@@ -36,8 +36,7 @@ KopeteMetaContact::~KopeteMetaContact()
 {
 }
 
-void KopeteMetaContact::addContact( KopeteContact *c,
-	const QStringList &groups )
+void KopeteMetaContact::addContact( KopeteContact *c )
 {
         bool unknown = false;
 
@@ -65,6 +64,7 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 		setDisplayName( c->name() );
 
 		// FIXME: Group handling!!!!
+        /*
 		m_groups = groups;
 		for( QStringList::ConstIterator it = groups.begin();
 			it != groups.end(); ++it )
@@ -95,6 +95,7 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 			kopeteapp->contactList()->addContact(
 				new KopeteMetaContactLVI( this, group_item ) );
 		}
+		*/
 	}
 }
 
@@ -334,9 +335,11 @@ void KopeteMetaContact::addToGroup( const QString &to )
 
 	m_groups.append( to );
 
+    /*
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 		it.current()->addToGroup( to );
+    */
 
 	emit addedToGroup( to );
 }

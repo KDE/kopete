@@ -18,6 +18,8 @@
 #include "kopetecontactlist.h"
 
 #include "kopetemetacontact.h"
+#include "kopetemetacontactlvi.h"
+
 #include "kopete.h"
 #include "pluginloader.h"
 #include "kopeteprotocol.h"
@@ -66,6 +68,32 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &contactId )
 	return c;
 }
 
+void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
+{
+    QStringList groups;
+
+	groups = mc->groups();
+
+	m_contacts.append( mc );
+
+	if ( groups.isEmpty() )
+	{
+        kdDebug() << "KopeteContactList::addMetaContact : adding metacontact with no groups" <<endl;
+		kopeteapp->contactList()->addContact(new KopeteMetaContactLVI( mc, kopeteapp->contactList() ) );
+	}
+    else
+	{
+        kdDebug() << "KopeteContactList::addMetaContact : adding metacontact" <<endl;
+		for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
+		{
+			QString group = *it;
+        	kdDebug() << "                                    adding to group " << group <<endl;
+			kopeteapp->contactList()->addContact(new KopeteMetaContactLVI( mc , kopeteapp->contactList()->getGroup(group) ) );
+		}
+	}
+}
+
+
 void KopeteContactList::loadXML()
 {
 	QString xml_filename;
@@ -96,15 +124,10 @@ void KopeteContactList::loadXML()
 			if ( elementl1.tagName() == "person" )
 			{
 				QString person_name = elementl1.attribute("name", "No Name");
-				QString person_groups = elementl1.attribute("groups", "Unknown");
-				kdDebug() << "XML Reader: New Person " << person_name << " in groups " << person_groups << endl;
-				KopeteMetaContact *mc = findContact(person_name);
+				kdDebug() << "XML Reader: New Person " << person_name << endl;
+				KopeteMetaContact *mc = new KopeteMetaContact();
 				mc->setDisplayName(person_name);
-
-				QStringList groupStringList = QStringList::split(',', person_groups);
-				for (QStringList::Iterator it = groupStringList.begin(); it != groupStringList.end(); it++)
-					mc->addToGroup(*it);
-					
+				
 				/* Now we have to find all contacts and metadata for this person */
 				QDomNode nodel2;
 				nodel2 = nodel1.firstChild();
@@ -129,7 +152,7 @@ void KopeteContactList::loadXML()
 							{
 								KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 								KopeteContact *c = prot->createContact(mc, contactid, serializedData);	
-								mc->addContact(c, "Unknown"); //FIXME add groups here
+								mc->addContact(c);
 							}
 							else
 								kdDebug() << "Protocol " << protocol << " could not be found!" << endl;
@@ -143,14 +166,22 @@ void KopeteContactList::loadXML()
 							//FIXME metadata is not supported
 
 						}
+
+						if ( elementl2.tagName() == "group" )
+						{
+                            QString groupname = elementl2.attribute("name", "Ups");
+                            kdDebug() << "Group: "<< groupname << endl;
+							mc->addToGroup(groupname);
+						}
 					}
 
 					/* We go for the next contact, metadata, etc */
-                	nodel2 = nodel2.nextSibling();
+					nodel2 = nodel2.nextSibling();
 				}
 
+            	/* We add the metacontact */
+				KopeteContactList::contactList()->addMetaContact( mc );
 			}
-
 		}
 		nodel1 = nodel1.nextSibling();
 	}
