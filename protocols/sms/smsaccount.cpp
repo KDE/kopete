@@ -34,6 +34,7 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 {
 	setMyself( new SMSContact(this, accountID, accountID, 0L) );
 	loadConfig();
+	connect();
 }
 
 SMSAccount::~SMSAccount()
@@ -70,9 +71,7 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 
 void SMSAccount::connect(const Kopete::OnlineStatus&)
 {
-//	myself()->setOnlineStatus( SMSOnline );
-
-	// FIXME: Set all contacts to SMSUnknown here
+	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
 }
 
 KActionMenu* SMSAccount::actionMenu()
@@ -84,9 +83,7 @@ KActionMenu* SMSAccount::actionMenu()
 
 void SMSAccount::disconnect()
 {
-//	myself()->setOnlineStatus( SMSOffline );
-
-	// FIXME: Set all contacts to SMSOffline here
+	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
 }
 
 bool SMSAccount::createContact( const QString &contactId,
