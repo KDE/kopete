@@ -21,7 +21,6 @@
 #define SPELLCHECKPLUGIN_H
 
 #include "kopeteplugin.h"
-#include "kopetemessage.h"
 
 class KActionCollection;
 class KopeteMessageManager;

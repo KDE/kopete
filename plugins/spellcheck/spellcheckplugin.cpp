@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include <qapplication.h>
 #include <qtextedit.h>
 
 #include <kdebug.h>

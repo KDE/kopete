@@ -20,7 +20,6 @@
 #ifndef SPELLCHECKPREFERENCES_H
 #define SPELLCHECKPREFERENCES_H
 
-#include <kshortcut.h>
 
 #include "configmodule.h"
 

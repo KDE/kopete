@@ -19,9 +19,6 @@
 #ifndef SINGLESPELLINSTANCE_H
 #define SINGLESPELLINSTANCE_H
 
-#include <qobject.h>
-#include <qmap.h>
-#include <qstringlist.h>
 #include <qregexp.h>
 #include <qsyntaxhighlighter.h>
 
