@@ -20,7 +20,6 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 
-#include "historydialog.h"
 #include "kmsnservice.h"
 #include "kopetestdaction.h"
 #include "msncontact.h"
