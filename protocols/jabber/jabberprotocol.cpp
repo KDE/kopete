@@ -131,8 +131,11 @@ const QString JabberProtocol::protocolIcon()
 
 void JabberProtocol::initActions()
 {
+
 	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0,
 					this, SLOT(slotGoOnline()), this, "actionJabberConnect");
+	actionGoChatty = new KAction(i18n("Free to Chat"), "jabber_chatty", 0,
+					this, SLOT(slotGoChatty()), this, "actionJabberChatty");
 	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0,
 					this, SLOT(slotGoAway()), this, "actionJabberAway");
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0,
@@ -161,6 +164,7 @@ void JabberProtocol::initActions()
 	menuTitleId = actionStatusMenu->popupMenu()->insertTitle("");
 
 	actionStatusMenu->insert(actionGoOnline);
+	actionStatusMenu->insert(actionGoChatty);
 	actionStatusMenu->insert(actionGoAway);
 	actionStatusMenu->insert(actionGoXA);
 	actionStatusMenu->insert(actionGoDND);
@@ -222,6 +226,7 @@ bool JabberProtocol::unload()
 	protocolInstance = 0L;
 
 	delete actionGoOnline;
+	delete actionGoChatty;
 	delete actionGoAway;
 	delete actionGoXA;
 	delete actionGoDND;
@@ -255,88 +260,85 @@ void JabberProtocol::connect()
 	// exists
 	if(jabberClient)
 	{
-			jabberClient->close();
-			delete jabberClient;
-			jabberClient = 0L;
+		jabberClient->close();
+		delete jabberClient;
+		jabberClient = 0L;
 	}
 
 	// instantiate new Psi backend class for handling the protocol
 	// and setup slots and signals
 	if(!jabberClient)
 	{
-			jabberClient = new Jabber::Client(this);
+		jabberClient = new Jabber::Client(this);
 
-			// this should only be done here to connect the signals,
-			// otherwise it is a bad idea
-			using namespace Jabber;
+		// this should only be done here to connect the signals,
+		// otherwise it is a bad idea
+		using namespace Jabber;
 
-			QObject::connect(jabberClient, SIGNAL(handshaken()),
-							this, SLOT(slotHandshaken()));
-			QObject::connect(jabberClient,
-							SIGNAL(authFinished(bool, int, const QString &)),
-							this, SLOT(slotConnected(bool, int, const QString &)));
+		QObject::connect(jabberClient, SIGNAL(handshaken()),
+						this, SLOT(slotHandshaken()));
+		QObject::connect(jabberClient,
+						SIGNAL(authFinished(bool, int, const QString &)),
+						this, SLOT(slotConnected(bool, int, const QString &)));
 
-			QObject::connect(jabberClient, SIGNAL(closeFinished()),
-							this, SLOT(slotDisconnected()));
+		QObject::connect(jabberClient, SIGNAL(closeFinished()),
+						this, SLOT(slotDisconnected()));
 
-			QObject::connect(jabberClient,
-							SIGNAL(subscription(const Jid &, const QString &)),
-							this, SLOT(slotSubscription(const Jid &, const QString &)));
+		QObject::connect(jabberClient,
+						SIGNAL(subscription(const Jid &, const QString &)),
+						this, SLOT(slotSubscription(const Jid &, const QString &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(rosterItemAdded(const RosterItem &)),
-							this, SLOT(slotNewContact(const RosterItem &)));
+		QObject::connect(jabberClient,
+						SIGNAL(rosterItemAdded(const RosterItem &)),
+						this, SLOT(slotNewContact(const RosterItem &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(rosterItemUpdated(const RosterItem &)),
-							this, SLOT(slotContactUpdated(const RosterItem &)));
+		QObject::connect(jabberClient,
+						SIGNAL(rosterItemUpdated(const RosterItem &)),
+						this, SLOT(slotContactUpdated(const RosterItem &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(rosterItemRemoved(const RosterItem &)),
-							this, SLOT(slotContactDeleted(const RosterItem &)));
+		QObject::connect(jabberClient,
+						SIGNAL(rosterItemRemoved(const RosterItem &)),
+						this, SLOT(slotContactDeleted(const RosterItem &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(resourceAvailable(const Jid &, const Resource &)),
-							this,
-							SLOT(slotResourceAvailable(const Jid &, const Resource &)));
+		QObject::connect(jabberClient,
+						SIGNAL(resourceAvailable(const Jid &, const Resource &)),
+						this, SLOT(slotResourceAvailable(const Jid &, const Resource &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(resourceUnavailable(const Jid &, const Resource &)),
-							this,
-							SLOT(slotResourceUnavailable(const Jid &, const Resource &)));
+		QObject::connect(jabberClient,
+						SIGNAL(resourceUnavailable(const Jid &, const Resource &)),
+						this, SLOT(slotResourceUnavailable(const Jid &, const Resource &)));
 
+		QObject::connect(jabberClient,
+						SIGNAL(messageReceived(const Message &)),
+						this, SLOT(slotRecievedMessage(const Message &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(messageReceived(const Message &)),
-							this, SLOT(slotRecievedMessage(const Message &)));
+		QObject::connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)),
+						this, SLOT(slotGroupChatJoined(const Jid &)));
 
-			QObject::connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)),
-							this, SLOT(slotGroupChatJoined(const Jid &)));
+		QObject::connect(jabberClient, SIGNAL(groupChatLeft(const Jid &)),
+						this, SLOT(slotGroupChatLeft(const Jid &)));
 
-			QObject::connect(jabberClient, SIGNAL(groupChatLeft(const Jid &)),
-							this, SLOT(slotGroupChatLeft(const Jid &)));
+		QObject::connect(jabberClient,
+						SIGNAL(groupChatPresence(const Jid &)),
+						this, SLOT(slotGroupChatPresence(const Jid &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(groupChatPresence(const Jid &)),
-							this, SLOT(slotGroupChatPresence(const Jid &)));
+		QObject::connect(jabberClient,
+						SIGNAL(groupChatError(const Jid &, int, QString &)),
+						this, SLOT(slotGroupChatError(const Jid &, int, QString &)));
 
-			QObject::connect(jabberClient,
-							SIGNAL(groupChatError(const Jid &, int, QString &)),
-							this, SLOT(slotGroupChatError(const Jid &, int, QString &)));
+		QObject::connect(jabberClient, SIGNAL(error(const StreamError &)),
+						this, SLOT(slotError(const StreamError &)));
 
-			QObject::connect(jabberClient, SIGNAL(error(const StreamError &)),
-							this, SLOT(slotError(const StreamError &)));
+		QObject::connect(jabberClient, SIGNAL(debugText(const QString &)),
+						this, SLOT(slotPsiDebug(const QString &)));
 
-			QObject::connect(jabberClient, SIGNAL(debugText(const QString &)),
-							this, SLOT(slotPsiDebug(const QString &)));
+		utsname utsBuf;
+		uname(&utsBuf);
 
-			utsname utsBuf;
-			uname(&utsBuf);
-
-			jabberClient->setClientName("Kopete Jabber Plugin");
-			jabberClient->setClientVersion("0.6.0");
-			jabberClient->setOSName(QString("%1 %2").arg(utsBuf.sysname,
-													1).arg(utsBuf.release,2));
+		jabberClient->setClientName("Kopete Jabber Plugin");
+		jabberClient->setClientVersion("0.6.0");
+		jabberClient->setOSName(QString("%1 %2").arg(utsBuf.sysname,
+								1).arg(utsBuf.release,2));
 
 	}
 
@@ -383,13 +385,13 @@ void JabberProtocol::connect()
 	int proxyType = Jabber::StreamProxy::None;
 
 	if(proxyTypeStr == QString("HTTPS"))
-			proxyType = Jabber::StreamProxy::HTTPS;
+		proxyType = Jabber::StreamProxy::HTTPS;
 	else
-			if(proxyTypeStr == QString("SOCKS4"))
-					proxyType = Jabber::StreamProxy::SOCKS4;
-			else
-					if(proxyTypeStr == QString("SOCKS5"))
-							proxyType = Jabber::StreamProxy::SOCKS5;
+		if(proxyTypeStr == QString("SOCKS4"))
+				proxyType = Jabber::StreamProxy::SOCKS4;
+		else
+				if(proxyTypeStr == QString("SOCKS5"))
+						proxyType = Jabber::StreamProxy::SOCKS5;
 
 	Jabber::StreamProxy proxy(proxyType,
 					KGlobal::config()->readEntry("ProxyName", ""),
@@ -401,8 +403,7 @@ void JabberProtocol::connect()
 
 	jabberClient->setProxy(proxy);
 
-	if(myContact)
-			delete myContact;
+	delete myContact;
 
 	// create a contact instance for self
 	myContact = new JabberContact(
@@ -434,41 +435,41 @@ void JabberProtocol::slotPsiDebug(const QString &msg)
 void JabberProtocol::slotHandshaken()
 {
 
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Performing login..." << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Performing login..." << endl;
 
-		if(registerFlag)
+	if(registerFlag)
+	{
+		Jabber::JT_Register *task =
+				new Jabber::JT_Register(jabberClient->rootTask());
+
+		QObject::connect(task, SIGNAL(finished()),
+						this, SLOT(slotRegisterUserDone()));
+
+		task->reg(KGlobal::config()->readEntry("UserID", ""),
+					KGlobal::config()->readEntry("Password", ""));
+
+		task->go(true);
+	}
+	else
+	{
+		KGlobal::config()->setGroup("Jabber");
+
+		if(KGlobal::config()->readEntry("AuthType", "digest")
+						== QString("digest"))
 		{
-			Jabber::JT_Register *task =
-					new Jabber::JT_Register(jabberClient->rootTask());
-
-			QObject::connect(task, SIGNAL(finished()),
-							this, SLOT(slotRegisterUserDone()));
-
-			task->reg(KGlobal::config()->readEntry("UserID", ""),
-							KGlobal::config()->readEntry("Password", ""));
-
-			task->go(true);
+			jabberClient->authDigest(
+							KGlobal::config()->readEntry("UserID", ""),
+							KGlobal::config()->readEntry("Password", ""),
+							KGlobal::config()->readEntry("Resource", "Kopete"));
 		}
 		else
 		{
-				KGlobal::config()->setGroup("Jabber");
-
-			if(KGlobal::config()->readEntry("AuthType", "digest")
-							== QString("digest"))
-			{
-					jabberClient->authDigest(
-									KGlobal::config()->readEntry("UserID", ""),
-									KGlobal::config()->readEntry("Password", ""),
-									KGlobal::config()->readEntry("Resource", "Kopete"));
-			}
-			else
-			{
-					jabberClient->authPlain(
-									KGlobal::config()->readEntry("UserID", ""),
-									KGlobal::config()->readEntry("Password", ""),
-									KGlobal::config()->readEntry("Resource", "Kopete"));
-			}
+			jabberClient->authPlain(
+							KGlobal::config()->readEntry("UserID", ""),
+							KGlobal::config()->readEntry("Password", ""),
+							KGlobal::config()->readEntry("Resource", "Kopete"));
 		}
+	}
 
 }
 
@@ -526,6 +527,8 @@ void JabberProtocol::disconnect()
 		jabberClient->close();
 	}
 
+	// we need to use deleteLater because a delete would
+	// not execute the close() request
 	jabberClient->deleteLater();
 	jabberClient = 0L;
 
@@ -559,7 +562,9 @@ void JabberProtocol::slotDisconnected()
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Disconnected from Jabber server."
 			<< endl;
 
-	jabberClient->deleteLater();
+	if(jabberClient)
+		jabberClient->deleteLater();
+
 	jabberClient = 0L;
 
 	setStatusIcon("jabber_offline");
@@ -655,6 +660,16 @@ void JabberProtocol::setPresence(Presence status, const QString &reason,
 
 		switch(status)
 		{
+		case STATUS_ONLINE:
+				setStatusIcon("jabber_online");
+				presence.setShow("");
+				break;
+
+		case STATUS_CHATTY:
+				setStatusIcon("jabber_chatty");
+				presence.setShow("chat");
+				break;
+
 		case STATUS_AWAY:
 				setStatusIcon("jabber_away");
 				presence.setShow("away");
@@ -669,14 +684,10 @@ void JabberProtocol::setPresence(Presence status, const QString &reason,
 				setStatusIcon("jabber_na");
 				presence.setShow("dnd");
 				break;
+
 		case STATUS_INVISIBLE:
 				setStatusIcon("jabber_invisible");
 				presence.setIsInvisible(true);
-				break;
-
-		case STATUS_ONLINE:
-				setStatusIcon("jabber_online");
-				presence.setShow("chat");
 				break;
 
 		default:
@@ -753,6 +764,7 @@ AddContactPage *JabberProtocol::createAddContactWidget(QWidget *parent)
 void JabberProtocol::slotGoOnline()
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Going online!" << endl;
+
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
@@ -769,6 +781,21 @@ void JabberProtocol::slotGoOffline()
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Going offline." << endl;
 
 	disconnect();
+}
+
+void JabberProtocol::slotGoChatty()
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Setting 'chatty' mode." << endl;
+
+	if (!isConnected())
+	{
+		// we are not connected yet, so connect now
+		initialPresence = STATUS_CHATTY;
+		connect();
+	}
+
+	setPresence(STATUS_CHATTY, "");
+
 }
 
 void JabberProtocol::slotGoAway()
@@ -917,6 +944,9 @@ void JabberProtocol::sendPresenceToNode(const Presence &pres,
 	switch(pres)
 	{
 	case STATUS_ONLINE:
+			status.setShow("");
+			break;
+	case STATUS_CHATTY:
 			status.setShow("chat");
 			break;
 	case STATUS_AWAY:

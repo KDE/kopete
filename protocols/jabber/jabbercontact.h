@@ -224,7 +224,8 @@ private slots:
 	 */
 	void slotRequestAuth();
 
-	void slotStatusChat();
+	void slotStatusOnline();
+	void slotStatusChatty();
 	void slotStatusAway();
 	void slotStatusXA();
 	void slotStatusDND();
@@ -291,8 +292,9 @@ private:
 	KAction 	*actionRename,
 			*actionSendAuth, *actionRequestAuth,
 			*actionInfo, *actionStatusAway,
-			*actionStatusChat, *actionStatusXA,
-			*actionStatusDND, *actionStatusInvisible;
+			*actionStatusOnline, *actionStatusChatty,
+			*actionStatusXA, *actionStatusDND,
+			*actionStatusInvisible;
 
 	KSelectAction *actionSelectResource;
 	KActionMenu *actionSetAvailability;

@@ -140,6 +140,7 @@ public:
 		enum Presence
 		{
 				STATUS_ONLINE,
+				STATUS_CHATTY,
 				STATUS_AWAY,
 				STATUS_XA,
 				STATUS_DND,
@@ -264,7 +265,12 @@ private slots:
 	void slotGoOffline();
 
 	/*
-	 * Slot for going "away
+	 * Slot for going "chatty"
+	 */
+	void slotGoChatty();
+
+	/*
+	 * Slot for going "away"
 	 */
 	void slotGoAway();
 
@@ -384,6 +390,7 @@ private:
 	JabberMessageManagerMap messageManagerMap;
 
 	KAction *actionGoOnline;
+	KAction *actionGoChatty;
 	KAction *actionGoAway;
 	KAction *actionGoXA;
 	KAction *actionGoDND;

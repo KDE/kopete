@@ -93,7 +93,8 @@ JabberContact::~JabberContact()
 	delete actionSelectResource;
 	delete actionSetAvailability;
 	delete actionSendAuth;
-	delete actionStatusChat;
+	delete actionStatusOnline;
+	delete actionStatusChatty;
 	delete actionStatusAway;
 	delete actionStatusXA;
 	delete actionStatusDND;
@@ -167,12 +168,16 @@ void JabberContact::initActions()
 	actionSendAuth = new KAction(i18n("(Re)send Authorization To"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
 	actionRequestAuth = new KAction(i18n("(Re)request Authorization From"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 	actionSetAvailability = new KActionMenu(i18n("Set Availability"), "jabber_online");
-	actionStatusChat = new KAction(i18n("Free to Chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
+	actionStatusOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotStatusOnline()), this, "actionOnline");
+	actionStatusChatty = new KAction(i18n("Free to Chat"), "jabber_chatty", 0, this, SLOT(slotStatusChatty()), this, "actionChatty");
 	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	actionStatusXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
 	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
 	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
 
+	actionSetAvailability->insert(actionStatusOnline);
+	actionSetAvailability->insert(actionStatusChatty);
+	actionSetAvailability->insert(actionStatusAway);
 	actionSetAvailability->insert(actionStatusXA);
 	actionSetAvailability->insert(actionStatusDND);
 	actionSetAvailability->insert(actionStatusInvisible);
@@ -255,6 +260,9 @@ void JabberContact::slotUpdatePresence(const JabberProtocol::Presence newStatus,
 	{
 		case JabberProtocol::STATUS_ONLINE:
 			dbgString += "STATUS_ONLINE";
+			break;
+		case JabberProtocol::STATUS_CHATTY:
+			dbgString += "STATUS_CHATTY";
 			break;
 		case JabberProtocol::STATUS_AWAY:
 			 dbgString += "STATUS_AWAY";
@@ -349,18 +357,19 @@ JabberContact::ContactStatus JabberContact::status() const
 	switch(presence)
 	{
 		case JabberProtocol::STATUS_ONLINE:
-		retval = Online;
-		break;
+		case JabberProtocol::STATUS_CHATTY:
+			retval = Online;
+			break;
 
 		case JabberProtocol::STATUS_AWAY:
 		case JabberProtocol::STATUS_XA:
 		case JabberProtocol::STATUS_DND:
-		retval = Away;
-		break;
+			retval = Away;
+			break;
 
 		default:
-		retval = Offline;
-		break;
+			retval = Offline;
+			break;
 	}
 
 	return retval;
@@ -375,6 +384,10 @@ QString JabberContact::statusText() const
 	{
 		case JabberProtocol::STATUS_ONLINE:
 			txt = i18n("Online");
+			break;
+
+		case JabberProtocol::STATUS_CHATTY:
+			txt = i18n("Free to Chat");
 			break;
 
 		case JabberProtocol::STATUS_AWAY:
@@ -410,6 +423,10 @@ QString JabberContact::statusIcon() const
 	{
 		case JabberProtocol::STATUS_ONLINE:
 					icon = "jabber_online";
+					break;
+
+		case JabberProtocol::STATUS_CHATTY:
+					icon = "jabber_chatty";
 					break;
 
 		case JabberProtocol::STATUS_AWAY:
@@ -504,8 +521,11 @@ int JabberContact::importance() const
 
 	switch(status())
 	{
-		case JabberProtocol::STATUS_ONLINE:
+		case JabberProtocol::STATUS_CHATTY:
 					value = 20;
+					break;
+		case JabberProtocol::STATUS_ONLINE:
+					value = 19;
 					break;
 		case JabberProtocol::STATUS_AWAY:
 					value = 15;
@@ -593,6 +613,11 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Res
 	}
 
 	JabberProtocol::Presence status = JabberProtocol::STATUS_ONLINE;
+	if(resource.status().show() == "chat")
+	{
+		status = JabberProtocol::STATUS_CHATTY;
+	}
+	else
 	if(resource.status().show() == "away")
 	{
 		status = JabberProtocol::STATUS_AWAY;
@@ -777,7 +802,7 @@ QString JabberContact::data() const
 
 }
 
-void JabberContact::slotStatusChat()
+void JabberContact::slotStatusOnline()
 {
 
 	QString id = userId();
@@ -786,6 +811,18 @@ void JabberContact::slotStatusChat()
 		id += activeResource->resource();
 
 	protocol->sendPresenceToNode(JabberProtocol::STATUS_ONLINE, id);
+
+}
+
+void JabberContact::slotStatusChatty()
+{
+
+	QString id = userId();
+
+	if(resourceOverride)
+		id += activeResource->resource();
+
+	protocol->sendPresenceToNode(JabberProtocol::STATUS_CHATTY, id);
 
 }
 
