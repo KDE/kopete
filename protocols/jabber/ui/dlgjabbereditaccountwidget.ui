@@ -210,7 +210,7 @@
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout160</cstring>
+                                    <cstring>layout44</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -228,11 +228,16 @@
                                         </property>
                                         <property name="sizeHint">
                                             <size>
-                                                <width>210</width>
+                                                <width>140</width>
                                                 <height>20</height>
                                             </size>
                                         </property>
                                     </spacer>
+                                    <widget class="KProgress">
+                                        <property name="name">
+                                            <cstring>kProgress1</cstring>
+                                        </property>
+                                    </widget>
                                     <widget class="QPushButton">
                                         <property name="name">
                                             <cstring>btnRegister</cstring>
@@ -276,6 +281,23 @@
                             <set>WordBreak|AlignTop</set>
                         </property>
                     </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer15</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>130</height>
+                            </size>
+                        </property>
+                    </spacer>
                     <widget class="KActiveLabel">
                         <property name="name">
                             <cstring>kActiveLabel3</cstring>
@@ -892,6 +914,7 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kprogress.h</includehint>
     <includehint>kactivelabel.h</includehint>
 </includehints>
 </UI>
