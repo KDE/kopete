@@ -31,8 +31,9 @@ class NLNoatun : public NLMediaPlayer
 	public:
 		NLNoatun( DCOPClient *client );
 		virtual void update();
-		QCString find() const;
  	protected:
+		QCString find() const;
+		QString currentProperty( QCString appname, QString property ) const;
 		DCOPClient *m_client;
 };
 

@@ -33,35 +33,9 @@ NLNoatun::NLNoatun( DCOPClient *client ) : NLMediaPlayer()
 	m_type = Audio;
 }
 
-QCString NLNoatun::find() const
-{
-	QCString app = "noatun";
-	if ( !m_client->isApplicationRegistered( app ) )
-	{
-		// looking for a registered app prefixed with 'app'
-		QCStringList allApps = m_client->registeredApplications();
-		QCStringList::iterator it;
-		for ( it = allApps.begin(); it != allApps.end(); it++ )
-		{
-			//kdDebug() << ( *it ) << endl;
-			if ( ( *it ).left( 6 ) == app )
-			{
-				app = ( *it );
-				break;
-			}
-		}
-		// not found, set app to ""
-		if ( it == allApps.end() )
-			app = "";
-	}
-	return app;
-}
-		
 void NLNoatun::update()
 {
-	// TODO: Fix to use currentProperty - author, title etc
-	// Thanks mETz
-	//
+	// Thanks mETz for telling me about Noatun's currentProperty()
 	m_playing = false;
 	QString newTrack;
 	// see if it's registered with DCOP
@@ -86,41 +60,27 @@ void NLNoatun::update()
 				//kdDebug() << "checked if Noatun is playing!" << endl;
 			}
 		}
-		// poll it for its current artist and album
-		// 'data' here is an unused input parameter
-		// Get the song title 
-		if ( !m_client->call( appname, "Noatun",
-					"title()", data, replyType, replyData ) )
-			kdDebug( ) <<  "NLNoatun::update() DCOP error on " << appname 
-				<< endl;
-		else {
-			QDataStream reply( replyData, IO_ReadOnly );
-			if ( replyType == "QString" ) {
-				reply >> newTrack;
-				//kdDebug() << "NLNoatun::update() the result is: " 
-				//	<< newTrack.latin1() << endl;
-				// this assumes the format of title() stays the same and
-				// song titles do not contain []-()
-				// take the artist as the text within the leftmost
-				// enclosing pair of []
-				m_artist = newTrack.mid( newTrack.find( '[' ) + 1,
-						newTrack.findRev( ']' ) - 1 );
-				// take the track to be everything after the -, less the
-				// rightmost pair of ()
-				int lpos = newTrack.find(  '-' ) + 2;
-				newTrack = newTrack.mid ( lpos,
-						newTrack.findRev( '(' ) - lpos - 1 );
-				kdDebug() << newTrack << endl;
-				// should be ok for You Never Close Your Eyes ( Any More )
-				//newTrack = newTrack.right( newTrack.length() -
-			//			newTrack.find( '-' ) + 1 );
-//				int rpos = newTrack.length() - newTrack.find(  '-' ) + 1 ;
-//				kdDebug() << "NLNOATUN::UPDATE " << newTrack.find ( '-' ) + 1 << " " << newTrack.length() << " " << newTrack.right( newTrack.length() - newTrack.find (  '-' ) - 1 ) <<endl;
-//				int lpos = newTrack.findRev( '(' - 1 ) ;
-//				kdDebug() << "NLNOATUN::UPDATE " << newTrack.findRev( '(' - 1 ) << " " << newTrack.length() << endl;
-			} else
-				kdDebug() << "NLNoatun::update(), title() returned unexpected reply type!" << endl;
-		}
+		// poll it for its current songtitle, artist and album
+		// Using properties
+		m_artist = currentProperty( appname, "author" );
+		m_album = currentProperty( appname, "album" );
+		QString title = currentProperty( appname, "title" );
+		// if properties not set ( no id3 tags... ) fallback to filename
+		if ( !title.isEmpty() )
+			newTrack = title;
+		else
+			// Using the title() method
+			if ( !m_client->call( appname, "Noatun",
+						"title()", data, replyType, replyData ) )
+				kdDebug( ) <<  "NLNoatun::update() DCOP error on " << appname 
+					<< endl;
+			else {
+				QDataStream reply( replyData, IO_ReadOnly );
+				if ( replyType == "QString" ) {
+					reply >> newTrack;
+				} else
+					kdDebug() << "NLNoatun::update(), title() returned unexpected reply type!" << endl;
+			}
 		// if the current track title has changed
 		if ( newTrack != m_track )
 		{
@@ -135,5 +95,53 @@ void NLNoatun::update()
 	}
 	else
 		kdDebug() << "NLNoatun::update() - noatun not found" << endl;
+}
+
+QCString NLNoatun::find() const
+{
+	QCString app = "noatun";
+	if ( !m_client->isApplicationRegistered( app ) )
+	{
+		// looking for a registered app prefixed with 'app'
+		QCStringList allApps = m_client->registeredApplications();
+		QCStringList::iterator it;
+		for ( it = allApps.begin(); it != allApps.end(); it++ )
+		{
+			//kdDebug() << ( *it ) << endl;
+			if ( ( *it ).left( 6 ) == app )
+			{
+				app = ( *it );
+				break;
+			}
+		}
+		// not found, set app to ""
+		if ( it == allApps.end() )
+			app = "";
+	}
+	return app;
+}
+		
+QString NLNoatun::currentProperty( QCString appname, QString property ) const
+{
+	QByteArray data, replyData;
+	QCString replyType;
+	QDataStream arg( data, IO_WriteOnly );
+	QString result = "";
+	arg << property;
+	if ( !m_client->call( appname, "Noatun",
+				"currentProperty(QString)", data, replyType, replyData ) )
+	{
+		kdDebug( ) <<  "NLNoatun::currentProperty() DCOP error on "
+			<< appname << endl;
+	}	
+	else
+	{
+		QDataStream reply( replyData, IO_ReadOnly );
+		if ( replyType == "QString" )
+		{
+			reply >> result;
+		}
+	}
+	return result;
 }
 // vim: set noet ts=4 sts=4 sw=4:
