@@ -175,35 +175,56 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 				rx.search( dataMessage );
 				unsigned long int sessID=rx.cap(1).toUInt();
 
+				rx=QRegExp("AppID: ([0-9]*)\r\n");
+				rx.search( dataMessage );
+				unsigned long int AppID=rx.cap(1).toUInt();
 
-				QString content="SessionID: " + QString::number( sessID ) ;
+				if(AppID==1) //Ask for a msn picture, or emoticon,  currently, we always send the display picture
+				{
 
-				QCString dataMessage= QString(
-						"MSNSLP/1.0 200 OK\r\n"
-						"To: <msnmsgr:"+m_msgHandle+">\r\n"
-						"From: <msnmsgr:"+m_myHandle+">\r\n"
-						"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
-						"CSeq: 1\r\n"
-						"Call-ID: {"+callid+"}\r\n"
-						"Max-Forwards: 0\r\n"
-						"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
-						"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
-						"\r\n" + content + "\r\n\r\n").utf8(); //\0
+					QString content="SessionID: " + QString::number( sessID ) ;
 
-				sendP2PMessage(dataMessage);
+					QCString dataMessage= QString(
+							"MSNSLP/1.0 200 OK\r\n"
+							"To: <msnmsgr:"+m_msgHandle+">\r\n"
+							"From: <msnmsgr:"+m_myHandle+">\r\n"
+							"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
+							"CSeq: 1\r\n"
+							"Call-ID: {"+callid+"}\r\n"
+							"Max-Forwards: 0\r\n"
+							"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
+							"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
+							"\r\n" + content + "\r\n\r\n").utf8(); //\0
 
-				//send the data preparation message
-				m_sessionId=sessID;
-				QByteArray initM(4);
-				initM.fill('\0');
-				sendP2PMessage(initM);
+					sendP2PMessage(dataMessage);
 
-				//prepare to send the file
-				m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
-				if(!m_Sfile->open(IO_ReadOnly))  {/*error?*/}
-    			m_totalDataSize=  m_Sfile->size();
+					//send the data preparation message
+					m_sessionId=sessID;
+					QByteArray initM(4);
+					initM.fill('\0');
+					sendP2PMessage(initM);
 
-				QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
+					//prepare to send the file
+					m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
+					if(!m_Sfile->open(IO_ReadOnly))  {/*error?*/}
+					m_totalDataSize=  m_Sfile->size();
+
+					QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
+				}
+				else
+				{
+					QCString dataMessage= QString(
+							"MSNSLP/1.0 500 Internal Error\r\n"
+							"To: <msnmsgr:"+m_msgHandle+">\r\n"
+							"From: <msnmsgr:"+m_myHandle+">\r\n"
+							"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
+							"CSeq: 1\r\n"
+							"Call-ID: {"+callid+"}\r\n"
+							"Max-Forwards: 0\r\n"
+							"Content-Type: null\r\n"
+							"Content-Length: 0\r\n\r\n").utf8(); //\0
+					sendP2PMessage(dataMessage);
+				}
 			}
 			else if (dataMessage.contains("BYE"))
 			{
