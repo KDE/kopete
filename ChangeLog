@@ -1,6 +1,9 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+01-Jun-2002 Released Kopete 0.4
+==============================
+
 o Main App
 	o Kopete API redesign/cleanup (Ryan)
 	o Added globally Away/Available (Duncan)
