@@ -26,8 +26,8 @@
 #include <kdeversion.h>
 #include <kdialogbase.h>
 #include <klocale.h>
-#include <kiconloader.h> 
-#include <kiconeffect.h> 
+#include <kiconloader.h>
+#include <kiconeffect.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -164,7 +164,7 @@ QPixmap KopeteAccount::accountIcon(const int size) const
 		KIconEffect effect;
 		basis = effect.apply( basis, KIconEffect::Colorize, 1, d->color, 0);
 	}
-	
+
 	if ( size > 0 && basis.width() != size )
 	{
 		basis = QPixmap( basis.convertToImage().smoothScale( size, size ) );
@@ -537,7 +537,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	{
 		//Create a new MetaContact
 		parentContact = new KopeteMetaContact();
-		parentContact->setDisplayName( displayName );
+		//parentContact->setDisplayName( displayName );
 
 		//Set it as a temporary contact if requested
 		if ( isTemporary )
