@@ -69,10 +69,10 @@
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name):KopeteAccount (parent, accountId, name)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId;
-
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId << "\n";
 
 	mProtocol = parent;
+
 	/* Create a new JabberContact for this account, to be returned from
 	 * myself(). */
 	myContact = new JabberContact (accountId, accountId, QStringList (), this, 0L, accountId, "jabber_offline");
@@ -84,19 +84,18 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	/* This is not yet implemented. */
 	sendRawDialog = 0L;
 
-	//myContact = 0L;
-
 	initialPresence = JabberProtocol::getJabberOnline ();
 
 	/* Setup actions. */
 	initActions ();
-	setAccountId (accountId);
-	userID = accountId.section ('@', 0, 0);
+
 }
 
 JabberAccount::~JabberAccount ()
 {
 	disconnect ();
+
+	Jabber::Stream::unloadSSL ();
 
 	if (jabberClient)
 	{
@@ -104,9 +103,6 @@ JabberAccount::~JabberAccount ()
 
 		jabberClient = 0L;
 	}
-
-	/* Kick the SSL library, which seems to *suck* *horribly*. */
-	Jabber::Stream::unloadSSL ();
 
 	delete actionGoOnline;
 	delete actionGoChatty;
@@ -118,8 +114,6 @@ JabberAccount::~JabberAccount ()
 	delete actionServices;
 	delete actionSendRaw;
 	delete actionEditVCard;
-
-//    delete actionEmptyMail;
 
 	delete actionStatusMenu;
 
@@ -146,28 +140,16 @@ void JabberAccount::initActions ()
 {
 
 	actionGoOnline = new KAction (i18n ("Online"), "jabber_online", 0, this, SLOT (slotGoOnline ()), this, "actionJabberConnect");
-
 	actionGoChatty = new KAction (i18n ("Free to Chat"), "jabber_chatty", 0, this, SLOT (slotGoChatty ()), this, "actionJabberChatty");
-
 	actionGoAway = new KAction (i18n ("Away"), "jabber_away", 0, this, SLOT (slotGoAway ()), this, "actionJabberAway");
-
 	actionGoXA = new KAction (i18n ("Extended Away"), "jabber_away", 0, this, SLOT (slotGoXA ()), this, "actionJabberXA");
-
 	actionGoDND = new KAction (i18n ("Do Not Disturb"), "jabber_na", 0, this, SLOT (slotGoDND ()), this, "actionJabberDND");
-
 	actionGoInvisible = new KAction (i18n ("Invisible"), "jabber_invisible", 0, this, SLOT (slotGoInvisible ()), this, "actionJabberInvisible");
-
 	actionGoOffline = new KAction (i18n ("Offline"), "jabber_offline", 0, this, SLOT (slotGoOffline ()), this, "actionJabberDisconnect");
-
 	actionJoinChat = new KAction (i18n ("Join Groupchat..."), "filenew", 0, this, SLOT (slotJoinNewChat ()), this, "actionJoinChat");
-
 	actionServices = new KAction (i18n ("Services..."), "filenew", 0, this, SLOT (slotGetServices ()), this, "actionJabberServices");
-
 	actionSendRaw = new KAction (i18n ("Send Raw Packet to Server..."), "filenew", 0, this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw");
 	actionEditVCard = new KAction (i18n ("Edit User Info..."), "identity", 0, this, SLOT (slotEditVCard ()), this, "actionEditVCard");
-	//actionEmptyMail = new KAction(i18n("New Email Message..."), "filenew", 0,
-	//this, SLOT(slotEmptyMail()), this, "actionEmptyMail");
-
 
 	actionStatusMenu = new KActionMenu ("Jabber", this);
 
@@ -191,7 +173,6 @@ void JabberAccount::initActions ()
 	actionStatusMenu->insert (actionEditVCard);
 
 	actionStatusMenu->popupMenu ()->insertSeparator ();
-	//actionStatusMenu->insert(actionEmptyMail);
 
 	/* If we need to connect on startup, do it now. */
 	if (pluginData (protocol (), "AutoConnect") == "true")
@@ -309,7 +290,7 @@ void JabberAccount::connect ()
 	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
 
-	if (userID.isEmpty ())
+	if (accountId().isEmpty ())
 	{
 		int r = KMessageBox::warningContinueCancel (qApp->mainWidget (),
 													i18n
@@ -398,15 +379,15 @@ void JabberAccount::slotHandshaken ()
 	{
 		Jabber::JT_Register * task = new Jabber::JT_Register (jabberClient->rootTask ());
 		QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
-		task->reg (userID, password);
+		task->reg (accountId(), password);
 		task->go (true);
 	}
 	else
 	{
 		if (pluginData (protocol (), "AuthType") == QString ("digest"))
-			jabberClient->authDigest (userID, password, resource);
+			jabberClient->authDigest (accountId(), password, resource);
 		else
-			jabberClient->authPlain (userID, password, resource);
+			jabberClient->authPlain (accountId(), password, resource);
 
 	}
 
@@ -514,35 +495,35 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 		KMessageBox::error (qApp->mainWidget (),
 							i18n
 							("Connection to the Jabber server %1 for account %2 failed due to a DNS error (%1); check you typed the server name correctly.").
-							arg (server, 1).arg (userID, 2).arg (error.details (), 3), i18n ("Error Connecting to Jabber Server"));
+							arg (server, 1).arg (accountId(), 2).arg (error.details (), 3), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Refused:
 		KMessageBox::error (qApp->mainWidget (),
 							i18n
 							("The connection was refused when attempting to contact the server %1 for the account %2; check both the server name and the port number.").
-							arg (server, 1).arg (userID, 2), i18n ("Error Connecting to Jabber Server"));
+							arg (server, 1).arg (accountId(), 2), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Timeout:
 		KMessageBox::error (qApp->mainWidget (),
 							i18n
 							("The connection to the Jabber server %1 for the account %2 timed out.").
-							arg (server, 1).arg (userID, 2), i18n ("Error Connecting to Jabber Server"));
+							arg (server, 1).arg (accountId(), 2), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Socket:
 		KMessageBox::error (qApp->mainWidget (),
 							i18n
 							("There was a socket error (%1); your connection to the Jabber server %2 for account %3 has been lost.").
-							arg (error.details (), 1).arg (server, 2).arg (userID, 3), i18n ("Error Connecting to Jabber Server"));
+							arg (error.details (), 1).arg (server, 2).arg (accountId(), 3), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Disconnected:
 		KMessageBox::error (qApp->mainWidget (),
 							i18n
 							("The remote server %1 closed the connection for account %2, without specifying any error. This usually means that the server is broken.").
-							arg (server, 1).arg (userID, 2), i18n ("Error Connecting to Jabber Server"));
+							arg (server, 1).arg (accountId(), 2), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Handshake:
@@ -965,7 +946,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 		KMessageBox::information (0L,
 								  i18n
 								  ("The Jabber user %1 removed %2's subscription to them. This account will no longer be able to view their online/offline status.").
-								  arg (jid.userHost (), 1).arg (userID, 2), i18n ("Notification"));
+								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification"));
 
 		/* Delete the item from the roster. */
 		Jabber::JT_Roster * task = new Jabber::JT_Roster (jabberClient->rootTask ());
@@ -1235,7 +1216,7 @@ void JabberAccount::slotEditVCard ()
 
 void JabberAccount::registerUser ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Registering user " << userID << " on server " << server << "." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Registering user " << accountId() << " on server " << server << "." << endl;
 
 	/* Save the current preferences. */
 	//preferences->save();

@@ -37,7 +37,8 @@ using namespace Jabber;
 class JabberAccount:public KopeteAccount
 {
 	Q_OBJECT
-		/* Friends can touch each other's private parts. */
+
+	/* Friends can touch each other's private parts. */
 	friend class JabberProtocol;
 	friend class JabberContact;
 	friend class JabberGroupChat;
@@ -48,9 +49,7 @@ class JabberAccount:public KopeteAccount
 	friend class dlgJabberStatus;
 	friend class JabberPreferences;
 
-  public:
-	/* Standard constructor - takes our JabberProtocol as the parent, plus
-	 * a unique account ID. */
+public:
 	  JabberAccount (JabberProtocol * parent, const QString & accountID, const char *name = 0L);
 	/* Standard null destructor. */
 	 ~JabberAccount ();
@@ -66,13 +65,9 @@ class JabberAccount:public KopeteAccount
 
 	/* Returns the contact for this account, must be created in ctor. */
 	virtual KopeteContact *myself () const;
-	//return myContact;
-	//};
 
 	/* Returns the action menu for this account. */
 	virtual KActionMenu *actionMenu ();
-//  return actionStatusMenu;
-	//   };
 
 	void registerUser ();
 
@@ -143,7 +138,6 @@ class JabberAccount:public KopeteAccount
 
 	/* Temps stuff to get to compile....needs some work to 
 	   port to the accounts stuff.  */
-	QString userID;
 	QString password;
 	QString resource;
 	QString server;
@@ -176,7 +170,6 @@ class JabberAccount:public KopeteAccount
 	KAction *actionServices;
 	KAction *actionSendRaw;
 	KAction *actionEditVCard;
-	KAction *actionEmptyMail;
 	KActionMenu *actionStatusMenu;
 
 	dlgJabberStatus *reasonDialog;
@@ -271,10 +264,6 @@ class JabberAccount:public KopeteAccount
 	 * session screws up after using this, it's seriously not our fault).
 	 * "</stream:stream>" is a fun message to send. */
 	void slotSendRaw ();
-
-	/* Creates a new empty one-shot window. */
-	//void slotOneShot();
-	//void slotOpenEmptyMail();
 
 	/* Slots for handling group chats. */
 	void slotJoinNewChat ();
