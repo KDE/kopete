@@ -47,6 +47,11 @@ QStringList KopeteIface::fileTransferContacts()
 	return KopeteContactList::contactList()->fileTransferContacts();
 }
 
+QStringList KopeteIface::contactFileProtocols(QString displayName)
+{
+	return KopeteContactList::contactList()->contactFileProtocols(displayName); 
+}
+
 void KopeteIface::sendFile(QString displayName, QString fileName)
 {
 	return KopeteContactList::contactList()->sendFile(displayName, fileName);
