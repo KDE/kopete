@@ -2,11 +2,12 @@ METASOURCES = AUTO
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(top_srcdir)/kopete/libkopete/private \
+	-I$(top_srcdir)/kopete/libkopete/compat \
 	$(all_includes) \
 	-I$(top_srcdir)/kopete/kopete \
 	-I$(top_srcdir)/kopete/kopete/chatwindow \
 	-I$(top_srcdir)/kopete/kopete/addcontactwizard \
-        -I$(top_builddir)/kopete/kopete/addcontactwizard
+    -I$(top_builddir)/kopete/kopete/addcontactwizard
 
 noinst_LTLIBRARIES = libkopetecontactlist.la
 
@@ -14,7 +15,7 @@ libkopetecontactlist_la_SOURCES = kopetemetacontactlvi.cpp kopetestatusgroupview
 	kopetecontactlistview.cpp
 
 libkopetecontactlist_la_LDFLAGS = $(all_libraries)
-libkopetecontactlist_la_LIBADD = ../../libkopete/libkopete.la ../addcontactwizard/libkopeteaddcontactwizard.la $(LIB_KDEUI)
+libkopetecontactlist_la_LIBADD = ../../libkopete/libkopete.la ../addcontactwizard/libkopeteaddcontactwizard.la  ../../libkopete/compat/libkopetecompat.la  $(LIB_KDEUI)
 
 # vim: set noet:
 

@@ -1,7 +1,7 @@
 kde_module_LTLIBRARIES = libkrichtexteditpart.la
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/kopete/addcontactwizard -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/kopete $(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/kopete/addcontactwizard -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/kopete  -I$(top_srcdir)/kopete/libkopete/compat   $(all_includes)
 
 noinst_LTLIBRARIES = libkopetechatwindow.la
 
@@ -12,7 +12,7 @@ libkopetechatwindow_la_SOURCES = kopeteviewmanager.cpp kopeteemailwindow.cpp \
 	kopeteemoticonaction.cpp
 
 libkopetechatwindow_la_LDFLAGS = $(all_libraries)
-libkopetechatwindow_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
+libkopetechatwindow_la_LIBADD = ../../libkopete/libkopete.la  ../../libkopete/compat/libkopetecompat.la   $(LIB_KDEUI)
 
 libkrichtexteditpart_la_SOURCES = krichtexteditpart.cpp
 libkrichtexteditpart_la_LDFLAGS = -module $(KDE_PLUGIN)

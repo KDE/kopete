@@ -27,9 +27,9 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klineeditdlg.h>
-#include <knotifyclient.h>
 #include <kiconeffect.h>
 #include <kpassivepopup.h>
+#include "knotifyclient.h"
 
 #include "kopetecontactlistview.h"
 #include "kopeteaccountmanager.h"
@@ -185,20 +185,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 
 	m_oldStatus=m_metaContact->status();
 
-#if KDE_VERSION >= 0x030101
 	int winId = KopeteSystemTray::systemTray() ?
 		KopeteSystemTray::systemTray()->winId() : 0;
 
 	KNotifyClient::event(winId, event,
-		i18n("%2 is now %1!")
-			.arg(m_metaContact->statusString())
-			.arg(m_metaContact->displayName()));
-#else
-	KNotifyClient::event(event,
-		i18n("%2 is now %1!")
-			.arg(m_metaContact->statusString())
-			.arg(m_metaContact->displayName()));
-#endif
+		i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
+		i18n("Chat") , this, SLOT(execute()));
 
 	if(!mBlinkTimer->isActive() && m_metaContact->statusIcon() != m_oldStatusIcon)
 	{

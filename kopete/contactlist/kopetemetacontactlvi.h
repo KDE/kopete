@@ -91,12 +91,6 @@ public:
 	QString colorName();*/
 
 
-	/**
-	 * Call the meta contact's execute as I don't want to expose m_contact
-	 * directly.
-	 */
-	void execute() const;
-
 	void movedToGroup(KopeteGroup * );
 	void rename( const QString& name );
 
@@ -139,11 +133,22 @@ public:
 
 	bool isGrouped() const;
 
+public slots:
+
+	/**
+	 * Call the meta contact's execute as I don't want to expose m_contact
+	 * directly.
+	 */
+	void execute() const;
+
+
 	void catchEvent(KopeteEvent *);
 
 	void slotRename();
 
 	void updateVisibility();
+
+
 
 private slots:
 	void slotUpdateIcons();
