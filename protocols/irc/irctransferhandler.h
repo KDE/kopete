@@ -33,8 +33,7 @@ class IRCTransferHandler
 	Q_OBJECT
 
 public:
-	static IRCTransferHandler *self()
-		{ return &sm_self; }
+	static IRCTransferHandler *self();
 
 private slots:
 	void transferCreated(KIRCTransfer *);
@@ -54,7 +53,6 @@ private:
 
 	KIRCTransferHandler *handler();
 
-	static IRCTransferHandler sm_self;
 	QIntDict<KIRCTransfer> m_idMap;
 };
 

@@ -27,7 +27,16 @@
 
 #include "irctransferhandler.h"
 
-IRCTransferHandler IRCTransferHandler::sm_self;
+IRCTransferHandler *IRCTransferHandler::self()
+{
+	static IRCTransferHandler sm_self;
+	return &sm_self;
+}
+
+KIRCTransferHandler *IRCTransferHandler::handler()
+{
+	return KIRCTransferHandler::self();
+}
 
 IRCTransferHandler::IRCTransferHandler()
 {
@@ -102,11 +111,10 @@ void IRCTransferHandler::transferRefused(const KopeteFileTransferInfo &info)
 
 void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer *t)
 {
+	kdDebug(14120) << k_funcinfo << endl;
+
 	if(kt && t)
 	{
-//		connect(kt , SIGNAL(transferCanceled()), t, SLOT(abort()));
-//		connect(kt,  SIGNAL(destroyed()) , t, SLOT(slotKopeteTransferDestroyed()));
-
 		switch(t->type())
 		{
 //		case KIRCTransfer::Chat:
@@ -124,6 +132,11 @@ void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer 
 		connect(t , SIGNAL(complete()),
 			kt, SLOT(slotComplete()));
 
+//		connect(kt , SIGNAL(transferCanceled()),
+//			t, SLOT(abort()));
+//		connect(kt,  SIGNAL(destroyed()),
+//			t, SLOT(slotKopeteTransferDestroyed()));
+
 		connect(kt, SIGNAL(result(KIO::Job *)),
 			this , SLOT(kioresult(KIO::Job *)));
 
@@ -133,9 +146,7 @@ void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer 
 
 void IRCTransferHandler::kioresult(KIO::Job *job)
 {
-//	KIRCTransfer *t = m_transfers[job];
-	KopeteTransfer *kt= (KopeteTransfer *)job;
-
+	KopeteTransfer *kt= (KopeteTransfer *)job; // FIXME: move to *_cast
 	if(!kt)
 	{
 		kdDebug(14120) << k_funcinfo << "KopeteTransfer not found from kio:" << job << endl;
@@ -166,11 +177,6 @@ KIRCTransfer *IRCTransferHandler::getKIRCTransfer(const KopeteFileTransferInfo &
 	KIRCTransfer *t = m_idMap[info.transferId()];
 	m_idMap.remove(info.transferId());
 	return t;
-}
-
-KIRCTransferHandler *IRCTransferHandler::handler()
-{
-	return KIRCTransferHandler::self();
 }
 
 #include "irctransferhandler.moc"

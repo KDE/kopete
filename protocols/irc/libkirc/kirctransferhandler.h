@@ -34,8 +34,7 @@ class KIRCTransferHandler
 	Q_OBJECT
 
 public:
-	static KIRCTransferHandler *self()
-		{ return &sm_self; }
+	static KIRCTransferHandler *self();
 
 	KIRCTransferServer *server();
 	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
@@ -66,7 +65,6 @@ signals:
 
 private:
 //	KIRCTransferHandler();
-	static KIRCTransferHandler sm_self;
 
 	KIRCTransferServer *m_server;
 //	QPtrList<KIRCTransferServer> m_servers;

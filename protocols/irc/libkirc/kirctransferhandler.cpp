@@ -27,7 +27,12 @@
 
 #include "kirctransferhandler.h"
 
-KIRCTransferHandler KIRCTransferHandler::sm_self;
+
+KIRCTransferHandler *KIRCTransferHandler::self()
+{
+	static KIRCTransferHandler sm_self;
+	return &sm_self;
+}
 
 KIRCTransferServer *KIRCTransferHandler::server()
 {
