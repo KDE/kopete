@@ -51,8 +51,8 @@ GaduPublicDir::GaduPublicDir(GaduAccount *account,
 
 	setButtonText( User1, i18n( "New Search" ) );
 	setButtonText( User2, i18n( "Search" ) );
-	setButtonText( User3, i18n( "Add user.." ) );
-	setButtonText( Cancel, i18n( "Exit.." ) );
+	setButtonText( User3, i18n( "Add user..." ) );
+	setButtonText( Cancel, i18n( "Exit..." ) );
 	
 	showButton(User1, false);
 	showButton(User3, false);
