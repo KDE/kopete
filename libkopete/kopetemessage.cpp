@@ -16,8 +16,6 @@
 
 #include "kopetemessage.h"
 
-#include "kopetemessage.moc"
-
 KopeteMessage::KopeteMessage()
 {
 	mTimestamp = QDateTime::currentDateTime();

@@ -17,7 +17,6 @@
 #ifndef _KOPETE_MESSAGE_H
 #define _KOPETE_MESSAGE_H
 
-#include <qobject.h>
 #include <qdatetime.h>
 #include <qstring.h>
 #include <qfont.h>
@@ -25,8 +24,6 @@
 
 class KopeteMessage
 {
-Q_OBJECT
-
 public:
 	/**
 		Direction of a message. Inbound is from the chat partner, Outbound is
