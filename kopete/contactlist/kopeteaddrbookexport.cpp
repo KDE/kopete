@@ -34,9 +34,10 @@
 #include "kopeteaddrbookexport.h"
 #include "kopeteaddrbookexportui.h"
 
-KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, KopeteMetaContact *mc ) : QWidget( parent )
+KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, KopeteMetaContact *mc ) : QObject( parent )
 {
 	// instantiate dialog and populate widgets
+	mParent = parent;
 	mAddressBook = KABC::StdAddressBook::self();
 	mMetaContact = mc;
 }
@@ -172,7 +173,7 @@ int KopeteAddressBookExport::showDialog()
 		numHomePhones = 0;
 		numWorkPhones = 0;
 		numMobilePhones = 0;
-		mDialog = new KDialogBase( this, "addressbookexportdialog", true, i18n("Export to Address Book"), KDialogBase::Ok|KDialogBase::Cancel );
+		mDialog = new KDialogBase( mParent, "addressbookexportdialog", true, i18n("Export to Address Book"), KDialogBase::Ok|KDialogBase::Cancel );
 		mUI = new AddressBookExportUI( mDialog );
 		mDialog->setMainWidget( mUI );
 		mDialog->setButtonOKText( i18n( "Merge selected fields" ), i18n( "Set addressbook fields using the selected data from Kopete" ) ); 
