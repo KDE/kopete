@@ -235,14 +235,14 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 			d->mContactList.remove(old);
 			d->mContactList.append(c);
 			disconnect (old, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
-			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
+			connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			emit contactAdded(c, surpress);
 			emit contactRemoved(old, surpress);
 		}
 		else
 		{
 			kdDebug(14010) << k_funcinfo << "Contact Joined session : " <<c->displayName() <<endl;
-			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
+			connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			d->mContactList.append(c);
 			emit contactAdded(c, surpress);
 		}
