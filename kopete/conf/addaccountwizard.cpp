@@ -34,10 +34,8 @@
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
 	: KWizard(parent, name, modal)
 {
-	kdDebug(14100) << k_funcinfo << "Called." << endl;
+//	kdDebug(14100) << k_funcinfo << "Called." << endl;
 	accountPage = 0L;
-	int pluginCount = 0;
-	QListViewItem *pluginItem=0L;
 
 	intro = new AddAccountWizardPage1(this);
 	selectService = new AddAccountWizardPage2(this);
@@ -47,7 +45,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	addPage( selectService, selectService->caption() );
 	addPage( finish, finish->caption() );
 
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	/*QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 	for(KopetePlugin *p = plugins.first(); p; p = plugins.next())
 	{
 		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>(p);
@@ -58,6 +56,27 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 			pluginItem->setPixmap(0, SmallIcon(proto->pluginIcon()));
 			pluginCount++;
 			m_protocolItems.insert(pluginItem, proto);
+		}
+	}*/
+
+	int pluginCount = 0;
+	QListViewItem *pluginItem=0L;
+
+	QValueList<KopeteLibraryInfo> available = LibraryLoader::pluginLoader()->available();
+
+	for(QValueList<KopeteLibraryInfo>::Iterator i = available.begin(); i != available.end(); ++i)
+	{
+//		bool exclusive = false;
+		if(( *i ).type == "Kopete/Protocol" )
+		{
+			pluginItem = new QListViewItem(selectService->protocolListView);
+			pluginItem->setText(0, ( *i ).name );
+			pluginItem->setText( 1, ( *i ).comment );
+			//pluginItem->setText( 2, ( *i ).author );
+			//pluginItem->setText( 3, ( *i ).license );
+			pluginItem->setPixmap(0, SmallIcon( (*i).icon ) );
+			pluginCount++;
+			m_protocolItems.insert(pluginItem, (*i));
 		}
 	}
 
@@ -73,16 +92,18 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 	connect(selectService->protocolListView, SIGNAL(clicked(QListViewItem *)),
 		this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect(selectService->protocolListView, SIGNAL(doubleClicked(QListViewItem *)),
+		this, SLOT(slotProtocolListDoubleClicked(QListViewItem *)));
 }
 
 AddAccountWizard::~AddAccountWizard()
 {
-	kdDebug(14100) << k_funcinfo << "Called." << endl;
+//	kdDebug(14100) << k_funcinfo << "Called." << endl;
 }
 
 void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 {
-	kdDebug(14100) << k_funcinfo << "Called." << endl;
+//	kdDebug(14100) << k_funcinfo << "Called." << endl;
 	// Just makes sure only one protocol is selected before allowing the user to continue
 	setNextEnabled(
 		selectService,
@@ -90,9 +111,18 @@ void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 		);
 }
 
+void AddAccountWizard::slotProtocolListDoubleClicked( QListViewItem *lvi)
+{
+	if(lvi) //make sure the user clicked on a item
+	{
+		next();
+	}
+}
+
+
 void AddAccountWizard::accept()
 {
-	kdDebug(14100) << k_funcinfo << "Called." << endl;
+//	kdDebug(14100) << k_funcinfo << "Called." << endl;
 	KopeteAccount *a = accountPage->apply();
 	if(a)
 		a->setColor( finish->mUseColor->isChecked() ? finish->mColorButton->color() : QColor() );
@@ -132,33 +162,44 @@ void AddAccountWizard::next()
 		}
 
 		QListViewItem *lvi = selectService->protocolListView->selectedItem();
-		if(lvi && m_protocolItems[lvi])
+		if(lvi)
 		{
-			if(accountPage)
+			KopetePlugin *pl=LibraryLoader::pluginLoader()->searchByName(m_protocolItems[lvi].name);
+			if(!pl)
+				pl=LibraryLoader::pluginLoader()->loadPlugin(m_protocolItems[lvi].specfile);
+			prot= dynamic_cast <KopeteProtocol*> (pl);
+			if(prot)
 			{
-				kdDebug(14100) << k_funcinfo << "accountPage still valid, part2!" << endl;
-/*				kdDebug(14100) << k_funcinfo << "deleting accountPage after finding selected Protocol" << endl;
-				removePage(dynamic_cast<QWidget*>(accountPage));
-				delete accountPage;
-				accountPage = 0L;*/
-			}
+				if(accountPage)
+				{
+					kdDebug(14100) << k_funcinfo << "accountPage still valid, part2!" << endl;
+	/*				kdDebug(14100) << k_funcinfo << "deleting accountPage after finding selected Protocol" << endl;
+					removePage(dynamic_cast<QWidget*>(accountPage));
+					delete accountPage;
+					accountPage = 0L;*/
+				}
 
-			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L, this);
+				accountPage = prot->createEditAccountWidget(0L, this);
 
-			if (!accountPage)
-			{
-				KMessageBox::error(this,
-					i18n("The author of this protocol hasn't implemented adding of accounts"),
-					i18n("Error while adding account") );
+				if (!accountPage)
+				{
+					KMessageBox::error(this,
+						i18n("The author of this protocol hasn't implemented adding of accounts"),
+						i18n("Error while adding account") );
+				}
+				else
+				{
+					kdDebug(14100) << k_funcinfo << "Adding Step Two page and switching to that one" << endl;
+					insertPage(
+						dynamic_cast<QWidget*>(accountPage),
+						i18n("Step Two: Account Information"), indexOf(finish)
+					);
+					KWizard::next();
+				}
 			}
 			else
 			{
-				kdDebug(14100) << k_funcinfo << "Adding Step Two page and switching to that one" << endl;
-				insertPage(
-					dynamic_cast<QWidget*>(accountPage),
-					i18n("Step Two: Account Information"), indexOf(finish)
-				);
-				KWizard::next();
+				KMessageBox::error(this, i18n("Impossible to load the protocol `%1'").arg(m_protocolItems[lvi].name) , i18n("Error while adding account") );
 			}
 		}
 		return;
@@ -168,8 +209,7 @@ void AddAccountWizard::next()
 		if(!accountPage->validateData())
 			return;
 
-		QColor col = KopeteAccountManager::manager()->guessColor(
-			m_protocolItems[selectService->protocolListView->selectedItem()] );
+		QColor col = KopeteAccountManager::manager()->guessColor(prot);
 
 		finish->mColorButton->setColor(col);
 		finish->mUseColor->setChecked(col.isValid());

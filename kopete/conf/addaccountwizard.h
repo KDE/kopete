@@ -26,6 +26,7 @@
 class EditAccountWidget;
 class KopeteProtocol;
 class QListViewItem;
+struct KopeteLibraryInfo;
 
 /**
  * @author  Olivier Goffart <ogoffart@tiscalinet.be>
@@ -40,6 +41,7 @@ class AddAccountWizard : public KWizard
 
 	private slots:
 		void slotProtocolListClicked( QListViewItem * );
+		void slotProtocolListDoubleClicked( QListViewItem *lvi);
 
 	protected slots:
 		virtual void back();
@@ -47,8 +49,9 @@ class AddAccountWizard : public KWizard
 		virtual void accept();
 
 	private:
-		QMap <QListViewItem*,KopeteProtocol*> m_protocolItems;
+		QMap <QListViewItem*,KopeteLibraryInfo> m_protocolItems;
 		EditAccountWidget *accountPage;
+		KopeteProtocol *prot;
 		AddAccountWizardPage1 *intro;
 		AddAccountWizardPage2 *selectService;
 		AddAccountWizardPage3 *finish;

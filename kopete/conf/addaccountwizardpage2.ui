@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>597</width>
-            <height>377</height>
+            <width>632</width>
+            <height>367</height>
         </rect>
     </property>
     <property name="caption">
@@ -77,24 +77,24 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QLabel" row="1" column="1">
-            <property name="name">
-                <cstring>TextLabel5_2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;qt&gt;&lt;u&gt;Note&lt;/u&gt;: If a messaging service is missing from the list, please confirm that it is enabled in the Kopete configuration window.&lt;/qt&gt;</string>
-            </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
         <widget class="KListView" row="2" column="1">
             <column>
                 <property name="text">
-                    <string>Services</string>
+                    <string>Name</string>
                 </property>
                 <property name="clickable">
-                    <bool>false</bool>
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Description</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
                 </property>
                 <property name="resizable">
                     <bool>true</bool>
