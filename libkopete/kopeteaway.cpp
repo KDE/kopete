@@ -159,7 +159,7 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	// init the timer
 	d->timer = new QTimer(this, "AwayTimer");
 	connect(d->timer, SIGNAL(timeout()), this, SLOT(slotTimerTimeout()));
-	d->timer->start(2000);
+	d->timer->start(4000);
 
 	//init the time and other
 	setActivity();
@@ -403,11 +403,12 @@ void KopeteAway::slotTimerTimeout()
 
 	if (root_x != d->mouse_x || root_y != d->mouse_y || mask != d->mouse_mask || xIdleTime < d->xIdleTime+2000)
 	{
+		if(d->mouse_x!=-1) //we just gone autoaway, not activity this time
+			setActivity();
 		d->mouse_x = root_x;
 		d->mouse_y = root_y;
 		d->mouse_mask = mask;
 		d->xIdleTime = xIdleTime;
-		setActivity();
 	}
 
 	// =================================================================================
@@ -446,6 +447,8 @@ void KopeteAway::setActivity()
 
 void KopeteAway::setAutoAway()
 {
+	d->mouse_x=-1; //do not go availiable automaticaly after
+
 //	kdDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
 	d->autoaway = true;
 
