@@ -46,8 +46,6 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 			mPassword->setText(account()->password());
 		mAutoConnect->setChecked(account()->autoLogin());
 		mRememberPassword->setChecked(true);
-		ImportContacts->setChecked(static_cast<YahooAccount*>(account())->importContacts());
-		UseServerGroupNames->setChecked(static_cast<YahooAccount*>(account())->useServerGroups());
 	}
 	show();
 }
@@ -82,16 +80,6 @@ KopeteAccount *YahooEditAccount::apply()
 
 	if(mRememberPassword->isChecked())
 		yahooAccount->setPassword(mPassword->text());
-
-	if (ImportContacts->isChecked())
-		yahooAccount->setImportContacts(true);
-	else
-		yahooAccount->setImportContacts(false);
-
-	if (UseServerGroupNames->isChecked())
-		yahooAccount->setUseServerGroups(true);
-	else
-		yahooAccount->setUseServerGroups(false);
 
 	return yahooAccount;
 }

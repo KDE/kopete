@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>YahooEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>462</width>
-            <height>516</height>
+            <width>224</width>
+            <height>290</height>
         </rect>
     </property>
     <property name="caption">
@@ -180,70 +180,15 @@
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to connect automatically when Kopete is started.</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                     </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>ImportContacts</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Import contacts from the server</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Whether or not you would like to import contacts from your contact list on the server when you connect.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Whether or not you would like to import contacts from your contact list on the server when you connect.</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout41</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer69_2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>17</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>UseServerGroupNames</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Use the group names from the server</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Whether you would like to use the group names from the server when importing.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Whether you would like to use the group names from the server when importing, or ignore them and put all contacts in the top-level.</string>
-                            </property>
-                        </widget>
-                    </hbox>
                 </widget>
             </vbox>
         </widget>
@@ -273,7 +218,7 @@
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
+                    <vsizetype>0</vsizetype>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
@@ -285,12 +230,6 @@
     </vbox>
 </widget>
 <connections>
-    <connection>
-        <sender>ImportContacts</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>UseServerGroupNames</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
     <connection>
         <sender>mRememberPassword</sender>
         <signal>toggled(bool)</signal>
@@ -309,8 +248,6 @@
     <tabstop>mRememberPassword</tabstop>
     <tabstop>mPassword</tabstop>
     <tabstop>mAutoConnect</tabstop>
-    <tabstop>ImportContacts</tabstop>
-    <tabstop>UseServerGroupNames</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

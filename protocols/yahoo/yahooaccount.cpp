@@ -60,8 +60,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	theHaveContactList = false;
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog(this);
-	m_importContacts = false;
-	m_useServerGroups = false;
 	m_needNewPassword = false;
 	
 	// we need this quite early (before initActions at least)
@@ -107,14 +105,6 @@ void YahooAccount::loaded()
 	if(!newPluginData.isEmpty())
 		myself()->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
 
-	newPluginData = pluginData(protocol(), QString::fromLatin1("UseServerGroups"));
-	if (newPluginData.lower() == "true")
-		m_useServerGroups = true;
-
-	newPluginData = pluginData(protocol(), QString::fromLatin1("ImportContacts"));
-	if (newPluginData.lower() == "true")
-		m_importContacts = true;
-
 }
 
 YahooSession *YahooAccount::yahooSession()
@@ -140,6 +130,8 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	kdDebug(14180) << k_funcinfo << "msg is " << msg << endl;
 	//If we get here, the message uses a standard Yahoo color
 	//(selectable from the drop down box)
+	//Please note that some of the colors are hard-coded to
+	//match the yahoo colors
 	if ( msg.find("[38m") != -1 )
 		return Qt::red;
 	if ( msg.find("[34m") != -1 )
@@ -241,7 +233,7 @@ void YahooAccount::connect()
 						SLOT(slotGotIdentities( const QStringList&)));
 
 				kdDebug(14180) << "We appear to have connected on session: " << m_session << endl;
-				static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
+				
 				kdDebug(14180) << "Starting the login connection" << endl;
 				m_session->login(YAHOO_STATUS_AVAILABLE);
 
@@ -291,8 +283,9 @@ void YahooAccount::setAway(bool status, const QString &awayMessage)
 
 void YahooAccount::slotConnected()
 {
-//	kdDebug(14180) << k_funcinfo << endl;
-	m_needNewPassword = false;
+	kdDebug(14180) << k_funcinfo << endl;
+	static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
+	m_needNewPassword = false;	
 }
 
 void YahooAccount::slotGoOnline()
@@ -337,7 +330,7 @@ KActionMenu *YahooAccount::actionMenu()
 
 void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
-/*
+/* Do Nothing
 //	kdDebug(14180) << k_funcinfo << endl;
 	theHaveContactList = true;
 
@@ -439,11 +432,10 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	IDs[userid] = QPair<QString, QString>(group, alias);
 
 	// Serverside -> local
-	/*if(m_importContacts)
-	{*/	kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
-		QString groupName = m_useServerGroups ? group : QString("Imported Yahoo Contacts");
-		addContact(userid, alias.isEmpty() ? userid : alias, 0, KopeteAccount::ChangeKABC, group);
-	//}
+	kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
+	QString groupName = group;
+	addContact(userid, alias.isEmpty() ? userid : alias, 0, KopeteAccount::ChangeKABC, group);
+	
 }
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
