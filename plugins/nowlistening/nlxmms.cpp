@@ -47,6 +47,8 @@ void NLXmms::update()
 			// get the song title
 			newTrack = xmms_remote_get_playlist_title( 0, xmms_remote_get_playlist_pos( 0 ) );
 			//kdDebug() << "NLXmms::update() - track is: " << m_track << endl;
+			m_artist = newTrack.section( " - ", 0, 0 );
+			newTrack = newTrack.section( " - ", -1, -1 );
 		}
 		else
 			m_playing = false;
@@ -63,3 +65,4 @@ void NLXmms::update()
 	else
 		kdDebug() << "NLXmms::update() - xmms not found" << endl;
 }
+// vim: set noet ts=4 sts=4 sw=4:
