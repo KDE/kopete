@@ -1,1 +1,1 @@
-SUBDIRS = ccmathteam.com Default greggman.com phpBB plain redones set1 BoxedEmoticonSet
+SUBDIRS = ccmathteam.com Default greggman.com phpBB plain redones set1 BoxedEmoticonSet KMess
