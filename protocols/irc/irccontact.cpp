@@ -44,7 +44,7 @@
 #include "tabcompleter.h"
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, QString( m_targetName + "@" + m_serverName ).lower(), parent),
+	: KopeteContact(protocol, server, parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
@@ -59,7 +59,7 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port,
 		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
 		       KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, QString( m_targetName + "@" + m_serverName ).lower(), parent),
+	: KopeteContact(protocol, server, parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
@@ -88,13 +88,11 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 		m_serverName = newServer;
 	}
 	else
-	{
 		m_serverName = server;
-	}
+
 	if (port == 0)
-	{
 		port = KGlobal::config()->readEntry("Port", "6667").toUInt();
-	}
+
 	QString user = "kopeteuser";
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
 
@@ -117,9 +115,8 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 
 
 	if (m_serverContact->activeContacts().contains(m_targetName.lower()) > 0)
-	{
 		return false;
-	}
+
 	m_serverContact->activeContacts().append(m_targetName.lower());
 	added = true;
 	connect(m_serverContact->engine(), SIGNAL(successfulQuit()), this, SLOT(unloading()));
@@ -136,13 +133,9 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 	if (mJoinOnConnect == true)
 	{
 		if (m_serverContact->engine()->isLoggedIn() == true)
-		{
 			joinNow();
-		}
 		else
-		{
 			QObject::connect(m_serverContact->engine(), SIGNAL(connectedToServer()), this, SLOT(joinNow()));
-		}
 	}
 
 	return true;
@@ -159,20 +152,17 @@ bool IRCContact::isChannel() const
 KopeteContact::ContactStatus IRCContact::status() const
 {
 	if (m_serverContact->engine()->isLoggedIn())
-	{
 		return KopeteContact::Online;
-	}
+
 	return KopeteContact::Offline;
 }
 
 QString IRCContact::statusIcon() const
 {
 	if (m_serverContact->engine()->isLoggedIn())
-	{
 		return "connect_established";
-	} else {
+	else
 		return "connect_no";
-	}
 }
 
 void IRCContact::incomingPrivMessage(const QString &originating, const QString &/*target_dest*/, const QString &/*message*/)
@@ -183,15 +173,12 @@ void IRCContact::incomingPrivMessage(const QString &originating, const QString &
 	if (m_targetName.lower() == target.lower())
 	{
 		if (mTabPage == 0)
-		{
 			joinNow();
-		}
+
 		if(m_targetName!=target)
-		{
 			//update case of the displayName
 			m_targetName=target;
 			setDisplayName(target);
-		}
 	}
 }
 
@@ -200,24 +187,18 @@ void IRCContact::incomingPrivAction(const QString &originating, const QString &/
 	QString target= originating.section('!', 0, 0);
 
 	if (m_targetName.lower() == target.lower())
-	{
 		if (mTabPage == 0)
-		{
 			joinNow();
-		}
-	}
 }
 
 void IRCContact::slotOpen()
 {
 	if (!m_serverContact->engine()->isLoggedIn())
-	{
 		slotOpenConnect();
-	} else {
+	else {
 		if (m_serverContact->chatWindow() != 0)
-		{
 			m_serverContact->chatWindow()->show();
-		}
+
 		joinNow();
 	}
 }
@@ -230,9 +211,8 @@ void IRCContact::slotOpenConnect()
 		QObject::connect(m_serverContact->engine(), SIGNAL(connectedToServer()), this, SLOT(joinNow()));
 		m_serverContact->slotConnectNow();
 		m_serverContact->chatWindow()->show();
-	} else {
+	} else
 		slotOpen();
-	}
 }
 
 KActionCollection* IRCContact::customContextMenuActions()
@@ -286,18 +266,13 @@ KActionCollection* IRCContact::customContextMenuActions()
 void IRCContact::execute()
 {
 	if (!mTabPage)
-	{
 		slotOpen();
-	}
-
 
 	if (m_serverContact->chatWindow() != 0)
 	{
 		m_serverContact->chatWindow()->raise();
 		if (mTabPage !=0)
-		{
 			m_serverContact->chatWindow()->mTabWidget->showPage(mTabPage);
-		}
 	}
 	if (chatView !=0)
 	{
@@ -318,9 +293,8 @@ void IRCContact::slotDeleteContact()
 				      i18n("Confirmation")) == KMessageBox::Yes)
 	{
 		if (isChannel())
-		{
 			slotPart();
-		}
+
 		if (mTabPage !=0)
 		{
 			m_serverContact->chatWindow()->mTabWidget->removePage(mTabPage);
@@ -357,26 +331,20 @@ void IRCContact::slotPart()
 void IRCContact::slotPartedChannel(const QString &originating, const QString &channel, const QString &)
 {
 	if (m_targetName.lower() == channel.lower() && originating.section('!', 0, 0).lower() == m_engine->nickName().lower())
-	{
 		unloading();
-	}
 }
 
 void IRCContact::slotUserKicked(const QString &user, const QString &channel,
 				const QString &/*by*/, const QString &/*reason*/)
 {
 	if (m_targetName.lower() == channel.lower() && user.lower() == m_engine->nickName().lower())
-	{
 		unloading();
-	}
 }
 
 IRCContact::~IRCContact()
 {
 	if (added && !contactOnList)
-	{
 		m_serverContact->activeContacts().remove(m_targetName.lower());
-	}
 }
 
 void IRCContact::unloading()
@@ -385,18 +353,12 @@ void IRCContact::unloading()
 	{
 		kdDebug()<< "IRCContact::unloading()" <<endl;
 		if (m_serverContact->closing() == false)
-		{
 			delete mTabPage;
-		}
+
 		mTabPage = 0L;
 		chatView = 0L;
 		queryView = 0L;
-		/*if (!contactOnList)
-		{
-			delete this;
-		} */
 	}
-//	emit statusChanged();
 	emit statusChanged(this, Offline);
 }
 
@@ -418,15 +380,11 @@ void IRCContact::joinNow()
 	KGlobal::config()->setGroup("IRC");
 	bool minimize = KGlobal::config()->readBoolEntry("MinimizeNewQueries", false);
 	if (isChannel())
-	{
 		m_serverContact->chatWindow()->mTabWidget->showPage(mTabPage);
-	} else {
+	else {
 		if (!minimize)
-		{
 			m_serverContact->chatWindow()->mTabWidget->showPage(mTabPage);
-		}
 	}
-//	emit statusChanged();
 	emit statusChanged(this, Online);
 
 }

@@ -1,3 +1,20 @@
+/***************************************************************************
+                          ircaddcontactpage.cpp  -  description
+                             -------------------
+    begin                : Unknown
+    copyright            : (C) 2002 by nbetcher
+    email                : nbetcher@usinternet.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+ 
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -13,6 +30,7 @@
 #include "ircadd.h"
 #include "ircprotocol.h"
 #include "kopetecontactlist.h"
+#include "ircservermanager.h"
 
 IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
@@ -22,9 +40,10 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 	plugin = owner;
 	QObject::connect(ircdata->chkConnectNow, SIGNAL(clicked()), this, SLOT(connectNowClicked()));
 
+	ircdata->ircServer->insertStringList(owner->serverManager()->serverList());
 	KGlobal::config()->setGroup("IRC");
 	QString server = KGlobal::config()->readEntry("Server", "");
-	ircdata->ircServer->setText(server);
+	ircdata->ircServer->lineEdit()->setText(server);
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
@@ -32,14 +51,14 @@ IRCAddContactPage::~IRCAddContactPage()
 
 void IRCAddContactPage::slotFinish(KopeteMetaContact *m)
 {
-	QString server = ircdata->ircServer->text();
+	QString server = ircdata->ircServer->lineEdit()->text();
 	QString name = ircdata->addID->text();
 	plugin->addContact(server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked(),m);
 }
 
 bool IRCAddContactPage::validateData()
 {
-	QString server = ircdata->ircServer->text();
+	QString server = ircdata->ircServer->lineEdit()->text();
 	if (server.isEmpty() == true)
 	{
 		KMessageBox::sorry(this, i18n("<qt>You need to specify a server to connect to.</qt>"), i18n("You Must Specify a Server"));

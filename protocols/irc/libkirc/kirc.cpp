@@ -17,8 +17,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
-
 #include "kirc.h"
 
 #include <kdebug.h>
@@ -39,8 +37,6 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 
-
-
 KIRC::KIRC()
 	: QSocket()
 {
@@ -55,10 +51,11 @@ KIRC::KIRC()
 	QObject::connect(this, SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
 	QObject::connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
 
-	codec = QTextCodec::codecForLocale();
+/*	codec = QTextCodec::codecForLocale();
 	if (KGlobal::locale()->country() == "jp") {
 		codec = QTextCodec::codecForName("iso-2022-jp");
 	}
+*/
 }
 
 KIRC::~KIRC()
@@ -69,6 +66,7 @@ KIRC::~KIRC()
 Q_LONG KIRC::writeString(const QString &str)
 {
 	QCString s;
+	QTextCodec *codec = QTextCodec::codecForContent(str, str.length());
 	if (codec) {
 		s = codec->fromUnicode(str);
 	} else {
@@ -93,7 +91,14 @@ void KIRC::slotReadyRead()
 	// Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times. This gets rid of trailing \r\n, \r, \n, and \n\r characters.
 	while (canReadLine() == true)
 	{
-		QString line = codec->toUnicode(readLine());
+		QCString rawline = readLine().latin1();
+		QString line;
+		QTextCodec *codec = QTextCodec::codecForContent(rawline.data(), rawline.length());
+		if (codec)
+			line = codec->toUnicode(rawline);
+		else
+			line = rawline;
+
 		line.replace(QRegExp("[\\r\\n]*$"), "");
 		QString number = line.mid((line.find(' ', 0, false)+1), 3);
 		int commandIndex = line.find(' ', 0, false);
@@ -283,7 +288,11 @@ void KIRC::slotReadyRead()
 					emit incomingCtcpReply("VERSION", originating.section('!', 0, 0), message.remove(0, 7));
 				}
 			}
-			kdDebug() << "-" << command << "-" << endl;
+			kdDebug() << "IRC Plugin: NOTICE received: originating is \"" << originating << "\" and message is \"" << message << "\"" << endl;
+			if (originating.isEmpty())
+				originating = mHost;
+
+			emit incomingNotice(originating.section('!', 0, 0), message);
 			continue;
 		} else if (command == QString("PART"))
 		{
@@ -801,6 +810,12 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 	}
 }
 
+void KIRC::sendNotice(const QString &target, const QString &message)
+{
+	if (state() == QSocket::Connected && loggedIn == true && !target.isEmpty() && !message.isEmpty())
+		writeString(QString("NOTICE %1 :%2\r\n").arg(target).arg(message));
+}
+
 void KIRC::messageContact(const QString &contact, const QString &message)
 {
 	if (state() == QSocket::Connected && loggedIn == true)
@@ -812,11 +827,9 @@ void KIRC::messageContact(const QString &contact, const QString &message)
 		statement.append("\r\n");
 		writeString(statement);
 		if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
-		{
 			emit incomingPrivMessage(mNickname, contact, message);
-		} else {
+		else
 			emit incomingMessage(mNickname, contact, message);
-		}
 	}
 }
 
@@ -825,18 +838,16 @@ void KIRC::slotConnectionClosed()
 	kdDebug() << "IRC Plugin: Connection Closed" << endl;
 	loggedIn = false;
 	if (attemptingQuit == true)
-	{
 		emit successfulQuit();
-	}
+
 	attemptingQuit = false;
 }
 
 void KIRC::changeNickname(const QString &newNickname)
 {
 	if (loggedIn == false)
-	{
 		failedNickOnLogin = true;
-	}
+
 	pendingNick = newNickname;
 	QString newString = "NICK ";
 	newString.append(newNickname);

@@ -53,7 +53,7 @@
 #include <qsocket.h>
 #include <qvbox.h>
 
-
+#include <unistd.h>
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
@@ -75,6 +75,11 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 
 void IRCServerContact::init()
 {
+	// Get the currently logged in username
+	m_userName = getlogin();
+	if (m_userName.isEmpty())
+		m_userName = "kopete";
+
 	m_parser = new IRCCmdParser(m_protocol, this);
 	m_messenger = new IRCMessage();
 	m_tryingQuit = false;
@@ -84,6 +89,7 @@ void IRCServerContact::init()
 // 	m_engine->setUserString(""); Pull this from a KConfig entry which is set in the preferences!
 	m_engine->setSourceString("Kopete IRC Plugin 1.0 http://kopete.kde.org");
 	mQuitMessage = "Using Kopete IRC Plugin";
+	
 	QObject::connect(m_engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
 	QObject::connect(m_engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
@@ -91,6 +97,7 @@ void IRCServerContact::init()
 	QObject::connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 	QObject::connect(m_engine, SIGNAL(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCClient &)), this, SLOT(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCClient &)));
 	QObject::connect(m_engine, SIGNAL(incomingDccSendRequest(const QHostAddress &, unsigned int, const QString &, const QString &, unsigned int, DCCClient &)), this, SLOT(incomingDccSendRequest(const QHostAddress &, unsigned int, const QString &, const QString &, unsigned int, DCCClient &)));
+	
 	m_ircChatWindow = new IRCChatWindow(m_serverName, this);
 	QObject::connect(m_ircChatWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	m_ircChatWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
@@ -128,13 +135,14 @@ void IRCServerContact::slotConnectNow()
 	}
 	m_ircChatWindow->mToolBar->removeItem(1);
 	m_ircChatWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(slotDisconnectNow()));
+	
+	// Connect or disconnect
 	if (m_engine->isLoggedIn() == false && m_engine->state() == QSocket::Idle)
-	{
-		m_engine->connectToServer(m_serverName, 6667, QString("kopeteuser"), m_nickname);
-	} else {
+		m_engine->connectToServer(m_serverName, 6667, m_userName, m_nickname);
+	else {
 		m_engine->close();
 		slotQuitServer();
-		m_engine->connectToServer(m_serverName, 6667, QString("kopeteuser"), m_nickname);
+		m_engine->connectToServer(m_serverName, 6667, m_userName, m_nickname);
 	}
 }
 
@@ -144,11 +152,9 @@ void IRCServerContact::slotDisconnectNow()
 	m_ircChatWindow->mToolBar->insertButton("stop", 1, SIGNAL(clicked()), this, SLOT(forceDisconnect()));
 	m_tryingQuit = false;
 	if (m_engine->isLoggedIn() == true)
-	{
 		slotQuitServer();
-	} else {
+	else
 		forceDisconnect();
-	}
 }
 
 void IRCServerContact::initiateDcc(const QString &nickname, const QString &filename, DCCServer::Type type)
@@ -160,9 +166,7 @@ void IRCServerContact::initiateDcc(const QString &nickname, const QString &filen
 		{
 			newFile = KFileDialog::getOpenFileName(QString::null, "*.*", m_ircChatWindow);
 			if (newFile.isEmpty())
-			{
 				return;
-			}
 		}
 	}
 	DCCServer *dccServer = new DCCServer(type, newFile);
@@ -172,17 +176,14 @@ void IRCServerContact::initiateDcc(const QString &nickname, const QString &filen
 		//unsigned int port = dccServer->port();
 		QVBox *parent = new QVBox(m_ircChatWindow->mTabWidget);
 		if (type == DCCServer::Chat)
-		{
-			/*IRCDCCView *dccView =*/ new IRCDCCView(nickname, this, parent, dccServer);
-		} else if (type == DCCServer::File)
-		{
-			/*IRCDCCSend *dccView =*/ new IRCDCCSend(nickname, filename, this, parent, dccServer);
-		}
+			new IRCDCCView(nickname, this, parent, dccServer);
+		else if (type == DCCServer::File)
+			new IRCDCCSend(nickname, filename, this, parent, dccServer);
+
 		m_ircChatWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 		m_ircChatWindow->mTabWidget->showPage(parent);
-	} else {
+	} else
 		delete dccServer;
-	}
 }
 
 void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int /*port*/, const QString &nickname, DCCClient &chatObject)
@@ -196,9 +197,8 @@ void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int
 			m_ircChatWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 			chatObject.dccAccept();
 			m_ircChatWindow->mTabWidget->showPage(parent);
-		} else {
+		} else
 			chatObject.dccCancel();
-		}
 	}
 }
 
@@ -210,17 +210,14 @@ void IRCServerContact::incomingDccSendRequest(const QHostAddress &, unsigned int
 		{
 			QString newFile = KFileDialog::getSaveFileName(filename, "*.*", m_ircChatWindow);
 			if (newFile.isEmpty())
-			{
 				return;
-			}
 			QVBox *parent = new QVBox(m_ircChatWindow->mTabWidget);
 			/*IRCDCCReceive *dccView =*/ new IRCDCCReceive(nickname, newFile, this, parent, &chatObject);
 			m_ircChatWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 			chatObject.dccAccept(newFile);
 			m_ircChatWindow->mTabWidget->showPage(parent);
-		} else {
+		} else
 			chatObject.dccCancel();
-		}
 	}
 }
 
@@ -228,9 +225,7 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 {
 	QString queryName = originating.section('!', 0, 0);
 	if (queryName.lower() == m_engine->nickName().lower())
-	{
 		return;
-	}
 
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
@@ -238,11 +233,8 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 		QString protocolID = m_protocol->pluginId();
 		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(protocolID, QString::null, contactID);
 		if(m)
-		{
 			kdDebug() << "IRCServerContact::incomingPrivMessage: "
 				<< "Contact already exists and not in this ServerContact : " << contactID <<endl;
-			//FIXME: TODO
-		}
 		else
 		{
 			//kdDebug() << "IRCServerContact::incomingPrivMessage: add contact: " << queryName <<endl;
@@ -258,9 +250,7 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 {
 	QString queryName = originating.section('!', 0, 0);
 	if (queryName.lower() == m_engine->nickName().lower())
-	{
 		return;
-	}
 
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
@@ -268,11 +258,8 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 		QString protocolID = m_protocol->pluginId();
 		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->pluginId(), QString::null,contactID);
 		if(m)
-		{
 			kdDebug() << "IRCServerContact::incomingPrivAction: "
 				<< "Contact already exists and not in this ServerContact : " << contactID <<endl;
-			//FIXME: TODO
-		}
 		else
 		{
 			//kdDebug() << "IRCServerContact::incomingPrivAction: add contact: " <<contactID <<endl;
@@ -299,7 +286,7 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 {
 	bool okay = false;
 	QString message = i18n("<qt>The nickname %1 is currently in use by another user. Enter a new nickname you would like to use:</qt>").arg(oldNickname);
-	QString title = i18n("<qt>%1 is currently in use, choose another</qt>").arg(oldNickname);
+	QString title = i18n("%1 is currently in use, choose another.").arg(oldNickname);
 	QString suggested = oldNickname;
 	suggested.append("-");
 	QString newNick = QInputDialog::getText(title, message, QLineEdit::Normal, suggested, &okay);
@@ -311,9 +298,8 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 		m_serverManager->linkServer(QString("%1@%2").arg(m_nickname).arg(m_serverName), title);
 		m_engine->changeNickname(newNick);
 		newNickname(newNick);
-	} else {
+	} else
 		m_engine->close();
-	}
 }
 
 void IRCServerContact::forceDisconnect()
@@ -374,9 +360,8 @@ bool IRCServerContact::parentClosing()
 			slotQuitServer();
 			// We do this here because we want to wait for the server to disconnect first, then later we destroy this class
 			return false;
-		} else {
+		} else
 			return false;
-		}
 	} else {
 		if (m_engine->state() != QSocket::Idle)
 		{
@@ -384,9 +369,8 @@ bool IRCServerContact::parentClosing()
 			{
 				forceDisconnect();
 				m_serverManager->removeServer(QString("%1@%2").arg(m_nickname).arg(m_serverName));
-			} else {
+			} else
 				return false;
-			}
 		} else {
 			m_serverManager->removeServer(QString("%1@%2").arg(m_nickname).arg(m_serverName));
 			m_closing = true;

@@ -90,15 +90,11 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->readBoolEntry("HideConsole", false) == false)
-	{
 		slotNewConsole();
-	}
 
 	/** Autoconnect if is selected in config */
 	if ( KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
-	{
 		connect();
-	}
 }
 
 IRCProtocol::~IRCProtocol()
@@ -127,10 +123,7 @@ void IRCProtocol::slotNewConsole()
 		serverContact->consoleView()->messageEdit()->setFocus();
 	}
 	else
-	{
 		m_serverManager->addServer(serverAndNick, true, this);
-	}
-
 }
 
 void IRCProtocol::addContact(  const QString &server, const QString &contact, bool connectNow, bool joinNow, KopeteMetaContact *meta)
@@ -159,9 +152,7 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 	if(contact[0]=='#')
 	{ //if it is a channel, add to the server metaContact (this is an idea of Nick)
 		if(m->displayName().isEmpty())
-		{
-			m->setDisplayName(server);
-		}
+			m->setDisplayName(contact);
 	}
 
 	KGlobal::config()->setGroup("IRC");
@@ -172,9 +163,7 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 
 	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
 	if (serverContact != 0)
-	{
 		m->addContact( new IRCContact(server, contact, 0, joinNow, serverContact, m, this));
-	}
 	else
 	{
 		IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
@@ -250,7 +239,7 @@ void IRCProtocol::serialize(KopeteMetaContact * metaContact)
 		IRCContact *g = static_cast<IRCContact*>(c);
 
 		if( g )
-			strList << g->contactId() << g->displayName();
+			strList << g->contactId() << g->displayName() << g->serverName();
 	}
 
 	metaContact->setPluginData(this, strList);
@@ -258,23 +247,12 @@ void IRCProtocol::serialize(KopeteMetaContact * metaContact)
 
 void IRCProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList &strList )
 {
-	unsigned int idx = 0;
-	while( idx < strList.size() )
-	{
-		QStringList cID  = QStringList::split( "@", strList[ idx ] );
-		QString displayName = strList[ idx + 1 ];
-		if(cID.size()!=2)
-		{
-			kdDebug() << "IRCProtocol::deserialize : WARNING: bad id '" << strList[ idx ] << "' for " << displayName <<endl;
-			break;
-		}
-
-		addContact( cID[1], cID[0], false, false,metaContact);
-
-		idx += 2;
-	}
-
-
+	QString contactID = strList[0];
+	QString displayName = strList[1];
+	QString serverName = strList[2];
+	if(displayName.isEmpty())
+		displayName = contactID;
+	addContact( serverName, displayName, false, false,metaContact);
 }
 
 
@@ -294,9 +272,8 @@ void IRCProtocol::importOldContactList()
 		m_config->setGroup((*it));
 		QString groupName = m_config->readEntry("Group", "");
 		if (groupName.isEmpty())
-		{
 			continue;
-		}
+
 		QString server = m_config->readEntry("Server", "");
 		if (server.isEmpty())
 		{

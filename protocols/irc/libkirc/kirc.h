@@ -20,20 +20,11 @@
 #ifndef KIRC_H
 #define KIRC_H
 
-
-
 #include <qsocket.h>
-
 #include "dcchandler.h"
-
 #include <qstring.h>
 
-
-
 class QHostAddress;
-class QTextCodec;
-
-
 
 /**
   *@author nbetcher
@@ -64,6 +55,7 @@ public:
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void whoisUser(const QString &user);
 	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
+	void sendNotice(const QString &target, const QString &message);
 enum UserClass
 {
 	Normal = 0,
@@ -126,6 +118,7 @@ signals:
 	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject);
 	void incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 	void incomingEndOfWhois(const QString &nickname);
+	void incomingNotice(const QString &originating, const QString &message);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;
@@ -138,7 +131,6 @@ private:
 	QString mVersionString;
 	QString mUserString;
 	QString mSourceString;
-	QTextCodec *codec;
 };
 
 #endif
@@ -150,4 +142,3 @@ private:
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

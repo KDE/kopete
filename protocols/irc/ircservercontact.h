@@ -63,7 +63,7 @@ public:
 	IRCChatWindow *chatWindow() { return m_ircChatWindow; };
 	IRCMessage *messenger() { return m_messenger; };
 	IRCCmdParser *parser() { return m_parser; };
-	QStringList activeContacts() { return m_activeContacts; };
+	QStringList &activeContacts() { return m_activeContacts; };
 	bool parentClosing();
 
 	bool tryingQuit() { return m_tryingQuit; };
@@ -85,6 +85,7 @@ private:
 	QVBox *mTabView;
 	bool m_tryingQuit;
 	bool m_closing;
+	QString m_userName;
 
 	QString m_serverName;
 	IRCChatWindow *m_ircChatWindow;
