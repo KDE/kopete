@@ -56,8 +56,15 @@ class SSIData : public QPtrList<SSI>
 public:
 	SSIData();
 	~SSIData();
-	/** Find the group named name, and returns a pointer to it */
+
+	/*
+	 * Find the group named name, and returns a pointer to it
+	 */
 	SSI *findGroup(const QString &name);
+	/*
+	 * Same asa above but searches for group by using its groupID
+	 */
+	SSI *findGroup(const int groupId);
 
 	/**
 	 * Adds a buddy to the SSI data list

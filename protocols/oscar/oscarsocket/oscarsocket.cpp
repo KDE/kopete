@@ -2620,23 +2620,29 @@ void OscarSocket::doLogoff()
 	}
 }
 
-void OscarSocket::sendAddBuddy(const QString &name, const QString &group)
+void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupName)
 {
-	kdDebug(14150) << k_funcinfo << "Sending add buddy" << endl;
-	SSI *newitem = ssiData.addBuddy(name,group);
+	SSI *newContact, *group;
 
-	if (!newitem)
+	kdDebug(14150) << k_funcinfo << "Sending add buddy" << endl;
+
+	group = ssiData.findGroup(groupName);
+	if (!group)
 	{
-		sendAddGroup(group);
-		newitem = ssiData.addBuddy(name,group);
+		group = ssiData.addGroup(groupName);
+		sendAddGroup(groupName);
 	}
 
-	kdDebug(14150) << k_funcinfo << "Adding " << newitem->name << ", gid " <<
-		newitem->gid << ", bid " << newitem->bid << ", type " << newitem->type
-		<< ", datalength " << newitem->tlvlength << endl;
+	newContact = ssiData.addBuddy(contactName, groupName);
 
-	sendSSIAddModDel(newitem,0x0008);
-	//now we need to modify the group our buddy is in
+	kdDebug(14150) << k_funcinfo << "Adding " << newContact->name << ", gid " <<
+		newContact->gid << ", bid " << newContact->bid << ", type " << newContact->type
+		<< ", datalength " << newContact->tlvlength << endl;
+
+	sendSSIAddModDel(newContact, 0x0008);
+	// TODO: now we need to modify the group our buddy is in, i.e. edit TLV(0x00C9)
+	// containing the list of contactIDs inside that group
+//	sendSSIAddModDel(group, 0x0009);
 }
 
 // Changes the group a buddy is in on the server

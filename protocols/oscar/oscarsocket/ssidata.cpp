@@ -66,6 +66,16 @@ SSI *SSIData::findGroup(const QString &name)
 	return 0L;
 }
 
+SSI *SSIData::findGroup(const int groupId)
+{
+	for (SSI *i=first(); i; i = next())
+	{
+		if ((current()->bid == groupId) && (current()->type == 0x0001))
+			return current();
+	}
+	return 0L;
+}
+
 SSI * SSIData::addGroup(const QString &name)
 {
 	SSI *newitem = new SSI;
