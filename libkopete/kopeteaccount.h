@@ -1,7 +1,7 @@
 /*
     kopeteaccount.h - Kopete Account
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -40,14 +40,14 @@ struct KopeteAccountPrivate;
  * The KopeteAccount class handles one account.
  * Each protocol should subclass this class in their own custom accounts class.
  * There are few pure virtual method that the protocol must implement. Examples are:
- * \li \ref myself()
  * \li \ref connect()
  * \li \ref disconnect()
  * \li \ref addContactToMetaContact()
  *
  * The accountId is an <b>constant</b> unique id, which represents the login.
  * The @ref myself() contact is one of the most important contacts, which represents
- * the user tied to this account.
+ * the user tied to this account. You must create this contact in the contructor of your
+ * account and use @ref setMyself() 
  *
  * All account data is automatically saved to @ref KConfig. This includes the
  * accountId, the password (in a encrypted format), the autoconnect flag, the color,
@@ -236,6 +236,8 @@ public:
 	 * \return the pointer to the KopeteContact object for this
 	 * account or NULL if not initialized
 	 *
+	 * The myself should have the @ref KopeteContactList::myself() as parent metacontact
+	 *
 	 * \see setMyself().
 	 */
 	KopeteContact * myself() const;
@@ -300,7 +302,8 @@ protected:
 	 * \brief Set the 'myself' contact.
 	 *
 	 * This contact HAS to be defined for every  account, because it
-	 * holds the online status of an account!
+	 * holds the online status of an account! 
+	 * You must call this function in the constructor of your account
 	 *
 	 * The myself contact can't be deleted as long as the account still
 	 * exists. The myself contact is used in each KopeteMessageManager,
@@ -308,8 +311,7 @@ protected:
 	 * should represent the current user's status. The statusbar icon
 	 * is connected to myself-> @ref onlineStatusChanged()
 	 * to update the icon.
-	 *
-	 * @return contact associated with the currently logged in user
+	 * The parent metacontact should be @ref KopeteContactList::myself() 
 	 */
 	void setMyself( KopeteContact *myself );
 

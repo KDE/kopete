@@ -48,6 +48,8 @@ class KopeteContactList::KopeteContactListPrivate
 	QPtrList<KopeteGroup> selectedGroups;
 
 	QTimer *saveTimer;
+	
+	KopeteMetaContact *myself;
 
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
@@ -69,6 +71,8 @@ KopeteContactList::KopeteContactList()
 : QObject( kapp, "KopeteContactList" )
 {
 	d=new KopeteContactListPrivate;
+	
+	d->myself=new KopeteMetaContact();
 
 	//no contactlist loaded yet, don't save them
 	d->loaded=false;
@@ -86,6 +90,7 @@ KopeteContactList::KopeteContactList()
 
 KopeteContactList::~KopeteContactList()
 {
+	delete d->myself;
 	delete d;
 }
 
@@ -972,6 +977,10 @@ void KopeteContactList::slotSaveLater()
 	d->saveTimer->start( 1000 /* 1 second */, true /* single-shot */ );
 }
 
+KopeteMetaContact* KopeteContactList::myself()
+{
+	return d->myself;
+}
 
 #include "kopetecontactlist.moc"
 

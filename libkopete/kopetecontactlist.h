@@ -2,9 +2,9 @@
     kopetecontactlist.h - Kopete's Contact List backend
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -162,6 +162,14 @@ public:
 	 * return the list of groups actualy selected in the contactlist UI
 	 */
 	QPtrList<KopeteGroup> selectedGroups() const ;
+	
+	/**
+	 * return the metacontact that represent the user itself.
+	 * This metacontact should be the parent of every @ref KopeteAccount::myself() contacts.
+	 *
+	 * This metacontact is not in the contactlist.
+	 */
+	KopeteMetaContact* myself();
 
 public slots:
 
