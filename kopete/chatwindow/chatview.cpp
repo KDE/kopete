@@ -1075,7 +1075,7 @@ const QString ChatView::addNickLinks( const QString &html ) const
 	KopeteContactPtrList members = msgManager()->members();
 	for( KopeteContact *c = members.first(); c; c = members.next() )
 	{
-		if( c->displayName().length() > 0 )
+		if( c->displayName().length() > 0 && retVal.contains( c->displayName() ) )
 		{
 			retVal.replace(
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
