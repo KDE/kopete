@@ -5,6 +5,7 @@
 
 #include <qdatetime.h>
 #include <qglobal.h>
+#include <qmap.h>
 #include <qstring.h>
 
 typedef Q_UINT16 NMERR_T;
@@ -21,6 +22,7 @@ typedef Q_UINT16 NMERR_T;
 #define	NM_STATUS_AWAY_IDLE			5
 #define	NM_STATUS_INVALID			6
 */
+
 namespace GroupWise
 {
 	enum Status {	Unknown = 0,
@@ -109,6 +111,7 @@ namespace GroupWise
 				awayMessage, 
 				authAttribute;
 		int status;
+		QMap< QString, QString > properties;
 	};
 	
 	struct OutgoingMessage

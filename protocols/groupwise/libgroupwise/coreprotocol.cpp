@@ -102,7 +102,12 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	m_state = Available;
 	// convert to a Transfer
 	if ( wireToTransfer( m_in ) )  // if we've received or assembled a complete message, we can discard this now
+	{
+		qDebug( "CoreProtocol::addIncomingData() - transfer converted (and handled?)" );
 		m_in = QByteArray();
+	}
+	else
+		qDebug( "CoreProtocol::addIncomingData() - transfer was incomplete, waiting for more..." );
 }
 
 Transfer* CoreProtocol::incomingTransfer()
@@ -395,6 +400,7 @@ bool CoreProtocol::wireToTransfer( const QByteArray& wire )
 			m_collatingEvent = val;
 			if ( ( ok = readEvent( wire, sizeof( Q_UINT32 ) ) ) )
 			{
+				qDebug( "CoreProtocol::wireToTransfer() - got an EVENT: %i\n", val );
 				m_state = Available;
 				emit incomingData();
 			}

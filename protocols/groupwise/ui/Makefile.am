@@ -10,6 +10,6 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 libkopetegroupwiseui_la_LDFLAGS = $(all_libraries)
 libkopetegroupwiseui_la_SOURCES = gwaccountpreferences.ui gwaddcontactpage.cpp \
 	gwaddui.ui gweditaccountwidget.cpp gwreceiveinvitationdialog.cpp \
-	gwshowinvitation.ui
+	gwshowinvitation.ui gwcontactpropswidget.ui gwcontactproperties.cpp
 
-noinst_HEADERS = gwreceiveinvitationdialog.h
+noinst_HEADERS = gwreceiveinvitationdialog.h gwcontactproperties.h

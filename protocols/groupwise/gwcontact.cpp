@@ -29,6 +29,7 @@
 
 #include "client.h"
 #include "gwaccount.h"
+#include "ui/gwcontactproperties.h"
 #include "gwerror.h"
 #include "gwfakeserver.h"
 #include "gwmessagemanager.h"
@@ -71,6 +72,9 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 		setProperty( protocol()->propFullName, details.fullName );
 	//if ( !details.awayMessage.isNull() )
 		//setProperty( protocol()->propAwayMessage, details.awayMessage );
+	
+	m_serverProperties = details.properties;
+	
 	if ( details.status != GroupWise::Invalid )
 	{	
 		KopeteOnlineStatus status = protocol()->gwStatusToKOS( details.status );
@@ -198,10 +202,15 @@ QPtrList<KAction> *GroupWiseContact::customContextMenuActions() //OBSOLETE
 	return 0L;
 }
 
-void GroupWiseContact::showContactSettings()
+void GroupWiseContact::slotUserInfo()
 {
-	//GroupWiseContactSettings* p = new GroupWiseContactSettings( this );
-	//p->show();
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	new GroupWiseContactProperties( this, account(), "gwcontactproperties" );
+}
+
+QMap< QString, QString > GroupWiseContact::serverProperties()
+{
+	return m_serverProperties;
 }
 
 void GroupWiseContact::sendMessage( KopeteMessage &message )

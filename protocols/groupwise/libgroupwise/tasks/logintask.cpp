@@ -156,6 +156,24 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 		cd.status = sf->value().toInt();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
 		cd.awayMessage = sf->value().toString();
+	Field::MultiField * mf;
+	QMap< QString, QString > propMap;
+	if ( ( mf = fields.findMultiField ( NM_A_FA_INFO_DISPLAY_ARRAY ) ) )
+	{
+		Field::FieldList fl = mf->fields();
+		const Field::FieldListIterator end = fl.end();
+		for ( Field::FieldListIterator it = fl.begin(); it != end; ++it )
+		{
+			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
+			QString propName = propField->tag();
+			QString propValue = propField->value().toString();
+			propMap.insert( propName, propValue );
+		}
+	}
+	if ( !propMap.empty() )
+	{
+		cd.properties = propMap;
+	}
 	return cd;
 }
 

@@ -27,14 +27,18 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
+#include "gwerror.h"
 #include "gwfield.h"
 
 class KAction;
 class KActionCollection;
 class KopeteAccount;
+class GroupWiseAccount;
 class GroupWiseMessageManager;
+class GroupWiseProtocol;
 class KopeteMetaContact;
 
+using namespace GroupWise;
 /**
  * Represents an instance of a contact in the server side contact list
  */
@@ -121,6 +125,11 @@ public:
 	 */
 	void leaveConference( const QString & guid );
 	
+	/**
+	 * Access the contact's server properties
+	 */
+	QMap< QString, QString > serverProperties();
+	
 	// CONTACT LIST MANAGEMENT FUNCTIONS
 	/**
 	 *	These functions simulate the server side contact list structure enough to allow Kopete to manipulate it correctly
@@ -149,9 +158,9 @@ protected:
 	void dumpManagers();
 protected slots:
 	/**
-	 * Show the settings dialog
+	 * Show the contact's properties
 	 */
-	void showContactSettings();
+	void slotUserInfo();
 	/**
 	 * A message manager was instantiated as a conference on the server, so record it.
 	 */
@@ -170,9 +179,13 @@ protected:
 	int m_sequence;
 	
 	KAction* m_actionPrefs;
+	// all the message managers that this contact is currently chatting via
 	QDict< GroupWiseMessageManager > m_msgManagers;
 	// a list of all the instances that this contact appears in the server side contact list
 	CLInstanceList m_instances;
+	// Novell Messenger Properties, as received by the server.  
+	// Unfortunately we don't the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
+	QMap< QString, QString > m_serverProperties;
 };
 
 #endif
