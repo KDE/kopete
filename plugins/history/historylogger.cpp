@@ -262,7 +262,8 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 	//getting the color for messages:
 	KGlobal::config()->setGroup("History Plugin");
-	QColor FGcolor=KGlobal::config()->readColorEntry( "History_color" );
+	QColor FGcolor=QColor( "#AAAA7F" );
+	FGcolor=KGlobal::config()->readColorEntry( "History_color" , &FGcolor);
 
 	//Hello guest!
 
@@ -361,7 +362,6 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 		if(msgElem.isNull()) //we don't find ANY messages in any contact for this month. so we change the month
 		{
-//kdDebug() << "HistoryLogger::readMessages: changiong the month (debut) " << m_currentMonth << endl;
 			if(sens==Chronological)
 			{
 				if(m_currentMonth <= 0)
@@ -374,7 +374,6 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 					break; //we don't have any other messages to show
 				setCurrentMonth(m_currentMonth+1);
 			}
-//kdDebug() << "HistoryLogger::readMessages: changiong the month " << m_currentMonth << endl;
 			continue; //begin the loop from the bottom, and find currentContact and timeLimit again
 		}
 
@@ -399,7 +398,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 					if(!timestamp.isValid())
 					{ //parse timestamp only if it was not already parsed
-						QRegExp rx("(\\d+) (\\d+):(\\d+)($|:)(\\d*)");
+						QRegExp rx("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
 						rx.search(msgElem.attribute("time"));
 						QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
 						timestamp=QDateTime( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() , rx.cap(5).toUInt() ) );
@@ -407,7 +406,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 					KopeteMessage msg(timestamp,from,to, msgElem.text() , dir);
 					msg.setFg(FGcolor);
-	//kdDebug() << "HistoryLogger::readMessages: message: " << msg.plainBody() << endl;
+
 					if(reverseOrder)
 						messages.prepend(msg);
 					else
@@ -420,7 +419,6 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 			msgElem=QDomElement(); //n.toElement();
 			while(!n.isNull() && msgElem.isNull())
 			{
-//				kdDebug() << "HistoryLogger::readMessages: n " << n.isNull() << " " << n.nodeType() <<  " " <<n.nodeName() <<  endl;
 				msgElem=n.toElement();
 				if( !msgElem.isNull() )
 				{
