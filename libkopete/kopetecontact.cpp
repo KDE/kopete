@@ -600,14 +600,19 @@ void KopeteContact::setProperty(const QString &key, const QVariant &value)
 
 void KopeteContact::setProperty(const QString &key, const QString &label, const QVariant &value)
 {
+	QVariant oldValue = property( key ).value();
+
 	if(value.isNull())
 	{
 		removeProperty(key);
+		emit propertyChanged( this, key, oldValue, QVariant() );
 		return;
 	}
 
 	Kopete::ContactProperty prop(value, label);
 	d->properties.insert(key, prop);
+
+	emit propertyChanged( this, key, oldValue, value );
 }
 
 void KopeteContact::removeProperty(const QString &key)
