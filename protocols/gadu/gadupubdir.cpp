@@ -65,6 +65,17 @@ bool GaduPublicDir::validateData()
     return true;
 }
 
+// Move to GaduProtocol someday
+QPixmap GaduPublicDir::iconForStatus( uint status )
+{
+    QPixmap n;
+    
+    if (GaduProtocol::protocol()){
+	return GaduProtocol::protocol()->convertStatus( status ).protocolIcon();
+    }
+    return n;
+}
+
 void GaduPublicDir::slotSearchResult( const searchResult &result )
 {
     QListView *list=mMainWidget->listFound;    
@@ -77,21 +88,23 @@ void GaduPublicDir::slotSearchResult( const searchResult &result )
     if (result.count()){
 	enableButton(User2, true);
     }
-    
-    
+        
     enableButton(User1, true);
+    
     QPtrListIterator< resLine > r (result);
+    QListViewItem *sl;
     
     for ( i = result.count()  ; i-- ; ){
         kdDebug(14100) << "adding" << (*r)->uin << endl;
-        new QListViewItem( list, 
-			    QString::number((*r)->status),
+        sl= new QListViewItem( list, 
+			    QString::fromLatin1(""),
 			    (*r)->firstname,
 			    (*r)->surname,
 			    (*r)->nickname,
 			    (*r)->age,
 			    (*r)->city,
 	    		    (*r)->uin);
+	sl->setPixmap(0, iconForStatus((*r)->status) );
 	++r;
     }
 }

@@ -12,6 +12,7 @@
 #include <kcombobox.h>
 #include <qcheckbox.h>
 #include <qspinbox.h>
+#include <qpixmap.h>
 
 
 class GaduProtocol;
@@ -25,7 +26,8 @@ class GaduPublicDir : public KDialogBase
 	public:
 		GaduPublicDir(GaduAccount *,
 			QWidget *parent = 0, const char* name = "GaduPublicDir");
-
+		QPixmap iconForStatus( uint status );
+		
 	
 	private slots:
 		void slotSearch();
