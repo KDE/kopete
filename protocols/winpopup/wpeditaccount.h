@@ -30,7 +30,7 @@
 
 class KopeteAccount;
 
-class WPEditAccount: public WPEditAccountBase, public EditAccountWidget
+class WPEditAccount: public WPEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

@@ -33,21 +33,21 @@
 #include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
-YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), EditAccountWidget(theAccount)
+YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
 	theProtocol = protocol;
-	if(m_account)
-	{	mScreenName->setText(m_account->accountId());
+	if(account())
+	{	mScreenName->setText(account()->accountId());
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
 		mScreenName->setDisabled(true);
-		if (m_account->rememberPassword())
-			mPassword->setText(m_account->password());
-		mAutoConnect->setChecked(m_account->autoLogin());
+		if (account()->rememberPassword())
+			mPassword->setText(account()->password());
+		mAutoConnect->setChecked(account()->autoLogin());
 		mRememberPassword->setChecked(true);
-		ImportContacts->setChecked(static_cast<YahooAccount*>(m_account)->importContacts());
-		UseServerGroupNames->setChecked(static_cast<YahooAccount*>(m_account)->useServerGroups());
+		ImportContacts->setChecked(static_cast<YahooAccount*>(account())->importContacts());
+		UseServerGroupNames->setChecked(static_cast<YahooAccount*>(account())->useServerGroups());
 	}
 	show();
 }
@@ -73,36 +73,30 @@ KopeteAccount *YahooEditAccount::apply()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	if(!m_account)
-		m_account = new YahooAccount(theProtocol, mScreenName->text());
+	if(!account())
+		setAccount(new YahooAccount(theProtocol, mScreenName->text()));
 
-	YahooAccount *account = static_cast<YahooAccount*>(m_account);
+	YahooAccount *yahooAccount = static_cast<YahooAccount *>(account());
 
-	account->setAutoLogin(mAutoConnect->isChecked());
+	yahooAccount->setAutoLogin(mAutoConnect->isChecked());
 
 	if(mRememberPassword->isChecked())
-		account->setPassword(mPassword->text());
+		yahooAccount->setPassword(mPassword->text());
 
 	if (ImportContacts->isChecked())
-		account->setImportContacts(true);
+		yahooAccount->setImportContacts(true);
 	else
-		account->setImportContacts(false);
+		yahooAccount->setImportContacts(false);
 
 	if (UseServerGroupNames->isChecked())
-		account->setUseServerGroups(true);
+		yahooAccount->setUseServerGroups(true);
 	else
-		account->setUseServerGroups(false);
+		yahooAccount->setUseServerGroups(false);
 
-	return account;
+	return yahooAccount;
 }
 
 #include "yahooeditaccount.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

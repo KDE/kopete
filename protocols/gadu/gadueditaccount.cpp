@@ -38,7 +38,7 @@
 #include <klocale.h>
 
 GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWidget* parent, const char* name )
-: GaduAccountEditUI( parent, name ), EditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
+: GaduAccountEditUI( parent, name ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
 {
 
 #ifdef __GG_LIBGADU_HAVE_OPENSSL

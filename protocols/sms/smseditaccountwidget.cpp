@@ -33,7 +33,7 @@
 #include "smsaccount.h"
 
 SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *account, QWidget *parent, const char */*name*/)
-	: QWidget(parent), EditAccountWidget(account)
+	: QWidget(parent), KopeteEditAccountWidget(account)
 {
 	QVBoxLayout *l = new QVBoxLayout(this, QBoxLayout::Down);
 	preferencesDialog = new smsActPrefsUI(this);
@@ -43,20 +43,19 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 	configWidget = 0L;
 	middleFrameLayout = 0L;
 
-	m_account = account;
 	m_protocol = protocol;
 
 	QString sName;
-	if (m_account)
+	if (account)
 	{
-		preferencesDialog->accountId->setText(m_account->accountId());
+		preferencesDialog->accountId->setText(account->accountId());
 		//Disable changing the account ID for now
 		//FIXME: Remove this when we can safely change the account ID (Matt)
 		preferencesDialog->accountId->setDisabled(true);
-		sName = m_account->pluginData(protocol, "ServiceName");
-		preferencesDialog->subEnable->setChecked(m_account->pluginData(protocol, "SubEnable") == "true");
-		preferencesDialog->subCode->setText(m_account->pluginData(protocol, "SubCode"));
-		preferencesDialog->ifMessageTooLong->setCurrentItem((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt());
+		sName = account->pluginData(protocol, "ServiceName");
+		preferencesDialog->subEnable->setChecked(account->pluginData(protocol, "SubEnable") == "true");
+		preferencesDialog->subCode->setText(account->pluginData(protocol, "SubCode"));
+		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->pluginData(protocol, "MsgAction").toInt()));
 	}
 
 	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());
@@ -91,21 +90,21 @@ bool SMSEditAccountWidget::validateData()
 
 KopeteAccount* SMSEditAccountWidget::apply()
 {
-	if (m_account)
-		m_account->setAccountId(preferencesDialog->accountId->text());
+	if (account())
+		account()->setAccountId(preferencesDialog->accountId->text());
 	else
-		m_account = new SMSAccount(m_protocol, preferencesDialog->accountId->text());
+		setAccount( new SMSAccount( m_protocol, preferencesDialog->accountId->text() ) );
 
 	if (service)
-		service->setAccount(m_account);
+		service->setAccount(account());
 
-	m_account->setPluginData(m_protocol, "ServiceName", preferencesDialog->serviceName->currentText());
-	m_account->setPluginData(m_protocol, "SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
-	m_account->setPluginData(m_protocol, "SubCode", preferencesDialog->subCode->text());
-	m_account->setPluginData(m_protocol, "MsgAction", QString().setNum((int)(preferencesDialog->ifMessageTooLong->currentItem())));
+	account()->setPluginData(m_protocol, "ServiceName", preferencesDialog->serviceName->currentText());
+	account()->setPluginData(m_protocol, "SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
+	account()->setPluginData(m_protocol, "SubCode", preferencesDialog->subCode->text());
+	account()->setPluginData(m_protocol, "MsgAction", QString().setNum((int)(preferencesDialog->ifMessageTooLong->currentItem())));
 
 	emit saved();
-	return m_account;
+	return account();
 }
 
 void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
@@ -116,7 +115,7 @@ void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 //	if (configWidget != 0L)
 		delete configWidget;
 
-	service = ServiceLoader::loadService(serviceName, m_account);
+	service = ServiceLoader::loadService(serviceName, account());
 
 	if (service == 0L)
 		return;

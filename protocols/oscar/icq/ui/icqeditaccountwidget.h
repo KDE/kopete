@@ -28,7 +28,7 @@ class ICQEditAccountUI;
 class ICQUserInfoWidget;
 class KJanusWidget;
 
-class ICQEditAccountWidget : public QWidget, public EditAccountWidget
+class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

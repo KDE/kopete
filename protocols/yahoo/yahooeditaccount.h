@@ -31,7 +31,7 @@
 
 class KopeteAccount;
 
-class YahooEditAccount: public YahooEditAccountBase, public EditAccountWidget
+class YahooEditAccount: public YahooEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

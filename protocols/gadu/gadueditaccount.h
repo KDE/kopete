@@ -31,7 +31,7 @@ class GaduAccount;
 class GaduProtocol;
 class KopeteAccount;
 
-class GaduEditAccount : public GaduAccountEditUI, public EditAccountWidget
+class GaduEditAccount : public GaduAccountEditUI, public KopeteEditAccountWidget
 {
     Q_OBJECT
 

@@ -24,22 +24,18 @@
 #include "testbedaccount.h"
 #include "testbedprotocol.h"
 
-
 TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, KopeteAccount* account)
-: QWidget( parent ), EditAccountWidget( account )
+: QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	kdDebug(14210) << k_funcinfo << endl;
-	m_account = account;
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new TestbedAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );
 }
 
-
 TestbedEditAccountWidget::~TestbedEditAccountWidget()
 {
 }
-
 
 KopeteAccount* TestbedEditAccountWidget::apply()
 {
@@ -49,12 +45,12 @@ KopeteAccount* TestbedEditAccountWidget::apply()
 	else
 		accountName = m_preferencesDialog->m_acctName->text();
 	
-	if ( m_account )
-		m_account->setAccountId( accountName );
+	if ( account() )
+		account()->setAccountId( accountName );
 	else
-		m_account = new TestbedAccount( TestbedProtocol::protocol(), accountName );
+		setAccount( new TestbedAccount( TestbedProtocol::protocol(), accountName ) );
 
-	return m_account;
+	return account();
 }
 
 bool TestbedEditAccountWidget::validateData()

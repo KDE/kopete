@@ -26,7 +26,7 @@ class IRCAccount;
 class KListView;
 class QListViewItem;
 
-class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
+class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

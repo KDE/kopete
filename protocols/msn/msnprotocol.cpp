@@ -93,7 +93,7 @@ AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , KopeteAcco
 	return (new MSNAddContactPage(i->isConnected(),parent));
 }
 
-EditAccountWidget *MSNProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *MSNProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return new MSNEditAccountWidget(this,account,parent);
 }

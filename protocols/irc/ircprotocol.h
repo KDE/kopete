@@ -27,7 +27,7 @@ class KopeteMetaContact;
 class AddContactPage;
 class KIRC;
 
-class EditAccountWidget;
+class KopeteEditAccountWidget;
 class KopeteAccount;
 class IRCAccount;
 class KActionCollection;
@@ -56,7 +56,7 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual EditAccountWidget* createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteEditAccountWidget* createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 
 	virtual KopeteAccount* createNewAccount(const QString &accountId);
 

@@ -30,7 +30,7 @@ class KopeteAccount;
 class AIMProtocol;
 class aimEditAccountUI;
 
-class AIMEditAccountWidget : public QWidget, public EditAccountWidget
+class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

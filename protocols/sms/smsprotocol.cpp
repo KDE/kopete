@@ -56,7 +56,7 @@ AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent, KopeteAccou
 	return new SMSAddContactPage(parent);
 }
 
-EditAccountWidget* SMSProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget* SMSProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return new SMSEditAccountWidget(this, account, parent);
 }

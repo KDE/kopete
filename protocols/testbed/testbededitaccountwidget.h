@@ -28,7 +28,7 @@ class TestbedAccountPreferences;
  * A widget for editing this protocol's accounts
  * @author Will Stephenson
 */
-class TestbedEditAccountWidget : public QWidget, public EditAccountWidget
+class TestbedEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 Q_OBJECT
 public:

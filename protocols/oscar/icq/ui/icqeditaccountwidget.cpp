@@ -40,7 +40,7 @@
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)
-	: QWidget(parent, name), EditAccountWidget(account)
+	: QWidget(parent, name), KopeteEditAccountWidget(account)
 {
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 

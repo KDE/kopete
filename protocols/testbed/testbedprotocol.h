@@ -46,7 +46,7 @@ public:
 	/**
 	 * Generate the widget needed to add/edit accounts for this protocol
 	 */
-	virtual EditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent );
+	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent );
 	/**
 	 * Generate a TestbedAccount
 	 */

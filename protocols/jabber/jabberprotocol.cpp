@@ -115,7 +115,7 @@ AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete
 	return new JabberAddContactPage (i, parent);
 }
 
-EditAccountWidget *JabberProtocol::createEditAccountWidget (KopeteAccount * account, QWidget * parent)
+KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (KopeteAccount * account, QWidget * parent)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
 	return new JabberEditAccountWidget (this, static_cast < JabberAccount * >(account), parent);

@@ -46,7 +46,7 @@ class ICQProtocol : public KopeteProtocol
 			const QMap<QString, QString> &serializedData,
 			const QMap<QString, QString> &addressBookData );
 		AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
-		EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+		KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 		KopeteAccount *createNewAccount(const QString &accountId);
 
 		const KopeteOnlineStatus statusOnline;

@@ -35,14 +35,14 @@
 #include "wpaccount.h"
 #include "wpeditaccount.h"
 
-WPEditAccount::WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): WPEditAccountBase(parent), EditAccountWidget(theAccount)
+WPEditAccount::WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
 
 	theProtocol = protocol;
-	if(m_account)
-	{	mHostName->setText(m_account->accountId());
-		mAutoConnect->setChecked(m_account->autoLogin());
+	if(account())
+	{	mHostName->setText(account()->accountId());
+		mAutoConnect->setChecked(account()->autoLogin());
 		mHostName->setReadOnly(true);
 	}
 	else
@@ -84,22 +84,16 @@ KopeteAccount *WPEditAccount::apply()
 {
 	kdDebug(14180) << "WPEditAccount::apply()";
 
-	if(!m_account)
-		m_account = new WPAccount(theProtocol, mHostName->text());
+	if(!account())
+		setAccount(new WPAccount(theProtocol, mHostName->text()));
 //	else
-//		m_account->setAccountId(mHostName->text());
-	m_account->setAutoLogin(mAutoConnect->isChecked());
+//		account()->setAccountId(mHostName->text());
+	account()->setAutoLogin(mAutoConnect->isChecked());
 	
-	return m_account;
+	return account();
 }
 
 #include "wpeditaccount.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -79,7 +79,7 @@ public:
 	~WPProtocol();
 
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *theAccount);
-	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 // KopetePlugin overloading

@@ -32,7 +32,7 @@ class KopeteProtocol;
 class AddAccountWizardPage1;
 class AddAccountWizardPage2;
 class AddAccountWizardPage3;
-class EditAccountWidget;
+class KopeteEditAccountWidget;
 
 /**
  * @author  Olivier Goffart <ogoffart@tiscalinet.be>
@@ -57,7 +57,7 @@ protected slots:
 
 private:
 	QMap<QListViewItem *, KPluginInfo *> m_protocolItems;
-	EditAccountWidget *m_accountPage;
+	KopeteEditAccountWidget *m_accountPage;
 	AddAccountWizardPage1 *m_intro;
 	AddAccountWizardPage2 *m_selectService;
 	AddAccountWizardPage3 *m_finish;

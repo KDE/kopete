@@ -32,7 +32,7 @@
 class MSNProtocol;
 class KAutoConfig;
 
-class MSNEditAccountWidget : public MSNEditAccountUI, public EditAccountWidget
+class MSNEditAccountWidget : public MSNEditAccountUI, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 

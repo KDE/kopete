@@ -201,7 +201,7 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, KopeteAccou
 	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));
 }
 
-EditAccountWidget *IRCProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *IRCProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return new IRCEditAccountWidget(this, static_cast<IRCAccount*>(account),parent);
 }

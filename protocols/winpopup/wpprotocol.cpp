@@ -131,7 +131,7 @@ void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
 }
 
-EditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return new WPEditAccount(this, account, parent);
 }

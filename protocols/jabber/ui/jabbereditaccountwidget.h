@@ -34,7 +34,7 @@ class JabberProtocol;
 class QCheckBox;
 class QLineEdit;
 
-class JabberEditAccountWidget:public DlgJabberEditAccountWidget, public EditAccountWidget
+class JabberEditAccountWidget:public DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
 
 	Q_OBJECT

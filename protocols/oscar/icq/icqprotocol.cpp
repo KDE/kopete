@@ -897,7 +897,7 @@ AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, KopeteAccou
 	return (new ICQAddContactPage(static_cast<ICQAccount*>(account) , parent));
 }
 
-EditAccountWidget *ICQProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *ICQProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return (new ICQEditAccountWidget(this, account, parent));
 }

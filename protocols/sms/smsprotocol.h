@@ -54,7 +54,7 @@ public:
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	virtual AddContactPage *createAddContactWidget(QWidget *parent , KopeteAccount *i);
-	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 	const KopeteOnlineStatus SMSOnline;

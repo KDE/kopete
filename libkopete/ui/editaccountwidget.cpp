@@ -1,9 +1,10 @@
 /*
     editaccountwidget.cpp - Kopete Account Widget
 
-    Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,10 +17,33 @@
 */
 
 #include "editaccountwidget.h"
-#include <kopeteaccount.h>
 
-EditAccountWidget::EditAccountWidget(KopeteAccount *i)
+class KopeteEditAccountWidgetPrivate
 {
-	m_account = i;
+public:
+	KopeteAccount *account;
+};
+
+KopeteEditAccountWidget::KopeteEditAccountWidget( KopeteAccount *account )
+{
+	d = new KopeteEditAccountWidgetPrivate;
+	d->account = account;
 }
+
+KopeteEditAccountWidget::~KopeteEditAccountWidget()
+{
+	delete d;
+}
+
+KopeteAccount * KopeteEditAccountWidget::account() const
+{
+	return d->account;
+}
+
+void KopeteEditAccountWidget::setAccount( KopeteAccount *account )
+{
+	d->account = account;
+}
+
+// vim: set noet ts=4 sts=4 sw=4:
 

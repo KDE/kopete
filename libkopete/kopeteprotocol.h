@@ -29,8 +29,8 @@ class KActionMenu;
 
 class AddContactPage;
 class KopeteContact;
+class KopeteEditAccountWidget;
 class KopeteMetaContact;
-class EditAccountWidget;
 class KopeteAccount;
 
 class KopeteProtocolPrivate;
@@ -63,14 +63,14 @@ public:
 	virtual AddContactPage *createAddContactWidget( QWidget *parent, KopeteAccount *account ) = 0L;
 
 	/**
-	 * @brief Create a new EditAccountWidget
+	 * @brief Create a new KopeteEditAccountWidget
 	 *
-	 * @return A new EditAccountWidget to be shown in the account part of the configurations.
+	 * @return A new KopeteEditAccountWidget to be shown in the account part of the configurations.
 	 *
 	 * @param account is the KopeteAccount to edit. If it's 0L, then we create a new account
 	 * @param parent The parent of the 'to be returned' widget
 	 */
-	virtual EditAccountWidget *createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0L;
+	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0L;
 
 	/**
 	 * @brief Create an empty KopeteAccount

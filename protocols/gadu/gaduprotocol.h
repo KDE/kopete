@@ -66,7 +66,7 @@ public:
 	// {
 	AddContactPage* createAddContactWidget( QWidget* parent, KopeteAccount* account );
 	KopeteAccount* createNewAccount( const QString& accountId );
-	EditAccountWidget *createEditAccountWidget( KopeteAccount* account, QWidget* parent );
+	KopeteEditAccountWidget *createEditAccountWidget( KopeteAccount* account, QWidget* parent );
 	bool canSendOffline() const { return true; }
 
 	virtual void deserializeContact( KopeteMetaContact* metaContact,

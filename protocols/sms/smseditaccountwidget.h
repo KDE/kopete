@@ -26,7 +26,7 @@ class smsActPrefsUI;
 class KopeteAccount;
 class QGridLayout;
 
-class SMSEditAccountWidget : public QWidget, public EditAccountWidget
+class SMSEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 public:

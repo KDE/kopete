@@ -90,7 +90,7 @@ AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, KopeteAccou
 	return (new AIMAddContactPage(account->isConnected(), parent));
 }
 
-EditAccountWidget *AIMProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *AIMProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return (new AIMEditAccountWidget(this, account, parent));
 }

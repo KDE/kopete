@@ -61,7 +61,7 @@ public:
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
 	virtual AddContactPage *createAddContactWidget (QWidget * parent, KopeteAccount * i);
-	virtual EditAccountWidget *createEditAccountWidget (KopeteAccount * account, QWidget * parent);
+	virtual KopeteEditAccountWidget *createEditAccountWidget (KopeteAccount * account, QWidget * parent);
 	virtual KopeteAccount *createNewAccount (const QString & accountId);
 
 	/**

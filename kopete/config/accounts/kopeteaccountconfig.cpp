@@ -177,7 +177,7 @@ void KopeteAccountConfig::slotEditAccount()
 	KDialogBase *editDialog = new KDialogBase( this, "KopeteAccountConfig::editDialog", true,
 		i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
-	EditAccountWidget *m_accountWidget = proto->createEditAccountWidget( ident, editDialog );
+	KopeteEditAccountWidget *m_accountWidget = proto->createEditAccountWidget( ident, editDialog );
 	if ( !m_accountWidget )
 		return;
 

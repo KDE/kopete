@@ -57,7 +57,7 @@ public:
 
 public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);
-	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 

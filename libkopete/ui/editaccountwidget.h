@@ -1,9 +1,10 @@
 /*
     editaccountwidget.h - Kopete Account Widget
 
-    Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,58 +21,87 @@
 
 class KopeteAccount;
 
+class KopeteEditAccountWidgetPrivate;
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * This class is used by protocol to add specifics protocol fields in the add account wizzard, or in the account preferences.
- * if the given accountis 0L, then you will have to create a new acvcount in @ref apply
+ * This class is used by the protocol plugins to add specific protocol fields in the add account wizard,
+ * or in the account preferences. If the given account is 0L, then you will have to create a new account
+ * in @ref apply().
  *
- * protocol has to subclasses it, and the protocol adet account page MUST inherits from QWidget too.
+ * Each protocol has to subclass this class, and the protocol's edit account page MUST inherits from
+ * QWidget too.
  *
- * We suggest in this page to put at least some fields:
+ * We suggest to put at least these fields in the page:
  *
- * - The User login, or the accountId. you can retrieve it from @ref KopeteAccount::accountId()  But this field has
- *     to be marked as ReadOnly when the account already exists. Remember that accountId should be constant
+ * - The User login, or the accountId. you can retrieve it from @ref KopeteAccount::accountId(). This
+ *   field has to be marked as ReadOnly or shown as a label if the account already exists. Remember
+ *   that accountId should be constant after account creation!
  *
- * - The password, and the remember password checkboxes.  First, you have to get if the password is remember, with @ref KopeteAccount::rememberPassword
- *    if it return true, you can use @ref KopeteAccount::password() to set the password field. WARNING: do not use password if the password is not
- *    remember, or kopete will popup a dialog to ask the password.
- *    To set the password use @ref KopeteAccount::setPassword()  if the user has unselected the remember password checkboxes, set QString::null as password
+ * - The password, and the remember password checkboxes. When creating the widget you have to get if
+ *   the password is remembered, with @ref KopeteAccount::rememberPassword(). If it returns true
+ *   you can use @ref KopeteAccount::password() to get the password field.
  *
- * - The auto connect checkboxe: use @ref KopeteAccount::autoConnect and @ref KopeteAccount::setAutoConnect  get/set this flag
+ *   WARNING: Do not use password() if the password is not remembered, or Kopete will popup a dialog
+ *            to ask the password!
  *
- * You may add some other custom fields, for example, the nickname. to save or retrieve theses settings use @ref KopetePluginDataObject::setPluginData or
- * @ref KopetePluginDataObject::pluginData with your protocol as plugin
+ *   To set the password use @ref KopeteAccount::setPassword(). If the user has not selected the
+ *   'remember password' checkbox, set the password to QString::null.
  *
+ * - The auto connect checkbox: use @ref KopeteAccount::autoConnect() and
+ *   @ref KopeteAccount::setAutoConnect() to get/set this flag.
+ *
+ * You may add other custom fields, e.g. the nickname. To save or retrieve these settings use
+ * @ref KopetePluginDataObject::pluginData() with your protocol as plugin.
  */
-class EditAccountWidget
+class KopeteEditAccountWidget
 {
-	public:
-		/**
-		 * Constructor. if 'account' is 0L, then, we are in the addAccountWizzard,
-		 * if it is an account, we are editing this account
-		 */
-		EditAccountWidget(KopeteAccount *account);
+public:
+	/**
+	 * Constructor.
+	 *
+	 * If 'account' is 0L we are in the 'add account wizard', otherwise
+	 * we are editing an existing account.
+	 */
+	KopeteEditAccountWidget( KopeteAccount *account );
 
-		/**
-		 * This method must be reimplemented.
-		 * It has the same action as the @ref AddContactPage::validateData()
-		 */
-		virtual bool validateData()=0;
+	/**
+	 * Destructor
+	 */
+	virtual ~KopeteEditAccountWidget();
 
-		/**
-		 * This must create the account if we are in the addAccountWizard,
-		 * or update it if we are in the edit page.
-		 */
-		virtual KopeteAccount *apply()=0;
+	/**
+	 * This method must be reimplemented.
+	 * It does the same as @ref AddContactPage::validateData()
+	 */
+	virtual bool validateData() = 0;
 
-	protected :
-		/**
-		 * this is simply a link to tha account given in the constructor. do with it what you want.
-		 */
-		KopeteAccount *m_account;
+	/**
+	 * Create a new account if we are in the 'add account wizard',
+	 * otherwise update the existing account.
+	 */
+	virtual KopeteAccount *apply() = 0;
+
+protected:
+	/**
+	 * Get a pointer to the KopeteAccount passed to the constructor.
+	 * You can modify it any way you like, just don't delete the object.
+	 */
+	KopeteAccount * account() const;
+
+	/**
+	 * Set the account
+	 */
+	// FIXME: Is it possible to make the API not require this? A const account
+	//        in this widget seems a lot cleaner to me - Martijn
+	void setAccount( KopeteAccount *account );
+
+private:
+	KopeteEditAccountWidgetPrivate *d;
 };
-#endif
 
+// vim: set noet ts=4 sts=4 sw=4:
+
+#endif
 

@@ -209,7 +209,7 @@ GaduProtocol::createNewAccount( const QString& accountId )
 	return defaultAccount_ ;
 }
 
-EditAccountWidget*
+KopeteEditAccountWidget*
 GaduProtocol::createEditAccountWidget( KopeteAccount* account, QWidget* parent )
 {
 	return( new GaduEditAccount( this, account, parent ) );

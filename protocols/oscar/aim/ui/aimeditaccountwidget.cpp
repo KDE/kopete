@@ -15,7 +15,7 @@
 
 AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)
-	: QWidget(parent, name), EditAccountWidget(account)
+	: QWidget(parent, name), KopeteEditAccountWidget(account)
 {
 	//kdDebug(14190) << k_funcinfo << "Called." << endl;
 

@@ -79,7 +79,7 @@ AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, Kopet
 	return new TestbedAddContactPage( parent );
 }
 
-EditAccountWidget * TestbedProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
+KopeteEditAccountWidget * TestbedProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
 {
 	kdDebug(14210) << "Creating Edit Account Page" << endl;
 	return new TestbedEditAccountWidget( parent, account );

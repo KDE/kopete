@@ -29,7 +29,7 @@
 #include "irceditaccountwidget.h"
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
-				  : IRCEditAccountBase(parent), EditAccountWidget(ident)
+				  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
 {
 	mProtocol = proto;
 
@@ -51,7 +51,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		partMessage->setText( m_IRCAccount->defaultPart() );
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
 
-		if(m_account->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
+		if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 		
 		QStringList cmds = m_IRCAccount->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
