@@ -45,7 +45,15 @@ Kopete::Kopete()
 : KUniqueApplication( true, true, true )
 {
 	m_isShuttingDown = false;
-	m_mainWindow = 0L;
+	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+
+	// Since the main window has no parent we must delete it in the Kopete
+	// destructor (we can't leak it, some code depends on the destructor
+	// being called). But since a KMainWindow usually has W_DestructiveClose
+	// set we can't be sure it exists by then either. Therefore track its
+	// deletion to make sure:
+	connect( m_mainWindow, SIGNAL( destroyed() ),
+		SLOT( slotMainWindowDestroyed() ) );
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
@@ -158,15 +166,6 @@ void Kopete::slotLoadPlugins()
 	//load the default chatwindow
 	KopetePluginManager::self()->loadPlugin( "kopete_chatwindow" );
 
-	m_mainWindow=new KopeteWindow( 0, "mainWindow" );
-	// Since the main window has no parent we must delete it in the Kopete
-	// destructor (we can't leak it, some code depends on the destructor
-	// being called). But since a KMainWindow usually has W_DestructiveClose
-	// set we can't be sure it exists by then either. Therefore track its
-	// deletion to make sure:
-	connect( m_mainWindow, SIGNAL( destroyed() ),
-		SLOT( slotMainWindowDestroyed() ) );
-
 	// --noconnect not specified?
 	if (args->isSet("connect"))
 	{
@@ -226,7 +225,6 @@ void Kopete::slotLoadPlugins()
 		action->activate();
 		delete action;
 	}
-
 }
 
 void Kopete::slotMainWindowDestroyed()
