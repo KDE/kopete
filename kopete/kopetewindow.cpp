@@ -115,12 +115,13 @@ void KopeteWindow::initSystray ( void )
 	tm->insertSeparator();
 	actionAddContact->plug( tm );
 	tm->insertSeparator();
-	actionConnect->plug( tm );
-	actionDisconnect->plug( tm );
-	actionSetAway->plug( tm );
+//	actionConnect->plug( tm );
+//	actionDisconnect->plug( tm );
+	actionConnectionMenu->plug ( tm );
+	actionAwayMenu->plug( tm );
 	tm->insertSeparator();
 	actionPrefs->plug( tm );
-	tm->insertSeparator();
+//	tm->insertSeparator();
 }
 
 KopeteWindow::~KopeteWindow()

@@ -69,6 +69,8 @@ void Kopete::initialize()
 
 	mLibraryLoader = new LibraryLoader();
 	mIconLoader = KGlobal::iconLoader();
+
+	// TODO: move that to mainwindow!
 	mPref = new PreferencesDialog();
 	mPref->hide();
 
@@ -103,6 +105,7 @@ Kopete::~Kopete()
 	kdDebug() << "[Kopete] ~Kopete()" << endl;
 
 	delete mPref;
+//	delete mainwindow;
 
 	kdDebug() << "[Kopete] END ~Kopete()" << endl;
 }
@@ -363,11 +366,11 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						(text[startIdx-1]!='{') && (text[startIdx-1]!='}')
 						)
 					{
-						kdDebug() << "searching start of email addy at: " << startIdx << endl;
+//						kdDebug() << "searching start of email addy at: " << startIdx << endl;
 						startIdx--;
 					}
 
-					kdDebug() << "found start of email addy at:" << startIdx << endl;
+//					kdDebug() << "found start of email addy at:" << startIdx << endl;
 
 					regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if ( regExp.search(text,startIdx) != -1 )
@@ -392,16 +395,15 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						}
 						else
 						{
-							kdDebug() << "adding email link starting at: " << result.length()-(idx-startIdx) << endl;
+//							kdDebug() << "adding email link starting at: " << result.length()-(idx-startIdx) << endl;
 							result.remove( result.length()-(idx-startIdx), idx-startIdx );
-							result +=
-//								QString::fromLatin1("<a href=\"addrOrId://") + // What is this weird adress?
-								QString::fromLatin1("<a href=\"mailto:%1\">%1</a>").arg( parseHTML(text.mid(startIdx,matchLen),false) );
-/*								parseHTML(text.mid(startIdx,matchLen),false) +
+							QString mailAddr = parseHTML(text.mid(startIdx,matchLen),false);
+							result += QString::fromLatin1("<a href=\"mailto:%1\">%2</a>").arg(mailAddr).arg(mailAddr);
+/*								QString::fromLatin1("<a href=\"addrOrId://") + // What is this weird adress?
+								parseHTML(text.mid(startIdx,matchLen),false) +
 								QString::fromLatin1("\">") +
 								parseHTML(text.mid(startIdx,matchLen),false) +
 								QString::fromLatin1("</a>"); */
-
 							idx = startIdx + matchLen - 1;
 							kdDebug() << "index is now: " << idx << endl;
 							kdDebug() << "result is: " << result << endl;
