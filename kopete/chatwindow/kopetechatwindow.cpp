@@ -233,46 +233,34 @@ bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
 
 		if( chatSend->isEnabled() )
 		{
-			for( uint i = 0; i < chatSend->shortcut().count(); i++ )
+			if ( chatSend->shortcut().contains( key ) )
 			{
-				if( key == chatSend->shortcut().seq(i).key(0) )
-				{
-					slotSendMessage();
-					return true;
-				}
-			}
-		}
-
-		for( uint i = 0; i < nickComplete->shortcut().count(); i++ )
-		{
-			if( key == nickComplete->shortcut().seq(i).key(0) )
-			{
-				slotNickComplete();
+				slotSendMessage();
 				return true;
 			}
 		}
 
+		if ( nickComplete->shortcut().contains( key ) )
+		{
+			slotNickComplete();
+			return true;
+		}
+
 		if( historyDown->isEnabled() )
 		{
-			for( uint i = 0; i < historyDown->shortcut().count(); i++ )
+			if ( historyDown->shortcut().contains( key ) )
 			{
-				if( key == historyDown->shortcut().seq(i).key(0) )
-				{
-					slotHistoryDown();
-					return true;
-				}
+				slotHistoryDown();
+				return true;
 			}
 		}
 
 		if( historyUp->isEnabled() )
 		{
-			for( uint i = 0; i < historyUp->shortcut().count(); i++ )
+			if ( historyUp->shortcut().contains( key ) )
 			{
-				if( key == historyUp->shortcut().seq(i).key(0) )
-				{
-					slotHistoryUp();
-					return true;
-				}
+				slotHistoryUp();
+				return true;
 			}
 		}
 	}
