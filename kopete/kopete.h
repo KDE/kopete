@@ -35,6 +35,7 @@
 #include "kopetewindow.h"
 #include "kopeteevent.h"
 #include "kopetenotifier.h"
+#include "kopeteaway.h"
 
 #include "plugin.h"
 #include "configmodule.h"
@@ -114,6 +115,10 @@ public:
 	**/
 	KopeteWindow *mainWindow() const { return m_mainWindow; }
 	/**
+	* Use it to access Kopete's away class.
+	**/
+	KopeteAway *away() const { return mAway; }
+	/**
 	* Use it to access Kopete's Contact List.
 	**/
 	ContactList *contactList() const;
@@ -157,6 +162,7 @@ private:
 	QString mEmoticonTheme;
 	KopeteNotifier *mNotifier;
 	KopeteMessageManagerFactory *mMessageManagerFactory;
+	KopeteAway *mAway;
 	void loadPlugins();
 
 public slots:

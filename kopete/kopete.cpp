@@ -37,6 +37,7 @@
 #include "plugin.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
+#include "kopeteaway.h"
 #include <addwizardimpl.h>
 
 class Plugins;
@@ -88,6 +89,7 @@ void Kopete::initialize()
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
 	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");
+	mAway = new KopeteAway;
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
@@ -178,6 +180,7 @@ void Kopete::slotDisconnectAll()
 // it worked or if the plugin exits away-mode
 void Kopete::slotSetAwayAll(void)
 {
+	mAway->show();	
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{

@@ -1,0 +1,83 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>KopeteAwayBase</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>KopeteAwaytBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>380</width>
+            <height>217</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Global Away Message</string>
+    </property>
+    <property name="layoutMargin" stdset="0">
+    </property>
+    <property name="layoutSpacing" stdset="0">
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>4</number>
+        </property>
+        <property name="spacing">
+            <number>4</number>
+        </property>
+        <widget class="QMultiLineEdit" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>mleMessage</cstring>
+            </property>
+        </widget>
+        <spacer row="2" column="1">
+            <property name="name">
+                <cstring>Spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="2" column="0">
+            <property name="name">
+                <cstring>cmdOkay</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Okay</string>
+            </property>
+            <property name="default">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="2" column="2">
+            <property name="name">
+                <cstring>cmdCancel</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Please enter your desired message below. This message will be shown to users who view your online status.</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter|AlignLeft</set>
+            </property>
+            <property name="wordwrap" stdset="0">
+            </property>
+        </widget>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
