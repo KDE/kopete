@@ -59,8 +59,6 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 
 	// initialise preferences
 	m_prefs = new NowListeningPreferences( pluginIcon(), this );
-	connect ( m_prefs, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
-	// get a pointer to the dcop client
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL(
 			messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM(
@@ -72,8 +70,8 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
 
+	// get a pointer to the dcop client
 	m_client = kapp->dcopClient(); //new DCOPClient();
-	//m_client->attach();
 
 	// set up known media players
 	m_mediaPlayer = new QPtrList<NLMediaPlayer>;
