@@ -167,7 +167,6 @@ void KopeteMetaContactLVI::initLVI()
 		else
 			smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.667 );
 		d->extraText = new TextComponent( vbox, smallFont );
-		//FIXME: fill in d->extraText
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
@@ -195,6 +194,8 @@ void KopeteMetaContactLVI::initLVI()
 		d->extraText = 0;
 		d->iconSize = 16;
 	}
+
+	// FIXME: fill in d->extraText
 
 	slotUpdateIcons();
 	slotDisplayNameChanged();
@@ -430,6 +431,22 @@ void KopeteMetaContactLVI::updateVisibility()
 		setVisible( true );
 }
 
+class ContactComponent : public ListView::ImageComponent
+{
+	KopeteContact *mContact;
+public:
+	ContactComponent( ListView::ComponentBase *parent, KopeteContact *contact )
+	 : ListView::ImageComponent( parent )
+	 , mContact( contact )
+	{
+		setPixmap( contact->onlineStatus().iconFor( contact, 12 ) );
+	}
+	KopeteContact *contact()
+	{
+		return mContact;
+	}
+};
+
 void KopeteMetaContactLVI::updateContactIcons()
 {
 	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
@@ -441,37 +458,37 @@ void KopeteMetaContactLVI::updateContactIcons()
 		delete d->contactIconBox->component( 0 );
 
 	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-	QPtrListIterator<KopeteContact> it( contacts );
-
-	for ( ; it.current(); ++it )
+	for ( QPtrListIterator<KopeteContact> it( contacts ); it.current(); ++it )
 	{
-		ListView::ImageComponent *icon = new ListView::ImageComponent( d->contactIconBox );
-		QPixmap image = (*it)->onlineStatus().iconFor( *it, 12 );
 		if ( !bHideOffline || (*it)->onlineStatus().status() != KopeteOnlineStatus::Offline )
-			icon->setPixmap( image );
+			(void)new ContactComponent( d->contactIconBox, *it );
+//		new ListView::TextComponent( d->contactIconBox, listView()->font(), QString::fromLatin1("test") );
 	}
+//		new ListView::TextComponent( d->contactIconBox, listView()->font(), QString::fromLatin1("end") );
 }
 
 KopeteContact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
 {
-	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-	QPtrListIterator<KopeteContact> it( contacts );
-	for ( uint n = 0; n < d->contactIconBox->components() && it.current(); ++it, ++n )
+	for ( uint n = 0; n < d->contactIconBox->components(); ++n )
 	{
-		if ( d->contactIconBox->component( n )->rect().contains( p ) )
-			return *it;
+		if ( ContactComponent *comp = dynamic_cast<ContactComponent*>( d->contactIconBox->component( n ) ) )
+		{
+			if ( comp->rect().contains( p ) )
+				return comp->contact();
+		}
 	}
 	return 0L;
 }
 
 QRect KopeteMetaContactLVI::contactRect( const KopeteContact *c ) const
 {
-	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-	QPtrListIterator<KopeteContact> it( contacts );
-	for ( uint n = 0; n < d->contactIconBox->components() && it.current(); ++it, ++n )
+	for ( uint n = 0; n < d->contactIconBox->components(); ++n )
 	{
-		if ( *it == c )
-			return d->contactIconBox->component( n )->rect();
+		if ( ContactComponent *comp = dynamic_cast<ContactComponent*>( d->contactIconBox->component( n ) ) )
+		{
+			if ( comp->contact() == c )
+				return comp->rect();
+		}
 	}
 	return QRect();
 }

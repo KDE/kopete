@@ -28,6 +28,13 @@
 #include <qtimer.h>
 #include <qheader.h>
 
+#define HAVE_XRENDER
+
+#ifdef HAVE_XRENDER
+#  include <X11/Xlib.h>
+#  include <X11/extensions/Xrender.h>
+#endif
+
 namespace Kopete {
 namespace UI {
 namespace ListView {
@@ -334,8 +341,9 @@ void BoxComponent::layout( const QRect &rect )
 		d->starts.append( comp->rect() );
 		d->targets.append( rc & rect );
 	}
+	if ( !d->layoutTimer.isActive() )
+		d->layoutTimer.start( 10 );
 	d->layoutSteps = -1;
-	d->layoutTimer.start( 10 );
 	layoutTimer();
 }
 
@@ -351,6 +359,7 @@ void BoxComponent::layoutTimer()
 	{
 		QRect start = d->starts[ n ];
 		QRect target = d->targets[ n ];
+		//if ( start == target ) continue;
 		Component *comp = component( n );
 		QRect rc( start.left() + ((target.left() - start.left()) * p) / s,
 		          start.top() + ((target.top() - start.top()) * p) / s,
@@ -554,7 +563,9 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
 class Item::Private
 {
 public:
+	Private() : alpha( 1.0 ) {}
 	QTimer layoutTimer;
+	float alpha;
 };
 
 Item::Item( QListViewItem *parent, QObject *owner, const char *name )
@@ -609,6 +620,18 @@ void Item::slotLayoutItems()
 	repaint();
 }
 
+float Item::opacity()
+{
+	return d->alpha;
+}
+
+void Item::setOpacity( float opacity )
+{
+	if ( d->alpha == opacity ) return;
+	d->alpha = opacity;
+	repaint();
+}
+
 void Item::repaint()
 {
 	// if we're about to relayout, don't bother painting yet.
@@ -645,8 +668,19 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	if ( Component *comp = component( column ) )
 		comp->paint( &paint, cg );
 	paint.end();
+
 	p->drawPixmap( 0, 0, back );
-	
+        
+#ifdef HAVE_XRENDER                
+	QColor rgb = backgroundColor();
+	const int alpha = 257 - int(opacity() * 257);
+	if ( alpha == 0 ) return;
+
+	QPoint zp(0,0); zp = p->xForm(zp);
+	XRenderColor clr = { alpha * rgb.red(),alpha * rgb.green(),alpha * rgb.blue(),alpha * 0xff };
+	XRenderFillRectangle( p->device()->x11Display(), PictOpOver, p->device()->x11RenderHandle(),
+	                      &clr, zp.x(), zp.y(), width, height() );
+#endif
 }
 
 void Item::componentAdded( Component *component )

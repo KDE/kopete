@@ -254,6 +254,9 @@ public:
 	void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
 	//TODO: startRename(...)
 
+	float opacity();
+	void setOpacity( float alpha );
+
 protected:
 	void componentAdded( Component *component );
 	void componentRemoved( Component *component );
