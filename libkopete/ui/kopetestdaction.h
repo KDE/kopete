@@ -36,13 +36,15 @@ class KopeteStdAction
 
 		static KAction *contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KAction *viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
-
+		
+		static KAction *changeMetaContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+		
 		static KAction *addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KListAction *moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
-		static KListAction *copyContact( const QObject *recvr,
-			const char *slot, QObject* parent, const char *name = 0 );
+		static KListAction *copyContact( const QObject *recvr, const char *slot, QObject* parent, const char *name = 0 );
 		static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KListAction *addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+		static KAction *changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 };
 
 // Fuckin' moc will only see signals/slots if they're defined in the .h

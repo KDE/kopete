@@ -119,11 +119,12 @@ ldadd=
 ldflags=
 
 [General]
+AMChanged=false
 author=duncan
 email=duncan@tarro
 kdevprj_version=1.3
 lfv_open_groups=
-makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,
+makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am
 project_name=kopete
 project_type=normal_empty
 sub_dir=
@@ -142,7 +143,11 @@ User Interface=*.ui,*.kdevdlg,*.rc,
 groups=Headers,Sources,GNU,Translations,User Interface,Desktop,Others
 
 [Makefile.am]
-sub_dirs=libkopete
+files=jabbermap.cpp,jabbermap.h,dlgjabberrename.cpp,dlgjabberrename.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=.
+sub_dirs=protocols
+type=static_library
 
 [contrib/Makefile.am]
 files=contrib/licq2kopete,contrib/indention_lines.pl,
@@ -231,6 +236,18 @@ dist=true
 install=false
 install_location=
 type=DATA
+
+[dlgjabberrename.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[dlgjabberrename.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [doc-api/Makefile.am]
 sub_dirs=html,
@@ -696,6 +713,18 @@ dist=true
 install=false
 install_location=
 type=DATA
+
+[jabbermap.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[jabbermap.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/Makefile.am]
 files=kopete/eventsrc,kopete/hi16-app-kopete.png,kopete/hi22-app-kopete.png,kopete/hi32-app-kopete.png,kopete/hi48-app-kopete.png,kopete/kopete.desktop,kopete/kopeteui.rc,kopete/main.cpp,kopete/kopeteiface.cpp,kopete/kopeteiface.h,
@@ -3567,9 +3596,9 @@ install_location=
 type=SOURCE
 
 [protocols/jabber/Makefile.am]
-files=protocols/jabber/jabber.plugin,protocols/jabber/jabbercontact.cpp,protocols/jabber/jabbercontact.h,protocols/jabber/jabbermessage.cpp,protocols/jabber/jabbermessage.h,protocols/jabber/jabberprefs.cpp,protocols/jabber/jabberprefs.h,protocols/jabber/jabberprotocol.cpp,protocols/jabber/jabberprotocol.h,protocols/jabber/TODO,
+files=protocols/jabber/jabber.plugin,protocols/jabber/jabbercontact.cpp,protocols/jabber/jabbercontact.h,protocols/jabber/jabbermessage.cpp,protocols/jabber/jabbermessage.h,protocols/jabber/jabberprefs.cpp,protocols/jabber/jabberprefs.h,protocols/jabber/jabberprotocol.cpp,protocols/jabber/jabberprotocol.h,protocols/jabber/TODO,protocols/jabber/jabbermap.cpp
 sub_dirs=pixmaps,psi,ui,
-type=normal
+type=static_library
 
 [protocols/jabber/TODO]
 dist=true
@@ -3594,6 +3623,12 @@ dist=true
 install=false
 install_location=
 type=HEADER
+
+[protocols/jabber/jabbermap.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
 
 [protocols/jabber/jabbermessage.cpp]
 dist=true

@@ -28,6 +28,7 @@ class QPixmap;
 class QTimer;
 
 class KAction;
+class KActionCollection;
 class KListAction;
 
 class KopeteHistoryDialog;
@@ -41,8 +42,6 @@ public:
 		const QString &displayName, const QString &group,
 		KopeteMetaContact *parent );
 
-	virtual void showContextMenu( const QPoint&, const QString& group );
-	virtual void execute();
 
 	virtual QString id() const;
 	virtual QString data() const;
@@ -99,22 +98,28 @@ public:
 	virtual void removeFromGroup( const QString &group );
 	virtual void moveToGroup( const QString &from, const QString &to );
 
+	virtual bool isReachable() { return false; };
+
+	virtual KActionCollection *customContextMenuActions();
+
 public slots:
-	void slotChatThisUser();
+
+
+	virtual void slotUserInfo();
+	virtual void slotDeleteContact();
+	virtual void execute();
+	virtual void slotViewHistory();
 
 signals:
 	void chatToUser( QString );
 
 private slots:
-	void slotRemoveThisUser();
-	void slotCopyThisUser();
-	void slotMoveThisUser();
-	void slotRemoveFromGroup();
+
 	void slotBlockUser();
 
 	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();
-	void slotViewHistory();
+
 
 private:
 	QString m_msnId;
@@ -129,14 +134,15 @@ private:
 
 	KopeteHistoryDialog *historyDialog;
 
-	KAction* m_actionRemove;
-	KAction* m_actionRemoveFromGroup;
-	KAction* m_actionChat;
-	KAction* m_actionInfo;
+	KActionCollection* m_actionCollection;
+//	KAction* m_actionRemove;
+//	KAction* m_actionRemoveFromGroup;
+//	KAction* m_actionChat;
+//	KAction* m_actionInfo;
 	KAction* m_actionBlock;
-	KAction* m_actionHistory;
-	KListAction *m_actionMove;
-	KListAction *m_actionCopy;
+//	KAction* m_actionHistory;
+//	KListAction *m_actionMove;
+//	KListAction *m_actionCopy;
 
 	/**
 	 * Most ugly hack ever. You're not seeing this. Nothing to see here.

@@ -13,10 +13,11 @@ free to assign the issue to yourself, or contact kopete-devel@kde.org.
 
 - Rewrite of the plugin API, for general use in kdelibs
   Planned for Kopete 0.6
-  Assigned to Martijn Klingens <klingens@kde.org>, help welcome
+  Assigned to Martijn Klingens <klingens@kde.org> and Chris <tenharmsel@users.sourceforge.net>
+  Help needed
 
 - Usability improvements
-  Applicable to all versions, not assigned to anyone in particular
+  Partially assigned to Chris TenHarmsel <tenharmsel@users.sourceforge.net>
 
 - Protocol plugin for sending/receiving SMS messages over either web
   gateway or mobile phone/modem

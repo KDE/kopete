@@ -27,6 +27,9 @@ class QPixmap;
 
 class KopeteEvent;
 class KopeteMetaContact;
+class KPopupMenu;
+class KAction;
+class KActionCollection;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -41,6 +44,12 @@ class KopeteContact : public QObject
 
 public:
 	/**
+	 * Create new contact. Supply the parent meta contact!
+	 */
+	KopeteContact( const QString &protocolId, KopeteMetaContact *parent );
+	~KopeteContact();
+	
+	/**
 	 * Contact's status
 	 */
 	enum ContactStatus { Online, Away, Offline };
@@ -53,6 +62,13 @@ public:
 	 */
 	bool isOnline() const { return status() != Offline; }
 
+	/**
+	 * Return whether or not this contact is REACHABLE.
+	 * Useful in determining if the contact is able to
+	 * recieve messages even if offline, etc.
+	 */
+	virtual bool isReachable() = 0;
+	
 	/**
 	 * The meta contact this contact is contained in
 	 */
@@ -96,20 +112,19 @@ public:
 	virtual void moveToGroup( const QString &from, const QString &to );
 
 	/**
-	 * Create new contact. Supply the parent meta contact!
-	 */
-	KopeteContact( const QString &protocolId, KopeteMetaContact *parent );
-	~KopeteContact();
-
-	/**
-	 * set name of an KopeteContact
-	 * This is the string that gets drawn in the listview
+	 * Sets the display name, or alias, for the contact.
+	 * this is what is shown in the contact list.
+	 * @param name Then new display name
 	 */
 	void setDisplayName( const QString &name );
+	
+	/**
+	 * Get the current display name
+	 */
 	QString displayName() const;
 
 	/**
-	 * return status of an KopeteContact
+	 * Return the status of the contact
 	 */
 	virtual ContactStatus status() const;
 
@@ -119,12 +134,11 @@ public:
 	 * but you might want to reimplement it for more
 	 * fine-grained reporting of status
 	 */
-
 	virtual QString statusText() const;
+	
 	/**
 	 * The name of the icon associated with the contact's status
 	 */
-
 	virtual QString statusIcon() const;
 
 	/**
@@ -153,19 +167,6 @@ public:
 	virtual int importance() const;
 
 	/**
-	 * This should typically pop up a KopeteChatWindow
-	 */
-	virtual void execute() = 0;
-
-	/**
-	 * Show a context menu of actions pertaining to this contact
-	 * I hate having the group parameter, but its used for when
-	 * a contact can be in multiple groups and you have to move
-	 * a specific instance from one group to another.
-	 */
-	virtual void showContextMenu( const QPoint& p, const QString& group ) = 0;
-
-	/**
 	 * Return the unique id that identifies a contact. Id is required
 	 * to be unique per protocol and per identity. Across those boundaries
 	 * ids may occur multiple times.
@@ -186,13 +187,72 @@ public:
 	 * this is undefined and may change at any time!
 	 */
 	QString protocol() const { return m_protocolId; }
+	
+	/**
+	 * Returns a set of custom menu items for the context menu
+	 * which is displayed in showContextMenu (private).  Protocols
+	 * should use this to add protocol-specific actions to the 
+	 * popup menu
+	 */
+	 virtual KActionCollection *customContextMenuActions() = 0;
+	 
+	 /**
+	 * Show a context menu of actions pertaining to this contact
+	 * I hate having the group parameter, but its used for when
+	 * a contact can be in multiple groups and you have to move
+	 * a specific instance from one group to another.
+	 */
+	void showContextMenu( const QPoint& p, const QString& group );
+	
+	
+public slots:
+	/**
+	 * This should typically pop up a KopeteChatWindow
+	 */
+	virtual void execute() = 0;
+	
+	/**
+	 * Changes the MetaContact that this contact is a part of.  This function
+	 * is called by the KAction changeMetaContact that is part of the context 
+	 * menu.
+	 * TODO: add popup dialog to choose new metacontact
+	 * TODO: get new metacontact name (or id) from the dialog and move this contact
+	 *	   to the new metacontact
+	 */
+	void slotChangeMetaContact();
+	
+	/**
+	 * Method to view the history, should be implemented by the protocol plugin
+	 */
+	virtual void slotViewHistory() = 0;
+	
+	/** 
+	 * Method to delete a contact from the contact list, 
+	 * should be implemented by protocol plugin to handle
+	 * protocol-specific actions required to delete a contact
+	 * (ie. messages to the server, etc)
+	 */
+	virtual void slotDeleteContact() = 0;
+	
+	/**
+	 * Method to retrieve user information.  Should be implemented by
+	 * the protocols, and popup some sort of dialog box
+	 */
+	virtual void slotUserInfo() = 0;
+	
+private slots:
+	/**
+	 * Function that is called when "Change Alias" is chosen from the
+	 * context menu.  Presents dialog box to change alias, and calls
+	 * setDisplayName with the returned value
+	 */
+	void slotChangeDisplayName();
 
 signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void statusChanged( KopeteContact *contact,
-		KopeteContact::ContactStatus status );
+	void statusChanged( KopeteContact *contact, KopeteContact::ContactStatus status );
 
 	/**
 	 * Deprecated, old signal! Use the above one instead
@@ -219,6 +279,7 @@ signals:
 	void contactDestroyed( KopeteContact *c );
 
 private:
+	
 	QString m_displayName;
 	QString m_protocolId;
 
@@ -230,6 +291,21 @@ private:
 	ContactStatus m_cachedOldStatus;
 
 	KopeteMetaContact *m_metaContact;
+	
+	/* Function to build the contextMenu */
+	void initActions();
+	/* Context Menu Entries */
+	KAction *actionSendMessage;
+	KAction *actionDeleteContact;
+	KAction *actionChangeMetaContact;
+	KAction *actionViewHistory;
+	KAction *actionChangeAlias;
+	KAction *actionUserInfo;
+	
+	/* This is THE context menu.  It will be populated with standard actions that
+	 * are protocol independant, and individual protocols can add menu items to it.
+	 */
+	KPopupMenu *contextMenu;
 };
 
 #endif

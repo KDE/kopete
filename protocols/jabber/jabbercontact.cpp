@@ -174,6 +174,7 @@ void JabberContact::initActions()
 /**
  * Popup the context menu
  */
+/*
 void JabberContact::showContextMenu(const QPoint& point, const QString&)
 {
 
@@ -268,6 +269,14 @@ void JabberContact::showContextMenu(const QPoint& point, const QString&)
 
 	delete popup;
 	delete popup_status;
+
+}
+*/
+
+KActionCollection *JabberContact::customContextMenuActions()
+{
+
+	return 0L;
 
 }
 
@@ -454,7 +463,7 @@ QString JabberContact::statusIcon() const
 	
 }
 
-void JabberContact::slotRemoveThisUser()
+void JabberContact::slotDeleteContact()
 {
 
 	kdDebug() << "[JabberContact] Removing user " << userId() << endl;
@@ -866,7 +875,7 @@ void JabberContact::slotSelectResource()
 }
 
 
-void JabberContact::slotRetrieveVCard()
+void JabberContact::slotUserInfo()
 {
 
 	// just pass the request on to the protocol backend
@@ -893,14 +902,16 @@ void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 
 }
 
-void JabberContact::slotEditVCard() {
+void JabberContact::slotEditVCard()
+{
 
 	mEditingVCard = true;
-	slotRetrieveVCard();
+	slotUserInfo();
 
 }
 
-void JabberContact::slotSaveVCard(QDomElement &vCardXML) {
+void JabberContact::slotSaveVCard(QDomElement &vCardXML)
+{
 
 	protocol->slotSaveVCard(vCardXML);
 	mEditingVCard = false;

@@ -130,10 +130,19 @@ class JabberContact : public KopeteContact
 			return awayReason;
 		}
 
-		/*
-		 * Show context menu for the contact
+		/**
+		 * Return if we are reachable (defaults to
+		 * true because we can send on- and offline
 		 */
-		virtual void showContextMenu(const QPoint&, const QString&);
+		virtual bool isReachable()
+		{
+			return true;
+		}
+
+		/**
+		 * Create custom context menu items for the contact
+		 */
+		virtual KActionCollection *customContextMenuActions();
 
 		/**
 		 * Determine the currently best resource for the contact
@@ -168,6 +177,11 @@ class JabberContact : public KopeteContact
 
 	public slots:
 
+		/**
+		 * Remove this contact from the roster
+		 */
+		virtual void slotDeleteContact();
+
 		/*
 		 * Handle incoming message
 		 */
@@ -183,6 +197,11 @@ class JabberContact : public KopeteContact
 		 */
 		void slotViewHistory();
 		
+		/**
+		 * Retrieve a vCard for the contact
+		 */
+		virtual void slotUserInfo();
+
 		/**
 		 * Slots called when a certain resource
 		 * appears or disappears for the contact
@@ -232,11 +251,6 @@ class JabberContact : public KopeteContact
 		void slotDeleteMySelf(bool);
 
 		/**
-		 * Remove this contact from the roster
-		 */
-		void slotRemoveThisUser();
-		
-		/**
 		 * Display a rename dialog
 		 */
 		void slotRenameContact();
@@ -256,11 +270,6 @@ class JabberContact : public KopeteContact
 		 */
 		void slotEmailUser();
 	
-		/**
-		 * Retrieve a vCard for the contact
-		 */
-		void slotRetrieveVCard();
-
 		/**
 		 * Edit a vCard for the contact.
 		 */
