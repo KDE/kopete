@@ -28,16 +28,18 @@
 #include <qsocket.h>
 // other
 #include <time.h>
-/**
-  *@author Olaf Lueg
-  */
 
+/**
+ * @author Olaf Lueg
+ */
 class KMSNServiceSocket : public QObject
 {
-Q_OBJECT
-public: 
+	Q_OBJECT
+
+public:
 	KMSNServiceSocket();
 	~KMSNServiceSocket();
+
 	QString _publicName;
 	QString buffer;
 	
@@ -119,7 +121,9 @@ signals:
 	void publicNameChanged( QString, QString );
 	void newSerial( uint );
 	void statusChanged( QString );
-	
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
