@@ -21,6 +21,8 @@
 
 #include "kopetenotifydataobject.h"
 #include "kopeteplugindataobject.h"
+#include "kopetemessage.h"
+#include "kopetemessagemanager.h"
 
 #include <qptrlist.h>
 
@@ -113,6 +115,11 @@ public:
 	 * \return the members of this group
 	 */
 	QPtrList<MetaContact> members() const;
+	
+	/**
+	 * \return the online members of this group
+	 */
+	QPtrList<MetaContact> onlineMembers() const;
 
 	/**
 	 * @internal
@@ -150,6 +157,12 @@ public:
 	 * \return a Kopete::Group pointer to the temporary group
 	 */
 	static Group *temporary();
+	
+public slots:
+	/**
+	 * Send a message to all contacts in the group
+	 */
+	void sendMessage();
 
 signals:
 	/**
@@ -162,6 +175,9 @@ private:
 	static Group *s_temporary;
 
 	KopeteGroupPrivate *d;
+	
+private slots:
+	void sendMessage( Kopete::Message& );
 };
 
 }

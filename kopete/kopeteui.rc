@@ -85,6 +85,7 @@
 	<Menu name="group_popup">
 		<Action name="contactRemove" />
 		<Action name="contactRename" />
+		<Action name="contactSendMessage" />
 		<Separator lineSeparator="true" />
 		<Action name="contactProperties" />
 	</Menu>

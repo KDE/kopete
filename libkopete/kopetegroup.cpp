@@ -287,6 +287,53 @@ QString Kopete::Group::internalName() const
 	return d->internalName;
 }
 
+void Kopete::Group::sendMessage()
+{
+	QPtrList<Kopete::MetaContact> list = onlineMembers();
+	Kopete::MetaContact *mc = list.first();
+	Kopete::Contact *c;
+	
+	if(!mc)
+		return;
+	c = mc->preferredContact();
+	c->sendMessage();
+	if( c->manager( false ) )
+	{
+		connect( c->manager( false ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
+	}
+}
+
+void Kopete::Group::sendMessage( Kopete::Message& msg )
+{
+	QPtrList<Kopete::MetaContact> list = onlineMembers();
+	Kopete::MetaContact *mc = list.first();
+	Kopete::Contact *c = msg.to().first();
+	
+	if(!mc)
+		return;
+	list.remove( msg.to().first()->metaContact() );
+	for( mc = list.first(); mc; mc = list.next() )
+	{
+		if( mc->preferredContact()->manager( true ) )
+		{
+			mc->preferredContact()->manager( false )->sendMessage( msg );
+		}
+	}
+	disconnect( c->manager( false ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
+}
+
+QPtrList<Kopete::MetaContact> Kopete::Group::onlineMembers() const
+{
+	QPtrList<Kopete::MetaContact> list = members();
+	
+	for( list.first(); list.current(); )
+		if( list.current()->isReachable() )
+			list.next();
+		else
+			list.remove();
+	return list;
+}
+
 #include "kopetegroup.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

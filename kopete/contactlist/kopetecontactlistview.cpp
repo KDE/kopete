@@ -1290,6 +1290,7 @@ void KopeteContactListView::updateActionsForSelection(
 	{
 		actionRename->setText(i18n("Rename Contact"));
 		actionRemove->setText(i18n("Remove Contact"));
+		actionSendMessage->setText(i18n("Send Single Message..."));
 		actionRename->setEnabled(true);
 		actionRemove->setEnabled(true);
 	}
@@ -1297,8 +1298,10 @@ void KopeteContactListView::updateActionsForSelection(
 	{
 		actionRename->setText(i18n("Rename Group"));
 		actionRemove->setText(i18n("Remove Group"));
+		actionSendMessage->setText(i18n("Send Message to Group"));
 		actionRename->setEnabled(true);
 		actionRemove->setEnabled(true);
+		actionSendMessage->setEnabled(true);
 	}
 	else
 	{
@@ -1317,8 +1320,12 @@ void KopeteContactListView::updateActionsForSelection(
 void KopeteContactListView::slotSendMessage()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
+	Kopete::Group *group = Kopete::ContactList::self()->selectedGroups().first();
 	if(m)
 		m->sendMessage();
+	else
+		if(group)
+			group->sendMessage();
 }
 
 void KopeteContactListView::slotStartChat()
