@@ -7,8 +7,8 @@ PATH=/bin
 # Check if file is indeed a file and readable
 [ ! -f "$1" -o ! -r "$1" ] && exit 1
 
-# Create a unique and (hopefully!) unpredictable filename
-filename="/tmp/.wp`date +%N`"
+# Create a unique filename
+filename="/var/lib/winpopup/.wp`date +%N`"
 
 # Put the remote host name into the file
 echo "$2" > $filename
