@@ -188,6 +188,11 @@ QString Client::userId()
 	return "maeuschen";
 }
 
+QString Client::userDN()
+{
+	return "cn=maeuschen,o=suse";
+}
+
 QString Client::password()
 {
 	return "maeuschen";

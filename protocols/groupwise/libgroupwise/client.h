@@ -108,6 +108,10 @@ Q_OBJECT
 		QString userId();
 		
 		/**
+		 * The current user's DN
+		 */
+		QString userDN();
+		/**
 		 * The current user's password
 		 */
 		QString password();
