@@ -401,7 +401,10 @@ void cs_dump( const QByteArray &bytes )
 		int dword = 0;
 		for ( int i = 0; i < 8; ++i )
 		{
-			printf( "%02x ", bytes[ count + i ] );
+			if ( count + i < bytes.count() )
+				printf( "%02x ", bytes[ count + i ] );
+			else
+				printf( "   " );
 			if ( i == 3 )
 				printf( " " );
 		}
@@ -409,11 +412,16 @@ void cs_dump( const QByteArray &bytes )
 		dword = 0;
 		for ( int i = 0; i < 8; ++i )
 		{
-			int j = bytes [ count + i ];
-			if ( j >= 0x20 && j <= 0x7e ) 
-				printf( "%2c ", j );
+			if ( count + i < bytes.count() )
+			{
+				int j = bytes [ count + i ];
+				if ( j >= 0x20 && j <= 0x7e ) 
+					printf( "%2c ", j );
+				else
+					printf( "%2c ", '.' );
+			}
 			else
-				printf( "%2c ", '.' );
+				printf( "   " );
 			if ( i == 3 )
 				printf( " " );
 		}
