@@ -29,8 +29,9 @@
 #include "testbedprotocol.h"
 
 TestbedContact::TestbedContact( KopeteAccount* _account, const QString &uniqueName, 
-		const TestbedContactType type, const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( _account, uniqueName, parent )
+		const TestbedContactType type, const QString &displayName, KopeteMetaContact *parent,
+		KopeteContact::AddMode mode  )
+: KopeteContact( _account, uniqueName, parent, mode )
 {
 	kdDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
 	m_type = type;

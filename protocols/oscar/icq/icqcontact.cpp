@@ -34,8 +34,8 @@
 static const unsigned int SUPPORTED_INFO_ITEMS = 7;
 
 ICQContact::ICQContact(const QString name, const QString displayName,
-	ICQAccount *acc, KopeteMetaContact *parent)
-	: OscarContact(name, displayName, acc, parent)
+	ICQAccount *acc, KopeteMetaContact *parent, KopeteContact::AddMode mode )
+	: OscarContact(name, displayName, acc, parent, mode)
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 

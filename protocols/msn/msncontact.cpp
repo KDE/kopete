@@ -41,8 +41,8 @@
 #include "msnnotifysocket.h"
 #include "msnaccount.h"
 
-MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( account, id, parent )
+MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent, KopeteContact::AddMode mode )
+: KopeteContact( account, id, parent, mode )
 {
 	m_displayPicture=0L;
 

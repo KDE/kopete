@@ -33,7 +33,7 @@
 #include "ksparser.h"
 
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, KopeteMetaContact *m)
-	: IRCContact(contactManager, servername, m, "irc_server")
+	: IRCContact(contactManager, servername, m, KopeteContact::OmitFromKABC, "irc_server")
 {
 	QObject::connect(m_engine, SIGNAL(internalError(KIRC::EngineError, const KIRCMessage &)),
 			this, SLOT(engineInternalError(KIRC::EngineError, const KIRCMessage &)));

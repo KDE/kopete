@@ -150,6 +150,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	if ( !kabcUid.isEmpty() )
 	{
 		KABC::AddressBook *ab = KABC::StdAddressBook::self();
+		KABC::StdAddressBook::setAutomaticSave( false );
 		KABC::Addressee a = ab->findByUid( kabcUid );
 		mainWidget->edtAddressee->setText( a.realName() );
 		mainWidget->btnSelectAddressee->setEnabled( true );
@@ -234,8 +235,5 @@ void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 	 mainWidget->edtAddressee->setText( a.realName() );
 	 // set/update the MC's addressee uin field
 	 item->metaContact()->setMetaContactId( a.uid() );
-	 // set/update the Messaging/Protocol entries in the KABC
-	 
-	 // What if - messaging entries already exist...
 }
 #include "kopetelviprops.moc"

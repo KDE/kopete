@@ -1,9 +1,10 @@
 /*
     kopetemetacontact.h - Kopete Meta Contact
 
-    Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
+	Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2003		by Will Stephenson		  <will@stevello.free-online.co.uk>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -23,7 +24,9 @@
 #include <qobject.h>
 #include <qptrlist.h>
 #include <qdom.h>
+#include <kabc/addressbook.h>
 
+//#include "kopetegroup.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteplugindataobject.h"
@@ -32,11 +35,11 @@ class QDomNode;
 
 class KURL;
 
-class KopeteGroup;
 
 struct KopeteMetaContactPrivate;
 
 /**
+ * @author Will Stephenson <will@stevello.free-online.co.uk>
  * @author Martijn Klingens <klingens@kde.org>
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
@@ -53,17 +56,19 @@ class KopeteMetaContact : public KopetePluginDataObject
 public:
 	KopeteMetaContact();
 	~KopeteMetaContact();
-
+	
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
 	QPtrList<KopeteContact> contacts() const;
 
 	/**
-	 * @brief Add a contact to the meta contact
+	 * @brief Add a brand new contact to the meta contact.  Updates KABC
+	 * @param c The KopeteContact being added
+	 * @param mode Whether the Contact is a completely new contact(Add) or one that is being loaded from disk
 	 */
-	void addContact( KopeteContact *c );
-
+	void addContact( KopeteContact *c, KopeteContact::AddMode mode );
+	
 	/**
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
@@ -235,7 +240,7 @@ public:
 	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.  
 	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
 	 */
-	void setMetaContactId( const QString& newMetaContactId ) const;
+	void setMetaContactId( const QString& newMetaContactId );
 	
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
@@ -405,6 +410,10 @@ private slots:
 	 */
 	void slotPluginLoaded( KopetePlugin *plugin );
 
+	/**
+	 * The KABC exposed data changed, so change it in KABC
+	 */
+	void slotUpdateKABC();
 
 private:
 	KopeteContact *preferredContact();

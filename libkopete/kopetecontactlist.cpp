@@ -23,6 +23,7 @@
 #include <qregexp.h>
 
 #include <kapplication.h>
+#include <kabc/stdaddressbook.h>
 #include <kdebug.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
@@ -85,7 +86,6 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 /*	connect( mc,
 		SIGNAL( removedFromGroup( KopeteMetaContact *, const QString & ) ),
 		SLOT( slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );*/
-
 	emit metaContactAdded( mc );
 }
 
@@ -605,14 +605,11 @@ const QDomDocument KopeteContactList::toXML()
 
 	// Save metacontact information.
 	for( KopeteMetaContact *m = m_contacts.first(); m; m = m_contacts.next() )
-	{
 		if( !m->isTemporary() )
 			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
-	}
-
+	
 	return doc;
 }
-
 
 QStringList KopeteContactList::contacts() const
 {

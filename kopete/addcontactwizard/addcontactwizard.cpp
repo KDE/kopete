@@ -138,6 +138,7 @@ void AddContactWizard::loadAddressees()
 {
 	addresseeListView->clear();
 	KABC::AddressBook* ab = KABC::StdAddressBook::self();
+	KABC::StdAddressBook::setAutomaticSave( false );
 	KABC::AddressBook::Iterator it;
 	for( it = ab->begin(); it != ab->end(); ++it )
 		KABC::AddresseeItem *item = new KABC::AddresseeItem( addresseeListView, (*it) );
@@ -215,8 +216,8 @@ void AddContactWizard::accept()
 		metaContact->setTrackChildNameChanges( false );
 		metaContact->setDisplayName( mDisplayName->text() );
 	}
-
-	// set the KABC uid in the metacontact
+	// NOT SURE IF I MEANT TO TAKE THIS OUT - WILL
+	//// set the KABC uid in the metacontact
 	KABC::AddresseeItem *item = 0L;
 	item = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
 	if ( addresseeListView->isEnabled() && item )
@@ -239,12 +240,19 @@ void AddContactWizard::accept()
 
 	// get each protocol's contact
 	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
-	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
-		ok |= it.data()->apply( it.key(), metaContact );
-
-	// add it to the contact list
+	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
+		ok |= it.data()->apply( it.key(), metaContact ); 
+	
 	if ( ok )
+	{
+		// set the KABC uid in the metacontact
+		KABC::AddresseeItem* i = 0L;
+		i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
+		if ( addresseeListView->isEnabled() && i )
+			metaContact->setMetaContactId( i->addressee().uid() );
+		// add it to the contact list
 		KopeteContactList::contactList()->addMetaContact( metaContact );
+	}
 	else
 		delete metaContact;
 

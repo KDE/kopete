@@ -81,7 +81,7 @@ void AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	}
 	// Create Oscar contact, this adds it to the proper account
 	// TODO
-	new AIMContact(contactId, displayName, static_cast<AIMAccount*>(account), metaContact);
+	new AIMContact(contactId, displayName, static_cast<AIMAccount*>(account), metaContact, KopeteContact::OmitFromKABC );
 
 }
 

@@ -45,7 +45,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	theInterface = parent->createInterface(theHostName);
 
 	// we need this before initActions
-	theMyself = new WPContact(this, theHostName, theHostName, 0);
+	theMyself = new WPContact(this, theHostName, theHostName, 0, KopeteContact::OmitFromKABC );
 
 	if(autoLogin()) connect();
 
@@ -95,7 +95,7 @@ bool WPAccount::addContactToMetaContact(const QString &contactId, const QString 
 
 	if(!contacts()[contactId])
 	{
-		WPContact *newContact = new WPContact(this, contactId, displayName, parentContact);
+		WPContact *newContact = new WPContact(this, contactId, displayName, parentContact, KopeteContact::AddToKABC );
 		return newContact != 0;
 	}
 	else

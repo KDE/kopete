@@ -56,7 +56,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact ( Olivier )
-	m_myself = new MSNContact( this, accountId(), accountId(), 0L );
+	m_myself = new MSNContact( this, accountId(), accountId(), 0L, KopeteContact::OmitFromKABC );
 	m_myself->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
@@ -749,7 +749,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		{
 			metaContact = new KopeteMetaContact();
 
-			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact );
+			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact, KopeteContact::OmitFromKABC );
 			msnContact->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 			for ( QStringList::Iterator it = contactGroups.begin();
@@ -791,12 +791,18 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			{
 				new_contact = true;
 
+				KopeteContact::AddMode mode;
 				if ( m_addWizard_metaContact )
+				{
 					m = m_addWizard_metaContact;
+					mode = KopeteContact::AddToKABC;
+				}
 				else
+				{
 					m = new KopeteMetaContact();
-
-				MSNContact *c = new MSNContact( this, handle, publicName, m );
+					mode = KopeteContact::OmitFromKABC;
+				}
+				MSNContact *c = new MSNContact( this, handle, publicName, m, mode );
 				c->contactAddedToGroup( group, m_groupList[ group ] );
 
 				if ( !m_addWizard_metaContact )
@@ -1066,7 +1072,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 		{
 			// This is a temporary contact. ( a person who messaged us but is not on our conntact list.
 			// We don't want to create it on the server.Just create the local contact object and add it
-			MSNContact *newContact = new MSNContact( this, contactId, contactId, metaContact );
+			MSNContact *newContact = new MSNContact( this, contactId, contactId, metaContact, KopeteContact::OmitFromKABC );
 			return ( newContact != 0L );
 		}
 	}

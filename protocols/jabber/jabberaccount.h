@@ -151,7 +151,8 @@ private:
 	 * Create a new JabberContact
 	 */
 	JabberContact *createContact (const QString & jid, const QString & alias,
-								  const QStringList & groups, KopeteMetaContact * metaContact);
+								  const QStringList & groups, KopeteMetaContact * metaContact,
+								  KopeteContact::AddMode mode );
 
 	/* Add new contact to the Kopete contact list; this doesn't actually
 	 * affect the Jabber roster, it's just an internal method. */

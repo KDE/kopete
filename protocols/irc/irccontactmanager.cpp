@@ -243,7 +243,7 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 	IRCUserContact *user = 0;
 	if ( !m_users.contains( lowerName ) )
 	{
-		user = new IRCUserContact(this, name, m);
+		user = new IRCUserContact(this, name, m, KopeteContact::OmitFromKABC );
 		m_users.insert( lowerName, user );
 		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)),
 				this, SLOT(unregisterUser(KopeteContact *)));

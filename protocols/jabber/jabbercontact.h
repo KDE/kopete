@@ -50,7 +50,8 @@ class JabberContact:public KopeteContact
 
 public:
 	JabberContact (QString userid, QString name, QStringList groups,
-				   JabberAccount * protocol, KopeteMetaContact * mc);
+				   JabberAccount * protocol, KopeteMetaContact * mc,
+				   KopeteContact::AddMode mode );
 
 	/********************************************************************
 	 *

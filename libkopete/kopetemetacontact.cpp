@@ -21,6 +21,10 @@
 
 #include <kapplication.h>
 
+#include <kabc/addressbook.h>
+#include <kabc/addressee.h>
+#include <kabc/stdaddressbook.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -69,7 +73,7 @@ KopeteMetaContact::~KopeteMetaContact()
 	delete d;
 }
 
-void KopeteMetaContact::addContact( KopeteContact *c )
+void KopeteMetaContact::addContact( KopeteContact *c, KopeteContact::AddMode mode )
 {
 	if( d->contacts.contains( c ) )
 	{
@@ -107,8 +111,24 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		/* for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
 			addToGroup(*it); */
 		emit contactAdded(c);
+		
+		if ( mode == KopeteContact::AddToKABC )
+		{
+			// Save the changed contact to KABC, if using KABC
+			if ( !d->metaContactId.isEmpty() )
+			{
+				// If the new contact is NOT in the pluginData
+				kdDebug(14010) << k_funcinfo << " contactId PluginData " << pluginData( c->protocol(), QString::fromLatin1( "contactId" ) ) << endl;;
+				if ( pluginData( c->protocol(), QString::fromLatin1( "contactId" ) ).contains( c->contactId() ) == 0 )
+				{
+					kdDebug(14010) << k_funcinfo << " didn't find " << c->contactId() << ", new contact, write KABC" << endl;
+					slotUpdateKABC();
+				}
+				else
+					kdDebug(14010) << k_funcinfo << " found " << c->contactId() << ", don't write." << endl;
+			}
+		}
 	}
-
 	updateOnlineStatus();
 }
 
@@ -589,8 +609,9 @@ void KopeteMetaContact::slotContactDestroyed( KopeteContact *contact )
 
 const QDomElement KopeteMetaContact::toXML()
 {
+	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 	emit aboutToSave(this);
-
+	
 	QDomDocument metaContact;
 	metaContact.appendChild( metaContact.createElement( QString::fromLatin1( "meta-contact" ) ) );
 	metaContact.documentElement().setAttribute( QString::fromLatin1( "contactId" ), metaContactId() );
@@ -613,22 +634,7 @@ const QDomElement KopeteMetaContact::toXML()
 		}
 		metaContact.documentElement().appendChild( groups );
 	}
-
-	// Store address book fields
-	QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
-	for( ; appIt != d->addressBook.end(); ++appIt )
-	{
-		QMap<QString, QString>::ConstIterator addrIt = appIt.data().begin();
-		for( ; addrIt != appIt.data().end(); ++addrIt )
-		{
-			QDomElement addressBook = metaContact.createElement( QString::fromLatin1("address-book-field") );
-			addressBook.setAttribute( QString::fromLatin1("app"),  appIt.key() ) ;
-			addressBook.setAttribute( QString::fromLatin1("key"),  addrIt.key()  );
-			addressBook.appendChild( metaContact.createTextNode( addrIt.data() ) );
-			metaContact.documentElement().appendChild( addressBook );
-		}
-	}
-
+	
 	// Store other plugin data
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
 	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
@@ -687,7 +693,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 			QString val = contactElement.text();
 			d->addressBook[ app ][ key ] = val;
 		}
-		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1( "custom-icons" ))
+		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1("custom-icons" ))
 		{
 			KopetePluginDataObject::fromXML(contactElement);
 		}
@@ -756,9 +762,74 @@ QString KopeteMetaContact::metaContactId() const
 	return d->metaContactId;
 }
 
-void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId ) const
+void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId )
 {
+	// 1) Check the Id is not already used by another contact
+	// 2) cause a kabc write ( only in response to kopetemetacontactLVIProps calling this, or will 
+	//      write be called twice when creating a brand new MC? )
+	// 3) What about changing from one valid kabc to another, are kabc fields removed?
+	// 4) May be called with Null to remove an invalid kabc uid by KMC::toKABC()
+	// 5) Is called when reading the saved contact list
 	d->metaContactId = newMetaContactId;
+	if ( !newMetaContactId.isEmpty() )
+		slotUpdateKABC();
+}
+
+void KopeteMetaContact::slotUpdateKABC()
+{
+	// Save any changes in each contact's addressBookFields to KABC
+	KABC::AddressBook* ab = KABC::StdAddressBook::self();
+	KABC::StdAddressBook::setAutomaticSave( false );
+	
+	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
+	emit aboutToSave(this);
+	
+	// If the metacontact is linked to a kabc entry
+	if ( !d->metaContactId.isEmpty() )
+	{
+		kdDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
+		// Look up the address book entry
+		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
+		// Check that if addressee is not deleted or if the link is spurious
+		// (inherited from Kopete < 0.8, where all metacontacts had random ids)
+		
+		// FIXME: this no longer gets called when reading all contacts but we need something similar to update from 0.7
+		if ( theAddressee.isEmpty() )
+		{
+			// remove the link
+			kdDebug( 14010 ) << k_funcinfo << "...not found." << endl;
+			setMetaContactId( QString::null );
+		}
+		else
+		{
+			kdDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
+			// Store address book fields
+			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
+			for( ; appIt != d->addressBook.end(); ++appIt )
+			{
+				QMap<QString, QString>::ConstIterator addrIt = appIt.data().begin();
+				for( ; addrIt != appIt.data().end(); ++addrIt )
+				{
+					// FIXME: This assumes Kopete is the only app writing these fields
+					// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
+					kdDebug( 14010 ) << k_funcinfo << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << addrIt.data() << endl;
+					theAddressee.insertCustom( appIt.key(), addrIt.key(), addrIt.data() );
+				}
+			}
+			ab->insertAddressee( theAddressee );
+			
+			KABC::Ticket *ticket = ab->requestSaveTicket();
+			if ( !ticket )
+				kdWarning( 14010 ) << "WARNING: Resource is locked by other application!" << endl;
+			else 
+			{
+				if ( !ab->save( ticket ) ) 
+					kdWarning( 14010 ) << "ERROR: Saving failed!" << endl;
+				ab->releaseSaveTicket( ticket );
+			}
+			kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC for " << displayName() << endl;
+		}
+	}	
 }
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const

@@ -51,7 +51,8 @@ class ICQContact : public OscarContact
 
 	public:
 		ICQContact(const QString name, const QString displayName,
-					ICQAccount *account, KopeteMetaContact *parent);
+					ICQAccount *account, KopeteMetaContact *parent,
+					KopeteContact::AddMode mode );
 		virtual ~ICQContact();
 
 		/**

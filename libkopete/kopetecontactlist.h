@@ -210,6 +210,7 @@ public slots:
 	 * FIXME: Use a better way, without exposing the XML backend, though.
 	 */
 	void load() { loadXML(); }
+	
 	void save() { saveXML(); }
 
 signals:
@@ -274,7 +275,7 @@ private:
 	 * Save the contact list to XML file
 	 */
 	void saveXML();
-
+	
 	/**
 	 * Private constructor: we are a singleton
 	 */

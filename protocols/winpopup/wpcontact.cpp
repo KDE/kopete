@@ -28,8 +28,8 @@
 #include "wpaccount.h"
 #include "wpdebug.h"
 
-WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const QString &displayName, KopeteMetaContact *metaContact)
-	: KopeteContact(account, newHostName, metaContact)
+WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const QString &displayName, KopeteMetaContact *metaContact, KopeteContact::AddMode mode )
+	: KopeteContact(account, newHostName, metaContact, mode )
 {
 	DEBUG(WPDMETHOD, "WPContact::WPContact(<account>, " << newHostName << ", " << displayName << ", <parent>)");
 	DEBUG(WPDINFO, "I am " << this << "!");

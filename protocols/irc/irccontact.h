@@ -51,7 +51,7 @@ class IRCContact
 	Q_OBJECT
 
 public:
-	IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, const QString& icon = QString::null);
+	IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, KopeteContact::AddMode mode, const QString& icon = QString::null );
 	~IRCContact();
 
 	/**

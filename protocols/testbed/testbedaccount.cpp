@@ -33,7 +33,7 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 {
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
-	m_myself = new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), 0L );
+	m_myself = new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), 0L, KopeteContact::OmitFromKABC );
 	m_myself->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
@@ -72,7 +72,8 @@ bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QSt
 {
 	kdDebug ( 14210 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
 			<< endl;
-	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, displayName, parentContact );
+	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, displayName, parentContact, 
+													 KopeteContact::AddToKABC );
 	return newContact != 0L;
 }
 

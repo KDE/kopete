@@ -28,8 +28,8 @@
 #include "aimuserinfo.h"
 #include "aim.h" //for tocNormalize
 
-AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *acc, KopeteMetaContact *parent)
-	 : OscarContact(name, displayName, acc, parent)
+AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *acc, KopeteMetaContact *parent, KopeteContact::AddMode mode )
+	 : OscarContact(name, displayName, acc, parent, mode)
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setOnlineStatus(mProtocol->statusOffline);

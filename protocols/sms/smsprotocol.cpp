@@ -112,7 +112,7 @@ void SMSProtocol::deserializeContact(KopeteMetaContact *metaContact, const QMap<
 		return;
 	}
 
-	/*SMSContact* c =*/ new SMSContact(account, contactId, displayName, metaContact);
+	/*SMSContact* c =*/ new SMSContact(account, contactId, displayName, metaContact, KopeteContact::OmitFromKABC );
 }
 
 KopeteAccount* SMSProtocol::createNewAccount(const QString &accountId)

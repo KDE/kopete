@@ -40,8 +40,8 @@ struct whoIsInfo
 	bool isOperator;
 };
 
-IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, const QString& icon)
-	: KopeteContact(contactManager->account(), nick, metac, icon),
+IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, KopeteContact::AddMode mode, const QString& icon)
+	: KopeteContact(contactManager->account(), nick, metac, mode, icon),
 	  m_protocol(static_cast<IRCProtocol *>(protocol())),
 	  m_account(contactManager->account()),
 	  m_engine(contactManager->engine()),

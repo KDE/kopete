@@ -61,7 +61,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
-	m_myself = new YahooContact(this, accountId(), accountId(), 0);
+	m_myself = new YahooContact(this, accountId(), accountId(), 0, KopeteContact::OmitFromKABC );
 	m_myself->setYahooStatus(YahooStatus::Offline, "", 0);
 
 	if(autoLogin()) connect();
@@ -286,7 +286,10 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 //	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
 	if(!contact(contactId))
-	{	YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact);
+	{	
+		// FIXME: New Contacts are NOT added to KABC, because:
+		// How on earth do you tell if a contact is being deserialised or added brand new here?
+		YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact, KopeteContact::OmitFromKABC);
 		return newContact != 0;
 	}
 	else

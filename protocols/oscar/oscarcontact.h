@@ -48,7 +48,8 @@ class OscarContact : public KopeteContact
 
 	public:
 		OscarContact(const QString& name, const QString& displayName,
-					KopeteAccount *account, KopeteMetaContact *parent);
+					KopeteAccount *account, KopeteMetaContact *parent,
+					KopeteContact::AddMode mode );
 		virtual ~OscarContact();
 
 		virtual void serialize(QMap<QString, QString> &, QMap<QString, QString> &);

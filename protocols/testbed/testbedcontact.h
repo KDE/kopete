@@ -41,7 +41,7 @@ public:
 
 	TestbedContact( KopeteAccount* _account, const QString &uniqueName, 
 			const TestbedContact::TestbedContactType type, const QString &displayName, 
-			KopeteMetaContact *parent );
+			KopeteMetaContact *parent, KopeteContact::AddMode mode  );
 
     ~TestbedContact();
 

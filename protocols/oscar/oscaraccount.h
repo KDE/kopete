@@ -195,7 +195,7 @@ protected:
 	 * @return whether the creation succeeded or not
 	 */
 	 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact ) =0;
+		KopeteMetaContact *parentContact, KopeteContact::AddMode mode ) = 0;
 
 	/*
 	 * Adds a contact to the internal list.

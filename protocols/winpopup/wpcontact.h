@@ -52,7 +52,7 @@ class WPContact: public KopeteContact
 	Q_OBJECT
 
 public:
-	WPContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
+	WPContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact, KopeteContact::AddMode mode );
 
 //	virtual bool isOnline() const;
 	virtual bool isReachable();

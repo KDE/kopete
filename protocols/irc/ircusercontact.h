@@ -44,7 +44,7 @@ class IRCUserContact
 
 public:
 	// This class provides a KopeteContact for each user on the channel.
-	IRCUserContact(IRCContactManager *, const QString &nickname, KopeteMetaContact *mc);
+	IRCUserContact(IRCContactManager *, const QString &nickname, KopeteMetaContact *mc, KopeteContact::AddMode mode );
 
 	// KopeteContact stuff
 	virtual KActionCollection *customContextMenuActions();

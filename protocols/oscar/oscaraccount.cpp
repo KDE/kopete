@@ -645,7 +645,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 		kdDebug(14150) << k_funcinfo << "Found buddy internally, just make"
 				<< " a new OscarContact subclass for it." << endl;
 		// Create an OscarContact for the metacontact
-		if(OscarContact* newContact = createNewContact(contactId, displayName, parentContact))
+		if(OscarContact* newContact = createNewContact( contactId, displayName, parentContact, KopeteContact::AddToKABC ))
 		{
 			// Set the oscar contact's status
 			newContact->setStatus(internalBuddy->status());
@@ -736,14 +736,14 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			mRandomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
-			return ( createNewContact( contactId, displayName, parentContact ));
+			return ( createNewContact( contactId, displayName, parentContact, KopeteContact::AddToKABC ));
 		}
 		else
 		{
 			kdDebug(14150) << "Temporary new contact, only adding him to local list" << endl;
 			// This is a temporary contact, so don't add it to the server list
 			// Create the contact, which adds it to the parent contact
-			if(createNewContact(contactId, displayName, parentContact))
+			if ( createNewContact( contactId, displayName, parentContact, KopeteContact::OmitFromKABC ) )
 			{
 				// Set it's initial status
 				// This requests the buddy's info from the server
@@ -847,7 +847,7 @@ void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 		else
 			nick = bud->screenname();
 
-		createNewContact(bud->screenname(), nick, m);
+		createNewContact(bud->screenname(), nick, m, KopeteContact::OmitFromKABC );
 
 		if (!meta)
 			KopeteContactList::contactList()->addMetaContact(m);

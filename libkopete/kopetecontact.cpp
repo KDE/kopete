@@ -87,7 +87,7 @@ public:
 
 
 KopeteContact::KopeteContact( KopeteAccount *account,
-	const QString &contactId, KopeteMetaContact *parent, const QString &icon )
+	const QString &contactId, KopeteMetaContact *parent, AddMode mode, const QString &icon )
 	: QObject( parent )
 {
 	d = new KopeteContactPrivate;
@@ -115,7 +115,7 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 		connect( parent, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
-		parent->addContact( this );
+		parent->addContact( this, mode );
 	}
 }
 
@@ -399,7 +399,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 
 	if( m )
 	{
-		m->addContact( this );
+		m->addContact( this, AddToKABC );
 		m->insertChild( this );
 
 		connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
