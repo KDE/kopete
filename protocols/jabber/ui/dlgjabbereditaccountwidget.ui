@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>538</height>
+            <height>540</height>
         </rect>
     </property>
     <property name="caption">
@@ -169,23 +169,6 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer69</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                     <widget class="QLabel">
                                         <property name="name">
                                             <cstring>TextLabel2_2</cstring>
@@ -562,23 +545,6 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer69_2</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                     <widget class="QLayoutWidget">
                                         <property name="name">
                                             <cstring>layout187</cstring>
