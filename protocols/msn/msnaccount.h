@@ -1,8 +1,8 @@
 /*
     msnaccount.h - Manages a single MSN account
 
-    Copyright (c) 2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
-    Kopete    (c) 2003 by The Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Kopete    (c) 2003-2004 by The Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -183,7 +183,7 @@ private:
 	bool m_badpassword;
 
 public: //FIXME: should be private
-	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
+	QMap< QString, QStringList > tmp_addToNewGroup;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
