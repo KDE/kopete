@@ -21,7 +21,9 @@
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kinputdialog.h>
+#include <klineedit.h>
+#include <klineeditdlg.h>
+#include <kcompletionbox.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kconfig.h>
@@ -236,7 +238,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	QString altNickName = altNick();
 	if( triedAltNick || altNickName.isEmpty() )
 	{
-		QString newNick = KInputDialog::getText( i18n( "IRC Plugin" ),
+		QString newNick = KLineEditDlg::getText( i18n( "IRC Plugin" ),
 			i18n( "The nickname %1 is already in use. Please enter an alternate nickname:" ).arg( nick ), nick );
 
 		m_engine->changeNickname( newNick );
@@ -612,18 +614,44 @@ void IRCAccount::slotJoinChannel()
 	if(!isConnected())
 		return;
 
-	QString chan = KInputDialog::getText( i18n( "IRC Plugin" ),
-		i18n( "Please enter name of the channel you want to join:" ), QString::null);
+	KConfig *config = kapp->config();
+	config->setGroup( QString::fromLatin1("Account_IRCProtocol_") + accountId() );
+	QStringList chans = config->readListEntry( "Recent Channel list" );
 
-	if( !chan.isNull() )
+	KLineEditDlg dlg(
+		i18n( "Please enter name of the channel you want to join:" ),
+		QString::null,
+		Kopete::UI::Global::mainWidget()
+	);
+
+	if( !chans.isEmpty() )
 	{
-		if( KIRCEntity::isChannel( chan ) )
-			contactManager()->findChannel( chan )->startChat();
-		else
-			KMessageBox::error( Kopete::UI::Global::mainWidget(),
-				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-				.arg(chan), i18n("IRC Plugin")
-			);
+		dlg.lineEdit()->setCompletedItems( chans );
+		dlg.lineEdit()->setCompletionMode( KGlobalSettings::CompletionPopupAuto );
+	}
+
+	if( dlg.exec() == QDialog::Accepted )
+	{
+		QString chan = dlg.text();
+		chans = dlg.lineEdit()->completionBox()->items();
+		chans.append( chan );
+
+		if( !chan.isNull() )
+		{
+			if( KIRCEntity::isChannel( chan ) )
+				contactManager()->findChannel( chan )->startChat();
+			else
+				KMessageBox::error( Kopete::UI::Global::mainWidget(),
+					i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
+					.arg(chan), i18n("IRC Plugin")
+				);
+		}
+
+		if( !chans.isEmpty() )
+		{
+			config->writeEntry( "Recent Channel list", chans );
+			config->sync();
+		}
 	}
 }
 

@@ -332,6 +332,11 @@ signals:
 	 */
 	void canSendChanged();
 
+	/**
+	 * Emitted when we re-parent ourselves with a new window
+	 */
+	void windowCreated();
+
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
 	void slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point );
@@ -422,6 +427,8 @@ private:
 	KListView *membersList;
 	bool transparencyEnabled;
 	bool bgOverride;
+	bool fgOverride;
+	bool rtfOverride;
 	bool isActive;
 	bool m_sendInProgress;
 	bool visibleMembers;

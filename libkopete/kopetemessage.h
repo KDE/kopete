@@ -320,6 +320,18 @@ public:
 	void setBgOverride( bool enable );
 
 	/**
+	 * Enables the use of a foreground for a message
+	 * @param enable A flag to indicate if the foreground should be enabled or disabled.
+	 */
+	void setFgOverride( bool enable );
+
+	/**
+	 * Enables the use of a RTF formatting for a message
+	 * @param enable A flag to indicate if the RTF formatting should be enabled or disabled.
+	 */
+	void setRtfOverride( bool enable );
+
+	/**
 	* Unescapes a string, removing XML entity references
 	*
 	* @param xml The string you want to unescape

@@ -8,12 +8,18 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qdatastream.h>
+#include <qregexp.h>
 
-#include <kglobal.h>
-#include <kconfig.h>
 #include <kdebug.h>
+#include <ksimpleconfig.h>
+#include <klocale.h>
+#include <kzip.h>
+#include <kurl.h>
+#include <ktempfile.h>
+#include <kdesktopfile.h>
+#include <kmessagebox.h>
 
+#include "kopeteuiglobal.h"
 #include "kopeteaccount.h"
 
 #include "javascriptconfig.h"
@@ -23,11 +29,10 @@ class JavaScriptConfigPrivate
 	public:
 	JavaScriptConfigPrivate()
 	{
-		scripts.setAutoDelete(true);
 	}
 
 	KConfig *config;
-	QDict< Script > scripts;
+	QMap< QString, Script* > scripts;
 };
 
 JavaScriptConfig* JavaScriptConfig::m_config = 0L;
@@ -40,38 +45,55 @@ JavaScriptConfig *JavaScriptConfig::instance()
 }
 
 JavaScriptConfig::JavaScriptConfig( QObject *parent, const char* name ) : QObject( parent, name )
+	, MimeTypeHandler( false )
 {
 	kdDebug() << k_funcinfo << endl;
 
 	d = new JavaScriptConfigPrivate;
 	d->config = new KConfig("javascriptplugin.rc");
-	d->scripts.setAutoDelete( true );
 
 	QStringList groups = d->config->groupList();
 	for( QStringList::iterator it = groups.begin(); it != groups.end(); ++it )
 	{
-		d->config->setGroup( *it );
-		Script *s = new Script;
-		s->name = *it;
-		s->description = d->config->readEntry("Description", "" );
-		s->author = d->config->readEntry("Author", "Unknown" );
-		s->script = d->config->readEntry("Script", "");
-		s->immutable = d->config->entryIsImmutable( *it );
-
-		QCString accountMap = d->config->readEntry("Accounts", "" ).latin1();
-		if( !accountMap.isEmpty() )
+		if( (*it).endsWith( "_Script" ) )
 		{
-			QDataStream stream( accountMap, IO_ReadOnly );
-			stream >> s->accounts;
+			d->config->setGroup( *it );
+			Script *s = new Script;
+			s->id = d->config->readEntry("ID", QString::number( time( NULL ) ) );
+			s->name = d->config->readEntry("Name", "" );
+			s->description = d->config->readEntry("Description", "" );
+			s->author = d->config->readEntry("Author", "Unknown" );
+			s->version = d->config->readEntry("Version", "Unknown" );
+			s->fileName = d->config->readEntry("FileName", "");
+			s->accounts = d->config->readListEntry("Accounts");
+			QStringList ftns = d->config->readListEntry("Functions");
+			for( QStringList::iterator it2 = ftns.begin(); it2 != ftns.end(); ++it2 )
+				s->functions.insert( *it2, d->config->readEntry( *it2 + "_Function", "" ) );
+			s->immutable = d->config->entryIsImmutable( *it );
+
+			d->scripts.insert( s->id, s );
 		}
 	}
+
+	//Handler for script packages
+	registerAsHandler( QString::fromLatin1("application/x-kopete-javascript") );
+	registerAsHandler( QString::fromLatin1("application/x-zip") );
 }
 
 JavaScriptConfig::~JavaScriptConfig()
 {
 	apply();
 	delete d->config;
+
+	for( QMap<QString,Script*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it )
+		delete it.data();
+
 	delete d;
+}
+
+QValueList<Script*> JavaScriptConfig::allScripts() const
+{
+	return d->scripts.values();
 }
 
 bool JavaScriptConfig::signalsEnabled() const
@@ -84,8 +106,6 @@ void JavaScriptConfig::setSignalsEnabled( bool val )
 {
 	d->config->setGroup("Global");
 	d->config->writeEntry( QString::fromLatin1("signalsEnabled"), val );
-
-	emit changed();
 }
 
 bool JavaScriptConfig::writeEnabled() const
@@ -98,8 +118,6 @@ void JavaScriptConfig::setWriteEnabled( bool val )
 {
 	d->config->setGroup("Global");
 	d->config->writeEntry( QString::fromLatin1("writeEnabled"), val );
-
-	emit changed();
 }
 
 bool JavaScriptConfig::treeEnabled() const
@@ -112,8 +130,6 @@ void JavaScriptConfig::setTreeEnabled( bool val )
 {
 	d->config->setGroup("Global");
 	d->config->writeEntry( QString::fromLatin1("treeEnabled"), val );
-
-	emit changed();
 }
 
 bool JavaScriptConfig::factoryEnabled() const
@@ -126,72 +142,60 @@ void JavaScriptConfig::setFactoryEnabled( bool val )
 {
 	d->config->setGroup("Global");
 	d->config->writeEntry( QString::fromLatin1("factoryEnabled"), val );
-
-	emit changed();
 }
 
 void JavaScriptConfig::apply()
 {
-	for( QDictIterator<Script> it( d->scripts ); it.current(); ++it )
+	for( QMap<QString,Script*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it  )
 	{
-		Script *s = it.current();
-		d->config->setGroup( s->name );
+		Script *s = it.data();
+		d->config->setGroup( s->id + "_Script" );
+		d->config->writeEntry("ID", s->id );
+		d->config->writeEntry("Name", s->name );
 		d->config->writeEntry("Description", s->description );
 		d->config->writeEntry("Author", s->author );
-		d->config->writeEntry("Script", s->script );
-
-		QCString accountMap;
-		QDataStream stream( accountMap, IO_WriteOnly );
-		stream << s->accounts;
-		d->config->writeEntry("Accounts", QString::fromLatin1( accountMap ) );
+		d->config->writeEntry("Version", s->version );
+		d->config->writeEntry("FileName", s->fileName );
+		d->config->writeEntry("Functions", s->functions.keys() );
+		d->config->writeEntry("Accounts", s->accounts );
+		for( QMap<QString,QString>::iterator it2 = s->functions.begin(); it2 != s->functions.end(); ++it2 )
+			d->config->writeEntry( it2.key() + "_Function", it2.data() );
 	}
 
 	d->config->sync();
-}
-
-Script* JavaScriptConfig::addScript( const QString &name, const QString &description,
-	const QString &author, const QString &script )
-{
-	Script *s = new Script;
-	s->name = name;
-	s->description = description;
-	s->author = author;
-	s->script = script;
-	s->immutable = false;
-	d->scripts.insert( s->name, s );
 
 	emit changed();
+}
+
+Script* JavaScriptConfig::addScript( const QString &fileName, const QString &name, const QString &description,
+	const QString &author, const QString &version, const QMap<QString,QString> &functions,
+	const QString &id )
+{
+	Script *s = new Script;
+	s->id = id;
+	s->name = name;
+	s->fileName = fileName;
+	s->description = description;
+	s->author = author;
+	s->version = version;
+	s->functions = functions;
+	s->immutable = false;
+	d->scripts.insert( s->id, s );
 
 	return s;
 }
 
-Script* JavaScriptConfig::script( const QString &name )
+Script* JavaScriptConfig::script( const QString &id )
 {
-	return d->scripts[name];
+	return d->scripts[id];
 }
 
-void JavaScriptConfig::writeScript( const QString &name, const QString &contents )
+void JavaScriptConfig::removeScript( const QString &id )
 {
-	Script *scriptPtr = d->scripts[name];
-	if( scriptPtr )
-	{
-		scriptPtr->script = contents;
-		emit changed();
-	}
-	else
-	{
-		kdError() << k_funcinfo << name << " is not a valid script!" << endl;
-	}
+	d->scripts.remove( id );
 }
 
-void JavaScriptConfig::removeScript( const QString &name )
-{
-	d->scripts.remove( name );
-
-	emit changed();
-}
-
-QStringList JavaScriptConfig::scriptsFor( KopeteAccount *account, int type )
+QValueList<Script*> JavaScriptConfig::scriptsFor( KopeteAccount *account )
 {
 	QString key;
 	if( account )
@@ -199,65 +203,18 @@ QStringList JavaScriptConfig::scriptsFor( KopeteAccount *account, int type )
 	else
 		key = "GLOBAL_SCRIPT";
 
-	QStringList retVal;
-
-	for( QDictIterator<Script> it( d->scripts ); it.current(); ++it )
+	QValueList<Script*> retVal;
+	for( QMap<QString,Script*>::iterator it = d->scripts.begin(); it != d->scripts.end(); ++it )
 	{
-		Script *scriptPtr = it.current();
-		QString types = scriptPtr->accounts[ key ];
-		if( types.contains( QString::number( type ) ) )
-		{
-			retVal.append( scriptPtr->script );
-		}
+		kdDebug() << it.data()->accounts << endl;
+		if( it.data()->accounts.contains( key ) || it.data()->accounts.contains( "GLOBAL_SCRIPT" ) )
+			retVal.append( it.data() );
 	}
 
 	return retVal;
 }
 
-QStringList JavaScriptConfig::scriptNamesFor( KopeteAccount *account, int type )
-{
-	QString key;
-	if( account )
-		key = account->accountId();
-	else
-		key = "GLOBAL_SCRIPT";
-
-	QStringList retVal;
-
-	for( QDictIterator<Script> it( d->scripts ); it.current(); ++it )
-	{
-		Script *scriptPtr = it.current();
-		QString types = scriptPtr->accounts[ key ];
-		if( types.contains( QString::number( type ) ) )
-		{
-			retVal.append( scriptPtr->name );
-		}
-	}
-
-	return retVal;
-}
-
-QStringList JavaScriptConfig::accountsFor( int type, const QString &script )
-{
-	QStringList retVal;
-
-	for( QDictIterator<Script> it( d->scripts ); it.current(); ++it )
-	{
-		Script *scriptPtr = it.current();
-		for( QMap<QString,QString>::iterator it = scriptPtr->accounts.begin();
-			it != scriptPtr->accounts.end(); ++it )
-		{
-			if( it.data().contains( QString::number( type ) ) )
-			{
-				retVal.append( it.key() );
-			}
-		}
-	}
-
-	return retVal;
-}
-
-void JavaScriptConfig::setScriptEnabled( KopeteAccount *account, int type, const QString &script, bool enabled )
+void JavaScriptConfig::setScriptEnabled( KopeteAccount *account, const QString &script, bool enabled )
 {
 	QString key;
 	if( account )
@@ -270,17 +227,95 @@ void JavaScriptConfig::setScriptEnabled( KopeteAccount *account, int type, const
 	Script *scriptPtr = d->scripts[script];
 	if( scriptPtr )
 	{
-		QString types = scriptPtr->accounts[ key ];
-		if( !types.contains( QString::number( type ) ) )
+		if( scriptPtr->accounts.contains( script ) )
 		{
-			scriptPtr->accounts[ key ] += QString::number( type );
-			emit changed();
+			if( !enabled )
+				scriptPtr->accounts.remove( key );
+		}
+		else if( enabled )
+		{
+			scriptPtr->accounts.append( key );
 		}
 	}
 	else
 	{
 		kdError() << k_funcinfo << script << " is not a valid script!" << endl;
 	}
+}
+
+void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal )
+{
+	retVal = false;
+	QString localScriptsDir( locateLocal("data", QString::fromLatin1("kopete/scripts")) );
+
+	if(localScriptsDir.isEmpty())
+	{
+		KMessageBox::queuedMessageBox(
+			Kopete::UI::Global::mainWidget(),
+			KMessageBox::Error, i18n("Could not find suitable place " \
+			"to install scripts into.")
+		);
+		return;
+	}
+
+	KZip archive( archiveName );
+	if ( !archive.open(IO_ReadOnly) )
+	{
+		KMessageBox::queuedMessageBox(
+			Kopete::UI::Global::mainWidget(),
+			KMessageBox::Error,
+			i18n("Could not open \"%1\" for unpacking.").arg(archiveName )
+		);
+		return;
+	}
+
+	const KArchiveDirectory* rootDir = archive.directory();
+	QStringList desktopFiles = rootDir->entries().grep( QRegExp( QString::fromLatin1("^(.*)\\.desktop$") ) );
+
+	if( desktopFiles.size() == 1 )
+	{
+		const KArchiveFile *manifestEntry = static_cast<const KArchiveFile*>( rootDir->entry( desktopFiles[0] ) );
+		if( manifestEntry )
+		{
+			KTempFile manifest;
+			manifest.setAutoDelete(true);
+			manifestEntry->copyTo( manifest.name() );
+			KDesktopFile manifestFile( manifest.name() );
+
+			if( manifestFile.readType() == QString::fromLatin1("KopeteScript") )
+			{
+				QString id = QString::number( time( NULL ) );
+				QString dir = localScriptsDir + QString::fromLatin1("/") + id;
+				rootDir->copyTo( dir );
+				KSimpleConfig conf( dir + QString::fromLatin1("/") + manifestFile.readURL() );
+
+				QMap<QString,QString> functions;
+				QStringList ftns = conf.readListEntry("Functions");
+
+				for( QStringList::iterator it = ftns.begin(); it != ftns.end(); ++it )
+					functions.insert( *it, conf.readEntry( *it + "_Function" ) );
+
+				addScript( conf.readEntry("FileName"), conf.readEntry("Name"),
+					conf.readEntry("Description"), conf.readEntry("Author"),
+					conf.readEntry("Version"), functions, id );
+
+				retVal = true;
+				return;
+			}
+		}
+	}
+
+	KMessageBox::queuedMessageBox(
+		Kopete::UI::Global::mainWidget(),
+		KMessageBox::Error, i18n("The file \"%1\" is not a valid kopete script package.")
+		.arg(archiveName)
+	);
+}
+
+void JavaScriptConfig::handleURL( const QString &, const KURL &url ) const
+{
+	bool retVal = false;
+	const_cast<JavaScriptConfig*>(this)->installPackage( url.path(), retVal );
 }
 
 #include "javascriptconfig.moc"

@@ -185,6 +185,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
 		mgr->protocol()->richTextCapabilities() );
 	connect( editpart, SIGNAL( toggleToolbar(const bool &)), this, SLOT(slotToggleRtfToolbar( const bool & )) );
+	connect( this, SIGNAL( windowCreated()), editpart, SLOT(checkToolbarEnabled()) );
 
 	m_edit = static_cast<KTextEdit*>( editpart->widget() );
 
@@ -349,21 +350,32 @@ void ChatView::slotScrollingTo( int /*x*/, int y)
 
 void ChatView::save()
 {
-	QString fileName = KFileDialog::getSaveFileName ( QString::null, QString::fromLatin1( "text/xml" ),
-		this, i18n( "Save Conversation" ) );
+	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/xml" ), this , "fileSaveDialog", false );
+	dlg.setCaption( i18n( "Save Conversation" ) );
+	dlg.setOperationMode( KFileDialog::Saving );
 
-	if ( fileName.isEmpty() )
+	if( dlg.exec() != QDialog::Accepted )
 		return;
 
-	QFile file ( fileName );
-	if ( file.open(IO_WriteOnly) )
+	QString fileName = dlg.selectedFile();
+	QFile file( fileName );
+
+	if( file.open(IO_WriteOnly) )
 	{
 		QTextStream stream ( &file );
-		QString xmlString;
-		for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
-			xmlString += (*it).asXML().toString();
+		if( dlg.currentFilter() == QString::fromLatin1("text/xml") )
+		{
+			QString xmlString;
+			for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
+				xmlString += (*it).asXML().toString();
 
-		stream << QString::fromLatin1("<document>") << xmlString << QString::fromLatin1("</document>");
+			stream << QString::fromLatin1("<document>") << xmlString << QString::fromLatin1("</document>") << '\n';
+		}
+		else
+		{
+			stream << chatView->htmlDocument().toHTML() << '\n';
+		}
+
 		file.close(); // maybe unneeded but I like to close opened files ;)
 	}
 	else
@@ -381,6 +393,7 @@ void ChatView::makeVisible()
 		m_mainWindow = KopeteChatWindow::window( m_manager );
 		if( root )
 			root->repaint( true );
+		emit windowCreated();
 	}
 
 	if( !m_mainWindow->isVisible() )
@@ -1149,11 +1162,6 @@ void ChatView::saveOptions()
 	writeDockConfig ( config, QString::fromLatin1("ChatViewDock") );
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
 	config->writeEntry( QString::fromLatin1("membersDockPosition"), membersDockPosition );
-	config->setGroup( QString::fromLatin1("ChatViewSettings") );
-	config->writeEntry ( QString::fromLatin1("BackgroundColor"), editpart->bgColor() );
-	config->writeEntry ( QString::fromLatin1("Font"), editpart->font() );
-	config->writeEntry ( QString::fromLatin1("TextColor"), editpart->fgColor() );
-
 	config->sync();
 }
 
@@ -1185,14 +1193,9 @@ void ChatView::readOptions()
 	viewDock->setDockSite(KDockWidget::DockLeft | KDockWidget::DockRight );
 	editDock->setEnableDocking(KDockWidget::DockNone);
 
-	config->setGroup( QString::fromLatin1("ChatViewSettings") );
-
-	QFont tmpFont = KGlobalSettings::generalFont();
-	editpart->setFont( config->readFontEntry( QString::fromLatin1("Font"), &tmpFont) );
-	QColor tmpColor = KGlobalSettings::baseColor();
-	editpart->setBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
-	tmpColor = KGlobalSettings::textColor();
-	editpart->setFgColor( config->readColorEntry ( QString::fromLatin1("TextColor"), &tmpColor ) );
+	bgOverride = KopetePrefs::prefs()->bgOverride();
+	fgOverride = KopetePrefs::prefs()->fgOverride();
+	rtfOverride = KopetePrefs::prefs()->rtfOverride();
 }
 
 void ChatView::addText(const QString &text)
@@ -1208,6 +1211,10 @@ void ChatView::setStylesheet( const QString &style )
 
 void ChatView::slotAppearanceChanged()
 {
+	bgOverride = KopetePrefs::prefs()->bgOverride();
+	fgOverride = KopetePrefs::prefs()->fgOverride();
+	rtfOverride = KopetePrefs::prefs()->rtfOverride();
+
 	d->xsltParser->setXSLT( KopetePrefs::prefs()->styleContents() );
 	slotRefreshNodes();
 }
@@ -1216,8 +1223,9 @@ void ChatView::addChatMessage( KopeteMessage &m )
 {
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
-	if( transparencyEnabled )
-		m.setBgOverride( bgOverride );
+	m.setBgOverride( bgOverride );
+	m.setFgOverride( fgOverride );
+	m.setRtfOverride( rtfOverride );
 
 	messageMap.insert( ++messageId, m );
 	QDomDocument message = m.asXML();
@@ -1269,6 +1277,10 @@ void ChatView::slotRefreshNodes()
 	QString xmlString;
 	for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 	{
+		(*it).setBgOverride( bgOverride );
+		(*it).setFgOverride( fgOverride );
+		(*it).setRtfOverride( rtfOverride );
+
 		QDomDocument message = (*it).asXML();
 	        message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number( it.key() ) );
 		xmlString += message.toString();
@@ -1616,7 +1628,6 @@ void ChatView::slotStopTimer()
 void ChatView::slotTransparencyChanged()
 {
 	transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
-	bgOverride = KopetePrefs::prefs()->bgOverride();
 
 //	kdDebug(14000) << k_funcinfo << "transparencyEnabled=" << transparencyEnabled << ", bgOverride=" << bgOverride << "." << endl;
 

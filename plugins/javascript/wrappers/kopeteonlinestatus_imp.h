@@ -11,17 +11,39 @@
 #define _KOPETE_ONLINE_STATUS_IMP_H
 
 #include <kopeteonlinestatus.h>
-#include "bindingobject.h"
+#include <kjs/object.h>
 
-class Status : public BindingObject
+class StatusProperties
 {
-	Q_OBJECT
+    public:
+        StatusProperties() :
+            description("description")
+        {
+        }
 
-	public:
-		Status( const KopeteOnlineStatus &s, QObject *parent=0, const char *name=0 );
+        const QString description;
+};
 
-	private:
-		KopeteOnlineStatus *status;
+class JSStatus : public KJS::ObjectImp
+{
+    public:
+        JSStatus( const KopeteOnlineStatus &status );
+
+        virtual KJS::UString className() const { return "OnlineStatus"; };
+
+        virtual KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const;
+
+        virtual void put(KJS::ExecState *exec, const KJS::Identifier &propertyName,
+                        const KJS::Value &value, int attr = KJS::None);
+
+        virtual bool canPut(KJS::ExecState *exec, const KJS::Identifier &propertyName) const;
+
+        const KopeteOnlineStatus &status() { return s; }
+
+    private:
+        KopeteOnlineStatus s;
+
+        static const StatusProperties methods;
 };
 
 #endif

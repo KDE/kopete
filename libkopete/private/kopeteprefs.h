@@ -78,6 +78,8 @@ public:
 	const QColor &idleContactColor() const { return mIdleContactColor; }
 	bool highlightEnabled() const { return mHighlightEnabled; }
 	bool bgOverride() const { return mBgOverride; }
+	bool fgOverride() const { return mFgOverride; }
+	bool rtfOverride() const { return mRtfOverride; }
 
 	enum ChatWindowPref { EmailWindow=0, ChatWindow };
 	ChatWindowPref interfacePreference() const { return mInterfacePreference; }
@@ -128,6 +130,8 @@ public:
 	void setHighlightEnabled(bool);
 	void setTransparencyValue(int);
 	void setBgOverride(bool);
+	void setFgOverride(bool);
+	void setRtfOverride(bool);
 	void setInterfacePreference(ChatWindowPref);
 	void setTextColor(const QColor &);
 	void setBgColor(const QColor &);
@@ -203,9 +207,12 @@ private:
 	QColor mIdleContactColor;
 	bool mHighlightEnabled;
 	bool mBgOverride;
+	bool mFgOverride;
+	bool mRtfOverride;
 	bool mShowTray;
 	bool mTransparencyChanged;
 	bool mWindowAppearanceChanged;
+	bool mMessageAppearanceChanged;
 	bool mContactListAppearanceChanged;
 	bool mNotifyAway;
 	bool mChatWShowSend;

@@ -123,8 +123,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 	connect(mPrfsChatWindow->mTransparencyValue, SIGNAL(valueChanged(int)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsChatWindow->mTransparencyBgOverride, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
 
 	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
@@ -185,6 +183,13 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(mPrfsColors->mGroupNameColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(emitChanged()));
 
+	connect(mPrfsColors->mBgOverride, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsColors->mFgOverride, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsColors->mRtfOverride, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+
 	mAppearanceTabCtl->addTab(mPrfsColors, i18n("Colors && Fonts"));
 
 	// ==========================================================================
@@ -215,7 +220,6 @@ void AppearanceConfig::save()
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
-	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
 	if( styleChanged || p->styleSheet() != itemMap[ mPrfsChatWindow->styleList->selectedItem() ] )
 		p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
 
@@ -238,7 +242,11 @@ void AppearanceConfig::save()
 	p->setContactListCustomSmallFont(mPrfsColors->mSmallFont->font());
 	p->setContactListCustomNormalFont(mPrfsColors->mNormalFont->font());
 	p->setContactListGroupNameColor(mPrfsColors->mGroupNameColor->color());
-	
+
+	p->setBgOverride( mPrfsColors->mBgOverride->isChecked() );
+	p->setFgOverride( mPrfsColors->mFgOverride->isChecked() );
+	p->setRtfOverride( mPrfsColors->mRtfOverride->isChecked() );
+
 	p->save();
 	errorAlert = false;
 	styleChanged = false;
@@ -260,7 +268,6 @@ void AppearanceConfig::load()
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
-	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
 
 	// FIXME: Using the filename as user-visible name is not translatable! - Martijn
 	mPrfsChatWindow->styleList->clear();
@@ -276,7 +283,7 @@ void AppearanceConfig::load()
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 	}
 	mPrfsChatWindow->styleList->sort();
-	
+
 	// "Contact List" TAB =======================================================
 	mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
 	mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
@@ -296,6 +303,10 @@ void AppearanceConfig::load()
 	mPrfsColors->mSmallFont->setFont(p->contactListCustomSmallFont());
 	mPrfsColors->mNormalFont->setFont(p->contactListCustomNormalFont());
 	mPrfsColors->mGroupNameColor->setColor(p->contactListGroupNameColor());
+
+	mPrfsColors->mBgOverride->setChecked( p->bgOverride() );
+	mPrfsColors->mFgOverride->setChecked( p->fgOverride() );
+	mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
 }
 
 void AppearanceConfig::updateEmoticonlist()
@@ -363,7 +374,6 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 {
 	mPrfsChatWindow->mTransparencyTintColor->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyValue->setEnabled( checked );
-	mPrfsChatWindow->mTransparencyBgOverride->setEnabled( checked );
 	emitChanged();
 }
 

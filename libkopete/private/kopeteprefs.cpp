@@ -78,7 +78,9 @@ void KopetePrefs::load()
 	tmpColor = KGlobalSettings::highlightedTextColor();
 	mHighlightForeground = config->readColorEntry("Highlight Foreground Color", &tmpColor);
 	mHighlightEnabled = config->readBoolEntry("Highlighting Enabled", true);
-	mBgOverride = config->readBoolEntry("ChatView Override Background", true);
+	mBgOverride = config->readBoolEntry("ChatView Override Background", false);
+	mFgOverride = config->readBoolEntry("ChatView Override Foreground", false);
+	mRtfOverride = config->readBoolEntry("ChatView Override RTF", false);
 	mInterfacePreference = (ChatWindowPref)config->readNumEntry("Interface Preference", ChatWindow);
 	tmpColor = KGlobalSettings::textColor();
 	mTextColor = config->readColorEntry("Text Color", &tmpColor );
@@ -134,6 +136,7 @@ void KopetePrefs::load()
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
+	mMessageAppearanceChanged = false;
 }
 
 void KopetePrefs::save()
@@ -161,6 +164,8 @@ void KopetePrefs::save()
 	config->writeEntry("ChatView Transparency Value", mTransparencyValue);
 	config->writeEntry("ChatView Transparency Tint Color", mTransparencyColor);
 	config->writeEntry("ChatView Override Background", mBgOverride);
+	config->writeEntry("ChatView Override Foreground", mFgOverride);
+	config->writeEntry("ChatView Override RTF", mRtfOverride);
 	config->writeEntry("ChatView BufferSize", mChatViewBufferSize);
 	config->writeEntry("Highlight Background Color", mHighlightBackground);
 	config->writeEntry("Highlight Foreground Color", mHighlightForeground);
@@ -201,6 +206,9 @@ void KopetePrefs::save()
 
 	if(mContactListAppearanceChanged)
 		emit(contactListAppearanceChanged());
+
+	if(mMessageAppearanceChanged)
+		emit(messageAppearanceChanged());
 
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
@@ -390,8 +398,20 @@ void KopetePrefs::setTransparencyValue(int value)
 
 void KopetePrefs::setBgOverride(bool value)
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mBgOverride);
+	mMessageAppearanceChanged = mMessageAppearanceChanged || !(value == mBgOverride);
 	mBgOverride = value;
+}
+
+void KopetePrefs::setFgOverride(bool value)
+{
+	mMessageAppearanceChanged = mMessageAppearanceChanged || !(value == mFgOverride);
+	mFgOverride = value;
+}
+
+void KopetePrefs::setRtfOverride(bool value)
+{
+	mMessageAppearanceChanged = mMessageAppearanceChanged || !(value == mRtfOverride);
+	mRtfOverride = value;
 }
 
 void KopetePrefs::setShowTray(bool value)

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>553</width>
-            <height>354</height>
+            <height>356</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -296,18 +296,12 @@
                         <cstring>mTransparencyTintColor</cstring>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>mTransparencyBgOverride</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Do not show user specified &amp;background color</string>
-                    </property>
-                </widget>
             </grid>
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>styleList</tabstop>
     <tabstop>addButton</tabstop>
@@ -316,7 +310,6 @@
     <tabstop>editButton</tabstop>
     <tabstop>deleteButton</tabstop>
     <tabstop>mTransparencyEnabled</tabstop>
-    <tabstop>mTransparencyBgOverride</tabstop>
     <tabstop>mTransparencyTintColor</tabstop>
     <tabstop>mTransparencyValue</tabstop>
 </tabstops>

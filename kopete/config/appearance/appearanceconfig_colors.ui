@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>595</width>
-            <height>604</height>
+            <height>606</height>
         </rect>
     </property>
     <property name="caption">
@@ -144,6 +144,52 @@
                     </property>
                 </widget>
             </grid>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox4</cstring>
+            </property>
+            <property name="title">
+                <string>Formatting Overrides</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mBgOverride</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Do not show user specified &amp;background color</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mFgOverride</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Do not show user specified &amp;foreground color</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+F</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mRtfOverride</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Do not show user specified &amp;rich text</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -299,12 +345,14 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>16</height>
+                    <height>80</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>mUseCustomFonts</sender>

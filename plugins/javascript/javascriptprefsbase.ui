@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>587</width>
-            <height>424</height>
+            <width>466</width>
+            <height>456</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,85 +19,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QComboBox" row="1" column="2" rowspan="1" colspan="3">
-            <item>
-                <property name="text">
-                    <string>About To Send Message</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>About To Receive Message</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>About To Display Message</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Account Changed Status</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Contact Changed Status</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Contact Added</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Contact Removed</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>File Transfer Request</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>eventType</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>200</width>
-                    <height>0</height>
-                </size>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="1">
-            <property name="name">
-                <cstring>textLabel1</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>On Event:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>comboBox1</cstring>
-            </property>
-        </widget>
-        <widget class="QListView" row="1" column="0" rowspan="2" colspan="1">
+        <widget class="QListView" row="1" column="0">
             <column>
                 <property name="text">
                     <string>For Account</string>
@@ -114,7 +36,7 @@
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
-                    <hsizetype>0</hsizetype>
+                    <hsizetype>1</hsizetype>
                     <vsizetype>5</vsizetype>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
@@ -132,11 +54,203 @@
             <property name="resizeMode">
                 <enum>AllColumns</enum>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>The list of accounts</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This is the list of available Kopete accounts. To see what scripts are active for a given account, click on that account.</string>
+            </property>
         </widget>
-        <widget class="QListView" row="2" column="1" rowspan="1" colspan="4">
+        <spacer row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>120</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>JavaScript Security Options</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>These options enable and disable features that impact the level of access scripts have to the Kopete API. Unless you are installing scripts from untrusted sources, it is usually OK to leave these options enabled.</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>factoryEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Allow access to the UI &amp;Factory</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+F</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>signalsEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Allow connecting to &amp;signals</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>treeEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Allow access to the QObject &amp;tree</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>writeEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enable &amp;write access to QObjects</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+W</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox" row="0" column="3" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>groupBox2</cstring>
+            </property>
+            <property name="title">
+                <string>Add / Remove</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>addScript</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Add a Script</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Click here to add a local file as a script</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>downloadScript</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Download Scripts</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+D</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Click here to download scripts from the Internet using KNewStuff</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>removeScript</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Uninstall Selected Scripts</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+U</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Click here to uninstall the selected scripts from your system</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QPushButton" row="2" column="4">
+            <property name="name">
+                <cstring>editScript</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Edit Properties</string>
+            </property>
+            <property name="accel">
+                <string>Alt+E</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Click here to modify properties such as the script name, author, and description</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="2" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>configureScript</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Configure Script</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Click here to configure this script</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Some scripts have a configuration GUI availaable. This button launches that UI, allowing you to configure the script's options visually.</string>
+            </property>
+        </widget>
+        <widget class="QListView" row="1" column="1" rowspan="1" colspan="4">
             <column>
                 <property name="text">
                     <string>Script</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Version</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -158,7 +272,7 @@
             </column>
             <column>
                 <property name="text">
-                    <string>About</string>
+                    <string>Author</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -170,6 +284,14 @@
             <property name="name">
                 <cstring>scriptList</cstring>
             </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
             <property name="selectionMode">
                 <enum>Single</enum>
             </property>
@@ -177,108 +299,19 @@
                 <bool>true</bool>
             </property>
             <property name="resizeMode">
-                <enum>AllColumns</enum>
+                <enum>NoColumn</enum>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>List of available scripts</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This is the list of scripts available on this system. Scripts that are enabled for the account selected are checked. You can check or uncheck a script to enable or disable it for the selected account.</string>
             </property>
         </widget>
-        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>groupBox1</cstring>
-            </property>
-            <property name="title">
-                <string>JavaScript Security Options</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>factoryEnabled</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Allow access to the UI Factory</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>signalsEnabled</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Allow connecting to signals</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>treeEnabled</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Allow access to the QObject tree</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>writeEnabled</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable write access to QObjects</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
-        <widget class="QPushButton" row="3" column="4">
-            <property name="name">
-                <cstring>editScript</cstring>
-            </property>
-            <property name="text">
-                <string>Edit</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="3" column="3">
-            <property name="name">
-                <cstring>removeScript</cstring>
-            </property>
-            <property name="text">
-                <string>Remove</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="3" column="2">
-            <property name="name">
-                <cstring>addScript</cstring>
-            </property>
-            <property name="text">
-                <string>Add</string>
-            </property>
-        </widget>
-        <spacer row="3" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>300</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
+<includes>
+    <include location="local" impldecl="in implementation">javascriptprefsbase.ui.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

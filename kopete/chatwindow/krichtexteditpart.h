@@ -67,6 +67,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void setAlignCenter( bool yes );
 		void setAlignJustify( bool yes );
 
+		void checkToolbarEnabled();
+
 	signals:
 		void toggleToolbar( const bool &enabled );
 

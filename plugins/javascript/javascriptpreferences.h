@@ -10,9 +10,12 @@
 #ifndef JSPREFERENCES_H
 #define JSPREFERENCES_H
 
+#include <sys/types.h>
+
 #include <qptrdict.h>
 
-#include "kcmodule.h"
+#include <knewstuff/knewstuff.h>
+#include <kcmodule.h>
 #include "javascriptconfig.h"
 
 typedef QValueList<KopeteAccount*> AccountList;
@@ -20,8 +23,10 @@ typedef QValueList<KopeteAccount*> AccountList;
 class JavaScriptPrefsBase;
 class KTempFile;
 class Script;
+class KDialogBase;
+class JavaScriptDialog;
 
-class JavaScriptPreferences : public KCModule
+class JavaScriptPreferences : public KCModule, public KNewStuff
 {
 	Q_OBJECT
 
@@ -32,12 +37,24 @@ class JavaScriptPreferences : public KCModule
 		virtual void save();
 		virtual void load();
 
+		//KNewStuff
+		virtual bool install( const QString &fileName );
+		virtual bool createUploadFile( const QString &fileName );
+
+	signals:
+		void installPackage( const QString &fileName, bool &retVal );
+
 	private slots:
 		void slotAddScript();
+		void slotAddComplete();
+		void slotAddDone();
 		void slotEditScript();
+		void slotEditDone();
 		void slotEmitChanged();
 		void slotUpdateScriptList();
+		void slotDownloadScript();
 		void slotUpdateButtons();
+		void slotWaitForEdit();
 		void slotFileDirty( const QString &file );
 		void slotEnableScript( const QVariant &scriptItem );
 
@@ -47,6 +64,9 @@ class JavaScriptPreferences : public KCModule
 		JavaScriptConfig *config;
 		KTempFile *tempFile;
 		Script *currentScript;
+		KDialogBase *addScriptDialog;
+		JavaScriptDialog *nameDialog;
+		pid_t editProcess;
 };
 
 #endif

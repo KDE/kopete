@@ -12,30 +12,67 @@
 #define _JAVASCRIPTCONFIG_H_
 
 #include <qobject.h>
+#include <qfile.h>
 
+#include <kglobal.h>
+#include <kconfig.h>
+#include <kstandarddirs.h>
+
+#include "downloadfile.h"
+#include "kopetemimetypehandler.h"
 #include "javascriptplugin.h"
+#include <time.h>
 
 class KopeteAccount;
 class KConfig;
 class JavaScriptConfigPrivate;
 
-struct Script
+class Script
 {
-	QString name;
-	QString description;
-	QString author;
-	QString script;
-	QMap<QString,QString> accounts;
-	bool immutable;
+	public:
+		const QString script( bool reload = false )
+		{
+			if( reload || m_script.isEmpty() )
+			{
+				m_script = QString::null;
+				QString localScriptsDir( locateLocal("data", QString::fromLatin1("kopete/scripts")) );
+				QFile f( localScriptsDir + "/" +  id + "/" + fileName );
+
+				if ( f.open( IO_ReadOnly ) )
+				{
+					QTextStream stream( &f );
+					m_script = stream.read();
+					f.close();
+				}
+			}
+
+			return m_script;
+		}
+
+		QString id;
+		QString name;
+		QString description;
+		QString author;
+		QString version;
+		QStringList accounts;
+		QString fileName;
+		QMap<QString,QString> functions;
+		bool immutable;
+
+	private:
+		QString m_script;
 };
 
-class JavaScriptConfig : public QObject
+class JavaScriptConfig : public QObject, public Kopete::MimeTypeHandler
 {
 	Q_OBJECT
 
 	public:
 		static JavaScriptConfig *instance();
 		~JavaScriptConfig();
+
+		//For Kopete::MimeTypeHandler
+		virtual void handleURL( const QString &mimeType, const KURL &url ) const;
 
 		void setSignalsEnabled( bool );
 		bool signalsEnabled() const;
@@ -49,22 +86,25 @@ class JavaScriptConfig : public QObject
 		void setTreeEnabled( bool );
 		bool treeEnabled() const;
 
-		Script* addScript( const QString &name, const QString &description,
-			const QString &author, const QString &contents );
-		void writeScript( const QString &name, const QString &contents );
-		void removeScript( const QString &name );
+		Script* addScript( const QString &fileName, const QString &name, const QString &description,
+			const QString &author, const QString &version, const QMap<QString,QString> &functions,
+			const QString &id = QString::number( time( NULL ) ) );
+		void removeScript( const QString &id );
 
-		void setScriptEnabled( KopeteAccount *account, int type, const QString &script, bool enabled );
-		QStringList scriptsFor( KopeteAccount *account, int );
-		QStringList scriptNamesFor( KopeteAccount *account, int );
-		QStringList accountsFor( int type, const QString &script );
+		void setScriptEnabled( KopeteAccount *account, const QString &scriptId, bool enabled );
+		QValueList<Script*> scriptsFor( KopeteAccount *account );
+		QValueList<Script*> allScripts() const;
 
-		Script *script( const QString &name );
+		Script *script( const QString &id );
 
 		void apply();
 
 	signals:
 		void changed();
+
+	public slots:
+		//For KNewStuff
+		void installPackage( const QString &fileName, bool &retVal );
 
 	private:
 		JavaScriptConfig( QObject *, const char* name );

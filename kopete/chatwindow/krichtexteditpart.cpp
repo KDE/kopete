@@ -85,6 +85,11 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 	updateActions();
 }
 
+void KopeteRichTextEditPart::checkToolbarEnabled()
+{
+	emit toggleToolbar( buttonsEnabled() );
+}
+
 void KopeteRichTextEditPart::createActions()
 {
 	createActions( actionCollection() );

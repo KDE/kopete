@@ -8,11 +8,46 @@
  ***************************************************************************/
 
 #include <kdebug.h>
+#include <kjs/ustring.h>
+#include <kjs/value.h>
 
 #include "kopetecontact.h"
 #include "kopeteonlinestatus_imp.h"
 
-Status::Status( const KopeteOnlineStatus &s, QObject *parent,  const char *name )
-	: BindingObject( parent, name ), status( const_cast<KopeteOnlineStatus*>(&s) ) {}
+const StatusProperties JSStatus::methods;
 
-#include "kopeteonlinestatus_imp.moc"
+JSStatus::JSStatus( const KopeteOnlineStatus &status ) : KJS::ObjectImp()
+{
+    s = status;
+}
+
+KJS::Value JSStatus::get( KJS::ExecState *exec, const KJS::Identifier &propertyName ) const
+{
+    QString prop = propertyName.qstring();
+
+    if( prop ==  methods.description )
+        return KJS::String( s.description() );
+    else
+        return KJS::ObjectImp::get( exec, propertyName );
+}
+
+void JSStatus::put( KJS::ExecState *exec, const KJS::Identifier &propertyName,
+                        const KJS::Value &value, int attr )
+{
+    QString prop = propertyName.qstring();
+    KJS::ObjectImp::put( exec, propertyName, value, attr );
+}
+
+bool JSStatus::canPut( KJS::ExecState *exec, const KJS::Identifier &propertyName ) const
+{
+    QString prop = propertyName.qstring();
+
+    if( prop == methods.description )
+    {
+        return false;
+    }
+    else
+    {
+        return KJS::ObjectImp::canPut( exec, propertyName );
+    }
+}

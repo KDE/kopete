@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>304</width>
-            <height>430</height>
+            <width>381</width>
+            <height>524</height>
         </rect>
     </property>
     <property name="caption">
@@ -22,46 +22,59 @@
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QCheckBox">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>chkTrackChildDisplayName</cstring>
+                <cstring>groupBox3</cstring>
             </property>
-            <property name="text">
-                <string>Use the name given by the server</string>
+            <property name="title">
+                <string>Contact Properties</string>
             </property>
-            <property name="toolTip" stdset="0">
-                <string>Use the name of the child contact</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
-This option is only available if there is exactly one child contact </string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout1</cstring>
-            </property>
-            <hbox>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>lblDisplayName</cstring>
+                        <cstring>layout1</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>lblDisplayName</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Name:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>edtDisplayName</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>edtDisplayName</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkTrackChildDisplayName</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Name:</string>
+                        <string>Use the name given by the server</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>edtDisplayName</cstring>
+                    <property name="toolTip" stdset="0">
+                        <string>Use the name of the child contact</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
+This option is only available if there is exactly one child contact </string>
                     </property>
                 </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>edtDisplayName</cstring>
-                    </property>
-                </widget>
-            </hbox>
+            </vbox>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -177,80 +190,184 @@ This option is only available if there is exactly one child contact </string>
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>chkHasAddressbookEntry</cstring>
+                <cstring>groupBox2</cstring>
             </property>
-            <property name="text">
-                <string>Has &amp;address book entry</string>
+            <property name="title">
+                <string>Addressbook Integration</string>
             </property>
-            <property name="checked">
-                <bool>false</bool>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Check to use KDE address book</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
-This option is only available if there is exactly one child contact </string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout4</cstring>
-            </property>
-            <hbox>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel">
+                <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>lblAddressee</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
+                        <cstring>chkHasAddressbookEntry</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Contact:</string>
+                        <string>Has &amp;address book entry</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>edtDisplayName</cstring>
+                    <property name="accel">
+                        <string>Alt+A</string>
                     </property>
-                </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>edtAddressee</cstring>
-                    </property>
-                    <property name="enabled">
+                    <property name="checked">
                         <bool>false</bool>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check to use KDE address book</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
+This option is only available if there is exactly one child contact </string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>lblAddressee</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Contact:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>edtDisplayName</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>edtAddressee</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>btnSelectAddressee</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>...</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Select an address book entry</string>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
                 <widget class="QPushButton">
                     <property name="name">
-                        <cstring>btnSelectAddressee</cstring>
+                        <cstring>btnMerge</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>...</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Select an address book entry</string>
+                        <string>Merge with Address Book</string>
                     </property>
                 </widget>
-            </hbox>
+            </vbox>
         </widget>
-        <widget class="QPushButton">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>btnMerge</cstring>
+                <cstring>groupBox4</cstring>
             </property>
-            <property name="enabled">
-                <bool>false</bool>
+            <property name="title">
+                <string>Custom Notifications</string>
             </property>
-            <property name="text">
-                <string>Merge with Address Book</string>
-            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>checkBox8</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Surpress standard notifications</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>checkBox6</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Display a message:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>lineEdit3</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>checkBox5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Play a sound</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
+                </widget>
+                <widget class="KURLRequester" row="1" column="1">
+                    <property name="name">
+                        <cstring>kURLRequester1</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>On Event:</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="1">
+                    <item>
+                        <property name="text">
+                            <string>User comes online</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>User goes offline</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>User changes status</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Message Recieved - In focus</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Message Recieved - Out of focus</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>customNotificationCombo</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <spacer>
             <property name="name">
@@ -265,12 +382,14 @@ This option is only available if there is exactly one child contact </string>
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>41</height>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>chkTrackChildDisplayName</sender>
@@ -288,4 +407,13 @@ This option is only available if there is exactly one child contact </string>
     <tabstop>icnbUnknown</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

@@ -67,6 +67,8 @@ struct KopeteMessagePrivate
 	KopeteMessage::MessageType type;
 	KopeteMessage::MessageImportance importance;
 	bool bgOverride;
+	bool fgOverride;
+	bool rtfOverride;
 	QDateTime timeStamp;
 	QFont font;
 
@@ -158,6 +160,8 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	d->manager=0l;
 	d->format = f;
 	d->bgOverride = false;
+	d->fgOverride = false;
+	d->rtfOverride = false;
 	d->type = type;
 
 
@@ -289,12 +293,22 @@ void KopeteMessage::detach()
 	d = newD;
 }
 
-
-
 void KopeteMessage::setBgOverride( bool enabled )
 {
 	detach();
 	d->bgOverride = enabled;
+}
+
+void KopeteMessage::setFgOverride( bool enabled )
+{
+	detach();
+	d->fgOverride = enabled;
+}
+
+void KopeteMessage::setRtfOverride( bool enabled )
+{
+	detach();
+	d->rtfOverride = enabled;
 }
 
 void KopeteMessage::setFg( const QColor &color )
@@ -302,14 +316,10 @@ void KopeteMessage::setFg( const QColor &color )
 	detach();
 #if MESSAGE_QDOM
 	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
-	if( color.isValid() )
-	{
+	if( !d->fgOverride && color.isValid() )
 		bodyNode.setAttribute( QString::fromLatin1("color"), color.name() );
-	}
 	else
-	{
 		bodyNode.removeAttribute( QString::fromLatin1("color") );
-	}
 #else
 	d->fgColor=color;
 #endif
@@ -337,7 +347,7 @@ void KopeteMessage::setFont( const QFont &font )
 #if MESSAGE_QDOM
 	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 
-	if(font!=QFont())
+	if(font!=QFont() && !d->rtfOverride )
 	{
 		QString fontstr;
 		if(!font.family().isNull())
@@ -745,12 +755,12 @@ const QDomDocument KopeteMessage::asXML() const
 
 	QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
 
-	if( d->fgColor.isValid() )
+	if( !d->fgOverride && d->fgColor.isValid() )
 		bodyNode.setAttribute( QString::fromLatin1("color"), d->fgColor.name() );
 	if( !d->bgOverride && d->bgColor.isValid() )
 		bodyNode.setAttribute( QString::fromLatin1("bgcolor"), d->bgColor.name() );
 
-	if(d->font!=QFont())
+	if( !d->rtfOverride && d->font!=QFont() )
 	{
 		QString fontstr;
 		if(!d->font.family().isNull())

@@ -1,105 +1,179 @@
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+// -*- c++ -*-
+
+/*
+ *  Copyright (C) 2003, Ian Reinhart Geiser <geiseri@kde.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ *  Boston, MA 02111-1307, USA.
+ */
 
 #include <kdebug.h>
 
-#include "kopetecontact.h"
+#include <kjsembed/jsopaqueproxy.h>
+#include <kjsembed/jsbinding.h>
+#include <kjsembed/jsfactory.h>
+#include <kjsembed/jsfactory_imp.h>
+#include <kjsembed/kjsembedpart.h>
+#include <kjsembed/customobject_imp.h>
+
 #include "kopetemessage_imp.h"
 
-Message::Message( KopeteMessage *m, QObject *parent,  const char *name )
-	: BindingObject( parent, name ), msg( m ) {}
+namespace KJSEmbed {
+namespace Bindings {
 
-void Message::setBgColor( const QColor &color )
+KopeteMessageLoader::KopeteMessageLoader( QObject *parent, const char *name, const QStringList &args ) :
+	JSBindingPlugin(parent, name, args)
 {
-	kdDebug() << k_funcinfo << endl;
-	msg->setBg( color );
 }
 
-QColor Message::bgColor() const
+KJS::Object KopeteMessageLoader::createBinding(KJSEmbedPart *, KJS::ExecState *, const KJS::List &) const
 {
-	kdDebug() << k_funcinfo << endl;
-	return msg->bg();
+	KJS::Object tmp;
+	return tmp;
 }
 
-void Message::setFgColor( const QColor &color )
+KopeteMessageImp::KopeteMessageImp( KJS::ExecState *exec, int id ) : JSProxyImp(exec), mid(id)
 {
-	kdDebug() << k_funcinfo << endl;
-	msg->setFg( color );
 }
 
-QColor Message::fgColor() const
+KopeteMessageImp::~KopeteMessageImp()
 {
-	kdDebug() << k_funcinfo << endl;
-	return msg->fg();
 }
 
-void Message::setFont( const QFont &font )
+void KopeteMessageImp::addBindings( KJS::ExecState *exec, KJS::Object &object )
 {
-	kdDebug() << k_funcinfo << endl;
-	msg->setFont( font );
+	KopeteMessage *msg = message(object);
+	if( msg )
+	{
+		JSProxy::MethodTable methods[] =
+		{
+			{ bgColor, "bgColor"},
+			{ setBgColor, "setbgColor"},
+			{ fgColor,  "fgColor"},
+			{ setFgColor, "setFgColor"},
+			{ font,  "font"},
+			{ setFont, "setFont"},
+			{ plainBody,  "plainBody"},
+			{ richBody, "richBody"},
+			{ setPlainBody,  "setPlainBody"},
+			{ setRichBody, "setRichBody"},
+			{ importance, "importance"},
+			{ setImportance, "setImportance"},
+			{ type, "type"},
+			{ asXML, "asXML"},
+			{ 0, 0 }
+		};
+
+		int idx = 0;
+		do
+		{
+			KopeteMessageImp *m = new KopeteMessageImp( exec, methods[idx].id );
+			object.put( exec , methods[idx].name, KJS::Object(m) );
+			++idx;
+		}
+		while( methods[idx].id );
+	}
 }
 
-QFont Message::font() const
+KopeteMessage *KopeteMessageImp::message( KJS::Object &object )
 {
-	kdDebug() << k_funcinfo << endl;
-	return msg->font();
+	JSOpaqueProxy *op = JSProxy::toOpaqueProxy( object.imp() );
+	if ( !op )
+	{
+		kdWarning() << "MyCustomObjectImp::call() failed, not a JSOpaqueProxy" << endl;
+		return 0;
+	}
+
+	if ( op->typeName() != "MyCustomObject" )
+	{
+		kdWarning() << "MyCustomObjectImp::call() failed, type is " << op->typeName() << endl;
+		return 0;
+	}
+
+	return (KopeteMessage*)op->toVoidStar();
 }
 
-void Message::setPlainBody( const QString &body )
+KJS::Value KopeteMessageImp::call( KJS::ExecState *exec, KJS::Object &self, const KJS::List &args )
 {
-	kdDebug() << k_funcinfo << endl;
-	msg->setBody( body, KopeteMessage::PlainText );
+	KopeteMessage *msg = message( self );
+	if( msg )
+	{
+		switch( mid )
+		{
+			case bgColor:
+				return KJS::String( msg->bg().name() );
+
+			case setBgColor:
+				msg->setBg( QColor( args[0].toString(exec).qstring() ) );
+
+			case fgColor:
+				return KJS::String( msg->bg().name() );
+
+			case setFgColor:
+				msg->setFg( QColor( args[0].toString(exec).qstring() ) );
+
+			case font:
+				return KJS::String( msg->font().toString() );
+
+			case setFont:
+				msg->setFont( QFont( args[0].toString(exec).qstring() ) );
+
+			case plainBody:
+				return KJS::String( msg->plainBody() );
+
+			case setPlainBody:
+				msg->setBody( args[0].toString(exec).qstring(), KopeteMessage::PlainText );
+
+			case richBody:
+				return KJS::String( msg->parsedBody() );
+
+			case setRichBody:
+				msg->setBody( args[0].toString(exec).qstring(), KopeteMessage::RichText );
+
+			case importance:
+				return KJS::Number( msg->importance() );
+
+			case setImportance:
+				msg->setImportance( KopeteMessage::MessageImportance(args[0].toInteger(exec)) );
+
+			case type:
+				return KJS::Number( msg->type() );
+
+			case asXML:
+				return KJS::String( msg->asXML().toString() );
+			//case from:
+			//return KJS::Object( new JSContact( const_cast<KopeteContact*>( msg->from() ) ) );
+		}
+	}
+
+	return KJS::Value();
 }
 
-QString Message::plainBody() const
+int KopeteMessageImp::extractInt( KJS::ExecState *exec, const KJS::List &args, int idx)
 {
-	kdDebug() << k_funcinfo << endl;
-	return msg->plainBody();
+     return (args.size() > idx) ? args[idx].toInteger(exec) : 0;
+}
+QString KopeteMessageImp::extractString(KJS::ExecState *exec, const KJS::List &args, int idx)
+{
+     return (args.size() > idx) ? args[idx].toString(exec).qstring() : QString::null;
 }
 
-void Message::setRichBody( const QString &body )
-{
-	kdDebug() << k_funcinfo << endl;
-	msg->setBody( body, KopeteMessage::RichText );
-}
+} // namespace KJSEmbed::Bindings
+} // namespace KJSEmbed
 
-QString Message::richBody() const
-{
-	kdDebug() << k_funcinfo << endl;
-	return msg->parsedBody();
-}
-
-void Message::setImportance( int importance )
-{
-	kdDebug() << k_funcinfo << endl;
-	msg->setImportance( (KopeteMessage::MessageImportance)importance );
-}
-
-int Message::importance() const
-{
-	kdDebug() << k_funcinfo << endl;
-	return msg->importance();
-}
-
-int Message::type() const
-{
-	kdDebug() << k_funcinfo << endl;
-	return (int)msg->type();
-}
-
-QString Message::xml() const
-{
-	kdDebug() << k_funcinfo << endl;
-	return msg->asXML().toString();
-}
-
-#include "kopetemessage_imp.moc"
-
-
+#include <kgenericfactory.h>
+typedef KGenericFactory<KJSEmbed::Bindings::KopeteMessageLoader> KopeteMessageLoaderFactory;
+K_EXPORT_COMPONENT_FACTORY( libkopetemessageplugin, KopeteMessageLoaderFactory( "KopeteMessageLoader" ) );
 
