@@ -52,9 +52,10 @@ QStringList KopeteIface::contactFileProtocols(QString displayName)
 	return KopeteContactList::contactList()->contactFileProtocols(displayName); 
 }
 
-void KopeteIface::sendFile(QString displayName, QString fileLocation, QString fileName = QString::null, unsigned long fileSize = 0L)
+void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL, 
+	const QString &altFileName = QString::null, const unsigned long fileSize = 0L)
 {
-	return KopeteContactList::contactList()->sendFile(displayName, fileLocation, fileName, fileSize);
+	return KopeteContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
 }
 
 

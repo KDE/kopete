@@ -22,7 +22,7 @@
 #include <qobject.h>
 #include <qpixmap.h>
 #include <qlistbox.h>
-
+#include <kurl.h>
 //#include "kopetegroup.h"
 
 class QString;
@@ -264,6 +264,7 @@ public:
 
 	 /*
 	  * Returns if this contact can accept file transfers
+	  * @return True if this contact is online and is capable of sending files, False otherwise
 	  */
 	  bool canAcceptFiles() const { return isOnline() && mFileCapable; }
 
@@ -307,9 +308,18 @@ public slots:
 	virtual void slotUserInfo() = 0;
 
 	/**
-	 * Method to send a file. Should be implemented by the protocols
+	 * This is the KopeteContact level slot for sending files. It should be implemented by all 
+	 * contacts which have the setFileCapable() flag set to true. If the function is called through
+	 * the GUI, no parameters are sent and they take on default values (the file is chosen with
+	 * a file open dialog)
+	 *
+	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param fileName (Optional) An alternate name for the file - what the reciever will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
+	 *                file size (such as over  asocket
 	 */
-	virtual void slotSendFile( QString &fileLocation, QString fileName, long unsigned int fileSize );
+	virtual void sendFile( const KURL &sourceURL = 0L, const QString &fileName = QString::null,
+		const long unsigned int fileSize = 0L );
 
 private slots:
 	/**

@@ -310,20 +310,22 @@ QStringList KopeteContactList::fileTransferContacts() const
 	return contacts;
 }
 
-void KopeteContactList::sendFile( QString displayName, QString fileLocation, QString fileName = QString::null, long unsigned int fileSize = 0L)
-{
-	/*
+void KopeteContactList::sendFile( const QString &displayName, const KURL &sourceURL, 
+	const QString &altFileName, const long unsigned int fileSize)
+{	/*
 	 * FIXME: We should be using either some kind of unique ID (kabc ID?)
 	 * here, or force user to only enter unique display names. A
 	 * unique identifier is needed for external DCOP refs like this!
 	 */
+	 
 //	kdDebug() << "Send To Display Name: " << displayName << "\n";
+
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 //		kdDebug() << "Display Name: " << it.current()->displayName() << "\n";
 		if( it.current()->displayName() == displayName ) {
-			it.current()->sendFile( fileLocation, fileName, fileSize );
+			it.current()->sendFile( sourceURL, altFileName, fileSize );
 			return;
 		}
 	}

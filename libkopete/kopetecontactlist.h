@@ -21,7 +21,7 @@
 #include <qobject.h>
 #include <qptrlist.h>
 //#include <qstringlist.h>
-
+#include <kurl.h>
 #include "kopetegroup.h"
 
 class QDomDocument;
@@ -88,8 +88,19 @@ public:
 
 	QStringList contactFileProtocols(QString displayName);
 
-	void sendFile(QString displayName, QString fileLocation, QString fileName, long unsigned int fileSize);
-
+	/**
+	 * Exposed via DCOP in kopeteiface
+	 * Used to send a file to a MetaContact using the highest ranked protocol
+	 * 
+	 * FIXME: We need to change this to us ea unique ID instea dof displayName
+	 *
+	 * @param displayName Metacontact to send file to
+	 * @param sourceURL The file we are sending
+	 * @param altFileName (Optional) An alternate filename for the file we are sending
+	 * @param fileSize (Optional) The size of the file
+	 */
+	void sendFile(const QString &displayName, const KURL &sourceURL,
+		const QString &altFileName = QString::null, const long unsigned int fileSize = 0L);
 	/**
 	 * Return all meta contacts with their current status
 	 *

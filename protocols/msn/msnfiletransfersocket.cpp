@@ -236,6 +236,7 @@ void MSNFileTransferSocket::setFile(const QString &fn, long unsigned int fileSiz
 			kdDebug() << "MSNFileTransferSocket::setFileName: WARNING unable to open the file" << endl;
 		}
 		
+		//If the fileSize is 0 it was not given, we are to get it from the file
 		if(fileSize == 0L)
 			m_size = m_file->size();
 		else

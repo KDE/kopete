@@ -20,6 +20,7 @@
 
 #include "kopetecontact.h"
 #include "msnprotocol.h"
+#include <kurl.h>
 
 class QListView;
 class QListViewItem;
@@ -110,7 +111,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
-	virtual void slotSendFile(QString &fileLocation, QString fileName, long unsigned int fileSize);
+	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
 
 	void slotRemovedFromGroup(unsigned int);
 	void slotAddedToGroup(unsigned int);

@@ -387,6 +387,7 @@ bool KopeteMetaContact::isReachable() const
 	return false;
 }
 
+//Determine if we are capable of accepting file transfers
 bool KopeteMetaContact::canAcceptFiles() const
 {
 	if( !isOnline() )
@@ -401,19 +402,23 @@ bool KopeteMetaContact::canAcceptFiles() const
 	return false;
 }
 
-void KopeteMetaContact::sendFile( QString fileLocation, QString fileName, unsigned long fileSize )
+//Slot for sending files
+void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileName, unsigned long fileSize )
 {
+	//If we can't send any files then exit
 	if( m_contacts.isEmpty() || !canAcceptFiles() )
 		return;
 
+	//Find the highest ranked protocol that can accept files
 	KopeteContact *c=m_contacts.first();
 	for(QPtrListIterator<KopeteContact> it( m_contacts ) ; it.current(); ++it )
 	{
-		if( (*it)->importance() > c->importance())
+		if( ( (*it)->importance() > c->importance() ) && ( (*it)->canAcceptFiles() ) )
 			c=*it;
 	}
 
-	c->slotSendFile( fileLocation, fileName, fileSize );
+	//Call the sendFile slot of this protocol
+	c->sendFile( sourceURL, altFileName, fileSize );
 }
 
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,

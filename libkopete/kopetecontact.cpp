@@ -73,7 +73,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	actionChangeAlias = KopeteStdAction::changeAlias( this,
 		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
 	actionSendFile = KopeteStdAction::sendFile( this,
-		SLOT( slotSendFile() ), this, "actionSendFile");
+		SLOT( sendFile() ), this, "actionSendFile");
 }
 
 KopeteContact::~KopeteContact()
@@ -193,7 +193,7 @@ void KopeteContact::slotHistoryDialogDestroyed()
 	m_historyDialog = 0L;
 }
 
-void KopeteContact::slotSendFile( QString &fileLocation, QString = QString::null /*fileName*/, long unsigned int = 0L/*fileSize*/)
+void KopeteContact::sendFile( const KURL &, const QString &, const long unsigned int)
 {
 	kdDebug() << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
 }

@@ -43,8 +43,8 @@ public:
 
 	MSNSwitchBoardSocket *service() { return m_chatService; };
 
-	void sendFile( const QString &fileLocation, QString &fileName, long unsigned int fileSize );
-
+	void sendFile( const QString &fileLocation, const QString &fileName, 
+		long unsigned int fileSize );
 public slots:
 	void slotCloseSession();
 

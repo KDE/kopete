@@ -517,19 +517,28 @@ void MSNMessageManager::slotFileTransferDone(MSNFileTransferSocket* MFTS)
 		setCanBeDeleted(true);
 }
 
-void MSNMessageManager::sendFile(const QString& fileLocation, QString& fileName, long unsigned int fileSize) 
+void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fileName, 
+	long unsigned int fileSize) 
 {
-		
+	QString theFileName;
+	
 	if(m_chatService)
 	{
-		if( fileName == QString::null )
-			fileName = fileLocation.right( fileLocation.length() - fileLocation.findRev( QRegExp("/") ) - 1 );
-		
+		//If the alternate filename is null, then get the filename from the location
+		if( fileName.isNull() ) {
+			theFileName = fileLocation.right( fileLocation.length() - 
+				fileLocation.findRev( QRegExp("/") ) - 1 );
+		} else {
+			theFileName = fileName;
+		}
+			
 		unsigned long int cookie = (rand()%(999999))+1;
 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(false,this);
 		MFTS->setCookie(cookie);
 		connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 		m_invitations.insert( cookie  , MFTS);
+		
+		//Call the setFile command to let the MFTS know what file we are sending
 		MFTS->setFile(fileLocation, fileSize);
 
 		QCString message=QString(

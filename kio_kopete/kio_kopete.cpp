@@ -68,6 +68,8 @@ void KopeteProtocol::get( const KURL& url ) {
 void KopeteProtocol::put( const KURL& dest_url, int perms, bool overWrite, bool resume ) {
 
 	int result;
+	KFileItem *destFile = new KFileItem( KFileItem::Unknown, KFileItem::Unknown, dest_url );
+	
 	QByteArray data, replyData;
 	QCString replyType;
 	QDataStream arg(data, IO_WriteOnly);
@@ -82,16 +84,18 @@ void KopeteProtocol::put( const KURL& dest_url, int perms, bool overWrite, bool 
 	QCString appId = client->registerAs("kio_kopete");
 	
 	//Pass contact, file, and new file name to function
-	//arg << [contact] [filename] << [new file name];
+	//arg << [contact] << [filename] << [new file name] << [filesize];
+	arg << dest_url.directory() << "/tmp/kopete_kio_test" << dest_url.fileName() << destFile->size();
 	
 	//Create the FIFO for output if it doesn't exist
-	mkfifo("/tmp/kopete", 0600);
+	mkfifo("/tmp/kopete_kio_test", 0600);
 	
-	
-	if (client->call("kopete", "KopeteIface", "sendFile(QString &, QString &, QString &)", data, replyType, replyData)) {
+	if (client->call("kopete", "KopeteIface", "sendFile(QString &, KURL &, QString &, unsigned long)", data, replyType, replyData)) {
 		
 		//Open the FIFO
-		FILE *fp = fopen("/tmp/kopete","wb");
+		FILE *fp = fopen("/tmp/kopete_kio_test","wb");
+		
+		//Write the file
 		do {
 			QByteArray buffer;
 			dataReq(); //Request Data from KIO
@@ -105,6 +109,7 @@ void KopeteProtocol::put( const KURL& dest_url, int perms, bool overWrite, bool 
 		fclose(fp);
 	
 	} else {
+		inout << "Couldn't connect to Kopete" << endl;
 		//Couldn't connect to kopete!
 	}
 	

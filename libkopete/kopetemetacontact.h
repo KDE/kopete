@@ -24,6 +24,7 @@
 //#include <qstringlist.h>
 #include <qmap.h>
 
+#include <kurl.h>
 #include "kopetecontact.h"
 #include "kopetegroup.h"
 
@@ -60,8 +61,8 @@ public:
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
 	 */
-	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString &contactId );
-	
+	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString 
+&contactId );	
 	/**
 	 * The name of the icon associated with the contact's status
 	 */
@@ -83,6 +84,7 @@ public:
 	
 	/**
 	 * Returns weather this contact can accept files
+	 * @return True if the user is online with a file capable protocol, false otherwise
 	 */
 	bool canAcceptFiles() const;
 	/**
@@ -234,8 +236,21 @@ public slots:
 	 */
 	void startChat();
 	
-	void sendFile(QString fileLocation = QString::null, QString fileName = QString::null, unsigned long fileSize = 0L);
-	
+	/**
+	 * This is the KopeteMetaContact level slot for sending files. It may be called through the
+	 * "Send File" entry in the GUI, or over DCOP. If the function is called through the GUI,
+	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
+	 * with identical params of the highest ranked contact capable of sending files (if any)
+	 *
+	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param altFileName (Optional) An alternate name for the file - what the reciever will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
+	 *                file size (such as over a socket)
+	 *
+	 */
+	void sendFile(const KURL &sourceURL, const QString &altFileName = QString::null,
+		unsigned long fileSize = 0L);
+
 signals:
 	/**
 	 * The contact's online status changed
