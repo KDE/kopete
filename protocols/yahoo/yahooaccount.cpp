@@ -68,14 +68,14 @@ void YahooAccount::slotGoStatus(int status)
 
 	if(!isConnected())
 	{	if(status == 12)
-			// must connect as invisible
+			// TODO: must connect as invisible
 			connect();
 		else
 			connect();
 		stateOnConnection = status;
 	}
 	else
-	{	m_session->setAway(yahoo_status(status), "", 1);
+	{	m_session->setAway(yahoo_status(status), "", status ? 1 : 0);
 		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(status));
 	}
 }
@@ -103,7 +103,6 @@ void YahooAccount::connect()
 
 	QString server = static_cast<YahooProtocol *>(protocol())->server();
 	int port = static_cast<YahooProtocol *>(protocol())->port();
-	// TODO: do something with them! :-)
 
 	kdDebug(14180) << "YahooAccount::connect()" << endl;
 
@@ -144,7 +143,7 @@ void YahooAccount::connect()
 			{
 				kdDebug(14180) << "Couldn't connect!" << endl;
 				delete session_;
-				// message box saying can't connect?
+				// TODO: message box saying can't connect?
 			}
 		}
 	}
@@ -174,13 +173,12 @@ void YahooAccount::disconnect()
 void YahooAccount::setAway(bool status)
 {
 	kdDebug(14180) << "YahooAccount::setAway(" << status << ")" << endl;
-	// TODO: make it work!
-
+	slotGoStatus(status ? 2 : 0);	// or SteppedOut?
 }
 
 void YahooAccount::slotConnected()
 {
-	kdDebug(14180) << "Yahoo: CONNECTED" << endl;
+	kdDebug(14180) << "YahooAccount::slotConnected()" << endl;
 }
 
 void YahooAccount::slotGoOnline()
@@ -188,7 +186,7 @@ void YahooAccount::slotGoOnline()
 	if(!isConnected())
 		connect();
 	else
-		m_myself->setYahooStatus(YahooStatus::Available);
+		slotGoStatus(0);
 }
 
 void YahooAccount::slotGoOffline()
