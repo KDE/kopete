@@ -284,6 +284,12 @@ KActionCollection* IRCContact::customContextMenuActions()
 
 void IRCContact::execute()
 {
+	if (!mTabPage)
+	{
+		slotOpen();
+	}
+
+
 	if (m_serverContact->chatWindow() != 0)
 	{
 		m_serverContact->chatWindow()->raise();
