@@ -264,6 +264,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 	findTags.setMinimal( true );
 	int pos = 0;
+
 	while ( pos >= 0 )
 	{
 		pos = findTags.search( htmlString );
@@ -277,7 +278,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 			{
 				QString attribute = (*attrPair).section(':',0,0);
 				QString value = (*attrPair).section(':',1);
-				kdDebug() << k_funcinfo << "Attribute:" << attribute << ", Value:" << value << endl;
+
 				if( attribute == QString::fromLatin1("color") )
 				{
 					int ircColor = KSParser::colorForHTML( value );

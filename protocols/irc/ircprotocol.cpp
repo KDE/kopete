@@ -139,23 +139,23 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /devoice <nickanme> - Remove channel voice status from someone (Requires operator status).") );
-		
+
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quit"),
 		SLOT( slotQuitCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /quit [<reason>] - Disconnect from IRC, optionally leaving a message.") );
-		
+
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("part"),
 		SLOT( slotPartCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /part [<reason>] - Part from a channel, optionally leaving a message.") );
-		
+
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("invite"),
 		SLOT( slotInviteCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /invite <nickname> - Invite a user to join a channel.") );
-		
+
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
 		QString::fromLatin1("join %1"),
 		i18n("USAGE: /j <channel> - Alias for JOIN."), KopeteCommandHandler::SystemAlias );
-		
+
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
 		QString::fromLatin1("join %1"),
 		i18n("USAGE: /j <channel> - Alias for JOIN."), KopeteCommandHandler::SystemAlias );
@@ -163,11 +163,11 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("ping"),
 		QString::fromLatin1("ctcp %1 PING"),
 		i18n("USAGE: /ping <nickname> - Alias for /CTCP <nickname> PING."), KopeteCommandHandler::SystemAlias );
-		
+
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("msg"),
 		QString::fromLatin1("query %s"),
 		i18n("USAGE: /msg <nickname> [<message>] - Alias for QUERY <nickname>."), KopeteCommandHandler::SystemAlias );
-	
+
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)),
 		this, SLOT(slotMessageFilter(KopeteMessage &)) );
 }
@@ -181,7 +181,7 @@ IRCProtocol::~IRCProtocol()
 {
 }
 
-bool IRCProtocol::supportsRichText()
+bool IRCProtocol::supportsRichText() const
 {
 	//We support rich text
 	return true;
@@ -368,16 +368,16 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 	{
 		QString user = args.section( ' ', 0, 0 );
 		QString rest = args.section( ' ', 1 );
-		
+
 		if( !user.startsWith( QString::fromLatin1("#") ) )
 		{
 			IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->findUser( user );
 			c->startChat();
 			if( !rest.isEmpty() )
 			{
-				KopeteMessage msg( c->manager()->user(), c->manager()->members(), rest, 
+				KopeteMessage msg( c->manager()->user(), c->manager()->members(), rest,
 					KopeteMessage::Outbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-				c->manager()->sendMessage(msg);	
+				c->manager()->sendMessage(msg);
 			}
 		}
 		else

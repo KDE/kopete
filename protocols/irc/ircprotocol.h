@@ -60,8 +60,8 @@ public:
 	virtual KopeteAccount* createNewAccount(const QString &accountId);
 
 	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
-	
-	virtual bool supportsRichText();
+
+	bool supportsRichText() const;
 
 	static IRCProtocol *protocol();
 

@@ -294,8 +294,6 @@ void IRCChannelContact::slotUserKicked(const QString &nick, const QString &chann
 		if( reason != nick )
 			r.append( i18n(" Reason: %2").arg( reason ) );
 
-
-
 		if( nickKicked.lower() != m_engine->nickName().lower() )
 		{
 			KopeteContact *c = locateUser( nickKicked );
