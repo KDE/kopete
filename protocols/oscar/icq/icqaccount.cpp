@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kconfig.h>
 
 
 ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *name)
@@ -40,16 +41,14 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 	mWebAware = true;
 	mHideIP = false;
 	mInvisible = false;
-	setMyself( new ICQContact(accountId(), QString::null, this, 0L) );
-}
-
-void ICQAccount::loaded()
-{
-	// needs to be here because pluginData() does not work in constructor
-	QString nickName = pluginData(protocol(), QString::fromLatin1("NickName"));
+	
+	ICQContact *myself = new ICQContact(accountId(), QString::null, this, 0L);
+	setMyself(myself);
+	
+	QString nickName = configGroup()->readEntry(QString::fromLatin1("NickName"));
 	if(!nickName.isNull())
-		static_cast<ICQContact *>(myself())->setOwnDisplayName(nickName);
-
+		myself->setOwnDisplayName(nickName);
+	
 	reloadPluginData();
 }
 

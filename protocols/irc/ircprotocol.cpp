@@ -101,7 +101,6 @@ void IRCProtocolHandler::handleURL( const KURL &url ) const
 	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId, chan );
 	newAccount->setNickName( user.loginName() );
 	newAccount->setUserName( user.loginName() );
-	newAccount->loaded();
 	newAccount->connect();
 }
 

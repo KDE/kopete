@@ -471,7 +471,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	{
 		password().setWrong();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
-		disconnected( BadUserName ); // FIXME: add a BadPassword disconnect reason that reconnects
+		disconnected( BadPassword );
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_LOCK)
@@ -514,7 +514,7 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	{
 		kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
 		Kopete::Group *g=Kopete::ContactList::self()->findGroup(group);
-		addMetaContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
+		addContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
 
 }
@@ -555,7 +555,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	if( !contact( who ) )
 	{
 		kdDebug(14180) << "Adding contact " << who << endl;
-		addMetaContact( who,who,  0L, Kopete::Account::Temporary );
+		addContact( who,who,  0L, Kopete::Account::Temporary );
 	}
 	
 	//Parse the message for it's properties

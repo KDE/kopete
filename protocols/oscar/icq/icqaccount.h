@@ -59,8 +59,6 @@ class ICQAccount : public OscarAccount
 		void slotToggleInvisible();
 
 	protected slots:
-		// called after XML is read in, cannot access pluginData in constructor
-		virtual void loaded();
 		void slotSendSMS();
 
 	protected:

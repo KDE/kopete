@@ -41,27 +41,27 @@ class OnlineStatus;
 class BlackLister;
 
 /**
- * @author Olivier Goffart  <ogoffart @tiscalinet.be>
- *
  * The Kopete::Account class handles one account.
- * Each protocol should subclass this class in their own custom accounts class.
+ * Each protocol should subclass this class in its own custom accounts class.
  * There are few pure virtual method that the protocol must implement. Examples are:
  * \li \ref connect()
  * \li \ref disconnect()
  * \li \ref createContact()
  *
- * But if your account may require a password, reimplement @ref PasswordedAccount which handle passwords
+ * If your account requires a password, derive from @ref PasswordedAccount instead of this class.
  *
- * The accountId is an <b>constant</b> unique id, which represents the login.
+ * The accountId is an @em constant unique id, which represents the login.
  * The @ref myself() contact is one of the most important contacts, which represents
  * the user tied to this account. You must create this contact in the contructor of your
- * account and use @ref setMyself()
+ * account and pass it to @ref setMyself().
  *
- * All account data is saved to @ref KConfig. This includes the accountId, the autoconnect flag, the color.
- * You can save more data using @ref configGroup()
+ * All account data is saved to @ref KConfig. This includes the accountId, the autoconnect flag and
+ * the color. You can save more data using @ref configGroup()
  *
- * When you create a new account, you have to register it in the account manager with @ref AccountManager::registerAccount
+ * When you create a new account, you have to register it with the account manager by calling
+ * @ref AccountManager::registerAccount.
  *
+ * @author Olivier Goffart  <ogoffart @tiscalinet.be>
  */
 class KOPETE_EXPORT Account : public QObject
 {
@@ -77,7 +77,6 @@ class KOPETE_EXPORT Account : public QObject
 	Q_PROPERTY( uint priority READ priority WRITE setPriority )
 
 public:
-
 	/**
 	 * \brief Describes how the account was disconnected
 	 *
@@ -87,21 +86,19 @@ public:
 	 * @see @ref disconnected
 	 */
 	enum DisconnectReason {
-		BadUserName = -2,	/** impossible to connect because some informations (Login, Password, ...) were incorrect*/
-		InvalidHost = -1,	/** impossible to connect because host is unreachable */
-		Manual = 0,			/** the user disconnected normaly */
-		ConnectionReset = 1, /** the connection has been lost */
-		Unknown = 99 };
-
-
+		BadPassword = -3,    ///< connection failed because password was incorrect
+		BadUserName = -2,    ///< connection failed because user name was invalid / unknown
+		InvalidHost = -1,    ///< connection failed because host is unreachable
+		Manual = 0,          ///< the user disconnected normally
+		ConnectionReset = 1, ///< the connection was lost
+		Unknown = 99         ///< the reason for disconnection is unknown
+	};
 
 	/**
-	 * constructor:
-	 * The constructor register automatically the account to the @ref AccountManager
-	 * @param parent it the protocol of this account. the accoun is a child object of the
-	 * protocol, so it will be automatically deleted with the parent.
-	 * @param accountID is the id of this protocol, it shouln't be changed after
-	 * @param name is the QObject name. it can be 0L
+	 * @param parent the protocol for this account. The account is a child object of the
+	 * protocol, so it will be automatically deleted when the protocol is.
+	 * @param accountID the unique ID of this account.
+	 * @param name the name of this QObject.
 	 */
 	Account(Protocol *parent, const QString &accountID, const char *name=0L);
 	~Account();
@@ -112,7 +109,7 @@ public:
 	Protocol *protocol() const ;
 
 	/**
-	 * \return the unique id of this account used as the login
+	 * \return the unique ID of this account used as the login
 	 */
 	QString accountId() const;
 
@@ -120,22 +117,21 @@ public:
 	/**
 	 * \brief Get the priority of this account.
 	 *
-	 * Used for sorting and determining the preferred account to message a contact
+	 * Used for sorting and determining the preferred account to message a contact.
 	 */
 	uint priority() const;
 
 	/**
 	 * \brief Set the priority of this account.
 	 *
-	 * This method is called by the UI, and should not be called elsewhere.
+	 * @note This method is called by the UI, and should not be called elsewhere.
 	 */
 	void setPriority( uint priority );
 
 	/**
 	 * \brief Set if the account should log in automatically.
 	 *
-	 * This function can be used by the EditAccountPage
-	 * Kopete handles the autoconnection automatically
+	 * This function can be used by the EditAccountPage. Kopete handles autoconnection automatically.
 	 * @sa @ref autoConnect
 	 */
 	void setAutoConnect(bool);
@@ -143,21 +139,25 @@ public:
 	/**
 	 * \brief Get if the account should log in automatically.
 	 *
- 	 * Say if yes or no the account should be connected with the connect all button.
+ 	 * @return @c true if the account should be connected automatically at startup, @c false otherwise.
 	 */
 	bool autoConnect() const;
 
 	/**
 	 * \brief Get the color for this account.
- 	 * The color will be used to differentiate this account from the other accounts
+	 * 
+ 	 * The color will be used to visually differentiate this account from other accounts on the
+	 * same protocol.
+	 * 
 	 * \return the user color for this account
 	 */
 	const QColor color() const;
 
 	/**
 	 * \brief Set the color for this account.
-	 * Normally, this should be called by Kopete's account config page so you
-	 * don't have to set the color yourself
+	 * 
+	 * This is called by Kopete's account config page; you don't have to set the color yourself.
+	 * 
 	 * @sa @ref color()
 	 */
 	void setColor( const QColor &color);
@@ -165,18 +165,17 @@ public:
 	/**
 	 * \brief Get the icon for this account.
 	 *
-	 * The icon is not cached.
-	 * \return the icon for this account, colored if needed
-	 * @param size is the size of the icon.  If the size is 0, the default size is used
-	 *
+	 * Generates an image of size @p size representing this account. The result is not cached.
+	 * 
+	 * @param size the size of the icon. If the size is 0, the default size is used.
+	 * @return the icon for this account, colored if needed
 	 */
-	QPixmap accountIcon(const int size=0) const;
-
+	QPixmap accountIcon( const int size = 0 ) const;
 
 	/**
 	 * \brief Retrieve the 'myself' contact.
 	 *
-	 * \return the pointer to the Contact object for this account
+	 * \return a pointer to the Contact object for this account
 	 *
 	 * \see setMyself().
 	 */
@@ -186,12 +185,15 @@ public:
 	 * @brief Return the menu for this account
 	 *
 	 * You have to reimplement this method to return the custom action menu which will
-	 * be shown in the statusbar. Kopete takes care of the deletion of the menu.
+	 * be shown in the statusbar. It is the caller's responsibility to ensure the menu is deleted.
 	 *
-	 * The default implementation provide a generic menu, with all actions from registered status
-	 * (@see OnlineStatusManager::registerOnlineStatus) and an action to show the preference of the account.
+	 * The default implementation provides a generic menu, with actions generated from the protocol's
+	 * registered statuses, and an action to show the account's settings dialog.
 	 *
-	 * You may may call the default implementation from your reimplementation to add more action in the resulting action menu.
+	 * You should call the default implementation from your reimplementation, and add more actions
+	 * you require to the resulting action menu.
+	 * 
+	 * @see OnlineStatusManager::registerOnlineStatus
 	 */
 	virtual KActionMenu* actionMenu() ;
 
@@ -204,96 +206,101 @@ public:
 	 */
 	const QDict<Contact>& contacts();
 
-
 	/**
 	 * Indicates whether or not we should suppress status notifications
 	 * for contacts belonging to this account.
 	 *
-	 * This is when we just connected or disconnected, and every contact get their initial status.
+	 * This is used when we just connected or disconnected, and every contact has their initial
+	 * status set.
 	 *
-	 * \return true if notifications should not be used, false if
-	 * notifications should be used
+	 * @return @c true if notifications should not be used, @c false otherwise
 	 */
 	bool suppressStatusNotification() const;
-
 
 	/**
 	 * \brief Describes what should be done when the contact is added to a metacontact
 	 * @sa @ref addContact()
-	 * @sa @ref addMetaContact()
 	 */
-	enum AddMode { ChangeKABC=0, 	/** The KDE Address book may be updated */
-				   DontChangeKABC=1 /** The KDE Address book will not be changed */,
-				   Temporary=2  	/** The contact will not be added on the contactlist */ };
+	enum AddMode {
+		ChangeKABC = 0,     ///< The KDE Address book may be updated
+		DontChangeKABC = 1, ///< The KDE Address book will not be changed
+		Temporary = 2       ///< The contact will not be added on the contactlist
+	};
 
 	/**
-	 * \brief add a contact to a new metacontact
+	 * \brief Create a contact (creating a new metacontact if necessary)
 	 *
-	 * This method will add a new metacontact containing only the contact.
-	 * It will take care the contact isn't already on the contactlist.
-	 * if it is already, the contact is not created, but the metacontact containing the contact is returned
+	 * If a contact for this account with ID @p contactId is not already on the contact list,
+	 * a new contact with that ID is created, and added to a new metacontact.
+	 * 
+	 * If @p mode is @c ChangeKABC, MetaContact::updateKABC will be called on the resulting metacontact.
+	 * If @p mode is @c Temporary, MetaContact::setTemporary will be called on the resulting metacontact,
+	 * and the metacontact will not be added to @p group.
+	 * If @p mode is @c DontChangeKABC, no additional action is carried out.
 	 *
-	 * @param contactId The @ref Contact::contactId
-	 * @param displayName The displayname (alias) of the new metacontact. Let empty if not applicable.
-	 * @param group the group to add the contact. if NULL, it will be added to toplevel
-	 * @param mode If the KDE addressbook should be changed to include the new contact. Don't change if you are using this method to deserialise.
-	 *   if Temporary, @p groups is not used
-	 * @return the new metacontact or 0L if no contact was created because of error.
+	 * @param contactId the @ref Contact::contactId of the contact to create
+	 * @param displayName the displayname (alias) of the new metacontact. Leave as QString::null if
+	 *                    no name is known.
+	 * @param group the group to add the created metacontact to, or 0 for the top-level group.
+	 * @param mode the mode used to add the contact. Use DontChangeKABC when deserializing.
+	 * @return @c true if creation of the contact succeeded or the contact was already in the list,
+	 *         @c false otherwise.
 	 */
-	MetaContact *addMetaContact( const QString &contactId, const QString &displayName = QString::null, Group *group=0L, AddMode mode = DontChangeKABC ) ;
+	bool addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;
 
 	/**
-	 * @brief add a contact to an existing metacontact
+	 * @brief Create a new contact, adding it to an existing metacontact
 	 *
-	 * This method will check if the contact is not already in the contactlist, and if not, will add a contact
-	 * to the given metacontact.
+	 * If a contact for this account with ID @p contactId is not already on the contact list,
+	 * a new contact with that ID is created, and added to the metacontact @p parent.
 	 *
-	 * @param contactId The @ref Contact::contactId of the contact
-	 * @param parent The metaContact parent (must exists)
-	 * @param mode If the KDE address book should be updated. see @ref AddMode.
+	 * @param contactId the @ref Contact::contactId of the contact to create
+	 * @param parent the parent metacontact (must not be 0)
+	 * @param mode the mode used to add the contact. See addContact(const QString&,const QString&,Group*,AddMode) for details.
 	 *
-	 * @return false if the cration of the contact has failed.
+	 * @return @c true if creation of the contact succeeded or the contact was already in the list,
+	 *         @c false otherwise.
 	 */
-	bool addContact(const QString &contactId , MetaContact *parent, AddMode mode = DontChangeKABC );
+	bool addContact( const QString &contactId, MetaContact *parent, AddMode mode = DontChangeKABC );
 
 	/**
 	 * @brief Indicate whether the account is connected at all.
 	 *
-	 * This is a convenience method that queries @ref Contact::onlineStatus()
-	 * on @ref myself()
-	 *
+	 * This is a convenience method that calls @ref Contact::isOnline() on @ref myself().
+	 * This function is safe to call if @ref setMyself() has not been called yet.
+	 * 
 	 * @see @ref isConnectedChanged()
 	 */
 	bool isConnected() const;
 
-
 	/**
 	 * @brief Indicate whether the account is away.
 	 *
-	 * This is a convenience method that queries @ref Contact::onlineStatus()
-	 * on @ref myself()
+	 * This is a convenience method that queries @ref Contact::onlineStatus() on @ref myself().
+	 * This function is safe to call if @ref setMyself() has not been called yet.
 	 */
 	bool isAway() const;
 
-
 	/**
-	  * Return the @ref KConfigGroup used to write and read special properties
-	  *
-	  * "Protocol", "AccountId" , "Color", "AutoConnect", "Priority", "Enabled" are reserved keyword already in use in that group
-	  */
+	 * Return the @ref KConfigGroup used to write and read special properties
+	 *
+	 * "Protocol", "AccountId" , "Color", "AutoConnect", "Priority", "Enabled" are reserved keyword
+	 * already in use in that group.
+	 */
 	KConfigGroup *configGroup() const;
 
 	/**
-	 * @brief remove the account on the server.
-	 * reimplement it if your protocol support removing the removing of the account on the server.
-	 * that function is called by @ref AccountManager::removeAccount tipicaly when you remove the
+	 * @brief Remove the account from the server.
+	 * 
+	 * Reimplement this if your protocol supports removing the accounts from the server.
+	 * This function is called by @ref AccountManager::removeAccount typically when you remove the
 	 * account on the account config page.
 	 *
-	 * You probably should add a confirmation message box before removing the account.
+	 * You should add a confirmation message box before removing the account. The default
+	 * implementation does nothing.
 	 *
-	 * the default implementation do nothing
-	 *
-	 * @return false only if the account deletion need to be canceled,  return true in other cases
+	 * @return @c false only if the user requested for the account to be deleted, and deleting the
+	 * account failed. Returns @c true in all other cases.
 	 */
 	virtual bool removeAccount();
 
@@ -303,7 +310,7 @@ public:
 	BlackLister* blackLister();
 
 	/**
-	 * \return @c true if the contact with ID @p contactId is in the blacklist, @c false otherwise
+	 * \return @c true if the contact with ID @p contactId is in the blacklist, @c false otherwise.
 	 */
 	virtual bool isBlocked( const QString &contactId );
 
@@ -311,31 +318,30 @@ protected:
 	/**
 	 * \brief Set the 'myself' contact.
 	 *
-	 * This contact HAS to be defined for every  account, because it
-	 * holds the online status of an account!
-	 * You must call this function in the constructor of your account
+	 * This contact must be defined for every account, because it holds the online status
+	 * of the account. You must call this function in the constructor of your account.
 	 *
-	 * The myself contact can't be deleted as long as the account still
-	 * exists. The myself contact is used in each ChatSession,
-	 * the myself contactId can be the accountID, the onlineStatus
-	 * should represent the current user's status. The statusbar icon
-	 * is connected to @p myself's @ref Kopete::Contact::onlineStatusChanged()
-	 * to update the icon.
+	 * The myself contact can't be deleted as long as the account still exists. The myself
+	 * contact is used as a member of every ChatSession involving this account. myself's
+	 * contactId should be the accountID. The online status of the myself contact represents
+	 * the account's status.
 	 */
 	void setMyself( Contact *myself );
 
 	/**
 	 * \brief Create a new contact in the specified metacontact
 	 *
-	 * You shouldn't ever call this method yourself, For adding contacts see @ref addContact()
+	 * You shouldn't ever call this method yourself. To add contacts, use @ref addContact().
 	 *
-	 * This method is called by @ref Account::addContact(). In this method, you should
-	 * simply create the new custom @ref Contact in the given metacontact.
-	 * If the metacontact is not temporary, You can add the contact to the server if the protocol supports it
+	 * This method is called by @ref addContact(). In this method, you should create the
+	 * new custom @ref Contact, using @p parentContact as the parent.
+	 * 
+	 * If the metacontact is not temporary and the protocol supports it, you can add the
+	 * contact to the server.
 	 *
-	 * @param contactId The unique ID for this protocol
-	 * @param parentContact The metacontact to add this contact to
-	 * @return false if the creation of the contact failed.  libkopete may delete the parent Contact in that case
+	 * @param contactId the ID of the contact to create
+	 * @param parentContact the metacontact to add this contact to
+	 * @return @c true if creating the contact succeeded, @c false on failure.
 	 */
 	virtual bool createContact( const QString &contactId, MetaContact *parentContact ) =0;
 	
@@ -344,19 +350,18 @@ protected slots:
 	 * \brief The service has been disconnected
 	 *
 	 * You have to call this method when you are disconnected. Depending on the value of
-	 * @p reason, this function may attempt auto-reconnect.
+	 * @p reason, this function may attempt to reconnect to the server.
 	 *
 	 * @param reason the reason for the disconnection.
 	 */
 	virtual void disconnected( DisconnectReason reason );
-
 
 	/**
 	 * @brief Sets the online status of all contacts in this account to the same value
 	 *
 	 * Some protocols do not provide status-changed events for all contacts when an account
 	 * becomes connected or disconnected. For such protocols, this function may be useful
-	 * to set all contacts Offline.
+	 * to set all contacts offline.
 	 *
 	 * Calls @ref Kopete::Contact::setOnlineStatus on all contacts of this account (except the
 	 * @ref myself() contact), passing @p status as the status.
@@ -366,17 +371,16 @@ protected slots:
 	void setAllContactsStatus( const Kopete::OnlineStatus &status );
 
 signals:
-
 	/**
 	 * The color of the account has been changed
 	 */
 	void colorChanged( const QColor & );
 
 	/**
-	 * The account is going to be deleted
-	 * @warning emitted in the Account destructor, any virtual fucntion may not anymore be called
+	 * Emitted when the account is deleted.
+	 * @warning emitted in the Account destructor. It is not safe to call any functions on @p account.
 	 */
-	void accountDestroyed( const Kopete::Account* );
+	void accountDestroyed( const Kopete::Account *account );
 
 	/**
 	 * Emitted whenever @ref isConnected() changes.
@@ -384,51 +388,43 @@ signals:
 	void isConnectedChanged();
 
 private:
-
-
 	/**
-	 * \brief Read the account's configuration
-	 *
-	 * Uses KConfig to read the configuration for this account
-	 *
 	 * @internal
+	 * Reads the configuration information of the account from KConfig.
 	 */
-	void readConfig(  );
+	void readConfig();
 
 public:
 	/**
-	 * \internal
-	 * Register a new Contact with the account
-	 * To be called <b>only</b> from @ref Contact constructor
-	 * not from any other class! (Not even a derived class).
+	 * @internal
+	 * Register a new Contact with the account. This should be called @em only from the
+	 * @ref Contact constructor, not from anywhere else (not even a derived class).
 	 */
 	void registerContact( Contact *c );
-
-
 
 public slots:
 	/**
 	 * @brief Go online for this service.
 	 *
-	 * @param initialStatus is the status to use initialy.  If it is an invalid status, the default online for that protocol should be used
+	 * @param initialStatus is the status to connect with. If it is an invalid status for this
+	 * account, the default online for the account should be used.
 	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() ) =0;
+	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() ) = 0;
 
 	/**
 	 * @brief Go offline for this service.
 	 *
-	 * If the service is connecting, you should abort the connection
+	 * If the service is connecting, you should abort the connection.
 	 *
-	 * you should call the @ref diconnected function from this function.
+	 * You should call the @ref diconnected function from this function.
 	 */
 	virtual void disconnect( ) = 0 ;
 
-
-
 public slots:
 	/**
-	 * this will be called if main-kopete wants
-	 * the plugin to set the user's mode to away
+	 * If @p away is @c true, set the account away with away message @p reason. Otherwise,
+	 * set the account to not be away.
+	 * 
 	 * @todo change ; make use of setOnlineStatus
 	 */
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
@@ -442,9 +438,9 @@ public slots:
 	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null ) = 0;
 
 	/**
-	 * Display the edit account widget of the account
+	 * Display the edit account widget for the account
 	 */
-	void editAccount(QWidget* parent=0L);
+	void editAccount( QWidget* parent = 0L );
 
 	/**
 	 * Add a user to the blacklist. The default implementation calls
@@ -462,30 +458,19 @@ public slots:
 	 */
 	virtual void unblock( const QString &contactId );
 
-	/**
-	 * @deprecated   place everithing in the constructor
-	 * @todo remove
-	 */
-	virtual void loaded() {};
-
-
 private slots:
 	/**
-	 * Track the deletion of a Contact and cleanup
+	 * Track the deletion of a Contact and clean up
 	 */
 	void contactDestroyed( Kopete::Contact * );
 
 	/**
-	 * Our online status changed.
-	 *
-	 * Currently this slot is used to set a timer that allows suppressing online status
-	 * notifications just after connecting.
+	 * The @ref myself() contact's online status changed.
 	 */
 	void slotOnlineStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus );
 
 	/**
-	 * Stop the suppression of status notification
-	 * (connected on the timer)
+	 * Stop the suppression of status notification (connected to a timer)
 	 */
 	void slotStopSuppression();
 
@@ -495,7 +480,6 @@ private:
 
 protected:
 	virtual void virtual_hook( uint id, void* data);
-
 
 public:
 	/**

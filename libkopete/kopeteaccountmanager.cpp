@@ -187,10 +187,6 @@ Account* AccountManager::registerAccount( Account *account )
 	d->accounts.append( account );	
 	d->accounts.sort();
 	
-	
-	//TODO: remove when all plugin are proted
-	account->loaded();
-	
 	// Connect to the account's status changed signal
 	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
 			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),

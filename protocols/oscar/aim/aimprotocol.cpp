@@ -135,7 +135,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 		kdDebug(14152) << k_funcinfo <<
 			"Adding Contact; screenname = " << screenname << endl;
-		if (account->addMetaContact(screenname, command, 0L,
+		if (account->addContact(screenname, command, 0L,
 			Kopete::Account::Temporary))
 		{
 			//Kopete::Contact *contact = account->contacts()[screenname];

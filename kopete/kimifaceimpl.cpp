@@ -323,7 +323,7 @@ bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocol
 		Kopete::Account *ac = it.toFirst();
 		if ( ac )
 		{
-			ac->addMetaContact( contactId );
+			ac->addContact( contactId );
 			return true;
 		}
 	}

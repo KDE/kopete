@@ -33,15 +33,11 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 	: Kopete::Account( parent, accountID, name )
 {
 	setMyself( new SMSContact(this, accountID, accountID, 0L) );
+	loadConfig();
 }
 
 SMSAccount::~SMSAccount()
 {
-}
-
-void SMSAccount::loaded()
-{
-	loadConfig();
 }
 
 void SMSAccount::loadConfig()

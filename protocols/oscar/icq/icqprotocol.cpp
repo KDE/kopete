@@ -144,7 +144,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	kdDebug(14153) << k_funcinfo <<
 		"Adding Contact; uin = " << uin << ", nick = '" << nick <<
 		"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
-	if (account->addMetaContact(uin, nick, 0L, Kopete::Account::Temporary))
+	if (account->addContact(uin, nick, 0L, Kopete::Account::Temporary))
 	{
 		Kopete::Contact *contact = account->contacts()[uin];
 		if (!first.isEmpty())

@@ -221,8 +221,6 @@ Kopete::Account *IRCEditAccountWidget::apply()
 		setAccount( new IRCAccount( mProtocol, generateAccountId(networkName) ) );
 
 		account()->setNetwork( networkName );
-
-		account()->loaded();
 	}
 
 	mPasswordWidget->save( &account()->password() );

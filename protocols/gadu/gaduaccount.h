@@ -116,9 +116,6 @@ public slots:
 signals:
 	void pubDirSearchResult( const SearchResult& );
 
-protected slots:
-	virtual void loaded();
-
 protected:
 	//{
 	bool createContact( const QString& contactId,

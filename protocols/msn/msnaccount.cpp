@@ -327,7 +327,7 @@ void MSNAccount::slotStartChat()
 		if ( MSNProtocol::validContactId( handle ) )
 		{
 			if ( !contacts()[ handle ] )
-				addMetaContact( handle, handle, 0L, Kopete::Account::Temporary );
+				addContact( handle, handle, 0L, Kopete::Account::Temporary );
 
 			contacts()[ handle ]->execute();
 		}
@@ -474,7 +474,7 @@ void MSNAccount::slotNotifySocketClosed()
 	m_notifySocket = 0l;
 	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	if ( password().isWrong() )
-		disconnected( BadUserName );
+		disconnected( BadPassword );
 	else
 		//FIXME: give correct disconnect reason
 		disconnected( Manual );
@@ -1040,7 +1040,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 //	kdDebug( 14140 ) << k_funcinfo <<"Creating chat for " << handle << endl;
 
 	if ( !contacts()[ handle ] )
-		addMetaContact( handle, publicName, 0L, Kopete::Account::Temporary );
+		addContact( handle, publicName, 0L, Kopete::Account::Temporary );
 
 	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
 

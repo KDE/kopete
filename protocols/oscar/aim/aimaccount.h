@@ -61,9 +61,6 @@ class AIMAccount : public OscarAccount
 		void slotGoOnline();
 
 	protected slots:
-		// called after XML is read in, cannot access pluginData in constructor
-		virtual void loaded();
-
 		// Called when we have been warned
 		void slotGotWarning(int newlevel, QString warner);
 

@@ -143,6 +143,11 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 
 	initActions();
 	initConnections();
+
+	QString nick = configGroup()->readEntry( QString::fromAscii( "nickName" ) );
+	if ( !nick.isNull() ) {
+		myself()->rename( nick );
+	}
 }
 
 GaduAccount::~GaduAccount()
@@ -196,16 +201,6 @@ GaduAccount::initConnections()
 
 	QObject::connect( p->pingTimer_, SIGNAL( timeout() ),
 				SLOT( pingServer() ) );
-}
-
-void
-GaduAccount::loaded()
-{
-	QString nick;
-	nick	= pluginData( protocol(), QString::fromAscii( "nickName" ) );
-	if ( !nick.isNull() ) {
-		myself()->rename( nick );
-	}
 }
 
 void
@@ -602,7 +597,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 			// user pressed CANCEL
 			p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 			myself()->setOnlineStatus( p->status_ );
-			disconnected( BadUserName );
+			disconnected( BadPassword );
 			return;
 		default:
 			if ( p->connectWithSSL ) {
@@ -775,7 +770,7 @@ GaduAccount::userlist( const QString& contactsListString )
 		}
 		else {
 			contactName = GaduContact::findBestContactName( &contactsList[i] );
-			bool s = addMetaContact( contactsList[i].uin, contactName, 0L, Kopete::Account::DontChangeKABC);
+			bool s = addContact( contactsList[i].uin, contactName, 0L, Kopete::Account::DontChangeKABC);
 			if ( s == false ) {
 				kdDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list" << endl;
 				continue;

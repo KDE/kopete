@@ -14,6 +14,7 @@
 */
 
 #include <kdebug.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
@@ -38,25 +39,21 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	mStatus = OSCAR_OFFLINE;
 
-	setMyself( new AIMContact(tocNormalize(accountID), accountID, this, 0L) );
-}
-
-AIMAccount::~AIMAccount()
-{
-	kdDebug(14152) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
-}
-
-void AIMAccount::loaded()
-{
-	kdDebug(14152) << k_funcinfo << "Called." << endl;
-
-	QString profile = pluginData(protocol(), "Profile");
+	AIMContact *myself = new AIMContact(tocNormalize(accountID), accountID, this, 0L);
+	setMyself(myself);
+	
+	QString profile = configGroup()->readEntry("Profile");
 	if(profile.isNull())
 	{
 		profile = QString::fromLocal8Bit("Visit the Kopete website at " \
 			"<a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>");
 	}
-	static_cast<AIMContact *>(myself())->setOwnProfile(profile);
+	myself->setOwnProfile(profile);
+}
+
+AIMAccount::~AIMAccount()
+{
+	kdDebug(14152) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId,

@@ -102,7 +102,8 @@ Account::~Account()
 void Account::disconnected( DisconnectReason reason )
 {
 	//reconnect if needed
-	if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual )
+	if ( ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual ) ||
+	     reason == BadPassword )
 	{
 		//use a timer to allow the plugins to clean up after return
 		QTimer::singleShot(0, this, SLOT(connect()));
@@ -202,13 +203,13 @@ const QDict<Contact>& Account::contacts()
 }
 
 
-MetaContact *Account::addMetaContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  ) 
+bool Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  ) 
 {
 	if ( contactId == d->myself->contactId() )
 	{
 		kdDebug( 14010 ) << k_funcinfo <<
 			"WARNING: the user try to add myself to his contactlist - abort" << endl;
-		return 0L;
+		return false;
 	}
 	bool isTemporary = mode == Temporary;
 	
@@ -257,12 +258,12 @@ MetaContact *Account::addMetaContact( const QString &contactId, const QString &d
 		if ( !createContact( contactId, parentContact ) )
 		{
 			delete parentContact;
-			return 0L;
+			return false;
 		}
 	}
 		
 	ContactList::self()->addMetaContact( parentContact );
-	return parentContact;
+	return true;
 }
 
 bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode mode )

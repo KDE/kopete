@@ -57,7 +57,6 @@ public slots:
 
 protected:
 	bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
-	virtual void loaded();
 
 private:
 	bool theSubEnable;

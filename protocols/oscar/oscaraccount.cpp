@@ -253,7 +253,7 @@ void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &inco
 			"Message from contact that is not on our contactlist, sender='" <<
 			sender << "'" << endl;
 
-		if (addMetaContact(tocNormalize(sender), sender, 0L, Kopete::Account::Temporary))
+		if (addContact(tocNormalize(sender), sender, 0L, Kopete::Account::Temporary))
 			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 		else
 			return; // adding contact failed for whatever reason!
@@ -455,7 +455,7 @@ void OscarAccount::slotGotServerBuddyList()
 					kdDebug(14150) << k_funcinfo << "Adding SSI contact '" <<
 						bit.current()->name << "' to kopete contact list" << endl;
 
-					addMetaContact( tocNormalize(bit.current()->name),
+					addContact( tocNormalize(bit.current()->name),
 						bit.current()->name, 0L );
 				}
 				else  //make sure we set the contact to be on the SSI
