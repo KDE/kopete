@@ -601,7 +601,6 @@ void MSNNotifySocket::slotSendKeepAlive()
 
 void MSNNotifySocket::slotResetKeepAlive()
 {
-	kdDebug() << "****** RESET KEEPALIVE!" << endl;
 	// Fire the timer every 60 seconds. QTimer will reset a running timer
 	// on a subsequent call if there has been activity again.
 	m_keepaliveTimer->start( 60000 );
