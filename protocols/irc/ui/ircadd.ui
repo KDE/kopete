@@ -34,7 +34,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Add Account</string>
+                    <string>&amp;Add Contact</string>
                 </attribute>
                 <vbox>
                     <property name="name">

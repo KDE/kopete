@@ -84,7 +84,6 @@ public:
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
 
-	void slotListCommand( const QString &args, KopeteMessageManager *manager);
 	void slotTopicCommand( const QString &args, KopeteMessageManager *manager);
 	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
 	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
