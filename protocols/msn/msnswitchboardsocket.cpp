@@ -104,7 +104,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is currently not signed in. \n"
 				"Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
-			userLeftChat(m_msgHandle, i18n("user disconected"));
+			userLeftChat(m_msgHandle, i18n("user disconnected"));
 			break;
 		}
 		default:

@@ -176,7 +176,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( idleStateChanged( KopeteContact * ) ),
 				this, SIGNAL( contactIdleStateChanged( KopeteContact *) ) );
 
-			kdDebug( 14010 ) << k_funcinfo << "Contact disconected" << endl;
+			kdDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
 		}
 		emit contactRemoved( c );
 	}
