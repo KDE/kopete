@@ -1,6 +1,7 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
+Comment[he]=תוכנית המסרים המיידיים Kopete
 Comment[sv]=Kopete Instant Messenger
 
 [kopete_event]
@@ -8,6 +9,7 @@ Name=message_all
 Name[sv]=Alla meddelanden
 Comment=Sound Notification for Kopete Events
 Comment[da]=Lydbesked for Kopete-begivenheder
+Comment[he]=הודעות צליל לאירועים של Kopete
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
 default_sound=kopete_event.wav
 default_presentation=1
