@@ -30,6 +30,7 @@
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "dlgjabberservices.h"
+#include "dlgjabberservices.moc"
 
 DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgServices(parent,name)
 {
