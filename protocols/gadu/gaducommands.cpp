@@ -215,6 +215,7 @@ void RegisterCommand::watcher()
 				gg_token_free( session_ );
 				session_ = NULL;
 				state = RegisterStateNoToken;
+				return;
 				break;
 			case GG_STATE_DONE:
 				struct gg_token* sp	= ( struct gg_token* )session_->data;
