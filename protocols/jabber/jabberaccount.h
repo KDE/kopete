@@ -300,6 +300,12 @@ private slots:
 	 * Update penalty timer
 	 */
 	void slotUpdatePenaltyTime ();
+	
+public:
+	/*
+	 * this is only a temporary solution to don't have an infinite loop whensyncing the contactlist
+	 */
+	dontSync;
 
 };
 

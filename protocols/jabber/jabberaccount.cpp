@@ -90,7 +90,9 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	// initiate penalty timer
 	QTimer::singleShot ( JABBER_PENALTY_TIME * 1000, this, SLOT ( slotUpdatePenaltyTime () ) );
-
+	
+#warning  this is a temporary solution.  remove also the definition of this in jabberaccount.h
+	dontSync=false;
 }
 
 JabberAccount::~JabberAccount ()

@@ -144,16 +144,22 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
 	}
 
+#warning  next dontsync stuff are temporary solutions
+	
 	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
-		metaContact()->removeFromGroup ( group, Kopete::MetaContact::DontSyncGroups );
+		account()->dontsync=true;
+		metaContact()->removeFromGroup ( group );
+		account()->dontsync=false;
 	}
 	
 	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
-		metaContact()->addToGroup ( group, Kopete::MetaContact::DontSyncGroups );
+		account()->dontsync=true;
+		metaContact()->addToGroup ( group );
+		account()->dontsync=false;
 	}
 
 }

@@ -698,6 +698,10 @@ void JabberContact::slotDeleteContact ()
 
 void JabberContact::syncGroups ()
 {
+	#warning  dontsync is a temporary solution
+	if( account()->dontSync )
+		return;
+
 	QStringList groups;
 	Kopete::GroupList groupList = metaContact ()->groups ();
 
