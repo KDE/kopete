@@ -109,6 +109,9 @@ bool GroupWiseContact::isReachable()
 		return true;
 	if ( !account()->isConnected()/* || account()->myself()->onlineStatus() == protocol()->groupwiseAppearOffline*/ )
 		return false;
+
+	// fallback, something went wrong
+	return false;
 }
 
 void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
