@@ -46,7 +46,7 @@ public:
 	/**
 	 * Add contact to the meta contact
 	 */
-	void addContact( KopeteContact *c );
+	void addContact( KopeteContact *c, const QStringList &groups );
 	
 	/**
 	 * Add metadata to the meta contact

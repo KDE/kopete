@@ -806,7 +806,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	// On empty lists handle might be empty, ignore that
 	if( handle.isEmpty() )
 		return;
-    /*
+
 	QStringList groups;
 	groups = QStringList::split(",", group, false );
 	if( list == "FL" )
@@ -864,10 +864,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
 			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
-
 		}
 	}
-	*/
 }
 
 void MSNProtocol::slotContactRemoved( QString handle, QString list,
@@ -918,8 +916,6 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	QString list, uint serial, uint group )
 {
-	// FIXME: Why is this method commented out??????
-    /*
 	m_serial = serial;
 
 	QString gn = groupName( group );
@@ -980,7 +976,6 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		if( !m_blockList.contains( handle ) )
 			m_blockList.append( handle );
 	}
-	*/
 }
 
 void MSNProtocol::slotStatusChanged( QString status )

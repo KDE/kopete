@@ -78,21 +78,23 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 
 	if ( groups.isEmpty() )
 	{
-        kdDebug() << "KopeteContactList::addMetaContact : adding metacontact with no groups" <<endl;
-		kopeteapp->contactList()->addContact(new KopeteMetaContactLVI( mc, kopeteapp->contactList() ) );
+		kdDebug() << "KopeteContactList::addMetaContact: "
+			<< "adding metacontact with no groups" << endl;
+		groups.append( "" );
 	}
-    else
+	else
 	{
-        kdDebug() << "KopeteContactList::addMetaContact : adding metacontact" <<endl;
-		for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
+		QStringList::ConstIterator it = groups.begin();
+		for( ; it != groups.end(); ++it )
 		{
 			QString group = *it;
-        	kdDebug() << "                                    adding to group " << group <<endl;
-			kopeteapp->contactList()->addContact(new KopeteMetaContactLVI( mc , kopeteapp->contactList()->getGroup(group) ) );
+			kdDebug() << "KopeteContactList::addMetaContact: "
+				<< "adding metacontact to group " << group <<endl;
+			kopeteapp->contactList()->addContact( new KopeteMetaContactLVI(
+				mc, kopeteapp->contactList()->getGroup( group ) ) );
 		}
 	}
 }
-
 
 void KopeteContactList::loadXML()
 {
@@ -158,7 +160,9 @@ void KopeteContactList::loadXML()
 								// FIXME: provide these values in a sane way.
 								c->setId( contactid );
 								c->setProtocol( protocol );
-								mc->addContact( c );
+
+								// FIXME: Retrieve the groups somewhere
+								mc->addContact( c, QStringList() );
 							}
 							else
 								kdDebug() << "Protocol " << protocol << " could not be found!" << endl;
