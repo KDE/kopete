@@ -97,7 +97,24 @@ GroupWiseAccount::~GroupWiseAccount()
 
 KActionMenu* GroupWiseAccount::actionMenu()
 {
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
+	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
+	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("GroupWise (%1)").arg(accountId()));
+
+	theActionMenu->insert( new KAction( i18n( "&Online" ),
+		GroupWiseProtocol::protocol()->groupwiseAvailable.iconFor(this), 0, this, SLOT ( slotGoOnline() ), this,
+		"actionGroupWiseConnect") );
+	theActionMenu->insert( new Kopete::AwayAction ( i18n( "&Away" ),
+		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway( const QString & ) ), this,
+		"actionGroupWiseAway") );
+	theActionMenu->insert( new Kopete::AwayAction ( i18n( "&Busy" ),
+		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy( const QString & ) ), this,
+		"actionGroupWiseBusy") );
+	theActionMenu->insert( new KAction( i18n( "A&ppear Offline" ), "groupwise_invisible", 0, this,
+		SLOT( slotGoAppearOffline() ), this,
+		"actionGroupWiseAppearOffline") ) ;
+	theActionMenu->insert( new KAction ( i18n( "O&ffline" ),
+		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
+		"actionGroupWiseOfflineDisconnect") );
 	KAction * autoReply = new KAction ( i18n( "&Set Auto-Reply..." ), QString::null, 0, this,
 		SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
 	autoReply->setEnabled( isConnected() );
