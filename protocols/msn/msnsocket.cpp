@@ -232,10 +232,10 @@ void MSNSocket::slotReadLine()
 		int index = QCString(m_buffer).find( "\r\n" );
 		if( index != -1 )
 		{
-			QString command = QString::fromUtf8(QCString(m_buffer.take(index+2)).left(index));
+			QString command = QString::fromUtf8((QCString(m_buffer.take(index+2))+'\0').left(index));
 
 			command.replace( QRegExp( "\r\n" ), "" );
-//			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
+			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
 
 			parseLine(command);
 
@@ -293,8 +293,8 @@ bool MSNSocket::pollReadBlock()
 		return true;
 	}
 
-  QByteArray baBlock = m_buffer.take( m_waitBlockSize );
-	QString block = QString::fromUtf8(QCString(baBlock).left(m_waitBlockSize));
+	QByteArray baBlock = m_buffer.take( m_waitBlockSize );
+	QString block = QString::fromUtf8((QCString(baBlock)+'\0').left(m_waitBlockSize));
 
 
 	kdDebug() << "MSNSocket::pollReadBlock: Successfully read block of size "
@@ -437,9 +437,9 @@ MSNSocket::Buffer::~Buffer() {}
 void MSNSocket::Buffer::add(char *str, unsigned int sz)
 {
 	char *b=new char[size()+sz];
-	for(int f=0;f<size(); f++)
+	for(unsigned int f=0;f<size(); f++)
 		b[f]=data()[f];
-	for(int f=0;f<sz; f++)
+	for(unsigned int f=0;f<sz; f++)
 		b[size()+f]=str[f];
 
 	assign(b,size()+sz);
@@ -447,16 +447,21 @@ void MSNSocket::Buffer::add(char *str, unsigned int sz)
 
 QByteArray MSNSocket::Buffer::take(unsigned int sz)
 {
+	if(size()<sz)
+	{
+		kdDebug() << "MSNSocket::Buffer::take : [WARNING] buffer size ("<< size()<<") < asked size (" << sz <<") " << endl;
+		return QByteArray();
+	}
 	char *str=new char[sz];
-	for (int f=0;f<sz;f++)
+	for (unsigned int f=0;f<sz;f++)
 		str[f] = data()[f];
 
 	QByteArray rep=QByteArray().assign(str,sz);
 
-	str=new char[size()-sz];
-	for(int f=0;f<size()-sz;f++)
+	str=new char[size()-sz+1];
+	for(unsigned int f=0;f<size()-sz;f++)
 		str[f]=data()[sz+f];
-
+	str[size()-sz]='\0';
 	assign(str,size()-sz);
 
 	return rep;
