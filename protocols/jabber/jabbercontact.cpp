@@ -509,7 +509,7 @@ void JabberContact::reevaluateStatus ()
 	setOnlineStatus ( status );
 
 	// set away message property
-	!resource.status().status().isEmpty () ? setProperty ( "awayMessage", resource.status().status () ) : removeProperty ( "awayMessage " );
+	!resource.status().status().isEmpty () ? setProperty ( "awayMessage", resource.status().status () ) : removeProperty ( "awayMessage" );
 
 }
 
