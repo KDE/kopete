@@ -67,18 +67,7 @@ QString MSNDebugRawCmdDlg::msg()
 	return m_main->m_msg->text();
 }
 
-
-
 #include "msndebugrawcmddlg.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
