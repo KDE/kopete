@@ -32,7 +32,6 @@
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "addcontactpage.h"
-#include "statusbaricon.h"
 #include "jabberprefs.h"
 #include "jabbermap.h"
 #include "jabbermessagemanager.h"

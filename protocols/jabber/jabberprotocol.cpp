@@ -20,7 +20,6 @@
 #include <kgenericfactory.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
-#include <kstatusbar.h>
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
