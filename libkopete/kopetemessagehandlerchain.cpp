@@ -168,8 +168,8 @@ void ProcessMessageTask::slotStart()
 
 void ProcessMessageTask::slotDone()
 {
-	emitResult();
 	d->event->message().manager()->deref();
+	emitResult();
 }
 
 MessageEvent *ProcessMessageTask::event()
