@@ -187,7 +187,7 @@ KTempFile* WebPresencePlugin::generateFile()
 	return theFile;
 }
 
-bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
+bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 {
 #ifdef HAVE_XSLT
 	QString error = "";
@@ -255,6 +255,9 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 		return false;
 	}
 #else
+	Q_UNUSED( src );
+	Q_UNUSED( dest );
+
 	return false;
 #endif
 }
