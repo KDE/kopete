@@ -417,7 +417,7 @@ void ChatView::createMembersList(void)
 		KopeteContact *contact;
 		KopeteContactPtrList chatMembers = m_manager->members();
 
-		for ( contact = chatMembers.first(); contact; contact = chatMembers.next() )
+						for ( contact = chatMembers.first(); contact; contact = chatMembers.next() )
 			slotContactAdded( contact, true );
 
 		slotContactAdded( m_manager->user(), true);
@@ -607,8 +607,6 @@ void ChatView::slotChatDisplayNameChanged()
 	QString chatName = m_manager->displayName();
 	if( chatName != m_captionText )
 		setCaption( chatName, true );
-
-	emit updateStatusIcon( this );
 }
 
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
@@ -757,7 +755,7 @@ void ChatView::slotMarkMessageRead()
 
 void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ , const KopeteOnlineStatus & /* oldstatus */)
 {
-	if(KopetePrefs::prefs()->showEvents())
+	if(KopetePrefs::prefs()->showEvents() && contact)
 	{
 		if( contact->metaContact() )
 		{
@@ -780,6 +778,20 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 			);
 		}
 	}
+
+	if(m_tabBar)
+	{
+		QPtrList<KopeteContact> chatMembers=msgManager()->members();
+		KopeteContact *c=0L;
+		for ( KopeteContact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+		{
+			if(!c || c->onlineStatus() < contact->onlineStatus())
+				c=contact;
+		}
+		if(c)
+			m_tabBar->setTabIconSet( this , msgManager()->contactOnlineStatus( c ).iconFor( c ) );
+	}
+	emit updateStatusIcon( this );
 }
 
 void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)

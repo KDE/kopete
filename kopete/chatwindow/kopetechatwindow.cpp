@@ -610,7 +610,14 @@ void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 
 void KopeteChatWindow::addTab( ChatView *view )
 {
-	QPixmap pluginIcon = SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+	QPtrList<KopeteContact> chatMembers=view->msgManager()->members();
+	KopeteContact *c=0L;
+	for ( KopeteContact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+	{
+		if(!c || c->onlineStatus() < contact->onlineStatus())
+			c=contact;
+	}
+	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->reparent( m_tabBar, 0, QPoint(), true );
 	m_tabBar->addTab( view, pluginIcon, QString::null );
@@ -847,9 +854,17 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
 {
-	const KopeteContact *contact = view->msgManager()->members().getFirst();
-	QPixmap icon16 = contact->onlineStatus().iconFor( contact, 16 );
-	QPixmap icon32 = contact->onlineStatus().iconFor( contact, 32 );
+	if(!view||!m_activeView||view!=m_activeView )
+		return; //(pas de charité)
+	QPtrList<KopeteContact> chatMembers=view->msgManager()->members();
+	KopeteContact *c=0L;
+	for ( KopeteContact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+	{
+		if(!c || c->onlineStatus() < contact->onlineStatus())
+			c=contact;
+	}
+	QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+	QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	KWin::setIcons( winId(), icon32, icon16 );
 }
