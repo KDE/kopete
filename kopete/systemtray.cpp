@@ -25,7 +25,7 @@
 #include <qtimer.h>
 #include <qtooltip.h>
 
-#include <klocale.h> 
+#include <klocale.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
@@ -38,7 +38,7 @@
 #include "kopeteballoon.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"
-#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
@@ -60,7 +60,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mIsBlinking = false;
 	mBlinkTimer = new QTimer(this, "mBlinkTimer");
 
-	//mKopeteIcon = kapp->miniIcon(); 
+	//mKopeteIcon = kapp->miniIcon();
 	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
 	mBlinkIcon = KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User);
 	mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
@@ -197,7 +197,7 @@ void KopeteSystemTray::slotNewEvent(KopeteEvent *event)
 {
 	mEventList.append( event );
 	connect( event , SIGNAL(done(KopeteEvent*)) , this, SLOT(slotEventDone(KopeteEvent*)));
-	
+
 	//balloon
 	addBalloon();
 
@@ -229,7 +229,7 @@ void KopeteSystemTray::addBalloon()
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
 		KopeteMessage msg = mEventList.first()->message();
-		if( (!msg.from()->protocol()->isAway() || KopetePrefs::prefs()->soundIfAway()) &&
+		if( (!msg.from()->account()->isAway() || KopetePrefs::prefs()->soundIfAway()) &&
 			msg.from() )
 		{
 			QString msgText = msg.plainBody();
@@ -252,7 +252,6 @@ void KopeteSystemTray::addBalloon()
 			m_balloon->show();
 		}
 	}
-
 }
 
 void KopeteSystemTray::slotConfigChanged()

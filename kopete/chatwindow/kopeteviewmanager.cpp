@@ -21,7 +21,7 @@
 #include <kwin.h>
 
 #include "kopeteprefs.h"
-#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -160,7 +160,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			readMessages( manager, outgoingMessage );
 		}
 
-		if ( !outgoingMessage && ( !manager->protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
+		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
 		{
 			QString msgFrom = QString::null;
 			if( msg.from()->metaContact() )

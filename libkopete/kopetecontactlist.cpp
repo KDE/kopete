@@ -837,7 +837,7 @@ bool KopeteContactList::dcopAddContact( const QString &protocolName, const QStri
 	const QString &displayName, KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
 	//Get the protocol instance
-	KopeteProtocol *myProtocol = (KopeteProtocol*) LibraryLoader::pluginLoader()->searchByName( protocolName );
+	/*KopeteAccount *myAccount = (KopeteProtocol*) LibraryLoader::pluginLoader()->searchByName( protocolName );
 
 	if( myProtocol != 0L )
 	{
@@ -867,9 +867,9 @@ bool KopeteContactList::dcopAddContact( const QString &protocolName, const QStri
 		KMessageBox::error( 0, i18n("An external application has attempted to add a contact using "
 				" the %1 protocol, which does not exist, or is not loaded.").arg( protocolName ),
 				i18n("Missing Protocol"));
-
+*/
 		return false;
-	}
+
 }
 
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)

@@ -52,7 +52,6 @@ struct KopeteAwayPrivate
 	bool goAvailable;
 	int awayTimeout;
 	QPtrList<KopeteAccount> autoAwayAccounts;
-	QPtrList<KopeteProtocol> autoAwayProtocols;
 
 	int mouse_x;
 	int mouse_y;
@@ -382,16 +381,6 @@ void KopeteAway::setActivity()
 				// remove() makes the next entry in the list the current one,
 				// that's why we use current() above
 				d->autoAwayAccounts.remove();
-			}
-
-			d->autoAwayProtocols.setAutoDelete(false);
-			for(KopeteProtocol *p=d->autoAwayProtocols.first() ; p; p=d->autoAwayProtocols.current() )
-			{
-				if(p->isConnected() && p->isAway()) {
-					p->setAvailable();
-				}
-
-				d->autoAwayProtocols.remove();
 			}
 		}
 	}

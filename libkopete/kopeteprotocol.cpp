@@ -251,64 +251,6 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 	/* Default implementation does nothing */
 }
 
-//-------- OBSOLETE
-bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName,
-	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
-{
-	//kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
-	//<< "; groupName: " << groupName  << "; parentContact" << parentContact << endl;
-
-	KopeteGroup *parentGroup=0L;
-	//If this is a temporary contact, use the temporary group
-	if(!groupName.isNull())
-		parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
-
-	if( parentContact )
-	{
-		//If we are given a MetaContact to add to that is marked as temporary. but
-		//this contact is not temporary, then change the metacontact to non-temporary
-		if( parentContact->isTemporary() && !isTemporary )
-			parentContact->setTemporary( false, parentGroup );
-		else
-			parentContact->addToGroup( parentGroup );
-	}
-	else
-	{
-		//Check if this MetaContact exists
-		parentContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, contactId );
-		if( !parentContact )
-		{
-			//Create a new MetaContact
-			parentContact = new KopeteMetaContact();
-			parentContact->setDisplayName( displayName );
-
-			//Set it as a temporary contact if requested
-			if( isTemporary )
-				parentContact->setTemporary(true);
-		}
-
-		//Add the MetaContact to the correct group
-		if( !isTemporary )
-			parentContact->addToGroup( parentGroup );
-
-		KopeteContactList::contactList()->addMetaContact( parentContact );;
-	}
-
-	//We should now have a parentContact.
-	//Call the protocols function to add the contact to this parent
-	if( parentContact )
-		return addContactToMetaContact( contactId, displayName, parentContact );
-	else
-		return false;
-}
-
-//-------- OBSOLETE
-bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
-{
-	kdDebug(14010) << "KopeteProtocol::addContactToMetaContact() Not Implemented!!!" << endl;
-	return false;
-}
-
 void KopeteProtocol::slotAccountAdded()
 {
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
@@ -345,47 +287,6 @@ void KopeteProtocol::slotRefreshStatusIcon()
 		m_status = newStatus;
 		emit( statusIconChanged( m_status ) );
 	}
-}
-
-//-------- OBSOLETE
-KopeteContact* KopeteProtocol::myself() const
-{
-	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict );
-	for( ; KopeteAccount *account=it.current(); ++it )
-	{
-		if(account->myself())
-		{
-			return account->myself();
-		}
-	}
-	return 0L;
-}
-
-//-------- OBSOLETE
-void KopeteProtocol::setStatusIcon( const QString &icon )
-{
-	if( icon != m_statusIcon )
-	{
-		m_statusIcon = icon;
-		emit( statusIconChanged( m_status ) );
-	}
-}
-
-//-------- OBSOLETE
-bool KopeteProtocol::isConnected() const
-{
-    if(myself())
-		return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
-	return false;
-}
-
-//-------- OBSOLETE
-bool KopeteProtocol::isAway() const
-{
-    if(myself())
-    	return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
-	return false;
 }
 
 #include "kopeteprotocol.moc"

@@ -24,6 +24,7 @@
 #include <qapplication.h>
 
 #include "kopeteaway.h"
+#include "kopeteaccount.h"
 #include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
@@ -176,7 +177,7 @@ void KopeteMessageManager::sendMessage(KopeteMessage &message)
 	if( !KopeteCommandHandler::commandHandler()->processMessage( message, this ) )
 	{
 		emit messageSent(sentMessage, this);
-		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
 	}
 	else

@@ -122,17 +122,6 @@ public:
 	QDict<KopeteContact> contacts( KopeteMetaContact *mc );
 
 	/**
-	 * Adds a contact to an existing MetaContact. Also performs any server-related
-	 * functions. *MUST* be implemented in each protocol
-	 *
-	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols
-	 * @param parentContact The metacontact to add this contact to
-	 */
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-		 KopeteMetaContact *parentContact );
-
-	/**
 	 * Deserialize plugin-data for a meta contact. This method splits up the
 	 * data into the independent KopeteContacts and calls @ref deserializeContact()
 	 * for each contact.
@@ -153,13 +142,6 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
 
-	/** OBSOLETE **/
-	virtual KopeteContact* myself() const;
-	bool isConnected() const;
-	virtual void setAway() {}
-	virtual void setAvailable() {}
-	bool isAway() const;
-	/** OBSOLETE **/
 	void setStatusIcon( const QString &icon );
 
 	/**
@@ -172,12 +154,6 @@ public:
 	void registerContact( KopeteContact *c );
 
 public slots:
-	/** OBSOLETE **/
-	virtual void connect() {};
-	virtual void disconnect() {};
-	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
-
 	/**
 	 * A meta contact is about to save.
 	 * Call serialize() for all contained contacts for this protocol.
