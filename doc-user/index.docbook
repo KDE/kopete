@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
-  <!ENTITY kopete "<application>kopete</application>">
+  <!ENTITY kopete "<application>Kopete</application>">
+  <!ENTITY Will.Stephenson
+"<personname><firstname>Will</firstname><surname>Stephenson</surname></personname>">
+  <!ENTITY Will.Stephenson.mail "<email>lists@stevello.free-online.co.uk</email>">
   <!ENTITY package "kdenetwork">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
@@ -53,13 +56,11 @@ Appendix: Obtaining and installation
 <title>The &kopete; Handbook</title>
 
 <authorgroup>
-<author>
-<firstname>Will</firstname>
-<othername></othername>
-<surname>Stephenson</surname>
-<address><email>lists@stevello.free-online.co.uk</email></address>
-</author>
+
+<author>&Will.Stephenson; &Will.Stephenson.mail;</author>
+
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
+
 </authorgroup>
 
 <legalnotice>&FDLNotice;</legalnotice>
