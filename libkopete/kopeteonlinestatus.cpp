@@ -24,7 +24,7 @@
 #include <qbitmap.h>
 #include "kopeteprotocol.h"
 #include <kiconloader.h>
-
+#include <kdebug.h>
 #include <klocale.h>
 
 struct KopeteOnlineStatusPrivate
@@ -191,6 +191,7 @@ KopeteProtocol* KopeteOnlineStatus::protocol() const
 
 QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact ) const
 {
+	kdDebug() << k_funcinfo << contact->displayName() << " : " << contact->icon() << endl;
 	if ( contact->icon().isNull() )
 	{
 		if ( d->protocol )
@@ -243,9 +244,6 @@ QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon ) const
 				basis = SmallIcon( baseIcon, 0, KIcon::DisabledState );
 			break;
 		case Online:
-			// FIXME This should be the protocol's protocol_online icon...
-			basis = SmallIcon( d->protocol->pluginIcon() );
-			break;
 		default:
 			// get the base icon
 			if ( baseIcon.isNull() )
