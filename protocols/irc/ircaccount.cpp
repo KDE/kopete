@@ -557,7 +557,7 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
-	return (myself()->onlineStatus().status() == KopeteOnlineStatus::Online);
+	return ( myself()->onlineStatus().status() != KopeteOnlineStatus::Offline );
 }
 
 
