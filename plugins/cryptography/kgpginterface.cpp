@@ -120,7 +120,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 		gpgcmd += KShellProcess::quote(text).utf8();
 		gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 		if(passphraseHandling)
-			gpgcmd += "--passphrase-fd " + ppass[0];
+			gpgcmd += "--passphrase-fd " + QString::number(ppass[0]).local8Bit();
 		gpgcmd += " -d ";
 		
 		//////////   encode with untrusted keys or armor if checked by user
