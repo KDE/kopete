@@ -18,6 +18,7 @@
 
 #include <qcheckbox.h>
 #include <qframe.h>
+#include <qxml.h>
 #include <qlabel.h>
 #include <qdir.h>
 #include <qtextstream.h>
@@ -450,7 +451,13 @@ void AppearanceConfig::slotDeleteStyle()
 		i18n("Delete Style"), i18n("Delete Style")) == KMessageBox::Continue )
 	{
 		QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
+		QString filePath = itemMap[ style ];
 		itemMap.remove( style );
+
+		QFileInfo fi(filePath);
+		if( fi.isWritable() )
+			QFile::remove( filePath );
+
 		if( style->next() )
 			mPrfsChatAppearance->styleList->setSelected( style->next(), true );
 		else
@@ -461,13 +468,40 @@ void AppearanceConfig::slotDeleteStyle()
 
 void AppearanceConfig::slotStyleSaved()
 {
+	QString filePath = itemMap[ editedItem ];
 	delete editedItem;
-	//mChatStyles[ styleEditor->styleName->text() ] = KTextEditor::editInterface( editDocument )->text();
 
-	mPrfsChatAppearance->styleList->insertItem( styleEditor->styleName->text() );
-	mPrfsChatAppearance->styleList->sort();
-	mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->findItem( styleEditor->styleName->text() ), true );
+	QXmlInputSource src;
+	QXmlSimpleReader reader;
+	src.setData( KTextEditor::editInterface( editDocument )->text() );
+	if( !reader.parse(&src,false) )
+		KMessageBox::error( this, i18n("This is not a valid XSL document. Please double check your modifications."), i18n("Invalid Style") );
 
+	if( !filePath.isNull() )
+	{
+		QFileInfo fi(filePath);
+		if( fi.isWritable() )
+			QFile::remove( filePath );
+	}
+
+	filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleEditor->styleName->text()) );
+
+	QFile out( filePath );
+	if ( out.open( IO_WriteOnly ) )
+	{
+		QTextStream stream( &out );
+		stream << src.data();
+		out.close();
+
+		mPrfsChatAppearance->styleList->insertItem( styleEditor->styleName->text(), 0 );
+		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), filePath );
+		mPrfsChatAppearance->styleList->sort();
+		mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->findItem( styleEditor->styleName->text() ), true );
+	}
+	else
+	{
+		KMessageBox::error( this, i18n("Error saving file. Check access permissions to \"%1\".").arg( filePath ), i18n("Could Not Save") );
+	}
 	styleEditor->deleteLater();
 }
 
