@@ -1,13 +1,9 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
-// Copyright (C) 	2002-2003	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+// Copyright (C) 	2003	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+// Copyright (C) 	2002	 Zack Rusin <zack@kde.org>
 //
-// gaducommands.h - all basic, and not-session dependent commands
-// (meaning you don't have to be logged in for any
-//  of these). These delete themselves, meaning you don't
-//  have to/can't delete them explicitly and have to create
-//  them dynamically (via the 'new' call).
+// gadusession.cpp
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,8 +34,8 @@
 #include <errno.h>
 #include <string.h>
 
-GaduSession::GaduSession( QObject *parent, const char* name )
-	: QObject( parent, name ), session_(0), searchSeqNr_(0)
+GaduSession::GaduSession( QObject* parent, const char* name )
+: QObject( parent, name ), session_( 0 ), searchSeqNr_( 0 )
 {
 	textcodec = QTextCodec::codecForName( "CP1250" );
 }
@@ -52,8 +48,9 @@ GaduSession::~GaduSession()
 bool
 GaduSession::isConnected() const
 {
-	if ( session_ )
-		return (session_->state & GG_STATE_CONNECTED);
+	if ( session_ ) {
+		return ( session_->state & GG_STATE_CONNECTED );
+	}
 	return false;
 }
 
@@ -61,35 +58,34 @@ int
 GaduSession::status() const
 {
 	kdDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
-	if ( session_ )
+	if ( session_ ) {
 		return session_->status;
+	}
 	return GG_STATUS_NOT_AVAIL;
 }
 
 void
-GaduSession::login( struct gg_login_params *p )
+GaduSession::login( struct gg_login_params* p )
 {
 	if ( !isConnected() ) {
-	    kdDebug()<<"Login"<<endl;
-		if ( !(session_ = gg_login( p ))) {
+		kdDebug(14100) << "Login" << endl;
+		if ( !(session_ = gg_login( p ) ) ) {
 			gg_free_session( session_ );
 			session_ = 0;
 			emit connectionFailed( 0L );
 			return;
 		}
+
 		read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
 		read_->setEnabled( false );
-		QObject::connect( read_, SIGNAL(activated(int)),
-											SLOT(checkDescriptor()) );
+		QObject::connect( read_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
 
 		write_ = new QSocketNotifier( session_->fd, QSocketNotifier::Write, this );
 		write_->setEnabled( false );
-		QObject::connect( write_, SIGNAL(activated(int)),
-											SLOT(checkDescriptor()) );
-
+		QObject::connect( write_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
 		enableNotifiers( session_->check );
-    searchSeqNr_=0;
-  }                  
+		searchSeqNr_=0;
+	}
 }
 
 void
@@ -106,15 +102,17 @@ GaduSession::enableNotifiers( int checkWhat )
 void
 GaduSession::disableNotifiers()
 {
-	if ( read_ )
+	if ( read_ ) {
 		read_->setEnabled( false );
-	if ( write_ )
+	}
+	if ( write_ ) {
 		write_->setEnabled( false );
+	}
 }
 
 void
 GaduSession::login( uin_t uin, const QString& password, bool useTls,
-										int status, const QString& statusDescr )
+					int status, const QString& statusDescr )
 {
 	memset( &params_, 0, sizeof(params_) );
 	params_.uin = uin;
@@ -132,13 +130,13 @@ GaduSession::destroySession()
 	if ( session_ ) {
 		disableNotifiers();
 		QObject::disconnect( this, SLOT(checkDescriptor()) );
-		if (read_){
-		    delete read_;
-		    read_=NULL;
+		if ( read_ ) {
+			delete read_;
+			read_=NULL;
 		}
-		if (write_){
-		    delete write_;
-		    write_=NULL;
+		if ( write_ ) {
+			delete write_;
+			write_=NULL;
 		}
 		gg_free_session( session_ );
 		session_ = 0;
@@ -148,70 +146,74 @@ GaduSession::destroySession()
 void
 GaduSession::logoff()
 {
-    destroySession();
-    emit disconnect();
+	destroySession();
+	emit disconnect();
 }
 
 int
-GaduSession::notify( uin_t *userlist, int count )
+GaduSession::notify( uin_t* userlist, int count )
 {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return gg_notify( session_, userlist, count );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You are not connected to the server!") );
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
+	}
+
 	return 1;
 }
 
 int
 GaduSession::addNotify( uin_t uin )
 {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return gg_add_notify( session_, uin );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You are not connected to the server!") );
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
+	}
+
 	return 1;
 }
 
 int
 GaduSession::removeNotify( uin_t uin )
 {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		gg_remove_notify( session_, uin );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You are not connected to the server!") );
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
+	}
+
 	return 1;
 }
 
 int
-GaduSession::sendMessage( uin_t recipient, const unsigned char *message, int msgClass )
+GaduSession::sendMessage( uin_t recipient, const unsigned char* message, int msgClass )
 {
-	if ( isConnected() )
-		return gg_send_message( session_,
-								msgClass,
-								recipient,
-								message );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You are not connected to the server!") );
+	if ( isConnected() ) {
+		return gg_send_message( session_, msgClass, recipient, message );
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
+	}
+
 	return 1;
 }
 
 int
-GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
-								int msgClass )
+GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg, int msgClass )
 {
-	if ( isConnected() )
-		return gg_send_message_ctcp( session_,
-								 msgClass,
-								 recipient,
-								 reinterpret_cast<const unsigned char *>( msg.local8Bit().data() ),
-								 msg.length() );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You are not connected to the server!") );
+	if ( isConnected() ) {
+		return gg_send_message_ctcp( session_, msgClass, recipient,
+							reinterpret_cast<const unsigned char*>( msg.local8Bit().data() ),
+							 msg.length() );
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
+	}
+
 	return 1;
 }
 
@@ -219,36 +221,39 @@ int
 GaduSession::changeStatus( int status )
 {
 	kdDebug()<<"## Changing to "<<status<<endl;
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return gg_change_status( session_, status );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You have to be connected to the server to change your status!") );
+	}
+	else {
+		emit error( i18n("Not Connected"),  i18n("You have to be connected to the server to change your status!") );
+	}
+
 	return 1;
 }
 
 int
 GaduSession::changeStatusDescription( int status, const QString& descr )
 {
-	QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
 	QString ndescr;
-	
+
 	ndescr= textcodec->fromUnicode(descr);
 
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return gg_change_status_descr( session_, status, ndescr.latin1() );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You have to be connected to the server to change your status!") );
-	return 1;
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You have to be connected to the server to change your status!") );
+	}
 
+	return 1;
 }
 
 int
 GaduSession::ping()
 {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return gg_ping( session_ );
+	}
 
 	return 1;
 }
@@ -256,175 +261,166 @@ GaduSession::ping()
 int
 GaduSession::dccRequest( uin_t uin )
 {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return gg_dcc_request( session_, uin );
-	else
-		emit error( i18n("Not Connected"),
-								i18n("You are not connected to the server!") );
+	}
+	else {
+		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
+	}
+
 	return 1;
 }
 
 void
 GaduSession::pubDirSearchClose()
 {
-
-  searchSeqNr_=0;
-
+	searchSeqNr_=0;
 }
 
 bool
-GaduSession::pubDirSearch(QString &name, QString &surname, QString &nick, int UIN, QString &city,
+GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UIN, QString& city,
                             int gender, int ageFrom, int ageTo, bool onlyAlive)
 {
+	QString bufYear;
+	gg_pubdir50_t searchRequest_;
 
-  QString bufYear; 
-	QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
-  gg_pubdir50_t searchRequest_;
-  
-  if (!session_){
-    return false;
-  }
-
-  searchRequest_ = gg_pubdir50_new( GG_PUBDIR50_SEARCH_REQUEST );
-  if (!searchRequest_){
-    return false;
-  }
-
-  if (!UIN){
-  
-	if (name.length()){
-	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_FIRSTNAME, (const char *)textcodec->fromUnicode( name ) );
+	if ( !session_ ) {
+		return false;
 	}
-	if (surname.length()){
-	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_LASTNAME, (const char *)textcodec->fromUnicode( surname ) );
-	}  
-	if (nick.length()){
-	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_NICKNAME, (const char *)textcodec->fromUnicode( nick ) );
+
+	searchRequest_ = gg_pubdir50_new( GG_PUBDIR50_SEARCH_REQUEST );
+	if ( !searchRequest_ ) {
+		return false;
 	}
-	if (city.length()){ 
-	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_CITY, (const char *)textcodec->fromUnicode( city ) );
+
+	if ( !UIN ) {
+		if (name.length()) {
+			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_FIRSTNAME,
+						(const char*)textcodec->fromUnicode( name ) );
+		}
+		if ( surname.length() ) {
+			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_LASTNAME,
+						(const char*)textcodec->fromUnicode( surname ) );
+		}
+		if ( nick.length() ) {
+			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_NICKNAME,
+						(const char*)textcodec->fromUnicode( nick ) );
+		}
+		if ( city.length() ) {
+			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_CITY,
+						(const char*)textcodec->fromUnicode( city ) );
+		}
+		if ( ageFrom || ageTo ) {
+			QString yearFrom = QString::number( QDate::currentDate().year() - ageFrom );
+			QString yearTo = QString::number( QDate::currentDate().year() - ageTo );
+
+			if ( ageFrom && ageTo ) {
+				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR,
+							(const char*)textcodec->fromUnicode( yearFrom + " " + yearTo ) );
+			}
+			if ( ageFrom ) {
+				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR,
+							(const char*)textcodec->fromUnicode( yearFrom ) );
+			}
+			else {
+				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR,
+							(const char*)textcodec->fromUnicode( yearTo ) );
+			}
+		}
+
+		switch ( gender ) {
+			case 1:
+				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_MALE );
+			break;
+			case 2:
+				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_FEMALE );
+			break;
+		}
+
+		if ( onlyAlive ) {
+			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_ACTIVE, GG_PUBDIR50_ACTIVE_TRUE );
+		}
 	}
-	
-    if (ageFrom || ageTo){
-      QString yearFrom = QString::number(QDate::currentDate().year() - ageFrom );
-      QString yearTo = QString::number(QDate::currentDate().year() - ageTo );
+	// otherwise we are looking only for one fellow with this nice UIN
+	else{
+		gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, QString::number( UIN ).latin1() );
+	}
 
-      if (ageFrom && ageTo){
-		    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR, (const char *)textcodec->fromUnicode( yearFrom + " " + yearTo ) );
-      }
-      if (ageFrom){   
-		    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR, (const char *)textcodec->fromUnicode( yearFrom ) );
-      }
-      else{
-		    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR, (const char *)textcodec->fromUnicode( yearTo ) );
-      }
-    }
+	gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_).latin1() );
 
-    switch ( gender ){
-		  case 1:
-			  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_MALE );
-		  break;
-		  case 2:
-			  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_FEMALE );
-		  break;
-	  }
+	gg_pubdir50( session_, searchRequest_ );
 
-    if (onlyAlive){
-      gg_pubdir50_add( searchRequest_, GG_PUBDIR50_ACTIVE, GG_PUBDIR50_ACTIVE_TRUE );
-    }
-    
-  }
-  // otherwise we are looking only for one fellow with this nice UIN
-  else{
-    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, QString::number( UIN ).latin1() );
-  }
+	gg_pubdir50_free( searchRequest_ );
 
-  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_).latin1() );
-                                   	
-  gg_pubdir50( session_, searchRequest_ );
-
-  gg_pubdir50_free( searchRequest_ );
-
-  return true;
+	return true;
 }
 
 void
 GaduSession::sendResult( gg_pubdir50_t result )
 {
-  int i, count, age;
-  resLine *rl=NULL;
-  searchResult sres;
-	QTextCodec *textcodec = QTextCodec::codecForName( "CP1250" );
-	
+	int i, count, age;
+	resLine *rl = NULL;
+	searchResult sres;
+
 	count = gg_pubdir50_count( result );
 
-//  No need to check that acctually :-)
-//	if (count < 1) {
-//	}
+	sres.setAutoDelete( TRUE );
 
-  sres.setAutoDelete( TRUE );
+	for ( i = 0; i < count; i++ ) {
+		rl = new resLine;
 
-	for (i = 0; i < count; i++){
-    
-      rl = new resLine;
-    
-		rl->uin =   textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
-		rl->firstname = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
-		rl->surname = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
-		rl->nickname = textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
-		rl->age = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
-		rl->city = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
-		QString stat = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
-		rl->status = stat.toInt();
+		rl->uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
+		rl->firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
+		rl->surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
+		rl->nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
+		rl->age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
+		rl->city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
+		QString stat	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
+		rl->status		= stat.toInt();
 		age = rl->age.toInt();
-		if (age){
-		    rl->age = QString::number(QDate::currentDate().year()-age);
+		if ( age ) {
+			rl->age = QString::number( QDate::currentDate().year() - age );
 		}
-		else{
-		    rl->age.truncate(0);
+		else {
+			rl->age.truncate( 0 );
 		}
-		
-    kdDebug(14100) << "found line "<< rl->uin << " " << rl->firstname << endl;
+		sres.append( rl );
+		kdDebug(14100) << "found line "<< rl->uin << " " << rl->firstname << endl;
+	}
 
-    sres.append(rl);
-  }
-    
 	searchSeqNr_ = gg_pubdir50_next( result );
 
-
-  emit pubDirSearchResult( sres );
-  
+	emit pubDirSearchResult( sres );
 }
 
 void
 GaduSession::requestContacts()
 {
-	if ( !session_ || session_->state != GG_STATE_CONNECTED) {
+	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
 		kdDebug(14100) <<" you need to be connected to send " << endl;
 		return;
 	}
 
-	if ( gg_userlist_request(session_, GG_USERLIST_GET, NULL) == -1 ) {
+	if ( gg_userlist_request( session_, GG_USERLIST_GET, NULL ) == -1 ) {
 		kdDebug(14100) <<" userlist export ERROR " << endl;
 		return;
 	}
 	kdDebug( 14100 ) << "Contacts list import..started " << endl;
-
 }
 
 void
-GaduSession::exportContacts( gaduContactsList *u )
+GaduSession::exportContacts( gaduContactsList* u )
 {
 	QPtrListIterator<contactLine>loo( *u );
 	unsigned int i;
 	QString plist, contacts;
 
-	if ( !session_ || session_->state != GG_STATE_CONNECTED) {
+	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
 		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
 		return;
 	}
 
-	for ( i=u->count() ; i-- ; ++loo ){ 
+	for ( i=u->count() ; i-- ; ++loo ) {
 //	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
 		contacts +=
 			(*loo)->firstname+";"+(*loo)->surname+";"+(*loo)->nickname+";"+(*loo)->name+";"+
@@ -433,16 +429,14 @@ GaduSession::exportContacts( gaduContactsList *u )
 
 	// XXX:Remove before release
 	kdDebug(14100) <<"--------------------userlists\n" << contacts << "\n---------------" << endl;
-	
+
 	plist = textcodec->fromUnicode( contacts );
 
-	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.latin1() ) == -1) {
+	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.latin1() ) == -1 ) {
 		kdDebug( 14100 ) << "export contact list failed " << endl;
 		return;
 	}
-
 	kdDebug( 14100 ) << "Contacts list export..started " << endl;
-
 }
 
 
@@ -452,14 +446,14 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 	QString cline;
 	QStringList::iterator it;
 	QStringList strList ;
-	contactLine *cl = NULL;
+	contactLine* cl = NULL;
 	bool email = false;
 
-	if (sList.isEmpty() || sList.isNull() || !sList.contains(';')){
+	if ( sList.isEmpty() || sList.isNull() || !sList.contains( ';' ) ) {
 		return false;
-	}    
-    
-	if (!sList.contains('\n') && sList.contains(';')){
+	}
+
+	if ( !sList.contains( '\n' ) && sList.contains( ';' ) ) {
 		// basicaly, server stores contact list as it is
 		// even if i will send him windows 2000 readme file
 		// he will accept it, and he will return it on each contact import
@@ -473,25 +467,23 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 		kdDebug(14100)<<"------------------------------------------------------"<<endl;
 		return false;
 	}
-    
-	QStringList ln  = QStringList::split( QChar('\n'),  sList, true );
-	QStringList::iterator lni = ln.begin( );
-		
-	while( lni != ln.end() ){
-		cline=(*lni);
 
-		if ( cline.isNull() ){
+	QStringList ln  = QStringList::split( QChar( '\n' ),  sList, true );
+	QStringList::iterator lni = ln.begin( );
+
+	while( lni != ln.end() ) {
+		cline = (*lni);
+		if ( cline.isNull() ) {
 			break;
 		}
-
 		kdDebug(14100)<<"\""<< cline << "\"" << endl;
-		    
-		strList  = QStringList::split( QChar(';'), cline, true );
-		if ( strList.count() == 12 ){
+
+		strList  = QStringList::split( QChar( ';' ), cline, true );
+		if ( strList.count() == 12 ) {
 			email=true;
 		}
-	
-		if ( strList.count() != 8 && email == false ){
+
+		if ( strList.count() != 8 && email == false ) {
 			kdDebug(14100)<< "fishy, maybe contact format was changed. Contact author/update software"<<endl;
 			kdDebug(14100)<<"nr of elements should be 8 or 12, but is "<<strList.count() << " LINE:" << cline <<endl;
 			++lni;
@@ -500,11 +492,11 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 
 		it = strList.begin();
 //each line ((firstname);(secondname);(nickname).;(name);(tel);(group);(uin);
-		    
-		if (cl==NULL){
-			cl=new contactLine;
+
+		if ( cl == NULL ) {
+			cl = new contactLine;
 		}
-		    
+
 		cl->firstname	= (*it);
 		cl->surname	= (*++it);
 		cl->nickname	= (*++it);
@@ -512,41 +504,41 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 		cl->phonenr	= (*++it);
 		cl->group		= (*++it);
 		cl->uin		= (*++it);
-		if ( email ){
+		if ( email ) {
 			cl->email	= (*++it);
         	}
-		else{
+		else {
 			 cl->email	= "";
 		}
 
 		++lni;
 
-		if ( cl->uin.isNull() ){
+		if ( cl->uin.isNull() ) {
 			kdDebug(14100) << "no Uin, strange "<<endl;
 			kdDebug(14100) << "LINE:" << cline <<endl;
 			// XXX: maybe i should consider this as an fatal error, and return false
 			continue;
 		}
-    
-		gaducontactslist.append(cl);
+
+		gaducontactslist.append( cl );
 		kdDebug(14100) << "adding to list ,uin:" << cl->uin <<endl;
-    
-		cl=NULL;
+
+		cl = NULL;
 	}
 	return true;
 }
 
-void 
-GaduSession::handleUserlist( gg_event *e )
+void
+GaduSession::handleUserlist( gg_event* e )
 {
 	QString ul;
-	switch (e->event.userlist.type) {
+	switch( e->event.userlist.type ) {
 		case GG_USERLIST_GET_REPLY:
-			if (e->event.userlist.reply){
+			if ( e->event.userlist.reply ) {
 				ul = e->event.userlist.reply;
 				kdDebug( 14100 ) << "Got Contacts list  OK " << endl;
 			}
-			else{
+			else {
 				kdDebug( 14100 ) << "Got Contacts list  FAILED/EMPTY " << endl;
 				// XXX: send failed?
 			}
@@ -557,7 +549,7 @@ GaduSession::handleUserlist( gg_event *e )
 			kdDebug( 14100 ) << "Contacts list exported  OK " << endl;
 			emit userListExported();
 			break;
-	
+
 	}
 }
 
@@ -568,69 +560,71 @@ GaduSession::checkDescriptor()
 
 	struct gg_event *e;
 
-	if (!(e = gg_watch_fd(session_))) {
+	if ( !( e = gg_watch_fd( session_ ) ) ) {
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		destroySession();
 		return;
 	}
 
 	switch( e->type ) {
-	case GG_EVENT_MSG:
-		if (e->event.msg.msgclass == GG_CLASS_CTCP){
-			// TODO: DCC CONNECTION
-		}
-		else{
-			emit messageReceived( e );
-		}
+		case GG_EVENT_MSG:
+			if ( e->event.msg.msgclass == GG_CLASS_CTCP ) {
+				// TODO: DCC CONNECTION
+			}
+			else {
+				emit messageReceived( e );
+			}
 		break;
-	case GG_EVENT_ACK:
-		emit ackReceived( e );
+		case GG_EVENT_ACK:
+			emit ackReceived( e );
 		break;
-	case GG_EVENT_STATUS:
-		kdDebug(14100)<<"event status < 60, i should not get it boy"<<endl;
+		case GG_EVENT_STATUS:
+			kdDebug(14100)<<"event status < 60, i should not get it boy"<<endl;
 		break;
-	case GG_EVENT_STATUS60:
-		emit statusChanged( e );
+		case GG_EVENT_STATUS60:
+			emit statusChanged( e );
 		break;
-	case GG_EVENT_NOTIFY60:
-		emit notify( e );
+		case GG_EVENT_NOTIFY60:
+			emit notify( e );
 		break;
-	case GG_EVENT_CONN_SUCCESS:
-		emit connectionSucceed( e );
+		case GG_EVENT_CONN_SUCCESS:
+			emit connectionSucceed( e );
 		break;
-	case GG_EVENT_CONN_FAILED:
-		kdDebug(14100)<<"event connectionFailed"<<endl;
-		destroySession();
-		kdDebug(14100)<<"emit connection failed signal"<<endl;
-		emit connectionFailed( NULL );
+		case GG_EVENT_CONN_FAILED:
+			kdDebug(14100)<<"event connectionFailed"<<endl;
+			destroySession();
+			kdDebug(14100)<<"emit connection failed signal"<<endl;
+			emit connectionFailed( NULL );
 		break;
-	case GG_EVENT_DISCONNECT:
-		kdDebug(14100)<<"event Disconnected"<<endl;
-		logoff();
+		case GG_EVENT_DISCONNECT:
+			kdDebug(14100)<<"event Disconnected"<<endl;
+			logoff();
 		break;
-	case GG_EVENT_PONG:
-		emit pong();
+		case GG_EVENT_PONG:
+			emit pong();
 		break;
-	case GG_EVENT_NONE:
-		break;
-	case GG_EVENT_PUBDIR50_SEARCH_REPLY:
-	case GG_EVENT_PUBDIR50_WRITE:
-	case GG_EVENT_PUBDIR50_READ:
-		sendResult( e->event.pubdir50 );
+		case GG_EVENT_NONE:
+			break;
+		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
+		case GG_EVENT_PUBDIR50_WRITE:
+		case GG_EVENT_PUBDIR50_READ:
+			sendResult( e->event.pubdir50 );
 	        break;
-	case GG_EVENT_USERLIST:
-		handleUserlist(e);
+		case GG_EVENT_USERLIST:
+			handleUserlist( e );
 		break;
-	default:
-		kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<e->type<<endl;
+		default:
+			kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<e->type<<endl;
 		break;
 	}
 
-	if ( e ) 
+	if ( e ) {
 		gg_free_event( e );
+	}
 
-	if ( session_ )
+	if ( session_ ) {
 		enableNotifiers( session_->check );
+	}
 }
 
 #include "gadusession.moc"

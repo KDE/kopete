@@ -1,24 +1,47 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
+//
+// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 	2002-2003	 Zack Rusin 	<zack@kde.org>
+//
+// gaducontact.cpp
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+
 #include <klocale.h>
 #include <kdebug.h>
+
+#include "gaduprotocol.h"
+#include "gaducontact.h"
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
+
 #include "userinfodialog.h"
+
 using Kopete::UserInfoDialog;
 
-#include "gaduprotocol.h"
-#include "gaducontact.h"
-
-GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount *account,
-					KopeteMetaContact* parent )
-	: KopeteContact( account, QString::number( uin ), parent )
+GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount* account, KopeteMetaContact* parent )
+: KopeteContact( account, QString::number( uin ), parent )
 {
 	msgManager_ = 0L;
 	uin_ = uin;
-	account_ = static_cast<GaduAccount *>(account);
+	account_ = static_cast<GaduAccount*>( account );
+
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
 
@@ -63,13 +86,13 @@ GaduContact::manager( bool )
 {
 	if ( msgManager_ ) {
 		return msgManager_;
-	} else {
+	}
+	else {
 		msgManager_ = KopeteMessageManagerFactory::factory()->create( account_->myself(),
-																																	thisContact_, GaduProtocol::protocol());
-		connect( msgManager_, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
-						 this, SLOT(messageSend(KopeteMessage&, KopeteMessageManager*)) );
-		connect( msgManager_, SIGNAL(destroyed()),
-						 this, SLOT(slotMessageManagerDestroyed()) );
+												thisContact_, GaduProtocol::protocol());
+		connect( msgManager_, SIGNAL( messageSent( KopeteMessage&, KopeteMessageManager*) ),
+						 this, SLOT( messageSend( KopeteMessage&, KopeteMessageManager*) ) );
+		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );
 		return msgManager_;
 	}
 }
@@ -83,10 +106,8 @@ GaduContact::slotMessageManagerDestroyed()
 void
 GaduContact::initActions()
 {
-	actionSendMessage_ = KopeteStdAction::sendMessage(this, SLOT(execute()),
-																										this, "actionMessage" );
-	actionInfo_ = KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()),
-																							this, "actionInfo" );
+	actionSendMessage_	= KopeteStdAction::sendMessage( this, SLOT( execute() ), this, "actionMessage" );
+	actionInfo_			= KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), this, "actionInfo" );
 }
 
 void
@@ -98,9 +119,10 @@ GaduContact::messageReceived( KopeteMessage& msg )
 void
 GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 {
-	if ( msg.plainBody().isEmpty() )
+	if ( msg.plainBody().isEmpty() ) {
 		return;
-	//FIXME: handle colors
+	}
+	//FIXME: handle ritch text
 	account_->sendMessage( uin_, msg.plainBody() );
 	mgr->appendMessage( msg );
 }
@@ -111,7 +133,7 @@ GaduContact::isReachable()
 	return true;
 }
 
-KActionCollection *
+KActionCollection*
 GaduContact::customContextMenuActions()
 {
 	return 0L;
@@ -120,7 +142,8 @@ GaduContact::customContextMenuActions()
 void
 GaduContact::slotUserInfo()
 {
-	UserInfoDialog *dlg = new UserInfoDialog( i18n("Gadu contact") );
+	/// XXX: use more decent information here
+	UserInfoDialog *dlg = new UserInfoDialog( i18n( "Gadu contact" ) );
 
 	dlg->setName( metaContact()->displayName() );
 	dlg->setId( QString::number( uin_ ) );
@@ -136,69 +159,75 @@ GaduContact::slotDeleteContact()
 	deleteLater();
 }
 
-/*
-*/
+
 void
-GaduContact::setInfo( const QString &email, const QString &firstName, 
-			 const QString &secondName,
-			 const QString &nickName, const QString &phonenr )
+GaduContact::setInfo( const QString& email, const QString& firstName,
+			 	const QString& secondName,
+			 	const QString& nickName, const QString& phonenr )
 {
-	if (email.length())
-	    email_	= email;
-	if (firstName.length())
-	    firstName_	= firstName;
-	if (secondName.length())
-	    secondName_	= secondName;
-	if (nickName.length())
-	    nickName_	= nickName;
-	if (phonenr.length())
-	    phonenr_	= phonenr;
+	if ( email.length() ) {
+		email_		= email;
+	}
+	if ( firstName.length() ) {
+		firstName_		= firstName;
+	}
+	if ( secondName.length() ) {
+		secondName_	= secondName;
+	}
+	if ( nickName.length() ) {
+		nickName_		= nickName;
+	}
+	if ( phonenr.length() ) {
+		phonenr_		= phonenr;
+	}
 }
 
 
 void
-GaduContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &)
+GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QString>& )
 {
-
-    serializedData["email"]	= email_;
-    serializedData["FirstName"]	= firstName_;
-    serializedData["SecondName"]= secondName_;
-    serializedData["NickName"]	= nickName_;
-    serializedData["telephone"]	= phonenr_;
-    
+	serializedData[ "email" ]		= email_;
+	serializedData[ "FirstName"  ]	= firstName_;
+	serializedData[ "SecondName" ]	= secondName_;
+	serializedData[ "NickName" ]	= nickName_;
+	serializedData[ "telephone" ]	= phonenr_;
 }
 
-contactLine *
+contactLine*
 GaduContact::contactDetails()
 {
 	KopeteGroupList		groupList;
 	QString			groups;
 
-	contactLine *cl	= new contactLine;
+	contactLine* cl	= new contactLine;
 
 	cl->firstname	= firstName_;
 	cl->surname	= secondName_;
 	cl->nickname	= nickName_;
-	cl->name		= firstName_+" "+secondName_;
+	cl->name		= firstName_ + " " + secondName_;
 	cl->phonenr	= phonenr_;
 	cl->uin		= QString::number( uin_ );
 	cl->email		= email_;
 	cl->name		= displayName();
-	
+
 	groupList = metaContact ()->groups ();
-	
-	KopeteGroup * gr;
-	for ( gr = groupList.first (); gr ; gr = groupList.next ()){
-		if ( gr!=KopeteGroup::topLevel() ){
+
+	KopeteGroup* gr;
+	for ( gr = groupList.first (); gr ; gr = groupList.next () ) {
+// if present in any group, don't export to top level
+// XXX: again, probably bug in libkopete
+// in case of topLevel group, KopeteGroup::displayName() returns "TopLevel" ineasted of just " " or "/"
+// imo TopLevel group should be detected like i am doing that below
+		if ( gr!=KopeteGroup::topLevel() ) {
 			groups += gr->displayName()+",";
 		}
 	}
-	
-	if (groups.length()){
+
+	if ( groups.length() ) {
 		groups.truncate( groups.length()-1 );
 	}
-	cl->group	= groups;
-	
+	cl->group = groups;
+
 	return cl;
 }
 

@@ -1,13 +1,11 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Current author and maintainer: Grzegorz Jaskiewicz
-//				gj at pointblue.com.pl
-//
-// Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
+// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 	2002-2003	 Zack Rusin 	<zack@kde.org>
 //
 // gaducommands.h - all basic, and not-session dependent commands
-// (meaning you don't have to be logged in for any
-//  of these). These delete themselves, meaning you don't
+// (meaning you don't have to be logged in for any of these).
+// These delete themselves, meaning you don't
 //  have to/can't delete them explicitly and have to create
 //  them dynamically (via the 'new' call).
 //
@@ -30,6 +28,7 @@
 #define GADUCOMMANDS_H
 
 #include <libgadu.h>
+
 #include <qobject.h>
 #include <qstringlist.h>
 
@@ -39,11 +38,12 @@ class QStringList;
 class GaduCommand : public QObject
 {
 	Q_OBJECT
+
 public:
-	GaduCommand( QObject *parent=0, const char* name=0 );
+	GaduCommand( QObject* parent = 0, const char* name = 0 );
 	virtual ~GaduCommand();
 
-	virtual void execute()=0;
+	virtual void execute() = 0;
 
 	bool done() const;
 
@@ -52,97 +52,112 @@ signals:
 	void done( const QString& title, const QString& what );
 	void error( const QString& title, const QString& error );
 	void socketReady();
+
 protected:
-	char* qstrToChar( const QString& str );
-	void checkSocket( int fd, int checkWhat );
-	void enableNotifiers( int checkWhat );
+	char* qstrToChar( const QString& );
+	void checkSocket( int, int );
+	void enableNotifiers( int );
 	void disableNotifiers();
 
 	bool done_;
+
 protected slots:
 	void forwarder();
+
 private:
-	QSocketNotifier *read_;
-	QSocketNotifier *write_;
+	QSocketNotifier*	read_;
+	QSocketNotifier*	write_;
 };
 
 class RegisterCommand : public GaduCommand
 {
 	Q_OBJECT
+
 public:
-	RegisterCommand( QObject *parent=0, const char* name=0 );
+	RegisterCommand( QObject* parent = 0, const char* name = 0 );
 	RegisterCommand( const QString& email, const QString& password ,
-									 QObject *parent=0, const char* name=0 );
+					QObject* parent = 0, const char* name = 0 );
 	~RegisterCommand();
 
 	void setUserinfo( const QString& email, const QString& password );
 	void execute();
 	unsigned int newUin();
+
 protected slots:
 	void watcher();
+
 private:
-	QString email_;
-	QString password_;
-	struct gg_http	*session_;
-	int uin;
+	QString		email_;
+	QString		password_;
+	struct gg_http*	session_;
+	int 			uin;
 };
 
 class RemindPasswordCommand : public GaduCommand
 {
 	Q_OBJECT
+
 public:
-	RemindPasswordCommand( uin_t uin, QObject *parent=0, const char* name=0 );
-	RemindPasswordCommand( QObject *parent=0, const char* name=0 );
+	RemindPasswordCommand( uin_t uin, QObject* parent = 0, const char* name = 0 );
+	RemindPasswordCommand( QObject* parent = 0, const char* name = 0 );
 	~RemindPasswordCommand();
 
-	void setUIN( uin_t uin );
+	void setUIN( uin_t );
 	void execute();
+
 protected slots:
 	void watcher();
+
 private:
-	uin_t uin_;
-	struct gg_http	*session_;
+	uin_t			uin_;
+	struct gg_http*	session_;
 };
 
 class ChangePasswordCommand : public GaduCommand
 {
 	Q_OBJECT
+
 public:
-	ChangePasswordCommand( QObject *parent=0, const char* name=0 );
+	ChangePasswordCommand( QObject* parent = 0, const char* name = 0 );
 	~ChangePasswordCommand();
 
 	void setInfo( uin_t uin, const QString& passwd, const QString& newpasswd,
-								const QString& newemail );
+				const QString& newemail );
 	void execute();
+
 protected slots:
 	void watcher();
+
 private:
-	struct gg_http	*session_;
-	QString passwd_;
-	QString newpasswd_;
-	QString newemail_;
-	uin_t uin_;
+	struct gg_http*	session_;
+	QString		passwd_;
+	QString		newpasswd_;
+	QString		newemail_;
+	uin_t			uin_;
 };
 
 class ChangeInfoCommand : public GaduCommand
 {
 	Q_OBJECT
+
 public:
-	ChangeInfoCommand( QObject *parent=0, const char* name=0 );
+	ChangeInfoCommand( QObject* parent = 0, const char* name = 0 );
 	~ChangeInfoCommand();
 
 	void setInfo( uin_t uin, const QString& passwd,
-								const QString& firstName, const QString& lastName,
-								const QString& nickname, const QString& email,
-								int born, int gender, const QString& city );
+				const QString& firstName, const QString& lastName,
+				const QString& nickname, const QString& email,
+				int born, int gender, const QString& city );
 	void execute();
+
 protected slots:
 	void watcher();
+
 private:
-	struct gg_change_info_request info_;
-	struct gg_http	*session_;
-	uin_t uin_;
-	QString passwd_;
+	struct gg_change_info_request	info_;
+	struct gg_http*				session_;
+	uin_t						uin_;
+	QString					passwd_;
 };
 
 #endif

@@ -1,6 +1,9 @@
-// gaduaway.h
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C)  2003  Zack Rusin <zack@kde.org>
+// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2002-2003 Zack Rusin	<zack@kde.org>
+//
+// gaduaway.h
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,7 +12,7 @@
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -29,16 +32,18 @@ class GaduAwayUI;
 class GaduAway : public KDialogBase
 {
 	Q_OBJECT
+
 public:
-	GaduAway( GaduAccount *account, QWidget* parent=0,
-						const char* name=0 );
+	GaduAway( GaduAccount*, QWidget* parent = 0, const char* name = 0 );
 	int status() const;
 	QString awayText() const;
+
 protected slots:
 	void slotApply();
+
 private:
-	GaduAccount *account_;
-	GaduAwayUI  *ui_;
+	GaduAccount*	account_;
+	GaduAwayUI*	ui_;
 };
 
 #endif

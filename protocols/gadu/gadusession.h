@@ -1,8 +1,9 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
-// gadusession.h
 //
 // Copyright (C)	2002	Zack Rusin <zack@kde.org>
 // Copyright (C)	2003 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+//
+// gadusession.h
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -50,7 +51,7 @@ struct resLine{
 	QString nickname;
 	QString age;
 	QString city;
-	int	status;
+	int status;
 };
 
 typedef QPtrList<resLine> searchResult;
@@ -61,53 +62,51 @@ class QStringList;
 class GaduSession : public QObject
 {
 	Q_OBJECT
+
 public:
-	GaduSession( QObject *parent=0, const char* name=0 );
+	GaduSession( QObject* parent = 0, const char* name = 0 );
 	virtual ~GaduSession();
 	bool	isConnected() const;
 	int	status() const;
-	bool	stringToContacts( gaduContactsList& gaducontactslist , const QString& sList );
+	bool	stringToContacts( gaduContactsList& , const QString& );
 
 public slots:
-	void login( struct gg_login_params *p );
-	void login( uin_t uin, const QString& password, bool useTls,
-							int status=GG_STATUS_INVISIBLE , const QString& statusDescr="" );
+	void login( struct gg_login_params* );
+	void login( uin_t uin, const QString&, bool, int status = GG_STATUS_AVAIL,
+			const QString& statusDescr = "" );
 	void logoff();
-	int	 notify( uin_t *userlist, int count );
-	int	 addNotify( uin_t uin );
-	int	 removeNotify( uin_t uin );
-	int	 sendMessage( uin_t recipient, const unsigned char *message, int msgClass );
-	int	 sendMessageCtcp( uin_t recipient, const QString& msg,
-												int msgClass );
-	int	 changeStatus( int status );
-	int	 changeStatusDescription( int status, const QString& descr );
+	int	 notify( uin_t*, int );
+	int	 addNotify( uin_t );
+	int	 removeNotify( uin_t );
+	int	 sendMessage( uin_t, const unsigned char*, int );
+	int	 sendMessageCtcp( uin_t , const QString&, int );
+	int	 changeStatus( int );
+	int	 changeStatusDescription( int, const QString& );
 	int	 ping();
 
-	int	 dccRequest( uin_t uin );
+	int	 dccRequest( uin_t );
 	void	requestContacts();
 
-  /*
-   *  Initiates search in public directory, we need to be logged on to perform search !
-   *  This returns false, if you are unable to search (fe you are not logged on, you don't have memory)
-   *  This does not checks parametrs !
-   *  Calling this function more times with the same params, will continue this search as long as
-   *  @ref pubDirSearchClose() will not be called
-   *  You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
-   *  will be returned
-   */
-    bool pubDirSearch(QString &name, QString &surname, QString &nick, 
-			    int UIN, QString &city, int gender, 
-			    int ageFrom, int ageTo, bool onlyAlive);
-                            
-  /*
-   *  Releases all allocated memory needed to perform search.
-   *  This will be done on each @ref pubDirNewSearch(), if previuos is not released
-   */
-    void pubDirSearchClose();
-    void exportContacts( gaduContactsList *u );
-  
+	/*
+	*  Initiates search in public directory, we need to be logged on to perform search !
+	*  This returns false, if you are unable to search (fe you are not logged on, you don't have memory)
+	*  This does not checks parametrs !
+	*  Calling this function more times with the same params, will continue this search as long as
+	*  @ref pubDirSearchClose() will not be called
+	*  You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
+	*  will be returned
+	*/
+	bool pubDirSearch( QString&, QString&, QString&, int, QString&, int, int, int, bool );
+
+	/*
+	*  Releases all allocated memory needed to perform search.
+	*  This will be done on each @ref pubDirNewSearch(), if previuos is not released
+	*/
+	void pubDirSearchClose();
+	void exportContacts( gaduContactsList* );
+
 signals:
-	void error( const QString& title, const QString& message );
+	void error( const QString&, const QString& );
 	void messageReceived( struct gg_event* );
 	void ackReceived( struct gg_event* );
 	void notify( struct gg_event* );
@@ -116,28 +115,27 @@ signals:
 	void connectionFailed( struct gg_event* );
 	void connectionSucceed( struct gg_event* );
 	void disconnect();
-	void pubDirSearchResult( const searchResult & );
-	void userListRecieved( const QString& );  
+	void pubDirSearchResult( const searchResult& );
+	void userListRecieved( const QString& );
 	void userListExported();
-	
+
 protected slots:
-	void enableNotifiers( int checkWhat );
+	void enableNotifiers( int );
 	void disableNotifiers();
 	void checkDescriptor();
 
 private:
 
-	void sendResult( gg_pubdir50_t result );
-	void handleUserlist( gg_event *e );
+	void sendResult( gg_pubdir50_t );
+	void handleUserlist( gg_event* );
 	void destroySession();
 
-	struct gg_session	*session_;
-	QSocketNotifier		*read_;
-	QSocketNotifier		*write_;
-	gg_login_params	params_;
-	QTextCodec 		*textcodec;
+	gg_session*		session_;
+	QSocketNotifier*		read_;
+	QSocketNotifier*		write_;
+	gg_login_params		params_;
+	QTextCodec*		textcodec;
 	int				searchSeqNr_;
-	
 };
 
 #endif
