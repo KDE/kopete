@@ -20,6 +20,7 @@
 
 #include <kdeversion.h>
 #include <kresolver.h>
+#include <ksharedptr.h>
 
 #include <qobject.h>
 #include <qregexp.h>
@@ -31,7 +32,8 @@ namespace KIRC
 class Engine;
 
 class Entity
-	: public QObject
+	: public QObject,
+	  public KShared
 {
 	Q_OBJECT
 
@@ -45,7 +47,7 @@ public:
 		User
 	};
 
-	Entity(KIRC::Engine *engine,const QString &name, const Type type = Unknown);
+	Entity(const QString &name, const Type type = Unknown);
 
 	QString name() const;
 	QString host() const;

@@ -40,10 +40,9 @@ const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([
 
 const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 
-Entity::Entity(Engine *engine,const QString &name, const Type type)
-		: QObject(engine),
-//		  m_engine(engine),
-		  m_type(type)
+Entity::Entity(const QString &name, const Type type)
+	: QObject(0, "KIRC::Entity"),
+	  m_type(type)
 {
 //	rename(name, type);
 }
