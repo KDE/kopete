@@ -86,6 +86,7 @@ private:
 	XMPP::ClientStream *jabberClientStream;
 	XMPP::Client *jabberClient;
 
+	bool mSuccess;
 };
 
 #endif

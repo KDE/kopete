@@ -72,6 +72,8 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 	hintPixmap = KGlobal::iconLoader()->loadIcon ( "jabber_online", KIcon::Small );
 
+	mSuccess = false;
+
 	// get all settings from the main dialog
 	mMainWidget->leServer->setText ( parent->mServer->text () );
 	mMainWidget->leJID->setText ( parent->mID->text () );
@@ -335,7 +337,8 @@ void JabberRegisterAccount::disconnect ()
 
 	cleanup ();
 
-	enableButtonOK ( true );
+	if ( !mSuccess )
+		enableButtonOK ( true );
 
 }
 
@@ -429,18 +432,21 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
-		// rewire buttons
-		enableButtonOK ( false );
-		setButtonCancel ( KStdGuiItem::close () );
-		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
-
 		// disable input widgets
+		mMainWidget->btnChooseServer->setEnabled ( false );
 		mMainWidget->leServer->setEnabled ( false );
 		mMainWidget->leJID->setEnabled ( false );
 		mMainWidget->lePassword->setEnabled ( false );
 		mMainWidget->lePasswordVerify->setEnabled ( false );
 		mMainWidget->sbPort->setEnabled ( false );
 		mMainWidget->cbUseSSL->setEnabled ( false );
+
+		mSuccess = true;
+
+		// rewire buttons
+		enableButtonOK ( false );
+		setButtonCancel ( KStdGuiItem::close () );
+		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
 	}
 	else
 	{
