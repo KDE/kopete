@@ -9,5 +9,6 @@ Name[es]=Autoalejado por movimiento
 Name[ja]=モーション自動Away
 Name[pt]=Auto-Ausência por Movimento
 Name[pt_BR]=Auto-Ausência por Movimento
+Name[ru]=Авто-отсутствие по движению
 Name[sv]=Automatisk rörelsefrånvaro
 Comment=Sets away status when not detecting movement near the computer 
