@@ -376,7 +376,13 @@ default_presentation=65
 
 [yahoo_mail]
 Name=Yahoo Mail
+Name[fr]=Courrier Yahoo
+Name[sv]=Yahoo e-post
 Comment=New email has arrived in your Yahoo inbox
+Comment[da]=Ny e-post ankom til din Yahoo-indbakke
+Comment[et]=Saabus uus meil sinu Yahoo Inboxi
+Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres Yahoo
+Comment[sv]=Ett nytt brev har anlänt i din Yahoo-inkorg
 
 
 [msn_mail]
