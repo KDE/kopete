@@ -188,6 +188,17 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 		disconnect ( KopeteAccount::Manual );
 		return;
 	}
+	bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
+
+	if (!sslPossible)
+	{
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+							i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
+							arg(myself()->contactId()),
+							i18n ("GroupWise SSL Error"));
+		return;
+	}
+
 	// set up network classes
 	m_connector = new KNetworkConnector( 0 );
 	//myConnector->setOptHostPort( "localhost", 8300 );
