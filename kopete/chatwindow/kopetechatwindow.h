@@ -165,6 +165,8 @@ private slots:
 	void slotPaste();
 
 	void slotSetBgColor();
+	void slotSetFgColor();
+	void slotSetFont();
 
 	void slotHistoryUp();
 	void slotHistoryDown();

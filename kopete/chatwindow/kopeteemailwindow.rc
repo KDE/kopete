@@ -29,5 +29,6 @@
 		<Action name="format_color" />
 		<Action name="format_bgcolor" />
 		<Action name="format_smiley"/>
+		<Action name="toolbar_animation"/>
 	</ToolBar>
 </kpartgui>

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>392</width>
-            <height>323</height>
+            <width>552</width>
+            <height>653</height>
         </rect>
     </property>
     <property name="caption">
@@ -49,6 +49,14 @@
             </property>
             <property name="text">
                 <string>Highlight messages containing your &amp;nickname</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>cb_RichText</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Use the rich text editor (experimental)</string>
             </property>
         </widget>
         <widget class="QButtonGroup">
@@ -177,7 +185,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>10</height>
+                    <height>300</height>
                 </size>
             </property>
         </spacer>

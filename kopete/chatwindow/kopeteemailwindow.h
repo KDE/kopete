@@ -20,16 +20,16 @@
 #define __KOPETEEMAILWINDOW_H__
 
 #include <kmainwindow.h>
-
+#include <kparts/mainwindow.h>
 #include "kopeteview.h"
 
 class KURL;
 
 namespace KParts { struct URLArgs; }
 
-class KopeteEmailWindowPrivate;
+struct KopeteEmailWindowPrivate;
 
-class KopeteEmailWindow : public KMainWindow, public KopeteView
+class KopeteEmailWindow : KParts::MainWindow, public KopeteView
 {
 	Q_OBJECT
 
@@ -83,10 +83,10 @@ private slots:
 	void slotReadPrev();
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
 	void slotTextChanged();
+	void slotCloseView();
 
 	void slotPrepareActionMenu();
-	void slotPrepareSmileyMenu();
-	void slotSmileyActivated( int );
+	void slotSmileyActivated( const QString & );
 	void slotCopy();
 	void slotSetBgColor( const QColor & = QColor() );
 	void slotSetFgColor( const QColor & = QColor() );

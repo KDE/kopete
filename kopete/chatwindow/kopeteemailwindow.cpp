@@ -44,7 +44,8 @@
 #include <kiconloader.h>
 #include <ktextedit.h>
 
-#include "kopeteemoticons.h"
+//#include "kopeteemoticons.h"
+#include "kopeteemoticonaction.h"
 #include "kopetecontact.h"
 #include "kopetemessagemanager.h"
 #include "kopeteprefs.h"
@@ -53,9 +54,8 @@
 
 #include "kopeteemailwindow.h"
 
-class KopeteEmailWindowPrivate
+struct KopeteEmailWindowPrivate
 {
-public:
 	QValueList<KopeteMessage> messageQueue;
 	bool blnShowingMessage;
 	bool sendInProgress;
@@ -77,13 +77,14 @@ public:
 	QMovie animIcon;
 	QPixmap normalIcon;
 	QString unreadMessageFrom;
+	KParts::Part *editpart;
 
 	KActionMenu *actionActionMenu;
-	KActionMenu *actionSmileyMenu;
+	KopeteEmoticonAction *actionSmileyMenu;
 };
 
 KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreignMessage )
-: KMainWindow( 0L ), KopeteView( manager )
+:  KParts::MainWindow( ), KopeteView( manager )
 {
 	d = new KopeteEmailWindowPrivate;
 
@@ -111,7 +112,34 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 		SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
 	d->htmlView->setFocusPolicy( NoFocus );
 
-	d->txtEntry = new KTextEdit( d->split );
+	d->editpart = 0L;
+	if(KopetePrefs::prefs()->richText())
+	{
+		KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
+		if ( factory )
+		{
+			d->editpart = dynamic_cast<KParts::Part*> (factory->create( d->split, "krichtexteditpart", "KParts::ReadWritePart" ) );
+		}
+	}
+
+	if ( d->editpart )
+	{
+		QDomDocument doc = d->editpart->domDocument();
+		QDomNode menu = doc.documentElement().firstChild();
+		menu.removeChild( menu.firstChild() ); // Remove File
+		menu.removeChild( menu.firstChild() ); // Remove Edit
+		menu.removeChild( menu.firstChild() ); // Remove View
+		menu.removeChild( menu.lastChild() ); //Remove Help
+
+		doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
+		doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
+		d->txtEntry = static_cast<KTextEdit*>( d->editpart->widget() );
+	}
+	else
+	{
+		d->txtEntry = new KTextEdit( d->split );
+	}
+
 	d->txtEntry->setMinimumSize( QSize( 75, 20 ) );
 	d->txtEntry->setWordWrap( QTextEdit::WidgetWidth );
 	d->txtEntry->setTextFormat( Qt::PlainText );
@@ -166,13 +194,6 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 
 	d->sendInProgress = false;
 
-	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
-
-	d->anim = new QLabel( toolBar(), "kde toolbar widget" );
-	d->anim->setMargin(5);
-	d->anim->setPixmap( d->normalIcon );
-	toolBar()->insertWidget( 99, d->anim->width(), d->anim );
 	toolBar()->alignItemRight( 99 );
 
 	d->visible = false;
@@ -182,7 +203,6 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 
 	m_type = KopeteMessage::Email;
 
-	kdDebug(14010) << k_funcinfo << endl;
 }
 
 KopeteEmailWindow::~KopeteEmailWindow()
@@ -215,7 +235,7 @@ void KopeteEmailWindow::initActions(void)
 	d->chatSend->setShortcut( QKeySequence( CTRL + Key_Return ) );
 	d->chatSend->setEnabled( false );
 
-	KStdAction::quit ( this, SLOT( closeView() ), coll );
+	KStdAction::quit ( this, SLOT( slotCloseView() ), coll );
 
 	KStdAction::cut( d->txtEntry, SLOT( cut() ), coll );
 	KStdAction::copy( this, SLOT(slotCopy()), coll);
@@ -233,20 +253,31 @@ void KopeteEmailWindow::initActions(void)
 	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), coll );
 
-	d->actionSmileyMenu = new KActionMenu( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
+	d->actionSmileyMenu = new KopeteEmoticonAction( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
 	d->actionSmileyMenu->setDelayed( false );
+	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
 	d->actionActionMenu = new KActionMenu( i18n( "&Actions" ), coll, "actions_menu" );
 	connect( d->actionActionMenu->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT( slotPrepareActionMenu() ) );
-
-	connect( d->actionSmileyMenu->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT( slotPrepareSmileyMenu() ) );
-	connect( d->actionSmileyMenu->popupMenu(), SIGNAL( activated( int ) ), this, SLOT( slotSmileyActivated( int ) ) );
 
 	// add configure key bindings menu item
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), coll);
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 
-	createGUI( QString::fromLatin1( "kopeteemailwindow.rc" ) );
+
+	// The animated toolbarbutton
+	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
+	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
+
+	d->anim = new QLabel( this, "kde toolbar widget" );
+	d->anim->setMargin(5);
+	d->anim->setPixmap( d->normalIcon );
+	//toolBar()->insertWidget( 99, d->anim->width(), d->anim );
+	new KWidgetAction( d->anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
+
+	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
+	createGUI( d->editpart );
+	//createGUI( QString::fromLatin1( "kopeteemailwindow.rc" ) );
 }
 
 void KopeteEmailWindow::slotViewToolBar()
@@ -265,10 +296,10 @@ void KopeteEmailWindow::slotViewMenuBar()
 		menuBar()->show();
 }
 
-void KopeteEmailWindow::slotSmileyActivated(int sm)
+void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 {
-	// FIXME: it should read from the emoticonlist instead of using the text
-	d->txtEntry->setText( d->txtEntry->text().append( d->actionSmileyMenu->popupMenu()->text( sm ) ) );
+	if ( !sm.isNull() )
+		d->txtEntry->insert( sm );
 }
 
 void KopeteEmailWindow::slotConfKeys()
@@ -282,7 +313,7 @@ void KopeteEmailWindow::slotConfToolbar()
 	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QString::fromLatin1("kopetechatwindow.rc") );
 	if (dlg->exec())
 	{
-		createGUI( QString::fromLatin1("kopetechatwindow.rc") );
+		createGUI( d->editpart );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
 	}
 	delete dlg;
@@ -302,7 +333,7 @@ void KopeteEmailWindow::slotPrepareActionMenu(void)
 		KActionCollection *customActions = p->customChatActions( m_manager );
 		if( customActions )
 		{
-			kdDebug(14010) << k_funcinfo << "Found custom Actions defined by Plugins" << endl;
+//			kdDebug(14010) << k_funcinfo << "Found custom Actions defined by Plugins" << endl;
 			actions = true;
 			for(unsigned int i = 0; i < customActions->count(); i++)
 			{
@@ -313,23 +344,12 @@ void KopeteEmailWindow::slotPrepareActionMenu(void)
 
 	if ( !actions )
 	{
-		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
+//		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
 		int id = actionsMenu->insertItem( i18n("No Action Defined by Any Plugin") );
 		actionsMenu->setItemEnabled(id, false);
 	}
 }
 
-void KopeteEmailWindow::slotPrepareSmileyMenu(void)
-{
-	QPopupMenu *smileyMenu = d->actionSmileyMenu->popupMenu();
-
-	smileyMenu->clear();
-
-	QMap<QString, QString> list = KopeteEmoticons::emoticons()->emoticonAndPicList();
-
-	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
-		smileyMenu->insertItem(QPixmap( it.data() ),it.key());
-}
 
 bool KopeteEmailWindow::queryExit()
 {
@@ -392,7 +412,7 @@ void KopeteEmailWindow::slotSetBgColor( const QColor &newColor )
 
 void KopeteEmailWindow::slotCopy()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	if ( d->htmlPart->hasSelection() )
 		QApplication::clipboard()->setText( d->htmlPart->selectedText() );
@@ -403,7 +423,7 @@ void KopeteEmailWindow::slotCopy()
 
 void KopeteEmailWindow::messageReceived(KopeteMessage &message)
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	if( message.from() != m_manager->user() )
 	{
@@ -464,7 +484,7 @@ void KopeteEmailWindow::slotTextChanged()
 
 void KopeteEmailWindow::slotReadNext()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	d->blnShowingMessage = true;
 
@@ -479,7 +499,7 @@ void KopeteEmailWindow::slotReadNext()
 
 void KopeteEmailWindow::slotReadPrev()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	d->blnShowingMessage = true;
 
@@ -639,7 +659,7 @@ void KopeteEmailWindow::windowActivationChange( bool )
 
 void KopeteEmailWindow::makeVisible()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 	d->visible = true;
 	show();
 }
@@ -652,7 +672,7 @@ bool KopeteEmailWindow::isVisible()
 KopeteMessage KopeteEmailWindow::currentMessage()
 {
 	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), d->txtEntry->text(),
-		KopeteMessage::Outbound, KopeteMessage::PlainText );
+		KopeteMessage::Outbound, d->editpart ? KopeteMessage::RichText : KopeteMessage::PlainText );
 
 	currentMsg.setFont( d->font );
 	currentMsg.setBg( d->bgColor );
@@ -681,6 +701,12 @@ QTextEdit * KopeteEmailWindow::editWidget()
 {
 	return d->txtEntry;
 }
+
+void KopeteEmailWindow::slotCloseView()
+{
+	closeView();
+}
+
 
 #include "kopeteemailwindow.moc"
 

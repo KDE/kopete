@@ -217,15 +217,17 @@ public slots:
 
 	/**
 	 * Sets the foreground color of the entry area, and outgoing messages
-	 * @param newColor The new foreground color.
+	 * @param newColor The new foreground color. If this is QColor(), then
+	 * a color chooser dialog is opened
 	 */
-	void setFgColor( const QColor &newColor );
+	void setFgColor( const QColor &newColor = QColor() );
 
 	/**
 	 * Sets the font of the edit area and outgoing messages to the specified value.
-	 * @param newFont The new font to use.
+	 * @param newFont The new font to use. If this is QFont(), then
+	 * a color chooser dialog is opened
 	 */
-	void setFont( const QFont &newFont );
+	void setFont( const QFont &newFont = QFont() );
 
 	/**
 	 * Sets the background color of the entry area, and outgoing messages
@@ -376,6 +378,8 @@ private:
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
 	KTextEdit* m_edit;
 	QColor mBgColor;
+	QColor mFgColor;
+	QFont mFont;
 	KListView *membersList;
 	bool transparencyEnabled;
 	bool bgOverride;

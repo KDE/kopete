@@ -17,6 +17,8 @@
 		<Menu name="format" >
 			<text>&amp;Format</text>
 			<Action name="format_bgcolor" append="show_merge"/>
+			<Action name="format_fgcolor" append="show_merge"/>
+			<Action name="format_font" append="show_merge"/>
 			<Action name="format_smiley"/>
 		</Menu>
 
@@ -42,11 +44,12 @@
 
 	<ToolBar name="mainToolBar" fullWidth="true">
 		<text>Main Toolbar</text>
-		<Action name="format_bgcolor" />
+		<Action name="format_fgcolor" />
 		<Action name="format_smiley"/>
 		<Separator lineSeparator="true"/>
 		<Action name="tabs_detach"/>
 		<Action name="tabs_close"/>
+		<Action name="toolbar_animation"/>
 	</ToolBar>
 
 </kpartgui>

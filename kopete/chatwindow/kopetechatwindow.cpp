@@ -140,20 +140,9 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	//Send Button
 	m_button_send = new KPushButton( i18n("Send"), statusArea );
 	m_button_send->setEnabled( false );
-//	h->addWidget(m_button_send, 0, Qt::AlignRight | Qt::AlignVCenter);
 
 	connect( m_button_send, SIGNAL( pressed() ), this, SLOT( slotSendMessage() ) );
 
-	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
-
-	anim = new QLabel( toolBar(), "kde toolbar widget" );
-	anim->setMargin(5);
-	anim->setPixmap( normalIcon );
-	toolBar()->insertWidget( 99, anim->width(), anim );
-	toolBar()->alignItemRight( 99 );
-
-	setStandardToolBarMenuEnabled( true );
 
 	readOptions();
 	setWFlags(Qt::WDestructiveClose);
@@ -355,8 +344,9 @@ void KopeteChatWindow::initActions(void)
 	KStdAction::copy( this, SLOT(slotCopy()), coll);
 	KStdAction::paste( this, SLOT(slotPaste()), coll);
 
-	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
-		this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
+	new KAction( i18n( "Set Default &Font..." ), QString::fromLatin1( "charset" ), 0, this, SLOT( slotSetFont() ), coll, "format_font" );
+	new KAction( i18n( "Set Default Text &Color..." ), QString::fromLatin1( "pencil" ), 0, this, SLOT( slotSetFgColor() ), coll, "format_fgcolor" );
+	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0, this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
 
 	historyUp = new KAction( i18n( "Previous History" ), QString::null, 0,
 		this, SLOT( slotHistoryUp() ), coll, "history_up" );
@@ -385,15 +375,6 @@ void KopeteChatWindow::initActions(void)
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
-/*
-	actionSmileyMenu = new KActionMenu( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
-	actionSmileyMenu->setDelayed( false );
-
-	emoticonSelector = new EmoticonSelector(actionSmileyMenu->popupMenu(), "emoticonSelector");
-	connect ( actionSmileyMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareSmileyMenu()) );
-	connect ( emoticonSelector, SIGNAL(ItemSelected(const QString&)), this, SLOT(slotSmileyActivated(const QString&)) );
-	actionSmileyMenu->popupMenu()->insertItem( emoticonSelector );
-*/
 	actionActionMenu = new KActionMenu(i18n("&Actions"), coll, "actions_menu" );
 	connect ( actionActionMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareActionMenu()) );
 //	connect ( actionActionMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotActionActivated(int)) );
@@ -406,6 +387,23 @@ void KopeteChatWindow::initActions(void)
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), coll);
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	KStdAction::preferences( PreferencesDialog::preferencesDialog() , SLOT( show() ), coll );
+
+
+	//The Sending movie
+	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
+	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
+
+	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
+	anim = new QLabel( /*toolBar()*/ this , "kde toolbar widget" );
+	anim->setMargin(5);
+	anim->setPixmap( normalIcon );
+
+	new KWidgetAction( anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
+
+	//toolBar()->insertWidget( 99, anim->width(), anim );
+	//toolBar()->alignItemRight( 99 );
+	setStandardToolBarMenuEnabled( true );
+
 
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( 0L );
@@ -477,6 +475,17 @@ void KopeteChatWindow::slotCopy()
 void KopeteChatWindow::slotPaste()
 {
 	m_activeView->paste();
+}
+
+
+void KopeteChatWindow::slotSetFont()
+{
+	m_activeView->setFont();
+}
+
+void KopeteChatWindow::slotSetFgColor()
+{
+	m_activeView->setFgColor();
 }
 
 void KopeteChatWindow::slotSetBgColor()
@@ -800,28 +809,6 @@ void KopeteChatWindow::slotSendMessage(void)
 	}
 }
 
-/*
-void KopeteChatWindow::slotPrepareSmileyMenu(void)
-{
-
-	QPopupMenu *smileyMenu = actionSmileyMenu->popupMenu();
-
-	smileyMenu->clear();
-
-	QMap<QString, QString> list = KopeteEmoticons::emoticons()->emoticonAndPicList();
-
-	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
-	{
-//		QString text = it.key();
-//		text.replace(QRegExp(QString::fromLatin1("&")), QString::fromLatin1("&&"));
-		smileyMenu->insertItem(QPixmap(it.data()), it.key());
-	}
-
-
-
-//	emoticonSelector->prepareList();
-}
-*/
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
 	QPopupMenu *contactsMenu = actionContactMenu->popupMenu();

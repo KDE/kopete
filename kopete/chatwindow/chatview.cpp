@@ -33,6 +33,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcolordialog.h>
+#include <kfontdialog.h>
 #include <krootpixmap.h>
 #include <ktempfile.h>
 #include <kiconeffect.h>
@@ -81,9 +82,14 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(), 0L, QString::fromLatin1( "editDock" ), QString::fromLatin1( " " ) );
 
 	editpart = 0L;
-	KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
-	if ( factory )
-		editpart = dynamic_cast<KParts::Part*> (factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
+
+	if(KopetePrefs::prefs()->richText())
+	{
+
+		KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
+		if ( factory )
+			editpart = dynamic_cast<KParts::Part*> (factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
+	}
 
 	if ( editpart )
 	{
@@ -844,8 +850,8 @@ void ChatView::saveOptions()
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 	config->writeEntry ( QString::fromLatin1("BackgroundColor"), mBgColor );
-	config->writeEntry ( QString::fromLatin1("Font"), m_edit->font() );
-	config->writeEntry ( QString::fromLatin1("TextColor"), m_edit->color() );
+	config->writeEntry ( QString::fromLatin1("Font"), mFont );
+	config->writeEntry ( QString::fromLatin1("TextColor"), mFgColor );
 
 	//config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
 
@@ -1135,8 +1141,8 @@ KopeteMessage ChatView::currentMessage()
 	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart ? KopeteMessage::RichText : KopeteMessage::PlainText );
 
 	currentMsg.setBg( mBgColor );
-	currentMsg.setFg( m_edit->color() );
-	currentMsg.setFont( m_edit->font() );
+	currentMsg.setFg( mFgColor );
+	currentMsg.setFont( mFont );
 
 	return currentMsg;
 }
@@ -1195,16 +1201,24 @@ void ChatView::setBgColor( const QColor &newColor )
 
 void ChatView::setFont( const QFont &newFont )
 {
-	m_edit->setFont(newFont);
+	mFont=newFont;
+	if(newFont==QFont())
+		KFontDialog::getFont(mFont, false, this);
+	m_edit->setFont(mFont);
 }
 
 void ChatView::setFgColor( const QColor &newColor )
 {
-	m_edit->setColor( newColor);
+	if( newColor == QColor() )
+		KColorDialog::getColor( mFgColor, this );
+	else
+		mFgColor = newColor;
+
+	m_edit->setColor( mFgColor);
 
 	QPalette pal = m_edit->palette();
-	pal.setColor(QPalette::Active, QColorGroup::Text, m_edit->color() );
-	pal.setColor(QPalette::Inactive, QColorGroup::Text, m_edit->color() );
+	pal.setColor(QPalette::Active, QColorGroup::Text, mFgColor );
+	pal.setColor(QPalette::Inactive, QColorGroup::Text, mFgColor );
 
 	// unsetPalette() so that color changes in kcontrol are honoured
 	// if we ever have a subclass of KTextEdit, reimplement setPalette()
