@@ -51,7 +51,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
   : GaduAccountEditUI( parent, name ), EditAccountWidget( ident )
   ,
 //    account_(ident), 
-    protocol_( proto )
+    protocol_( proto ), rcmd(0)
 {
 
     if (!m_account){
@@ -93,7 +93,8 @@ void GaduEditAccount::registrationComplete( const QString& title, const QString&
 	
 	kdDebug(14100)<<"GJ"<<" ID " << title << endl;	    
 	    
-	loginEdit_->setText(title);
+	// i am sure rcmd is valid, since it sends this signal ;)
+	loginEdit_->setText(QString::number(rcmd->newUin()));
 	passwordEdit_->setText(passwordEdit2__->text());
 
 	radio1->setChecked(true);
@@ -148,8 +149,8 @@ bool GaduEditAccount::validateData()
 	kdDebug(14100)<<"GJ"<<"email:" << emailedit_->text() <<endl;
 
 	reg_in_progress=true;
-	RegisterCommand *rcmd=new RegisterCommand(emailedit_->text(), 
-						    passwordEdit2__->text(), this);
+	rcmd=new RegisterCommand(emailedit_->text(), 
+				    passwordEdit2__->text(), this);
 	
 	connect( rcmd, SIGNAL(done(const QString&, const QString&)),
         	 SLOT(registrationComplete(const QString&, const QString&)) );

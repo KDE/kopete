@@ -287,7 +287,7 @@ void RegisterCommand::watcher()
 		if (gg_pub){
 		    uin= gg_pub->uin;
 //		    kdDebug(14100713)<<"wylosowany numerek to:"<< uin << endl;
-		    emit done( QString::number(uin), i18n("Registration has completed successfully..") );
+		    emit done( i18n("Registration finished"), i18n("Registration has completed successfully..") );
 		}
 		else{
 		    emit error( i18n("Registration error"),

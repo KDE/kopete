@@ -4,6 +4,8 @@
 
 #include "gadueditaccountui.h"
 #include "editaccountwidget.h"
+#include "gaduaccount.h"
+#include "gaduprotocol.h"
 
 class GaduAccount;
 class GaduProtocol;
@@ -27,7 +29,7 @@ public slots:
 private:
 	GaduProtocol *protocol_;
 	bool reg_in_progress;
-	
+	RegisterCommand *rcmd;	
 };
 
 #endif
