@@ -33,9 +33,10 @@
 #include <kmessagebox.h>
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
+#include "kopeteidentity.h"
+#include "kopeteidentitymanager.h"
 #include "pluginloader.h"
 #include "kopetegroup.h"
-#include "kopetemessage.h"
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -61,13 +62,22 @@ KopeteContactList::~KopeteContactList()
 KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	const QString &identityId, const QString &contactId )
 {
-	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	KopeteIdentity *i=KopeteIdentityManager::manager()->findIdentity(protocolId,identityId);
+	if(!i)
+	{
+		kdDebug() << k_funcinfo << "Identity not found" << endl;
+		return 0L;
+	}
+	KopeteContact *c=i->contacts()[contactId];
+	if(c)
+		return c->metaContact();
+	
+	/*QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->findContact( protocolId, identityId, contactId ) )
 			return it.current();
-	}
-	//kdDebug(14010) << k_funcinfo << "*** Not found!" << endl;
+	}*/
 	return 0L;
 }
 
@@ -821,7 +831,7 @@ KopeteGroupList KopeteContactList::groups() const
 
 void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 {
-	KopeteContactPtrList children = m->contacts();
+	QPtrList<KopeteContact> children = m->contacts();
 	for( KopeteContact *c = children.first(); c; c = children.next() )
 	{
 		if( c->conversations() > 0 )
