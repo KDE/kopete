@@ -21,6 +21,8 @@
 #include <sys/utsname.h>
 
 #include <qdatetime.h>
+#include <qvaluelist.h>
+#include <qvariant.h>
 
 #include <kaboutdata.h>
 #include <kaction.h>
@@ -34,12 +36,11 @@
 
 #include "gwaccount.h"
 
-#include <qvaluelist.h>
-
 #include <kopeteuiglobal.h>
 #include <kopeteawayaction.h>
 #include <kopetecontactlist.h>
 #include <kopetegroup.h>
+#include <kopeteglobal.h>
 #include <kopetemessagemanagerfactory.h>
 #include <kopetemetacontact.h>
 #include <kopetepassword.h>
@@ -63,7 +64,7 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
 	KopeteMetaContact *metaContact = new KopeteMetaContact;
-	setMyself( new GroupWiseContact( this, accountId(), metaContact, "myself", 0, 0, 0 ) );
+	setMyself( new GroupWiseContact( this, accountId(), metaContact, 0, 0, 0 ) );
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 	
 	m_connector = 0;
@@ -227,8 +228,11 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList & ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & ) ) );
 
 	// typing events
-	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ),
+								SIGNAL( contactTyping( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ), 
+								SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
+	// misc
 	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const ContactDetails &) ), SLOT( receiveAccountDetails( const ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( tempContactReceived( const ContactDetails &) ), SLOT( receiveTemporaryContact( const ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
@@ -505,8 +509,10 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 	else
 	{
 		KopeteMetaContact *metaContact = new KopeteMetaContact();
+		metaContact->setDisplayName( contact.displayName );
 		// HACK: lowercased DN
-		GroupWiseContact * c = new GroupWiseContact( this, contact.dn.lower(), metaContact, contact.displayName, contact.id, contact.parentId, contact.sequence );
+		c = new GroupWiseContact( this, contact.dn.lower(), metaContact, contact.id, contact.parentId, contact.sequence );
+		c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
 		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
 		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
 		{
@@ -518,15 +524,33 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		}
 		KopeteContactList::contactList()->addMetaContact( metaContact );
 	}
+	// finally, record this contact list instance in the contact
+	ContactListInstance inst;
+	inst.objectId = contact.id;
+	inst.parentId = contact.parentId;
+	inst.sequence = contact.sequence;
+	c->addCLInstance( inst );
 }
 
 void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
 {
-	if ( details.cn == accountId() )
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
+		<< "Auth attribute: " << details.authAttribute
+		<< ", Away message: " << details.awayMessage
+		<< ", CN" << details.cn
+		<< ", DN" << details.dn
+		<< ", fullName" << details.fullName
+		<< ", surname" << details.surname
+		<< ", givenname" << details.givenName
+		<< ", status" << details.status
+		<< endl;
+	if ( details.cn.lower() == accountId().lower() )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - got our details in contact list, updating them" << endl;
 		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( myself() );
 		detailsOwner->updateDetails( details );
+		detailsOwner->setProperty( Kopete::Global::Properties::self()->nickName(), details.fullName );
+
 		// Very important, without knowing our DN we can't do much else
 		Q_ASSERT( !details.dn.isEmpty() );
 		m_client->setUserDN( details.dn );
@@ -554,7 +578,7 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 	if ( !details.dn.isNull() )
 	{
 		// are the details for someone in our contact list?
-		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( contacts()[ details.dn ] );
+		GroupWiseContact * detailsOwner = static_cast<GroupWiseContact *>( contacts()[ details.dn ] );
 		if( detailsOwner )
 		{
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - updating details for " << details.dn << endl;
@@ -575,15 +599,16 @@ void GroupWiseAccount::receiveTemporaryContact( const ContactDetails & details )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Got a temporary contact DN: " << details.dn << endl;
 		// the client is telling us about a temporary contact we need to know about so add them 
 		KopeteMetaContact *metaContact = new KopeteMetaContact ();
-	
+		// Because we never know if the details will contain a fullname
 		metaContact->setTemporary (true);
 	
-		// Because we never know if the details will contain a fullname
+
+		GroupWiseContact * c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
+		c->updateDetails( details );
 		QString displayName = details.fullName;
 		if ( displayName.isEmpty() )
-			displayName = ( details.givenName + " " + details.surname );
-
-		new GroupWiseContact( this, details.dn, metaContact, displayName, 0, 0, 0 );
+			displayName = c->property( Kopete::Global::Properties::self()->fullName() ).value().toString();
+		metaContact->setDisplayName( displayName );
 		KopeteContactList::contactList ()->addMetaContact (metaContact);
 		// the contact details probably don't contain status - but we can ask for it
 		if ( details.status == GroupWise::Invalid )
@@ -592,42 +617,6 @@ void GroupWiseAccount::receiveTemporaryContact( const ContactDetails & details )
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Notified of existing temporary contact DN: " << details.dn << endl;
 }
-
-// any pending messages" << endl;
-// 			// we asked for the user's details because we got a message from them out of the blue
-// 			// look for any events from this user, add the user and deliver the event(s)
-// 			QValueListIterator< ConferenceEvent > it;
-// 			bool handledDetails = false;
-// 			for ( it = m_pendingEvents.begin(); it != m_pendingEvents.end(); ++it )
-// 			{
-// 				ConferenceEvent event = *it;
-// 				if ( !( event.user.isNull() || event.user != details.dn ) )
-// 				{
-// 					// we may have multiple events for this contact, but only create one temporary contact
-// 					if ( !detailsOwner )
-// 					{
-// 						KopeteMetaContact *metaContact = new KopeteMetaContact ();
-// 		
-// 						metaContact->setTemporary (true);
-// 		
-// 						detailsOwner = new GroupWiseContact( this, details.dn, metaContact, details.fullName, 0, 0, 0 );
-// 						KopeteContactList::contactList ()->addMetaContact (metaContact);
-// 						// the contact details probably don't contain status - but we can ask for it
-// 						if ( details.status == GroupWise::Invalid )
-// 							m_client->requestStatus( details.dn );
-// 					}
-// 					// now the message can be received
-// 					receiveMessage( event );
-// 					handledDetails = true;
-// 				}
-// 				else
-// 					kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - user DN: " << event.user << " received DN: " << details.dn << endl;
-// 			}
-// 			if ( !handledDetails )
-// 				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - received details, but there was no pending event matching them" << endl;
-// 		}
-// 	}
-// }
 
 void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status, const QString &awayMessage )
 {
@@ -750,7 +739,9 @@ void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
 		GroupWiseContact * c = static_cast< GroupWiseContact *>( contacts()[ event.user ] );
 		if ( c )
 		{
-			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has rejected an invitation to join this conversation.").arg( c->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
+			QString from = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+
+			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has rejected an invitation to join this conversation.").arg( from ), KopeteMessage::Internal, KopeteMessage::PlainText );
 			mgr->appendMessage( declined );
 		}
 	}
@@ -767,7 +758,8 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 		GroupWiseContact * c = static_cast< GroupWiseContact *>( contacts()[ event.user ] );
 		if ( c )
 		{
-			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
+			QString from = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( from ), KopeteMessage::Internal, KopeteMessage::PlainText );
 			mgr->appendMessage( declined );
 		}
 	}

@@ -27,6 +27,9 @@ class GroupWiseAccount;
  * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::messageManager().
  * @author SUSE AG
 */
+
+using namespace GroupWise;
+
 class GroupWiseMessageManager : public KopeteMessageManager
 {
 Q_OBJECT
@@ -93,8 +96,8 @@ protected slots:
 	void slotSendTypingNotification ( bool typing );
 	void slotMessageSent( KopeteMessage &message, KopeteMessageManager * );
 	// TODO: slots for us leaving conference, us inviting someone, someone joining, someone leaving, someone sending an invitation, getting typing?
-	void slotGotTypingNotification( const GroupWise::ConferenceEvent & );
-	void slotGotNotTypingNotification( const GroupWise::ConferenceEvent & );
+	void slotGotTypingNotification( const ConferenceEvent & );
+	void slotGotNotTypingNotification( const ConferenceEvent & );
 	/**
 	 * Popupulate the menu of invitable contacts
 	 */

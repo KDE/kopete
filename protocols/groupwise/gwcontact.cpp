@@ -41,14 +41,12 @@ using namespace GroupWise;
 
 GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn, 
 			KopeteMetaContact *parent, 
-			const QString &displayName, const int objectId, const int parentId, const int sequence )
+			const int objectId, const int parentId, const int sequence )
 : KopeteContact( account, dn, parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dn: " << dn << endl;
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
-
-	rename( displayName );
 }
 
 GroupWiseContact::~GroupWiseContact()
@@ -271,6 +269,49 @@ void GroupWiseContact::leaveConference( const QString & guid )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
 }
+
+void GroupWiseContact::addCLInstance( const ContactListInstance & instance )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	m_instances.append( instance );
+}
+
+void GroupWiseContact::removeCLInstance( const int objectId )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	QValueListIterator< ContactListInstance > it = m_instances.begin();
+	const QValueListIterator< ContactListInstance > end = m_instances.end();
+	for ( ; it != end; ++it )
+	{
+		if ( (*it).objectId == objectId )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "removed objectId: " << objectId << endl;
+			m_instances.remove( it );
+			break;
+		}
+	}
+}
+
+bool GroupWiseContact::hasCLObjectId( const int objectId ) const
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	QValueListConstIterator< ContactListInstance > it = m_instances.begin();
+	const QValueListConstIterator< ContactListInstance > end = m_instances.end();
+	for ( ; it != end; ++it )
+	{
+		if ( (*it).objectId == objectId )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+CLInstanceList GroupWiseContact::instances() const
+{
+	return m_instances;
+}
+
 #include "gwcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

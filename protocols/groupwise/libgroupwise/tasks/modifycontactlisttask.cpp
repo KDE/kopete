@@ -15,7 +15,6 @@ ModifyContactListTask::ModifyContactListTask(Task* parent): RequestTask(parent)
 {
 }
 
-
 ModifyContactListTask::~ModifyContactListTask()
 {
 }

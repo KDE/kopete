@@ -42,10 +42,10 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	connect ( this, SIGNAL( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
 			  SLOT( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
 	connect( this, SIGNAL( typingMsg ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
-	connect( account(), SIGNAL( contactTyping( const GroupWise::ConferenceEvent & ) ), 
-						SLOT( slotGotTypingNotification( const GroupWise::ConferenceEvent & ) ) );
-	connect( account(), SIGNAL( contactNotTyping( const GroupWise::ConferenceEvent & ) ), 
-						SLOT( slotGotNotTypingNotification( const GroupWise::ConferenceEvent & ) ) );
+	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ), 
+						SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
+	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ), 
+						SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
 	
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "gwInvite" );

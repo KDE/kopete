@@ -126,8 +126,8 @@ public slots:
 signals: 
 	void conferenceCreated( const int mmId, const QString & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
-	void contactTyping( const GroupWise::ConferenceEvent & );
-	void contactNotTyping( const GroupWise::ConferenceEvent & );
+	void contactTyping( const ConferenceEvent & );
+	void contactNotTyping( const ConferenceEvent & );
 protected slots:
 	/**
 	 * Change the account's status.  Called by KActions and internally.

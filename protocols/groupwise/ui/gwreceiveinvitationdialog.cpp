@@ -15,6 +15,7 @@
 #include <klocale.h>
 #include <qlabel.h>
 #include <kopetecontact.h>
+#include <kopeteglobal.h>
 
 #include "client.h"
 #include "gwaccount.h"
@@ -36,7 +37,7 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 	
 	ShowInvitationWidget * wid = new ShowInvitationWidget ( this );
 	if ( c )
-		wid->m_contactName->setText( c->displayName() );
+		wid->m_contactName->setText( c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	else //something is very wrong
 		wid->m_contactName->setText( event.user );
 		

@@ -36,6 +36,17 @@ class GroupWiseMessageManager;
 class KopeteMetaContact;
 
 /**
+ * Represents an instance of a contact in the server side contact list
+ */
+struct ContactListInstance
+{
+	int objectId;
+	int parentId;
+	int sequence;
+};
+
+typedef QValueList< ContactListInstance > CLInstanceList;
+/**
 @author Will Stephenson
 */
 class GroupWiseContact : public KopeteContact
@@ -47,14 +58,13 @@ public:
 	 * @param account The GroupWiseAccount this belongs to.
 	 * @param uniqueName The unique identifier for this contact, in GroupWise terms, the DN.
 	 * @param parent The KopeteMetaContact this contact is part of.
-	 * @param displayName The display name given to this contact by the protocol.
 	 * @param objectId The contact's numeric object ID.
 	 * @param parentId The ID of this contact's parent (folder).
 	 * @param sequence This contact's sequence number (The position it appears in within its parent).
 	 */
 	GroupWiseContact( KopeteAccount* account, const QString &uniqueName, 
 			KopeteMetaContact *parent, 
-			const QString &displayName, const int objectId, const int parentId, const int sequence );
+			const int objectId, const int parentId, const int sequence );
 
     ~GroupWiseContact();
 
@@ -110,6 +120,19 @@ public:
 	 * Remove this contact from a conference
 	 */
 	void leaveConference( const QString & guid );
+	
+	// CONTACT LIST MANAGEMENT FUNCTIONS
+	/**
+	 *	These functions simulate the server side contact list structure enough to allow Kopete to manipulate it correctly
+	 */
+	/**
+	 * Add an instance to this contact
+	 */
+	void addCLInstance( const ContactListInstance & );
+	void removeCLInstance( const int objectId );
+	bool hasCLObjectId( const int objectId ) const;
+	CLInstanceList instances() const;
+	
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
@@ -148,8 +171,8 @@ protected:
 	
 	KAction* m_actionPrefs;
 	QDict< GroupWiseMessageManager > m_msgManagers;
-	// message managers that don't exist on the server yet
-	//QPtrList m_pendingManagers;
+	// a list of all the instances that this contact appears in the server side contact list
+	CLInstanceList m_instances;
 };
 
 #endif

@@ -90,7 +90,7 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 		return 0;
 	}
 
-	return new GroupWiseContact(account, contactId, metaContact, displayName, objectId, parentId, sequence );
+	return new GroupWiseContact(account, contactId, metaContact, objectId, parentId, sequence );
 }
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
