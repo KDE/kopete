@@ -139,3 +139,40 @@ void YahooStatus::setStatus( Status status_ )
 {
 	m_status = status_;
 }
+
+YahooStatus::Status YahooStatus::fromLibYahoo2( int status_ )
+{
+	switch (status_)
+	{
+		case YAHOO_STATUS_AVAILABLE :
+			return Available;
+		case YAHOO_STATUS_BRB :
+			return BeRightBack;
+		case YAHOO_STATUS_BUSY :
+			return Busy;
+		case YAHOO_STATUS_NOTATHOME :
+			return NotAtHome;
+		case YAHOO_STATUS_NOTATDESK :
+			return NotAtMyDesk;
+		case YAHOO_STATUS_NOTINOFFICE :
+			return NotInTheOffice;
+		case YAHOO_STATUS_ONPHONE :
+			return OnThePhone;
+		case YAHOO_STATUS_ONVACATION :
+			return OnVacation;
+		case YAHOO_STATUS_OUTTOLUNCH :
+			return OutToLunch;
+		case YAHOO_STATUS_STEPPEDOUT :
+			return SteppedOut;
+		case YAHOO_STATUS_INVISIBLE :
+			return Invisible;
+		case YAHOO_STATUS_CUSTOM :
+			return Custom;
+		case YAHOO_STATUS_IDLE :
+			return Idle;
+		case YAHOO_STATUS_OFFLINE :
+			return Offline;
+		case YAHOO_STATUS_TYPING :
+			return Typing;
+	}
+}

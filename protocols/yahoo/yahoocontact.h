@@ -52,6 +52,8 @@ class YahooContact : public KopeteContact
 	virtual KActionCollection *customContextMenuActions();
 	virtual void addThisTemporaryContact(KopeteGroup *group = 0L);
 	
+	void setYahooStatus( YahooStatus::Status , const QString &, int  );
+	
 public slots:
 	
 	virtual void execute();

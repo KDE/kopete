@@ -82,6 +82,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 YahooProtocol::~YahooProtocol()
 {
 	kdDebug() << "YahooProtocol::~YahooProtocol()" << endl;
+	delete mPrefs;
 	protocolStatic_ = 0L;
 }
 
@@ -151,7 +152,7 @@ void YahooProtocol::deserialize( KopeteMetaContact *metaContact, const QStringLi
 		return;
 	}
 
-	if ( m_contactsMap.contains(userid) )
+	if ( contact(userid) )
 	{
 		kdDebug() << "[YahooProtocol::deserialize] User " << userid << " already in contacts map" << endl;
 		return;
@@ -393,11 +394,16 @@ void YahooProtocol::slotGotBuddy(const QString &userid, const QString &alias, co
 	addContact(userid, alias, group, 0L);
 }
 
+YahooContact *YahooProtocol::contact( const QString &id )
+{
+	return static_cast<YahooContact *>( contacts()[ id ] );
+}
+
 void YahooProtocol::addContact(const QString &userid, const QString &alias, const QString &group, KopeteMetaContact *metaContact)
 {
 	kdDebug() << "[YahooProtocol::addContact]" << endl;
 
-	if ( ! m_contactsMap.contains(userid) )
+	if ( ! contact(userid) )
 	{
 		kdDebug() << "[YahooProtocol::addContact] Got new buddy " << userid << endl;
 
@@ -428,7 +434,6 @@ void YahooProtocol::addContact(const QString &userid, const QString &alias, cons
 
 		/* Ok lets create the contact now */
 		YahooContact *contact = new YahooContact( userid, alias, group, this, metaContact);
-		m_contactsMap[userid] = contact;
 		metaContact->addContact(contact);
 		KopeteContactList::contactList()->addMetaContact(metaContact);
 	}
@@ -453,9 +458,9 @@ void YahooProtocol::slotStatusChanged( const QString &who, int stat, const QStri
 {
 	kdDebug() << "[YahooProtocol::slotStatusChanged]" << endl;
 	
-	if ( ! m_contactsMap.contains(who) )
+	if ( contact(who) )
 	{
-		
+		contact(who)->setYahooStatus( YahooStatus::fromLibYahoo2(stat), msg, away);
 	}
 	else
 	{

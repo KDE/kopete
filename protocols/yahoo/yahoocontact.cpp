@@ -84,6 +84,11 @@ QString YahooContact::statusIcon() const
 	return mStatus.icon();
 }
 
+void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int away)
+{
+	mStatus.setStatus(status_);
+	emit statusChanged( this, mStatus.translate() );
+}
 
 /* XXX
 void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)

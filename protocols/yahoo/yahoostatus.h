@@ -21,6 +21,7 @@
 // KDE Includes
 #include <klocale.h>
 #include "kopetecontact.h"
+#include "libyahoo2/yahoo2_types.h"
 
 #define YSTAvailable		I18N_NOOP("Available")
 #define YSTBeRightBack		I18N_NOOP("Be Right Back")
@@ -55,16 +56,22 @@ public:
 		Custom,			// 99
 		CustomBusy,		// 99+Busy
 		CustomMobile,	// 99+Mobile
-		Idle			// 999
+		Idle,			// 999
+		Typing
 	};
 
 	YahooStatus( Status );
 	YahooStatus();
 	
+	/* Translates YahooStatus to Kopete standard ones */
 	KopeteContact::ContactStatus translate() const;
+	/* Returns a status description */
 	QString text() const;
+	/* Returns status asscociated icon */
 	QString icon() const;
+	/* Set current status */
 	void setStatus( Status );
+	static Status fromLibYahoo2( int );
 private:
 	Status m_status;
 	QString m_statusText;

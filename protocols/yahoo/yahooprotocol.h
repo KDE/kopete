@@ -60,6 +60,7 @@ public:
 	void addContact(QString);
 
 	virtual KActionMenu* protocolActions();
+	YahooContact *contact( const QString &id );
 						// Protocol-specific actions for status bar
 
 public slots:
