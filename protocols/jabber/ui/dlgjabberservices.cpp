@@ -81,7 +81,7 @@ void DlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
 {
 
 	tblServices->clearSelection(true);
-#if QT_VERSION >= 0x030100
+#if (QT_VERSION >= 0x030100)
 	tblServices->addSelection(QTableSelection(row, 0, row, 1));
 #else
 	QTableSelection selection;
