@@ -561,7 +561,8 @@ GaduAccount::connectionSucceed( )
 {
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
 	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
-	myself()->setOnlineStatus( status_, lastDescription );
+	myself()->setOnlineStatus( status_ );
+	myself()->setProperty( "awayMessage", i18n("awayMessage"), lastDescription );
 	startNotify();
 
 	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
