@@ -48,7 +48,13 @@ public:
 	 * Is the data correct?
 	 */
 	virtual bool validateData();
+protected slots:
+	void configChanged();
 protected:
+	bool settings_changed;
+	GroupWiseAccount * account();
+	void reOpen();
+	void writeConfig();
 	KopeteAccount *m_account;
 	QVBoxLayout *m_layout;
 	GroupWiseAccountPreferences *m_preferencesDialog;

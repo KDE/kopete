@@ -30,8 +30,7 @@ CreateConferenceTask::~CreateConferenceTask()
 void CreateConferenceTask::conference( const int confId, const QStringList &participants )
 {
 	m_confId = confId;
-	QCString command = "createconf";
-	Request * createConfRequest = client()->requestFactory()->request( command );
+	Request * createConfRequest = client()->requestFactory()->request( "createconf" );
 	Field::FieldList lst, tmp;
 	// list containing blank GUID
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_guid ) );
@@ -70,12 +69,6 @@ bool CreateConferenceTask::take( Transfer * transfer )
 		setError( resultCode );
 	return true;
 	
-}
-
-void CreateConferenceTask::onGo()
-{	
-	qDebug( "CreateConferenceTask::onGo() - sending createconf fields" );
-	send( static_cast<Request *>( transfer() ) );
 }
 
 QString CreateConferenceTask::conferenceGUID() const

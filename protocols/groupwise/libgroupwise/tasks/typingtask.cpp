@@ -31,19 +31,13 @@ void TypingTask::typing( const QString & conferenceGuid, const bool typing )
 {
 	Field::FieldList typingNotification, outgoingList;
 	typingNotification.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, conferenceGuid ) );
-	typingNotification.append( new Field::SingleField( NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, QString::number( typing ? UserTyping : UserNotTyping ) ) );
+	typingNotification.append( new Field::SingleField( NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, QString::number( typing ? EventTransfer::UserTyping : EventTransfer::UserNotTyping ) ) );
 	outgoingList.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, typingNotification ) );
 	QCString command = "sendtyping";
 	Request * typingRequest = client()->requestFactory()->request( command );
 	typingRequest->setFields( outgoingList );
 
 	setTransfer( typingRequest );
-}
-
-void TypingTask::onGo()
-{
-	//cout << "TypingTask::onGo() - sending status fields" << endl;
-	send( static_cast<Request *>( transfer() ) );
 }
 
 #include "typingtask.moc"

@@ -44,6 +44,8 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
   m_sequence( sequence )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dn: " << dn << endl;
+	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
+
 	rename( displayName );
 }
 
@@ -125,7 +127,7 @@ KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
 
 GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMembers, bool canCreate )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED!" << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	
 	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager ( account()->myself(), chatMembers, protocol() );
 	GroupWiseMessageManager *mgr = dynamic_cast<GroupWiseMessageManager*>( _manager );

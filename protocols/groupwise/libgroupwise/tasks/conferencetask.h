@@ -32,16 +32,16 @@ public:
 	~ConferenceTask();
 	bool take( Transfer * transfer );
 signals:
-	void typing( ConferenceEvent & );
-	void notTyping( ConferenceEvent & );
-	void joined( ConferenceEvent & );
-	void left( ConferenceEvent &);
-	void invited( ConferenceEvent & );
-	void otherInvited( ConferenceEvent & );
-	void invitationRejected( ConferenceEvent & );
-	void closed( ConferenceEvent & );
+	void typing( const ConferenceEvent & );
+	void notTyping( const ConferenceEvent & );
+	void joined( const ConferenceEvent & );
+	void left( const ConferenceEvent &);
+	void invited( const ConferenceEvent & );
+	void otherInvited( const ConferenceEvent & );
+	void invitationRejected( const ConferenceEvent & );
+	void closed( const ConferenceEvent & );
 	void message( const ConferenceEvent &);
-	void autoReply( ConferenceEvent & );
+	void autoReply( const ConferenceEvent & );
 protected:
 	Q_UINT32 readFlags( QDataStream & din );
 	QString readMessage( QDataStream & din );

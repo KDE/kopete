@@ -39,8 +39,7 @@ void SetStatusTask::status( Status newStatus, const QString &awayMessage, const 
 	m_awayMessage = awayMessage;
 	m_autoReply = autoReply;
 	
-	QCString command("setstatus");
-	Request * setStatus = client()->requestFactory()->request( command );
+	Request * setStatus = client()->requestFactory()->request( "setstatus" );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_STATUS, 0, NMFIELD_TYPE_UTF8, QString::number( newStatus ) ) );
 	if ( !awayMessage.isNull() )
@@ -49,12 +48,6 @@ void SetStatusTask::status( Status newStatus, const QString &awayMessage, const 
 		lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
 	setStatus->setFields( lst );
 	setTransfer( setStatus );
-}
-
-void SetStatusTask::onGo()
-{
-	//cout << "SetStatusTask::onGo() - sending status fields" << endl;
-	send( static_cast<Request *>( transfer() ) );
 }
 
 Status SetStatusTask::requestedStatus() const

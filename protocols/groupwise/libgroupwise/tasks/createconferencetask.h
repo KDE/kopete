@@ -31,7 +31,6 @@ public:
 	 * @param participants A list of Novell DNs of the people taking part in the conference.
 	 */
 	void conference( const int confId, const QStringList &participants );
-	void onGo();
 	bool take( Transfer * transfer );
 	int clientConfId() const;
 	QString conferenceGUID() const;

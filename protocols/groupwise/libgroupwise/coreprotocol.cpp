@@ -149,18 +149,30 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	QTextStream dout( bytesOut, IO_WriteOnly );
 	dout.setEncoding( QTextStream::Latin1 );
 	//dout.setByteOrder( QDataStream::LittleEndian );
+
+	// strip out any embedded host and port in the command string 
+	QCString command, host, port;
+	if ( request->command().section( ':', 0, 0 ) == "login" )
+	{
+		command = "login";
+		host = request->command().section( ':', 1, 1 ).ascii();
+		port = request->command().section( ':', 2, 2 ).ascii();
+		qDebug( "Host: %s Port: %s", host.data(), port.data() );
+	}
+	else
+		command = request->command().ascii();
 	
 	// add the POST
 	dout << "POST /";
-	dout << request->command();
+	dout << command;
 	dout << " HTTP/1.0\r\n";
 	
-	// if a login, add Host arg 
-	if ( request->command() == "login" )
+	// if a login, add Host arg
+	if ( command == "login" )
 	{
-		dout <<  "Host: ";
-		dout <<  "reiser.suse.de"; //FIXME: Get this from somewhere else!!
-		dout <<  ":8300\r\n\r\n";
+		dout << "Host: ";
+		dout << host; //FIXME: Get this from somewhere else!!
+		dout << ":" << port << "\r\n\r\n";
 	}
 	else
 		dout <<  "\r\n";
@@ -267,7 +279,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				( field->type() == NMFIELD_TYPE_ARRAY || field->type() == NMFIELD_TYPE_MV ) )
 		{
 			const Field::MultiField *mField = static_cast<const Field::MultiField*>( field );
-			fieldsToWire( mField->fields(), ++depth );
+			fieldsToWire( mField->fields(), depth + 1 );
 		}
 		//cout << " - field done" << endl;
 		

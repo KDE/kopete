@@ -29,8 +29,7 @@ GetDetailsTask::~GetDetailsTask()
 void GetDetailsTask::userDNs( const QStringList & userDNs )
 {
 	// set up Transfer
-	QCString command = "getdetails";
-	Request * getDetailsRequest = client()->requestFactory()->request( command );
+	Request * getDetailsRequest = client()->requestFactory()->request( "getdetails" );
 	Field::FieldList lst;
 	
 	for ( QStringList::ConstIterator it = userDNs.begin(); it != userDNs.end(); ++it )
@@ -39,12 +38,6 @@ void GetDetailsTask::userDNs( const QStringList & userDNs )
 	}
 	getDetailsRequest->setFields( lst );
 	setTransfer( getDetailsRequest );
-}
-
-void GetDetailsTask::onGo()
-{	
-	qDebug( "GetDetailsTask::onGo() - sending getdetails fields" );
-	send( static_cast<Request *>( transfer() ) );
 }
 
 bool GetDetailsTask::take( Transfer * transfer )

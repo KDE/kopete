@@ -25,7 +25,6 @@ public:
 	SetStatusTask(Task* parent);
 	~SetStatusTask();
 	void status( GroupWise::Status newStatus, const QString &awayMessage, const QString &autoReply );
-	void onGo();
 	GroupWise::Status requestedStatus() const;
 	QString awayMessage() const;
 	QString autoReply() const; 

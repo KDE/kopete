@@ -12,7 +12,7 @@
 #ifndef REQUESTFACTORY_H
 #define REQUESTFACTORY_H
 
-#include <qcstring.h>
+#include <qstring.h>
 
 class Request;
 
@@ -30,7 +30,7 @@ public:
 	 * The consumer is responsible for deleting this
 	 * TODO: Allow the user to provide the fields for the request in this call
 	 */
-	Request * request( QCString &request);
+	Request * request( const QString &request);
 private:
 	int m_nextTransaction;
 };

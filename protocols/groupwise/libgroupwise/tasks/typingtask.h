@@ -12,7 +12,7 @@
 #ifndef TYPINGTASK_H
 #define TYPINGTASK_H
 
-#include <requesttask.h>
+#include "requesttask.h"
 
 /**
 	Notifies the server that we are typing or are no longer typing in a particular conversation
@@ -27,7 +27,6 @@ public:
 	TypingTask(Task* parent);
 	~TypingTask();
 	void typing( const QString & conferenceGuid, const bool typing );
-	void onGo();
 };
 
 #endif

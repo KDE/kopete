@@ -27,9 +27,6 @@ public:
 	~SendMessageTask();
 	
 	void message( const QStringList & recipientDNList, const OutgoingMessage & msg );
-	void onGo();
-	
-
 };
 
 #endif

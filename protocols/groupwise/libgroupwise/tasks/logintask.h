@@ -34,10 +34,6 @@ public:
 	 */
 	void initialise();
 	/**
-	 * Sends the login fields and gets ready to handle the contactlist that is returned.
-	 */
-	void onGo();
-	/**
 	 * Only accepts the contactlist that comes back from the server, 
 	 * processes it and notifies the client of the contactlist
 	 */

@@ -64,6 +64,12 @@ public:
 	 */
 	KopeteOnlineStatus gwStatusToKOS( const int gwInternal );
 	/**
+	 * Wrap unformatted text in RTF formatting so that other GroupWise clients will display it
+	 * @param plain unformatted text
+	 * @return RTF text (in UCS-4 encoding)
+	 */
+	QString rtfizeText( const QString & plain );
+	/**
 	 * Online statuses used for contacts' presence
 	 */
 	const KopeteOnlineStatus groupwiseUnknown;

@@ -92,6 +92,7 @@ namespace GroupWise
 	{
 		QString guid;
 		QString message;
+		QString rtfMessage;
 	};
 };
 

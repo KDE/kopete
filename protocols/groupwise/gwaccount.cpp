@@ -18,15 +18,20 @@
     *************************************************************************
 */
 
+#include <kaboutdata.h>
+#include <kaction.h>
+#include <kapplication.h>
+#include <kdebug.h>
+#include <klineeditdlg.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kpopupmenu.h>
+
 #include "gwaccount.h"
 
 #include <qvaluelist.h>
 
-#include <kaction.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <kpopupmenu.h>
-
+#include <kopeteuiglobal.h>
 #include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
@@ -84,6 +89,9 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
 		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
 		"actionGroupWiseOfflineDisconnect") );
+	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
+		SLOT( slotTestRTFize() ), this,
+		"actionTestRTFize") );
 
 	return theActionMenu;
 }
@@ -99,14 +107,17 @@ bool GroupWiseAccount::addContactToMetaContact(const QString& contactId, const Q
 
 const int GroupWiseAccount::port() const
 {
-	return 8300;
 	return pluginData( KopeteAccount::protocol(), "Port" ).toInt();
 }
 
 const QString GroupWiseAccount::server() const
 {
-	return "reiser.suse.de";
 	return pluginData( KopeteAccount::protocol(), "Server" );
+}
+
+Client * GroupWiseAccount::client() const
+{
+	return m_client;
 }
 
 GroupWiseProtocol *GroupWiseAccount::protocol()
@@ -161,7 +172,8 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 	
 	m_client = new Client( this );
-	
+
+	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// TODO: Connect Client signals
 	// we connected successfully
 	QObject::connect( m_client, SIGNAL( loggedIn() ), SLOT( slotLoggedIn() ) );
@@ -179,14 +191,20 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	
 	QObject::connect( m_client, SIGNAL( conferenceCreated( const int, const QString & ) ), SIGNAL( conferenceCreated( const int, const QString & ) ) );
+	QObject::connect( m_client, SIGNAL( conferenceCreationFailed( const int,  const int ) ), SIGNAL( conferenceCreationFailed( const int,  const int ) ) );
+	// typing events
+	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
+
+	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
 	
 	struct utsname utsBuf;
 
 	uname (&utsBuf);
 	
-	/*jabberClient->setClientName ("Kopete");
-	jabberClient->setClientVersion (kapp->aboutData ()->version ());
-	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2)); */
+	m_client->setClientName ("Kopete");
+	m_client->setClientVersion ( kapp->aboutData ()->version () );
+	m_client->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2)); 
 
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to GroupWise server " << server() << ":" << port() << endl;
 
@@ -328,7 +346,7 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 {
 	// i don't know what secLayerCode is for...
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	m_client->start( server(), accountId(), password().cachedValue() );
+	m_client->start( server(), port(), accountId(), password().cachedValue() );
 }
 
 void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
@@ -350,13 +368,6 @@ void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 		// and we'll add a temporary contact in receiveContactUserDetails, before coming back to this method
 		m_client->requestDetails( userDNsList );
 	}
-}
-
-void GroupWiseAccount::updateContactStatus()
-{
-	QDictIterator<KopeteContact> itr( contacts() );
-	for ( ; itr.current(); ++itr )
-		itr.current()->setOnlineStatus( myself()->onlineStatus() );
 }
 
 void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
@@ -553,10 +564,12 @@ void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString 
 
 void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & message )
 {
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// make an outgoing message
 	GroupWise::OutgoingMessage outMsg;
 	outMsg.guid = guid;
 	outMsg.message = message.plainBody();
+	outMsg.rtfMessage = protocol()->rtfizeText( message.plainBody() );
 	// make a list of DNs to send to
 	QStringList addresseeDNs;
 	KopeteContactPtrList addressees = message.to();
@@ -565,4 +578,21 @@ void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & m
 	// send the message 
 	m_client->sendMessage( addresseeDNs, outMsg );
 }
+
+void GroupWiseAccount::slotConnectedElsewhere()
+{
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
+				i18n( "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere" ).arg( accountId() ) , i18n ("Signed in as %1 elsewhere").arg( accountId() ) );
+	disconnect();
+}
+
+void GroupWiseAccount::slotTestRTFize()
+{
+	bool ok;
+	const QString query = QString::fromLatin1("Enter a string to rtfize:");
+	QString testText = KLineEditDlg::getText( query, QString::null, &ok, Kopete::UI::Global::mainWidget() );
+	if ( ok )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Converted text is: '" << protocol()->rtfizeText( testText ) << "'" << endl;
+}
+
 #include "gwaccount.moc"

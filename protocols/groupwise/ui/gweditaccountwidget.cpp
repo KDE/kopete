@@ -18,10 +18,17 @@
     *************************************************************************
 */
 
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qspinbox.h>
 #include <kdebug.h>
-#include "kopeteaccount.h"
+#include <kmessagebox.h>
+#include <klocale.h>
+
+#include "kopetepasswordedaccount.h"
+#include "kopetepasswordwidget.h"
+
 #include "gwaccountpreferences.h"
 #include "gwaccount.h"
 #include "gwerror.h"
@@ -29,39 +36,76 @@
 
 #include "gweditaccountwidget.h"
 
-GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteAccount* account)
-: QWidget( parent ), KopeteEditAccountWidget( account )
+GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteAccount* theAccount)
+: QWidget( parent ), KopeteEditAccountWidget( theAccount )
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );
+	connect( m_preferencesDialog->m_server, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
+	connect( m_preferencesDialog->m_port, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
+	if ( account() )
+		reOpen();
 }
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
 {
 }
 
+GroupWiseAccount *GroupWiseEditAccountWidget::account ()
+{
+	return dynamic_cast< GroupWiseAccount *>(KopeteEditAccountWidget::account () );
+}
+
+void GroupWiseEditAccountWidget::reOpen()
+{
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	// Kopete at least <=0.90 doesn't support changing account IDs
+	m_preferencesDialog->m_userId->setDisabled( true );
+	m_preferencesDialog->m_userId->setText( account()->accountId() );
+	m_preferencesDialog->m_password->load( &account()->password() );
+	m_preferencesDialog->m_server->setText( account()->pluginData( GroupWiseProtocol::protocol(), "Server") );
+	m_preferencesDialog->m_port->setValue( account()->pluginData( GroupWiseProtocol::protocol(), "Port" ).toInt() );
+	m_preferencesDialog->m_autoConnect->setChecked( account()->autoLogin() );
+}
+
 KopeteAccount* GroupWiseEditAccountWidget::apply()
 {
-	QString accountName;
-	if ( m_preferencesDialog->m_acctName->text().isEmpty() )
-		accountName = "GroupWise Account";
-	else
-		accountName = m_preferencesDialog->m_acctName->text();
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+		
+	if ( !account() )
+		setAccount( new GroupWiseAccount( GroupWiseProtocol::protocol(), m_preferencesDialog->m_userId->text() ) );
 	
-	if ( account() )
-		account()->setAccountId( accountName );
-	else
-		setAccount( new GroupWiseAccount( GroupWiseProtocol::protocol(), accountName ) );
+	if(account()->isConnected())
+	{
+		KMessageBox::information(this,
+					i18n("The changes you just made will take effect next time you log in with GroupWise."),
+					i18n("GroupWise settings changed while signed in"));
+	}
+
+	writeConfig();
 
 	return account();
 }
 
 bool GroupWiseEditAccountWidget::validateData()
 {
-    //return !( m_preferencesDialog->m_acctName->text().isEmpty() );
-	return true;
+    return !( m_preferencesDialog->m_userId->text().isEmpty() || m_preferencesDialog->m_server->text().isEmpty() );
+}
+
+void GroupWiseEditAccountWidget::writeConfig()
+{
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	account()->setPluginData( GroupWiseProtocol::protocol(), "Server", m_preferencesDialog->m_server->text() );
+	account()->setPluginData( GroupWiseProtocol::protocol(), "Port", QString::number( m_preferencesDialog->m_port->value() ) );
+	account()->setAutoLogin( m_preferencesDialog->m_autoConnect->isChecked() );
+	settings_changed = false;
+}
+
+void GroupWiseEditAccountWidget::configChanged ()
+{
+	settings_changed = true;
 }
 
 #include "gweditaccountwidget.moc"

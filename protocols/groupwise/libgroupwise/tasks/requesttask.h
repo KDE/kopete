@@ -23,6 +23,7 @@ Q_OBJECT
 	public:
 		RequestTask( Task *parent );
 		bool take( Transfer * transfer );
+		virtual void onGo();
 	protected:
 		bool forMe( Transfer * transfer ) const;
 		void setTransfer( Transfer * transfer );

@@ -28,10 +28,11 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	// make sure Kopete knows about this instance
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
 
-	connect ( this, SIGNAL ( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
-			  this, SLOT ( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
-
-	connect ( this, SIGNAL ( typingMsg ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
+	connect ( this, SIGNAL( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
+			  SLOT( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
+	connect( this, SIGNAL( typingMsg ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
+	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ), SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
+	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ), SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
 	
 	if ( m_guid.isEmpty() )
 		createConference();
@@ -59,12 +60,16 @@ void GroupWiseMessageManager::updateDisplayName()
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
 }
 
+GroupWiseAccount *  GroupWiseMessageManager::account()
+{
+	return static_cast<GroupWiseAccount *>( KopeteMessageManager::account() );
+}
+
 void GroupWiseMessageManager::createConference()
 {
 	if ( m_guid.isEmpty() )
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-		GroupWiseAccount * acct = static_cast<GroupWiseAccount *>( account() );
 		// form a list of invitees
 		QStringList invitees;
 		KopeteContactPtrList chatMembers = members();
@@ -73,9 +78,11 @@ void GroupWiseMessageManager::createConference()
 			invitees.append( contact->contactId() );
 		}
 		// this is where we will set the GUID and send any pending messages
-		connect( acct, SIGNAL( conferenceCreated( const int, const QString & ) ), SLOT( receiveGuid( const int, const QString & ) ) );
+		connect( account(), SIGNAL( conferenceCreated( const int, const QString & ) ), SLOT( receiveGuid( const int, const QString & ) ) );
+		connect( account(), SIGNAL( conferenceCreationFailed( const int, const int ) ), SLOT( slotCreationFailed( const int, const int ) ) );
+		
 		// create the conference
-		acct->createConference( mmId(), invitees );
+		account()->createConference( mmId(), invitees );
 	}
 	else
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " tried to create conference on the server when it was already instantiated" << endl;
@@ -83,9 +90,9 @@ void GroupWiseMessageManager::createConference()
 
 void GroupWiseMessageManager::receiveGuid( const int newMmId, const QString & guid )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got GUID from server" << endl;
 	if ( newMmId == mmId() )
 	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got GUID from server" << endl;
 		setGuid( guid );
 		// notify the contact(s) using this message manager that it's been instantiated on the server
 		emit conferenceCreated();
@@ -94,9 +101,20 @@ void GroupWiseMessageManager::receiveGuid( const int newMmId, const QString & gu
 	}
 }
 
+void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int statusCode )
+{
+	if ( failedId == mmId() )
+	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
+		//emit creationFailed();
+		KopeteMessage failureNotify = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, QString::fromLatin1("An error occurred when trying to start a chat: %1").arg( statusCode ), KopeteMessage::Internal, KopeteMessage::PlainText);
+	}
+}
+
 void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	account()->client()->sendTyping( guid(), typing );
 }
 
 void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMessageManager * )
@@ -104,23 +122,34 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if( account()->isConnected() )
 	{
-	
-		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 		if ( m_guid.isEmpty() )
 		{
+			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
 			// the conference hasn't been instantiated on the server yet, so queue the message
 			m_pendingOutgoingMessages.append( message );
 		}
 		else 
 		{
-			GroupWiseAccount * acct = static_cast<GroupWiseAccount *>( account() );
-			acct->sendMessage( guid(), message );
+			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "sending message" << endl;
+			account()->sendMessage( guid(), message );
 			// we could wait until the server acks our send, 
 			// but we'd need a UID for outgoing messages and a list to track them
 			appendMessage( message );
 			messageSucceeded();
 		}
 	}
+}
+
+void GroupWiseMessageManager::slotGotTypingNotification( const ConferenceEvent& event )
+{
+	if ( event.guid == guid() )
+		receivedTypingMsg( event.user, true );
+}
+
+void GroupWiseMessageManager::slotGotNotTypingNotification( const ConferenceEvent& event )
+{
+	if ( event.guid == guid() )
+		receivedTypingMsg( event.user, false );
 }
 
 void GroupWiseMessageManager::dequeMessages()

@@ -25,11 +25,11 @@ friend class RequestFactory;
 
 public:
 	~Request( );
-	QCString command();
+	QString command();
 	TransferType type() { return Transfer::RequestTransfer; }
 private:
-	Request( int transactionId, QCString &command );
-	QCString m_command;
+	Request( const int transactionId, const QString &command );
+	QString m_command;
 };
 
 #endif

@@ -30,7 +30,6 @@ public:
 signals:
 	void gotContactUserDetails( const ContactDetails & );
 protected:
-	void onGo();
 	ContactDetails extractUserDetails(Field::MultiField * details );
 
 };

@@ -27,7 +27,8 @@ LoginTask::~LoginTask()
 
 void LoginTask::initialise()
 {
-	QCString command("login");
+	QString command = QString::fromLatin1("login:%1:%2").arg( client()->host() ).arg( client()->port() );
+	
 	Request * loginRequest = client()->requestFactory()->request( command );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, client()->userId() ) );
@@ -37,12 +38,6 @@ void LoginTask::initialise()
 	lst.append( new Field::SingleField( NM_A_IP_ADDRESS, 0, NMFIELD_TYPE_UTF8, client()->ipAddress() ) );
 	loginRequest->setFields( lst );
 	setTransfer( loginRequest );
-}
-
-void LoginTask::onGo()
-{
-	qDebug( "LoginTask::onGo() - sending login fields" );
-	send( static_cast<Request *>( transfer() ) );
 }
 
 bool LoginTask::take( Transfer * transfer )
@@ -80,15 +75,7 @@ bool LoginTask::take( Transfer * transfer )
 		container = static_cast<Field::MultiField *>( *it );
 		extractContact( container );
 	}
-/*	while ( findContact() )
-	{
-		emit gotContact( fields );
-		if ( findUserDetails( fields );
-			emit gotContactUserRecord( fields );
-	}
-	cout << 
-	// create privacy list
-	*/
+	// TODO: create privacy list
 	setSuccess();
 	
 	return true;

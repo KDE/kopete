@@ -11,7 +11,7 @@
 //
 #include "request.h"
 
-Request::Request(int transactionId, QCString &command )
+Request::Request( const int transactionId, const QString &command )
 : UserTransfer(transactionId), m_command( command )
 {
 }
@@ -20,7 +20,7 @@ Request::~Request()
 {
 }
 
-QCString Request::command()
+QString Request::command()
 {
 	return m_command;
 }

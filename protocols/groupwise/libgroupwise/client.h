@@ -25,7 +25,11 @@ Q_OBJECT
 		  
 		Client(QObject *parent=0);
 		~Client();
-		
+		void setOSName( const QString &name );
+		void setClientName( const QString &s );
+		void setClientVersion( const QString &s );
+		void setUserDN( const QString & userDN );
+
 		/**
 		 * Start a connection to the server using the supplied @ref ClientStream.
 		 * This is only a transport layer connection.
@@ -43,8 +47,7 @@ Q_OBJECT
 		 * @param user The user name to log in as.
 		 * @param password 
 		 */ 
-
-		void start( const QString &host, const QString &user, const QString &pass );
+		void start( const QString &host, const uint port, const QString &userId, const QString &pass );
 		
 		/**
 		 * Logout and disconnect
@@ -52,6 +55,12 @@ Q_OBJECT
 
 		 */
 		void close();
+
+		/**
+		 * Accessors needed for login
+		 */
+		QString host();
+		int port();
 		
 		/** 
 		 * Set the user's presence on the server
@@ -73,7 +82,7 @@ Q_OBJECT
 		 * @param conference The conference where the typing took place.
 		 * @param typing True if the user is now typing, false otherwise.
 		 */
-		void sendTyping( /*Conference &conference ,*/ bool typing );
+		void sendTyping( const QString & conferenceGuid, bool typing );
 		
 		/** 
 		 * Request details for one or more users, for example, if we receive a message from someone who isn't on our contact list
@@ -162,7 +171,7 @@ Q_OBJECT
 		 */
 		void disconnected();
 		/** 
-		 * Notify that we've just received a message 
+		 * Notify that we've just received a message.  Sender may not be on our contact list
 		 */
 		void messageReceived( const ConferenceEvent & );
 		/**
@@ -193,6 +202,49 @@ Q_OBJECT
 		 * A conference was successfully created on the server
 		 */
 		void conferenceCreated( const int clientId, const QString & guid );
+		/**
+		 * A third party was invited to join a chat.  They may not be on our contact list.
+		 */
+		void inviteNotifyReceived( const ConferenceEvent & );
+		/**
+		 * We were invited to join a chat.  The inviter may not be on our contact list
+		 */
+		void invitationReceived( const ConferenceEvent & );
+		/**
+		 * Someone joined a chat.  They may not be on our contact list if it is a group chat
+		 * and they were invited to join the chat prior to our being invited to join and joining
+		 */
+		void conferenceJoined( const ConferenceEvent & );
+		/**
+		 * Someone left a conference. This may close a conference, see @ref conferenceClosed.
+		 */
+		void conferenceLeft( const ConferenceEvent & );
+		/**
+		 * Someone declined an invitation to join a conference. This may close a conference, see @ref conferenceClosed.
+		 */
+		void invitationDeclined( const ConferenceEvent & );
+		/**
+		 * A conference was closed by the server. This occurs if we are the only participant and there
+		 * are no outstanding invitations.
+		 */
+		void conferenceClosed( const ConferenceEvent & );
+		/**
+		 * We received an "is typing" event in a conference
+		 */
+		void contactTyping( const ConferenceEvent & );
+		/**
+		 * We received an "is not typing event" in a conference
+		 */
+		void contactNotTyping( const ConferenceEvent & );
+		/**
+		 * We were disconnected because we connected elsewhere
+		 */
+		void connectedElsewhere();
+		/**
+		 * An attempt to create a conference failed.
+		 */
+		 void conferenceCreationFailed( const int clientId, const int error );
+		 
 	public slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

@@ -148,5 +148,100 @@ KopeteOnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
 	return status;
 }
 
+QString GroupWiseProtocol::rtfizeText( const QString & plain )
+{
+	// transcode a utf-8 encoded string into an rtf string
+	// iterate through the input string converting each char into the equivalent rtf 
+	// of single-byte characters with first byte =< 0x7f (127), { } \ are escaped. \n are converted into \par , the rest are appended verbatim
+	// of multi-byte UTF-8 characters 2 to 6 bytes long (with first byte > 0x7f), these are recoded as 32 bit values, escaped as \u<val>? strings
+
+	// vanilla RTF "envelope" that doesn't say much but causes other clients to accept the message
+	QString rtfTemplate = QString::fromLatin1("{\\rtf1\\ansi\n"
+						"{\\fonttbl{\\f0\\fnil Unknown;}}\n"
+						"{\\colortbl ;\\red0\\green0\\blue0;}\n"
+						"\\uc1\\cf1\\f0\\fs24 %1\\par\n}");
+	QString outputText; // output text
+	QCString plainUtf8 = plain.utf8(); // encoded as UTF8, because that's what this encoding algorithm, taken from Gaim's Novell plugin
+	uint index = 0; // current char to transcode
+	while ( index  < plainUtf8.length() )
+	{
+		Q_UINT8 current = plainUtf8.data()[ index ];
+		if ( current <= 0x7F )
+		{
+			switch ( current )
+			{
+				case '{':
+				case '}':
+				case '\\':
+					outputText.append( QString( "\\%1" ).arg( QChar( current ) ) );
+					break;
+				case '\n':
+					outputText.append( "\\par " );
+					break;
+				default:
+					outputText.append( QChar( current ) );
+					break;
+			}
+			++index;
+		}
+		else
+		{
+			Q_UINT32 ucs4Char;
+			int bytesEncoded;
+			QString escapedUnicodeChar;
+			if ( current <= 0xDF )
+			{
+				ucs4Char = (( plainUtf8.data()[ index ] & 0x001F) << 6) |
+					( plainUtf8.data()[ index+1 ] & 0x003F);
+				bytesEncoded = 2;
+			}
+			else if ( current <= 0xEF )
+			{
+				ucs4Char = (( plainUtf8.data()[ index ] & 0x000F) << 12) |
+					(( plainUtf8.data()[ index+1 ] & 0x003F) << 6) |
+					( plainUtf8.data()[ index+2 ] & 0x003F);
+				bytesEncoded = 3;
+			}
+			else if ( current <= 0xF7 )
+			{
+				ucs4Char = (( plainUtf8.data()[ index ] & 0x0007) << 18) |
+					(( plainUtf8.data()[ index+1 ] & 0x003F) << 12) |
+					(( plainUtf8.data()[ index+2 ] & 0x003F) << 6) |
+					( plainUtf8.data()[ index+3 ] & 0x003F);
+				bytesEncoded = 4;
+			}
+			else if ( current <= 0xFB )
+			{
+				ucs4Char = (( plainUtf8.data()[ index ] & 0x0003) << 24 ) |
+					(( plainUtf8.data()[ index+1 ] & 0x003F) << 18) |
+					(( plainUtf8.data()[ index+2 ] & 0x003F) << 12) |
+					(( plainUtf8.data()[ index+3 ] & 0x003F) << 6) |
+					( plainUtf8.data()[ index+4 ] & 0x003F);
+				bytesEncoded = 5;
+			}
+			else if ( current <= 0xFD )
+			{
+				ucs4Char = (( plainUtf8.data()[ index ] & 0x0001) << 30 ) |
+					(( plainUtf8.data()[ index+1 ] & 0x003F) << 24) |
+					(( plainUtf8.data()[ index+2 ] & 0x003F) << 18) |
+					(( plainUtf8.data()[ index+3 ] & 0x003F) << 12) |
+					(( plainUtf8.data()[ index+4 ] & 0x003F) << 6) |
+					( plainUtf8.data()[ index+5 ] & 0x003F);
+				bytesEncoded = 6;
+			}
+			else
+			{
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "bogus utf-8 lead byte: 0x" << QTextStream::hex << current << endl;
+				ucs4Char = 0x003F;
+				bytesEncoded = 1;
+			}
+			index += bytesEncoded;
+			escapedUnicodeChar = QString("\\u%1?").arg( ucs4Char );
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "unicode escaped char: " << escapedUnicodeChar << endl;
+			outputText.append( escapedUnicodeChar );
+		}
+	}
+	return rtfTemplate.arg( outputText );
+}
 
 #include "gwprotocol.moc"

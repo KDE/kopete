@@ -35,6 +35,12 @@ void RequestTask::setTransfer( Transfer * transfer )
 	Task::setTransfer( transfer );
 }
 
+void RequestTask::onGo()
+{
+	qDebug( "%s::onGo() - sending %s fields", className(), ( static_cast<Request *>( transfer() )->command().ascii() ) );
+	send( static_cast<Request *>( transfer() ) );
+}
+
 bool RequestTask::take( Transfer * transfer )
 {
 	if ( forMe( transfer ) )

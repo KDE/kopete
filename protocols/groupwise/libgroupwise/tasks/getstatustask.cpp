@@ -28,8 +28,7 @@ void GetStatusTask::userDN( const QString & dn )
 {
 	m_userDN = dn;
 	// set up Transfer
-	QCString command = "getstatus";
-	Request * getDetailsRequest = client()->requestFactory()->request( command );
+	Request * getDetailsRequest = client()->requestFactory()->request( "getstatus" );
 	Field::FieldList lst;
 	
 	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, m_userDN ) );

@@ -4,6 +4,7 @@
 #include "requestfactory.h"
 #include "task.h"
 #include "tasks/conferencetask.h"
+#include "tasks/connectiontask.h"
 #include "tasks/createconferencetask.h"
 #include "tasks/getdetailstask.h"
 #include "tasks/getstatustask.h"
@@ -11,6 +12,7 @@
 #include "tasks/sendmessagetask.h"
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
+#include "tasks/typingtask.h"
 
 #include "client.h"
 
@@ -22,9 +24,10 @@ public:
 	ClientStream *stream;
 	int id_seed;
 	Task *root;
-	QString host, user, pass, resource;
+	QString host, user, userDN, pass;
 	QString osname, tzname, clientName, clientVersion;
-	int tzoffset;
+	uint port;
+/*	int tzoffset;*/
 	bool active;
 	RequestFactory * requestFactory;
 /*	LiveRoster roster;
@@ -36,7 +39,7 @@ Client::Client(QObject *par)
 :QObject(par, "groupwiseclient" )
 {
 	d = new ClientPrivate;
-	d->tzoffset = 0;
+/*	d->tzoffset = 0;*/
 	d->active = false;
 	d->osname = "N/A";
 	d->clientName = "N/A";
@@ -68,10 +71,26 @@ void Client::connectToServer( ClientStream *s, const NovellDN &server, bool auth
 	d->stream->connectToServer(server, auth);
 }
 
-void Client::start( const QString &host, const QString &user, const QString &pass )
+void Client::setOSName(const QString &name)
+{
+	d->osname = name;
+}
+
+void Client::setClientName(const QString &s)
+{
+	d->clientName = s;
+}
+
+void Client::setClientVersion(const QString &s)
+{
+	d->clientVersion = s;
+}
+
+void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
 {
 	d->host = host;
-	d->user = user;
+	d->port = port;
+	d->user = userId;
 	d->pass = pass;
 
 	initialiseEventTasks();
@@ -95,23 +114,7 @@ void Client::start( const QString &host, const QString &user, const QString &pas
 	login->initialise();
 	login->go( true );
 	
-// 	Status stat;
-// 	stat.setIsAvailable(false);
-// 
-// 	JT_PushPresence *pp = new JT_PushPresence(rootTask());
-// 	connect(pp, SIGNAL(subscription(const Jid &, const QString &)), SLOT(ppSubscription(const Jid &, const QString &)));
-// 	connect(pp, SIGNAL(presence(const Jid &, const Status &)), SLOT(ppPresence(const Jid &, const Status &)));
-// 
-// 	JT_PushMessage *pm = new JT_PushMessage(rootTask());
-// 	connect(pm, SIGNAL(message(const Message &)), SLOT(pmMessage(const Message &)));
-// 
-// 	JT_PushRoster *pr = new JT_PushRoster(rootTask());
-// 	connect(pr, SIGNAL(roster(const Roster &)), SLOT(prRoster(const Roster &)));
-// 
-// 	new JT_ServInfo(rootTask());
-
 	d->active = true;
-
 }
 
 void Client::close()
@@ -139,13 +142,36 @@ void Client::close()
 // 	cleanup();
 }
 
+QString Client::host()
+{
+	return d->host;
+}
+
+int Client::port()
+{
+	return d->port;
+}
+
 void Client::initialiseEventTasks()
 {
+	// The StatusTask handles incoming status changes
 	StatusTask * st = new StatusTask( d->root ); // FIXME - add an additional EventRoot?
 	connect( st, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
+	// The ConferenceTask handles incoming conference events, messages, joins, leaves, etc
 	ConferenceTask * ct = new ConferenceTask( d->root ); 
 	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SIGNAL( messageReceived( const ConferenceEvent & ) ) );
-	
+	connect( ct, SIGNAL( typing( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( notTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( joined( const ConferenceEvent & ) ), SIGNAL( conferenceJoined( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( left( const ConferenceEvent & ) ), SIGNAL( conferenceLeft( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( invited( const ConferenceEvent & ) ), SIGNAL( invitationReceived( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( otherInvited( const ConferenceEvent & ) ), SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( invitationRejected( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
+	// TODO: connect autoreply
+	// The ConnectionTask handles incoming connection events
+	ConnectionTask* cont = new ConnectionTask( d->root );
+	connect( cont, SIGNAL( connectedElsewhere() ), SIGNAL( connectedElsewhere() ) );
 }
 
 void Client::setStatus( GroupWise::Status status, const QString & reason )
@@ -169,15 +195,17 @@ void Client::requestStatus( const QString & userDN )
 
 void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessage & message )
 {
+	qDebug( "Sending message..." );
 	SendMessageTask * smt = new SendMessageTask( d->root );
 	smt->message( addresseeDNs, message );
 	smt->go( true );
 }
 
-void Client::sendTyping( /*Conference &conference ,*/ bool typing )
+void Client::sendTyping( const QString & conferenceGuid, bool typing )
 {
-	//TODO Implement sendTyping
-	qDebug( "TODO: sendTyping" );
+	TypingTask * tt = new TypingTask( d->root );
+	tt->typing( conferenceGuid, typing );
+	tt->go( true );
 }
 
 void Client::createConference( const int clientId )
@@ -249,32 +277,41 @@ void Client::cct_conferenceCreated()
 		qDebug( "conference created" );
 		emit conferenceCreated( cct->clientConfId(), cct->conferenceGUID() );
 	}
-	// TODO: signal failure too
+	else
+	{	qDebug( "conference creation FAILED" );
+		emit conferenceCreationFailed( cct->clientConfId(), cct->statusCode() );
+	}
 }
 // INTERNALS //
 
 QString Client::userId()
 {
-	return "maeuschen";
+	return d->user;
+}
+
+void Client::setUserDN( const QString & userDN )
+{
+	d->userDN = userDN;
 }
 
 QString Client::userDN()
 {
-	return "CN=maeuschen,O=suse";
+	return d->userDN;
 }
 
 QString Client::password()
 {
-	return "maeuschen";
+	return d->pass;
 }
 
 QString Client::userAgent()
 {
-	return "libgroupwise/0.1 (Linux, 2.6.5-7.97-smp)";
+	return QString::fromLatin1( "%1/%2 (%3)" ).arg( d->clientName, d->clientVersion, d->osname );
 }
 
 QCString Client::ipAddress()
 {
+	// TODO: remove hardcoding
 	return "10.10.11.103";
 }
 

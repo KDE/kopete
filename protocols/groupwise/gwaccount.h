@@ -85,12 +85,14 @@ public:
 	 * Utility access to the server given by the user
 	 */
 	const QString GroupWiseAccount::server() const;
-
 	/**
 	 * Utility access to our protocol
 	 */
 	GroupWiseProtocol * GroupWiseAccount::protocol();
-
+	/**
+	 * Utility access to the @ref Client which is the main interface exposed by libgroupwise.
+	 */
+	Client * client() const;
 	/**
 	 * Create a conference (start a chat) on the server
 	 */
@@ -102,19 +104,29 @@ public:
 	void sendMessage( const QString & guid, const KopeteMessage & message );
 public slots:
 
+	void slotTestRTFize();
+	
 	/* Connects to the server. */
 	virtual void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	virtual void disconnect ();
-	
+signals: 
+	void conferenceCreated( const int mmId, const QString & guid );
+	void conferenceCreationFailed( const int mmId, const int statusCode );
+	void contactTyping( const ConferenceEvent & );
+	void contactNotTyping( const ConferenceEvent & );
+protected slots:
 	/**
-	 * Called when the server has a message for us.  
-	 * This identifies the sending KopeteContact and passes the message on to it,
-	 * in order to locate the MessageManager and finally pass to the GUI.
+	 * Change the account's status.  Called by KActions and internally.
 	 */
-	void receiveMessage( const ConferenceEvent & event );
-	/** 
+	void slotGoOnline();
+	void slotGoAway( const QString & reason );
+	void slotGoOffline();
+	void slotGoBusy( const QString & reason );
+	void slotGoAppearOffline();
+	// SERVER SIDE CONTACT LIST PROCESSING
+	/**
 	 * Called when we receive a FOLDER from the server side contact list
 	 * Adds to the Kopete contact list if not already present.
 	 */
@@ -125,10 +137,19 @@ public slots:
 	 */
 	void receiveContact( const ContactItem & );
 	/**
-	 * Called when we receive a CONTACT'S METADATA (including initial status) from the server side contact list.
+	 * Called when we receive a CONTACT'S METADATA (including initial status) from the server side contact list,
+	 * or in response to an explicity query.  This is necessary to handle some events from the server.  
+	 * These events are queued in the account until the data arrives and then we handle the event.
 	 */
 	void receiveContactUserDetails( const ContactDetails & );
-	/** 
+	// SLOTS HANDLING PROTOCOL EVENTS
+	/**
+	 * Called when the server has a message for us.  
+	 * This identifies the sending KopeteContact and passes the message on to it,
+	 * in order to locate the MessageManager and finally pass to the GUI.
+	 */
+	void receiveMessage( const ConferenceEvent & event );
+	/**
 	 * A contact changed status
 	 */
 	void receiveStatus( const QString &, Q_UINT16 , const QString & );
@@ -136,7 +157,51 @@ public slots:
 	 * Our status changed on the server
 	 */
 	void changeOurStatus( GroupWise::Status, const QString &, const QString & );
+	/**
+	 * Called when we've been disconnected for logging in as this user somewhere else
+	 */ 
+	void slotConnectedElsewhere();
 	/** 
+	 * Called when we've logged in successfully
+	 */
+	void slotLoggedIn();
+	/**
+	 * Someone joined a conference, add them to the appropriate message manager
+	 */
+// 	void receiveConferenceJoined();
+	/**
+	 * Someone left a conference, remove them from the message manager
+	 */
+// 	void receiveConferenceLeft();
+	/**
+	 * The user was invited to join a conference
+	 */
+// 	void receiveInvitation();
+	/**
+	 * Notification that a third party was invited to join conference
+	 */
+// 	void receiveInviteNotify();
+	/**
+	 * Notification that a third party declined an invitation
+	 */
+// 	void receiveInvitationDeclined();
+	/**
+	 * A conference was closed by the server because everyone has left or declined invitations
+	 * Prevents any further messages to this conference
+	 */
+// 	void closeConference();
+	// SLOTS HANDLING NETWORK EVENTS
+	/**
+	 * Update the local user's metadata
+	 */
+	void slotGotMyDetails( Field::FieldList & fields );
+	/**
+	 * The TLS handshake has happened, check the result
+	 */
+	void slotTLSHandshaken();
+	/** The connection is ready for a login */
+	void slotTLSReady( int secLayerCode );
+	/**
 	 * Called when the clientstream is connected, debug only
 	 */
 	void slotCSConnected();
@@ -150,40 +215,11 @@ public slots:
 	/** Debug slots */
 	void slotConnError();
 	void slotConnConnected();
-signals: 
-	void conferenceCreated( const int mmId, const QString & guid );
 protected:
-	/**
-	 * This simulates contacts going on and offline in sync with the account's status changes
-	 */
-	void updateContactStatus();
 	/**
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
 	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
-protected slots:
-	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
-	void slotGoOnline();
-	void slotGoAway( const QString & reason );
-	void slotGoOffline();
-	void slotGoBusy( const QString & reason );
-	void slotGoAppearOffline();
-	
-	/** 
-	 * Called when we've logged in successfully
-	 */
-	void slotLoggedIn();
-	/**
-	 * Update the local user's metadata
-	 */
-	void slotGotMyDetails( Field::FieldList & fields );
-	/** The TLS handshake has happened, check the result */
-	void slotTLSHandshaken();
-	/** The connection is ready for a login */
-	void slotTLSReady( int secLayerCode );
-
 private:
 	// Network code 
 	KNetworkConnector * m_connector;
