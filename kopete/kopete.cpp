@@ -32,6 +32,7 @@
 #include "pluginloader.h"
 #include "pluginmodule.h"
 #include <addwizardimpl.h>
+#include "systemtray.h"
 
 class Plugins;
 
@@ -48,12 +49,12 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	mainwindow = new KopeteWindow;
 	setMainWidget(mainwindow);
 	mainwindow->statusBar()->show();
-	
+
   	mPref->hide();
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
-	/* Ups! the user dont have plugins selected. */	
+	/* Ups! the user dont have plugins selected. */
 	if (!config->hasKey("Modules"))
 	{
 		QStringList modules;
@@ -63,8 +64,8 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	}
 	/* Ok, load saved plugins */
 	loadPlugins();
-	
-	
+	tray = new KopeteSystemTray();
+
 }
 
 Kopete::~Kopete()
@@ -87,6 +88,10 @@ void Kopete::slotExit()
 	quit();
 }
 
+KopeteSystemTray *Kopete::systemTray()
+{
+	return tray;
+}
 
 /** No descriptions */
 void Kopete::readOptions()
@@ -195,7 +200,7 @@ void Kopete::slotAboutPlugins()
 	AboutPlugins *aboutPl;
 	aboutPl = new AboutPlugins(mainwindow);
 	aboutPl->show();
-	
+
 }
 /** Add a contact through Wizard */
 void Kopete::slotAddContact()

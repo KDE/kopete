@@ -44,15 +44,16 @@
 
 class LibraryLoader;
 class KopeteLibraryInfo;
+class KopeteSystemTray;
 
 /** Kopete is the base class of the project */
 class Kopete : public KUniqueApplication
 {
-  Q_OBJECT 
+  Q_OBJECT
   public:
     Kopete();
     ~Kopete();
-	
+
 	PreferencesDialog *preferencesBox() const { return mPref; }
 	KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
 	//PluginManager *Plugins() const { return plugins; }
@@ -76,18 +77,20 @@ class Kopete : public KUniqueApplication
 
 	/** Some bool stuff */
 	bool allConnected;
+	KopeteSystemTray *systemTray();
 	private:
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
 	static void cleverKCrashHack(int);
 	void loadPlugins();
-	
+	KopeteSystemTray *tray;
+
 public slots:
   void slotPreferences();
   void slotExit();
   void slotConnectAll();
-  void slotDisconnectAll();	
+  void slotDisconnectAll();
   void slotAboutPlugins();
   void slotAddContact();
 	void slotSetAway();

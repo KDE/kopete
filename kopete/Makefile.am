@@ -5,7 +5,7 @@ KDE_ICON = AUTO
 
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
-libkopetemain_la_LDFLAGS = -lX11 -lpng -lz -lm -ljpeg $(LIBQT) -lXext -lkdecore -lkdeui $(KFILE) -lXpm -lDCOP
+libkopetemain_la_LDFLAGS = -lX11 -lpng -lz -lm -ljpeg $(LIB_QT) -lXext -lkdecore -lkdeui $(LIB_KFILE) -lXpm -lDCOP
 libkopetemain_la_LIBADD = $(top_srcdir)/kopete/library/libkopete.la
 
 bin_PROGRAMS = kopete
@@ -16,6 +16,9 @@ CXXFLAGS = -g -O2 -Wall
 METASOURCES = AUTO
 
 CLEANFILES = dummy.cpp
+
+icondir = $(kde_datadir)/kopete/pics
+icon_DATA = newmsg.xpm
 
 dummy.cpp:
 	echo > dummy.cpp
