@@ -504,6 +504,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		//FIXME: Shouldn't we say that we are the MSN plugin?
 		job->showErrorDialog();
 		disconnect();
+		return;
 	}
 
 	if(m_kv.isNull())
