@@ -737,7 +737,7 @@ void ChatView::appendMessage(KopeteMessage &message)
 	//  this is for example the case with the history
 	//(calling remoteTyping in this case is not fine because it adds the user to the chat)
 
-	if(typingMap.contains(message.from()))  
+	if(typingMap.contains(message.from()))
 		remoteTyping( message.from(), false );
 
 	//Need to copy this because it comes in as a const
@@ -750,7 +750,8 @@ void ChatView::appendMessage(KopeteMessage &message)
 			case KopeteMessage::Highlight:
 				setTabState( Highlighted );
 #if KDE_IS_VERSION( 3, 1, 90 )
-				KWin::setState( m_mainWindow->winId(), NET::DemandsAttention );
+				if( m_mainWindow )
+					KWin::setState( m_mainWindow->winId(), NET::DemandsAttention );
 #endif
 				break;
 			case KopeteMessage::Normal:
