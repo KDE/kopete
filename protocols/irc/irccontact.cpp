@@ -30,7 +30,6 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "tabcompleter.h"
-#include "kopetewindow.h"
 
 #include <kaction.h>
 #include <kconfig.h>

@@ -26,7 +26,6 @@
 
 #include "kopete.h"
 #include "kopetestdaction.h"
-#include "kopetewindow.h"
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
@@ -79,7 +78,7 @@ void OscarContact::execute(void)
 
 	if ( mStatus == OSCAR_OFFLINE )
 	{
-		KMessageBox::sorry(kopeteapp->mainWindow(), i18n(
+		KMessageBox::sorry(qApp->mainWidget(), i18n(
 			"<qt>Sorry, this user is not online at the moment for you" \
 			" to message him/her. AIM users must be online for you to be" \
 			" able to message them.</qt>"), i18n("User not Online") );
@@ -274,12 +273,12 @@ void OscarContact::slotUserInfo(void)
 		
 		if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1){
 				if (!mProtocol->isConnected()){
-						KMessageBox::sorry(kopeteapp->mainWindow(),
+						KMessageBox::sorry(qApp->mainWidget(),
 										i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
 										i18n("You Must be Connected") );
 				} else {
 						if (tmpBuddy.status == TAIM_OFFLINE){
-								KMessageBox::sorry(kopeteapp->mainWindow(),
+								KMessageBox::sorry(qApp->mainWidget(),
 												i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ),
 												i18n("User not Online"));
 						}
@@ -324,7 +323,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 
 		// Check to see if we're even online
 		if (!mProtocol->isConnected()){
-				KMessageBox::sorry(kopeteapp->mainWindow(),
+				KMessageBox::sorry(qApp->mainWidget(),
 								i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
 								i18n("Not Signed On"));
 				return;
@@ -332,7 +331,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 
 		// Check to see if the person we're sending the message to is online
 		if (tmpBuddy->status == TAIM_OFFLINE || mStatus == TAIM_OFFLINE){
-				KMessageBox::sorry(kopeteapp->mainWindow(),
+				KMessageBox::sorry(qApp->mainWidget(),
 								i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"),
 								i18n("User not Online"));
 				return;
@@ -422,7 +421,7 @@ void OscarContact::slotDeleteContact(void)
 
 	if (
 		KMessageBox::warningYesNo(
-			kopeteapp->mainWindow(),
+			qApp->mainWidget(),
 			i18n("<qt>Are you sure you want to remove %1 from your contact list?</qt>").arg(buddyName),
 			i18n("Confirmation")
 			) == KMessageBox::Yes )
@@ -444,7 +443,7 @@ void OscarContact::slotWarn()
 	" this function, it is meant for legitimate practices.)</qt>" ).arg(mName);
 	QString title = i18n("Warn User %1?").arg(mName);
 
-	int result = KMessageBox::questionYesNoCancel(kopeteapp->mainWindow(), message, title);
+	int result = KMessageBox::questionYesNoCancel(qApp->mainWidget(), message, title);
 	if (result == KMessageBox::Yes)
 	{
 		mProtocol->engine->sendWarning(mName, true);

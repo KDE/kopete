@@ -19,6 +19,7 @@
 
 
 #include <qcursor.h>
+#include <qapplication.h>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -37,7 +38,6 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopetewindow.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
 #include "msndebugrawcmddlg.h"
@@ -169,13 +169,13 @@ void MSNProtocol::Connect()
 
 	if( m_msnId.isEmpty() )
 	{
-		int r = KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
+		int r = KMessageBox::warningContinueCancel( qApp->mainWidget(),
 			i18n("<qt>You have not yet specified a username for MSN. "
 				"You can specify your MSN settings in the Kopete configuration dialog<br>"
 				"Get an MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a><br>"
 				"Do you want to configure MSN now?</qt>" ),
 			i18n( "MSN plugin not configured yet" ),
-			KGuiItem( i18n( "C&onfigure..." ), "configure" ),  QString::null,
+			KGuiItem( i18n( "C&onfigure..." ), "configure" ), QString::null,
 			KMessageBox::AllowLink );
 
 		if( r != KMessageBox::Cancel )

@@ -2,7 +2,7 @@
     yahoocontact.cpp - Yahoo Contact
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    
+
     Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -23,7 +23,6 @@
 #include "yahoocontact.h"
 
 // Kopete Includes
-#include "kopetewindow.h"
 #include "kopete.h"
 
 // QT Includes
@@ -32,7 +31,6 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kmessagebox.h>
-
 
 YahooContact::YahooContact(QString userID, QString fullName, QString group,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
@@ -55,12 +53,10 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
     // XXX initActions();
 }
 
-
 YahooContact::~YahooContact()
 {
 	kdDebug() << "Yahoo::~YahooContact()" << endl;
 }
-
 
 // Return status
 YahooContact::ContactStatus YahooContact::status() const
@@ -77,7 +73,6 @@ YahooContact::ContactStatus YahooContact::status() const
 		return Online;
 	}
 }
-
 
 // Return status text
 QString YahooContact::statusText() const

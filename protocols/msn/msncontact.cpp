@@ -36,7 +36,6 @@
 #include "msncontact.h"
 #include "msnprotocol.h"
 #include "msnnotifysocket.h"
-#include "kopetewindow.h"
 
 #include "msninfo.h"
 

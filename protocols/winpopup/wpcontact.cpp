@@ -25,7 +25,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
-#include <kmessagebox.h>
 
 // Kopete Includes
 #include "kopetestdaction.h"
@@ -33,7 +32,6 @@
 #include "kopetemessagemanager.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "kopetewindow.h"
 
 // Local Includes
 #include "wpcontact.h"

@@ -14,7 +14,6 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
-#include "kopetewindow.h"
 #include "kopetemessagemanagerfactory.h"
 #include "statusbaricon.h"
 #include "systemtray.h"
@@ -300,7 +299,7 @@ void
 GaduProtocol::slotLogin()
 {
     if ( (userUin_ == 0) || password_.isEmpty() ) {
-        KMessageBox::error( kopeteapp->mainWindow(),
+        KMessageBox::error( qApp->mainWidget(),
                             i18n("You must fill in UIN and password fields in the preferences dialog before you can login"),
                             i18n("Unable to Login") );
         return;
@@ -390,7 +389,7 @@ GaduProtocol::changeStatus( int status, const QString& descr )
 void
 GaduProtocol::error( const QString& title, const QString& message )
 {
-    KMessageBox::error( kopeteapp->mainWindow(), message, title );
+    KMessageBox::error( qApp->mainWidget(), message, title );
 }
 
 void
@@ -486,7 +485,7 @@ GaduProtocol::pong()
 void
 GaduProtocol::connectionFailed( struct gg_event* /*e*/ )
 {
-    KMessageBox::error( kopeteapp->mainWindow(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
+    KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
                         i18n("Connection Error") );
     statusBarIcon_->setPixmap( offlineIcon_ );
 }

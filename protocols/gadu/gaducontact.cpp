@@ -12,7 +12,6 @@
 #include "kopetestdaction.h"
 #include "kopetehistorydialog.h"
 #include "kopeteaway.h"
-#include "kopetewindow.h"
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"

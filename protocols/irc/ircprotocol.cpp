@@ -48,7 +48,6 @@
 #include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "kopetewindow.h"
 #include "statusbaricon.h"
 
 
@@ -78,7 +77,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->hasKey("Nickname") == false)
 	{
-//		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>You haven't setup your IRC settings for the first time. Please do so by going to File->Configure Kopete->IRC Plugin. Once you have done that, try connecting again.</qt>"), i18n("Preferences Nonexistent"));
+//		KMessageBox::sorry( qapp->mainWidget(), i18n("<qt>You haven't setup your IRC settings for the first time. Please do so by going to File->Configure Kopete->IRC Plugin. Once you have done that, try connecting again.</qt>"), i18n("Preferences Nonexistent"));
 		return;
 	}
 
