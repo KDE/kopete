@@ -282,6 +282,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 			{
 				d->usingWallet = true;
 				KopeteAccountPrivate::s_walletRefCount++;
+				QObject::connect( KopeteAccountPrivate::s_wallet, SIGNAL( walletClosed() ), this, SLOT( walletClosed() ) );
 			}
 
 			// Before trying to read from the wallet, check if the config file holds a password.
@@ -302,7 +303,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		}
 #endif
 
-		if ( d->rememberPassword || !d->password.isNull() )
+		if ( d->rememberPassword && !d->password.isNull() )
 			return d->password;
 	}
 
@@ -371,12 +372,14 @@ void KopeteAccount::setPassword( const QString &pass )
 			{
 				KopeteAccountPrivate::s_walletRefCount++;
 				d->usingWallet = true;
+				QObject::connect( KopeteAccountPrivate::s_wallet, SIGNAL( walletClosed() ), this, SLOT( walletClosed() ) );
 			}
 		}
 		else if ( !d->usingWallet )
 		{
 			d->usingWallet = true;
 			KopeteAccountPrivate::s_walletRefCount++;
+			QObject::connect( KopeteAccountPrivate::s_wallet, SIGNAL( walletClosed() ), this, SLOT( walletClosed() ) );
 		}
 
 		if ( KopeteAccountPrivate::s_wallet )
