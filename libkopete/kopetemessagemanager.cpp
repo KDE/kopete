@@ -10,6 +10,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteCo
 {
 
 	mContactList = others;
+	mUser = mUser;
 	mChatWindow = 0L;
 	mUnreadMessageEvent = 0L;
 	mReadMode = Queued;
@@ -28,7 +29,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteCo
 
 KopeteMessageManager::~KopeteMessageManager()
 {
-
+	emit dying(this);
 }
 
 void KopeteMessageManager::setReadMode( int mode )

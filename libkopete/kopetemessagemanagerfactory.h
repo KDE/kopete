@@ -49,6 +49,8 @@ public:
 	 * Get a list of all open sessions
 	 */
 	static const KopeteMessageManagerList& sessions();
+protected slots:
+	void slotRemoveSession( KopeteMessageManager *);
 
 private:
 

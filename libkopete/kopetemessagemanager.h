@@ -84,7 +84,11 @@ public:
 	/**
 	 * Get a list of all contacts in the session
 	 */
-	const KopeteContactList& contacts() const;
+	const KopeteContactList& contacts() const { return mContactList; };
+    /**
+	 * Get athe local user in the session
+	 */
+	const KopeteContact* user() const { return mUser; };
 
 signals:
 	/**
@@ -92,6 +96,7 @@ signals:
 	 * connect to this signal to actually send the message over the wire.
 	 */
 	void messageSent( const KopeteMessage &msg );
+	void dying( KopeteMessageManager *);
 
 protected slots:
 	void cancelUnreadMessageEvent();
@@ -106,6 +111,7 @@ private:
 		QString logFile = QString::null, QObject *parent = 0, const char *name = 0 );
 
 	KopeteContactList mContactList;
+	KopeteContact *mUser;
 	KopeteChatWindow *mChatWindow;
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
