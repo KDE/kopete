@@ -6,7 +6,7 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn <metz AT gehn.net>
-    Copyright (c) 2002-2004 by Olivier Goffart <ogoffart @ tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart <ogoffart @ kde.org>
     Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -157,7 +157,6 @@ private slots:
 	void slotSendEmail();
 	void slotMoveToGroup();
 	void slotCopyToGroup();
-	void slotRemoveFromGroup();
 	void slotRemove();
 	void slotRename();
 	void slotAddContact();
@@ -192,7 +191,6 @@ private:
 	KListAction *actionCopy;
 	KAction *actionRename;
 	KAction *actionRemove;
-	KAction *actionRemoveFromGroup;
 	KAction *actionAddTemporaryContact;
 	KAction *actionProperties;
 	KAction *actionUndo;

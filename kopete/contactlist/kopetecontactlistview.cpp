@@ -6,11 +6,11 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher           <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -470,10 +470,6 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ),
 		ac, "contactStartChat" );
 
-	actionRemoveFromGroup = KopeteStdAction::deleteContact(
-		this, SLOT( slotRemoveFromGroup() ), ac, "contactRemoveFromGroup" );
-	actionRemoveFromGroup->setText( i18n("Remove From Group") );
-
 	actionMove = KopeteStdAction::moveContact( this, SLOT( slotMoveToGroup() ),
 		ac, "contactMove" );
 	actionCopy = KopeteStdAction::copyContact( this, SLOT( slotCopyToGroup() ),
@@ -547,14 +543,10 @@ void KopeteContactListView::slotMetaContactSelected( bool sel )
 		Kopete::MetaContact *kmc = Kopete::ContactList::self()->selectedMetaContacts().first();
 		set = sel && kmc->isReachable();
 		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
-
-		// TODO: make available for several contacts
-		actionRemoveFromGroup->setEnabled( sel && (kmc->groups().count()>1 )  );
 	}
 	else
 	{
 		actionAddTemporaryContact->setEnabled(false);
-		actionRemoveFromGroup->setEnabled(false);
 	}
 
 	actionSendMessage->setEnabled( set );
@@ -1446,20 +1438,7 @@ void KopeteContactListView::slotCopyToGroup()
 	actionCopy->setCurrentItem( -1 );
 }
 
-void KopeteContactListView::slotRemoveFromGroup()
-{
-	KopeteMetaContactLVI *metaLVI=dynamic_cast<KopeteMetaContactLVI*>(currentItem());
-	if(!metaLVI)
-		return;
-	Kopete::MetaContact *m=metaLVI->metaContact();
 
-	if(m->isTemporary())
-		return;
-
-	m->removeFromGroup( metaLVI->group() );
-
-	insertUndoItem( new UndoItem( UndoItem::MetaContactRemove , m , metaLVI->group() ) );
-}
 
 void KopeteContactListView::slotRemove()
 {
@@ -1477,7 +1456,7 @@ void KopeteContactListView::slotRemove()
 	}
 	for( Kopete::MetaContact *it = contacts.first(); it; it = contacts.next() )
 	{
-		if(!it->displayName().isEmpty())
+		if(!it->displayName().isEmpty() )
 			items.append( it->displayName() );
 	}
 
@@ -1522,9 +1501,43 @@ void KopeteContactListView::slotRemove()
 		}
 	}
 
-	for( Kopete::MetaContact *it = contacts.first(); it; it = contacts.next() )
+	bool undo_step=true; //only  the first undo item we will add will be a step
+
+	for( Kopete::MetaContact *mc = contacts.first(); mc; mc = contacts.next() )
 	{
-		Kopete::ContactList::self()->removeMetaContact( it );
+		if(mc->groups().count()==1 || mc->isTemporary() )
+			Kopete::ContactList::self()->removeMetaContact( mc );
+		else
+		{
+			//try to guess from what group we are removing that contact.
+			QListViewItemIterator lvi_it( this );
+			while ( lvi_it.current() )
+			{
+				QListViewItem *item = lvi_it.current();
+				++lvi_it;
+
+				if ( item->isSelected() )
+				{
+					KopeteMetaContactLVI *metaLVI=dynamic_cast<KopeteMetaContactLVI*>(item);
+					if(metaLVI && metaLVI->metaContact() == mc )
+					{
+						if(mc->groups().count()==1)
+						{
+							Kopete::ContactList::self()->removeMetaContact( mc );
+							break;
+						}
+						else
+						{
+							mc->removeFromGroup(metaLVI->group());
+							insertUndoItem( new UndoItem( UndoItem::MetaContactRemove , mc , metaLVI->group() ) );
+							m_undo->isStep=undo_step; //if there is several selected contacts.
+							undo_step=false;
+						}
+						//let's continue, it's possible this contact is selected several times
+					}
+				}
+			}
+		}
 	}
 
 	for( Kopete::Group *it = groups.first(); it; it = groups.next() )

@@ -19,7 +19,6 @@
 			<Separator lineSeparator="true" />
 			<Action name="contactMove" />
 			<Action name="contactCopy" />
-			<Action name="contactRemoveFromGroup" />
 			<Action name="contactRemove" />
 			<Action name="contactRename" />
 			<Action name="contactAddContact" />
@@ -77,7 +76,6 @@
 			  <text>&amp;Groups</text>
 			  <Action name="contactMove" />
 			  <Action name="contactCopy" />
-			  <Action name="contactRemoveFromGroup" />
 		</Menu>
 		<Action name="contactRemove" />
 		<Action name="contactRename" />
