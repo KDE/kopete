@@ -113,30 +113,30 @@ public:
 	 */
 	enum Capabilities
 	{
-		BaseFgColor = 0x1,     // Setting the bg color of the whole edit widget / message
-		BaseBgColor = 0x2,     // Setting the fg color of the whole edit widget / message
-		RichFgColor = 0x4,       // Setting the fg/bg color of text portions individually
-		RichBgColor = 0x8,       // Setting the fg/bg color of text portions individually
+		BaseFgColor = 0x1,     ///< Setting the bg color of the whole edit widget / message
+		BaseBgColor = 0x2,     ///< Setting the fg color of the whole edit widget / message
+		RichFgColor = 0x4,       ///< Setting the fg/bg color of text portions individually
+		RichBgColor = 0x8,       ///< Setting the fg/bg color of text portions individually
 
-		BaseFont = 0x10,        // Setting the font of the whole edit widget / message
-		RichFont = 0x20,       // Setting the font of text portions individually
+		BaseFont = 0x10,        ///< Setting the font of the whole edit widget / message
+		RichFont = 0x20,       ///< Setting the font of text portions individually
 
-		// Setting the formatting of the whole edit widget / message
+		/// Setting the formatting of the whole edit widget / message
 		BaseUFormatting = 0x40,
 		BaseIFormatting = 0x80,
 		BaseBFormatting = 0x100,
 
-		// Setting the formatting of text portions individually
+		/// Setting the formatting of text portions individually
 		RichUFormatting = 0x200,
 		RichIFormatting = 0x400,
 		RichBFormatting = 0x800,
 
-		Alignment = 0x1000,     // Setting the alignment of text portions
+		Alignment = 0x1000,     ///< Setting the alignment of text portions
 
-		// Setting the formatting of the whole edit widget / message
+		/// Setting the formatting of the whole edit widget / message
 		BaseFormatting = BaseIFormatting | BaseUFormatting | BaseBFormatting,
 
-		// Setting the formatting of text portions individually
+		/// Setting the formatting of text portions individually
 		RichFormatting = RichIFormatting | RichUFormatting | RichBFormatting,
 
 		RichColor = RichBgColor | RichFgColor,
@@ -146,8 +146,7 @@ public:
 		FullRTF =  RichFormatting | Alignment | RichFont | RichFgColor | RichBgColor ,
 
 
-		CanSendOffline = 0x10000
-
+		CanSendOffline = 0x10000 ///< If it's possible to send  offline messages
 	};
 	
 	/**
