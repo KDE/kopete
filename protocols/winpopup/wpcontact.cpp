@@ -38,7 +38,7 @@
 #include "wpprotocol.h"
 #include "wpdebug.h"
 
-WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContact *parent) : KopeteContact(protocol, parent)
+WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContact *parent) : KopeteContact(protocol, host, parent)
 {
 	DEBUG(WPDMETHOD, "WPContact::WPContact(" << host << ", <protocol>, <parent>)");
 
@@ -52,7 +52,6 @@ WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContac
 	setDisplayName(newDisplayName);
 	myProtocol = protocol;
 	myHost = host;
-	myHistoryDialog = 0;
 
 	// Initialise and start the periodical checking for contact's status
 	myIsOnline = true;
@@ -129,21 +128,6 @@ void WPContact::slotSendMessage(const KopeteMessage& message)
 	
 	QString Message = (message.subject() != "" ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
 	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
-}
-
-void WPContact::slotViewHistory()
-{
-	if(!myHistoryDialog)
-	{
-		myHistoryDialog = new KopeteHistoryDialog(QString("wp_logs/%1.log").arg(myHost), displayName(), true, 50, 0, "WPHistoryDialog");
-		connect(myHistoryDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
-	}
-}
-
-void WPContact::slotCloseHistoryDialog()
-{
-	delete myHistoryDialog;
-	myHistoryDialog = 0;
 }
 
 void WPContact::slotMovedToMetaContact()

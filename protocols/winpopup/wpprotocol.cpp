@@ -113,7 +113,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	connect();
 
 	// FIXME: I guess 'myself' should be a metacontact as well...
-	theMyself = new WPContact(theHostName, this, 0L);		// XXX: Should be from config file!!!
+	theMyself = new WPContact(this, theHostName, 0L);		// XXX: Should be from config file!!!
 	QObject::connect( theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
 }
 
@@ -186,7 +186,7 @@ void WPProtocol::deserialize(KopeteMetaContact *metaContact, const QStringList &
 
 		DEBUG(WPDINFO, "Sub-Contact " << host << " is deserialised.");
 
-		WPContact *newContact = new WPContact(host, this, metaContact);
+		WPContact *newContact = new WPContact(this, host, metaContact);
 		metaContact->addContact(newContact);
 	}
 }
@@ -210,7 +210,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 
 	KopeteContact *theContact = theMetaContact->findContact(this->pluginId(), Name, "smb://" + Name);
 	if(!theContact)
-	{	theContact = new WPContact(Name, this, theMetaContact);
+	{	theContact = new WPContact(this, Name, theMetaContact);
 		theMetaContact->addContact(theContact);
 	}
 
