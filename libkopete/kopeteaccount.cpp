@@ -99,7 +99,7 @@ void KopeteAccount::setAccountId( const QString &accountId )
 QString KopeteAccount::toXML()
 {
 	QString xml = QString::fromLatin1( "  <account account-id=\"" ) + QStyleSheet::escape(d->id) + 
-			QString::fromLatin1( "\" protocol-id=\"" )  + QStyleSheet::escape(QString::fromLatin1(d->protocol->pluginId())) + QString::fromLatin1( "\">\n" );
+		QString::fromLatin1( "\" protocol-id=\"" )  + QStyleSheet::escape( d->protocol->pluginId() ) + QString::fromLatin1( "\">\n" );
 
 	if( !d->password.isNull())
 	{
@@ -259,15 +259,15 @@ bool KopeteAccount::rememberPassword()
 
 void KopeteAccount::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
+	d->pluginData[ p->pluginId() ][ key ] = value;
 }
 
 QString KopeteAccount::pluginData( KopetePlugin *p, const QString &key ) const
 {
-	if( !d->pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !d->pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
+	if( !d->pluginData.contains( p->pluginId() ) || !d->pluginData[ p->pluginId() ].contains( key ) )
 		return QString::null;
 
-	return d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
+	return d->pluginData[ p->pluginId() ][ key ];
 }
 
 void KopeteAccount::registerContact( KopeteContact *c )

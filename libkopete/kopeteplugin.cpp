@@ -33,9 +33,9 @@ bool KopetePlugin::unload()
 	return true;
 }
 
-const char *KopetePlugin::pluginId() const
+QString KopetePlugin::pluginId() const
 {
-	return className();
+	return QString::fromLatin1( className() );
 }
 
 QString KopetePlugin::displayName() const

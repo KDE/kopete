@@ -201,15 +201,15 @@ bool KopeteGroup::expanded()
 
 QString KopeteGroup::pluginData( KopetePlugin *p, const QString &key ) const
 {
-	if( !d->pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !d->pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
+	if( !d->pluginData.contains( p->pluginId() ) || !d->pluginData[ p->pluginId() ].contains( key ) )
 		return QString::null;
 
-	return d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
+	return d->pluginData[ p->pluginId() ][ key ];
 }
 
 void KopeteGroup::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
+	d->pluginData[ p->pluginId() ][ key ] = value;
 }
 
 

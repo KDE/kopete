@@ -43,7 +43,7 @@ public:
 	virtual ~KopetePlugin();
 
 	virtual bool unload();
-	virtual const char *pluginId() const;
+	QString pluginId() const;
 
 	/**
 	 * Return the list of all keys from the address book in which the plugin

@@ -725,7 +725,7 @@ QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts( const QString
 			QPtrListIterator<KopeteContact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
-				if( cit.current()->isOnline() && QString::fromLatin1( cit.current()->protocol()->pluginId() ) == protocolId )
+				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
 					result.append( it.current() );
 			}
 		}
@@ -746,7 +746,7 @@ QPtrList<KopeteContact> KopeteContactList::onlineContacts( const QString &protoc
 			QPtrListIterator<KopeteContact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
-				if( cit.current()->isOnline() && QString::fromLatin1( cit.current()->protocol()->pluginId() ) == protocolId )
+				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
 					result.append( cit.current() );
 			}
 		}
@@ -815,7 +815,7 @@ QStringList KopeteContactList::contactFileProtocols(const QString &displayName)
 			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << "\n";
 			if( jt.current()->canAcceptFiles() ) {
 				kdDebug(14010) << jt.current()->protocol()->pluginId() << "\n";
-				protocols.append ( QString::fromLatin1( jt.current()->protocol()->pluginId() ) );
+				protocols.append ( jt.current()->protocol()->pluginId() );
 			}
 		}
 		return protocols;

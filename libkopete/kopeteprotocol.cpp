@@ -266,7 +266,7 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 	else
 	{
 		//Check if this MetaContact exists
-		parentContact = KopeteContactList::contactList()->findContact( QString::fromLatin1( pluginId() ), QString::null, contactId );
+		parentContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, contactId );
 		if( !parentContact )
 		{
 			//Create a new MetaContact

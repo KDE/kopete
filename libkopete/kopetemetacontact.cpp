@@ -242,13 +242,10 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	{
 		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto "
 		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
-		if( ( it.current()->contactId() == contactId ) &&
-				( QString::fromLatin1( it.current()->protocol()->pluginId() ) == protocolId ) )
+		if( ( it.current()->contactId() == contactId ) && ( it.current()->protocol()->pluginId() == protocolId ) )
 		{
 			if ( accountId.isEmpty() )
-			{
 				return it.current();
-			}
 		
 			if(it.current()->account())
 			{
@@ -831,7 +828,7 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	for( it = d->pluginData.begin(); it != d->pluginData.end(); ++it )
 	{
 		//kdDebug( 14010 ) << "key: " << it.key() << ", plugin id: " << p->pluginId() << endl;
-		if( QString::fromLatin1( p->pluginId() ) == it.key() )
+		if( p->pluginId() == it.key() )
 			p->deserialize( this, it.data() );
 	}
 }
@@ -840,32 +837,32 @@ void KopeteMetaContact::setPluginData( KopetePlugin *p, const QMap<QString, QStr
 {
 	if( pluginData.isEmpty() )
 	{
-		d->pluginData.remove( QString::fromLatin1( p->pluginId() ) );
+		d->pluginData.remove( p->pluginId() );
 		return;
 	}
 
-	d->pluginData[ QString::fromLatin1( p->pluginId() ) ] = pluginData;
+	d->pluginData[ p->pluginId() ] = pluginData;
 }
 
 void KopeteMetaContact::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
+	d->pluginData[ p->pluginId() ][ key ] = value;
 }
 
 QMap<QString, QString> KopeteMetaContact::pluginData( KopetePlugin *p ) const
 {
-	if( !d->pluginData.contains( QString::fromLatin1( p->pluginId() ) ) )
+	if( !d->pluginData.contains( p->pluginId() ) )
 		return QMap<QString, QString>();
 
-	return d->pluginData[ QString::fromLatin1( p->pluginId() ) ];
+	return d->pluginData[ p->pluginId() ];
 }
 
 QString KopeteMetaContact::pluginData( KopetePlugin *p, const QString &key ) const
 {
-	if( !d->pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !d->pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
+	if( !d->pluginData.contains( p->pluginId() ) || !d->pluginData[ p->pluginId() ].contains( key ) )
 		return QString::null;
 
-	return d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
+	return d->pluginData[ p->pluginId() ][ key ];
 }
 
 KopeteMetaContact::IdleState KopeteMetaContact::idleState() const

@@ -191,7 +191,7 @@ KopeteAccount* KopeteAccountManager::findAccount(const QString& protocolId, cons
 {
 	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
-		if(QString::fromLatin1(i->protocol()->pluginId()) == protocolId && i->accountId() == accountId)
+		if( i->protocol()->pluginId() == protocolId && i->accountId() == accountId )
 			return i;
 	}
 	return 0L;
@@ -279,7 +279,7 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 				QString accountId = element.attribute( QString::fromLatin1("account-id"), QString::null );
 				QString protocolId = element.attribute( QString::fromLatin1("protocol-id"), QString::null );
 
-				if( protocolId == QString::fromLatin1(protocol->pluginId()) )
+				if( protocolId == protocol->pluginId() )
 				{
 					KopeteAccount *account = protocol->createNewAccount(accountId);
 					QDomNode accountNode = node.firstChild();
