@@ -202,8 +202,33 @@ JabberContact::ContactStatus JabberContact::status() const
 	}
 }
 
-QString JabberContact::statusText() const {
-    return mStatus + " (" + mReason + ")";
+QString JabberContact::statusText() const
+{
+	QString txt;
+	
+	switch ( mStatus )
+	{
+		case STATUS_ONLINE:
+			txt = i18n("Online");
+			break;
+		case STATUS_AWAY:
+			txt = i18n("Away");
+			break;
+		case STATUS_XA:
+			txt = i18n("Extended Away");
+			break;
+		case STATUS_DND:
+			txt = i18n("Do Not Disturb");
+			break;
+		default:
+			txt = i18n("Offline");
+			break;
+	}
+
+	if ( !mReason.isNull() && !mReason.isEmpty() )
+		txt += " (" + mReason + ")";
+
+	return txt;
 }
 
 QString JabberContact::statusIcon() const {
@@ -344,7 +369,7 @@ void JabberContact::slotSendMsgKCW(const KopeteMessage message) {
 
 void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &resource) {
 	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
-	kdDebug() << "[JabberContact] New resource - they want " << theirJID << ", we're " << userID() << endl;
+//	kdDebug() << "[JabberContact] New resource - they want " << theirJID << ", we're " << userID() << endl;
 	if (theirJID != userID()) { return; }
 	kdDebug() << "[JabberContact] Adding new resource '" << resource.name << "' for " << userID() << endl;
 	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next()) {
