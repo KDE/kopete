@@ -57,7 +57,9 @@
 							</xsl:choose>
 						</xsl:attribute>
 						<span>
-							<xsl:attribute name="title" disable-output-escaping="yes"><kopete-i18n>Contact ID: %FROM_CONTACT_ID%</kopete-i18n></xsl:attribute>
+							<xsl:attribute name="title">
+								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
+							</xsl:attribute>
 							<xsl:attribute name="dir">
 								<xsl:value-of select="from/contact/contactDisplayName/@dir"/>
 							</xsl:attribute>
