@@ -32,8 +32,6 @@ class KopeteOnlineStatus;
 
 struct KopeteAccountPrivate;
 
-QString cryptStr(const QString &aStr);
-
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  *
