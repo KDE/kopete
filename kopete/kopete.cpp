@@ -41,14 +41,22 @@
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
 {
+	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+	setMainWidget( m_mainWindow );
+
+	// Since the main window has no parent we must delete it in the Kopete
+	// destructor (we can't leak it, some code depends on the destructor
+	// being called). But since a KMainWindow usually has W_DestructiveClose
+	// set we can't be sure it exists by then either. Therefore track its
+	// deletion to make sure:
+	connect( m_mainWindow, SIGNAL( destroyed() ),
+		SLOT( slotMainWindowDestroyed() ) );
+
 	// Create the plugin preferences module
 	new Plugins( this );
 
-	KopeteWindow *mainWindow = new KopeteWindow( 0, "mainWindow" );
-	setMainWidget( mainWindow );
-
-	new AppearanceConfig( mainWindow );
-	new KopeteUserPreferencesConfig( mainWindow );
+	new AppearanceConfig( m_mainWindow );
+	new KopeteUserPreferencesConfig( m_mainWindow );
 
 	/*
 	 * This is a workaround for a quite odd problem:
@@ -77,6 +85,7 @@ Kopete::Kopete()
 
 Kopete::~Kopete()
 {
+	delete m_mainWindow;
 }
 
 void Kopete::slotLoadPlugins()
@@ -134,6 +143,11 @@ void Kopete::slotLoadPlugins()
 	config->writeEntry("Modules", modules);
 
 	LibraryLoader::pluginLoader()->loadAll();
+}
+
+void Kopete::slotMainWindowDestroyed()
+{
+	m_mainWindow = 0L;
 }
 
 #include "kopete.moc"

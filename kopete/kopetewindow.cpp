@@ -128,7 +128,7 @@ void KopeteWindow::initActions ( void )
 		SLOT( show() ), actionCollection(), "ShowTransfers" );
 
 	actionPrefs = KStdAction::preferences(
-		PreferencesDialog::preferencesDialog(), SLOT( show() ),
+		this, SLOT( slotShowPreferencesDialog() ),
 		actionCollection() );
 
 	actionSave = new KAction( i18n("Save &ContactList"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
@@ -442,6 +442,18 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	KActionMenu *menu = proto->protocolActions();
 	if( menu )
 		menu->popup( p );
+}
+
+void KopeteWindow::slotShowPreferencesDialog()
+{
+	// Although show() itself is a slot too we can't connect actions to it
+	// from the KopeteWindow constructor, because we cannot access the
+	// preferences dialog there yet.
+	// If we did, qApp->mainWidget would still be 0L, and the dialog would
+	// get no parent and wouldn't get deleted. In itself not that bad on
+	// exit, but the KJanusWidget can't handle it properly and will cause
+	// crashes.
+	PreferencesDialog::preferencesDialog()->show();
 }
 
 #include "kopetewindow.moc"

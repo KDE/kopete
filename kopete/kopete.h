@@ -28,6 +28,8 @@
 
 #include "kopetemessage.h"
 
+class KopeteWindow;
+
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
@@ -44,6 +46,14 @@ private slots:
 	 * Load all plugins
 	 */
 	void slotLoadPlugins();
+
+	/**
+	 * The main window got deleted
+	 */
+	void slotMainWindowDestroyed();
+
+private:
+	KopeteWindow *m_mainWindow;
 };
 
 #endif

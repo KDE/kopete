@@ -128,6 +128,13 @@ private:
 	 * use QObject instead.
 	 */
 	QPtrDict<QObject> m_statusBarIcons;
+
+private slots:
+	/**
+	 * Show the prefs dialog. See also the source for a description
+	 * why this is needed.
+	 */
+	void slotShowPreferencesDialog();
 };
 
 #endif
