@@ -34,10 +34,13 @@
 KMSNChatService::KMSNChatService()
 {
 	socketTimer = 0L;
+	msgSocket = 0L;
 }
 
 KMSNChatService::~KMSNChatService()
 {
+	delete msgSocket;
+	msgSocket = 0L;
 }
 
 void KMSNChatService::connectToSwitchBoard(QString ID, QString address, QString auth)
