@@ -78,13 +78,18 @@ Possible ACW order including kabc
         agreed - Olivier
         yup - Matt
 If we delay the KABC assoc question until after contacts are added, we cannot use any IM information
-that is already present in KABC.  And if different contacts are in the KABC, this might surprise the user when 
+that is already present in KABC.  And if different contacts are in the KABC, this might surprise the user when
 the KMC appears in the contactlist with extra contacts.·
- 
+
 So it would be better if we performed this check before adding any contacts, in the ACW
 
 Olivier: I think a step (the first?) should be to ask a displayname for the metacontact.
 
+wow wow wow...  this make a big ACW, but a quick add feature would still be desired by people like this:
+Bug 53062: Adding contacts more quickly
+
+
+--Will's try--
 1) Welcome :P
 2) Do you want to use the KDE Addressbook for this contact, or restrict it to Kopete?
    ( Could have a 'remember my choice and don't ask again option' ).
@@ -94,11 +99,11 @@ Olivier: I think a step (the first?) should be to ask a displayname for the meta
    (Mark the contact as 'In KABC' or can we just use valid vs invalid KABC UIDs to show relation?
    (Chances are next time the user adds a KABC addressee it will coincide with an existing Kopete UID).
 4) (Check to see if IM fields are already present in KABC)
-5a)"The addressbook already contained the following IM information..  
+5a)"The addressbook already contained the following IM information..
 (goto C)
 
 A) How would you like to IM XXX?
-B) Fill in contact details 
+B) Fill in contact details
    (Add duplicate check after validity check)
 C) Use another protocol?
 
@@ -107,15 +112,54 @@ D) Finish screen
 NB) Better to move to a serial selection of protocols (Select protocol -> fill in details -> Select protocol or done ...).
 This way power users can add +1 contact per protocol without complicating the ACW for simple users.
 
-wow wow wow...  this make a big ACW, but a quick add feature would still be desired by people like this:
-Bug 53062: Adding contacts more quickly
+
+
+--Olivier's try--
+1) Welcome :P   (the smeley is very important here)
+2) some radio-button (could be merged with the welcome sceen?)    we need to choose a good default, or using the last selected one
+	(.) Add this contact to a new KAB entry 	 => goto A
+	(.) Use an existing KAb Entry           	 => goto B
+	(.) Do not add this contact to KAB      	 => goto 3
+
+A) use a KPart from KAB to show the widget showed when adding new KAB entried => goto 3
+B) use a KPart from KAB to search an user an select one
+
+3) select groups, and ask the displayName (let empty to use the serverside one)  (show the KAB displayname by default)
+4) select account to use  (select by default account where a KAB entry exist)
+5) fill the account data (if a KAB entry exist, show as default)
+6) (.) another account    => goto 5
+   (.) finish
+7) Finish screen  (is that possible to merge this screen with the previous one?
+
+This try to do all in as few step as possible.
+
+
+
+ KAB Windget in Kopete
+=========================
+
+ in the metacontact popup menu:
+A)  "Add to KAB"         if the metacontact don't use KAB yet
+B)  "View information"   if the metacontact is already in KAB
+
+
+A)  show the step  2 and A/B  of my addcontactwizard  (Olivier)
+
+B) KParts showing the KAdressBook entries information, and allow to edit it of course
+
+
+so kopete becomes in fact a adressbook itself
+
+
 
 Adding fields to kabc
 ~~~~~~~~~~~~~~~~~~~~~
-Either - all new addressee, no IM + new IM to add | existing address, no IM + new IM to add 
+Either - all new addressee, no IM + new IM to add | existing address, no IM + new IM to add
 | existing addressee, no IM + new IM to add | existing addressee, existing IM + new IM to add | existing addressee, existing IM + nothing to add
 
 I think we're going to need a more complex data structure to tell KCL::addMetaContact what it has to do.
+
+   I don't understand this <p>  -Olivier
 
 Fields to put in kabc
 ~~~~~~~~~~~~~~~~~~~~~
@@ -158,15 +202,13 @@ Scenario 2:
 2) Do nothing
 3) Deferreed association - user performs associate when they want to
 
-For/In Favour
-~~~~~~~~~~~~~
+-- For/In Favour
 .) easier to code
 .) easier migration
 .) doesn't disturb people who don't want it
 .) unobtrusive
 
-Against
-~~~~~~~
+-- Against
 .) less consistent
 	(can someone explain me this? -Olivier)
 	Yes, I need more explanation on what consistent means. - Matt
@@ -183,16 +225,20 @@ Hybrid 1-2
 1) Fetch SSCL
 2) Match SS contacts with kabc entries and associate automatically.  Unmatched contacts are associated with synthetic kabc entries.
 
-For
-~~~
+-- For
 .) Can integrate with kabc contacts without disturbing user
 
-Against
-~~~~~~~
+-- Against
 .) User has control of address book, this removes that control.
 .) Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
 .) Hybrid approach may be too complex for user to comprehend.
 .) this will be slow to add hundred of contacts when syncing the contactlist for the first time
+
+Conclusion
+~~~~~~~~~~
+I think the Optional is the best solution. all i describe in the other part of this file are using this solution (Olivier)
+
+
 
 KDE PIM Apps' use of Kopete
 --------------------------
