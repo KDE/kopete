@@ -5,6 +5,7 @@ Icon=color
 Name=Text Effect
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_texteffect
+X-Kopete-Plugin-Id=texteffect
 X-Kopete-Author=Olivier Goffart
 X-Kopete-Site=http://kopete.kde.org
 X-Kopete-Email=ogoffart@tiscalinet.be
