@@ -32,7 +32,6 @@ static QTextStream _out( stdout, IO_WriteOnly );
 
 static KCmdLineOptions opts[] =
 {
- { "async", I18N_NOOP("Get password asynchronously"), 0 },
  { "id <id>", I18N_NOOP("Config group to store password in"), "TestAccount" },
  { "set <new>", I18N_NOOP("Set password to new"), 0 },
  { "error", I18N_NOOP("Claim password was erroneous"), 0 },
@@ -43,11 +42,8 @@ static KCmdLineOptions opts[] =
 
 using namespace Kopete;
 
-QString retrieve( bool async, Password &pwd, const QPixmap &image, const QString &prompt )
+QString retrieve( Password &pwd, const QPixmap &image, const QString &prompt )
 {
-	if ( !async )
-		return pwd.retrieve( image, prompt );
-
 	PasswordRetriever r;
 	pwd.request( &r, SLOT( gotPassword( const QString & ) ), image, prompt );
 	QTimer tmr;
@@ -77,7 +73,6 @@ int main( int argc, char *argv[] )
 
 	KApplication app( "kopetepasswordtest" );
 
-	bool async = args->isSet("async");
 	bool setPassword = args->isSet("set");
 	QString newPwd = args->getOption("set");
 	QString passwordId = args->getOption("id");
@@ -92,7 +87,7 @@ int main( int argc, char *argv[] )
 
 	_out << "Cached value is null: " << pwd.cachedValue().isNull() << endl;
 
-	QString pass = retrieve( async, pwd, image, prompt );
+	QString pass = retrieve( pwd, image, prompt );
 
 	if ( !pass.isNull() )
 		_out << "Read password: " << pass << endl;
@@ -122,7 +117,7 @@ int main( int argc, char *argv[] )
 
 	if ( setPassword )
 	{
-		pass = retrieve( async, pwd, image, i18n("Hopefully this popped up because you set the password to the empty string.") );
+		pass = retrieve( pwd, image, i18n("Hopefully this popped up because you set the password to the empty string.") );
 		if( pass == newPwd )
 			_out << "Password successfully set." << endl;
 		else

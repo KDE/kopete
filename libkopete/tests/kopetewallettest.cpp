@@ -31,12 +31,6 @@
 
 static QTextStream _out( stdout, IO_WriteOnly );
 
-void openWallet()
-{
-	KWallet::Wallet *wallet = Kopete::WalletManager::self()->wallet();
-	_out << "[SYNC] Received wallet pointer: " << wallet << endl;
-}
-
 void closeWallet()
 {
 	Kopete::WalletManager::self()->closeWallet();
@@ -82,8 +76,7 @@ int main( int argc, char *argv[] )
 	{
 		QString arg = args->arg( i );
 		_out << "Processing " << arg << endl;
-		if( arg == QString::fromLatin1( "open" ) ) openWallet();
-		if( arg == QString::fromLatin1( "async" ) ) openWalletAsync();
+		if( arg == QString::fromLatin1( "open" ) ) openWalletAsync();
 		if( arg == QString::fromLatin1( "close" ) ) closeWallet();
 		if( arg == QString::fromLatin1( "delay" ) ) delay();
 		_out << "Done." << endl;
