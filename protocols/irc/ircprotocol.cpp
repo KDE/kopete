@@ -82,6 +82,16 @@ KActionMenu* IRCProtocol::protocolActions()
 	return m_actionMenu;
 }
 
+void IRCProtocol::connect()
+{
+	identity->connect();
+}
+
+void IRCProtocol::disconnect()
+{
+	identity->disconnect();
+}
+
 const QString IRCProtocol::protocolIcon()
 {
 	return "irc_protocol_small";

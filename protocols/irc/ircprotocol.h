@@ -62,6 +62,11 @@ public:
 
 	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
 
+public slots:
+	/** OBSOLETE **/
+	virtual void connect();
+	virtual void disconnect();
+
 private:
 	KActionMenu *m_actionMenu;
 
