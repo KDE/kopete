@@ -660,7 +660,7 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 void KopeteWindow::slotShowPreferencesDialog()
 {
 	if ( !m_configDialog )
-		m_configDialog = new KConfigureDialog( this );
+		m_configDialog = new KConfigureDialog( KConfigureDialog::Static, this );
 	m_configDialog->show();
 }
 
