@@ -192,7 +192,7 @@ void JabberProtocol::Connect()
 	bool sslPossible = jabberClient->setSSLEnabled(KGlobal::config()->readBoolEntry("UseSSL", "0"));
 	if(!sslPossible)
 	{
-		KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, SSL is not supported. QSSL was probably not compiled in."), i18n("SSL error"));
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("SSL is not supported. QSSL was probably not compiled in."), i18n("SSL Error"));
 		return;
 	}
 	
