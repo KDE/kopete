@@ -17,17 +17,16 @@
 
 #include <klocale.h>
 #include <kdeversion.h>
-#include <qinputdialog.h>
-
 #if KDE_IS_VERSION( 3, 1, 90 )
-	#include <kinputdialog.h>
-	#define QInputDialog KInputDialog
+#include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
 #endif
 
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
 
-KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut, 
+KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut,
 	const QObject *receiver, const char *slot, QObject *parent, const char *name ) :
 	KSelectAction(text, pix, cut, parent, name )
 {
@@ -39,7 +38,7 @@ KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, con
 		
 	QObject::connect( this, SIGNAL( activated( int ) ), 
 		this, SLOT( slotSelectAway( int ) ) );
-	
+
 	reasonCount = 0;
 
 	slotAwayChanged();
@@ -65,8 +64,20 @@ void KopeteAwayAction::slotSelectAway( int index )
 		awayReason = mAway->getMessage( awayTitles[index] );
 	}
 	else
-		awayReason = QInputDialog::getText( i18n( "Custom Away Message" ), i18n( "Please enter your away reason:" ), QString::null);
-	
+	{
+#if KDE_IS_VERSION( 3, 1, 90 )
+		awayReason = KInputDialog::getText(
+			i18n( "Custom Away Message" ),
+			i18n( "Please enter your away reason:" )
+			);
+#else
+		awayReason = KLineEditDlg::getText(
+			i18n( "Custom Away Message" ),
+			i18n( "Please enter your away reason:" )
+			);
+#endif
+	}
+
 	if( !awayReason.isEmpty() )
 	{
 		emit( awayMessageSelected( awayReason ) );
