@@ -33,7 +33,7 @@
                 <cstring>textLabel1</cstring>
             </property>
             <property name="text">
-                <string>&lt;p&gt;Motion Auto-Away cans et you away automaticaly when it doesn't detect motion from your webcam or any video4linux device.&lt;/p&gt; &lt;p&gt;It will put you online again when it detects you moving in front of the camera.&lt;/p&gt;</string>
+                <string>&lt;p&gt;Motion Auto-Away can set you away automaticaly when it does not detect motion from your webcam or any video4linux device.&lt;/p&gt; &lt;p&gt;It will put you online again when it detects you moving in front of the camera.&lt;/p&gt;</string>
             </property>
         </widget>
         <widget class="Line">
