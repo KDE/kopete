@@ -65,7 +65,8 @@ WPPreferences::~WPPreferences()
 void WPPreferences::installSamba()
 {
 	DEBUG(WPDMETHOD, "WPPreferences::installSamba()");
-	theProtocol->installSamba();
+	if (theProtocol)
+		theProtocol->installSamba();
 }
 
 // Save preferences

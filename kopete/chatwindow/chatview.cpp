@@ -443,9 +443,11 @@ void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const Q
 	if( item )
 	{
 		KopeteContactLVI *contactLVI = dynamic_cast<KopeteContactLVI*>( item );
-		KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu();
-		p->exec( point );
-		delete p;
+		if (contactLVI) {
+			KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu();
+			p->exec( point );
+			delete p;
+		}
 	}
 }
 

@@ -121,7 +121,10 @@ void WPContact::slotCheckStatus()
 	bool newIsOnline = false;
 
 	myWasConnected = protocol() != 0 && account() != 0;
-	if(account()) newIsOnline = dynamic_cast<WPAccount *>(account())->checkHost(contactId());
+	WPAccount *acct = dynamic_cast<WPAccount *>(account());
+	if (acct) {
+		newIsOnline = acct->checkHost(contactId());
+	}
 
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected)
 		setOnlineStatus(myWasConnected ? newIsOnline ? WPProtocol::protocol()->WPOnline : WPProtocol::protocol()->WPOffline : WPProtocol::protocol()->WPOffline );
@@ -148,12 +151,16 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 void WPContact::slotSendMessage( KopeteMessage& message )
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
+	// Warning: this could crash
 	DEBUG(WPDINFO, message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId() );
 
 	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
-	dynamic_cast<WPAccount *>(account())->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->contactId() );
-
-	emit messageSuccess();
+	WPAccount *acct = dynamic_cast<WPAccount *>(account());
+	WPContact *contact = dynamic_cast<WPContact *>( message.to().first() );
+	if (acct && contact) {
+		acct->slotSendMessage( Message, contact->contactId() );
+		emit messageSuccess();
+	}
 }
 
 #include "wpcontact.moc"

@@ -154,9 +154,11 @@ KActionMenu* WPAccount::actionMenu()
 	KActionMenu *theActionMenu = new KActionMenu("WinPopup", this);
 	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "WinPopup (" + accountId() + ")");
 
-	theActionMenu->insert(new KAction("Online", QIconSet(theProtocol->WPOnline.iconFor(this)), 0, this, SLOT(connect()), theActionMenu, "actionGoAvailable"));
-	theActionMenu->insert(new KAction("Away", QIconSet(theProtocol->WPAway.iconFor(this)), 0, this, SLOT(goAway()), theActionMenu, "actionGoAway"));
-	theActionMenu->insert(new KAction("Offline", QIconSet(theProtocol->WPOffline.iconFor(this)), 0, this, SLOT(disconnect()), theActionMenu, "actionGoOffline"));
+    if (theProtocol) {
+		theActionMenu->insert(new KAction("Online", QIconSet(theProtocol->WPOnline.iconFor(this)), 0, this, SLOT(connect()), theActionMenu, "actionGoAvailable"));
+		theActionMenu->insert(new KAction("Away", QIconSet(theProtocol->WPAway.iconFor(this)), 0, this, SLOT(goAway()), theActionMenu, "actionGoAway"));
+		theActionMenu->insert(new KAction("Offline", QIconSet(theProtocol->WPOffline.iconFor(this)), 0, this, SLOT(disconnect()), theActionMenu, "actionGoOffline"));
+	}
 
 	return theActionMenu;
 }

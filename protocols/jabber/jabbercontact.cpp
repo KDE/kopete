@@ -346,8 +346,10 @@ void JabberContact::syncGroups() {
 
 void JabberContact::km2jm(const KopeteMessage & km, Jabber::Message & jm) {
     JabberContact *to = dynamic_cast<JabberContact *>(km.to().first());
-    const JabberContact *from =
-	dynamic_cast<const JabberContact *>(km.from());
+    const JabberContact *from = dynamic_cast<const JabberContact *>(km.from());
+
+	if (!to || !from)
+		return;
 
     // ugly hack, Jabber::Message does not have a setFrom() method
     Jabber::Message jabMessage(Jabber::Jid(from->userId()));

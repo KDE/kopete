@@ -68,7 +68,9 @@ SingleSpellInstance::SingleSpellInstance( SpellCheckPlugin *plugin, KopeteView *
 	//We can't use \b because QT barfs when trying to split on it
 	mBound = QRegExp( QString::fromLatin1("[\\s\\W]") );
 
-	connect( dynamic_cast<QObject*>(mView), SIGNAL( destroyed() ), this, SLOT( slotViewDestroyed() ) );
+	QObject *o = dynamic_cast<QObject*>(mView);
+	if (o)
+		connect( o, SIGNAL( destroyed() ), this, SLOT( slotViewDestroyed() ) );
 }
 
 SingleSpellInstance::~SingleSpellInstance()
