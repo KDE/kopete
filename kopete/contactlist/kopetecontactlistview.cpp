@@ -1116,7 +1116,7 @@ void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 	m_offlineItem->setText(0,i18n("Offline contacts (%1)").arg(m_offlineItem->childCount()));
 }
 
-void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem * /* parent */, QListViewItem *after)
+void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *  parent , QListViewItem *after)
 {
 	if(!acceptDrag(e))
 		return;
@@ -1228,13 +1228,11 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	QListViewItem *source=currentItem();
 	QListViewItem *parent;
 	QListViewItem *afterme;
-
 	// Due to a little design problem in KListView::findDrop() we can't
 	// call it directly from a const method until KDE 4.0, but as the
 	// method is in fact const we can of course get away with a
 	// const_cast...
-	const_cast<KopeteContactListView *>( this )->findDrop( e->pos(),
-		parent, afterme );
+	const_cast<KopeteContactListView *>( this )->findDrop( e->pos(), parent, afterme );
 
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(afterme);
 
@@ -1257,7 +1255,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	//			return false;
 			return true;
 		}
-		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI && source_contact) //we are moving a metacontact to toplevel
+		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI && !source_contact) //we are moving a metacontact to toplevel
 		{
 			if(source_metaLVI->group() == KopeteGroup::toplevel)
 				return false;
@@ -1320,6 +1318,15 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 	return false;
 }
+
+void KopeteContactListView::findDrop(const QPoint &pos, QListViewItem *&parent, QListViewItem *&after)
+{
+	//Since KDE 3.1.1 ,  the original find Drop return 0L for afterme if the group is open.
+	//This woraround allow us to keep the highlight of the item, and give always a correct position
+	parent=0L;
+	after=itemAt(pos);
+}
+
 
 void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 {

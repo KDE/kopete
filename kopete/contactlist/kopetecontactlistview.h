@@ -88,6 +88,12 @@ protected:
 	virtual bool acceptDrag(QDropEvent *e) const;
 	virtual QDragObject *dragObject();
 
+	/**
+	 * Since KDE 3.1.1 ,  the original find Drop return 0L for afterme if the group is open.
+	 * This woraround allow us to keep the highlight of the item, and give always a correct position
+	 */
+	virtual void findDrop(const QPoint &pos, QListViewItem *&parent, QListViewItem *&after);
+
 private slots:
 	void slotSelectionChanged();
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
