@@ -48,20 +48,41 @@
               </td>
             </tr>
             <tr>
-              <td width="32" valign="bottom">
-	        <a class="KopeteDisplayName">
+              <td width="32" valign="bottom" align="center">
+	        <a style="text-decoration:none;" class="KopeteDisplayName">
 		<xsl:attribute name="href">kopetemessage://<xsl:value-of select="from/contact/contactDisplayName/@text"/></xsl:attribute>
 		<xsl:attribute name="contactid"><xsl:value-of select="from/contact/@contactId"/></xsl:attribute>
-                <img height="32" width="32">
-                  <xsl:attribute name="src">
-                   <xsl:value-of select="$image-location" />
-                   <xsl:value-of select="$from-color-scheme" />
-                   <xsl:text>them.png</xsl:text>
-                  </xsl:attribute>
-                  <xsl:attribute name="title">
-                    <xsl:value-of select="from/contact/contactDisplayName/@text"/>
-                  </xsl:attribute>
-                </img>
+		<xsl:choose>
+			<xsl:when test="from/contact/@userPhoto">
+			    <img style="height:48px;margin:4px;margin-bottom:0px;border:1px solid black;">
+				<xsl:attribute name="src"><xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
+			    </img>
+			</xsl:when>
+			<xsl:otherwise>
+				<img height="32" width="32">
+				  <xsl:attribute name="src">
+				   <xsl:value-of select="$image-location" />
+				   <xsl:value-of select="$from-color-scheme" />
+				   <xsl:text>them.png</xsl:text>
+				  </xsl:attribute>
+				  <xsl:attribute name="title">
+				    <xsl:value-of select="from/contact/contactDisplayName/@text"/>
+				  </xsl:attribute>
+				</img>
+		    	</xsl:otherwise>
+		</xsl:choose>
+		<xsl:if test="$public-names='yes'">
+		      <span>
+			<xsl:attribute name="style">
+			  <xsl:text>font-family:</xsl:text>
+			  <xsl:value-of select="$font-family"/>
+			  <xsl:text>;font-size:</xsl:text>
+			  <xsl:value-of select="$name-font-size"/>
+			  <xsl:text>;</xsl:text>
+			</xsl:attribute>
+			<xsl:value-of select="from/contact/contactDisplayName/@text"/>
+		      </span>
+                 </xsl:if>
 		</a>
               </td>
               <td>
@@ -237,26 +258,6 @@
                 </table>
               </td>
             </tr>
-            <xsl:choose>
-              <xsl:when test="$public-names='yes'">
-                <tr>
-                  <td colspan="2">
-                    <span>
-                      <xsl:attribute name="style">
-                        <xsl:text>font-family:</xsl:text>
-                        <xsl:value-of select="$font-family"/>
-                        <xsl:text>;font-size:</xsl:text>
-                        <xsl:value-of select="$name-font-size"/>
-                        <xsl:text>;</xsl:text>
-                      </xsl:attribute>
-                      <xsl:value-of select="from/contact/contactDisplayName/@text"/>
-                    </span>
-                  </td>
-                </tr>
-              </xsl:when>
-              <xsl:otherwise>
-              </xsl:otherwise>
-            </xsl:choose>
           </table>
         </xsl:when>
         <xsl:when test="@direction='1'">
@@ -388,19 +389,28 @@
                 </table>
               </td>
               <td width="32" valign="bottom">
-	        <a class="KopeteDisplayName">
+		<a style="text-decoration:none;" class="KopeteDisplayName">
 		<xsl:attribute name="href">kopetemessage://<xsl:value-of select="from/contact/contactDisplayName/@text"/></xsl:attribute>
 		<xsl:attribute name="contactid"><xsl:value-of select="from/contact/@contactId"/></xsl:attribute>
-                <img height="32" width="32">
-                  <xsl:attribute name="src">
-                   <xsl:value-of select="$image-location" />
-                   <xsl:value-of select="$to-color-scheme" />
-                   <xsl:text>me.png</xsl:text>
-                  </xsl:attribute>
-                  <xsl:attribute name="title">
-                    <xsl:value-of select="from/contact/contactDisplayName/@text"/>
-                  </xsl:attribute>
-                </img>
+		<xsl:choose>
+		    <xsl:when test="from/contact/@userPhoto">
+                        <img style="height:48px;margin:4px;margin-bottom:0px;border:1px solid black;">
+			    <xsl:attribute name="src"><xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
+			</img>
+		    </xsl:when>
+		    <xsl:otherwise>
+			<img height="32" width="32">
+			    <xsl:attribute name="src">
+				<xsl:value-of select="$image-location" />
+				<xsl:value-of select="$from-color-scheme" />
+				<xsl:text>me.png</xsl:text>
+			    </xsl:attribute>
+			    <xsl:attribute name="title">
+				<xsl:value-of select="from/contact/contactDisplayName/@text"/>
+			    </xsl:attribute>
+			</img>
+		    </xsl:otherwise>
+		</xsl:choose>
 		</a>
               </td>
             </tr>
@@ -537,19 +547,28 @@
                 </tr>
                 <tr>
                   <td width="32" valign="bottom">
-                    <a class="KopeteDisplayName">
+		    <a style="text-decoration:none;" class="KopeteDisplayName">
 		    <xsl:attribute name="href">kopetemessage://<xsl:value-of select="from/contact/contactDisplayName/@text"/></xsl:attribute>
 		    <xsl:attribute name="contactid"><xsl:value-of select="from/contact/@contactId"/></xsl:attribute>
-		    <img height="32" width="32">
-                      <xsl:attribute name="src">
-                       <xsl:value-of select="$image-location" />
-                       <xsl:value-of select="$from-color-scheme" />
-                       <xsl:text>them.png</xsl:text>
-                      </xsl:attribute>
-                      <xsl:attribute name="title">
-                        <xsl:value-of select="from/contact/contactDisplayName/@text"/>
-                      </xsl:attribute>
-                    </img>
+			<xsl:choose>
+				<xsl:when test="from/contact/@userPhoto">
+				    <img style="height:48px;margin:4px;margin-bottom:0px;;border:1px solid black;">
+					<xsl:attribute name="src"><xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
+				    </img>
+				</xsl:when>
+				<xsl:otherwise>
+				    <img height="32" width="32">
+					<xsl:attribute name="src">
+					    <xsl:value-of select="$image-location" />
+					    <xsl:value-of select="$from-color-scheme" />
+					    <xsl:text>them.png</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="title">
+					    <xsl:value-of select="from/contact/contactDisplayName/@text"/>
+					</xsl:attribute>
+				    </img>
+				</xsl:otherwise>
+			</xsl:choose>
 		    </a>
                   </td>
                   <td>

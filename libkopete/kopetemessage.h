@@ -337,7 +337,7 @@ public:
 	/**
 	 * get a XML version of this message
 	 */
-	const QDomDocument asXML() const;
+	const QDomDocument asXML();
 
 	/**
 	 * Enables the use of a background for a message
@@ -399,6 +399,8 @@ private:
 	KSharedPtr<Private> d;
 
 	static QString parseLinks( const QString &message, MessageFormat format );
+
+	QDomElement contactNode( QDomDocument doc, const Contact *contact );
 };
 
 }

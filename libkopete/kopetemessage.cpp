@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include <qcolor.h>
+#include <qimage.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
@@ -26,6 +27,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
+#include <ktempfile.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -60,6 +62,7 @@ public:
 	bool rtfOverride;
 	QDateTime timeStamp;
 	QFont font;
+	KTempFile photoFile;
 
 	QColor fgColor;
 	QColor bgColor;
@@ -459,7 +462,7 @@ void Message::setManager(ChatSession *kmm)
 }
 
 
-static QDomElement contactNode( QDomDocument doc, const Contact *contact )
+QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 {
 	KopetePrefs *p = KopetePrefs::prefs();
 
@@ -495,16 +498,31 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 	contactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( contactName ) );
 	contactNode.appendChild( contactNameNode );
 
+
 	QDomElement metacontactNameNode = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("dir"), metacontactName.isRightToLeft() ?
 	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( metacontactName ) );
+
+	if( contact->metaContact() )
+	{
+		QImage photo = contact->metaContact()->photo();
+		if( !photo.isNull() )
+		{
+			d->photoFile = KTempFile( QString::null, QString::fromLatin1("png") );
+			d->photoFile.setAutoDelete( true );
+			d->photoFile.close();
+			photo.save( d->photoFile.name(), "PNG" );
+			contactNode.setAttribute( QString::fromLatin1("userPhoto"), QStyleSheet::escape( d->photoFile.name() ) );
+		}
+	}
+
 	contactNode.appendChild( metacontactNameNode );
 
 	// FIXME: protocol() returns NULL here in the style preview in appearance config.
 	// this isn't the right place to work around it, since contacts should never have
 	// no protocol, but it works for now.
-	QString iconName = QString::fromLatin1("unknown");
+	QString iconName = QString::fromLatin1("kopete");
 	if ( Protocol *protocol = contact->protocol() )
 		iconName = protocol->pluginIcon();
 
@@ -524,7 +542,7 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 }
 
 
-const QDomDocument Message::asXML() const
+const QDomDocument Message::asXML()
 {
 	QDomDocument doc;
 	QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
