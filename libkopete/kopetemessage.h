@@ -25,6 +25,8 @@
 
 class KopeteMessage
 {
+Q_OBJECT
+
 public:
 	/**
 		Direction of a message. Inbound is from the chat partner, Outbound is
