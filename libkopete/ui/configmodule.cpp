@@ -54,9 +54,16 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, cons
 
 ConfigModule::~ConfigModule()
 {
-	// TODO When kdialogbase is fixed, delete the parent QFrame, and
-	// all traces of the related page
+#if (QT_VERSION>=0x030005 && QT_VERSION<0x030102) && KDE_VERSION<0x0302000
+	// Due to a bug in Qt 3.1 and 3.1.1 no close events are sent to hidden
+	// widgets, causing the KJanusWidget to crash. This workaround is
+	// rather intrusive and should be used only in the affected versions
+	// to avoid hard to track bugs in the future. KDE HEAD (to become 3.2)
+	// has a workaround for this problem, and additionally it's fixed in
+	// Qt 3.1.2.
 	kapp->sendPostedEvents();
+#endif
+
 	PreferencesDialog::preferencesDialog()->remove(this);
 }
 
