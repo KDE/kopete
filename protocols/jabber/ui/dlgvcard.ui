@@ -12,9 +12,6 @@
             <height>408</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>dlgVCard</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>

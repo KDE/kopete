@@ -315,23 +315,7 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 	if(!contact)
 		return;
 
-	/*kdDebug(14150) << k_funcinfo <<
-		"Incoming away-message is: " << message << endl;*/
-
-	QString filteredMessage = message;
-	filteredMessage.replace(
-		QRegExp(QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>")),
-		QString::fromLatin1("\\1"));
-	filteredMessage.replace(
-		QRegExp(QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>")),
-		QString::fromLatin1("\\1") );
-	filteredMessage.replace(
-		QRegExp(QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>")),
-		QString::fromLatin1("\\1") );
-
-	/*kdDebug(14150) << k_funcinfo <<
-		"Filtered Away-message is: " << filteredMessage << endl;*/
-	contact->setAwayMessage(filteredMessage);
+	contact->setAwayMessage(message);
 }
 
 // Called when a group is added by adding a contact
@@ -369,7 +353,7 @@ void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &old
 	//We can't rename the top-level or temporary groups
 	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
 		return;
-		
+
 	kdDebug(14150) << k_funcinfo << "Sending 'group rename' to server" << endl;
 	engine()->sendChangeGroupName(oldName, group->displayName());
 }
@@ -380,11 +364,11 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 	if (!isConnected())
 		return;
 
-	//We can't rename the top-level or temporary groups 
+	//We can't rename the top-level or temporary groups
 	//This shouldn't happen here, but it can't hurt.
 	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
 		return;
-		
+
 	// This method should be called after the contacts have been removed
 	// We should then be able to remove the group from the server
 	kdDebug(14150) << k_funcinfo <<
@@ -699,7 +683,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			{
 				//OSCAR doesn't support multiple groups for a contact. Add to the
 				//first one
-				
+
 				//apparently kopeteGroups.first() can be invalid. Attempt to prevent
 				//crashes in SSIData::findGroup(const QString& name)
 				groupName = kopeteGroups.first() ? kopeteGroups.first()->displayName() : i18n("Buddies");

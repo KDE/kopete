@@ -338,6 +338,16 @@ void AIMContact::setAwayMessage(const QString &message)
 {
 	/*kdDebug(14150) << k_funcinfo <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
+	QString filteredMessage = message;
+	filteredMessage.replace(
+		QRegExp(QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>")),
+		QString::fromLatin1("\\1"));
+	filteredMessage.replace(
+		QRegExp(QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>")),
+		QString::fromLatin1("\\1") );
+	filteredMessage.replace(
+		QRegExp(QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>")),
+		QString::fromLatin1("\\1") );
 	setProperty(mProtocol->awayMessage, message);
 	emit awayMessageChanged();
 }

@@ -13,9 +13,6 @@
             <height>442</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>Form1</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -108,9 +105,6 @@
                                         </property>
                                         <property name="text">
                                             <string>Remember &amp;password</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+P</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Check to save your password.</string>
@@ -317,9 +311,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -333,9 +324,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Override default server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -466,9 +454,6 @@
                                     <string>Automatically open a &amp;chat window when someone starts
 a conversation</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+C</string>
-                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -488,9 +473,6 @@ a conversation</string>
                                 <property name="text">
                                     <string>Download and show c&amp;ustom emoticons (experimental)</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+U</string>
-                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -506,9 +488,6 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>Send a&amp;way messages</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+W</string>
                                 </property>
                                 <property name="checked">
                                     <bool>false</bool>
@@ -1077,9 +1056,6 @@ a conversation</string>
                                 <property name="text">
                                     <string>Block all users not in 'Allowed' &amp;list</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+L</string>
-                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
                                 </property>
@@ -1140,9 +1116,6 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>View &amp;Reverse List</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+R</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>The reverse list is the list of contact who added you in their own contact list.</string>

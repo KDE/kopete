@@ -114,9 +114,6 @@
                                         <property name="text">
                                             <string>Remember &amp;password</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+P</string>
-                                        </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Check to save your password.</string>
                                         </property>
@@ -218,9 +215,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Re&amp;gister New Account</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+G</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Register a new account on this network.</string>
@@ -525,9 +519,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Override default configuration</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">

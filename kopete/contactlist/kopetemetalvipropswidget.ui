@@ -12,9 +12,6 @@
             <height>443</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>KopeteMetaLVIPropsWidget</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -81,9 +78,6 @@
                                 <property name="text">
                                     <string>Use the name given by the &amp;server</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Use the name of the child contact</string>
                                 </property>
@@ -133,9 +127,6 @@ This option is only available if there is exactly one child contact </string>
                                 </property>
                                 <property name="text">
                                     <string>Use custom &amp;icons</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+I</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to set custom icons for this contact</string>
@@ -232,9 +223,6 @@ This option is only available if there is exactly one child contact </string>
                                 <property name="text">
                                     <string>Has &amp;address book entry</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+A</string>
-                                </property>
                                 <property name="checked">
                                     <bool>false</bool>
                                 </property>
@@ -322,9 +310,6 @@ This option is only available if there is exactly one child contact </string>
                                 <property name="text">
                                     <string>&amp;Merge with Address Book...</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+M</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Select which data obtained from instant messaging systems to add to the KDE Address Book</string>
                                 </property>
@@ -380,9 +365,6 @@ This option is only available if there is exactly one child contact </string>
                         <property name="text">
                             <string>Start a cha&amp;t</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+T</string>
-                        </property>
                         <property name="toolTip" stdset="0">
                             <string>Open a chat window with this contact when this event occurs for this contact</string>
                         </property>
@@ -393,9 +375,6 @@ This option is only available if there is exactly one child contact </string>
                         </property>
                         <property name="text">
                             <string>&amp;Display a message:</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+D</string>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>Display a message on your screen when this event occurs for this contact</string>
@@ -422,9 +401,6 @@ This option is only available if there is exactly one child contact </string>
                         <property name="text">
                             <string>T&amp;rigger once</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+R</string>
-                        </property>
                         <property name="toolTip" stdset="0">
                             <string>Only start a chat the next time the event occurs</string>
                         </property>
@@ -439,9 +415,6 @@ This option is only available if there is exactly one child contact </string>
                         <property name="text">
                             <string>D&amp;isplay once</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+I</string>
-                        </property>
                         <property name="toolTip" stdset="0">
                             <string>Only display a message the next time the event occurs</string>
                         </property>
@@ -455,9 +428,6 @@ This option is only available if there is exactly one child contact </string>
                         </property>
                         <property name="text">
                             <string>P&amp;lay once</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+L</string>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>Only play a sound the next time the event occurs</string>
@@ -481,9 +451,6 @@ This option is only available if there is exactly one child contact </string>
                         <property name="text">
                             <string>&amp;Play a sound:</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+P</string>
-                        </property>
                         <property name="toolTip" stdset="0">
                             <string>Play a sound when this event occurs for this contact</string>
                         </property>
@@ -494,9 +461,6 @@ This option is only available if there is exactly one child contact </string>
                         </property>
                         <property name="text">
                             <string>S&amp;uppress standard notifications</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+U</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
