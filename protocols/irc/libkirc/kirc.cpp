@@ -48,6 +48,7 @@ KIRCMethodFunctorCall *KIRC::IgnoreMethod( new KIRCMethodFunctor_Ignore() );
 
 KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_status(Disconnected),
+	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
 	  m_IrcMethods(17, false),
 	  m_IrcNumericMethods(101),
