@@ -86,7 +86,7 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(cons
 				if (fullMatch)
 					result = kmm;
 			}
-		} 
+		}
 	}
 	return result;
 }
@@ -166,8 +166,7 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 		if ( it.current()->protocol() == protocol )
 		{
 //			kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
-			mSessionDict.remove( it.current()->mmId() );
-			delete it.current();
+			it.current()->deleteLater();
 		}
 	}
 }

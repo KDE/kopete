@@ -252,24 +252,17 @@ QPixmap* KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, c
 	QString fingerprint;
 
 	// fingerprint consists of description/icon name/color/overlay name/size/idle state
-	fingerprint.sprintf( "%s/%s/%s/%i/%c",
+	fingerprint.sprintf( "%s/%s/%s/%s/%i/%c",
 			d->description.latin1(),
 			icon.latin1(),
-			QString::number(color.red()).latin1(),
-			QString::number(color.green()).latin1(),
-			QString::number(color.blue()).latin1(),
+			color.name().latin1(),
 			d->overlayIcon.latin1(),
 			size,
 			idle ? 'i' : 'a' );
 
 	// look it up in the cache
-	QPixmap* theIcon;
-
-	if ( ( theIcon = d->iconCache.find( fingerprint ) ) ) //return (*(d->iconCache))[ fingerprint ];		// cache hit
-	{
-//		kdDebug(14010) << k_funcinfo << "Found " << fingerprint << " in icon cache!" << endl;
-	}
-	else
+	QPixmap* theIcon= d->iconCache.find( fingerprint );
+	if ( ! theIcon  )
 	{
 		// cache miss
 //		kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;

@@ -253,6 +253,12 @@ public:
 	 */
 	void setConversations( int ) const;
 
+	/**
+	 * Returns the name of the icon to use for this contact
+	 */
+	virtual QString& icon() const;
+
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -311,14 +317,9 @@ public slots:
 	virtual void syncGroups();
 
 	/**
-	 * Returns the name of the icon to use for this contact
-	 */
-	virtual QString& icon() const;
-
-	/**
 	 * Changet the icon to use for this account
 	 */
-	virtual void setIcon( const QString& icon );
+	void setIcon( const QString& icon );
 
 protected:
 	/**
