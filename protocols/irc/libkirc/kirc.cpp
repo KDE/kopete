@@ -678,6 +678,20 @@ void KIRC::slotReadyRead()
 					emit( incomingChannelMode( channel, mode, params ) );
 					break;
 				}
+				case 322:
+				{
+					QString channel = line.section(' ', 3, 3);
+					uint users = line.section(' ', 4, 4).stripWhiteSpace().toUInt();
+					QString topic = line.section(':', 2);
+					emit incomingListedChan( channel, users, topic );
+					break;
+				}
+				case 323:
+				{
+					emit incomingEndOfList();
+					break;
+				}
+
 				default:
 				{
 					/*
@@ -730,6 +744,14 @@ void KIRC::addToNotifyList( const QString &nick )
 	{
 		mNotifyList.append( nick );
 		slotCheckOnline();
+	}
+}
+
+void KIRC::list()
+{
+ 	if(loggedIn)
+	{
+		writeString( QString::fromLatin1("LIST") );
 	}
 }
 

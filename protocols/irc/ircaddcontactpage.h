@@ -39,6 +39,12 @@ public slots:
 
 private slots:
 	virtual bool validateData();
+	void slotSearch();
+	void slotListedChannel( const QString &channel, uint users, const QString &topic );
+	void slotListEnd();
+private:
+	IRCAccount *mAccount;
+	QString search;
 };
 
 #endif

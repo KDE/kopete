@@ -30,17 +30,72 @@
 #include "ircadd.h"
 #include "ircprotocol.h"
 #include "ircaccount.h"
+#include "kirc.h"
 #include "kopetecontactlist.h"
 
-IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount * ) : AddContactPage(parent, 0)
+class ChannelListItem : public QListViewItem
+{
+	public:
+		ChannelListItem( QListView *parent, QString arg1, QString arg2, QString arg3 );
+		virtual int compare( QListViewItem *i, int col, bool ascending ) const;
+};
+
+ChannelListItem::ChannelListItem( QListView *parent, QString arg1, QString arg2, QString arg3 ) :
+	QListViewItem( parent, arg1, arg2, arg3 ) {}
+
+int ChannelListItem::compare( QListViewItem *i, int col, bool ascending ) const
+{
+	if( col == 1 )
+	{
+		if( text(1).toUInt() < i->text(1).toUInt() )
+			return -1;
+		else if ( text(1).toUInt() == i->text(1).toUInt() )
+			return 0;
+		else
+			return 1;
+	}
+	else
+		return QListViewItem::compare( i, col, ascending );
+}
+
+
+IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddContactPage(parent, 0)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	ircdata = new ircAddUI(this);
-	ircdata->searchResults->setEnabled( false );
-	ircdata->searchButton->setEnabled( false );
+	mAccount = a;
+
+	connect( ircdata->searchButton, SIGNAL( clicked() ), this, SLOT( slotSearch() ) );
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
+}
+
+void IRCAddContactPage::slotSearch()
+{
+	ircdata->searchResults->clear();
+	if( mAccount->isConnected() )
+	{
+		search = ircdata->addID->text();
+		connect( mAccount->engine(), SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ), this,
+			SLOT( slotListedChannel( const QString &, uint, const QString & ) ) );
+		connect( mAccount->engine(), SIGNAL( incomingEndOfList() ), this, SLOT( slotListEnd() ) );
+		mAccount->engine()->list();
+	}
+}
+
+void IRCAddContactPage::slotListedChannel( const QString &channel, uint users, const QString &topic )
+{
+	if( search.isEmpty() || channel.contains( search, false ) || topic.contains( search, false ) )
+	{
+		ChannelListItem *i = new ChannelListItem( ircdata->searchResults, channel, QString::number(users), topic );
+		ircdata->searchResults->insertItem( i );
+	}
+}
+
+void IRCAddContactPage::slotListEnd()
+{
+	disconnect( mAccount->engine(), 0, this, 0 );
 }
 
 bool IRCAddContactPage::apply(KopeteAccount *account , KopeteMetaContact *m)

@@ -63,6 +63,7 @@ public:
 	void changeMode( const QString &target, const QString &mode);
 	void addToNotifyList( const QString &nick );
 	void removeFromNotifyList( const QString &nick );
+	void list();
 
 enum UserClass
 {
@@ -132,6 +133,8 @@ signals:
 	void incomingChannelMode( const QString &channel, const QString &mode, const QString &params);
 	void incomingUserIsAway( const QString &nick, const QString &awayMessage );
 	void userOnline( const QString &nick );
+	void incomingListedChan( const QString &chan, uint users, const QString &topic );
+	void incomingEndOfList();
 
 private:
 	bool waitingFinishMotd;
