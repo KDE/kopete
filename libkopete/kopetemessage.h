@@ -282,7 +282,7 @@ private:
 	/**
 	 * Helper method for transforMessage for formatting names for display
 	 */
-	 QString formatDisplayName( QString name );
+	 QString formatDisplayName( QString name ) const;
 };
 
 #endif

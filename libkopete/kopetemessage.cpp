@@ -333,7 +333,7 @@ QString KopeteMessage::parsedBody() const
 }
 
 
-QString KopeteMessage::formatDisplayName(QString name)
+QString KopeteMessage::formatDisplayName(QString name) const
 {
 	return QString::fromLatin1(
 		"<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + 
