@@ -48,7 +48,7 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Jabber
 	// here anymore as it causes an invocation of manager()
 	// which is still a pure virtual in this constructor.
 	// (needs to be done in subclasses instead)
-	reevaluateStatus ();
+	//reevaluateStatus ();
 
 }
 
