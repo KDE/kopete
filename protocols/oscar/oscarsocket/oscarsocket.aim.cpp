@@ -73,27 +73,27 @@ void OscarSocket::sendLoginAIM(void)
 // Parses a minityping notification from the server
 void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_TYPINGNOTIFY) SNAC(4,20)" << endl;
+//	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_TYPINGNOTIFY)" << endl;
 	// Throw away 8 bytes which are all zeros
-	inbuf.getDWord();
-	inbuf.getDWord();
+	inbuf.getBlock(8)
 
 	// Throw away two bytes (0x0001) which are always there
-	inbuf.getWord();
+	inbuf.getWord(); // notification channel
 
 	// The length of the screen name
 	int snlen = inbuf.getByte();
-	kdDebug(14150) << "Trying to find username of length: " << snlen << endl;
+//	kdDebug(14150) << k_funcinfo << "Trying to find username of length: " << snlen << endl;
 
 	// The screen name
 	char *sn = inbuf.getBlock(snlen);
-	QString screenName = QString::fromLatin1(sn);
+	QString screenName = QString::fromLatin1(sn); // TODO: check if encoding is right
 	delete [] sn;
 
 	// Get the actual notification
 	WORD notification = inbuf.getWord();
 
-	kdDebug(14150) << "[OSCAR] Determining Minitype from user '" << screenName << "'" << endl;
+//	kdDebug(14150) << k_funcinfo <<
+//		"Determining Minitype from user '" << screenName << "'" << endl;
 
 	switch(notification)
 	{
@@ -110,19 +110,20 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 			emit gotMiniTypeNotification(screenName, 2);
 			break;
 		default:
-			kdDebug(14150) << "[OSCAR] MiniType Error: " << notification << endl;
+			kdDebug(14150) << k_funcinfo << "MiniType Error: " << notification << endl;
 	}
 }
 
 void OscarSocket::sendMiniTypingNotify(QString screenName, TypingNotify notifyType)
 {
-	kdDebug(14150) << k_funcinfo <<  "Sending Typing notify " << endl;
+//	kdDebug(14150) << k_funcinfo << "SEND (SRV_TYPINGNOTIFY)" << endl;
 
 	//look for direct connection before sending through server
 	OscarConnection *dc = mDirectIMMgr->findConnection(screenName);
 	if(dc)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Found direct connection, sending typing notify directly" << endl;
+//		kdDebug(14150) << k_funcinfo <<
+//			"Found direct connection, sending typing notify directly" << endl;
 		dc->sendTypingNotify(notifyType);
 		return;
 	}
@@ -178,7 +179,8 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 	QPtrList<TLV> ql = inbuf.getTLVList();
 	ql.setAutoDelete(TRUE);
 
-	kdDebug(14150) << k_funcinfo <<  "requested offset " << offset << ", length " << len << endl;
+//	kdDebug(14150) << k_funcinfo <<
+//		"requested offset " << offset << ", length " << len << endl;
 
 	if (len == 0)
 	{
@@ -231,8 +233,8 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 {
 	//aol multiplies warning % by 10, don't know why
 	int newevil = inbuf.getWord() / 10;
-	kdDebug(14150) << "[OSCAR} Got a warning: new warning level is " <<
-		newevil << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Got a warning: new warning level is " << newevil << endl;
 
 	if (inbuf.length() != 0)
 	{
