@@ -197,21 +197,12 @@ void OscarSocket::slotRead()
 	// a FLAP is min 6 bytes, we cannot read more out of
 	// a buffer without these 6 initial bytes
 
-	/*
-	if(mSocket->bytesAvailable() < 6)
-	{
-		kdDebug(14150) << k_funcinfo <<
-		"less than 6 bytes available, waiting for m data" << endl;
-		mSocket->waitForMore(200);
-		return;
-	}
-	*/
-
 	fl = getFLAP();
 
 	if (fl.error || fl.length == 0)
 	{
-		kdDebug(14150) << k_funcinfo << "Could not read full FLAP, aborting" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Could not read full FLAP, aborting" << endl;
 		return;
 	}
 

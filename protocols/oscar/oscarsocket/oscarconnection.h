@@ -2,7 +2,7 @@
     oscarconnection.h  -  Implementation of an oscar connection
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,8 +23,8 @@
 #include <kextsock.h>
 #include <ksockaddr.h>
 #else
-#include <qt-addon/qbufferedsocket.h>
-#include <qt-addon/qsocketbase.h>
+#include <ksocketbase.h>
+#include <kbufferedsocket.h>
 #endif
 
 #include <qobject.h>
@@ -34,6 +34,7 @@
  * No login functions, just basic direct Oscar connection functionality.
  *
  * @author Tom Linsky
+ * @author Stefan Gehn
  */
 class OscarConnection : public QObject
 {
@@ -198,11 +199,11 @@ class OscarConnection : public QObject
 		/**
 		 * The encapsulated socket
 		 */
-		#ifdef USE_KEXTSOCK
+#ifdef USE_KEXTSOCK
 		KExtendedSocket *mSocket;
-		#else
-		QBufferedSocket *mSocket;
-		#endif
+#else
+		KNetwork::KBufferedSocket *mSocket;
+#endif
 };
 
 #endif

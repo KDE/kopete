@@ -17,7 +17,6 @@
 #include "oscarconnection.h"
 
 #include <kdebug.h>
-#include <klocale.h>
 
 OscarConnection::OscarConnection(const QString &connName, ConnectionType type,
 	const QByteArray &cookie, QObject *parent, const char *name) : QObject(parent, name)
@@ -43,10 +42,10 @@ OscarConnection::OscarConnection(const QString &connName, ConnectionType type,
 
 	#else // libqt-addon
 
-	mSocket = new QBufferedSocket(QString::null, QString::null, this, "mSocket");
+	mSocket = new KNetwork::KBufferedSocket(QString::null, QString::null, this, "mSocket");
 	//mSocket->setSocketFlags(QSocketBase::Keepalive);
 
-	connect(mSocket, SIGNAL(connected(const QResolverEntry &)),
+	connect(mSocket, SIGNAL(connected(const KResolverEntry &)),
 		this, SLOT(slotSocketConnected()));
 	connect(mSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
 	connect(mSocket, SIGNAL(closed()), this, SLOT(slotSocketClosed()));
@@ -94,10 +93,10 @@ OscarConnection::ConnectionStatus OscarConnection::socketStatus() const
 
 	switch(mSocket->state())
 	{
-		case (QClientSocketBase::HostLookup):
-		case (QClientSocketBase::Connecting):
+		case (KNetwork::KClientSocketBase::HostLookup):
+		case (KNetwork::KClientSocketBase::Connecting):
 			return Connecting;
-		case (QClientSocketBase::Open):
+		case (KNetwork::KClientSocketBase::Open):
 			return Connected;
 		default:
 			break;
@@ -208,9 +207,6 @@ void OscarConnection::slotSocketClosed()
 {
 	kdDebug(14150) << k_funcinfo << "Connection with '" <<
 		connectionName() << "' closed" << endl;
-
-	//emit protocolError(i18n("Connection with %1 lost").arg(mSocket->host()), 1);
-	//emit connectionClosed(connectionName());
 
 	emit socketClosed(connectionName(), (socketStatus() != Disconnecting));
 }
