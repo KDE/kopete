@@ -157,11 +157,11 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 			{
 				QContextMenuEvent *event = (QContextMenuEvent*) e;
 
-				int para = 0, charPos, firstSpace, lastSpace;
+				int para = 1, charPos, firstSpace, lastSpace;
 
 				//Get the character at the position of the click
-				QString paraText = t->text( para );
 				charPos = t->charAt( event->pos(), &para );
+				QString paraText = t->text( para );
 
 				if( !paraText.at(charPos).isSpace() )
 				{
@@ -178,7 +178,7 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 						KPopupMenu p;
 						p.insertTitle( i18n("Suggestions") );
 
-						//Add the suggesitons to the popup menu
+						//Add the suggestions to the popup menu
 						QStringList reps = mReplacements[word];
 						if( reps.count() > 0 )
 						{
