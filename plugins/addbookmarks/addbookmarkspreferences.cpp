@@ -28,6 +28,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory
 BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, const QStringList &args)
  : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
 {
+	Q_UNUSED( name );
 	( new QVBoxLayout (this) )->setAutoAdd( true );
 	p_dialog = new BookmarksPrefsUI( this );
 	load();
@@ -49,9 +50,10 @@ void BookmarksPreferences::save()
 	QStringList list;
 	QStringList::iterator it;
 
-	
+
 	m_settings.setFolderForEachContact( (BookmarksPrefsSettings::UseSubfolders)p_dialog->buttonGroup1->selectedId() );
-	if(m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsNotInList ){
+	if ( m_settings.isFolderForEachContact() == BookmarksPrefsSettings::SelectedContacts ||
+				m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts ) {
 		for( uint i = 0; i < p_dialog->contactList->count() ; ++i ){
 			if( p_dialog->contactList->isSelected( i ) ){
 				list += p_dialog->contactList->text( i );
@@ -82,14 +84,18 @@ void BookmarksPreferences::load()
 	
 	m_settings.load();
 	p_dialog->buttonGroup1->setButton(m_settings.isFolderForEachContact());
+
 	if( p_dialog->contactList->count() == 0 ){
-		p_dialog->contactList->insertStringList( Kopete::ContactList::self()->contacts() );
+		QStringList contacts = Kopete::ContactList::self()->contacts();
+		contacts.sort();
+		p_dialog->contactList->insertStringList( contacts );
 	}
 	p_dialog->contactList->clearSelection();
-	p_dialog->contactList->setEnabled(m_settings.isFolderForEachContact() != BookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsNotInList );
+	p_dialog->contactList->setEnabled( m_settings.isFolderForEachContact() == BookmarksPrefsSettings::SelectedContacts ||
+			 m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts );
 	list = m_settings.getContactsList();
 	for( it = list.begin() ; it != list.end() ; ++it){
-		if( item = p_dialog->contactList->findItem(*it, Qt::ExactMatch ) ){
+		if ( ( item = p_dialog->contactList->findItem(*it, Qt::ExactMatch ) ) ){
 			p_dialog->contactList->setSelected( item, true );
 		}
 	}

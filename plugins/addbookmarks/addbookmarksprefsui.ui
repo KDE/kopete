@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>308</width>
-            <height>440</height>
+            <width>396</width>
+            <height>421</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>BookmarksPrefsUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -21,7 +24,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Put Bookmarks in Distinct Subfolder for Each Contact</string>
+                <string>Use subfolder for each contact</string>
             </property>
             <vbox>
                 <property name="name">
@@ -35,7 +38,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>Yes</string>
+                        <string>Always</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -49,10 +52,10 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>No</string>
+                        <string>Never</string>
                     </property>
                     <property name="buttonGroupId">
-                        <number>-1</number>
+                        <number>1</number>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -63,13 +66,13 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>Only for selected contacts in the list</string>
+                        <string>Only the selected contacts</string>
                     </property>
                     <property name="checked">
                         <bool>false</bool>
                     </property>
                     <property name="buttonGroupId">
-                        <number>-1</number>
+                        <number>2</number>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -80,7 +83,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>Only for non-selected contacts in the list</string>
+                        <string>Not the selected contacts</string>
                     </property>
                 </widget>
             </vbox>

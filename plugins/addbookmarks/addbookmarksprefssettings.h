@@ -22,7 +22,7 @@ class BookmarksPrefsSettings : public QObject
 {
 Q_OBJECT
 public:
-    enum UseSubfolders { Yes=0, No=1, OnlyContactsInList=2, OnlyContactsNotInList=3 };
+	enum UseSubfolders { Always=0, Never=1, SelectedContacts=2, UnselectedContacts=3 };
 
     BookmarksPrefsSettings(QObject *parent = 0, const char *name = 0);
 
@@ -32,7 +32,7 @@ public:
     void save();
     UseSubfolders isFolderForEachContact() {return m_isfolderforeachcontact;}
     void setFolderForEachContact(UseSubfolders val) {m_isfolderforeachcontact = val;}
-    bool isUseSubfolderForContact(QString nickname);
+    bool useSubfolderForContact( QString nickname );
     QStringList getContactsList() {return m_contactslist;}
     void setContactsList(QStringList list) {m_contactslist = list;}
     

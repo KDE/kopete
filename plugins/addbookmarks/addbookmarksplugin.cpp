@@ -21,7 +21,7 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
 
-BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &args)
+BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &/*args*/)
  : Kopete::Plugin(BookmarksPluginFactory::instance(), parent, name)
 {
 	//kdDebug(14501) << "plugin loading" << endl;
@@ -47,10 +47,10 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 		return;
 	KURL::List *URLsList;
 	KURL::List::iterator it;
-	URLsList = ExtractURLsFromString(msg.parsedBody());
+	URLsList = extractURLsFromString( msg.parsedBody() );
 	if (!URLsList->empty()) {
 		for( it = URLsList->begin() ; it != URLsList->end() ; ++it){
-			AddKopeteBookmark(*it, msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() );
+			addKopeteBookmark(*it, msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() );
 			//kdDebug (14501) << "name:" << msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() << endl;
 		}
 	}
@@ -59,28 +59,31 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 
 void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data )
 {
-	QTextCodec *codec = GetPageEncoding( data );
+	QTextCodec *codec = getPageEncoding( data );
 	QString htmlpage = codec->toUnicode( data );
-	QRegExp rx("<(title|TITLE)>[^<]*</(title|TITLE)>");
+	QRegExp rx("<(?:title|TITLE)>([^<]*)</(?:title|TITLE)>");
 	int pos = rx.search( htmlpage );
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
-	KBookmarkGroup group = GetKopeteFolder();
+	KBookmarkGroup group = getKopeteFolder();
+	QString sender = m_map[(KIO::TransferJob*)transfer].sender;
 	
-	if( m_map[(KIO::TransferJob*)transfer].sender.compare( "" ) && m_settings.isUseSubfolderForContact( m_map[(KIO::TransferJob*)transfer].sender )){
-		group = GetFolder( group, m_map[(KIO::TransferJob*)transfer].sender );
-	} 
+	if ( m_settings.useSubfolderForContact( sender ) )
+		group = getFolder( group, sender );
+
 	if( pos == -1 ){
 		group.addBookmark( mgr, m_map[(KIO::TransferJob*)transfer].url.prettyURL(), m_map[(KIO::TransferJob*)transfer].url.url() );
 		kdDebug( 14501 ) << "failed to extract title from first data chunk" << endl;
 	}else {
-		group.addBookmark( mgr, htmlpage.mid(pos+7, rx.matchedLength()-15).simplifyWhiteSpace() , m_map[(KIO::TransferJob*)transfer].url.url() );
+		group.addBookmark( mgr, rx.cap( 1 ).simplifyWhiteSpace(),
+						   m_map[(KIO::TransferJob*)transfer].url.url() );
 	}
 	mgr->save();
+	mgr->emitChanged( group );
 	m_map.remove( (KIO::TransferJob*)transfer );
 	transfer->kill();
 }
 
-KURL::List* BookmarksPlugin::ExtractURLsFromString(QString text)
+KURL::List* BookmarksPlugin::extractURLsFromString( QString text )
 {
 	KURL::List *list = new KURL::List;
 	QRegExp rx("<a href=\"[^\\s\"]+\"");
@@ -97,15 +100,15 @@ KURL::List* BookmarksPlugin::ExtractURLsFromString(QString text)
 	return list;
 }
 
-void BookmarksPlugin::AddKopeteBookmark (KURL url, QString sender )
+void BookmarksPlugin::addKopeteBookmark( KURL url, QString sender )
 {
-	KBookmarkGroup group = GetKopeteFolder();
-	KIO::TransferJob *transfer;
-	
-	if( m_settings.isUseSubfolderForContact( sender ) ){
-		group = GetFolder( group, sender );
+	KBookmarkGroup group = getKopeteFolder();
+
+	if ( m_settings.useSubfolderForContact( sender ) ) {
+		group = getFolder( group, sender );
 	}
 	if( !isURLInGroup( url, group ) ){
+		KIO::TransferJob *transfer;
 		// make asynchronous transfer to avoid GUI freezing due to overloaded web servers
 		transfer = KIO::get(url, false, false);
 		connect ( transfer, SIGNAL ( data( KIO::Job *, const QByteArray & ) ),
@@ -115,11 +118,11 @@ void BookmarksPlugin::AddKopeteBookmark (KURL url, QString sender )
 	}
 }
 
-KBookmarkGroup BookmarksPlugin::GetKopeteFolder()
+KBookmarkGroup BookmarksPlugin::getKopeteFolder()
 {
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 
-	return GetFolder( mgr->root(), "kopete" );
+	return getFolder( mgr->root(), "kopete" );
 }
 
 bool BookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
@@ -134,7 +137,7 @@ bool BookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
 	return false;
 }
 
-KBookmarkGroup BookmarksPlugin::GetFolder( KBookmarkGroup group, QString folder )
+KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, QString folder )
 {
 	KBookmark bookmark;
 
@@ -150,7 +153,7 @@ KBookmarkGroup BookmarksPlugin::GetFolder( KBookmarkGroup group, QString folder 
 	return group;
 }
 
-QTextCodec* BookmarksPlugin::GetPageEncoding( QByteArray data )
+QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 {
 	QString temp = QString::fromLatin1(data);
 	QRegExp rx("<meta[^>]*(charset|CHARSET)\\s*=\\s*[^>]*>");
