@@ -1,0 +1,71 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>smsPrefsUI</class>
+<author>Duncan Mac-Vicar P.</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>smsPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>510</width>
+            <height>86</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>groupBox1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>490</width>
+                <height>66</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>Services</string>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>20</x>
+                    <y>20</y>
+                    <width>450</width>
+                    <height>26</height>
+                </rect>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Service name:</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox">
+                    <property name="name">
+                        <cstring>serviceName</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </widget>
+</widget>
+<includes>
+    <include location="global" impldecl="in implementation">knuminput.h</include>
+</includes>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
