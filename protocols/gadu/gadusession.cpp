@@ -34,6 +34,7 @@
 #include <kdebug.h>
 
 #include <qsocketnotifier.h>
+#include <qtextcodec.h>
 
 #include <netinet/in.h>
 #include <errno.h>
@@ -239,8 +240,13 @@ GaduSession::changeStatus( int status )
 int
 GaduSession::changeStatusDescription( int status, const QString& descr )
 {
+	QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
+	QString ndescr;
+	
+	ndescr= textcodec->fromUnicode(descr);
+
 	if ( isConnected() )
-		return gg_change_status_descr( session_, status, descr.local8Bit() );
+		return gg_change_status_descr( session_, status, ndescr );
 	else
 		emit error( i18n("Not Connected..."),
 								i18n("You have to be connected to the server to change your status!") );
