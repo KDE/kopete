@@ -48,6 +48,10 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_port = serverInfo.section(':',1).toUInt();
 
 	m_engine = new KIRC( m_server, m_port );
+	QMap< QString, QString> replies = customCtcpReplies();
+	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
+		m_engine->addCustomCtcp( it.key(), it.data() ); 
+	
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	m_engine->setVersionString( version  );
 

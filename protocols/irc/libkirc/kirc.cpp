@@ -1261,7 +1261,9 @@ void KIRC::sendCtcpVersion(const QString &target)
 bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("version") ];
-	if( !response.isEmpty() )
+	kdDebug(14120) << "Version check: " << response << endl;
+
+	if( !response.isNull() )
 	{
 		writeCtcpReplyMessage(msg.prefix(), QString::null,
 			msg.ctcpMessage().command(), QStringList(), response);
@@ -1284,7 +1286,7 @@ bool KIRC::CtcpReply_version(const KIRCMessage &msg)
 bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("userinfo") ];
-	if( !response.isEmpty() )
+	if( !response.isNull() )
 	{
 		writeCtcpReplyMessage(msg.prefix(), QString::null,
 			msg.ctcpMessage().command(), QStringList(), response);
@@ -1302,7 +1304,7 @@ bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("clientinfo") ];
-	if( !response.isEmpty() )
+	if( !response.isNull() )
 	{
 		writeCtcpReplyMessage(	msg.prefix(), QString::null,
 					msg.ctcpMessage().command(), QStringList(), response);

@@ -36,6 +36,7 @@
 
 #include "dcchandler.h"
 #include "kircmessage.h"
+#include "kdebug.h"
 
 class QTimer;
 class QRegExp;
@@ -92,7 +93,9 @@ public:
 	inline bool isConnected() const { return m_status == Connected; }
 	
 	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
-	void addCustomCtcp( const QString &ctcp, const QString &reply ) { customCtcpMap[ ctcp ] = reply; }
+	void addCustomCtcp( const QString &ctcp, const QString &reply ) { 
+	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
+	customCtcpMap[ ctcp.lower() ] = reply; }
 
 
 public slots:

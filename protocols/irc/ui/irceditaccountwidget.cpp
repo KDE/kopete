@@ -58,7 +58,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 			
 		const QMap< QString, QString > replies = m_IRCAccount->customCtcpReplies();
 		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
-			new QListViewItem( ctcpList, it.key().lower(), it.data() );
+			new QListViewItem( ctcpList, it.key(), it.data() );
 	}
 	
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
