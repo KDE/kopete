@@ -214,7 +214,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		else if( id== -2 ) //the message has not been sent
 		{
 			//FIXME:  tell the what window the message has been processed. but we havent't sent it 
-			messageSucceeded();
+			messageSucceeded();  //that should stop the blonking icon.
 		}
 		else
 		{
@@ -275,17 +275,16 @@ void MSNMessageManager::slotActionInviteAboutToShow()
 
 	m_actionInvite->popupMenu()->clear();
 
-	QPtrList<KopeteContact> availableContacts = KopeteContactList::contactList()->onlineContacts( protocol()->pluginId() );
-	QPtrListIterator<KopeteContact> it( availableContacts );
+	
+	QDictIterator<KopeteContact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
-		if( !members().contains( it.current() ) )
+		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != user() )
 		{
 			KAction *a=new KopeteContactAction( it.current(), this,
 				SLOT( slotInviteContact( KopeteContact * ) ), m_actionInvite );
 			m_actionInvite->insert( a );
 			m_inviteactions.append( a ) ;
-
 		}
 	}
 	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
@@ -373,6 +372,8 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 		QString body = i18n( "The following message has not been sent correctly:\n%1" ).arg( m.plainBody() );
 		KopeteMessage msg = KopeteMessage( m.to().first(), members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
 		appendMessage( msg );
+		//stop the stupid animation
+		messageSucceeded();  
 	}
 	else
 	{
