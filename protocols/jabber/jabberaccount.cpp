@@ -1,5 +1,5 @@
 /***************************************************************************
-                          jabberaccount.cpp  -  description
+                   jabberaccount.cpp  -  core Jabber account class
                              -------------------
     begin                : Sat Mär 8 2003
     copyright            : (C) 2003 by Daniel Stone <dstone@kde.org>
@@ -67,17 +67,14 @@
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
-#include "jabberaccount.moc"
+
 #include <sys/utsname.h>
 
 
 JabberAccount::JabberAccount(KopeteProtocol *parent, const QString& accountID,
-		             const char *name) : KopeteAccount(parent,
-				                 accountID, name) {
-	/*
-	 * create a new contact for myself(), using accountID for the actual user ID,
-	 * the display name and the identity ID, metacontact is left empty
-	 */
+		             const char *name) : KopeteAccount(parent, accountID, name) {
+/* create a new contact for myself(), using accountID for the actual user ID,
+ * the display name and the identity ID, metacontact is left empty. */
 	myContact = new JabberContact(accountID, accountID, QStringList(),
 			static_cast<JabberAccount*>(parent), 0L, accountID);
 
@@ -136,7 +133,7 @@ KopeteContact *JabberAccount::myself() const {
 	return myContact;
 }
 
-void JabberAccount::setAway(bool, const QString &) {
+void JabberAccount::setAway(bool) {
 }
 
 void JabberAccount::initActions() {
