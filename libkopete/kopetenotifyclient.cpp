@@ -328,57 +328,62 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
     else
     {
 		//kdDebug( 14000 ) << "carrying out common notifications" << endl;
-		int level=Default;
-		QString sound;
-		QString file;
-		QString commandline;
-	
-		// get config file
-		KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
-		eventsFile.setGroup(message);
-	
-		KConfig configFile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
-		configFile.setGroup(message);
-	
-		int present=getPresentation(message);
-		if(present==-1)
-			present=getDefaultPresentation(message);
-		if(present==-1)
-			present=0;
-	
-		// get sound file name
-		if( present & KNotifyClient::Sound ) {
-			QString theSound = configFile.readPathEntry( "soundfile" );
-			if ( theSound.isEmpty() )
-				theSound = eventsFile.readPathEntry( "default_sound" );
-			if ( !theSound.isEmpty() )
-				sound = theSound;
-		}
-	
-		// get log file name
-		if( present & KNotifyClient::Logfile ) {
-			QString theFile = configFile.readPathEntry( "logfile" );
-			if ( theFile.isEmpty() )
-				theFile = eventsFile.readPathEntry( "default_logfile" );
-			if ( !theFile.isEmpty() )
-				file = theFile;
-		}
-	
-		// get default event level
-		if( present & KNotifyClient::Messagebox )
-		level = eventsFile.readNumEntry( "level", 0 );
-	
-		// get command line
-		if (present & KNotifyClient::Execute ) {
-		commandline = configFile.readPathEntry( "commandline" );
-		if ( commandline.isEmpty() )
-			commandline = eventsFile.readPathEntry( "default_commandline" );
-		}
-	
-	
-		return userEvent(winId, message, text,  present , level, sound, file, commandline, action, receiver,
-				slot);
-    }
+		return event( winId, message, text, action, receiver, slot );
+	}
+}
+		
+int KNotifyClient::event(int winId, const QString &message, const QString &text, const KGuiItem &action,
+                    QObject* receiver , const char* slot)
+{
+	int level=Default;
+	QString sound;
+	QString file;
+	QString commandline;
+
+	// get config file
+	KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+	eventsFile.setGroup(message);
+
+	KConfig configFile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
+	configFile.setGroup(message);
+
+	int present=getPresentation(message);
+	if(present==-1)
+		present=getDefaultPresentation(message);
+	if(present==-1)
+		present=0;
+
+	// get sound file name
+	if( present & KNotifyClient::Sound ) {
+		QString theSound = configFile.readPathEntry( "soundfile" );
+		if ( theSound.isEmpty() )
+			theSound = eventsFile.readPathEntry( "default_sound" );
+		if ( !theSound.isEmpty() )
+			sound = theSound;
+	}
+
+	// get log file name
+	if( present & KNotifyClient::Logfile ) {
+		QString theFile = configFile.readPathEntry( "logfile" );
+		if ( theFile.isEmpty() )
+			theFile = eventsFile.readPathEntry( "default_logfile" );
+		if ( !theFile.isEmpty() )
+			file = theFile;
+	}
+
+	// get default event level
+	if( present & KNotifyClient::Messagebox )
+	level = eventsFile.readNumEntry( "level", 0 );
+
+	// get command line
+	if (present & KNotifyClient::Execute ) {
+	commandline = configFile.readPathEntry( "commandline" );
+	if ( commandline.isEmpty() )
+		commandline = eventsFile.readPathEntry( "default_commandline" );
+	}
+
+	return userEvent(winId, message, text,  present , level, sound, file, commandline, action, receiver,
+			slot);
 }
 
 int KNotifyClient::userEvent(int winId, const QString &message, const QString &text, int present,

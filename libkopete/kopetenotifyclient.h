@@ -47,7 +47,29 @@ namespace KNotifyClient
 	 * @return a value > 0, unique for this event if successful, 0 otherwise
 	 * @since 3.2
 	 */
-	int event( int winId, const QString& message, const QString& text, KopeteMetaContact *mc,
+int event(int winId, const QString &message, const QString &text, const KGuiItem &action,
+                    QObject* receiver , const char* slot);
+
+	/**
+	 * This should be the most used method in here.
+	 * Pass the origin-widget's winId() here so that a PassivePopup can be
+	 * placed appropriately.
+	 *
+	 * Call it by KNotifyClient::event(widget->winId(), "EventName");
+	 * It will use KApplication::kApplication->dcopClient() to communicate to
+	 * the server
+	 * @param winId The winId() of the widget where the event originates
+	 * @param message The name of the event
+	 * @param text The text to put in a dialog box.  This won't be shown if
+	 *             the user connected the event to sound, only. Can be QString::null.
+	 * @param mc The metacontact to which the notification relates.  Used for custom notifications, may not be 0.
+	 * @param action The text to show in the message box, or in the passive popup
+	 * @param receiver The @p slot's parent
+	 * @param slot The SLOT to invoque when the @p action is fired
+	 * @return a value > 0, unique for this event if successful, 0 otherwise
+	 * @since 3.2
+	 */
+int event( int winId, const QString& message, const QString& text, KopeteMetaContact *mc,
 		const KGuiItem& action, QObject *receiver, const char *slot );
 
 	/**
