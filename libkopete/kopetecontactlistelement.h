@@ -22,7 +22,7 @@
 #include <qobject.h>
 #include <qdom.h>
 
-
+#include <kopete_export.h>
 
 namespace Kopete {
 
@@ -41,7 +41,7 @@ class Plugin;
  *
  * It also allow to store an icon for this element.
  */
-class ContactListElement : public QObject  /* public KopeteNotifyDataObject */
+class KOPETE_EXPORT ContactListElement : public QObject  /* public KopeteNotifyDataObject */
 {
 	Q_OBJECT
 

@@ -20,6 +20,8 @@
 
 #include <qmime.h>
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
@@ -34,7 +36,7 @@ namespace Kopete
  * Note that the various id strings should be URL-encoded (with, for instance,
  * KURL::encode_string) if they might contain colons.
  */
-class MimeSourceFactory : public QMimeSourceFactory
+class KOPETE_EXPORT MimeSourceFactory : public QMimeSourceFactory
 {
 public:
 	MimeSourceFactory();

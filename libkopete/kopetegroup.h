@@ -22,6 +22,7 @@
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
 
+#include <kopete_export.h>
 
 #include <qptrlist.h>
 
@@ -43,7 +44,7 @@ class Message;
  *
  * @author Olivier Goffart
  */
-class Group : public ContactListElement, public NotifyDataObject
+class KOPETE_EXPORT Group : public ContactListElement, public NotifyDataObject
 {
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
 	Q_PROPERTY( uint groupId READ groupId )

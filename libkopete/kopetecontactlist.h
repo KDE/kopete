@@ -22,6 +22,8 @@
 #include <qobject.h>
 #include <qptrlist.h>
 
+#include <kopete_export.h>
+
 class KURL;
 class QDomDocument;
 
@@ -45,7 +47,7 @@ class Contact;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart @tiscalinet.be>
  */
-class ContactList : public QObject
+class KOPETE_EXPORT ContactList : public QObject
 {
 	Q_OBJECT
 

@@ -25,6 +25,7 @@
 #include <kdemacros.h>
 #include "kopeteglobal.h"
 
+#include <kopete_export.h>
 
 class KPopupMenu;
 class KAction;
@@ -49,7 +50,7 @@ typedef QPtrList<Group> GroupList;
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
-class Contact : public QObject
+class KOPETE_EXPORT Contact : public QObject
 {
 	Q_OBJECT
 

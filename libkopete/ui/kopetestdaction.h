@@ -23,10 +23,12 @@
 #include <kaction.h>
 #include <qobject.h>
 
+#include <kopete_export.h>
+
 /**
  * @author Ryan Cumming <bodnar42@phalynx.dhs.org>
  */
-class KopeteStdAction
+class KOPETE_EXPORT KopeteStdAction
 {
 public:
 	/**
@@ -108,7 +110,7 @@ public:
  * moc only sees signals/slots if they're defined in the .h
  * This is a private class
  */
-class KopeteGroupListAction : public KListAction
+class KOPETE_EXPORT KopeteGroupListAction : public KListAction
 {
 	Q_OBJECT
 
@@ -128,7 +130,7 @@ namespace KSettings
 	class Dialog;
 }
 
-class KopetePreferencesAction : public KAction
+class KOPETE_EXPORT KopetePreferencesAction : public KAction
 {
 	Q_OBJECT
 

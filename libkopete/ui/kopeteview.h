@@ -22,6 +22,8 @@
 #include "kopetemessage.h"
 #include <qvaluelist.h>
 
+#include <kopete_export.h>
+
 class Kopete::ChatSession;
 class QTextEdit;
 class Kopete::Message;
@@ -34,7 +36,7 @@ class Kopete::Message;
  * these may be either KopeteView::Chat or KopeteView::Email.
  *
  */
-class KopeteView
+class KOPETE_EXPORT KopeteView
 {
 	public:
 		/**

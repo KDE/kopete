@@ -22,6 +22,8 @@
 #include <kactionclasses.h>
 #include <kaction.h>
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
@@ -33,7 +35,7 @@ namespace Kopete
  *
  * @author Jason Keirstead   <jason@keirstead.org>
  */
-class AwayAction : public KSelectAction
+class KOPETE_EXPORT AwayAction : public KSelectAction
 {
 	Q_OBJECT
 	public:

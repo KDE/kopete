@@ -29,6 +29,8 @@
 #include <qdatetime.h>
 #include <qvaluelist.h>
 
+#include <kopete_export.h>
+
 
 class QDateTime;
 
@@ -52,7 +54,7 @@ class Contact;
  * It is recommended to use these flags, even for RichText messages, so the user can disable
  * custom colors in the chat window style.
  */
-class Message
+class KOPETE_EXPORT Message
 {
 public:
 	/**

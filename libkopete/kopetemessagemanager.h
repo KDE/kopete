@@ -28,6 +28,8 @@
 
 #include <kxmlguiclient.h>
 
+#include <kopete_export.h>
+
 // FIXME: get rid of these includes
 #include "kopetemessage.h"
 #include "kopetemessagehandlerchain.h"
@@ -67,7 +69,7 @@ typedef QValueList<Message> MessageList;
  * so plugins can add childClients of this client to add their own actions in the
  * chatwindow.
  */
-class ChatSession : public QObject , public KXMLGUIClient
+class KOPETE_EXPORT ChatSession : public QObject , public KXMLGUIClient
 {
 	// friend class so the object factory can access the protected constructor
 	friend class ChatSessionManager;

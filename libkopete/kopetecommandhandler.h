@@ -21,6 +21,8 @@
 #include <kshortcut.h>
 #include "kopetemessage.h"
 
+#include <kopete_export.h>
+
 class KProcess;
 
 struct CommandHandlerPrivate;
@@ -43,7 +45,7 @@ typedef QDict<Command> CommandList;
  *
  * The Kopete::CommandHandler can handle /action like messages
  */
-class CommandHandler : public QObject
+class KOPETE_EXPORT CommandHandler : public QObject
 {
 	friend class KopeteCommandGUIClient;
 

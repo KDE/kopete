@@ -21,6 +21,8 @@
 
 #include <qvariant.h>
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
@@ -33,7 +35,7 @@ struct ContactPropertyTmplPrivate;
  * You need to use this if you want to set properties for a
  * Kopete::Contact
  **/
-class ContactPropertyTmpl
+class KOPETE_EXPORT ContactPropertyTmpl
 {
 	public:
 		/**
@@ -131,7 +133,7 @@ class ContactPropertyTmpl
  * A data container for whatever information Kopete or any of its
  * plugins want to store for a Kopete::Contact
  **/
-class ContactProperty
+class KOPETE_EXPORT ContactProperty
 {
 	// TODO: Add d-pointer !
 	public:

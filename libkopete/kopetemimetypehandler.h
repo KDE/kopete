@@ -22,6 +22,8 @@ class KURL;
 class QString;
 class QStringList;
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
@@ -30,7 +32,7 @@ namespace Kopete
  * A mime type handler is responsible for handling requests to open files of
  * certain mime types presented to the main application.
  */
-class MimeTypeHandler
+class KOPETE_EXPORT MimeTypeHandler
 {
 protected:
 	MimeTypeHandler( bool canAcceptRemoteFiles = false );
@@ -115,7 +117,7 @@ private:
 /**
  * Mime-type handler class for Kopete emoticon files
  */
-class EmoticonMimeTypeHandler : public MimeTypeHandler
+class KOPETE_EXPORT EmoticonMimeTypeHandler : public MimeTypeHandler
 {
 public:
 	EmoticonMimeTypeHandler();

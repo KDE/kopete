@@ -21,6 +21,8 @@
 #include <qvaluelist.h>
 #include <qregexp.h>
 
+#include <kopete_export.h>
+
 struct Emoticon
 {
 	Emoticon();
@@ -37,7 +39,7 @@ private:
 };
 typedef QValueList<Emoticon> EmoticonList;
 
-class KopeteEmoticons : public QObject
+class KOPETE_EXPORT KopeteEmoticons : public QObject
 {
 	Q_OBJECT
 

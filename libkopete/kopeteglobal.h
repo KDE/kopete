@@ -20,6 +20,8 @@
 
 #include "kopetecontactproperty.h"
 
+#include <kopete_export.h>
+
 /**
  * This namespace contains all of Kopete's core classes and functions.
  */
@@ -45,7 +47,7 @@ namespace Global
 	 *
 	 * TODO: If possible, port it to KIO instead of using ugly blocking KTar
 	 **/
-	void installEmoticonTheme(const QString &localPath);
+	KOPETE_EXPORT void installEmoticonTheme(const QString &localPath);
 
 	/**
 	 * \brief Global facility to query/store templates that are needed by KopeteContactProperty
@@ -54,7 +56,7 @@ namespace Global
 	 * objects for all the properties he wants to set for a Kopete::Contact,
 	 * everything else is handled behind the scenes.
 	 **/
-	class Properties
+	class KOPETE_EXPORT Properties
 	{
 		friend class ContactPropertyTmpl;
 		public:

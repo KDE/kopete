@@ -21,6 +21,8 @@
 #include <qstring.h>
 #include <qvaluelist.h>
 
+#include <kopete_export.h>
+
 class QDomElement;
 
 namespace Kopete
@@ -32,7 +34,7 @@ class NotifyEvent;
  * Contains custom notification control and storage functionality
  */
 
-class NotifyDataObject
+class KOPETE_EXPORT NotifyDataObject
 {
 	public:
 		NotifyDataObject();

@@ -20,6 +20,7 @@
 #define _KOPETE_XSLT_H
 
 #include <qobject.h>
+#include <kopete_export.h>
 
 class KopeteXSLTPrivate;
 
@@ -32,7 +33,7 @@ namespace Kopete
  * This class provides an easy to use interface to basic
  * libxslt transformations.
  */
-class XSLT : public QObject
+class KOPETE_EXPORT XSLT : public QObject
 {
 	Q_OBJECT
 

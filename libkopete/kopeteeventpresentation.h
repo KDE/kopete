@@ -20,10 +20,12 @@
 
 #include <qstring.h>
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
-class EventPresentation
+class KOPETE_EXPORT EventPresentation
 {
 public:
 	enum PresentationType { Sound, Message, Chat };

@@ -20,6 +20,8 @@
 
 #include <qwidget.h>
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
@@ -34,12 +36,12 @@ namespace Global
 	/**
 	 * Set the main widget to widget
 	 */
-	void setMainWidget( QWidget *widget );
+	KOPETE_EXPORT void setMainWidget( QWidget *widget );
 	/**
 	 * Returns the main widget - this is the widget that message boxes
 	 * and KNotify stuff should use as a parent.
 	 */
-	QWidget *mainWidget();
+	KOPETE_EXPORT QWidget *mainWidget();
 
 	/**
 	 * \brief Returns the WId of the system tray.
@@ -49,7 +51,7 @@ namespace Global
 	 * \return the WId of the system tray. Returns the WId of the main
 	 * widget if there's no system tray.
 	 */ 
-	int sysTrayWId();
+	KOPETE_EXPORT int sysTrayWId();
 
 	/**
 	 * \brief Set the WId of the system tray.
@@ -57,7 +59,7 @@ namespace Global
 	 * Called by the KopeteSystemTray constructor and destructor to 
 	 * set the WId for the system tray appropriately
 	 */
-	void setSysTrayWId( int newWinId );
+	KOPETE_EXPORT void setSysTrayWId( int newWinId );
 } //Global::UI
 
 } //UI

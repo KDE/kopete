@@ -26,6 +26,8 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessage.h"
 
+#include <kopete_export.h>
+
 class KopeteView;
 
 namespace Kopete
@@ -45,7 +47,7 @@ typedef QIntDict<ChatSession> ChatSessionDict;
  * Kopete::ChatSessionManager is responsible for creating and tracking Kopete::ChatSession
  * instances for each chat.
  */
-class ChatSessionManager : public QObject
+class KOPETE_EXPORT ChatSessionManager : public QObject
 {
 	Q_OBJECT
 

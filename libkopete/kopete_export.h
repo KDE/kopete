@@ -18,17 +18,8 @@
 #ifndef KOPETE_EXPORT_H
 #define KOPETE_EXPORT_H
 
-#include <qglobal.h>
+#include <kdemacros.h>
 
-#if @HAVE_GCC_VISIBILITY@
-#define KOPETE_NO_EXPORT __attribute__ ((visibility("hidden")))
-#define KOPETE_EXPORT __attribute__ ((visibility("default")))
-#elif defined(Q_WS_WIN)
-#define KOPETE_NO_EXPORT
-#define KOPETE_EXPORT __declspec(dllexport)
-#else
-#define KOPETE_NO_EXPORT
-#define KOPETE_EXPORT
-#endif
+#define KOPETE_EXPORT KDE_EXPORT
 
 #endif

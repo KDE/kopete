@@ -21,10 +21,12 @@
 #include <qwidget.h>
 #include <kopeteprotocol.h>
 
+#include <kopete_export.h>
+
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class AddContactPage : public QWidget
+class KOPETE_EXPORT AddContactPage : public QWidget
 {
 Q_OBJECT
 

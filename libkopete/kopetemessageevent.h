@@ -25,6 +25,8 @@
 
 #include "kopetemessage.h"
 
+#include <kopete_export.h>
+
 namespace Kopete
 {
 
@@ -37,7 +39,7 @@ namespace Kopete
  * the message, and a signal when it is terminated (i.e.
  * the message is read
  **/
-class MessageEvent : public QObject
+class KOPETE_EXPORT MessageEvent : public QObject
 {
 	Q_OBJECT
 

@@ -26,6 +26,7 @@
 
 #include <kabc/addressbook.h>
 #include <kdemacros.h>
+#include <kopete_export.h>
 
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
@@ -52,7 +53,7 @@ class Group;
  * the metacontact. Plugins can store data in it with all
  * @ref ContactListElement methods
  */
-class MetaContact : public ContactListElement, public NotifyDataObject
+class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataObject
 {
 	Q_OBJECT
 

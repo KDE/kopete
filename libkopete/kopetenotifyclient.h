@@ -23,6 +23,8 @@
 #include <kguiitem.h>
 #include <knotifyclient.h>
 
+#include <kopete_export.h>
+
 class QObject;
 
 namespace Kopete
@@ -51,7 +53,7 @@ namespace KNotifyClient
 	 * @return a value > 0, unique for this event if successful, 0 otherwise
 	 * @since 3.2
 	 */
-int event(int winId, const QString &message, const QString &text, const KGuiItem &action,
+KOPETE_EXPORT int event(int winId, const QString &message, const QString &text, const KGuiItem &action,
                     QObject* receiver , const char* slot);
 
 	/**
@@ -73,7 +75,7 @@ int event(int winId, const QString &message, const QString &text, const KGuiItem
 	 * @return a value > 0, unique for this event if successful, 0 otherwise
 	 * @since 3.2
 	 */
-int event( int winId, const QString& message, const QString& text, Kopete::MetaContact *mc,
+KOPETE_EXPORT int event( int winId, const QString& message, const QString& text, Kopete::MetaContact *mc,
 		const KGuiItem& action, QObject *receiver, const char *slot );
 
 	/**
@@ -94,11 +96,11 @@ int event( int winId, const QString& message, const QString& text, Kopete::MetaC
 	 * @return a value > 0, unique for this event if successful, 0 otherwise
 	 * @since 3.2
 	 */
-	int userEvent(int winId, const QString &message, const QString &text, int present, int level, 
+KOPETE_EXPORT	int userEvent(int winId, const QString &message, const QString &text, int present, int level, 
 			 const QString &sound, const QString &file, const QString &commandline,
 			 const KGuiItem &action = KGuiItem() , QObject *receiver=0L, const char *slot=0L);
 
-	void performCustomNotifications( int winId, Kopete::MetaContact * mc, const QString &message, bool& suppress);
+KOPETE_EXPORT	void performCustomNotifications( int winId, Kopete::MetaContact * mc, const QString &message, bool& suppress);
 }
 
 #endif

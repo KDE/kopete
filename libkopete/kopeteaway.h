@@ -23,6 +23,8 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
+#include <kopete_export.h>
+
 class QStringList;
 
 struct KopeteAwayPrivate;
@@ -50,7 +52,7 @@ namespace Kopete
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
 
  */
-class Away : public QObject
+class KOPETE_EXPORT Away : public QObject
 {
 Q_OBJECT
 

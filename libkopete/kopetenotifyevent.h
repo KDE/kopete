@@ -22,12 +22,14 @@
 #include <qvaluelist.h>
 #include "kopeteeventpresentation.h"
 
+#include <kopete_export.h>
+
 class QDomElement;
 
 namespace Kopete
 {
 
-class NotifyEvent
+class KOPETE_EXPORT NotifyEvent
 {
 public:
 	NotifyEvent( const bool suppressCommon = false );
