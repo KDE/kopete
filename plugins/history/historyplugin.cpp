@@ -232,7 +232,7 @@ void HistoryPlugin::slotNext()
 	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
 }
 
-void HistoryPlugin::addMessage(KopeteMessage::MessageDirection dir, QString nick, QString date, QString body)
+void HistoryPlugin::addMessage( KopeteMessage::MessageDirection dir, QString /* nick */, QString /* date */, QString body )
 {
 	//TODO: use nick and date
 	QPtrList<KopeteContact> mb=m_currentMessageManager->members();

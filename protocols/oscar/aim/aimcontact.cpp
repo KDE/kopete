@@ -189,7 +189,7 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 
 // Called when an IM is received
 
-void AIMContact::slotIMReceived(QString message, QString sender, bool isAuto)
+void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto */ )
 {
 	// Check if we're the one who sent the message
 	if(tocNormalize(sender)!=tocNormalize(mName))
@@ -258,7 +258,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 
 	// Check to see if the person we're sending the message to is online
 	if (
-			( mListContact->status() == OSCAR_OFFLINE ) ||
+			( mListContact->status() == int( OSCAR_OFFLINE ) ) ||
 			( onlineStatus().status() == KopeteOnlineStatus::Offline )
 		)
 	{

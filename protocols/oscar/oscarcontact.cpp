@@ -247,12 +247,12 @@ void OscarContact::slotDeleteContact()
 	deleteLater();
 }
 
-void OscarContact::slotContactDestroyed(KopeteContact */*contact*/)
+void OscarContact::slotContactDestroyed(KopeteContact * /* contact */ )
 {
 	slotDeleteContact();
 }
 
-void OscarContact::slotGroupRemoved(KopeteGroup *removedGroup)
+void OscarContact::slotGroupRemoved(KopeteGroup * /* removedGroup */ )
 {
 /******
 //For an unknown reason, when deleting a group, even if the contact is not in this group, the contact was deleted.
