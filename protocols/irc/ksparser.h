@@ -25,6 +25,7 @@ class KSParser
 {
 public:
     QString parse(const QString &);
+    int colorForHTML( const QString &html );
 
 private:
     QString pushTag(const QString &, const QString & = QString::null);

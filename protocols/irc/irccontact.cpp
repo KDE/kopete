@@ -273,17 +273,36 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
-	// If the above was false, there was a server command so we don't need to do any of this
-	QStringList messages = QStringList::split( QRegExp( QString::fromLatin1("[\\r\\n]+") ), message.plainBody() );
-	for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
+	QString htmlString = message.escapedBody();
+	QRegExp findTags( QString::fromLatin1("<span style=\"color:(#\\w+)\">.*</span>") );
+	if( findTags.search( htmlString ) > -1 )
 	{
-		KopeteMessage msg( message.from(), message.to(), *it, KopeteMessage::Outbound, KopeteMessage::PlainText, KopeteMessage::Chat );
-		msg.setBg( QColor() );
-		msg.setFg( QColor() );
-		mEngine->messageContact(mNickName, msg.plainBody() );
-		manager()->appendMessage(msg);
+		QStringList list = findTags.capturedTexts();
+		for( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+		{
+			QString colorHTML = *it;
+			int ircColor = mAccount->protocol()->parser()->colorForHTML( colorHTML );
+			if( ircColor > -1 )
+				htmlString.replace( QRegExp( QString::fromLatin1("<span style=\"color:%1\">(.*)</span>").arg( colorHTML ) ),
+					 QString::fromLatin1("%1%2\\1%3").arg( QChar( 0x03 ) ).arg( QString::number( ircColor ) ).arg( QChar( 0x03 ) ) );
+			else
+				htmlString.replace( QRegExp( QString::fromLatin1("<span style=\"color:%1\">(.*)</span>").arg( colorHTML ) ), QString::fromLatin1("\\1") );
+
+			kdDebug() << htmlString << endl;
+		}
 	}
 
+	htmlString.replace( QRegExp( QString::fromLatin1( "<p.*>(.*)</p>" ) ), QString::fromLatin1("\\1\n") );
+	htmlString.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+
+	QStringList messages = QStringList::split( QRegExp( QString::fromLatin1("\n") ), htmlString );
+	for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
+		mEngine->messageContact(mNickName, *it );
+
+	message.setBg( QColor() );
+	message.setFg( QColor() );
+
+	manager()->appendMessage(message);
 	manager()->messageSucceeded();
 }
 

@@ -172,23 +172,23 @@ QColor KSParser::ircColor(int code)
 		case 1:
 			return Qt::black;
 		case 2:
-			return QColor("darkblue");
+			return Qt::darkBlue;
 		case 3:
-			return QColor("darkgreen");
+			return Qt::darkGreen;
 		case 4:
 			return Qt::red;
 		case 5:
-			return QColor("darkred");
+			return Qt::darkRed;
 		case 6:
-			return QColor("darkmagenta");
+			return Qt::darkMagenta;
 		case 7:
-			return QColor("orange");
+			return Qt::darkYellow;
 		case 8:
 			return Qt::yellow;
 		case 9:
 			return Qt::green;
 		case 10:
-			return QColor("darkcyan");
+			return Qt::darkCyan;
 		case 11:
 			return Qt::cyan;
 		case 12:
@@ -196,10 +196,24 @@ QColor KSParser::ircColor(int code)
 		case 13:
 			return Qt::magenta;
 		case 14:
-			return QColor("darkgray");
+			return Qt::darkGray;
 		case 15:
 			return Qt::gray;
 		default:
 			return QColor();
 	}
+}
+
+int KSParser::colorForHTML( const QString &html )
+{
+	QColor color;
+	color.setNamedColor( html );
+
+	for( int i=0; i < 16; i++ )
+	{
+		if( ircColor( i ) == color )
+			return i;
+	}
+
+	return -1;
 }
