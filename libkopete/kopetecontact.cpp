@@ -172,6 +172,7 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 		removeProperty(Kopete::Global::Properties::self()->lastSeen());
 	}
 	else if( oldStatus.status() != KopeteOnlineStatus::Offline &&
+		oldStatus.status() != KopeteOnlineStatus::Unknown &&
 		status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty(Kopete::Global::Properties::self()->onlineSince());
@@ -595,23 +596,24 @@ void KopeteContact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 	if(value.isNull())
 	{
 		removeProperty(tmpl);
-		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
-		return;
 	}
 	else
 	{
 		Kopete::ContactProperty prop(tmpl, value);
-		d->properties.insert(tmpl.key(), prop);
+		d->properties.insert(tmpl.key(), prop, true);
 
-		emit propertyChanged(this, tmpl.key(), oldValue, value);
+		/*kdDebug(14000) << k_funcinfo << "set property " << tmpl.key() <<
+			" for contact " << displayName() << " to " << value.toString() << endl;*/
 	}
+	emit propertyChanged(this, tmpl.key(), oldValue, value);
 }
 
 void KopeteContact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 {
 	if(!tmpl.isNull() && !tmpl.key().isEmpty())
 	{
-		//kdDebug(14000) << k_funcinfo << "removing property " << key << endl;
+		/*kdDebug(14000) << k_funcinfo << "removing property " << tmpl.key() <<
+			" for contact " << displayName() << endl;*/
 		d->properties.remove(tmpl.key());
 	}
 }

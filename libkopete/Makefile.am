@@ -8,7 +8,9 @@ SUBDIRS = private ui $(COMPAT_DIR) . tests
 METASOURCES = AUTO
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
+	$(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) \
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private \
+	-I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
@@ -19,10 +21,10 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.c
 	kopetecommandhandler.cpp kopetenotifyclient.cpp kopeteaway.cpp kopeteawayaction.cpp \
 	kautoconfig.cpp kopetewalletmanager.cpp kopetecontactproperty.cpp kopetepassword.cpp \
 	kopeteglobal.cpp kopeteuiglobal.cpp kopetepasswordedaccount.cpp kopetemimetypehandler.cpp \
-	kopetetask.cpp kopetemimesourcefactory.cpp
+	kopetetask.cpp kopetemimesourcefactory.cpp kopetexsl.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
-libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS)
+libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetecommandui.rc

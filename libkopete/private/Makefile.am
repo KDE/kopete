@@ -1,13 +1,13 @@
 METASOURCES = AUTO
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-	$(KOPETE_INCLUDES) $(all_includes) $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS)
+	$(KOPETE_INCLUDES) $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteprivate.la
 
 libkopeteprivate_la_SOURCES = kopeteevent.cpp kopeteemoticons.cpp \
-	kopeteprefs.cpp kopetexsl.cpp kopetecommand.cpp
+	kopeteprefs.cpp kopetecommand.cpp
 libkopeteprivate_la_LDFLAGS = $(all_libraries)
-libkopeteprivate_la_LIBADD = $(LIB_KDEUI) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+libkopeteprivate_la_LIBADD = $(LIB_KDEUI)
 # vim: set noet:
 
