@@ -64,6 +64,22 @@ class OnlineStatus::Private
 
 };
 
+/**
+ * This is required by some plugins, when a status need to be stored on
+ * the disk, to avoid problems.
+ */
+static struct 
+{
+	OnlineStatus::StatusType status; 
+	const char *name; 
+} statusNames[] = { 
+	{ OnlineStatus::Unknown, "Unknown" },
+	{ OnlineStatus::Offline, "Offline" },
+	{ OnlineStatus::Connecting, "Connecting" },
+	{ OnlineStatus::Invisible, "Invisible" },
+	{ OnlineStatus::Online, "Online"}, 
+	{ OnlineStatus::Away, "Away" } };
+
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
 	unsigned internalStatus, const QString &overlayIcon,  const QString &description )
 	 : d( new Private )
@@ -256,7 +272,27 @@ QString OnlineStatus::mimeSource( const QString& icon, int size, QColor color, b
 	return OnlineStatusManager::self()->fingerprint( *this, icon, size, color, idle );
 }
 
+QString OnlineStatus::statusTypeToString(OnlineStatus::StatusType statusType)
+{
+	const int size = sizeof(statusNames) / sizeof(statusNames[0]);
+	
+	for (int i=0; i< size; i++)
+		if (statusNames[i].status == statusType) 
+			return QString::fromLatin1(statusNames[i].name);
+	
+	return QString::fromLatin1(statusNames[0].name); // Unknown
+}
 
+OnlineStatus::StatusType OnlineStatus::statusStringToType(QString& string)
+{
+	int size = sizeof(statusNames) / sizeof(statusNames[0]);
+	
+	for (int i=0; i< size; i++)
+		if (QString::fromLatin1(statusNames[i].name) == string) 
+			return statusNames[i].status;
+	
+	return OnlineStatus::Unknown; 
+}
 
 
 } //END namespace Kopete 

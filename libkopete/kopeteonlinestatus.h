@@ -118,6 +118,8 @@ public:
 	// the metacontact status from the contact status starts from Unknown, and
 	// takes a contact only if its status is greater
 
+	
+	
 	/**
 	 * Constructor.
 	 *
@@ -323,6 +325,24 @@ public:
 	 */
 	bool operator<( const OnlineStatus &other ) const;
 
+	/**
+	 * \brief returns a QString from a StatusType 
+	 *
+	 * Static method to convert a Kopete::OnlineStatus::StatusType to a string to avoid
+	 * many issues when saving StatusType to disk
+	 */
+	 static QString statusTypeToString(OnlineStatus::StatusType status);
+	 
+	 /**
+	 * \brief returns a StatusType from a QString 
+	 *
+	 * Static method to convert a QString representing a StatusType to a StatusType to avoid
+	 * many issues when saving StatusType to disk
+	 */
+	 static OnlineStatus::StatusType statusStringToType(QString& string);
+	 
+	 
+	
 private:
 	
 	class Private;
@@ -332,7 +352,6 @@ private:
 	
 
 };
-
 
 }  //END namespace Kopete 
 
