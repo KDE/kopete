@@ -359,7 +359,7 @@ bool KopeteAccount::autoLogin() const
 
 bool KopeteAccount::rememberPassword()
 {
-	return !d->password.isNull();
+	return !password().isNull();
 }
 
 void KopeteAccount::registerContact( KopeteContact *c )
