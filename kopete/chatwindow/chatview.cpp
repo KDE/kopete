@@ -74,7 +74,7 @@
 namespace Kopete {
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
-	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr )
+	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), m_haveRichText( false )
 {
 	hide();
 
@@ -107,6 +107,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 	if ( editpart )
 	{
+		m_haveRichText = true;
 		QDomDocument doc = editpart->domDocument();
 		QDomNode menu = doc.documentElement().firstChild();
 		menu.removeChild( menu.firstChild() ); // Remove File
@@ -1105,7 +1106,7 @@ void ChatView::setCurrentMessage( const KopeteMessage &message )
 
 KopeteMessage ChatView::currentMessage()
 {
-	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, KopeteMessage::RichText );
+	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, m_haveRichText ? KopeteMessage::RichText : KopeteMessage::PlainText );
 
 	currentMsg.setFont( mFont );
 	currentMsg.setBg( mBgColor );

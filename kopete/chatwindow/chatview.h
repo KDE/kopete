@@ -441,6 +441,7 @@ private:
 	const QString styleHTML() const;
 
 	QMap<unsigned long,KopeteMessage> messageMap;
+	bool m_haveRichText;
 };
 
 } // namespace Kopete
