@@ -84,7 +84,7 @@ AM_CONDITIONAL(include_gadu, test -n "$COMPILE_GADU")
 AM_CONDITIONAL(include_libggcopy, test -n "$use_libgadu_copy")
 LIBS="$ac_save_LIBS"
 CXXFLAGS="$ac_save_CXXFLAGS"
-
+KDE_CHECK_SSL
 if test "$use_libgadu_copy" = "yes"; then
 	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.in \
 	${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h
@@ -95,7 +95,6 @@ if test "$use_libgadu_copy" = "yes"; then
 	if test "$kde_cv_c_long_long" = "yes"; then
 	AC_LIBGADU_DEFINE([HAVE_LONG_LONG])
 	fi
-	KDE_CHECK_SSL
 	if test  "$have_ssl" = "yes"; then
 	AC_LIBGADU_DEFINE([HAVE_OPENSSL])
 	fi
