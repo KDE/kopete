@@ -126,14 +126,14 @@ AC_ARG_WITH(libidn, AC_HELP_STRING([--with-libidn=[DIR]],
 
 if test "$libidn" != "no"; then
 	if test "$libidn" != "yes"; then
-		LDFLAGS="${LDFLAGS} -L$libidn/lib"
-		CPPFLAGS="${CPPFLAGS} -I$libidn/include"
+		IDN_LDFLAGS="${LDFLAGS} -L$libidn/lib"
+		IDN_CPPFLAGS="${CPPFLAGS} -I$libidn/include"
 	fi
 fi
 
 AC_CHECK_HEADER(idna.h,
 		AC_CHECK_LIB(idn, stringprep_check_version,
-				[libidn=yes LIBS="${LIBS} -lidn"], libidn=no),
+				[libidn=yes; IDN_LIBS="-lidn"], libidn=no),
 		libidn=no)
 
 if test "$libidn" != "no" ; then
@@ -146,3 +146,7 @@ AC_MSG_CHECKING([if Libidn can be used])
 AC_MSG_RESULT($libidn)
 
 AM_CONDITIONAL(include_jabber, test "$libidn" != "yes")
+
+AC_SUBST(IDN_LDFLAGS)
+AC_SUBST(IDN_CPPFLAGS)
+AC_SUBST(IDN_LIBS)
