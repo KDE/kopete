@@ -420,7 +420,7 @@ void KopeteWindow::slotConfGlobalKeys()
 void KopeteWindow::slotConfToolbar()
 {
 	saveMainWindowSettings(KGlobal::config(), "General Options");
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), "kopeteui.rc");
+	KEditToolbar *dlg = new KEditToolbar(factory());
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
 	connect( dlg, SIGNAL(finished()) , dlg, SLOT(deleteLater()));
 	dlg->show();
@@ -428,7 +428,6 @@ void KopeteWindow::slotConfToolbar()
 
 void KopeteWindow::slotUpdateToolbar()
 {
-	createGUI("kopeteui.rc", false);
 	applyMainWindowSettings(KGlobal::config(), "General Options");
 }
 
