@@ -71,15 +71,23 @@
 typedef KGenericFactory<AppearanceConfig, QWidget> KopeteAppearanceConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) )
 
+class KopeteAppearanceConfigPrivate
+{
+public:
+	KopeteXSLT *xsltParser;
+};
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
-	: KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
+: KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
 {
+	d = new KopeteAppearanceConfigPrivate;
+
+	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents(), this );
+
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
 
 	editedItem = 0L;
-
 
 	// "Emoticons" TAB ==========================================================
 	mEmoticonsTab = new QFrame(mAppearanceTabCtl);
@@ -173,6 +181,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	load();
 }
 
+AppearanceConfig::~AppearanceConfig()
+{
+	delete d;
+}
+
 void AppearanceConfig::save()
 {
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
@@ -259,20 +272,18 @@ void AppearanceConfig::load()
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
 
-	QStringList mChatStyles = KGlobal::dirs()->findAllResources(
-		"appdata", QString::fromLatin1("styles/*.xsl") );
+	// FIXME: Using the filename as user-visible name is not translatable!!! - Martijn
 	mPrfsChatWindow->styleList->clear();
-	for( QStringList::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
+	QStringList chatStyles = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "styles/*.xsl" ) );
+	for ( QStringList::Iterator it = chatStyles.begin(); it != chatStyles.end(); ++it )
 	{
 		QFileInfo fi( *it );
-		QString fileName = fi.fileName().section('.',0,0);
+		QString fileName = fi.fileName().section( '.', 0, 0 );
 		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
-		itemMap.insert(mPrfsChatWindow->styleList->firstItem(), *it);
-		if((*it) == p->styleSheet())
-		{
-			mPrfsChatWindow->styleList->setSelected(
-				mPrfsChatWindow->styleList->firstItem(), true);
-		}
+		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), *it );
+
+		if ( ( *it ) == p->styleSheet() )
+			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 	}
 	mPrfsChatWindow->styleList->sort();
 
@@ -373,12 +384,11 @@ void AppearanceConfig::slotAddStyle()
 	if(!editDocument)
 		return; //TODO: show an error if the plugin can't be loaded
 	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
-	KTextEditor::editInterface( editDocument )->setText(
-		QString::fromLatin1(
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-			"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
-			"<xsl:output method=\"html\"/>\n"
-			"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>") );
+	KTextEditor::editInterface( editDocument )->setText( QString::fromLatin1(
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
+		"<xsl:output method=\"html\"/>\n"
+		"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>" ) );
 	updateHighlight();
 	styleEditor->show();
 	connect( styleEditor->buttonOk, SIGNAL(clicked()), this, SLOT(slotStyleSaved()) );
@@ -420,35 +430,35 @@ void AppearanceConfig::slotStyleSelected()
 
 void AppearanceConfig::slotImportStyle()
 {
-	KURL chosenStyle = KURLRequesterDlg::getURL(QString::null, this,
-		i18n("Choose Stylesheet"));
-
-	if(!chosenStyle.isEmpty())
+	KURL chosenStyle = KURLRequesterDlg::getURL( QString::null, this, i18n( "Choose Stylesheet" ) );
+	if ( !chosenStyle.isEmpty() )
 	{
 		QString stylePath;
-		if( KIO::NetAccess::download(chosenStyle, stylePath ) )
+		// FIXME: Using NetAccess uses nested event loops with all associated problems.
+		//        Better use normal KIO and an async API - Martijn
+		if ( KIO::NetAccess::download( chosenStyle, stylePath ) )
 		{
-			QString xslString = fileContents( stylePath );
-			if( KopeteXSL::isValid( xslString ) )
+			QString styleSheet = fileContents( stylePath );
+			if ( KopeteXSLT( styleSheet ).isValid() )
 			{
 				QFileInfo fi( stylePath );
-				addStyle( fi.fileName().section('.',0,0), xslString );
+
+				// FIXME: Isn't it better to copy the style to $KDEHOME/share/apps/kopete/styles
+				//        using locateLocal() - Martijn
+				addStyle( fi.fileName().section( '.', 0, 0 ), styleSheet );
 			}
 			else
 			{
 				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-					i18n("\"%1\" is not a valid XSL document. Import canceled.")
-						.arg(chosenStyle.path()),
-					i18n("Invalid Style") );
+					i18n( "'%1' is not a valid XSLT document. Import canceled." ).arg( chosenStyle.path() ),
+					i18n( "Invalid Style" ) );
 			}
 		}
 		else
 		{
 			KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-				i18n("Could not import \"%1\". Check access " \
-					"permissions / network connection.")
-					.arg(chosenStyle.path()),
-				i18n("Import Error"));
+				i18n( "Could not import '%1'. Check access permissions/network connection." ).arg( chosenStyle.path() ),
+				i18n( "Import Error" ) );
 		}
 	}
 }
@@ -458,22 +468,15 @@ void AppearanceConfig::slotCopyStyle()
 	QListBoxItem *copiedItem = mPrfsChatWindow->styleList->selectedItem();
 	if( copiedItem )
 	{
+		QString styleName =
 #if KDE_IS_VERSION( 3, 1, 90 )
-		QString styleName = KInputDialog::getText(
-			i18n("New Style Name"),
-			i18n("Enter the name of the new style:")
-			);
+			KInputDialog::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
 #else
-		QString styleName = KLineEditDlg::getText(
-			i18n("New Style Name"),
-			i18n("Enter the name of the new style:")
-			);
+			KLineEditDlg::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
 #endif
+
 		if ( !styleName.isEmpty() )
-		{
-			QString copiedXSL = fileContents( itemMap[ copiedItem] );
-			addStyle( styleName, copiedXSL );
-		}
+			addStyle( styleName, fileContents( itemMap[ copiedItem ] ) );
 	}
 	else
 	{
@@ -504,7 +507,7 @@ void AppearanceConfig::slotDeleteStyle()
 		QString filePath = itemMap[ style ];
 		itemMap.remove( style );
 
-		QFileInfo fi(filePath);
+		QFileInfo fi( filePath );
 		if( fi.isWritable() )
 			QFile::remove( filePath );
 
@@ -519,27 +522,22 @@ void AppearanceConfig::slotDeleteStyle()
 
 void AppearanceConfig::slotStyleSaved()
 {
-	QString fileSource = KTextEditor::editInterface( editDocument )->text();
+	addStyle( styleEditor->styleName->text(), KTextEditor::editInterface( editDocument )->text() );
+
+	// Remove our tempfile
 	QString filePath = itemMap[ editedItem ];
-	delete editedItem;
-
-	if( !KopeteXSL::isValid( fileSource ) )
-		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("This is not a valid XSL document. Please double check your modifications."), i18n("Invalid Style") );
-
-	if( !filePath.isNull() )
+	if ( !filePath.isNull() )
 	{
-		QFileInfo fi(filePath);
-		if( fi.isWritable() )
+		if ( QFileInfo( filePath ).isWritable() )
 			QFile::remove( filePath );
 	}
-
-	addStyle( styleEditor->styleName->text(), fileSource );
+	delete editedItem;
 
 	styleEditor->deleteLater();
-	setChanged(true);
+	setChanged( true );
 }
 
-void AppearanceConfig::addStyle( const QString &styleName, const QString &xslString )
+void AppearanceConfig::addStyle( const QString &styleName, const QString &styleSheet )
 {
 	if( !mPrfsChatWindow->styleList->findItem( styleName ) )
 	{
@@ -548,7 +546,7 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 		if ( out.open( IO_WriteOnly ) )
 		{
 			QTextStream stream( &out );
-			stream << xslString;
+			stream << styleSheet;
 			out.close();
 
 			mPrfsChatWindow->styleList->insertItem( styleName, 0 );
@@ -578,58 +576,55 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 
 void AppearanceConfig::slotUpdatePreview()
 {
-	QString model;
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
-	if( style && itemMap[style] != currentStyle )
+	if( style && itemMap[ style ] != currentStyle )
 	{
-		currentStyle=itemMap[style];
-		QString model = fileContents( currentStyle );
+		KopeteContact *myself = new TestContact( i18n( "Myself" ) );
+		KopeteContact *jack = new TestContact( i18n( "Jack" ) );
 
-		if(!model.isEmpty())
-		{
-			KopeteContact *myself = new TestContact(i18n("Myself"));
-			KopeteContact *jack = new TestContact(i18n("Jack") );
+		KopeteMessage msgIn(  jack,   myself, i18n( "Hello, this is an incoming message :-)" ), KopeteMessage::Inbound );
+		KopeteMessage msgOut( myself, jack,   i18n( "Ok, this is an outgoing message" ), KopeteMessage::Outbound );
+		KopeteMessage msgInt( jack,   myself, i18n( "This is an internal message" ), KopeteMessage::Internal );
+		KopeteMessage msgAct( jack,   myself, i18n( "performed an action" ), KopeteMessage::Action );
+		//KopeteMessage msgHigh( jack, myself, i18n( "This is a highlighted message" ), KopeteMessage::Inbound );
 
-			KopeteMessage msgIn( jack, myself, i18n("Hello, This is an incoming message :-) "),KopeteMessage::Inbound );
-			KopeteMessage msgOut( myself, jack, i18n("Ok, this is an outgoing message"),KopeteMessage::Outbound );
-			KopeteMessage msgInt( jack, myself, i18n("This is an internal message"),KopeteMessage::Internal );
-			//KopeteMessage msgHigh( jack, myself, i18n("This is a highlighted message"),KopeteMessage::Inbound );
-			KopeteMessage msgAct( jack, myself, i18n("performed an action"),KopeteMessage::Action );
+		preview->begin();
+		preview->write( QString::fromLatin1(
+			"<html><head><style>"
+			"body{ font-family:%1;color:%2; }"
+			"td{ font-family:%3;color:%4; }"
+			".highlight{ color:%5;background-color:%6 }"
+			"</style></head>"
+			"<body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">"
+		).arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
+			.arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
+			.arg( mPrfsColors->foregroundColor->color().name() ).arg( mPrfsColors->backgroundColor->color().name() )
+			.arg( mPrfsColors->bgColor->color().name() ).arg( mPrfsColors->linkColor->color().name() )
+			.arg( mPrfsColors->linkColor->color().name() ) );
 
-			preview->begin();
-			preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
-				.arg( mPrfsColors->fontFace->font().family() )
-				.arg( mPrfsColors->textColor->color().name() )
-				.arg( mPrfsColors->fontFace->font().family() )
-				.arg( mPrfsColors->textColor->color().name() )
-				.arg( mPrfsColors->foregroundColor->color().name() )
-				.arg( mPrfsColors->backgroundColor->color().name() )
-				.arg( mPrfsColors->bgColor->color().name() )
-				.arg( mPrfsColors->linkColor->color().name() )
-				.arg( mPrfsColors->linkColor->color().name() ) );
+		// Parsing a XSLT message is incredibly slow! that's why I commented out some preview messages
+		d->xsltParser->setXSLT( fileContents( itemMap[ style ] ) );
+		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
+		preview->write( d->xsltParser->transform( msgOut.asXML().toString()) );
+		msgIn.setFg( QColor( "DodgerBlue" ) );
+		msgIn.setBg( QColor( "LightSteelBlue" ) );
+		msgIn.setBody( i18n( "Here is an incoming colored message" ) );
+		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
+		preview->write( d->xsltParser->transform( msgInt.asXML().toString() ) );
+		preview->write( d->xsltParser->transform( msgAct.asXML().toString() ) );
+		//msgHigh.setImportance( KopeteMessage::Highlight );
+		//preview->write( d->xsltParser->transform( msgHigh.asXML().toString() ) ) ;
+		msgOut.setBody( i18n( "Bye" ) );
+		preview->write( d->xsltParser->transform( msgOut.asXML().toString() ) );
 
-			//parsing a XSLT message is incredibly slow! that's why i commented out some preview messages
-			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
-			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
-			msgIn.setFg(QColor("DodgerBlue"));
-			msgIn.setBg(QColor("LightSteelBlue"));
-			msgIn.setBody( i18n("Here is an incoming colored message"));
-			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
-			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
-			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
-			//msgHigh.setImportance( KopeteMessage::Highlight );
-			//preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model )) ;
-			msgOut.setBody( i18n("Bye"));
-			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
+		preview->write( QString::fromLatin1( "</body></html>" ) );
+		preview->end();
 
-			preview->write( QString::fromLatin1( "</body></html>" ) );
-			preview->end();
+		delete myself;
+		delete jack;
 
-			delete myself;
-			delete jack;
-		} // END if(!model.isEmpty())
+		setChanged( true );
 	}
-	setChanged(true);
 }
 
 QString AppearanceConfig::fileContents( const QString &path )

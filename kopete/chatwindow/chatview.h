@@ -46,6 +46,8 @@ class KopeteMessageManager;
 class KCompletion;
 class KURL;
 
+class KopeteChatViewPrivate;
+
 using namespace DOM;
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
@@ -56,20 +58,19 @@ class KopeteContactLVI : public QObject, public KListViewItem
 {
 	Q_OBJECT
 
-	public:
-		KopeteContactLVI( KopeteView *view, const KopeteContact *contact, KListView *parent );
-		const KopeteContact *contact() const { return m_contact; }
+public:
+	KopeteContactLVI( KopeteView *view, const KopeteContact *contact, KListView *parent );
+	const KopeteContact *contact() const { return m_contact; }
 
-	private:
-		KopeteContact *m_contact;
-		KListView *m_parentView;
-		KopeteView *m_view;
+private:
+	KopeteContact *m_contact;
+	KListView *m_parentView;
+	KopeteView *m_view;
 
-	private slots:
-		void slotDisplayNameChanged(const QString &, const QString&);
-		void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, 
-			const KopeteOnlineStatus & );
-		void slotExecute( QListViewItem* );
+private slots:
+	void slotDisplayNameChanged(const QString &, const QString&);
+	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus & );
+	void slotExecute( QListViewItem* );
 };
 
 /**
@@ -196,10 +197,8 @@ public:
 	 * @return The contents of the view
 	 */
 	void nickComplete();
-		
-	void setStylesheet( const QString &style  ) { xslStyleSheet = style; slotRefreshNodes(); }
-	
-	const QString xslStyleString() const;
+
+	void setStylesheet( const QString &style  );
 
 public slots:
 	/**
@@ -386,7 +385,7 @@ private slots:
 private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
-	
+
 	QPtrDict<QTimer> m_remoteTypingMap;
 	KHTMLPart *chatView;
 	KHTMLView *htmlWidget;
@@ -397,7 +396,6 @@ private:
 	int historyPos;
 	bool bgChanged;
 	QString unreadMessageFrom;
-	QString xslStyleSheet;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
 	KTextEdit* m_edit;
 	KListView *membersList;
@@ -466,9 +464,9 @@ private:
 	const QString styleHTML() const;
 
 	QMap<unsigned long,KopeteMessage> messageMap;
+
+	KopeteChatViewPrivate *d;
 };
-
-
 
 #endif
 

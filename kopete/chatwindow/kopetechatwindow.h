@@ -45,7 +45,6 @@ class KSelectAction;
 class ChatView;
 
 typedef QPtrList<KopeteContact>  KopeteContactPtrList;
-typedef QMap<int, QString> StyleMap;
 
 class KopeteChatWindow : public KParts::MainWindow
 {
@@ -126,8 +125,6 @@ private:
 	QMovie animIcon;
 	QPixmap normalIcon;
 	QWidget *statusArea;
-	StyleMap styleMap;
-	KSelectAction *selectStyle;
 
 	KAction *chatSend;
 	KAction *historyUp;
@@ -192,8 +189,6 @@ private slots:
 	void slotConfKeys();
 	void slotConfToolbar();
 	
-	void slotChangeStyle( int style );
-
 	void slotViewMembersLeft();
 	void slotViewMembersRight();
 	void slotToggleViewMembers();

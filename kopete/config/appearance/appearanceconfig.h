@@ -35,6 +35,8 @@ class QListBoxItem;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_Colors;
 
+class KopeteAppearanceConfigPrivate;
+
 namespace KTextEditor
 {
 	class View;
@@ -53,6 +55,7 @@ class AppearanceConfig : public KCModule
 
 public:
 	AppearanceConfig(QWidget *parent, const char *name, const QStringList &args );
+	~AppearanceConfig();
 
 	virtual void save();
 	virtual void load();
@@ -102,6 +105,10 @@ private:
 	QString fileContents(const QString &path);
 	void addStyle(const QString &styleName, const QString &xslString);
 
+	KopeteAppearanceConfigPrivate *d;
 };
+
 #endif
+
 // vim: set noet ts=4 sts=4 sw=4:
+

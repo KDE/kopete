@@ -56,9 +56,19 @@
 
 #include <ktabwidget.h>
 
+class KopeteChatViewPrivate
+{
+public:
+	KopeteXSLT *xsltParser;
+};
+
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
 {
+	d = new KopeteChatViewPrivate;
+
+	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents() );
+
 	hide();
 
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
@@ -191,6 +201,8 @@ ChatView::~ChatView()
 	saveOptions();
 
 	delete mComplete;
+
+	delete d;
 }
 
 void ChatView::raise(bool activate)
@@ -980,6 +992,12 @@ void ChatView::addText(const QString &text)
 	m_edit->insert(text);
 }
 
+void ChatView::setStylesheet( const QString &style )
+{
+	d->xsltParser->setXSLT( style );
+	slotRefreshNodes();
+}
+
 void ChatView::addChatMessage( KopeteMessage &m )
 {
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
@@ -990,7 +1008,7 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	messageMap.insert( ++messageId, m );
 	QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
-	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), xslStyleString() );
+	QString resultHTML = d->xsltParser->transform( message.toString() );
 	
 	KopeteContactPtrList members = msgManager()->members();
 	for( KopeteContact *c = members.first(); c; c = members.next() )
@@ -1017,14 +1035,6 @@ void ChatView::addChatMessage( KopeteMessage &m )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
-const QString ChatView::xslStyleString() const
-{
-	if( xslStyleSheet.isEmpty() )
-		return KopetePrefs::prefs()->styleContents();
-	else
-		return xslStyleSheet;
-}
-
 void ChatView::slotRefreshNodes()
 {
 	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
@@ -1032,7 +1042,8 @@ void ChatView::slotRefreshNodes()
 	QString xmlString;
 	for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
 		xmlString += (*it).asXML().toString();
-	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>"), xslStyleString(), this, SLOT(slotTransformComplete( const QVariant &)) );
+	d->xsltParser->transformAsync( QString::fromLatin1( "<document>" ) + xmlString + QString::fromLatin1( "</document>" ),
+		this, SLOT( slotTransformComplete( const QVariant & ) ) );
 }
 
 void ChatView::slotRefreshView()

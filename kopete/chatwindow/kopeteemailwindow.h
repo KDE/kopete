@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Daniel Stone          <dstone@kde.org>
     Copyright (c) 2003      by Jason Keirstead       <jason@keirstead.org>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,13 +22,14 @@
 
 #include <kmainwindow.h>
 #include <kparts/mainwindow.h>
+
 #include "kopeteview.h"
 
 class KURL;
 
 namespace KParts { struct URLArgs; }
 
-struct KopeteEmailWindowPrivate;
+class KopeteEmailWindowPrivate;
 
 class KopeteEmailWindow : KParts::MainWindow, public KopeteView
 {

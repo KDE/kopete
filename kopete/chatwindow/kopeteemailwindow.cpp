@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Daniel Stone          <dstone@kde.org>
     Copyright (c) 2003      by Jason Keirstead       <jason@keirstead.org>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -54,8 +55,9 @@
 #include "kopeteprefs.h"
 #include "kopetexsl.h"
 
-struct KopeteEmailWindowPrivate
+class KopeteEmailWindowPrivate
 {
+public:
 	QValueList<KopeteMessage> messageQueue;
 	bool blnShowingMessage;
 	bool sendInProgress;
@@ -81,12 +83,16 @@ struct KopeteEmailWindowPrivate
 
 	KActionMenu *actionActionMenu;
 	KopeteEmoticonAction *actionSmileyMenu;
+
+	KopeteXSLT *xsltParser;
 };
 
 KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreignMessage )
 :  KParts::MainWindow( ), KopeteView( manager )
 {
 	d = new KopeteEmailWindowPrivate;
+
+	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents(), this );
 
 	QVBox *v = new QVBox( this );
 	setCentralWidget( v );
@@ -455,8 +461,6 @@ void KopeteEmailWindow::slotReadNext()
 
 	d->blnShowingMessage = true;
 
-	const QString model = KopetePrefs::prefs()->styleContents();
-
 	d->queuePosition++;
 
 	writeMessage( (*d->messageQueue.at( d->queuePosition - 1 )) );
@@ -485,8 +489,6 @@ void KopeteEmailWindow::slotRefreshAppearance()
 
 void KopeteEmailWindow::writeMessage( KopeteMessage &msg )
 {
-	const QString model = KopetePrefs::prefs()->styleContents();
-
 	d->htmlPart->begin();
 	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;font-size:%2pt;color:%3}td{font-family:%4;font-size:%5pt;color:%6}</style></head><body style=\"background-repeat:no-repeat;background-attachment:fixed\" bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">%10</body></html>" )
 		.arg( KopetePrefs::prefs()->fontFace().family() )
@@ -498,7 +500,7 @@ void KopeteEmailWindow::writeMessage( KopeteMessage &msg )
 		.arg( KopetePrefs::prefs()->bgColor().name() )
 		.arg( KopetePrefs::prefs()->linkColor().name() )
 		.arg( KopetePrefs::prefs()->linkColor().name() )
-		.arg( KopeteXSL::xsltTransform( msg.asXML().toString(), model ) ) );
+		.arg( d->xsltParser->transform( msg.asXML().toString() ) ) );
 	d->htmlPart->end();
 }
 
