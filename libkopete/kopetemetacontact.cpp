@@ -59,6 +59,9 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 		connect( c, SIGNAL( nameChanged( const QString & ) ),
 			this, SLOT( slotContactNameChanged( const QString & ) ) );
 
+		connect( c, SIGNAL( destroyed( QObject * ) ),
+			this, SLOT( slotMetaContactDestroyed( QObject * ) ) );
+
 		setDisplayName( c->name() );
 
 		// FIXME: Group handling!!!!
@@ -341,6 +344,13 @@ void KopeteMetaContact::addToGroup( const QString &to )
 QStringList KopeteMetaContact::groups() const
 {
 	return m_groups;
+}
+
+void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
+{
+	// Try removing the item. The contact might be removed already, but
+	// that's safely handled inside QPtrList::remove()
+	m_contacts.remove( dynamic_cast<KopeteContact *>( obj ) );
 }
 
 #include "kopetemetacontact.moc"

@@ -185,6 +185,12 @@ private slots:
 	 */
 	void slotContactNameChanged( const QString &name );
 
+	/**
+	 * A child contact was deleted, remove it from the list, if it's still
+	 * there
+	 */
+	void slotMetaContactDestroyed( QObject *obj );
+
 private:
 	QPtrList<KopeteContact> m_contacts;
 
