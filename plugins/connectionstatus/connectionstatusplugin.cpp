@@ -56,6 +56,7 @@ void ConnectionStatusPlugin::init()
 
 bool ConnectionStatusPlugin::unload()
 {
+	return true;
 }
 
 void ConnectionStatusPlugin::slotCheckStatus()
