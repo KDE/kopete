@@ -34,6 +34,7 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kapplication.h>
+#include <krun.h>
 #include <kmessagebox.h>
 
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact )
@@ -178,9 +179,8 @@ void YahooContact::slotUserInfo()
 {
 	//kdDebug(14180) << k_funcinfo << endl;
 
-	QString profileSiteString = "http://profiles.yahoo.com/" + m_userId;
-	//kdDebug(14180) << "Yahoo profile site string: " << profileSiteString << endl;
-	kapp->invokeBrowser(profileSiteString);
+	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + m_userId;
+	KRun::runURL( KURL( profileSiteString ) , "text/html" );
 }
 
 void YahooContact::slotSendFile()
