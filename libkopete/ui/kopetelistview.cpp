@@ -155,6 +155,8 @@ struct ListView::Private
 	int scrollAutoHideTimeout;
 	//! State of scroll auto hide
 	bool scrollAutoHide;
+	//! If true slotConfigChange won't effect scroll auto hide status
+	bool ignoreGlobalScrollAutoHide;
 	//! Muse navigation offset, we will ignore this much offset to the up/bottom edges
 	int mouseNavigationOffset;
 	//! C-tor
@@ -188,6 +190,7 @@ struct ListView::Private
 	  scrollAutoHideCounter(10),
 	  scrollAutoHideTimeout(10),
 	  scrollAutoHide(false),
+	  ignoreGlobalScrollAutoHide(false),
 	  mouseNavigationOffset(20) {}
 };
 
@@ -239,43 +242,17 @@ void ListView::slotConfigChanged()
 {
 	if( KopetePrefs::prefs()->contactListHideVerticalScrollBar() )
 	{	// If "hide scrollbars" is enabled, hide the scrollbars ALWAYS and disable auto-hide.
+		if( !d->ignoreGlobalScrollAutoHide )
+			setScrollAutoHideInternal(false);
 		setVScrollBarMode( AlwaysOff );
-		d->scrollAutoHide = false;
 	}
 	else
 	{	// If "hide scrollbars" is not enabled, show vertical scrollbars if necessary.
 		setVScrollBarMode( Auto );
-
-		if( KopetePrefs::prefs()->contactListAutoHideVScroll() )
-		{	// Auto-hide Scroll Bar option is selected
-			if( this->parent() ) // just a caution, otherwise below code will crash if this class initiated without parent
-			{
-				// Set scrollbar auto-hiding state true
-				d->scrollAutoHide = true;
-				// Turn of the bar now
-				setVScrollBarMode( AlwaysOff );
-				// Start the timer to handle auto-hide
-				killTimer( d->scrollAutoHideTimer );
-				d->scrollAutoHideTimer = startTimer( 1000 );
-				// Implement a slider for -> KopetePrefs::prefs()->contactListScrollAutoHideTimeOut() 
-				d->scrollAutoHideTimeout = KopetePrefs::prefs()->contactListAutoHideTimeout();
-			}
-			else
-			{
-				// If there is no parent of the widget, then don't enable show/hide. It's not easy to make
-				// a healthy auto-hide like this, scroll bar flickers due to Enter/Leave events.
-				kdDebug(14000) << k_funcinfo << "Parent does not exist, I can't manage auto-hide scroll bar. So it's not enabled." << endl;
-			}
-		}
-		else
-		{	// Auto-Hide Scroll Bar is disabled
-			if( this->parent() )
-			{
-				d->scrollAutoHide = false;
-				setVScrollBarMode( Auto );
-				killTimer( d->scrollAutoHideTimer );
-			}
-		}
+		// Scroll auto hide feature makes sense only if always hide is not enabled
+		// hence we have this in this "else" clause.
+		if( !d->ignoreGlobalScrollAutoHide )
+			setScrollAutoHideInternal( KopetePrefs::prefs()->contactListAutoHideVScroll() );
 	}
 }
 
@@ -419,6 +396,59 @@ int ListView::smoothScrollingTimerInterval()
 	return d->smoothScrollingTimerInterval;
 }
 
+void ListView::setScrollAutoHide( bool b )
+{
+	// Scroll bar status is changed manually, ignore any further changes done by slotConfigChange
+	setIgnoreGlobalScrollAutoHide( true );
+	
+	setScrollAutoHideInternal( b );
+
+	// Now honor other settings
+	// This is usefull for options such as "always hide scrollbar".
+	// Calling slotConfigChanged cannot override this ScrollAutoHide property since we have
+	// ignoreGlobalScrollAutoHide at the top of this method by default, so it's safe and sensible to
+	// call this method.
+	slotConfigChanged();
+}
+
+void ListView::setScrollAutoHideInternal( bool b )
+{
+	if( b )
+	{
+		// Set scrollbar auto-hiding state true
+		d->scrollAutoHide = true;
+		// Turn of the bar now
+		setVScrollBarMode( AlwaysOff );
+		// Start the timer to handle auto-hide
+		killTimer( d->scrollAutoHideTimer );
+		d->scrollAutoHideTimer = startTimer( 1000 );
+		// Implement a slider for -> KopetePrefs::prefs()->contactListScrollAutoHideTimeOut() 
+		d->scrollAutoHideTimeout = KopetePrefs::prefs()->contactListAutoHideTimeout();
+	}
+	else
+	{
+		d->scrollAutoHide = false;
+		setVScrollBarMode( Auto );
+		killTimer( d->scrollAutoHideTimer );
+	}
+}
+
+bool ListView::scrollAutoHide()
+{
+	return d->scrollAutoHide;
+}
+
+void ListView::setIgnoreGlobalScrollAutoHide( bool b )
+{
+	d->ignoreGlobalScrollAutoHide = b;
+}
+
+bool ListView::ignoreGlobalScrollAutoHide()
+{
+	return d->ignoreGlobalScrollAutoHide;
+	
+}
+
 void ListView::timerEvent( QTimerEvent *e )
 {
 	if( e->timerId() == d->smoothScrollingTimer )
@@ -515,6 +545,8 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 		}
 		else if( e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonDblClick )
 		{
+			// This is lame, and will be done with QWidget::style()::querySubControl with the next revision hopefully
+
 			// We are intercepting all clicks and double clicks on the scrollbar. Unless we do so
 			// scroll bar immediatly goes to the point wherever user's click requests it to.
 			// Then smooth scroll begins, and animates the scrolling, but since the scrollbar

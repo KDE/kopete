@@ -71,6 +71,30 @@ public:
 	 */
 	int smoothScrollingTimerInterval();
 
+	/**
+	 * Sets scroll auto hide feature
+	 * This method implicitly calls setIgnoreGlobalScrolLAutoHide(true) by default.
+	 * If you want not to ignore global changes, explicitly call setIgnoreGlobalScrollAutoHide(false).
+	 */
+	void setScrollAutoHide( bool b );
+	
+	/**
+	 * Gets scroll auto hide feature status
+	 */
+	bool scrollAutoHide();
+
+	/**
+	 * If b is true global settings changes won't effect the status of
+	 * scroll auto-hide feature.
+	 */
+	void setIgnoreGlobalScrollAutoHide( bool b );
+
+	/**
+	 * If returns true, it means global changes won't effect the status
+	 * of the scroll auto-hide feature.
+	 */
+	bool ignoreGlobalScrollAutoHide();
+
 public slots:
 	/**
 	 * Calls QListView::sort()
@@ -108,6 +132,7 @@ private slots:
 	 */
 	void slotCurrentChanged( QListViewItem *item );
 private:
+	void setScrollAutoHideInternal( bool b );
 	struct Private;
 	Private *d;
 };
