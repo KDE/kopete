@@ -126,7 +126,7 @@ void KopetePrefs::load()
 			"\t<xsl:when test=\"@direction='2'\"><!--internal message-->\n"
 			"\t\t-<font color=\"cyan\">--</font>\n\t</xsl:when>\n"
 			"\t<xsl:when test=\"@direction='3'\"><!--action message-->\n"
-			"\t\t<span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span>\n"
+			"\t\t<span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span><xsl:text disable-output-escaping=\"yes\">&#160;</xsl:text>\n"
 			"\t</xsl:when>\n\t<xsl:otherwise>\n\t\t<font color=\"blue\">&lt;</font>\n"
 			"\t\t<font>\n\t\t\t<xsl:attribute name=\"color\">\n"
 			"\t\t\t\t<xsl:choose>\n\t\t\t\t\t<xsl:when test=\"@direction='1'\"> <!-- Outgoing -->\n"
