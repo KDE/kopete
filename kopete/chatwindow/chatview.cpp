@@ -347,7 +347,7 @@ bool ChatView::closeView( bool force )
 	return false;
 }
 
-void ChatView::setTabState( KopeteTabState newState  )
+void ChatView::setTabState( KopeteTabState newState )
 {
 	if( newState == Undefined )
 		newState = m_tabState;
@@ -647,38 +647,40 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 	setTabState();
 }
 
-void ChatView::slotContactRemoved( const KopeteContact *c, const QString& reason )
+void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason )
 {
-	if( memberContactMap.contains(c) && (c != m_manager->user()) )
+	if ( memberContactMap.contains( contact ) && contact != m_manager->user() )
 	{
-		m_remoteTypingMap.remove( const_cast<KopeteContact *>( c ) );
+		m_remoteTypingMap.remove( const_cast<KopeteContact *>( contact ) );
 
-		QString contactName;
-		contactName = c->displayName();
-		disconnect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
-			this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
+		disconnect( contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
+			this, SLOT( slotContactNameChanged( const QString &, const QString & ) ) );
 
+		QString contactName = contact->displayName();
 		mComplete->removeItem( contactName );
 
-
-		disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+		disconnect( contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-		//FIXME: bugs if the nickname contains %1 again
-		if(reason.isNull())
-			sendInternalMessage( i18n( "%1 has left the chat." ).arg(contactName) ) ;
+		if ( reason.isEmpty() )
+		{
+			sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ) ) ;
+		}
 		else
-			sendInternalMessage( i18n( "%1 has left the chat (%2).").
+		{
+			sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
 #if QT_VERSION < 0x030200
-			arg( contactName ).arg( reason )
+				arg( contactName ).arg( reason )
 #else
-			arg( contactName, reason )
+				arg( contactName, reason )
 #endif
-		);
+			);
+		}
 
-		delete memberContactMap[c];
-		memberContactMap.remove(c);
+		delete memberContactMap[ contact ];
+		memberContactMap.remove( contact );
 	}
+
 	setTabState();
 }
 
