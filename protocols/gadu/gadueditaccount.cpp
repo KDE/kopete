@@ -144,7 +144,7 @@ GaduEditAccount::apply()
 		account()->setPassword();
 	}
 
-	account()->myself()->rename( nickName->text() ); 
+	account()->myself()->rename( nickName->text() );
 
 	// this is changed only here, so i won't add any proper handling now
 	account()->setPluginData( account()->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
