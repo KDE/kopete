@@ -7,7 +7,9 @@ AM_CFLAGS = -DUSE_TLSHANDLER
 
 CLEANFILES = securestream.moc
 
-SUBDIRS = qca tasks tests
+SUBDIRS = qca tasks
+
+KDE_OPTIONS = nofinal
 
 securestream.moc: $(srcdir)/securestream.cpp $(srcdir)/securestream.h
 	${MOC} $(srcdir)/securestream.h > $@

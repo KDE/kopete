@@ -16,4 +16,3 @@ noinst_HEADERS = requesttask.h eventtask.h logintask.h setstatustask.h \
 		getdetailstask.h getstatustask.h typingtask.h connectiontask.h sendinvitetask.h \
 	joinconferencetask.h leaveconferencetask.h rejectinvitetask.h createcontacttask.h \
 	modifycontactlisttask.h createfoldertask.h deletecontacttask.h movecontacttask.h
-SUBDIRS = tests
