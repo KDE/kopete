@@ -410,7 +410,7 @@ void JabberAccount::slotTLSHandshaken ()
 		switch(validityResult)
 		{
 			case QCA::TLS::NoCert:
-				validityString = i18n("No certificate presented.");
+				validityString = i18n("No certificate was presented.");
 				code = "NoCert";
 				break;
 			case QCA::TLS::HostMismatch:
@@ -435,6 +435,7 @@ void JabberAccount::slotTLSHandshaken ()
 				code = "InvalidCA";
 				break;
 			case QCA::TLS::InvalidPurpose:
+				// FIXME: write better error  message here
 				validityString = i18n("Invalid certificate purpose.");
 				code = "InvalidPurpose";
 				break;
@@ -447,7 +448,7 @@ void JabberAccount::slotTLSHandshaken ()
 				code = "Revoked";
 				break;
 			case QCA::TLS::PathLengthExceeded:
-				validityString = i18n("Maximum certificate chain length has been exceeded.");
+				validityString = i18n("Maximum certificate chain length was exceeded.");
 				code = "PathLengthExceeded";
 				break;
 			case QCA::TLS::Expired:
@@ -462,7 +463,7 @@ void JabberAccount::slotTLSHandshaken ()
 		}
 
 		if(KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
-						      i18n("There was a problem while validating the server's certificate: %1").
+						      i18n("The server's certificate could not be validated: %1").
 						      arg(validityString),
 						      i18n("Connection Certificate Problem"),
 						      KStdGuiItem::cont(),
@@ -730,7 +731,7 @@ void JabberAccount::slotCSError (int error)
 			switch(jabberClientStream->errorCondition())
 			{
 				case XMPP::ClientStream::TLSStart:
-					errorCondition = i18n("Server rejected to start the TLS handshake.");
+					errorCondition = i18n("Server rejected our request to start the TLS handshake.");
 					break;
 				case XMPP::ClientStream::TLSFail:
 					errorCondition = i18n("Failed to establish a secure connection.");
@@ -762,7 +763,7 @@ void JabberAccount::slotCSError (int error)
 					errorCondition = i18n("Encryption is required but not present.");
 					break;
 				case XMPP::ClientStream::InvalidAuthzid:
-					errorCondition = i18n("Invalid ID.");
+					errorCondition = i18n("Invalid user ID.");
 					break;
 				case XMPP::ClientStream::InvalidMech:
 					errorCondition = i18n("Invalid mechanism.");
@@ -791,7 +792,7 @@ void JabberAccount::slotCSError (int error)
 			switch(jabberClientStream->errorCondition())
 			{
 				case XMPP::ClientStream::LayerTLS:
-					errorCondition = i18n("Transport Security Layer (TLS) problem.");
+					errorCondition = i18n("Transport Layer Security (TLS) problem.");
 					break;
 				case XMPP::ClientStream::LayerSASL:
 					errorCondition = i18n("Simple Authentication and Security Layer (SASL) problem.");
@@ -811,7 +812,7 @@ void JabberAccount::slotCSError (int error)
 					errorCondition = i18n("No permission to bind the resource.");
 					break;
 				case XMPP::ClientStream::BindConflict:
-					errorCondition = i18n("Resource already in use.");
+					errorCondition = i18n("The resource is already in use.");
 					break;
 				default:
 					errorCondition = i18n("Unknown error.");
