@@ -1,7 +1,6 @@
 SUBDIRS = oscarsocket . icq aim icons pics
 METASOURCES = AUTO
-AM_CPPFLAGS = -I../../libkopete/ui \
-	-I./ui -I$(srcdir)/ui \
+AM_CPPFLAGS = -I./ui -I$(srcdir)/ui \
 	-I./oscarsocket -I$(srcdir)/oscarsocket \
 	 $(KOPETE_INCLUDES) $(all_includes)
 
