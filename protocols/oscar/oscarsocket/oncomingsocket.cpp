@@ -16,6 +16,8 @@
  ***************************************************************************/
 
 #include <kdebug.h>
+#include "oscarsocket.h"
+#include "oscardirectconnection.h"
 #include "oncomingsocket.h"
 #include "oncomingsocket.moc"
 
@@ -24,22 +26,32 @@ OncomingSocket::OncomingSocket(QObject *parent, const char *name )
 {
 }
 
-OncomingSocket::OncomingSocket(QList<ServiceSocket> *socketz, const QHostAddress &address,
+OncomingSocket::OncomingSocket(OscarSocket *server, QList<OscarConnection> *socketz, const QHostAddress &address,
 	Q_UINT16 port, int backlog, QObject *parent, const char *name)
 : QServerSocket(address,port,backlog,parent,name)
 {
 	conns = socketz;
+	mServer = server;
 }
 
 OncomingSocket::~OncomingSocket()
 {
 }
 
-/** Called when someone connects to the serversocket */
+/** Called when someone connects to the server socket */
 void OncomingSocket::newConnection( int socket )
 {
-	ServiceSocket *newsock = new ServiceSocket;
+	OscarConnection *newsock = new OscarDirectConnection("DIRECT");
 	newsock->setSocket(socket);
+	if (mServer)
+		newsock->setDebugDialog(mServer->debugDialog());
+	// Connect protocol error signal
+	QObject::connect(newsock, SIGNAL(protocolError(QString, int)),
+			mServer, SLOT(OnDirectIMError(QString, int)));
+	// Got IM
+	QObject::connect(newsock, SIGNAL(gotIM(QString, QString, bool)),
+			mServer, SLOT(OnDirectIMReceived(QString,QString,bool)));
+
 	if (conns)
 		conns->append(newsock);
 	else

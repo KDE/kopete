@@ -193,15 +193,13 @@ static const char *msgerrreason[] = {
 
 static const int msgerrreasonlen = 25;
 
-OscarSocket::OscarSocket(QObject *parent, const char *name)
-    : ProtocolSocket(parent,name)
+OscarSocket::OscarSocket(const QString &connName, QObject *parent, const char *name)
+    : OscarConnection(connName, CONN_TYPE_SERVER, parent,name)
 {
-    connect(this, SIGNAL(readyRead()), this, SLOT(OnRead()));
+    //connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
     connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
-    connect(this, SIGNAL(keyReceived()), this, SLOT(OnKeyReceived()));
-    connect(this, SIGNAL(cookieReceived()), this, SLOT(OnCookieReceived()));
     connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
-    connect(this, SIGNAL(gotBOSRights(WORD,WORD)), this, SLOT(OnGotBOSRights(WORD,WORD)));
+//    connect(this, SIGNAL(gotBOSRights(WORD,WORD)), this, SLOT(OnGotBOSRights(WORD,WORD)));
 //    connect(this, SIGNAL(gotConfig(TAimConfig)), this, SLOT(OnGotConfig(TAimConfig)));
     key = NULL;
     cookie = NULL;
@@ -222,13 +220,13 @@ void OscarSocket::OnConnect(void)
 {
     QString tmp = QString("Connected to " + peerName() + ", port %1").arg(peerPort());
     kdDebug() << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
-    serverSocket = new OncomingSocket(&sockets,address(),DIRECTIM_PORT);
+    serverSocket = new OncomingSocket(this,&sockets,address(),DIRECTIM_PORT);
     kdDebug() << "[OSCAR] address() is " << address().toString() << " serverSocket->address() is " << serverSocket->address().toString() << endl;
     emit connectionChanged(1,tmp);
 }
 
 /** This function is called when there is data to be read */
-void OscarSocket::OnRead(void)
+void OscarSocket::slotRead(void)
 {
 	FLAP fl = getFLAP();
 	char *buf = new char[fl.length];
@@ -241,17 +239,17 @@ void OscarSocket::OnRead(void)
 	}
 
 	int bytesread = readBlock(buf,fl.length);
-	if (fl.length < bytesAvailable())
+	if (bytesAvailable())
 		emit readyRead(); //there is another packet waiting to be read
 
 	inbuf.setBuf(buf,bytesread);
 
 	//kdDebug() << "[OSCAR] Input: " << endl;
 	//inbuf.print();
-	if(mHaveDebugDialog){
-			mDebugDialog->addMessageFromServer(inbuf.toString());
+	if(hasDebugDialog()){
+			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 	}
-
+  
 	switch(fl.channel)
 	{
 		case 0x01: //new connection negotiation channel
@@ -268,13 +266,13 @@ void OscarSocket::OnRead(void)
 			}
 			break;
 
-		case 0x02: //snac data channel
+		case 0x02: //snac data channel */
 			SNAC s;
 			s = inbuf.getSnacHeader();
 			//printf("Snac family is %x, subtype is %x, flags are %x, id is %x\n",s.family,s.subtype,s.flags,s.id);
 			switch(s.family)
 			{
-			case 0x0001: //generic service controls
+				case 0x0001: //generic service controls
 					switch(s.subtype)
 					{
 					case 0x0001:  //error
@@ -388,26 +386,21 @@ void OscarSocket::OnRead(void)
 					default:
 							kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
 					};
-					break;
+					break;        
 			case 0x0017: //authorization family
 					switch(s.subtype) {
 					case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
 							break;
 					case 0x0007: //encryption key is being sent
-							WORD keylen;
-							keylen = inbuf.getWord();
-							if (key)
-									delete key;
-							key = inbuf.getBlock(keylen);
-							emit keyReceived();
+							parsePasswordKey(inbuf);
 							break;
 					default: //unknown subtype
 							kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
 					};
 					break;
 			default: //unknown family
-					kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
+					kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl; 
 			};
 			break;
 			//		case 0x03: //FLAP error channel
@@ -424,54 +417,7 @@ void OscarSocket::OnRead(void)
 #endif
 		}
 	} // END switch(fl.channel)
-	delete buf;
-}
-
-/** Reads a FLAP header from the input */
-FLAP OscarSocket::getFLAP(void)
-{
-    FLAP fl;
-    int theword, theword2;
-    int start;
-    int chan;
-		//the FLAP start byte
-    if ((start = getch()) == 0x2a){
-				//get the channel ID
-				if ( (chan = getch()) == -1) {
-						kdDebug() << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
-						fl.channel = 0x00;
-				} else {
-						fl.channel = chan;
-				}
-
-				//get the sequence number
-				if((theword = getch()) == -1){
-						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
-						fl.sequence_number = 0x00;
-				} else if((theword2 = getch()) == -1){
-						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-						fl.sequence_number = 0x00;
-				} else {
-						// Got both pieces of info we need...
-						fl.sequence_number = (theword << 8) | theword2;
-				}
-
-
-				//get the data field length
-				if ((theword = getch()) == -1) {
-						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
-						fl.length = 0x00;
-				} else if((theword2 = getch()) == -1){
-						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-						fl.length = 0x00;
-				} else {
-						fl.length = (theword << 8) | theword2;
-				}
-
-		} else {
-				kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
-		}
-    return fl;
+	delete buf; 
 }
 
 /** Sends an authorization request to the server */
@@ -529,8 +475,8 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 
 		//kdDebug() << "[OSCAR] Output: " << endl;
 		//outbuf.print();
-		if(mHaveDebugDialog){
-				mDebugDialog->addMessageFromClient(outbuf.toString());
+		if(hasDebugDialog()){
+				debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
 		}
 		
 		outbuf.addFlap(chan);
@@ -552,10 +498,15 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 }
 
 /** The program does this when a key is received */
-void OscarSocket::OnKeyReceived(void)
+void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
-    kdDebug() << "[OSCAR] Got the key" << endl;;
-    sendLogin();
+	kdDebug() << "[OSCAR] Got the key" << endl;;
+	WORD keylen;
+	keylen = inbuf.getWord();
+	if (key)
+		delete key;
+	key = inbuf.getBlock(keylen);
+  sendLogin();
 }
 
 /** Sends login information, actually logs onto the server */
@@ -587,7 +538,7 @@ void OscarSocket::sendLogin(void)
 }
 
 /** Called when a cookie is received */
-void OscarSocket::OnCookieReceived(void)
+void OscarSocket::connectToBos(void)
 {
     kdDebug() << "[OSCAR] Cookie received!... preparing to connect to BOS server" << endl;
     emit connectionChanged(4,"Connecting to server...");
@@ -780,7 +731,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	{
 	    cookie = cook->data;
 	    cookielen = cook->length;
-	    emit cookieReceived();
+	    connectToBos();
 	}
     if (sn)
 	delete sn->data;
@@ -1051,16 +1002,9 @@ void OscarSocket::parseBOSRights(Buffer &inbuf)
 	if ((t = findTLV(ql,0x0002))) //max denies
 		maxdenies = (t->data[0] << 8) | t->data[1];
 	kdDebug() << "[OSCAR] Maxpermits: " << maxpermits << ", maxdenies: " << maxdenies << endl;
-	emit gotBOSRights(maxpermits,maxdenies);
 	ql.clear();
 	sendGroupPermissionMask();
 	sendPrivacyFlags();
-}
-
-/** Called when bos rights are received */
-void OscarSocket::OnGotBOSRights(WORD /*maxperm*/, WORD /*maxdeny*/)
-{
-	//sendClientReady();
 }
 
 /** Parses the server ready response */
@@ -1708,7 +1652,7 @@ void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 void OscarSocket::parseRedirect(Buffer &inbuf)
 {
     kdDebug() << "[OSCAR] Parsing redirect" << endl;
-    ServiceSocket *servsock = new ServiceSocket();
+    OscarConnection *servsock = new OscarConnection("Redirect",CONN_TYPE_REDIRECT);
     QList<TLV> tl = inbuf.getTLVList();
     int n;
     QString host;
@@ -1725,25 +1669,25 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 			{
 			case 0x0006: //auth cookie
 		    for (int i=0;i<tmp->length;i++)
-					servsock->cookie[i] = tmp->data[i];
+					//servsock->mAuthCookie[i] = tmp->data[i];
 		    	break;
 			case 0x000d: //service type
-		    servsock->type = (tmp->data[1] << 8) | tmp->data[0];
+		    //servsock->mConnType = (tmp->data[1] << 8) | tmp->data[0];
 		    break;
 			case 0x0005: //new ip & port
 		    host = tmp->data;
 		    n = host.find(':');
 		    if (n != -1)
 				{
-			    servsock->host = host.left(n);
-			    servsock->conPort = host.right(n).toInt();
+			    //servsock->mHost = host.left(n);
+			    //servsock->mPort = host.right(n).toInt();
 				}
 		    else
 				{
-			    servsock->host = host;
-			    servsock->conPort = peerPort();
+			    //servsock->mHost = host;
+			    //servsock->mPort = peerPort();
 				}
-		    kdDebug() << "[OSCAR] Set host to " << servsock->host << ", port to " << servsock->conPort << endl;
+		    //kdDebug() << "[OSCAR] Set host to " << servsock->mHost << ", port to " << servsock->mPort << endl;
 		    break;
 		default: //unknown
 		    kdDebug() << "[OSCAR] Unknown tlv type in parseredirect: " << tmp->type << endl;
@@ -1754,7 +1698,8 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	tl.clear();
 	sockets.append(servsock);
 	kdDebug() << "[OSCAR] Socket added to connection list!" << endl;
-} 
+}
+
 /** Request a direct IM session with someone
 	type == 0: request
 	type == 1: deny
@@ -1779,7 +1724,8 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 }
 
 // Parses a minityping notification from the server
-void OscarSocket::parseMiniTypeNotify(Buffer &inbuf){
+void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
+{
 		//TODO
 		// Throw away 8 bytes which are all zeros
 		inbuf.getDWord();
@@ -2208,6 +2154,50 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	emit denyRemoved(sname);
 }
 
+/** Reads a FLAP header from the input */
+FLAP OscarSocket::getFLAP(void)
+{
+    FLAP fl;
+    int theword, theword2;
+    int start;
+    int chan;
+		//the FLAP start byte
+    if ((start = getch()) == 0x2a){
+				//get the channel ID
+				if ( (chan = getch()) == -1) {
+						kdDebug() << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
+						fl.channel = 0x00;
+				} else {
+						fl.channel = chan;
+				}
+
+				//get the sequence number
+				if((theword = getch()) == -1){
+						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
+						fl.sequence_number = 0x00;
+				} else if((theword2 = getch()) == -1){
+						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+						fl.sequence_number = 0x00;
+				} else {
+						// Got both pieces of info we need...
+						fl.sequence_number = (theword << 8) | theword2;
+				}
+
+				//get the data field length
+				if ((theword = getch()) == -1) {
+						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
+						fl.length = 0x00;
+				} else if((theword2 = getch()) == -1){
+						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+						fl.length = 0x00;
+				} else {
+						fl.length = (theword << 8) | theword2;
+				}
+		} else {
+				kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
+		}
+    return fl;
+}
 
 void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyType ){
 		//BLARG
@@ -2244,14 +2234,21 @@ void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyTyp
 		sendBuf(outbuf, 0x02);
 }
 
-void OscarSocket::setDebugDialog(OscarDebugDialog *dialog){
-		if(dialog){
-				mDebugDialog = dialog;
-				mHaveDebugDialog = true;
-		} else {
-				mHaveDebugDialog = false;
-		}
+/** Called when a direct IM is received */
+void OscarSocket::OnDirectIMReceived(QString message, QString sender, bool isAuto)
+{
+	//for now, let's just emit a gotIM as though it came from the server
+	emit gotIM(message,sender,isAuto);
 }
+
+/** Called when a direct IM connection suffers an error */
+void OscarSocket::OnDirectIMError(QString errmsg, int num)
+{
+	//let's just emit a protocolError for now
+	emit protocolError(errmsg, num);
+}
+
+
 
 /*
  * Local variables:

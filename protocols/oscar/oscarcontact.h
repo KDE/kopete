@@ -89,6 +89,7 @@ private: // Private attributes
 	KopeteMessageManager *mMsgManager;
 	KAction* actionWarn;
 	KAction* actionBlock;
+	KAction* actionDirectConnect;
 	KActionCollection* actionCollection;
 
 	OscarProtocol *mProtocol;
@@ -140,6 +141,8 @@ private slots: // Private slots
   void slotMoved(KopeteMetaContact *mc);
   /** Called when we want to block the contact */
   void slotBlock(void);
+  /** Called when we want to connect directly to this contact */
+  void slotDirectConnect();
 };
 
 #endif

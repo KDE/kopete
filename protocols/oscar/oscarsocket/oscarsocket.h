@@ -18,11 +18,11 @@
 #ifndef OSCARSOCKET_H
 #define OSCARSOCKET_H
 
-#include "protocolsocket.h"
+#include "oscarconnection.h"
 #include <qlist.h>
-#include "buffer.h"
 #include "oncomingsocket.h"
 #include "ssidata.h"
+#include "tbuddylist.h"
 
 struct FLAP { //flap header
 	BYTE channel;
@@ -48,8 +48,26 @@ struct RateClass { //rate info
 	QList<SnacPair> members;
 };
 
-class ServiceSocket;
-class OscarDebugDialog;
+typedef struct TAimConfig
+{
+	int permitStatus;
+	TBuddyList buddyList;
+	TBuddyList permitList;
+	TBuddyList denyList;
+	unsigned short revision;
+	unsigned long timestamp;
+};
+
+struct UserInfo { //user info
+	QString sn;
+	int evil;
+	int userclass;
+	unsigned long membersince;
+	unsigned long onlinesince;
+	long capabilities;
+	long sessionlen;
+	int idletime;
+};
 
 #define OSCAR_SERVER 	"login.oscar.aol.com"
 #define OSCAR_PORT 		5190
@@ -69,10 +87,10 @@ class OscarDebugDialog;
   *@author Tom Linsky
   */
 
-class OscarSocket : public ProtocolSocket  {
+class OscarSocket : public OscarConnection  {
 	Q_OBJECT
 public:
-	OscarSocket(QObject *parent=0, const char *name=0);
+	OscarSocket(const QString &connName, QObject *parent=0, const char *name=0);
 	~OscarSocket();
 
 	/** Enum for typing notifications */
@@ -80,7 +98,6 @@ public:
 		{
 			TypingFinished, TextTyped, TypingBegun
 		};
-	
 	
   /** Sends an authorization request to the server */
   void sendLoginRequest(void);
@@ -131,30 +148,29 @@ public:
   /** Sets the user's profile */
   void setMyProfile(const QString &profile);
   /** Returns the user's profile */
-  inline QString getMyProfile(void) { return myUserProfile; };
+  inline QString getMyProfile(void) const { return myUserProfile; };
   /** Blocks user sname */
   void sendBlock(const QString &sname);
   /** Removes the block on user sname */
-	void sendRemoveBlock(const QString &sname);
+  void sendRemoveBlock(const QString &sname);
 	/**
 	 * Sends a typing notification to the server
 	 * @param screenName The name of the person to send to
 	 * @param notifyType Type of notify to send
 	 */
 	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
-	/** Sets the pointer to the debug dialog */
-	void setDebugDialog(OscarDebugDialog *dialog);
-	
-public slots: // Public slots
+
+public slots:
   /** This is called when a connection is established */
   void OnConnect(void);
   /** This function is called when there is data to be read */
-  void OnRead(void);
+  virtual void slotRead(void);
+	
 private: // Private methods
-  /** Reads a FLAP header from the input */
-  FLAP getFLAP(void);
   /** adds the flap version to the buffer */
   void putFlapVer(Buffer &buf);
+  /** Reads a FLAP header from the input */
+  FLAP getFLAP(void);
   /** Sends the output buffer, and clears it */
   void sendBuf(Buffer &buf, BYTE chan);
   /**
@@ -162,6 +178,8 @@ private: // Private methods
 	 * onto the server
 	 */
   void sendLogin(void);
+  /** Called when a cookie is received */
+  void connectToBos(void);
   /** Sends the authorization cookie to the BOS server */
   void sendCookie(void);
   /** Parses the rate info response */
@@ -182,6 +200,8 @@ private: // Private methods
 	 * (which hopefully contains the cookie)
 	 */
   void parseAuthResponse(Buffer &inbuf);
+  /** The program does this when a key is received */
+  void parsePasswordKey(Buffer &inbuf);
   /**
 	 * tells the server that the client is
 	 * ready to receive commands & stuff */
@@ -272,27 +292,51 @@ private slots: // Private slots
   void OnConnectionClosed(void);
   /** Called when the server aknowledges the connection */
   void OnConnAckReceived(void);
-  /** The program does this when a key is received */
-  void OnKeyReceived(void);
-  /** Called when a cookie is received */
-  void OnCookieReceived(void);
   /** called when a conn ack is recieved for the BOS connection */
   void OnBosConnAckReceived(void);
   /** Called when the server is ready for normal commands */
   void OnServerReady(void);
   /** Called on connection to bos server */
   void OnBosConnect();
-  /** Called when bos rights are received */
-  void OnGotBOSRights(WORD maxperm, WORD maxdeny);
+  /** Called when a direct IM is received */
+  void OnDirectIMReceived(QString, QString, bool);
+  /** Called when a direct IM connection suffers an error */
+  void OnDirectIMError(QString, int);
 signals: // Signals
-  /** Tells when the connection ack has been recieved on channel 1 */
-  void connAckReceived(void);
   /** The server has sent the key with which to encrypt the password */
   void keyReceived(void);
-  /** authorization successful... the authorization cookie has been recieved */
-  void cookieReceived(void);
   /** The bos server is ready to be sent commands */
   void serverReady(void);
+  /** A buddy has left */
+  void gotOffgoingBuddy(QString);
+  /** A buddy has arrived! */
+  void gotBuddyChange(UserInfo);
+  /** A user profile has arrived */
+  void gotUserProfile(UserInfo, QString);
+  /** Emitted when the status of the connection changes during login */
+  void connectionChanged(int, QString);
+  /** Emitted when my user info is received */
+  void gotMyUserInfo(UserInfo);
+  /** A buddy list has been received */
+  void gotConfig(TAimConfig);
+  /** emitted when we have recieved an ack from the server */
+  void gotAck(QString, int);
+  /** Emitted (with new status as parameter) when our status has changed */
+  void statusChanged(int);
+  /** Emitted when the logged in user has been warned
+  		The int is the new warning level.
+    	The QString is the name of the user which warned us (QString::null if anonymous)
+     WARNING: this is emitted every time the server notifies us about our warning level,
+     so natural decreases in level will be signalled.*/
+  void gotWarning(int, QString);
+	/**
+	 * Emitted when we get a minityping notifications
+	 * First param is the screen name, second is the type
+	 * 0: Finished
+	 * 1: Typed
+	 * 2: Begun (is typing)
+	 */
+	void gotMiniTypeNotification(QString, int);
 private: // Private attributes
   /** The key used to encrypt the password */
   char * key;
@@ -313,7 +357,7 @@ private: // Private attributes
   /** tells whether we are idle */
   bool idle;
   /** A collections of the sockets we are connected with */
-  QList<ServiceSocket> sockets;
+  QList<OscarConnection> sockets;
   /** A temp socket, used for making temporary connectionz */
 //  QSocket * tmpSocket;
   /** Socket for direct connections */
@@ -326,20 +370,19 @@ private: // Private attributes
   QString myUserProfile;
   /** Tells if we are connected to the server and ready to operate */
   bool isConnected;
-	/** Pointer to the debug dialog, should not delete */
-	OscarDebugDialog *mDebugDialog;
-	/** Bool indicating whether or not we have a debug dialog */
-	bool mHaveDebugDialog;
 		
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */
   void SSIAck();
   /** emitted when BOS rights are received */
-  void gotBOSRights(WORD,WORD);
+ // void gotBOSRights(WORD,WORD);
   /** emitted when a buddy gets blocked */
   void denyAdded(QString);
   /** emitted when a block is removed on a buddy */
   void denyRemoved(QString);
+ /** Tells when the connection ack has been recieved on channel 1 */
+  void connAckReceived(void);
+
 };
 
 #endif

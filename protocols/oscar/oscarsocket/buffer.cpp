@@ -30,6 +30,13 @@ Buffer::Buffer(QObject *parent, const char *name)
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
 
+Buffer::Buffer(const Buffer &b, QObject *parent, const char *name)
+	: QObject(parent,name)
+{
+	setBuf(b.getBuf(),b.getLength());
+	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
+}
+
 Buffer::~Buffer()
 {
 }
@@ -132,20 +139,14 @@ int Buffer::addFlap(const BYTE channel)
 }
 
 /** Prints out the buffer */
-void Buffer::print()
+void Buffer::print() const
 {
-	QString output;
-	for (int i=0;i<length;i++)
-	{
-		if (static_cast<unsigned char>(buf[i]) < 0x10)
-			output += "0";
-		output += QString("%1 ").arg(static_cast<unsigned char>(buf[i]),0,16);
-	}
-	kdDebug() << output << endl;
+	kdDebug() << toString() << endl;
 }
 
 // Returns a QString representation
-QString Buffer::toString(){
+QString Buffer::toString() const
+{
 	QString output;
 	for (int i=0;i<length;i++)
 	{

@@ -46,9 +46,10 @@ class Buffer : public QObject {
 	Q_OBJECT
 public: 
 	Buffer(QObject *parent=0, const char *name=0);
+	Buffer(const Buffer &b, QObject *parent=0, const char *name=0);
 	~Buffer();
 	/** returns the actual buffer */
-	inline char *getBuf(void) { return buf; };
+	inline char *getBuf(void) const { return buf; };
   /** adds the given string to the buffer (make sure it's NULL-terminated) */
   int addString(const char *, const WORD);
   /** adds the given DWord to the buffer */
@@ -56,7 +57,7 @@ public:
   /** adds the given word to the buffer */
   int addWord(const WORD);
 	/** returns the length of the buffer */
-	inline int getLength(void) { return length; };
+	inline int getLength(void) const { return length; };
   /** adds the given byte to the buffer */
   int addByte(const BYTE);
   /** deletes the current buffer */
@@ -66,9 +67,9 @@ public:
   /** adds the given flap header to the beginning of the buffer, returns new buffer length */
   int addFlap(const BYTE channel);
   /** Prints out the buffer */
-  void print();
+  void print() const;
 	/** Returns a QString representation of the buffer */
-	QString toString();
+	QString toString() const;
   /** Adds a SNAC to the end of the buffer with given family, subtype, flags, and request ID */
   int addSnac(const WORD, const WORD, const WORD, const DWORD);
   /** gets a Dword out of the buffer */

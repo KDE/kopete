@@ -192,7 +192,7 @@ void OscarContact::slotUpdateBuddy(int buddyNum)
 		return;
 
 	// status did not change, do nothing
-	if ( mStatus == tmpBuddy.status )
+	if ( ( mStatus == tmpBuddy.status ) && ( mIdle == tmpBuddy.idleTime ) )
 		return;
 
 	// if we have become idle
@@ -263,6 +263,7 @@ void OscarContact::initActions(void)
 
 	actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()), this, "actionWarn");
 	actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()), this, "actionBlock");
+	actionDirectConnect = new KAction(i18n("&Connect"), 0, this, SLOT(slotDirectConnect()), this, "actionDirectConnect");
 }
 
 /** Returns the status icon of the contact */
@@ -523,6 +524,8 @@ KActionCollection *OscarContact::customContextMenuActions(void)
 	actionCollection = new KActionCollection(this);
 	actionCollection->insert( actionWarn );
 	actionCollection->insert( actionBlock );
+	//experimental
+	actionCollection->insert( actionDirectConnect );
 	return actionCollection;
 }
 
@@ -676,6 +679,14 @@ void OscarContact::slotBlock(void)
 		mProtocol->engine->sendBlock(mName);
 	}
 }
+
+/** Called when we want to connect directly to this contact */
+void OscarContact::slotDirectConnect(void)
+{
+	kdDebug() << "[OscarContact] Requesting direct IM with " << mName << endl;
+	mProtocol->engine->sendDirectIMRequest(mName);
+}
+
 /*
  * Local variables:
  * c-indentation-style: k&r
