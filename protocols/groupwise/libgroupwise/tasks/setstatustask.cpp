@@ -1,0 +1,50 @@
+//
+// C++ Implementation: %{MODULE}
+//
+// Description: 
+//
+//
+// Author: %{AUTHOR} <%{EMAIL}>, (C) %{YEAR}
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
+#include "client.h"
+#include "gwerror.h"
+#include "request.h"
+#include "requestfactory.h"
+
+#include "setstatustask.h"
+
+SetStatusTask::SetStatusTask(Task* parent): RequestTask(parent)
+{
+}
+
+SetStatusTask::~SetStatusTask()
+{
+}
+
+void SetStatusTask::status( const uint newStatus, const QString &awayMessage, const QString &autoReply )
+{
+	if ( newStatus < NM_STATUS_UNKNOWN || newStatus > NM_STATUS_INVALID )
+	{
+		setError( 1, "Invalid Status" );
+		return;
+	}
+	QCString command("setstatus");
+	Request * setStatus = client()->requestFactory()->request( command );
+	Field::FieldList lst;
+	lst.append( new Field::SingleField( NM_A_SZ_STATUS, 0, NMFIELD_TYPE_UTF8, QString::number( newStatus ) ) );
+	lst.append( new Field::SingleField( NM_A_SZ_STATUS_TEXT, 0, NMFIELD_TYPE_UTF8, awayMessage ) );
+	lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
+	setStatus->setFields( lst );
+	setTransactionId( setStatus->transactionId() );
+	setTransfer( setStatus );
+}
+
+void SetStatusTask::onGo()
+{
+	//cout << "SetStatusTask::onGo() - sending status fields" << endl;
+	send( static_cast<Request *>( transfer() ) );
+}
