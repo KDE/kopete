@@ -68,8 +68,10 @@ void KopeteAccountManager::disconnectAll()
 void KopeteAccountManager::setAwayAll( const QString &awayReason )
 {
 	KopeteAway::setGlobalAway( true );
-
-	for(KopeteAccount *i = m_accounts.first() ; i; i = m_accounts.next() )
+	//When a status is changed, the protocol loops into the account to update the menu icon.
+	//and then it change the m_accounts.current().. so we make a copy
+	QPtrList<KopeteAccount>accounts = m_accounts;
+	for(KopeteAccount *i = accounts.first() ; i; i = accounts.next() )
 	{
 		if(i->isConnected() && !i->isAway())
 		{
@@ -84,8 +86,10 @@ void KopeteAccountManager::setAwayAll( const QString &awayReason )
 void KopeteAccountManager::setAvailableAll()
 {
 	KopeteAway::setGlobalAway( false );
-
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	//When a status is changed, the protocol loops into the account to update the menu icon.
+	//and then it change the m_accounts.current().. so we make a copy
+	QPtrList<KopeteAccount>accounts = m_accounts;
+	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
 		if(i->isConnected() && i->isAway())
 			i->setAway(false);
