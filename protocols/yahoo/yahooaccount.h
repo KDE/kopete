@@ -100,12 +100,17 @@ public slots:
 	 * Disconnect from the Yahoo service
 	 */
 	virtual void disconnect();
-
+	
 signals:
 	/**
 	 * Emitted when we receive notification that the person we're talking to is typing
 	 */
 	void receivedTypingMsg(const QString &contactId, bool isTyping);
+	
+	/**
+	 * Emitted when a reconnect is needed due to a bad password
+	 */
+	void needReconnect();
 
 protected:
 	/**
@@ -117,7 +122,7 @@ protected:
 	 * Gets the just-received message color
 	 */
 	QColor getMsgColor(const QString& msg);
-
+	
 protected slots:
 	virtual void loaded();
 
@@ -163,6 +168,12 @@ private slots:
 	void slotGoStatus012() { slotGoStatus(12); } // Invisible
 	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
+	
+	/**
+	 * Set an error flag so that the password box 
+	 * is popped up again when the password is wrong
+	 */
+	void slotNeedReconnect();
 
 private:
 	/**
@@ -184,6 +195,7 @@ private:
 	 */
 	bool m_useServerGroups;		// Use the groups on the server for import
 	bool m_importContacts;		// Import the contacts from the server
+	bool m_needNewPassword;		// New password needed. Old one was bad.
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooSession *m_session;	// Connection Object
 

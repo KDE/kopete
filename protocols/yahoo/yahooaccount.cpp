@@ -62,14 +62,15 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	theAwayDialog = new YahooAwayDialog(this);
 	m_importContacts = false;
 	m_useServerGroups = false;
-
-
-
+	m_needNewPassword = false;
+	
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
 	setMyself( new YahooContact(this, accountId(), accountId(), 0) );
-	static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline, "", 0);
+	static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 
+	QObject::connect(this, SIGNAL(needReconnect()), this, SLOT(slotNeedReconnect()));
+	
 	if(autoLogin()) connect();
 }
 
@@ -176,6 +177,15 @@ void YahooAccount::connect()
 	loaded();
 	
 	YahooSessionManager::manager()->setPager(server, port);
+	
+	
+		
+	if ((password(m_needNewPassword)).isNull())
+	{ //cancel the connection attempt
+		static_cast<YahooContact*>(myself())->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+	
 	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
 
 	if(!isConnected())
@@ -247,7 +257,7 @@ void YahooAccount::connect()
 	{	// They're really away, and they want to un-away.
 		slotGoOnline();
 	}
-	else	// Nope, just your regular crack junky.
+	else	// ignore
 		kdDebug(14180) << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
 }
 
@@ -262,8 +272,12 @@ void YahooAccount::disconnect()
 		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
 			static_cast<YahooContact *>(i.current())->setYahooStatus(YahooStatus::Offline);
 	}
-	else	// Again, what's with the crack? Sheez.
+	else
+	{ 	//make sure we set everybody else offline explicitly, just for cleanup
 		kdDebug(14180) << "Ignoring disconnect request (not connected)." << endl;
+		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
+			static_cast<YahooContact *>(i.current())->setYahooStatus(YahooStatus::Offline);
+	}
 }
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
@@ -278,6 +292,7 @@ void YahooAccount::setAway(bool status, const QString &awayMessage)
 void YahooAccount::slotConnected()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
+	m_needNewPassword = false;
 }
 
 void YahooAccount::slotGoOnline()
@@ -364,6 +379,13 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 }
 
 
+void YahooAccount::slotNeedReconnect()
+{
+	m_needNewPassword = true;
+	connect();
+}
+
+
 /***************************************************************************
  *                                                                         *
  *   Slot for KYahoo signals                                               *
@@ -387,9 +409,8 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
 	{
-		errorMsg = i18n("Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
-		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
+		emit needReconnect();
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_LOCK)
@@ -405,6 +426,10 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		return;
+	}
+	else
+	{ //we disconnected for some unknown reason, change the icon
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 	}
 }
 
