@@ -75,7 +75,7 @@ public:
 	 * For debugging it's convenient to have this method public, but using
 	 * it outside this class is deprecated for any other use!
 	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
+	void sendCommand( const QCString &cmd, const QCString &args = "",
 		bool addNewLine = true, bool addId = true );
 
 signals:

@@ -1207,7 +1207,7 @@ void MSNProtocol::slotDebugRawCommand()
 	int result = dlg->exec();
 	if( result == QDialog::Accepted )
 	{
-		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
+		m_notifySocket->sendCommand( QCString(dlg->command()), QCString(dlg->params()),
 			dlg->addNewline(), dlg->addId() );
 	}
 	delete dlg;

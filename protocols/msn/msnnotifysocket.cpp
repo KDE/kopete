@@ -67,7 +67,7 @@ void MSNNotifySocket::slotReceivedServer( const QString &server, uint port )
 void MSNNotifySocket::disconnect()
 {
 	if( onlineStatus() != Disconnected )
-		sendCommand( "OUT", QString::null, true, false );
+		sendCommand( "OUT", "", true, false );
 
 	MSNAuthSocket::disconnect();
 }
@@ -328,19 +328,19 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 void MSNNotifySocket::addGroup(QString groupName)
 {
 	// escape spaces
-	sendCommand( "ADG", escape( groupName ) + " 0" );
+	sendCommand( "ADG", (escape( groupName ) + " 0").utf8() );
 }
 
 void MSNNotifySocket::renameGroup( QString groupName, uint group )
 {
 	// escape spaces
-	sendCommand( "REG", QString::number( group ) + " " +
-		escape( groupName ) + " 0" );
+	sendCommand( "REG", (QString::number( group ) + " " +
+		escape( groupName ) + " 0").utf8() );
 }
 
 void MSNNotifySocket::removeGroup( uint group )
 {
-	sendCommand( "RMG", QString::number( group ) );
+	sendCommand( "RMG", QString::number( group ).utf8() );
 }
 
 void MSNNotifySocket::addContact( const QString &handle,
@@ -364,7 +364,7 @@ void MSNNotifySocket::addContact( const QString &handle,
 			list << "!" << endl;
 		return;
 	}
-	sendCommand( "ADD", args );
+	sendCommand( "ADD", args.utf8() );
 }
 
 void MSNNotifySocket::removeContact( const QString &handle, uint group,
@@ -387,18 +387,18 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,
 			"WARNING! Unknown list " << list << "!" << endl;
 		return;
 	}
-	sendCommand( "REM", args );
+	sendCommand( "REM", args.utf8() );
 }
 
 void MSNNotifySocket::setStatus( int status )
 {
-	sendCommand( "CHG", statusToString( status ) );
+	sendCommand( "CHG", statusToString( status ).utf8() );
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName )
 {
 	QString pn = publicName;
-	sendCommand( "REA", msnId() + " " + escape( pn ) );
+	sendCommand( "REA", (msnId() + " " + escape( pn )).utf8() );
 }
 
 void MSNNotifySocket::createChatSession()

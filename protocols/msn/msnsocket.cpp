@@ -338,14 +338,17 @@ void MSNSocket::handleError( uint code, uint id )
 	KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 }
 
-void MSNSocket::sendCommand( const QString &cmd, const QString &args,
+void MSNSocket::sendCommand( const QCString &cmd, const QCString &args,
 	bool addNewLine, bool addId )
 {
-	QCString data = cmd.utf8();
-	if( addId )
-		data += " " + QString::number( m_id );
+	QCString data=cmd;
+	if( addId ) {
+	        char buf[50];
+		sprintf(buf," %d",m_id);
+		data += buf;
+	}
 	if( !args.isEmpty() )
-		data += " " + args.utf8();
+		data += " " + args;
 
 	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
 

@@ -357,7 +357,7 @@ void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 
 void MSNSwitchBoardSocket::slotCloseSession()
 {
-	sendCommand( "OUT", QString::null, true, false );
+	sendCommand( "OUT", "", true, false );
 }
 
 void MSNSwitchBoardSocket::callUser()
