@@ -280,7 +280,7 @@ public:
 	 * will call @ref setDisplayName() (which emits @ref displayNameChanged() )
 	 * to confirm the change.
 	 *
-	 * The default implementation calls @ref setDisplatName() immediately.
+	 * The default implementation calls @ref setDisplayName() immediately.
 	 */
 	virtual void rename( const QString &newName );
 
