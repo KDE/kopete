@@ -32,15 +32,19 @@
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {
-#if 0 //disabled because of feature frezee.   TODO: enable after kde 3.2
 	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
 
 	if (config->readBoolEntry("UseAutoAway", true))
-		connectDCOPSignal("kdesktop", "KScreensaverIface", "KDE_start_screensaver()", "setAutoAway()", false);
+	{
+		connectDCOPSignal("kdesktop", "KScreensaverIface",
+			"KDE_start_screensaver()", "setAutoAway()", false);
+	}
 	else
-		disconnectDCOPSignal("kdesktop", "KScreensaverIface", "KDE_start_screensaver()", "setAutoAway()");
-#endif
+	{
+		disconnectDCOPSignal("kdesktop", "KScreensaverIface",
+			"KDE_start_screensaver()", "setAutoAway()");
+	}
 }
 
 QStringList KopeteIface::contacts()
@@ -241,6 +245,11 @@ bool KopeteIface::unloadPlugin( const QString &name )
 void KopeteIface::setAway()
 {
 	KopeteAccountManager::manager()->setAwayAll();
+}
+
+void KopeteIface::setAway(const QString &msg)
+{
+	KopeteAccountManager::manager()->setAwayAll(msg);
 }
 
 void KopeteIface::setAvailable()
