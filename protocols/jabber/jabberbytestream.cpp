@@ -49,6 +49,8 @@ bool JabberByteStream::connect ( QString host, QString service )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
 
+	mClosing = false;
+
 	return socket()->connect ( host, service );
 
 }
@@ -108,7 +110,7 @@ void JabberByteStream::slotConnectionClosed ()
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed." << endl;
 
 	// depending on who closed the socket, emit different signals
-	if ( mClosing )
+	if ( !mClosing )
 	{
 		emit connectionClosed ();
 	}
@@ -116,6 +118,8 @@ void JabberByteStream::slotConnectionClosed ()
 	{
 		emit delayedCloseFinished ();
 	}
+
+	mClosing = false;
 
 }
 
