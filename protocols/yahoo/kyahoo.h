@@ -18,12 +18,6 @@
 #ifndef KYAHOO_H
 #define KYAHOO_H
 
-
-// Local Includes
-class StatusBarIcon;
-
-// Kopete Includes
-
 // QT Includes
 #include <qobject.h>
 #include <kextendedsocket.h>
@@ -44,6 +38,7 @@ class QSocketNotifier;
 class YahooSessionManager : public QObject
 {
 	Q_OBJECT
+
 public:
 	static YahooSessionManager *manager();
 	YahooSessionManager();
@@ -53,11 +48,11 @@ public:
 	{ return m_fdMap[session_id] ? m_fdMap[session_id] : 0L ; };
 
 	/* Creates a new session */
-	YahooSession* createSession(const QString username, const QString password, int initial);	
+	YahooSession* createSession(const QString username, const QString password, int initial);
 	bool cleanSessions();
 	YahooSession* getSession(int id);
 	int getSessionCount();
-	
+
 	/* Receivers for libyahoo callbacks, resolve connection id and emit signal for the correct session */
 	void loginResponseReceiver( int id, int succ, char *url);
 	void gotIgnoreReceiver(int id, YList *igns);
@@ -83,8 +78,7 @@ public:
 	void addHandlerReceiver(int id, int fd, yahoo_input_condition cond);
 	void removeHandlerReceiver(int id, int fd);
 	int hostConnectReceiver(char *host, int port);
-	StatusBarIcon* statusBarIcon;
-	
+
 private:
 	/* id to session */
 	QMap< int, YahooSession*> m_sessionsMap;
@@ -95,7 +89,7 @@ private:
 	/* fd to id */
 	QMap< int,int> m_idMap;
 
-	static YahooSessionManager *managerStatic_;	
+	static YahooSessionManager *managerStatic_;
 };
 
 // Yahoo Protocol Connection
@@ -103,19 +97,19 @@ class YahooSession : public QObject
 {
 friend class YahooSessionManager;
 	Q_OBJECT
-public:
 
+public:
 	~YahooSession();
 	int Id()
 	{ return m_connId; };
-	
+
 	int socketDescriptor()
 	{ return m_fd; };
 
 	int setLogLevel(enum yahoo_log_level level);
-	
+
 	int login(const QString username, const QString password, int initial);
-	
+
 	void logOff();
 	void refresh();
 	void setIdentityStatus( const QString &identity, int active);
@@ -143,84 +137,83 @@ public:
 	QStringList getIdentities();
 	QString getCookie( const QString &which);
 	QString getProfile_url( void );
-	
-signals:
 
+signals:
 	/**
 	 * emitted when server says login OK
 	 */
 	void loginResponse( int succ, const QString &url);
-	
+
 	/**
 	 * emitted when servers send us our contact list
 	 */
 	void gotBuddy(const QString &userid, const QString &alias, const QString &group);
-	
+
 	/**
 	 * emitted when server notifies us our ignore list
 	 */
 	void gotIgnore( const QStringList &igns);
-	
+
 	/**
 	 * emitted when server notify us our identities
 	 */
 	void gotIdentities( const QStringList &ids);
-	
+
 	/**
 	 * emitted when a contact changes status
 	 */
 	void statusChanged( const QString &who, int stat, const QString &msg, int away);
-	
+
 	/**
 	 * emitted when someone send us a message
 	 */
 	void gotIm( const QString &who, const QString &msg, long tm, int stat);
-	
+
 	/**
 	 * emitted when someone invites us into a conference room
 	 */
 	void gotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
-	
+
 	/**
 	 * emitted when someone declines joining a conference room
 	 */
 	void confUserDecline( const QString &who, const QString &room, const QString &msg);
-	
+
 	/**
 	 * emitted when someone joins a conference
 	 */
 	void confUserJoin( const QString &who, const QString &room);
-	
+
 	/**
 	 * emitted when someone leaves a conference
 	 */
 	void confUserLeave( const QString &who, const QString &room);
-	
+
 	/**
 	 * emitted when someone send us a Conference message
 	 */
 	void confMessage( const QString &who, const QString &room, const QString &msg);
-	
+
 	/**
 	 * emitted when someone wants to send us a file
 	 */
 	void gotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
-	
+
 	/**
 	 * emitted when a contact is added
 	 */
 	void contactAdded( const QString &myid, const QString &who, const QString &msg);
-	
+
 	/**
 	 * emitted when someone rejects our auth request
 	 */
 	void rejected( const QString &who, const QString &msg);
-	
+
 	/**
 	 * emitted when someone is typing a message
 	 */
 	void typingNotify( const QString &who, int stat);
-	
+
 	/**
 	 * emitted when someone invites us to join a game
 	 */
@@ -229,12 +222,12 @@ signals:
 	 * Notify that we have mail
 	 */
 	void mailNotify( const QString &from, const QString &subject, int cnt);
-	
+
 	/**
 	 * emitted when Yahoo servers send us a admin message
 	 */
 	void systemMessage( const QString &msg);
-	
+
 	/**
 	 * emitted when error
 	 */
@@ -248,11 +241,10 @@ signals:
 	private:
 	/* Private constructor */
 	YahooSession();
-	
-	
+
 	void addHandler(int fd, yahoo_input_condition cond);
 	void removeHandler(int fd);
-	
+
 	KExtendedSocket *m_socket;
 
 	void setSocket(int fd);
@@ -260,12 +252,12 @@ signals:
 	int m_Port;
 	int m_Status;
 	int m_connId;
-	int m_fd;	
+	int m_fd;
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
 
 	static YahooSession* sessionStatic_;
-	
+
 	typedef struct {
         int id;
         char *label;

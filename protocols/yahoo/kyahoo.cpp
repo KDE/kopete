@@ -19,9 +19,6 @@
 #include "yahoodebug.h"
 #include "kyahoo.h"
 
-// Kopete Includes
-#include <statusbaricon.h>
-
 // QT Includes
 #include <qregexp.h>
 #include <qsocketnotifier.h>
