@@ -23,6 +23,7 @@
 
 #include <dcopclient.h>
 #include "kopeteiface.h"
+#include "kimifaceimpl.h"
 
 #define KOPETE_VERSION "0.8.90 (CVS >= 20040123)"
 
@@ -93,8 +94,9 @@ int main( int argc, char *argv[] )
 	KUniqueApplication::addCmdLineOptions();
 
 	KopeteApplication kopete;
+	new KIMIfaceImpl();
 	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
-
+	
 	kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:

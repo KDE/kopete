@@ -1,6 +1,8 @@
 kopete_srcdir=$(top_srcdir)/kopete
 kopete_builddir=$(top_builddir)/kopete
 
+INCLUDES = -I$(kopete_srcdir)/kopete
+
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_srcdir)/kopete/conf \
 	-I$(kopete_srcdir)/kopete/addcontactwizard \
@@ -23,7 +25,8 @@ kopete_SOURCES = main.cpp \
 	kopeteapplication.cpp kopeteiface.cpp kopeteiface.skel \
 	systemtray.cpp \
 	kopeteballoon.cpp kopetewindow.cpp \
-	kopeteaccountstatusbaricon.cpp
+	kopeteaccountstatusbaricon.cpp \
+	kimiface.skel kimifaceimpl.cpp
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
@@ -41,3 +44,4 @@ mime_DATA    = x-kopete-emoticons.desktop
 xdg_apps_DATA = kopete.desktop
 
 # vim: set noet:
+noinst_HEADERS =  kimifaceimpl.h
