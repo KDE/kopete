@@ -25,6 +25,7 @@ class QFrame;
 class QTabWidget;
 class QCheckBox;
 class KListBox;
+class KIconView;
 class KHTMLPart;
 class KopeteContact;
 class StyleEditDialog;
@@ -61,6 +62,7 @@ public:
 private slots:
 	void slotConfigSound();
 	void slotUseEmoticonsChanged(bool);
+	void slotSelectedEmoticonsThemeChanged();
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
 	void slotShowTrayChanged();
@@ -81,6 +83,7 @@ private:
 	QFrame* mEmoticonsTab;
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
+	KIconView *icon_theme_preview;
 	KHTMLPart *preview;
 	KTextEditor::Document* editDocument;
 

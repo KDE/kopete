@@ -40,6 +40,7 @@
 #include <kfontdialog.h>
 #include <ktrader.h>
 #include <klibloader.h>
+#include <kiconview.h>
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -91,7 +92,13 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
 	mUseEmoticonsChk = new QCheckBox ( i18n("&Use emoticons"), mEmoticonsTab );
 	icon_theme_list = new KListBox ( mEmoticonsTab, "icon_theme_list" );
+	icon_theme_preview = new KIconView ( mEmoticonsTab, "icon_theme_preview" );
+	icon_theme_preview->setFixedHeight( 40 );
+	icon_theme_preview->setItemsMovable( false );
+	icon_theme_preview->setSelectionMode( QIconView::NoSelection );
+	icon_theme_preview->setFocusPolicy( NoFocus );
 	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)), this, SLOT(slotUseEmoticonsChanged( bool )));
+	connect(icon_theme_list, SIGNAL(selectionChanged()), this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	mAppearanceTabCtl->addTab( mEmoticonsTab, i18n("&Emoticons") );
 
 	// "Chat Window" TAB =========================================================
@@ -255,7 +262,7 @@ void AppearanceConfig::reopen()
 		icon_theme_list->setCurrentItem( 0 );
 
 	mUseEmoticonsChk->setChecked( p->useEmoticons() );
-	icon_theme_list->setEnabled ( p->useEmoticons() );
+	slotUseEmoticonsChanged     ( p->useEmoticons() );
 
 	// "Chat Window" TAB
 	mPrfsChatWindow->cb_RaiseMsgWindowChk->setChecked( p->raiseMsgWindow() );
@@ -308,6 +315,33 @@ void AppearanceConfig::slotConfigSound()
 void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
 {
 	icon_theme_list->setEnabled( checked );
+	icon_theme_preview->setEnabled( checked );
+}
+
+void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
+{
+	icon_theme_preview->clear();
+
+	QStringList smilies;
+	QStringList smilyText;
+
+	// from README.emoticons
+	smilies << "smile" << "wink" << "unhappy" << "tongue" << "biggrin" << "cry" \
+	<< "oh" << "sleep" << "confused" << "kiss" << "vempire" << "devil" \
+	<< "angel" << "sunglasses" << "scream" << "smoke";
+
+	QString iconPath = locate ("data", "kopete/pics/emoticons/" + icon_theme_list->currentText() + "/");
+
+	for (unsigned int i = 0; i < smilies.size(); ++i)
+	{
+		QPixmap prevPixmap = QPixmap( iconPath + smilies[i] + ".png" );
+		// pixmap exists? (> 0x0)
+		if (!prevPixmap.isNull())
+		{
+			KIconViewItem *item = new KIconViewItem(icon_theme_preview);
+			item->setPixmap( prevPixmap );
+		}
+	}
 }
 
 void AppearanceConfig::slotTransparencyChanged ( bool checked )
