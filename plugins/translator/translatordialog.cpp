@@ -17,7 +17,7 @@
 
 #include <klocale.h>
 #include <kdeversion.h>
-#if KDE_VERSION < 305
+#if KDE_VERSION < 306
 #include <qtextedit.h>
 #else
 #include <ktextedit.h>
@@ -29,7 +29,7 @@
 TranslatorDialog::TranslatorDialog(const QString &text,QWidget *parent, const char *name ) : KDialogBase(parent,name,true,i18n("Translator Plugin"), Ok)
 {
 
-#if KDE_VERSION < 305
+#if KDE_VERSION < 306
 	m_textEdit=new QTextEdit(this);
 #else
 	m_textEdit=new KTextEdit(this);

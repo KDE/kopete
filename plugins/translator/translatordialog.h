@@ -22,7 +22,7 @@
 #include <kdialogbase.h>
 
 //#include <kopetemessage.h>
-#if KDE_VERSION < 305
+#if KDE_VERSION < 306
 class QTextEdit;
 #else
 class KTextEdit;
@@ -41,7 +41,7 @@ public:
 	QString translatedText();
 
 private:
-#if KDE_VERSION < 305
+#if KDE_VERSION < 306
 	QTextEdit *m_textEdit;
 #else
 	KTextEdit *m_textEdit;
