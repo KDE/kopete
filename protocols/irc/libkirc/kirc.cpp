@@ -297,7 +297,7 @@ void KIRC::slotConnected()
 {
 	kdDebug(14120) << "Connected" << endl;
 
-	changeUser(m_Username, 0, QString::fromLatin1("My Real Name"));
+	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
 	changeNickname(m_Nickname);
 
 	enableRead(true);
