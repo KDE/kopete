@@ -19,7 +19,7 @@
 #define __LIBWINPOPUP_H
 
 // The winpopup message file (really should go into config.h)
-#define WP_MESSAGE_FILE "/tmp/.winpopup"
+#define WP_MESSAGE_FILE "/var/lib/winpopup/message"
 
 // Local Includes
 
