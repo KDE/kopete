@@ -27,6 +27,7 @@
 #include <kcmdlineargs.h>
 
 #include "appearanceconfig.h"
+#include "identityconfig.h"
 #include "kopetecontactlist.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
@@ -53,7 +54,7 @@ Kopete::Kopete()
 
 	// Create the plugin preferences module
 	new PluginConfig( this );
-
+	new IdentityConfig( m_mainWindow );
 	new AppearanceConfig( m_mainWindow );
 
 	/*
@@ -120,8 +121,8 @@ void Kopete::slotLoadPlugins()
 	for (int i = 0; i < args->count(); i++)
 	{
 		QString argument = args->arg(i);
-		if (!argument.endsWith(".plugin"))
-			argument.append(".plugin");
+		if (!argument.endsWith(".desktop"))
+			argument.append(".desktop");
 
 		modules.append(argument);
 	}
