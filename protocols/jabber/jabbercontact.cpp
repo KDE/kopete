@@ -63,9 +63,6 @@ JabberContact::JabberContact(QString userID, QString nickname, QString group, Ja
 
 }
 
-/*
- * Initialize contact
- */
 void JabberContact::initContact(QString &userID, QString &nickname, QString &group)
 {
 
@@ -109,9 +106,6 @@ void JabberContact::initContact(QString &userID, QString &nickname, QString &gro
 
 }
 
-/*
- * Singleton for returning an email window
- */
 KopeteMessageManager* JabberContact::msgManagerKEW()
 {
 
@@ -131,9 +125,6 @@ KopeteMessageManager* JabberContact::msgManagerKEW()
 
 }
 
-/*
- * Singleton for returning a chat window
- */
 KopeteMessageManager* JabberContact::msgManagerKCW()
 {
 	
@@ -153,9 +144,6 @@ KopeteMessageManager* JabberContact::msgManagerKCW()
 
 }
 
-/*
- * Initialize popup menu
- */
 void JabberContact::initActions()
 {
     
@@ -169,11 +157,12 @@ void JabberContact::initActions()
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
 	actionSnarfVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
 
+	// Authorization actions 
+	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
+	actionRerequestAuth = new KAction(i18n("Rerequest authorization from"), "", 0, this, SLOT(slotSendAuth()), this, "actionRerequestAuth");
+
 }
 
-/*
- * Show context menu for the contact
- */
 void JabberContact::showContextMenu(const QPoint&, const QString&)
 {
 
@@ -255,6 +244,8 @@ void JabberContact::showContextMenu(const QPoint&, const QString&)
 	popup->insertSeparator();
 	actionRename->plug(popup);
 	actionContactMove->plug(popup);
+	actionSendAuth->plug(popup);
+	actionRerequestAuth->plug(popup);
 	actionRemoveFromGroup->plug(popup);
 	actionRemove->plug(popup);
 
@@ -262,9 +253,6 @@ void JabberContact::showContextMenu(const QPoint&, const QString&)
 
 }
 
-/*
- * Update contact to a new status
- */
 void JabberContact::slotUpdateContact(QString resource, int newStatus, QString reason)
 {
 	
@@ -283,9 +271,6 @@ void JabberContact::slotUpdateContact(QString resource, int newStatus, QString r
 
 }
 
-/*
- * Display a rename dialog
- */
 void JabberContact::slotRenameContact()
 {
 
@@ -306,9 +291,6 @@ void JabberContact::slotRenameContact()
 
 }
 
-/*
- * Catch the rename dialog's results
- */
 void JabberContact::slotDoRenameContact()
 {
 	QString name = dlgRename->leNickname->text();
@@ -336,9 +318,6 @@ void JabberContact::slotDoRenameContact()
 
 }
 
-/*
- * Delete this contact instance
- */
 void JabberContact::slotDeleteMySelf(bool)
 {
     
@@ -346,9 +325,6 @@ void JabberContact::slotDeleteMySelf(bool)
 
 }
 
-/*
- * Return contact's status
- */
 JabberContact::ContactStatus JabberContact::status() const
 {
 	JabberContact::ContactStatus retval;
@@ -372,9 +348,6 @@ JabberContact::ContactStatus JabberContact::status() const
 	
 }
 
-/*
- * Return contact's status in textual form
- */
 QString JabberContact::statusText() const
 {
 	QString txt;
@@ -405,9 +378,6 @@ QString JabberContact::statusText() const
 	return txt;
 }
 
-/*
- * Return contact's status as icon name
- */
 QString JabberContact::statusIcon() const
 {
 	QString icon;
@@ -433,9 +403,6 @@ QString JabberContact::statusIcon() const
 	
 }
 
-/*
- * Remove this contact from the roster
- */
 void JabberContact::slotRemoveThisUser()
 {
 
@@ -447,9 +414,6 @@ void JabberContact::slotRemoveThisUser()
 
 }
 
-/*
- * Move the contact to a different group
- */
 void JabberContact::slotMoveThisUser()
 {
 
@@ -464,19 +428,21 @@ void JabberContact::slotMoveThisUser()
 
 }
 
-/*
- * Add contact to a group
- * FIXME: Jabber does not support multiple copies of the same contact!
- *        This will need emulation via the serialization API
- */
+void JabberContact::slotSendAuth()
+{
+
+}
+
+void JabberContact::slotRerequestAuth()
+{
+
+}
+
 void JabberContact::addToGroup(const QString &group)
 {
 
 }
 
-/*
- * Move contact to a different group
- */
 void JabberContact::moveToGroup(const QString &from, const QString &to)
 {
 
@@ -490,9 +456,6 @@ void JabberContact::moveToGroup(const QString &from, const QString &to)
 
 }
 
-/*
- * Remove contact
- */
 void JabberContact::removeFromGroup(const QString &group)
 {
 
@@ -503,11 +466,6 @@ void JabberContact::removeFromGroup(const QString &group)
 
 }
 
-/*
- * Return importance of contact.
- * The importance is used for sorting and determined based
- * on the contact's current status. See ICQ for reference values.
- */
 int JabberContact::importance() const
 {
 	int value;
@@ -535,9 +493,6 @@ int JabberContact::importance() const
 	
 }
 
-/*
- * Open a chat window
- */
 void JabberContact::slotChatThisUser()
 {
 
@@ -547,9 +502,6 @@ void JabberContact::slotChatThisUser()
 
 }
 
-/*
- * Open an email window
- */
 void JabberContact::slotEmailUser()
 {
 	
@@ -560,9 +512,6 @@ void JabberContact::slotEmailUser()
 
 }
 
-/*
- * Open a window for this contact (either chat or email)
- */
 void JabberContact::execute()
 {
 
@@ -577,9 +526,6 @@ void JabberContact::execute()
 
 }
 
-/*
- * Handle incoming message
- */
 void JabberContact::slotNewMessage(const JabMessage &message)
 {
 	QString theirUserID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
@@ -607,9 +553,6 @@ void JabberContact::slotNewMessage(const JabMessage &message)
 	}
 }
 
-/*
- * View chat log
- */
 void JabberContact::slotViewHistory()
 {
 
@@ -624,9 +567,6 @@ void JabberContact::slotViewHistory()
 
 }
 
-/*
- * Handle the removal of the log viewer
- */
 void JabberContact::slotCloseHistoryDialog()
 {
     
@@ -635,9 +575,6 @@ void JabberContact::slotCloseHistoryDialog()
 
 }
 
-/*
- * Send a message using the email window
- */
 void JabberContact::slotSendMsgKEW(const KopeteMessage& message)
 {
 	JabMessage jabMessage;
@@ -667,9 +604,6 @@ void JabberContact::slotSendMsgKEW(const KopeteMessage& message)
 
 }
 
-/*
- * Send a message using the chat window
- */
 void JabberContact::slotSendMsgKCW(const KopeteMessage& message)
 {
 	JabMessage jabMessage;
@@ -699,9 +633,6 @@ void JabberContact::slotSendMsgKCW(const KopeteMessage& message)
 
 }
 
-/*
- * Add a new resource to the contact
- */
 void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &resource)
 {
 	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
@@ -750,10 +681,6 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 
 }
 
-
-/*
- * Remove a resource from the contact
- */
 void JabberContact::slotResourceUnavailable(const Jid &jid)
 {
 	JabberResource *resource;
@@ -806,9 +733,6 @@ void JabberContact::slotResourceUnavailable(const Jid &jid)
 
 }
 
-/*
- * Select a new resource for the contact
- */
 void JabberContact::slotSelectResource()
 {
 	
@@ -842,9 +766,6 @@ void JabberContact::slotSelectResource()
 	
 }
 
-/*
- * Retrieve a vCard for the contact
- */
 void JabberContact::slotSnarfVCard()
 {
 	
@@ -853,9 +774,6 @@ void JabberContact::slotSnarfVCard()
 	
 }
 
-/*
- * Received a vCard for the contact
- */
 void JabberContact::slotGotVCard(JT_VCard *vCard)
 {
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid << ", displaying." << endl;
@@ -869,9 +787,6 @@ void JabberContact::slotGotVCard(JT_VCard *vCard)
 
 }
 
-/*
- * Determine the currently best resource for the contact
- */
 JabberResource *JabberContact::bestResource()
 {
 	JabberResource *resource, *tmpResource;
@@ -911,10 +826,6 @@ JabberResource *JabberContact::bestResource()
 
 }
 
-/*
- * Remove the user from the current group
- * (will leave the group field empty)
- */
 void JabberContact::slotRemoveFromGroup()
 {
 
@@ -926,10 +837,6 @@ void JabberContact::slotRemoveFromGroup()
 
 }
 
-/*
- * Return id() field for user
- * FIXME: old API?
- */
 QString JabberContact::id() const
 {
 
@@ -937,10 +844,6 @@ QString JabberContact::id() const
 
 }
 
-/*
- * Return data() field for user
- * FIXME: old API?
- */
 QString JabberContact::data() const
 {
 
@@ -948,9 +851,6 @@ QString JabberContact::data() const
 
 }
 
-/*
- * Set a new nickname for the contact
- */
 void JabberContact::slotUpdateNickname(const QString newNickname)
 {
 	kdDebug() << "JabberContact::slotUpdateNickname( " << newNickname << " )" << endl;

@@ -49,18 +49,39 @@ class JabberContact : public KopeteContact
 		JabberContact( QString userid, QString name, QString group,
 				JabberProtocol *protocol, KopeteMetaContact *mc);
 
+		/**
+		 * Initialize contact
+		 */
 		void initContact(QString &userID, QString &name, QString &group);
 
 
 		// Reimplementations of the (uninteresting)
 		// members in KopeteContact
+		
+		/**
+		 * Return contact's status
+		 */
 		virtual ContactStatus status() const;
+		
+		/**
+		 * Return contact's status in textual form
+		 */
 		QString statusText() const;
+
+		/**
+		 * Return contact's status as icon name
+		 */
 		QString statusIcon() const;
+	
+		/**
+		 * Return importance of contact.
+		 * The importance is used for sorting and determined based
+		 * on the contact's current status. See ICQ for reference values.
+		 */
 		int importance() const;
 
-		/*
-		 * Pop up a chat window for this contact
+		/**
+		 * Open a window for this contact (either chat or email)
 		 */
 		void execute();
 
@@ -99,12 +120,12 @@ class JabberContact : public KopeteContact
 		}
 
 		/*
-		 * Display context menu for the contact
+		 * Show context menu for the contact
 		 */
 		virtual void showContextMenu(const QPoint&, const QString&);
 
-		/*
-		 * Returns the best resource for the contact
+		/**
+		 * Determine the currently best resource for the contact
 		 */
 		JabberResource *bestResource();
 
@@ -118,71 +139,139 @@ class JabberContact : public KopeteContact
 		/*
 		 * *** New API implementation ***
 		 */
-		 
-		/*
-		 * Add/Remove user to/from a group
+		
+		/**
+		 * Add contact to a group
+		 * FIXME: Jabber does not support multiple copies of the same contact!
+		 *        This will need emulation via the serialization API
 		 */
 		virtual void addToGroup( const QString &group );
+		
 		virtual void removeFromGroup( const QString &group );
+		
+		/**
+		 * Move contact to a different group
+		 */
 		virtual void moveToGroup( const QString &from, const QString &to );
 
 	public slots:
+
 		/*
-		 * New message for this contact
+		 * Handle incoming message
 		 */
 		void slotNewMessage(const JabMessage &);
 		
-		/*
-		 * Slots for chat history
+		/**
+		 * Handle the removal of the log viewer
 		 */
 		void slotCloseHistoryDialog();
+
+		/**
+		 * View chat log
+		 */
 		void slotViewHistory();
 		
 		/*
-		 * Send message using KopeteChatWindow (KCW)
-		 * and KopeteEmailWindow (KEW)
+		 * Send a message using the chat window
 		 */
 		void slotSendMsgKCW(const KopeteMessage&);
+
+		/**
+		 * Send a message using the email window
+		 */
 		void slotSendMsgKEW(const KopeteMessage&);
 		
-		/*
+		/**
 		 * Slots called when a certain resource
 		 * appears or disappears for the contact
 		 */
 		void slotResourceAvailable(const Jid &, const JabResource &);
+		
+		/**
+		 * Remove a resource from the contact
+		 */
 		void slotResourceUnavailable(const Jid &);
+
+		/**
+		* Select a new resource for the contact
+		*/
 		void slotSelectResource();
 		
 		/*
-		 * Remove contact from a group
+		 * Remove the user from the current group
+		 * (will leave the group field empty)
 		 */
 		void slotRemoveFromGroup();
 
-		/*
+		/**
 		 * vCard received from server for this contact
 		 */
 		void slotGotVCard(JT_VCard *);
 		
-		/*
-		 * Update contact display
+		/**
+		 * Update contact to a new status
 		 */
 		void slotUpdateContact(QString, int, QString);
 
 	private slots:
+		
+		/**
+		 * Delete this contact instance
+		 */
 		void slotDeleteMySelf(bool);
+
+		/**
+		 * Remove this contact from the roster
+		 */
 		void slotRemoveThisUser();
+		
+		/**
+		 * Display a rename dialog
+		 */
 		void slotRenameContact();
+
+		/**
+		 * Catch the rename dialog's results
+		 */
 		void slotDoRenameContact();
+
+		/**
+		 * Move the contact to a different group
+		 */
 		void slotMoveThisUser();
+
+		/**
+		 * Open a chat window
+		 */
 		void slotChatThisUser();
+		
+		/**
+		 * Open an email window
+		 */
 		void slotEmailUser();
+	
+		/**
+		 * Retrieve a vCard for the contact
+		 */
 		void slotSnarfVCard();
+		
+		/**
+		 * Set a new nickname for the contact
+		 */
 		void slotUpdateNickname(const QString);
+		
+		void slotSendAuth();
+		
+		void slotRerequestAuth();
 
 	signals:
 		void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 
 	private:
+
+		/**
+		 * Initialize popup menu
+		 */
 		void initActions();
 
 		JabberProtocol *mProtocol;
@@ -196,14 +285,27 @@ class JabberContact : public KopeteContact
 		int mStatus;
 
 		KPopupMenu *popup;
-		KAction *actionMessage, *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename, *actionSnarfVCard;
+		KAction *actionMessage, *actionChat,
+				*actionHistory, *actionSnarfVCard,
+				*actionRename,
+	 			*actionSendAuth, *actionRerequestAuth,
+				*actionRemoveFromGroup, *actionRemove, *actionInfo;
 		KListAction *actionContactMove;
 		KSelectAction *actionSelectResource;
 
 		dlgJabberRename *dlgRename;
 		dlgJabberVCard *dlgVCard;
 		KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
-		KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
+		
+		/**
+		 * Singleton for returning a chat window
+		 */
+		KopeteMessageManager *msgManagerKCW();
+		
+		/**
+		 * Singleton for returning an email window
+		 */
+		KopeteMessageManager *msgManagerKEW();
 
 		KopeteHistoryDialog *historyDialog;
 
