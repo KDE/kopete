@@ -121,7 +121,7 @@ private slots:
 	void slotAccountStatusIconRightClicked( KopeteAccount *a,
 		const QPoint &p );
 
-	void slotTrayAboutToShowMenu( KActionMenu *am );
+	void slotTrayAboutToShowMenu(KActionMenu *);
 
 	/**
 	 * Show the Add Contact wizard

@@ -24,6 +24,7 @@
 class QFrame;
 class QTabWidget;
 class QCheckBox;
+class QSplitter;
 class KListBox;
 class KIconView;
 class KHTMLPart;
@@ -84,6 +85,7 @@ private:
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
 	KIconView *icon_theme_preview;
+// 	QSplitter *icon_theme_splitter;
 	KHTMLPart *preview;
 	KTextEditor::Document* editDocument;
 
@@ -106,5 +108,4 @@ private:
 
 };
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:

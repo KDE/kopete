@@ -22,6 +22,7 @@
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qslider.h>
+// #include <qsplitter.h>
 
 #include <klineedit.h>
 #include <kcolorcombo.h>
@@ -59,6 +60,8 @@
 #include "kopetexsl.h"
 #include "kopetecontact.h"
 
+#include "kopeteemoticons.h"
+
 #include <qtabwidget.h>
 
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
@@ -91,13 +94,15 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mEmoticonsTab = new QFrame(mAppearanceTabCtl);
 	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
 	mUseEmoticonsChk = new QCheckBox ( i18n("&Use emoticons"), mEmoticonsTab );
-	icon_theme_list = new KListBox ( mEmoticonsTab, "icon_theme_list" );
-	icon_theme_preview = new KIconView ( mEmoticonsTab, "icon_theme_preview" );
-	icon_theme_preview->setFixedHeight( 40 );
-	icon_theme_preview->setItemsMovable( false );
-	icon_theme_preview->setSelectionMode( QIconView::NoSelection );
-	icon_theme_preview->setFocusPolicy( NoFocus );
-	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)), this, SLOT(slotUseEmoticonsChanged( bool )));
+//	icon_theme_splitter = new QSplitter ( Qt::Vertical, mEmoticonsTab, "icon_theme_splitter" );
+	icon_theme_list = new KListBox(mEmoticonsTab, "icon_theme_list");
+	icon_theme_preview = new KIconView(mEmoticonsTab, "icon_theme_preview");
+	icon_theme_preview->setFixedHeight(64);
+	icon_theme_preview->setItemsMovable(false);
+	icon_theme_preview->setSelectionMode(QIconView::NoSelection);
+	icon_theme_preview->setFocusPolicy(NoFocus);
+	icon_theme_preview->setSpacing(2);
+	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)), this, SLOT(slotUseEmoticonsChanged(bool)));
 	connect(icon_theme_list, SIGNAL(selectionChanged()), this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	mAppearanceTabCtl->addTab( mEmoticonsTab, i18n("&Emoticons") );
 
@@ -152,7 +157,7 @@ AppearanceConfig::~AppearanceConfig()
 
 void AppearanceConfig::save()
 {
-//	kdDebug(14000) k_funcinfo << "called." << endl;
+//	kdDebug(14000) << k_funcinfo << "called." << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
 	// "General" TAB
@@ -321,27 +326,20 @@ void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
 
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
+//	kdDebug(14000) << k_funcinfo << "called." << endl;
+
 	icon_theme_preview->clear();
 
-	QStringList smilies;
-	QStringList smilyText;
+	KopeteEmoticons emoticons( icon_theme_list->currentText() );
+	QPixmap previewPixmap;
 
-	// from README.emoticons
-	smilies << "smile" << "wink" << "unhappy" << "tongue" << "biggrin" << "cry" \
-	<< "oh" << "sleep" << "confused" << "kiss" << "vempire" << "devil" \
-	<< "angel" << "sunglasses" << "scream" << "smoke";
+	QStringList smileys = emoticons.picList();
 
-	QString iconPath = locate ("data", "kopete/pics/emoticons/" + icon_theme_list->currentText() + "/");
-
-	for (unsigned int i = 0; i < smilies.size(); ++i)
+	for ( QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
 	{
-		QPixmap prevPixmap = QPixmap( iconPath + smilies[i] + ".png" );
-		// pixmap exists? (> 0x0)
-		if (!prevPixmap.isNull())
-		{
-			KIconViewItem *item = new KIconViewItem(icon_theme_preview);
-			item->setPixmap( prevPixmap );
-		}
+		previewPixmap = QPixmap((*it));
+		if (!previewPixmap.isNull())
+			new KIconViewItem(icon_theme_preview, 0, previewPixmap);
 	}
 }
 

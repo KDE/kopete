@@ -64,7 +64,7 @@ void EmoticonSelector::prepareList(void)
 	{
 		QObjectList *list = queryList( "EmoticonLabel" );
 //		kdDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
-		list->setAutoDelete( true );
+		list->setAutoDelete(true);
 		list->clear();
 		delete list;
 		delete lay;

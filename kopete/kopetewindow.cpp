@@ -202,7 +202,7 @@ void KopeteWindow::initSystray ( void )
 	actionConnectionMenu->plug ( tm,1 );
 	tm->insertSeparator(1);
 
-	QObject::connect( tray, SIGNAL(aboutToShowMenu(KActionMenu *)), this, SLOT(slotTrayAboutToShowMenu(KactionMenu*am)));
+	QObject::connect(tray, SIGNAL(aboutToShowMenu(KActionMenu*)), this, SLOT(slotTrayAboutToShowMenu(KActionMenu*)));
 
 #if KDE_VERSION >= 306
 	QObject::connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
@@ -565,15 +565,15 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 		QPixmap pm = status.protocolIcon();
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
-		if( pm.isNull() )
+		if(pm.isNull())
 			pm = loader->loadIcon( status.overlayIcon(), KIcon::User, 0, KIcon::DefaultState, 0L, true );
 
-		if( pm.isNull() )
+		if(pm.isNull())
 		{
 			/* No Pixmap found, fallback to Unknown */
-			kdDebug(14000) << k_funcinfo
-				<< "Using unknown pixmap for status icon '" << status.overlayIcon() << "'."
-				<< endl;
+			kdDebug(14000) << k_funcinfo <<
+				"Using unknown pixmap for status icon '" << status.overlayIcon() <<
+				"'." << endl;
 			i->setPixmap( KIconLoader::unknown() );
 		}
 		else
@@ -583,14 +583,14 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	}
 	else
 	{
-		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
+		kdDebug(14000) << k_funcinfo << "Using movie." << endl;
 		i->setMovie( mv );
 	}
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KActionMenu *am )
 {
-
+	kdDebug(14000) << k_funcinfo << "Called. EMPTY" << endl;
 }
 
 void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
@@ -652,7 +652,7 @@ void KopeteWindow::slotSaveContactList()
 
 void KopeteWindow::showAddContactDialog()
 {
-	( new AddContactWizard( qApp->mainWidget() ) )->show();
+	(new AddContactWizard(qApp->mainWidget()))->show();
 }
 
 #include "kopetewindow.moc"

@@ -11,7 +11,7 @@
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
-
+//#include <kopeteprefs.h>
 #include <qwhatsthis.h>
 
 #include "emoticonselector.h"
@@ -27,7 +27,7 @@ class KopeteEmoticonAction::KopeteEmoticonActionPrivate
 			emoticonSelector = new EmoticonSelector(
 				m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
 			m_popup->insertItem( emoticonSelector );
-			// FIXME: connect to kopeteprefs and redo list only on config changes
+			// TODO: Maybe connect to kopeteprefs and redo list only on config changes
 			connect(
 				m_popup, SIGNAL(aboutToShow()),
 				emoticonSelector, SLOT(prepareList()) );
@@ -72,14 +72,14 @@ KopeteEmoticonAction::KopeteEmoticonAction( const QString& text, const QString& 
 KopeteEmoticonAction::~KopeteEmoticonAction()
 {
 	unplugAll();
-	kdDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
+//	kdDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
 	delete d;
 	d = 0;
 }
 
 void KopeteEmoticonAction::init()
 {
-	kdDebug(14010) << k_funcinfo << "called." << endl;
+//	kdDebug(14010) << k_funcinfo << "called." << endl;
 	d = new KopeteEmoticonActionPrivate;
 	setShortcutConfigurable( false );
 	connect(
@@ -123,7 +123,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 	if (kapp && !kapp->authorizeKAction(name()))
 		return -1;
 
-	kdDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;
+//	kdDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;
 
 	if ( widget->inherits("QPopupMenu") )
 	{
