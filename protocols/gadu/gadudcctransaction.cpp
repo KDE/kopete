@@ -189,7 +189,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 							i18n( "File Exists: %1" ).arg( fileName ), resumeButton, overwriteButton ) )
 		{
 			case KMessageBox::Yes:		// resume
-				if ( localFile_.open( IO_ReadWrite ) ) {
+				if ( localFile_.open( IO_WriteOnly | IO_Append ) ) {
 					dccSock_->offset  = localFile_.size();
 					dccSock_->file_fd = localFile_.handle();
 				}
