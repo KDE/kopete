@@ -38,6 +38,7 @@ struct KopeteMetaContactPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * A metacontact represent a persone. This is a kind of entry to
