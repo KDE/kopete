@@ -1547,20 +1547,8 @@ sub_dirs=icq
 type=normal
 
 [protocols/icq/Makefile.am]
-files=protocols/icq/icqauthevent.cpp,protocols/icq/icqauthevent.h
+files=
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=icq
 sub_dirs=
 type=static_library
-
-[protocols/icq/icqauthevent.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icqauthevent.h]
-dist=true
-install=false
-install_location=
-type=HEADER
