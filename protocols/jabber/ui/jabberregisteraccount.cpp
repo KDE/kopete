@@ -420,10 +420,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 
 	if (task->success ())
 	{
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration successful." ) );
-		KMessageBox::information (Kopete::UI::Global::mainWidget (),
-								  i18n ("Account successfully registered."),
-								  i18n ("Jabber Account Registration"));
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration successful!" ) );
 
 		// save settings to parent
 		mParentWidget->mServer->setText ( mMainWidget->leServer->text () );
