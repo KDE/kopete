@@ -21,6 +21,10 @@ Allow the user to have more than one emoticon set enabled at once, and to set pr
 This way, the user will be able to have a base theme, a set of MSN-specific emoticons, a
 set of Gadu-Gadu-specific emoticons and so on.
 
+Add an iconName() function to contacts, metacontacts and accounts returning a string that
+can be put in an <img src="%1"> in any rich text to give the appropriate icon. See the
+MimeSourceFactory.
+
 Some sort of async message processing API needs to be designed and implemented
 Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
