@@ -677,9 +677,18 @@ QString KopeteContact::toolTip() const
 			QString url = property(*it).value().toString();
 			if(!url.isEmpty())
 			{
-				url += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
+				tip += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
 					arg( KURL::encode_string( url ), QStyleSheet::escape( url ) );
+			}
+		}
+		else if ((*it) == QString::fromLatin1("awayMessage"))
+		{
+			QString awaymsg = property(*it).value().toString();
+			if(!awaymsg.isEmpty())
+			{
+				tip += i18n("<br><b>Away Message:</b>&nbsp;FORMATTED AWAY MESSAGE",
+					"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( awaymsg );
 			}
 		}
 		else

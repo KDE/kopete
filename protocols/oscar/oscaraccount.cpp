@@ -322,8 +322,19 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 		", sender='" << sender << "'" << endl;*/
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
+	kdDebug(14150) << k_funcinfo << "Away message is: " << message << endl;
+	QString test = message;
 	if(contact)
-		contact->setAwayMessage(message);
+	{
+		test.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
+				QString::fromLatin1("\\1"));
+		test.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
+				QString::fromLatin1("\\1") );
+		//test.insert(0,"<qt>");
+		//test.append("</qt>");
+		kdDebug(14150) << k_funcinfo << "Away message is now: " << test << endl;
+		contact->setAwayMessage(test);
+	}
 }
 
 // Called when a group is added by adding a contact
