@@ -600,16 +600,14 @@ void UserlistGetCommand::stringToList(gaduContactsList& gaducontactslist ,
     }    
     
     if (!sList.contains('\n') && sList.contains(';')){
-	// too bad, not implemented yet
-	// this is an error, and i will rather than implement this 
-	// wait for somebody that have a will to help me, not only
-	// send me a note that this does not work :/
-	// i am not able to reproduce that, all i know is that
-	// for some ;\n is missing at the end of each line
-	// if you expierenced this error, try ekg or kadu and
-	// tell me if it also happends there
-	
-	kdDebug(14100)<<"This is a bit bizzare error, send this line to author:"<<endl;
+	// basicaly, server stores contact list as it is
+	// even if i will send him windows 2000 readme file
+	// he will accept it, and he will return it on each contact import
+	// so, if you have any problems with contact list
+	// this is probably not my fault, only previous client issue
+	// iow: i am not bothered :-)
+	kdDebug(14100)<<"you have to retype your contacts, and export list again"<<endl;
+	kdDebug(14100)<<"send this line to author, if you think it should work"<<endl;
 	kdDebug(14100)<<"------------------------------------------------------"<<endl;
 	kdDebug(14100)<<"\"" << sList << "\""<<endl;
 	kdDebug(14100)<<"------------------------------------------------------"<<endl;
