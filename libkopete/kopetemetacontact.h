@@ -336,6 +336,7 @@ public slots:
 	 * @brief Remove any KABC data for this meta contact
 	 */
 	void removeKABC();
+	bool syncWithKABC();
 
 signals:
 	/**
@@ -455,7 +456,9 @@ private:
 	void writeAddressBook();
 
 	static KABC::AddressBook* addressBook();
-
+    
+	static void splitField( const QString &str, QString &app, QString &name, QString &value );
+	
 	static KABC::AddressBook* m_addressBook;
 };
 

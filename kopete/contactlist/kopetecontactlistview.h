@@ -171,6 +171,8 @@ private slots:
 	void slotAddTemporaryContact();
 	void slotProperties();
 
+	void slotSyncKABC();
+	
 	/**
 	 * Sort the view when the timer expires.
 	 * Too bad QListView::sort() is not a slot itself...

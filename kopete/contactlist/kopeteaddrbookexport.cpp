@@ -175,6 +175,8 @@ int KopeteAddressBookExport::showDialog()
 		mDialog = new KDialogBase( this, "addressbookexportdialog", true, i18n("Export to Address Book"), KDialogBase::Ok|KDialogBase::Cancel );
 		mUI = new AddressBookExportUI( mDialog );
 		mDialog->setMainWidget( mUI );
+		mDialog->setButtonOKText( i18n( "Merge selected fields" ), i18n( "Set addressbook fields using the selected data from Kopete" ) ); 
+
 		initLabels();
 		// fetch existing data from kabc
 		fetchKABCData();

@@ -62,6 +62,7 @@
 		<Action name="contactStartChat" />
 		<Action name="contactSendFile" />
 		<Action name="contactSendEmail" />
+		<Action name="contactSyncKABC"/>
 		<Separator lineSeparator="true" />
 		<Action name="contactMove" />
 		<Action name="contactCopy" />

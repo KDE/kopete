@@ -28,10 +28,12 @@
 #include <kabc/stdaddressbook.h>
 
 #include <kdebug.h>
+#include <kdialogbase.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdeversion.h>
 
+#include "accountselector.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteprefs.h"
@@ -934,3 +936,177 @@ void KopeteMetaContact::slotWriteAddressBook()
 
 // vim: set noet ts=4 sts=4 sw=4:
 
+
+
+/**
+ * Check for any new addresses added to this contact's KABC entry 
+ * and prompt if they should be added in Kopete too.
+ */
+bool KopeteMetaContact::syncWithKABC()
+{
+	kdDebug(14010) << k_funcinfo << endl;
+	bool contactAdded = false;
+	// check whether the dontShowAgain was checked
+	if ( !d->metaContactId.isEmpty() ) // if we are associated with KABC
+	{
+		KABC::AddressBook* ab = addressBook();
+		KABC::Addressee addr  = ab->findByUid( metaContactId() );
+		// load the set of addresses from KABC
+		QStringList customs = addr.customs();
+	
+		QStringList::ConstIterator it;
+		for ( it = customs.begin(); it != customs.end(); ++it )
+		{
+			QString app, name, value;
+			splitField( *it, app, name, value );
+	
+			if ( app.startsWith( QString::fromLatin1( "messaging/" ) ) )
+			{
+				if ( name == QString::fromLatin1( "All" ) )
+				{
+					kdDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contactlist " << endl;
+					// Get the protocol namefrom the custom field
+					// by chopping the 'messaging/' prefix from the custom field app name
+					QString protocolName = app.right( app.length() - 10 );
+					// munge Jabber hack
+					if ( protocolName == QString::fromLatin1( "xmpp" ) )
+						protocolName = QString::fromLatin1( "jabber" );
+					
+					// Check Kopete supports it
+					KopeteProtocol * proto = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->loadPlugin( QString::fromLatin1( "kopete_" ) + protocolName ) );
+					if ( !proto )
+					{
+						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+								i18n( "<qt>\"%1\" is not supported by Kopete</qt>" ).arg( protocolName ),
+								i18n( "Could not sync with KDE Address Book" )  );
+						continue;
+					}
+					
+					// Check the accounts for this protocol are all connected
+					// Most protocols do not allow you to add contacts while offline
+					// Would be better to have a virtual bool KopeteAccount::readyToAddContact()
+					bool allAccountsConnected = true;
+					QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( proto );
+					QDictIterator<KopeteAccount> acs(accounts);
+					for ( ; acs.current(); ++acs )
+						if ( !acs.current()->isConnected() )
+						{	allAccountsConnected = false;
+							break;
+						}
+					if ( !allAccountsConnected )
+					{
+						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+							i18n( "<qt>One or more of your accounts using %1 are offline.  Most systems have to be connected to add contacts.  Please connect these accounts and try again.</qt>" ).arg( protocolName ),
+							i18n( "Not connected" )  );
+						continue;
+					}
+
+					// See if we need to add each contact in this protocol
+					QStringList addresses = QStringList::split( QChar( 0xE000 ), value );
+					QStringList::iterator end = addresses.end();
+					for ( QStringList::iterator it = addresses.begin(); it != end; ++it )
+					{
+						// check whether each one is present in Kopete
+						// Is it in the contact list?
+						KopeteMetaContact *mc;
+						for ( acs.toFirst(); acs.current(); ++acs )
+							if ( ( mc = KopeteContactList::contactList()->findContact( 
+									proto->pluginId(), acs.current()->accountId(), *it ) ) )
+								break;
+
+						if ( mc ) // Is it in another metacontact?
+						{
+							// Is it already in this metacontact? If so, we needn't do anything
+							if ( mc == this )
+							{
+								kdDebug( 14010 ) << *it << " already a child of this metacontact." << endl;
+								continue;
+							}
+							kdDebug( 14010 ) << *it << " already exists in OTHER metacontact, move here?" << endl;
+							// find the KopeteContact and attempt to move it to this metacontact.
+							mc->findContact( proto->pluginId(), QString::null, *it )->setMetaContact( this );
+						}
+						else
+						{
+							// if not, prompt to add it
+							kdDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add..." << endl;
+							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
+															 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import address from Address Book" ), i18n("&Yes"), i18n("&No"), QString::fromLatin1( "ImportFromKABC" ) ) )
+							{
+								for ( ; acs.current(); ++acs )
+									if ( !acs.current()->isConnected() )
+									{
+									}
+								acs.toFirst();
+								if ( !allAccountsConnected )
+									continue;
+								
+								// we have got a contact to add, our accounts are connected, so add it.
+								// Do we need to choose an account
+								KopeteAccount *chosen = 0;
+								if ( accounts.count() > 1 )
+								{	// if we have >1 account in this protocol, prompt for the protocol.
+									KDialogBase *chooser = new KDialogBase(0, "chooser", true,
+										i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
+										KDialogBase::Ok, false);
+									AccountSelector *accSelector = new AccountSelector(proto, chooser,
+										"accSelector");
+									chooser->setMainWidget(accSelector);
+									int ret = chooser->exec();
+									chosen = accSelector->selectedItem();
+									if ( ret == QDialog::Rejected )
+										continue; 
+
+									delete chooser;
+								}
+								else if ( accounts.isEmpty() )
+								{
+									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+										i18n( "<qt>You don't have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>" ).arg( protocolName ),
+										i18n( "No account found" )  );
+									continue;
+								}
+								else // if we have 1 account in this protocol, choose it
+								{
+									chosen = acs.current();
+								}
+								// add the contact to the chosen account
+								
+								if ( chosen )
+								{
+									kdDebug( 14010 ) << "Adding " << *it << " to " << chosen->accountId() << endl;
+									if ( chosen->addContact( *it, QString::null, this ) )
+										contactAdded = true;
+									else
+										KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+											i18n( "<qt>It was not possible to add the contact. Please see the debug messages for details.</qt>" ),
+											i18n( "Couldn't add contact") ) ;
+								}
+							}
+							else
+								kdDebug( 14010 ) << " user declined to add " << *it << " to contactlist " << endl;
+						}
+					}
+					kdDebug( 14010 ) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked " << endl;
+				}
+			}
+		}
+	}
+	return contactAdded;
+}
+
+// FIXME: Remove when IM address API is in KABC (KDE 4)
+void KopeteMetaContact::splitField( const QString &str, QString &app, QString &name, QString &value )
+{
+  int colon = str.find( ':' );
+  if ( colon != -1 ) {
+    QString tmp = str.left( colon );
+    value = str.mid( colon + 1 );
+
+    int dash = tmp.find( '-' );
+    if ( dash != -1 ) {
+      app = tmp.left( dash );
+      name = tmp.mid( dash + 1 );
+    }
+  }
+}
