@@ -283,10 +283,11 @@ void AppearanceConfig::reopen()
 	<b>%f</b> : insert the displayName of the sender                 <br>\
 	<b>%t</b> : insert the displayName of the reciever               <br>\
                                                                    <br>\
-	<b>%i ... %i </b> : code between is parsed only if inbound        <br>\
-	<b>%o ... %o </b> : code between is parsed only if outbound       <br>\
-	<b>%s ... %s </b>: code between is parsed only if internal       <br>\
-	<b>%e ... %e </b>: code between is parsed only if not internal (external) <br>\
+	<b>%i ... %i </b> : code between is parsed only if message is inbound <br> \
+	<b>%o ... %o </b> : code between is parsed only if message is outbound <br> \
+	<b>%a ... %a </b> : code between is parsed only if message is an action <br> \
+	<b>%s ... %s </b>: code between is parsed only if message is internal <br>\
+	<b>%e ... %e </b>: code between is parsed only if message is inbound or outbound <br>\
                                                                      <br>\
 	<b>%%</b> : insert a '%'");
 
