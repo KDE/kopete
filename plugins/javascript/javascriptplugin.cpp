@@ -33,8 +33,9 @@
 static KJS::Object contactPtrList( KJSEmbed::KJSEmbedPart *jsEngine,
 	const KopeteContactPtrList &list, QPtrList<Status> statusContainer )
 {
-	KJS::Object retVal = jsEngine->interpreter()->builtinArray();
+	KJS::Object arrayObject = jsEngine->interpreter()->builtinArray();
 	KJS::ExecState *state = jsEngine->globalExec();
+        KJS::Object retVal = arrayObject.construct( state, KJS::List() );
 
 	for( QPtrListIterator<KopeteContact> it( list ); it.current(); ++it)
 	{
@@ -46,7 +47,10 @@ static KJS::Object contactPtrList( KJSEmbed::KJSEmbedPart *jsEngine,
 		args.append( object );
 
 		KJS::Object pushMethod = retVal.get( state, "push" ).toObject( state );
-		retVal.call( state, pushMethod, args );
+		if( pushMethod.implementsCall() )
+			pushMethod.call( state, retVal, args );
+		else
+			kdError() << "Array push method cannot be called" << endl;
 	}
 
 	return retVal;
