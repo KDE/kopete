@@ -35,6 +35,8 @@
 #include <inttypes.h>
 #ifndef __FreeBSD__
 #  include <netinet/in.h>
+#else
+#  include <arpa/inet.h>
 #endif
 #include <unistd.h>
 
