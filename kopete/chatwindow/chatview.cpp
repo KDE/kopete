@@ -684,7 +684,10 @@ void ChatView::slotContactRemoved( const KopeteContact *c, const QString& reason
 			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		//FIXME: bugs if the nickname contains %1 again
-		sendInternalMessage( ( reason.isNull() ? i18n( "%1 has left the chat." ) : i18n( "%1 has left the chat (%2).") ).
+		if(reason.isNull())
+			sendInternalMessage( i18n( "%1 has left the chat." ).arg(contactName) ) ;
+		else
+			sendInternalMessage( i18n( "%1 has left the chat (%2).").
 #if QT_VERSION < 0x030200
 			arg( contactName ).arg( reason )
 #else
@@ -808,7 +811,11 @@ void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args
 
 void ChatView::sendInternalMessage(const QString &msg)
 {
-	KopeteMessage m = KopeteMessage(m_manager->user(), m_manager->members(), msg, KopeteMessage::Internal);
+	                               //when closing kopete, some internal message may be send because some contact are deleted
+                                   //theses contact can already been deleted
+	KopeteMessage m = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, msg, KopeteMessage::Internal);
+	//(in many case, this is useless to set myself as contact
+	//TODO: set the contact which initiate the internal messae, so we can later show a icon of it (for example, when he join a chat
 	addChatMessage(m);
 }
 
