@@ -268,84 +268,6 @@ void KopeteChatWindow::windowListChanged()
 		(*it)->checkDetachEnable();
 }
 
-bool KopeteChatWindow::eventFilter( QObject *object, QEvent *event )
-{
-	if ( object->inherits( "KTextEdit" ) )
-		KCursor::autoHideEventFilter( object, event );
-
-	if( event->type() == QEvent::KeyPress )
-	{
-		QKeyEvent *keyEvent = static_cast<QKeyEvent*>( event );
-		KKey key( keyEvent );
-
-		// NOTE:
-		// shortcut.contains( key ) doesn't work. It was the old way we used to do it, but it is incorrect
-		// because if you have a multi-key shortcut then pressing any of the keys in
-		// that shortcut individually causes the shortcut to be activated.
-
-		if( chatSend->isEnabled() )
-		{
-			for( uint i = 0; i < chatSend->shortcut().count(); i++ )
-			{
-				if( key == chatSend->shortcut().seq(i).key(0) )
-				{
-					slotSendMessage();
-					return true;
-				}
-			}
-		}
-
-		for( uint i = 0; i < nickComplete->shortcut().count(); i++ )
-		{
-			if( key == nickComplete->shortcut().seq(i).key(0) )
-			{
-				slotNickComplete();
-				return true;
-			}
-		}
-
-		if( historyDown->isEnabled() )
-		{
-			for( uint i = 0; i < historyDown->shortcut().count(); i++ )
-			{
-				if( key == historyDown->shortcut().seq(i).key(0) )
-				{
-					slotHistoryDown();
-					return true;
-				}
-			}
-		}
-
-		if( historyUp->isEnabled() )
-		{
-			for( uint i = 0; i < historyUp->shortcut().count(); i++ )
-			{
-				if( key == historyUp->shortcut().seq(i).key(0) )
-				{
-					slotHistoryUp();
-					return true;
-				}
-			}
-		}
-
-		if( m_activeView )
-		{
-			if( keyEvent->key() == Qt::Key_Prior )
-			{
-				m_activeView->messagePart()->pageUp();
-				return true;
-			}
-			else if( keyEvent->key() == Qt::Key_Next )
-			{
-				m_activeView->messagePart()->pageDown();
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
 void KopeteChatWindow::slotNickComplete()
 {
 	if( m_activeView )
@@ -436,6 +358,9 @@ void KopeteChatWindow::initActions(void)
 		this, SLOT( slotHistoryDown() ), coll, "history_down" );
 	historyDown->setShortcut( QKeySequence(CTRL + Key_Down) );
 
+	KStdAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
+	KStdAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
+	
 	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), QString::null, 0,
@@ -569,6 +494,18 @@ void KopeteChatWindow::slotHistoryDown()
 {
 	if( m_activeView )
 		m_activeView->editPart()->historyDown();
+}
+
+void KopeteChatWindow::slotPageUp()
+{
+	if( m_activeView )
+		m_activeView->messagePart()->pageUp();
+}
+
+void KopeteChatWindow::slotPageDown()
+{
+	if( m_activeView )
+		m_activeView->messagePart()->pageDown();
 }
 
 void KopeteChatWindow::slotCut()

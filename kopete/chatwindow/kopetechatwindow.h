@@ -180,6 +180,8 @@ private slots:
 
 	void slotHistoryUp();
 	void slotHistoryDown();
+	void slotPageUp();
+	void slotPageDown();
 
 	void slotSendMessage();
 	void slotChatSave();
@@ -212,7 +214,6 @@ private slots:
 protected:
 	virtual void closeEvent( QCloseEvent *e );
 	virtual void windowActivationChange( bool );
-	virtual bool eventFilter( QObject *object, QEvent *event );
 };
 
 #endif
