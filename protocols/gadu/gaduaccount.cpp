@@ -967,21 +967,54 @@ GaduAccount::slotSearchResult( const searchResult& result )
 GaduAccount::tlsConnection
 GaduAccount::useTls()
 {
-	tlsConnection Tls = (tlsConnection) ( pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) ).toInt() );
-	if ( Tls != TLS_ifAvaliable && Tls != TLS_only && Tls != TLS_no ) {
-		// default
-		Tls = TLS_no;
+	QString s;
+	bool c;
+	unsigned int oldC;
+	tlsConnection Tls;
+	
+	s = pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) );
+	oldC = s.toUInt( &c );
+	// we have old format
+	if ( c ) {
+		kdDebug( 14100 ) << "old format for param useEncryptedConnection, value " << 
+				oldC << " willl be converted to new string value" << endl;
+		setUseTls( (tlsConnection) oldC );
+		// should be string now, unless there was an error reading
+		s = pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) );
+		kdDebug( 14100 ) << "new useEncryptedConnection value : " << s << endl;
 	}
+	
+	Tls = TLS_no;
+	if ( s == "TLS_ifAvaliable" ) {
+		Tls = TLS_ifAvaliable;
+	}
+	if ( s == "TLS_only" ) {
+		Tls = TLS_only;
+	}
+	
 	return Tls;
 }
 
 void
 GaduAccount::setUseTls( tlsConnection ut )
 {
-	if ( ut < 0 || ut > 2 ) {
-		return;
+	QString s;
+	switch( ut ) {	
+		case TLS_ifAvaliable:
+			s = "TLS_ifAvaliable";
+		break;
+
+		case TLS_only:
+			s = "TLS_only";
+		break;
+
+		default: 
+		case TLS_no:
+			s = "TLS_no";
+		break;
 	}
-	setPluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ), QString::number( (int) ut ) );
+
+	setPluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ), s );
 }
 
 #include "gaduaccount.moc"
