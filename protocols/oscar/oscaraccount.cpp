@@ -228,8 +228,8 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	// to pop up a password dialog saying the same thing when we try to reconenct
 	if (errorCode != 5)
 	{
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errmsg,
-			i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
+		QString caption = engine()->isICQ() ? i18n("Connection Lost - ICQ Plugin") : i18n("Connection Lost - AIM Plugin");
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errmsg, caption, KMessageBox::Notify);
 	}
 	else
 	{
