@@ -59,6 +59,8 @@ public:
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
+	d = new KopeteMetaContactPrivate;
+	
 	d->trackChildNameChanges = true;
 	d->temporary = false;
 //	m_isTopLevel=false;
