@@ -598,7 +598,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
 		{
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - seeking in group named: " << grp->displayName() << ", id: " << grp->pluginData( protocol(), accountId() + " objectId" ).toInt() << " our parentId is: " << contact.parentId << endl;
-			if ( grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
+			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
 				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - matches, adding." << endl;
 				metaContact->addToGroup( grp, KopeteMetaContact::DontSyncGroups ); //addToGroup() is safe to call if already a member
@@ -616,7 +616,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
 		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
 		{
-			if ( grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
+			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
 				metaContact->addToGroup( grp, KopeteMetaContact::DontSyncGroups );
 				break;

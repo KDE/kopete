@@ -27,7 +27,14 @@ class GroupWiseContactProperties : public QObject
 {
 Q_OBJECT
 public:
-	GroupWiseContactProperties( GroupWiseContact * contact, QObject *parent = 0, const char *name = 0 );
+	/**
+	 * Display properties given a GroupWiseContact
+	 */ 
+	GroupWiseContactProperties( GroupWiseContact * contact, QObject *parent, const char *name );
+	/**
+	 * Display properties given a GroupWise::ContactDetails
+	 */
+	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QObject *parent = 0, const char *name = 0 );
 	~GroupWiseContactProperties();
 
 private:

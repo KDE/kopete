@@ -13,6 +13,7 @@
 #include <qlistbox.h>
 #include <qpushbutton.h>
 #include <qstringlist.h>
+#include <qlistview.h>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -23,7 +24,7 @@
 #include "gwaccount.h"
 #include "gwprivacy.h"
 #include "gwprotocol.h"
-
+#include "gwsearch.h"
 #include "privacymanager.h"
 #include "userdetailsmanager.h"
 #include "gwprivacydialog.h"
@@ -44,33 +45,33 @@ GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWid
  : KDialogBase(  parent, name, false, i18n( "Account specific privacy settings", "Manage Privacy for %1" ).arg( account->accountId() ),
  KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account ), m_dirty( false )
 {
-	m_widget = new GroupWisePrivacyWidget( this );
-	setMainWidget( m_widget );
+	m_privacy = new GroupWisePrivacyWidget( this );
+	setMainWidget( m_privacy );
 	PrivacyManager * mgr = m_account->client()->privacyManager();
 	// populate the widget;
 	// admin lock
 	if ( mgr->isPrivacyLocked() )
 	{
-		m_widget->m_status->setText( i18n( "Privacy settings have been administratively locked" ) );
+		m_privacy->m_status->setText( i18n( "Privacy settings have been administratively locked" ) );
 		disableWidgets();
 	}
 
 	populateWidgets();
 
-	m_widget->m_allowList->setSelectionMode( QListBox::Extended );
-	m_widget->m_denyList->setSelectionMode( QListBox::Extended );
+	m_privacy->m_allowList->setSelectionMode( QListBox::Extended );
+	m_privacy->m_denyList->setSelectionMode( QListBox::Extended );
 
-	connect( m_widget->m_btnAllow, SIGNAL( clicked() ), SLOT( slotAllowClicked() ) );
-	connect( m_widget->m_btnBlock, SIGNAL( clicked() ), SLOT( slotBlockClicked() ) );
-	//connect( m_widget->m_btnAdd, SIGNAL( clicked() ), SLOT( slotAddClicked() ) );
-	connect( m_widget->m_btnRemove, SIGNAL( clicked() ), SLOT( slotRemoveClicked() ) );
-	connect( m_widget->m_allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
-	connect( m_widget->m_denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
+	connect( m_privacy->m_btnAllow, SIGNAL( clicked() ), SLOT( slotAllowClicked() ) );
+	connect( m_privacy->m_btnBlock, SIGNAL( clicked() ), SLOT( slotBlockClicked() ) );
+	connect( m_privacy->m_btnAdd, SIGNAL( clicked() ), SLOT( slotAddClicked() ) );
+	connect( m_privacy->m_btnRemove, SIGNAL( clicked() ), SLOT( slotRemoveClicked() ) );
+	connect( m_privacy->m_allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
+	connect( m_privacy->m_denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
 	connect( mgr, SIGNAL( privacyChanged( const QString &, bool ) ), SLOT( slotPrivacyChanged() ) );
-	m_widget->m_btnAdd->setEnabled( false );
-	m_widget->m_btnAllow->setEnabled( false );
-	m_widget->m_btnBlock->setEnabled( false );
-	m_widget->m_btnRemove->setEnabled( false );
+	m_privacy->m_btnAdd->setEnabled( true );
+	m_privacy->m_btnAllow->setEnabled( false );
+	m_privacy->m_btnBlock->setEnabled( false );
+	m_privacy->m_btnRemove->setEnabled( false );
 
 /*	showButtonOK( true );
 	showButtonApply( true );
@@ -91,9 +92,9 @@ void GroupWisePrivacyDialog::populateWidgets()
 	// default policy
 	QString defaultPolicyText = i18n( "<Everyone Else>" );
 	if ( mgr->defaultAllow() )
-		m_defaultPolicy = new QListBoxText( m_widget->m_allowList, defaultPolicyText );
+		m_defaultPolicy = new QListBoxText( m_privacy->m_allowList, defaultPolicyText );
 	else
-		m_defaultPolicy = new QListBoxText( m_widget->m_denyList, defaultPolicyText );
+		m_defaultPolicy = new QListBoxText( m_privacy->m_denyList, defaultPolicyText );
 
 	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account );
 
@@ -105,7 +106,7 @@ void GroupWisePrivacyDialog::populateWidgets()
 		GroupWise::ContactDetails cd = m_account->client()->userDetailsManager()->details( *it );
 		if ( cd.fullName.isEmpty() )
 			cd.fullName = cd.givenName + " " + cd.surname;
-		new PrivacyLBI( m_widget->m_allowList, icon, cd.fullName, *it );
+		new PrivacyLBI( m_privacy->m_allowList, icon, cd.fullName, *it );
 	}
 	// deny list
 	QStringList denyList = mgr->denyList();
@@ -115,19 +116,19 @@ void GroupWisePrivacyDialog::populateWidgets()
 		GroupWise::ContactDetails cd = m_account->client()->userDetailsManager()->details( *it );
 		if ( cd.fullName.isEmpty() )
 			cd.fullName = cd.givenName + " " + cd.surname;
-		new PrivacyLBI( m_widget->m_denyList, icon, cd.fullName, *it );
+		new PrivacyLBI( m_privacy->m_denyList, icon, cd.fullName, *it );
 	}
 	updateButtonState();
 }
 
 void GroupWisePrivacyDialog::disableWidgets()
 {
-	if ( m_widget )
+	if ( m_privacy )
 	{
-		m_widget->m_btnAllow->setEnabled( false );
-		m_widget->m_btnBlock->setEnabled( false );
-		m_widget->m_btnAdd->setEnabled( false );
-		m_widget->m_btnRemove->setEnabled( false );
+		m_privacy->m_btnAllow->setEnabled( false );
+		m_privacy->m_btnBlock->setEnabled( false );
+		m_privacy->m_btnAdd->setEnabled( false );
+		m_privacy->m_btnRemove->setEnabled( false );
 	}
 }
 
@@ -135,14 +136,14 @@ void GroupWisePrivacyDialog::slotBlockClicked()
 {
 	// take each selected item from the allow list and add it to the deny list
 	// start at the bottom, as we are changing the contents of the list as we go
-	for( int i = m_widget->m_allowList->count() - 1; i >= 0 ; --i )
+	for( int i = m_privacy->m_allowList->count() - 1; i >= 0 ; --i )
 	{
-		if ( m_widget->m_allowList->isSelected( i ) )
+		if ( m_privacy->m_allowList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_widget->m_allowList->item( i );
-			m_widget->m_allowList->takeItem( lbi );
-			m_widget->m_denyList->insertItem( lbi );
+			QListBoxItem * lbi = m_privacy->m_allowList->item( i );
+			m_privacy->m_allowList->takeItem( lbi );
+			m_privacy->m_denyList->insertItem( lbi );
 		}
 	}
 	updateButtonState();
@@ -151,44 +152,71 @@ void GroupWisePrivacyDialog::slotBlockClicked()
 void GroupWisePrivacyDialog::slotAllowClicked()
 {
 	// take each selected item from the deny list and add it to the allow list
-	for( int i = m_widget->m_denyList->count() - 1; i >= 0 ; --i )
+	for( int i = m_privacy->m_denyList->count() - 1; i >= 0 ; --i )
 	{
-		if ( m_widget->m_denyList->isSelected( i ) )
+		if ( m_privacy->m_denyList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_widget->m_denyList->item( i );
-			m_widget->m_denyList->takeItem( lbi );
-			m_widget->m_allowList->insertItem( lbi );
+			QListBoxItem * lbi = m_privacy->m_denyList->item( i );
+			m_privacy->m_denyList->takeItem( lbi );
+			m_privacy->m_allowList->insertItem( lbi );
 		}
 	}
 	updateButtonState();
 }
 
+void GroupWisePrivacyDialog::slotAddClicked()
+{
+	KDialogBase * searchDlg = new KDialogBase( this, "searchadddialog", false, i18n( "Search for contacts to block" ), KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::NoDefault, true );
+	m_search = new GroupWiseSearch( m_account, QListView::Extended, searchDlg, "privacysearchwidget" );
+	searchDlg->setMainWidget( m_search );
+	m_search->m_results->setSelectionMode( QListView::Multi );
+	connect( searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
+	searchDlg->show();
+}
+
+void GroupWisePrivacyDialog::slotSearchedForUsers()
+{
+	// create an item for each result, in the block list
+	QValueList< ContactDetails > selected = m_search->selectedResults();
+	QValueList< ContactDetails >::Iterator it = selected.begin();
+	const QValueList< ContactDetails >::Iterator end = selected.end();
+	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account );
+	for ( ; it != end; ++it )
+	{
+		m_dirty = true;
+		m_account->client()->userDetailsManager()->addDetails( *it );
+		if ( (*it).fullName.isEmpty() )
+			(*it).fullName = (*it).givenName + " " + (*it).surname;
+		new PrivacyLBI( m_privacy->m_denyList, icon, (*it).fullName, (*it).dn );
+	}
+}
+
 void GroupWisePrivacyDialog::slotRemoveClicked()
 {
 	// remove any selected items from either list, except the default policy
-	for( int i = m_widget->m_denyList->count() - 1; i >= 0 ; --i )
+	for( int i = m_privacy->m_denyList->count() - 1; i >= 0 ; --i )
 	{
-		if ( m_widget->m_denyList->isSelected( i ) )
+		if ( m_privacy->m_denyList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_widget->m_denyList->item( i );
+			QListBoxItem * lbi = m_privacy->m_denyList->item( i );
 			// can't remove the default policy
 			if ( lbi == m_defaultPolicy )
 				continue;
-			m_widget->m_denyList->removeItem( i );
+			m_privacy->m_denyList->removeItem( i );
 		}
 	}
-	for( int i = m_widget->m_allowList->count() - 1; i >= 0 ; --i )
+	for( int i = m_privacy->m_allowList->count() - 1; i >= 0 ; --i )
 	{
-		if ( m_widget->m_allowList->isSelected( i ) )
+		if ( m_privacy->m_allowList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_widget->m_allowList->item( i );
+			QListBoxItem * lbi = m_privacy->m_allowList->item( i );
 			// can't remove the default policy
 			if ( lbi == m_defaultPolicy )
 				continue;
-			m_widget->m_allowList->removeItem( i );
+			m_privacy->m_allowList->removeItem( i );
 		}
 	}
 	updateButtonState();
@@ -197,47 +225,47 @@ void GroupWisePrivacyDialog::slotRemoveClicked()
 void GroupWisePrivacyDialog::slotAllowListClicked()
 {
 	// don't get into feedback
-	disconnect( m_widget->m_denyList, SIGNAL( selectionChanged() ), this, SLOT( slotDenyListClicked() ) );
-	m_widget->m_denyList->clearSelection();
-	connect( m_widget->m_denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
+	disconnect( m_privacy->m_denyList, SIGNAL( selectionChanged() ), this, SLOT( slotDenyListClicked() ) );
+	m_privacy->m_denyList->clearSelection();
+	connect( m_privacy->m_denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
 	bool selected = false;
-	for( int i = m_widget->m_allowList->count() - 1; i >= 0 ; --i )
+	for( int i = m_privacy->m_allowList->count() - 1; i >= 0 ; --i )
 	{
-		if ( m_widget->m_allowList->isSelected( i ) )
+		if ( m_privacy->m_allowList->isSelected( i ) )
 		{
 			selected = true;
 			break;
 		}
 	}
-	m_widget->m_btnAllow->setEnabled( false );
-	m_widget->m_btnBlock->setEnabled( selected );
-	m_widget->m_btnRemove->setEnabled( selected );
+	m_privacy->m_btnAllow->setEnabled( false );
+	m_privacy->m_btnBlock->setEnabled( selected );
+	m_privacy->m_btnRemove->setEnabled( selected );
 }
 
 void GroupWisePrivacyDialog::slotDenyListClicked()
 {
 	// don't get into feedback
-	disconnect( m_widget->m_allowList, SIGNAL( selectionChanged() ), this, SLOT( slotAllowListClicked() ) );
-	m_widget->m_allowList->clearSelection();
-	connect( m_widget->m_allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
+	disconnect( m_privacy->m_allowList, SIGNAL( selectionChanged() ), this, SLOT( slotAllowListClicked() ) );
+	m_privacy->m_allowList->clearSelection();
+	connect( m_privacy->m_allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
 	bool selected = false;
-	for( int i = m_widget->m_denyList->count() - 1; i >= 0 ; --i )
+	for( int i = m_privacy->m_denyList->count() - 1; i >= 0 ; --i )
 	{
-		if ( m_widget->m_denyList->isSelected( i ) )
+		if ( m_privacy->m_denyList->isSelected( i ) )
 		{
 			selected = true;
 			break;
 		}
 	}
-	m_widget->m_btnAllow->setEnabled( selected );
-	m_widget->m_btnBlock->setEnabled( false );
-	m_widget->m_btnRemove->setEnabled( selected );
+	m_privacy->m_btnAllow->setEnabled( selected );
+	m_privacy->m_btnBlock->setEnabled( false );
+	m_privacy->m_btnRemove->setEnabled( selected );
 }
 
 void GroupWisePrivacyDialog::slotPrivacyChanged()
 {
-	m_widget->m_denyList->clear();
-	m_widget->m_allowList->clear();
+	m_privacy->m_denyList->clear();
+	m_privacy->m_allowList->clear();
 	populateWidgets();
 }
 
@@ -272,23 +300,23 @@ void GroupWisePrivacyDialog::commitChanges()
 		QStringList denyList;
 		QStringList allowList;
 		// pass on our current allow, deny and default policy to the PrivacyManager
-		for( int i = 0; i < (int)m_widget->m_denyList->count(); ++i )
+		for( int i = 0; i < (int)m_privacy->m_denyList->count(); ++i )
 		{
-			if ( m_widget->m_denyList->item( i ) == m_defaultPolicy )
+			if ( m_privacy->m_denyList->item( i ) == m_defaultPolicy )
 				defaultDeny = true;
 			else
 			{
-				PrivacyLBI * lbi = static_cast<PrivacyLBI *>( m_widget->m_denyList->item( i ) );
+				PrivacyLBI * lbi = static_cast<PrivacyLBI *>( m_privacy->m_denyList->item( i ) );
 				denyList.append( lbi->dn() );
 			}
 		}
-		for( int i = 0; i < (int)m_widget->m_allowList->count(); ++i )
+		for( int i = 0; i < (int)m_privacy->m_allowList->count(); ++i )
 		{
-			if ( m_widget->m_allowList->item( i ) == m_defaultPolicy )
+			if ( m_privacy->m_allowList->item( i ) == m_defaultPolicy )
 				defaultDeny = false;
 			else
 			{
-				PrivacyLBI * lbi = static_cast<PrivacyLBI *>( m_widget->m_allowList->item( i ) );
+				PrivacyLBI * lbi = static_cast<PrivacyLBI *>( m_privacy->m_allowList->item( i ) );
 				allowList.append( lbi->dn() );
 			}
 		}

@@ -16,6 +16,7 @@
 
 class GroupWiseAccount;
 class GroupWisePrivacyWidget;
+class GroupWiseSearch;
 class QListBoxItem;
 
 /**
@@ -38,19 +39,21 @@ protected:
 protected slots:
 	void slotAllowClicked();
 	void slotBlockClicked();
+	void slotAddClicked();
 	void slotRemoveClicked();
 	void slotAllowListClicked();
 	void slotDenyListClicked();
 	void slotPrivacyChanged();
+	void slotSearchedForUsers();
 	void slotOk();
 	void slotApply();
 	
 private:
 	GroupWiseAccount * m_account;
-	GroupWisePrivacyWidget * m_widget;
+	GroupWisePrivacyWidget * m_privacy;
+	GroupWiseSearch * m_search;
 	QListBoxItem * m_defaultPolicy;
 	bool m_dirty;
-	
 };
 
 #endif

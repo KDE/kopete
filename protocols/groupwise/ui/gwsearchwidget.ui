@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>GWSearchWidget</class>
+<class>GroupWiseSearchWidget</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>GWSearchWidget</cstring>
+        <cstring>GroupWiseSearchWidget</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -328,7 +328,7 @@
                         <cstring>m_details</cstring>
                     </property>
                     <property name="enabled">
-                        <bool>false</bool>
+                        <bool>true</bool>
                     </property>
                     <property name="text">
                         <string>Detai&amp;ls...</string>
@@ -359,10 +359,10 @@
                         <cstring>m_search</cstring>
                     </property>
                     <property name="text">
-                        <string>Searc&amp;h</string>
+                        <string>&amp;Search</string>
                     </property>
                     <property name="accel">
-                        <string>Alt+H</string>
+                        <string>Alt+S</string>
                     </property>
                 </widget>
             </hbox>

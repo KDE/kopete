@@ -30,7 +30,7 @@ class KopeteAccount;
 class KopeteMetaContact;
 class GroupWiseAccount;
 class GroupWiseAddUI;
-class GWSearchWidget;
+class GroupWiseSearch;
 
 /**
  * A page in the Add Contact Wizard
@@ -53,15 +53,12 @@ public:
     virtual bool validateData();
 protected slots:
 	void slotAddMethodChanged();
-	void slotDoSearch();
-	void slotShowDetails();
-	void slotGotSearchResults();
 protected:
 	QValueList< GroupWise::ContactDetails > m_searchResults;
 	unsigned char searchOperation( int comboIndex );
 	GroupWiseAccount * m_account;
 	GroupWiseAddUI * m_gwAddUI;
-	GWSearchWidget * m_searchUI;
+	GroupWiseSearch * m_searchUI;
 	QLabel *m_noaddMsg1;
 	QLabel *m_noaddMsg2;
 	bool m_canadd;
