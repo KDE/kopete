@@ -24,6 +24,8 @@
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 
+#include "gaducommands.h"
+
 #include "libgadu.h"
 
 #include <qmap.h>
@@ -86,7 +88,7 @@ private slots:
 	void notifyDescription( struct gg_event* e );
 	void statusChanged( struct gg_event* e );
 	void slotSessionDisconnect();
-	void userlist( const QString& );
+	void userlist( const gaduContactsList& );
 	void connectionFailed( struct gg_event* /*e*/ );
 	void connectionSucceed( struct gg_event* /*e*/ );
 

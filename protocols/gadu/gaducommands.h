@@ -33,6 +33,20 @@
 #include <qobject.h>
 #include <qstringlist.h>
 
+
+struct contactLine{
+	QString name;
+	QString group;
+	QString uin;
+	QString firstname;
+	QString surname;
+	QString nickname;
+	QString phonenr;
+	QString email;
+};
+
+typedef QPtrList<contactLine> gaduContactsList;
+
 class QSocketNotifier;
 class QStringList;
 
@@ -202,8 +216,11 @@ public:
 
 	void setInfo( uin_t uin, const QString& password );
 	void execute();
+
+	void stringToList( gaduContactsList& gaducontactslist , 
+				      const QString& sList);
 signals:
-	void done( const QString& );
+	void done( const gaduContactsList& );
 protected slots:
 	void watcher();
 

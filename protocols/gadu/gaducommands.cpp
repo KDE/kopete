@@ -30,6 +30,7 @@
 #include <qsocketnotifier.h>
 #include <klocale.h>
 #include <qregexp.h>
+#include <qtextcodec.h>
 #include <kdebug.h>
 #include <errno.h>
 
@@ -584,10 +585,104 @@ UserlistGetCommand::execute()
 	checkSocket( session_->fd, session_->check );
 }
 
+void UserlistGetCommand::stringToList(gaduContactsList& gaducontactslist , 
+				      const QString& sList)
+{
+
+    QString cline;
+    QStringList::iterator it;
+    QStringList strList ;
+    contactLine *cl=NULL;
+    bool email=false;
+
+    if (sList.isEmpty() || sList.isNull() || !sList.contains(';')){
+	return;
+    }    
+    
+    if (!sList.contains('\n') && sList.contains(';')){
+	// too bad, not implemented yet
+	// this is an error, and i will rather than implement this 
+	// wait for somebody that have a will to help me, not only
+	// send me a note that this does not work :/
+	// i am not able to reproduce that, all i know is that
+	// for some ;\n is missing at the end of each line
+	// if you expierenced this error, try ekg or kadu and
+	// tell me if it also happends there
+	
+	kdDebug(14100)<<"This is a bit bizzare error, send this line to author:"<<endl;
+	kdDebug(14100)<<"------------------------------------------------------"<<endl;
+	kdDebug(14100)<<"\"" << sList << "\""<<endl;
+	kdDebug(14100)<<"------------------------------------------------------"<<endl;
+	
+	return;
+    }
+    
+    QStringList ln  = QStringList::split( QChar('\n'),  sList, true );
+    QStringList::iterator lni=ln.begin();
+		
+    while(lni != ln.end()){
+	cline=(*lni);
+
+	if (cline.isNull()){
+	    break;
+	}
+
+	kdDebug(14100)<<"\""<< cline << "\"" << endl;
+		    
+	strList  = QStringList::split( QChar(';'), cline, true );
+	if (strList.count()==12){
+	    email=true;
+	}
+	
+	if (strList.count()!=8 && email==false){
+	    kdDebug(14100)<< "fishy, maybe contact format was changed. Contact author/update software"<<endl;
+	    kdDebug(14100)<<"nr of elements should be 8 or 12, but is "<<strList.count() << " LINE:" << cline <<endl;
+	    ++lni;
+	    continue;
+	}
+
+	it = strList.begin();
+//each line ((firstname);(secondname);(nickname).;(name);(tel);(group);(uin);
+		    
+	if (cl==NULL){
+	    cl=new contactLine;
+	}
+		    
+	cl->firstname	= (*it);
+	cl->surname	= (*++it);
+	cl->nickname	= (*++it);
+	cl->name	= (*++it);
+	cl->phonenr	= (*++it);
+	cl->group	= (*++it);
+	cl->uin		= (*++it);
+	if (email){
+	    cl->email	= (*++it);
+        }
+	else{
+	    cl->email	= "";
+	}
+	
+	++lni;
+
+	if (cl->uin.isNull()){
+	    kdDebug(14100) << "no Uin, strange "<<endl;
+	    kdDebug(14100) << "LINE:" << cline <<endl;
+	    continue;
+	}
+		    
+	gaducontactslist.append(cl);
+	kdDebug(14100) << "adding to list ,uin:" << cl->uin <<endl;
+		    		    
+	cl=NULL;
+    }
+}
+				       
+
 void
 UserlistGetCommand::watcher()
 {
-	QString result=QString::null;
+	gaduContactsList gl;
+	QString result;
 
 	disableNotifiers();
 	kdDebug(14100)<<"Watching start"<<endl;
@@ -609,9 +704,18 @@ UserlistGetCommand::watcher()
 		return;
 	}
 	if ( session_->state == GG_STATE_DONE) {
-		result = QString( static_cast<char*>(session_->data) );
+		
+		QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
+				
+		result = textcodec->toUnicode(
+			    QString( static_cast<char*>(session_->data) ) );
 
-		emit done( result );
+		gl.setAutoDelete(TRUE);
+		
+		UserlistGetCommand::stringToList(gl, result);
+
+		emit done( gl );
+
 		done_ = true;
 		deleteLater();
 		return;
