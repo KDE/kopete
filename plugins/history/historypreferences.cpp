@@ -17,6 +17,7 @@
 #include <kgenericfactory.h>
 #include <kcautoconfigmodule.h>
 #include "historyprefsui.h"
+#include <qcheckbox.h>
 
 class HistoryPreferences;
 
@@ -28,7 +29,10 @@ class HistoryPreferences : public KCAutoConfigModule
 public:
 	HistoryPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCAutoConfigModule( HistoryConfigFactory::instance(), parent, args )
 	{
-		setMainWidget( new HistoryPrefsUI( this ) , "History Plugin");
+		HistoryPrefsUI *p = new HistoryPrefsUI( this );
+		p->Auto_chatwindow->setChecked(false);
+		setMainWidget( p , "History Plugin");
+		
 	}
 };
 
