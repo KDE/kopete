@@ -57,6 +57,7 @@ void KIRC::slotReadyRead()
 	while (canReadLine() == true)
 	{
 		QString line = readLine();
+		line.replace(QRegExp("[\\r\\n]*$"), "");
 		QString number = line.mid((line.find(' ', 0, false)+1), 3);
 		int commandIndex = line.find(' ', 0, false);
 		QString command = line.section(' ', 1, 1);
@@ -68,10 +69,9 @@ void KIRC::slotReadyRead()
 			*/
 			kdDebug() << "IRC Plugin: userJoinedChannel emitting" << endl;
 			QString channel = line.mid((line.findRev(':')+1), (line.length()-1));
-			channel.replace(QRegExp("[\\r\\n]*$"), "");
 			emit userJoinedChannel(line.mid(1, (commandIndex-1)), channel);
 		}
-		if (command == QString("PRIVMSG"))
+		else if (command == QString("PRIVMSG"))
 		{
 			/*
 			This is a signal that indicates there is a new message. This can be either from a channel or from a specific user.
@@ -82,7 +82,6 @@ void KIRC::slotReadyRead()
 			QString target = line.section(' ', 2, 2);
 			QString message = line.section(' ', 3);
 			message.remove(0,1);
-			message.replace(QRegExp("[\\r\\n]*$"), "");
 			if (QChar(message[0]).unicode() == 1 && (QChar(message[(message.length() -1)])).unicode() == 1)
 			{
 				// Fun!
@@ -104,7 +103,7 @@ void KIRC::slotReadyRead()
 				emit incomingPrivMessage(originating, target, message);
 			}
 		}
-		if (command == QString("PART"))
+		else if (command == QString("PART"))
 		{
 			/*
 			This signal emits when a user parts a channel
@@ -114,11 +113,10 @@ void KIRC::slotReadyRead()
 			originating.remove(0, 1);
 			QString target = line.section(' ', 2, 2);
 			QString message = line.section(' ', 3);
-			message.replace(QRegExp("[\\r\\n]*$"), "");
 			message = message.remove(0, 1);
 			emit incomingPartedChannel(originating, target, message);
 		}
-		if (command == QString("QUIT"))
+		else if (command == QString("QUIT"))
 		{
 			/*
 			This signal emits when a user quits irc
@@ -127,11 +125,10 @@ void KIRC::slotReadyRead()
 			QString originating = line.section(' ', 0, 0);
 			originating.remove(0, 1);
 			QString message = line.section(' ', 2);
-			message.replace(QRegExp("[\\r\\n]*$"), "");
 			message = message.remove(0, 1);
 			emit incomingQuitIRC(originating, message);
 		}
-		if (command == QString("NICK"))
+		else if (command == QString("NICK"))
 		{
 			/*
 			Nick name of a user changed
@@ -140,7 +137,6 @@ void KIRC::slotReadyRead()
 			oldNick = oldNick.remove(0,1);
 			QString newNick = line.section(' ', 2, 2);
 			newNick = newNick.remove(0, 1);
-			newNick.replace(QRegExp("[\\r\\n]*$"), "");
 			if (oldNick.lower() == mNickname.lower())
 			{
 				emit successfullyChangedNick(oldNick, newNick);
@@ -149,7 +145,7 @@ void KIRC::slotReadyRead()
 			}
 			emit incomingNickChange(oldNick, newNick);
 		}
-		if (command == QString("TOPIC"))
+		else if (command == QString("TOPIC"))
 		{
 			/*
 			The topic of a channel changed. emit the channel, new topic, and the person who changed it
@@ -157,17 +153,15 @@ void KIRC::slotReadyRead()
 			QString channel = line.section(' ', 2, 2);
 			QString newTopic = line.section(' ', 3);
 			newTopic = newTopic.remove(0, 1);
-			newTopic.replace(QRegExp("[\\r\\n]*$"), "");
 			QString changer = line.section('!', 0, 0);
 			changer = changer.remove(0,1);
 			emit incomingTopicChange(channel, changer, newTopic);
 		}
-		if (number.contains(QRegExp("^\\d\\d\\d$")))
+		else if (number.contains(QRegExp("^\\d\\d\\d$")))
 		{
 			QRegExp getServerText("\\s\\d+\\s+[^\\s]+\\s+:(.*)");
 			getServerText.match(line);
 			QString message = getServerText.cap(1);
-			message.replace(QRegExp("[\\r\\n]*$"), "");
 			switch(number.toInt())
 			{
 				case 375:
@@ -317,7 +311,6 @@ void KIRC::slotReadyRead()
 					QString channel = line.section(' ', 3, 3);
 					QString topic = line.section(' ', 4);
 					topic = topic.remove(0, 1);
-					topic.replace(QRegExp("[\\r\\n]*$"), "");
 					emit incomingExistingTopic(channel, topic);
 					break;
 				}
@@ -333,7 +326,6 @@ void KIRC::slotReadyRead()
 					QString channel = line.section(' ', 4, 4);
 					kdDebug() << "IRC Plugin: Case 353: channel == \"" << channel << "\"" << endl;
 					QString names = line.section(' ', 5);
-					names.replace(QRegExp("[\\r\\n]*$"), "");
 					names = names.remove(0, 1);
 					kdDebug() << "IRC Plugin: Case 353: names before preprocessing == \"" << names << "\"" << endl;
 					QStringList namesList = QStringList::split(' ', names);
@@ -411,6 +403,16 @@ void KIRC::slotReadyRead()
 					break;
 				}
 			}
+		}
+		else if ( line.section(' ', 0, 0) == "PING" )
+		{
+			QCString statement = "PONG";
+
+			if ( line.contains(' ') )
+				statement.append(" :" + line.section(':', 1, 1));
+
+			statement.append( "\r\n");
+			writeBlock(statement.data(), statement.length() );
 		}
 	}
 }
