@@ -305,7 +305,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 		// Build a KopeteMessage and set the body as Rich Text
 		KopeteContactPtrList tmpList;
 		tmpList.append(mProtocol->myself());
-		KopeteMessage msg( this, tmpList, message, KopeteMessage::Inbound, KopeteMessage::RichText);
+		KopeteMessage msg = parseAIMHTML( message );
 		msgManager()->appendMessage(msg);
 
 		if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
@@ -338,26 +338,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 				return;
 		}
 
-		// Build our message, escaping any control characters in it
-		QString msg = message.plainBody();
-
-		// we want a custom foreground-color
-		if ( message.fg().isValid() ){
-				msg.prepend ( QString("<FONT COLOR=\"%1\">").arg(message.fg().name()) );
-		} else {
-				msg.prepend ( QString("<FONT>") );
-		}
-		msg.append ( "</FONT>" );
-
-		// we want a custom background-color
-		if ( message.bg().isValid() ){
-				msg.prepend ( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(message.bg().name()) );
-		} else {
-				msg.prepend ( QString("<HTML><BODY>") );
-		}
-		msg.append ( "</BODY></HTML>" );
-
-		mProtocol->engine->sendIM( msg, mName, false );
+		mProtocol->engine->sendIM( message.asHTML(), mName, false );
 
 		// Show the message we just sent in the chat window
 		msgManager()->appendMessage(message);
@@ -455,16 +436,25 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	============================================================================================ */
 
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
+        QRegExp html("<HTML*>");
+        QRegExp body("<BODY*>");
+        html.setCaseSensitive( false );
+        body.setCaseSensitive( false );
+        html.setWildcard( true );
+        body.setWildcard( true );
+        html.setMinimal( true );
+        body.setMinimal( true );
 
 	QString result = m;
+        result.remove( html );
+        result.remove( body );
+
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
-	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound);
+	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
 
 	// We don't actually do anything in there yet, but we might eventually
 
-	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
-	msg.setBody(result , KopeteMessage::RichText);
 	return msg;
 }
 

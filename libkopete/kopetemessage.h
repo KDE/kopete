@@ -103,10 +103,10 @@ public:
 	 */
 	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
 									QString body, QString subject, MessageDirection direction, MessageFormat format=PlainText);
-	
+
 
 	// Accessors
-	
+
 	/**
 	 * Accessor method for the timestamp of the message
 	 * @return The message's timestamp
@@ -160,13 +160,13 @@ public:
 	 * @return The message format
 	 */
 	MessageFormat format() const { return mFormat; }
-	
+
 	/**
 	 * Accessor method for the direction of the message
 	 * @return The message direction
 	 */
 	MessageDirection direction() const { return mDirection; }
-	
+
 	/**
 	 * Sets the foreground color for the message
 	 * @param color The color
@@ -191,7 +191,7 @@ public:
 	 * @param format The format of the message
 	 */
 	void setBody( const QString& body , MessageFormat format=PlainText );
-	
+
 	/**
 	 * Get the message body back as plain text
 	 * @return The message body as plain text
@@ -203,14 +203,20 @@ public:
 	 * @return The message body as escaped text
 	 */
 	QString escapedBody() const ;
-	
+
 	/**
 	 * Get the message body as parsed HTML with Emoticons,
 	 * this should be ready to show in the chatwindow
 	 * @return The HTML and Emoticon parsed message body
 	 */
 	QString parsedBody() const ;
-		
+
+	/**
+	 * Functions
+	 *
+	 */
+	QString asHTML() const;
+
 protected:
 	// Helper for constructors
 	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to,

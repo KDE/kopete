@@ -416,6 +416,27 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 	return result;
 }
 
+QString KopeteMessage::asHTML() const
+{
+	QString msg = parsedBody();
+
+	if ( fg().isValid() ){
+		msg.prepend( QString("<FONT COLOR=\"%1\">").arg(fg().name()) );
+	} else {
+		msg.prepend( QString("<FONT>") );
+	}
+	msg.append ( "</FONT>" );
+
+	// we want a custom background-color
+	if ( bg().isValid() ){
+		msg.prepend( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(bg().name()) );
+	} else {
+		msg.prepend ( QString("<HTML><BODY>") );
+	}
+	msg.append ( "</BODY></HTML>" );
+	return msg;
+}
+
 /*
  * Local variables:
  * c-indentation-style: k&r

@@ -21,7 +21,7 @@ libkopeteui_la_SOURCES = configmodule.cpp \
 	kopeteawayconfigbase.ui kopeteawayconfigui.cpp kopetechatwindow.cpp chatview.cpp
 
 libkopeteui_la_LDFLAGS = $(all_libraries)
-libkopeteui_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO)
+libkopeteui_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(LIB_KHTML)
 
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetechatwindow.rc
