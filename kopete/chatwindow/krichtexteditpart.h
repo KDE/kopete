@@ -5,6 +5,10 @@
 
 #include <kparts/part.h>
 
+#include <qfont.h>
+#include <qcolor.h>
+
+class KAboutData;
 class KTextEdit;
 class KFontAction;
 class KFontSizeAction;
@@ -22,7 +26,7 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 	Q_OBJECT
 
 	public:
-                KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& );
+		KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& );
 		KopeteRichTextEditPart( QWidget *wparent, const char *wname, int capabilities );
 
 		/**
