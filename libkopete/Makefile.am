@@ -1,7 +1,20 @@
 METASOURCES = AUTO
 SUBDIRS = ui
+#
+# This works only with automake:
+#
+#AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
+#    -I$(srcdir)/ui -I./ui $(all_includes)
+#
+# This works with unsermake:
+#
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-    -I$(srcdir)/ui -I./ui $(all_includes)
+    -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui $(all_includes)
+#
+# This worls too but is not wanted:
+#
+#INCLUDES = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
+#    -I$(srcdir)/ui -I./ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
