@@ -67,7 +67,7 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(cons
 	it = QIntDictIterator<KopeteMessageManager>( protocolSessions );
 	for ( KopeteMessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  )
 	{
-		if ( user == kmm->user() && widget == kmm->widgetType())
+		if ( user == kmm->user() )
 		{
 			QPtrList<KopeteContact> contactlist = kmm->members();
 
@@ -172,8 +172,6 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
 		it.current()->deleteLater();
 	}
-	sessions.setAutoDelete( true );
-	sessions.clear();
 }
 
 #include "kopetemessagemanagerfactory.moc"

@@ -24,22 +24,13 @@
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
-namespace Kopete {
-	class ChatView;
-}
-
-using Kopete::ChatView;
 
 class KopeteContact;
 class KopeteMessageManager;
 class KopeteEvent;
 class KopeteMessageLog;
 class KopeteProtocol;
-class KopeteChatWindow;
-class KMainWindow;
 
-typedef QMap<KopeteProtocol*,KopeteChatWindow*> ChatWindowMap;
-typedef QPtrList<KopeteChatWindow>        ChatWindowList;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
@@ -62,16 +53,11 @@ public:
 	 * Widget type to display.
 	 */
 	enum WidgetType { ChatWindow, Email, MDI, FileSend };
+
 	/**
 	 * Delete a chat manager instance
 	 */
 	~KopeteMessageManager();
-
-	/**
-	 * Fire up a new widget.
-	 */
-	void newChatView();
-	void newReplyWindow();
 
 	/**
 	 * Set Reading mode
@@ -88,9 +74,6 @@ public:
 	 */
 	bool logging() const;
 
-	WidgetType widgetType() const;
-
-	QWidget *widget() const;
 	/**
 	 * Read Messages
 	 */
@@ -118,12 +101,8 @@ public:
 	KopeteMessage currentMessage();
 	
 	virtual const QString chatName();
-	
-	void setMainWindow();
-	
-	void setCurrentMessage( const KopeteMessage &message );
 
-	ChatWindowList *chatWindowList();
+	void setCurrentMessage( const KopeteMessage &message );
 
 signals:
 	/**
@@ -131,7 +110,7 @@ signals:
 	 * connect to this signal to actually send the message over the wire.
 	 */
 	void messageSent( const KopeteMessage& msg, KopeteMessageManager *);
-	void dying(KopeteMessageManager *);
+	void closing(KopeteMessageManager *);
 
 	/**
 	 * The following signals are used internally by Kopete.
@@ -156,6 +135,8 @@ signals:
 	 */
 	void typingMsg( bool isTyping );
 
+	void remoteTyping( const KopeteContact *, bool );
+
 	void dying( QWidget* );
 
 public slots:
@@ -172,7 +153,6 @@ public slots:
 	void receivedTypingMsg( const QString &contactId, bool isTyping = true );
 
 	void readModeChanged();
-	void slotSendEnabled(bool);
 
 	/**
 	 * Enables/disables logging
@@ -202,17 +182,15 @@ public slots:
 	/**
 	 * Send a message to the user
 	 */
-	void slotMessageSent(const KopeteMessage &message);
+	void messageSent(const KopeteMessage &message);
 
-private slots:
-	void slotChatViewClosing();
-	void slotTyping(bool t);
-	
+	void typing(bool t);
+
+	void cancelUnreadMessageEvent();
+
+
 protected slots:
-	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
-	void slotChatWindowClosing( KopeteChatWindow *closedWindow = 0L );
-	void slotReplyWindowClosing();
 	void slotReadMessages();
 	void slotReply();
 
@@ -236,12 +214,7 @@ private:
 	 * if a foreign message exists
 	 */
 	bool emptyMessageBuffer();
-	bool dockChatWindows;
-	KopeteChatWindow *newWindow();
-	ChatWindowMap *chatWindowMap();
 
-	KMainWindow *myWindow;
-	
 	KMMPrivate *d;
 };
 
