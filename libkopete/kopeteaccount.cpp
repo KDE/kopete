@@ -184,7 +184,7 @@ void KopeteAccount::loaded()
 	/* do nothing in default implementation */
 }
 
-QString KopeteAccount::getPassword( bool error, bool *ok )
+QString KopeteAccount::getPassword( bool error, bool *ok, unsigned int maxLength )
 {
 	if(ok) *ok=true;
 	if(!d->password.isNull())
@@ -214,6 +214,8 @@ QString KopeteAccount::getPassword( bool error, bool *ok )
 
 	view->m_login->setText(d->id);
 	view->m_autologin->setChecked( d->autologin );
+	if(maxLength!=0)
+		view->m_password->setMaxLength(maxLength);
 
 	view->adjustSize();
 	passwdDialog->adjustSize();

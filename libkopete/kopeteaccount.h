@@ -76,7 +76,7 @@ public:
 	 * return the KopeteProtocol for this account
 	 */
 	KopeteProtocol *protocol() const ;
-	
+
 	/**
 	 * return the unique id of this account used as the login
 	 */
@@ -100,9 +100,11 @@ public:
 	 * result was incorrect (the password was wrong). It adds a label in the input
 	 * dialog saying that the password was wrong
 	 * @param ok is set to false if the user returned cancel
+	 * @param maxLength maximum length for a password, restricts the password
+	 * lineedit accordingly, the default is no limit at all
 	 * @return The password or QString::null if the user has canceled
 	 */
-	QString getPassword( bool error = false, bool *ok =0L );
+	QString getPassword( bool error = false, bool *ok =0L, unsigned int maxLength=0 );
 	/**
 	 * Set the password for this account.
 	 * @param pass set to Qtring::null means that
