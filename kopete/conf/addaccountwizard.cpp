@@ -23,6 +23,7 @@
 #include <klineeditdlg.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
+#include <kmessagebox.h>
 #include <kdebug.h>
 
 #include "addaccountwizard.h"
@@ -98,9 +99,11 @@ void AddAccountWizard::next()
 
 			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L,this);
 
-			//that will not be possible, but if a protocol doesn't have yet this page, we should show a inform text or textbox
-			if (!accountPage)
+			if (!accountPage) {
+        KMessageBox::error( this, i18n( "The author of this protocol hasn't implemented Adding of Accounts" ),
+														i18n( "Error while adding account" ) );
 				return;
+      }
 
 			insertPage( dynamic_cast<QWidget*>(accountPage), i18n( "Step Two: Account Information" ), indexOf(finis) );
 			QWizard::next();
