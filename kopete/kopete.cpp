@@ -98,11 +98,6 @@ void Kopete::initialize()
 
 Kopete::~Kopete()
 {
-	kdDebug() << "[Kopete] ~Kopete()" << endl;
-
-	KopeteContactList::contactList()->save();
-
-	kdDebug() << "[Kopete] END ~Kopete()" << endl;
 }
 
 void Kopete::slotLoadPlugins()

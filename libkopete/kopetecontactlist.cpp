@@ -51,6 +51,7 @@ KopeteContactList::KopeteContactList()
 
 KopeteContactList::~KopeteContactList()
 {
+	save();
 }
 
 KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
