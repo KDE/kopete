@@ -173,8 +173,7 @@ void IRCChannelContact::slotAddNicknames()
 
 	if ( nickToAdd.lower() != m_account->mySelf()->nickName().lower() )
 	{
-		kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
-
+		//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 		user = m_account->findUser( nickToAdd );
 		user->setOnlineStatus( m_protocol->m_UserStatusOnline );
 
