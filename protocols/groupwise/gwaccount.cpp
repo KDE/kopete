@@ -447,9 +447,10 @@ void GroupWiseAccount::slotKopeteGroupRemoved( KopeteGroup * group )
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 		// the member contacts should be deleted separately, so just delete the folder here
 		// get the folder object id
-		QString objectIdString = group->pluginData( protocol(), group->pluginData( protocol(), accountId() + " objectId" ) );
+		QString objectIdString = group->pluginData( protocol(), accountId() + " objectId" );
 		if ( !objectIdString.isEmpty() )
 		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "deleting folder with objectId: " << objectIdString << endl;
 			int objectId = objectIdString.toInt();
 			if ( objectId == 0 )
 			{
