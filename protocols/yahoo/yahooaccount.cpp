@@ -74,8 +74,9 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	setMyself( new YahooContact( this, accountId, accountId, 0 ) );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( parent->Offline );
 
-	QObject::connect( this, SIGNAL( needReconnect() ), this, SLOT( slotNeedReconnect() ) );
-
+	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
+	if(!displayName.isEmpty())
+		myself()->rename(displayName);  //TODO: might cause problems depending on rename semantics
 }
 
 YahooAccount::~YahooAccount()
@@ -97,16 +98,6 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 		m_session->setAway( yahoo_status( status ), awayMessage, status ? 1 : 0 );
 		myself()->setOnlineStatus( m_protocol->statusFromYahoo( status ) );
 	}
-}
-
-void YahooAccount::loaded()
-{
-	kdDebug(14180) << k_funcinfo << endl;
-	QString newPluginData;
-
-	newPluginData = pluginData(m_protocol, QString::fromLatin1("displayName"));
-	if(!newPluginData.isEmpty())
-		myself()->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
 }
 
 YahooSession *YahooAccount::yahooSession()
@@ -317,10 +308,6 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
-	/* call loaded() here. It shouldn't hurt anything
-	 * and ensures that all our settings get loaded */
-	loaded();
-
 	YahooSessionManager::manager()->setPager( server, port );
 
 	m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
@@ -365,6 +352,8 @@ void YahooAccount::disconnect()
 
 		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
 			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
+		
+		disconnected( Manual );
 	}
 	else
 	{       //make sure we set everybody else offline explicitly, just for cleanup
@@ -455,13 +444,6 @@ bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *
 }
 
 
-void YahooAccount::slotNeedReconnect()
-{
-	password().setWrong();
-	connect();
-}
-
-
 /***************************************************************************
  *                                                                         *
  *   Slot for KYahoo signals                                               *
@@ -487,8 +469,9 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
 	{
-		disconnect();
-		emit needReconnect();
+		password().setWrong();
+		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+		disconnected( BadUserName ); // FIXME: add a BadPassword disconnect reason that reconnects
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_LOCK)
@@ -496,6 +479,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.").arg(url);
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+		disconnected( BadUserName ); // FIXME: add a more appropriate disconnect reason
 		return;
 	}
 	else if ( succ == YAHOO_LOGIN_UNAME )
@@ -503,17 +487,20 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+		disconnected( BadUserName );
 	}
 	else if ( succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode != 2 )
 	{
 		errorMsg = i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+		disconnected( Manual ); // cannot use ConnectionReset since that will auto-reconnect
 		return;
 	}
 
 	//If we get here, something went wrong, so set ourselves to offline
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+	disconnected( Unknown );
 
 }
 

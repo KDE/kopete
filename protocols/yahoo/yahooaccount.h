@@ -111,11 +111,6 @@ signals:
 	 */
 	void receivedTypingMsg(const QString &contactId, bool isTyping);
 
-	/**
-	 * Emitted when a reconnect is needed due to a bad password
-	 */
-	void needReconnect();
-
 protected:
 	/**
 	 * Adds our Yahoo contact to a metacontact
@@ -132,8 +127,6 @@ protected:
 	QString stripMsgColorCodes(const QString& msg);
 
 protected slots:
-	virtual void loaded();
-
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
@@ -178,12 +171,6 @@ private slots:
 	void slotGoStatus012() { slotGoStatus(12); } // Invisible
 	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
-
-	/**
-	 * Set an error flag so that the password box
-	 * is popped up again when the password is wrong
-	 */
-	void slotNeedReconnect();
 
 private:
 
