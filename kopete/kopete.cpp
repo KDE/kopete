@@ -104,19 +104,45 @@ void Kopete::slotLoadPlugins()
 	KopeteContactList::contactList()->load();
 
 	KConfig *config = KGlobal::config();
-	config->setGroup("");
+	config->setGroup( "" );
 
 	// Parse command-line arguments
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-	QStringList modules;
 	bool showConfigDialog = false;
 
-	if( config->hasKey( "Plugins" ) )
+	// Listen to arguments
+	if ( args->count() > 0 )
 	{
-		modules = config->readListEntry( "Plugins" );
+		config->setGroup( "Plugins" );
+
+		for ( int i = 0; i < args->count(); i++ )
+		{
+			QString argument = args->arg(i);
+			if ( !argument.startsWith( "kopete_" ) )
+				argument.prepend( "kopete_" );
+
+			config->writeEntry( argument + "Enabled", true );
+		}
 	}
-	else
+
+	// Prevent plugins from loading?
+	QCStringList disableArgs = args->getOptionList( "disable" );
+	for ( QCStringList::ConstIterator i = disableArgs.begin(); i != disableArgs.end(); ++i )
+	{
+		QString argument = QString::fromLatin1( *i );
+		if ( !argument.startsWith( "kopete_" ) )
+			argument.prepend( "kopete_" );
+
+		config->writeEntry( argument + "Enabled", false );
+	}
+
+	// --noplugins specified?
+	if ( !args->isSet( "plugins" ) )
+	{
+		config->deleteGroup( "Plugins", true );
+	}
+	else if( !config->hasGroup( "Plugins" ) )
 	{
 		// No plugins specified. Show the config dialog.
 		// FIXME: Although it's a bit stupid it is theoretically possible that a user
@@ -133,37 +159,7 @@ void Kopete::slotLoadPlugins()
 		showConfigDialog = true;
 	}
 
-	// Listen to arguments
-	if (args->count() > 0)
-		modules.clear();
-
-	for (int i = 0; i < args->count(); i++)
-	{
-		QString argument = args->arg(i);
-		if (!argument.endsWith(".desktop"))
-			argument.append(".desktop");
-
-		modules.append(argument);
-	}
-
-	// Prevent plugins from loading?
-	QCStringList disableArgs = args->getOptionList("disable");
-	for (QCStringList::ConstIterator i = disableArgs.begin(); i != disableArgs.end(); ++i)
-	{
-		QString argument = QString::fromLatin1(*i);
-		if (!argument.endsWith(".desktop"))
-			argument.append(".desktop");
-
-		modules.remove(argument);
-	}
-
-	// --noplugins specified?
-	if (!args->isSet("plugins"))
-	{
-		modules.clear();
-	}
-
-	config->writeEntry( "Plugins", modules );
+	config->sync();
 
 	KopetePluginManager::self()->loadAllPlugins();
 
