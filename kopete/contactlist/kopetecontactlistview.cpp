@@ -1557,7 +1557,7 @@ void KopeteContactListView::slotRemove()
 	else
 	{
 		QString msg = groups.isEmpty() ? i18n( "Are you sure you want to remove these contacts from your contact list?" ) :
-			i18n( "Are you sure you want to remove these groups and contacts from your contact list?" )
+			i18n( "Are you sure you want to remove these groups and contacts from your contact list?" );
 
 		if( KMessageBox::questionYesNoList(this, msg , items , i18n("Remove") , KStdGuiItem::yes(), KStdGuiItem::no(), "askRemovingContactOrGroup" )
 			 != KMessageBox::Yes )
