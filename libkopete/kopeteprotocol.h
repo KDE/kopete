@@ -36,16 +36,17 @@ class KopeteProtocol : public Plugin
 public:
 	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);
 	virtual ~KopeteProtocol();
-
-    /* This will be called when Kopete read the contact list, implement it */
-    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData ) = 0;
+   
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
+
 	virtual QString protocolIcon() const = 0;
 	virtual void Connect()=0;
 	virtual void Disconnect()=0;
 	virtual bool isConnected() const = 0;
+	 /* This will be called when Kopete read the contact list, implement it */
+    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData ) = 0;
 
 	// this will be called if main-kopete wants
 	// the plugin to set the user's mode to away or something similar

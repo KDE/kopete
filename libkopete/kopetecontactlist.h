@@ -48,7 +48,6 @@ public:
 	 * For now, just compare the ID field.
 	 * FIXME: Also take protocol and identity into account!
 	 */
-#warning Obsolete findContact
 	KopeteMetaContact *findContact( const QString &contactId );
 
 	/**
@@ -57,7 +56,6 @@ public:
 	 */
 	void addMetaContact(KopeteMetaContact *);
 
-#warning Overload addContact to support ids
 	/**
 	 * Return all meta contacts
 	 */
