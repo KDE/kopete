@@ -20,6 +20,7 @@
 
 #include "kopetecontact.h"
 #include "jabberprotocol.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetemessagemanager.h"
 #include "kopetehistorydialog.h"
 #include "dlgrename.h"
