@@ -349,6 +349,16 @@ void AppearanceConfig::slotAddStyle()
 	editDocument = static_cast<KTextEditor::Document *>( factory->create( styleEditor->editFrame, 0, "KTextEditor::Document" ) );
 	if(!editDocument)
 		return; //TODO: show an error if the plugin can't be loaded
+
+	//FIXME:  Can someone explain me why editDocument has no parents.  Is it a problem in Kate? in the KLibrary system?
+	//    This is a workaround for that.  That solve also a crash while closing kopete
+	connect( styleEditor , SIGNAL(destroyed()) , editDocument,  SLOT(deleteLater()) );
+	//    Explaination of the crash (Bug 67494) :
+	//     There is a static deleter in the Kate KPart to free some classes. This one deelte also some Highligh object.
+	//     And There is another staticDeleter in Kopete to free the LibLoader, which will free the Kate Library, which will delete
+	//     the Kate's Document, which will deref some Highlight object ***BOUM***  (Highlight objects are already deleted)
+	//     So this is maybe a problem in Kate. But if we delte object before closig kopete, when they are not usefull anymore, no problem
+
 	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
 	KTextEditor::editInterface( editDocument )->setText( QString::fromLatin1(
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
