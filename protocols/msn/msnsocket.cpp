@@ -404,12 +404,12 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 
 QString MSNSocket::escape( const QString &str )
 {
-	return ( KURL::encode_string(str) );
+	return ( KURL::encode_string( str, 106 ) );
 }
 
 QString MSNSocket::unescape( const QString &str )
 {
-	return ( KURL::decode_string(str) );
+	return ( KURL::decode_string( str, 106 ) );
 }
 
 void MSNSocket::slotConnectionSuccess()
