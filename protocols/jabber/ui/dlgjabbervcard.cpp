@@ -62,7 +62,7 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, const QString &jid, QWid
 	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 
-	if(static_cast<JabberContact *>(m_account->myself())->userId() == jid)
+	if(m_account->myself()->contactId() == jid)
 		setReadOnly (false);
 	else
 		setReadOnly (true);
@@ -229,7 +229,7 @@ void dlgJabberVCard::slotSaveNickname ()
 	}
 	else
 	{
-		jc->slotDisplayNameChanged(m_mainWidget->leNick->text(), m_mainWidget->leNick->text());
+		jc->rename ( m_mainWidget->leNick->text() );
 	}
 
 }

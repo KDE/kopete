@@ -66,14 +66,14 @@ K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
 : KopeteProtocol( JabberProtocolFactory::instance(), parent, name ),
-	JabberKOSOnline(KopeteOnlineStatus::Online,         25, this, 0, QString::null,       i18n ("Go O&nline"), i18n ("Online")),
-	JabberKOSChatty(KopeteOnlineStatus::Online,         20, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
-	JabberKOSAway(KopeteOnlineStatus::Away,             25, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
-	JabberKOSXA(KopeteOnlineStatus::Away,               20, this, 3, "jabber_away",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
-	JabberKOSDND(KopeteOnlineStatus::Away,              15, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
-	JabberKOSOffline(KopeteOnlineStatus::Offline,       20, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
-	JabberKOSInvisible(KopeteOnlineStatus::Online,       5, this, 6, "jabber_invisible",    i18n ("Set I&nvisible"), i18n ("Invisible")),
-	JabberKOSConnecting(KopeteOnlineStatus::Connecting,  2, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting"))
+	JabberKOSChatty(KopeteOnlineStatus::Online,        100, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
+	JabberKOSOnline(KopeteOnlineStatus::Online,         90, this, 0, QString::null,       i18n ("Go O&nline"), i18n ("Online")),
+	JabberKOSAway(KopeteOnlineStatus::Away,             80, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
+	JabberKOSXA(KopeteOnlineStatus::Away,               70, this, 3, "jabber_away",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
+	JabberKOSDND(KopeteOnlineStatus::Away,              60, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
+	JabberKOSOffline(KopeteOnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
+	JabberKOSInvisible(KopeteOnlineStatus::Online,      40, this, 6, "jabber_invisible",    i18n ("Set I&nvisible"), i18n ("Invisible")),
+	JabberKOSConnecting(KopeteOnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting"))
 {
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;

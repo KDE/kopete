@@ -16,6 +16,7 @@
 
 #include <kdebug.h>
 #include "jabberaccount.h"
+#include "jabberprotocol.h"
 #include "jabberawaydialog.h"
 
 JabberAwayDialog::JabberAwayDialog(JabberAccount *account, QWidget* parent, const char* name):
@@ -32,7 +33,7 @@ JabberAwayDialog::~JabberAwayDialog()
 
 void JabberAwayDialog::setAway(int awayType)
 {
-
+/*
 	switch(awayType)
 	{
 		case JabberProtocol::JabberAway:
@@ -48,7 +49,7 @@ void JabberAwayDialog::setAway(int awayType)
 				kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Warning: Unknown away type!" << endl;
 				break;
 	}
-
+*/
 }
 
 #include "jabberawaydialog.moc"

@@ -1,11 +1,10 @@
  /*
   * jabberresource.h
   *
-  * Maintained by Till Gerken <till@tantalo.net>
-  * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
-  * 
+  * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
+  *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -24,31 +23,27 @@
  */
 
 #include <qobject.h>
+#include <im.h>
 #include "jabberprotocol.h"
-
-class QDateTime;
 
 class JabberResource:public QObject
 {
-  Q_OBJECT public:
-	  JabberResource ();
-	  JabberResource (const QString &, const int &, const QDateTime &, const KopeteOnlineStatus & status, const QString &);
 
-	int priority () const;
+Q_OBJECT
 
-	QString reason () const;
+public:
+	JabberResource (const XMPP::Jid &jid, const XMPP::Resource &resource);
+	~JabberResource ();
 
-	QString resource () const;
+	const XMPP::Jid &jid() const;
+	const XMPP::Resource &resource() const;
 
-	QDateTime timestamp () const;
+	void setResource ( const XMPP::Resource &resource );
 
-	KopeteOnlineStatus status () const;
-	
-  private:
-	  QString mResource, mReason;
-	int mPriority;
-	KopeteOnlineStatus mStatus;
-	QDateTime mTimestamp;
+private:
+	XMPP::Jid mJid;
+	XMPP::Resource mResource;
+
 };
 
 #endif

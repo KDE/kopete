@@ -23,23 +23,28 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
-#include <qwidget.h>
-#include <kaction.h>
-#include "kopeteaccount.h"
-#include "jabberawaydialog.h"
-#include "jabbercontact.h"
-#include "jabberprotocol.h"
-#include "kopeteonlinestatus.h"
-#include "ui/dlgjabbersendraw.h"
-#include "im.h"
-#include "xmpp.h"
+// include these because of namespace reasons
+#include <im.h>
+#include <xmpp.h>
 
-// forward declaration required due to cyclic includes
-class JabberAwayDialog;
+// we need these for type reasons
+#include <kopeteaccount.h>
+#include <kopeteonlinestatus.h>
+
+class JabberProtocol;
+class QString;
+class QStringList;
+class KopeteMetaContact;
+class KActionMenu;
+class JabberResourcePool;
+class JabberContact;
+class JabberContactPool;
+
+using namespace XMPP;
 
 /* @author Daniel Stone, Till Gerken */
 
-class JabberAccount:public KopeteAccount
+class JabberAccount : public KopeteAccount
 {
 	Q_OBJECT
 
@@ -53,12 +58,13 @@ public:
 
 	virtual void setAway (bool away, const QString & reason = QString::null);
 
-	void setPresence (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
-
 	/* Return the resource of the client */
 	const QString resource () const;
 	const QString server () const;
 	const int port () const;
+
+	JabberResourcePool *resourcePool ();
+	JabberContactPool *contactPool ();
 
 	XMPP::Client *client();
 
@@ -71,6 +77,10 @@ public:
 	/* Tells the user to connect first before they can do whatever it is
 	 * that they want to do. */
 	void errorConnectFirst ();
+
+	/* Tells the user that the connection was lost while we waited for
+	 * an answer of him. */
+	void errorConnectionLost ();
 
 	/*
 	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
@@ -91,29 +101,23 @@ public slots:
 	/* Disconnects from the server. */
 	void disconnect ();
 
-	/* Sends a presence packet to a node. */
-	void sendPresenceToNode (const KopeteOnlineStatus & status, const QString & reason);
-
+protected:
 	/**
-	 * Adds a contact to this protocol with the specified details
+	 * Create a new contact in the specified metacontact
+	 *
+	 * You shouldn't ever call this method yourself, For adding contacts see @ref addContact()
+	 *
+	 * This method is called by @ref KopeteAccount::addContact() in this method, you should
+	 * simply create the new custom @ref KopeteContact in the given metacontact. You should
+	 * NOT add the contact to the server here as this method gets only called when synchronizing
+	 * the contact list on disk with the one in memory. As such, all created contacts from this
+	 * method should have the "dirty" flag set.
+	 *
+	 * This method should simply be used to intantiate the new contact, everything else
+	 * (updating the GUI, parenting to meta contact, etc.) is being taken care of.
 	 *
 	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols
-	 * @param parentContact The metacontact to add this contact to
-	 * @param groupName The name of the group to add the contact to
-	 * @param isTemporary If this is a temporary contact
-	 * @return Pointer to the KopeteContact object which was added
-	 */
-	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const KopeteAccount::AddMode mode = KopeteAccount::DontChangeKABC,
-		const QString &groupName = QString::null, bool isTemporary = false) ;
-
-protected:
-	/* Create a new contact in the specified metacontact.
-	 * You shouldn't call this method yourself; for adding contacts, see @ref addContact().
-	 *
-	 * @param contactID The unique ID for this protocol.
-	 * @param displayName The display name of the contact (may equal @param contactID).
+	 * @param displayName The displayname of the contact (may equal userId for some protocols)
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, KopeteMetaContact * parentContact);
@@ -126,20 +130,10 @@ private:
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
 
-	/* away dialog instance */
-	JabberAwayDialog *awayDialog;
-
-	/* Asks the specified JID for authorization. */
-	void subscribe (const Jid & jid);
-
-	/* Accepts another JID's request for authorization. */
-	void subscribed (const Jid & jid);
-
-	/* Removes another JID's authorization. */
-	void unsubscribed (const Jid & jid);
+	JabberResourcePool *mResourcePool;
+	JabberContactPool *mContactPool;
 
 	void setAvailable ();
-	void removeContact (const RosterItem &);
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
@@ -149,20 +143,16 @@ private:
 	JabberProtocol *mProtocol;
 
 	/* Initial presence to set after connecting. */
-	KopeteOnlineStatus initialPresence;
+	XMPP::Status initialPresence;
 
 	/* Caches the title ID of the account context menu. */
 	int menuTitleId;
 
-	/*
-	 * Create a new JabberContact
+	/**
+	 * Sets our own presence. Updates our resource in the
+	 * resource pool and sends a presence packet to the server.
 	 */
-	JabberContact *createContact (const QString & jid, const QString & alias,
-								  const QStringList & groups, KopeteMetaContact * metaContact);
-
-	/* Add new contact to the Kopete contact list; this doesn't actually
-	 * affect the Jabber roster, it's just an internal method. */
-	void createAddContact (KopeteMetaContact * mc, const RosterItem & item);
+	void setPresence ( const XMPP::Status &status );
 
 private slots:
 		/* Connects to the server. */
@@ -191,6 +181,9 @@ private slots:
 	/* Called from Psi: report certificate status */
 	void slotTLSHandshaken ();
 
+	/* Called from Psi: roster request finished */
+	void slotRosterRequestFinished ( bool success, int statusCode, const QString &statusString );
+
 	/* Called from Psi: debug messages from the backend. */
 	void slotPsiDebug (const QString & msg);
 
@@ -200,14 +193,14 @@ private slots:
 	/* Set global presence to "free for chat", no reason.. */
 	void slotGoChatty ();
 
-	/* Set global presence to "away", no reason. */
-	void slotGoAway ();
+	/* Set global presence to "away". */
+	void slotGoAway ( const QString & );
 
-	/* Set global presence to "extended away", no reason. */
-	void slotGoXA ();
+	/* Set global presence to "extended away". */
+	void slotGoXA ( const QString & );
 
-	/* Set global presence to "do not disturb", no reason. */
-	void slotGoDND ();
+	/* Set global presence to "do not disturb". */
+	void slotGoDND ( const QString & );
 
 	/* Set global presence to "invisible", no reason. */
 	void slotGoInvisible ();
@@ -220,20 +213,26 @@ private slots:
 	void slotGroupChatJoined (const Jid & jid);
 	void slotGroupChatLeft (const Jid & jid);
 	void slotGroupChatPresence (const Jid & jid, const Status & status);
-	void slotGroupChatError (const Jid & jid, int error,const QString & reason);
+	void slotGroupChatError (const Jid & jid, int error, const QString & reason);
 
 	/* Incoming subscription request. */
 	void slotSubscription (const Jid & jid, const QString & type);
 
-	/* A new item was added to our roster, so update our contact list.
-	 * If this is a new subscription, make sure we action it. */
+	/**
+	 * A new item appeared in our roster, synch it with the
+	 * contact list.
+	 */
 	void slotNewContact (const RosterItem &);
+
+	/**
+	 * An item has been deleted from our roster,
+	 * delete it from our contact pool.
+	 */
+	void slotContactDeleted (const RosterItem &);
+
 
 	/* Update a contact's details. */
 	void slotContactUpdated (const RosterItem &);
-
-	/* Someone on our contact list revoked their authorization. */
-	void slotContactDeleted (const RosterItem &);
 
 	/* Someone on our contact list had (another) resource come online. */
 	void slotResourceAvailable (const Jid &, const Resource &);

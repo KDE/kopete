@@ -72,8 +72,8 @@ public:
 	enum OnlineStatus { JabberOnline, JabberChatty, JabberAway, JabberXA, JabberDND,
 						JabberOffline, JabberInvisible, JabberConnecting };
 
-	const KopeteOnlineStatus JabberKOSOnline;
 	const KopeteOnlineStatus JabberKOSChatty;
+	const KopeteOnlineStatus JabberKOSOnline;
 	const KopeteOnlineStatus JabberKOSAway;
 	const KopeteOnlineStatus JabberKOSXA;
 	const KopeteOnlineStatus JabberKOSDND;

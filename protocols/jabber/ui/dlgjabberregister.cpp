@@ -21,9 +21,8 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-
-#include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberprotocol.h"
 #include "dlgjabberregister.h"
 
 dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)

@@ -10,7 +10,16 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 kde_module_LTLIBRARIES = kopete_jabber.la
 
-kopete_jabber_la_SOURCES = jabberprotocol.cpp jabberaccount.cpp jabberresource.cpp jabbercontact.cpp                            jabberformtranslator.cpp jabberformlineedit.cpp jabbergroupchat.cpp jabberawaydialog.cpp
+kopete_jabber_la_SOURCES = \
+	jabberprotocol.cpp \
+	jabberaccount.cpp \
+	jabberresource.cpp \
+	jabberresourcepool.cpp \
+	jabbercontact.cpp \
+	jabbercontactpool.cpp \
+	jabberformtranslator.cpp \
+	jabberformlineedit.cpp \
+	jabbermessagemanager.cpp
 
 kopete_jabber_la_LDFLAGS = -no-undefined -module -lidn $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
@@ -26,3 +35,4 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
 
+noinst_HEADERS =  jabberresourcepool.h

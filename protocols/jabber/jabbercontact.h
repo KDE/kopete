@@ -33,6 +33,7 @@ class dlgJabberVCard;
 class JabberProtocol;
 class JabberResource;
 class JabberMessage;
+class JabberMessageManager;
 class KopeteMessage;
 class KopeteMessageManager;
 class KopeteMetaContact;
@@ -48,8 +49,8 @@ class JabberContact:public KopeteContact
 	 friend class JabberAccount;	/* Friends can touch each other's private parts. */
 
 public:
-	JabberContact (QString userid, QString name, QStringList groups,
-				   JabberAccount * protocol, KopeteMetaContact * mc);
+	JabberContact (const XMPP::RosterItem &rosterItem,
+				   JabberAccount *account, KopeteMetaContact * mc);
 
 	/********************************************************************
 	 *
@@ -58,19 +59,14 @@ public:
 	 ********************************************************************/
 
 	/**
-	 * Return the user ID
+	 * Return the protocol instance associated with this contact
 	 */
-	QString userId () const;
-
-	/*
-	 * Return the currently used resource for this contact
-	 */
-	QString resource () const;
+	JabberProtocol *protocol ();
 
 	/**
-	 * Return the reason why we are away
+	 * Return the account instance associated with this contact
 	 */
-	QString reason () const;
+	JabberAccount *account ();
 
 	/**
 	 * Return if the contact is reachable (this is true if the account
@@ -80,20 +76,44 @@ public:
 
 	/**
 	 * Create custom context menu items for the contact
+	 * FIXME: implement manager version here?
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions ();
-
-	/**
-	 * Determine the currently best resource for the contact
-	 */
-	JabberResource *bestResource ();
 
 	/**
 	 * Serialize contact
 	 */
 	virtual void serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > &addressBookData);
 
-	virtual KopeteMessageManager *manager (bool canCreate = false);
+	/**
+	 * Create a message manager for this contact
+	 */
+	virtual KopeteMessageManager *manager ( bool canCreate = false );
+
+	JabberMessageManager *manager ( const QString &resource, bool canCreate = false );
+
+	/**
+	 * Start a rename request.
+	 */
+	virtual void rename ( const QString &newName );
+
+	/**
+	 * Update contact if a roster item has been
+	 * received for it. (used during login)
+	 */
+	void updateContact ( const XMPP::RosterItem &item );
+
+	/**
+	 * Deal with an incoming message for this contact.
+	 */
+	void handleIncomingMessage ( const XMPP::Message &message );
+
+	/**
+	 * Re-evaluate online status. Gets called
+	 * whenever a resource is added, removed, or
+	 * changed in the resource pool.
+	 */
+	void reevaluateStatus ();
 
 public slots:
 
@@ -108,64 +128,16 @@ public slots:
 	virtual void slotUserInfo ();
 
 	/**
-	 * Slots called when a certain resource
-	 * appears or disappears for the contact
+	 * Sync Groups with server
 	 */
-	void slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource);
-
-	/**
-	 * Remove a resource from the contact
-	 */
-	void slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::Resource & resource);
+	virtual void syncGroups ();
 
 	/**
 	* Select a new resource for the contact
 	*/
 	void slotSelectResource ();
 
-	/**
-	 * Update contact to new roster data
-	 */
-	void slotUpdateContact (const XMPP::RosterItem & item);
-
-	/**
-	 * Update contact to a new status
-	 */
-	void slotUpdatePresence (const KopeteOnlineStatus & newStatus, const QString & reason);
-
-	/**
-	 * Received a message for this contact
-	 */
-	void slotReceivedMessage (const XMPP::Message & message);
-
-	/**
-	 * Sync Groups with server
-	 */
-	virtual void syncGroups ();
-
-	/**
-	 * Catch the rename dialog's results
-	 */
-	void slotDisplayNameChanged (const QString &oldName, const QString &newName);
-
-protected slots:
-
-	/**
-	 * Catch a dying message manager
-	 */
-	virtual void slotMessageManagerDeleted ();
-
 private slots:
-	/**
-	 * Edit a vCard for the contact.
-	 */
-	void slotEditVCard ();
-
-	/**
-	 * Save this contact's vCard.
-	 */
-	void slotSaveVCard (QDomElement &);
-
 	/**
 	 * Send type="subscribed" to contact
 	 */
@@ -191,17 +163,9 @@ private slots:
 	void slotStatusDND ();
 	void slotStatusInvisible ();
 
-	/**
-	 * Send a message to somebody
-	 */
-	void slotSendMessage (KopeteMessage & message);
+	void slotMessageManagerDeleted ( QObject *sender );
 
 private:
-
-	/**
-	 * Convert KopeteMessage to XMPP::Message
-	 */
-	void km2jm (const KopeteMessage & km, XMPP::Message & jm);
 
 	/**
 	 * Sends subscription messages.
@@ -209,61 +173,28 @@ private:
 	void sendSubscription (const QString& subType);
 
 	/**
-	 * The metacontact that this contact belongs
-	 * to.
+	 * Sends a presence packet to this contact
 	 */
-	KopeteMetaContact *parentMetaContact;
+	void sendPresence ( const XMPP::Status status );
 
 	/**
-	 * Currently active resource for this contact.
+	 * Construct best address out of
+	 * eventually preselected resource
+	 * (due to subscription) and best
+	 * available resource.
 	 */
-	JabberResource *activeResource;
-
-	/**
-	 * Default resource for this contact (usually empty)
-	 */
-	JabberResource *defaultResource;
+	XMPP::Jid bestAddress ();
 
 	/**
 	 * This will simply cache all
 	 * relevant data for this contact.
 	 */
-	XMPP::RosterItem rosterItem;
+	XMPP::RosterItem mRosterItem;
 
-	/**
-	 * List of available resources for the
-	 * contact.
-	 */
-	QPtrList < JabberResource > resources;
-
-	/**
-	 * Current away reason and -type
-	 */
-	QString awayReason;
-
-	/**
-	 * Do we specifically send to a
-	 * certain resource or do we use
-	 * autoselection?
-	 */
-	bool resourceOverride, mEditingVCard;
-
-	bool mIsNetworkPush;
-
-	/**
-	 * Message manager in use to display a message
-	 */
-	KopeteMessageManager *messageManager;
-
-	KopeteMessageManager *m_manager;
+	QPtrList<JabberMessageManager> mManagers;
 
 	dlgJabberVCard *dlgVCard;
 
-	//Actions
-	KAction *actionSendAuth;
-	KAction *actionRequestAuth;
-	KAction *actionRemoveAuth;
-	KActionMenu *actionSetAvailability;
 };
 
 #endif
