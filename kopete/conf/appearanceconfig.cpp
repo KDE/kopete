@@ -15,6 +15,8 @@
 */
 
 #include "appearanceconfig.h"
+#include "appearanceconfig_chatwindow.h"
+#include "appearanceconfig_colors.h"
 
 #include <qcheckbox.h>
 #include <qdir.h>
@@ -47,8 +49,6 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
-#include "appearanceconfig_chatwindow.h"
-#include "appearanceconfig_chatappearance.h"
 #include "kopeteprefs.h"
 #include "kopetemessage.h"
 #include "styleeditdialog.h"
@@ -62,7 +62,7 @@
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
 		i18n("Appearance"),
-		i18n("Here You Can Personalize Kopete"),
+		i18n("Here You Can Alter Kopete Look'n'Feel"),
 		"looknfeel",
 		parent )
 {
@@ -71,9 +71,11 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	editedItem = 0L;
 
-	// "Emoticons" TAB ===========================================================
+
+	// "Emoticons" TAB ==========================================================
 	mEmoticonsTab = new QFrame(mAppearanceTabCtl);
-	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
+	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(),
+		KDialog::spacingHint()))->setAutoAdd(true);
 	mUseEmoticonsChk = new QCheckBox ( i18n("&Use emoticons"), mEmoticonsTab );
 	icon_theme_list = new KListBox(mEmoticonsTab, "icon_theme_list");
 	icon_theme_preview = new KIconView(mEmoticonsTab, "icon_theme_preview");
@@ -82,51 +84,67 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	icon_theme_preview->setSelectionMode(QIconView::NoSelection);
 	icon_theme_preview->setFocusPolicy(NoFocus);
 	icon_theme_preview->setSpacing(2);
-	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)), this, SLOT(slotUseEmoticonsChanged(bool)));
-	connect(icon_theme_list, SIGNAL(selectionChanged()), this, SLOT(slotSelectedEmoticonsThemeChanged()));
+	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotUseEmoticonsChanged(bool)));
+	connect(icon_theme_list, SIGNAL(selectionChanged()),
+		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	mAppearanceTabCtl->addTab( mEmoticonsTab, i18n("&Emoticons") );
 
-	// "Chat Window" TAB =========================================================
+
+	// "Chat Window" TAB ========================================================
 	mPrfsChatWindow = new AppearanceConfig_ChatWindow(mAppearanceTabCtl);
-	mAppearanceTabCtl->addTab( mPrfsChatWindow, i18n("&Interface") );
-	connect(mPrfsChatWindow->mTransparencyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotTransparencyChanged(bool)));
-
-	// "Chat Appearance" TAB =====================================================
-	mPrfsChatAppearance = new AppearanceConfig_ChatAppearance(mAppearanceTabCtl);
-	mPrfsChatAppearance->htmlFrame->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
-	QVBoxLayout *l = new QVBoxLayout( mPrfsChatAppearance->htmlFrame );
-
-	preview = new KHTMLPart( mPrfsChatAppearance->htmlFrame, "preview" );
-	preview->setJScriptEnabled( false ) ;
-	preview->setJavaEnabled( false );
-	preview->setPluginsEnabled( false );
-	preview->setMetaRefreshEnabled( false );
-
+	connect(mPrfsChatWindow->mTransparencyEnabled, SIGNAL(toggled(bool)),
+		this, SLOT(slotTransparencyChanged(bool)));
+	connect(mPrfsChatWindow->styleList, SIGNAL(selectionChanged(QListBoxItem *)),
+		this, SLOT(slotStyleSelected()));
+	connect(mPrfsChatWindow->addButton, SIGNAL(clicked()),
+		this, SLOT(slotAddStyle()));
+	connect(mPrfsChatWindow->editButton, SIGNAL(clicked()),
+		this, SLOT(slotEditStyle()));
+	connect(mPrfsChatWindow->deleteButton, SIGNAL(clicked()),
+		this, SLOT(slotDeleteStyle()));
+	connect(mPrfsChatWindow->importButton, SIGNAL(clicked()),
+		this, SLOT(slotImportStyle()));
+	connect(mPrfsChatWindow->copyButton, SIGNAL(clicked()),
+		this, SLOT(slotCopyStyle()));
+	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
+	preview = new KHTMLPart(mPrfsChatWindow->htmlFrame, "preview");
+	preview->setJScriptEnabled(false);
+	preview->setJavaEnabled(false);
+	preview->setPluginsEnabled(false);
+	preview->setMetaRefreshEnabled(false);
 	KHTMLView *htmlWidget = preview->view();
 	htmlWidget->setMarginWidth(4);
 	htmlWidget->setMarginHeight(4);
-	htmlWidget->setFocusPolicy( NoFocus );
-	htmlWidget->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding) );
-	l->addWidget( htmlWidget );
+	htmlWidget->setFocusPolicy(NoFocus);
+	htmlWidget->setSizePolicy(
+		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	l->addWidget(htmlWidget);
+	mAppearanceTabCtl->addTab( mPrfsChatWindow, i18n("Chat Window") );
 
-	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
-//	connect(mPrfsChatAppearance->highlightEnabled, SIGNAL(toggled(bool)), this, SLOT(slotHighlightChanged()));
-	connect(mPrfsChatAppearance->foregroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
-	connect(mPrfsChatAppearance->backgroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
-	connect(mPrfsChatAppearance->fontFace, SIGNAL(clicked()), this, SLOT(slotChangeFont()));
-	connect(mPrfsChatAppearance->textColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
-	connect(mPrfsChatAppearance->bgColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
-	connect(mPrfsChatAppearance->linkColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
-	connect(mPrfsChatAppearance->styleList, SIGNAL(selectionChanged( QListBoxItem *)), this, SLOT(slotStyleSelected()));
-	connect(mPrfsChatAppearance->addButton, SIGNAL(clicked()), this, SLOT(slotAddStyle()));
-	connect(mPrfsChatAppearance->editButton, SIGNAL(clicked()), this, SLOT(slotEditStyle()));
-	connect(mPrfsChatAppearance->deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteStyle()));
-	connect(mPrfsChatAppearance->importButton, SIGNAL(clicked()), this, SLOT(slotImportStyle()));
-	connect(mPrfsChatAppearance->copyButton, SIGNAL(clicked()), this, SLOT(slotCopyStyle()));
-	// ===========================================================================
+
+	// "Colors" TAB =============================================================
+	mPrfsColors = new AppearanceConfig_Colors(mAppearanceTabCtl);
+	connect(mPrfsColors->foregroundColor, SIGNAL(changed(const QColor &)),
+		this, SLOT(slotHighlightChanged()));
+	connect(mPrfsColors->backgroundColor, SIGNAL(changed(const QColor &)),
+		this, SLOT(slotHighlightChanged()));
+	connect(mPrfsColors->fontFace, SIGNAL(clicked()),
+		this, SLOT(slotChangeFont()));
+	connect(mPrfsColors->textColor, SIGNAL(changed(const QColor &)),
+		this, SLOT(slotUpdatePreview()));
+	connect(mPrfsColors->bgColor, SIGNAL(changed(const QColor &)),
+		this, SLOT(slotUpdatePreview()));
+	connect(mPrfsColors->linkColor, SIGNAL(changed(const QColor &)),
+		this, SLOT(slotUpdatePreview()));
+	connect(mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
+		this, SLOT(slotGreyIdleMetaContactsChanged(bool)));
+
+	mAppearanceTabCtl->addTab(mPrfsColors, i18n("Colors && Fonts"));
+	// ==========================================================================
 
 	errorAlert = false;
-//	reopen(); // load settings from config  //WHY? theses are loaded when we need it
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 }
 
@@ -135,27 +153,30 @@ void AppearanceConfig::save()
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
-	// Another TAB
+
+	// "Emoticons" TAB ==========================================================
 	p->setIconTheme( icon_theme_list->currentText() );
 	p->setUseEmoticons ( mUseEmoticonsChk->isChecked() );
 
-	// "Chat Window" TAB
+
+	// "Chat Window" TAB ========================================================
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
+	p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
 
-	// "Appearance" TAB
-	p->setHighlightBackground(mPrfsChatAppearance->backgroundColor->color());
-	p->setHighlightForeground(mPrfsChatAppearance->foregroundColor->color());
-	p->setBgColor(mPrfsChatAppearance->bgColor->color());
-	p->setTextColor(mPrfsChatAppearance->textColor->color());
-	p->setLinkColor(mPrfsChatAppearance->linkColor->color());
-	p->setFontFace(mPrfsChatAppearance->fontFace->font());
 
-	p->setStyleSheet( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
+	// "Colors & Fonts" TAB =====================================================
+	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
+	p->setHighlightForeground(mPrfsColors->foregroundColor->color());
+	p->setBgColor(mPrfsColors->bgColor->color());
+	p->setTextColor(mPrfsColors->textColor->color());
+	p->setLinkColor(mPrfsColors->linkColor->color());
+	p->setFontFace(mPrfsColors->fontFace->font());
+	p->setIdleContactColor(mPrfsColors->idleContactColor->color());
+	p->setGreyIdleMetaContacts(mPrfsColors->mGreyIdleMetaContacts->isChecked());
 
-	// disconnect or else we will end up in an endless loop
 	p->save();
 	errorAlert = false;
 }
@@ -167,7 +188,7 @@ void AppearanceConfig::reopen()
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
-	// "Emoticons" TAB
+	// "Emoticons" TAB ==========================================================
 	KStandardDirs dir;
 	icon_theme_list->clear(); // Wipe out old list
 	// Get a list of directories in our icon theme dir
@@ -185,8 +206,8 @@ void AppearanceConfig::reopen()
 			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
 			{
 				// Add ourselves to the list, using our directory name
-				QPixmap previewPixmap = QPixmap( locate("data","kopete/pics/emoticons/"+themeQDir[y]+"/smile.png") );
-				icon_theme_list->insertItem ( previewPixmap,themeQDir[y] );
+				QPixmap previewPixmap = QPixmap(locate("data","kopete/pics/emoticons/"+themeQDir[y]+"/smile.png"));
+				icon_theme_list->insertItem(previewPixmap,themeQDir[y]);
 			}
 		}
 	}
@@ -203,43 +224,41 @@ void AppearanceConfig::reopen()
 	slotUseEmoticonsChanged     ( p->useEmoticons() );
 
 
-	// "Chat Window" TAB
+	// "Chat Window" TAB ========================================================
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
 
-
-	// "Chat Appearance" TAB
-	mPrfsChatAppearance->foregroundColor->setColor( p->highlightForeground() );
-	mPrfsChatAppearance->backgroundColor->setColor( p->highlightBackground() );
-
-	mPrfsChatAppearance->textColor->setColor( p->textColor() );
-	mPrfsChatAppearance->linkColor->setColor( p->linkColor() );
-	mPrfsChatAppearance->bgColor->setColor( p->bgColor() );
-	mPrfsChatAppearance->fontFace->setFont( p->fontFace() );
-	mPrfsChatAppearance->fontFace->setText( p->fontFace().family() );
-
 	QStringList mChatStyles = KGlobal::dirs()->findAllResources(
 		"appdata", QString::fromLatin1("styles/*.xsl") );
-	mPrfsChatAppearance->styleList->clear();
-
+	mPrfsChatWindow->styleList->clear();
 	for( QStringList::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
 	{
 		QFileInfo fi( *it );
 		QString fileName = fi.fileName().section('.',0,0);
-
-		mPrfsChatAppearance->styleList->insertItem( fileName, 0 );
-		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), *it );
-
-		if( *it == p->styleSheet() )
+		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
+		itemMap.insert(mPrfsChatWindow->styleList->firstItem(), *it);
+		if((*it) == p->styleSheet())
 		{
-			mPrfsChatAppearance->styleList->setSelected(
-				mPrfsChatAppearance->styleList->firstItem(), true );
+			mPrfsChatWindow->styleList->setSelected(
+				mPrfsChatWindow->styleList->firstItem(), true);
 		}
 	}
+	mPrfsChatWindow->styleList->sort();
 
-	mPrfsChatAppearance->styleList->sort();
+
+	// "Colors & Fonts" TAB =====================================================
+	mPrfsColors->foregroundColor->setColor(p->highlightForeground());
+	mPrfsColors->backgroundColor->setColor(p->highlightBackground());
+	mPrfsColors->textColor->setColor(p->textColor());
+	mPrfsColors->linkColor->setColor(p->linkColor());
+	mPrfsColors->bgColor->setColor(p->bgColor());
+	mPrfsColors->fontFace->setFont(p->fontFace());
+	mPrfsColors->fontFace->setText(p->fontFace().family());
+	mPrfsColors->mGreyIdleMetaContacts->setChecked(p->greyIdleMetaContacts());
+	mPrfsColors->idleContactColor->setColor(p->idleContactColor());
+	slotGreyIdleMetaContactsChanged(p->greyIdleMetaContacts());
 }
 
 void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
@@ -277,9 +296,9 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 
 void AppearanceConfig::slotHighlightChanged()
 {
-//	bool value = mPrfsChatAppearance->highlightEnabled->isChecked();
-//	mPrfsChatAppearance->foregroundColor->setEnabled ( value );
-//	mPrfsChatAppearance->backgroundColor->setEnabled ( value );
+//	bool value = mPrfsChatWindow->highlightEnabled->isChecked();
+//	mPrfsChatWindow->foregroundColor->setEnabled ( value );
+//	mPrfsChatWindow->backgroundColor->setEnabled ( value );
 	slotUpdatePreview();
 }
 
@@ -288,9 +307,9 @@ void AppearanceConfig::slotChangeFont()
 	QFont mFont = KopetePrefs::prefs()->fontFace();
 	KFontDialog::getFont( mFont );
 	KopetePrefs::prefs()->setFontFace( mFont );
-	mPrfsChatAppearance->fontFace->setFont( mFont );
-	mPrfsChatAppearance->fontFace->setText( mFont.family() );
-	currentStyle=QString::null; //force to update preview;
+	mPrfsColors->fontFace->setFont( mFont );
+	mPrfsColors->fontFace->setText( mFont.family() );
+	currentStyle = QString::null; //force to update preview;
 	slotUpdatePreview();
 }
 
@@ -333,24 +352,26 @@ void AppearanceConfig::updateHighlight()
 
 void AppearanceConfig::slotStyleSelected()
 {
-	QFileInfo fi( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
-	if( fi.isWritable() )
+	QFileInfo fi(itemMap[mPrfsChatWindow->styleList->selectedItem()]);
+	if(fi.isWritable())
 	{
-		mPrfsChatAppearance->editButton->setEnabled( true );
-		mPrfsChatAppearance->deleteButton->setEnabled( true );
+		mPrfsChatWindow->editButton->setEnabled( true );
+		mPrfsChatWindow->deleteButton->setEnabled( true );
 	}
 	else
 	{
-		mPrfsChatAppearance->editButton->setEnabled( false );
-		mPrfsChatAppearance->deleteButton->setEnabled( false );
+		mPrfsChatWindow->editButton->setEnabled( false );
+		mPrfsChatWindow->deleteButton->setEnabled( false );
 	}
 	slotUpdatePreview();
 }
 
 void AppearanceConfig::slotImportStyle()
 {
-	KURL chosenStyle = KURLRequesterDlg::getURL( QString::null, this, i18n("Choose Stylesheet") );
-	if( !chosenStyle.isEmpty() )
+	KURL chosenStyle = KURLRequesterDlg::getURL(QString::null, this,
+		i18n("Choose Stylesheet"));
+
+	if(!chosenStyle.isEmpty())
 	{
 		QString stylePath;
 		if( KIO::NetAccess::download(chosenStyle, stylePath ) )
@@ -362,38 +383,53 @@ void AppearanceConfig::slotImportStyle()
 				addStyle( fi.fileName().section('.',0,0), xslString );
 			}
 			else
-				KMessageBox::error( this, i18n("\"%1\" is not a valid XSL document. Import canceled.").arg(chosenStyle.path()), i18n("Invalid Style") );
+			{
+				KMessageBox::error(
+					this,
+					i18n("\"%1\" is not a valid XSL document. Import canceled.")
+						.arg(chosenStyle.path()),
+					i18n("Invalid Style") );
+			}
 		}
 		else
 		{
-			KMessageBox::error( this, i18n("Could not import \"%1\". Check access permissions / network connection.").arg( chosenStyle.path() ), i18n("Import Error") );
+			KMessageBox::error(
+				this,
+				i18n("Could not import \"%1\". Check access " \
+					"permissions / network connection.")
+					.arg(chosenStyle.path()),
+				i18n("Import Error"));
 		}
 	}
 }
 
 void AppearanceConfig::slotCopyStyle()
 {
-	QListBoxItem *copiedItem = mPrfsChatAppearance->styleList->selectedItem();
+	QListBoxItem *copiedItem = mPrfsChatWindow->styleList->selectedItem();
 	if( copiedItem )
 	{
 		bool okPressed;
 		if( okPressed )
 		{
-			QString styleName = KLineEditDlg::getText( i18n("New Style Name"), i18n("Enter the name of the new style:"), QString::null, &okPressed, 0L );
+			QString styleName = KLineEditDlg::getText(
+				i18n("New Style Name"),
+				i18n("Enter the name of the new style:"),
+				QString::null, &okPressed, 0L );
 			QString copiedXSL = fileContents( itemMap[ copiedItem] );
 			addStyle( styleName, copiedXSL );
 		}
 	}
 	else
-		KMessageBox::error( this, i18n("Please select a style to copy."), i18n("No Style Selected") );
-
-
+	{
+		KMessageBox::error(this,
+			i18n("Please select a style to copy."), i18n("No Style Selected") );
+	}
 }
 
 void AppearanceConfig::slotEditStyle()
 {
 	slotAddStyle();
-	editedItem = mPrfsChatAppearance->styleList->selectedItem();
+	editedItem = mPrfsChatWindow->styleList->selectedItem();
 	QString model = fileContents( itemMap[ editedItem] );
 	KTextEditor::editInterface( editDocument )->setText( model );
 	updateHighlight();
@@ -403,10 +439,10 @@ void AppearanceConfig::slotEditStyle()
 void AppearanceConfig::slotDeleteStyle()
 {
 	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
-		.arg( mPrfsChatAppearance->styleList->selectedItem()->text() ),
+		.arg( mPrfsChatWindow->styleList->selectedItem()->text() ),
 		i18n("Delete Style"), i18n("Delete Style")) == KMessageBox::Continue )
 	{
-		QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
+		QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 		QString filePath = itemMap[ style ];
 		itemMap.remove( style );
 
@@ -415,9 +451,9 @@ void AppearanceConfig::slotDeleteStyle()
 			QFile::remove( filePath );
 
 		if( style->next() )
-			mPrfsChatAppearance->styleList->setSelected( style->next(), true );
+			mPrfsChatWindow->styleList->setSelected( style->next(), true );
 		else
-			mPrfsChatAppearance->styleList->setSelected( style->prev(), true );
+			mPrfsChatWindow->styleList->setSelected( style->prev(), true );
 		delete style;
 	}
 }
@@ -445,7 +481,7 @@ void AppearanceConfig::slotStyleSaved()
 
 void AppearanceConfig::addStyle( const QString &styleName, const QString &xslString )
 {
-	if( !mPrfsChatAppearance->styleList->findItem( styleName ) )
+	if( !mPrfsChatWindow->styleList->findItem( styleName ) )
 	{
 		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
 		QFile out( filePath );
@@ -455,10 +491,10 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 			stream << xslString;
 			out.close();
 
-			mPrfsChatAppearance->styleList->insertItem( styleName, 0 );
-			itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), filePath );
-			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->firstItem(), true );
-			mPrfsChatAppearance->styleList->sort();
+			mPrfsChatWindow->styleList->insertItem( styleName, 0 );
+			itemMap.insert( mPrfsChatWindow->styleList->firstItem(), filePath );
+			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
+			mPrfsChatWindow->styleList->sort();
 		}
 		else
 		{
@@ -474,15 +510,14 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 void AppearanceConfig::slotUpdatePreview()
 {
 	QString model;
-	QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
+	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && itemMap[style] != currentStyle )
 	{
 		currentStyle=itemMap[style];
 		QString model = fileContents( currentStyle );
 
-		if( !model.isEmpty() )
+		if(!model.isEmpty())
 		{
-
 			KopeteContact *cFrom = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserFrom"), 0L);
 			KopeteContact *cTo = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserTo"), 0L);
 
@@ -497,18 +532,17 @@ void AppearanceConfig::slotUpdatePreview()
 
 			preview->begin();
 			preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
-				.arg( mPrfsChatAppearance->fontFace->font().family() )
-				.arg( mPrfsChatAppearance->textColor->color().name() )
-				.arg( mPrfsChatAppearance->fontFace->font().family() )
-				.arg( mPrfsChatAppearance->textColor->color().name() )
-				.arg( mPrfsChatAppearance->foregroundColor->color().name() )
-				.arg( mPrfsChatAppearance->backgroundColor->color().name() )
-				.arg( mPrfsChatAppearance->bgColor->color().name() )
-				.arg( mPrfsChatAppearance->linkColor->color().name() )
-				.arg( mPrfsChatAppearance->linkColor->color().name() ) );
+				.arg( mPrfsColors->fontFace->font().family() )
+				.arg( mPrfsColors->textColor->color().name() )
+				.arg( mPrfsColors->fontFace->font().family() )
+				.arg( mPrfsColors->textColor->color().name() )
+				.arg( mPrfsColors->foregroundColor->color().name() )
+				.arg( mPrfsColors->backgroundColor->color().name() )
+				.arg( mPrfsColors->bgColor->color().name() )
+				.arg( mPrfsColors->linkColor->color().name() )
+				.arg( mPrfsColors->linkColor->color().name() ) );
 
 			//parsing a XSLT message is incredibly slow! that's why i commented out some preview messages
-
 			//preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
 			msgIn.setFg(QColor("DodgerBlue"));
 			msgIn.setBg(QColor("LightSteelBlue"));
@@ -525,8 +559,7 @@ void AppearanceConfig::slotUpdatePreview()
 
 			delete cFrom;
 			delete cTo;
-
-		}
+		} // END if(!model.isEmpty())
 	}
 }
 
@@ -544,6 +577,11 @@ QString AppearanceConfig::fileContents( const QString &path )
 	return contents;
 }
 
-#include "appearanceconfig.moc"
+void AppearanceConfig::slotGreyIdleMetaContactsChanged(bool b)
+{
+	mPrfsColors->idleContactColor->setEnabled(b);
+}
 
+
+#include "appearanceconfig.moc"
 // vim: set noet ts=4 sts=4 sw=4:

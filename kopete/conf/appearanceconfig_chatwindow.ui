@@ -8,17 +8,157 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>434</width>
-            <height>247</height>
+            <width>468</width>
+            <height>334</height>
         </rect>
     </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>7</hsizetype>
+            <vsizetype>7</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
     <property name="caption">
-        <string>Chat Window</string>
+        <string>Chatwindow Appearance</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>stylesGroupBox</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="title">
+                <string>Styles</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QFrame" row="0" column="1">
+                    <property name="name">
+                        <cstring>htmlFrame</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="frameShape">
+                        <enum>StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Raised</enum>
+                    </property>
+                </widget>
+                <widget class="KListBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>styleList</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QFrame" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>frame4</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Raised</enum>
+                    </property>
+                    <property name="lineWidth">
+                        <number>0</number>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="KPushButton">
+                            <property name="name">
+                                <cstring>importButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Import Style...</string>
+                            </property>
+                        </widget>
+                        <widget class="KPushButton">
+                            <property name="name">
+                                <cstring>copyButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Copy Style...</string>
+                            </property>
+                        </widget>
+                        <widget class="KPushButton">
+                            <property name="name">
+                                <cstring>addButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Add Style...</string>
+                            </property>
+                        </widget>
+                        <widget class="KPushButton">
+                            <property name="name">
+                                <cstring>editButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Edit Style</string>
+                            </property>
+                        </widget>
+                        <widget class="KPushButton">
+                            <property name="name">
+                                <cstring>deleteButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Delete Style</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </grid>
+        </widget>
         <widget class="QButtonGroup">
             <property name="name">
                 <cstring>mTransparencyGroupBox</cstring>
@@ -107,7 +247,7 @@
                 </widget>
                 <widget class="QLabel" row="3" column="0">
                     <property name="name">
-                        <cstring>textLabel2</cstring>
+                        <cstring>textLabel2_3</cstring>
                     </property>
                     <property name="text">
                         <string>Opacity:</string>
@@ -131,7 +271,7 @@
                 </widget>
                 <widget class="QLabel" row="2" column="0">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>textLabel1_4</cstring>
                     </property>
                     <property name="text">
                         <string>Tint color:</string>
@@ -150,26 +290,15 @@
                 </widget>
             </grid>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>60</height>
-                </size>
-            </property>
-        </spacer>
     </vbox>
 </widget>
 <tabstops>
+    <tabstop>styleList</tabstop>
+    <tabstop>importButton</tabstop>
+    <tabstop>copyButton</tabstop>
+    <tabstop>addButton</tabstop>
+    <tabstop>editButton</tabstop>
+    <tabstop>deleteButton</tabstop>
     <tabstop>mTransparencyEnabled</tabstop>
     <tabstop>mTransparencyBgOverride</tabstop>
     <tabstop>mTransparencyTintColor</tabstop>
@@ -177,6 +306,12 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>klistbox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorcombo.h</includehint>
 </includehints>
 </UI>

@@ -453,7 +453,7 @@ void KopeteWindow::slotProtocolDestroyed( QObject */*o */)
 
 void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 {
-	kdDebug(14000) << "KopeteWindow::slotAccountRegistered()" << endl;
+	kdDebug(14000) << k_funcinfo << "Called." << endl;
 
 	if ( !a )
 		return;
@@ -484,7 +484,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 {
-	kdDebug(14000) << "KopeteWindow::slotAccountUnregistered()" << endl;
+	kdDebug(14000) << k_funcinfo << "Called." << endl;
 
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ a ] );
 	if( !i )
@@ -497,8 +497,8 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 {
 	KopeteOnlineStatus status = account->myself()->onlineStatus();
-	kdDebug(14000) << "KopeteWindow::slotAccountStatusIconChanged() Icon: " <<
-		status.overlayIcon() << endl;
+	kdDebug(14000) << k_funcinfo << "Icon: '" <<
+		status.overlayIcon() << "'" << endl;
 
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
 	if( !i )
@@ -554,7 +554,7 @@ void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
 void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
 /*KopeteProtocol * p,	const QString &icon )*/
 {
-	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " <<
+	kdDebug(14000) << k_funcinfo << "Icon: " <<
 		status.overlayIcon() << endl;
 
 	KopeteProtocolStatusBarIcon *i = static_cast<KopeteProtocolStatusBarIcon *>( m_protocolStatusBarIcons[ status.protocol() ] );

@@ -14,40 +14,22 @@
 */
 
 #include "behaviorconfig.h"
+#include "behaviorconfig_general.h"
+#include "behaviorconfig_chat.h"
 
 #include <qcheckbox.h>
-//#include <qdir.h>
 #include <qlayout.h>
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
-//#include <qslider.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <knotifydialog.h>
 #include <kpushbutton.h>
-/*
-#include <klineedit.h>
-#include <kcolorcombo.h>
-#include <kcolorbutton.h>
-#include <klineeditdlg.h>
-#include <khtmlview.h>
-#include <khtml_part.h>
-#include <kmessagebox.h>
-#include <kio/netaccess.h>
-#include <kstandarddirs.h>
-#include <kurlrequesterdlg.h>
-#include <kfontdialog.h>
-#include <ktrader.h>
-#include <klibloader.h>
-#include <kiconview.h>
-*/
+
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigui.h"
-
-#include "behaviorconfig_general.h"
-#include "behaviorconfig_chat.h"
 
 #include <qtabwidget.h>
 
@@ -81,7 +63,7 @@ BehaviorConfig::BehaviorConfig(QWidget * parent) :
 
 void BehaviorConfig::save()
 {
-	kdDebug(14000) << k_funcinfo << "called." << endl;
+//	kdDebug(14000) << k_funcinfo << "called." << endl;
 
 	KopetePrefs *p = KopetePrefs::prefs();
 	KopeteAway *ka = KopeteAway::getInstance();
@@ -96,7 +78,6 @@ void BehaviorConfig::save()
 	p->setTreeView(mPrfsGeneral->mTreeContactList->isChecked());
 	p->setShowOffline(mPrfsGeneral->mShowOfflineUsers->isChecked());
 	p->setSortByGroup(mPrfsGeneral->mSortByGroup->isChecked());
-	p->setGreyIdleMetaContacts(mPrfsGeneral->mGreyIdleMetaContacts->isChecked());
 
 
 	// "Away" TAB ===============================================================
@@ -117,15 +98,14 @@ void BehaviorConfig::save()
 			mPrfsChat->interfaceGroup->selected()) );
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 
-	// disconnect or else we will end up in an endless loop
 	p->save();
 }
 
 void BehaviorConfig::reopen()
 {
-	kdDebug(14000) << k_funcinfo << "called" << endl;
-
+//	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
+
 
 	// "General" TAB ============================================================
 	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
@@ -138,7 +118,6 @@ void BehaviorConfig::reopen()
 	mPrfsGeneral->mTreeContactList->setChecked( p->treeView() );
 	mPrfsGeneral->mSortByGroup->setChecked( p->sortByGroup() );
 	mPrfsGeneral->mShowOfflineUsers->setChecked( p->showOffline() );
-	mPrfsGeneral->mGreyIdleMetaContacts->setChecked( p->greyIdleMetaContacts() );
 
 
 	// "Away" TAB ===============================================================

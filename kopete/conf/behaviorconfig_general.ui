@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>295</width>
-            <height>363</height>
+            <width>264</width>
+            <height>357</height>
         </rect>
     </property>
     <property name="caption">
@@ -43,7 +43,10 @@
                 <cstring>mUseQueueChk</cstring>
             </property>
             <property name="text">
-                <string>Use message &amp;queue (don't popup messages)</string>
+                <string>Use message &amp;queue</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Use a queue instead of opening chat windows on incoming messages</string>
             </property>
         </widget>
         <widget class="QButtonGroup">
@@ -73,7 +76,7 @@
                         <string>Flash system &amp;tray on new message</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="5" column="0">
+                <widget class="QCheckBox" row="2" column="0">
                     <property name="name">
                         <cstring>mSoundIfAwayChk</cstring>
                     </property>
@@ -81,7 +84,7 @@
                         <string>Enable events if away</string>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="6" column="0">
+                <widget class="QPushButton" row="3" column="0">
                     <property name="name">
                         <cstring>configSound</cstring>
                     </property>
@@ -89,7 +92,7 @@
                         <string>Con&amp;figure Sounds &amp;&amp; Events...</string>
                     </property>
                 </widget>
-                <spacer row="5" column="1">
+                <spacer row="3" column="1">
                     <property name="name">
                         <cstring>spacer2</cstring>
                     </property>
@@ -101,7 +104,7 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>71</width>
+                            <width>20</width>
                             <height>20</height>
                         </size>
                     </property>
@@ -141,14 +144,6 @@
                     </property>
                     <property name="text">
                         <string>Show offline &amp;users</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mGreyIdleMetaContacts</cstring>
-                    </property>
-                    <property name="text">
-                        <string>G&amp;rey idle meta contacts</string>
                     </property>
                 </widget>
             </vbox>

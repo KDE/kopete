@@ -545,10 +545,12 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 			cellWidth = 0;
 
 		QColorGroup modcg = cg;
-		if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleState() == KopeteMetaContact::Idle ) )
+		KopetePrefs *prefs = KopetePrefs::prefs();
+		if (prefs->greyIdleMetaContacts() &&
+			(m_metaContact->idleState() == KopeteMetaContact::Idle)
+			)
 		{
-			//FIXME: HARD CODED COLOR!
-			modcg.setColor(QColorGroup::Text, darkGray);
+			modcg.setColor(QColorGroup::Text, prefs->idleContactColor());
 		}
 		QListViewItem::paintCell( p, modcg, column, cellWidth, align );
 		QFontMetrics fm( p->font() );
@@ -626,38 +628,6 @@ KopeteGroup *KopeteMetaContactLVI::group()
 	return KopeteGroup::toplevel;
 }
 
-
-// Duncan Experiment
-/*void KopeteMetaContactLVI::setText(int column,const QString &text)
-{
-	if (column!=1)
-	{
-		QListViewItem::setText(column,text);
-	}
-}
-
-void KopeteMetaContactLVI::setColor(const QString &color)
-{
-	columnColor=QColor(color);
-	repaint();
-}
-
-void KopeteMetaContactLVI::setColor(const QColor &color)
-{
-	columnColor=color;
-	repaint();
-}
-
-QString KopeteMetaContactLVI::colorName()
-{
-	return columnColor.name();
-}
-
-QColor KopeteMetaContactLVI::color()
-{
-	return columnColor;
-} */
-
 QString KopeteMetaContactLVI::key( int, bool ) const
 {
 	char importance_char;
@@ -705,7 +675,7 @@ void KopeteMetaContactLVI::slotIdleStateChanged()
 	{
 		KIconEffect::semiTransparent(theIcon);
 	}
-	setPixmap( 0, theIcon );
+	setPixmap(0, theIcon);
 /*	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();*/
 }

@@ -102,7 +102,9 @@ PluginConfig::PluginConfig( QObject *_parent )
 : ConfigModule( i18n( "Plugins" ), i18n( "Here You Can Manage Your Plugins" ),
 	"input_devices_settings", _parent )
 {
+/*
 	(new QVBoxLayout(this))->setAutoAdd(true);
+
 	QTabWidget *tabControl = new QTabWidget(this,"tabControl");
 
 	QFrame *protocolTab = new QFrame( tabControl );
@@ -124,12 +126,25 @@ PluginConfig::PluginConfig( QObject *_parent )
 	otherList = new PluginListView( otherTab );
 	connect(otherList, SIGNAL(stateChange(PluginListItem *, bool)), this, SLOT(stateChange(PluginListItem *, bool)));
 	tabControl->addTab(otherTab, i18n("Other Plugins"));
+*/
+
+	(new QVBoxLayout(this, 0, KDialog::spacingHint()))->setAutoAdd(true);
+
+	new QLabel(i18n("Select the protocols you would like loaded:"), this);
+
+	protocolList = new PluginListView(this);
+	connect(protocolList, SIGNAL(stateChange(PluginListItem *, bool)),
+		this, SLOT(stateChange(PluginListItem *, bool)));
+
+	new QLabel(i18n("Select the plugins you would like loaded:"), this);
+
+	otherList = new PluginListView(this);
+	connect(otherList, SIGNAL(stateChange(PluginListItem *, bool)),
+		this, SLOT(stateChange(PluginListItem *, bool)));
 }
 
 void PluginConfig::reopen()
 {
-	//playlistList->clear();
-	//interfaceList->clear();
 	protocolList->clear();
 	otherList->clear();
 
@@ -197,6 +212,4 @@ void PluginConfig::save()
 }
 
 #include "pluginconfig.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -32,13 +32,15 @@
 #include "kopeteaccountmanager.h"
 
 AccountConfig::AccountConfig(QWidget * parent) :
-	ConfigModule (i18n("Accounts"),i18n("Here You Can Manage Your Accounts"),"personal", parent )
+	ConfigModule(
+		i18n("Accounts"),
+		i18n("Here You Can Manage Your Accounts"),
+		"personal", parent)
 {
 	previousAccount = 0L;
 
-	QVBoxLayout *topLayout = new QVBoxLayout(this);
-	m_view=new AccountConfigBase(this, "AccountConfig::m_view");
-	topLayout->add(m_view);
+	(new QVBoxLayout(this))->setAutoAdd(true);
+	m_view = new AccountConfigBase(this, "AccountConfig::m_view");
 
 	m_view->mButtonUp->setPixmap(SmallIcon("up"));
 	m_view->mButtonDown->setPixmap(SmallIcon("down"));
@@ -56,10 +58,6 @@ AccountConfig::AccountConfig(QWidget * parent) :
 		this, SLOT( slotAccountUp()));
 	connect(m_view->mButtonDown, SIGNAL(clicked()),
 		this, SLOT( slotAccountDown()));
-}
-
-AccountConfig::~AccountConfig()
-{
 }
 
 void AccountConfig::save()
@@ -164,20 +162,15 @@ void AccountConfig::slotEditAccount()
 		true, i18n("Edit Account"),
 		KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 
-//	editDialog->resize( 525, 400 ); // EEEEK [mETz]
 	EditAccountWidget *m_accountWidget = proto->createEditAccountWidget(ident,editDialog);
 	if (!m_accountWidget)
 		return;
 
-	QWidget *qWidget = dynamic_cast<QWidget*>(m_accountWidget);
-
-	editDialog->setMainWidget(qWidget);
+	editDialog->setMainWidget(dynamic_cast<QWidget*>(m_accountWidget));
 	if(editDialog->exec() == QDialog::Accepted)
 	{
 		if(m_accountWidget->validateData())
-		{
 			m_accountWidget->apply();
-		}
 	}
 	editDialog->deleteLater();
 	reopen();

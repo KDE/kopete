@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>417</height>
+            <width>397</width>
+            <height>351</height>
         </rect>
     </property>
     <property name="caption">
@@ -45,14 +45,6 @@
             </property>
             <property name="text">
                 <string>&amp;Remove</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="8" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mButtonDown</cstring>
-            </property>
-            <property name="text">
-                <string></string>
             </property>
         </widget>
         <widget class="QPushButton" row="7" column="1" rowspan="1" colspan="2">
@@ -93,6 +85,14 @@
                 <bool>true</bool>
             </property>
         </widget>
+        <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>mUseColor</cstring>
+            </property>
+            <property name="text">
+                <string>Use Custom Color</string>
+            </property>
+        </widget>
         <spacer row="6" column="2">
             <property name="name">
                 <cstring>spacer1</cstring>
@@ -106,27 +106,11 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>210</height>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget class="KColorButton" row="5" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mColorButton</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mUseColor</cstring>
-            </property>
-            <property name="text">
-                <string>Use a different color</string>
-            </property>
-        </widget>
-        <spacer row="3" column="1">
+        <spacer row="3" column="2">
             <property name="name">
                 <cstring>spacer3</cstring>
             </property>
@@ -139,7 +123,40 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>21</height>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="8" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>mButtonDown</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="KColorButton" row="5" column="2">
+            <property name="name">
+                <cstring>mColorButton</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <spacer row="5" column="1">
+            <property name="name">
+                <cstring>spacer3_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Minimum</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>16</width>
+                    <height>16</height>
                 </size>
             </property>
         </spacer>

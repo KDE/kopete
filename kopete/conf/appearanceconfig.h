@@ -31,11 +31,11 @@ class KopeteContact;
 class StyleEditDialog;
 class QListBoxItem;
 
-class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
-class AppearanceConfig_ChatAppearance;
+class AppearanceConfig_Colors;
 
-namespace KTextEditor {
+namespace KTextEditor
+{
 	class View;
 	class Document;
 }
@@ -70,9 +70,10 @@ private slots:
 	void slotCopyStyle();
 	void slotStyleSaved();
 	void slotStyleSelected();
+	void slotGreyIdleMetaContactsChanged(bool);
 
 private:
-	QTabWidget* mAppearanceTabCtl; // The TabWidget
+	QTabWidget* mAppearanceTabCtl;
 
 	// Widgets for Emoticon TAB
 	QFrame* mEmoticonsTab;
@@ -83,18 +84,20 @@ private:
 	KTextEditor::Document* editDocument;
 
 	// All other TABs have their own ui-file
-	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
+	AppearanceConfig_Colors *mPrfsColors;
 
+	// Vars used in ChatWindow TAB
 	StyleEditDialog *styleEditor;
 	QListBoxItem *editedItem;
 	QMap<QListBoxItem*,QString> itemMap;
 	QString currentStyle;
-
-	void updateHighlight();
 	bool errorAlert;
-	QString fileContents( const QString &path );
-	void addStyle( const QString &styleName, const QString &xslString );
+
+private:
+	void updateHighlight();
+	QString fileContents(const QString &path);
+	void addStyle(const QString &styleName, const QString &xslString);
 
 };
 #endif

@@ -2,7 +2,7 @@
     accountconfig.h  -  Kopete account config page
 
     Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
-    
+
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -21,19 +21,18 @@
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
- 
+
 class AccountConfigBase;
 class KopeteAccount;
 class QListViewItem;
 //class AddAccountWizard;
- 
+
 class AccountConfig : public ConfigModule
 {
 	Q_OBJECT
 
 public:
 	AccountConfig(QWidget * parent);
-	~AccountConfig();
 
 	virtual void save();
 	virtual void reopen();
