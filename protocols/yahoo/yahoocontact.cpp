@@ -28,6 +28,7 @@
 
 // QT Includes
 #include <qstring.h>
+#include <qregexp.h>
 
 // KDE Includes
 #include <kdebug.h>
@@ -132,14 +133,19 @@ KopeteMessageManager *YahooContact::manager( bool )
 
 void YahooContact::slotSendMessage(KopeteMessage &message)
 {
-	kdDebug(14180) << "[YahooContact::slotSendMessage(" << message.escapedBody() << ")]" << endl;
+	kdDebug(14180) << "[YahooContact::slotSendMessage(...)]" << endl;
+
+	QString taintedHTML = message.escapedBody();
+	taintedHTML = taintedHTML.replace(QRegExp(QString::fromLatin1("<br/>")), QString::fromLatin1("<br>"));
+
+	kdDebug(14180) << "Sending message: " << taintedHTML << endl;
 
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
 	YahooAccount *i = static_cast<YahooAccount *>(account());
 
 	kdDebug(14180) << "Yahoo: Sending message from " << static_cast<YahooContact *>(i->myself())->m_userId << ", to " << static_cast<YahooContact *>(target)->m_userId << endl;
-	i->yahooSession()->sendIm( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, message.escapedBody() );
+	i->yahooSession()->sendIm( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, taintedHTML );
 
 	// append message to window
 	manager()->appendMessage(message);
