@@ -2,7 +2,7 @@
     kopeteviewmanager.cpp - View Manager
 
     Copyright (c) 2003      by Jason Keirstead       <jason@keirstead.org>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -183,39 +183,43 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
 		{
-			QString msgFrom = QString::null;
-			if( msg.from()->metaContact() )
-				msgFrom = msg.from()->metaContact()->displayName();
-			else
-				msgFrom = msg.from()->contactId();
-
-			QString msgText = msg.plainBody();
-			if( msgText.length() > 90 )
-				msgText = msgText.left(88) + QString::fromLatin1("...");
-
 			int winId = 0;  //KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			if(w) winId=w->topLevelWidget()->winId();
 
-
-			QString event;
-			QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );;
-
-			switch( msg.importance() )
+			KConfig *config = KGlobal::config();
+			config->setGroup("General");
+			if( !manager->view(false) || !w || manager->view() != d->activeView ||
+						  config->readBoolEntry("EventIfActive", true) || !w->isActiveWindow() )
 			{
-				case Kopete::Message::Low:
-					event = QString::fromLatin1( "kopete_contact_lowpriority" );
-					break;
-				case Kopete::Message::Highlight:
-					event = QString::fromLatin1( "kopete_contact_highlight" );
-					body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
-					break;
-				default:
-					event = QString::fromLatin1( "kopete_contact_incoming" );
+				QString msgFrom = QString::null;
+				if( msg.from()->metaContact() )
+					msgFrom = msg.from()->metaContact()->displayName();
+				else
+					msgFrom = msg.from()->contactId();
+	
+				QString msgText = msg.plainBody();
+				if( msgText.length() > 90 )
+					msgText = msgText.left(88) + QString::fromLatin1("...");
+	
+				QString event;
+				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );;
+	
+				switch( msg.importance() )
+				{
+					case Kopete::Message::Low:
+						event = QString::fromLatin1( "kopete_contact_lowpriority" );
+						break;
+					case Kopete::Message::Highlight:
+						event = QString::fromLatin1( "kopete_contact_highlight" );
+						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
+						break;
+					default:
+						event = QString::fromLatin1( "kopete_contact_incoming" );
+				}
+				KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ), msg.from()->metaContact(),
+					i18n("View") , const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
 			}
-			KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ), msg.from()->metaContact(),
-				i18n("View") , const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
-
 		}
 	}
 }

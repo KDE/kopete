@@ -1,7 +1,7 @@
 /*
     behaviorconfig.cpp  -  Kopete Look Feel Config
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -73,8 +73,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	connect(mPrfsGeneral->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-		connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
+			this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mEventIfActive, SIGNAL(toggled(bool)),
+			this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 
 
@@ -110,6 +112,7 @@ void BehaviorConfig::save()
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 
 	KopetePrefs *p = KopetePrefs::prefs();
+	KConfig *config = KGlobal::config();
 
 	// "General" TAB ============================================================
 	p->setShowTray(mPrfsGeneral->mShowTrayChk->isChecked());
@@ -119,11 +122,12 @@ void BehaviorConfig::save()
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
+	config->setGroup("General");
+	config->writeEntry("EventIfActive", mPrfsGeneral->mEventIfActive->isChecked());
 
 	// "Away" TAB ===============================================================
 	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
 
-	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
 	config->writeEntry("Timeout", mAwayConfigUI->mAutoAwayTimeout->value() * 60);
 	config->writeEntry("GoAvailable", mAwayConfigUI->mGoAvailable->isChecked());
@@ -150,7 +154,7 @@ void BehaviorConfig::load()
 {
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
-
+	KConfig *config = KGlobal::config();
 
 	// "General" TAB ============================================================
 	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
@@ -161,9 +165,10 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
 	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
+	config->setGroup("General");
+	mPrfsGeneral->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
 
 	// "Away" TAB ===============================================================
-	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
 	mAwayConfigUI->mAutoAwayTimeout->setValue(config->readNumEntry("Timeout", 600)/60);
 	mAwayConfigUI->mGoAvailable->setChecked(config->readBoolEntry("GoAvailable", true));
