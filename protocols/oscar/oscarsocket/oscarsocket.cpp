@@ -2756,7 +2756,7 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 
 	// Get the SSI data item to send using the
 	// sendSSIAddModDel method
-	SSI *updatedItem = ssiData.changeGroup(currentName,  newName);
+	SSI *updatedItem = ssiData.renameGroup(currentName, newName);
 	// Make the call to sendSSIAddModDel requesting a "modify"
 	// SNAC (0x0009)
 	sendSSIAddModDel(updatedItem, 0x0009);

@@ -69,7 +69,7 @@ QCString OscarSocket::encodePasswordXOR()
 {
 	// TODO: check if latin1 is the right conversion
 	const char *password = loginPassword.latin1();
-	QCString encoded;
+	QCString encodedPass;
 
 	kdDebug(14150) << k_funcinfo << endl;
 //	kdDebug(14150) << " unencoded pw='" << password << "'" << endl;
@@ -83,14 +83,34 @@ QCString OscarSocket::encodePasswordXOR()
 		0x53, 0x7a, 0x95, 0x7c
 	};
 	unsigned int i;
+/*
+	// old way
 	for (i = 0; i < strlen(password); i++)
 	{
 		encoded += (password[i] ^ encoding_table[i]);
-//		kdDebug(14150) << "adding char '" << (char) (password[i] ^ encoding_table[i]) << "'" << endl;
+	}
+*/
+
+	for (i = 0; i < 16; i++)
+	{
+		if(password[i] == 0)
+			break;
+
+		char enc = (password[i] ^ encoding_table[i]);
+		if (enc == 0)
+		{
+			encodedPass += "\\";
+			enc = '0';
+		}
+		else if (enc == '\\')
+		{
+			encodedPass += "\\";
+        }
+		encodedPass += enc;
 	}
 
-//	kdDebug(14150) << " encoded pw='" << encoded << "', length=" << encoded.length() << endl;
-	return encoded;
+//	kdDebug(14150) << " encoded pw='" << encodedPass << "', length=" << encodedPass.length() << endl;
+	return encodedPass;
 }
 
 void OscarSocket::sendLoginICQ()

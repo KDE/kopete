@@ -56,7 +56,6 @@ SSI * SSIData::addBuddy(const QString &name, const QString &group)
 	return newitem;
 }
 
-/** Find the group named name, and returns a pointer to it */
 SSI * SSIData::findGroup(const QString &name)
 {
 	for (SSI *i=first(); i; i = next())
@@ -67,7 +66,6 @@ SSI * SSIData::findGroup(const QString &name)
 	return 0L;
 }
 
-/** Adds a group to the local ssi data */
 SSI * SSIData::addGroup(const QString &name)
 {
 	SSI *newitem = new SSI;
@@ -99,16 +97,15 @@ SSI * SSIData::addGroup(const QString &name)
 	return newitem;
 }
 
-// Changes a groups name
-SSI *SSIData::changeGroup(const QString &currentName, const QString &newName)
+SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 {
 	// Find the group
 	SSI *group = findGroup(currentName);
+
 	// No sense in trying to change the group's name if it doesn't exist
-	if (group != 0L)
-	{ // Printing some debugging info
-		kdDebug(14150) << k_funcinfo <<  "Building group name change request"
-					   << endl;
+	if (group)
+	{
+		kdDebug(14150) << k_funcinfo << "Building group name change request" << endl;
 		// Change the info in the SSI for the group name
 		// Sending the OSCAR serverthis SNAC, where the
 		// group ID is the same, but the name in the
@@ -116,6 +113,7 @@ SSI *SSIData::changeGroup(const QString &currentName, const QString &newName)
 		// the group on the server -Chris
 		group->name = newName;
 	}
+
 	// Return the group, which will be null if this couldn't
 	// find the group
 	return group;
@@ -127,7 +125,10 @@ SSI *SSIData::findBuddy(const QString &name, const QString &group)
 	SSI *gr = findGroup(group); //find the parent group
 	if (gr)
 	{
-		printf("g->name is %s, g->gid is %x, g->bid is %x, g->type is %x\n",gr->name.latin1(),gr->gid,gr->bid,gr->type);
+		kdDebug(14150) << k_funcinfo << "gr->name= " << gr->name <<
+			", gr->gid= " << gr->gid <<
+			", gr->bid= " << gr->bid <<
+			", gr->type= " << gr->type << endl;
 		for (SSI *i=first(); i; i = next())
 		{
 			//if the ssi item has the right name, is a buddy, and has the right group
@@ -142,10 +143,11 @@ SSI *SSIData::findBuddy(const QString &name, const QString &group)
 	}
 	else
 		kdDebug(14150) << "Group " << group << " not found" << endl;
+
 	return 0L;
 }
 
-void SSIData::print(void)
+void SSIData::print()
 {
 	for (SSI *i=first(); i; i = next())
 	{
@@ -157,6 +159,7 @@ void SSIData::print(void)
 
 SSI *SSIData::addDeny(const QString &name)
 {
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 	SSI *newitem = new SSI;
 	newitem->name = name;
 	newitem->gid = 0;
@@ -177,6 +180,7 @@ SSI *SSIData::addDeny(const QString &name)
 
 SSI *SSIData::findDeny(const QString &name)
 {
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 	for (SSI *i=first(); i; i = next())
 	{
 		if ((current()->name == name) && (current()->type == 0x0003))

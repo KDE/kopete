@@ -81,7 +81,7 @@ public:
 	 * method to pass to the server to actually change
 	 * the name on the SSI data
 	 */
-	SSI *changeGroup(const QString &currentName, const QString &newName);
+	SSI *renameGroup(const QString &currentName, const QString &newName);
 
 	/** Finds the buddy with given name and group... returns NULL if not found */
 	SSI *findBuddy(const QString &name, const QString &group);
