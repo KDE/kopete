@@ -122,7 +122,8 @@ private slots:
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
 	void slotSearchResult( const searchResult &result );
-	
+	void userListExportDone();
+
 private:
 	void initConnections();
 	void initActions();

@@ -14,6 +14,7 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
+#include <knotifyclient.h>
 
 #include <qapplication.h>
 #include <qdialog.h>
@@ -72,6 +73,8 @@ GaduAccount::initConnections()
 				SLOT(ackReceived(struct gg_event*)) );
 	QObject::connect( session_, SIGNAL(pubDirSearchResult( const searchResult & )),
 				SLOT(slotSearchResult( const searchResult & )) );
+	QObject::connect( session_, SIGNAL( userListExported() ),
+				SLOT( userListExportDone() ));
 
 }
 
@@ -619,14 +622,16 @@ next_cont:
 }
 
 void
+GaduAccount::userListExportDone()
+{
+	KNotifyClient::userEvent( qApp->mainWidget()->winId() , 
+			i18n("Contacts exported to the server."), KNotifyClient::PassivePopup  );
+}
+
+void
 GaduAccount::slotExportContactsList()
 {
-
 	session_->exportContacts( userlist() );
-
-//	QObject::connect( session_, SIGNAL(),
-//					SLOT( ) );
-
 }
 
 
@@ -687,7 +692,9 @@ GaduAccount::slotChangePassword()
 void
 GaduAccount::slotCommandDone( const QString& title, const QString& what )
 {
-	KMessageBox::information( qApp->mainWidget(), title, what );
+	//XXX: any chance to have my own title in event popup ?
+	KNotifyClient::userEvent( qApp->mainWidget()->winId() , what, 
+			KNotifyClient::PassivePopup, KNotifyClient::Notification  );
 }
 
 void
