@@ -195,9 +195,6 @@ KActionCollection * MSNMessageManager::chatActions()
 
 	m_actions = new KActionCollection( this );
 
-	KAction *actionClose = new KAction( i18n ( "&Leave Chat" ), 0,
-		SLOT( slotCloseSession() ), m_actions, "actionClose" );
-	m_actions->insert( actionClose );
 	kdDebug(14140) << "MSNMessageManager::chatActions"  <<endl;
 
 	KActionMenu *actionInvite = new KActionMenu( i18n( "&Invite" ), m_actions , "actionInvite" );
