@@ -437,7 +437,7 @@ void MSNContact::rename( const QString &newName )
 
 void MSNContact::slotShowProfile()
 {
-	KRun::runURL( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId()  , "text/html" );
+	KRun::runURL( KURL( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId())  , "text/html" );
 }
 
 

@@ -213,7 +213,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
 
-			KIO::Job *job = KIO::get( authURL , true, false ); 
+			KIO::Job *job = KIO::get( KURL( authURL ), true, false ); 
 			job->addMetaData("cookies", "manual");
 			/* FIXME: This should force kio to download the page even is we are in the 
 			 * konqueror offline mode.  But it does not seems to have any effect
@@ -481,7 +481,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		// FIXME: when it's fixed in kdelibs use the correct way to delete the file with the KRun's API
 		//  (this is just a workaround)
 		// see Bug 62555 for more information  (http://bugs.kde.org/show_bug.cgi?id=62555)
-		KRun::runURL( m_tmpMailFile->name(), "text/html" /*, true */);
+		KRun::runURL( KURL::fromPathOrURL( m_tmpMailFile->name() ), "text/html" /*, true */);
 		m_tmpMailFile->setAutoDelete(true);
 
 	}
@@ -539,7 +539,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		if(m_kv.isNull()) m_kv="";
 
 		authURL += escape( m_password );
-		job = KIO::get( authURL, false, false );
+		job = KIO::get( KURL( authURL ), false, false );
 		job->addMetaData("cookies", "manual");
 		job->addMetaData("setcookies", cookies);
 

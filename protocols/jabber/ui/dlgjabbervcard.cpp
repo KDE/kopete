@@ -402,7 +402,7 @@ void dlgJabberVCard::slotSentVCard()
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
 
-	new KRun(url);
+	new KRun(KURL( url ) );
 
 }
 

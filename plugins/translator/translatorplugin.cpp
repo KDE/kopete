@@ -283,7 +283,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 {
 	kdDebug( 14308 ) << k_funcinfo << from << "_" << to << ":" << endl << msg << endl << endl;
 
-	KURL translatorURL = "http://translate.google.com/translate_t";
+	KURL translatorURL ( "http://translate.google.com/translate_t");
 
 	QString body = KURL::encode_string( msg );
 	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
@@ -293,7 +293,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 	QString gurl = "http://translate.google.com/translate_t?text=" + body +"&langpair=" + lp;
 	kdDebug(14308) << "[Translator] URL: " << gurl << endl;
-	KURL geturl = gurl;
+	KURL geturl ( gurl );
 
 	KIO::TransferJob *job = KIO::get( geturl, false, true );
 	//job = KIO::http_post( translatorURL, postData, true );
@@ -333,7 +333,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 	QString body = KURL::encode_string( msg);
 	QString lp = from + "_" + to;
 	QString gurl = "http://babelfish.altavista.com/babelfish/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body + "&lp=" + lp;
-	KURL geturl = gurl;
+	KURL geturl ( gurl );
 
 	kdDebug( 14308 ) << k_funcinfo << "URL: " << gurl << endl;
 

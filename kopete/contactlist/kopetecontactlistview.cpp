@@ -1433,7 +1433,7 @@ void KopeteContactListView::slotSendFile()
 {
 	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
 	if(m)
-		m->sendFile(QString::null);
+		m->sendFile(KURL());
 }
 
 void KopeteContactListView::slotMoveToGroup()

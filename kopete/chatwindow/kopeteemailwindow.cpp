@@ -690,7 +690,7 @@ void KopeteEmailWindow::slotOpenURLRequest(const KURL &url, const KParts::URLArg
 
 	// FIXME: Doesn't KRun do the mime type check automagically for us? - Martijn
 	if( url.protocol() == QString::fromLatin1( "mailto" ) )
-		kapp->invokeMailer( url.url() );
+		kapp->invokeMailer( url );
 	else
 		kapp->invokeBrowser( url.url() );
 }
