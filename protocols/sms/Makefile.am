@@ -2,7 +2,7 @@ METASOURCES = AUTO
 SUBDIRS = ui services
 INCLUDES = -I$(srcdir)/ui \
 	-I./ui \
-	-I./services \
+	-I$(srcdir)/services \
 	-I$(srcdir)/../../libkopete \
 	-I$(srcdir)/../../libkopete/ui \
 	-I../../libkopete/ui \
