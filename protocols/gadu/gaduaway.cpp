@@ -42,32 +42,40 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent, const char* name )
 			 KDialogBase::Ok, true ), account_( account )
 {
 	Kopete::OnlineStatus ks;
+	int s;
 
 	ui_ = new GaduAwayUI( this );
 	setMainWidget( ui_ );
 
 	ks = account->myself()->onlineStatus();
+	s  = GaduProtocol::protocol()->statusToWithDescription( ks );
 
-	ui_->statusGroup_->setButton( GaduProtocol::protocol()->statusToWithDescription( ks ) );
+	if ( s == GG_STATUS_NOT_AVAIL_DESCR ) {
+		ui_->statusGroup_->find( GG_STATUS_NOT_AVAIL_DESCR )->setDisabled( TRUE );
+		ui_->statusGroup_->setButton( GG_STATUS_AVAIL_DESCR );
+	}
+	else {
+		ui_->statusGroup_->setButton( s );
+	}
 
 	ui_->textEdit_->setText( account->myself()->property( "awayMessage" ).value().toString() );
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
 }
 
-int 
+int
 GaduAway::status() const
 {
 	return ui_->statusGroup_->id( ui_->statusGroup_->selected() );
 }
 
-QString 
+QString
 GaduAway::awayText() const
 {
 	return ui_->textEdit_->text();
 }
 
 
-void 
+void
 GaduAway::slotApply()
 {
 	if ( account_ ) {
