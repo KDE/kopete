@@ -19,7 +19,7 @@
 #include "kopetewindow.moc"
 
 #include "contactlist.h"
-#include "imcontact.h"
+#include "kopetecontact.h"
 #include "kopete.h"
 #include "kopeteballoon.h"
 #include "systemtray.h"
@@ -214,9 +214,9 @@ void KopeteWindow::showToolbar(void)
 
 void KopeteWindow::slotExecuted( QListViewItem *item )
 {
-	IMContact *contact = dynamic_cast<IMContact *>(item);
+	KopeteContact *contact = dynamic_cast<KopeteContact *>(item);
 	if ( contact )
-		contact->doubleClicked();
+		contact->execute();
 }
 
 // vim: set noet sw=4 ts=4 sts=4:
