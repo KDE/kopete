@@ -834,12 +834,11 @@ GaduAccount::userListExportDone()
 	slotCommandDone( QString::null, i18n( "Contacts exported to the server.") );
 }
 
-
 void
 GaduAccount::slotFriendsMode()
 {
 	p->forFriends = !p->forFriends;
-	kdDebug( 14100 ) << "for friends mode: " << p->forFriends << endl;
+	kdDebug( 14100 ) << "for friends mode: " << p->forFriends << " desc" << p->lastDescription << endl;
 	// now change status, it will changing it with p->forFriends flag
 	changeStatus( p->status_, p->lastDescription );
 

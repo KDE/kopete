@@ -93,6 +93,9 @@ GaduEditContact::fillGroups()
 	gl = Kopete::ContactList::self()->groups();
 
 	for( g = gl.first(); g; g = gl.next() ) {
+		if ( g->type() == Kopete::Group::Temporary ) {
+			continue;
+		}
 		QCheckListItem* item = new QCheckListItem( ui_->groups, g->displayName(), QCheckListItem::CheckBox );
 		// FIXME: optimize this O(2) search
 		for( cg = cgl.first(); cg; cg = cgl.next() ) {
@@ -144,6 +147,9 @@ GaduEditContact::fillIn()
 void
 GaduEditContact::slotApply()
 {
+	QPtrList<Kopete::Group> gl;
+	Kopete::Group* group;
+
 	cl_->firstname = ui_->fornameEdit_->text().stripWhiteSpace();
 	cl_->surname = ui_->snameEdit_->text().stripWhiteSpace();
 	cl_->nickname = ui_->nickEdit_->text().stripWhiteSpace();
@@ -159,12 +165,29 @@ GaduEditContact::slotApply()
 		}
 		contact_ = static_cast<GaduContact*>( account_->contacts()[ cl_->uin ] );
 		if ( contact_ == NULL ) {
- 			kdDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << cl_->uin << "\"" << endl;
+			kdDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << cl_->uin << "\"" << endl;
 			return;
 		}
 	}
 
 	contact_->setContactDetails( cl_ );
+
+	gl = Kopete::ContactList::self()->groups();
+	bool topLevel = true;
+	for ( QListViewItemIterator it( ui_->groups ); it.current(); ++it ) {
+		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
+		if ( check && check->isOn() ) {
+			for( group = gl.first(); group; group = gl.next() ) {
+				if ( group->displayName() == check->text() ) {
+					contact_->metaContact()->addToGroup( group );
+					topLevel = false;
+					break;
+				}
+			}
+		}
+	}
+	if( topLevel )
+		contact_->metaContact()->addToGroup( Kopete::Group::topLevel() );
 }
 
 #include "gadueditcontact.moc"
