@@ -64,7 +64,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 			for (tmp_contact = contactlist.first(); tmp_contact && halfMatch; tmp_contact = contactlist.next()) {
 				if ( !_contacts.containsRef( tmp_contact ) )
 				{
-					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << tmp_contact->name() << "\" not found! in _contacts" << endl;
+					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << /* THIS CAUSES CRASHES, DONT ENABLE tmp_contact->name() << */ "\" not found! in _contacts" << endl;
 					halfMatch = false;
 				}
 			}
