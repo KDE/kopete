@@ -168,7 +168,7 @@ bool TranslatorPlugin::serialize( KopeteMetaContact *metaContact,
 void TranslatorPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
 {
 	m_langMap[ metaContact ] = data.first();
-	kdDebug() << "[Translator] Deserialize " << metaContact->displayName() << " lang is " << data.first() << endl;
+//	kdDebug() << "[Translator] Deserialize " << metaContact->displayName() << " lang is " << data.first() << endl;
 
 }
 
@@ -205,7 +205,10 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 
 void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
-	kdDebug() << "[Translator] Incoming message " << msg.timestamp().toString("hhmmsszzz") << endl;
+	if(m_prefs->incommingMode()==DontTranslate)
+		return;
+
+//	kdDebug() << "TranslatorPlugin::slotIncomingMessage " << m_prefs->incommingMode() << DontTranslate << endl;
 
 	QString src_lang;
 	QString dst_lang;
@@ -219,7 +222,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 		}
 		else
 		{
-			kdDebug() << "[Translator] ( Incoming) Cannot determine src Metacontact language (" << from->displayName() << ")" << endl;
+			kdDebug() << "TranslatorPlugin::slotIncomingMessage : Cannot determine src Metacontact language (" << from->displayName() << ")" << endl;
 			return;
 		}
 
@@ -227,7 +230,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 		if ( src_lang == dst_lang )
 		{
-			kdDebug() << "[Translator] ( Incoming) Src and Dst languages are the same" << endl;
+			kdDebug() << "TranslatorPlugin::slotIncomingMessage : Src and Dst languages are the same" << endl;
 			return;
 		}
 
@@ -247,39 +250,44 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	}
 	else
 	{
-		kdDebug() << "[Translator] Incoming, but empty body" << endl;
+		kdDebug() << "TranslatorPlugin::slotIncomingMessage , outgoing or empty body" << endl;
 	}
 }
 
 void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
-	kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
+/*	kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
 	kdDebug() << "[Translator] Outgoing info: " << endl
-		<< msg.body() << endl << "Direction: " << msg.direction();
+		<< msg.body() << endl << "Direction: " << msg.direction();*/
+
+	if(m_prefs->outgoingMode()==DontTranslate)
+		return;
+
+		
 	QString src_lang;
 	QString dst_lang;
 
 	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( msg.body() != QString::null ) )
 	{
 		src_lang = m_prefs->myLang();
-		kdDebug() << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
+//		kdDebug() << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
 
 		/* Sad, we have to consideer only the first To: metacontact only */
 		KopeteMetaContact *to = msg.to().first()->metaContact();
 		if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
 		{
 			dst_lang = m_langMap[ to ];
-			kdDebug() << "[Translator] ( Outgoing ) remote lang is: " << dst_lang << endl;
+//			kdDebug() << "[Translator] ( Outgoing ) remote lang is: " << dst_lang << endl;
 		}
 		else
 		{
-			kdDebug() << "[Translator] ( Outgoing ) Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+			kdDebug() << "TranslatorPlugin::slotOutgoingMessage :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
 			return;
 		}
 
 		if ( src_lang == dst_lang )
 		{
-			kdDebug() << "[Translator] ( Outgoing ) Src and Dst languages are the same" << endl;
+			kdDebug() << "TranslatorPlugin::slotOutgoingMessage :  Src and Dst languages are the same" << endl;
 			return;
 		}
 
@@ -293,18 +301,18 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 			if ( *i == src_lang + "_" + dst_lang )
 			{
 				translateMessage( msg , src_lang, dst_lang);
-				kdDebug() << "[Translator] Outgoing, DONE" << endl;
+//				kdDebug() << "[Translator] Outgoing, DONE" << endl;
 				return;
 			}
 			else
 			{
-				kdDebug() << "[Translator] ( Outgoing ) " << src_lang << " and " << dst_lang << " != " << *i<< endl;
+//				kdDebug() << "[Translator] ( Outgoing ) " << src_lang << " and " << dst_lang << " != " << *i<< endl;
 			}
 		}
 	}
 	else
 	{
-		kdDebug() << "[Translator] Outgoing, but empty body" << endl;
+		kdDebug() << "TranslatorPlugin::slotOutgoingMessage : incomming or empty body" << endl;
 	}
 }
 
@@ -372,8 +380,7 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 
 void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
 {
-	kdDebug() << "[Translator] Babel Translating: [" << from << "_" << to << "] " << endl
-		<< msg.body() << endl << endl;
+	kdDebug() << "TranslatorPlugin::babelTranslateMessage : [" << from << "_" << to << "] " << endl ;
 	
 	QString body, lp;
 	KURL translatorURL;
@@ -390,7 +397,7 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 	postData = "enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp ;
 
 	QString gurl = "http://babel.altavista.com/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp;
-	kdDebug() << "[Translator] URL: " << gurl << endl;
+	kdDebug() << "TranslatorPlugin::babelTranslateMessage : URL: " << gurl << endl;
 	KURL geturl = gurl;
 
 	//job = KIO::http_post( translatorURL, postData, true );
@@ -412,7 +419,7 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 	m_data.remove( job );
 	m_completed.remove( job );
 
-	kdDebug() << "[Translator]: Babelfish response: "<< endl << data << endl;
+//	kdDebug() << "[Translator]: Babelfish response: "<< endl << data << endl;
 
 	//QRegExp re("*-*-* (.*) *-*-*");
 	QRegExp re("<Div style=padding:10px;>(.*)</div");
@@ -437,10 +444,10 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 	switch (msg.direction())
 	{
 		case KopeteMessage::Outbound:
-			mode=m_prefs->outgoingMode();
+			mode=(TranslateMode)m_prefs->outgoingMode();
 			break;
 		case KopeteMessage::Inbound:
-			mode=m_prefs->incommingMode();
+			mode=(TranslateMode)m_prefs->incommingMode();
 			break;
 		default:
 			kdDebug() << "TranslatorPlugin::sendTranslation - WARNING: can't determine if it is an incomming or outgoing message" <<endl;
