@@ -466,7 +466,7 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 
 void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data)
 {
-	m_data[job] += data;
+	m_data[job] += QCString( data, data.size()+1 );
 }
 
 void TranslatorPlugin::slotJobDone ( KIO::Job *job)
