@@ -548,7 +548,7 @@ QString KopeteMetaContact::toXML()
 
 bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 {
-    m_isTopLevel = false;
+	m_isTopLevel = false;
 
 	QDomNode contactNode = cnode;
 	while( !contactNode.isNull() )
@@ -611,8 +611,13 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 			plugin->deserialize( this, strList );
 	}
 
+	//If a plugin is loaded, load data cached
+	connect( kopeteapp->libraryLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
+			this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
+
+
 	if ( m_groups.isEmpty() && ! m_isTopLevel )
-		m_isTopLevel = true;	
+		m_isTopLevel = true;
 
 	return true;
 }
@@ -664,6 +669,22 @@ void KopeteMetaContact::setTemporary( bool b  )
 	}
 	else
 		moveToGroup("temporaryGroup",QString::null);  //move to top-level
+}
+
+void KopeteMetaContact::slotPluginLoaded(KopetePlugin *p)
+{
+	if(!p)
+		return;
+	QMap<QString, QString>::ConstIterator it;
+	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+	{
+		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(it.key());
+		if(plugin==p)
+		{
+			QStringList strList = QStringList::split( "||", it.data() );
+			p->deserialize( this, strList );
+		}
+	}
 }
 
 #include "kopetemetacontact.moc"

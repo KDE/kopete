@@ -215,6 +215,7 @@ bool LibraryLoader::loadSO(const QString &spec)
 			listitem->plugin->addressBookFields() );
 
 		kdDebug() << "[LibraryLoader] loadSO(), loading " << spec << " successful"<< endl;
+		emit pluginLoaded(listitem->plugin);
 		return true;
 	}
 	else

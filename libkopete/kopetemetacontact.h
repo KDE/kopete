@@ -253,6 +253,12 @@ private slots:
 	 */
 	void slotContactDestroyed( QObject *obj );
 
+	/**
+	 * If a plugin is loaded, maybe dada about this plugins are already cached in the metacontact
+	 */
+	void slotPluginLoaded(KopetePlugin *p);
+
+
 private:
 	QPtrList<KopeteContact> m_contacts;
 
