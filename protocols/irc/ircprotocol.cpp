@@ -117,7 +117,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		SLOT( slotNickCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /nick <nickname> - Change your nickname to the given one.") );
 
-	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("mode"),
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("me"),
 		SLOT( slotMeCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /me <action> - Do something.") );
 
@@ -287,9 +287,10 @@ void IRCProtocol::slotMeCommand( const QString &args, KopeteMessageManager *mana
 {
 	if( !args.isEmpty() )
 	{
+		KopeteContactPtrList members = manager->members();
 		QStringList argsList = KopeteCommandHandler::parseArguments( args );
 		static_cast<IRCAccount*>( manager->account() )->engine()->actionContact(
-			static_cast<const IRCContact*>(manager->user())->nickName(), args );
+			static_cast<const IRCContact*>(members.first())->nickName(), args );
 	}
 }
 
