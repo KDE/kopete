@@ -106,9 +106,9 @@ public:
 	/**
 	 * Return the current, shared S5B server instance.
 	 */
-	static XMPP::S5BServer *s5bServer ();
-	static void addS5bAddress ( const QString &address );
-	static void removeS5bAddress ( const QString &address );
+	XMPP::S5BServer *s5bServer ();
+	void addS5bAddress ( const QString &address );
+	void removeS5bAddress ( const QString &address );
 
 public slots:
 	/* Connects to the server. */
@@ -271,6 +271,8 @@ private slots:
 
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
+
+	void slotS5bServerGone ();
 
 };
 

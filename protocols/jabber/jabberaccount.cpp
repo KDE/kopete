@@ -110,10 +110,18 @@ XMPP::S5BServer *JabberAccount::s5bServer ()
 	{
 		KGlobal::config()->setGroup("Jabber");
 		m_s5bServer = new XMPP::S5BServer ();
+		QObject::connect ( m_s5bServer, SIGNAL ( destroyed () ), this, SLOT ( slotS5bServerGone () ) );
 		m_s5bServer->start ( KGlobal::config()->readNumEntry ( "LocalPort", 8001 ) );
 	}
 
 	return m_s5bServer;
+
+}
+
+void JabberAccount::slotS5bServerGone ()
+{
+
+	m_s5bServer = 0L;
 
 }
 
