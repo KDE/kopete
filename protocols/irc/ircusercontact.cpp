@@ -272,10 +272,7 @@ void IRCUserContact::whoIsComplete()
 		msg += i18n("idle: %2\n").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
 		//End
-		KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal,
-			KopeteMessage::PlainText, KopeteMessage::Chat );
-
-		KopeteMessageManagerFactory::factory()->activeView()->appendMessage(m);
+		m_account->appendMessage(msg, IRCAccount::InfoReply );
 		m_protocol->setCommandInProgress(false);
 	}
 }

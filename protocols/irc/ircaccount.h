@@ -83,11 +83,12 @@ class IRCAccount:  public KopeteAccount
 public:
 	enum MessageType
 	{
-		LoginReply = 1,
+		ConnectReply = 1,
 		InfoReply = 2,
 		NoticeReply = 4,
 		ErrorReply = 8,
-		UnknownReply = 16
+		UnknownReply = 16,
+		Default = 32
 	};
 
 	enum MessageDestination
@@ -95,7 +96,8 @@ public:
 		ActiveWindow = 1,
 		ServerWindow = 2,
 		AnonymousWindow = 4,
-		Ignore = 8
+		KNotify = 8,
+		Ignore = 16
 	};
 
 	IRCAccount(IRCProtocol *p, const QString &accountid);
@@ -168,7 +170,7 @@ public slots:
 
 	void listChannels();
 
-	void appendMessage( MessageType type, const QString &message );
+	void appendMessage( const QString &message, MessageType type = Default );
 
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
@@ -188,6 +190,7 @@ private slots:
 	void slotDisconnected();
 	void slotServerBusy();
 	void slotSearchChannels();
+	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 	void slotJoinedUnknownChannel( const QString &user,  const QString &channel );
 
 private:

@@ -98,7 +98,6 @@ class IRCContact : public KopeteContact
 		virtual void messageManagerDestroyed();
 
 		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
-		void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 		void slotUserDisconnected( const QString &nickname, const QString &reason);
 
 
@@ -108,7 +107,6 @@ class IRCContact : public KopeteContact
 		virtual void updateStatus() = 0;
 
 	protected:
-		void listedChannel(const QString &channel, uint users, const QString &topic);
 
 		IRCProtocol *m_protocol;
 		IRCAccount *m_account;

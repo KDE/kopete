@@ -49,6 +49,7 @@ class IRCServerContact : public IRCContact
 		virtual const QString caption() const;
 
 		virtual void appendMessage(KopeteMessage &);
+                void appendMessage( const QString &message );
 
 	protected slots:
 		void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
@@ -58,7 +59,9 @@ class IRCServerContact : public IRCContact
 		virtual void updateStatus();
 		void slotViewCreated( KopeteView* );
 		void slotDumpMessages();
-		void slotAppendMessage( const QString &message );
+
+		void slotIncomingUnknown( const QString &message );
+		void slotIncomingConnect( const QString &message );
 		void slotIncomingMotd( const QStringList &motd );
 		void slotIncomingNotice( const QString &orig, const QString &notice );
 		void slotCannotSendToChannel( const QString &channel, const QString &msg );

@@ -61,8 +61,6 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 			this, SLOT(slotNewNickChange(const QString &, const QString &)));
 	QObject::connect(m_engine, SIGNAL(incomingQuitIRC(const QString &, const QString &)),
 			this, SLOT( slotUserDisconnected(const QString&, const QString&)));
-	QObject::connect(m_engine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)),
-			this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::EngineStatus)),
 			this, SLOT(updateStatus()));
@@ -187,16 +185,6 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 	}
 }
 
-void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
-{
-	if( m_isConnected && manager()->view() ==
-		KopeteMessageManagerFactory::factory()->activeView() )
-	{
-		KopeteMessage msg(m_account->myServer(), mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		appendMessage(msg);
-	}
-}
-
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	QString htmlString = message.escapedBody();
@@ -312,18 +300,6 @@ void IRCContact::slotDeleteContact()
 	{
 		kdDebug(14120) << k_funcinfo << "will delete " << m_nickName << endl;
 		KopeteContact::slotDeleteContact();
-	}
-}
-
-void IRCContact::listedChannel(const QString &channel, uint users, const QString &topic)
-{
-//	Should check that the current contact is the lastest viewed contact(add support on account?(KopeteView::activated(KopeteView*)))
-//	or the servercontact
-	{
-		QString message = i18n("%1\t(%2 Users) Topic is %3").arg(channel).arg(users).arg(topic);
-		KopeteMessage msg(m_account->myServer(), manager()->members(), message,
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		appendMessage(msg);
 	}
 }
 

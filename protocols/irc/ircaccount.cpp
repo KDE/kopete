@@ -25,12 +25,15 @@
 #include <kpopupmenu.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <knotifyclient.h>
 
 #include "kopeteaway.h"
+#include "kopeteglobal.h"
 #include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetecommandhandler.h"
+#include "kopeteview.h"
 
 #include "ircaccount.h"
 #include "ircprotocol.h"
@@ -108,6 +111,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 
 	QObject::connect(m_engine, SIGNAL(incomingJoinedChannel(const QString &, const QString &)),
 		this, SLOT(slotJoinedUnknownChannel(const QString &, const QString &)));
+
+	QObject::connect(m_engine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)),
+			this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
@@ -285,7 +291,7 @@ void IRCAccount::setNetwork( const QString &network )
 	else
 	{
 		KMessageBox::queuedMessageBox(
-		0L, KMessageBox::Error,
+		Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 		i18n("<qt>The network associated with this account, <b>%1</b>, no longer exists. Please"
 		" ensure that the account has a valid network.</qt>").arg(network),
 		i18n("Network No Longer Exists"), 0 );
@@ -422,7 +428,7 @@ void IRCAccount::connect()
 			if( hosts.count() == 0 )
 			{
 				KMessageBox::queuedMessageBox(
-					0L, KMessageBox::Error,
+					Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(m_network->name),
 					i18n("Network Is Empty"), 0 );
 			}
@@ -476,7 +482,8 @@ void IRCAccount::disconnect()
 void IRCAccount::slotServerBusy()
 {
 	KMessageBox::queuedMessageBox(
-		0L, KMessageBox::Error, i18n("The IRC server is currently too busy to respond to this request."),
+		Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+		i18n("The IRC server is currently too busy to respond to this request."),
 		i18n("Server is busy"), 0
 	);
 }
@@ -608,18 +615,68 @@ void IRCAccount::slotJoinChannel()
 
 	if( !chan.isNull() )
 	{
-		if( QRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") ).search( chan ) != -1 )
+		if( KIRC::isChannel( chan ) )
 			contactManager()->findChannel( chan )->startChat();
 		else
-			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#','!','+', or '&'.</qt>").arg(chan), i18n("IRC Plugin"));
+			KMessageBox::error( Kopete::UI::Global::mainWidget(),
+				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
+				.arg(chan), i18n("IRC Plugin")
+			);
 	}
 }
 
-void IRCAccount::appendMessage( MessageType type, const QString &message )
+void IRCAccount::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
-	if( type == Ignore )
-		return;
+	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), InfoReply );
+}
 
+void IRCAccount::appendMessage( const QString &message, MessageType type )
+{
+	MessageDestination destination;
+	//if( !manager )
+	//{
+		//No manager was passed. Use current active manager
+		destination = ActiveWindow;
+	//}
+	/*else
+	{
+		//FIXME: Implement this!
+		destination = type;
+	} */
+
+	switch( destination )
+	{
+		case ActiveWindow:
+		{
+			KopeteView *activeView = KopeteMessageManagerFactory::factory()->activeView();
+			if( activeView && activeView->msgManager()->account() == this )
+			{
+				KopeteMessageManager *manager = activeView->msgManager();
+				KopeteMessage msg( manager->user(), manager->members(), message,
+					KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+				activeView->appendMessage(msg);
+
+				return;
+			}
+		}
+
+		case AnonymousWindow:
+			//TODO: Create an anonymous window??? What will this mean...
+
+		case ServerWindow:
+			myServer()->appendMessage(message);
+			return;
+
+		case KNotify:
+			KNotifyClient::event(
+				Kopete::UI::Global::mainWidget()->winId(), QString::fromLatin1("irc_event"), message
+			);
+
+			return;
+
+		default:
+			return;
+	}
 }
 
 IRCUserContact *IRCAccount::mySelf() const

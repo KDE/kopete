@@ -120,6 +120,7 @@ private slots:
 	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
 	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
 	void slotWhoisCommand( const QString &args, KopeteMessageManager *manager);
+	void slotWhoWasCommand( const QString &args, KopeteMessageManager *manager);
 	void slotWhoCommand( const QString &args, KopeteMessageManager *manager);
 	void slotMeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotModeCommand( const QString &args, KopeteMessageManager *manager);

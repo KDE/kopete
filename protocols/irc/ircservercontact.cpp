@@ -52,10 +52,10 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 			this, SLOT(slotCannotSendToChannel(const QString &, const QString &)) );
 
 	QObject::connect( m_engine, SIGNAL(incomingUnknown( const QString &)),
-			this, SLOT(slotAppendMessage(const QString &)) );
+			this, SLOT(slotIncomingUnknown(const QString &)) );
 
 	QObject::connect( m_engine, SIGNAL(incomingConnectString( const QString &)),
-			this, SLOT(slotAppendMessage(const QString &)) );
+			this, SLOT(slotIncomingConnect(const QString &)) );
 
 	//FIXME:: This shouldn't add MOTD stuffs when someone uses /motd
 	QObject::connect( m_engine, SIGNAL(incomingMotd( const QStringList &)),
@@ -115,11 +115,7 @@ void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const
 			error = i18n("KIRC Error - Unknown error: ");
 	}
 
-	KopeteContactPtrList members;
-	members.append( this );
-	KopeteMessage msg(this, members, error + QString( ircmsg.raw() ), KopeteMessage::Internal,
-		KopeteMessage::PlainText, KopeteMessage::Chat);
-	appendMessage(msg);
+	m_account->appendMessage( error + QString( ircmsg.raw() ), IRCAccount::ErrorReply );
 }
 
 void IRCServerContact::slotSendMsg(KopeteMessage &, KopeteMessageManager *manager )
@@ -130,7 +126,7 @@ void IRCServerContact::slotSendMsg(KopeteMessage &, KopeteMessageManager *manage
 	manager->appendMessage(msg);
 }
 
-void IRCServerContact::slotAppendMessage( const QString &message )
+void IRCServerContact::appendMessage( const QString &message )
 {
 	KopeteContactPtrList members;
 	members.append( this );
@@ -142,18 +138,28 @@ void IRCServerContact::slotAppendMessage( const QString &message )
 
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
-	slotAppendMessage( i18n("NOTICE %1: %2").arg( orig.section('!',0,0) ).arg( notice ) );
+	m_account->appendMessage( i18n("NOTICE %1: %2").arg( orig.section('!',0,0) ).arg( notice ), IRCAccount::NoticeReply );
+}
+
+void IRCServerContact::slotIncomingUnknown( const QString &message )
+{
+	m_account->appendMessage( message , IRCAccount::UnknownReply );
+}
+
+void IRCServerContact::slotIncomingConnect( const QString &message )
+{
+	m_account->appendMessage( message , IRCAccount::ConnectReply );
 }
 
 void IRCServerContact::slotCannotSendToChannel( const QString &channel, const QString &message )
 {
-	slotAppendMessage( QString::fromLatin1("%1: %2").arg( channel ).arg( message ) );
+	m_account->appendMessage( QString::fromLatin1("%1: %2").arg( channel ).arg( message ), IRCAccount::ErrorReply );
 }
 
 void IRCServerContact::slotIncomingMotd( const QStringList &motd )
 {
 	for( QStringList::ConstIterator it = motd.begin(); it != motd.end(); ++it )
-		slotAppendMessage( *it );
+		slotIncomingConnect( *it );
 }
 
 void IRCServerContact::appendMessage( KopeteMessage &msg )
@@ -169,9 +175,12 @@ void IRCServerContact::appendMessage( KopeteMessage &msg )
 
 void IRCServerContact::slotDumpMessages()
 {
-	for( QValueList<KopeteMessage>::Iterator it = mMsgBuffer.begin(); it != mMsgBuffer.end(); ++it )
-		manager()->appendMessage(*it);
-	mMsgBuffer.clear();
+	if( !mMsgBuffer.isEmpty() )
+	{
+		manager()->appendMessage( mMsgBuffer.front() );
+		mMsgBuffer.pop_front();
+		QTimer::singleShot( 0, this, SLOT( slotDumpMessages() ) );
+	}
 }
 
 void IRCServerContact::slotViewCreated( KopeteView *v )

@@ -40,6 +40,7 @@
 #include "kopetecommandhandler.h"
 #include "kopeteview.h"
 #include "ksparser.h"
+#include "kopeteglobal.h"
 
 #include "networkconfig.h"
 #include "channellist.h"
@@ -121,6 +122,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whois"),
 		SLOT( slotWhoisCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /whois <nickname> - Display whois info on this user."), 1, 1 );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whowas"),
+		SLOT( slotWhoWasCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /whowas <nickname> - Display whowas info on this user."), 1, 1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("who"),
 		SLOT( slotWhoCommand( const QString &, KopeteMessageManager*) ),
@@ -309,10 +314,8 @@ void IRCProtocol::slotRawCommand( const QString &args, KopeteMessageManager *man
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must enter some text to send to the server."),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -324,10 +327,8 @@ void IRCProtocol::slotQuoteCommand( const QString &args, KopeteMessageManager *m
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must enter some text to send to the server."),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -374,10 +375,8 @@ void IRCProtocol::slotTopicCommand( const QString &args, KopeteMessageManager *m
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must be in a channel to use the TOPIC command.").arg( chan->nickName() ),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must be in a channel to use this command."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -391,10 +390,9 @@ void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *ma
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.").arg(chan),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
+			.arg(chan), IRCAccount::ErrorReply );
 	}
 }
 
@@ -412,10 +410,9 @@ void IRCProtocol::slotInviteCommand( const QString &args, KopeteMessageManager *
 		}
 		else
 		{
-			KopeteMessage msg(manager->user(), manager->members(),
-				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.").arg(argsList[1]),
-				KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-			manager->appendMessage(msg);
+			static_cast<IRCAccount*>( manager->account() )->appendMessage(
+				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
+				.arg(argsList[1]), IRCAccount::ErrorReply );
 		}
 	}
 	else
@@ -433,9 +430,8 @@ void IRCProtocol::slotInviteCommand( const QString &args, KopeteMessageManager *
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(), i18n("You must be a channel operator on %1 to do that.").arg(c->nickName()),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -458,10 +454,9 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
 			i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#','!','+', or '&'.").arg(user),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+			IRCAccount::ErrorReply );
 	}
 }
 
@@ -477,6 +472,14 @@ void IRCProtocol::slotWhoCommand( const QString &args, KopeteMessageManager *man
 	QStringList argsList = KopeteCommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
 		QString::fromLatin1("WHO %1").arg( argsList.first() ) );
+	m_commandInProgress = true;
+}
+
+void IRCProtocol::slotWhoWasCommand( const QString &args, KopeteMessageManager *manager )
+{
+	QStringList argsList = KopeteCommandHandler::parseArguments( args );
+	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
+		QString::fromLatin1("WHOWAS %1").arg( argsList.first() ) );
 	m_commandInProgress = true;
 }
 
@@ -520,10 +523,8 @@ void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *ma
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must be a channel operator to perform this command."),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -539,10 +540,8 @@ void IRCProtocol::slotBanCommand( const QString &args, KopeteMessageManager *man
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must be a channel operator to perform this command."),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -562,10 +561,8 @@ void IRCProtocol::slotPartCommand( const QString &args, KopeteMessageManager *ma
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must be in a channel to use this command."),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must be in a channel to use this command."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -607,10 +604,8 @@ void IRCProtocol::simpleModeChange( const QString &args, KopeteMessageManager *m
 	}
 	else
 	{
-		KopeteMessage msg(manager->user(), manager->members(),
-			i18n("You must be a channel operator to perform this command."),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager->appendMessage(msg);
+		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
 	}
 }
 
@@ -618,7 +613,7 @@ void IRCProtocol::editNetworks( const QString &networkName )
 {
 	if( !netConf )
 	{
-		netConf = new NetworkConfig( 0L, "network_config", true );
+		netConf = new NetworkConfig( Kopete::UI::Global::mainWidget(), "network_config", true );
 		netConf->host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), netConf ) );
 		netConf->upButton->setPixmap( SmallIcon( "up" )  );
 		netConf->downButton->setPixmap( SmallIcon( "down" ) );
@@ -683,7 +678,7 @@ void IRCProtocol::slotDeleteNetwork()
 {
 	QString network = netConf->networkList->currentText();
 	if( KMessageBox::warningContinueCancel(
-		0L, i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
+		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
 		"Any accounts which use this network will have to be modified.</qt>")
 		.arg(network), i18n("Deleting Network"),
 		i18n("&Delete Network"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
@@ -702,7 +697,7 @@ void IRCProtocol::slotDeleteHost()
 {
 	QString hostName = netConf->host->text();
 	if( KMessageBox::warningContinueCancel(
-		0L, i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
+		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
 		.arg(hostName), i18n("Deleting Host"),
 		i18n("&Delete Host"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
 	{
@@ -791,10 +786,7 @@ void IRCProtocol::slotReadNetworks()
 						else if( serverChild.tagName() == "port" )
 							host->port = serverChild.text().toInt();
 						else if( serverChild.tagName() == "useSSL" )
-						{
 							host->ssl = ( serverChild.text() == "true" );
-							kdDebug() << "SSL Enabled for " << host->host << ":" << host->ssl << endl;
-						}
 
 						serverChild = serverChild.nextSibling().toElement();
 					}
