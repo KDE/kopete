@@ -76,7 +76,7 @@ void WebPresencePlugin::loadSettings()
 	
 	frequency = kconfig->readNumEntry("UploadFrequency" , 15);
 	
-	url = kconfig->readEntry("uploadURL");
+	url = kconfig->readPathEntry("uploadURL");
 	useDefaultStyleSheet = kconfig->readBoolEntry("formatDefault", true);
 	justXml = kconfig->readBoolEntry("formatXML", false);
 	userStyleSheet = kconfig->readEntry("formatStylesheetURL");
