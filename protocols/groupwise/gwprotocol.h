@@ -60,6 +60,10 @@ public:
 	 */
 	static GroupWiseProtocol *protocol();
 	/**
+	 * Transform a GroupWise internal status into a KopeteOnlineStatus
+	 */
+	KopeteOnlineStatus gwStatusToKOS( const int gwInternal );
+	/**
 	 * Online statuses used for contacts' presence
 	 */
 	const KopeteOnlineStatus groupwiseUnknown;
@@ -69,7 +73,8 @@ public:
 	const KopeteOnlineStatus groupwiseAway;
 	const KopeteOnlineStatus groupwiseAwayIdle;
 	const KopeteOnlineStatus groupwiseInvalid;
-
+	const KopeteOnlineStatus groupwiseConnecting;
+	
 	/**
 	 * Represents contacts that are Away
 	 */
@@ -77,6 +82,7 @@ public:
 	const Kopete::ContactPropertyTmpl propLastName;
 	const Kopete::ContactPropertyTmpl propFullName;
 	const Kopete::ContactPropertyTmpl propAwayMessage;
+	const Kopete::ContactPropertyTmpl propAutoReply;
 	const Kopete::ContactPropertyTmpl propCN;
 	
 	

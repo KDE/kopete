@@ -51,10 +51,13 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  		"FIXME: Make this unselectable", i18n( "Idle" ) ),
 	  groupwiseInvalid( KopeteOnlineStatus::Unknown, 25, this, 6, "status_unknown",
 	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ) ),
+	  groupwiseConnecting( KopeteOnlineStatus::Unknown, 0, this, 99, "status_connecting",
+	  		"FIXME: Make this unselectable", i18n( "Connecting" ) ),
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
 	  propAwayMessage( Kopete::Global::Properties::self()->awayMessage() ),
+	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString::null, false, false ),
 	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
@@ -112,6 +115,38 @@ GroupWiseProtocol *GroupWiseProtocol::protocol()
 	return s_protocol;
 }
 
+KopeteOnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
+{
+	KopeteOnlineStatus status;
+	switch ( gwInternal )
+	{
+		case GroupWise::Unknown:
+			status = groupwiseUnknown;
+			break;
+		case GroupWise::Offline:
+			status = groupwiseOffline;
+			break;
+		case GroupWise::Available:
+			status = groupwiseAvailable;
+			break;
+		case GroupWise::Busy:
+			status = groupwiseBusy;
+			break;
+		case GroupWise::Away:
+			status = groupwiseAway;
+			break;
+		case GroupWise::AwayIdle:
+			status = groupwiseAwayIdle;
+			break;
+		case GroupWise::Invalid:
+			status = groupwiseInvalid;
+			break;
+		default:
+			status = groupwiseInvalid;
+			kdWarning( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got unrecognised status value" << gwInternal << endl;
+	}
+	return status;
+}
 
 
 #include "gwprotocol.moc"
