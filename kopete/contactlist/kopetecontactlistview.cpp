@@ -1297,9 +1297,7 @@ void KopeteContactListView::keyPressEvent( QKeyEvent *e )
 {
 	if ( (e->key() == Qt::Key_F2) && currentItem() )
 	{
-		currentItem()->setRenameEnabled(0, true);
-		KListView::keyPressEvent(e);
-		currentItem()->setRenameEnabled(0, false);
+		slotRename();
 	}
 	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && currentItem())
 	{
