@@ -41,8 +41,8 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 	preferencesDialog = new AutoReplacePrefsUI( this );
 
 	// creates table columns (avoids new columns every time)
-	preferencesDialog->m_list->addColumn( i18n("Text") );
-	preferencesDialog->m_list->addColumn( i18n("Replacement") );
+	preferencesDialog->m_list->addColumn( i18n("Text" ) );
+	preferencesDialog->m_list->addColumn( i18n("Replacement" ) );
 
 	// connect SIGNALS/SLOTS
 	connect( preferencesDialog->m_add, SIGNAL(pressed()),
@@ -54,9 +54,9 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 	connect( preferencesDialog->m_value, SIGNAL(textChanged ( const QString & )),
 		SLOT( slotEnableAdd()) ); */
 
-	m_wordListChanged=false;
+	m_wordListChanged = false;
 
-	setMainWidget( preferencesDialog->gb_options , "AutoReplace Plugin" );
+	setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
 
 	m_config = new AutoReplaceConfig;
 	load();
@@ -84,7 +84,7 @@ void AutoReplacePreferences::load()
 		new QListViewItem( preferencesDialog->m_list, it.key(), it.data() );
 	}
 
-	m_wordListChanged=false;
+	m_wordListChanged = false;
 	KCAutoConfigModule::load();
 }
 
@@ -100,7 +100,7 @@ void AutoReplacePreferences::save()
 	m_config->setMap( newWords );
 	m_config->save();
 
-	m_wordListChanged=false;
+	m_wordListChanged = false;
 	KCAutoConfigModule::save();
 }
 
@@ -109,9 +109,9 @@ void AutoReplacePreferences::slotAddCouple()
 {
 	QString k = preferencesDialog->m_key->text();
 	QString v = preferencesDialog->m_value->text();
-	if( !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() ) {
-		QListViewItem * lvi =
-			new QListViewItem( preferencesDialog->m_list, k, v );
+	if ( !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() )
+	{
+		QListViewItem * lvi = new QListViewItem( preferencesDialog->m_list, k, v );
 		// clear k and v [only if added]
 		preferencesDialog->m_key->clear();
 		preferencesDialog->m_value->clear();
@@ -119,10 +119,10 @@ void AutoReplacePreferences::slotAddCouple()
 		// during the next iteration of the event loop
 		preferencesDialog->m_list->triggerUpdate();
 		// select last added
-		preferencesDialog->m_list->setSelected(lvi, true);
+		preferencesDialog->m_list->setSelected( lvi, true );
 	}
 
-	m_wordListChanged=true;
+	m_wordListChanged = true;
 	slotWidgetModified();
 }
 
@@ -130,11 +130,11 @@ void AutoReplacePreferences::slotAddCouple()
 // Single selection mode and an item is selected
 void AutoReplacePreferences::slotRemoveCouple()
 {
-	QListViewItem * lvi = preferencesDialog->m_list->selectedItem();
-	if( lvi )
+	QListViewItem *lvi = preferencesDialog->m_list->selectedItem();
+	if ( lvi )
 		delete lvi;
 
-	m_wordListChanged=true;
+	m_wordListChanged = true;
 	slotWidgetModified();
 }
 
@@ -152,7 +152,7 @@ void AutoReplacePreferences::slotEnableRemove()
 
 void AutoReplacePreferences::slotWidgetModified()
 {
-	setChanged( m_wordListChanged || autoConfig()->hasChanged() ) ;
+	setChanged( m_wordListChanged || autoConfig()->hasChanged() );
 }
 
 #include "autoreplacepreferences.moc"
