@@ -25,23 +25,25 @@
 #include <qfileinfo.h>
 #include <qregexp.h>
 
-void KIRC::registerCtcp()
+using namespace KIRC;
+
+void Engine::registerCtcp()
 {
 //	CTCP Queries
-	addCtcpQueryIrcMethod("ACTION",		&KIRC::CtcpQuery_action,	-1,	-1,	"");
-	addCtcpQueryIrcMethod("CLIENTINFO",	&KIRC::CtcpQuery_clientInfo,	-1,	1,	"");
-	addCtcpQueryIrcMethod("DCC",		&KIRC::CtcpQuery_dcc,		4,	5,	"");
-	addCtcpQueryIrcMethod("FINGER",		&KIRC::CtcpQuery_finger,	-1,	0,	"");
-	addCtcpQueryIrcMethod("PING",		&KIRC::CtcpQuery_pingPong,	1,	1,	"");
-	addCtcpQueryIrcMethod("SOURCE",		&KIRC::CtcpQuery_source,	-1,	0,	"");
-	addCtcpQueryIrcMethod("TIME",		&KIRC::CtcpQuery_time,		-1,	0,	"");
-	addCtcpQueryIrcMethod("USERINFO",	&KIRC::CtcpQuery_userInfo,	-1,	0,	"");
-	addCtcpQueryIrcMethod("VERSION",	&KIRC::CtcpQuery_version,	-1,	0,	"");
+	addCtcpQueryIrcMethod("ACTION",		&Engine::CtcpQuery_action,	-1,	-1,	"");
+	addCtcpQueryIrcMethod("CLIENTINFO",	&Engine::CtcpQuery_clientInfo,	-1,	1,	"");
+	addCtcpQueryIrcMethod("DCC",		&Engine::CtcpQuery_dcc,		4,	5,	"");
+	addCtcpQueryIrcMethod("FINGER",		&Engine::CtcpQuery_finger,	-1,	0,	"");
+	addCtcpQueryIrcMethod("PING",		&Engine::CtcpQuery_pingPong,	1,	1,	"");
+	addCtcpQueryIrcMethod("SOURCE",		&Engine::CtcpQuery_source,	-1,	0,	"");
+	addCtcpQueryIrcMethod("TIME",		&Engine::CtcpQuery_time,		-1,	0,	"");
+	addCtcpQueryIrcMethod("USERINFO",	&Engine::CtcpQuery_userInfo,	-1,	0,	"");
+	addCtcpQueryIrcMethod("VERSION",	&Engine::CtcpQuery_version,	-1,	0,	"");
 
 //	CTCP Replies
-	addCtcpReplyIrcMethod("ERRMSG",		&KIRC::CtcpReply_errorMsg,	1,	-1,	"");
-	addCtcpReplyIrcMethod("PING",		&KIRC::CtcpReply_pingPong,	1,	1,	"");
-	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
+	addCtcpReplyIrcMethod("ERRMSG",		&Engine::CtcpReply_errorMsg,	1,	-1,	"");
+	addCtcpReplyIrcMethod("PING",		&Engine::CtcpReply_pingPong,	1,	1,	"");
+	addCtcpReplyIrcMethod("VERSION",	&Engine::CtcpReply_version,	-1,	-1,	"");
 }
 
 // Normal order for a ctcp command:
@@ -50,7 +52,7 @@ void KIRC::registerCtcp()
 // CtcpReply_* (if any)
 
 /* Generic ctcp commnd for the /ctcp trigger */
-void KIRC::CtcpRequestCommand(const QString &contact, const QString &command)
+void Engine::CtcpRequestCommand(const QString &contact, const QString &command)
 {
 	if(m_status == Connected)
 	{
@@ -59,7 +61,7 @@ void KIRC::CtcpRequestCommand(const QString &contact, const QString &command)
 	}
 }
 
-void KIRC::CtcpRequest_action(const QString &contact, const QString &message)
+void Engine::CtcpRequest_action(const QString &contact, const QString &message)
 {
 	if(m_status == Connected)
 	{
@@ -72,7 +74,7 @@ void KIRC::CtcpRequest_action(const QString &contact, const QString &message)
 	}
 }
 
-bool KIRC::CtcpQuery_action(const KIRCMessage &msg)
+bool Engine::CtcpQuery_action(const Message &msg)
 {
 	QString target = msg.arg(0);
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
@@ -84,13 +86,13 @@ bool KIRC::CtcpQuery_action(const KIRCMessage &msg)
 
 /*
 NO REPLY EXIST FOR THE CTCP ACTION COMMAND !
-bool KIRC::CtcpReply_action(const KIRCMessage &msg)
+bool Engine::CtcpReply_action(const Message &msg)
 {
 }
 */
 
 //	FIXME: the API can now answer to help commands.
-bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
+bool Engine::CtcpQuery_clientInfo(const Message &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("clientinfo") ];
 	if( !response.isNull() )
@@ -110,7 +112,7 @@ bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, KIRCTransfer::Type type)
+void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, KIRCTransfer::Type type)
 {
 	if(	m_status != Connected ||
 		m_sock->localAddress() == 0 ||
@@ -123,7 +125,7 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uin
 		{
 			writeCtcpQueryMessage(nickname, QString::null,
 				QString::fromLatin1("DCC"),
-				KIRC::join( QString::fromLatin1("CHAT"), QString::fromLatin1("chat"),
+				Engine::join( QString::fromLatin1("CHAT"), QString::fromLatin1("chat"),
 					m_sock->localAddress()->nodeName(), QString::number(port)
 				)
 			);
@@ -156,7 +158,7 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uin
 
 			writeCtcpQueryMessage(nickname, QString::null,
 				QString::fromLatin1("DCC"),
-				KIRC::join( QString::fromLatin1( "SEND" ), noWhiteSpace, ipNumber,
+				Engine::join( QString::fromLatin1( "SEND" ), noWhiteSpace, ipNumber,
 					QString::number( server->port() ), QString::number( file.size() )
 				)
 			);
@@ -170,9 +172,9 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uin
 	}
 }
 
-bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
+bool Engine::CtcpQuery_dcc(const Message &msg)
 {
-	const KIRCMessage &ctcpMsg = msg.ctcpMessage();
+	const Message &ctcpMsg = msg.ctcpMessage();
 	QString dccCommand = ctcpMsg.arg(0).upper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
@@ -233,24 +235,24 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 
 /*
 NO REPLY EXIST FOR THE CTCP DCC COMMAND !
-bool KIRC::CtcpReply_dcc(const KIRCMessage &msg)
+bool Engine::CtcpReply_dcc(const Message &msg)
 {
 }
 */
 
-bool KIRC::CtcpReply_errorMsg(const KIRCMessage &)
+bool Engine::CtcpReply_errorMsg(const Message &)
 {
 	// should emit one signal
 	return true;
 }
 
-bool KIRC::CtcpQuery_finger( const KIRCMessage & /* msg */ )
+bool Engine::CtcpQuery_finger( const Message & /* msg */ )
 {
 	// To be implemented
 	return true;
 }
 
-void KIRC::CtcpRequest_pingPong(const QString &target)
+void Engine::CtcpRequest_pingPong(const QString &target)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
@@ -268,14 +270,14 @@ void KIRC::CtcpRequest_pingPong(const QString &target)
 	}
 }
 
-bool KIRC::CtcpQuery_pingPong(const KIRCMessage &msg)
+bool Engine::CtcpQuery_pingPong(const Message &msg)
 {
 	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
 				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 	return true;
 }
 
-bool KIRC::CtcpReply_pingPong( const KIRCMessage &msg )
+bool Engine::CtcpReply_pingPong( const Message &msg )
 {
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
@@ -312,14 +314,14 @@ bool KIRC::CtcpReply_pingPong( const KIRCMessage &msg )
 	return false;
 }
 
-bool KIRC::CtcpQuery_source(const KIRCMessage &msg)
+bool Engine::CtcpQuery_source(const Message &msg)
 {
 	writeCtcpReplyMessage( msg.nickFromPrefix(), QString::null,
 				msg.ctcpMessage().command(), m_SourceString);
 	return true;
 }
 
-bool KIRC::CtcpQuery_time(const KIRCMessage &msg)
+bool Engine::CtcpQuery_time(const Message &msg)
 {
 	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
 				msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
@@ -327,7 +329,7 @@ bool KIRC::CtcpQuery_time(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
+bool Engine::CtcpQuery_userInfo(const Message &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("userinfo") ];
 	if( !response.isNull() )
@@ -344,12 +346,12 @@ bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::CtcpRequest_version(const QString &target)
+void Engine::CtcpRequest_version(const QString &target)
 {
 	writeCtcpQueryMessage(target, QString::null, "VERSION");
 }
 
-bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
+bool Engine::CtcpQuery_version(const Message &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("version") ];
 	kdDebug(14120) << "Version check: " << response << endl;
@@ -363,7 +365,7 @@ bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::CtcpReply_version(const KIRCMessage &msg)
+bool Engine::CtcpReply_version(const Message &msg)
 {
 	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.nickFromPrefix(), msg.ctcpMessage().ctcpRaw());
 	return true;

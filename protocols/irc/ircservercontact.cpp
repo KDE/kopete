@@ -16,27 +16,25 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-
-#include <kdebug.h>
-#include <klocale.h>
-#include <qtimer.h>
-
-#undef KDE_NO_COMPAT
-#include <kaction.h>
-
-#include "kopetemessagemanagerfactory.h"
-#include "kopeteview.h"
 #include "ircusercontact.h"
 #include "ircservercontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
 
+#include "kopetemessagemanagerfactory.h"
+#include "kopeteview.h"
+
+#include <kaction.h>
+#include <kdebug.h>
+#include <klocale.h>
+
+#include <qtimer.h>
+
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, Kopete::MetaContact *m)
 	: IRCContact(contactManager, servername, m, "irc_server")
 {
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(internalError(KIRC::EngineError, const KIRCMessage &)),
-			this, SLOT(engineInternalError(KIRC::EngineError, const KIRCMessage &)));
+	QObject::connect(MYACCOUNT->engine(), SIGNAL(internalError(KIRC::Engine::Error, const KIRC::Message &)),
+			this, SLOT(engineInternalError(KIRC::Engine::Error, const KIRC::Message &)));
 
 	//FIXME: Have some kind of a debug option for raw input/ouput display??
 	/*QObject::connect(m_engine, SIGNAL(sentMessage(const KIRCMessage &)),
@@ -67,17 +65,17 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 
 void IRCServerContact::updateStatus()
 {
-	KIRC::EngineStatus status = MYACCOUNT->engine()->status();
+	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
 	switch( status )
 	{
-		case KIRC::Disconnected:
-		case KIRC::Connecting:
+		case KIRC::Engine::Disconnected:
+		case KIRC::Engine::Connecting:
 			setOnlineStatus( m_protocol->m_ServerStatusOffline );
 			break;
 
-		case KIRC::Authentifying:
-		case KIRC::Connected:
-		case KIRC::Closing:
+		case KIRC::Engine::Authentifying:
+		case KIRC::Engine::Connected:
+		case KIRC::Engine::Closing:
 			// should make some extra check here
 			setOnlineStatus( m_protocol->m_ServerStatusOnline );
 			break;
@@ -92,24 +90,24 @@ const QString IRCServerContact::caption() const
 	return i18n("%1 @ %2").arg( MYACCOUNT->mySelf()->nickName() ).arg( MYACCOUNT->engine()->currentHost() );
 }
 
-void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const KIRCMessage &ircmsg )
+void IRCServerContact::engineInternalError( KIRC::Engine::Error engineError, const KIRC::Message &ircmsg )
 {
 	QString error;
 	switch( engineError )
 	{
-		case KIRC::ParsingFailed:
+		case KIRC::Engine::ParsingFailed:
 			error = i18n("KIRC Error - Parse error: ");
 			break;
-		case KIRC::UnknownCommand:
+		case KIRC::Engine::UnknownCommand:
 			error = i18n("KIRC Error - Unknown command: ");
 			break;
-		case KIRC::UnknownNumericReply:
+		case KIRC::Engine::UnknownNumericReply:
 			error = i18n("KIRC Error - Unknown numeric reply: ");
 			break;
-		case KIRC::InvalidNumberOfArguments:
+		case KIRC::Engine::InvalidNumberOfArguments:
 			error = i18n("KIRC Error - Invalid number of arguments: ");
 			break;
-		case KIRC::MethodFailed:
+		case KIRC::Engine::MethodFailed:
 			error = i18n("KIRC Error - Method failed: ");
 			break;
 		default:

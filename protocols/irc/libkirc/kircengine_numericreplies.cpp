@@ -23,201 +23,203 @@
 
 #include <qtimer.h>
 
-void KIRC::registerNumericReplies()
+using namespace KIRC;
+
+void Engine::registerNumericReplies()
 {
 //	Note: Numeric replies always have the current nick or *(when undefined) as first argmuent.
-	addNumericIrcMethod( 1, &KIRC::numericReply_001, 1, 1);
+	addNumericIrcMethod( 1, &Engine::numericReply_001, 1, 1);
 
 	/* Gives information about the host, close to 004 (See case 004) in the form of:
 	 * ":Your host is <servername>, running version <ver>" */
-	addNumericIrcMethod( 2, new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
+	addNumericIrcMethod( 2, new KIRCMethodFunctor_S_Suffix<Engine>(this, &Engine::incomingConnectString, 1, 1));
 
 	/* Gives the date that this server was created (useful for determining the uptime of the server) in the form of:
 	 * "This server was created <date>" */
-	addNumericIrcMethod( 3, new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
+	addNumericIrcMethod( 3, new KIRCMethodFunctor_S_Suffix<Engine>(this, &Engine::incomingConnectString, 1, 1));
 
 	/* Gives information about the servername, version, available modes, etc in the form of:
 	 * "<servername> <version> <available user modes> <available channel modes>"
 	 */
-	addNumericIrcMethod( 4, &KIRC::numericReply_004,	5,	5);
+	addNumericIrcMethod( 4, &Engine::numericReply_004,	5,	5);
 
 	/* NOT IN RFC1459 NOR RFC2812
 	 * Tells connections statistics about the server for the uptime activity:
 	 * ":Highest connection count: <integer> (<integer> clients) (<integer> since server was (re)started)"
 	 * This is not the only form of this message ignoring it for now.
 	 * FIXME: Implement me */
-	addNumericIrcMethod( 250, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 250, Engine::IgnoreMethod );
 
 	/* Tells how many user there are on all the different servers in the form of:
 	 * ":There are <integer> users and <integer> services on <integer> servers" */
-	addNumericIrcMethod( 251, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 251, Engine::IgnoreMethod );
 
 	/* Issues a number of operators on the server in the form of:
 	 * "<integer> :operator(s) online" */
 	// FIXME: send an integer instead of a QString
-	addNumericIrcMethod( 252, &KIRC::numericReply_252,	2,	2);
+	addNumericIrcMethod( 252, &Engine::numericReply_252,	2,	2);
 
 	/* Tells how many unknown connections the server has in the form of:
 	 * "<integer> :unknown connection(s)" */
 	// FIXME: send an integer instead of a QString
-	addNumericIrcMethod( 253, &KIRC::numericReply_253,	2,	2);
+	addNumericIrcMethod( 253, &Engine::numericReply_253,	2,	2);
 
 	/* Tells how many total channels there are on this network in the form of:
 	 * "<integer> :channels formed" */
 	// FIXME: send an integer instead of a QString
-	addNumericIrcMethod( 254, &KIRC::numericReply_254,	2,	2);
+	addNumericIrcMethod( 254, &Engine::numericReply_254,	2,	2);
 
 	/* Tells how many clients and servers *this* server handles in the form of:
 	 * ":I have <integer> clients and <integer> servers" */
-	addNumericIrcMethod( 255, new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
+	addNumericIrcMethod( 255, new KIRCMethodFunctor_S_Suffix<Engine>(this, &Engine::incomingConnectString, 1, 1));
 
 	//Server is too busy
-	addNumericIrcMethod( 263, new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingServerLoadTooHigh));
+	addNumericIrcMethod( 263, new KIRCMethodFunctor_Empty<Engine>(this, &Engine::incomingServerLoadTooHigh));
 
 	/* NOT IN RFC2812
 	 * Tells statistics about the current local server state:
 	 * ":Current local  users: <integer>  Max: <integer>" */
-	addNumericIrcMethod( 265, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 265, Engine::IgnoreMethod );
 
 	/* Tells statistics about the current global(the whole irc server chain) server state:
 	 * ":Current global users: <integer>  Max: <integer>" */
-	addNumericIrcMethod( 266, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 266, Engine::IgnoreMethod );
 
 	/* "<nick> :<away message>"
 	 */
-	addNumericIrcMethod( 301, new KIRCMethodFunctor_SS_Suffix<KIRC,1>(this, &KIRC::incomingUserIsAway, 2, 2));
+	addNumericIrcMethod( 301, new KIRCMethodFunctor_SS_Suffix<Engine,1>(this, &Engine::incomingUserIsAway, 2, 2));
 
-	addNumericIrcMethod( 303, &KIRC::numericReply_303,	1,	1);
+	addNumericIrcMethod( 303, &Engine::numericReply_303,	1,	1);
 
 	/* ":You are no longer marked as being away"
 	 */
-	addNumericIrcMethod( 305, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 305, Engine::IgnoreMethod );
 
 	/* ":You have been marked as being away"
 	 */
-	addNumericIrcMethod( 306, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 306, Engine::IgnoreMethod );
 
 	/* DALNET: Indicates that this user is identified with NICSERV. */
-	addNumericIrcMethod( 307, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
+	addNumericIrcMethod( 307, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingWhoIsIdentified, 2, 2));
 
 	/* Show info about a user (part of a /whois) in the form of:
 	 * "<nick> <user> <host> * :<real name>" */
-	addNumericIrcMethod( 311, &KIRC::numericReply_311,	5,	5);
+	addNumericIrcMethod( 311, &Engine::numericReply_311,	5,	5);
 
 	/* Show info about a server (part of a /whois) in the form of:
 	 * "<nick> <server> :<server info>" */
-	addNumericIrcMethod( 312, &KIRC::numericReply_312,	3,	3);
+	addNumericIrcMethod( 312, &Engine::numericReply_312,	3,	3);
 
 	/* Show info about an operator (part of a /whois) in the form of:
 	 * "<nick> :is an IRC operator" */
-	addNumericIrcMethod( 313, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsOperator, 2, 2));
+	addNumericIrcMethod( 313, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingWhoIsOperator, 2, 2));
 
 	/* Show WHOWAS Info
 	 * "<nick> <user> <host> * :<real name>" */
-	addNumericIrcMethod( 314, &KIRC::numericReply_314,	5,	5);
+	addNumericIrcMethod( 314, &Engine::numericReply_314,	5,	5);
 
-	addNumericIrcMethod( 315, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWho, 2, 2));
+	addNumericIrcMethod( 315, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingEndOfWho, 2, 2));
 
-	addNumericIrcMethod( 317, &KIRC::numericReply_317,	3,	4);
+	addNumericIrcMethod( 317, &Engine::numericReply_317,	3,	4);
 
 	/* Receive end of WHOIS in the form of
 	 * "<nick> :End of /WHOIS list" */
-	addNumericIrcMethod( 318, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhois, 2, 2));
+	addNumericIrcMethod( 318, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingEndOfWhois, 2, 2));
 
-	addNumericIrcMethod( 319, &KIRC::numericReply_319,	2,	2);
+	addNumericIrcMethod( 319, &Engine::numericReply_319,	2,	2);
 
 	/* Indicates that this user is identified with NICSERV on FREENODE */
-	addNumericIrcMethod( 320, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
+	addNumericIrcMethod( 320, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingWhoIsIdentified, 2, 2));
 
 	/* RFC1459: "<channel> :Users  Name" ("Channel :Users  Name")
 	 * RFC2812: Obsolete. Not used. */
-	addNumericIrcMethod( 321, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 321, Engine::IgnoreMethod );
 
 	/* Received one channel from the LIST command.
 	 * "<channel> <# visible> :<topic>" */
-	addNumericIrcMethod( 322, &KIRC::numericReply_322,	3,	3);
+	addNumericIrcMethod( 322, &Engine::numericReply_322,	3,	3);
 
 	/* End of the LIST command.
 	 * ":End of LIST" */
-	addNumericIrcMethod( 323, new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingEndOfList));
+	addNumericIrcMethod( 323, new KIRCMethodFunctor_Empty<Engine>(this, &Engine::incomingEndOfList));
 
-	addNumericIrcMethod( 324, &KIRC::numericReply_324,	2,	4);
+	addNumericIrcMethod( 324, &Engine::numericReply_324,	2,	4);
 
-	addNumericIrcMethod( 328, &KIRC::numericReply_328,	2,	2);
+	addNumericIrcMethod( 328, &Engine::numericReply_328,	2,	2);
 
-	addNumericIrcMethod( 329, &KIRC::numericReply_329,	3,	3);
+	addNumericIrcMethod( 329, &Engine::numericReply_329,	3,	3);
 
-	addNumericIrcMethod( 331, &KIRC::numericReply_331,	2,	2);
+	addNumericIrcMethod( 331, &Engine::numericReply_331,	2,	2);
 
-	addNumericIrcMethod( 332, &KIRC::numericReply_332,	2,	2);
+	addNumericIrcMethod( 332, &Engine::numericReply_332,	2,	2);
 
-	addNumericIrcMethod( 333, &KIRC::numericReply_333,	4,	4);
+	addNumericIrcMethod( 333, &Engine::numericReply_333,	4,	4);
 
 	//WHO Reply
-	addNumericIrcMethod( 352, &KIRC::numericReply_352,	5,	10);
+	addNumericIrcMethod( 352, &Engine::numericReply_352,	5,	10);
 
 	//NAMES list
-	addNumericIrcMethod( 353, &KIRC::numericReply_353,	3,	3);
+	addNumericIrcMethod( 353, &Engine::numericReply_353,	3,	3);
 
 	/* Gives a signal to indicate that the NAMES list has ended for a certain channel in the form of:
 	 * "<channel> :End of NAMES list" */
-	addNumericIrcMethod( 366, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfNames, 2, 2));
+	addNumericIrcMethod( 366, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingEndOfNames, 2, 2));
 
 	/* End of WHOWAS Request */
-	addNumericIrcMethod( 369, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhoWas, 2, 2));
+	addNumericIrcMethod( 369, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingEndOfWhoWas, 2, 2));
 
 	/* Part of the MOTD.
 	 * ":- <text>" */
-	addNumericIrcMethod( 372, &KIRC::numericReply_372,	1,	1);
+	addNumericIrcMethod( 372, &Engine::numericReply_372,	1,	1);
 
 	/* Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
 	 * ":- <server> Message of the day - "
 	 */
-	addNumericIrcMethod( 375, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 375, Engine::IgnoreMethod );
 
 	/* End of the motd.
 	 * ":End of MOTD command" */
-	addNumericIrcMethod( 376, KIRC::IgnoreMethod );
+	addNumericIrcMethod( 376, Engine::IgnoreMethod );
 
 	/* Gives a signal to indicate that the command issued failed because the person not being on IRC in the for of:
 	 * "<nickname> :No such nick/channel"
 	 *  - Used to indicate the nickname parameter supplied to a command is currently unused. */
-	addNumericIrcMethod( 401, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingNoNickChan, 2, 2));
+	addNumericIrcMethod( 401, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingNoNickChan, 2, 2));
 
-	addNumericIrcMethod( 404, new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
+	addNumericIrcMethod( 404, new KIRCMethodFunctor_SS_Suffix<Engine, 1>(this, &Engine::incomingCannotSendToChannel, 2, 2));
 
 	/* Like case 401, but when there *was* no such nickname
 	 * "<nickname> :There was no such nickname" */
-	addNumericIrcMethod( 406, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWasNoNick, 2, 2));
+	addNumericIrcMethod( 406, new KIRCMethodFunctor_S<Engine, 1>(this, &Engine::incomingWasNoNick, 2, 2));
 
-	addNumericIrcMethod( 433, &KIRC::numericReply_433,	2,	2);
+	addNumericIrcMethod( 433, &Engine::numericReply_433,	2,	2);
 
-	addNumericIrcMethod( 442, new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
+	addNumericIrcMethod( 442, new KIRCMethodFunctor_SS_Suffix<Engine, 1>(this, &Engine::incomingCannotSendToChannel, 2, 2));
 
 	/* Bad server password
 	 * ":Password Incorrect"
 	 */
-	addNumericIrcMethod( 464, &KIRC::numericReply_464,	1,	1);
+	addNumericIrcMethod( 464, &Engine::numericReply_464,	1,	1);
 
 	/* Channel is Full */
-	addNumericIrcMethod( 471, &KIRC::numericReply_471,	2,	2);
+	addNumericIrcMethod( 471, &Engine::numericReply_471,	2,	2);
 
 	/* Invite Only */
-	addNumericIrcMethod( 473, &KIRC::numericReply_473,	2,	2);
+	addNumericIrcMethod( 473, &Engine::numericReply_473,	2,	2);
 
 	/* Banned */
-	addNumericIrcMethod( 474, &KIRC::numericReply_474,	2,	2);
+	addNumericIrcMethod( 474, &Engine::numericReply_474,	2,	2);
 
 	/* Wrong Chan-key */
-	addNumericIrcMethod( 475, &KIRC::numericReply_475,	2,	2);
+	addNumericIrcMethod( 475, &Engine::numericReply_475,	2,	2);
 
 	/* DALNET:
 	 * "<channel> :You need a registered nick to join that channel."
 	 */
-//	addNumericIrcMethod( 477, &KIRC::numericReply_477,	2,	2);
+//	addNumericIrcMethod( 477, &Engine::numericReply_477,	2,	2);
 }
 
-bool KIRC::numericReply_001(const KIRCMessage &msg)
+bool Engine::numericReply_001(const Message &msg)
 {
 	kdDebug(14121) << k_funcinfo << endl;
 
@@ -245,41 +247,41 @@ bool KIRC::numericReply_001(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_004(const KIRCMessage &msg)
+bool Engine::numericReply_004(const Message &msg)
 {
 	emit incomingHostInfo(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
 	return true;
 }
 
-bool KIRC::numericReply_252(const KIRCMessage &msg)
+bool Engine::numericReply_252(const Message &msg)
 {
 	emit incomingConnectString( msg.toString() );
 	return true;
 }
 
-bool KIRC::numericReply_253(const KIRCMessage &msg)
+bool Engine::numericReply_253(const Message &msg)
 {
 	emit incomingConnectString( msg.toString() );
 	return true;
 }
 
-bool KIRC::numericReply_254(const KIRCMessage &msg)
+bool Engine::numericReply_254(const Message &msg)
 {
 	emit incomingConnectString( msg.toString() );
 	return true;
 }
 
-bool KIRC::numericReply_265(const KIRCMessage &)
+bool Engine::numericReply_265(const Message &)
 {
 	return true;
 }
 
-bool KIRC::numericReply_266(const KIRCMessage &)
+bool Engine::numericReply_266(const Message &)
 {
 	return true;
 }
 
-bool KIRC::numericReply_303(const KIRCMessage &msg)
+bool Engine::numericReply_303(const Message &msg)
 {
 	/* ":*1<nick> *(" " <nick> )"
 	 */
@@ -292,35 +294,35 @@ bool KIRC::numericReply_303(const KIRCMessage &msg)
 	return true;
 }
 /*
-bool KIRC::numericReply_305(const KIRCMessage &msg)
+bool Engine::numericReply_305(const Message &msg)
 {
 	return true;
 }
 
-bool KIRC::numericReply_306(const KIRCMessage &msg)
+bool Engine::numericReply_306(const Message &msg)
 {
 	return true;
 }
 */
-bool KIRC::numericReply_311(const KIRCMessage &msg)
+bool Engine::numericReply_311(const Message &msg)
 {
 	emit incomingWhoIsUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 	return true;
 }
 
-bool KIRC::numericReply_312(const KIRCMessage &msg)
+bool Engine::numericReply_312(const Message &msg)
 {
 	emit incomingWhoIsServer(msg.arg(1), msg.arg(2), msg.suffix());
 	return true;
 }
 
-bool KIRC::numericReply_314(const KIRCMessage &msg)
+bool Engine::numericReply_314(const Message &msg)
 {
 	emit incomingWhoWasUser( msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix() );
 	return true;
 }
 
-bool KIRC::numericReply_317(const KIRCMessage &msg)
+bool Engine::numericReply_317(const Message &msg)
 {
 	/* RFC say: "<nick> <integer> :seconds idle"
 	 * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
@@ -332,7 +334,7 @@ bool KIRC::numericReply_317(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_319(const KIRCMessage &msg)
+bool Engine::numericReply_319(const Message &msg)
 {
 	/* Show info a channel a user is logged in (part of a /whois) in the form of:
 	 * "<nick> :{[@|+]<channel><space>}"
@@ -341,7 +343,7 @@ bool KIRC::numericReply_319(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_322(const KIRCMessage &msg)
+bool Engine::numericReply_322(const Message &msg)
 {
 	/* "<channel> <# visible> :<topic>"
 	 */
@@ -351,7 +353,7 @@ bool KIRC::numericReply_322(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_324(const KIRCMessage &msg)
+bool Engine::numericReply_324(const Message &msg)
 {
 	/* "<channel> <mode> <mode params>"
 	 */
@@ -359,7 +361,7 @@ bool KIRC::numericReply_324(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_328(const KIRCMessage &msg)
+bool Engine::numericReply_328(const Message &msg)
 {
 	/* "<channel> <mode> <mode params>"
 	 */
@@ -368,7 +370,7 @@ bool KIRC::numericReply_328(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_329( const KIRCMessage & /* msg */ )
+bool Engine::numericReply_329( const Message & /* msg */ )
 {
 	/* NOT IN RFC1459 NOR RFC2812
 	 * "%s %lu"
@@ -377,7 +379,7 @@ bool KIRC::numericReply_329( const KIRCMessage & /* msg */ )
 	return true;
 }
 
-bool KIRC::numericReply_331( const KIRCMessage & /* msg */ )
+bool Engine::numericReply_331( const Message & /* msg */ )
 {
 	/* Gives the existing topic for a channel after a join.
 	 * "<channel> :No topic is set"
@@ -386,7 +388,7 @@ bool KIRC::numericReply_331( const KIRCMessage & /* msg */ )
 	return true;
 }
 
-bool KIRC::numericReply_332(const KIRCMessage &msg)
+bool Engine::numericReply_332(const Message &msg)
 {
 	/* Gives the existing topic for a channel after a join.
 	 * "<channel> :<topic>"
@@ -395,7 +397,7 @@ bool KIRC::numericReply_332(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_333( const KIRCMessage &msg )
+bool Engine::numericReply_333( const Message &msg )
 {
 	/* Gives the nickname and time who changed the topic
 	 */
@@ -406,7 +408,7 @@ bool KIRC::numericReply_333( const KIRCMessage &msg )
 	 return true;
 }
 
-bool KIRC::numericReply_352(const KIRCMessage &msg)
+bool Engine::numericReply_352(const Message &msg)
 {
 	QStringList suffix = QStringList::split( ' ', msg.suffix() );
 
@@ -425,19 +427,19 @@ bool KIRC::numericReply_352(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_353(const KIRCMessage &msg)
+bool Engine::numericReply_353(const Message &msg)
 {
 	emit incomingNamesList(msg.arg(2), QStringList::split(' ', msg.suffix()));
 	return true;
 }
 
-bool KIRC::numericReply_372(const KIRCMessage &msg)
+bool Engine::numericReply_372(const Message &msg)
 {
 	emit incomingMotd( msg.suffix() );
 	return true;
 }
 
-bool KIRC::numericReply_433(const KIRCMessage &msg)
+bool Engine::numericReply_433(const Message &msg)
 {
 	/* "<nick> :Nickname is already in use"
 	 * Tells us that our nickname is already in use.
@@ -462,38 +464,38 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_464(const KIRCMessage &/*msg*/)
+bool Engine::numericReply_464(const Message &/*msg*/)
 {
 	/* Server need pass.. Call disconnect */
 	emit incomingFailedServerPassword();
 	return true;
 }
 
-bool KIRC::numericReply_471(const KIRCMessage &msg)
+bool Engine::numericReply_471(const Message &msg)
 {
 	emit incomingFailedChanFull(msg.arg(1));
 	return true;
 }
 
-bool KIRC::numericReply_473(const KIRCMessage &msg)
+bool Engine::numericReply_473(const Message &msg)
 {
 	emit incomingFailedChanInvite(msg.arg(1));
 	return true;
 }
 
-bool KIRC::numericReply_474(const KIRCMessage &msg)
+bool Engine::numericReply_474(const Message &msg)
 {
 	emit incomingFailedChanBanned(msg.arg(1));
 	return true;
 }
 
-bool KIRC::numericReply_475(const KIRCMessage &msg)
+bool Engine::numericReply_475(const Message &msg)
 {
 	emit incomingFailedChankey(msg.arg(1));
 	return true;
 }
 /*
-bool KIRC::numericReply_477(const KIRCMessage &msg)
+bool Engine::numericReply_477(const Message &msg)
 {
 	emit incomingChannelNeedRegistration(msg.arg(2), msg.suffix());
 	return true;

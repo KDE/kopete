@@ -35,7 +35,7 @@
 #include "ksparser.h"
 
 IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon)
-	: Kopete::Contact( contactManager->account(), nick, metac, icon),
+	: Kopete::Contact(contactManager->account(), nick, metac, icon),
 	  m_nickName(nick),
 	  m_msgManager(0L)
 {
@@ -57,7 +57,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	QObject::connect(MYACCOUNT->engine(), SIGNAL(incomingQuitIRC(const QString &, const QString &)),
 			this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(statusChanged(KIRC::EngineStatus)),
+	QObject::connect(MYACCOUNT->engine(), SIGNAL(statusChanged(KIRC::Engine::Status)),
 			this, SLOT(updateStatus()));
 
 	MYACCOUNT->engine()->setCodec( m_nickName, codec() );
@@ -113,7 +113,7 @@ Kopete::MessageManager *IRCContact::manager(bool canCreate)
 {
 	if( canCreate && !m_msgManager )
 	{
-		if(MYACCOUNT->engine()->status() == KIRC::Disconnected)
+		if(MYACCOUNT->engine()->status() == KIRC::Engine::Disconnected)
 			MYACCOUNT->connect();
 
 		m_msgManager = Kopete::MessageManagerFactory::factory()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());

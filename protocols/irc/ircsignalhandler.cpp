@@ -22,9 +22,11 @@
 
 #include "kircengine.h"
 
-IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager(m)
+IRCSignalHandler::IRCSignalHandler(IRCContactManager *m)
+	: QObject(m),
+	  manager(m)
 {
-	KIRC *m_engine = static_cast<IRCAccount*>( manager->mySelf()->account() )->engine();
+	KIRC::Engine *m_engine = static_cast<IRCAccount*>( manager->mySelf()->account() )->engine();
 
 	//Channel Connections to ourself
 	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),

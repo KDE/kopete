@@ -15,15 +15,6 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <klocale.h>
-
-#undef KDE_NO_COMPAT
-#include <kaction.h>
-#include <kfiledialog.h>
-
-#include <qtimer.h>
-
 #include "ircusercontact.h"
 #include "ircservercontact.h"
 #include "ircchannelcontact.h"
@@ -31,8 +22,16 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 #include "kcodecaction.h"
+
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
+
+#include <kaction.h>
+#include <kdebug.h>
+#include <kfiledialog.h>
+#include <klocale.h>
+
+#include <qtimer.h>
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
@@ -61,23 +60,23 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 void IRCUserContact::updateStatus()
 {
-	KIRC::EngineStatus status = MYACCOUNT->engine()->status();
+	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
 	switch( status )
 	{
-		case KIRC::Disconnected:
+		case KIRC::Engine::Disconnected:
 			setOnlineStatus(m_protocol->m_UserStatusOffline);
 			break;
 
-		case KIRC::Connecting:
-		case KIRC::Authentifying:
+		case KIRC::Engine::Connecting:
+		case KIRC::Engine::Authentifying:
 			if(this == MYACCOUNT->mySelf())
 				setOnlineStatus(m_protocol->m_UserStatusConnecting);
 			else
 				setOnlineStatus(m_protocol->m_UserStatusOffline);
 			break;
 
-		case KIRC::Connected:
-		case KIRC::Closing:
+		case KIRC::Engine::Connected:
+		case KIRC::Engine::Closing:
 			if( m_isAway )
 				setOnlineStatus(m_protocol->m_UserStatusAway);
 			else if( m_isOnline )

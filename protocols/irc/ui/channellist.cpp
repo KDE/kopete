@@ -64,7 +64,7 @@ int ChannelListItem::compare( QListViewItem *i, int col, bool ascending ) const
 		return QListViewItem::compare( i, col, ascending );
 }
 
-ChannelList::ChannelList( QWidget* parent, KIRC *engine )
+ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
     : QWidget( parent ), m_engine( engine )
 {
 	ChannelListLayout = new QVBoxLayout( this, 11, 6, "ChannelListLayout");

@@ -24,12 +24,15 @@
 #include <qobject.h>
 #include <qtextstream.h>
 
-class KIRC;
-
 class KExtendedSocket;
 
 class QFile;
 class QTextCodec;
+
+namespace KIRC
+{
+class Engine;
+};
 
 class KIRCTransfer
 	: public QObject
@@ -54,21 +57,21 @@ public:
 		Closed
 	};
 public:
-	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress
 			Type type = Unknown,
 			QObject *parent = 0L, const char *name = 0L );
 
-	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, Q_UINT16 peer_port,
 			KIRCTransfer::Type type,
 			QObject *parent = 0L, const char *name = 0L );
 
-	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 
-	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, Q_UINT16 peer_port,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
@@ -92,7 +95,7 @@ public:
 */
 	~KIRCTransfer();
 
-	KIRC *engine() const
+	KIRC::Engine *engine() const
 		{ return m_engine; }
 	QString nick() const
 		{ return m_nick; }
@@ -155,7 +158,7 @@ protected:
 //	void emitSignals();
 	void checkFileTransferEnd( Q_UINT32 fileSizeAck );
 
-	KIRC *		m_engine;
+	KIRC::Engine *	m_engine;
 	QString		m_nick;
 
 	Type		m_type;

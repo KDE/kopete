@@ -35,7 +35,7 @@ class KIRCTransferServer
 public:
 //	KIRCTransferServer(QObject *parent = 0, const char *name = 0);
 	KIRCTransferServer(Q_UINT16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
-	KIRCTransferServer(KIRC *engine, QString nick,// QString nick_peer_adress,
+	KIRCTransferServer(KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0, const char *name = 0);
@@ -62,7 +62,7 @@ private:
 	int			m_backlog;
 
 	// The following will be deprecated ...
-	KIRC *			m_engine;
+	KIRC::Engine *		m_engine;
 	QString			m_nick;
 	KIRCTransfer::Type	m_type;
 	QString			m_fileName;

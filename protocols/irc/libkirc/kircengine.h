@@ -1,8 +1,8 @@
 /*
-    kirc.h - IRC Client
+    kircengine.h - IRC Client
 
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -17,42 +17,47 @@
     *************************************************************************
 */
 
-#ifndef KIRC_H
-#define KIRC_H
+#ifndef KIRCENGINE_H
+#define KIRCENGINE_H
 
-#include <qdict.h>
-#include <qintdict.h>
-#include <qdatetime.h>
-#include <qregexp.h>
-#include <qstring.h>
-#include <qstringlist.h>
+#include "kircmessage.h"
+#include "kirctransfer.h"
 
 #include <kdeversion.h>
 
+// FIXME: Move the following kdedebug class to the *.cpp.
 #include <kdebug.h>
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 #include <kdebugclasses.h>
 #endif
 
-#include "kirctransfer.h"
-#include "kircmessage.h"
+#include <qdatetime.h>
+#include <qdict.h>
+#include <qintdict.h>
+#include <qregexp.h>
+#include <qstring.h>
+#include <qstringlist.h>
 
 class QTimer;
 class QRegExp;
 
 class KIRCMethodFunctorCall;
 
+namespace KIRC
+{
+
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class KIRC : public QObject
+class Engine
+	: public QObject
 {
 	Q_OBJECT
 
 public:
-	typedef enum EngineError
+	typedef enum Error
 	{
 		ParsingFailed,
 		UnknownCommand,
@@ -61,7 +66,7 @@ public:
 		MethodFailed
 	};
 
-	typedef enum EngineStatus
+	typedef enum Status
 	{
 		Disconnected = 0,
 		Connecting = 1,
@@ -70,8 +75,8 @@ public:
 		Closing = 4
 	};
 
-	KIRC( QObject *parent = 0, const char* name = 0 );
-	~KIRC();
+	Engine( QObject *parent = 0, const char* name = 0 );
+	~Engine();
 
 	inline const QString &currentHost() const
 		{ return m_Host; };
@@ -118,7 +123,7 @@ public:
 	KExtendedSocket *socket()
 		{ return m_sock; };
 
-	EngineStatus status() const
+	inline KIRC::Engine::Status status() const
 		{ return m_status; }
 
 	inline bool isDisconnected() const
@@ -210,9 +215,9 @@ signals:
 	void disconnected();
 	void successfulQuit();
 	void connectionTimeout();
-	void internalError(KIRC::EngineError, const KIRCMessage &);
-	void statusChanged(KIRC::EngineStatus newStatus);
-	void receivedMessage(const KIRCMessage &);
+	void internalError(KIRC::Engine::Error, const KIRC::Message &);
+	void statusChanged(KIRC::Engine::Status newStatus);
+	void receivedMessage(const KIRC::Message &);
 	void successfullyChangedNick(const QString &, const QString &);
 
 	//ServerContact Signals
@@ -303,9 +308,9 @@ private:
 	void registerNumericReplies();
 	void registerCtcp();
 
-	void setStatus(EngineStatus status);
+	void setStatus(KIRC::Engine::Status status);
 	bool canSend( bool mustBeConnected ) const;
-	bool invokeCtcpCommandOfMessage(const KIRCMessage &message, const QDict<KIRCMethodFunctorCall> &map);
+	bool invokeCtcpCommandOfMessage(const KIRC::Message &message, const QDict<KIRCMethodFunctorCall> &map);
 
 	//Joins a bunch of strings with " "
 	inline static const QStringList join( const QString &arg1, const QString &arg2 = QString::null,
@@ -317,8 +322,8 @@ private:
 //		return ret.join( QChar(' ') ).stripWhiteSpace();
 	}
 
-	typedef bool ircMethod(const KIRCMessage &msg);
-	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
+	typedef bool ircMethod(const KIRC::Message &msg);
+	typedef bool (KIRC::Engine::*pIrcMethod)(const KIRC::Message &msg);
 
 	//KIRCMethodFunctor registration
 	void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method);
@@ -422,7 +427,7 @@ private:
 	//Static regexes
 	static const QRegExp m_RemoveLinefeeds;
 
-	EngineStatus m_status;
+	KIRC::Engine::Status m_status;
 	QString m_Host;
 	Q_UINT16 m_Port;
 
@@ -453,7 +458,9 @@ private:
 	KExtendedSocket *m_sock;
 };
 
-#endif // KIRC_H
+};
+
+#endif
 
 // vim: set noet ts=4 sts=4 sw=4:
 

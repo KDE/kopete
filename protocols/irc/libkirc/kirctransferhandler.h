@@ -39,12 +39,12 @@ public:
 	KIRCTransferServer *server();
 	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
 
-	KIRCTransferServer *createServer(KIRC *engine, QString m_userName,
+	KIRCTransferServer *createServer(KIRC::Engine *engine, QString m_userName,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize);
 
 	KIRCTransfer *createClient(
-		KIRC *engine, QString nick,// QString nick_peer_adress,
+		KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 		QHostAddress peer_address, Q_UINT16 peer_port,
 		KIRCTransfer::Type type,
 		QString file = QString::null, Q_UINT32 fileSize = 0 );

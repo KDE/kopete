@@ -19,29 +19,38 @@
 #ifndef IRCACCOUNT_H
 #define IRCACCOUNT_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <kdialogbase.h>
+#include "ircprotocol.h"
 
 #include "kopeteaccount.h"
-#include "ircprotocol.h"
+
+#include <kdialogbase.h>
+
+#include <qstring.h>
+#include <qstringlist.h>
+
+class ChannelList;
+class IRCChannelContact;
+class IRCContactManager;
+class IRCServerContact;
+class IRCProtocol;
+class IRCUserContact;
+
+namespace KIRC
+{
+class Engine;
+}
+
+namespace Kopete
+{
+class AwayAction;
+class Contact;
+class Message;
+class MessageManager;
+class MetaContact;
+}
 
 class KAction;
 class KActionMenu;
-namespace Kopete { class AwayAction; }
-
-namespace Kopete { class MetaContact; }
-namespace Kopete { class Message; }
-namespace Kopete { class Contact; }
-namespace Kopete { class MessageManager; }
-
-class KIRC;
-class IRCProtocol;
-class IRCContactManager;
-class IRCChannelContact;
-class IRCServerContact;
-class IRCUserContact;
-class ChannelList;
 
 struct IRCHost
 {
@@ -58,12 +67,13 @@ struct IRCNetwork
 	QValueList<IRCHost*> hosts;
 };
 
-class ChannelListDialog : public KDialogBase
+class ChannelListDialog
+	: public KDialogBase
 {
 	Q_OBJECT
 
 	public:
-		ChannelListDialog( KIRC *engine, const QString &caption, QObject *target, const char* slotJoinChan );
+		ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan);
 
 		void clear();
 
@@ -73,11 +83,12 @@ class ChannelListDialog : public KDialogBase
 		void slotChannelDoubleClicked( const QString & );
 
 	private:
-		KIRC *m_engine;
+		KIRC::Engine *m_engine;
 		ChannelList *m_list;
 };
 
-class IRCAccount:  public Kopete::Account
+class IRCAccount
+	: public Kopete::Account
 {
 	friend class IRCEditAccountWidget;
 	friend class IRCProtocolHandler;
@@ -152,7 +163,7 @@ public slots:
 	virtual bool isConnected();
 
 	// Returns the KIRC engine instance
-	KIRC *engine() const { return m_engine; }
+	KIRC::Engine *engine() const { return m_engine; }
 
 	// Returns the IRCProtocol instance for contacts
 	IRCProtocol *protocol() const { return m_protocol; }
@@ -204,7 +215,7 @@ private:
 	bool triedAltNick;
 	QString autoConnect;
 
-	KIRC *m_engine;
+	KIRC::Engine *m_engine;
 	IRCNetwork *m_network;
 	uint currentHost;
 	QTextCodec *mCodec;

@@ -24,30 +24,31 @@
 
 #include <qtimer.h>
 
+using namespace KIRC;
 
-void KIRC::registerCommands()
+void Engine::registerCommands()
 {
 //	The following order is based on the RFC2812.
 
 //	Connection Registration
-	addIrcMethod("NICK",	&KIRC::nickChange,	0,	0);
-	addIrcMethod("QUIT",	new KIRCMethodFunctor_SS_PrefixSuffix<KIRC>(this, &KIRC::incomingQuitIRC,	0,	0));
-//	addIrcMethod("SQUIT",	new KIRCMethodFunctor_SS_PrefixSuffix<KIRC>(this, &KIRC::incomingServerQuitIRC,	1,	1));
+	addIrcMethod("NICK",	&Engine::nickChange,	0,	0);
+	addIrcMethod("QUIT",	new KIRCMethodFunctor_SS_PrefixSuffix<Engine>(this, &Engine::incomingQuitIRC,	0,	0));
+//	addIrcMethod("SQUIT",	new KIRCMethodFunctor_SS_PrefixSuffix<Engine>(this, &Engine::incomingServerQuitIRC,	1,	1));
 
 //	Channel operations
-	addIrcMethod("JOIN",	&KIRC::joinChannel,	0,	1);
-	addIrcMethod("PART",	&KIRC::partChannel,	1,	1);
-	addIrcMethod("MODE",	&KIRC::modeChange,	1,	1);
-	addIrcMethod("TOPIC",	&KIRC::topicChange,	1,	1);
-	addIrcMethod("KICK",	&KIRC::kick,		2,	2);
+	addIrcMethod("JOIN",	&Engine::joinChannel,	0,	1);
+	addIrcMethod("PART",	&Engine::partChannel,	1,	1);
+	addIrcMethod("MODE",	&Engine::modeChange,	1,	1);
+	addIrcMethod("TOPIC",	&Engine::topicChange,	1,	1);
+	addIrcMethod("KICK",	&Engine::kick,		2,	2);
 
 //	Sending messages
-	addIrcMethod("PRIVMSG",	&KIRC::privateMessage,	1,	1);
-	addIrcMethod("NOTICE",	&KIRC::notice,		1,	1);
+	addIrcMethod("PRIVMSG",	&Engine::privateMessage,	1,	1);
+	addIrcMethod("NOTICE",	&Engine::notice,		1,	1);
 
 //	Miscellaneous messages
-	addIrcMethod("PING",	&KIRC::ping,	0,	0);
-	addIrcMethod("PONG",	&KIRC::pong,	0,	0);
+	addIrcMethod("PING",	&Engine::ping,	0,	0);
+	addIrcMethod("PONG",	&Engine::pong,	0,	0);
 }
 
 // Normal order for a command:
@@ -55,13 +56,13 @@ void KIRC::registerCommands()
 // Query_*
 // Reply_* (if any)
 
-void KIRC::changeNickname(const QString &newNickname)
+void Engine::changeNickname(const QString &newNickname)
 {
 	m_PendingNick = newNickname;
 	writeMessage("NICK", newNickname, QString::null, false);
 }
 
-bool KIRC::nickChange(const KIRCMessage &msg)
+bool Engine::nickChange(const Message &msg)
 {
 	/* Nick name of a user changed
 	 * "<nickname>" */
@@ -86,7 +87,7 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname)
+void Engine::changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname)
 {
 	/* RFC1459: "<username> <hostname> <servername> <realname>"
 	 * The USER command is used at the beginning of connection to specify
@@ -98,7 +99,7 @@ void KIRC::changeUser(const QString &newUsername, const QString &hostname, const
 	writeMessage("USER", join( m_Username, hostname, m_Host ), m_Realname, false);
 }
 
-void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
+void Engine::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
 {
 	/* RFC2812: "<user> <mode> <unused> <realname>"
 	 * mode is a numeric value (from a bit mask).
@@ -111,7 +112,7 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 	writeMessage("USER", join(m_Username, QString::number(mode), QChar('*') ), m_Realname, false);
 }
 
-void KIRC::quitIRC(const QString &reason, bool now)
+void Engine::quitIRC(const QString &reason, bool now)
 {
 	kdDebug(14120) << k_funcinfo << reason << endl;
 
@@ -132,7 +133,7 @@ void KIRC::quitIRC(const QString &reason, bool now)
 	}
 }
 
-void KIRC::quitTimeout()
+void Engine::quitTimeout()
 {
 	if(	m_sock->socketStatus() > KExtendedSocket::nothing &&
 		m_sock->socketStatus() < KExtendedSocket::done &&
@@ -144,7 +145,7 @@ void KIRC::quitTimeout()
 	}
 }
 
-bool KIRC::quitIRC(const KIRCMessage &msg)
+bool Engine::quitIRC(const Message &msg)
 {
 	/* This signal emits when a user quits irc.
 	 */
@@ -153,7 +154,7 @@ bool KIRC::quitIRC(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::joinChannel(const QString &name, const QString &key)
+void Engine::joinChannel(const QString &name, const QString &key)
 {
 	if ( !key.isNull() )
 		writeMessage("JOIN", join( name, key ) );
@@ -161,7 +162,7 @@ void KIRC::joinChannel(const QString &name, const QString &key)
 		writeMessage("JOIN", name);
 }
 
-bool KIRC::joinChannel(const KIRCMessage &msg)
+bool Engine::joinChannel(const Message &msg)
 {
 	/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
 	 * suspected: ":<channel> *(" "/"," <channel>)"
@@ -177,14 +178,14 @@ bool KIRC::joinChannel(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::partChannel(const QString &channel, const QString &reason)
+void Engine::partChannel(const QString &channel, const QString &reason)
 {
 	/* This will part a channel with 'reason' as the reason for parting
 	 */
 	writeMessage("PART", channel, reason);
 }
 
-bool KIRC::partChannel(const KIRCMessage &msg)
+bool Engine::partChannel(const Message &msg)
 {
 	/* This signal emits when a user parts a channel
 	 * "<channel> *( "," <channel> ) [ <Part Message> ]"
@@ -194,12 +195,12 @@ bool KIRC::partChannel(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::changeMode(const QString &target, const QString &mode)
+void Engine::changeMode(const QString &target, const QString &mode)
 {
 	writeMessage("MODE", join( target, mode ) );
 }
 
-bool KIRC::modeChange(const KIRCMessage &msg)
+bool Engine::modeChange(const Message &msg)
 {
 	/* Change the mode of a user.
 	 * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
@@ -213,12 +214,12 @@ bool KIRC::modeChange(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::setTopic(const QString &channel, const QString &topic)
+void Engine::setTopic(const QString &channel, const QString &topic)
 {
 	writeMessage("TOPIC", channel, topic);
 }
 
-bool KIRC::topicChange(const KIRCMessage &msg)
+bool Engine::topicChange(const Message &msg)
 {
 	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
 	 * "<channel> [ <topic> ]"
@@ -227,22 +228,22 @@ bool KIRC::topicChange(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::list()
+void Engine::list()
 {
 	writeMessage("LIST", QString::null);
 }
 
-void KIRC::motd(const QString &server)
+void Engine::motd(const QString &server)
 {
 	writeMessage("MOTD", server);
 }
 
-void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
+void Engine::kickUser(const QString &user, const QString &channel, const QString &reason)
 {
 	writeMessage("KICK", join( channel, user, reason ) );
 }
 
-bool KIRC::kick(const KIRCMessage &msg)
+bool Engine::kick(const Message &msg)
 {
 	/* The given user is kicked.
 	 * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
@@ -251,17 +252,17 @@ bool KIRC::kick(const KIRCMessage &msg)
 	return true;
 }
 
-//void KIRC::sendPrivateMessage(const QString &contact, const QString &message)
-void KIRC::messageContact(const QString &contact, const QString &message)
+//void Engine::sendPrivateMessage(const QString &contact, const QString &message)
+void Engine::messageContact(const QString &contact, const QString &message)
 {
 	writeMessage("PRIVMSG", contact, message);
 }
 
-bool KIRC::privateMessage(const KIRCMessage &msg)
+bool Engine::privateMessage(const Message &msg)
 {
 	/* This is a signal that indicates there is a new message.
 	 * This can be either from a channel or from a specific user. */
-	KIRCMessage m = msg;
+	Message m = msg;
 	if (!m.suffix().isEmpty())
 	{
 		QString user = m.arg(0);
@@ -281,12 +282,12 @@ bool KIRC::privateMessage(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::sendNotice(const QString &target, const QString &message)
+void Engine::sendNotice(const QString &target, const QString &message)
 {
 	writeMessage("NOTICE", target, message);
 }
 
-bool KIRC::notice(const KIRCMessage &msg)
+bool Engine::notice(const Message &msg)
 {
 	if(!msg.suffix().isEmpty())
 		emit incomingNotice(msg.prefix(), msg.suffix());
@@ -297,23 +298,23 @@ bool KIRC::notice(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::whoisUser(const QString &user)
+void Engine::whoisUser(const QString &user)
 {
 	writeMessage("WHOIS", user);
 }
 
-bool KIRC::ping(const KIRCMessage &msg)
+bool Engine::ping(const Message &msg)
 {
 	writeMessage("PONG", msg.arg(0), msg.suffix(), false);
 	return true;
 }
 
-bool KIRC::pong(const KIRCMessage &/*msg*/)
+bool Engine::pong(const Message &/*msg*/)
 {
 	return true;
 }
 
-void KIRC::setAway(bool isAway, const QString &awayMessage)
+void Engine::setAway(bool isAway, const QString &awayMessage)
 {
 	if(isAway)
 		if( !awayMessage.isEmpty() )
@@ -324,7 +325,7 @@ void KIRC::setAway(bool isAway, const QString &awayMessage)
 		writeMessage("AWAY", QString::null);
 }
 
-void KIRC::isOn(const QStringList &nickList)
+void Engine::isOn(const QStringList &nickList)
 {
 	if (!nickList.isEmpty())
 	{

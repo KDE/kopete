@@ -24,7 +24,9 @@
 
 #include "kirctransfer.h"
 
-KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+using namespace KIRC;
+
+KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
 				Type type,
 				QObject *parent, const char *name )
 	: QObject( parent, name ),
@@ -36,7 +38,7 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 {
 }
 
-KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
 				KIRCTransfer::Type type,
 				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
 				QObject *parent, const char *name )
@@ -49,7 +51,7 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 {
 }
 
-KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
 				QHostAddress hostAdress, Q_UINT16 port, // put this in a QVariant ?
 				KIRCTransfer::Type type,
 				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
@@ -64,7 +66,7 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 	setSocket(new KExtendedSocket(hostAdress.toString(), port));
 }
 /*
-KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
 				KIRCTransfer::Type type, QVariant properties,
 				QObject *parent, const char *name )
 	: QObject( parent, name ),

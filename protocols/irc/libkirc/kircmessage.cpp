@@ -27,30 +27,32 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+using namespace KIRC;
+
 #ifndef _IRC_STRICTNESS_
-QRegExp KIRCMessage::m_IRCNumericCommand("^\\d{1,3}$");
+QRegExp Message::m_IRCNumericCommand("^\\d{1,3}$");
 
 // TODO: This regexp parsing is no good. It's slower than it needs to be, and
 // is not codec-safe since QString requires a codec. NEed to parse this with
 // our own parsing class that operates on the raw QCStrings
-QRegExp KIRCMessage::m_IRCCommandType1(
+QRegExp Message::m_IRCCommandType1(
 	"^(?::([^ ]+) )?([A-Za-z]+|\\d{1,3})((?: [^ :][^ ]*)*) ?(?: :(.*))?$");
 	// Extra end arg space check -------------------------^
 #else // _IRC_STRICTNESS_
-QRegExp KIRCMessage::m_IRCNumericCommand("^\\d{3,3}$");
+QRegExp Message::m_IRCNumericCommand("^\\d{3,3}$");
 
-QRegExp KIRCMessage::m_IRCCommandType1(
+QRegExp Message::m_IRCCommandType1(
 	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,13})(?: :(.*))?$");
-QRegExp KIRCMessage::m_IRCCommandType2(
+QRegExp Message::m_IRCCommandType2(
 	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
 
-KIRCMessage::KIRCMessage()
+Message::Message()
 	: m_ctcpMessage(0)
 {
 }
 
-KIRCMessage::KIRCMessage(const KIRCMessage &obj)
+Message::Message(const Message &obj)
 	: m_ctcpMessage(0)
 {
 	m_raw = obj.m_raw;
@@ -63,10 +65,10 @@ KIRCMessage::KIRCMessage(const KIRCMessage &obj)
 	m_ctcpRaw = obj.m_ctcpRaw;
 
 	if (obj.m_ctcpMessage)
-		m_ctcpMessage = new KIRCMessage(obj.m_ctcpMessage);
+		m_ctcpMessage = new Message(obj.m_ctcpMessage);
 }
 
-KIRCMessage::KIRCMessage(const KIRCMessage *obj)
+Message::Message(const Message *obj)
 	: m_ctcpMessage(0)
 {
 	m_raw = obj->m_raw;
@@ -79,16 +81,16 @@ KIRCMessage::KIRCMessage(const KIRCMessage *obj)
 	m_ctcpRaw = obj->m_ctcpRaw;
 
 	if (obj->m_ctcpMessage)
-		m_ctcpMessage = new KIRCMessage(obj->m_ctcpMessage);
+		m_ctcpMessage = new Message(obj->m_ctcpMessage);
 }
 
-KIRCMessage::~KIRCMessage()
+Message::~Message()
 {
 	if (m_ctcpMessage)
 		delete m_ctcpMessage;
 }
 
-void KIRCMessage::writeRawMessage(KIRC *engine, const QTextCodec *codec, const QString &str)
+void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QString &str)
 {
 	QCString s;
 	QString txt = str + QString::fromLatin1("\r\n");
@@ -101,12 +103,12 @@ void KIRCMessage::writeRawMessage(KIRC *engine, const QTextCodec *codec, const Q
 	engine->socket()->writeBlock(s.data(), s.length());
 }
 
-void KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec, const QString &message)
+void Message::writeMessage(Engine *engine, const QTextCodec *codec, const QString &message)
 {
 	writeRawMessage(engine, codec, quote(message));
 }
 
-void KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec,
+void Message::writeMessage(Engine *engine, const QTextCodec *codec,
 	const QString &command, const QStringList &args, const QString &suffix)
 {
 	QString msg = command;
@@ -120,14 +122,14 @@ void KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec,
 	writeMessage(engine, codec, msg);
 }
 
-void KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
+void Message::writeCtcpMessage(Engine *engine, const QTextCodec *codec,
 		const QString &command, const QString&to,
 		const QString &ctcpMessage)
 {
 	writeMessage(engine, codec, command, to, QChar(0x01) + ctcpQuote(ctcpMessage) + QChar(0x01));
 }
 
-void KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
+void Message::writeCtcpMessage(Engine *engine, const QTextCodec *codec,
 		const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix )
 {
@@ -142,7 +144,7 @@ void KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
 	writeMessage(engine, codec, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMsg) + QChar(0x01));
 }
 
-KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *parseSuccess)
+Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSuccess)
 {
 	if (parseSuccess)
 		*parseSuccess=false;
@@ -159,7 +161,7 @@ KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *pars
 
 			kdDebug(14121) << "<< " << raw << endl;
 
-			KIRCMessage msg;
+			Message msg;
 			if(matchForIRCRegExp(raw, codec, msg))
 			{
 				if(parseSuccess)
@@ -176,10 +178,10 @@ KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *pars
 			kdWarning(14121) << k_funcinfo << "Failed to read a line while canReadLine returned true!" << endl;
 	}
 
-	return KIRCMessage();
+	return Message();
 }
 
-QString KIRCMessage::quote(const QString &str)
+QString Message::quote(const QString &str)
 {
 	QString tmp = str;
 	QChar q('\020');
@@ -191,7 +193,7 @@ QString KIRCMessage::quote(const QString &str)
 }
 
 // FIXME: The unquote system is buggy.
-QString KIRCMessage::unquote(const QString &str)
+QString Message::unquote(const QString &str)
 {
 	QString tmp = str;
 
@@ -211,7 +213,7 @@ QString KIRCMessage::unquote(const QString &str)
 	return tmp;
 }
 
-QString KIRCMessage::ctcpQuote(const QString &str)
+QString Message::ctcpQuote(const QString &str)
 {
 	QString tmp = str;
 	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
@@ -219,7 +221,7 @@ QString KIRCMessage::ctcpQuote(const QString &str)
 	return tmp;
 }
 
-QString KIRCMessage::ctcpUnquote(const QString &str)
+QString Message::ctcpUnquote(const QString &str)
 {
 	QString tmp = str;
 	tmp.replace("\\\\", "\\");
@@ -227,7 +229,7 @@ QString KIRCMessage::ctcpUnquote(const QString &str)
 	return tmp;
 }
 
-bool KIRCMessage::matchForIRCRegExp(const QString &line, const QTextCodec *codec, KIRCMessage &message)
+bool Message::matchForIRCRegExp(const QString &line, const QTextCodec *codec, Message &message)
 {
 	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
 		return true;
@@ -240,7 +242,7 @@ bool KIRCMessage::matchForIRCRegExp(const QString &line, const QTextCodec *codec
 
 // FIXME: remove the decodeStrings calls or update them.
 // FIXME: avoid the recursive call, it make the ctcp command unquoted twice (wich is wrong, but valid in most of the cases)
-bool KIRCMessage::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QString &line, KIRCMessage &msg )
+bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QString &line, Message &msg )
 {
 	if (regexp.exactMatch(line))
 	{
@@ -254,7 +256,7 @@ bool KIRCMessage::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, co
 		{
 			if (extractCtcpCommand(suffix, msg.m_ctcpRaw))
 			{
-				msg.m_ctcpMessage = new KIRCMessage();
+				msg.m_ctcpMessage = new Message();
 				msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
 
 				int space = msg.m_ctcpRaw.find(' ');
@@ -281,7 +283,7 @@ bool KIRCMessage::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, co
 
 
 // FIXME: there are missing parts
-QString KIRCMessage::toString() const
+QString Message::toString() const
 {
 	if( !isValid() )
 		return QString::null;
@@ -295,12 +297,12 @@ QString KIRCMessage::toString() const
 	return msg;
 }
 
-bool KIRCMessage::isNumeric() const
+bool Message::isNumeric() const
 {
 	return m_IRCNumericCommand.exactMatch(m_command);
 }
 
-bool KIRCMessage::isValid() const
+bool Message::isValid() const
 {
 //	This could/should be more complex but the message validity is tested durring the parsing
 //	So this is enougth as we don't allow the editing the content.
@@ -312,7 +314,7 @@ bool KIRCMessage::isValid() const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-bool KIRCMessage::extractCtcpCommand(QString &message, QString &ctcpline)
+bool Message::extractCtcpCommand(QString &message, QString &ctcpline)
 {
 	message = unquote(message);
 	uint len = message.length();
@@ -326,7 +328,7 @@ bool KIRCMessage::extractCtcpCommand(QString &message, QString &ctcpline)
 	return false;
 }
 
-void KIRCMessage::dump() const
+void Message::dump() const
 {
 	kdDebug(14120)	<< "Raw:" << m_raw << endl
 			<< "Prefix:" << m_prefix << endl

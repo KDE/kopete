@@ -3,7 +3,7 @@
 
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004      by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,6 +22,11 @@
 #include <qmap.h>
 #include <qpair.h>
 
+namespace KIRC
+{
+class Engine;
+}
+
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
@@ -31,14 +36,14 @@ class QPushButton;
 class QListView;
 class QSpinBox;
 class QListViewItem;
-class KIRC;
 
-class ChannelList : public QWidget
+class ChannelList
+	: public QWidget
 {
 	Q_OBJECT
 
 	public:
-		ChannelList( QWidget *parent, KIRC *engine );
+		ChannelList( QWidget *parent, KIRC::Engine *engine );
 
 	public slots:
 		void search();
@@ -67,7 +72,7 @@ class ChannelList : public QWidget
 		QListView* mChannelList;
 		QVBoxLayout* ChannelListLayout;
 		QHBoxLayout* layout72_2;
-		KIRC *m_engine;
+		KIRC::Engine *m_engine;
 		bool mSearching;
 		QString mSearch;
 		uint mUsers;
@@ -75,4 +80,4 @@ class ChannelList : public QWidget
 		QMap< QString, QPair< uint, QString > >::const_iterator cacheIterator;
 };
 
-#endif // CHANNELLIST_H
+#endif

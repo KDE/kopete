@@ -21,6 +21,9 @@
 #include "kirctransferhandler.h"
 
 #include "kirctransferserver.h"
+
+using namespace KIRC;
+
 /*
 KIRCTransferServer::KIRCTransferServer( QObject *parent, const char *name )
 	: QObject( parent, name ),
@@ -38,7 +41,7 @@ KIRCTransferServer::KIRCTransferServer(Q_UINT16 port, int backlog, QObject *pare
 {
 }
 
-KIRCTransferServer::KIRCTransferServer(KIRC *engine, QString nick,// QString nick_peer_adress,
+KIRCTransferServer::KIRCTransferServer(Engine *engine, QString nick,// QString nick_peer_adress,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent, const char *name)

@@ -18,21 +18,32 @@
 #ifndef IRCCONTACTMANAGER_H
 #define IRCCONTACTMANAGER_H
 
-#include <qmap.h>
+#include <qdict.h>
 #include <qobject.h>
 #include <qstring.h>
+#include <qstringlist.h>
 
-class QTimer;
+class IRCContact;
+class IRCAccount;
 
-namespace Kopete { class MetaContact; }
-class KopeteView;
-
-class KIRC;
 class IRCServerContact;
 class IRCChannelContact;
 class IRCUserContact;
-class IRCContact;
-class IRCAccount;
+
+namespace KIRC
+{
+class Engine;
+}
+
+namespace Kopete
+{
+class Contact;
+class MetaContact;
+}
+
+class KopeteView;
+
+class QTimer;
 
 /**
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -62,7 +73,7 @@ class IRCContactManager
 		IRCContact *findContact(const QString &nick, Kopete::MetaContact *m=0);
 		IRCContact *existContact( const QString &id ) const;
 
-		static IRCContact *existContact(const KIRC *engine, const QString &nick);
+		static IRCContact *existContact(const KIRC::Engine *engine, const QString &nick);
 
 	public slots:
 		void unregister(Kopete::Contact *contact);
@@ -99,5 +110,5 @@ class IRCContactManager
 		static const QRegExp isChannel;
 };
 
-#endif // IRCCONTACTMANAGER_H
+#endif
 

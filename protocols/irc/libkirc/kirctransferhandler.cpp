@@ -27,6 +27,7 @@
 
 #include "kirctransferhandler.h"
 
+using namespace KIRC;
 
 KIRCTransferHandler *KIRCTransferHandler::self()
 {
@@ -53,7 +54,7 @@ KIRCTransferServer *KIRCTransferHandler::server( Q_UINT16 port, int backlog )
 	return m_server;
 }
 
-KIRCTransferServer *KIRCTransferHandler::createServer(KIRC *engine, QString m_userName,
+KIRCTransferServer *KIRCTransferHandler::createServer(Engine *engine, QString m_userName,
 		KIRCTransfer::Type type,
 		QString fileName, Q_UINT32 fileSize)
 {
@@ -63,7 +64,7 @@ KIRCTransferServer *KIRCTransferHandler::createServer(KIRC *engine, QString m_us
 }
 
 KIRCTransfer *KIRCTransferHandler::createClient(
-	KIRC *engine, QString nick,// QString nick_peer_adress,
+	Engine *engine, QString nick,// QString nick_peer_adress,
 	QHostAddress peer_address, Q_UINT16 peer_port,
 	KIRCTransfer::Type type,
 	QString fileName, Q_UINT32 fileSize )

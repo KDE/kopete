@@ -27,12 +27,15 @@
 
 #define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
 
-namespace Kopete { class MetaContact; }
+namespace Kopete
+{
+class Account;
+class MetaContact;
+}
+
 class AddContactPage;
-class KIRC;
 
 class EditAccountWidget;
-namespace Kopete { class Account; }
 class IRCAccount;
 
 class QStringList;
@@ -121,7 +124,7 @@ signals:
 	void networkConfigUpdated( const QString &selectedNetwork );
 
 private slots:
-	// FIXME: All the code for managing the networks list should be in another class - Will 
+	// FIXME: All the code for managing the networks list should be in another class - Will
 	void slotUpdateNetworkConfig();
 	void slotUpdateNetworkHostConfig();
 	void slotMoveServerUp();
@@ -135,7 +138,7 @@ private slots:
 	void slotNewHost();
 	void slotHostPortChanged( int value );
 	// end of network list specific code
-	
+
 	void slotMessageFilter( Kopete::Message &msg );
 
 	void slotRawCommand( const QString &args, Kopete::MessageManager *manager );
@@ -172,7 +175,7 @@ private:
 
 	void simpleModeChange( const QString &, Kopete::MessageManager *, const QString &mode );
 
-	// FIXME: All the code for managing the networks list should be in another class - Will 
+	// FIXME: All the code for managing the networks list should be in another class - Will
 	void storeCurrentNetwork();
 	void storeCurrentHost();
 
@@ -180,7 +183,7 @@ private:
 	QString m_uiCurrentNetworkSelection;
 	QString m_uiCurrentHostSelection;
 	// end of network list specific code
-	
+
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;
 

@@ -38,14 +38,17 @@
 #include <sys/types.h>
 #include <pwd.h>
 
+using namespace KIRC;
+
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
-const QRegExp KIRC::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
+const QRegExp Engine::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
-KIRCMethodFunctorCall *KIRC::IgnoreMethod( new KIRCMethodFunctor_Ignore() );
+KIRCMethodFunctorCall *Engine::IgnoreMethod( new KIRCMethodFunctor_Ignore() );
 
-KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
+Engine::Engine(QObject *parent, const char *name)
+	: QObject(parent, name),
 	  m_status(Disconnected),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
@@ -86,7 +89,7 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	connect( m_connectTimer, SIGNAL( timeout() ), this, SLOT( slotAuthFailed() ) );
 }
 
-KIRC::~KIRC()
+Engine::~Engine()
 {
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
 	quitIRC("KIRC Deleted", true);
@@ -94,7 +97,7 @@ KIRC::~KIRC()
 		delete m_sock;
 }
 
-void KIRC::setUseSSL( bool useSSL )
+void Engine::setUseSSL( bool useSSL )
 {
 	kdDebug(14120) << k_funcinfo << useSSL << endl;
 
@@ -123,7 +126,7 @@ void KIRC::setUseSSL( bool useSSL )
 	}
 }
 
-void KIRC::setStatus(EngineStatus status)
+void Engine::setStatus(Engine::Status status)
 {
 	kdDebug(14120) << k_funcinfo << status << endl;
 	if( status == Disconnected && m_status != Closing )
@@ -135,7 +138,7 @@ void KIRC::setStatus(EngineStatus status)
 	emit statusChanged(status);
 }
 
-void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL )
+void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL )
 {
 	setUseSSL(useSSL);
 
@@ -167,7 +170,7 @@ void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &ni
 	}
 }
 
-void KIRC::slotAuthFailed()
+void Engine::slotAuthFailed()
 {
 	kdDebug(14120) << k_funcinfo << endl;
 	if( m_status != Connected )
@@ -179,7 +182,7 @@ void KIRC::slotAuthFailed()
 	}
 }
 
-void KIRC::slotConnected()
+void Engine::slotConnected()
 {
 	kdDebug(14120) << k_funcinfo << "Connected" << endl;
 	setStatus(Authentifying);
@@ -196,7 +199,7 @@ void KIRC::slotConnected()
 	m_connectTimer->start( connectTimeout );
 }
 
-void KIRC::slotConnectionClosed()
+void Engine::slotConnectionClosed()
 {
 	kdDebug(14120) << k_funcinfo << "Connection Closed - local status: " << m_status << " sock status: " << m_sock->socketStatus() << endl;
 	if(m_status == Closing)
@@ -207,7 +210,7 @@ void KIRC::slotConnectionClosed()
 	m_sock->reset();
 }
 
-void KIRC::error(int errCode)
+void Engine::error(int errCode)
 {
 	kdDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
 	if (m_sock->socketStatus () != KExtendedSocket::connecting)
@@ -218,25 +221,25 @@ void KIRC::error(int errCode)
 	}
 }
 
-void KIRC::setVersionString(const QString &newString)
+void Engine::setVersionString(const QString &newString)
 {
 	m_VersionString = newString;
 	m_VersionString.remove(m_RemoveLinefeeds);
 }
 
-void KIRC::setUserString(const QString &newString)
+void Engine::setUserString(const QString &newString)
 {
 	m_UserString = newString;
 	m_UserString.remove(m_RemoveLinefeeds);
 }
 
-void KIRC::setSourceString(const QString &newString)
+void Engine::setSourceString(const QString &newString)
 {
 	m_SourceString = newString;
 	m_SourceString.remove(m_RemoveLinefeeds);
 }
 
-void KIRC::setUserName(const QString &newName)
+void Engine::setUserName(const QString &newName)
 {
 	if(newName.isEmpty())
 		m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
@@ -245,78 +248,77 @@ void KIRC::setUserName(const QString &newName)
 	m_Username.remove(m_RemoveLinefeeds);
 }
 
-void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method)
+void Engine::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method)
 {
 	map.replace( QString::fromLatin1(str), method);
 }
 
-void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str,
-			bool (KIRC::*method)(const KIRCMessage &msg),
+void Engine::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, pIrcMethod method,
 			int argsSize_min, int argsSize_max, const char *helpMessage)
 {
-	addIrcMethod(map, str, new KIRCMethodFunctor_Forward<KIRC>(this, method, argsSize_min, argsSize_max, helpMessage));
+	addIrcMethod(map, str, new KIRCMethodFunctor_Forward<Engine>(this, method, argsSize_min, argsSize_max, helpMessage));
 }
 
-void KIRC::addNumericIrcMethod(int id, KIRCMethodFunctorCall *method)
+void Engine::addNumericIrcMethod(int id, KIRCMethodFunctorCall *method)
 {
 	m_IrcNumericMethods.replace(id, method);
 }
 
-void KIRC::addNumericIrcMethod(int id, bool (KIRC::*method)(const KIRCMessage &msg),
+void Engine::addNumericIrcMethod(int id, pIrcMethod method,
 			int argsSize_min, int argsSize_max, const char *helpMessage)
 {
-	addNumericIrcMethod(id, new KIRCMethodFunctor_Forward<KIRC>(this, method, argsSize_min, argsSize_max, helpMessage) );
+	addNumericIrcMethod(id, new KIRCMethodFunctor_Forward<Engine>(this, method, argsSize_min, argsSize_max, helpMessage) );
 }
 
-bool KIRC::canSend( bool mustBeConnected ) const
+bool Engine::canSend( bool mustBeConnected ) const
 {
 	return	( !mustBeConnected || m_status == Connected );
 }
 
 /* Message will be send as passed.
  */
-void KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
+void Engine::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage::writeRawMessage(this, defaultCodec, rawMsg);
+		Message::writeRawMessage(this, defaultCodec, rawMsg);
 	}
 }
 
 /* Message will be quoted before beeing send.
  */
-void KIRC::writeMessage(const QString &msg, bool mustBeConnected)
+void Engine::writeMessage(const QString &msg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage::writeMessage(this, defaultCodec, msg);
+		Message::writeMessage(this, defaultCodec, msg);
 	}
 }
 
-void KIRC::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
+void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage::writeMessage(this, defaultCodec, command, args, suffix );
+		Message::writeMessage(this, defaultCodec, command, args, suffix );
 	}
 }
 
-void KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
+void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
 {
 	if (canSend(true))
-		KIRCMessage::writeCtcpMessage(this, defaultCodec, command, to, ctcpMessage);
+		Message::writeCtcpMessage(this, defaultCodec, command, to, ctcpMessage);
 }
 
-void KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
+void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool )
 {
 	QString nick =  KIRCEntity::userNick(to);
 
-	KIRCMessage::writeCtcpMessage(this, codecForNick( nick ), command, nick, suffix,
+	Message::writeCtcpMessage(this, codecForNick( nick ), command, nick, suffix,
 		ctcpCommand, ctcpArgs, ctcpSuffix );
 }
 
-void KIRC::slotReadyRead()
+void Engine::slotReadyRead()
 {
 	// This condition is buggy when the peer server
 	// close the socket unexpectedly
@@ -324,7 +326,7 @@ void KIRC::slotReadyRead()
 
 	if( m_sock->socketStatus() == KExtendedSocket::connected && m_sock->canReadLine())
 	{
-		KIRCMessage msg = KIRCMessage::parse(this, defaultCodec, &parseSuccess);
+		Message msg = Message::parse(this, defaultCodec, &parseSuccess);
 		if(parseSuccess)
 		{
 			KIRCMethodFunctorCall *method;
@@ -384,7 +386,7 @@ void KIRC::slotReadyRead()
 		error();
 }
 
-const QTextCodec *KIRC::codecForNick( const QString &nick ) const
+const QTextCodec *Engine::codecForNick( const QString &nick ) const
 {
 	if( nick.isEmpty() )
 		return defaultCodec;
@@ -398,7 +400,7 @@ const QTextCodec *KIRC::codecForNick( const QString &nick ) const
 		return codec;
 }
 
-void KIRC::showInfoDialog()
+void Engine::showInfoDialog()
 {
 	if( m_useSSL )
 	{
@@ -411,11 +413,11 @@ void KIRC::showInfoDialog()
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
-bool KIRC::invokeCtcpCommandOfMessage(const KIRCMessage &msg, const QDict<KIRCMethodFunctorCall> &map)
+bool Engine::invokeCtcpCommandOfMessage(const Message &msg, const QDict<KIRCMethodFunctorCall> &map)
 {
 	if(msg.hasCtcpMessage() && msg.ctcpMessage().isValid())
 	{
-		const KIRCMessage &ctcpMsg = msg.ctcpMessage();
+		const Message &ctcpMsg = msg.ctcpMessage();
 
 		KIRCMethodFunctorCall *method = map[ctcpMsg.command()];
 		if(method && method->isValid())

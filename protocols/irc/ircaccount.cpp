@@ -15,8 +15,26 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qlayout.h>
-#include <qtimer.h>
+
+#include "ircaccount.h"
+#include "irccontact.h"
+#include "irccontactmanager.h"
+#include "ircprotocol.h"
+#include "channellist.h"
+
+#include "ircservercontact.h"
+#include "ircchannelcontact.h"
+#include "ircusercontact.h"
+
+#include "kopeteaway.h"
+#include "kopeteawayaction.h"
+#include "kopeteuiglobal.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "kopeteaccountmanager.h"
+#include "kopetecommandhandler.h"
+#include "kopeteview.h"
+
 #include <kaction.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -30,25 +48,11 @@
 #include <kglobal.h>
 #include <knotifyclient.h>
 
-#include "kopeteaway.h"
-#include "kopeteuiglobal.h"
-#include "kopeteawayaction.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopeteaccountmanager.h"
-#include "kopetecommandhandler.h"
-#include "kopeteview.h"
+#include <qlayout.h>
+#include <qtimer.h>
 
-#include "ircaccount.h"
-#include "ircprotocol.h"
-#include "irccontactmanager.h"
-#include "ircservercontact.h"
-#include "ircchannelcontact.h"
-#include "ircusercontact.h"
-#include "channellist.h"
-
-ChannelListDialog::ChannelListDialog( KIRC *engine, const QString &caption, QObject *target, const char* slotJoinChan )
- : KDialogBase( Kopete::UI::Global::mainWidget(), "channel_list_widget", false, caption, Close )
+ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)
+	: KDialogBase(Kopete::UI::Global::mainWidget(), "channel_list_widget", false, caption, Close)
 {
 	m_engine = engine;
 	m_list = new ChannelList( this, engine );
@@ -91,7 +95,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	triedAltNick = false;
 
 	m_contactManager = 0;
-	m_engine = new KIRC(this);
+	m_engine = new KIRC::Engine(this);
 
 	QMap< QString, QString> replies = customCtcpReplies();
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )

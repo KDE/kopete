@@ -41,7 +41,8 @@ class IRCChannelContact;
  * This class is the @ref Kopete::Contact object representing IRC Servers.
  * It is derrived from @ref IRCContact where much of its functionality is shared with @ref IRCChannelContact and @ref IRCUserContact.
  */
-class IRCServerContact : public IRCContact
+class IRCServerContact
+	: public IRCContact
 {
 	Q_OBJECT
 
@@ -55,7 +56,7 @@ class IRCServerContact : public IRCContact
                 void appendMessage( const QString &message );
 
 	protected slots:
-		void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
+		void engineInternalError(KIRC::Engine::Error error, const KIRC::Message &ircmsg);
 		virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
 
 	private slots:

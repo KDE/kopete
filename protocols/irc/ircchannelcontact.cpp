@@ -15,7 +15,19 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
+#include "irccontactmanager.h"
+#include "ircchannelcontact.h"
+#include "ircusercontact.h"
+#include "ircservercontact.h"
+#include "ircaccount.h"
+#include "ircprotocol.h"
+
+#include "kopeteview.h"
+#include "kopeteuiglobal.h"
+#include "kcodecaction.h"
+#include "kopetemetacontact.h"
+#include "kopetestdaction.h"
+#include "kopetemessagemanagerfactory.h"
 
 #include <kdebug.h>
 #include <krun.h>
@@ -25,19 +37,7 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 
-#include "kopeteview.h"
-#include "kopeteuiglobal.h"
-#include "kcodecaction.h"
-#include "kopetemetacontact.h"
-#include "kopetestdaction.h"
-#include "kopetemessagemanagerfactory.h"
-
-#include "irccontactmanager.h"
-#include "ircchannelcontact.h"
-#include "ircusercontact.h"
-#include "ircservercontact.h"
-#include "ircaccount.h"
-#include "ircprotocol.h"
+#include <qtimer.h>
 
 IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, Kopete::MetaContact *metac)
 	: IRCContact(contactManager, channel, metac, "irc_channel")
@@ -105,16 +105,16 @@ void IRCChannelContact::slotChannelListed( const QString &channel, uint members,
 
 void IRCChannelContact::updateStatus()
 {
-	KIRC::EngineStatus status = MYACCOUNT->engine()->status();
+	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
 	switch( status )
 	{
-		case KIRC::Disconnected:
-		case KIRC::Connecting:
-		case KIRC::Authentifying:
+		case KIRC::Engine::Disconnected:
+		case KIRC::Engine::Connecting:
+		case KIRC::Engine::Authentifying:
 			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
 			break;
-		case KIRC::Connected:
-		case KIRC::Closing:
+		case KIRC::Engine::Connected:
+		case KIRC::Engine::Closing:
 			setOnlineStatus(m_protocol->m_ChannelStatusOnline);
 			break;
 		default:

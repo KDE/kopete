@@ -187,7 +187,7 @@ IRCContact *IRCContactManager::findContact( const QString &id, Kopete::MetaConta
 		return findUser( id, m );
 }
 
-IRCContact *IRCContactManager::existContact( const KIRC *engine, const QString &id )
+IRCContact *IRCContactManager::existContact( const KIRC::Engine *engine, const QString &id )
 {
 	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( IRCProtocol::protocol() );
 	QDictIterator<Kopete::Account> it(accounts);
