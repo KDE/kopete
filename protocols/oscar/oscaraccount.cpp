@@ -58,8 +58,8 @@ public:
 	/*
 	 * Random new group/contact number for the engine
 	 */
-	int randomNewGroupNum;
-	int randomNewBuddyNum;
+	//int randomNewGroupNum;
+	//int randomNewBuddyNum;
 
 	/*
 	 * This flag is used internally to keep track
@@ -99,8 +99,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	d->engine = 0L;
 	// Set our random new numbers
-	d->randomNewBuddyNum = 0;
-	d->randomNewGroupNum = 0;
+	//d->randomNewBuddyNum = 0;
+	//d->randomNewGroupNum = 0;
 	d->ignoreUnknownContacts = false;
 	d->isIdle = false;
 	d->lastIdleValue = 0;
@@ -671,7 +671,7 @@ void OscarAccount::slotIdleTimeout()
 }
 
 
-int OscarAccount::randomNewBuddyNum()
+/*int OscarAccount::randomNewBuddyNum()
 {
 	return d->randomNewBuddyNum++;
 }
@@ -680,7 +680,7 @@ int OscarAccount::randomNewBuddyNum()
 int OscarAccount::randomNewGroupNum()
 {
 	return d->randomNewGroupNum++;
-}
+}*/
 
 
 void OscarAccount::setServerAddress(const QString &server)
@@ -775,8 +775,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	 * (when getting server contacts), so don't bother
 	 */
 
-	if ( (!myself()->isOnline()) &&
-		(myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting) )
+	if ((!myself()->isOnline()) &&
+		(myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
 	{
 		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline!" << endl;
 		return false;
@@ -812,47 +812,37 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			if (kopeteGroups.isEmpty() ||
 				kopeteGroups.first()->type() == KopeteGroup::TopLevel)
 			{
-				kdDebug(14150) << k_funcinfo << "Contact with no group. "
+				kdDebug(14150) << k_funcinfo << "Contact with NO group. "
 					<< "Adding to group 'Buddies'" << endl;
 				groupName = i18n("Buddies");
 			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo << "Contact with group, grouplist count="
-					<< kopeteGroups.count() << endl;
-
 				//OSCAR doesn't support multiple groups for a contact. Add to the
 				//first one
-				KopeteGroup* group = kopeteGroups.first();
-				groupName = group->displayName();
+				groupName = kopeteGroups.first()->displayName();
+
+				kdDebug(14150) << k_funcinfo << "Contact with group." <<
+					" No. of groups = " << kopeteGroups.count() <<
+					" Name of first group = " << groupName << endl;
 			}
 
 			if(groupName.isEmpty())
 			{ // emergency exit, should never occur
-				kdDebug(14150) << k_funcinfo << "Could not add Contact because no " <<
+				kdWarning(14150) << k_funcinfo <<
+					"Could not add Contact because no " <<
 					"groupname was given" << endl;
 				return false;
 			}
 
-			// See if it exists in our internal group list already
-			SSI *internalGroup = engine()->ssiData().findGroup(groupName);
-
-			// If the group didn't exist
-			if (!internalGroup)
-			{
-				addGroup( groupName );
-				kdDebug(14150) << "created internal group for new contact" << endl;
-				// Add the group on the server list
-				engine()->sendAddGroup( groupName );
-			}
-
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
-			engine()->sendAddBuddy(tocNormalize(contactId), internalGroup->name, false);
+			// NOTE: sendAddBuddy autocreates a group named groupName if it's not on SSI
+			engine()->sendAddBuddy(tocNormalize(contactId), groupName, false);
 
 			// Increase these counters, I'm not sure what this does
-			d->randomNewGroupNum++;
-			d->randomNewBuddyNum++;
+			//d->randomNewGroupNum++;
+			//d->randomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
 			return(createNewContact(contactId, displayName, parentContact, true));
@@ -865,7 +855,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			if(!createNewContact(contactId, displayName, parentContact))
 				return false;
 
-			// Get user status through BLM if contact is temporary (ICQ only)
+			// Get user status through BLM if contact is temporary (only works on ICQ)
 			if (engine()->isICQ())
 				engine()->sendAddBuddylist(tocNormalize(contactId));
 

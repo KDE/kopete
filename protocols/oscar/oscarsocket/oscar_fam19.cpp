@@ -444,11 +444,14 @@ void OscarSocket::parseSSIOk(Buffer &inbuf)
 }
 
 
-void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupName, bool addingAuthBuddy)
+void OscarSocket::sendAddBuddy(const QString &contactName,
+	const QString &groupName, bool addingAuthBuddy)
 {
 	SSI *newContact, *group;
 
-	kdDebug(14150) << k_funcinfo << "Sending SSI add buddy" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Sending SSI add buddy; contactName = '" <<
+		contactName << "', groupName = '" << groupName << "'" << endl;
 
 	group = mSSIData.findGroup(groupName);
 	if (!group)
@@ -963,12 +966,6 @@ void OscarSocket::sendSSIRemoveVisible(const QString &name)
 }
 
 
-
-
-
-
-
-// Changes the group a buddy is in on the server
 void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 	const QString &oldGroup, const QString &newGroup)
 {

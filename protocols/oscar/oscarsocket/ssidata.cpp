@@ -34,6 +34,13 @@ SSIData::~SSIData()
 
 SSI *SSIData::addContact(const QString &name, const QString &group, bool addingAuthBuddy)
 {
+	if (name.isNull() || group.isNull())
+	{
+		kdWarning(14150) << k_funcinfo <<
+			"Passed NULL name or group string, aborting!" << endl;
+		return 0;
+	}
+
 	SSI *tmp = findGroup(group);
 	if(!tmp) //the group does not exist
 		return 0L;
@@ -73,6 +80,13 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 // Finds the contact with given name and group... returns NULL if not found
 SSI *SSIData::findContact(const QString &name, const QString &group)
 {
+	if (name.isNull() || group.isNull())
+	{
+		kdWarning(14150) << k_funcinfo <<
+			"Passed NULL name or group string, aborting!" << endl;
+		return 0;
+	}
+
 	SSI *gr = findGroup(group); // find the parent group
 	if (gr)
 	{
@@ -108,6 +122,13 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 
 SSI *SSIData::findContact(const QString& name)
 {
+	if (name.isNull())
+	{
+		kdWarning(14150) << k_funcinfo <<
+			"Passed NULL name string, aborting!" << endl;
+		return 0;
+	}
+
 	for (SSI *i=first(); i; i = next())
 	{
 		//if the ssi item has the right name, is a contact, and has the right group
@@ -137,13 +158,19 @@ SSI *SSIData::findGroup(const QString &name)
 	kdDebug(14151) << k_funcinfo <<
 		"Looking for group named '" << name << "'" << endl;
 #endif
+	if (name.isNull())
+	{
+		kdWarning(14150) << k_funcinfo <<
+			"Passed NULL groupname string, aborting!" << endl;
+		return 0;
+	}
 
 	for (SSI *i=first(); i; i = next())
 	{
 		if ((current()->name == name) && (current()->type == ROSTER_GROUP))
 			return current();
 	}
-	return 0L;
+	return 0;
 }
 
 SSI *SSIData::findGroup(const int groupId)
@@ -163,6 +190,13 @@ SSI *SSIData::findGroup(const int groupId)
 
 SSI *SSIData::addGroup(const QString &name)
 {
+	if (name.isNull())
+	{
+		kdWarning(14150) << k_funcinfo <<
+			"Passed NULL groupname string, aborting!" << endl;
+		return 0;
+	}
+
 	if(findGroup(name) != 0L)
 		return 0L; // the group already exists
 
@@ -183,6 +217,13 @@ SSI *SSIData::addGroup(const QString &name)
 
 SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 {
+	if (newName.isNull())
+	{
+		kdWarning(14150) << k_funcinfo <<
+			"Passed NULL groupname string for new groupname, aborting!" << endl;
+		return 0;
+	}
+
 	// Find the group
 	SSI *group = findGroup(currentName);
 

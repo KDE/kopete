@@ -1295,7 +1295,7 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 						BYTE minor2 = (version & 0xFF);
 						if (minor2 > 0) // w.x.y.z
 						{
-							u.clientVersion.sprintf("u.%u.%u.%u", major1, major2,
+							u.clientVersion.sprintf("%u.%u.%u.%u", major1, major2,
 								minor1, minor2);
 						}
 						else if (minor1 > 0)  // w.x.y

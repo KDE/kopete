@@ -74,12 +74,12 @@ public:
 	/*
 	 * Gets the next random new buddy num
 	 */
-	int randomNewBuddyNum();
+	//int randomNewBuddyNum();
 
 	/*
 	 * Gets the next random new group num
 	 */
-	int randomNewGroupNum();
+	//int randomNewGroupNum();
 
 	/**
 	 * \brief Add a group to the contact list from the server
