@@ -18,63 +18,36 @@
 #include <qregexp.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <kiconloader.h>
 
 #include "kopetemessage.h"
 #include "kopeteemoticons.h"
 #include "kopetemetacontact.h"
-
-class KopeteMessagePrivate
-{
-public:
-
-//	KopeteMessagePrivate() {};
-	const KopeteContact *from;
-	KopeteContactPtrList to;
-	QColor bgColor;
-	QColor fgColor;
-	QDateTime timeStamp;
-	QFont font;
-	QString	body;
-	QString	subject;	
-	KopeteMessage::MessageDirection	direction;
-	KopeteMessage::MessageFormat format;
-	KopeteView::ViewType	type;
-
-	bool				bgOverride;
-};
+#include "kopeteprefs.h"
 
 KopeteMessage::KopeteMessage()
 {
-
-	d = new KopeteMessagePrivate;
-
-	d->timeStamp = QDateTime::currentDateTime();
-	d->body = QString::null;
-	d->direction = Internal;
-	d->bgColor = QColor();
-	d->fgColor = QColor();
-	d->font = QFont();
-	d->format = PlainText;
-	d->type = KopeteView::Chat;
+	mTimestamp = QDateTime::currentDateTime();
+	mBody = QString::null;
+	mDirection = Internal;
+	mBg = QColor();
+	mFg = QColor();
+	mFont = QFont();
+	mFormat = PlainText;
+	m_type = KopeteView::Chat;
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
 		KopeteContactPtrList toKC, QString body, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
 {
-
-	d = new KopeteMessagePrivate;
-
 	init(QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, type);
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
 		KopeteContactPtrList toKC, QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
 {
-
-	d = new KopeteMessagePrivate;
-
 	init(QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, type);
 }
 
@@ -82,9 +55,6 @@ KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
 		MessageDirection direction, MessageFormat f, KopeteView::ViewType type)
 {
-
-	d = new KopeteMessagePrivate;
-
 	init(timeStamp, fromKC, toKC, body, QString::null, direction, f, type);
 }
 
@@ -92,79 +62,70 @@ KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
 		QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type)
 {
-
-	d = new KopeteMessagePrivate;
-
 	init(timeStamp, fromKC, toKC, body, subject, direction, f, type);
-}
-
-KopeteMessage::~KopeteMessage() {
-
-	delete d;
-
 }
 
 void KopeteMessage::setBgOverride( bool enabled )
 {
-	d->bgOverride = enabled;
+	mBgOverride = enabled;
 }
 
 void KopeteMessage::setFg(QColor color)
 {
-	d->fgColor = color;
+	mFg = color;
 }
 
 void KopeteMessage::setBg(QColor color)
 {
-	d->bgColor = color;
+	mBg = color;
 }
 
 void KopeteMessage::setFont(QFont font)
 {
-	d->font = font;
+	mFont = font;
 }
 
 void KopeteMessage::setBody( const QString& body, MessageFormat f )
 {
-	if( d->direction == Outbound && body.startsWith( QString::fromLatin1( "/me " ) ) )
+	if( mDirection == Outbound && body.startsWith( QString::fromLatin1( "/me " ) ) )
 	{
-		d->body = body.section( QString::fromLatin1( " " ), 1 ).prepend(
-			QString::fromLatin1( " " ) ).prepend( d->from->displayName() ).prepend( QString::fromLatin1( "*" ) );
+		mBody = body.section( QString::fromLatin1( " " ), 1 ).prepend(
+			QString::fromLatin1( " " ) ).prepend( mFrom->displayName() ).prepend( QString::fromLatin1( "*" ) );
 	}
 	else
 	{
-		d->body = body;
+		mBody = body;
 	}
 
-	d->format = f;
+	mFormat = f;
 }
 
 void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type)
 {
-	d->timeStamp = timeStamp;
-	d->from = from;
-	d->to = to;
-	d->subject = subject;
-	d->direction = direction;
-	d->fgColor = QColor();
-	d->bgColor = QColor();
-	d->font = QFont();
+	mTimestamp = timeStamp;
+	mFrom = from;
+	mTo = to;
+	mSubject = subject;
+	mDirection = direction;
+	mFg = QColor();
+	mBg = QColor();
+	mFont = QFont();
 	setBody( body, f );
-	d->bgOverride = false;
-	d->type = type;
+	mBgOverride = false;
+	m_type = type;
 }
 
 
 QString KopeteMessage::plainBody() const
 {
-	if(d->format==PlainText)
-		return d->body;
+	if(mFormat==PlainText)
+		return mBody;
 
 //	kdDebug(14010) << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
 
 	//FIXME: is there a better way to unescape HTML?
-	QString r=d->body;
+	QString r=mBody;
 	r = r.replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) ).
 		replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) ).
 		replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) ).
@@ -178,19 +139,19 @@ QString KopeteMessage::plainBody() const
 
 QString KopeteMessage::escapedBody() const
 {
-	if( d->format == PlainText )
+	if( mFormat == PlainText )
 	{
 		QStringList words;
 		QString parsedString;
 
 		//Strip whitespace off the end of the string only
 		//(stripWhiteSpace removes it from beginning as well)
-		int stringEnd = d->body.findRev( QRegExp( QString::fromLatin1( "\\S" ) ) );
+		int stringEnd = mBody.findRev( QRegExp( QString::fromLatin1( "\\S" ) ) );
 //		kdDebug(14010) << k_funcinfo << "String End:" << stringEnd <<endl;
 		if( stringEnd > -1 )
-			parsedString = QStyleSheet::escape( d->body.left( stringEnd + 1 ) );
+			parsedString = QStyleSheet::escape( mBody.left( stringEnd + 1 ) );
 		else
-			parsedString = QStyleSheet::escape( d->body );
+			parsedString = QStyleSheet::escape( mBody );
 
 		words = QStringList::split( ' ', parsedString, true );
 
@@ -216,13 +177,13 @@ QString KopeteMessage::escapedBody() const
 	}
 
 	kdDebug(14010) << "KopeteMessage::escapeBody: not escape needed" <<endl;
-	return d->body;
+	return mBody;
 }
 
 QString KopeteMessage::parsedBody() const
 {
-	if(d->format==ParsedHTML)
-		return d->body;
+	if(mFormat==ParsedHTML)
+		return mBody;
 
 	return KopeteEmoticons::parseEmoticons(parseHTML(escapedBody()));
 }
@@ -252,29 +213,29 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 
 				case 'T':  //insert Timestamp
-					message.append( KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
+					message.append( KGlobal::locale()->formatTime(mTimestamp.time(), true) );
 					break;
 
 				case 'F':  //insert Fonts
 					if( F_first ) // <font>....
 					{
 						message += QString::fromLatin1( "<font " );
-						if ( d->fgColor.isValid() )
-							message += QString::fromLatin1( "color=\"" ) + d->fgColor.name() + QString::fromLatin1( "\"" );
-						if ( d->font != QFont() )
-							message += QString::fromLatin1( " face=\"" ) + d->font.family() + QString::fromLatin1( "\"" );
+						if ( mFg.isValid() )
+							message += QString::fromLatin1( "color=\"" ) + mFg.name() + QString::fromLatin1( "\"" );
+						if ( mFont != QFont() )
+							message += QString::fromLatin1( " face=\"" ) + mFont.family() + QString::fromLatin1( "\"" );
 						message += QString::fromLatin1( ">" );
-						if ( d->font != QFont() && d->font.bold())
+						if ( mFont != QFont() && mFont.bold())
 							message += QString::fromLatin1( "<b>" );
-						if ( d->font != QFont() && d->font.italic())
+						if ( mFont != QFont() && mFont.italic())
 							message += QString::fromLatin1( "<i>" );
 						F_first=false;
 					}
 					else            // </font>
 					{
-						if ( d->font != QFont() && d->font.italic())
+						if ( mFont != QFont() && mFont.italic())
 							message += QString::fromLatin1( "</i>" );
-						if ( d->font != QFont() && d->font.bold())
+						if ( mFont != QFont() && mFont.bold())
 							message += QString::fromLatin1( "</b>" );
 
 						message += QString::fromLatin1( "</font>" );
@@ -283,12 +244,12 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 
 				case 'b':   //BgColor
-					if ( d->bgColor.isValid() && !d->bgOverride )
-						message += d->bgColor.name();
+					if ( mBg.isValid() && !mBgOverride )
+						message += mBg.name();
 					break;
 
 				case 'i': //only inbound
-					if(d->direction != Inbound)
+					if(mDirection != Inbound)
 					{
 						bool b=false;
 						bool fin;
@@ -306,7 +267,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 
 				case 'o': //only outbound
-					if(d->direction != Outbound)
+					if(mDirection != Outbound)
 					{
 						bool b=false;
 						bool fin;
@@ -323,7 +284,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					}
 					break;
 				case 's': //only internal
-					if(d->direction != Internal)
+					if(mDirection != Internal)
 					{
 						bool b=false;
 						bool fin;
@@ -340,7 +301,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					}
 					break;
 				case 'e': //not internal (external)
-					if(d->direction == Internal)
+					if(mDirection == Internal)
 					{
 						bool b=false;
 						bool fin;
@@ -358,10 +319,10 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 
 				case 'f': //insert the 'from' metaContact's displayName
-					if (d->from->metaContact())
-						message.append( QStyleSheet::escape(d->from->metaContact()->displayName()) );
+					if (mFrom->metaContact())
+						message.append( QStyleSheet::escape(mFrom->metaContact()->displayName()) );
 					else
-						message.append( QStyleSheet::escape(d->from->displayName()) );
+						message.append( QStyleSheet::escape(mFrom->displayName()) );
 					break;
 
 				case 't': //insert the 'to' metaContact's displayName
@@ -377,14 +338,14 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 					
 				case 'C': //the 'to' KopeteContact displayName
-					if (d->from)
-						message.append( QStyleSheet::escape(d->from->displayName()) );
+					if (mFrom)
+						message.append( QStyleSheet::escape(mFrom->displayName()) );
 					break;
 
 				case 'I': //insert the statusicon path
-					if(d->from)
+					if(mFrom)
 					{
-						QString icoPath = KGlobal::iconLoader()->iconPath(d->from->statusIcon(), KIcon::Small);
+						QString icoPath = KGlobal::iconLoader()->iconPath(mFrom->statusIcon(), KIcon::Small);
 						if (!icoPath.isNull())
 						message.append( QStyleSheet::escape(icoPath) );
 					}
@@ -690,61 +651,6 @@ QString KopeteMessage::asHTML() const
 
 	msg.append ( QString::fromLatin1( "</body></html>" ) );
 	return msg;
-}
-
-const QDateTime & KopeteMessage::timestamp() const
-{
-	return d->timeStamp;
-}
-
-const KopeteContact *KopeteMessage::from() const
-{
-	return d->from;
-}
-
-KopeteContactPtrList & KopeteMessage::to() const
-{
-	return d->to;
-}
-
-KopeteView::ViewType & KopeteMessage::type() const
-{
-	return d->type;
-}
-
-const QColor & KopeteMessage::fg() const
-{
-	return d->fgColor;
-}
-
-const QColor & KopeteMessage::bg() const
-{
-	return d->bgColor;
-}
-
-const QFont & KopeteMessage::font() const
-{
-	return d->font;
-}
-
-QString & KopeteMessage::body() const
-{
-	return d->body;
-}
-
-QString & KopeteMessage::subject() const
-{
-	return d->subject;
-}
-
-KopeteMessage::MessageFormat & KopeteMessage::format() const
-{
-	return d->format;
-}
-
-KopeteMessage::MessageDirection & KopeteMessage::direction() const
-{
-	return d->direction;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
