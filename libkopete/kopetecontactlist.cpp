@@ -765,6 +765,8 @@ void KopeteContactList::sendFile( const QString &displayName, const KURL &source
 void KopeteContactList::messageContact( const QString &displayName, const QString &messageText )
 {
 	KopeteMetaContact *mc = findContactByDisplayName( displayName );
+	if (!mc) return;
+
 	KopeteContact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
 	if (!c) return;
 
