@@ -285,7 +285,6 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 			{
 				if ( !accountId.isEmpty() )
 				{
-					kdWarning(14010) << k_funcinfo << "Creating account for " << accountId << endl;
 					KopeteAccount *account = protocol->createNewAccount(accountId);
 					if (account && !account->fromXML( element ) )
 					{
@@ -298,15 +297,11 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 					kdWarning(14010) << k_funcinfo << "Account with emtpy id!" << endl;
 				}
 			}
-			else
-			{
-				kdWarning(14010) << k_funcinfo << "This account belong to another protocol!" << endl;
-			}
 		}
 		else
 		{
 			kdWarning(14010) << k_funcinfo << "Unknown element '" << element.tagName()
-				<< "' in contact list!" << endl;
+				<< "' in accounts.xml!" << endl;
 		}
 		element = element.nextSibling().toElement();
 	}
