@@ -45,6 +45,7 @@
 #include "ssiauthtask.h"
 #include "offlinemessagestask.h"
 #include "task.h"
+#include "typingnotifytask.h"
 #include "userinfotask.h"
 #include "usersearchtask.h"
 #include "warningtask.h"
@@ -78,7 +79,7 @@ public:
 	ICQUserInfoRequestTask* icqInfoTask;
 	UserInfoTask* userInfoTask;
 	CloseConnectionTask* closeConnectionTask;
-	
+	TypingNotifyTask * typingNotifyTask;
 	//Managers
 	SSIManager* ssiManager;
 	QValueList<Connection*> connections;
@@ -108,7 +109,7 @@ Client::Client( QObject* parent )
 	d->userInfoTask = 0L;
 	d->closeConnectionTask = 0L;
 	d->stage = ClientPrivate::StageOne;
-	
+	d->typingNotifyTask = 0L;
 }
 
 Client::~Client()
@@ -482,6 +483,7 @@ void Client::initializeStaticTasks()
 	d->ssiAuthTask = new SSIAuthTask( d->connections.first()->rootTask() );
 	d->icqInfoTask = new ICQUserInfoRequestTask( d->connections.first()->rootTask() );
 	d->userInfoTask = new UserInfoTask( d->connections.first()->rootTask() );
+	d->typingNotifyTask = new TypingNotifyTask( d->connections.first()->rootTask() );
 	
 	connect( d->onlineNotifier, SIGNAL( userIsOnline( const QString&, const UserDetails& ) ),
 	         this, SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ) );
@@ -505,8 +507,10 @@ void Client::initializeStaticTasks()
 	         this, SIGNAL( receivedProfile( const QString&, const QString& ) ) );
 	connect( d->userInfoTask, SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	         this, SIGNAL( receivedAwayMessage( const QString&, const QString& ) ) );
-	connect( d->userInfoTask, SIGNAL( gotInfo( Q_UINT16 ) ),
-	         this, SLOT( receivedInfo( Q_UINT16 ) ) );
+	connect( d->typingNotifyTask, SIGNAL( typingStarted( const QString& ) ),
+	         this, SIGNAL( userStartedTyping( const QString& ) ) );
+	connect( d->typingNotifyTask, SIGNAL( gotInfo( const QString& ) ),
+	         this, SIGNAL( userStoppedTyping( const QString& ) ) );
 }
 
 void Client::removeGroup( const QString& groupName )

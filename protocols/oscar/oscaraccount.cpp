@@ -83,6 +83,10 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 						this, SLOT( messageReceived(const Oscar::Message& ) ) );
 	QObject::connect( d->engine, SIGNAL( error( int, int, const QString&  ) ),
 	                  this, SLOT( protocolError( int, int, const QString& ) ) );
+	QObject::connect( d->engine, SIGNAL( userStartedTyping( const QString& ) ),
+	                  this, SLOT( userStartedTyping( const QString& ) ) );
+	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
+	                  this, SLOT( userStoppedTyping( const QString& ) ) );
 }
 
 OscarAccount::~OscarAccount()
@@ -470,6 +474,25 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 	}
 }
 	
+void OscarAccount::userStartedTyping( const QString & contact )
+{
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	if ( ct )
+	{
+		OscarContact * oc = static_cast<OscarContact *>( ct );
+		oc->startedTyping();
+	}
+}
+
+void OscarAccount::userStoppedTyping( const QString & contact )
+{
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	if ( ct )
+	{
+		OscarContact * oc = static_cast<OscarContact *>( ct );
+		oc->stoppedTyping();
+	}
+}
 
 #include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode csands;

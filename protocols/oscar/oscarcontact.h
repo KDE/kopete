@@ -78,6 +78,10 @@ public:
 	void setSSIItem( const Oscar::SSI& item );
 	Oscar::SSI ssiItem() const;
 	
+	/** we received a typing notification from this contact, tell any message manager */
+	void startedTyping();
+	void stoppedTyping();
+	
 public slots:
 	/** slot so that properties can be updated based on a new SSI item */
 	virtual void updateSSIItem() = 0;
