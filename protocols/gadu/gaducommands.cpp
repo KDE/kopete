@@ -155,7 +155,7 @@ SearchCommand::watcher()
             kdDebug(713)<<"Writting error."<<endl;
             break;
         default:
-            kdDebug(613)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
+            kdDebug(713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
 
         }
         done_ = true;
@@ -536,9 +536,7 @@ UserlistGetCommand::watcher()
         return;
     }
     if ( session_->state == GG_STATE_DONE) {
-        //kdDebug(613)<< "Data = "<<(char*)session_->data<<endl;
         QString data = QString( static_cast<char*>(session_->data) );
-        kdDebug(613)<< "Data = "<<data<<endl;
         QStringList result;
         QString name;
         QString group;

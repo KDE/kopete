@@ -21,6 +21,7 @@ GaduSession::~GaduSession()
     }
     if( session_ ) {
         gg_free_session( session_ );
+        session_ = 0;
     }
 }
 
@@ -98,6 +99,8 @@ GaduSession::logoff()
     if ( isConnected() ) {
         gg_logoff( session_ );
 	QObject::disconnect( this, SLOT(checkDescriptor()) );
+        gg_free_session( session_ );
+        session_ = 0;
     }
 }
 
@@ -172,7 +175,7 @@ GaduSession::changeStatus( int status )
         return gg_change_status( session_, status );
     else
         emit error( i18n("Not Connected..."),
-                    i18n("You are not connected to the server!") );
+                    i18n("You have to be connected to the server to change your status!") );
     return 1;
 }
 
@@ -183,7 +186,7 @@ GaduSession::changeStatusDescription( int status, const QString& descr )
         return gg_change_status_descr( session_, status, descr.latin1() );
     else
         emit error( i18n("Not Connected..."),
-                    i18n("You are not connected to the server!") );
+                    i18n("You have to be connected to the server to change your status!") );
     return 1;
 
 }
@@ -193,9 +196,7 @@ GaduSession::ping()
 {
     if ( isConnected() )
         return gg_ping( session_ );
-    else
-        emit error( i18n("Not Connected..."),
-                    i18n("You are not connected to the server!") );
+
     return 1;
 }
 
@@ -213,8 +214,10 @@ GaduSession::dccRequest( uin_t uin )
 void
 GaduSession::checkDescriptor()
 {
-    struct gg_event *e;
     disableNotifiers();
+
+    struct gg_event *e;
+
 
     if (!(e = gg_watch_fd(session_))) {
         emit error( i18n("Connection broken!"),
@@ -244,9 +247,17 @@ GaduSession::checkDescriptor()
         emit connectionSucceed( e );
         break;
     case GG_EVENT_CONN_FAILED:
+        if ( session_ ) {
+            gg_free_session( session_ );
+            session_ = 0L;
+        }
         emit connectionFailed( e );
         break;
     case GG_EVENT_DISCONNECT:
+        if ( session_ ) {
+            gg_free_session( session_ );
+            session_ = 0L;
+        }
         emit disconnect();
         break;
     case GG_EVENT_PONG:
@@ -256,10 +267,11 @@ GaduSession::checkDescriptor()
 	    break;
     default:
         emit error( i18n("Unknown event..."),
-                    i18n("Can't handle an event. Please report this to zackrat@att.net") );
+                    i18n("Can't handle an event. Please report this to zack@kde.org") );
 	kdDebug()<<"GaduGadu Event = "<<e->type<<endl;
         break;
     }
+
     enableNotifiers( session_->check );
 }
 

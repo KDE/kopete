@@ -58,28 +58,28 @@ public:
     void init();
     bool unload();
 
-    virtual QString protocolIcon() const ;
-    virtual void Connect();
-    virtual void Disconnect();
-    virtual bool isConnected() const;
-    virtual KopeteContact* createContact( KopeteMetaContact *parent,
+    QString protocolIcon() const ;
+    void Connect();
+    void Disconnect();
+    bool isConnected() const;
+    KopeteContact* createContact( KopeteMetaContact *parent,
                                           const QString &serializedData );
-    virtual void setAway();
-    virtual void setAvailable();
-    virtual bool isAway() const ;
+    void setAway();
+    void setAvailable();
+    bool isAway() const ;
 
-    virtual AddContactPage *createAddContactWidget( QWidget *parent );
+    AddContactPage *createAddContactWidget( QWidget *parent );
     bool canSendOffline() const { return true; }
     KopeteContact *myself() const;
-    // }
-    //!Plugin reimplementation
-
-    void addContact( const QString& uin, const QString &nick, KopeteMetaContact* parent = 0L );
-    void removeContact( const GaduContact *c );
-
     bool serialize( KopeteMetaContact *metaContact, QStringList &strList ) const;
     void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
     QStringList addressBookFields() const;
+    // }
+    //!Plugin reimplementation
+
+    void addContact( const QString& uin, const QString &nick,
+                     KopeteMetaContact* parent = 0L, const QString& group = QString::null );
+    void removeContact( const GaduContact *c );
 public slots:
     void slotIconRightClicked( const QPoint& );
     void slotLogin();
@@ -118,9 +118,10 @@ private:
     void initActions();
 
     static GaduProtocol* protocolStatic_;
-    GaduSession*         session_;
-    QPtrList<GaduCommand>    commandList_;
-    ContactsMap          contactsMap_;
+
+    GaduSession*           session_;
+    QPtrList<GaduCommand>  commandList_;
+    ContactsMap            contactsMap_;
 
     StatusBarIcon *statusBarIcon_;
 
@@ -140,11 +141,12 @@ private:
     QPixmap  connectingIcon_;
 
     KActionMenu *actionMenu_;
-    KAction* onlineAction_;
-    KAction* busyAction_;
-    KAction* awayAction_;
-    KAction* invisibleAction_;
-    KAction* offlineAction_;
+    KAction     *onlineAction_;
+    KAction     *busyAction_;
+    KAction     *awayAction_;
+    KAction     *invisibleAction_;
+    KAction     *offlineAction_;
+
     QTimer  *pingTimer_;
 };
 

@@ -219,13 +219,14 @@ GaduProtocol::myself() const
 }
 
 void
-GaduProtocol::addContact( const QString& uin, const QString& nick, KopeteMetaContact* parent )
+GaduProtocol::addContact( const QString& uin, const QString& nick,
+                          KopeteMetaContact* parent, const QString& group )
 {
     KopeteContactList *l = KopeteContactList::contactList();
     KopeteMetaContact *m;
 
     if ( !parent ) {
-        m = l->findContact( this->id(), nick );
+        m = l->findContact( this->id(), uin );
     } else
         m = parent;
 
@@ -237,7 +238,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick, KopeteMetaCon
         m->setAddressBookField( this, "uin", uin );
         GaduContact *contact = new GaduContact( this->id(), uinNumber,
                                                 nick, m );
-        m->addContact( contact, m->groups().first() );
+        m->addContact( contact, group );
         contactsMap_.insert( uinNumber, contact );
         addNotify( uinNumber );
     }
@@ -267,6 +268,12 @@ GaduProtocol::slotIconRightClicked( const QPoint& /*p*/ )
 void
 GaduProtocol::slotLogin()
 {
+    if ( (userUin_ == 0) || password_.isEmpty() ) {
+        KMessageBox::error( kopeteapp->mainWindow(),
+                            i18n("You have fill in uin and password fields in the preferences dialog before you'll be able to login"),
+                            i18n("Couldn't login") );
+        return;
+    }
     if ( !session_->isConnected() ) {
         session_->login( userUin_, password_ );
     } else {
@@ -359,7 +366,7 @@ GaduProtocol::messageReceived( struct gg_event* e )
         return;
 
     if ( e->event.msg.sender == 0 ) {
-        //system message
+        //system message, display them or not?
         kdDebug()<<"####"<<" System Message "<<endl;
         return;
     }
@@ -371,7 +378,7 @@ GaduProtocol::messageReceived( struct gg_event* e )
         KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
         c->messageReceived( msg );
     } else {
-        addContact( QString::number(e->event.msg.sender), (const char*)e->event.msg.message );
+        addContact( QString::number(e->event.msg.sender), QString::number(e->event.msg.sender) );
         GaduContact *c = contactsMap_.find( e->event.msg.sender ).data();
         KopeteContactPtrList tmp;
         tmp.append( myself_ );
@@ -489,7 +496,7 @@ GaduProtocol::userlist( const QStringList& u )
                 uin = *it;
             }
         }
-        addContact( uin, name );
+        addContact( uin, name, 0L, group );
     }
 }
 

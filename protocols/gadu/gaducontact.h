@@ -36,56 +36,56 @@ class KopeteHistoryDialog;
 
 class GaduContact : public KopeteContact
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GaduContact( const QString &protocolId, uin_t uin, const QString& name,
-		     KopeteMetaContact *parent );
+    GaduContact( const QString &protocolId, uin_t uin, const QString& name,
+                 KopeteMetaContact *parent );
 
-	virtual void          addToGroup( const QString &group );
-	virtual void          removeFromGroup( const QString &group );
-	virtual void          moveToGroup( const QString &from, const QString &to );
-	virtual QStringList   groups() const;
-	virtual void          setName( const QString &name );
-	virtual QString       name() const;
-	virtual ContactStatus status() const;
-	virtual QString       statusText() const;
-	virtual QString       statusIcon() const;
-	virtual int           importance() const;
-	virtual QString       id() const;
-	virtual QString       data() const;
+    virtual void          addToGroup( const QString &group );
+    virtual void          removeFromGroup( const QString &group );
+    virtual void          moveToGroup( const QString &from, const QString &to );
+    virtual QStringList   groups() const;
+    virtual void          setName( const QString &name );
+    virtual QString       name() const;
+    virtual ContactStatus status() const;
+    virtual QString       statusText() const;
+    virtual QString       statusIcon() const;
+    virtual int           importance() const;
+    virtual QString       id() const;
+    virtual QString       data() const;
 
-	void  setGaduStatus( Q_UINT32 );
-	Q_UINT32  gaduStatus() const;
-	uin_t uin() const;
+    void  setGaduStatus( Q_UINT32 );
+    Q_UINT32  gaduStatus() const;
+    uin_t uin() const;
 
 public slots:
-	void showContextMenu(const QPoint& p, const QString& group);
-	void execute();
+    void showContextMenu(const QPoint& p, const QString& group);
+    void execute();
 
-	void slotUserInfo();
-	void slotViewHistory();
-	void removeThisUser();
-	void messageReceived( const KopeteMessage& );
-	void messageSend( const KopeteMessage&, KopeteMessageManager* );
+    void slotUserInfo();
+    void slotViewHistory();
+    void removeThisUser();
+    void messageReceived( const KopeteMessage& );
+    void messageSend( const KopeteMessage&, KopeteMessageManager* );
 
 protected:
-	KopeteMessageManager* msgManager();
-	void initActions();
+    KopeteMessageManager* msgManager();
+    void initActions();
 
 private:
-	KopeteHistoryDialog  *historyDialog_;
-	KopeteMessageManager *msgManager_;
-	uin_t                 uin_;
-	QString               name_;
-	QStringList           groups_;
-	GaduProtocol         *protocol_;
-	Q_UINT32              status_;
-	KopeteContactPtrList  thisContact_;
+    KopeteHistoryDialog  *historyDialog_;
+    KopeteMessageManager *msgManager_;
+    uin_t                 uin_;
+    QString               name_;
+    QStringList           groups_;
+    GaduProtocol         *protocol_;
+    Q_UINT32              status_;
+    KopeteContactPtrList  thisContact_;
 
-	KAction     *actionSendMessage_;
-	KAction     *actionInfo_;
-	KAction     *actionViewHistory_;
-	KAction     *actionRemove_;
+    KAction     *actionSendMessage_;
+    KAction     *actionInfo_;
+    KAction     *actionViewHistory_;
+    KAction     *actionRemove_;
 };
 
 #endif

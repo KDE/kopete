@@ -19,7 +19,6 @@ GaduContact::GaduContact( const QString& protocolId, uin_t uin,
                           const QString& name, KopeteMetaContact* parent )
     : KopeteContact( GaduProtocol::protocol()->id(), parent )
 {
-    kdDebug()<<k_funcinfo<<endl;
     historyDialog_ = 0L;
     msgManager_ = 0L;
     uin_ = uin;
@@ -36,7 +35,6 @@ GaduContact::GaduContact( const QString& protocolId, uin_t uin,
 void
 GaduContact::showContextMenu( const QPoint& p, const QString& /*group*/ )
 {
-    kdDebug()<<k_funcinfo<<endl;
     KPopupMenu *popup = new KPopupMenu();
 
     popup->insertTitle( QString("%1 (%2)").arg(name_).arg(statusText()) );
@@ -58,56 +56,48 @@ GaduContact::showContextMenu( const QPoint& p, const QString& /*group*/ )
 void
 GaduContact::execute()
 {
-    kdDebug()<<k_funcinfo<<endl;
     msgManager()->readMessages();
 }
 
 void
 GaduContact::addToGroup( const QString& group )
 {
-    kdDebug()<<k_funcinfo<<endl;
     groups_.append( group );
 }
 
 void
 GaduContact::removeFromGroup( const QString& group )
 {
-    kdDebug()<<k_funcinfo<<endl;
     groups_.remove( group );
 }
 
 void
 GaduContact::moveToGroup( const QString& /*from*/, const QString& /*to*/ )
 {
-    kdDebug()<<k_funcinfo<<endl;
     //GaduProtocol::protocol()->moveContact( this, from, to );
 }
 
 QStringList
 GaduContact::groups() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     return groups_;
 }
 
 void
 GaduContact::setName( const QString& name )
 {
-    kdDebug()<<k_funcinfo<<endl;
     name_ = name;
 }
 
 QString
 GaduContact::name() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     return name_;
 }
 
 KopeteContact::ContactStatus
 GaduContact::status() const
 {
-    //kdDebug()<<k_funcinfo<<endl;
     switch( status_ ) {
     case GG_STATUS_NOT_AVAIL:
     case GG_STATUS_NOT_AVAIL_DESCR:
@@ -130,7 +120,6 @@ GaduContact::status() const
 QString
 GaduContact::statusText() const
 {
-    //kdDebug()<<k_funcinfo<<endl;
     switch( status_ ) {
     case GG_STATUS_NOT_AVAIL:
     case GG_STATUS_NOT_AVAIL_DESCR:
@@ -157,7 +146,6 @@ GaduContact::statusText() const
 QString
 GaduContact::statusIcon() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     switch( status_ ) {
     case GG_STATUS_NOT_AVAIL:
         return "gg_away";
@@ -192,7 +180,6 @@ GaduContact::statusIcon() const
 int
 GaduContact::importance() const
 {
-    //kdDebug()<<k_funcinfo<<endl;
     switch( status_ ) {
     case GG_STATUS_NOT_AVAIL:
         return 13;
@@ -223,21 +210,18 @@ GaduContact::importance() const
 QString
 GaduContact::id() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     return QString::number( uin_ );;
 }
 
 QString
 GaduContact::data() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     return QString::number( uin_ );
 }
 
 void
 GaduContact::setGaduStatus( Q_UINT32 status )
 {
-    kdDebug()<<k_funcinfo<<endl;
     status_ = status;
     emit statusChanged( this, GaduContact::status() );
 }
@@ -245,21 +229,18 @@ GaduContact::setGaduStatus( Q_UINT32 status )
 Q_UINT32
 GaduContact::gaduStatus() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     return status_;
 }
 
 uin_t
 GaduContact::uin() const
 {
-    kdDebug()<<k_funcinfo<<endl;
     return uin_;
 }
 
 KopeteMessageManager*
 GaduContact::msgManager()
 {
-    kdDebug()<<k_funcinfo<<endl;
     if ( msgManager_ ) {
         return msgManager_;
     } else {
