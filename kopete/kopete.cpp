@@ -47,6 +47,11 @@ Kopete::Kopete()
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
 
+	// KApplication sets the reference count to 1 on startup. KopetePluginManager has a
+	// reference to us once created, so create it and drop our own reference.
+	KopetePluginManager::self();
+	deref();
+
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
 	 * When starting up kopete and the msn plugin gets loaded it can bring up

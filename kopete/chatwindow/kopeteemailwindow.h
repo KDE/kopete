@@ -76,7 +76,7 @@ signals:
 	virtual void activated( KopeteView *view );
 
 protected:
-	virtual bool queryExit();
+	virtual void closeEvent( QCloseEvent *e );
 	virtual void windowActivationChange( bool activated );
 	virtual bool eventFilter( QObject *o, QEvent *e );
 
