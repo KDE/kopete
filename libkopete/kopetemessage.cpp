@@ -15,10 +15,7 @@
     *************************************************************************
 */
 
-#include "config.h"
-#ifdef HAVE_TGMATH_H
-#include <tgmath.h>
-#endif
+#include <stdlib.h>
 
 #include <qdatetime.h>
 #include <qfont.h>
@@ -150,7 +147,7 @@ void KopeteMessage::compareColors( QColor &colorFg, QColor &colorBg )
 	colorBg.hsv( &h2, &s2, &v2 );
 	vDiff = v1 - v2;
 
-	if( h1 == s1 && h2 == s2 && ( abs((double)vDiff) <= 150 ) )
+	if( h1 == s1 && h2 == s2 && ( abs( vDiff ) <= 150 ) )
 		colorFg = QColor( h2, s2, (v1 + 127) % 255, QColor::Hsv );
 }
 
