@@ -134,8 +134,6 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_connId = id;
 	m_Username = username;
 	m_Password = password;
-	//Uncomment for yahoo packet debugging
-	yahoo_set_log_level(YAHOO_LOG_DEBUG);
 }
 
 int YahooSession::sessionId() const
@@ -165,6 +163,8 @@ void YahooSession::logOff()
 {
 	kdDebug(14180)<< k_funcinfo << " " << m_connId<<endl;
 	yahoo_logoff(m_connId);
+	m_socket->close();
+	m_socket->reset();
 }
 
 void YahooSession::refresh()

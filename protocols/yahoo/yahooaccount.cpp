@@ -100,11 +100,11 @@ void YahooAccount::loaded()
 		m_myself->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
 
 	newPluginData = pluginData(protocol(), QString::fromLatin1("UseServerGroups"));
-	if (newPluginData == "True")
+	if (newPluginData.lower() == "true")
 		m_useServerGroups = true;
 
 	newPluginData = pluginData(protocol(), QString::fromLatin1("ImportContacts"));
-	if (newPluginData == "True")
+	if (newPluginData.lower() == "true")
 		m_importContacts = true;
 
 	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
@@ -271,6 +271,7 @@ KActionMenu *YahooAccount::actionMenu()
 
 void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
+/*
 //	kdDebug(14180) << k_funcinfo << endl;
 	theHaveContactList = true;
 
@@ -286,6 +287,7 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 	for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
 		if(i.currentKey() != accountId())
 			static_cast<YahooContact *>(i.current())->syncToServer();
+*/
 }
 
 YahooContact *YahooAccount::contact( const QString &id )
@@ -361,6 +363,13 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	IDs[userid] = QPair<QString, QString>(group, alias);
+
+	// Serverside -> local
+	/*if(m_importContacts)
+	{*/	kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
+		QString groupName = m_useServerGroups ? group : QString("Imported Yahoo Contacts");
+		addContact(userid, alias.isEmpty() ? userid : alias, 0, KopeteAccount::ChangeKABC, group);
+	//}
 }
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
