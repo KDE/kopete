@@ -20,16 +20,15 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
-//#include <qstringlist.h>
+
 #include <kurl.h>
+
+#include "kopetecontact.h"
 #include "kopetegroup.h"
 
 class QDomDocument;
 
 class KopeteMetaContact;
-/*class KopeteGroup;
-class KopeteGroupList;*/
-
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -71,15 +70,26 @@ public:
 	QStringList reachableContacts() const;
 
 	/**
-	 * Return all meta contacts that are online
+	 * Return all contacts that are online
 	 */
-	QStringList onlineContacts() const;
+	QPtrList<KopeteContact> onlineContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineContacts() that only returns
 	 * the online contacts for a single protocol
 	 */
-	QStringList onlineContacts( const QString &protocolId ) const;
+	QPtrList<KopeteContact> onlineContacts( const QString &protocolId ) const;
+
+	/**
+	 * Return all meta contacts that are online
+	 */
+	QPtrList<KopeteMetaContact> onlineMetaContacts() const;
+
+	/**
+	 * Overloaded method of @ref onlineMetaContacts() that only returns
+	 * the online meta contacts for a single protocol
+	 */
+	QPtrList<KopeteMetaContact> onlineMetaContacts( const QString &protocolId ) const;
 
 	/**
 	 * Returns all contacts which can accept file transfers

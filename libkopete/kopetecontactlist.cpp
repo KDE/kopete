@@ -664,21 +664,41 @@ QStringList KopeteContactList::reachableContacts() const
 	return contacts;
 }
 
-QStringList KopeteContactList::onlineContacts() const
+QPtrList<KopeteContact> KopeteContactList::onlineContacts() const
 {
-	QStringList contacts;
+	QPtrList<KopeteContact> result;
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
-			contacts.append( it.current()->displayName() );
+		{
+			QPtrList<KopeteContact> contacts = it.current()->contacts();
+			QPtrListIterator<KopeteContact> cit( contacts );
+			for( ; cit.current(); ++cit )
+			{
+				if ( cit.current()->isOnline() )
+					result.append( cit.current() );
+			}
+		}
 	}
-	return contacts;
+	return result;
 }
 
-QStringList KopeteContactList::onlineContacts( const QString &protocolId ) const
+QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts() const
 {
-	QStringList onlineContacts;
+	QPtrList<KopeteMetaContact> result;
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		if ( it.current()->isOnline() )
+			result.append( it.current() );
+	}
+	return result;
+}
+
+QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts( const QString &protocolId ) const
+{
+	QPtrList<KopeteMetaContact> result;
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
@@ -689,12 +709,33 @@ QStringList KopeteContactList::onlineContacts( const QString &protocolId ) const
 			QPtrListIterator<KopeteContact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
-				if ( cit.current()->protocol()->pluginId() == protocolId )
-					onlineContacts.append( it.current()->displayName() );
+				if ( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
+					result.append( it.current() );
 			}
 		}
 	}
-	return onlineContacts;
+	return result;
+}
+
+QPtrList<KopeteContact> KopeteContactList::onlineContacts( const QString &protocolId ) const
+{
+	QPtrList<KopeteContact> result;
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		// FIXME: This loop is not very efficient :(
+		if ( it.current()->isOnline() )
+		{
+			QPtrList<KopeteContact> contacts = it.current()->contacts();
+			QPtrListIterator<KopeteContact> cit( contacts );
+			for( ; cit.current(); ++cit )
+			{
+				if ( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
+					result.append( cit.current() );
+			}
+		}
+	}
+	return result;
 }
 
 QStringList KopeteContactList::fileTransferContacts() const

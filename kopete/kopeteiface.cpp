@@ -35,7 +35,13 @@ QStringList KopeteIface::reachableContacts()
 
 QStringList KopeteIface::onlineContacts()
 {
-	return KopeteContactList::contactList()->onlineContacts();
+	QStringList result;
+	QPtrList<KopeteContact> list = KopeteContactList::contactList()->onlineContacts();
+	QPtrListIterator<KopeteContact> it( list );
+	for( ; it.current(); ++it )
+		result.append( it.current()->contactId() );
+
+	return result;
 }
 
 QStringList KopeteIface::contactsStatus()

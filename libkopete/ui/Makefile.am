@@ -10,7 +10,7 @@ noinst_HEADERS = configmodule.h \
 	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp \
-	preferencesdialog.cpp \
+	preferencesdialog.cpp kopetecontactaction.cpp \
 	addcontactpage.cpp systemtray.cpp \
 	kopeteballoon.cpp \
 	kopetehistorydialog.cpp \

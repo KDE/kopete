@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+#include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -193,24 +194,30 @@ KActionCollection * MSNMessageManager::chatActions()
 {
 	delete m_actions;
 
-	m_actions= new KActionCollection(this);
+	m_actions = new KActionCollection( this );
 
-	KAction *actionClose = new KAction( i18n ("Leave Chat"), 0,
-		this, SLOT( slotCloseSession() ), m_actions, "actionClose" );
+	KAction *actionClose = new KAction( i18n ( "Leave Chat" ), 0,
+		SLOT( slotCloseSession() ), m_actions, "actionClose" );
 	m_actions->insert( actionClose );
 
-	KListAction *actionInvite=new KListAction(i18n("&Invite"),"",0, m_actions ,"actionInvite");
-	QStringList sl = KopeteContactList::contactList()->onlineContacts( protocol()->pluginId() );
+	KActionMenu *actionInvite = new KActionMenu( i18n( "&Invite" ), m_actions , "actionInvite" );
+	QPtrList<KopeteContact> availableContacts = KopeteContactList::contactList()->onlineContacts( protocol()->pluginId() );
+	QPtrListIterator<KopeteContact> it( availableContacts );
+	for( ; it.current(); ++it )
+	{
+		actionInvite->insert( new KopeteContactAction( it.current(), this,
+			SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
+	}
 
 	// FIXME: Remove the currently active members from this list again!
-	sl.append( otherString=i18n("Other...") );
-	actionInvite->setItems( sl );
-	connect( actionInvite, SIGNAL( activated(const QString&) ), this, SLOT(slotInviteContact(const QString &)) );
-	m_actions->insert(actionInvite);
+	//sl.append( otherString = i18n( "Other..." ) );
+	//actionInvite->setItems( sl );
+	//connect( actionInvite, SIGNAL( activated( const QString & ) ),
+	//	SLOT( slotInviteContact( const QString & ) ) );
+	m_actions->insert( actionInvite );
 
 	return m_actions;
 }
-
 
 void MSNMessageManager::slotCloseSession()
 {
@@ -218,8 +225,10 @@ void MSNMessageManager::slotCloseSession()
 		m_chatService->slotCloseSession();
 }
 
-void MSNMessageManager::slotInviteContact(const QString &_handle)
+void MSNMessageManager::slotInviteContact( KopeteContact *contact )
 {
+	/*
+	 FIXME: Move this to a separate slot for 'other...' - Martijn
 	QString handle=_handle;
 	if(handle==otherString)
 	{
@@ -235,11 +244,12 @@ void MSNMessageManager::slotInviteContact(const QString &_handle)
 			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
 			return;
 	}
-	handle=handle.lower();
+	*/
+
 	if( m_chatService )
-		m_chatService->slotInviteContact(handle);
+		m_chatService->slotInviteContact( contact->contactId() );
 	else
-		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( handle );
+		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( contact->contactId() );
 }
 
 void MSNMessageManager::sendMessageQueue()
