@@ -47,6 +47,7 @@ class KopeteXSLThread : public QThread
 		 */
 		virtual void run();
 
+		static QString xsltTransform(const QString &xmlString, const QString &xslString);
 		/**
 		 * Returns the result string
 		 */
@@ -72,6 +73,24 @@ KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QString &xslSt
 
 void KopeteXSLThread::run()
 {
+	m_resultString = xsltTransform(m_xml, m_xsl);
+
+	//Signal completion
+	if( m_target && m_slotCompleted )
+	{
+		QSignal completeSignal( m_target );
+		completeSignal.connect( m_target, m_slotCompleted );
+		completeSignal.setValue( m_resultString );
+		completeSignal.activate();
+
+		delete this;
+	}
+}
+
+QString KopeteXSLThread::xsltTransform(const QString &xmlString, const QString &xslString)
+{
+	QString resultString;
+
 	xsltStylesheetPtr style_sheet = NULL;
 	xmlDocPtr xmlDoc, xslDoc, resultDoc;
 
@@ -80,15 +99,14 @@ void KopeteXSLThread::run()
 	xmlSubstituteEntitiesDefault(1);
 
 	// Convert QString into a C string
-	QCString xmlCString = m_xml.utf8();
-	QCString xslCString = m_xsl.utf8();
+	QCString xmlCString = xmlString.utf8();
+	QCString xslCString = xslString.utf8();
 
 	// Read XML docs in from memory
 	xmlDoc = xmlParseMemory( xmlCString, xmlCString.length() );
-	xslDoc = xmlParseMemory( xslCString, xslCString.length() );
-
 	if( xmlDoc != NULL )
 	{
+		xslDoc = xmlParseMemory( xslCString, xslCString.length() );
 		if( xslDoc != NULL )
 		{
 			style_sheet = xsltParseStylesheetDoc( xslDoc );
@@ -101,7 +119,7 @@ void KopeteXSLThread::run()
 					xmlChar *mem;
 					int size;
 					xmlDocDumpMemory( resultDoc, &mem, &size );
-					m_resultString = QString::fromUtf8( QCString( (char*)mem, size + 1 ) );
+					resultString = QString::fromUtf8( QCString( (char*)mem, size + 1 ) );
 					free(mem);
 					xmlFreeDoc(resultDoc);
 				}
@@ -127,27 +145,12 @@ void KopeteXSLThread::run()
 	{
 		kdDebug( 14010 ) << "XML Document could not be parsed!!!" << endl;
 	}
-
-	//Signal completion
-	if( m_target && m_slotCompleted )
-	{
-		QSignal completeSignal( m_target );
-		completeSignal.connect( m_target, m_slotCompleted );
-		completeSignal.setValue( m_resultString );
-		completeSignal.activate();
-
-		delete this;
-	}
+	return resultString;
 }
-
-extern int xmlLoadExtDtdDefaultValue;
 
 const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
 {
-	KopeteXSLThread mThread( xmlString, xslString );
-	mThread.start();
-	mThread.wait();
-	return mThread.result();
+	return KopeteXSLThread::xsltTransform(xmlString, xslString);
 }
 
 void KopeteXSL::xsltTransformAsync( const QString &xmlString, const QString &xslString,
@@ -162,6 +165,10 @@ bool KopeteXSL::isValid( const QString &xslString )
 	xsltStylesheetPtr style_sheet = NULL;
 	xmlDocPtr xslDoc = NULL;
 	bool retVal = false;
+
+	//Init Stuff
+	xmlLoadExtDtdDefaultValue = 0;
+	xmlSubstituteEntitiesDefault(1);
 
 	// Convert QString into a C string
 	QCString xslCString = xslString.utf8();
