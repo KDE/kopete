@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 #define MEANWHILELIBRARY_CPP
 
@@ -27,7 +28,7 @@
 #include "meanwhileserver.h"
 #include "meanwhilecontact.h"
 
-#define HERE printf("siva: %s-%d\n",__FILE__,__LINE__);
+#define HERE kdDebug() << k_funcinfo << endl;
 
 extern "C"
 {
@@ -151,7 +152,7 @@ MEANWHILE_HOOK(on_stop(
 HERE
     REMOVE_UNUSED_VAR_WARNING(s);
 
-printf("siva close : %s\n",mwError(reason));
+ kdDebug() << "close: " << mwError(reason) << endl;
     if (reason & ERR_FAILURE)
     {
         emit serverNotificationReceived(QString(mwError(reason)));
@@ -165,11 +166,7 @@ MEANWHILE_HOOK(on_setUserStatus(
                on_setUserStatus(s,msg))
 {
 HERE
-printf("sss %p %p",s,msg);
-printf("siva: status of [%s] to %x [%s]\n",
-            (s->login.user_id==NULL)?"null":s->login.user_id,
-            (msg->status.status),
-            (msg->status.desc==NULL)?"null":msg->status.desc);
+    kdDebug() << "meanwhile status for " << ((s->login.user_id==NULL)?"null":s->login.user_id) << " changed to " << (msg->status.status) << endl;
         struct mwAwareIdBlock id = 
                 { 
                     mwAware_USER,
@@ -196,7 +193,6 @@ HERE
     	idletime = (idb->status.time == 0xdeadbeef)?
                             0:idb->status.time;
     
-//printf("siva: user status change for %s",idb->id.user);
     emit userStatusChanged(QString(idb->id.user),
                         idb->online,
                         idletime,
@@ -388,7 +384,7 @@ int MeanwhileLibrary::writeToSocket(
 {
 HERE
     REMOVE_UNUSED_VAR_WARNING(handler);
-    prettyprint(buffer,count);
+//prettyprint(buffer,count);
     int returnval = sock2server->writeBlock(buffer,count);
     sock2server->flush();
     return returnval;
@@ -506,7 +502,7 @@ HERE
     readAmount = sock2server->readBlock(buffer,4000);
     if (readAmount < 0)
         return;
-prettyprint(buffer,readAmount);
+//prettyprint(buffer,readAmount);
     mwSession_recv(session, buffer, (unsigned int) readAmount);
 }
 
@@ -563,8 +559,9 @@ int MeanwhileLibrary::sendIm(const QString &toUser, const QString &msg)
 HERE
   struct mwIdBlock t = { (char *) toUser.ascii(), NULL };
 
-  printf("sending data to user [%s]\n%s\n",toUser.ascii(),msg.ascii());
-prettyprint(msg.ascii(),14);
+  kdDebug() << "sending data to user " << toUser.ascii() << endl;
+  kdDebug() << msg.ascii() << endl;
+  //prettyprint(msg.ascii(),14);
   return !mwServiceIM_sendText(srvc_im, &t, msg.ascii());
 }
 
