@@ -480,8 +480,6 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 	connect( sbIcon, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
-	// FIXME: Wanted by pmax, not sure if we should leave both in
-	// it'll confuse users if we take out the RMB function
 	connect( sbIcon, SIGNAL( leftClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
@@ -559,6 +557,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 		// BEGIN REMOVE
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
+		#if 0
 		if( pm.isNull() )
 		{
 			kdDebug(14000) << k_funcinfo << " FIXME: loading non-themed icon for "
@@ -566,6 +565,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 			pm = loader->loadIcon( status.overlayIcon(),
 				 KIcon::User, 0, KIcon::DefaultState, 0L, true );
 		}
+		#endif
 		// END REMOVE
 
 		if( pm.isNull() )
@@ -593,17 +593,17 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 		QToolTip::remove(m_tray);
 
 		QString tt = QString::fromLatin1("<qt><table>");
-		QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
-		for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
+		QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
+		for(KopeteAccount *a = accounts.first(); a; a = accounts.next())
 		{
 			KopeteContact *self = a->myself();
 			tt += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-			           "<tr><td><img src=\"kopete-account-icon:%3:%4\">&nbsp;<b>%1</b>&nbsp;(%2)</td><td align=\"right\">%5</td></tr>")
-			           .arg( a->protocol()->displayName() ).arg( a->accountId(), KURL::encode_string( a->protocol()->pluginId() ),
-			                 KURL::encode_string( a->accountId() ), self->onlineStatus().description() );
+				"<tr><td><img src=\"kopete-account-icon:%3:%4\">&nbsp;<b>%1</b>&nbsp;(%2)</td><td align=\"right\">%5</td></tr>")
+				.arg( a->protocol()->displayName() ).arg( a->accountId(), KURL::encode_string( a->protocol()->pluginId() ),
+					KURL::encode_string( a->accountId() ), self->onlineStatus().description() );
 		}
 		tt += QString::fromLatin1("</table></qt>");
-		QToolTip::add(m_tray,tt);
+		QToolTip::add(m_tray, tt);
 	}
 }
 
