@@ -176,7 +176,7 @@ void MSNProtocol::Connect()
 		m_msnId = KGlobal::config()->readEntry( "UserID", "" );
 		m_password = KGlobal::config()->readEntry( "Password", "" );
 		//m_msnService->setMyPublicName(KGlobal::config()->readEntry("Nick", ""));
-		m_serviceSocket->connectToService( m_msnId, m_password, m_serial,
+		m_serviceSocket->connectToMSN( m_msnId, m_password, m_serial,
 			m_silent );
 		statusBarIcon->setMovie( connectingIcon );
 	}

@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qdatetime.h>
 
 #include "kmsnservicesocket.h"
 #include "msnprotocol.h"
@@ -33,36 +34,44 @@
 
 KMSNServiceSocket::KMSNServiceSocket()
 {
-	if( !s_kmsnServiceSocket )
-		s_kmsnServiceSocket = this;
-	else
-		kdDebug() << "KMSNServiceSocket::KMSNServiceSocket: WARNING! s_kmsnServiceSocket already defined!!!" << endl;
 }
 
 KMSNServiceSocket::~KMSNServiceSocket()
 {
-	s_kmsnServiceSocket = 0L;
 }
 
 /* Connect to MSN Service */
-void KMSNServiceSocket::connectToService(QString handle, QString password, uint serial, bool silent)
+void KMSNServiceSocket::connectToMSN( const QString &handle,
+	const QString &password, uint serial, bool silent )
 {
 	_handle = handle;
 	_password = password;
 	_serial = serial;
-	isConnected = false;
 	_silent = silent;
 	mailCount = 0;
-	
-	socket = new KExtendedSocket("messenger.hotmail.com",1863,0x00 | 0x600000 );
-	socket->enableRead(true);
-	connect(socket, SIGNAL(readyRead()),this, SLOT(slotDataReceived()));
-	connect(socket, SIGNAL(connectionFailed(int)), this, SLOT(slotSocketError(int)));
+
+	connectInternal( "messenger.hotmail.com", 1863 );
+}
+
+void KMSNServiceSocket::connectInternal( const QString &server, uint port )
+{
+	isConnected = false;
+
+	socket = new KExtendedSocket( server, port, 0x600000 );
+	socket->enableRead( true );
+
+	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotDataReceived() ) );
+	connect( socket, SIGNAL( connectionFailed( int ) ),
+		this, SLOT( slotSocketError( int ) ) );
+
 	socket->connect();
 
-/** FIXME - KExtendetSocket doesn't send the connectionSuccess() signal
-	calling slotSocketConnected from here */
-	slotSocketConnected();
+	// We're connected. Send the protocol. Reply from the server should be
+	// a 'VER' reply, handled in slotDataReceived
+	kdDebug() << "Sending protocol" << endl;
+	ID = time( ( time_t * ) NULL );
+	sendData( QString().sprintf( "VER %lu MSNP7 MSNP6 MSNP5 MSNP4 CVR0\r\n",
+		ID ) );
 }
 
 void KMSNServiceSocket::close()
@@ -84,10 +93,6 @@ void KMSNServiceSocket::closeService()
 	QString command = "OUT\r\n";
 	socket->writeBlock(command,command.length());
 	slotSocketClose();
-}
-void KMSNServiceSocket::slotSocketConnected()
-{
-	sendProtocol();
 }
 
 void KMSNServiceSocket::slotSocketClose()
@@ -137,6 +142,9 @@ void KMSNServiceSocket::slotDataReceived()
 		return;
 	buf[ ret ] = '\0'; // Make it properly null-terminated
 	data = QString::fromUtf8( buf );
+	kdDebug() << QTime::currentTime().toString() <<
+		" - KMSNServiceSocket::slotDataReceived: Received '" <<
+		data << "'" << endl;
 //	showError(data);
 	if((data.left(3)) == "911")
 	{
@@ -188,7 +196,6 @@ void KMSNServiceSocket::slotDataReceived()
 	{
 		parseCommand(readLine());
 	}
-	
 }
 
 /* reads a line from the buffer */
@@ -377,12 +384,15 @@ void KMSNServiceSocket::parseCommand(QString str)
 	{
 		if( str.contains("1 1 0 ~ 0") )
 		{
-			emit groupName( tr("Friends"), 0 );
-			renameGroup(tr("Friends"),0);
-			return;
+			emit groupName( i18n( "Friends" ), 0 );
+			renameGroup( i18n( "Friends" ),0 );
 		}
-		// groupName, group
-		emit groupName( kstr.word(str,6).replace(QRegExp("%20")," ") , kstr.word(str,5).toUInt() );
+		else
+		{
+			// groupName, group
+			emit groupName( kstr.word(str,6).replace(QRegExp("%20")," "),
+				kstr.word(str,5).toUInt() );
+		}
 		return;
 	}
 	if( command == "ADG" )
@@ -446,14 +456,9 @@ void KMSNServiceSocket::sendFinalAuthentication(QString res)
 	kdDebug() << "Sending final Authentication" << endl;
 }
 
-//
-void KMSNServiceSocket::sendProtocol()
+void KMSNServiceSocket::sendData( const QString &data )
 {
-	ID = time((time_t *)NULL);
-	QString command;
-	command.sprintf("VER %lu MSNP7 MSNP6 MSNP5 MSNP4 CVR0\r\n",ID);
-	socket->writeBlock(command,command.length());
-	kdDebug() << "Sending protocol" << endl;
+	socket->writeBlock( data, data.length() );
 }
 
 /* MSN Service has send a new IP , so connect to it */
@@ -467,13 +472,9 @@ void KMSNServiceSocket::newConnect( QString data)
 	socket->flush();
 	socket->closeNow();
 	delete socket;
-	socket = new KExtendedSocket(server,port.toUInt(),0x00 | 0x600000 );
-	socket->enableRead(true);
-	connect(socket, SIGNAL(readyRead()),this, SLOT(slotDataReceived()));
-	connect(socket, SIGNAL(connectionFailed(int)), this, SLOT(slotSocketError(int)));
-	kdDebug() << "Connect to new Server... " << server << ":" << port << endl;
-	socket->connect();
-	slotSocketConnected(); // FIXME
+
+	kdDebug() << "Connecting to new server " << server << ":" << port << endl;
+	connectInternal( server, port.toUInt() );
 }
 
 void KMSNServiceSocket::sendServerPolicy()
@@ -676,13 +677,6 @@ void KMSNServiceSocket::createChatSession()
 	QString command;
 	command.sprintf("XFR %lu SB\r\n",ID);
 	socket->writeBlock(command,command.length());
-}
-
-KMSNServiceSocket* KMSNServiceSocket::s_kmsnServiceSocket = 0L;
-
-KMSNServiceSocket* KMSNServiceSocket::kmsnServiceSocket()
-{
-	return s_kmsnServiceSocket;
 }
 
 #include "kmsnservicesocket.moc"

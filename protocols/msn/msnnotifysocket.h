@@ -40,23 +40,13 @@ public:
 	KMSNServiceSocket();
 	~KMSNServiceSocket();
 
-	/**
-	 * Treat the service socket as singleton.
-	 * WARNING: This is no longer true when Kopete supports multiple
-	 *          identities per protocol. By then the KMSNService class should
-	 *          either be phased out completely or another solution must be
-	 *          found! Let's hope I make it in time to get the former result :)
-	 * FIXME: Hide this again ASAP, this is dangerous! - Martijn
-	 */
-	static KMSNServiceSocket *kmsnServiceSocket();
-
 	QString _publicName;
 	QString buffer;
-	
+
 	QString readLine();
 	bool canReadLine();
 	QString readBlock(uint len);
-	
+
 protected:
 	uint _serial;
 	uint mailCount;
@@ -69,13 +59,12 @@ protected:
 	KExtendedSocket *socket;
 	bool isConnected;
 	KStringHandler kstr;
-	
+
 protected slots:
 	void slotDataReceived();
 	void slotSocketError(int error);
 	void slotSocketClose();
-	void slotSocketConnected();
-	
+
 protected:
 	void sendProtocol();
 	void newConnect( QString data);
@@ -85,26 +74,27 @@ protected:
 	void sendSerial();
 	void sendCVR();
 	void sendFinalAuthentication(QString res);
-	
+
 	void parseCommand( QString str);
-	
+
 public:
-	void connectToService( QString handle, QString password, uint serial, bool silent);
+	void connectToMSN( const QString &handle, const QString &password,
+		uint serial, bool silent );
 	void close();
 	void kill();
 	void closeService();
-	
+
 	void setStatus( int status );
 	void addContact( const QString &handle, QString pulicName, uint group , int list );
 	void removeContact( const QString &handle, uint group, int list );
-	
+
 	void addGroup( QString groupName );
 	void removeGroup( uint group );
 	void renameGroup(QString groupName, uint group);
-	
+
 	void changePublicName(QString publicName );
 	QString getPublicName() { return _publicName;}
-	
+
 	void createChatSession();
 signals:
 	void newMail(QString, uint);
@@ -115,25 +105,34 @@ signals:
 	void contactAdded(QString, QString, QString, uint, uint);
 	void contactRemoved(QString, QString, uint, uint);
 	void contactOffline(QString);
-	
+
 	void groupName(QString, uint);
 	void groupAdded( QString, uint, uint);
 	void groupRenamed( QString, uint, uint);
 	void groupRemoved( uint, uint);
-	
+
 	void sessionClosed( QString);
 	void connected( bool);
-	
+
 	void invitedToChat(QString, QString, QString, QString, QString );
 	void startChat( QString, QString );
-	
+
 	void newPublicName(QString);
 	void publicNameChanged( QString, QString );
 	void newSerial( uint );
 	void statusChanged( QString );
 
 private:
-	static KMSNServiceSocket *s_kmsnServiceSocket;
+	/**
+	 * The actual connect code, shared between the initial connect and a
+	 * server-initiated redirect to another server
+	 */
+	void connectInternal( const QString &server, uint port );
+
+	/**
+	 * Send raw data to the socket
+	 */
+	void sendData( const QString &data );
 };
 
 #endif
