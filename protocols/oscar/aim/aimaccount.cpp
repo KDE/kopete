@@ -93,11 +93,11 @@ KActionMenu* AIMAccount::actionMenu()
 			"AIMAccount::mActionOnline"));
 
 	mActionMenu->insert(
-		new Kopete::AwayAction(i18n("Offline"),
+		new Kopete::AwayAction(i18n("Away"),
 		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" ) );
 
-	KAction* mActionOffline = new KAction(i18n("Away"),
+	KAction* mActionOffline = new KAction(i18n("Offline"),
 		p->statusOffline.iconFor(this),
 		0, this, SLOT(slotGoOffline()), mActionMenu,
 		"AIMAccount::mActionOffline");
