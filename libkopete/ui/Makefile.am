@@ -5,7 +5,7 @@ noinst_LTLIBRARIES = libkopeteui.la
 noinst_HEADERS = pluginmodule.h configmodule.h \
 	preferencesdialog.h \
 	protocolboxitem.h addcontactpage.h systemtray.h \
-	appearanceconfig.h kopeteballoonbase.h kopeteballoon.h \
+	appearanceconfig.h kopeteballoon.h \
 	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
 	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h
 
@@ -13,7 +13,7 @@ libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp pluginmodule.cpp \
 	addwizardui.ui addwizardimpl.cpp protocolboxitem.cpp \
 	addcontactpage.cpp systemtray.cpp appearanceconfig.cpp \
-	kopeteballoonbase.cpp kopeteballoon.cpp \
+	kopeteballoon.cpp \
 	kopetehistorydialog.cpp \
 	kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui \
