@@ -31,8 +31,6 @@
 #include "spellcheckpreferences.h"
 #include "spellcheckprefs.h"
 
-#include <kdeversion.h>
-
 SpellCheckPreferences::SpellCheckPreferences(const QString &pixmap, QObject *parent): ConfigModule( i18n("Spell Checking"), i18n("Spell Checking Plugin"), pixmap, parent)
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
@@ -49,17 +47,9 @@ SpellCheckPreferences::SpellCheckPreferences(const QString &pixmap, QObject *par
 
 	connect( m_keyButton, SIGNAL(capturedShortcut( const KShortcut & )), this, SLOT(slotShortcutChanged( const KShortcut & )) );
 
-	autoCheck = false;
-	#if KDE_VERSION >= 306
-		if( KDE::versionMajor() > 3 || ( KDE::versionMajor() == 3 && ( KDE::versionMinor() > 1 || ( KDE::versionMinor() == 1 && KDE::versionRelease() >= 90 ) ) ) )
-		{
-			connect( preferencesDialog->autoCheck, SIGNAL(clicked()), this, SLOT(slotAutoCheckChanged()) );
-			autoCheck = true;
-		}
-	#endif
+	connect( preferencesDialog->autoCheck, SIGNAL(clicked()), this, SLOT(slotAutoCheckChanged()) );
 
-	preferencesDialog->autoCheck->setChecked( autoCheck );
-	preferencesDialog->autoCheck->setEnabled( autoCheck );
+	autoCheck = true;
 
 	reopen();
 }

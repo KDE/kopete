@@ -40,7 +40,6 @@ class SingleSpellInstance : public QObject
 		KopeteView *mView;
 		QTextEdit *t;
 		QRegExp mBound;
-		QStringList *words;
 		ReplacementMap mReplacements;
 		bool spellCheckerReady;
 		KSpell *mSpell;

@@ -36,7 +36,6 @@ SingleSpellInstance::SingleSpellInstance( KopeteView *myView, SpellCheckPreferen
 	t->installEventFilter( this );
 	t->viewport()->installEventFilter( this );
 
-	words = 0L;
 	spellCheckerReady = false;
 
 	//Define our word seperator regexp
@@ -54,7 +53,6 @@ SingleSpellInstance::~SingleSpellInstance()
 	spellCheckerReady = false;
 	mSpell->cleanUp();
 	delete mSpell;
-	delete words;
 }
 
 void SingleSpellInstance::slotViewDestroyed()
@@ -135,14 +133,7 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 
 				//Only spellcheck when we hit a word delimiter
 				if( !QChar( event->ascii() ).isLetterOrNumber() )
-				{
-					//We need to use an actual pointer for this, not just pass in the address of a veriable,
-					//because KSpell is async and the variable will be deleted before KSpell completes
-					delete words;
-					words = new QStringList( QStringList::split( mBound, t->text() ) );
-					if( words->count() > 0 )
-						mSpell->checkList( words, false );
-				}
+					mSpell->check( t->text(), false );
 
 				//Update highlighting
 				slotUpdateTextEdit();
