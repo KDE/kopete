@@ -1,23 +1,23 @@
-/***************************************************************************
-                          dcchandler.cpp  -  description
-                             -------------------
-    begin                : Fri Apr 19 2002
-    copyright            : (C) 2002 by nbetcher
-    email                : nbetcher@usinternet.com
-    Coutesy of Szymon (from KVirc) for many of the ideas (from the source) on how to implement this!
+/*
+    dcchandler.cpp - DCC Handler
+
+    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+
+    Coutesy of Szymon (from KVirc) for many of the ideas
+    (from the source) on how to implement this!
     ...but I didn't copy his code :)
- ***************************************************************************/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
-
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include "dcchandler.h"
 
@@ -39,8 +39,6 @@
 #  include <arpa/inet.h>
 #endif
 #include <unistd.h>
-
-
 
 DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
 	: QSocket()

@@ -1,21 +1,19 @@
-/***************************************************************************
-                          kirc.cpp  -  description
-                             -------------------
-    begin                : Wed Dec 26 2001
-    copyright            : (C) 2002 by Nick Betcher
-    email                : nbetcher@kde.org
+/*
+    kirc.h - IRC Client
 
+    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
- ***************************************************************************/
+    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef KIRC_H
 #define KIRC_H
@@ -27,7 +25,7 @@
 class QHostAddress;
 
 /**
-  *@author nbetcher
+  *@author Nick Betcher <nbetcher@kde.org>
   */
 
 class KIRC : public QSocket {

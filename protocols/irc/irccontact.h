@@ -1,19 +1,19 @@
-/***************************************************************************
-                          irccontact.h  -  description
-                             -------------------
-    begin                : Thu Feb 20 2003
-    copyright            : (C) 2003 by nbetcher
-    email                : nbetcher@kde.org
- ***************************************************************************/
+/*
+    irccontact.h - IRC Contact
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+
+    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
