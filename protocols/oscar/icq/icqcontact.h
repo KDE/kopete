@@ -94,6 +94,10 @@ class ICQContact : public OscarContact
 
 	signals:
 		void updatedUserInfo();
+		void userInfoRequestFailed();
+
+	private:
+		void incUserInfoCounter();
 
 	private:
 		ICQProtocol *mProtocol;
@@ -157,6 +161,7 @@ class ICQContact : public OscarContact
 		void slotUpdBackgroundUserInfo( const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past );
 
 		void slotReadAwayMessage();
+		void slotSnacFailed(WORD snacID);
 };
 
 #endif

@@ -88,6 +88,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 		acc->engine(), SIGNAL( gotICQShortInfo(const int, const ICQSearchResult& ) ),
 		this, SLOT( slotUpdShortInfo( const int, const ICQSearchResult& ) ) );
 
+	QObject::connect(acc->engine(), SIGNAL(snacFailed(WORD)),
+		this, SLOT(slotSnacFailed(WORD)));
+
 
 	if(name == displayName && account()->isConnected())
 	{
@@ -329,7 +332,8 @@ void ICQContact::slotUserInfo()
 		infoDialog = new ICQUserInfo(this, 0L, "infoDialog");
 		if(!infoDialog)
 			return;
-		QObject::connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
+		QObject::connect(infoDialog, SIGNAL(closing()),
+			this, SLOT(slotCloseUserInfoDialog()));
 		infoDialog->show();
 	}
 	else
@@ -364,17 +368,20 @@ void ICQContact::slotReadAwayMessage()
 	}
 }
 
+
 void ICQContact::slotCloseAwayMessageDialog()
 {
 	awayMessageDialog->delayedDestruct();
 	awayMessageDialog = 0L;
 }
 
+
 const QString ICQContact::awayMessage()
 {
 	kdDebug(14150) << k_funcinfo <<  property(mProtocol->awayMessage).value().toString() << endl;
 	return property(mProtocol->awayMessage).value().toString();
 }
+
 
 void ICQContact::setAwayMessage(const QString &message)
 {
@@ -384,6 +391,7 @@ void ICQContact::setAwayMessage(const QString &message)
 	emit awayMessageChanged();
 }
 
+
 void ICQContact::requestUserInfo()
 {
 	//kdDebug(14200) << k_funcinfo << "called" << endl;
@@ -392,6 +400,7 @@ void ICQContact::requestUserInfo()
 		account()->engine()->sendReqInfo(contactName().toULong());
 }
 
+
 void ICQContact::requestShortInfo()
 {
 	//kdDebug(14200) << k_funcinfo << "called" << endl;
@@ -399,6 +408,7 @@ void ICQContact::requestShortInfo()
 	userinfoRequestSequence =
 		account()->engine()->sendShortInfoReq( contactName().toULong() );
 }
+
 
 void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)
 {
@@ -445,14 +455,10 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 		setDisplayName(generalInfo.nickName);
 	}
 
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
+	incUserInfoCounter();
 }
 
 
-//FIXME: Share the code for first and last name and email address with
-// the above function some how
 void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
 {
 	// compare reply's sequence with the one we sent with our last request
@@ -477,11 +483,12 @@ void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
 
 	if ( contactName() == displayName() && !shortInfo.nickName.isEmpty() )
 	{
-		kdDebug(14200) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
+		kdDebug(14200) << k_funcinfo <<
+			"setting new displayname for former UIN-only Contact" << endl;
 		setDisplayName(shortInfo.nickName);
 	}
 
-	userinfoReplyCount++;
+	userinfoReplyCount = 0;
 }
 
 
@@ -504,9 +511,7 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 		removeProperty("workFaxNum");
 	*/
 
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
+	incUserInfoCounter();
 }
 
 void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
@@ -515,9 +520,7 @@ void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 	moreInfo = inf;
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
+	incUserInfoCounter();
 }
 
 void ICQContact::slotUpdAboutUserInfo(const int seq, const QString &inf)
@@ -526,9 +529,7 @@ void ICQContact::slotUpdAboutUserInfo(const int seq, const QString &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 	aboutInfo = inf;
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
+	incUserInfoCounter();
 }
 
 void ICQContact::slotUpdEmailUserInfo(const int seq, const ICQMailList &inf)
@@ -537,9 +538,7 @@ void ICQContact::slotUpdEmailUserInfo(const int seq, const ICQMailList &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 	emailInfo = inf;
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
+	incUserInfoCounter();
 }
 
 void ICQContact::slotUpdInterestUserInfo(const int seq, const ICQInfoItemList &inf)
@@ -548,6 +547,11 @@ void ICQContact::slotUpdInterestUserInfo(const int seq, const ICQInfoItemList &i
 	if(seq != userinfoRequestSequence)
 		return;
 	interestInfo = inf;
+	incUserInfoCounter();
+}
+
+void ICQContact::incUserInfoCounter()
+{
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
@@ -560,9 +564,20 @@ void ICQContact::slotUpdBackgroundUserInfo(const int seq, const ICQInfoItemList 
 		return;
 	currentBackground = curr;
 	pastBackground = past;
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
+	incUserInfoCounter();
+}
+
+void ICQContact::slotSnacFailed(WORD snacID)
+{
+	if (userinfoRequestSequence != 0)
+		kdDebug(14200) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence << endl;
+	
+	//TODO: ugly interaction between snacID and request sequence, see OscarSocket::sendCLI_TOICQSRV
+	if (snacID == (0x0000 << 16) | userinfoRequestSequence)
+	{
+		userinfoRequestSequence = 0;
+		emit userInfoRequestFailed();
+	}
 }
 
 #include "icqcontact.moc"

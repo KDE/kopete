@@ -807,7 +807,7 @@ class OscarSocket : public OscarConnection
 		void parseWarningNotify(Buffer &inbuf);
 
 		/** Parses a message sending error */
-		void parseError(WORD family, Buffer &inbuf);
+		void parseError(WORD family, WORD snacID, Buffer &inbuf);
 
 		/** Parses a missed message notification */
 		void parseMissedMessage(Buffer &inbuf);
@@ -1047,6 +1047,14 @@ class OscarSocket : public OscarConnection
 		 */
 		void directIMConnectionClosed(QString name);
 
+		/**
+		 * emitted whenever a protocol error occured
+		 * connect to this signal if you are waiting for an answer
+		 * from the server, if you get an error for your snacID then it's
+		 * time to abort the action :)
+		 * TODO: replace with an action queue for every snac-family
+		 **/
+		void snacFailed(WORD);
 
 	protected slots:
 		/**

@@ -77,6 +77,8 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, QWidget *parent, const char* name)
 		this, SLOT(slotHomePageClicked(const QString &)));
 	connect(c, SIGNAL(updatedUserInfo()),
 		this, SLOT(slotReadInfo()));
+	connect(c, SIGNAL(userInfoRequestFailed()),
+		this, SLOT(slotUserInfoRequestFailed()));
 
 	slotFetchInfo();
 }
@@ -113,6 +115,18 @@ void ICQUserInfo::slotReadInfo()
 
 	p->contactInfo2UserInfoWidget(mContact, mMainWidget, false);
 } // END slotReadInfo()
+
+void ICQUserInfo::slotUserInfoRequestFailed()
+{
+	kdDebug(14200) << k_funcinfo << "called for user '" <<
+		mContact->displayName() << "'." << endl;
+
+	setCaption(i18n("User Info for %1").arg(mContact->displayName()));
+
+	mMainWidget->setDisabled(false);
+	enableButton(User1,true);
+	enableButton(User2,true);
+}
 
 void ICQUserInfo::setReadonly()
 {

@@ -43,6 +43,7 @@ class ICQUserInfo : public KDialogBase
 		void slotEmailClicked(const QString &);
 		void slotFetchInfo(); // initiate fetching info from server
 		void slotReadInfo(); // read in results from fetch
+		void slotUserInfoRequestFailed();
 
 	signals:
 //		void updateNickname(const QString);

@@ -336,7 +336,7 @@ void OscarSocket::slotRead()
 					{
 						case 0x0001:
 							kdDebug(14150) << k_funcinfo << "SNAC Family 2 error" << endl;
-							parseError(s.family, inbuf);
+							parseError(s.family, s.id, inbuf);
 							break;
 						case 0x0003: //locate rights
 							parseLocateRights(inbuf);
@@ -386,7 +386,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001: //msg error
-							parseError(s.family, inbuf);
+							parseError(s.family, s.id, inbuf);
 							break;
 						case 0x0005: //msg rights SNAC(4,5)
 							parseMsgRights(inbuf);
@@ -461,7 +461,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001:
-							parseError(s.family, inbuf);
+							parseError(s.family, s.id, inbuf);
 							break;
 						case 0x0003:
 							parseSRV_FROMICQSRV(inbuf);
@@ -3477,7 +3477,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 	}
 }
 
-void OscarSocket::parseError(WORD family, Buffer &inbuf)
+void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 {
 	QString msg;
 	WORD reason = inbuf.getWord();
@@ -3487,22 +3487,35 @@ void OscarSocket::parseError(WORD family, Buffer &inbuf)
 
 	if (reason < msgerrreasonlen)
 	{
-		if(family==OSCAR_FAM_2)
+		switch (family)
 		{
-			msg = i18n("Sending userprofile failed: %1").arg(msgerrreason[reason]);
-		}
-		else if(family == OSCAR_FAM_4) // Instant Messaging errors
-		{
-			// Ignores rate to client errors, usually caused by querying away messages
-			if (reason == 3)
-				return;
-
-			msg = i18n("Your message did not get sent because the following" \
-				" error occurred: %1").arg(msgerrreason[reason]);
-		}
-		else
-		{
-			msg = i18n("Generic Packet error: %1").arg(msgerrreason[reason]);
+			case OSCAR_FAM_2:
+				msg = i18n("Sending userprofile failed: %1").arg(msgerrreason[reason]);
+				break;
+			case OSCAR_FAM_4:
+				// Ignores rate to client errors, usually caused by querying away messages
+				if (reason == 3)
+					return;
+				msg = i18n("Your message did not get sent because the following" \
+					" error occurred: %1").arg(msgerrreason[reason]);
+				break;
+			case OSCAR_FAM_21:
+			{
+				if (reason == 2)
+				{
+					msg = i18n("Your ICQ information request was denied by the " \
+						"ICQ-Server, please try again later.");
+				}
+				else
+				{
+					msg = i18n("Your ICQ information request failed.\n" \
+						"%1").arg(msgerrreason[reason]);
+				}
+				break;
+			}
+			default:
+				msg = i18n("Generic Packet error: %1").arg(msgerrreason[reason]);
+				break;
 		}
 	}
 	else
@@ -3525,6 +3538,8 @@ void OscarSocket::parseError(WORD family, Buffer &inbuf)
 	}
 
 	emit protocolError(msg, reason);
+	// in case a special request failed
+	emit snacFailed(snacID);
 }
 
 /* Request, deny, or accept a rendezvous session with someone
