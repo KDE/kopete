@@ -347,13 +347,13 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 	}
 	
 #if KDE_VERSION >= 306
-// ### this heavily interferes with session management. FIX THIS.
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
 		"system tray. Use Quit from the File menu to quit the "
 		"application.</qt>" ), i18n( "Docking in System Tray" ),
 		"hideOnCloseInfo" );
 	hide();
+	e->accept(); // necessary to not interrupt session management!
 #else
 	KMainWindow::closeEvent( e );
 #endif
