@@ -105,7 +105,9 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
 		XMPP::Message jabberMessage;
 		KopeteContact *recipient = message.to().first ();
 
-		jabberMessage.setFrom ( XMPP::Jid ( message.from()->contactId () ) );
+		XMPP::Jid jid ( message.from()->contactId () );
+		jid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
+		jabberMessage.setFrom ( jid );
 
 		XMPP::Jid toJid ( recipient->contactId () );
 
