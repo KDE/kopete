@@ -1,9 +1,9 @@
 /*
     kopeteplugindataobject.cpp - Kopete Plugin Data Object
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,16 +20,13 @@
 #include "kopeteplugin.h"
 #include "kopeteplugindataobject.h"
 
-
 KopetePluginDataObject::KopetePluginDataObject(QObject *parent, const char *name) : QObject (parent, name)
 {
 }
 
 KopetePluginDataObject::~KopetePluginDataObject()
 {
-
 }
-
 
 void KopetePluginDataObject::setPluginData( KopetePlugin *p, const QMap<QString, QString> &pluginData )
 {
@@ -63,7 +60,6 @@ QString KopetePluginDataObject::pluginData( KopetePlugin *p, const QString &key 
 	return m_pluginData[ p->pluginId() ][ key ];
 }
 
-
 const QValueList<QDomElement> KopetePluginDataObject::toXML()
 {
 	QDomDocument pluginData;
@@ -95,7 +91,6 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 	return pluginNodes;
 }
 
-
 void KopetePluginDataObject::fromXML( const QDomElement& element )
 {
 	if( element.tagName() == QString::fromLatin1( "plugin-data" ) )
@@ -122,4 +117,5 @@ void KopetePluginDataObject::fromXML( const QDomElement& element )
 	}
 }
 
+// vim: set noet ts=4 sts=4 sw=4:
 
