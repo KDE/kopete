@@ -70,7 +70,7 @@ KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
 {
 	//TODO: foreignMessage, how will we do this cleanly?
 	return (KopeteView*)new KopeteEmailWindow(manager,this, false);
-};
+}
 
 class KopeteEmailWindow::Private
 {

@@ -25,7 +25,7 @@ namespace NetworkStatus
 		// EnumChargingModel - FlatRate, TimeCharge, VolumeCharged
 		// EnumLinkStatus - for WLANs - VPOOR, POOR, AVERAGE, GOOD, EXCELLENT
 	};
-};
+}
 
 QDataStream & operator>> ( QDataStream & s, NetworkStatus::Properties &p );
 QDataStream & operator<< ( QDataStream & s, const NetworkStatus::Properties p );

@@ -57,7 +57,7 @@ ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const char *name, const QStr
 KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
 {
     return (KopeteView*)new ChatView(manager,this);
-};
+}
 
 class KopeteChatViewPrivate
 {

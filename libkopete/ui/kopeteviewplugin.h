@@ -54,6 +54,6 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		virtual void aboutToUnload();
 };
 
-};
+}
 
 #endif

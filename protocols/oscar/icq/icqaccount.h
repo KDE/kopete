@@ -33,7 +33,7 @@ class ICQMyselfContact : public OscarMyselfContact
 {
 Q_OBJECT
 public:
-	ICQMyselfContact::ICQMyselfContact( ICQAccount *acct );
+	ICQMyselfContact( ICQAccount *acct );
 	void userInfoUpdated();
 	
 public slots:

@@ -26,7 +26,7 @@
 namespace Kopete
 {
 	class ViewPlugin;
-};
+}
 
 /**
  * @author Jason Keirstead
