@@ -56,7 +56,7 @@ WPPreferences::WPPreferences(const QString & pixmap,
 
 	KGlobal::config()->setGroup("WinPopup");
 	preferencesDialog->inHostName->setText(KGlobal::config()->readEntry("HostName", "LOCAL"));
-	preferencesDialog->inSMBClientPath->setURL(KGlobal::config()->readEntry("SMBClientPath", "/usr/local/bin/smbclient"));
+	preferencesDialog->inSMBClientPath->setURL(KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient"));
 	preferencesDialog->inInitialSearchHost->setText(KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1"));
 	preferencesDialog->inAwayMessage->setText(KGlobal::config()->readEntry("AwayMessage", ""));
 	preferencesDialog->inSendAwayMessage->setChecked(KGlobal::config()->readBoolEntry("SendAwayMessage", true));

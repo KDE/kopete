@@ -87,7 +87,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 
 	// Set up initial settings
 	KGlobal::config()->setGroup("WinPopup");
-	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/local/bin/smbclient");
+	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
 	QString theInitialSearchHost = KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1");
 	QString theHostName = "";
 	QString theAwayMessage = KGlobal::config()->readEntry("AwayMessage", i18n("Sorry, I'm not here right now."));
@@ -415,7 +415,7 @@ void WPProtocol::slotSettingsChanged()
 	DEBUG(WPDMETHOD, "WPProtocol::slotSettingsChanged()");
 
 	KGlobal::config()->setGroup("WinPopup");
-	theInterface->setSMBClientPath(KGlobal::config()->readEntry("SMBClientPath", "/usr/local/bin/smbclient"));
+	theInterface->setSMBClientPath(KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient"));
 	theInterface->setInitialSearchHost(KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1"));
 	theInterface->setHostName(KGlobal::config()->readEntry("HostName", "LOCAL"));
 }
