@@ -99,7 +99,7 @@ Contact::Contact( Account *account, const QString &contactId,
 
 		parent->addContact( this );
 	}
-	
+
 	connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
 }
 
@@ -157,7 +157,7 @@ void Contact::slotAccountIsConnectedChanged()
 {
 	if ( this == account()->myself() )
 		return;
-	
+
 	if ( account()->isConnected() )
 		emit onlineStatusChanged( this, d->onlineStatus, protocol()->accountOfflineStatus() );
 	else
@@ -215,11 +215,11 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), menu, "actionSendMessage" );
 	actionSendMessage->setEnabled( reach && !myself );
 	actionSendMessage->plug( menu );
-	
+
 	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), menu, "actionChat" );
 	actionChat->setEnabled( reach && !myself );
 	actionChat->plug( menu );
-	
+
 	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), menu, "actionSendFile" );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
 	actionSendFile->plug( menu );
@@ -239,7 +239,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	delete customActions;
 
 	menu->insertSeparator();
-	
+
 	if( metaContact() && !metaContact()->isTemporary() )
 		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu, "actionChangeMetaContact" )->plug( menu );
 
@@ -325,7 +325,7 @@ void Contact::setMetaContact( MetaContact *m )
 	if( old )
 	{
 		int result=KMessageBox::No;
-		if( old->isTemporary() ) 
+		if( old->isTemporary() )
 			result=KMessageBox::Yes;
 		else if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
@@ -340,7 +340,7 @@ void Contact::setMetaContact( MetaContact *m )
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
-		
+
 		if(result==KMessageBox::Yes)
 		{
 			//remove the old metacontact.  (this delete the MC)
@@ -764,6 +764,9 @@ QString Contact::toolTip() const
 
 QString Kopete::Contact::formattedName() const
 {
+	if( hasProperty(QString::fromLatin1("FormattedName")) )
+		return property(QString::fromLatin1("FormattedName")).value().toString();
+
 	QString ret;
 	Kopete::ContactProperty first, last;
 
