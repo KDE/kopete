@@ -17,9 +17,6 @@
     *************************************************************************
 */
 
-#include "translatorplugin.h"
-#include "translatorplugin.moc"
-
 #include <qcolor.h>
 #include <qcstring.h>
 #include <qstring.h>
@@ -39,7 +36,10 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
+
+#include "translatorplugin.h"
 #include "translatorprefs.h"
+#include "translatordialog.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, KGenericFactory<TranslatorPlugin> );
 
@@ -455,8 +455,13 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 			msg.setBody(msg.body() + "\n" + i18n("Auto Translated: ") + translated);
 			break;
 		case ShowDialog:
-			//TODO!!!
+		{
+			TranslatorDialog *d=new TranslatorDialog(translated);
+			d->exec();
+			msg.setBody(d->translatedText());
+			delete d;
 			break;
+		}
 		case DontTranslate:
 		default:
 			//do nothing
@@ -486,6 +491,8 @@ void TranslatorPlugin::slotSetLanguage()
 		m_langMap[ m_currentMetaContact ]= languageKey( m_actionLanguage->currentItem() );
 	}
 }
+
+#include "translatorplugin.moc"
 
 /*
  * Local variables:
