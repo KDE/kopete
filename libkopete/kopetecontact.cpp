@@ -105,9 +105,8 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 
 KopeteContact::~KopeteContact()
 {
-	d->metaContact = 0L;
 	emit( contactDestroyed( this ) );
-
+	d->metaContact = 0L;
 	delete d;
 }
 
