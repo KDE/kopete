@@ -22,7 +22,7 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qobjectcleanuphandler.h>
+#include <qguardedptr.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -289,8 +289,7 @@ public:
 
 			// solution: reparent to none, and track the parent. if it's deleted, don't use it.
 			parent()->removeChild( this );
-			QObjectCleanupHandler watchParent;
-			watchParent.add( &mPassword );
+			QGuardedPtr<KopetePassword> watchParent = &mPassword;
 
 			if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
 			        i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
@@ -305,7 +304,9 @@ public:
 			// if our parent was deleted, we can't save the password.
 			// this is a corner case, so we don't worry about handling it properly. just make
 			// sure we don't crash; tell the user and abort.
-			if ( watchParent.isEmpty() )
+			//TODO: either handle this properly (ie make sure we actually save the password) or
+			//      don't stop the app from closing when we're waiting to save it.
+			if ( watchParent.isNull() )
 			{
 				KMessageBox::error( qApp->mainWidget(), i18n( "Sorry, your password could not be saved at this time." ),
 				                    i18n( "Unable to Store Password" ) );
