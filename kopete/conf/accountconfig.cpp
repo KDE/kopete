@@ -53,8 +53,6 @@ AccountConfig::AccountConfig(QWidget * parent) :
 		this, SLOT(slotRemoveAccount()));
 	connect(m_view->mAccountList, SIGNAL(selectionChanged()),
 		this, SLOT(slotItemSelected()));
-	connect(m_view->mAccountList, SIGNAL(doubleClicked(QListViewItem*)),
-		this, SLOT(slotEditAccount()));
 	connect(m_view->mButtonUp, SIGNAL(clicked()),
 		this, SLOT( slotAccountUp()));
 	connect(m_view->mButtonDown, SIGNAL(clicked()),
