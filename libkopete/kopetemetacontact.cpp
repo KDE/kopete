@@ -2,7 +2,7 @@
     kopetemetacontact.cpp - Kopete Meta Contact
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -340,11 +340,11 @@ void KopeteMetaContact::addToGroup( const QString &to )
 
 	m_groups.append( to );
 
-    /*
+	/*
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 		it.current()->addToGroup( to );
-    */
+	*/
 
 	emit addedToGroup( to );
 }
@@ -370,7 +370,7 @@ QString KopeteMetaContact::toXML()
 	if ( ! m_displayName.isNull() )
 	{
 		xml = xml + " name=\"" + m_displayName + "\"";
-    }
+	}
 
 	xml = xml + ">\n";
 
@@ -378,7 +378,7 @@ QString KopeteMetaContact::toXML()
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		    xml = xml + "\t" + (it.current())->toXML() + "\n";
+		xml = xml + "\t" + (it.current())->toXML() + "\n";
 	}
 
 	// FIXME: KopeteMetaContact::toXML() Metadata is ignored
@@ -387,17 +387,14 @@ QString KopeteMetaContact::toXML()
 	for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
 	{
 		QString group = *it;
-		xml = xml + "\t<group name=\"" + group + "\"/>\n";                          
+		xml = xml + "\t<group name=\"" + group + "\"/>\n";
 	}
 
 	xml = xml + "</person>";
 	return xml;
 }
 
-
 #include "kopetemetacontact.moc"
-
-
 
 /*
  * Local variables:
@@ -406,5 +403,6 @@ QString KopeteMetaContact::toXML()
  * indent-tabs-mode: t
  * End:
  */
+
 // vim: set noet ts=4 sts=4 sw=4:
 
