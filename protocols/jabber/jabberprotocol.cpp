@@ -133,7 +133,7 @@ void JabberProtocol::initActions()
 					this, SLOT(slotGoXA()), this, "actionJabberXA");
 	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0,
 					this, SLOT(slotGoDND()), this, "actionJabberDND");
-	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0,
+	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0,
 					this, SLOT(slotGoInvisible()), this, "actionJabberInvisible");
 	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0,
 					this, SLOT(slotGoOffline()), this, "actionJabberDisconnect");
@@ -662,7 +662,7 @@ void JabberProtocol::setPresence(Presence status, const QString &reason,
 				presence.setShow("dnd");
 				break;
 		case STATUS_INVISIBLE:
-				setStatusIcon("jabber_offline");
+				setStatusIcon("jabber_invisible");
 				presence.setIsInvisible(true);
 				break;
 

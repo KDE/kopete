@@ -168,7 +168,7 @@ void JabberContact::initActions()
 	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	actionStatusXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
 	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
-	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
+	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
 
 	actionSetAvailability->insert(actionStatusChat);
 	actionSetAvailability->insert(actionStatusAway);
