@@ -41,7 +41,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
-	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
+	QObject::connect(m_engine, SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
 
@@ -119,7 +119,7 @@ void IRCUserContact::userOnline()
 	if( mInfo.lastUpdate.isNull() || mInfo.lastUpdate.secsTo( QTime::currentTime() ) > 45 )
 	{
 		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
-		mInfo.lastUpdate = QTime::currentTime();
+
 	}
 }
 
@@ -276,6 +276,7 @@ void IRCUserContact::updateInfo()
 	setProperty( QString::fromLatin1("Hops"), i18n("Hops"), QString::number(mInfo.hops) );
 
 	setIdleTime( mInfo.idle );
+	mInfo.lastUpdate = QTime::currentTime();
 }
 
 void IRCUserContact::newWhoReply( const QString &channel, const QString &user, const QString &host,
@@ -371,7 +372,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManage
 	return 0L;
 }
 
-void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
+void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &nick, const QString &mode )
 {
 	IRCChannelContact *chan = m_account->contactManager()->findChannel( channel );
 	if( chan->locateUser( m_nickName ) )

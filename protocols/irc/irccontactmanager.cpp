@@ -66,7 +66,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(userOnline(const QString &)),
+	QObject::connect(m_engine, SIGNAL(incomingUserOnline(const QString &)),
 			this, SLOT( slotIsonRecieved()));
 
 	socketTimeout = 15000;

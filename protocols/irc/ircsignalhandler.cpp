@@ -40,13 +40,13 @@ IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager
 	map<IRCChannelContact>( m, SIGNAL(incomingFailedChanFull(const QString &)),
 		&IRCChannelContact::failedChanInvite );
 
-	map<IRCChannelContact>( m, SIGNAL(slotFailedChanInvite(const QString &)),
+	map<IRCChannelContact>( m, SIGNAL(incomingFailedChanInvite(const QString &)),
 		&IRCChannelContact::failedChanInvite );
 
 	map<IRCChannelContact>( m, SIGNAL(incomingFailedChanBanned(const QString &)),
 		&IRCChannelContact::failedChanBanned );
 
-	mapSingle<IRCChannelContact>( m, SIGNAL(userJoinedChannel(const QString &, const QString &)),
+	mapSingle<IRCChannelContact>( m, SIGNAL(incomingJoinedChannel(const QString &, const QString &)),
 		&IRCChannelContact::userJoinedChannel );
 
 	mapSingle<IRCChannelContact>( m, SIGNAL(incomingExistingTopic(const QString &, const QString &)),

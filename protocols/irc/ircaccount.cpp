@@ -81,6 +81,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_manager = 0L;
 	m_protocol = protocol;
 	m_channelList = 0L;
+	m_network = 0L;
 
 	triedAltNick = false;
 
@@ -105,7 +106,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QObject::connect(m_engine, SIGNAL(incomingFailedNickOnLogin(const QString &)),
 			this, SLOT(slotNickInUse( const QString &)) );
 
-	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
+	QObject::connect(m_engine, SIGNAL(incomingJoinedChannel(const QString &, const QString &)),
 		this, SLOT(slotJoinedUnknownChannel(const QString &, const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
@@ -253,7 +254,10 @@ const QString IRCAccount::altNick() const
 
 const QString IRCAccount::networkName() const
 {
-	return m_network->name;
+	if( m_network )
+		return m_network->name;
+	else
+		return i18n("Unknown");
 }
 
 void IRCAccount::setUserName( const QString &userName )
@@ -277,7 +281,11 @@ void IRCAccount::setNetwork( const QString &network )
 	}
 	else
 	{
-		kdWarning() << k_funcinfo << network << " does not exist." << endl;
+		KMessageBox::queuedMessageBox(
+		0L, KMessageBox::Error,
+		i18n("<qt>The network associated with this account, <b>%1</b>, no longer exists. Please"
+		" ensure that the account has a valid network.</qt>").arg(network),
+		i18n("Network No Longer Exists"), 0 );
 	}
 }
 
@@ -412,9 +420,8 @@ void IRCAccount::connect()
 			{
 				KMessageBox::queuedMessageBox(
 					0L, KMessageBox::Error,
-					i18n("The network associated with this account, <b>%1</b>, no longer exists. Please"
-					" ensure that the account has a valid network."),
-					i18n("Network No Longer Exists"), 0 );
+					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(m_network->name),
+					i18n("Network Is Empty"), 0 );
 			}
 			else
 			{
