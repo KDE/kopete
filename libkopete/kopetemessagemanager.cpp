@@ -116,7 +116,6 @@ KopeteMessageManager::~KopeteMessageManager()
 		ChatWindowMap windowMap = *(chatWindowMap());
 		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
 			chatWindowMap()->remove( d->mProtocol );
-		chatWindowList()->remove( static_cast<KopeteChatWindow*>(myWindow) );
 	}
 	delete d;
 }
