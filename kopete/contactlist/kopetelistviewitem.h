@@ -50,6 +50,8 @@ protected:
 	/** A child item has been resized */
 	virtual void componentResized( Component *component );
 
+	/** @internal animate items */
+	void updateAnimationPosition( int p, int s );
 private:
 	class Private;
 	Private *d;
@@ -148,13 +150,20 @@ protected:
 	void componentRemoved( Component *component );
 
 private:
+	// calls the three functions below
+	friend void ComponentBase::updateAnimationPosition( int p, int s );
+
+	// used for animation
+	void setRect( const QRect &rect );
+	QRect startRect();
+	QRect targetRect();
+
 	class Private;
 	Private *d;
 };
 
-class BoxComponent : public QObject, public Component
+class BoxComponent : public Component
 {
-	Q_OBJECT
 public:
 	enum Direction { Horizontal, Vertical };
 	BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
@@ -170,8 +179,6 @@ protected:
 	void componentRemoved( Component *component );
 	void componentResized( Component *component );
 
-private slots:
-	void layoutTimer();
 private:
 	void calcMinSize();
 
@@ -271,6 +278,7 @@ private:
 private slots:
 	void slotScheduleLayout();
 	void slotLayoutItems();
+	void slotLayoutAnimateItems();
 
 private:
 	class Private;

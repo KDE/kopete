@@ -29,6 +29,7 @@
 
 #include <klistview.h>
 
+class QVariant;
 
 class KAction;
 class KListAction;
@@ -40,6 +41,8 @@ class KopeteContact;
 class KopeteGroupViewItem;
 class KopeteGroup;
 class KopeteEvent;
+
+class ContactComponent;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -75,7 +78,7 @@ public:
 	 */
 	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
 
-	void movedToGroup(KopeteGroup * );
+	void movedToGroup( KopeteGroup * );
 	void rename( const QString& name );
 
 	KopeteGroup *group();
@@ -111,7 +114,7 @@ public slots:
 	 */
 	void execute() const;
 
-	void catchEvent(KopeteEvent *);
+	void catchEvent( KopeteEvent * );
 
 	void slotRename();
 
@@ -120,19 +123,22 @@ public slots:
 private slots:
 	void slotOpacityTimer();
 	void slotUpdateIcons();
-	void slotContactStatusChanged(KopeteContact *);
+	void slotContactStatusChanged( KopeteContact * );
+	void slotContactPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactAdded( KopeteContact * );
+	void slotContactRemoved( KopeteContact * );
 
 	void slotDisplayNameChanged();
 
 	void slotAddToNewGroup();
-	void slotIdleStateChanged();
+	void slotIdleStateChanged( KopeteContact * );
 
 	/**
 	 * maybe remove this and find a better way to check for pref-changes
 	 */
 	void slotConfigChanged();
 
-	void slotEventDone(KopeteEvent* );
+	void slotEventDone( KopeteEvent* );
 	void slotBlink();
 
 protected:
@@ -142,7 +148,9 @@ private:
 	void initLVI();
 	QString key( int column, bool ascending ) const;
 	void updateContactIcons();
+	void updateContactIcon( KopeteContact * );
 	void setOpacityTarget( float target );
+	ContactComponent *contactComponent( const KopeteContact *c ) const;
 
 	KopeteMetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;

@@ -91,6 +91,22 @@ void ComponentBase::componentResized( Component * )
 {
 }
 
+void ComponentBase::updateAnimationPosition( int p, int s )
+{
+	for ( uint n = 0; n < components(); ++n )
+	{
+		Component *comp = component( n );
+		QRect start = comp->startRect();
+		QRect target = comp->targetRect();
+		QRect rc( start.left() + ((target.left() - start.left()) * p) / s,
+		          start.top() + ((target.top() - start.top()) * p) / s,
+		          start.width() + ((target.width() - start.width()) * p) / s,
+		          start.height() + ((target.height() - start.height()) * p) / s );
+		comp->setRect( rc );
+		comp->updateAnimationPosition( p, s );
+	}
+}
+
 // Component --------
 
 class Component::Private
@@ -103,6 +119,7 @@ public:
 	}
 	ComponentBase *parent;
 	QRect rect;
+	QRect startRect, targetRect;
 	int minWidth, minHeight;
 	bool growHoriz, growVert;
 };
@@ -120,6 +137,8 @@ Component::~Component()
 }
 
 QRect Component::rect() { return d->rect; }
+QRect Component::startRect() { return d->startRect; }
+QRect Component::targetRect() { return d->targetRect; }
 
 int Component::minWidth() { return d->minWidth; }
 int Component::minHeight() { return d->minHeight; }
@@ -147,10 +166,19 @@ bool Component::setMinHeight( int height, bool canUseMore )
 	return true;
 }
 
-void Component::layout( const QRect &rect )
+void Component::layout( const QRect &newRect )
+{
+	if ( rect().isNull() )
+		d->startRect = QRect( newRect.topLeft(), newRect.topLeft() );
+	else
+		d->startRect = rect();
+	d->targetRect = newRect;
+	//kdDebug(14000) << k_funcinfo << "At " << rect << endl;
+}
+
+void Component::setRect( const QRect &rect )
 {
 	d->rect = rect;
-	//kdDebug(14000) << k_funcinfo << "At " << rect << endl;
 }
 
 void Component::paint( QPainter *painter, const QColorGroup &cg )
@@ -191,18 +219,12 @@ public:
 	Private( BoxComponent::Direction dir ) : direction( dir ) {}
 	BoxComponent::Direction direction;
 
-	QValueList<QRect> starts;
-	QValueList<QRect> targets;
-	QTimer layoutTimer;
-	int layoutSteps;
-	static const int layoutStepsTotal = 10;
 	static const int padding = 2;
 };
 
 BoxComponent::BoxComponent( ComponentBase *parent, Direction dir )
- : QObject( 0 ), Component( parent ), d( new Private( dir ) )
+ : Component( parent ), d( new Private( dir ) )
 {
-	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( layoutTimer() ) );
 }
 BoxComponent::~BoxComponent()
 {
@@ -297,7 +319,17 @@ void BoxComponent::layout( const QRect &rect )
 
 	// remaining space after all fixed items have been allocated
 	const int padding = Private::padding;
-	int remaining = (horiz ? rect.width() : rect.height()) - fixedSize - padding * components();
+
+	// ensure total is at least minXXX. the only time the rect
+	// will be smaller than that is when we don't fit, and in
+	// that cases we should pretend that we're wide/high enough.
+	int total;
+	if ( horiz )
+		total = QMAX( rect.width(), minWidth() );
+	else
+		total = QMAX( rect.height(), minHeight() );
+
+	int remaining = total - fixedSize - padding * components();
 
 	// extra space for each variable-size and each fixed-size item
 	int eachVariable = padding, eachFixed = padding;
@@ -307,8 +339,6 @@ void BoxComponent::layout( const QRect &rect )
 		eachFixed = remaining / numFixed + padding;
 
 	// finally, lay everything out
-	d->starts.clear();
-	d->targets.clear();
 	int pos = 0;
 	for ( uint n = 0; n < components(); ++n )
 	{
@@ -336,38 +366,8 @@ void BoxComponent::layout( const QRect &rect )
 				rc.setHeight( comp->minHeight() + eachFixed );
 			pos += rc.height();
 		}
-		if ( comp->rect().isNull() )
-			comp->layout( rc & rect );
-		d->starts.append( comp->rect() );
-		d->targets.append( rc & rect );
+		comp->layout( rc & rect );
 	}
-	if ( !d->layoutTimer.isActive() )
-		d->layoutTimer.start( 10 );
-	d->layoutSteps = -1;
-	layoutTimer();
-}
-
-void BoxComponent::layoutTimer()
-{
-	if ( ++d->layoutSteps == Private::layoutStepsTotal )
-		d->layoutTimer.stop();
-
-	const int s = Private::layoutStepsTotal;
-	const int p = d->layoutSteps;
-
-	for ( uint n = 0; n < components(); ++n )
-	{
-		QRect start = d->starts[ n ];
-		QRect target = d->targets[ n ];
-		//if ( start == target ) continue;
-		Component *comp = component( n );
-		QRect rc( start.left() + ((target.left() - start.left()) * p) / s,
-		          start.top() + ((target.top() - start.top()) * p) / s,
-		          start.width() + ((target.width() - start.width()) * p) / s,
-		          start.height() + ((target.height() - start.height()) * p) / s );
-		comp->layout( rc );
-	}
-	repaint();
 }
 
 void BoxComponent::componentAdded( Component *component )
@@ -566,6 +566,9 @@ public:
 	Private() : alpha( 1.0 ) {}
 	QTimer layoutTimer;
 	float alpha;
+	QTimer layoutAnimateTimer;
+	int layoutAnimateSteps;
+	static const int layoutAnimateStepsTotal = 10;
 };
 
 Item::Item( QListViewItem *parent, QObject *owner, const char *name )
@@ -589,6 +592,7 @@ void Item::initLVI()
 {
 	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotScheduleLayout() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
+	connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
 }
 
 void Item::slotScheduleLayout()
@@ -616,6 +620,24 @@ void Item::slotLayoutItems()
 		kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
 	}
 
+	setHeight(0);
+	repaint();
+
+	if ( !d->layoutAnimateTimer.isActive() )
+		d->layoutAnimateTimer.start( 10 );
+	d->layoutAnimateSteps = -1;
+	slotLayoutAnimateItems();
+}
+
+void Item::slotLayoutAnimateItems()
+{
+	if ( ++d->layoutAnimateSteps == Private::layoutAnimateStepsTotal )
+		d->layoutAnimateTimer.stop();
+
+	const int s = Private::layoutAnimateStepsTotal;
+	const int p = d->layoutAnimateSteps;
+	
+	updateAnimationPosition( p, s );
 	setHeight(0);
 	repaint();
 }
