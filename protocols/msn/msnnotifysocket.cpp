@@ -104,7 +104,7 @@ void MSNNotifySocket::disconnect()
 		m_dispatchSocket->disconnect();
 
 	// the socket is not connected yet, so I should force the signals
-	if ( onlineStatus() == Disconnected )
+	if ( onlineStatus() == Disconnected || onlineStatus() == Connecting )
 		emit socketClosed(-1);
 	else
 		MSNAuthSocket::disconnect();
