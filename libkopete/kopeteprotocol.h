@@ -1,11 +1,11 @@
 /*
     kopeteprotocol.h - Kopete Protocol
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -34,9 +34,9 @@ class EditAccountWidget;
 class KopeteAccount;
 
 /**
- * @author Duncan Mac-Vicar P. <duncan@kde.org>
- * @author Martijn Klingens   <klingens@kde.org>
- * @author Olivier Goffart  <ogoffart@tiscalinet.be>
+ * @author Duncan Mac-Vicar Prett <duncan@kde.org>
+ * @author Martijn Klingens       <klingens@kde.org>
+ * @author Olivier Goffart        <ogoffart@tiscalinet.be>
  */
 class KopeteProtocol : public KopetePlugin
 {
@@ -51,7 +51,7 @@ public:
 	 *
 	 * @return A new AddContactPage to be shown in the Add Contact Wizard
 	 */
-	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount* account) =0L;
+	virtual AddContactPage *createAddContactWidget( QWidget *parent, KopeteAccount *account ) = 0L;
 
 	/**
 	 * @brief Create a new EditAccountWidget
@@ -60,8 +60,7 @@ public:
 	 *
 	 * @param account is the KopeteAccount to edit. If it's 0L, then we create a new account
 	 */
-	virtual EditAccountWidget *createEditAccountWidget( KopeteAccount * account, QWidget * parent ) =0L;
-
+	virtual EditAccountWidget *createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0L;
 
 	/**
 	 * @brief Create an empty KopeteAccount
@@ -72,7 +71,7 @@ public:
 	 *
 	 * @return The new @ref KopeteAccount object created by this function
 	 */
-	virtual KopeteAccount *createNewAccount( const QString &  accountId  ) =0L;
+	virtual KopeteAccount *createNewAccount( const QString &accountId ) = 0L;
 
 	/**
 	 * @brief Get the most significant status of the protocol's accounts.
@@ -98,7 +97,7 @@ public:
 	 *
 	 * @return The KActionMenu object created by this function
 	 */
-	virtual KActionMenu* protocolActions();
+	virtual KActionMenu * protocolActions();
 
 
 	/**
@@ -160,7 +159,6 @@ private slots:
 
 protected:
 	KopeteOnlineStatus m_status;
-
 };
 
 #endif
