@@ -101,9 +101,9 @@ class KopeteCommandHandler : public QObject
 		 * or not they are already handled by another handler. This is so that
 		 * if the first plugin is unloaded, the next handler in the sequence
 		 * will handle the command. However, there are certain commands which
-		 * are reserved, which will not be registered. These commands include
-		 * "help", "clear", and "exec", and others. Reserved commands can be
-		 * discovered using @ref reserved()
+		 * are reserved (internally handled by the KopeteCommandHandler). These
+		 * commands can also be overridden by registering a new suplicate command.
+		 * Reserved commands can be discovered using @ref reserved() if needed.
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
@@ -143,7 +143,7 @@ class KopeteCommandHandler : public QObject
 		static QStringList parseArguments( const QString &args );
 
 		/**
-		 * Used to discover if a command is already handled by a handler
+		 * Used to discover if a command is already handled by any handler
 		 *
 		 * @param command The command to check
 		 * @return True if the command is already being handled, False if not
@@ -151,7 +151,7 @@ class KopeteCommandHandler : public QObject
 		bool commandHandled( const QString &command );
 
 		/**
-		 * Returns the list of reserved commands.
+		 * Returns the list of reserved (internal) commands.
 		 *
 		 * @return A list of commands reserved for internal Kopete use
 		 */
@@ -163,9 +163,12 @@ class KopeteCommandHandler : public QObject
 		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
 
 	private:
-		CommandMap reservedCommands;
+		/**
+		 * Function to run a reserved (internal) command
+		 */
 		void reservedCommand( const QString &command, const QString &args, KopeteMessageManager *manager );
 
+		CommandMap reservedCommands;
 		CommandList commands( KopeteProtocol * );
 		PluginCommandMap pluginCommands;
 		static KopeteCommandHandler *s_handler;
