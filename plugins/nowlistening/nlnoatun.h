@@ -3,11 +3,11 @@
 
     Kopete Now Listening To plugin
 
-    Copyright (c) 2002 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-	
-	Purpose: 
+    Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
+
+	Purpose:
 	This class abstracts the interface to Noatun by
 	implementing NLMediaPlayer
 
