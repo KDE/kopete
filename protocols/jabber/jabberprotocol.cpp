@@ -127,55 +127,11 @@ KopeteAccount *JabberProtocol::createNewAccount (const QString & accountId)
 }
 
 
-KActionMenu *JabberProtocol::protocolActions ()
-{
-	KActionMenu *protocolMenu = new KActionMenu ();
-
-	/*QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
-	   for (JabberAccount * tmpAccount = accounts.first();
-	   tmpAccount != accounts.last(); tmpAccount = accounts.next())
-	   protocolMenu->insert(tmpAccount->actionMenu());
-	 */
-	return protocolMenu;
-}
-
-void JabberProtocol::connectAll ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] connectAll()" << endl;
-	// QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
-	//for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
-	//if (!accounts.isEmpty())
-	//{
-	//  JabberAccount * tmpAccount = accounts[0];
-//  tmpAccount->connect();
-	//   }
-}
-
 JabberProtocol *JabberProtocol::protocol ()
 {
 	// return current instance
 	return protocolInstance;
 }
-
-void JabberProtocol::disconnectAll ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] disconnectAll()" << endl;
-	/*
-	   for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
-	   tmpAccount->disconnect();
-	 */
-}
-
-/*
- * Set presence (usually called by dialog widget)
- */
-void JabberProtocol::setPresenceAll (const KopeteOnlineStatus & status, const QString & reason, int priority)
-{
-	/*for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
-	   tmpAccount->setPresence(status, reason, priority);
-	 */
-}
-
 
 void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )

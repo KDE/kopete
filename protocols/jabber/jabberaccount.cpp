@@ -137,27 +137,22 @@ KActionMenu *JabberAccount::actionMenu ()
 	return m_actionMenu;
 }
 
-
-
 /*
  *  Add a contact to Meta Contact
  */
-bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString & displayName, KopeteMetaContact * kmc)
+bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString & displayName, KopeteMetaContact * metaContact)
 {
-	JabberContact *jc;
 
-	if (!kmc)
-	{
-		//kmc = new KopeteMetaContact ();
-		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] New meta contacts" << endl;
-	}
+	/* collect all group names */
+	QStringList groupNames;
+	QPtrList<KopeteGroup> groupList = metaContact->groups();
+	for(KopeteGroup *group = groupList.first(); group; group = groupList.next())
+		groupNames += group->displayName();
 
-	//KopeteContactList::contactList()->addMetaContact(kmc);
+	JabberContact *jc = createContact(contactId, displayName, groupNames, metaContact);
 
-	jc = new JabberContact (contactId, displayName, "Unknown", this, kmc, 0L);
-	//kmc->addContact(jc);
+	return (jc != 0);
 
-	return true;
 }
 
 void JabberAccount::errorConnectFirst ()
@@ -532,16 +527,6 @@ void JabberAccount::setAvailable (void)
 	slotGoOnline ();
 }
 
-void JabberAccount::deserializeContact (KopeteMetaContact * metaContact,
-										const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << endl;
-
-	new JabberContact (serializedData["contactId"], serializedData["displayName"],
-					   QStringList::split (',', serializedData["groups"]), this, metaContact, serializedData["identityId"]);
-
-}
-
 void JabberAccount::slotGoOnline ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Going online!" << endl;
@@ -721,53 +706,70 @@ void JabberAccount::sendPresenceToNode (const KopeteOnlineStatus & pres, const Q
 	task->go (true);
 }
 
-JabberContact *JabberAccount::createContact (const QString & jid, const QString & alias, const QStringList & groups, KopeteMetaContact * metaContact,
-											 const QString & identity)
+JabberContact *JabberAccount::createContact (const QString & jid, const QString & alias, const QStringList & groups, KopeteMetaContact * metaContact)
 {
 
-	JabberContact *jc = new JabberContact (jid, alias, groups, this, metaContact, identity);
+	JabberContact *jc = new JabberContact (jid, alias, groups, this, metaContact, accountId());
 
-	//metaContact->addContact(jc);
 	return jc;
+
 }
 
 
 void JabberAccount::createAddContact (KopeteMetaContact * mc, const Jabber::RosterItem & item)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "findContact " << protocol ()->pluginId () << " "
-		<< myContact->contactId () << " " << item.jid ().userHost () << endl;
 
 	if (!mc)
 	{
-		mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), myContact->contactId (), item.jid ().userHost ());
+		/*
+		 * If no metacontact has been given, try to locate an existing one
+		 * that contains a contact with the same ID that we are to create.
+		 */
+		mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), item.jid ().userHost ());
 
 		if (mc)
 		{
+			/*
+			 * A metacontact exists that does contain a contact with the same ID
+			 */
 			JabberContact *jc = (JabberContact *) mc->findContact (protocol ()->pluginId (),
-																   myContact->contactId (),
+																   accountId (),
 																   item.jid ().userHost ());
 
 			if (jc)
 			{
-				/* Existing contact, update data. */
-				kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Contact " << item.jid ().userHost () << " already exists, updating" << endl;
+				/*
+				 * Since the subcontact exists already, we don't recreate it but
+				 * merely update its data according to our parameters.
+				 */
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Contact " << item.jid ().userHost () << " already exists, updating" << endl;
 				jc->slotUpdateContact (item);
 				return;
 			}
 			else
 			{
-				kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount]****Warning**** : " << item.jid ().userHost () << " already exists, and can be found" << endl;
+				/*
+				 * If this code is reached, something is severely broken:
+				 * A subcontact of a metacontact exists but we are unable to
+				 * retrieve it's pointer.
+				 */
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "****Warning**** : " << item.jid ().userHost () << " already exists, and can be found" << endl;
 			}
 		}
 	}
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Adding contact " << item.jid ().userHost () << " ..." << endl;
-
+	/*
+	 * If we got here and mc is still NULL, the contact is not
+	 * in the contact list yet and we need to create a new metacontact
+	 * for it.
+	 */
 	bool isContactInList = true;
-
 	if (!mc)
 	{
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding contact " << item.jid ().userHost () << " ..." << endl;
+
 		isContactInList = false;
+
 		mc = new KopeteMetaContact ();
 		QStringList groups = item.groups ();
 
@@ -775,6 +777,11 @@ void JabberAccount::createAddContact (KopeteMetaContact * mc, const Jabber::Rost
 			mc->addToGroup (KopeteContactList::contactList ()->getGroup (*it));
 	}
 
+	/*
+	 * At this point, we either found the metacontact or created a new
+	 * one. The only thing left to do is to create a new Jabber contact
+	 * inside it.
+	 */
 	QString contactName;
 
 	if (item.name ().isNull () || item.name ().isEmpty ())
@@ -782,10 +789,11 @@ void JabberAccount::createAddContact (KopeteMetaContact * mc, const Jabber::Rost
 	else
 		contactName = item.name ();
 
-	createContact (item.jid ().userHost (), contactName, item.groups (), mc, myContact->contactId ());
+	createContact (item.jid().userHost(), contactName, item.groups(), mc);
 
 	if (!isContactInList)
 		KopeteContactList::contactList ()->addMetaContact (mc);
+
 }
 
 void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & type)
@@ -812,7 +820,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 			subscribed (jid);
 
 			/* Is the user already in our contact list? */
-			mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), myContact->contactId (), jid.userHost ());
+			mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.userHost ());
 
 			/* If it is not, ask the user if he wants to subscribe in return. */
 			if (!mc && (KMessageBox::questionYesNo (qApp->mainWidget (),
@@ -968,7 +976,7 @@ void JabberAccount::slotReceivedMessage (const Jabber::Message & message)
 
 			metaContact->setTemporary (true);
 
-			contactFrom = createContact (userHost, userHost, QStringList (), metaContact, myContact->contactId ());
+			contactFrom = createContact (userHost, userHost, QStringList (), metaContact);
 
 			KopeteContactList::contactList ()->addMetaContact (metaContact);
 		}
@@ -1003,7 +1011,7 @@ void JabberAccount::slotGroupChatJoined (const Jabber::Jid & jid)
 	mc->setTemporary (true);
 
 	/* The group chat object basically works like a JabberContact. */
-	JabberGroupChat *groupChat = new JabberGroupChat (jid, QStringList (), this, mc, myContact->contactId ());
+	JabberGroupChat *groupChat = new JabberGroupChat (jid, QStringList (), this, mc, accountId ());
 
 	/* Add the group chat class to the meta contact. */
 	mc->addContact (groupChat);

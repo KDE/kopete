@@ -64,25 +64,12 @@ public:
 	 JabberProtocol (QObject * parent, const char *name, const QStringList &);
 	 ~JabberProtocol ();
 
-	KActionMenu *protocolActions ();
-
 	/**
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
-	//AddContactPage *createAddContactWidget(QWidget * parent);
 	virtual AddContactPage *createAddContactWidget (QWidget * parent, KopeteAccount * i);
 	virtual EditAccountWidget *createEditAccountWidget (KopeteAccount * account, QWidget * parent);
 	virtual KopeteAccount *createNewAccount (const QString & accountId);
-
-	/**
-	 * Set status to "Online"/"Available"
-	 */
-	void setAvailable ();
-
-	/**
-	 * Are we able to relay messages to offline users?
-	 */
-	bool canSendOffline () const;
 
 	/**
 	 * Deserialize contact data
@@ -110,57 +97,11 @@ public:
 	 */
 	static JabberProtocol *protocol ();
 
-	/**
-	 * Function called by the configuration dialog,
-	 * it will register the account currently specified
-	 * in the dialog.
-	 */
-	void registerUser ();
-
-	public slots:
-
-	/**
-	 * Function to connect to the server
-	 */
-	  virtual void connectAll ();
-
-	/**
-	 * Function to disconnect from server
-	 */
-	virtual void disconnectAll ();
-
-	void setPresenceAll (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
-
 private:
 	/*
 	 * Singleton instance of our protocol class
 	 */
 	static JabberProtocol *protocolInstance;
-
-	/*
-	 * Create a new JabberContact
-	 */
-	JabberContact *createContact (const QString & jid, const QString & alias,
-								  const QStringList & groups, KopeteMetaContact * metaContact, const QString & identity);
-
-	/*
-	 * Add new contact to the Kopete contact list
-	 * Note: this does not affect the Jabber roster at all
-	 */
-	//void createAddContact(KopeteMetaContact * mc,
-//            const Jabber::RosterItem & item);
-
-	/*
-	 * Sends a presence element with
-	 * type="subscribe" to ask for authorization
-	 */
-	void subscribe (const Jabber::Jid & jid);
-
-	/*
-	 * Sends a presence element with
-	 * type="subscribed" to acknowledge authorization
-	 */
-	void subscribed (const Jabber::Jid & jid);
 
 };
 

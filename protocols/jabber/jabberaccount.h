@@ -43,15 +43,6 @@ public:
 	/* Standard null destructor. */
 	 ~JabberAccount ();
 
-	/* Sets the user away, or, conversely, back online (called by the main
-	 * away manager).
-	 * @param away True: set this account away, false: set this account
-	 * as available. */
-
-	/*virtual void setStatus(KopeteOnlineStatus status, const QString & reason =
-	   QString::null);
-	 */
-
 	/* Returns the contact for this account, must be created in ctor. */
 	virtual KopeteContact *myself () const;
 
@@ -60,24 +51,7 @@ public:
 
 	void registerUser ();
 
-	/* Creates the add contact dialog for this account.
-	 * @param parent The dialog to add our widget to. */
-	//virtual AddContactPage *createAddContactWidget(QWidget * parent);
-
-	/* Are we able to relay messages to offline users? */
-	virtual bool canSendOffline () const
-	{
-		return true;
-	}
-
-
 	virtual void setAway (bool away, const QString & reason = QString::null);
-	/* Deserialize contact data.
-	 * @param metaContact The metacontact to deserialize.
-	 * @param serializedData Output - serialized data.
-	 * @param addressBookData Output - serialized address book data. */
-	virtual void deserializeContact (KopeteMetaContact * metaContact,
-									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
 
 	/* Return the resource of the client */
 	QString resource ();
@@ -167,7 +141,7 @@ private:
 	 * Create a new JabberContact
 	 */
 	JabberContact *createContact (const QString & jid, const QString & alias,
-								  const QStringList & groups, KopeteMetaContact * metaContact, const QString & identity);
+								  const QStringList & groups, KopeteMetaContact * metaContact);
 
 	/* Add new contact to the Kopete contact list; this doesn't actually
 	 * affect the Jabber roster, it's just an internal method. */
@@ -215,9 +189,7 @@ private slots:
 	/* Set global presence to "invisible", no reason. */
 	void slotGoInvisible ();
 
-	/* Sends a raw message to the server (warning! use with caution - if your
-	 * session screws up after using this, it's seriously not our fault).
-	 * "</stream:stream>" is a fun message to send. */
+	/* Sends a raw message to the server (use with caution) */
 	void slotSendRaw ();
 
 	/* Slots for handling group chats. */
