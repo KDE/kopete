@@ -99,18 +99,18 @@ YList *y_list_remove(YList * list, void *data)
 /* Warning */
 /* link MUST be part of list */
 /* caller must free link using y_list_free_1 */
-YList *y_list_remove_link(YList * list, const YList * link)
+YList *y_list_remove_link(YList * list, const YList * listlink)
 {
-	if (!link)
+	if (!listlink)
 		return list;
 
-	if (link->next)
-		link->next->prev = link->prev;
-	if (link->prev)
-		link->prev->next = link->next;
+	if (listlink->next)
+		listlink->next->prev = listlink->prev;
+	if (listlink->prev)
+		listlink->prev->next = listlink->next;
 
-	if (link == list)
-		list = link->next;
+	if (listlink == list)
+		list = listlink->next;
 	
 	return list;
 }

@@ -61,7 +61,7 @@ char * y_str_to_utf8(const char *in)
 	char *result = NULL;
 
 	if(in == NULL || *in == '\0')
-		return "";
+		return strdup("");
 	
 	result = y_new(char, strlen(in) * 2 + 1);
 
@@ -87,7 +87,7 @@ char * y_utf8_to_str(const char *in)
 	char *result = NULL;
 
 	if(in == NULL || *in == '\0')
-		return "";
+		return strdup("");
 	
 	result = y_new(char, strlen(in) + 1);
 
@@ -116,16 +116,17 @@ void y_strfreev(char ** vector)
 	FREE(vector);
 }
 
-char ** y_strsplit(char * str, char * sep, int nelem)
+char ** y_strsplit(char * str, const char * sep, int nelem)
 {
 	char ** vector;
-	char *s, *p;
+	char *s = 0;
+	char *p = 0;
 	int i=0;
 	int l = strlen(sep);
 	if(nelem < 0) {
-		char * s;
+		char * tmp_s = 0;
 		nelem=0;
-		for(s=strstr(str, sep); s; s=strstr(s+l, sep),nelem++)
+		for(tmp_s=strstr(str, sep); tmp_s; tmp_s=strstr(tmp_s+l, sep),nelem++)
 			;
 		if(strcmp(str+strlen(str)-l, sep))
 			nelem++;

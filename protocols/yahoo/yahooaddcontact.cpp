@@ -53,7 +53,7 @@ bool YahooAddContact::validateData()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	return theDialog->contactID->text() != "";
+	return !theDialog->contactID->text().isEmpty();
 }
 
 bool YahooAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact)

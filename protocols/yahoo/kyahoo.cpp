@@ -465,7 +465,7 @@ void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 extern "C"
 {
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_login_response ) ( int id, int succ, char *url )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_login_response ) ( int id, int succ, const char *url )
 {
 	YahooSession *session = YahooSessionManager::manager()->session(id);
 	session->_loginResponseReceiver( succ, url );
@@ -705,7 +705,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*sen
     *************************************************************************
 */
 
-void YahooSession::_loginResponseReceiver( int succ, char *url )
+void YahooSession::_loginResponseReceiver( int succ, const char *url )
 {
 
 	kdDebug(14181) << k_funcinfo << endl;

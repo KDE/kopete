@@ -96,7 +96,7 @@ void YahooContact::syncToServer()
 	kdDebug(14180) << k_funcinfo  << endl;
 	if(!m_account->isConnected()) return;
 
-	if(!m_account->isOnServer(m_userId))
+	if( !m_account->isOnServer(m_userId) )
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
 		KopeteGroupList groupList = metaContact()->groups();
