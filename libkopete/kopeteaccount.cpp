@@ -106,7 +106,7 @@ KopeteProtocol *KopeteAccount::protocol() const
 	return d->protocol;
 }
 
-QString KopeteAccount::accountId()
+QString KopeteAccount::accountId() const
 {
 	return d->id;
 }
@@ -116,7 +116,7 @@ const QColor KopeteAccount::color() const
 	return d->color;
 }
 
-void KopeteAccount::setColor( QColor color )
+void KopeteAccount::setColor( const QColor &color )
 {
 	d->color = color;
 }
@@ -255,7 +255,7 @@ void KopeteAccount::setAutoLogin(bool b)
 {
 	d->autologin=b;
 }
-bool KopeteAccount::autoLogin()
+bool KopeteAccount::autoLogin() const
 {
 	return d->autologin;
 }

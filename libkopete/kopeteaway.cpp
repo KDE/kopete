@@ -136,7 +136,7 @@ QString KopeteAway::message()
 	return getInstance()->d->awayMessage;
 }
 
-void KopeteAway::setGlobalAwayMessage(QString message)
+void KopeteAway::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
@@ -194,7 +194,7 @@ QStringList KopeteAway::getTitles()
 	return titles;
 }
 
-QString KopeteAway::getMessage(QString title)
+QString KopeteAway::getMessage(const QString &title)
 {
 	for(QValueList<KopeteAwayMessage>::iterator i = d->awayMessageList.begin(); i != d->awayMessageList.end(); i++)
 	{
@@ -206,7 +206,7 @@ QString KopeteAway::getMessage(QString title)
 	return QString::null;
 }
 
-bool KopeteAway::addMessage(QString title, QString message)
+bool KopeteAway::addMessage(const QString &title, const QString &message)
 {
 	bool found = false;
 	/* Check to see if it exists already */
@@ -234,7 +234,7 @@ bool KopeteAway::addMessage(QString title, QString message)
 	}
 }
 
-bool KopeteAway::deleteMessage(QString title)
+bool KopeteAway::deleteMessage(const QString &title)
 {
 	/* Search for the message */
 	QValueList<KopeteAwayMessage>::iterator itemToDelete = d->awayMessageList.begin();
@@ -259,7 +259,7 @@ bool KopeteAway::deleteMessage(QString title)
 	}
 }
 
-bool KopeteAway::updateMessage(QString title, QString message)
+bool KopeteAway::updateMessage(const QString &title, const QString &message)
 {
 	/* Search for the message */
 	QValueList<KopeteAwayMessage>::iterator itemToUpdate = d->awayMessageList.begin();
@@ -390,7 +390,7 @@ void KopeteAway::setAutoAwayTimeout(int sec)
 	d->awayTimeout = sec;
 }
 
-bool KopeteAway::goAvailable()
+bool KopeteAway::goAvailable() const
 {
 	return d->goAvailable;
 }

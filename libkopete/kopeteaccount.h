@@ -52,7 +52,7 @@ public:
 	/**
 	 * return the unique id of this account used as the login
 	 */
-	QString accountId();
+	QString accountId() const;
 
 	/**
 	 * The account ID should be constant, don't use this method.
@@ -87,7 +87,7 @@ public:
 	/*
 	 * Say if the account should log in automaticaly
 	 */
-	bool autoLogin();
+	bool autoLogin() const;
 
 	/*
 	 * returns the user color for this account
@@ -96,7 +96,7 @@ public:
 	/*
 	 * Set the color this account will use to differenciatte from the other accounts
 	 */
-	void setColor( QColor color);
+	void setColor( const QColor &color);
 
 	/**
 	 * this will be called if main-kopete wants
@@ -178,6 +178,7 @@ public slots:
 	 * Go online for this service.
 	 * This is a slot, so it can be called directly from e.g. a KAction.
 	 */
+
 	virtual void connect() = 0;
 
 	/**

@@ -259,7 +259,7 @@ public:
 	 * The kopeteMessagemanager is only set if the message is already passed by the manager.
 	 * we should trust this only in aboutToSend/aboutToReceive signals
 	 */
-	 KopeteMessageManager *manager() ;
+	 KopeteMessageManager *manager()const ;
 
 	 /**
 	  * set the kopetemessagemanager for this message.

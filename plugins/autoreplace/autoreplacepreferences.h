@@ -41,10 +41,10 @@ public:
 	virtual void reopen();
 
 	typedef QMap<QString, QString> WordsToReplace;
-	WordsToReplace getMap() { return map; };	// O(1) implicity shared
-	bool getAutoreplaceIncoming() { return autoreplaceIncoming; };
-	bool getAddDot() { return addDot; };
-	bool getUpper() { return upper; };
+	WordsToReplace getMap() const { return map; };	// O(1) implicity shared
+	bool getAutoreplaceIncoming() const { return autoreplaceIncoming; };
+	bool getAddDot() const { return addDot; };
+	bool getUpper() const { return upper; };
 
 private:
 	AutoReplacePrefsUI * preferencesDialog;

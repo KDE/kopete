@@ -43,7 +43,7 @@ public:
 	 * Method to return whether or not we're shutting down
 	 * or not at this point.
 	 */
-	 bool isShuttingDown() { return m_isShuttingDown; }
+	 bool isShuttingDown() const { return m_isShuttingDown; }
 	 virtual void commitData( QSessionManager &sm );
 
 private slots:

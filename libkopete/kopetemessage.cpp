@@ -420,7 +420,7 @@ KopeteMessage::MessageImportance KopeteMessage::importance() const
 	return d->importance;
 }
 
-KopeteMessageManager *KopeteMessage::manager()
+KopeteMessageManager *KopeteMessage::manager() const
 {
 	return d->manager;
 }

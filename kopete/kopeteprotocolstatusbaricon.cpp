@@ -17,7 +17,7 @@
 
 #include "kopeteprotocolstatusbaricon.h"
 #include "kopeteprotocol.h"
-
+#include <qpixmap.h>
 #include <kdebug.h>
 
 //#include <kdebug.h>

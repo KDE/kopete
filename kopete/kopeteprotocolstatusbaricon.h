@@ -20,7 +20,6 @@
 
 #include <qevent.h>
 #include <qlabel.h>
-#include <qpixmap.h>
 #include <qpoint.h>
 
 class KopeteProtocol;

@@ -80,7 +80,7 @@ public:
 	 * @brief Sets the global away message
 	 * @param message The message you want to set
 	 */
-	void setGlobalAwayMessage(QString message);
+	void setGlobalAwayMessage(const QString &message);
 
 	/**
 	 * @brief Sets global away (all protocols)
@@ -119,7 +119,7 @@ public:
 	 * This function retrieves the away message that corresponds to the title passed in.
 	 * If the requested away message is not found an empty string ("") is returned.
 	 */
-	 QString getMessage(QString title);
+	 QString getMessage(const QString &title);
 
 	 /**
 	  * @brief Adds an away message
@@ -134,7 +134,7 @@ public:
 	  * be added and true will be returned.  save() should be called when finished adding messages
 	  * in order to write the new message configuration to disk.
 	  */
-	 bool addMessage(QString title, QString message);
+	 bool addMessage(const QString &title, const QString &message);
 
 	 /**
 	  * @brief Deletes an away message
@@ -146,7 +146,7 @@ public:
 	  * defined away messages.  save() should be called after any changes to the current away
 	  * message list in order to write the new away message list to disk.
 	  */
-	 bool deleteMessage(QString title);
+	 bool deleteMessage(const QString &title);
 
 	 /**
 	 * @brief Updates an existing away message
@@ -158,7 +158,7 @@ public:
 	 * This function will update an existing message and replace it's text with the
 	 * text specified.
 	 */
-	bool updateMessage(QString title, QString message);
+	bool updateMessage(const QString &title, const QString &message);
 
 	/**
 	 * time in seconds since the user is idle
@@ -172,7 +172,7 @@ public:
 	/**
 	 *  Go avaliable when detect activity
 	 */
-	bool goAvailable();
+	bool goAvailable() const;
 
 	/**
 	 * set the time before going automaticaly away.
