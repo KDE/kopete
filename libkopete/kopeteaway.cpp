@@ -19,6 +19,10 @@
 #include "kopeteaway.h"
 
 #include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
+#include "kopeteplugin.h"
+#include "kopeteprotocol.h"
+#include "pluginloader.h"
 
 #include <qstring.h>
 #include <qdatetime.h>
@@ -50,6 +54,8 @@ struct KopeteAwayPrivate
 	bool autoaway;
 	bool goAvailable;
 	int awayTimeout;
+	QPtrList<KopeteAccount> autoAwayAccounts;
+	QPtrList<KopeteProtocol> autoAwayProtocols;
 	
 	int mouse_x;
 	int mouse_y;
@@ -350,7 +356,33 @@ void KopeteAway::slotTimerTimeout()
 	if(!d->autoaway && d->awayTimeout!=0 && idleTime() > d->awayTimeout) 
 	{
 		d->autoaway = true;
-		KopeteAccountManager::manager()->setAwayAll();
+
+		// Set all accounts that are not away already to away.
+		// We remember them so later we only set the accounts to
+		// available that we set to away (and not the user).
+		QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
+		for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
+		{
+			if(i->isConnected() && !i->isAway()) {
+				d->autoAwayAccounts.append(i);
+				i->setAway(true);
+			}
+		}
+
+		// Do the same with the protocols.
+		QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+		for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+		{
+			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+			if( !proto )
+					continue;
+
+			if( proto->isConnected() && !proto->isAway() )
+			{
+				d->autoAwayProtocols.append(proto);
+				proto->setAway();
+			}
+		}
 	}
 
 }
@@ -363,7 +395,29 @@ void KopeteAway::setActivity()
 		d->autoaway=false;
 		emit activity();
 		if (d->goAvailable)
-			KopeteAccountManager::manager()->setAvailableAll();
+		{
+			d->autoAwayAccounts.setAutoDelete(false);
+			for(KopeteAccount *i=d->autoAwayAccounts.first() ; i; i=d->autoAwayAccounts.current() )
+			{
+				if(i->isConnected() && i->isAway()) {
+					i->setAway(false);
+				}
+
+				// remove() makes the next entry in the list the current one,
+				// that's why we use current() above
+				d->autoAwayAccounts.remove();
+			}
+
+			d->autoAwayProtocols.setAutoDelete(false);
+			for(KopeteProtocol *p=d->autoAwayProtocols.first() ; p; p=d->autoAwayProtocols.current() )
+			{
+				if(p->isConnected() && p->isAway()) {
+					p->setAvailable();
+				}
+
+				d->autoAwayProtocols.remove();
+			}
+		}
 	}
 }
 
