@@ -379,8 +379,7 @@ void ChatView::setTabState( KopeteTabState newState  )
 	}
 
 	if( newState!= Typing )
-		setStatus ( i18n( "%1 people in the chat" ).arg( memberContactMap.count()  ) );
-
+		setStatus( i18n( "One person in the chat", "%n people in the chat", memberContactMap.count() ) );
 }
 
 void ChatView::setMainWindow( KopeteChatWindow* parent )
