@@ -17,6 +17,7 @@
 
 #include <qstylesheet.h>
 #include <qtimer.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -133,7 +134,13 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 		if(!plainBody.isEmpty())
 		{
-			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message: ")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(plainBody).replace("\n", "<br/>")+"</td></tr></table>"
+			//this is the same algoritm as in KopeteMessage::escapedBody();
+			QString escapedBody = QStyleSheet::escape( plainBody );
+			escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
+				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
+				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+
+			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message: ")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+escapedBody+" </td></tr></table>"
 				,KopeteMessage::RichText);
 		}
 
@@ -147,7 +154,13 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	if(!body.isEmpty())
 	{
-		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incoming Encrypted Message: ")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body).replace("\n", "<br/>")  +"</td></tr></table>";
+		//this is the same algoritm as in KopeteMessage::escapedBody();
+		QString escapedBody = QStyleSheet::escape( body );
+		escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
+			.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
+			.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+
+		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incoming Encrypted Message: ")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+ escapedBody  +" </td></tr></table>";
 		msg.setBody(body,KopeteMessage::RichText);
 	}
 

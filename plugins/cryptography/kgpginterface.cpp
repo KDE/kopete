@@ -344,10 +344,6 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
     }
   dests+=" --recipient "+userIDs;
 
-  // FIXME: Why replace this if we use KShellProcess:quote() 2 lines below?
-  //        This doesn't look like safe code to me - Martijn
-  text = text.replace( '\\', "\\\\" ).replace( '\"', "\\\"" ).replace( '$', "\\$" );
-
   gpgcmd="echo ";
   gpgcmd+=KShellProcess::quote(text);
   gpgcmd+=" | gpg --no-secmem-warning --no-tty ";
