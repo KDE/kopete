@@ -23,6 +23,10 @@
 #include <qobject.h>
 #include <kservice.h>
 
+template<class T> class QValueList;
+class KPluginInfo;
+class KCMultiDialog;
+
 /**
  * @short Generic configuration dialog that even works over component boundaries
  *
@@ -35,7 +39,7 @@
  *
  * You initialize \p m_cfgdlg with
  * \code
- * m_cfgdlg = new KConfigureDialog( this );
+ * m_cfgdlg = new KConfigureDialog( KConfigureDialog::Static, this );
  * \endcode
  * If you use a KPart that was not especially designed for your app you can use
  * the second constructor:
@@ -58,41 +62,71 @@
  */
 class KConfigureDialog : public QObject
 {
-	Q_OBJECT
-	public:
-		/**
-		 * Construct a new Preferences Dialog for the application. It uses all
-		 * KCMs with X-KDE-ParentApp set to KGlobal::instance()->instanceName().
-		 */
-		KConfigureDialog( QObject * parent = 0, const char * name = 0 );
+    Q_OBJECT
+    public:
+        /**
+         * Tells the dialog whether the entries in the listview are all static
+         * or whether it should add a Configure... button to select which parts
+         * of the optional functionality should be active or not.
+         */
+        enum ContentInListView
+        {
+            /**
+             * Static listview, while running no entries are added or deleted
+             */
+            Static,
+            /**
+             * Configurable listview. The user can select what functionality he
+             * wants.
+             */
+            Configurable
+        };
 
-		/**
-		 * Construct a new Preferences Dialog with the pages for the selected
-		 * instance names. For example if you want to have the configuration
-		 * pages for the kviewviewer KPart you would pass a
-		 * QStringList consisting of only the name of the part "kviewviewer".
-		 */
-		KConfigureDialog( const QStringList & kcdparents, QObject * parent = 0, const char * name = 0 );
+        /**
+         * Construct a new Preferences Dialog for the application. It uses all
+         * KCMs with X-KDE-ParentApp set to KGlobal::instance()->instanceName().
+         */
+        KConfigureDialog( ContentInListView content = Static, QObject * parent = 0,
+                const char * name = 0 );
 
-		//void addKPartsPluginPage();
+        /**
+         * Construct a new Preferences Dialog with the pages for the selected
+         * instance names. For example if you want to have the configuration
+         * pages for the kviewviewer KPart you would pass a
+         * QStringList consisting of only the name of the part "kviewviewer".
+         */
+        KConfigureDialog( const QStringList & kcdparents, ContentInListView
+                content = Static, QObject * parent = 0, const char * name = 0 );
 
-		~KConfigureDialog();
+        ~KConfigureDialog();
 
-	public slots:
-		/**
-		 * Show the config dialog. The slot immediatly returns since the dialog
-		 * is non-modal.
-		 */
-		void show();
+        /**
+         * If you use a Configurable dialog you need to pass KPluginInfo
+         * objects that the dialog should configure.
+         */
+        void addPluginInfos( const QValueList<KPluginInfo*> & plugininfos );
 
-	private:
-		QValueList<KService::Ptr> instanceServices() const;
-		QValueList<KService::Ptr> parentComponentsServices( const QStringList & ) const;
-		void createDialogFromServices( const QValueList<KService::Ptr> & );
-		class KConfigureDialogPrivate;
-		KConfigureDialogPrivate * d;
+        KCMultiDialog * dialog();
+
+        public slots:
+            /**
+             * Show the config dialog. The slot immediatly returns since the dialog
+             * is non-modal.
+             */
+            void show();
+
+        protected slots:
+            void configureTree();
+        void updateTreeList();
+
+    private:
+        QValueList<KService::Ptr> instanceServices() const;
+        QValueList<KService::Ptr> parentComponentsServices( const QStringList & ) const;
+        void createDialogFromServices();
+        class KConfigureDialogPrivate;
+        KConfigureDialogPrivate * d;
 };
 
 #endif // KCONFIGUREDIALOG_H
 
-// vim: sw=4 ts=4
+// vim: sw=4 sts=4 et

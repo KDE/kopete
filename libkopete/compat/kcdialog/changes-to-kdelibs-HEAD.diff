@@ -1,0 +1,17 @@
+Index: kpluginselector.cpp
+===================================================================
+RCS file: /home/kde/kdenonbeta/kopete/libkopete/compat/kcdialog/kpluginselector.cpp,v
+retrieving revision 1.1
+retrieving revision 1.2
+diff -u -p -r1.1 -r1.2
+--- kpluginselector.cpp	27 Aug 2003 17:35:59 -0000	1.1
++++ kpluginselector.cpp	27 Aug 2003 19:08:26 -0000	1.2
+@@ -82,7 +82,7 @@
+ #include <qvaluelist.h>
+ #include <kservice.h>
+ #include <ktrader.h>
+-#include <ktabwidget.h>
++#include "ktabwidget.h"
+ #include <kiconloader.h>
+ #include <kcmodule.h>
+ #include "kcmoduleinfo.h"

@@ -22,16 +22,10 @@
 #ifndef __KCMODULE_H__
 #define __KCMODULE_H__
 
-// This file is only meant for KDE 3.1. KDE 3.2 will have the original code
-// of which this version is a fork.
-// To avoid symbol clashes with the KCModule in kdelibs the class is renamed
-// to __KCModule and the name is #defined to be source compatible.
-#define KCModule __KCModule
-
 #include <qwidget.h>
 #include <qstringlist.h>
 class KAboutData;
-class __KCModulePrivate;
+class KCModulePrivate;
 class KInstance;
 
 /**
@@ -53,8 +47,8 @@ class KInstance;
  * \code
  * #include <kgenericfactory.h>
  *
- * typedef KGenericFactory<Your__KCModule, QWidget> Your__KCModuleFactory;
- * K_EXPORT_COMPONENT_FACTORY( yourLibName, Your__KCModuleFactory("name_of_the_po_file") );
+ * typedef KGenericFactory<YourKCModule, QWidget> YourKCModuleFactory;
+ * K_EXPORT_COMPONENT_FACTORY( yourLibName, YourKCModuleFactory("name_of_the_po_file") );
  * \endcode
  *
  * The parameter "name_of_the_po_file" has to correspond with the messages target
@@ -65,7 +59,7 @@ class KInstance;
  * @author Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  */
 
-class __KCModule : public QWidget
+class KCModule : public QWidget
 {
   Q_OBJECT
 
@@ -75,7 +69,7 @@ public:
    * An enumeration type for the buttons used by this module.
    * You should only use Help, Default and Apply. The rest is obsolete.
    *
-   * @see __KCModule::buttons @see __KCModule::setButtons
+   * @see KCModule::buttons @see KCModule::setButtons
    */
   enum Button {Help=1, Default=2, Apply=16,
                Reset=4, /* obsolete, do not use! */
@@ -88,14 +82,14 @@ public:
    * Make sure you have a QStringList argument in your
    * implementation.
    */
-  __KCModule(QWidget *parent=0, const char *name=0, const QStringList &args=QStringList() );
+  KCModule(QWidget *parent=0, const char *name=0, const QStringList &args=QStringList() );
 
-  __KCModule(KInstance *instance, QWidget *parent=0, const QStringList &args=QStringList() );
+  KCModule(KInstance *instance, QWidget *parent=0, const QStringList &args=QStringList() );
 
   /*
    * Destroys the module.
    */
-  ~__KCModule();
+  ~KCModule();
 
   /**
    * Load the configuration data into the module.
@@ -173,7 +167,7 @@ public:
    * The return value is a value or'ed together from
    * the Button enumeration type.
    *
-   * @see __KCModule::setButtons
+   * @see KCModule::setButtons
    */
   int buttons() const { return _btn; };
 
@@ -187,7 +181,7 @@ public:
    * customized message. If none has been set, a default message
    * will be used.
    *
-   * @see __KCModule::setRootOnlyMsg
+   * @see KCModule::setRootOnlyMsg
    */
   QString rootOnlyMsg() const;
 
@@ -199,7 +193,7 @@ public:
    * appear (for example if it has already one). This function
    * tells KControl if a RootOnly message should be shown
    *
-   * @see __KCModule::setUseRootOnlyMsg
+   * @see KCModule::setUseRootOnlyMsg
    */
   bool useRootOnlyMsg() const;
 
@@ -251,7 +245,7 @@ protected:
    *
    * If Apply is not specified, kcmshell will show a "Close" button.
    *
-   * @see __KCModule::buttons
+   * @see KCModule::buttons
    */
   void setButtons(int btn) { _btn = btn; };
 
@@ -262,7 +256,7 @@ protected:
    * corresponding desktop file contains the line X-KDE-RootOnly=true.
    * If no message is set, a default one will be used.
    *
-   * @see __KCModule::rootOnlyMessage
+   * @see KCModule::rootOnlyMessage
    */
   void setRootOnlyMsg(const QString& msg);
 
@@ -272,7 +266,7 @@ protected:
    * Following the value of @p on, the RootOnly message will be
    * shown or not.
    *
-   * @see __KCModule::useRootOnlyMsg
+   * @see KCModule::useRootOnlyMsg
    */
   void setUseRootOnlyMsg(bool on);
 
@@ -284,7 +278,7 @@ protected slots:
    * shown in the module changes. It allows the control center to
    * keep track of unsaved changes.
    *
-   * If you are creating a new __KCModule take care that you call setChanged( true ) when
+   * If you are creating a new KCModule take care that you call setChanged( true ) when
    * the settings have changed and setChanged( false ) when the settings in the
    * dialog equal the settings in the config file.
    */
@@ -296,7 +290,7 @@ private:
 protected:
   virtual void virtual_hook( int id, void* data );
 private:
-  __KCModulePrivate *d;
+  KCModulePrivate *d;
 };
 
 #endif
