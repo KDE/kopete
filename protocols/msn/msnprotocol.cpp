@@ -613,3 +613,4 @@ void MSNProtocol::slotGoURL( QString url)
 
 // vim: set ts=4 sts=4 sw=4 noet:
 
+#include "msnprotocol.moc"

@@ -328,3 +328,4 @@ QString KMSNChatService::parseFontAttr(QString str, QString attr)
 	return tmp;
 }
 
+#include "kmsnchatservice.moc"

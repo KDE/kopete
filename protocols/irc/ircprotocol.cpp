@@ -175,3 +175,4 @@ void IRCProtocol::initIcons()
 }
 
 
+#include "ircprotocol.moc"

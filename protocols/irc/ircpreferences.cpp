@@ -95,3 +95,4 @@ void IRCPreferences::slotHighlightOthers()
 		}
 	}
 }
+#include "ircpreferences.moc"

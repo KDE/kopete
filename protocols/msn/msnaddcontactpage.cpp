@@ -55,3 +55,4 @@ void MSNAddContactPage::slotFinish()
 		return;
 	}
 }
+#include "msnaddcontactpage.moc"

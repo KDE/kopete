@@ -497,3 +497,4 @@ void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString user
 	mHost = host;
 	connectToHost(host.latin1(), port);
 }
+#include "kirc.moc"

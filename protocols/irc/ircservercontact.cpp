@@ -196,3 +196,4 @@ bool IRCServerContact::parentClosing()
 	}
 	return true;
 }
+#include "ircservercontact.moc"

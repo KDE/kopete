@@ -328,3 +328,4 @@ void MSNContact::slotFlashIcon()
 	*/
 }
 
+#include "msncontact.moc"

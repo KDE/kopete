@@ -186,3 +186,4 @@ void IRCContact::joinNow()
 	QObject::connect(mContact->engine, SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), chatView, SLOT(incomingNewTopic(const QString &, const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingExistingTopic(const QString &,  const QString &)), chatView, SLOT(receivedExistingTopic(const QString &, const QString &)));
 }
+#include "irccontact.moc"

@@ -37,3 +37,4 @@ void IRCAddContactPage::connectNowClicked()
 		ircdata->chkJoinNow->setChecked(false);
 	}
 }
+#include "ircaddcontactpage.moc"
