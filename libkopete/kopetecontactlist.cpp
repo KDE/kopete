@@ -18,6 +18,7 @@
 
 #include "kopetecontactlist.h"
 
+#include <qdir.h>
 #include <qdom.h>
 #include <qfile.h>
 #include <qregexp.h>
@@ -528,7 +529,9 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 	// Close the file, and save the new file
 	contactListFile.close();
 
-	kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
+	QDir().rename( fileName, fileName + ".bak" );
+
+	// kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
 	contactListFile.open( IO_WriteOnly );
 	QTextStream stream( &contactListFile );
