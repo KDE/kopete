@@ -36,7 +36,7 @@
 #include "kopeteprefs.h"
 #include "pluginloader.h"
 
-#if KDE_VERSION >= 305
+#if KDE_VERSION >= 310
 #include <kpassivepopup.h>
 #include "systemtray.h"
 #endif
@@ -343,7 +343,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	updateOnlineStatus();
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
 	{
-		#if KDE_VERSION >= 305
+		#if KDE_VERSION >= 310
 		if ( KopetePrefs::prefs()->notifyOnline() )
 			KPassivePopup::message(i18n("%2 is now %1!").arg(statusString()).arg(displayName()), kopeteapp->systemTray());
 		#endif
