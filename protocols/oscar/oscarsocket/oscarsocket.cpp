@@ -544,14 +544,14 @@ void OscarSocket::slotRead()
 	// another flap is waiting in read buffer
 	if (socket()->bytesAvailable() > 0)
 	{
-		kdDebug(14150) << k_funcinfo <<
-			"END, restarting from top as we still have buffer contents." << endl;
+		/*kdDebug(14150) << k_funcinfo <<
+			"END, restarting from top as we still have buffer contents." << endl;*/
 		slotRead();
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<
-			"END, nothing more to read from socket buffer." << endl;
+		/*kdDebug(14150) << k_funcinfo <<
+			"END, nothing more to read from socket buffer." << endl;*/
 
 		if(awaitingFirstPresenceBlock == OscarSocket::GotSome)
 		{
@@ -1024,8 +1024,8 @@ void OscarSocket::sendClientReady(void)
 
 	// FIXME: is this needed for AIM?
 	// ICQ surely doesn't need that, it gets a reply for changing status
-	if(!mIsICQ)
-		emit statusChanged(OSCAR_ONLINE);
+	/*if(!mIsICQ)
+		emit statusChanged(OSCAR_ONLINE);*/
 
 	isLoggedIn = true;
 	emit loggedIn();
@@ -2146,9 +2146,9 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 				break;
 			default: // unknown info type
 			{
-				kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
+				/*kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
 					") length=" << t.length << " in userinfo for user '" <<
-					u.sn << "'" << tlvBuf.toString() << endl;
+					u.sn << "'" << tlvBuf.toString() << endl;*/
 			}
 		}; // END switch()
 		tlvBuf.clear(); // unlink tmpBuf from tlv data
@@ -2381,7 +2381,7 @@ void OscarSocket::parseUserOnline(Buffer &inbuf)
 	UserInfo u;
 	if (parseUserInfo(inbuf, u))
 	{
-		kdDebug(14150) << k_funcinfo << "RECV SRV_USERONLINE, name=" << u.sn << endl;
+		//kdDebug(14150) << k_funcinfo << "RECV SRV_USERONLINE, name=" << u.sn << endl;
 		emit gotBuddyChange(u);
 	}
 }
@@ -2391,7 +2391,7 @@ void OscarSocket::parseUserOffline(Buffer &inbuf)
 	UserInfo u;
 	if (parseUserInfo(inbuf, u))
 	{
-		kdDebug(14150) << k_funcinfo << "RECV SRV_USEROFFLINE, name=" << u.sn << endl;
+		//kdDebug(14150) << k_funcinfo << "RECV SRV_USEROFFLINE, name=" << u.sn << endl;
 		emit gotOffgoingBuddy(u.sn);
 	}
 }

@@ -26,7 +26,7 @@ class AIMContact : public OscarContact
 	Q_OBJECT
 
 	public:
-		AIMContact (const QString name, const QString displayName, AIMAccount *account, KopeteMetaContact *parent);
+		AIMContact(const QString , const QString , AIMAccount *, KopeteMetaContact *);
 		virtual ~AIMContact();
 
 		bool isReachable();
@@ -35,7 +35,7 @@ class AIMContact : public OscarContact
 		/*
 		 * Reimplemented because AIM handles start/stop of typing
 		 */
-		KopeteMessageManager* manager( bool canCreate = false );
+		KopeteMessageManager* manager(bool canCreate = false);
 
 		virtual void setStatus(const unsigned int newStatus);
 

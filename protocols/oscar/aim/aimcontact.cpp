@@ -28,37 +28,38 @@
 #include "aimuserinfo.h"
 #include "aim.h" //for tocNormalize
 
-AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *account, KopeteMetaContact *parent)
-	 : OscarContact(name, displayName, account, parent)
+AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *acc, KopeteMetaContact *parent)
+	 : OscarContact(name, displayName, acc, parent)
 {
-	mProtocol = static_cast<AIMProtocol *>(protocol());
+	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setOnlineStatus(mProtocol->statusOffline);
 
-	mLastAutoResponseTime = 0;
-	mUserProfile = "";
+	mLastAutoResponseTime=0;
+	mUserProfile="";
 	infoDialog=0L;
 
-	// Contact Changed
-	QObject::connect(
-		account->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
-		this, SLOT(slotContactChanged(const UserInfo &)));
-
-	/*
-	// Received IM
-	QObject::connect(
-		account,
-		 SIGNAL(slotGotIM(OscarMessageType type, QString &sender, QString &msg, bool isAuto))),
-		this, SLOT(slotIMReceived(QString,QString,bool)));
-	*/
+	if(name == account()->accountId())
+	{
+		QObject::connect(
+			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
+			this, SLOT(slotContactChanged(const UserInfo &)));
+	}
+	else
+	{
+		// Buddy Changed
+		QObject::connect(
+			acc->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+			this, SLOT(slotContactChanged(const UserInfo &)));
+	}
 
 	// Incoming minitype notification
 	QObject::connect(
-		account->engine(), SIGNAL(gotMiniTypeNotification(const QString &, int)),
+		acc->engine(), SIGNAL(gotMiniTypeNotification(const QString &, int)),
 		this, SLOT(slotGotMiniType(const QString &, int)));
 
 	// received userprofile
 	QObject::connect(
-		account->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
+		acc->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
 		this, SLOT(slotGotProfile(const UserInfo &, const QString &, const QString &)));
 
 // 	kdDebug(14190) << k_funcinfo "name='" << name <<
