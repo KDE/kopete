@@ -58,23 +58,24 @@ For 1.0/kdenetwork:
 	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
 	- possible switch to a libfaim based backend (for both ICQ and AOL)
+	  (rather no :P)
 
 
 	ICQ specific ================================================================
 For 0.7:
-	- IMPORTANT: write plugin data to accounts.xml, and fail gracefully if 
-	there is none there instead of giving 
+	X IMPORTANT: write plugin data to accounts.xml, and fail gracefully if
+	there is none there instead of giving
 	kopete (oscar): [void OscarAccount::slotGoOnline()] 389743: Already ONLINE
 	** See if this is still there after the move back to KConfig
-	I noticed it was writing no plugin data to accounts.xml recently, 
-	I think a lack of server name and port data there prevents ICQ 
-	connecting. (Will, confirmed by Till)
-	
-	- support simple icq type-2 messages so we can send/receive away 
-	messages (yes, I even see this as a point for not releasing 0.7, away 
+	I noticed it was writing no plugin data to accounts.xml recently,
+	I think a lack of server name and port data there prevents ICQ
+	connecting. (Will, confirmed by Till, hopefully fixed by mETz)
+
+	- support simple icq type-2 messages so we can send/receive away
+	messages (yes, I even see this as a point for not releasing 0.7, away
 	messages ARE important or else I could take out away modes altogether)
 
-	- prevent passwords longer than 8 chars, it upsets the server
+	- prevent passwords longer than 8 chars, it upsets the server (wrong, 16 are allowed afaics)
 	- general support for SNAC (0x15,y)
 	- read away reasons
 	- own away-reasons
@@ -91,7 +92,7 @@ For 0.7:
 	- invisible list (needs proper group-handling)
 	X invisible mode
 
-	- support login with something different than "online" status, both for
+	X support login with something different than "online" status, both for
 	  AIM and ICQ. I thought about changing OscarSocket::doLogin but the var
 	  would either contain an icq status long or a simple number for aim, not
 	  sure if mixing icq-specific values and plain numbers is a good idea
@@ -100,6 +101,7 @@ For 0.7:
 	- support sending your own icq userinfo to the server,
 	  it's easy to do for me but because of the mass of items takes lots of time
 	  and is extremely boring.
+
 For 1.0/kdenetwork:
 	What's not achievable in the above?  Move it down here...
 	AIM specific ================================================================
@@ -122,6 +124,4 @@ For 1.0/kdenetwork:
 	   possibility to send files without opening previously a chat
 
 ================================================================================
-
-
 
