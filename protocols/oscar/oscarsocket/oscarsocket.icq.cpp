@@ -736,6 +736,7 @@ void OscarSocket::startKeepalive()
 		kdDebug(14150) << k_funcinfo << "Creating keepaliveTimer" << endl;
 		keepaliveTimer=new QTimer(this, "keepaliveTimer");
 		QObject::connect(keepaliveTimer,SIGNAL(timeout()),this,SLOT(slotKeepaliveTimer()));
+		bSomethingOutgoing = true;
 		keepaliveTimer->start(keepaliveTime*1000);
 	}
 }
@@ -753,7 +754,14 @@ void OscarSocket::stopKeepalive()
 
 void OscarSocket::slotKeepaliveTimer()
 {
-//	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	if(!bSomethingOutgoing)
+	{
+		kdDebug(14150) << k_funcinfo << "EEEEK, didn send something since last ping sent to socket!" << endl;
+		emit protocolError(
+			i18n("Connection to %1 timed out").arg((mIsICQ ? "ICQ" : "AIM")), 0);
+	}
+	bSomethingOutgoing = false;
 	sendKeepalive();
 }
 

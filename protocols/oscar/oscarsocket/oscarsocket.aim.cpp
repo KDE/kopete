@@ -213,14 +213,16 @@ void OscarSocket::sendAIMAway(bool away, const QString &message)
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		outbuf.addTLV(0x0003, defencoding.length(), defencoding.latin1());
 		outbuf.addTLV(0x0004, message.length(), message.local8Bit());
-		emit statusChanged(OSCAR_AWAY);
+		//emit statusChanged(OSCAR_AWAY);
 	}
 	else //if we send it a tlv with length 0, we become unaway
 	{
 		outbuf.addTLV(0x0004, 0, "");
-		emit statusChanged(OSCAR_ONLINE);
+		//emit statusChanged(OSCAR_ONLINE);
 	}
 	sendBuf(outbuf,0x02);
+	//sendUserLocationInfoRequest(getSN(), AIM_LOCINFO_SHORTINFO)
+	requestMyUserInfo();
 }
 
 void OscarSocket::parseWarningNotify(Buffer &inbuf)

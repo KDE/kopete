@@ -77,23 +77,23 @@ const WORD P2P_REFUSE	= 0x0100; // refused
 const WORD P2P_AWAY		= 0x0400; // accepted (to contact list) because of away
 const WORD P2P_OCC		= 0x0900; // refused because of occupied (retry by sending to contact list or as urgent)
 const WORD P2P_DND		= 0x0a00; // refused because of dnd (retry by sending to contact list)
-const WORD P2P_NA		= 0x0e00; // accepted (to contact list) because of na
+const WORD P2P_NA			= 0x0e00; // accepted (to contact list) because of na
 
 
-const WORD AIM_LOCINFO_GENERALINFO = 0x0001;
-const WORD AIM_LOCINFO_SHORTINFO = 0x0002;
-const WORD AIM_LOCINFO_AWAYMESSAGE = 0x0003;
-const WORD AIM_LOCINFO_CAPABILITIES = 0x0004;
+const WORD AIM_LOCINFO_GENERALINFO	= 0x0001;
+const WORD AIM_LOCINFO_SHORTINFO		= 0x0002;
+const WORD AIM_LOCINFO_AWAYMESSAGE	= 0x0003;
+const WORD AIM_LOCINFO_CAPABILITIES	= 0x0004;
 
 
-const WORD CLASS_TRIAL			= 0x0001;
+const WORD CLASS_TRIAL				= 0x0001;
 const WORD CLASS_ADMINISTRATOR	= 0x0002; // AOL admin
-const WORD CLASS_AOL			= 0x0004; // AOL staff user flag
+const WORD CLASS_AOL					= 0x0004; // AOL staff user flag
 const WORD CLASS_COMMERCIAL		= 0x0008; // AOL commercial account flag
-const WORD CLASS_AIM			= 0x0010; // ICQ non-commercial account flag
-const WORD CLASS_AWAY			= 0x0020; //  Away status flag
-const WORD CLASS_ICQ			= 0x0040; //  ICQ user sign
-const WORD CLASS_WIRELESS		= 0x0080; // AOL wireless user
+const WORD CLASS_AIM					= 0x0010; // ICQ non-commercial account flag
+const WORD CLASS_AWAY				= 0x0020; //  Away status flag
+const WORD CLASS_ICQ					= 0x0040; //  ICQ user sign
+const WORD CLASS_WIRELESS			= 0x0080; // AOL wireless user
 const WORD CLASS_UNKNOWN100		= 0x0100; // Unknown bit
 const WORD CLASS_UNKNOWN200		= 0x0200;  // Unknown bit
 const WORD CLASS_UNKNOWN400		= 0x0400;  // Unknown bit

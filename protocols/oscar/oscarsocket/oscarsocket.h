@@ -110,27 +110,27 @@ class OscarMessage
 
 
 const DWORD AIM_CAPS_BUDDYICON 		= 0x00000001;
-const DWORD AIM_CAPS_VOICE			= 0x00000002;
-const DWORD AIM_CAPS_IMIMAGE		= 0x00000004;
-const DWORD AIM_CAPS_CHAT			= 0x00000008;
-const DWORD AIM_CAPS_GETFILE		= 0x00000010;
-const DWORD AIM_CAPS_SENDFILE		= 0x00000020;
-const DWORD AIM_CAPS_GAMES			= 0x00000040;
+const DWORD AIM_CAPS_VOICE				= 0x00000002;
+const DWORD AIM_CAPS_IMIMAGE			= 0x00000004;
+const DWORD AIM_CAPS_CHAT				= 0x00000008;
+const DWORD AIM_CAPS_GETFILE			= 0x00000010;
+const DWORD AIM_CAPS_SENDFILE			= 0x00000020;
+const DWORD AIM_CAPS_GAMES				= 0x00000040;
 const DWORD AIM_CAPS_SAVESTOCKS		= 0x00000080;
 const DWORD AIM_CAPS_SENDBUDDYLIST	= 0x00000100;
 const DWORD AIM_CAPS_GAMES2			= 0x00000200;
-const DWORD AIM_CAPS_ISICQ			= 0x00000400;
+const DWORD AIM_CAPS_ISICQ				= 0x00000400;
 const DWORD AIM_CAPS_APINFO			= 0x00000800;
-const DWORD AIM_CAPS_RTFMSGS		= 0x00001000;
-const DWORD AIM_CAPS_EMPTY			= 0x00002000;
+const DWORD AIM_CAPS_RTFMSGS			= 0x00001000;
+const DWORD AIM_CAPS_EMPTY				= 0x00002000;
 const DWORD AIM_CAPS_ICQSERVERRELAY	= 0x00004000;
-const DWORD AIM_CAPS_IS_2001		= 0x00008000;
+const DWORD AIM_CAPS_IS_2001			= 0x00008000;
 const DWORD AIM_CAPS_TRILLIANCRYPT	= 0x00010000;
-const DWORD AIM_CAPS_UTF8			= 0x00020000;
+const DWORD AIM_CAPS_UTF8				= 0x00020000;
 const DWORD AIM_CAPS_IS_WEB			= 0x00040000;
 const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
 const DWORD AIM_CAPS_KOPETE			= 0x00100000;
-const DWORD AIM_CAPS_LAST			= 0x00200000;
+const DWORD AIM_CAPS_LAST				= 0x00200000;
 
 const struct
 {
@@ -284,7 +284,7 @@ const unsigned int OSCAR_CONNECTING = 10;
 
 // used for SRV_RECVMSG, SNAC(4,7)
 const WORD MSGFORMAT_SIMPLE		= 0x0001;
-const WORD MSGFORMAT_ADVANCED	= 0x0002;
+const WORD MSGFORMAT_ADVANCED		= 0x0002;
 const WORD MSGFORMAT_SERVER		= 0x0004;
 
 const QString AIM_SERVER		= "login.oscar.aol.com";
@@ -901,6 +901,7 @@ class OscarSocket : public OscarConnection
 		 */
 		void slotToggleSend();
 
+		void slotBytesWritten(int n);
 
 	signals:
 		/*
@@ -1142,6 +1143,8 @@ class OscarSocket : public OscarConnection
 			Waiting=0, GotSome, GotAll
 		};
 		FirstPresenceBlock awaitingFirstPresenceBlock;
+
+		bool bSomethingOutgoing;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -48,7 +48,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mCookie=0L;
 	loginStatus=0;
 	gotAllRights=0;
-	keepaliveTime=60;
+	keepaliveTime=30;
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
 	isLoggedIn=false;
@@ -59,6 +59,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mFileTransferMgr=0L;
 	awaitingFirstPresenceBlock=OscarSocket::Waiting;
 	mBlockSend=false;
+	bSomethingOutgoing=false;
 
 	socket()->enableWrite(false); // don't spam us with readyWrite() signals
 	socket()->enableRead(true);
@@ -66,6 +67,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	QObject::connect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
 	//QObject::connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 	QObject::connect(this, SIGNAL(moreToRead()), this, SLOT(slotRead()));
+	QObject::connect(socket(), SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
 }
 
 OscarSocket::~OscarSocket()
@@ -193,6 +195,15 @@ void OscarSocket::slotConnectionClosed()
 
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_OFFLINE)" << endl;
 	emit statusChanged(OSCAR_OFFLINE);
+}
+
+void OscarSocket::slotBytesWritten(int n)
+{
+	if (n > 0 && !bSomethingOutgoing)
+	{
+		kdDebug(14150) << k_funcinfo << "Setting bSomethingOutgoing = true" << endl;
+		bSomethingOutgoing = true;
+	}
 }
 
 void OscarSocket::slotRead()
@@ -661,8 +672,7 @@ void OscarSocket::doLogin(
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_CONNECTING)" << endl;
 	emit statusChanged(OSCAR_CONNECTING);
 
-	socket()->setHost(host);
-	socket()->setPort(port);
+	socket()->setAddress(host, port);
 	socket()->connect();
 }
 
@@ -821,6 +831,8 @@ void OscarSocket::sendRateAck()
 void OscarSocket::OnBosConnect()
 {
 	kdDebug(14150) << k_funcinfo << "Connected to " << socket()->host() << ", port " << socket()->port() << endl;
+	if (!socket()->setBufferSize(-1, 1024))
+		kdDebug(14150) << k_funcinfo << "Failed setting new buffersize!" << endl;
 }
 
 void OscarSocket::sendPrivacyFlags(void)
