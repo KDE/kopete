@@ -130,7 +130,7 @@ void KopeteAccount::setAccountId( const QString &accountId )
 
 QPixmap KopeteAccount::accountIcon(const int size) const
 {
-	QPixmap basis = SmallIcon( d->protocol->pluginIcon() );
+	QPixmap basis = KGlobal::instance()->iconLoader()->loadIcon( d->protocol->pluginIcon(), KIcon::Small, size );
 
 	if ( d->color.isValid() )
 	{
@@ -138,10 +138,6 @@ QPixmap KopeteAccount::accountIcon(const int size) const
 		basis = effect.apply( basis, KIconEffect::Colorize, 1, d->color, 0);
 	}
 	
-	if ( size > 0 && basis.width() != size )
-	{
-		basis = QPixmap( basis.convertToImage().smoothScale( size, size ) );
-	}
 	return basis;
 }
 
@@ -218,7 +214,13 @@ void KopeteAccount::loaded()
 
 QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
-	return d->password.retrieve( error, ok, maxLength );
+	QString prompt;
+	if ( error )
+		prompt = i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+	else
+		prompt = i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+
+	return d->password.retrieve( accountIcon( IconSize(KIcon::Toolbar) ), prompt, error, ok, maxLength );
 }
 
 void KopeteAccount::setPassword( const QString &pass )
