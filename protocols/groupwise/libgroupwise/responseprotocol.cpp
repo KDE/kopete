@@ -49,14 +49,12 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	// read rest of header
 	QStringList headerRest;
 	QCString line;
-	int safetyCheck = 0; // sanity check in case the server is a babbling idiot
 	while ( line != "\r\n" )
 	{
 		if ( !readGroupWiseLine( line ) )
 			return 0;
 		headerRest.append( line );
-		qDebug( "- read header line %i - (%i) : %s", safetyCheck, line.length(), line.data() );
-		safetyCheck++;
+		qDebug( "- read header line - (%i) : %s", line.length(), line.data() );
 	}
 	qDebug( "CoreProtocol::readResponse() header finished" );
 	// if it's a redirect, set flag
@@ -68,6 +66,12 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	}
 	// other header processing ( 500! )
 	if ( ok && rtnCode == 500 )
+	{
+		qDebug( "- server error %i", rtnCode );
+		packetState = ServerError;
+		return 0;
+	}
+	if ( ok && rtnCode == 404 )
 	{
 		qDebug( "- server error %i", rtnCode );
 		packetState = ServerError;
