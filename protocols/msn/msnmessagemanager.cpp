@@ -163,7 +163,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 {
  	if(m_chatService)
 	{
-		int id= m_chatService->sendMsg(message);
+		int id = m_chatService->sendMsg(message);
 		if(id == -1)
 		{
 			m_messagesQueue.append(message);
@@ -176,6 +176,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 			msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
 			msg2.setBody(message.plainBody() , KopeteMessage::PlainText);
 			appendMessage(msg2);
+			emit( messageSuccess() );
 			// send the own msg to chat window
 		}
 	}

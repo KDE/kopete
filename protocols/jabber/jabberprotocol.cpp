@@ -1398,7 +1398,7 @@ void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
 
 	messageManagerMap[jid.userHost()] = createMessageManager(myContact);
 
-	KopeteViewManager::viewManager()->readMessages( messageManagerMap[jid.userHost()], false );
+	KopeteViewManager::viewManager()->launchWindow( messageManagerMap[jid.userHost()], KopeteView::Chat );
 }
 
 JabberMessageManager *JabberProtocol::manager( const QString &key )

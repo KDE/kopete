@@ -192,6 +192,8 @@ public:
 
 		JabberMessageManager *manager( const QString &key );
 
+		JabberMessageManager *createMessageManager(JabberContact *to);
+
 public slots:
 		/**
 		 * Function to connect to the server
@@ -449,10 +451,6 @@ private:
 	 */
 	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item);
 
-	/*
-	 * Creates a new message manager
-	 */
-	JabberMessageManager *createMessageManager(JabberContact *to);
 
 	/*
 	 * Sends a presence element with

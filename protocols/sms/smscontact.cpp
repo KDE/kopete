@@ -71,6 +71,7 @@ KopeteMessageManager* SMSContact::manager()
 		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
 		this, SLOT(slotSendMessage(KopeteMessage&)));
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		connect(this, SIGNAL(messageSuccess()), m_msgManager, SIGNAL(messageSuccess()));
 		return m_msgManager;
 	}
 }

@@ -46,6 +46,8 @@ void YahooConferenceMessageManager::slotMessageSent( KopeteMessage &message, Kop
 {
 	kdDebug(14130) << "[YahooImMessageManager] slotMessageSent called: " << message.body() << endl;
 
+	emit( messageSuccess() );
+
 }
 
 YahooConferenceMessageManager::~YahooConferenceMessageManager()

@@ -66,6 +66,8 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	void slotSendMessage(KopeteMessage &msg);
+signals:
+	void messageSuccess();
 
 private slots:
 	void userPrefs();

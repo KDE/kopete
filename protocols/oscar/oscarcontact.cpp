@@ -137,21 +137,26 @@ KopeteMessageManager* OscarContact::manager()
 				KopeteMessageManagerFactory::factory()->create(
 								mProtocol->myself(), theContacts, mProtocol);
 		QObject::connect(
-						mMsgManager,
-						SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
-						this,
-						SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
+					mMsgManager,
+					SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
+					this,
+					SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect(
-						mMsgManager,
-						SIGNAL(destroyed()),
-						this,
-						SLOT(slotMessageManagerDestroyed()));
-		// TODO
+					mMsgManager,
+					SIGNAL(destroyed()),
+					this,
+					SLOT(slotMessageManagerDestroyed()));
 		QObject::connect(
-						mMsgManager,
-						SIGNAL(typingMsg(bool)),
-						this,
-						SLOT(slotTyping(bool)));
+					mMsgManager,
+					SIGNAL(typingMsg(bool)),
+					this,
+					SLOT(slotTyping(bool)));
+		QObject::connect(
+					this,
+					SIGNAL(messageSuccess()),
+					mMsgManager,
+					SIGNAL(messageSuccess()));
+
 
 		return mMsgManager;
 	}
@@ -476,6 +481,8 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
+
+	emit( messageSuccess() );
 }
 
 /** Called when nickname needs to be updated */

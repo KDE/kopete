@@ -95,6 +95,7 @@ signals:
 	void messageAppended( KopeteMessage& msg, KopeteMessageManager * = 0L );
 	void messageReceived( KopeteMessage& msg, KopeteMessageManager * = 0L );
  	void messageSent( KopeteMessage& msg, KopeteMessageManager * = 0L );
+	void messageSuccess();
 
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);

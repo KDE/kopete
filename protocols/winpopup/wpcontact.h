@@ -79,6 +79,8 @@ public:
 	const QString host() { return myHost; }
 							// the host name return method
 	KopeteMessageManager *manager();
+signals:
+	void messageSuccess();
 //***********************************************************************
 // BEGIN MANDATORY OVERLOADING
 //***********************************************************************

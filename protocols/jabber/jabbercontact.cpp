@@ -100,8 +100,6 @@ JabberContact::~JabberContact()
 	delete actionStatusInvisible;
 }
 
-
-
 /* Return the identity ID */
 QString JabberContact::identityId() const
 {
@@ -122,7 +120,11 @@ QString JabberContact::resource() const
 
 KopeteMessageManager *JabberContact::manager()
 {
-	return static_cast<KopeteMessageManager*>( protocol->manager( contactId() ) );
+	JabberMessageManager *jmm = protocol->manager( contactId() );
+	if( !jmm )
+		jmm = protocol->createMessageManager( this );
+
+	return static_cast<KopeteMessageManager*>( jmm );
 }
 
 /* Return the group this contact resides in */

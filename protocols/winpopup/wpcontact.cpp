@@ -79,6 +79,7 @@ KopeteMessageManager* WPContact::manager()
 		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
   		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		connect(this, SIGNAL(messageSuccess()), m_manager, SIGNAL(messageSuccess()));
 	}
 
 	return m_manager;
