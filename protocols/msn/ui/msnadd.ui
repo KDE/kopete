@@ -1,0 +1,136 @@
+<!DOCTYPE UI><UI>
+<class>msnAddUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>msnAddUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>353</width>
+            <height>155</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form4</string>
+    </property>
+    <vbox>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget>
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>Contact Information</string>
+            </property>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>20</y>
+                        <width>90</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>MSN id</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>90</y>
+                        <width>90</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Show as</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>50</y>
+                        <width>210</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>( for example joe@hotmail.com )</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLineEdit</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>addID</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>90</x>
+                        <y>20</y>
+                        <width>127</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLineEdit</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>addNick</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>90</x>
+                        <y>90</y>
+                        <width>127</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+            </widget>
+        </widget>
+    </vbox>
+</widget>
+</UI>

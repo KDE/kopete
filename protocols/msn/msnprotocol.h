@@ -18,14 +18,21 @@
 #ifndef MSNPROTOCOL_H
 #define MSNPROTOCOL_H
 
-#include <improtocol.h>
 #include <qpixmap.h>
+#include <qwidget.h>
+#include "msnpreferences.h"
+#include <statusbaricon.h>
+#include <addcontactpage.h>
+#include <improtocol.h>
+
 
 /**
   *@author duncan
   */
 
-class MSNProtocol : public IMProtocol  {
+class MSNProtocol : public QObject, public IMProtocol
+{
+Q_OBJECT
 public: 
 	MSNProtocol();
 	~MSNProtocol();
@@ -34,7 +41,16 @@ public:
 	bool unload();
 	/** IMProtocol reimplementation */
 	virtual QPixmap getProtocolIcon();
+	virtual AddContactPage *getAddContactWidget(QWidget *parent);
 	virtual void Connect();
+	virtual bool isConnected();
+	/** Internal */
+	StatusBarIcon *statusBarIcon;
+private:
+	void initIcons();
+	QPixmap protocolIcon;
+	QPixmap onlineIcon;
+	QPixmap offlineIcon;
 };
 
 #endif
