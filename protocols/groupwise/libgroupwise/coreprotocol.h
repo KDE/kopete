@@ -84,7 +84,7 @@ class Transfer;
  * Responses consist of text/line oriented standard HTTP headers, followed by a binary payload.  The payload is a series of Fields as described above,
  * and the terminator following the last field is a null (0x0) byte.
  *
- * TODO: Add Field structure format: type, tag, method, flags, and value.  see readFields() for reference if this is incomplete.
+ * TODO: Add Field structure format: type, tag, method, flags, and value.  see ResponseProtocol::readFields() for reference if this is incomplete.
  *
  * 1.3) INPUT PROCESSING IMPLEMENTATION
  * CoreProtocol input handling operates on an event driven basis.  It starts processing when it receives data via @ref addIncomingData(),

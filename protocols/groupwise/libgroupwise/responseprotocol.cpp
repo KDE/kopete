@@ -135,6 +135,8 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 		m_state = ProtocolError;
 		return 0;
 	}
+
+	delete m_din;
 }
 
 bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )

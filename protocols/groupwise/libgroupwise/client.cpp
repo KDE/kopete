@@ -212,7 +212,6 @@ void Client::setStatus( GroupWise::Status status, const QString & reason, const 
 	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
 	sst->go( true );
 	// TODO: set status change in progress flag
-	
 }
 
 void Client::requestStatus( const QString & userDN )

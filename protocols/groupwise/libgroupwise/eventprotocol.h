@@ -30,22 +30,31 @@ class EventTransfer;
  *
 @author SUSE AG
 	Ablauf:
-	CoreProtocol detects an event.  
+	CoreProtocol receives data in addIncomingData, and passes to wireToTransfer.
+	wireToTransfer detects an event.
 		Passes whole chunk to EventProtocol ( as QByteArray )
 		In to EventProtocol - QByteArray
 		Returned from EventProtocol - EventTransfer *, bytes read, set state?
 	EventProtocol tries to parse data into eventTransfer
 	If not complete, sets state to NeedMore and returns 0
 	If complete, returns number of bytes read for the event
-	If bytes -lt length of chunk, CoreProtocol places the unread bytes back in m_in and calls processNext()
-	if Core or EventProtocol set state to NeedMore, don't call wireToTransfer again.
-	ProcessNext, if there is data in m_in, calls wireToTransfer. 
+	If bytes less than length of chunk, CoreProtocol::addIncomingData places the unread bytes back in m_in and calls wireToTransfer again.
+	if ResponseProtocol or EventProtocol set state to NeedMore, don't call wireToTransfer again.
 	
-	What event dependent data does EventTransfer need to contain to do everything that the Tasks were doing?  
-	Look at the tasks!
+	What event dependent data does EventTransfer contain?
+	
 	What if some events contain EXTRA bytes off the end that we don't know about?  Then we will put those bytes back on the buffer, and try and parse those as the start of a new message!!!  Need to react SAFELY then.
 	
 	What event dependent binary data does each event type contain?
+
+	All Events contain an event code, and a source ( a DN )
+	NOTHANDLED indicates that there is no further data and we don't handle events of that type, because they are not sent by the server
+	NONE indicates there is no further data
+	STATUSTEXT, GUID, MESSAGE indicate a string encoded in the usual GroupWise binary string encoding: a UINT32 containing the string length in little-endian, followed by the string itself, as UTF-8 encoded unicode.  The string length value includes a terminating NUL, so when converting to a QString, subtract one from the string length.
+	FLAGS contains a UINT32 containing the server's flags for this conference.  See gwerror.h for the possible values and meanings of these flags.  Only Logging has been observed in practice.
+
+	All events are timestamped with the local time on receipt.
+
 	From gwerror.h:
 	enum Event {		InvalidRecipient 		= 101,
 							NOTHANDLED

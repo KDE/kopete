@@ -438,7 +438,7 @@ void GroupWiseMessageManager::left( GroupWiseContact * c )
 {
 	removeContact( c );
 	c->leaveConference( m_guid );
-	--m_memberCount;		
+	--m_memberCount;
 	
 	updateArchiving();
 	

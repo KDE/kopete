@@ -292,6 +292,10 @@ protected:
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
 	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
+	/**
+	 * Memory management
+	 */
+	void cleanup();
 private:
 	// current auto reply message
 	QString m_autoReply;

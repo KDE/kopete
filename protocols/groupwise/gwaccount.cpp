@@ -91,6 +91,7 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 
 GroupWiseAccount::~GroupWiseAccount()
 {
+	cleanup();
 }
 
 KActionMenu* GroupWiseAccount::actionMenu()
@@ -210,7 +211,11 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 							i18n ("GroupWise SSL Error"));
 		return;
 	}
-
+	if ( m_client )
+	{
+		m_client->close();
+		cleanup();
+	}
 	// set up network classes
 	m_connector = new KNetworkConnector( 0 );
 	//myConnector->setOptHostPort( "localhost", 8300 );
@@ -339,6 +344,19 @@ void GroupWiseAccount::disconnect()
 	 * connection attempt.
 	 */
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
+}
+
+void GroupWiseAccount::cleanup()
+{
+	delete m_clientStream;
+	delete m_QCATLS;
+	delete m_connector;
+	delete m_client;
+	
+	m_connector = 0;
+	m_QCATLS = 0;
+	m_clientStream = 0;
+	m_client = 0;
 }
 
 void GroupWiseAccount::setStatus( GroupWise::Status status, const QString & reason )
@@ -658,7 +676,6 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 				break;
 			}
 		}
-		// TODO: need to update parentId? and sequence
 	}
 	else
 	{
@@ -757,14 +774,14 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 		// the client is telling us about a temporary contact we need to know about so add them 
 		KopeteMetaContact *metaContact = new KopeteMetaContact ();
 		metaContact->setTemporary (true);
-
-		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
-		c->updateDetails( details );
 		QString displayName = details.fullName;
 		if ( displayName.isEmpty() )
-			displayName = c->property( Kopete::Global::Properties::self()->fullName() ).value().toString();
+			displayName = details.givenName + " " + details.surname;
+
 		metaContact->setDisplayName( displayName );
-		KopeteContactList::contactList ()->addMetaContact (metaContact);
+		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
+		c->updateDetails( details );
+		KopeteContactList::contactList()->addMetaContact( metaContact );
 		// the contact details probably don't contain status - but we can ask for it
 		if ( details.status == GroupWise::Invalid )
 			m_client->requestStatus( details.dn );

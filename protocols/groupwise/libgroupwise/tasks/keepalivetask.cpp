@@ -29,7 +29,7 @@
 
 KeepAliveTask::KeepAliveTask(Task* parent): RequestTask(parent)
 {
-	m_keepAliveTimer = new QTimer();
+	m_keepAliveTimer = new QTimer( this );
 	connect( m_keepAliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive ) );
 	m_keepAliveTimer->start( GW_KEEPALIVE_INTERVAL );
 }
