@@ -176,10 +176,24 @@ GaduAccount::actionMenu()
 	kdDebug( 14100 ) << "nr of contacts - " << contacts().count() <<endl ;
 	
 	if ( contacts().count() > 1 ) {
+		if ( saveListDialog ) {
+			listToFileAction->setEnabled( FALSE );
+		}	
+		else {
+			listToFileAction->setEnabled( TRUE );
+		}
+	
 		listToFileAction->setEnabled( TRUE );
 	}
 	else {
 		listToFileAction->setEnabled( FALSE );
+	}
+	
+	if ( loadListDialog ) {
+		listFromFileAction->setEnabled( FALSE );
+	}
+	else {
+		listFromFileAction->setEnabled( TRUE );
 	}
 	
 	actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
@@ -765,6 +779,11 @@ GaduAccount::slotExportContactsListToFile()
 {
 	KTempFile tempFile;
 	
+	if ( saveListDialog ) {
+		kdDebug( 14100 ) << " save contacts to file: alread waiting for input " << endl ;
+		return;
+	}
+	
 	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
 					Kopete::UI::Global::mainWidget(), "gadu-list-save", false ); 
 	saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
@@ -802,6 +821,12 @@ GaduAccount::slotExportContactsListToFile()
 void
 GaduAccount::slotImportContactsFromFile()
 {
+
+	if ( loadListDialog ) {
+		kdDebug( 14100 ) << "load contacts from file: alread waiting for input " << endl ;
+		return;
+	}
+
 	loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
 					Kopete::UI::Global::mainWidget(), "gadu-list-load", true ); 
 	loadListDialog->setCaption( i18n(" Load Contacts list for account %1 as ...").arg( myself()->displayName() ) );
