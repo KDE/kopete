@@ -27,6 +27,7 @@
 // Yahoo
 #include "yahooaccount.h"
 #include "yahoocontact.h"
+#include "yahoostatus.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)
 : KopeteAccount(parent, AccountID, name)
@@ -36,6 +37,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	// first things first - initialise internals
 	theHaveContactList = false;
 	stateOnConnection = 0;
+	theAwayDialog = 0L;
 
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
@@ -201,9 +203,9 @@ KActionMenu *YahooAccount::actionMenu()
 	theActionMenu->insert(new KAction(i18n(YSTOnVacation), YahooStatus(YahooStatus::OnVacation).translate().iconFor(this), 0, this, SLOT(slotGoStatus007()), this, "actionYahooGoStatus007"));
 	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), YahooStatus(YahooStatus::OutToLunch).translate().iconFor(this), 0, this, SLOT(slotGoStatus008()), this, "actionYahooGoStatus008"));
 	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), YahooStatus(YahooStatus::SteppedOut).translate().iconFor(this), 0, this, SLOT(slotGoStatus009()), this, "actionYahooGoStatus009"));
-	theActionMenu->insert(new KAction(i18n("Invisible"), YahooStatus(YahooStatus::Invisible).translate().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012"));
+	theActionMenu->insert(new KAction(i18n(YSTInvisible), YahooStatus(YahooStatus::Invisible).translate().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012"));
 	theActionMenu->insert(new KAction(i18n("Custom"), YahooStatus(YahooStatus::Custom).translate().iconFor(this), 0, this, SLOT(slotGoStatus099()), this, "actionYahooGoStatus099"));
-	theActionMenu->insert(new KAction(i18n("Offline"), YahooStatus(YahooStatus::Offline).translate().iconFor(this), 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
+	theActionMenu->insert(new KAction(i18n(YSTOffline), YahooStatus(YahooStatus::Offline).translate().iconFor(this), 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
 	// TODO: do something(?!) with it
 //	theActionMenu->insert(new KAction(i18n(YSTIdle), YahooStatus(YahooStatus::Idle).translate().iconFor(this), 0, this, SLOT(slotGoStatus999()), this, "actionYahooGoStatus999");
 

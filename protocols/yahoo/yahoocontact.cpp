@@ -155,7 +155,7 @@ void YahooContact::slotTyping(bool isTyping_ )
 	KopeteContact *target = m_them.first();
 	YahooAccount *i = static_cast<YahooAccount *>(account());
 
-	kdDebug(14180) << "Yahoo: Sending typing notification from " << static_cast<YahooContact *>(i->myself())->m_userId << ", to " << static_cast<YahooContact *>(target)->m_userId << endl;
+	kdDebug(14180) << "Yahoo: Sending typing notification from " << static_cast<YahooContact *>(i->myself())->m_userId << " to " << static_cast<YahooContact *>(target)->m_userId << endl;
 	i->yahooSession()->sendTyping( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, isTyping_ );
 }
 

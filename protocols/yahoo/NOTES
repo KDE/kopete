@@ -1,3 +1,9 @@
+2003-05-26 - Stuff (by mattr)
+yahoo doesn't seem to do XSL parsing correctly.
+sending <b>bold text</b> shows up as "<b>bold text</b>" in the chat window
+kopete currently crashes with a custom away mode
+
+
 2003.04.06 - General status
 Pretty much all basic functionality is there now.
 Chatting works fine, away messages fine, contact status fine.

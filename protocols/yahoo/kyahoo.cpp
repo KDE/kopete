@@ -892,7 +892,7 @@ void YahooSession::slotReadReady()
     //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
 	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
 
-	kdDebug(14180) << "YahooSession::slotDataReceived" << fd << endl;
+	kdDebug(14180) << "YahooSession::slotDataReceived " << fd << endl;
 	ret = yahoo_read_ready( m_connId , m_fd );
 
 	if ( ret == -1)
@@ -908,7 +908,7 @@ void YahooSession::slotWriteReady()
     //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
 	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
 
-	kdDebug(14180) << "YahooSession::slotSendReady" << fd << endl;
+	kdDebug(14180) << "YahooSession::slotSendReady " << fd << endl;
 	ret = yahoo_write_ready( m_connId , m_fd );
 
 	if ( ret == -1)

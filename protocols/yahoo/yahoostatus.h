@@ -23,7 +23,7 @@
 #include "kopetecontact.h"
 #include "libyahoo2/yahoo2_types.h"
 
-#define YSTOffline			I18N_NOOP("Offline")
+#define YSTOffline		I18N_NOOP("Offline")
 #define YSTInvisible		I18N_NOOP("Invisible")
 #define YSTAvailable		I18N_NOOP("Available")
 #define YSTBeRightBack		I18N_NOOP("Be Right Back")
