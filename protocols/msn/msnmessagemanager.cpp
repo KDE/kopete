@@ -393,7 +393,7 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 		/*QString theFileName;
 		if( fileName.isNull() ) {
 			theFileName = fileLocation.right( fileLocation.length()
-				- fileLocation.findRev( QRegExp("/") ) - 1 );
+				- fileLocation.findRev( '/' ) ) - 1 );
 		} else {
 			theFileName = fileName;
 		}*/

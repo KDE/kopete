@@ -322,7 +322,7 @@ bool HistoryPlugin::detectOldHistory()
 	QFileInfo *fi;
 	while ( (fi = it.current()) != 0 )
 	{
-		if(KopeteProtocol *p=dynamic_cast<KopeteProtocol*>(LibraryLoader::pluginLoader()->searchByID(fi->fileName())) )
+		if( dynamic_cast<KopeteProtocol*>( LibraryLoader::pluginLoader()->searchByID( fi->fileName() ) ) )
 			return true;
 
 		if(fi->fileName() == "MSNProtocol" || fi->fileName() == "msn_logs" )

@@ -299,7 +299,7 @@ QString MSNFileTransferSocket::invitationHead()
 	QTimer::singleShot( 10 * 60000, this, SLOT(slotTimer()) );  //the user has 10 mins to accept or refuse or initiate the transfer
 
 	return QString( MSNInvitation::invitationHead()+
-					"Application-File: "+ m_fileName.right( m_fileName.length() - m_fileName.findRev( QRegExp("/") ) - 1 ) +"\r\n"
+					"Application-File: "+ m_fileName.right( m_fileName.length() - m_fileName.findRev( '/' ) - 1 ) +"\r\n"
 					"Application-FileSize: "+ QString::number(size()) +"\r\n\r\n").utf8();
 }
 

@@ -45,7 +45,7 @@ void JabberGroupChat::slotMessageManagerDeleted ()
 
 }
 
-void JabberGroupChat::updatePresence (const Jabber::Jid & jid, const Jabber::Status & status)
+void JabberGroupChat::updatePresence (const Jabber::Jid & jid, const Jabber::Status & /* status */ )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "JID " << jid.full () << endl;
 
