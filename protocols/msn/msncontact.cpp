@@ -83,15 +83,24 @@ MSNContact::~MSNContact()
 
 bool MSNContact::isReachable()
 {
+	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
+		return true;
+
+	MSNMessageManager *kmm=dynamic_cast<MSNMessageManager*>(manager(false));
+	if( kmm && kmm->service() )  //the chat socket is open.  than mean message will be sent
+		return true;
+
 	// When we are invisible we can't start a chat with others, make isReachable return false
 	// (This is an MSN limitation, not a problem in Kopete)
-/*	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
-		return true;
-	else
-		return false;*/
+	if ( !account()->isConnected() || account()->myself()->onlineStatus() == MSNProtocol::protocol()->HDN )
+		return false;
 		
+	//if the contact is offline, it is impossible to send it a message.  but it is impossible
+	//to be sure the contact is realy offline. For example, if the contact is not on the contactlist for
+	//some reason.
+	if( onlineStatus() == MSNProtocol::protocol()->FLN && ( isAllowed() || isBlocked() ) && !serverGroups().isEmpty() )
+		return false;
 		
-	//fuck stupid restriction.  we can't know if a contact is not reachable without try to start a chat.
 	return true;
 }
 
