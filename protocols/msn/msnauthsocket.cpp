@@ -59,8 +59,7 @@ void MSNAuthSocket::handleError( uint code, uint id )
 		{
 			m_msgBoxShown = true;*/
 		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Information,
-				 i18n( "The MSN server is busy.\n"
-				       "Please retry." ) , i18n( "MSN Plugin" ) , KMessageBox::Notify );
+			 i18n( "The MSN server is busy.\nPlease retry connecting later." ), i18n( "MSN Plugin" ) , KMessageBox::Notify );
 		break;
 	}
 
@@ -89,7 +88,7 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id,
 /*		struct utsname utsBuf;
 		uname (&utsBuf);
 
-		sendCommand("CVR" ,  i18n("MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx","0x0409") +
+		sendCommand("CVR", i18n("MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx","0x0409") +
 		   " " + escape(utsBuf.sysname) + " " + escape(utsBuf.release) + " " + escape(utsBuf.machine) +" Kopete "+ escape(kapp->aboutData()->version()) + " Kopete " + m_msnId );*/
 	}
 	else if ( cmd == "CVR" ) //else if( cmd == "INF" )

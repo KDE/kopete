@@ -45,9 +45,9 @@
 MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( account, id, parent )
 {
-	m_displayPicture=0L;
+	m_displayPicture = 0L;
 
-//	m_deleted = false;
+	//m_deleted = false;
 	m_allowed = false;
 	m_blocked = false;
 	m_reversed = false;
@@ -57,12 +57,11 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 
 	setFileCapable( true );
 
-	//When we are not connected, it's certenly because we load the contactlist. so we set the initial status to offline.
-	//  we set offline dirrectly because modifiing the status after is too slow. (notification, contactlist updating,....)
+	// When we are not connected, it's because we are loading the contactlist. so we set the initial status to offline.
+	// We set offline directly because modifying the status after is too slow. (notification, contactlist updating,....)
 	//When we are connected, it can be because the user add a contact with the wizzard, and it can be because we are creating a temporary contact.
-	// if it's aded by the wizzard, the status will be set immediatly after.  if it's a temporary contact, better to set the unknown status.
-	setOnlineStatus( (parent && parent->isTemporary())? MSNProtocol::protocol()->UNK : MSNProtocol::protocol()->FLN );
-
+	// if it's aded by the wizard, the status will be set immediately after.  if it's a temporary contact, better to set the unknown status.
+	setOnlineStatus( ( parent && parent->isTemporary() ) ? MSNProtocol::protocol()->UNK : MSNProtocol::protocol()->FLN );
 }
 
 MSNContact::~MSNContact()
@@ -90,14 +89,14 @@ KActionCollection *MSNContact::customContextMenuActions()
 	KActionCollection *m_actionCollection = new KActionCollection(this);
 
 	// Block/unblock Contact
-	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
+	QString label = isBlocked() ? i18n( "Unblock User..." ) : i18n( "Block User..." );
 	KAction* actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
 
 	//show profile
-	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
+	KAction* actionShowProfile = new KAction( i18n("Show Profile...") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
 
 	// Send mail (only available if it is an hotmail account)
-	KAction* actionSendMail = new KAction( i18n("Send Mail") , "mail_generic",0, this, SLOT( slotSendMail() ), m_actionCollection, "actionSendMail" );
+	KAction* actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ), m_actionCollection, "actionSendMail" );
 	actionSendMail->setEnabled( static_cast<MSNAccount*>(account())->isHotmail());
 
 	m_actionCollection->insert( actionBlock );
@@ -113,7 +112,7 @@ void MSNContact::slotBlockUser()
 	if( !notify )
 	{
 		KMessageBox::error( 0l,
-			i18n( "<qt>Please go online to block/unblock contact.</qt>" ),
+			i18n( "<qt>Please go online to block or unblock a contact.</qt>" ),
 			i18n( "MSN Plugin" ));
 		return;
 	}
@@ -178,7 +177,7 @@ void MSNContact::slotDeleteContact()
 	{
 		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
 		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
-		KMessageBox::error( 0L, i18n( "<qt>Please go online to remove contact.</qt>" ), i18n( "MSN Plugin" ));
+		KMessageBox::error( 0L, i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
 	}
 }
 
@@ -401,8 +400,8 @@ void MSNContact::rename( const QString &newName )
 	{
 		// FIXME: Move this to libkopete instead - Martijn
 		KMessageBox::information( 0L,
-			i18n( "<qt>Changes in the contact list when you are offline don't update the contact "
-				"list server-side. Your changes may be lost.</qt>" ),
+			i18n( "<qt>Changes to your contact list when you are offline will not be updated on the MSN server. "
+				"Your changes will be lost when you reconnect.</qt>" ),
 			i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
 }

@@ -34,7 +34,7 @@
 #include "msnswitchboardsocket.h"
 
 MSNFileTransferSocket::MSNFileTransferSocket(const QString &handle, KopeteContact *c,bool incoming, QObject* parent)
-	: MSNSocket(parent) , MSNInvitation(incoming, MSNFileTransferSocket::applicationID() , i18n("File Transfer"))
+	: MSNSocket(parent) , MSNInvitation(incoming, MSNFileTransferSocket::applicationID() , i18n("File Transfer - MSN Plugin"))
 {
 	m_handle=handle;
 	m_kopeteTransfer=0l;

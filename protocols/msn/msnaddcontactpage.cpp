@@ -25,8 +25,8 @@ MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char
 	}
 	else
 	{
-			noaddMsg1 = new QLabel(i18n("You need to be connected to be able to add contacts."), this);
-			noaddMsg2 = new QLabel(i18n("Connect to the MSN network and try again."), this);
+			noaddMsg1 = new QLabel( i18n( "You need to be connected to be able to add contacts." ), this );
+			noaddMsg2 = new QLabel( i18n( "Please connect to the MSN network and try again." ), this );
 			canadd = false;
 	}
 

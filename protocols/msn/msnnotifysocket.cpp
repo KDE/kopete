@@ -108,8 +108,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 201:
 	case 205:
 	{
-		QString msg = i18n( "<qt>Invalid user!<br>"
-			"This MSN user does not exist: <b>%1</b>.<br>Please check the MSN ID.</qt>" ).arg(m_tmpLastHandle);
+		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>" ).arg( m_tmpLastHandle );
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -117,12 +116,13 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		if(m_tmpLastHandle==msnId())
 		{
-			QString msg = i18n( "Your nickname has not been changed, maybe it contains incorrect words or it was too long" );
+			QString msg = i18n( "Unable to change your display name.\nPlease check if your display name doesn't contain 'forbidden' "
+				"words or is too long." );
 			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		}
 		/*else
 		 {
-			QString msg = i18n( "You are trying to change the display name of an user who has not "
+			QString msg = i18n( "You are trying to change the display name of a user who has not "
 				"confirmed his or her email address.\n"
 				"The contact was not renamed on the server." );
 			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
@@ -131,9 +131,9 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 215:
 	{
-		QString msg = i18n( "<qt>The user <b>%1</b> already exists in this group!<br>"
-			"If this is not the case, please send us a detailed bug report "
-			"at kopete-devel@kde.org containing the raw output on the "
+		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server!<br>"
+			"If Kopete doesn't show the user, please send us a detailed bug report "
+			"at kopete-devel@kde.org containing the raw debug output on the "
 			"console (in gzipped format, as it is probably a lot of output!)</qt>" ).arg(m_tmpLastHandle);
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
@@ -148,35 +148,36 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 223:
 	{
-		QString msg = i18n( "The maximum number of group is reached.\n"
-			"You can't have more than 30 groups" );
+		QString msg = i18n( "You have reached the maximum number of groups.\n"
+			"MSN doesn't support more than 30 groups." );
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 710:
 	{
-		QString msg = i18n( "You can't open a hotmail inbox because you haven't a valid hotmail/msn account." );
+		QString msg = i18n( "You can't open a Hotmail inbox because you don't have an MSN account with a valid "
+			"Hotmail or MSN mailbox." );
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 800:
 	{
-		QString msg = i18n( "You are trying to change your status, or your nickname too rapidely.\n"
-		 		"This might happen if you added yourself on your contact list" );
+		QString msg = i18n( "You are trying to change your status, or your display name too rapidly.\n"
+	 		"This might happen if you added yourself to your own contact list." );
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		//FIXME: try to fix this problem
 		break;
 	}
 	case 913:
 	{
-		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline." );
+		QString msg = i18n( "You cannot send messages when you are offline or when you are invisible." );
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 910:
 	case 921:
 	    KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
-			i18n( "MSN Server is busy or temporary unavailable. Try to reconnect later." ) , i18n( "MSN Plugin" ) );
+			i18n( "The MSN Server is busy or temporary unavailable. Try to reconnect later." ) , i18n( "MSN Plugin" ) );
 		break;
 	default:
 		MSNAuthSocket::handleError( code, id );
@@ -305,7 +306,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
 			KMessageBox::queuedMessageBox( 0L, KMessageBox::Information ,
-				 i18n( "You have connected from another client." ) , i18n ("MSN Plugin") );
+				i18n( "You have connected from another computer to the MSN server." ) , i18n ("MSN Plugin") );
 		}
 	}
 	else if( cmd == "CHG" )
@@ -546,11 +547,11 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 	{
 		if(m_authData.contains("CookiesDisabled"))
 		{
+			// FIXME: is this still possible now we add our meta data? - Martijn
 			disconnect();
 			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
-						i18n("Impossible to connect to MSN Network.\n"
-						     "Your Web browser options are currently set to disable cookies.\n"
-						     "To use .NET Passport, you must enable cookies at least for the passport.com domain"), i18n( "MSN Plugin" ) );
+				i18n( "Unable to connect to the MSN Network.\nYour Web browser options are currently set to disable cookies.\n"
+				"To use .NET Passport, you must enable cookies at least for the passport.com domain" ), i18n( "MSN Plugin" ) );
 			return;
 		}
 
@@ -584,10 +585,9 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(mailCount > 0 )
 		{
-			KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one unread message in your MSN inbox.", "You have %n unread messages in your MSN inbox." , mailCount),
-				i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
+			KNotifyClient::event( 0, "msn_mail", i18n( "You have one unread message in your MSN inbox.",
+				"You have %n unread messages in your MSN inbox.", mailCount ), i18n( "Open &inbox..." ), this, SLOT( slotOpenInbox() ) );
 		}
-
 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
@@ -605,8 +605,8 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
-		KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
-			i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
+		KNotifyClient::event( 0, "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
+			i18n( "Open &inbox..." ), this, SLOT( slotOpenInbox() ) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
 	{
@@ -803,7 +803,7 @@ void MSNNotifySocket::slotSendKeepAlive()
 	{
 		disconnect();
 		KMessageBox::queuedMessageBox( 0L, KMessageBox::Information,
-			i18n( "Connection with the MSN network has been lost" ) , i18n ("MSN Plugin") );
+			i18n( "The connection with the MSN network has been lost" ) , i18n ("MSN Plugin") );
 		return;
 	}
 	else

@@ -182,8 +182,7 @@ void MSNSocket::slotDataReceived()
 	if ( avail == -1 )
 	{
 		// error!
-		kdWarning(14140) << "MSNSocket::slotDataReceived: bytesAvailable() returned"
-			" -1. Are we disconnected?" << endl;
+		kdWarning( 14140 ) << "MSNSocket::slotDataReceived: bytesAvailable() returned -1. Are we disconnected?" << endl;
 	}
 
 	// incoming data
@@ -378,20 +377,20 @@ void MSNSocket::handleError( uint code, uint /*id*/ )
 		break;*/
 	case 500:
 		disconnect();
-		msg = i18n ( "An internal server error occurred. Please try again later.\n " );
+		msg = i18n ( "An internal server error occurred. Please try again later." );
 		break;
 	case 600:
 		disconnect();
-		msg = i18n ( "The server is busy. Please try again later.\n " );
+		msg = i18n ( "The server is busy. Please try again later." );
 		break;
 	case 601:
 		disconnect();
-		msg = i18n ( "The server is not available for the moment. Please try again later.\n " );
+		msg = i18n ( "The server is not available at the moment. Please try again later." );
 		break;
 	default:
 		//FIXME: if the error cause a disconnection, it will crash, but we can't disconnect every time
 		msg = i18n( "Unhandled MSN error code %1 \n"
-			"Please fill a bug report with a detailed description and if possible the last console debug output. \n" ).arg( code );
+			"Please fill a bug report with a detailed description and if possible the last console debug output." ).arg( code );
 			/*"See http://www.hypothetic.org/docs/msn/basics.php for a description of all error codes."*/
 		break;
 	}

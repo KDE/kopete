@@ -252,7 +252,7 @@ void MSNEditAccountWidget::slotSelectImage()
 	else
 	{
 		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
-			"Make sure that you have select a correct image file</qt>" ), i18n( "MSN Messenger" ) );
+			"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
 	}
 }
 

@@ -65,7 +65,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ),
 		SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
 
-	m_openInboxAction = new KAction ( i18n( "Open Inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
+	m_openInboxAction = new KAction ( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openInboxAction->setEnabled( false );
 }
 
@@ -177,7 +177,7 @@ KActionMenu * MSNAccount::actionMenu()
 #else
 		arg( accountId(), myself()->displayName() )
 #endif
- );
+	);
 
 	m_actionMenu->insert( new KAction ( i18n( "Set O&nline" ),        MSNProtocol::protocol()->NLN.iconFor( this ), 0,
 		this, SLOT( slotGoOnline() ), m_actionMenu, "actionMSNConnect" ) );
@@ -197,7 +197,7 @@ KActionMenu * MSNAccount::actionMenu()
 		this, SLOT( slotGoOffline() ), m_actionMenu, "actionMSNConnect" ) );
 
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( new KAction ( i18n( "&Change Nickname..." ), QString::null, 0,
+	m_actionMenu->insert( new KAction ( i18n( "&Change Display Name..." ), QString::null, 0,
 		this, SLOT( slotChangePublicName() ), m_actionMenu, "renameAction" ) );
 	m_actionMenu->insert( new KAction ( i18n( "&Start Chat..." ), "mail_generic", 0,
 		this, SLOT( slotStartChat() ), m_actionMenu, "startChatAction" ) );
@@ -289,16 +289,14 @@ void MSNAccount::slotStartChat()
 {
 	if ( !isConnected() )
 	{
-		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
-			i18n( "<qt>Please go online before you start a chat.</qt>" ),
-			i18n( "MSN Plugin" ) , KMessageBox::Notify );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, i18n( "<qt>Please go online before you start a chat.</qt>" ),
+			i18n( "MSN Plugin" ), KMessageBox::Notify );
 		return;
 	}
 
 	bool ok;
 	QString handle = KInputDialog::getText( i18n( "Start Chat - MSN Plugin" ),
-		i18n( "Please enter the email address of the person with whom you want to chat:" ),
-		QString::null, &ok ).lower();
+		i18n( "Please enter the email address of the person with whom you want to chat:" ), QString::null, &ok ).lower();
 	if ( ok )
 	{
 		if ( MSNProtocol::validContactId( handle ) )
@@ -336,8 +334,8 @@ void MSNAccount::slotDebugRawCommand()
 void MSNAccount::slotChangePublicName()
 {
 	bool ok;
-	QString name = KInputDialog::getText( i18n( "Change Nickname - MSN Plugin" ),
-		i18n( "Enter the new public name by which you want to be visible to your friends on MSN:" ),
+	QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ),
+		i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
 		myself()->displayName(), &ok );
 
 	if ( ok )
@@ -345,9 +343,9 @@ void MSNAccount::slotChangePublicName()
 		if ( name.length() > 387 )
 		{
 			KMessageBox::error( 0L,
-				i18n( "The display name you enter is too long.  Please enter one smaller.\n"
-					"Your display name has not been changed." ),
-				i18n( "Change Nickname - MSN Plugin" ) );
+				i18n( "<qt>The display name you entered is too long. Please use a shorter name.\n"
+					"Your display name has <b>not</b> been changed.</qt>" ),
+				i18n( "Change Display Name - MSN Plugin" ) );
 			return;
 		}
 
@@ -455,8 +453,9 @@ void MSNAccount::slotNotifySocketClosed( int  state  )
 		connect();
 	else if ( state == 0x10 ) // connection died unexpectedly
 	{
-		KMessageBox::queuedMessageBox( 0, KMessageBox::Error , i18n( "Connection with the MSN server was lost unexpectedly.\n"
-			"If you are unable to reconnect, please try again later." ), i18n( "Connection Lost - MSN Plugin" ) , KMessageBox::Notify);
+		KMessageBox::queuedMessageBox( 0, KMessageBox::Error , i18n( "The connection with the MSN server was lost unexpectedly.\n"
+			"If you cannot reconnect now, the server might be down. In that case, please try again later." ),
+			i18n( "Connection Lost - MSN Plugin" ), KMessageBox::Notify );
 	}
 
 	// kdDebug( 14140 ) << "MSNAccount::slotNotifySocketClosed - done" << endl;
@@ -957,7 +956,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		if ( !ID.isEmpty() && notifyNewChat )
 		{
 			// this temporary message should open the window if they not exist
-			QString body = i18n( "%1 has opened a new chat" ).arg( c->displayName() );
+			QString body = i18n( "%1 has started a chat with you" ).arg( c->displayName() );
 			KopeteMessage tmpMsg = KopeteMessage( c, c->manager()->members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
 			c->manager()->appendMessage( tmpMsg );
 		}
