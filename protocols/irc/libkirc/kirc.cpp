@@ -473,7 +473,12 @@ void KIRC::actionContact(const QString &contact, const QString &message)
 		statement.append(0x01);
 		statement.append("\r\n");
 		writeBlock(statement.local8Bit(), statement.length());
-		emit incomingAction(mNickname, contact, message);
+                if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
+                {
+                        emit incomingPrivAction(mNickname, contact, message);
+                } else {
+			emit incomingAction(mNickname, contact, message);
+		}
 	}
 }
 
@@ -487,8 +492,12 @@ void KIRC::messageContact(const QCString &contact, const QCString &message)
 		statement.append(message);
 		statement.append("\r\n");
 		writeBlock(statement.data(), statement.length());
-		// Ahhhhhhhh, fix this ASAP:
-		emit incomingMessage(mNickname, contact, message);
+		if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
+		{
+			emit incomingPrivMessage(mNickname, contact, message);
+		} else {
+			emit incomingMessage(mNickname, contact, message);
+		}
 	}
 }
 

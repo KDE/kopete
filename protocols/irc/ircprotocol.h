@@ -30,6 +30,7 @@
 class IRCServerContact;
 class IRCServerManager;
 class KPopupMenu;
+class KSimpleConfig;
 
 /**
   *@author duncan
@@ -67,6 +68,7 @@ public:
 	QPixmap joinIcon;
 	QPixmap privmsgIcon;
 	IRCServerManager *manager;
+	KSimpleConfig *mConfig;
 private:
 	void initIcons();
 	KPopupMenu *popup;

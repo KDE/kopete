@@ -34,6 +34,7 @@
 #include <qiconset.h>
 #include <qvbox.h>
 #include <qstringlist.h>
+#include <ksimpleconfig.h>
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
 	: KopeteContact(contact->mProtocol)
@@ -168,6 +169,7 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	mUsername = user;
 	mNickname = nick;
 	mJoinOnConnect = joinOnConnect;
+	mGroupName = groupName;
 
 	// Just to be safe!
 	mTabPage = 0L;
@@ -175,10 +177,16 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	chatView = 0L;
 
 	mContact->activeContacts.append(this);
+	connect(kopeteapp->contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotGroupRemoved(const QString &)));
 
 	init();
 
 	kopeteapp->contactList()->addContact(this, groupName);
+	mContact->mProtocol->mConfig->setGroup(mTarget.lower());
+	mContact->mProtocol->mConfig->writeEntry("Server", mServer);
+	mContact->mProtocol->mConfig->writeEntry("Group", groupName);
+	mContact->mProtocol->mConfig->sync();
+
 	setName(QString("%1@%2").arg(target).arg(mServer));
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
@@ -191,6 +199,14 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 		} else {
 			QObject::connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
 		}
+	}
+}
+
+void IRCContact::slotGroupRemoved(const QString &group)
+{
+	if (group == mGroupName)
+	{
+		slotRemoveThis();
 	}
 }
 
@@ -266,6 +282,8 @@ void IRCContact::slotRemoveThis()
 	{
 		return;
 	}
+	mContact->mProtocol->mConfig->deleteGroup(mTarget.lower());
+	mContact->mProtocol->mConfig->sync();
 	if (mTabPage !=0)
 	{
 		mContact->mWindow->mTabWidget->removePage(mTabPage);

@@ -22,16 +22,20 @@
 #include <kpopupmenu.h>
 #include <klocale.h>
 #include <qcursor.h>
+#include <klocale.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+
 #include "ircprotocol.h"
 #include "irccontact.h"
-#include <ircadd.h>
-#include <klocale.h>
+#include "ircadd.h"
 #include "kopete.h"
-#include <ircaddcontactpage.h>
+#include "ircaddcontactpage.h"
 #include "ircchatview.h"
 #include "ircservercontact.h"
 #include "ircmessage.h"
 #include "ircservermanager.h"
+#include "contactlist.h"
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor
@@ -60,6 +64,27 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), KopeteProtocol()
 	{
 		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you haven't setup your IRC settings for the first time, please do so by going to File->Configure Kopete->IRC Plugin. Once you are done there, please try connecting again.</qt>"), "Preferences non-existant");
 		return;
+	}
+
+	QString filename = locateLocal("data", "kopete/irc.buddylist");
+	mConfig = new KSimpleConfig(filename);
+
+	QStringList contacts = mConfig->groupList();
+	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); it++)
+	{
+		mConfig->setGroup((*it));
+		QString groupName = mConfig->readEntry("Group", "");
+		if (groupName.isEmpty())
+		{
+			continue;
+		}
+		QString server = mConfig->readEntry("Server", "");
+		if (server.isEmpty())
+		{
+			KGlobal::config()->setGroup("IRC");
+			server = KGlobal::config()->readEntry("Server", "irc.unknown.com");
+		}
+		addContact(groupName, server, (*it), false, false);
 	}
 
 	KGlobal::config()->setGroup("IRC");

@@ -58,6 +58,7 @@ public:
 	QStringList mPendingMessage;
 	QString mServer;
 	QString mTarget;
+	QString mGroupName;
 private:
 	unsigned int mPort;
 	QString mUsername;
@@ -76,6 +77,7 @@ private slots:
 	void slotOpenConnect();
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
+	void slotGroupRemoved(const QString &);
 public slots:
 	void slotPart();
 	void joinNow();
