@@ -80,8 +80,8 @@ void ChannelListDialog::slotChannelDoubleClicked( const QString & )
 	close();
 }
 
-IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, bool url)
-	: KopeteAccount(protocol, accountId), fromURL( url )
+IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
+	: KopeteAccount(protocol, accountId)
 {
 	m_manager = 0L;
 	m_protocol = protocol;
@@ -173,7 +173,7 @@ void IRCAccount::loaded()
 
 		mNickName = m_accountId.section('@',0,0);
 		QString serverInfo = m_accountId.section('@',1);
-		QString hostName = m_accountId.section(':',0,0);
+		QString hostName = serverInfo.section(':',0,0);
 
 		for( QDictIterator<IRCNetwork> it( m_protocol->networks() ); it.current(); ++it )
 		{
@@ -227,9 +227,6 @@ void IRCAccount::loaded()
 	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
-
-	//if( fromURL )
-		//connect();
 }
 
 void IRCAccount::slotNickInUse( const QString &nick )

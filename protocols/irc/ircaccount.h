@@ -79,6 +79,7 @@ class ChannelListDialog : public KDialogBase
 class IRCAccount:  public KopeteAccount
 {
 	friend class IRCEditAccountWidget;
+	friend class IRCProtocolHandler;
 
 	Q_OBJECT
 
@@ -102,7 +103,7 @@ public:
 		Ignore = 16
 	};
 
-	IRCAccount(IRCProtocol *p, const QString &accountid, bool fromURL = false );
+	IRCAccount(IRCProtocol *p, const QString &accountid);
 	~IRCAccount();
 
 	const QString userName() const;
@@ -201,7 +202,6 @@ private:
 	QString mNickName;
 	KopeteAwayAction *mAwayAction;
 	bool triedAltNick;
-	bool fromURL;
 
 	KIRC *m_engine;
 	IRCNetwork *m_network;

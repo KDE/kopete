@@ -92,8 +92,13 @@ void IRCProtocolHandler::handleURL( const KURL &url ) const
 
 	kdDebug(14120) << accountId << endl;
 
-	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId, true );
+	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId );
+	newAccount->setNickName( user.loginName() );
+	newAccount->setUserName( user.loginName() );
 	newAccount->setConnectCommands( QStringList( QString::fromLatin1("/join %1").arg(chan) ) );
+
+	newAccount->loaded();
+	newAccount->connect();
 }
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
