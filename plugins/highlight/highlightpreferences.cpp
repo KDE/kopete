@@ -25,7 +25,7 @@
 #include <klistview.h>
 #include <kgenericfactory.h>
 #include <kcolorbutton.h>
-#include <knuminputdlg.h>
+#include <kinputdialog.h>
 #include <kurlrequester.h>
 #include <kregexpeditorinterface.h>
 #include <kdebug.h>
@@ -192,7 +192,7 @@ void HighlightPreferences::slotRenameFilter()
 		return;
 
 	bool ok;
-	QString newname = KNumInputDlg::getText(
+	QString newname = KInputDialog::getText(
 		i18n( "Rename Filter" ), i18n( "Please enter the new name for the filter:" ), current->displayName, &ok );
 	if( !ok )
 		return;
