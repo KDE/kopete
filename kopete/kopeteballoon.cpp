@@ -5,7 +5,7 @@
 
     Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
 
-    Portions of this code based on KSim Applet code
+    Portions of this code based on Kim Applet code
     Copyright (c) 2000-2002 by Malte Starostik        <malte@kde.org>
 
     *************************************************************************
@@ -23,6 +23,11 @@
 #include <qtooltip.h>
 #include <qlabel.h>
 #include <qlayout.h>
+
+#include <kdeversion.h>
+#if KDE_VERSION > 0x030100
+#include <kglobalsettings.h>
+#endif
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -114,15 +119,17 @@ void KopeteBalloon::updateMask()
 		mask -= corner;
 	}
 
-	bool bottom, right;
-	QDesktopWidget* tmp = QApplication::desktop();
-	QRect deskRect;
 	// get screen-geometry for screen our anchor is on
 	// (geometry can differ from screen to screen!
-	deskRect = tmp->screenGeometry( tmp->screenNumber(m_anchor) );
+	#if KDE_VERSION > 0x030100
+		QRect deskRect = KGlobalSettings::desktopGeometry(m_anchor);
+	#else
+		QDesktopWidget* tmp = QApplication::desktop();
+		QRect deskRect = tmp->screenGeometry(tmp->screenNumber(m_anchor));
+	#endif
 
-	bottom = m_anchor.y() + height() > deskRect.height() - 48;
-	right = m_anchor.x() + width() > deskRect.width() - 48;
+	bool bottom = (m_anchor.y() + height()) > (deskRect.height() - 48);
+	bool right = (m_anchor.x() + width()) > (deskRect.width() - 48);
 
 	QPointArray arrow(4);
 	arrow.setPoint(0, QPoint(right ? width() : 0, bottom ? height() : 0));
