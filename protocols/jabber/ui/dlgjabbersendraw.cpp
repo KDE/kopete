@@ -55,6 +55,10 @@ void dlgJabberSendRaw::slotClear ()
 void dlgJabberSendRaw::slotCreateMessage(int index)
 {
 	switch (index) {
+		case 1:
+			tePacket->setText(QString("<iq type='set' to='%1'>\n<query xmlns='jabber:iq:register'><remove/>\n</query>\n</iq>")
+						.arg(mEngine->host()));
+			break;
 		case 2:
 			tePacket->setText("<presence>\n<show>\?\?\?</show>\n<status>\?\?\?</status>\n</presence>");
 			break;

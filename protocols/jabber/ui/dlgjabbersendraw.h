@@ -45,9 +45,27 @@ class dlgJabberSendRaw:public DlgSendRaw
 	  virtual ~ dlgJabberSendRaw ();
 
 	public slots:
+
+		/**
+		 * Closes the SendRaw Dialog.
+		 */
 		void slotCancel ();
+
+		/**
+		 * Clears current xml message in tePacket.
+		 */
 		void slotClear ();
+
+		/**
+		 * Sets a xml message in tePacket(QTextWidget) 
+		 * according to the state of inputWidget.
+		 */
 		void slotCreateMessage (int);
+		
+		/**
+		 * Sends a xml message to the server,
+		 * clears tePacket afterwards.
+		 */
 		void slotSend();
 
 	private:
