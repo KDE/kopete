@@ -133,6 +133,14 @@ namespace Global
 			 */
 			const ContactPropertyTmpl &nickName() const;
 			/**
+			 * default template for a contact's photo.
+			 *
+			 * It could be either a QString or a QImage.
+			 * If it's a QString, it should points to the path the image is stored.
+			 */
+			const ContactPropertyTmpl &photo() const;
+
+			/**
 			 * @return a map of all registered ContactPropertyTmpl object
 			 */
 			const ContactPropertyTmpl::Map &templateMap() const;

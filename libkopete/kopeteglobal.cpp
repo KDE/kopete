@@ -182,6 +182,12 @@ const ContactPropertyTmpl &Properties::nickName() const
 		i18n("Nick Name"), QString::null, true);
 }
 
+const ContactPropertyTmpl &Properties::photo() const
+{
+	return createProp(QString::fromLatin1("photo"),
+					  i18n("Photo"), QString::null, true);
+}
+
 
 const ContactPropertyTmpl &Properties::createProp(const QString &key,
 	const QString &label, const QString &icon, bool persistent) const

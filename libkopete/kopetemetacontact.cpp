@@ -65,6 +65,7 @@ class  MetaContact::Private
 	QString metaContactId;
 	OnlineStatus::StatusType onlineStatus;
 	static bool s_addrBookWritePending;
+	bool isTrackingPhoto;
 };
 
 KABC::AddressBook* MetaContact::m_addressBook = 0L;
@@ -115,6 +116,9 @@ MetaContact::MetaContact()
 	addToGroup( Group::topLevel() );
 			 //i'm not sure this is correct -Olivier
 			 // we probably should do the check in groups() instead
+
+
+	d->isTrackingPhoto=false;
 }
 
 MetaContact::~MetaContact()
@@ -495,9 +499,7 @@ void MetaContact::sendFile( const KURL &sourceURL, const QString &altFileName, u
 }
 
 
-
-
-void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &status, const OnlineStatus &oldstatus  )
+void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &status, const OnlineStatus &/*oldstatus*/  )
 {
 	updateOnlineStatus();
 	emit contactStatusChanged( c, status );
@@ -545,17 +547,16 @@ QImage MetaContact::photo() const
 		else
 		{
 			KABC::Picture pic = theAddressee.photo();
-			if ( pic.data().isNull() )
+			if ( pic.data().isNull() && pic.url().isEmpty() )
 				pic = theAddressee.logo();
 			
-			if ( pic.isIntern() && !pic.data().isNull() )
+			if ( pic.isIntern())
 			{
-				QImage img = pic.data();
-				return img;
+				return pic.data();
 			}
 			else
 			{
-				kdDebug( 14010 ) << k_funcinfo << "null image" << displayName() << "..." << endl;
+				return QPixmap( pic.url() ).convertToImage();
 			}
 		}
 	}
@@ -621,9 +622,35 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 			//because nameSource is removed in setDisplayName
 			setNameSource( ns );
 		}
-	//TODO:  chack if the property was persistent, and emit, not only when it's the displayname
+	}
+	else if ( key == Global::Properties::self()->photo().key() )
+	{
+		// If the metacontact is linked to a kabc entry
+		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
+		{
+			KABC::Addressee theAddressee = addressBook()->findByUid( metaContactId() );
+			if ( !theAddressee.isEmpty() && (d->isTrackingPhoto || photo().isNull() ) )
+			{
+				d->isTrackingPhoto=true;
+				QImage img;
+				if(newValue.canCast( QVariant::Image ))
+					img=newValue.toImage();
+				else if(newValue.canCast( QVariant::Pixmap ))
+					img=newValue.toPixmap().convertToImage();
+
+				if(img.isNull())
+					theAddressee.setPhoto(newValue.toString());
+				else
+					theAddressee.setPhoto(img);
+
+				addressBook()->insertAddressee(theAddressee);
+				writeAddressBook();
+			}
+		}
+	}
+
+	//TODO:  check if the property was persistent, and emit, not only when it's the displayname
 	emit persistentDataChanged();
-	}  // <<<<===  move that  one line before when ready :-)
 }
 
 void MetaContact::moveToGroup( Group *from, Group *to )
@@ -730,6 +757,13 @@ const QDomElement MetaContact::toXML()
 	}
 	metaContact.documentElement().appendChild( displayName );
 
+	if( !d->metaContactId.isEmpty()  )
+	{
+		QDomElement photo = metaContact.createElement( QString::fromLatin1("photo" ) );
+		photo.setAttribute( QString::fromLatin1("track") , QString::fromLatin1( d->isTrackingPhoto ? "1" : "0" ) );
+		metaContact.documentElement().appendChild( photo );
+	}
+
 	// Store groups
 	if ( !d->groups.isEmpty() )
 	{
@@ -778,6 +812,10 @@ bool MetaContact::fromXML( const QDomElement& element )
 			d->nameSourcePID = contactElement.attribute( NSPID_ELEM );
 			d->nameSourceAID = contactElement.attribute( NSAID_ELEM );
 
+		}
+		else if( contactElement.tagName() == QString::fromLatin1( "photo" ) )
+		{
+			d->isTrackingPhoto = contactElement.attribute(QString::fromLatin1("track")).toUInt() == 1;
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 		{
