@@ -39,7 +39,7 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mWebAware = true;
 	mHideIP = false;
 	mInvisible = false;
-	mMyself = new ICQContact(accountId(), QString::null, this, 0L);
+	setMyself( new ICQContact(accountId(), QString::null, this, 0L) );
 
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
@@ -50,7 +50,7 @@ void ICQAccount::loaded()
 	// needs to be here because pluginData() does not work in constructor
 	QString nickName = pluginData(protocol(), QString::fromLatin1("NickName"));
 	if(!nickName.isNull())
-		static_cast<ICQContact *>(mMyself)->setOwnDisplayName(nickName);
+		static_cast<ICQContact *>(myself())->setOwnDisplayName(nickName);
 
 	reloadPluginData();
 }
@@ -107,8 +107,8 @@ KActionMenu* ICQAccount::actionMenu()
 	mActionOffline->setEnabled(isConnected());
 
 	mActionMenu->popupMenu()->insertTitle(
-		mMyself->onlineStatus().iconFor(mMyself),
-		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));
+		myself()->onlineStatus().iconFor(myself()),
+		i18n("%2 <%1>").arg(accountId()).arg(myself()->displayName()));
 
 	mActionMenu->insert(mActionOnline); // always first
 	mActionMenu->insert(mActionFFC);

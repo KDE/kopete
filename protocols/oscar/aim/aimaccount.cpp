@@ -36,7 +36,7 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	kdDebug(14190) << k_funcinfo << accountID << ": Called."<< endl;
 	mStatus = OSCAR_OFFLINE;
 
-	mMyself = new AIMContact(tocNormalize(accountID), accountID, this, 0L);
+	setMyself( new AIMContact(tocNormalize(accountID), accountID, this, 0L) );
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
@@ -56,7 +56,7 @@ void AIMAccount::loaded()
 		profile = QString::fromLocal8Bit("Visit the Kopete website at " \
 			"<a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>");
 	}
-	static_cast<AIMContact *>(mMyself)->setOwnProfile(profile);
+	static_cast<AIMContact *>(myself())->setOwnProfile(profile);
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId,
@@ -76,12 +76,12 @@ KActionMenu* AIMAccount::actionMenu()
 	AIMProtocol *p = AIMProtocol::protocol();
 
 	mActionMenu->popupMenu()->insertTitle(
-		mMyself->onlineStatus().iconFor(mMyself),
+		myself()->onlineStatus().iconFor(myself()),
 		i18n("%2 <%1>")
 #if QT_VERSION < 0x030200
-			.arg(accountId()).arg(mMyself->displayName()));
+			.arg(accountId()).arg(myself()->displayName()));
 #else
-			.arg(accountId(), mMyself->displayName()));
+			.arg(accountId(), myself()->displayName()));
 #endif
 
 	mActionMenu->insert(
@@ -135,7 +135,7 @@ void AIMAccount::initSignals()
 void AIMAccount::setUserProfile(const QString &profile)
 {
 	kdDebug(14190) << k_funcinfo << "called." << endl;
-	static_cast<AIMContact *>(mMyself)->setOwnProfile(profile);
+	static_cast<AIMContact *>(myself())->setOwnProfile(profile);
 	setPluginData(protocol(), "Profile", profile);
 }
 
@@ -145,7 +145,7 @@ void AIMAccount::slotGotWarning(int newlevel, QString warner)
 	kdDebug(14190) << k_funcinfo << "Called." << endl;
 
 	//this is not a natural decrease in level
-	if (mMyself->userInfo().evil < newlevel)
+	if (static_cast<AIMContact *>( myself() )->userInfo().evil < newlevel)
 	{
 		QString warnMessage;
 		if(warner.isNull())
@@ -171,7 +171,7 @@ void AIMAccount::slotGotWarning(int newlevel, QString warner)
 
 void AIMAccount::slotEditInfo()
 {
-	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>(mMyself), this,
+	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>(myself()), this,
 	true, 0L, "myInfo");
 	myInfo->exec(); // This is a modal dialog
 }
@@ -205,13 +205,13 @@ void AIMAccount::setStatus(const unsigned long status,
 
 void AIMAccount::slotGoOnline()
 {
-	if(mMyself->onlineStatus().status() == KopeteOnlineStatus::Away)
+	if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 	{
 		kdDebug(14190) << k_funcinfo << "'" << accountId() <<
 			"' was AWAY, marking back" << endl;
 		setStatus(OSCAR_ONLINE, QString::null);
 	}
-	else if(mMyself->onlineStatus().status() == KopeteOnlineStatus::Offline)
+	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
 	{
 		kdDebug(14190) << k_funcinfo << "'" << accountId() <<
 			"' was OFFLINE, now connecting" << endl;
@@ -270,7 +270,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 				port.toInt(),
 				screenName,
 				_password,
-				static_cast<AIMContact *>(mMyself)->userProfile(),
+				static_cast<AIMContact *>(myself())->userProfile(),
 				status,
 				awMessage);
 		}
