@@ -15,6 +15,18 @@
 */
 
 #include <kapplication.h>
+
+// ------------------------------------------------------------
+// TODO: UGLY HACK, remove when we drop KDE 3.1 compatibility
+#ifdef KDE_NO_COMPAT
+
+#undef KDE_NO_COMPAT
+#include <kaction.h>
+#define KDE_NO_COMPAT 1
+
+#endif
+// ------------------------------------------------------------
+
 #include <qregexp.h>
 #include <kdebug.h>
 #include <klocale.h>

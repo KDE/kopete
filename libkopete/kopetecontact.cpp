@@ -632,7 +632,7 @@ QString KopeteContact::toolTip() const
 	QString tip;
 	QStringList shownProps = KopetePrefs::prefs()->toolTipContents();
 
-	kdDebug() << k_funcinfo << "Configured Tips: " << shownProps << endl;
+	//kdDebug(14000) << k_funcinfo << "Configured Tips: " << shownProps << endl;
 
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
