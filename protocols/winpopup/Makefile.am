@@ -1,9 +1,7 @@
 METASOURCES = AUTO
 SUBDIRS = ui pixmaps libwinpopup
 AM_CPPFLAGS = -I$(srcdir)/ui \
-	-I$(srcdir)/../../libkopete \
-	-I$(srcdir)/../../libkopete/ui \
-	-I../../libkopete/ui \
+	$(KOPETE_INCLUDES) \
 	-I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/libwinpopup \

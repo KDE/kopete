@@ -1,6 +1,5 @@
 noinst_LTLIBRARIES = libkopetewpui.la
-AM_CPPFLAGS = -I$(srcdir)/../../../libkopete \
-	-I$(srcdir)/../../../libkopete/ui \
+AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/.. \
 	$(all_includes)
 

@@ -1,7 +1,5 @@
 METASOURCES = AUTO
-AM_CPPFLAGS = -I$(srcdir)/../../../libkopete \
-	-I$(srcdir)/../../../libkopete/ui \
-	-I../../../libkopete/ui \
+AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I../psi/libpsi/src \
 	-I$(srcdir)/.. \
 	$(all_includes)

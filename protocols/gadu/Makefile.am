@@ -1,13 +1,10 @@
 METASOURCES = AUTO
 SUBDIRS = lib ui pixmaps
 AM_CPPFLAGS = -I$(srcdir)/ui \
-	 -I./ui \
-	 -I$(srcdir)/lib \
-	 -I$(top_srcdir)/kopete/libkopete \
-	 -I$(top_srcdir)/kopete/libkopete/ui \
-	 -I../../libkopete/ui \
-	 -I$(srcdir)/lib \
-	 $(all_includes)
+	-I./ui \
+	-I$(srcdir)/lib \
+	$(KOPETE_INCLUDES) \
+	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_gadu.la
 

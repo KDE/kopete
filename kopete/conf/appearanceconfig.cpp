@@ -48,11 +48,8 @@
 #include <khtml_part.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#if KDE_VERSION >= 306
 #include <knotifydialog.h>
-#else
 #include <kprocess.h>
-#endif
 #include <kstddirs.h>
 #include <ktabctl.h>
 #include <kglobalsettings.h>
@@ -93,9 +90,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	// "Contact List" TAB ========================================================
 	mPrfsContactlist = new AppearanceConfig_Contactlist(mAppearanceTabCtl);
-	#if KDE_VERSION < 306
-		mPrfsContactlist->mNotifyOnlineUsers->hide();
-	#endif
 	mAppearanceTabCtl->addTab( mPrfsContactlist, i18n("Contact &List") );
 
 	// "Emoticons" TAB ===========================================================
@@ -167,9 +161,7 @@ void AppearanceConfig::save()
 	p->setShowOffline ( mPrfsContactlist->mShowOfflineUsers->isChecked() );
 	p->setSortByGroup ( mPrfsContactlist->mSortByGroup->isChecked() );
 	p->setGreyIdleMetaContacts( mPrfsContactlist->mGreyIdleMetaContacts->isChecked() );
-	#if KDE_VERSION >= 306
-		p->setNotifyOnline ( mPrfsContactlist->mNotifyOnlineUsers->isChecked() );
-	#endif
+	p->setNotifyOnline ( mPrfsContactlist->mNotifyOnlineUsers->isChecked() );
 
 	// Another TAB
 	p->setIconTheme( icon_theme_list->currentText() );
@@ -226,9 +218,7 @@ void AppearanceConfig::reopen()
 	mPrfsContactlist->mSortByGroup->setChecked( p->sortByGroup() );
 	mPrfsContactlist->mShowOfflineUsers->setChecked( p->showOffline() );
 	mPrfsContactlist->mGreyIdleMetaContacts->setChecked( p->greyIdleMetaContacts() );
-	#if KDE_VERSION >= 306
-		mPrfsContactlist->mNotifyOnlineUsers->setChecked( p->notifyOnline() );
-	#endif
+	mPrfsContactlist->mNotifyOnlineUsers->setChecked( p->notifyOnline() );
 
 	// "Emoticons" TAB
 	KStandardDirs dir;
@@ -300,19 +290,7 @@ void AppearanceConfig::reopen()
 
 void AppearanceConfig::slotConfigSound()
 {
-#if KDE_VERSION >= 306
 	KNotifyDialog::configure(this);
-#else
-	KProcess kcm;
-	kcm << "kcmshell" << "Sound/kcmnotify";
-	if (!kcm.start(KProcess::DontCare))
-	{
-		KMessageBox::information( this,
-		i18n( "<qt>The KControl Module to configure event notifications did not start.\n"
-		"Make sure \"kcmshell\" is in your PATH and is working properly</qt>" ),
-		i18n( "KControl Launch failed" ) );
-	}
-#endif
 }
 
 void AppearanceConfig::slotSoundChanged()

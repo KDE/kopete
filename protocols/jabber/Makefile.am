@@ -1,8 +1,6 @@
 METASOURCES = AUTO
 SUBDIRS = ui pixmaps psi
-AM_CPPFLAGS = -I$(srcdir)/../../libkopete \
-	-I$(srcdir)/../../libkopete/ui \
-	-I../../libkopete/ui \
+AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/ui \
 	-Iui \
 	-Ipsi/libpsi/src \

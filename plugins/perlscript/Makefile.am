@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(all_includes) $(LIBPERL_INCLUDES)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes) $(LIBPERL_INCLUDES)
 
 kde_module_LTLIBRARIES = kopete_perlscript.la
 

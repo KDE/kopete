@@ -1,6 +1,5 @@
 SUBDIRS = ui pixmaps libkirc
-AM_CPPFLAGS = -I$(srcdir)/ui -I$(srcdir)/../../libkopete \
-		-I$(srcdir)/../../libkopete/ui \
+AM_CPPFLAGS = -I$(srcdir)/ui $(KOPETE_INCLUDES) \
 		-I./ui \
 		-I$(srcdir)/libkirc \
 		$(all_includes)

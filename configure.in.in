@@ -9,3 +9,12 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
+KDE_CHECK_HEADERS(knotifydialog.h)
+if test "$ac_cv_header_knotifydialog_h" = "no"; then
+        KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_srcdir)/kopete/libkopete/compat'
+        LIB_KOPETECOMPAT='$(top_srcdir)/kopete/libkopete/compat/libkopetecompat.la'
+        AC_SUBST(LIB_KOPETECOMPAT)
+else
+        KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui'
+fi
+AC_SUBST(KOPETE_INCLUDES)

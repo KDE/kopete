@@ -1,8 +1,6 @@
 METASOURCES = AUTO
 
-AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete \
-	-I$(top_srcdir)/kopete/libkopete/ui \
-	$(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteconf.la
 noinst_HEADERS = pluginconfig.h appearanceconfig.h identityconfig.h addidentitywizard.h
