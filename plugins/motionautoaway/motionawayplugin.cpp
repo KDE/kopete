@@ -74,10 +74,11 @@ typedef __signed__ long long __s64;
 #define NORM_DEFAULT		0
 #define IN_DEFAULT		8
 
-K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, KGenericFactory<MotionAwayPlugin> );
+typedef KGenericFactory<MotionAwayPlugin> MotionAwayPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory );
 
 MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( MotionAwayPluginFactory::instance(), parent, name )
 {
 	kdDebug(14305) << k_funcinfo << "Called." << endl;
 	/* This should be read from config someday may be */

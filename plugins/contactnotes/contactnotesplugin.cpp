@@ -26,10 +26,11 @@
 
 #include "contactnotesplugin.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, KGenericFactory<ContactNotesPlugin> );
+typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory );
 
 ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( ContactNotesPluginFactory::instance(), parent, name )
 {
 	if ( pluginStatic_ )
 		kdDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;
