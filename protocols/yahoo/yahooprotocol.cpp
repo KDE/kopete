@@ -19,19 +19,6 @@
  ***************************************************************************/
 
 
-// Local Includes
-#include "yahoodebug.h"
-#include "yahoostatus.h"
-#include "yahooprotocol.h"
-#include "yahoocontact.h"
-
-// Kopete Includes
-#include "kopete.h"
-#include "kopetecontact.h"
-#include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "statusbaricon.h"
-#include "systemtray.h"
 // QT Includes
 #include <qcursor.h>
 #include <qwidget.h>
@@ -46,6 +33,20 @@
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
+
+// Local Includes
+#include "yahoodebug.h"
+#include "yahoostatus.h"
+#include "yahooprotocol.h"
+#include "yahoocontact.h"
+
+// Kopete Includes
+#include "kopete.h"
+#include "kopetecontact.h"
+#include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
+#include "statusbaricon.h"
+#include "systemtray.h"
 
 class KPopupMenu;
 

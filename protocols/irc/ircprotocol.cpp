@@ -17,22 +17,6 @@
 
 
 
-#include "ircprotocol.h"
-
-#include "ircadd.h"
-#include "ircaddcontactpage.h"
-#include "ircchatview.h"
-#include "irccontact.h"
-#include "ircmessage.h"
-#include "ircpreferences.h"
-#include "ircservercontact.h"
-#include "ircservermanager.h"
-#include "kopete.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopetewindow.h"
-#include "statusbaricon.h"
-
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -48,6 +32,21 @@
 #include <qcursor.h>
 #include <qregexp.h>
 
+#include "ircprotocol.h"
+
+#include "ircadd.h"
+#include "ircaddcontactpage.h"
+#include "ircchatview.h"
+#include "irccontact.h"
+#include "ircmessage.h"
+#include "ircpreferences.h"
+#include "ircservercontact.h"
+#include "ircservermanager.h"
+#include "kopete.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "kopetewindow.h"
+#include "statusbaricon.h"
 
 
 ///////////////////////////////////////////////////

@@ -18,21 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
-// Local Includes
-#include "wpprotocol.h"
-#include "wpdebug.h"
-#include "wpcontact.h"
-#include "wpaddcontact.h"
-#include "wppreferences.h"
-
-// Kopete Includes
-#include "kopete.h"
-#include "kopetecontactlistview.h"
-#include "kopetemetacontact.h"
-#include "statusbaricon.h"
-#include "systemtray.h"
-
 // QT Includes
 #include <qcursor.h>
 #include <qprocess.h>
@@ -52,6 +37,20 @@
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
 #include <kstdguiitem.h>
+
+// Local Includes
+#include "wpprotocol.h"
+#include "wpdebug.h"
+#include "wpcontact.h"
+#include "wpaddcontact.h"
+#include "wppreferences.h"
+
+// Kopete Includes
+#include "kopete.h"
+#include "kopetecontactlistview.h"
+#include "kopetemetacontact.h"
+#include "statusbaricon.h"
+#include "systemtray.h"
 
 class KPopupMenu;
 
