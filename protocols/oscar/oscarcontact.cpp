@@ -182,10 +182,7 @@ void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* sessi
 	Q_UNUSED( session );
 	Oscar::Message message;
 	
-	if ( account()->engine()->isIcq() )
-		message.setText( msg.plainBody() );
-	else
-		message.setText( msg.escapedBody() );
+	message.setText( msg.escapedBody() );
 	
 	message.setTimestamp( msg.timestamp() );
 	message.setSender( mAccount->accountId() );
