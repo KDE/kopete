@@ -171,14 +171,14 @@ KActionMenu* MSNAccount::actionMenu()
 #endif
 	);
 
-	m_actionMenu->insert( new KAction ( i18n("Go O&nline"), MSNProtocol::protocol()->NLN.iconFor( this ), 0, this, SLOT(slotGoOnline()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set O&nline"), MSNProtocol::protocol()->NLN.iconFor( this ), 0, this, SLOT(slotGoOnline()), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n("Set &Away"), MSNProtocol::protocol()->AWY.iconFor( this ), 0, this, SLOT(slotGoAway()), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n("Set &Busy"), MSNProtocol::protocol()->BSY.iconFor( this ), 0, this, SLOT(slotGoBusy()), m_actionMenu, "actionMSNConnect")  );
 	m_actionMenu->insert( new KAction ( i18n("Set Be &Right Back"), MSNProtocol::protocol()->BRB.iconFor( this ), 0, this, SLOT(slotGoBeRightBack()), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n("Set on &Phone"), MSNProtocol::protocol()->PHN.iconFor( this ), 0, this, SLOT(slotGoOnThePhone()), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n("Set Out to &Lunch"), MSNProtocol::protocol()->LUN.iconFor( this ), 0, this, SLOT(slotGoOutToLunch()), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n("Set &Invisible"), MSNProtocol::protocol()->HDN.iconFor( this ), 0, this, SLOT(slotGoInvisible()), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n("Go &Offline"), MSNProtocol::protocol()->FLN.iconFor( this ), 0, this, SLOT(slotGoOffline()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set &Offline"), MSNProtocol::protocol()->FLN.iconFor( this ), 0, this, SLOT(slotGoOffline()), m_actionMenu, "actionMSNConnect" ) );
 
 	m_actionMenu->popupMenu()->insertSeparator();
 	m_actionMenu->insert( new KAction ( i18n( "&Change Nickname..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), m_actionMenu, "renameAction" ) );
