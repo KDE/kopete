@@ -749,7 +749,7 @@ void KIRC::slotCheckOnline()
 			if( (statement.length() + (*it).length()) > 512 )
 			{
 				writeString( statement + QString::fromLatin1("\r\n") );
-				statement = QString::fromLatin1("ISON ");
+				statement = QString::fromLatin1("ISON ") +  (*it) + QString::fromLatin1(" ") ;
 			}
 			else
 				statement.append( (*it) + QString::fromLatin1(" ") );
