@@ -28,7 +28,7 @@
 #include <imcontact.h>
 #include <qdict.h>
 
-#include "kirc.h"
+class KIRC;
 
 class IRCServerContact : public QObject, public KListViewItem
 {
@@ -43,6 +43,7 @@ public:
 	IRCChatWindow *mWindow;
 	QString mNickname;
 	QString mServer;
+	bool parentClosing();
 private:
 	bool tryingQuit;
 	bool completedDisconnect;
@@ -50,12 +51,11 @@ private slots:
 	void nickInUseOnLogin(const QString &);
 	void slotChangedNick(const QString &, const QString &);
 	void slotServerHasQuit();
-	void slotPollList();
 	void forceDisconnect();
 	void disconnectNow();
+	void updateToolbar();
 public slots:
 	void slotQuitServer();
-	void unloading();
 	void connectNow();
 signals:
 	void quittingServer();

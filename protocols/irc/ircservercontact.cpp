@@ -23,10 +23,11 @@
 #include "ircconsoleview.h"
 #include <qtabwidget.h>
 #include <qvbox.h>
-#include <kjanuswidget.h>
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
 #include <qsocket.h>
+#include <kmessagebox.h>
+#include "kirc.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
 	: KListViewItem( kopeteapp->contactList() )
@@ -40,14 +41,17 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	mManager = manager;
 	mNickname = nickname;
 	mServer = server;
-	mWindow = new IRCChatWindow(mServer);
+	mWindow = new IRCChatWindow(mServer, this);
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 
-	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, this, mWindow->mDialog->addVBoxPage(mServer));
+	QVBox *tabView = new QVBox(mWindow->mTabWidget);
+	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, this, tabView);
+	mWindow->mTabWidget->addTab(tabView, mServer);
 
 	QObject::connect(consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 	QObject::connect(this, SIGNAL(connecting()), consoleView, SLOT(slotConnecting()));
+	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
 
 	mWindow->show();
 	consoleView->show();
@@ -88,6 +92,7 @@ void IRCServerContact::disconnectNow()
 	completedDisconnect = false;
 	mWindow->mToolBar->removeItem(1);
 	mWindow->mToolBar->insertButton("stop", 1, SIGNAL(clicked()), this, SLOT(forceDisconnect()));
+	tryingQuit = false;
 	if (engine->isLoggedIn() == true)
 	{
 		slotQuitServer();
@@ -159,7 +164,6 @@ void IRCServerContact::slotQuitServer()
 		completedDisconnect = true;
 		emit serverQuit();
 		mManager->removeServer(text(0));
-		completedDisconnect = false;
 		mWindow->mToolBar->removeItem(1);
 		mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 	}
@@ -171,17 +175,24 @@ void IRCServerContact::slotServerHasQuit()
 	slotQuitServer();
 }
 
-void IRCServerContact::unloading()
+void IRCServerContact::updateToolbar()
 {
-	// It's a hack, what can I say? Send me a patch if it really bothers you.
-	QTimer::singleShot(200, this, SLOT(slotPollList()));
+	mWindow->mToolBar->removeItem(1);
+	mWindow->mToolBar->insertButton("connect_established", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
 }
 
-void IRCServerContact::slotPollList()
+bool IRCServerContact::parentClosing()
 {
-	if (childCount() == 0)
+	if (engine->isLoggedIn() == true || engine->state() != QSocket::Idle)
 	{
-		tryingQuit = false;
-		slotQuitServer();
+		if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connected to the IRC server, are you sure you want to quit now?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAsk") == KMessageBox::Yes)
+		{
+			tryingQuit = false;
+			slotQuitServer();
+			return true;
+		} else {
+			return false;
+		}
 	}
+	return true;
 }

@@ -25,8 +25,8 @@
 #include <kstddirs.h>
 #include <ircchatwindow.h>
 #include <qtabwidget.h>
-#include <kjanuswidget.h>
 #include <qvbox.h>
+#include <klocale.h>
 
 IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
 	: IMContact(parent)
@@ -159,7 +159,6 @@ void IRCContact::unloading()
 	{
 		delete mTabPage;
 	}
-	mContact->unloading();
 	delete this;
 }
 
@@ -171,12 +170,12 @@ void IRCContact::slotIncomingMotd(const QString &motd)
 void IRCContact::joinNow()
 {
 
-	mTabPage = mContact->mWindow->mDialog->addVBoxPage(mTarget);
+	mTabPage = new QVBox(mContact->mWindow->mTabWidget);
 	chatView = new IRCChatView(mServer, mTarget, this, mTabPage);
+	mContact->mWindow->mTabWidget->addTab(mTabPage, mTarget);
 
 	mContact->mWindow->show();
-	chatView->show();
-	mContact->mWindow->mDialog->showPage(mContact->mWindow->mDialog->pageIndex(mTabPage));
+	mContact->mWindow->mTabWidget->showPage(mTabPage);
 	QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));
