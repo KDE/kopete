@@ -108,6 +108,9 @@ public:
 	bool contactListFolding() const { return mContactListFolding; }
 
 	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
+	
+	bool truncateContactNames() const { return mTruncateContactNames; }
+	int maxConactNameLength() const { return mMaxContactNameLength; }
 
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
@@ -156,6 +159,8 @@ public:
 	void setContactListFading( bool );
 	void setContactListFolding( bool );
 	void setReconnectOnDisconnect( bool newSetting );
+	void setTruncateContactNames( bool );
+	void setMaxContactNameLength( int );
 
 signals:
 	/**
@@ -224,6 +229,9 @@ private:
 	bool mChatWShowSend;
 
 	int mChatWindowPolicy;
+	
+	bool mTruncateContactNames;
+	int mMaxContactNameLength;
 
 	bool mRichText;
 	QString mStyleSheet;

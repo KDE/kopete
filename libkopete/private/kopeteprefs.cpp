@@ -68,6 +68,8 @@ void KopetePrefs::load()
 	mRichText = config->readBoolEntry("RichText editor", false);
 	mChatWShowSend = config->readBoolEntry("Show Chatwindow Send Button", true);
 	mRememberedMessages = config->readNumEntry("Remembered Messages", 5);
+	mTruncateContactNames = config->readBoolEntry("TruncateContactNames", false);
+	mMaxContactNameLength = config->readNumEntry("MaxContactNameLength", 20);
 
 	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
@@ -185,6 +187,8 @@ void KopetePrefs::save()
 	config->writeEntry("Idle Contact Color", mIdleContactColor);
 	config->writeEntry("RichText editor", mRichText);
 	config->writeEntry("Show Chatwindow Send Button", mChatWShowSend);
+	config->writeEntry("TruncateContactNames", mTruncateContactNames);
+	config->writeEntry("MaxContactNameLength", mMaxContactNameLength);
 
 	config->writeEntry("Interface Preference", mInterfacePreference);
 
@@ -368,6 +372,16 @@ void KopetePrefs::setLinkColor( const QColor &value )
 void KopetePrefs::setChatWindowPolicy(int value)
 {
 	mChatWindowPolicy = value;
+}
+
+void KopetePrefs::setTruncateContactNames( bool value )
+{
+	mTruncateContactNames = value;
+}
+
+void KopetePrefs::setMaxContactNameLength( int value )
+{
+	mMaxContactNameLength = value;
 }
 
 void KopetePrefs::setInterfacePreference(ChatWindowPref value)

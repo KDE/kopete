@@ -88,6 +88,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotValueChanged(int)));
 	connect( mPrfsChat->mChatViewBufferSize, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
+	connect( mPrfsChat->truncateContactNameEnabled, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mPrfsChat->mMaxContactNameLength, SIGNAL(valueChanged(int)),
+		this, SLOT(slotValueChanged(int)));
 
 	// "Away" TAB ===============================================================
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
@@ -131,6 +135,8 @@ void BehaviorConfig::save()
 	p->setInterfacePreference(static_cast<KopetePrefs::ChatWindowPref>
 		(mPrfsChat->interfaceGroup->id(mPrfsChat->interfaceGroup->selected())) );
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
+	p->setTruncateContactNames(mPrfsChat->truncateContactNameEnabled->isChecked());
+	p->setMaxContactNameLength(mPrfsChat->mMaxContactNameLength->value());
 
 	p->save();
 	emit changed(false);
@@ -166,6 +172,8 @@ void BehaviorConfig::load()
 	mPrfsChat->chatWindowGroup->setButton(p->chatWindowPolicy());
 	mPrfsChat->interfaceGroup->setButton(p->interfacePreference());
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
+	mPrfsChat->truncateContactNameEnabled->setChecked(p->truncateContactNames());
+	mPrfsChat->mMaxContactNameLength->setValue(p->maxConactNameLength());
 
 	//TODO: make the whole thing working correctly insteads of this ugly hack...
 	// emit changed(false);

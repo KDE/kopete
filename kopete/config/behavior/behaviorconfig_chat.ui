@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>BehaviorConfig_Chat</class>
 <widget class="QWidget">
     <property name="name">
@@ -15,43 +15,11 @@
     <property name="caption">
         <string>Chat</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>cb_RaiseMsgWindowChk</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Raise window/tab on new messages</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>cb_ShowEventsChk</cstring>
-            </property>
-            <property name="text">
-                <string>Show e&amp;vents in chat window</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>highlightEnabled</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Highlight messages containing your &amp;nickname</string>
-            </property>
-        </widget>
-        <widget class="QButtonGroup">
+        <widget class="QButtonGroup" row="3" column="0">
             <property name="name">
                 <cstring>interfaceGroup</cstring>
             </property>
@@ -80,7 +48,24 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QButtonGroup">
+        <spacer row="7" column="0">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>240</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="4" column="0">
             <property name="name">
                 <cstring>chatWindowGroup</cstring>
             </property>
@@ -142,9 +127,99 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QLayoutWidget">
+        <widget class="QCheckBox" row="2" column="0">
             <property name="name">
-                <cstring>layout2</cstring>
+                <cstring>highlightEnabled</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Highlight messages containing your &amp;nickname</string>
+            </property>
+            <property name="accel">
+                <string>Alt+N</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="0">
+            <property name="name">
+                <cstring>cb_ShowEventsChk</cstring>
+            </property>
+            <property name="text">
+                <string>Show e&amp;vents in chat window</string>
+            </property>
+            <property name="accel">
+                <string>Alt+V</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="0" column="0">
+            <property name="name">
+                <cstring>cb_RaiseMsgWindowChk</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Raise window/tab on new messages</string>
+            </property>
+            <property name="accel">
+                <string>Alt+R</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="5" column="0">
+            <property name="name">
+                <cstring>layout3</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>truncateContactNameEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Truncate contact name with more characters than</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>120</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>mMaxContactNameLength</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="minValue">
+                        <number>5</number>
+                    </property>
+                    <property name="value">
+                        <number>20</number>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget" row="6" column="0">
+            <property name="name">
+                <cstring>layout4</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -176,7 +251,7 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>111</width>
+                            <width>212</width>
                             <height>20</height>
                         </size>
                     </property>
@@ -197,25 +272,16 @@
                 </widget>
             </hbox>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>300</height>
-                </size>
-            </property>
-        </spacer>
-    </vbox>
+    </grid>
 </widget>
+<connections>
+    <connection>
+        <sender>truncateContactNameEnabled</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mMaxContactNameLength</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>cb_RaiseMsgWindowChk</tabstop>
     <tabstop>cb_ShowEventsChk</tabstop>

@@ -32,6 +32,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetemessagemanager.h"
+#include "kopeteprefs.h"
 
 class Kopete::Message::Private
 {
@@ -463,6 +464,7 @@ void Kopete::Message::setManager(Kopete::MessageManager *kmm)
 
 static QDomElement contactNode( QDomDocument doc, const Kopete::Contact *contact )
 {
+	KopetePrefs *p = KopetePrefs::prefs();
 	// These colors are used for coloring nicknames. I tried to use
 	// colors both visible on light and dark background.
 	static const char* nameColors[] =
@@ -475,6 +477,11 @@ static QDomElement contactNode( QDomDocument doc, const Kopete::Contact *contact
 	};
 
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+	if( p->truncateContactNames() )
+	{
+		contactName = KStringHandler::csqueeze( contactName, p->maxConactNameLength() );
+	}
+	
 	if(contactName.isEmpty())
 		contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
 
