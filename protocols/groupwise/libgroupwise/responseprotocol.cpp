@@ -209,8 +209,8 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 					m_packetState = ProtocolError;
 					break;
 				}
-				// convert to unicode
-				QString fieldValue = QString::fromUtf8( rawData.data(), val );
+				// convert to unicode - ignore the terminating NUL, because Qt<3.3.2 doesn't sanity check val.
+				QString fieldValue = QString::fromUtf8( rawData.data(), val - 1 );
 				qDebug("- utf/dn single field: %s", fieldValue.ascii() );
 				// create singlefield
 				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
