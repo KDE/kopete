@@ -839,7 +839,23 @@ void Kopete::Contact::slotUnblock()
 	account()->unblock( d->contactId );
 }
 
+void Kopete::Contact::setNickName( const QString &name )
+{
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if( name == nick )
+		return;
 
+	setProperty( Kopete::Global::Properties::self()->nickName(), name );
+}
+
+QString Kopete::Contact::nickName() const
+{
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if( !nick.isEmpty() )
+		return nick;
+
+	return contactId();
+}
 
 void Contact::virtual_hook( uint , void * )
 { }

@@ -67,6 +67,7 @@ class KOPETE_EXPORT Account : public QObject
 {
 	Q_OBJECT
 
+	Q_ENUMS( AddMode )
 	Q_PROPERTY( QString accountId READ accountId )
 	Q_PROPERTY( bool excludeConnect READ excludeConnect WRITE setExcludeConnect )
 	Q_PROPERTY( QColor color READ color WRITE setColor )

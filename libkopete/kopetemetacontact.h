@@ -58,13 +58,16 @@ class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataOb
 	Q_OBJECT
 
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
-//	Q_PROPERTY( QString statusString READ statusString )
-//	Q_PROPERTY( QString statusIcon READ statusIcon )
-//	Q_PROPERTY( bool isOnline READ isOnline )
-//	Q_PROPERTY( bool isReachable READ isReachable )
-//	Q_PROPERTY( bool isTopLevel READ isTopLevel )
-//	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+	Q_PROPERTY( QString statusString READ statusString )
+	Q_PROPERTY( QString statusIcon READ statusIcon )
+	Q_PROPERTY( bool isOnline READ isOnline )
+	Q_PROPERTY( bool isReachable READ isReachable )
+	Q_PROPERTY( bool isTopLevel READ isTopLevel )
+	Q_PROPERTY( bool isTemporary READ isTemporary )
+	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+	Q_PROPERTY( ulong idleTime READ idleTime )
 	Q_PROPERTY( QString metaContactId READ metaContactId WRITE setMetaContactId )
+	Q_PROPERTY( bool photoSyncedWithKABC READ isPhotoSyncedWithKABC WRITE setPhotoSyncedWithKABC )
 
 public:
 
@@ -162,11 +165,11 @@ public:
 
 	/**
 	 * Set if the photo should be synced with the adressbook when the photosource change his photo
-	 * 
+	 *
 	 * If  \p b is true, the photo will be synced immediatly if possible
 	 */
 	void setPhotoSyncedWithKABC(bool b);
-		
+
 
 	/**
 	 * Temporary contacts will not be serialized.
@@ -377,7 +380,6 @@ public slots:
 	 * returns the Contact that was chosen as the preferred
 	 */
 	Contact *startChat();
-
 
 signals:
 	/**

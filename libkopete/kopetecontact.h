@@ -55,14 +55,18 @@ class KOPETE_EXPORT Contact : public QObject
 {
 	Q_OBJECT
 
-//	Q_PROPERTY( QString formattedName READ formattedName )
-//	Q_PROPERTY( QString formattedIdleTime READ formattedIdleTime )
-//	Q_PROPERTY( bool isOnline READ isOnline )
-//	Q_PROPERTY( bool isFileCapable READ isFileCapable )
-//	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+	Q_ENUMS( CanCreateFlags )
+	Q_PROPERTY( QString formattedName READ formattedName )
+	Q_PROPERTY( QString formattedIdleTime READ formattedIdleTime )
+	Q_PROPERTY( bool isOnline READ isOnline )
+	Q_PROPERTY( bool fileCapable READ isFileCapable WRITE setFileCapable )
+	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+	Q_PROPERTY( bool isReachable READ isReachable )
 	Q_PROPERTY( QString contactId READ contactId )
-	Q_PROPERTY( QString icon READ icon )
-//	Q_PROPERTY( QString toolTip READ toolTip )
+	Q_PROPERTY( QString icon READ icon WRITE setIcon )
+	Q_PROPERTY( QString toolTip READ toolTip )
+	Q_PROPERTY( QString nickName READ nickName WRITE setNickName )
+	Q_PROPERTY( ulong idleTime READ idleTime WRITE setIdleTime )
 
 public:
 	/**
@@ -205,7 +209,6 @@ public:
 	 */
 	void setOnlineStatus(const OnlineStatus &status);
 
-
 	/**
 	 * \brief Get the set of custom menu items for this contact
 	 *
@@ -219,6 +222,7 @@ public:
 	 * @todo if possible, try to use KXMLGUI
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
+
 	/**
 	 * @todo  What is this function for ?
 	 */
@@ -295,7 +299,6 @@ public:
 	 */
 	void setIcon( const QString& icon );
 
-
 	/**
 	 * \brief Get the time (in seconds) this contact has been idle
 	 * It will return the time set in @ref setIdleTime() with an addition of the time
@@ -348,6 +351,19 @@ public:
 	 **/
 	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
 
+        /**
+	 * \brief Convenience method to set the nickName property to the specified value
+	 * @param name The nickname to set
+	 */
+	void setNickName( const QString &name );
+
+	/**
+	 * \brief Convenience method to retrieve the nickName property.
+	 *
+	 * This method will return the contactId if there has been no nickName property set
+	 */
+	QString nickName() const;
+
 	/**
 	 * \brief Remove a property if it exists
 	 *
@@ -374,8 +390,6 @@ public:
 	 * Suitable for GUI display
 	 **/
 	QString formattedIdleTime() const;
-
-
 
 	/**
 	 * used in @ref sync()
@@ -455,7 +469,6 @@ public slots:
 	virtual void sendFile( const KURL &sourceURL = KURL(),
 			       const QString &fileName = QString::null, uint fileSize = 0L );
 
-
 private slots:
 
 	/**
@@ -500,8 +513,6 @@ signals:
 	 */
 	void contactDestroyed( Kopete::Contact *contact );
 
-
-
 	/**
 	 * The contact's idle state changed.
 	 * You need to emit this signal to update the view.
@@ -535,41 +546,29 @@ public:
 
 	/**
 	 * @todo remove
-	 * @deprecated  use the nickName property
+	 * @deprecated  Use setNickName, or set the nickName property
 	 */
 	KDE_DEPRECATED void rename( const QString &name )
 	{
-		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-		if( name == nick )
-			return;
-
-		setProperty( Kopete::Global::Properties::self()->nickName(), name );
+		setNickName( name );
 	}
 
 	/**
 	 * @todo remove
-	 * @deprecated  use the nickName property
+	 * @deprecated  Use setNickName, or set the nickName property
 	 */
 	KDE_DEPRECATED void setDisplayName( const QString &name )
 	{
-		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-		if( name == nick )
-			return;
-
- 		setProperty( Kopete::Global::Properties::self()->nickName(), name );
+		setNickName( name );
 	}
 
 	/**
 	 * @todo remove
-	 * @deprecated  use the nickName property
+	 * @deprecated  Use nickName, or get the nickName property
 	 */
 	KDE_DEPRECATED QString displayName() const
 	{
-		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-		if( !nick.isEmpty() )
-			return nick;
-
-		return contactId();
+		return nickName();
 	}
 
 //MOC_SKIP_END//
