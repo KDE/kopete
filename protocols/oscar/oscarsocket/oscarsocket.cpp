@@ -2810,13 +2810,25 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	//Predict the new rate level
 	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize) * lastTime;
 	kdDebug(14150) << "New Level is: " << newLevel << endl;
-	
-	if (code == 0x0002) //we've been warned about exceeding the rate limit
+
+	if (currentLevel >= disconnectLevel)
 	{
-		slotToggleSend();
-		kdDebug(14150) << "Warning about the rate limit received. Waiting "
-						<< currentLevel / 2 << "milliseconds" << endl;
-		QTimer::singleShot( currentLevel / 2, this, SLOT(slotToggleSend()));
+		emit protocolError(i18n("The account %1 will be disconnected for exceeding the rate limit." \
+					"Please wait approximately 10 minutes before reconnecting.")
+					.arg(mAccount->accountId()),0);
+
+		//let the account properly clean itself up
+		mAccount->disconnect();
+	}
+	else
+	{
+		if (code == 0x0002 || code == 0x0003)
+		{
+			slotToggleSend();
+			kdDebug(14150) << "Warning about the rate limit received. Waiting "
+							<< newLevel / 2 << "milliseconds" << endl;
+			QTimer::singleShot( newLevel / 2, this, SLOT(slotToggleSend()));
+		}
 	}
 
 /*
