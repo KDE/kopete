@@ -108,7 +108,7 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KopeteAwayAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
 		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy( const QString & ) ), this,
 		"actionGroupWiseBusy") );
-	theActionMenu->insert( new KAction ( "A&ppear Offline", "jabber_invisible", 0, this, 
+	theActionMenu->insert( new KAction ( "A&ppear Offline", "groupwise_invisible", 0, this, 
 		SLOT( slotGoAppearOffline() ), this, 
 		"actionGroupWiseAppearOffline") );
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
