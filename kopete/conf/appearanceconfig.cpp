@@ -579,8 +579,8 @@ void AppearanceConfig::slotUpdatePreview()
 				.arg( mPrfsChatAppearance->fontFace->font().family() )
 				.arg( mPrfsChatAppearance->textColor->color().name() )
 				.arg( mPrfsChatAppearance->foregroundColor->color().name() )
-				.arg( mPrfsChatAppearance->bgColor->color().name() )
 				.arg( mPrfsChatAppearance->backgroundColor->color().name() )
+				.arg( mPrfsChatAppearance->bgColor->color().name() )
 				.arg( mPrfsChatAppearance->linkColor->color().name() )
 				.arg( mPrfsChatAppearance->linkColor->color().name() ) );
 
