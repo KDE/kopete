@@ -59,7 +59,7 @@ AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const Q
 	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 					  this, SLOT( slotAwayChanged() ) );
 
-	QObject::connect( this, SIGNAL( awayMessageSelected( const OnlineStatus &, const QString & ) ),
+	QObject::connect( this, SIGNAL( awayMessageSelected( const Kopete::OnlineStatus &, const QString & ) ),
 					  receiver, slot );
 
 	QObject::connect( this, SIGNAL( activated( int ) ),

@@ -209,12 +209,12 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		KAction *action;
 		if(options & OnlineStatusManager::HasAwayMessage)
 		{
-			action=new AwayAction( status, caption, status.iconFor(account) , 0, account,  SLOT(setOnlineStatus(const Kopete::OnlineStatus&)) ,  parent);
+			action=new AwayAction( status, caption, status.iconFor(account) , 0, account,  SLOT(setOnlineStatus(const Kopete::OnlineStatus&, const QString&)) ,  parent);
 		}
 		else
 		{
 			action=new OnlineStatusAction( status, caption, status.iconFor(account) , parent  );
-			connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&, const QString&)));
+			connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 		}
 
 		if(options & OnlineStatusManager::DisabledIfOffline  && !account->isConnected())
