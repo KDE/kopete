@@ -116,9 +116,6 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 	int nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number_Auto_chatwindow" , 7) ;
 //	m_nbChatWindow=KGlobal::config()->readNumEntry( "Number_ChatWindow", 20) ;
 
-	if(!autoChatWindow ||  nbAutoChatWindow == 0)
-		return;
-
 	KopeteMessageManager *m_currentMessageManager=v->msgManager();
 	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
 	KopeteView *m_currentView=v;
@@ -131,6 +128,9 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 		m_loggers.insert(m_currentMessageManager , new HistoryGUIClient( m_currentMessageManager ) );
 		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
 	}
+
+	if(!autoChatWindow ||  nbAutoChatWindow == 0)
+		return;
 
 	HistoryLogger *l=m_loggers[m_currentMessageManager]->logger();
 	l->setPositionToLast();
