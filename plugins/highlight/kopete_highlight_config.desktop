@@ -7,8 +7,11 @@ ServiceTypes=KCModule
 X-KDE-ModuleType=Library
 X-KDE-Library=kcm_kopete_highlight
 X-KDE-FactoryName=HighlightConfigFactory
-X-KDE-ParentApp=kopete
-X-KDE-ParentComponents=kopete_highlight_plugin
+X-KDE-ParentApp=kopete_highlight
+X-KDE-ParentComponents=kopete_highlight
 
 Name=Highlight
+Name[da]=Fremhæv
+Name[sr]=Истицање
 Comment=Highlights text based on filters
+Comment[da]=Fremhæv tekst baseret på filtre

@@ -7,9 +7,11 @@ ServiceTypes=KCModule
 X-KDE-ModuleType=Library
 X-KDE-Library=kopete_nowlistening
 X-KDE-FactoryName=NowListeningConfigFactory
-X-KDE-ParentApp=kopete
-X-KDE-ParentComponents=kopete_nowlistening_plugin
+X-KDE-ParentApp=kopete_nowlistening
+X-KDE-ParentComponents=kopete_nowlistening
 
 Name=Now Listening
+Name[da]=Lytter nu
+Name[sr]=Сада слушам
 Comment=Tell your buddies what you're listening to
 

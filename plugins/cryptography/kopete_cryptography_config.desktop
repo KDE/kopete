@@ -7,9 +7,12 @@ ServiceTypes=KCModule
 X-KDE-ModuleType=Library
 X-KDE-Library=kopete_cryptography
 X-KDE-FactoryName=CryptographyConfigFactory
-X-KDE-ParentApp=kopete
-X-KDE-ParentComponents=kopete_cryptography_plugin
+X-KDE-ParentApp=kopete_cryptography
+X-KDE-ParentComponents=kopete_cryptography
 
 Name=Cryptography
+Name[da]=Kryptografi
+Name[sr]=Криптографија
 Comment=Encrypts messages using PGP
+Comment[da]=Krypterer beskeder ved brug af PGP
 
