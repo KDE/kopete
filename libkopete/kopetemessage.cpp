@@ -628,7 +628,7 @@ const QDomDocument KopeteMessage::asXML() const
 
 		//quick and simple hash algoritm.
 		int hash=0;
-		QString &contactId = d->from->contactId();
+		const QString &contactId = d->from->contactId();
 		for( uint f = 0; f < contactId.length(); ++f )
 			hash += contactId[f].latin1() * f;
 
