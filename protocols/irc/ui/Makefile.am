@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libkopeteircui.la
 AM_CPPFLAGS = -I$(srcdir)/../../../libkopete\
 	-I$(srcdir)/../../../libkopete/ui\
 	-I$(srcdir)/..\
-	-I$(srcdir)/../kirc \
+	-I$(srcdir)/../libkirc \
 	$(all_includes)
 
 libkopeteircui_la_METASOURCES = AUTO

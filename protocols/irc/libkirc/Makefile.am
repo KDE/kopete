@@ -7,6 +7,3 @@ METASOURCES = AUTO
 #Generates some warnings!!!
 KDE_ICON = AUTO
 
-#messages:
-#	 $(XGETTEXT) -ki18n -C $(kmerlin_SOURCES)  -o $(top_srcdir)/po/kmerlin.pot
-

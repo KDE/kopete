@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Feb 23 2002
     copyright            : (C) 2002 by Nick Betcher
-    email                : nbetcher@usinternet.com
+    email                : nbetcher@kde.org
 
 
  ***************************************************************************/
@@ -27,6 +27,7 @@
 #include <qfileinfo.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
+#include <qtimer.h>
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -37,25 +38,30 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 
-KIRC::KIRC()
+#include <unistd.h>
+#include <pwd.h>
+
+KIRC::KIRC(const QString host, const Q_UINT16 port)
 	: QSocket()
 {
 	attemptingQuit = false;
 	waitingFinishMotd = false;
 	loggedIn = false;
 	failedNickOnLogin = false;
+	mHost = host;
+	mUsername = getpwuid(getuid())->pw_name;
+
+	if (port == 0)
+		mPort = 6667;
+	else
+		mPort = port;
+
 	QObject::connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
 	QObject::connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	QObject::connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 	QObject::connect(this, SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
 	QObject::connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
-
-/*	codec = QTextCodec::codecForLocale();
-	if (KGlobal::locale()->country() == "jp") {
-		codec = QTextCodec::codecForName("iso-2022-jp");
-	}
-*/
 }
 
 KIRC::~KIRC()
@@ -67,11 +73,10 @@ Q_LONG KIRC::writeString(const QString &str)
 {
 	QCString s;
 	QTextCodec *codec = QTextCodec::codecForContent(str, str.length());
-	if (codec) {
+	if (codec)
 		s = codec->fromUnicode(str);
-	} else {
+	else
 		s = str.local8Bit();
-	}
 	return writeBlock(s.data(), s.length());
 }
 
@@ -414,7 +419,7 @@ void KIRC::slotReadyRead()
 					if (failedNickOnLogin == true)
 					{
 						// this is if we had a "Nickname in use" message when connecting and we set another nick. This signal emits that the nick was accepted and we are now logged in
-						emit loginNickNameAccepted(pendingNick);
+						emit successfullyChangedNick(mNickname, pendingNick);
 						mNickname = pendingNick;
 						failedNickOnLogin = false;
 					}
@@ -686,7 +691,7 @@ void KIRC::joinChannel(const QString &name)
 	/*
 	This will join a channel
 	*/
-	if (state() == QSocket::Connected && loggedIn == true)
+	if (state() == QSocket::Connected && loggedIn)
 	{
 		QString statement = "JOIN ";
 		statement.append(name.data());
@@ -700,13 +705,23 @@ void KIRC::quitIRC(const QString &reason)
 	/*
 	This will quit IRC
 	*/
-	if (state() == QSocket::Connected && loggedIn == true && attemptingQuit == false)
+	if (state() == QSocket::Connected && loggedIn && !attemptingQuit)
 	{
 		attemptingQuit = true;
 		QString statement = "QUIT :";
 		statement.append(reason);
 		statement.append("\r\n");
 		writeString(statement);
+		QTimer::singleShot(10000, this, SLOT(quitTimeout()));
+	}
+}
+
+void KIRC::quitTimeout()
+{
+	if (state() == QSocket::Connected && attemptingQuit)
+	{
+		attemptingQuit = false;
+		close();
 	}
 }
 
@@ -826,10 +841,6 @@ void KIRC::messageContact(const QString &contact, const QString &message)
 		statement.append(message);
 		statement.append("\r\n");
 		writeString(statement);
-		if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
-			emit incomingPrivMessage(mNickname, contact, message);
-		else
-			emit incomingMessage(mNickname, contact, message);
 	}
 }
 
@@ -868,20 +879,18 @@ void KIRC::slotConnected()
 	ident.append(mUsername);
 	ident.append(" 127.0.0.1 ");
 	ident.append(mHost);
-	ident.append(" :Using Kopete IRC Plugin 0.1 ");
+	ident.append(" :Using Kopete IRC Plugin 2.0 ");
 	ident.append("\r\nNICK ");
 	ident.append(mNickname);
 	ident.append("\r\n");
 	writeString(ident);
-	
+
 }
 
-void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname)
+void KIRC::connectToServer(const QString &nickname)
 {
-	mUsername = username;
 	mNickname = nickname;
-	mHost = host;
-	connectToHost(host, port);
+	connectToHost(mHost, mPort);
 	emit connecting();
 }
 

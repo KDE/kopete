@@ -1,8 +1,8 @@
-SUBDIRS = ui pixmaps kirc
+SUBDIRS = ui pixmaps libkirc
 AM_CPPFLAGS = -I$(srcdir)/ui -I$(srcdir)/../../libkopete \
 		-I$(srcdir)/../../libkopete/ui \
 		-I./ui \
-		-I$(srcdir)/kirc \
+		-I$(srcdir)/libkirc \
 		$(all_includes)
 kde_module_LTLIBRARIES = kopete_irc.la
 
@@ -11,7 +11,7 @@ kopete_irc_la_METASOURCES = AUTO
 kopete_irc_la_LDFLAGS     = -module $(KDE_PLUGIN) $(all_libraries) 
 kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \
 		./ui/libkopeteircui.la \
-		./kirc/libkirc.la \
+		./libkirc/libkirc.la \
 		$(LIB_KIO)
 
 data_DATA = irc.desktop

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Dec 26 2001
     copyright            : (C) 2002 by Nick Betcher
-    email                : nbetcher@usinternet.com
+    email                : nbetcher@kde.org
 
 
  ***************************************************************************/
@@ -33,15 +33,16 @@ class QHostAddress;
 class KIRC : public QSocket {
 Q_OBJECT
 public:
-	KIRC();
+	KIRC(const QString host, const Q_UINT16 port);
 	~KIRC();
-	void connectToServer(const QString host, Q_UINT16 port, const QString, const QString);
+	void connectToServer(const QString &);
 	void joinChannel(const QString &);
 	void messageContact(const QString &contact, const QString &message);
 	void actionContact(const QString &contact, const QString &message);
-	QString &userName() { return mUsername; };
-	QString &nickName() { return mNickname; };
-	QString &host() { return mHost; };
+	const QString &nickName() { return mNickname; };
+	const QString &host() { return mHost; };
+	Q_UINT16 port() { return mPort; }
+	const QString &password() { return mPasswd; }
 	bool isLoggedIn() { return loggedIn; };
 	void changeNickname(const QString &newNickname);
 	void partChannel(const QString &name, const QString &reason);
@@ -56,6 +57,7 @@ public:
 	void whoisUser(const QString &user);
 	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
 	void sendNotice(const QString &target, const QString &message);
+	void setPassword(const QString &passwd) { mPasswd = passwd; }
 enum UserClass
 {
 	Normal = 0,
@@ -72,6 +74,7 @@ private slots:
 	void slotReadyRead();
 	void slotBytesWritten(int);
 	void slotError(int);
+	void quitTimeout();
 signals:
 	void connecting();
 	void incomingMotd(const QString &motd);
@@ -97,7 +100,6 @@ signals:
 	void incomingNickInUse(const QString &usingNick);
 	void successfullyChangedNick(const QString &, const QString &);
 	void incomingNickChange(const QString &, const QString &);
-	void loginNickNameAccepted(const QString &);
 	void incomingFailedNickOnLogin(const QString &);
 	void incomingTopicChange(const QString &, const QString &, const QString &);
 	void incomingExistingTopic(const QString &, const QString &);
@@ -122,7 +124,6 @@ signals:
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;
-	QString mUsername;
 	QString mNickname;
 	QString mHost;
 	bool failedNickOnLogin;
@@ -131,6 +132,9 @@ private:
 	QString mVersionString;
 	QString mUserString;
 	QString mSourceString;
+	Q_UINT16 mPort;
+	QString mUsername;
+	QString mPasswd;
 };
 
 #endif
