@@ -1283,7 +1283,7 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 					if ((u.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
 						(u.lastExtInfoUpdateTime == 0xFFFFFFFFL))
 					{
-						u.clientName=QString::fromLatin1("Gaim");
+						u.clientName=QString::null; /*QString::fromLatin1("Gaim");*/
 					}
 					else
 					{
