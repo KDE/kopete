@@ -17,8 +17,6 @@
 
 #include <sys/select.h>
 
-#include <qmutex.h>
-#include <qthread.h>
 #include <qtimer.h>
 #include <qsocketnotifier.h>
 
