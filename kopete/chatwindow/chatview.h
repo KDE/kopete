@@ -68,7 +68,7 @@ private:
 	KopeteView *m_view;
 
 private slots:
-	void slotProperyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus & );
 	void slotExecute( QListViewItem* );
 };
@@ -344,7 +344,7 @@ private slots:
 	void slotRemoteTypingTimeout();
 	void slotScrollView();
 	void slotAppearanceChanged();
-	void slotProperyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * Called when a contact is added to the KMM instance (A new person joins the chat).

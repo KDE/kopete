@@ -779,7 +779,7 @@ void ChatView::slotChatDisplayNameChanged()
 		setCaption( chatName, true );
 }
 
-void ChatView::slotProperyChanged( KopeteContact*, const QString &key,
+void ChatView::slotPropertyChanged( KopeteContact*, const QString &key,
 		const QVariant& oldValue, const QVariant &newValue  )
 {
 	if( key == Kopete::Global::Properties::self()->nickName().key() )
@@ -802,7 +802,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 	{
 		QString contactName = c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 		connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			this, SLOT( slotPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		mComplete->addItem( contactName );
 
@@ -843,7 +843,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 		if ( msgManager()->members().count() > 0 )
 		{
 			disconnect(contact,SIGNAL(propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & )),
-				this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+				this, SLOT( slotPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 		}
 
 		if ( reason.isEmpty() )
@@ -1845,7 +1845,7 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 	QString nick=m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
 	setText( 0, /*QString::fromLatin1( " " ) +*/ (nick.isEmpty() ? m_contact->contactId() : nick) );
 	connect( m_contact, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			this, SLOT( slotPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
 
@@ -1859,7 +1859,7 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 		view->msgManager()->contactOnlineStatus(m_contact) );
 }
 
-void KopeteContactLVI::slotProperyChanged( KopeteContact*, const QString &key,
+void KopeteContactLVI::slotPropertyChanged( KopeteContact*, const QString &key,
 		const QVariant&, const QVariant &newValue  )
 {
 	if( key == Kopete::Global::Properties::self()->nickName().key() )
