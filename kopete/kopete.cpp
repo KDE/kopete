@@ -346,7 +346,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 				{
 					startIdx = idx;
 					while (
-						(startIdx>0) &&
+						(startIdx>=0) &&
 						(startIdx>(uint)(lastReplacement+1)) &&
 						(text[startIdx-1]!=' ') &&
 						(text[startIdx-1]!='\t') &&
@@ -361,7 +361,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						startIdx--;
 					}
 
-//					kdDebug() << "found start of email addy at:" << startIdx << endl;
+					kdDebug() << "found start of email addy at:" << startIdx << endl;
 
 					regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if ( regExp.search(text,startIdx) != -1 )
