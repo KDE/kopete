@@ -176,7 +176,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 		}
 	}
 	status_ = status;
-	myself_->setOnlineStatus( status_ );
+	myself_->setOnlineStatus( status_, descr );
   if ( status_.internalStatus() == GG_STATUS_NOT_AVAIL ||
        status_.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
     if (pingTimer_){
@@ -199,7 +199,7 @@ GaduAccount::slotLogin( int status, const QString& dscr  )
 		return;
 	}
 */
-	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ) );
+	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 	if ( !session_->isConnected() ) {
 		session_->login( accountId().toInt(), getPassword(), status, dscr );
 	} else {
@@ -362,6 +362,7 @@ GaduAccount::notify( struct gg_event* e )
 	    ++n;
 	    continue;
 	}	
+
 	c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( n->status ) );
 	++n;
     }
@@ -382,7 +383,7 @@ GaduAccount::notifyDescription( struct gg_event* e )
 	if ( c->onlineStatus() ==  GaduProtocol::protocol()->convertStatus( n->status ) )
 	    continue;
 	c->setDescription( descr );
-	c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( n->status ) );
+	c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( n->status ), descr );
     }
 }
 
@@ -394,7 +395,8 @@ GaduAccount::statusChanged( struct gg_event* e )
     if( !c )
 	return;
     c->setDescription( e->event.status.descr );
-    c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status.status ) );
+    c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status.status ),
+			e->event.status.descr  );
 }
 
 void

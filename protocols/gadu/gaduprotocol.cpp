@@ -108,6 +108,53 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
 		kdWarning(14100)<<"CONTACTS ARE BEING DESERIALIZED BEFORE AN ACCOUNT!!!"<<endl;
 }
 
+uint
+GaduProtocol::statusToWithDescription( KopeteOnlineStatus status )
+{
+	
+    if ( status==gaduStatusOffline_ || status==gaduStatusOfflineDescr_){
+	return GG_STATUS_NOT_AVAIL_DESCR;
+    }
+	
+    if ( status==gaduStatusBusyDescr_ || status==gaduStatusBusy_){
+	return GG_STATUS_BUSY_DESCR;
+    }
+		
+    if ( status==gaduStatusInvisibleDescr_ || status==gaduStatusInvisible_){
+	return GG_STATUS_INVISIBLE_DESCR;
+    }	
+
+    // this and anything else matches next return
+    //	
+    //if ( status==gaduStatusAvailDescr_ || status==gaduStatusAvail_){
+    //	return GG_STATUS_AVAIL_DESCR;
+    //}
+
+    return GG_STATUS_AVAIL_DESCR;
+
+}
+
+bool 
+GaduProtocol::statusWithDesciption( uint status )
+{
+    switch( status )
+    {
+	case GG_STATUS_NOT_AVAIL:
+	case GG_STATUS_BUSY:
+	case GG_STATUS_INVISIBLE:
+	case GG_STATUS_AVAIL:
+	case GG_STATUS_CONNECTING:
+	    return false;
+	case GG_STATUS_INVISIBLE_DESCR:
+	case GG_STATUS_NOT_AVAIL_DESCR:
+	case GG_STATUS_BUSY_DESCR:
+	case GG_STATUS_AVAIL_DESCR:
+	    return true;
+    }
+
+    return false;
+}
+
 KopeteOnlineStatus
 GaduProtocol::convertStatus( uint status ) const
 {

@@ -19,11 +19,17 @@ GaduAway::GaduAway( GaduAccount *account, QWidget* parent,
 								 KDialogBase::Ok | KDialogBase::Apply |  KDialogBase::Cancel,
 								 KDialogBase::Ok, true ), account_( account )
 {
+	KopeteOnlineStatus ks;
+		
 	ui_ = new GaduAwayUI( this );
 	setMainWidget( ui_ );
+
+	ks = account->myself()->onlineStatus();
 	
-//	ui_->statusGroup_->setButton(account->myself()->onlineStatus());
-//	ui_->textEdit_->setText(account->myself()->onlineStatus().caption());
+	ui_->statusGroup_->setButton( 
+			GaduProtocol::protocol()->statusToWithDescription(ks) );
+
+	ui_->textEdit_->setText(account->myself()->statusDescription() );
 	connect( this, SIGNAL(applyClicked()), SLOT(slotApply()) );
 }
 
@@ -36,6 +42,7 @@ QString GaduAway::awayText() const
 {
 	return ui_->textEdit_->text();
 }
+
 
 void GaduAway::slotApply()
 {

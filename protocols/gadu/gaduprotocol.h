@@ -70,6 +70,9 @@ public:
 	//!Plugin reimplementation
 
 	KopeteOnlineStatus convertStatus( uint ) const;
+	bool statusWithDesciption( uint status );
+
+	uint statusToWithDescription( KopeteOnlineStatus status );
 
 private slots:
 	void settingsChanged();
