@@ -370,32 +370,32 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	generalInfo = inf;
 
 	if(!generalInfo.firstName.isEmpty())
-		setProperty("firstName", i18n("First Name"), generalInfo.firstName);
+		setProperty("firstName", generalInfo.firstName);
 	else
 		removeProperty("firstName");
 
 	if(!generalInfo.lastName.isEmpty())
-		setProperty("lastName", i18n("Last Name"), generalInfo.lastName);
+		setProperty("lastName", generalInfo.lastName);
 	else
 		removeProperty("lastName");
 
 	if(!generalInfo.eMail.isEmpty())
-		setProperty("emailAddress", i18n("eMail"), generalInfo.eMail);
+		setProperty("emailAddress", generalInfo.eMail);
 	else
 		removeProperty("emailAddress");
 
 	if(!generalInfo.phoneNumber.isEmpty())
-		setProperty("privPhoneNum", i18n("Private Phone Number"), generalInfo.phoneNumber);
+		setProperty("privPhoneNum", generalInfo.phoneNumber);
 	else
 		removeProperty("privPhoneNum");
 
 	if(!generalInfo.faxNumber.isEmpty())
-		setProperty("privFaxNum", i18n("Private Fax Number"), generalInfo.faxNumber);
+		setProperty("privFaxNum", generalInfo.faxNumber);
 	else
 		removeProperty("privFaxNum");
 
 	if(!generalInfo.cellularNumber.isEmpty())
-		setProperty("privMobileNum", i18n("Private Mobile Number"), generalInfo.cellularNumber);
+		setProperty("privMobileNum", generalInfo.cellularNumber);
 	else
 		removeProperty("privMobileNum");
 

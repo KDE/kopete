@@ -730,7 +730,7 @@ void OscarContact::setAwayMessage(const QString &message)
 {
 	/*kdDebug(14150) << k_funcinfo <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
-	setProperty("awayMessage", i18n("Away Message"), message);
+	setProperty("awayMessage", message);
 	emit awayMessageChanged();
 }
 
