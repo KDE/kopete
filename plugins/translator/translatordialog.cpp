@@ -15,18 +15,27 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <ktextedit.h>
 #include <klocale.h>
+#include <kdeversion.h>
+#if KDE_VERSION < 305
+#include <qtextedit.h>
+#else
+#include <ktextedit.h>
+#endif
  
 #include "translatordialog.h"
 
 
 TranslatorDialog::TranslatorDialog(const QString &text,QWidget *parent, const char *name ) : KDialogBase(parent,name,true,i18n("Translator Plugin"), Ok)
 {
+
+#if KDE_VERSION < 305
+	m_textEdit=new QTextEdit(this);
+#else
 	m_textEdit=new KTextEdit(this);
+#endif
 	setMainWidget(m_textEdit);
 	m_textEdit->setText(text);
-//	connect(this, SIGNAL(finished()) , this, SLOT(slotFinished());
 }
 TranslatorDialog::~TranslatorDialog()
 {

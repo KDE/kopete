@@ -22,8 +22,11 @@
 #include <kdialogbase.h>
 
 //#include <kopetemessage.h>
-
+#if KDE_VERSION < 305
+class QTextEdit;
+#else
 class KTextEdit;
+#endif
 
 /**
   *@author Olivier Goffart
@@ -38,7 +41,11 @@ public:
 	QString translatedText();
 
 private:
+#if KDE_VERSION < 305
+	QTextEdit *m_textEdit;
+#else
 	KTextEdit *m_textEdit;
+#endif
 private slots: // Public slots
 //  void slotFinished();
 };
