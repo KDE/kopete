@@ -53,9 +53,9 @@ const int NUM_SERVERS = 5;
 const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.88",
  	"217.17.41.85",
-	"217.17.41.87", 
-	"217.17.41.86", 
-	"217.17.41.84", 
+	"217.17.41.87",
+	"217.17.41.86",
+	"217.17.41.84",
 };
 
  GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
@@ -71,7 +71,7 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 
 	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL );
 	lastDescription = QString::null;
-	
+
 	for ( int i = 0; i < NUM_SERVERS; i++ ) {
 		ip.setAddress( QString( servers_ip[i] ) );
 		servers_.append( ip );
@@ -117,7 +117,7 @@ GaduAccount::initConnections()
 				SLOT( userListExportDone() ) );
 }
 
-void 
+void
 GaduAccount::loaded()
 {
 	QString nick;
@@ -127,7 +127,7 @@ GaduAccount::loaded()
 	}
 }
 
-void 
+void
 GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
 	unsigned int currentStatus;
@@ -142,7 +142,7 @@ GaduAccount::setAway( bool isAway, const QString& awayMessage )
 }
 
 
-KActionMenu* 
+KActionMenu*
 GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
@@ -189,20 +189,20 @@ GaduAccount::actionMenu()
 	return actionMenu_;
 }
 
-void 
+void
 GaduAccount::connect()
 {
 	slotGoOnline();
 }
 
-void 
+void
 GaduAccount::disconnect()
 {
 	slotGoOffline();
 	connectWithSSL=true;
 }
 
-bool 
+bool
 GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
 					 KopeteMetaContact* parentContact )
 {
@@ -263,7 +263,8 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 		}
 	}
 
-	myself()->setOnlineStatus( status, descr );
+	myself()->setOnlineStatus( status );
+	myself()->setProperty( "awayMessage", descr );
 
 	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( pingTimer_ ){
@@ -277,9 +278,11 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 {
 	lastDescription	= dscr;
 
-	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
+	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ));
+	myself()->setProperty( "awayMessage", dscr );
 
-	if ( !session_->isConnected() ) { 
+
+	if ( !session_->isConnected() ) {
 		if ( password().isEmpty() ) {
 			connectionFailed( GG_FAILURE_PASSWORD );
 		}
@@ -428,7 +431,7 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 		kdDebug(14100) << "### NOTIFY " << (*notifyListIterator)->contact_id << " " << (*notifyListIterator)->status << endl;
 		contact = static_cast<GaduContact*> ( contacts()[ QString::number( (*notifyListIterator)->contact_id ) ] );
 
-		if ( !contact) {
+		if ( !contact ) {
 			kdDebug(14100) << "Notify not in the list " << (*notifyListIterator)->contact_id << endl;
 			session_->removeNotify((*notifyListIterator)->contact_id );
 			continue;
@@ -437,10 +440,13 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 		if ( (*notifyListIterator)->description.isNull() ) {
 			contact->setDescription( QString::null );
 			contact->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
+			myself()->removeProperty( "awayMessage" );
+
 		}
 		else {
-			contact->setDescription( (*notifyListIterator)->description  );
-			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ), contact->description() );
+			contact->setDescription( (*notifyListIterator)->description );
+			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
+			myself()->setProperty( "awayMessage", contact->description() );
 		}
 	}
 }
@@ -460,10 +466,12 @@ GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 	if ( gaduNotify->description.isEmpty() ) {
 		contact->setDescription( QString::null );
 		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
+			myself()->removeProperty( "awayMessage" );
 	}
 	else {
 		contact->setDescription( gaduNotify->description );
-		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ), contact->description() );
+		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
+		myself()->setProperty( "awayMessage", contact->description() );
 	}
 
 /// FIXME: again, store this information
@@ -492,7 +500,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 	bool tryReconnect = false;
 	QString pass;
 
-			
+
 	switch (failure) {
 		case GG_FAILURE_PASSWORD:
 			pass = password( true );
@@ -786,7 +794,7 @@ GaduAccount::slotDescription()
 	delete away;
 }
 
-bool 
+bool
 GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 			    int UIN, QString& city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive )
@@ -795,13 +803,13 @@ GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 							ageFrom, ageTo, onlyAlive );
 }
 
-void 
+void
 GaduAccount::pubDirSearchClose()
 {
 	session_->pubDirSearchClose();
 }
 
-void 
+void
 GaduAccount::slotSearchResult( const searchResult& result )
 {
 	emit pubDirSearchResult( result );
@@ -819,7 +827,7 @@ GaduAccount::useTls()
 	return Tls;
 }
 
-void 
+void
 GaduAccount::setUseTls( tlsConnection ut )
 {
 	if ( ut < 0 || ut > 2 ) {
