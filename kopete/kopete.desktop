@@ -4,3 +4,4 @@ Name[es]=
 Exec=kopete %i %m -caption "%c"
 Type=Application
 Terminal=0
+Icon=kopete
