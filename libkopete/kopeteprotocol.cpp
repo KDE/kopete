@@ -21,6 +21,8 @@
 
 #include <kdebug.h>
 #include <kaction.h>
+#include <klocale.h>
+
 #include <qdict.h>
 
 #include "kopeteaccountmanager.h"
@@ -44,6 +46,8 @@ public:
 	 */
 	ContactPropertyTmpl mStickLastSeen;
 	ContactPropertyTmpl mStickFullName;
+	
+	Kopete::OnlineStatus accountNotConnectedStatus;
 };
 
 Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
@@ -54,6 +58,7 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
 	d->capabilities = 0;
+	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QString::fromLatin1( "account_offline_overlay" ), i18n( "Account Offline" ) );
 }
 
 Protocol::~Protocol()
@@ -79,6 +84,12 @@ unsigned int Protocol::capabilities() const
 void Protocol::setCapabilities( unsigned int capabilities )
 {
 	d->capabilities = capabilities;
+}
+
+
+Kopete::OnlineStatus Protocol::accountOfflineStatus() const
+{
+	return d->accountNotConnectedStatus;
 }
 
 void Protocol::slotAccountOnlineStatusChanged( Contact *self )

@@ -21,6 +21,7 @@
 #define KOPETEPROTOCOL_H
 
 #include "kopeteplugin.h"
+#include "kopeteonlinestatus.h"
 
 class KopeteEditAccountWidget;
 class AddContactPage;
@@ -148,6 +149,11 @@ public:
 		CanSendOffline = 0x10000
 
 	};
+	
+	/**
+	 * @brief Returns the status used for contacts when accounts of this protocol are offline
+	 */
+	Kopete::OnlineStatus accountOfflineStatus() const;
 
 
 protected:
