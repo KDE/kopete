@@ -4,7 +4,6 @@ INCLUDES = -I$(top_srcdir)/protocols/groupwise/libgroupwise/qca/src \
 METASOURCES = AUTO
 noinst_LTLIBRARIES = libgroupwise_tasks.la
 
-libgroupwise_tasks_la_LDFLAGS = -no-undefined $(all_libraries)
 libgroupwise_tasks_la_SOURCES = requesttask.cpp eventtask.cpp logintask.cpp \
 		setstatustask.cpp statustask.cpp conferencetask.cpp createconferencetask.cpp \
 		sendmessagetask.cpp getdetailstask.cpp getstatustask.cpp typingtask.cpp connectiontask.cpp \
@@ -20,3 +19,10 @@ noinst_HEADERS = requesttask.h eventtask.h logintask.h setstatustask.h \
 		modifycontactlisttask.h createfoldertask.h movecontacttask.h updateitemtask.h deleteitemtask.h \
 		updatefoldertask.h updatecontacttask.h searchtask.h pollsearchresultstask.h \
 		privacyitemtask.h needfoldertask.h
+
+
+libgroupwise_tasks_la_LDFLAGS = -no-undefined $(all_libraries)
+libgroupwise_tasks_la_LIBADD = $(LIB_QT)
+
+
+
