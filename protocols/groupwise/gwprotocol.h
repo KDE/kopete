@@ -80,7 +80,8 @@ public:
 	const KopeteOnlineStatus groupwiseAwayIdle;
 	const KopeteOnlineStatus groupwiseInvalid;
 	const KopeteOnlineStatus groupwiseConnecting;
-	
+	const KopeteOnlineStatus groupwiseAppearOffline;
+
 	/**
 	 * Represents contacts that are Away
 	 */

@@ -53,6 +53,8 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ) ),
 	  groupwiseConnecting( KopeteOnlineStatus::Unknown, 0, this, 99, "status_connecting",
 	  		"FIXME: Make this unselectable", i18n( "Connecting" ) ),
+	  groupwiseAppearOffline( KopeteOnlineStatus::Online,22, this, 98, "jabber_invisible",
+	  		i18n( "A&ppear Offline" ), i18n( "Appear Offline" ) ),
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
@@ -60,6 +62,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString::null, false, false ),
 	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false )
 {
+	// ^^ That is all member initialiser syntax, not broken indentation!
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	s_protocol = this;

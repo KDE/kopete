@@ -660,7 +660,10 @@ void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status
 
 void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString & awayMessage, const QString & autoReply )
 {
-	myself()->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
+	if ( status == GroupWise::Offline )
+		myself()->setOnlineStatus( protocol()->groupwiseAppearOffline );
+	else
+		myself()->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
 	myself()->setProperty( protocol()->propAwayMessage, awayMessage );
 	myself()->setProperty( protocol()->propAutoReply, autoReply );
 }

@@ -26,6 +26,7 @@
 #include "gwaccount.h"
 #include "gwcontact.h"
 #include "gwerror.h"
+#include "gwprotocol.h"
 
 #include "gwmessagemanager.h"
 
@@ -173,8 +174,9 @@ void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int 
 
 void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	if ( !m_guid.isEmpty() )
+	// only send a notification if we've got a conference going and we are not Appear Offline
+	if ( !m_guid.isEmpty() &&
+		  ( account()->myself()->onlineStatus() != ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline ) )
 		account()->client()->sendTyping( guid(), typing );
 }
 
@@ -189,6 +191,13 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
+		else if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
+		{
+			KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), KopeteMessage::Internal, KopeteMessage::PlainText);
+			appendMessage( failureNotify );
+			messageSucceeded();
+		}
+
 		else
 		{
 			if ( m_guid.isEmpty() )

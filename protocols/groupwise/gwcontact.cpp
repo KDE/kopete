@@ -100,8 +100,15 @@ GroupWiseAccount *GroupWiseContact::account()
 
 bool GroupWiseContact::isReachable()
 {
-	//TODO: use status to determine reachability
-    return true;
+	// When we are invisible we can't start a chat with others, but we don't make isReachable return false, because then we
+	// don't get any notification when we click on someone in the contact list.  Instead we warn the user when they try to send a message,
+	// in GWMessageManager
+	// (This is a GroupWise rule, not a problem in Kopete)
+
+	if ( account()->isConnected() && isOnline()/* && account()->myself()->onlineStatus() != protocol()->groupwiseAppearOffline */)
+		return true;
+	if ( !account()->isConnected()/* || account()->myself()->onlineStatus() == protocol()->groupwiseAppearOffline*/ )
+		return false;
 }
 
 void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
