@@ -164,7 +164,7 @@ void IRCChannelContact::slotConnectedToServer()
 void IRCChannelContact::namesList(const QStringList &nicknames)
 {
 	mInfoTimer->stop();
-	mJoinedNicks = nicknames;
+	mJoinedNicks += nicknames;
 	slotAddNicknames();
 }
 
