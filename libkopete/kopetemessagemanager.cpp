@@ -51,6 +51,10 @@ struct KMMPrivate
 	bool mLog;
 	bool isEmpty;
 	bool mCanBeDeleted;
+
+
+	//say if ye're currently reading message, and don't accept new message durring this time
+	bool isBusy;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
@@ -71,6 +75,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	d->mLog = (logFile.isEmpty()) ? false : true;
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted= false;
+	d->isBusy=false;
 
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
@@ -128,7 +133,7 @@ void KopeteMessageManager::newChatWindow()
 		d->mChatWindow->setSendEnabled(d->mSendEnabled);
 
 		/* When the window is shown, we have to delete this contact event */
-		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
+//		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect (d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
 		connect (d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
@@ -206,29 +211,24 @@ bool KopeteMessageManager::emptyMessageBuffer()
 	if ((d->mWidget == ChatWindow && !d->mChatWindow) ||
 	    (d->mWidget == Email && !d->mEmailWindow) )
 	{
-		kdDebug() << "[KopeteMessageManager::emptyMessageBuffer] mChatWindow just doesn't exist" << endl;
+		kdDebug() << "KopeteMessageManager::emptyMessageBuffer: mChatWindow just doesn't exist" << endl;
 		newChatWindow();
 	}
 
 	bool foreignMessage = false;
 	for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it = d->mMessageQueue.begin())
 	{
-		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
+//		kdDebug() << "KopeteMessageManager::emptyMessageBuffer: Inserting message from " << (*it).from()->displayName() << endl;
 		if ( (*it).from() != d->mUser )
 			foreignMessage = true;
 
-		KopeteMessage msg=*it;
-		//It is verry important to remove the message from the queue before
-		// emiting the message, because some plugin (translator, cryptography)
-		// can don't return imediatly. Then, if a new message arrive, same
-		// message is interpreted several times by the plugin, and finaly, crash
-		d->mMessageQueue.remove(it);
-
-		emit messageReceived( msg );
+		emit messageReceived( *it );
 		if ( d->mWidget == ChatWindow ) // ### why don't they implement the same interface?
-			d->mChatWindow->messageReceived(msg);
+			d->mChatWindow->messageReceived(*it);
 		else if ( d->mWidget == Email )
-			d->mEmailWindow->messageReceived(msg);
+			d->mEmailWindow->messageReceived(*it);
+
+		d->mMessageQueue.remove(it);
 	}
 	d->mMessageQueue.clear();
 	return foreignMessage;
@@ -236,28 +236,32 @@ bool KopeteMessageManager::emptyMessageBuffer()
 
 void KopeteMessageManager::readMessages()
 {
-	if ((d->mWidget == ChatWindow && !d->mChatWindow) ||
-	    (d->mWidget == Email && !d->mEmailWindow) )
+	if(d->isBusy)
 	{
-		kdDebug() << "[KopeteMessageManager] mChatWindow just doesn't exist" << endl;
-		newChatWindow();
+		kdDebug() << "KopeteMessageManager::readMessages: Busy! A plugin is working on a precedent message" << endl;
+		return;
 	}
 
+	if (!widget())
+	{
+		kdDebug() << "KopeteMessageManager::readMessages: mChatWindow just doesn't exist" << endl;
+		newChatWindow();
+	}
 	QWidget *window = widget();
-
 	if ( !window )
 	{
-		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << d->mWidget << endl;
+		kdDebug() << "KopeteMessageManager::readMessages: WARNING: cannot get the ChatWindow"  << endl;
 		d->mMessageQueue.clear();
 		return;
 	}
 
-	if (window->isMinimized())
+/*	if (window->isMinimized())
 		kdDebug() << "[KopeteMessageManager] window is minimized" << endl;
 	if (window->isHidden())
-		kdDebug() << "[KopeteMessageManager] window is hidden" << endl;
+		kdDebug() << "[KopeteMessageManager] window is hidden" << endl;*/
 
-	bool queueEmpty = d->mMessageQueue.isEmpty() ;
+	d->isBusy=true;
+	bool queueEmpty = d->mMessageQueue.isEmpty();
 	bool foreignMessage = emptyMessageBuffer();
 
 	// only show the window when a message from someone else (i.e. not an own message) arrived or
@@ -271,6 +275,7 @@ void KopeteMessageManager::readMessages()
 		}
 		window->show();	// show message window again (but not for own messages)
 	}
+	d->isBusy=false;
 }
 
 const KopeteContactPtrList& KopeteMessageManager::members() const
@@ -560,7 +565,7 @@ void KopeteMessageManager::setCurrentMessage(const KopeteMessage& t)
 	{
 		if (d->mChatWindow)
 		{
-			return d->mChatWindow->setCurrentMessage(t);
+			d->mChatWindow->setCurrentMessage(t);
 		}
 	}
 }

@@ -52,50 +52,37 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(cons
 	KopeteMessageManager* result = 0;
 
 	it = QIntDictIterator<KopeteMessageManager>( protocolSessions );
-	for ( KopeteMessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  ) {
-		if ( user == kmm->user() && widget == kmm->widgetType()) {
-
-			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;
+	for ( KopeteMessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  )
+	{
+		if ( user == kmm->user() && widget == kmm->widgetType())
+		{
 			QPtrList<KopeteContact> contactlist = kmm->members();
 
 			// set this to false if chatContacts doesn't contain current kmm's contactlist
 			bool halfMatch = true;
 
 			KopeteContact *tmpContact;
-			for (tmpContact = contactlist.first(); tmpContact && halfMatch; tmpContact = contactlist.next()) {
+			for (tmpContact = contactlist.first(); tmpContact && halfMatch; tmpContact = contactlist.next())
+			{
 				if ( !chatContacts.containsRef( tmpContact ) )
-				{
-					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << /* THIS CAUSES CRASHES, DONT ENABLE tmpContact->displayName() << */ "\" not found! in chatContacts" << endl;
 					halfMatch = false;
-				}
 			}
 
 			// If chatContacts contains current kmm's contactlist, try the other way around
-			if (halfMatch) {
-
+			if (halfMatch)
+			{
 				bool fullMatch = true;
-				for (tmpContact = chatContacts.first(); tmpContact && fullMatch; tmpContact = chatContacts.next()) {
+				for (tmpContact = chatContacts.first(); tmpContact && fullMatch; tmpContact = chatContacts.next())
+				{
 					if ( !contactlist.containsRef( tmpContact ) )
-					{
-						kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << tmpContact->displayName() << "\" not found! in contactlist" << endl;
 						fullMatch = false;
-					}
 				}
-
 				// We have a winner
-				if (fullMatch) {
-					kdDebug()<<"### That's not cool - found one"<<endl;
+				if (fullMatch)
 					result = kmm;
-				}
-
 			}
-
-		} else {
-			kdDebug() << "[KopeteMessageManagerFactory] User doesn't match, trying next session" << endl;
-		}
-
+		} 
 	}
-
 	return result;
 }
 
@@ -149,7 +136,6 @@ KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopetePr
 		if ( it.current()->protocol() == protocol )
 		{
 			protocolSessions.insert( it.current()->id(), it.current() );
-//			kdDebug() << "KopeteMessageManagerFactory::protocolSessions : found one" << endl;
 		}
 	}
 	return protocolSessions;
@@ -158,13 +144,10 @@ KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopetePr
 void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
 	KopeteMessageManagerDict sessions=protocolSessions( protocol );
-//	kdDebug() << "KopeteMessageManagerFactory::cleanSessions " <<sessions.count() << endl;
 	QIntDictIterator<KopeteMessageManager> it( sessions );
 	
 	for ( ; it.current() ; ++it )
 	{
-//		kdDebug() << "KopeteMessageManagerFactory::cleanSessions : delete one later" << endl;
-		//slotRemoveSession( it.current() );
 		it.current()->deleteLater();
 	}
 }
