@@ -34,7 +34,7 @@ static QTextStream _out( stdout, IO_WriteOnly );
 void openWallet()
 {
 	KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet();
-	_out << "[SYNC] Recieved wallet pointer: " << wallet << endl;
+	_out << "[SYNC] Received wallet pointer: " << wallet << endl;
 }
 
 void closeWallet()
@@ -51,13 +51,13 @@ void delay()
 void openWalletAsync()
 {
 	WalletReciever *r = new WalletReciever;
-	_out << "[ASYNC] About to open wallet, reciever: " << r << endl;
+	_out << "[ASYNC] About to open wallet, receiver: " << r << endl;
 	KopeteWalletManager::self()->openWallet( r, SLOT( gotWallet(  KWallet::Wallet* ) ) );
 }
 
 void WalletReciever::gotWallet( KWallet::Wallet *w )
 {
-	_out << "[ASYNC] Recieved wallet pointer: " << w << " for reciever: " << this << endl;
+	_out << "[ASYNC] Received wallet pointer: " << w << " for receiver: " << this << endl;
 }
 
 void WalletReciever::timer()

@@ -67,7 +67,7 @@
                                             <string>The hostname you would like to use to send WinPopup messages as.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to recieve them.</string>
+                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
                                         </property>
                                     </widget>
                                     <widget class="QLabel" row="0" column="0">
@@ -84,7 +84,7 @@
                                             <string>The hostname you would like to use to send WinPopup messages as.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to recieve them.</string>
+                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
                                         </property>
                                     </widget>
                                 </grid>
