@@ -365,14 +365,19 @@ void MSNProtocol::slotConnected()
 					exists++;
 				}
 			}
-			/* Groups doesnt matches any server group */
-			if (exists == 0)
-			{
-				QString notexistsMsg = i18n("the group ") + localgroup + i18n(" doesn't exists in MSN server group list, if you want to move a MSN contact to this group you need to add it to MSN server, do you want to add this group to the server group list?");
-				kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
-				//useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
-				engine->groupAdd( localgroup );
 
+			/* Groups doesnt match any server group */
+			if ( exists == 0 )
+			{
+				kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
+				/*
+				QString notexistsMsg = i18n(
+					"the group %1 doesn't exist in MSN server group list, if you want to move" \
+					" a MSN contact to this group you need to add it to MSN server, do you want" \
+					" to add this group to the server group list?" ).arg(localgroup);
+				useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
+				*/
+				engine->groupAdd( localgroup );
 			}
 		}
 	}
@@ -398,18 +403,16 @@ void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 	}
 	else
 	{
-		kdDebug() << "MSN Plugin: Incoming chat , no window, creating window for " << reqUserID <<"\n";
+		kdDebug() << "MSN Plugin: Incoming chat, no window, creating window for " << reqUserID <<"\n";
 		QString nick = engine->getPublicName( reqUserID );
 
 #warning FIXME: MSN message dialog needs status
 
-		//FIXME: We leak this object!
+		// FIXME: We leak this object!
 		MSNUser *user = new MSNUser( reqUserID, nick, MSNUser::Online );
 		messageDialog = new MSNMessageDialog( user, newboard, this );
-		//QObject::connect( this, SIGNAL(userStateChanged(QString)),
-		//				  messageDialog, SLOT(slotUserStateChanged(QString)) );
-		QObject::connect( messageDialog, SIGNAL(closing(QString)),
-						  this, SLOT(slotMessageDialogClosing(QString)) );
+//		connect( this, SIGNAL(userStateChanged(QString)), messageDialog, SLOT(slotUserStateChanged(QString)) );
+		connect( messageDialog, SIGNAL(closing(QString)), this, SLOT(slotMessageDialogClosing(QString)) );
 
 		mChatWindows.append( messageDialog );
 		messageDialog->show();
@@ -440,24 +443,16 @@ void MSNProtocol::slotGoOnline()
 {
 	kdDebug() << "MSN Plugin: Going Online" << endl;
 	if (!isConnected() )
-	{
-		kdDebug() << "MSN Plugin: Ups! we have to connect before going online" << endl;
 		Connect();
-	}
 	else
-	{
-		engine->changeStatus( NLN );		
-	}
+		engine->changeStatus( NLN );
 }
 void MSNProtocol::slotGoOffline()
 {
 	kdDebug() << "MSN Plugin: Going Offline" << endl;
 	if (isConnected() )
-	{
 		Disconnect();
-	}
-	// disconnect while trying to connect. Anyone know a better way? (remenic)
-	else
+	else // disconnect while trying to connect. Anyone know a better way? (remenic)
 	{
 		engine->cancelConnect();
 		statusBarIcon->setPixmap(offlineIcon);
@@ -467,23 +462,17 @@ void MSNProtocol::slotGoAway()
 {
 	kdDebug() << "MSN Plugin: Going Away" << endl;
 	if (!isConnected() )
-	{
 		Connect();
-	}
 	engine->changeStatus( AWY );
 }
 
 void MSNProtocol::slotConnectedToMSN(bool c)
 {
 	mIsConnected = c;
-	if (c)
-	{
+	if ( c )
 		slotConnected();
-	}
 	else
-	{
 		slotDisconnected();
-	}
 }
 
 void MSNProtocol::slotUserStateChange (QString handle, QString nick, int newstatus)
