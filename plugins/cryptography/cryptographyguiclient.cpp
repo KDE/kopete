@@ -23,7 +23,9 @@
 #include <kaction.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 
+class CryptographyPlugin;
 
 CryptographyGUIClient::CryptographyGUIClient(KopeteMessageManager *parent )
  : QObject(parent) , KXMLGUIClient(parent)
@@ -42,6 +44,8 @@ CryptographyGUIClient::CryptographyGUIClient(KopeteMessageManager *parent )
 		deleteLater(); //we refuse to build this client, it is based on wrong parametters
 		return;
 	}
+	
+	setInstance( KGenericFactory<CryptographyPlugin>::instance() );
 
 
 	m_action=new KToggleAction( i18n("Encrypt messages" ), QString::fromLatin1( "encrypted" ), 0, this, SLOT(slotToggled()), actionCollection() , "cryptographyToggle" );

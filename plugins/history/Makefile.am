@@ -4,7 +4,7 @@ INCLUDES = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_history.la kcm_kopete_history.la
 
-kopete_history_la_SOURCES = historyplugin.cpp historydialog.cpp  historylogger.cpp converter.cpp historyguiclient.cpp
+kopete_history_la_SOURCES = historyplugin.cpp historydialog.cpp  historylogger.cpp converter.cpp historyguiclient.cpp history.kcfgc
 kopete_history_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
 kopete_history_la_LIBADD      = ../../libkopete/libkopete.la
 
@@ -18,9 +18,7 @@ servicedir = $(kde_servicesdir)
 mydatadir = $(kde_datadir)/kopete_history
 mydata_DATA = historyui.rc  historychatui.rc
 
-mydata2dir = $(kde_datadir)/kopete
-mydata2_DATA = historychatui.rc
-
 kcm_DATA = kopete_history_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
 
+kde_kcfg_DATA = history.kcfg 

@@ -19,8 +19,5 @@ kcm_DATA = kopete_cryptography_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
 
 mydatadir = $(kde_datadir)/kopete_cryptography
-mydata_DATA = cryptographyui.rc
-
-mydata2dir = $(kde_datadir)/kopete
-mydata2_DATA = cryptographychatui.rc
+mydata_DATA = cryptographyui.rc cryptographychatui.rc
 

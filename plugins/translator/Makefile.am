@@ -20,7 +20,6 @@ kcm_DATA = kopete_translator_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
 
 mydatadir = $(kde_datadir)/kopete_translator
-mydata_DATA = translatorui.rc
+mydata_DATA = translatorui.rc translatorchatui.rc
 
-mydata2dir = $(kde_datadir)/kopete
-mydata2_DATA = translatorchatui.rc
+

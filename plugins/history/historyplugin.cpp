@@ -1,8 +1,8 @@
 /*
     historyplugin.cpp
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,9 +16,11 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
 #include <kaction.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
+#include <kdeversion.h>
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -32,7 +34,12 @@
 #include "historyguiclient.h"
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( "kopete_history" )  )
+#if KDE_IS_VERSION(3,2,90)
+static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0" );
+K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
+#else
+K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory("kopete_history")  )
+#endif
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( HistoryPluginFactory::instance(), parent, name )

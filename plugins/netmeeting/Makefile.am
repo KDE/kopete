@@ -11,6 +11,6 @@ kopete_netmeeting_la_LIBADD      = $(top_builddir)/kopete/libkopete/libkopete.la
 service_DATA = kopete_netmeeting.desktop
 servicedir = $(kde_servicesdir)
 
-mydatadir = $(kde_datadir)/kopete
+mydatadir = $(kde_datadir)/kopete_netmeeting
 mydata_DATA = netmeetingchatui.rc
 

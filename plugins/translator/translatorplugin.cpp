@@ -4,9 +4,9 @@
     Kopete Translator plugin
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart      <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart      <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,6 +28,8 @@
 #include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kdeversion.h>
+#include <kaboutdata.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -39,7 +41,12 @@
 #include "translatorlanguages.h"
 
 typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
+#if KDE_IS_VERSION(3,2,90)
+static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") , "1.0" );
+K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
+#else
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_translator" )  )
+#endif
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( TranslatorPluginFactory::instance(), parent, name )
@@ -63,7 +70,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	for ( int k = 0; k <= m_languages->numLanguages(); k++ )
 		keys << m[ m_languages->languageKey( k ) ];
 
-	m_actionLanguage = new KSelectAction( i18n( "Set &Language" ), "", 0, actionCollection(), "contactLanguage" );
+	m_actionLanguage = new KSelectAction( i18n( "Set &Language" ), "locale", 0, actionCollection(), "contactLanguage" );
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );
 	connect( KopeteContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );

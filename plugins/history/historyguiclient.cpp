@@ -1,8 +1,8 @@
 /*
     historyguiclient.cpp
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,14 +21,20 @@
 #include "kopetecontact.h"
 #include "kopeteview.h"
 
+
 #include <kaction.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
+
+class HistoryPlugin;
 
 
 HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent , const char *name)
  : QObject(parent, name) , KXMLGUIClient(parent)
 {
+	setInstance(KGenericFactory<HistoryPlugin>::instance());
+
 	m_manager=parent;
 	if(!m_manager || m_manager->members().isEmpty())
 		deleteLater(); //we refuse to build this client, it is based on wrong parametters

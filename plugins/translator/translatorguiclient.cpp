@@ -3,9 +3,9 @@
 
     Kopete Translator plugin
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -36,12 +36,13 @@
 TranslatorGUIClient::TranslatorGUIClient( KopeteMessageManager *parent, const char *name )
 : QObject( parent, name ), KXMLGUIClient( parent )
 {
+	setInstance( TranslatorPlugin::plugin()->instance() );
 	connect( TranslatorPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );
 
 	m_manager = parent;
 
 	new KAction( i18n( "Translate" ), "locale", CTRL + Key_T, this, SLOT( slotTranslateChat() ), actionCollection(), "translateCurrentMessage" );
-
+	
 	setXMLFile( "translatorchatui.rc" );
 }
 

@@ -3,9 +3,9 @@
 
     Kopete NetMeeting plugin
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 
 #include "msnmessagemanager.h"
 #include "msncontact.h"
@@ -29,11 +30,12 @@
 #include "netmeetingguiclient.h"
 #include "netmeetinginvitation.h"
 
-
+class NetMeetingPlugin;
 
 NetMeetingGUIClient::NetMeetingGUIClient( MSNMessageManager *parent,  const char *name )
 : QObject( parent, name ) , KXMLGUIClient(parent)
 {
+	setInstance(KGenericFactory<NetMeetingPlugin>::instance());
 	m_manager=parent;
 
 	new KAction( i18n( "Invite to Use NetMeeting" ), 0, this, SLOT( slotStartInvitation() ), actionCollection() , "netmeeting" ) ;
