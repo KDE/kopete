@@ -31,6 +31,7 @@ IRCSignalHandler::IRCSignalHandler(IRCContactManager *m)
 	//Channel Connections to ourself
 	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
 		this, SLOT(slotNamesList(const QString &, const QStringList &)));
+
 	QObject::connect(m_engine, SIGNAL(incomingEndOfNames(const QString &)),
 		this, SLOT(slotEndOfNames(const QString &)));
 

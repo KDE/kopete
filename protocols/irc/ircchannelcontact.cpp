@@ -39,6 +39,11 @@
 
 #include <qtimer.h>
 
+//This is the number of nicknames we will process concurrently when joining a channel
+//Lower numbers ensure less GUI blocking, but take marginally longer to complete.
+//Higher numbers are absolute fastest, but block GUI until all members are added
+#define NICK_BATCH_LENGTH 1
+
 IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, Kopete::MetaContact *metac)
 	: IRCContact(contactManager, channel, metac, "irc_channel")
 {
@@ -159,34 +164,32 @@ void IRCChannelContact::slotConnectedToServer()
 void IRCChannelContact::namesList(const QStringList &nicknames)
 {
 	mInfoTimer->stop();
-	mJoinedNicks += nicknames;
-	if (mJoinedNicks.count() == nicknames.count())
-		slotAddNicknames();
+	mJoinedNicks = nicknames;
+	slotAddNicknames();
 }
 
 void IRCChannelContact::endOfNames()
 {
+	setMode(QString::null);
 	slotUpdateInfo();
 }
 
 void IRCChannelContact::slotAddNicknames()
 {
-	if (!manager(Kopete::Contact::CannotCreate) || mJoinedNicks.isEmpty())
+	if( !manager(Kopete::Contact::CannotCreate) || mJoinedNicks.isEmpty())
 	{
-		setMode(QString::null);
 		return;
 	}
 
 	IRCAccount *account = ircAccount();
 
-	while (!mJoinedNicks.isEmpty())
+	for( uint i = 0; !mJoinedNicks.isEmpty() && i < NICK_BATCH_LENGTH; ++i )
 	{
 		QString nickToAdd = mJoinedNicks.front();
 		QChar firstChar = nickToAdd[0];
 		if( firstChar == '@' || firstChar == '%' || firstChar == '+' )
 			nickToAdd = nickToAdd.remove(0, 1);
 
-		mJoinedNicks.pop_front();
 		IRCContact *user;
 
 		if ( nickToAdd.lower() != account->mySelf()->nickName().lower() )
@@ -205,7 +208,11 @@ void IRCChannelContact::slotAddNicknames()
 			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
 		else if( firstChar == '+')
 			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusVoice );
+
+		mJoinedNicks.pop_front();
 	}
+
+	QTimer::singleShot( 0, this, SLOT( slotAddNicknames() ) );
 }
 
 void IRCChannelContact::channelTopic(const QString &topic)
