@@ -1,0 +1,6 @@
+Add support for Minityping Notifications ("Your buddy is typing a message")
+Add support for Direct Connections
+Add support for File Transfers
+
+Long Term:
+Remove all legacy TAim code: TBuddy, TBuddyList, etc.
