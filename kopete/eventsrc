@@ -15,7 +15,7 @@ Comment[ven]=Murumiwa wa Kopete
 
 [kopete_event]
 Name=Event
-Name[af]=gebeurtenis
+Name[af]=Gebeurtenis
 Name[bs]=Događaj
 Name[da]=Begivenhed
 Name[de]=Ereignis
@@ -55,7 +55,7 @@ default_presentation=1
 
 [kopete_incoming]
 Name=Incoming
-Name[af]=inkomende
+Name[af]=Inkomende
 Name[bs]=Ulazni
 Name[da]=Indkommende
 Name[de]=Eingang
@@ -71,7 +71,7 @@ Name[uk]=Вхідна
 Name[ven]=Zwine zwa khoutou da
 Name[xh]=Engenayo
 Comment=Incoming message arrives
-Comment[af]=inkomende boodskap arriveer
+Comment[af]=Inkomende boodskap arriveer
 Comment[bs]=Dolazi poruka
 Comment[da]=Indkommende besked ankommer
 Comment[de]=Eingehende Nachrichten
@@ -92,7 +92,7 @@ default_presentation=0
 
 [kopete_outgoing]
 Name=Outgoing
-Name[af]=uitgaande
+Name[af]=Uitgaande
 Name[bs]=Izlazni
 Name[da]=Udgående
 Name[de]=Ausgang
@@ -108,7 +108,7 @@ Name[uk]=Вихідна
 Name[ven]=Zwine zwa khou tou bva
 Name[xh]=Ephumayo
 Comment=Outgoing message is sent
-Comment[af]=uitgaande boodskap is gestuur
+Comment[af]=Uitgaande boodskap is gestuur
 Comment[bs]=Poslana je poruka
 Comment[da]=Udgående besked er sendt
 Comment[de]=Nachricht wird versendet
@@ -130,7 +130,7 @@ default_presentation=0
 
 [kopete_online]
 Name=Online
-Name[af]=aan-lyn
+Name[af]=Aan-lyn
 Name[el]=Συνδεμένος
 Name[es]=En línea
 Name[fi]=Yhteys auki
@@ -140,7 +140,7 @@ Name[pt]=Ligado
 Name[pt_BR]=On-line
 Name[sv]=Uppkopplad
 Comment=User goes online
-Comment[af]=gebruiker gaan aan-lyn
+Comment[af]=Gebruiker gaan aan-lyn
 Comment[bs]=Korisnik ide online
 Comment[da]=Bruger går online
 Comment[el]=Ο χρήστης συνδέεται
