@@ -21,7 +21,10 @@
 
 #include <kopetenotifyclient.h>
 #include <kdebug.h>
+#include <kopetemessage.h>
+
 #include "gadurichtextformat.h"
+#include "gadusession.h"
 
 #include <qstring.h>
 #include <qregexp.h>
@@ -40,9 +43,11 @@ QString
 GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, void* formatStructure)
 {
 	if ( formatStructure == NULL ) {
+		kdDebug(14100) << "no rtf structure, plain message" << endl;
 		return msg;
 	}
 	if ( formats == 0 ) {
+		kdDebug(14100) << "rtf structure size 0 , plain message" << endl;
 		return msg;
 	}
 
@@ -70,7 +75,14 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			tmp += "<b>[this should be a picture, not yet implemented]</b>";
 		}
 		else {
-			tmp += msg.mid( j, position - j );
+			QString nb;
+
+			nb = msg.mid( j, position - j );
+			nb.replace( '\n', QString::fromLatin1( "<br />" ) );
+			nb.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+			nb.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
+			tmp += nb;
+
 			j = position;
 
 			// add message bit between formating
@@ -114,9 +126,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 		tmp += formatClosingTag("span");
 	}
 
-	tmp.replace( '\n', QString::fromLatin1( "<br />" ) );
-	tmp.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
-	tmp.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
+	kdDebug(14100) << "----------\n" << tmp << "\n----------" << endl;
 
 	return tmp;
 }
@@ -134,5 +144,103 @@ QString
 GaduRichTextFormat::formatClosingTag( const QString& tag )
 {
 	return "</" + tag + ">";
+}
+
+// the idea stolen from IRC plugin
+KGaduMessage*
+GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
+{
+	QString htmlString = message.escapedBody();
+	QColor color;
+
+	KGaduMessage* output = new KGaduMessage;
+	gg_msg_richtext_format rtfs;
+	gg_msg_richtext_color rtcs;
+	gg_msg_richtext* header;
+	rtcs.blue  = rtcs.green = rtcs.red = 0;
+
+	output->rtf.resize( sizeof( gg_msg_richtext) );
+
+	if( htmlString.find( QString::fromLatin1("</span") ) > -1 ){
+		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
+		findTags.setMinimal( true );
+		int pos = 0;
+
+		while ( pos >= 0 ){
+			pos = findTags.search( htmlString );
+			if ( pos > -1 ) {
+				QString styleHTML = findTags.cap(1);
+				QString replacement = findTags.cap(2);
+				QStringList styleAttrs = QStringList::split( ';', styleHTML );
+				rtfs.font = 0;
+
+				kdDebug(14100)  <<"--------------\nstyle: "  << endl;
+				for( QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair ) {
+					QString attribute = (*attrPair).section(':',0,0);
+					QString value = (*attrPair).section(':',1);
+
+					if( attribute == QString::fromLatin1("color") ) {
+						color.setNamedColor( value );
+						kdDebug(14100) << "color detected, value: \"" <<  value << "\"  " << endl;
+					}
+					if( attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600") ) {
+						kdDebug(14100) << " font bold " << endl;
+						rtfs.font |= GG_FONT_BOLD;
+					}
+					if( attribute == QString::fromLatin1("text-decoration")  && value == QString::fromLatin1("underline") ) {
+						kdDebug(14100) << " font underline "  << endl;
+						rtfs.font |= GG_FONT_UNDERLINE ;
+					}
+					if( attribute == QString::fromLatin1("font-style")  && value == QString::fromLatin1("italic") ) {
+						kdDebug(14100) << " font italic "  << endl;
+						rtfs.font |= GG_FONT_ITALIC;
+					}
+				}
+				if ( color.red() != rtcs.red || color.blue() != rtcs.blue || color.green() !=rtcs.green ) {
+					rtcs.blue  = color.red();
+					rtcs.green = color.green();
+					rtcs.red   = color.blue();
+					rtfs.font |= GG_FONT_COLOR;
+				}
+
+				if ( rtfs.font ) {
+					// append font description
+					rtfs.position = pos;
+					uint csize = output->rtf.size();
+					if ( output->rtf.resize( csize + sizeof( gg_msg_richtext_format ) ) == FALSE ) {
+						kdDebug( 14100 ) << "problem allocating memory, message cannot be sent" << endl;
+						return NULL;
+					};
+					memcpy( output->rtf.data()+csize, &rtfs, sizeof( rtfs ) );
+					// append color description, if color has changed
+					if ( rtfs.font & GG_FONT_COLOR ) {
+						csize = output->rtf.size();
+						if ( output->rtf.resize( csize + sizeof( gg_msg_richtext_color ) ) == FALSE ) {
+							kdDebug( 14100 ) << "problem allocating memory, message cannot be sent" << endl;
+							return NULL;
+						};
+						memcpy( output->rtf.data()+csize, &rtcs, sizeof( rtcs ) );
+					}
+				}
+
+
+				QRegExp rx( QString::fromLatin1("<span style=\"%1\">.*</span>" ).arg( styleHTML ) );
+				rx.setMinimal( true );
+				htmlString.replace( rx, replacement );
+				replacement = KopeteMessage::unescape( replacement );
+				replacement.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
+				kdDebug(14100) << " message: \"" <<replacement <<"\"\n---------------" << endl;
+				output->message += replacement;
+				pos += replacement.length();
+			}
+		}
+		// this is sick, but that's the way libgadu is designed
+		// here I am adding network header !, should sit in libgadu IMO
+		header = (gg_msg_richtext*) output->rtf.data();
+		header->length = output->rtf.size() - sizeof( gg_msg_richtext );
+		header->flag = 2;
+	}
+	return output;
+
 }
 

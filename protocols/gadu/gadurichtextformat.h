@@ -21,12 +21,16 @@
 
 
 class Qstring;
+class KopeteMessage;
+class KGaduMessage;
 
 class GaduRichTextFormat {
 public:
 	GaduRichTextFormat();
 	~GaduRichTextFormat();
 	static QString convertToHtml( const QString&, unsigned int, void* );
+	static KGaduMessage* convertToGaduMessage( const KopeteMessage& );
+
 private:
 	static QString formatOpeningTag( const QString& , const QString& = QString::null );
 	static QString formatClosingTag( const QString& tag );
