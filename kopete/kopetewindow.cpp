@@ -138,9 +138,11 @@ void KopeteWindow::initActions()
 		0, this, SLOT( showAddContactDialog() ),
 		actionCollection(), "AddContact" );
 
+	/* ConnectAll is now obsolete.  "Go online" has replaced it.
 	actionConnect = new KAction( i18n( "&Connect Accounts" ), "connect_creating",
 		0, Kopete::AccountManager::self(), SLOT( connectAll() ),
 		actionCollection(), "ConnectAll" );
+	*/
 
 	actionDisconnect = new KAction( i18n( "O&ffline" ), "connect_no",
 		0, Kopete::AccountManager::self(), SLOT( disconnectAll() ),
@@ -150,6 +152,7 @@ void KopeteWindow::initActions()
 																			0, this, SLOT( showExportDialog() ),
 																			actionCollection(), "ExportContacts" );
 
+	/* the connection menu has been replaced by the set status menu
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
 							actionCollection(), "Connection" );
 
@@ -157,6 +160,7 @@ void KopeteWindow::initActions()
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 	actionConnect->setEnabled(false);
+	*/
 	actionDisconnect->setEnabled(false);
 
 	selectAway = new Kopete::AwayAction( i18n("&Away"), SmallIcon("kopeteaway"), 0,
@@ -494,7 +498,7 @@ void KopeteWindow::slotPluginLoaded( Kopete::Plugin *  p  )
 
 void KopeteWindow::slotAllPluginsLoaded()
 {
-	actionConnect->setEnabled(true);
+//	actionConnect->setEnabled(true);
 	actionDisconnect->setEnabled(true);
 }
 
@@ -505,7 +509,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 		return;
 
 	//enable the connect all toolbar button
-	actionConnect->setEnabled(true);
+//	actionConnect->setEnabled(true);
 	actionDisconnect->setEnabled(true);
 
 	connect( account->myself(),
@@ -542,7 +546,7 @@ void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	if (accounts.isEmpty())
 	{
-		actionConnect->setEnabled(false);
+//		actionConnect->setEnabled(false);
 		actionDisconnect->setEnabled(false);
 	}
 

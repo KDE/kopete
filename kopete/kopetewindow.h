@@ -161,8 +161,8 @@ public:
 	// Some Actions
 	KAction* actionAddContact;
 
-	KActionMenu* actionConnectionMenu;
-	KAction* actionConnect;
+	//KActionMenu* actionConnectionMenu;
+	//KAction* actionConnect;
 	KAction* actionDisconnect;
 	KAction* actionExportContacts;
 
