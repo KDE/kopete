@@ -1,10 +1,13 @@
-INCLUDES = -I$(srcdir)/../libkopete \
-	-I$(srcdir)/../libkopete/ui \
+INCLUDES = -I$(top_srcdir)/kopete/libkopete \
+	-I$(top_srcdir)/kopete/libkopete/ui \
+	-I$(srcdir)/conf \
 	-I../libkopete/ui \
 	$(all_includes)
 
 KDE_ICON = AUTO
 METASOURCES = AUTO
+
+SUBDIRS = conf
 
 noinst_HEADERS = \
 	kopetewindow.h kopete.h \
@@ -18,7 +21,7 @@ kopete_SOURCES = main.cpp \
 	statusbaricon.cpp
 
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kopete_LDADD = ../libkopete/libkopete.la
+kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la
 
 icondir = $(kde_datadir)/kopete/pics
 icon_DATA =

@@ -32,7 +32,7 @@
 #include "kopeteuserpreferences.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
-#include "pluginmodule.h"
+#include "pluginconfig.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -53,7 +53,7 @@ Kopete::Kopete()
 		SLOT( slotMainWindowDestroyed() ) );
 
 	// Create the plugin preferences module
-	new Plugins( this );
+	new PluginConfig( this );
 
 	new AppearanceConfig( m_mainWindow );
 	new KopeteUserPreferencesConfig( m_mainWindow );

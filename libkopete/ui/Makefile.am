@@ -2,7 +2,7 @@ METASOURCES = AUTO
 INCLUDES = -I$(top_srcdir)/kopete/libkopete $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteui.la
-noinst_HEADERS = pluginmodule.h configmodule.h \
+noinst_HEADERS = configmodule.h \
 	preferencesdialog.h \
 	protocolboxitem.h addcontactpage.h systemtray.h \
 	appearanceconfig.h kopeteballoon.h \
@@ -10,7 +10,7 @@ noinst_HEADERS = pluginmodule.h configmodule.h \
 	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp \
-	preferencesdialog.cpp pluginmodule.cpp \
+	preferencesdialog.cpp \
 	addwizardui.ui addwizardimpl.cpp protocolboxitem.cpp \
 	addcontactpage.cpp systemtray.cpp appearanceconfig.cpp \
 	kopeteballoon.cpp \
