@@ -120,7 +120,7 @@ public:
 
 			toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>")
-						.arg( iconName, c->property(Kopete::Global::Properties::self()->nickName()).value().toString() , c->contactId(), c->onlineStatus().description() );
+						.arg( iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
 		}
 
 		return toolTip + QString::fromLatin1("</table></td></tr></table></qt>");
@@ -360,7 +360,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			else
 			{
 				//QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
-				text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), m_metaContact->displayName() );
+				text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), Kopete::Emoticons::parseEmoticons( m_metaContact->displayName() ) );
 			}
 
 			
