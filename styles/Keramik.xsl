@@ -45,7 +45,7 @@
 				<xsl:choose>
 					<xsl:when test="@direction='2'">
 						<!-- Internal message -->
-						<xsl:text>System Message</xsl:text>
+						<kopete-i18n>System Message</kopete-i18n>
 					</xsl:when>
 					<xsl:when test="@direction='1'">
 						<!-- Outgoing -->
@@ -54,15 +54,7 @@
 								<xsl:value-of select="to/contact/@protocolIcon"/>
 							</xsl:attribute>
 						</img>
-						<xsl:text>To </xsl:text>
-						<span>
-							<xsl:attribute name="title">
-								<xsl:value-of disable-output-escaping="yes" select="to/contact/@contactId"/>
-							</xsl:attribute>
-							<xsl:value-of disable-output-escaping="yes" select="to/contact/@contactDisplayName"/>
-						</span>
-						<xsl:text> at </xsl:text>
-						<xsl:value-of select="@time"/>
+						<kopete-i18n>To %TO_CONTACT_DISPLAYNAME% at %TIME%</kopete-i18n>
 					</xsl:when>
 					<xsl:otherwise>
 						<!-- Incoming / Action message -->
@@ -71,15 +63,7 @@
 								<xsl:value-of select="from/contact/@protocolIcon"/>
 							</xsl:attribute>
 						</img>
-						<xsl:text>From </xsl:text>
-						<span>
-							<xsl:attribute name="title">
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
-							</xsl:attribute>
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
-						</span>
-						<xsl:text> at </xsl:text>
-						<xsl:value-of select="@time"/>
+						<kopete-i18n>From %FROM_CONTACT_DISPLAYNAME% at %TIME%</kopete-i18n>
 					</xsl:otherwise>
 				</xsl:choose>
 			</div>
@@ -108,18 +92,15 @@
 						<xsl:text>color:darkgreen;</xsl:text>
 					</xsl:if>
 				</xsl:attribute>
-				<xsl:if test="@direction='3'">
-					<!-- Action -->
-					*
-					<span>
-						<xsl:attribute name="title">
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
-						</xsl:attribute>
-						<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
-					</span>
-					<xsl:text>&#160;</xsl:text>
-				</xsl:if>
-				<xsl:value-of disable-output-escaping="yes" select="body"/>
+				<xsl:choose>
+					<xsl:when test="@direction='3'">
+						<!-- Action -->
+						<kopete-i18n>* %FROM_CONTACT_DISPLAYNAME%&#160;%BODY%</kopete-i18n>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of disable-output-escaping="yes" select="body"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</div>
 		</div>
 		<div>

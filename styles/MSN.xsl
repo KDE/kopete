@@ -8,13 +8,7 @@
 			</xsl:attribute>
 			<xsl:if test="@direction &lt; 2">
 				<div style="color:gray">
-					(<xsl:value-of select="@time"/>)
-					<span>
-						<xsl:attribute name="title">
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
-						</xsl:attribute>
-						<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/> says:
-					</span>
+					<kopete-i18n>(%TIME%) %FROM_CONTACT_DISPLAYNAME% says:</kopete-i18n>
 				</div>
 				<xsl:text disable-output-escaping="yes">&#160;&#160;&#160;&#160;</xsl:text>
 			</xsl:if>

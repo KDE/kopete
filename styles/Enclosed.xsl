@@ -14,52 +14,29 @@
 							<xsl:attribute name="style">
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
-							Message from 
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							(
-							<span>
-								<xsl:attribute name="title">
-									<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
-								</xsl:attribute>
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
-							</span>)
+							<kopete-i18n>Message from %FROM_METACONTACT_DISPLAYNAME% (%FROM_CONTACT_ID%)</kopete-i18n>
 						</xsl:when>
 						<xsl:when test="@direction='2'">
 							<!-- internal message -->
 							<xsl:attribute name="style">
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
-							System Message
+							<!-- System Message -->
+							<kopete-i18n>System Message</kopete-i18n>
 						</xsl:when>
 						<xsl:when test="@direction='1'">
 							<!-- Outgoing -->
 							<xsl:attribute name="style">
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
-							Message to
-							<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
-							(from
-							<span>
-								<xsl:attribute name="title">
-									<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
-								</xsl:attribute>
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
-							</span>)
+							<kopete-i18n>Message to %TO_METACONTACT_DISPLAYNAME% (from %FROM_CONTACT_ID%)</kopete-i18n>
 						</xsl:when>
 						<xsl:otherwise>
 							<!-- Incoming -->
 							<xsl:attribute name="style">
 								<xsl:text>color:blue;font-weight:bold;</xsl:text>
 							</xsl:attribute>
-							Message from
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							(
-							<span>
-								<xsl:attribute name="title">
-									<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
-								</xsl:attribute>
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
-							</span>)
+							<kopete-i18n>Message from %FROM_METACONTACT_DISPLAYNAME% (%FROM_CONTACT_ID%)</kopete-i18n>
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>
