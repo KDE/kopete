@@ -26,10 +26,13 @@
 #include <kstandarddirs.h>
 #include <kglobal.h>
 #include <kcharsets.h>
+#include <kuser.h>
+#include <unistd.h>
 #include <kmessagebox.h>
 
 #include <qlineedit.h>
 #include <qdom.h>
+#include <qtimer.h>
 #include <qfile.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
@@ -60,6 +63,38 @@ typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  )
 
 IRCProtocol *IRCProtocol::s_protocol = 0L;
+
+IRCProtocolHandler::IRCProtocolHandler() : Kopete::MimeTypeHandler( false )
+{
+	registerAsProtocolHandler( QString::fromLatin1("irc") );
+}
+
+void IRCProtocolHandler::handleURL( const KURL &url ) const
+{
+	kdDebug(14120) << url << endl;
+	if( !url.isValid() )
+		return;
+
+	unsigned short port = url.port();
+	if( port == 0 )
+		port = 6667;
+
+	QString chan = url.path(-1);
+	if( chan.isEmpty() )
+		return;
+
+	KUser user( getuid() );
+	QString accountId = QString::fromLatin1("%1@%2:%3").arg(
+		user.loginName(),
+		url.host(),
+		QString::number(port)
+	);
+
+	kdDebug(14120) << accountId << endl;
+
+	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId, true );
+	newAccount->setConnectCommands( QStringList( QString::fromLatin1("/join %1").arg(chan) ) );
+}
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopeteProtocol( IRCProtocolFactory::instance(), parent, name ),
@@ -227,6 +262,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	slotReadNetworks();
 
+	m_protocolHandler = new IRCProtocolHandler();
+
 	IRCTransferHandler::self(); // Initiate the transfer handling system.
 }
 
@@ -237,6 +274,7 @@ IRCProtocol * IRCProtocol::protocol()
 
 IRCProtocol::~IRCProtocol()
 {
+	delete m_protocolHandler;
 }
 
 void IRCProtocol::slotViewCreated( KopeteView *view )

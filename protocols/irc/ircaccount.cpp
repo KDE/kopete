@@ -80,8 +80,8 @@ void ChannelListDialog::slotChannelDoubleClicked( const QString & )
 	close();
 }
 
-IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
-	: KopeteAccount(protocol, accountId)
+IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, bool url)
+	: KopeteAccount(protocol, accountId), fromURL( url )
 {
 	m_manager = 0L;
 	m_protocol = protocol;
@@ -169,11 +169,7 @@ void IRCAccount::loaded()
 	QString m_accountId = accountId();
 	if( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
 	{
-		/*
-		Test for backwards compatability. If the account ID matches this,
-		then we have an old account. First, try to find it in an existing
-		network, and use that. if we can't, then add a new network.
-		*/
+		kdDebug(14120) << "Creating account from " << m_accountId << endl;
 
 		mNickName = m_accountId.section('@',0,0);
 		QString serverInfo = m_accountId.section('@',1);
@@ -231,6 +227,9 @@ void IRCAccount::loaded()
 	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
+
+	//if( fromURL )
+		//connect();
 }
 
 void IRCAccount::slotNickInUse( const QString &nick )

@@ -21,6 +21,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
+#include "kopetemimetypehandler.h"
 
 #include <dom/dom_node.h>
 
@@ -39,6 +40,15 @@ class KopeteView;
 class IRCNetwork;
 class IRCHost;
 class NetworkConfig;
+
+class IRCProtocolHandler : public Kopete::MimeTypeHandler
+{
+	public:
+
+		IRCProtocolHandler();
+
+		void handleURL( const KURL &url ) const;
+};
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -161,6 +171,7 @@ private:
 	QDict<IRCNetwork> m_networks;
 	QDict<IRCHost> m_hosts;
 	NetworkConfig *netConf;
+	IRCProtocolHandler *m_protocolHandler;
 };
 
 #endif

@@ -202,7 +202,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
 	KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
-		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
 	appendMessage(msg);
 }
 
@@ -334,7 +334,8 @@ void IRCChannelContact::setTopic(const QString &topic)
 			bool okPressed = true;
 			QString newTopic = topic;
 			if( newTopic.isNull() )
-				newTopic = KInputDialog::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
+				newTopic = KInputDialog::getText( i18n("New Topic"), i18n("Enter the new topic:"),
+					KopeteMessage::unescape(mTopic), &okPressed, 0L );
 
 			if( okPressed )
 			{
@@ -359,7 +360,7 @@ void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopi
 	manager()->setDisplayName( caption() );
 	KopeteMessage msg(m_account->myServer(), mMyself,
 		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
-		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
 	msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
 	appendMessage(msg);
 }
@@ -589,7 +590,7 @@ const QString IRCChannelContact::caption() const
 {
 	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(m_engine->currentHost());
 		if( !mTopic.isNull() && !mTopic.isEmpty() )
-			cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
+			cap.append( QString::fromLatin1(" - %1").arg(KopeteMessage::unescape(mTopic)) );
 
 	return cap;
 }
