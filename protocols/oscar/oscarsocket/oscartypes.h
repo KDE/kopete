@@ -23,4 +23,26 @@ typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
 
+const BYTE MSG_FLAG_GETAUTO	=	0x03; // flag marking away-message request
+const BYTE MSG_FLAG_MASS	=	0x80; // The message was sent to several recipients.
+
+const BYTE MSG_AUTO			= 0x00; // An automatic message.
+const BYTE MSG_NORM			= 0x01; // A plain normal message.
+const BYTE MSG_CHAT			= 0x02; // A chat request.
+const BYTE MSG_FILE			= 0x03; // A file transfer request.
+const BYTE MSG_URL			= 0x04; // An URL message. The message consists of the description and the url.
+const BYTE MSG_AUTHREQ		= 0x06; // An authorization request.
+const BYTE MSG_AUTHREJ		= 0x07; // An authorization reject message.
+const BYTE MSG_AUTHACC		= 0x08; // An authorization accept message.
+const BYTE MSG_ADDED		= 0x0c; // You were added to the sender's contact list.
+const BYTE MSG_WEB			= 0x0d; // A message sent through www.icq.com's web pager.
+const BYTE MSG_EMAIL		= 0x0e; // A message sent through the email pager ([uin]@pager.icq.com).
+const BYTE MSG_CONTACT		= 0x13; // A contact list message.
+const BYTE MSG_EXTENDED		= 0x1a; // An extended message. The packet will contain more data.
+const BYTE MSG_GET_AWAY		= 0xe8; // A message requesting the "away" auto message.
+const BYTE MSG_GET_OCC		= 0xe9; // A message requesting the "occupied" auto message.
+const BYTE MSG_GET_NA		= 0xea; // A message requesting the "not available" auto message.
+const BYTE MSG_GET_DND		= 0xeb; // A message requesting the "do not disturb" auto message.
+const BYTE MSG_GET_FFC		= 0xec; // A message requesting the "free for chat" auto message.
+
 #endif

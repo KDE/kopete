@@ -1587,7 +1587,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 				Buffer tlv5(tlv5tlv.data, tlv5tlv.length);
 
-				WORD acktype = tlv5.getWord();
+				/*WORD ackType =*/ tlv5.getWord();
 				DWORD msgTime = tlv5.getDWord();
 				DWORD msgRandomId = tlv5.getDWord();
 				char *capData = tlv5.getBlock(16);
@@ -1662,7 +1662,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				QString message;
 				WORD msgtype = 0x0000; //used to tell whether it is a direct IM requst, deny, or accept
 				DWORD capflag = 0x00000000; //used to tell what kind of rendezvous this is
-				OncomingSocket *sockToUse; //used to tell which listening socket to use
+				/*OncomingSocket *sockToUse;*/ //used to tell which listening socket to use
 				QString fileName; //the name of the file to be transferred (if any)
 				long unsigned int fileSize = 0; //the size of the file(s) to be transferred
 
@@ -2028,71 +2028,90 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 
 void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 {
-	kdDebug(14150) << k_funcinfo << "message format = MSGFORMAT_SERVER" << endl;
-	bool moreTLVs = true; // Flag to indicate if there are more TLV's to parse
-	while(moreTLVs)
+	kdDebug(14150) << k_funcinfo << "IM received on channel 4 from " << u.sn << endl;
+	TLV tlv5tlv = inbuf.getTLV();
+	kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
+	if (tlv5tlv.type != 0x0005)
 	{
-		WORD type = inbuf.getWord();
-		kdDebug(14150) << k_funcinfo << "MSGFORMAT_SERVER; type=" << type << endl;
-		switch(type)
-		{
-			case 0x0005: //TLV(5)
-			{
-				// This is the total length of the rest of this message TLV
-				WORD length = inbuf.getWord();
-				DWORD uin = inbuf.getLEDWord();
-				BYTE msgtype = inbuf.getByte();
-				BYTE msgflags = inbuf.getByte();
-				WORD msgLength = inbuf.getLEWord();
-
-				kdDebug(14150) << "MSGFORMAT_SERVER; server message, tlv length=" <<
-					length << ", uin=" << uin << ", type=" << msgtype <<
-					", flags=" << msgflags << endl;
-
-				kdDebug(14150) << k_funcinfo <<
-					"MSGFORMAT_SERVER; length after reading uin + type=" <<
-					inbuf.length() << " == " << msgLength << " ?" << endl;
-
-				char *msgtxt = inbuf.getBlock(msgLength);
-				QStringList msgParts = QStringList::split(QChar('þ') /*0xFE*/,
-					QString::fromLatin1(msgtxt));
-				delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
-
-				if(msgParts.count() == 2)
-				{
-					QString message = QString("%1\n%2").arg(msgParts[1]).arg(msgParts[0]);
-
-					kdDebug(14150) << k_funcinfo <<
-						"MSGFORMAT_SERVER; emit gotIM(), contact=" <<
-						u.sn << ", message='" << message << "'" << endl;
-
-					emit gotIM(URL, message, u.sn);
-				}
-
-				if(inbuf.length() > 0)
-				{
-					moreTLVs = true;
-					kdDebug(14150) << k_funcinfo <<
-						"MSGFORMAT_SERVER; remaining length after reading message=" <<
-						inbuf.length() << endl;
-				}
-				else
-				{
-					kdDebug(14150) << k_funcinfo <<
-						"MSGFORMAT_SERVER; last TLV after reading message" << endl;
-					moreTLVs = false;
-				}
-				break;
-			}
-
-			default: //unknown type
-			{
-				kdDebug(14150) << k_funcinfo <<
-					"MSGFORMAT_SERVER; Unknown message type, type=" << type << endl;
-				moreTLVs = (inbuf.length() > 0);
-			}
-		}; // END switch(type)
+		kdDebug(14150) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
+		return;
 	}
+
+	Buffer tlv5(tlv5tlv.data, tlv5tlv.length);
+
+	DWORD uin = tlv5.getLEDWord(); // little endian for no sane reason!
+	if(QString::number(uin) != u.sn)
+	{
+		kdWarning(14150) << k_funcinfo <<
+		"type-4 message uin does not match uin found in packet header!" << endl;
+	}
+	BYTE msgtype = tlv5.getByte();
+	BYTE msgflags = tlv5.getByte();
+
+	kdDebug(14150) << k_funcinfo <<
+		"MSGFORMAT_SERVER; server message, TLV(5) length= " << tlv5tlv.length <<
+		", uin=" << uin <<
+		", type=" << msgtype <<
+		", flags=" << msgflags << endl;
+
+	WORD msgLength = tlv5.getLEWord(); // little endian for no sane reason!
+	char *msgText = tlv5.getBlock(msgLength);
+	QString message = QString::fromLatin1(msgText); // TODO: guess encoding (it's undefined)
+	delete [] msgText; // getBlock allocates memory, we HAVE to free it again!
+
+
+	switch(msgtype)
+	{
+		case MSG_AUTO:
+			kdDebug(14150) << k_funcinfo <<
+				"Got an automatic message: " << message << endl;
+			emit gotIM(Away, message, u.sn);
+			break;
+		case MSG_NORM:
+			kdDebug(14150) << k_funcinfo <<
+				"Got a normal message: " << message << endl;
+			emit gotIM(Normal, message, u.sn);
+			break;
+		case MSG_URL:
+			kdDebug(14150) << k_funcinfo <<
+				"Got an URL message: " << message << endl;
+			emit gotIM(URL, message, u.sn);
+			break;
+		case MSG_AUTHREJ:
+			kdDebug(14150) << k_funcinfo <<
+				"Got an 'auth rejected' message: " << message << endl;
+			emit gotIM(DeclinedAuth, message, u.sn);
+			break;
+		case MSG_AUTHACC:
+			kdDebug(14150) << k_funcinfo <<
+				"Got an 'auth granted' message: " << message << endl;
+			emit gotIM(GrantedAuth, message, u.sn);
+			break;
+		case MSG_WEB:
+			kdDebug(14150) << k_funcinfo <<
+				"Got a web panel message: " << message << endl;
+			emit gotIM(WebPanel, message, u.sn);
+			break;
+		case MSG_EMAIL:
+			kdDebug(14150) << k_funcinfo <<
+				"Got an email message: " << message << endl;
+			emit gotIM(EMail, message, u.sn);
+			break;
+		case MSG_CHAT:
+		case MSG_FILE:
+		case MSG_CONTACT:
+		case MSG_EXTENDED:
+			kdDebug(14150) << k_funcinfo <<
+				"Got an unsupported message, dropping: " << message << endl;
+			break; // TODO: unsupported and for now dropped messages
+		default:
+			kdDebug(14150) << k_funcinfo <<
+				"Got unknown message type, treating as normal: " << message << endl;
+			emit gotIM(Normal, message, u.sn);
+			break;
+	}
+
+	kdDebug(14150) << k_funcinfo << "END" << endl;
 } // END parseServerIM()
 
 

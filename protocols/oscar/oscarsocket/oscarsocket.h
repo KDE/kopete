@@ -310,7 +310,7 @@ class OscarSocket : public OscarConnection
 	public:
 		enum OscarMessageType
 		{
-			Normal=0, Away, URL, SMS, WebPanel, GrantedAuth, DeclinedAuth
+			Normal=0, Away, URL, SMS, WebPanel, EMail, GrantedAuth, DeclinedAuth
 		};
 
 		OscarSocket(const QString &connName, const QByteArray &cookie,

@@ -219,6 +219,8 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 
 		if (addContact(tocNormalize(sender), sender, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
 			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
+		else
+			return; // adding contact failed for whatever reason!
 	}
 
 	// AIM usually contains HTML, do not escape then
@@ -242,6 +244,7 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 				break;
 
 			case OscarSocket::URL:
+				message.replace("þ", "<br />");
 				message=i18n("<b>[URL Message:]</b> %1").arg(message);
 				break;
 
@@ -249,12 +252,30 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 				message=i18n("<b>[SMS Message:]</b> %1").arg(message);
 				break;
 
+			case OscarSocket::EMail:
+				message=i18n("<b>[Email Message:]</b> %1").arg(message);
+				break;
+
 			case OscarSocket::WebPanel:
+				message.replace(QString::fromLatin1("þþþ"), QString::fromLatin1("<br />"));
+				message.replace(QString::fromLatin1("þ3þ"), QString::fromLatin1("<br />"));
 				message=i18n("<b>[WebPanel Message:]</b> %1").arg(message);
 				break;
 
-			default:
+			case OscarSocket::Normal:
 				break;
+
+			case OscarSocket::GrantedAuth:
+				message=i18n("<b>[Granted authentication:]</b> %1").arg(message);
+				break;
+
+			case OscarSocket::DeclinedAuth:
+				message=i18n("<b>[Declined authentication:]</b> %1").arg(message);
+				break;
+
+			/* TODO: For now I prefer 'unhandled in case-statement' warnings on compilation
+			default:
+				break;*/
 		}
 		contact->gotIM(type, message);
 	}
@@ -736,7 +757,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			mRandomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
-			return ( createNewContact( contactId, displayName, parentContact ));
+			return(createNewContact(contactId, displayName, parentContact));
 		}
 		else
 		{
@@ -750,9 +771,12 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 				// I'm not sure what it does if they're offline, but there
 				// is code in oscarcontact to handle the signal from
 				// the engine that this causes
-				kdDebug(14150) << k_funcinfo <<
-					"Requesting user info for '" << contactId << "'" << endl;
-				engine()->sendUserProfileRequest(tocNormalize(contactId));
+				if(!mEngine->isICQ())
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Requesting user info for '" << contactId << "'" << endl;
+						engine()->sendUserProfileRequest(tocNormalize(contactId));
+				}
 				return true;
 			}
 			else
