@@ -2,7 +2,10 @@
 Encoding=UTF-8
 Type=ServiceType
 X-KDE-ServiceType=Kopete/Plugin
+X-KDE-Derived=KPluginInfo
 Comment=Kopete Plugin
+Comment[da]=Kopete-plugin
+Comment[sr]=Додатак за Kopete
 
 [PropertyDef::X-Kopete-Plugin-Id]
 Type=QString
