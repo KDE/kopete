@@ -61,14 +61,6 @@
 #include "jabbermessagemanager.h"
 #include "jabberprotocol.h"
 
-/*
-online = jabber_online
-offline = jabber_offline
-away = jabber_na
-na = jabber_na
-connecting = jabber_connecting.mng
-*/
-
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
@@ -373,9 +365,19 @@ void JabberProtocol::slotHandshaken()
 	else
 	{
 		KGlobal::config()->setGroup("Jabber");
-		jabberClient->authDigest(KGlobal::config()->readEntry("UserID", ""),
-					KGlobal::config()->readEntry("Password", ""),
-					KGlobal::config()->readEntry("Resource", "Kopete"));
+
+		if(KGlobal::config()->readEntry("AuthType", "digest") == QString("digest"))
+		{
+			jabberClient->authDigest(KGlobal::config()->readEntry("UserID", ""),
+						KGlobal::config()->readEntry("Password", ""),
+						KGlobal::config()->readEntry("Resource", "Kopete"));
+		}
+		else
+		{
+			jabberClient->authPlain(KGlobal::config()->readEntry("UserID", ""),
+						KGlobal::config()->readEntry("Password", ""),
+						KGlobal::config()->readEntry("Resource", "Kopete"));
+		}
 	}
 
 }
