@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>537</width>
-            <height>517</height>
+            <width>526</width>
+            <height>442</height>
         </rect>
     </property>
     <property name="caption">
@@ -163,30 +163,111 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget class="QLabel">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>textLabel7</cstring>
+                            <cstring>groupBox5</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
                                 <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
+                                <vsizetype>1</vsizetype>
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>450</width>
-                                <height>0</height>
-                            </size>
+                        <property name="title">
+                            <string>Registration</string>
                         </property>
-                        <property name="text">
-                            <string>&lt;i&gt;To connect to the Microsoft network, you will need a Microsoft Passport.&lt;br&gt;&lt;br&gt;If you do not currently have a Passport, you may register for one at the site linked below.&lt;/i&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel6</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>0</height>
+                                    </size>
+                                </property>
+                                <property name="text">
+                                    <string>&lt;i&gt;To connect to the Microsoft network, you will need a Microsoft Passport.&lt;br&gt;&lt;br&gt;If you do not currently have a Passport, please click the &lt;b&gt;Register for a Microsoft Passport&lt;/b&gt; link.&lt;/i&gt;</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout77</cstring>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer61</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Vertical</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>31</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="KActiveLabel">
+                                        <property name="name">
+                                            <cstring>kActiveLabel4</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>1</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>&lt;center&gt;&lt;a href="http://register.passport.net/"&gt;Register for a&lt;br&gt;Microsoft Passport&lt;/a&gt;&lt;/center&gt;</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer62</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Vertical</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>21</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </vbox>
+                            </widget>
+                        </hbox>
                     </widget>
                     <spacer>
                         <property name="name">
@@ -205,22 +286,6 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="KActiveLabel">
-                        <property name="name">
-                            <cstring>kActiveLabel4</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>1</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>&lt;a href="http://register.passport.net/"&gt;Register for a Microsoft Passport&lt;/a&gt;</string>
-                        </property>
-                    </widget>
                 </vbox>
             </widget>
             <widget class="QWidget">
