@@ -22,6 +22,8 @@
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "pluginloader.h"
+#include "kopeteprotocol.h"
 
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
@@ -114,6 +116,75 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 		return false;
 	}
 }
+
+QStringList KopeteIface::accounts()
+{
+	QStringList list;
+	QPtrList<KopeteAccount> m_accounts=KopeteAccountManager::manager()->accounts();
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
+	{
+		++it;
+
+		list += ( account->protocol()->pluginId() +"||" + account->accountId() );
+	}
+
+	return list;
+
+}
+
+void KopeteIface::connect(const QString &protocolId, const QString &accountId )
+{
+	QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
+	{
+		++it;
+
+		if( ( account->accountId() == accountId) )
+		{
+			if( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )
+			{
+				account->connect();
+				break;
+			}
+		}
+	}
+}
+
+
+void KopeteIface::disconnect(const QString &protocolId, const QString &accountId )
+{
+	QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
+	{
+		++it;
+
+		if( ( account->accountId() == accountId) )
+		{
+			if( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )
+			{
+				account->disconnect();
+				break;
+			}
+		}
+	}
+}
+
+
+
+bool KopeteIface::loadPlugin( const QString& name )
+{
+	return LibraryLoader::pluginLoader()->loadPlugin(name);
+}
+
+bool KopeteIface::unloadPlugin( const QString& name )
+{
+	return LibraryLoader::pluginLoader()->remove( name );
+}
+
 
 
 // vim: set noet ts=4 sts=4 sw=4:

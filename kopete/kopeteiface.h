@@ -63,6 +63,14 @@ k_dcop:
 	 */
 	bool addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 		const QString &displayName, const QString &groupName = QString::null );
+
+	QStringList accounts();
+
+	void connect(const QString &protocolName, const QString &accountId);
+	void disconnect(const QString &protocolName, const QString &accountId);
+
+	bool loadPlugin( const QString& name );
+	bool unloadPlugin( const QString& name );
 };
 
 #endif

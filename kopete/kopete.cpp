@@ -20,12 +20,16 @@
 #include "kopete.h"
 
 #include <qtimer.h>
+#include <qregexp.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
+#include <klocale.h>
 #include <kcmdlineargs.h>
 
 #include "accountconfig.h"
+#include "kopeteaccount.h"
+#include "kopeteprotocol.h"
 #include "appearanceconfig.h"
 #include "behaviorconfig.h"
 #include "kopetecontactlist.h"
@@ -34,6 +38,8 @@
 #include "kopetewindow.h"
 #include "pluginconfig.h"
 #include "preferencesdialog.h"
+
+
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -170,6 +176,41 @@ void Kopete::slotLoadPlugins()
 	if (args->isSet("connect"))
 	{
 		KopeteAccountManager::manager()->autoConnect();
+	}
+
+	QCStringList connectArgs = args->getOptionList("autoconnect");
+	for (QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i)
+	{
+		QString id = QString::fromLatin1(*i);
+
+		QRegExp rx( QString::fromLatin1("([^\\|]*)\\|\\|(.*)"));
+		rx.search(id);
+		QString protocolId=rx.cap(1);
+		QString accountId=rx.cap(2);
+
+		if(accountId.isEmpty())
+		{
+			if(protocolId.isEmpty())
+				accountId=id;
+			else
+				continue;
+		}
+
+		QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
+		KopeteAccount *account;
+		while ( ( account = it.current() ) != 0 )
+		{
+			++it;
+
+			if( ( account->accountId() == accountId) )
+			{
+				if( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )
+				{
+					account->connect();
+					break;
+				}
+			}
+		}
 	}
 
 	if( showConfigDialog )

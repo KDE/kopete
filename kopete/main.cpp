@@ -24,7 +24,7 @@
 #include <dcopclient.h>
 #include "kopeteiface.h"
 
-#define KOPETE_VERSION "0.7.90cvs >= 20030811"
+#define KOPETE_VERSION "0.7.90cvs >= 20030812"
 
 static const char description[] =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
@@ -33,7 +33,7 @@ static KCmdLineOptions options[] =
 {
 	{ "noplugins", I18N_NOOP("Do not load plugins"), 0 },
 	{ "noconnect" , I18N_NOOP("Disable auto-connection") , 0 },
-//	{ "connect <account>" , I18N_NOOP("auto-connect specified account") , 0 }, //TODO
+	{ "autoconnect <account>" , I18N_NOOP("Auto-connect specified account.") , 0 },
 	{ "disable <plugin>", I18N_NOOP("Do not load specified plugin"), 0 },
 	{ "!+[plugin]", I18N_NOOP("Load specified plugins"), 0 },
 	KCmdLineLastOption
