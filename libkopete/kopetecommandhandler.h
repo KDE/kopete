@@ -186,7 +186,6 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		void slotAwayCommand( const QString & args, Kopete::ChatSession *manager );
 		void slotAwayAllCommand( const QString & args, Kopete::ChatSession *manager );
 		void slotSayCommand( const QString & args, Kopete::ChatSession *manager );
-		void slotNickCommand( const QString & args, Kopete::ChatSession *manager );
 
 	private:
 		/**

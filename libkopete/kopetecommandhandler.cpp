@@ -129,9 +129,6 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 		i18n( "USAGE: /say <text> - Say text in this chat. This is the same as just typing a message, but is very "
 			"useful for scripts." ), 1 );
 
-	registerCommand( this, QString::fromLatin1("nick"), SLOT( slotNickCommand( const QString &, Kopete::ChatSession * ) ),
-		i18n( "USAGE: /nick <nickname> - Change your nickname to the given one." ), 1 );
-
 	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /exec [-o] <command> - Executes the specified command and displays the output in the chat buffer. "
 		"If -o is specified, the output is sent to all members of the chat."), 1 );
@@ -269,11 +266,6 @@ void Kopete::CommandHandler::slotSayCommand( const QString &args, Kopete::ChatSe
 	Kopete::Message msg(manager->myself(), manager->members(), args,
 		Kopete::Message::Outbound, Kopete::Message::PlainText);
 	manager->sendMessage(msg);
-}
-
-void Kopete::CommandHandler::slotNickCommand( const QString & args, Kopete::ChatSession *manager )
-{
-	manager->account()->myself()->setDisplayName( args );
 }
 
 void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatSession *manager )
