@@ -63,15 +63,16 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 		if (d.exists())
 		{
 			prefix = "/usr";
-			break;
 		}
 		d = "/usr/local/share/smssend";
 		if (d.exists())
 		{
 			prefix="/usr/local";
-			break;
 		}
-		prefix = "/usr";
+		else
+		{
+			prefix="/usr";
+		}
 	}
 	
 	connect (prefWidget->program, SIGNAL(textChanged(const QString &)),
