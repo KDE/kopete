@@ -226,8 +226,7 @@ private slots:
 	void slotContactAdded(QString handle, QString publicName, QString list,
 		uint serial, uint group );
 
-	void slotContactList(QString handle, QString publicName, QString group,
-		QString list );
+	void slotContactListed( QString handle, QString publicName, QString group, QString list );
 	void slotStatusChanged( QString status );
 
 	/**

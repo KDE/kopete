@@ -35,6 +35,13 @@ class MSNContact : public KopeteContact
 {
 	Q_OBJECT
 
+	/**
+	 * With the notify socket handling most of the finer details of the
+	 * protocol it needs access to setDisplayName, so make it a friend
+	 * of this class
+	 */
+	friend class MSNNotifySocket;
+
 public:
 	MSNContact( KopeteProtocol *protocol, const QString &id,
 		const QString &displayName, KopeteMetaContact *parent );
@@ -113,6 +120,11 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	void removeFromGroup( unsigned int group );
+
+	/**
+	 * Rename contact on server
+	 */
+	virtual void rename( const QString &newName );
 
 public slots:
 	virtual void slotUserInfo();

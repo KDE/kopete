@@ -175,7 +175,7 @@ void MSNProtocol::connect()
 //	QObject::connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
 //		this, SLOT( slotStateChanged( QString ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( contactList( QString, QString, QString, QString ) ),
-		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
+		this, SLOT( slotContactListed( QString, QString, QString, QString ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
 		this,	SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
@@ -850,7 +850,7 @@ MSNProtocol::Status MSNProtocol::convertStatus( QString status )
 		return FLN;
 }
 
-void MSNProtocol::slotContactList( QString handle, QString publicName, QString group, QString list )
+void MSNProtocol::slotContactListed( QString handle, QString publicName, QString group, QString list )
 {
 	// On empty lists handle might be empty, ignore that
 	if( handle.isEmpty() )
@@ -862,11 +862,12 @@ void MSNProtocol::slotContactList( QString handle, QString publicName, QString g
 		KopeteMetaContact *metaContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, handle );
 		if( metaContact )
 		{
-			//Contact exists, update data.
-			//Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
+			// Contact exists, update data.
+			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
+			kdDebug( 14140 ) << k_funcinfo << "******* updating existing contact: " << handle << "!" << endl;
 			MSNContact *c = static_cast<MSNContact*>( metaContact->findContact( pluginId(), QString::null, handle ) );
 			c->setMsnStatus( FLN );
-			c->setDisplayName( publicName );
+			c->rename( publicName ); // FIXME: setDisplayName() is protected, but is rename() actually what we want here?
 
 			const QMap<uint, KopeteGroup *> &serverGroups = c->serverGroups();
 			for( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
@@ -1089,7 +1090,7 @@ void MSNProtocol::slotAddTemporaryContact( const QString &userName )
 	addContact( userName, QString::null, 0L, QString::null, true);
 }
 
-void MSNProtocol::slotPublicNameChanged( QString publicName)
+void MSNProtocol::slotPublicNameChanged( QString publicName )
 {
 	if( publicName != m_publicName )
 	{
@@ -1098,7 +1099,7 @@ void MSNProtocol::slotPublicNameChanged( QString publicName)
 			m_publicName = publicName;
 			m_publicNameSyncMode = SyncBoth;
 
-			m_myself->setDisplayName(publicName);
+			m_myself->rename( publicName );
 
 			// Also sync the config file
 			mPrefs->setPublicName(m_publicName);

@@ -501,6 +501,26 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	}
 }
 
+void MSNContact::rename( const QString &newName )
+{
+	if( newName == displayName() )
+		return;
+
+	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	if( notify )
+	{
+		notify->changePublicName( newName, contactId() );
+	}
+	else
+	{
+		// FIXME: Move this to libkopete instead - Martijn
+		KMessageBox::information( 0L,
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact "
+				"list server-side. Your changes may be lost</qt>" ),
+			i18n( "MSN Plugin" ), "msn_OfflineContactList" );
+	}
+}
+
 void MSNContact::addToGroup( KopeteGroup *group )
 {
 	//kdDebug( 14140 ) << k_funcinfo << group->displayName() << endl;

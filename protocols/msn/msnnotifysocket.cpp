@@ -119,7 +119,9 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 209:
 	{
-		QString msg = i18n( "You are trying to change the display name of an user who has not confirmed his e-mail address" );
+		QString msg = i18n( "You are trying to change the display name of an user who has not "
+			"confirmed his or her e-mail address.\n"
+			"The contact was not renamed on the server." );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
@@ -273,15 +275,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "REA" )
 	{
 		QString handle=data.section( ' ', 1, 1 );
-		if(handle==msnId())
+		if( handle == msnId() )
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 		else
 		{
 			MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ handle ] );
 			if( c )
-			{
-				c->setDisplayName(unescape(data.section( ' ', 2, 2 )));
-			}
+				c->setDisplayName( unescape( data.section( ' ', 2, 2 ) ) );
 		}
 	}
 	else if( cmd == "LSG" )
@@ -499,13 +499,13 @@ void MSNNotifySocket::addContact( const QString &handle, QString publicName, uin
 	switch( list )
 	{
 	case MSNProtocol::FL:
-		args = "FL " + handle + " " + handle + " " + QString::number( group );
+		args = "FL " + handle + " " + escape( publicName ) + " " + QString::number( group );
 		break;
 	case MSNProtocol::AL:
-		args = "AL " + handle + " "  + escape( publicName );
+		args = "AL " + handle + " " + escape( publicName );
 		break;
 	case MSNProtocol::BL:
-		args = "BL " + handle + " "  + escape( publicName );
+		args = "BL " + handle + " " + escape( publicName );
 		break;
 	default:
 		kdDebug(14140) << "MSNNotifySocket::addContact: WARNING! Unknown list " <<
@@ -549,10 +549,10 @@ void MSNNotifySocket::setStatus( int status )
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
-	if(handle.isNull())
-		sendCommand( "REA", msnId() + " " + escape (publicName) );
+	if( handle.isNull() )
+		sendCommand( "REA", msnId() + " " + escape ( publicName ) );
 	else
-		sendCommand( "REA", handle + " " + escape (publicName) );
+		sendCommand( "REA", handle + " " + escape ( publicName ) );
 }
 
 void MSNNotifySocket::createChatSession()

@@ -160,13 +160,6 @@ public:
 	virtual void moveToGroup( KopeteGroup *from, KopeteGroup *to );
 
 	/**
-	 * Sets the display name, or alias, for the contact.
-	 * this is what is shown in the contact list.
-	 * @param name Then new display name
-	 */
-	void setDisplayName( const QString &name );
-
-	/**
 	 * Get the current display name
 	 * @return The display name
 	 */
@@ -309,6 +302,17 @@ public:
 	
 	KPopupMenu *popupMenu();
 
+	/**
+	 * Rename a contact's display name.
+	 * This method can be asynchronous, i.e. it starts the rename, but the
+	 * result may not be instant. Whenever the rename is done the contact
+	 * will call @ref setDisplayName() (which emits @ref displayNameChanged() )
+	 * to confirm the change.
+	 *
+	 * The default implementation calls @ref setDisplatName() immediately.
+	 */
+	virtual void rename( const QString &newName );
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -349,6 +353,14 @@ public slots:
 	 */
 	virtual void sendFile( const KURL &sourceURL = 0L, const QString &fileName = QString::null,
 		const long unsigned int fileSize = 0L );
+
+protected:
+	/**
+	 * Sets the display name, or alias, for the contact.
+	 * this is what is shown in the contact list.
+	 * @param name Then new display name
+	 */
+	void setDisplayName( const QString &name );
 
 private slots:
 	/**

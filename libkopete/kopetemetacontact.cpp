@@ -455,10 +455,18 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
-//	kdDebug(14010) << "[KopeteMetaContact] setDisplayName(); name=" << name <<
-//		", m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
+	kdDebug( 14000 ) << k_funcinfo << "Set new contact name to " << name  <<
+		", m_trackChildNameChanges=" << m_trackChildNameChanges << endl;
+
+	if( name == m_displayName )
+		return;
+
 	m_displayName = name;
-//	m_trackChildNameChanges = false;
+	m_trackChildNameChanges = false;
+
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+		c->rename( name );
+
 	emit displayNameChanged( this, name );
 }
 

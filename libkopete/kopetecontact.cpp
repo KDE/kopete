@@ -101,8 +101,17 @@ QString KopeteContact::identityId() const
 	return QString::null;
 }
 
+void KopeteContact::rename( const QString &name )
+{
+	// Default implementation immediately sets the new name
+	setDisplayName( name );
+}
+
 void KopeteContact::setDisplayName( const QString &name )
 {
+	if( name == m_displayName )
+		return;
+
 	m_displayName = name;
 	emit displayNameChanged( name );
 }
