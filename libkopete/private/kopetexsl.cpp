@@ -24,9 +24,11 @@
 #include <kopetexsl.h>
 #include <qregexp.h>
 
+//#define XSL_DEBUG 1
+
 extern int xmlLoadExtDtdDefaultValue;
 
-QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
+const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
 {
 	KopeteXSLThread mThread( xmlString, xslString );
 	mThread.start();
@@ -73,6 +75,11 @@ void KopeteXSLThread::run()
 	xmlInitMemory();
 	xmlLoadExtDtdDefaultValue = 0;
 	xmlSubstituteEntitiesDefault(1);
+
+	#ifdef XSL_DEBUG
+		kdDebug() << m_xml << endl;
+		kdDebug() << m_xsl << endl;
+	#endif
 
 	// Convert QString into a C string
 	QCString xmlCString = m_xml.latin1();

@@ -37,7 +37,7 @@ class KopeteXSL
 		 * @param xslString The source XSL
 		 * @return The result of the transformation
 		 */
-		static QString xsltTransform( const QString &xmlString, const QString &xslString );
+		static const QString xsltTransform( const QString &xmlString, const QString &xslString );
 
 		/**
 		 * Transforms the XML string using the XSL String, asynchronously

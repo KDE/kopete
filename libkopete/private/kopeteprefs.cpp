@@ -104,7 +104,7 @@ void KopetePrefs::load()
 		QString end =   QString::fromLatin1( "\n</xsl:template>\n</xsl:stylesheet>" );
 
   		QString msnStyle = start + QString::fromLatin1(
-			"<div style=\"padding-bottom:10px;\">\n"
+			"<div style=\"padding-bottom:10px;\" class=\"KopeteMessage\"><xsl:attribute name=\"id\"><xsl:value-of select=\"@id\"/></xsl:attribute>\n"
 			"\t<div style=\"color:lightgray\">\n"
 			"\t\t(<xsl:value-of select=\"@timestamp\"/>) <span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span> says:\n"
 			"\t</div>\n"
@@ -116,11 +116,9 @@ void KopetePrefs::load()
 		) + end;
 
 		QString xchatStyle = start + QString::fromLatin1(
-			"<div>\n"
+			"<div class=\"KopeteMessage\"><xsl:attribute name=\"id\"><xsl:value-of select=\"@id\"/></xsl:attribute>\n"
 			"<xsl:attribute name=\"style\">\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
-			"\n<xsl:if test=\"@importance='2'\">\n"
-			"\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
-			"</xsl:if>\n<xsl:if test=\"@direction='3'\">\n"
+			"\n<xsl:if test=\"@direction='3'\">\n"
 			"\t<xsl:attribute name=\"style\"><xsl:text>color:darkgreen</xsl:text></xsl:attribute>\n"
 			"</xsl:if>\n[<xsl:value-of select=\"@timestamp\"/>] \n"
 			"<!-- Choose based on message direction -->\n<xsl:choose>\n"
@@ -135,12 +133,14 @@ void KopetePrefs::load()
 			"\t\t\t\t\t<xsl:otherwise> <!-- Incoming -->\n\t\t\t\t\t\t<xsl:value-of select=\"from/contact/@color\"/>\n"
 			"\t\t\t\t\t</xsl:otherwise>\n\t\t\t\t</xsl:choose>\n\t\t\t</xsl:attribute>\n"
 			"\t\t\t<span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span>\n\t\t</font>\n"
-			"\t\t<font color=\"blue\">&gt; </font>\n\t</xsl:otherwise>\n</xsl:choose>\n"
-			"<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/>\n</div>"
+			"\t\t<font color=\"blue\">&gt; </font>\n\t</xsl:otherwise>\n</xsl:choose>\n<span>\n"
+			"<xsl:if test=\"@importance='2'\">\n"
+			"\t<xsl:attribute name=\"class\"><xsl:text>KopeteMessage highlight</xsl:text></xsl:attribute>\n"
+			"</xsl:if>\n<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/>\n</span>\n</div>"
 		 ) + end;
 
 		QString kopeteStyle = start + QString::fromLatin1(
-			"<div style=\"padding-bottom:10px;\">\n"
+			"<div class=\"KopeteMessage\" style=\"padding-bottom:10px;\"><xsl:attribute name=\"id\"><xsl:value-of select=\"@id\"/></xsl:attribute>\n"
 			"\t<xsl:if test=\"@direction='0' or @direction='1'\">\n"
 			"\t\t<div>\n"
 			"\t\t\t<xsl:choose>\n"
