@@ -187,7 +187,12 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	// Lastly, pass on the plugin data to the account
 	QMap<QString, QMap<QString, QString> >::Iterator pluginDataIt;
 	for ( pluginDataIt = pluginData.begin(); pluginDataIt != pluginData.end(); ++pluginDataIt )
-		setPluginData( LibraryLoader::self()->searchByID( pluginDataIt.key() ), pluginDataIt.data() );
+	{
+		QString pluginId = QString::fromLatin1( "kopete_" ) + pluginDataIt.key();
+		KopetePlugin *plugin = LibraryLoader::self()->searchByID( pluginId );
+		if ( plugin )
+			setPluginData( plugin, pluginDataIt.data() );
+	}
 
 	loaded();
 }
