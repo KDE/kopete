@@ -5,6 +5,8 @@
     
     Based on Testbed   
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    rtfizeTest from nm_rtfize_text, from Gaim src/protocols/novell/nmuser.c
+    Copyright (c) 2004 Novell, Inc. All Rights Reserved
     
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
  
@@ -22,7 +24,7 @@
 #define TESTBEDPROTOCOL_H
 
 #include <kopeteprotocol.h>
-
+#include "kopetecontactproperty.h"
 
 /**
  * Encapsulates the generic actions associated with this protocol
@@ -60,17 +62,45 @@ public:
 	 */
 	static GroupWiseProtocol *protocol();
 	/**
-	 * Represents contacts that are Online
+	 * Transform a GroupWise internal status into a KopeteOnlineStatus
 	 */
-	const KopeteOnlineStatus groupwiseOnline;
+	KopeteOnlineStatus gwStatusToKOS( const int gwInternal );
+	/**
+	 * Wrap unformatted text in RTF formatting so that other GroupWise clients will display it
+	 * @param plain unformatted text
+	 * @return RTF text (in UCS-4 encoding)
+	 */
+	QString rtfizeText( const QString & plain );
+	/**
+	 * Convert full DNs to dotted-untyped format
+	 * Assumes the DN is normalised - comma separated, no spaces between elements
+	 * eg cn=wstephenson,o=suse becomes wstephenson.suse
+	 */
+	static QString dnToDotted( const QString & dn );
+	/**
+	 * Online statuses used for contacts' presence
+	 */
+	const KopeteOnlineStatus groupwiseUnknown;
+	const KopeteOnlineStatus groupwiseOffline;
+	const KopeteOnlineStatus groupwiseAvailable;
+	const KopeteOnlineStatus groupwiseBusy;
+	const KopeteOnlineStatus groupwiseAway;
+	const KopeteOnlineStatus groupwiseAwayIdle;
+	const KopeteOnlineStatus groupwiseInvalid;
+	const KopeteOnlineStatus groupwiseConnecting;
+	const KopeteOnlineStatus groupwiseAppearOffline;
+
 	/**
 	 * Represents contacts that are Away
 	 */
-	const KopeteOnlineStatus groupwiseAway;
-	/**
-	 * Represents contacts that are Offline
-	 */
-	const KopeteOnlineStatus groupwiseOffline;
+	const Kopete::ContactPropertyTmpl propGivenName;
+	const Kopete::ContactPropertyTmpl propLastName;
+	const Kopete::ContactPropertyTmpl propFullName;
+	const Kopete::ContactPropertyTmpl propAwayMessage;
+	const Kopete::ContactPropertyTmpl propAutoReply;
+	const Kopete::ContactPropertyTmpl propCN;
+	
+	
 protected:
 	static GroupWiseProtocol *s_protocol;
 };

@@ -1,0 +1,212 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>GroupWiseContactPropsWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GroupWiseContactPropsWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>506</width>
+            <height>533</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout21</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer row="1" column="0">
+                    <property name="name">
+                        <cstring>spacer5_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>40</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLabel" row="6" column="2">
+                    <property name="name">
+                        <cstring>m_lastName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>USER_LAST_NAME</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="2">
+                    <property name="name">
+                        <cstring>m_displayName</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Change the display name used for this contact</string>
+                    </property>
+                </widget>
+                <widget class="Line" row="2" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>line1</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>m_status</cstring>
+                    </property>
+                    <property name="text">
+                        <string>USER_STATUS</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="2">
+                    <property name="name">
+                        <cstring>m_firstName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>USER_FIRST_NAME</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>textLabel11</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Last Name:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="1">
+                    <property name="name">
+                        <cstring>textLabel14</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Status:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0" rowspan="2" colspan="2">
+                    <property name="name">
+                        <cstring>lbl_displayName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Display Name:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_displayName</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>textLabel10</cstring>
+                    </property>
+                    <property name="text">
+                        <string>First Name:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="2">
+                    <property name="name">
+                        <cstring>m_userId</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>3</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>USER_ID</string>
+                    </property>
+                </widget>
+                <spacer row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>spacer5</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>120</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line1_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel15</cstring>
+            </property>
+            <property name="text">
+                <string>Additional Properties:</string>
+            </property>
+        </widget>
+        <widget class="QListView">
+            <column>
+                <property name="text">
+                    <string>Property</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Value</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>m_propsView</cstring>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
