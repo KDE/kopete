@@ -1,3 +1,4 @@
+
 /***************************************************************************
                       dlgjabbersendraw.h  -  Raw XML dialog
                              -------------------
@@ -32,27 +33,25 @@
  * @author Till <till@tantalo.net>
  * @author Chris TenHarmsel <tenharmsel@users.sf.net>
  */
-class dlgJabberSendRaw : public dlgSendRaw
+class dlgJabberSendRaw:public dlgSendRaw
 {
-	Q_OBJECT
+  Q_OBJECT public:
+	dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
+	  virtual ~ dlgJabberSendRaw ();
 
-	public:
-		dlgJabberSendRaw(Jabber::Client *engine,
-										QWidget *parent = 0, const char *name = 0);
-		virtual ~dlgJabberSendRaw();
+	public slots:void slotFinish ();
+	void slotCancel ();
 
-	public slots:
-		void slotFinish();
-		void slotCancel();
+  private:
 
-	private:
 		/** This is what we talk through */
-		Jabber::Client *mEngine;
+	  Jabber::Client * mEngine;
 
 };
 
 
 #endif
+
 /*
  * Local variables:
  * c-indentation-style: k&r

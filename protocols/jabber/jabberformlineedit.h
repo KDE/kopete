@@ -28,19 +28,18 @@
   *@author Kopete developers
   */
 
-class JabberFormLineEdit:public QLineEdit {
+class JabberFormLineEdit:public QLineEdit
+{
 
   Q_OBJECT public:
-    JabberFormLineEdit(const int type, const QString & realName,
-		       const QString & value, QWidget * parent =
-		       0, const char *name = 0);
-    ~JabberFormLineEdit();
+	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = 0, const char *name = 0);
+	 ~JabberFormLineEdit ();
 
-    public slots:void slotGatherData(Jabber::Form & form);
+	public slots:void slotGatherData (Jabber::Form & form);
 
   private:
-    int fieldType;
-    QString fieldName;
+	int fieldType;
+	QString fieldName;
 
 };
 

@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabberservices.cpp  -  description
                              -------------------
@@ -31,41 +32,41 @@
 
 #include "dlgjabberservices.moc"
 
-dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgServices(parent,name)
+dlgJabberServices::dlgJabberServices (QWidget * parent, const char *name):dlgServices (parent, name)
 {
 
 	/*if(JabberAccount::protocol()->isConnected())
-	{
-		// pre-populate the server field
-	//	leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
-	}*/
+	   {
+	   // pre-populate the server field
+	   //   leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
+	   } */
 
 	// disable the left margin
-	tblServices->setLeftMargin(0);
+	tblServices->setLeftMargin (0);
 
 	// no content for now
-	tblServices->setNumRows(0);
+	tblServices->setNumRows (0);
 
 	// disable the buttons as long as nothing has been selected
-	btnRegister->setDisabled(true);
-	btnBrowse->setDisabled(true);
+	btnRegister->setDisabled (true);
+	btnBrowse->setDisabled (true);
 
 	// allow autostretching
-	tblServices->setColumnStretchable(0, true);
-	tblServices->setColumnStretchable(1, true);
+	tblServices->setColumnStretchable (0, true);
+	tblServices->setColumnStretchable (1, true);
 
 	// disable user selections
-	tblServices->setSelectionMode(QTable::NoSelection);
+	tblServices->setSelectionMode (QTable::NoSelection);
 
 	// name table headers
-	tblServices->horizontalHeader()->setLabel(0, i18n("Name"));
-	tblServices->horizontalHeader()->setLabel(1, i18n("Address"));
+	tblServices->horizontalHeader ()->setLabel (0, i18n ("Name"));
+	tblServices->horizontalHeader ()->setLabel (1, i18n ("Address"));
 
-	connect(btnQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
-	connect(tblServices, SIGNAL(clicked(int, int, int, const QPoint &)), this, SLOT(slotSetSelection(int, int, int, const QPoint &)));
+	connect (btnQuery, SIGNAL (clicked ()), this, SLOT (slotQuery ()));
+	connect (tblServices, SIGNAL (clicked (int, int, int, const QPoint &)), this, SLOT (slotSetSelection (int, int, int, const QPoint &)));
 
-	connect(btnRegister, SIGNAL(clicked()), this, SLOT(slotRegister()));
-	connect(btnBrowse, SIGNAL(clicked()), this, SLOT(slotBrowse()));
+	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotRegister ()));
+	connect (btnBrowse, SIGNAL (clicked ()), this, SLOT (slotBrowse ()));
 
 	serviceTask = 0L;
 
@@ -73,99 +74,100 @@ dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 
 }
 
-void dlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
+void dlgJabberServices::slotSetSelection (int row, int, int, const QPoint &)
 {
 
-	tblServices->clearSelection(true);
+	tblServices->clearSelection (true);
 #if (QT_VERSION >= 0x030100)
-	tblServices->addSelection(QTableSelection(row, 0, row, 1));
+	tblServices->addSelection (QTableSelection (row, 0, row, 1));
 #else
 	QTableSelection selection;
-	selection.init(row, 0);
-	selection.expandTo(row, 1);
-	tblServices->addSelection(selection);
+
+	selection.init (row, 0);
+	selection.expandTo (row, 1);
+	tblServices->addSelection (selection);
 #endif
 
 	// query the agent list about the selected item
-	btnRegister->setDisabled(!serviceTask->agents()[row].canRegister());
-	btnBrowse->setDisabled(!serviceTask->agents()[row].canSearch());
+	btnRegister->setDisabled (!serviceTask->agents ()[row].canRegister ());
+	btnBrowse->setDisabled (!serviceTask->agents ()[row].canSearch ());
 
 	selectedRow = row;
 
 }
 
-void dlgJabberServices::slotQuery()
+void dlgJabberServices::slotQuery ()
 {
 
 	/*if(!JabberProtocol::protocol()->isConnected())
-	{
-		JabberProtocol::protocol()->errorConnectFirst();
-		return;
-	}*/
+	   {
+	   JabberProtocol::protocol()->errorConnectFirst();
+	   return;
+	   } */
 
 	// create the jabber task
 	delete serviceTask;
-	serviceTask = new Jabber::JT_GetServices(JabberProtocol::protocol()->jabberClient->rootTask());
-	connect(serviceTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
+
+	serviceTask = new Jabber::JT_GetServices (JabberProtocol::protocol ()->jabberClient->rootTask ());
+	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotQueryFinished ()));
 
 	/* populate server field if it is empty */
 	//if(leServer->text().isEmpty())
-	//	leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
+	//  leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 
-	kdDebug(14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
+	kdDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text () << endl;
 
-	serviceTask->get(leServer->text());
-	serviceTask->go(false);
+	serviceTask->get (leServer->text ());
+	serviceTask->go (false);
 
 }
 
-void dlgJabberServices::slotQueryFinished()
+void dlgJabberServices::slotQueryFinished ()
 {
-	kdDebug(14130) << "[dlgJabberServices] Query task finished" << endl;
+	kdDebug (14130) << "[dlgJabberServices] Query task finished" << endl;
 
-	Jabber::JT_GetServices *task = (Jabber::JT_GetServices *)sender();
+	Jabber::JT_GetServices * task = (Jabber::JT_GetServices *) sender ();
 
-	if(!task->success())
-	{
-		KMessageBox::error(this,
-								 i18n("Unable to retrieve the list of services"),
-								 i18n("Jabber Error"));
-		return;
-	}
+	if (!task->success ())
+	  {
+		  KMessageBox::error (this, i18n ("Unable to retrieve the list of services"), i18n ("Jabber Error"));
+		  return;
+	  }
 
-	tblServices->setNumRows(task->agents().count());
+	tblServices->setNumRows (task->agents ().count ());
 
 	int row = 0;
-	for(Jabber::AgentList::const_iterator it = task->agents().begin(); it != task->agents().end(); it++)
-	{
-		tblServices->setText(row, 0, (*it).name());
-		tblServices->setText(row, 1, (*it).jid().userHost());
-		row++;
-	}
+
+	for (Jabber::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); it++)
+	  {
+		  tblServices->setText (row, 0, (*it).name ());
+		  tblServices->setText (row, 1, (*it).jid ().userHost ());
+		  row++;
+	  }
 
 }
 
-void dlgJabberServices::slotRegister()
+void dlgJabberServices::slotRegister ()
 {
 
-	dlgJabberRegister *registerDialog = new dlgJabberRegister(serviceTask->agents()[selectedRow].jid());
+	dlgJabberRegister *registerDialog = new dlgJabberRegister (serviceTask->agents ()[selectedRow].jid ());
 
-	registerDialog->show();
-	registerDialog->raise();
+	registerDialog->show ();
+	registerDialog->raise ();
 
 }
 
-void dlgJabberServices::slotBrowse()
+void dlgJabberServices::slotBrowse ()
 {
 
-	dlgJabberBrowse *browseDialog = new dlgJabberBrowse(serviceTask->agents()[selectedRow].jid());
+	dlgJabberBrowse *browseDialog = new dlgJabberBrowse (serviceTask->agents ()[selectedRow].jid ());
 
-	browseDialog->show();
-	browseDialog->raise();
+	browseDialog->show ();
+	browseDialog->raise ();
 
 }
 
-dlgJabberServices::~dlgJabberServices()
+dlgJabberServices::~dlgJabberServices ()
 {
 
 	delete serviceTask;

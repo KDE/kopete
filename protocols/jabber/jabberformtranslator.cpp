@@ -22,69 +22,71 @@
 #include "jabberformlineedit.h"
 #include "jabberformtranslator.h"
 
-JabberFormTranslator::JabberFormTranslator(QWidget * parent,
-					   const char *name):QWidget(parent,
-								     name) {
+JabberFormTranslator::JabberFormTranslator (QWidget * parent, const char *name):QWidget (parent, name)
+{
 }
 
-void JabberFormTranslator::translate(const Jabber::Form & form,
-				     QWidget * widget) {
-    QVBoxLayout *innerLayout;
+void JabberFormTranslator::translate (const Jabber::Form & form, QWidget * widget)
+{
+	QVBoxLayout *innerLayout;
 
-    /* Copy basic form values. */
-    privForm.setJid(form.jid());
-    privForm.setInstructions(form.instructions());
-    privForm.setKey(form.key());
+	/* Copy basic form values. */
+	privForm.setJid (form.jid ());
+	privForm.setInstructions (form.instructions ());
+	privForm.setKey (form.key ());
 
-    /* Add instructions to layout. */
-    if (widget->layout())
-	innerLayout = new QVBoxLayout(widget->layout());
-    else
-	innerLayout = new QVBoxLayout(widget);
+	/* Add instructions to layout. */
+	if (widget->layout ())
+		innerLayout = new QVBoxLayout (widget->layout ());
+	else
+		innerLayout = new QVBoxLayout (widget);
 
 
-    QLabel *label =
-	new QLabel(form.instructions(), parentWidget(), "InstructionLabel");
-    innerLayout->addWidget(label, 0, 0);
-    label->setAlignment(int (QLabel::WordBreak | QLabel::AlignVCenter));
-    label->show();
+	QLabel *label = new QLabel (form.instructions (), parentWidget (), "InstructionLabel");
 
-    QGridLayout *formLayout = new QGridLayout(innerLayout, form.count(), 2);
+	innerLayout->addWidget (label, 0, 0);
+	label->setAlignment (int (QLabel::WordBreak | QLabel::AlignVCenter));
 
-    int row = 1;
-    for (Jabber::Form::const_iterator it = form.begin(); it != form.end(); it++) {
-	kdDebug(14130) << "[JabberFormTranslator] Adding field realName()==" <<
-	    (*it).realName() << ", fieldName()==" << (*it).
-	    fieldName() << " to the dialog" << endl;
+	label->show ();
 
-	label =
-	    new QLabel((*it).fieldName(), parentWidget(), (*it).fieldName());
-	formLayout->addWidget(label, row, 0);
-	label->show();
+	QGridLayout *formLayout = new QGridLayout (innerLayout, form.count (), 2);
 
-	JabberFormLineEdit *edit =
-	    new JabberFormLineEdit((*it).type(), (*it).realName(),
-				   (*it).value(), parentWidget());
-	formLayout->addWidget(edit, row, 1);
-	edit->show();
+	int row = 1;
 
-	connect(this, SIGNAL(gatherData(Jabber::Form &)), edit,
-		SLOT(slotGatherData(Jabber::Form &)));
+	for (Jabber::Form::const_iterator it = form.begin (); it != form.end (); it++)
+	  {
+		  kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
+			  (*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
 
-	row++;
-    }
+		  label = new QLabel ((*it).fieldName (), parentWidget (), (*it).fieldName ());
+		  formLayout->addWidget (label, row, 0);
+		  label->show ();
 
-}
+		  JabberFormLineEdit *edit = new JabberFormLineEdit ((*it).type (), (*it).realName (),
+															 (*it).value (), parentWidget ());
 
-Jabber::Form & JabberFormTranslator::resultData() {
+		  formLayout->addWidget (edit, row, 1);
+		  edit->show ();
 
-    /* Let all line edit fields write into our form. */
-    emit gatherData(privForm);
+		  connect (this, SIGNAL (gatherData (Jabber::Form &)), edit, SLOT (slotGatherData (Jabber::Form &)));
 
-    return privForm;
+		  row++;
+	  }
 
 }
 
-JabberFormTranslator::~JabberFormTranslator() {
+Jabber::Form & JabberFormTranslator::resultData ()
+{
+
+	/* Let all line edit fields write into our form. */
+	emit gatherData (privForm);
+
+	return privForm;
+
 }
+
+JabberFormTranslator::~JabberFormTranslator ()
+{
+}
+
 #include "jabberformtranslator.moc"

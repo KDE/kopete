@@ -18,46 +18,50 @@
 #include <kdebug.h>
 #include "jabberresource.h"
 
-JabberResource::JabberResource() {
-    kdDebug(14130) << "Jabber resource: New Jabber resource (no params)." <<
-	endl;
+JabberResource::JabberResource ()
+{
+	kdDebug (14130) << "Jabber resource: New Jabber resource (no params)." << endl;
 
 }
 
-JabberResource::JabberResource(const QString & resource, const int &priority,
-			       const QDateTime & timestamp,
-			       const KopeteOnlineStatus & status,
-			       const QString & reason) {
-    kdDebug(14130) <<
-	QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").
-	arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
+JabberResource::JabberResource (const QString & resource, const int &priority,
+								const QDateTime & timestamp, const KopeteOnlineStatus & status, const QString & reason)
+{
+	kdDebug (14130) <<
+		QString ("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").
+		arg (resource, 1).arg (priority, 2).arg (timestamp.toString ("yyyyMMddhhmmss"), 3) << endl;
 
-    mResource = resource;
-    mPriority = priority;
-    mTimestamp = timestamp;
-    mStatus = status;
-    mReason = reason;
+	mResource = resource;
+	mPriority = priority;
+	mTimestamp = timestamp;
+	mStatus = status;
+	mReason = reason;
 
 }
 
-QString JabberResource::resource() {
-    return mResource;
+QString JabberResource::resource ()
+{
+	return mResource;
 }
 
-int JabberResource::priority() {
-    return mPriority;
+int JabberResource::priority ()
+{
+	return mPriority;
 }
 
-QDateTime JabberResource::timestamp() {
-    return mTimestamp;
+QDateTime JabberResource::timestamp ()
+{
+	return mTimestamp;
 }
 
-KopeteOnlineStatus JabberResource::status() {
-    return mStatus;
+KopeteOnlineStatus JabberResource::status ()
+{
+	return mStatus;
 }
 
-QString JabberResource::reason() {
-    return mReason;
+QString JabberResource::reason ()
+{
+	return mReason;
 }
 
 #include "jabberresource.moc"

@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabberregister.h  -  description
                              -------------------
@@ -33,23 +34,20 @@
   *@author Kopete developers
   */
 
-class dlgJabberRegister : public dlgRegister
+class dlgJabberRegister:public dlgRegister
 {
 
-   Q_OBJECT
+  Q_OBJECT public:
 
-public: 
+	dlgJabberRegister (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	 ~dlgJabberRegister ();
 
-	dlgJabberRegister(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
-	~dlgJabberRegister();
+	private slots:void slotGotForm ();
+	void slotSendForm ();
+	void slotSentForm ();
 
-private slots:
-	void slotGotForm();
-	void slotSendForm();
-	void slotSentForm();
-
-private:
-	JabberFormTranslator *translator;
+  private:
+	  JabberFormTranslator * translator;
 
 };
 

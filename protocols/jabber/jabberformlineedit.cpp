@@ -17,22 +17,25 @@
 
 #include "jabberformlineedit.h"
 
-JabberFormLineEdit::JabberFormLineEdit(const int type, const QString & realName,
-				       const QString & value, QWidget * parent,
-				       const char *name):QLineEdit(value,
-								   parent, name) {
+JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent, const char *name):QLineEdit (value,
+																																						parent,
+																																						name)
+{
 
-    fieldType = type;
-    fieldName = realName;
-
-}
-
-void JabberFormLineEdit::slotGatherData(Jabber::Form & form) {
-
-    form += Jabber::FormField(fieldName, text());
+	fieldType = type;
+	fieldName = realName;
 
 }
 
-JabberFormLineEdit::~JabberFormLineEdit() {
+void JabberFormLineEdit::slotGatherData (Jabber::Form & form)
+{
+
+	form += Jabber::FormField (fieldName, text ());
+
 }
+
+JabberFormLineEdit::~JabberFormLineEdit ()
+{
+}
+
 #include "jabberformlineedit.moc"

@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabbervcard.h  -  description
                              -------------------
@@ -26,32 +27,29 @@
 class QDomElement;
 class QDomDocument;
 
-class dlgJabberVCard : public dlgVCard
-{ 
-	Q_OBJECT
+class dlgJabberVCard:public dlgVCard
+{
+  Q_OBJECT public:
+	dlgJabberVCard (QWidget * parent = 0, const char *name = 0, Jabber::JT_VCard * vCard = 0);
+	 ~dlgJabberVCard ();
 
-	public:
-		dlgJabberVCard(QWidget* parent = 0, const char* name = 0, Jabber::JT_VCard *vCard = 0);
-		~dlgJabberVCard();
-    
-		void assignVCard(Jabber::JT_VCard *vCard);
-    
-	public slots:
-		void slotClose();
-		void slotSaveNickname();
-		void setReadOnly(bool);
+	void assignVCard (Jabber::JT_VCard * vCard);
 
-	signals:
-		void updateNickname(const QString &);
-		void saveAsXML(QDomElement &);
+	public slots: void slotClose ();
+	void slotSaveNickname ();
+	void setReadOnly (bool);
 
-	private:
-		bool mIsReadOnly;
-		QDomDocument doc;
-		QDomElement textTag(const QString &, const QString &);
+	  signals: void updateNickname (const QString &);
+	void saveAsXML (QDomElement &);
+
+  private:
+	  bool mIsReadOnly;
+	QDomDocument doc;
+	QDomElement textTag (const QString &, const QString &);
 };
 
 #endif // DLGJABBERVCARD_H
+
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -60,4 +58,3 @@ class dlgJabberVCard : public dlgVCard
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

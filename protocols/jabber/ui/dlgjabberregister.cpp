@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabberregister.cpp  -  description
                              -------------------
@@ -19,98 +20,94 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
- 
+
 
 #include "jabberprotocol.h"
 #include "dlgjabberregister.h"
 
-dlgJabberRegister::dlgJabberRegister(const Jabber::Jid &jid, QWidget *parent, const char *name ) : dlgRegister(parent,name)
+dlgJabberRegister::dlgJabberRegister (const Jabber::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)
 {
 
-	Jabber::JT_Register *task = new Jabber::JT_Register(JabberProtocol::protocol()->jabberClient->rootTask());
+	Jabber::JT_Register * task = new Jabber::JT_Register (JabberProtocol::protocol ()->jabberClient->rootTask ());
 
-	connect(task, SIGNAL(finished()), this, SLOT(slotGotForm()));
+	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
 
-	task->getForm(jid);
-	task->go(true);
+	task->getForm (jid);
+	task->go (true);
 
 	translator = 0;
 
 }
 
-void dlgJabberRegister::slotGotForm()
+void dlgJabberRegister::slotGotForm ()
 {
-	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
+	Jabber::JT_Register * task = (Jabber::JT_Register *) sender ();
 
 	// remove the "wait" message
 	delete lblWait;
 
-	if(!task->success())
-	{
-		KMessageBox::error(this,
-								 i18n("Unable to retrieve registration form.\nReason: \"%1\"").arg(task->statusString(), 1),
-								 i18n("Jabber Error"));
+	if (!task->success ())
+	  {
+		  KMessageBox::error (this, i18n ("Unable to retrieve registration form.\nReason: \"%1\"").arg (task->statusString (), 1), i18n ("Jabber Error"));
 
-		deleteLater();
-		
-		return;
-	}
+		  deleteLater ();
+
+		  return;
+	  }
 
 	// translate the form and create it inside the box widget
-	translator = new JabberFormTranslator(grpForm);
+	translator = new JabberFormTranslator (grpForm);
 
-	translator->translate(task->form(), grpForm);
+	translator->translate (task->form (), grpForm);
 
 	// enable the send button
-	btnRegister->setEnabled(true);
+	btnRegister->setEnabled (true);
 
-	connect(btnRegister, SIGNAL(clicked()), this, SLOT(slotSendForm()));
-
-}
-
-void dlgJabberRegister::slotSendForm()
-{
-
-	Jabber::JT_Register *task = new Jabber::JT_Register(JabberProtocol::protocol()->jabberClient->rootTask());
-
-	connect(task, SIGNAL(finished()), this, SLOT(slotSentForm()));
-	
-	task->setForm(translator->resultData());
-	task->go(true);
-
-	btnRegister->setEnabled(false);
-	btnCancel->setEnabled(false);
+	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotSendForm ()));
 
 }
 
-void dlgJabberRegister::slotSentForm()
+void dlgJabberRegister::slotSendForm ()
 {
-	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
 
-	if(task->success())
-	{
-		KMessageBox::information(this,
-								 i18n("Registration sent successfully"),
-								 i18n("Jabber Registration"));
+	Jabber::JT_Register * task = new Jabber::JT_Register (JabberProtocol::protocol ()->jabberClient->rootTask ());
 
-		deleteLater();
-	}
+	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));
+
+	task->setForm (translator->resultData ());
+	task->go (true);
+
+	btnRegister->setEnabled (false);
+	btnCancel->setEnabled (false);
+
+}
+
+void dlgJabberRegister::slotSentForm ()
+{
+	Jabber::JT_Register * task = (Jabber::JT_Register *) sender ();
+
+	if (task->success ())
+	  {
+		  KMessageBox::information (this, i18n ("Registration sent successfully"), i18n ("Jabber Registration"));
+
+		  deleteLater ();
+	  }
 	else
-	{
-		KMessageBox::error(this,
-								 i18n("The server denied the registration form.\nReason: \"%1\"").arg(task->statusString(), 1),
-								 i18n("Jabber Registration"));
+	  {
+		  KMessageBox::error (this,
+							  i18n ("The server denied the registration form.\nReason: \"%1\"").arg (task->statusString (), 1), i18n ("Jabber Registration"));
 
-		btnRegister->setEnabled(true);
-		btnRegister->setEnabled(true);
-	}
+		  btnRegister->setEnabled (true);
+		  btnRegister->setEnabled (true);
+	  }
 
 }
 
-dlgJabberRegister::~dlgJabberRegister()
+dlgJabberRegister::~dlgJabberRegister ()
 {
 
 	delete translator;
 
 }
+
 #include "dlgjabberregister.moc"

@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabberchatjoin.h  -  description
                              -------------------
@@ -25,17 +26,14 @@
   *@author Kopete developers
   */
 
-class dlgJabberChatJoin : public dlgChatJoin
+class dlgJabberChatJoin:public dlgChatJoin
 {
 
-	Q_OBJECT
+  Q_OBJECT public:
+	dlgJabberChatJoin (QWidget * parent = 0, const char *name = 0);
+	 ~dlgJabberChatJoin ();
 
-public: 
-	dlgJabberChatJoin(QWidget *parent=0, const char *name=0);
-	~dlgJabberChatJoin();
-
-private slots:
-	void slotDialogDone();
+	private slots:void slotDialogDone ();
 
 };
 

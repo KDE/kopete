@@ -28,19 +28,20 @@
   *@author Kopete developers
   */
 
-class JabberFormTranslator:public QWidget {
+class JabberFormTranslator:public QWidget
+{
 
   Q_OBJECT public:
-    JabberFormTranslator(QWidget * parent = 0, const char *name = 0);
-    ~JabberFormTranslator();
+	  JabberFormTranslator (QWidget * parent = 0, const char *name = 0);
+	 ~JabberFormTranslator ();
 
-    void translate(const Jabber::Form & form, QWidget * widget);
-     Jabber::Form & resultData();
+	void translate (const Jabber::Form & form, QWidget * widget);
+	  Jabber::Form & resultData ();
 
-     signals:void gatherData(Jabber::Form & form);
+	  signals:void gatherData (Jabber::Form & form);
 
   private:
-     Jabber::Form privForm;
+	  Jabber::Form privForm;
 
 };
 

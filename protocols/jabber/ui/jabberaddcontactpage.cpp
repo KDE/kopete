@@ -5,63 +5,62 @@
 
 #include "jabberaddcontactpage.h"
 
-JabberAddContactPage::JabberAddContactPage(KopeteAccount * owner,
-					   QWidget * parent,
-					   const char *name)
-:AddContactPage(parent, name)
+JabberAddContactPage::JabberAddContactPage (KopeteAccount * owner, QWidget * parent, const char *name):AddContactPage (parent, name)
 {
-    (new QVBoxLayout(this))->setAutoAdd(true);
-    if (owner->isConnected()) {
-	jabData = new dlgAddContact(this);
-	jabData->show();
-	plugin = owner;
-	canadd = true;
+	(new QVBoxLayout (this))->setAutoAdd (true);
+	if (owner->isConnected ())
+	  {
+		  jabData = new dlgAddContact (this);
+		  jabData->show ();
+		  plugin = owner;
+		  canadd = true;
 
-    } else {
-	noaddMsg1 =
-	    new
-	    QLabel(i18n
-		   ("You need to be connected to be able to add contacts."),
-		   this);
-	noaddMsg2 =
-	    new
-	    QLabel(i18n("Connect to the Jabber network and try again."),
-		   this);
-	canadd = false;
-    }
+	  }
+	else
+	  {
+		  noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
+		  noaddMsg2 = new QLabel (i18n ("Connect to the Jabber network and try again."), this);
+		  canadd = false;
+	  }
 
 }
 
-JabberAddContactPage::~JabberAddContactPage()
+JabberAddContactPage::~JabberAddContactPage ()
 {
 }
 
-bool JabberAddContactPage::validateData()
+bool JabberAddContactPage::validateData ()
 {
-    return true;
+	return true;
 }
 
-void JabberAddContactPage::slotFinish(KopeteMetaContact *mc)
+void JabberAddContactPage::slotFinish (KopeteMetaContact * mc)
 {
-    if (canadd) {
-	QString userID = jabData->addID->text();
-	//plugin->addContact(mc, userID);
-    } else {
-	return;
-    }
+	if (canadd)
+	  {
+		  QString userID = jabData->addID->text ();
+
+		  //plugin->addContact(mc, userID);
+	  }
+	else
+	  {
+		  return;
+	  }
 }
 
-bool JabberAddContactPage::apply( KopeteAccount* i, KopeteMetaContact*m )
+bool JabberAddContactPage::apply (KopeteAccount * i, KopeteMetaContact * m)
 {
-        if ( validateData() )
-	{
-		QString userid = i->myself()->contactId();
-	        return i->addContact( userid , userid, m );
-	}
+	if (validateData ())
+	  {
+		  QString userid = i->myself ()->contactId ();
+
+		  return i->addContact (userid, userid, m);
+	  }
 	return false;
-}	
+}
 
 #include "jabberaddcontactpage.moc"
+
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -70,4 +69,3 @@ bool JabberAddContactPage::apply( KopeteAccount* i, KopeteMetaContact*m )
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -48,20 +48,22 @@ class JabberDefaultPreferences;
 
 using namespace Jabber;
 
-class JabberProtocol:public KopeteProtocol {
-    Q_OBJECT
-	/* Friends can touch each other's private parts. */
-    friend class JabberAccount;
+class JabberProtocol:public KopeteProtocol
+{
+	Q_OBJECT
+		/* Friends can touch each other's private parts. */
+	friend class JabberAccount;
 
-    friend class JabberContact;
-    friend class JabberGroupChat;
-    friend class dlgJabberServices;
-    friend class dlgJabberRegister;
-    friend class dlgJabberBrowse;
-    friend class dlgJabberChatJoin;
-    friend class dlgJabberStatus;
+	friend class JabberContact;
+	friend class JabberGroupChat;
+	friend class dlgJabberServices;
+	friend class dlgJabberRegister;
+	friend class dlgJabberBrowse;
+	friend class dlgJabberChatJoin;
+	friend class dlgJabberStatus;
 
   public:
+
 	/*********************************************************************
 	 *
 	 * KopeteProtocol reimplementation start
@@ -71,48 +73,66 @@ class JabberProtocol:public KopeteProtocol {
 	/**
 	 * Object constructor and destructor
 	 */
-     JabberProtocol(QObject * parent, QString name, QStringList);
-    ~JabberProtocol();
+	  JabberProtocol (QObject * parent, QString name, QStringList);
+	 ~JabberProtocol ();
 
-    KActionMenu *protocolActions();
-
-
-    static KopeteOnlineStatus getJabberOnline() { return JabberOnline; };
-    static KopeteOnlineStatus getJabberChatty() { return JabberChatty; };
-    static KopeteOnlineStatus getJabberAway() { return JabberAway; };
-    static KopeteOnlineStatus getJabberXA() { return JabberXA; };
-    static KopeteOnlineStatus getJabberDND() { return JabberDND; };
-    static KopeteOnlineStatus getJabberOffline() { return JabberOffline; };
-    static KopeteOnlineStatus getJabberInvisible() { return JabberInvisible; };
+	KActionMenu *protocolActions ();
 
 
-	
+	static KopeteOnlineStatus getJabberOnline ()
+	{
+		return JabberOnline;
+	};
+	static KopeteOnlineStatus getJabberChatty ()
+	{
+		return JabberChatty;
+	};
+	static KopeteOnlineStatus getJabberAway ()
+	{
+		return JabberAway;
+	};
+	static KopeteOnlineStatus getJabberXA ()
+	{
+		return JabberXA;
+	};
+	static KopeteOnlineStatus getJabberDND ()
+	{
+		return JabberDND;
+	};
+	static KopeteOnlineStatus getJabberOffline ()
+	{
+		return JabberOffline;
+	};
+	static KopeteOnlineStatus getJabberInvisible ()
+	{
+		return JabberInvisible;
+	};
+
+
+
 	/**
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
-    //AddContactPage *createAddContactWidget(QWidget * parent);
-    virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteAccount *i);
-    virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-    virtual KopeteAccount *createNewAccount(const QString &accountId);
+	//AddContactPage *createAddContactWidget(QWidget * parent);
+	virtual AddContactPage *createAddContactWidget (QWidget * parent, KopeteAccount * i);
+	virtual EditAccountWidget *createEditAccountWidget (KopeteAccount * account, QWidget * parent);
+	virtual KopeteAccount *createNewAccount (const QString & accountId);
 
 	/**
 	 * Set status to "Online"/"Available"
 	 */
-    void setAvailable();
+	void setAvailable ();
 
 	/**
 	 * Are we able to relay messages to offline users?
 	 */
-    bool canSendOffline() const;
+	bool canSendOffline () const;
 
 	/**
 	 * Deserialize contact data
 	 */
-    virtual void deserializeContact(KopeteMetaContact * metaContact,
-				    const QMap < QString,
-				    QString > &serializedData,
-				    const QMap < QString,
-				    QString > &addressBookData);
+	virtual void deserializeContact (KopeteMetaContact * metaContact,
+									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
 
 	/*********************************************************************
 	 *
@@ -123,261 +143,259 @@ class JabberProtocol:public KopeteProtocol {
 	/**
 	 * This returns our protocol instance
 	 */
-    static JabberProtocol *protocol();
+	static JabberProtocol *protocol ();
 
 	/**
 	 * Function called by the configuration dialog,
 	 * it will register the account currently specified
 	 * in the dialog.
 	 */
-    void registerUser();
+	void registerUser ();
 
-    public slots:
+	public slots:
+
 	/**
 	 * Function to connect to the server
 	 */
-     virtual void connectAll();
+	  virtual void connectAll ();
 
 	/**
 	 * Function to disconnect from server
 	 */
-    virtual void disconnectAll();
+	virtual void disconnectAll ();
 
-    void setPresenceAll(const KopeteOnlineStatus & status,
-     			const QString & reason = 0, int priority = 5);
+	void setPresenceAll (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
 
 	/**
 	 * Sends a presence packet to a node
 	 */
-    //void sendPresenceToNode(const KopeteOnlineStatus & status,
-//			    const QString & reason);
+	//void sendPresenceToNode(const KopeteOnlineStatus & status,
+//              const QString & reason);
 
-     signals:
-     //void settingsChanged();
+  signals:
+	//void settingsChanged();
 
-    private slots:
+  private slots:
 	/*
 	 * Slot to connect to the server
 	 */
-    //void slotConnect();
+	//void slotConnect();
 
-    /*
-     * Slot to disconnect from the server
-     */
-    //void slotDisconnect();
+	/*
+	 * Slot to disconnect from the server
+	 */
+	//void slotDisconnect();
 
-    /*
-     * Slot called upon successful connection (called by Psi backend)
-     */
-   // void slotConnected(bool success, int statusCode,
-//		       const QString & statusString);
+	/*
+	 * Slot called upon successful connection (called by Psi backend)
+	 */
+	// void slotConnected(bool success, int statusCode,
+//             const QString & statusString);
 
-    /*
-     * This slot is called from connect() if there has
-     * been a successful connection to a Jabber server.
-     * This function is then responsible for logging in.
-     */
-    //void slotHandshaken();
+	/*
+	 * This slot is called from connect() if there has
+	 * been a successful connection to a Jabber server.
+	 * This function is then responsible for logging in.
+	 */
+	//void slotHandshaken();
 
-    /*
-     * Slot called upon successful disconnection (called by Psi backend)
-     */
-    //void slotDisconnected();
+	/*
+	 * Slot called upon successful disconnection (called by Psi backend)
+	 */
+	//void slotDisconnected();
 
-    //void slotPsiDebug(const QString & msg);
+	//void slotPsiDebug(const QString & msg);
 
-    /*
-     * Slot called if there was a protocol error (called by Psi backend)
-     */
-    //void slotError(const StreamError &);
+	/*
+	 * Slot called if there was a protocol error (called by Psi backend)
+	 */
+	//void slotError(const StreamError &);
 
-    /*
-     * Slot for going online
-     */
-    //void slotGoOnline();
+	/*
+	 * Slot for going online
+	 */
+	//void slotGoOnline();
 
-    /*
-     * Slot for going offline
-     */
-    //void slotGoOffline();
+	/*
+	 * Slot for going offline
+	 */
+	//void slotGoOffline();
 
-    /*
-     * Slot for going "chatty"
-     */
-    //void slotGoChatty();
+	/*
+	 * Slot for going "chatty"
+	 */
+	//void slotGoChatty();
 
-    /*
-     * Slot for going "away"
-     */
-    //void slotGoAway();
+	/*
+	 * Slot for going "away"
+	 */
+	//void slotGoAway();
 
-    /*
-     * Slot for going "not available"
-     */
-    //void slotGoXA();
+	/*
+	 * Slot for going "not available"
+	 */
+	//void slotGoXA();
 
-    /*
-     * Slot for going "do not disturb"
-     */
-    //void slotGoDND();
+	/*
+	 * Slot for going "do not disturb"
+	 */
+	//void slotGoDND();
 
-    /*
-     * Slot for going to invisible mode
-     */
-    //void slotGoInvisible();
+	/*
+	 * Slot for going to invisible mode
+	 */
+	//void slotGoInvisible();
 
-    /*
-     * Slot for sending a raw message to the server
-     */
-    //void slotSendRaw();
+	/*
+	 * Slot for sending a raw message to the server
+	 */
+	//void slotSendRaw();
 
-    /*
-     * Slot for creating a new empty email window
-     */
-    //void slotEmptyMail();
-    //void slotOpenEmptyMail();
+	/*
+	 * Slot for creating a new empty email window
+	 */
+	//void slotEmptyMail();
+	//void slotOpenEmptyMail();
 
-    /*
-     * Slots for handling group chats
-     */
-    //void slotJoinNewChat();
-    //void slotGroupChatJoined(const Jid & jid);
-    //void slotGroupChatLeft(const Jid & jid);
-    //void slotGroupChatPresence(const Jid & jid, const Status & status);
-    //void slotGroupChatError(const Jid & jid, int error, QString & reason);
+	/*
+	 * Slots for handling group chats
+	 */
+	//void slotJoinNewChat();
+	//void slotGroupChatJoined(const Jid & jid);
+	//void slotGroupChatLeft(const Jid & jid);
+	//void slotGroupChatPresence(const Jid & jid, const Status & status);
+	//void slotGroupChatError(const Jid & jid, int error, QString & reason);
 
-    /*
-     * Incoming subscription request
-     */
-    //void slotSubscription(const Jid & jid, const QString & type);
+	/*
+	 * Incoming subscription request
+	 */
+	//void slotSubscription(const Jid & jid, const QString & type);
 
-    /*
-     * A new item was added to our roster, update contact
-     * list. If this is a new subscription, make sure we
-     * validate it.
-     */
-    //void slotNewContact(const RosterItem &);
+	/*
+	 * A new item was added to our roster, update contact
+	 * list. If this is a new subscription, make sure we
+	 * validate it.
+	 */
+	//void slotNewContact(const RosterItem &);
 
-    /*
-     * Update a contact's details
-     */
-    //void slotContactUpdated(const RosterItem &);
+	/*
+	 * Update a contact's details
+	 */
+	//void slotContactUpdated(const RosterItem &);
 
-    /*
-     * A user deleted you from his contact list (call from Psi backend)
-     */
-    //void slotContactDeleted(const RosterItem &);
+	/*
+	 * A user deleted you from his contact list (call from Psi backend)
+	 */
+	//void slotContactDeleted(const RosterItem &);
 
-    /*
-     * Slot to update the configuration data
-     */
-    void slotSettingsChanged(void);
+	/*
+	 * Slot to update the configuration data
+	 */
+	void slotSettingsChanged (void);
 
-    /*
-     * Slot for notifying the availability of another resource for a contact
-     * (called from Psi backend)
-     */
-    //void slotResourceAvailable(const Jid &, const Resource &);
+	/*
+	 * Slot for notifying the availability of another resource for a contact
+	 * (called from Psi backend)
+	 */
+	//void slotResourceAvailable(const Jid &, const Resource &);
 
-    /*
-     * Slot for notifying the removal of a certain resource for a contact
-     * (called from Psi backend)
-     */
-    //oid slotResourceUnavailable(const Jid &, const Resource &);
+	/*
+	 * Slot for notifying the removal of a certain resource for a contact
+	 * (called from Psi backend)
+	 */
+	//oid slotResourceUnavailable(const Jid &, const Resource &);
 
-    /*
-     * Slot for displaying a new message
-     */
-    //void slotReceivedMessage(const Message &);
+	/*
+	 * Slot for displaying a new message
+	 */
+	//void slotReceivedMessage(const Message &);
 
-    /*
-     * Evaluate results of account registration
-     */
-    //void slotRegisterUserDone();
+	/*
+	 * Evaluate results of account registration
+	 */
+	//void slotRegisterUserDone();
 
-    /*
-     * User wishes to edit his own vCard
-     */
-    //void slotEditVCard();
+	/*
+	 * User wishes to edit his own vCard
+	 */
+	//void slotEditVCard();
 
-    /*
-     * The user wants to manage services
-     */
-    //void slotGetServices();
+	/*
+	 * The user wants to manage services
+	 */
+	//void slotGetServices();
 
   private:
-    /*
-     * Singleton instance of our protocol class
-     */
-    static JabberProtocol *protocolInstance;
+	/*
+	 * Singleton instance of our protocol class
+	 */
+	static JabberProtocol *protocolInstance;
 
-    static KopeteOnlineStatus JabberOnline;
-    static KopeteOnlineStatus JabberChatty;
-    static KopeteOnlineStatus JabberAway;
-    static KopeteOnlineStatus JabberXA;
-    static KopeteOnlineStatus JabberDND;
-    static KopeteOnlineStatus JabberOffline;
-    static KopeteOnlineStatus JabberInvisible;
+	static KopeteOnlineStatus JabberOnline;
+	static KopeteOnlineStatus JabberChatty;
+	static KopeteOnlineStatus JabberAway;
+	static KopeteOnlineStatus JabberXA;
+	static KopeteOnlineStatus JabberDND;
+	static KopeteOnlineStatus JabberOffline;
+	static KopeteOnlineStatus JabberInvisible;
 
-    JabberDefaultPreferences *preferences;
+	JabberDefaultPreferences *preferences;
 
-    /*
-     * Initial presence to set after connecting
-     */
-    KopeteOnlineStatus initialPresence;
+	/*
+	 * Initial presence to set after connecting
+	 */
+	KopeteOnlineStatus initialPresence;
 
-    /*
-     * Jabber client classes per identity
-     */
-     Jabber::Client * jabberClient;
+	/*
+	 * Jabber client classes per identity
+	 */
+	Jabber::Client * jabberClient;
 
-    /*
-     * Flag whether we are to register upon connect
-     */
-    int registerFlag;
+	/*
+	 * Flag whether we are to register upon connect
+	 */
+	int registerFlag;
 
-    /*
-     * Cache for the title ID of the status bar context
-     * menu to reflect changes in the user@host setting
-     */
-    int menuTitleId;
+	/*
+	 * Cache for the title ID of the status bar context
+	 * menu to reflect changes in the user@host setting
+	 */
+	int menuTitleId;
 
-    /*
-     * Little helper function to tell the user to connect
-     */
-    void errorConnectFirst();
+	/*
+	 * Little helper function to tell the user to connect
+	 */
+	void errorConnectFirst ();
 
-    /*
-     * Create actions
-     */
-    void initActions();
+	/*
+	 * Create actions
+	 */
+	void initActions ();
 
-    /*
-     * Create a new JabberContact
-     */
-    JabberContact *createContact(const QString & jid, const QString & alias,
-				 const QStringList & groups,
-				 KopeteMetaContact * metaContact,
-				 const QString & identity);
+	/*
+	 * Create a new JabberContact
+	 */
+	JabberContact *createContact (const QString & jid, const QString & alias,
+								  const QStringList & groups, KopeteMetaContact * metaContact, const QString & identity);
 
-    /*
-     * Add new contact to the Kopete contact list
-     * Note: this does not affect the Jabber roster at all
-     */
-    //void createAddContact(KopeteMetaContact * mc,
-//			  const Jabber::RosterItem & item);
+	/*
+	 * Add new contact to the Kopete contact list
+	 * Note: this does not affect the Jabber roster at all
+	 */
+	//void createAddContact(KopeteMetaContact * mc,
+//            const Jabber::RosterItem & item);
 
-    /*
-     * Sends a presence element with
-     * type="subscribe" to ask for authorization
-     */
-    void subscribe(const Jabber::Jid & jid);
+	/*
+	 * Sends a presence element with
+	 * type="subscribe" to ask for authorization
+	 */
+	void subscribe (const Jabber::Jid & jid);
 
-    /*
-     * Sends a presence element with
-     * type="subscribed" to acknowledge authorization
-     */
-    void subscribed(const Jabber::Jid & jid);
+	/*
+	 * Sends a presence element with
+	 * type="subscribed" to acknowledge authorization
+	 */
+	void subscribed (const Jabber::Jid & jid);
 
 };
 

@@ -27,27 +27,27 @@
 
 class QDateTime;
 
-class JabberResource:public QObject {
+class JabberResource:public QObject
+{
   Q_OBJECT public:
-    JabberResource();
-    JabberResource(const QString &, const int &, const QDateTime &,
-		   const KopeteOnlineStatus & status, const QString &);
+	  JabberResource ();
+	  JabberResource (const QString &, const int &, const QDateTime &, const KopeteOnlineStatus & status, const QString &);
 
-    QString resource();
+	QString resource ();
 
-    int priority();
+	int priority ();
 
-    QDateTime timestamp();
+	QDateTime timestamp ();
 
-    KopeteOnlineStatus status();
+	KopeteOnlineStatus status ();
 
-    QString reason();
+	QString reason ();
 
   private:
-    QString mResource, mReason;
-    int mPriority;
-    KopeteOnlineStatus mStatus;
-    QDateTime mTimestamp;
+	  QString mResource, mReason;
+	int mPriority;
+	KopeteOnlineStatus mStatus;
+	QDateTime mTimestamp;
 };
 
 #endif

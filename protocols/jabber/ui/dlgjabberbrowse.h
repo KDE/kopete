@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabberbrowse.h  -  description
                              -------------------
@@ -30,22 +31,19 @@
   *@author Kopete developers
   */
 
-class dlgJabberBrowse : public dlgBrowse
+class dlgJabberBrowse:public dlgBrowse
 {
 
-   Q_OBJECT
+  Q_OBJECT public:
+	dlgJabberBrowse (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	 ~dlgJabberBrowse ();
 
-public: 
-	dlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
-	~dlgJabberBrowse();
+	private slots:void slotGotForm ();
+	void slotSendForm ();
+	void slotSentForm ();
 
-private slots:
-	void slotGotForm();
-	void slotSendForm();
-	void slotSentForm();
-
-private:
-	JabberFormTranslator *translator;
+  private:
+	  JabberFormTranslator * translator;
 
 };
 

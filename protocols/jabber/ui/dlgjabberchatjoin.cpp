@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           dlgjabberchatjoin.cpp  -  description
                              -------------------
@@ -18,27 +19,27 @@
 #include <qpushbutton.h>
 #include "dlgjabberchatjoin.h"
 
-dlgJabberChatJoin::dlgJabberChatJoin(QWidget *parent, const char *name ) : dlgChatJoin(parent,name)
+dlgJabberChatJoin::dlgJabberChatJoin (QWidget * parent, const char *name):dlgChatJoin (parent, name)
 {
-	connect(buttonOk, SIGNAL(clicked()), this, SLOT(slotDialogDone()));
+	connect (buttonOk, SIGNAL (clicked ()), this, SLOT (slotDialogDone ()));
 }
 
-void dlgJabberChatJoin::slotDialogDone()
+void dlgJabberChatJoin::slotDialogDone ()
 {
 
 	/*if(!JabberProtocol::protocol()->isConnected())
-	{
-			JabberProtocol::protocol()->errorConnectFirst();
-			return;
-	}
+	   {
+	   JabberProtocol::protocol()->errorConnectFirst();
+	   return;
+	   }
 
-	// send the join request
-	JabberProtocol::protocol()->jabberClient->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
-	*/
+	   // send the join request
+	   JabberProtocol::protocol()->jabberClient->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
+	 */
 
 }
 
-dlgJabberChatJoin::~dlgJabberChatJoin()
+dlgJabberChatJoin::~dlgJabberChatJoin ()
 {
 }
 

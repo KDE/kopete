@@ -1,3 +1,4 @@
+
 /***************************************************************************
                       dlgjabbersendraw.cpp  -  Raw XML dialog
                              -------------------
@@ -22,45 +23,42 @@
 #include "dlgjabbersendraw.h"
 
 
-dlgJabberSendRaw::dlgJabberSendRaw(Jabber::Client *engine,
-				QWidget *parent, const char *name)
-				: dlgSendRaw(parent, name)
+dlgJabberSendRaw::dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent, const char *name):dlgSendRaw (parent, name)
 {
 
-		// Grab the thing that lets us talk
-		mEngine = engine;
+	// Grab the thing that lets us talk
+	mEngine = engine;
 
-		// Connect the GUI elements to things that do stuff
-		connect(btnFinish, SIGNAL(clicked()),
-						this, SLOT(slotFinish()));
-		connect(btnCancel, SIGNAL(clicked()),
-						this, SLOT(slotCancel()));
+	// Connect the GUI elements to things that do stuff
+	connect (btnFinish, SIGNAL (clicked ()), this, SLOT (slotFinish ()));
+	connect (btnCancel, SIGNAL (clicked ()), this, SLOT (slotCancel ()));
 }
 
-dlgJabberSendRaw::~dlgJabberSendRaw()
+dlgJabberSendRaw::~dlgJabberSendRaw ()
 {
-		// Nothing yet
+	// Nothing yet
 }
 
-void dlgJabberSendRaw::slotFinish()
+void dlgJabberSendRaw::slotFinish ()
 {
-		// Debugging output
-		kdDebug(14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
-		// Tell our engine to send
-		mEngine->send(tePacket->text());
-		// Hide ourselves
-		hide();
+	// Debugging output
+	kdDebug (14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
+	// Tell our engine to send
+	mEngine->send (tePacket->text ());
+	// Hide ourselves
+	hide ();
 }
 
-void dlgJabberSendRaw::slotCancel()
+void dlgJabberSendRaw::slotCancel ()
 {
-		// Clear the contents
-		tePacket->clear();
-		// Hide ourselves
-		hide();
+	// Clear the contents
+	tePacket->clear ();
+	// Hide ourselves
+	hide ();
 }
 
 #include "dlgjabbersendraw.moc"
+
 /*
  * Local variables:
  * mode: c++
@@ -70,4 +68,3 @@ void dlgJabberSendRaw::slotCancel()
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-
