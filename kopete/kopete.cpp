@@ -23,12 +23,10 @@
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
 	mainwidget = new QWidget(0);
+	mainwidget->resize(200,400);
 	setMainWidget(mainwidget);
 	mPref=new PreferencesDialog(0);
-	aboutPl = new AboutPlugins(mainwidget);
   mPref->hide();
-  aboutPl->hide();
-	
 	plugins = new PluginManager();
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
   QBoxLayout *layout2 = new QBoxLayout(mainwidget,QBoxLayout::LeftToRight);
@@ -69,7 +67,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	popupmenu->insertItem("&Connect", this, SLOT(slotConnectAll()),0);
 	popupmenu->insertSeparator();
 	popupmenu->insertItem("&Preferences", this, SLOT(slotPreferences()),0);
-	popupmenu->insertItem("About Plugins", aboutPl, SLOT(show()),0);
+	popupmenu->insertItem("About Plugins", this, SLOT(slotAboutPlugins()),0);
 	popupmenu->insertSeparator();
 	popupmenu->insertItem("&Exit", this, SLOT(slotExit()),0);
 	
@@ -162,4 +160,12 @@ void Kopete::saveOptions(){
 /** No descriptions */
 void Kopete::slotConnectAll()
 {
+}
+/** No descriptions */
+void Kopete::slotAboutPlugins()
+{
+	AboutPlugins *aboutPl;
+	aboutPl = new AboutPlugins(mainwidget);
+	aboutPl->show();
+	
 }

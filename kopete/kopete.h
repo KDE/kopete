@@ -54,9 +54,9 @@ class Kopete : public KUniqueApplication
 
 	PluginManager *plugins;
 	PreferencesDialog *mPref;
-	AboutPlugins *aboutPl;
 	private:
 	QWidget *mainwidget;
+	
 	ContactList *contactlist;
 	QPushButton *mainbutton;
 	
@@ -78,6 +78,8 @@ public slots:
   void slotPrefDialogClosed();
   /** No descriptions */
   void slotConnectAll();
+  /** No descriptions */
+  void slotAboutPlugins();
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))
