@@ -71,7 +71,8 @@ KActionMenu* KopeteProtocol::protocolActions()
 	for( ; KopeteAccount *account=it.current(); ++it )
 	{
 		KActionMenu *accountMenu = account->actionMenu();
-		accountMenu->parent()->removeChild( accountMenu );
+		if(accountMenu->parent())
+			accountMenu->parent()->removeChild( accountMenu );
 		m_menu->insertChild( accountMenu );
 		m_menu->insert( accountMenu );
 	}
