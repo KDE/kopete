@@ -628,9 +628,9 @@ const QDomDocument KopeteMessage::asXML() const
 
 		//quick and simple hash algoritm.
 		int hash=0;
-		const char *dname=d->from->contactId().ascii();
-		for(unsigned int f=0; f<strlen(dname) ; f++)
-			hash+=dname[f]*f;
+		QString &contactId = d->from->contactId();
+		for( uint f = 0; f < contactId.length(); ++f )
+			hash += contactId[f].latin1() * f;
 
 		fromContactNode.setAttribute( QString::fromLatin1("color"), QString::fromLatin1( nameColors[hash % (sizeof(nameColors)/sizeof(char*)) ] )  );
 		messageNode.appendChild( fromNode );
