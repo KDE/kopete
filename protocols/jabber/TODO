@@ -21,3 +21,4 @@ TODO for Jabber:
 - support different icons for contacts from servers with broken connections etc.
 - verify OpenSSL check
 - show (i.e. with a QToolTip) the subscription status: both, to, from
+- vCard doesn't save address and gender (is gender supported?)
