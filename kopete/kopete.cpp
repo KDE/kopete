@@ -103,7 +103,7 @@ void Kopete::initialize()
 	// Ok, load saved plugins
 
 	KopeteContactList::contactList()->load();
-	mTransferManager = new KopeteTransferManager();
+	mTransferManager = KopeteTransferManager::transferManager();
 }
 
 Kopete::~Kopete()

@@ -104,9 +104,18 @@ void KopeteTransfer::setError(KopeteTransferError error)
  *  KopeteTransferManager  *
  ***************************/
 
+KopeteTransferManager* KopeteTransferManager::s_transferManager = 0L;
 
-KopeteTransferManager::KopeteTransferManager()
-	: KopeteFileTransferUI()
+KopeteTransferManager* KopeteTransferManager::transferManager()
+{
+	if( !s_transferManager )
+		s_transferManager = new KopeteTransferManager( qApp->mainWidget() );
+
+	return s_transferManager;
+}
+
+KopeteTransferManager::KopeteTransferManager( QWidget *parent )
+	: KopeteFileTransferUI( parent )
 {
 	nextID = 0;
 	hide();

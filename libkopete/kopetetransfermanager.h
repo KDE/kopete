@@ -31,7 +31,6 @@ class KopeteContact;
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
  */
-
 class KopeteFileTransferInfo
 {
 public:
@@ -47,6 +46,7 @@ public:
 	unsigned long size() const { return mSize; };
 	void *internalId() const { return m_intId; };
 	KopeteTransferDirection direction() const { return mDirection; };
+
 private:
 	unsigned long mSize;
 	QString mRecipient;
@@ -59,22 +59,15 @@ private:
 
 class KopeteTransferManager : public KopeteFileTransferUI
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
-	KopeteTransferManager();
+	static KopeteTransferManager* transferManager();
 	~KopeteTransferManager(){};
 	KopeteTransfer *addTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di);
 	int askIncommingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, void *internalId=0L);
 	void removeTransfer( unsigned int id );
 	void paintProgressBar(QListViewItem *item, const int currentPercent);
-private slots:
-	void slotAbortClicked();
-	void slotClearFinished();
-  /** No descriptions */
-  void slotAccepted(const KopeteFileTransferInfo&, const QString&);
-private:
-	int nextID;
-	QMap<unsigned int, KopeteTransfer *> mTransfersMap;
 
 signals:
 	void done( KopeteTransfer* );
@@ -83,11 +76,23 @@ signals:
 	void accepted(KopeteTransfer*, const QString &fileName);
 	void refused(const KopeteFileTransferInfo& );
 
+private slots:
+	void slotAbortClicked();
+	void slotClearFinished();
+	void slotAccepted(const KopeteFileTransferInfo&, const QString&);
+
+private:
+	KopeteTransferManager( QWidget *parent );
+
+	static KopeteTransferManager *s_transferManager;
+	int nextID;
+	QMap<unsigned int, KopeteTransfer *> mTransfersMap;
 };
 
 class KopeteTransfer : public QObject, public QListViewItem
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
 	enum KopeteTransferError
 	{
@@ -101,17 +106,23 @@ public:
 	~KopeteTransfer(){};
 	KopeteFileTransferInfo info() { return mInfo; };
 	void setError(KopeteTransferError error);
+
 public slots:
 	void slotPercentCompleted(unsigned int);
+
+signals:
+	void transferCanceled(  );
+	void done( KopeteTransfer* );
+
 private:
 	KopeteFileTransferInfo mInfo;
 	int mPercent;
 
 //protected slots:
 //	void percentCompleted( const KopeteFileTransferInfo *,int percentDone );
-signals:
-	void transferCanceled(  );
-	void done( KopeteTransfer* );
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
