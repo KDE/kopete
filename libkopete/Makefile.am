@@ -30,6 +30,15 @@ libkopete_la_SOURCES = connectionmanager.cpp kopeteonlinestatus.cpp kopeteonline
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
+#AM_CXXFLAGS = -DQT_PLUGIN 
+kde_widget_LTLIBRARIES = kopetewidgets.la
+kopetewidgets_la_LDFLAGS = $(KDE_PLUGIN) -module $(all_libraries)
+kopetewidgets_la_LIBADD = $(LIB_KIO) libkopete.la ui/libkopeteui.la
+kopetewidgets_la_SOURCES = ui/kopetewidgets.cpp 
+
+#kopetewidgets.cpp: $(srcdir)/kopete.widgets
+#	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets
+
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetecommandui.rc
 

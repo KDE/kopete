@@ -1,0 +1,12 @@
+[Global]
+PluginName=KopeteWidgets
+Includes=kinstance.h
+Init=new KInstance("kopetewidgets");
+
+[Kopete::UI::ListView::ListView]
+ToolTip=List View (Kopete)
+WhatsThis=A component capable list view widget.
+IncludeFile=kopete/ui/kopetelistview.h
+Group=Views (Kopete)
+
+
