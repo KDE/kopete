@@ -158,7 +158,7 @@ OscarAccount::~OscarAccount()
 {
 	//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'" << endl;
 
-	OscarAccount::disconnect();
+	OscarAccount::disconnect(KopeteAccount::Manual);
 
 	// Delete the backend
 	if (d->engine)
@@ -178,8 +178,14 @@ OscarSocket* OscarAccount::engine() const
 
 void OscarAccount::disconnect()
 {
+	OscarAccount::disconnect(KopeteAccount::Manual);
+}
+
+void OscarAccount::disconnect(DisconnectReason reason)
+{
 	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	d->engine->doLogoff();
+	KopeteAccount::disconnect(reason);
 }
 
 bool OscarAccount::passwordWasWrong()
@@ -199,7 +205,7 @@ void OscarAccount::initEngine(bool icq)
 
 void OscarAccount::slotGoOffline()
 {
-	OscarAccount::disconnect();
+	OscarAccount::disconnect(KopeteAccount::Manual);
 }
 
 void OscarAccount::slotError(QString errmsg, int errorCode)
@@ -211,7 +217,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	// 1 = username unknown to server
 	// 5 = wrong password
 	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
-		OscarAccount::disconnect();
+		OscarAccount::disconnect(KopeteAccount::Manual);
 
 	// suppress error dialog for password-was-wrong error, since we're about
 	// to pop up a password dialog saying the same thing when we try to reconenct

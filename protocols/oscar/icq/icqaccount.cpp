@@ -122,87 +122,31 @@ KActionMenu* ICQAccount::actionMenu()
 	return mActionMenu;
 }
 
-void ICQAccount::connect()
+void ICQAccount::connect(void)
 {
 	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	setStatus(ICQ_STATUS_ONLINE, QString::null);
+	setStatus(ICQ_STATUS_ONLINE);
 }
 
-void ICQAccount::connect(const unsigned long status, const QString &awMessage)
+// ----------------------
+
+
+void ICQAccount::connect(const KopeteOnlineStatus &initialStatus)
 {
-	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() <<
-		"', status=" << status << ", awaymessage=" << awMessage << endl;
+	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() << "'" <<
+		" initialStatus=" << (int)initialStatus.status() << endl;
 
-	// Get the screen name for this account
-	QString screenName = accountId();
-	QString server = pluginData(protocol(), "Server");
-	QString port = pluginData(protocol(), "Port");
-
-	if(server.isEmpty())
-	{
-		slotError(i18n("You have not specified a server address in the " \
-			"account set up yet, please do so."), 0);
-	}
-	else if(port.isEmpty() || (port.toInt() < 1))
-	{
-		slotError(i18n("You have not specified a server port in the " \
-			"account set up yet, please do so."), 0);
-	}
-	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
-	{
-		QString _password = password(passwordWasWrong(), 0L, 8);
-		if (_password.isEmpty())
-		{
-			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
-				"ICQ network because no password was specified in the " \
-				"preferences."), 0);
-		}
-		else
-		{
-			kdDebug(14150) << k_funcinfo << accountId() <<
-				": Logging in as " << screenName << endl;
-
-			// Connect, need to normalize the name first
-			engine()->doLogin(
-				server,
-				port.toInt(),
-				screenName,
-				_password,
-				QString::null,
-				status,
-				awMessage);
-		}
-	}
+	if (initialStatus.status() == KopeteOnlineStatus::Away)
+		setStatus(ICQ_STATUS_SET_AWAY);
 	else
-	{
-		slotError(i18n("You have not specified your account name in the " \
-			"account set up yet, please do so."), 0);
-	}
+		setStatus(ICQ_STATUS_ONLINE);
 }
+
 
 void ICQAccount::slotGoOnline()
 {
-	if(
-		myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
-		myself()->onlineStatus().internalStatus() == OSCAR_FFC)
-	{ // If we're away , set us available
-		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Was AWAY or FFC, marking back" << endl;
-
-		setAway(false, QString::null);
-	}
-	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
-	{ // If we're offline, connect
-		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Was OFFLINE, now connecting" << endl;
-
-		ICQAccount::connect();
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Already ONLINE" << endl;
-	}
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	setStatus(ICQ_STATUS_ONLINE, QString::null);
 }
 
 void ICQAccount::slotGoAway(const QString &reason)
@@ -241,6 +185,7 @@ void ICQAccount::slotToggleInvisible()
 	setInvisible(!mInvisible);
 }
 
+
 void ICQAccount::setAway(bool away, const QString &awayReason)
 {
 	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
@@ -249,6 +194,7 @@ void ICQAccount::setAway(bool away, const QString &awayReason)
 	else
 		setStatus(ICQ_STATUS_ONLINE);
 }
+
 
 const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
 {
@@ -274,6 +220,7 @@ const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
 	return sendStatus;
 }
 
+
 void ICQAccount::setStatus(const unsigned long status,
 	const QString &awayMessage)
 {
@@ -287,15 +234,43 @@ void ICQAccount::setStatus(const unsigned long status,
 	unsigned long outgoingStatus = fullStatus(status);
 	if (isConnected())
 	{
-		kdDebug(14200) << k_funcinfo <<
-			"calling sendICQStatus(), outgoingStatus = " << outgoingStatus << endl;
+		/*kdDebug(14200) << k_funcinfo <<
+			"calling sendICQStatus(), outgoingStatus = " <<
+			outgoingStatus << endl;*/
 		engine()->sendICQStatus(outgoingStatus);
 	}
 	else
 	{
-		kdDebug(14200) << k_funcinfo <<
-			"calling connect(), outgoingStatus = " << outgoingStatus << endl;
-		ICQAccount::connect(outgoingStatus, awayMessage);
+		kdDebug(14200) << k_funcinfo << "LOGGING IN; accountId='" <<
+			accountId() << "', status=" << outgoingStatus <<
+			", awaymessage=" << awayMessage << endl;
+
+		QString server = pluginData(protocol(), "Server");
+		if(server.isEmpty())
+			server = ICQ_SERVER;
+		QString port = pluginData(protocol(), "Port");
+		if(port.isEmpty() || (port.toInt() < 1))
+			port = ICQ_PORT;
+
+		QString pass = password(passwordWasWrong(), 0L, 8);
+		if (pass.isEmpty())
+		{
+			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
+				"ICQ network because no password was specified in the " \
+				"preferences."), 0);
+		}
+		else
+		{
+			// Connect, need to normalize the name first
+			engine()->doLogin(
+				server,
+				port.toInt(),
+				accountId(),
+				pass,
+				QString::null,
+				outgoingStatus,
+				awayMessage);
+		}
 	}
 }
 

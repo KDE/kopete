@@ -48,7 +48,8 @@ public:
 	/*
 	 * Disconnects this account
 	 */
-	void disconnect();
+	virtual void disconnect();
+	virtual void disconnect(DisconnectReason reason);
 
 	/*
 	 * Was the password wrong last time we tried to connect?

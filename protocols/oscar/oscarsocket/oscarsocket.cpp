@@ -201,7 +201,7 @@ void OscarSocket::slotConnectionClosed()
 
 void OscarSocket::slotRead()
 {
-	kdDebug(14150) << k_funcinfo << "-----------------------" << endl;
+	//kdDebug(14150) << k_funcinfo << "-----------------------" << endl;
 
 	//int waitCount=0;
 	char *buf=0L;
@@ -270,8 +270,11 @@ void OscarSocket::slotRead()
 			SNAC s;
 			s=inbuf.getSnacHeader();
 
-			kdDebug(14150) << k_funcinfo <<
-				"SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
+			if (s.family != 3 && s.subtype != 11) // avoid the spam of all the online notifies
+			{
+				kdDebug(14150) << k_funcinfo << "SNAC(" << s.family << "," <<
+					s.subtype << "), id=" << s.id << endl;
+			}
 
 			switch(s.family)
 			{
@@ -2895,7 +2898,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 			" before reconnecting.")
 			.arg(mAccount->accountId()), 0);
 		//let the account properly clean itself up
-		mAccount->disconnect();
+		mAccount->disconnect(KopeteAccount::Manual);
 	}
 	else
 	{
@@ -4122,7 +4125,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 		}
 
 		if (errorNum != 0x0000)
-			doLogoff();
+			mAccount->disconnect(KopeteAccount::Manual); //doLogoff();
 
 		delete [] err->data;
 	}
