@@ -106,24 +106,24 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mPrfsChatAppearance = new AppearanceConfig_ChatAppearance(mAppearanceTabCtl);
 	mPrfsChatAppearance->htmlFrame->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
 	QVBoxLayout *l = new QVBoxLayout( mPrfsChatAppearance->htmlFrame );
-	
+
 	preview = new KHTMLPart( mPrfsChatAppearance->htmlFrame, "preview" );
 	preview->setJScriptEnabled( false ) ;
 	preview->setJavaEnabled( false );
 	preview->setPluginsEnabled( false );
 	preview->setMetaRefreshEnabled( false );
-	
+
 	KHTMLView *htmlWidget = preview->view();
 	htmlWidget->setMarginWidth(4);
 	htmlWidget->setMarginHeight(4);
 	htmlWidget->setFocusPolicy( NoFocus );
 	htmlWidget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 	l->addWidget( htmlWidget );
-	
+
 	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
 	connect(mPrfsChatAppearance->cb_Kind, SIGNAL(activated(int)), this, SLOT(slotSelectKind(int)));
 	connect(mPrfsChatAppearance->previewButton, SIGNAL(pressed()), this, SLOT(slotUpdatePreview()));
-	
+
 	// ===========================================================================
 
 	reopen(); // load settings from config
@@ -267,7 +267,7 @@ void AppearanceConfig::reopen()
 
 	// "Chat Appearance" TAB
 	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
-	
+
 	slotUpdatePreview();
 }
 
@@ -322,15 +322,15 @@ void AppearanceConfig::slotUpdatePreview()
 {
 	KopeteContact *cFrom = new KopeteContact(0L, QString::fromLatin1("UserFrom"), 0L);
 	KopeteContact *cTo = new KopeteContact(0L, QString::fromLatin1("UserTo"), 0L);
-	
+
 	KopeteContactPtrList toList = KopeteContactPtrList();
 	toList.append( cTo );
-	
+
 	KopeteMessage *msgIn = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
 	KopeteMessage *msgOut = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
-	
+
 	QString model = mPrfsChatAppearance->mle_codehtml->text();
-	
+
 	preview->begin();
 	preview->write( QString::fromLatin1( "<html><body>" ) );
 	preview->write( msgIn->transformMessage( model ) );
@@ -338,7 +338,7 @@ void AppearanceConfig::slotUpdatePreview()
 	preview->write( msgOut->transformMessage( model ) );
 	preview->write( QString::fromLatin1( "</body></html>" ) );
 	preview->end();
-	
+
 	delete msgIn;
 	delete msgOut;
 	delete cFrom;
@@ -348,3 +348,4 @@ void AppearanceConfig::slotUpdatePreview()
 #include "appearanceconfig.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
