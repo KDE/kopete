@@ -104,7 +104,7 @@ private:
 	QListBoxItem *editedItem;
 	QMap<QListBoxItem*,QString> itemMap;
 	QString currentStyle;
-	bool errorAlert;
+	bool loading;
 	bool styleChanged;
 
 	KopeteAppearanceConfigPrivate *d;

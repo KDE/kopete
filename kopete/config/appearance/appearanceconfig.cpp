@@ -215,8 +215,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	// ==========================================================================
 
 
-
-	errorAlert = false;
 	styleChanged = false;
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 
@@ -274,14 +272,15 @@ void AppearanceConfig::save()
 	p->setRtfOverride( mPrfsColors->mRtfOverride->isChecked() );
 
 	p->save();
-	errorAlert = false;
 	styleChanged = false;
 }
 
 void AppearanceConfig::load()
 {
-	if( errorAlert )
-		return;
+	//we will change the state of somme controls, which will call some signals.
+	//so to don't refresh everything several times, we memorize we are loading.
+	loading=true; 
+	
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
@@ -305,7 +304,6 @@ void AppearanceConfig::load()
 		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
 		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), *it );
 		KDirWatch::self()->addFile(*it);
-kdDebug(14000) << k_funcinfo << *it << " " << fileName << " - " << mPrfsChatWindow->styleList->firstItem()->text()  << endl;
 
 		if ( fileName == p->styleSheet() )
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
@@ -338,6 +336,9 @@ kdDebug(14000) << k_funcinfo << *it << " " << fileName << " - " << mPrfsChatWind
 	mPrfsColors->mBgOverride->setChecked( p->bgOverride() );
 	mPrfsColors->mFgOverride->setChecked( p->fgOverride() );
 	mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
+	
+	loading=false;
+	slotUpdatePreview();
 }
 
 void AppearanceConfig::updateEmoticonlist()
@@ -625,6 +626,9 @@ public:
 
 void AppearanceConfig::slotUpdatePreview()
 {
+	if(loading)
+		return;
+
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && style->text() != currentStyle )
 	{
