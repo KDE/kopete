@@ -150,6 +150,20 @@ void JabberProtocol::Connect()
 	if (isConnected())
 		return;
 
+	// this is dirty but has to be done:
+	// if a previous connection attempt failed, psi
+	// doesn't handle recovering too well. we are not
+	// allowed to call close in the slotConnected() slot
+	// since it causes a crash, so we have to delete the
+	// psi backend altogether here for safety if it still
+	// exists
+	if(jabberClient)
+	{
+		jabberClient->close();
+		delete jabberClient;
+		jabberClient = 0L;
+	}
+		
 	// instantiate new Psi backend class for handling the protocol and setup slots and signals
 	if(!jabberClient)
 	{
@@ -256,7 +270,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 	else
 	{
 		kdDebug() << "[JabberProtocol] Connection failed! Status: " << statusCode << ", " << statusString << endl;
-		jabberClient->close();
+		statusBarIcon->setPixmap(offlineIcon);
 		KMessageBox::error(kopeteapp->mainWindow(), i18n("Connection failed with reason \"%1\"").arg(statusString, 1), i18n("Connection Failed"));
 	}
 
