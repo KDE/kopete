@@ -512,8 +512,8 @@ void JabberContact::reevaluateStatus ()
 	removeProperty ( "awayMessage" );
 
 	// set away message property
-	setProperty ( "awayMessage", resource.status().status () );
-
+	if ( !resource.status ().status ().isEmpty () )
+		setProperty ( "awayMessage", resource.status().status () );
 }
 
 QString JabberContact::fullAddress ()
