@@ -73,13 +73,16 @@ IRCAddContactPage::~IRCAddContactPage()
 void IRCAddContactPage::slotSearch()
 {
 	ircdata->searchResults->clear();
+
 	if( mAccount->isConnected() )
 	{
+		ircdata->searchButton->setEnabled(false);
 		search = ircdata->searchText->text();
 		connect( mAccount->engine(), SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ), this,
 			SLOT( slotListedChannel( const QString &, uint, const QString & ) ) );
 		connect( mAccount->engine(), SIGNAL( incomingEndOfList() ), this, SLOT( slotListEnd() ) );
 		mAccount->engine()->list();
+		ircdata->searchButton->setEnabled(true);
 	}
 	else
 		KMessageBox::error( this, i18n("You must be connected to the IRC server to perform a search."), i18n("Not Connected") );
