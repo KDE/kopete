@@ -1089,3 +1089,5 @@ QCString Stream::elemToString(const QDomElement &e)
 	e.save(ts, 0);
 	return out.utf8();
 }
+
+#include "xmpp_stream.moc"

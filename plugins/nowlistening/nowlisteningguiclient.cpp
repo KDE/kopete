@@ -53,3 +53,5 @@ void NowListeningGUIClient::slotAdvertToCurrentChat()
 }
 
 
+
+#include "nowlisteningguiclient.moc"

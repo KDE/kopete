@@ -50,3 +50,5 @@ void JabberAwayDialog::setAway(int awayType)
 	}
 
 }
+
+#include "jabberawaydialog.moc"

@@ -1651,3 +1651,5 @@ void ServSock::newConnection(int x)
 {
 	connectionReady(x);
 }
+
+#include "xmpp_dtcp.moc"

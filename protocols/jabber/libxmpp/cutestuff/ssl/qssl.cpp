@@ -912,3 +912,5 @@ int _QSSLFilter::resultToCV(int ret) const
 	}
 	return rc;
 }
+
+#include "qssl.moc"

@@ -1310,3 +1310,5 @@ LiveRoster::ConstIterator LiveRoster::find(const Jid &j, bool compareRes) const
 	}
 	return it;
 }
+
+#include "xmpp_client.moc"

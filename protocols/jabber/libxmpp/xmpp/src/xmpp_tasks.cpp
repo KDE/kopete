@@ -1721,3 +1721,5 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 	return true;
 }
 
+
+#include "xmpp_tasks.moc"

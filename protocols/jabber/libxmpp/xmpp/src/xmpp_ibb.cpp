@@ -634,3 +634,5 @@ int JT_IBB::mode() const
 {
 	return d->mode;
 }
+
+#include "xmpp_ibb.moc"

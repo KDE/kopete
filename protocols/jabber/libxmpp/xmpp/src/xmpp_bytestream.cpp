@@ -68,3 +68,5 @@ int ByteStream::bytesToWrite() const
 {
 	return 0;
 }
+
+#include "xmpp_bytestream.moc"

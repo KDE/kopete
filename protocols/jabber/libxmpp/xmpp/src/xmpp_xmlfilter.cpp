@@ -232,3 +232,5 @@ bool XmlHandler::characters(const QString &str)
 
 	return true;
 }
+
+#include "xmpp_xmlfilter.moc"

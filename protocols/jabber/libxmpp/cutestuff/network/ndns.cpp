@@ -258,3 +258,4 @@ void NDnsWorker::run()
 
 	QApplication::postEvent(par, new NDnsWorkerEvent(this));
 }
+#include "ndns.moc"

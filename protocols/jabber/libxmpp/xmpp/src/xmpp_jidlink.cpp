@@ -342,3 +342,5 @@ void JidLinkManager::takeOver(ByteStream *bs)
 	// TODO handle shutdown of this object
 	bs->deleteLater();
 }
+
+#include "xmpp_jidlink.moc"
