@@ -25,6 +25,7 @@ class KActionCollection;
 class MSNInvitation;
 class MSNContact;
 class KActionMenu;
+class QLabel;
 
 
 /**
@@ -71,6 +72,8 @@ private slots:
 
 	void slotActionInviteAboutToShow();
 
+	void slotDisplayPictureChanged();
+
 	/**
 	 * (debug)
 	 */
@@ -92,6 +95,8 @@ private:
 	QMap<long unsigned int, MSNInvitation*> m_invitations;
 
 	QTime m_awayMessageTime;
+
+	QLabel *m_image;
 
 
 signals:

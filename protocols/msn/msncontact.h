@@ -35,6 +35,7 @@ class MSNMessageManager;
 class KAction;
 class KActionCollection;
 class KListAction;
+class KTempFile;
 
 class KopeteProtocol;
 class KopeteOnlineStatus;
@@ -45,6 +46,7 @@ class MSNContact : public KopeteContact
 
 public:
 	MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent );
+	~MSNContact();
 
 	/**
 	 * Indicate whether this contact is blocked
@@ -125,8 +127,9 @@ public:
 	QString phoneWork();
 	QString phoneMobile();
 
-	void setObject(const QString &obj) { m_obj=obj; }
+	void setObject(const QString &obj);
 	QString object() const { return m_obj; }
+	KTempFile *displayPicture() const { return m_displayPicture; }
 
 public slots:
 	virtual void slotUserInfo();
@@ -137,6 +140,11 @@ public slots:
 	 * Every time the kopete's contactlist is modified, we sync the serverlist with it
 	 */
 	virtual void syncGroups();
+
+	void setDisplayPicture(KTempFile *f) ;
+
+signals:
+	void displayPictureChanged();
 
 private slots:
 	void slotBlockUser();
@@ -156,8 +164,6 @@ private:
 //	bool m_deleted;
 	bool m_reversed;
 
-	KActionCollection* m_actionCollection;
-
 	bool m_moving;
 
 	QString m_phoneHome;
@@ -166,6 +172,7 @@ private:
 	bool m_phone_mob;
 
 	QString m_obj; //the MSNObject
+	KTempFile *m_displayPicture;
 };
 
 #endif

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="2" name="kopete_msn_chat">
+<kpartgui version="3" name="kopete_msn_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -11,4 +11,11 @@
 			</Menu>
 		</Menu>
 	</MenuBar>
+
+
+	<ToolBar name="status">
+		<Action name="msnDisplayPicture" />
+	</ToolBar>
+
+
 </kpartgui>

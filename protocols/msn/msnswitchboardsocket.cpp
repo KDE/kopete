@@ -440,9 +440,8 @@ void MSNSwitchBoardSocket::userLeftChat(const QString& handle , const QString &r
 void MSNSwitchBoardSocket::requestDisplayPicture()
 {
 	MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
-	QString msnObject;
-	if(c)
-		msnObject= c->object().utf8();
+	if(!c)
+		return;
 
 	if(!m_p2p)
 	{
@@ -452,7 +451,8 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
 	}
 
-	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, msnObject);
+	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
+	QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile * ) ) , c , SLOT(setDisplayPicture( KTempFile *) ) ) ;
 }
 
 

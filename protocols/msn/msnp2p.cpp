@@ -124,14 +124,15 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 			{
 				m_file->close();
 
-				//TODO: show the file in a better way
+/*				//TODO: show the file in a better way
 				#if KDE_IS_VERSION(3,1,90)
 				KRun::runURL( m_file->name(), "image/png", true );
 				#else
 				KRun::runURL( m_file->name(), "image/png" );
 				#endif
 
-				delete m_file;
+				delete m_file;*/
+				emit fileReceived(m_file);
 				m_file=0;
 
 				//send the bye message
@@ -156,7 +157,8 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 
 			if(msg.data()[startBinHeader+48] == '\0' )
 			{  //This can be only the data preparaion message.   prepare to download
-				m_file=new KTempFile( locateLocal( "tmp", "msnpicture" ), ".png" );
+				m_file=new KTempFile( locateLocal( "tmp", "msnpicture-" ), ".png" );
+				m_file->setAutoDelete(true);
 			}
    			else if (dataMessage.contains("INVITE"))
 			{

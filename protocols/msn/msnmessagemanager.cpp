@@ -22,6 +22,9 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kconfig.h>
+#include <ktempfile.h>
+
+#include <qlabel.h>
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
@@ -64,11 +67,23 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request display picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
 
+
+	if(!c->object().isEmpty())
+	{
+		connect( c, SIGNAL(displayPictureChanged()) , this , SLOT( slotDisplayPictureChanged() ) );
+		m_image=new QLabel(0L);
+		new KWidgetAction( m_image , i18n("MSN Display Picture") , 0, 0 , 0 , actionCollection() , "msnDisplayPicture");
+		if( c->displayPicture() )
+			m_image->setPixmap(c->displayPicture()->name());
+	}
+	else m_image=0L;
+
 	setXMLFile("msnchatui.rc");
 }
 
 MSNMessageManager::~MSNMessageManager()
 {
+	delete m_image;
 	//force to disconnect the switchboard
 	//not needed since the m_chatService has us as parent
 	//	if(m_chatService)
@@ -131,6 +146,9 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 	addContact(c , IRO); // don't show notificaions when we join wesalef
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
 		sendMessageQueue();
+
+	if(!c->object().isEmpty() && !c->displayPicture())
+		slotRequestPicture();
 }
 
 void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reason )
@@ -448,8 +466,29 @@ void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 
 void MSNMessageManager::slotRequestPicture()
 {
+	QPtrList<KopeteContact> mb=members();
 	if(m_chatService)
-		m_chatService->requestDisplayPicture();
+	{
+		MSNContact *c = static_cast<MSNContact*>( mb.first() );
+		if(c && !c->displayPicture() && !c->object().isEmpty() )
+			m_chatService->requestDisplayPicture();
+	}
+	else
+		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
+
+}
+
+void MSNMessageManager::slotDisplayPictureChanged()
+{
+	QPtrList<KopeteContact> mb=members();
+	MSNContact *c = static_cast<MSNContact*>( mb.first() );
+	if(c && m_image)
+	{
+		if( c->displayPicture() )
+			m_image->setPixmap(c->displayPicture()->name());
+		else
+			slotRequestPicture();
+	}
 }
 
 void MSNMessageManager::slotDebugRawCommand()

@@ -30,6 +30,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <krun.h>
+#include <ktempfile.h>
 
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
@@ -43,7 +44,7 @@
 MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( account, id, parent )
 {
-	m_actionCollection=0L;
+	m_displayPicture=0L;
 
 //	m_deleted = false;
 	m_allowed = false;
@@ -57,6 +58,11 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 
 	setOnlineStatus( MSNProtocol::protocol()->UNK );
 
+}
+
+MSNContact::~MSNContact()
+{
+	delete m_displayPicture;
 }
 
 KopeteMessageManager *MSNContact::manager( bool canCreate )
@@ -76,7 +82,7 @@ KopeteMessageManager *MSNContact::manager( bool canCreate )
 
 KActionCollection *MSNContact::customContextMenuActions()
 {
-	m_actionCollection = new KActionCollection(this);
+	KActionCollection *m_actionCollection = new KActionCollection(this);
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -493,6 +499,22 @@ void MSNContact::slotSendMail()
 void MSNContact::setDontSync(bool b)
 {
 	m_moving=b;
+}
+
+void MSNContact::setDisplayPicture(KTempFile *f)
+{
+	if(m_displayPicture && m_displayPicture!=f)
+		delete m_displayPicture;
+	m_displayPicture=f;
+	emit displayPictureChanged();
+}
+
+void MSNContact::setObject(const QString &obj)
+{
+	m_obj=obj;
+	delete m_displayPicture;
+	m_displayPicture=0;
+	emit displayPictureChanged();
 }
 
 

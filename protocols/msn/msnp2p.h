@@ -52,6 +52,8 @@ signals:
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
+	void fileReceived( KTempFile * );
+
 private:
 	/**
 	 * send the MSNSLP command in a msn p2p message
