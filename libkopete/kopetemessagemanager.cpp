@@ -167,7 +167,7 @@ void KopeteMessageManager::slotUpdateDisplayName()
 	{
 		if(! d->displayName.isNull() )
 			d->displayName.append( QString::fromLatin1( ", " ) ) ;
-		
+
 		if ( c->metaContact() )
 			d->displayName.append( c->metaContact()->displayName() );
 		else
@@ -176,11 +176,11 @@ void KopeteMessageManager::slotUpdateDisplayName()
 			d->displayName.append( nick.isEmpty() ? c->contactId() : nick );
 		}
 	}
-	
+
 	//If we have only 1 contact, add the status of him
 	if ( d->mContactList.count() == 1 )
 	{
-		d->displayName.append( QString::fromLatin1( " (%1)" ).arg( c->onlineStatus().description() ) );
+		d->displayName.append( QString::fromLatin1( " (%1)" ).arg( d->mContactList.first()->onlineStatus().description() ) );
 	}
 
 	emit displayNameChanged();
