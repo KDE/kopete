@@ -39,17 +39,34 @@ KopeteGroupListAction::~KopeteGroupListAction()
 
 void KopeteGroupListAction::slotUpdateList()
 {
-	QStringList m_groupList;
+	QStringList groupList;
 
-	KopeteGroupList groups=KopeteContactList::contactList()->groups();
 	// Add groups to our list
-	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
+	KopeteGroupList groups = KopeteContactList::contactList()->groups();
+	for ( KopeteGroup *it = groups.first(); it; it = groups.next() )
 	{
-		if(!it->displayName().isEmpty())	//do not add top-level groups or other
-			m_groupList.append( it->displayName() );
+		kdDebug() << k_funcinfo << "Name: " << it->displayName() << ", Type: " << it->type() << endl;
+		// FIXME: I think handling the i18n for temporary and top level
+		//        groups belongs in KopeteGroup instead.
+		//        It's now duplicated in KopeteGroupListAction and
+		//        KopeteGroupViewItem already - Martijn
+		QString displayName;
+		switch ( it->type() )
+		{
+		case KopeteGroup::Temporary:
+			// Moving to temporary makes no sense, skip the group
+			continue;
+		case KopeteGroup::TopLevel:
+			displayName = i18n( "(Top-Level)" );
+			break;
+		default:
+			displayName = it->displayName();
+			break;
+		}
+		groupList.append( displayName );
 	}
 
-	setItems( m_groupList );
+	setItems( groupList );
 }
 
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot, QObject* parent, const char *name )

@@ -38,20 +38,18 @@ KopeteGroup *KopeteGroup::s_temporary = 0L;
 
 KopeteGroup * KopeteGroup::topLevel()
 {
+	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_topLevel )
-	{
-		s_topLevel = new KopeteGroup(
-			i18n( "Contacts are put in groups. Top Level holds all groups (but can contain contacts too) Similar to KMail's folders", "Top Level" ),
-			KopeteGroup::TopLevel );
-	}
+		s_topLevel = new KopeteGroup( QString::fromLatin1( "Top-Level" ), KopeteGroup::TopLevel );
 
 	return s_topLevel;
 }
 
 KopeteGroup * KopeteGroup::temporary()
 {
+	// Do not translate the internal name, it's not shown in the GUI
 	if ( s_temporary )
-		s_temporary = new KopeteGroup( i18n( "Not in your contact list" ), KopeteGroup::Temporary );
+		s_temporary = new KopeteGroup( QString::fromLatin1( "Temporary" ), KopeteGroup::Temporary );
 
 	return s_temporary;
 }
@@ -128,26 +126,30 @@ bool KopeteGroup::fromXML( const QDomElement &data )
 			d->uniqueGroupId = d->groupId;
 	}
 
-	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
-	if ( type == QString::fromLatin1( "temporary" ) )
+	// Don't overwrite type for Temporary and TopLevel groups
+	if ( d->type != Temporary && d->type != TopLevel )
 	{
-		if ( d->type != Temporary )
+		QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
+		if ( type == QString::fromLatin1( "temporary" ) )
 		{
-			s_temporary->fromXML( data );
-			return false;
+			if ( d->type != Temporary )
+			{
+				s_temporary->fromXML( data );
+				return false;
+			}
 		}
-	}
-	else if ( type == QString::fromLatin1( "top-level" ) )
-	{
-		if ( d->type != TopLevel )
+		else if ( type == QString::fromLatin1( "top-level" ) )
 		{
-			s_topLevel->fromXML( data );
-			return false;
+			if ( d->type != TopLevel )
+			{
+				s_topLevel->fromXML( data );
+				return false;
+			}
 		}
-	}
-	else
-	{
-		d->type = Normal;
+		else
+		{
+			d->type = Normal;
+		}
 	}
 
 	QString view = data.attribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
@@ -158,27 +160,32 @@ bool KopeteGroup::fromXML( const QDomElement &data )
 	{
 		QDomElement groupElement = groupData.toElement();
 		if ( groupElement.tagName() == QString::fromLatin1( "display-name" ) )
-			d->displayName = groupElement.text();
+		{
+			// Don't set display name for temporary or top-level items
+			if ( d->type == Normal )
+				d->displayName = groupElement.text();
+		}
 		else
+		{
 			KopetePluginDataObject::fromXML( groupElement );
+		}
 
 		groupData = groupData.nextSibling();
 	}
 
-	// sanity checks. We must not have groups without a displayname. "Normal" should never happen.
-	// Should "Default" be i18n()ed as well?
+	// Sanity checks. We must not have groups without a displayname.
 	if ( d->displayName.isEmpty() )
 	{
 		switch ( d->type )
 		{
 		case Temporary:
-			d->displayName = i18n( "Not in your contact list" );
+			d->displayName = QString::fromLatin1( "Temporary" );
 			break;
 		case TopLevel:
-			d->displayName = QString::fromLatin1( "Default" );
+			d->displayName = QString::fromLatin1( "Top-Level" );
 			break;
 		default:
-			d->displayName = QString::fromLatin1( "Normal" );
+			d->displayName = i18n( "(Unnamed Group)" );
 			break;
 		}
 	}
