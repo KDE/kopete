@@ -158,45 +158,46 @@ KopeteMessageManager::WidgetType KopeteMessageManager::widget() const
 
 void KopeteMessageManager::readMessages()
 {
-	if (d->mWidget == ChatWindow) {
-		if (d->mChatWindow == 0L) {
-			kdDebug() << "[KopeteMessageManager] mChatWindow just doesn't exist" << endl;
-			newChatWindow();
-		}
-		if (d->mChatWindow->isMinimized())
-			kdDebug() << "[KopeteMessageManager] mChatWindow is minimized" << endl;
-		if (d->mChatWindow->isHidden())
-			kdDebug() << "[KopeteMessageManager] mChatWindow is hidden" << endl;
-		if(KopetePrefs::prefs()->raiseMsgWindow())
-			d->mChatWindow->raise();	// make it top window
-		for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it++)
-		{
-			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
-			emit messageReceived( *it );
-			d->mChatWindow->messageReceived(*it);
-		}
-		d->mChatWindow->show();	// show message window again
+	if ((d->mWidget == ChatWindow && !d->mChatWindow) ||
+	    (d->mWidget == Email && !d->mEmailWindow) ) {
+		kdDebug() << "[KopeteMessageManager] mChatWindow just doesn't exist" << endl;
+		newChatWindow();
 	}
-	else if (d->mWidget == Email) {
-		if (d->mEmailWindow == 0L) {
-			kdDebug() << "[KopeteMessageManager] mEmailWindow just doesn't exist" << endl;
-			newChatWindow();
-		}
-		if (d->mEmailWindow->isMinimized())
-			kdDebug() << "[KopeteMessageManager] mEmailWindow is minimized" << endl;
-		if (d->mEmailWindow->isHidden())
-			kdDebug() << "[KopeteMessageManager] mEmailWindow is hidden" << endl;
-		if(KopetePrefs::prefs()->raiseMsgWindow())
-			d->mEmailWindow->raise();
-		for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it++) {
-			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
-			emit messageReceived( *it );
-			d->mEmailWindow->messageReceived(*it);
-		}
-		d->mEmailWindow->show();
-	}
-	else {
+
+	QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : ((d->mWidget == Email) ? d->mEmailWindow : 0L);
+	if ( !window ) {
 		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << d->mWidget << endl;
+		d->mMessageQueue.clear();
+		return;
+	}
+
+	if (window->isMinimized())
+		kdDebug() << "[KopeteMessageManager] window is minimized" << endl;
+	if (window->isHidden())
+		kdDebug() << "[KopeteMessageManager] window is hidden" << endl;
+
+	bool foreignMessage = false;
+	for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it++)
+	{
+		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
+		if ( (*it).from() != d->mUser )
+			foreignMessage = true;
+
+		emit messageReceived( *it );
+		if ( d->mWidget == ChatWindow ) // ### why don't they implement the same interface?
+			d->mChatWindow->messageReceived(*it);
+		else if ( d->mWidget == Email )
+			d->mEmailWindow->messageReceived(*it);
+	}
+
+	// only show the window when a message from someone else (i.e. not an own message) arrived or
+	// when no message at all arrived (happens when you click on a contact, creating the window)
+	if ( foreignMessage || d->mMessageQueue.isEmpty() )
+	{
+		if(KopetePrefs::prefs()->raiseMsgWindow())
+			window->raise(); // make it top window
+
+		window->show();	// show message window again (but not for own messages)
 	}
 
 	d->mMessageQueue.clear();
