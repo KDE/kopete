@@ -15,3 +15,14 @@ diff -u -p -b -B -r1.4 dialog.cpp
  		if( tmp.isValid() )
  			parentid = tmp.toString();
  		d->pagetree.insert( info, parentid );
+@@ -636,8 +636,10 @@ void Dialog::updateTreeList()
+ 	d->pagetree.removeFromDialog( d->dlg );
+ 	d->pagetree.addToDialog( d->dlg );
+ 
++#if KDE_IS_VERSION( 3, 1, 90 )
+ 	if( d->pagetree.needTree() )
+ 		d->dlg->unfoldTreeList( true );
++#endif
+ }
+ 
+ } //namespace
