@@ -18,7 +18,7 @@
 #ifndef IRCTRANSFERHANDLER_H
 #define IRCTRANSFERHANDLER_H
 
-#include <qmap.h>
+#include <qintdict.h>
 
 #include <kopetetransfermanager.h>
 
@@ -53,7 +53,7 @@ private:
 	KIRCTransferHandler *handler();
 
 	static IRCTransferHandler sm_self;
-	QMap<int,KIRCTransfer *> m_idMap;
+	QIntDict<KIRCTransfer> m_idMap;
 };
 
 #endif
