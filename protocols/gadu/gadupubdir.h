@@ -26,6 +26,7 @@
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
 #include "gadusearch.h"
+#include "gadusession.h"
 
 #include <kdebug.h>
 #include <qhbox.h>
@@ -53,7 +54,7 @@ public:
 private slots:
 	void slotSearch();
 	void slotNewSearch();
-	void slotSearchResult( const searchResult& result );
+	void slotSearchResult( const SearchResult& result );
 	void inputChanged( const QString& );
 	void inputChanged( bool );
 

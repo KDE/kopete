@@ -100,7 +100,7 @@ public slots:
 	void setUseTls( tlsConnection  ut );
 
 signals:
-	void pubDirSearchResult( const searchResult& );
+	void pubDirSearchResult( const SearchResult& );
 
 protected slots:
 	virtual void loaded();
@@ -138,7 +138,7 @@ private slots:
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
 
-	void slotSearchResult( const searchResult& result );
+	void slotSearchResult( const SearchResult& result );
 	void userListExportDone();
 
 private:

@@ -65,7 +65,7 @@ struct KGaduNotify {
 
 typedef QPtrList<KGaduNotify> KGaduNotifyList;
 
-struct resLine{
+struct ResLine{
 	QString uin;
 	QString firstname;
 	QString surname;
@@ -75,7 +75,7 @@ struct resLine{
 	int status;
 };
 
-typedef QPtrList<resLine> searchResult;
+typedef QValueList<ResLine> SearchResult;
 
 class QSocketNotifier;
 class QStringList;
@@ -138,7 +138,7 @@ signals:
 	void connectionFailed( gg_failure_t failure );
 	void connectionSucceed( );
 	void disconnect();
-	void pubDirSearchResult( const searchResult& );
+	void pubDirSearchResult( const SearchResult& );
 	void userListRecieved( const QString& );
 	void userListExported();
 

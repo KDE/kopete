@@ -111,8 +111,8 @@ GaduPublicDir::initConnections()
 	connect( this, SIGNAL( user2Clicked() ), SLOT( slotSearch() ) );
 	connect( this, SIGNAL( user1Clicked() ), SLOT( slotNewSearch() ) );
 
-	connect( mAccount, SIGNAL( pubDirSearchResult( const searchResult& ) ),
-				SLOT( slotSearchResult( const searchResult& ) ) );
+	connect( mAccount, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
+				SLOT( slotSearchResult( const SearchResult& ) ) );
 
 	connect( mMainWidget->nameS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->surname,	SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
@@ -193,7 +193,7 @@ GaduPublicDir::iconForStatus( uint status )
 }
 
 void 
-GaduPublicDir::slotSearchResult( const searchResult& result )
+GaduPublicDir::slotSearchResult( const SearchResult& result )
 {
 	QListView* list = mMainWidget->listFound;
 	int i;
@@ -209,21 +209,21 @@ GaduPublicDir::slotSearchResult( const searchResult& result )
 
 	enableButton( User1, true );
 
-	QPtrListIterator< resLine >r ( result );
 	QListViewItem* sl;
 
-	for ( i = result.count()  ; i-- ; ){
-		kdDebug(14100) << "adding" << (*r)->uin << endl;
+	SearchResult::const_iterator r;
+
+	for ( r = result.begin(); r != result.end() ; ++r ){
+		kdDebug(14100) << "adding" << (*r).uin << endl;
 		sl= new QListViewItem(
 					list, QString::fromAscii(""),
-					(*r)->firstname,
-					(*r)->nickname,
-					(*r)->age,
-					(*r)->city,
-					(*r)->uin
+					(*r).firstname.latin1(),
+					(*r).nickname.latin1(),
+					(*r).age.latin1(),
+					(*r).city.latin1(),
+					(*r).uin.latin1()
 						);
-		sl->setPixmap( 0, iconForStatus( (*r)->status ) );
-		++r;
+		sl->setPixmap( 0, iconForStatus( (*r).status ) );
 	}
 }
 

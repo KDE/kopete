@@ -376,35 +376,32 @@ void
 GaduSession::sendResult( gg_pubdir50_t result )
 {
 	int i, count, age;
-	resLine *resultLine = NULL;
-	searchResult sres;
+	ResLine resultLine;
+	SearchResult sres;
 
 	count = gg_pubdir50_count( result );
 
-	sres.setAutoDelete( TRUE );
-
 	for ( i = 0; i < count; i++ ) {
-		resultLine = new resLine;
 
-		resultLine->uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
-		resultLine->firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
-		resultLine->surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
-		resultLine->nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
-		resultLine->age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
-		resultLine->city	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
+		resultLine.uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
+		resultLine.firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
+		resultLine.surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
+		resultLine.nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
+		resultLine.age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
+		resultLine.city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
 		QString stat		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
-		resultLine->status	= stat.toInt();
-		age = resultLine->age.toInt();
+		resultLine.status	= stat.toInt();
+		age = resultLine.age.toInt();
 		if ( age ) {
-			resultLine->age = QString::number( QDate::currentDate().year() - age );
+			resultLine.age = QString::number( QDate::currentDate().year() - age );
 		}
 		else {
-			resultLine->age.truncate( 0 );
+			resultLine.age.truncate( 0 );
 		}
 		sres.append( resultLine );
-		kdDebug(14100) << "found line "<< resultLine->uin << " " << resultLine->firstname << endl;
+		kdDebug(14100) << "found line "<< resultLine.uin << " " << resultLine.firstname << endl;
 	}
-
+	
 	searchSeqNr_ = gg_pubdir50_next( result );
 
 	emit pubDirSearchResult( sres );

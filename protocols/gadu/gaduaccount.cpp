@@ -121,8 +121,8 @@ GaduAccount::initConnections()
 				SLOT( slotSessionDisconnect() ) );
 	QObject::connect( session_, SIGNAL( ackReceived( unsigned int ) ),
 				SLOT( ackReceived( unsigned int ) ) );
-	QObject::connect( session_, SIGNAL( pubDirSearchResult( const searchResult& ) ),
-				SLOT( slotSearchResult( const searchResult& ) ) );
+	QObject::connect( session_, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
+				SLOT( slotSearchResult( const SearchResult& ) ) );
 	QObject::connect( session_, SIGNAL( userListExported() ),
 				SLOT( userListExportDone() ) );
 }
@@ -967,7 +967,7 @@ GaduAccount::pubDirSearchClose()
 }
 
 void
-GaduAccount::slotSearchResult( const searchResult& result )
+GaduAccount::slotSearchResult( const SearchResult& result )
 {
 	emit pubDirSearchResult( result );
 }
