@@ -64,7 +64,7 @@ GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* accou
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
 
-	setDisplayName( name );
+	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
 QString
