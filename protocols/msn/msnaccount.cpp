@@ -682,6 +682,9 @@ void MSNAccount::slotNewContactList()
 		m_blockList.clear();
 		m_reverseList.clear();
 		m_groupList.clear();
+		setPluginData( protocol(), QString::fromLatin1( "blockList" ), QString::null ) ;
+		setPluginData( protocol(), QString::fromLatin1( "allowList" ), QString::null );
+		setPluginData( protocol(), QString::fromLatin1( "reverseList" ), QString::null );
 
 		// clear all date information which will be received.
 		// if the information is not anymore on the server, it will not be received
