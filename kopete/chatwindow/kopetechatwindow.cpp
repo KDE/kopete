@@ -234,6 +234,44 @@ KopeteChatWindow::~KopeteChatWindow()
 		}
 	}
 
+	repeat = true;
+	while( repeat )
+	{
+		repeat = false;
+		for( GroupMap::Iterator it = groupMap.begin(); it != groupMap.end(); ++it )
+		{
+			if( it.data() == this )
+			{
+				groupMap.remove( it.key() );
+
+				// When deleting items from a QMap you can no longer use any
+				// outstanding iterators to the map, so reset the loop here
+				// If we don't do this it could be possible that we're
+				// incrementing beyond map.end(), pointing into nowhere
+				repeat = true;
+				break;
+			}
+		}
+	}
+	repeat = true;
+	while( repeat )
+	{
+		repeat = false;
+		for( MetaContactMap::Iterator it = mcMap.begin(); it != mcMap.end(); ++it )
+		{
+			if( it.data() == this )
+			{
+				mcMap.remove( it.key() );
+
+				// When deleting items from a QMap you can no longer use any
+				// outstanding iterators to the map, so reset the loop here
+				// If we don't do this it could be possible that we're
+				// incrementing beyond map.end(), pointing into nowhere
+				repeat = true;
+				break;
+			}
+		}
+	}
 	windows.remove( this );
 
 //	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
