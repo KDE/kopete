@@ -69,7 +69,7 @@ KActionMenu* AIMAccount::actionMenu()
 	// mActionMenu is managed by KopeteAccount.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
 	KActionMenu *mActionMenu = new KActionMenu(accountId(),
-		"aim_protocol", this, "AIMAccount::mActionMenu");
+		myself()->onlineStatus().iconFor( this ), this, "AIMAccount::mActionMenu");
 
 	AIMProtocol *p = AIMProtocol::protocol();
 

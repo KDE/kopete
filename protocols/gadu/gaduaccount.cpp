@@ -112,9 +112,9 @@ KopeteContact* GaduAccount::myself() const
 KActionMenu* GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
-	
-	actionMenu_ = new KActionMenu( "Gadu-Gadu", this );
-	
+
+	actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor(this) ,this );
+
 	actionMenu_->popupMenu()->insertTitle( myself_->onlineStatus().iconFor( myself_ ), i18n( "%1 <%2> " ).
 
 #if QT_VERSION < 0x030200

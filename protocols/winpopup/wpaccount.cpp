@@ -158,7 +158,7 @@ KActionMenu* WPAccount::actionMenu()
 	DEBUG(WPDMETHOD, "WPAccount::actionMenu()");
 
 	WPProtocol *theProtocol = dynamic_cast<WPProtocol *>(protocol());
-	KActionMenu *theActionMenu = new KActionMenu("WinPopup", this);
+	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), this);
 	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "WinPopup (" + accountId() + ")");
 
 	if (theProtocol)

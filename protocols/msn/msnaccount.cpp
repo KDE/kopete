@@ -162,7 +162,7 @@ void MSNAccount::disconnect()
 
 KActionMenu* MSNAccount::actionMenu()
 {
-	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
+	KActionMenu *m_actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) ,  this );
 	m_actionMenu->popupMenu()->insertTitle( m_myself->onlineStatus().iconFor( m_myself ), i18n( "%2 <%1>" ).
 #if QT_VERSION < 0x030200
 		arg( accountId() ).arg( m_myself->displayName() )

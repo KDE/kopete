@@ -67,7 +67,7 @@ KActionMenu* ICQAccount::actionMenu()
 	// it is no longer shown, so we can (safely) just make a new one here.
 
 	KActionMenu* mActionMenu = new KActionMenu(accountId(),
-		"icq_protocol", this, "ICQAccount::mActionMenu");
+		myself()->onlineStatus().iconFor(this), this, "ICQAccount::mActionMenu");
 
 	ICQProtocol *p = ICQProtocol::protocol();
 

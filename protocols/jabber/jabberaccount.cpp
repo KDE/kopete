@@ -118,7 +118,7 @@ KopeteContact *JabberAccount::myself () const
 
 KActionMenu *JabberAccount::actionMenu ()
 {
-	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
+	KActionMenu *m_actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor(this),  this );
 
 	m_actionMenu->popupMenu()->insertTitle(
 		myContact->onlineStatus().iconFor(myContact),

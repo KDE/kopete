@@ -50,7 +50,7 @@ void SMSAccount::connect()
 
 KActionMenu* SMSAccount::actionMenu()
 {
-	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
+	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
 	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), i18n("SMS (%1)").arg(accountId()));
 
 	return theActionMenu;
