@@ -938,14 +938,7 @@ void OscarSocket::requestAwayMessage(OscarContact *c)
 	else if (receiverStatus & ICQ_STATUS_IS_FFC)	type |= MSG_GET_FFC;
 
 	if(!sendType2IM(c, "", type))
-	{
-		// TODO: Post KDE 3.2
-		#if 0
-			emit receivedAwayMessage(c->contactName(), i18n("Client does not support away messages"));
-		#else
-			emit receivedAwayMessage(c->contactName(), "");
-		#endif
-	}
+		emit receivedAwayMessage(c->contactName(), i18n("Client does not support away messages"));
 }
 
 bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
