@@ -20,15 +20,25 @@
 
 #include <ksettings/dispatcher.h>
 
-KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *name )
-: QObject( parent, name ) , KXMLGUIClient()
+class KopetePluginPrivate
 {
+public:
+	QStringList addressBookFields;
+	QString indexField;
+};
+
+KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *name )
+: QObject( parent, name ), KXMLGUIClient()
+{
+	d = new KopetePluginPrivate;
+
 	setInstance( instance );
 	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
 }
 
 KopetePlugin::~KopetePlugin()
 {
+	delete d;
 }
 
 QString KopetePlugin::pluginId() const
@@ -54,19 +64,19 @@ void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,
 
 QStringList KopetePlugin::addressBookFields() const
 {
-	return m_addressBookFields;
+	return d->addressBookFields;
 }
 
 QString KopetePlugin::addressBookIndexField() const
 {
-	return m_indexField;
+	return d->indexField;
 }
 
 void KopetePlugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
 {
-	m_addressBookFields.append( field );
+	d->addressBookFields.append( field );
 	if( mode == MakeIndexField )
-		m_indexField = field;
+		d->indexField = field;
 }
 
 KActionCollection *KopetePlugin::customChatWindowPopupActions( const KopeteMessage &, DOM::Node & )

@@ -24,6 +24,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kglobal.h>
 
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"

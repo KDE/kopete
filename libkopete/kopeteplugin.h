@@ -1,10 +1,10 @@
 /*
     kopeteplugin.h - Kopete Plugin API
 
-    Copyright (c) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
-    Copyright (c) 2002      by Martijn Klingens    <klingens@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Copyright (c) 2002 by the Kopete developers    <kopete-devel@kde.org>
+    Copyright (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,10 +20,7 @@
 #define KOPETEPLUGIN_H
 
 #include <qobject.h>
-#include <qstringlist.h>
 
-#include <dom/dom_node.h>
-#include <kglobal.h>
 #include <kxmlguiclient.h>
 
 class KopeteMetaContact;
@@ -31,6 +28,13 @@ class KopeteMessageManager;
 class KActionCollection;
 class KMainWindow;
 class KopeteMessage;
+
+namespace DOM
+{
+	class Node;
+}
+
+class KopetePluginPrivate;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -41,7 +45,7 @@ class KopeteMessage;
  * please note the the client is added *RIGHT* after the plugin is created.
  * so you have to make every actions in the constructor
  */
-class KopetePlugin : public QObject , public KXMLGUIClient
+class KopetePlugin : public QObject, public KXMLGUIClient
 {
 	Q_OBJECT
 
@@ -91,8 +95,7 @@ public:
 	/**
 	 * The user right-click on the chatwindow
 	 */
-	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & ) ;
-
+	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node &node );
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the
@@ -111,7 +114,7 @@ public:
 	 * This is a convenience method that simply calls @ref PluginLoader::pluginName().
 	 */
 	QString displayName() const;
-	
+
 signals:
 	/**
 	 * Notify that the settings of a plugin were changed.
@@ -132,8 +135,7 @@ public slots:
 	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data );
 
 private:
-	QStringList m_addressBookFields;
-	QString m_indexField;
+	KopetePluginPrivate *d;
 };
 
 #endif

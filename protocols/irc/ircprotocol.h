@@ -21,6 +21,8 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 
+#include <dom/dom_node.h>
+
 class KopeteMetaContact;
 class AddContactPage;
 class KIRC;
