@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
+Version=1000792
 Icon=jabber_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_jabber
@@ -15,8 +16,20 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Jabber
+Name[xx]=xxJabberxx
 Comment=Protocol to connect to Jabber
+Comment[ca]=Protocol per a connectar-se a Jabber
+Comment[cs]=Protokol k připojení k Jabberu
 Comment[da]=Protokol til at forbinde til Jabber
+Comment[de]=Protokoll zur Verbindung mit Jabber
+Comment[es]=Protocolo de conexión con Jabber
+Comment[et]=Protokoll ühendumiseks Jabberiga
 Comment[hu]=Protokoll a Jabber használatához
+Comment[it]=Protocollo per connessione a Jabber
+Comment[nl]=Protocol om met Jabber te verbinden
+Comment[pt_BR]=Protocolo para conexão ao Jabber
+Comment[ru]=Протокол для подключения к Jabber
 Comment[sr]=Протокол за повезивање на Jabber
+Comment[sv]=Protokoll för att ansluta till Jabber
+Comment[xx]=xxProtocol to connect to Jabberxx
 

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
+Version=1000792
 Icon=irc_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_irc
@@ -15,8 +16,22 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=IRC
+Name[xx]=xxIRCxx
 Comment=Protocol to connect to IRC
+Comment[ca]=Protocol per a connectar-se a l'IRC
+Comment[cs]=Protokol k připojení k IRC
 Comment[da]=Protokol til at forbinde til IRC
+Comment[de]=Protokoll zur Verbindung mit IRC
+Comment[es]=Protocolo de conexión al IRC
+Comment[et]=Protokoll ühendumiseks IRC-ga
 Comment[hu]=Protokoll az IRC használatához
+Comment[it]=Protocollo per connessione a IRC
+Comment[nl]=Protocol om met Internet Relay Chat (IRC) te verbinden
+Comment[pt]=Protocolo para ligar ao IRC
+Comment[pt_BR]=Protocolo de conexão ao IRC
+Comment[ru]=Протокол для подключения к IRC
 Comment[sr]=Протокол за повезивање на IRC
+Comment[sv]=Protokoll för att ansluta till IRC
+Comment[wa]=Protocole po s' raloyî so les canås IRC
+Comment[xx]=xxProtocol to connect to IRCxx
 

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
+Version=1000792
 Icon=alias
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_alias

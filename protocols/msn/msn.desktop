@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
+Version=1000792
 Icon=msn_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_msn
@@ -16,8 +17,24 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=MSN Messenger
 Name[da]=MSN-Messenger
+Name[de]=MSN-Messenger
+Name[pt_BR]=Mensageiro MSN
 Name[sr]=MSN Гласник
+Name[xx]=xxMSN Messengerxx
 Comment=Protocol to connect to MSN Messenger
-Comment[da]=MSN-Messenger
-Comment[sr]=MSN Гласник
+Comment[ca]=Protocol per a connectar-se a MSN Messenger
+Comment[cs]=Protokol k připojení k MSN Messengeru
+Comment[da]=Protokol til at forbinde til MSN-Messenger
+Comment[de]=Protokoll zur Verbindung mit dem MSN-Messenger
+Comment[es]=Protocolo para conectar con MSN Messenger
+Comment[et]=Protokoll ühendumiseks MSN Messengeriga
+Comment[hu]=Protokoll az MSN Messenger használatához
+Comment[it]=Protocollo per connessiona MSN Messenger
+Comment[nl]=Protocol om met MSN Messenger te verbinden
+Comment[pt_BR]=Protocolo para conexão ao MSN Messenger
+Comment[ru]=Протокол для подключения к MSN Messenger
+Comment[sr]=Протокол за повезивање на MSN Messenger
+Comment[sv]=Protokoll för att ansluta till MSN Messenger
+Comment[wa]=Protocole po s' raloyî a MSN
+Comment[xx]=xxProtocol to connect to MSN Messengerxx
 
