@@ -52,10 +52,8 @@ private:
 public slots:
 	virtual void accept();
 	void slotProtocolListClicked( QListViewItem * );
-	void slotGroupListClicked( QListViewItem * );
 
 	void slotAddGroupClicked();
-	void slotRemoveGroupClicked();
 
 protected slots:
 	virtual void next();

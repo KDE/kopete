@@ -44,17 +44,17 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	protocolListView->clear();
 	m_accountItems.clear();
-	
+
 	QCheckListItem* accountLVI=0L;
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
-		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox); 
+		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		accountLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
 		m_accountItems.insert(accountLVI,i);
 	}
-	
+
 
 	if ( accounts.count() == 1 )
 	{
@@ -67,6 +67,8 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 }
 
 AddContactWizard::~AddContactWizard()
@@ -91,28 +93,6 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 	setNextEnabled(selectService, oneIsChecked);
 }
 
-void AddContactWizard::slotGroupListClicked( QListViewItem *)
-{
-	//top-level contacts are allowed
-/*
-	bool oneIsChecked = false;
-	for (QListViewItem *listItem = groupList->firstChild(); listItem != 0; listItem = listItem->itemBelow())
-	{
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>(listItem);
-		if (!check) 
-		{
-			kdDebug(14000) << "WARNING : AddContactWizard::slotGroupListClicked : one listItem is not a CheckListItem" << endl;
-		}
-		else 	if (check->isOn())
-		{
-			oneIsChecked = true;
-			break;
-		}
-	}
-	setNextEnabled(page2,oneIsChecked);
-  */
-}
-
 void AddContactWizard::slotAddGroupClicked()
 {
 	bool ok;
@@ -125,9 +105,6 @@ void AddContactWizard::slotAddGroupClicked()
 		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox);
 }
 
-void AddContactWizard::slotRemoveGroupClicked()
-{
-}
 
 void AddContactWizard::accept()
 {
