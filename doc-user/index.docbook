@@ -140,7 +140,7 @@ Appendix: Obtaining and installation
 <chapter id="getting-started">
 <title>Getting Started</title>
 <para>To use &kopete; you need to set up one or more accounts for the instant messaging services you wish to use.</para>
-<para>You've probably already chosen a messaging service, either because you already use IM, or you need to use the same service as your friends.  If you don't fit into either of these categories, please consider using a messaging service based on open standards, because these are designed for use by Free Software.  Other messaging services are prone to changing the underlying technology without making the details freely available, making them harder for Free Software developers to support.</para>
+<para>You've probably already chosen a messaging service, either because you already use &im;, or you need to use the same service as your friends.  If you don't fit into either of these categories, please consider using a messaging service based on open standards, because these are designed for use by Free Software.  Other messaging services are prone to changing the underlying technology without making the details freely available, making them harder for Free Software developers to support.</para>
 <para>The messaging services that &kopete; supports that are based on open standards are Jabber and IRC.</para>
 <para>The following section assumes you are registered with an &im;
 service already.  If not, you can register with Gadu-Gadu, Jabber, and
@@ -199,21 +199,38 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>A Word about Metacontacts</title>
 <para>One of the principles behind &kopete; is that it offers a standardised way to use &im; systems.  Differences between &im; systems are smoothed over, making it easier to communicate.  We follow this principle in the way contacts are organised.  When you use &kopete; you just find contacts by name; the actual &im; system used is less important.  Some people have more than one &im; account - &kopete; puts the person using the account first.</para>
 <para>To support this, &kopete; introduced <quote>Metacontacts</quote>, which represent the person you want to chat with.  One Metacontact contains all the different &im; IDs they may have, making it easy to see with a glance at the Metacontact whether someone is available, regardless of which &im; system they are using right now.</para>
-</sect3>
-<sect3 id="organise-contacts-adding">
-<title>Adding Contacts</title>
-<para>To add a contact, either select <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact...</guimenuitem></menuchoice> or click the <guibutton>Add Contact</guibutton> button on the toolbar.  This brings up the Add Contact Wizard.</para>
-<para>The Add Contact Wizard should be straightforward to use. It leads you through the following steps:</para>
-<orderedlist>
-<listitem><para>Choose Metacontact name.  By choosing an entry from your KDE Address Book, you can easily use their name.</para></listitem>
-</orderedlist>
-<para>You can add contacts to an existing Metacontact using its context menu.</para>
+<sect4 id="organise-contacts-metacontacts-moving">
+<title>Moving Contacts between Metacontacts</title>
+<para>You can change the metacontact a contact belongs to.  In practice, you only have to do this when you have just added multiple accounts to &kopete;, and you know that HotDog76 and mikejones@hotmail.com are both the same person.</para>
+<para>There are two ways to do this:</para>
+<variablelist>
+<varlistentry><term>Drag and Drop</term><listitem><para>The contact icon to the right of the Metacontact name may be dragged from one Metacontact to another.</para></listitem></varlistentry>
+<varlistentry><term>Contact Context Menu</term><listitem><para>The context menu for contacts (<mousebutton>Right</mousebutton>-click the contact icon) allows you to choose the new Metacontact from a dialog.</para></listitem></varlistentry>
+</variablelist>
+<para>If the move would leave a Metacontact empty (with no contacts), you'll be asked if you want to delete this contact.</para>
+</sect4>
 </sect3>
 <sect3 id="organise-contacts-grouping">
-<title>Grouping Contacts</title>
-<para>Within Groups</para>
-<para>Within Metacontacts</para>
+<title>A Word about Grouping Contacts</title>
+<para>&kopete; lets you create groups to sort your contacts.  A contact may be in more than one group.  Where possible, groupings are saved on server side contact lists, so if you use other &im; programs, group memberships are kept in sync.</para>
+
+</sect3><sect3 id="organise-contacts-adding">
+<title>Adding Contacts</title>
+<para>To add a contact, either select <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact...</guimenuitem></menuchoice> or click the <guibutton>Add Contact</guibutton> button on the toolbar.  This brings up the Add Contact Wizard.</para>
+<para>The Add Contact Wizard creates a new Metacontact using one or more &im; systems, byleads you through the following pages:</para>
+
+<orderedlist>
+<listitem><para>Welcome Page.  Here you can choose whether you want to use the KDE Address Book for this contact.  Storing &im; information in the KDE Address Book will enable other &kde; &im; programs to share contact information with &kopete; and in future &kde; applications may use &kopete; to send information via &im;.  If you prefer to keep your &im; contacts separated, clear the checkbox here.</para></listitem>
+<listitem><para>Choose KDE Address Book entry.  By choosing an entry from your KDE Address Book, you can use its name as a Display Name in &kopete;.  You can also create a new entry here.  This page doesn't show if you chose not to use the KDE Address Book.</para></listitem>
+<listitem><para>Select Display Name and Group.  Here you can enter a Display Name (the name used for this person inside &kopete;), and choose the <link linkend="organise-contacts-grouping">groups</link> they are a member of.</para></listitem>
+<listitem><para>Select &im; Accounts.  Here you can choose which accounts you want to use to chat to the new contact.  If you only have one &im; account yourself, you won't see this screen.</para></listitem>
+<listitem><para>Account-specific Add Contact Pages.  For each account, you'll get one page where you can enter the <acronym>UIN</acronym>, buddy name or E-mail address, depending on the &im; system in use.</para></listitem>
+<listitem><para>Finish Screen.  All done.  Except if the &im; system requires authorisation (such as <trademark>ICQ</trademark>) to add a contact to your list - in which case, you'll be prompted after the wizard exits.</para></listitem>
+</orderedlist>
+
+<para>You can add contacts to an existing Metacontact using its context menu.</para>
 </sect3>
+
 <sect3 id="organise-contacts-removing">
 <title>Removing Contacts</title>
 <para>If you no longer want a contact in the contact list...</para>
