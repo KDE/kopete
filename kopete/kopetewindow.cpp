@@ -131,11 +131,11 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
-
+/*
 	actionShowTransfers = new KAction( i18n( "Show &File Transfers" ),
 		"network", 0, KopeteTransferManager::transferManager(),
 		SLOT( show() ), actionCollection(), "ShowTransfers" );
-
+*/
 	actionPrefs = KStdAction::preferences(
 		this, SLOT( slotShowPreferencesDialog() ),
 		actionCollection(), "settings_prefs" );
@@ -449,7 +449,8 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
 /*KopeteProtocol * p,	const QString &icon )*/
 {
-	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << endl;
+	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " <<
+		status.overlayIcon() << endl;
 
 	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ status.protocol() ] );
 	if( !i )
@@ -459,7 +460,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
-	QMovie mv = loader->loadMovie( status.overlayIcon(), KIcon::User, 0 );
+	QMovie mv = loader->loadMovie(status.overlayIcon(), KIcon::Small);
 
 	if ( mv.isNull() )
 	{
@@ -488,7 +489,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	}
 	else
 	{
-//		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
+		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
 		i->setMovie( mv );
 	}
 }

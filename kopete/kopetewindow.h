@@ -121,7 +121,7 @@ public:
 	KToggleAction *menubarAction;
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
-	KAction *actionShowTransfers;
+//	KAction *actionShowTransfers;
 	KGlobalAccel *globalAccel;
 
 	KopeteSystemTray *tray;
