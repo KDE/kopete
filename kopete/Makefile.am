@@ -38,10 +38,6 @@ mydata_DATA  = kopeteui.rc eventsrc
 mimedir      = $(kde_mimedir)/application
 mime_DATA    = x-kopete-emoticons.desktop
 
-# TODO: Remove the following 2 lines after we drop KDE 3.1 compat
-desktopdir   = $(kde_appsdir)/Internet
-desktop_DATA = kopete.desktop
-# ... and uncomment the following line instead
-# xdg_apps_DATA = kopete.desktop
+xdg_apps_DATA = kopete.desktop
 
 # vim: set noet:
