@@ -220,7 +220,12 @@ void OscarConnection::slotSocketError(int errornum)
 #endif
 
 	kdDebug(14150) << k_funcinfo << "SOCKET ERROR: " << errornum << endl;
-	mSocket->closeNow();
+	// in case of a socket error, the socket may already be closed,
+	// and if it is, the closed() signal may not have been emitted.
+	//mSocket->closeNow();
+	// pretend this was expected, or else autoreconnect kicks in and
+	// we end up in an infinite loop if, say, DNS is failing.
+	emit socketClosed(connectionName(), true);
 	emit socketError(connectionName(), errornum);
 }
 
