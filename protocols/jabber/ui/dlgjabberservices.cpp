@@ -134,7 +134,7 @@ void dlgJabberServices::slotQueryFinished ()
 
 	int row = 0;
 
-	for (XMPP::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); it++)
+	for (XMPP::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); ++it)
 	{
 		tblServices->setText (row, 0, (*it).name ());
 		tblServices->setText (row, 1, (*it).jid ().userHost ());

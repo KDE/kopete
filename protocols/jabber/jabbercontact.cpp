@@ -151,7 +151,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 		// now go through the string list and add the resources with their icons
 		i = 0;
-		for(QStringList::iterator it = items.begin(); it != items.end(); it++)
+		for(QStringList::iterator it = items.begin(); it != items.end(); ++it)
 		{
 			if( i == activeItem )
 			{
@@ -519,7 +519,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * saved.
 	 * This might not be the desired behaviour for all.
 	 */
-	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); ++it)
 	{
 		XMPP::VCard::Email email = (*it);
 
@@ -545,7 +545,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * phone number property. This might not be the desired
 	 * behavior for all users.
 	 */
-	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); it++)
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); ++it)
 	{
 		XMPP::VCard::Phone phone = (*it);
 

@@ -119,7 +119,7 @@ void dlgJabberBrowse::slotSentForm ()
 
 	int row = 0;
 
-	for (QValueList < XMPP::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); it++)
+	for (QValueList < XMPP::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); ++it)
 	{
 		tblResults->setText (row, 0, (*it).jid ().userHost ());
 		tblResults->setText (row, 1, (*it).first ());

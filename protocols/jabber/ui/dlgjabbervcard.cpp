@@ -144,7 +144,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 	m_mainWidget->urlHomepage->setUseCursor ( !vCard.url().isEmpty () );
 
 	// addresses
-	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); ++it)
 	{
 		XMPP::VCard::Address address = (*it);
 
