@@ -177,7 +177,7 @@ void IRCServerContact::appendMessage( KopeteMessage &msg )
 //	m_messageQueue.append(msg);
 	if(manager(false) && manager()->view(false))
 	{
-		manager()->appendMessage(msg);
+		manager()->view()->appendMessage(msg);
 	}
 }
 
