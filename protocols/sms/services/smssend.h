@@ -20,6 +20,7 @@ public:
 	QWidget* configureWidget(QWidget* parent);
 
 	int maxSize();
+	QString description();
 
 public slots:
 	void savePreferences();

@@ -19,6 +19,7 @@ public:
 	virtual QWidget* configureWidget(QWidget* parent) = 0;
 
 	virtual int maxSize() = 0;
+	virtual QString description() = 0;
 public slots:
 	virtual void savePreferences() = 0;
 signals:

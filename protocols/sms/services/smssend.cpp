@@ -138,6 +138,11 @@ int SMSSend::maxSize()
 	return s->maxSize();
 }
 
+QString SMSSend::description()
+{
+	return i18n("SMSSend is a program for sending SMS through gateways on the web. It can be found on http://zekiller.skytech.org/smssend_en.php");
+}
+
 
 #include "smssend.moc"
 /*

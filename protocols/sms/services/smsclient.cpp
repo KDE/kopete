@@ -140,7 +140,12 @@ void SMSClient::slotSendFinished(KProcess* p)
 
 int SMSClient::maxSize()
 {
-	return -1;
+	return 160;
+}
+
+QString SMSClient::description()
+{
+	return i18n("SMSClient is a program for sending SMS with the modem. The program can be found on http://www.smsclient.org");
 }
 
 #include "smsclient.moc"
