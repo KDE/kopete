@@ -305,13 +305,8 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 	KopeteContactPtrList justMe;
 	justMe.append(myself());
-	KopeteMessage kmsg(contact(who), justMe, msg, KopeteMessage::Inbound);
+	KopeteMessage kmsg(contact(who), justMe, msg, KopeteMessage::Inbound , KopeteMessage::RichText);
 
-	//filter <fade> tags from the messages
-	QString filteredMsg = kmsg.plainBody();
-
-	//set the body to be richtext so tags are removed
-	kmsg.setBody(filteredMsg, KopeteMessage::RichText);
 	mm->appendMessage(kmsg);
 
 }
