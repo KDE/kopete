@@ -24,6 +24,7 @@
 #include <kopeteaccount.h>
 #include <kopetepasswordedaccount.h>
 
+#include "gwerror.h"
 #include "gwfield.h"
 
 class KActionMenu;
@@ -50,6 +51,9 @@ class Client;
 const QString GroupWiseAccount::server() const
 
 */
+
+using namespace GroupWise;
+
 class GroupWiseAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
@@ -79,6 +83,11 @@ public:
 	 */
 	const QString GroupWiseAccount::server() const;
 
+	/**
+	 * Utility access to our protocol
+	 */
+	GroupWiseProtocol * GroupWiseAccount::protocol();
+
 public slots:
 
 	/* Connects to the server. */
@@ -88,11 +97,36 @@ public slots:
 	virtual void disconnect ();
 	
 	/**
-	 * Called by the server when it has a message for us.  
-	 * This identifies the sending KopeteContact and passes it a KopeteMessage
+	 * Called when the server has a message for us.  
+	 * This identifies the sending KopeteContact and passes the message on to it,
+	 * in order to locate the MessageManager and finally pass to the GUI.
 	 */
-	void receivedMessage( const QString &message );
-	
+	void receiveMessage( const ConferenceEvent & event, const Message & message );
+	/** 
+	 * Called when we receive a FOLDER from the server side contact list
+	 * Adds to the Kopete contact list if not already present.
+	 */
+	void receiveFolder( const FolderItem & folder );
+	/**
+	 * Called when we receive a CONTACT from the server side contact list
+	 * Adds to a folder in the Kopete contact list.
+	 */
+	void receiveContact( const ContactItem & );
+	/**
+	 * Called when we receive a CONTACT'S METADATA (including initial status) from the server side contact list.
+	 */
+	void receiveContactUserDetails( const ContactDetails & );
+	/** 
+	 * A contact changed status
+	 */
+	void receiveStatus( const QString &, Q_UINT16 , const QString & );
+	/**
+	 * Our status changed on the server
+	 */
+	void changeOurStatus( GroupWise::Status, const QString &, const QString & );
+	/** 
+	 * Called when the clientstream is connected, debug only
+	 */
 	void slotCSConnected();
 	/**
 	 * Performs necessary actions when the client stream has been disconnected
@@ -110,16 +144,24 @@ protected:
 	 * This simulates contacts going on and offline in sync with the account's status changes
 	 */
 	void updateContactStatus();
-
+	/**
+	 * Sends a status message to the server - called by the status specific slotGoAway etc
+	 */
+	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
 protected slots:
 	/**
 	 * Change the account's status.  Called by KActions and internally.
 	 */
 	void slotGoOnline();
-	void slotGoAway();
+	void slotGoAway( const QString & reason );
 	void slotGoOffline();
-	void slotGoBusy();
+	void slotGoBusy( const QString & reason );
 	void slotGoAppearOffline();
+	
+	/** 
+	 * Called when we've logged in successfully
+	 */
+	void slotLoggedIn();
 	/**
 	 * Update the local user's metadata
 	 */
@@ -130,11 +172,17 @@ protected slots:
 	void slotTLSReady( int secLayerCode );
 
 private:
+	// Network code 
 	KNetworkConnector * m_connector;
 	QCA::TLS * m_QCATLS;
 	QCATLSHandler *	m_tlsHandler;
 	ClientStream * m_clientStream;
+	// Client, entry point of libgroupwise
 	Client * m_client;
+	// Map of objectId to group, used to add contacts to the correct KopeteGroup
+	//QMap<unsigned int, KopeteGroup*> m_groupList;
+	GroupWise::Status m_initialStatus;
+	QString m_initialReason;
 };
 
 #endif
