@@ -107,6 +107,12 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( contactRemoved( KopeteContact * ) ),
 		SLOT( slotUpdateIcons() ) );
 
+	connect( m_metaContact, SIGNAL( iconChanged( KopetePluginDataObject::IconState, const QString & ) ),
+		SLOT( slotUpdateIcons() ) );
+
+	connect( m_metaContact, SIGNAL( useCustomIconChanged( bool ) ),
+		SLOT( slotUpdateIcons() ) );
+
 	connect( m_metaContact, SIGNAL( contactIdleStateChanged( KopeteContact * ) ),
 		SLOT( slotIdleStateChanged() ) );
 
@@ -114,7 +120,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
-	QObject::connect( mBlinkTimer, SIGNAL( timeout() ), this, SLOT( slotBlink() ) );
+	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
 	mIsBlinkIcon = false;
 	m_event = 0L;
 
