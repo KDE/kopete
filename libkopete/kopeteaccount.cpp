@@ -228,7 +228,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	if ( !error )
 	{
 #if KDE_IS_VERSION( 3, 1, 90 )
-		if ( KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
+		if ( !KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
 		{
 			// The folder might exist, try to open the wallet
 			if ( !d->wallet ) {
