@@ -84,12 +84,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
 	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
 		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
-	// And accounts too
-	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
-		this, SLOT(slotAccountRegistered(KopeteAccount*)));
-	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
-		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
-		
+	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ),
+		this, SLOT( slotAllPluginsLoaded() ));
+			
 	createGUI ( "kopeteui.rc", false );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
@@ -132,6 +129,8 @@ void KopeteWindow::initActions()
 
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
+	actionConnect->setEnabled(false);
+	actionDisconnect->setEnabled(false);
 
 	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0, 
 		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
@@ -437,10 +436,22 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *  p  )
 	guiFactory()->addClient(p);
 }
 
-void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
+void KopeteWindow::slotAllPluginsLoaded()
+{
+	//Connect the appropriate account signals
+	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
+		this, SLOT(slotAccountRegistered(KopeteAccount*)));
+	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
+		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
+
+	actionConnect->setEnabled(true);
+	actionConnect->setEnabled(true);
+}
+
+void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
-	if ( !a )
+	if ( !account )
 		return;
 
 	//enable the connect all toolbar button
@@ -451,28 +462,30 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 		actionDisconnect->setEnabled(true);
 	}
 		
-	connect( a->myself(),
+	connect( account->myself(),
 		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
 		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
 
-	KopeteAccountStatusBarIcon *i = new KopeteAccountStatusBarIcon( a, m_statusBarWidget );
-	connect( i, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
+	KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon( account, m_statusBarWidget );
+	connect( sbIcon, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
 	// Wanted by pmax, not sure if we should leave both in
 	// it'll confuse users if we take out the RMB function
-	connect( i, SIGNAL( leftClicked( KopeteAccount *, const QPoint & ) ),
+	connect( sbIcon, SIGNAL( leftClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
 
-	m_accountStatusBarIcons.insert( a, i );
+	m_accountStatusBarIcons.insert( account, sbIcon );
 
 	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
-	contactlist->actionAddContact->insert(new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , contactlist , SLOT( slotAddContact() ) , a));
-	slotAccountStatusIconChanged( a->myself() );
+	contactlist->actionAddContact->insert(new KAction( account->accountId() ,
+		account->protocol()->pluginIcon() , 0 ,
+		contactlist , SLOT( slotAddContact() ) , account));
+	slotAccountStatusIconChanged( account->myself() );
 }
 
-void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
+void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
 
@@ -483,12 +496,12 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 		actionDisconnect->setEnabled(false);
 	}
 	
-	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ a ] );
-	if( !i )
+	KopeteAccountStatusBarIcon *sbIcon = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
+	if( !sbIcon )
 		return;
 
-	delete i;
-	m_accountStatusBarIcons.remove( a );
+	delete sbIcon;
+	m_accountStatusBarIcons.remove( account );
 }
 
 void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )

@@ -129,6 +129,13 @@ private slots:
 	 * Carry out any changes resulting from a change to preferences
 	 */
 	void slotSettingsChanged();
+	
+	/**
+	 * Enable the Connect All and Disconnect All buttons here
+	 * along with connecting the accountRegistered and accountUnregistered
+	 * signals.
+	 */
+	void slotAllPluginsLoaded();
 
 public:
 	KopeteContactListView *contactlist;
