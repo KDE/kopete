@@ -563,20 +563,103 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
 
 // Item --------
 
+/**
+ * A periodic timer intended to be shared amongst multiple objects. Will run only
+ * if an object is attached to it.
+ */
+class SharedTimer : private QTimer
+{
+	int period;
+	int users;
+public:
+	SharedTimer( int period ) : period(period), users(0) {}
+	void attach( QObject *target, const char *slot )
+	{
+		connect( this, SIGNAL(timeout()), target, slot );
+	}
+	void detach( QObject *target, const char *slot )
+	{
+		disconnect( this, SIGNAL(timeout()), target, slot );
+	}
+protected:
+	void connectNotify( const char *signal )
+	{
+		if( signal == SIGNAL(timeout()) )
+			if( users++ == 0 )
+				start( period );
+	}
+	void disconnectNotify( const char *signal )
+	{
+		if( signal == SIGNAL(timeout()) )
+			if( --users == 0 )
+				stop();
+	}
+};
+
+class SharedTimerRef
+{
+	SharedTimer &timer;
+	QObject * const object;
+	const char * const slot;
+	bool attached;
+public:
+	SharedTimerRef( SharedTimer &timer, QObject *obj, const char *slot )
+	 : timer(timer), object(obj), slot(slot), attached(false)
+	{
+	}
+	void start()
+	{
+		if( attached ) return;
+		timer.attach( object, slot );
+		attached = true;
+	}
+	void stop()
+	{
+		if( !attached ) return;
+		timer.detach( object, slot );
+		attached = false;
+	}
+	bool isActive()
+	{
+		return attached;
+	}
+};
+
 class Item::Private
 {
 public:
-	Private() : animateLayout( true ), opacity( 1.0 ), visibilityLevel( 0 ), visibilityTarget( false ) {}
+	Private( Item *item )
+	 : layoutAnimateTimer( theLayoutAnimateTimer(), item, SLOT( slotLayoutAnimateItems() ) )
+	 , animateLayout( true ), opacity( 1.0 )
+	 , visibilityTimer( theVisibilityTimer(), item, SLOT( slotUpdateVisibility() ) )
+	 , visibilityLevel( 0 ), visibilityTarget( false )
+	{
+	}
 
 	QTimer layoutTimer;
 
-	QTimer layoutAnimateTimer;
+	//QTimer layoutAnimateTimer;
+	SharedTimerRef layoutAnimateTimer;
+	SharedTimer &theLayoutAnimateTimer()
+	{
+		static SharedTimer timer( 10 );
+		return timer;
+	}
+
 	bool animateLayout;
 	int layoutAnimateSteps;
 	static const int layoutAnimateStepsTotal = 10;
 
 	float opacity;
-	QTimer visibilityTimer;
+
+	//QTimer visibilityTimer;
+	SharedTimerRef visibilityTimer;
+	SharedTimer &theVisibilityTimer()
+	{
+		static SharedTimer timer( 40 );
+		return timer;
+	}
+
 	int visibilityLevel;
 	bool visibilityTarget;
 	static const int visibilityFoldSteps = 7;
@@ -588,19 +671,21 @@ public:
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
 	static bool animateChanges;
 	static bool fadeVisibility;
+	static bool foldVisibility;
 };
 
 bool Item::Private::animateChanges = true;
 bool Item::Private::fadeVisibility = true;
+bool Item::Private::foldVisibility = true;
 
 Item::Item( QListViewItem *parent, QObject *owner, const char *name )
- : QObject( owner, name ), KListViewItem( parent ), d( new Private )
+ : QObject( owner, name ), KListViewItem( parent ), d( new Private(this) )
 {
 	initLVI();
 }
 
 Item::Item( QListView *parent, QObject *owner, const char *name )
- : QObject( owner, name ), KListViewItem( parent ), d( new Private )
+ : QObject( owner, name ), KListViewItem( parent ), d( new Private(this) )
 {
 	initLVI();
 }
@@ -610,18 +695,19 @@ Item::~Item()
 	delete d;
 }
 
-void Item::setEffects( bool animation, bool fading )
+void Item::setEffects( bool animation, bool fading, bool folding )
 {
 	Private::animateChanges = animation;
 	Private::fadeVisibility = fading;
+	Private::foldVisibility = folding;
 }
 
 void Item::initLVI()
 {
 	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotColumnResized() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
-	connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
-	connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
+	//connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
+	//connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
 	setVisible( false );
 	setTargetVisibility( true );
 }
@@ -660,8 +746,9 @@ void Item::slotLayoutItems()
 
 	if ( Private::animateChanges && d->animateLayout )
 	{
-		if ( !d->layoutAnimateTimer.isActive() )
-			d->layoutAnimateTimer.start( 10 );
+		d->layoutAnimateTimer.start();
+		//if ( !d->layoutAnimateTimer.isActive() )
+		//	d->layoutAnimateTimer.start( 10 );
 		d->layoutAnimateSteps = -1;
 	}
 	else
@@ -704,13 +791,6 @@ bool Item::targetVisibility()
 
 void Item::setTargetVisibility( bool vis )
 {
-	// disable if user wants it disabled
-	if ( !Private::fadeVisibility )
-	{
-		setVisible( vis );
-		return;
-	}
-
 	if ( d->visibilityTarget == vis )
 	{
 		// in case we're getting called because our parent was shown and
@@ -720,7 +800,8 @@ void Item::setTargetVisibility( bool vis )
 		return;
 	}
 	d->visibilityTarget = vis;
-	d->visibilityTimer.start( 40 );
+	d->visibilityTimer.start();
+	//d->visibilityTimer.start( 40 );
 	if ( targetVisibility() )
 		setVisible( true );
 	slotUpdateVisibility();
@@ -732,6 +813,13 @@ void Item::slotUpdateVisibility()
 		++d->visibilityLevel;
 	else
 		--d->visibilityLevel;
+
+	if ( !Private::foldVisibility && !Private::fadeVisibility )
+		d->visibilityLevel = targetVisibility() ? Private::visibilityStepsTotal : 0;
+	else if ( !Private::fadeVisibility && d->visibilityLevel >= Private::visibilityFoldSteps )
+		d->visibilityLevel = targetVisibility() ? Private::visibilityStepsTotal : Private::visibilityFoldSteps - 1;
+	else if ( !Private::foldVisibility && d->visibilityLevel <= Private::visibilityFoldSteps )
+		d->visibilityLevel = targetVisibility() ? Private::visibilityFoldSteps + 1 : 0;
 
 	if ( d->visibilityLevel >= Private::visibilityStepsTotal )
 	{
@@ -773,7 +861,7 @@ void Item::setHeight( int )
 	for ( uint n = 0; n < components(); ++n )
 		minHeight = QMAX( minHeight, component( n )->rect().height() );
 	//kdDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
-	if ( d->visibilityTimer.isActive() )
+	if ( Private::foldVisibility && d->visibilityTimer.isActive() )
 	{
 		int vis = QMIN( d->visibilityLevel, Private::visibilityFoldSteps );
 		minHeight = (minHeight * vis) / Private::visibilityFoldSteps;
@@ -793,7 +881,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 #ifdef HAVE_XRENDER
 	QColor rgb = cg.base();//backgroundColor();
 	float opac = 1.0;
-	if ( d->visibilityTimer.isActive() )
+	if ( d->visibilityTimer.isActive() && Private::fadeVisibility )
 	{
 		int vis = QMAX( d->visibilityLevel - Private::visibilityFoldSteps, 0 );
 		opac = float(vis) / Private::visibilityFadeSteps;

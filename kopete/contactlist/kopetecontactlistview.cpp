@@ -895,8 +895,10 @@ void KopeteContactListView::slotSettingsChanged( void )
 		setTreeStepSize( 0 );
 	}
 
+	// maybe setEffects should read these from KopetePrefs itself?
 	Kopete::UI::ListView::Item::setEffects( KopetePrefs::prefs()->contactListAnimation(),
-	                                        KopetePrefs::prefs()->contactListFading() );
+	                                        KopetePrefs::prefs()->contactListFading(),
+	                                        KopetePrefs::prefs()->contactListFolding() );
 
 	if ( KopetePrefs::prefs()->sortByGroup() )
 	{

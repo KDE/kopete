@@ -270,9 +270,10 @@ public:
 	/**
 	 * Turn on and off certain visual effects for all Items.
 	 * @param animation whether changes to items should be animated.
-	 * @param fading whether requests to setTargetVisibility should be honoured.
+	 * @param fading whether requests to setTargetVisibility should cause fading of items.
+	 * @param folding whether requests to setTargetVisibility should cause folding of items.
 	 */
-	static void setEffects( bool animation, bool fading );
+	static void setEffects( bool animation, bool fading, bool folding );
 
 protected:
 	void componentAdded( Component *component );
