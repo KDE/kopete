@@ -379,7 +379,7 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, 
 {
 	if(canSend(mustBeConnected))
 		return KIRCMessage::writeMessage(&m_sock, command, args, suffix);
-	kdDebug(14120) << "Must be connected error:" << command << args << suffix << endl;
+//	kdDebug(14120) << "Must be connected error:" << command << args << suffix << endl;
 	return KIRCMessage();
 }
 
