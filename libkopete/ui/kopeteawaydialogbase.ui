@@ -50,7 +50,7 @@
                 <cstring>cmdOkay</cstring>
             </property>
             <property name="text">
-                <string>&amp;Okay</string>
+                <string>&amp;OK</string>
             </property>
             <property name="default">
                 <bool>true</bool>
