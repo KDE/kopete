@@ -81,12 +81,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 
 	// specifically cause this instance to update this contact as offline
 	slotUpdatePresence(JabberProtocol::STATUS_OFFLINE, "");
-
-	if(mc)
-	{
-		connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
-				this, SLOT (slotMoved(KopeteMetaContact*) ));
-	}
 }
 
 /**
@@ -94,7 +88,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
  */
 JabberContact::~JabberContact()
 {
-
 	delete actionCollection;
 	delete actionMessage;
 	delete actionChat;
@@ -107,7 +100,6 @@ JabberContact::~JabberContact()
 	delete actionStatusXA;
 	delete actionStatusDND;
 	delete actionStatusInvisible;
-
 }
 
 /**
@@ -115,7 +107,6 @@ JabberContact::~JabberContact()
  */
 void JabberContact::initActions()
 {
-
 	actionChat = new KAction(i18n("Send Chat Message"), "mail_generic", 0, this, SLOT(slotChatUser()), this, "actionChat");
 	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
 	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
@@ -777,7 +768,6 @@ void JabberContact::slotStatusXA()
 
 void JabberContact::slotStatusDND()
 {
-
 	QString id = userId();
 
 	if(resourceOverride)
@@ -789,35 +779,12 @@ void JabberContact::slotStatusDND()
 
 void JabberContact::slotStatusInvisible()
 {
-
 	QString id = userId();
 
 	if(resourceOverride)
 		id += activeResource->resource();
 
 	protocol->sendPresenceToNode(JabberProtocol::STATUS_INVISIBLE, id);
-
-}
-
-void JabberContact::slotMoved(KopeteMetaContact* from)
-{
-//	kdDebug(14130) <<"JabberContact::slotMoved" <<endl;
-	QStringList groups_new=metaContact()->groups().toStringList();
-	QStringList groups_old=from->groups().toStringList();
-	QStringList groups_current=groups();
-
-	for( QStringList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
-	{
-		QString group=*it;
-		if(!groups_current.contains(group))
-			addToGroup(KopeteContactList::contactList()->getGroup(group));
-	}
-	for( QStringList::ConstIterator it = groups_old.begin(); it != groups_old.end(); ++it )
-	{
-		QString group=*it;
-		if(groups_current.contains(group) && !groups_new.contains(group))
-			removeFromGroup(KopeteContactList::contactList()->getGroup(group));
-	}
 }
 
 void JabberContact::serialize( QMap<QString, QString> &serializedData,

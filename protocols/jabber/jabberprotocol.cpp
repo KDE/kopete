@@ -981,8 +981,6 @@ JabberContact *JabberProtocol::createContact(const QString &jid,
 
 		metaContact->addContact(jc );
 
-		contactMap.insert(jid, jc);
-
 		return jc;
 }
 

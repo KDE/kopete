@@ -70,8 +70,6 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myChatManager, SLOT(appendMessage(const KopeteMessage &)));
 
-	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-
 	// Set up the context menu
 	myActionCollection = new KActionCollection(this);
 }

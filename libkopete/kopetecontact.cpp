@@ -290,37 +290,36 @@ void KopeteContact::slotMoveDialogOkClicked()
 		kdDebug(14010) << "KopeteContact::slotMoveDialogOkClicked : WARNING metaContact not found" << endl;
 		return;
 	}
-	moveToMetaContact(mc);
+	setMetaContact( mc );
 }
 
-void KopeteContact::moveToMetaContact(KopeteMetaContact *m)
+void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
-	KopeteMetaContact *old=m_metaContact;
-	m_metaContact->removeContact(this);
-	m->addContact(this);
+	KopeteMetaContact *old = m_metaContact;
+	m_metaContact->removeContact( this );
+	m->addContact( this );
 
-/*	KopeteGroupList groups_new=m->groups();
-	KopeteGroupList groups_old=m_metaContact->groups();
-	KopeteGroupList groups_current=groups();*/
+	KopeteGroupList newGroups = m->groups();
+	KopeteGroupList oldGroups = m_metaContact->groups();
+	KopeteGroupList currentGroups = groups();
 
-	m_metaContact->removeChild(this);
-	m->insertChild(this);
-	m_metaContact=m;
+	// Reparent the contact
+	m_metaContact->removeChild( this );
+	m->insertChild( this );
+	m_metaContact = m;
 
-/*	for( KopeteGroupList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
+	// Sync groups
+	for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
 	{
-		KopeteGroup group=*it;
-		if(!groups_current.contains(group))
-			addToGroup(group);
+		if( !currentGroups.contains( group ) )
+			addToGroup( group );
 	}
-	for( KopeteGroupList::ConstIterator it = groups_old.begin(); it != groups_old.end(); ++it )
-	{
-		KopeteGroup group=*it;
-		if(groups_current.contains(group) && !groups_new.contains(group))
-			removeFromGroup(group);
-	}*/
 
-	emit moved(old, this);
+	for( KopeteGroup *group = oldGroups.first(); group; group = oldGroups.next() )
+	{
+		if( currentGroups.contains( group ) && !newGroups.contains( group ) )
+			removeFromGroup( group );
+	}
 }
 
 KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p)
@@ -373,6 +372,12 @@ void KopeteContact::removeFromGroup( KopeteGroup * /* group */ )
 void KopeteContact::moveToGroup( KopeteGroup * /* from */, KopeteGroup * /* to */ )
 {
 	/* Default implementation does nothing */
+}
+
+KopeteGroupList KopeteContact::groups() const
+{
+	/* Default implementation does nothing */
+	return KopeteGroupList();
 }
 
 #include "kopetecontact.moc"

@@ -87,7 +87,16 @@ public:
 	/**
 	 * The groups in which the user is located on the server.
 	 */
-	QValueList<unsigned int> groups();
+	const QMap<uint, KopeteGroup *> & serverGroups() const;
+
+	/**
+	 * The same list that @ref serverGroups() returns, but now in a format
+	 * that libkopete understands. It is in theory possible to make
+	 * MSNProtocol use this method too, but @ref serverGroups() is a lot
+	 * closer to our internal data structures and hence a lot more
+	 * efficient.
+	 */
+	virtual KopeteGroupList groups() const;
 
 	/**
 	 * The contact's MSN specific status, this is NOT the ContactStatus!
@@ -107,6 +116,10 @@ public:
 	virtual void removeFromGroup( KopeteGroup *group );
 	virtual void moveToGroup( KopeteGroup *oldGroup, KopeteGroup *newGroup );
 
+	void contactAddedToGroup( uint groupNumber, KopeteGroup *group );
+
+	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
@@ -114,7 +127,6 @@ public slots:
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
 
 	void slotRemovedFromGroup(unsigned int);
-	void slotAddedToGroup(unsigned int);
 
 signals:
 	void chatToUser( QString );
@@ -122,10 +134,8 @@ signals:
 private slots:
 	void slotBlockUser();
 
-	void slotMoved(KopeteMetaContact* from);
-
 private:
-	QValueList<unsigned int> m_groups;
+	QMap<uint, KopeteGroup *> m_serverGroups;
 
 	bool m_blocked;
 	bool m_allowed;

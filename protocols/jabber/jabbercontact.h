@@ -264,11 +264,6 @@ private slots:
 	void slotStatusDND();
 	void slotStatusInvisible();
 
-	/**
-	 *  the contact is moved to another metaContact
-	 */
-	void slotMoved(KopeteMetaContact* from);
-
 private:
 	/**
 	 * Initialize popup menu

@@ -255,7 +255,7 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	MSNContact *c = new MSNContact( this, contactId, displayName, metaContact );
 	c->setMsnStatus( MSNProtocol::FLN );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
-		c->slotAddedToGroup( (*it).toUInt() );
+		c->contactAddedToGroup( ( *it ).toUInt(), m_groupList[ ( *it ).toUInt() ] );
 }
 
 KopeteContact* MSNProtocol::myself() const
@@ -466,7 +466,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 
 		mIsConnected = true;
 
-		// Now pending changes are updated we want to sync both ways
+		// Now pending changes are updated if we want to sync both ways
 		m_publicNameSyncMode = SyncBoth;
 
 		QStringList contacts;
@@ -602,14 +602,14 @@ void MSNProtocol::slotBlockContact( QString handle ) const
 }
 
 bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact )
+		KopeteMetaContact *metaContact )
 {
 	if( isConnected() )
 	{
-		if( !parentContact->isTemporary() )
+		if( !metaContact->isTemporary() )
 		{
 			//This is a normal contact. Get all the groups this MetaContact is in
-			QPtrList<KopeteGroup> groupList = parentContact->groups();
+			QPtrList<KopeteGroup> groupList = metaContact->groups();
 			if( !groupList.isEmpty() )
 			{
 				for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
@@ -633,7 +633,7 @@ bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QStri
 		} else {
 			//This is a temporary contact. (a person who messaged us but is not on our conntact list.
 			//We don't want to create it on the server.Just create the local contact object and add it
-			MSNContact *newContact = new MSNContact( this, contactId, contactId, parentContact );
+			MSNContact *newContact = new MSNContact( this, contactId, contactId, metaContact );
 			return (newContact != 0L);
 		}
 	} else {
@@ -642,100 +642,102 @@ bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QStri
 	}
 }
 
-
-
-/*QStringList MSNProtocol::groups() const
-{
-	QStringList result;
-	QMap<uint, QString>::ConstIterator it;
-	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
-		result.append( *it );
-
-//	kdDebug(14140) << "MSNProtocol::groups(): " << result.join(", " ) << endl;
-	return result;
-} */
-
 void MSNProtocol::slotGroupAdded( QString groupName, uint groupNumber )
 {
-	if(tmp_addToNewGroup.count()>0)
+	// We have pending groups that we need add a contact to
+	// FIXME: This is dangerous, since in theory there could be more groups being
+	// created, resulting in Kopete adding contacts into the wrong group!
+	// Better use s/th like a QMap<KopeteGroup *, QMap< QString id, QString nick> >
+	// or similar - Martijn
+	if( tmp_addToNewGroup.count() > 0 )
 	{
-		for ( QValueList<QPair<QString,QString> >::Iterator it = tmp_addToNewGroup.begin(); it != tmp_addToNewGroup.end(); ++it)
+		for( QValueList<QPair<QString,QString> >::Iterator it = tmp_addToNewGroup.begin(); it != tmp_addToNewGroup.end(); ++it )
 		{
-			if((*it).second==groupName)
+			if( ( *it ).second == groupName )
 			{
-				kdDebug(14140) << "MSNProtocol::slotGroupAdded : Adding to new group: " << (*it).first <<  endl;
-				m_notifySocket->addContact( (*it).first, (*it).first, groupNumber, FL );
+				kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << ( *it ).first <<  endl;
+				m_notifySocket->addContact( ( *it ).first, ( *it ).first, groupNumber, FL );
 			}
 		}
+
+		// FIXME: Although we check for groupName above we clear regardless of the outcome? :) - Martijn
 		tmp_addToNewGroup.clear();
 	}
 
 	if( m_groupList.contains( groupNumber ) )
 	{
-		kdDebug(14140) << "MSNProtocol::slotGroupAdded: WARNING: group already in list" <<endl;
+		// Group can already be in the list since the idle timer does a 'List Groups'
+		// command. Simply return, don't issue a warning.
+		// kdDebug( 14140 ) << k_funcinfo << "Group " << groupName << " already in list, skipped." << endl;
 		return;
 	}
 
-	QPtrList<KopeteGroup> list= KopeteContactList::contactList()->groups();
-	KopeteGroup *convient=0L;
-	for ( KopeteGroup *g=list.first(); g; g = list.next() )
+	// Find the appropriate KopeteGroup, or create one
+	QPtrList<KopeteGroup> groupList = KopeteContactList::contactList()->groups();
+	KopeteGroup *fallBack = 0L;
+	for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
 	{
-		QStringList strL=g->pluginData(this);
-		if(strL.count() >= 1)
+		QStringList pluginData = g->pluginData( this );
+		if( pluginData.count() >= 1 )
 		{
-			if(strL.first().toUInt() == groupNumber)
+			if( pluginData.first().toUInt() == groupNumber )
 			{
 				m_groupList.insert( groupNumber, g );
-				QString oldServerName;
-				if(strL.count()>=2)
-					oldServerName=strL[1];
-				if(oldServerName != groupName)
-				{	// the dispalyName of the group has been modified by another client
-					strL.clear();
-					strL.append( QString::number(groupNumber) );
-					strL.append( groupName );
-					g->setPluginData(this, strL);
-					if(g->type() == KopeteGroup::Classic)
-						g->setDisplayName( groupName );
+				QString oldGroupName;
+				if( pluginData.count() >= 2 && pluginData[ 1 ] != groupName )
+				{
+					// The displayName of the group has been modified by another client
+					slotGroupRenamed( groupName, groupNumber );
 				}
-				else if(g->displayName() != groupName)
-				{	//the displayName was changed in kopete when we was offline (update the server right now)
-					//TODO
+				else if( g->displayName() != groupName )
+				{
+					// The displayName was changed in Kopete while we were offline
+					// FIXME: update the server right now
 				}
 				return;
 			}
 		}
 		else
-		{	//a group with the same dysplayName but with no msn id set convient
-			if(g->displayName()==groupName)
-				convient=g;
+		{
+			// If we found a group with the same displayName but no plugin data
+			// use that instead. This group is only used if no exact match is
+			// found in the list.
+			// FIXME: When adding a group in Kopete we already need to inform the
+			//        plugins about the KopeteGroup*, so they know which to use
+			//        and this code path can be removed (or kept solely for people
+			//        who migrate from older versions) - Martijn
+			if( g->displayName() == groupName )
+				fallBack = g;
 		}
 	}
 
-	if(!convient)
+	if( !fallBack )
 	{
-		convient=new KopeteGroup(groupName);
-		KopeteContactList::contactList()->addGroup(convient);
+		fallBack = new KopeteGroup( groupName );
+		KopeteContactList::contactList()->addGroup( fallBack );
 	}
 
-	QStringList strL;
-	strL.append( QString::number(groupNumber) );
-	strL.append( groupName );
-	convient->setPluginData(this, strL);
+	QStringList pluginData;
+	pluginData.append( QString::number( groupNumber ) );
+	pluginData.append( groupName );
+	fallBack->setPluginData( this, pluginData );
 
-	m_groupList.insert( groupNumber, convient );
-
+	m_groupList.insert( groupNumber, fallBack );
 }
 
 void MSNProtocol::slotGroupRenamed( QString groupName, uint groupNumber )
 {
 	if( m_groupList.contains( groupNumber ) )
 	{
-		QStringList strL;
-		strL.append( QString::number(groupNumber) );
-		strL.append( groupName );
-		m_groupList[groupNumber]->setPluginData(this, strL);
-		m_groupList[groupNumber]->setDisplayName(groupName);
+		QStringList pluginData;
+		pluginData.append( QString::number( groupNumber ) );
+		pluginData.append( groupName );
+		m_groupList[ groupNumber ]->setPluginData( this, pluginData );
+		m_groupList[ groupNumber ]->setDisplayName( groupName );
+	}
+	else
+	{
+		slotGroupAdded( groupName, groupNumber );
 	}
 }
 
@@ -743,8 +745,9 @@ void MSNProtocol::slotGroupRemoved( uint group )
 {
 	if( m_groupList.contains( group ) )
 	{
-		//FIXME: we should realy emty data in the group... but in most of cases, the group is already del
-		//m_groupList[group]->setPluginData(this, QStringList());
+		// FIXME: we should realy emty data in the group... but in most of cases, the group is already del
+		// FIXME: Shouldn't we fix the memory management instead then??? - Martijn
+		//m_groupList[ group ]->setPluginData( this, QStringList() );
 		m_groupList.remove( group );
 	}
 }
@@ -802,7 +805,7 @@ void MSNProtocol::slotKopeteGroupRemoved(KopeteGroup *g)
 		for ( ; it.current() ; ++it )
 		{
 			MSNContact *c = static_cast<MSNContact *>( it.current() );
-			if( c->groups().contains( groupNumber ) && c->groups().count() == 1 )
+			if( c->serverGroups().contains( groupNumber ) && c->serverGroups().count() == 1 )
 				m_notifySocket->addContact( c->contactId(), c->displayName(), 0, MSNProtocol::FL );
 		}
 		m_notifySocket->removeGroup( groupNumber );
@@ -838,66 +841,64 @@ MSNProtocol::Status MSNProtocol::convertStatus( QString status )
 		return FLN;
 }
 
-void MSNProtocol::slotContactList( QString handle, QString publicName,
-	QString group, QString list )
+void MSNProtocol::slotContactList( QString handle, QString publicName, QString group, QString list )
 {
 	// On empty lists handle might be empty, ignore that
 	if( handle.isEmpty() )
 		return;
 
-	QStringList groups;
-	groups = QStringList::split(",", group, false );
+	QStringList contactGroups = QStringList::split( ",", group, false );
 	if( list == "FL" )
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(
-			pluginId(), QString::null, handle );
-
-		if( m )
+		KopeteMetaContact *metaContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, handle );
+		if( metaContact )
 		{
 			//Contact exists, update data.
 			//Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
-			MSNContact *c = static_cast<MSNContact*>(m->findContact( pluginId(), QString::null, handle ));
-			c->setMsnStatus(FLN);
-			c->setDisplayName(publicName);
-			QValueList<unsigned int> contactGroups=c->groups();
-			QValueList<unsigned int> serverGroups=c->groups();
+			MSNContact *c = static_cast<MSNContact*>( metaContact->findContact( pluginId(), QString::null, handle ) );
+			c->setMsnStatus( FLN );
+			c->setDisplayName( publicName );
 
-			for( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
+			const QMap<uint, KopeteGroup *> &serverGroups = c->serverGroups();
+			for( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
 			{
-				unsigned int serverGroup=(*it).toUInt();
-				serverGroups.append(serverGroup);
-				if(!contactGroups.contains(serverGroup))
-				{	//the contact has been added in a group by another client
-					c->slotAddedToGroup(serverGroup);
-					m->addToGroup(m_groupList[serverGroup]);
+				uint serverGroup = ( *it ).toUInt();
+				if( !serverGroups.contains( serverGroup ) )
+				{
+					// The contact has been added in a group by another client
+					c->contactAddedToGroup( serverGroup, m_groupList[ serverGroup ] );
+					metaContact->addToGroup( m_groupList[ serverGroup ] );
 				}
 			}
-			for( QValueList<unsigned int>::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
+
+			for( QMap<uint, KopeteGroup *>::ConstIterator it = serverGroups.begin(); it != serverGroups.end(); ++it )
 			{
-				unsigned int cGroup=*it;
-				if(!serverGroups.contains(cGroup))
-				{	//the contact has been removed from a group by another client
-					c->slotRemovedFromGroup(cGroup);
-					m->removeFromGroup(m_groupList[cGroup]);
+				if( !contactGroups.contains( QString::number( it.key() ) ) )
+				{
+					// The contact has been removed from a group by another client
+					c->slotRemovedFromGroup( it.key() );
+					metaContact->removeFromGroup( m_groupList[ it.key() ] );
 				}
 			}
-			//TODO: update server if the contact has been moved to other group when msn is offline
+
+			// FIXME: Update server if the contact has been moved to another group while MSN was offline
 		}
 		else
 		{
-			m = new KopeteMetaContact();
+			metaContact = new KopeteMetaContact();
 
-			MSNContact *msnContact = new MSNContact( this, handle, publicName, m );
+			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact );
 			msnContact->setMsnStatus( FLN );
 
-			for( QStringList::Iterator it = groups.begin();
-				it != groups.end(); ++it )
+			for( QStringList::Iterator it = contactGroups.begin();
+				it != contactGroups.end(); ++it )
 			{
-				msnContact->slotAddedToGroup(  (*it).toUInt()  );
-				m->addToGroup(m_groupList[(*it).toUInt()]);
+				uint groupNumber = ( *it ).toUInt();
+				msnContact->contactAddedToGroup( groupNumber, m_groupList[ groupNumber ] );
+				metaContact->addToGroup( m_groupList[ groupNumber ] );
 			}
-			m->addContact( msnContact );
-			KopeteContactList::contactList()->addMetaContact(m);
+			metaContact->addContact( msnContact );
+			KopeteContactList::contactList()->addMetaContact( metaContact );
 		}
 	}
 	else if( list == "BL" )
@@ -937,23 +938,20 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	}
 }
 
-void MSNProtocol::slotContactRemoved( QString handle, QString list,
-	uint /* serial */, uint group )
+void MSNProtocol::slotContactRemoved( QString handle, QString list, uint /* serial */, uint group )
 {
-
 	if( list == "BL" )
 	{
 		m_blockList.remove(handle);
 		if(!m_allowList.contains(handle))
 			m_notifySocket->addContact( handle, handle, 0, AL );
-
 	}
+
 	if( list == "AL" )
 	{
 		m_allowList.remove(handle);
 		if(!m_blockList.contains(handle))
 			m_notifySocket->addContact( handle, handle, 0, BL );
-
 	}
 
 	MSNContact *c = static_cast<MSNContact*>( contacts()[ handle ] );
@@ -991,7 +989,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 			c->setAllowed(false);
 		}
 
-		if( c->groups().isEmpty()  && !c->isMoving())
+		if( c->serverGroups().isEmpty()  && !c->isMoving() )
 		{
 			kdDebug(14140) << "MSNProtocol::slotContactRemoved : contact removed from each group, delete contact" << endl;
 			delete c;
@@ -1012,7 +1010,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			{
 				kdDebug(14140) << "MSNProtocol::slotContactAdded: Warning: the contact was found in the contactlist but not referanced in the protocol" <<endl;
 				MSNContact *c = static_cast<MSNContact*>(m->findContact( pluginId(), QString::null, handle ));
-				c->slotAddedToGroup( group );
+				c->contactAddedToGroup( group, m_groupList[ group ] );
 			}
 			else
 			{
@@ -1024,7 +1022,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 					m=new KopeteMetaContact();
 
 				MSNContact *c = new MSNContact( this, handle, publicName, m );
-				c->slotAddedToGroup( group );
+				c->contactAddedToGroup( group, m_groupList[ group ] );
 
 				if(!m_addWizard_metaContact)
 				{
@@ -1046,7 +1044,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			if(c->metaContact()->isTemporary())
 				c->metaContact()->setTemporary(false,m_groupList[group]);
 			else
-				c->slotAddedToGroup( group );
+				c->contactAddedToGroup( group, m_groupList[ group ] );
 		}
 
 		if(!m_allowList.contains(handle) && !m_blockList.contains(handle))

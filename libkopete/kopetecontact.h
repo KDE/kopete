@@ -26,7 +26,7 @@
 
 #include <kurl.h>
 
-//#include "kopetegroup.h"
+#include "kopetegroup.h"
 
 class QString;
 class QPixmap;
@@ -127,8 +127,14 @@ public:
 	 * can be different from the logical groups!
 	 * Not the whole API supports multi-group membership yet, be careful
 	 * relying on this for now!
+	 *
+	 * The default implementation returns an empty list. This is fine if
+	 * your protocol doesn't support groups. However, if you reimplemented
+	 * @ref addToGroup() or @removeFromGroup() you MUST also implement this
+	 * method, or strange things may happen when Kopete tries to sync
+	 * groups when moving contacts around.
 	 */
-//	virtual QStringList groups();
+	virtual KopeteGroupList groups() const;
 
 	/**
 	 * Add a contact to a physical group. If the protocol doesn't support
@@ -248,57 +254,59 @@ public:
 	 *
 	 * @return Collection of menu items to be show on the context menu
 	 */
-	 virtual KActionCollection *customContextMenuActions() {return 0L;};
+	virtual KActionCollection *customContextMenuActions() {return 0L;};
 
-	 /**
-	  * Show a context menu of actions pertaining to this contact
-	  *
-	  * @param p The point at which to show the context menu
-	  */
-	 void showContextMenu( const QPoint& p );
+	/**
+	 * Show a context menu of actions pertaining to this contact
+	 *
+	 * @param p The point at which to show the context menu
+	 */
+	void showContextMenu( const QPoint& p );
 
-	 /**
-	  * Get the Context Menu for this contact
-	  */
+	/**
+	 * Get the Context Menu for this contact
+	 */
 	KPopupMenu *createContextMenu();
 
-	 /**
-	  * Moves this contact to a new MetaContact
-	  *
-	  * @param m The new MetaContact to move this contact to
-	  */
-	 void moveToMetaContact(KopeteMetaContact *m);
+	/**
+	 * Moves this contact to a new MetaContact.
+	 * This basically reparents the contact and updates the internal
+	 * data structures.
+	 *
+	 * @param m The new MetaContact to move this contact to
+	 */
+	void setMetaContact(KopeteMetaContact *m);
 
-	 /**
-	  * Returns whether or not this contact is capable of file transfers or not
-	  */
-	 bool isFileCapable() const { return mFileCapable; }
+	/**
+	 * Returns whether or not this contact is capable of file transfers or not
+	 */
+	bool isFileCapable() const { return mFileCapable; }
 
-	 /*
-	  * Sets the capability of file transfers for this user. Once this is changed it will
-	  * immediately add a new menu entry called "Send File...", and will call the
-	  * virtual slotSendFile
-	  */
-	  void setFileCapable(bool filecap) { mFileCapable = filecap; }
+	/*
+	 * Sets the capability of file transfers for this user. Once this is changed it will
+	 * immediately add a new menu entry called "Send File...", and will call the
+	 * virtual slotSendFile
+	 */
+	 void setFileCapable(bool filecap) { mFileCapable = filecap; }
 
-	 /*
-	  * Returns if this contact can accept file transfers
-	  * @return True if this contact is online and is capable of sending files, False otherwise
-	  */
-	  bool canAcceptFiles() const { return isOnline() && mFileCapable; }
+	/*
+	 * Returns if this contact can accept file transfers
+	 * @return True if this contact is online and is capable of sending files, False otherwise
+	 */
+	 bool canAcceptFiles() const { return isOnline() && mFileCapable; }
 
-	 /**
-	  * Accessor function for the idle state of the contact
-	  * @return Idle state of the contact
-	  */
-	 IdleState idleState() const { return m_idleState; };
+	/**
+	 * Accessor function for the idle state of the contact
+	 * @return Idle state of the contact
+	 */
+	IdleState idleState() const { return m_idleState; };
 
-	 /**
-	 	* Sets the idle state to newState
-	  * If this function is not called by a plugin, the idle state is set to Unknown
-	  */
-	 void setIdleState( KopeteContact::IdleState newState );
-	  
+	/**
+	 * Sets the idle state to newState
+	 * If this function is not called by a plugin, the idle state is set to Unknown
+	 */
+	void setIdleState( KopeteContact::IdleState newState );
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -384,11 +392,6 @@ signals:
 	 * metaContact() is still accessible at this point.
 	 */
 	void contactDestroyed( KopeteContact *c );
-
-	/**
-	 * Called when the contact is moved to another MetaContact
-	 */
-	void moved(KopeteMetaContact *from , KopeteContact *)  ;
 
 	/**
 	 * The contact's idle state changed
