@@ -103,12 +103,39 @@ public:
 	KopeteGroup *group();
 
 	/**
-	 *  Return the KopeteContact of the small little icon at he point p
-	 *  p must be coord of the cell
-	 *  Return 0L if p is not on a smallicon
-	 *  (This is used to showing context-menu of a contact when right-click on a icon)
+	 * Returns the KopeteContact of the small little icon at the point p
+	 * @param p must be in the list view item's coordinate system.
+	 * Returns a null pointer if p is not on a small icon.
+	 * (This is used for e.g. the context-menu of a contact when
+	 * right-clicking an icon, or the tooltips)
 	 */
-	KopeteContact *getContactFromIcon(const QPoint &p);
+	KopeteContact *contactForPoint( const QPoint &p ) const;
+
+	/**
+	 * Returns the QRect small little icon used for the KopeteContact.
+	 * The behaviour is undefined if @param c doesn't point to a valid
+	 * KopeteContact for this list view item.
+	 * The returned QRect is using the list view item's coordinate
+	 * system and should probably be transformed into the list view's
+	 * coordinates before being of any practical use.
+	 * Note that the returned Rect is always vertically stretched to fill
+	 * the full list view item's height, only the width is relative to
+	 * the actual icon width.
+	 */
+	QRect contactRect( const KopeteContact *c ) const;
+
+	/**
+	 * Returns the first X position used by contact icons.
+	 * Returns the entire width of the LVI if there are no KopeteContacts.
+	 */
+	uint firstContactIconX() const;
+
+	/**
+	 * Returns the last X position used by contact icons, i.e. the first
+	 * position AFTER the last icon.
+	 * Returns the entire width of the LVI if there are no KopeteContacts.
+	 */
+	uint lastContactIconX() const;
 
 	bool isGrouped() const;
 

@@ -80,7 +80,6 @@ public slots:
 	void addGroup();
 
 protected:
-	virtual void contentsMouseMoveEvent( QMouseEvent *e );
 	virtual void contentsMousePressEvent( QMouseEvent *e );
 	virtual void keyPressEvent( QKeyEvent *e );
 

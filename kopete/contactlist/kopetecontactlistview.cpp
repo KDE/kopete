@@ -21,42 +21,136 @@
 */
 
 #include "kopetecontactlistview.h"
-#include "kopetecontactlist.h"
 
 #include <qcursor.h>
+#include <qdragobject.h>
 #include <qheader.h>
 #include <qstylesheet.h>
-#include <qdragobject.h>
-#include <kurldrag.h>
+#include <qtooltip.h>
 
+#include <kaction.h>
 #include <kapplication.h>
-#include <kmainwindow.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <klocale.h>
+#include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kaction.h>
+#include <kurldrag.h>
 
 #include "addcontactwizard.h"
 #include "addcontactpage.h"
-#include "kopeteevent.h"
-#include "kopetegroupviewitem.h"
-#include "kopetemetacontactlvi.h"
-#include "kopetemetacontact.h"
-#include "kopetegroup.h"
-#include "kopeteprefs.h"
-#include "kopetestatusgroupviewitem.h"
-#include "kopeteviewmanager.h"
-#include "kopetestdaction.h"
-#include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
+#include "kopetecontactlist.h"
+#include "kopeteevent.h"
+#include "kopetegroup.h"
+#include "kopetegroupviewitem.h"
+#include "kopetemetacontact.h"
+#include "kopetemetacontactlvi.h"
+#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
+#include "kopetestatusgroupviewitem.h"
+#include "kopetestdaction.h"
+#include "kopeteviewmanager.h"
 
-#if QT_VERSION < 0x030100
-#include <qtooltip.h>
+/*
+	Custom QToolTip for the contact list.
+	The decision whether or not to show tooltips is taken in
+	maybeTip(). See also the QListView sources from Qt itself.
+*/
+class KopeteContactListViewToolTip : public QToolTip
+{
+public:
+	KopeteContactListViewToolTip( QWidget *parent, KopeteContactListView *lv );
+
+	void maybeTip( const QPoint &pos );
+
+private:
+	KopeteContactListView *m_listView;
+};
+
+KopeteContactListViewToolTip::KopeteContactListViewToolTip( QWidget *parent, KopeteContactListView *lv )
+    : QToolTip( parent )
+{
+	m_listView = lv;
+}
+
+void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
+{
+	if ( !parentWidget() || !m_listView )
+		return;
+
+	QListViewItem *item = m_listView->itemAt( pos );
+	if( !item )
+		return;
+
+	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
+	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( item );
+
+	// FIXME: add more info to the tooltips! they are sorta bare at the
+	// moment! Time last online, Idle time, members of groups, etc... - Martijn
+	KopeteContact *contact = 0L;
+	QString toolTip;
+	QRect itemRect = m_listView->itemRect( item );
+	if( metaLVI )
+	{
+		// Check if we are hovering over a protocol icon. If so, use that
+		// tooltip in the code below
+		uint leftMargin = m_listView->treeStepSize() * ( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) + m_listView->itemMargin();
+		uint xAdjust = itemRect.left() + leftMargin;
+		uint yAdjust = itemRect.top();
+		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
+		contact = metaLVI->contactForPoint( relativePos );
+		if( contact )
+		{
+			QRect iconRect = metaLVI->contactRect( contact );
+			itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust, iconRect.width(), iconRect.height() );
+			// FIXME: Make this i18n after 0.7 - Martijn
+			toolTip = i18n( "<b>%3</b><br>%2<br>%1" ).
+#if QT_VERSION < 0x030200
+				arg( contact->onlineStatus().description() ).arg( QStyleSheet::escape( contact->contactId() ) ).
+				arg( QStyleSheet::escape( contact->displayName() ) );
+#else
+				arg( contact->onlineStatus().description(), QStyleSheet::escape( contact->contactId() ),
+					QStyleSheet::escape( contact->displayName() ) );
 #endif
+		}
+		else
+		{
+			KopeteMetaContact *mc = metaLVI->metaContact();
+			// FIXME: Make this i18n after 0.7 - Martijn
+			toolTip = i18n( "<b>%2</b><br>%1" ).
+#if QT_VERSION < 0x030200
+				arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
+#else
+				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
+#endif
+			// Adjust the item rect on the right
+			uint first = metaLVI->firstContactIconX();
+			uint last  = metaLVI->lastContactIconX();
+
+			if ( first != last )
+			{
+				if ( pos.x() > int( itemRect.left() + leftMargin + first ) )
+					itemRect.setLeft( itemRect.left() + leftMargin + last );
+				else
+					itemRect.setWidth( leftMargin + first );
+			}
+		}
+	}
+	else if( groupLVI )
+	{
+		// FIXME: use item->text( 0 ) for now so we get the # online / # total, since there is no
+		//        interface to get these from KopeteGroup
+		//KopeteGroup *g=groupLVI->group();
+		toolTip = QString( "<b>%1</b>" ).arg( item->text( 0 ) );
+	}
+
+	//kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: " << itemRect << ", tooltip:  " << toolTip << endl;
+	tip( itemRect, toolTip );
+}
 
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
 	: KListView( parent, name )
@@ -87,6 +181,32 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	setAlternateBackground( QColor() ); // no alternate color, looks ugly
 	setFullWidth( true );
+
+	/*
+		The below QTooltip::remove() call seems silly, but is need to work around a Qt bug
+		that's present at least in all Qt 3.1.x versions and in 3.2.0. Qt allocates a
+		tooltip that covers the entire viewport, which is used by QListView's own tooltips
+		if setShowToolTips is set to true (the default) for the tooltips on truncated
+		list view items.
+
+		However, this tooltip overrides the custom tooltip that Kopete wants to create
+		for itself. As such our own tooltip code is never called and the custom tooltips
+		don't appear. To work around the problem we simply remove the existing tooltip
+		that QListView creates on the viewport.
+
+		I committed a patch to qt-copy (http://lists.kde.org/?l=kde-cvs&m=105992758126841&w=2),
+		but haven't received a reaction from TrollTech yet. Hopefully it will be in upcoming
+		Qt versions. In the mean time we check for the presence of the #define that I added
+		in the patch.
+
+		Note that Qt 3.0.x is not affected by this bug, but Kopete no longer supports it,
+		so there's no #if for that. - Martijn
+	*/
+	setShowToolTips( false );
+#ifndef QT_QLISTVIEW_FIXED_TOOLTIPS
+	QToolTip::remove( viewport() );
+#endif
+    new KopeteContactListViewToolTip( viewport(), this );
 
 	connect( this,
 		SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
@@ -160,9 +280,6 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setDropHighlighter(true);
 	setAutoOpen(true);
 	setSelectionMode(QListView::Extended);
-
-
-//	setTooltipColumn(0);
 }
 
 void KopeteContactListView::initActions(KActionCollection* ac)
@@ -614,7 +731,7 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 			header()->height();
 
 //		kdDebug(14000) << "KopeteContactListView::showContextMenu: x: " << px << ", y: " << py << endl;
-		KopeteContact *c = metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+		KopeteContact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
 		if( c )
 		{
 			KPopupMenu *p = c->popupMenu();
@@ -897,7 +1014,7 @@ void KopeteContactListView::slotExecuted( QListViewItem *item,
 		QPoint relativePos( pos.x() - r.left() - ( treeStepSize() *
 			( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) +
 			itemMargin() ), pos.y() - r.top() );
-		c = metaContactLVI->getContactFromIcon( relativePos );
+		c = metaContactLVI->contactForPoint( relativePos );
 		if( c )
 			c->execute();
 		else
@@ -963,7 +1080,7 @@ void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 	m_offlineItem->setText(0,i18n("Offline contacts (%1)").arg(m_offlineItem->childCount()));
 }
 
-void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/, QListViewItem *after)
+void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem * /* parent */, QListViewItem *after)
 {
 	if(!acceptDrag(e))
 		return;
@@ -976,7 +1093,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 	KopeteContact *source_contact=0L;
 
 	if(source_metaLVI)
-		source_contact = source_metaLVI->getContactFromIcon( m_startDragPos );
+		source_contact = source_metaLVI->contactForPoint( m_startDragPos );
 
 	if(source_metaLVI  && dest_groupLVI)
 	{
@@ -1056,7 +1173,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
 			treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
 		int py = p.y() - itemRect( dest_metaLVI ).y();
-		KopeteContact *c = dest_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+		KopeteContact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) ) ;
 
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
@@ -1092,7 +1209,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		KopeteContact *source_contact=0L;
 
 		if(source_metaLVI)
-			source_contact = source_metaLVI->getContactFromIcon( m_startDragPos );
+			source_contact = source_metaLVI->contactForPoint( m_startDragPos );
 
 		if( source_metaLVI && dest_groupLVI && !source_contact) //we are moving a metacontact to another group
 		{
@@ -1157,7 +1274,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 			int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
 				treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
 			int py = p.y() - itemRect( dest_metaLVI ).y();
-			KopeteContact *c = dest_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+			KopeteContact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) ) ;
 			if(c)
 				return c->canAcceptFiles();
 			else //to the metacontact
@@ -1215,115 +1332,6 @@ void KopeteContactListView::keyPressEvent( QKeyEvent *e )
 		KListView::keyPressEvent(e);
 }
 
-void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
-{
-
-#if QT_VERSION < 0x030100
-//tooltips does not works for QT >= 3.1.   FIXME: but what is the problem???????
-// If i remove this code, AND call setTooltipColumn(0) in the constructor, default toolTip works (i.e:
-//  just the item's text, if it is turncated).
-// I tried to reimpement KListView::toolTip , without success. When looking at the KListView's code, I
-// see that KListView::tooltip() , KListView::showTooltip, class KListView::Tooltip dos not seems to be
-// even  KListView::setTooltipColumn() seems useless.. but then, WHT even default Tooltips DOES NOT WORK
-// if i don't call setTooltipColumn(0) in KopeteContactListView's constructor  (which is set to 0 by default)??
-// HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME!   -Olivier
-
-	if( e->state() != Qt::NoButton )
-	{
-		KListView::contentsMouseMoveEvent( e );
-		return;
-	}
-
-	QListViewItem *item = itemAt( e->pos () );
-	if( !item )
-	{
-		KListView::contentsMouseMoveEvent( e );
-		return;
-	}
-
-	QPoint pos = contentsToViewport( e->pos() );
-	QString tip;
-
-	// Hide any tooltips currently shown
-	// If we don't do this first, the tooltip is continually shown (and updated)
-	// when moving from one contact to the next!
-	QToolTip::hide();
-
-	// First, delete the last tooltip, since we don't need it anymore
-	if(!m_onItem.isNull())
-	{
-/*		kdDebug(14000) << "KopeteContactListView::contentsMouseMoveEvent: "
-			<< "Removing tooltip at top=" << m_onItem.top()
-			<< ", left=" << m_onItem.left() << ", bottom="
-			<< m_onItem.bottom() << ", right=" << m_onItem.right() << endl;*/
-		QToolTip::remove( this, m_onItem );
-	}
-
-	//a little sanity check, there shouldn't already be a tip here, but if there is, don't add a new one
-	if(QToolTip::textFor( this, e->pos() ).isNull() )
-	{
-		KopeteMetaContactLVI *metaLVI =
-			dynamic_cast<KopeteMetaContactLVI*>( item );
-		KopeteGroupViewItem *groupLVI =
-			dynamic_cast<KopeteGroupViewItem*>( item );
-
-		//FIXME: add more info to the tooltips! they are sorta bare at the
-		// moment! Time last online, Idle time, members of groups, etc...
-		KopeteContact *c = 0L;
-		if( metaLVI )
-		{
-			// Try if we are hovering over a protocol icon. If so, use that
-			// tooltip in the code below
-			QRect r = itemRect( item );
-			QPoint relativePos( pos.x() - r.left() - ( treeStepSize() *
-				( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) +
-				itemMargin() ), pos.y() - r.top() );
-			c = metaLVI->getContactFromIcon( relativePos );
-			if( c )
-			{
-				tip = i18n( "<b>%3</b><br>%2<br>Status: %1" ).
-#if QT_VERSION < 0x030200
-					arg( c->onlineStatus().description() ).arg( QStyleSheet::escape( c->contactId() ) ).arg( QStyleSheet::escape( c->displayName() ) );
-#else
-					arg( c->onlineStatus().description(), QStyleSheet::escape( c->contactId() ), QStyleSheet::escape( c->displayName() ) );
-#endif
-			}
-			else
-			{
-				KopeteMetaContact *mc = metaLVI->metaContact();
-				tip = i18n( "<b>%2</b><br>Status: %1" ).
-#if QT_VERSION < 0x030200
-					arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
-#else
-					arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
-#endif
-			}
-		}
-		else if( groupLVI )
-		{
-			//KopeteGroup *g=groupLVI->group();
-			//FIXME: user item->text(0) for now so we get the # online / # total, since there is no interface
-			//FIXME: to get these from KopeteGroup
-
-			tip=QString("<b>%1</b>").arg(item->text(0));
-		}
-
-		m_onItem=itemRect(item);
-		//we have to do this to account for the header, these co-ordinate systems are screwed :p
-		m_onItem.moveBy(0,header()->height());
-//		kdDebug(14000) << "KopeteContactListView::contentsMouseMoveEvent - ADDING TOOLTIP AT top="<<m_onItem.top()<<" tip="<<tip<<endl;
-		QToolTip::add(this,m_onItem,tip);
-	}
-	else
-	{
-//		kdDebug(14000) << "KopeteContactListView::contentsMouseMoveEvent - Already has a tooltip, not adding a new one" << endl;
-	}
-#endif //qt < 3.1
-
-	// Also call parent, or we'll break drag-n-drop
-	KListView::contentsMouseMoveEvent( e );
-}
-
 void KopeteContactListView::slotNewMessageEvent(KopeteEvent *event)
 {
 	KopeteMessage msg=event->message();
@@ -1364,7 +1372,7 @@ QDragObject *KopeteContactListView::dragObject()
 		// get the pixmap depending what we're dragging
 		if ( source_metaLVI )
 		{
-			c = source_metaLVI->getContactFromIcon( m_startDragPos );
+			c = source_metaLVI->contactForPoint( m_startDragPos );
 
 			if ( c ) 	// dragging a contact
 				pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling

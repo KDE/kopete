@@ -423,7 +423,7 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 	}
 }
 
-KopeteContact *KopeteMetaContactLVI::getContactFromIcon( const QPoint &p )
+KopeteContact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
 {
 	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
 	QPtrListIterator<KopeteContact> it( contacts );
@@ -439,6 +439,44 @@ KopeteContact *KopeteMetaContactLVI::getContactFromIcon( const QPoint &p )
 	return 0L;
 }
 
+QRect KopeteMetaContactLVI::contactRect( const KopeteContact *c ) const
+{
+	if ( !c )
+		return QRect();
+
+	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
+	QPtrListIterator<KopeteContact> it( contacts );
+	int mc_x = 0;
+	for( ; it.current(); ++it )
+	{
+		if( it.current() == c )
+			return QRect( mc_x + m_pixelWide + 4, 0, 12, height() );
+
+		mc_x += 16;
+	}
+
+	return QRect();
+}
+
+uint KopeteMetaContactLVI::firstContactIconX() const
+{
+	return m_pixelWide;
+}
+
+uint KopeteMetaContactLVI::lastContactIconX() const
+{
+	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
+
+	if ( contacts.isEmpty() )
+		return m_pixelWide;
+
+	QPtrListIterator<KopeteContact> it( contacts );
+	int mc_x = 0;
+	for( ; it.current(); ++it )
+		mc_x += 16;
+
+	return mc_x + m_pixelWide + 4;
+}
 
 KopeteGroup *KopeteMetaContactLVI::group()
 {
