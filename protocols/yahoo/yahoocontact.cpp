@@ -56,7 +56,7 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
-	kdDebug(14180) << "Yahoo::serialize(...)" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	KopeteContact::serialize(serializedData, addressBookData);
 }
@@ -89,7 +89,7 @@ void YahooContact::syncToServer()
 {
 	YahooAccount* yAccount = static_cast<YahooAccount*> (account());
 
-	kdDebug(14180) << "[YahooContact::syncToServer()]" << endl;
+	kdDebug(14180) << k_funcinfo<< endl;
 	if(!yAccount->isConnected()) return;
 
 	if(!yAccount->isOnServer(m_userId))
@@ -103,19 +103,19 @@ void YahooContact::syncToServer()
 
 bool YahooContact::isOnline() const
 {
-	kdDebug(14180) << "[YahooContact::isOnline()]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()
 {
-	kdDebug(14180) << "[YahooContact::isReachable()]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	return true;
 }
 
 /*QString YahooContact::accountId() const
 {
-	kdDebug(14180) << "[YahooContact::accountId()]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	return m_userId;
 }
 */
@@ -137,7 +137,7 @@ KopeteMessageManager *YahooContact::manager( bool )
 
 void YahooContact::slotSendMessage(KopeteMessage &message)
 {
-	kdDebug(14180) << "[YahooContact::slotSendMessage(...)]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	QString taintedHTML = message.escapedBody();
 	taintedHTML = taintedHTML.replace(QString::fromLatin1("<br/>"), QString::fromLatin1("<br>"));
@@ -173,7 +173,7 @@ void YahooContact::slotMessageManagerDestroyed()
 
 KActionCollection *YahooContact::customContextMenuActions()
 {
-	kdDebug(14180) << "[YahooContact::customContextMenuActions()]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	return 0L;
 }
 
@@ -188,7 +188,7 @@ void YahooContact::slotUserInfo()
 
 void YahooContact::slotSendFile()
 {
-	kdDebug(14180) << "[YahooContact::slotSendFile()]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 }
 
 #include "yahoocontact.moc"

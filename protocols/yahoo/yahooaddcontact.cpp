@@ -34,7 +34,7 @@
 // Yahoo Add Contact page
 YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)
 {
-	kdDebug(14180) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << name << ")";
+	kdDebug(14180) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << name << ")" << endl;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	theDialog = new YahooAddContactBase(this);
@@ -45,19 +45,19 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const ch
 // Destructor
 YahooAddContact::~YahooAddContact()
 {
-	kdDebug(14180) << "YahooAddContact::~YahooAddContact()";
+	kdDebug(14180) << k_funcinfo << endl;
 }
 
 bool YahooAddContact::validateData()
 {
-	kdDebug(14180) << "YahooAddContact::validateData()";
+	kdDebug(14180) << k_funcinfo << endl;
 
 	return theDialog->contactID->text() != "";
 }
 
 bool YahooAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact)
 {
-	kdDebug(14180) << "YahooAddContact::apply()";
+	kdDebug(14180) << k_funcinfo << endl;
 
 	theAccount->addContact(theDialog->contactID->text(), theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text(), theMetaContact);
 	return true;

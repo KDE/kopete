@@ -36,7 +36,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
 
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & ) : KopeteProtocol( parent, name )
 {
-	kdDebug(14180) << "YahooProtocol::YahooProtocol()" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	s_protocolStatic_ = this;
 
@@ -61,7 +61,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 YahooProtocol::~YahooProtocol()
 {
-	kdDebug(14180) << "YahooProtocol::~YahooProtocol()" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	//delete m_prefs;
 	s_protocolStatic_ = 0L;
 }

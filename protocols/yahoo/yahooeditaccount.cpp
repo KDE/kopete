@@ -35,7 +35,7 @@
 // Yahoo Add Contact page
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): YahooEditAccountBase(parent), EditAccountWidget(theAccount)
 {
-	kdDebug(14180) << "YahooEditAccount::YahooEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
+	kdDebug(14180) << "YahooEditAccount::YahooEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")" << endl;
 
 	theProtocol = protocol;
 	if(m_account)
@@ -51,7 +51,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 
 bool YahooEditAccount::validateData()
 {
-	kdDebug(14180) << "YahooEditAccount::validateData()";
+	kdDebug(14180) << k_funcinfo << endl;
 
 	if(mScreenName->text() == "")
 	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name</qt>"), i18n("Yahoo"));
@@ -66,7 +66,7 @@ bool YahooEditAccount::validateData()
 
 KopeteAccount *YahooEditAccount::apply()
 {
-	kdDebug(14180) << "YahooEditAccount::apply()";
+	kdDebug(14180) << k_funcinfo << endl;
 
 	if(!m_account)
 		m_account = new YahooAccount(theProtocol, mScreenName->text());
