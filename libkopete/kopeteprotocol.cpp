@@ -41,8 +41,6 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 
 KopeteProtocol::~KopeteProtocol()
 {
-	KopeteMessageManagerFactory::factory()->cleanSessions(this);
-
 	// Remove all active accounts
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )

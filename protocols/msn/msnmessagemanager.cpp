@@ -37,7 +37,7 @@
 
 MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
 	KopeteContactPtrList others, const char *name )
-: KopeteMessageManager( user, others, protocol, 0, protocol, name )
+: KopeteMessageManager( user, others, protocol, 0, name )
 {
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
@@ -56,8 +56,9 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 MSNMessageManager::~MSNMessageManager()
 {
 	//force to disconnect the switchboard
-	if(m_chatService)
-		delete m_chatService;
+	//not needed since the m_chatService has us as parent
+	//	if(m_chatService)
+	//		delete m_chatService;
 
 	QMap<unsigned long int, MSNInvitation*>::Iterator it;
 	for( it = m_invitations.begin(); it != m_invitations.end() ; it = m_invitations.begin())
@@ -80,7 +81,7 @@ void MSNMessageManager::createChat( const QString &handle,
 //	uncomment this line if you don't want to the peer know when you close the window
 //	setCanBeDeleted( false );
 
-	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( user()->account() ) );
+	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( user()->account() ) , this);
 	m_chatService->setHandle( user()->account()->accountId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );

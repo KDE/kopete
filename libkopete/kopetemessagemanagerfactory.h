@@ -89,15 +89,6 @@ public:
 	 * Get a list of all open sessions.
 	 */
 	const KopeteMessageManagerDict& sessions();
-	/**
-	 * Get a list of all open sessions for a protocol.
-	 */
-	KopeteMessageManagerDict protocolSessions( KopeteProtocol *);
-
-	/**
-	 * Clean sessions for a protocol.
-	 */
-	void cleanSessions( KopeteProtocol *);
 
 	/**
 	 * @internal

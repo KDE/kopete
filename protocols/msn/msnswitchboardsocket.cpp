@@ -38,8 +38,8 @@
 
 
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account )
-: MSNSocket( account )
+MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *parent )
+: MSNSocket( parent )
 {
 	m_account = account;
 }
@@ -268,6 +268,15 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		//Stupid MSN PLUS colors code. message with incorrect charactère are not showed correctly in the chatwindow.µ
 		//TODO: parse theses one to show the color too in Kopete
 		message.replace("\3","").replace("\4","").replace("\2","");
+
+		if(!m_account->contacts()[m_msgHandle])
+		{
+			//this may happens if the contact has been deleted.
+			kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: WARNING: contact is null, adding it" <<endl;
+			if( !m_chatMembers.contains( m_msgHandle ) )
+				m_chatMembers.append( m_msgHandle );
+			emit userJoined( m_msgHandle , m_msgHandle , false);
+		}
 
 		KopeteMessage kmsg( m_account->contacts()[ m_msgHandle ], others,
 			message,

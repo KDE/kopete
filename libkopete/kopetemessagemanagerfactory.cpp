@@ -97,7 +97,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 	KopeteMessageManager *result=findKopeteMessageManager( user,  chatContacts, protocol);
 	if (!result)
 	{
-		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId);
+		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId );
 		addKopeteMessageManager(result);
 	}
 	return (result);
@@ -139,36 +139,9 @@ void KopeteMessageManagerFactory::removeSession( KopeteMessageManager *session)
 	mSessionDict.remove( session->mmId() );
 }
 
-KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopeteProtocol *protocol)
-{
-	KopeteMessageManagerDict protocolSessions;
-	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
-	for ( ; it.current() ; ++it )
-	{
-		if ( it.current()->protocol() == protocol )
-		{
-			protocolSessions.insert( it.current()->mmId(), it.current() );
-		}
-	}
-	return protocolSessions;
-}
-
 const KopeteMessageManagerDict& KopeteMessageManagerFactory::sessions( )
 {
 	return mSessionDict;
-}
-
-void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
-{
-	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
-	for ( ; it.current() ; ++it )
-	{
-		if ( it.current()->protocol() == protocol )
-		{
-//			kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
-			it.current()->deleteLater();
-		}
-	}
 }
 
 KopeteView * KopeteMessageManagerFactory::createView( KopeteMessageManager *kmm , KopeteMessage::MessageType type )

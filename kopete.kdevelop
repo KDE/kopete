@@ -13,7 +13,9 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
-    <ignoreparts/>
+    <ignoreparts>
+      <part>KDevDebugger</part>
+    </ignoreparts>
   </general>
   <kdevfileview>
     <groups>
@@ -36,6 +38,10 @@
       <toc>php</toc>
       <toc>perl</toc>
     </ignoretocs>
+    <projectdoc>
+      <userdocDir>/home/olivier/kdesrc/kdenonbeta/kopete/html/</userdocDir>
+      <apidocDir>/home/olivier/kdesrc/kdenonbeta/kopete/html/</apidocDir>
+    </projectdoc>
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
@@ -45,6 +51,7 @@
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
+      <runappinappdirectory>true</runappinappdirectory>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -97,12 +104,13 @@
   </kdevclassview>
   <kdevcvs>
     <cvsoptions>-f</cvsoptions>
-    <commitoptions/>
+    <commitoptions></commitoptions>
     <updateoptions>-dP</updateoptions>
-    <addoptions/>
+    <addoptions></addoptions>
     <removeoptions>-f</removeoptions>
     <diffoptions>-u3 -p</diffoptions>
-    <logoptions/>
-    <rshoptions/>
+    <logoptions></logoptions>
+    <rshoptions></rshoptions>
+    <revertoptions>-C -d -P</revertoptions>
   </kdevcvs>
 </kdevelop>

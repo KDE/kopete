@@ -49,9 +49,8 @@ struct KMMPrivate
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
-	KopeteContactPtrList others, KopeteProtocol *protocol, int id,
-	QObject *parent, const char *name )
-: QObject( parent, name )
+	KopeteContactPtrList others, KopeteProtocol *protocol, int id, const char *name )
+: QObject( user->account(), name )
 {
 	d = new KMMPrivate;
 	d->mUser = user;
@@ -64,7 +63,6 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	for( KopeteContact *c = others.first(); c; c = others.next() )
 	{
 		addContact(c,true);
-		c->setConversations( c->conversations() + 1 );
 	}
 
 	connect( user, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), this,
@@ -251,23 +249,20 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool supress )
 			disconnect (old, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
 			if(old->metaContact())
 				disconnect (old->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
-			//connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactChanged()));
-			connect (c, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
-			if(c->metaContact())
-				connect (c->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
 			emit contactAdded(c, supress);
 			emit contactRemoved(old, QString::null);
 		}
 		else
 		{
-			//connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactChanged()));
-			connect (c, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
-			if(c->metaContact())
-				connect (c->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
 			d->mContactList.append(c);
 			emit contactAdded(c, supress);
 		}
 		c->setConversations( c->conversations() + 1 );
+		//connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactChanged()));
+		connect (c, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
+		if(c->metaContact())
+			connect (c->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
+		connect (c, SIGNAL(contactDestroyed(KopeteContact*)) , this , SLOT(slotContactDestroyed(KopeteContact*)));
 	}
 	d->isEmpty=false;
 }
@@ -343,6 +338,22 @@ void KopeteMessageManager::slotViewDestroyed()
 KopeteAccount *KopeteMessageManager::account() const
 {
 	return user()->account();
+}
+
+void KopeteMessageManager::slotContactDestroyed(KopeteContact* c)
+{
+	if(!c || !d->mContactList.contains(c))
+		return;
+
+	if(d->mContactList.count()==1)
+	{
+		deleteLater(); //the contact has been deleted, it is better to delete this
+	}
+	else
+	{
+		d->mContactList.remove( c );
+		emit contactRemoved(c , QString::null);
+	}
 }
 
 #include "kopetemessagemanager.moc"

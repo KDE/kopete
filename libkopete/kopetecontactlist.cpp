@@ -805,13 +805,13 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 	QPtrList<KopeteContact> children = m->contacts();
 	for( KopeteContact *c = children.first(); c; c = children.next() )
 	{
-		if( c->conversations() > 0 )
+/*		if( c->conversations() > 0 )
 		{
 			KopeteMetaContact *m = new KopeteMetaContact();
 			m->setTemporary( true );
 			c->setMetaContact( m );
 		}
-		else
+		else*/
 			c->slotDeleteContact();
 	}
 

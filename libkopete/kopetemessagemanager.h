@@ -248,6 +248,7 @@ private slots:
 	void slotUpdateDisplayName();
 	void slotViewDestroyed();
 	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
+	void slotContactDestroyed(KopeteContact*);
 
 protected:
 	/**
@@ -255,9 +256,8 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	KopeteMessageManager( const KopeteContact *user,
-		KopeteContactPtrList others, KopeteProtocol *protocol, int id = 0,
-		QObject *parent = 0, const char *name = 0 );
+	KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
+		KopeteProtocol *protocol, int id = 0, const char *name = 0 );
 
 	void setMMId( int );
 

@@ -42,7 +42,7 @@ public:
 	/**
 	 * Contructor: id is the KopeteMessageMangager's id
 	 */
-	MSNSwitchBoardSocket( MSNAccount * account );
+	MSNSwitchBoardSocket( MSNAccount * account , QObject *parent);
 	~MSNSwitchBoardSocket();
 
 private:
