@@ -198,7 +198,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManage
 {
 	if( manager )
 	{
-		QPtrList<KAction> *mCustomActions = new QPtrList<KAction>();
+		QPtrList<KAction> *mCustomActions = new QPtrList<KAction> ();
 		mActiveManager = manager;
 		KopeteContactPtrList members = mActiveManager->members();
 		IRCChannelContact *isChannel = dynamic_cast<IRCChannelContact*>( members.first() );

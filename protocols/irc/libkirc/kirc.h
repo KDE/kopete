@@ -60,7 +60,7 @@ public:
 		InvalidNumberOfArguments,
 		MethodFailed
 	};
-	
+
 	typedef enum EngineStatus
 	{
 		Disconnected,
@@ -69,7 +69,7 @@ public:
 		Connected,
 		Closing
 	};
-	
+
 	KIRC(const QString &host, const Q_UINT16 port, QObject *parent=0, const char *name=0);
 	~KIRC();
 
@@ -87,18 +87,18 @@ public:
 
 	const bool reqsPassword() const { return m_ReqsPasswd; };
 	void setReqsPassword(bool b) { m_ReqsPasswd = b; };
-	
+
 	EngineStatus status() const { return m_status; }
 	inline bool isDisconnected() const { return m_status == Disconnected; }
 	inline bool isConnected() const { return m_status == Connected; }
-	
+
 	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
-	void addCustomCtcp( const QString &ctcp, const QString &reply ) { 
+	void addCustomCtcp( const QString &ctcp, const QString &reply ) {
 	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
 	customCtcpMap[ ctcp.lower() ] = reply; }
-	
+
 	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
-	
+
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
@@ -138,25 +138,26 @@ public:
 	void setTopic(const QString &channel, const QString &topic);
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void partChannel(const QString &name, const QString &reason);
-	
+
 	const QStringList &motd() { return m_motdBuffer; }
 
 signals:
 	//Engine Signals
 	void connectedToServer(); /* 001 */
+	void disconnected();
 	void successfulQuit();
 	void internalError(KIRC::EngineError, const KIRCMessage &);
 	void statusChanged(KIRC::EngineStatus newStatus);
 	void sentMessage(const KIRCMessage &);
 	void receivedMessage(const KIRCMessage &);
-	
+
 	//ServerContact Signals
 	void incomingMotd(const QStringList &motd);
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
 	void incomingYourHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
 	void incomingConnectString(const QString &clients);
-	
+
 	//Channel Contact Signals
 	void incomingMessage(const QString &originating, const QString &target, const QString &message);
 	void incomingTopicChange(const QString &, const QString &, const QString &);
@@ -166,12 +167,13 @@ signals:
 	void incomingEndOfNames(const QString &channel);
 	void incomingPartedChannel(const QString &user, const QString &channel, const QString &reason);
 	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
-	
+	void incomingCannotSendToChannel(const QString  &channel, const QString &message);
+
 	//Contact Signals
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
-	
+
 	//General Signals
 	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
@@ -195,7 +197,7 @@ signals:
 	void incomingPrivAction(const QString &, const QString &, const QString &);
 	void incomingKick(const QString &nick, const QString &channel,
 		const QString &nickKicked, const QString &reason);
-	
+
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
 	void userOnline(const QString &nick);
@@ -209,7 +211,7 @@ signals:
 
 	void incomingDccChatRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, DCCClient &chatObject);
 	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
-	
+
 protected:
 	bool canSend( bool mustBeConnected ) const;
 
@@ -422,10 +424,10 @@ private slots:
 	void slotReadyRead();
 	void error(int errCode = 0);
 	void quitTimeout();
-	
+
 private:
 	void setStatus(EngineStatus status);
-	
+
 
 };
 

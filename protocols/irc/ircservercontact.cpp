@@ -48,6 +48,9 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 	QObject::connect( m_engine, SIGNAL(incomingNotice( const QString &, const QString &)),
 			this, SLOT(slotIncomingNotice(const QString &, const QString &)) );
 
+	QObject::connect( m_engine, SIGNAL(incomingCannotSendToChannel( const QString &, const QString &)),
+			this, SLOT(slotCannotSendToChannel(const QString &, const QString &)) );
+
 	QObject::connect( m_engine, SIGNAL(incomingUnknown( const QString &)),
 			this, SLOT(slotAppendMessage(const QString &)) );
 
@@ -140,6 +143,11 @@ void IRCServerContact::slotAppendMessage( const QString &message )
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
 	slotAppendMessage( i18n("NOTICE %1: %2").arg( orig.section('!',0,0) ).arg( notice ) );
+}
+
+void IRCServerContact::slotCannotSendToChannel( const QString &channel, const QString &message )
+{
+	slotAppendMessage( i18n("%1: %2").arg( channel ).arg( message ) );
 }
 
 void IRCServerContact::slotIncomingMotd( const QStringList &motd )

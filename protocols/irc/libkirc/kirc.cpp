@@ -150,7 +150,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* Tells how many clients and servers *this* server handles in the form of:
 	 * ":I have <integer> clients and <integer> servers" */
-	addIrcMethod("255",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,	1,	1));
+	addIrcMethod("255",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
 
 	/* NOT IN RFC2812
 	 * Tells statistics about the current local server state:
@@ -163,7 +163,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* "<nick> :<away message>"
 	 */
-	addIrcMethod("301",	new KIRCMethodFunctor_SS_Suffix<KIRC,1>(this, &KIRC::incomingUserIsAway,	2,	2));
+	addIrcMethod("301",	new KIRCMethodFunctor_SS_Suffix<KIRC,1>(this, &KIRC::incomingUserIsAway, 2, 2));
 
 	addIrcMethod("303",	&KIRC::numericReply_303,	1,	1);
 
@@ -185,13 +185,13 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* Show info about an operator (part of a /whois) in the form of:
 	 * "<nick> :is an IRC operator" */
-	addIrcMethod("313",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsOperator,		2,	2));
+	addIrcMethod("313",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsOperator, 2, 2));
 
 	addIrcMethod("317",	&KIRC::numericReply_317,	3,	4);
 
 	/* Receive end of WHOIS in the form of
 	 * "<nick> :End of /WHOIS list" */
-	addIrcMethod("318",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhois,		2,	2));
+	addIrcMethod("318",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhois, 2, 2));
 
 	addIrcMethod("319",	&KIRC::numericReply_319,	2,	2);
 
@@ -216,7 +216,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* Gives a signal to indicate that the NAMES list has ended for a certain channel in the form of:
 	 * "<channel> :End of NAMES list" */
-	addIrcMethod("366",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfNames,		2,	2));
+	addIrcMethod("366",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfNames, 2, 2));
 
 	/* Part of the MOTD.
 	 * ":- <text>" */
@@ -235,13 +235,18 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	/* Gives a signal to indicate that the command issued failed because the person not being on IRC in the for of:
 	 * "<nickname> :No such nick/channel"
 	 *  - Used to indicate the nickname parameter supplied to a command is currently unused. */
-	addIrcMethod("401",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingNoNickChan,		2,	2));
+	addIrcMethod("401",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingNoNickChan, 2, 2));
+
+	addIrcMethod("404",	new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
 
 	/* Like case 401, but when there *was* no such nickname
 	 * "<nickname> :There was no such nickname" */
-	addIrcMethod("406",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWasNoNick,		2,	2));
+	addIrcMethod("406",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWasNoNick, 2, 2));
 
 	addIrcMethod("433",	&KIRC::numericReply_433,	2,	2);
+
+	addIrcMethod("442",	new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
+
 	/* Bad server password */
 	addIrcMethod("464",	&KIRC::numericReply_464,	1,	1);
 	/* Channel is Full */
@@ -290,7 +295,12 @@ KIRC::~KIRC()
 
 void KIRC::setStatus(EngineStatus status)
 {
-	m_status=status;
+	if( status == Disconnected && m_status != Closing )
+	{
+		emit disconnected();
+	}
+
+	m_status = status;
 	emit statusChanged(status);
 }
 
@@ -334,7 +344,7 @@ void KIRC::slotConnected()
 	if (!(password()).isEmpty()) {
 		writeMessage("PASS", QStringList(password()) , m_Realname, false);
 	}
-                                               
+
 	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
 	changeNickname(m_Nickname);
 }
@@ -344,8 +354,7 @@ void KIRC::slotConnectionClosed()
 	kdDebug(14120) << k_funcinfo << "Connection Closed - local status: " << m_status << " sock status: " << m_sock.socketStatus() << endl;
 	if(m_status == Closing)
 		emit successfulQuit();
-//	else
-//		emit connectionUnexpectedlyClosedByPeer();
+
 	if(m_status!=Disconnected)
 		setStatus(Disconnected);
 	m_sock.reset();
@@ -650,7 +659,7 @@ void KIRC::joinChannel(const QString &name, const QString &key)
 	} else {
 		writeMessage("JOIN", name);
 	}
-		
+
 }
 
 bool KIRC::joinChannel(const KIRCMessage &msg)
@@ -1123,7 +1132,7 @@ bool KIRC::numericReply_322(const KIRCMessage &msg)
 	/* "<channel> <# visible> :<topic>"
 	 */
 	//kdDebug(14120) << k_funcinfo << "Listed " << msg.args()[1] << endl;
-	 
+
 	emit incomingListedChan(msg.args()[1], msg.args()[2].toUInt(), msg.suffix());
 	return true;
 }
@@ -1221,8 +1230,8 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 		// but it's already in use
 		emit incomingNickInUse(msg.args()[1]);
 	}
-	
-	
+
+
 	return true;
 }
 
@@ -1361,7 +1370,7 @@ bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
 		writeCtcpReplyMessage(msg.prefix(), QString::null,
 			msg.ctcpMessage().command(), QStringList(), m_VersionString);
 	}
-	
+
 	return true;
 }
 
@@ -1384,7 +1393,7 @@ bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 		writeCtcpReplyMessage( msg.prefix(), QString::null,
 				msg.ctcpMessage().command(), QStringList(), m_UserString );
 	}
-	
+
 	return true;
 }
 
@@ -1402,7 +1411,7 @@ bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 		QString info = QString::fromLatin1("The following commands are supported, but "
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
-		
+
 		writeCtcpReplyMessage(	msg.prefix(), QString::null,
 					msg.ctcpMessage().command(), QStringList(), info);
 	}

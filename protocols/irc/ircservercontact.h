@@ -41,19 +41,19 @@ class IRCChannelContact;
 class IRCServerContact : public IRCContact
 {
 	Q_OBJECT
-	
+
 	public:
 		// This class provides a KopeteContact for each server of a given IRC connection.
 		IRCServerContact(IRCContactManager *, const QString &servername, KopeteMetaContact *mc);
-	
+
 		virtual const QString caption() const;
-		
+
 		virtual void appendMessage(KopeteMessage &);
-	
+
 	protected slots:
 		void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
 		virtual void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
-	
+
 	private slots:
 		virtual void updateStatus();
 		void slotViewCreated( KopeteView* );
@@ -61,7 +61,8 @@ class IRCServerContact : public IRCContact
 		void slotAppendMessage( const QString &message );
 		void slotIncomingMotd( const QStringList &motd );
 		void slotIncomingNotice( const QString &orig, const QString &notice );
-	
+		void slotCannotSendToChannel( const QString &channel, const QString &msg );
+
 	private:
 		QValueList<KopeteMessage> mMsgBuffer;
 };
