@@ -35,12 +35,12 @@ AddScriptDialog::AddScriptDialog( QWidget* parent, const char* name, bool modal,
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     Layout1->addItem( spacer );
 
-    buttonOk = new QPushButton( this, "buttonOk" );
+    buttonOk = new KPushButton( this, "buttonOk" );
     buttonOk->setAutoDefault( TRUE );
     buttonOk->setDefault( TRUE );
     Layout1->addWidget( buttonOk );
 
-    buttonCancel = new QPushButton( this, "buttonCancel" );
+    buttonCancel = new KPushButton( this, "buttonCancel" );
     buttonCancel->setAutoDefault( TRUE );
     Layout1->addWidget( buttonCancel );
 
@@ -110,9 +110,9 @@ void AddScriptDialog::accept()
 void AddScriptDialog::languageChange()
 {
     setCaption( tr2i18n( "Add Script" ) );
-    buttonOk->setText( tr2i18n( "&OK" ) );
+    buttonOk->setGuiItem( KStdGuiItem::ok() );
     buttonOk->setAccel( QKeySequence( QString::null ) );
-    buttonCancel->setText( tr2i18n( "&Cancel" ) );
+    buttonCancel->setGuiItem( KStdGuiItem::cancel() );
     buttonCancel->setAccel( QKeySequence( QString::null ) );
     textLabel1->setText( tr2i18n( "Name:" ) );
     textLabel2->setText( tr2i18n( "Description:" ) );
