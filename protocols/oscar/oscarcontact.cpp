@@ -254,6 +254,11 @@ void OscarContact::slotContactDestroyed(KopeteContact */*contact*/)
 
 void OscarContact::slotGroupRemoved(KopeteGroup *removedGroup)
 {
+/******
+//For an unknown reason, when deleting a group, even if the contact is not in this group, the contact was deleted.
+//In many case, when a group is deleted, Kopete move contacts to toplevel. and OscarContact::syncGroups() is called
+// so you can handle the moving to top level here  (it should be called before the deletion of the group)
+
 	AIMGroup *aGroup = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
 	if (!aGroup)
 	{
@@ -270,6 +275,8 @@ void OscarContact::slotGroupRemoved(KopeteGroup *removedGroup)
 		", Calling slotDeleteContact()" << endl;
 
 	slotDeleteContact();
+
+*****/
 }
 
 void OscarContact::slotWarn()
