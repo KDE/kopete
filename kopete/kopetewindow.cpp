@@ -54,13 +54,9 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 
 void KopeteWindow::initView ( void )
 {
-	mainwidget = new QWidget(this);
+	contactlist = new ContactList(this);
 	setCentralWidget(mainwidget);
 
-	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
-	contactlist = new ContactList(mainwidget);
-
-	layout->insertWidget ( -1, contactlist );
 	connect( contactlist, SIGNAL(executed(QListViewItem *)), this, SLOT(slotExecuted(QListViewItem *)) );
 }
 
