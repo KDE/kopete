@@ -141,14 +141,14 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	if( !identities.isEmpty() )
 	{
-		for( int i=0 ; i<identities.count(); i++ )
+		for( uint i=0 ; i<identities.count(); i++ )
 		{
 			kdDebug(14120) << k_funcinfo << i << endl;
 			QString server = identities[i].section('@',1);
 			if( mIdentityMap.contains( server ) )
-				mIdentityMap[ server ]->addContact( contactId, displayName, metaContact, identities );
+				mIdentityMap[ server ]->addContact( contactId, displayName, metaContact );
 			else
-				mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact, identities );
+				mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact );
 		}
 	}
 	else
@@ -156,7 +156,7 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 		//This guy does not have an identity. Must be old data.
 		//Just add him to the first server we have, which would be the default server if
 		//the migration code was run at the beginning
-		mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact, identities );
+		mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact );
 	}
 }
 

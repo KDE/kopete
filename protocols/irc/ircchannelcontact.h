@@ -34,7 +34,7 @@ class IRCChannelContact : public IRCContact
 	Q_OBJECT
 
 	public:
-		IRCChannelContact(IRCIdentity *, const QString &channel, KopeteMetaContact *metac,QStringList identities);
+		IRCChannelContact(IRCIdentity *, const QString &channel, KopeteMetaContact *metac);
 
 		~IRCChannelContact();
 

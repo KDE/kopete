@@ -31,8 +31,8 @@
 #include <klineeditdlg.h>
 #include <qapplication.h>
 
-IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac, QStringList identities) :
-		IRCContact( identity, channel, metac, identities )
+IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac) :
+		IRCContact( identity, channel, metac )
 {
 	// Variable assignments
 	mNickName = channel;
