@@ -400,7 +400,7 @@ GaduAccount::notify( uin_t* userlist, int count )
 }
 
 void
-GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
+GaduAccount::sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass )
 {
 	if ( session_->isConnected() ) {
 		session_->sendMessage( recipient, msg, msgClass );
@@ -483,15 +483,7 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 			continue;
 		}
 
-		if ( (*notifyListIterator)->description.isNull() ) {
-			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			contact->removeProperty( GaduProtocol::protocol()->propAwayMessage );
-
-		}
-		else {
-			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			contact->setProperty( GaduProtocol::protocol()->propAwayMessage, (*notifyListIterator)->description );
-		}
+		contact->changedStatus( (*notifyListIterator) );
 	}
 }
 

@@ -46,6 +46,7 @@ class GaduSession;
 class GaduCommand;
 class QTimer;
 class KActionMenu;
+class KopeteMessage;
 
 class GaduAccount : public KopeteAccount
 {
@@ -80,7 +81,7 @@ public slots:
 	void addNotify( uin_t uin );
 	void notify( uin_t* userlist, int count );
 
-	void sendMessage( uin_t recipient, const QString& msg,
+	void sendMessage( uin_t recipient, const KopeteMessage& msg,
 			int msgClass = GG_CLASS_CHAT );
 
 	void error( const QString& title, const QString& message );
@@ -116,7 +117,7 @@ protected:
 private slots:
 	void startNotify();
 	void notify( KGaduNotifyList* );
-	
+
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );
 	void contactStatusChanged( KGaduNotify* );

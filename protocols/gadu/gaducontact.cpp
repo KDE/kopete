@@ -29,6 +29,8 @@
 #include "gadupubdir.h"
 #include "gadueditcontact.h"
 #include "gaducontactlist.h"
+#include "gadurichtextformat.h"
+#include "gadusession.h"
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
@@ -67,38 +69,36 @@ GaduContact::setParentIdentity( const QString& id)
 	parentIdentity_ = id;
 }
 
-void
-GaduContact::setDescription( const QString& descr )
-{
-	description_ = descr;
-}
-
-QString
-GaduContact::description() const
-{
-	return description_;
-}
-
 uin_t
 GaduContact::uin() const
 {
 	return uin_;
 }
 
-KopeteMessageManager*
-GaduContact::manager( bool )
+void
+GaduContact::changedStatus( KGaduNotify* newstatus )
 {
-	if ( msgManager_ ) {
-		return msgManager_;
+	if ( newstatus->description.isNull() ) {
+		setOnlineStatus( GaduProtocol::protocol()->convertStatus( newstatus->status ) );
+		removeProperty( GaduProtocol::protocol()->propAwayMessage );
 	}
 	else {
-		msgManager_ = KopeteMessageManagerFactory::factory()->create( account_->myself(),
-												thisContact_, GaduProtocol::protocol());
-		connect( msgManager_, SIGNAL( messageSent( KopeteMessage&, KopeteMessageManager*) ),
-						 this, SLOT( messageSend( KopeteMessage&, KopeteMessageManager*) ) );
-		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );
-		return msgManager_;
+		setOnlineStatus( GaduProtocol::protocol()->convertStatus( newstatus->status ) );
+		setProperty( GaduProtocol::protocol()->propAwayMessage, newstatus->description );
 	}
+}
+
+KopeteMessageManager*
+GaduContact::manager( bool /* canCreate */ )
+{
+	if ( !msgManager_ ) {
+		msgManager_ = KopeteMessageManagerFactory::factory()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
+		connect( msgManager_, SIGNAL( messageSent( KopeteMessage&, KopeteMessageManager*) ),
+			 this, SLOT( messageSend( KopeteMessage&, KopeteMessageManager*) ) );
+		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );
+
+	}
+	return msgManager_;
 }
 
 void
@@ -126,9 +126,8 @@ GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 	if ( msg.plainBody().isEmpty() ) {
 		return;
 	}
-
-	account_->sendMessage( uin_, msg.plainBody() );
 	mgr->appendMessage( msg );
+	account_->sendMessage( uin_, msg );
 }
 
 bool

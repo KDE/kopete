@@ -27,6 +27,7 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include "kopetemessage.h"
 
 #include <qsocketnotifier.h>
 #include <qtextcodec.h>
@@ -73,7 +74,7 @@ GaduSession::login( struct gg_login_params* p )
 
 // turn on in case you have any problems, and  you want
 // to report it better. libgadu needs to be recompiled with debug enabled
-//		gg_debug_level=GG_DEBUG_MISC;
+//		gg_debug_level=GG_DEBUG_MISC|GG_DEBUG_FUNCTION;
 
 		kdDebug(14100) << "Login" << endl;
 
@@ -228,17 +229,30 @@ GaduSession::removeNotify( uin_t uin )
 }
 
 int
-GaduSession::sendMessage( uin_t recipient, const QString& msg, int msgClass )
+GaduSession::sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass )
 {
 	QString sendMsg;
 	QCString cpMsg;
+	KGaduMessage* gadumessage;
 
 	if ( isConnected() ) {
-		sendMsg = msg;
-		sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
-		cpMsg = textcodec->fromUnicode( sendMsg );
+		gadumessage = GaduRichTextFormat::convertToGaduMessage( msg );
+		if ( gadumessage ) {
+			const void* data = (const void*)gadumessage->rtf.data();
+			cpMsg = textcodec->fromUnicode( gadumessage->message );
+			int o;
+			o = gg_send_message_richtext( session_, msgClass, recipient, (const unsigned char *)cpMsg.data(), (const unsigned char*) data, gadumessage->rtf.size() );
+			gadumessage->rtf.resize(0);
+			delete gadumessage;
+			return o;
+		}
+		else {
+			sendMsg = msg.plainBody();
+			sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
+			cpMsg = textcodec->fromUnicode( sendMsg );
 
-		return gg_send_message( session_, msgClass, recipient, (const unsigned char *)cpMsg.data() );
+			return gg_send_message( session_, msgClass, recipient, (const unsigned char *)cpMsg.data() );
+		}
 	}
 	else {
 		emit error( i18n("Not Connected"), i18n("You are not connected to the server.") );
@@ -603,6 +617,7 @@ GaduSession::checkDescriptor()
 		case GG_EVENT_MSG:
 			if ( event->event.msg.msgclass == GG_CLASS_CTCP ) {
 				// TODO: DCC CONNECTION
+				break;
 			}
 			if ( event->event.msg.msgclass == GG_CLASS_MSG ||  event->event.msg.msgclass == GG_CLASS_CHAT ) {
 				gaduMessage.message =
@@ -611,6 +626,7 @@ GaduSession::checkDescriptor()
 				gaduMessage.sendTime.setTime_t( event->event.msg.time, Qt::LocalTime );
 				gaduMessage.message = GaduRichTextFormat::convertToHtml( gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats );
 				emit messageReceived( &gaduMessage );
+				break;
 			}
 		break;
 		case GG_EVENT_ACK:

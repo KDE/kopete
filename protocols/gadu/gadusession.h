@@ -29,15 +29,17 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qdatetime.h>
+#include <qcstring.h>
 
 #include "gaducontactlist.h"
 
 #include <libgadu.h>
 
 struct KGaduMessage {
-    QString		message;	// Unicode
-    unsigned int	sender_id;	// sender's UIN
-    QDateTime	sendTime;
+	QString		message;	// Unicode
+	unsigned int	sender_id;	// sender's UIN
+	QDateTime	sendTime;
+	QByteArray	rtf;
 };
 
 struct KGaduNotify {
@@ -67,6 +69,7 @@ typedef QValueList<ResLine> SearchResult;
 
 class QSocketNotifier;
 class QStringList;
+class KopeteMessage;
 
 class GaduSession : public QObject
 {
@@ -91,7 +94,7 @@ public slots:
 	int	notify( uin_t*, int );
 	int	addNotify( uin_t );
 	int	removeNotify( uin_t );
-	int	sendMessage( uin_t recipient, const QString& msg, int msgClass );
+	int	sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass );
 	int	changeStatus( int, bool forFriends = false );
 	int	changeStatusDescription( int, const QString&, bool forFriends = false );
 	int	ping();

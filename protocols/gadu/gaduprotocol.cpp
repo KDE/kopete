@@ -81,6 +81,9 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 	}
 
 	addAddressBookField( "messaging/gadu", KopetePlugin::MakeIndexField );
+
+	setRichTextCapabilities( KopeteProtocol::RichFormatting | KopeteProtocol::RichColor );
+
 }
 
 GaduProtocol::~GaduProtocol()

@@ -42,6 +42,7 @@ class GaduAccount;
 class KopeteAccount;
 class KopeteMessageManager;
 
+
 class GaduContact : public KopeteContact
 {
 	Q_OBJECT
@@ -62,13 +63,11 @@ public:
 	bool setContactDetails( const GaduContactsList::ContactLine* );
 
 	void	setParentIdentity( const QString& );
-	void	setDescription( const QString& );
 	void	setIgnored( bool );
 	bool ignored();
 
-	QString description() const;
-
 	static QString findBestContactName( const GaduContactsList::ContactLine* );
+	void changedStatus( KGaduNotify* );
 
 	uin_t uin() const;
 
