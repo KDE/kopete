@@ -78,6 +78,7 @@ public:
 	bool showTray() const { return mShowTray; }
 	bool notifyAway() const { return mNotifyAway; }
 	bool richText() const { return mRichText; }
+	bool chatWShowSend() const { return mChatWShowSend; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
 	QString styleSheet() const { return mStyleSheet; }
@@ -178,6 +179,7 @@ private:
 	bool mTransparencyChanged;
 	bool mWindowAppearanceChanged;
 	bool mNotifyAway;
+	bool mChatWShowSend;
 
 	int mChatWindowPolicy;
 

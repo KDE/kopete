@@ -36,7 +36,7 @@
 #include <ktempfile.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
-#include <ksqueezedtextlabel.h>
+#include <kstatusbar.h>
 #include <kpushbutton.h>
 #include <ktabwidget.h>
 #include <kstandarddirs.h>
@@ -62,6 +62,7 @@
 	#include <kactionclasses.h>
 #endif
 
+static int MESSAGE_STATUS_ID = 1;
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
@@ -182,21 +183,22 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
 
-	statusArea = new QHBox( vBox );
-	statusArea->setSizePolicy( QSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum) );
-	statusArea->setMargin( 2 );
+	if( KopetePrefs::prefs()->chatWShowSend() )
+	{
+		//Send Button
+		m_button_send = new KPushButton( i18n("Send"), statusBar() );
+		m_button_send->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
+		m_button_send->setEnabled( false );
+		m_button_send->setFont( statusBar()->font() );
+		m_button_send->setFixedHeight( statusBar()->sizeHint().height() );
+		connect( m_button_send, SIGNAL( pressed() ), this, SLOT( slotSendMessage() ) );
+		statusBar()->addWidget( m_button_send, 0, true );
+	}
+	else
+		m_button_send = 0L;
 
-	m_status = new KSqueezedTextLabel( i18n("Ready."), statusArea );
-	m_status->setIndent( KDialog::marginHint() ); //marginHint == 4px
-	m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum ) );
-	QToolTip::add( m_status, m_status->text() );
-
-	//Send Button
-	m_button_send = new KPushButton( i18n("Send"), statusArea );
-	m_button_send->setEnabled( false );
-
-	connect( m_button_send, SIGNAL( pressed() ), this, SLOT( slotSendMessage() ) );
-
+	statusBar()->insertItem( i18n("Ready."), MESSAGE_STATUS_ID, 1, false );
+	statusBar()->setItemAlignment( MESSAGE_STATUS_ID, AlignLeft | AlignVCenter );
 
 	readOptions();
 	setWFlags( Qt::WDestructiveClose );
@@ -357,6 +359,13 @@ void KopeteChatWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
+#if KDE_IS_VERSION( 3, 1, 90 )
+	createStandardStatusBarAction();
+#else
+	mStatusbarAction = KStdAction::showStatusbar(this,
+			SLOT(slotToggleStatusBar()), actionCollection());
+#endif
+
 	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( slotSendMessage() ), coll, "chat_send" );
 	//Default to "send" shortcut as used by KMail and KNode
@@ -413,7 +422,6 @@ void KopeteChatWindow::initActions(void)
 	historyDown->setShortcut( QKeySequence(CTRL + Key_Down) );
 
 	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
-	viewStatusBar = KStdAction::showStatusbar( this, SLOT(slotViewStatusBar()), coll );
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), QString::null, 0,
 		this, SLOT( slotViewMembersLeft() ), coll, "options_membersleft" );
@@ -457,6 +465,10 @@ void KopeteChatWindow::initActions(void)
 
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( 0L );
+
+#if !KDE_IS_VERSION( 3, 1, 90 )
+	mStatusbarAction->setChecked(!statusBar()->isHidden());
+#endif
 }
 
 const QString KopeteChatWindow::fileContents( const QString &path ) const
@@ -482,7 +494,8 @@ void KopeteChatWindow::slotStopAnimation( ChatView* view )
 void KopeteChatWindow::setSendEnabled( bool enabled )
 {
 	chatSend->setEnabled( enabled );
-	m_button_send->setEnabled( enabled );
+	if(m_button_send)
+		m_button_send->setEnabled( enabled );
 }
 
 void KopeteChatWindow::updateMembersActions()
@@ -579,9 +592,7 @@ KopeteView *KopeteChatWindow::addChatView( KopeteMessageManager *manager )
 
 void KopeteChatWindow::setStatus(const QString &text)
 {
-	m_status->setText(text);
-	if ( text != QToolTip::textFor( m_status ) )
-		QToolTip::add( m_status, text );
+	statusBar()->changeItem(text, MESSAGE_STATUS_ID);
 }
 
 void KopeteChatWindow::createTabBar()
@@ -973,11 +984,6 @@ void KopeteChatWindow::readOptions()
 	KConfig *config = KGlobal::config();
 	applyMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
-	if( !config->readBoolEntry ( QString::fromLatin1("Show Status Bar"), true ) )
-	{
-		viewStatusBar->setChecked( false );
-		statusArea->hide();
-	}
 }
 
 void KopeteChatWindow::saveOptions()
@@ -991,7 +997,6 @@ void KopeteChatWindow::saveOptions()
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), m_tabBar->tabPosition() );
-	config->writeEntry ( QString::fromLatin1("Show Status Bar"), viewStatusBar->isChecked() );
 
 	config->sync();
 }
@@ -1014,12 +1019,14 @@ void KopeteChatWindow::slotChatPrint()
 	m_activeView->print();
 }
 
-void KopeteChatWindow::slotViewStatusBar()
+void KopeteChatWindow::slotToggleStatusBar()
 {
-	if( statusArea->isVisible() )
-		statusArea->hide();
+#if !KDE_IS_VERSION( 3, 1, 90 )
+	if (statusBar()->isVisible())
+		statusBar()->hide();
 	else
-		statusArea->show();
+		statusBar()->show();
+#endif
 }
 
 void KopeteChatWindow::slotViewMenuBar()
@@ -1104,6 +1111,4 @@ bool KopeteChatWindow::queryExit()
 }
 
 #include "kopetechatwindow.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

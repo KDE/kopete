@@ -65,6 +65,7 @@ void KopetePrefs::load()
 	mTransparencyValue = config->readNumEntry("ChatView Transparency Value", 50);
 	mNotifyAway = config->readBoolEntry("Notification Away", false);
 	mRichText = config->readBoolEntry("RichText editor", false);
+	mChatWShowSend = config->readBoolEntry("Show Chatwindow Send Button", true);
 
 	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
@@ -130,6 +131,7 @@ void KopetePrefs::save()
 	config->writeEntry("Link Color", mLinkColor);
 	config->writeEntry("Idle Contact Color", mIdleContactColor);
 	config->writeEntry("RichText editor", mRichText);
+	config->writeEntry("Show Chatwindow Send Button", mChatWShowSend);
 
 	config->writeEntry("Interface Preference", mInterfacePreference);
 

@@ -21,6 +21,7 @@
 #include <kparts/mainwindow.h>
 #include <qmovie.h>
 #include "kopetecontact.h"
+#include "kdeversion.h"
 
 class KopeteMessage;
 class KopeteMessageManager;
@@ -116,7 +117,6 @@ private:
 	const KopeteContact *m_us;
 	bool updateBg;
 	KTabWidget *m_tabBar;
-	KSqueezedTextLabel *m_status;
 	KPushButton* m_button_send;
 	QVBox *vBox;
 	QVBoxLayout *mainLayout;
@@ -124,14 +124,15 @@ private:
 	QLabel *anim;
 	QMovie animIcon;
 	QPixmap normalIcon;
-	QHBox *statusArea;
 
 	KAction *chatSend;
 	KAction *historyUp;
 	KAction *historyDown;
 	KAction *nickComplete;
 
-	KToggleAction *viewStatusBar;
+#if !KDE_IS_VERSION( 3, 1, 90 )
+  KToggleAction *mStatusbarAction;
+#endif
 
 	KAction *tabLeft;
 	KAction *tabRight;
@@ -184,11 +185,11 @@ private slots:
 	void slotPlaceTabs( int tabPlacement );
 
 	void slotViewMenuBar();
-	void slotViewStatusBar();
+	void slotToggleStatusBar();
 
 	void slotConfKeys();
 	void slotConfToolbar();
-	
+
 	void slotViewMembersLeft();
 	void slotViewMembersRight();
 	void slotToggleViewMembers();
