@@ -14,10 +14,12 @@
     *************************************************************************
 */
 
+#include "kopetepasswordtest.h"
 #include "kopetepassword.h"
 
 #include <qtextstream.h>
 #include <qpixmap.h>
+#include <qtimer.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -30,13 +32,39 @@ static QTextStream _out( stdout, IO_WriteOnly );
 
 static KCmdLineOptions opts[] =
 {
+ { "async", I18N_NOOP("Set password asynchronously"), 0 },
  { "id <id>", I18N_NOOP("Config group to store password in"), "TestAccount" },
- { "set <new>", I18N_NOOP("Set password to new"), "" },
- { "error", I18N_NOOP("Claim password was erroneous"), "" },
+ { "set <new>", I18N_NOOP("Set password to new"), 0 },
+ { "error", I18N_NOOP("Claim password was erroneous"), 0 },
  { "prompt <prompt>", I18N_NOOP("Password prompt"), "Enter a password" },
- { "image <filename>", I18N_NOOP("Image to display in password dialog"), "" },
+ { "image <filename>", I18N_NOOP("Image to display in password dialog"), 0 },
  KCmdLineLastOption
 };
+
+QString retrieve( bool async, KopetePassword &pwd, const QPixmap &image, const QString &prompt, bool error = false )
+{
+	if ( !async )
+		return pwd.retrieve( image, prompt, error );
+
+	PasswordRetriever r;
+	pwd.request( &r, SLOT( gotPassword( const QString & ) ), image, prompt, error );
+	QTimer tmr;
+	r.connect( &tmr, SIGNAL( timeout() ), SLOT( timer() ) );
+	tmr.start( 1000 );
+	qApp->exec();
+	return r.password;
+}
+
+void PasswordRetriever::gotPassword( const QString &pass )
+{
+	password = pass;
+	qApp->quit();
+}
+
+void PasswordRetriever::timer()
+{
+	_out << "." << flush;
+}
 
 int main( int argc, char *argv[] )
 {
@@ -46,7 +74,8 @@ int main( int argc, char *argv[] )
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	KApplication app( "kopetepasswordtest" );
-	
+
+	bool async = args->isSet("async");
 	bool setPassword = args->isSet("set");
 	QString newPwd = args->getOption("set");
 	QString passwordId = args->getOption("id");
@@ -57,7 +86,7 @@ int main( int argc, char *argv[] )
 	_out << (image.isNull() ? "image is null" : "image is valid") << endl;
 
 	KopetePassword pwd( passwordId );
-	QString pass = pwd.retrieve( image, prompt, error );
+	QString pass = retrieve( async, pwd, image, prompt, error );
 
 	if ( !pass.isNull() )
 		_out << "Read password: " << pass << endl;
@@ -76,7 +105,16 @@ int main( int argc, char *argv[] )
 			_out << "Setting password to " << newPwd << endl;
 		}
 		pwd.set( newPwd );
-		pass = pwd.retrieve( image, i18n("Hopefully this popped up because you set the password to the empty string.") );
+	}
+
+	// without this, setting passwords will fail since they're
+	// set asynchronously.
+	QTimer::singleShot( 0, &app, SLOT( deref() ) );
+	app.exec();
+
+	if ( setPassword )
+	{
+		pass = retrieve( async, pwd, image, i18n("Hopefully this popped up because you set the password to the empty string.") );
 		if( pass == newPwd )
 			_out << "Password successfully set." << endl;
 		else
@@ -86,5 +124,6 @@ int main( int argc, char *argv[] )
 	return 0;
 }
 
-// vim: set noet ts=4 sts=4 sw=4:
+#include "kopetepasswordtest.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:

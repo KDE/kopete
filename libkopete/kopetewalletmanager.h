@@ -41,15 +41,19 @@ public:
 	~KopeteWalletManager();
 
 	/**
-	 * @brief Attempt to open the KWallet asyncronously.
+	 * @brief Attempt to open the KWallet asyncronously, then signal an
+	 *        object to indicate the task is complete.
 	 *
-	 * After calling this function, connect the walletOpened signal to one
-	 * of your slots to recieve notification of the wallet being opened.
+	 * @param object The object to call back to
+	 * @param slot The slot on object to call; must have signature slot( KWallet::Wallet* )
+	 *        The parameter to the slot will be the wallet that was opened if the call
+	 *        succeeded, or NULL if the wallet failed to open or the Kopete folder was
+	 *        inaccessible.
 	 *
-	 * For simplicity of client code, it is guaranteed that walletOpened
-	 * will not be emitted during a call to this function.
+	 * For simplicity of client code, it is guaranteed that your slot
+	 * will not be called during a call to this function.
 	 */
-	void openWallet();
+	void openWallet( QObject *object, const char *slot );
 	
 	/**
 	 * Get a KWallet instance, possibly prompting the user for his
@@ -73,14 +77,6 @@ public slots:
 
 signals:
 	/**
-	 * Emitted when an asyncronous openWallet call ends
-	 * @param wallet The wallet that was opened if the call succeeded, or
-	 *        NULL if the wallet failed to open or the Kopete folder was
-	 *        inaccessible.
-	 */
-	void walletOpened( KWallet::Wallet *wallet );
-
-	/**
 	 * Emitted when the connection to the wallet is lost.
 	 */
 	void walletLost();
@@ -101,10 +97,21 @@ private slots:
 	void slotGiveExistingWallet();
 
 private:
+	void openWalletInner();
+	void emitWalletOpened( KWallet::Wallet *wallet );
+
 	struct KopeteWalletManagerPrivate;
 	KopeteWalletManagerPrivate *d;
 
 	KopeteWalletManager();
+};
+
+class KopeteWalletSignal : public QObject
+{
+	Q_OBJECT
+	friend class KopeteWalletManager;
+signals:
+	void walletOpened( KWallet::Wallet *wallet );
 };
 
 #endif
