@@ -54,7 +54,7 @@ void KopeteEvent::apply()
 
 void KopeteEvent::ignore()
 {
-	if( m_message.from()->metaContact()->isTemporary() )
+	if( m_message.from()->metaContact() && m_message.from()->metaContact()->isTemporary() )
 		KopeteContactList::contactList()->removeMetaContact( m_message.from()->metaContact() );
 	m_state= Ignored;
 	deleteLater();
