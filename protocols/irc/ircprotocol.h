@@ -58,6 +58,10 @@ public:
 
 	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
 
+	/*
+	 * Returns a pointer to the KSParser. The KSParser changes IRC color codes into HTML
+	 * for use in KopeteMessage.
+	 */
 	KSParser *parser() const { return mParser; };
 
 	static IRCProtocol *protocol();

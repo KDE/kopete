@@ -12,13 +12,15 @@
 #include <qcolor.h>
 #include <qvaluestack.h>
 
-// Helper class to parse IRC colour/style codes and convert them to
-// richtext. The parser maintains an internal stack of the styles
-// applied because the IRC message could contain sequences as
-// (bold)Hello (red)World(endbold)! (blue)blue text
-// which needs to be converted to
-// <b>Hello </b><font color="red"><b>World</b>! </font><font color="blue">blue text</font>
-// to get correctly nested tags. (malte)
+/*
+ * Helper class to parse IRC colour/style codes and convert them to
+ * richtext. The parser maintains an internal stack of the styles
+ * applied because the IRC message could contain sequences as
+ * (bold)Hello (red)World(endbold)! (blue)blue text
+ * which needs to be converted to
+ * <b>Hello </b><font color="red"><b>World</b>! </font><font color="blue">blue text</font>
+ * to get correctly nested tags. (malte)
+ */
 class KSParser
 {
 public:

@@ -38,9 +38,6 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	// Variable assignments
 	mNickName = channel;
 
-	// Registers this IRCChannelContact with the identity
-	identity->registerChannel(mNickName, this);
-
 	// KAction stuff
 	mCustomActions = new KActionCollection(this);
 	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), mCustomActions, "actionJoin");
