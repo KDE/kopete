@@ -194,7 +194,6 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 
 	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar(), "m_status_text" );
 	m_status_text->setAlignment( AlignLeft | AlignVCenter );
-	m_status_text->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Expanding ) );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
 	statusBar()->addWidget( m_status_text, 1 );
