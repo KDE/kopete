@@ -127,6 +127,7 @@ public slots:
 
 private slots:
 	void slotBlockUser();
+	void slotShowProfile();
 
 private:
 	QMap<uint, KopeteGroup *> m_serverGroups;
@@ -137,7 +138,6 @@ private:
 	bool m_reversed;
 
 	KActionCollection* m_actionCollection;
-	KAction* m_actionBlock;
 
 	bool m_moving;
 

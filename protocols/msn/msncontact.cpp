@@ -29,6 +29,7 @@
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <krun.h>
 
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
@@ -44,7 +45,6 @@
 MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( account, id, parent )
 {
-	m_actionBlock = 0L;
 	m_actionCollection=0L;
 
 //	m_deleted = false;
@@ -74,21 +74,18 @@ KopeteMessageManager *MSNContact::manager( bool canCreate )
 
 KActionCollection *MSNContact::customContextMenuActions()
 {
-	if( m_actionCollection != 0L )
-		delete m_actionCollection;
-
+	delete m_actionCollection;
 	m_actionCollection = new KActionCollection(this);
 
 	// Block/unblock Contact
-	if(m_actionBlock)
-		delete m_actionBlock;
-	QString label = isBlocked() ?
-		i18n( "Unblock User" ) : i18n( "Block User" );
-	m_actionBlock = new KAction( label,
-		0, this, SLOT( slotBlockUser() ),
-		this, "m_actionBlock" );
+	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
+	KAction* actionBlock = new KAction( label, 0, this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
+	
+	//show profile
+	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
 
-	m_actionCollection->insert( m_actionBlock );
+	m_actionCollection->insert( actionBlock );
+	m_actionCollection->insert( actionShowProfile );
 
 	return m_actionCollection;
 }
@@ -371,6 +368,11 @@ void MSNContact::rename( const QString &newName )
 				"list server-side. Your changes may be lost</qt>" ),
 			i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
+}
+
+void MSNContact::slotShowProfile()
+{
+	KRun::runURL( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId()  , "text/html" ); 
 }
 
 
