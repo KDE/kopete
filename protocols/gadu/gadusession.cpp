@@ -462,13 +462,13 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 	QStringList::iterator stringIterator;
 	QStringList strList ;
 	contactLine* cl = NULL;
-	bool email = false;
+	bool email;
 
-	if ( sList.isEmpty() || sList.isNull() || !sList.contains( ';' ) ) {
+	if ( sList.isEmpty() || sList.isNull() ) {
 		return false;
 	}
-
-	if ( !sList.contains( '\n' ) && sList.contains( ';' ) ) {
+	 
+	if ( ( !sList.contains( '\n' ) && sList.contains( ';' ) )  || !sList.contains( ';' ) ) {
 		// basicaly, server stores contact list as it is
 		// even if i will send him windows 2000 readme file
 		// he will accept it, and he will return it on each contact import
@@ -494,10 +494,14 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 		kdDebug(14100)<<"\""<< cline << "\"" << endl;
 
 		strList  = QStringList::split( QChar( ';' ), cline, true );
+		
 		if ( strList.count() == 12 ) {
-			email=true;
+			email = true;
 		}
-
+		else {
+			email = false;
+		}
+		
 		if ( strList.count() != 8 && email == false ) {
 			kdDebug(14100)<< "fishy, maybe contact format was changed. Contact author/update software"<<endl;
 			kdDebug(14100)<<"nr of elements should be 8 or 12, but is "<<strList.count() << " LINE:" << cline <<endl;
