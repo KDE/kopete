@@ -78,6 +78,12 @@ KopeteMetaContact::KopeteMetaContact()
 
 KopeteMetaContact::~KopeteMetaContact()
 {
+	for( KopeteContact *c = d->contacts.first(); c; c = d->contacts.next() )
+	{
+		removeContact( c );
+		c->slotDeleteContact();
+	}
+
 	delete d;
 }
 
@@ -199,6 +205,10 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 			kdDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
 		}
+
+		// Reparent the contact
+		removeChild( c );
+
 		emit contactRemoved( c );
 	}
 	updateOnlineStatus();

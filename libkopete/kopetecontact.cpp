@@ -118,6 +118,7 @@ KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, 
 
 KopeteContact::~KopeteContact()
 {
+	kdDebug() << k_funcinfo << endl;
 	emit( contactDestroyed( this ) );
 	d->metaContact = 0L;
 	delete d;
@@ -391,9 +392,6 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 		old->updateKABC();
-
-		// Reparent the contact
-		old->removeChild( this );
 
 		if(result==KMessageBox::Yes)
 		{
