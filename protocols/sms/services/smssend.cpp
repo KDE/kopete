@@ -124,7 +124,11 @@ void SMSSend::setOptions(const QString& name)
 	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), m_contact, this);
 
 	for (int i=0; i < s->count(); i++)
-		prefWidget->providerSettings->insertItem(s->listItem(prefWidget->providerSettings, i));
+	{
+		QListViewItem* item = s->listItem(prefWidget->providerSettings, i);
+		if (item != 0L)
+			prefWidget->providerSettings->insertItem(item);
+	}
 }
 
 void SMSSend::showDescription()

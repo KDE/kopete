@@ -23,6 +23,8 @@ public:
 	void showDescription(QString name);
 	int count();
 	void send(const KopeteMessage& msg);
+
+	int maxSize();
 private slots:
 	void slotReceivedOutput(KProcess*, char  *buffer, int  buflen);
 	void slotSendFinished(KProcess*);
@@ -32,6 +34,10 @@ private:
 	QStringList descriptions;
 	QStringList rules;
 	QStringList values;
+
+	int messagePos;
+	int telPos;
+	int m_maxSize;
 
 	QString provider;
 	QString prefix;
