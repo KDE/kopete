@@ -202,7 +202,7 @@ bool JabberEditAccountWidget::validateData ()
 	if(!mID->text().contains('@'))
 	{
 		KMessageBox::sorry(this, i18n("The Jabber ID you have chosen is invalid. "
-							"Please make sure it is in the form user@jabber.org."),
+							"Please make sure it is in the form user@server.com, like an email address."),
 							i18n("Invalid Jabber ID"));
 
 		return false;
@@ -222,9 +222,6 @@ void JabberEditAccountWidget::updateServerField ()
 	if(!cbCustomServer->isChecked())
 	{
 		QString newServer = mID->text().section("@", 1);
-
-		if(newServer.isEmpty ())
-			newServer = QString::fromLatin1("jabber.org");
 
 		mServer->setText(newServer);
 		mServer->setEnabled(false);

@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>609</width>
-            <height>515</height>
+            <height>517</height>
         </rect>
     </property>
     <property name="caption">
@@ -355,7 +355,7 @@
                                             <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>jabber.org</string>
+                                            <string></string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>The IP address or hostname of the server you would like to connect to.</string>
