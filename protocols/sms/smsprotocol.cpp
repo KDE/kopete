@@ -89,11 +89,6 @@ AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent)
 	return (new SMSAddContactPage(this,parent));
 }
 
-void SMSProtocol::slotStartChat()
-{
-	KMessageBox::error( 0l, i18n( "<qt>Not implemented yet</qt>" ), i18n( "SMS Plugin" ));
-}
-
 void SMSProtocol::addContact( const QString nr , const QString name, KopeteMetaContact *m)
 {
 	m->addContact(new SMSContact(protocol(), nr, name, m));

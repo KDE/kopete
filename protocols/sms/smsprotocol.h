@@ -62,9 +62,6 @@ public:
 
 	KopeteContact *myself() const;
 
-public slots:
-	void slotStartChat();
-
 private slots:
 	void slotPreferencesSaved();
 
