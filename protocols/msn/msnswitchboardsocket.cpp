@@ -267,8 +267,14 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				others.append( m_account->contacts()[ *it ] );
 		}
 
+		QString message=msg.right( msg.length() - msg.find("\r\n\r\n") - 4 );
+
+		//Stupid MSN PLUS colors code. message with incorrect charactère are not showed correctly in the chatwindow.µ
+		//TODO: parse theses one to show the color too in Kopete
+		message.replace("\3","");
+
 		KopeteMessage kmsg( m_account->contacts()[ m_msgHandle ], others,
-			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
+			message,
 			KopeteMessage::Inbound , KopeteMessage::PlainText );
 
 		kmsg.setFg( fontColor );
