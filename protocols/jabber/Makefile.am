@@ -14,7 +14,9 @@ kopete_jabber_la_SOURCES = jabberprotocol.cpp jabberresource.cpp jabbercontact.c
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN)
 kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
-	-lpsi
+	-lpsi \
+	-lssl \
+	-lqssl
 
 data_DATA = jabber.plugin
 datadir = $(kde_datadir)/kopete

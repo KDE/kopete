@@ -234,11 +234,25 @@ void JabberProtocol::Connect()
 
 
 	// check if we are capable of using SSL if requested
-	bool sslPossible = jabberClient->setSSLEnabled(KGlobal::config()->readBoolEntry("UseSSL", "0"));
-	if(!sslPossible)
+	if(KGlobal::config()->readBoolEntry("UseSSL", "0"))
 	{
-		KMessageBox::error(kopeteapp->mainWindow(), i18n("SSL is not supported. QSSL was probably not compiled in."), i18n("SSL Error"));
-		return;
+		// try to load QSSL library needed by libpsi
+		// FIXME: this is ugly because it uses fixed dirs! should check ldconfig or something
+		QStringList dirs;
+
+		dirs += "/usr/lib";
+		dirs += "/usr/local/lib";
+		
+		jabberClient->stream().loadSSL(dirs);
+		
+		bool sslPossible = jabberClient->setSSLEnabled(true);
+		
+		if(!sslPossible)
+		{
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("SSL is not supported. This is most likely "+
+															 "because the QSSL library could not be found."), i18n("SSL Error"));
+			return;
+		}
 	}
 	
 	if(myContact)
