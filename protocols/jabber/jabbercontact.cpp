@@ -658,7 +658,7 @@ void JabberContact::slotGotVCard ()
 {
 	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
 
-	if (!vCard->success () || vCard->vcard ().isIncomplete ())
+	if (!vCard->success () && !vCard->vcard ().isIncomplete ())
 	{
 		// unsuccessful, or incomplete
 		KMessageBox::error (qApp->mainWidget (), i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
