@@ -466,17 +466,17 @@ Kopete::BlackLister* Kopete::Account::blackLister()
 	return d->blackList;
 }
 
-void Kopete::Account::block( QString &contactId )
+void Kopete::Account::block( const QString &contactId )
 {
-	d->blackList->slotAddContact( contactId );
+	d->blackList->addContact( contactId );
 }
 
-void Kopete::Account::unblock( QString &contactId )
+void Kopete::Account::unblock( const QString &contactId )
 {
-	d->blackList->slotRemoveContact( contactId );
+	d->blackList->removeContact( contactId );
 }
 
-bool Kopete::Account::isBlocked( QString &contactId )
+bool Kopete::Account::isBlocked( const QString &contactId )
 {
 	return d->blackList->isBlocked( contactId );
 }

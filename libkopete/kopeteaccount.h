@@ -305,9 +305,9 @@ public:
 	BlackLister* blackLister();
 	
 	/**
-	 * \return true if the contact is in the blacklist, false otherwise
+	 * \return @c true if the contact with ID @p contactId is in the blacklist, @c false otherwise
 	 */
-	virtual bool isBlocked( QString &contactId );
+	virtual bool isBlocked( const QString &contactId );
 	
 protected:
 	/**
@@ -327,7 +327,7 @@ protected:
 	void setMyself( Contact *myself );
 
 	/**
-	 * Create a new contact in the specified metacontact
+	 * \brief Create a new contact in the specified metacontact
 	 *
 	 * You shouldn't ever call this method yourself, For adding contacts see @ref addContact()
 	 *
@@ -390,18 +390,20 @@ public slots:
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
 
 	/**
-	 * Add a user to the blacklist. 
-	 * Default implementation emits @ref Kopete::BlackLister::contactAdded()
+	 * Add a user to the blacklist. The default implementation calls
+	 * blackList()->addContact( contactId )
+	 *
 	 * @param contactId the contact to be added to the blacklist
 	 */
-	virtual void block( QString &contactId );
+	virtual void block( const QString &contactId );
 	
 	/**
-	 * Remove a user from the blacklist
-	 * Default implementation emits @ref Kopete::BlackLister::contactRemoved()
+	 * Remove a user from the blacklist. The default implementation calls
+	 * blackList()->removeContact( contactId )
+	 *
 	 * @param contactId the contact to be removed from the blacklist
 	 */
-	virtual void unblock( QString &contactId );
+	virtual void unblock( const QString &contactId );
 
 signals:
 	/**

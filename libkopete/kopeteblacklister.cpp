@@ -2,7 +2,7 @@
     kopeteblacklister.cpp - Kopete BlackLister
 
     Copyright (c) 2004      by Roie Kerstein         <sf_kersteinroie@bezeqint.net>
-    
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -12,61 +12,77 @@
     *                                                                       *
     *************************************************************************
 */
+
 #include "kopeteblacklister.h"
+
+#include "kopetecontact.h"
+
 #include <kconfig.h>
 #include <kglobal.h>
 
-namespace Kopete {
+#include <qstringlist.h>
 
-BlackLister::BlackLister(QString protocolId, QString accountId, QObject *parent, const char *name)
- : QObject(parent, name)
+namespace Kopete
+{
+
+class BlackLister::Private
+{
+public:
+	QStringList blacklist;
+	QString owner;
+	QString protocol;
+};
+
+
+BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent, const char *name)
+ : QObject(parent, name), d( new Private )
 {
 	KConfig *config = KGlobal::config();
 	
-	m_owner = accountId;
-	m_protocol = protocolId;
+	d->owner = accountId;
+	d->protocol = protocolId;
 	config->setGroup("BlackLister");
-	m_blacklist = config->readListEntry( m_protocol + QString::fromLatin1("_") + m_owner );
+	d->blacklist = config->readListEntry( d->protocol + QString::fromLatin1("_") + d->owner );
 }
-
 
 BlackLister::~BlackLister()
 {
+	delete d;
 }
 
-bool BlackLister::isBlocked(QString &contactId)
+
+bool BlackLister::isBlocked(const QString &contactId)
 {
-	return (m_blacklist.find( contactId ) != m_blacklist.end() );
+	return (d->blacklist.find( contactId ) != d->blacklist.end() );
 }
 
 bool BlackLister::isBlocked(Contact *contact)
 {
-	QString temp = contact->contactId();
-
-	return isBlocked(temp);
+	return isBlocked(contact->contactId());
 }
 
-void BlackLister::slotAddContact(QString &contactId)
+void BlackLister::addContact(const QString &contactId)
 {
-	if( !isBlocked(contactId) ){
-		m_blacklist += contactId;
+	if( !isBlocked(contactId) )
+	{
+		d->blacklist += contactId;
 		saveToDisk();
 		emit contactAdded( contactId );
 	}
 }
 
-void BlackLister::slotAddContact(Contact *contact)
+void BlackLister::addContact(Contact *contact)
 {
 	QString temp = contact->contactId();
 	
-	slotAddContact( temp );
+	addContact( temp );
 }
 
-void BlackLister::slotRemoveContact(Contact *contact)
+void BlackLister::removeContact(Contact *contact)
 {
 	QString temp = contact->contactId();
 	
-	slotRemoveContact( temp );
+	removeContact( temp );
 }
 
 void BlackLister::saveToDisk()
@@ -74,18 +90,20 @@ void BlackLister::saveToDisk()
 	KConfig *config = KGlobal::config();
 	
 	config->setGroup("BlackLister");
-	config->writeEntry( m_protocol + QString::fromLatin1("_") + m_owner, m_blacklist );
+	config->writeEntry( d->protocol + QString::fromLatin1("_") + d->owner, d->blacklist );
 	config->sync();
 }
 
-void BlackLister::slotRemoveContact(QString &contactId)
+void BlackLister::removeContact(const QString &contactId)
 {
-	if( isBlocked(contactId) ){
-		m_blacklist.remove( contactId );
+	if( isBlocked(contactId) )
+	{
+		d->blacklist.remove( contactId );
 		saveToDisk();
 		emit contactRemoved( contactId );
 	}
 }
 
-};
+}
+
 #include "kopeteblacklister.moc"
