@@ -101,7 +101,7 @@ public slots:
 
 signals:
 	/**
-	 * Emitted when we recieve notification that the person we're talking to is typing
+	 * Emitted when we receive notification that the person we're talking to is typing
 	 */
 	void receivedTypingMsg(const QString &contactId, bool isTyping);
 

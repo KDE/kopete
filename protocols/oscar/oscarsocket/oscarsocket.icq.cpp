@@ -74,7 +74,7 @@ QCString OscarSocket::encodePasswordXOR()
 
 void OscarSocket::sendLoginICQ()
 {
-	kdDebug(14150) << k_funcinfo << "Sending ICQ login info... (CLI_COOKIE)" << endl;;
+	kdDebug(14150) << k_funcinfo << "Sending ICQ login info... (CLI_COOKIE)" << endl;
 
 	Buffer outbuf;
 

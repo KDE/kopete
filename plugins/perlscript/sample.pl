@@ -24,7 +24,7 @@ sub OutgoingMessage
 	
 	#Return array format is ("New Message Text", "Foreground Color", "Background Color")
 	#If you do not want to modify a paramater return empty string in that place
-	#If you dont return anything, message is unmodified.
+	#If you don't return anything, message is unmodified.
 	
 }
 

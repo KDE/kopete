@@ -120,7 +120,7 @@ public slots:
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, uint fileSize);
 
 	/**
-	 * Everytime the kopete's contactlist is modified, we sync the serverlist with it
+	 * Every time the kopete's contactlist is modified, we sync the serverlist with it
 	 */
 	virtual void syncGroups();
 

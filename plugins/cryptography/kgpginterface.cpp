@@ -981,7 +981,7 @@ pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI
 
 /*void KgpgInterface::signover(KProcess *)
 {
-  if ((signSuccess==3) || (signSuccess==2)) emit signatureFinished(signSuccess);  ////   signature successfull or bad passphrase 
+  if ((signSuccess==3) || (signSuccess==2)) emit signatureFinished(signSuccess);  ////   signature successful or bad passphrase 
   else 
   {
   }

@@ -222,7 +222,7 @@ private:
 	 * Check if we're waiting for a block of raw data. Emits blockRead()
 	 * when the data is available.
 	 * Returns true when still waiting and false when there is no pending
-	 * read, or when the read is succesfully handled.
+	 * read, or when the read is successfully handled.
 	 */
 	bool pollReadBlock();
 

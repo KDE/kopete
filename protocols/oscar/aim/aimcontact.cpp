@@ -83,7 +83,7 @@ KopeteMessageManager* AIMContact::manager(bool)
 {
 	// Check to see if we already have a message manager
 	if (mMsgManager == 0L)
-	{  // We dont' have one, so create it
+	{  // We don't have one, so create it
 		// The true flag here is to tell OscarContact that
 		// it can create the message mananger if it
 		// doesn't exist, which is the case here.

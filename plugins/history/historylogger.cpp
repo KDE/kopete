@@ -213,7 +213,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 
 	//kdDebug() << "HistoryLogger::appendMessage: "  <<  doc.toString() << endl;
 	//SAVE!
-	//is that a good thing to save everytimes?
+	//is that a good thing to save every time?
 	KSaveFile file( getFileName(c,0) );
 	if( file.status() == 0 )
 	{

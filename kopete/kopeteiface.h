@@ -59,7 +59,7 @@ k_dcop:
 	 * @param contactId The unique ID for this protocol
 	 * @param displayName The displayName of the contact (may equal userId for some protocols
 	 * @param groupName The name of the group to add the contact to
-	 * @return Weather or not the contact was added sucessfully
+	 * @return Weather or not the contact was added successfully
 	 */
 	bool addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 		const QString &displayName, const QString &groupName = QString::null );

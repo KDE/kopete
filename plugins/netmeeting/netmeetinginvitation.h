@@ -48,7 +48,7 @@ private slots:
 private:
 	MSNContact *m_contact;
 	bool oki;
-	void startMeeting(const QString & ip_adress);
+	void startMeeting(const QString & ip_address);
 
 };
 

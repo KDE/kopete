@@ -224,12 +224,12 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 	emit messageAppended( msg, this );
 }
 
-void KopeteMessageManager::addContact( const KopeteContact *c, bool supress )
+void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 {
 	if ( d->mContactList.contains(c) )
 	{
 		kdDebug(14010) << k_funcinfo << "Contact already exists" <<endl;
-		emit contactAdded(c, supress);
+		emit contactAdded(c, suppress);
 	}
 	else
 	{
@@ -242,13 +242,13 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool supress )
 			disconnect (old, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
 			if(old->metaContact())
 				disconnect (old->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
-			emit contactAdded(c, supress);
+			emit contactAdded(c, suppress);
 			emit contactRemoved(old, QString::null);
 		}
 		else
 		{
 			d->mContactList.append(c);
-			emit contactAdded(c, supress);
+			emit contactAdded(c, suppress);
 		}
 		//c->setConversations( c->conversations() + 1 );
 		//connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactChanged()));

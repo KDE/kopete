@@ -97,7 +97,7 @@ public:
 	 */
 	const QColor color() const;
 	/*
-	 * Set the color this account will use to differenciate from the other accounts
+	 * Set the color this account will use to differentiate from the other accounts
 	 */
 	void setColor( const QColor &color);
 

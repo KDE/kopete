@@ -45,7 +45,7 @@ QString NetMeetingInvitation::invitationHead()
 	QTimer::singleShot( 10*60000, this, SLOT( slotTimeout() ) ); //send TIMEOUT in 10 minute if the invitation has not been accepted/refused
 	return QString( MSNInvitation::invitationHead()+
 				"Session-Protocol: SM1\r\n"
-  				"Session-ID: {6672F94C-45BF-11D7-B4AE-00010A1008DF}\r\n" //FIXME i dont know what is the session id
+  				"Session-ID: {6672F94C-45BF-11D7-B4AE-00010A1008DF}\r\n" //FIXME i don't know what is the session id
 				"\r\n").utf8();
 }
 
@@ -116,17 +116,17 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 			}
 			rx=QRegExp("IP-Address: ([0-9\\:\\.]*)");
 			rx.search(msg);
-			QString ip_adress = rx.cap(1);
-	    	startMeeting(ip_adress);
-			kdDebug() << k_funcinfo << ip_adress << endl ;
+			QString ip_address = rx.cap(1);
+	    	startMeeting(ip_address);
+			kdDebug() << k_funcinfo << ip_address << endl;
 		}
 		else
 		{
 			rx=QRegExp("IP-Address: ([0-9\\:\\.]*)");
 			rx.search(msg);
-			QString ip_adress = rx.cap(1);
+			QString ip_address = rx.cap(1);
 
-			startMeeting(ip_adress);
+			startMeeting(ip_address);
 		}
 	}
 	else //CANCEL
@@ -151,7 +151,7 @@ void NetMeetingInvitation::slotTimeout()
 }
 
 
-void NetMeetingInvitation::startMeeting(const QString & ip_adress)
+void NetMeetingInvitation::startMeeting(const QString & ip_address)
 {
 	kdDebug() << k_funcinfo << endl ;
 
@@ -160,7 +160,7 @@ void NetMeetingInvitation::startMeeting(const QString & ip_adress)
   QProcess process;
   process.addArgument("gnomemeeting");
   process.addArgument("-c");
-  process.addArgument(  "callto://" + ip_adress );
+  process.addArgument(  "callto://" + ip_address );
   process.start();
 }
 

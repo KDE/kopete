@@ -218,7 +218,7 @@ void OscarSocket::slotRead(void)
 
 	if (fl.error) //something went wrong, this shouldn't happen
 	{
-		kdDebug(14150) << k_funcinfo << "FLAP() read error occured!" << endl;
+		kdDebug(14150) << k_funcinfo << "FLAP() read error occurred!" << endl;
 		//dump packet, try to recover
 		char *tmp = new char[bytesAvailable()];
 		readBlock(tmp, bytesAvailable());
@@ -286,7 +286,7 @@ void OscarSocket::slotRead(void)
 #endif
 							emit protocolError(
 							i18n(
-								"An unknown error occured. " \
+								"An unknown error occurred. " \
 								"Please report this to the Kopete development " \
 								"team by visiting http://kopete.kde.org. The error " \
 								"message was: \"Generic service error: SNAC(1,1)\""), 0);
@@ -715,7 +715,7 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 
 void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "Got the key" << endl;;
+	kdDebug(14150) << k_funcinfo << "Got the key" << endl;
 
 	WORD keylen;
 	keylen = inbuf.getWord();
@@ -916,7 +916,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	TLV *cook = findTLV(lst,0x0006); //authorization cookie
 	TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
 	TLV *regstatus = findTLV(lst,0x0013); //whether the e-mail address is available to others
-	TLV *err = findTLV(lst,0x0008); //whether an error occured
+	TLV *err = findTLV(lst,0x0008); //whether an error occurred
 
 	if (mCookie)
 		delete[] mCookie;
@@ -1405,7 +1405,7 @@ void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 	if (id < 4)
 	{
 		emit protocolError(i18n(
-			"An unknown error occured. Your connection may be lost. " \
+			"An unknown error occurred. Your connection may be lost. " \
 			"The error was: \"AOL MOTD Error: your connection may be lost. ID: %1\"").arg(id), 0);
 	}
 }
@@ -2311,7 +2311,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	{
 		tl.clear();
 		emit protocolError(
-			i18n("An unknown error occured. Please check " \
+			i18n("An unknown error occurred. Please check " \
 				"your internet connection. The error message " \
 				"was: \"Not enough information found in server redirect\""), 0);
 		return;
@@ -3145,7 +3145,7 @@ void OscarSocket::sendMsgParams(void)
 	outbuf.addWord(0x1f40);
 	//max sender warning level
 	outbuf.addWord(0x03e7);
-	//max reciever warning level
+	//max receiver warning level
 	outbuf.addWord(0x03e7);
 	//min message interval limit
 	outbuf.addDWord(0x00000000);
@@ -3249,7 +3249,7 @@ FLAP OscarSocket::getFLAP()
 		if((theword = getch()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo <<
-				"Error reading sequence number: nothing to be read" << endl;;
+				"Error reading sequence number: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else if((theword2 = getch()) == -1)

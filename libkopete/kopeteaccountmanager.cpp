@@ -103,7 +103,7 @@ void KopeteAccountManager::setAvailableAll()
 
 QColor KopeteAccountManager::guessColor( KopeteProtocol* protocol )
 {
-	//TODO: use a different algoritm. It should realy check if the color is realy not used
+	//TODO: use a different algoritm. It should really check if the color is really not used
 
 	/* counter for accounts of this protocol */
 	int thisProtocolCounter = 0;
@@ -153,7 +153,7 @@ void KopeteAccountManager::registerAccount(KopeteAccount *i)
 	if ( !i )
 		return;
 
-	/* No, we dont allow accounts without id */
+	/* No, we don't allow accounts without id */
 	if ( !(i->accountId()).isNull() )
 	{
 		/* Lets check if account exists already in protocol namespace */

@@ -341,7 +341,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		else
 			parentContact->addToGroup( parentGroup );
 
-		KopeteContactList::contactList()->addMetaContact( parentContact );;
+		KopeteContactList::contactList()->addMetaContact( parentContact );
 	}
 
 	if( c )

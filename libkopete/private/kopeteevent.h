@@ -28,7 +28,7 @@
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * KopeteEvent is used when a new messages arrives, it is
- * catched by the UI. It contains just informations about
+ * caught by the UI. It contains just informations about
  * the message, and a signal when it is terminated (i.e.
  * the message is readed)
  **/

@@ -111,7 +111,7 @@ void AccountConfig::slotItemSelected()
 		m_view->mButtonDown->setEnabled( itemSelected );
 	}
 
-	//we shouldn't realy save data before apply :-s
+	//we shouldn't really save data before apply :-s
 	if(previousAccount)
 	{
 		previousAccount->setColor(

@@ -602,7 +602,7 @@ const QDomElement KopeteMetaContact::toXML()
 	if ( !d->groups.isEmpty() )
 	{
 		QDomElement groups = metaContact.createElement( QString::fromLatin1("groups") );
-		KopeteGroup *g;;
+		KopeteGroup *g;
 		for ( g = d->groups.first(); g; g = d->groups.next() )
 		{
 			QDomElement group = metaContact.createElement( QString::fromLatin1("group") );

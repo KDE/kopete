@@ -265,7 +265,7 @@ void MSNContact::syncGroups( )
 
 	if(m_moving)
 	{
-		//We need to make sure that syncGroups is not called twice succesively
+		//We need to make sure that syncGroups is not called twice successively
 		// because m_serverGroups will be only updated with the reply of the server
 		// and then, the same command can be sent twice.
 		// FIXME: if this method is called a seconds times, that mean change can be

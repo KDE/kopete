@@ -331,7 +331,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 		{
 			rx=QRegExp("IP-Address: ([0-9\\.]*)");
 			rx.search(msg);
-			QString ip_adress = rx.cap(1);
+			QString ip_address = rx.cap(1);
 			rx=QRegExp("AuthCookie: ([0-9]*)");
 			rx.search(msg);
 			QString authcook = rx.cap(1);
@@ -340,7 +340,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 			QString port = rx.cap(1);
 
 			setAuthCookie(authcook);
-			connect(ip_adress, port.toUInt());
+			connect(ip_address, port.toUInt());
 		}
 		else
 		{

@@ -72,7 +72,7 @@ public:
 
 	/**
 	 * Function used in determining if the contact is able to
-	 * recieve messages even if offline, etc.  This function must
+	 * receive messages even if offline, etc.  This function must
 	 * be defined by child classes
 	 *
 	 * @return bool indicating whether or not the contact is reachable (can send a message to it)
@@ -297,7 +297,7 @@ public slots:
 	 * a file open dialog)
 	 *
 	 * @param sourceURL The actual KURL of the file you are sending
-	 * @param fileName (Optional) An alternate name for the file - what the reciever will see
+	 * @param fileName (Optional) An alternate name for the file - what the receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
 	 *                file size (such as over  asocket
 	 */
@@ -306,7 +306,7 @@ public slots:
 	/**
 	 * Protocols with server-side contact lists can implement this to
 	 * sync the server groups with the metaContact groups.
-	 * This method is called everytime the metacontact has been moved
+	 * This method is called every time the metacontact has been moved
 	 *
 	 * default implementation does nothing
 	 */

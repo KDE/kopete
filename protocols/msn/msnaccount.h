@@ -123,7 +123,7 @@ private slots:
 	 */
 	void slotGroupRenamed( const QString& groupName, uint group );
 	/**
-	 * A new group was created on the server (or recieved durring an LSG command)
+	 * A new group was created on the server (or received durring an LSG command)
 	 */
 	void slotGroupAdded( const QString& groupName, uint groupNumber );
 	/**

@@ -189,9 +189,9 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionSendMessage , SLOT(setEnabled(bool)));
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionStartChat   , SLOT(setEnabled(bool)));
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionMove        , SLOT(setEnabled(bool))); //TODO: make avaliable for several contacts
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionCopy        , SLOT(setEnabled(bool))); //TODO: make avaliable for several contacts
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)),actionRemoveFromGroup,SLOT(setEnabled(bool))); //TODO: make avaliable for several contacts, and unavaliable when the contact is only in one group
+	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionMove        , SLOT(setEnabled(bool))); //TODO: make available for several contacts
+	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionCopy        , SLOT(setEnabled(bool))); //TODO: make available for several contacts
+	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)),actionRemoveFromGroup,SLOT(setEnabled(bool))); //TODO: make available for several contacts, and unavailable when the contact is only in one group
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionAddContact  , SLOT(setEnabled(bool)));
 
 
@@ -1216,7 +1216,7 @@ void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
 //tooltips does not works for QT >= 3.1.   FIXME: but what is the problem???????
 // If i remove this code, AND call setTooltipColumn(0) in the constructor, default toolTip works (i.e:
 //  just the item's text, if it is turncated).
-// I tried to reimpement KListView::toolTip , without succes. When looking at the KListView's code, I
+// I tried to reimpement KListView::toolTip , without success. When looking at the KListView's code, I
 // see that KListView::tooltip() , KListView::showTooltip, class KListView::Tooltip dos not seems to be
 // even  KListView::setTooltipColumn() seems useless.. but then, WHT even default Tooltips DOES NOT WORK
 // if i don't call setTooltipColumn(0) in KopeteContactListView's constructor  (which is set to 0 by default)??
@@ -1239,11 +1239,11 @@ void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
 	QString tip;
 
 	// Hide any tooltips currently shown
-	// If we dont do this first, the tooltip is continually shown (and updated)
+	// If we don't do this first, the tooltip is continually shown (and updated)
 	// when moving from one contact to the next!
 	QToolTip::hide();
 
-	// First, delete the last tooltip, since we dont need it anymore
+	// First, delete the last tooltip, since we don't need it anymore
 	if(!m_onItem.isNull())
 	{
 /*		kdDebug(14000) << "KopeteContactListView::contentsMouseMoveEvent: "
@@ -1253,7 +1253,7 @@ void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
 		QToolTip::remove( this, m_onItem );
 	}
 
-	//a little sanity check, there shouldnt already be a tip here, but if there is, don't add a new one
+	//a little sanity check, there shouldn't already be a tip here, but if there is, don't add a new one
 	if(QToolTip::textFor( this, e->pos() ).isNull() )
 	{
 		KopeteMetaContactLVI *metaLVI =

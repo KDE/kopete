@@ -148,7 +148,7 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 		{
 			raw.resize(length);
 			raw = unquote(raw);
-			kdDebug(14121) << "<< " << raw; //endl allready included
+			kdDebug(14121) << "<< " << raw; //endl already included
 
 			QTextCodec *_codec = codec?codec:QTextCodec::codecForContent(raw.data(), raw.length());
 

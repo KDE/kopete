@@ -38,7 +38,7 @@ public:
 	MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user, KopeteContactPtrList others, const char *name = 0 );
 	~MSNMessageManager();
 
-	void createChat( const QString &handle, const QString &adress, const QString &auth, const QString &ID = QString::null );
+	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString::null );
 
 	MSNSwitchBoardSocket *service() { return m_chatService; };
 

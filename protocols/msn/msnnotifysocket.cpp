@@ -362,7 +362,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		}
 		else //we have already the contactlist
 		{
-			//recieve even the grouplist, since it is not correctly saved
+			//receive even the grouplist, since it is not correctly saved
 			sendCommand( "LSG" );
 		}
 
@@ -376,7 +376,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		{
 			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
 		}
-//		emit recievedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
+//		emit receivedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
 	}
 	else if( cmd == "QRY" )
 	{

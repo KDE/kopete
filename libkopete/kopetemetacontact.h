@@ -130,7 +130,7 @@ public:
 
 	/**
 	 * Get/set the tracking of contact names
-	 * The MetaContact will adjust its displayName() everytime the contact
+	 * The MetaContact will adjust its displayName() every time the contact
 	 * inside changes its name.
 	 * This should only work for MCs with exactly ONE contact inside in order
 	 * to not confuse users (think about 4 subcontacts and what happens if one
@@ -274,7 +274,7 @@ public slots:
 	 * with identical params of the highest ranked contact capable of sending files (if any)
 	 *
 	 * @param sourceURL The actual KURL of the file you are sending
-	 * @param altFileName (Optional) An alternate name for the file - what the reciever will see
+	 * @param altFileName (Optional) An alternate name for the file - what the receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
 	 *                file size (such as over a socket)
 	 *

@@ -60,7 +60,7 @@ class IRCContact : public KopeteContact
 		/**
 		 * This function attempts to find the nickname specified within the current chat
 		 * session. Returns a pointer to that IRCUserContact, or 0L if the user does not
-		 * exist in this session. More usefull for channels. Calling IRCChannelContact::locateUser()
+		 * exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
 		 * for example tells you if a user is in a certain channel.
 		 */
 		KopeteContact *locateUser( const QString &nickName );

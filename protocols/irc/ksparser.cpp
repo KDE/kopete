@@ -85,7 +85,7 @@ QString KSParser::parse( const QString &message )
 				break;
 			case 7:
 				//System bell
-				KNotifyClient::beep( QString::fromLatin1("IRC beep event recieved in a message") );
+				KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
 				break;
 
 			case 15:

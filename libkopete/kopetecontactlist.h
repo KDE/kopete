@@ -300,7 +300,7 @@ private:
 	void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
 
 	/**
-	 * flag to don't save the contactlist when it is not completly loaded
+	 * flag to don't save the contactlist when it is not completely loaded
 	 */
 	bool m_loaded;
 

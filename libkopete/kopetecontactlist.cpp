@@ -848,7 +848,7 @@ KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGrou
 	if( type == KopeteGroup::Temporary )
 		return KopeteGroup::temporary;
 
-	KopeteGroup *groupIterator;;
+	KopeteGroup *groupIterator;
 	for ( groupIterator = m_groupList.first(); groupIterator; groupIterator = m_groupList.next() )
 	{
 		if( groupIterator->type() == type && groupIterator->displayName() == displayName )

@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Use it to parse emoticons in a text.
-	 * You dont need to use this for chat windows,
+	 * You don't need to use this for chat windows,
 	 * There is a special class that abstract a chat view
 	 * and uses emoticons parser.
 	 * This function will use the selected emoticon theme.

@@ -41,7 +41,7 @@ static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
 // Sends login information, actually logs onto the server
 void OscarSocket::sendLoginAIM(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Sending AIM login info..." << endl;;
+	kdDebug(14150) << k_funcinfo <<  "Sending AIM login info..." << endl;
 	unsigned char digest[16];
 	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
 

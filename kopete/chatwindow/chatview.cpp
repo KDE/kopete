@@ -316,7 +316,7 @@ bool ChatView::closeView( bool force )
 
 		if( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
-			response = KMessageBox::warningContinueCancel(this, i18n("You have recieved a message from \"%1\" in the last "
+			response = KMessageBox::warningContinueCancel(this, i18n("You have received a message from \"%1\" in the last "
 				"second, are you sure you want to close this chat?").arg(unreadMessageFrom), i18n("Unread Message"),
 				i18n("Cl&ose Chat"), i18n("Do not ask me this again"));
 		}

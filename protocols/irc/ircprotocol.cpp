@@ -223,7 +223,7 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 			a->addContact( contactId, displayName, metaContact );
 		else
 			kdDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
-				" but we dont have it in the accounts list" << endl;
+				" but we don't have it in the accounts list" << endl;
 	}
 	else
 		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;

@@ -125,7 +125,7 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 	if( c->displayName() != publicName)
 		c->rename(publicName);
 
-	addContact(c , IRO); // dont show notificaions when we join wesalef
+	addContact(c , IRO); // don't show notificaions when we join wesalef
 	if(!m_messagesQueue.empty())
 		sendMessageQueue();
 }
@@ -199,7 +199,7 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 	appendMessage(msg);
 	if(account()->isAway() && !static_cast<MSNAccount*>(account())->awayReason().isEmpty())
 	{
-		//Don't translate "Auto-Message:" This string is catched by MSN Plus! , (and also by kopete now)
+		//Don't translate "Auto-Message:" This string is caught by MSN Plus! , (and also by kopete now)
 		KopeteMessage msg2(user(), members() , "AutoMessage: " + static_cast<MSNAccount*>(account())->awayReason() , KopeteMessage::Outbound );
 		msg2.setFg(QColor("SlateGray3"));
 		QFont f;

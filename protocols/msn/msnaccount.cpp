@@ -572,7 +572,7 @@ void MSNAccount::slotGroupRemoved( uint group )
 {
 	if( m_groupList.contains( group ) )
 	{
-		// FIXME: we should realy emty data in the group... but in most of cases, the group is already del
+		// FIXME: we should really emty data in the group... but in most of cases, the group is already del
 		// FIXME: Shouldn't we fix the memory management instead then??? - Martijn
 		//m_groupList[ group ]->setPluginData( this, QStringList() );
 		m_groupList.remove( group );
@@ -648,8 +648,8 @@ void MSNAccount::slotNewContactList()
 		m_blockList.clear();
 		m_groupList.clear();
 
-		//clear all date information which will be recieved.
-		//if the information is not anymore on the server, it will not be recieved
+		//clear all date information which will be received.
+		//if the information is not anymore on the server, it will not be received
 		QDictIterator<KopeteContact> it( contacts() );
 		for ( ; it.current() ; ++it )
 		{
@@ -677,7 +677,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		{
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
-			// FIXME: everytime we move a metaContact, syncGroups is called.here, the contact can change in the server, when
+			// FIXME: every time we move a metaContact, syncGroups is called.here, the contact can change in the server, when
 			//        the new serverGroups are not yet set in the metacontact (Olivier)
 			MSNContact *c = static_cast<MSNContact*>( metaContact->findContact( protocol()->pluginId(), accountId(), handle ) );
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
@@ -1011,7 +1011,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 				m_notifySocket->addContact( contactId, displayName, 0, MSNProtocol::FL );
 			}
 
-			//TODO: Find out if this contact was reallt added or not!
+			//TODO: Find out if this contact was really added or not!
 			return true;
 		}
 		else

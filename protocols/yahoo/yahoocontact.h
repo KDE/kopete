@@ -57,7 +57,7 @@ public slots:
 	virtual void slotSendFile();
 
 	/**
-	 * Must be called after the contact list has been recieved
+	 * Must be called after the contact list has been received
 	 * or it doesn't work well!
 	 */
 	void syncToServer();

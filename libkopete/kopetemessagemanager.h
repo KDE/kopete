@@ -168,14 +168,14 @@ signals:
 	 */
  	void messageSent( KopeteMessage& msg, KopeteMessageManager * = 0L );
 	/**
-	 * The last message has finaly sucessfully been sent
+	 * The last message has finaly successfully been sent
 	 */
 	void messageSuccess();
 
 	/**
 	 * @brief a new contact is now in the chat
 	 */
-	void contactAdded(const KopeteContact *, bool supress);
+	void contactAdded(const KopeteContact *, bool suppress);
 	/**
 	 * @brief a contact is no longer in this chat
 	 */
@@ -228,11 +228,11 @@ public slots:
 	/**
 	 * Add a contact to the session
 	 * @param c is the contact
-	 * @param supress mean the there will be no automatic notifications in the chatwindow.
-	 *  (note that i don't like the param supress at all. it is used in irc to show a different notification (with an info text)
+	 * @param suppress mean the there will be no automatic notifications in the chatwindow.
+	 *  (note that i don't like the param suppress at all. it is used in irc to show a different notification (with an info text)
 	 *   a QStringinfo would be more interesting, but it is also used to don't show the notification when entering in a channel)
 	 */
-	void addContact( const KopeteContact *c, bool supress = false );
+	void addContact( const KopeteContact *c, bool suppress = false );
 
 	/**
 	 * Remove a contact from the session

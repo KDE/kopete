@@ -163,7 +163,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 
 		/*//This is WRONG! the displayName is never updated on the switchboeardsocket
 		  //so we can't trust it.
-		  //that's why the official client does not uptade alaws the nickname immediatly.
+		  //that's why the official client does not uptade alaws the nickname immediately.
 		if(m_account->contacts()[ m_msgHandle ])
 		{
 			QString displayName=data.section( ' ', 1, 1 );

@@ -263,13 +263,13 @@ public slots:
 	void addChatMessage( KopeteMessage &message );
 
 	/**
-	 * Called when a message is recieved from someone
-	 * @param message The message recieved
+	 * Called when a message is received from someone
+	 * @param message The message received
 	 */
 	virtual void appendMessage( KopeteMessage &message );
 
 	/**
-	 * Called when a typing event is recieved from a contact
+	 * Called when a typing event is received from a contact
 	 * Updates the typing map and outputs the typing message into the status area
 	 * @param contact The contact who is / isn't typing
 	 * @param typing If the contact is typing now
@@ -322,7 +322,7 @@ private slots:
 	 * Called when a contact is added to the KMM instance (A new person joins the chat).
 	 * Adds this contact to the typingMap and the contact list view
 	 * @param c The contact that joined the chat
-	 * @param supress mean that no notifications are showed
+	 * @param suppress mean that no notifications are showed
 	 */
 	void slotContactAdded( const KopeteContact *c, bool surpress );
 

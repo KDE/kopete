@@ -118,7 +118,7 @@ class KopeteViewManager : public QObject
 
 	signals:
 		/**
-		 * A new message is recieved, but not yet shown in the chatwindow
+		 * A new message is received, but not yet shown in the chatwindow
 	 	 */
 		void newMessageEvent(KopeteEvent *);
 };

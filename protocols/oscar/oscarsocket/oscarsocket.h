@@ -607,7 +607,7 @@ class OscarSocket : public OscarConnection
 	void OnConnectionClosed();
 	/** Called when the server aknowledges the connection */
 	void OnConnAckReceived();
-	/** called when a conn ack is recieved for the BOS connection */
+	/** called when a conn ack is received for the BOS connection */
 	void OnBosConnAckReceived();
 	/** Called when the server is ready for normal commands */
 	void OnServerReady();
@@ -646,7 +646,7 @@ class OscarSocket : public OscarConnection
 	void gotMyUserInfo(const UserInfo &);
 	/** A buddy list has been received */
 	void gotConfig(AIMBuddyList &);
-	/** emitted when we have recieved an ack from the server */
+	/** emitted when we have received an ack from the server */
 	void gotAck(QString, int);
 
 	/**
@@ -741,7 +741,7 @@ class OscarSocket : public OscarConnection
 		WORD flapSequenceNum;
 
 	signals:
-		/** Called when an SSI acknowledgement is recieved */
+		/** Called when an SSI acknowledgement is received */
 		void SSIAck();
 		/** emitted when BOS rights are received */
 //		void gotBOSRights(WORD,WORD);
@@ -749,7 +749,7 @@ class OscarSocket : public OscarConnection
 		void denyAdded(QString);
 		/** emitted when a block is removed on a buddy */
 		void denyRemoved(QString);
-		/** Tells when the connection ack has been recieved on channel 1 */
+		/** Tells when the connection ack has been received on channel 1 */
 		void connAckReceived();
 		/** emitted when a direct connection has been terminated */
 		void directIMConnectionClosed(QString name);
