@@ -117,7 +117,7 @@ void ChatMembersListWidget::ContactItem::reposition()
 		int theirWeight = session->contactOnlineStatus(item->m_contact).weight();
 
 		if( theirWeight < ourWeight ||
-			(theirWeight == ourWeight && item->text(0).lower().localeAwareCompare( text(0).lower() ) > 0 ) )
+			(theirWeight == ourWeight && item->text(0).localeAwareCompare( text(0) ) > 0 ) )
 		{
 			break;
 		}
