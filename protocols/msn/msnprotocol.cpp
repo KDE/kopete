@@ -32,7 +32,6 @@
 #include "msnmessagedialog.h"
 #include "msnpreferences.h"
 #include "msnprotocol.h"
-#include "msnuser.h"
 #include "newuserimpl.h"
 #include "statusbaricon.h"
 
@@ -317,7 +316,7 @@ void MSNProtocol::slotMessageDialogClosing(QString handle)
 	MSNMessageDialog *messageDialog = mChatWindows.first();
 	for ( ; messageDialog; messageDialog = mChatWindows.next() )
 	{
-		if ( messageDialog->user()->userID() == handle )
+		if ( messageDialog->contact()->msnId() == handle )
 		{
 			mChatWindows.remove(messageDialog);
 		}
@@ -989,7 +988,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	// Maybe we have a copy of us in another group
 	for( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
 	{
-		if ( messageDialog->user()->userID() == handle )
+		if ( messageDialog->contact()->msnId() == handle )
 			break;
 	}
 
@@ -1003,13 +1002,9 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	else
 	{
 		kdDebug() << "MSN Plugin: Incoming chat, no window, creating window for " << handle <<"\n";
-		QString nick = publicName( handle );
-
 		// FIXME: MSN message dialog needs status
 
-		// FIXME: We leak this object!
-		MSNUser *user = new MSNUser( handle, nick, MSNUser::Online );
-		messageDialog = new MSNMessageDialog( user, chatService, this );
+		messageDialog = new MSNMessageDialog( m_contacts[ handle ], chatService, this );
 //		connect( this, SIGNAL(userStateChanged(QString)), messageDialog, SLOT(slotUserStateChanged(QString)) );
 		connect( messageDialog, SIGNAL(closing(QString)), this, SLOT(slotMessageDialogClosing(QString)) );
 
