@@ -29,12 +29,15 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "kopeteaccount.h"
-#include "kopeteglobal.h"
-#include "kopetemessage.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetemetacontact.h"
+#include <kopeteaccount.h>
+#include <kopetecontactlist.h>
+#include <kopeteglobal.h>
+#include <kopetegroup.h>
+#include <kopetemessage.h>
+#include <kopetemessagemanagerfactory.h>
+#include <kopetemetacontact.h>
 
+#include "tasks/createcontactinstancetask.h"
 #include "tasks/deleteitemtask.h"
 #include "tasks/updatecontacttask.h"
 
@@ -408,27 +411,116 @@ void GroupWiseContact::syncGroups()
 		// if this is a temporary contact, don't bother
 		if ( metaContact()->isTemporary() )
 			return;
-			
-		// determine which groups we have joined
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " assuming we haven't JOINED any groups" << endl;
-		// get the difference between the current set of contact list instances and the metacontact's current group membership
-		// assume all MC groups are new wrt server side list
-			// initialise a duplicate newGroupMemberships MC group list initially containing all the MC's groups
-		// assume we haven't left any groups.
-		// cycle through each group in the contact's CLInstances
-			// if there is a corresponding MC group
-				// this group exists on the server and we have not left it, definitely don't add it
-				// remove that MC group from newGroupMemberships
-				// add it to unchangedMemberships 
-			// if it is not
-				// we have left this group
-				// create a contactlistitem and add to groupsLeft
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = CONTACT '" << property( Kopete::Global::Properties::self()->nickName() ).value().toString() << "' IS IN " << metaContact()->groups().count() << " MC GROUPS, AND HAS " << m_instances.count() << " CONTACT LIST INSTANCES." << endl;
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR NOOP GROUP MEMBERSHIPS" << endl;
+		// 1) Seek matches between CLIs and MCGs and remove from the lists without taking any action. match on objectid, parentid
+		// 2) Each remaining unmatched pair is a move, initiate and remove - need to take care to always use greatest unused sequence number - if we have to set the sequence number to the following sequence number within the folder, we may have a problem where after the first move, we have to wait for the state of the CLIs to be updated pending the completion of the first move - this would be difficult to cope with, because our current lists would be out of date, or we'd have to restart the sync - assuming the first move created a new matched CLI-MCG pair, we could do that with little cost.
+		// 3) Any remaining entries in MCG list are adds, carry out
+		// 4) Any remaining entries in CLI list are removes, carry out
+
+		// 1)
+		// make a list of all the groups the metacontact is in
+		QPtrList< KopeteGroup > groupList = metaContact()->groups();
+		// make a list of all the groups this contact is in, according to its CLInstances
+		CLInstanceList contactInstanceList = m_instances;
+		// seek corresponding pairs in both lists and remove
+		// ( for each group )
+		QPtrListIterator< KopeteGroup > grpIt( groupList );
+		while ( *grpIt )
+		{
+			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
+			candidateGrp = grpIt;
+			++grpIt;
 	
-		// determine which groups we have left
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " assuming we haven't LEFT any groups" << endl;
+			QValueList< ContactListInstance >::Iterator instIt = contactInstanceList.begin();
+			const QValueList< ContactListInstance >::Iterator instEnd = contactInstanceList.end();
+			// ( see if a contactlist instance matches the group)
+			while ( instIt != instEnd )
+			{
+				QValueList< ContactListInstance >::Iterator candidateInst = instIt;
+				++instIt;
+				
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - Looking for a match, MC grp '" << ( *candidateGrp )->displayName() << "', objectId is '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "', CLInstance id is '" << QString::number( ( *candidateInst ).parentId ) << "'" << endl;
+				
+				if ( ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ).toInt() 
+					== ( *candidateInst ).parentId )
+				{
+					// ( this pair matches, we can remove its members from both lists )
+					kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - match! removing both entries" << endl;
+					contactInstanceList.remove( candidateInst );
+					groupList.remove( *candidateGrp );
+					break;
+				}
+			}
+		}
+		
+		// 2) seek unmatched pairs and move
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR MOVES" << endl;
+		grpIt.toFirst();
+		// ( take the first pair and carry out a move )
+		while ( *grpIt && !contactInstanceList.isEmpty() )
+		{
+			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
+			candidateGrp = grpIt;
+			++grpIt;
+			
+			QValueList< ContactListInstance >::Iterator instIt = contactInstanceList.begin();
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - moving contact instance from group '" << (*instIt).parentId << "' to group '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "'" << endl;
+			groupList.remove( candidateGrp );
+			contactInstanceList.remove( instIt );
+		}
+		
+		// 3) look for adds
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR ADDS" << endl;
+		grpIt.toFirst();
+		// ( add each remaining MC group, because it's not on the server yet )
+		while ( *grpIt )
+		{
+			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
+			candidateGrp = grpIt;
+			++grpIt;
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - add a contact instance for group '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "'" << endl;
+
+			bool ok = false;
+			int parentId = ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ).toInt( &ok );
+			if ( ok )
+			{
+				CreateContactInstanceTask * ccit = new CreateContactInstanceTask( account()->client()->rootTask() );
+				ccit->contactFromUserId( m_dn, m_displayName, parentId );
+				// connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
+				// connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+				ccit->go( true );
+			}
+			else
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - not adding to group '" << ( *candidateGrp )->displayName() << "', it does not exist on the server - add a queuing function to CreateContactInstanceTask" << endl;
+			groupList.remove( candidateGrp );
+		}
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR REMOVES" << endl;
+		QValueList< ContactListInstance >::Iterator instIt = contactInstanceList.begin();
+		const QValueList< ContactListInstance >::Iterator instEnd = contactInstanceList.end();
+		// ( remove each remaining contactlist instance, because it doesn't exist locally any more )
+		while ( instIt != instEnd )
+		{
+			QValueList< ContactListInstance >::Iterator candidateInst = instIt;
+			++instIt;
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - remove contact instance '"<< ( *candidateInst ).objectId << "' in group '" << ( *candidateInst ).parentId << "'" << endl;
+
+			DeleteItemTask * dit = new DeleteItemTask( account()->client()->rootTask() );
+			dit->item( (*candidateInst).parentId, (*candidateInst).objectId );
+			// connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			dit->go( true );
+
+			contactInstanceList.remove( candidateInst );
+		}
+
+		// TODO: Don't forget to make sure the local CLInstance entries are updated, either here or by the results of the Tasks.
+
 		// start an UpdateItem
-/*		if ( metaContact()->displayName() != m_displayName )
-		{*/
+		if ( metaContact()->displayName() != property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
+		{
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " resetting the contact's display name to " << metaContact()->displayName() << endl;
 			// form a list of the contact's groups
 			QValueList< ContactListInstance >::Iterator it = m_instances.begin();
@@ -447,10 +539,8 @@ void GroupWiseContact::syncGroups()
 				uct->renameContact( metaContact()->displayName(), instancesToChange );
 				connect ( uct, SIGNAL( finished() ), SLOT( slotRenamedOnServer() ) );
 				uct->go( true );
-				
 			}
-//		setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
-// 		}
+ 		}
 	}
 }
 
