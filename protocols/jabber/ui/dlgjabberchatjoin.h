@@ -20,6 +20,7 @@
 #define DLGJABBERCHATJOIN_H
 
 #include <qwidget.h>
+#include "jabberaccount.h"
 #include "dlgchatjoin.h"
 
 /**
@@ -29,11 +30,17 @@
 class dlgJabberChatJoin:public dlgChatJoin
 {
 
-  Q_OBJECT public:
-	  dlgJabberChatJoin (QWidget * parent = 0, const char *name = 0);
+	Q_OBJECT
+
+public:
+	  dlgJabberChatJoin (JabberAccount *account, QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberChatJoin ();
 
-	private slots:void slotDialogDone ();
+private slots:
+	void slotDialogDone ();
+
+private:
+	JabberAccount *m_account;
 
 };
 

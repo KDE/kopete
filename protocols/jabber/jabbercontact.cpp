@@ -371,7 +371,7 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 	KopeteMessage::MessageType type;
 	KopeteContactPtrList contactList;
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberContact] Received Message Type:" << message.type () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
 	// determine message type
 	if (message.type () == "chat")

@@ -17,25 +17,32 @@
  ***************************************************************************/
 
 #include <qpushbutton.h>
+#include <qlineedit.h>
+#include "jabberaccount.h"
+#include "client.h"
 #include "dlgjabberchatjoin.h"
 
-dlgJabberChatJoin::dlgJabberChatJoin (QWidget * parent, const char *name):dlgChatJoin (parent, name)
+dlgJabberChatJoin::dlgJabberChatJoin (JabberAccount *account, QWidget * parent, const char *name)
+									: dlgChatJoin (parent, name)
 {
+
+	m_account = account;
+
 	connect (buttonOk, SIGNAL (clicked ()), this, SLOT (slotDialogDone ()));
+
 }
 
 void dlgJabberChatJoin::slotDialogDone ()
 {
 
-	/*if(!JabberProtocol::protocol()->isConnected())
-	   {
-	   JabberProtocol::protocol()->errorConnectFirst();
-	   return;
-	   }
+	if(!m_account->isConnected())
+	{
+		m_account->errorConnectFirst();
+		return;
+	}
 
-	   // send the join request
-	   JabberProtocol::protocol()->jabberClient->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
-	 */
+	// send the join request
+	m_account->client()->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
 
 }
 

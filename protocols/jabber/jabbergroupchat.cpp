@@ -23,7 +23,7 @@
 JabberGroupChat::JabberGroupChat (Jabber::Jid jid, QStringList groups, JabberAccount * p, KopeteMetaContact * mc, QString identity):JabberContact (jid.userHost (), jid.userHost (), groups, p, mc,
 			   identity)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] Joined room " << jid.user () << " at " << jid.host () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Joined room " << jid.user () << " at " << jid.host () << endl;
 
 	room = jid;
 
@@ -35,10 +35,10 @@ JabberGroupChat::~JabberGroupChat ()
 
 void JabberGroupChat::slotMessageManagerDeleted ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] slotMessageManagerDeleted(), leaving room " << room.user () << " at server " << room.host () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Leaving room " << room.user () << " at server " << room.host () << endl;
 
 	// the message manager has been deleted, leave the chat room
-	dynamic_cast<JabberAccount *>(account())->client()->groupChatLeave (room.host (), room.user ());
+	static_cast<JabberAccount *>(account())->client()->groupChatLeave (room.host (), room.user ());
 
 	// pass the slot on to the base class
 	JabberContact::slotMessageManagerDeleted ();
@@ -47,6 +47,6 @@ void JabberGroupChat::slotMessageManagerDeleted ()
 
 void JabberGroupChat::updatePresence (const Jabber::Jid & jid, const Jabber::Status & status)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] updatePresence() called for JID " << jid.full () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "JID " << jid.full () << endl;
 
 }

@@ -996,7 +996,7 @@ void JabberAccount::slotJoinNewChat ()
 		return;
 	}
 
-	dlgJabberChatJoin *dlg = new dlgJabberChatJoin (qApp->mainWidget ());
+	dlgJabberChatJoin *dlg = new dlgJabberChatJoin (this, qApp->mainWidget ());
 
 	dlg->show ();
 	dlg->raise ();
