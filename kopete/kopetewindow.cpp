@@ -390,8 +390,8 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 		return;
 
 	connect( proto,
-		SIGNAL( statusIconChanged( KopeteOnlineStatus& ) ),
-		SLOT( slotProtocolStatusIconChanged( KopeteOnlineStatus& ) ) );
+		SIGNAL( statusIconChanged( const KopeteOnlineStatus& ) ),
+		SLOT( slotProtocolStatusIconChanged( const KopeteOnlineStatus& ) ) );
 	connect( proto, SIGNAL( destroyed( QObject * ) ),
 		SLOT( slotProtocolDestroyed( QObject * ) ) );
 
@@ -423,7 +423,7 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 	m_statusBarIcons.remove( o );
 }
 
-void KopeteWindow::slotProtocolStatusIconChanged( KopeteOnlineStatus& status )
+void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
 /*KopeteProtocol * p,	const QString &icon )*/
 {
 //	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << icon << endl;

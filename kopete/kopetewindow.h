@@ -86,7 +86,7 @@ private slots:
 	 */
 	//void slotProtocolStatusIconChanged( KopeteProtocol *proto,
 	//	const QString &iconName );
-	void slotProtocolStatusIconChanged( KopeteOnlineStatus& status );
+	void slotProtocolStatusIconChanged( const KopeteOnlineStatus& status );
 	/**
 	 * Show a context icon for a protocol
 	 */
