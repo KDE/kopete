@@ -9,4 +9,9 @@ WhatsThis=A component capable list view widget.
 IncludeFile=kopete/ui/kopetelistview.h
 Group=Views (Kopete)
 
-
+[Kopete::UI::ListView::SearchLine]
+ToolTip=List View Search Line (Kopete)
+WhatsThis=Search line able to use Kopete custom list View.
+IncludeFile=kopete/ui/kopetelistviewsearchline.h
+ConstructorArgs=(parent, 0, name)
+Group=Input (Kopete)
