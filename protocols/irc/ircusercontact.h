@@ -40,6 +40,7 @@ class IRCUserContact : public IRCContact
 		// KopeteContact stuff
 		virtual QString statusIcon() const;
 		virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
+		virtual const QString caption() const;
 
 	private slots:
 		void slotWhois();

@@ -54,4 +54,9 @@ void IRCUserContact::slotWhois()
 	mEngine->whoisUser( mNickName );
 }
 
+const QString IRCUserContact::caption() const
+{
+	return i18n("Dialog with %1 @ %2").arg(mNickName).arg(mEngine->host());
+}
+
 #include "ircusercontact.moc"

@@ -46,7 +46,7 @@ class IRCContact : public KopeteContact
 		const QString &nickName() { return mNickName; }
 
 		virtual KopeteMessageManager* manager( bool canCreate = false );
-		virtual const QString &caption() const;
+		virtual const QString caption() const;
 
 	signals:
 		void endSession();
@@ -62,6 +62,8 @@ class IRCContact : public KopeteContact
 		void slotNewWhoIsIdle(const QString &nickname, unsigned long seconds);
 		void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
 		void slotWhoIsComplete(const QString &nickname);
+		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
+
 	protected:
 		QPtrList<KopeteContact> mContact;
 		QPtrList<KopeteContact> mMyself;

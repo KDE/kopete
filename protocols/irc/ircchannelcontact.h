@@ -40,6 +40,7 @@ class IRCChannelContact : public IRCContact
 		virtual bool isReachable();
 		virtual KActionCollection *customContextMenuActions();
 		virtual QString statusIcon() const;
+		virtual const QString caption() const;
 		// FINISH
 
 	private slots:

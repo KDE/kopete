@@ -54,7 +54,7 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
 
 	connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
-	
+
 	// TODO: make this configurable: (join on load)
 	if (mEngine->state() == QSocket::Idle)
 		identity->engine()->connectToServer(identity->mySelf()->nickName());
@@ -168,6 +168,11 @@ QString IRCChannelContact::statusIcon() const
 	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
 		return "irc_protocol_small";
 	return "irc_protocol_offline";
+}
+
+const QString IRCChannelContact::caption() const
+{
+	return QString::fromLatin1("%1 @ %2 / %3").arg(mEngine->nickName()).arg(mEngine->host()).arg(mNickName);
 }
 
 #include "ircchannelcontact.moc"

@@ -63,6 +63,7 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingWhoIsIdle(const QString &, unsigned long )), this, SLOT(slotNewWhoIsIdle(const QString &, unsigned long )));
 	QObject::connect(mEngine, SIGNAL(incomingWhoIsChannels(const QString &, const QString &)), this, SLOT(slotNewWhoIsChannels(const QString &, const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingEndOfWhois(const QString &)), this, SLOT( slotWhoIsComplete(const QString &)));
+	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
 }
 
 KopeteMessageManager* IRCContact::manager(bool)
@@ -220,6 +221,17 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 	}
 }
 
+void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &newnickname)
+{
+	IRCContact *c = static_cast<IRCContact*>( locateUser( oldnickname) );
+	if( c )
+	{
+		c->setNickName( newnickname );
+		//If we are tracking name changes...
+		c->setDisplayName( newnickname );
+	}
+}
+
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	if( onlineStatus() != KopeteContact::Online )
@@ -235,11 +247,6 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	manager()->messageSucceeded();
 }
 
-const QString &IRCContact::caption() const
-{
-	return mNickName;
-}
-
 KopeteContact *IRCContact::locateUser( const QString &nick )
 {
 	kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
@@ -252,6 +259,11 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 	}
 
 	return 0L;
+}
+
+const QString IRCContact::caption() const
+{
+	return mNickName;
 }
 
 #include "irccontact.moc"
