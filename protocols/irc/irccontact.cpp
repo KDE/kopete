@@ -275,20 +275,22 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	QString htmlString = message.escapedBody();
 	QRegExp findTags( QString::fromLatin1("<span style=\"color:(#\\w+)\">.*</span>") );
-	if( findTags.search( htmlString ) > -1 )
+	findTags.setMinimal( true );
+	int pos = 0;
+	while ( pos >= 0 )
 	{
-		QStringList list = findTags.capturedTexts();
-		for( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+		pos = findTags.search( htmlString );
+		if ( pos > -1 )
 		{
-			QString colorHTML = *it;
+			QString colorHTML = findTags.cap( 1 );
+			QRegExp replaceTags( QString::fromLatin1("<span style=\"color:%1\">(.*)</span>").arg( colorHTML ) );
+			replaceTags.setMinimal( true );
+
 			int ircColor = mAccount->protocol()->parser()->colorForHTML( colorHTML );
 			if( ircColor > -1 )
-				htmlString.replace( QRegExp( QString::fromLatin1("<span style=\"color:%1\">(.*)</span>").arg( colorHTML ) ),
-					 QString::fromLatin1("%1%2\\1%3").arg( QChar( 0x03 ) ).arg( QString::number( ircColor ) ).arg( QChar( 0x03 ) ) );
+				htmlString.replace( replaceTags, QString::fromLatin1("%1%2\\1%3").arg( QChar( 0x03 ) ).arg( QString::number( ircColor ) ).arg( QChar( 0x03 ) ) );
 			else
-				htmlString.replace( QRegExp( QString::fromLatin1("<span style=\"color:%1\">(.*)</span>").arg( colorHTML ) ), QString::fromLatin1("\\1") );
-
-			kdDebug() << htmlString << endl;
+				htmlString.replace( replaceTags, QString::fromLatin1("\\1") );
 		}
 	}
 
