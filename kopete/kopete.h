@@ -42,12 +42,10 @@
 #include "pluginmodule.h"
 #include "pluginloader.h"
 
-//#include "appearanceconfig.h"
-
 class LibraryLoader;
 class KopeteLibraryInfo;
 class KopeteMessageManagerFactory;
-
+class AppearanceConfig;
 
 /**
 * Kopete is the main class.

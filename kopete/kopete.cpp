@@ -30,6 +30,7 @@
 #include <kstandarddirs.h>
 
 #include "preferencesdialog.h"
+#include "appearanceconfig.h"
 #include "kopetewindow.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteemoticons.h"
