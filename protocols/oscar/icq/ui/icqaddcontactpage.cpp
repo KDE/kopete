@@ -45,7 +45,7 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	addUI = new icqAddUI(this);
-	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
+	//connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
 }
 
 ICQAddContactPage::~ICQAddContactPage()
