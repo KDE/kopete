@@ -2967,13 +2967,60 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 		kdDebug(14150) << k_funcinfo <<
 			": Modifying buddy's group number in the SSI Data" << endl;
 
+		// Ok, this is a strange sequence - Penna
+		Buffer editStart,
+		       delBuddy,
+		       addBuddy,
+		       changeGroup,
+		       editEnd;
+
+		// Send CLI_SSI_EDIT_BEGIN
+		editStart.addSnac(0x0013,0x0011,0x0000,0x00000000);
+		sendBuf(editStart,0x02);
+
+		// Send CLI_SSIxDELETE with the BuddyID and the GroupID, but null screenname
+		delBuddy.addSnac(0x0013,0x000a,0x0000,0x00000000);
+		delBuddy.addBSTR("");
+		delBuddy.addWord(buddyItem->gid);
+		delBuddy.addWord(buddyItem->bid);
+		delBuddy.addWord(buddyItem->type);
+		delBuddy.addWord(0); // no TVL
+		sendBuf(delBuddy,0x02);
+
 		// Change the buddy's group number
 		buddyItem->gid = groupItem->gid;
 
-		kdDebug(14150) << k_funcinfo << ": Sending SSI Data to server" << endl;
-		// Make the call to sendSSIAddModDel requesting a "modify"
-		// SNAC (0x0009) with the buddy with the modified group number
-		sendSSIAddModDel(buddyItem, 0x0009);
+		// Send CLI_SSIxADD with the new buddy group
+		addBuddy.addSnac(0x0013,0x0008,0x0000,0x00000000);
+		addBuddy.addBSTR(buddyItem->name.latin1());
+		addBuddy.addWord(buddyItem->gid);
+		addBuddy.addWord(buddyItem->bid);
+		addBuddy.addWord(buddyItem->type);
+		addBuddy.addWord(buddyItem->tlvlength); // LEN
+		if (buddyItem->tlvlength > 0)
+		{
+			kdDebug(14150) << k_funcinfo << "Adding TLVs with length=" <<
+				buddyItem->tlvlength << endl;
+			addBuddy.addString(buddyItem->tlvlist,buddyItem->tlvlength);
+		}
+		sendBuf(addBuddy,0x02);
+
+		// Send CLI_SSIxUPDATE for the group
+		changeGroup.addSnac(0x0013,0x0009,0x0000,0x00000000);
+		changeGroup.addBSTR(groupItem->name.latin1());
+		changeGroup.addWord(groupItem->gid);
+		changeGroup.addWord(groupItem->bid);
+		changeGroup.addWord(groupItem->type);
+		changeGroup.addWord(6);
+		// TLV 0xc8 with the buddy ID
+		changeGroup.addWord(0xc8);
+		changeGroup.addWord(2);
+		changeGroup.addWord(buddyItem->bid);
+		sendBuf(changeGroup,0x02);
+
+		// Send CLI_SSI_EDIT_END
+		editEnd.addSnac(0x0013,0x0012,0x0000,0x00000000);
+		sendBuf(editEnd,0x02);
 	}
 	else
 	{
