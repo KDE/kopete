@@ -958,16 +958,7 @@ void KopeteMetaContact::slotWriteAddressBook()
 	//kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC" << endl;
 	KopeteMetaContactPrivate::s_addrBookWritePending = false;
 }
-#include "kopetemetacontact.moc"
 
-// vim: set noet ts=4 sts=4 sw=4:
-
-
-
-/**
- * Check for any new addresses added to this contact's KABC entry 
- * and prompt if they should be added in Kopete too.
- */
 bool KopeteMetaContact::syncWithKABC()
 {
 	kdDebug(14010) << k_funcinfo << endl;
@@ -985,13 +976,14 @@ bool KopeteMetaContact::syncWithKABC()
 		{
 			QString app, name, value;
 			splitField( *it, app, name, value );
+			kdDebug( 14010 ) << "app=" << app << " name=" << name << " value=" << value << endl;
 	
 			if ( app.startsWith( QString::fromLatin1( "messaging/" ) ) )
 			{
 				if ( name == QString::fromLatin1( "All" ) )
 				{
 					kdDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contactlist " << endl;
-					// Get the protocol namefrom the custom field
+					// Get the protocol name from the custom field
 					// by chopping the 'messaging/' prefix from the custom field app name
 					QString protocolName = app.right( app.length() - 10 );
 					// munge Jabber hack
@@ -1008,25 +1000,6 @@ bool KopeteMetaContact::syncWithKABC()
 						continue;
 					}
 					
-					// Check the accounts for this protocol are all connected
-					// Most protocols do not allow you to add contacts while offline
-					// Would be better to have a virtual bool KopeteAccount::readyToAddContact()
-					bool allAccountsConnected = true;
-					QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( proto );
-					QDictIterator<KopeteAccount> acs(accounts);
-					for ( ; acs.current(); ++acs )
-						if ( !acs.current()->isConnected() )
-						{	allAccountsConnected = false;
-							break;
-						}
-					if ( !allAccountsConnected )
-					{
-						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-							i18n( "<qt>One or more of your accounts using %1 are offline.  Most systems have to be connected to add contacts.  Please connect these accounts and try again.</qt>" ).arg( protocolName ),
-							i18n( "Not Connected" )  );
-						continue;
-					}
-
 					// See if we need to add each contact in this protocol
 					QStringList addresses = QStringList::split( QChar( 0xE000 ), value );
 					QStringList::iterator end = addresses.end();
@@ -1034,7 +1007,9 @@ bool KopeteMetaContact::syncWithKABC()
 					{
 						// check whether each one is present in Kopete
 						// Is it in the contact list?
-						KopeteMetaContact *mc;
+						QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( proto );
+						QDictIterator<KopeteAccount> acs(accounts);
+						KopeteMetaContact *mc = 0;
 						for ( acs.toFirst(); acs.current(); ++acs )
 							if ( ( mc = KopeteContactList::contactList()->findContact( 
 									proto->pluginId(), acs.current()->accountId(), *it ) ) )
@@ -1059,6 +1034,23 @@ bool KopeteMetaContact::syncWithKABC()
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
 															 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import Address From Address Book" ), i18n("&Yes"), i18n("&No"), QString::fromLatin1( "ImportFromKABC" ) ) )
 							{
+								// Check the accounts for this protocol are all connected
+								// Most protocols do not allow you to add contacts while offline
+								// Would be better to have a virtual bool KopeteAccount::readyToAddContact()
+								bool allAccountsConnected = true;
+								for ( acs.toFirst(); acs.current(); ++acs )
+									if ( !acs.current()->isConnected() )
+									{	allAccountsConnected = false;
+										break;
+									}
+								if ( !allAccountsConnected )
+								{
+									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+										i18n( "<qt>One or more of your accounts using %1 are offline.  Most systems have to be connected to add contacts.  Please connect these accounts and try again.</qt>" ).arg( protocolName ),
+										i18n( "Not Connected" )  );
+									continue;
+								}
+
 								// we have got a contact to add, our accounts are connected, so add it.
 								// Do we need to choose an account
 								KopeteAccount *chosen = 0;
@@ -1085,7 +1077,7 @@ bool KopeteMetaContact::syncWithKABC()
 								}
 								else // if we have 1 account in this protocol, choose it
 								{
-									chosen = acs.current();
+									chosen = acs.toFirst();
 								}
 
 								// add the contact to the chosen account
@@ -1106,7 +1098,12 @@ bool KopeteMetaContact::syncWithKABC()
 					}
 					kdDebug( 14010 ) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked " << endl;
 				}
+				else
+					kdDebug( 14010 ) << "not interested in name=" << name << endl;
+					
 			}
+			else
+				kdDebug( 14010 ) << "not interested in app=" << app << endl;
 		}
 	}
 	return contactAdded;
@@ -1122,8 +1119,12 @@ void KopeteMetaContact::splitField( const QString &str, QString &app, QString &n
 
     int dash = tmp.find( '-' );
     if ( dash != -1 ) {
-      app = tmp.left( dash );
+      app = tmp.left( dash ); 	
       name = tmp.mid( dash + 1 );
     }
   }
 }
+
+#include "kopetemetacontact.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:

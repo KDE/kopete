@@ -339,8 +339,17 @@ public slots:
 	 * @brief Remove any KABC data for this meta contact
 	 */
 	void removeKABC();
+	
+	/**
+	 * Check for any new addresses added to this contact's KABC entry
+	 * and prompt if they should be added in Kopete too.
+	 * @return whether any contacts were added from KABC.
+	 */
 	bool syncWithKABC();
 
+	/**
+	 * @return the preferred child KopeteContact for communication, or 0 if none is suitable (all unreachable).
+	 */
 	KopeteContact *preferredContact();
 signals:
 	/**
