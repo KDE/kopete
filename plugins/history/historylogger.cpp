@@ -65,6 +65,9 @@ void HistoryLogger::readLog(int msgStart , int msgCount)
 	//From the kopete 0.6 kopetehistorywidget
     //  by Richard Stellingwerff <remenic@linuxfromscratch.org>
 
+	if(messages==0)
+		return; //no messages
+
 	QDomElement msgelement;
 	QDomNode node;
 
@@ -119,6 +122,8 @@ void HistoryLogger::readLog(int msgStart , int msgCount)
 
 		// open the file
 		FILE *f = fopen(QFile::encodeName(logFileName), "r");
+		if(f==NULL)
+			return;
 
 		// find the first message to display ( this needs to be faster! )
 		while ( !feof( f ) && currentPos != startPos)
