@@ -380,7 +380,7 @@ GaduProtocol::messageReceived( struct gg_event* e )
 void
 GaduProtocol::ackReceived( struct gg_event* e )
 {
-    kdDebug(14100)<<"####"<<"Received an ACK from "<<e->event.ack.recipient<<endl;
+    //kdDebug(14100)<<"####"<<"Received an ACK from "<<e->event.ack.recipient<<endl;
 }
 
 void
@@ -433,7 +433,7 @@ GaduProtocol::statusChanged( struct gg_event* e )
 void
 GaduProtocol::pong()
 {
-    kdDebug(14100)<<"####"<<" Pong..."<<endl;
+    //kdDebug(14100)<<"####"<<" Pong..."<<endl;
 }
 
 void
@@ -459,6 +459,10 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
                           SLOT(pingServer()) );
     }
     pingTimer_->start( 180000 );//3 minute timeout
+    ContactsMap::Iterator it;
+    for ( it = contactsMap_.begin(); it != contactsMap_.end(); ++it ) {
+        addNotify( it.key() );
+    }
 }
 
 void
@@ -486,8 +490,9 @@ GaduProtocol::userlist( const QStringList& u )
                 uin = *it;
             }
         }
-        kdDebug(14100)<<"uin = "<< uin << "; name = "<< name << "; group = " << group <<endl;
-        addContact( uin, name, 0L, group );
+        //kdDebug(14100)<<"uin = "<< uin << "; name = "<< name << "; group = " << group <<endl;
+        if ( ! contactsMap_.contains( uin.toUInt() ) )
+            addContact( uin, name, 0L, group );
     }
 }
 
@@ -536,7 +541,7 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
                                   const QMap<QString, QString> &serializedData,
                                   const QMap<QString, QString> & /* addressBookData */ )
 {
-    kdDebug()<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
+    //kdDebug()<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
     addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
 }
 

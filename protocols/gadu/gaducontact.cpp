@@ -254,7 +254,7 @@ GaduContact::slotUserInfo()
 {
     UserInfoDialog *dlg = new UserInfoDialog( i18n("Gadu contact") );
 
-    dlg->setName( name() );
+    dlg->setName( metaContact()->displayName() );
     dlg->setId( QString::number( uin_ ) );
     dlg->setStatus( statusText() );
     dlg->setAwayMessage( description_ );
