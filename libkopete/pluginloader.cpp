@@ -366,6 +366,17 @@ QStringList LibraryLoader::addressBookFields( KopetePlugin *p ) const
 		return QStringList();
 }
 
+KopetePlugin * LibraryLoader::searchByName(const QString &name)
+{
+	for (QDictIterator<PluginLibrary> i(mLibHash); i.current(); ++i)
+	{
+		if (getInfo(i.currentKey()).name==name)
+			return (*i)->plugin;
+	}
+	return 0L; 
+}
+
+
 #include <pluginloader.moc>
 
 // vim: set noet ts=4 sts=4 sw=4:

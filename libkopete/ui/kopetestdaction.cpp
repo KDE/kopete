@@ -122,7 +122,7 @@ KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot,
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
+		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByName( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>( tmpprot );
 		if (prot)
 		{

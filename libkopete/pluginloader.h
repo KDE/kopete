@@ -29,6 +29,9 @@
 
 #include <klibloader.h>
 
+class KopeteProtocol;
+class KopetePlugin;
+
 struct KopeteLibraryInfo
 {
 	QString specfile;
@@ -45,8 +48,6 @@ struct KopeteLibraryInfo
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
-class KopeteProtocol;
-class KopetePlugin;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -71,8 +72,15 @@ public:
 
 	/**
 	 * Search by Id
+	 * ex: "ICQProtocol"
 	 */
 	KopetePlugin *searchByID( const QString &Id );
+	/**
+	 * Search by name
+	 * ex: "ICQ"
+	 **/
+	KopetePlugin *searchByName(const QString&);
+
 
 	/**
 	 * loads all the enabled plugins
