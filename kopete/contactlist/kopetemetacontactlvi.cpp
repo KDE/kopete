@@ -702,10 +702,10 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	}
 
 	// set some components to have the metacontact tooltip
-		setMetaContactToolTipSourceForComponent( d->metaContactIcon );
-		setMetaContactToolTipSourceForComponent( d->nameText );
-		setMetaContactToolTipSourceForComponent( d->extraText );
-		setMetaContactToolTipSourceForComponent( d->metaContactPhoto );
+	setMetaContactToolTipSourceForComponent( d->metaContactIcon );
+	setMetaContactToolTipSourceForComponent( d->nameText );
+	setMetaContactToolTipSourceForComponent( d->extraText );
+	setMetaContactToolTipSourceForComponent( d->metaContactPhoto );
 	
 	// update the display name
 	slotDisplayNameChanged();
