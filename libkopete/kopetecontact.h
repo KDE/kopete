@@ -83,7 +83,7 @@ public:
 	 *
 	 * @return bool indicating whether or not the contact is reachable (can send a message to it)
 	 */
-	virtual bool isReachable() = 0;
+	virtual bool isReachable();
 
 	/**
 	 * Accessor function for the contact's MetaContact
@@ -317,7 +317,7 @@ public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
 	 */
-	virtual void execute() = 0;
+	virtual void execute();
 
 	/**
 	 * Changes the MetaContact that this contact is a part of.  This function
@@ -332,13 +332,13 @@ public slots:
 	 * protocol-specific actions required to delete a contact
 	 * (ie. messages to the server, etc)
 	 */
-	virtual void slotDeleteContact() = 0;
+	virtual void slotDeleteContact();
 
 	/**
 	 * Method to retrieve user information.  Should be implemented by
 	 * the protocols, and popup some sort of dialog box
 	 */
-	virtual void slotUserInfo() = 0;
+	virtual void slotUserInfo();
 
 	/**
 	 * This is the KopeteContact level slot for sending files. It should be implemented by all 

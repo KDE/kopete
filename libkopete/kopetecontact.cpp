@@ -54,7 +54,8 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	mFileCapable = false;
 	m_historyDialog = 0L;
 	m_idleState = Unspecified;
-
+	m_displayName = contactId;
+	
 	if( protocol )
 		protocol->registerContact( this );
 
@@ -395,6 +396,26 @@ void KopeteContact::addToGroup( KopeteGroup * /* newGroup */ )
 }
 
 void KopeteContact::removeFromGroup( KopeteGroup * /* group */ )
+{
+	/* Default implementation does nothing */
+}
+
+bool KopeteContact::isReachable()
+{
+	return false;
+}
+
+void KopeteContact::execute()
+{
+	/* Default implementation does nothing */
+}
+
+void KopeteContact::slotDeleteContact()
+{
+	/* Default implementation does nothing */
+}
+
+void KopeteContact::slotUserInfo()
 {
 	/* Default implementation does nothing */
 }
