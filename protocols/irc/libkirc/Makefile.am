@@ -1,3 +1,4 @@
+KDE_OPTIONS = nofinal
 noinst_LTLIBRARIES = libkirc.la
 
 libkirc_la_SOURCES = \
