@@ -26,6 +26,8 @@
 #include <qptrqueue.h>
 #include <qtimer.h>
 
+#include <kdebug.h>
+
 #include "bytestream.h"
 #include "connector.h"
 #include "coreprotocol.h"
@@ -243,8 +245,7 @@ Transfer* ClientStream::read()
 
 void ClientStream::write( Transfer *request )
 {
-	qDebug( "ClientStream::write()" );
-
+	kdDebug(14180) << k_funcinfo << endl;
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
 }
@@ -295,7 +296,7 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
 #ifdef LIBOSCAR_DEBUG
-	qDebug( "ClientStream::cp_outgoingData:" );
+	kdDebug(14180) << k_funcinfo << endl;
 	cs_dump( outgoingBytes );
 #endif	
 	d->bs->write( outgoingBytes );
@@ -303,17 +304,17 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 
 void ClientStream::cp_incomingData()
 {
-	qDebug( "ClientStream::cp_incomingData:" );
+	kdDebug(14180) << k_funcinfo << endl;
 	Transfer * incoming = d->client.incomingTransfer();
 	if ( incoming )
 	{
-		qDebug( " - got a new transfer" );
+		kdDebug(14180) << k_funcinfo << " - got a new transfer" << endl;
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
 		emit doReadyRead();
 	}
 	else
-		qDebug( " - client signalled incomingData but none was available, state is: %i", d->client.state() );
+		kdDebug(14180) << k_funcinfo << " - client signalled incomingData but none was available, state is: "<< d->client.state() << endl;
 }
 
 void ClientStream::cr_connected()
@@ -335,7 +336,7 @@ void ClientStream::cr_connected()
 
 void ClientStream::cr_error()
 {
-	qDebug("CLIENTSTREAM: cr_error()");
+	kdDebug(14180) << k_funcinfo << endl;
 	reset();
 	emit error(ErrConnection);
 }
@@ -365,7 +366,7 @@ void ClientStream::bs_readyRead()
 #ifdef LIBOSCAR_DEBUG
 	QCString cs(a.data(), a.size()+1);
 	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-	qDebug("ClientStream: bs_readyRead() recv: %d bytes\n", a.size() );
+	kdDebug(14180) << k_funcinfo << " recv: " << a.size()  <<" bytes" <<endl;
 	cs_dump( a );
 #endif
 
@@ -375,7 +376,7 @@ void ClientStream::bs_readyRead()
 void ClientStream::bs_bytesWritten(int bytes)
 {
 #ifdef LIBOSCAR_DEBUG
-	qDebug( "ClientStream::bs_bytesWritten: %i bytes written", bytes );
+	kdDebug(14180) << k_funcinfo << " written: " << bytes  <<" bytes" <<endl;
 #else
 	Q_UNUSED( bytes );
 #endif
