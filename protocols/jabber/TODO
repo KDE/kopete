@@ -20,10 +20,8 @@ TODO for Jabber:
 - add a button for server defaults
 - on a failed connection attempt, the animation does not stop
 - going offline does not stop the animation after a failed connection attempt
-- empty hostname makes Jabber crash (faulty NDNS)
+x empty hostname makes Jabber crash (faulty NDNS)
 - port dialogs to KDialogBase
-- make sure that contact context menus use the same terms (email message vs. chat message)
 - in slotGotVCard() there's a change nickname method, check that it does not
   collide with "rename contact" (change alias) -> disabled for now
 - "Remove Authorization From" in contact popup menu has wrong position
-- display dialog when somebody removed the subscription from us
