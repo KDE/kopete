@@ -68,13 +68,11 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	connect( user, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), this,
 		SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-//	kdDebug(14010) << k_funcinfo << endl;
+	connect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
 }
 
 KopeteMessageManager::~KopeteMessageManager()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
-
 	for( KopeteContact *c = d->mContactList.first(); c; c = d->mContactList.next() )
 		c->setConversations( c->conversations() - 1 );
 
@@ -130,7 +128,6 @@ const QString KopeteMessageManager::displayName()
 
 void KopeteMessageManager::setDisplayName( const QString &newName )
 {
-//	kdDebug(14010) << k_funcinfo << endl;
 	disconnect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
 
 	d->displayName = newName;
@@ -140,8 +137,6 @@ void KopeteMessageManager::setDisplayName( const QString &newName )
 
 void KopeteMessageManager::slotUpdateDisplayName()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
-
 	QString nextDisplayName;
 
 	KopeteContact *c = d->mContactList.first();
@@ -216,7 +211,6 @@ void KopeteMessageManager::messageSucceeded()
 
 void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 {
-//	kdDebug(14010) << k_funcinfo << endl;
 	msg.setManager(this);
 
 	if( msg.direction() == KopeteMessage::Inbound )
@@ -284,6 +278,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		disconnect (c, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
 		if(c->metaContact())
 			disconnect (c->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
+		disconnect (c, SIGNAL(contactDestroyed(KopeteContact*)) , this , SLOT(slotContactDestroyed(KopeteContact*)));
 		c->setConversations( c->conversations() - 1 );
 	}
 	emit contactRemoved(c, raison);
