@@ -396,7 +396,7 @@ void AIMContact::slotUserInfo()
 	if (!infoDialog)
 	{
 		infoDialog = new AIMUserInfoDialog(this, static_cast<AIMAccount*>(account()),
-			false, 0L, displayName()+"_userInfoDialog");
+			false, 0L, ( displayName() + "_userInfoDialog" ).latin1() );
 		if(!infoDialog)
 			return;
 		connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));

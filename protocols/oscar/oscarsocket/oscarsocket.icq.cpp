@@ -148,7 +148,7 @@ void OscarSocket::sendLoginICQ()
 	}
 */
 
-	outbuf.addTLV(0x0002, encodedPassword.length(), encodedPassword);
+	outbuf.addTLV( 0x0002, encodedPassword.length(), encodedPassword.latin1() );
 
 	outbuf.addTLV(0x0003, strlen(ICQ_CLIENTSTRING), ICQ_CLIENTSTRING);
 	outbuf.addTLV16(0x0016, ICQ_CLIENTID);
