@@ -326,6 +326,19 @@ public:
 	*/
 	static QString unescape( const QString &xml );
 
+	/**
+	 * Helper function to decode a string. Whatever returned here is *nearly guarenteed* to
+	 * be parseable by the XML engine.
+	 *
+	 * @param message The string you are trying to decode
+	 * @param providedCodec A codec you want to try to decode with
+	 * @param success Optional pointer to a bool you want updated on success. "Success"
+	 *	is defined as a successfull decoding using either UTF8 or the codec you
+	 *	provided. If a guess has to be taken, success will be false.
+	 */
+	static QString decodeString( const QCString &message,
+		const QTextCodec *providedCodec = 0L, bool *success = 0L );
+
 private:
 	/**
 	 * Helper for constructors

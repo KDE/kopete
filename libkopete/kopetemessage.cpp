@@ -19,9 +19,11 @@
 
 #include <qstylesheet.h>
 #include <qregexp.h>
+#include <qtextcodec.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kstringhandler.h>
 
 #include "kopetemessage.h"
 #include "kopeteemoticons.h"
@@ -775,6 +777,64 @@ const QDomDocument KopeteMessage::asXML() const
 	return doc;
 
 #endif
+}
+
+QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *providedCodec, bool *success )
+{
+	/*
+	Note to everyone. This function is not the most efficient, that is for sure.
+	However, it *is* the only way we can be guarenteed that a given string is
+	decoded properly.
+	*/
+	if( success )
+		*success = true;
+
+	//First, we check if it is UTF, no matter what the inital quess
+	if( KStringHandler::isUtf8(message) )
+	{
+		//We have a UTF string almost for sure. At least we know it will be decoded.
+		//Reject the provided codec.
+		return QString::fromUtf8( message );
+	}
+
+	int charsToCheck = 256 > message.length() ? message.length() : 256;
+
+	//They are providing a possible codec. Check if it is valid
+	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	{
+		//All chars decodable.
+		return providedCodec->toUnicode( message );
+	}
+
+	kdWarning(14000) << k_funcinfo << "Unable to decode string using provided codec(s), taking best guesses!" << endl;
+	if( success )
+		*success = false;
+
+	//We don't have any clues here. Try latin1 codec
+	QTextCodec *latin1 = QTextCodec::codecForMib(4);
+	if( latin1 && latin1->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	{
+		//All chars decodable.
+		return latin1->toUnicode( message );
+	}
+
+	//Try local codec
+	QTextCodec *locale = QTextCodec::codecForLocale();
+	if( locale && locale->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	{
+		//All chars decodable.
+		return locale->toUnicode( message );
+	}
+
+	//No codec decoded. Just decode latin1, and clean out any junk.
+	QString result = QString::fromLatin1(message);
+	for( uint i = 0; i < message.length(); ++i )
+	{
+		if( !result[i].isPrint() )
+			result[i] = '?';
+	}
+
+	return result;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
