@@ -273,21 +273,33 @@ void Kopete::cancelEvent( KopeteEvent *event)
 QString Kopete::parseEmoticons( QString message )
 {
 	kdDebug() << "[Kopete] parseEmoticons()" << endl;
-	/* if emoticons are disabled, we do nothing */
+	// if emoticons are disabled, we do nothing
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 		return message;
 
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
-	QString em;
-
+//	QString em;
+	int p = -1;
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
+		/*
+		// The old an probably slower way
 		em = (*it);
-		em.replace( QRegExp("\\)"), "\\)" );
-		em.replace( QRegExp("\\("), "\\(" );
-		em.replace( QRegExp("\\>"), "\\>" );
-		em.replace( QRegExp("\\<"), "\\<" );
+		em.replace( QRegExp("\)"), "\\)" );
+		em.replace( QRegExp("\("), "\\(" );
+		em.replace( QRegExp("\]"), "\\]" );
+		em.replace( QRegExp("\["), "\\[" );
+		em.replace( QRegExp(">"), "\\>" );
+		em.replace( QRegExp("<"), "\\<" );
 		message = message.replace ( QRegExp(em), "<img src=\""+KopeteEmoticons::emoticons()->emoticonToPicPath(*it)+"\">" );
+		*/
+		p = message.find( (*it), 0, true );
+		if ( p != -1 )
+		{
+			message = message.remove( p, (*it).length() );
+			message = message.insert( p, "<img src=\""+KopeteEmoticons::emoticons()->emoticonToPicPath(*it)+"\">" );
+			p = -1;
+		}
 	}
 	return message;
 }
