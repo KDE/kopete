@@ -166,12 +166,11 @@ void MSNChatSession::createChat( const QString &handle,
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
 	if( !account()->contacts()[ handle ] )
-		account()->addContact( handle, publicName, 0L, Kopete::Account::Temporary);
+		account()->addContact( handle, QString::null, 0L, Kopete::Account::Temporary);
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
-	if( c->property( Kopete::Global::Properties::self()->nickName()).value().toString() != publicName)
-		c->rename(publicName);
+	c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
 
 	addContact(c , IRO); // don't show notificaions when we join wesalef
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
