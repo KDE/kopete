@@ -78,6 +78,8 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 
     if( KGlobal::config()->readBoolEntry("AutoConnect", false) )
         slotGoOnline();
+
+    addAddressBookField( "messaging/gadu", KopetePlugin::MakeIndexField );
 }
 
 GaduProtocol::~GaduProtocol()
@@ -165,13 +167,6 @@ GaduProtocol::isConnected() const
     return session_->isConnected();
 }
 
-KopeteContact*
-GaduProtocol::createContact( KopeteMetaContact* /*parent*/, const QString& serializedData )
-{
-    kdDebug(14100)<<"####"<<"createContact() called with \""<<serializedData<<"\""<<endl;
-    return 0L;
-}
-
 void
 GaduProtocol::setAway()
 {
@@ -203,23 +198,16 @@ GaduProtocol::myself() const
 }
 
 bool GaduProtocol::addContactToMetaContact( const QString &contactId, const QString &displayName,
-	KopeteMetaContact* parentContact )
+    KopeteMetaContact* parentContact )
 {
-	uin_t uinNumber = contactId.toUInt();
+    uin_t uinNumber = contactId.toUInt();
 
-	QString uins;
-	if ( parentContact->addressBookField( this, "messaging/gadu" ).isEmpty() )
-		uins = contactId;
-	else
-		uins = parentContact->addressBookField( this, "messaging/gadu" ) + "\n" + contactId;
+    GaduContact *newContact = new GaduContact( this->pluginId(), uinNumber, displayName, parentContact );
+    newContact->setParentIdentity( QString::number( userUin_ ) );
+    contactsMap_.insert( uinNumber, newContact );
+    addNotify( uinNumber );
 
-	parentContact->setAddressBookField( this, "messaging/gadu", uins );
-	GaduContact *newContact = new GaduContact( this->pluginId(), uinNumber, displayName, parentContact );
-	newContact->setParentIdentity( QString::number( userUin_ ) );
-	contactsMap_.insert( uinNumber, newContact );
-	addNotify( uinNumber );
-	
-	return true;
+    return true;
 }
 
 void
@@ -530,43 +518,12 @@ GaduProtocol::pingServer()
     session_->ping();
 }
 
-void GaduProtocol::serialize( KopeteMetaContact *metaContact)
-{
-	QStringList strList;
-	for( KopeteContact *c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
-	{
-		if ( c->protocol()->pluginId() == this->pluginId() )
-		{
-			GaduContact *g = static_cast<GaduContact*>(c);
-			strList << g->name();
-		}
-	}
-	metaContact->setPluginData(this , strList);
-}
-
 void
-GaduProtocol::deserialize( KopeteMetaContact *metaContact,
-                           const QStringList &strList )
+GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
+                                  const QMap<QString, QString> &serializedData,
+                                  const QMap<QString, QString> & /* addressBookData */ )
 {
-    QString protocolId = this->pluginId();
-
-    QString uin, nick;
-    int numContacts = strList.size();
-    int idx = 0;
-    QStringList uins = QStringList::split( "\n",
-                                           metaContact->addressBookField( this, "messaging/gadu" ) );
-
-    while( numContacts-- ) {
-        nick = strList[ idx ];
-        uin = uins[ idx++ ];
-        addContact( uin, nick, metaContact );
-    }
-}
-
-QStringList
-GaduProtocol::addressBookFields() const
-{
-    return QStringList::split( "|", "|messaging/gadu|" );
+    addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
 }
 
 #include "gaduprotocol.moc"

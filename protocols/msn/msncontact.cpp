@@ -68,9 +68,6 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 		connect( metaContact(),
 			SIGNAL( removedFromGroup(  KopeteGroup * , KopeteMetaContact * ) ),
 			this, SLOT( removeFromGroup( KopeteGroup * ) ) );
-		connect( metaContact(),
-			SIGNAL( aboutToSave( KopeteMetaContact * ) ),
-			protocol(), SLOT( serialize( KopeteMetaContact * ) ) );
 	}
 
 	setFileCapable(true);
@@ -594,10 +591,6 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (addToGroup(KopeteGroup*) ));
 	disconnect (from , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
-	// no need to disconnect: 1) maybe there are other msncontact here ; 2) we need to remove old info
-//	disconnect (from , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-//		static_cast<MSNProtocol*>( protocol() ), SLOT (serialize(KopeteMetaContact*) ));
-
 
 	connect (metaContact() , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
@@ -605,10 +598,7 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (addToGroup(KopeteGroup*) ));
 	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-			protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
-
 
 void MSNContact::sendFile(const KURL &sourceURL, const QString &altFileName, 
 	const long unsigned int fileSize)

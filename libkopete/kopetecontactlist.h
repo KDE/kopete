@@ -184,12 +184,16 @@ signals:
 	void groupRemoved( KopeteGroup * );
 	void groupRenamed(KopeteGroup *, const QString & oldname);
 
-
 	/* Not used yet.... */
 //	void addedToGroup( KopeteMetaContact *mc, const QString &to );
 //	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 private:
+	/**
+	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
+	 */
+	static const uint ContactListVersion = 10;
+
 	/**
 	 * Return a XML representation of the contact list
 	 */
@@ -224,6 +228,11 @@ private:
 	 * Our contact list instance
 	 */
 	static KopeteContactList *s_contactList;
+
+	/**
+	 * Convert the contact list from an older version
+	 */
+	void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
 };
 
 #endif

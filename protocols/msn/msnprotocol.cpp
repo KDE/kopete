@@ -92,6 +92,8 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	QObject::connect( KopeteContactList::contactList(),
 		SIGNAL( groupRemoved( KopeteGroup * ) ),
 		SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
+
+	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
 }
 
 MSNProtocol::~MSNProtocol()
@@ -242,55 +244,18 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
-void MSNProtocol::serialize( KopeteMetaContact *metaContact )
+void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+	const QMap<QString, QString> & /* addressBookData */ )
 {
-	QStringList stream;
-	QPtrList<KopeteContact> contacts = metaContact->contacts();
-	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
-	{
-		if ( c->protocol()->pluginId() != this->pluginId() ) // not our contact, next one please
-				continue;
+	QString contactId   = serializedData[ "contactId" ];
+	QString displayName = serializedData[ "displayName" ];
+	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
 
-		MSNContact *m = dynamic_cast<MSNContact*>(c);
-
-		if( m )
-		{
-			QString groups;
-			QValueList<unsigned int> list=m->groups();
-			for ( QValueList<unsigned int>::Iterator it = list.begin(); it != list.end(); ++it)
-			{
-				if(!groups.isEmpty()) groups+=",";
-				groups+=QString::number(*it);
-			}
-			stream << m->contactId() << m->displayName() << groups ;
-		}
-	}
-	metaContact->setPluginData(this , stream);
-}
-
-void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
-	const QStringList &strList )
-{
-/*	kdDebug(14140) << "MSNProtocol::deserialize: " << metaContact->displayName()
-		<< ", [ " << strList.join( ", " ) << " ]" << endl;*/
-
-	QString protocolId = this->pluginId();
-
-	uint idx = 0;
-	while( idx < strList.size() )
-	{
-		QString passport    = strList[ idx ];
-		QString displayName = strList[ idx + 1 ];
-		QStringList groups  = QStringList::split( ",", strList[ idx + 2 ] );
-
-		// Create MSN contact
-		MSNContact *c = new MSNContact( this, passport, displayName, metaContact );
-		c->setMsnStatus( MSNProtocol::FLN );
-		for(QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
-			c->slotAddedToGroup(  (*it).toUInt()  );
-
-		idx += 3;
-	}
+	// Create MSN contact
+	MSNContact *c = new MSNContact( this, contactId, displayName, metaContact );
+	c->setMsnStatus( MSNProtocol::FLN );
+	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
+		c->slotAddedToGroup( (*it).toUInt() );
 }
 
 KopeteContact* MSNProtocol::myself() const
@@ -302,10 +267,6 @@ AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new MSNAddContactPage(this,parent));
 }
-
-/*
- * Internal functions implementation
- */
 
 void MSNProtocol::slotOpenInbox()
 {
@@ -376,14 +337,14 @@ KActionMenu* MSNProtocol::protocolActions()
 	return actionStatusMenu;
 }
 
-/** NOTE: CALL THIS ONLY BEING CONNECTED */
+// NOTE: CALL THIS ONLY BEING CONNECTED
 void MSNProtocol::slotSyncContactList()
 {
 	if ( ! mIsConnected )
 	{
 		return;
 	}
-	/* First, delete D marked contacts */
+	// First, delete D marked contacts
 	QStringList localcontacts;
 /*
 	contactsFile->setGroup("Default");

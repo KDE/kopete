@@ -149,24 +149,21 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	if(msg.direction() != KopeteMessage::Outbound)
 		return;
 
-	QString key;
-
+	QStringList keys;
 	QPtrList<KopeteContact> contactlist = msg.to();
-	for (KopeteContact *c=contactlist.first(); c; c = contactlist.next())
+	for( KopeteContact *c = contactlist.first(); c; c = contactlist.next() )
 	{
-		QStringList strlist= c->metaContact()->pluginData(this);
-		if(strlist.isEmpty())
+		QString tmpKey = c->metaContact()->pluginData( this, "gpgKey" );
+		if( tmpKey.isEmpty() )
 		{
-			kdDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
+			kdDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
 			return;
 		}
-		if(!key.isNull())
-			key+=" ";
-		key+=strlist.first();
+		keys.append( tmpKey );
 	}
 	// always encrypt to self, too
-	key += " ";
-	key += m_prefs->privateKey();
+	keys.append( m_prefs->privateKey() );
+	QString key = keys.join( " " );
 
 	if(key.isEmpty())
 	{
@@ -207,16 +204,13 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 void CryptographyPlugin::slotSelectContactKey()
 {
-	QString key = m_currentMetaContact->pluginData(this).first();
-	CryptographySelectUserKey *opts=new CryptographySelectUserKey(key,m_currentMetaContact);
+	QString key = m_currentMetaContact->pluginData( this, "gpgKey" );
+	CryptographySelectUserKey *opts = new CryptographySelectUserKey( key, m_currentMetaContact );
 	opts->exec();
-	if (opts->result()==true)
+	if( opts->result() )
 	{
-		key=opts->publicKey();
-		if(key.isEmpty())
-			m_currentMetaContact->setPluginData(this , QStringList()) ;
-		else
-			m_currentMetaContact->setPluginData(this , key) ;
+		key = opts->publicKey();
+		m_currentMetaContact->setPluginData( this, "gpgKey", key );
 	}
 	delete opts;
 }

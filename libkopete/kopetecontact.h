@@ -19,10 +19,13 @@
 #ifndef KOPETECONTACT_H
 #define KOPETECONTACT_H
 
+#include <qlistbox.h>
+#include <qmap.h>
 #include <qobject.h>
 #include <qpixmap.h>
-#include <qlistbox.h>
+
 #include <kurl.h>
+
 //#include "kopetegroup.h"
 
 class QString;
@@ -96,6 +99,27 @@ public:
 	 * @return THe identity of the ID
 	 */
 	virtual QString identityId() const;
+
+	/**
+	 * Serialize the contact for storage in the contact list.
+	 *
+	 * The provided serializedData contain the contact id in the field
+	 * "contactId" and the display name in the field "displayName". If
+	 * you don't like this, or don't want to store these fields at all,
+	 * you are free to remove them from the list.
+	 *
+	 * Most plugins don't need more than these fields, so they only need
+	 * to set the address book fields themselves. If you have nothing to
+	 * save at all you can clear the QMap, an empty map is treated as
+	 * 'nothing to save'.
+	 *
+	 * The provided addressBookFields QMap contains the index field as
+	 * marked with @ref KopetePlugin::addAddressBookField() with the
+	 * contact id as value. If no index field is available the QMap is
+	 * simply passed as an empty map.
+	 */
+	virtual void serialize( QMap<QString, QString> &serializedData,
+		QMap<QString, QString> &addressBookData );
 
 	/**
 	 * The groups in which the user is physically located.

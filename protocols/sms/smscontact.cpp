@@ -40,16 +40,22 @@ SMSContact::SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 	initActions();
 
 	m_msgManager = 0L;
-
-	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
-
 }
 
 SMSContact::~SMSContact()
 {
 }
 
+void SMSContact::serialize( QMap<QString, QString> &serializedData,
+	QMap<QString, QString> & /* addressBookData */ )
+{
+	// Contact id and display name are already set for us, only add the rest
+	if( !serviceName().isNull() )
+	{
+		serializedData[ "serviceName" ]  = serviceName();
+		serializedData[ "servicePrefs" ] = servicePrefs().join( "," );
+	}
+}
 
 void SMSContact::execute()
 {
@@ -232,26 +238,7 @@ void SMSContact::userPrefs()
 	p->show();
 }
 
-void SMSContact::slotMovedToMetaContact()
-{
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
-}
-
-
 #include "smscontact.moc"
 
-
-
-
-
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

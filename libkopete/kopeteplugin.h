@@ -20,6 +20,7 @@
 #define KOPETEPLUGIN_H
 
 #include <qobject.h>
+#include <qstringlist.h>
 
 class KopeteMetaContact;
 class KopeteMessageManager;
@@ -50,9 +51,32 @@ public:
 	 * during runtime. When the key actually changes, the plugin's
 	 * addressBookKeyChanged( KopeteMetaContact *mc, const QString &key )
 	 * is called.
-	 * The default implementation returns an empty list.
+	 * You can add fields to the list using @ref addAddressBookField()
 	 */
-	virtual QStringList addressBookFields() const;
+	QStringList addressBookFields() const;
+
+	/**
+	 * Return the index field as set by @ref addAddressBookField()
+	 */
+	QString addressBookIndexField() const;
+
+	/**
+	 * Mode for an address book field as used by @ref addAddressBookField()
+	 */
+	enum AddressBookFieldAddMode { AddOnly, MakeIndexField };
+
+	/**
+	 * Add a field to the list of address book fields. See also @ref addressBookFields()
+	 * for a description of the fields.
+	 *
+	 * Set mode to MakeIndexField to make this the index field. Index fields
+	 * are currently used by KopeteContact::serialize to autoset the index
+	 * when possible.
+	 *
+	 * Only one field can be index field. Calling this method multiple times
+	 * as index field will reset the value of index field!
+	 */
+	void addAddressBookField( const QString &field, AddressBookFieldAddMode mode = AddOnly );
 
 	/**
 	 * Returns a set of custom menu items for the meta contact's context menu
@@ -80,25 +104,6 @@ public:
 
 public slots:
 	/**
-	 * Store the plugin data for a given meta contact in QStringList and
-	 * return it. If a given metacontact contains more than one KopeteContact
-	 * for which the plugin wishes to store data it has to append that
-	 * data to the returned QStringList too.
-	 * If this plugin doesn't has any useful data to store regarding a meta
-	 * contact, return false. Otherwise return true and stream the required
-	 * settings into the provided stream.
-	 *
-	 * This method is also responsible for storing the settings in the KDE
-	 * address book. You can save all fields that you registered for using
-	 * @ref KopeteMetaContact::setAddressBookField().
-	 *
-	 * The default implementation returns false to disable streaming and
-	 * doesn't store anything in the KDE address book.
-	 */
-	//virtual bool serialize( KopeteMetaContact *metaContact,
-	//	QStringList &strList ) const;
-
-	/**
 	 * deserialize() does the opposite of serialize() and tells the plugin
 	 * to apply the previously stored data again.
 	 * This method is also responsible for retrieving the settings from the
@@ -107,7 +112,7 @@ public slots:
 	 *
 	 * The default implementation does nothing.
 	 */
-	virtual void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
+	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data );
 
 	/**
 	 * Notify that an address book field was changed.
@@ -118,11 +123,15 @@ public slots:
 	virtual void addressBookFieldChanged( KopeteMetaContact *c,
 		const QString &key );
 
-signals: 
+signals:
 	/*
 	 * Signal emitted when the protocol is unloaded
 	 */
 	void unloading();
+
+private:
+	QStringList m_addressBookFields;
+	QString m_indexField;
 };
 
 #endif

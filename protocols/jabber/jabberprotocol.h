@@ -4,7 +4,7 @@
     begin                : Thu Aug 22 2002
     copyright            : (C) 2002 by Till Gerken / The Kopete Dev Team
     email                : till@tantalo.net
-    
+
  ***************************************************************************/
 
 /***************************************************************************
@@ -114,13 +114,12 @@ public:
 	/**
 	 * Deserialize contact data
 	 */
-	virtual void deserialize(KopeteMetaContact *contact, const QStringList &data);
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	/**
-	 * addressBookFields() returns a list of fields we are interested in
 	 * addressBookFieldChanged() is a notification slot for changes
 	 */
-	virtual QStringList addressBookFields() const;
 	//virtual void addressBookFieldChanged(KopeteMetaContact *contact, const QString &key);
 
 	/*********************************************************************
@@ -207,12 +206,6 @@ public slots:
 	 * Slot for retrieving a vCard
 	 */
 	void slotRetrieveVCard (const Jid &);
-
-	/**
-	 * Serialize  contact data
-	 */
-	void serialize(KopeteMetaContact *contact);
-
 
 signals:
 	void settingsChanged();
@@ -318,11 +311,6 @@ private slots:
 	 * Slot to catch a dying message manager
 	 */
 	void slotMessageManagerDeleted(KopeteMessageManager *manager);
-	
-	/**
-	 * Cleans up when a contact is destroyed
-	 */
-	void slotContactDestroyed(KopeteContact *c);
 
 	/**
 	 * Incoming subscription request
@@ -386,26 +374,12 @@ private slots:
 	void slotGetServices();
 
 private:
-	typedef JabberMap<JabberContact*, KopeteMetaContact*> JabberMetaContactMap;
-	typedef QMap<QString, JabberContact*> JabberContactMap;
 	typedef QMap<QString, JabberMessageManager*> JabberMessageManagerMap;
 
 	/**
 	 * Singleton instance of our protocol class
 	 */
 	static JabberProtocol *protocolInstance;
-	
-	/**
-	 * This is the local contact list used to keep JabberContacts in
-	 * synch with the related metacontacts.
-	 */
-	JabberMetaContactMap metaContactMap;
-
-	/**
-	 * This is the local contact list used to keep the Psi
-	 * roster items in synch with the related JabberContacts
-	 */
-	JabberContactMap contactMap;
 
 	/**
 	 * This map associates message managers to

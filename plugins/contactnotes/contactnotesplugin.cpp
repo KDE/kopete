@@ -76,17 +76,13 @@ void ContactNotesPlugin::slotEditInfo()
 
 QString ContactNotesPlugin::notes(KopeteMetaContact *m)
 {
-	return m->pluginData(this).join("\n");
+	return m->pluginData( this, "notes" );
 }
 
-void ContactNotesPlugin::setNotes(const QString &n, KopeteMetaContact *m)
+void ContactNotesPlugin::setNotes( const QString &n, KopeteMetaContact *m )
 {
-	if(n.isEmpty())
-		m->setPluginData(this , QStringList() );
-	else
-		m->setPluginData(this , n );
+	m->setPluginData( this, "notes", n );
 }
-
 
 #include "contactnotesplugin.moc"
 

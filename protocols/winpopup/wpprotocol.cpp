@@ -115,6 +115,8 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	// FIXME: I guess 'myself' should be a metacontact as well...
 	theMyself = new WPContact(this, theHostName, 0L);		// XXX: Should be from config file!!!
 	QObject::connect( theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
+
+	addAddressBookField( "messaging/winpopup", KopetePlugin::MakeIndexField );
 }
 
 // Destructor
@@ -141,54 +143,10 @@ WPProtocol::~WPProtocol()
 	DEBUG(WPDINFO, "Deleted OK.");*/
 }
 
-QStringList WPProtocol::addressBookFields() const
+void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+	const QMap<QString, QString> & /* addressBookData */ )
 {
-	DEBUG(WPDMETHOD, "WPProtocol::addressBookFields()");
-
-	return QStringList("messaging/winpopup");
-}
-
-void WPProtocol::serialize(KopeteMetaContact *metaContact)
-{
-//	DEBUG(WPDMETHOD, "WPProtocol::serialize(metaContact => " << metaContact->displayName() << ", <strList>)");
-	QStringList strList;
-	QStringList addressList;
-	QPtrList<KopeteContact> contacts = metaContact->contacts();
-
-	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
-		if(c->protocol()->pluginId() == this->pluginId())
-		{
-			WPContact *curContact = static_cast<WPContact*>(c);
-			DEBUG(WPDINFO, "Sub-Contact " << curContact->host() << " is ours - serialising.");
-			strList << curContact->host();
-//			addressList << curContact->host();
-		}
-
-//	QString addresses = addressList.join(",");
-//	if(!addresses.isEmpty())
-//		metaContact->setAddressBookField(WPProtocol::protocol(), "messaging/winpopup", addresses);
-	metaContact->setPluginData(this , strList);
-
-//	DEBUG(WPDINFO, "Finished with strList = " << strList.join(","));
-
-}
-
-void WPProtocol::deserialize(KopeteMetaContact *metaContact, const QStringList &strList)
-{
-	DEBUG(WPDMETHOD, "WPProtocol::deserialize(metaContact => " << metaContact->displayName() << ", " << strList.join(",") << ")");
-
-	// not using the kabc thingy for now it would seem...
-//	QStringList hosts = QStringList::split("\n", metaContact->addressBookField(this, "messaging/winpopup"));
-
-	for(unsigned i = 0; i < strList.count(); i++)
-	{
-		QString host = strList[i];
-
-		DEBUG(WPDINFO, "Sub-Contact " << host << " is deserialised.");
-
-		WPContact *newContact = new WPContact(this, host, metaContact);
-		metaContact->addContact(newContact);
-	}
+	new WPContact( this, serializedData[ "contactId" ], metaContact );
 }
 
 WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMetaContact)

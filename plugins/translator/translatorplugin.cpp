@@ -166,11 +166,11 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 
 	m_actionLanguage->setItems( keys );
 
-	QStringList strlist=m->pluginData( this );
-	if (!strlist.isEmpty() && strlist.first() != "null" && strlist.first() != "")
-		m_actionLanguage->setCurrentItem( languageIndex(strlist.first()) );
+	QString languageKey = m->pluginData( this, "languageKey" );
+	if( !languageKey.isNull() && languageKey != "null" )
+		m_actionLanguage->setCurrentItem( languageIndex( languageKey ) );
 	else
-		m_actionLanguage->setCurrentItem( languageIndex("null") );
+		m_actionLanguage->setCurrentItem( languageIndex( "null" ) );
 
 
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
@@ -205,12 +205,8 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	if ( (msg.direction() == KopeteMessage::Inbound) && ( msg.body() != QString::null ) )
 	{
 		KopeteMetaContact *from = msg.from()->metaContact();
-		QStringList strlist=from->pluginData( this );
-		if (!strlist.isEmpty() && strlist.first() != "null" )
-		{
-			src_lang = strlist.first();
-		}
-		else
+		src_lang = from->pluginData( this, "languageKey" );
+		if( src_lang.isEmpty() || src_lang == "null" )
 		{
 			kdDebug(14308) << "TranslatorPlugin::slotIncomingMessage : Cannot determine src Metacontact language (" << from->displayName() << ")" << endl;
 			return;
@@ -262,14 +258,10 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		src_lang = m_prefs->myLang();
 //		kdDebug(14308) << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
 
-		/* Sad, we have to consideer only the first To: metacontact only */
+		// Sad, we have to consider only the first To: metacontact
 		KopeteMetaContact *to = msg.to().first()->metaContact();
-		QStringList strlist=to->pluginData( this );
-		if (!strlist.isEmpty() && strlist.first() != "null" )
-		{
-			dst_lang = strlist.first();
-		}
-		else
+		dst_lang = to->pluginData( this, "languageKey" );
+		if( dst_lang.isEmpty() || dst_lang == "null" )
 		{
 			kdDebug(14308) << "TranslatorPlugin::slotOutgoingMessage :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
 			return;
@@ -490,7 +482,7 @@ void TranslatorPlugin::slotSetLanguage()
 {
 	if( m_actionLanguage && m_currentMetaContact)
 	{
-		m_currentMetaContact->setPluginData(this , languageKey( m_actionLanguage->currentItem() ) );
+		m_currentMetaContact->setPluginData( this, "languageKey", languageKey( m_actionLanguage->currentItem() ) );
 	}
 }
 
@@ -509,12 +501,8 @@ void TranslatorPlugin::slotTranslateChat()
 
 	QPtrList<KopeteContact> list=m_currentMessageManager->members();
 	KopeteMetaContact *to = list.first()->metaContact();
-	QStringList strlist=to->pluginData( this );
-	if (!strlist.isEmpty() && strlist.first() != "null" )
-	{
-		dst_lang = strlist.first();
-	}
-	else
+	dst_lang = to->pluginData( this, "languageKey" );
+	if( dst_lang.isEmpty() || dst_lang == "null" )
 	{
 		kdDebug(14308) << "TranslatorPlugin::slotTranslateChat :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
 		return;

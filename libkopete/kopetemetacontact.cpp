@@ -80,10 +80,10 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
 			this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
 
-		if (m_displayName == QString::null)
+		if( m_displayName.isNull() )
 		{
-			 setDisplayName( c->displayName() );
-			 m_trackChildNameChanges=true;
+			setDisplayName( c->displayName() );
+			m_trackChildNameChanges=true;
 		}
 
 	/*	for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
@@ -559,7 +559,7 @@ QString KopeteMetaContact::toXML()
 {
 	emit aboutToSave(this);
 
-	QString xml = "  <meta-contact id=\"TODO: KABC ID\">\n"
+	QString xml = "  <meta-contact>\n"
 		"    <display-name>" +
 		QStyleSheet::escape( m_displayName ) +
 		"</display-name>\n";
@@ -601,38 +601,36 @@ QString KopeteMetaContact::toXML()
 		xml += "    <groups><top-level/></groups>\n";
 	}
 
-/* //SERIALIZE IS NOW OBSOLETE
-	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = ps.first() ; p != 0L; p = ps.next() )
-	{
-		QStringList strList;
-		if ( p->serialize( this, strList ) && !strList.empty() )
-		{
-			for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
-			{
-				//escape '||' I don't like this but it is needed
-				(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
-			}
-			QString data = QStyleSheet::escape( strList.join( "||" ) );
-			xml += "    <plugin-data plugin-id=\"" +
-				QStyleSheet::escape( p->id())  + "\">" + data  + "</plugin-data>\n";
-		}
-	}*/
-
 	// Store address book fields
-	AddressBookFields::Iterator addrIt = m_addressBook.begin();
-	for( ; addrIt != m_addressBook.end(); ++addrIt )
+	QMap<QString, QMap<QString, QString> >::ConstIterator appIt = m_addressBook.begin();
+	for( ; appIt != m_addressBook.end(); ++appIt )
 	{
-		xml += "    <address-book-field id=\"" + QStyleSheet::escape(addrIt.key()) + "\">" +
-					QStyleSheet::escape(addrIt.data()) + "</address-book-field>\n";
+		QMap<QString, QString>::ConstIterator addrIt = appIt.data().begin();
+		for( ; addrIt != appIt.data().end(); ++addrIt )
+		{
+			xml += "    <address-book-field app=\"" + QStyleSheet::escape( appIt.key() ) +
+				"\" key=\"" + QStyleSheet::escape( addrIt.key() ) + "\">" +
+				QStyleSheet::escape( addrIt.data() ) + "</address-book-field>\n";
+		}
 	}
 
 	// Store other plugin data
-	QMap<QString, QString>::ConstIterator it;
-	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+	if( !m_pluginData.isEmpty() )
 	{
-		xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
-				+ QStyleSheet::escape(it.data()) + "</plugin-data>\n";
+		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
+		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
+		{
+			xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape( pluginIt.key() ) + "\">\n";
+
+			QMap<QString, QString>::ConstIterator it;
+			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
+			{
+				xml += "      <plugin-data-field key=\"" + QStyleSheet::escape( it.key() ) + "\">"
+						+ QStyleSheet::escape( it.data() ) + "</plugin-data-field>\n";
+			}
+
+			xml += "    </plugin-data>\n";
+		}
 	}
 
 	xml += "  </meta-contact>\n";
@@ -676,18 +674,28 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 
 			else if( contactElement.tagName() == "address-book-field" )
 			{
-				QString id = contactElement.attribute( "id", QString::null );
+				QString app = contactElement.attribute( "app", QString::null );
+				QString key = contactElement.attribute( "key", QString::null );
 				QString val = contactElement.text();
-				m_addressBook.insert( id, val );
-
+				m_addressBook[ app ][ key ] = val;
 			}
 			else if( contactElement.tagName() == "plugin-data" )
 			{
-				QString pluginId = contactElement.attribute(
-					"plugin-id", QString::null );
-				m_pluginData.insert( pluginId, contactElement.text() );
-			}
+				QMap<QString, QString> pluginData;
+				QString pluginId = contactElement.attribute( "plugin-id", QString::null );
 
+				QDomNode field = contactElement.firstChild();
+				while( !field.isNull() )
+				{
+					QDomElement fieldElement = field.toElement();
+					if( fieldElement.tagName() == "plugin-data-field" )
+						pluginData.insert( fieldElement.attribute( "key", "undefined-key" ), fieldElement.text() );
+
+					field = field.nextSibling();
+				}
+
+				m_pluginData.insert( pluginId, pluginData );
+			}
 		}
 		contactNode = contactNode.nextSibling();
 	}
@@ -699,38 +707,21 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	return true;
 }
 
-QString KopeteMetaContact::addressBookField( KopetePlugin * p,
-	const QString & key ) const
+QString KopeteMetaContact::addressBookField( KopetePlugin * /* p */, const QString &app, const QString & key ) const
 {
-	if ( p && p->addressBookFields().contains( key ) ) {
-		if ( m_addressBook.contains( key ) ) {
-			return m_addressBook[ key ];
-		} else
-			return QString::null;
-	} else
-		return QString::null;
+	return m_addressBook[ app ][ key ];
 }
 
-void KopeteMetaContact::setAddressBookField( KopetePlugin * p ,
-	const QString & key, const QString & value )
+void KopeteMetaContact::setAddressBookField( KopetePlugin * /* p */, const QString &app, const QString &key, const QString &value )
 {
-	if ( p && p->addressBookFields().contains( key ) )
-		m_addressBook.insert( key, value );
-	else
-		kdDebug(14010) << "[KopeteMetaContact::setAddressBookField] Sorry, plugin "
-			  << p->pluginId() << " doesn't have field "
-			  << key << " registered" << endl;
-}
-
-KopeteMetaContact::AddressBookFields KopeteMetaContact::addressBookFields() const
-{
-	return m_addressBook;
+	m_addressBook[ app ][ key ] = value;
 }
 
 bool KopeteMetaContact::isTemporary() const
 {
 	return m_temporary;
 }
+
 void KopeteMetaContact::setTemporary( bool isTemporary, KopeteGroup *group )
 {
 	m_temporary = isTemporary;
@@ -764,44 +755,45 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	if( !p )
 		return;
 
-	QMap<QString, QString>::ConstIterator it;
+	QMap<QString, QMap<QString, QString> >::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
+		//kdDebug( 14010 ) << "key: " << it.key() << ", plugin id: " << p->pluginId() << endl;
 		if( p->pluginId() == it.key() )
-		{
-			p->deserialize( this, pluginData(p) );
-		}
+			p->deserialize( this, it.data() );
 	}
 }
 
-void KopeteMetaContact::setPluginData(KopetePlugin *p, QStringList strList )
+void KopeteMetaContact::setPluginData( KopetePlugin *p, const QMap<QString, QString> &pluginData )
 {
-	if(strList.isEmpty())
+	if( pluginData.isEmpty() )
 	{
-		m_pluginData.remove(p->pluginId());
+		m_pluginData.remove( p->pluginId() );
 		return;
 	}
 
-	for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
-	{
-		//escape '||' I don't like this but it is needed
-		(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
-	}
-	m_pluginData[p->pluginId()] =  strList.join( "||" ) ;
+	m_pluginData[ p->pluginId() ] = pluginData;
 }
 
-QStringList KopeteMetaContact::pluginData(KopetePlugin *p)
+void KopeteMetaContact::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	if(!m_pluginData.contains(p->pluginId()))
-		return QStringList();
+	m_pluginData[ p->pluginId() ][ key ] = value;
+}
 
-	QStringList strList = QStringList::split( "||", m_pluginData[p->pluginId()] );
-	for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
-	{
-		//unescape '||'
-		(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
-	}
-	return strList;
+QMap<QString, QString> KopeteMetaContact::pluginData( KopetePlugin *p ) const
+{
+	if( !m_pluginData.contains( p->pluginId() ) )
+		return QMap<QString, QString>();
+
+	return m_pluginData[ p->pluginId() ];
+}
+
+QString KopeteMetaContact::pluginData( KopetePlugin *p, const QString &key ) const
+{
+	if( !m_pluginData.contains( p->pluginId() ) || !m_pluginData[ p->pluginId() ].contains( key ) )
+		return QString::null;
+
+	return m_pluginData[ p->pluginId() ][ key ];
 }
 
 KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
@@ -809,7 +801,7 @@ KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
 	return m_idleState;
 }
 
-void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c,	KopeteContact::IdleState s )
+void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c, KopeteContact::IdleState s )
 {
 	emit contactIdleStateChanged(c,s);
 	updateIdleState();

@@ -119,9 +119,6 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 
 	connect(m_serverContact->engine(), SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
-	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
-
 	if (mJoinOnConnect == true)
 	{
 		if (m_serverContact->engine()->isLoggedIn() == true)
@@ -131,6 +128,13 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 	}
 
 	return true;
+}
+
+void IRCContact::serialize( QMap<QString, QString> &serializedData,
+	QMap<QString, QString> & /* addressBookData */ )
+{
+	// Contact id and display name are already set for us, only add the rest
+	serializedData[ "serverName" ]  = serverName();
 }
 
 bool IRCContact::isChannel() const
@@ -379,11 +383,6 @@ void IRCContact::joinNow()
 	}
 	emit statusChanged(this, Online);
 
-}
-
-void IRCContact::slotMovedToMetaContact()
-{
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
 #include "irccontact.moc"

@@ -66,35 +66,27 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	// User's status changed (I don't understand this)
 	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)),
 					this, SLOT(slotMainStatusChanged(int)));
-	// Contact moved
-	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
-			this, SLOT (slotMoved(KopeteMetaContact*) ));
 	// Incoming minitype notification
 	QObject::connect(mProtocol->engine, SIGNAL(gotMiniTypeNotification(QString, int)),
 					this, SLOT(slotGotMiniType(QString, int)));
-  // New direct connection
-  QObject::connect(mProtocol->engine, SIGNAL(connectionReady(QString)),
-  	this, SLOT(slotDirectIMReady(QString)));
-  // Direct connection closed
-  QObject::connect(mProtocol->engine, SIGNAL(directIMConnectionClosed(QString)),
-  	this, SLOT(slotDirectIMConnectionClosed(QString)));
+	// New direct connection
+	QObject::connect(mProtocol->engine, SIGNAL(connectionReady(QString)),
+		this, SLOT(slotDirectIMReady(QString)));
+	// Direct connection closed
+	QObject::connect(mProtocol->engine, SIGNAL(directIMConnectionClosed(QString)),
+		this, SLOT(slotDirectIMConnectionClosed(QString)));
 	// Set up the mTypingTimer
 	QObject::connect(mTypingTimer, SIGNAL(timeout()),
 					this, SLOT(slotTextEntered()));
 	//File transfer request
 	QObject::connect(mProtocol->engine, SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
 		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
-  //File transfer manager stuff
+	//File transfer manager stuff
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
 		this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(KopeteTransfer *, const QString &)),
 		this, SLOT(slotTransferDeleted(KopeteTransfer *, const QString &)) );
-		
-	if(parent){
-		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-				protocol, SLOT (serialize(KopeteMetaContact*) ));
-	}
-	
+
 	initActions();
 	TBuddy tmpBuddy;
 	int num = mProtocol->buddyList()->getNum(mName);
@@ -715,13 +707,6 @@ QStringList OscarContact::removeTag ( QString &message, QString tag )
 	return attr;
 }
 */
-void OscarContact::slotMoved(KopeteMetaContact * old )
-{
-	disconnect(old, SIGNAL(aboutToSave(KopeteMetaContact*)), 0, 0);
-
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-		protocol(), SLOT (serialize(KopeteMetaContact*) ));
-}
 
 /** Called when we want to block the contact */
 void OscarContact::slotBlock(void)

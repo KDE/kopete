@@ -92,8 +92,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 				this, SLOT (removeFromGroup(KopeteGroup*) ));
 		connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
 				this, SLOT (slotMoved(KopeteMetaContact*) ));
-		connect (mc , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-				protocol, SLOT (serialize(KopeteMetaContact*) ));
 	}
 }
 
@@ -840,9 +838,14 @@ void JabberContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (addToGroup(KopeteGroup*) ));
 	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
+}
 
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-			protocol, SLOT (serialize(KopeteMetaContact*) ));
+void JabberContact::serialize( QMap<QString, QString> &serializedData,
+	QMap<QString, QString> & /* addressBookData */ )
+{
+	// Contact id and display name are already set for us, only add the rest
+	serializedData[ "identityId" ] = identityId();
+	serializedData[ "groups" ]     = groups().join( "," );
 }
 
 #include "jabbercontact.moc"

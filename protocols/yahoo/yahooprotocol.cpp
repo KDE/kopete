@@ -77,6 +77,8 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	{
 		connect();
 	}
+
+	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
 }
 
 YahooProtocol::~YahooProtocol()
@@ -94,76 +96,23 @@ YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
  *                                                                         *
  ***************************************************************************/
 
-void YahooProtocol::serialize( KopeteMetaContact *metaContact )
-{
-	kdDebug(14180) << "[YahooProtocol::serialize] Serializing metacontact" << endl;
-
-	QStringList strList;
-
-	KopeteContact *c;
-
-	for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
-	{
-		if ( c->protocol() == this )
-		{
-			kdDebug(14180) << "[YahooProtocol::serialize] Found Yahoo Contact in MetaContact" << endl;
-			YahooContact *g = static_cast<YahooContact*>(c);
-
-			if ( !g )
-			{
-				/* try the next one :) */
-				continue;
-			}
-
-			strList << g->displayName();
-			metaContact->setAddressBookField( YahooProtocol::protocol(), "messaging/yahoo" , g->contactId() );
-		}
-	}
-
-	metaContact->setPluginData(this, strList);
-}
-
 YahooProtocol *YahooProtocol::protocol()
 {
 	return protocolStatic_;
 }
 
-
-void YahooProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList &strList )
+void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
+	const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */ )
 {
-	kdDebug(14180) << "[YahooProtocol::deserialize] Deserializing metacontact" << endl;
+	QString contactId = serializedData[ "contactId" ];
 
-	QString protocolId = this->pluginId();
-
-	QString userid, alias, group;
-	userid = metaContact->addressBookField( this, "messaging/yahoo" ) ;
-
-	alias = strList[0];
-
-	if ( strList[1] != QString::null )
-		group = strList[1];
-	else
-		group = QString::null;
-
-	/* Robustness (TM) */
-	if ( userid == QString::null )
+	if( contact( contactId ) )
 	{
-		kdDebug(14180) << "[YahooProtocol::deserialize] null userid! trying next!" << endl;
+		kdDebug( 14180 ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
 		return;
 	}
 
-	if ( contact(userid) )
-	{
-		kdDebug(14180) << "[YahooProtocol::deserialize] User " << userid << " already in contacts map" << endl;
-		return;
-	}
-
-	this->addContact(userid, alias, metaContact, group);
-}
-
-QStringList YahooProtocol::addressBookFields() const
-{
-	return QStringList("messaging/yahoo");
+	addContact( contactId, serializedData[ "displayName" ], metaContact, serializedData[ "group" ] );
 }
 
 void YahooProtocol::init()
@@ -178,7 +127,7 @@ void YahooProtocol::init()
 
 KopeteContact *YahooProtocol::myself() const
 {
-#warning "For future maintainers : reimplement this!"
+	// FIXME: For future maintainers : reimplement this!
 	return 0L;
 }
 
@@ -280,8 +229,8 @@ bool YahooProtocol::isAway() const
 	return false; // XXX
 }
 
-AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
- {
+AddContactPage *YahooProtocol::createAddContactWidget( QWidget * /* parent */ )
+{
 	kdDebug(14180) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
 	//return (new YahooAddContactPage(this,parent));
 	return 0L;
@@ -371,17 +320,17 @@ void YahooProtocol::initActions()
  *                                                                         *
  ***************************************************************************/
 
-void YahooProtocol::slotLoginResponse( int succ, const QString &url)
+void YahooProtocol::slotLoginResponse( int /* succ */ , const QString & /* url */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotLoginResponse]" << endl;
 }
 
-void YahooProtocol::slotGotBuddies(YList * buds)
+void YahooProtocol::slotGotBuddies( YList * /* buds */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotBuddies]" << endl;
 }
 
-void YahooProtocol::slotGotBuddy(const QString &userid, const QString &alias, const QString &group)
+void YahooProtocol::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotBuddy]" << endl;
 	this->addContact(userid, alias, 0L, group);
@@ -392,7 +341,7 @@ YahooContact *YahooProtocol::contact( const QString &id )
 	return static_cast<YahooContact *>( contacts()[ id ] );
 }
 
-bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QString &displayName, 
+bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact )
 {
 	kdDebug(14180) << "[YahooProtocol::addContactToMetaContact] contactId: " << contactId << endl;
@@ -406,15 +355,17 @@ bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QStr
 	} else {
 		kdDebug(14180) << "[YahooProtocol::addContact] Contact already exists" << endl;
 	}
+
+	return false;
 }
 
 
-void YahooProtocol::slotGotIgnore( YList * igns)
+void YahooProtocol::slotGotIgnore( YList * /* igns */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotIgnore]" << endl;
 }
 
-void YahooProtocol::slotGotIdentities( const QStringList &ids)
+void YahooProtocol::slotGotIdentities( const QStringList & /* ids */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotIdentities]" << endl;
 
@@ -439,84 +390,78 @@ void YahooProtocol::slotGotIm( const QString &who, const QString &msg, long tm, 
 	kdDebug(14180) << "[YahooProtocol::slotGotIm] " << who << " " << msg << " " << tm << " " << stat << endl;
 }
 
-void YahooProtocol::slotGotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members)
+void YahooProtocol::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotConfInvite]" << endl;
 }
 
-void YahooProtocol::slotConfUserDecline( const QString &who, const QString &room, const QString &msg)
+void YahooProtocol::slotConfUserDecline( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotConfUserDecline]" << endl;
 }
 
-void YahooProtocol::slotConfUserJoin( const QString &who, const QString &room)
+void YahooProtocol::slotConfUserJoin( const QString & /* who */, const QString & /* room */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotConfUserJoin]" << endl;
 }
 
-void YahooProtocol::slotConfUserLeave( const QString &who, const QString &room)
+void YahooProtocol::slotConfUserLeave( const QString & /* who */, const QString & /* room */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotConfUserLeave]" << endl;
 }
 
-void YahooProtocol::slotConfMessage( const QString &who, const QString &room, const QString &msg)
+void YahooProtocol::slotConfMessage( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotConfMessage]" << endl;
 }
 
-void YahooProtocol::slotGotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize)
+void YahooProtocol::slotGotFile( const QString & /* who */, const QString & /* url */, long /* expires */, const QString & /* msg */,
+	const QString & /* fname */, unsigned long /* fesize */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotFile]" << endl;
 }
 
-void YahooProtocol::slotContactAdded( const QString &myid, const QString &who, const QString &msg)
+void YahooProtocol::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotContactAdded]" << endl;
 }
 
-void YahooProtocol::slotRejected( const QString &who, const QString &msg)
+void YahooProtocol::slotRejected( const QString & /* who */, const QString & /* msg */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotRejected]" << endl;
 }
 
-void YahooProtocol::slotTypingNotify( const QString &who, int stat)
+void YahooProtocol::slotTypingNotify( const QString & /* who */, int /* stat */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotTypingNotify]" << endl;
 }
 
-void YahooProtocol::slotGameNotify( const QString &who, int stat)
+void YahooProtocol::slotGameNotify( const QString & /* who */, int /* stat */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGameNotify]" << endl;
 }
 
-void YahooProtocol::slotMailNotify( const QString &from, const QString &subj, int cnt)
+void YahooProtocol::slotMailNotify( const QString & /* from */, const QString & /* subj */, int /* cnt */)
 {
 	kdDebug(14180) << "[YahooProtocol::slotMailNotify]" << endl;
 }
 
-void YahooProtocol::slotSystemMessage( const QString &msg)
+void YahooProtocol::slotSystemMessage( const QString &msg )
 {
 	kdDebug(14180) << "[YahooProtocol::slotSystemMessage]" << msg << endl;
 }
 
-void YahooProtocol::slotError( const QString &err, int fatal)
+void YahooProtocol::slotError( const QString & /* err */, int /* fatal */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotError]" << endl;
 }
 
-void YahooProtocol::slotRemoveHandler( int fd)
+void YahooProtocol::slotRemoveHandler( int /* fd */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotRemoveHandler]" << endl;
 }
 
 #include "yahooprotocol.moc"
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

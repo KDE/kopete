@@ -44,8 +44,7 @@ public:
 	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
 	~IRCProtocol();
 	/* Plugin reimplementation */
-	void init();
-	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
+	virtual void init();
 
 	/** KopeteProtocol reimplementation */
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
@@ -63,8 +62,13 @@ public:
 	IRCServerManager *serverManager() { return m_serverManager; }
 	KIRC *engine() { return m_engine; };
 
+	/**
+	 * Deserialize contact data
+	 */
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+
 public slots:
-	void serialize(KopeteMetaContact * metaContact);
 	virtual void connect();
 	virtual void disconnect();
 

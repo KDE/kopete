@@ -2,7 +2,7 @@
     yahoocontact.h - Yahoo Contact
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    
+
     Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -33,7 +33,7 @@
 
 class YahooProtocol;
 
-class YahooContact : public KopeteContact 
+class YahooContact : public KopeteContact
 {
 	Q_OBJECT public:
 
@@ -48,17 +48,16 @@ class YahooContact : public KopeteContact
 	virtual QString statusIcon() const;
 	virtual int importance() const;
 	virtual KActionCollection *customContextMenuActions();
-	
+
 	void setYahooStatus( YahooStatus::Status , const QString &, int  );
-	
+
 public slots:
-	
 	virtual void execute();
 	virtual void slotViewHistory();
 	virtual void slotDeleteContact();
 	virtual void slotUserInfo();
-	virtual void slotSendFile();	
-		
+	virtual void slotSendFile();
+
 	private slots:
 
 	private:
@@ -68,20 +67,9 @@ public slots:
 	QString mFullName;
 
 	YahooStatus mStatus;
-
-private slots: // Private slots
-	void slotMovedToMetaContact();
 };
-	
+
 #endif
 
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

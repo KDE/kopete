@@ -54,6 +54,12 @@ public:
 	QStringList servicePrefs();
 	void setServicePrefs(QStringList prefs);
 
+	/**
+	 * Serialize contact
+	 */
+	virtual void serialize( QMap<QString, QString> &serializedData,
+		QMap<QString, QString> &addressBookData );
+
 public slots:
 
 	virtual void slotUserInfo();
@@ -64,7 +70,6 @@ public slots:
 private slots:
 	void userPrefs();
 	void messageSent(const KopeteMessage&);
-	void slotMovedToMetaContact();
 
 private:
 	KopeteMessageManager* msgManager();
@@ -82,12 +87,5 @@ private:
 
 #endif
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -41,9 +41,6 @@ class KopeteMetaContact : public QObject
 	Q_OBJECT
 
 public:
-	// <PluginID, Value   >
-	typedef QMap< QString, QString > AddressBookFields;
-
 	KopeteMetaContact();
 	~KopeteMetaContact();
 
@@ -56,13 +53,13 @@ public:
 	 * Add contact to the meta contact
 	 */
 	void addContact( KopeteContact *c);
-	
+
 	/**
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
 	 */
-	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString 
-&contactId );	
+	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString
+&contactId );
 	/**
 	 * The name of the icon associated with the contact's status
 	 */
@@ -81,7 +78,7 @@ public:
 	 *        protocols
 	 */
 	bool isOnline() const;
-	
+
 	/**
 	 * Returns weather this contact can accept files
 	 * @return True if the user is online with a file capable protocol, false otherwise
@@ -124,7 +121,7 @@ public:
 	 */
 	QString displayName() const;
 	void setDisplayName( const QString &name);
-	
+
 	/**
 	 * The groups the contact is stored in
 	 */
@@ -147,7 +144,8 @@ public:
 	 * Move a contact from one group to another.
 	 */
 	void moveToGroup( KopeteGroup *from, KopeteGroup *to );
-    /**
+
+	/**
 	 * Remove a contact from one group
 	 */
 	void removeFromGroup( KopeteGroup *from);
@@ -191,26 +189,60 @@ public:
 	void removeContact(KopeteContact *c , bool deleted=false);
 
 	/**
-	 * Set or get data specific for each plugin.
-	 * Theses data are saved to the contactlist
+	 * Set the plugin-specific data.
+	 * The data in the provided QMap is a set of key/value pairs.
+	 * Note that protocol plugins usually shouldn't use this method, but
+	 * reimplement @ref KopeteContact::serialize() instead. This method
+	 * is called by @ref KopeteProtocol for those classes.
+	 * It is fine to call this method from non-protocol plugins.
 	 */
-	void setPluginData(KopetePlugin *p, QStringList value );
-	QStringList pluginData(KopetePlugin *p) ;
+	void setPluginData( KopetePlugin *p, const QMap<QString, QString> &value );
+
+	/**
+	 * Get the settings as stored previously by calls to @ref setPluginData()
+	 *
+	 * Note that calling this method for protocol plugins that use the
+	 * @ref KopeteContact::serialize() API may yield unexpected results.
+	 */
+	QMap<QString, QString> pluginData( KopetePlugin *p ) const;
+
+	/**
+	 * Convenience method to store or change only a single field of the
+	 * plugin data. As with the other @ref setPluginData() method, protocols
+	 * are advised not to use this method and reimplement
+	 * @ref KopeteContact::serialize() instead. This method is meant for use
+	 * by non-protocol plugins.
+	 */
+	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
+
+	/**
+	 * Convenience method to retrieve only a single field from the plugin
+	 * data. See @ref setPluginData().
+	 *
+	 * Note that calling this method for protocol plugins that use the
+	 * @ref KopeteContact::serialize() API may yield unexpected results.
+	 */
+	QString pluginData( KopetePlugin *p, const QString &key ) const;
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()
 	 * cannot be altered!
+	 *
+	 * @param app refers to the application id in the libkabc database.
+	 * This should be a standardized format to make sense in the address
+	 * book in the first place - if you could use "kopete" as application
+	 * then probably you should use the plugin data API instead of the
+	 * address book fields.
+	 *
+	 * FIXME: In the code the requirement that fields are registered first
+	 *        is already lifted, but the API needs some review before we
+	 *        can remove it here too.
+	 *        Probably it requires once more some rewrites to get it working
+	 *        properly :( - Martijn
 	 */
-	QString addressBookField( KopetePlugin *p, const QString &key ) const;
-	void setAddressBookField( KopetePlugin *p, const QString &key, const QString &value );
-
-	/**
-	 * Return a copy of all address book fields exported by this
-	 * meta contact
-	 */
-	AddressBookFields addressBookFields() const;
-
+	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
+	void setAddressBookField( KopetePlugin *p, const QString &app, const QString &key, const QString &value );
 
 public slots:
 	/**
@@ -235,7 +267,7 @@ public slots:
 	 * ICQ the only true difference is the GUI shown to the user.
 	 */
 	void startChat();
-	
+
 	/**
 	 * This is the KopeteMetaContact level slot for sending files. It may be called through the
 	 * "Send File" entry in the GUI, or over DCOP. If the function is called through the GUI,
@@ -268,7 +300,6 @@ signals:
 	 */
 	void contactStatusChanged( KopeteContact *contact,
 		KopeteContact::ContactStatus status );
-
 
 	/**
 	 * The meta contact's display name changed
@@ -313,12 +344,11 @@ signals:
 	void idleStateChanged( KopeteMetaContact *contact,
 		KopeteMetaContact::IdleState newState );
 
-  /**
-  	* One of the subcontacts' idle status has changed.  As with online status,
-    * this can occur without the metacontact changing idle state
-    */
-  void contactIdleStateChanged( KopeteContact *contact,
-   	KopeteContact::IdleState newState );
+	/**
+	 * One of the subcontacts' idle status has changed.  As with online status,
+	 * this can occur without the metacontact changing idle state
+	 */
+	void contactIdleStateChanged( KopeteContact *contact, KopeteContact::IdleState newState );
 
 private slots:
 	/**
@@ -382,8 +412,8 @@ private:
 	/**
 	 * Data to store in the XML file
 	 */
-	QMap<QString, QString> m_pluginData;
-	AddressBookFields m_addressBook;
+	QMap<QString, QMap<QString, QString> > m_pluginData;
+	QMap<QString, QMap<QString, QString> > m_addressBook;
 
 	bool m_temporary;
 

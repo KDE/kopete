@@ -126,10 +126,13 @@ public slots:
 
 // KopetePlugin overloading
 public:
-	QStringList addressBookFields() const;	// Returns the address book fields we're interested in
 	bool unload();				// Unload statusbar icon
 
-	void deserialize(KopeteMetaContact *metaContact, const QStringList &strList);	// Deserialises a strlist into a metacontact
+	/**
+	 * Deserialize into a wpcontact
+	 */
+	void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+		const QMap<QString, QString> &addressBookData );
 
 // Stuff used by WPContact
 public:
@@ -140,22 +143,10 @@ public:
 
 public slots:
 	/**
-	 * Despatches said message to the destination.
+	 * Dispatches said message to the destination.
 	 */
 	void slotSendMessage(const QString &Body, const QString &Destination);
-
-	void serialize(KopeteMetaContact *metaContact);	// Serialises a given metacontact
 };
 
 #endif
-
-	// Creates a contact from the serialised data
-//	KopeteContact *createContact(KopeteMetaContact *parent, const QString &serializedData);
-
-	// Returns a WP contact under the given MetaContact for Name. If theMetaContact is invalid, returns 0.
-	// If Name already exists, returns that. If Name doesn't exist, creates a new contact.
-	// *** USE FOR SAFELY CREATING CONTACTS UNDER AN EXISTING METACONTACT ***
-	// OBSELETE
-//	WPContact *addContact(const QString &Name, KopeteMetaContact* theMetaContact);
-
 

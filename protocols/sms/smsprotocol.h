@@ -41,8 +41,11 @@ public:
 
 	bool unload();
 
-	virtual void deserialize( KopeteMetaContact *metaContact,
-		const QStringList &strList );
+	/**
+	 * Deserialize contact data
+	 */
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual bool isConnected() const;
@@ -55,7 +58,6 @@ public:
 	KopeteContact *myself() const;
 
 public slots:
-	void serialize( KopeteMetaContact *metaContact);
 	virtual void connect();
 	virtual void disconnect();
 

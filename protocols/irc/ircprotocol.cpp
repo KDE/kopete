@@ -87,6 +87,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 		cfg->writeEntry ( "ContactList Version", "0.5" );
 	}
 
+	addAddressBookField( "messaging/irc", KopetePlugin::MakeIndexField );
 
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->readBoolEntry("HideConsole", false) == false)
@@ -229,41 +230,23 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 	return (new IRCAddContactPage(this,parent));
 }
 
-
-void IRCProtocol::serialize(KopeteMetaContact * metaContact) 
+void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+	const QMap<QString, QString> & /* addressBookData */ )
 {
-	QStringList strList;
+	// This seems to not be required? Results in a duplicate contact adding warning
+	// (Martijn:) yes, it is. If you get dups you are apparently storing your contact
+	//            list somewhere else too and not only in Kopete's contactlist.xml
 
-	QPtrList<KopeteContact> contacts = metaContact->contacts();
-	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
+	QString contactId = serializedData[ "contactId" ];
+	if( !contacts()[ contactId ] )
 	{
-		if ( c->protocol()->pluginId() != this->pluginId() ) // not our contact, next one please
-				continue;
+		QString displayName = serializedData[ "displayName" ];
+		if( displayName.isEmpty() )
+			displayName = contactId;
 
-		IRCContact *g = static_cast<IRCContact*>(c);
-
-		if( g )
-			strList << g->contactId() << g->displayName() << g->serverName();
-	}
-
-	metaContact->setPluginData(this, strList);
-}
-
-void IRCProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList &strList )
-{
-	/* This seems to not be required??! Results in a duplicate contact adding warning */
-	
-	QString contactID = strList[0];
-	
-	if (!contacts()[contactID]) {
-		QString displayName = strList[1];
-		QString serverName = strList[2];
-		if(displayName.isEmpty())
-			displayName = contactID;
-		addContact( serverName, displayName, false, false,metaContact);
+		addContact( serializedData[ "serverName" ], displayName, false, false, metaContact );
 	}
 }
-
 
 ///////////////////////////////////////////////////
 //           Internal functions implementation

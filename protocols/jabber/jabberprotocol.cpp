@@ -99,30 +99,25 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 
 	// read remaining settings from configuration file
 	slotSettingsChanged();
+	addAddressBookField( "messaging/xmpp", KopetePlugin::MakeIndexField );
 }
 
 JabberProtocol::~JabberProtocol()
 {
-
 }
 
 void JabberProtocol::errorConnectFirst()
 {
-
 	KMessageBox::error( qApp->mainWidget(), i18n( "Please connect first" ), i18n( "Error" ) );
-
 }
 
 KActionMenu *JabberProtocol::protocolActions()
 {
-
 	return actionStatusMenu;
-
 }
 
 void JabberProtocol::initActions()
 {
-
 	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotGoOnline()), this, "actionJabberConnect");
 	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0, this, SLOT(slotGoAway()), this, "actionJabberAway");
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotGoXA()), this, "actionJabberXA");
@@ -339,15 +334,10 @@ void JabberProtocol::connect()
 	jabberClient->setProxy(proxy);
 
 	if(myContact)
-	{
-		contactMap.remove(myContact->userId());
 		delete myContact;
-	}
 
 	// create a contact instance for self
 	myContact = new JabberContact(QString("%1@%2").arg(userId, 1).arg(server, 2), userId, QStringList(i18n("Unknown")), this, 0L, QString::null);
-
-	contactMap.insert(myContact->userId(), myContact);
 
 	// set the title according to the new changes
 	actionStatusMenu->popupMenu()->changeTitle( menuTitleId , userId + "@" + server );
@@ -460,9 +450,10 @@ void JabberProtocol::disconnect()
 	// it seems that we don't get offline notifications
 	// when going offline with the protocol, so update
 	// all contacts manually
-	for(JabberContactMap::iterator it = contactMap.begin(); it != contactMap.end(); it++)
+	QDictIterator<KopeteContact> it( contacts() );
+	for ( ; it.current() ; ++it )
 	{
-		it.data()->slotUpdatePresence(STATUS_OFFLINE, "");
+		static_cast<JabberContact *>( *it )->slotUpdatePresence( STATUS_OFFLINE, "" );
 	}
 }
 
@@ -627,71 +618,18 @@ bool JabberProtocol::isAway(void) const
 	return (myContact->status() != JabberContact::Online);
 }
 
-void JabberProtocol::serialize(KopeteMetaContact *mc )
+void JabberProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+	const QMap<QString, QString> & /* addressBookData */ )
 {
-	QStringList addressList;
-	QStringList data;
-	kdDebug(14130) << "[JabberProtocol] Serializing data for metacontact " << mc->displayName() << endl;
+	kdDebug( 14130 ) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName() << endl;
 
-	QPtrList<KopeteContact> contacts = mc->contacts();
+	JabberContact *jc = new JabberContact( serializedData[ "contactId" ],
+		serializedData[ "displayName" ], QStringList::split( ',', serializedData[ "groups" ] ),
+		this, metaContact, serializedData[ "identityId" ] );
 
-	// iterate through all contacts that the metacontact has
-	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
-	{
-		if(c->protocol()->pluginId() != this->pluginId())
-			continue;
-
-		JabberContact *jc = (JabberContact *)c;
-
-		data << jc->identityId() << jc->userId() << jc->displayName() << jc->groups().join(",");
-
-		addressList << jc->userId();
-	}
-
-	QString addresses = addressList.join(",");
-//	if(!addresses.isEmpty()) //if there are no contact, then erase old data
-	mc->setAddressBookField(this, "messaging/jabber", addresses);
-	mc->setPluginData(this , data );
-}
-
-void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &data)
-{
-	kdDebug(14130) << "[JabberProtocol] Deserializing data for metacontact " << contact->displayName() << endl;
-
-	for(unsigned i = 0; i < data.count(); i += 4)
-	{
-		QString identityId = data[i + 0];
-		QString userId = data[i + 1];
-		QString displayName = data[i + 2];
-		QStringList groups;
-
-		// make sure that we don't segfault if no groups are supplied
-		if((data.count() - i) >= 4)
-			QStringList groups = QStringList::split(",", data[i + 3]);
-
-		kdDebug(14130) << "[JabberProtocol] Deserialized subcontact " << userId << endl;
-
-		JabberContact *jc = new JabberContact(userId, displayName, groups, this, contact, identityId);
-
-		metaContactMap.insert(jc, contact);
-		contactMap.insert(userId, jc);
-
-		QObject::connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
-		QObject::connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
-		QObject::connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
-
-	}
-}
-
-QStringList JabberProtocol::addressBookFields() const
-{
-	return QStringList("messaging/jabber");
-}
-
-void JabberProtocol::slotContactDestroyed(KopeteContact *contact)
-{
-	metaContactMap.remove((JabberContact *)contact);
-	contactMap.remove(((JabberContact *)contact)->userId());
+	// FIXME: Shouldn't the JabberContact constructor do this instead? - Martijn
+	QObject::connect( jc, SIGNAL( chatUser( JabberContact * ) ),         SLOT( slotChatUser( JabberContact * ) ) );
+	QObject::connect( jc, SIGNAL( emailUser( JabberContact * ) ),        SLOT( slotEmailUser( JabberContact * ) ) );
 }
 
 /*
@@ -911,13 +849,12 @@ JabberContact *JabberProtocol::createContact(const QString &jid, const QString &
 
 	JabberContact *jc = new JabberContact(jid, alias, groups, this, metaContact, identity);
 
-	QObject::connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
 	QObject::connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
 	QObject::connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
 
-	contactMap.insert(jid, jc);
+	metaContact->addContact(jc );
 
-	metaContactMap.insert(jc, metaContact);
+	contactMap.insert(jid, jc);
 
 	return jc;
 }
@@ -939,14 +876,6 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 				kdDebug(14130) << "[JabberProtocol] Contact " << item.jid().userHost() << " already exists, updating" << endl;
 
 				jc->slotUpdateContact(item);
-
-				// Due to the fact that we serialize and deserialize contacts
-				// on startup, they usually exist in the GUI roster but not in
-				// our contact map associations yet after connecting.
-				// Make sure that we propagate the associations into the maps
-				// now.
-				contactMap.insert(item.jid().userHost(), jc);
-				metaContactMap.insert(jc, mc);
 
 				return;
 			}
@@ -1047,9 +976,7 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 		Jabber::JT_Roster *task = new Jabber::JT_Roster(jabberClient->rootTask());
 		task->remove(jid);
 		task->go(true);
-
 	}
-
 }
 
 void JabberProtocol::slotNewContact(const Jabber::RosterItem &item)
@@ -1098,51 +1025,41 @@ void JabberProtocol::slotNewContact(const Jabber::RosterItem &item)
 
 	// add the contact to the GUI
 	createAddContact(0L, item);
-
 }
 
 void JabberProtocol::slotContactDeleted(const Jabber::RosterItem &item)
 {
-
 	kdDebug(14130) << "[JabberProtocol] Deleting contact " << item.jid().userHost() << endl;
 
-	if(!contactMap.contains(item.jid().userHost()))
+	if( !contacts()[ item.jid().userHost() ] )
 	{
 		kdDebug(14130) << "[JabberProtocl] WARNING: slotContactDeleted() was asked to delete a non-existing contact." << endl;
 		return;
 	}
 
-	JabberContact *jc = contactMap[item.jid().userHost()];
-
-	// delete contact
-	metaContactMap.remove(jc);
-	contactMap.remove(item.jid().userHost());
+	JabberContact *jc = static_cast<JabberContact*>( contacts()[ item.jid().userHost() ] );
 
 	// this will also cause the contact to disappear from the metacontact
 	delete jc;
-
 }
 
 void JabberProtocol::slotContactUpdated(const Jabber::RosterItem &item)
 {
-
 	kdDebug(14130) << "[JabberProtocol] Status update for " << item.jid().userHost() << endl;
 
 	// sanity check
-	if(!contactMap.contains(item.jid().userHost()))
+	if( !contacts()[ item.jid().userHost() ] )
 	{
 		kdDebug(14130) << "[JabberProtocol] WARNING: slotContactUpdated() was requested to update a non-existing contact." << endl;
 		return;
 	}
 
 	// update the contact data
-	contactMap[item.jid().userHost()]->slotUpdateContact(item);
-
+	static_cast<JabberContact*>( contacts()[ item.jid().userHost() ] )->slotUpdateContact( item );
 }
 
 void JabberProtocol::slotSettingsChanged()
 {
-
 	KGlobal::config()->setGroup("Jabber");
 
 	QString userId = KGlobal::config()->readEntry("UserID", "");
@@ -1208,7 +1125,7 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		kdDebug(14130) << "[JabberProtocol] New message from '" << message.from().userHost() << "'" << endl;
 
 		// see if the contact is actually in our roster
-		if (!contactMap.contains(message.from().userHost()))
+		if( !contacts()[ message.from().userHost() ] )
 		{
 			// this case happens if we are getting a message from a chat room
 			// FIXME: this can also happen with contacts we did not previously subscribe
@@ -1234,9 +1151,9 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		{
 			// we don't have a widget yet, create one
 			if((message.type() == "chat") && !emailType)
-				manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::ChatWindow);
+				manager = createMessageManager( contacts()[ message.from().userHost() ], KopeteMessageManager::ChatWindow);
 			else
-				manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::Email);
+				manager = createMessageManager( contacts()[ message.from().userHost() ], KopeteMessageManager::Email);
 
 			// add this manager to the map
 			messageManagerMap[message.from().userHost()] = manager;
@@ -1253,9 +1170,9 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 				delete manager;
 
 				if((message.type() == "chat") && !emailType)
-					manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::ChatWindow);
+					manager = createMessageManager( contacts()[ message.from().userHost() ], KopeteMessageManager::ChatWindow );
 				else
-					manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::Email);
+					manager = createMessageManager( contacts()[ message.from().userHost() ], KopeteMessageManager::Email );
 
 				messageManagerMap[message.from().userHost()] = manager;
 			}
@@ -1264,7 +1181,7 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		KopeteContactPtrList contactList;
 		contactList.append(myself());
 
-		KopeteMessage newMessage(message.timeStamp(), contactMap[message.from().userHost()], contactList, message.body(), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText);
+		KopeteMessage newMessage( message.timeStamp(), contacts[ message.from().userHost() ], contactList, message.body(), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText );
 
 		// pass the message on to the manager
 		manager->appendMessage(newMessage);
@@ -1400,13 +1317,13 @@ void JabberProtocol::slotResourceAvailable(const Jabber::Jid &jid, const Jabber:
 
 	kdDebug(14130) << "[JabberProtocol] New resource available for " << jid.userHost() << endl;
 
-	if(!contactMap.contains(jid.userHost()))
+	if( !contacts()[ jid.userHost() ] )
 	{
 		kdDebug(14130) << "[JabberProtocol] Trying to add a resource, but couldn't find an entry for " << jid.userHost() << endl;
 		return;
 	}
 
-	contactMap[jid.userHost()]->slotResourceAvailable(jid, resource);
+	static_cast<JabberContact*>( contacts()[ jid.userHost() ] )->slotResourceAvailable( jid, resource );
 
 }
 
@@ -1415,14 +1332,13 @@ void JabberProtocol::slotResourceUnavailable(const Jabber::Jid &jid, const Jabbe
 
 	kdDebug(14130) << "[JabberProtocol] Resource now unavailable for " << jid.userHost() << endl;
 
-	if(!contactMap.contains(jid.userHost()))
+	if( !contacts()[ jid.userHost() ] )
 	{
 		kdDebug(14130) << "[JabberProtocol] Trying to remove a resource, but couldn't find an entry for " << jid.userHost() << endl;
 		return;
 	}
 
-	contactMap[jid.userHost()]->slotResourceUnavailable(jid, resource);
-
+	static_cast<JabberContact*>( contacts()[ jid.userHost() ] )->slotResourceUnavailable( jid, resource );
 }
 
 void JabberProtocol::slotRetrieveVCard(const Jabber::Jid &jid)
@@ -1460,13 +1376,13 @@ void JabberProtocol::slotGotVCard()
 		return;
 	}
 
-	if (!contactMap.contains(vCard->jid().userHost()))
+	if( !contacts()[ vCard->jid().userHost() ] )
 	{
 		kdDebug(14130) << "[JabberProtocol] slotGotVCard received a vCard - but couldn't find JID " << vCard->jid().userHost() << " in the list!" << endl;
 		return;
 	}
 
-	contactMap[vCard->jid().userHost()]->slotGotVCard(vCard);
+	static_cast<JabberContact*>( contacts()[ vCard->jid().userHost() ] )->slotGotVCard( vCard );
 
 	delete vCard;
 

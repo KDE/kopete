@@ -42,6 +42,8 @@
 KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId,
 	KopeteMetaContact *parent ) : QObject( parent )
 {
+	kdDebug() << "KopeteContact::KopeteContact: Creating contact with id " << contactId << endl;
+
 	m_contactId = contactId;
 
 	m_metaContact = parent;
@@ -73,7 +75,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
 	actionSendFile = KopeteStdAction::sendFile( this,
 		SLOT( sendFile() ), this, "actionSendFile");
-		
+
 	//Need to check this because ourself has no parent
 	if( parent )
 		parent->addContact( this );
@@ -344,6 +346,12 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 QString KopeteContact::contactId() const
 {
 	return m_contactId;
+}
+
+void KopeteContact::serialize( QMap<QString, QString> & /*serializedData */,
+	QMap<QString, QString> & /* addressBookData */ )
+{
+	// Do nothing in the default implementation
 }
 
 void KopeteContact::setIdleState( KopeteContact::IdleState newState )

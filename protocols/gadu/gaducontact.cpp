@@ -29,12 +29,6 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
 
     setDisplayName( name );
     thisContact_.append( this );
-
-        connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
-                this, SLOT (slotMovedToMetaContact() ));
-        connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-                protocol_, SLOT (serialize(KopeteMetaContact*) ));
-
 }
 
 /*void
@@ -319,13 +313,6 @@ GaduContact::slotDeleteContact()
 {
     GaduProtocol::protocol()->removeContact( this );
 }
-
-void GaduContact::slotMovedToMetaContact()
-{
-    connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-        protocol(), SLOT (serialize(KopeteMetaContact*) ));
-}
-
 
 #include "gaducontact.moc"
 

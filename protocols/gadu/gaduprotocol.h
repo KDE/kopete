@@ -57,8 +57,6 @@ public:
     void init();
 
     bool isConnected() const;
-    KopeteContact* createContact( KopeteMetaContact *parent,
-                                          const QString &serializedData );
     void setAway();
     void setAvailable();
     bool isAway() const ;
@@ -66,15 +64,15 @@ public:
     AddContactPage *createAddContactWidget( QWidget *parent );
     bool canSendOffline() const { return true; }
     KopeteContact *myself() const;
-    void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
-    QStringList addressBookFields() const;
+    virtual void deserializeContact( KopeteMetaContact *metaContact,
+        const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
     virtual KActionMenu* protocolActions();
     // }
     //!Plugin reimplementation
     bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-	KopeteMetaContact *parentContact );
-    
+    KopeteMetaContact *parentContact );
+
     void removeContact( const GaduContact *c );
 public slots:
     virtual void connect();
@@ -91,8 +89,6 @@ public slots:
     void slotGoInvisible();
     void slotGoAway();
     void slotGoBusy();
-
-    void serialize( KopeteMetaContact *metaContact);
 
 private slots:
     void settingsChanged();

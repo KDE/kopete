@@ -71,8 +71,6 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myChatManager, SLOT(appendMessage(const KopeteMessage &)));
 
 	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol, SLOT (serialize(KopeteMetaContact*) ));
-
 
 	// Set up the context menu
 	myActionCollection = new KActionCollection(this);
@@ -129,12 +127,6 @@ void WPContact::slotSendMessage(const KopeteMessage& message)
 	QString Message = (message.subject() != "" ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
 	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
 }
-
-void WPContact::slotMovedToMetaContact()
-{
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
-}
-
 
 #include "wpcontact.moc"
 

@@ -114,8 +114,8 @@ public:
 		RL     // reverse
 	};
 
-	virtual void deserialize( KopeteMetaContact *metaContact,
-		const QStringList &strList );
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual bool isConnected() const;
@@ -163,11 +163,6 @@ public slots:
 	 * Start a new chat session: the result is an XFR command, see above
 	 */
 	void slotStartChatSession( QString handle );
-
-	/**
-	 * Update metaContact data for saving
-	 */
-	void serialize( KopeteMetaContact *metaContact);
 
 private slots:
 	/**

@@ -45,10 +45,6 @@ YahooContact::YahooContact(QString userID, QString fullName,
 	emit statusChanged(this, status());
 
 	// XXX initActions();
-
-	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol, SLOT (serialize(KopeteMetaContact*) ));
-
 }
 
 YahooContact::~YahooContact()
@@ -159,11 +155,6 @@ void YahooContact::slotUserInfo()
 void YahooContact::slotSendFile()
 {
 	kdDebug(14180) << "[YahooContact::slotSendFile()]" << endl;
-}
-
-void YahooContact::slotMovedToMetaContact()
-{
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
 #include "yahoocontact.moc"

@@ -121,13 +121,34 @@ public:
 	/**
 	 * Adds a contact to an existing MetaContact. Also performs any server-related
 	 * functions. *MUST* be implemented in each protocol
-	 * 
+	 *
 	 * @param contactId The unique ID for this protocol
 	 * @param displayName The displayname of the contact (may equal userId for some protocols
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
 		 KopeteMetaContact *parentContact );
+
+	/**
+	 * Deserialize plugin-data for a meta contact. This method splits up the
+	 * data into the independent KopeteContacts and calls @ref deserializeContact()
+	 * for each contact.
+	 *
+	 * Note that you can still reimplement this method if you prefer, but you are
+	 * strongly recommended to use this version of the method instead, unless you
+	 * want to do _VERY_ special things with the data...
+	 */
+	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData );
+
+	/**
+	 * Deserialize a single contact.
+	 * This method is called by @ref deserialize() for each separate contact,
+	 * so you don't need to add your own hooks for multiple contacts in a single
+	 * meta contact yourself.
+	 * The default implementation does nothing.
+	 */
+	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+		const QMap<QString, QString> &addressBookData );
 
 public slots:
 	/**
@@ -168,6 +189,12 @@ private slots:
 	 * Track the deletion of a KopeteContact and cleanup
 	 */
 	void slotKopeteContactDestroyed( KopeteContact * );
+
+	/**
+	 * A meta contact is about to save.
+	 * Call serialize() for all contained contacts for this protocol.
+	 */
+	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
 
 private:
 	/**

@@ -62,20 +62,18 @@ KopeteGroup::~KopeteGroup()
 
 QString KopeteGroup::toXML()
 {
-	QString xml = "  <kopete-group>\n";
-	xml += "    <display-name>" + m_displayName + "</display-name>\n";
-	
-	if( m_type == Classic )
-		xml += "    <type>Classic</type>\n";
+	QString xml = "  <kopete-group type=\"";
+
 	if( m_type == Temporary )
-		xml += "    <type>Temporary</type>\n";
-	if( m_type == TopLevel )
-		xml += "    <type>TopLevel</type>\n";
-		
-	if( m_expanded )
-		xml += "    <view>expanded</view>\n";
+		xml += "temporary";
+	else if( m_type == TopLevel )
+		xml += "top-level";
 	else
-		xml += "    <view>collapsed</view>\n";
+		xml += "standard";
+
+	xml += "\" view=\"" + QString( m_expanded ? "expanded" : "collapsed" ) + "\">\n";
+
+	xml += "    <display-name>" + QStyleSheet::escape( m_displayName ) + "</display-name>\n";
 
 	// Store other plugin data
 	QMap<QString, QString>::ConstIterator it;
@@ -96,6 +94,16 @@ bool KopeteGroup::fromXML(const QDomNode& data)
 	while( !groupData.isNull() )
 	{
 		QDomElement groupElement = groupData.toElement();
+		QString type = groupElement.attribute( "type", "standard" );
+		if( type == "temporary" )
+			m_type = Temporary;
+		else if( type == "top-level" )
+			m_type = TopLevel;
+		else
+			m_type = Classic;
+
+		QString view = groupElement.attribute( "view", "expanded" );
+		m_expanded = ( type != "collapsed" );
 
 		if( groupElement.tagName() == "display-name" )
 		{
@@ -103,30 +111,13 @@ bool KopeteGroup::fromXML(const QDomNode& data)
 //				return false;
 			m_displayName = groupElement.text();
 		}
-		if( groupElement.tagName() == "type" )
-		{
-			if( groupElement.text() == "Temporary" )
-				m_type = Temporary;
-			else if( groupElement.text() == "TopLevel" )
-				m_type = TopLevel;
-			else
-				m_type = Classic;
-		}
-		if( groupElement.tagName() == "view" )
-		{
-			if( groupElement.text() == "collapsed" )
-				m_expanded = false;
-			else
-				m_expanded = true;
-		}
 		else if( groupElement.tagName() == "plugin-data" )
 		{
-			QString pluginId = groupElement.attribute(
-				"plugin-id", QString::null );
+			QString pluginId = groupElement.attribute( "plugin-id", QString::null );
 			m_pluginData.insert( pluginId, groupElement.text() );
-			if(m_type==TopLevel) //FIXME:
+			if( m_type == TopLevel ) //FIXME:
 				toplevel->m_pluginData.insert( pluginId, groupElement.text() );
-		}                           
+		}
 
 		groupData = groupData.nextSibling();
 	}

@@ -28,7 +28,9 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 	
 	new SMSPreferences("sms_protocol", this);
 
-	QString protocolId = this->pluginId();
+	QString protocolId = pluginId();
+
+	addAddressBookField( "messaging/sms", KopetePlugin::MakeIndexField );
 
 	m_mySelf = new SMSContact(protocol(), "", "", 0);
 }
@@ -94,79 +96,20 @@ SMSProtocol* SMSProtocol::protocol()
 	return s_protocol;
 }
 
-void SMSProtocol::serialize( KopeteMetaContact *metaContact)
+void SMSProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+	const QMap<QString, QString> & /* addressBookData */ )
 {
-	QStringList stream;
-	
-	QPtrList<KopeteContact> contacts = metaContact->contacts();
-	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
+	SMSContact* c = addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
+
+	QString serviceName = serializedData[ "serviceName" ];
+	if( !serviceName.isNull() )
 	{
-		if ( c->protocol()->pluginId() != this->pluginId() )
-			continue;
-
-		SMSContact *g = static_cast<SMSContact*>(c);
-
-		if (g)
-		{
-			stream << g->contactId() << g->displayName();
-			if (g->serviceName() != QString::null)
-			{
-				stream << g->serviceName();
-				stream += g->servicePrefs();
-			}
-		}
-		stream << ".";
-	}
-	metaContact->setPluginData(this, stream);
-}
-
-void SMSProtocol::deserialize( KopeteMetaContact *metaContact,
-	const QStringList &strList )
-{
-	QString protocolId = this->pluginId();
-
-	unsigned idx=0;
-
-	while (idx < strList.size())
-	{
-		QString nr = strList[ idx+0 ];
-		QString name = strList[ idx+1 ];
-		SMSContact* c = addContact(nr, name, metaContact);
-
-		if (strList.size() > (idx+2) && strList[ idx+2 ] != ".")
-		{
-			c->setServiceName(strList[ 2 ]);
-		}
-		else
-		{
-			idx += 3;
-			break;
-		}
-
-		QStringList prefs;
-		for (idx+=3; idx < strList.size() && strList[idx] != "."; idx++)
-			prefs << strList[idx];
-		idx++;
-
-		c->setServicePrefs(prefs);
-
+		c->setServiceName( serviceName );
+		c->setServicePrefs( QStringList::split( ',', serializedData[ "servicePrefs" ] ) );
 	}
 }
-
 
 #include "smsprotocol.moc"
 
-
-
-
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

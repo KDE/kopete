@@ -48,7 +48,7 @@ QString KopetePlugin::displayName()
 }
 
 void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,
-	const QStringList & /* stream */ )
+	const QMap<QString, QString> & /* stream */ )
 {
 	// Do nothing in default implementation
 }
@@ -61,8 +61,19 @@ void KopetePlugin::addressBookFieldChanged( KopeteMetaContact * /* c */,
 
 QStringList KopetePlugin::addressBookFields() const
 {
-	// Do nothing in default implementation
-	return QStringList();
+	return m_addressBookFields;
+}
+
+QString KopetePlugin::addressBookIndexField() const
+{
+	return m_indexField;
+}
+
+void KopetePlugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
+{
+	m_addressBookFields.append( field );
+	if( mode == MakeIndexField )
+		m_indexField = field;
 }
 
 #include "kopeteplugin.moc"

@@ -47,300 +47,297 @@ enum JabberProtocol::Presence;
 class JabberContact : public KopeteContact
 {
 	Q_OBJECT
-	
+
 	friend class JabberProtocol; /* Friends can touch each other's private parts. */
-  
-	public:
 
-		JabberContact( QString userid, QString name, QStringList groups,
-				JabberProtocol *protocol, KopeteMetaContact *mc, QString identity);
-				
-		~JabberContact();
+public:
+	JabberContact( QString userid, QString name, QStringList groups,
+			JabberProtocol *protocol, KopeteMetaContact *mc, QString identity);
 
-		/********************************************************************
-		 *
-		 * KopeteContact reimplementation start
-		 *
-		 ********************************************************************/
+	~JabberContact();
 
-		/**
-		 * Return contact's status
-		 */
-		virtual ContactStatus status() const;
-		
-		/**
-		 * Return contact's status in textual form
-		 */
-		virtual QString statusText() const;
+	/********************************************************************
+	 *
+	 * KopeteContact reimplementation start
+	 *
+	 ********************************************************************/
 
-		/**
-		 * Return contact's status as icon name
-		 */
-		virtual QString statusIcon() const;
-	
-		/**
-		 * Return importance of contact.
-		 * The importance is used for sorting and determined based
-		 * on the contact's current status. See ICQ for reference values.
-		 */
-		virtual int importance() const;
+	/**
+	 * Return contact's status
+	 */
+	virtual ContactStatus status() const;
 
-		/**
-		 * Open a window for this contact (either chat or email)
-		 */
-		void execute();
+	/**
+	 * Return contact's status in textual form
+	 */
+	virtual QString statusText() const;
 
-		/**
-		 * Return the identity ID
-		 */
-		virtual QString identityId() const
-		{
-			return mIdentityId;
-		}
+	/**
+	 * Return contact's status as icon name
+	 */
+	virtual QString statusIcon() const;
 
-		/**
-		 * Return the user ID
-		 */
-		QString userId() const
-		{
-			return rosterItem.jid().userHost();
-		}
+	/**
+	 * Return importance of contact.
+	 * The importance is used for sorting and determined based
+	 * on the contact's current status. See ICQ for reference values.
+	 */
+	virtual int importance() const;
 
-		/*
-		 * Return the currently used resource for this contact
-		 */
-		QString resource() const
-		{
-			return activeResource->resource();
-		}
-		
-		/*
-		 * Return the group this contact resides in
-		 */
-		virtual QStringList groups() const
-		{
-			return rosterItem.groups();
-		}
+	/**
+	 * Open a window for this contact (either chat or email)
+	 */
+	void execute();
 
-		/**
-		 * Return the reason why we are away
-		 */
-		QString reason() const
-		{
-			return awayReason;
-		}
+	/**
+	 * Return the identity ID
+	 */
+	virtual QString identityId() const
+	{
+		return mIdentityId;
+	}
 
-		/**
-		 * Return if we are reachable (defaults to
-		 * true because we can send on- and offline
-		 */
-		virtual bool isReachable()
-		{
-			return true;
-		}
+	/**
+	 * Return the user ID
+	 */
+	QString userId() const
+	{
+		return rosterItem.jid().userHost();
+	}
 
-		/**
-		 * Create custom context menu items for the contact
-		 */
-		virtual KActionCollection *customContextMenuActions();
+	/*
+	 * Return the currently used resource for this contact
+	 */
+	QString resource() const
+	{
+		return activeResource->resource();
+	}
 
-		/**
-		 * Determine the currently best resource for the contact
-		 */
-		JabberResource *bestResource();
+	/*
+	 * Return the group this contact resides in
+	 */
+	virtual QStringList groups() const
+	{
+		return rosterItem.groups();
+	}
 
-		/*
-		 * Contact ID and associated data
-		 */
-		virtual QString data() const;
+	/**
+	 * Return the reason why we are away
+	 */
+	QString reason() const
+	{
+		return awayReason;
+	}
 
-		/*
-		 * *** New API implementation ***
-		 */
+	/**
+	 * Return if we are reachable (defaults to
+	 * true because we can send on- and offline
+	 */
+	virtual bool isReachable()
+	{
+		return true;
+	}
 
-	signals:
-		void chatUser(JabberContact *contact);
-		void emailUser(JabberContact *contact);
-		
-	public slots:
+	/**
+	 * Create custom context menu items for the contact
+	 */
+	virtual KActionCollection *customContextMenuActions();
 
-		/**
-		 * Remove this contact from the roster
-		 */
-		virtual void slotDeleteContact();
+	/**
+	 * Determine the currently best resource for the contact
+	 */
+	JabberResource *bestResource();
 
-		/**
-		 * Retrieve a vCard for the contact
-		 */
-		virtual void slotUserInfo();
+	/*
+	 * Contact ID and associated data
+	 */
+	virtual QString data() const;
 
-		/**
-		 * Slots called when a certain resource
-		 * appears or disappears for the contact
-		 */
-		void slotResourceAvailable(const Jabber::Jid &jid, const Jabber::Resource &resource);
-		
-		/**
-		 * Remove a resource from the contact
-		 */
-		void slotResourceUnavailable(const Jabber::Jid &jid, const Jabber::Resource &resource);
+	/**
+	 * Serialize contact
+	 */
+	virtual void serialize( QMap<QString, QString> &serializedData,
+		QMap<QString, QString> &addressBookData );
 
-		/**
-		* Select a new resource for the contact
-		*/
-		void slotSelectResource();
-		
-		/**
-		 * vCard received from server for this contact
-		 */
-		void slotGotVCard(Jabber::JT_VCard *);
+signals:
+	void chatUser(JabberContact *contact);
+	void emailUser(JabberContact *contact);
 
-		/**
-		 * Update contact to new roster data
-		 */
-		void slotUpdateContact(const Jabber::RosterItem &item);
-		
-		/**
-		 * Update contact to a new status
-		 */
-		void slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason);
+public slots:
+	/**
+	 * Remove this contact from the roster
+	 */
+	virtual void slotDeleteContact();
 
-		/**
-		 * Add/Remove user to/from a group
-		 */
-		void addToGroup( KopeteGroup * );
-		void removeFromGroup( KopeteGroup * );
-		void moveToGroup( KopeteGroup * , KopeteGroup * );
+	/**
+	 * Retrieve a vCard for the contact
+	 */
+	virtual void slotUserInfo();
 
-	private slots:
-		
-		/**
-		 * Delete this contact instance
-		 */
-		void slotDeleteMySelf(bool);
+	/**
+	 * Slots called when a certain resource
+	 * appears or disappears for the contact
+	 */
+	void slotResourceAvailable(const Jabber::Jid &jid, const Jabber::Resource &resource);
 
-		/**
-		 * Display a rename dialog
-		 */
-		void slotRenameContact();
+	/**
+	 * Remove a resource from the contact
+	 */
+	void slotResourceUnavailable(const Jabber::Jid &jid, const Jabber::Resource &resource);
 
-		/**
-		 * Catch the rename dialog's results
-		 */
-		void slotDoRenameContact(const QString &);
+	/**
+	* Select a new resource for the contact
+	*/
+	void slotSelectResource();
 
-		/**
-		 * Open a chat window
-		 */
-		void slotChatUser();
-		
-		/**
-		 * Open an email window
-		 */
-		void slotEmailUser();
-	
-		/**
-		 * Edit a vCard for the contact.
-		 */
-		void slotEditVCard();
+	/**
+	 * vCard received from server for this contact
+	 */
+	void slotGotVCard(Jabber::JT_VCard *);
 
-		/**
-		 * Save this contact's vCard.
-		 */
-		void slotSaveVCard(QDomElement &);
-		
-		/**
-		 * Send type="subscribed" to contact
-		 */
-		void slotSendAuth();
+	/**
+	 * Update contact to new roster data
+	 */
+	void slotUpdateContact(const Jabber::RosterItem &item);
 
-		/**
-		 * Send type="subscribe" to contact
-		 */
-		void slotRequestAuth();
+	/**
+	 * Update contact to a new status
+	 */
+	void slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason);
 
-		void slotStatusChat();
-		void slotStatusAway();
-		void slotStatusXA();
-		void slotStatusDND();
-		void slotStatusInvisible();
+	/**
+	 * Add/Remove user to/from a group
+	 */
+	void addToGroup( KopeteGroup * );
+	void removeFromGroup( KopeteGroup * );
+	void moveToGroup( KopeteGroup * , KopeteGroup * );
 
-		/**
-		 *  the contact is moved to another metaContact
-		 */
-		void slotMoved(KopeteMetaContact* from);
+private slots:
+	/**
+	 * Delete this contact instance
+	 */
+	void slotDeleteMySelf(bool);
 
-	private:
+	/**
+	 * Display a rename dialog
+	 */
+	void slotRenameContact();
 
-		/**
-		 * Initialize popup menu
-		 */
-		void initActions();
+	/**
+	 * Catch the rename dialog's results
+	 */
+	void slotDoRenameContact(const QString &);
 
-		/**
-		 * Protocol identity (user ID) that this
-		 * contact belongs to. Basically identifies
-		 * the account into whose roster this contact
-		 * belongs.
-		 */
-		QString mIdentityId;
+	/**
+	 * Open a chat window
+	 */
+	void slotChatUser();
 
-		/**
-		 * Protocol instance that this contact
-		 * belongs to.
-		 */
-		JabberProtocol *protocol;
+	/**
+	 * Open an email window
+	 */
+	void slotEmailUser();
 
-		/**
-		 * The metacontact that this contact belongs
-		 * to.
-		 */
-		KopeteMetaContact *parentMetaContact;
+	/**
+	 * Edit a vCard for the contact.
+	 */
+	void slotEditVCard();
 
-		/**
-		 * Currently active resource for this contact.
-		 */
-		JabberResource *activeResource;
+	/**
+	 * Save this contact's vCard.
+	 */
+	void slotSaveVCard(QDomElement &);
 
-		/**
-		 * This will simply cache all
-		 * relevant data for this contact.
-		 */
-		Jabber::RosterItem rosterItem;
+	/**
+	 * Send type="subscribed" to contact
+	 */
+	void slotSendAuth();
 
-		/**
-		 * List of available resources for the
-		 * contact.
-		 */
-		QPtrList<JabberResource> resources;
+	/**
+	 * Send type="subscribe" to contact
+	 */
+	void slotRequestAuth();
 
-		/**
-		 * Current away reason and -type
-		 */
-		QString awayReason;
-		JabberProtocol::Presence presence;
+	void slotStatusChat();
+	void slotStatusAway();
+	void slotStatusXA();
+	void slotStatusDND();
+	void slotStatusInvisible();
 
-		/**
-		 * Do we specifically send to a
-		 * certain resource or do we use
-		 * autoselection?
-		 */
-		bool resourceOverride, mEditingVCard;
+	/**
+	 *  the contact is moved to another metaContact
+	 */
+	void slotMoved(KopeteMetaContact* from);
 
-		KActionCollection *actionCollection;
-		
-		KAction *actionMessage, *actionChat,
-				*actionRename,
-				*actionSendAuth, *actionRequestAuth,
-				*actionInfo, *actionStatusAway,
-				*actionStatusChat, *actionStatusXA,
-				*actionStatusDND, *actionStatusInvisible;
-		
-		KSelectAction *actionSelectResource;
-		KActionMenu *actionSetAvailability;
+private:
+	/**
+	 * Initialize popup menu
+	 */
+	void initActions();
 
-		dlgJabberVCard *dlgVCard;
+	/**
+	 * Protocol identity (user ID) that this
+	 * contact belongs to. Basically identifies
+	 * the account into whose roster this contact
+	 * belongs.
+	 */
+	QString mIdentityId;
 
+	/**
+	 * Protocol instance that this contact
+	 * belongs to.
+	 */
+	JabberProtocol *protocol;
+
+	/**
+	 * The metacontact that this contact belongs
+	 * to.
+	 */
+	KopeteMetaContact *parentMetaContact;
+
+	/**
+	 * Currently active resource for this contact.
+	 */
+	JabberResource *activeResource;
+
+	/**
+	 * This will simply cache all
+	 * relevant data for this contact.
+	 */
+	Jabber::RosterItem rosterItem;
+
+	/**
+	 * List of available resources for the
+	 * contact.
+	 */
+	QPtrList<JabberResource> resources;
+
+	/**
+	 * Current away reason and -type
+	 */
+	QString awayReason;
+	JabberProtocol::Presence presence;
+
+	/**
+	 * Do we specifically send to a
+	 * certain resource or do we use
+	 * autoselection?
+	 */
+	bool resourceOverride, mEditingVCard;
+
+	KActionCollection *actionCollection;
+
+	KAction *actionMessage, *actionChat,
+			*actionRename,
+			*actionSendAuth, *actionRequestAuth,
+			*actionInfo, *actionStatusAway,
+			*actionStatusChat, *actionStatusXA,
+			*actionStatusDND, *actionStatusInvisible;
+
+	KSelectAction *actionSelectResource;
+	KActionMenu *actionSetAvailability;
+
+	dlgJabberVCard *dlgVCard;
 };
 
 #endif

@@ -63,6 +63,12 @@ public:
 	QString targetName() { return m_targetName; } ;
 //	QString groupName() { return m_groupName; };
 
+	/**
+	 * Serialize contact
+	 */
+	virtual void serialize( QMap<QString, QString> &serializedData,
+		QMap<QString, QString> &addressBookData );
+
 private:
 
 	bool init(const QString &server, unsigned int port,const QString &target, IRCServerContact *contact,bool joinOnConnect);
@@ -104,10 +110,8 @@ private slots:
 	void slotOpenConnect();
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
-	void slotMovedToMetaContact();
 
 public slots:
-
 	void slotPart();
 	void joinNow();
 	void unloading();

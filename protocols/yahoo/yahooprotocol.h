@@ -50,20 +50,19 @@ public:
 
 	/* Plugin reimplementation */
 	void init();
-	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
-	QStringList addressBookFields() const;
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
-	~YahooProtocol();	// Destructor
+	~YahooProtocol();
 
 	KopeteContact* myself() const;
-	
+
 	bool addContactToMetaContact(const QString &contactId, const QString &displayName,
 		KopeteMetaContact *parentContact);
 
 	virtual KActionMenu* protocolActions();
 	YahooContact *contact( const QString &id );
-						// Protocol-specific actions for status bar
 
 public slots:
 	void connect();			// Connect to server
@@ -106,8 +105,6 @@ public slots:
 	void slotError( const QString &, int);
 	void slotRemoveHandler( int fd);
 	//void slotHostConnect(const QString &host, int port);
-
-	void serialize( KopeteMetaContact *metaContact);
 
 signals:
 //	void protocolUnloading();	// Unload Protocol
