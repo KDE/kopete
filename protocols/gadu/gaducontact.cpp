@@ -120,14 +120,9 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 	version		= newstatus->version;
 	image_size	= newstatus->image_size;
 
-	kdDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip << " image size: " << image_size << "  version: "  << version  << endl;
+	setFileCapable( newstatus->fileCap );
 
-	if ( remote_port > 10 ) {
-		setFileCapable( true );
-	}
-	else {
-		setFileCapable( false );
-	}
+	kdDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip << " image size: " << image_size << "  version: "  << version  << endl;
 
 }
 
@@ -342,7 +337,7 @@ GaduContact::findBestContactName( const GaduContactsList::ContactLine* cl )
 	return name;
 }
 
-void 
+void
 GaduContact::messageAck()
 {
 	manager()->messageSucceeded();
@@ -354,7 +349,7 @@ GaduContact::setIgnored( bool val )
 	ignored_ = val;
 }
 
-bool 
+bool
 GaduContact::ignored()
 {
 	return ignored_;

@@ -60,6 +60,7 @@ struct KGaduNotify {
 	int status;
 	unsigned int remote_ip;
 	unsigned short remote_port;
+	bool fileCap;
 	int version;
 	int image_size;
 	int time;

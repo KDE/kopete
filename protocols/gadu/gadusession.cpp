@@ -575,13 +575,18 @@ GaduSession::notify60( gg_event* event )
 	unsigned int n;
 	nl.setAutoDelete( TRUE );
 
-
 	for( n=0 ; event->event.notify60[n].uin ; n++ ) {
 		gn = new KGaduNotify;
 		gn->contact_id	= event->event.notify60[n].uin;
 		gn->status	= event->event.notify60[n].status;
 		gn->remote_ip	= event->event.notify60[n].remote_ip;
 		gn->remote_port	= event->event.notify60[n].remote_port;
+		if ( gn->remote_ip && gn->remote_port > 10 ) {
+			gn->fileCap = true;
+		}
+		else {
+			gn->fileCap = false;
+		}
 		gn->version	= event->event.notify60[n].version;
 		gn->image_size	= event->event.notify60[n].image_size;
 		gn->description	= textcodec->toUnicode( event->event.notify60[n].descr );
@@ -649,6 +654,7 @@ GaduSession::checkDescriptor()
 			gaduNotify.version	= 0;
 			gaduNotify.image_size	= 0;
 			gaduNotify.time		= 0;
+			gaduNotify.fileCap	= false;
 
 			emit contactStatusChanged( &gaduNotify );
 		break;
@@ -666,6 +672,12 @@ GaduSession::checkDescriptor()
 			gaduNotify.version	= event->event.status60.version;
 			gaduNotify.image_size	= event->event.status60.image_size;
 			gaduNotify.time		= event->event.status60.time;
+			if ( gaduNotify.remote_ip && gaduNotify.remote_port > 10 ) {
+				gaduNotify.fileCap = true;
+			}
+			else {
+				gaduNotify.fileCap = false;
+			}
 
 			emit contactStatusChanged( &gaduNotify );
 		break;
