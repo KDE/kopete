@@ -1,6 +1,7 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
+Comment[bg]=Месинджър
 Comment[ca]=Missatger Kopete
 Comment[de]=Kopete-Nachrichtendienst
 Comment[el]=Αποστολέας Kopete
@@ -21,6 +22,7 @@ Comment[xx]=xxKopete Messengerxx
 [kopete_event]
 Name=Event
 Name[be]=Падзея
+Name[bg]=Събитие
 Name[bs]=Događaj
 Name[ca]=Esdeveniment
 Name[cs]=Událost
@@ -51,6 +53,7 @@ Name[wa]=Evenmint
 Name[xh]=Isiganeko
 Name[xx]=xxEventxx
 Comment=Sound Notification for Kopete Events
+Comment[bg]=Звуково уведомяване при дадени събития в Kopete
 Comment[bs]=Zvučna obavještenja za Kopete događaje
 Comment[ca]=Sons de notificació per als esdeveniments a Kopete
 Comment[cs]=Nastavení zvukových hlášení Kopete
@@ -84,6 +87,7 @@ default_presentation=65
 
 [kopete_incoming]
 Name=Incoming
+Name[bg]=Входящо
 Name[bs]=Ulazni
 Name[ca]=Entrant
 Name[cs]=Příchozí
@@ -112,6 +116,7 @@ Name[wa]=En intrêye
 Name[xh]=Engenayo
 Name[xx]=xxIncomingxx
 Comment=Incoming message arrives
+Comment[bg]=Пристигане на ново съобщение
 Comment[bs]=Dolazi poruka
 Comment[ca]=Arriba un missatge entrant
 Comment[cs]=Přišla zpráva
@@ -144,6 +149,7 @@ default_presentation=64
 
 [kopete_outgoing]
 Name=Outgoing
+Name[bg]=Изходящо
 Name[bs]=Izlazni
 Name[ca]=Sortint
 Name[cs]=Odchozí
@@ -172,6 +178,7 @@ Name[wa]=E rexhowe
 Name[xh]=Ephumayo
 Name[xx]=xxOutgoingxx
 Comment=Outgoing message is sent
+Comment[bg]=Изпращане на съобщение
 Comment[bs]=Poslana je poruka
 Comment[ca]=S'envia un missatge sortint
 Comment[cs]=Byla odeslána zpráva
@@ -205,6 +212,7 @@ default_presentation=0
 
 [kopete_online]
 Name=Online
+Name[bg]=Онлайн
 Name[ca]=Connectat
 Name[el]=Σε σύνδεση
 Name[es]=Conectado
@@ -225,6 +233,7 @@ Name[tr]=Çevirimiçi
 Name[wa]=So les fyis
 Name[xx]=xxOnlinexx
 Comment=User goes online
+Comment[bg]=Преминаване в режим онлайн
 Comment[bs]=Korisnik ide online
 Comment[ca]=L'usuari entra en línia
 Comment[cs]=Uživatel je online
@@ -252,6 +261,7 @@ default_presentation=16
 
 [kopete_offline]
 Name=Offline
+Name[bg]=Офлайн
 Name[ca]=Desconnectat
 Name[da]=Gå offline
 Name[el]=Χωρίς σύνδεση
@@ -269,6 +279,7 @@ Name[sr]=Није на вези
 Name[sv]=Nerkopplad
 Name[xx]=xxOfflinexx
 Comment=User goes offline
+Comment[bg]=Преминаване в режим офлайн
 Comment[ca]=L'usuari entra a connectat
 Comment[cs]=Uživatel je offline
 Comment[da]=Bruger går offline
@@ -296,6 +307,7 @@ default_presentation=0
 [kopete_status_change]
 Name=Status Change
 Name[be]=Зьмяненьне статусу
+Name[bg]=Промяна на статуса
 Name[ca]=Canvia estatus
 Name[cs]=Změna stavu
 Name[da]=Statusændring
@@ -321,6 +333,7 @@ Name[uz]=Ҳолати ўзгарди
 Name[wa]=Candjmint di statut
 Name[xx]=xxStatus Changexx
 Comment=User changed his online status.
+Comment[bg]=Промяна на онлайн статуса
 Comment[ca]=L'usuari canvia el seu estat a connectat.
 Comment[cs]=Uživatel změnil online stav
 Comment[da]=Bruger ændrede sin status på nettet.
@@ -347,6 +360,7 @@ default_presentation=0
 [kopete_highlight]
 Name=Highlight
 Name[be]=Падсьветка
+Name[bg]=Открояване
 Name[ca]=Ressaltat
 Name[cs]=Zvýraznit
 Name[da]=Fremhæv
@@ -369,6 +383,7 @@ Name[sv]=Markera
 Name[wa]=E sorbiyance
 Name[xx]=xxHighlightxx
 Comment=A message was highlighted because it contained your nickname
+Comment[bg]=Открояване на съобщение при наличието на псевдонима Ви
 Comment[ca]=S'ha ressaltat un missatge atés que conté el vostre sobrenom
 Comment[cs]=Byla zvýrazněna zpráva obsahující vaši přezdívku
 Comment[da]=En besked blev fremhævet fordi den indeholdt dit alias
@@ -397,6 +412,7 @@ default_presentation=65
 [msn_mail]
 Name=MSN Mail
 Name[be]=Пошта MSN
+Name[bg]=Поща от MSN
 Name[ca]=Correu de MSN
 Name[cs]=MSN pošta
 Name[da]=MSN-Mail
@@ -416,6 +432,7 @@ Name[sv]=MSN e-post
 Name[tr]=MSN Posta
 Name[xx]=xxMSN Mailxx
 Comment=A new email arrived in your MSN inbox
+Comment[bg]=Пристигане на нова поща в MSN
 Comment[ca]=Ha arribat un missatge a la vostra bústia de MSN
 Comment[cs]=Přišla nová pošta do vaší MSN schránky
 Comment[da]=En ny e-post ankom til din MSN-indbakke
