@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-	Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -73,6 +73,8 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? MSNProtocol::protocol()->UNK : MSNProtocol::protocol()->FLN );
 
 	actionBlock = 0L;
+	
+	setProperty("emailAddress", id);
 }
 
 MSNContact::~MSNContact()
@@ -251,6 +253,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	if( type == "PHH" )
 	{
 		m_phoneHome = data;
+		setProperty("privPhoneNumber", data);
 	}
 	else if( type == "PHW" )
 	{
@@ -259,6 +262,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	else if( type == "PHM" )
 	{
 		m_phoneMobile = data;
+		setProperty("privMobileNum", data);
 	}
 	else if( type == "MOB" )
 	{
