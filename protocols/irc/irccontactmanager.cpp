@@ -41,25 +41,33 @@ IRCContactManager::IRCContactManager(const QString &nickName, const QString &ser
 
 	QObject::connect(m_engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivAction(const QString &, const QString &, const QString &)));
-
-	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
-			this, SLOT(viewCreated(KopeteView*)) );
-	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewActivated(KopeteView *)),
-			this, SLOT(viewActivated(KopeteView *)));
-	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewClosing(KopeteView *)),
-			this, SLOT(viewClosing(KopeteView *)));
+			
+	QObject::connect(m_engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
+			this, SLOT( slotNewNickChange(const QString&, const QString&)));
 
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
 			this, SLOT(checkOnlineNotifyList()));
 	m_NotifyTimer->start(30000); // check online every 60sec
+}
+
+void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString &newnick)
+{
+	IRCUserContact *c =  m_users[ oldnick ];
+	if( c )
+	{
+		m_users[ newnick ] = c;
+		m_users[ oldnick ] = 0L;
+	}
 }
 
 void IRCContactManager::slotNewMessage(const QString &originating, const QString &channel, const QString &message)
@@ -92,38 +100,6 @@ void IRCContactManager::slotNewPrivAction(const QString &originating, const QStr
 	IRCContact *from = findUser(originating.section('!', 0, 0));
 	IRCUserContact *to = findUser(user);
 	emit action(from, to, message);
-}
-
-void IRCContactManager::viewCreated(KopeteView *view)
-{
-	kdDebug(14120) << k_funcinfo << view << endl;
-
-	// This code runs through all channels for this connection to find 
-	// out if a given view is open.
-	
-	/* should search for user/channel/server view but only channels are really needed */
-	QValueList<IRCChannelContact *> channels = m_channels.values();
-	for(QValueList<IRCChannelContact *>::Iterator cc = channels.begin(); cc != channels.end(); ++cc )
-	{
-		kdDebug(14120) << k_funcinfo << "Chan name:" << (*cc)->nickName() << endl;
-		if((*cc)->manager(false))
-			kdDebug(14120) << k_funcinfo << "Testing view:" << (*cc)->manager()->view(false) << endl;
-		if((*cc)->manager(false) && (*cc)->manager() == view->msgManager())
-		{
-			kdDebug(14120) << k_funcinfo << "Calling slotJoinChannel on view" << endl;
-			(*cc)->slotJoinChannel(view);
-		}
-	}
-}
-
-void IRCContactManager::viewActivated(KopeteView */*view*/)
-{
-	//kdDebug(14120) << k_funcinfo << "View activated" << endl;
-}
-
-void IRCContactManager::viewClosing(KopeteView */*view*/)
-{
-	kdDebug(14120) << k_funcinfo << "View closing" << endl;
 }
 
 void IRCContactManager::unregister(KopeteContact *contact)

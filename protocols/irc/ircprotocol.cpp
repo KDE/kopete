@@ -127,6 +127,14 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		SLOT( slotPartCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /part [<reason>] - Part from a channel, optionally leaving a message.") );
 		
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quote"),
+		SLOT( slotQuoteCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /quote <command text> - Send raw commands to the IRC server.") );
+		
+	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("raw"),
+		QString::fromLatin1("quote %s"),
+		i18n("USAGE: /raw <command text> - Alias for QUOTE."), KopeteCommandHandler::SystemAlias );
+		
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
 		QString::fromLatin1("join %1"),
 		i18n("USAGE: /j <channel> - Alias for JOIN."), KopeteCommandHandler::SystemAlias );
@@ -321,6 +329,18 @@ void IRCProtocol::slotModeCommand( const QString &args, KopeteMessageManager *ma
 	{
 		static_cast<IRCAccount*>( manager->account() )->engine()->changeMode( argsList.front(),
 			args.section( QRegExp(QString::fromLatin1("\\s+")), 1 ) );
+	}
+}
+
+void IRCProtocol::slotQuoteCommand( const QString &args, KopeteMessageManager *manager )
+{
+	QString command = args.stripWhiteSpace();
+	if( !command.isEmpty() )
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeString( command, false );
+	else
+	{
+		KopeteMessage msg(manager->user(), manager->members(), i18n("You must enter some text to send to the server."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		manager->appendMessage(msg);
 	}
 }
 

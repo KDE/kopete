@@ -161,6 +161,7 @@ void IRCChannelContact::slotAddNicknames()
 
 	if (nickToAdd.lower() != m_nickName.lower())
 	{
+		kdDebug(14120) << k_funcinfo << m_nickName << endl;
 		QChar firstChar = nickToAdd[0];
 		if( firstChar == '@' || firstChar == '+' )
 			nickToAdd = nickToAdd.remove(0, 1);

@@ -56,6 +56,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	// IRCContactManager stuff
 	QObject::connect(contactManager, SIGNAL(privateMessage(IRCContact *, IRCContact *, const QString &)),
 			this, SLOT(privateMessage(IRCContact *, IRCContact *, const QString &)));
+	
 	QObject::connect(contactManager, SIGNAL(action(IRCContact *, IRCContact *, const QString &)),
 			this, SLOT(action(IRCContact *, IRCContact *, const QString &)));
 
@@ -104,9 +105,17 @@ bool IRCContact::isReachable()
 	return false;
 }
 
+void IRCContact::privateMessage(IRCContact *, IRCContact *, const QString &)
+{
+}
+
+void IRCContact::action(IRCContact *, IRCContact *, const QString &)
+{
+}
+
 KopeteMessageManager *IRCContact::manager(bool canCreate)
 {
-	if(canCreate && !m_msgManager)
+	if( canCreate && !m_msgManager )
 	{
 		if(m_engine->status() == KIRC::Disconnected)
 			m_account->connect();
@@ -119,6 +128,7 @@ KopeteMessageManager *IRCContact::manager(bool canCreate)
 		QObject::connect( m_msgManager, SIGNAL(closing(KopeteMessageManager*)),
 			this, SLOT(messageManagerDestroyed()));
 	}
+
 	return m_msgManager;
 }
 
@@ -221,7 +231,7 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 
 void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &newnickname)
 {
-	kdDebug(14120) << k_funcinfo << oldnickname << " >> " << newnickname << ", " << m_nickName << endl;
+	//kdDebug(14120) << k_funcinfo << oldnickname << " >> " << newnickname << ", " << m_nickName << endl;
 
 	IRCContact *user = static_cast<IRCContact*>( locateUser(oldnickname) );
 	if( user )

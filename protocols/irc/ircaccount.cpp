@@ -46,9 +46,11 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QString serverInfo = accountId.section('@',1);
 	m_server = serverInfo.section(':',0,0);
 	m_port = serverInfo.section(':',1).toUInt();
+
 	triedAltNick = false;
 	
 	m_engine = new KIRC( m_server, m_port );
+	
 	QMap< QString, QString> replies = customCtcpReplies();
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 		m_engine->addCustomCtcp( it.key(), it.data() ); 
@@ -58,6 +60,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingFailedServerPassword()),
 			this, SLOT(slotFailedServerPassword()));
 
@@ -66,6 +69,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	
 	QObject::connect(m_engine, SIGNAL(incomingFailedNickOnLogin(const QString &)),
 			this, SLOT(slotNickInUse( const QString &)) );
+			
+	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
+		this, SLOT(slotJoinedUnknownChannel(const QString &, const QString &)));
 			
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
@@ -84,8 +90,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	//
 	//if( rememberPassword() )
 	//	m_engine->setPassword( password() );
-
-
 }
 
 IRCAccount::~IRCAccount()
@@ -261,6 +265,14 @@ void IRCAccount::slotConnectedToServer()
 	}
 }
 
+void IRCAccount::slotJoinedUnknownChannel( const QString &user, const QString &channel )
+{
+	kdDebug(14120) << user << " joins " << channel << ", me=" << m_contactManager->mySelf()->nickName().lower() << endl;
+	QString nickname = user.section('!', 0, 0);
+	if ( nickname.lower() == m_contactManager->mySelf()->nickName().lower() )
+		m_contactManager->findChannel( channel )->startChat();
+}
+
 void IRCAccount::slotDisconnected()
 {
 	triedAltNick = false;
@@ -310,7 +322,7 @@ void IRCAccount::slotGoAway( const QString &reason )
 
 void IRCAccount::slotShowServerWindow()
 {
-	m_myServer->startServerChat();
+	m_myServer->startChat();
 }
 
 bool IRCAccount::isConnected()

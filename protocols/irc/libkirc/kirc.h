@@ -96,25 +96,9 @@ public:
 	void addCustomCtcp( const QString &ctcp, const QString &reply ) { 
 	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
 	customCtcpMap[ ctcp.lower() ] = reply; }
-
-
-public slots:
-	void setVersionString(const QString &versionString);
-	void setUserString(const QString &userString);
-	void setSourceString(const QString &sourceString);
-	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
-
-	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
-	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
-	void changeNickname(const QString &newNickname);
-	void sendNotice(const QString &target, const QString &message);
-	void changeMode(const QString &target, const QString &mode);
-	void joinChannel(const QString &name, const QString &key);
-	void messageContact(const QString &contact, const QString &message);
-	void setTopic(const QString &channel, const QString &topic);
-	void kickUser(const QString &user, const QString &channel, const QString &reason);
-	void partChannel(const QString &name, const QString &reason);
-	// void pingUser ??
+	
+	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
+	
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
@@ -137,38 +121,56 @@ public slots:
 	void sendCtcpPing(const QString &target);
 	void sendCtcpVersion(const QString &target);
 
+	void setVersionString(const QString &versionString);
+	void setUserString(const QString &userString);
+	void setSourceString(const QString &sourceString);
+	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
+
+	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
+	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
+	void changeNickname(const QString &newNickname);
+	void sendNotice(const QString &target, const QString &message);
+	void changeMode(const QString &target, const QString &mode);
+	void joinChannel(const QString &name, const QString &key);
+	void messageContact(const QString &contact, const QString &message);
+	void setTopic(const QString &channel, const QString &topic);
+	void kickUser(const QString &user, const QString &channel, const QString &reason);
+	void partChannel(const QString &name, const QString &reason);
+
 signals:
+	//Engine Signals
+	void connectedToServer(); /* 001 */
+	void successfulQuit();
 	void internalError(KIRC::EngineError, const KIRCMessage &);
 	void statusChanged(KIRC::EngineStatus newStatus);
-	
 	void sentMessage(const KIRCMessage &);
 	void receivedMessage(const KIRCMessage &);
 	
-	void incomingNotice(const QString &originating, const QString &message);
-	void incomingTopicChange(const QString &, const QString &, const QString &); /* */
-	void successfulQuit();
-
-	void incomingMessage(const QString &originating, const QString &target, const QString &message);
-	void incomingPrivMessage(const QString &, const QString &, const QString &);
-
+	//ServerContact Signals
+	void incomingStartOfMotd();
 	void incomingMotd(const QString &motd);
-	void incomingYourHost(const QString &);
-	void incomingHostCreated(const QString &info);
+	void incomingEndOfMotd();
+	void incomingNotice(const QString &originating, const QString &message);
 	void incomingHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
-	void incomingUsersInfo(const QString &userinfo);
 	void incomingYourHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
-	void incomingOnlineOps(const QString &ops);
-	void incomingUnknownConnections(const QString &unknown);
-	void incomingTotalChannels(const QString &amount);
-	void incomingHostedClients(const QString &);
+	void incomingConnectString(const QString &clients);
+	
+	//Channel Contact Signals
+	void incomingMessage(const QString &originating, const QString &target, const QString &message);
+	void incomingTopicChange(const QString &, const QString &, const QString &);
+	void incomingExistingTopic(const QString &, const QString &); /* 332 */
 	void userJoinedChannel(const QString &user, const QString &channel);
 	void incomingNamesList(const QString &channel, const QStringList &nicknames);
 	void incomingEndOfNames(const QString &channel);
-	void incomingEndOfMotd();
-	void incomingStartOfMotd();
 	void incomingPartedChannel(const QString &user, const QString &channel, const QString &reason);
+	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
+	
+	//Contact Signals
+	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
+	
+	//General Signals
 	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
 	void incomingFailedServerPassword();
@@ -183,40 +185,31 @@ signals:
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
 	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
+	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
+	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
+	void incomingEndOfWhois(const QString &nickname);
 	void incomingUnknown(const QString &);
 	void incomingUnknownCtcp(const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
 	void incomingKick(const QString &nick, const QString &channel,
 		const QString &nickKicked, const QString &reason);
-	void incomingEndOfWhois(const QString &nickname);
+	
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
-	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
 	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
 	void userOnline(const QString &nick);
 	void incomingListedChan(const QString &chan, uint users, const QString &topic);
 	void incomingEndOfList();
 
-	void incomingWelcome(const QString &welcome); /* 001 */
-	/* This is only on successful login.
-	 * connected() is QSocket's signal if you want to tell when the TCP connection is ACK'ed
-	 */
-	void connectedToServer(); /* 001 */
 	void successfullyChangedNick(const QString &, const QString &); /* 001 */
-
-	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
-	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
-	void incomingExistingTopic(const QString &, const QString &); /* 332 */
 
 	void repliedCtcp(const QString &type, const QString &ctcpMessage);
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 
 	void incomingDccChatRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, DCCClient &chatObject);
 	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
-
+	
 protected:
 	bool canSend( bool mustBeConnected ) const;
-
-	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
 
 	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true);
 	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true)
@@ -295,18 +288,25 @@ protected:
 	ircMethod numericReply_001;
 	ircMethod numericReply_004;
 
-	ircMethod numericReply_250;
-	ircMethod numericReply_265; ircMethod numericReply_266;
+	ircMethod numericReply_251;
+	ircMethod numericReply_252;
+	ircMethod numericReply_253;
+	ircMethod numericReply_254;
+	ircMethod numericReply_265;
+	ircMethod numericReply_266;
 
 	ircMethod numericReply_303;
-	ircMethod numericReply_305; ircMethod numericReply_306;
-	ircMethod numericReply_311; ircMethod numericReply_312;
+	ircMethod numericReply_305;
+	ircMethod numericReply_306;
+	ircMethod numericReply_311;
+	ircMethod numericReply_312;
 	ircMethod numericReply_317;
 	ircMethod numericReply_319;
 	ircMethod numericReply_322;
 	ircMethod numericReply_324;
 	ircMethod numericReply_329;
-	ircMethod numericReply_331; ircMethod numericReply_332;
+	ircMethod numericReply_331;
+	ircMethod numericReply_332;
 	ircMethod numericReply_333;
 	ircMethod numericReply_353;
 

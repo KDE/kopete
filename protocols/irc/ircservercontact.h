@@ -18,13 +18,14 @@
 #ifndef IRCSERVERCONTACT_H
 #define IRCSERVERCONTACT_H
 
+#include <qvaluelist.h>
+
 #include "kopetemessagemanagerfactory.h"
 #include "irccontact.h"
 
 class KActionCollection;
 class KAction;
 class KActionMenu;
-
 class KopeteView;
 
 class IRCContactManager;
@@ -36,43 +37,31 @@ class IRCChannelContact;
  * This class is the @ref KopeteContact object representing IRC Servers.
  * It is derrived from @ref IRCContact where much of its functionality is shared with @ref IRCChannelContact and @ref IRCUserContact.
  */
-class IRCServerContact
-	: public IRCContact
+class IRCServerContact : public IRCContact
 {
 	Q_OBJECT
-
-public:
-	// This class provides a KopeteContact for each server of a given IRC connection.
-	IRCServerContact(IRCContactManager *, const QString &servername, KopeteMetaContact *mc);
-
-	// KopeteContact stuff
-	virtual KActionCollection *customContextMenuActions();
-	virtual const QString caption() const;
 	
-	virtual void appendMessage(KopeteMessage &);
-	void startServerChat();
-
-protected slots:
-	void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
-	void engineSentMessage(const KIRCMessage &ircmsg);
-	void engineReceivedMessage(const KIRCMessage &ircmsg);
-
-	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
+	public:
+		// This class provides a KopeteContact for each server of a given IRC connection.
+		IRCServerContact(IRCContactManager *, const QString &servername, KopeteMetaContact *mc);
 	
-private slots:
-	virtual void updateStatus();
-
-	void slotServerOnline(const QString &server);
-	void slotServerOffline();
-
-private:
-	KActionCollection *m_customActions;
-	KActionMenu *m_actionModeMenu;
-	KActionMenu *m_actionCtcpMenu;
-	KAction *m_actionKick;
-	KActionMenu *m_actionBanMenu;
-	QTimer *m_onlineTimer;
+		virtual const QString caption() const;
+		
+		virtual void appendMessage(KopeteMessage &);
+	
+	protected slots:
+		void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
+		virtual void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
+	
+	private slots:
+		virtual void updateStatus();
+		void slotViewCreated( KopeteView* );
+		void slotDumpMessages();
+		void slotAppendMessage( const QString &message );
+		void slotIncomingNotice( const QString &orig, const QString &notice );
+	
+	private:
+		QValueList<KopeteMessage> mMsgBuffer;
 };
 
 #endif

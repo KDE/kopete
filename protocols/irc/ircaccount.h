@@ -163,6 +163,7 @@ private slots:
 	void slotNickInUseAlert( const QString &nick );
 	void slotConnectedToServer();
 	void slotDisconnected();
+	void slotJoinedUnknownChannel( const QString &user,  const QString &channel );
 
 private:
 	IRCProtocol *m_protocol;

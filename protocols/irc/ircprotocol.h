@@ -27,7 +27,7 @@ class KopeteMetaContact;
 class AddContactPage;
 class KIRC;
 
-class KopeteEditAccountWidget;
+class EditAccountWidget;
 class KopeteAccount;
 class IRCAccount;
 class KActionCollection;
@@ -100,6 +100,7 @@ private slots:
 	void slotDevoiceCommand( const QString &args, KopeteMessageManager *manager);
 	void slotQuitCommand( const QString &args, KopeteMessageManager *manager);
 	void slotPartCommand( const QString &args, KopeteMessageManager *manager);
+	void slotQuoteCommand( const QString &args, KopeteMessageManager *manager);
 
 private:
 	static IRCProtocol *s_protocol;

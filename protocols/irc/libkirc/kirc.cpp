@@ -115,11 +115,11 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* Gives information about the host, close to 004 (See case 004) in the form of:
 	 * ":Your host is <servername>, running version <ver>" */
-	addIrcMethod("002",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingYourHost,		1,	1));
+	addIrcMethod("002",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,		1,	1));
 
 	/* Gives the date that this server was created (useful for determining the uptime of the server) in the form of:
 	 * "This server was created <date>" */
-	addIrcMethod("003",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingHostCreated,		1,	1));
+	addIrcMethod("003",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,		1,	1));
 	addIrcMethod("004",	&KIRC::numericReply_004,	5,	5);
 
 	/* NOT IN RFC1459 NOR RFC2812
@@ -131,26 +131,26 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* Tells how many user there are on all the different servers in the form of:
 	 * ":There are <integer> users and <integer> services on <integer> servers" */
-	addIrcMethod("251",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingUsersInfo,		1,	1));
+	addIrcMethod("251",	new KIRCMethodFunctor_Ignore());
 
 	/* Issues a number of operators on the server in the form of:
 	 * "<integer> :operator(s) online" */
 	// FIXME: send an integer instead of a QString
-	addIrcMethod("252",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingOnlineOps,		2,	2));
+	addIrcMethod("252",	&KIRC::numericReply_252,	2,	2);
 
 	/* Tells how many unknown connections the server has in the form of:
 	 * "<integer> :unknown connection(s)" */
 	// FIXME: send an integer instead of a QString
-	addIrcMethod("253",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingUnknownConnections,	2,	2));
+	addIrcMethod("253",	&KIRC::numericReply_253,	2,	2);
 
 	/* Tells how many total channels there are on this network in the form of:
 	 * "<integer> :channels formed" */
 	// FIXME: send an integer instead of a QString
-	addIrcMethod("254",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingTotalChannels,		2,	2));
+	addIrcMethod("254",	&KIRC::numericReply_254,	2,	2);
 
 	/* Tells how many clients and servers *this* server handles in the form of:
 	 * ":I have <integer> clients and <integer> servers" */
-	addIrcMethod("255",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingHostedClients,	1,	1));
+	addIrcMethod("255",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,	1,	1));
 
 	/* NOT IN RFC2812
 	 * Tells statistics about the current local server state:
@@ -967,13 +967,14 @@ bool KIRC::numericReply_001(const KIRCMessage &msg)
 		m_Nickname = m_PendingNick;
 		m_FailedNickOnLogin = false;
 	}
-	emit incomingWelcome(msg.suffix());
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
+	emit incomingConnectString(msg.suffix());
 	setStatus(Connected);
 	emit connectedToServer();
+
 	return true;
 }
 
@@ -986,9 +987,21 @@ bool KIRC::numericReply_004(const KIRCMessage &msg)
 	return true;
 }
 
-/*
-bool KIRC::numericReply_250(const KIRCMessage &msg)
+bool KIRC::numericReply_252(const KIRCMessage &msg)
 {
+	emit incomingConnectString( msg.toString() );
+	return true;
+}
+
+bool KIRC::numericReply_253(const KIRCMessage &msg)
+{
+	emit incomingConnectString( msg.toString() );
+	return true;
+}
+
+bool KIRC::numericReply_254(const KIRCMessage &msg)
+{
+	emit incomingConnectString( msg.toString() );
 	return true;
 }
 
@@ -1001,7 +1014,6 @@ bool KIRC::numericReply_266(const KIRCMessage &msg)
 {
 	return true;
 }
-*/
 
 bool KIRC::numericReply_303(const KIRCMessage &msg)
 {
@@ -1178,7 +1190,6 @@ bool KIRC::numericReply_475(const KIRCMessage &msg)
 	emit incomingFailedChankey(msg.args()[1]);
 	return true;
 }
-
 
 void KIRC::sendCtcpAction(const QString &contact, const QString &message)
 {

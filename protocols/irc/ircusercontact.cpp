@@ -54,6 +54,7 @@ void IRCUserContact::updateStatus()
 		case KIRC::Disconnected:
 			setOnlineStatus(m_protocol->m_UserStatusOffline);
 			break;
+		
 		case KIRC::Connecting:
 		case KIRC::Authentifying:
 			if(this == m_account->mySelf())
@@ -61,6 +62,7 @@ void IRCUserContact::updateStatus()
 			else
 				setOnlineStatus(m_protocol->m_UserStatusOffline);
 			break;
+		
 		case KIRC::Connected:
 		case KIRC::Closing:
 			if( m_isAway )
@@ -70,6 +72,7 @@ void IRCUserContact::updateStatus()
 			else
 				setOnlineStatus(m_protocol->m_UserStatusOffline);
 			break;
+		
 		default:
 			setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
