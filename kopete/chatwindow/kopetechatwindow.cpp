@@ -43,6 +43,7 @@
 #include "kopetemetacontact.h"
 #include "preferencesdialog.h"
 
+#include "kopetegroup.h"
 #include "kopetechatwindow.h"
 #include "kopetemessagemanager.h"
 #include "kopeteviewmanager.h"
@@ -63,32 +64,50 @@
 
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
+typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
 typedef QPtrList<KopeteChatWindow> WindowList;
 
 namespace
 {
 	AccountMap accountMap;
+	GroupMap groupMap;
 	WindowList windows;
 }
 
-KopeteChatWindow *KopeteChatWindow::window( KopeteAccount *a )
+KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 {
 	bool windowCreated = false;
 	KopeteChatWindow *myWindow;
+	
+	//Take the first and the first? What else?
+	KopeteGroup *g = 0L;
+	KopeteContactPtrList members = manager->members();
+	KopeteMetaContact *m = members.first()->metaContact();
+	if( !m->isTemporary() )
+	{
+		KopeteGroupList gList = m->groups();
+		g = gList.first();
+	}
 
 	switch( KopetePrefs::prefs()->chatWindowPolicy() )
 	{
-		case NEW_WINDOW: //Open every chat in a new window
-			windowCreated = true;
-			break;
-
 		case GROUP_BY_ACCOUNT: //Open chats in the same protocol in the same window
-			if( accountMap.contains( a ) )
-				myWindow = accountMap[ a ];
+			if( accountMap.contains( manager->account() ) )
+				myWindow = accountMap[ manager->account() ];
 			else
 				windowCreated = true;
 			break;
 
+		case GROUP_BY_GROUP: //Open chats in the same group in the same window
+			if( g )
+			{
+				if( groupMap.contains( g ) )
+					myWindow = groupMap[ g ];
+				else
+					windowCreated = true;
+				break;
+			}
+		
 		case GROUP_ALL: //Open all chats in the same window
 			if( windows.isEmpty() )
 				windowCreated = true;
@@ -105,13 +124,25 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteAccount *a )
 				}
 			}
 			break;
+		
+		case NEW_WINDOW: //Open every chat in a new window
+		default:
+			windowCreated = true;
+			break;
 	}
 
 	if( windowCreated )
 	{
 		myWindow = new KopeteChatWindow();
-		if( !accountMap.contains( a ) )
-			accountMap.insert( a, myWindow );
+		
+		if( !accountMap.contains( manager->account() ) )
+			accountMap.insert( manager->account(), myWindow );
+		
+		if( g )
+		{
+			if( !groupMap.contains( g ) )
+				groupMap.insert( g, myWindow );
+		}
 	}
 
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>BehaviorConfig_Chat</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>552</width>
-            <height>653</height>
+            <height>656</height>
         </rect>
     </property>
     <property name="caption">
@@ -130,6 +130,14 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>All chats get grouped into one window by using tabs.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mTabGroup</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group messages from contacts in the same group in the same chat window</string>
                     </property>
                 </widget>
             </vbox>

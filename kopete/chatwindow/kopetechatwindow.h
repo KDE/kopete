@@ -54,7 +54,7 @@ class KopeteChatWindow : public KParts::MainWindow
 {
 	Q_OBJECT
 
-	enum {NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL};
+	enum {NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL, GROUP_BY_GROUP};
 
 public:
 	/**
@@ -64,7 +64,7 @@ public:
 	 * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
 	 *  to be a valid pointer.
 	 */
-	static KopeteChatWindow *window( KopeteAccount *account );
+	static KopeteChatWindow *window( KopeteMessageManager *manager );
 	~KopeteChatWindow();
 
 	KopeteMessage currentMessage();
