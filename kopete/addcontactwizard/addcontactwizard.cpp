@@ -1,6 +1,7 @@
 /*
     addcontactwizard.h - Kopete's Add Contact Wizard
 
+    Copyright (c) 2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2003 by Will Stephenson        <will@stevello.free-online.co.uk>
     Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -102,7 +103,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
 		accountLVI->setPixmap( 1, i->accountIcon() );
-		if ( m_usedAccounts.contains( i->accountId() ) )
+		if ( m_usedAccounts.contains( i->protocol()->pluginId() +  i->accountId() ) )
 		{
 			accountLVI->setOn( true );
 			foundUsedAccount = true;
@@ -321,13 +322,6 @@ void AddContactWizard::next()
 	if (currentPage() == selectService ||
 		(currentPage() == intro && !appropriate( selectService )))
 	{
-		QMap <KopeteAccount*,AddContactPage*>::Iterator it;
-		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
-		{
-			delete it.data();
-		}
-		protocolPages.clear();
-
 		// reset the list of last used accounts
 		m_usedAccounts.clear();
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
@@ -336,12 +330,17 @@ void AddContactWizard::next()
 			QCheckListItem *item = dynamic_cast<QCheckListItem *>(it.current());
 			if (item && item->isOn())
 			{
+				KopeteAccount *i=m_accountItems[item];
 				// this shouldn't happen either, but I hate crashes
-				if (!m_accountItems[item])
+				if (!i)
+					continue;
+					
+				m_usedAccounts.append( i->protocol()->pluginId() + i->accountId() );
+				
+				if(protocolPages.contains(i))
 					continue;
 
-				AddContactPage *addPage = m_accountItems[item]->protocol()->createAddContactWidget(this, m_accountItems[item] );
-				m_usedAccounts.append( m_accountItems[item]->accountId() );
+				AddContactPage *addPage = i->protocol()->createAddContactWidget(this, i );
 				if (!addPage)
 					continue;
 
@@ -351,7 +350,19 @@ void AddContactWizard::next()
 
 				insertPage( addPage, i18n( "The account name is prepended here",
 					"%1 Contact Information" ).arg( item->text(0) ), indexOf( finis ) );
-				protocolPages.insert( m_accountItems[item] , addPage );
+				protocolPages.insert( i , addPage );
+			}
+		}
+
+		//remove pages that were eventualy added previusely, and needs to be removed if the user pressed back.
+		QMap <KopeteAccount*,AddContactPage*>::Iterator it;
+		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
+		{
+			KopeteAccount *i=it.key();
+			if( !i || !m_usedAccounts.contains( i->protocol()->pluginId() + i->accountId() ) )
+			{
+				delete it.data();
+				protocolPages.remove(it);
 			}
 		}
 		QWizard::next();
