@@ -25,8 +25,6 @@
 
 #include <kio/job.h>
 
-#include "kopetefiletransferui.h"
-
 class KopeteTransfer;
 class KopeteContact;
 
@@ -38,8 +36,8 @@ class KopeteFileTransferInfo
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
-	KopeteFileTransferInfo( KopeteContact *, const QString&, const unsigned long size, const QString &,KopeteFileTransferInfo::KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null);
-	~KopeteFileTransferInfo(){}
+	KopeteFileTransferInfo( KopeteContact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null);
+	~KopeteFileTransferInfo() {}
 	unsigned int transferId() const { return mId; }
 	const KopeteContact* contact() const { return mContact; }
 	QString file() const { return mFile; }
@@ -70,7 +68,7 @@ public:
 	 * Retrieve the transfer manager instance
 	 */
 	static KopeteTransferManager* transferManager();
-	virtual ~KopeteTransferManager(){};
+	virtual ~KopeteTransferManager() {};
 
 	/**
 	 * @brief Adds a file transfer to the KopeteTransferManager
