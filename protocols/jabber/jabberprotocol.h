@@ -225,528 +225,264 @@ signals:
 private slots:
 
 
-	/
-
-	 * Slot to connect to the serve
-
-	 *
-
-	void slotConnect()
-
-
-
-	/
-
-	 * Slot to disconnect from the serve
-
-	 *
-
-	void slotDisconnect()
-
-
+	/*
+	 * Slot to connect to the server
+	 */
+	void slotConnect();
 
 	/*
-
-	 * Slot called upon successful connection (called by Psi backend
-
-	 *
-
-	void slotConnected(bool success, int statusCode, const QString &statusString)
-
-
+	 * Slot to disconnect from the server
+	 */
+	void slotDisconnect();
 
 	/*
-
-	 * This slot is called from connect() if there ha
-
-	 * been a successful connection to a Jabber server
-
-	 * This function is then responsible for logging in
-
-	 *
-
-	void slotHandshaken()
-
-
+	 * Slot called upon successful connection (called by Psi backend)
+	 */
+	void slotConnected(bool success, int statusCode, const QString &statusString);
 
 	/*
-
-	 * Slot called upon successful disconnection (called by Psi backend
-
-	 *
-
-	void slotDisconnected()
-
-
-
-	void slotPsiDebug(const QString &msg)
-
-
+	 * This slot is called from connect() if there has
+	 * been a successful connection to a Jabber server.
+	 * This function is then responsible for logging in.
+	 */
+	void slotHandshaken();
 
 	/*
+	 * Slot called upon successful disconnection (called by Psi backend)
+	 */
+	void slotDisconnected();
 
-	 * Slot called if there was a protocol error (called by Psi backend
-
-	 *
-
-	void slotError(const StreamError &)
-
-
+	void slotPsiDebug(const QString &msg);
 
 	/*
-
-	 * Slot for going onlin
-
-	 *
-
-	void slotGoOnline()
-
-
+	 * Slot called if there was a protocol error (called by Psi backend)
+	 */
+	void slotError(const StreamError &);
 
 	/*
-
-	 * Slot for going offlin
-
-	 *
-
-	void slotGoOffline()
-
-
+	 * Slot for going online
+	 */
+	void slotGoOnline();
 
 	/*
+	 * Slot for going offline
+	 */
+	void slotGoOffline();
 
+	/*
 	 * Slot for going "away
-
-	 *
-
-	void slotGoAway()
-
-
+	 */
+	void slotGoAway();
 
 	/*
-
-	 * Slot for going "not available
-
-	 *
-
-	void slotGoXA()
-
-
+	 * Slot for going "not available"
+	 */
+	void slotGoXA();
 
 	/*
-
-	 * Slot for going "do not disturb
-
-	 *
-
-	void slotGoDND()
-
-
+	 * Slot for going "do not disturb"
+	 */
+	void slotGoDND();
 
 	/*
-
-	 * Slot for going to invisible mod
-
-	 *
-
-	void slotGoInvisible()
-
-
+	 * Slot for going to invisible mode
+	 */
+	void slotGoInvisible();
 
 	/*
-
-	 * Slot for sending a raw message to the serve
-
-	 *
-
-	void slotSendRaw()
-
-
+	 * Slot for sending a raw message to the server
+	 */
+	void slotSendRaw();
 
 	/*
-
-	 * Slot for creating a new empty email windo
-
-	 *
-
-	void slotEmptyMail()
-
-	void slotOpenEmptyMail()
-
-
+	 * Slot for creating a new empty email window
+	 */
+	void slotEmptyMail();
+	void slotOpenEmptyMail();
 
 	/*
-
-	 * Slot for joining a new group cha
-
-	 *
-
-	void slotJoinNewChat()
-
-	void slotJoinChat()
-
-	void slotGroupChatJoined(const Jid &jid)
-
-	void slotGroupChatLeave()
-
-	void slotGroupChatLeft(const Jid &jid)
-
-	void slotGroupChatPresence(const Jid &jid, const Status &status)
-
-	void slotGroupChatError(const Jid &jid, int error, QString &reason)
-
-
+	 * Slot for joining a new group chat
+	 */
+	void slotJoinNewChat();
+	void slotJoinChat();
+	void slotGroupChatJoined(const Jid &jid);
+	void slotGroupChatLeave();
+	void slotGroupChatLeft(const Jid &jid);
+	void slotGroupChatPresence(const Jid &jid, const Status &status);
+	void slotGroupChatError(const Jid &jid, int error, QString &reason);
 
 	/*
-
-	 * Slot for sending a chat message to a use
-
-	 *
-
-	void slotChatUser(JabberContact *contact)
-
-
+	 * Slot for sending a chat message to a user
+	 */
+	void slotChatUser(JabberContact *contact);
 
 	/*
-
-	 * Slot for sending an email message to a use
-
-	 *
-
-	void slotEmailUser(JabberContact *contact)
-
-
+	 * Slot for sending an email message to a user
+	 */
+	void slotEmailUser(JabberContact *contact);
 
 	/*
-
-	 * Slot to catch a dying message manage
-
-	 *
-
-	void slotMessageManagerDeleted(KopeteMessageManager *manager)
-
-
+	 * Slot to catch a dying message manager
+	 */
+	void slotMessageManagerDeleted(KopeteMessageManager *manager);
 
 	/*
-
-	 * Cleans up when a contact is destroye
-
-	 *
-
-	void slotContactDestroyed(KopeteContact *c)
-
-
+	 * Cleans up when a contact is destroyed
+	 */
+	void slotContactDestroyed(KopeteContact *c);
 
 	/*
-
-	 * Incoming subscription reques
-
-	 *
-
-	void slotSubscription(const Jid &jid, const QString &type)
-
-
+	 * Incoming subscription request
+	 */
+	void slotSubscription(const Jid &jid, const QString &type);
 
 	/*
-
-	 * A new item was added to our roster, update contac
-
-	 * list. If this is a new subscription, make sure w
-
-	 * validate it
-
-	 *
-
-	void slotNewContact(const RosterItem &)
-
-
+	 * A new item was added to our roster, update contact
+	 * list. If this is a new subscription, make sure we
+	 * validate it.
+	 */
+	void slotNewContact(const RosterItem &);
 
 	/*
-
-	 * Update a contact's detail
-
-	 *
-
-	void slotContactUpdated(const RosterItem &)
-
-
+	 * Update a contact's details
+	 */
+	void slotContactUpdated(const RosterItem &);
 
 	/*
-
 	 * A user deleted you from his contact list (call from Psi backend)
-
-	 *
-
-	void slotContactDeleted(const RosterItem &)
-
-
+	 */
+	void slotContactDeleted(const RosterItem &);
 
 	/*
-
-	 * Slot to update the configuration dat
-
-	 *
-
-	void slotSettingsChanged(void)
-
-
+	 * Slot to update the configuration data
+	 */
+	void slotSettingsChanged(void);
 
 	/*
-
-	 * Slot for notifying the availability of another resource for a contac
-
-	 * (called from Psi backend
-
-	 *
-
-	void slotResourceAvailable(const Jid &, const Resource &)
-
-
+	 * Slot for notifying the availability of another resource for a contact
+	 * (called from Psi backend)
+	 */
+	void slotResourceAvailable(const Jid &, const Resource &);
 
 	/*
-
-	 * Slot for notifying the removal of a certain resource for a contac
-
-	 * (called from Psi backend
-
-	 *
-
-	void slotResourceUnavailable(const Jid &, const Resource &)
-
-
+	 * Slot for notifying the removal of a certain resource for a contact
+	 * (called from Psi backend)
+	 */
+	void slotResourceUnavailable(const Jid &, const Resource &);
 
 	/*
-
-	 * Slot for displaying a new messag
-
-	 *
-
-	void slotNewMessage(const Message &)
-
-
+	 * Slot for displaying a new message
+	 */
+	void slotNewMessage(const Message &);
 
 	/*
-
-	 * Evaluate results of account registratio
-
-	 *
-
-	void slotRegisterUserDone()
-
-
+	 * Evaluate results of account registration
+	 */
+	void slotRegisterUserDone();
 
 	/*
-
-	 * Slot being called when a vCard arrive
-
-	 *
-
-	void slotGotVCard()
-
-
-
-	void slotEditVCard()
-
-
+	 * Slot being called when a vCard arrives
+	 */
+	void slotGotVCard();
+	void slotEditVCard();
 
 	/*
+	 * The user wants to manage services
+	 */
+	void slotGetServices();
 
-	 * The user wants to manage service
-
-	 *
-
-	void slotGetServices()
-
-
-
-private
-
-	typedef QMap<QString, JabberMessageManager*> JabberMessageManagerMap
-
-
+private:
+	typedef QMap<QString, JabberMessageManager*> JabberMessageManagerMap;
 
 	/*
-
-	 * Singleton instance of our protocol clas
-
-	 *
-
-	static JabberProtocol *protocolInstance
-
-
+	 * Singleton instance of our protocol class
+	 */
+	static JabberProtocol *protocolInstance;
 
 	/*
+	 * This map associates message managers to
+	 * a contact's (or chatroom's) userhost
+	 */
+	JabberMessageManagerMap messageManagerMap;
 
-	 * This map associates message managers t
+	KAction *actionGoOnline;
+	KAction *actionGoAway;
+	KAction *actionGoXA;
+	KAction *actionGoDND;
+	KAction *actionGoInvisible;
+	KAction *actionGoOffline;
+	KAction *actionJoinChat;
+	KAction *actionServices;
+	KAction *actionSendRaw;
+	KAction *actionEditVCard;
+	KAction *actionEmptyMail;
+	KActionMenu *actionStatusMenu;
 
-	 * a contact's (or chatroom's) userhos
+	dlgJabberStatus *reasonDialog;
+	dlgJabberSendRaw *sendRawDialog;
 
-	 *
+	JabberPreferences *preferences;
 
-	JabberMessageManagerMap messageManagerMap
-
-
-
-	KAction *actionGoOnline
-
-	KAction *actionGoAway
-
-	KAction *actionGoXA
-
-	KAction *actionGoDND
-
-	KAction *actionGoInvisible
-
-	KAction *actionGoOffline
-
-	KAction *actionJoinChat
-
-	KAction *actionServices
-
-	KAction *actionSendRaw
-
-	KAction *actionEditVCard
-
-	KAction *actionEmptyMail
-
-	KActionMenu *actionStatusMenu
-
-
-
-	dlgJabberStatus *reasonDialog
-
-	dlgJabberSendRaw *sendRawDialog
-
-
-
-	JabberPreferences *preferences
-
-
-
-	JabberContact *myContact
-
-
+	JabberContact *myContact;
 
 	/*
-
-	 * Initial presence to set after connectin
-
-	 *
-
-	Presence initialPresence
-
-
+	 * Initial presence to set after connecting
+	 */
+	Presence initialPresence;
 
 	/*
-
-	 * Jabber client classes per identit
-
-	 *
-
-    Jabber::Client *jabberClient
-
-
+	 * Jabber client classes per identity
+	 */
+    Jabber::Client *jabberClient;
 
     /*
-
-     * Flag whether we are to register upon connec
-
-     *
-
-    int registerFlag
-
-   
+     * Flag whether we are to register upon connect
+     */
+    int registerFlag;
 
 	/*
-
-	 * Cache for the title ID of the status bar contex
-
+	 * Cache for the title ID of the status bar context
 	 * menu to reflect changes in the user@host setting
-
-	 *
-
-	int menuTitleId
-
-
+	 */
+	int menuTitleId;
 
 	/*
-
-	 * Little helper function to tell the user to connec
-
-	 *
-
-	void errorConnectFirst()
-
-
+	 * Little helper function to tell the user to connect
+	 */
+	void errorConnectFirst();
 
 	/*
-
-	 * Create action
-
-	 *
-
-	void initActions()
-
-
+	 * Create actions
+	 */
+	void initActions();
 
 	/*
-
-	 * Create a new JabberContac
-
-	 *
-
-	JabberContact *createContact(const QString &jid, const QString &alias, const QStringList &groups, KopeteMetaContact *metaContact, const QString &identity)
-
-
+	 * Create a new JabberContact
+	 */
+	JabberContact *createContact(const QString &jid, const QString &alias, const QStringList &groups, KopeteMetaContact *metaContact, const QString &identity);
 
 	/*
-
-	 * Add new contact to the Kopete contact lis
-
-	 * Note: this does not affect the Jabber roster at al
-
-	 *
-
-	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item)
-
-
+	 * Add new contact to the Kopete contact list
+	 * Note: this does not affect the Jabber roster at all
+	 */
+	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item);
 
 	/*
-
-	 * Creates a new message manage
-
-	 *
-
-	JabberMessageManager *createMessageManager(JabberContact *to, KopeteMessageManager::WidgetType type)
-
-
+	 * Creates a new message manager
+	 */
+	JabberMessageManager *createMessageManager(JabberContact *to, KopeteMessageManager::WidgetType type);
 
 	/*
-
-	 * Sends a presence element wit
-
-	 * type="subscribe" to ask for authorizatio
-
-	 *
-
-	void subscribe(const Jabber::Jid &jid)
-
-
+	 * Sends a presence element with
+	 * type="subscribe" to ask for authorization
+	 */
+	void subscribe(const Jabber::Jid &jid);
 
 	/*
-
-	 * Sends a presence element wit
-
-	 * type="subscribed" to acknowledge authorizatio
-
-	 *
-
-	void subscribed(const Jabber::Jid &jid)
-
-
-
-
-
+	 * Sends a presence element with
+	 * type="subscribed" to acknowledge authorization
+	 */
+	void subscribed(const Jabber::Jid &jid);
 
 };
 

@@ -1379,15 +1379,14 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 					delete manager;
 
 					if((message.type() == "chat") && !emailType)
-						manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::ChatWindow);
+						manager = createMessageManager(dynamic_cast<JabberContact*>(contacts()[message.from().userHost()]), KopeteMessageManager::ChatWindow);
 					else
-						manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::Email);
+						manager = createMessageManager(dynamic_cast<JabberContact*>(contacts()[message.from().userHost()]), KopeteMessageManager::Email);
 
 					messageManagerMap[message.from().userHost()] = manager;
 				}
 			}
 
-			from = contactMap[message.from().userHost()];
 		}
 
 		KopeteContactPtrList contactList;
@@ -1535,9 +1534,6 @@ void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid, const Jabber:
 		JabberMessageManager *manager = messageManagerMap[jid.userHost()];
 
 		JabberContact *contact = (JabberContact *)manager->getContact(jid.resource());
-
-		// remove contact from our map
-		contactMap.remove(QString("%1@%2").arg(jid.resource(), 1).arg(jid.host(), 2));
 
 		// delete it from the manager
 		manager->removeContact(jid.resource());
