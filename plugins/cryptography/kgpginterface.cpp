@@ -1,3 +1,4 @@
+#include "cryptographyplugin.h"  //(for the cached passphrase)
 //Code from KGPG
 
 /***************************************************************************
@@ -502,22 +503,26 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
   QString encResult,gpgcmd;
   char buffer[200];
   int counter=0,ppass[2];
-  QCString password;
+  QCString password = CryptographyPlugin::cachedPass();
 
   while ((counter<3) && (encResult.isEmpty()))
-    {
-      /// pipe for passphrase
-      counter++;
-	  //userID=QString::fromUtf8(userID);
-	  userID.replace(QRegExp("<"),"&lt;");
-      QString passdlg=i18n("Enter passphrase for <b>%1</b>:").arg(userID);
-      if (counter>1)
-        passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>").arg(QString::number(4-counter)));
+  {
+		if(password.isNull())
+		{
+			/// pipe for passphrase
+			counter++;
+			//userID=QString::fromUtf8(userID);
+			userID.replace(QRegExp("<"),"&lt;");
+			QString passdlg=i18n("Enter passphrase for <b>%1</b>:").arg(userID);
+			if (counter>1)
+				passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>").arg(QString::number(4-counter)));
 
-      /// pipe for passphrase
-      int code=KPasswordDialog::getPassword(password,passdlg);
-      if (code!=QDialog::Accepted)
-        return " ";
+			/// pipe for passphrase
+			int code=KPasswordDialog::getPassword(password,passdlg);
+			if (code!=QDialog::Accepted)
+				return QString::null;
+			CryptographyPlugin::setCachedPass(password);
+		}
 
       pipe(ppass);
       pass = fdopen(ppass[1], "w");
@@ -534,6 +539,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
       while ( fgets( buffer, sizeof(buffer), fp))
         encResult+=buffer;
       pclose(fp);
+	  password=QCString();
     }
   if (encResult!="")
     return encResult;
