@@ -389,7 +389,6 @@ void OscarAccount::slotGotServerBuddyList()
 	QPtrListIterator<SSI> git( engine()->ssiData() );
 	for ( ; git.current(); ++git )
 	{
-		kdDebug(14150) << "Looking at " << git.count() << " items" << endl;
 		if ( git.current()->type == 1 )
 		{ //active contact on SSI
 			if ( !git.current()->name.isEmpty() )
@@ -404,7 +403,6 @@ void OscarAccount::slotGotServerBuddyList()
 	QPtrListIterator<SSI> bit( engine()->ssiData() );
 	for ( ; bit.current(); ++bit )
 	{
-		kdDebug(14150) << "Looking at " << bit.count() << " items" << endl;
 		if ( bit.current()->type == 0 )
 		{ //active contact on SSI
 			SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
