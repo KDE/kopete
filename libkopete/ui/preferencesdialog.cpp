@@ -17,6 +17,7 @@
 
 #include "configmodule.h"
 #include "preferencesdialog.h"
+#include "preferencesdialog.moc"
 
 #include <klocale.h>
 

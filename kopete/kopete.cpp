@@ -277,14 +277,10 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						(text[startIdx-1]!=' ') &&
 						(text[startIdx-1]!='\t') &&
 						(text[startIdx-1]!=',') &&
-						(text[startIdx-1]!='<') &&
-						(text[startIdx-1]!='>') &&
-						(text[startIdx-1]!='(') &&
-						(text[startIdx-1]!=')') &&
-						(text[startIdx-1]!='[') &&
-						(text[startIdx-1]!=']') &&
-						(text[startIdx-1]!='{') &&
-						(text[startIdx-1]!='}')
+						(text[startIdx-1]!='<') && (text[startIdx-1]!='>') &&
+						(text[startIdx-1]!='(') && (text[startIdx-1]!=')') &&
+						(text[startIdx-1]!='[') && (text[startIdx-1]!=']') &&
+						(text[startIdx-1]!='{') && (text[startIdx-1]!='}')
 						)
 					{
 						kdDebug() << "searching start of email addy at: " << startIdx << endl;
