@@ -9,7 +9,6 @@
 			<Action name="AddContact"/>
 			<Action name="AddGroup"/>
 			<Separator lineSeparator="true"/>
-			<Action name="save_contactlist"/>
 			<Action name="file_quit"/>
 		</Menu>
 		<Menu name="edit">

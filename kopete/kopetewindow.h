@@ -164,7 +164,6 @@ public:
 	KGlobalAccel *globalAccel;
 
 private slots:
-	void slotSaveContactList();
 	void slotConfigurePlugins();
 	void slotConfGlobalKeys();
 	void slotShowHide();

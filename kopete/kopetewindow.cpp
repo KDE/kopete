@@ -164,10 +164,6 @@ void KopeteWindow::initActions()
 	actionAwayMenu->insert(selectAway);
 	actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
-	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
-							this, SLOT(slotSaveContactList()),
-							actionCollection(), "save_contactlist" );
-
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	setStandardToolBarMenuEnabled(true);
@@ -648,13 +644,6 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto, co
 		connect( menu->popupMenu(), SIGNAL( aboutToHide() ), menu, SLOT( deleteLater() ) );
 		menu->popupMenu()->popup( p );
 	}
-}
-
-void KopeteWindow::slotSaveContactList()
-{
-	KopeteContactList::contactList()->save();
-	// FIXME: UGLY!
-	KMessageBox::information(this, i18n("Contact list saved."), i18n("Contact List Saved"));
 }
 
 void KopeteWindow::showAddContactDialog()
