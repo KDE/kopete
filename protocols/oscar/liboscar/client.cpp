@@ -271,7 +271,7 @@ SSIManager* Client::ssiManager() const
 void Client::streamError( int error )
 {
 	qDebug( "CLIENT ERROR (Error %i)", error );
-	disconnectionError( 0, i18n( "An unknown error has occured and the connection "
+	disconnectionError( 0, i18n( "An unknown error has occurred and the connection "
 	                             "has been closed." ) );
 }
 

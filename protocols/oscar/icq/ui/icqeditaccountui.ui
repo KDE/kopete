@@ -372,7 +372,7 @@ If you do not currently have an ICQ account, please click the button to create o
                                     <cstring>chkWebAware</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Make my status available via &amp;ICQ's unifed messaging center</string>
+                                    <string>Make my status available via &amp;ICQ's unified messaging center</string>
                                 </property>
                                 <property name="accel">
                                     <string>Alt+I</string>
