@@ -39,7 +39,7 @@
         </size>
     </property>
     <property name="caption">
-        <string>New account registration form</string>
+        <string>New Account Registration Form</string>
     </property>
     <property name="modal">
         <bool>false</bool>
@@ -75,7 +75,7 @@
                                 <cstring>textLabel2</cstring>
                             </property>
                             <property name="text">
-                                <string>E-mail:</string>
+                                <string>Email:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>kLineEdit1_2</cstring>

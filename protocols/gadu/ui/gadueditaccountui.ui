@@ -21,7 +21,7 @@
         </sizepolicy>
     </property>
     <property name="caption">
-        <string>Edit account settings</string>
+        <string>Edit Account Settings</string>
     </property>
     <vbox>
         <property name="name">
@@ -354,7 +354,7 @@
                         <widget class="QComboBox">
                             <item>
                                 <property name="text">
-                                    <string>If available</string>
+                                    <string>If Available</string>
                                 </property>
                             </item>
                             <item>
@@ -364,7 +364,7 @@
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>Do not use</string>
+                                    <string>Do Not Use</string>
                                 </property>
                             </item>
                             <property name="name">

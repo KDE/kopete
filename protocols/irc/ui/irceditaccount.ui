@@ -209,7 +209,7 @@
                                 <enum>Plain</enum>
                             </property>
                             <property name="text">
-                                <string>Server Pass&amp;word:</string>
+                                <string>Server pass&amp;word:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>mPassword</cstring>
