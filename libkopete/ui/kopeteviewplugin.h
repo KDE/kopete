@@ -46,7 +46,7 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		/**
 		 * @brief Creates a view to be associated with the passed in session
 		*/
-		virtual KopeteView *createView( ChatSession *session ){ return 0L; };
+		virtual KopeteView *createView( ChatSession * /*session*/ ){ return 0L; };
 
 		/**
 		 * @brief Reimplemented from @ref KopetePlugin

@@ -191,10 +191,13 @@ bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeTyp
 
 void MimeTypeHandler::handleURL( const KURL &url ) const
 {
+	Q_UNUSED( url );
 }
 
 void MimeTypeHandler::handleURL( const QString &mimeType, const KURL &url ) const
 {
+	Q_UNUSED( mimeType );
+	Q_UNUSED( url );
 }
 
 
