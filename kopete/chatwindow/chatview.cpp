@@ -562,7 +562,7 @@ void ChatView::createMembersList()
 
 		KopeteContactPtrList members = m_manager->members();
 
-		if(members.first()->metaContact() != 0 )
+		if(members.first() && members.first()->metaContact() != 0 )
 		{
 			membersStatus = static_cast<MembersListPolicy>
 			(
