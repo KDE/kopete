@@ -12,8 +12,10 @@ free to assign the issue to yourself, or contact kopete-devel@kde.org.
   Assigned partially to Nick Betcher <nbetcher@kde.org>, help welcome
 
 - Rewrite of the plugin API, for general use in kdelibs
+  + Includes GnuPG encryption/signature support. 
   Planned for Kopete 0.6
-  Assigned to Martijn Klingens <klingens@kde.org>, help welcome
+  Assigned to Martijn Klingens <klingens@kde.org> and Daniel Stone
+  <dstone@kde.org>, help welcome
 
 - Usability improvements
   Applicable to all versions, not assigned to anyone in particular
@@ -23,6 +25,10 @@ free to assign the issue to yourself, or contact kopete-devel@kde.org.
   Planned for Kopete 0.6
   Assigned to Till Gerken <till@tantalo.net>
 
+- Jabber improvements - agents, transports, and more.
+  Planned for Kopete 0.6.
+  Assigned to Daniel Stone <dstone@kde.org>
+  
 - Protocol plugin for Microsoft Exchange Instant Messaging
   No planned release
   Assigned to Martijn Klingens <klingens@kde.org>, help welcome

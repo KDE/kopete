@@ -78,7 +78,7 @@ void JabberContact::initActions() {
     actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
     actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
-	actionSnarfVCard = new KAction(i18n("Get VCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
+	actionSnarfVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
 }
 
 void JabberContact::showContextMenu(QPoint, QString)
@@ -87,27 +87,23 @@ void JabberContact::showContextMenu(QPoint, QString)
 	popup->insertTitle(userID() + " (" + mResource + ")");
 	
 	KGlobal::config()->setGroup("Jabber");
-	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
-	{
+	if (KGlobal::config()->readBoolEntry("EmailDefault", false)) {
 		actionMessage->plug(popup);
 		actionChat->plug(popup);
 	}
-	else
-	{
+	else {
 		actionChat->plug(popup);
 		actionMessage->plug(popup);
 	}
 	
-	if (mStatus != STATUS_OFFLINE)
-	{
+	if (mStatus != STATUS_OFFLINE) {
 		QStringList items;
 		int activeItem = 0;
 		items.append("Automatic (best resource)");
 		JabberResource *tmpBestResource = bestResource();
 		items.append(tmpBestResource->resource());
 		int i = 1;
-		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++)
-		{                                    
+		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++) {                                    
 			if (tmpResource != tmpBestResource)
 				items.append(tmpResource->resource());
 			if (hasResource && (tmpResource->resource() == activeResource->resource())) {
@@ -282,23 +278,19 @@ void JabberContact::execute() {
 void JabberContact::slotNewMessage(const JabMessage &message) {
 	QString theirUserID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
 	
-	kdDebug() << "[JabberContact] Message received from " << theirUserID << endl;
     if (theirUserID != userID()) {
 		return;
     }
 
-	kdDebug() << "[JabberContact] It's for us! *swoon*" << endl;
 	KopeteContactPtrList contactList;
-	kdDebug() << "[JabberContact] Past new KCL" << endl;
 	contactList.append(mProtocol->myself());
 	KopeteMessage jabberMessage(this, contactList, message.body, message.subject, KopeteMessage::Inbound);
-	kdDebug() << "[JabberContact] Past new KM" << endl;
 	if (message.type == JABMESSAGE_CHAT)
 		msgManagerKCW()->appendMessage(jabberMessage);
-	else
+	else {
 		msgManagerKEW()->appendMessage(jabberMessage);
 		msgManagerKEW()->slotSendEnabled(false);
-	kdDebug() << "[JabberContact] end slotNewMessage" << endl;
+	}
 }
 
 void JabberContact::slotViewHistory() {
@@ -455,8 +447,16 @@ void JabberContact::slotGotVCard(JT_VCard *vCard) {
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid << ", displaying." << endl;
 	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard");
 	dlgVCard->JabberIDLabel->setText(vCard->jid);
-	dlgVCard->nickNameLE->setText(vCard->vcard.field[vNickname]);
-	dlgVCard->firstNameLabel->setText(vCard->vcard.field[vFullname]);
+	dlgVCard->nickNameLabel->setText(vCard->vcard.field[vNickname]);
+	dlgVCard->fullNameLabel->setText(vCard->vcard.field[vFullname]);
+	dlgVCard->birthdayLabel->setText(vCard->vcard.field[vBday]);
+	dlgVCard->emailAddressLabel->setText(vCard->vcard.field[vEmail]);
+	dlgVCard->homepageLabel->setText(vCard->vcard.field[vHomepage]);
+	dlgVCard->addressLabel->setText(vCard->vcard.field[vStreet]);
+	dlgVCard->cityLabel->setText(vCard->vcard.field[vCity]);
+	dlgVCard->stateLabel->setText(QString("%1 %2").arg(vCard->vcard.field[vState], 1).arg(vCard->vcard.field[vPcode], 2));
+	dlgVCard->countryLabel->setText(vCard->vcard.field[vCountry]);
+	dlgVCard->phoneNumberLabel->setText(vCard->vcard.field[vPhone]);
 	dlgVCard->show();
 	dlgVCard->raise();
 }

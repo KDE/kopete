@@ -1,16 +1,13 @@
-/****************************************************************************
-** Form interface generated from reading ui file './icqinfobase.ui'
-**
-** Created: Sat May 25 23:04:53 2002
-**      by:  The User Interface Compiler (uic)
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
+/* jabbervcard.h, by Daniel Stone <dstone@kde.org>.
+ * Licensed under the GNU General Public License, etc, etc. */
+
 #ifndef DLGJABBERVCARD_H
 #define DLGJABBERVCARD_H
 
 #include <qvariant.h>
 #include <qdialog.h>
+#include <kurllabel.h>
+
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
@@ -30,7 +27,7 @@ public:
 
     QGroupBox* GroupBox1;
     QLabel* TextLabel2;
-    QLineEdit* nickNameLE;
+    QLabel* nickNameLabel;
     QLabel* TextLabel3;
     QLabel* JabberIDLabel;
     KURLLabel* homepageLabel;
@@ -41,10 +38,9 @@ public:
     QLabel* TextLabel26;
     QLabel* TextLabel31;
     QLabel* birthdayLabel;
-    QLabel* firstNameLabel;
+    QLabel* fullNameLabel;
     QLabel* TextLabel9;
     QLabel* TextLabel7;
-    QLabel* lastNameLabel;
     QPushButton* cmdClose;
     QPushButton* cmdSave;
     QGroupBox* GroupBox3;

@@ -1,12 +1,7 @@
+/* Jabber vCard dialog stuff, blah blah licensed under the GNU General
+ * Public License, blah blah Daniel Stone <dstone@kde.org> blah. */
+
 #include <klocale.h>
-/****************************************************************************
-** Form implementation generated from reading ui file './icqinfobase.ui'
-**
-** Created: Sat May 25 23:05:48 2002
-**      by:  The User Interface Compiler (uic)
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
 #include "dlgjabbervcard.h"
 
 #include <qvariant.h>
@@ -49,10 +44,13 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, bool modal, 
 
     GroupBox1Layout->addMultiCellWidget( TextLabel2, 0, 0, 0, 1 );
 
-    nickNameLE = new QLineEdit( GroupBox1, "nickNameLE" );
-    nickNameLE->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)0, 0, 0, nickNameLE->sizePolicy().hasHeightForWidth() ) );
+    nickNameLabel = new QLabel( GroupBox1, "nickNameLabel" );
+    nickNameLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)0, 0, 0, nickNameLabel->sizePolicy().hasHeightForWidth() ) );
+    nickNameLabel->setFrameShape(QLabel::StyledPanel);
+    nickNameLabel->setFrameShadow(QLabel::Sunken);
+    nickNameLabel->setText(QString::null);
 
-    GroupBox1Layout->addMultiCellWidget( nickNameLE, 0, 0, 2, 5 );
+    GroupBox1Layout->addMultiCellWidget( nickNameLabel, 0, 0, 2, 5 );
 
     TextLabel3 = new QLabel( GroupBox1, "TextLabel3" );
     TextLabel3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)4, 0, 0, TextLabel3->sizePolicy().hasHeightForWidth() ) );
@@ -78,26 +76,6 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, bool modal, 
 
     GroupBox1Layout->addWidget( TextLabel29, 3, 3 );
 
-    ageLabel = new QLabel( GroupBox1, "ageLabel" );
-    ageLabel->setFrameShape( QLabel::StyledPanel );
-    ageLabel->setFrameShadow( QLabel::Sunken );
-    ageLabel->setText( QString::null );
-
-    GroupBox1Layout->addMultiCellWidget( ageLabel, 3, 3, 1, 2 );
-
-    TextLabel27 = new QLabel( GroupBox1, "TextLabel27" );
-    TextLabel27->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)4, 0, 0, TextLabel27->sizePolicy().hasHeightForWidth() ) );
-    TextLabel27->setText( tr2i18n( "Age:" ) );
-
-    GroupBox1Layout->addWidget( TextLabel27, 3, 0 );
-
-    genderLabel = new QLabel( GroupBox1, "genderLabel" );
-    genderLabel->setFrameShape( QLabel::StyledPanel );
-    genderLabel->setFrameShadow( QLabel::Sunken );
-    genderLabel->setText( QString::null );
-
-    GroupBox1Layout->addMultiCellWidget( genderLabel, 3, 3, 4, 5 );
-
     TextLabel26 = new QLabel( GroupBox1, "TextLabel26" );
     TextLabel26->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)4, 0, 0, TextLabel26->sizePolicy().hasHeightForWidth() ) );
     TextLabel26->setText( tr2i18n( "Homepage:" ) );
@@ -117,30 +95,18 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, bool modal, 
 
     GroupBox1Layout->addWidget( birthdayLabel, 3, 7 );
 
-    firstNameLabel = new QLabel( GroupBox1, "firstNameLabel" );
-    firstNameLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)1, 0, 0, firstNameLabel->sizePolicy().hasHeightForWidth() ) );
-    firstNameLabel->setFrameShape( QLabel::StyledPanel );
-    firstNameLabel->setFrameShadow( QLabel::Sunken );
-    firstNameLabel->setText( QString::null );
+    fullNameLabel = new QLabel( GroupBox1, "fullNameLabel" );
+    fullNameLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)1, 0, 0, fullNameLabel->sizePolicy().hasHeightForWidth() ) );
+    fullNameLabel->setFrameShape( QLabel::StyledPanel );
+    fullNameLabel->setFrameShadow( QLabel::Sunken );
+    fullNameLabel->setText( QString::null );
 
-    GroupBox1Layout->addMultiCellWidget( firstNameLabel, 1, 1, 1, 3 );
-
-    TextLabel9 = new QLabel( GroupBox1, "TextLabel9" );
-    TextLabel9->setText( tr2i18n( "Last:" ) );
-
-    GroupBox1Layout->addWidget( TextLabel9, 1, 4 );
+    GroupBox1Layout->addMultiCellWidget( fullNameLabel, 1, 1, 1, 3 );
 
     TextLabel7 = new QLabel( GroupBox1, "TextLabel7" );
-    TextLabel7->setText( tr2i18n( "First:" ) );
+    TextLabel7->setText( tr2i18n( "Name:" ) );
 
     GroupBox1Layout->addWidget( TextLabel7, 1, 0 );
-
-    lastNameLabel = new QLabel( GroupBox1, "lastNameLabel" );
-    lastNameLabel->setFrameShape( QLabel::StyledPanel );
-    lastNameLabel->setFrameShadow( QLabel::Sunken );
-    lastNameLabel->setText( QString::null );
-
-    GroupBox1Layout->addMultiCellWidget( lastNameLabel, 1, 1, 5, 7 );
 
     dlgJabberVCardLayout->addMultiCellWidget( GroupBox1, 0, 0, 0, 2 );
 
@@ -183,19 +149,6 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, bool modal, 
     GroupBox3Layout->addLayout( Layout10, 1, 0 );
 
     Layout3 = new QGridLayout( 0, 1, 1, 0, 3, "Layout3"); 
-
-    TextLabel16 = new QLabel( GroupBox3, "TextLabel16" );
-    TextLabel16->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)4, 0, 0, TextLabel16->sizePolicy().hasHeightForWidth() ) );
-    TextLabel16->setText( tr2i18n( "Cellular:" ) );
-
-    Layout3->addWidget( TextLabel16, 0, 2 );
-
-    cellularPhoneNumber = new QLabel( GroupBox3, "cellularPhoneNumber" );
-    cellularPhoneNumber->setFrameShape( QLabel::StyledPanel );
-    cellularPhoneNumber->setFrameShadow( QLabel::Sunken );
-    cellularPhoneNumber->setText( QString::null );
-
-    Layout3->addWidget( cellularPhoneNumber, 0, 3 );
 
     TextLabel14 = new QLabel( GroupBox3, "TextLabel14" );
     TextLabel14->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)4, (QSizePolicy::SizeType)4, 0, 0, TextLabel14->sizePolicy().hasHeightForWidth() ) );
