@@ -350,7 +350,7 @@ void KopeteMessage::setFont( const QFont &font )
 			fontstr+=QString::fromLatin1("font-weight: bold;");
 
 		//TODO: font size
-//		kdDebug() << k_funcinfo << fontstr <<endl;
+//		kdDebug(14010) << k_funcinfo << fontstr <<endl;
 		bodyNode.setAttribute( QString::fromLatin1("font"), fontstr );
 		//bodyNode.setAttribute( QString::fromLatin1("fontsize"), font.pointSize() );
 	}

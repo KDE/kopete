@@ -470,20 +470,20 @@ int JabberAccount::handleTLSWarning (int warning, QString server)
 void JabberAccount::slotTLSHandshaken ()
 {
 
-	kdDebug() << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
+	kdDebug(14131) << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
 
 	int validityResult = jabberTLS->certificateValidityResult ();
 
 	if(validityResult == QCA::TLS::Valid)
 	{
-		kdDebug() << k_funcinfo << "Certificate is valid, continuing." << endl;
+		kdDebug(14131) << k_funcinfo << "Certificate is valid, continuing." << endl;
 
 		// valid certificate, continue
 		jabberTLSHandler->continueAfterHandshake ();
 	}
 	else
 	{
-		kdDebug() << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
+		kdDebug(14131) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
 
 		// certificate is not valid, query the user
 		if(handleTLSWarning (validityResult, server ()) == KMessageBox::Continue)

@@ -118,7 +118,7 @@ KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, 
 
 KopeteContact::~KopeteContact()
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug(14010) << k_funcinfo << endl;
 	emit( contactDestroyed( this ) );
 	d->metaContact = 0L;
 	delete d;

@@ -158,7 +158,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.data() );
-//			kdDebug() << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
+//			kdDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.data() );

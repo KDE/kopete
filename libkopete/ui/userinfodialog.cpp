@@ -203,7 +203,7 @@ void UserInfoDialog::fillHTML()
 
 void UserInfoDialog::fillWidgets()
 {
-	kdDebug()<<"Creating widgets"<<endl;
+	kdDebug(14010)<<"Creating widgets"<<endl;
 	if ( !d->name.isEmpty() ) {
 		d->topLayout->addWidget( addLabelEdit( i18n("Name:"), d->name, d->nameEdit ) );
 	}

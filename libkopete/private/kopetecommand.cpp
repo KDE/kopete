@@ -100,7 +100,7 @@ void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *m
 				}
 			}
 
-			kdDebug() << "New Command after processing alias: " << formatString << endl;
+			kdDebug(14010) << "New Command after processing alias: " << formatString << endl;
 
 			KopeteCommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
 		}

@@ -249,7 +249,7 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 int
 GaduSession::changeStatus( int status, bool forFriends )
 {
-	kdDebug()<<"## Changing to "<<status<<endl;
+	kdDebug(14101)<<"## Changing to "<<status<<endl;
 	if ( isConnected() ) {
 		return gg_change_status( session_, status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0) );
 	}

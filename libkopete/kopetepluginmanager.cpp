@@ -176,7 +176,7 @@ void KopetePluginManager::shutdown()
 	// certainly fire due to valgrind's much slower processing
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
 	if ( RUNNING_ON_VALGRIND )
-		kdDebug() << k_funcinfo << "Running under valgrind, disabling plugin unload timeout guard" << endl;
+		kdDebug(14010) << k_funcinfo << "Running under valgrind, disabling plugin unload timeout guard" << endl;
 	else
 #endif
 		QTimer::singleShot( 3000, this, SLOT( slotShutdownTimeout() ) );
@@ -237,7 +237,7 @@ void KopetePluginManager::loadAllPlugins()
 		if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 		{
 			key.setLength( key.length() - 7 );
-			//kdDebug() << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+			//kdDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
 
 			if ( it.data() == QString::fromLatin1( "true" ) )
 			{
@@ -370,7 +370,7 @@ KopetePlugin *KopetePluginManager::loadPluginInternal( const QString &pluginId )
 
 bool KopetePluginManager::unloadPlugin( const QString &spec )
 {
-	kdDebug() << k_funcinfo << spec << endl;
+	kdDebug(14010) << k_funcinfo << spec << endl;
 
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )

@@ -317,7 +317,7 @@ void KopeteAccountManager::autoConnect()
 
 void KopeteAccountManager::notifyAccountReady( KopeteAccount *account )
 {
-	kdDebug() << k_funcinfo << account->accountId() << endl;
+	kdDebug(14010) << k_funcinfo << account->accountId() << endl;
 	emit accountReady( account );
 	d->accounts.sort();
 }

@@ -270,7 +270,7 @@ GaduAccount::addContactToMetaContact( const QString& contactId, const QString& d
 void
 GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& descr )
 {
-	kdDebug() << "### Status = " << session_->isConnected() << endl;
+	kdDebug(14101) << "### Status = " << session_->isConnected() << endl;
 
 	if ( GG_S_NA( status.internalStatus() ) ) {
 		if ( !session_->isConnected() ) {

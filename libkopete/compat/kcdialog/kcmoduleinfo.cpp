@@ -43,7 +43,7 @@ KCModuleInfo::KCModuleInfo(const QString& desktopFile)
 KCModuleInfo::KCModuleInfo( KService::Ptr moduleInfo )
   : _fileName( moduleInfo->desktopEntryPath() )
 {
-  kdDebug() << k_funcinfo << _fileName << endl;
+  kdDebug(14010) << k_funcinfo << _fileName << endl;
   _allLoaded = false;
 
   init(moduleInfo);

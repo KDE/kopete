@@ -192,7 +192,7 @@ static bool notifyByExecute( const QString &command, const QString& event,
     if (!command.isEmpty()) {
 		QString execLine;
 #if KDE_IS_VERSION( 3, 1, 90 )
-	// kdDebug() << "executing command '" << command << "'" << endl;
+	// kdDebug(14010) << "executing command '" << command << "'" << endl;
 		QMap<QChar,QString> subst;
 		subst.insert( 'e', event );
 		subst.insert( 'a', fromApp );

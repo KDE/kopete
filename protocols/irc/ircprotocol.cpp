@@ -741,7 +741,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 		}
 	}
 
-	kdDebug() << k_funcinfo << doc.toString(4) << endl;
+	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
 	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
 	QTextStream stream( &xmlFile );
 
@@ -830,7 +830,7 @@ void IRCProtocol::slotMoveServerUp()
 	if( currentPos > 0 )
 	{
 		netConf->hostList->removeItem( currentPos );
-		kdDebug() << k_funcinfo << selectedHost->host << endl;
+		kdDebug(14121) << k_funcinfo << selectedHost->host << endl;
 		netConf->hostList->insertItem( selectedHost->host, --currentPos );
 		netConf->hostList->setSelected( currentPos, true );
 	}
