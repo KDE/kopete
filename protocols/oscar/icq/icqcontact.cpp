@@ -153,8 +153,6 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	}
 
 	setStatus(newStatus);
-
-	slotUpdateBuddy();
 }
 
 void ICQContact::slotOffgoingBuddy(QString sender)
@@ -163,7 +161,6 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 		return;
 
 	setOnlineStatus(mProtocol->statusOffline);
-	slotUpdateBuddy();
 }
 
 #if 0
@@ -250,6 +247,8 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 		actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
+		actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
+			this, SLOT(slotIgnore()), this, "actionIgnore");
 	}
 
 	//TODO: Only enable this if waitAuth is set
@@ -257,9 +256,14 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 	actionSendAuth->setEnabled(account()->isConnected());
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 
+	// TODO: implement changing its value
+	actionIgnore->setEnabled(false);
+	actionIgnore->setChecked(mIgnore);
+
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
 	actionCollection->append(actionReadAwayMessage);
+	actionCollection->append(actionIgnore);
 
 	return actionCollection;
 }
@@ -571,7 +575,7 @@ void ICQContact::slotSnacFailed(WORD snacID)
 {
 	if (userinfoRequestSequence != 0)
 		kdDebug(14200) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence << endl;
-	
+
 	//TODO: ugly interaction between snacID and request sequence, see OscarSocket::sendCLI_TOICQSRV
 	if (snacID == (0x0000 << 16) | userinfoRequestSequence)
 	{
@@ -579,6 +583,12 @@ void ICQContact::slotSnacFailed(WORD snacID)
 		emit userInfoRequestFailed();
 	}
 }
+
+void ICQContact::slotIgnore()
+{
+	kdDebug(14150) << "TODO" << endl;
+}
+
 
 #include "icqcontact.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -254,8 +254,6 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	}
 	else
 		setStatus(OSCAR_ONLINE);
-
-	slotUpdateBuddy();
 }
 
 void AIMContact::slotOffgoingBuddy(QString sn)
@@ -267,7 +265,6 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 
 	setStatus(OSCAR_OFFLINE);
-	slotUpdateBuddy();
 }
 
 void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)

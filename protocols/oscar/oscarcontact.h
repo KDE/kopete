@@ -106,10 +106,13 @@ class OscarContact : public KopeteContact
 
 		virtual const QString awayMessage() = 0;
 		virtual void setAwayMessage(const QString &message) = 0;
-		
+
 		//Server side accessors
 		bool serverSide() { return mIsServerSide; }
 		void setServerSide( bool isServerSide ) { mIsServerSide = isServerSide; }
+
+		bool ignore() { return mIgnore; }
+		void setIgnore(bool val) { mIgnore = val; }
 
 	signals:
 		void awayMessageChanged();
@@ -129,8 +132,6 @@ class OscarContact : public KopeteContact
 		 */
 		virtual void syncGroups();
 
-		void slotUpdateBuddy(); // aimbuddy legacy crap
-
 	protected:
 		// The account we're associated with
 		OscarAccount *mAccount;
@@ -139,13 +140,6 @@ class OscarContact : public KopeteContact
 		QString mName;
 
 		KopeteMessageManager *mMsgManager;
-
-		/*
-		 * The internal representation of our contact
-		 */
-		//TODO: Use SSI
-		
-		
 
 	protected slots:
 		/** Called when a buddy has changed status */
@@ -206,17 +200,10 @@ class OscarContact : public KopeteContact
 		void slotGotAuthReply(const QString &contact, const QString &reason, bool granted);
 
 	private:
-		/*
-		 * Initializes signal connections
-		 */
 		void initSignals();
-
-		/*
-		 * Initialzes the actions
-		 */
 		void initActions();
 
-	private:
+	protected:
 		UserInfo mInfo;
 		/*
 		 * Tells whether or not we have a direct connection with the contact
@@ -225,8 +212,9 @@ class OscarContact : public KopeteContact
 
 		int mEncoding;
 		int mGroupId;
-		
+
 		bool mIsServerSide;
+		bool mIgnore;
 };
 
 #endif

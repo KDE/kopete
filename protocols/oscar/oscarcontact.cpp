@@ -25,11 +25,7 @@
 #include <kmessagebox.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -53,7 +49,6 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 		"', displayName='" << displayName << "'" << endl;*/
 
 	assert(account);
-
 	mAccount = static_cast<OscarAccount*>(account);
 
 	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
@@ -61,6 +56,7 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mGroupId=0;
 	mMsgManager=0L;
 	mIsServerSide = false;
+	mIgnore = false;
 
 	setFileCapable(false);
 
@@ -175,7 +171,6 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 	if(newStatus == OSCAR_OFFLINE)
 	{
 		setStatus(OSCAR_OFFLINE);
-		slotUpdateBuddy();
 		mInfo.idletime = 0;
 		setIdleTime(0);
 		emit idleStateChanged(this);
@@ -188,7 +183,6 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 		return;
 
 	setStatus(OSCAR_OFFLINE);
-	slotUpdateBuddy();
 	mInfo.idletime = 0;
 	setIdleTime(0);
 	emit idleStateChanged(this);
@@ -198,12 +192,6 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName(newNickname);
 }
-
-void OscarContact::slotUpdateBuddy()
-{
-
-}
-
 
 void OscarContact::slotDeleteContact()
 {
@@ -496,13 +484,8 @@ void OscarContact::slotRequestAuth()
 
 int OscarContact::requestAuth()
 {
-#if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
 		i18n("Request Authorization"),i18n("Reason for requesting authorization:"));
-#else
-	QString reason = KLineEditDlg::getText(
-		i18n("Request Authorization"),i18n("Reason for requesting authorization:"));
-#endif
 	if(!reason.isNull())
 	{
 		kdDebug(14150) << k_funcinfo << "Sending auth request to '" <<
@@ -514,18 +497,14 @@ int OscarContact::requestAuth()
 		return(0);
 }
 
+
 void OscarContact::slotSendAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
 
 	// TODO: custom dialog also allowing a refusal
-#if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
 		i18n("Request Authorization"),i18n("Reason for granting authorization:"));
-#else
-	QString reason = KLineEditDlg::getText(
-		i18n("Grant Authorization"),i18n("Reason for granting authorization:"));
-#endif
 	if(!reason.isNull())
 	{
 		kdDebug(14150) << k_funcinfo << "Sending auth granted to '" <<
@@ -580,8 +559,6 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 */
 	manager()->appendMessage(msg);
 
-
-	// TODO: make it configurable
 #if 0
 	// send our away message in fire-and-forget-mode :)
 	if(mAccount->isAway())

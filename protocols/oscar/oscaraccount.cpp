@@ -409,56 +409,71 @@ void OscarAccount::slotGotServerBuddyList()
 	//was mysteriously destroyed and since engine()->ssiData() returns a reference
 	//we'll need to start saving the result of engine()->ssiData() so that we
 	//make sure it lives long enough.
-	QPtrListIterator<SSI> git( engine()->ssiData() );
+	QPtrListIterator<SSI> git(engine()->ssiData());
 	for ( ; git.current(); ++git )
 	{
-		if ( git.current()->type == 1 )
+		if (git.current()->type == ROSTER_GROUP && !git.current()->name.isEmpty())
 		{ //active contact on SSI
-			if ( !git.current()->name.isEmpty() )
-			{
-				kdDebug(14150) << k_funcinfo << "Adding group '" <<
-					git.current()->name << "' to contact list" << endl;
-				addGroup( git.current()->name );
-			}
+			kdDebug(14150) << k_funcinfo << "Adding group '" <<
+				git.current()->name << "' to contact list" << endl;
+			addGroup( git.current()->name );
 		}
 	}
 
 	//groups are added. Add the contacts
 	QPtrListIterator<SSI> bit( engine()->ssiData() );
 	QString groupName;
-	for ( ; bit.current(); ++bit )
+	for (; bit.current(); ++bit)
 	{
-		if ( bit.current()->type == 0 )
-		{ //active contact on SSI
-			SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
-			if ( ssiGroup )
-			{
-				/*kdDebug(14150) << k_funcinfo <<
-					"ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
-				*/
-				groupName = ssiGroup->name;
-			}
-			else
-			{
-				kdDebug(14150) << k_funcinfo <<
-					"ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
-				groupName = i18n("Buddies");
+		switch (bit.current()->type)
+		{
+			case ROSTER_CONTACT:
+			{ //active contact on SSI
+				SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
+				if ( ssiGroup )
+				{
+					/*kdDebug(14150) << k_funcinfo <<
+						"ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
+					*/
+					groupName = ssiGroup->name;
+				}
+				else
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
+					groupName = i18n("Buddies");
+				}
+
+				OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
+				if ( !contact )
+				{
+					kdDebug(14150) << k_funcinfo "Adding SSI contact '" <<
+						bit.current()->name << "' to contact list" << endl;
+					addContact(tocNormalize(bit.current()->name),
+						bit.current()->name, 0L,
+						DontChangeKABC, groupName, false);
+				}
+				break;
 			}
 
-			OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
-			if ( !contact )
+			case ROSTER_VISIBLE: // a contact on the visible list
+				break;
+			case ROSTER_INVISIBLE:// a contact on the invisible/ignore list
 			{
-				kdDebug(14150) << k_funcinfo "Adding contact '" <<
-					bit.current()->name << "' to contact list" << endl;
-				addContact( tocNormalize(bit.current()->name), bit.current()->name, 0L,
-					 DontChangeKABC, groupName , false );
+				OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
+				if (contact)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Setting IGNORE flag on contact '" << contact->displayName() << "'" << endl;
+					contact->setIgnore(true);
+				}
+				break;
 			}
 		}
 	}
 
 	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
-
 }
 
 void OscarAccount::slotLoggedIn()
@@ -479,7 +494,7 @@ void OscarAccount::slotLoggedIn()
 
 void OscarAccount::slotDelayedListSync()
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	kdDebug(14150) << k_funcinfo << "Called ==============================================" << endl;
 
 	syncLocalWithServerBuddyList ();
 }
@@ -492,7 +507,7 @@ void OscarAccount::slotDelayedListSync()
 
 void OscarAccount::syncLocalWithServerBuddyList()
 {
-	kdDebug(14150) << k_funcinfo << "Called but DISABLED" << endl;
+	kdDebug(14150) << k_funcinfo << "Called but DISABLED =========================================" << endl;
 #if 0
 	//FIXME: Does not work [mETz]
 	const QDict<KopeteContact>& contactList = contacts();

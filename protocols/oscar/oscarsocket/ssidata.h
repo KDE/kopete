@@ -48,29 +48,23 @@ const WORD SSIACK_NEEDAUTH		= 0x000E; // Cannot add contact because he needs AUT
 struct SSI
 {
 	/** \brief The name of this SSI item.
-	 * 
+	 *
 	 * This is usually the screenname, ICQ number, or group name.
-	 */ 
+	 */
 	QString name;
-	
+
 	/** \brief The group id of the SSI item */
-	int gid; 
-	
+	int gid;
+
 	/** \brief The buddy id of the SSI item */
-	int bid; 
-	
-	/** \brief The type of the SSI Item. 
-	 * 
-	 * The most common types are
-	 *	- 0x0000 - Buddies
-	 *	- 0x0001 - Groups
-	 *	- 0x0002 - Permit buddies (called the "Allow" list in AIM
-	 *	and the "Visible" list in ICQ)
-	 *	- 0x0003 - Deny buddies (called the "Block" list in AIM, 
-	 *	and the "Invisible" list in ICQ). 
+	int bid;
+
+	/** \brief The type of the SSI Item.
+	 *
+	 * see ROSTER_* defines
 	 *
 	 */
-	int type; 
+	int type;
 	/** \brief The TLV list for this item. */
 	char *tlvlist;
 	/** \brief The length of the TLV list */
@@ -87,14 +81,14 @@ struct SSI
  * @author Tom Linsky (Main)
  * @author Chris TenHarmsel (Secondary)
  *
- * \brief Manages SSI data from the server 
+ * \brief Manages SSI data from the server
  *
- * You can use the SSI pointers returned from many of these methods to get 
+ * You can use the SSI pointers returned from many of these methods to get
  * the data for the actual request to the server. None of these methods send
  * any data to the server. These fall under the Oscar Protocol Specification:
  * Family 0x0013, Subtype 0x0008 (Add item) or the Oscar Protocol
  * Specification: Family 0x0013, Subtype 0x0009 (Modify Item), but do not
- * contain information for whether it's an add or modify request, you will 
+ * contain information for whether it's an add or modify request, you will
  * have to construct that part of the SNAC yourself, and can then append this
  * data to the "series of items" list
  *
@@ -124,9 +118,9 @@ class SSIData : public QPtrList<SSI>
 		SSI *findContact(const QString &name, const QString &group);
 
 		/**
-		 * \brief Find the contact with the given name. 
+		 * \brief Find the contact with the given name.
 		 *
-		 * The group the contacts is in doesn't matter. This is a 
+		 * The group the contacts is in doesn't matter. This is a
 		 * convienence function and behaves much like the above function
 		 * \return NULL if not found
 		 */
@@ -143,11 +137,11 @@ class SSIData : public QPtrList<SSI>
 
 		/**
 		 * \brief Find the group named name
-		 * \return An SSI pointer to the data or NULL if no matching 
+		 * \return An SSI pointer to the data or NULL if no matching
 		 * group is found.
 		 */
 		SSI *findGroup(const QString &name);
-		
+
 		/**
 		 * \brief Find the group by it's ID
 		 * \return An SSI pointer to the data or NULL if no matching
@@ -177,10 +171,10 @@ class SSIData : public QPtrList<SSI>
 		/**
 		 * \brief Remove an SSI item from the list of blocked
 		 * screennames
-		 * 
+		 *
 		 * Deletes the SSI item created by addInvis from the SSI list
 		 * The SSI item should be retrieved using findInvis before
-		 * removing the item using this function. 
+		 * removing the item using this function.
 		 * \return true if the deletion was successful, false otherwise
 		 */
 		bool removeInvis(const QString &name);
@@ -195,11 +189,11 @@ class SSIData : public QPtrList<SSI>
 		SSI *findInvis(const QString &name);
 
 		// ===============================================================================
-		
+
 		/**
 		 * \brief Set that we're waiting auth for a SSI Item
 		 *
-		 * This does not indicate that the appropriate TLV will be 
+		 * This does not indicate that the appropriate TLV will be
 		 * added or is currently in the TLV list for this item
 		 */
 		void setWaitingAuth( SSI* item, bool waiting );
@@ -210,7 +204,7 @@ class SSIData : public QPtrList<SSI>
 		 * or has been added to the TLV list for this item
 		 */
 		bool waitingAuth( SSI* item );
-		
+
 		/**
 		 * \internal
 		 * Prints out the SSI data

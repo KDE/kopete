@@ -55,7 +55,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 {
 	unsigned int length = 0;
 	QStringList blmBuddies;
-	
+
 	inbuf.getByte(); //get fmt version
 	length = inbuf.getWord();
 
@@ -122,12 +122,12 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			{
 				parseSSIVisibility(ssi);
 				break;
-			} // END 0x0004
+			}
 
 			case ROSTER_PRESENCE: // Presence info (if others can see your idle status, etc)
 			{
 				kdDebug(14150) << k_funcinfo <<
-					"TODO: Handle ROSTER_PRESENCE" << endl; 
+					"TODO: Handle ROSTER_PRESENCE" << endl;
 				break;
 			}
 
@@ -231,8 +231,8 @@ void OscarSocket::parseSSIContact(SSI *pSsi, QStringList &blmContacts)
 				here to tell your client that you are waiting for authorization
 				for the person. This TLV is always empty.
 				*/
-				/*kdDebug(14150) << k_funcinfo <<
-					"Contact has WAITAUTH set." << endl;*/
+				kdDebug(14150) << k_funcinfo <<
+					"Contact "<<pSsi->name<<" has WAITAUTH set." << endl;
 				//TODO: reimplement somehow. Set waitauth flag and add to blm lists
 				pSsi->waitingAuth = true;
 				blmContacts << pSsi->name;
@@ -262,7 +262,7 @@ void OscarSocket::parseSSIContact(SSI *pSsi, QStringList &blmContacts)
 
 			default:
 			{
-				/*
+#ifdef OSCAR_SSI_DEBUG
 				kdDebug(14150) << k_funcinfo <<
 					"UNKNOWN TLV(" << t->type << "), length=" << t->length << endl;
 				QString tmpStr;
@@ -275,9 +275,9 @@ void OscarSocket::parseSSIContact(SSI *pSsi, QStringList &blmContacts)
 						tmpStr += QString("\n");
 				}
 				kdDebug(14150) << k_funcinfo << tmpStr << endl;
-				*/
+#endif
 				break;
-			}
+			} // END default
 		} // END switch()
 	} // END for()
 	lst.clear();
@@ -312,7 +312,7 @@ void OscarSocket::parseSSIVisibility(SSI *pSsi)
 	kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
 		pSsi->name << "', groupId=" << pSsi->gid << ", id=" << pSsi->bid <<
 		", type=" << pSsi->type << ", TLV length=" << pSsi->tlvlength << endl;
-	
+
 	Buffer tmpBuf(pSsi->tlvlist, pSsi->tlvlength);
 	QPtrList<TLV> lst = tmpBuf.getTLVList();
 	lst.setAutoDelete(TRUE);
@@ -340,7 +340,7 @@ void OscarSocket::parseSSIVisibility(SSI *pSsi)
 				kdDebug(14150) << k_funcinfo <<
 					"visibility setting = Allow only users in the permit list to see you" << endl;
 				break;
-				
+
 			case 4:
 				kdDebug(14150) << k_funcinfo <<
 					"visibility setting = Block only users in the invisible list from seeing you" << endl;
@@ -369,13 +369,13 @@ void OscarSocket::parseSSIVisibility(SSI *pSsi)
 			kdDebug(14150) << k_funcinfo <<
 				"Do not allow others to see that I am using a wireless device" << endl;
 		}
-		
+
 		if (vis & 0x00000400)
 		{
 			kdDebug(14150) << k_funcinfo <<
 			 	"Allow others to see my idle time" << endl;
 		}
- 
+
 		if (vis & 0x00400000)
 		{
 			kdDebug(14150) << k_funcinfo <<

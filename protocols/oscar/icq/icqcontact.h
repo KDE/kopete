@@ -28,6 +28,7 @@ class AIMBuddy;
 
 struct UserInfo;
 class KAction;
+class KToggleAction;
 class KopeteMessageManager;
 class KopeteOnlineStatus;
 class ICQProtocol;
@@ -117,6 +118,7 @@ class ICQContact : public OscarContact
 		KAction *actionReadAwayMessage;
 		KAction *actionRequestAuth;
 		KAction *actionSendAuth;
+		KToggleAction *actionIgnore;
 
 		int userinfoRequestSequence;
 		unsigned int userinfoReplyCount;
@@ -162,6 +164,7 @@ class ICQContact : public OscarContact
 
 		void slotReadAwayMessage();
 		void slotSnacFailed(WORD snacID);
+		void slotIgnore();
 };
 
 #endif
