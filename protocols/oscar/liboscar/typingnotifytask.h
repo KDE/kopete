@@ -1,5 +1,5 @@
 /*
-    messagereceivertask.h  - Incoming OSCAR Messaging Handler
+    typingnotifytask.h  - Send/Recieve typing notifications
 
     Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -13,54 +13,49 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef MESSAGERECEIVERTASK_H
-#define MESSAGERECEIVERTASK_H
+
+#ifndef _TYPINGNOTIFYTASK_H_
+#define _TYPINGNOTIFYTASK_H_
 
 #include "task.h"
 #include <qstring.h>
 #include "oscartypeclasses.h"
 
 /**
- * Handles receiving messages. 
+ * Handles sending and receiving mini typing notifications
  * @author Matt Rogers
-*/
-class MessageReceiverTask : public Task
+ */
+class TypingNotifyTask : public Task
 {
 Q_OBJECT
 public:
-	MessageReceiverTask( Task* parent );
+	enum { Finished = 0x0000, Typed = 0x0001, Begin = 0x0002 };
 	
-	~MessageReceiverTask();
+	TypingNotifyTask( Task* parent );
+	~TypingNotifyTask();
 	
-	virtual bool forMe( const Transfer* transfer ) const;
+	virtual bool forMe( const Transfer* transfer) const;
 	virtual bool take( Transfer* transfer );
+	virtual void onGo();
+	
+	void setNotification( int notifyType );
 	
 signals:
+	//! somebody started typing on the other end
+	void typingStarted( const QString& contact );
 	
-	void receivedMessage( const Oscar::Message& );
-	
-private:
-	
-	//!Handles messages from channel 1 (type 1 messages)
-	void handleType1Message();
-	
-	//!Handles messages from channel 2 (type 2 messages)
-	void handleType2Message() {};
-	
-	//!Handles messages from channel 4 (type 4 messages)
-	void handleType4Message();
+	//! somebody finished typing
+	void typingFinished( const QString& contact );
 	
 private:
 	
-	QByteArray m_icbmCookie;
-	int m_channel;
-	QString m_fromUser;
-	QString m_messageText;
-	int m_charSet;
-	int m_subCharSet;
+	//! Parse the incoming SNAC(0x04, 0x14)
+	void handleNotification();
 	
+private:
+	WORD m_notificationType;
 };
 
 #endif
 
-//kate: indent-mode csands; tab-width 4;
+//kate: indent-mode csands; space-indent off; replace-tabs off;
