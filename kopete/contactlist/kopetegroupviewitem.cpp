@@ -39,7 +39,7 @@ class KopeteGroupViewItem::Private
 {
 public:
 	Kopete::UI::ListView::ImageComponent *image;
-	Kopete::UI::ListView::TextComponent *name;
+	Kopete::UI::ListView::DisplayNameComponent *name;
 	Kopete::UI::ListView::TextComponent *count;
 	std::auto_ptr<Kopete::UI::ListView::ToolTipSource> toolTipSource;
 };
@@ -95,7 +95,7 @@ void KopeteGroupViewItem::initLVI()
 	using namespace Kopete::UI::ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->image = new ImageComponent( hbox );
-	d->name = new TextComponent( hbox );
+	d->name = new DisplayNameComponent( hbox );
 	d->count = new TextComponent( hbox );
 
 	d->image->setToolTipSource( d->toolTipSource.get() );
