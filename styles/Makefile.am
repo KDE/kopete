@@ -1,6 +1,7 @@
 SUBDIRS = . data
 
 styles_DATA = \
+	Adium.xsl \
 	Enclosed.xsl \
 	Gaim.xsl \
 	iChat.xsl \
