@@ -169,11 +169,15 @@ void MSNSocket::slotSocketError( int error )
 
 	setOnlineStatus( Disconnected );
 
-	delete m_socket;
+	//delete m_socket;
+	m_socket->deleteLater();
 	m_socket = 0L;
 
 	emit connectionFailed();
-	slotSocketClosed( -1 ); // Just like when the socket is normally closed
+
+	//like if the socket is closed
+	emit( socketClosed( -1 ) );
+
 }
 
 void MSNSocket::slotDataReceived()

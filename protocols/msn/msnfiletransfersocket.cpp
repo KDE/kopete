@@ -212,6 +212,11 @@ void MSNFileTransferSocket::slotTimer()
 	{
 		m_kopeteTransfer->setError(KopeteTransfer::Timeout);
 	}
+
+	MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+	if(manager && manager->service())
+		manager->service()->sendCommand( "MSG" , "N", true, rejectMessage("TIMEOUT") );
+
 	emit done(this);
 }
 
@@ -295,6 +300,8 @@ void MSNFileTransferSocket::slotReadyWrite()
 
 QCString MSNFileTransferSocket::invitationHead()
 {
+	QTimer::singleShot( 10 * 60000, this, SLOT(slotTimer()) );  //the user has 10 mins to accept or refuse or initiate the transfer
+
 	return QString( MSNInvitation::invitationHead()+
 					"Application-File: "+ m_fileName.right( m_fileName.length() - m_fileName.findRev( QRegExp("/") ) - 1 ) +"\r\n"
 					"Application-FileSize: "+ QString::number(size()) +"\r\n\r\n").utf8();
@@ -316,7 +323,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 
 		MSNInvitation::parseInvitation(msg); //for the cookie
 
-		KopeteTransferManager::transferManager()->askIncomingTransfer( m_contact , filename, filesize, QString::null, this );
+		KopeteTransferManager::transferManager()->askIncomingTransfer( m_contact , filename, filesize, QString::null, QString::number( cookie() ) );
 
 		QObject::connect( KopeteTransferManager::transferManager(), SIGNAL( accepted( KopeteTransfer *, const QString& ) ),this, SLOT( slotFileTransferAccepted( KopeteTransfer *, const QString& ) ) );
 		QObject::connect( KopeteTransferManager::transferManager(), SIGNAL( refused( const KopeteFileTransferInfo & ) ), this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
@@ -379,7 +386,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 
 void MSNFileTransferSocket::slotFileTransferAccepted(KopeteTransfer *trans, const QString& fileName)
 {
- 	if(trans->info().internalId()!=this);
+ 	if(trans->info().internalId().toULong() != cookie())
 		return;
 
 	if(!trans->info().contact())
@@ -402,6 +409,8 @@ void MSNFileTransferSocket::slotFileTransferAccepted(KopeteTransfer *trans, cons
 			"Launch-Application: FALSE\r\n"
 			"Request-Data: IP-Address:\r\n"  ).utf8();
 		manager->service()->sendCommand( "MSG" , "N", true, message );
+
+		QTimer::singleShot( 3 * 60000, this, SLOT(slotTimer()) ); //if after 3 minutes the transfer has not begin, delete this
 	}
 	else
 	{
@@ -414,7 +423,7 @@ void MSNFileTransferSocket::slotFileTransferAccepted(KopeteTransfer *trans, cons
 
 void MSNFileTransferSocket::slotFileTransferRefused(const KopeteFileTransferInfo &info)
 {
- 	if(info.internalId()!=this);
+	if(info.internalId().toULong() != cookie())
 		return;
 
 	if(!info.contact())
@@ -424,19 +433,13 @@ void MSNFileTransferSocket::slotFileTransferRefused(const KopeteFileTransferInfo
 
 	if(manager && manager->service())
 	{
-		QCString message=QString(
-			"MIME-Version: 1.0\r\n"
-			"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-			"\r\n"
-			"Invitation-Command: CANCEL\r\n"
-			"Invitation-Cookie: " + QString::number(cookie()) + "\r\n"
-			"Cancel-Code: REJECT").utf8();
-		manager->service()->sendCommand( "MSG" , "N", true, message );
+		manager->service()->sendCommand( "MSG" , "N", true, rejectMessage() );
 	}
 
 	emit done(this);
-
 }
+
+
 
 #include "msnfiletransfersocket.moc"
 

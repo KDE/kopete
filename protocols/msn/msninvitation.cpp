@@ -54,6 +54,16 @@ QString MSNInvitation::invitationHead()
 					"Invitation-Cookie: " +QString::number(m_cookie) +"\r\n");
 }
 
+QCString MSNInvitation::rejectMessage(const QString & rejectcode)
+{
+	return QString( "MIME-Version: 1.0\r\n"
+					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
+					"\r\n"
+					"Invitation-Command: CANCEL\r\n"
+					"Invitation-Cookie: " + QString::number(cookie()) + "\r\n"
+					"Cancel-Code: "+ rejectcode +"\r\n").utf8();
+}
+
 void MSNInvitation::parseInvitation(const QString& msg)
 {
 	QRegExp rx("Invitation-Command: ([A-Z]*)");

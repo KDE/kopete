@@ -34,8 +34,9 @@ public:
 
 	static QCString unimplemented(long unsigned int cookie);
 	QString invitationHead();
+	QCString rejectMessage(const QString & rejectcode = "REJECT");
 
-    virtual void parseInvitation(const QString& invitation);
+	virtual void parseInvitation(const QString& invitation);
 
 
 protected:

@@ -327,6 +327,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 
 void MSNMessageManager::invitationDone(MSNInvitation* MFTS)
 {
+	kdDebug(14140) << k_funcinfo <<endl;
 	m_invitations.remove(MFTS->cookie());
 //	MFTS->deleteLater();
 	delete MFTS;
@@ -350,7 +351,7 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 
 		QPtrList<KopeteContact>contacts=members();
 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),contacts.first(), false,this);
-		connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
+		connect(MFTS, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
 		m_invitations.insert( MFTS->cookie()  , MFTS);
 
 		//Call the setFile command to let the MFTS know what file we are sending

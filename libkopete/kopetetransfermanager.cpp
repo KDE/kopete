@@ -40,7 +40,7 @@
  *  KopeteFileTransferInfo *
  ***************************/
 
-KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, void *internalId)
+KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId)
 {
 	mContact = contact;
 	mFile = file;
@@ -211,7 +211,7 @@ KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, con
 		nextID++;
 	KopeteFileTransferInfo info(contact, file, size, recipient,di,  nextID);
 	KopeteTransfer *trans = new KopeteTransfer(info, contact);
-	connect(trans, SIGNAL(done(KopeteTransfer *)), this, SIGNAL(slotComplete(KopeteTransfer *)));
+	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KopeteTransfer *)));
 	mTransfersMap.insert(nextID, trans);
 	return trans;
 }
@@ -219,12 +219,12 @@ KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, con
 void KopeteTransferManager::slotAccepted(const KopeteFileTransferInfo& info, const QString& filename)
 {
 	KopeteTransfer *trans = new KopeteTransfer(info, filename);
-	connect(trans, SIGNAL(result(KIO::Job *)), this, SIGNAL(slotComplete(KopeteTransfer *)));
+	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KopeteTransfer *)));
 	mTransfersMap.insert(info.transferId(), trans);
 	emit accepted(trans,filename);
 }
 
-int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString& description, void *internalId)
+int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId)
 {
 //	if (nextID != 0)
 		nextID++;
