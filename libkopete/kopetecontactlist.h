@@ -163,14 +163,6 @@ public:
 	 */
 	QPtrList<KopeteGroup> selectedGroups() const ;
 	
-	/**
-	 * return the metacontact that represent the user itself.
-	 * This metacontact should be the parent of every @ref KopeteAccount::myself() contacts.
-	 *
-	 * This metacontact is not in the contactlist.
-	 */
-	KopeteMetaContact* myself();
-
 public slots:
 
 	/**

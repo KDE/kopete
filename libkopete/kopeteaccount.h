@@ -236,8 +236,6 @@ public:
 	 * \return the pointer to the KopeteContact object for this
 	 * account or NULL if not initialized
 	 *
-	 * The myself should have the @ref KopeteContactList::myself() as parent metacontact
-	 *
 	 * \see setMyself().
 	 */
 	KopeteContact * myself() const;
@@ -311,7 +309,6 @@ protected:
 	 * should represent the current user's status. The statusbar icon
 	 * is connected to myself-> @ref onlineStatusChanged()
 	 * to update the icon.
-	 * The parent metacontact should be @ref KopeteContactList::myself() 
 	 */
 	void setMyself( KopeteContact *myself );
 

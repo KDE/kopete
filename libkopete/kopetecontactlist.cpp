@@ -49,8 +49,6 @@ class KopeteContactList::KopeteContactListPrivate
 
 	QTimer *saveTimer;
 	
-	KopeteMetaContact *myself;
-
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
 	 */
@@ -72,8 +70,6 @@ KopeteContactList::KopeteContactList()
 {
 	d=new KopeteContactListPrivate;
 	
-	d->myself=0L;
-
 	//no contactlist loaded yet, don't save them
 	d->loaded=false;
 
@@ -90,7 +86,6 @@ KopeteContactList::KopeteContactList()
 
 KopeteContactList::~KopeteContactList()
 {
-	delete d->myself;
 	delete d;
 }
 
@@ -975,13 +970,6 @@ void KopeteContactList::slotSaveLater()
 	// if we already have a save scheduled, it will be cancelled. either way,
 	// start a timer to save the contact list a bit later.
 	d->saveTimer->start( 1000 /* 1 second */, true /* single-shot */ );
-}
-
-KopeteMetaContact* KopeteContactList::myself()
-{
-	if(!d->myself)
-		d->myself=new KopeteMetaContact();
-	return d->myself;
 }
 
 #include "kopetecontactlist.moc"
