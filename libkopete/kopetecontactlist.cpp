@@ -347,15 +347,15 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 								newMetaContact.appendChild( pluginData[ id ] );
 							}
 
-							QStringList strList = QStringList::split( "||", data );
-							// Unescape '||'
-							for( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
-								( *it ).replace( QRegExp( "\\\\\\|;" ), "|" ).replace( QRegExp( "\\\\\\\\" ), "\\" );
-
 							// Do the actual conversion
 							if( id == "MSNProtocol" || id == "OscarProtocol" || id == "AIMProtocol" || id == "IRCProtocol" ||
 								id == "ICQProtocol" || id == "JabberProtocol" )
 							{
+								QStringList strList = QStringList::split( "||", data );
+								// Unescape '||'
+								for( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
+									( *it ).replace( QRegExp( "\\\\\\|;" ), "|" ).replace( QRegExp( "\\\\\\\\" ), "\\" );
+
 								uint idx = 0;
 								while( idx < strList.size() )
 								{
@@ -423,8 +423,19 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									idx += fieldCount;
 								}
 							}
+							else if( id == "ContactNotesPlugin" || id == "CryptographyPlugin" || id == "TranslatorPlugin" )
+							{
+								QDomElement dataField = newList.createElement( "plugin-data-field" );
+								pluginData[ id ].appendChild( dataField );
+								if( id == "ContactNotesPlugin" )
+									dataField.setAttribute( "key", "notes" );
+								else if( id == "CryptographyPlugin" )
+									dataField.setAttribute( "key", "gpgKey" );
+								else if( id == "TranslatorPlugin" )
+									dataField.setAttribute( "key", "languageKey" );
 
-							// TODO: Convert the actual data in 'data'
+								dataField.appendChild( newList.createTextNode( data ) );
+							}
 						}
 					}
 					oldContactNode = oldContactNode.nextSibling();
