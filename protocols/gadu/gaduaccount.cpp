@@ -48,7 +48,6 @@
 #include <qtextcodec.h>
 #include <qptrlist.h>
 #include <qtextstream.h>
-#include <qtextcodec.h>
 
 #include <netinet/in.h>
 
@@ -791,8 +790,7 @@ GaduAccount::slotExportContactsListToFile()
 	
 	if ( saveListDialog->exec() == QDialog::Accepted ) {
 		
-		QTextCodec* textcodec = QTextCodec::codecForName( "CP1250" );
-		QCString list = textcodec->fromUnicode( session_->contactsToString( userlist() ) );
+		QCString list = textcodec_->fromUnicode( session_->contactsToString( userlist() ) );
 		
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....			
@@ -834,7 +832,6 @@ GaduAccount::slotImportContactsFromFile()
 	
 	if ( loadListDialog->exec() == QDialog::Accepted ) {
 		
-		QTextCodec* textcodec = QTextCodec::codecForName( "CP1250" );
 		QCString list;
 
 		KURL url = loadListDialog->selectedURL();
@@ -854,7 +851,7 @@ GaduAccount::slotImportContactsFromFile()
 				kdDebug( 14100 ) << "loaded list:" << endl;
 				kdDebug( 14100 ) << list << endl;
 				kdDebug( 14100 ) << " --------------- " << endl;
-				userlist( textcodec->toUnicode( list ) );
+				userlist( textcodec_->toUnicode( list ) );
 			}
 			else {
 				error( tempFile.errorString(),

@@ -153,7 +153,7 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 	params_.uin		= uin;
 	params_.password	= (char *)password.ascii();
 	params_.status		= status;
-	params_.status_descr	= (char *)statusDescr.ascii();
+	params_.status_descr	= ( textcodec->fromUnicode( statusDescr ).data() );
 	params_.async		= 1;
 	params_.tls		= useTls;
 	params_ .server_addr	= server;
@@ -229,14 +229,15 @@ GaduSession::removeNotify( uin_t uin )
 int
 GaduSession::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-	QString sendMsg, cpMsg;
+	QString sendMsg; 
+	QCString cpMsg;
 
 	if ( isConnected() ) {
 		sendMsg = msg;
 		sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
 		cpMsg = textcodec->fromUnicode( sendMsg );
 
-		return gg_send_message( session_, msgClass, recipient, reinterpret_cast<const unsigned char*>( cpMsg.ascii() ) );
+		return gg_send_message( session_, msgClass, recipient, (const unsigned char *)cpMsg.data() );
 	}
 	else {
 		emit error( i18n("Not Connected"), i18n("You are not connected to the server.") );
@@ -262,12 +263,12 @@ GaduSession::changeStatus( int status )
 int
 GaduSession::changeStatusDescription( int status, const QString& descr )
 {
-	QString ndescr;
+	QCString ndescr;
 
 	ndescr= textcodec->fromUnicode(descr);
 
 	if ( isConnected() ) {
-		return gg_change_status_descr( session_, status, ndescr.ascii() );
+		return gg_change_status_descr( session_, status, ndescr.data() );
 	}
 	else {
 		emit error( i18n("Not Connected"), i18n("You have to be connected to the server to change your status.") );
@@ -457,7 +458,7 @@ GaduSession::contactsToString( gaduContactsList* contactsList )
 void
 GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
 {
-	QString plist;
+	QCString plist;
 
 	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
 		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
@@ -469,7 +470,7 @@ GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
 	kdDebug(14100) <<"--------------------userlists\n" << plist << endl;
 	kdDebug(14100) << "----------------------------" << endl;
 
-	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.ascii() ) == -1 ) {
+	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.data() ) == -1 ) {
 		kdDebug( 14100 ) << "export contact list failed " << endl;
 		return;
 	}
