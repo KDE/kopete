@@ -103,7 +103,6 @@ class KopeteChatViewPrivate
 		bool isActive;
 		bool sendInProgress;
 		bool visibleMembers;
-		QTimer sortMembersTimer;
 };
 
 class ChatViewMembersTip : public QToolTip
@@ -194,8 +193,6 @@ ChatView::ChatView( Kopete::MessageManager *mgr, const char *name )
 	d = new KopeteChatViewPrivate;
 
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
-	
-	connect( &d->sortMembersTimer, SIGNAL( timeout() ), this, SLOT( sortMembers() ) );
 
 	hide();
 	
@@ -581,7 +578,7 @@ void ChatView::createMembersList()
 		new ChatViewMembersTip( membersList );
 		membersList->setAllColumnsShowFocus( true );
 		membersList->addColumn( i18n("Chat Members"), -1 );
-		membersList->setSorting( 0, true );
+		membersList->setSorting( -1 ); // list is sorted by us, not by Qt
 		membersList->header()->setStretchEnabled( true, 0 );
 		membersList->header()->hide();
 
@@ -2029,20 +2026,10 @@ void ChatView::dropEvent ( QDropEvent * event )
 
 }
 
-void ChatView::sortMembersLater()
-{
-	d->sortMembersTimer.start(10, true);
-}
-
-void ChatView::sortMembers()
-{
-	membersList->sort();
-}
-
 //-------------------------------------------------------------------------------------------------------
 //-- class KopeteContactLVI --
 
-KopeteContactLVI::KopeteContactLVI( ChatView *view, const Kopete::Contact *contact, KListView *parent ) : KListViewItem( parent )
+KopeteContactLVI::KopeteContactLVI( KopeteView *view, const Kopete::Contact *contact, KListView *parent ) : KListViewItem( parent )
 {
 	m_contact = const_cast<Kopete::Contact*> ( contact );
 	m_parentView = parent;
@@ -2063,6 +2050,8 @@ KopeteContactLVI::KopeteContactLVI( ChatView *view, const Kopete::Contact *conta
 
 	slotStatusChanged( m_contact, view->msgManager()->contactOnlineStatus(m_contact),
 		view->msgManager()->contactOnlineStatus(m_contact) );
+	
+	reposition();
 }
 
 void KopeteContactLVI::slotPropertyChanged( Kopete::Contact*, const QString &key,
@@ -2071,18 +2060,17 @@ void KopeteContactLVI::slotPropertyChanged( Kopete::Contact*, const QString &key
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )
 	{
 		setText( 0, /*QString::fromLatin1( " " ) +*/ newValue.toString() );
-		m_view->sortMembersLater();
+		reposition();
 	}
 }
 
-void KopeteContactLVI::slotStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus,
-	const Kopete::OnlineStatus &oldStatus )
+void KopeteContactLVI::slotStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status,
+	const Kopete::OnlineStatus & )
 {
 	if ( contact == m_contact )
 	{
-		setPixmap( 0, newStatus.iconFor( m_contact ) );
-		if ( newStatus.weight() != oldStatus.weight() )
-			m_view->sortMembersLater();
+		setPixmap( 0, status.iconFor( m_contact ) );
+		reposition();
 	}
 }
 
@@ -2092,9 +2080,28 @@ void KopeteContactLVI::slotExecute( QListViewItem *item )
 		m_contact->execute();
 }
 
-QString KopeteContactLVI::key( int column, bool /*ascending*/ ) const
+void KopeteContactLVI::reposition()
 {
-	return QString::number(99 - m_contact->onlineStatus().weight() ) + text(column).lower();
+	// Qt's listview sorting is pathetic - it's impossible to reposition a single item
+	// when its key changes, without re-sorting the whole list. Plus, the whole list gets
+	// re-sorted whenever an item is added/removed. So, we do manual sorting.
+	// In particular, this makes adding N items O(N^2) not O(N^2 log N).
+	QListViewItem *after = 0;
+	for ( QListViewItem *it = m_parentView->firstChild(); it; it = it->nextSibling() )
+	{
+		if ( KopeteContactLVI *item = dynamic_cast<KopeteContactLVI*>(it) )
+		{
+			int theirWeight = item->m_contact->onlineStatus().weight();
+			int ourWeight = m_contact->onlineStatus().weight();
+			if ( theirWeight < ourWeight ||
+			     (theirWeight == ourWeight && item->text(0).lower().localeAwareCompare( text(0).lower() ) > 0 ) )
+			{
+				break;
+			}
+		}
+		after = it;
+	}
+	m_parentView->moveItem( this, 0, after );
 }
 
 #include "chatview.moc"
