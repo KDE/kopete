@@ -183,7 +183,8 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	WORD flapLength = 0;
 	WORD s1, s2 = 0;
 	uint bytesParsed = 0;
-			
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire) << endl;
 	if ( wire.size() < 6 ) //check for valid flap length
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
@@ -273,7 +274,7 @@ bool CoreProtocol::okToProceed()
 		if ( m_din->atEnd() )
 		{
 			m_state = NeedMore;
-			kdDebug(OSCAR_RAW_DEBUG) << "EventProtocol::okToProceed() - Server message ended prematurely!" << endl;
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Server message ended prematurely!" << endl;
 		}
 		else
 			return true;
