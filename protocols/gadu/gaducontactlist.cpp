@@ -99,7 +99,7 @@ GaduContactsList::GaduContactsList( QString sList )
 
 		// ignored contact
 		if ( strList.count() == 7 ) {
-			 // well, this is probably it - you're d00med d\/de :-)
+			 // well, this is probably it - you're d00med d|_|de :-)
 			if ( (*stringIterator) == QString( "i" ) ) {
 				ContactLine c;
 				c.uin		= strList[6];
@@ -149,7 +149,6 @@ GaduContactsList::GaduContactsList( QString sList )
 		++lni;
 
 		if ( cl.uin.isNull() ) {
-			// FIXME: maybe i should consider this as an fatal error, and return false
 			continue;
 		}
 
