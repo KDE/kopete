@@ -28,16 +28,6 @@
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
 
-void dumpList ( QPtrList<KopeteContact> list )
-{
-
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "################## LIST DUMP START ###############" << endl;
-	for ( KopeteContact *contact = list.first(); contact; contact = list.next())
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contact->contactId() << endl;
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "################## LIST DUMP END ###############" << endl;
-
-}
-
 /**
  * JabberGroupContact constructor
  */
@@ -214,8 +204,6 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 	// now, add the contact also to our own list
 	mContactList.append ( subContact );
 
-	dumpList ( mContactList );
-
 	return subContact;
 
 }
@@ -248,8 +236,6 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 	// remove the contact from our internal list
 	mContactList.remove ( subContact );
-
-	dumpList ( mContactList );
 
 	// delete the meta contact first
 	delete subContact->metaContact ();
