@@ -50,7 +50,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = kopete/library kopete/library/ui
+INPUT                  = libkopete libkopete/ui
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO
 EXCLUDE                = *.moc.h
