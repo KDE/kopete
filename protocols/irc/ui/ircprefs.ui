@@ -426,5 +426,8 @@
         </widget>
     </widget>
 </widget>
+<includes>
+    <include location="local" impldecl="in implementation">ircprefs.ui.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
