@@ -108,7 +108,4 @@ void KopeteAwayConfigUI::updateView()
 
 	txtMessage->setText( QString::null );
 
-	mUseAutoAway->setChecked(ka->useAutoAway());
-	mAutoAwayTimeout->setValue((int)(ka->autoAwayTimeout()/60));
-	mGoAvailable->setChecked(ka->goAvailable());
 }

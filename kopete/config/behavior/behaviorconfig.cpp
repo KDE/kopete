@@ -28,6 +28,7 @@
 #include <kpushbutton.h>
 #include <kgenericfactory.h>
 #include <ktrader.h>
+#include <kconfig.h>
 
 
 #include "kopeteprefs.h"
@@ -71,7 +72,6 @@ void BehaviorConfig::save()
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 
 	KopetePrefs *p = KopetePrefs::prefs();
-	KopeteAway *ka = KopeteAway::getInstance();
 
 	// "General" TAB ============================================================
 	p->setShowTray(mPrfsGeneral->mShowTrayChk->isChecked());
@@ -86,11 +86,13 @@ void BehaviorConfig::save()
 
 	// "Away" TAB ===============================================================
 	p->setNotifyAway( mAwayConfigUI->mNotifyAway->isChecked());
-	ka->setUseAutoAway(mAwayConfigUI->mUseAutoAway->isChecked());
-	ka->setAutoAwayTimeout(mAwayConfigUI->mAutoAwayTimeout->value() * 60);
-	ka->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
-	ka->save();
 
+	KConfig *config = KGlobal::config();
+	config->setGroup("AutoAway");
+	config->writeEntry("Timeout", mAwayConfigUI->mAutoAwayTimeout->value() * 60);
+	config->writeEntry("GoAvailable", mAwayConfigUI->mGoAvailable->isChecked());
+	config->writeEntry("UseAutoAway", mAwayConfigUI->mUseAutoAway->isChecked() );
+	config->sync();
 
 	// "Chat" TAB ===============================================================
 	p->setRaiseMsgWindow(mPrfsChat->cb_RaiseMsgWindowChk->isChecked());
@@ -126,9 +128,14 @@ void BehaviorConfig::load()
 
 
 	// "Away" TAB ===============================================================
-	mAwayConfigUI->updateView();
+	KConfig *config = KGlobal::config();
+	config->setGroup("AutoAway");
+	mAwayConfigUI->mAutoAwayTimeout->setValue(config->readNumEntry("Timeout", 600)/60);
+	mAwayConfigUI->mGoAvailable->setChecked(config->readBoolEntry("GoAvailable", true));
+	mAwayConfigUI->mUseAutoAway->setChecked(config->readBoolEntry("UseAutoAway", true));
 	mAwayConfigUI->mNotifyAway->setChecked( p->notifyAway() );
 
+	mAwayConfigUI->updateView();
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat->cb_RaiseMsgWindowChk->setChecked(p->raiseMsgWindow());

@@ -165,39 +165,6 @@ public:
 	 */
 	long int idleTime();
 
-
-	/**
-	 * set if kopete will go available when we detect activity
-	 * This should be only used by the preference dialog
-	 */
-	void setGoAvailable(bool );
-	/**
-	 * Say if kopete will go available when we detect activity.
-	 * this is a configuration setting, and is used by the preferences dialog
-	 */
-	bool goAvailable() const;
-
-	/**
-	 * Set the time before going away automatically.
-	 * This is used by the preferences dialog.
-	 */
-	void setAutoAwayTimeout(int);
-	/**
-	 * The time (in seconds) of idle before Kopete will set automatically every accounts away
-	 */
-	int autoAwayTimeout() const;
-
-	/**
-	 * set if Kopete will set every accounts in away mode after an idle time.
-	 * This is a configuration option used by the preferences page
-	 * see @ref autoAwayTimeout()
-	 */
-	void setUseAutoAway(bool);
-	/**
-	 * @return true if Kopete will set to away every online accounts if the user is idle
-	 */
-	bool useAutoAway() const;
-
 private:
 	KopeteAway();
 	~KopeteAway();
@@ -208,6 +175,7 @@ private:
 
 private slots:
 	void slotTimerTimeout();
+	void load();
 
 public slots:
 	/**
@@ -219,6 +187,14 @@ public slots:
 	 * set automatically to away because of idleness, and if they was previously online
 	 */
 	void setActivity();
+
+	/**
+	 * Use this method if you want to go in the autoaway mode.
+	 * This will go autoaway even if the idle time is not yet reached. (and even if the user
+	 * did not selected to go autoaway automaticaly)
+	 * But that will go unaway again when activity will be detected
+	 */
+	void setAutoAway();
 
 signals:
 	/**

@@ -32,6 +32,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdebug.h>
+#include <ksettings/dispatcher.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -114,14 +115,11 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	if(d->useMit)
 		kdDebug(14010) << "using X11 MIT Screensaver extension" << endl;
 
+
+	load();
+	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( load() ) );
 	// Set up the config object
 	KConfig *config = KGlobal::config();
-
-	config->setGroup("AutoAway");
-	d->awayTimeout=config->readNumEntry("Timeout", 600);
-	d->goAvailable=config->readBoolEntry("GoAvailable", true);
-	d->useAutoAway=config->readBoolEntry("UseAutoAway", true);
-
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 
@@ -219,11 +217,17 @@ void KopeteAway::save()
 
 	/* Write out the titles */
 	config->writeEntry("Titles", titles);
-	config->setGroup("AutoAway");
-	config->writeEntry("Timeout", d->awayTimeout);
-	config->writeEntry("GoAvailable", d->goAvailable);
-	config->writeEntry("UseAutoAway", d->useAutoAway);
 	config->sync();
+}
+
+void KopeteAway::load()
+{
+	KConfig *config = KGlobal::config();
+	config->setGroup("AutoAway");
+	d->awayTimeout=config->readNumEntry("Timeout", 600);
+	d->goAvailable=config->readBoolEntry("GoAvailable", true);
+	d->useAutoAway=config->readBoolEntry("UseAutoAway", true);
+
 }
 
 QStringList KopeteAway::getTitles()
@@ -267,6 +271,7 @@ bool KopeteAway::addMessage(const QString &title, const QString &message)
 		temp.title = title;
 		temp.message = message;
 		d->awayMessageList.append(temp);
+		save();
 		return true;
 	}
 	else
@@ -291,7 +296,7 @@ bool KopeteAway::deleteMessage(const QString &title)
 
 		/* Remove it from the list */
 		d->awayMessageList.remove(itemToDelete);
-
+		save();
 		return true;
 	}
 	else
@@ -311,6 +316,7 @@ bool KopeteAway::updateMessage(const QString &title, const QString &message)
 	if(itemToUpdate != d->awayMessageList.end())
 	{
 		(*itemToUpdate).message = message;
+		save();
 		return true;
 	}
 	else
@@ -408,21 +414,7 @@ void KopeteAway::slotTimerTimeout()
 
 	if(!d->autoaway && d->useAutoAway && idleTime() > d->awayTimeout)
 	{
-//		kdDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
-		d->autoaway = true;
-
-		// Set all accounts that are not away already to away.
-		// We remember them so later we only set the accounts to
-		// available that we set to away (and not the user).
-		QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-		for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
-		{
-			if(i->isConnected() && !i->isAway())
-			{
-				d->autoAwayAccounts.append(i);
-				i->setAway( true, getInstance()->d->awayMessage);
-			}
-		}
+		setAutoAway();
 	}
 }
 
@@ -452,34 +444,24 @@ void KopeteAway::setActivity()
 	}
 }
 
-int KopeteAway::autoAwayTimeout() const
+void KopeteAway::setAutoAway()
 {
-	return d->awayTimeout;
+//	kdDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
+	d->autoaway = true;
+
+	// Set all accounts that are not away already to away.
+	// We remember them so later we only set the accounts to
+	// available that we set to away (and not the user).
+	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
+	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
+	{
+		if(i->isConnected() && !i->isAway())
+		{
+			d->autoAwayAccounts.append(i);
+			i->setAway( true, getInstance()->d->awayMessage);
+		}
+	}
 }
 
-void KopeteAway::setAutoAwayTimeout(int sec)
-{
-	d->awayTimeout = sec;
-}
-
-bool KopeteAway::goAvailable() const
-{
-	return d->goAvailable;
-}
-
-void KopeteAway::setGoAvailable(bool t)
-{
-	d->goAvailable = t;
-}
-
-bool KopeteAway::useAutoAway() const
-{
-	return d->useAutoAway;
-}
-
-void KopeteAway::setUseAutoAway(bool b)
-{
-	d->useAutoAway = b;
-}
 #include "kopeteaway.moc"
 // vim: set et ts=4 sts=4 sw=4:
