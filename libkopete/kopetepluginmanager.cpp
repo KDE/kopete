@@ -36,7 +36,6 @@
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
 #include <kplugininfo.h>
-#include <ksettings/dispatcher.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kstaticdeleter.h>
@@ -96,8 +95,6 @@ KopetePluginManager::KopetePluginManager()
 	// robust if they are still doing processing.
 	kapp->ref();
 	d->shutdownMode = KopetePluginManagerPrivate::StartingUp;
-
-	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( loadAllPlugins() ) );
 
 	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
 		QString::fromLatin1( "[X-Kopete-Version] == 1000900" ) ) );
@@ -246,8 +243,9 @@ void KopetePluginManager::loadAllPlugins()
 			}
 			else
 			{
-				// FIXME: Does this ever happen? As loadAllPlugins is only called on startup I'd say 'no'.
-				//        If it does, it should be made async though. - Martijn
+				//This happens if the user unloaded plugins with the config plugin page.
+				// No real need to be assync because the user usualy unload few plugins 
+				// compared tto the number of plugin to load in a cold start. - Olivier
 				if ( plugin( key ) )
 					unloadPlugin( key );
 			}
