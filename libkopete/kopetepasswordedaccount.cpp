@@ -45,6 +45,13 @@ KopetePassword &KopetePasswordedAccount::password()
 
 void KopetePasswordedAccount::connect()
 {
+	QString cached = password().cachedValue();
+	if ( !cached.isNull() )
+	{
+		connectWithPassword( cached );
+		return;
+	}
+
 	QString prompt = passwordPrompt();
 	KopetePassword::PasswordSource src = password().isWrong() ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser;
 
