@@ -415,8 +415,10 @@ QString MetaContact::statusIcon() const
 		case OnlineStatus::Unknown:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Unknown );
-			else
+			if ( d->contacts.isEmpty() )
 				return QString::fromLatin1( "metacontact_unknown" );
+			else
+				return QString::fromLatin1( "metacontact_offline" );
 
 		case OnlineStatus::Offline:
 		default:
