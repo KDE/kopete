@@ -247,7 +247,7 @@ public:
 	void relayout();
 
 	void setup();
-	void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
+	virtual void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
 	//TODO: startRename(...)
 
 	float opacity();

@@ -350,14 +350,12 @@ void KopeteMetaContactLVI::startRename( int col )
 void KopeteMetaContactLVI::okRename( int col )
 {
 	KListViewItem::okRename( col );
-	rename( text(0) );
-	setText( col, QString::null );
+	rename( text( 0 ) );
 }
 
 void KopeteMetaContactLVI::cancelRename( int col )
 {
 	KListViewItem::cancelRename( col );
-	setText( col, QString::null );
 }
 
 /*
@@ -753,7 +751,26 @@ void KopeteMetaContactLVI::slotEventDone( KopeteEvent * /* event */ )
 	mIsBlinkIcon = false;
 }
 
+QString KopeteMetaContactLVI::text( int column ) const
+{
+	if ( column == 0 )
+		return d->nameText->text();
+	else
+		return KListViewItem::text( column );
+}
+
+void KopeteMetaContactLVI::setText( int column, const QString &text )
+{
+	if ( column == 0 )
+		d->nameText->setText( text );
+	else
+		KListViewItem::setText( column, text );
+}
+
 #include "kopetemetacontactlvi.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
+
+
 

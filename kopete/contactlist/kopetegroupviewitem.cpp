@@ -221,5 +221,23 @@ void KopeteGroupViewItem::updateIcon()
 	}
 }
 
+QString KopeteGroupViewItem::text( int column ) const
+{
+	if ( column == 0 )
+		return d->name->text();
+	else
+		return KListViewItem::text( column );
+}
+
+void KopeteGroupViewItem::setText( int column, const QString &text )
+{
+	if ( column == 0 )
+		d->name->setText( text );
+	else
+		KListViewItem::setText( column, text );
+}
+
 #include "kopetegroupviewitem.moc"
 // vim: set noet ts=4 sts=4 sw=4:
+
+
