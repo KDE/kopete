@@ -122,7 +122,7 @@ KActionMenu* ICQAccount::actionMenu()
 	return mActionMenu;
 }
 
-void ICQAccount::connect()
+void ICQAccount::connect( ConnectionStatus initalStatus )
 {
 	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_ONLINE, QString::null);

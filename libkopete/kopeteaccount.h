@@ -75,6 +75,11 @@ public:
 	 * Describes what should be done when the contact is added to a metacontact
 	 */
 	enum AddMode { ChangeKABC=0, DontChangeKABC=1 };
+	
+	/**
+	 * Describes what initial status the account is going to use to connect
+	 */
+	enum ConnectionStatus { Online = 0, Away, Invisible };
 
 	/**
 	 * constructor:
@@ -300,7 +305,7 @@ public slots:
 	 *
 	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
-	virtual void connect() = 0;
+	virtual void connect( ConnectionStatus initialStatus = Online ) = 0;
 
 	/**
 	 * @brief Disconnect from this service.

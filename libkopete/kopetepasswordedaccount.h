@@ -32,7 +32,9 @@ class Password;
 class PasswordedAccount : public KopeteAccount
 {
 	Q_OBJECT
+	
 public:
+
 	/**
 	 * KopetePasswordedAccount constructor
 	 * @param parent The protocol this account connects via
@@ -48,7 +50,7 @@ public:
 	 */
 	Password &password();
 
-	void connect();
+	void connect( ConnectionStatus initalStatus = Online );
 
 public slots:
 	/**
@@ -56,7 +58,7 @@ public slots:
 	 * @param password The password to connect with, or QString::null
 	 *        if the user wished to cancel the connection attempt.
 	 */
-	virtual void connectWithPassword( const QString &password ) = 0;
+	virtual void connectWithPassword( const QString &password, ConnectionStatus initalStatus = Online ) = 0;
 
 protected:
 	/**

@@ -165,7 +165,7 @@ public slots:
 
 	void successfullyChangedNick(const QString &, const QString &);
 
-	virtual void connect();
+	virtual void connect( KopeteAccount::ConnectionStatus initalStatus = Online );
 	virtual void disconnect();
 
 	void quit( const QString &quitMessage = QString::null );

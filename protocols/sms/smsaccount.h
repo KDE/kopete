@@ -51,7 +51,7 @@ public slots:
 	void loadConfig();
 
 public slots:
-	virtual void connect();
+	virtual void connect( ConnectionStatus initalStatus = Online );
 	virtual void disconnect();
 
 protected:

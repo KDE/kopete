@@ -48,7 +48,7 @@ public:
 	/*
 	 * Connects this account
 	 */
-	virtual void connect()=0;
+	virtual void connect( ConnectionStatus initalStatus = Online )=0;
 
 	/*
 	 * Disconnects this account

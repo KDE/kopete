@@ -222,7 +222,7 @@ void AIMAccount::slotGoOnline()
 	}
 }
 
-void AIMAccount::connect()
+void AIMAccount::connect( ConnectionStatus initalStatus )
 {
 	kdDebug(14190) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	setStatus(OSCAR_ONLINE, QString::null);

@@ -241,7 +241,7 @@ GaduAccount::actionMenu()
 }
 
 void
-GaduAccount::connect()
+GaduAccount::connect( ConnectionStatus initalStatus ) 
 {
 	slotGoOnline();
 }

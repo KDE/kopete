@@ -152,7 +152,7 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	return Qt::black;
 }
 
-void YahooAccount::connectWithPassword( const QString &passwd )
+void YahooAccount::connectWithPassword( const QString &passwd, ConnectionStatus initialStatus )
 {
 	if ( passwd.isNull() )
 	{ //cancel the connection attempt

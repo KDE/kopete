@@ -416,7 +416,7 @@ KActionMenu *IRCAccount::actionMenu()
 	return mActionMenu;
 }
 
-void IRCAccount::connect()
+void IRCAccount::connect( ConnectionStatus initalStatus )
 {
 	if( m_engine->isConnected() )
 	{

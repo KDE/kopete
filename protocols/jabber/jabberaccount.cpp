@@ -314,7 +314,7 @@ bool JabberAccount::isConnecting ()
 }
 
 
-void JabberAccount::connect ()
+void JabberAccount::connect ( ConnectionStatus initalStatus )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called" << endl;
 

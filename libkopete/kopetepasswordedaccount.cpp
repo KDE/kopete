@@ -43,7 +43,7 @@ Kopete::Password &Kopete::PasswordedAccount::password()
 	return d->password;
 }
 
-void Kopete::PasswordedAccount::connect()
+void Kopete::PasswordedAccount::connect( ConnectionStatus initalStatus )
 {
 	QString cached = password().cachedValue();
 	if ( !cached.isNull() )
