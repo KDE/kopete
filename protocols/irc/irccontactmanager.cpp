@@ -45,7 +45,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 	m_mySelf = findUser(nickName);
 
 	KopeteMetaContact *m = new KopeteMetaContact();
-	m->setTemporary( true );
+//	m->setTemporary( true );
 	m_myServer = new IRCServerContact(this, account->engine()->currentHost(), m);
 
 	QObject::connect(account->engine(), SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
