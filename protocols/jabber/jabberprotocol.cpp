@@ -180,8 +180,6 @@ void JabberProtocol::Connect()
 		connect(jabberClient, SIGNAL(debugText(const QString &)), this, SLOT(slotPsiDebug(const QString &)));
 	}
 
-	QString currentId = QString::null;
-
 	// read all configuration data from the configuration file
 	KGlobal::config()->setGroup("Jabber");
 	QString userId = KGlobal::config()->readEntry("UserID", "");
@@ -258,8 +256,8 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 	else
 	{
 		kdDebug() << "[JabberProtocol] Connection failed! Status: " << statusCode << ", " << statusString << endl;
-
-		Disconnect();
+		jabberClient->close();
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("Connection failed with reason \"%1\"").arg(statusString, 1), i18n("Connection failed"));
 	}
 
 }
