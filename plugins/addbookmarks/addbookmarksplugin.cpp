@@ -22,10 +22,10 @@
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, AddBookmarksPluginFactory( "kopete_addbookmarks" )  )
 
 AddBookmarksPlugin::AddBookmarksPlugin(QObject *parent, const char *name, const QStringList &args)
- : KopetePlugin(AddBookmarksPluginFactory::instance(), parent, name)
+ : Kopete::Plugin(AddBookmarksPluginFactory::instance(), parent, name)
 {
 	//kdDebug(14501) << "plugin loading" << endl;
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotBookmarkURLsInMessage( KopeteMessage & ) ) );
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotBookmarkURLsInMessage( KopeteMessage & ) ) );
 }
 
 
@@ -40,10 +40,10 @@ AddBookmarksPlugin::~AddBookmarksPlugin()
 /*!
     \fn AddBookmarksPlugin::slotBookmarkURLsInMessage(KopeteMessage & msg)
  */
-void AddBookmarksPlugin::slotBookmarkURLsInMessage(KopeteMessage & msg)
+void AddBookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 {
 	//kdDebug(14501) << "recieved message:" << endl << msg.parsedBody() << endl;
-	if(msg.direction() != KopeteMessage::Inbound)
+	if(msg.direction() != Kopete::Message::Inbound)
 		return;
 	KURL::List *URLsList;
 	KURL::List::iterator it;

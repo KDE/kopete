@@ -35,7 +35,7 @@ AddBookmarksPreferences::AddBookmarksPreferences(QWidget *parent, const char *na
 	connect( p_dialog->radioButton3 , SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->radioButton4 , SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->listBox1 , SIGNAL( selectionChanged() ), this, SLOT( slotSetStatusChanged() ));
-	connect( this, SIGNAL(PreferencesChanged()), KopetePluginManager::self()->plugin("kopete_addbookmarks") , SLOT(slotReloadSettings()));
+	connect( this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin("kopete_addbookmarks") , SLOT(slotReloadSettings()));
 }
 
 
@@ -76,7 +76,7 @@ void AddBookmarksPreferences::load()
 	m_settings.load();
 	p_dialog->buttonGroup1->setButton(m_settings.isFolderForEachContact());
 	if( p_dialog->listBox1->count() == 0 ){
-		p_dialog->listBox1->insertStringList( KopeteContactList::contactList()->contacts() );
+		p_dialog->listBox1->insertStringList( Kopete::ContactList::contactList()->contacts() );
 	}
 	p_dialog->listBox1->clearSelection();
 	p_dialog->listBox1->setEnabled(m_settings.isFolderForEachContact()==AddBookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==AddBookmarksPrefsSettings::OnlyContactsNotInList );

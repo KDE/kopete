@@ -24,7 +24,7 @@
 @author Roie Kerstein <sf_kersteinroie@bezeqint.net>
 */
 
-class AddBookmarksPlugin : public KopetePlugin
+class AddBookmarksPlugin : public Kopete::Plugin
 {
 Q_OBJECT
 public:
@@ -49,7 +49,7 @@ private:
     bool isURLInGroup(KURL url, KBookmarkGroup group);
     QTextCodec* GetPageEncoding( QByteArray data );
 public slots:
-    void slotBookmarkURLsInMessage(KopeteMessage & msg);
+    void slotBookmarkURLsInMessage(Kopete::Message & msg);
     void slotReloadSettings();
     
 private slots:

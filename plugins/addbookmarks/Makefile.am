@@ -22,3 +22,4 @@ kcm_kopete_addbookmarks_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) \
 	$(all_libraries)
 kcm_kopete_addbookmarks_la_SOURCES = addbookmarkspreferences.cpp \
 		addbookmarksprefsui.ui addbookmarksprefssettings.cpp
+kcm_kopete_addbookmarks_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KUTILS)
