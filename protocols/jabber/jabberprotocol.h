@@ -75,11 +75,6 @@ public:
 	JabberProtocol(QObject *parent, QString name, QStringList);
 	~JabberProtocol();
 
-	/**
-	 * Our own Jabber contact associated with the Jabber account
-	 */
-	KopeteContact *myself() const;
-
 	KActionMenu *protocolActions();
 
 	/**
@@ -105,9 +100,9 @@ public:
 	/**
 	 * Deserialize contact data
 	 */
-	virtual void deserializeContact( KopeteMetaContact *metaContact,
+	virtual void deserializeContact(KopeteMetaContact *metaContact,
 					const QMap<QString, QString> &serializedData,
-					const QMap<QString, QString> &addressBookData );
+					const QMap<QString, QString> &addressBookData);
 
 	/*********************************************************************
 	 *
@@ -127,43 +122,24 @@ public:
 	 */
 	void registerUser();
 
-	/**
-	 * Function called by the add contact widget,
-	 * it will send a subscription request to the
-	 * specified user.
-	 */
-	void addContact(KopeteMetaContact *mc, const QString &userId);
-
-	/**
-	 * Function called by JabberContact via
-	 * the various widgetd to update roster
-	 * information (groups, name)
-	 */
-	void updateContact(const Jabber::RosterItem &item);
-
-	/**
-	 * Removes a contact from the roster
-	 */
-	void removeContact(const Jabber::RosterItem &item);
-
 public slots:
 	/**
 	 * Function to connect to the server
 	 */
-	virtual void connect();
+	virtual void connectAll();
 
 	/**
 	 * Function to disconnect from server
 	 */
-	virtual void disconnect();
+	virtual void disconnectAll();
 
-	void setPresence( const KopeteOnlineStatus &status, const QString &reason = 0,
-					int priority = 5);
+	void setPresenceAll(const KopeteOnlineStatus &status, const QString &reason = 0,
+			    int priority = 5);
 
 	/**
 	 * Sends a presence packet to a node
 	 */
-	void sendPresenceToNode( const KopeteOnlineStatus &status, const QString & );
+	void sendPresenceToNode(const KopeteOnlineStatus &status, const QString &reason);
 
 signals:
 	void settingsChanged();
@@ -332,26 +308,7 @@ private:
 	const KopeteOnlineStatus JabberOffline;
 	const KopeteOnlineStatus JabberInvisible;
 
-	KAction *actionGoOnline;
-	KAction *actionGoChatty;
-	KAction *actionGoAway;
-	KAction *actionGoXA;
-	KAction *actionGoDND;
-	KAction *actionGoInvisible;
-	KAction *actionGoOffline;
-	KAction *actionJoinChat;
-	KAction *actionServices;
-	KAction *actionSendRaw;
-	KAction *actionEditVCard;
-	KAction *actionEmptyMail;
-	KActionMenu *actionStatusMenu;
-
-	dlgJabberStatus *reasonDialog;
-	dlgJabberSendRaw *sendRawDialog;
-
 	JabberPreferences *preferences;
-
-	JabberContact *myContact;
 
 	/*
 	 * Initial presence to set after connecting
@@ -361,12 +318,12 @@ private:
 	/*
 	 * Jabber client classes per identity
 	 */
-    Jabber::Client *jabberClient;
+	Jabber::Client *jabberClient;
 
-    /*
-     * Flag whether we are to register upon connect
-     */
-    int registerFlag;
+	/*
+	 * Flag whether we are to register upon connect
+	 */
+	int registerFlag;
 
 	/*
 	 * Cache for the title ID of the status bar context
@@ -394,7 +351,6 @@ private:
 	 * Note: this does not affect the Jabber roster at all
 	 */
 	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item);
-
 
 	/*
 	 * Sends a presence element with
