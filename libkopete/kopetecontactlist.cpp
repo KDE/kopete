@@ -756,7 +756,7 @@ QStringList KopeteContactList::fileTransferContacts() const
 	return contacts;
 }
 
-void KopeteContactList::sendFile( const QString &displayName, const KURL &sourceURL, 
+void KopeteContactList::sendFile( const QString &displayName, const KURL &sourceURL,
 	const QString &altFileName, const long unsigned int fileSize)
 {
 //	kdDebug(14010) << "Send To Display Name: " << displayName << "\n";
@@ -766,7 +766,7 @@ void KopeteContactList::sendFile( const QString &displayName, const KURL &source
 		c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteContactList::messageContact( const QString &displayName, const QString &messageText )
+void KopeteContactList::messageContact( const QString &displayName, const QString & /* messageText */ )
 {
 	KopeteMetaContact *c = findContactByDisplayName( displayName );
 	if( c )
@@ -857,17 +857,17 @@ bool KopeteContactList::dcopAddContact( const QString &protocolName, const QStri
 {
 	//Get the protocol instance
 	KopeteProtocol *myProtocol = (KopeteProtocol*) LibraryLoader::pluginLoader()->searchByName( protocolName );
-	
-	if( myProtocol != 0L ) 
+
+	if( myProtocol != 0L )
 	{
 		QString contactName;
-		
+
 		//If the nickName isn't specified we need to display the userId in the prompt
 		if( displayName.isEmpty() || displayName.isNull() )
 			contactName = contactId;
 		else
 			contactName = displayName;
-		
+
 		//Confirm with the user before we add the contact
 		if( KMessageBox::questionYesNo( 0, i18n("An external application is attempting to add the "
 				" %1 contact \"%2\" to your contact list. Do you want to allow this?"
@@ -880,13 +880,13 @@ bool KopeteContactList::dcopAddContact( const QString &protocolName, const QStri
 			//User said No
 			return false;
 		}
-		
+
 	} else {
 		//This protocol is not loaded
 		KMessageBox::error( 0, i18n("An external application has attempted to add a contact using "
 				" the %1 protocol, which does not exist, or is not loaded.").arg( protocolName ),
 				i18n("Missing Protocol"));
-		
+
 		return false;
 	}
 }
@@ -895,7 +895,7 @@ KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGrou
 {
 	if( type == KopeteGroup::Temporary )
 		return KopeteGroup::temporary;
-	
+
 	KopeteGroup *groupIterator;;
 	for ( groupIterator = m_groupList.first(); groupIterator; groupIterator = m_groupList.next() )
 	{
