@@ -84,9 +84,6 @@ public:
 	};
 
 
-	// Plugin reimplementation
-	void init();
-	bool unload();
 
 	enum Status
 	{
@@ -118,18 +115,12 @@ public:
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
 	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
 
-	virtual bool isConnected() const;
-	virtual void setAway();
-	virtual void setAvailable();
-	virtual bool isAway() const;
-
 	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
 		KopeteMetaContact *parentContact );
 
 	void addGroup( const QString &groupName,
 		const QString &contactToAdd = QString::null );
 
-	KopeteContact *myself() const;
 
 	/**
 	 * Convert string-like status to Status enum
@@ -151,83 +142,32 @@ public:
 	
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
+	
+	MSNPreferences *mPrefs;  //FIXME: made this private
 
 public slots:
-	virtual void connect();
-	virtual void disconnect();
 
 	/**
 	 * Start a new chat session: the result is an XFR command, see above
 	 */
 	void slotStartChatSession( QString handle );
 	
-		void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus );
-
-private slots:
-	// Block a Contact
-	void slotBlockContact( QString passport ) ;
-
-	void slotSyncContactList();
-
-
-	void slotAddContact( const QString &userName );
-	/**
-	 * A kopetegroup is renamed, just call renameGroup
-	 **/
-	void slotKopeteGroupRenamed(KopeteGroup *g);
-
-	/**
-	 * A kopetegroup is removed, remove the group in the server
-	 **/
-	void slotKopeteGroupRemoved( KopeteGroup* );
-
-	/**
-	 * The group has successful renamed in the server
-	 * groupName: is new new group name
-	 */
-	void slotGroupRenamed( QString groupName, uint group );
-	/**
-	 * A new group was created on the server (or recieved durring an LSG command)
-	 */
-	void slotGroupAdded( QString groupName, uint groupNumber );
-	/**
-	 * Group was removed from the list
-	 */
-	void slotGroupRemoved( uint group );
-
-	/**
-	 * Contact was removed from the list
-	 */
-	void slotContactRemoved(QString handle, QString list, uint serial,
-		uint group );
-
+	
 	void slotContactAdded(QString handle, QString publicName, QString list,
 		uint serial, uint group );
 
 	void slotContactListed( QString handle, QString publicName, QString group, QString list );
 
-	/**
-	 * Incoming RING command: connect to the Switchboard server and send
-	 * the startChat signal
-	 */
-	void slotCreateChat( QString sessionID, QString address, QString auth,
-		QString handle, QString publicName );
+	
+private slots:
 
-	/**
-	 * Incoming XFR command: this is an result from
-	 * slotStartChatSession(handle)
-	 * connect to the switchboard server and sen startChat signal
-	 */
-	void slotCreateChat( QString address, QString auth);
+	void slotSyncContactList();
+
 
 	void slotPreferencesSaved();
 
 private:
-
-
 	bool mIsConnected;
-
-	MSNPreferences *mPrefs;
 
 	// Actions we use
 	/*KAction* actionGoOnline;
@@ -245,14 +185,11 @@ private:
 	KActionMenu *m_debugMenu;
 	KAction *m_debugRawCommand;
 
-	KActionMenu *actionStatusMenu;
 	KAction* actionConnect;
 	KAction* actionDisconnect;
 	KAction* actionPrefs;
 	KAction* actionUnload;*/
-	int m_menuTitleId;
-
-	QMap<unsigned int, KopeteGroup*> m_groupList;
+	KActionMenu *m_menu;
 
 	static MSNProtocol *s_protocol;
 	Status m_status;
@@ -265,20 +202,9 @@ private:
 	QString m_msgHandle;
 	KopeteMetaContact *m_addWizard_metaContact;
 
-	MSNIdentity *m_identity;
+//	MSNIdentity *m_identity;
 //	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
 
-	/**
-	 * Mapping of meta contacts to MSN contacts
-	 * I removed this: I think it is not needed.
-	 * that can provoque problem with several MSN contact in the same protocol
-	 */
-	//QPtrDict<MSNContact> m_metaContacts;
-
-	QStringList m_allowList;
-	QStringList m_blockList;
-
-	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
 };
 
 #endif

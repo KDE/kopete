@@ -37,7 +37,7 @@
 #include "msnprotocol.h"
 
 MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
-	const QString &displayName, KopeteMetaContact *parent ) : KopeteContact( proto, id, parent )
+	const QString &displayName, KopeteMetaContact *parent , QStringList identities ) : KopeteContact( proto, id, parent, identities )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
@@ -89,11 +89,6 @@ KActionCollection *MSNContact::customContextMenuActions()
 	m_actionCollection->insert( m_actionBlock );
 
 	return m_actionCollection;
-}
-
-QString MSNContact::data() const
-{
-	return contactId();
 }
 
 void MSNContact::slotBlockUser()

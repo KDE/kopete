@@ -38,10 +38,8 @@ class MSNContact : public KopeteContact
 
 public:
 	MSNContact( KopeteProtocol *protocol, const QString &id,
-		const QString &displayName, KopeteMetaContact *parent );
+		const QString &displayName, KopeteMetaContact *parent, QStringList identities=QStringList() );
 	~MSNContact();
-
-	virtual QString data() const;
 
 	QString statusText() const;
 	QString statusIcon() const;
