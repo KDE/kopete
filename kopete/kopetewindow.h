@@ -198,7 +198,7 @@ private slots:
 	 * why this is needed.
 	 */
 	void slotShowPreferencesDialog();
-	void slotAddAccount();
+//	void slotAddAccount();
 	void slotSaveContactList();
 	void slotConfGlobalKeys();
 	void slotShowHide();
