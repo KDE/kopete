@@ -48,7 +48,8 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
 	for ( ; it.current() ; ++it )
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM: Why this KMM isn't yet unloaded?" << endl;
+		KopeteMessageManager *kmm;
 		delete it.current();
 	}
 }
