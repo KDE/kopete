@@ -30,6 +30,42 @@ KopeteAway::KopeteAway()
 {
 	mAwayMessage = "";
 	mGlobalAway = false;
+	
+	mAwayMessageList.clear(); // Empty the list
+	
+	/* Initialize the away message vector */
+	config = KGlobal::config();
+	config->setGroup("Away Messages");
+	/* If Kopete has been run before, this will be true.
+	 * It's only false the first time Kopete is run
+	 */
+	if(config->hasKey("Titles")){
+		QStringList titles = config->readListEntry("Titles");
+		KopeteAwayMessage temp; //Temporary away message....
+		for(QStringList::iterator i = titles.begin(); i != titles.end(); i++){
+			 temp.title = (*i); // Grab the title
+			 temp.message = config->readEntry(temp.title); // And the message
+			 mAwayMessageList.append(temp); // And add it to the list
+		}
+	} else {
+		/* There are no away messages, so we'll create a default one */
+		/* Create an away message */
+		KopeteAwayMessage temp;
+		temp.title = "Busy";
+		temp.message = "Sorry, I'm busy right now";
+		
+		/* Add it to the vector */
+		mAwayMessageList.append(temp);
+		
+		temp.title = "Gone";
+		temp.message = "I'm gone right now, but I'll be back later";
+		mAwayMessageList.append(temp);
+		
+		/* Save this list to disk */
+		save();
+	}
+		
+		
 }
 
 QString KopeteAway::message()
@@ -62,6 +98,112 @@ void KopeteAway::setGlobalAway(bool status)
 	getInstance()->mGlobalAway = status;	
 }
 
+void KopeteAway::save(){
+	/* Set the config group */
+	config->setGroup("Away Messages");
+	QStringList titles;
+	/* For each message, keep track of the title, and write out the message */
+	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
+		titles.append((*i).title);
+		config->writeEntry((*i).title, (*i).message);
+	}
+	
+	/* Write out the titles */
+	config->writeEntry("Titles", titles);
+}
+
+
+
+QStringList KopeteAway::getTitles()
+{
+	QStringList titles;
+	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
+		titles.append((*i).title);
+	}
+	return titles;
+}
+
+
+
+QString KopeteAway::getMessage(QString title)
+{
+	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
+		if((*i).title == title)
+			return (*i).message;
+	}
+	
+	/* Return an empty string if none was found */
+	return "";
+}
+
+bool KopeteAway::addMessage(QString title, QString message)
+{
+	bool found = false;
+	/* Check to see if it exists already */
+	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
+		if((*i).title == title){
+			found = true;
+			break;
+		}
+	}
+	
+	/* If not, add it */
+	if(!found){
+		KopeteAwayMessage temp;
+		temp.title = title;
+		temp.message = message;
+		mAwayMessageList.append(temp);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool KopeteAway::deleteMessage(QString title)
+{
+	/* Search for the message */
+	QValueList<KopeteAwayMessage>::iterator itemToDelete = NULL;
+	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
+		if((*i).title == title){
+			itemToDelete = i;
+			break;
+		}
+	}
+	
+	/* If it was found, delete it */
+	if(itemToDelete != NULL){
+		/* Remove it from the config entry, if it's there */
+		if(config->hasKey((*itemToDelete).title)){
+			config->deleteEntry((*itemToDelete).title);
+		}
+		/* Remove it from the list */
+		mAwayMessageList.remove(itemToDelete);
+		
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool KopeteAway::updateMessage(QString title, QString message)
+{
+	/* Search for the message */
+	QValueList<KopeteAwayMessage>::iterator itemToUpdate = NULL;
+	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
+		if((*i).title == title){
+			itemToUpdate = i;
+			break;
+		}
+	}
+	
+	/* If it was found, update it */
+	if(itemToUpdate != NULL){
+		(*itemToUpdate).message = message;
+		return true;
+	} else {
+		return false;
+	}
+}
 
 
 /*

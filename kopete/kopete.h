@@ -49,6 +49,7 @@ class LibraryLoader;
 class KopeteLibraryInfo;
 class KopeteMessageManagerFactory;
 class AppearanceConfig;
+class KopeteUserPreferencesConfig;
 class KopeteTransferManager;
 class KopeteMetaContact;
 
@@ -144,6 +145,7 @@ private:
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
 	AppearanceConfig *mAppearance;
+	KopeteUserPreferencesConfig *mUserPreferencesConfig;  //User preferences config module
 	QString mEmoticonTheme;
 	KopeteNotifier *mNotifier;
 	KopeteMessageManagerFactory *mMessageManagerFactory;

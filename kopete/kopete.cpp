@@ -37,6 +37,7 @@
 
 #include "preferencesdialog.h"
 #include "appearanceconfig.h"
+#include "kopeteuserpreferences.h"
 #include "kopetewindow.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteemoticons.h"
@@ -97,6 +98,8 @@ void Kopete::initialize()
 				this, SLOT( slotMainWindowDestroyed() ) );
 
 	mAppearance = new AppearanceConfig(m_mainWindow);
+	mUserPreferencesConfig = new KopeteUserPreferencesConfig(m_mainWindow);
+	
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
 	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");

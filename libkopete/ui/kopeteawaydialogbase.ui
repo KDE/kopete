@@ -69,11 +69,11 @@
                 <property name="name">
                     <cstring>cmbHistory</cstring>
                 </property>
+                <property name="editable">
+                    <bool>false</bool>
+                </property>
                 <property name="insertionPolicy">
                     <enum>AtCurrent</enum>
-                </property>
-                <property name="editable">
-                    <bool>true</bool>
                 </property>
             </widget>
             <widget class="QPushButton" row="2" column="2">
@@ -93,6 +93,12 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>0</height>
+                    </size>
                 </property>
             </spacer>
         </grid>
