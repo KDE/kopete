@@ -24,9 +24,7 @@ AC_LANG_CPLUSPLUS
 kcompat_save_CXXFLAGS="$CXXFLAGS"
 kcompat_safe_LIBS="$LIBS"
 LIBS="$LIBS $X_EXTRA_LIBS"
-if test "$GXX" = "yes"; then
 CXXFLAGS="$CXXFLAGS $all_includes"
-fi
 
 AC_TRY_COMPILE([
 #include <kdeversion.h>
