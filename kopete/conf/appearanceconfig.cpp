@@ -499,8 +499,8 @@ void AppearanceConfig::slotUpdatePreview()
 				.arg( mPrfsChatAppearance->textColor->color().name() )
 				.arg( mPrfsChatAppearance->fontFace->font().family() )
 				.arg( mPrfsChatAppearance->textColor->color().name() )
-				.arg( mPrfsChatAppearance->bgColor->color().name() )
 				.arg( mPrfsChatAppearance->foregroundColor->color().name() )
+				.arg( mPrfsChatAppearance->bgColor->color().name() )
 				.arg( mPrfsChatAppearance->backgroundColor->color().name() )
 				.arg( mPrfsChatAppearance->linkColor->color().name() )
 				.arg( mPrfsChatAppearance->linkColor->color().name() ) );
@@ -515,6 +515,7 @@ void AppearanceConfig::slotUpdatePreview()
 			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
+			msgHigh.highlight();
 			preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model ) );
 
 			preview->write( QString::fromLatin1( "</body></html>" ) );
