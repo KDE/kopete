@@ -117,19 +117,26 @@ YahooSession *YahooAccount::yahooSession()
 QString YahooAccount::stripMsgColorCodes(const QString& msg)
 {
 	QString filteredMsg = msg;
-	filteredMsg.remove(QRegExp("\033\\[(..m|#......)"));
-
+	
 	//Handle bold, underline and italic messages
-	filteredMsg.replace( QRegExp("\033\\[1m"), "<b>" );
-	filteredMsg.replace( QRegExp("\033\\[x1m"), "</b>" );
-	//work around gaim's broken sending
-	filteredMsg.remove( QRegExp( "\033\\[xlm" ) );
-	filteredMsg.remove( QRegExp( "\033\\[lm" ) );
-	//end work around
-	filteredMsg.replace( QRegExp("\033\\[3m"), "<i>" );
-	filteredMsg.replace( QRegExp("\033\\[x3m"), "</i>" );
-	filteredMsg.replace( QRegExp("\033\\[4m"), "<u>" );
-	filteredMsg.replace( QRegExp("\033\\[x4m"), "</u>" );
+	filteredMsg.replace( "\033[1m", "<b>" );
+	filteredMsg.replace( "\033[x1m", "</b>" );
+	filteredMsg.replace( "\033[2m", "<i>" );
+	filteredMsg.replace( "\033[x2m", "</i>" );
+	filteredMsg.replace( "\033[4m", "<u>" );
+	filteredMsg.replace( "\033[x4m", "</u>" );
+	
+	//GAIM doesn't check for ^[[3m. Does this ever get sent?
+	filteredMsg.replace( "\033[3m", "<i>" );
+	filteredMsg.replace( "\033[x3m", "</i>" );
+	
+	//Strip link tags
+	filteredMsg.remove( "\033[lm" );
+	filteredMsg.remove( "\033[xlm" );
+	
+	//Remove color codes and other residual formatting
+	filteredMsg.remove( QRegExp("\033\\[[^m]*m") );
+	
 	return filteredMsg;
 }
 
@@ -557,53 +564,49 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	QFont msgFont;
 	QDateTime msgDT;
 	Kopete::ContactPtrList justMe;
-
+	
 	if( !contact( who ) )
 	{
 		kdDebug(14180) << "Adding contact " << who << endl;
 		addMetaContact( who,who,  0L, Kopete::Account::Temporary );
 	}
-
-    //Parse the message for it's properties
-    kdDebug(14180) << "Original message is '" << msg << "'" << endl;
-    //kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
-    QColor fgColor = getMsgColor( msg );
-    if (tm == 0)
+	
+	//Parse the message for it's properties
+	kdDebug(14180) << "Original message is '" << msg << "'" << endl;
+	//kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
+	QColor fgColor = getMsgColor( msg );
+	if (tm == 0)
 		msgDT.setTime_t(time(0L));
 	else
 		msgDT.setTime_t(tm, Qt::LocalTime);
-
-    QString newMsgText = stripMsgColorCodes( msg );
-
-    kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
-
-   	if (newMsgText.find("<font") != -1)
+	
+	QString newMsgText = stripMsgColorCodes( msg );
+	
+	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
+	
+	newMsgText.replace("<font","</font><font");
+	// if message contained <font>, remove first </font> and add </font> to end
+	int index = newMsgText.find("</font>");
+	if ( index != -1 )
 	{
-		msgFont.setFamily(newMsgText.section('"', 1,1));
-
-		if (newMsgText.find("size"))
-			msgFont.setPointSize(newMsgText.section('"', 3,3).toInt());
-
-		//remove the font encoding since we handle them ourselves
-		newMsgText.remove(newMsgText.mid(0, newMsgText.find('>')+1));
+		newMsgText.remove(index, 7);
+		newMsgText.append("</font>");
 	}
-
-    kdDebug(14180) << "Message after removing font tags '" << newMsgText << "'" << endl;
-
+	
+	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
+	
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
-
+	
 	// Tell the message manager that the buddy is done typing
 	mm->receivedTypingMsg(contact(who), false);
-
+	
 	justMe.append(myself());
-
+	
 	Kopete::Message kmsg(msgDT, contact(who), justMe, newMsgText,
-					Kopete::Message::Inbound , Kopete::Message::RichText);
-
+	                     Kopete::Message::Inbound , Kopete::Message::RichText);
+	
 	kmsg.setFg( fgColor );
-	kmsg.setFont(msgFont);
 	mm->appendMessage(kmsg);
-
 }
 
 void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
