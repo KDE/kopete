@@ -106,7 +106,6 @@ void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
 			<< "contact removed from all groups: now toplevel." << endl;
 		//m_contacts.remove( mc );
 		//mc->deleteLater();
-		
 	}
 }
 
@@ -279,48 +278,20 @@ QStringList KopeteContactList::onlineContacts() const
 QStringList KopeteContactList::groups() const
 {
 	return kopeteapp->contactList()->groupStringList();
-	/*	QStringList groups;
 
-	QPtrListIterator<KopeteMetaContact> it( m_contacts );
-	kdDebug() << "[AddContactWizard] ****************************" <<endl;
-
-	for( ; it.current(); ++it )
-	{
-		QStringList thisgroups;
-
-		// We get groups for this metacontact 
-		thisgroups = it.current()->groups();
-
-		if ( thisgroups.isEmpty() ) continue;
-
-		for( QStringList::ConstIterator it = thisgroups.begin();
-			it != thisgroups.end(); ++it )
-		{
-			 // We add the group only if it is not already there 
-			QString groupname = (*it);
-			if ( ! groups.contains( groupname ) && !groupname.isNull() )
-			{
-				kdDebug() << "[AddContactWizard] Adding group ["
-					<< groupname << "]" <<endl;
-				groups.append( *it );
-			}
-		}
-	}
-	kdDebug() << "[AddContactWizard] ****************************" <<endl;
-
-	return groups;*/
 }
 
-void KopeteContactList::removeMetaContact(KopeteMetaContact *c)
+void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 {
-	//TODO: remove subcontacts
-	if(!c->contacts().isEmpty())
-		return;
+  	kdDebug() << "KopeteMetaContact::removeMetaContact :" << m->displayName() << endl;
+   for( 	KopeteContact *c = m->contacts().first(); c ; c = m->contacts().next() )
+	{
+		c->slotDeleteContact();
+	}
 
-	//FIXME: euh... I don't know if that is enough.. but it seems to work
-	kopeteapp->contactList()->removeContact(c);
-	m_contacts.remove( c );
-	delete c;
+	kopeteapp->contactList()->removeContact(m);
+	m_contacts.remove( m );
+	delete m;
 }
 
 QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const

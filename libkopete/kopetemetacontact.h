@@ -147,7 +147,7 @@ public:
 	/**
 	 * Return true if the contact is shown at toplevel
 	 */
-	bool isTopLevel() const;
+	bool isTopLevel();
 
 	/**
 	 * add or remove from top-level
