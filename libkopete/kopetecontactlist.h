@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef __kopetecontactlist_h__
-#define __kopetecontactlist_h__
+#ifndef __KOPETECONTACTLIST_H__
+#define __KOPETECONTACTLIST_H__
 
 #include <qobject.h>
 #include <qptrlist.h>

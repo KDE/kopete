@@ -25,11 +25,7 @@
 #include <kdebug.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
 
 #include <kdialogbase.h>
 #include <klocale.h>
@@ -236,17 +232,11 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionSendMessage->setEnabled( reach );
 
 	QString titleText;
-#if QT_VERSION < 0x030200
-	if( displayName() == contactId() )
-		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( d->onlineStatus.description() );
-	else
-		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( d->onlineStatus.description() );
-#else
+
 	if( displayName() == contactId() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName(), d->onlineStatus.description() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName(), contactId(), d->onlineStatus.description() );
-#endif
 
 	menu->insertTitle( titleText );
 
@@ -296,11 +286,7 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 void KopeteContact::slotChangeDisplayName()
 {
 	QString newName =
-#if KDE_IS_VERSION( 3, 1, 90 )
 		KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ), displayName());
-#else
-		KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ), displayName());
-#endif
 
 	if( !newName.isNull() )
 		setDisplayName( newName );
@@ -377,11 +363,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
 			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1 <%2>' to `%3'.\n"
 				"`%4' will be empty afterwards. Do you want to delete this contact?" )
-#if QT_VERSION < 0x030200
-					.arg(displayName()).arg(contactId()).arg(m ? m->displayName() : QString::null).arg(old->displayName())
-#else
 					.arg(displayName(), contactId(), m ? m->displayName() : QString::null, old->displayName())
-#endif
 				, i18n( "Move Contact" ), i18n( "&Delete" ) , i18n( "&Keep" ) , QString::fromLatin1("delete_old_contact_when_move") );
 
 			if(result==KMessageBox::Cancel)

@@ -15,24 +15,13 @@
 */
 
 #include <kapplication.h>
-
-// ------------------------------------------------------------
-// TODO: UGLY HACK, remove when we drop KDE 3.1 compatibility
-#ifdef KDE_NO_COMPAT
-
-#undef KDE_NO_COMPAT
-#include <kaction.h>
-#define KDE_NO_COMPAT 1
-
-#endif
-// ------------------------------------------------------------
-
 #include <qregexp.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
 #include <kdeversion.h>
 #include <kxmlguiclient.h>
+#include <kaction.h>
 #include <qdom.h>
 
 #include "kopetemessagemanagerfactory.h"
@@ -282,13 +271,9 @@ void KopeteCommandHandler::slotExecCommand( const QString &args, KopeteMessageMa
 	if( !args.isEmpty() )
 	{
 		KProcess *proc = 0L;
-		#if KDE_IS_VERSION( 3, 1, 90 )
-			if ( kapp->authorize( QString::fromLatin1( "shell_access" ) ) )
+		if ( kapp->authorize( QString::fromLatin1( "shell_access" ) ) )
 				proc = new KProcess(manager);
-		#else
-			proc = new KProcess();
-			connect( manager , SIGNAL (destroyed() ) , proc , SLOT(deleteLater()));
-		#endif
+		
 		if( proc )
 		{
 			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
@@ -357,13 +342,6 @@ void KopeteCommandHandler::slotCloseCommand( const QString &, KopeteMessageManag
 {
 	manager->view()->closeView();
 }
-
-/*void KopeteCommandHandler::slotMeCommand( const QString &args, KopeteMessageManager *manager )
-{
-	QString output = manager->user()->displayName() + QChar(' ') + args;
-	KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Outbound, KopeteMessage::PlainText);
-	manager->sendMessage(msg);
-}*/
 
 void KopeteCommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int bufflen )
 {

@@ -130,18 +130,6 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	connect( mc, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ), SIGNAL( metaContactRemovedFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
 }
 
-/*
-void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc, const QString &  )
-{
-	if ( mc->groups().isEmpty() )
-	{
-		kdDebug( 14010 ) << k_funcinfo << "Contact removed from all groups, is now top-level" << endl;
-		//m_contacts.remove( mc );
-		//mc->deleteLater();
-	}
-}
-*/
-
 void KopeteContactList::load()
 {
 	loadXML();
@@ -692,12 +680,7 @@ QStringList KopeteContactList::contactStatuses() const
 	for( ; it.current(); ++it )
 	{
 		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).
-#if QT_VERSION < 0x030200
-			arg( it.current()->displayName() ).arg( it.current()->statusString() )
-#else
-			arg( it.current()->displayName(), it.current()->statusString() )
-#endif
-		);
+			arg( it.current()->displayName(), it.current()->statusString() ));
 	}
 	return meta_contacts;
 }

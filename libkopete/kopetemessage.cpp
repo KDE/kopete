@@ -536,33 +536,18 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 	//Replace http/https/ftp links:
 	// Replace (stuff)://[user:password@](linkstuff) with a link
 	result.replace(
-		QRegExp( makeRegExp("\\w+://%1?\\w%2")
-#if QT_VERSION < 0x030200
-		          .arg( userAndPassword ).arg( urlSection ) ),
-#else
-		          .arg( userAndPassword, urlSection ) ),
-#endif
+		QRegExp( makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection ) ),
 		QString::fromLatin1("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3" ) );
 
 	// Replace www.X.Y(linkstuff) with a http: link
 	result.replace(
-		QRegExp( makeRegExp("%1?www\\.%2%3")
-#if QT_VERSION < 0x030200
-		          .arg( userAndPassword ).arg( domain ).arg( urlSection ) ),
-#else
-		          .arg( userAndPassword, domain, urlSection ) ),
-#endif
+		QRegExp( makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection ) ),
 		QString::fromLatin1("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3" ) );
 
 	//Replace Email Links
 	// Replace user@domain with a mailto: link
 	result.replace(
-		QRegExp( makeRegExp("%1@%2")
-#if QT_VERSION < 0x030200
-		          .arg( name ).arg( domain ) ),
-#else
-		          .arg( name, domain ) ),
-#endif
+		QRegExp( makeRegExp("%1@%2").arg( name, domain ) ),
 		QString::fromLatin1("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
 
 	return result;

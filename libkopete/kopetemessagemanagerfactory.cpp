@@ -18,12 +18,12 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include <kapplication.h>
+#include <kdebug.h>
 
 #include "ui/kopeteview.h"
 #include "kopetecontact.h"
 
 
-#include <kdebug.h>
 
 KopeteMessageManagerFactory* KopeteMessageManagerFactory::s_factory = 0L;
 

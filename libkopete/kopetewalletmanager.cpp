@@ -14,9 +14,6 @@
     *************************************************************************
 */
 
-#include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
-
 #include "kopetewalletmanager.h"
 
 #include "kopeteuiglobal.h"
@@ -213,8 +210,6 @@ void Kopete::WalletManager::emitWalletOpened( KWallet::Wallet *wallet )
 
 
 #include "kopetewalletmanager.moc"
-
-#endif // KDE_IS_VERSION
 
 // vim: set noet ts=4 sts=4 sw=4:
 

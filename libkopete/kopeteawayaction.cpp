@@ -17,11 +17,7 @@
 
 #include <klocale.h>
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
 
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
@@ -65,17 +61,10 @@ void KopeteAwayAction::slotSelectAway( int index )
 	}
 	else
 	{
-#if KDE_IS_VERSION( 3, 1, 90 )
 		awayReason = KInputDialog::getText(
 			i18n( "Custom Away Message" ),
 			i18n( "Please enter your away reason:" )
 			);
-#else
-		awayReason = KLineEditDlg::getText(
-			i18n( "Custom Away Message" ),
-			i18n( "Please enter your away reason:" )
-			);
-#endif
 	}
 
 	if( !awayReason.isEmpty() )

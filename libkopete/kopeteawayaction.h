@@ -19,15 +19,11 @@
 #define KOPETEAWAYACTION_H
 
 #include <kdeversion.h>
-
-#if KDE_IS_VERSION( 3, 1, 90 )
-	#include <kactionclasses.h>
-#endif
-
+#include <kactionclasses.h>
 #include <kaction.h>
 
 /**
- * @class KopeteAwayAction kopeteawayaction.h
+ * @class KopeteAwayAction
  *
  * KopeteAwayAction is a KAction that lets you select an away message
  * from the list of predefined away messages, or enter a custom one.

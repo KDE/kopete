@@ -96,11 +96,7 @@ void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
 		{
 			QMap<QString, QString>::ConstIterator it;
 			for ( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
-#if QT_VERSION < 0x030200
-				config->writeEntry( QString::fromLatin1( "PluginData_%1_%2" ).arg( pluginIt.key() ).arg( it.key() ), it.data() );
-#else
 				config->writeEntry( QString::fromLatin1( "PluginData_%1_%2" ).arg( pluginIt.key(), it.key() ), it.data() );
-#endif
 		}
 	}
 
