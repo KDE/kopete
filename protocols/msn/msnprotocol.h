@@ -64,103 +64,118 @@ class MSNProtocol : public QObject, public IMProtocol
 {
 	Q_OBJECT
 
-	public:
-		MSNProtocol();
-		~MSNProtocol();
+public:
+	MSNProtocol();
+	~MSNProtocol();
 
-		/* Plugin reimplementation */
-		void init();
-		bool unload();
+	// Plugin reimplementation
+	void init();
+	bool unload();
 
-		/** IMProtocol reimplementation */
-		virtual QPixmap getProtocolIcon();
-		virtual AddContactPage *getAddContactWidget(QWidget *parent);
-		virtual void Connect();
-		virtual void Disconnect();
-		virtual bool isConnected();
-		virtual void setAway(void);
-		virtual void setAvailable(void);
-		virtual bool isAway(void);
-		bool mIsConnected;
-		/** Internal */
-		StatusBarIcon *statusBarIcon;
-		/** The MSN Engine */
-		KMSNService *engine;
-		QPixmap protocolIcon;
-		QPixmap onlineIcon;
-		QPixmap offlineIcon;
-		QPixmap awayIcon;
-		QPixmap naIcon;
-		QMovie connectingIcon;
+	// IMProtocol reimplementation
+	virtual QPixmap getProtocolIcon();
+	virtual AddContactPage *getAddContactWidget( QWidget *parent );
+	virtual void Connect();
+	virtual void Disconnect();
+	virtual bool isConnected();
+	virtual void setAway();
+	virtual void setAvailable();
+	virtual bool isAway();
 
-		/* The main msn popup */
-		KPopupMenu *popup;
-		/* Actions we use */
-		KAction* actionGoOnline;
-		KAction* actionGoOffline;
-		KAction* actionGoAway;
-		//KSelectAction* actionStatus;
+	KMSNService* msnService() const;
 
-		KActionMenu *actionStatusMenu;
-		KAction* actionConnect;
-		KAction* actionDisconnect;
-		KAction* actionPrefs;
-		KAction* actionUnload;
+public slots:
+	void slotMessageDialogClosing( QString );
+	void slotIncomingChat( KMSNChatService *, QString );
 
-		QPtrList<MSNMessageDialog> mChatWindows;
+	void slotSyncContactList();
 
-		/* Files to store contacts locally */
-		KSimpleConfig *mContactsFile;
-		KSimpleConfig *mGroupsFile;
+	void slotConnected();
+	void slotDisconnected();
 
-	private:
-		MSNPreferences *mPrefs;
-		KDialogBase *mEmptyConfig;
-		KURLLabel *mPassportURL;
-		QLabel *mEmptyMsg;
-	//	QList<MSNContactStruct> contactList;
-	//	QList<MSNGroupStruct> groupList;
+	// To go online we need to check if connected
+	void slotGoOnline();
+	void slotGoOffline();
+	void slotGoAway();
+	void slotIconRightClicked( const QPoint );
 
-		void initIcons();
-		void initActions();
+	void slotConnectedToMSN( bool c );
+	void slotConnecting();
 
-	public slots: // Public slots
-		void slotMessageDialogClosing(QString);
-		void slotIncomingChat(KMSNChatService *, QString);
+	void slotContactAdded( QString, QString, QString );
+	void slotUserStateChange( QString, QString, int );
+	void slotStateChanged( uint );
+	void slotUserSetOffline( QString );
+	void slotInitContacts( QString, QString, QString );
+	void slotNewUserFound( QString );
 
-		void slotSyncContactList();
-		/** No descriptions */
-		void slotConnected();
-		void slotDisconnected();
-		// To go online we need to check if connected
-		void slotGoOnline();
-		void slotGoOffline();
-		void slotGoAway();
-		void slotIconRightClicked(const QPoint);
+	// Someone tries to talk with us
+	void slotNewUser( QString );
+	// Ask user to auth the new contact
+	void slotAuthenticate( QString );
+	// Add a Contact
+	void slotAddContact(QString);
+	// Block a Contact
+	void slotBlockContact(QString);
 
-		void slotConnectedToMSN(bool c);
-		void slotConnecting();
+	// Group slots
+	void slotGroupAdded( const QString );
+	void slotDeletingGroup( const QString );
+	void slotGoURL( const QString );
 
-		void slotContactAdded (QString, QString, QString);
-		void slotUserStateChange (QString, QString, int);
-		void slotStateChanged (uint);
-		void slotUserSetOffline( QString );
-		void slotInitContacts (QString, QString, QString);
-		void slotNewUserFound (QString);
+signals:
+	void userStateChange( QString, QString, QString );
+	void protocolUnloading();
+	void settingsChanged( void );
 
-		void slotNewUser(QString);	// Someone tries to talk with us
-		void slotAuthenticate(QString);	// Ask user to auth the new contact
-		void slotAddContact(QString);	// Add a Contact
-		void slotBlockContact(QString);	// Block a Contact
-		/* Group slots */
-		void slotGroupAdded(const QString);
-		void slotDeletingGroup(const QString);
-		void slotGoURL(const QString);
+private:
+	void initIcons();
+	void initActions();
 
-	signals:
-		void userStateChange (QString, QString, QString);
-		void protocolUnloading();
-		void settingsChanged(void);
+	bool mIsConnected;
+
+	// The MSN Engine
+	KMSNService *m_msnService;
+
+	StatusBarIcon *statusBarIcon;
+
+	QPixmap protocolIcon;
+	QPixmap onlineIcon;
+	QPixmap offlineIcon;
+	QPixmap awayIcon;
+	QPixmap naIcon;
+	QMovie connectingIcon;
+
+	// The main msn popup
+	KPopupMenu *popup;
+
+	// Actions we use
+	KAction* actionGoOnline;
+	KAction* actionGoOffline;
+	KAction* actionGoAway;
+	//KSelectAction* actionStatus;
+
+	KActionMenu *actionStatusMenu;
+	KAction* actionConnect;
+	KAction* actionDisconnect;
+	KAction* actionPrefs;
+	KAction* actionUnload;
+
+	QPtrList<MSNMessageDialog> mChatWindows;
+
+	// Files to store contacts locally
+	KSimpleConfig *mContactsFile;
+	KSimpleConfig *mGroupsFile;
+
+	MSNPreferences *mPrefs;
+	KDialogBase *mEmptyConfig;
+	KURLLabel *mPassportURL;
+	QLabel *mEmptyMsg;
+//	QList<MSNContactStruct> contactList;
+//	QList<MSNGroupStruct> groupList;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

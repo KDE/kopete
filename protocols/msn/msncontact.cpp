@@ -55,16 +55,16 @@ MSNContact::MSNContact(QString userid, const QString name, QString group, MSNPro
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
 {
 	// We connect this signal so that we can tell when a user's status changes
-	connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
-	connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
+	connect(protocol->msnService(), SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
+	connect(protocol->msnService(), SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
 
-	connect ( this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
-	connect ( protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	connect ( this, SIGNAL(chatToUser(QString)), protocol->msnService(), SLOT( slotStartChatSession(QString)) );
+	connect ( protocol->msnService(), SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
 
 	QString tmp = name;
 	setName  ( tmp );
 	initActions();
-	slotUpdateContact( mUserID, mProtocol->engine->getStatus( mUserID ) );		
+	slotUpdateContact( mUserID, mProtocol->msnService()->getStatus( mUserID ) );		
 }
 
 void MSNContact::initActions()
@@ -79,8 +79,8 @@ void MSNContact::initActions()
 
 void MSNContact::showContextMenu(QPoint point)
 {
-	QStringList grouplist1 = mProtocol->engine->getGroups();
-	QStringList grouplist2 = mProtocol->engine->getGroups();
+	QStringList grouplist1 = mProtocol->msnService()->getGroups();
+	QStringList grouplist2 = mProtocol->msnService()->getGroups();
 	actionContactMove->setItems(grouplist1);
 	actionContactCopy->setItems(grouplist2);
 
@@ -109,7 +109,7 @@ void MSNContact::slotChatThisUser()
 
 void MSNContact::slotRemoveThisUser()
 {
-	mProtocol->engine->contactDelete(mUserID);
+	mProtocol->msnService()->contactDelete(mUserID);
 	delete this;
 }
 
@@ -117,7 +117,7 @@ void MSNContact::slotRemoveFromGroup()
 {
 	QString group;
 	group = mGroup;
-	mProtocol->engine->contactRemove(mUserID, group);
+	mProtocol->msnService()->contactRemove(mUserID, group);
 }
 
 void MSNContact::slotMoveThisUser()
@@ -126,14 +126,14 @@ void MSNContact::slotMoveThisUser()
 	QString oldgroup;
 	newgroup = actionContactMove->currentText();
 	oldgroup = mGroup;
-	mProtocol->engine->contactMove( mUserID, oldgroup, newgroup);	
+	mProtocol->msnService()->contactMove( mUserID, oldgroup, newgroup);	
 }
 
 void MSNContact::slotCopyThisUser()
 {
 	QString newgroup;
 	newgroup = actionContactCopy->currentText();
-	mProtocol->engine->contactCopy( mUserID, newgroup);
+	mProtocol->msnService()->contactCopy( mUserID, newgroup);
 }
 
 void MSNContact::slotContactRemoved(QString handle, QString group)
@@ -154,7 +154,7 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 
 	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
 	mStatus = status;
-	QString tmppublicname = mProtocol->engine->getPublicName( handle);
+	QString tmppublicname = mProtocol->msnService()->getPublicName( handle);
 
 	if (mStatus == BLO)
 		setName( i18n("%1 (Blocked)").arg(tmppublicname) );

@@ -16,7 +16,7 @@ MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const 
 	{
 			msndata = new msnAddUI(this);
 			/*			
-			msndata->cmbGroup->insertStringList(owner->engine->getGroups());
+			msndata->cmbGroup->insertStringList(owner->msnService()->getGroups());
 			msndata->cmbGroup->setCurrentItem(0);
 			*/
 			plugin = owner;
@@ -48,7 +48,7 @@ void MSNAddContactPage::slotFinish()
 		}
 		*/
 		QString userid = msndata->addID->text();
-		plugin->engine->contactAdd(userid);
+		plugin->msnService()->contactAdd(userid);
 	}
 	else
 	{
