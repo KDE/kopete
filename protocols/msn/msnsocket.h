@@ -89,6 +89,7 @@ signals:
 	 * After this the normal line-based reads go on again
 	 */
 	void blockRead( const QString &block );
+  void blockRead( const QByteArray &block );
 
 	/**
 	 * The online status has changed
@@ -158,8 +159,19 @@ protected:
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data ) = 0;
 
+  /** Used in MSNFileTransferSocket */
+  virtual void bytesReceived(const QByteArray &);
+
+    
 	const QString &server() { return m_server; }
 	uint port() { return m_port; }
+
+ 	/**
+	 * The last confirmed ID by the server
+	 */
+	uint m_lastId;
+
+  
 
 private slots:
 	void slotDataReceived();
@@ -201,10 +213,6 @@ private:
 	 */
 	uint m_id;
 
-	/**
-	 * The last confirmed ID by the server
-	 */
-	uint m_lastId;
 
 	/**
 	 * Queue of pending commands (should be mostly empty, but is needed to
@@ -222,7 +230,6 @@ private:
 	KExtendedSocket *m_socket;
 	OnlineStatus m_onlineStatus;
 
-	QCString m_buffer;
 	QString m_server;
 	uint m_port;
 
@@ -235,6 +242,17 @@ private:
 	 * The size of the requested block for block-based reads
 	 */
 	uint m_waitBlockSize;
+
+  class Buffer : public QByteArray
+  {
+      public:
+        Buffer(unsigned int sz=0);
+        ~Buffer();
+        void add(char *str,unsigned int size);
+        QByteArray take(unsigned int size);
+      
+  };
+  Buffer m_buffer;
 };
 
 #endif

@@ -44,6 +44,8 @@ protected:
 	QString m_ID;
 	QString m_auth;
 
+  QString m_filetransferName;
+
 	// contains the handle of the last person that msg'ed us.
 	// since we receive the actual message by readBlock(), we need
 	// to remember what the handle was of the person sending us the message.
