@@ -33,7 +33,6 @@
 #include "types.h"
 
 #include "dlgjabbervcard.h"
-#include "dlgjabberrename.h"
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "jabberresource.h"
