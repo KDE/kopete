@@ -25,7 +25,7 @@
 #include "kopeteiface.h"
 #include "kimifaceimpl.h"
 
-#define KOPETE_VERSION "0.9.91"
+#define KOPETE_VERSION "0.9.92"
 
 static const char description[] =
 	I18N_NOOP( "Kopete, the KDE Instant Messenger" );
@@ -52,38 +52,37 @@ int main( int argc, char *argv[] )
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
 		KOPETE_VERSION, description, KAboutData::License_GPL,
-		I18N_NOOP("(c) 2001-2005, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
+		I18N_NOOP("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, Developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
-	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Developer, MSN plugin maintainer"), "ogoffart@kde.org");
+	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Developer, MSN plugin maintainer"), "ogoffart@tiscalinet.be");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@telenet.be" );
+	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Developer, Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( "Grzegorz Jaskiewicz", I18N_NOOP("Developer, Gadu plugin maintainer"), "gj@pointblue.com.pl" );
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer, IRC maintainer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Developer"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, Yahoo plugin and Oscar plugin maintainer"), "mattrogers@sbcglobal.net" );
+	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Developer, original Gadu plugin author"), "zack@kde.org" );
 	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
-	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, icons, various plugins"), "lists@stevello.free-online.co.uk" );
-	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("WinPopup plugin maintainer"), "gjw102@york.ac.uk" );
-   aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Former Developer"), "metz@gehn.net", "http://metz.gehn.net" );
-   aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Former Developer, original Gadu plugin author"), "zack@kde.org" );
+	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
+	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Developer, WinPopup plugin maintainer"), "gjw102@york.ac.uk" );
 
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Iris Jabber Backend Library") );
 	aboutData.addCredit ( "Tom Linsky", I18N_NOOP("OscarSocket author"), "twl6@po.cwru.edu" );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
-
+	
 	aboutData.addCredit ( "Nick Betcher", I18N_NOOP("Former developer, project co-founder"), "nbetcher@kde.org");
 	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Former developer"), "ryan@kde.org" );
+	aboutData.addCredit ( "Stefan Gehn", I18N_NOOP("Former developer"), "metz@gehn.net", "http://metz.gehn.net" );
 	aboutData.addCredit ( "Andres Krapf", I18N_NOOP("Former developer"), "dae@chez.com" );
 	aboutData.addCredit ( "Carsten Pfeiffer", I18N_NOOP("Misc bugfixes and enhancements"), "pfeiffer@kde.org" );
 	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Former developer"), "remenic@linuxfromscratch.org");
 	aboutData.addCredit ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin author"), "daniel@fooishbar.org", "http://fooishbar.org");
 	aboutData.addCredit ( "Chris TenHarmsel", I18N_NOOP("Former developer, Oscar plugin"), "tenharmsel@users.sourceforge.net");
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
-   aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
-
 
 	aboutData.setTranslator( I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
 		I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails") );
@@ -96,7 +95,7 @@ int main( int argc, char *argv[] )
 	new KIMIfaceImpl();
 	kapp->dcopClient()->registerAs( "kopete", false );
 	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
-
+	
 	kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:
