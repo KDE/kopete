@@ -22,8 +22,3 @@ kopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la \
 
 data_DATA = msn.plugin
 datadir = $(kde_datadir)/kopete
-
-messages: rc.cpp
-	$(EXTRACTRC) */*.ui >> rc.cpp
-	$(XGETTEXT) -ki18n -C *.cpp *.h -o $(podir)/kopete_msn.pot
-

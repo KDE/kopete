@@ -29,9 +29,5 @@ datadir = $(kde_datadir)/kopete
 desktopdir   = $(kde_appsdir)/Internet
 desktop_DATA = kopete.desktop
 
-messages: rc.cpp
-	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
-	if test -n "$$LIST"; then \
-		$(XGETTEXT) -C -ki18n -kI18N_NOOP $$LIST -o ../po/kopete.pot; \
-	fi
+
 
