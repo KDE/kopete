@@ -124,7 +124,7 @@ private:
 	QLabel *anim;
 	QMovie animIcon;
 	QPixmap normalIcon;
-	QWidget *statusArea;
+	QHBox *statusArea;
 
 	KAction *chatSend;
 	KAction *historyUp;

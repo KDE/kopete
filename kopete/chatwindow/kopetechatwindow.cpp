@@ -19,6 +19,7 @@
 */
 
 #include <qtimer.h>
+#include <qhbox.h>
 #include <qvbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
@@ -39,6 +40,7 @@
 #include <kpushbutton.h>
 #include <ktabwidget.h>
 #include <kstandarddirs.h>
+#include <kdialog.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -180,7 +182,7 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
 
-	statusArea = new QHBox(vBox);
+	statusArea = new QHBox( vBox );
 	statusArea->setSizePolicy( QSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum) );
 
 	//Status label
@@ -196,7 +198,7 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 
 
 	readOptions();
-	setWFlags(Qt::WDestructiveClose);
+	setWFlags( Qt::WDestructiveClose );
 
 	windows.append( this );
 

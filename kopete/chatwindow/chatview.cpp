@@ -167,6 +167,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	membersStatus = Smart;
 	bgChanged = false;
 	m_tabState=Normal;
+	//valgrind complained about this - initialize it to true
+	visibleMembers = true;
 
 //	m_icon = SmallIcon( mgr->protocol()->pluginIcon() );
 //	m_iconLight = KIconEffect().apply( m_icon, KIconEffect::ToGamma, 0.5, Qt::white, true );
