@@ -263,6 +263,9 @@ QString KopeteMessage::escapedBody() const
 		//Replace a tab with 4 spaces
 		parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "    " ) );
 
+		//Escape CDATA end tags
+		parsedString.replace( QRegExp( QString::fromLatin1("]]>") ), QString::fromLatin1("]] >") );
+
 		return parsedString;
 	}
 
