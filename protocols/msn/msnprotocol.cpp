@@ -84,8 +84,8 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), IMProtocol()
 
 	if ( (KGlobal::config()->readEntry("UserID", "") == "" ) || (KGlobal::config()->readEntry("Password", "") == "" ) )
 	{
-		QString emptyText = "<qt>If you have a <a href=\"http://www.passport.com\">MSN account</a>, please configure it in the Kopete Settings. Get a MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a>.</qt>";
-		QString emptyCaption = "No MSN Configuration found!";
+		QString emptyText = i18n( "<qt>If you have a <a href=\"http://www.passport.com\">MSN account</a>, please configure it in the Kopete Settings. Get a MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a>.</qt>" );
+		QString emptyCaption = i18n( "No MSN Configuration found!" );
 		
 		KMessageBox::error(kopeteapp->mainWindow(), emptyText,emptyCaption );
 	}
