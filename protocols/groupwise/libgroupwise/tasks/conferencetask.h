@@ -12,23 +12,8 @@
 #ifndef CONFERENCETASK_H
 #define CONFERENCETASK_H
 
+#include "gwerror.h"
 #include "eventtask.h"
-
-struct ConferenceEvent {
-	QString guid;
-	QString user;
-	QTime timeStamp;
-	Q_UINT32 flags;
-};
-
-enum ConferenceFlags
-{
-	Logged = 0x00000001,
-	Secure = 0x00000002,
-	Closed = 0x10000000
-};
-
-typedef QString Message;
 
 /**
  * This Task is responsible for handling all conference related events, and signalling them up to @ref GroupWiseAccount
@@ -36,6 +21,9 @@ typedef QString Message;
  * of code they share is quite large
  * @author SUSE AG
  */
+ 
+using namespace GroupWise;
+
 class ConferenceTask : public EventTask
 {
 Q_OBJECT
@@ -52,7 +40,7 @@ signals:
 	void otherInvited( ConferenceEvent & );
 	void invitationRejected( ConferenceEvent & );
 	void closed( ConferenceEvent & );
-	void message( ConferenceEvent &, Message & );
+	void message( const ConferenceEvent &, const Message & );
 	void autoReply( ConferenceEvent &, Message & );
 protected:
 	Q_UINT32 readFlags( QDataStream & din );

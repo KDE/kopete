@@ -36,8 +36,9 @@ bool StatusTask::take( Transfer * transfer )
 		din.readBytes( rawData, val );
 		if ( val ) // val is 0 if there is no status text
 			statusText = QString::fromUtf8( rawData, val );
-		qDebug( "%s changed status to %i, message: %s", event->source().data(), status, statusText.ascii() );
-		emit gotStatus( event->source(), status, statusText );
+		qDebug( "%s changed status to %i, message: %s", event->source().ascii(), status, statusText.ascii() );
+		// HACK: check with mike about case sensitivity.
+		emit gotStatus( event->source().lower(), status, statusText );
 		return true;
 	}
 	else
