@@ -96,9 +96,8 @@ void KopeteGroupViewItem::refreshDisplayName()
 		}
 	}
 
-	m_renameText = newText;
 	newText += " (" + QString::number( onlineMemberCount ) + "/" + QString::number( totalMemberCount ) + ")";
-
+	m_renameText = newText;
 	//kdDebug( 14000 ) << k_funcinfo << "newText='" << newText << "', old text= " << text( 0 ) << endl;
 
 	setText( 0, newText );
