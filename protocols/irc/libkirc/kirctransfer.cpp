@@ -147,7 +147,7 @@ bool KIRCTransfer::initiate()
 //		this, SLOT(slotConnectionClosed()));
 //	connect(m_socket, SIGNAL(delayedCloseFinished()),
 //		this, SLOT(slotConnectionClosed()));
-	connect(m_socket, SIGNAL(error(int)),
+	connect(m_socket, SIGNAL(error(int)), // FIXME: connection failed: No such signal KExtendedSocket::error(int)
 		this, SLOT(slotError(int)));
 
 	switch( m_type )

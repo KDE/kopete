@@ -40,7 +40,7 @@ public:
 	KIRCTransferServer *server();
 	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
 
-	KIRCTransferServer *createServer(QString m_userName,
+	KIRCTransferServer *createServer(KIRC *engine, QString m_userName,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize);
 

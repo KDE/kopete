@@ -18,8 +18,10 @@
 #include <kdebug.h>
 #include <kextsock.h>
 
-#include "kirctransferserver.h"
+#include "kirctransferhandler.h"
 
+#include "kirctransferserver.h"
+/*
 KIRCTransferServer::KIRCTransferServer( QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_socket( 0 ),
@@ -27,8 +29,8 @@ KIRCTransferServer::KIRCTransferServer( QObject *parent, const char *name )
 	  m_backlog( 1 )
 {
 }
-
-KIRCTransferServer::KIRCTransferServer( Q_UINT16 port, int backlog, QObject *parent, const char *name )
+*/
+KIRCTransferServer::KIRCTransferServer(Q_UINT16 port, int backlog, QObject *parent, const char *name)
 	: QObject( parent, name ),
 	  m_socket( 0 ),
 	  m_port( port ),
@@ -36,7 +38,7 @@ KIRCTransferServer::KIRCTransferServer( Q_UINT16 port, int backlog, QObject *par
 {
 }
 
-KIRCTransferServer::KIRCTransferServer(QString userName,
+KIRCTransferServer::KIRCTransferServer(KIRC *engine, QString nick,// QString nick_peer_adress,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent, const char *name)
@@ -44,7 +46,8 @@ KIRCTransferServer::KIRCTransferServer(QString userName,
 	  m_socket(0),
 	  m_port(0),
 	  m_backlog(1),
-	  m_userName(userName),
+	  m_engine(engine),
+	  m_nick(nick),
 	  m_type(type),
 	  m_fileName(fileName),
 	  m_fileSize(fileSize)
@@ -62,6 +65,9 @@ bool KIRCTransferServer::initServer()
 				this, SLOT(readyAccept()));
 		QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
 				this, SLOT(connectionFailed(int)));
+
+		QObject::connect(this, SIGNAL(incomingNewTransfer(KIRCTransfer *)),
+				KIRCTransferHandler::self(), SIGNAL(transferCreated(KIRCTransfer *)));
 
 		if (!m_socket->setTimeout(2*60)) // FIXME: allow configuration of this.
 			kdDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
@@ -99,7 +105,7 @@ void KIRCTransferServer::readyAccept()
 {
 	KExtendedSocket *socket;
 	m_socket->accept( socket );
-	KIRCTransfer *transfer = new KIRCTransfer((KIRC *)0, m_userName, m_type, m_fileName, m_fileSize); // FIXME: remove the NULL if possible.
+	KIRCTransfer *transfer = new KIRCTransfer(m_engine, m_nick, m_type, m_fileName, m_fileSize);
 	transfer->setSocket(socket);
 	transfer->initiate();
 	emit incomingNewTransfer(transfer);
@@ -109,7 +115,7 @@ void KIRCTransferServer::connectionFailed(int error)
 {
 	if (error!=0)
 	{
-		kdDebug(14120) << k_funcinfo << "Connection failed with " << m_userName << endl;
+		kdDebug(14120) << k_funcinfo << "Connection failed with " << m_nick << endl;
 		deleteLater();
 	}
 }

@@ -33,9 +33,9 @@ class KIRCTransferServer
 	Q_OBJECT
 
 public:
-	KIRCTransferServer(QObject *parent = 0, const char *name = 0);
+//	KIRCTransferServer(QObject *parent = 0, const char *name = 0);
 	KIRCTransferServer(Q_UINT16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
-	KIRCTransferServer(QString userName,
+	KIRCTransferServer(KIRC *engine, QString nick,// QString nick_peer_adress,
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0, const char *name = 0);
@@ -58,10 +58,16 @@ private:
 	KExtendedSocket *	m_socket;
 	Q_UINT16		m_port;
 	int			m_backlog;
-	QString			m_userName;
+
+	// The following will be deprecated ...
+	KIRC *			m_engine;
+	QString			m_nick;
 	KIRCTransfer::Type	m_type;
 	QString			m_fileName;
 	Q_UINT32		m_fileSize;
+	// by
+	// QPtrList<KIRCTransfer> m_pendingTransfers;
+	// QPtrList<KIRCTransfer> m_activeTransfers;
 
 };
 

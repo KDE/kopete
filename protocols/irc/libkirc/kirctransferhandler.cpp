@@ -48,17 +48,13 @@ KIRCTransferServer *KIRCTransferHandler::server( Q_UINT16 port, int backlog )
 	return m_server;
 }
 
-KIRCTransferServer *KIRCTransferHandler::createServer(QString m_userName,
+KIRCTransferServer *KIRCTransferHandler::createServer(KIRC *engine, QString m_userName,
 		KIRCTransfer::Type type,
 		QString fileName, Q_UINT32 fileSize)
 {
-//	if( m_server )
-//		m_server->terminate();
-	KIRCTransferServer *m_server = new KIRCTransferServer( m_userName, type, fileName, fileSize, this );
-
-	// here connect the slots of the server
-
-	return m_server;
+	KIRCTransferServer *server = new KIRCTransferServer(engine, m_userName, type, fileName, fileSize, this);
+	transferServerCreated(server);
+	return server;
 }
 
 KIRCTransfer *KIRCTransferHandler::createClient(
@@ -73,7 +69,7 @@ KIRCTransfer *KIRCTransferHandler::createClient(
 		type,
 		fileName, fileSize,
 		this );
-	transferCreated( client );
+	transferCreated(client);
 	return client;
 }
 

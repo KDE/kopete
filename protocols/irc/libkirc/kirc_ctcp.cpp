@@ -133,7 +133,7 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uin
 		if (noWhiteSpace.contains(' ') > 0)
 			noWhiteSpace.replace(QRegExp("\\s+"), "_");
 
-		KIRCTransferServer *server = KIRCTransferHandler::self()->createServer(nickname, type, fileName, file.size());
+		KIRCTransferServer *server = KIRCTransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 		QString ip = m_sock->localAddress()->nodeName();
 		QRegExp reg("^(\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})$");

@@ -42,6 +42,8 @@ IRCTransferHandler::IRCTransferHandler()
 
 void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 {
+	kdDebug(14120) << k_funcinfo << endl;
+
 	IRCContact *contact = IRCContactManager::existContact(t->engine(), t->nick());
 	QString fileName = t->fileName();
 	unsigned long fileSize = t->fileSize();
@@ -58,7 +60,7 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 	case KIRCTransfer::FileOutgoing:
 		{
 			KopeteTransfer *kt = KopeteTransferManager::transferManager()->addTransfer(
-				contact, fileName, fileSize, QString::null/*contact->displayName()*/,
+				contact, fileName, fileSize, contact->displayName(),
 				KopeteFileTransferInfo::Outgoing);
 			connectKopeteTransfer(kt, t);
 		}
