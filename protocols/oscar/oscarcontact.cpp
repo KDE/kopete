@@ -37,7 +37,8 @@
 #include "oscaruserinfo.h"
 
 OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
-		KopeteMetaContact *parent) : KopeteContact(protocol, parent)
+		KopeteMetaContact *parent)
+: KopeteContact(protocol, name, parent)
 {
 	kdDebug() << "[OscarContact] OscarContact(), name=" << name << endl;
 
@@ -94,14 +95,6 @@ void OscarContact::execute(void)
 		return;
 	}
 	msgManager()->readMessages();
-}
-
-/** Return the unique id that identifies a contact.  Id is required
- *  to be unique per protocol and per identity.  Across those boundaries
- *  ids may occur multiple times. */
-QString OscarContact::contactId(void) const
-{
-	return mName;
 }
 
 /** Return the protocol specific serialized data that a plugin may want to store a contact list. */

@@ -128,8 +128,6 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 
 			m->addContact( c );
 			KopeteContactList::contactList()->addMetaContact(m);
-
-			MSNProtocol::protocol()->contacts().insert( handle, c );
 		}
 	}
 
@@ -239,16 +237,10 @@ KActionCollection * MSNMessageManager::chatActions()
 	m_actions->insert( actionClose );
 
 	KListAction *actionInvite=new KListAction(i18n("&Invite"),"",0, m_actions ,"actionInvite");
-	QStringList sl;
-	QMap<QString, MSNContact*>_contacts= MSNProtocol::protocol()->contacts();
-	QMap<QString, MSNContact*>::Iterator it;
-	for ( it = _contacts.begin(); it != _contacts.end() ; ++it)
-	{
-		if((*it)->isOnline() && !members().contains(*it))
-		{
-			sl.append((*it)->contactId());
-		}
-	}
+	QStringList sl = KopeteContactList::contactList()->onlineContacts(
+		MSNProtocol::protocol()->pluginId() );
+
+	// FIXME: Remove the currently active members from this list again!
 	sl.append( otherString=i18n("Other...") );
 	actionInvite->setItems( sl );
 	connect( actionInvite, SIGNAL( activated(const QString&) ), this, SLOT(slotInviteContact(const QString &)) );

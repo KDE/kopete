@@ -38,7 +38,7 @@
 
 MSNContact::MSNContact( const QString &msnId,
 	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( MSNProtocol::protocol(), parent )
+: KopeteContact( MSNProtocol::protocol(), msnId, parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
@@ -51,15 +51,10 @@ MSNContact::MSNContact( const QString &msnId,
 	m_reversed = false;
 	m_moving=false;
 
-	m_msnId = msnId;
-
 	connect ( this, SIGNAL( chatToUser( QString ) ),
 		MSNProtocol::protocol(), SLOT( slotStartChatSession( QString ) ) );
 	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
 		this, SLOT (slotMoved(KopeteMetaContact*) ));
-	connect( this, SIGNAL( contactDestroyed( KopeteContact * ) ),
-		MSNProtocol::protocol(), SLOT( slotContactDestroyed( KopeteContact * ) ) );
-
 	setDisplayName( displayName );
 
 	if(parent)
@@ -100,24 +95,17 @@ KActionCollection *MSNContact::customContextMenuActions()
 
 	m_actionCollection->insert( m_actionBlock );
 
-
 	return m_actionCollection;
-}
-
-
-QString MSNContact::contactId() const
-{
-	return m_msnId;
 }
 
 QString MSNContact::data() const
 {
-	return m_msnId;
+	return contactId();
 }
 
 void MSNContact::execute()
 {
-	emit chatToUser( m_msnId );
+	emit chatToUser( contactId() );
 }
 
 void MSNContact::slotBlockUser()
@@ -133,16 +121,16 @@ void MSNContact::slotBlockUser()
 
 	if( m_blocked )
 	{
-		notify->removeContact( m_msnId, 0, MSNProtocol::BL );
+		notify->removeContact( contactId(), 0, MSNProtocol::BL );
 //		if( !m_allowed )
-//			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::AL );
+//			notify->addContact( contactId(), contactId(), 0, MSNProtocol::AL );
 	}
 	else
 	{
 		if(m_allowed)
-			notify->removeContact( m_msnId, 0, MSNProtocol::AL);
+			notify->removeContact( contactId(), 0, MSNProtocol::AL);
 		else
-			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::BL );
+			notify->addContact( contactId(), contactId(), 0, MSNProtocol::BL );
 	}
 }
 
@@ -150,7 +138,7 @@ void MSNContact::slotUserInfo()
 {
 	KDialogBase *infoDialog=new KDialogBase( 0l, "infoDialog", /*modal = */false, QString::null, KDialogBase::Close , KDialogBase::Close, false );
 	MSNInfo *info=new MSNInfo ( infoDialog,"info");
-	info->m_id->setText(m_msnId);
+	info->m_id->setText( contactId() );
 	info->m_displayName->setText(displayName());
 	info->m_phh->setText(m_phoneHome);
 	info->m_phw->setText(m_phoneWork);
@@ -180,7 +168,7 @@ void MSNContact::slotDeleteContact()
 
 		for( QValueList<unsigned int>::Iterator it = m_groups.begin(); it != m_groups.end(); ++it )
 		{
-			notify->removeContact( m_msnId, *it, MSNProtocol::FL );
+			notify->removeContact( contactId(), *it, MSNProtocol::FL );
 		}
 	}
 	else
@@ -366,12 +354,7 @@ int MSNContact::importance() const
 
 QString MSNContact::msnId() const
 {
-	return m_msnId;
-}
-
-void MSNContact::setMsnId( const QString &id )
-{
-	m_msnId = id;
+	return contactId();
 }
 
 MSNProtocol::Status MSNContact::msnStatus() const
@@ -384,7 +367,7 @@ void MSNContact::setMsnStatus( MSNProtocol::Status _status )
 	if( m_status == _status )
 		return;
 
-//	kdDebug() << "MSNContact::setMsnStatus: Setting status for " << m_msnId <<
+//	kdDebug() << "MSNContact::setMsnStatus: Setting status for " << contactId() <<
 //		" to " << _status << endl;
 	m_status = _status;
 
@@ -502,7 +485,7 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		if(strL.count() >= 1)
 		{
 			if( m_groups.contains(strL.first().toUInt()) )
-				notify->removeContact( m_msnId, strL.first().toUInt(), MSNProtocol::FL );
+				notify->removeContact( contactId(), strL.first().toUInt(), MSNProtocol::FL );
 		}
 	}
 	else
@@ -527,14 +510,16 @@ void MSNContact::addToGroup( KopeteGroup *group )
 		if(strL.count() >= 1 )
 		{
 			if(!m_groups.contains(strL.first().toUInt()))
-					notify->addContact( m_msnId, displayName(), strL.first().toUInt(), MSNProtocol::FL );
+					notify->addContact( contactId(), displayName(), strL.first().toUInt(), MSNProtocol::FL );
 		}
 		else if(group->displayName().isNull() || group->type() != KopeteGroup::Classic)
 		{
 			kdDebug() << "MSNContact::addToGroup: ignoring top-level group" << endl;
 		}
 		else
-			MSNProtocol::protocol()->addGroup(group->displayName(), m_msnId);
+		{
+			MSNProtocol::protocol()->addGroup( group->displayName(), contactId() );
+		}
 	}
 	else
 	{
@@ -567,7 +552,7 @@ void MSNContact::removeFromGroup( KopeteGroup * group )
 		if(strL.count() >= 1 )
 		{
 			if(m_groups.contains(strL.first().toUInt()))
-				notify->removeContact( m_msnId, strL.first().toUInt(), MSNProtocol::FL );
+				notify->removeContact( contactId(), strL.first().toUInt(), MSNProtocol::FL );
 		}
 	}
 	else
@@ -591,7 +576,7 @@ void MSNContact::slotRemovedFromGroup(unsigned int group)
 void MSNContact::addThisTemporaryContact(KopeteGroup* group)
 {
 	if(!group || group->displayName().isNull() || group->type() != KopeteGroup::Classic)
-		MSNProtocol::protocol()->addContact( m_msnId );
+		MSNProtocol::protocol()->addContact( contactId() );
 	else
 		addToGroup(  group );
 }

@@ -39,7 +39,6 @@ public:
 		const QString &displayName, KopeteMetaContact *parent );
 	~MSNContact();
 
-	virtual QString contactId() const;
 	virtual QString data() const;
 
 	ContactStatus status() const;
@@ -51,7 +50,6 @@ public:
 	 * The MSN id of this user, e.g. kopeteuser@kde.org
 	 */
 	QString msnId() const;
-	void setMsnId( const QString &id );
 
 	/**
 	 * Indicate whether this contact is blocked
@@ -138,7 +136,6 @@ private slots:
 	void slotMoved(KopeteMetaContact* from);
 
 private:
-	QString m_msnId;
 	QValueList<unsigned int> m_groups;
 
 	bool m_blocked;

@@ -21,6 +21,8 @@
 
 #include "kopeteplugin.h"
 
+#include <qdict.h>
+
 class KActionMenu;
 
 class AddContactPage;
@@ -101,8 +103,42 @@ signals:
 	 */
 	void statusIconChanged( KopeteProtocol *protocol, const QString &icon );
 
+protected:
+	/**
+	 * Retrieve the list of contacts for this protocol
+	 *
+	 * FIXME: Make this const!
+	 */
+	QDict<KopeteContact>& contacts();
+
+private slots:
+	/**
+	 * Track the deletion of a KopeteContact and cleanup
+	 */
+	void slotKopeteContactDestroyed( KopeteContact * );
+
 private:
+	/**
+	 * KopeteContact needs to access @ref registerContact(), so it is a
+	 * friend of KopeteProtocol. Please do _NOT_ use this friendship to
+	 * access other members without documenting them here!
+	 */
+	friend class KopeteContact;
+
+	/**
+	 * @internal
+	 * Register a new KopeteContact with the protocol.
+	 * To be called ONLY from KopeteContact, not from any other class!
+	 * (Not even a derived class).
+	 */
+	void registerContact( KopeteContact *c );
+
 	QString m_statusIcon;
+
+	/**
+	 * The list of all contacts for this protocol
+	 */
+	QDict<KopeteContact> m_contacts;
 };
 
 #endif

@@ -38,9 +38,15 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 
-KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent )
-	: QObject( parent )
+KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId,
+	KopeteMetaContact *parent )
+: QObject( parent )
 {
+	m_contactId = contactId;
+
+	if( protocol )
+		protocol->registerContact( this );
+
 	m_metaContact = parent;
 	m_protocol = protocol;
 	m_cachedSize = 0;
@@ -332,13 +338,12 @@ void KopeteContact::moveToMetaContact(KopeteMetaContact *m)
 KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p)
 		:QListBoxText(p)
 {
-
 	metaContact=m;
 	QString t=m->displayName();
-   bool f=true;
+	bool f=true;
 
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
-	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
+	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
 		if(f) t+=" [";
 		else t+=" ; ";
@@ -348,6 +353,11 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 	if(!f) t+="]";
 
 	setText(t);
+}
+
+QString KopeteContact::contactId() const
+{
+	return m_contactId;
 }
 
 #include "kopetecontact.moc"

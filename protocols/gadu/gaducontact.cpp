@@ -17,7 +17,7 @@
 
 GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
                           const QString& name, KopeteMetaContact* parent )
-    : KopeteContact( GaduProtocol::protocol(), parent )
+    : KopeteContact( GaduProtocol::protocol(), QString::number( uin_ ), parent )
 {
     msgManager_ = 0L;
     uin_ = uin;
@@ -209,12 +209,6 @@ GaduContact::importance() const
         return 0;
         break;
     }
-}
-
-QString
-GaduContact::contactId() const
-{
-    return QString::number( uin_ );
 }
 
 QString

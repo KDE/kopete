@@ -277,6 +277,27 @@ QStringList KopeteContactList::onlineContacts() const
 	return contacts;
 }
 
+QStringList KopeteContactList::onlineContacts( const QString &protocolId ) const
+{
+	QStringList onlineContacts;
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		// FIXME: This loop is not very efficient :(
+		if ( it.current()->isOnline() )
+		{
+			QPtrList<KopeteContact> contacts = it.current()->contacts();
+			QPtrListIterator<KopeteContact> cit( contacts );
+			for( ; cit.current(); ++cit )
+			{
+				if ( cit.current()->protocol()->pluginId() == protocolId )
+					onlineContacts.append( it.current()->displayName() );
+			}
+		}
+	}
+	return onlineContacts;
+}
+
 QStringList KopeteContactList::fileTransferContacts() const
 {
 	QStringList contacts;

@@ -58,8 +58,6 @@ public:
 
 	static MSNProtocol *protocol();
 
-	typedef QMap<QString, MSNContact*> ContactList;
-
 	/**
 	 * SyncMode indicates whether settings differing between client and
 	 * server should be propagated to keep them in sync.
@@ -151,8 +149,6 @@ public:
 	 * change the publicName to this new name
 	 */
 	void setPublicName( const QString &name );
-
-	ContactList& contacts() { return m_contacts; }
 
 	MSNContact *contact( const QString &handle );
 
@@ -279,11 +275,6 @@ private slots:
 	 */
 	 void slotNotifySocketClosed( int state );
 
-	/**
-	 * An MSN contact got deleted. Clean up the necessary data
-	 */
-	void slotContactDestroyed( KopeteContact *c );
-
 	void slotPreferencesSaved();
 
 private:
@@ -315,8 +306,6 @@ private:
 	KAction* actionPrefs;
 	KAction* actionUnload;
 	int m_menuTitleId;
-
-	ContactList m_contacts;
 
 	QMap<unsigned int, KopeteGroup*> m_groupList;
 

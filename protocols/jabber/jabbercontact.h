@@ -151,11 +151,9 @@ class JabberContact : public KopeteContact
 
 		/*
 		 * Contact ID and associated data
-		 * FIXME: old API?
 		 */
-		virtual QString contactId() const;
 		virtual QString data() const;
-		
+
 		/*
 		 * *** New API implementation ***
 		 */

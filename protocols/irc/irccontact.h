@@ -63,8 +63,6 @@ public:
 	QString targetName() { return m_targetName; } ;
 //	QString groupName() { return m_groupName; };
 
-	virtual QString contactId() const;
-
 private:
 
 	bool init(const QString &server, unsigned int port,const QString &target, IRCServerContact *contact,bool joinOnConnect);

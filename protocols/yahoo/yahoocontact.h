@@ -50,7 +50,6 @@ class YahooContact : public KopeteContact
 	virtual QString statusIcon() const;
 	//virtual QPixmap scaledStatusIcon(int size);
 	virtual int importance() const;
-	virtual QString contactId() const;
 	virtual KActionCollection *customContextMenuActions();
 	virtual void addThisTemporaryContact(KopeteGroup *group = 0L);
 	

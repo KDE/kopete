@@ -44,7 +44,7 @@
 #include "tabcompleter.h"
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, parent),
+	: KopeteContact(protocol, QString( m_targetName + "@" + m_serverName ).lower(), parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
@@ -54,13 +54,12 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 		delete this;
 		return;
 	}
-
 }
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port,
 		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
 		       KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, parent),
+	: KopeteContact(protocol, QString( m_targetName + "@" + m_serverName ).lower(), parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
@@ -430,11 +429,6 @@ void IRCContact::joinNow()
 //	emit statusChanged();
 	emit statusChanged(this, Online);
 
-}
-
-QString IRCContact::contactId() const
-{
-	return QString(m_targetName+"@"+m_serverName).lower();
 }
 
 void IRCContact::slotMovedToMetaContact()

@@ -37,10 +37,6 @@ class OscarContact : public KopeteContact  {
 public:
 	OscarContact(const QString name, OscarProtocol *protocol,	KopeteMetaContact *parent);
 	~OscarContact();
-	/** Return the unique id that identifies a contact.  Id is required
-	*  to be unique per protocol and per identity.  Across those boundaries
-	*  ids may occur multiple times. */
-	virtual QString contactId(void) const;
 	/** Return the protocol specific serialized data that a plugin may want to store a contact list. */
 	virtual QString data(void) const;
 	/** Returns the online status of the contact */

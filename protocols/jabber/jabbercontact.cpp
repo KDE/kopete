@@ -49,7 +49,8 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact(QString userId, QString nickname, QStringList groups, JabberProtocol *p, KopeteMetaContact *mc, QString identity) : KopeteContact(p, mc)
+JabberContact::JabberContact(QString userId, QString nickname, QStringList groups, JabberProtocol *p, KopeteMetaContact *mc, QString identity)
+: KopeteContact( p, userId, mc )
 {
 
 	// save parent protocol object
@@ -736,13 +737,6 @@ void JabberContact::slotSaveVCard(QDomElement &vCardXML)
 
 	protocol->slotSaveVCard(vCardXML);
 	mEditingVCard = false;
-
-}
-
-QString JabberContact::contactId() const
-{
-
-	return userId();
 
 }
 

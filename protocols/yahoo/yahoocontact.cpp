@@ -31,7 +31,7 @@
 
 YahooContact::YahooContact(QString userID, QString fullName, QString group,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
-:  KopeteContact( protocol, metaContact)
+:  KopeteContact( protocol, userID, metaContact)
 {
 	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName <<
 			", " << group << ", <protocol>)" ;
@@ -202,12 +202,6 @@ int YahooContact::importance() const
 {
 	kdDebug() << "[YahooContact::importance()]" << endl;
 	return 0;
-}
-
-QString YahooContact::contactId() const
-{
-	kdDebug() << "[YahooContact::contactId()]" << endl;
-	return mUserID;
 }
 
 KActionCollection *YahooContact::customContextMenuActions()

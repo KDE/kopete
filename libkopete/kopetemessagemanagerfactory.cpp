@@ -167,13 +167,9 @@ const KopeteMessageManagerDict& KopeteMessageManagerFactory::sessions( )
 
 void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
-	KopeteMessageManagerDict sessions=protocolSessions( protocol );
-	QIntDictIterator<KopeteMessageManager> it( sessions );
-	
-	for ( ; it.current() ; ++it )
-	{
-		it.current()->deleteLater();
-	}
+	KopeteMessageManagerDict sessions = protocolSessions( protocol );
+	sessions.setAutoDelete( true );
+	sessions.clear();
 }
 
 #include "kopetemessagemanagerfactory.moc"

@@ -76,6 +76,12 @@ public:
 	QStringList onlineContacts() const;
 
 	/**
+	 * Overloaded method of @ref onlineContacts() that only returns
+	 * the online contacts for a single protocol
+	 */
+	QStringList onlineContacts( const QString &protocolId ) const;
+
+	/**
 	 * Returns all contacts which can accept file transfers
 	 */
 	QStringList fileTransferContacts() const;

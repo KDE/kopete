@@ -20,6 +20,8 @@
 
 #include "kopetemessagemanagerfactory.h"
 
+#include <kdebug.h>
+
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
 {
@@ -53,6 +55,24 @@ void KopeteProtocol::setStatusIcon( const QString &icon )
 KActionMenu* KopeteProtocol::protocolActions()
 {
 	return 0L;
+}
+
+QDict<KopeteContact>& KopeteProtocol::contacts()
+{
+	return m_contacts;
+}
+
+void KopeteProtocol::registerContact( KopeteContact *c )
+{
+	m_contacts.insert( c->contactId(), c );
+	connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
+		SLOT( slotKopeteContactDestroyed( KopeteContact * ) ) );
+}
+
+void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
+{
+	kdDebug() << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
+	m_contacts.remove( c->contactId() );
 }
 
 #include "kopeteprotocol.moc"

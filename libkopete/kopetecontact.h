@@ -53,7 +53,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent );
+	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent );
 	~KopeteContact();
 
 	/**
@@ -193,7 +193,7 @@ public:
 	 *
 	 * @return The unique id of the contact
 	 */
-	virtual QString contactId() const = 0;
+	QString contactId() const;
 
 	/**
 	 * Return the protocol id that identifies a contact.
@@ -382,6 +382,8 @@ private:
 			KopeteMetaContact *metaContact;
 			MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p);
 	};
+
+	QString m_contactId;
 };
 
 #endif
