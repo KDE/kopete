@@ -73,7 +73,7 @@ private slots:
 	void slotDeleteStyle();
 	void slotImportStyle();
 	void slotCopyStyle();
-	void slotStyleSaved();
+	void slotStyleModified(const QString &);
 	void slotStyleSelected();
 	void slotEditTooltips();
 	void emitChanged();

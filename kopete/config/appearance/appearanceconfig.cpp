@@ -51,10 +51,10 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <klibloader.h>
-#include <ktrader.h>
 #include <ktextedit.h>
 #include <kurlrequesterdlg.h>
+#include <krun.h>
+#include <kdirwatch.h>
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -63,7 +63,6 @@
 
 #include "kopeteprefs.h"
 #include "kopetemessage.h"
-#include "styleeditdialog.h"
 #include "kopetexsl.h"
 #include "kopetecontact.h"
 #include "kopeteemoticons.h"
@@ -145,6 +144,10 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	mAppearanceTabCtl->addTab( mPrfsChatWindow, i18n("Chat Window") );
 
+
+	connect( KDirWatch::self() , SIGNAL(dirty(const QString&)) , this, SLOT( slotStyleModified( const QString &) ) );
+
+
 	// "Contact List" TAB =======================================================
 	mPrfsContactList = new AppearanceConfig_ContactList(mAppearanceTabCtl);
 	connect(mPrfsContactList->mTreeContactList, SIGNAL(toggled(bool)),
@@ -211,6 +214,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// ==========================================================================
 
+
+
 	errorAlert = false;
 	styleChanged = false;
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
@@ -237,8 +242,9 @@ void AppearanceConfig::save()
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
-	if( styleChanged || p->styleSheet() != itemMap[ mPrfsChatWindow->styleList->selectedItem() ] )
-		p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
+	if( styleChanged || p->styleSheet() != mPrfsChatWindow->styleList->selectedItem()->text() )
+		p->setStyleSheet(  mPrfsChatWindow->styleList->selectedItem()->text() );
+	kdDebug(14000) << k_funcinfo << p->styleSheet()  << mPrfsChatWindow->styleList->selectedItem()->text() << endl;
 
 	// "Contact List" TAB =======================================================
 	p->setTreeView(mPrfsContactList->mTreeContactList->isChecked());
@@ -297,7 +303,9 @@ void AppearanceConfig::load()
 		QFileInfo fi( *it );
 		QString fileName = fi.fileName().section( '.', 0, 0 );
 		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
-		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), fileName );
+		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), *it );
+		KDirWatch::self()->addFile(*it);
+kdDebug(14000) << k_funcinfo << *it << " " << fileName << " - " << mPrfsChatWindow->styleList->firstItem()->text()  << endl;
 
 		if ( fileName == p->styleSheet() )
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
@@ -368,7 +376,7 @@ void AppearanceConfig::updateEmoticonlist()
 		mPrfsEmoticons->icon_theme_list->setCurrentItem( 0 );
 }
 
-void AppearanceConfig::slotUseEmoticonsChanged( bool b )
+void AppearanceConfig::slotUseEmoticonsChanged( bool  )
 {
 	emitChanged();
 }
@@ -416,41 +424,20 @@ void AppearanceConfig::slotChangeFont()
 
 void AppearanceConfig::slotAddStyle()
 {
-	editedItem = 0L;
-	styleEditor = new StyleEditDialog(0L,"style", true);
-	(new QHBoxLayout( styleEditor->editFrame ))->setAutoAdd( true );
-	KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document" );
-	KService::Ptr service = *offers.begin();
-	KLibFactory *factory = KLibLoader::self()->factory( service->library().latin1() );
-	editDocument = static_cast<KTextEditor::Document *>( factory->create( styleEditor->editFrame, 0, "KTextEditor::Document" ) );
+	QString styleName=KInputDialog::getText( i18n("Add Styles - Kopete") , i18n("Enter the name for the new style you want to add") ,
+				QString::null, 0L, this) ;
+	if(styleName.isEmpty())
+		return;
 
-	if(!editDocument)
-		return; //TODO: show an error if the plugin can't be loaded
-
-	// FIXME: Can someone explain me why editDocument has no parent?
-	// Is it a problem in Kate? in the KLibrary system? This is a workaround
-	// for that. That also solves a crash while closing Kopete
-	connect(styleEditor, SIGNAL(destroyed()), editDocument, SLOT(deleteLater()) );
-	// Explanation of the crash (Bug 67494) :
-	// There is a static deleter in the Kate KPart to free some classes. This
-	// one also deletes some Highlight object. And there is another staticDeleter
-	// in Kopete to free the LibLoader, which will free the Kate Library, which
-	// will delete Kate's Document, which will deref some Highlight object
-	// ***BOOM***  (Highlight objects are already deleted)
-	// So this is maybe a problem in Kate. But if we delete object before closing
-	// Kopete, when they are not useful anymore, no problem
-
-	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
-	KTextEditor::editInterface( editDocument )->setText( QString::fromLatin1(
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-		"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
-		"<xsl:output method=\"html\"/>\n"
-		"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>" ) );
-	updateHighlight();
-	styleEditor->show();
-	connect( styleEditor->buttonOk, SIGNAL(clicked()), this, SLOT(slotStyleSaved()) );
-	connect( styleEditor->buttonCancel, SIGNAL(clicked()), styleEditor, SLOT(deleteLater()) );
-	currentStyle = QString::null; //force to update preview;
+	if( addStyle( styleName ,
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
+			"<xsl:output method=\"html\"/>\n"
+			"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>"  ) );
+	{
+		KRun::runURL( KURL(locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) )) , "text/plain");
+		currentStyle = QString::null; //force to update preview;
+	}
 }
 
 void AppearanceConfig::updateHighlight()
@@ -470,8 +457,7 @@ void AppearanceConfig::updateHighlight()
 
 void AppearanceConfig::slotStyleSelected()
 {
-	QString styleName = itemMap[mPrfsChatWindow->styleList->selectedItem()];
-	QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
+	QString filePath = itemMap[mPrfsChatWindow->styleList->selectedItem()];
 	QFileInfo fi( filePath );
 	if(fi.isWritable())
 	{
@@ -529,7 +515,7 @@ void AppearanceConfig::slotCopyStyle()
 
 		if ( !styleName.isEmpty() )
 		{
-			QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ copiedItem ]) );
+			QString stylePath = itemMap[ copiedItem ];
 			addStyle( styleName, fileContents( stylePath ) );
 		}
 	}
@@ -543,14 +529,10 @@ void AppearanceConfig::slotCopyStyle()
 
 void AppearanceConfig::slotEditStyle()
 {
-	slotAddStyle();
 	editedItem = mPrfsChatWindow->styleList->selectedItem();
-	QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ editedItem ]) );
-	QString model = fileContents( stylePath );
-	KTextEditor::editInterface( editDocument )->setText( model );
-	updateHighlight();
-	styleEditor->styleName->setText( editedItem->text() );
-	emitChanged();
+	QString stylePath = itemMap[ editedItem ];
+
+	KRun::runURL(stylePath, "text/plain");
 }
 
 void AppearanceConfig::slotDeleteStyle()
@@ -576,24 +558,25 @@ void AppearanceConfig::slotDeleteStyle()
 	emitChanged();
 }
 
-void AppearanceConfig::slotStyleSaved()
+void AppearanceConfig::slotStyleModified(const QString &filename)
 {
-	if( addStyle( styleEditor->styleName->text(), KTextEditor::editInterface( editDocument )->text() ) )
+	editedItem = mPrfsChatWindow->styleList->selectedItem();
+	QString stylePath = itemMap[ editedItem ];
+
+	if(filename == stylePath)
 	{
-		styleEditor->deleteLater();
+		currentStyle=QString::null;  //force to relead the preview
+		slotUpdatePreview();
+
 		emitChanged();
 	}
-	else //The style has not been saved for a reason or another - don't loose it
-		styleEditor->show();
 }
 
 bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleSheet )
 {
 	bool newStyleName = !mPrfsChatWindow->styleList->findItem( styleName );
-	bool editExistingStyle = (mPrfsChatWindow->styleList->selectedItem() &&
-				 mPrfsChatWindow->styleList->selectedItem()->text()==styleName);
 
-	if ( newStyleName || editExistingStyle )
+	if ( newStyleName )
 	{
 		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
 		QFile out( filePath );
@@ -603,10 +586,12 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 			stream << styleSheet;
 			out.close();
 
+			KDirWatch::self()->addFile(filePath);
+
 			if ( newStyleName )
 			{
 				mPrfsChatWindow->styleList->insertItem( styleName, 0 );
-				itemMap.insert( mPrfsChatWindow->styleList->firstItem(), styleName );
+				itemMap.insert( mPrfsChatWindow->styleList->firstItem(), filePath );
 				mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 				mPrfsChatWindow->styleList->sort();
 			}
@@ -641,7 +626,7 @@ public:
 void AppearanceConfig::slotUpdatePreview()
 {
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
-	if( style && itemMap[ style ] != currentStyle )
+	if( style && style->text() != currentStyle )
 	{
 		KopeteContact *myself = new TestContact( i18n( "Myself" ) );
 		KopeteContact *jack = new TestContact( i18n( "Jack" ) );
@@ -667,7 +652,7 @@ void AppearanceConfig::slotUpdatePreview()
 			.arg( mPrfsColors->linkColor->color().name() ) );
 
 		// Parsing a XSLT message is incredibly slow! that's why I commented out some preview messages
-		QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ style ]) );
+		QString stylePath = itemMap[ style ];
 		d->xsltParser->setXSLT( fileContents(stylePath) );
 		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
 		preview->write( d->xsltParser->transform( msgOut.asXML().toString() ) );
