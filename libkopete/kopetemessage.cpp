@@ -235,15 +235,19 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	}
 
 	QDomElement toNode = d->xmlDoc.createElement( QString::fromLatin1("to") );
-	for( KopeteContact *c = d->to.first(); c; c = d->to.next() )
-	{
-		QDomElement cNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
-		cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
-		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( c->displayName() ) );
-		cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ?
-			QStyleSheet::escape( c->metaContact()->displayName() ) : QStyleSheet::escape( c->displayName() ) );
-		toNode.appendChild( cNode );
-	}
+	///for( KopeteContact *c = d->to.first(); c; c = d->to.next() )
+	//{
+		KopeteContact *c = d->to.first();
+		if( c )
+		{
+			QDomElement cNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
+			cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
+			cNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( c->displayName() ) );
+			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ?
+				QStyleSheet::escape( c->metaContact()->displayName() ) : QStyleSheet::escape( c->displayName() ) );
+			toNode.appendChild( cNode );
+		}
+	//}
 	messageNode.appendChild( toNode );
 
 	QString theBody = body;

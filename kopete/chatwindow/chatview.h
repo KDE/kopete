@@ -19,7 +19,7 @@
 #define __CHATVIEW_H__
 
 #include <qptrdict.h>
-#include <qstringlist.h>
+#include <qvaluelist.h>
 #include <qpair.h>
 #include <ktextedit.h>
 
@@ -370,7 +370,7 @@ private:
 	QPixmap m_iconLight;
 	KCompletion *mComplete;
 	HTMLElement activeElement;
-	QStringList xmlList;
+	QValueList<KopeteMessage> messageList;
 
 	KopeteTabState m_tabState;
 	KRootPixmap *root;

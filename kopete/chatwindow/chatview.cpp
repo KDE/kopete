@@ -256,7 +256,10 @@ void ChatView::save()
 	if ( file.open(IO_WriteOnly) )
 	{
 		QTextStream stream ( &file );
-		stream << QString::fromLatin1("<document>") + xmlList.join( QString::fromLatin1("") ) + QString::fromLatin1("</document>");
+		QString xmlString;
+		for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
+			xmlString += (*it).asXML().toString();
+		stream << QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>");
 		file.close(); // maybe unneeded but I like to close opened files ;)
 	}
 	else
@@ -878,19 +881,19 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	newNode.setInnerHTML( resultHTML );
 
 	chatView->htmlDocument().body().appendChild( newNode );
-	xmlList.append( message.toString() );
+	messageList.append( m );
 
-	if( xmlList.count() >= bufferLen )
+	if( messageList.count() >= bufferLen )
 	{
 		chatView->htmlDocument().body().removeChild( chatView->htmlDocument().body().firstChild() );
 		messageMap.remove( messageMap.begin() );
-		xmlList.pop_front();
+		messageList.pop_front();
 	}
 
 	if( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
-#include <qdatetime.h>
+
 void ChatView::slotRefreshNodes()
 {
 	HTMLElement styleElement = chatView->document().documentElement().firstChild().firstChild();
@@ -899,15 +902,15 @@ void ChatView::slotRefreshNodes()
 	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 
-	kdDebug(14010) << "Begin Transform " << m_captionText.left(10) << ".. " << QTime::currentTime().second() << ":" << QTime::currentTime().msec() << endl;
-	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlList.join( QString::fromLatin1("") ) + QString::fromLatin1("</document>"), KopetePrefs::prefs()->styleContents(), this, SLOT(slotTransformComplete( const QVariant &)) );
+	QString xmlString;
+	for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
+		xmlString += (*it).asXML().toString();
+	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>"), KopetePrefs::prefs()->styleContents(), this, SLOT(slotTransformComplete( const QVariant &)) );
 }
 
 void ChatView::slotTransformComplete( const QVariant &result )
 {
-	kdDebug(14010) << "Transform Complete, Update HTML "  << m_captionText.left(10) << ".. " <<  QTime::currentTime().second() << ":" << QTime::currentTime().msec() << endl;
 	chatView->htmlDocument().body().setInnerHTML( result.toString() );
-	kdDebug(14010) << "Update Complete "  << m_captionText.left(10) << ".. " <<  QTime::currentTime().second() << ":" << QTime::currentTime().msec() << endl;
 
 	if( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
@@ -945,7 +948,7 @@ void ChatView::clear()
 	while( body.hasChildNodes() )
 		body.removeChild( body.childNodes().item( body.childNodes().length() - 1 ) );
 
-	xmlList.clear();
+	messageList.clear();
 }
 
 void ChatView::slotRightClick( const QString &, const QPoint &point )
