@@ -29,6 +29,14 @@ Add an Unknown status to KopeteOnlineStatus for when the status of a contact is 
 the case that they've not authorised you) or unknowable (in the case that your account is offline,
 etc).
 
+The DCOP interface needs to be totally re-done so as to be usefull, and to hopefully not rely on
+display names. Obsolete functions previously used only for DCOP should be removed from KopeteContactList
+where applicable.
+
+The file transfer mechanisms should be available to plugins... ie, a plugin should be able to
+both initiate file transfers, and intercept and possibly cancel file transfer requests, the exact
+same as plugins can ( will ) be able to filter KopeteMessages ( see below ).
+
 Some sort of async message processing API needs to be designed and implemented
 Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
