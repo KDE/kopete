@@ -13,6 +13,7 @@
   *************************************************************************
 */
 
+#include <qdom.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>
@@ -93,7 +94,52 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 
 QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
 {
-	return message.text();
+	QDomDocument doc;
+	QString domError;
+	int errLine = 0, errCol = 0;
+	doc.setContent( message.text(), false, &domError, &errLine, &errCol );
+	if ( !domError.isEmpty() ) //error parsing, do nothing
+	{
+		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "error from dom document conversion: "
+			<< domError << endl;
+		return message.text();
+	}
+	else
+	{
+		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "conversion to dom document successful."
+			<< "looking for font tags" << endl;
+		QDomNodeList fontTagList = doc.elementsByTagName( "font" );
+		if ( fontTagList.count() == 0 )
+		{
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "No font tags found. Returning normal message" << endl;
+			return message.text();
+		}
+		else
+		{
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found font tags. Attempting replacement" << endl;
+			uint numFontTags = fontTagList.count();
+			for ( uint i = 0; i < numFontTags; i++ )
+			{
+				QDomNode fontNode = fontTagList.item(i);
+				QDomElement fontEl;
+				if ( !fontNode.isNull() && fontNode.isElement() )
+					fontEl = fontTagList.item(i).toElement();
+				else 
+					continue;
+				if ( fontEl.hasAttribute( "back" ) )
+				{
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
+					QString backgroundColor = fontEl.attribute( "back" );
+					backgroundColor.insert( 0, "background-color: " );
+					backgroundColor.append( ';' );
+					fontEl.setAttribute( "style", backgroundColor );
+					fontEl.removeAttribute( "back" );
+				}
+			}
+		}
+	}
+	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sanitized message is " << doc.toString();
+	return doc.toString();
 }
 
 KActionMenu* AIMAccount::actionMenu()
