@@ -313,8 +313,10 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// Some clients like Trillian and Kopete itself send a font
 			// name of 'MS Serif' since MS changed the server to
 			// _require_ a font name specified in june 2002.
-			// Handle 'MS Serif' as an empty font name
-			if( !fontName.isEmpty() && fontName != "MS Serif" )
+			// MSN's own client defaults to 'MS Sans Serif', which also
+			// has issues.
+			// Handle 'MS Serif' and 'MS Sans Serif' as an empty font name
+			if( !fontName.isEmpty() && fontName != "MS Serif" && fontName != "MS Sans Serif" )
 			{
 				kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: "
 					<< "Font: '" << fontName << "'" << endl;
