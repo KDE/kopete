@@ -117,12 +117,17 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 	if(msg.direction() != KopeteMessage::Inbound)
 	{
 		kdDebug(14303) << "CryptographyPlugin::slotIncomingMessage: inbound messages" <<endl;
-		if(m_cachedMessages.contains(body))
-		{
-			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(m_cachedMessages[body])+"</td></tr></table>"
-				,KopeteMessage::RichText);
-			m_cachedMessages.remove(body);
+		QString plainBody;
+		if ( m_cachedMessages.contains( body ) ) {
+			plainBody = m_cachedMessages[ body ];
+			m_cachedMessages.remove( body );
+		} else {
+			plainBody = KgpgInterface::KgpgDecryptText( body, m_prefs->privateKey() );
 		}
+
+		msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(plainBody)+"</td></tr></table>"
+			,KopeteMessage::RichText);
+
 		//if there are too messages in cache, clear the cache
 		if(m_cachedMessages.count()>10)
 			m_cachedMessages.clear();
@@ -159,6 +164,9 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 			key+=" ";
 		key+=strlist.first();
 	}
+	// always encrypt to self, too
+	key += " ";
+	key += m_prefs->privateKey();
 
 	if(key.isEmpty())
 	{
