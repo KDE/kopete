@@ -808,7 +808,7 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;
 	else
-		sendCommand( "CHG", statusToString( status ) + " 268435500 " + escape(m_account->pictureObject()) );
+		sendCommand( "CHG", statusToString( status ) + " 268435492 " + escape(m_account->pictureObject()) );
 }
 
 void MSNNotifySocket::changePublicName(  QString publicName, const QString &handle )
