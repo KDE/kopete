@@ -97,6 +97,8 @@ private:
 	QTime m_awayMessageTime;
 
 	QLabel *m_image;
+	
+	bool sent;
 
 
 signals:

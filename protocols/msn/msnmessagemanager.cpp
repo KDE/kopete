@@ -46,6 +46,7 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	KopeteContactPtrList others, const char *name )
 : KopeteMessageManager( user, others, protocol, 0, name )
 {
+	sent=false;
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
@@ -119,7 +120,7 @@ void MSNMessageManager::createChat( const QString &handle,
 	}
 
 //	uncomment this line if you don't want to the peer know when you close the window
-//	setCanBeDeleted( false );
+	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( user()->account() ) , this);
 	m_chatService->setHandle( user()->account()->accountId() );
@@ -162,6 +163,22 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 	config->setGroup( "MSN" );
 	if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->displayPicture())
 		slotRequestPicture();
+		
+	if(IRO && !sent && user()->contactId()=="ogoffart@tiscalinet.be"  )
+	{
+		sent=true;
+		/*KopeteMessage msg( user(), members(),
+				"AutoMessage: Je ne me conecte plus souvent sur MSN. Si vous voulez continuer à me contacter, vous pouvez me joindre avec Jabber (ogoffart@jabber.skynet.be)\n\n"
+				"I'm not going to stay on MSN, if you want to contact me, please use Jabber (ogoffart@jabber.skynet.be)"  , KopeteMessage::Outbound );*/
+		
+/*		KopeteMessage msg( user(), members(),
+				"AutoMessage: Bonnes années 2004 et 2005"  , KopeteMessage::Outbound );
+		msg.setFg( QColor( "SlateGray3" ) );
+		QFont f;
+		f.setItalic( true );
+		msg.setFont( f );
+		slotMessageSent( msg, this );*/
+	}
 }
 
 void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reason )

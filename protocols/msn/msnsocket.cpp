@@ -448,7 +448,7 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 
 		sendBytes( data2 ) ;
 
-		kdDebug( 14141 ) << k_funcinfo << data2.data() << endl;
+		//kdDebug( 14141 ) << k_funcinfo << data2.data() << endl;
 	}
 
 	if ( addId )
