@@ -519,39 +519,72 @@
                                     <string>&lt;qt&gt;&lt;p align="center"&gt;&lt;font color="#ff0000"&gt;These options affect &lt;b&gt;all&lt;/b&gt; Gadu-Gadu accounts.&lt;/font&gt;&lt;/p&gt;&lt;/qt&gt;</string>
                                 </property>
                             </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>optionOverrideDCC</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Override default configuration</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+O</string>
+                                </property>
+                            </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout41</cstring>
+                                    <cstring>layout33</cstring>
                                 </property>
-                                <grid>
+                                <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QSpinBox" row="1" column="1">
+                                    <widget class="QLayoutWidget">
                                         <property name="name">
-                                            <cstring>dccPort</cstring>
+                                            <cstring>layout32</cstring>
                                         </property>
-                                        <property name="maxValue">
-                                            <number>65535</number>
-                                        </property>
-                                        <property name="value">
-                                            <number>8010</number>
-                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="spacing">
+                                                <number>3</number>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel2</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Local &amp;IP address /</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>ipAddress</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel2_3</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Po&amp;rt:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>dccPort</cstring>
+                                                </property>
+                                            </widget>
+                                        </hbox>
                                     </widget>
-                                    <widget class="QLabel" row="0" column="0">
+                                    <widget class="KRestrictedLine">
                                         <property name="name">
-                                            <cstring>textLabel2</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Local &amp;IP address:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
                                             <cstring>ipAddress</cstring>
                                         </property>
-                                    </widget>
-                                    <widget class="KRestrictedLine" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>ipAddress</cstring>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="sizePolicy">
                                             <sizepolicy>
@@ -565,64 +598,21 @@
                                             <string>0.0.0.0</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="1" column="0">
+                                    <widget class="QSpinBox">
                                         <property name="name">
-                                            <cstring>textLabel2_3</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Local Po&amp;rt:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
                                             <cstring>dccPort</cstring>
                                         </property>
-                                    </widget>
-                                </grid>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout39</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer5</cstring>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+                                        <property name="maxValue">
+                                            <number>65535</number>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>369</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>dccSetDefaults</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Reset to &amp;Default</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+D</string>
+                                        <property name="value">
+                                            <number>8010</number>
                                         </property>
                                     </widget>
                                 </hbox>
-                            </widget>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel5</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Fancy description</string>
-                                </property>
                             </widget>
                         </vbox>
                     </widget>
@@ -672,6 +662,30 @@
         <receiver>passwordText</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>optionOverrideDCC</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideDCC</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ipAddress</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideDCC</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel2_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideDCC</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>dccPort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>loginEdit_</tabstop>
@@ -684,9 +698,9 @@
     <tabstop>dccCheck_</tabstop>
     <tabstop>useTls_</tabstop>
     <tabstop>nickName</tabstop>
+    <tabstop>optionOverrideDCC</tabstop>
     <tabstop>ipAddress</tabstop>
     <tabstop>dccPort</tabstop>
-    <tabstop>dccSetDefaults</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
