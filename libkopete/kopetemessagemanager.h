@@ -147,6 +147,11 @@ signals:
 	void contactRemoved(const KopeteContact *);
 
 	/**
+	 * The name of the chat is changed
+	 */
+	void chatNameChanged();
+
+	/**
 	 * The user is typing a message
 	 */
 	void typingMsg( bool isTyping );

@@ -90,6 +90,9 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
 
+	for ( KopeteContact *contact = d->mContactList.first(); contact; contact = d->mContactList.next() )
+		connect (contact->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
+
 	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
@@ -653,12 +656,15 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 			kdDebug(14010) << k_funcinfo << old->displayName() << " left and " << c->displayName() << " joined " <<endl;
 			d->mContactList.remove(old);
 			d->mContactList.append(c);
+			disconnect (old->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
+			connect (c->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
 			emit contactAdded(c);
 			emit contactRemoved(old);
 		}
 		else
 		{
 			kdDebug(14010) << k_funcinfo << "Contact Joined session : " <<c->displayName() <<endl;
+			connect (c->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
 			d->mContactList.append(c);
 			emit contactAdded(c);
 		}
@@ -679,6 +685,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 	else
 	{
 		d->mContactList.remove( c );
+		disconnect (c->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
 	}
 	emit contactRemoved(c);
 }
