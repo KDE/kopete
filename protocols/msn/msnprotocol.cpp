@@ -45,11 +45,15 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 
 	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
 	new MSNPreferences(protocolIcon, this);
+	
+	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
+	engine = new MSN;
+	connect(engine, SIGNAL(connectedToMsn(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	kdDebug() << "MSN Protocol Plugin: Done\n";
 
-	
-	/** Autoconnect if is selected in config */
 	KGlobal::config()->setGroup("MSN");
+
+	/** Autoconnect if is selected in config */
 	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
 	{
 		Connect();
@@ -86,15 +90,42 @@ bool MSNProtocol::unload()
 
 void MSNProtocol::Connect()
 {
-	KGlobal::config()->setGroup("MSN");
-	kdDebug() << "Attempting to connect to MSN" << endl;
-	kdDebug() << "Setting Monopoly mode..." << endl;
-	kdDebug() << "Using Micro$oft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password " << KGlobal::config()->readEntry("Password", "") << endl;
+	if ( !isConnected() )
+	{
+		KGlobal::config()->setGroup("MSN");
+		kdDebug() << "Attempting to connect to MSN" << endl;
+		kdDebug() << "Setting Monopoly mode..." << endl;
+		kdDebug() << "Using Micro$oft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password " << KGlobal::config()->readEntry("Password", "") << endl;
+		KGlobal::config()->setGroup("MSN");
+
+		engine->setUser(KGlobal::config()->readEntry("UserID", "")
+			,KGlobal::config()->readEntry("Password", "")
+			,KGlobal::config()->readEntry("Nick", "")
+			);
+		engine->slotConnect();
+	}
+	else
+	{
+    	kdDebug() << "MSN Plugin: Ignoring Connect request (Already Connected)" << endl;
+	}	
 }
+
+void MSNProtocol::Disconnect()
+{
+	if ( isConnected() )
+	{
+		engine->slotDisconnect();
+	}
+	else
+	{
+    	kdDebug() << "MSN Plugin: Ignoring Disconnect request (Im not Connected)" << endl;
+	}	
+}
+
 
 bool MSNProtocol::isConnected()
 {
-	return false;	
+	return engine->isConnected;	
 }
 
 /** This i used for al protocol selection dialogs */
@@ -121,10 +152,26 @@ void MSNProtocol::initIcons()
 	onlineIcon = QPixmap(loader->loadIcon("msn_online", KIcon::User));
 	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
 }
-/*
+
+/** No descriptions */
 void MSNProtocol::slotConnected()
 {
-	statusBarIcon->setPixmap(onlineIcon);
+		statusBarIcon->setPixmap(&onlineIcon);
 }
-*/
 
+void MSNProtocol::slotDisconnected()
+{
+		statusBarIcon->setPixmap(&offlineIcon);
+}
+
+void MSNProtocol::slotConnectedToMSN(bool c)
+{
+		if (c)
+		{
+			slotConnected();
+		}
+		else
+		{
+			slotDisconnected();
+		}
+}

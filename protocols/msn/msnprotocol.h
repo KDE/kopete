@@ -24,6 +24,7 @@
 #include <statusbaricon.h>
 #include <addcontactpage.h>
 #include <improtocol.h>
+#include <msn.h>
 
 
 /**
@@ -43,14 +44,22 @@ public:
 	virtual QPixmap getProtocolIcon();
 	virtual AddContactPage *getAddContactWidget(QWidget *parent);
 	virtual void Connect();
+	virtual void Disconnect();
 	virtual bool isConnected();
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
+	/** The MSN Engine */
+	MSN *engine;
 private:
 	void initIcons();
 	QPixmap protocolIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
+public slots: // Public slots
+  /** No descriptions */
+  void slotConnected();
+  void slotDisconnected();
+  void slotConnectedToMSN(bool c);		
 };
 
 #endif
