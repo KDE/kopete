@@ -41,12 +41,27 @@
 #include <time.h>
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+/* The following is a mandrake 9 hack. Mandrake 9
+ * doesn't define this 64 bit types (we need GNU C lib
+ * because we use long long and warning - gcc extensions.
+ */
+#if !defined(__u64) && defined(__GNUC__)
+//#warning "defining __u64"
+typedef unsigned long long __u64;
+#endif
+#if !defined(__s64) && defined(__GNUC__)
+//#warning "defining __s64"
+typedef __signed__ long long __s64;
+#endif
 #include <linux/videodev.h>
 
 #define DEF_WIDTH	352
 #define DEF_HEIGHT	288
 #define DEF_QUALITY	50
 #define DEF_CHANGES	5000
+
+#define DEF_POLL_INTERVAL 1500
 
 #define DEF_GAP		60*5 /* 5 minutes */
 
@@ -105,7 +120,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 		m_tookFirst = true;
 		m_wentAway = false;
      
-		m_captureTimer->start( 1000 );
+		m_captureTimer->start( DEF_POLL_INTERVAL );
 		m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
 	}
 }
