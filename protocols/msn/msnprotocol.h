@@ -19,6 +19,7 @@
 #define MSNPROTOCOL_H
 
 #include <improtocol.h>
+#include <qpixmap.h>
 
 /**
   *@author duncan
@@ -28,6 +29,12 @@ class MSNProtocol : public IMProtocol  {
 public: 
 	MSNProtocol();
 	~MSNProtocol();
+	/* Plugin reimplementation */
+	void init();
+	bool unload();
+	/** IMProtocol reimplementation */
+	virtual QPixmap getProtocolIcon();
+	virtual void Connect();
 };
 
 #endif

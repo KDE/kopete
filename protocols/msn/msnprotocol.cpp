@@ -21,3 +21,11 @@ MSNProtocol::MSNProtocol(){
 }
 MSNProtocol::~MSNProtocol(){
 }
+
+void MSNProtocol::Connect()
+{
+}
+/** This i used for al protocol selection dialogs */
+QPixmap MSNProtocol::getProtocolIcon()
+{
+}
