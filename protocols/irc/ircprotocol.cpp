@@ -135,9 +135,17 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		SLOT( slotMotdCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /motd - Shows the message of the day.") );
 		
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("invite"),
+		SLOT( slotInviteCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /invite <nickname> - Invite a user to join a channel.") );
+		
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("raw"),
 		QString::fromLatin1("quote %s"),
 		i18n("USAGE: /raw <command text> - Alias for QUOTE."), KopeteCommandHandler::SystemAlias );
+		
+	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
+		QString::fromLatin1("join %1"),
+		i18n("USAGE: /j <channel> - Alias for JOIN."), KopeteCommandHandler::SystemAlias );
 		
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
 		QString::fromLatin1("join %1"),
@@ -272,8 +280,34 @@ void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *ma
 		{
 			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid channel. Channels must start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager->appendMessage(msg);
-			//TODO: join the user
 		}
+	}
+}
+
+void IRCProtocol::slotInviteCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
+		{
+			KopeteContactPtrList members = manager->members();
+			IRCChannelContact *c = static_cast<IRCChannelContact*>( members.first() );
+			static_cast<IRCAccount*>( manager->account() )->engine()->writeString(
+				QString::fromLatin1("INVITE %1 %2").arg( args ).arg( c->nickName() )
+			);
+		}
+		else
+		{
+			KopeteMessage msg(manager->user(), manager->members(), i18n("You must be a channel operator to do that."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			manager->appendMessage(msg);
+		}
+	}
+	else
+	{
+		KopeteMessage msg(manager->user(), manager->members(), i18n("Please specify a user  to invite."),
+			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		manager->appendMessage(msg);
 	}
 }
 
