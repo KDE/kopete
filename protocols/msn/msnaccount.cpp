@@ -438,10 +438,9 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 		}
 */
 
-		// FIXME: only do it for contact for this account
-		QDictIterator<Kopete::Contact> it( contacts() );
-		for ( ; it.current(); ++it )
-			( *it )->setOnlineStatus( MSNProtocol::protocol()->FLN );
+		setAllContactsStatus( MSNProtocol::protocol()->FLN );
+		// FIXME: give correct disconnect reason
+		disconnected( Manual );
 
 /*
 		m_allowList.clear();
@@ -475,7 +474,10 @@ void MSNAccount::slotNotifySocketClosed()
 	m_notifySocket = 0l;
 	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	if ( password().isWrong() )
-		connect();
+		disconnected( BadUserName );
+	else
+		//FIXME: give correct disconnect reason
+		disconnected( Manual );
 
 #if 0
 	else if ( state == 0x10 ) // connection died unexpectedly
