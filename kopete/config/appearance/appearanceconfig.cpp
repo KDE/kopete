@@ -310,12 +310,12 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
 	QString themeName = mPrfsEmoticons->icon_theme_list->currentText();
 	QFileInfo fileInf(KGlobal::dirs()->findResource("data",
-		"kopete/pics/emoticons/"+themeName+"/"));
+		"kopete/pics/emoticons/"+themeName+"/"));	
 	mPrfsEmoticons->btnRemoveTheme->setEnabled( fileInf.isWritable() );
 
 	KopeteEmoticons emoticons( themeName );
 	QStringList smileys = emoticons.picList();
-	QString newContentText("<qt>");
+	QString newContentText = "<qt>";
 
 	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
 		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
@@ -441,9 +441,6 @@ void AppearanceConfig::slotImportStyle()
 			if ( KopeteXSLT( styleSheet ).isValid() )
 			{
 				QFileInfo fi( stylePath );
-
-				// FIXME: Isn't it better to copy the style to $KDEHOME/share/apps/kopete/styles
-				//        using locateLocal() - Martijn
 				addStyle( fi.fileName().section( '.', 0, 0 ), styleSheet );
 			}
 			else
@@ -610,7 +607,8 @@ void AppearanceConfig::slotUpdatePreview()
 			.arg( mPrfsColors->linkColor->color().name() ) );
 
 		// Parsing a XSLT message is incredibly slow! that's why I commented out some preview messages
-		d->xsltParser->setXSLT( fileContents( itemMap[ style ] ) );
+		QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ style ]) );
+		d->xsltParser->setXSLT( fileContents(stylePath) );
 		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
 		preview->write( d->xsltParser->transform( msgOut.asXML().toString()) );
 		msgIn.setFg( QColor( "DodgerBlue" ) );
