@@ -88,6 +88,8 @@ public:
 	void maybeTip( const QPoint &pos );
 
 private:
+	QString idleTime2String( int seconds );
+private:
 	KopeteContactListView *m_listView;
 };
 
@@ -146,8 +148,8 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
 				contact->onlineStatus().iconFor( contact ).convertToImage() );
 
-			if ( contact->idleTime() != 0 )
-				toolTip += i18n( "<br>Idle: %1'%2" ).arg( contact->idleTime() / 60 ).arg( contact->idleTime() % 60 );
+			if( contact->idleTime() > 0 )
+				toolTip += idleTime2String(contact->idleTime());
 
 			if ( !contact->statusDescription().isNull() )
 				toolTip += i18n( "<br><blockquote>%1</blockquote>" ).arg( contact->statusDescription() );
@@ -165,8 +167,8 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
 				SmallIcon( mc->statusIcon() ).convertToImage() );
 
-			if( mc->idleTime() != 0 )
-				toolTip += i18n( "<br>Idle: %1'%2" ).arg( mc->idleTime() / 60 ).arg( mc->idleTime() % 60 );
+			if( mc->idleTime() > 0 )
+				toolTip += idleTime2String(mc->idleTime());
 
 			// Adjust the item rect on the right
 			uint first = metaLVI->firstContactIconX();
@@ -191,6 +193,18 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 	//kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: " << itemRect << ", tooltip:  " << toolTip << endl;
 	tip( itemRect, toolTip );
+}
+
+QString KopeteContactListViewToolTip::idleTime2String( int idleSeconds )
+{
+	int days, hours, mins, secs, left;
+	days = idleSeconds / (60*60*24);
+	left = idleSeconds % (60*60*24);
+	hours = left / (60*60);
+	left = left % (60*60);
+	mins = left / 60;
+	secs = left % 60;
+	return i18n( "<br>Idle: %1d %2h %3m %4s" ).arg( days ).arg( hours ).arg( mins ).arg( secs );
 }
 
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
