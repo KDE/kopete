@@ -15,6 +15,7 @@
 
 #include <qvaluelist.h>
 
+#include "eventtransfer.h"
 #include "task.h"
 
 class Transfer;
@@ -26,6 +27,7 @@ Q_OBJECT
 		EventTask( Task *parent );
 	protected:
 		bool forMe( Transfer * transfer ) const;
+		void addEventCode( EventTransfer::Event e );
 	private:
 		QValueList<int> m_eventCodes;
 };

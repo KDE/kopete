@@ -11,8 +11,6 @@
 //
 
 #include "gwfield.h"
-#include "eventtransfer.h"
-
 #include "eventtask.h"
 
 EventTask::EventTask( Task * parent )
@@ -20,15 +18,21 @@ EventTask::EventTask( Task * parent )
 {
 }
 
+void EventTask::addEventCode( EventTransfer::Event e )
+{
+	m_eventCodes.append( e );
+}
+
 bool EventTask::forMe( Transfer * transfer ) const
 {
-	// see if we can down-cast transfer to a Response
+	// see if we can down-cast transfer to an EventTransfer
 	EventTransfer * event = dynamic_cast<EventTransfer *>(transfer);
 	if ( event )
 	{
 		// see if we are supposed to handle this kind of event
 		// consider speeding this up by having 1 handler per event
-		return ( m_eventCodes.find( event->eventType() ) != m_eventCodes.end() );
+		qDebug( "EventTask::forMe - do I handle event %i?", event->event() );
+		return ( m_eventCodes.find( event->event() ) != m_eventCodes.end() );
 	}
 	return false;
 }

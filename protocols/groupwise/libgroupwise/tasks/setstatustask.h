@@ -12,6 +12,7 @@
 #ifndef SETSTATUSTASK_H
 #define SETSTATUSTASK_H
 
+#include "gwerror.h"
 #include "requesttask.h"
 
 /**
@@ -22,7 +23,7 @@ class SetStatusTask : public RequestTask
 Q_OBJECT
 public:
 	SetStatusTask(Task* parent);
-	void status( const uint newStatus, const QString &awayMessage, const QString &autoReply );
+	void status( GroupWise::Status newStatus, const QString &awayMessage, const QString &autoReply );
 	void onGo();
 	~SetStatusTask();
 };

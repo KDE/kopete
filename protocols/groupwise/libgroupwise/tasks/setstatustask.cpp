@@ -25,9 +25,9 @@ SetStatusTask::~SetStatusTask()
 {
 }
 
-void SetStatusTask::status( const uint newStatus, const QString &awayMessage, const QString &autoReply )
+void SetStatusTask::status( GroupWise::Status newStatus, const QString &awayMessage, const QString &autoReply )
 {
-	if ( newStatus > NM_STATUS_INVALID )
+	if ( newStatus > GroupWise::Invalid )
 	{
 		setError( 1, "Invalid Status" );
 		return;

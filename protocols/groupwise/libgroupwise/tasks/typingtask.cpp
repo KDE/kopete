@@ -31,7 +31,7 @@ void TypingTask::typing( const QString & conferenceGuid, const bool typing )
 {
 	Field::FieldList typingNotification, outgoingList;
 	typingNotification.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, conferenceGuid ) );
-	typingNotification.append( new Field::SingleField( NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, QString::number( typing ? NMEVT_USER_TYPING : NMEVT_USER_NOT_TYPING ) ) );
+	typingNotification.append( new Field::SingleField( NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, QString::number( typing ? UserTyping : UserNotTyping ) ) );
 	outgoingList.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, typingNotification ) );
 	QCString command = "sendtyping";
 	Request * typingRequest = client()->requestFactory()->request( command );
