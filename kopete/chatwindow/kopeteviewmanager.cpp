@@ -45,6 +45,7 @@ struct KopeteViewManagerPrivate
 
 	bool useQueue;
 	bool raiseWindow;
+	bool foreignMessage;
 };
 
 KopeteViewManager *KopeteViewManager::s_viewManager = 0L;
@@ -61,6 +62,7 @@ KopeteViewManager::KopeteViewManager() : QObject( kapp, "KopeteViewManager" )
 {
 	d = new KopeteViewManagerPrivate;
 	d->activeView = 0L;
+	d->foreignMessage=false;
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
 	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType  ) ) ,
 		this, SLOT (slotRequestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType  )));
@@ -85,7 +87,7 @@ void KopeteViewManager::slotPrefsChanged()
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 }
 
-KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool foreignMessage, KopeteMessage::MessageType type )
+KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*foreignMessage*/, KopeteMessage::MessageType type )
 {
 	if( d->eventMap.contains( manager ) )
 	{
@@ -115,9 +117,10 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool foreign
 		}
 		else
 		{
-			newView = new KopeteEmailWindow( manager, foreignMessage );
+			newView = new KopeteEmailWindow( manager, d->foreignMessage );
 			newViewWidget = newView->mainWidget();
 		}
+		d->foreignMessage=false;
 
 		d->managerMap.insert( manager, newView );
 
@@ -140,7 +143,8 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
-		view( manager, outgoingMessage )->messageReceived( msg );
+		d->foreignMessage=!outgoingMessage;
+		manager->view(true)->messageReceived( msg );
 
 		if ( !outgoingMessage && d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
 		{
@@ -193,9 +197,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoingMessage )
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
-	KopeteView *thisView = view( manager, !outgoingMessage );
-
+//	kdDebug( 14000 ) << k_funcinfo << endl;
+	d->foreignMessage=!outgoingMessage;
+	KopeteView *thisView = manager->view( true );
  	if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow )
 		thisView->raise();
 
