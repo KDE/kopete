@@ -464,15 +464,15 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	binHeader[25]=(int)size/256;
 
 	//Ack sessionID
-	/*binHeader[32]=(char)(rand()%256);
+	binHeader[32]=(char)(rand()%256);
 	binHeader[33]=(char)(rand()%256);
 	binHeader[34]=(char)(rand()%256);
-	binHeader[35]=(char)(rand()%256);*/
+	binHeader[35]=(char)(rand()%256);
 
-	binHeader[32]=0xDE;
+	/*binHeader[32]=0xDE;
 	binHeader[33]=0xC7;
 	binHeader[34]=0x07;
-	binHeader[35]=0x14;
+	binHeader[35]=0x14;*/
 
 
 	//merge all in a unique message
@@ -487,7 +487,7 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 		data[messageHeader.length()+binHeader.size()+dataMessage.size()+f]='\0';
 
 	if(transferStarted)
-	{ //then, the footer ends with \1
+	{ //then, the footer ends with \1  (only for display pictures)
 		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\1';
 	}
 
@@ -650,14 +650,16 @@ void MSNP2P::abortCurrentTransfer()
 	{
 		delete m_Rfile;
 		m_Rfile=0L;
+		
+		//this need to be reseted before sending the BYE message.
+		m_totalDataSize=0;
+		m_offset=0;
 
 		//FIXME: i'm not sure it's like that i should abort the transfer.
-		makeMSNSLPMessage(BYE, QString::null );
+		makeMSNSLPMessage(BYE, "\r\n\r\n" );
 
 		m_sessionId=0;
 		m_msgIdentifier=0;
-		m_totalDataSize=0;
-		m_offset=0;
 	}
 }
 
