@@ -139,15 +139,15 @@ void KopeteMessage::setFont( const QFont &font )
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
 {
 	detach();
-	if( d->direction == Outbound && body.startsWith( QString::fromLatin1( "/me " ) ) )
+	/*if( d->direction == Outbound && body.startsWith( QString::fromLatin1( "/me " ) ) )
 	{
 		d->body = body.section( QString::fromLatin1( " " ), 1 ).prepend(
 			QString::fromLatin1( " " ) ).prepend( d->from->displayName() ).prepend( QString::fromLatin1( "*" ) );
 	}
 	else
-	{
+	{*/
 		d->body = body;
-	}
+	//}
 
 	d->format = f;
 }

@@ -20,6 +20,7 @@
 #define __KOPETECONTACT_H__
 
 #include <qobject.h>
+#include <kurl.h>
 
 class KopeteContactPrivate;
 
@@ -369,7 +370,7 @@ public slots:
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
 	 *                file size (such as over  asocket
 	 */
-	virtual void sendFile( const KURL &sourceURL, const QString &fileName = QString::null, uint fileSize = 0L );
+	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
 
 protected:
 	/**
