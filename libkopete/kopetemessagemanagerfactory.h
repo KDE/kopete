@@ -57,6 +57,14 @@ public:
 	 * Get a list of all open sessions
 	 */
 	static const KopeteMessageManagerList& sessions();
+	/**
+	 * Get a list of all open sessions  for a protocol
+	 */
+	KopeteMessageManagerList protocolSessions( KopeteProtocol *);
+	/**
+	  *	Clean sessions for a protocol
+	  */
+	void cleanSessions( KopeteProtocol *);
 
 protected slots:
 	void slotRemoveSession( KopeteMessageManager *session );

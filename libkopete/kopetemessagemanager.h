@@ -115,7 +115,7 @@ signals:
 
 public slots:
 	void readModeChanged();
-	
+	void slotSendEnabled( bool );
 protected slots:
 	void cancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
@@ -142,6 +142,7 @@ private:
 	enum WidgetType mWidget;
 	QMap<const KopeteContact *, QStringList> resources;
 	KopeteProtocol *mProtocol;
+	bool mSendEnabled;
 };
 
 #endif

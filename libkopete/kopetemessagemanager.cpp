@@ -32,7 +32,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 		KopeteProtocol *protocol, QString logFile, enum WidgetType widget,
 		QObject *parent, const char *name) : QObject( parent, name)
 {
-
+    mSendEnabled = true;
 	mContactList = others;
 	mUser = user;
 	mChatWindow = 0L;
@@ -59,8 +59,19 @@ KopeteMessageManager::~KopeteMessageManager()
 	emit dying(this);
 }
 
+void KopeteMessageManager::slotSendEnabled( bool e )
+{
+	mSendEnabled = e;
+	if ( mChatWindow )
+	{
+		mChatWindow->setSendEnabled(e);
+	}	
+}
+
 void KopeteMessageManager::newChatWindow() {
 	mChatWindow = new KopeteChatWindow();
+	mChatWindow->setSendEnabled( mSendEnabled);	
+
 	if (mContactList.first() != 0L)
 		mChatWindow->setCaption(mContactList.first()->name()); //TODO: add multi-user support
 	/* When the window is shown, we have to delete this contact event */

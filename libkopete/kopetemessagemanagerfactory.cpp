@@ -113,5 +113,30 @@ void KopeteMessageManagerFactory::slotRemoveSession( KopeteMessageManager *sessi
 	(mSessionList).remove(session);
 }
 
+KopeteMessageManagerList KopeteMessageManagerFactory::protocolSessions( KopeteProtocol *protocol)
+{
+	KopeteMessageManager *tmpKmm;
+	KopeteMessageManagerList this_protocol_sessions;
+	for ( tmpKmm = mSessionList.first(); tmpKmm ; tmpKmm = mSessionList.next() )
+	{
+		if ( tmpKmm->protocol() == protocol )
+		{
+			this_protocol_sessions.append(tmpKmm);
+		}
+	}
+	return this_protocol_sessions;
+}
+
+void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol)
+{
+	KopeteMessageManager *tmpKmm;
+	KopeteMessageManagerList protocol_sessions = protocolSessions( protocol );
+	for ( tmpKmm = protocol_sessions.first(); tmpKmm ; tmpKmm = protocol_sessions.next() )
+	{
+			slotRemoveSession(tmpKmm);
+	}
+}
+
+
 // vim: set noet ts=4 sts=4 sw=4:
 
