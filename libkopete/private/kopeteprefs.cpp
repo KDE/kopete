@@ -132,6 +132,8 @@ void KopetePrefs::load()
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
 	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
+	mContactListAnimation = config->readBoolEntry("AnimateContactListChanges", true);
+	mContactListFading = config->readBoolEntry("FadeContactListItems", true);
 	
 	//Load the reconnection setting
 	config->setGroup("General");
@@ -199,6 +201,8 @@ void KopetePrefs::save()
 	config->writeEntry("NormalFont", mContactListNormalFont);
 	config->writeEntry("SmallFont", mContactListSmallFont);
 	config->writeEntry("GroupNameColor", mContactListGroupNameColor);
+	config->writeEntry("AnimateContactListChanges", mContactListAnimation);
+	config->writeEntry("FadeContactListItems", mContactListFading);
 	
 	//Save the reconnection setting
 	config->setGroup("General");
