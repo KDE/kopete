@@ -1,388 +1,395 @@
  /*
-    oscarsocket.h  -  Oscar Protocol Implementation
+ oscarsocket.h  -  Oscar Protocol Implementation
 
-    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+ Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+ Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
-    *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
-*/
+ *************************************************************************
+ *                                                                       *
+ * This program is free software; you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation; either version 2 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ *************************************************************************
+ */
 
-#ifndef OSCARSOCKET_H
-#define OSCARSOCKET_H
+ #ifndef OSCARSOCKET_H
+ #define OSCARSOCKET_H
 
-#include "oscardirectconnection.h"
-#include <qptrlist.h>
-#include <kfileitem.h>
-#include "oncomingsocket.h"
-#include "ssidata.h"
-#include "aimbuddylist.h"
+ #include "oscardirectconnection.h"
+ #include <qptrlist.h>
+ #include <kfileitem.h>
+ #include "oncomingsocket.h"
+ #include "ssidata.h"
+ #include "aimbuddylist.h"
 
-struct FLAP { //flap header
-	BYTE channel;
-	WORD sequence_number;
-	WORD length;
-	bool error;
-};
+ class OscarAccount;
 
-struct SnacPair { //just a group+type pair
-	WORD group;
-	WORD type;
-};
+ struct FLAP { //flap header
+	 BYTE channel;
+	 WORD sequence_number;
+	 WORD length;
+	 bool error;
+ };
 
-struct RateClass { //rate info
-	WORD classid;
-	DWORD windowsize;
-	DWORD clear;
-	DWORD alert;
-	DWORD limit;
-	DWORD disconnect;
-	DWORD current;
-	DWORD max;
-	BYTE unknown[5];
-	QPtrList<SnacPair> members;
-};
+ struct SnacPair { //just a group+type pair
+	 WORD group;
+	 WORD type;
+ };
 
-struct UserInfo { //user info
-	QString sn;
-	int evil;
-	int userclass;
-	unsigned long membersince;
-	unsigned long onlinesince;
-	long capabilities;
-	long sessionlen;
-	int idletime;
-};
+ struct RateClass { //rate info
+	 WORD classid;
+	 DWORD windowsize;
+	 DWORD clear;
+	 DWORD alert;
+	 DWORD limit;
+	 DWORD disconnect;
+	 DWORD current;
+	 DWORD max;
+	 BYTE unknown[5];
+	 QPtrList<SnacPair> members;
+ };
 
-#define OSCAR_SERVER 	"login.oscar.aol.com"
-#define OSCAR_PORT 		5190
-#define OSCAR_OFFLINE	0
-#define OSCAR_ONLINE		1
-#define OSCAR_AWAY		2
+ struct UserInfo { //user info
+	 QString sn;
+	 int evil;
+	 int userclass;
+	 unsigned long membersince;
+	 unsigned long onlinesince;
+	 long capabilities;
+	 long sessionlen;
+	 int idletime;
+ };
 
-#define USERCLASS_TRIAL			0x0001
-#define USERCLASS_UNKNOWN2 	0x0002
-#define USERCLASS_AOL				0x0004
-#define USERCLASS_UNKNOWN4	0x0008
-#define USERCLASS_AIM				0x0010
-#define USERCLASS_AWAY			0x0020
-#define	USERCLASS_ACTIVEBUDDY	0x0400
+ #define OSCAR_SERVER 	"login.oscar.aol.com"
+ #define OSCAR_PORT 		5190
+ #define OSCAR_OFFLINE	0
+ #define OSCAR_ONLINE		1
+ #define OSCAR_AWAY		2
 
-/**Implements the actual communication with the oscar server
-  *@author Tom Linsky
-  */
+ #define USERCLASS_TRIAL			0x0001
+ #define USERCLASS_UNKNOWN2 	0x0002
+ #define USERCLASS_AOL				0x0004
+ #define USERCLASS_UNKNOWN4	0x0008
+ #define USERCLASS_AIM				0x0010
+ #define USERCLASS_AWAY			0x0020
+ #define	USERCLASS_ACTIVEBUDDY	0x0400
 
-class OscarSocket : public OscarConnection  {
-	Q_OBJECT
-public:
-	OscarSocket(const QString &connName, const QByteArray &cookie, QObject *parent=0, const char *name=0);
-	~OscarSocket();
+ /**Implements the actual communication with the oscar server
+ *@author Tom Linsky
+ */
 
-  /** Sends an authorization request to the server */
-  void sendLoginRequest(void);
-  /** encodes a password, outputs to the 3rd parameter */
-  int encodePassword(unsigned char *digest);
-  /** Logs in the user! */
-  void doLogin(const QString &host, int port, const QString &s, const QString &password);
-  /** Gets the rate info from the server */
-  void sendRateInfoRequest(void);
-  /** requests the current user's info */
-  void requestMyUserInfo(void);
-  /** Sets idle time */
-  void sendIdleTime(DWORD time);
-  /** requests ssi data from the server */
-  /*void sendBuddyListRequest(const TAimConfig &);*/
-  /** Sends message to dest */
-  void sendIM(const QString &message, const QString &dest, bool isAuto);
-  /** Requests sn's user info */
-  void sendUserProfileRequest(const QString &sn);
-  /** Sets the away message, makes user away */
-  void sendAway(int, const QString &message);
-  /** Sends someone a warning */
-  void sendWarning(const QString &target, bool isAnonymous);
-  /** Changes a user's password!!!!!! */
-  void sendChangePassword(const QString &newpw, const QString &oldpw);
-  /** Joins the given chat room */
-  void sendChatJoin(const QString &name, const int exchange);
-  /** Sends a request for direct IM */
-  void sendDirectIMRequest(const QString &sn);
-  /** Sends a direct IM denial */
-  void sendDirectIMDeny(const QString &sn);
-  /** Sends a direct IM accept */
-  void sendDirectIMAccept(const QString &sn);
-  /** Sends our capabilities to the server */
-  void sendCapabilities(unsigned long caps);
-  /** Signs the user off */
-  virtual void doLogoff();
-  /** Adds a buddy to the server side buddy list */
-  virtual void sendAddBuddy(const QString &name, const QString &group);
-  /** Adds a group to the server side buddy list */
-  virtual void sendAddGroup(const QString &name);
-  /** Deletes a buddy from the server side buddy list */
-  virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
-  /** Sends the server lots of  information about the currently logged in user */
-  void sendInfo(void);
-  /** Sends the user's profile to the server */
-  void sendMyProfile();
-  /** Sets the user's profile */
-  void setMyProfile(const QString &profile);
-  /** Returns the user's profile */
-  inline QString getMyProfile(void) const { return myUserProfile; };
-  /** Blocks user sname */
-  void sendBlock(const QString &sname);
-  /** Removes the block on user sname */
-  void sendRemoveBlock(const QString &sname);
-	/**
+ class OscarSocket : public OscarConnection  {
+	 Q_OBJECT
+	 public:
+	 OscarSocket(const QString &connName,
+	 const QByteArray &cookie, OscarAccount *account, QObject *parent=0,
+	 const char *name=0);
+	 ~OscarSocket();
+
+	 /** Sends an authorization request to the server */
+	 void sendLoginRequest(void);
+	 /** encodes a password, outputs to the 3rd parameter */
+	 int encodePassword(unsigned char *digest);
+	 /** Logs in the user! */
+	 void doLogin(const QString &host, int port, const QString &s, const QString &password);
+	 /** Gets the rate info from the server */
+	 void sendRateInfoRequest(void);
+	 /** requests the current user's info */
+	 void requestMyUserInfo(void);
+	 /** Sets idle time */
+	 void sendIdleTime(DWORD time);
+	 /** requests ssi data from the server */
+	 /*void sendBuddyListRequest(const TAimConfig &);*/
+	 /** Sends message to dest */
+	 void sendIM(const QString &message, const QString &dest, bool isAuto);
+	 /** Requests sn's user info */
+	 void sendUserProfileRequest(const QString &sn);
+	 /** Sets the away message, makes user away */
+	 void sendAway(bool away, const QString &message=0L);
+	 /** Sends someone a warning */
+	 void sendWarning(const QString &target, bool isAnonymous);
+	 /** Changes a user's password!!!!!! */
+	 void sendChangePassword(const QString &newpw, const QString &oldpw);
+	 /** Joins the given chat room */
+	 void sendChatJoin(const QString &name, const int exchange);
+	 /** Sends a request for direct IM */
+	 void sendDirectIMRequest(const QString &sn);
+	 /** Sends a direct IM denial */
+	 void sendDirectIMDeny(const QString &sn);
+	 /** Sends a direct IM accept */
+	 void sendDirectIMAccept(const QString &sn);
+	 /** Sends our capabilities to the server */
+	 void sendCapabilities(unsigned long caps);
+	 /** Signs the user off */
+	 virtual void doLogoff();
+	 /** Adds a buddy to the server side buddy list */
+	 virtual void sendAddBuddy(const QString &name, const QString &group);
+	 /** Adds a group to the server side buddy list */
+	 virtual void sendAddGroup(const QString &name);
+	 /** Deletes a buddy from the server side buddy list */
+	 virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
+	 /** Sends the server lots of  information about the currently logged in user */
+	 void sendInfo(void);
+	 /** Sends the user's profile to the server */
+	 void sendMyProfile();
+	 /** Sets the user's profile */
+	 void setMyProfile(const QString &profile);
+	 /** Returns the user's profile */
+	 inline QString getMyProfile(void) const { return myUserProfile; };
+	 /** Blocks user sname */
+	 void sendBlock(const QString &sname);
+	 /** Removes the block on user sname */
+	 void sendRemoveBlock(const QString &sname);
+	 /**
 	 * Sends a typing notification to the server
 	 * @param screenName The name of the person to send to
 	 * @param notifyType Type of notify to send
 	 */
-	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
-  /** Initiate a transfer of the given file to the given sn */
-  void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
-  /** Sends a file transfer deny to @sn */
-  void sendFileSendDeny(const QString &sn);
-  /** Accepts a file transfer from sn, returns OscarConnection created */
-  OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
+	 void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
+	 /** Initiate a transfer of the given file to the given sn */
+	 void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
+	 /** Sends a file transfer deny to @sn */
+	 void sendFileSendDeny(const QString &sn);
+	 /** Accepts a file transfer from sn, returns OscarConnection created */
+	 OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
 
-public slots:
-  /** This is called when a connection is established */
-  void OnConnect(void);
-  /** This function is called when there is data to be read */
-  virtual void slotRead(void);
-	
-private: // Private methods
-  /** adds the flap version to the buffer */
-  void putFlapVer(Buffer &buf);
-  /** Reads a FLAP header from the input */
-  FLAP getFLAP(void);
-  /** Sends the output buffer, and clears it */
-  void sendBuf(Buffer &buf, BYTE chan);
-  /**
+	 public slots:
+	 /** This is called when a connection is established */
+	 void OnConnect(void);
+	 /** This function is called when there is data to be read */
+	 virtual void slotRead(void);
+
+	 private: // Private methods
+	 /** adds the flap version to the buffer */
+	 void putFlapVer(Buffer &buf);
+	 /** Reads a FLAP header from the input */
+	 FLAP getFLAP(void);
+	 /** Sends the output buffer, and clears it */
+	 void sendBuf(Buffer &buf, BYTE chan);
+	 /**
 	 * Sends login information, actually logs
 	 * onto the server
 	 */
-  void sendLogin(void);
-  /** Called when a cookie is received */
-  void connectToBos(void);
-  /** Sends the authorization cookie to the BOS server */
-  void sendCookie(void);
-  /** Parses the rate info response */
-  void parseRateInfoResponse(Buffer &inbuf);
-  /**
+	 void sendLogin(void);
+	 /** Called when a cookie is received */
+	 void connectToBos(void);
+	 /** Sends the authorization cookie to the BOS server */
+	 void sendCookie(void);
+	 /** Parses the rate info response */
+	 void parseRateInfoResponse(Buffer &inbuf);
+	 /**
 	 * Tells the server we accept it's communist rate
 	 * limits, even though I have no idea what they mean
 	 */
-  void sendRateAck(void);
-  /** Sends privacy flags to the server  */
-  void sendPrivacyFlags(void);
-  /** parse my user info */
-  void parseMyUserInfo(Buffer &inbuf);
-  /** finds a tlv of type typ in the list */
-  TLV * findTLV(QPtrList<TLV> &l, WORD typ);
-  /**
+	 void sendRateAck(void);
+	 /** Sends privacy flags to the server  */
+	 void sendPrivacyFlags(void);
+	 /** parse my user info */
+	 void parseMyUserInfo(Buffer &inbuf);
+	 /** finds a tlv of type typ in the list */
+	 TLV * findTLV(QPtrList<TLV> &l, WORD typ);
+	 /**
 	 * Parse the server's authorization response
 	 * (which hopefully contains the cookie)
 	 */
-  void parseAuthResponse(Buffer &inbuf);
-  /** The program does this when a key is received */
-  void parsePasswordKey(Buffer &inbuf);
-  /**
+	 void parseAuthResponse(Buffer &inbuf);
+	 /** The program does this when a key is received */
+	 void parsePasswordKey(Buffer &inbuf);
+	 /**
 	 * tells the server that the client is
 	 * ready to receive commands & stuff */
-  void sendClientReady(void);
-  /** Sends versions so that we get proper rate info */
-  void sendVersions(const WORD *families, const int len);
-  /**
+	 void sendClientReady(void);
+	 /** Sends versions so that we get proper rate info */
+	 void sendVersions(const WORD *families, const int len);
+	 /**
 	 * Handles AOL's evil attempt to thwart 3rd
 	 * party apps using Oscar.  It requests a
 	 * segment and offset of aim.exe.  We can
 	 * thwart it with help from the good people
 	 * at Gaim
 	 */
-  void parseMemRequest(Buffer &inbuf);
-  /** parses incoming ssi data */
-  void parseSSIData(Buffer &inbuf);
-  /** Requests the user's SSI rights */
-  void requestBOSRights(void);
-  /** Parses SSI rights data */
-  void parseBOSRights(Buffer &inbuf);
-  /** Parses the server ready response */
-  void parseServerReady(Buffer &inbuf);
-  /** parses server version info */
-  void parseServerVersions(Buffer &inbuf);
-  /** Parses Message of the day */
-  void parseMessageOfTheDay(Buffer &inbuf);
-  /** Requests location rights */
-  void requestLocateRights(void);
-  /** Requests a bunch of information (permissions, rights, my user info, etc) from server */
-  void requestInfo(void);
-  /** adds a mask of the groups that you want to be able to see you to the buffer */
-  void sendGroupPermissionMask(void);
-  /** adds a request for buddy list rights to the buffer */
-  void requestBuddyRights(void);
-  /** adds a request for msg rights to the buffer */
-  void requestMsgRights(void);
-  /** Parses the locate rights provided by the server */
-  void parseLocateRights(Buffer &inbuf);
-  /** Parses buddy list rights from the server */
-  void parseBuddyRights(Buffer &inbuf);
-  /** Parses msg rights info from server */
-  void parseMsgRights(Buffer &inbuf);
-  /** Parses an incoming IM */
-  void parseIM(Buffer &inbuf);
-  /** parses the aim standard user info block */
-  UserInfo parseUserInfo(Buffer &inbuf);
-  /** Activates the SSI list on the server */
-  void sendSSIActivate(void);
-  /** Parses the oncoming buddy server notification */
-  void parseBuddyChange(Buffer &inbuf);
-  /** Parses offgoing buddy message from server */
-  void parseOffgoingBuddy(Buffer &inbuf);
-  /** Parses someone's user info */
-  void parseUserProfile(Buffer &inbuf);
-  /** Handles a redirect */
-  void parseRedirect(Buffer &inbuf);
-  /** Parses a message ack from the server */
-  void parseMsgAck(Buffer &inbuf);
-	/** Parses a minityping notification from server */
-	void parseMiniTypeNotify(Buffer &inbuf);
-  /** Parses a rate change */
-  void parseRateChange(Buffer &inbuf);
-  /** Sends SSI add, modify, or delete request to reuse code */
-  void sendSSIAddModDel(SSI *item, WORD request_type);
-  /** Parses the SSI acknowledgement */
-  void parseSSIAck(Buffer &inbuf);
-	/** Parses a warning notification */
-	void parseWarningNotify(Buffer &inbuf);
-	/** Parses a message sending error */
-	void parseError(Buffer &inbuf);
-	/** Parses a missed message notification */
-	void parseMissedMessage(Buffer &inbuf);
-  /** Request, deny, or accept a rendezvous session with someone
-		type == 0: request
-		type == 1: deny
-		type == 2: accept  */
-  void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType,
-  	const KFileItem *finfo=0L);
-  /** Sends a 0x0013,0x0002 (requests SSI rights information) */
-  void sendSSIRightsRequest(void);
-  /** Sends a 0x0013,0x0004 (requests SSI data?) */
-  void sendSSIRequest(void);
-  /** Parses a 0x0013,0x0003 (SSI rights) from the server */
-  void parseSSIRights(Buffer &inbuf);
-  /** Sends parameters for ICBM messages */
-  void sendMsgParams(void);
-  /** Returns the appropriate server socket, based on the capability flag it is passed. */
-  OncomingSocket * serverSocket(DWORD capflag);
-private slots: // Private slots
-  /** Called when a connection has been closed */
-  void OnConnectionClosed(void);
-  /** Called when the server aknowledges the connection */
-  void OnConnAckReceived(void);
-  /** called when a conn ack is recieved for the BOS connection */
-  void OnBosConnAckReceived(void);
-  /** Called when the server is ready for normal commands */
-  void OnServerReady(void);
-  /** Called on connection to bos server */
-  void OnBosConnect();
-  /** Called when a direct IM is received */
-  void OnDirectIMReceived(QString, QString, bool);
-  /** Called when a direct IM connection suffers an error */
-  void OnDirectIMError(QString, int);
-  /** Called when a direct IM connection bites the dust */
-  void OnDirectIMConnectionClosed(QString);
-  /** Called whenever a direct IM connection gets a typing notification */
-  void OnDirectMiniTypeNotification(QString screenName, int notify);
-  /** Called when a direct connection is set up and ready for use */
-  void OnDirectIMReady(QString name);
-  /** Called when a file transfer begins */
-  void OnFileTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient);
-signals: // Signals
-  /** The server has sent the key with which to encrypt the password */
-  void keyReceived(void);
-  /** The bos server is ready to be sent commands */
-  void serverReady(void);
-  /** A buddy has left */
-  void gotOffgoingBuddy(QString);
-  /** A buddy has arrived! */
-  void gotBuddyChange(UserInfo);
-  /** A user profile has arrived */
-  void gotUserProfile(UserInfo, QString);
-  /** Emitted when the status of the connection changes during login */
-  void connectionChanged(int, QString);
-  /** Emitted when my user info is received */
-  void gotMyUserInfo(UserInfo);
-  /** A buddy list has been received */
-  void gotConfig(AIMBuddyList &);
-  /** emitted when we have recieved an ack from the server */
-  void gotAck(QString, int);
+	 void parseMemRequest(Buffer &inbuf);
+	 /** parses incoming ssi data */
+	 void parseSSIData(Buffer &inbuf);
+	 /** Requests the user's SSI rights */
+	 void requestBOSRights(void);
+	 /** Parses SSI rights data */
+	 void parseBOSRights(Buffer &inbuf);
+	 /** Parses the server ready response */
+	 void parseServerReady(Buffer &inbuf);
+	 /** parses server version info */
+	 void parseServerVersions(Buffer &inbuf);
+	 /** Parses Message of the day */
+	 void parseMessageOfTheDay(Buffer &inbuf);
+	 /** Requests location rights */
+	 void requestLocateRights(void);
+	 /** Requests a bunch of information (permissions, rights, my user info, etc) from server */
+	 void requestInfo(void);
+	 /** adds a mask of the groups that you want to be able to see you to the buffer */
+	 void sendGroupPermissionMask(void);
+	 /** adds a request for buddy list rights to the buffer */
+	 void requestBuddyRights(void);
+	 /** adds a request for msg rights to the buffer */
+	 void requestMsgRights(void);
+	 /** Parses the locate rights provided by the server */
+	 void parseLocateRights(Buffer &inbuf);
+	 /** Parses buddy list rights from the server */
+	 void parseBuddyRights(Buffer &inbuf);
+	 /** Parses msg rights info from server */
+	 void parseMsgRights(Buffer &inbuf);
+	 /** Parses an incoming IM */
+	 void parseIM(Buffer &inbuf);
+	 /** parses the aim standard user info block */
+	 UserInfo parseUserInfo(Buffer &inbuf);
+	 /** Activates the SSI list on the server */
+	 void sendSSIActivate(void);
+	 /** Parses the oncoming buddy server notification */
+	 void parseBuddyChange(Buffer &inbuf);
+	 /** Parses offgoing buddy message from server */
+	 void parseOffgoingBuddy(Buffer &inbuf);
+	 /** Parses someone's user info */
+	 void parseUserProfile(Buffer &inbuf);
+	 /** Handles a redirect */
+	 void parseRedirect(Buffer &inbuf);
+	 /** Parses a message ack from the server */
+	 void parseMsgAck(Buffer &inbuf);
+	 /** Parses a minityping notification from server */
+	 void parseMiniTypeNotify(Buffer &inbuf);
+	 /** Parses a rate change */
+	 void parseRateChange(Buffer &inbuf);
+	 /** Sends SSI add, modify, or delete request to reuse code */
+	 void sendSSIAddModDel(SSI *item, WORD request_type);
+	 /** Parses the SSI acknowledgement */
+	 void parseSSIAck(Buffer &inbuf);
+	 /** Parses a warning notification */
+	 void parseWarningNotify(Buffer &inbuf);
+	 /** Parses a message sending error */
+	 void parseError(Buffer &inbuf);
+	 /** Parses a missed message notification */
+	 void parseMissedMessage(Buffer &inbuf);
+	 /** Request, deny, or accept a rendezvous session with someone
+	 type == 0: request
+	 type == 1: deny
+	 type == 2: accept  */
+	 void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType,
+	 const KFileItem *finfo=0L);
+	 /** Sends a 0x0013,0x0002 (requests SSI rights information) */
+	 void sendSSIRightsRequest(void);
+	 /** Sends a 0x0013,0x0004 (requests SSI data?) */
+	 void sendSSIRequest(void);
+	 /** Parses a 0x0013,0x0003 (SSI rights) from the server */
+	 void parseSSIRights(Buffer &inbuf);
+	 /** Sends parameters for ICBM messages */
+	 void sendMsgParams(void);
+	 /** Returns the appropriate server socket, based on the capability flag it is passed. */
+	 OncomingSocket * serverSocket(DWORD capflag);
+	 private slots: // Private slots
+	 /** Called when a connection has been closed */
+	 void OnConnectionClosed(void);
+	 /** Called when the server aknowledges the connection */
+	 void OnConnAckReceived(void);
+	 /** called when a conn ack is recieved for the BOS connection */
+	 void OnBosConnAckReceived(void);
+	 /** Called when the server is ready for normal commands */
+	 void OnServerReady(void);
+	 /** Called on connection to bos server */
+	 void OnBosConnect();
+	 /** Called when a direct IM is received */
+	 void OnDirectIMReceived(QString, QString, bool);
+	 /** Called when a direct IM connection suffers an error */
+	 void OnDirectIMError(QString, int);
+	 /** Called when a direct IM connection bites the dust */
+	 void OnDirectIMConnectionClosed(QString);
+	 /** Called whenever a direct IM connection gets a typing notification */
+	 void OnDirectMiniTypeNotification(QString screenName, int notify);
+	 /** Called when a direct connection is set up and ready for use */
+	 void OnDirectIMReady(QString name);
+	 /** Called when a file transfer begins */
+	 void OnFileTransferBegun(OscarConnection *con, const QString& file,
+	 const unsigned long size, const QString &recipient);
+	 signals: // Signals
+	 /** The server has sent the key with which to encrypt the password */
+	 void keyReceived(void);
+	 /** The bos server is ready to be sent commands */
+	 void serverReady(void);
+	 /** A buddy has left */
+	 void gotOffgoingBuddy(QString);
+	 /** A buddy has arrived! */
+	 void gotBuddyChange(UserInfo);
+	 /** A user profile has arrived */
+	 void gotUserProfile(UserInfo, QString);
+	 /** Emitted when the status of the connection changes during login */
+	 void connectionChanged(int, QString);
+	 /** Emitted when my user info is received */
+	 void gotMyUserInfo(UserInfo);
+	 /** A buddy list has been received */
+	 void gotConfig(AIMBuddyList &);
+	 /** emitted when we have recieved an ack from the server */
+	 void gotAck(QString, int);
 
-	/**
+	 /**
 	 * Emitted (with new status as parameter) when our status has changed
 	 */
-	void statusChanged( const KopeteOnlineStatus &newStatus );
+	 void statusChanged( const KopeteOnlineStatus &newStatus );
 
-  /** Emitted when the logged in user has been warned
-  		The int is the new warning level.
-    	The QString is the name of the user which warned us (QString::null if anonymous)
-     WARNING: this is emitted every time the server notifies us about our warning level,
-     so natural decreases in level will be signalled.*/
-  void gotWarning(int, QString);
-  /** Emitted when someone has requested a direct IM session with us */
-  void gotDirectIMRequest(QString);
-  /** Emitted when someone has requested to send a file to us */
-  void gotFileSendRequest(QString, QString, QString, unsigned long);
-private: // Private attributes
-  /** The key used to encrypt the password */
-  char * key;
-  /** The user's password */
-  QString pass;
-  /** The authorization cookie */
-  char * mCookie;
-  /** ip address of the bos server */
-  QString bosServer;
-  /** The length of the cookie */
-  WORD cookielen;
-  /** The port of the bos server */
-  int bosPort;
-  /** Stores rate class information */
-  QPtrList<RateClass> rateClasses;
-  /** tells whether we are idle */
-  bool idle;
-  /** Socket for direct connections */
-  OncomingSocket *mDirectIMMgr;
-  /** Socket for file transfers */
-  OncomingSocket *mFileTransferMgr;
-  /** SSI server stored data */
-  SSIData ssiData;
-  /** Socket for direct connections */
-  QSocket * connsock;
-  /** The currently logged in user's profile */
-  QString myUserProfile;
-  /** Tells if we are connected to the server and ready to operate */
-  bool isConnected;
+	 /** Emitted when the logged in user has been warned
+	 The int is the new warning level.
+	 The QString is the name of the user which warned us (QString::null if anonymous)
+	 WARNING: this is emitted every time the server notifies us about our warning level,
+	 so natural decreases in level will be signalled.*/
+	 void gotWarning(int, QString);
+	 /** Emitted when someone has requested a direct IM session with us */
+	 void gotDirectIMRequest(QString);
+	 /** Emitted when someone has requested to send a file to us */
+	 void gotFileSendRequest(QString, QString, QString, unsigned long);
+	 private: // Private attributes
+	 /** The OscarAccount we're assocated with */
+	 OscarAccount *m_account;
+	 /** The key used to encrypt the password */
+	 char * key;
+	 /** The user's password */
+	 QString pass;
+	 /** The authorization cookie */
+	 char * mCookie;
+	 /** ip address of the bos server */
+	 QString bosServer;
+	 /** The length of the cookie */
+	 WORD cookielen;
+	 /** The port of the bos server */
+	 int bosPort;
+	 /** Stores rate class information */
+	 QPtrList<RateClass> rateClasses;
+	 /** tells whether we are idle */
+	 bool idle;
+	 /** Socket for direct connections */
+	 OncomingSocket *mDirectIMMgr;
+	 /** Socket for file transfers */
+	 OncomingSocket *mFileTransferMgr;
+	 /** SSI server stored data */
+	 SSIData ssiData;
+	 /** Socket for direct connections */
+	 QSocket * connsock;
+	 /** The currently logged in user's profile */
+	 QString myUserProfile;
+	 /** Tells if we are connected to the server and ready to operate */
+	 bool isConnected;
 
-signals: // Signals
-  /** Called when an SSI acknowledgement is recieved */
-  void SSIAck();
-  /** emitted when BOS rights are received */
- // void gotBOSRights(WORD,WORD);
-  /** emitted when a buddy gets blocked */
-  void denyAdded(QString);
-  /** emitted when a block is removed on a buddy */
-  void denyRemoved(QString);
- /** Tells when the connection ack has been recieved on channel 1 */
-  void connAckReceived(void);
-  /** emitted when a direct connection has been terminated */
-  void directIMConnectionClosed(QString name);
-};
+	 signals: // Signals
+	 /** Called when an SSI acknowledgement is recieved */
+	 void SSIAck();
+	 /** emitted when BOS rights are received */
+	 // void gotBOSRights(WORD,WORD);
+	 /** emitted when a buddy gets blocked */
+	 void denyAdded(QString);
+	 /** emitted when a block is removed on a buddy */
+	 void denyRemoved(QString);
+	 /** Tells when the connection ack has been recieved on channel 1 */
+	 void connAckReceived(void);
+	 /** emitted when a direct connection has been terminated */
+	 void directIMConnectionClosed(QString name);
+ };
 
-#endif
+ #endif

@@ -24,6 +24,7 @@ extern "C" {
 
 #include "oscarsocket.h"
 #include "oscarprotocol.h"
+#include "oscaraccount.h"
 #include "oncomingsocket.h"
 #include "oscardebugdialog.h"
 #include "oscarsocket.moc"
@@ -193,7 +194,8 @@ static const char *msgerrreason[] = {
 
 static const int msgerrreasonlen = 25;
 
-OscarSocket::OscarSocket( const QString &connName, const QByteArray &cookie, QObject *parent, const char *name)
+OscarSocket::OscarSocket( const QString &connName, const QByteArray &cookie,
+	OscarAccount *account, QObject *parent, const char *name)
     : OscarConnection("unknown", connName, Server, cookie, parent,name)
 {
     connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
@@ -204,6 +206,8 @@ OscarSocket::OscarSocket( const QString &connName, const QByteArray &cookie, QOb
     rateClasses.setAutoDelete(TRUE);
     myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
     isConnected = false;
+	// Save the account we're in
+	m_account = account;
 }
 
 OscarSocket::~OscarSocket(void)
@@ -259,7 +263,7 @@ void OscarSocket::slotRead(void)
 	if(hasDebugDialog()){
 			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 	}
-  
+
 	switch(fl.channel)
 	{
 		case 0x01: //new connection negotiation channel
@@ -463,14 +467,18 @@ void OscarSocket::putFlapVer(Buffer &outbuf)
 
 /** Called when a connection has been closed */
 void OscarSocket::OnConnectionClosed(void)
-{
-    emit statusChanged( OscarProtocol::protocol()->OscarOffline );
+{  // Get the online status
+    KopeteOnlineStatus status =
+	OscarProtocol::protocol()->getOnlineStatus(
+	    OscarProtocol::OFFLINE);
+
+    emit statusChanged( status );
     kdDebug(14150) << "[OSCAR] Connection closed by server" << endl;
     rateClasses.clear();
     isConnected = false;
     if (mDirectIMMgr)
     	delete mDirectIMMgr;
- 		if (mFileTransferMgr)
+ 	if (mFileTransferMgr)
    		delete mFileTransferMgr;
 }
 
@@ -493,7 +501,7 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 		if(hasDebugDialog()){
 				debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
 		}
-		
+
 		outbuf.addFlap(chan);
 		writeBlock(outbuf.getBuf(),outbuf.getLength());
 		outbuf.clear();
@@ -828,7 +836,10 @@ void OscarSocket::sendClientReady(void)
     outbuf.addWord(0x0004);
     outbuf.addWord(0x0001); */
     sendBuf(outbuf,0x02);
-    emit statusChanged( OscarProtocol::protocol()->OscarOnline );
+	KopeteOnlineStatus status =
+		OscarProtocol::protocol()->getOnlineStatus(
+			OscarProtocol::ONLINE);
+    emit statusChanged( status );
     isConnected = true;
 }
 
@@ -1158,7 +1169,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
     QString message;
     WORD msgtype = 0; //used to tell whether it is a direct IM requst, deny, or accept
     DWORD capflag = 0; //used to tell what kind of rendezvous this is
-    OncomingSocket *sockToUse; //used to tell which listening socket to use 
+    OncomingSocket *sockToUse; //used to tell which listening socket to use
     QString fileName; //the name of the file to be transferred (if any)
     long unsigned int fileSize = 0; //the size of the file(s) to be transferred
 
@@ -1388,7 +1399,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 				// Set the appropriate server socket
 				sockToUse = serverSocket(capflag);
-				
+
 				if (msgtype == 0x0000) // initiate
 				{
 					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
@@ -1553,7 +1564,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 
     //NOTE TO TOM: there are a lot of other options that can go here
     // IMPLEMENT THEM!
-    if ( isAuto )                  
+    if ( isAuto )
 		{
 			outbuf.addWord(0x0004);
 			outbuf.addWord(0x0000);
@@ -1664,21 +1675,27 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 }
 
 /** Sets the away message, makes user away */
-void OscarSocket::sendAway(int, const QString &message)
+void OscarSocket::sendAway(bool away, const QString &message)
 {
     static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
     Buffer outbuf;
     outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
-    if (message.length()) //make sure there actually is an away message there
-	{
-	    outbuf.addTLV(0x0003,defencoding.length(),defencoding.latin1());
+    if (away && message)
+	{ // Check to see that we're sending away
+		outbuf.addTLV(0x0003,defencoding.length(),defencoding.latin1());
 	    outbuf.addTLV(0x0004,message.length(),message.local8Bit());
-	    emit statusChanged( OscarProtocol::protocol()->OscarAway );
+		KopeteOnlineStatus status =
+			OscarProtocol::protocol()->getOnlineStatus(
+				OscarProtocol::AWAY);
+		emit statusChanged( status );
 	}
     else
-	{
-	    outbuf.addTLV(0x0004,0,""); //if we send it a tlv with length 0, we become unaway
-	    emit statusChanged( OscarProtocol::protocol()->OscarOnline );
+	{   //if we send it a tlv with length 0, we become unaway
+	    outbuf.addTLV(0x0004,0,"");
+		KopeteOnlineStatus status =
+			OscarProtocol::protocol()->getOnlineStatus(
+				OscarProtocol::ONLINE);
+	    emit statusChanged( status );
 	}
     sendBuf(outbuf,0x02);
 }
@@ -1819,7 +1836,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 		// DEBUG STATEMENT
 		kdDebug(14150) << "[OSCAR] Determining Minitype from user "
 							<< screenName << endl;
-		
+
 		switch(notification){
 		case 0x0000:
 				emit gotMiniTypeNotification(screenName, 0);
@@ -1835,7 +1852,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 		default:
 				kdDebug(14150) << "[OSCAR] MiniType Error: " << notification << endl;
 		}
-				
+
 }
 
 /** Sends our capabilities to the server */
@@ -2057,7 +2074,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     		kdDebug(14150) << "[Oscar] SERVER SOCKET NOT SET UP... returning from sendRendezvous" << endl;
       	emit protocolError(i18n("Error setting up listening socket.  The request will not be send."),0);
 				return;
-			}	
+			}
     	outbuf.addDWord(static_cast<DWORD>(sockToUse->address().ip4Addr())); //8
     	//TLV (type 5)
     	outbuf.addWord(0x0005);
@@ -2065,7 +2082,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     	outbuf.addWord(sockToUse->port()); //6
     	//TLV (type f)
     	outbuf.addTLV(0x000f,0x0000,NULL); //4
-    	
+
    	 if ( finfo )
    	 {
     		outbuf.addWord(0x2711); //2
@@ -2103,16 +2120,16 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 		// get the channel (this isn't used anywhere)
 		/*WORD channel =*/ inbuf.getWord();
 
-		// get user info 
+		// get user info
 		UserInfo u = parseUserInfo(inbuf);
 
-		// get number of missed messages 
+		// get number of missed messages
 		WORD nummissed = inbuf.getWord();
 
 		//the number the aol servers report seems to be one too many
 		nummissed--;
 
-		// get reason for missed messages 
+		// get reason for missed messages
 		WORD reason = inbuf.getWord();
 
 		QString errstring = i18n(
@@ -2151,7 +2168,7 @@ void OscarSocket::sendSSIRightsRequest()
 {
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0002,0x0000,0x00000002);
-	sendBuf(outbuf,0x02);	
+	sendBuf(outbuf,0x02);
 }
 
 /** Sends a 0x0013,0x0004 (requests SSI data?) */
@@ -2209,7 +2226,7 @@ void OscarSocket::sendMsgParams(void)
 	//these are all read-write
 	//flags
 	outbuf.addDWord(0x0000000b);
-	
+
 	//TODO: make these parameters customizable options!
 	//max message length
 	outbuf.addWord(0x1f40);
@@ -2244,7 +2261,7 @@ void OscarSocket::sendBlock(const QString &sname)
 	      << ", bid " << newitem->bid << ", type " << newitem->type
 	      << ", datalength " << newitem->tlvlength << endl;
   sendSSIAddModDel(newitem,0x0008);
-  
+
   // NOTE TO TOM: use snac headers and SSI acks to do this more correctly
   emit denyAdded(sname);
 }
@@ -2333,7 +2350,7 @@ void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyTyp
 			dc->sendTypingNotify(notifyType);
 			return;
 		}
-		
+
 		// Build the buffer
 		Buffer outbuf;
 		// This is header stuff for the SNAC
