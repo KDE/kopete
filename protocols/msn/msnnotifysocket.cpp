@@ -506,7 +506,6 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		/*QString authURL="https://loginnet.passport.com/ppsecure/post.srf?lc=" + rx.cap(1) + "&id=" +rx.cap(2) +"&tw=" +rx.cap(3) +"&cbid=" + rx.cap(2)
 			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=hotmail.com&passwd=" + escape ( m_account->password() ) ;*/
 
-
 		QString authURL = "https://login.passport.com/ppsecure/post.srf?lc=" + rx.cap( 1 ) + "&id=" +
 			rx.cap( 2 ) + "&tw=" + rx.cap( 3 ) + "&cbid=" + rx.cap( 2 ) + "&da=passport.com&login=" +
 			m_account->accountId() + "&domain=passport.com&passwd=";
@@ -525,6 +524,15 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 	}
 	else
 	{
+		if(m_authData.contains("CookiesDisabled"))
+		{
+			disconnect();
+			KMessageBox::error( 0, "Impossible to connect to MSN Network.\n"
+							"Your Web browser options are currently set to disable cookies.\n"
+							"To use .NET Passport, you must enable cookies at least for the passport.com domain", i18n( "MSN Plugin" ) );
+			return;
+		}
+
 		QRegExp rx(/*URL=http://memberservices.passport.net/memberservice.srf*/"\\?did=[0-9]*&(t=[0-9A-Za-z!$*]*&p=[0-9A-Za-z!$*]*)\"");
 		rx.search(m_authData);
 
