@@ -43,7 +43,8 @@
 #include <kurl.h>
 
 #include "kopeteplugin.h"
-
+#include "kopetecontactlist.h"
+#include "kopeteaccountmanager.h"
 
 namespace Kopete
 {
@@ -160,7 +161,16 @@ KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
 
 void PluginManager::shutdown()
 {
-	kdDebug( 14010 ) << k_funcinfo << kdBacktrace() << endl;
+//	kdDebug( 14010 ) << k_funcinfo << kdBacktrace() << endl;
+
+	/* save the contact list now, just in case a change was made very recently
+	   and it hasn't autosaved yet
+	   from a OO point of view, theses lines should not be there, but i don't
+	   see better place -Olivier
+	*/
+	Kopete::ContactList::self()->save();
+	Kopete::AccountManager::self()->save();
+	
 	
 	d->shutdownMode = Private::ShuttingDown;
 	
