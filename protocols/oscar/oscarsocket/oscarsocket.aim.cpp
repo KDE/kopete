@@ -31,7 +31,7 @@ const WORD AIM_MAJOR			= 0x0004;
 const WORD AIM_MINOR			= 0x0008;
 const WORD AIM_POINT			= 0x0000;
 const WORD AIM_BUILD			= 0x0ae6;
-const char AIM_OTHER[]			= { 0x00, 0x00, 0x00, 0xbb };
+const unsigned char AIM_OTHER[]	= { 0x00, 0x00, 0x00, 0xbb };
 const char AIM_COUNTRY[]		= "us";
 const char AIM_LANG[] 			= "en";
 
@@ -57,7 +57,7 @@ void OscarSocket::sendLoginAIM(void)
 	outbuf.addTLV16(0x0018, AIM_MINOR);
 	outbuf.addTLV16(0x0019, AIM_POINT);
 	outbuf.addTLV16(0x001a, AIM_BUILD);
-	outbuf.addTLV(0x0014, 0x0004, AIM_OTHER);
+	outbuf.addTLV(0x0014, 0x0004, reinterpret_cast<const char *>(AIM_OTHER));
 	outbuf.addTLV(0x000f, 0x0002, AIM_LANG);
 	outbuf.addTLV(0x000e, 0x0002, AIM_COUNTRY);
 
