@@ -233,10 +233,10 @@ bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
 		QKeyEvent *event = static_cast<QKeyEvent*>( e );
 		KKey key( event );
 
-// NOTE:
-// shortcut.contains( key ) doesn't work. It was the old way we used to do it, but it is incorrect
-// because if you have a multi-key shortcut then pressing any of the keys in
-// that shortcut individually causes the shortcut to be activated.
+		// NOTE:
+		// shortcut.contains( key ) doesn't work. It was the old way we used to do it, but it is incorrect
+		// because if you have a multi-key shortcut then pressing any of the keys in
+		// that shortcut individually causes the shortcut to be activated.
 
 		if( chatSend->isEnabled() )
 		{
@@ -280,6 +280,20 @@ bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
 					slotHistoryUp();
 					return true;
 				}
+			}
+		}
+
+		if( m_activeView )
+		{
+			if( event->key() == Qt::Key_Prior )
+			{
+				m_activeView->pageUp();
+				return true;
+			}
+			else if( event->key() == Qt::Key_Next )
+			{
+				m_activeView->pageDown();
+				return true;
 			}
 		}
 	}

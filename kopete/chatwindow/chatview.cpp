@@ -529,6 +529,16 @@ void ChatView::setStatus( const QString &status )
 		m_mainWindow->setStatus( status );
 }
 
+void ChatView::pageUp()
+{
+	htmlWidget->scrollBy( 0, -htmlWidget->visibleHeight() );
+}
+
+void ChatView::pageDown()
+{
+	htmlWidget->scrollBy( 0, htmlWidget->visibleHeight() );
+}
+
 void ChatView::nickComplete()
 {
 	int firstSpace, lastSpace, para = 1, parIdx = 1;
@@ -561,6 +571,7 @@ void ChatView::nickComplete()
 			QString rightText = fullText.right( fullText.length() - lastSpace );
 			if( para == 0 && firstSpace == 0 )
 			{
+				m_Match += QString::fromLatin1(": ");
 				rightText = m_Match + QString::fromLatin1(": ");
 				parIdx += 2;
 			}
@@ -1093,7 +1104,7 @@ void ChatView::refreshView()
 
 void ChatView::slotScrollView()
 {
-	chatView->view()->scrollBy( 0, chatView->view()->contentsHeight() );
+	htmlWidget->scrollBy( 0, htmlWidget->contentsHeight() );
 }
 
 void ChatView::setCurrentMessage( const KopeteMessage &message )

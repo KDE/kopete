@@ -214,6 +214,10 @@ public slots:
 	 */
 	void selectAll();
 
+	void pageUp();
+
+	void pageDown();
+
 	/**
 	 * Sets the background color of the entry area, and outgoing messages
 	 * @param newColor The new background color. If this is QColor(), then
