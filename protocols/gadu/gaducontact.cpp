@@ -132,12 +132,7 @@ GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 bool
 GaduContact::isReachable()
 {
-	if ( account_->isConnected() ) {
-		return true;
-	}
-	else { 
-		return false;
-	}
+	account_->isConnected();
 }
 
 QPtrList<KAction>*
