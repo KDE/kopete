@@ -30,6 +30,8 @@ KMSNServiceSocket::KMSNServiceSocket( const QString &msnId )
 {
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
+		
+	m_dispatchSocket = 0L;
 }
 
 KMSNServiceSocket::~KMSNServiceSocket()
@@ -57,6 +59,8 @@ void KMSNServiceSocket::connect( const QString &pwd )
 void KMSNServiceSocket::slotReceivedServer( const QString &server, uint port )
 {
 	MSNAuthSocket::connect( server, port );
+	m_dispatchSocket->deleteLater();
+	m_dispatchSocket = 0L;
 }
 
 void KMSNServiceSocket::disconnect()
@@ -431,6 +435,8 @@ QString KMSNServiceSocket::statusToString( int status ) const
 void KMSNServiceSocket::slotDispatchFailed()
 {
 	emit( onlineStatusChanged( Disconnected ) );
+	m_dispatchSocket->deleteLater();
+	m_dispatchSocket = 0L;
 }
 
 #include "kmsnservicesocket.moc"
