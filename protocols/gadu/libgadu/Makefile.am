@@ -8,6 +8,5 @@ libgadu_copy_la_SOURCES = common.c \
 			  events.c \
 			  http.c \
 			  libgadu.c \
-			  obsolete.c \
 			  pubdir50.c \
 			  pubdir.c
