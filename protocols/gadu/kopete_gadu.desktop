@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-X-Kopete-Version=1000792
+X-Kopete-Version=1000793
 Icon=gadu_protocol
 ServiceTypes=Kopete/Protocol
 X-Kopete-Messaging-Protocol=messaging/gadu

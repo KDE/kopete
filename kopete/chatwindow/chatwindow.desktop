@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 ServiceTypes=Kopete/UI
-X-Kopete-Version=1000792
+X-Kopete-Version=1000793
 X-KDE-Library=kopete_chatwindow
 X-KDE-PluginInfo-Author=Kopete Developers
 X-KDE-PluginInfo-Email=kopete-devel@kde.org
