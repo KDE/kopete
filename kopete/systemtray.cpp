@@ -182,15 +182,32 @@ void KopeteSystemTray::slotBlink()
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
-void KopeteSystemTray::slotNewEvent(KopeteEvent *event)
+void KopeteSystemTray::slotNewEvent( KopeteEvent *event )
 {
 	mEventList.append( event );
-	connect( event , SIGNAL(done(KopeteEvent*)) , this, SLOT(slotEventDone(KopeteEvent*)));
+	connect(event, SIGNAL(done(KopeteEvent*)),
+		this, SLOT(slotEventDone(KopeteEvent*)));
 
-	//balloon
-	addBalloon();
+	if( event->message().manager() != 0 )
+	{
+		if( event->message().manager()->account() )
+		{
+			if( !event->message().manager()->account()->isAway() ||
+				KopetePrefs::prefs()->soundIfAway() )
+			{
+				kdDebug(14000) << k_funcinfo << "adding a balloon" << endl;
+				addBalloon();
+			}
+			else
+			{
+				kdDebug(14000) << k_funcinfo << "Supressing balloon, account is away" << endl;
+			}
+		}
+	}
+	else
+		kdDebug(14000) << k_funcinfo << "NULL message().manager()!" << endl;
 
-	//flash
+	// tray animation
 	if ( KopetePrefs::prefs()->trayflashNotify() )
 		startBlink();
 }

@@ -193,7 +193,7 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 		m_button_send->setEnabled( false );
 		m_button_send->setFont( statusBar()->font() );
 		m_button_send->setFixedHeight( statusBar()->sizeHint().height() );
-		connect( m_button_send, SIGNAL( pressed() ), this, SLOT( slotSendMessage() ) );
+		connect( m_button_send, SIGNAL( clicked() ), this, SLOT( slotSendMessage() ) );
 		statusBar()->addWidget( m_button_send, 0, true );
 	}
 	else
