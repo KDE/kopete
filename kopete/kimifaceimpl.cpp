@@ -29,6 +29,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontactlist.h"
+#include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
@@ -266,11 +267,16 @@ QStringList KIMIfaceImpl::protocols()
 
 void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageText )
 {
-	// TODO: make it possible to specify the message here
-	Q_UNUSED( messageText );
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
-		m->sendMessage();
+	{
+		Kopete::Contact * c = m->preferredContact();
+		Kopete::MessageManager * manager = c->manager(true);
+		c->manager( true )->view( true );
+		Kopete::Message msg = Kopete::Message( manager->user(), manager->members(), messageText,
+				Kopete::Message::Outbound, Kopete::Message::PlainText);
+		manager->sendMessage( msg );
+	}
 	else
 		unknown( uid );
 }
