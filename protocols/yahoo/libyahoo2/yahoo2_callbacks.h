@@ -534,7 +534,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_data_request)(int id, int send);
  * Returns:
  * 	0
  */
-int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char *fmt, ...);
+int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(const char *fmt, ...);
 
 
 

@@ -39,7 +39,7 @@ char *strchr (), *strrchr ();
 
 #include "yahoo_util.h"
 
-char * y_string_append(char * string, char * append)
+char * y_string_append(char * string, const char * append)
 {
 	int size = strlen(string) + strlen(append) + 1;
 	char * new_string = y_renew(char, string, size);
