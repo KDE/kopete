@@ -13,17 +13,22 @@
 #define GWMESSAGEMANAGER_H
 
 #include <qptrqueue.h>
-
 #include <kopetemessage.h>
-
 #include <kopetemessagemanager.h>
 
+#include "gwerror.h"
+
+#include "groupwisemessagemanagerfactory.h"
+
+class GroupWiseAccount;
 /**
 @author SUSE AG
 */
 class GroupWiseMessageManager : public KopeteMessageManager
 {
 Q_OBJECT
+
+friend class GroupWiseMessageManagerFactory;
 public:
 	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id = 0, const char* name = 0);
 	~GroupWiseMessageManager();
@@ -86,8 +91,8 @@ protected slots:
 	void slotSendTypingNotification ( bool typing );
 	void slotMessageSent( KopeteMessage &message, KopeteMessageManager * );
 	// TODO: slots for us leaving conference, us inviting someone, someone joining, someone leaving, someone sending an invitation, getting typing?
-	void slotGotTypingNotification( const ConferenceEvent & );
-	void slotGotNotTypingNotification( const ConferenceEvent & );
+	void slotGotTypingNotification( const GroupWise::ConferenceEvent & );
+	void slotGotNotTypingNotification( const GroupWise::ConferenceEvent & );
 private:
 	QString m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server

@@ -35,7 +35,7 @@ void dump( QStringList & list )
 bool UserDetailsManager::known( const QString & dn )
 {
 	QStringList::Iterator found = m_knownDNs.find( dn );
-	return ( found != m_knownDNs.end() );
+	return ( found != m_knownDNs.end() ) || (dn == m_client->userDN() );
 }
 
 QStringList UserDetailsManager::knownDNs()
@@ -45,9 +45,12 @@ QStringList UserDetailsManager::knownDNs()
 
 void UserDetailsManager::addContact( const QString & dn )
 {
-	m_knownDNs.append( dn );
 	qDebug( "UserDetailsManager::addContact, we now know: " );
+	m_knownDNs.append( dn );
 	dump( m_knownDNs );
+	qDebug( "UserDetailsManager::addContact, pending: " );
+	dump( m_pendingDNs );
+
 }
 
 void UserDetailsManager::removeContact( const QString & dn )
@@ -62,6 +65,9 @@ void UserDetailsManager::requestDetails( const QStringList & dnList )
 	QValueListConstIterator<QString> end = dnList.end();
 	for ( QValueListConstIterator<QString> it = dnList.begin(); it != end; ++it )
 	{
+		// don't request our own details
+		if ( *it == m_client->userDN() )
+			break;
 		QStringList::Iterator found = m_pendingDNs.find( *it );
 		if ( found == m_pendingDNs.end() )
 		{
@@ -74,8 +80,6 @@ void UserDetailsManager::requestDetails( const QStringList & dnList )
 	{
 		GetDetailsTask * gdt = new GetDetailsTask( m_client->rootTask() );
 		gdt->userDNs( requestList );
-//		connect( gdt, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
-//			SLOT( slotReceiveContactDetails( const ContactDetails & ) ) );
 		connect( gdt, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ), 
 			SLOT( slotReceiveContactDetails( const GroupWise::ContactDetails & ) ) );
 		// TODO: connect to gdt's finished() signal, check for failures, expand gdt to maintain a list of not found DNs?
@@ -99,6 +103,9 @@ void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDeta
 {
 	qDebug( "UserDetailsManager::slotReceiveContactDetails()");
 	m_pendingDNs.remove( m_pendingDNs.find( details.dn ) );
+	/*client()->userDetailsManager()->*/
+	addContact( details.dn );
+	emit temporaryContact( details );
 	emit gotContactDetails( details );
 }
 

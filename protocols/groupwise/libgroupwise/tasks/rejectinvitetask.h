@@ -12,7 +12,7 @@
 #ifndef REJECTINVITETASK_H
 #define REJECTINVITETASK_H
 
-#include <requesttask.h>
+#include "requesttask.h"
 
 /**
 Used to reject an invitation to join a conference

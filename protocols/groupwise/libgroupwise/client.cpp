@@ -8,7 +8,10 @@
 #include "tasks/createconferencetask.h"
 #include "tasks/getdetailstask.h"
 #include "tasks/getstatustask.h"
+#include "tasks/joinconferencetask.h"
+#include "tasks/leaveconferencetask.h"
 #include "tasks/logintask.h"
+#include "tasks/rejectinvitetask.h"
 #include "tasks/sendmessagetask.h"
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
@@ -162,13 +165,13 @@ void Client::initialiseEventTasks()
 	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SLOT( ct_messageReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( typing( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( notTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( joined( const ConferenceEvent & ) ), SIGNAL( conferenceJoined( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( joined( const ConferenceEvent & ) ), SIGNAL( conferenceJoinNotifyReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( left( const ConferenceEvent & ) ), SIGNAL( conferenceLeft( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( invited( const ConferenceEvent & ) ), SIGNAL( invitationReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( otherInvited( const ConferenceEvent & ) ), SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( invitationRejected( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
+	connect( d->userDetailsMgr, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
 	// TODO: connect autoreply
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
@@ -229,6 +232,31 @@ void Client::requestDetails( const QStringList & userDNs )
 	connect( gdt, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
 			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) );
 	gdt->go( true );
+}
+
+void Client::joinConference( const QString & guid )
+{
+	JoinConferenceTask * jct = new JoinConferenceTask( d->root );
+	jct->join( guid );
+	connect( jct, SIGNAL( finished() ), SLOT( jct_joinConfCompleted() ) );
+	jct->go( true );
+}
+
+void Client::rejectInvitation( const QString & guid )
+{
+	RejectInviteTask * rit = new RejectInviteTask ( d->root );
+	rit->reject( guid );
+	// we don't do anything with the results of this task
+	rit->go( true );
+}
+
+void Client::leaveConference( const QString & guid )
+{
+	qDebug( "Client::leaveConference()" );
+	LeaveConferenceTask * lct = new LeaveConferenceTask( d->root );
+	lct->leave( guid );
+	//connect( lct, SIGNAL( finished() ), SLOT( lct_leftConference() ) );
+	lct->go( true );
 }
 
 // SLOTS //
@@ -298,6 +326,17 @@ void Client::cct_conferenceCreated()
 		emit conferenceCreationFailed( cct->clientConfId(), cct->statusCode() );
 	}
 }
+
+void Client::jct_joinConfCompleted()
+{
+	const JoinConferenceTask * jct = ( JoinConferenceTask * )sender();
+	qDebug( "Joined conference %s, participants are: ", jct->guid().ascii() );
+	QStringList parts = jct->participants();
+	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
+		qDebug( " - %s", (*it).ascii() );
+	emit conferenceJoined( jct->guid(), jct->participants() );
+}
+
 // INTERNALS //
 
 QString Client::userId()

@@ -73,14 +73,14 @@ Q_OBJECT
 
 		/**
 		 * Send a message 
-		 * Protocol action P11
+		 * Protocol action P10
 		 * @param message contains the text and the recipient.
 		 */
 		void sendMessage( const QStringList & addresseeDNs, const OutgoingMessage & message );
 		  
 		/**
 		 * Send a typing notification
-		 * Protocol action P12
+		 * Protocol action P11
 		 * @param conference The conference where the typing took place.
 		 * @param typing True if the user is now typing, false otherwise.
 		 */
@@ -99,12 +99,12 @@ Q_OBJECT
 		
 		/**
 		 * Add a contact to the contact list
-		 * Protocol action P13 
+		 * Protocol action P12
 		 */
 		 
 		/**
 		 * Remove a contact from the contact list
-		 * Protocol action P14
+		 * Protocol action P13
 		 */
 		
 		/**
@@ -117,6 +117,22 @@ Q_OBJECT
 		 */
 		void createConference( const int clientId, const QStringList & participants );
 		
+		/**
+		 * Join a conference, accepting an invitation 
+		 * Protocol action P7
+		 */
+		void joinConference( const QString & guid );
+
+		/**
+		 * Reject a conference invitation
+		 * Protocol action P8
+		 */
+		void rejectInvitation( const QString & guid );
+		
+		/**
+		 * Leave a conference, notifying 
+		 */
+		void leaveConference( const QString & guid ); 
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -235,7 +251,7 @@ Q_OBJECT
 		 * Someone joined a chat.  They may not be on our contact list if it is a group chat
 		 * and they were invited to join the chat prior to our being invited to join and joining
 		 */
-		void conferenceJoined( const ConferenceEvent & );
+		void conferenceJoinNotifyReceived( const ConferenceEvent & );
 		/**
 		 * Someone left a conference. This may close a conference, see @ref conferenceClosed.
 		 */
@@ -249,6 +265,10 @@ Q_OBJECT
 		 * are no outstanding invitations.
 		 */
 		void conferenceClosed( const ConferenceEvent & );
+		/**
+		 * We joined a conference.
+		 */
+		void conferenceJoined( const QString &, const QStringList & );
 		/**
 		 * We received an "is typing" event in a conference
 		 */
@@ -281,7 +301,8 @@ Q_OBJECT
 		 * Transforms an RTF message into an HTML message and emits messageReceived()
 		 */ 
 		void ct_messageReceived( const ConferenceEvent & );
-		
+		void jct_joinConfCompleted();
+
 		/**
 		 * Used by the client stream to notify errors to upper layers.
 		 */

@@ -42,7 +42,6 @@ signals:
 	void closed( const ConferenceEvent & );
 	void message( const ConferenceEvent &);
 	void autoReply( const ConferenceEvent & );
-	void temporaryContact( const ContactDetails & );
 protected slots:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & );
 protected:

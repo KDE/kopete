@@ -171,8 +171,6 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 {
 	qDebug( "ConferenceTask::slotReceiveUserDetails()" );
 	
-	// emit the details, so anything waiting for them will update itself
-	//client()-›contactUserDetailsReceived(details);
 	// dequeue any events which are deliverable now we have these details 
 	QValueListIterator< ConferenceEvent > end = m_pendingEvents.end();
 	QValueListIterator< ConferenceEvent > it = m_pendingEvents.begin();
@@ -184,7 +182,6 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 		if ( details.dn == (*current).user )
 		{
 			qDebug( " - got details for event involving %s", (*current).user.ascii() );
-			emit temporaryContact( details );
 			switch ( (*current).type )
 			{
 				case GroupWise::ConferenceJoined:
@@ -207,7 +204,7 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 					qDebug( "Queued an event while waiting for more data, but didn't write a handler for the dequeue!" );
 			}
 			m_pendingEvents.remove( current );
-			qDebug( "Event handled - now %i pending events", m_pendingEvents.count() );
+			qDebug( "Event handled - now %u pending events", m_pendingEvents.count() );
 		}
 	}
 }

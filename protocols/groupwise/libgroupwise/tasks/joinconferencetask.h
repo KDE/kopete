@@ -27,9 +27,16 @@ public:
 	~JoinConferenceTask();
 	void join( const QString & guid );
 	bool take( Transfer * transfer );
-	QStringList participants();
+	QStringList participants() const;
+	QString guid() const;
+public slots:
+	void slotReceiveUserDetails( const GroupWise::ContactDetails & details );
+signals:
+	void temporaryContact( const GroupWise::ContactDetails & );
 private:
+	QString m_guid;
 	QStringList m_participants;
+	QStringList m_unknowns;
 };
 
 #endif

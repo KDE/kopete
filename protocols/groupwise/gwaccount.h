@@ -22,6 +22,7 @@
 #define GW_ACCOUNT_H
 
 #include <qvaluelist.h>
+#include <qdict.h>
 
 #include <kopeteaccount.h>
 #include <kopetemessage.h>
@@ -29,6 +30,7 @@
 
 #include "gwerror.h"
 #include "gwfield.h"
+#include "gwmessagemanager.h"
 
 class KActionMenu;
 class KopeteContact;
@@ -36,6 +38,8 @@ class KopeteMetaContact;
 
 class GroupWiseContact;
 class GroupWiseProtocol;
+class GroupWiseMessageManagerFactory;
+
 class KNetworkConnector;
 namespace QCA {
 	class TLS;
@@ -93,6 +97,10 @@ public:
 	 * Utility access to the @ref Client which is the main interface exposed by libgroupwise.
 	 */
 	Client * client() const;
+	/** 
+	 * Utility access to a message manager instance for a given GUID
+	 */
+	GroupWiseMessageManager * messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid );
 	/**
 	 * Create a conference (start a chat) on the server
 	 */
@@ -167,25 +175,29 @@ protected slots:
 	 */
 	void slotLoggedIn();
 	/**
+	 * We joined a conference having accepted an invitation, create a message manager
+	 */
+	void receiveConferenceJoin( const QString & guid, const QStringList & participants );
+	/**
 	 * Someone joined a conference, add them to the appropriate message manager
 	 */
-// 	void receiveConferenceJoined();
+// 	void receiveConferenceJoinNotify( const ConferenceEvent & );
 	/**
 	 * Someone left a conference, remove them from the message manager
 	 */
-// 	void receiveConferenceLeft();
+// 	void receiveConferenceLeft( const ConferenceEvent & );
 	/**
 	 * The user was invited to join a conference
 	 */
-// 	void receiveInvitation();
+ 	void receiveInvitation( const ConferenceEvent & );
 	/**
 	 * Notification that a third party was invited to join conference
 	 */
-// 	void receiveInviteNotify();
+// 	void receiveInviteNotify( const ConferenceEvent & );
 	/**
 	 * Notification that a third party declined an invitation
 	 */
-// 	void receiveInvitationDeclined();
+// 	void receiveInvitationDeclined( const ConferenceEvent & );
 	/**
 	 * A conference was closed by the server because everyone has left or declined invitations
 	 * Prevents any further messages to this conference
@@ -216,7 +228,14 @@ protected slots:
 	void slotCSDisconnected();
 	void slotCSError( int error );
 	void slotCSWarning( int warning );
-
+	
+	// HOUSEKEEPING
+	/**
+	 * We listen for the destroyed() signal and leave any conferences we
+	 * might have been in, and remove it from our map.
+	 */
+	void slotMessageManagerDestroyed( QObject * );
+	
 	/** Debug slots */
 	void slotConnError();
 	void slotConnConnected();
@@ -237,7 +256,8 @@ private:
 	//QMap<unsigned int, KopeteGroup*> m_groupList;
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
-	QValueList<ConferenceEvent> m_pendingEvents; // events for which we need the source's details before we can deal with them
+	//QValueList<ConferenceEvent> m_pendingEvents; // events for which we need the source's details before we can deal with them
+	QDict< GroupWiseMessageManager > m_managers;
 };
 
 #endif

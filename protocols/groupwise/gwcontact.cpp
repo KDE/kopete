@@ -27,11 +27,13 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 
+#include "client.h"
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwfakeserver.h"
 #include "gwmessagemanager.h"
 #include "gwprotocol.h"
+#include "userdetailsmanager.h"
 
 #include "gwcontact.h"
 
@@ -51,6 +53,11 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 
 GroupWiseContact::~GroupWiseContact()
 {
+	// This is necessary because otherwise the userDetailsManager 
+	// would not fetch details for this contact if they contact you
+	// again from off-contact-list.
+	if ( metaContact()->isTemporary() )
+		static_cast< GroupWiseAccount *>( account() )->client()->userDetailsManager()->removeContact( contactId() );
 }
 
 void GroupWiseContact::updateDetails( const ContactDetails & details )
@@ -158,10 +165,10 @@ GroupWiseMessageManager * GroupWiseContact::manager( const QString & guid, bool 
 		{
 			// we've received the first message from a new conference.
 			// create a message manager with the given guid
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - creating a new GroupWiseMessageManager for this guid. " << endl;
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - this GroupWiseMessageManager is new to us. " << endl;
 			KopeteContactPtrList chatMembers;
 			chatMembers.append ( this );
-			mgr = new GroupWiseMessageManager( this, chatMembers, protocol(), guid );
+			mgr = ( static_cast<GroupWiseAccount *>( account() ) )->messageManager( account()->myself(), chatMembers, protocol(), guid );
 			connect( mgr, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotMessageManagerDeleted ( QObject * ) ) );
 			m_msgManagers.insert( guid, mgr );
 		}
@@ -247,6 +254,17 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message )
 	Q_ASSERT( mgr );
 	mgr->appendMessage( *newMessage );
 	delete newMessage;
+}
+
+void GroupWiseContact::joinConference( const QString & guid )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	manager( guid, false );
+}
+
+void GroupWiseContact::leaveConference( const QString & guid )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
 }
 #include "gwcontact.moc"
 

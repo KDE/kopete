@@ -95,7 +95,16 @@ public:
 	 * Find the conversation that this message belongs to, and display it there.
 	 */
 	void handleIncomingMessage( const ConferenceEvent & event );
+	
+	/**
+	 * Add this contact to a conference
+	 */
+	void joinConference( const QString & guid );
 
+	/**
+	 * Remove this contact from a conference
+	 */
+	void leaveConference( const QString & guid );
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 

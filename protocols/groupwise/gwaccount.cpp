@@ -18,11 +18,16 @@
     *************************************************************************
 */
 
+#include <sys/utsname.h>
+
+#include <qdatetime.h>
+
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klineeditdlg.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
@@ -35,6 +40,7 @@
 #include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetepassword.h"
 
@@ -45,9 +51,10 @@
 #include "gwprotocol.h"
 #include "gwclientstream.h"
 #include "gwconnector.h"
+#include "gwmessagemanager.h"
+#include "ui/gwreceiveinvitationdialog.h"
 #include "qcatlshandler.h"
 
-#include <sys/utsname.h>
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
 : Kopete::PasswordedAccount ( parent, accountID, 0, "groupwiseaccount" )
@@ -125,6 +132,18 @@ GroupWiseProtocol *GroupWiseAccount::protocol()
 	return static_cast<GroupWiseProtocol *>( KopeteAccount::protocol() );
 }
 
+GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid )
+{
+	GroupWiseMessageManager * mgr = m_managers[ guid ];
+	if ( !mgr )
+	{
+		mgr = new GroupWiseMessageManager( user, others, protocol, guid );
+		m_managers.insert( guid, mgr );
+		QObject::connect( mgr, SIGNAL( destroyed( QObject * ) ), SLOT( slotMessageManagerDestroyed( QObject * ) ) );
+	}
+	return mgr;
+}
+
 void GroupWiseAccount::setAway( bool away, const QString & reason )
 {
 	if ( away )
@@ -189,9 +208,12 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( receiveMessage( const ConferenceEvent & ) ) );
 	
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
-	
+	// conference events
 	QObject::connect( m_client, SIGNAL( conferenceCreated( const int, const QString & ) ), SIGNAL( conferenceCreated( const int, const QString & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceCreationFailed( const int,  const int ) ), SIGNAL( conferenceCreationFailed( const int,  const int ) ) );
+	QObject::connect( m_client, SIGNAL( invitationReceived( const ConferenceEvent & ) ), SLOT( receiveInvitation( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList & ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & ) ) );
+
 	// typing events
 	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
@@ -367,8 +389,6 @@ void GroupWiseAccount::slotTLSHandshaken()
 					disconnect ( KopeteAccount::Manual );
 					}*/
 	}
-
-
 }
 
 void GroupWiseAccount::slotTLSReady( int secLayerCode )
@@ -529,7 +549,7 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 void GroupWiseAccount::receiveTemporaryContact( const ContactDetails & details )
 {
 	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.lower() ] );
-	if ( !c )
+	if ( !c && details.dn != accountId() )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Got a temporary contact DN: " << details.dn << endl;
 		// the client is telling us about a temporary contact we need to know about so add them 
@@ -629,8 +649,47 @@ void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & m
 void GroupWiseAccount::slotConnectedElsewhere()
 {
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
-				i18n( "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere" ).arg( accountId() ) , i18n ("Signed in as %1 elsewhere").arg( accountId() ) );
+				i18n( "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere" ).arg( accountId() ) , i18n ("Signed in as %1 elsewhere").arg( accountId() ) );
 	disconnect();
+}
+
+void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
+{
+	// ask the user if they want to accept the invitation or not
+	// TODO: make a pretty KDialogBase'd solution 
+	ReceiveInvitationDialog * dlg = new ReceiveInvitationDialog( this, event, Kopete::UI::Global::mainWidget(), "invitedialog" );
+	dlg->show();
+}
+
+void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStringList & participants )
+{
+	// get a new GWMM
+	KopeteContactPtrList others;
+	GroupWiseMessageManager * mgr = messageManager( myself(), others, protocol(), guid );
+	// find each contact and add them to the GWMM, and tell them they are in the conference
+	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
+	{
+		GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ *it ] );
+		if ( c )
+		{
+			mgr->addContact( c, true );
+			c->joinConference( guid );
+		}
+		else
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << *it << endl;
+	}
+	mgr->view( true );
+}
+
+void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " address is: " << obj << endl;
+	// the message manager is one of ours
+	GroupWiseMessageManager * mgr = static_cast< GroupWiseMessageManager* >( obj );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " it's one of ours, got its deleted signal" << endl;
+	// leave the conference
+	m_client->leaveConference( mgr->guid() );
+	m_managers.remove( mgr->guid() );
 }
 
 void GroupWiseAccount::slotTestRTFize()

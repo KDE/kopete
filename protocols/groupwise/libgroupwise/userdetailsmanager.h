@@ -57,6 +57,7 @@ public:
 	void requestDetails( const QString & dn );
 	
 signals:
+	void temporaryContact( const ContactDetails & );
 	void gotContactDetails( const GroupWise::ContactDetails & );
 protected slots:
 	void slotReceiveContactDetails( const GroupWise::ContactDetails & );
