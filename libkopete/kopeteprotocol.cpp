@@ -38,29 +38,21 @@ KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char
 {
 	d = new KopeteProtocolPrivate;
 	d->unloading = false;
-
-	// FIXME: avoid having to use an arbitrary number like 765
-	// and *hope* that protocols won't declare their own KOS with
-	// the same internalStatus
-	m_status = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 765,
-		QString::fromLatin1( "status_unknown" ) , QString::null, QString::null );
-	connect ( KopeteAccountManager::manager(), SIGNAL( accountReady(KopeteAccount *) ),
-		this, SLOT( refreshAccounts() ) );
 }
 
 KopeteProtocol::~KopeteProtocol()
 {
 	// Remove all active accounts
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
-	for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
-		delete *it;
+	if ( !accounts.isEmpty() )
+	{
+		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
+
+		for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
+			delete *it;
+	}
 
 	delete d;
-}
-
-KopeteOnlineStatus KopeteProtocol::status() const
-{
-	return m_status;
 }
 
 bool KopeteProtocol::supportsRichText() const
@@ -251,52 +243,60 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 	/* Default implementation does nothing */
 }
 
-void KopeteProtocol::refreshAccounts()
+void KopeteProtocol::slotAccountOnlineStatusChanged( KopeteContact *self, const KopeteOnlineStatus &newStatus,
+	const KopeteOnlineStatus & /* old */ )
 {
-	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict );
-	for( ; KopeteAccount *account=it.current(); ++it )
-	{
-		if(account->myself())
-		{	//because we can't know if the account has already connected
-			QObject::disconnect( account->myself(),
-			 					 SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )),
-								 this,
-								 SLOT( slotRefreshStatus()) );
-			QObject::connect( account->myself(),
-							  SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )),
-							  this,
-							  SLOT( slotRefreshStatus()) );
-		}
-	}
-	slotRefreshStatus();
+	if ( !self || !self->account() || newStatus.status() != KopeteOnlineStatus::Offline )
+		return;
+
+	connect( self->account(), SIGNAL( destroyed( QObject * ) ),
+		this, SLOT( slotAccountDestroyed( QObject * ) ) );
+
+	self->account()->deleteLater();
 }
 
-void KopeteProtocol::slotRefreshStatus()
+void KopeteProtocol::slotAccountDestroyed( QObject * /* account */ )
 {
-	bool accountFound = false;
-
-	KopeteOnlineStatus newStatus;
 	QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( this );
-	for ( QDictIterator<KopeteAccount> it( dict ); KopeteAccount *account = it.current(); ++it )
+	if ( dict.isEmpty() )
 	{
-		if ( account->myself() && account->myself()->onlineStatus() > newStatus )
+		// While at this point we are still in a stack trace from the destroyed
+		// account it's safe to emit readyForUnload already, because it uses a
+		// deleteLater rather than a delete for exactly this reason, to keep the
+		// API managable
+		emit( readyForUnload() );
+	}
+}
+
+void KopeteProtocol::aboutToUnload()
+{
+	bool allDisconnected = true;
+
+	d->unloading = true;
+
+	// Disconnect all accounts
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+	for ( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
+	{
+		if ( it.current()->myself() && it.current()->myself()->isOnline() )
 		{
-			newStatus = account->myself()->onlineStatus();
-			accountFound = true;
+			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() << " is still connected, disconnecting..." << endl;
+
+			QObject::connect( it.current()->myself(),
+				SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				this, SLOT( slotAccountOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+			it.current()->disconnect();
+
+			allDisconnected = false;
 		}
-	}
+		else
+		{
+			// Remove account, it's already disconnected
+			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() << " is already disconnected, deleting..." << endl;
 
-	if ( !accountFound )
-	{
-		newStatus = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 765,
-			QString::fromLatin1( "status_unknown" ), QString::null, QString::null );
-	}
-
-	if ( newStatus != m_status )
-	{
-		m_status = newStatus;
-		emit( statusIconChanged( m_status ) );
+			connect( it.current(), SIGNAL( destroyed( QObject * ) ), this, SLOT( slotAccountDestroyed( QObject * ) ) );
+			it.current()->deleteLater();
+		}
 	}
 }
 

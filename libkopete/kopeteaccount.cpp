@@ -93,10 +93,6 @@ KopeteAccount::~KopeteAccount()
 		delete *QDictIterator<KopeteContact>( d->contacts );
 	KopeteAccountManager::manager()->unregisterAccount( this );
 
-	// Let the protocol know that one of its accounts
-	// is no longer there
-	d->protocol->refreshAccounts();
-
 #if KDE_IS_VERSION( 3, 1, 90 )
 	delete d->wallet;
 #endif

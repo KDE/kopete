@@ -84,13 +84,6 @@ public:
 	virtual KopeteAccount *createNewAccount( const QString &accountId ) = 0L;
 
 	/**
-	 * @brief Get the most significant status of the protocol's accounts.
-	 *
-	 * Useful for aggregating status information.
-	 */
-	KopeteOnlineStatus status() const;
-
-	/**
 	 * @brief Determine whether the protocol supports offline messages.
 	 *
 	 * @todo Make pure virtual, or define protected method
@@ -138,6 +131,27 @@ public:
 	 */
 	 virtual bool supportsRichText() const;
 
+	/**
+	 * Reimplemented from KopetePlugin.
+	 *
+	 * This method disconnects all accounts and deletes them, after which it
+	 * will emit readyForUnload.
+	 *
+	 * Note that this is an asynchronous operation that may take some time
+	 * with active chats. It's no longer immediate as it used to be in
+	 * Kopete 0.7.x and before. This also means that you can do a clean
+	 * shutdown.
+	 *
+	 * WARNING: The method is not private to allow subclasses to reimplement
+	 *          it even more, but if you need to do this please explain why
+	 *          on the list first. It might make more sense to add another
+	 *          virtual for protocols that's called instead, but for now I
+	 *          actually think protocols don't need their own implementation
+	 *          at all, so I left out the necessary hooks on purpose.
+	 *          - Martijn
+	 */
+	virtual void aboutToUnload();
+
 public slots:
 	/**
 	 * A meta contact is about to save.
@@ -145,34 +159,19 @@ public slots:
 	 */
 	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
 
-	/**
-	 * @internal
-	 * KopeteAccount will call this slot when accounts are created or deleted
-	 */
-	void refreshAccounts();
-
-signals:
-	/**
-	 * @brief Signal the status icon changed.
-	 *
-	 * This signal is only emitted if the new icon is different from
-	 * the previous icon.
-	 */
-	void statusIconChanged( const KopeteOnlineStatus& );
-
 private slots:
 	/**
-	 * Update the overall protocol status, called in
-	 * response to account status changes
+	 * The account changed online status. Used while unloading the protocol.
 	 */
-	void slotRefreshStatus();
+	void slotAccountOnlineStatusChanged( KopeteContact *self, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus );
 
-protected:
 	/**
-	 * The default unknown status every protocol needs
+	 * The account is destroyed. When it's the last account we emit the
+	 * readyForUnload signal. Used while unloading the protocol.
 	 */
-	KopeteOnlineStatus m_status;
+	void slotAccountDestroyed( QObject *account );
 
+private:
 	KopeteProtocolPrivate *d;
 };
 
