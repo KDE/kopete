@@ -576,7 +576,7 @@ void ChatView::nickComplete()
 	if( parIdx > 0 )
 	{
 		firstSpace = txt.findRev( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
-		lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\W]") ), firstSpace );
+		lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\:]") ), firstSpace );
 		if( lastSpace == -1 )
 			lastSpace = txt.length();
 
@@ -587,14 +587,18 @@ void ChatView::nickComplete()
 		{
 			m_Match = mComplete->makeCompletion( word );
 			m_lastMatch = QString::null;
+			parIdx -= word.length();
 		}
 		else
+		{
 			m_Match = mComplete->nextMatch();
+			parIdx -= m_lastMatch.length();
+		}
 
 		if( !m_Match.isNull() && !m_Match.isEmpty() )
 		{
-			QString fullText = m_edit->text();
-			QString rightText = fullText.right( fullText.length() - lastSpace );
+			QString rightText = txt.right( txt.length() - lastSpace );
+
 			if( para == 0 && firstSpace == 0 )
 			{
 				rightText = m_Match + QString::fromLatin1(": ");
@@ -603,9 +607,9 @@ void ChatView::nickComplete()
 			else
 				rightText = m_Match + rightText;
 
-			fullText += rightText;
-			m_edit->setText( fullText.left(firstSpace) + rightText );
-			m_edit->setCursorPosition( para, parIdx + (m_Match.length() - m_lastMatch.length()) );
+			m_edit->removeParagraph( para );
+			m_edit->insertParagraph( txt.left(firstSpace) + rightText, para);
+			m_edit->setCursorPosition( para, parIdx + m_Match.length() );
 			m_lastMatch = m_Match;
 		}
 	}
