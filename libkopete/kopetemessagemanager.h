@@ -21,7 +21,6 @@
 #include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qmap.h>
-#include <qevent.h>
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
@@ -37,12 +36,6 @@ class KopeteView;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
-
-class ContactAddedEvent : public QCustomEvent
-{
-	public:
-		ContactAddedEvent( KopeteContact *c ) : QCustomEvent( QEvent::User + 1 ) { setData( c ); };
-};
 
 struct  KMMPrivate;
 
@@ -210,9 +203,6 @@ protected:
 		QObject *parent = 0, const char *name = 0 );
 
 	void setMMId( int );
-
-	void customEvent( QCustomEvent * e );
-
 
 private:
 	KMMPrivate *d;

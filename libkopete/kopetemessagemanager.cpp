@@ -21,6 +21,7 @@
 #include <qregexp.h>
 #include <qmap.h>
 #include <qwidget.h>
+#include <qapplication.h>
 
 #include "kopeteaway.h"
 #include "kopetemessagelog.h"
@@ -92,15 +93,6 @@ const KopeteOnlineStatus KopeteMessageManager::contactOnlineStatus( const Kopete
 		return d->contactStatus[ contact ];
 
 	return contact->onlineStatus();
-}
-
-void KopeteMessageManager::customEvent( QCustomEvent * e )
-{
-	if ( e->type() == (QEvent::User + 1) )
-	{
-		ContactAddedEvent* ce = (ContactAddedEvent*)e;
-		addContact( static_cast<KopeteContact*>( ce->data() ), true );
-	}
 }
 
 const QString KopeteMessageManager::displayName()
@@ -242,6 +234,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 		}
 		c->setConversations( c->conversations() + 1 );
 	}
+	qApp->processEvents();
 	d->isEmpty=false;
 }
 
@@ -261,6 +254,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress 
 		disconnect (c, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 		c->setConversations( c->conversations() - 1 );
 	}
+	qApp->processEvents();
 	emit contactRemoved(c, surpress);
 }
 

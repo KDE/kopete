@@ -130,6 +130,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 		kdDebug(14120) << k_funcinfo << "Names List:" << channel << endl;
 
 		QStringList mNickNames = nicknames;
+		uint contactCount = 0;
 		for (QStringList::Iterator it = mNickNames.begin(); it != mNickNames.end(); it++)
 		{
 			if ((*it).lower() == mNickName.lower())
@@ -147,10 +148,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 			else if( firstChar == '+')
 				manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), IRCProtocol::IRCUserVoice() );
 
-			//Post the event so we don't block the UI
-			ContactAddedEvent *ce = new ContactAddedEvent( static_cast<KopeteContact*>(user) );
-			QApplication::postEvent( manager(), ce );
-			//manager()->addContact( static_cast<KopeteContact*>(user), true );
+			manager()->addContact( static_cast<KopeteContact*>(user), true );
 		}
 	}
 }
