@@ -315,7 +315,7 @@ void KopeteAccount::setPassword( const QString &pass )
 	if ( KWallet::Wallet::isEnabled() )
 	{
 		if ( !d->wallet )
-			d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
+			d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), /*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
 
 		if ( d->wallet )
 		{
