@@ -49,6 +49,7 @@ void KopetePrefs::load()
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
 	mUseEmoticons = config->readBoolEntry("Use Emoticons", true);
 	mShowOffline = config->readBoolEntry("ShowOfflineUsers", true);
+	mShowEmptyGroups = config->readBoolEntry("ShowEmptyGroups", true);
 	mGreyIdle = config->readBoolEntry("GreyIdleMetaContacts", true);
 	mSortByGroup = config->readBoolEntry("SortByGroup" , true);
 	mTreeView = config->readBoolEntry("TreeView", true);
@@ -102,6 +103,7 @@ void KopetePrefs::save()
 	config->writeEntry("EmoticonTheme", mIconTheme);
 	config->writeEntry("Use Emoticons", mUseEmoticons);
 	config->writeEntry("ShowOfflineUsers", mShowOffline);
+	config->writeEntry("ShowEmptyGroups", mShowEmptyGroups);
 	config->writeEntry("GreyIdleMetaContacts", mGreyIdle);
 	config->writeEntry("TreeView", mTreeView);
 	config->writeEntry("SortByGroup", mSortByGroup);
@@ -160,6 +162,11 @@ void KopetePrefs::setUseEmoticons(bool value)
 void KopetePrefs::setShowOffline(bool value)
 {
 	mShowOffline = value;
+}
+
+void KopetePrefs::setShowEmptyGroups(bool value)
+{
+	mShowEmptyGroups = value;
 }
 
 void KopetePrefs::setTreeView(bool value)

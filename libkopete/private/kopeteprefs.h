@@ -50,6 +50,7 @@ public:
 	QString iconTheme() const { return mIconTheme; }
 	bool useEmoticons() const { return mUseEmoticons; }
 	bool showOffline() const { return mShowOffline; }
+	bool showEmptyGroups() const { return mShowEmptyGroups; }
 	bool treeView() const { return mTreeView; }
 	bool sortByGroup() const { return mSortByGroup; }
 	bool greyIdleMetaContacts() const { return mGreyIdle; }
@@ -86,6 +87,7 @@ public:
 	void setIconTheme( const QString &value );
 	void setUseEmoticons( bool value );
 	void setShowOffline( bool value );
+	void setShowEmptyGroups( bool value );
 	void setTreeView( bool );
 	void setSortByGroup( bool );
 	void setGreyIdleMetaContacts( bool );
@@ -147,6 +149,7 @@ private:
 	QString mIconTheme;
 	bool mUseEmoticons;
 	bool mShowOffline;
+	bool mShowEmptyGroups;
 	bool mGreyIdle;
 	bool mTreeView;
 	bool mSortByGroup;
