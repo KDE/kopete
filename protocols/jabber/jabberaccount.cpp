@@ -304,6 +304,8 @@ void JabberAccount::connect ()
 				  this, SLOT (slotCSDisconnected ()));
 		QObject::connect (jabberClientStream, SIGNAL (delayedCloseFinished ()),
 				  this, SLOT (slotCSDisconnected ()));
+		QObject::connect (jabberClientStream, SIGNAL (warning (int)),
+				  this, SLOT (slotCSWarning (int)));
 		QObject::connect (jabberClientStream, SIGNAL (error (int)),
 				  this, SLOT (slotCSError (int)));
 	}
@@ -361,7 +363,8 @@ void JabberAccount::connect ()
 
 	setPresence(protocol()->JabberKOSConnecting, "");
 
-	jabberClientStream->connectToServer ( XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")) );
+	//jabberClientStream->connectToServer ( XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")) );
+	jabberClient->connectToServer (jabberClientStream, XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")));
 
 }
 
@@ -417,11 +420,13 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 
 void JabberAccount::slotCSAuthenticated ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connected to Jabber server." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());
 	jabberClient->start ( jid.domain(), jid.node(), password(), pluginData( protocol (), "Resource") );
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 
 	/* Request roster. */
 	jabberClient->rosterRequest ();
@@ -431,7 +436,7 @@ void JabberAccount::slotCSAuthenticated ()
 	 * information before we have updated our roster with actual
 	 * contacts from the server! (libpsi won't forward presence
 	 * information in that case either). */
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting Presence." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
 	setPresence (initialPresence, static_cast<JabberContact *>( myself() )->reason ());
 
 }
@@ -483,6 +488,24 @@ void JabberAccount::slotCSDisconnected ()
 	 * with the protocol, so update all contacts manually. */
 	for (QDictIterator < KopeteContact > it (contacts ()); it.current (); ++it)
 		static_cast < JabberContact * >(*it)->slotUpdatePresence (protocol()->JabberKOSOffline, "disconnected");
+}
+
+void JabberAccount::slotCSWarning (int warning)
+{
+
+	/*
+	 * FIXME: these warnings don't mean anything to the user just yet,
+	 *        so we simply ignore them (pre XMPP 1.0 warning, no TLS warning).
+	 *
+	switch(warning)
+	{
+		case XMPP::ClientStream::WarnOldVersion:
+		case XMPP::ClientStream::WarnNoTLS:
+	}
+	*/
+
+	jabberClientStream->continueAfterWarning ();
+
 }
 
 void JabberAccount::slotCSError (int error)

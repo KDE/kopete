@@ -175,6 +175,9 @@ private slots:
 	/* Called from Psi: tells us when we've been disconnected from the server. */
 	void slotCSDisconnected ();
 
+	/* Called from Psi: alerts us to a protocol warning. */
+	void slotCSWarning (int);
+
 	/* Called from Psi: alerts us to a protocol error. */
 	void slotCSError (int);
 
