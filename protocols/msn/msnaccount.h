@@ -174,6 +174,8 @@ private slots:
 private:
 	MSNNotifySocket *m_notifySocket;
 	KAction *m_openInboxAction;
+	KAction *m_startChatAction;
+	KAction *m_changeDNAction;
 
 	// status which will be using for connecting
 	KopeteOnlineStatus m_connectstatus;

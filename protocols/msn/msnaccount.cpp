@@ -66,8 +66,10 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ),
 		SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
 
-	m_openInboxAction = new KAction ( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
-	m_openInboxAction->setEnabled( false );
+	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
+	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
+	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
+
 }
 
 void MSNAccount::loaded()
@@ -190,6 +192,19 @@ KActionMenu * MSNAccount::actionMenu()
 #endif
 	);
 
+	if ( isConnected() )
+	{
+		m_openInboxAction->setEnabled( true );
+		m_startChatAction->setEnabled( true );
+		m_changeDNAction->setEnabled( true );
+	}
+	else
+	{
+		m_openInboxAction->setEnabled( false );
+		m_startChatAction->setEnabled( false );
+		m_changeDNAction->setEnabled( false );
+	}
+
 	m_actionMenu->insert( new KAction ( i18n( "Set O&nline" ),        MSNProtocol::protocol()->NLN.iconFor( this ), 0,
 		this, SLOT( slotGoOnline() ), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n( "Set &Away" ),          MSNProtocol::protocol()->AWY.iconFor( this ), 0,
@@ -208,11 +223,12 @@ KActionMenu * MSNAccount::actionMenu()
 		this, SLOT( slotGoOffline() ), m_actionMenu, "actionMSNConnect" ) );
 
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( new KAction ( i18n( "&Change Display Name..." ), QString::null, 0,
-		this, SLOT( slotChangePublicName() ), m_actionMenu, "renameAction" ) );
-	m_actionMenu->insert( new KAction ( i18n( "&Start Chat..." ), "mail_generic", 0,
-		this, SLOT( slotStartChat() ), m_actionMenu, "startChatAction" ) );
+	
+	m_actionMenu->insert( m_changeDNAction );
+	m_actionMenu->insert( m_startChatAction );
+
 	m_actionMenu->popupMenu()->insertSeparator();
+
 	m_actionMenu->insert( m_openInboxAction );
 
 #if !defined NDEBUG
@@ -298,12 +314,6 @@ void MSNAccount::setOnlineStatus( const KopeteOnlineStatus &status )
 
 void MSNAccount::slotStartChat()
 {
-	if ( !isConnected() )
-	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>Please go online before you start a chat.</qt>" ),
-			i18n( "MSN Plugin" ), KMessageBox::Notify );
-		return;
-	}
 
 	bool ok;
 	QString handle = KInputDialog::getText( i18n( "Start Chat - MSN Plugin" ),
