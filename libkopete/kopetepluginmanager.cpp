@@ -91,40 +91,22 @@ KopetePluginManager::KopetePluginManager()
 KopetePluginManager::~KopetePluginManager()
 {
 	if ( d->shutdownMode != KopetePluginManagerPrivate::DoneShutdown )
+	{
 		kdWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process!" << endl << kdBacktrace() << endl;
 
-	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-
-	// Remove non-protocol plugins first
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
-	{
-		// Remove causes the iterator to become invalid, so pre-increment first
-		if( it.key()->category() != QString::fromLatin1( "Protocols" ) )
+		// Quick cleanup of the remaining plugins, hope it helps
+		QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+		for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
 		{
+			// Remove causes the iterator to become invalid, so pre-increment first
 			QMap<KPluginInfo *, KopetePlugin *>::ConstIterator nextIt( it );
 			++nextIt;
 			delete it.data();
 			it = nextIt;
 		}
-		else
-		{
-			++it;
-		}
-	}
-
-	// Remove protocols
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
-	{
-		// Remove causes the iterator to become invalid, so pre-increment first
-		QMap<KPluginInfo *, KopetePlugin *>::ConstIterator nextIt( it );
-		++nextIt;
-		delete it.data();
-		it = nextIt;
 	}
 
 	delete d;
-
-	kdDebug( 14010 ) << k_funcinfo << "All plugins removed" << endl;
 }
 
 QValueList<KPluginInfo *> KopetePluginManager::availablePlugins( const QString &category ) const
