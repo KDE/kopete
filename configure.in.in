@@ -10,11 +10,10 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
 fi
 
 KDE_CHECK_HEADERS(knotifydialog.h)
+
+KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui'
 if test "$ac_cv_header_knotifydialog_h" = "no"; then
-        KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_srcdir)/kopete/libkopete/compat'
-        LIB_KOPETECOMPAT='$(top_srcdir)/kopete/libkopete/compat/libkopetecompat.la'
-        AC_SUBST(LIB_KOPETECOMPAT)
-else
-        KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui'
+  KOPETE_INCLUDES=$KOPETE_INCLUDES' -I$(top_srcdir)/kopete/libkopete/compat'
+  LIB_KOPETECOMPAT='$(top_srcdir)/kopete/libkopete/compat/libkopetecompat.la'
 fi
 AC_SUBST(KOPETE_INCLUDES)
