@@ -67,9 +67,6 @@
                     <property name="text">
                         <string>&amp;Search</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="default">
                         <bool>true</bool>
                     </property>
@@ -91,9 +88,6 @@
                     <property name="text">
                         <string>Show &amp;oldest message first</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -101,9 +95,6 @@
                     </property>
                     <property name="text">
                         <string>Only show &amp;incoming messages</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
                     </property>
                 </widget>
             </hbox>

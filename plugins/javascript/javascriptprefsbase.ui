@@ -99,9 +99,6 @@
                     <property name="text">
                         <string>Allow access to the UI &amp;factory</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+F</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -112,9 +109,6 @@
                     </property>
                     <property name="text">
                         <string>Allow connecting to &amp;signals</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -127,9 +121,6 @@
                     <property name="text">
                         <string>Allow access to the QObject &amp;tree</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -140,9 +131,6 @@
                     </property>
                     <property name="text">
                         <string>Enable &amp;write access to QObjects</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+W</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -168,9 +156,6 @@
                     <property name="text">
                         <string>&amp;Add Script</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Click here to add a local file as a script</string>
                     </property>
@@ -182,9 +167,6 @@
                     <property name="text">
                         <string>&amp;Download Scripts</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+D</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Click here to download scripts from the Internet using KNewStuff</string>
                     </property>
@@ -195,9 +177,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Uninstall Selected Scripts</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Click here to uninstall the selected scripts from your system</string>
@@ -212,9 +191,6 @@
             <property name="text">
                 <string>&amp;Edit Properties</string>
             </property>
-            <property name="accel">
-                <string>Alt+E</string>
-            </property>
             <property name="toolTip" stdset="0">
                 <string>Click here to modify properties such as the script name, author, and description</string>
             </property>
@@ -225,9 +201,6 @@
             </property>
             <property name="text">
                 <string>&amp;Configure Script</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Click here to configure this script</string>

@@ -326,9 +326,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -365,9 +362,6 @@
                                     <string>Automatically open a chat &amp;window when someone starts
 a conversation</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+W</string>
-                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -386,9 +380,6 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>Download and show c&amp;ustom emoticons (experimental)</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+U</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">

@@ -37,9 +37,6 @@
                     <property name="text">
                         <string>Arrange metacontacts by &amp;group</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+G</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -47,9 +44,6 @@
                     </property>
                     <property name="text">
                         <string>Show tree &amp;branch lines</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
                     </property>
                 </widget>
                 <spacer row="2" column="0">
@@ -76,9 +70,6 @@
                     <property name="text">
                         <string>In&amp;dent contacts</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+D</string>
-                    </property>
                 </widget>
             </grid>
         </widget>
@@ -100,9 +91,6 @@
                     <property name="text">
                         <string>&amp;Classic, left-aligned status icons</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+C</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -114,9 +102,6 @@
                     <property name="text">
                         <string>&amp;Right-aligned status icons</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -125,9 +110,6 @@
                     <property name="text">
                         <string>Detailed &amp;view</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+V</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -135,9 +117,6 @@
                     </property>
                     <property name="text">
                         <string>D&amp;etailed, right-aligned icons</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                 </widget>
             </vbox>
@@ -160,9 +139,6 @@
                     <property name="text">
                         <string>Animate c&amp;hanges to contact list items</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+H</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -171,9 +147,6 @@
                     <property name="text">
                         <string>&amp;Fade in / out contacts as they appear / disappear</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+F</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -181,9 +154,6 @@
                     </property>
                     <property name="text">
                         <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+L</string>
                     </property>
                 </widget>
             </vbox>
@@ -202,9 +172,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Tooltip Contents...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
                     </property>
                 </widget>
                 <spacer>

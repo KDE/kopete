@@ -208,9 +208,6 @@ This option is only available if there is exactly one child contact </string>
                     <property name="text">
                         <string>Has &amp;address book entry</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
                     <property name="checked">
                         <bool>false</bool>
                     </property>
@@ -319,9 +316,6 @@ This option is only available if there is exactly one child contact </string>
                     </property>
                     <property name="text">
                         <string>&amp;Play a sound</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
                     </property>
                 </widget>
                 <widget class="KURLRequester" row="1" column="1">

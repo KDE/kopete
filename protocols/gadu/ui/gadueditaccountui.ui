@@ -363,9 +363,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -382,9 +379,6 @@
                                 </property>
                                 <property name="text">
                                     <string>C&amp;ache server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+A</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -405,9 +399,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Use direct connections (DCC).</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+U</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>

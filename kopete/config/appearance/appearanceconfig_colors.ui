@@ -163,9 +163,6 @@
                     <property name="text">
                         <string>Do not show user specified &amp;background color</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -174,9 +171,6 @@
                     <property name="text">
                         <string>Do not show user specified &amp;foreground color</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+F</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -184,9 +178,6 @@
                     </property>
                     <property name="text">
                         <string>Do not show user specified &amp;rich text</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
                     </property>
                 </widget>
             </vbox>

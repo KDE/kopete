@@ -37,9 +37,6 @@
                     <property name="text">
                         <string>Show the system tray &amp;icon</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -47,9 +44,6 @@
                     </property>
                     <property name="text">
                         <string>Start with the contact list &amp;minimised to the system tray</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+M</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Start with the main window hidden, the only visible item is the system tray icon</string>
@@ -96,9 +90,6 @@
                 <property name="text">
                     <string>Use the message &amp;queue</string>
                 </property>
-                <property name="accel">
-                    <string>Alt+Q</string>
-                </property>
                 <property name="whatsThis" stdset="0">
                     <string>Use a queue instead of opening a chat window on incoming messages</string>
                 </property>
@@ -129,9 +120,6 @@
                     </property>
                     <property name="text">
                         <string>Flash the system &amp;tray on new messages</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0">

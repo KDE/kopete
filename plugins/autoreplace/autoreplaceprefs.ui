@@ -80,9 +80,6 @@
                     <property name="text">
                         <string>&amp;Add</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
                     <property name="on">
                         <bool>false</bool>
                     </property>
@@ -96,9 +93,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Edit</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                     <property name="on">
                         <bool>false</bool>
@@ -130,9 +124,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Remove</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
                     </property>
                 </widget>
             </vbox>

@@ -283,9 +283,6 @@
                                         <property name="text">
                                             <string>Remember &amp;password</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+P</string>
-                                        </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Check to save your password.</string>
                                         </property>
@@ -418,9 +415,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -434,9 +428,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Use protocol encr&amp;yption (SSL)</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+Y</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this box to enable SSL encrypted communication with the server.</string>
@@ -904,9 +895,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Re&amp;quires authentication</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+Q</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this box if your proxy server requires authentication, and enter the login credentials below.</string>
