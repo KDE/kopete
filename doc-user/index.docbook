@@ -784,11 +784,11 @@ the icon files and an XML file describing the mapping from text to picture in
 $KDEDIR/share/apps/kopete/pics/emoticons (or $KDEHOME, for example, in /home/joeuser/.kde/).</para>
 
 <orderedlist>
-<listitem><para>Copy the EmotiKons directory to $KDEDIR/share/apps/kopete/pics/emoticons or 
- $HOME/.kde/share/apps/kopete/pics/emoticons (or wherever $KDEHOME is).</para></listitem>
-<listitem><para>Select Configure &kopete; from the Settings menu and click on Appearance in the left panel of the Preferences windows and click on the Emoticons tab.</para></listitem>
-<listitem><para>Select the emoticons set you just installed from the list.</para></listitem> 
-<listitem><para>Now you can use the newly installed emoticons in Kopete.</para></listitem>
+<listitem><para>Copy the extracted directory to $KDEDIR/share/apps/kopete/pics/emoticons or 
+ $HOME/.kde/share/apps/kopete/pics/emoticons (or wherever $KDEHOME is)</para></listitem>
+<listitem><para>Select Configure &kopete; from the Settings menu and click on Appearance in the left panel of the Preferences windows and click on the Emoticons tab</para></listitem>
+<listitem><para>Select the emoticons set you just installed from the list</para></listitem> 
+<listitem><para>Now you can use the newly installed emoticons in Kopete</para></listitem>
 </orderedlist>
 <para>To replace the protocol icons, you'll have to replace the icons in  
 $KDEDIR/share/apps/kopete/icons, or provide replacements to override them in 
