@@ -99,13 +99,20 @@ GaduEditAccount::registrationFailed()
 	KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
 }
 
-void 
-GaduEditAccount::newUin( unsigned int uni, QString password )
-{
-	loginEdit_->setText( QString::number( uni ) );
-	passwordEdit_->setText( password );
-}
 
+void
+GaduEditAccount::newUin( unsigned int uin, QString password )
+{
+	if ( uin ) {
+		loginEdit_->setText( QString::number( uin ) );
+		passwordWidget_->setPassword( password );
+	}
+	else {
+		// registration failed, enable button again
+		registerNew->setDisabled( false );
+	}
+}
+                     
 bool 
 GaduEditAccount::validateData()
 {
