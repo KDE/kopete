@@ -245,7 +245,7 @@ If you do not currently have an ICQ account, please click the button to create o
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Co&amp;nnection</string>
+                    <string>Account Preferences</string>
                 </attribute>
                 <vbox>
                     <property name="name">
