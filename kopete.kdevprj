@@ -358,7 +358,7 @@ install_location=
 type=DATA
 
 [kopete/library/Makefile.am]
-files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/pluginmanager.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h,kopete/library/pluginmanager.cpp
+files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h
 sub_dirs=ui,
 type=static_library
 
@@ -429,18 +429,6 @@ install_location=
 type=SOURCE
 
 [kopete/library/pluginloader.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[kopete/library/pluginmanager.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[kopete/library/pluginmanager.h]
 dist=true
 install=false
 install_location=
@@ -1176,7 +1164,7 @@ sub_dirs=libkmsn,ui,libkmerlin
 type=static_library
 
 [kopete/protocols/msn/libkmerlin/Makefile.am]
-files=kopete/protocols/msn/libkmerlin/kmsnchatservice.cpp,kopete/protocols/msn/libkmerlin/kmsnchatservice.h,kopete/protocols/msn/libkmerlin/kmsnservice.cpp,kopete/protocols/msn/libkmerlin/kmsnservice.h
+files=kopete/protocols/msn/libkmerlin/kmsnchatservice.cpp,kopete/protocols/msn/libkmerlin/kmsnchatservice.h,kopete/protocols/msn/libkmerlin/kmsnservice.cpp,kopete/protocols/msn/libkmerlin/kmsnservice.h,kopete/protocols/msn/libkmerlin/kmsnchatsession.cpp,kopete/protocols/msn/libkmerlin/kmsnchatsession.h,kopete/protocols/msn/libkmerlin/kmsnservicesocket.cpp,kopete/protocols/msn/libkmerlin/kmsnservicesocket.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=libkmerlin
 sub_dirs=
@@ -1194,6 +1182,18 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/protocols/msn/libkmerlin/kmsnchatsession.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/libkmerlin/kmsnchatsession.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/protocols/msn/libkmerlin/kmsnservice.cpp]
 dist=true
 install=false
@@ -1201,6 +1201,18 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/msn/libkmerlin/kmsnservice.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/msn/libkmerlin/kmsnservicesocket.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/libkmerlin/kmsnservicesocket.h]
 dist=true
 install=false
 install_location=

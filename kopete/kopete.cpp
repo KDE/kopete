@@ -1,9 +1,8 @@
 /***************************************************************************
-                          kopete.cpp  -  description
+                          Kopete Instant Messenger
+						        kopete.cpp
                              -------------------
-    begin                : Wed Dec 26 03:12:10 CLST 2001
-    copyright            : (C) 2001 by Duncan Mac-Vicar Prett
-    email                : duncan@puc.cl
+				(C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -52,7 +51,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	mPref = new PreferencesDialog();
 	mPref->hide();
 
-	Plugins *blah = new Plugins(this);
+	mPluginsModule = new Plugins(this);
 
 	mainwindow = new KopeteWindow();
 	setMainWidget(mainwindow);
@@ -592,9 +591,3 @@ QString Kopete::parseHTML( QString message )
 	}
 	return result;
 }
-
-/*
-QString Kopete::parseURL( QString message )
-{
-}
-*/

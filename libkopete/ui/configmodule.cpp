@@ -1,9 +1,10 @@
 /***************************************************************************
-                          configmodule.cpp  -  description
-                             -------------------
-    begin                : Thu Jan 3 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+                          Kopete Instant Messenger
+							 configmodule.cpp
+                            -------------------
+				(C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
+				Portions of the code,
+				(C) 2001-2002 The Noatun Developers
  ***************************************************************************/
 
 /***************************************************************************

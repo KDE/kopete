@@ -1,9 +1,8 @@
 /***************************************************************************
-                          kopete.h  -  description
+                          Kopete Instant Messenger
+					             kopete.h
                              -------------------
-    begin                : Wed Dec 26 03:12:10 CLST 2001
-    copyright            : (C) 2001 by Duncan Mac-Vicar Prett
-    email                : duncan@puc.cl
+				(C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -39,7 +38,6 @@
 #include "configmodule.h"
 #include "pluginmodule.h"
 #include "pluginloader.h"
-#include "pluginmanager.h"
 
 class AppearanceConfig;
 class LibraryLoader;
@@ -72,8 +70,6 @@ class Kopete : public KUniqueApplication
 	~Kopete();
 
 	PreferencesDialog *preferencesBox() const { return mPref; }
-	//KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
-	//PluginManager *Plugins() const { return plugins; }
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
 	KIconLoader *iconLoader() const { return mIconLoader; }
 	KopeteWindow *mainWindow() const { return mainwindow; };
@@ -100,8 +96,8 @@ class Kopete : public KUniqueApplication
 	bool allConnected;
 
 private:
-	PluginManager *plugins;
 	PreferencesDialog *mPref;
+	Plugins *mPluginsModule;
 
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;

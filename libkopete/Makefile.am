@@ -8,10 +8,10 @@ INCLUDES = -I$(top_srcdir)/kopete/library \
 noinst_LTLIBRARIES = libkopete.la
 #lib_LTLIBRARIES = libkopete.la
 
-# kopete_include_HEADERS = imcontact.h  improtocol.h kopete.h pluginmanager.h
+# kopete_include_HEADERS = imcontact.h  improtocol.h kopete.h
 
 libkopete_la_SOURCES = kopete.cpp improtocol.cpp imcontact.cpp \
-                       pluginmanager.cpp pluginloader.cpp plugin.cpp \
+                       pluginloader.cpp plugin.cpp \
                        messagelog.cpp kopetemessage.cpp
 libkopete_la_METASOURCES = AUTO
 libkopete_la_LDFLAGS     = 
