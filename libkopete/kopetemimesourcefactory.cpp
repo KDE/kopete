@@ -32,11 +32,6 @@
 namespace Kopete
 {
 
-namespace
-{
-	static QDict<Kopete::MimeSourceFactory> g_mimeHandlers;
-}
-
 class MimeSourceFactory::Private
 {
 public:
