@@ -4,6 +4,7 @@ Add support for File Transfers
 Add support for buddy icons
 Add support for sending/receiving buddy lists
 Add support for reverse connections for both file transfers and direct IM (this is used when one client is behind a firewall that does not allow direct connections)
+Handling of 0x0001/0x000b (Server pause) snac: this will be very difficult to debug since that server command is very rare
 
 Long Term:
 Remove all legacy TAim code: TBuddy, TBuddyList, etc.

@@ -86,9 +86,10 @@ int Buffer::addString(const char * s, const DWORD len)
 /** deletes the current buffer */
 void Buffer::clear()
 {
-	delete buf;
+	delete[] alloc_buf;
 	buf = NULL;
 	length = 0;
+	alloc_length = 0;
 }
 
 /** Adds a TLV with the given type and data */
@@ -207,7 +208,7 @@ void Buffer::OnBufError(QString s)
 void Buffer::setBuf(char *b, const WORD l)
 {
 	if (alloc_buf)
-		delete alloc_buf;
+		delete [] alloc_buf;
 	alloc_buf = b;
 	buf = b;
 	length = l;
@@ -302,7 +303,7 @@ void Buffer::doResize(int inc)
 		for (DWORD i=0;i<length;i++)
 			tmp[i] = buf[i];
 		if (alloc_buf)
-			delete alloc_buf;
+			delete[] alloc_buf;
 		alloc_buf = tmp;
 		buf = alloc_buf;
 		alloc_length = (length + inc)*2;

@@ -20,14 +20,10 @@
 #include "oscardebugdialog.h"
 #include "oscarsocket.h"
 
-OscarDirectConnection::OscarDirectConnection(const QString &sn, const QString &connName, char cookie[8],
-	QObject *parent, const char *name)
-	: OscarConnection(connName, CONN_TYPE_DIRECTIM, parent, name)
+OscarDirectConnection::OscarDirectConnection(const QString &sn, const QString &connName,
+	char cookie[8],	QObject *parent, const char *name)
+	: OscarConnection(sn, connName, DirectIM, cookie, parent, name)
 {
-  setSN(sn);
-  for (int i=0;i<8;i++)
-  	mCookie[i] = cookie[i];
-	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 }
 
@@ -116,7 +112,7 @@ ODC2 OscarDirectConnection::getODC2(void)
 		Buffer inbuf;
 		inbuf.setBuf(buf,odc.headerLength-6);
 
-		inbuf.print();
+		//inbuf.print();
 		if(hasDebugDialog()){
 			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 		}
@@ -178,14 +174,6 @@ ODC2 OscarDirectConnection::getODC2(void)
   return odc;
 }
 
-/** Called when we have established a connection */
-void OscarDirectConnection::slotConnected(void)
-{
-	kdDebug() << "[OscarDirectConnection] We are connected to " << connectionName() << endl;
-	// Announce that we are ready for use!
-	emit directIMReady(connectionName());
-}
-
 /** Sets the socket to use socket, state() to connected, and emit connected() */
 void OscarDirectConnection::setSocket( int socket )
 {
@@ -197,14 +185,6 @@ void OscarDirectConnection::setSocket( int socket )
 void OscarDirectConnection::sendIM(const QString &message, bool /*isAuto*/)
 {
 	sendODC2Block(message, 0x0000); // 0x0000 means message
-}
-
-/** Called when the connection is closed */
-void OscarDirectConnection::slotConnectionClosed(void)
-{
-	kdDebug() << "[OscarDirectConnection] connection with " << connectionName() << "lost." << endl;
-	emit protocolError(QString("Connection with %1 lost").arg(connectionName()), 0);
-	emit connectionClosed(this);
 }
 
 /** Sends a typing notification to the server
@@ -235,7 +215,7 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 	outbuf.addWord(0x0001); // channel
 	outbuf.addWord(0x0006); // 0x0006
 	outbuf.addWord(0x0000); // 0x0000
-  outbuf.addString(mCookie,8);
+  outbuf.addString(cookie(),8);
 	outbuf.addDWord(0x00000000);
 	outbuf.addDWord(0x00000000);
 	outbuf.addWord(0x0000);
@@ -253,7 +233,7 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
   if (typingnotify == 0x0000)
 	  outbuf.addString(message.latin1(), message.length());
   kdDebug() << "Sending ODC2 block, message: " << message << "typingnotify: " << typingnotify << endl;
-  outbuf.print();
+  //outbuf.print();
 
  	if(hasDebugDialog()){
 			debugDialog()->addMessageFromClient(outbuf.toString(),connectionName());

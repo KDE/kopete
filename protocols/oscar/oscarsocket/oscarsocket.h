@@ -20,6 +20,7 @@
 
 #include "oscardirectconnection.h"
 #include <qptrlist.h>
+#include <qfileinfo.h>
 #include "oncomingsocket.h"
 #include "ssidata.h"
 #include "tbuddylist.h"
@@ -28,6 +29,7 @@ struct FLAP { //flap header
 	BYTE channel;
 	WORD sequence_number;
 	WORD length;
+	bool error;
 };
 
 struct SnacPair { //just a group+type pair
@@ -90,7 +92,7 @@ struct UserInfo { //user info
 class OscarSocket : public OscarConnection  {
 	Q_OBJECT
 public:
-	OscarSocket(const QString &connName, QObject *parent=0, const char *name=0);
+	OscarSocket(const QString &connName, char cookie[8]="ABCDEFGH", QObject *parent=0, const char *name=0);
 	~OscarSocket();
 
   /** Sends an authorization request to the server */
@@ -154,7 +156,7 @@ public:
 	 */
 	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
   /** Initiate a transfer of the given file to the given sn */
-  void sendFileSendRequest(const QString &sn, const QString &filename);
+  void sendFileSendRequest(const QString &sn, const QFileInfo &finfo);
 
 public slots:
   /** This is called when a connection is established */
@@ -277,7 +279,7 @@ private: // Private methods
 		type == 1: deny
 		type == 2: accept  */
   void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType,
-  	const QString &filename=QString::null, long filesize=0);
+  	const QFileInfo &finfo=QFileInfo());
   /** Sends a 0x0013,0x0002 (requests SSI rights information) */
   void sendSSIRightsRequest(void);
   /** Sends a 0x0013,0x0004 (requests SSI data?) */
@@ -286,6 +288,8 @@ private: // Private methods
   void parseSSIRights(Buffer &inbuf);
   /** Sends parameters for ICBM messages */
   void sendMsgParams(void);
+  /** Returns the appropriate server socket, based on the capability flag it is passed. */
+  OncomingSocket * serverSocket(DWORD capflag);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
@@ -340,7 +344,7 @@ private: // Private attributes
   /** The user's password */
   QString pass;
   /** The authorization cookie */
-  char * cookie;
+  char * mCookie;
   /** ip address of the bos server */
   QString bosServer;
   /** The length of the cookie */
@@ -352,7 +356,9 @@ private: // Private attributes
   /** tells whether we are idle */
   bool idle;
   /** Socket for direct connections */
-  OncomingSocket *serverSocket;
+  OncomingSocket *mDirectIMMgr;
+  /** Socket for file transfers */
+  OncomingSocket *mFileTransferMgr;
   /** SSI server stored data */
   SSIData ssiData;
   /** Socket for direct connections */

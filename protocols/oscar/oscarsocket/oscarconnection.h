@@ -25,24 +25,26 @@
   *@author Tom Linsky
   */
 
-#define CONN_TYPE_DIRECTIM			1
-#define CONN_TYPE_SERVER				2
-#define CONN_TYPE_FILETRANSFER	4
-#define CONN_TYPE_REDIRECT			8
-
 class OscarDebugDialog;
 
 class OscarConnection : public QSocket  {
   Q_OBJECT
 public:
-	OscarConnection(const QString &connName, int type, QObject *parent=0, const char *name=0);
-	~OscarConnection();
+	/** Enum for connection type */
+	enum ConnectionType
+	{
+		DirectIM, Server, SendFile, Redirect
+	};
 
 	/** Enum for typing notifications */
 	enum TypingNotify
 	{
 		TypingFinished, TextTyped, TypingBegun
 	};
+
+	OscarConnection(const QString &sn, const QString &connName, ConnectionType type,
+		char cookie[8]="ABCDEFGH", QObject *parent=0, const char *name=0);
+	~OscarConnection();
 
 	/** Sets the pointer to the debug dialog */
 	void setDebugDialog(OscarDebugDialog *dialog);
@@ -54,12 +56,21 @@ public:
   inline QString connectionName(void) const { return mConnName; };
   /** Returns the type of this connection */
   inline int connectionType(void) const { return mConnType; };
-  /** Sends an IM */
-  //virtual void sendIM(const QString &message, const QString &dest, bool isAuto);
   /** Gets the currently logged in user's screen name */
   inline QString getSN(void) const { return mSN; };
   /** Sets the currently logged in user's screen name */
   void setSN(const QString &newSN);
+  /** Gets the message cookie */
+  inline const char *cookie(void) const { return mCookie; };
+
+  //VIRTUAL FUNCTIONS THAT CAN BE OVERLOADED BY CHILD CLASSES
+  /** Sends the direct IM message to buddy */
+  virtual void sendIM(const QString &message, bool isAuto);
+  /** Sends a typing notification to the server
+			@param notifyType Type of notify to send
+	 */
+  virtual void sendTypingNotify(TypingNotify notifyType);
+
 
 signals: // Signals
 	/** Emitted when an IM comes in */
@@ -74,24 +85,33 @@ signals: // Signals
 	 * 2: Begun (is typing)
 	 */
 	void gotMiniTypeNotification(QString, int);
-	/** Emitted when we are ready to Direct IM! */
-	void directIMReady(QString name);
-
+	/** Emitted when we are ready to send commands! */
+	void connectionReady(QString name);
+  /** Emitted when the connection is closed */
+  void connectionClosed(QString name);
+  /** Emitted when a file transfer is complete */
+  void transferComplete(QString name);
 	
-protected slots: // Private slots
+protected slots: // Protected slots
   /** Called when there is data to be read.
 		If you want your connection to be able to receive data, you
 		should override this
 		No need to connect the signal in derived classes, just override this slot*/
   virtual void slotRead(void);
 
+private slots: // Private slots
+	/** Called when we have established a connection */
+	void slotConnected(void);
+  /** Called when the connection is closed */
+  void slotConnectionClosed(void);
+
 private: //private attributes
-	/** The cookie used to authenticate */
-	//char mAuthCookie[256];
+	/** The ICBM cookie used to authenticate */
+	char mCookie[8];
 	/** The name of the connection */
 	QString mConnName;
 	/** The connection type */
-	int mConnType;
+	ConnectionType mConnType;
 	/** The ip of the host we will connect to */
 	QString mHost;
 	/** The Port we will connect to on the peer machine */

@@ -42,11 +42,11 @@ public:
   /** Sets the socket to use socket, state() to connected, and emit connected() */
   virtual void setSocket( int socket );
   /** Sends the direct IM message to buddy */
-  void sendIM(const QString &message, bool isAuto);
+  virtual void sendIM(const QString &message, bool isAuto);
   /** Sends a typing notification to the server
 			@param notifyType Type of notify to send
 	 */
-  void sendTypingNotify(TypingNotify notifyType);
+  virtual void sendTypingNotify(TypingNotify notifyType);
 	
 protected slots: // Protected slots
   /** Called when there is data to be read from peer */
@@ -60,19 +60,6 @@ private: // Private methods
   /** Parses the given message */
   void parseMessage(Buffer &inbuf);
   
-private slots: // Private slots
-  /** Called when we have established a connection */
-  void slotConnected(void);
-  /** Called when the connection is closed */
-  void slotConnectionClosed(void);
-
-private: //private members
-	/** the message cookie */
-	char mCookie[8];
-
-signals:
-  /** Emitted when the connection is closed */
-  void connectionClosed(OscarDirectConnection *conn);
 };
 
 #endif

@@ -26,9 +26,11 @@ struct DirectInfo { //info used for keeping track of direct connections
 	char cookie[8];
 	QString sn;
 	QString host;
+	QFileInfo finfo;
 };
 
 #define DIRECTIM_PORT		4443
+#define SENDFILE_PORT		5190
 
 /**Handles oncoming connections
   *@author twl6
@@ -41,25 +43,27 @@ class OncomingSocket : public QServerSocket  {
    Q_OBJECT
 public: 
 	OncomingSocket(QObject *parent=0, const char *name=0);
-	OncomingSocket(OscarSocket *server, const QHostAddress &address, Q_UINT16 port=DIRECTIM_PORT,
+	OncomingSocket(OscarSocket *server, const QHostAddress &address, OscarConnection::ConnectionType type, Q_UINT16 port=DIRECTIM_PORT,
 		int backlog=5, QObject *parent=0, const char *name=0);
 	~OncomingSocket();
   /** Called when someone connects to the serversocket */
   virtual void newConnection( int socket );
   /** Finds the connection named name and returns a pointer to it.
 			If no such connection is found, return NULL */
-  OscarDirectConnection * findConnection(const QString &name);
-  /** Adds the connection to the list of pending connections */
-  void addPendingConnection(const QString &sn, char cookie[8]);
+  OscarConnection * findConnection(const QString &name);
+  /** Adds the connection to the list of pending connections, returns it */
+  DirectInfo *addPendingConnection(const QString &sn, char cookie[8], const QFileInfo &finfo=QFileInfo());
   /** Adds an outgoing connection to the list and attempts to connect */
   void addOutgoingConnection(const QString &sn, char * cook, const QString &host, int port);
   /** Removes the named connection from the connection list and disconnects it. */
   void removeConnection(const QString &name);
 private:
   /** A list of all connections */
-  QPtrList<OscarDirectConnection> mConns;
+  QPtrList<OscarConnection> mConns;
   /** A list with pending connection info */
   QPtrList<DirectInfo> mPendingConnections;
+  /** The type of objects to be created */
+  OscarConnection::ConnectionType mType;
 	OscarSocket *mServer;
 public slots: // Public slots
   /** Called when a connection is ready */
@@ -68,7 +72,9 @@ public slots: // Public slots
   void slotConnectionClosed(QString name);
 private: // Private methods
   /** Set up a connection before adding it to the list of connections */
-  void setupConnection(OscarDirectConnection *newsock);
+  void setupConnection(OscarConnection *newsock);
+  /** Allocates memory to ptr of the proper type */
+  OscarConnection * createAppropriateType(DirectInfo *info);
 };
 
 #endif

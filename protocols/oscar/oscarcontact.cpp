@@ -787,9 +787,10 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &altFileName,
 
 	if ( !filePath.isEmpty() )
 	{
-		kdDebug() << "[OscarContact] File size is " << fileSize << endl;
+    QFileInfo finfo(filePath);
+		kdDebug() << "[OscarContact] File size is " << finfo.size() << endl;
 		//Send the file
-		mProtocol->engine->sendFileSendRequest( mName, filePath );
+		mProtocol->engine->sendFileSendRequest( mName, finfo );
 	}
 }
 

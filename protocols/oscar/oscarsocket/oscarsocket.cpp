@@ -192,18 +192,14 @@ static const char *msgerrreason[] = {
 
 static const int msgerrreasonlen = 25;
 
-OscarSocket::OscarSocket(const QString &connName, QObject *parent, const char *name)
-    : OscarConnection(connName, CONN_TYPE_SERVER, parent,name)
+OscarSocket::OscarSocket(const QString &connName, char cookie[8], QObject *parent, const char *name)
+    : OscarConnection("unknown", connName, Server, cookie, parent,name)
 {
-    //connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
     connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
     connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
-//    connect(this, SIGNAL(gotBOSRights(WORD,WORD)), this, SLOT(OnGotBOSRights(WORD,WORD)));
-//    connect(this, SIGNAL(gotConfig(TAimConfig)), this, SLOT(OnGotConfig(TAimConfig)));
     key = NULL;
-    cookie = NULL;
+    mCookie = NULL;
     idle = false;
-//    tmpSocket = NULL;
     rateClasses.setAutoDelete(TRUE);
     myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
     isConnected = false;
@@ -219,8 +215,9 @@ void OscarSocket::OnConnect(void)
 {
     QString tmp = QString("Connected to " + peerName() + ", port %1").arg(peerPort());
     kdDebug() << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
-   	serverSocket = new OncomingSocket(this, address());
-    kdDebug() << "[OSCAR] address() is " << address().toString() << " serverSocket->address() is " << serverSocket->address().toString() << endl;
+   	mDirectIMMgr = new OncomingSocket(this, address(), DirectIM);
+    mFileTransferMgr = new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
+    kdDebug() << "[OSCAR] address() is " << address().toString() << " mDirectIMMgr->address() is " << mDirectIMMgr->address().toString() << endl;
     emit connectionChanged(1,tmp);
 }
 
@@ -231,13 +228,14 @@ void OscarSocket::slotRead(void)
 	char *buf = new char[fl.length];
 	Buffer inbuf;
 
-	if (fl.length == 0) //something went wrong, this shouldn't happen
+	if ( fl.error ) //something went wrong, this shouldn't happen
   {
   	kdDebug() << "[OSCAR] this is bad, flap read error occured " << endl;
   	//dump packet, try to recover
    	char *tmp = new char[bytesAvailable()];
     readBlock(tmp, bytesAvailable());
     inbuf.setBuf(tmp, bytesAvailable());
+    inbuf.print();
     if (hasDebugDialog()) {
     	debugDialog()->addMessageFromServer(inbuf.toString(), connectionName());
     }
@@ -416,8 +414,9 @@ void OscarSocket::slotRead(void)
 			break;
 			//		case 0x03: //FLAP error channel
 			//			break;
-			//		case 0x04: //close connection negotiation channel
-			//			break;
+		case 0x04: //close connection negotiation channel
+			kdDebug() << "[OSCAR] Got connection close request " << endl;
+			break;
 
 		default: //oh, crap, something's wrong
 		{
@@ -428,7 +427,7 @@ void OscarSocket::slotRead(void)
 #endif
 		}
 	} // END switch(fl.channel)
-	delete buf; 
+	delete [] buf; 
 }
 
 /** Sends an authorization request to the server */
@@ -468,8 +467,10 @@ void OscarSocket::OnConnectionClosed(void)
     kdDebug() << "[OSCAR] Connection closed by server" << endl;
     rateClasses.clear();
     isConnected = false;
-    if (serverSocket)
-    	delete serverSocket;
+    if (mDirectIMMgr)
+    	delete mDirectIMMgr;
+ 		if (mFileTransferMgr)
+   		delete mFileTransferMgr;
 }
 
 /** Called when the server aknowledges the connection */
@@ -517,7 +518,7 @@ void OscarSocket::parsePasswordKey(Buffer &inbuf)
 	WORD keylen;
 	keylen = inbuf.getWord();
 	if (key)
-		delete key;
+		delete [] key;
 	key = inbuf.getBlock(keylen);
   sendLogin();
 }
@@ -575,7 +576,7 @@ void OscarSocket::sendCookie(void)
 {
     Buffer outbuf;
     putFlapVer(outbuf);
-    outbuf.addTLV(0x0006,cookielen, cookie);
+    outbuf.addTLV(0x0006,cookielen, mCookie);
     sendBuf(outbuf,0x01);
 }
 
@@ -710,8 +711,8 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
     TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
     TLV *regstatus = findTLV(lst,0x0013); //whether the e-mail address is available to others
     TLV *err = findTLV(lst,0x0008); //whether an error occured
-    if (cookie)
-	delete cookie;
+    if (mCookie)
+	delete[] mCookie;
     if (err)
     {
 	QString errorString;
@@ -742,19 +743,19 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	}
     if (cook)
 	{
-	    cookie = cook->data;
+	    mCookie = cook->data;
 	    cookielen = cook->length;
 	    connectToBos();
 	}
     if (sn)
-	delete sn->data;
+	delete [] sn->data;
     if (email)
-	delete email->data;
+	delete [] email->data;
     if (regstatus)
-	delete regstatus->data;
+	delete [] regstatus->data;
     lst.clear();
     if (url)
-    	delete url->data;
+    	delete [] url->data;
 }
 
 /** finds a tlv of type typ in the list */
@@ -985,7 +986,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 		} // END switch (ssi->type)
 
 		if (name)
-			delete name;
+			delete [] name;
 	} // END while(inbuf.getLength() > 4)
 
 	blist.timestamp = inbuf.getDWord();
@@ -1031,7 +1032,7 @@ void OscarSocket::parseServerReady(Buffer &inbuf)
 	}
 	sendVersions(families,famcount);
 	emit serverReady();
-	delete families;
+	delete [] families;
 }
 
 /** parses server version info */
@@ -1162,6 +1163,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
     QString message;
     WORD msgtype = 0; //used to tell whether it is a direct IM requst, deny, or accept
     DWORD capflag = 0; //used to tell what kind of rendezvous this is
+    OncomingSocket *sockToUse; //used to tell which listening socket to use
     switch(channel)
 		{
  		case 0x0001: //normal IM
@@ -1200,7 +1202,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								// Get the message
 								char *msg = inbuf.getBlock(msglen);
 								message = msg;
-								delete msg;
+								delete [] msg;
 								kdDebug() << "[OSCAR] IM text: " << message << endl;
 								emit gotIM(message,u.sn,isAutoResponse);
 
@@ -1280,7 +1282,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				    break; /* should only match once... */
 					}
 				}
-				delete cap;
+				delete [] cap;
 				if (!identified)
 				{
 						printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
@@ -1357,7 +1359,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								}
 								else
 										kdDebug() << "[OSCAR] ICBM ch2: unknown tlv type " << cur->type << endl;
-								delete cur->data;
+								delete [] cur->data;
 						}
 				}
 				else
@@ -1365,33 +1367,36 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						kdDebug() << "[OSCAR] Ch 2 IM: unknown TLV type " << type << endl;
 				}
 
+				// Set the appropriate server socket
+				sockToUse = serverSocket(capflag);
+				
 				if (msgtype == 0x0000) // initiate
 				{
 					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
 					{
 						sendDirectIMAccept(u.sn);
-						serverSocket->addOutgoingConnection(u.sn, cook, qh.toString(), DIRECTIM_PORT);
+						remotePort = 4443;
 					}
 					else // file send
 					{
 						sendFileSendAccept(u.sn);
-						serverSocket->addOutgoingConnection(u.sn, cook, qh.toString(), remotePort);
 					}
+					sockToUse->addOutgoingConnection(u.sn, cook, qh.toString(), remotePort);
 				}
-				else if (msgtype == 0x0002) //deny
+				else if (msgtype == 0x0001) //deny
 				{
 					if ( capflag & AIM_CAPS_IMIMAGE )
 					{
 						emit protocolError(i18n("Direct IM request denied by %1").arg(u.sn),0);
-						serverSocket->removeConnection(u.sn);
 					}
 					else
 					{
 						emit protocolError(i18n("Send file request denied by %1").arg(QString(u.sn)),0);
 					}
+					sockToUse->removeConnection(u.sn);
 				}
         if (cook)
-		    	delete cook;
+		    	delete [] cook;
 				break;
 		default: //unknown channel
 				kdDebug() << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
@@ -1424,7 +1429,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				WORD tlvlen = inbuf.getWord();
 				kdDebug() << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
 									<< ", tlvlen: " << tlvlen << endl;
-				delete cb;
+				delete [] cb;
 				for (int i=0;i<tlvlen;i++)
 				{
 						TLV t = inbuf.getTLV();
@@ -1459,7 +1464,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 						default: //unknown info type
 								kdDebug() << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
 						};
-						delete t.data;
+						delete [] t.data;
 
 				}
 				// TODO [Sept 27 2002] gives compilation warning on third argument
@@ -1483,7 +1488,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	OscarDirectConnection *dc = serverSocket->findConnection(dest);
+	OscarConnection *dc = mDirectIMMgr->findConnection(dest);
 	if (dc)
 	{
 		dc->sendIM(message,isAuto);
@@ -1624,7 +1629,7 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 						kdDebug() << "[OSCAR] Unknown user info type " << cur->type << endl;
 						break;
 		};
-		delete cur->data;
+		delete [] cur->data;
 	}
   if (away.length())
 		profile += "<B>Away Message:</B><br>" + away + "<br><hr>";
@@ -1700,7 +1705,7 @@ void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 void OscarSocket::parseRedirect(Buffer &inbuf)
 {
     kdDebug() << "[OSCAR] Parsing redirect" << endl;
-    OscarConnection *servsock = new OscarConnection("Redirect",CONN_TYPE_REDIRECT);
+    OscarConnection *servsock = new OscarConnection(getSN(),"Redirect",Redirect);
     QList<TLV> tl = inbuf.getTLVList();
     int n;
     QString host;
@@ -1741,7 +1746,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 		    kdDebug() << "[OSCAR] Unknown tlv type in parseredirect: " << tmp->type << endl;
 		    break;
 		}
-	  delete tmp->data;
+	  delete [] tmp->data;
 	}
 	tl.clear();
 	//sockets.append(servsock);
@@ -1767,8 +1772,8 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
     BYTE snlen = inbuf.getByte();
     char *sn = inbuf.getBlock(snlen);
     QString nm = sn;
-    delete sn;
-    delete ck;
+    delete [] sn;
+    delete [] ck;
     emit gotAck(nm,typ);
 }
 
@@ -1787,7 +1792,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 		// The screen name
 		char *sn = inbuf.getBlock(snlen);
 		QString screenName = sn;
-		delete sn;
+		delete [] sn;
 		// Get the actual notification
 		WORD notification = inbuf.getWord();
 		// DEBUG STATEMENT
@@ -1961,8 +1966,9 @@ void OscarSocket::parseError(Buffer &inbuf)
 type == 0: request
 type == 1: deny
 type == 2: accept  */
-void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const QString &filename, long filesize)
+void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const QFileInfo &finfo)
 {
+		OncomingSocket *sockToUse = serverSocket(rendezvousType);
     Buffer outbuf;
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
     char ck[8];
@@ -1971,10 +1977,11 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 		{
 	    ck[i] = static_cast<BYTE>(rand());
 		}
+
 		//add this to the list of pending connections if it is a request
 		if ( type == 0 )
 		{
-			serverSocket->addPendingConnection(sn, ck);
+			sockToUse->addPendingConnection(sn, ck, finfo);
 		}
     outbuf.addString(ck,8);
     //channel 2
@@ -1986,7 +1993,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     outbuf.addTLV(0x0003,0x0000,NULL);
     //add a huge TLV of type 5
     outbuf.addWord(0x0005);
-    if ( filename.isNull() ) //this is a simple direct IM
+    if ( finfo.fileName().isNull() ) //this is a simple direct IM
     {
     	if (type == 0x0000)
      		outbuf.addWord(2+8+16+6+8+6+4);
@@ -1996,7 +2003,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     else //this is a file transfer request
     {
     	if (type == 0x0000)
-	    	outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+filename.length()+4);
+	    	outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+finfo.fileName().length()+4);
       else
       	outbuf.addWord(2+8+16);
     }
@@ -2019,31 +2026,32 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
  	   	//TLV (type 3)
     	outbuf.addWord(0x0003);
     	outbuf.addWord(0x0004);
-    	if (!serverSocket->ok()) //make sure the socket stuff is properly set up
+    	if (!sockToUse->ok()) //make sure the socket stuff is properly set up
     	{
     		kdDebug() << "[Oscar] SERVER SOCKET NOT SET UP... returning from sendRendezvous" << endl;
+      	emit protocolError(i18n("Error setting up listening socket.  The request will not be send."),0);
 				return;
 			}	
-    	outbuf.addDWord(static_cast<DWORD>(serverSocket->address().ip4Addr())); //8
+    	outbuf.addDWord(static_cast<DWORD>(sockToUse->address().ip4Addr())); //8
     	//TLV (type 5)
     	outbuf.addWord(0x0005);
     	outbuf.addWord(0x0002); //8
-    	outbuf.addWord(serverSocket->port()); //6
+    	outbuf.addWord(sockToUse->port()); //6
     	//TLV (type f)
     	outbuf.addTLV(0x000f,0x0000,NULL); //4
     	
-   	 if ( !filename.isNull() )
+   	 if ( !finfo.fileName().isNull() )
    	 {
     		outbuf.addWord(0x2711); //2
-     		outbuf.addWord(2+2+4+filename.length()+4); //2
+     		outbuf.addWord(2+2+4+finfo.fileName().length()+4); //2
       	outbuf.addWord(0x0001); //more than 1 file? (0x0002 for multiple -- implement later)
       	outbuf.addWord(0x0001); //number of files
-				outbuf.addDWord(filesize);
-				outbuf.addString(filename.latin1(),filename.length());
+				outbuf.addDWord(finfo.size());
+				outbuf.addString(finfo.fileName().latin1(),finfo.fileName().length());
 				outbuf.addDWord(0x00000000);
     	}
     }
-   	kdDebug() << "[OSCAR] Sending direct IM, type " << type << " from " << serverSocket->address().toString() << ", port " << serverSocket->port() << endl;
+   	kdDebug() << "[OSCAR] Sending direct IM, type " << type << " from " << sockToUse->address().toString() << ", port " << sockToUse->port() << endl;
     sendBuf(outbuf,0x02);
 }
 
@@ -2238,12 +2246,13 @@ FLAP OscarSocket::getFLAP(void)
     int theword, theword2;
     int start;
     int chan;
+    fl.error = false;
 		//the FLAP start byte
     if ((start = getch()) == 0x2a){
 				//get the channel ID
 				if ( (chan = getch()) == -1) {
 						kdDebug() << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
-						fl.channel = 0x00;
+						fl.error = true;
 				} else {
 						fl.channel = chan;
 				}
@@ -2251,10 +2260,10 @@ FLAP OscarSocket::getFLAP(void)
 				//get the sequence number
 				if((theword = getch()) == -1){
 						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
-						fl.sequence_number = 0x00;
+						fl.error = true;
 				} else if((theword2 = getch()) == -1){
 						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-						fl.sequence_number = 0x00;
+						fl.error = true;
 				} else {
 						// Got both pieces of info we need...
 						fl.sequence_number = (theword << 8) | theword2;
@@ -2263,16 +2272,16 @@ FLAP OscarSocket::getFLAP(void)
 				//get the data field length
 				if ((theword = getch()) == -1) {
 						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
-						fl.length = 0x00;
+						fl.error = true;
 				} else if((theword2 = getch()) == -1){
 						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-						fl.length = 0x00;
+						fl.error = true;
 				} else {
 						fl.length = (theword << 8) | theword2;
 				}
 		} else {
 				kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
-				fl.length = 0;
+				fl.error = true;
 				putch(start);
 		}
     return fl;
@@ -2284,7 +2293,7 @@ void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyTyp
 		kdDebug() << "[OSCAR] Sending Typing notify " << endl;
 
 		//look for direct connection before sending through server
-		OscarDirectConnection *dc = serverSocket->findConnection(screenName);
+		OscarConnection *dc = mDirectIMMgr->findConnection(screenName);
 		if ( dc )
 		{
 			kdDebug() << "[OSCAR] Found direct connection, sending typing notify directly" << endl;
@@ -2353,19 +2362,28 @@ void OscarSocket::OnDirectIMConnectionClosed(QString name)
 /** Called when a direct connection is set up and ready for use */
 void OscarSocket::OnDirectIMReady(QString name)
 {
-	emit directIMReady(name);
+	emit connectionReady(name);
 }
 
 /** Initiate a transfer of the given file to the given sn */
-void OscarSocket::sendFileSendRequest(const QString &sn, const QString &filename)
+void OscarSocket::sendFileSendRequest(const QString &sn, const QFileInfo &finfo)
 {
-	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, filename);
+	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, finfo);
 }
 
 /** Accepts a file transfer from sn */
 void OscarSocket::sendFileSendAccept(const QString &sn)
 {
 	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
+}
+
+/** Returns the appropriate server socket, based on the capability flag it is passed. */
+OncomingSocket * OscarSocket::serverSocket(DWORD capflag)
+{
+	if ( capflag & AIM_CAPS_IMIMAGE ) //direct im
+		return mDirectIMMgr;
+	else  //must be a file transfer?
+		return mFileTransferMgr;
 }
 
 /*

@@ -19,13 +19,18 @@
 #include "oscardebugdialog.h"
 #include "oscarconnection.h"
 
-OscarConnection::OscarConnection(const QString &connName, int type,
-	QObject *parent, const char *name)
+OscarConnection::OscarConnection(const QString &sn, const QString &connName,
+	ConnectionType type, char cookie[8], QObject *parent, const char *name)
 	: QSocket(parent, name)
 {
 	mConnName = connName;
 	mConnType = type;
+	mSN = sn;
+  for (int i=0;i<8;i++)
+	 	mCookie[i] = cookie[i];
+
   connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
+ 	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 }
 
 OscarConnection::~OscarConnection()
@@ -67,6 +72,37 @@ void OscarConnection::setDebugDialog(OscarDebugDialog *dialog)
 void OscarConnection::setSN(const QString &newSN)
 {
 	mSN = newSN;
+}
+
+/** Sends the direct IM message to buddy */
+void OscarConnection::sendIM(const QString &message, bool isAuto)
+{
+	kdDebug() << "[OscarConnection] sendIM not implemented in this object! " << endl;
+}
+
+/** Sends a typing notification to the server
+		@param notifyType Type of notify to send
+ */
+void OscarConnection::sendTypingNotify(TypingNotify notifyType)
+{
+	kdDebug() << "[OscarConnection] sendTypingNotify not implemented in this object! " << endl;
+}
+
+/** Called when we have established a connection */
+void OscarConnection::slotConnected(void)
+{
+	kdDebug() << "[OscarConnection] We are connected to " << connectionName() << endl;
+	// Announce that we are ready for use, if it's not the server socket
+	if ( mConnType != Server )
+		emit connectionReady(connectionName());
+}
+
+/** Called when the connection is closed */
+void OscarConnection::slotConnectionClosed(void)
+{
+	kdDebug() << "[OscarDirectConnection] connection with " << connectionName() << "lost." << endl;
+	emit protocolError(QString("Connection with %1 lost").arg(connectionName()), 0);
+	emit connectionClosed(connectionName());
 }
 
 #include "oscarconnection.moc"
