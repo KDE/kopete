@@ -29,7 +29,8 @@ o IRC Plugin
 
 o ICQ Plugin
 	 o Updated for globally Away/Available (Duncan)
-
+	 o Added support for authorizing contacts (Duncan)
+	 o Added support for invisible status ( Duncan )
 o MSN Plugin
 	o Updated for globally Away/Available (Duncan)
 	o Big Protocol cleanup and plugin redesign (Martijn)
