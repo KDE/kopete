@@ -135,12 +135,32 @@ void KopeteContactList::loadXML()
 	}
 
 	/* All ok! */
+	xml_file.close();
 }
 
 void KopeteContactList::saveXML()
 {
+	QString xml_filename = locateLocal("data","kopete/contacts.xml");
+	QFile xml_file( xml_filename );
 
+	xml_file.open(IO_ReadWrite | IO_Append);
+	QTextStream stream(&xml_file);
 
+	stream.setEncoding(QTextStream::UnicodeUTF8);
+	
+	/*
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		QPtrListIterator<KopeteContact> contactIt( it.current()->contacts() );
+		for( ; contactIt.current(); ++contactIt )
+		{
+			
+		}
+	}
+	*/
+	stream.device()->flush();
+	xml_file.close();
 }
 
 QStringList KopeteContactList::meta_all()
