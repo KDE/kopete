@@ -31,6 +31,7 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "icquserinfo.h"
+const unsigned int supportedInfoItems = 5;
 
 ICQContact::ICQContact(const QString name, const QString displayName,
 	ICQAccount *acc, KopeteMetaContact *parent)

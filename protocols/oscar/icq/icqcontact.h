@@ -99,7 +99,6 @@ class ICQContact : public OscarContact
 		int userinfoRequestSequence;
 		unsigned int userinfoReplyCount;
 		bool mInvisible;
-		const unsigned int supportedInfoItems = 5;
 
 	private slots:
 		/** Called when the userinfo dialog is getting closed */

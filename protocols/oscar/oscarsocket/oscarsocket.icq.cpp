@@ -124,10 +124,10 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	WORD subcmd = fromicqsrv.getLEWord();
 	WORD sequence = fromicqsrv.getLEWord();
 
-/*
+
 	kdDebug(14150) << k_funcinfo << "commandlength=" << commandlength <<
 		", ourUIN='" << ourUIN << "', subcmd=" << subcmd << ", sequence=" << sequence << endl;
-*/
+
 	switch(subcmd)
 	{
 		case 0x0041: //SRV_OFFLINEMSG
