@@ -95,11 +95,14 @@ int CoreProtocol::state()
 
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
-	// store locally
+/*	// store locally
 	int oldsize = m_in.size();
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
 	// convert to a Transfer
+*/
+	// Assuming TCP and SSL manage to deliver us complete globs of data from the server
+	m_in = incomingBytes;	
 	wireToTransfer( m_in );
 }
 
@@ -186,7 +189,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		//cout << " - writing a field" << endl;
 		QByteArray bytesOut;
 		QDataStream dout( bytesOut, IO_WriteOnly );
-		//dout.setByteOrder( QDataStream::LittleEndian );
+		dout.setByteOrder( QDataStream::LittleEndian );
 		
 		// these fields are ignored by Gaim's novell
 		if ( field->type() == NMFIELD_TYPE_BINARY  || field->method() == NMFIELD_METHOD_IGNORE )
@@ -271,8 +274,13 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 	}
 	if ( depth == 0 ) // this call to the function was not recursive, so the entire request has been sent at this point
 	{
-		emit outgoingData( QCString( "\r\n" ) );
-		cout << " - request sent." << endl;
+		// very important, don't send put the \r\n on the wire as a string or it will be preceded with the string length and 0 terminated, which the server reads as a request to disconnect.
+		QByteArray bytesOut;
+		QDataStream dout( bytesOut, IO_WriteOnly );
+		dout.setByteOrder( QDataStream::LittleEndian );
+		dout.writeRawBytes( "\r\n", 2 );
+		emit outgoingData( bytesOut );
+		cout << " - request sent, end via qbytearray..." << endl;
 	}
 	cout << " - method done" << endl;
 }
@@ -405,7 +413,7 @@ bool CoreProtocol::readResponse()
 	}
 	
 	// read fields
-	readFields( -1 ); // only read 20 in case we don't end the loop properly.
+	readFields( -1 );
 	// find transaction id field and create Response object if nonzero
 	int tId = 0;
 	Field::FieldListIterator it;
@@ -449,10 +457,11 @@ void CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// that is the last element in the top list in m_collatingFields.
 	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
 	cout << "CoreProtocol::readFields()" << endl;
-	cout << fieldCount << " reading " << fieldCount << "fields" << endl;
+	if ( fieldCount > 0 )
+		cout << " reading " << fieldCount << "fields" << endl;
 	Field::FieldList currentList;
 	int safetyCheck = 0;
-	while ( fieldCount != 0 && safetyCheck ++ < 1000 )  // prevents input data from ruining our day
+	while ( fieldCount != 0 && safetyCheck++ < 1000 )  // prevents bad input data from ruining our day
 	{
 		cout << fieldCount << " fields left to read" << endl;
 		// the field being read
@@ -463,7 +472,7 @@ void CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 		// read uint8 type
 		*m_din >> type;
 		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
-		if ( type == 0 && m_din->atEnd() )
+		if ( type == 0 ) /*&& m_din->atEnd() )*/
 		{
 			cout << "- end of field list" << endl;
 			*m_din >> type;
@@ -479,18 +488,18 @@ void CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 		// read tag and length
 		char* rawData;
 		m_din->readBytes( rawData, val );
-		// set tag from the raw dcout "- end of field list" << endl;ata.  QDataStream::readBytes() allocates the 
+		// set tag from the raw dout "- end of field list" << endl;ata.  QDataStream::readBytes() allocates the 
 		// space for rawData and expects us to manage it, and we let 
 		// QCString take care of it
 		tag.setRawData( rawData, val );
-		printf( "- type: %i, method: %i, tag: %s\n", type, method, rawData );
+		qDebug( "- type: %i, method: %i, tag: %s,", type, method, rawData );
 		// if multivalue or array
 		if ( type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY )
 		{
 			// read length uint32
 			*m_din >> val;
 			// create multifield
-			qDebug( "- multi field containing: %i\n", val );
+			qDebug( " multi field containing: %i\n", val );
 			Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
 			currentList.append( m );
 			readFields( val, &currentList);
