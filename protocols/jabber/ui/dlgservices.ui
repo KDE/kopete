@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>627</width>
+            <width>539</width>
             <height>286</height>
         </rect>
     </property>
@@ -18,89 +18,151 @@
     <property name="sizeGripEnabled">
         <bool>true</bool>
     </property>
-    <grid>
+    <widget class="QTable">
         <property name="name">
-            <cstring>unnamed</cstring>
+            <cstring>tblServices</cstring>
         </property>
-        <widget class="QPushButton" row="2" column="2">
-            <property name="name">
-                <cstring>btnRegister</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Register</string>
-            </property>
-            <property name="accel">
-                <string>Alt+R</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="2" column="3">
-            <property name="name">
-                <cstring>btnClose</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Close</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
-            </property>
-        </widget>
-        <widget class="QTable" row="1" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>tblServices</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>StyledPanel</enum>
-            </property>
-            <property name="resizePolicy">
-                <enum>Default</enum>
-            </property>
-            <property name="numRows">
-                <number>0</number>
-            </property>
-            <property name="numCols">
-                <number>2</number>
-            </property>
-            <property name="columnMovingEnabled">
-                <bool>true</bool>
-            </property>
-            <property name="readOnly">
-                <bool>true</bool>
-            </property>
-            <property name="focusStyle">
-                <enum>SpreadSheet</enum>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>lblServer</cstring>
-            </property>
-            <property name="text">
-                <string>Server:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>leServer</cstring>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="0" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>btnQuery</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Query Server</string>
-            </property>
-            <property name="accel">
-                <string>Alt+Q</string>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
-            </property>
-            <property name="default">
-                <bool>true</bool>
-            </property>
-        </widget>
-    </grid>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>43</y>
+                <width>517</width>
+                <height>200</height>
+            </rect>
+        </property>
+        <property name="frameShape">
+            <enum>StyledPanel</enum>
+        </property>
+        <property name="resizePolicy">
+            <enum>Default</enum>
+        </property>
+        <property name="numRows">
+            <number>0</number>
+        </property>
+        <property name="numCols">
+            <number>2</number>
+        </property>
+        <property name="columnMovingEnabled">
+            <bool>true</bool>
+        </property>
+        <property name="readOnly">
+            <bool>true</bool>
+        </property>
+        <property name="focusStyle">
+            <enum>SpreadSheet</enum>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lblServer</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>44</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Server:</string>
+        </property>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>leServer</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>61</x>
+                <y>13</y>
+                <width>291</width>
+                <height>22</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnRegister</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>248</x>
+                <y>249</y>
+                <width>82</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Register</string>
+        </property>
+        <property name="accel">
+            <string>Alt+R</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnBrowse</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>346</x>
+                <y>249</y>
+                <width>82</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Browse</string>
+        </property>
+        <property name="accel">
+            <string>Alt+B</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnQuery</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>358</x>
+                <y>11</y>
+                <width>170</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Query Server</string>
+        </property>
+        <property name="accel">
+            <string>Alt+Q</string>
+        </property>
+        <property name="autoDefault">
+            <bool>true</bool>
+        </property>
+        <property name="default">
+            <bool>true</bool>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnClose</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>444</x>
+                <y>249</y>
+                <width>82</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Close</string>
+        </property>
+        <property name="accel">
+            <string>Alt+C</string>
+        </property>
+    </widget>
 </widget>
 <connections>
     <connection>
