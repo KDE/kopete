@@ -77,7 +77,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 
 	m_pluginConfig = 0L;
-	tray = 0L;
 
 	// --------------------------------------------------------------------------------
 	initView();
@@ -669,13 +668,6 @@ void KopeteWindow::slotSettingsChanged()
 	// Account colouring may have changed, so tell our status bar to redraw
 //	kdDebug(14000) << k_funcinfo << endl;
 
-	// Hide the systray if needed
-	if ( KopetePrefs::prefs()->showTray() )
-		tray->show();
-	else
-		tray->hide();
-	
-
 	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Protocols" );
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
@@ -690,8 +682,6 @@ void KopeteWindow::slotSettingsChanged()
 			++accountIt;
 		}
 	}
-	
-	
 }
 
 #include "kopetewindow.moc"
