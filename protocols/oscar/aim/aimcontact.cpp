@@ -174,7 +174,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		}
 	}
 	
+// 	if ( details.buddyIconHash() != m_details.buddyIconHash() )
+// 		account()->engine()->getBuddyIcon( contactId() );
+
 	OscarContact::userInfoUpdated( contact, details );
+
+
 }
 
 

@@ -158,7 +158,8 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, "aim_connecting", i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false),
-	clientProfile( "clientProfile", i18n( "User Profile"), 0, false)
+	clientProfile( "clientProfile", i18n( "User Profile"), 0, false),
+	iconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, true, false, true)
 {
 	if (protocolStatic_)
 		kdDebug(14152) << k_funcinfo << "AIM plugin already initialized" << endl;

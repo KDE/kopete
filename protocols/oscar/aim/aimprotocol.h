@@ -71,6 +71,7 @@ public:
 	const Kopete::ContactPropertyTmpl awayMessage;
 	const Kopete::ContactPropertyTmpl clientFeatures;
 	const Kopete::ContactPropertyTmpl clientProfile;
+	const Kopete::ContactPropertyTmpl iconHash;
 
 private:
 	/** The active instance of oscarprotocol */

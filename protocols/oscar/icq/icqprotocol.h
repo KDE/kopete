@@ -65,6 +65,7 @@ public:
 	const Kopete::ContactPropertyTmpl awayMessage;
 	const Kopete::ContactPropertyTmpl emailAddress;
 	const Kopete::ContactPropertyTmpl clientFeatures;
+	const Kopete::ContactPropertyTmpl buddyIconHash;
 
 	const QMap<int, QString> &genders() { return mGenders; }
 	const QMap<int, QString> &countries() { return mCountries; }
