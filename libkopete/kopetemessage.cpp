@@ -610,14 +610,26 @@ const QDomDocument KopeteMessage::asXML() const
 
 	if( d->from )
 	{
+		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName(): d->from->displayName();
 		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
 		QDomElement fromContactNode = doc.createElement( QString::fromLatin1("contact") );
 		fromContactNode.setAttribute( QString::fromLatin1("contactId"), d->from->contactId() );
-		fromContactNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( d->from->displayName() ) );
+		
+		QDomElement fromDisplayName = doc.createElement( QString::fromLatin1("contactDisplayName") );
+		fromDisplayName.setAttribute( QString::fromLatin1("dir"), d->from->displayName().isRightToLeft() ?
+			QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+		fromDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( d->from->displayName() ) );
+		fromContactNode.appendChild( fromDisplayName );
+		
+		QDomElement fromMcDisplayname = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
+		fromMcDisplayname.setAttribute( QString::fromLatin1("dir"), fromName.isRightToLeft() ?
+			QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+		fromContactNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( fromName ) );
+		fromContactNode.appendChild( fromMcDisplayname );
+		
 		QString iconPath = KGlobal::iconLoader()->iconPath( d->from->protocol()->pluginIcon(), 		KIcon::Small );
 		fromContactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
-		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName() : d->from->displayName();
-		fromContactNode.setAttribute( QString::fromLatin1("metaContactDisplayName"),  fromName  );
+		
 		fromNode.appendChild( fromContactNode );
 
 		if( !d->colorMap.contains( fromName ) )
@@ -641,9 +653,20 @@ const QDomDocument KopeteMessage::asXML() const
 		{
 			QDomElement cNode = doc.createElement( QString::fromLatin1("contact") );
 			cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
-			cNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( c->displayName() ) );
-			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ?
-				QStyleSheet::escape( c->metaContact()->displayName() ) : QStyleSheet::escape( c->displayName() ) );
+			
+			QDomElement toDisplayName = doc.createElement( QString::fromLatin1("contactDisplayName") );
+			toDisplayName.setAttribute( QString::fromLatin1("dir"), c->displayName().isRightToLeft() ?
+				QString::fromLatin1("rtl") : QString::fromLatin1("ltr"));
+			toDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( c->displayName() ) );
+			cNode.appendChild( toDisplayName );
+			
+			QString toName = c->metaContact() ? c->metaContact()->displayName() : c->displayName();
+			QDomElement toMDisplayName = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
+			toMDisplayName.setAttribute( QString::fromLatin1("dir"), toName.isRightToLeft() ?
+				QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+			toMDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( toName ) );
+			cNode.appendChild( toMDisplayName );
+
 			QString iconPath = KGlobal::iconLoader()->iconPath(c->protocol()->pluginIcon(), 		KIcon::Small );
 			cNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
 			toNode.appendChild( cNode );

@@ -228,48 +228,62 @@ void KopeteXSLT::setXSLT( const QString &_document )
 			{
 				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
 					"<xsl:choose>"
-						"<xsl:when test='from/contact/@contactId=from/contact/@contactDisplayName'>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@metaContactDisplayName\"/>"
+						"<xsl:when test='from/contact/@contactId=from/contact/contactDisplayName/@text'>"
+							"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/metaContactDisplayName/@text\"/>"
 						"</xsl:when>"
 						"<xsl:otherwise>"
-							"<xsl:value-of disable-output-escaping=\"yes\"	select=\"from/contact/@metaContactDisplayName\"/>&#160;"
+							"<xsl:value-of disable-output-escaping=\"yes\"	select=\"from/contact/metaContactDisplayName/@text\"/>&#160;"
 							"(<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/>)"
 						"</xsl:otherwise>"
 					"</xsl:choose></xsl:attribute>"
-					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactDisplayName\"/></span>" );
+					"<xsl:attribute name=\"dir\">"
+					"<xsl:value-of select=\"from/contact/contactDisplayName/@dir\"/>"
+					"</xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/contactDisplayName/@text\"/></span>" );
 			}
 			else if ( *it == QString::fromLatin1( "TO_CONTACT_DISPLAYNAME" ) )
 			{
 				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
 					"<xsl:choose>"
-						"<xsl:when test='to/contact/@contactId=from/contact/@contactDisplayName'>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>"
+						"<xsl:when test='to/contact/@contactId=from/contact/contactDisplayName/@text'>"
+							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/metaContactDisplayName/@text\"/>"
 						"</xsl:when>"
 						"<xsl:otherwise>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>&#160;"
+							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/metaContactDisplayName/@text\"/>&#160;"
 							"(<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/>)"
 						"</xsl:otherwise>"
 					"</xsl:choose></xsl:attribute>"
-					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactDisplayName\"/></span>" );
+					"<xsl:attribute name=\"dir\">"
+					"<xsl:value-of select=\"to/contact/contactDisplayName/@dir\"/>"
+					"</xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/contactDisplayName/@text\"/></span>" );
 			}
 			else if ( *it == QString::fromLatin1( "FROM_METACONTACT_DISPLAYNAME" ) )
 			{
-				trans += QString::fromLatin1( "<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@metaContactDisplayName\"/>" );
+				trans += QString::fromLatin1( "<spam>"
+				"<xsl:attribute name=\"dir\">"
+				"<xsl:value-of select=\"from/contact/metaContactDisplayName/@dir\"/>"
+				"</xsl:attribute>"
+				"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/metaContactDisplayName/@text\"/></span>" );
 			}
 			else if ( *it == QString::fromLatin1( "TO_METACONTACT_DISPLAYNAME" ) )
 			{
-				trans += QString::fromLatin1( "<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>" );
+				trans += QString::fromLatin1( "<span>"
+				"<xsl:attribute name=\"dir\">"
+					"<xsl:value-of select=\"to/contact/metaContactDisplayName/@dir\"/>"
+					"</xsl:attribute>"
+				"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/metaContactDisplayName/@text\"/></span>" );
 			}
 			else if ( *it == QString::fromLatin1( "FROM_CONTACT_ID" ) )
 			{
 				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
-					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactDisplayName\"/></xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/contactDisplayName/@text\"/></xsl:attribute>"
 					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/></span>" );
 			}
 			else if ( *it == QString::fromLatin1( "TO_CONTACT_ID" ) )
 			{
 				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
-					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactDisplayName\"/></xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/contactDisplayName/@text\"/></xsl:attribute>"
 					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/></span>" );
 			}
 			else if ( *it == QString::fromLatin1( "BODY" ) )

@@ -98,7 +98,7 @@
 				<xsl:choose>
 					<xsl:when test="@direction='3'">
 						<!-- Action -->
-						<kopete-i18n>* %FROM_CONTACT_DISPLAYNAME%&#160;%BODY%</kopete-i18n>
+						<kopete-i18n>* %FROM_CONTACT_DISPLAYNAME% &#160;%BODY%</kopete-i18n>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of disable-output-escaping="yes" select="body"/>

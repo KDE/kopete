@@ -73,7 +73,12 @@
 							<!--action message-->
 							<span style="color:darkgreen">
 								<xsl:text>* </xsl:text>
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
+								<span>
+									<xsl:attribute name="dir">
+										<xsl:value-of select="from/contact/metaContactDisplayName/@dir"/>
+									</xsl:attribute>
+									<xsl:value-of disable-output-escaping="yes" select="from/contact/metaContactDisplayName/@text"/>
+								</span>
 								<xsl:text> </xsl:text>
 								<xsl:value-of disable-output-escaping="yes" select="body"/>
 							</span>

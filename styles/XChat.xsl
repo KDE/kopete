@@ -34,11 +34,13 @@
 				<xsl:when test="@direction='3'">
 					<!--action message-->
 					<span>
-						<xsl:attribute name="title">
-							Contact ID: 
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
+						<xsl:attribute name="dir">
+							<xsl:value-of select="from/contact/contactDisplayName/@dir"/>
 						</xsl:attribute>
-						<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+						<xsl:attribute name="title">
+							<kopete-i18n>Contact ID: %FROM_CONTACT_ID%</kopete-i18n>
+						</xsl:attribute>
+						<xsl:value-of disable-output-escaping="yes" select="from/contact/contactDisplayName/@text"/>
 						<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 					</span>
 				</xsl:when>
@@ -61,7 +63,10 @@
 							<xsl:attribute name="title">
 								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
 							</xsl:attribute>
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+							<xsl:attribute name="dir">
+								<xsl:value-of select="from/contact/contactDisplayName/@dir"/>
+							</xsl:attribute>
+							<xsl:value-of disable-output-escaping="yes" select="from/contact/contactDisplayName/@text"/>
 						</span>
 					</font>
 					<font color="blue">&gt;</font>

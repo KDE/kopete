@@ -45,7 +45,7 @@
 						<xsl:attribute name="title">
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
 						</xsl:attribute>
-						<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+						<xsl:value-of disable-output-escaping="yes" select="from/contact/contactDisplayName/@text"/>
 						<xsl:text> </xsl:text>
 					</span>
 				</xsl:if>
