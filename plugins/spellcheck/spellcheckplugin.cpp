@@ -33,7 +33,10 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, KGenericFactory<SpellCheckPlugin> );
 
-SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QStringList &) : KopetePlugin( parent, name )
+SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
+
+SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QStringList & )
+: KopetePlugin( parent, name )
 {
 	if ( !pluginStatic_ )
 		pluginStatic_ = this;
@@ -41,14 +44,14 @@ SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QSt
 	m_actionCollection = 0L;
 	m_currentKMM=0L;
 	mSpell = 0L;
-	mPrefs = new SpellCheckPreferences( QString::fromLatin1("spellcheck"), this );
+	mPrefs = new SpellCheckPreferences( QString::fromLatin1( "spellcheck" ), this );
 
-	spellCheckerReady = false;
-	manualCheckInProgress = false;
+	m_spellCheckerReady = false;
+	m_manualCheckInProgress = false;
 
-	connect( mPrefs, SIGNAL(saved()), this, SLOT( slotPrefsSaved() ) );
+	connect( mPrefs, SIGNAL( saved() ), this, SLOT( slotPrefsSaved() ) );
 
-	//Connect to the viewCreated signal to install our event filter
+	// Connect to the viewCreated signal to install our event filter
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView * ) ), this, SLOT( slotBindToView( KopeteView * ) ) );
 }
 
@@ -67,8 +70,6 @@ SpellCheckPlugin* SpellCheckPlugin::plugin()
 	return pluginStatic_ ;
 }
 
-SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
-
 void SpellCheckPlugin::slotPrefsSaved()
 {
 	// Destroy the spelling instance so that new prefs will be reloaded
@@ -84,22 +85,27 @@ KSpell *SpellCheckPlugin::speller()
 {
 	if( !mSpell )
 	{
-		mSpell = new KSpell(0L, i18n("Spellcheck"), this, SLOT( slotSpellCheckerReady( KSpell * )), mPrefs->spellConfig() );
-		connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
-		connect( mSpell, SIGNAL( corrected( const QString&, const QString&, unsigned int ) ), this, SLOT( slotCorrection( const QString&, const QString&, unsigned int ) ) );
+		mSpell = new KSpell( 0L, i18n( "Spellcheck" ), this, SLOT( slotSpellCheckerReady( KSpell * ) ), mPrefs->spellConfig() );
+		connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ),
+			this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
+		connect( mSpell, SIGNAL( corrected( const QString&, const QString&, unsigned int ) ),
+			this, SLOT( slotCorrection( const QString&, const QString&, unsigned int ) ) );
 		connect( mSpell, SIGNAL( done( const QString & ) ), this, SLOT( slotSpellDone( const QString &) ) );
 
 		if( !singleSpellers.isEmpty() )
 		{
 			for ( SingleSpellInstance *it = singleSpellers.first(); it; it = singleSpellers.next() )
-				connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), it, SLOT( misspelling( const QString&, const QStringList&, unsigned int ) ) );
+				connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ),
+					it, SLOT( misspelling( const QString&, const QStringList&, unsigned int ) ) );
 		}
-
-		while( !spellCheckerReady )
-			qApp->processEvents();
 	}
 
-	return mSpell;
+	// If the spell checker is not ready, return 0L. The caller can try later
+	// whether initialization succeeded by calling speller() again
+	if ( m_spellCheckerReady )
+		return mSpell;
+	else
+		return 0L;
 }
 
 KActionCollection *SpellCheckPlugin::customChatActions( KopeteMessageManager *kmm )
@@ -115,20 +121,26 @@ KActionCollection *SpellCheckPlugin::customChatActions( KopeteMessageManager *km
 	KAction *spellCheck = new  KAction( i18n( "Check S&pelling" ), QString::fromLatin1( "spellcheck" ),
 		mPrefs->shortCut(), this, SLOT( slotCheckSpelling() ), m_actionCollection, "checkSpelling" );
 
-	m_actionCollection->insert ( spellCheck );
+	m_actionCollection->insert( spellCheck );
 
 	return m_actionCollection;
 }
 
 void SpellCheckPlugin::slotBindToView( KopeteView *view )
 {
-	//Install event filter on the edit widget
-	if( mPrefs->autoCheckEnabled() && view->editWidget()->inherits("QTextEdit") )
+	// Install event filter on the edit widget
+	if ( mPrefs->autoCheckEnabled() && view->editWidget()->inherits( "QTextEdit" ) )
 	{
 		kdDebug() << k_funcinfo << "New View, creating a single speller instance" << endl;
-		SingleSpellInstance *spell = new SingleSpellInstance( this, view );
-		singleSpellers.append( spell );
-		connect( speller(), SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), spell, SLOT( misspelling( const QString&, const QStringList&, unsigned int ) ) );
+
+		SingleSpellInstance *spellInstance = new SingleSpellInstance( this, view );
+		singleSpellers.append( spellInstance );
+		KSpell *spell = speller();
+		if ( spell )
+		{
+			connect( speller(), SIGNAL( misspelling( const QString &, const QStringList &, unsigned int ) ),
+				spellInstance, SLOT( misspelling( const QString &, const QStringList &, unsigned int ) ) );
+		}
 	}
 }
 
@@ -136,25 +148,39 @@ void SpellCheckPlugin::slotCheckSpelling()
 {
 	kdDebug() << k_funcinfo << endl;
 
-	if( spellCheckerReady )
+	if ( m_spellCheckerReady )
 	{
 		delete mSpell;
 		mSpell = 0L;
-		manualCheckInProgress = true;
+		m_manualCheckInProgress = true;
 		KopeteView *activeView = m_currentKMM->view();
 		mBuffer = activeView->currentMessage();
-		speller()->check( mBuffer.plainBody() );
+
+		// Return here, the actual spell check is done when
+		// slotSpellCheckerReady() is called.
 	}
 }
 
 void SpellCheckPlugin::slotSpellCheckerReady( KSpell * )
 {
-	spellCheckerReady = true;
+	m_spellCheckerReady = true;
+
+	// If a user requested a manual check a new speller is created.
+	// Call check() here
+	if ( m_manualCheckInProgress )
+		mSpell->check( mBuffer.plainBody() );
+
+	// FIXME: Bind to all existing views here. This is needed because
+	//        1. slotBindToView() may have been called while spellcheck was initializing.
+	//           in this case nothing is done yet and the connect should be done here instead.
+	//        2. A user may decide to load spell check later, while existing chats are
+	//           already open
+	// - Martijn
 }
 
 void SpellCheckPlugin::slotCorrection( const QString &originalword, const QString &newword, unsigned int pos )
 {
-	if( manualCheckInProgress )
+	if( m_manualCheckInProgress )
 	{
 		//FIXME
 		KopeteView *activeView = 0L;//m_currentKMM->view();
@@ -170,7 +196,7 @@ void SpellCheckPlugin::slotCorrection( const QString &originalword, const QStrin
 
 void SpellCheckPlugin::slotMisspelling( const QString &originalword, const QStringList &, unsigned int pos )
 {
-	if( manualCheckInProgress )
+	if( m_manualCheckInProgress )
 	{
 		//FIXME
 		KopeteView *activeView = 0L;//m_currentKMM->view();
@@ -186,7 +212,7 @@ void SpellCheckPlugin::slotMisspelling( const QString &originalword, const QStri
 
 void SpellCheckPlugin::slotSpellDone( const QString & )
 {
-	manualCheckInProgress = false;
+	m_manualCheckInProgress = false;
 
 	KSpell::spellStatus status = mSpell->status();
 
@@ -197,8 +223,7 @@ void SpellCheckPlugin::slotSpellDone( const QString & )
 
 }
 
-
-
-
-
 #include "spellcheckplugin.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

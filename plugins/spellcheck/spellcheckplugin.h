@@ -49,8 +49,8 @@ class SpellCheckPlugin : public KopetePlugin
 		KSpell *mSpell;
 		KopeteMessage mBuffer;
 		SpellCheckPreferences *mPrefs;
-		bool spellCheckerReady;
-		bool manualCheckInProgress;
+		bool m_spellCheckerReady;
+		bool m_manualCheckInProgress;
 		KopeteMessageManager *m_currentKMM;
 
 	private slots:
@@ -64,3 +64,6 @@ class SpellCheckPlugin : public KopetePlugin
 };
 
 #endif // SPELLCHECKPLUGIN_H
+
+// vim: set noet ts=4 sts=4 sw=4:
+
