@@ -168,11 +168,11 @@
                 <string>This user has me on their contact list</string>
             </property>
             <property name="toolTip" stdset="0">
-                <string>Show if you are on the contactlist of this user</string>
+                <string>Show whether you are on the contactlist of this user</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>If this case is checked, that mean you are on the contactlist of this user.
-If not it is certainly because this user removed you, or simply didn't add you yet</string>
+                <string>If this box is checked, you are on this user's contactlist. 
+If not, the user has not added you to their list, or has removed you.</string>
             </property>
         </widget>
         <spacer>
