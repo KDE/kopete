@@ -364,9 +364,28 @@ void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
 		jabMessage.setTo (Jabber::Jid (to->userId ()));
 
 	//jabMessage.setFrom(from->userId();
-	jabMessage.setBody (km.plainBody (), true);
 	jabMessage.setSubject (km.subject ());
 	jabMessage.setTimeStamp (km.timestamp ());
+
+	if(km.plainBody().find("-----BEGIN PGP MESSAGE-----") != -1)
+	{
+		// this message is encrypted
+
+		// send dummy header (please don't translate)
+		jabMessage.setBody ("This message is encrypted.", false);
+
+		QString encryptedBody = km.plainBody();
+
+		// remove footer
+		encryptedBody.truncate(encryptedBody.length() - QString("-----END PGP MESSAGE-----").length() - 2);
+		encryptedBody = encryptedBody.right(encryptedBody.length() - encryptedBody.find("\n\n") - 2);
+		jabMessage.setXEncrypted (encryptedBody);
+	}
+	else
+	{
+		// this message is not encrypted
+		jabMessage.setBody (km.plainBody (), false);
+	}
 
 	// determine type of the widget and set message type accordingly
 	//if (km.type() == KopeteMessage::Chat)
@@ -394,9 +413,18 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 
 	contactList.append (account()->myself ());
 
+	// retrieve and reformat body
+	QString body = message.body();
+
+	if(!message.xencrypted().isEmpty())
+	{
+		body = QString("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted() + QString("\n-----END PGP MESSAGE-----\n");
+	}
+
 	// convert Jabber::Message into KopeteMessage
-	KopeteMessage newMessage (message.timeStamp (), this, contactList, message.body (), message.subject (),
-							  KopeteMessage::Inbound, KopeteMessage::PlainText, type);
+	KopeteMessage newMessage (message.timeStamp (), this, contactList, body,
+				  message.subject (), KopeteMessage::Inbound,
+				  KopeteMessage::PlainText, type);
 
 	// add it to the manager
 	manager ()->appendMessage (newMessage);
