@@ -43,6 +43,7 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	m_actionHistory = 0L;
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
+	m_actionBlock = 0L;
 
 	m_status = MSNProtocol::FLN;
 
@@ -122,6 +123,17 @@ void MSNContact::showContextMenu(QPoint point, QString /*group*/)
 	}
 	m_actionRemove->plug( popup );
 
+	popup->insertSeparator();
+
+	// Block/unblock Contact
+	delete m_actionBlock;
+	QString label = isBlocked() ?
+		i18n( "Unblock User" ) : i18n( "Block User" );
+	m_actionBlock = new KAction( label,
+		0, this, SLOT( slotBlockUser() ),
+		this, "m_actionBlock" );
+	m_actionBlock->plug( popup );
+
 	popup->exec( point );
 	delete popup;
 }
@@ -175,6 +187,14 @@ void MSNContact::slotCopyThisUser()
 {
 	if( m_actionCopy )
 		MSNProtocol::protocol()->copyContact( this, m_actionCopy->currentText() );
+}
+
+void MSNContact::slotBlockUser()
+{
+	if( isBlocked() )
+		MSNProtocol::protocol()->contactUnBlock( m_msnId );
+	else
+		MSNProtocol::protocol()->slotBlockContact( m_msnId );
 }
 
 void MSNContact::slotViewHistory()

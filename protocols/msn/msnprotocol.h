@@ -165,7 +165,7 @@ public:
 	/**
 	 * Allow this blocked contact
 	 */
-	void contactUnBlock( QString handle );
+	void contactUnBlock( QString handle ) const;
 
 	const ContactList& contacts() const { return m_contacts; }
 

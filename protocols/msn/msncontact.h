@@ -122,6 +122,7 @@ private slots:
 	void slotCopyThisUser();
 	void slotMoveThisUser();
 	void slotRemoveFromGroup();
+	void slotBlockUser();
 
 	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();
@@ -145,6 +146,7 @@ private:
 	KAction* m_actionRemoveFromGroup;
 	KAction* m_actionChat;
 	KAction* m_actionInfo;
+	KAction* m_actionBlock;
 	KAction* m_actionHistory;
 	KListAction *m_actionMove;
 	KListAction *m_actionCopy;

@@ -514,8 +514,7 @@ void MSNProtocol::slotAddContact( QString handle )
 void MSNProtocol::slotBlockContact( QString handle ) const
 {
 	m_serviceSocket->removeContact( handle, 0, AL);
-	m_serviceSocket->addContact( handle, m_contacts[ handle ]->nickname(),
-		0, BL );
+	m_serviceSocket->addContact( handle, handle, 0, BL );
 }
 
 void MSNProtocol::addContact( const QString &userID )
@@ -832,14 +831,6 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 		if( group )
 			m_contacts[ handle ]->removeFromGroup( gn );
 
-		if( list == "BL" )
-		{
-			// the contact is removed from the blocked list,
-			// add it to the AL list
-			m_contacts[ handle ]->setBlocked( false );
-			m_serviceSocket->addContact( handle,
-				m_contacts[ handle ]->nickname(), 0, AL );
-		}
 		else if( list == "RL" )
 		{
 /*
@@ -1084,9 +1075,10 @@ void MSNProtocol::slotStartChatSession( QString handle )
 	}
 }
 
-void MSNProtocol::contactUnBlock( QString handle )
+void MSNProtocol::contactUnBlock( QString handle ) const
 {
 	m_serviceSocket->removeContact( handle, 0, BL );
+	m_serviceSocket->addContact( handle, handle, 0, AL );
 }
 
 void MSNProtocol::slotChangePublicName()
