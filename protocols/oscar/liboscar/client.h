@@ -315,6 +315,9 @@ signals:
 	void gotSearchResults( const ICQSearchResult& );
 	void endOfSearch( int);
 	
+	/* Typing signals */
+	void userStartedTyping( const QString& contact );
+	void userStoppedTyping( const QString& contact );
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 

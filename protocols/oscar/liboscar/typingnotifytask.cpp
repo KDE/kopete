@@ -83,6 +83,7 @@ void TypingNotifyTask::onGo()
 
 void TypingNotifyTask::handleNotification()
 {
+	/* NB ICQ5 (windows) seems to only send 0x0002 and 0x0001, so I'm interpreting 0x001 as typing finished here - Will */
 	Buffer* b = transfer()->buffer();
 	
 	//I don't care about the QWORD or the channel
@@ -90,15 +91,23 @@ void TypingNotifyTask::handleNotification()
 	
 	QString contact( b->getBUIN() );
 	
-	switch ( b->getWord() )
+	Q_UINT32 word = b->getWord();
+	switch ( word )
 	{
 	case 0x0000:
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has finished typing" << endl;
 		emit typingFinished( contact );
 		break;
+	case 0x0001:
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has typed a word" << endl;
+		emit typingFinished( contact );
+		break;
 	case 0x0002:
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has started typing" << endl;
 		emit typingStarted( contact );
+		break;
+	default:
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " typed an unknown typing notification - " << word << endl;
 	}
 }
 
