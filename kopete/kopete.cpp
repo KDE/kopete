@@ -81,9 +81,6 @@ Kopete::~Kopete()
 	delete mPref;
 	delete mLibraryLoader;
 
-	kdDebug() << "~Kopete(), deleting mainwindow" << endl;
-	delete mainwindow;
-
 	kdDebug() << "END OF Kopete::~Kopete()" << endl;
 }
 
