@@ -16,7 +16,6 @@
 */
 
 #include "kopetemessagemanager.h"
-#include "kopetemessagemanager.moc"
 #include "kopetechatwindow.h"
 #include "kopeteevent.h"
 #include "kopete.h"
@@ -263,18 +262,7 @@ void KopeteMessageManager::removeResource(const KopeteContact *c, QString resour
 		if (mChatWindow != 0L) {
 			mChatWindow->removeResource(c, resource);
 		}
-		QStringList tmpResources = resources[c];
-		if (&tmpResources == NULL) {
-			kdDebug() << "[KopeteMessageManager] ->rR(): Eeks, no tmpResource!" << endl;
-		}
-		else {
-			for (QStringList::Iterator it = tmpResources.begin(); it != tmpResources.end(); ++it) {
-				if ((*it) == resource) {
-					tmpResources.remove(it);
-					break;
-				}
-			}
-		}
+		(resources[c]).remove(resource);
 	}
 	else {
 		kdDebug() << "[KopeteMessageManager] Removing resource from other widget: " << resource << endl;
@@ -292,4 +280,4 @@ void KopeteMessageManager::checkServer(bool check)
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
-
+#include "kopetemessagemanager.moc"
