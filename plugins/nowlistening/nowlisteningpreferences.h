@@ -20,16 +20,8 @@
 #ifndef NOWLISTENINGPREFERENCES_H
 #define NOWLISTENINGPREFERENCES_H
 
-//#include <qcheckbox.h>
-//#include <qspinbox.h>
-
-//#include <qwidget.h>
-//#include <klineedit.h>
-
 #include "configmodule.h"
 
-//class QSpinBox;
-//class QTextEdit;
 class NowListeningPrefsUI;
 
 /**
@@ -45,7 +37,9 @@ public:
 	virtual void save();
 
 	int pollFrequency();
-	QString message();
+	QString header();
+	QString perTrack();
+	QString conjunction();
 
 signals:
 	void saved();

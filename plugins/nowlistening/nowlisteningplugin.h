@@ -54,6 +54,7 @@ class NowListeningPlugin : public KopetePlugin
 			/** 
 			 * Constructs and sends the message
 			 */
+			QString substDepthFirst( NLMediaPlayer *player, QString in, bool );
 			void advertiseNewTracks( QString message );
 		protected slots:
 			/**
@@ -68,7 +69,7 @@ class NowListeningPlugin : public KopetePlugin
 			// Triggers slotPollPlayers
 			QTimer *m_pollTimer;
 			// The initial part of the "now listening" message
-			QString m_message;
+			//QString m_message;
 			// Needed for DCOP interprocess communication
 			DCOPClient *m_client;
 			KActionCollection *m_actionCollection;

@@ -17,14 +17,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>layout3</cstring>
+            <cstring>layout4</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>0</x>
                 <y>20</y>
-                <width>273</width>
-                <height>196</height>
+                <width>238</width>
+                <height>145</height>
             </rect>
         </property>
         <vbox>
@@ -85,13 +85,64 @@
                     <string>Use this message when advertising:</string>
                 </property>
             </widget>
-            <widget class="QTextEdit">
+            <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>m_message</cstring>
+                    <cstring>layout3</cstring>
                 </property>
-                <property name="text">
-                    <string>Now Listening To: </string>
-                </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLineEdit" row="0" column="1">
+                        <property name="name">
+                            <cstring>m_header</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Now Listening To: </string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>m_perTrack</cstring>
+                        </property>
+                        <property name="text">
+                            <string>%track (by %artist)(on %album)</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1">
+                        <property name="name">
+                            <cstring>m_conjunction</cstring>
+                        </property>
+                        <property name="text">
+                            <string>, and </string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2_2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Conjunction:
+(&gt;1 track)</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Each track: </string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Start with: </string>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
         </vbox>
     </widget>

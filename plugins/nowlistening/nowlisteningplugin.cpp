@@ -72,9 +72,6 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	connect( m_pollTimer, SIGNAL( timeout() ),
 			this, SLOT( slotPollPlayers() ) );
 	m_pollTimer->start( m_prefs->pollFrequency() * 1000 );
-	
-	// set up the greeting
-	m_message = m_prefs->message();
 }
 
 KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaContact *m )
@@ -114,12 +111,10 @@ void NowListeningPlugin::slotPollPlayers()
 {
 	kdDebug() << "NowListeningPlugin::slotPollPlayers()" << endl;
 	bool sthToAdvertise = false;
-	QString message = m_message;
-	// use m_message for header, for now
-	QString header = m_message;
-	// temporary prototypes, to be made configurable
-	QString conjunction = ", and ";
-	QString perTrack = "%track by %artist on $album";
+	QString header = m_prefs->header();
+	QString message = header;
+	QString conjunction = m_prefs->conjunction();
+	QString perTrack = m_prefs->perTrack();
 
 	// see if there is something new
 	for ( int i = 0; i < NO_PLAYERS; i++ )
@@ -133,30 +128,108 @@ void NowListeningPlugin::slotPollPlayers()
 			kdDebug() << m_mediaPlayer[ i ]->name() << " says it's playing "
 				<< " a " << ( m_mediaPlayer[ i ]->newTrack() ? " new" : "old" )  << " track" << endl;
 			/*if ( message != m_message ) // > 1 track playing!
-				message = message + "\nand: ";
-			message = message + m_mediaPlayer[ i ]->track();
-			if ( !m_mediaPlayer[ i ]->artist().isEmpty() )
-				message += " by " + m_mediaPlayer[ i ]->artist();
-			if ( !m_mediaPlayer[ i ]->album().isEmpty( ) )
-				message = message + " on " + m_mediaPlayer[ i ]->album();
-			*/
+			  message = message + "\nand: ";
+			  message = message + m_mediaPlayer[ i ]->track();
+			  if ( !m_mediaPlayer[ i ]->artist().isEmpty() )
+			  message += " by " + m_mediaPlayer[ i ]->artist();
+			  if ( !m_mediaPlayer[ i ]->album().isEmpty( ) )
+			  message = message + " on " + m_mediaPlayer[ i ]->album();
+		
 			// SUBSTITUTION MESSAGE
 			// get the prototype (header, per track, and conjunction)
 			// substitutable strings are
 			// %artist, %track, %album
 			if ( message != header ) // > 1 track playing!
+			  message = message + conjunction;
+			  QString thisTrack = perTrack;
+			  thisTrack.replace( "%track", m_mediaPlayer[  i ]->track() );
+			  thisTrack.replace( "%artist", m_mediaPlayer[  i ]->artist() );
+			  thisTrack.replace( "%album", m_mediaPlayer[  i ]->album() );
+			  message = message + thisTrack;
+			  */
+			// CLEVER SUBSTITUTION WITH DEPTH FIRST SEARCH FOR 
+			// INCLUSION CONDITIONAL ON SUBSTITUTION BEING MADE
+			
+			if (  message != header ) // > 1 track playing!
 				message = message + conjunction;
-			QString thisTrack = perTrack;
-			thisTrack.replace( "%track", m_mediaPlayer[  i ]->track() );
-			thisTrack.replace( "%artist", m_mediaPlayer[  i ]->artist() );
-			thisTrack.replace( "%album", m_mediaPlayer[  i ]->album() );
-			message = message + thisTrack;
+			//kdDebug() << m_mediaPlayer[ i ]->track() << m_mediaPlayer[ i ]->artist() << m_mediaPlayer[ i ]->album() << m_mediaPlayer[ i ]->name() << endl;
+			message = message + substDepthFirst( m_mediaPlayer[ i ], 
+					perTrack, false );
 		}
 	}
 	// tell anyone who is interested
 	if ( sthToAdvertise )
 		advertiseNewTracks( message );
 }
+
+QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
+		QString in, bool inBrackets )
+{
+	QString track = player->track();
+	QString artist = player->artist();
+	QString album = player->album();
+
+	for ( unsigned int i = 0; i < in.length(); i++ )
+	{
+		QChar c = in.at( i );
+		//kdDebug() << "Now working on:" << in << " char is: " << c << endl;
+		if ( c == '(' )
+		{
+			// find matching bracket
+			int depth = 0;
+			//kdDebug() << "Looking for ')'" << endl;
+			for ( unsigned int j = i + 1; j < in.length(); j++ )
+			{
+				QChar d = in.at( j );
+				//kdDebug() << "Got " << d << endl;
+				if ( d == '(' )
+					depth++;
+				if ( d == ')' )
+				{
+					// have we found the match?
+					if ( depth == 0 )
+					{
+						// recursively replace contents of matching ()
+						QString substitution = substDepthFirst( player,
+								in.mid( i + 1, j - i - 1), true ) ;
+						in.replace ( i, j - i + 1, substitution );
+						// perform substitution and return the result
+						i = i + substitution.length() - 1;
+						break;
+					}
+					else
+						depth--;
+				}
+			}
+		}
+	}
+	// no () found, perform substitution!
+	// get each string (to) to substitute for (from)
+	bool done = false;
+	if ( in.contains ( "%track" ) && !track.isEmpty() )
+	{
+		in.replace( "%track", track );
+		done = true;
+	}
+	if ( in.contains ( "%artist" ) && !artist.isEmpty() )
+	{
+		in.replace( "%artist", artist );
+		done = true;
+	}
+	if ( in.contains ( "%album" ) && !album.isEmpty() )
+	{
+		in.replace( "%album", album );
+		done = true;
+	}
+	//kdDebug() << "Result is: " << in << endl;
+	// make whether we return anything dependent on whether we
+	// were in brackets and if we were, if a substitution was made.
+	if ( inBrackets && !done )
+		return "";
+	else
+		return in;
+}
+	
 
 void NowListeningPlugin::advertiseNewTracks(QString message)
 {
@@ -211,14 +284,13 @@ void NowListeningPlugin::advertiseNewTracks(QString message)
 		}
 	}
 	// for now, just print a debug message
-	//kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " << 
-		//message << endl;
+	kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " << 
+		message << endl;
 }
 
 void NowListeningPlugin::slotSettingsChanged()
 {
 	m_pollTimer->start( m_prefs->pollFrequency() * 1000 );
-	m_message = m_prefs->message();
 }
 
 NowListeningPlugin::~NowListeningPlugin()

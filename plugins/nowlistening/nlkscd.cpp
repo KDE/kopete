@@ -74,8 +74,8 @@ void NLKscd::update()
 				QStringList result;
 				reply >> result;
 				QString artistAlbum = result.first();
-				m_artist = artistAlbum.section( '/', 0, 0 ).left( artistAlbum.length() - 1 );
-				m_album = artistAlbum.section( '/', 1, 1 ).right( artistAlbum.length() - 1 );
+				m_artist = artistAlbum.section( '/', 0, 0 ).left( artistAlbum.length() - 1 ).stripWhiteSpace();
+				m_album = artistAlbum.section( '/', 1, 1 ).right( artistAlbum.length() - 1 ).stripWhiteSpace();
 				//kdDebug() << "NLKscd::update() artist:" << m_artist <<
 				//	" album:" << m_album << endl;
 			} else

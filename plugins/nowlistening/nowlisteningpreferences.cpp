@@ -17,7 +17,7 @@
     *************************************************************************
 */
 #include <qspinbox.h>
-#include <qtextedit.h>
+#include <qlineedit.h>
 #include <qlayout.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -37,9 +37,17 @@ NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject
 	preferencesDialog->m_freq->setValue(
 			KGlobal::config()->readNumEntry( "PollFrequency", 90 )
 			);
-	preferencesDialog->m_message->setText( 
-			KGlobal::config()->readEntry( "Message", 
+	preferencesDialog->m_header->setText( 
+			KGlobal::config()->readEntry( "Header", 
 				"Now Listening To: " ) 
+			 );
+	preferencesDialog->m_perTrack->setText( 
+			KGlobal::config()->readEntry( "PerTrack", 
+				"%track (by %artist)(on %album)" ) 
+			 );
+	preferencesDialog->m_conjunction->setText( 
+			KGlobal::config()->readEntry( "Conjunction", 
+				", and " ) 
 			 );
 }
 
@@ -52,9 +60,19 @@ int NowListeningPreferences::pollFrequency()
 	return preferencesDialog->m_freq->value(); 
 }
 
-QString NowListeningPreferences::message()
+QString NowListeningPreferences::header()
 {
-	return preferencesDialog->m_message->text();
+	return preferencesDialog->m_header->text();
+}
+
+QString NowListeningPreferences::perTrack()
+{
+	return preferencesDialog->m_perTrack->text();
+}
+
+QString NowListeningPreferences::conjunction()
+{
+	return preferencesDialog->m_conjunction->text();
 }
 
 void NowListeningPreferences::save()
@@ -63,8 +81,12 @@ void NowListeningPreferences::save()
 		config->setGroup( "Now Listening Plugin" );
 		config->writeEntry( "PollFrequency", 
 				preferencesDialog->m_freq->value() );
-		config->writeEntry( "Message", 
-				preferencesDialog->m_message->text() );
+		config->writeEntry( "Header", 
+				preferencesDialog->m_header->text() );
+		config->writeEntry( "PerTrack", 
+				preferencesDialog->m_perTrack->text() );
+		config->writeEntry( "Conjunction", 
+				preferencesDialog->m_conjunction->text() );
 		config->sync();
 		emit saved();
 }
