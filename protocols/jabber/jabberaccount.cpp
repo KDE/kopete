@@ -381,15 +381,6 @@ void JabberAccount::connect ()
 
 	jabberClient->setProxy (proxy);
 
-	//delete myContact;
-
-	/* Create a contact instance for self. */
-	// Why would we do this???
-	//myContact =
-	//  new JabberContact(QString("%1@%2").arg(userID, 1).arg(server, 2),
-	//            userID, QStringList(i18n("Unknown")), this, 0L,
-	//            QString::null);
-
 	/* Set the title according to the new changes. */
 	actionStatusMenu->popupMenu ()->changeTitle (menuTitleId, accountId ());
 
@@ -466,11 +457,6 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 	}
 
 }
-
-
-/*JabberProtocol *JabberAccount::protocol() {
-    return parent;
-}*/
 
 void JabberAccount::disconnect ()
 {

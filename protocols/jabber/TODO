@@ -8,3 +8,6 @@ TODO for Jabber:
   integrated into the Kopete filtering API
 - support all message types (chat/ticker/etc)
 - do a std translation of resource.status().show() to JabberProtocol::Presence
+- fix contact adding/removing
+- verify sane state of a) metacontact handling (adding to list) b) contact handling (tracking changes)
+- fix server browsing
