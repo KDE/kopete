@@ -273,6 +273,12 @@ QStringList KopeteContactList::onlineContacts() const
 	return contacts;
 }
 
+QStringList KopeteContactList::groups() const
+{
+	// FIXME: having this in a GUI class is horrible to put it mildly...
+	return kopeteapp->contactList()->groups();
+}
+
 #include "kopetecontactlist.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

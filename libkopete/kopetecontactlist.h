@@ -99,6 +99,11 @@ public:
 	 */
 	void load() { loadXML(); }
 
+	/**
+	 * Return all available groups
+	 */
+	QStringList groups() const;
+
 private:
 	/**
 	 * Return a XML representation of the contact list
