@@ -450,7 +450,7 @@ void AppearanceConfig::slotCopyStyle()
 #if KDE_IS_VERSION( 3, 1, 90 )
 		QString styleName = KInputDialog::getText(
 			i18n("New Style Name"),
-			i18n("Enter the name of the new style:"),
+			i18n("Enter the name of the new style:")
 			);
 #else
 		QString styleName = KLineEditDlg::getText(
