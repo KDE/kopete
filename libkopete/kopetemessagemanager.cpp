@@ -509,13 +509,13 @@ void KopeteMessageManager::readModeChanged()
 	}
 }
 
-void KopeteMessageManager::userTypingMsg ( const KopeteContact *c )
+void KopeteMessageManager::userTypingMsg ( const KopeteContact *c , bool t )
 {
 	if (d->mWidget == ChatWindow)
 	{
 		if (d->mChatWindow)
 		{
-			d->mChatWindow->slotAnyTyping( c , true );
+			d->mChatWindow->slotAnyTyping( c , t );
 		}
 	}
 }

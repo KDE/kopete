@@ -65,7 +65,7 @@ public:
 	 * @return bool indicating whhether the contact is online
 	 * FIXME: When all plugins support this, make this pure virtual!
 	 */
-	bool isOnline() const { return status() != Offline; }
+	virtual bool isOnline() const { return status() != Offline && status() != Unknown; }
 
 	/**
 	 * Function used in determining if the contact is able to

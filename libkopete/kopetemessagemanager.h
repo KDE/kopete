@@ -162,7 +162,7 @@ public slots:
 	/**
 	 * Set any user is typing
 	 */
-	void userTypingMsg ( const KopeteContact *c );
+	void userTypingMsg ( const KopeteContact *c , bool t=true);
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted
