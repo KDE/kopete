@@ -147,7 +147,7 @@ void BehaviorConfig::save()
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 
 	p->save();
-	setChanged(false);
+	emit changed(false);
 }
 
 void BehaviorConfig::load()
@@ -187,15 +187,15 @@ void BehaviorConfig::load()
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
 
 	//TODO: make the whole thing working corretly insteads of this ugly hack...
-	setChanged(false);
-	setChanged(true);
+	// emit changed(false);
+	// emit changed(true);
 }
 
 
 void BehaviorConfig::slotConfigSound()
 {
 	KNotifyDialog::configure( this );
-	setChanged(true);
+	emit changed(true);
 }
 
 void BehaviorConfig::slotShowTrayChanged(bool check)
@@ -203,17 +203,17 @@ void BehaviorConfig::slotShowTrayChanged(bool check)
 	mPrfsGeneral->mStartDockedChk->setEnabled(check);
 	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
 	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
-	setChanged(true);
+	emit changed(true);
 }
 
 void BehaviorConfig::slotSettingsChanged(bool)
 {
-	setChanged(true);
+	emit changed(true);
 }
 
 void BehaviorConfig::slotValueChanged(int)
 {
-	setChanged( true );
+	emit changed( true );
 }
 #include "behaviorconfig.moc"
 // vim: set noet ts=4 sts=4 sw=4:
