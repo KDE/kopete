@@ -439,7 +439,7 @@ void AppearanceConfig::slotChangeFont()
 
 void AppearanceConfig::slotAddStyle()
 {
-	QString styleName=KInputDialog::getText( i18n("Add Styles - Kopete") , i18n("Enter the name for the new style you want to add") ,
+    QString styleName=KInputDialog::getText( i18n("Add Styles - Kopete") , i18n("Enter the name for the new style you want to add:") ,
 				QString::null, 0L, this) ;
 	if(styleName.isEmpty())
 		return;

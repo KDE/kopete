@@ -320,7 +320,7 @@
                                             <cstring>editButton</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Edit</string>
+                                            <string>&amp;Edit...</string>
                                         </property>
                                     </widget>
                                     <spacer>

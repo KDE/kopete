@@ -59,7 +59,7 @@ void KopeteGroupListAction::slotUpdateList()
 
 	groupList.sort();
 	groupList.prepend(QString::null); //add a separator;
-	groupList.prepend( i18n("Top level") ); //the top-level group, with the id 0
+	groupList.prepend( i18n("Top Level") ); //the top-level group, with the id 0
 	setItems( groupList );
 }
 

@@ -266,7 +266,7 @@ void Contact::changeMetaContact()
 
 	QVBox *w = new QVBox( moveDialog );
 	w->setSpacing( 8 );
-	new QLabel( i18n( "Select the meta contact to which you want to move this contact" ), w );
+        new QLabel( i18n( "Select the meta contact to which you want to move this contact:" ), w );
 	KListView *selectMetaContactListBox = new KListView ( w, "selectMetaContactListBox" );
 	selectMetaContactListBox->addColumn( i18n( "Display Name" ) );
 	selectMetaContactListBox->addColumn( i18n( "Contact IDs" ) );
