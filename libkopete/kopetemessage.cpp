@@ -283,10 +283,12 @@ QString KopeteMessage::unescape( const QString &xml )
 {
 	QString data = xml;
 
+	//Can someone (Jason?) explain to me why unescaping "" to " ?? thanks - Olivier
 	data.replace( QRegExp( QString::fromLatin1( "\"\"" ) ), QString::fromLatin1( "\"" ) );
 	data.replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) );
 	data.replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) );
 	data.replace( QRegExp( QString::fromLatin1( "&quot;" ) ), QString::fromLatin1( "\"" ) );
+	data.replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) );
 	data.replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
 
 	return data;
