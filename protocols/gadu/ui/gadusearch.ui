@@ -361,17 +361,6 @@
                         </column>
                         <column>
                             <property name="text">
-                                <string>Surname</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
                                 <string>Nick name</string>
                             </property>
                             <property name="clickable">
@@ -416,13 +405,10 @@
                         </column>
                     <item>
                         <property name="text">
-                            <string>Item</string>
+                            <string>12</string>
                         </property>
                         <property name="text">
                             <string>agnieszka</string>
-                        </property>
-                        <property name="text">
-                            <string>krzysztofowoficz</string>
                         </property>
                         <property name="text">
                             <string>agniesia z podlesia</string>
@@ -434,10 +420,7 @@
                             <string>zagłobożagłów nizno-dolny</string>
                         </property>
                         <property name="text">
-                            <string>31337</string>
-                        </property>
-                        <property name="pixmap">
-                            <pixmap></pixmap>
+                            <string>245324956234</string>
                         </property>
                         <property name="pixmap">
                             <pixmap></pixmap>
@@ -482,13 +465,13 @@
                         <property name="fullWidth">
                             <bool>true</bool>
                         </property>
-                        <property name="autoOpen" stdset="0">
+                        <property name="itemsMovable">
                             <bool>false</bool>
                         </property>
-                        <property name="dropVisualizer" stdset="0">
+                        <property name="autoOpen">
                             <bool>false</bool>
                         </property>
-                        <property name="itemsMovable" stdset="0">
+                        <property name="dropVisualizer">
                             <bool>false</bool>
                         </property>
                     </widget>

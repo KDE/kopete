@@ -120,7 +120,6 @@ void GaduPublicDir::slotSearchResult( const searchResult &result )
         sl= new QListViewItem( list, 
 			    QString::fromLatin1(""),
 			    (*r)->firstname,
-			    (*r)->surname,
 			    (*r)->nickname,
 			    (*r)->age,
 			    (*r)->city,
