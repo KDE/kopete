@@ -197,9 +197,9 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 					}
 				}
 				if ( color.red() != rtcs.red || color.blue() != rtcs.blue || color.green() !=rtcs.green ) {
-					rtcs.blue  = color.red();
+					rtcs.red   = color.red();
 					rtcs.green = color.green();
-					rtcs.red   = color.blue();
+					rtcs.blue  = color.blue();
 					rtfs.font |= GG_FONT_COLOR;
 				}
 
