@@ -1,7 +1,30 @@
 #include "gaduaccount.h"
+#include "gadusession.h"
+#include "gaducontact.h"
+#include "gaducommands.h"
+#include "gaduprotocol.h"
+
+#include "kopetecontact.h"
+#include "kopetegroup.h"
+#include "kopeteaway.h"
+#include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
+#include "kopetestdaction.h"
+
+#include <kaction.h>
+#include <kconfig.h>
+#include <kdebug.h>
+#include <klocale.h>
+#include <kpopupmenu.h>
+#include <kmessagebox.h>
+
+#include <qapplication.h>
+#include <qtimer.h>
+
 
 GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,
 													const char* name )
+  : KopeteAccount( parent, accountID, name )
 {
 	pingTimer_ = 0;
 
@@ -9,11 +32,11 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,
 
 	KGlobal::config()->setGroup("Gadu");
 	setAccountId( KGlobal::config()->readEntry("Uin", "0") );
-	userUin_ = accountID().toUInt();
+	userUin_ = accountId().toUInt();
 	setPassword( KGlobal::config()->readEntry("Password", "") );
 	nick_    = KGlobal::config()->readEntry("Nick", "");
-	myself_ = new GaduContact( pluginId(), userUin_, nick_,
-														 new KopeteMetaContact() );
+	myself_ = new GaduContact(  userUin_, nick_, this,
+                              new KopeteMetaContact() );
 
 	initActions();
 	initConnections();
@@ -24,20 +47,20 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,
 void
 GaduAccount::initActions()
 {
-	KAction* onlineAction_    = new KAction( i18n("Go O&nline"), "gg_online", 0, this,
-																					 SLOT(slotGoOnline()), this, "actionGaduConnect" );
-	KAction* offlineAction_   = new KAction( i18n("Go &Offline"), "gg_offline", 0, this,
-																					 SLOT(slotGoOffline()), this, "actionGaduConnect" );
-	KAction* awayAction_      = new KAction( i18n("Set &Away"), "gg_away", 0, this,
-																					 SLOT(slotGoAway()), this, "actionGaduConnect" );
-	KAction* busyAction_      = new KAction( i18n("Set &Busy"), "gg_busy", 0, this,
-																					 SLOT(slotGoBusy()), this, "actionGaduConnect" );
-	KAction* invisibleAction_ = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
-																					 SLOT(slotGoInvisible()), this, "actionGaduConnect" );
+	KAction* onlineAction    = new KAction( i18n("Go O&nline"), "gg_online", 0, this,
+                                          SLOT(slotGoOnline()), this, "actionGaduConnect" );
+	KAction* offlineAction   = new KAction( i18n("Go &Offline"), "gg_offline", 0, this,
+                                          SLOT(slotGoOffline()), this, "actionGaduConnect" );
+	KAction* awayAction      = new KAction( i18n("Set &Away"), "gg_away", 0, this,
+                                          SLOT(slotGoAway()), this, "actionGaduConnect" );
+	KAction* busyAction      = new KAction( i18n("Set &Busy"), "gg_busy", 0, this,
+                                          SLOT(slotGoBusy()), this, "actionGaduConnect" );
+	KAction* invisibleAction = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
+                                          SLOT(slotGoInvisible()), this, "actionGaduConnect" );
 
 	actionMenu_ = new KActionMenu( "Gadu-Gadu", this );
 
-	actionMenu_->popupMenu()->insertTitle( pluginId() );
+	actionMenu_->popupMenu()->insertTitle( protocol()->pluginId() );
 
 	actionMenu_->insert( onlineAction );
 	actionMenu_->insert( offlineAction );
@@ -71,8 +94,10 @@ GaduAccount::initConnections()
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
-  uint status = (awayMessage.isEmpty()) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
-  changeStatus( GaduProtocol::protocol()->convertStatus( status, awayMessage  ) );
+  if ( isAway ) {
+    uint status = (awayMessage.isEmpty()) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
+    changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage  );
+  }
 }
 
 KopeteContact* GaduAccount::myself() const
@@ -100,8 +125,8 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 {
 	uin_t uinNumber = contactId.toUInt();
 
-	if ( !parentContact->findContact( pluginId(), myself_->contactId(), contactId ) ) {
-		GaduContact *newContact = new GaduContact( pluginId(), uinNumber, displayName, parentContact );
+	if ( !parentContact->findContact( protocol()->pluginId(), myself_->contactId(), contactId ) ) {
+		GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
 		newContact->setParentIdentity( QString::number( userUin_ ) );
 		contactsMap_.insert( uinNumber, newContact );
 		addNotify( uinNumber );
@@ -136,10 +161,10 @@ GaduAccount::slotLogin()
 	}
 	if ( !session_->isConnected() ) {
 		session_->login( userUin_, password_, GG_STATUS_AVAIL );
-		changeStatus( gaduStatusAvail_ );
+		changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 	} else {
 		session_->changeStatus( GG_STATUS_AVAIL );
-		changeStatus( gaduStatusAvail_ );
+		changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 	}
 }
 
@@ -147,10 +172,10 @@ void
 GaduAccount::slotLogoff()
 {
 	if ( session_->isConnected() ) {
-		status_ = gaduStatusOffline_;
+		status_ = GaduProtocol::protocol()->convertStatus( 0 );
 		changeStatus( status_ );
 	} else
-		setStatusIcon( "gg_offline" );
+		protocol()->setStatusIcon( "gg_offline" );
 }
 
 void
@@ -160,7 +185,7 @@ GaduAccount::slotGoOnline()
 		kdDebug(14100)<<"#### Connecting..."<<endl;
 		slotLogin();
 	} else
-		changeStatus( GaduStatusAvail );
+		changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 }
 
 void
@@ -172,19 +197,19 @@ GaduAccount::slotGoOffline()
 void
 GaduAccount::slotGoInvisible()
 {
-	changeStatus( gaduStatusInvisible_ );
+	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ) );
 }
 
 void
 GaduAccount::slotGoAway()
 {
-	changeStatus( gaduStatusNotAvail_ );
+	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 }
 
 void
 GaduAccount::slotGoBusy()
 {
-	changeStatus( gaduStatusBusy_ );
+	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ) );
 }
 
 void
@@ -277,9 +302,9 @@ GaduAccount::notify( struct gg_event* e )
 			++n;
 			continue;
 		}
-		if ( c->onlineStatus() == convertStatus( n->status ) )
+		if ( c->onlineStatus() == GaduProtocol::protocol()->convertStatus( n->status ) )
 			continue;
-		c->setOnlineStatus( convertStatus( n->status ) );
+		c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( n->status ) );
 		++n;
 	}
 }
@@ -296,10 +321,10 @@ GaduAccount::notifyDescription( struct gg_event* e )
 		char *descr = (e->type == GG_EVENT_NOTIFY_DESCR) ? e->event.notify_descr.descr : NULL;
 		if ( !(c=contactsMap_.find( n->uin ).data()) )
 			continue;
-		if ( c->onlineStatus() == convertStatus( n->status ) )
+		if ( c->onlineStatus() ==  GaduProtocol::protocol()->convertStatus( n->status ) )
 			continue;
 		c->setDescription( descr );
-		c->setOnlineStatus( convertStatus( n->status ) );
+		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( n->status ) );
 	}
 }
 
@@ -310,7 +335,7 @@ GaduAccount::statusChanged( struct gg_event* e )
 	if( !c )
 		return;
 	c->setDescription( e->event.status.descr );
-	c->setOnlineStatus( convertStatus( e->event.status.status ) );
+	c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status.status ) );
 }
 
 void
@@ -324,7 +349,7 @@ GaduAccount::connectionFailed( struct gg_event* /*e*/ )
 {
 	KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
 											i18n("Connection Error") );
-	setStatusIcon( "gg_offline" );
+  protocol()->setStatusIcon( "gg_offline" );
 }
 
 void
@@ -352,7 +377,7 @@ void
 GaduAccount::slotSessionDisconnect()
 {
 	pingTimer_->stop();
-	changeStatus( GaduStatusOffline );
+	changeStatus(  GaduProtocol::protocol()->convertStatus( 0 ) );
 }
 
 void

@@ -20,7 +20,21 @@
 #define GADUACCOUNT_H
 
 #include "kopeteaccount.h"
-#include "gaduprotocol.h"
+#include "kopetecontact.h"
+#include "kopeteonlinestatus.h"
+
+#include "libgadu.h"
+
+#include <qmap.h>
+#include <qstring.h>
+#include <qptrlist.h>
+
+class GaduContact;
+class GaduProtocol;
+class GaduSession;
+class GaduCommand;
+class QTimer;
+class KActionMenu;
 
 class GaduAccount : public KopeteAccount
 {
@@ -40,7 +54,7 @@ public slots:
 	void disconnect();
   //}
 
-  void changeStatus( const KopeteOnlineStatus& status, const QString& descr );
+  void changeStatus( const KopeteOnlineStatus& status, const QString& descr=QString::null );
   void slotLogin();
   void slotLogoff();
 	void slotGoOnline();
