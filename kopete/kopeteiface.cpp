@@ -92,6 +92,9 @@ QString KopeteIface::messageContact( const QString &contactId, const QString &me
 		KopeteContactList::contactList()->messageContact( contactId, messageText );
 	else
 		return "Unable to send message. The contact is not reachable";
+	
+	//Default return value
+	return QString::null;
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
