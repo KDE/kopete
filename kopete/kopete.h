@@ -48,6 +48,8 @@ public:
 	 */
 	bool isShuttingDown() const { return m_isShuttingDown; }
 
+	virtual int newInstance();
+
 public slots:
 	/**
 	 * Quit Kopete. This method marks Kopete as 'shutting down' to avoid

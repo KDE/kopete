@@ -215,6 +215,28 @@ void  Kopete::slotAllPluginsLoaded()
 	}
 }
 
+int Kopete::newInstance()
+{
+	kdDebug(14000) << k_funcinfo << endl;
+
+	/** The following three lines work around the problem that
+	 * Kopete has multiple main windows, so qapp->mainWidget()
+	 * returns 0, which breaks the normal
+	 * KUniqueApplication::newInstance() that raises the window
+	 * when we run a new instance.
+	 *
+	 * 1. Set the main widget to the contact list window
+	 * 2. Call KUniqueApplication::newInstance()
+	 * 3. Set the main widget back to 0
+	 */
+
+	setMainWidget( m_mainWindow );
+	int kUniqAppReturnCode = KUniqueApplication::newInstance();
+	setMainWidget( 0L );
+
+	return kUniqAppReturnCode;
+}
+
 void Kopete::quitKopete()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
