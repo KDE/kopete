@@ -6,7 +6,7 @@
     Copyright (c) 2001-2002  by Duncan Mac-Vicar Prett   <duncan@kde.org>
     Copyright (c) 2002-2003  by Martijn Klingens         <klingens@kde.org>
 
-    Kopete    (c) 2002-2003  by the Kopete developers    <kopete-devel@kde.org>
+    Kopete    (c) 2001-2003  by the Kopete developers    <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -52,8 +52,7 @@ Kopete::Kopete()
 	// being called). But since a KMainWindow usually has W_DestructiveClose
 	// set we can't be sure it exists by then either. Therefore track its
 	// deletion to make sure:
-	connect( m_mainWindow, SIGNAL( destroyed() ),
-		SLOT( slotMainWindowDestroyed() ) );
+	connect( m_mainWindow, SIGNAL( destroyed() ), this, SLOT( slotMainWindowDestroyed() ) );
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
@@ -85,7 +84,6 @@ Kopete::~Kopete()
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	KopeteContactList::contactList()->save();
-	//KopeteAccountManager::manager()->save(); //now called in PluginManager::shutdown
 	delete m_mainWindow;
 	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
@@ -107,7 +105,7 @@ void Kopete::slotLoadPlugins()
 
 	config->setGroup( "Plugins" );
 
-	if( !config->hasGroup( "Plugins" ) )
+	if ( !config->hasGroup( "Plugins" ) )
 		showConfigDialog = true;
 
 	// Listen to arguments
@@ -159,7 +157,7 @@ void Kopete::slotLoadPlugins()
 		showConfigDialog = false;
 	}
 
- 	config->sync();
+	config->sync();
 
 	KopetePluginManager::self()->loadAllPlugins();
 
@@ -167,25 +165,23 @@ void Kopete::slotLoadPlugins()
 	KopetePluginManager::self()->loadPlugin( "kopete_chatwindow" );
 
 	// --noconnect not specified?
-	if (args->isSet("connect"))
-	{
+	if ( args->isSet( "connect" ) )
 		KopeteAccountManager::manager()->autoConnect();
-	}
 
-	QCStringList connectArgs = args->getOptionList("autoconnect");
-	for (QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i)
+	QCStringList connectArgs = args->getOptionList( "autoconnect" );
+	for ( QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
-		QString id = QString::fromLatin1(*i);
+		QString id = QString::fromLatin1( *i );
 
-		QRegExp rx( QString::fromLatin1("([^\\|]*)\\|\\|(.*)"));
-		rx.search(id);
-		QString protocolId=rx.cap(1);
-		QString accountId=rx.cap(2);
+		QRegExp rx( QString::fromLatin1( "([^\\|]*)\\|\\|(.*)" ) );
+		rx.search( id );
+		QString protocolId = rx.cap( 1 );
+		QString accountId = rx.cap( 2 );
 
-		if(accountId.isEmpty())
+		if ( accountId.isEmpty() )
 		{
-			if(protocolId.isEmpty())
-				accountId=id;
+			if ( protocolId.isEmpty() )
+				accountId = id;
 			else
 				continue;
 		}
@@ -196,9 +192,9 @@ void Kopete::slotLoadPlugins()
 		{
 			++it;
 
-			if( ( account->accountId() == accountId) )
+			if ( ( account->accountId() == accountId ) )
 			{
-				if( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )
+				if ( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )
 				{
 					account->connect();
 					break;
@@ -268,7 +264,7 @@ void Kopete::quitKopete()
 void Kopete::commitData( QSessionManager &sm )
 {
 	m_isShuttingDown = true;
-	KUniqueApplication::commitData(sm);
+	KUniqueApplication::commitData( sm );
 }
 
 #include "kopete.moc"
