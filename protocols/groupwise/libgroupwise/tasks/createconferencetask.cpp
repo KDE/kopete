@@ -39,9 +39,9 @@ void CreateConferenceTask::conference( const int confId, const QStringList &part
 	// series of participants (may be empty )
 	QValueListConstIterator<QString> end = participants.end();
 	for ( QValueListConstIterator<QString> it = participants.begin(); it != end; ++it )
-		lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_DN, *it ) );
+		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 		
-	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_DN, client()->userDN() ) );
+	lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, client()->userDN() ) );
 	createConfRequest->setFields( lst );
 	setTransfer( createConfRequest );
 }
@@ -78,12 +78,12 @@ void CreateConferenceTask::onGo()
 	send( static_cast<Request *>( transfer() ) );
 }
 
-QString CreateConferenceTask::conferenceGUID()
+QString CreateConferenceTask::conferenceGUID() const
 {
 	return m_guid;
 }
 
-int CreateConferenceTask::conferenceId()
+int CreateConferenceTask::clientConfId() const
 {
 	return m_confId;
 }	

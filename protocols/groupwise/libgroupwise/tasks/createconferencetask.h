@@ -12,7 +12,7 @@
 #ifndef CREATECONFERENCETASK_H
 #define CREATECONFERENCETASK_H
 
-#include <requesttask.h>
+#include "requesttask.h"
 
 /**
 This task is responsible for creating a conference at the server, and confirming that the server allowed the conference to be created.
@@ -33,8 +33,8 @@ public:
 	void conference( const int confId, const QStringList &participants );
 	void onGo();
 	bool take( Transfer * transfer );
-	int  conferenceId();
-	QString conferenceGUID();
+	int clientConfId() const;
+	QString conferenceGUID() const;
 	
 signals:
 	void created( const QString & guid );
