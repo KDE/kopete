@@ -55,13 +55,20 @@ KopeteAccountManager::~KopeteAccountManager()
 
 void KopeteAccountManager::connectAll()
 {
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	//When a status is changed, the protocol loops into the account to update the menu icon.
+	//and then it change the m_accounts.current().. so we make a copy
+	QPtrList<KopeteAccount>accounts = m_accounts;
+
+	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 		i->connect();
 }
 
 void KopeteAccountManager::disconnectAll()
 {
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	//When a status is changed, the protocol loops into the account to update the menu icon.
+	//and then it change the m_accounts.current().. so we make a copy
+	QPtrList<KopeteAccount>accounts = m_accounts;
+	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 		i->disconnect();
 }
 
