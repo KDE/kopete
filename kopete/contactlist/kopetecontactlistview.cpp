@@ -284,6 +284,14 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setDropVisualizer( false );
 	setDropHighlighter( true );
 	setSelectionMode( QListView::Extended );
+
+	clearWFlags( WStaticContents | WNoAutoErase );
+
+	// clear the appropriate flags from the viewport - qt docs say we have to mask
+	// these flags out of the QListView to make weirdly painted list items work, but
+	// that doesn't do the job. this does.
+	class MyWidget : public QWidget { public: QWidget::clearWFlags; };
+	static_cast<MyWidget*>( viewport() )->clearWFlags( WStaticContents | WNoAutoErase );
 }
 
 void KopeteContactListView::initActions( KActionCollection *ac )
