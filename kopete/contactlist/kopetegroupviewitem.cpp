@@ -103,24 +103,6 @@ void KopeteGroupViewItem::slotConfigChanged()
 
 void KopeteGroupViewItem::refreshDisplayName()
 {
-	QString groupName;
-	// FIXME: I think handling the i18n for temporary and top level
-	//        groups belongs in KopeteGroup instead.
-	//        It's now duplicated in KopeteGroupListAction and
-	//        KopeteGroupViewItem already - Martijn
-	switch ( m_group->type() )
-	{
-		case KopeteGroup::Temporary:
-			groupName = i18n( "Not in your contact list" );
-			break;
-		case KopeteGroup::TopLevel:
-			groupName = i18n( "Top-Level" );
-			break;
-		default:
-			groupName = m_group->displayName();
-			break;
-	}
-
 	totalMemberCount = 0;
 	onlineMemberCount = 0;
 
@@ -134,7 +116,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 		}
 	}
 
-	d->name->setText( groupName );
+	d->name->setText( m_group->displayName() );
 	d->count->setText( i18n( "(NUMBER OF ONLINE CONTACTS/NUMBER OF CONTACTS IN GROUP)", "(%1/%2)" )
 	                  .arg( QString::number( onlineMemberCount ), QString::number( totalMemberCount ) ) );
 

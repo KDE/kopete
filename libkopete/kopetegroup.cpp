@@ -26,6 +26,7 @@
 struct KopeteGroupPrivate
 {
 	QString displayName;
+	QString internalName;
 	KopeteGroup::GroupType type;
 	bool expanded;
 	uint groupId;
@@ -41,7 +42,9 @@ KopeteGroup * KopeteGroup::topLevel()
 {
 	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_topLevel )
-		s_topLevel = new KopeteGroup( QString::fromLatin1( "Top-Level" ), KopeteGroup::TopLevel );
+		s_topLevel = new KopeteGroup( i18n( "Top Level" ),
+				QString::fromLatin1( "Top-Level" ), 
+				KopeteGroup::TopLevel );
 
 	return s_topLevel;
 }
@@ -50,7 +53,9 @@ KopeteGroup * KopeteGroup::temporary()
 {
 	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_temporary )
-		s_temporary = new KopeteGroup( QString::fromLatin1( "Temporary" ), KopeteGroup::Temporary );
+		s_temporary = new KopeteGroup( i18n( "Not in your contact list" ),
+				 QString::fromLatin1( "Temporary" ), 
+				 KopeteGroup::Temporary );
 
 	return s_temporary;
 }
@@ -62,6 +67,7 @@ KopeteGroup::KopeteGroup( const QString &_name, GroupType _type )
 {
 	d = new KopeteGroupPrivate;
 	d->displayName = _name;
+	d->internalName = _name;
 	d->type = _type;
 	d->expanded = true;
 	d->groupId = 0;
@@ -74,6 +80,17 @@ KopeteGroup::KopeteGroup()
 	d->expanded = true;
 	d->type = Normal;
 	d->displayName = QString::null;
+	d->internalName = QString::null;
+	d->groupId = 0;
+}
+
+KopeteGroup::KopeteGroup( const QString &_displayName, const QString &_internalName, GroupType _type )
+{
+	d = new KopeteGroupPrivate;
+	d->displayName = _displayName;
+	d->internalName = _internalName;
+	d->type = _type;
+	d->expanded = true;
 	d->groupId = 0;
 }
 
@@ -250,6 +267,11 @@ uint KopeteGroup::groupId() const
 		d->groupId = ++d->uniqueGroupId;
 
 	return d->groupId;
+}
+
+QString KopeteGroup::internalName() const
+{
+	return d->internalName;
 }
 
 #include "kopetegroup.moc"

@@ -55,7 +55,16 @@ public:
 	 *
 	 * Overloaded constructor to create a group of the specified type.
 	 */
-	KopeteGroup( const QString &name, GroupType type = Normal );
+	KopeteGroup( const QString &displayName, GroupType type = Normal );
+	
+	/**
+	 * \brief Create a group with the specified internal name
+	 *
+	 * Overloaded constructor to create a group with the specified internal
+	 * name
+	 */
+	KopeteGroup( const QString &displayName, const QString& internalName,
+			 GroupType type = Normal );
 
 	~KopeteGroup();
 
@@ -71,6 +80,12 @@ public:
 	 */
 	void setDisplayName( const QString &newName );
 
+	/**
+	 * \brief Get the group's internal name
+	 * \return Return a QString containing the internal name
+	 */
+	QString internalName() const;
+	
 	/**
 	 * \return the group type
 	 */

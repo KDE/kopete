@@ -57,24 +57,7 @@ void KopeteGroupListAction::slotUpdateList()
 	KopeteGroupList groups = KopeteContactList::contactList()->groups();
 	for ( KopeteGroup *it = groups.first(); it; it = groups.next() )
 	{
-		// FIXME: I think handling the i18n for temporary and top level
-		//        groups belongs in KopeteGroup instead.
-		//        It's now duplicated in KopeteGroupListAction and
-		//        KopeteGroupViewItem already - Martijn
-		QString displayName;
-		switch ( it->type() )
-		{
-		case KopeteGroup::Temporary:
-			// Moving to temporary makes no sense, skip the group
-			continue;
-		case KopeteGroup::TopLevel:
-			displayName = i18n( "(Top-Level)" );
-			break;
-		default:
-			displayName = it->displayName();
-			break;
-		}
-		groupList.append( displayName );
+		groupList.append( it->displayName() );
 	}
 
 	groupList.sort();
