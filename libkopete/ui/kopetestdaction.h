@@ -67,16 +67,6 @@ public:
 	static KAction *addGroup(const QObject *recvr, const char *slot,
 		QObject* parent, const char *name = 0);
 	/**
-	 * Standard action to move a contact into another group
-	 */
-	static KListAction *moveContact(const QObject *recvr, const char *slot,
-		QObject* parent, const char *name = 0);
-	/**
-	 * Standard action to copy a contact to another group
-	 */
-	static KListAction *copyContact( const QObject *recvr, const char *slot,
-		QObject* parent, const char *name = 0 );
-	/**
 	 * Standard action to delete a contact
 	 */
 	static KAction *deleteContact(const QObject *recvr, const char *slot,
@@ -89,12 +79,12 @@ public:
 	/**
 	 * Standard action to block a contact
 	 */
-	static KAction *blockContact(const QObject *recvr, const char *slot, 
+	static KAction *blockContact(const QObject *recvr, const char *slot,
 		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to unblock a contact
 	 */
-	static KAction *unblockContact(const QObject *recvr, const char *slot, 
+	static KAction *unblockContact(const QObject *recvr, const char *slot,
 		QObject* parent, const char *name = 0);
 
 	/**
@@ -105,43 +95,24 @@ public:
 	static KAction *preferences(KActionCollection *parent, const char *name = 0);
 };
 
-/**
- * @internal
- * moc only sees signals/slots if they're defined in the .h
- * This is a private class
- */
-class KOPETE_EXPORT KopeteGroupListAction : public KListAction
-{
-	Q_OBJECT
-
-public:
-	KopeteGroupListAction( const QString &, const QString &, const KShortcut &,
-		const QObject *, const char *, QObject *, const char * );
-	~KopeteGroupListAction();
-
-protected slots:
-	void slotUpdateList();
-private:
-	QStringList m_groupList;
-};
 
 namespace KSettings
 {
-	class Dialog;
+	  class Dialog;
 }
 
 class KOPETE_EXPORT KopetePreferencesAction : public KAction
 {
-	Q_OBJECT
+	  Q_OBJECT
 
-public:
-	KopetePreferencesAction( KActionCollection *parent, const char *name = 0 );
-	~KopetePreferencesAction();
+	  public:
+			 KopetePreferencesAction( KActionCollection *parent, const char *name = 0 );
+			 ~KopetePreferencesAction();
 
-protected slots:
-	void slotShowPreferences();
-private:
-	static KSettings::Dialog *s_settingsDialog;
+	  protected slots:
+			 void slotShowPreferences();
+	  private:
+			 static KSettings::Dialog *s_settingsDialog;
 };
 
 #endif

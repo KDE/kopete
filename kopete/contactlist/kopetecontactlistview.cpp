@@ -69,6 +69,7 @@
 #include "kopetemessage.h"       //needed to send the URL
 #include "kopeteglobal.h"
 #include "kopetelviprops.h"
+#include "kopetegrouplistaction.h"
 
 #include <memory>
 
@@ -470,10 +471,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ),
 		ac, "contactStartChat" );
 
-	actionMove = KopeteStdAction::moveContact( this, SLOT( slotMoveToGroup() ),
-		ac, "contactMove" );
-	actionCopy = KopeteStdAction::copyContact( this, SLOT( slotCopyToGroup() ),
-		ac, "contactCopy" );
+	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QString::fromLatin1( "editcut" ),
+														  0, this, SLOT( slotMoveToGroup() ), ac, "contactMove" );
+	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QString::fromLatin1( "editcopy" ), 0,
+														 this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
+
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ),
 		ac, "contactRemove" );
 	actionSendEmail = new KAction( i18n( "Send Email..." ), QString::fromLatin1( "mail_generic" ),
