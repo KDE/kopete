@@ -88,7 +88,6 @@ private:
 
 	const KopeteOnlineStatus gaduStatusOffline_;
 	const KopeteOnlineStatus gaduStatusOfflineDescr_;
-	const KopeteOnlineStatus gaduStatusMaybeOffline_;
 	const KopeteOnlineStatus gaduStatusBusy_;
 	const KopeteOnlineStatus gaduStatusBusyDescr_;
 	const KopeteOnlineStatus gaduStatusInvisible_;
