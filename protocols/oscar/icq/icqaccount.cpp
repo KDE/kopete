@@ -324,6 +324,7 @@ OscarContact *ICQAccount::createNewContact(const QString &contactId,
 	
 	ICQContact* contact = new ICQContact(contactId, displayName, this, parentContact);
 	contact->setServerSide( isOnSSI );
+	return contact;
 }
 
 #include "icqaccount.moc"

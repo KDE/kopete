@@ -63,6 +63,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId,
 {
 	AIMContact* contact = new AIMContact(contactId, displayName, this, parentContact);
 	contact->setServerSide( isOnSSI );
+	return contact;
 }
 
 KActionMenu* AIMAccount::actionMenu()
