@@ -161,8 +161,6 @@ IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContac
 	{
 		channel = new IRCChannelContact(this, name, m);
 		mChannels.insert( lowerName, channel );
-		if( engine()->state() == QSocket::Connected)
-			channel->setOnlineStatus( IRCProtocol::IRCChannelOnline() );
 		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)), this,
 			SLOT(slotContactDestroyed(KopeteContact *)));
 	}

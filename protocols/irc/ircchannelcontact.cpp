@@ -172,7 +172,7 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 void IRCChannelContact::slotJoin()
 {
 	if ( !isConnected && onlineStatus().status() == KopeteOnlineStatus::Online )
-		mEngine->joinChannel(mNickName);
+		execute();
 }
 
 void IRCChannelContact::slotPart()

@@ -74,7 +74,6 @@ public:
 	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
 
 private slots:
-	void slotJoinChannel();
 	void slotMessageFilter( KopeteMessage &msg );
 
 

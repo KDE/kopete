@@ -132,19 +132,10 @@ KActionCollection *IRCProtocol::customChatWindowPopupActions( const KopeteMessag
 		activeAccount = static_cast<IRCAccount*>( m.from()->account() );
 		mActions = new KActionCollection(this);
 		if( e.className() == QString::fromLatin1("KopeteIRCChannel") )
-		{
-			new KAction(i18n("Join %1").arg(e.innerText().string()),0,this,SLOT(slotJoinChannel()),mActions);
-		}
+			return activeAccount->findChannel( e.innerText().string() )->customContextMenuActions();
 	}
 
 	return mActions;
-}
-
-void IRCProtocol::slotJoinChannel()
-{
-	DOM::HTMLElement e = activeNode;
-	if( !e.isNull() )
-		activeAccount->findChannel( e.innerText().string() )->startChat();
 }
 
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)
