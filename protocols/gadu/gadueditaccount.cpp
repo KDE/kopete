@@ -70,7 +70,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		nickName->setText( account()->myself()->displayName() );
 
 		rememberCheck_->setChecked( account()->rememberPassword() );
-		autoLoginCheck_->setChecked( account()->autoLogin() );
+		autoLoginCheck_->setChecked( account()->autoConnect() );
 		dccCheck_->setChecked( static_cast<GaduAccount*>(account())->dccEnabled() );
 		useTls_->setCurrentItem( isSsl ?  ( static_cast<GaduAccount*> (account()) ->useTls() ) : 2 );
 	}
@@ -136,7 +136,7 @@ GaduEditAccount::apply()
 		account()->setAccountId( loginEdit_->text() );
 	}
 
-	account()->setAutoLogin( autoLoginCheck_->isChecked() );
+	account()->setAutoConnect( autoLoginCheck_->isChecked() );
 
 	if( rememberCheck_->isChecked() && passwordEdit_->text().length() ) {
 		account()->setPassword( passwordEdit_->text() );
@@ -150,7 +150,7 @@ GaduEditAccount::apply()
 	// this is changed only here, so i won't add any proper handling now
 	account()->setPluginData( account()->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
 
-	account()->setAutoLogin( autoLoginCheck_->isChecked() );
+	account()->setAutoConnect( autoLoginCheck_->isChecked() );
 	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
 
 	if ( static_cast<GaduAccount*>(account())->setDcc( dccCheck_->isChecked() ) == false ) {

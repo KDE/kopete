@@ -273,12 +273,12 @@ void Kopete::Account::setPassword( const QString &pass )
 	d->password.set( pass );
 }
 
-void Kopete::Account::setAutoLogin( bool b )
+void Kopete::Account::setAutoConnect( bool b )
 {
 	d->autologin = b;
 }
 
-bool Kopete::Account::autoLogin() const
+bool Kopete::Account::autoConnect() const
 {
 	return d->autologin;
 }

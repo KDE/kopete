@@ -121,7 +121,7 @@ void AddAccountWizard::accept()
 	KWizard::accept();
 
 	//Bug 76583: If "Connect automatically at startup" box is checked, Kopete should connect to that account upon creation 
-	if(account && account->autoLogin())
+	if(account && account->autoConnect())
 		account->connect();
 }
 

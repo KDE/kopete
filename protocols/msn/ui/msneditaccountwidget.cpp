@@ -83,7 +83,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setDisabled( true );
-		d->ui->m_autologin->setChecked( ( account && account->autoLogin() ) );
+		d->ui->m_autologin->setChecked( ( account && account->autoConnect() ) );
 		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
@@ -152,7 +152,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	if ( !account() )
 		setAccount( new MSNAccount( d->protocol, d->ui->m_login->text() ) );
 
-	account()->setAutoLogin( d->ui->m_autologin->isChecked() );
+	account()->setAutoConnect( d->ui->m_autologin->isChecked() );
 	d->ui->m_password->save( &static_cast<MSNAccount *>(account())->password() );
 
 	account()->setPluginData( d->protocol, "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() ? "1" : QString::null );

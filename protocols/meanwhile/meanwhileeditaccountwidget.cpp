@@ -52,7 +52,7 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
             mRememberPassword->setChecked(true);
             mPassword->setText(account()->password());
         }
-        mAutoConnect->setChecked(account()->autoLogin());
+        mAutoConnect->setChecked(account()->autoConnect());
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
         mServerName->setText(myAccount->serverName());
         mServerPort->setValue(myAccount->serverPort());
@@ -82,7 +82,7 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 
     MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
 
-    myAccount->setAutoLogin(mAutoConnect->isChecked());
+    myAccount->setAutoConnect(mAutoConnect->isChecked());
 
     if(mRememberPassword->isChecked())
         myAccount->setPassword(mPassword->text());

@@ -39,7 +39,7 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 		mGui->edtAccountId->setText(account->accountId());
 		//Remove me after we can change Account IDs (Matt)
 		mGui->edtAccountId->setDisabled(true);
-		mGui->mAutoLogon->setChecked(account->autoLogin());
+		mGui->mAutoLogon->setChecked(account->autoConnect());
         if (account->pluginData(protocol, "Server") != "login.oscar.aol.com" || (account->pluginData(protocol, "Port").toInt() != 5190)) {
             mGui->optionOverrideServer->setChecked( true );
         }
@@ -76,7 +76,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	else
 		mAccount->setPassword(QString::null);
 
-	mAccount->setAutoLogin(mGui->mAutoLogon->isChecked()); // save the autologon choice
+	mAccount->setAutoConnect(mGui->mAutoLogon->isChecked()); // save the autologon choice
 	if (mGui->optionOverrideServer->isChecked()) {
 		static_cast<OscarAccount *>(mAccount)->setServerAddress(mGui->edtServerAddress->text());
 		static_cast<OscarAccount *>(mAccount)->setServerPort(mGui->sbxServerPort->value());

@@ -184,14 +184,14 @@ public:
 	 * This function can be used by the EditAccountPage (and only by it)
 	 * Kopete handles the autoconnection automatically
 	 */
-	void setAutoLogin(bool);
+	void setAutoConnect(bool);
 	/**
 	 * \brief Get if the account should log in automatically.
 	 *
  	 * This function can be used by the EditAccountPage (and only by it)
 	 * Kopete handles the autoconnection automatically
 	 */
-	bool autoLogin() const;
+	bool autoConnect() const;
 
 	/**
 	 * \brief Get the color for this account.

@@ -124,7 +124,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		// TODO: Remove me after we can change Account IDs (Matt)
 		mAccountSettings->edtAccountId->setDisabled(true);
 
-		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
+		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoConnect());
 
 		if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
 			mAccountSettings->optionOverrideServer->setChecked( true );
@@ -275,7 +275,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	else
 		mAccount->setPassword(QString::null);
 
-	mAccount->setAutoLogin(mAccountSettings->chkAutoLogin->isChecked());
+	mAccount->setAutoConnect(mAccountSettings->chkAutoLogin->isChecked());
 
 	if (mAccountSettings->optionOverrideServer->isChecked() ) {
 		static_cast<OscarAccount *>(mAccount)->setServerAddress(

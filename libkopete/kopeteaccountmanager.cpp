@@ -323,7 +323,7 @@ void Kopete::AccountManager::autoConnect()
 {
 	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
 	{
-		if ( it.current()->autoLogin() )
+		if ( it.current()->autoConnect() )
 			it.current()->connect();
 	}
 }

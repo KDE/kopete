@@ -47,7 +47,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	// we need this before initActions
 	setMyself( new WPContact(this, theHostName, theHostName, 0) );
 
-	if(autoLogin()) connect();
+	if(autoConnect()) connect();
 
 	QObject::connect(theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
 //	QObject::connect(theInterface, SIGNAL(accountIdChanged()), this, SLOT(updateAccountId()));
