@@ -8,6 +8,7 @@ kopete_nowlistening_la_SOURCES = nowlisteningprefs.ui nowlisteningpreferences.cp
 kopete_nowlistening_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_nowlistening_la_LIBADD      = ../../libkopete/libkopete.la $(XMMS_LIBS)
 
+service_DATA = nowlistening.desktop
 servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete
