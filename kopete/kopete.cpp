@@ -59,7 +59,7 @@ Kopete::Kopete()
 	new AppearanceConfig( m_mainWindow );
 
 	/*
-	 * This is a workaround for a quite odd problem:
+	 * FIXME: This is a workaround for a quite odd problem:
 	 * When starting up kopete and the msn plugin gets loaded it can bring up
 	 * a messagebox, in case the msg configuration is missing. This messagebox
 	 * will result in a QApplication::enter_loop() call, an event loop is
@@ -170,4 +170,3 @@ void Kopete::commitData( QSessionManager &sm )
 #include "kopete.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

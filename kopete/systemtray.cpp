@@ -65,14 +65,12 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mBlinkIcon = KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User);
 	mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
 
-	QObject::connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-
+	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(KopeteViewManager::viewManager() , SIGNAL(newMessageEvent(KopeteEvent*)),
 		this, SLOT(slotNewEvent(KopeteEvent*)));
+	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 
 	setPixmap(mKopeteIcon);
-
-	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
 
 	m_balloon=0l;
@@ -259,8 +257,8 @@ void KopeteSystemTray::addBalloon()
 
 void KopeteSystemTray::slotConfigChanged()
 {
-	kdDebug(14010) << k_funcinfo << "called." << endl;
-	if ( KopetePrefs::prefs()->showTray())
+//	kdDebug(14010) << k_funcinfo << "called." << endl;
+	if (KopetePrefs::prefs()->showTray())
 		show();
 	else
 		hide(); // for users without kicker or a similar docking app

@@ -74,12 +74,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	/* -------------------------------------------------------------------------------- */
 
 	loadOptions();
-/*
-	if ( KopetePrefs::prefs()->showTray())
-		tray->show();
-	else
-		tray->hide(); // for users without kicker or a similar docking app
-*/
 	// Trap all loaded plugins, so we can add their status bar icons accordingly
 	connect( LibraryLoader::pluginLoader(),
 		SIGNAL( pluginLoaded( KopetePlugin * ) ),
@@ -173,19 +167,16 @@ void KopeteWindow::initActions ( void )
 void KopeteWindow::initSystray ( void )
 {
 	tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
-
 	KPopupMenu *tm = tray->contextMenu();
 
-	tm->insertSeparator();
-	actionAddContact->plug( tm );
-	tm->insertSeparator();
-//	actionConnect->plug( tm );
-//	actionDisconnect->plug( tm );
-	actionConnectionMenu->plug ( tm );
-	actionAwayMenu->plug( tm );
-	tm->insertSeparator();
-	actionPrefs->plug( tm );
-//	tm->insertSeparator();
+	// NOTE: This is in reverse order because we insert
+	// at the top of the menu, not at bottom!
+	actionAddContact->plug( tm,1 );
+	actionPrefs->plug(tm,1);
+	tm->insertSeparator(1);
+	actionAwayMenu->plug( tm,1 );
+	actionConnectionMenu->plug ( tm,1 );
+	tm->insertSeparator(1);
 
 #if KDE_VERSION >= 306
 	connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
