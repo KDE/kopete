@@ -45,6 +45,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "jabberconnector.h"
 #include "jabberprotocol.h"
 #include "jabberresourcepool.h"
 #include "jabbercontactpool.h"
@@ -355,7 +356,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	}
 
 	/*
-	 * Setup authentication layer
+	 * Check for SSL availability first
 	 */
 	bool trySSL = false;
 	if (pluginData (protocol (), "UseSSL") == "true")
@@ -373,78 +374,31 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		else
 		{
 			trySSL = true;
-
-			jabberTLS = new QCA::TLS;
-			jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
-
-			{
-				using namespace XMPP;
-				QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
-			}
 		}
 	}
-
-	/*
-	 * Setup proxy layer
-	 */
-	QString proxyTypeStr = pluginData (protocol (), "ProxyType");
-	int proxyType = XMPP::AdvancedConnector::Proxy::None;
-
-	if (proxyTypeStr == QString ("HTTPS"))
-	{
-		proxyType = XMPP::AdvancedConnector::Proxy::HttpConnect;
-	}
-	else
-	{
-		if (proxyTypeStr == QString ("SOCKS"))
-		{
-			proxyType = XMPP::AdvancedConnector::Proxy::Socks;
-		}
-		else
-		{
-			if (proxyTypeStr == QString ("HTTPPoll"))
-			{
-				proxyType = XMPP::AdvancedConnector::Proxy::HttpPoll;
-			}
-		}
-	}
-
-	XMPP::AdvancedConnector::Proxy proxy;
-
-	switch(proxyType)
-	{
-		case XMPP::AdvancedConnector::Proxy::None:
-			// no proxy
-			break;
-
-		case XMPP::AdvancedConnector::Proxy::HttpConnect:
-			// use HTTP
-			proxy.setHttpConnect( pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt () );
-			break;
-
-		case XMPP::AdvancedConnector::Proxy::HttpPoll:
-			// use HTTP polling
-			proxy.setHttpPoll ( pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt (), pluginData (protocol (), "ProxyUrl") );
-			proxy.setPollInterval (2);
-			break;
-
-		case XMPP::AdvancedConnector::Proxy::Socks:
-			// use socks
-			proxy.setSocks( pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt () );
-			break;
-	}
-
-	if (pluginData (protocol (), "ProxyAuth") == QString::fromLatin1 ("true"))
-		proxy.setUserPass (pluginData (protocol (), "ProxyUser"), pluginData (protocol (), "ProxyPass"));
 
 	/*
 	 * Instantiate connector, responsible for dealing with the socket.
-	 * This class makes use of the proxy layer created above.
+	 * This class uses KDE's socket code, which in turn makes use of
+	 * the global proxy settings.
 	 */
-	jabberClientConnector = new XMPP::AdvancedConnector;
+	jabberClientConnector = new JabberConnector;
 	jabberClientConnector->setOptHostPort (server (), port ());
-	jabberClientConnector->setProxy(proxy);
 	jabberClientConnector->setOptSSL(trySSL);
+
+	/*
+	 * Setup authentication layer
+	 */
+	if ( trySSL )
+	{
+		jabberTLS = new QCA::TLS;
+		jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
+
+		{
+			using namespace XMPP;
+			QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
+		}
+	}
 
 	/*
 	 * Instantiate client stream which handles the network communication by referring
@@ -683,9 +637,6 @@ void JabberAccount::slotCSAuthenticated ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
 
-	/* slow down the polling interval for HTTP Poll proxies */
-	jabberClientConnector->changePollInterval (10);
-
 	/*
 	 * Determine local IP address.
 	 * FIXME: This is ugly!
@@ -862,20 +813,20 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("There was a conflict in the information received.");
 					break;
 				case XMPP::Stream::ConnectionTimeout:
-					errorCondition = i18n("The connection timed out.");
+					errorCondition = i18n("The stream timed out.");
 					break;
 				case XMPP::Stream::InternalServerError:
 					errorCondition = i18n("Internal server error.");
 					break;
 				case XMPP::Stream::InvalidFrom:
-					errorCondition = i18n("Packet received from an invalid address.");
+					errorCondition = i18n("Stream packet received from an invalid address.");
 					break;
 				case XMPP::Stream::InvalidXml:
-					errorCondition = i18n("Malformed packet received.");
+					errorCondition = i18n("Malformed stream packet received.");
 					break;
 				case XMPP::Stream::PolicyViolation:
 					// FIXME: need a better error message here
-					errorCondition = i18n("Policy violation.");
+					errorCondition = i18n("Policy violation in the protocol stream.");
 					break;
 				case XMPP::Stream::ResourceConstraint:
 					// FIXME: need a better error message here
@@ -896,20 +847,50 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 		case XMPP::ClientStream::ErrConnection:
 			switch(connectorCode)
 			{
-				case XMPP::AdvancedConnector::ErrConnectionRefused:
-					errorCondition = i18n("Connection refused.");
-					break;
-				case XMPP::AdvancedConnector::ErrHostNotFound:
+ 				case KNetwork::KSocketBase::LookupFailure:
 					errorCondition = i18n("Host not found.");
 					break;
-				case XMPP::AdvancedConnector::ErrProxyConnect:
-					errorCondition = i18n("Could not connect to proxy server.");
+				case KNetwork::KSocketBase::AddressInUse:
+					errorCondition = i18n("Address is already in use.");
 					break;
-				case XMPP::AdvancedConnector::ErrProxyNeg:
-					errorCondition = i18n("Could not negotiate with the proxy server.");
+				case KNetwork::KSocketBase::AlreadyCreated:
+					errorCondition = i18n("Cannot recreate the socket.");
 					break;
-				case XMPP::AdvancedConnector::ErrProxyAuth:
-					errorCondition = i18n("Could not authenticate with the proxy server.");
+				case KNetwork::KSocketBase::AlreadyBound:
+					errorCondition = i18n("Cannot bind the socket again.");
+					break;
+				case KNetwork::KSocketBase::AlreadyConnected:
+					errorCondition = i18n("Socket is already connected.");
+					break;
+				case KNetwork::KSocketBase::NotConnected:
+					errorCondition = i18n("Socket is not connected.");
+					break;
+				case KNetwork::KSocketBase::NotBound:
+					errorCondition = i18n("Socket is not bound.");
+					break;
+				case KNetwork::KSocketBase::NotCreated:
+					errorCondition = i18n("Socket hasn't been created.");
+					break;
+				case KNetwork::KSocketBase::WouldBlock:
+					errorCondition = i18n("Socket operation would block. You should not see this error, please use \"Report Bug\" from the Help menu.");
+					break;
+				case KNetwork::KSocketBase::ConnectionRefused:
+					errorCondition = i18n("Connection refused.");
+					break;
+				case KNetwork::KSocketBase::ConnectionTimedOut:
+					errorCondition = i18n("Connection timed out.");
+					break;
+				case KNetwork::KSocketBase::InProgress:
+					errorCondition = i18n("Connection attempt already in progress.");
+					break;
+				case KNetwork::KSocketBase::NetFailure:
+					errorCondition = i18n("Network failure.");
+					break;
+				case KNetwork::KSocketBase::NotSupported:
+					errorCondition = i18n("Operation is not supported.");
+					break;
+				case KNetwork::KSocketBase::Timeout:
+					errorCondition = i18n("Socket timed out.");
 					break;
 				default:
 					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
@@ -1044,10 +1025,14 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 	}
 
-	KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
-								   KMessageBox::Error,
-								   errorText,
-								   i18n("Connection problem with Jabber server %1").arg(server));
+	/*
+	 * This mustn't be queued as otherwise the reconnection
+	 * API will attempt to reconnect, queueing another
+	 * error until memory is exhausted.
+	 */
+	KMessageBox::error (Kopete::UI::Global::mainWidget (),
+						errorText,
+						i18n("Connection problem with Jabber server %1").arg(server));
 
 
 }
@@ -1073,7 +1058,7 @@ void JabberAccount::slotCSError (int error)
 		// display message to user
 		handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server ());
 
-		KopeteAccount::disconnect ( KopeteAccount::ConnectionReset );
+		disconnect ( KopeteAccount::ConnectionReset );
 
 		// manually force the slot to be called since in case of an error,
 		// libpsi will most likely be confused and not emit signals anymore

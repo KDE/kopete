@@ -32,6 +32,7 @@
   */
 
 class JabberProtocol;
+class JabberConnector;
 class QCheckBox;
 class QLineEdit;
 
@@ -52,7 +53,7 @@ private:
 
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
-	XMPP::AdvancedConnector *jabberClientConnector;
+	JabberConnector *jabberClientConnector;
 	XMPP::ClientStream *jabberClientStream;
 	XMPP::Client *jabberClient;
 

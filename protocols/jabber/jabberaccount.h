@@ -32,6 +32,7 @@
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>
 
+class JabberConnector;
 class JabberProtocol;
 class QString;
 class QStringList;
@@ -158,7 +159,7 @@ private:
 	/* Psi backend for this account. */
 	XMPP::Client *jabberClient;
 	XMPP::ClientStream *jabberClientStream;
-	XMPP::AdvancedConnector *jabberClientConnector;
+	JabberConnector *jabberClientConnector;
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
 

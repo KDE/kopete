@@ -34,6 +34,7 @@
 #include "xmpp_tasks.h"
 
 #include "jabbereditaccountwidget.h"
+#include "jabberconnector.h"
 
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent, const char *name)
 						: DlgJabberEditAccountWidget (parent, name), KopeteEditAccountWidget (ident)
@@ -59,15 +60,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbAllowPlainTextPassword, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbRemPass, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-
-	connect (cbProxyType, SIGNAL (activated (int)), this, SLOT (configChanged ()));
-	connect (leProxyName, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-	connect (spbProxyPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
-	connect (leProxyUrl, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-
-	connect (cbProxyAuth, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-	connect (leProxyUser, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-	connect (leProxyPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (updateServerField ()));
 	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (updateServerField ()));
@@ -127,24 +119,6 @@ void JabberEditAccountWidget::reopen ()
 	}
 
 	cbAllowPlainTextPassword->setChecked (account()->pluginData (m_protocol, "AllowPlainTextPassword") == QString::fromLatin1 ("true"));
-
-	QString proxyType = account()->pluginData (m_protocol, "ProxyType");
-
-	cbProxyType->setCurrentItem (0);
-	if (proxyType == QString ("HTTPS"))
-		cbProxyType->setCurrentItem (1);
-	else if (proxyType == QString ("HTTPPoll"))
-		cbProxyType->setCurrentItem (2);
-	else if (proxyType == QString ("SOCKS"))
-		cbProxyType->setCurrentItem (3);
-
-	leProxyName->setText (account()->pluginData (m_protocol, "ProxyName"));
-	spbProxyPort->setValue (account()->pluginData (m_protocol, "ProxyPort").toInt ());
-	leProxyUrl->setText (account()->pluginData (m_protocol, "ProxyUrl"));
-	cbProxyAuth->setChecked (account()->pluginData (m_protocol, "ProxyAuth") == QString::fromLatin1 ("true"));
-	leProxyUser->setText (account()->pluginData (m_protocol, "ProxyUser"));
-	leProxyPass->setText (account()->pluginData (m_protocol, "ProxyPass"));
-	cbAutoConnect->setChecked (account()->autoLogin());
 
 	KGlobal::config()->setGroup("Jabber");
 	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", ""));
@@ -220,38 +194,6 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setAutoLogin(cbAutoConnect->isChecked());
 
-	switch (cbProxyType->currentItem ())
-	{
-	case 0:
-		account()->setPluginData (m_protocol, "ProxyType", "None");
-		break;
-	case 1:
-		account()->setPluginData (m_protocol, "ProxyType", "HTTPS");
-		break;
-	case 2:
-		account()->setPluginData (m_protocol, "ProxyType", "HTTPPoll");
-		break;
-	case 3:
-		account()->setPluginData (m_protocol, "ProxyType", "SOCKS");
-		break;
-	default:					// this case should never happen, just
-		// implemented for safety
-		account()->setPluginData (m_protocol, "ProxyType", "None");
-		break;
-	}
-
-	account()->setPluginData (m_protocol, "ProxyName", leProxyName->text ());
-	account()->setPluginData (m_protocol, "ProxyPort", QString::number (spbProxyPort->value ()));
-	account()->setPluginData (m_protocol, "ProxyUrl", leProxyUrl->text ());
-
-	if (cbProxyAuth->isChecked ())
-		account()->setPluginData (m_protocol, "ProxyAuth", "true");
-	else
-		account()->setPluginData (m_protocol, "ProxyAuth", "false");
-
-	account()->setPluginData (m_protocol, "ProxyUser", leProxyUser->text ());
-	account()->setPluginData (m_protocol, "ProxyPass", leProxyPass->text ());
-
 	KGlobal::config()->setGroup("Jabber");
 	KGlobal::config()->writeEntry("LocalIP", leLocalIP->text());
 	KGlobal::config()->writeEntry("LocalPort", sbLocalPort->value());
@@ -314,88 +256,49 @@ void JabberEditAccountWidget::registerClicked ()
 	pbRegistration->setEnabled(true);
 
 	/*
-	 * Setup authentication layer
+	 * Check for SSL availability first
 	 */
 	bool trySSL = false;
-	if (cbUseSSL->isChecked ())
+	if ( cbUseSSL->isChecked () )
 	{
 		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
 
 		if (!sslPossible)
 		{
 			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-								i18n ("SSL is not supported. This is most likely because the QCA TLS plugin is not installed on your system."), i18n ("SSL Error"));
+								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
+								arg(mID->text()),
+								i18n ("Jabber SSL Error"));
 			return;
 		}
 		else
 		{
 			trySSL = true;
-
-			jabberTLS = new QCA::TLS;
-			jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
-
-			{
-				using namespace XMPP;
-				QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
-			}
 		}
 	}
 
 	/*
-	 * Setup proxy layer
+	 * Instantiate connector, responsible for dealing with the socket.
+	 * This class uses KDE's socket code, which in turn makes use of
+	 * the global proxy settings.
 	 */
-	int proxyType = XMPP::AdvancedConnector::Proxy::None;
-	switch(cbProxyType->currentItem ())
-	{
-		case 1:
-			proxyType = XMPP::AdvancedConnector::Proxy::HttpConnect;
-			break;
-
-		case 2:
-			proxyType = XMPP::AdvancedConnector::Proxy::HttpPoll;
-			break;
-
-		case 3:
-			proxyType = XMPP::AdvancedConnector::Proxy::Socks;
-			break;
-	}
-
-	XMPP::AdvancedConnector::Proxy proxy;
-
-	switch(proxyType)
-	{
-		case XMPP::AdvancedConnector::Proxy::None:
-			// no proxy
-			break;
-
-		case XMPP::AdvancedConnector::Proxy::HttpConnect:
-			// use HTTP
-			proxy.setHttpConnect( leProxyName->text (), spbProxyPort->value () );
-			break;
-
-		case XMPP::AdvancedConnector::Proxy::HttpPoll:
-			// use HTTP polling
-			proxy.setHttpPoll ( leProxyName->text (), spbProxyPort->value (), leProxyUrl->text () );
-			proxy.setPollInterval (2);
-			break;
-
-		case XMPP::AdvancedConnector::Proxy::Socks:
-			// use socks
-			proxy.setSocks( leProxyName->text (), spbProxyPort->value () );
-			break;
-	}
-
-	if (cbProxyAuth->isChecked ())
-		proxy.setUserPass (leProxyUser->text (), leProxyPass->text ());
+	jabberClientConnector = new JabberConnector;
+	jabberClientConnector->setOptHostPort ( mServer->text (), mPort->value () );
+	jabberClientConnector->setOptSSL(trySSL);
 
 	/*
-	 * Instantiate connector, responsible for dealing with the socket.
-	 * This class makes use of the proxy layer created above.
+	 * Setup authentication layer
 	 */
-	jabberClientConnector = new XMPP::AdvancedConnector;
-	jabberClientConnector->setOptHostPort (mServer->text (), mPort->value ());
-	jabberClientConnector->setProxy(proxy);
-	jabberClientConnector->setOptSSL(trySSL);
+	if ( trySSL )
+	{
+		jabberTLS = new QCA::TLS;
+		jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
+
+		{
+			using namespace XMPP;
+			QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
+		}
+	}
 
 	/*
 	 * Instantiate client stream which handles the network communication by referring
@@ -522,9 +425,6 @@ void JabberEditAccountWidget::slotCSAuthenticated ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task..." << endl;
 
 	pbRegistration->setProgress(75);
-
-	/* slow down the polling interval for HTTP Poll proxies */
-	jabberClientConnector->changePollInterval (10);
 
 	/* start the client operation */
 	XMPP::Jid jid(mID->text ());

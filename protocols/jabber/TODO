@@ -1,9 +1,6 @@
 TODO for Jabber:
 
-- support for public channels
 - implement support for transports/agents
-- allow synchronization of offline changes / online changes
-  (only lacks group synch)
 - support all message types (chat/ticker/etc)
 - add a button for server defaults
 - port dialogs to KDialogBase
@@ -23,14 +20,7 @@ TODO for Jabber:
 - support avatars and idle times for tooltips
 - when trying to register an account, try to display the actual server error
   message
-- when adding a new contact, automatically save the display name chosen
-  there to the server
-- when adding a new contact to an existing meta contact, save its display
-  name to the server
 - clean up JabberAddContactPage (needs rewrite)
 - support advanced auth methods
 - subclass TLS to make use of KDE classes
 - allow SSL fallback with setOptProbe
-- verify if Kopete can follow foreign clients modifying it's contact list
-- try to subscribe to a resource
-- verify behavior when subscribing to a certain resource of a contact
