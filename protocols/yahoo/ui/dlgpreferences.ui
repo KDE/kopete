@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>365</width>
-            <height>411</height>
+            <height>413</height>
         </rect>
     </property>
     <property name="caption">
@@ -139,34 +139,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="KURLLabel">
-                    <property name="name">
-                        <cstring>kURLLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Get a Yahoo! account now</string>
-                    </property>
-                    <property name="url" stdset="0">
-                        <string>http://edit.yahoo.com/config/eval_register</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>113</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
             </hbox>
         </widget>
         <spacer>
