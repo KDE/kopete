@@ -508,7 +508,8 @@ GaduAccount::userlist( const gaduContactsList& u)
 	
 	QString contactname;
 	int i;
-	
+	GaduContact *ucontact;
+		
 	QPtrListIterator< contactLine > loo(u);
 	
 	for ( i=u.count() ; i-- ; ){ 
@@ -521,40 +522,65 @@ GaduAccount::userlist( const gaduContactsList& u)
 
  	    if (contactsMap_.contains((*loo)->uin.toUInt())){
 		kdDebug(14100) << "UIN allready exists in contacts "<< (*loo)->uin << endl; 
-		goto next_cont;
 	    }
+	    else{
     
-	    // if there is no nicname
-	    if ((*loo)->nickname.isNull()){
-		// no name either
-		if ((*loo)->name.isNull()){
-		    // maybe we can use fistname + surname ?
-		    if ((*loo)->firstname.isNull() && (*loo)->surname.isNull()){
-			contactname=(*loo)->uin;
-		    }
-		    // what a shame, i have to use UIN than :/
-		    else{
-			if ((*loo)->firstname.isNull()){
-			    contactname=(*loo)->surname;
+		if ((*loo)->name.length()){
+		    contactname=(*loo)->name;
+		}
+		// if there is no nicname
+		if ((*loo)->nickname.isNull()){
+		    // no name either
+		    if ((*loo)->name.isNull()){
+			// maybe we can use fistname + surname ?
+			if ((*loo)->firstname.isNull() && (*loo)->surname.isNull()){
+			    contactname=(*loo)->uin;
 			}
+			// what a shame, i have to use UIN than :/
 			else{
-			    if ((*loo)->surname.isNull()){
-				contactname=(*loo)->firstname;
+			    if ((*loo)->firstname.isNull()){
+				contactname=(*loo)->surname;
 			    }
 			    else{
-				contactname=(*loo)->firstname+" "+(*loo)->surname;
+				if ((*loo)->surname.isNull()){
+				    contactname=(*loo)->firstname;
+				}
+				else{
+				    contactname=(*loo)->firstname+" "+(*loo)->surname;
+				}
 			    }
 			}
+		    }
+		    else{
+			contactname=(*loo)->name;
 		    }
 		}
 		else{
-		    contactname=(*loo)->name;
+		    contactname=(*loo)->nickname;
+		}
+	    
+		if (addContact( (*loo)->uin, contactname, 0L, QString::null, false)==false){
+		    kdDebug(14100) << "There was a problem adding UIN "<< (*loo)->uin << "to users list" << endl; 
+		    goto next_cont;
 		}
 	    }
-	    else{
-		contactname=(*loo)->nickname;
-	    }
-	    addContact( (*loo)->uin, contactname, 0L, QString::null);
+	    ucontact=contactsMap_[(*loo)->uin.toUInt()];
+	    
+	    kdDebug(14100) << "Adding extra information for " << (*loo)->uin <<endl; 
+	    kdDebug(14100) << (*loo)->email << 
+	                   ",  " << endl <<
+			    (*loo)->firstname <<
+	                   ",  "<< endl <<
+			    (*loo)->surname <<
+	                   ",  "<< endl <<
+			    (*loo)->nickname <<
+	                   ",  "<< endl <<
+			     (*loo)->phonenr
+			     << endl;
+	    // update/add infor for contact
+	    ucontact->setInfo( (*loo)->email, (*loo)->firstname, (*loo)->surname,
+			    (*loo)->nickname, (*loo)->phonenr );
+	    
 next_cont:
 	    ++loo;
 	}

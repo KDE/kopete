@@ -33,6 +33,7 @@
 #include <qptrlist.h>
 #include <kaction.h>
 
+class KopeteAccount;
 class GaduContact;
 class GaduProtocol;
 class GaduSession;

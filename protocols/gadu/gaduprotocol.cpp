@@ -22,10 +22,17 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
+#include <kconfig.h>
 
-
-#include "gaduprotocol.h"
 #include "gaduaccount.h"
+
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
+#include "kopetemetacontact.h"
+
+#include "gaducontact.h"
+#include "gaduprotocol.h"
+
 #include "gadueditaccount.h"
 #include "gaduaddcontactpage.h"
 #include "gadupreferences.h"
@@ -96,14 +103,34 @@ GaduProtocol::settingsChanged()
 
 void
 GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
-																	const QMap<QString, QString> &serializedData,
-																	const QMap<QString, QString> & /* addressBookData */ )
+				const QMap<QString, QString> &serializedData,
+				const QMap<QString, QString> & /* addressBookData */ )
 {
 	kdDebug(14100)<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
-	if ( defaultAccount_ )
-		defaultAccount_->addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
-	else
-		kdWarning(14100)<<"CONTACTS ARE BEING DESERIALIZED BEFORE AN ACCOUNT!!!"<<endl;
+	
+	const QString aid = serializedData[ "accountId" ];
+	const QString cid = serializedData[ "contactId" ];
+	const QString dn  = serializedData[ "displayName" ];
+	
+	QDict<KopeteAccount> daccounts = KopeteAccountManager::manager()->accounts(this);
+	
+	KopeteAccount *account = daccounts[aid];
+	if (!account){
+	    account = createNewAccount(aid);
+	}
+//GaduContact::GaduContact( uin_t uin, const QString& name, GaduAccount *account,
+//				KopeteMetaContact* parent )
+	
+	GaduContact *c= new GaduContact( cid.toUInt(), dn, 
+					account, metaContact );
+	
+	c->setInfo(	serializedData["email"],
+			serializedData["FirstName"],
+			serializedData["SecondName"],
+			serializedData["NickName"], 
+			serializedData["telephone"]);
+		
+
 }
 
 uint

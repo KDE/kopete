@@ -2,7 +2,6 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
@@ -10,16 +9,15 @@
 using Kopete::UserInfoDialog;
 
 #include "gaduprotocol.h"
-#include "gaduaccount.h"
 #include "gaducontact.h"
 
-GaduContact::GaduContact( uin_t uin, const QString& name, GaduAccount *account,
-													KopeteMetaContact* parent )
+GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount *account,
+					KopeteMetaContact* parent )
 	: KopeteContact( account, QString::number( uin ), parent )
 {
 	msgManager_ = 0L;
 	uin_ = uin;
-	account_ = account;
+	account_ = static_cast<GaduAccount *>(account);
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
 
@@ -135,6 +133,38 @@ GaduContact::slotDeleteContact()
 {
 	account_->removeContact( this );
 	deleteLater();
+}
+
+/*
+*/
+void
+GaduContact::setInfo( const QString &email, const QString &firstName, 
+			 const QString &secondName,
+			 const QString &nickName, const QString &phonenr )
+{
+	if (email.length())
+	    email_	= email;
+	if (firstName.length())
+	    firstName_	= firstName;
+	if (secondName.length())
+	    secondName_	= secondName;
+	if (nickName.length())
+	    nickName_	= nickName;
+	if (phonenr.length())
+	    phonenr_	= phonenr;
+}
+
+
+void
+GaduContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &)
+{
+
+    serializedData["email"]	= email_;
+    serializedData["FirstName"]	= firstName_;
+    serializedData["SecondName"]= secondName_;
+    serializedData["NickName"]	= nickName_;
+    serializedData["telephone"]	= phonenr_;
+    
 }
 
 void GaduContact::messageAck()

@@ -26,6 +26,9 @@
 #include <qstring.h>
 #include <qpoint.h>
 
+#include "gaduaccount.h"
+
+#include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "libgadu.h"
@@ -38,13 +41,20 @@ class KopeteMessageManager;
 class GaduContact : public KopeteContact
 {
 	Q_OBJECT
+	
 public:
-	GaduContact( uin_t uin, const QString& name,
-							 GaduAccount *account, KopeteMetaContact *parent );
+	GaduContact( unsigned int uin, const QString& name,
+			KopeteAccount *account, KopeteMetaContact *parent );
 
-	virtual bool		isReachable();
+	virtual bool isReachable();
+	virtual void serialize(QMap<QString, QString> &serializedData, 
+				QMap<QString, QString> &addressBookData);
 	virtual KActionCollection *customContextMenuActions();
 	virtual QString identityId() const;
+
+	void	setInfo( const QString &email, const QString &firstName, 
+			 const QString &secondName,
+			 const QString &nickName, const QString &phonenr );
 
 	void	setParentIdentity( const QString& );
 	void	setDescription( const QString& descr );
@@ -68,6 +78,12 @@ private:
 	QString		parentIdentity_;
 	GaduAccount	*account_;
 	KopeteContactPtrList	thisContact_;
+
+	QString		email_;
+	QString		firstName_;
+	QString		secondName_;
+	QString		nickName_;
+	QString		phonenr_;
 
 	KAction			*actionSendMessage_;
 	KAction			*actionInfo_;

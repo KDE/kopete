@@ -26,6 +26,7 @@
 #include <qptrlist.h>
 #include <qpixmap.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qpoint.h>
 
 #include <libgadu.h>
@@ -35,14 +36,17 @@
 
 #include "gaducommands.h"
 
-class GaduSession;
-class KopeteContact;
 class KAction;
 class KActionMenu;
+
+class QWidget;
+
+class KopeteContact;
+class KopeteMetaContact;
+
+class GaduSession;
 class GaduContact;
 class GaduAccount;
-class QWidget;
-class KopeteMetaContact;
 class GaduPreferences;
 
 #define GG_STATUS_CONNECTING 0x0100

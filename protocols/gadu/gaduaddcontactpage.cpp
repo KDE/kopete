@@ -39,11 +39,13 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner,
 		addUI_ = new gaduAddUI( this );
 		account_ = owner;
 		canAdd_ = true;
+		addUI_->addEdit_->setValidChars("1234567890");
 	} else {
 		noaddMsg1_ = new QLabel(i18n("You need to be connected to be able to add contacts."), this);
 		noaddMsg2_ = new QLabel(i18n("Connect to the Gadu-Gadu network and try again."), this);
 		canAdd_ = false;
 	}
+	
 }
 
 GaduAddContactPage::~GaduAddContactPage()
@@ -69,7 +71,9 @@ GaduAddContactPage::apply(KopeteAccount *a , KopeteMetaContact *mc)
 				kdDebug(14001)<<"Problem since accounts differ: "<< a->accountId()
 											<<" , "<<account_->accountId() <<endl;
 			}
-			a->addContact( userid, userid, mc );
+			if (a->addContact( userid, userid, mc )==false){
+			    return false;
+			}
 		}
 	} else {
 		return false;
