@@ -35,7 +35,7 @@ ConferenceTask::~ConferenceTask()
 void dumpConferenceEvent( ConferenceEvent & evt )
 {
 	qDebug( "Conference Event - guid: %s user: %s timestamp: %i:%i:%i flags: %08x\n",
-			evt.guid.ascii(), evt.user.ascii(), evt.timeStamp.hour(), evt.timeStamp.minute(), evt.timeStamp.second(), evt.flags );
+			evt.guid.ascii(), evt.user.ascii(), evt.timeStamp.time().hour(), evt.timeStamp.time().minute(), evt.timeStamp.time().second(), evt.flags );
 }
 
 bool ConferenceTask::take( Transfer * transfer )
@@ -59,8 +59,7 @@ bool ConferenceTask::take( Transfer * transfer )
 			event.guid = QString::fromUtf8( rawData, val );
 		//else 
 			// set error protocolError
-			
-		Message m;
+
 		switch ( incomingEvent->event() )
 		{
 			case EventTransfer::ConferenceClosed:
@@ -85,7 +84,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				event.message = readMessage( din );
 				qDebug( "ReceiveMessage" );
 				dumpConferenceEvent( event );
-				qDebug( "message: %s\n", m.ascii() );
+				qDebug( "message: %s\n", event.message.ascii() );
 				emit message( event );
 				break;
 			case EventTransfer::UserTyping:
@@ -102,7 +101,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				event.message = readMessage( din );
 				qDebug( "ConferenceInvite" );
 				dumpConferenceEvent( event );
-				qDebug( "message: %s\n", m.ascii() );
+				qDebug( "message: %s\n", event.message.ascii() );
 				emit invited( event );
 				break;
 			case EventTransfer::ConferenceInviteNotify:
@@ -120,7 +119,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				event.message = readMessage( din );
 				qDebug( "ReceiveAutoReply" );
 				dumpConferenceEvent( event );
-				qDebug( "message: %s\n", m.ascii() );
+				qDebug( "message: %s\n", event.message.ascii() );
 				emit autoReply( event );
 				break;
 			default:

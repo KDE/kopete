@@ -54,7 +54,7 @@ namespace GroupWise
 	{
 		QString guid;
 		QString user;
-		QTime timeStamp;
+		QDateTime timeStamp;
 		Q_UINT32 flags;
 		QString message;
 	};
@@ -87,11 +87,15 @@ namespace GroupWise
 				authAttribute;
 		int status;
 	};
+	
+	struct OutgoingMessage
+	{
+		QString guid;
+		QString message;
+	};
 };
 
 // temporary typedef pending implementation
-typedef QString Message;
-					
 
 // #define NMERR_BASE							0x2000L
 // #define NM_OK								0L
