@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>446</width>
+            <width>453</width>
             <height>471</height>
         </rect>
     </property>
@@ -34,43 +34,6 @@
             <property name="text">
                 <string>Show e&amp;vents in chat window</string>
             </property>
-        </widget>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>buttonGroup1</cstring>
-            </property>
-            <property name="title">
-                <string>Send Message With</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>cb_Enter</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enter</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>cb_CtrlEnter</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Ctrl+Enter</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>cb_ShiftEnter</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Shift+Enter</string>
-                    </property>
-                </widget>
-            </hbox>
         </widget>
         <widget class="QButtonGroup">
             <property name="name">
@@ -271,9 +234,6 @@
 <tabstops>
     <tabstop>cb_RaiseMsgWindowChk</tabstop>
     <tabstop>cb_ShowEventsChk</tabstop>
-    <tabstop>cb_Enter</tabstop>
-    <tabstop>cb_CtrlEnter</tabstop>
-    <tabstop>cb_ShiftEnter</tabstop>
     <tabstop>mNewWindow</tabstop>
     <tabstop>mTabProtocolWindow</tabstop>
     <tabstop>mTabWindow</tabstop>

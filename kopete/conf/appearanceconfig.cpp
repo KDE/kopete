@@ -171,9 +171,6 @@ void AppearanceConfig::save()
 	// "Chat Window" TAB
 	p->setRaiseMsgWindow( mPrfsChatWindow->cb_RaiseMsgWindowChk->isChecked() );
 	p->setShowEvents( mPrfsChatWindow->cb_ShowEventsChk->isChecked() );
-	p->setSendMessageEnter(mPrfsChatWindow->cb_Enter->isChecked());
-	p->setSendMessageCtrlEnter(mPrfsChatWindow->cb_CtrlEnter->isChecked());
-	p->setSendMessageShiftEnter(mPrfsChatWindow->cb_ShiftEnter->isChecked());
 	p->setChatWindowPolicy ( mPrfsChatWindow->chatWindowGroup->id(mPrfsChatWindow->chatWindowGroup->selected()) );
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
@@ -256,9 +253,6 @@ void AppearanceConfig::reopen()
 	// "Chat Window" TAB
 	mPrfsChatWindow->cb_RaiseMsgWindowChk->setChecked( p->raiseMsgWindow() );
 	mPrfsChatWindow->cb_ShowEventsChk->setChecked( p->showEvents() );
-	mPrfsChatWindow->cb_Enter->setChecked(p->sendMessageEnter());
-	mPrfsChatWindow->cb_CtrlEnter->setChecked(p->sendMessageCtrlEnter());
-	mPrfsChatWindow->cb_ShiftEnter->setChecked(p->sendMessageShiftEnter());
 	mPrfsChatWindow->chatWindowGroup->setButton( p->chatWindowPolicy() );
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
