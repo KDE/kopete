@@ -145,6 +145,10 @@ protected slots:
 	 * TODO: Extend KopeteAwayAction so you can set multiple ones there.
 	 */
 	void slotSetAutoReply();
+	/**
+	 * Manage the user's privacy settings
+	 */
+	void slotPrivacy();
  	void slotKopeteGroupRenamed( KopeteGroup * );
 	void slotKopeteGroupRemoved( KopeteGroup * );
 

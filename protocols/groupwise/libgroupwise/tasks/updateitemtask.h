@@ -25,7 +25,7 @@ Q_OBJECT
 public:
 	UpdateItemTask( Task* parent );
 	~UpdateItemTask();
-	
+	void item( Field::FieldList updateItemFields );
 };
 
 #endif

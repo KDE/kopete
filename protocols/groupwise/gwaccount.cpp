@@ -29,6 +29,7 @@
 #include <kaction.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <kdialogbase.h>
 #include <kinputdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -55,6 +56,7 @@
 #include "gwclientstream.h"
 #include "gwconnector.h"
 #include "gwmessagemanager.h"
+#include "ui/gwprivacy.h"
 #include "ui/gwreceiveinvitationdialog.h"
 #include "qcatlshandler.h"
 #include "tasks/createcontacttask.h"
@@ -106,10 +108,13 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
 		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
 		"actionGroupWiseOfflineDisconnect") );
-	theActionMenu->insert( new KAction ( "&Set Auto-Reply", QString::null, 0, this,
+	theActionMenu->insert( new KAction ( "&Set Auto-Reply...", QString::null, 0, this,
 		SLOT( slotSetAutoReply() ), this,
 		"actionSetAutoReply") );
-// 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
+	theActionMenu->insert( new KAction ( "&Manage Privacy...", QString::null, 0, this,
+		SLOT( slotPrivacy() ), this,
+		"actionPrivacy") );
+/// 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
 // 		SLOT( slotTestRTFize() ), this,
 // 		"actionTestRTFize") );
 
@@ -389,11 +394,20 @@ void GroupWiseAccount::slotKopeteGroupRemoved( KopeteGroup * group )
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// the member contacts should be deleted separately, so just delete the folder here
 	// get the folder object id
-	int objectId = group->pluginData( protocol(), group->pluginData( protocol(), accountId() + " objectId" ) ).toInt();
-	DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
-	dit->item( 0, objectId );
-	// the group is deleted synchronously after this slot returns; so there is no point listening for signals
-	dit->go( true );
+	QString objectIdString = group->pluginData( protocol(), group->pluginData( protocol(), accountId() + " objectId" ) );
+	if ( !objectIdString.isEmpty() )
+	{
+		int objectId = objectIdString.toInt();
+		if ( objectId == 0 )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "deleted folder " << group->displayName() << " has root folder objectId 0!" << endl;
+			return;
+		}
+		DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
+		dit->item( 0, objectId );
+		// the group is deleted synchronously after this slot returns; so there is no point listening for signals
+		dit->go( true );
+	}
 }
 
 void GroupWiseAccount::slotConnError()
@@ -926,6 +940,13 @@ void GroupWiseAccount::slotTestRTFize()
 // 	metaContact->setDisplayName( "Test Add MC" );
 // 	metaContact->setTemporary (true);
 // 	addContactToMetaContact( testText, "Test Add Contact", metaContact );
+}
+
+void GroupWiseAccount::slotPrivacy()
+{
+	KDialogBase * privacyDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "gwprivacydialog", false, i18n( "Account specific privacy settings", "Manage Privacy for %1" ).arg( accountId() ), KDialogBase::Ok );
+	privacyDialog->setMainWidget( new GroupWisePrivacyWidget( privacyDialog ) );
+	privacyDialog->show();
 }
 
 #include "gwaccount.moc"

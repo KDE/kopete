@@ -22,6 +22,11 @@ DeleteItemTask::~DeleteItemTask()
 
 void DeleteItemTask::item( const int parentFolder, const int objectId )
 {
+	if ( objectId == 0 )
+	{
+		setError( 1, "Can't delete the root folder" );
+		return;
+	}
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
 	// this is either a user Id or a DN
