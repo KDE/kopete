@@ -168,62 +168,66 @@ void ICQUserInfo::slotReadInfo()
 	initTZCombo (mMainWidget->rwTimezone, mUser->TimeZone );
 	if ( !mEditable )
 		mMainWidget->roTimezone->setText( mMainWidget->rwTimezone->currentText() );
+*/
 
 	// AGE ===========================================
 	if ( !mEditable ) // fixed value for readonly
 	{
-		mMainWidget->rwAge->setMinValue( mUser->Age );
-		mMainWidget->rwAge->setMaxValue( mUser->Age );
-		mMainWidget->rwAge->setValue( mUser->Age );
+		mMainWidget->rwAge->setMinValue(mContact->moreInfo.age);
+		mMainWidget->rwAge->setMaxValue(mContact->moreInfo.age);
 	}
-	else
-		mMainWidget->rwAge->setValue( mUser->Age );
+	mMainWidget->rwAge->setValue(mContact->moreInfo.age);
 
 	// GENDER ========================================
-//	kdDebug(14200) << "[ICQUserInfo] Gender of contact is " << mUser->Gender << endl;
+	kdDebug(14200) << k_funcinfo << " Gender of contact is " << mContact->moreInfo.gender << endl;
+/*
 	initCombo( mMainWidget->rwGender, mUser->Gender, genders);
 	if ( !mEditable ) // get text from hidden combobox and insert into readonly lineedit
 		mMainWidget->roGender->setText( mMainWidget->rwGender->currentText() );
-
+*/
 	// BIRTHDAY ========================================
 
-	if ( mUser->BirthYear == 0 ) // no birthday defined
+	if(!mContact->moreInfo.birthday.isValid()) // no birthday defined
 	{
-		if ( mEditable )
+		if(mEditable)
 			mMainWidget->rwBday->setDate(QDate());
 		else
 			mMainWidget->roBday->setText("");
 	}
 	else
 	{
-		QDate bday (mUser->BirthYear,mUser->BirthMonth,mUser->BirthDay);
-		if ( bday.isValid() )
+		if(mEditable)
 		{
-			if ( mEditable )
-				mMainWidget->rwBday->setDate(bday);
-			else
-				mMainWidget->roBday->setText(KGlobal::locale()->formatDate(bday,true));
+			mMainWidget->rwBday->setDate(mContact->moreInfo.birthday);
+		}
+		else
+		{
+			mMainWidget->roBday->setText(
+				KGlobal::locale()->formatDate(mContact->moreInfo.birthday,true));
 		}
 	}
 
-
 	// Personal HOMEPAGE ========================================
-	homepage = QString::fromLocal8Bit(mUser->Homepage.c_str());
-	if ( mEditable )
+	homepage = QString::fromLocal8Bit(mContact->moreInfo.homepage);
+	if(mEditable)
 	{
 		mMainWidget->prsHomepageEdit->setText( homepage );
-	} else {
-		if ( homepage.isNull() )
+	}
+	else
+	{
+		if(homepage.isEmpty())
 		{
 			mMainWidget->prsHomepageLabel->setText( i18n("unspecified") );
 			mMainWidget->prsHomepageLabel->setURL( QString::null );
 			mMainWidget->prsHomepageLabel->setDisabled( true );
 			mMainWidget->prsHomepageLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		} else {
+		}
+		else
+		{
 			QString tmpHP = homepage; // copy it, do not work on the original
 			mMainWidget->prsHomepageLabel->setText( tmpHP );
 
-			if ( !tmpHP.contains("://") ) // assume http-protocol if not protocol given
+			if ( !tmpHP.contains("://") ) // assume http-protocol if no protocol given
 				tmpHP.prepend("http://");
 			mMainWidget->prsHomepageLabel->setURL( tmpHP );
 
@@ -233,10 +237,10 @@ void ICQUserInfo::slotReadInfo()
 	}
 
 	// LANGUAGES =========================================
-
-	initCombo ( mMainWidget->rwLang1, mUser->Language1, languages );
-	initCombo ( mMainWidget->rwLang2, mUser->Language2, languages );
-	initCombo ( mMainWidget->rwLang3, mUser->Language3, languages );
+/*
+	initCombo ( mMainWidget->rwLang1, mContact->moreInfo.lang1, languages );
+	initCombo ( mMainWidget->rwLang2, mContact->moreInfo.lang2, languages );
+	initCombo ( mMainWidget->rwLang3, mContact->moreInfo.lang3, languages );
 	if ( !mEditable )
 	{
 		mMainWidget->roLang1->setText( mMainWidget->rwLang1->currentText() );
@@ -267,7 +271,7 @@ void ICQUserInfo::slotReadInfo()
 	}
 	else
 	{
-		if ( homepage.isEmpty() )
+		if(homepage.isEmpty())
 		{
 			mMainWidget->wrkHomepageLabel->setText(i18n("unspecified"));
 			mMainWidget->wrkHomepageLabel->setURL(QString::null);

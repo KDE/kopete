@@ -98,6 +98,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->getEngine(), SIGNAL(gotICQWorkUserInfo(const int, const ICQWorkUserInfo &)),
 		this, SLOT(slotUpdWorkInfo(const int, const ICQWorkUserInfo &)));
+	QObject::connect(
+		acc->getEngine(), SIGNAL(gotICQMoreUserInfo(const int, const ICQMoreUserInfo &)),
+		this, SLOT(slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &)));
 }
 
 ICQContact::~ICQContact()
@@ -290,6 +293,22 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 		userinfoRequestSequence << endl;
 
 	workInfo = inf;
+
+	userinfoReplyCount++; // number of packets that
+	if (userinfoReplyCount >= 2)
+		emit updatedUserInfo();
+}
+
+void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+
+	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+		userinfoRequestSequence << endl;
+
+	moreInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
 	if (userinfoReplyCount >= 2)

@@ -53,16 +53,21 @@ class OscarConnection : public QSocket
 		inline QString getSN(void) const { return mSN; };
 		/** Sets the currently logged in user's screen name */
 		void setSN(const QString &newSN);
+
 		/** Gets the message cookie */
 		inline const QByteArray &cookie(void) const { return mCookie; };
+
 		/** Sets the socket to use socket, state() to connected, and emit connected() */
 		virtual void setSocket( int socket );
-		//VIRTUAL FUNCTIONS THAT CAN BE OVERLOADED BY CHILD CLASSES
+
+		// virtual functions to be overloaded by child classes
+
 		/** Sends the direct IM message to buddy */
 		virtual void sendIM(const QString &message, bool isAuto);
-		/** Sends a typing notification to the server
-					@param notifyType Type of notify to send
-			*/
+
+		/* Sends a typing notification to the server
+		 * @param notifyType Type of notify to send
+		 */
 		virtual void sendTypingNotify(TypingNotify notifyType);
 		/** Sends request to the client telling he/she that we want to send a file */
 		virtual void sendFileSendRequest(void);
@@ -70,8 +75,10 @@ class OscarConnection : public QSocket
 	signals:
 		/** Emitted when an IM comes in */
 		void gotIM(QString, QString, bool);
+
 		/** called when an AIM protocol error occurs */
 		void protocolError(QString, int);
+
 		/**
 		* Emitted when we get a minityping notifications
 		* First param is the screen name, second is the type

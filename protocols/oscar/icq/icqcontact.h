@@ -79,6 +79,7 @@ class ICQContact : public OscarContact
 
 		ICQGeneralUserInfo generalInfo;
 		ICQWorkUserInfo workInfo;
+		ICQMoreUserInfo moreInfo;
 
 		int userinfoRequestSequence;
 		int userinfoReplyCount;
@@ -98,6 +99,7 @@ class ICQContact : public OscarContact
 
 		void slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf);
 		void slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf);
+		void slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &);
 };
 
 #endif

@@ -34,7 +34,7 @@
 #include "kopetestdaction.h"
 #include "kopeteawaydialog.h"
 
-// TODO: remove the next include
+// TODO: get rid of the next include
 #include "aim.h" // For tocNormalize()
 
 #include "aimbuddylist.h" // TODO: remove buddylist
@@ -46,33 +46,31 @@
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
 	: KopeteAccount(parent, accountID, name)
 {
-	kdDebug(14150) << k_funcinfo << endl;
+	kdDebug(14150) << k_funcinfo << " accountID='" << accountID <<
+		"', isICQ=" << isICQ << endl;
 
 	mEngine = 0L;
-
 	mMyself = 0L;
-
 	mAwayDialog =0L;
+	// Set our random new numbers
+	mRandomNewBuddyNum = 0;
+	mRandomNewGroupNum = 0;
+	// Set our idle to no
+	mAreIdle = false;
 
 	initEngine(isICQ); // Initialize the backend
 
 	// Create the internal buddy list for this account
+	// TODO: make this an internal list of KopeteGroup and Kopete-/OscarContact
 	mInternalBuddyList = new AIMBuddyList(this, "mInternalBuddyList");
 
-	// Initialize the signals and slots
 	initSignals();
-
-	// Set our random new numbers
-	mRandomNewBuddyNum = 0;
-	mRandomNewGroupNum = 0;
-
-	// Set our idle to no
-	mAreIdle = false;
 }
 
 OscarAccount::~OscarAccount()
 {
-	kdDebug(14150) << k_funcinfo << "'" << accountId() << "' deleted, Disconnecting..." << endl;
+	kdDebug(14150) << k_funcinfo << "'" << accountId() <<
+		"' deleted, Disconnecting..." << endl;
 
 	disconnect();
 
@@ -84,7 +82,8 @@ OscarAccount::~OscarAccount()
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "WTH don't we have an OscarSocket anymore?" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"ERROR, we don't have an OscarSocket anymore!" << endl;
 	}
 }
 
@@ -93,10 +92,10 @@ KopeteContact* OscarAccount::myself() const
 	return mMyself;
 }
 
-
 void OscarAccount::connect()
 {
-	kdDebug(14150) << "[OscarAccount: " << accountId() << "] connect()" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"accountId='" << accountId() << "'" << endl;
 
 	// Get the screen name for this account
 	QString screenName = accountId();
@@ -225,17 +224,20 @@ void OscarAccount::slotGoOnline()
 {
 	if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 	{ // If we're away , set us available
-		kdDebug(14150) << k_funcinfo << accountId() << ": Was AWAY, marking back" << endl;
+		kdDebug(14150) << k_funcinfo << accountId() <<
+			": Was AWAY, marking back" << endl;
 		setAway(false);
 	}
 	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
 	{ // If we're offline, connect
-		kdDebug(14150) << k_funcinfo << accountId() << ": Was OFFLINE, now connecting" << endl;
+		kdDebug(14150) << k_funcinfo << accountId() <<
+			": Was OFFLINE, now connecting" << endl;
 		connect();
 	}
 	else
 	{ // We're already online
-		kdDebug(14150) << k_funcinfo << accountId() << ": Already ONLINE" << endl;
+		kdDebug(14150) << k_funcinfo << accountId() <<
+			": Already ONLINE" << endl;
 	}
 }
 
@@ -250,9 +252,11 @@ void OscarAccount::slotGoOffline()
 void OscarAccount::slotGoAway()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
+
+	// Away could also be a different AWAY mode (like NA or OCC)
 	if(
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away) // Away could also be a different AWAY mode (like NA or OCC)
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 		)
 	{
 		mAwayDialog->show(OSCAR_AWAY);
@@ -265,29 +269,26 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 		"' errmsg=" << errmsg <<
 		", errorCode=" << errorCode << "." << endl;
 
-	//TODO: somebody add a comment about these two error-types
-	// FIXME: maybe goLogoff() instead to properly shutdown the connection
+	// 1 = username unknown to server
+	// 5 = wrong password
 	if (errorCode == 1 || errorCode == 5)
-		slotDisconnected();
+	{
+//		slotDisconnected();
+	   OscarAccount::disconnect();
+	}
+	// FIXME: maybe goLogoff() instead to properly shutdown the connection
 
 	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
 
 
 // Called when we get disconnected
+/*
 void OscarAccount::slotDisconnected()
 {
-	kdDebug(14150) << "[OscarAccount: " << accountId()
-		<< "] slotDisconnected() and function info is: "
-		<< k_funcinfo << endl;
-/*
-// TODO: don't we get a statusupdate anyway, makes this unneeded?
-	if(isICQ())
-		myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
-	else
-		myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
-*/
+	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 }
+*/
 
 // Called when a group is added by adding a contact
 void OscarAccount::slotGroupAdded(KopeteGroup *group)

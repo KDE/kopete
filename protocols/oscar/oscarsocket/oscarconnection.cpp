@@ -44,7 +44,8 @@ OscarConnection::~OscarConnection()
  */
 void OscarConnection::slotRead()
 {
-	kdDebug(14150) << k_funcinfo <<  bytesAvailable() << " bytes, connection name: " << mConnName << endl;
+	kdDebug(14150) << k_funcinfo << bytesAvailable() <<
+		" bytes, connection name='" << mConnName << "'" << endl;
 
 	Buffer inbuf;
 	int len = bytesAvailable();
@@ -62,19 +63,20 @@ void OscarConnection::slotError(int errornum)
 	{
 		case QSocket::ErrConnectionRefused:
 		{
-			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is connection refused." << endl;
+			kdDebug(14150) << k_funcinfo << "Connection refused." << endl;
 			slotConnectionClosed();
 			break;
 		}
 		case QSocket::ErrHostNotFound:
 		{
-			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is host not found." << endl;
+			kdDebug(14150) << k_funcinfo << "Host not found." << endl;
 			slotConnectionClosed();
 			break;
 		}
 		case QSocket::ErrSocketRead:
 		{
-			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is problem with reading socket. Problems may be present from here on out..." << endl;
+			kdDebug(14150) << k_funcinfo << "Problem with reading socket." <<
+				" Problems may be present from here on out..." << endl;
 			break;
 		}
 	}
@@ -89,7 +91,8 @@ void OscarConnection::setSN(const QString &newSN)
 /** Sends the direct IM message to buddy */
 void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
 {
-	kdDebug(14150) << "[OscarConnection] sendIM not implemented in this object! " << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Not implemented in this object! " << endl;
 }
 
 /** Sends a typing notification to the server
@@ -97,22 +100,28 @@ void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
  */
 void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 {
-	kdDebug(14150) << "[OscarConnection] sendTypingNotify not implemented in this object! " << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Not implemented in this object! " << endl;
 }
 
 /** Called when we have established a connection */
 void OscarConnection::slotConnected(void)
 {
-	kdDebug(14150) << "[OscarConnection] We are connected to " << connectionName() << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"We are connected to '" <<
+		connectionName() << "'" << endl;
+
 	// Announce that we are ready for use, if it's not the server socket
-	if ( mConnType != Server )
+	if(mConnType != Server)
 		emit connectionReady(connectionName());
 }
 
 /** Called when the connection is closed */
 void OscarConnection::slotConnectionClosed(void)
 {
-	kdDebug(14150) << "[OscarDirectConnection] connection with " << connectionName() << "lost." << endl;
+	kdDebug(14150) << k_funcinfo << "connection with '" <<
+		connectionName() << "' lost." << endl;
+
 	emit protocolError(QString("Connection with %1 lost").arg(connectionName()), 0);
 	emit connectionClosed(connectionName());
 }
@@ -120,11 +129,12 @@ void OscarConnection::slotConnectionClosed(void)
 /** Sends request to the client telling he/she that we want to send this file */
 void OscarConnection::sendFileSendRequest(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "sendFileSendRequest not implemented in this object! " << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Not implemented in this object! " << endl;
 }
 
 /** Sets the socket to use socket, state() to connected, and emit connected() */
-void OscarConnection::setSocket( int socket )
+void OscarConnection::setSocket(int socket)
 {
 	QSocket::setSocket(socket);
 	emit connected();

@@ -164,8 +164,6 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	kdDebug(14150) << k_funcinfo <<  "connName=" << connName <<
 		QString::fromLatin1( isicq?" ICQICQ":" AIMAIM" ) << endl;
 
-	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
-	connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 	mIsICQ=isicq; // TODO: I have no idea if this is a good way of handling icq mode
 	toicqsrv_seq = 1;
 	key = NULL;
@@ -175,14 +173,14 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	keepaliveTime=0; // TODO: make that an option
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
-
-	// TODO: move this to OscarContact
+	// TODO: move this to OscarContact or even AIMContact, it's unused by ICQ
 	myUserProfile = "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>";
-
 	// FIXME: really needed? We have QSocket::status()!
 	isConnected = false;
-
 	mAccount = account;
+
+	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
+	connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 }
 
 OscarSocket::~OscarSocket(void)

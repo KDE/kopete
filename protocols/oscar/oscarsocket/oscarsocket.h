@@ -181,6 +181,17 @@ class ICQWorkUserInfo
 		QString homepage;
 };
 
+class ICQMoreUserInfo
+{
+	public:
+		int age;
+		unsigned int gender;
+		QString homepage;
+		QDate birthday;
+		unsigned int lang1;
+		unsigned int lang2;
+		unsigned int lang3;
+};
 
 /*
  * Implements the actual communication with the oscar server
@@ -546,12 +557,12 @@ class OscarSocket : public OscarConnection
 
 	/*
 	 * emitted when a userinfo request yielded a result, ICQ SPECIFIC
-	 * word = sequence of the server reply
+	 * first argument = sequence of the server reply
 	 */
 	void gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &);
 	void gotICQWorkUserInfo(const int, const ICQWorkUserInfo &);
-/*
 	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
+/*
 	void gotICQAboutUserInfo(const int, const ICQAboutUserInfo &);
 	void gotICQEmailUserInfo(const int, const ICQEmailUserInfo &);
 	void gotICQInterestUserInfo(const int, const ICQInterestUserInfo &);

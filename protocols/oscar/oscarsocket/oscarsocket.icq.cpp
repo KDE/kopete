@@ -419,7 +419,34 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				case 220:
 				{
-					kdDebug(14150) << "TODO: userinfo, SRV_METAMORE subtype=" << type << endl;
+					kdDebug(14150) << "RECV (SRV_METAWORK), parsing it..." << endl;
+					char *tmptxt;
+					ICQMoreUserInfo res;
+
+					res.age = fromicqsrv.getLEWord();
+					res.gender = fromicqsrv.getLEByte();
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.homepage = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					WORD y = fromicqsrv.getLEWord();
+					BYTE m = fromicqsrv.getLEByte();
+					BYTE d = fromicqsrv.getLEByte();
+					kdDebug(14150) <<
+						"birtday, y=" << y << ", m=" << m << ", d=" << d << endl;
+					res.birthday = QDate(y,m,d);
+
+					res.lang1 = fromicqsrv.getLEByte();
+					res.lang2 = fromicqsrv.getLEByte();
+					res.lang3 = fromicqsrv.getLEByte();
+
+					WORD unknown = fromicqsrv.getLEWord();
+					kdDebug(14150) <<
+						"unknown last word=" << unknown << endl;
+
+					kdDebug(14150) << k_funcinfo << "emitting gotICQMoreUserInfo()" << endl;
+					emit gotICQMoreUserInfo(sequence, res);
 					break;
 				}
 
@@ -452,9 +479,6 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					kdDebug(14150) << "TODO: userinfo, SRV_META270 subtype=" << type << endl;
 					break;
 				}
-
-
-
 
 				default:
 				{
@@ -599,7 +623,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 				if (ackType==0x0000) // normal message
 				{
-					QPtrList<TLV> lst = buf.getTLVList();
+					// ERROR
+					QPtrList<TLV> lst = type2.getTLVList();
 					lst.setAutoDelete(TRUE);
 
 					TLV *messageTLV = findTLV(lst,0x2711); //TLV(10001)
@@ -639,23 +664,23 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 							{
 								messageBuf.getWord(); // unknown
 								messageBuf.getWord(); // unknown, might be priority
-								WORD messageLength = messageBuf.getWord();
-
-								char *messagetext = messageBuf.getBlock(messageLength);
+								char *messagetext = messageBuf.getLNTS();
 								QString message = QString::fromLocal8Bit(messagetext);
-								kdDebug(14150) << k_funcinfo <<  "type-2 messagtext=" << messagetext << endl;
 								delete [] messagetext;
-
+								kdDebug(14150) << k_funcinfo <<
+									"type-2 messagtext=" << message << endl;
 								/*DWORD fgColor=*/messageBuf.getDWord();
 								/*DWORD bgColor=*/messageBuf.getDWord();
-								kdDebug(14150) << k_funcinfo <<  "messageBuf.getLength() after message and colors =" << messageBuf.getLength() << endl;
+								kdDebug(14150) << k_funcinfo <<
+									"messageBuf.getLength() after message and colors =" <<
+									messageBuf.getLength() << endl;
 
 								DWORD guidlen = messageBuf.getDWord();
 								char *guid = messageBuf.getBlock(guidlen);
 								kdDebug(14150) << k_funcinfo <<  "type-2 guid=" << guid << endl;
 								delete [] guid;
 
-								kdDebug(14150) << k_funcinfo <<  "emit gotIM(), contact='" <<
+								kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
 									user.sn << "', message='" << message << "'" << endl;
 
 								emit gotIM(message, user.sn, false);
@@ -664,13 +689,20 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 							default:
 							{
-								kdDebug(14150) << k_funcinfo <<  "Unhandled message-type:" << msgType << endl;
+								kdDebug(14150) << k_funcinfo <<
+									"Unhandled message-type:" << msgType << endl;
 							}
 						} // END switch(msgType)
-					}
+					} // END found TLV(10001)
 					else
 					{
-						kdDebug(14150) << k_funcinfo <<  "Could not find TLV(10001) in advanced message!" << endl;
+						kdDebug(14150) << k_funcinfo << "Could not find TLV(10001) in advanced message!" << endl;
+						kdDebug(14150) << k_funcinfo << "contained TLVs:" << endl;
+						TLV *t;
+						for(t=lst.first(); t; t=lst.next())
+						{
+							kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") length=" << t->length << endl;
+						}
 					}
 
 					lst.clear();

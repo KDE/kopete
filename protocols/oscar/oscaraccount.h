@@ -88,7 +88,7 @@ public slots:
 
 protected slots:
 	/** Called when we get disconnected */
-	void slotDisconnected();
+//	void slotDisconnected();
 
 	/** Called when a group is added for this account */
 	void slotGroupAdded(KopeteGroup* group);
