@@ -542,10 +542,9 @@ void ChatView::createMembersList()
 		membersList->setShowToolTips( false );
 		new ChatViewMembersTip( membersList );
 		membersList->setAllColumnsShowFocus( true );
-		membersList->addColumn( QString::null, 18);
 		membersList->addColumn( i18n("Chat Members"), -1 );
 		membersList->setSorting( 0, true );
-		membersList->header()->setStretchEnabled( true, 1 );
+		membersList->header()->setStretchEnabled( true, 0 );
 		membersList->header()->hide();
 		//Add the contacts that are in the message manager
 		KopeteContact *contact;
@@ -1844,7 +1843,7 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 	m_view = view;
 
 	QString nick=m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
-	setText( 1, QString::fromLatin1( " " ) + (nick.isEmpty() ? m_contact->contactId() : nick) );
+	setText( 0, /*QString::fromLatin1( " " ) +*/ (nick.isEmpty() ? m_contact->contactId() : nick) );
 	connect( m_contact, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
 			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
@@ -1865,7 +1864,7 @@ void KopeteContactLVI::slotProperyChanged( KopeteContact*, const QString &key,
 {
 	if( key == Kopete::Global::Properties::self()->nickName().key() )
 	{
-		setText( 1, QString::fromLatin1( " " ) + newValue.toString() );
+		setText( 0, /*QString::fromLatin1( " " ) +*/ newValue.toString() );
 		m_parentView->sort();
 	}
 }
@@ -1875,7 +1874,6 @@ void KopeteContactLVI::slotStatusChanged( KopeteContact *c, const KopeteOnlineSt
 {
 	if( c == m_contact )
 	{
-		setText( 0, QChar( -status.weight() ) );
 		setPixmap( 0, status.iconFor(m_contact) );
 		m_parentView->sort();
 	}
@@ -1885,6 +1883,11 @@ void KopeteContactLVI::slotExecute( QListViewItem *item )
 {
 	if( static_cast<QListViewItem*>( this ) == item )
 		((KopeteContact*)m_contact)->execute();
+}
+
+QString KopeteContactLVI::key( int column, bool /*ascending*/ ) const
+{
+	return QString::number(99 - m_contact->onlineStatus().weight() ) + text(column).lower();
 }
 
 #include "chatview.moc"

@@ -61,7 +61,7 @@ class KopeteContactLVI : public QObject, public KListViewItem
 public:
 	KopeteContactLVI( KopeteView *view, const KopeteContact *contact, KListView *parent );
 	const KopeteContact *contact() const { return m_contact; }
-
+	virtual QString key( int column, bool /*ascending*/ ) const;
 private:
 	KopeteContact *m_contact;
 	KListView *m_parentView;
