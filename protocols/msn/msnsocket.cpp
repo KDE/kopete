@@ -350,24 +350,72 @@ void MSNSocket::parseLine( const QString &str )
 
 void MSNSocket::handleError( uint code, uint id )
 {
-	if(code==500)
-	{
-		QString msg = i18n( "Internal server error!\n"
-				"The server is maybe down for maintenance. Try again later." );
 
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-		return;
+	QString msg;	
+
+	switch (code)
+	{
+	case 205:
+		msg = i18n ( "An invalid username has been specified. \n"
+			    "Please correct it, and try to reconnect.\n" );
+		break;
+	case 201:
+		msg = i18n ( "Fully Qualified domain name missing. \n" ); 
+		break;
+	case 207:
+		msg = i18n ( "You are already logged in!\n" );
+		break;
+	case 208:
+		msg = i18n ( "You specified an invalid username.\n"
+			     "Please correct it, and try to reconnect.\n");
+		break;
+	case 209:
+		msg = i18n ( "Your nickname is invalid. Please check it, correct it, \n"
+			     "and try to reconnect.\n" );
+		break;
+	case 210:
+		msg = i18n ( "Your list has reached its maximum capacity.\n"
+			     "No more contacts can be added, unless you remove some first.\n" );
+		break;
+	case 216:
+		 msg = i18n ( "This user is not in your contact list.\n " );
+		break;
+	case 300:
+		msg = i18n ( "Some required fields are missing. Please fill them in and try again.\n" );
+		break;
+	case 302:
+		msg = i18n ( "You are not logged in.\n" );
+		break;
+	case 500:
+		msg = i18n ( "An internal server error occured. Please try again later.\n " );
+		break;
+	case 600:
+		msg = i18n ( "The server is busy. Please try again later.\n " );
+                break;
+	case 601:
+                msg = i18n ( "The server is not available for the moment. Please try again later.\n " );
+                break;	
+	case 911:
+                msg = i18n ( "Authentication failed.\n " );
+                break;	
+	case 913:
+                msg = i18n ( "You can't do that when you're offline.\n"
+			     "Please connect, and try again.\n" );
+		break;
+	default:
+		msg = "";
+		break;
+
 	}
 
-	QString msg =
-		i18n( "Unhandled MSN error code %1 (in response to "
-			"transaction ID %2).\n"
-			"Please mail kopete-devel@kde.org to ask for an implementation, "
-			"or send in a patch yourself.\n"
-			"See http://www.hypothetic.org/docs/msn/basics.php for a "
-			"description of all error codes." ).arg( code ).arg( id );
-	//disconnect();
-	KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+	if (msg != "")
+	{
+		KMessageBox::error(0, msg, i18n( "MSN Plugin - Kopete" ) );
+	}
+	
+	return;
+	
+	
 }
 
 int MSNSocket::sendCommand( const QString &cmd, const QString &args,
