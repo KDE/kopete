@@ -128,8 +128,8 @@ void IRCContactManager::slotNewPrivAction(const QString &originating, const QStr
 
 void IRCContactManager::unregister(KopeteContact *contact)
 {
-	unregisterChannel(contact);
-	unregisterUser(contact);
+	unregisterChannel(contact, true);
+	unregisterUser(contact, true);
 }
 
 IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMetaContact *m)
@@ -147,7 +147,7 @@ IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMet
 		channel = new IRCChannelContact(this, name, m);
 		m_channels.insert( name, channel );
 		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)),
-			this, SLOT(unregisterChannel(KopeteContact *)));
+			this, SLOT(unregister(KopeteContact *)));
 	}
 
 	return channel;
@@ -158,12 +158,13 @@ IRCChannelContact *IRCContactManager::existChannel( const QString &channel ) con
 	return m_channels[ channel ];
 }
 
-void IRCContactManager::unregisterChannel(KopeteContact *contact)
+void IRCContactManager::unregisterChannel(KopeteContact *contact, bool force )
 {
 	IRCChannelContact *channel = (IRCChannelContact*)contact;
-	if(	channel!=0 &&
+	if( force || (
+		channel!=0 &&
 		!channel->isChatting() &&
-		channel->metaContact()->isTemporary() )
+		channel->metaContact()->isTemporary() ) )
 	{
 		m_channels.remove( channel->nickName() );
 	}
@@ -184,7 +185,7 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 		user = new IRCUserContact(this, name, m);
 		m_users.insert( name, user );
 		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)),
-				this, SLOT(unregisterUser(KopeteContact *)));
+				this, SLOT(unregister(KopeteContact *)));
 	}
 
 	return user;
@@ -224,13 +225,14 @@ IRCContact *IRCContactManager::existContact( const QString &id ) const
 		return existUser( id );
 }
 
-void IRCContactManager::unregisterUser(KopeteContact *contact)
+void IRCContactManager::unregisterUser(KopeteContact *contact, bool force )
 {
 	IRCUserContact *user = (IRCUserContact *)contact;
-	if(	user!=0 &&
+	if( force || (
+		user!=0 &&
 		user!=mySelf() &&
 		!user->isChatting() &&
-		user->metaContact()->isTemporary() )
+		user->metaContact()->isTemporary() ) )
 	{
 		kdDebug(14120) << k_funcinfo << user->nickName() << endl;
 		m_users.remove( user->nickName() );

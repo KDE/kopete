@@ -67,8 +67,8 @@ class IRCContactManager
 
 	public slots:
 		void unregister(KopeteContact *contact);
-		void unregisterUser(KopeteContact *contact);
-		void unregisterChannel(KopeteContact *contact);
+		void unregisterUser(KopeteContact *contact, bool force = false );
+		void unregisterChannel(KopeteContact *contact, bool force = false );
 
 		void addToNotifyList(const QString &nick);
 		void removeFromNotifyList(const QString &nick);
