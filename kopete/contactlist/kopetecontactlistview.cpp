@@ -27,6 +27,7 @@
 #include <qheader.h>
 #include <qtooltip.h>
 #include <qstylesheet.h>
+#include <qdragobject.h>
 #include <kurldrag.h>
 
 #include <kapplication.h>
@@ -719,6 +720,7 @@ void KopeteContactListView::slotSettingsChanged( void )
 		}
 	}
 	delete gi;
+	update();
 /*
 	if( KopetePrefs::prefs()->ctransparencyEnabled() )
 	{
@@ -836,6 +838,14 @@ void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 }
 
 
+KopeteContact *KopeteContactListView::contactFromMetaContactLVI( KopeteMetaContactLVI *i ) const
+{
+	int px = m_startDragPos.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+		treeStepSize() * ( i->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+	int py = m_startDragPos.y() - itemRect( i ).y();
+	return i->getContactFromIcon( QPoint( px, py ) ) ;
+}
+
 
 void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/, QListViewItem *after)
 {
@@ -851,13 +861,8 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 
 	if(source_metaLVI)
 	{
-		int px = m_startDragPos.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
-			treeStepSize() * ( source_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-		int py = m_startDragPos.y() - itemRect( source_metaLVI ).y();
-
-		source_contact = source_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+		source_contact = contactFromMetaContactLVI( source_metaLVI );
 	}
-
 
 	if(source_metaLVI  && dest_groupLVI)
 	{
@@ -975,11 +980,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 		if(source_metaLVI)
 		{
-			int px = m_startDragPos.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
-				treeStepSize() * ( source_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-			int py = m_startDragPos.y() - itemRect( source_metaLVI ).y();
-
-			source_contact = source_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+			source_contact = contactFromMetaContactLVI( source_metaLVI );
 		}
 
 		if( source_metaLVI && dest_groupLVI && !source_contact) //we are moving a metacontact to another group
@@ -1200,6 +1201,47 @@ void KopeteContactListView::slotNewMessageEvent(KopeteEvent *event)
 	}
 }
 
+QDragObject *KopeteContactListView::dragObject()
+{
+	// Discover what the drag started on.
+	// If it's a MetaContactLVI, it was either on the MCLVI itself
+	// or on one of the child contacts
+	// Once we know this,
+	// we set the pixmap for the drag to the MC's pixmap
+	// or the child contact's small icon
+
+	// Find out if we're starting a drag using parent's implementation
+	QDragObject *drag;
+	if ( ( drag = KListView::dragObject() ) )
+	{
+		//we're starting to drag something
+		KopeteMetaContactLVI *source_metaLVI =
+			dynamic_cast<KopeteMetaContactLVI*>( currentItem() );
+		KopeteContact *c = 0L;
+		QPixmap pm;
+
+		// get the pixmap depending what we're dragging
+		if ( source_metaLVI )
+		{
+			c = contactFromMetaContactLVI( source_metaLVI );
+
+			if ( c ) 	// dragging a contact
+				pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
+			else		// dragging a metacontact
+			{
+				// FIXME: first start at rendering the whole MC incl small icons
+				// into a pixmap to drag - anyone know how to complete this?
+				//QPainter p( pm );
+				//source_metaLVI->paintCell( p, cg?, width(), 0, 0 );
+				pm = UserIcon( source_metaLVI->metaContact()->statusIcon() );
+			}
+		}
+
+		QSize s = pm.size();
+		drag->setPixmap( pm, QPoint( s.width(), s.height() ) );
+	}
+	return drag;
+}
 
 #include "kopetecontactlistview.moc"
 

@@ -30,6 +30,7 @@
 #include <klistview.h>
 
 class KToggleAction;
+class KopeteContact;
 class KopeteMetaContact;
 class KopeteMetaContactLVI;
 class KopeteGroup;
@@ -82,6 +83,8 @@ protected:
 	virtual void keyPressEvent( QKeyEvent *e );
 
 	virtual bool acceptDrag(QDropEvent *e) const;
+	virtual QDragObject *dragObject();
+	KopeteContact *contactFromMetaContactLVI( KopeteMetaContactLVI *i ) const;
 
 private slots:
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
