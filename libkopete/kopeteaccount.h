@@ -61,14 +61,14 @@ class KopeteAccount : public KopetePluginDataObject
 
 	Q_PROPERTY( QString accountId READ accountId )
 	Q_PROPERTY( QString password READ password WRITE setPassword )
-	Q_PROPERTY( bool remberPassword READ rememberPassword )
+	Q_PROPERTY( bool rememberPassword READ rememberPassword )
 	Q_PROPERTY( bool autoLogin READ autoLogin WRITE setAutoLogin )
 	Q_PROPERTY( QColor color READ color WRITE setColor )
 	Q_PROPERTY( QPixmap accountIcon READ accountIcon )
 	Q_PROPERTY( bool isConnected READ isConnected )
 	Q_PROPERTY( bool isAway READ isAway )
 	Q_PROPERTY( bool suppressStatusNotification READ suppressStatusNotification )
-	Q_PROPERTY( int priority READ priority WRITE setPriority )
+	Q_PROPERTY( uint priority READ priority WRITE setPriority )
 
 public:
 	/**
@@ -131,7 +131,7 @@ public:
 	 * lineedit accordingly, the default is no limit at all
 	 * @return The password or QString::null if the user has canceled
 	 */
-	QString password( bool error = false, bool *ok =0L, unsigned int maxLength=0 );
+	QString password( bool error = false, bool *ok =0L, unsigned int maxLength=0 ) const;
 
 	/**
 	 * Set the password for this account.
@@ -149,7 +149,7 @@ public:
 	 *
 	 * This function should be used by the editAccountPage (and only by the editAccountPage)
 	 */
-	bool rememberPassword();
+	bool rememberPassword() const;
 
 	/**
 	 * Set if the account should log in automatically or not

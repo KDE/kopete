@@ -35,13 +35,17 @@
 #include "kopetegroup.h"
 #include "kopetepassword.h"
 
-static QString configGroup( KopeteProtocol *protocol, const QString &accountId )
+namespace
+{
+QString configGroup( KopeteProtocol *protocol, const QString &accountId )
 {
 #if QT_VERSION < 0x030200
 	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId ).arg( protocol->pluginId() );
 #else
 	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId, protocol->pluginId() );
 #endif
+}
+
 }
 
 class KopeteAccountPrivate
@@ -74,6 +78,8 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ), this, SLOT( slotStopSuppression() ) );
 
 	KopeteAccountManager::manager()->registerAccount( this );
+
+	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 }
 
 KopeteAccount::~KopeteAccount()
@@ -212,8 +218,6 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	}
 
 	loaded();
-
-	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 }
 
 void KopeteAccount::loaded()
@@ -221,7 +225,7 @@ void KopeteAccount::loaded()
 	/* do nothing in default implementation */
 }
 
-QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
+QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength ) const
 {
 	d->password.setMaximumLength( maxLength );
 	QString prompt;
@@ -250,7 +254,7 @@ bool KopeteAccount::autoLogin() const
 	return d->autologin;
 }
 
-bool KopeteAccount::rememberPassword()
+bool KopeteAccount::rememberPassword() const
 {
 	return d->password.remembered();
 }
