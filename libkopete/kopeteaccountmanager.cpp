@@ -207,6 +207,9 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 	KConfig *config = KGlobal::config();
 	QString groupName = account->configGroup();
 
+	// Clean up the account list
+	d->accounts.remove( account );
+
 	delete account;
 
 	// Clean up configuration
@@ -227,7 +230,6 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 {
 	kdDebug(14010) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
-	d->accounts.remove( account );
 	emit accountUnregistered( account );
 }
 
