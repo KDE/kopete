@@ -124,7 +124,7 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 			m=new KopeteMetaContact();
 			m->setTemporary(true);
 
-			c = new MSNContact(  handle, publicName, m );
+			c = new MSNContact( MSNProtocol::protocol(), handle, publicName, m );
 
 			m->addContact( c );
 			KopeteContactList::contactList()->addMetaContact(m);
