@@ -19,6 +19,7 @@
 #define __kopeteonlinestatus_h__
 
 class QString;
+class QPixmap;
 
 class KopeteProtocol;
 
@@ -104,13 +105,13 @@ public:
 	 * @param internalStatus is the status as used internally by the protocol.
 	 * This status is usually a lot more fine-grained than the status as used
 	 * by libkopete and should be unique per protocol.
-	 * @param icon is a string returning the name of the status icon to be
+	 * @param overlayIcon is a string returning the name of the status icon to be
 	 * used by the KDE icon loader.
 	 * @param caption is the description of the status in menus and on buttons.
 	 * @param description is a description in e.g. tooltips.
 	 */
 	KopeteOnlineStatus( OnlineStatus status, unsigned weight, KopeteProtocol *protocol,
-		unsigned internalStatus, const QString &icon, const QString &caption, const QString &description );
+		unsigned internalStatus, const QString &overlayIcon, const QString &caption, const QString &description );
 
 	/**
 	 * Constructor.
@@ -152,7 +153,7 @@ public:
 	/**
 	 * Return the icon
 	 */
-	QString icon() const;
+	QString overlayIcon() const;
 
 	/**
 	 * Return the description
@@ -163,6 +164,25 @@ public:
 	 * Return the caption
 	 */
 	QString caption() const;
+
+	/**
+	 * Return the protocol this applies to
+	 */
+	KopeteProtocol* protocol() const;
+
+	/**
+	 * Return the standard status icon for the object's protocol.
+	 */
+	QPixmap genericIcon() const;
+
+	/**
+	 * Return a status icon generated for the given base icon
+	 * This will draw an overlay representing the online status
+	 * of the account/contact the KopeteOnlineStatus applies to
+	 * over the base icon.
+	 * @param baseIcon is the icon to be used as basis for the status icon.
+	 */
+	QPixmap customIcon( const QString& baseIcon ) const;
 
 	/**
 	 * Assignment operator

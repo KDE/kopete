@@ -436,7 +436,8 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 				case 'I': //insert the statusicon path
 					if(d->from)
 					{
-						QString icoPath = KGlobal::iconLoader()->iconPath( d->from->onlineStatus().icon(), KIcon::Small );
+						//FIXME -Will
+						QString icoPath = KGlobal::iconLoader()->iconPath( d->from->onlineStatus().overlayIcon(), KIcon::Small );
 						if (!icoPath.isNull())
 						message.append( QStyleSheet::escape(icoPath) );
 					}

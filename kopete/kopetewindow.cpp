@@ -49,6 +49,7 @@
 #include "kopetetransfermanager.h"
 #include "kopeteviewmanager.h"
 #include "kopeteglobalawaydialog.h"
+#include "kopeteonlinestatus.h"
 #include "pluginloader.h"
 #include "preferencesdialog.h"
 #include "systemtray.h"
@@ -398,9 +399,8 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 		return;
 
 	connect( proto,
-		SIGNAL( statusIconChanged( KopeteProtocol *, const QString & ) ),
-		SLOT( slotProtocolStatusIconChanged( KopeteProtocol *,
-		const QString & ) ) );
+		SIGNAL( statusIconChanged( KopeteOnlineStatus& ) ),
+		SLOT( slotProtocolStatusIconChanged( KopeteOnlineStatus& ) ) );
 	connect( proto, SIGNAL( destroyed( QObject * ) ),
 		SLOT( slotProtocolDestroyed( QObject * ) ) );
 
@@ -412,7 +412,8 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 
 	m_statusBarIcons.insert( proto, i );
 
-	slotProtocolStatusIconChanged( proto, proto->statusIcon() );
+	// FIXME -Will
+	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 
 	KActionMenu *menu = proto->protocolActions();
 	if( menu )
@@ -431,36 +432,38 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 	m_statusBarIcons.remove( o );
 }
 
-void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
-	const QString &icon )
+void KopeteWindow::slotProtocolStatusIconChanged( KopeteOnlineStatus& status )
+/*KopeteProtocol * p,	const QString &icon )*/
 {
 //	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << icon << endl;
 
-	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ p ] );
+	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ status.protocol() ] );
 	if( !i )
 		return;
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
-	
-	QMovie mv = loader->loadMovie( icon, KIcon::User, 0 );
+
+	QMovie mv = loader->loadMovie( status.overlayIcon(), KIcon::User, 0 );
 	
 	if ( mv.isNull() )
 	{
 		// No movie found, fallback to pixmap
-		QPixmap pm = SmallIcon( icon );
-	
+		// Get the icon for our status
+
+		//QPixmap pm = SmallIcon( icon );
+		QPixmap pm = status.genericIcon();
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
 		if( pm.isNull() )
-			QPixmap pm = loader->loadIcon( icon, KIcon::User, 0, KIcon::DefaultState, 0L, true );
+			pm = loader->loadIcon( status.overlayIcon(), KIcon::User, 0, KIcon::DefaultState, 0L, true );
 
 		if( pm.isNull() )
 		{
 			/* No Pixmap found, fallback to Unknown */
-			kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "
-				<< "Using unknown pixmap for status icon '" << icon << "'."
+			kdDebug(14000) << k_funcinfo
+				<< "Using unknown pixmap for status icon '" << status.overlayIcon() << "'."
 				<< endl;
 			i->setPixmap( KIconLoader::unknown() );
 		}

@@ -87,7 +87,7 @@ public:
 	/**
 	 * Contact's status
 	 */
-	enum OnlineStatus { Online, Away, Offline, Unknown };
+	enum OnlineStatus { Unknown, Offline, Online, Away };
 
 	/**
 	 * Contact's idle state

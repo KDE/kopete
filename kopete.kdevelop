@@ -55,15 +55,7 @@
     </display>
   </kdevdebugger>
   <workspace>
-    <openfiles>
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.h" />
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.cpp" />
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.h" />
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.cpp" />
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.h" />
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.cpp" />
-      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wppreferences.cpp" />
-    </openfiles>
+    <openfiles/>
   </workspace>
   <kdevautoproject>
     <makeenvvars>
@@ -87,8 +79,8 @@
       <codehinting outputview="1" enablech="1" selectview="0" />
     </codecompletion>
     <classstore>
-      <enablepcs>false</enablepcs>
-      <enablepp>false</enablepp>
+      <enablepcs>true</enablepcs>
+      <enablepp>true</enablepp>
       <preparsing/>
     </classstore>
     <filetemplates>
@@ -99,6 +91,9 @@
       <implementationsuffix>.cpp</implementationsuffix>
       <lowercasefilenames>true</lowercasefilenames>
     </filetemplates>
+    <newclass>
+      <filenamesetting>lower</filenamesetting>
+    </newclass>
   </cppsupportpart>
   <kdevclassview>
     <folderhierarchy>true</folderhierarchy>

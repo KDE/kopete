@@ -20,6 +20,8 @@
 #define KOPETEPROTOCOL_H
 
 #include "kopeteplugin.h"
+//FIXME - How can I avoid this?
+#include "kopeteonlinestatus.h"
 
 #include <qdict.h>
 
@@ -193,7 +195,7 @@ signals:
 	 * This signal is only emitted if the new icon is different from
 	 * the previous icon.
 	 */
-	void statusIconChanged( KopeteProtocol *protocol, const QString &icon );
+	void statusIconChanged( KopeteOnlineStatus& );
 
 private slots:
 	/**
@@ -205,7 +207,10 @@ private slots:
 	void slotAccountAdded();
 
 private:
+	//FIXME -Will, remove!
 	QString m_statusIcon;
+
+	KopeteOnlineStatus m_status;
 
 	/**
 	 * The list of all contacts for this protocol

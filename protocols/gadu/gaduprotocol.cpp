@@ -303,7 +303,8 @@ GaduProtocol::changeStatus( const KopeteOnlineStatus &status, const QString& des
     status_ = status;
     myself_->setOnlineStatus( status_ );
 
-    setStatusIcon( status_.icon() );
+    //OBSOLETE
+	//setStatusIcon( status_.icon() );
 }
 
 void

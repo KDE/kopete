@@ -18,6 +18,11 @@
 #include "kopeteonlinestatus.h"
 
 #include <qstring.h>
+// necessary for renderIcon, remove after!
+#include <qpainter.h>
+#include <qpixmap.h>
+#include "kopeteprotocol.h"
+#include <kiconloader.h>
 
 #include <klocale.h>
 
@@ -27,14 +32,14 @@ struct KopeteOnlineStatusPrivate
 	unsigned weight;
 	KopeteProtocol *protocol;
 	unsigned internalStatus;
-	QString icon;
+	QString overlayIcon;
 	QString caption;
 	QString description;
 	unsigned refCount;
 };
 
 KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, KopeteProtocol *protocol,
-	unsigned internalStatus, const QString &icon, const QString &caption, const QString &description )
+	unsigned internalStatus, const QString &overlayIcon, const QString &caption, const QString &description )
 {
 	d = new KopeteOnlineStatusPrivate;
 
@@ -43,7 +48,7 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, Ko
 	d->status = status;
 	d->internalStatus = internalStatus;
 	d->weight = weight;
-	d->icon = icon;
+	d->overlayIcon = overlayIcon;
 	d->caption = caption;
 	d->protocol = protocol;
 	d->description = description;
@@ -64,20 +69,21 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 	{
 	case Online:
 		d->caption = d->description = i18n( "Online" );
-		d->icon = QString::fromLatin1( "unknown" );
+		// This might be problematic
+		d->overlayIcon = QString::null;
 		break;
 	case Away:
 		d->caption = d->description = i18n( "Away" );
-		d->icon = QString::fromLatin1( "unknown" );
+		d->overlayIcon = QString::null;
 		break;
 	case Unknown:
 		d->caption = d->description = i18n( "Status not available" );
-		d->icon = QString::fromLatin1( "unknown" );
+		d->overlayIcon = QString::null;
 		break;
 	case Offline:
 	default:
 		d->caption = d->description = i18n( "Offline" );
-		d->icon = QString::fromLatin1( "unknown" );
+		d->overlayIcon = QString::null;
 	}
 }
 
@@ -162,9 +168,9 @@ unsigned KopeteOnlineStatus::weight() const
 	return d->weight;
 }
 
-QString KopeteOnlineStatus::icon() const
+QString KopeteOnlineStatus::overlayIcon() const
 {
-	return d->icon;
+	return d->overlayIcon;
 }
 
 QString KopeteOnlineStatus::caption() const
@@ -175,6 +181,67 @@ QString KopeteOnlineStatus::caption() const
 QString KopeteOnlineStatus::description() const
 {
 	return d->description;
+}
+
+KopeteProtocol* KopeteOnlineStatus::protocol() const
+{
+	return d->protocol;
+}
+
+QPixmap KopeteOnlineStatus::genericIcon() const
+{
+	if ( d->protocol )
+		return customIcon( d->protocol->pluginIcon() );
+	else
+		return SmallIcon( QString::fromLatin1( "unknown" ) );
+}
+
+QPixmap KopeteOnlineStatus::customIcon( const QString& baseIcon ) const
+{
+	// create an icon suiting the status from the base icon
+	// use reasonable defaults if not provided or protocol not set
+	QPixmap basis;
+
+	if ( d->status == Away )
+	{
+		// Apply standard Disabled effect to generate Away iconOverlay
+		// This will probably look crap on the Unknown icon
+		// FIXME This won't return icons that are not installed using Martijn's
+		// automake magic so we'd have to use UserIcon instead of SmallIcon
+		if ( baseIcon.isNull() )
+			if ( d->protocol )
+				basis = SmallIcon( d->protocol->pluginIcon(), 0,
+						KIcon::DisabledState );
+			else
+				basis = SmallIcon( QString::fromLatin1( "unknown" ), 0,
+						KIcon::DisabledState );
+		else
+			basis = SmallIcon( baseIcon, 0, KIcon::DisabledState );
+	}
+	else
+	{
+		// get the base icon
+		if ( baseIcon.isNull() )
+			if ( d->protocol )
+				basis = SmallIcon( d->protocol->pluginIcon() );
+			else
+				basis = SmallIcon( QString::fromLatin1( "unknown" ) );
+		else
+			basis = SmallIcon( baseIcon );
+
+		//composite the iconOverlay for this status and the supplied baseIcon
+		if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is
+		{
+			QPixmap overlay = SmallIcon( d->overlayIcon );
+			if ( !overlay.isNull() )
+			{
+				// draw the overlay on top of it
+				QPainter p( &basis );
+				p.drawPixmap( 0, 0, overlay );
+			}
+		}
+	}
+	return basis;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -45,11 +45,11 @@ public:
 	~KopeteAccount();
 
 	/**
-	 * retrurn to protocol of this account
+	 * return the protocol for this account
 	 */
 	KopeteProtocol *protocol() const ;
 	/**
-	 * return the unique id of this account which is the login
+	 * return the unique id of this account used as the login
 	 */
 	QString accountId();
 

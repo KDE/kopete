@@ -255,7 +255,7 @@ QPixmap KopeteContact::scaledStatusIcon( int size )
 {
 	if ( !( d->onlineStatus == d->oldStatus ) || size != d->cachedSize )
 	{
-		QImage afScal = ( SmallIcon( d->onlineStatus.icon() ).convertToImage() ).smoothScale( size, size );
+		QImage afScal = ( d->onlineStatus.genericIcon().convertToImage() ).smoothScale( size, size );
 		d->cachedScaledIcon = QPixmap( afScal );
 		d->oldStatus = d->onlineStatus;
 		d->cachedSize = size;

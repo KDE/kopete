@@ -37,6 +37,7 @@ class KopeteProtocol;
 class KopeteSystemTray;
 class KopeteGlobalAwayDialog;
 class StatusBarIcon;
+class KopeteOnlineStatus;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -83,9 +84,9 @@ private slots:
 	 * The status icon got changed, update it.
 	 * Note that iconName can also be a .mng movie instead of an icon.
 	 */
-	void slotProtocolStatusIconChanged( KopeteProtocol *proto,
-		const QString &iconName );
-
+	//void slotProtocolStatusIconChanged( KopeteProtocol *proto,
+	//	const QString &iconName );
+	void slotProtocolStatusIconChanged( KopeteOnlineStatus& status );
 	/**
 	 * Show a context icon for a protocol
 	 */
@@ -128,8 +129,8 @@ private:
 	void initView ( void );
 	void initActions ( void );
 	void initSystray ( void );
-	void loadOptions(void);
-	void saveOptions(void);
+	void loadOptions( void );
+	void saveOptions( void );
 	int docked;
 	bool hidden;
 	int deskRight;

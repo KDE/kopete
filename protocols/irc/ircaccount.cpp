@@ -72,8 +72,8 @@ KActionMenu *IRCAccount::actionMenu()
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( mMySelf->onlineStatus().description() );
 
 	KActionMenu *mActionMenu = new KActionMenu( accountId(), this );
-	mActionMenu->popupMenu()->insertTitle( SmallIcon( mMySelf->onlineStatus().icon() ), menuTitle, 1 );
-	mActionMenu->setIcon( mMySelf->onlineStatus().icon() );
+	mActionMenu->popupMenu()->insertTitle( mMySelf->onlineStatus().genericIcon(), menuTitle, 1 );
+	mActionMenu->setIconSet( QIconSet ( mMySelf->onlineStatus().genericIcon() ) );
 
 	mActionMenu->insert( actionOnline );
 	mActionMenu->insert( actionOffline );

@@ -316,24 +316,24 @@ void KopeteProtocol::slotAccountAdded()
 
 void KopeteProtocol::slotRefreshStatusIcon()
 {
-	KopeteOnlineStatus status;
+	KopeteOnlineStatus newStatus;
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict ); 
+	QDictIterator<KopeteAccount> it( dict );
 	for( ; KopeteAccount *account=it.current(); ++it )
 	{
 		if(account->myself())
 		{
-			if(account->myself()->onlineStatus() > status)
+			if(account->myself()->onlineStatus() > newStatus)
 			{
-				status=account->myself()->onlineStatus();
+				newStatus = account->myself()->onlineStatus();
 			}
 		}
 	}
 	
-	if( status.icon() != m_statusIcon )
+	if( newStatus != m_status )
 	{
-		m_statusIcon = status.icon();
-		emit( statusIconChanged( this, m_statusIcon ) );
+		m_status = newStatus;
+		emit( statusIconChanged( m_status ) );
 	}
 }
 
@@ -357,7 +357,7 @@ void KopeteProtocol::setStatusIcon( const QString &icon )
 	if( icon != m_statusIcon )
 	{
 		m_statusIcon = icon;
-		emit( statusIconChanged( this, icon ) );
+		emit( statusIconChanged( m_status ) );
 	}
 }
 

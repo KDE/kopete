@@ -121,29 +121,17 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 void KopeteMetaContact::updateOnlineStatus()
 {
 	OnlineStatus newStatus = Unknown;
+	KopeteOnlineStatus mostSignificantStatus;
 
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		KopeteOnlineStatus status = it.current()->onlineStatus();
-
-		if( status.status() == KopeteOnlineStatus::Online )
-		{
-			newStatus = Online;
-			break;
-		}
-
-		else if( ( status.status() == KopeteOnlineStatus::Away ) && ( newStatus != Online ) )
-		{
-			// Set status, but don't stop searching, since 'Online' overrules
-			// 'Away'
-			newStatus = Away;
-		}
-		else if( ( status.status() == KopeteOnlineStatus::Offline ) && ( newStatus != Away ) && ( newStatus != Online ) )
-		{
-			newStatus = Offline;
-		}
+		// find most significant status
+		if ( it.current()->onlineStatus() > mostSignificantStatus )
+			mostSignificantStatus = it.current()->onlineStatus();
 	}
+
+	newStatus = (OnlineStatus) mostSignificantStatus.status();
 
 	if( newStatus != d->onlineStatus )
 	{
