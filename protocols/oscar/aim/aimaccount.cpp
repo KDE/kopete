@@ -109,7 +109,7 @@ KActionMenu* AIMAccount::actionMenu()
 	mActionMenu->insert( mActionOffline );
 	mActionMenu->popupMenu()->insertSeparator();
 
-	mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
+	//mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
 
 	return mActionMenu;
 }
