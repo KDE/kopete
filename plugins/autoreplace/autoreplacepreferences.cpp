@@ -155,6 +155,22 @@ void AutoReplacePreferences::slotWidgetModified()
 	emit KCModule::changed( m_wordListChanged || autoConfig()->hasChanged() );
 }
 
+void AutoReplacePreferences::defaults()
+{
+    KCAutoConfigModule::defaults();
+    preferencesDialog->m_list->clear();
+    m_config->loadDefaultAutoReplaceList();
+    AutoReplaceConfig::WordsToReplace::Iterator it;
+    AutoReplaceConfig::WordsToReplace map = m_config->map();
+    for ( it = map.begin(); it != map.end(); ++it )
+    {
+        // notice: insertItem is called automatically by the constructor
+        new QListViewItem( preferencesDialog->m_list, it.key(), it.data() );
+    }
+    m_wordListChanged = true;
+    slotWidgetModified();
+}
+
 #include "autoreplacepreferences.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

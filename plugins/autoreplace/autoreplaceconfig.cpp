@@ -39,8 +39,7 @@ void AutoReplaceConfig::load()
 		// basic list, key/value
 		// a list based on i18n should be provided, i.e. for italian
 		// "qsa,qualcosa,qno,qualcuno" remember UTF-8 accents
-		wordsList = QStringList::split( ",", i18n( "list_of_words_to_replace", 
-			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ) );
+            wordsList = defaultAutoReplaceList();
 	}
 
 	QString k, v;
@@ -56,6 +55,26 @@ void AutoReplaceConfig::load()
 	m_addDot              = config->readBoolEntry( "DotEndSentence" , false );
 	m_upper               = config->readBoolEntry( "CapitalizeBeginningSentence" , false );
 }
+
+QStringList AutoReplaceConfig::defaultAutoReplaceList()
+{
+    return QStringList::split( ",", i18n( "list_of_words_to_replace",
+			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ) );
+}
+
+void AutoReplaceConfig::loadDefaultAutoReplaceList()
+{
+    QStringList wordsList = defaultAutoReplaceList();
+    m_map.clear();
+    QString k, v;
+    for ( QStringList::Iterator it = wordsList.begin(); it != wordsList.end(); ++it )
+    {
+        k = *it;
+        v = *( ++it );
+        m_map.insert( k, v );
+    }
+}
+
 
 bool AutoReplaceConfig::autoReplaceIncoming() const
 {

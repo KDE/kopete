@@ -18,6 +18,7 @@
 
 #include <qmap.h>
 #include <qstring.h>
+#include <qstringlist.h>
 
 #ifndef AutoReplaceConfig_H
 #define AutoReplaceConfig_H
@@ -39,6 +40,8 @@ public:
 	bool capitalizeBeginningSentence() const;
 
 	void setMap( const WordsToReplace &w );
+    QStringList defaultAutoReplaceList();
+    void loadDefaultAutoReplaceList();
 
 private:
 	WordsToReplace m_map;

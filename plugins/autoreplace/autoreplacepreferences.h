@@ -39,6 +39,7 @@ public:
 
 	virtual void save();
 	virtual void load();
+    virtual void defaults();
 
 private slots:
 	//void slotSettingsDirty();
