@@ -47,6 +47,7 @@ public:
 	void init();
 	bool unload();
 	/** KopeteProtocol reimplementation */
+	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData );
 	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
 	virtual void Connect();

@@ -45,6 +45,8 @@
 #include "ircdccreceive.h"
 #include "ircconsoleview.h"
 #include "messagetransport.h"
+#include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
@@ -90,7 +92,7 @@ IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 
 void IRCServerContact::init()
 {
-	parser = new IRCCmdParser(this);
+	parser = new IRCCmdParser(mProtocol, this);
 	messenger = new IRCMessage();
 	tryingQuit = false;
 	closing = false;
@@ -249,7 +251,9 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 
 	if (activeContacts.find(queryName.lower()) == activeContacts.end())
 	{
-		(void)new IRCContact(mServer, queryName, 6667, true, this);
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(queryName);
+		QString protocolID=mProtocol->id();
+		(void)new IRCContact(mServer, queryName, 6667, true, this, m, protocolID);
 	}
 }
 
@@ -263,7 +267,9 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 
 	if (activeContacts.find(queryName.lower()) == activeContacts.end())
 	{
-		(void)new IRCContact(mServer, queryName, 6667, true, this);
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(queryName);
+		QString protocolID=mProtocol->id();
+		(void)new IRCContact(mServer, queryName, 6667, true, this, m, protocolID);
 	}
 }
 
@@ -377,6 +383,10 @@ bool IRCServerContact::parentClosing()
 		}
 	}
 	return true;
+}
+QString IRCServerContact::id() const
+{
+	return mServer+mNickname; //FIXME Is this the righway(TM)
 }
 
 #include "ircservercontact.moc"

@@ -40,9 +40,11 @@
 #include "ircqueryview.h"
 #include "irccontact.h"
 #include "ircservercontact.h"
+#include "kopetecontactlist.h"
 
-	IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
-	: KopeteContact(contact->mProtocol)
+
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
+	: KopeteContact(protocolID, parent)
 {
 	engine = contact->engine;
 	requestedQuit = false;
@@ -99,8 +101,8 @@
 
 }
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pendingMessage)
-	: KopeteContact(contact->mProtocol)
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pendingMessage, KopeteMetaContact *parent, QString &protocolID)
+	: KopeteContact(protocolID, parent)
 {
 	engine = contact->engine;
 	requestedQuit = false;
@@ -156,8 +158,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	}
 }
 
-IRCContact::IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
-	: KopeteContact(contact->mProtocol)
+IRCContact::IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
+	: KopeteContact(protocolID, parent)
 {
 	engine = contact->engine;
 	requestedQuit = false;
@@ -195,7 +197,7 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	queryView = 0L;
 	chatView = 0L;
 
-	connect(kopeteapp->contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotGroupRemoved(const QString &)));
+	connect(KopeteContactList::contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotGroupRemoved(const QString &)));
 
 	if (!init())
 	{
@@ -509,10 +511,20 @@ void IRCContact::slotMoveThisUser() {
 
 void IRCContact::initActions()
 {
-	actionAddGroup = KopeteStdAction::addGroup( kopeteapp->contactList(), SLOT(addGroup()), this, "actionAddGroup" );
+	actionAddGroup = KopeteStdAction::addGroup( KopeteContactList::contactList(), SLOT(addGroup()), this, "actionAddGroup" );
 	actionContactMove = KopeteStdAction::moveContact( this, SLOT(slotMoveThisUser()), this, "actionMove" );
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT(slotRemoveThis()), this, "actionDelete" );
 }
+
+QString IRCContact::id() const
+{
+	return mUsername+mNickname; //FIXME Is this the righway(TM)
+}
+
+QString IRCContact::data() const
+{
+	return mUsername+mNickname; //FIXME Is this the righway(TM)
+}	
 #include "irccontact.moc"
 /*
  * Local variables:

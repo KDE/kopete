@@ -31,12 +31,13 @@
 #include "irccontact.h"
 #include "ircadd.h"
 #include "kopete.h"
+#include "kopetemetacontact.h"
 #include "ircaddcontactpage.h"
 #include "ircchatview.h"
 #include "ircservercontact.h"
 #include "ircmessage.h"
 #include "ircservermanager.h"
-#include "contactlist.h"
+#include "kopetecontactlist.h"
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor
@@ -118,25 +119,58 @@ void IRCProtocol::slotNewConsole()
 	(void)new IRCServerContact(this);
 }
 
-void IRCProtocol::addContact(const QString &groupName, const QString &server, const QString &contact, bool connectNow, bool joinNow)
+void IRCProtocol::addContact( const QString &groupName, const QString &server, const QString &contact, bool connectNow, bool joinNow)
 {
+	
+	QString protocolID = this->id();
 	KGlobal::config()->setGroup("IRC");
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-
 	QString serverAndNick = nick;
 	serverAndNick.append("@");
 	serverAndNick.append(server);
 	IRCServerContact *serverContact = manager->findServer(serverAndNick);
-	if (serverContact != 0)
+
+	KopeteContactList *l = KopeteContactList::contactList();
+	KopeteMetaContact *m = l->findContact( serverAndNick );
+	KopeteContact *c = m->findContact( serverAndNick );
+	if( c )
 	{
-		(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverContact);
-	} else {
-		IRCServerContact *serverItem = manager->addServer(serverAndNick, connectNow, this);
-		if (serverItem != 0)
+		// Existing contact, update data
+		// FIXME: TODO!
+		kdDebug() << "IRCProtocol::slotContactList: Not implemented: "
+			<< "Meta contact already contains contact " << contact
+			<< "???" << endl;
+	}
+	else
+	{
+		if (serverContact != 0)
 		{
-			(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverItem);
+			(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverContact, m, protocolID);
+		} else {
+			IRCServerContact *serverItem = manager->addServer(serverAndNick, connectNow, this);
+			if (serverItem != 0)
+			{
+				(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverItem, m, protocolID);
+			}
 		}
 	}
+}
+
+KopeteContact* IRCProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
+{
+    QString protocolID = this->id();
+	// FIXME: serializedData contains much more than just the server, target, port, joinonconnect contact 
+
+	// FIXME: more error-proof deserialize would be useful :)
+	QStringList data    = QStringList::split( ' ', serializedData );
+	QString server = data[ 0 ].replace( QRegExp( "%20" ), " " );
+	QString target = data[ 1 ].replace( QRegExp( "%20" ), " " );
+	unsigned int port =(data[ 2 ].replace( QRegExp( "%20" ), " " )).toUInt();
+	bool joinOnConnect = (data[ 3 ].replace( QRegExp( "%20" ), " " )).toUInt();
+
+	return new IRCContact( server, target, port, joinOnConnect, new IRCServerContact(this, true), parent, protocolID );
+	//FIXME connectNow in IRCServerContact should not be hardwired to true
+	//FIXME is new IRCServerContact good thing?
 }
 
 IRCProtocol::~IRCProtocol()
@@ -229,6 +263,8 @@ void IRCProtocol::initIcons()
 	joinIcon = QPixmap(loader->loadIcon("irc_join", KIcon::User));
 	privmsgIcon = QPixmap(loader->loadIcon("irc_privmsg", KIcon::User));
 }
+
+
 
 
 #include "ircprotocol.moc"

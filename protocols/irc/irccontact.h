@@ -42,9 +42,9 @@ class IRCContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
-	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages);
-	IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
+	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID);
+	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, QString &protocolID);
+	IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID);
 	~IRCContact();
 	// KopeteContact virtual functions
 	virtual ContactStatus status() const;
@@ -60,6 +60,10 @@ public:
 	QString mServer;
 	QString mTarget;
 	QString mGroupName;
+
+	virtual QString id() const;
+	virtual QString data() const;
+	
 private:
 	void initActions();
 	unsigned int mPort;
