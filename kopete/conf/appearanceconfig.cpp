@@ -328,18 +328,38 @@ void AppearanceConfig::slotUpdatePreview()
 
 	KopeteMessage *msgIn = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
 	KopeteMessage *msgOut = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
+	KopeteMessage *msgInt = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
 
 	QString model = mPrfsChatAppearance->mle_codehtml->text();
 
 	preview->begin();
 	preview->write( QString::fromLatin1( "<html><body>" ) );
+
+	// incoming messages
 	preview->write( msgIn->transformMessage( model ) );
+	msgIn->setFg(Qt::white);
+	msgIn->setBg(Qt::blue);
+	msgIn->setBody( QString::fromLatin1("This is a colored incoming message") );
+	preview->write( msgIn->transformMessage( model ) );
+	// -------------------
+
+	// outgoing messages
 	preview->write( msgOut->transformMessage( model ) );
+	msgOut->setFg(Qt::white);
+	msgOut->setBg(Qt::blue);
+	msgOut->setBody( QString::fromLatin1("This is a colored outgoing message") );
+	preview->write( msgOut->transformMessage( model ) );
+	// -------------------
+
+	// internal message
+	preview->write( msgInt->transformMessage( model ) );
+
 	preview->write( QString::fromLatin1( "</body></html>" ) );
 	preview->end();
 
 	delete msgIn;
 	delete msgOut;
+	delete msgInt;
 	delete cFrom;
 	delete cTo;
 }

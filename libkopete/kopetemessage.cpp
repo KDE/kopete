@@ -226,7 +226,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 
 				case 'b':   //BgColor
 					if ( mBg.isValid() && !mBgOverride )
-						message += QString::fromLatin1( "bgcolor=\"" ) + mBg.name() + QString::fromLatin1( "\"" );
+						message += mBg.name();
 					break;
 
 				case 'i': //only inbound
