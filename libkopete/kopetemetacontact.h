@@ -407,6 +407,11 @@ signals:
 	 * @brief The meta contact's display name changed
 	 */
 	void displayNameChanged( const QString &oldName, const QString &newName );
+	
+	/**
+	 * @brief The meta contact's photo changed
+	 */
+	void photoChanged();
 
 	/**
 	 * @brief  The contact was moved

@@ -303,11 +303,20 @@ void KopeteMetaLVIProps::slotOkClicked()
 	{
 		item->metaContact()->setDisplayName( mainWidget->edtDisplayName->text() );
 	}
+	
+	// set name source
 	if ( mainWidget->chkTrackChildDisplayName->isChecked() )
 		item->metaContact()->setNameSource( item->metaContact()->contacts().at( mainWidget->cmbAccount->currentItem() ) );
 	else
-		item->metaContact()->setNameSource( 0 );
-
+		item->metaContact()->setNameSource( 0L );
+	
+	// set photo source
+	if ( mainWidget->chkTrackChildPhoto->isChecked() )
+		item->metaContact()->setPhotoSource( item->metaContact()->contacts().at( mainWidget->cmbAccountPhoto->currentItem() ) );
+	else
+		item->metaContact()->setPhotoSource( 0L );
+	
+	
 	item->metaContact()->setUseCustomIcon(
 		mainWidget->chkUseCustomIcons->isChecked() );
 

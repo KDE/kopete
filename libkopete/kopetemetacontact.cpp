@@ -671,6 +671,7 @@ void MetaContact::setPhotoSource( Contact *contact )
 		d->photoSourceAID = "";
 	}
 	emit persistentDataChanged();
+	emit photoChanged();
 }
 
 void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,

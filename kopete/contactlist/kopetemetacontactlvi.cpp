@@ -238,6 +238,9 @@ void KopeteMetaContactLVI::initLVI()
 	
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
+	
+	connect( m_metaContact, SIGNAL( photoChanged() ),
+		SLOT( slotPhotoChanged() ) );
 
 	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
 		SLOT( slotUpdateMetaContact() ) );
@@ -746,7 +749,7 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *,
+void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == QString::fromLatin1("awayMessage") && d->extraText && old != newVal )
@@ -755,6 +758,10 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *,
 			d->extraText->setText( QString::null );
 		else
 			d->extraText->setText( newVal.toString() );
+	}
+	else if ( key == QString::fromLatin1("photo") && m_metaContact->photoSource() == contact )
+	{
+		slotPhotoChanged();
 	}
 }
 
