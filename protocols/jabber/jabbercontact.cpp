@@ -78,7 +78,6 @@ JabberContact::~JabberContact()
 
 	// Authorization actions 
 	delete actionSendAuth;
-	delete actionRerequestAuth;
 
 	if(popup)
 		delete popup;
@@ -181,7 +180,6 @@ void JabberContact::initActions()
 
 	// Authorization actions 
 	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
-	actionRerequestAuth = new KAction(i18n("Rerequest authorization from"), "", 0, this, SLOT(slotSendAuth()), this, "actionRerequestAuth");
 
 }
 
@@ -267,7 +265,6 @@ void JabberContact::showContextMenu(const QPoint&, const QString&)
 	actionRename->plug(popup);
 	actionContactMove->plug(popup);
 	actionSendAuth->plug(popup);
-	actionRerequestAuth->plug(popup);
 	actionRemoveFromGroup->plug(popup);
 	actionRemove->plug(popup);
 
@@ -452,12 +449,9 @@ void JabberContact::slotMoveThisUser()
 
 void JabberContact::slotSendAuth()
 {
-
-}
-
-void JabberContact::slotRerequestAuth()
-{
-
+	kdDebug() << "[JabberContact] (Re)sendAuth -> recall subscribe() " << userID() << endl;
+	
+	mProtocol->addContact(userID());
 }
 
 void JabberContact::addToGroup(const QString &group)

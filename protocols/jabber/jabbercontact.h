@@ -269,11 +269,12 @@ class JabberContact : public KopeteContact
 		 * Set a new nickname for the contact
 		 */
 		void slotUpdateNickname(const QString);
-		
+	
+		/**
+		 * Send type="subscribe" to contact
+		 */
 		void slotSendAuth();
 		
-		void slotRerequestAuth();
-
 	signals:
 		void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 
@@ -308,7 +309,7 @@ class JabberContact : public KopeteContact
 		KAction *actionMessage, *actionChat,
 				*actionHistory, *actionSnarfVCard,
 				*actionRename,
-	 			*actionSendAuth, *actionRerequestAuth,
+	 			*actionSendAuth,
 				*actionRemoveFromGroup, *actionRemove, *actionInfo;
 		KListAction *actionContactMove;
 		KSelectAction *actionSelectResource;
