@@ -27,7 +27,6 @@
  */
 class KopetePluginConfig : public KCDPluginPage
 {
-	Q_OBJECT
 
 public:
 	KopetePluginConfig( QWidget *parent, const char *name, const QStringList &args );

@@ -30,5 +30,6 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */
     pluginSelector()->addPlugins( KGlobal::instance()->instanceName(), i18n( "General Plugins" ), "Plugins" );
 }
 
+
 // vim: set noet ts=4 sts=4 sw=4:
 
