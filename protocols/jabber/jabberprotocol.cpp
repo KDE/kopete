@@ -1516,88 +1516,10 @@ void JabberProtocol::slotResourceUnavailable(const Jabber::Jid &jid,
 										jid, resource );
 }
 
-void JabberProtocol::slotRetrieveVCard(const Jabber::Jid &jid)
-{
-
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
-
-		Jabber::JT_VCard *task = new Jabber::JT_VCard(jabberClient->rootTask());
-
-		// signal to ourselves when the vCard data arrived
-		QObject::connect(task, SIGNAL(finished()),
-						this, SLOT(slotGotVCard()));
-
-		task->get(jid);
-
-		// don't autodelete as we want to use the task data
-		// when it arrived
-		task->go(false);
-
-}
-
-void JabberProtocol::slotGotVCard()
-{
-		Jabber::JT_VCard *vCard = (Jabber::JT_VCard *) sender();
-
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotGotVCard() success: "
-									 << vCard->success() << ", jid: "
-									 << vCard->jid().userHost() << ", myjid: "
-									 << myContact->userId() << ", incomplete: "
-									 << vCard->vcard().isIncomplete() << endl;
-
-		if (!vCard->success() || (vCard->vcard().isIncomplete())
-						&& (vCard->jid().userHost() != myContact->userId()))
-		{
-				// unsuccessful, or incomplete
-				KMessageBox::error(qApp->mainWidget(),
-								i18n("Unable to retrieve vCard for %1").arg(
-												vCard->jid().userHost()));
-				return;
-		}
-
-		if( !contacts()[ vCard->jid().userHost() ] )
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotGotVCard received a vCard "
-											 << "- but couldn't find JID "
-											 << vCard->jid().userHost() << " in the list!"
-											 << endl;
-				return;
-		}
-
-		static_cast<JabberContact*>(
-						contacts()[vCard->jid().userHost()])->slotGotVCard( vCard );
-
-		delete vCard;
-
-}
-
 void JabberProtocol::slotEditVCard()
 {
 
 		myContact->slotEditVCard();
-
-}
-
-void JabberProtocol::slotSaveVCard(QDomElement &vCardXML)
-{
-
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
-
-		Jabber::JT_VCard *task = new Jabber::JT_VCard(jabberClient->rootTask());
-		Jabber::VCard vCard = Jabber::VCard();
-
-		vCard.fromXml(vCardXML);
-
-		task->set(vCard);
-		task->go(true);
 
 }
 

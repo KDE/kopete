@@ -176,7 +176,7 @@ public slots:
 	/**
 	 * vCard received from server for this contact
 	 */
-	void slotGotVCard(Jabber::JT_VCard *);
+	void slotGotVCard();
 
 	/**
 	 * Update contact to new roster data

@@ -213,11 +213,6 @@ public slots:
 		 */
 		void sendPresenceToNode(const Presence &, const QString &);
 
-		/**
-		 * Slot for retrieving a vCard
-		 */
-		void slotRetrieveVCard (const Jid &);
-
 signals:		
 		void settingsChanged();
 
@@ -365,9 +360,8 @@ private slots:
 	void slotRegisterUserDone();
 
 	/*
-	 * Slot being called when a vCard arrives
+	 * User wishes to edit his own vCard
 	 */
-	void slotGotVCard();
 	void slotEditVCard();
 
 	/*
