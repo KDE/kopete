@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KopeteAccountConfigBase</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>457</width>
-            <height>352</height>
+            <height>316</height>
         </rect>
     </property>
     <property name="caption">
@@ -30,6 +30,9 @@
             <property name="text">
                 <string>&amp;New...</string>
             </property>
+            <property name="accel">
+                <string>Alt+N</string>
+            </property>
             <property name="toolTip" stdset="0">
                 <string>Add new account</string>
             </property>
@@ -41,8 +44,14 @@
             <property name="text">
                 <string>&amp;Modify...</string>
             </property>
+            <property name="accel">
+                <string>Alt+M</string>
+            </property>
             <property name="toolTip" stdset="0">
                 <string>Modify selected account</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Let you edit accounts properties.</string>
             </property>
         </widget>
         <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="3">
@@ -52,7 +61,13 @@
             <property name="text">
                 <string>&amp;Remove</string>
             </property>
+            <property name="accel">
+                <string>Alt+R</string>
+            </property>
             <property name="toolTip" stdset="0">
+                <string>Remove selected account</string>
+            </property>
+            <property name="whatsThis" stdset="0">
                 <string>Remove selected account</string>
             </property>
         </widget>
@@ -92,6 +107,9 @@
             </property>
             <property name="text">
                 <string>Use &amp;custom color</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Use custom color for account</string>
@@ -145,7 +163,8 @@
                 <string>Account custom color selector</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>apart.&lt;/qt&gt;</string>
+                <string>Allows you to set a custom color for this account.
+The icon of every contact of this account will be coloured with this color. Usefull if you have several accounts of the same protocol</string>
             </property>
         </widget>
         <spacer row="5" column="1">
@@ -190,7 +209,11 @@
                 <string></string>
             </property>
             <property name="toolTip" stdset="0">
-                <string>Down</string>
+                <string>Increase the priority</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Uses theses buttons to increase or decrease the priority.
+The priority is used to determine what contact to use when you click on a metacontact.  Kopete will use the contact of the account which has the greatest priority, if all contact has the same online status.</string>
             </property>
         </widget>
         <widget class="KPushButton" row="8" column="1" rowspan="1" colspan="2">
@@ -199,6 +222,13 @@
             </property>
             <property name="text">
                 <string></string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Decrease the priority</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Uses theses buttons to increase or decrease the priority.
+The priority is used to determine what contact to use when you click on a metacontact.  Kopete will use the contact of the account which has the greatest priority, if all contact has the same online status.</string>
             </property>
         </widget>
     </grid>
@@ -221,6 +251,8 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kcolorbutton.h</includehint>
+    <includehint>klistview.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
