@@ -64,6 +64,10 @@
 
 	<xsl:template match="protoname">
 		<xsl:choose>
+			<xsl:when test=".='AIMProtocol'">
+				<!-- AIM gubbins here -->
+				AIM
+			</xsl:when>
 			<xsl:when test=".='MSNProtocol'">
 				<!-- MSN gubbins here -->
 				MSN
@@ -80,10 +84,6 @@
 				<!-- Yahoo gubbins here -->
 				Yahoo
 			</xsl:when>
-			<xsl:when test=".='OscarProtocol'">
-				<!-- Oscar gubbins here -->
-				AIM
-			</xsl:when>
 			<xsl:when test=".='GaduProtocol'">
 				<!-- Gadu-gadu gubbins here -->
 				Gadu-gadu
@@ -97,7 +97,7 @@
 				SMS
 			</xsl:when>
 			<xsl:when test=".='IRCProtocol'">
-				<!-- SMS gubbins here -->
+				<!-- IRC gubbins here -->
 				IRC
 			</xsl:when>
 			<xsl:otherwise>

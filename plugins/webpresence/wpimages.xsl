@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
+<!-- NB You will have to create a dir 'images' at the upload location containing the files named below -->
 	<xsl:template match="contacts">
 		<html>
 			<head><title>My IM Status</title></head>
@@ -84,11 +84,15 @@
 			</xsl:when>
 			<xsl:when test=".='SMSProtocol'">
 				<!-- IRC gubbins here -->
-				<img src="images/irc_protocol.png"/>
+				<img src="images/sms_protocol.png"/>
 			</xsl:when>
 			<xsl:when test=".='GaduProtocol'">
 				<!-- IRC gubbins here -->
-				<img src="images/irc_protocol.png"/>
+				<img src="images/gadu_protocol.png"/>
+			</xsl:when>
+			<xsl:when test=".='WPProtocol'">
+				<!-- WinPopup gubbins here -->
+				<img src="images/winpopup_protocol.png"/>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
