@@ -226,7 +226,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 
     if ( !parent )
     {
-        m = l->findContact( this->id(), QString::null, uin );
+        m = l->findContact( this->id(),  QString::number( userUin_ ), uin );
         if( !m )
         {
             //TODO: make this better
@@ -238,7 +238,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
     } else
         m = parent;
 
-    KopeteContact *c = m->findContact( this->id(), QString::null, uin );
+    KopeteContact *c = m->findContact( this->id(), QString::number( userUin_ ) , uin );
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();
@@ -479,12 +479,10 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
     kdDebug()<<"#### Gadu-Gadu connected!"<<endl;
     //FIXME: remember last state and set it appropriately
     changeStatus( GG_STATUS_INVISIBLE );
-    kdDebug()<<"### Creating get command "<<endl;
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( userUin_, password_ );
     connect( cmd, SIGNAL(done(const QStringList&)),
              SLOT(userlist(const QStringList&)) );
-    kdDebug()<<"### Executing get command "<<endl;
     cmd->execute();
     if ( !pingTimer_ ) {
         pingTimer_ = new QTimer( this );
@@ -497,7 +495,6 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
 void
 GaduProtocol::disconnect()
 {
-    kdDebug()<<"### Disconnected!"<<endl;
     pingTimer_->stop();
     changeStatus( 0 );
 }
@@ -570,7 +567,6 @@ GaduProtocol::serialize( KopeteMetaContact *metaContact,
 {
     KopeteContact *c;
     bool done = false;
-    kdDebug()<<" HERE @@@@@ "<<endl;
     for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() ) {
         if ( c->protocol() == this->id() ) {
             kdDebug() << "*** Do it!" << endl;
@@ -592,14 +588,11 @@ GaduProtocol::deserialize( KopeteMetaContact *metaContact,
     QString uin, nick;
     int numContacts = strList.size();
     int idx = 0;
-    kdDebug()<<" %%%%% HERE "<<endl;
     QStringList uins = QStringList::split( "\n",
                                            metaContact->addressBookField( this, "messaging/gadu" ) );
-    kdDebug()<<"contacts = "<<numContacts<<endl;
-    while( numContacts ) {
+    while( numContacts-- ) {
         nick = strList[ idx ];
         uin = uins[ idx++ ];
-        --numContacts;
         addContact( uin, nick, metaContact );
     }
 }
