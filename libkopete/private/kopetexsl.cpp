@@ -210,7 +210,12 @@ void KopeteXSLT::setXSLT( const QString &_document )
 		//kdDebug( 14010 ) << k_funcinfo << "Original text: " << orig << endl;
 
 		// Split on % and go over all parts
-		QStringList parts = QStringList::split( '%', i18n( orig.utf8() ), true );
+		// WARNING: If you change the translator comment, also change it in the
+		//          styles/extracti18n Perl script, because the strings have to be
+		//          identical!
+		QStringList parts = QStringList::split( '%', i18n(
+			"Translators: The %FOO% placeholders are variables that are substituted "
+			"in the code, please leave them untranslated", orig.utf8() ), true );
 
 		// The first part is always text, as our variables are written like %FOO%
 		QStringList::Iterator it = parts.begin();
