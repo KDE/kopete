@@ -26,7 +26,9 @@ kopete_SOURCES = main.cpp \
 	systemtray.cpp \
 	kopeteballoon.cpp kopetewindow.cpp \
 	kopeteaccountstatusbaricon.cpp \
-	kimiface.skel kimifaceimpl.cpp
+	kimifaceimpl.cpp kimiface.skel
+
+kimiface_DIR = $(kde_includes)
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
