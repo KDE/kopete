@@ -259,7 +259,7 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 	if( d->managerMap.contains( closingView->msgManager() ) )
 	{
 		d->managerMap.remove( closingView->msgManager() );
-		closingView->msgManager()->setCanBeDeleted( true );
+//		closingView->msgManager()->setCanBeDeleted( true );
 	}
 
 	if( closingView == d->activeView )

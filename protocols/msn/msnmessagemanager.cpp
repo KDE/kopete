@@ -83,7 +83,8 @@ void MSNMessageManager::createChat( const QString &handle,
 		delete m_chatService;
 	}
 
-	setCanBeDeleted( false );
+//	uncomment this line if you don't want to the peer know when you close the window
+//	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( user()->account() ) );
 	m_chatService->setHandle( user()->account()->accountId() );
@@ -138,6 +139,8 @@ void MSNMessageManager::slotSwitchBoardClosed()
 
 		m_messagesSent.remove(it);
 	}
+
+	setCanBeDeleted( true );
 }
 
 void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageManager *)
@@ -293,6 +296,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			connect(MFTS, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
 			m_invitations.insert( cookie  , MFTS);
 			MFTS->parseInvitation(msg);
+			setCanBeDeleted(false);
 		}
 		else if( msg.contains(MSNVoiceInvitation::applicationID()) )
 		{
@@ -300,6 +304,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			connect(msnVI, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
 			m_invitations.insert( cookie  , msnVI);
 			msnVI->parseInvitation(msg);
+			setCanBeDeleted(false);
 		}
 		else
 		{
@@ -308,6 +313,8 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			if(i)
 			{
 				m_invitations.insert( cookie  , i );
+				//don't delete this if all invitation are not done
+				setCanBeDeleted(false);
 			}
 			else
 			{

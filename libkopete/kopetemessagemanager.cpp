@@ -63,7 +63,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mProtocol = protocol;
 	d->mId = id;
 	d->isEmpty= others.isEmpty();
-	d->mCanBeDeleted = false;
+	d->mCanBeDeleted = true;
 	d->view=0L;
 
 	for( KopeteContact *c = others.first(); c; c = others.next() )
@@ -306,7 +306,7 @@ void KopeteMessageManager::typing ( bool t )
 void KopeteMessageManager::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;
-	if(b)
+	if(b && !d->view)
 		deleteLater();
 }
 
@@ -323,6 +323,8 @@ KopeteView* KopeteMessageManager::view(bool /*canCreate*/  , KopeteMessage::Mess
 void KopeteMessageManager::slotViewDestroyed()
 {
 	d->view=0L;
+	if(d->mCanBeDeleted)
+		deleteLater();
 }
 
 #include "kopetemessagemanager.moc"
