@@ -540,7 +540,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 	QDir().rename( fileName, fileName + ".bak" );
 
-	kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
+	// kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
 	contactListFile.open( IO_WriteOnly );
 	QTextStream stream( &contactListFile );
