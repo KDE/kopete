@@ -38,6 +38,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 {
 	mOnlineTimer = new QTimer( this );
 	m_isOnline = m_metaContact->isTemporary();
+	mOnlineTimer->start( 45000, true );
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
@@ -90,7 +91,11 @@ void IRCUserContact::slotUserOffline()
 {
 	m_isOnline = false;
 	m_isAway = false;
-	updateStatus();
+	m_engine->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
+
+	removeProperty( QString::fromLatin1("userInfo") );
+	removeProperty( QString::fromLatin1("server") );
+	removeProperty( QString::fromLatin1("channels") );
 }
 
 void IRCUserContact::setAway(bool isAway)
@@ -115,10 +120,12 @@ void IRCUserContact::userOnline()
 	m_isOnline = true;
 	mOnlineTimer->start( 45000, true );
 	updateStatus();
-	if( !metaContact()->isTemporary() )
+	if( this != m_account->mySelf() && !metaContact()->isTemporary() )
 	{
 		m_engine->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
 	}
+
+	removeProperty( QString::fromLatin1("lastOnline") );
 }
 
 void IRCUserContact::slotUserInfo()
@@ -207,7 +214,13 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 void IRCUserContact::newWhoIsServer(const QString &servername, const QString &serverinfo)
 {
 	mInfo.serverName = servername;
-	mInfo.serverInfo = serverinfo;
+	if( metaContact()->isTemporary() || onlineStatus().status() == KopeteOnlineStatus::Online )
+		mInfo.serverInfo = serverinfo;
+	else
+	{
+		kdDebug(14120)<< "Setting last online: " << serverinfo << endl;
+		setProperty( QString::fromLatin1("lastOnline"), i18n("Last Online"), QDateTime::fromString( serverinfo ) );
+	}
 }
 
 void IRCUserContact::newWhoIsIdle(unsigned long idle)
@@ -274,6 +287,7 @@ void IRCUserContact::updateInfo()
 	setProperty( QString::fromLatin1("hops"), i18n("Hops"), QString::number(mInfo.hops) );
 
 	setIdleTime( mInfo.idle );
+
 	mInfo.lastUpdate = QTime::currentTime();
 }
 

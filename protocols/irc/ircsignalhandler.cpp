@@ -101,6 +101,10 @@ IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager
 	mapTriple<IRCUserContact>( m,
 		SIGNAL(incomingWhoIsUser(const QString &, const QString &, const QString &, const QString &)),
 		&IRCUserContact::newWhoIsUser );
+
+	mapTriple<IRCUserContact>( m,
+		SIGNAL(incomingWhoWasUser(const QString &, const QString &, const QString &, const QString &)),
+		&IRCUserContact::newWhoIsUser );
 }
 
 IRCSignalHandler::~IRCSignalHandler()
