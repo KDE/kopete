@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
  	
 	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@kde.org","http://www.mac-vicar.com");
 	aboutData.addAuthor ("Nick Betcher", "core developer, faster plugin developer in the earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
+	aboutData.addAuthor ("Ryan Cumming", "core developer","bodnar42@phalynx.dhs.org");
+
 
 	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
 	aboutData.addCredit("Olaf Lueg", I18N_NOOP("Kmerlin MSN Code"));
