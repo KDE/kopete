@@ -127,7 +127,7 @@ const cap oscar_caps[] =
 	// third number, point version
 	// fourth number,  point version
 	{'K', 'o', 'p', 'e', 't', 'e', ' ', 'I',
-			'C', 'Q', ' ', ' ', 0, 10, 0, 0},
+			'C', 'Q', ' ', ' ', 0, 10, 89, 0},
 		
 		// CAP_MICQ
 		// last 4 bytes determine version
