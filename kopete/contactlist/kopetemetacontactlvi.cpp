@@ -262,6 +262,10 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 
 	if ( c->account()->myself()->onlineStatus().status() == KopeteOnlineStatus::Connecting )
 		return;
+		
+	//generaly when starting kopete and creating contacts.  (yeah, it's a workaround)
+	if( !c->account()->isConnected() )
+		return;
 
 	if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 	{
