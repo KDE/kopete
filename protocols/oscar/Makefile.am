@@ -14,7 +14,11 @@ kde_module_LTLIBRARIES = kopete_oscar.la
 #    aimmergebuddies.cpp aimpreferences.cpp \
 #    aimprocessbuddies.cpp aimdeleteevent.cpp
 
-kopete_oscar_la_SOURCES = oscarprotocol.cpp oscarcontact.cpp oscarpreferences.cpp oscarchangestatus.cpp oscaruserinfo.cpp xautolock.cpp oscaraccount.cpp
+kopete_oscar_la_SOURCES = oscarprotocol.cpp oscarcontact.cpp \
+			oscarpreferences.cpp oscarchangestatus.cpp \
+			oscaruserinfo.cpp xautolock.cpp oscaraccount.cpp 
+#			icquserinfo.cpp icqaddcontactpage.cpp
+
 kopete_oscar_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_oscar_la_LIBADD  = ./oscarsocket/libkopeteoscarsocket.la \
     ./ui/libkopeteoscarui.la $(top_builddir)/kopete/libkopete/libkopete.la
