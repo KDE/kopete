@@ -153,12 +153,8 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		else
 		{
 			m_messagesSent.insert( id, message );
-			//FIXME: What is the point of this?  Why not just message.setBg, it is not const - Jason
-			KopeteMessage msg2=message;
-			msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
-			msg2.setBody(message.plainBody() , KopeteMessage::PlainText);
-			appendMessage(msg2);
-			// send the own msg to chat window
+			message.setBg(QColor()); // clear the bgColor
+			appendMessage(message); // send the own msg to chat window
 		}
 	}
 	else // There's no switchboard available, so we must create a new one!
