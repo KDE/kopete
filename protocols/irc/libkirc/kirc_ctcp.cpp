@@ -217,12 +217,12 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kdDebug(14120) << "Starting DCC send file transfert for file:" << msg.arg(1) << endl;
+			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
 			KIRCTransferHandler::self()->createClient(
 				this, msg.nickFromPrefix(),
 				address, port,
 				KIRCTransfer::FileIncoming,
-				msg.arg(1), size );
+				ctcpMsg.arg(1), size );
 			return true;
 		}
 	}
