@@ -74,7 +74,7 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 	}
 
 	m_richTextEnabled = enable;
-	emit toggleToolbar( m_richTextEnabled );
+	emit toggleToolbar( buttonsEnabled() );
 
 	// Spellchecking disabled when using rich text because the
 	// text we were getting from widget was coloured HTML!
@@ -190,27 +190,27 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 
 void KopeteRichTextEditPart::updateActions()
 {
-	actionFgColor->setEnabled( m_richTextEnabled &&
+	actionFgColor->setEnabled( buttonsEnabled() &&
 		( m_capabilities & KopeteProtocol::BaseFgColor || m_capabilities & KopeteProtocol::RichColor )
 	);
 
-	actionBgColor->setEnabled( m_richTextEnabled &&
+	actionBgColor->setEnabled( buttonsEnabled() &&
 		( m_capabilities & KopeteProtocol::BaseBgColor || m_capabilities & KopeteProtocol::RichColor )
 	);
 
-	bool activateFont = m_richTextEnabled &&
+	bool activateFont = buttonsEnabled() &&
 		( m_capabilities & KopeteProtocol::BaseFont || m_capabilities & KopeteProtocol::RichFont );
 	action_font->setEnabled( activateFont );
 	action_font_size->setEnabled( activateFont );
 
-	bool activateFormat = m_richTextEnabled && (
+	bool activateFormat = buttonsEnabled() && (
 		m_capabilities & KopeteProtocol::BaseFormatting ||
 		m_capabilities & KopeteProtocol::RichFormatting );
 	action_bold->setEnabled( activateFormat );
 	action_italic->setEnabled(activateFormat);
 	action_underline->setEnabled(activateFormat);
 
-	bool activateAlignment = m_richTextEnabled && ( m_capabilities & KopeteProtocol::Alignment );
+	bool activateAlignment = buttonsEnabled() && ( m_capabilities & KopeteProtocol::Alignment );
 	action_align_left->setEnabled( activateAlignment );
 	action_align_center->setEnabled( activateAlignment );
 	action_align_right->setEnabled( activateAlignment );

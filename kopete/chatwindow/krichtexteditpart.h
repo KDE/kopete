@@ -44,6 +44,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 
 		bool richTextEnabled() { return m_richTextAvailable && m_richTextEnabled; }
 
+		bool buttonsEnabled() { return !m_richTextAvailable || m_richTextEnabled; }
+
 		static KAboutData *createAboutData();
 
 		virtual bool openFile() { return false; };
