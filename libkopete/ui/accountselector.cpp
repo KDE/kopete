@@ -85,6 +85,7 @@ AccountSelector::AccountSelector(KopeteProtocol *proto, QWidget *parent,
 AccountSelector::~AccountSelector()
 {
 	kdDebug(14010) << k_funcinfo << endl;
+	delete d;
 }
 
 

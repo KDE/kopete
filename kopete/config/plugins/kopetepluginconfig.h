@@ -33,7 +33,7 @@ class KopetePluginConfig : public KDialogBase
 
 public:
 	KopetePluginConfig( QWidget *parent, const char *name = 0L );
-
+	~KopetePluginConfig();
 	void apply();
 
 public slots:
