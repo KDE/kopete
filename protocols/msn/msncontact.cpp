@@ -190,7 +190,7 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 		return;
 
 	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
-	m_status = status;
+	m_status = static_cast<MSNProtocol::Status>( status );
 	QString tmppublicname = MSNProtocol::protocol()->publicName( handle );
 
 	if (m_status == MSNProtocol::BLO)
