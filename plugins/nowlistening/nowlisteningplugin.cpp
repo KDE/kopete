@@ -34,7 +34,7 @@
 #include "nlkscd.h"
 #include "nlnoatun.h"
 #include "nljuk.h"
-#include "nlamarok.h"
+//#include "nlamarok.h"
 #include "nowlisteningguiclient.h"
 
 #ifdef HAVE_XMMS
