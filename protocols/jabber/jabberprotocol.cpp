@@ -147,7 +147,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 	}
 	else
 	{
-		if (resource.status ().show () == "")
+		if (resource.status ().show ().isEmpty ())
 		{
 			if (resource.status ().isInvisible ())
 			{

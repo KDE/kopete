@@ -97,21 +97,21 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 
 bool MeanwhileEditAccountWidget::validateData()
 {
-    if(mScreenName->text() == "")
+    if(mScreenName->text().isEmpty())
     {   
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter a valid screen name.</qt>"), 
             i18n("Meanwhile plugin"));
         return false;
     }
-    if( (mRememberPassword->isChecked()) && (mPassword->text() == ""))
+    if( (mRememberPassword->isChecked()) && (mPassword->text().isEmpty()))
     {   
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must deselect password remembering or enter a valid password.</qt>"), 
             i18n("Meanwhile plugin"));
         return false;
     }
-    if (mServerName->text() == "")
+    if (mServerName->text().isEmpty())
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter the server's hostname/ip address.</qt>"), 
