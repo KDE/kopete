@@ -152,7 +152,7 @@ void MetaContact::addContact( Contact *c )
 		connect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
 			this, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ) );
 
-		if( d->displayName.isNull() )
+		if( d->displayName.isNull() || d->contacts.count() == 1 )
 		{
 			/*kdDebug(14010) << k_funcinfo <<
 				"empty displayname, using contacts display" << endl;*/
