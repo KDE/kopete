@@ -227,13 +227,13 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 void GroupWiseMessageManager::slotGotTypingNotification( const ConferenceEvent& event )
 {
 	if ( event.guid == guid() )
-		receivedTypingMsg( event.user, true );
+		receivedTypingMsg( static_cast<GroupWiseProtocol *>( protocol() )->dnToDotted( event.user ), true );
 }
 
 void GroupWiseMessageManager::slotGotNotTypingNotification( const ConferenceEvent& event )
 {
 	if ( event.guid == guid() )
-		receivedTypingMsg( event.user, false );
+		receivedTypingMsg( static_cast<GroupWiseProtocol *>( protocol() )->dnToDotted( event.user ), false );
 }
 
 void GroupWiseMessageManager::dequeMessages()

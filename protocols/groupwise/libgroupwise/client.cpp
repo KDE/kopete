@@ -179,7 +179,6 @@ void Client::initialiseEventTasks()
 	connect( ct, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( autoReply( const ConferenceEvent & ) ), SIGNAL( autoReplyReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
 	connect( cont, SIGNAL( connectedElsewhere() ), SIGNAL( connectedElsewhere() ) );
@@ -236,7 +235,7 @@ void Client::requestDetails( const QStringList & userDNs )
 {
 	GetDetailsTask * gdt = new GetDetailsTask( d->root );
 	gdt->userDNs( userDNs );
-	connect( gdt, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
+	connect( gdt, SIGNAL( gotContactUserDetails( const ContactDetails & ) ),
 			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) );
 	gdt->go( true );
 }
@@ -305,7 +304,7 @@ void Client::lt_loginFinished()
 		// There is a chicken-and-egg case regarding this: We need the privacy before reading the contact list so
 		// blocked contacts are shown as blocked.  But we need not fetch user details for the privacy lists
 		// before reading the contact list, as many privacy items' details are already in the contact list
-		privacyManager()->getDetailsForPrivacyLists();
+  privacyManager()->getDetailsForPrivacyLists();
 	}
 	else
 	{

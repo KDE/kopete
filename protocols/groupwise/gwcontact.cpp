@@ -471,6 +471,18 @@ void GroupWiseContact::receivePrivacyChanged( const QString & dn, bool allow )
 
 void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
 {
+	bool idleChanged = false;
+	if ( status == protocol()->groupwiseAwayIdle && status != onlineStatus() )
+	{
+		idleChanged = true;
+		setIdleTime( 1 );
+	}
+	else if ( onlineStatus() == protocol()->groupwiseAwayIdle && status != onlineStatus() )
+	{
+		idleChanged = true;
+		setIdleTime( 0 );
+	}
+
 	if ( account()->isContactBlocked( m_dn ) && status.internalStatus() < 15 )
 	{
 		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
@@ -509,6 +521,8 @@ void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
 		else
 			KopeteContact::setOnlineStatus(status);
 	}
+	if ( idleChanged )
+		emit idleStateChanged( this );
 }
 
 #include "gwcontact.moc"

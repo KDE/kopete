@@ -280,7 +280,6 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 								SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
 	// misc
 	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const ContactDetails &) ), SLOT( receiveAccountDetails( const ContactDetails & ) ) );
-	QObject::connect( m_client, SIGNAL( tempContactReceived( const ContactDetails &) ), SLOT( receiveTemporaryContact( const ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
 	// privacy - contacts can't connect directly to this signal because myself() is initialised before m_client
 	QObject::connect( m_client->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ), SIGNAL( privacyChanged( const QString &, bool ) ) );
@@ -721,7 +720,8 @@ void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status
 	if ( c )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - their KOS is: " << protocol()->gwStatusToKOS( status ).description() << endl;
-		c->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
+		KopeteOnlineStatus kos = protocol()->gwStatusToKOS( status );
+		c->setOnlineStatus( kos );
 		c->setProperty( protocol()->propAwayMessage, awayMessage );
 	}
 	else

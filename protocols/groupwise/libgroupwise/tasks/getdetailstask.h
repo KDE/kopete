@@ -20,6 +20,8 @@ This task fetches the details for a set of user IDs from the server.  Sometimes 
 
 @author SUSE AG
 */
+using namespace GroupWise;
+
 class GetDetailsTask : public RequestTask
 {
 Q_OBJECT
@@ -29,7 +31,7 @@ public:
 	bool take( Transfer * transfer );
 	void userDNs( const QStringList & userDNs );
 signals:
-	void gotContactUserDetails( const GroupWise::ContactDetails & );
+	void gotContactUserDetails( const ContactDetails & );
 protected:
 	GroupWise::ContactDetails extractUserDetails( Field::MultiField * details );
 
