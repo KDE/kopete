@@ -150,10 +150,6 @@ void KopetePluginManager::shutdown()
 	// Remove any pending plugins to load, we're shutting down now :)
 	d->pluginsToLoad.clear();
 
-	//first: save the accounts before unloading them
-	//FIXME: i don't like this depedence between KopetePluginManager and KopeteAccountManager
-	KopeteAccountManager::manager()->save();
-
 	// Ask all plugins to unload
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )

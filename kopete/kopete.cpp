@@ -83,7 +83,6 @@ Kopete::~Kopete()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	KopeteContactList::contactList()->save();
 	delete m_mainWindow;
 	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
@@ -242,6 +241,11 @@ void Kopete::quitKopete()
 	if ( m_mainWindow )
 		m_mainWindow->close();
 
+	//first: save the contacts and accounts before unloading them
+	KopeteContactList::contactList()->save();
+	KopeteAccountManager::manager()->save();
+
+	//unload plugins and shutdown
 	KopetePluginManager::self()->shutdown();
 }
 
