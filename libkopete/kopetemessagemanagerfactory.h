@@ -188,6 +188,9 @@ signals:
 	 */
 	 void getActiveView( KopeteView *& );
 
+public slots:
+	void slotReadMessage();
+
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 

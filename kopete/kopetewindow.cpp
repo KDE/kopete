@@ -196,7 +196,7 @@ void KopeteWindow::initActions()
 
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, KopeteMessageManagerFactory::factory() , SIGNAL(readMessage()) );
+		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, KopeteMessageManagerFactory::factory(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
 		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );
@@ -400,7 +400,7 @@ void KopeteWindow::slotConfGlobalKeys()
 void KopeteWindow::slotConfToolbar()
 {
 	saveMainWindowSettings(KGlobal::config(), "General Options");
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), "kopeteui.rc");
+	KEditToolbar *dlg = new KEditToolbar(factory());
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
 	connect( dlg, SIGNAL(finished()) , dlg, SLOT(deleteLater()));
 	dlg->show();
@@ -408,7 +408,6 @@ void KopeteWindow::slotConfToolbar()
 
 void KopeteWindow::slotUpdateToolbar()
 {
-	createGUI("kopeteui.rc", false);
 	applyMainWindowSettings(KGlobal::config(), "General Options");
 }
 
