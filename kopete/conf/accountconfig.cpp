@@ -75,7 +75,7 @@ void AccountConfig::save()
 
 void AccountConfig::reopen()
 {
-	QListViewItem* lvi;
+	QListViewItem* lvi=0L;
 
 	m_view->mAccountList->clear();
 	m_accountItems.clear();
@@ -83,7 +83,7 @@ void AccountConfig::reopen()
 	QPtrList<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts();
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
-		lvi=new QListViewItem(m_view->mAccountList);
+		lvi=new QListViewItem(m_view->mAccountList,lvi);  //insert the item after the previous
 		lvi->setText(0, i->protocol()->displayName());
 		lvi->setPixmap(0, SmallIcon(i->protocol()->pluginIcon()));
 		lvi->setText(1, i->accountId());
@@ -137,7 +137,12 @@ void AccountConfig::slotItemSelected()
 void AccountConfig::slotAccountUp()
 {
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
-	itemSelected->itemAbove()->moveItem( itemSelected );
+	if(!itemSelected)
+		return;
+	if(itemSelected->itemAbove())
+		itemSelected->itemAbove()->moveItem( itemSelected );
+
+	KopeteAccountManager::manager()->moveAccount( m_accountItems[itemSelected] , KopeteAccountManager::Up );
 
 	slotItemSelected();
 }
@@ -145,7 +150,11 @@ void AccountConfig::slotAccountUp()
 void AccountConfig::slotAccountDown()
 {
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
+	if(!itemSelected)
+		return;
 	itemSelected->moveItem( itemSelected->itemBelow() );
+
+	KopeteAccountManager::manager()->moveAccount( m_accountItems[itemSelected] , KopeteAccountManager::Down );
 
 	slotItemSelected();
 }

@@ -303,6 +303,27 @@ void KopeteAccountManager::notifyAccountReady( KopeteAccount *account )
 	emit accountReady( account );
 }
 
+void KopeteAccountManager::moveAccount(KopeteAccount *account , KopeteAccountManager::moveDirrection dirrection)
+{
+	int index=m_accounts.findRef(account);
+
+	m_accounts.take(index);
+	switch(dirrection)
+	{
+		case Up:
+			index--;
+			break;
+		case Down:
+			index++;
+			break;
+	}
+
+	if(index<0) index=0;
+
+	m_accounts.insert(index, account);
+
+}
+
 #include "kopeteaccountmanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

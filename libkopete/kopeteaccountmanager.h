@@ -83,6 +83,21 @@ public:
 	 */
 	QColor guessColor( KopeteProtocol *protocol );
 
+
+	/**
+	 * The dirrection to move. used by @ref KopeteAccountManager::moveAccount
+	 */
+	enum moveDirrection { Up , Down } ;
+
+
+	/**
+	 * Move the account up or down in the priority order.
+	 * @param account is the account to move
+	 * @param dirrection can be KopeteAccountManager::Up or KopeteAccountManager::Down
+	 */
+	void moveAccount(KopeteAccount *account , moveDirrection dirrection);
+
+
 public slots:
 	/**
 	 * Connect all accounts which have auto connect enabled

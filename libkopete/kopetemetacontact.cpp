@@ -26,6 +26,7 @@
 #include <kmessagebox.h>
 
 #include "kopetecontactlist.h"
+#include "kopeteaccountmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -293,11 +294,17 @@ KopeteContact *KopeteMetaContact::preferredContact()
 	*/
 
 	KopeteContact *c = 0L;
+	int index=0;
 
+	QPtrList<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts();
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 	{
-		if( ( *it )->isReachable() && ( !c || ( *it )->onlineStatus() > c->onlineStatus() ) )
+		if( ( *it )->isReachable() && ( !c || ( *it )->onlineStatus() > c->onlineStatus()  ||
+				( (*it)->account() && (*it)->onlineStatus() == c->onlineStatus() && index > accounts.findRef((*it)->account()) ) ) )
+		{
 			c = *it;
+			index=accounts.findRef((*it)->account()) ;
+		}
 	}
 
 	return c;
