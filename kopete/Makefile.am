@@ -19,8 +19,8 @@ noinst_HEADERS = \
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
 	kopetewindow.cpp kopete.cpp kopeteiface.cpp kopeteiface.skel \
-	kopetemetacontactlvi.cpp kopetegroupviewitem.cpp kopetecontactlistview.cpp \
-	statusbaricon.cpp
+	kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \
+	statusbaricon.cpp kopetecontactlistview.cpp
 
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
