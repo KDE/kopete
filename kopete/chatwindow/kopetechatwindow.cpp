@@ -1022,7 +1022,8 @@ void KopeteChatWindow::slotViewMenuBar()
 void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 {
 	if ( !sm.isNull() )
-		m_activeView->addText( sm );
+		m_activeView->addText( " " + sm + " " );
+	//we are adding space around the emoticon becasue our parser only display emoticons not in a word.
 }
 
 bool KopeteChatWindow::queryClose()
