@@ -13,6 +13,12 @@ X-KDE-ParentComponents=kopete_smpppdcs
 X-Kopete-Version=1000900
 
 Name=SUSE SMPPPD Connection Status
-Name[de]=SUSE SMPPPD Verbindungs Status
+Name[et]=SUSE SMPPPD ühenduse staatus
+Name[ga]=Stádas Ceangail SUSE SMPPPD
+Name[pt]=Estado da Ligação SUSE SMPPPD
+Name[pt_BR]=Estado da Ligação SUSE SMPPPD
 Comment=SMPPPDCS Plugin
-Comment[de]=SMPPPD Verbindungs Status Modul
+Comment[et]=SMPPPDCS plugin
+Comment[ga]=Breiseán SMPPPDCS
+Comment[pt]='Plugin' SMPPPDCS
+Comment[pt_BR]='Plugin' SMPPPDCS
