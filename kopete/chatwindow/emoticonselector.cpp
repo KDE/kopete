@@ -24,7 +24,7 @@
 
 #include <math.h>
 
-#include <qpixmap.h>
+#include <qmovie.h>
 #include <qlayout.h>
 #include <qobjectlist.h>
 #include <qtooltip.h>
@@ -35,9 +35,14 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 	: QLabel(parent,name)
 {
 	mText = emoticonText;
-	setPixmap( QPixmap(pixmapPath) );
+	setMovie( QMovie(pixmapPath) );
 	setAlignment(Qt::AlignCenter);
 	QToolTip::add(this,emoticonText);
+	// Somehow QLabel doesn't tell a reasonable size when you use setMovie
+	// although it does it correctly for setPixmap. Therefore here is a little workaround
+	// to tell our minimum size.
+	QPixmap p(pixmapPath);
+	setMinimumSize(p.size());
 }
 
 void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
