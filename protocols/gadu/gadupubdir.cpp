@@ -166,6 +166,7 @@ GaduPublicDir::validateData()
 	getData();
     
 	if ( mMainWidget->radioByData->isChecked() ) {
+		CHECK_STRING( fCity );
 		CHECK_STRING( fName );
 		CHECK_STRING( fSurname );
 		CHECK_STRING( fNick );
@@ -236,7 +237,8 @@ GaduPublicDir::slotNewSearch()
 	showButton( User1, false );
 	showButton( User3, false );
 	enableButton( User2, false );
-	mAccount->pubDirSearchClose();
+ 	inputChanged( QString::null );
+ 	mAccount->pubDirSearchClose();
 }
 
 void 
