@@ -16,6 +16,7 @@
 
 #include "sendmessagetask.h"
 
+#include <qtextcodec.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include "connection.h"
@@ -83,10 +84,38 @@ void SendMessageTask::onGo()
 	//we only send one message part. There's only one client that actually uses
 	//them and it's quite old and infrequently used
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
-	tlv2buffer.addWord( m_message.text().length() + 4 ); // add TLV length
-	tlv2buffer.addWord( 0x0003 ); // ISO-8859-1
-	tlv2buffer.addWord( 0x0000 ); // no sub encoding
-	tlv2buffer.addString( m_message.text().latin1(),  m_message.text().length() );
+	
+	/* If we can encode in Latin1, do that, otherwise send Unicode */
+	QTextCodec* codec = QTextCodec::codecForMib( 4 );
+	if ( codec->canEncode( m_message.text() ) )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding successful. Sending outgoing message as "
+			<< "ISO-8859-1" << endl;
+		tlv2buffer.addWord( m_message.text().length() + 4 ); // add TLV length
+		tlv2buffer.addWord( 0x0001 );
+		tlv2buffer.addWord( 0x0000 );
+		tlv2buffer.addString( m_message.text().latin1(), m_message.text().length() );
+	}
+	else
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding not successful. Sending outgoing message as "
+			<< "UCS-2" << endl;
+		
+		int length = m_message.text().length() * 2;
+		unsigned char* utfMessage = new unsigned char[length];
+		for ( unsigned int l = 0; l < m_message.text().length(); l++ )
+		{
+			utfMessage[l * 2] = m_message.text().unicode()[l].row();
+			utfMessage[( l * 2 ) + 1] = m_message.text().unicode()[l].cell();
+		}
+		
+		tlv2buffer.addWord( length + 4 ); // add TLV length
+		tlv2buffer.addWord( 0x0002 );
+		tlv2buffer.addWord( 0x0000 );
+		tlv2buffer.addString( utfMessage, length );
+		
+	}
+	
 	
 	TLV tlv2( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
 	b->addTLV( tlv2 );
