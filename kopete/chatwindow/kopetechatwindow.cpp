@@ -1084,8 +1084,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 	// window is closed.
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
 	if ( KopetePrefs::prefs()->showTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
-		hide();
-/*		// BEGIN of code borrowed from KMainWindow::closeEvent
+		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
@@ -1093,7 +1092,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		if ( queryClose() ) {
 			e->accept();
 		}
-		// END of code borrowed from KMainWindow::closeEvent*/
+		// END of code borrowed from KMainWindow::closeEvent
 	}
 	else
 		KMainWindow::closeEvent( e );
