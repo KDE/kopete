@@ -477,7 +477,7 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 void OscarAccount::userStartedTyping( const QString & contact )
 {
 	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
-	if ( ct )
+	if ( ct && contact != accountId() )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );
 		oc->startedTyping();
@@ -487,12 +487,13 @@ void OscarAccount::userStartedTyping( const QString & contact )
 void OscarAccount::userStoppedTyping( const QString & contact )
 {
 	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
-	if ( ct )
+	if ( ct && contact != accountId() )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );
 		oc->stoppedTyping();
 	}
 }
+
 
 #include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode csands;

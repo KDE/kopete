@@ -104,8 +104,8 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 		connect(mMsgManager, SIGNAL( destroyed() ),
 		        this, SLOT( chatSessionDestroyed() ) );
 
-/*		connect(mMsgManager, SIGNAL( myselfTyping( bool ) ),
-		        this, SLOT( slotTyping( bool ) ) );*/
+		connect(mMsgManager, SIGNAL( myselfTyping( bool ) ),
+		        this, SLOT( slotTyping( bool ) ) );
 	}
 	return mMsgManager;
 }
@@ -211,6 +211,12 @@ void OscarContact::stoppedTyping()
 {
 	if ( mMsgManager )
 		mMsgManager->receivedTypingMsg( this, false );
+}
+
+void OscarContact::slotTyping( bool typing )
+{
+	if ( this != account()->myself() )
+		account()->engine()->sendTyping( contactId(), typing );
 }
 
 #include "oscarcontact.moc"

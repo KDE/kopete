@@ -101,6 +101,9 @@ public slots:
 	/** a user is offline */
 	virtual void userOffline( const QString& ) = 0;
 
+protected slots:
+	void slotTyping( bool typing );
+
 signals:
 	void updatedSSI();
 	
