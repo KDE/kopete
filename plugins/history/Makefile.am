@@ -13,7 +13,7 @@ kcm_kopete_history_la_SOURCES = historyprefsui.ui historypreferences.cpp
 kcm_kopete_history_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_history_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
-service_DATA = history.desktop
+service_DATA = kopete_history.desktop
 servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete_history
