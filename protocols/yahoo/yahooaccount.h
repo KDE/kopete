@@ -24,6 +24,7 @@
 
 // Kopete
 #include "kopeteaccount.h"
+#include "kopeteawaydialog.h"
 
 // Local
 #include "yahooprotocol.h"
@@ -32,6 +33,20 @@ class KAction;
 class KActionMenu;
 
 class YahooContact;
+
+class YahooAccount;
+
+class YahooAwayDialog : public KopeteAwayDialog
+{
+public:
+	YahooAwayDialog(YahooAccount *account, QWidget *parent = 0, const char *name = 0) :
+		KopeteAwayDialog(parent, name) { theAccount = account; }
+
+	virtual void setAway(int awayType);
+
+private:
+	YahooAccount *theAccount;
+};
 
 class YahooAccount : public KopeteAccount
 {
@@ -105,7 +120,7 @@ private slots:
 	void slotGoStatus008() { slotGoStatus(8); } // Out To Lunch
 	void slotGoStatus009() { slotGoStatus(9); } // Stepped Out
 	void slotGoStatus012() { slotGoStatus(12); } // Invisible
-	void slotGoStatus099() { slotGoStatus(99); } // Custom
+	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
 
 private:
@@ -114,18 +129,18 @@ private:
 		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
-	
+
 	// external settings/descriptors
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
-	
+
 	// gui related stuff
 	KActionMenu *theActionMenu;	// Statusbar Popup
 	void initActions();		// Load Status Actions
+	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 };
-
 
 
 //********************************************************
