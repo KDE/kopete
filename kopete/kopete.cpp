@@ -49,7 +49,6 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	mainwindow = new KopeteWindow;
 	setMainWidget(mainwindow);
 	mainwindow->statusBar()->show();
-
   	mPref->hide();
 
 	KConfig *config=KGlobal::config();
@@ -63,6 +62,13 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 		config->writeEntry("Modules", modules);
 	}
 	tray = new KopeteSystemTray();
+	tray->getContextMenu()->insertSeparator();
+	mainwindow->actionAddContact->plug( tray->getContextMenu() );
+	tray->getContextMenu()->insertSeparator();
+	mainwindow->actionConnect->plug( tray->getContextMenu() );
+	mainwindow->actionDisconnect->plug( tray->getContextMenu() );
+  	mainwindow->actionPrefs->plug( tray->getContextMenu() );
+	tray->getContextMenu()->insertSeparator();
 	/* Ok, load saved plugins */
 	loadPlugins();
 }
