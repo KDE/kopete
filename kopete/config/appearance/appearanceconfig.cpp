@@ -244,7 +244,7 @@ void AppearanceConfig::load()
 		QFileInfo fi( *it );
 		QString fileName = fi.fileName().section( '.', 0, 0 );
 		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
-		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), *it );
+		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), fileName );
 
 		if ( ( *it ) == p->styleSheet() )
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );

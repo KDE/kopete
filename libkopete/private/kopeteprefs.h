@@ -195,6 +195,7 @@ private:
 	QStringList mToolTipContents;
 
 	QString fileContents(const QString &path);
+	void _setStyleSheet (const QString &);
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

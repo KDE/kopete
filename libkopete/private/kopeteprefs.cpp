@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 
-#define KOPETE_DEFAULT_CHATSTYLE  "styles/Kopete.xsl"
+#define KOPETE_DEFAULT_CHATSTYLE  "Kopete"
 
 KopetePrefs *KopetePrefs::s_prefs = 0L;
 
@@ -43,7 +43,7 @@ KopetePrefs::KopetePrefs() : QObject( kapp, "KopetePrefs" )
 
 void KopetePrefs::load()
 {
-//	kdDebug(14010) << "KopetePrefs::load()" << endl;
+//	kdDebug( 14010 ) << k_funcinfo << endl;
 	config->setGroup("Appearance");
 
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
@@ -88,10 +88,12 @@ void KopetePrefs::load()
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
-	mStyleSheet = config->readEntry("Stylesheet", locate("appdata", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
-	if ( !QFile::exists( mStyleSheet ) )
-		mStyleSheet = locate( "appdata", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE) );
-	mStyleContents = fileContents(mStyleSheet);
+	
+	/*
+	The stylesheet config value is now just the basename of the xsl file ie: Messenger, Kopete 
+	T avoid having fallback duplicate code, I used the extract method pattern and left all in _setStyleSheet
+	*/
+	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
 	if(mToolTipContents.empty())
@@ -244,13 +246,28 @@ void KopetePrefs::setSoundIfAway(bool value)
 
 void KopetePrefs::setStyleSheet(const QString &value)
 {
-	if ( !QFile::exists( value ) || value.isEmpty())
-		mStyleSheet = locate( "appdata", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE) );
-	else
-		mStyleSheet = value;
-	
-	mStyleContents = fileContents( mStyleSheet );
+	_setStyleSheet(value);
 	emit( messageAppearanceChanged() );
+}
+
+void KopetePrefs::_setStyleSheet(const QString &value)
+{
+	QString styleFileName  = locate( "appdata", QString::fromLatin1("styles/") + value + QString::fromLatin1(".xsl"));
+	
+	/* In case the user had selected a style not available now */
+	if ( !QFile::exists(styleFileName) || value.isEmpty() )
+	{
+		/* Try to fallback to default style */
+		mStyleSheet = QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE);
+		// FIXME: Duncan: we could check here if Kopete XSL exists too and show a msgbox about a broken install in case it is not found
+	}
+	else
+	{
+		mStyleSheet = value;
+	}
+	
+	styleFileName = locate( "appdata", QString::fromLatin1("styles/") + mStyleSheet + QString::fromLatin1(".xsl"));
+	mStyleContents = fileContents(styleFileName);	
 }
 
 void KopetePrefs::setFontFace( const QFont &value )
