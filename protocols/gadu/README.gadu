@@ -6,10 +6,14 @@ that, as it's needed to maintain compatibility with the Windows client, which
 is the only one supported (and created) by the creators of gadu-gadu - sms-
 express company.
 
-To use gadu gadu you need the libgadu library installed on your system, which
-can be downloaded from http://dev.null.pl/ekg . 
-This should be version 1.4 (release candidate or stable), please stick with version
-1.4 if possible. Author of libgadu/ekg does not keep any compatibility between
+Gadu-Gadu plugin uses libgadu. If it's not avaliable in the system, 
+it will automaticaly switch to it's copy in /protocols/gadu/lib (v1.5).
+
+Following describes what to do if you still want to use external library version:
+
+You can download libgadu (part of ekg package) from http://dev.null.pl/ekg, 
+This should be version 1.5 (release candidate or stable), please stick with version
+1.5 if possible. Author of libgadu/ekg does not keep any compatibility between
 minor releases. It should support protocol version 6.0 by default.
  
 You have to download the ekg communicator package 
