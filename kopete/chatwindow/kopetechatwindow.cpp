@@ -41,6 +41,7 @@
 #include <ktabwidget.h>
 #include <kstandarddirs.h>
 #include <kdialog.h>
+#include <kstringhandler.h> 
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -345,7 +346,8 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 	m_popupView = static_cast<ChatView*>( tab );
 
 	KPopupMenu *p = new KPopupMenu;
-	p->insertTitle( m_popupView->caption() );
+	p->insertTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );	
+	
 	actionContactMenu->plug(p);
 	p->insertSeparator();
 	tabDetach->plug( p );
