@@ -788,13 +788,14 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 	*/
 
 	//Check first 128 chars
-	int charsToCheck = 128 > message.length() ? message.length() : 128;
+	int charsToCheck = message.length();
+	charsToCheck = 128 > charsToCheck ? charsToCheck : 128;
 
 	if( success )
 		*success = true;
 
 	//They are providing a possible codec. Check if it is valid
-	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{
 		//All chars decodable.
 		return providedCodec->toUnicode( message );
@@ -809,7 +810,7 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 
 	//Try codecForContent - exact match
 	QTextCodec *testCodec = QTextCodec::codecForContent(message, charsToCheck);
-	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{
 		//All chars decodable.
 		return testCodec->toUnicode( message );
@@ -821,24 +822,27 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 
 	//We don't have any clues here.
 
-	//Try latin1 codec
-	testCodec = QTextCodec::codecForMib(4);
-	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
-	{
-		//All chars decodable.
-		return testCodec->toUnicode( message );
-	}
-
 	//Try local codec
 	testCodec = QTextCodec::codecForLocale();
-	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{
 		//All chars decodable.
+		kdDebug(14000) << k_funcinfo << "Using locale's codec" << endl;
 		return testCodec->toUnicode( message );
 	}
 
+	//Try latin1 codec
+	testCodec = QTextCodec::codecForMib(4);
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
+	{
+		//All chars decodable.
+		kdDebug(14000) << k_funcinfo << "Using latin1" << endl;
+		return testCodec->toUnicode( message );
+	}
+
+	kdDebug(14000) << k_funcinfo << "Using latin1 and cleaning string" << endl;
 	//No codec decoded. Just decode latin1, and clean out any junk.
-	QString result = QString::fromLatin1(message);
+	QString result = testCodec->toUnicode( message );
 	for( uint i = 0; i < message.length(); ++i )
 	{
 		if( !result[i].isPrint() )
