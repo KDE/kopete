@@ -271,7 +271,7 @@ KopeteAccount *ICQEditAccountWidget::apply()
 
 	// Check to see if we're saving the password, and set it if so
 	if (mAccountSettings->chkSavePassword->isChecked())
-		mAccount->setPassword(mAccountSettings->edtPassword->text());
+		mAccount->setPassword(mAccountSettings->edtPassword->password());
 	else
 		mAccount->setPassword(QString::null);
 
