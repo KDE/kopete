@@ -460,7 +460,7 @@ KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
 
 
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
-	KopeteStdAction::preferences( coll );
+	KopeteStdAction::preferences( coll , "settings_prefs" );
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
