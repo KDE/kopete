@@ -104,6 +104,7 @@ void BehaviorConfig::save()
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 
 	p->save();
+	setChanged(false);
 }
 
 void BehaviorConfig::load()
@@ -137,12 +138,17 @@ void BehaviorConfig::load()
 	mPrfsChat->chatWindowGroup->setButton(p->chatWindowPolicy());
 	mPrfsChat->interfaceGroup->setButton(p->interfacePreference());
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
+
+	//TODO: make the whole thing working corretly insteads of this ugly hack...
+	setChanged(false);
+	setChanged(true);
 }
 
 
 void BehaviorConfig::slotConfigSound()
 {
 	KNotifyDialog::configure( this );
+	setChanged(true);
 }
 
 void BehaviorConfig::slotShowTrayChanged(bool check)
@@ -150,6 +156,7 @@ void BehaviorConfig::slotShowTrayChanged(bool check)
 	mPrfsGeneral->mStartDockedChk->setEnabled(check);
 	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
 	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
+	setChanged(true);
 }
 
 #include "behaviorconfig.moc"

@@ -206,6 +206,8 @@ void AppearanceConfig::save()
 	p->save();
 	errorAlert = false;
 	styleChanged = false;
+
+	setChanged(false);
 }
 
 void AppearanceConfig::load()
@@ -286,12 +288,17 @@ void AppearanceConfig::load()
 	mPrfsColors->mGreyIdleMetaContacts->setChecked(p->greyIdleMetaContacts());
 	mPrfsColors->idleContactColor->setColor(p->idleContactColor());
 	slotGreyIdleMetaContactsChanged(p->greyIdleMetaContacts());
+
+	//TODO: make the whole thing working corretly insteads of this ugly hack...
+	setChanged(false);
+	setChanged(true);
 }
 
 void AppearanceConfig::slotUseEmoticonsChanged(bool b)
 {
 	icon_theme_list->setEnabled(b);
 	icon_theme_preview->setEnabled(b);
+	setChanged(true);
 }
 
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
@@ -323,6 +330,7 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 	}
 	newContentText += QString::fromLatin1("</qt>");
 	icon_theme_preview->setText(newContentText);
+	setChanged(true);
 }
 
 void AppearanceConfig::slotTransparencyChanged ( bool checked )
@@ -330,6 +338,7 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 	mPrfsChatWindow->mTransparencyTintColor->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyValue->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyBgOverride->setEnabled( checked );
+	setChanged(true);
 }
 
 
@@ -361,6 +370,8 @@ void AppearanceConfig::slotAddStyle()
 	KService::Ptr service = *offers.begin();
 	KLibFactory *factory = KLibLoader::self()->factory( service->library().latin1() );
 	editDocument = static_cast<KTextEditor::Document *>( factory->create( styleEditor->editFrame, 0, "KTextEditor::Document" ) );
+	if(!editDocument)
+		return; //TODO: show an error if the plugin can't be loaded
 	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
 	KTextEditor::editInterface( editDocument )->setText(
 		QString::fromLatin1(
@@ -387,6 +398,7 @@ void AppearanceConfig::updateHighlight()
 			break;
 		}
 	}
+	setChanged(true);
 }
 
 void AppearanceConfig::slotStyleSelected()
@@ -403,6 +415,7 @@ void AppearanceConfig::slotStyleSelected()
 		mPrfsChatWindow->deleteButton->setEnabled( false );
 	}
 	slotUpdatePreview();
+	setChanged(true);
 }
 
 void AppearanceConfig::slotImportStyle()
@@ -469,6 +482,7 @@ void AppearanceConfig::slotCopyStyle()
 		KMessageBox::error(this,
 			i18n("Please select a style to copy."), i18n("No Style Selected") );
 	}
+	setChanged(true);
 }
 
 void AppearanceConfig::slotEditStyle()
@@ -479,6 +493,7 @@ void AppearanceConfig::slotEditStyle()
 	KTextEditor::editInterface( editDocument )->setText( model );
 	updateHighlight();
 	styleEditor->styleName->setText( editedItem->text() );
+	setChanged(true);
 }
 
 void AppearanceConfig::slotDeleteStyle()
@@ -501,6 +516,7 @@ void AppearanceConfig::slotDeleteStyle()
 			mPrfsChatWindow->styleList->setSelected( style->prev(), true );
 		delete style;
 	}
+	setChanged(true);
 }
 
 void AppearanceConfig::slotStyleSaved()
@@ -522,6 +538,7 @@ void AppearanceConfig::slotStyleSaved()
 	addStyle( styleEditor->styleName->text(), fileSource );
 
 	styleEditor->deleteLater();
+	setChanged(true);
 }
 
 void AppearanceConfig::addStyle( const QString &styleName, const QString &xslString )
@@ -614,6 +631,7 @@ void AppearanceConfig::slotUpdatePreview()
 			delete jack;
 		} // END if(!model.isEmpty())
 	}
+	setChanged(true);
 }
 
 QString AppearanceConfig::fileContents( const QString &path )
@@ -633,6 +651,7 @@ QString AppearanceConfig::fileContents( const QString &path )
 void AppearanceConfig::slotGreyIdleMetaContactsChanged(bool b)
 {
 	mPrfsColors->idleContactColor->setEnabled(b);
+	setChanged(true);
 }
 
 
