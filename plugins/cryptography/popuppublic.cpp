@@ -32,7 +32,7 @@
 #include <qpushbutton.h>
 #include <klineedit.h>
 #include <qlabel.h>
-#include <kstdguiitem.h>
+
 
 
 #include "popuppublic.h"
@@ -146,7 +146,7 @@ KButtonBox *boutonbox=new KButtonBox(this,KButtonBox::Horizontal,15,12);
   bouton0->setIconSet(QIconSet(KGlobal::iconLoader()->loadIcon("up",KIcon::Small)));
   boutonbox->addStretch(1);
   bouton1=boutonbox->addButton(i18n("&Select"),this,SLOT(crypte()),TRUE);
-  bouton2=boutonbox->addButton(KStdGuiItem::cancel(),this,SLOT(annule()),TRUE);
+  bouton2=boutonbox->addButton(i18n("&Cancel"),this,SLOT(annule()),TRUE);
   boutonbox->layout();
   bouton1->setDefault(true);
   if (isascii) CBarmor->setChecked(true);
