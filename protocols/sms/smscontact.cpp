@@ -200,7 +200,7 @@ QStringList SMSContact::servicePrefs()
 		QString data = it.data();
 		if (data.length() == 0)
 			continue;
-		prefs.append(QString("%1=%2").arg(key.replace("=","\\=")).arg(data.replace("=","\\=")));
+		prefs.append(QString("%1=%2").arg(key.replace(QRegExp("="),"\\=")).arg(data.replace(QRegExp("="),"\\=")));
 	}
 
 	return prefs;
@@ -212,7 +212,7 @@ void SMSContact::setServicePrefs(QStringList prefs)
 	{
 		QRegExp r("(.*)[^\\]=(.*)");
 		r.search(*it);
-		setServicePref(r.cap(1).replace("\\=", "="), r.cap(2).replace("\\=", "="));
+		setServicePref(r.cap(1).replace(QRegExp("\\="), "="), r.cap(2).replace(QRegExp("\\="), "="));
 	}
 }
 
