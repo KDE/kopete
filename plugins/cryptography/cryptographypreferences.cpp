@@ -69,7 +69,7 @@ void CryptographyPreferences::load()
 
 void CryptographyPreferences::save()
 {
-	m_config->setCacheMode(preferencesDialog->m_cache->selectedId());
+	m_config->setCacheMode(preferencesDialog->m_cache->id(preferencesDialog->m_cache->selected()));
 	m_config->setCacheTime(preferencesDialog->m_time->value());
 	m_config->setEncrypt(preferencesDialog->m_alsoMyKey->isChecked());
 	m_config->setAskPassPhrase(preferencesDialog->m_noPassphrase->isChecked());
