@@ -24,6 +24,8 @@
 
 #include "msnauthsocket.h"
 
+class MSNAccount;
+
 /**
  * @author Martijn Klingens <klingens@kde.org>
  *
@@ -36,7 +38,7 @@ class MSNDispatchSocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNDispatchSocket( const QString &msnId, QObject *parent = 0L );
+	MSNDispatchSocket( MSNAccount *account, const QString &msnId, QObject *parent = 0L );
 	~MSNDispatchSocket();
 
 	/**
@@ -57,6 +59,9 @@ protected:
 	 * Handle an MSN command response line.
 	 */
 	virtual void parseCommand( const QString &cmd, uint id, const QString &data );
+
+private:
+	MSNAccount *m_account;
 };
 
 #endif

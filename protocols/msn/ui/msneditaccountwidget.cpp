@@ -27,6 +27,7 @@
 #include <qlistbox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
+#include <qspinbox.h>
 
 #include <kautoconfig.h>
 #include <kfiledialog.h>
@@ -101,6 +102,10 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *a
 		d->ui->m_allowButton->setEnabled( connected );
 		d->ui->m_blockButton->setEnabled( connected );
 
+		MSNAccount *m_account = static_cast<MSNAccount*>( account );
+		d->ui->m_serverName->setText( m_account->serverName() );
+		d->ui->m_serverPort->setValue( m_account->serverPort() );
+
 		QStringList blockList = QStringList::split( ',', account->pluginData( d->protocol, QString::fromLatin1( "blockList" ) ) );
 		QStringList allowList = QStringList::split( ',', account->pluginData( d->protocol, QString::fromLatin1( "allowList" ) ) );
 		//QStringList reverseList = QStringList::split( ',', account->pluginData( d->protocol, QString::fromLatin1( "reverseList" ) ) );
@@ -150,6 +155,9 @@ KopeteAccount * MSNEditAccountWidget::apply()
 
 	account()->setAutoLogin( d->ui->m_autologin->isChecked() );
 	account()->setPluginData( d->protocol, "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() ? "1" : QString::null );
+	account()->setPluginData( d->protocol, "serverName", d->ui->m_serverName->text() );
+	account()->setPluginData( d->protocol, "serverPort", QString::number( d->ui->m_serverPort->value() ) );
+
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )

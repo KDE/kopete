@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>MSNEditAccountUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>534</width>
+            <height>492</height>
         </rect>
     </property>
     <property name="caption">
@@ -248,16 +248,86 @@
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
+                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>textLabel1_4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use the following server / port:</string>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="2" column="1">
+                                <property name="name">
+                                    <cstring>m_serverPort</cstring>
+                                </property>
+                                <property name="maxValue">
+                                    <number>65535</number>
+                                </property>
+                                <property name="minValue">
+                                    <number>1</number>
+                                </property>
+                                <property name="value">
+                                    <number>1863</number>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="2" column="0">
+                                <property name="name">
+                                    <cstring>m_serverName</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>messenger.hotmail.com</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                </property>
+                            </widget>
+                            <spacer row="2" column="2">
+                                <property name="name">
+                                    <cstring>spacer9</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>0</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
                                 <property name="name">
                                     <cstring>m_autologin</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -266,7 +336,7 @@
                                     <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                                 </property>
                             </widget>
-                        </vbox>
+                        </grid>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -295,6 +365,9 @@
                                     <string>Automatically open a chat &amp;window when someone starts
 a conversation</string>
                                 </property>
+                                <property name="accel">
+                                    <string>Alt+W</string>
+                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -313,6 +386,9 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>Download and show c&amp;ustom emoticons (experimental)</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+U</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -446,7 +522,7 @@ a conversation</string>
                         <property name="sizeHint">
                             <size>
                                 <width>21</width>
-                                <height>104</height>
+                                <height>70</height>
                             </size>
                         </property>
                     </spacer>
@@ -952,6 +1028,8 @@ a conversation</string>
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>m_useDisplayPicture</sender>

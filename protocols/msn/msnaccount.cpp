@@ -96,6 +96,26 @@ void MSNAccount::loaded()
 	}
 }
 
+QString MSNAccount::serverName()
+{
+	//FIXME: After need for backwards compatability is removed, just return serverName
+	QString sName = pluginData( protocol(), QString::fromLatin1( "serverName" ) );
+	if( !sName.isEmpty() )
+		return sName;
+	else
+		return QString::fromLatin1("messenger.hotmail.com");
+}
+
+uint MSNAccount::serverPort()
+{
+	//FIXME: After need for backwards compatability is removed, just return serverPort
+	QString serverPort = pluginData( protocol(), QString::fromLatin1( "serverPort" ) );
+	if( !serverPort.isEmpty() )
+		return serverPort.toUInt();
+	else
+		return 1863;
+}
+
 void MSNAccount::setAway( bool away, const QString & awayReason )
 {
 	m_awayReason = awayReason;
@@ -223,7 +243,7 @@ KActionMenu * MSNAccount::actionMenu()
 		this, SLOT( slotGoOffline() ), m_actionMenu, "actionMSNConnect" ) );
 
 	m_actionMenu->popupMenu()->insertSeparator();
-	
+
 	m_actionMenu->insert( m_changeDNAction );
 	m_actionMenu->insert( m_startChatAction );
 
@@ -578,15 +598,15 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 				fallBack = g;
 		}
 	}
-	
+
 	if ( !fallBack )
 	{
 		if( groupNumber==0  )
 		{	// The group #0 is an unremovable group. his default name is "~" ,
 			// but the official client rename it i18n("others contact") at the first
-			// connection.   
-			// In many case, the users don't use that group as a real group, or just as 
-			// a group to put all contact that are not sorted.  
+			// connection.
+			// In many case, the users don't use that group as a real group, or just as
+			// a group to put all contact that are not sorted.
 			fallBack = KopeteGroup::topLevel();
 		}
 		else
@@ -644,7 +664,7 @@ void MSNAccount::addGroup( const QString &groupName, const QString& contactToAdd
 			kdDebug( 14140 ) << k_funcinfo << "preparing to add " << groupName << " for " << contactToAdd  <<  endl;
 		}
 	}
-		
+
 	if ( m_notifySocket )
 		m_notifySocket->addGroup( groupName );
 
@@ -655,7 +675,7 @@ void MSNAccount::slotKopeteGroupRenamed( KopeteGroup *g )
 	if ( notifySocket() && g->type() == KopeteGroup::Normal )
 	{
 		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() &&
-			g->displayName() != g->pluginData( protocol(), accountId() + " displayName" ) && 
+			g->displayName() != g->pluginData( protocol(), accountId() + " displayName" ) &&
 			m_groupList.contains( g->pluginData( protocol(), accountId() + " id" ).toUInt() ) )
 		{
 			notifySocket()->renameGroup( g->displayName(), g->pluginData( protocol(), accountId() + " id" ).toUInt() );
@@ -750,7 +770,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				ct->setMetaContact(metaContact);
 				KopeteContactList::contactList()->addMetaContact( metaContact );
 			}
-		
+
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
 			MSNContact *c = static_cast<MSNContact *>( ct);
@@ -777,12 +797,12 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					// The contact has been removed from a group by another client
 					c->contactRemovedFromGroup( it.key() );
 					c->setDontSync( true ); // prevent the moving of the metacontact change the server
-					
+
 					KopeteGroup *old_group=m_groupList.contains( it.key() ) ? m_groupList[it.key()] : it.data();
 					if(!old_group)
 					{	//the group is not anymore on the msn server.
 						QPtrList<KopeteGroup> mc_groups = c->metaContact()->groups();
-						if(mc_groups.count() > 1) 
+						if(mc_groups.count() > 1)
 							for(KopeteGroup *g_it=mc_groups.first() ; g_it ; g_it=mc_groups.next() )
 						{
 							QString Gid=g_it->pluginData(protocol() , accountId() +" id");
@@ -798,7 +818,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 								break;
 							}
 						}
-						
+
 					}
 					c->metaContact()->removeFromGroup( old_group );
 				}
@@ -1032,7 +1052,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 			chatmembers.append(c);
 			manager = new MSNMessageManager( protocol(), myself(), chatmembers  );
 		}
-	
+
 		manager->createChat( handle, address, auth, ID );
 
 		KGlobal::config()->setGroup( "MSN" );
@@ -1116,9 +1136,9 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 				{
 					int Gid=group->pluginData( protocol(), accountId() + " id" ).toUInt();
 					if(!m_groupList.contains(Gid))
-					{ // ohoh!   something is corrupted on the contactlist.xml  
+					{ // ohoh!   something is corrupted on the contactlist.xml
 					  // anyway, we never should add a contact to an unexisting group on the server.
-					  
+
 						//repair the problem
 						group->setPluginData( protocol() , accountId() + " id" , QString::null);
 						group->setPluginData( protocol() , accountId() + " displayName" , QString::null);
@@ -1134,7 +1154,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 				}
 				if(!added)
 				{
-					if ( !group->displayName().isEmpty() && group->type() == KopeteGroup::Normal ) 
+					if ( !group->displayName().isEmpty() && group->type() == KopeteGroup::Normal )
 					{  // not the top-level
 						// Create the group and add the contact
 						// FIXME: if for a reason or another the group can't be added, the contact will not be added.

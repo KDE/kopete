@@ -19,10 +19,11 @@
     *************************************************************************
 */
 
+#include "msnaccount.h"
 #include "msndispatchsocket.h"
 
-MSNDispatchSocket::MSNDispatchSocket( const QString &msnId, QObject *parent )
-: MSNAuthSocket( msnId, parent)
+MSNDispatchSocket::MSNDispatchSocket( MSNAccount *account, const QString &msnId, QObject *parent )
+: MSNAuthSocket( msnId, parent), m_account( account )
 {
 }
 
@@ -32,7 +33,7 @@ MSNDispatchSocket::~MSNDispatchSocket()
 
 void MSNDispatchSocket::connect()
 {
-	MSNAuthSocket::connect( "messenger.hotmail.com", 1863 );
+	MSNAuthSocket::connect( m_account->serverName(), m_account->serverPort() );
 }
 
 void MSNDispatchSocket::parseCommand( const QString &cmd, uint id, const QString &data )

@@ -55,6 +55,16 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
+	/**
+	 * Returns the address of the MSN server
+	 */
+	QString serverName();
+
+	/**
+	 * Returns the address of the MSN server port
+	 */
+	uint serverPort();
+
 	MSNNotifySocket *notifySocket();
 
 	// FIXME: Make generic - Martijn

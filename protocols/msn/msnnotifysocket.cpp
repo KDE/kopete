@@ -74,7 +74,7 @@ void MSNNotifySocket::connect()
 	m_isHotmailAccount=false;
 	m_ping=false;
 
-	m_dispatchSocket = new MSNDispatchSocket( msnId() ,this);
+	m_dispatchSocket = new MSNDispatchSocket( m_account, msnId() ,this);
 	QObject::connect( m_dispatchSocket,
 		SIGNAL( receivedNotificationServer( const QString &, uint ) ),
 		this,
@@ -98,7 +98,7 @@ void MSNNotifySocket::disconnect()
 		sendCommand( "OUT", QString::null, false );
 
 	m_keepaliveTimer->stop();
-	
+
 	dispatchOK=true; // without this MSNNotifySocket will assume that an error has ocurred and display a message box
 	if (m_dispatchSocket)
 		m_dispatchSocket->disconnect();
@@ -157,8 +157,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 210:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-			i18n("Your contact list is full; you cannot add any new contacts."), 
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+			i18n("Your contact list is full; you cannot add any new contacts."),
 			i18n( "MSN Contact List Full" ) );
 		break;
 	}
@@ -196,16 +196,16 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 225:
 	case 230:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 			i18n("Kopete is trying to perform an operation on a group or a contact that does not exists on the server.\n"
-			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report"), 
+			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report"),
 			i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 229:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-			i18n("The group name is too long; it has not been changed on the MSN server."), 
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+			i18n("The group name is too long; it has not been changed on the MSN server."),
 			i18n( "Invalid group name - MSN Plugin" ) );
 		break;
 	}
@@ -273,13 +273,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
 
-			KIO::Job *job = KIO::get( KURL( authURL ), true, false ); 
+			KIO::Job *job = KIO::get( KURL( authURL ), true, false );
 			job->addMetaData("cookies", "manual");
-			/* FIXME: This should force kio to download the page even is we are in the 
+			/* FIXME: This should force kio to download the page even is we are in the
 			 * konqueror offline mode.  But it does not seems to have any effect
 			 * [see bug #68483]
 			job->addMetaData("cache", "reload");
-			job->addMetaData("no-cache", "true"); 
+			job->addMetaData("no-cache", "true");
 			 */
 			QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
 		}
