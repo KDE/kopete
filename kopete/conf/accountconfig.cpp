@@ -197,6 +197,7 @@ void AccountConfig::slotRemoveAccount()
 		i18n("Remove Account"),
 		i18n("Remove Account")) == KMessageBox::Continue )
 	{
+		previousAccount=0L;
 		m_accountItems.remove(lvi);
 		KopeteAccountManager::manager()->removeAccount(i);
 		delete lvi;
