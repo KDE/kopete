@@ -26,10 +26,10 @@ Using Kopete
 			Chat members list
 			Status bar (typing notifications, etc )
 	 		Tabbing
-	
+
                 Starting group chats
                 Shortcuts
-        File transfers? 
+        File transfers?
 Configuring Kopete
 	Global Shortcuts
         Adding/Editing Accounts
@@ -57,9 +57,7 @@ Appendix: Obtaining and installation
 <firstname>Will</firstname>
 <othername></othername>
 <surname>Stephenson</surname>
-<affiliation>
 <address><email>lists@stevello.free-online.co.uk</email></address>
-</affiliation>
 </author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
@@ -136,13 +134,28 @@ Appendix: Obtaining and installation
 	<para>To use &kopete; you need to set up one or more accounts for the instant messaging services you wish to use.</para>
 	<para>You've probably already chosen a messaging service, either because you already use IM, or you need to use the same service as your friends.  If you don't fit into either of these categories, please consider using a messaging service based on open standards, because these are designed for use by Free Software.  Other messaging services are prone to changing the underlying technology without making the details freely available, making them harder for Free Software developers to support.</para>
 	<para>The messaging services that &kopete; supports that are based on open standards are Jabber and IRC.</para>
-	<para>The following section assumes you are registered with an &im; service already.  If not, you can register with Gadu-Gadu, Jabber, and MSN from inside &kopete;; for other services, you'll have to register using their respective web site before creating an account in Kopete.</para>
+	<para>The following section assumes you are registered with an &im;
+service already.  If not, you can register with Gadu-Gadu, Jabber, and
+MSN from inside &kopete;; for other services, you'll have to register
+using their respective web site before creating an account in
+&kopete;.</para>
 	<sect1 id="creating-accounts">
 		<title>Creating Accounts</title>
 		<para>To create an account, use <menuchoice><guimenu>Settings</guimenu> <guimenuitem>Configure &kopete;...</guimenuitem> </menuchoice> to display the Configure window.</para>
-		<para>The Configure window is the main way to set up and customise &kopete;.  On the left a row of icons control which aspect of Kopete is being configured.  Click the <guiicon>Accounts</guiicon> icon.  The main pane will change to display the account management pane.  This is currently empty, but will soon list your &im; accounts.  Click <guibutton>New</guibutton> to display the <guilabel>Account Wizard</guilabel>.</para>
-		<para>The <guilabel>Account Wizard</guilabel> helps you create an &im; account.  After the <guilabel>Welcome</guilabel> page, you are asked to select the messaging service that you'd like to use.  Click one of the services show and then click <guibutton>Next</guibutton>.  On the following page, you should enter your registration details for that instant messaging service.</para> 
-		<para>Most services just require you to enter a username or unique identifying number (<acronym>UIN</acronym>) and password.  The special purpose services Winpopup and SMS work slightly differently, so please see their specific sections.  There are a couple of other options that apply to most services that you should look at:</para>
+		<para>The Configure window is the main way to set up and customise
+&kopete;.  On the left a row of icons control which aspect of &kopete;
+is being configured.  Click the <guiicon>Accounts</guiicon> icon.  The main pane
+will change to display the account management pane.  This is currently
+empty, but will soon list your &im; accounts.  Click
+<guibutton>New</guibutton> to display the <guilabel>Account
+Wizard</guilabel>.</para>
+		<para>The <guilabel>Account Wizard</guilabel> helps you create an &im; account.  After the <guilabel>Welcome</guilabel> page, you are asked to select the messaging service that you'd like to use.  Click one of the services show and then click <guibutton>Next</guibutton>.  On the following page, you should enter your registration details for that instant messaging service.</para>
+		<para>Most services just require you to enter a username or unique
+identifying number (<acronym>UIN</acronym>) and password.  The special
+purpose services Winpopup and <acronym>SMS</acronym> work slightly
+differently, so please see their specific sections.  There are a couple
+of other options that apply to most services that you should look
+at:</para>
 		<variablelist>
 			<varlistentry><term>Remember password</term><listitem><para>When this is checked, &kopete; will store the password for you, so you don't have to enter it every time you connect to the &im; service.  If you are security-conscious or want to limit access to the &im; account you can leave this unchecked.</para></listitem></varlistentry>
 			<varlistentry><term>Connect at startup</term><listitem><para>When this is checked, &kopete; will try to connect to the &im; service as when it starts.  If you use a <acronym>LAN</acronym>, <acronym>DSL</acronym>or other <quote>always-on</quote> connection, this is appropriate; dial-up modem users should turn this off and connect manually when you have dialed up.</para></listitem></varlistentry>
@@ -151,12 +164,27 @@ Appendix: Obtaining and installation
 	</sect1><!-- creating-accounts -->
 	<sect1 id="go-online">
 		<title>Go Online and Start Chatting!</title>
-		<para>Now you'll notice that an icon representing the account has appeared in the status bar at the bottom of the &kopete; <guilabel>Contact List</guilabel> window.  This represents your current presence for this account.  Right click on it and you can go online from the menu that appears.  The status bar icon will animate while &kopete; connects to the &im; service.</para>
-		<para>Once you're online, if you've used this IM service before, your contacts will be fetched from the server and displayed in the <guilabel>Contact List</guilabel>.  To start a chat with a contact, just click their name and a Chat window will appear.  The upper part of the window is where the conversation appears - to say something, type into the bottom part of the window and click <guibutton>Send</guibutton>.</para>
-		<tip><para>The shortcut for <guibutton>Send</guibutton> is set to <keycombo action="simul">&Ctrl;<keycap>&Enter;</keycap></keycombo> by default; you can change it in the Chat window using <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Shortcuts...</guimenuitem></menuchoice>.</para></tip>
+		<para>Now you'll notice that an icon representing the account has
+appeared in the status bar at the bottom of the &kopete;
+<guilabel>Contact List</guilabel> window.  This represents your current
+presence for this account.  <mousebutton>Right</mousebutton> click on
+it and you can go online from the menu that appears.  The status bar
+icon will animate while &kopete; connects to the &im; service.</para>
+		<para>Once you're online, if you've used this &im; service before,
+your contacts will be fetched from the server and displayed in the
+<guilabel>Contact List</guilabel>.  To start a chat with a contact, just
+click their name and a Chat window will appear.  The upper part of the
+window is where the conversation appears - to say something, type into
+the bottom part of the window and click
+<guibutton>Send</guibutton>.</para>
+		<tip><para>The shortcut for <guibutton>Send</guibutton> is set to
+<keycombo action="simul">&Ctrl;&Enter;</keycombo> by
+default; you can change it in the Chat window using
+<menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure
+Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 	</sect1><!-- go-online -->
 	</chapter>
-	&documentation.index;
+
 	<chapter id="credits-and-licenses">
 		<title>Credits and Licenses</title>
 		<para>
@@ -169,6 +197,7 @@ Appendix: Obtaining and installation
 		&underFDL;
 		&underGPL;
 	</chapter>
+&documentation.index;
 </book>
 
 <!--
