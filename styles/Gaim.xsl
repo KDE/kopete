@@ -69,16 +69,16 @@ The theme is mainly based on:
 	</xsl:when>
 	<!-- incoming/outgoing messages -->
 	<xsl:otherwise>
-		<font>
-			<xsl:attribute name="color">
+		<span>
+			<xsl:attribute name="style">
 				<xsl:choose>
 					<!-- outgoing -->
 					<xsl:when test="@direction='1'">
-						<xsl:text>#16569E</xsl:text>
+						color:<xsl:text>#16569E</xsl:text>
 					</xsl:when>
 					<!-- incoming -->
 					<xsl:otherwise>
-						<xsl:text>#A82F2F</xsl:text>
+						color:<xsl:text>#A82F2F</xsl:text>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
@@ -89,7 +89,7 @@ The theme is mainly based on:
 	                        </xsl:attribute>
 				<xsl:value-of disable-output-escaping="yes" select="from/contact/metaContactDisplayName/@text"/>:
 			</span>
-		</font>
+		</span>
 	</xsl:otherwise>
 </xsl:choose>
 

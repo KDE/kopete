@@ -160,7 +160,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	: KHTMLPart( parent, name ), m_manager( mgr ), d( new Private )
 {
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
-	d->transformAllMessages=KopetePrefs::prefs()->styleContents().contains("TRANSFORM_ALL_MESSAGES");
+	d->transformAllMessages = ( d->xsltParser->flags() & Kopete::XSLT::TransformAllMessages );
 
 	backgroundFile = 0;
 	root = 0;
@@ -324,7 +324,7 @@ void ChatMessagePart::readOverrides()
 void ChatMessagePart::setStylesheet( const QString &style )
 {
 	d->xsltParser->setXSLT( style );
-	d->transformAllMessages=style.contains("TRANSFORM_ALL_MESSAGES");
+	d->transformAllMessages = ( d->xsltParser->flags() & Kopete::XSLT::TransformAllMessages );
 	slotRefreshNodes();
 }
 

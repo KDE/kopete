@@ -57,23 +57,23 @@ public:
 	 * Thread constructor
 	 *
 	 * @param xmlString The XML to be transformed
-	 * @param xslString The XSL string we will use to transform
+	 * @param xslString The XSL stylesheet we will use to transform
 	 * @param target Target object to connect to for async operation
 	 * @param slotCompleted Slot to fire on completion in asnc operation
 	 */
-	KopeteXSLThread( const QString &xmlString, const QCString &xslString, QObject *target = 0L, const char *slotCompleted = 0L );
+	KopeteXSLThread( const QCString &xmlString, xsltStylesheetPtr xslDoc, QObject *target = 0L, const char *slotCompleted = 0L );
 
 	/**
 	 * Reimplemented from QThread. Does the processing.
 	 */
 	virtual void run();
-	
+
 	/**
 	 * A user event is used to get back to the UI thread to emit the completed signal
 	 */
 	bool event( QEvent *event );
-	
-	static QString xsltTransform( const QString &xmlString, const QCString &xsltString );
+
+	static QString xsltTransform( const QString &xmlString, xsltStylesheetPtr xslDoc );
 
 	/**
 	 * Returns the result string
@@ -82,18 +82,18 @@ public:
 	{ return m_resultString; };
 
 private:
-	QString m_xml;
-	QCString m_xsl;
+	QCString m_xml;
+	xsltStylesheetPtr m_xsl;
 	QString m_resultString;
 	QObject *m_target;
 	const char *m_slotCompleted;
 	QMutex dataMutex;
 };
 
-KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QCString &xsltString, QObject *target, const char *slotCompleted )
+KopeteXSLThread::KopeteXSLThread( const QCString &xmlString, xsltStylesheetPtr xslDoc, QObject *target, const char *slotCompleted )
 {
 	m_xml = xmlString;
-	m_xsl = xsltString;
+	m_xsl = xslDoc;
 
 	m_target = target;
 	m_slotCompleted = slotCompleted;
@@ -127,63 +127,48 @@ bool KopeteXSLThread::event( QEvent *event )
 	return QObject::event( event );
 }
 
-QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString &xslCString )
+QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheetPtr styleSheet )
 {
-	// Init Stuff
-	xmlLoadExtDtdDefaultValue = 0;
-	xmlSubstituteEntitiesDefault( 1 );
-
 	// Convert QString into a C string
 	QCString xmlCString = xmlString.utf8();
 
 	QString resultString;
 	QString errorMsg;
 
-	// Read XML docs in from memory
 	xmlDocPtr xmlDoc = xmlParseMemory( xmlCString, xmlCString.length() );
 	if ( xmlDoc )
 	{
-		xmlDocPtr xslDoc = xmlParseMemory( xslCString, xslCString.length() );
-		if ( xslDoc )
+		if ( styleSheet )
 		{
-			xsltStylesheetPtr styleSheet = xsltParseStylesheetDoc( xslDoc );
-			if ( styleSheet )
+			static QCString appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).utf8() );
+
+			static const char* params[3] = {
+				"appdata",
+				appPath,
+				NULL
+			};
+
+			xmlDocPtr resultDoc = xsltApplyStylesheet( styleSheet, xmlDoc, params );
+			if ( resultDoc )
 			{
-				static QCString appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).utf8() );
-
-				static const char* params[3] = {
-					"appdata",
-					appPath,
-					NULL
-				};
-
-				xmlDocPtr resultDoc = xsltApplyStylesheet( styleSheet, xmlDoc, params );
-				if ( resultDoc )
-				{
-					// Save the result into the QString
-					xmlChar *mem;
-					int size;
-					xmlDocDumpMemory( resultDoc, &mem, &size );
-					resultString = QString::fromUtf8( QCString( ( char * )( mem ), size + 1 ) );
-					free( mem );
-					xmlFreeDoc( resultDoc );
-				}
-				else
-				{
-					errorMsg = i18n( "Message is null." );
-				}
-				xsltFreeStylesheet( styleSheet );
+				// Save the result into the QString
+				xmlChar *mem;
+				int size;
+				xmlDocDumpMemory( resultDoc, &mem, &size );
+				resultString = QString::fromUtf8( QCString( ( char * )( mem ), size + 1 ) );
+				free( mem );
+				xmlFreeDoc( resultDoc );
 			}
 			else
 			{
-				errorMsg = i18n( "The selected chat style is invalid." );
-				xmlFreeDoc( xslDoc );
+				errorMsg = i18n( "Message is null." );
 			}
 		}
 		else
 		{
 			errorMsg = i18n( "The selected chat style is invalid." );
 		}
+
 		xmlFreeDoc( xmlDoc );
 	}
 	else
@@ -205,19 +190,31 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString
 class KopeteXSLTPrivate
 {
 public:
-	QCString document;
+	xmlDocPtr xslDoc;
+	xsltStylesheetPtr styleSheet;
+	unsigned int flags;
 };
 
 Kopete::XSLT::XSLT( const QString &document, QObject *parent )
 : QObject( parent )
 {
 	d = new KopeteXSLTPrivate;
+	d->flags = 0;
+	d->xslDoc = 0;
+	d->styleSheet = 0;
+
+	// Init Stuff
+	xmlLoadExtDtdDefaultValue = 0;
+	xmlSubstituteEntitiesDefault( 1 );
 
 	setXSLT( document );
 }
 
 Kopete::XSLT::~XSLT()
 {
+	xmlFreeDoc( d->xslDoc );
+	xsltFreeStylesheet( d->styleSheet );
+
 	delete d;
 }
 
@@ -235,6 +232,10 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 	//        The reason I'm doing it like this is because of issues with QDOM and
 	//        namespaces in earlier Qt versions. When we drop Qt 3.1.x support we
 	//        should probably convert this to more accurate DOM code. - Martijn
+	//
+	//	Actually, since we need to parse into a libxml2 document anyway, this whole
+	//	nonsense could be replaced with some simple XPath expressions - JK
+	//
 	QRegExp elementMatch( QString::fromLatin1( "<kopete-i18n>(.*)</kopete-i18n>" ) );
 	elementMatch.setMinimal( true );
 	QString document = _document;
@@ -352,47 +353,74 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 		document.replace( uint( pos ), orig.length() + 27, trans );
 	}
 
-	d->document = document.utf8();
-
 	#ifdef RAWXSL
-		kdDebug(14000) << k_funcinfo << d->document << endl;
+		kdDebug(14000) << k_funcinfo << document.utf8() << endl;
 	#endif
+
+	//Freeing the stylesheet also frees the doc pointer;
+	xsltFreeStylesheet( d->styleSheet );
+	d->styleSheet = 0;
+	d->xslDoc = 0;
+	d->flags = 0;
+
+	QCString rawDocument = document.utf8();
+	d->xslDoc = xmlParseMemory( rawDocument, rawDocument.length() );
+
+	if( d->xslDoc )
+	{
+		d->styleSheet = xsltParseStylesheetDoc( d->xslDoc );
+		if( d->styleSheet  )
+		{
+			// Check for flags
+			QStringList flags;
+			for( xmlNodePtr child = d->xslDoc->children; child != d->xslDoc->last; child = child->next )
+			{
+				if( child->type == XML_PI_NODE )
+				{
+					//We have a flag. Enable it;
+					QCString flagData( (const char*)child->content );
+
+					if( flagData.contains( "Flag:" ) )
+					{
+						flags += flagData.mid(5);
+					}
+				}
+			}
+
+			if( !flags.isEmpty() )
+				setProperty("flags", flags.join( QString::fromLatin1("|") ) );
+		}
+		else
+		{
+			//We don't have a stylesheet, so free the doc pointer
+			xmlFreeDoc( d->xslDoc );
+		}
+	}
 }
 
 QString Kopete::XSLT::transform( const QString &xmlString )
 {
-	return KopeteXSLThread::xsltTransform( xmlString, d->document );
+	return KopeteXSLThread::xsltTransform( xmlString.utf8(), d->styleSheet );
 }
 
 void Kopete::XSLT::transformAsync( const QString &xmlString, QObject *target, const char *slotCompleted )
 {
-	( new KopeteXSLThread( xmlString, d->document, target, slotCompleted ) )->start();
+	( new KopeteXSLThread( xmlString.utf8(), d->styleSheet, target, slotCompleted ) )->start();
 }
 
-bool Kopete::XSLT::isValid()
+bool Kopete::XSLT::isValid() const
 {
-	bool retVal = false;
+	return d->styleSheet != NULL;
+}
 
-	// Init Stuff
-	xmlLoadExtDtdDefaultValue = 0;
-	xmlSubstituteEntitiesDefault( 1 );
+void Kopete::XSLT::setFlags( unsigned int flags )
+{
+	d->flags = flags;
+}
 
-	xmlDocPtr xslDoc = xmlParseMemory( d->document, d->document.length() );
-	if ( xslDoc )
-	{
-		xsltStylesheetPtr styleSheet = xsltParseStylesheetDoc( xslDoc );
-		if ( styleSheet )
-		{
-			retVal = true;
-			xsltFreeStylesheet( styleSheet );
-		}
-		else
-		{
-			xmlFreeDoc( xslDoc );
-		}
-	}
-
-	return retVal;
+unsigned int Kopete::XSLT::flags() const
+{
+	return d->flags;
 }
 
 #include "kopetexsl.moc"

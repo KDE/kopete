@@ -37,7 +37,21 @@ class KOPETE_EXPORT XSLT : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY( Flags flags READ flags WRITE setFlags )
+	Q_PROPERTY( bool isValid READ isValid )
+
+	Q_SETS( Flags )
+
 public:
+	/**
+	 * Special flags to be used during the transformation process. Passed
+	 * into the engine as processing instructions.
+	 */
+	enum Flags
+	{
+ 		TransformAllMessages = 1
+	};
+
 	/**
 	 * Constructor.
 	 *
@@ -49,6 +63,8 @@ public:
 
 	/**
 	 * Set the XSLT document
+	 *
+	 * @return an ORed set of @ref Flags, or 0 if none
 	 */
 	void setXSLT( const QString &document );
 
@@ -75,7 +91,19 @@ public:
 	 *
 	 * @return Whether the document represents a valid XSLT stylesheet
 	 */
-	bool isValid();
+	bool isValid() const;
+
+	/**
+	 * @return An ORed list of Flags that the current stylesheet provides via processing instructions
+	 */
+	unsigned int flags() const;
+
+	/**
+	 * Sets flags to be used for the transformation.
+	 *
+	 * @param flags An ORed list of flags
+	 */
+	void setFlags( unsigned int flags );
 
 private:
 	KopeteXSLTPrivate *d;

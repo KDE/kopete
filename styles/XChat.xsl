@@ -29,7 +29,7 @@
 				<xsl:when test="@direction='2'">
 					<!--internal message-->
 					-
-					<font color="cyan">--</font>
+					<span style="color:cyan">--</span>
 				</xsl:when>
 				<xsl:when test="@direction='3'">
 					<!--action message-->
@@ -44,7 +44,7 @@
 					</span>
 				</xsl:when>
 				<xsl:otherwise>
-					<font color="blue">&lt;</font>
+					<span style="color:blue">&lt;</span>
 					<font>
 						<xsl:attribute name="color">
 							<xsl:choose>
@@ -59,6 +59,16 @@
 							</xsl:choose>
 						</xsl:attribute>
 						<span>
+							<xsl:attribute name="style">
+								<xsl:choose>
+									<xsl:when test="@direction='1'">
+										<xsl:text>color:yellow</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										color:<xsl:value-of select="from/contact/@color"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
 							<xsl:attribute name="title">
 								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
 							</xsl:attribute>
@@ -68,7 +78,7 @@
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/contactDisplayName/@text"/>
 						</span>
 					</font>
-					<font color="blue">&gt;</font>
+					<span style="color:blue">&gt;</span>
 				</xsl:otherwise>
 			</xsl:choose>
 			<span style="margin-left:0.5em;">
