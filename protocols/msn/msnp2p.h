@@ -27,33 +27,56 @@ class KTempFile;
 
 /**
  * @author Olivier Goffart
+ *
+ * This class help the MSNSwithboardSocket to handle the MSN-P2P messages
  */
 class MSNP2P : public QObject
 {
 	Q_OBJECT
 
 public:
-	/**
-	 * Contructor: id is the KopeteMessageMangager's id
-	 */
 	MSNP2P(  QObject *parent=0L , const char *name=0L);
 	~MSNP2P();
 
 public slots:
+	/**
+	 * parse an incomming message
+	 */
 	void slotReadMessage( const QByteArray &msg );
 
-	void requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject);
+	unsigned long int m_msgIdentifier;
 
 signals:
+	/**
+	 * should be connected to the MSNSwitchBoardSocket's sendCommand function
+	 */
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
 private:
+	/**
+	 * send the MSNSLP command in a msn p2p message
+	 */
+	void sendP2PMessage( const QCString& dataMessage );
+
+	/**
+	 * send the ACK
+	 */
+	void sendP2PAck( const char * originalHeader) ;
+
+public slots:
+	/**
+	 * Load the dysplayImage.
+	 */
+	void requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject);
+private:
+	//for the display image
 	KTempFile *m_file;
 	unsigned int m_Tsize;
 
 	QString m_myHandle;
 	QString m_msgHandle;
+
 
 
 };
