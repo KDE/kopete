@@ -1,7 +1,7 @@
-INCLUDES = -I$(srcdir)/.. $(all_includes)
+INCLUDES = -I$(top_srcdir)/libkopete $(all_includes)
 noinst_LTLIBRARIES = libkopeteui.la
 
-noinst_HEADERS = contactlist.h\   
+noinst_HEADERS = contactlist.h\
 		pluginmodule.h\
 		configmodule.h\
 		kopetelistview.h\

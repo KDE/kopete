@@ -1,7 +1,10 @@
 SUBDIRS = libkmerlin ui pixmaps
-INCLUDES = -I$(srcdir)/ui -I./ui \
-        -I$(srcdir)/libkmerlin -I./libkmerlin \
-        -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui \
+INCLUDES = -I$(srcdir)/ui \
+        -I./ui \
+        -I$(srcdir)/libkmerlin \
+        -I./libkmerlin \
+        -I$(srcdir)/../../libkopete \
+        -I$(srcdir)/../../libkopete/ui \
         $(all_includes)
 kde_module_LTLIBRARIES = kopete_msn.la
 
