@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>YahooEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>569</width>
-            <height>399</height>
+            <height>401</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,71 +19,177 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0">
+        <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>TextLabel1_2</cstring>
+                <cstring>layout5</cstring>
             </property>
-            <property name="font">
-                <font>
-                    <bold>1</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Account Information</string>
-            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel1_2</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <bold>1</bold>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Account Information</string>
+                    </property>
+                </widget>
+                <widget class="QFrame">
+                    <property name="name">
+                        <cstring>Frame3_2</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout1</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>mPassword</cstring>
+                            </property>
+                            <property name="echoMode">
+                                <enum>Password</enum>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="0" column="1">
+                            <property name="name">
+                                <cstring>mScreenName</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>label2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Your &amp;password:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mPassword</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>label1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Your Yahoo screen &amp;name:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mScreenName</cstring>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </vbox>
         </widget>
-        <widget class="QFrame" row="1" column="0">
+        <widget class="QLayoutWidget" row="2" column="0">
             <property name="name">
-                <cstring>Frame3_2</cstring>
+                <cstring>layout4</cstring>
             </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel1_2_2</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <bold>1</bold>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Preferences</string>
+                    </property>
+                </widget>
+                <widget class="QFrame">
+                    <property name="name">
+                        <cstring>Frame3_2_2</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout3</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mAutoConnect</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Auto-connect</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+A</string>
+                            </property>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mRememberPassword</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Remember password</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+R</string>
+                            </property>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>ImportContacts</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Import contacts from the server</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+I</string>
+                            </property>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>UseServerGroupNames</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Use the group names from the server when importing</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+U</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+            </vbox>
         </widget>
-        <widget class="QLabel" row="4" column="0">
-            <property name="name">
-                <cstring>TextLabel1_2_2</cstring>
-            </property>
-            <property name="font">
-                <font>
-                    <bold>1</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Preferences</string>
-            </property>
-        </widget>
-        <widget class="QFrame" row="5" column="0">
-            <property name="name">
-                <cstring>Frame3_2_2</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="6" column="0">
-            <property name="name">
-                <cstring>mAutoConnect</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Auto-connect</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="7" column="0">
-            <property name="name">
-                <cstring>mRememberPassword</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Remember password</string>
-            </property>
-        </widget>
-        <spacer row="8" column="0">
+        <spacer row="3" column="0">
             <property name="name">
                 <cstring>spacer4</cstring>
             </property>
@@ -96,95 +202,37 @@
             <property name="sizeHint">
                 <size>
                     <width>21</width>
-                    <height>150</height>
+                    <height>110</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QLayoutWidget" row="3" column="0">
+        <spacer row="1" column="0">
             <property name="name">
-                <cstring>layout7</cstring>
+                <cstring>spacer3</cstring>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="KURLLabel">
-                    <property name="name">
-                        <cstring>kURLLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Get a Yahoo! account now</string>
-                    </property>
-                    <property name="url" stdset="0">
-                        <string>http://edit.yahoo.com/config/eval_register</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>317</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-        <widget class="QLayoutWidget" row="2" column="0">
-            <property name="name">
-                <cstring>layout1</cstring>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>mPassword</cstring>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>mScreenName</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>label2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Your &amp;password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>mPassword</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>label1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Your Yahoo screen &amp;name:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>mScreenName</cstring>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>10</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
+<connections>
+    <connection>
+        <sender>ImportContacts</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>UseServerGroupNames</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>mScreenName</tabstop>
     <tabstop>mPassword</tabstop>

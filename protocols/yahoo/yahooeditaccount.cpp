@@ -33,19 +33,21 @@
 #include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
-YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): YahooEditAccountBase(parent), EditAccountWidget(theAccount)
+YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), EditAccountWidget(theAccount)
 {
-	kdDebug(14180) << "YahooEditAccount::YahooEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	theProtocol = protocol;
 	if(m_account)
 	{	mScreenName->setText(m_account->accountId());
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
 		mScreenName->setDisabled(true);
-		if(m_account->rememberPassword())
+		if (m_account->rememberPassword())
 			mPassword->setText(m_account->password());
 		mAutoConnect->setChecked(m_account->autoLogin());
 		mRememberPassword->setChecked(true);
+		ImportContacts->setChecked(static_cast<YahooAccount*>(m_account)->importContacts());
+		UseServerGroupNames->setChecked(static_cast<YahooAccount*>(m_account)->useServerGroups());
 	}
 	show();
 }
@@ -71,13 +73,25 @@ KopeteAccount *YahooEditAccount::apply()
 
 	if(!m_account)
 		m_account = new YahooAccount(theProtocol, mScreenName->text());
-//	else
-//		m_account->setAccountId(mScreenName->text());
-	m_account->setAutoLogin(mAutoConnect->isChecked());
-	if(mRememberPassword->isChecked())
-		m_account->setPassword(mPassword->text());
 
-	return m_account;
+	YahooAccount *account = static_cast<YahooAccount*>(m_account);
+
+	account->setAutoLogin(mAutoConnect->isChecked());
+
+	if(mRememberPassword->isChecked())
+		account->setPassword(mPassword->text());
+
+	if (ImportContacts->isChecked())
+		account->setImportContacts(true);
+	else
+		account->setImportContacts(false);
+
+	if (UseServerGroupNames->isChecked())
+		account->setUseServerGroups(true);
+	else
+		account->setUseServerGroups(false);
+
+	return account;
 }
 
 #include "yahooeditaccount.moc"

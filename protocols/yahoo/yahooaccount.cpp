@@ -54,9 +54,11 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	theHaveContactList = false;
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog(this);
-	
+	m_importContacts = false;
+	m_useServerGroups = false;
+
 	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
-	
+
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
 	m_myself = new YahooContact(this, accountId(), accountId(), 0);
@@ -90,9 +92,20 @@ void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
 
 void YahooAccount::loaded()
 {
-	QString publicName = pluginData(protocol(), QString::fromLatin1("displayName"));
-	if(!publicName.isNull())
-		m_myself->rename(publicName);		//TODO: might cause problems depending on rename semantics
+	QString newPluginData;
+
+	newPluginData = pluginData(protocol(), QString::fromLatin1("displayName"));
+	if(!newPluginData.isEmpty())
+		m_myself->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
+
+	newPluginData = pluginData(protocol(), QString::fromLatin1("UseServerGroups"));
+	if (newPluginData == "True")
+		m_useServerGroups = true;
+
+	newPluginData = pluginData(protocol(), QString::fromLatin1("ImportContacts"));
+	if (newPluginData == "True")
+		m_importContacts = true;
+
 }
 
 YahooSession *YahooAccount::yahooSession()
@@ -105,18 +118,30 @@ KopeteContact *YahooAccount::myself() const
 	return m_myself ? m_myself : 0L;
 }
 
+void YahooAccount::setUseServerGroups(bool newSetting)
+{
+	m_useServerGroups = newSetting;
+}
+
+void YahooAccount::setImportContacts(bool newSetting)
+{
+	m_importContacts = newSetting;
+}
+
+
+
 void YahooAccount::connect()
-{	
-	QString server = static_cast<YahooProtocol *>(protocol())->server();
-	int port = static_cast<YahooProtocol *>(protocol())->port();
-	
+{
+	QString server = "scs.yahoo.com";
+	int port = 5050;
+
 	YahooSessionManager::manager()->setPager(server, port);
 //	kdDebug(14180) << k_funcinfo << endl;
 
 	if(!isConnected())
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
-		
+
 		if( m_session > 0)
 		{
 			if( m_session->sessionId() > 0)
@@ -143,7 +168,7 @@ void YahooAccount::connect()
 				QObject::connect( m_session , SIGNAL(systemMessage( const QString &)), this , SLOT(slotSystemMessage( const QString &)) );
 				QObject::connect( m_session , SIGNAL(error( const QString &, int )), this , SLOT(slotError( const QString &, int )) );
 				QObject::connect( m_session , SIGNAL(gotIdentities( const QStringList & )), this , SLOT(slotGotIdentities( const QStringList & )) );
-				
+
 				m_session->login(YAHOO_STATUS_AVAILABLE);
 			}
 			else
@@ -236,14 +261,12 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 	theHaveContactList = true;
-	KGlobal::config()->setGroup("Yahoo");
-	YahooProtocol *theProtocol = static_cast<YahooProtocol *>(protocol());
 
 	// Serverside -> local
 	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
-		if(!contacts()[i.key()] && theProtocol->importContacts())
+		if(!contacts()[i.key()] && m_importContacts)
 		{	kdDebug(14180) << "SS Contact " << i.key() << " is not in the contact list. Adding..." << endl;
-			QString groupName = theProtocol->useGroupNames() ? i.data().first : QString("Imported Yahoo Contacts");
+			QString groupName = m_useServerGroups ? i.data().first : QString("Imported Yahoo Contacts");
 			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
 		}
 

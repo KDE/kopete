@@ -87,6 +87,14 @@ public:
 	 */
 	bool haveContactList() const { return theHaveContactList; }
 
+	bool useServerGroups() const { return m_useServerGroups; }
+
+	bool importContacts() const { return m_importContacts; }
+
+	void setUseServerGroups(bool newSetting);
+
+	void setImportContacts(bool newSetting);
+
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -174,8 +182,8 @@ private:
 	 * External Settings and Descriptors
 	 */
 	bool m_useServerGroups;		// Use the groups on the server for import
+	bool m_importContacts;		// Import the contacts from the server
 	int m_sessionId;		// The Yahoo session descriptor
-	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
 

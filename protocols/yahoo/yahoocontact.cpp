@@ -103,22 +103,16 @@ void YahooContact::syncToServer()
 
 bool YahooContact::isOnline() const
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 	return true;
 }
 
-/*QString YahooContact::accountId() const
-{
-	kdDebug(14180) << k_funcinfo << endl;
-	return m_userId;
-}
-*/
 KopeteMessageManager *YahooContact::manager( bool )
 {
 	if( !m_manager )
@@ -173,16 +167,16 @@ void YahooContact::slotMessageManagerDestroyed()
 
 KActionCollection *YahooContact::customContextMenuActions()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 	return 0L;
 }
 
 void YahooContact::slotUserInfo()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 
 	QString profileSiteString = "http://profiles.yahoo.com/" + m_userId;
-	kdDebug(14180) << "Yahoo profile site string: " << profileSiteString << endl;
+	//kdDebug(14180) << "Yahoo profile site string: " << profileSiteString << endl;
 	kapp->invokeBrowser(profileSiteString);
 }
 

@@ -23,7 +23,6 @@
 #include "libyahoo2/yahoo2_callbacks.h"
 
 // Local Includes
-#include "yahooprefs.h"
 #include "kyahoo.h"
 
 // Kopete Includes
@@ -56,29 +55,15 @@ public:
 					 const QMap<QString,QString> &serializedData,
 					 const QMap<QString, QString> &addressBookData );
 
-	QString server() const { return m_server; }
-	int port() const { return m_port; }
-	bool importContacts() const { return m_importContacts; }
-	bool useGroupNames() const { return m_useGroupNames; }
-
 public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
-	/**
-	 * Callback when settings changed
-	 */
-	void slotSettingsChanged(void);
 
 private:
 	static YahooProtocol* s_protocolStatic_;
-	YahooPreferences *m_prefs;
 
-	// Configuration data
-	QString m_server;
-	int m_port;
-	bool m_logAll, m_useGroupNames, m_importContacts;
 };
 
 #endif

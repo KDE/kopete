@@ -46,13 +46,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	// TODO: this will be useful for introduing yahoo specific actions in the future, but i cant be bothered yet.
 	//initActions();
 
-	// Create preferences menu
-	m_prefs = new YahooPreferences("yahoo_protocol", this);
 
-	// Call slotSettingsChanged() to get it all registered.
-	slotSettingsChanged();
-
-	QObject::connect( m_prefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
 	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
 }
@@ -61,7 +55,6 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 YahooProtocol::~YahooProtocol()
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	//delete m_prefs;
 	s_protocolStatic_ = 0L;
 }
 
@@ -97,19 +90,6 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	}
 
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
-}
-
-void YahooProtocol::slotSettingsChanged()
-{
-	kdDebug(14180) << "YahooProtocol::slotSettingsChanged()" <<endl;
-	m_server   = KGlobal::config()->readEntry("Server", "scs.yahoo.com");
-	m_port     = KGlobal::config()->readNumEntry("Port", 5050);
-	m_logAll   = KGlobal::config()->readBoolEntry("LogAll", true);
-	m_importContacts   = KGlobal::config()->readBoolEntry("ImportContacts", true);
-	m_useGroupNames     = KGlobal::config()->readNumEntry("UseGroupNames", false);
-
-	if(m_server == "cs.yahoo.com") m_server = "scs.yahoo.com";
-	// FIXME: take out the above line asap --- it's a nasty fix for people with a broken config from old versions.
 }
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , KopeteAccount* )
