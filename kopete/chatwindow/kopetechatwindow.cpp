@@ -874,7 +874,7 @@ void KopeteChatWindow::readOptions()
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	if( !config->readBoolEntry ( QString::fromLatin1("Show Status Bar"), true ) )
 	{
-		// viewStatusBar->setChecked( false );
+		viewStatusBar->setChecked( false );
 		statusArea->hide();
 	}
 }
@@ -890,7 +890,7 @@ void KopeteChatWindow::saveOptions()
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), m_tabBar->tabPosition() );
-//	config->writeEntry ( QString::fromLatin1("Show Status Bar"), viewStatusBar->isChecked() );
+	config->writeEntry ( QString::fromLatin1("Show Status Bar"), viewStatusBar->isChecked() );
 
 	config->sync();
 }
