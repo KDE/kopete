@@ -41,7 +41,6 @@
 							<kopete-i18n>Contact ID: %FROM_CONTACT_ID%</kopete-i18n>
 						</xsl:attribute>
 						<xsl:value-of disable-output-escaping="yes" select="from/contact/contactDisplayName/@text"/>
-						<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 					</span>
 				</xsl:when>
 				<xsl:otherwise>
