@@ -264,7 +264,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 
 	myself()->setOnlineStatus( status );
-	myself()->setProperty( "awayMessage", descr );
+	myself()->setProperty( "awayMessage", i18n("awayMessage"), descr );
 
 	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( pingTimer_ ){
@@ -279,7 +279,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 	lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ));
-	myself()->setProperty( "awayMessage", dscr );
+	myself()->setProperty( "awayMessage", i18n("awayMessage"), dscr );
 
 
 	if ( !session_->isConnected() ) {
@@ -446,7 +446,7 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 		else {
 			contact->setDescription( (*notifyListIterator)->description );
 			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			myself()->setProperty( "awayMessage", contact->description() );
+			myself()->setProperty( "awayMessage", i18n("awayMessage"), contact->description() );
 		}
 	}
 }
@@ -471,7 +471,7 @@ GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 	else {
 		contact->setDescription( gaduNotify->description );
 		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-		myself()->setProperty( "awayMessage", contact->description() );
+		myself()->setProperty( "awayMessage", i18n("awayMessage"), contact->description() );
 	}
 
 /// FIXME: again, store this information
