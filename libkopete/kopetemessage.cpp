@@ -104,22 +104,27 @@ QString KopeteMessage::plainBody() const
 	if(mFormat==PlainText)
 		return mBody;
 
-	//TOTO: usescape and remove HTML
-	kdDebug() << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
-	return mBody;
+//	kdDebug() << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
+
+	//FIXME: is there a beter way to unescape HTML?
+	QString r=mBody;
+	r=r.replace(QRegExp("<br>"), "\n").replace(QRegExp("<[^>]*>"), "").replace(QRegExp("&gt;"), ">").replace(QRegExp("&lt;"), "<").replace(QRegExp("&nbsp;"), " ").replace(QRegExp("&amp;"), "&");
+	kdDebug() << "KopeteMessage::plainBody: " << r <<endl;
+
+	return r;
 }
 
 QString KopeteMessage::escapedBody() const
 {
-				if(mFormat==PlainText)
-				{
-								QString parsedString = QStyleSheet::escape(mBody);
-								kdDebug() << "KopeteMessage::escapeBody: " << parsedString <<endl;
-								return parsedString;
-				}
+	if(mFormat==PlainText)
+	{
+		QString parsedString = QStyleSheet::escape(mBody);
+		kdDebug() << "KopeteMessage::escapeBody: " << parsedString <<endl;
+		return parsedString;
+	}
 
 //	kdDebug() << "KopeteMessage::escapeBody: not escape needed" <<endl;
-				return mBody;
+	return mBody;
 }
 
 QString KopeteMessage::parsedBody() const
