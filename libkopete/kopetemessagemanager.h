@@ -163,6 +163,13 @@ private:
 			      enum WidgetType widget = ChatWindow,
 			      QObject *parent = 0, const char *name = 0 );
 	void setID( int );
+
+	/**
+	 * Empties Message buffer, filling the window and returning true
+	 * if a foreign message exists
+	 */
+	bool emptyMessageBuffer();
+	
 	KMMPrivate *d;
 };
 
