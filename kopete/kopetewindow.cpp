@@ -79,9 +79,8 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 	tm->insertSeparator();
 
 	statusBar()->show();
-//	mainwidget->show();
 
-	show();
+
 }
 
 KopeteWindow::~KopeteWindow()
@@ -115,11 +114,22 @@ void KopeteWindow::loadOptions(void)
 
 	QString tmp = config->readEntry("State", "Shown");
 	if ( tmp == "Minimized" )
+	{
 		showMinimized();
+	}
 	else if ( tmp == "Hidden" )
+	{
 		hide();
+	}
 	else
-		show();
+	{
+		KConfig *config = KGlobal::config();
+  		config->setGroup("Appearance");
+  		if (!config->readBoolEntry("StartDocked", false))
+  	    {
+			show();
+		}
+	}
 }
 
 void KopeteWindow::saveOptions(void)

@@ -1,2 +1,31 @@
+Main Developers
+===============
+
 Duncan Mac-Vicar Prett <duncan@kdedevelopers.net>
+- Original author, main app work & design , MSN Plugin, hacks in all plugins
+
 Nick Betcher <nbetcher@usinternet.com>
+- ICQ Plugin, AIM Plugin, IRC Plugin, various hacks
+
+Developer Team
+==============
+
+Ryan Cumming <bodnar42@phalynx.dhs.org>
+- ChatView class.
+
+Martin Klingens <klingens@kde.org>
+- Misc hacks, bugfixes, KopeteMessage
+
+Stefan Gehen <sgehn@gmx.net>
+- Misc bugfixes, cleanups, hacks, features.
+
+Richard Stellingwerff <remenic@linuxfromscratch.org>
+- Misc fixes.
+
+Contributed patches. Thanks!!!
+==============================
+
+Simon Perreault <nomis80@linuxquebec.com>
+- Start docked feature.
+
+
