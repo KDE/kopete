@@ -3,7 +3,7 @@
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
-			<Action name="Connection"/>
+			<!-- <Action name="Connection"/> -->
 			<Action name="Status"/>
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
@@ -48,8 +48,6 @@
 	</MenuBar>
 
 	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
-		<Action name="ConnectAll"/>
-		<Action name="DisconnectAll"/>
 		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="settings_show_offliners"/>

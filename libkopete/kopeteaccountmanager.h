@@ -133,8 +133,10 @@ public slots:
 	void setAwayAll( const QString &awayReason = QString::null );
 
 	/**
-	 * \brief  Remove the away status from all accounts at once.
-	 *
+	 * \brief Connect or make available every account.  
+	 * Make all accounts Available, by setting status, and connecting if necessary.
+	 * Accounts which are @ref excludeConnect() are excepted from connection.
+	 * Accounts which are already connected are controlled regardless of their excludeConnect() setting.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAvailableAll();

@@ -91,6 +91,19 @@ void AccountManager::connectAll()
 			it.current()->connect();
 }
 
+void AccountManager::setAvailableAll()
+{
+	Away::setGlobalAway( false );
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	{
+		if ( it.current()->isConnected() && it.current()->isAway() )
+			it.current()->setAway( false );
+		else 
+			if(!it.current()->excludeConnect())
+				it.current()->connect();
+	}
+}
+
 void AccountManager::disconnectAll()
 {
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
@@ -108,16 +121,6 @@ void AccountManager::setAwayAll( const QString &awayReason )
 		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
 		if ( it.current()->isConnected() && !isInvisible )
 			it.current()->setAway( true, awayReason.isNull() ? Kopete::Away::message() : awayReason );
-	}
-}
-
-void AccountManager::setAvailableAll()
-{
-	Away::setGlobalAway( false );
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
-	{
-		if ( it.current()->isConnected() && it.current()->isAway() )
-			it.current()->setAway( false );
 	}
 }
 

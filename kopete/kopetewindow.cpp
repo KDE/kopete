@@ -135,7 +135,7 @@ void KopeteWindow::initActions()
 		0, Kopete::AccountManager::self(), SLOT( connectAll() ),
 		actionCollection(), "ConnectAll" );
 
-	actionDisconnect = new KAction( i18n( "&Disconnect Accounts" ), "connect_no",
+	actionDisconnect = new KAction( i18n( "O&ffline" ), "connect_no",
 		0, Kopete::AccountManager::self(), SLOT( disconnectAll() ),
 		actionCollection(), "DisconnectAll" );
 
@@ -148,20 +148,22 @@ void KopeteWindow::initActions()
 	actionConnect->setEnabled(false);
 	actionDisconnect->setEnabled(false);
 
-	selectAway = new Kopete::AwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0,
+	selectAway = new Kopete::AwayAction( i18n("&Away"), SmallIcon("kopeteaway"), 0,
 		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
 		"SetAwayAll" );
 
-	actionSetAvailable = new KAction( i18n( "Set Availa&ble Globally" ),
+	actionSetAvailable = new KAction( i18n( "&Online" ),
 		"kopeteavailable", 0 , Kopete::AccountManager::self(),
 		SLOT( setAvailableAll() ), actionCollection(),
 		"SetAvailableAll" );
 
-	actionAwayMenu = new KActionMenu( i18n("Status"),"kopeteaway",
+	actionAwayMenu = new KActionMenu( i18n("&Set Status"), "kopeteaway",
 							actionCollection(), "Status" );
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(selectAway);
+	actionAwayMenu->insert(actionDisconnect);
+
 	actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
@@ -254,7 +256,7 @@ void KopeteWindow::initSystray()
 	actionPrefs->plug( tm, 1 );
 	tm->insertSeparator( 1 );
 	actionAwayMenu->plug( tm, 1 );
-	actionConnectionMenu->plug ( tm, 1 );
+	//actionConnectionMenu->plug ( tm, 1 );
 	tm->insertSeparator( 1 );
 
 	QObject::connect( m_tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ),
