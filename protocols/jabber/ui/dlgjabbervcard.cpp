@@ -100,52 +100,28 @@ void dlgJabberVCard::slotClose()
  */
 void dlgJabberVCard::slotSaveNickname()
 {
-
 	if (mIsReadOnly == true)
-	{
 		emit updateNickname(leNickname->text());
-	}
 	else
 	{
 		doc = QDomDocument();
-		QDomElement element = doc.createElement("vCard");
-		element.setAttribute("version", "3.0");
+		QDomElement element = doc.createElement("vcard");
+		element.setAttribute("version", "2.0");
 		element.setAttribute("xmlns", "vcard-temp");
 		element.setAttribute("prodid","-//HandGen//NONSGML vGen v1.0//EN");
 		
-		if (!leCountry->text().isNull())
-			element.appendChild(textTag("COUNTRY", leCountry->text()));
+		element.appendChild(textTag("country", leCountry->text()));
+		element.appendChild(textTag("pcode", leZIP->text()));
+		element.appendChild(textTag("region", leState->text()));
+		element.appendChild(textTag("locality", leCity->text()));
+		element.appendChild(textTag("street", teAddress->text()));
+		element.appendChild(textTag("voice", lePhone->text()));
+		element.appendChild(textTag("url", leHomepage->text()));
+		element.appendChild(textTag("bday", leBirthday->text()));
+		element.appendChild(textTag("email", leEmail->text()));
+		element.appendChild(textTag("nickname", leNickname->text()));
+		element.appendChild(textTag("fn", leName->text()));
 
-		if (!leZIP->text().isNull())
-			element.appendChild(textTag("PCODE", leZIP->text()));
-
-		if (!leState->text().isNull())
-			element.appendChild(textTag("REGION", leState->text()));
-
-		if (!leCity->text().isNull())
-			element.appendChild(textTag("LOCALITY", leCity->text()));
-
-		if (!teAddress->text().isNull())
-			element.appendChild(textTag("STREET", teAddress->text()));
-
-		if (!lePhone->text().isNull())
-			element.appendChild(textTag("VOICE", lePhone->text()));
-
-		if (!leHomepage->text().isNull())
-			element.appendChild(textTag("URL", leHomepage->text()));
-
-		if (!leBirthday->text().isNull())
-			element.appendChild(textTag("BDAY", leBirthday->text()));
-
-		if (!leEmail->text().isNull())
-			element.appendChild(textTag("EMAIL", leEmail->text()));
-
-		if (!leNickname->text().isNull())
-			element.appendChild(textTag("NICKNAME", leNickname->text()));
-
-		if (!leName->text().isNull())
-			element.appendChild(textTag("FN", leName->text()));
-		
 		emit saveAsXML(element);
 	}
 }

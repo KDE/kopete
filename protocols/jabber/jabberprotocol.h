@@ -192,6 +192,11 @@ public:
 	 * Slot for sending a message
 	 */
 	void slotSendMessage(Message);
+	
+	/**
+	 * Save a vCard.
+	 */
+	void slotSaveVCard(QDomElement &);
 
 public slots:
 	void setPresence(Presence status, const QString &reason = 0, int priority = 0);
@@ -349,7 +354,6 @@ private slots:
 	void slotGotVCard();
 	
 	void slotEditVCard();
-	void slotSaveVCard(QDomElement &);
 
 private:
 	typedef JabberMap<JabberContact*, KopeteMetaContact*> JabberMetaContactMap;

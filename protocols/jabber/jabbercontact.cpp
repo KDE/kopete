@@ -870,33 +870,31 @@ void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 	
 	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard", vCard);
 
-/*	if (mEditingVCard) {
+	if (mEditingVCard) {
 		connect(dlgVCard, SIGNAL(saveAsXML(QDomElement &)), this, SLOT(slotSaveVCard(QDomElement &)));
 		dlgVCard->setReadOnly(false);
 	}
 	else
-*/		connect(dlgVCard, SIGNAL(updateNickname(const QString &)), this, SLOT(slotDoRenameContact(const QString &)));
+		connect(dlgVCard, SIGNAL(updateNickname(const QString &)), this, SLOT(slotDoRenameContact(const QString &)));
 	
 	dlgVCard->show();
 	dlgVCard->raise();
 
 }
 
-/*
 void JabberContact::slotEditVCard() {
 
 	mEditingVCard = true;
-	slotSnarfVCard();
+	slotRetrieveVCard();
 
 }
 
 void JabberContact::slotSaveVCard(QDomElement &vCardXML) {
 
-	mProtocol->slotSaveVCard(vCardXML);
+	protocol->slotSaveVCard(vCardXML);
 	mEditingVCard = false;
 
 }
-*/
 
 QString JabberContact::id() const
 {

@@ -47,6 +47,8 @@ enum JabberProtocol::Presence;
 class JabberContact : public KopeteContact
 {
 	Q_OBJECT
+	
+	friend class JabberProtocol; /* Friends can touch each other's private parts. */
   
 	public:
 
@@ -258,6 +260,16 @@ class JabberContact : public KopeteContact
 		 * Retrieve a vCard for the contact
 		 */
 		void slotRetrieveVCard();
+
+		/**
+		 * Edit a vCard for the contact.
+		 */
+		void slotEditVCard();
+
+		/**
+		 * Save this contact's vCard.
+		 */
+		void slotSaveVCard(QDomElement &);
 		
 		/**
 		 * Append a message to the appropriate widgets
@@ -350,7 +362,7 @@ class JabberContact : public KopeteContact
 		 * certain resource or do we use
 		 * autoselection?
 		 */
-		bool resourceOverride;
+		bool resourceOverride, mEditingVCard;
 
 		KAction *actionMessage, *actionChat,
 				*actionHistory, *actionRetrieveVCard,

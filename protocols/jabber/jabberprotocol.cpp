@@ -1079,6 +1079,11 @@ void JabberProtocol::slotGotVCard()
 		return;
 	}
 
+	if (vCard->jid().userHost() == myContact->userId()) { /* Gwah. */
+		myContact->slotGotVCard(vCard);
+		return;
+	}
+
 	if (!contactMap.contains(vCard->jid().userHost()))
 	{
 		kdDebug() << "[JabberProtocol] slotGotVCard received a vCard - but couldn't find JID " << vCard->jid().userHost() << " in the list!" << endl;
@@ -1092,24 +1097,15 @@ void JabberProtocol::slotGotVCard()
 }
 
 void JabberProtocol::slotEditVCard() {
-/*
-	if (!myContact) {
-		kdDebug() << "[JabberProtocol] fuck me silly with a fencepost" << endl;
-		return;
-	}
 	myContact->slotEditVCard();
-*/
 }
 
 void JabberProtocol::slotSaveVCard(QDomElement &vCardXML) {
-/*
-	JabTask *psiIOTask = mProtocol->ioUser();
-	JT_VCard *tmpvCard = new JT_VCard(psiIOTask);
-	VCard vCard = VCard();
+	Jabber::JT_VCard *tmpvCard = new Jabber::JT_VCard(jabberClient->rootTask());
+	Jabber::VCard vCard = Jabber::VCard();
 	vCard.fromXml(vCardXML);
 	tmpvCard->set(vCard);
-	tmpvCard->go();
-*/
+	tmpvCard->go(true);
 }
 
 void JabberProtocol::registerUser()
