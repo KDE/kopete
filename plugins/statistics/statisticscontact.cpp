@@ -164,56 +164,56 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 
 }
 
-QDateTime StatisticsContact::nextOfflineEvent()
-{
-	return nextEvent(Kopete::OnlineStatus::Offline);
-}
+// QDateTime StatisticsContact::nextOfflineEvent()
+// {
+// 	return nextEvent(Kopete::OnlineStatus::Offline);
+// }
+// 
+// QDateTime StatisticsContact::nextOnlineEvent()
+// {
+// 	return nextEvent(Kopete::OnlineStatus::Online);
+// }
 
-QDateTime StatisticsContact::nextOnlineEvent()
-{
-	return nextEvent(Kopete::OnlineStatus::Online);
-}
-
-QDateTime StatisticsContact::nextEvent(const Kopete::OnlineStatus::StatusType& status)
-{
-	QStringList values;
-	QDateTime currentDateTime = QDateTime::currentDateTime();
-	values = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(metaContact()->metaContactId()));
-	
-	/// @todo Problem here with the ORDER BY because it works here on strings, not on dates
-	/// So this doesn't work for now.
-		
-	int secsTo = 0;
-	int nb = 0;
-	for(int i=0; i < values.count(); i+=3)
-	{
-		kdDebug() << "statistics: " << currentDateTime.time().toString();
-		kdDebug() << "  statistics: " << QTime::fromString(values[i]).toString();
-		kdDebug() << "  statistics: " << QTime::fromString(values[i+1]).toString();
-		if (currentDateTime.time() > QTime::fromString(values[i]) && currentDateTime.time() < QTime::fromString(values[i+1])
-		/*&& currentDateTime.date().dayOfWeek() == QDate::fromString(values[i]).dayOfWeek() */ /// @todo temporary removed for tests
-		)
-		// We match the status like the current status and at the same time, and the same day of week, because on sundays, I 
-		// do not connect like on tuesdays.
-		{
-			kdDebug() << "statistics: " << currentDateTime.time().toString();
-			/// Then we look for the fist \p status (method parameter) event
-			int j = i+3;
-			while(j < values.count())
-			{
-				if (values[j+3] == Kopete::OnlineStatus::statusTypeToString(status))
-				{
-					
-					// Not really good for events at about midnight
-					secsTo = (nb*secsTo + currentDateTime.time().secsTo(QDateTime::fromString(values[j]).time()))/(nb+1);
-					nb++;
-					break;
-				}
-				
-				j+=3;
-			}
-		}
-	}
-	
-	return currentDateTime.addSecs(secsTo);
-}
+// QDateTime StatisticsContact::nextEvent(const Kopete::OnlineStatus::StatusType& status)
+// {
+// 	QStringList values;
+// 	QDateTime currentDateTime = QDateTime::currentDateTime();
+// 	values = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(metaContact()->metaContactId()));
+// 	
+// 	/// @todo Problem here with the ORDER BY because it works here on strings, not on dates
+// 	/// So this doesn't work for now.
+// 		
+// 	int secsTo = 0;
+// 	int nb = 0;
+// 	for(int i=0; i < values.count(); i+=3)
+// 	{
+// 		kdDebug() << "statistics: " << currentDateTime.time().toString();
+// 		kdDebug() << "  statistics: " << QTime::fromString(values[i]).toString();
+// 		kdDebug() << "  statistics: " << QTime::fromString(values[i+1]).toString();
+// 		if (currentDateTime.time() > QTime::fromString(values[i]) && currentDateTime.time() < QTime::fromString(values[i+1])
+// 		/*&& currentDateTime.date().dayOfWeek() == QDate::fromString(values[i]).dayOfWeek() */ /// @todo temporary removed for tests
+// 		)
+// 		// We match the status like the current status and at the same time, and the same day of week, because on sundays, I 
+// 		// do not connect like on tuesdays.
+// 		{
+// 			kdDebug() << "statistics: " << currentDateTime.time().toString();
+// 			/// Then we look for the fist \p status (method parameter) event
+// 			int j = i+3;
+// 			while(j < values.count())
+// 			{
+// 				if (values[j+3] == Kopete::OnlineStatus::statusTypeToString(status))
+// 				{
+// 					
+// 					// Not really good for events at about midnight
+// 					secsTo = (nb*secsTo + currentDateTime.time().secsTo(QDateTime::fromString(values[j]).time()))/(nb+1);
+// 					nb++;
+// 					break;
+// 				}
+// 				
+// 				j+=3;
+// 			}
+// 		}
+// 	}
+// 	
+// 	return currentDateTime.addSecs(secsTo);
+// }

@@ -94,26 +94,26 @@ public:
 	 */
 	void newMessageReceived(Kopete::Message& m);
 
-	/*
-	 * Prevision methods
-	 */
-	/**
-	 * \brief Give informations on when the next event will occur
-	 *
-	 * \param status the status to be checked.
-	 * \retval nextEventDateTime the next event average prevision datetime.
-	 */
-	QDateTime nextEvent(const Kopete::OnlineStatus::StatusType& status);
-	
-	/**
-	 * \brief Convenience method for nextEvent with Offline status
-	 */
-	QDateTime nextOfflineEvent();
-	
-	/**
-	 * \brief Convenience method for nextEvent with Online status
-	 */
-	QDateTime nextOnlineEvent();
+// 	/*
+// 	 * Prevision methods
+// 	 */
+// 	/**
+// 	 * \brief Give informations on when the next event will occur
+// 	 *
+// 	 * \param status the status to be checked.
+// 	 * \retval nextEventDateTime the next event average prevision datetime.
+// 	 */
+// 	QDateTime nextEvent(const Kopete::OnlineStatus::StatusType& status);
+// 	
+// 	/**
+// 	 * \brief Convenience method for nextEvent with Offline status
+// 	 */
+// 	QDateTime nextOfflineEvent();
+// 	
+// 	/**
+// 	 * \brief Convenience method for nextEvent with Online status
+// 	 */
+// 	QDateTime nextOnlineEvent();
 	
 	
 	
