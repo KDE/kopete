@@ -65,8 +65,13 @@ private slots:
 	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();
 	void slotConfKeys();
+	void slotConfNotifications();
 	void slotConfToolbar();
 	void slotUpdateToolbar();
+	void slotConfigurePlugins();
+	void slotConfGlobalKeys();
+	void slotShowHide();
+
 	/**
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
@@ -162,11 +167,6 @@ public:
 	KToggleAction *actionShowOffliners;
 	KToggleAction *actionShowEmptyGroups;
 	KGlobalAccel *globalAccel;
-
-private slots:
-	void slotConfigurePlugins();
-	void slotConfGlobalKeys();
-	void slotShowHide();
 
 private:
 	void initView();

@@ -31,6 +31,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <knotifydialog.h>
 #include <kpopupmenu.h>
 #include <kaccel.h>
 #include <kkeydialog.h>
@@ -178,6 +179,7 @@ void KopeteWindow::initActions()
 		SLOT( slotConfGlobalKeys() ), actionCollection(), "settings_global" );
 
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection(), "settings_toolbars" );
+	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
 	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
@@ -210,7 +212,7 @@ void KopeteWindow::slotShowHide()
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
 			KWin::deIconifyWindow(winId());
-		
+
 		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
 			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
@@ -361,6 +363,11 @@ void KopeteWindow::slotConfigChanged()
 void KopeteWindow::slotConfKeys()
 {
 	KKeyDialog::configure(actionCollection(), this, true);
+}
+
+void KopeteWindow::slotConfNotifications()
+{
+	KNotifyDialog::configure( this );
 }
 
 void KopeteWindow::slotConfigurePlugins()
@@ -584,7 +591,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	if(m_tray)
 	{
 		QToolTip::remove(m_tray);
-		
+
 		QString tt = QString::fromLatin1("<qt><table>");
 		QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
 		for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )

@@ -24,7 +24,6 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <knotifydialog.h>
 #include <kpushbutton.h>
 #include <kgenericfactory.h>
 #include <ktrader.h>
@@ -48,8 +47,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 
 	// "General" TAB ============================================================
 	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
-	connect(mPrfsGeneral->configSound, SIGNAL(clicked()),
-		this, SLOT(slotConfigSound()));
 	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotShowTrayChanged(bool)));
 	mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
@@ -179,13 +176,6 @@ void BehaviorConfig::load()
 	//TODO: make the whole thing working correctly insteads of this ugly hack...
 	// emit changed(false);
 	// emit changed(true);
-}
-
-
-void BehaviorConfig::slotConfigSound()
-{
-	KNotifyDialog::configure( this );
-	emit changed(true);
 }
 
 void BehaviorConfig::slotShowTrayChanged(bool check)

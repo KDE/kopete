@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="14">
+<kpartgui name="kopete" version="15">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -41,6 +41,7 @@
 			<Separator lineSeparator="true" />
 			<Action name="settings_keys" />
 			<Action name="settings_global" />
+			<Action name="settings_notifications" />
 			<Action name="settings_toolbars" />
 			<Action name="settings_plugins"/>
 			<Action name="settings_prefs" />

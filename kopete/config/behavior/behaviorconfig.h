@@ -36,7 +36,6 @@ class BehaviorConfig : public KCModule
 		virtual void load();
 
 	private slots:
-		void slotConfigSound();
 		void slotShowTrayChanged(bool);
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);

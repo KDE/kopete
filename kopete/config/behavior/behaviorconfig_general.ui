@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>BehaviorConfig_General</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>422</width>
-            <height>400</height>
+            <width>390</width>
+            <height>296</height>
         </rect>
     </property>
     <property name="caption">
@@ -106,31 +106,6 @@
                         <string>Enable events while away</string>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="3" column="0">
-                    <property name="name">
-                        <cstring>configSound</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Con&amp;figure Sounds &amp;&amp; Events...</string>
-                    </property>
-                </widget>
-                <spacer row="3" column="1">
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>8</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
             </grid>
         </widget>
         <spacer>
@@ -153,10 +128,12 @@
     </vbox>
 </widget>
 <tabstops>
+    <tabstop>mUseQueueChk</tabstop>
+    <tabstop>mShowTrayChk</tabstop>
+    <tabstop>mStartDockedChk</tabstop>
     <tabstop>mBalloonNotifyChk</tabstop>
     <tabstop>mTrayflashNotifyChk</tabstop>
     <tabstop>mSoundIfAwayChk</tabstop>
-    <tabstop>configSound</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
