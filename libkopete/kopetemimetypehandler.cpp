@@ -37,6 +37,7 @@ namespace Kopete
 namespace
 {
 	static QDict<Kopete::MimeTypeHandler> g_mimeHandlers;
+	static QDict<Kopete::MimeTypeHandler> g_protocolHandlers;
 }
 
 class MimeTypeHandler::Private
@@ -45,6 +46,7 @@ public:
 	Private( bool carf ) : canAcceptRemoteFiles( carf ) {}
 	bool canAcceptRemoteFiles;
 	QStringList mimeTypes;
+	QStringList protocols;
 };
 
 MimeTypeHandler::MimeTypeHandler( bool canAcceptRemoteFiles )
@@ -57,10 +59,13 @@ MimeTypeHandler::~MimeTypeHandler()
 	for( QStringList::iterator it = d->mimeTypes.begin(); it != d->mimeTypes.end(); ++it )
 		g_mimeHandlers.remove( *it );
 
+	for( QStringList::iterator it = d->protocols.begin(); it != d->protocols.end(); ++it )
+		g_protocolHandlers.remove( *it );
+
 	delete d;
 }
 
-bool MimeTypeHandler::registerAsHandler( const QString &mimeType )
+bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
 {
 	if( g_mimeHandlers[ mimeType ] )
 	{
@@ -75,9 +80,29 @@ bool MimeTypeHandler::registerAsHandler( const QString &mimeType )
 	return true;
 }
 
+bool MimeTypeHandler::registerAsProtocolHandler( const QString &protocol )
+{
+	if( g_protocolHandlers[ protocol ] )
+	{
+		kdWarning(14010) << k_funcinfo << "Warning: Two protocol handlers attempting"
+			" to handle " << protocol << endl;
+		return false;
+	}
+
+	g_protocolHandlers.insert( protocol, this );
+	d->protocols.append( protocol );
+	kdDebug(14010) << k_funcinfo << "Mime type " << protocol << " registered" << endl;
+	return true;
+}
+
 const QStringList MimeTypeHandler::mimeTypes() const
 {
 	return d->mimeTypes;
+}
+
+const QStringList MimeTypeHandler::protocols() const
+{
+	return d->protocols;
 }
 
 bool MimeTypeHandler::canAcceptRemoteFiles() const
@@ -92,13 +117,30 @@ bool MimeTypeHandler::dispatchURL( const KURL &url )
 
 	QString type = KMimeType::findByURL( url )->name();
 
-	MimeTypeHandler *handler = g_mimeHandlers[ type ];
-	if( !handler )
-	{
-		kdDebug(14010) << "No mime type handler found for " << url.prettyURL() << " of type " << type << endl;
-		return false;
-	}
+	MimeTypeHandler *mimeHandler = g_mimeHandlers[ type ];
 
+	if( mimeHandler )
+	{
+		return dispatchToHandler( url, type, mimeHandler );
+	}
+	else
+	{
+		mimeHandler = g_protocolHandlers[ url.protocol() ];
+
+		if( mimeHandler )
+		{
+			return dispatchToHandler( url, QString::null, mimeHandler );
+		}
+		else
+		{
+			kdDebug(14010) << "No mime type handler can handle this URL: " << url.prettyURL() << endl;
+			return false;
+		}
+	}
+}
+
+bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeType, MimeTypeHandler *handler )
+{
 	if( !handler->canAcceptRemoteFiles() )
 	{
 		QString file;
@@ -124,14 +166,23 @@ bool MimeTypeHandler::dispatchURL( const KURL &url )
 			return false;
 		}
 
-		KURL dest; dest.setPath( file );
-		handler->handleURL( type, dest );
+		KURL dest;
+		dest.setPath( file );
+
+		if( !mimeType.isNull() )
+			handler->handleURL( mimeType, dest );
+		else
+			handler->handleURL( dest );
+
 		// for now, local-only handlers have to be synchronous
 		KIO::NetAccess::removeTempFile( file );
 	}
 	else
 	{
-		handler->handleURL( type, url );
+		if( !mimeType.isNull() )
+			handler->handleURL( mimeType, url );
+		else
+			handler->handleURL( url );
 	}
 
 	return true;
@@ -140,9 +191,9 @@ bool MimeTypeHandler::dispatchURL( const KURL &url )
 EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
  : MimeTypeHandler( false )
 {
-	registerAsHandler( QString::fromLatin1("application/x-kopete-emoticons") );
-	registerAsHandler( QString::fromLatin1("application/x-tgz") );
-	registerAsHandler( QString::fromLatin1("application/x-tbz") );
+	registerAsMimeHandler( QString::fromLatin1("application/x-kopete-emoticons") );
+	registerAsMimeHandler( QString::fromLatin1("application/x-tgz") );
+	registerAsMimeHandler( QString::fromLatin1("application/x-tbz") );
 }
 
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KURL &url ) const

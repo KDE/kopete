@@ -52,6 +52,11 @@ public:
 	const QStringList mimeTypes() const;
 
 	/**
+	 * Returns a list of protocols this object is registered to handle
+	 */
+	const QStringList protocols() const;
+
+	/**
 	 * Returns true if this handler can accept remote files direcltly;
 	 * If false, remote files are downloaded via KIO::NetAccess before
 	 * being passed to handleURL
@@ -59,12 +64,19 @@ public:
 	bool canAcceptRemoteFiles() const;
 
 	/**
+	 * Handles the URL @p url
+	 *
+	 * @param url The url to handle
+	 */
+	virtual void handleURL( const KURL &url ) const {};
+
+	/**
 	 * Handles the URL @p url, which has the mime type @p mimeType
 	 *
 	 * @param mimeType The mime type of the URL
 	 * @param url The url to handle
 	 */
-	virtual void handleURL( const QString &mimeType, const KURL &url ) const = 0;
+	virtual void handleURL( const QString &mimeType, const KURL &url ) const {};
 
 protected:
 	/**
@@ -73,9 +85,29 @@ protected:
 	 * @return true if registration succeeded, false if another handler is
 	 *         already set for this mime type.
 	 */
-	bool registerAsHandler( const QString &mimeType );
+	bool registerAsMimeHandler( const QString &mimeType );
+
+	/**
+	 * Register this object as the handler of type @p protocol.
+	 * @param protocol the protocol to handle
+	 * @return true if registration succeeded, false if another handler is
+	 *         already set for this protocol.
+	 */
+	bool registerAsProtocolHandler( const QString &protocol );
 
 private:
+	/**
+	 * Helper function.
+	 * Attempts to dispatch a given URL to a given handler
+	 *
+	 * @param url The url to dispatch
+	 * @param mimeType The mime type of the url
+	 * @param handler The handler to attempt
+	 *
+	 * @return true if a handler was able to process the URL, false otherwise
+	 */
+	static bool dispatchToHandler( const KURL &url, const QString &mimeType, MimeTypeHandler *handler );
+
 	class Private;
 	Private *d;
 };
