@@ -325,11 +325,13 @@ void ChatView::raise(bool activate)
 
 	//Will not activate window if user was typing
 	if(activate)
+	{
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 		KWin::setActiveWindow( m_mainWindow->winId() );
 #else
 		KWin::activateWindow( m_mainWindow->winId() );
 #endif
+	}
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
@@ -875,6 +877,10 @@ void ChatView::appendMessage(KopeteMessage &message)
 				setTabState( Changed );
 		}
 	}
+#if KDE_VERSION > KDE_MAKE_VERSION( 3, 1, 90 )
+	if((m_mainWindow != 0) && (m.direction() == KopeteMessage::Inbound))
+		KWin::demandAttention( m_mainWindow->winId() );
+#endif
 
 	if( !m_sendInProgress || message.from() != m_manager->user() )
 	{
@@ -994,11 +1000,12 @@ void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args
 
 void ChatView::sendInternalMessage(const QString &msg)
 {
-	                               //when closing kopete, some internal message may be send because some contact are deleted
-                                   //theses contact can already been deleted
+	// When closing kopete, some internal message may be sent because some contact are deleted
+	// these contacts can already be deleted
 	KopeteMessage m = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, msg, KopeteMessage::Internal);
-	//(in many case, this is useless to set myself as contact
-	//TODO: set the contact which initiate the internal messae, so we can later show a icon of it (for example, when he join a chat
+	// (in many case, this is useless to set myself as contact)
+	// TODO: set the contact which initiate the internal message,
+	// so we can later show a icon of it (for example, when he join a chat)
 	addChatMessage(m);
 }
 
