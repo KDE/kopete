@@ -17,7 +17,8 @@
 
 #include "kopeteprotocol.h"
 
-KopeteProtocol::KopeteProtocol()
+KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
+    : Plugin( parent, name )
 {
 }
 

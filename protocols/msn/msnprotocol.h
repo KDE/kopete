@@ -44,12 +44,12 @@ class StatusBarIcon;
 /**
  * @author duncan
  */
-class MSNProtocol : public QObject, public KopeteProtocol
+class MSNProtocol : public KopeteProtocol
 {
 	Q_OBJECT
 
 public:
-	MSNProtocol();
+	MSNProtocol( QObject *parent, const char *name, const QStringList &args );
 	~MSNProtocol();
 
 	static const MSNProtocol *protocol();
@@ -208,7 +208,7 @@ private slots:
 	 * Open the chat window for a specific user
 	 */
     void slotExecute( QString handle );
-		
+
 	/**
 	 * The group has successful renamed
 	 * groupName: is new new group name

@@ -49,37 +49,40 @@ class dlgJabberStatus;
 class StatusBarIcon;
 
 /**
- * @author Daniel Stone 
+ * @author Daniel Stone
  */
-class JabberProtocol:public QObject, public KopeteProtocol {
-  Q_OBJECT public:
-    JabberProtocol();
-    ~JabberProtocol();
+class JabberProtocol : public KopeteProtocol
+{
+	Q_OBJECT
 
-    void init();
-    bool unload();
+public:
+	JabberProtocol();
+	~JabberProtocol();
 
-    QString protocolIcon() const;
-    AddContactPage *createAddContactWidget(QWidget * parent);
+	void init();
+	bool unload();
+
+	QString protocolIcon() const;
+	AddContactPage *createAddContactWidget(QWidget * parent);
 
 	void Connect();
-    void Disconnect();
-   
+	void Disconnect();
+
 	bool isConnected() const;
-    bool isAway() const;
-    
+	bool isAway() const;
+
 	void setAway();
-    void setAvailable();
+	void setAvailable();
 
 	JabberContact *myself() { return myContact; }
-    
+
 	void removeUser(QString);
-    void renameContact(QString, QString, QString);
-    void moveUser(QString, QString, QString, JabberContact * contact);
-    void addContact(QString);
+	void renameContact(QString, QString, QString);
+	void moveUser(QString, QString, QString, JabberContact * contact);
+	void addContact(QString);
 	void registerUser();
 
-  public slots:
+public slots:
     void slotConnect();
     void slotDisconnect();
 	void slotConnected();

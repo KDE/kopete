@@ -36,7 +36,8 @@
 #include "statusbaricon.h"
 #include "dlgjabberstatus.h"
 
-JabberProtocol::JabberProtocol() : QObject(0, "JabberProtocol"), KopeteProtocol() {
+JabberProtocol::JabberProtocol() : KopeteProtocol( 0, "JabberProtocol" )
+{
     kdDebug() << "Jabber plugin: Loading ..." << endl;
 
     initIcons();

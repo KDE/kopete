@@ -36,9 +36,10 @@ class KSimpleConfig;
   *@author duncan
   */
 
-class IRCProtocol : public QObject, public KopeteProtocol
+class IRCProtocol : public KopeteProtocol
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
 	IRCProtocol();
 	~IRCProtocol();

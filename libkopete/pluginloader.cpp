@@ -12,6 +12,7 @@
 #include <plugin.h>
 #include <pluginloader.h>
 #include <kopete.h>
+#include <kparts/componentfactory.h>
 class KopeteLibraryInfo;
 
 bool operator ==(const KopeteLibraryInfo &a, const KopeteLibraryInfo &b)
@@ -175,16 +176,32 @@ bool LibraryLoader::loadSO(const QString &spec)
 			mLibHash.insert(spec, listitem);
 		}
 
-		void *create = listitem->library->symbol("create_plugin");
-		if (!create)
-			return false;
+#if KDE_VERSION < 305
+		// This code works with KDE 3.0.x, but will generate a warning on
+		// stderr if the symbol is not found. For later KDE versions use
+		// the new hasSymbol() method instead
+		if( listitem->library->symbol( "create_plugin" ) == 0 &&
+			listitem->library->factory() )
+#else
+		if( !listitem->library->hasSymbol( "create_plugin" ) &&
+			listitem->library->factory() )
+#endif
+		{
+			listitem->plugin =
+				KParts::ComponentFactory::createInstanceFromFactory<Plugin>
+				( listitem->library->factory(), 0L /* FIXME: parent object */ );
+		}
+		else
+		{
+			kdDebug() << "LibraryLoader::loadSO old plugin" << endl;
+			void *create = listitem->library->symbol("create_plugin");
+			Plugin* (*plugInStart)();
+			plugInStart = (Plugin* (*)()) create;
+			listitem->plugin = plugInStart();
+		}
 
-		Plugin* (*plugInStart)();
-		plugInStart = (Plugin* (*)()) create;
-		listitem->plugin = plugInStart();
-
-		//if (getInfo(spec).type=="playlist")
-		//	mPlaylist=listitem->plugin->playlist();
+		// Automatically load the i18n catalogue for the plugin
+		KGlobal::locale()->insertCatalogue( info.filename );
 
 		listitem->plugin->init();
 		kdDebug() << "[LibraryLoader] loadSO(), loading " << spec << " successful"<< endl;
@@ -288,7 +305,7 @@ void LibraryLoader::removeNow(const QString &spec)
 				removeNow((*i).specfile);
 		}
 	}
-	
+
 	PluginLibrary *lib=mLibHash[spec];
 
 	if (!lib)
@@ -300,7 +317,7 @@ void LibraryLoader::removeNow(const QString &spec)
 
 	delete lib->plugin;
 	lib->plugin=0;
-	
+
 	mLibHash.remove(spec);
 //	delete lib->library;
 //	delete lib;

@@ -31,7 +31,7 @@ class QString;
 class KopeteProtocol : public Plugin
 {
 public:
-	KopeteProtocol();
+	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);
 	virtual ~KopeteProtocol();
 
 	/**

@@ -39,7 +39,13 @@
 #include "newuserimpl.h"
 #include "statusbaricon.h"
 
-MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
+#include <kgenericfactory.h>
+
+K_EXPORT_COMPONENT_FACTORY( kopete_msn, KGenericFactory<MSNProtocol> );
+
+MSNProtocol::MSNProtocol( QObject *parent, const char *name,
+	const QStringList & /* args */ )
+: KopeteProtocol( parent, name )
 {
 	if( s_protocol )
 		kdDebug() << "MSNProtocol::MSNProtocol: WARNING: s_protocol already defined!" << endl;
@@ -842,7 +848,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 /*
 			// Contact is removed from the reverse list
 			// only MSN can do this, so this is currently not supported
-			
+
 			InfoWidget *info = new InfoWidget(0);
 			info->title->setText("<b>" + i18n( "Contact removed!" ) +"</b>" );
 			QString dummy;
