@@ -23,3 +23,5 @@ CLEANFILES = securestream.moc
 securestream.moc: $(srcdir)/securestream.cpp $(srcdir)/securestream.h
 	${MOC} $(srcdir)/securestream.h > $@
 	${MOC} $(srcdir)/securestream.cpp >> $@
+
+KDE_OPTIONS = nofinal

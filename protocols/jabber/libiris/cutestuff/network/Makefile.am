@@ -11,3 +11,6 @@ libcutestuff_network_la_SOURCES = \
 	servsock.cpp \
 	socks.cpp \
 	srvresolver.cpp
+
+KDE_OPTIONS = nofinal
+

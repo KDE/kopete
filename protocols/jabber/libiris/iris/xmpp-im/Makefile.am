@@ -14,3 +14,6 @@ CLEANFILES = types.moc
 types.lo: types.moc
 types.moc: $(top_builddir)/kopete/protocols/jabber/libiris/iris/xmpp-im/Makefile
 	${MOC} -o types.moc $(srcdir)/../xmpp-im/types.cpp
+
+KDE_OPTIONS = nofinal
+
