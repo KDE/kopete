@@ -1,12 +1,13 @@
 /*
     msnsocket.cpp - Base class for the sockets used in MSN
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
-              (c) 2001 by Olaf Lueg              <olueg@olsd.de>
+              (c) 2001      by Olaf Lueg              <olueg@olsd.de>
 
     *************************************************************************
     *                                                                       *
@@ -182,7 +183,8 @@ void MSNSocket::slotDataReceived()
 	if ( avail == -1 )
 	{
 		// error!
-		kdWarning( 14140 ) << "MSNSocket::slotDataReceived: bytesAvailable() returned -1. Are we disconnected?" << endl;
+		kdWarning( 14140 ) << k_funcinfo << "bytesAvailable() returned -1. This should not happen!" << endl
+			<< "Are we disconnected? Backtrace:" << endl << kdBacktrace() << endl;
 		return;
 	}
 
@@ -606,10 +608,6 @@ QString MSNSocket::getLocalIP()
 	return ip;
 }
 
-
-
-
-
 MSNSocket::Buffer::Buffer(unsigned int sz) : QByteArray(sz) {}
 
 MSNSocket::Buffer::~Buffer() {}
@@ -650,4 +648,5 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 
 #include "msnsocket.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:
 
