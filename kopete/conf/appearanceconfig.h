@@ -61,6 +61,7 @@ private slots:
 	void slotUseEmoticonsChanged(bool);
 	void slotConfigChanged(void);
 	void slotTransparancyChanged(bool);
+	void slotCTransparancyChanged(bool);
 
 private:
 	KTabCtl* mAppearanceTab;
@@ -105,6 +106,12 @@ private:
 	KColorCombo *mTransparancyColor;
 	QCheckBox *mTransparancyEnabled;
 	QSlider *mTransparancyValue;
+	QCheckBox *mBgOverride;
+	
+	QVGroupBox *mCTransparancyGroupBox;
+	KColorCombo *mCTransparancyColor;
+	QCheckBox *mCTransparancyEnabled;
+	QSlider *mCTransparancyValue;
 	
 	// Widgets for Emoticon TAB
 	QFrame* mEmoticonsTab;

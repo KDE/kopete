@@ -121,6 +121,23 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	QSpacerItem* spacer2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 	contactListLayout->addItem( spacer2 );
+	
+	/*mCTransparancyGroupBox = new QVGroupBox( i18n("Contact List Translucency"), mContactListTab );
+		
+	mCTransparancyEnabled = new QCheckBox ( i18n("Enable Translucency"), mCTransparancyGroupBox );
+	QObject::connect( mCTransparancyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotCTransparancyChanged( bool )));
+	
+	new QLabel( i18n( "Tint Color:"), mCTransparancyGroupBox );
+	mCTransparancyColor = new KColorCombo(mCTransparancyGroupBox);
+	
+	new QLabel( i18n( "Translucency:"), mCTransparancyGroupBox );
+	mCTransparancyValue = new QSlider ( 0, 100, 1, 50, Qt::Horizontal, mCTransparancyGroupBox);
+	mCTransparancyValue->setTickmarks( QSlider::Below );
+	mCTransparancyValue->setTickInterval( 50 );
+	
+	contactListLayout->addWidget( mCTransparancyGroupBox );
+	
+	generalLayout->addWidget( mCTransparancyGroupBox );*/
 
 	mAppearanceTab->addTab( mContactListTab, i18n("Contact &List") );
 	/* ============================================================== */
@@ -166,12 +183,16 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mTransparancyEnabled = new QCheckBox ( i18n("Enable Translucency"), mTransparancyGroupBox );
 	QObject::connect( mTransparancyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotTransparancyChanged( bool )));
 	
+	mBgOverride = new QCheckBox ( i18n("Don't show user specified background color"), mTransparancyGroupBox );
+	QObject::connect( mTransparancyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotTransparancyChanged( bool )));
+	
 	new QLabel( i18n( "Tint Color:"), mTransparancyGroupBox );
 	mTransparancyColor = new KColorCombo(mTransparancyGroupBox);
 	
 	new QLabel( i18n( "Translucency:"), mTransparancyGroupBox );
 	mTransparancyValue = new QSlider ( 0, 100, 1, 50, Qt::Horizontal, mTransparancyGroupBox);
-	mTransparancyValue->setTickmarks( QSlider::NoMarks );
+	mTransparancyValue->setTickmarks( QSlider::Below );
+	mTransparancyValue->setTickInterval( 50 );
 
 	generalLayout->addWidget( mTransparancyGroupBox );
 	
@@ -231,7 +252,12 @@ void AppearanceConfig::save()
 	p->setTransparancyColor( mTransparancyColor->color() );
 	p->setTransparancyEnabled( mTransparancyEnabled->isChecked() );
 	p->setTransparancyValue( mTransparancyValue->value() );
-
+	/*p->setCTransparancyColor( mCTransparancyColor->color() );
+	p->setCTransparancyEnabled( mCTransparancyEnabled->isChecked() );
+	p->setCTransparancyValue( mCTransparancyValue->value() );*/
+	
+	p->setBgOverride( mBgOverride->isChecked() );
+	
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	kdDebug(14000) << "[AppearanceConfig] calling KopetePrefs::save()" << endl;
 	p->save();
@@ -317,6 +343,10 @@ void AppearanceConfig::reopen()
 	mTransparancyEnabled->setChecked( p->transparancyEnabled() );
 	mTransparancyColor->setColor( p->transparancyColor() );
 	mTransparancyValue->setValue( p->transparancyValue() );
+	/*mCTransparancyEnabled->setChecked( p->ctransparancyEnabled() );
+	mCTransparancyColor->setColor( p->ctransparancyColor() );
+	mCTransparancyValue->setValue( p->ctransparancyValue() );*/
+	mBgOverride->setChecked( p->bgOverride() );
 }
 
 void AppearanceConfig::slotConfigSound()
@@ -353,11 +383,18 @@ void AppearanceConfig::slotTransparancyChanged ( bool checked )
 {
 	mTransparancyColor->setEnabled( checked );
 	mTransparancyValue->setEnabled( checked );
+	mBgOverride->setEnabled( checked );
+}
+
+void AppearanceConfig::slotCTransparancyChanged ( bool checked )
+{
+	mCTransparancyColor->setEnabled( checked );
+	mCTransparancyValue->setEnabled( checked );
 }
 
 void AppearanceConfig::slotSelectKind(int k)
 {
-	if(k>0)
+	if(k > 0)
 	{
 		QString model = KopeteChatWindow::KindMessagesHTML(k-1);
 		mPrfsChatWindow->mle_codehtml->setText( model );

@@ -23,6 +23,7 @@
 #include "kopetemessage.h"
 #include "kopeteemoticons.h"
 #include "kopetemetacontact.h"
+#include "kopeteprefs.h"
 
 KopeteMessage::KopeteMessage()
 {
@@ -61,6 +62,11 @@ KopeteMessage::KopeteMessage(QDateTime timeStamp,
 	init(timeStamp, fromKC, toKC, body, subject, direction, f);
 }
 
+void KopeteMessage::setBgOverride( bool enabled )
+{
+	mBgOverride = enabled;
+}
+
 void KopeteMessage::setFg(QColor color)
 {
 	mFg = color;
@@ -97,6 +103,7 @@ void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 	mBg = QColor();
 	mFont = QFont();
 	setBody( body, f );
+	mBgOverride = false;
 }
 
 
@@ -211,7 +218,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 
 				case 'b':   //BgColor
-					if ( mBg.isValid() )
+					if ( mBg.isValid() && !mBgOverride )
 						message += "bgcolor=\"" + mBg.name() + "\"";
 					break;
 

@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qfont.h>
 #include <qcolor.h>
+#include <qobject.h>
 
 #include "kopetecontact.h"
 #include "qptrlist.h"
@@ -35,6 +36,7 @@ typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 class KopeteMessage
 {
+
 public:
 	/**
 		Direction of a message. Inbound is from the chat partner, Outbound is
@@ -218,6 +220,8 @@ public:
 	QString asHTML() const;
 	
 	QString transformMessage( const QString &model ) const;
+	
+	void setBgOverride( bool enable );
 
 protected:
 	// Helper for constructors
@@ -244,6 +248,8 @@ protected:
 	MessageDirection mDirection;
 	/** The message format */
 	MessageFormat mFormat;
+	
+	bool mBgOverride;
 
 public:
 	/**
@@ -253,6 +259,7 @@ public:
 	 * and uses HTML parser.
 	 **/
 	static QString parseHTML( QString message, bool parseURLs = true );
+	
 };
 
 #endif
