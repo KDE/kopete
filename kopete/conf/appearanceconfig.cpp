@@ -77,6 +77,9 @@
 #include "kopeteawayconfigui.h"
 #include "styleeditdialog.h"
 
+
+#include <qtabwidget.h>
+
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
 		i18n("Behaviour"),
@@ -85,7 +88,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 		parent )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	KTabCtl *mAppearanceTabCtl = new KTabCtl(this);
+	QTabWidget *mAppearanceTabCtl = new QTabWidget(this,"mAppearanceTabCtl");
 
 	editedItem = 0L;
 

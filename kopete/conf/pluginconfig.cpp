@@ -23,12 +23,12 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qtabwidget.h>
 
 #include <kdialog.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <ktabctl.h>
 
 #include "pluginconfig.h"
 
@@ -106,8 +106,8 @@ PluginConfig::PluginConfig( QObject *_parent )
 : ConfigModule( i18n( "Plugins" ), i18n( "Here You Can Manage Your Plugins" ),
 	"input_devices_settings", _parent )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	KTabCtl *tabControl = new KTabCtl( this );
+	(new QVBoxLayout(this))->setAutoAdd(true);
+	QTabWidget *tabControl = new QTabWidget(this,"tabControl");
 
 	QFrame *protocolTab = new QFrame( tabControl );
 	( new QVBoxLayout( protocolTab, KDialog::marginHint(),
