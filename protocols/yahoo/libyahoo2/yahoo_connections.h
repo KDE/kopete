@@ -27,6 +27,7 @@
 void add_to_list(struct yahoo_data *yd, int fd);
 void del_from_list(struct yahoo_data *yd);
 void del_from_list_by_fd(int fd);
+int yahoo_connect(char * host, int port);
 
 struct yahoo_data * find_conn_by_id(int id);
 struct yahoo_data * find_conn_by_fd(int fd);
