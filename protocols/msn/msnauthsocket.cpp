@@ -80,7 +80,7 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id,
 	}
 	else
 	{
-		kdDebug() << "MSNAuthSocket::parseCommand: Unexpected response '"
+		kdDebug() << "MSNAuthSocket::parseCommand: Unimplemented command '"
 			<< cmd << " " << id << " " << data << "' from server!" << endl;
 	}
 }
