@@ -1,0 +1,11 @@
+KopeteMessageManager should allow any number of views to be attached, from 0
+to infinity.
+
+The chat window should be restructured so each ChatView object has its own
+send button.
+
+KopeteMessage should be reorganised to use QDomDocument to store its
+contents.
+
+Some sort of async message processing API needs to be designed and implemented
+- how do we order the various message filters available properly?
