@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ("Nick Betcher", "core developer, fastest plugin developer on earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 	aboutData.addAuthor ("Ryan Cumming", "core developer","bodnar42@phalynx.dhs.org");
     aboutData.addAuthor ("Stefan Gehn", "cleanups, features and bugfixes","sgehn@gmx.net");
+    aboutData.addAuthor ("Martijn Klingens", "Patches, bugfixes","klingens@kde.org");
 
 	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
 	aboutData.addCredit("Olaf Lueg", I18N_NOOP("Kmerlin MSN Code"));
