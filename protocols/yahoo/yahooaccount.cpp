@@ -171,127 +171,137 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 	if ( sct == MakeConnections )
 	{
 		QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
-				this, SLOT(slotLoginResponse(int, const QString &)) );
-
+		                 this, SLOT(slotLoginResponse(int, const QString &)) );
+		
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
-				this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-
+		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+		
 		QObject::connect(m_session, SIGNAL( buddyListFetched( int ) ),
-				this, SLOT(slotBuddyListFetched( int ) ) );
-
+		                 this, SLOT(slotBuddyListFetched( int ) ) );
+		
 		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
-				this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
-
+		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+		
 		QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
-				this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
-
-		QObject::connect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&,
-				const QStringList&)), this,
-				SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
-
-		QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this,
-				SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
-
+		                 this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+		
+		QObject::connect(m_session, SIGNAL( gotConfInvite( const QString&, const QString&,
+		                                                   const QString&, const QStringList&) ),
+		                 this,
+		                 SLOT( slotGotConfInvite( const QString&, const QString&,
+		                                          const QString&, const QStringList& ) ) );
+		
+		QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)),
+		                 this,
+		                 SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
+		
 		QObject::connect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
-				SLOT(slotConfUserJoin( const QString &, const QString &)) );
-
+		                 SLOT(slotConfUserJoin( const QString &, const QString &)) );
+		
 		QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
-				SLOT(slotConfUserLeave( const QString &, const QString &)) );
-
+		                 SLOT(slotConfUserLeave( const QString &, const QString &)) );
+		
 		QObject::connect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
-				SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
-
+		                 SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+		
 		QObject::connect(m_session,
-				SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
-				this,
-				SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
-
+		                 SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
+		                 this,
+		                 SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
+		
 		QObject::connect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
-				SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
-
+		                 SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
+		
 		QObject::connect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
-				SLOT(slotRejected(const QString&, const QString&)));
-
+		                 SLOT(slotRejected(const QString&, const QString&)));
+		
 		QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
-				SLOT(slotTypingNotify(const QString &, int)));
-
+		                 SLOT(slotTypingNotify(const QString &, int)));
+		
 		QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-				SLOT(slotGameNotify( const QString &, int)));
-
+		                 SLOT(slotGameNotify( const QString &, int)));
+		
 		QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
-				SLOT(slotMailNotify(const QString &, const QString&, int)));
-
+		                 SLOT(slotMailNotify(const QString &, const QString&, int)));
+		
 		QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this,
-				SLOT(slotSystemMessage(const QString &)));
-
+		                 SLOT(slotSystemMessage(const QString &)));
+		
 		QObject::connect(m_session, SIGNAL(error(const QString&, int)), this,
-				SLOT(slotError(const QString &, int )));
-
+		                 SLOT(slotError(const QString &, int )));
+		
 		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-				SLOT(slotGotIdentities( const QStringList&)));
+		                 SLOT(slotGotIdentities( const QStringList&)));
 	}
 
 	if ( sct == DeleteConnections )
 	{
 		QObject::disconnect(m_session, SIGNAL(loginResponse(int, const QString &)),
-				this, SLOT(slotLoginResponse(int, const QString &)) );
-
+		                    this, SLOT(slotLoginResponse(int, const QString &)) );
+		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
-				this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-
+		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+		
 		QObject::disconnect(m_session, SIGNAL( buddyListFetched( int ) ),
-					this, SLOT(slotBuddyListFetched( int ) ) );
-
+		                    this, SLOT(slotBuddyListFetched( int ) ) );
+		
 		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
-				this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
-
+		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+		
 		QObject::disconnect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
-				this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
-
-		QObject::disconnect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&,
-				const QStringList&)), this,
-				SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
-
-		QObject::disconnect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this,
-				SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
-
-		QObject::disconnect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
-				SLOT(slotConfUserJoin( const QString &, const QString &)) );
-
-		QObject::disconnect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
-				SLOT(slotConfUserLeave( const QString &, const QString &)) );
-
-		QObject::disconnect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
-				SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
-
+		                    this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+		
 		QObject::disconnect(m_session,
-				SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
-				this,
-				SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
-
+		                    SIGNAL( gotConfInvite( const QString&, const QString&,
+		                                           const QString&, const QStringList&) ),
+		                    this, 
+		                    SLOT( slotGotConfInvite( const QString&, const QString&,
+		                                             const QString&, const QStringList&) ) );
+		
+		QObject::disconnect(m_session,
+		                    SIGNAL(confUserDecline(const QString&, const QString &, const QString &)),
+		                    this,
+		                    SLOT(slotConfUserDecline( const QString &, const QString &, const QString& ) ) );
+		
+		QObject::disconnect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)),
+		                    this, SLOT(slotConfUserJoin( const QString &, const QString &)) );
+		
+		QObject::disconnect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)),
+		                    this, SLOT(slotConfUserLeave( const QString &, const QString &)) );
+		
+		QObject::disconnect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
+		                    SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+		
+		QObject::disconnect(m_session,
+		                    SIGNAL(gotFile(const QString &, const QString &,
+		                                   long, const QString &, const QString &, unsigned long)),
+		                    this,
+		                    SLOT(slotGotFile(const QString&, const QString&,
+		                                     long, const QString&, const QString&, unsigned long)));
+		
 		QObject::disconnect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
-				SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
-
+		                    SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
+		
 		QObject::disconnect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
-				SLOT(slotRejected(const QString&, const QString&)));
-
+		                    SLOT(slotRejected(const QString&, const QString&)));
+		
 		QObject::disconnect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
-				SLOT(slotTypingNotify(const QString &, int)));
-
+		                    SLOT(slotTypingNotify(const QString &, int)));
+		
 		QObject::disconnect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-				SLOT(slotGameNotify( const QString &, int)));
-
+		                    SLOT(slotGameNotify( const QString &, int)));
+		
 		QObject::disconnect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
-				SLOT(slotMailNotify(const QString &, const QString&, int)));
-
+		                    SLOT(slotMailNotify(const QString &, const QString&, int)));
+		
 		QObject::disconnect(m_session, SIGNAL(systemMessage(const QString&)), this,
-				SLOT(slotSystemMessage(const QString &)));
-
+		                    SLOT(slotSystemMessage(const QString &)));
+		
 		QObject::disconnect(m_session, SIGNAL(error(const QString&, int)), this,
-				SLOT(slotError(const QString &, int )));
-
+		                    SLOT(slotError(const QString &, int )));
+		
 		QObject::disconnect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-				SLOT(slotGotIdentities( const QStringList&)));
+		                    SLOT(slotGotIdentities( const QStringList&)));
 	}
 }
 
@@ -412,60 +422,61 @@ KActionMenu *YahooAccount::actionMenu()
 	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
 
 	KActionMenu *theActionMenu = new KActionMenu( myself()->displayName(), myself()->onlineStatus().iconFor(this), this );
-	theActionMenu->popupMenu()->insertTitle( myself()->icon(), "Yahoo (" + myself()->displayName() + ")");
+	theActionMenu->popupMenu()->insertTitle( myself()->icon(),
+	                                         "Yahoo (" + myself()->displayName() + ")");
 
 	theActionMenu->insert(new KAction(i18n( "Online" ),
-		m_protocol->Online.iconFor(this), 0, this, SLOT(slotGoOnline()),
-		this, "actionYahooGoOnline"));
-
+	                                  m_protocol->Online.iconFor(this), 0, this, SLOT(slotGoOnline()),
+	                                  this, "actionYahooGoOnline"));
+	
 	theActionMenu->insert(new KAction(i18n( "Be Right Back" ),
-		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus001()),
-		this, "actionYahooGoStatus001"));
-
+	                                  m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus001()),
+	                                  this, "actionYahooGoStatus001"));
+	
 	theActionMenu->insert(new KAction(i18n( "Busy" ),
-		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus002()),
-		this, "actionYahooGoStatus002"));
-
+	                                  m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus002()),
+	                                  this, "actionYahooGoStatus002"));
+	
 	theActionMenu->insert(new KAction(i18n( "Not at Home" ),
-		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus003()),
-		this, "actionYahooGoStatus003"));
-
+	                                  m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus003()),
+	                                  this, "actionYahooGoStatus003"));
+	
 	theActionMenu->insert(new KAction( i18n( "Not at My Desk" ),
-		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus004()),
-		this, "actionYahooGoStatus004"));
-
+	                                   m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus004()),
+	                                   this, "actionYahooGoStatus004"));
+	
 	theActionMenu->insert(new KAction( i18n( "Not in The Office"),
-		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus005()),
-		this, "actionYahooGoStatus005"));
-
+	                                   m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus005()),
+	                                   this, "actionYahooGoStatus005"));
+	
 	theActionMenu->insert(new KAction( i18n( "On The Phone" ),
-		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus006()),
-		this, "actionYahooGoStatus006"));
-
+	                                   m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus006()),
+	                                   this, "actionYahooGoStatus006"));
+	
 	theActionMenu->insert(new KAction( i18n( "On Vacation" ),
-		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus007()),
-		this, "actionYahooGoStatus007"));
-
+	                                   m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus007()),
+	                                   this, "actionYahooGoStatus007"));
+	
 	theActionMenu->insert(new KAction( i18n( "Out to Lunch" ),
-		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus008()),
-		this, "actionYahooGoStatus008"));
-
+	                                   m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus008()),
+	                                   this, "actionYahooGoStatus008"));
+	
 	theActionMenu->insert(new KAction( i18n( "Stepped Out" ),
-		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus009()),
-		this, "actionYahooGoStatus009"));
-
+	                                   m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus009()),
+	                                   this, "actionYahooGoStatus009"));
+	
 	theActionMenu->insert(new KAction( i18n( "Invisible" ),
-		 m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus012()),
-		 this, "actionYahooGoStatus012"));
-
+	                                   m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus012()),
+	                                   this, "actionYahooGoStatus012"));
+	
 	theActionMenu->insert(new KAction( i18n( "Custom" ), 
-		m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus099()),
-		this, "actionYahooGoStatus099"));
-
+	                                   m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus099()),
+	                                   this, "actionYahooGoStatus099"));
+	
 	theActionMenu->insert(new KAction(i18n( "Offline" ),
-		m_protocol->Offline.iconFor(this), 0, this, SLOT(slotGoOffline()),
-		this, "actionYahooGoOffline"));
-
+	                                  m_protocol->Offline.iconFor(this), 0, this, SLOT(slotGoOffline()),
+	                                  this, "actionYahooGoOffline"));
+	
 	return theActionMenu;
 }
 
@@ -489,7 +500,8 @@ bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *
 		// How on earth do you tell if a contact is being deserialised or added brand new here?
 			// -- actualy (oct 2004) this method is only called when new contact are added.  but this will
 			//    maybe change and you will be noticed   --Olivier
-		YahooContact *newContact = new YahooContact( this, contactId, parentContact->displayName(), parentContact );
+		YahooContact *newContact = new YahooContact( this, contactId, 
+		                                             parentContact->displayName(), parentContact );
 		return newContact != 0;
 	}
 	else
@@ -709,14 +721,14 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
 		KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_mail",
-			i18n( "You have one unread message in your Yahoo inbox.",
-			"You have %n unread messages in your Yahoo inbox.", cnt ));
+		                      i18n( "You have one unread message in your Yahoo inbox.",
+		                            "You have %n unread messages in your Yahoo inbox.", cnt ));
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kdDebug(14180) << k_funcinfo << "attempting to trigger event" << endl;
 		KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_mail",
-			i18n( "You have a message from %1 in your Yahoo inbox.").arg(from));
+		                      i18n( "You have a message from %1 in your Yahoo inbox.").arg(from));
 		m_currentMailCount = cnt;
 	}
 }
@@ -741,12 +753,21 @@ void YahooAccount::slotRemoveHandler( int /* fd */ )
 
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
-	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
+	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
+	     status.status() == Kopete::OnlineStatus::Online )
+	{
 		connect( status );
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
+	}
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+	          status.status() == Kopete::OnlineStatus::Offline )
+	{
 		disconnect();
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
+	}
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+	          status.status() == Kopete::OnlineStatus::Away )
+	{
 		slotGoStatus( status.internalStatus(), reason );
+	}
 }
 
 #include "yahooaccount.moc"
