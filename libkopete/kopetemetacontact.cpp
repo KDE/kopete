@@ -142,15 +142,14 @@ void KopeteMetaContact::updateOnlineStatus()
 	KopeteOnlineStatus::OnlineStatus newStatus = KopeteOnlineStatus::Unknown;
 	KopeteOnlineStatus mostSignificantStatus;
 
-	QPtrListIterator<KopeteContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	for ( QPtrListIterator<KopeteContact> it( d->contacts ); it.current(); ++it )
 	{
 		// find most significant status
 		if ( it.current()->onlineStatus() > mostSignificantStatus )
 			mostSignificantStatus = it.current()->onlineStatus();
 	}
 
-	newStatus = (KopeteOnlineStatus::OnlineStatus) mostSignificantStatus.status();
+	newStatus = KopeteOnlineStatus::OnlineStatus( mostSignificantStatus.status() );
 
 	if( newStatus != d->onlineStatus )
 	{
