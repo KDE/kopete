@@ -22,10 +22,12 @@
 
 // Qt
 #include <qobject.h>
+#include <qmap.h>
 
 // Kopete
 #include "kopeteaccount.h"
 #include "kopeteawaydialog.h"
+#include "yahooconferencemessagemanager.h"
 
 // Local
 #include "yahooprotocol.h"
@@ -161,6 +163,11 @@ private:
 	 * This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	 */
 	QMap<QString, QPair<QString, QString> > IDs;
+
+	/**
+	 * Conferences list, maped by room name (id)
+	 */
+	QMap<QString, YahooConferenceMessageManager *> m_conferences;
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
