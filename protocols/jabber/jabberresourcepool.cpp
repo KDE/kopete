@@ -236,6 +236,23 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid )
 
 	// FIXME: the code below would be more efficient if it would cache results
 
+	// check if the JID already carries a resource, then we will have to use that one
+	if ( !jid.resource().isEmpty () )
+	{
+		// we are subscribed to a JID, find the according resource in the pool
+		for ( JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next () )
+		{
+			if ( ( mResource->jid().userHost().lower () == jid.userHost().lower () ) && ( mResource->resource().name () == jid.resource () ) )
+			{
+				return mResource->resource ();
+			}
+		}
+
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: No resource found in pool, returning as offline." << endl;
+
+		return EmptyResource;
+	}
+
 	// if we are locked to a certain resource, always return that one
 	const XMPP::Resource &mResource = lockedResource ( jid );
 	if ( !mResource.name().isEmpty() )
