@@ -87,6 +87,11 @@ private slots:
 	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 		const QPoint &p );
 
+	/**
+	 * Show the Add Contact wizard
+	 */
+	void showAddContactDialog();
+
 public:
 	KopeteContactListView *contactlist;
 

@@ -11,7 +11,7 @@ noinst_HEADERS = configmodule.h \
 
 libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp \
-	addwizardui.ui addwizardimpl.cpp protocolboxitem.cpp \
+	protocolboxitem.cpp \
 	addcontactpage.cpp systemtray.cpp \
 	kopeteballoon.cpp \
 	kopetehistorydialog.cpp \

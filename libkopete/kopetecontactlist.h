@@ -133,12 +133,6 @@ public:
 	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
 
 public slots:
-	/**
-	 * Show the 'Add contact' dialog.
-	 * This is a slot, so it can be directly called from e.g. a KAction.
-	 */
-	void showAddContactDialog();
-
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 	/**

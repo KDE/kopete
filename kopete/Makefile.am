@@ -1,13 +1,15 @@
 INCLUDES = -I$(top_srcdir)/kopete/libkopete \
 	-I$(top_srcdir)/kopete/libkopete/ui \
 	-I$(srcdir)/conf \
+	-I$(srcdir)/addcontactwizard \
+	-I./addcontactwizard \
 	-I../libkopete/ui \
 	$(all_includes)
 
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = conf
+SUBDIRS = conf addcontactwizard
 
 noinst_HEADERS = \
 	kopetewindow.h kopete.h \
@@ -21,7 +23,8 @@ kopete_SOURCES = main.cpp \
 	statusbaricon.cpp
 
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la
+kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
+	addcontactwizard/libkopeteaddcontactwizard.la
 
 icondir = $(kde_datadir)/kopete/pics
 icon_DATA =

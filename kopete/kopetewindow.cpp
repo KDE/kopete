@@ -36,6 +36,7 @@
 #include <kstatusbar.h>
 #include <kwin.h>
 
+#include "addcontactwizard.h"
 #include "kopeteballoon.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
@@ -91,7 +92,7 @@ void KopeteWindow::initView ( void )
 void KopeteWindow::initActions ( void )
 {
 	actionAddContact = new KAction( i18n( "&Add Contact..." ), "bookmark_add",
-		0, KopeteContactList::contactList(), SLOT( showAddContactDialog() ),
+		0, this, SLOT( showAddContactDialog() ),
 		actionCollection(), "AddContact" );
 
 	actionConnect = new KAction( i18n( "&Connect All" ), "connect_creating",
@@ -454,6 +455,11 @@ void KopeteWindow::slotShowPreferencesDialog()
 	// exit, but the KJanusWidget can't handle it properly and will cause
 	// crashes.
 	PreferencesDialog::preferencesDialog()->show();
+}
+
+void KopeteWindow::showAddContactDialog()
+{
+	( new AddContactWizard( qApp->mainWidget() ) )->show();
 }
 
 #include "kopetewindow.moc"

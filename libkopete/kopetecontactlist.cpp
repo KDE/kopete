@@ -29,7 +29,6 @@
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 
-#include "addwizardimpl.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
@@ -66,11 +65,6 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	}
 	// kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
 	return 0L;
-}
-
-void KopeteContactList::showAddContactDialog()
-{
-	( new AddWizardImpl( qApp->mainWidget() ) )->show();
 }
 
 void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
@@ -336,7 +330,7 @@ QStringList KopeteContactList::contactFileProtocols(QString displayName)
 			return protocols;
 		}
 	}
-	return;
+	return QStringList();
 }
 
 
