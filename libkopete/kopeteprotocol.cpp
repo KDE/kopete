@@ -19,6 +19,7 @@
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
+#include "kopete.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : Plugin( parent, name )
@@ -29,7 +30,7 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 KopeteContact* KopeteProtocol::createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData )
 {
 	KopeteContact *kc;
-	kc = new KopeteContact( parent );
+	kc = new KopeteContact( kapp );
 	kc->setId( Id );
 	return kc;
 }
