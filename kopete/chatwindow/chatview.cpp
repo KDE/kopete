@@ -440,14 +440,11 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 
 void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point )
 {
-	if( item )
-	{
-		KopeteContactLVI *contactLVI = dynamic_cast<KopeteContactLVI*>( item );
-		if (contactLVI) {
-			KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu();
-			p->exec( point );
-			delete p;
-		}
+	KopeteContactLVI *contactLVI = dynamic_cast<KopeteContactLVI*>( item );
+	if (contactLVI) {
+		KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu();
+		p->exec( point );
+		delete p;
 	}
 }
 
