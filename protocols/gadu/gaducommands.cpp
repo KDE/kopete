@@ -29,6 +29,7 @@
 #include <qsocketnotifier.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
+#include <qimage.h>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -92,6 +93,17 @@ GaduCommand::disableNotifiers()
 }
 
 void
+GaduCommand::deleteNotifiers()
+{
+	if ( read_ ) {
+		delete read_;
+	}
+	if ( write_ ) {
+		delete write_;
+	}
+}
+
+void
 GaduCommand::forwarder()
 {
 	emit socketReady();
@@ -99,13 +111,13 @@ GaduCommand::forwarder()
 
 
 RegisterCommand::RegisterCommand( QObject* parent, const char* name )
-:GaduCommand( parent, name ), session_( 0 )
+:GaduCommand( parent, name ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken )
 {
 	uin = 0;
 }
 
 RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent, const char* name )
-:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 )
+:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken )
 {
 	uin = 0;
 }
@@ -118,6 +130,28 @@ unsigned int RegisterCommand::newUin()
 
 RegisterCommand::~RegisterCommand()
 {
+	if ( tokenImg ) {
+		delete tokenImg;
+	}
+}
+
+void
+RegisterCommand::requestToken()
+{
+	kdDebug( 14100 ) << "requestToken Initialisation" << endl;
+
+	state = RegisterStateWaitingForToken;
+
+	if ( !( session_ = gg_token( 1 ) ) ) {
+		emit error("tokenB0rked", "tokenB0rked");
+		state = RegisterStateNoToken;
+		return;
+	}
+
+	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
+	checkSocket( session_->fd, session_->check );
+
+	return;
 }
 
 void
@@ -130,6 +164,11 @@ RegisterCommand::setUserinfo( const QString& email, const QString& password )
 void
 RegisterCommand::execute()
 {
+	if ( tokenImg == NULL ) {
+		// get token first
+		return;
+	}
+
 	session_ = gg_register( email_.ascii(), password_.ascii(), 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
@@ -140,58 +179,110 @@ void RegisterCommand::watcher()
 	disableNotifiers();
 	gg_pubdir* gg_pub;
 
-	if ( gg_register_watch_fd( session_ ) == -1 ) {
-		gg_free_register( session_ );
-		emit error( i18n( "Connection Error" ),
-				i18n( "Unknown connection error while registering" ) );
-		done_ = true;
-		deleteLater();
+	kdDebug( 14100 ) << "4" << endl;
+	if ( state == RegisterStateWaitingForToken  ){
+		if (gg_token_watch_fd( session_ ) == -1) {
+			deleteNotifiers();
+			emit error( "", "" );
+			gg_token_free( session_ );
+			session_ = NULL;
+			state = RegisterStateNoToken;
+			return;
+		}
+		gg_pub = (struct gg_pubdir *)session_->data;
+		switch ( session_->state ) {
+			case GG_STATE_CONNECTING:
+				kdDebug( 14100 ) << "Recreating notifiers " << endl;
+				deleteNotifiers();
+				checkSocket( session_->fd, 0);
+				break;
+			case GG_STATE_ERROR:
+				deleteNotifiers();
+				emit error(  "", ""  );
+				gg_token_free( session_ );
+				session_ = NULL;
+				state = RegisterStateNoToken;
+				break;
+			case GG_STATE_DONE:
+				struct gg_token* sp	= ( struct gg_token* )session_->data;
+				tokenId = (char *)sp->tokenid;
+				kdDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
+				if ( gg_pub->success ) {
+					QByteArray imgB( session_->body_size );
+					for ( unsigned int i = 0; i < session_->body_size; i++ ) {
+						imgB[i] = session_->body[i];
+					}
+					tokenImg = new QPixmap;
+					tokenImg->loadFromData( imgB );
+					emit tokenRecieved( *tokenImg, tokenId );
+				}
+				else {
+					emit error("tokenB0rked", "tokenB0rked");
+				}
+				deleteNotifiers();
+				gg_token_free( session_ );
+				session_ = NULL;
+				state = RegisterStateNoToken;
+				return;
+				break;
+		}
+		enableNotifiers( session_->check );
+	}
+	if ( state == RegisterStateWaitingForNumber ) {
+		if ( gg_register_watch_fd( session_ ) == -1 ) {
+			gg_free_register( session_ );
+			emit error( i18n( "Connection Error" ),
+					i18n( "Unknown connection error while registering" ) );
+			done_ = true;
+			deleteLater();
+			return;
+		}
+	
+		if ( session_->state == GG_STATE_ERROR ) {
+			gg_free_register( session_ );
+			emit error( i18n( "Registration Error" ),
+					i18n( "There was an unknown registration error. ") );
+			switch( session_->error ){
+				case GG_ERROR_RESOLVING:
+					kdDebug(14100713)<<"Resolving error."<<endl;
+				break;
+				case GG_ERROR_CONNECTING:
+					kdDebug(14100713)<<"Connecting error."<<endl;
+				break;
+				case GG_ERROR_READING:
+					kdDebug(14100713)<<"Reading error."<<endl;
+				break;
+				case GG_ERROR_WRITING:
+					kdDebug(14100713)<<"Writing error."<<endl;
+				break;
+				default:
+					kdDebug(14100713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
+				break;
+			}
+			done_ = true;
+			deleteLater();
+			return;
+		}
+	
+		if ( session_->state == GG_STATE_DONE ) {
+			gg_pub = (gg_pubdir*) session_->data;
+			if (gg_pub) {
+				uin= gg_pub->uin;
+				emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
+			}
+			else {
+				emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
+			}
+			deleteNotifiers();
+			gg_free_register( session_ );
+			session_=NULL;
+			done_ = true;			
+			deleteLater();
+			return;
+		}
+		enableNotifiers( session_->check );
 		return;
 	}
-
-	if ( session_->state == GG_STATE_ERROR ) {
-		gg_free_register( session_ );
-		emit error( i18n( "Registration Error" ),
-				i18n( "There was an unknown registration error. ") );
-		switch( session_->error ){
-			case GG_ERROR_RESOLVING:
-				kdDebug(14100713)<<"Resolving error."<<endl;
-			break;
-			case GG_ERROR_CONNECTING:
-				kdDebug(14100713)<<"Connecting error."<<endl;
-			break;
-			case GG_ERROR_READING:
-				kdDebug(14100713)<<"Reading error."<<endl;
-			break;
-			case GG_ERROR_WRITING:
-				kdDebug(14100713)<<"Writing error."<<endl;
-			break;
-			default:
-				kdDebug(14100713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
-			break;
-		}
-		done_ = true;
-		deleteLater();
-		return;
-	}
-
-	if ( session_->state == GG_STATE_DONE ) {
-
-		gg_pub = (gg_pubdir*) session_->data;
-		if (gg_pub) {
-			uin= gg_pub->uin;
-			emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
-		}
-		else {
-			emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
-		}
-		gg_free_register( session_ );
-		done_ = true;
-		deleteLater();
-		return;
-	}
-	enableNotifiers( session_->check );
-	return;
 }
 
 RemindPasswordCommand::RemindPasswordCommand( QObject* parent, const char* name )

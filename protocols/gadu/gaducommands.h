@@ -31,6 +31,7 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
+#include <qpixmap.h>
 
 class QSocketNotifier;
 class QStringList;
@@ -57,6 +58,7 @@ protected:
 	void checkSocket( int, int );
 	void enableNotifiers( int );
 	void disableNotifiers();
+	void deleteNotifiers();
 
 	bool done_;
 
@@ -81,15 +83,23 @@ public:
 	void setUserinfo( const QString& email, const QString& password );
 	void execute();
 	unsigned int newUin();
+	void requestToken();
+
+signals:
+	void tokenRecieved( QPixmap, QString );
 
 protected slots:
 	void watcher();
 
 private:
+	enum RegisterState{ RegisterStateNoToken, RegisterStateWaitingForToken, RegisterStateGotToken, RegisterStateWaitingForNumber, RegisterStateDone };
+	RegisterState	state;
 	QString		email_;
 	QString		password_;
 	struct gg_http*	session_;
 	int 			uin;
+	QPixmap*		tokenImg;
+	QString		tokenId;
 };
 
 class RemindPasswordCommand : public GaduCommand
