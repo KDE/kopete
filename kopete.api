@@ -3,7 +3,7 @@
 # General configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = kopete
-PROJECT_NUMBER         = 0.3
+PROJECT_NUMBER         = 0.9
 OUTPUT_DIRECTORY       = doc-api
 OUTPUT_LANGUAGE        = English
 EXTRACT_ALL            = NO
@@ -146,9 +146,9 @@ DOT_CLEANUP            = YES
 # Configuration::addtions related to the search engine   
 #---------------------------------------------------------------------------
 SEARCHENGINE           = NO
-CGI_NAME               = search.cgi
+CGI_NAME               =
 CGI_URL                = 
 DOC_URL                = 
-DOC_ABSPATH            = 
-BIN_ABSPATH            = /usr/local/bin/
+DOC_ABSPATH            =
+BIN_ABSPATH            =
 EXT_DOC_PATHS          = 

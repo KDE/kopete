@@ -1,37 +1,45 @@
 Main Developers
 ===============
 
-Duncan Mac-Vicar Prett <duncan@kdedevelopers.net>
-- Original author, main app work & design , MSN Plugin, hacks in all plugins
+Duncan Mac-Vicar Prett <duncan@kdedevelopers.net> (irc: BaRRiL)
+- Original author, main app work & design, original MSN Plugin, hacks in all plugins
 
-Nick Betcher <nbetcher@usinternet.com>
+Nick Betcher <nbetcher@usinternet.com> (irc: Error403)
 - ICQ Plugin, AIM Plugin, IRC Plugin, various hacks
 
 Developer Team
 ==============
 
-Ryan Cumming <bodnar42@phalynx.dhs.org>
+Ryan Cumming <bodnar42@phalynx.dhs.org> (irc: Phalynx)
 - ChatView class. API re-design & cleanup.
   History logger, etc
 
-Martin Klingens <klingens@kde.org>
-- Misc hacks, bugfixes, KopeteMessage
+Martijn Klingens <klingens@kde.org> (irc: spaze)
+- Misc hacks, bugfixes, KopeteMessage, MSN plugin cleanups and redesign
 
-Stefan Gehen <sgehn@gmx.net>
+Stefan Gehn <sgehn@gmx.net> (irc: meTz )
 - Misc bugfixes, cleanups, hacks, features.
 
-Richard Stellingwerff <remenic@linuxfromscratch.org>
+Richard Stellingwerff <remenic@linuxfromscratch.org> (irc: Remenic)
 - Misc fixes. History dialog, etc
 
-Daniel Stone <dstone@kde.org>
-- Jabber plugin
+Daniel Stone <dstone@kde.org> (irc: DannyS)
+- Jabber plugin, misc hacks
 
-Contributed patches. Thanks!!!
+Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
+- KMM work
+
+Contributed patches. Thanks!
 ==============================
 
 Simon Perreault <nomis80@linuxquebec.com>
 - Start docked feature.
+
 Hendrik vom Lehn <hvl@linux-4-ever.de>
 - KNotify beep support for KopeteEvent
 - KNotify Sound support for KopeteEvent
+
+Juanjo Alvarez <juanjux@yahoo.es>
+- Support for configurable Ctrl-Enter or Enter
+  shortcut in KopeteChatWindow
 

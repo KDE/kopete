@@ -2,14 +2,18 @@ Kopete Messenger ChangeLog
 --------------------------
 
 o Main App
-
 	o Kopete API redesign/cleanup (Ryan)
 	o Added globally Away/Available (Duncan)
 	o Added Auto-Away Plugin (Duncan)
 	o KNotify beep support for KopeteEvent (Hendrik)
 	o KNotify sound support for KopeteEvent (Hendrik)	
-o IRC Plugin
+	o KopeteMessageManager support (Duncan, Daniel)
+          - All plugins inherits events (balloon, etc)
+          - All plugins use the same chat dialog
+          - API allows for multiuser chat
+	o Emoticons can be disabled now. (Duncan) 
 
+o IRC Plugin
 	o Updated for globally Away/Vailable
 	o Added support for: (Nick)
 		o /server
@@ -20,21 +24,25 @@ o IRC Plugin
 		o Ability to load more than one console
 	o Many bug fixes (Nick)
 	o Removed servers from the contact list. They were intrusive. (Nick)
-	o Channels and private conversation windows only appear in the contact list when added using "Add Contact" (Nick)
-
+	o Channels and private conversation windows only appear 
+	  in the contact list when added using "Add Contact" (Nick)
 
 o ICQ Plugin
-
-	 o Updated for globally Away/Available
+	 o Updated for globally Away/Available (Duncan)
 
 o MSN Plugin
-
-	 o Updated for globally Away/Available
+	o Updated for globally Away/Available (Duncan)
+	o Big Protocol cleanup and plugin redesign (Martijn)
 
 o AIM Plugin
+	 o Updated for globally Away/Available (Duncan)
 
-	 o Updated for globally Away/Available
+o Jabber Plugin
+	 o First release of Kopete with Jabber
+           , numerous updates. (Daniel)
 
+o Yahoo Plugin
+	o Introduced Yahoo plugin
 
 05-04-2002 Released Kopete 0.3
 ==============================

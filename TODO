@@ -4,75 +4,78 @@ TODO - Kopete
 This is a very rough draft, so we have something. Feel free to add or modify
 your entries, or to beautify this file a bit ;-) - Martijn
 
+DMV - Duncan Mac-Vicar Prett <duncan@kde.org> (irc: BaRRiL)
+NB - Nick Betcher <nbetcher@usinternet.com> (irc: Error403)
+MK - Martijn Klingens <klingens@kde.org> (irc: spaze)
+RC - Ryan Cumming <bodnar42@phalynx.dhs.org> (irc: Phalynx)
+DS - Daniel Stone <dstone@kde.org> (irc: DannyS)
+IRG - Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
 
 Framework
 =========
 
 o KopeteMessageManager, integration of chat sessions, chat window
   managment, notifier display, message queues.
-  
-  Status: In progress.
-  Assigned: Duncan Mac-Vicar (BaRRiL)
+  -> In progress (90% done)
+     ASSIGNED: DMV, DS, IRG
 
 o Better chatwindow
-  
-  Status: Almost finished
-  Assigned: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  -> Almost finished
+     ASSIGNED: MK, RC 
   
 + contact list functionality sharing among plugins
-  
-  Status: Part of API restructuring
-       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+    -> Part of API restructuring (COMPLETED)
+       ASSIGNED: MK, RC
   + unified support for groups (icq can move users to any groups, but aim
     can't...)
-    -> Part of API restructuring
-       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+    -> Part of API restructuring (COMPLETED)
+       ASSIGNED: MK, RC
   + unified events - on message, on login/logout, on file transfer...
-    -> Part of API restructuring
-       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+    -> Part of API restructuring (KopeteMessageManager)
+       ASSIGNED: MK, RC
   + global notification api and preferences (right now, only the icq plugin
     seems to use the balloons, and msn/aim pop up a window)
-    -> Part of API restructuring
-       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+    -> Part of API restructuring (COMPLETED)
+       ASSIGNED: MK, RC
   + support for file transfer
-    UNASSIGNED
-  + add sound support to KopeteEvent
-    UNASSIGNED
+    -> Part of KopeteMessageManager
+       + Note from DS: KMMF->create() has an int widget flag, USE IT, please.
+       ASSIGNED: DS
   + Split KopeteProtocol into KopeteProtocol and KopeteIdentity to allow
     multiple identities using the same protocol
     -> Part of API restructuring
-       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+       ASSIGNED: MK, RC
 
 - ui
   + integrate patch for not quitting on close (when there's a way of quitting
     from the systray... what's the status of this ?)
     -> In progress, currently being discussed on kde-core-devel (kdelibs bug)
-       ASSIGNED: Martijn Klingens
+       ASSIGNED: MK
   + chatwindow like gaim's/trillian's (richtext + send hyperlink + emoticon
     menu + a few extras). maybe use the one from kinkatta, which is nice.
     -> Is this the same as the 'better chatwindow' above?
-       UNASSIGNED
+       + DS: Yes. KMMF->create() has an int capabilities flag, USE IT.
+       ASSIGNED: DS
   + notify the user of events. either with sounds or blink something in the
     systray.
-    -> Is this part of the global notification API?
-       UNASSIGNED
+    -> Part of gloabl notify API/KopeteMessageManager (COMPLETED).
+       ASSIGNED: ?
 
 - msn
-  + store the users locally
+  + store the users locally (should this *really* be done? -DS)
     UNASSIGNED
 
 - icq
   + store users on server/icq2001b (although that's more of a kxengine item)
     -> In progress, almost finished in kxicq/kxengine
-       ASSIGNED: Herwin Jan Steehouwer ('Gompy'), kxicq author
+       ASSIGNED: Herwin "Gompy" Jan Steehouwer (kxicq author)
 
-- jabber
+- Jabber
   + port to Psi code
-    -> In progress, 20% done
-       ASSIGNED: Daniel Stone ('DannyS')
+    -> COMPLETED
   + support multi-user chats
     -> sort of a part of the first point, and KChatWindow
-       ASSIGNED: Daniel Stone ('DannyS')
-  + support differentiation between messages and chats
+       ASSIGNED: DS
+  + support differentiation between messages and chats (use int widget flag)
     -> also half a part of the KChatWindow stuff
-       ASSIGNED: Daniel Stone ('DannyS')
+       ASSIGNED: DS
