@@ -66,6 +66,11 @@ protected slots:
 	 * @brief Slot that is called when a new title is selected in the title list
 	 */
 	void titleSelected();
+signals:
+	/**
+	 * @brief Signal emitted when the away messages change in any way
+	 */
+	void awayMessagesChanged(bool);
 };
 
 #endif

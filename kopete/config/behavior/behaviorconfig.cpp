@@ -65,7 +65,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 
 	load();
 	//connect a whole bunch of signals and slots so the thing works
-	//TODO: There's gotta be a better way to do this --Matt
+	//TODO: There's gotta be a better way to do this --Matt  | I hope so too --Will
 	
 	connect(mPrfsGeneral->mStartDockedChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
@@ -80,6 +80,32 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	connect(mPrfsGeneral->mTreeContactList, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSortByGroup, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	
+	//"Chat" TAB signals
+	connect( mPrfsChat->cb_RaiseMsgWindowChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mPrfsChat->cb_ShowEventsChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mPrfsChat->highlightEnabled, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mPrfsChat->chatWindowGroup, SIGNAL(clicked(int)),
+		this, SLOT(slotValueChanged(int)));
+	connect( mPrfsChat->interfaceGroup, SIGNAL(clicked(int)),
+		this, SLOT(slotValueChanged(int)));
+	connect( mPrfsChat->mChatViewBufferSize, SIGNAL(valueChanged(int)),
+		this, SLOT(slotValueChanged(int)));
+		
+	//"Away" TAB signals
+	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
+		this, SLOT(slotValueChanged(int)));
+	connect( mAwayConfigUI->mGoAvailable, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mAwayConfigUI->mUseAutoAway, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mAwayConfigUI->mNotifyAway, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mAwayConfigUI, SIGNAL(awayMessagesChanged(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 }
 
@@ -185,5 +211,9 @@ void BehaviorConfig::slotSettingsChanged(bool)
 	setChanged(true);
 }
 
+void BehaviorConfig::slotValueChanged(int)
+{
+	setChanged( true );
+}
 #include "behaviorconfig.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -64,6 +64,7 @@ void KopeteAwayConfigUI::newButtonClicked()
 		KopeteAway::getInstance()->addMessage( newTitle,
 			QString::null ); // Add a new empty away message
 		updateView();
+		emit awayMessagesChanged(true);
 	}
 }
 
@@ -80,6 +81,7 @@ void KopeteAwayConfigUI::deleteButtonClicked()
 	{
 		KopeteAway::getInstance()->deleteMessage(selectedItem->text());
 		updateView();
+		emit awayMessagesChanged(true);
 	}
 }
 
@@ -89,6 +91,7 @@ void KopeteAwayConfigUI::saveTextButtonClicked()
 
 	QListBoxItem *selectedItem = lstTitles->item( lstTitles->currentItem() );
 	KopeteAway::getInstance()->updateMessage(selectedItem->text(), txtMessage->text());
+	emit awayMessagesChanged(true);
 }
 
 void KopeteAwayConfigUI::titleSelected()
