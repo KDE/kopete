@@ -107,7 +107,7 @@ void IRCServerContact::init()
 
 	mTabView = new QVBox(mWindow->mTabWidget);
 	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
-	mWindow->mTabWidget->addTab(mTabView, mServer);
+	mWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg.xpm"),mServer);
 
 	QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
@@ -123,7 +123,7 @@ void IRCServerContact::connectNow()
 
 		mTabView = new QVBox(mWindow->mTabWidget);
 		mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
-		mWindow->mTabWidget->addTab(mTabView, mServer);
+		mWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg.xpm"),mServer);
 
 		mConsoleView->messageBox->setFocus();
 		QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
@@ -173,7 +173,7 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 	}
 	QStringList pendingMessage;
 	pendingMessage << "message" << originating << target << message;
-	if (activeQueries.find(queryName.lower()) == activeQueries.end())
+	if (activeContacts.find(queryName.lower()) == activeContacts.end())
 	{
 		(void)new IRCContact(mServer, queryName, 6667, true, this, pendingMessage);
 	}
@@ -188,7 +188,7 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 	}
 	QStringList pendingMessage;
 	pendingMessage << "action" << originating << target << message;
-	if (activeQueries.find(queryName.lower()) == activeQueries.end())
+	if (activeContacts.find(queryName.lower()) == activeContacts.end())
 	{
 		(void)new IRCContact(mServer, queryName, 6667, true, this, pendingMessage);
 	}

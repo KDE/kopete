@@ -42,6 +42,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 {
 	engine = contact->engine;
 	requestedQuit = false;
+	added = false;
+	contactOnList = false;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
 
@@ -73,9 +75,11 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	queryView = 0L;
 	chatView = 0L;
 
-	mContact->activeContacts.append(this);
-
-	init();
+	if (!init())
+	{
+		delete this;
+		return;
+	}
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
@@ -96,6 +100,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 {
 	engine = contact->engine;
 	requestedQuit = false;
+	added = false;
+	contactOnList = false;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
 
@@ -127,9 +133,11 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	queryView = 0L;
 	chatView = 0L;
 
-	mContact->activeContacts.append(this);
-
-	init();
+	if (!init())
+	{
+		delete this;
+		return;
+	}
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
@@ -151,6 +159,8 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 {
 	engine = contact->engine;
 	requestedQuit = false;
+	added = false;
+	contactOnList = true;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
 
@@ -183,10 +193,13 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	queryView = 0L;
 	chatView = 0L;
 
-	mContact->activeContacts.append(this);
 	connect(kopeteapp->contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotGroupRemoved(const QString &)));
 
-	init();
+	if (!init())
+	{
+		delete this;
+		return;
+	}
 
 	kopeteapp->contactList()->addContact(this, groupName);
 	mContact->mProtocol->mConfig->setGroup(mTarget.lower());
@@ -217,25 +230,19 @@ void IRCContact::slotGroupRemoved(const QString &group)
 	}
 }
 
-void IRCContact::init()
+bool IRCContact::init()
 {
-	// Split up into init() so we can call this multiple times and have multiple constructors
-	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
+	if (mContact->activeContacts.contains(mTarget.lower()) > 0)
 	{
-		// What to do here, what to do, hmm
-	} else {
-		// Gosh darn it I love NULL pointer checks ;)
-		if (mContact->activeQueries.find(mTarget.lower()) != mContact->activeQueries.end())
-		{
-			delete this;
-			return;
-		}
-		mContact->activeQueries.append(mTarget.lower());
+		return false;
 	}
+	mContact->activeContacts.append(mTarget.lower());
+	added = true;
 	connect(mContact->engine, SIGNAL(successfulQuit()), this, SLOT(unloading()));
 	connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotPartedChannel(const QString &, const QString &, const QString &)));
 	connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
 	connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
+	return true;
 }
 
 KopeteContact::ContactStatus IRCContact::status() const
@@ -431,11 +438,11 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 IRCContact::~IRCContact()
 {
-	if (mTarget[0] != '#' && mTarget[0] != '!' && mTarget[0] == '&')
+	kdDebug() << "IRC Plugin: ~IRCContact: added == " << added << endl;
+	if (added && !contactOnList)
 	{
-		mContact->activeQueries.remove(mTarget.lower());
+		mContact->activeContacts.remove(mTarget.lower());
 	}
-	mContact->activeContacts.remove(this);
 }
 
 void IRCContact::unloading()
@@ -446,6 +453,10 @@ void IRCContact::unloading()
 		mTabPage = 0L;
 		chatView = 0L;
 		queryView = 0L;
+		if (!contactOnList)
+		{
+			delete this;
+		}
 	}
 }
 

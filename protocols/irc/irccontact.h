@@ -71,7 +71,9 @@ private:
 	KPopupMenu *popup;
 	QVBox *mTabPage;
 	IRCQueryView *queryView;
-	void init();
+	bool init();
+	bool added;
+	bool contactOnList;
 
 	KAction* actionAddGroup;
 	KListAction *actionContactMove;

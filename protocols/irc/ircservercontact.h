@@ -55,10 +55,9 @@ public:
 	QString mServer;
 	bool parentClosing();
 	QString mQuitMessage;
-	QStringList activeQueries;
 	IRCMessage *messenger;
 	IRCCmdParser *parser;
-	QPtrList<IRCContact> activeContacts;
+	QStringList activeContacts;
 	QVBox *mTabView;
 	bool tryingQuit;
 	bool closing;
