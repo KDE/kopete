@@ -256,7 +256,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 			d->mContactList.remove( old );
 			d->mContactList.append( c );
 
-			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+			disconnect( old, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 
 			if ( old->metaContact() )
