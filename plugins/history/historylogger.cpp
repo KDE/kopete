@@ -494,6 +494,8 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 					Kopete::Message msg(timestamp, from, to, msgElem.text(), dir);
 					if (colorize)
 						msg.setFg(fgColor);
+						
+					msg.setBody( "<span title=\"" + timestamp.toString(Qt::LocalDate) + "\">" + msg.escapedBody() +"</span>" , Kopete::Message::RichText );
 
 					if(reverseOrder)
 						messages.prepend(msg);
