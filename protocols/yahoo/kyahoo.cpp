@@ -1,4 +1,4 @@
-/*
+ /*
     kyahoo.cpp - QT libyahoo2 wrapper
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -838,17 +838,17 @@ void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 
 	if ( _session && _socket )
 	{
-		kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver] read off";
+		kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver] read off" << endl;
 		_socket->enableRead(false);
 		disconnect (_socket,SIGNAL(readyRead()),_session,SLOT(slotReadReady()));
 
-		kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver] write off";
+		kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver] write off" << endl;
 		_socket->enableRead(false);
 		disconnect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotWriteReady()));
 	}
 	else
 	{
-		kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver] FATAL ERROR: socket or session NULL";
+		kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver] FATAL ERROR: socket or session NULL" << endl;
 	}
 }
 
