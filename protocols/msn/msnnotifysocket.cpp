@@ -43,6 +43,11 @@ MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
 
 	m_dispatchSocket = 0L;
 	m_newstatus = MSNProtocol::NLN;
+
+	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
+	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
+
+	QObject::connect( this, SIGNAL( commandSent() ), SLOT( slotResetKeepAlive() ) );
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -85,6 +90,8 @@ void MSNNotifySocket::disconnect()
 {
 	if( onlineStatus() == Connected )
 		sendCommand( "OUT", QString::null, false );
+
+	m_keepaliveTimer->stop();
 
 	MSNAuthSocket::disconnect();
 }
@@ -530,7 +537,7 @@ void MSNNotifySocket::setStatus( int status )
 
 }
 
-void MSNNotifySocket::changePublicName( const QString &publicName  , const QString &handle)
+void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
 	if(handle.isNull())
 		sendCommand( "REA", msnId() + " " + escape (publicName) );
@@ -583,6 +590,21 @@ void MSNNotifySocket::slotDispatchClosed()
 		emit onlineStatusChanged( Disconnected );
 		emit socketClosed(-1);
 	}
+}
+
+void MSNNotifySocket::slotSendKeepAlive()
+{
+	// Send a dummy command to fake activity. This makes sure MSN doesn't
+	// disconnect you when the notify socket is idle.
+	sendCommand( "LSG", QString::null );
+}
+
+void MSNNotifySocket::slotResetKeepAlive()
+{
+	kdDebug() << "****** RESET KEEPALIVE!" << endl;
+	// Fire the timer every 60 seconds. QTimer will reset a running timer
+	// on a subsequent call if there has been activity again.
+	m_keepaliveTimer->start( 60000 );
 }
 
 #include "msnnotifysocket.moc"

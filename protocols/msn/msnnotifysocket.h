@@ -99,15 +99,26 @@ private slots:
 	 * instead of cr/lf line-based text.
 	 */
 	void slotReadMessage( const QString &msg );
-	
+
 	void slotDispatchClosed();
+
+	/**
+	 * Send a keepalive to the server to avoid idle connections to cause
+	 * MSN closing the connection
+	 */
+	void slotSendKeepAlive();
+
+	/**
+	 * Reset the keepalive time after the socket has sent a command.
+	 */
+	void slotResetKeepAlive();
 
 private:
 	MSNProtocol *m_protocol;
 
 	unsigned int mailCount;
 	QString m_password;
-	
+
 	int m_newstatus;
 
 	/**
@@ -124,6 +135,8 @@ private:
 	QString m_kv;
 	QString m_sid;
 	QString m_hotmailRequest;
+
+	QTimer *m_keepaliveTimer;
 };
 
 #endif
