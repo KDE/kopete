@@ -19,7 +19,8 @@
 #include <kdebug.h>
 
 OscarConnection::OscarConnection(const QString &sn, const QString &connName,
-	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name)
+	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name) :
+	QObject(parent, name)
 {
 //	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" << connName << "'" << endl;
 
