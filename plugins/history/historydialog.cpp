@@ -65,7 +65,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, int count, QWidget* parent
 	}
 	// END TODO
 
-	mXsltParser = new Kopete::XSLT(styleContents);
+	mXsltParser = new Kopete::XSLT(styleContents, this);
 
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
 	setMainWidget(mMainWidget);
