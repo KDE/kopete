@@ -467,8 +467,7 @@ bool KopeteContact::isReachable()
 {
 	// The default implementation returns false when offline and true
 	// otherwise. Subclass if you need more control over the process.
-	//return onlineStatus().status() != KopeteOnlineStatus::Offline;
-	return true;
+	return onlineStatus().status() != KopeteOnlineStatus::Offline;
 }
 
 void KopeteContact::startChat()
@@ -488,8 +487,8 @@ void KopeteContact::sendMessage()
 void KopeteContact::execute()
 {
 	// FIXME: After KDE 3.2 remove the isConnected check and move it to isReachable - Martijn
-/*	if ( account()->isConnected() && isReachable() )
-	{*/
+	if ( account()->isConnected() && isReachable() )
+	{
 		switch ( KopetePrefs::prefs()->interfacePreference() )
 		{
 			case KopetePrefs::EmailWindow:
@@ -500,13 +499,13 @@ void KopeteContact::execute()
 				startChat();
 				break;
 		}
-	/*}
+	}
 	else
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 			i18n( "This user is not reachable at the moment. Please try a protocol that supports offline sending, or wait "
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
-	}*/
+	}
 }
 
 void KopeteContact::slotDeleteContact()
