@@ -61,10 +61,13 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
-#include "kopeteprefs.h"
-#include "kopetemessage.h"
-#include "kopetexsl.h"
+// Things we fake to get the message preview to work
+#include "kopetemetacontact.h"
 #include "kopetecontact.h"
+#include "kopetemessage.h"
+
+#include "kopeteprefs.h"
+#include "kopetexsl.h"
 #include "kopeteemoticons.h"
 #include "kopeteglobal.h"
 
@@ -616,12 +619,12 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	return false;
 }
 
-//reimplement Kopete::Contact and his abstract method
-class TestContact : public Kopete::Contact
+// Reimplement Kopete::Contact and its abstract method
+class FakeContact : public Kopete::Contact
 {
 public:
-	TestContact (  const QString &id  ) : Kopete::Contact ( (Kopete::Account*)0L, id, 0L ) {}
-	virtual Kopete::MessageManager* manager(bool) { return 0L; }
+	FakeContact ( const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( 0, id, mc ) {}
+	virtual Kopete::MessageManager *manager(bool) { return 0L; }
 };
 
 void AppearanceConfig::slotUpdatePreview()
@@ -632,14 +635,15 @@ void AppearanceConfig::slotUpdatePreview()
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && style->text() != currentStyle )
 	{
-		Kopete::Contact *myself = new TestContact( i18n( "Myself" ) );
-		Kopete::Contact *jack = new TestContact( i18n( "Jack" ) );
+		Kopete::MetaContact jackMC;
+		FakeContact myself( i18n( "Myself" ), 0 );
+		FakeContact jack( i18n( "Jack" ), &jackMC );
 
-		Kopete::Message msgIn(  jack,   myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
-		Kopete::Message msgOut( myself, jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
-		Kopete::Message msgInt( jack,   myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
-		Kopete::Message msgAct( jack,   myself, i18n( "performed an action" ), Kopete::Message::Action );
-		//Kopete::Message msgHigh( jack, myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
+		Kopete::Message msgIn ( &jack,   &myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
+		Kopete::Message msgOut( &myself, &jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
+		Kopete::Message msgInt( &jack,   &myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
+		Kopete::Message msgAct( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Action );
+		//Kopete::Message msgHigh( &jack, &myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 
 		preview->begin();
 		preview->write( QString::fromLatin1(
@@ -673,9 +677,6 @@ void AppearanceConfig::slotUpdatePreview()
 
 		preview->write( QString::fromLatin1( "</body></html>" ) );
 		preview->end();
-
-		delete myself;
-		delete jack;
 
 		emitChanged();
 	}
