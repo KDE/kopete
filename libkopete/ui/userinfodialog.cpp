@@ -1,5 +1,14 @@
 #include "userinfodialog.h"
 
+#include <khtml_part.h>
+#include <kapplication.h>
+#include <klineedit.h>
+#include <klocale.h>
+#include <ktextbrowser.h>
+#include <qmap.h>
+#include <qlayout.h>
+#include <qstring.h>
+
 namespace Kopete {
 
 struct UserInfoDialog::UserInfoDialogPrivate {
@@ -87,7 +96,7 @@ void UserInfoDialog::setInfo( const QString& info )
 
 void UserInfoDialog::setAddress( const QString& addr )
 {
-	d->addr = addr;
+	d->address = addr;
 }
 
 void UserInfoDialog::setPhone( const QString& phone )
@@ -95,30 +104,31 @@ void UserInfoDialog::setPhone( const QString& phone )
 	d->phone = phone;
 }
 
-void UserInfoDialog::addCustomField( const QString& name, const QString& txt )
+void UserInfoDialog::addCustomField( const QString& /*name*/, const QString& /*txt*/ )
 {
 
 }
 
-void UserInfoDialog::addHTMLText( const QString& str )
+void UserInfoDialog::addHTMLText( const QString& /*str*/ )
 {
 
 }
 
-void UserInfoDialog::addLabelEdit( const QString& label, const QString& text )
+QHBox* UserInfoDialog::addLabelEdit( const QString& /*label*/, const QString& /*text*/ )
 {
-
+	return 0;
 }
 
 void UserInfoDialog::fillHTML()
 {
 	d->htmlPart = new KHTMLPart( this );
 
-	QString text = "<html><head></head><body>";
-
+	QString text;
+	/*
 	if ( d->name.isEmpty() ) {
-		text.append( "<div id=\"name\"><b>" + i18n("Name : ") + "</b>" );
-		text.append( d->name + "</div><br>" );
+		text.append( QString("<div id=\"name\"><b>") + i18n("Name : ") +
+								 QString("</b>") );
+		text.append( d->name + QString("</div><br>") );
 	}
 
 	if ( d->id.isEmpty() ) {
@@ -160,7 +170,7 @@ void UserInfoDialog::fillHTML()
 		text.append( "<div id=\"info\"><b>" + i18n("Info : ") + "</b>" );
 		text.append( d->info + "</div><br>" );
 	}
-
+*/
 	d->htmlPart->begin();
 	d->htmlPart->write( text );
 	d->htmlPart->end();
@@ -168,5 +178,18 @@ void UserInfoDialog::fillHTML()
 
 void UserInfoDialog::fillWidgets()
 {
+}
+
+void UserInfoDialog::setStyleSheet( const QString& /*css*/ )
+{
+}
+
+void UserInfoDialog::constructGUI()
+{
+}
+
+void UserInfoDialog::create()
+{
+}
 
 }

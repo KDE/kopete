@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // gaduprotocol.h                                                           //
 //                                                                          //
-// Copyright (C)  2002  Zack Rusin <zack@kde.org>                           //
+// Copyright (C)  2002-2003  Zack Rusin <zack@kde.org>                      //
 //                                                                          //
 // This program is free software; you can redistribute it and/or            //
 // modify it under the terms of the GNU General Public License              //
@@ -71,7 +71,7 @@ public:
     // }
     //!Plugin reimplementation
     bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-    KopeteMetaContact *parentContact );
+                                  KopeteMetaContact *parentContact );
 
     void removeContact( const GaduContact *c );
     virtual const QString protocolIcon();

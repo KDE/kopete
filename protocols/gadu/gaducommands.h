@@ -4,7 +4,7 @@
 //                   have to/can't delete them explicitely and have to create
 //                   them dynamically (via the 'new' call).
 //
-// Copyright (C)  2002  Zack Rusin <zack@kde.org>
+// Copyright (C)  2002-2003  Zack Rusin <zack@kde.org>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -61,7 +61,10 @@ private:
     QSocketNotifier *write_;
 };
 
+//due to a bug in moc. moc will remove the keyword
+// "struct" in the signals definitions breaking compilation
 typedef struct gg_search gg_search_qt;
+
 class SearchCommand : public GaduCommand
 {
     Q_OBJECT

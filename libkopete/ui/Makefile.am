@@ -8,7 +8,7 @@ noinst_HEADERS = configmodule.h \
 	addcontactpage.h  \
 	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
 	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h \
-        kopeteemailwindow.h
+        kopeteemailwindow.h userinfodialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp kopetecontactaction.cpp \
@@ -18,7 +18,7 @@ libkopeteui_la_SOURCES = configmodule.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp \
 	kopeteawaydialogbase.ui \
 	kopetefiletransferui.ui kopetefileconfirmdialog.cpp fileconfirmbase.ui \
-	kopetechatwindow.cpp chatview.cpp
+	kopetechatwindow.cpp chatview.cpp userinfodialog.cpp
 
 libkopeteui_la_LDFLAGS = $(all_libraries)
 libkopeteui_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(LIB_KHTML)

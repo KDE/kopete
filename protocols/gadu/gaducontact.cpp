@@ -21,7 +21,6 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
 {
     msgManager_ = 0L;
     uin_ = uin;
-//    name_ = name;
     protocol_ = GaduProtocol::protocol();
     status_ = 0;
 
