@@ -534,7 +534,7 @@ void OscarSocket::slotRead(void)
 					case 0x0005: // bad password
 						kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
 						emit protocolError( i18n( "Couldn't log on to %1 with account %2 as the password was incorrect." ).arg(
-														( mIsICQ ? "AIM" : "ICQ" ) ).arg( getSN() ), 0 );
+														( mIsICQ ? "ICQ" : "AIM" ) ).arg( getSN() ), 0 );
 						doLogoff();
 						disconnect();
 						emit statusChanged( OSCAR_OFFLINE );
@@ -543,7 +543,7 @@ void OscarSocket::slotRead(void)
 					case 0x0008: // non-existant ICQ#
 						kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
 						emit protocolError( i18n( "Couldn't log on to %1 with nonexistent account %2." ).arg(
-														( mIsICQ ? "AIM" : "ICQ" ) ).arg( getSN() ), 0 );
+														( mIsICQ ? "ICQ" : "AIM" ) ).arg( getSN() ), 0 );
 						doLogoff();
 						break;
 					case 0x0015: // too many clients from same IP
@@ -551,14 +551,14 @@ void OscarSocket::slotRead(void)
 						kdDebug(14150) << k_funcinfo <<
 							"too many clients from same IP" << endl;
 						emit protocolError( i18n( "Couldn't log on to %1 as there are too many clients from the same computer." ).arg(
-														( mIsICQ ? "AIM" : "ICQ" ) ), 0 );
+														( mIsICQ ? "ICQ" : "AIM" ) ), 0 );
 						break;
 					case 0x0018: // rate exceeded (turboing)
 						kdDebug(14150) << k_funcinfo <<
 							"rate exceeded (maybe reconnecting too fast), " \
 							"server-ban for at least 10 mins!!!" << endl;
 						emit protocolError( i18n( "Server has blocked %1 account %2 for sending messages too quickly. Wait ten minutes and try again. If you continue to try, you will need to wait even longer." ).arg(
-														( mIsICQ ? "AIM" : "ICQ" ) ).arg( getSN() ), 0 );
+														( mIsICQ ? "ICQ" : "AIM" ) ).arg( getSN() ), 0 );
 						break;
 				}
 
