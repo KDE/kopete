@@ -599,7 +599,7 @@ HERE
 void MeanwhileLibrary::setStatusMesg(const QString &statusMesg)
 {
 HERE
-    if(statusMesg == QString::null) 
+    if(statusMesg.isNull())
         return;
     struct mwUserStatus stat;
     mwUserStatus_clone(&stat, &session->status);
