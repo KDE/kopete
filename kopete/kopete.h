@@ -66,6 +66,8 @@ class Kopete : public KUniqueApplication
 	void initPlugins();
 	/** No descriptions */
 	KStatusBar *statusBar();
+  /** No descriptions */
+  ContactList *contactList();
 	/** No descriptions */
 	PluginManager *plugins;
 	PreferencesDialog *mPref;

@@ -182,3 +182,9 @@ KStatusBar *Kopete::statusBar()
 {
 	return mainwindow->statusBar();
 }
+/** No descriptions */
+ContactList *Kopete::contactList()
+{
+	return mainwindow->contactlist;
+
+}
