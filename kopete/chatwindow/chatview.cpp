@@ -786,7 +786,7 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 	if ( contact && KopetePrefs::prefs()->showEvents() )
 	{
 		// If we just went offline ourself, disable the send button
-		if ( contact->account() && contact == contact->account()->myself() )
+		if ( mainWindow() && contact->account() && contact == contact->account()->myself() )
 			mainWindow()->setSendEnabled( newStatus.status() != KopeteOnlineStatus::Offline );
 
 		if ( contact->metaContact() )
