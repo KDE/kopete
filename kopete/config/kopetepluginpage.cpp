@@ -26,7 +26,7 @@ typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) );
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
-: KCDPluginPage( KopetePluginConfigFactory::instance(), parent, args )
+: KSettings::PluginPage( KopetePluginConfigFactory::instance(), parent, args )
 {
 	QValueList<KPluginInfo*> pluginInfo = KPluginInfo::fromServices( KTrader::self()->query( "Kopete/Protocol" ) );
 	pluginSelector()->addPlugins( pluginInfo, i18n( "Protocols" ), "Protocols" );

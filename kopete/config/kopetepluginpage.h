@@ -18,14 +18,14 @@
 #ifndef KOPETEPLUGINPAGE_H
 #define KOPETEPLUGINPAGE_H
 
-#include <kcdpluginpage.h>
+#include <ksettings/pluginpage.h>
 
 /**
- * Plugin selector. See KCDPluginPage in kdelibs for documentation.
+ * Plugin selector. See KSettings::PluginPage in kdelibs for documentation.
  *
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopetePluginConfig : public KCDPluginPage
+class KopetePluginConfig : public KSettings::PluginPage
 {
 
 public:
