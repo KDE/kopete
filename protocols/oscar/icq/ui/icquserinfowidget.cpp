@@ -75,6 +75,8 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	                  this, SLOT( fillWorkInfo( const ICQWorkUserInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveEmailInfo( const ICQEmailInfo& ) ),
 	                  this, SLOT( fillEmailInfo( const ICQEmailInfo& ) ) );
+	QObject::connect( contact, SIGNAL( haveMoreInfo( const ICQMoreUserInfo& ) ),
+	                  this, SLOT( fillMoreInfo( const ICQMoreUserInfo& ) ) );
 }
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )

@@ -81,6 +81,7 @@ signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
 	void haveWorkInfo( const ICQWorkUserInfo& );
 	void haveEmailInfo( const ICQEmailInfo& );
+	void haveMoreInfo( const ICQMoreUserInfo& );
 
 private:
 	ICQProtocol *mProtocol;
