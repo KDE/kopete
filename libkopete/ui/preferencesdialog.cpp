@@ -43,6 +43,7 @@ PreferencesDialog::PreferencesDialog()
 PreferencesDialog::~PreferencesDialog()
 {
 }
+
 void PreferencesDialog::show()
 {
 	for (ConfigModule *i=mModules.first(); i != 0; i=mModules.next())

@@ -44,7 +44,7 @@ public:
 	ConfigModule(const QString &name, const QString &description, QObject *parent=0);
 	/**
 	 * This is the same contrucor as above, but with a icon which is used in the preference dialog.
-	 * We recomand to use this constructor
+	 * We recommend to use this constructor
 	 */
 	ConfigModule(const QString &name, const QString &description, const QString &icon, QObject *parent=0);
 	virtual ~ConfigModule();

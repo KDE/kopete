@@ -1,7 +1,7 @@
 /*
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
-    Copyright (c) 2002-2003 by Stefan Gehn            <sgehn@gmx.net>
+    Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -21,10 +21,6 @@
 #include <qmap.h>
 
 typedef QMap<QString, QStringList> EmoticonMap;
-
-/**
- * @author Stefan Gehn <sgehn@gmx.net>
- */
 
 class KopeteEmoticons : public QObject
 {

@@ -178,7 +178,7 @@ void KopeteGroup::setDisplayName(const QString &s)
 	{
 		QString oldname = d->displayName;
 		d->displayName = s;
-		emit renamed(this,oldname);
+		emit renamed(this, oldname);
 	}
 }
 
@@ -245,7 +245,4 @@ void KopeteGroup::setParentGroup(KopeteGroup* g)
 	emit movedToGroup( old_one , g , this );
 }*/
 
-
-
 #include "kopetegroup.moc"
-
