@@ -37,6 +37,7 @@ class KopeteMessageLog;
 class KopeteProtocol;
 class KopeteChatWindow;
 
+typedef QMap<KopeteProtocol*,KopeteChatWindow*> ChatWindowMap;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
@@ -184,11 +185,6 @@ public slots:
 	 */
 	void setCanBeDeleted ( bool ) ;
 
-	/*
-	 * Change the current message in the ChatWindow
-	 */
-	void setCurrentMessage(const KopeteMessage&);
-
 	/**
 	 * Send a message to the user
 	 */
@@ -227,9 +223,8 @@ private:
 	 */
 	bool emptyMessageBuffer();
 	bool dockChatWindows;
-	KopeteChatWindow *newMainWindow();
-	KopeteChatWindow *mainWindow(KopeteChatWindow* newValue = 0L);
-	QMap<KopeteProtocol*,KopeteChatWindow*> chatWindowMap();
+	KopeteChatWindow *newWindow();
+	ChatWindowMap *chatWindowMap();
 	KopeteChatWindow *myWindow;
 	
 	KMMPrivate *d;
