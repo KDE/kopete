@@ -30,6 +30,7 @@
 
 // Kopete Includes
 #include "kopeteaccountmanager.h"
+#include "kopeteuiglobal.h"
 
 // Local Includes
 #include "wpprotocol.h"
@@ -162,9 +163,9 @@ void WPProtocol::installSamba()
 	args += KStandardDirs::findExe("winpopup-install.sh");
 	args += KStandardDirs::findExe("winpopup-send.sh");
 	if (KApplication::kdeinitExecWait("kdesu", args) == 0)
-		KMessageBox::information(0, i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
+		KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
 	else
-		KMessageBox::error(0, i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
 }
 
 #include "wpprotocol.moc"

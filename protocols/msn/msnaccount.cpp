@@ -37,6 +37,7 @@
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
+#include "kopeteuiglobal.h"
 
 
 #include "sha1.h"
@@ -299,7 +300,7 @@ void MSNAccount::slotStartChat()
 {
 	if ( !isConnected() )
 	{
-		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, i18n( "<qt>Please go online before you start a chat.</qt>" ),
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>Please go online before you start a chat.</qt>" ),
 			i18n( "MSN Plugin" ), KMessageBox::Notify );
 		return;
 	}
@@ -318,7 +319,7 @@ void MSNAccount::slotStartChat()
 		}
 		else
 		{
-			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 				i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "MSN Plugin" ) );
 		}
 	}
@@ -352,7 +353,7 @@ void MSNAccount::slotChangePublicName()
 	{
 		if ( name.length() > 387 )
 		{
-			KMessageBox::error( 0L,
+			KMessageBox::error( Kopete::UI::Global::mainWidget(),
 				i18n( "<qt>The display name you entered is too long. Please use a shorter name.\n"
 					"Your display name has <b>not</b> been changed.</qt>" ),
 				i18n( "Change Display Name - MSN Plugin" ) );
@@ -463,7 +464,7 @@ void MSNAccount::slotNotifySocketClosed( int  state  )
 		connect();
 	else if ( state == 0x10 ) // connection died unexpectedly
 	{
-		KMessageBox::queuedMessageBox( 0, KMessageBox::Error , i18n( "The connection with the MSN server was lost unexpectedly.\n"
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error , i18n( "The connection with the MSN server was lost unexpectedly.\n"
 			"If you cannot reconnect now, the server might be down. In that case, please try again later." ),
 			i18n( "Connection Lost - MSN Plugin" ), KMessageBox::Notify );
 	}

@@ -22,6 +22,7 @@
 
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
+#include "kopeteuiglobal.h"
 #include "aimbuddy.h"
 #include "aimprotocol.h"
 #include "aimcontact.h"
@@ -338,7 +339,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// Check to see if we're even online
 	if(!mAccount->isConnected())
 	{
-		KMessageBox::sorry(qApp->mainWidget(),
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
 			i18n("Not Signed On"));
 		return;
@@ -348,7 +349,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	if((mListContact->status() == static_cast<int>(OSCAR_OFFLINE)) ||
 		(onlineStatus().status() == KopeteOnlineStatus::Offline))
 	{
-		KMessageBox::sorry(qApp->mainWidget(),
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("<qt>This user is not online at the moment for you to message them. "
 				"AIM users must be online for you to be able to message them.</qt>"),
 			i18n("User Not Online"));
@@ -464,7 +465,7 @@ void AIMContact::slotWarn()
 		" this function, it is meant for legitimate practices.)</qt>" ).arg(displayName());
 
 	int result = KMessageBox::questionYesNoCancel(
-		qApp->mainWidget(),
+		Kopete::UI::Global::mainWidget(),
 		message,
 		i18n("Warn User %1?").arg(displayName()),
 		i18n("Warn Anonymously"),

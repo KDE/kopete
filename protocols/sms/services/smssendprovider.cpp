@@ -25,6 +25,7 @@
 #include <klocale.h>
 
 #include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
 
 #include "smssendprovider.h"
 #include "smsprotocol.h"
@@ -209,7 +210,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 		if ( messagePos == -1 )
 		{
 			canSend = false;
-			KMessageBox::error(0L, i18n("Could not determine which argument which should contain the message."),
+			KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Could not determine which argument which should contain the message."),
 				i18n("Could Not Send Message"));
 			return;
 		}
@@ -217,7 +218,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 		{
 			canSend = false;
 
-			KMessageBox::error(0L, i18n("Could not determine which argument which should contain the number."),
+			KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Could not determine which argument which should contain the number."),
 				i18n("Could Not Send Message"));
 			return;
 		}

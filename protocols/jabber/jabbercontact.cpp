@@ -41,6 +41,7 @@
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteuiglobal.h"
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
@@ -445,7 +446,7 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 	// check for errors
 	if (message.type () == "error")
 	{
-		//KMessageBox::sorry(qApp->mainWidget(), i18n("Your message to %1 could not be delivered: \"%2\"").arg(message.from().full()).arg(message.body()));
+		//KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Your message to %1 could not be delivered: \"%2\"").arg(message.from().full()).arg(message.body()));
 		//return;
 		newMessage = new KopeteMessage(message.timeStamp(), this, contactList, i18n("Your message could not be delivered: \"%1\"").arg(message.body()), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText, type);
 	}
@@ -682,7 +683,7 @@ void JabberContact::slotUserInfo ()
 		return;
 	}
 
-	new dlgJabberVCard (static_cast<JabberAccount *>(account()), userId(), qApp->mainWidget());
+	new dlgJabberVCard (static_cast<JabberAccount *>(account()), userId(), Kopete::UI::Global::mainWidget());
 
 }
 

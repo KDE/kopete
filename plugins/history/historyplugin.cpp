@@ -24,6 +24,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 #include "kopetecontactlist.h"
+#include "kopeteuiglobal.h"
 
 #include "historydialog.h"
 #include "historyplugin.h"
@@ -48,7 +49,7 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 
 	if(detectOldHistory())
 	{
-		if( KMessageBox::questionYesNo( 0L , i18n( "Old history files from Kopete 0.6.x or older has been detected.\n"
+		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget() , i18n( "Old history files from Kopete 0.6.x or older has been detected.\n"
 				"Do you want to import and convert it to the new history format?" ) , i18n( "History Plugin" ) ) == KMessageBox::Yes )
 		{
 			convertOldHistory();
@@ -106,7 +107,7 @@ void HistoryPlugin::slotViewHistory()
 {
 	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
 	if(m)
-		new HistoryDialog( m, true , 50 ); //, qApp->mainWidget(), "KopeteHistoryDialog" );
+		new HistoryDialog( m, true , 50 ); //, Kopete::UI::Global::mainWidget(), "KopeteHistoryDialog" );
 }
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )

@@ -21,6 +21,8 @@
 
 #include "kopetenotifyclient.h"
 
+#include "kopeteuiglobal.h"
+
 #include <qfile.h>
 #include <qlayout.h>
 #include <qsignal.h>
@@ -107,16 +109,16 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 			break;
 #else
 		case KNotifyClient::Notification:
-			KMessageBox::information( 0, text, i18n( "Notification" ) );
+			KMessageBox::information( Kopete::UI::Global::mainWidget(), text, i18n( "Notification" ) );
 			break;
 		case KNotifyClient::Warning:
-			KMessageBox::sorry( 0, text, i18n( "Warning" ) );
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), text, i18n( "Warning" ) );
 			break;
 		case KNotifyClient::Error:
-			KMessageBox::error( 0, text, i18n( "Error" ) );
+			KMessageBox::error( Kopete::UI::Global::mainWidget(), text, i18n( "Error" ) );
 			break;
 		case KNotifyClient::Catastrophe:
-			KMessageBox::error( 0, text, i18n( "Fatal" ) );
+			KMessageBox::error( Kopete::UI::Global::mainWidget(), text, i18n( "Fatal" ) );
 			break;
 #endif
 		}
@@ -130,16 +132,16 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 		{
 		default:
 		case KNotifyClient::Notification:
-			result = KMessageBox::questionYesNo(0, text, i18n( "Notification" ), action, KStdGuiItem::cancel(), QString::null, false );
+			result = KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), text, i18n( "Notification" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		case KNotifyClient::Warning:
-			result = KMessageBox::warningYesNo( 0, text, i18n( "Warning" ), action, KStdGuiItem::cancel(), QString::null, false );
+			result = KMessageBox::warningYesNo( Kopete::UI::Global::mainWidget(), text, i18n( "Warning" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		case KNotifyClient::Error:
-			result = KMessageBox::warningYesNo( 0, text, i18n( "Error" ), action, KStdGuiItem::cancel(), QString::null, false );
+			result = KMessageBox::warningYesNo( Kopete::UI::Global::mainWidget(), text, i18n( "Error" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		case KNotifyClient::Catastrophe:
-			result = KMessageBox::warningYesNo( 0, text, i18n( "Fatal" ), action, KStdGuiItem::cancel(), QString::null, false );
+			result = KMessageBox::warningYesNo( Kopete::UI::Global::mainWidget(), text, i18n( "Fatal" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		}
 
@@ -363,9 +365,9 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
 
     QString appname = KNotifyClient::instance()->instanceName();
 
-    if(winId==0   && kapp->mainWidget())
+    if(winId==0   && Kopete::UI::Global::mainWidget())
     {
-	winId=kapp->mainWidget()->winId();
+	winId=Kopete::UI::Global::mainWidget()->winId();
     }
 
     // emit event

@@ -24,6 +24,7 @@
 #include <kdebug.h>
 
 #include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
 
 #include "smsclient.h"
 #include "smsclientprefs.h"
@@ -60,7 +61,7 @@ void SMSClient::send(const KopeteMessage& msg)
 
 	if (provider.isNull())
 	{
-		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could Not Send Message"));
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No provider configured"), i18n("Could Not Send Message"));
 		return;
 	}
 

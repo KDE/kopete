@@ -34,6 +34,7 @@
 // Kopete
 #include <kopetemessagemanager.h>
 #include <kopetemessage.h>
+#include <kopeteuiglobal.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -411,14 +412,14 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	else if(succ == YAHOO_LOGIN_LOCK)
 	{
 		errorMsg = i18n("Could not log into Yahoo service.  Your account has been locked.\nVisit %1 to reactivate it.").arg(url);
-		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_DUPL)
 	{
 		errorMsg = i18n("You have been logged out of the yahoo service, possibly due to a duplicate login.");
-		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		return;
 	}

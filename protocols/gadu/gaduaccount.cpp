@@ -30,6 +30,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
+#include "kopeteuiglobal.h"
 
 #include <kpassdlg.h>
 #include <kconfig.h>
@@ -367,7 +368,7 @@ GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 void
 GaduAccount::error( const QString& title, const QString& message )
 {
-	KMessageBox::error( 0, title, message );
+	KMessageBox::error( Kopete::UI::Global::mainWidget(), title, message );
 }
 
 void

@@ -42,6 +42,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
+#include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontact.h"
@@ -257,7 +258,7 @@ void KopeteMetaContactLVI::slotRemoveThisUser()
 	kdDebug( 14000 ) << k_funcinfo << " Removing user" << endl;
 	//m_metaContact->removeThisUser();
 
-	if ( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "Are you sure you want to remove %1 from your contact list?" ).
+	if ( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "Are you sure you want to remove %1 from your contact list?" ).
 		arg( m_metaContact->displayName() ), i18n( "Remove Contact - Kopete" ) ) == KMessageBox::Yes )
 	{
 		KopeteContactList::contactList()->removeMetaContact( m_metaContact );

@@ -22,6 +22,7 @@
 */
 
 #include "kopetecontactlistview.h"
+#include "kopeteuiglobal.h"
 
 #include <qcursor.h>
 #include <qdragobject.h>
@@ -756,7 +757,7 @@ void KopeteContactListView::slotContextMenu( KListView * /* listview */, QListVi
 	if ( !window )
 	{
 		kdError( 14000 ) << k_funcinfo << "Main window not found, unable to display context-menu; "
-			<< "kapp->mainWidget() = " << kapp->mainWidget() << endl;
+			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
 		return;
 	}
 
@@ -860,7 +861,7 @@ void KopeteContactListView::slotContextMenu( KListView * /* listview */, QListVi
 
 void KopeteContactListView::slotShowAddContactDialog()
 {
-	( new AddContactWizard( qApp->mainWidget() ) )->show();
+	( new AddContactWizard( Kopete::UI::Global::mainWidget() ) )->show();
 }
 
 void KopeteContactListView::slotSettingsChanged( void )
@@ -1069,7 +1070,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 			return;
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
-			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
+			int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 
 			if(r==KMessageBox::Yes)
@@ -1087,7 +1088,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
-			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
+			int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 
 			if ( r == KMessageBox::Yes )
@@ -1103,7 +1104,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 	{
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
-			/*int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list</qt>" ),
+			/*int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 			if(r==KMessageBox::Yes)
 				TODO*/
@@ -1525,7 +1526,7 @@ void KopeteContactListView::slotMoveToGroup()
 
 	if(m->isTemporary())
 	{
-		if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
+		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,g);
@@ -1734,7 +1735,7 @@ void KopeteContactListView::slotAddTemporaryContact()
 		KopeteContactList::contactList()->selectedMetaContacts().first();
 	if( metacontact )
 	{
-/*		int r=KMessageBox::questionYesNo( qApp->mainWidget(),
+/*		int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 			i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 			i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
 			"addTemporaryWhenMoving" );

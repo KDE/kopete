@@ -22,6 +22,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
 #include "kopetecommand.h"
+#include "kopeteuiglobal.h"
 
 KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help, KopeteCommandHandler::CommandType type, const QString &formatString,
@@ -114,7 +115,7 @@ void KopeteCommand::printError( const QString &error, KopeteMessageManager *mana
 {
 	if( gui )
 	{
-		KMessageBox::error( 0L, error, i18n("Command Error") );
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), error, i18n("Command Error") );
 	}
 	else
 	{

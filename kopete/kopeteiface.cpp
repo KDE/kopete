@@ -27,6 +27,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
+#include "kopeteuiglobal.h"
 #include "kopeteaway.h"
 #include "kopetecontact.h"
 
@@ -134,7 +135,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			contactName = displayName;
 
 		// Confirm with the user before we add the contact
-		if( KMessageBox::questionYesNo( 0, i18n( "An external application is attempting to add the "
+		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "An external application is attempting to add the "
 			" '%1' contact '%2' to your contact list. Do you want to allow this?" )
 			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
 		{
@@ -148,7 +149,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 
 	} else {
 		//This protocol is not loaded
-		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 				 i18n("An external application has attempted to add a contact using "
 				      " the %1 protocol, which either does not exist or is not loaded.").arg( protocolName ),
 				i18n("Missing Protocol"));

@@ -22,6 +22,8 @@
 
 #include "msnauthsocket.h"
 
+#include "kopeteuiglobal.h"
+
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
@@ -63,7 +65,7 @@ void MSNAuthSocket::handleError( uint code, uint id )
 		{
 			m_msgBoxShown = true;
 */
-		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Information,
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
 			 i18n( "The MSN server is busy.\nPlease retry connecting later." ), i18n( "MSN Plugin" ), KMessageBox::Notify );
 		break;
 	}
@@ -75,7 +77,7 @@ void MSNAuthSocket::handleError( uint code, uint id )
 
 		m_badPassword = true;
 		disconnect();
-		//KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::error( Kopete::UI::Global::mainWidget(), msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	default:

@@ -18,6 +18,7 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "kopeteprotocol.h"
+#include "kopeteuiglobal.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -35,10 +36,10 @@
 
 void HistoryPlugin::convertOldHistory()
 {
-	bool deleteFiles=  KMessageBox::questionYesNo( kapp->mainWidget(),
+	bool deleteFiles=  KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 		i18n( "Would you like to remove old history files?" ) , i18n( "History Converter" ) ) == KMessageBox::Yes;
 
-	KProgressDialog *progressDlg=new KProgressDialog(kapp->mainWidget() , "history_progress_dlg" , i18n( "History converter" ) ,
+	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , "history_progress_dlg" , i18n( "History converter" ) ,
 		 QString::null , true); //modal  to  make sure the user will not doing stupid things (we have a kapp->processEvents())
 	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
 

@@ -32,6 +32,7 @@
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
+#include "kopeteuiglobal.h"
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
 	const char *slot, QObject *parent, const char *name )
@@ -102,7 +103,7 @@ void KopetePreferencesAction::slotShowPreferences()
 {
 	// FIXME: Use static deleter - Martijn
 	if ( !s_settingsDialog )
-		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, qApp->mainWidget() );
+		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, Kopete::UI::Global::mainWidget() );
 	s_settingsDialog->show();
 
 	s_settingsDialog->dialog()->raise();

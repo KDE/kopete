@@ -48,6 +48,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteplugin.h"
+#include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "addcontactpage.h"
 #include "dlgjabbersendraw.h"
@@ -184,7 +185,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 
 void JabberAccount::errorConnectFirst ()
 {
-	KMessageBox::queuedMessageBox(qApp->mainWidget (), KMessageBox::Error,  i18n ("Please connect first."), i18n ("Error"));
+	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,  i18n ("Please connect first."), i18n ("Error"));
 }
 
 
@@ -253,7 +254,7 @@ void JabberAccount::connect ()
 
 		if (!sslPossible)
 		{
-			KMessageBox::queuedMessageBox(qApp->mainWidget (), KMessageBox::Error,
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 								i18n ("SSL is not supported. This is most likely because the QSSL library could not be found."), i18n ("SSL Error"));
 			return;
 		}
@@ -349,7 +350,7 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connection failed! Status: " << statusCode << ", " << statusString << endl;
 
-		KMessageBox::queuedMessageBox(qApp->mainWidget (), KMessageBox::Error, i18n ("Connection failed with reason \"%1\".").arg (statusString, 1), i18n ("Connection Failed"));
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error, i18n ("Connection failed with reason \"%1\".").arg (statusString, 1), i18n ("Connection Failed"));
 	}
 
 }
@@ -411,56 +412,56 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 	switch (error.type ())
 	{
 	case Jabber::StreamError::DNS:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("Connection to the Jabber server %1 for account %2 failed due to a DNS error (%1); check you typed the server name correctly.").
 							arg (server(), 1).arg (accountId(), 2).arg (error.details (), 3), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Refused:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("The connection was refused when attempting to contact the server %1 for the account %2; check both the server name and the port number.").
 							arg (server(), 1).arg (accountId(), 2), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Timeout:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error, 
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error, 
 							i18n
 							("The connection to the Jabber server %1 for the account %2 timed out.").
 							arg (server(), 1).arg (accountId(), 2), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Socket:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("There was a socket error (%1); your connection to the Jabber server %2 for account %3 has been lost.").
 							arg (error.details (), 1).arg (server(), 2).arg (accountId(), 3), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Disconnected:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("The remote server %1 closed the connection for account %2, without specifying any error. This usually means that the server is broken.").
 							arg (server(), 1).arg (accountId(), 2), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Handshake:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("Connection to the Jabber server failed due to the handshake failing (%1); check that you typed your Jabber ID and password. Note that the Jabber ID now needs to be done in full user@domain form, not just the username.").
 							arg (error.details (), 1), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::SSL:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("Connection to the Jabber server failed due to a SSL error (%1); this usually means that the server's SSL implementation is broken.").
 							arg (error.details (), 1), i18n ("Error Connecting to Jabber Server"));
 		break;
 
 	case Jabber::StreamError::Proxy:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("Connection to the Jabber server failed due to a proxy error (%1).").
 							arg (error.details (), 1), i18n ("Error Connecting to Jabber Server"));
@@ -468,7 +469,7 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 
 	case Jabber::StreamError::Unknown:
 	default:
-		KMessageBox::queuedMessageBox (qApp->mainWidget (), KMessageBox::Error,
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n
 							("An unknown error was encountered (%1); please report this error to kopete-devel@kde.org, along with what you were doing at the time.").
 							arg (error.details (), 1), i18n ("Error Connecting to Jabber Server"));
@@ -685,7 +686,7 @@ void JabberAccount::slotSendRaw ()
 		return;
 	}
 
-	new dlgJabberSendRaw (jabberClient, qApp->mainWidget());
+	new dlgJabberSendRaw (jabberClient, Kopete::UI::Global::mainWidget());
 
 }
 
@@ -867,7 +868,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 		/* A new user wants to subscribe. */
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] slotSubscription(): " << jid.userHost () << " is asking for authorization to subscribe." << endl;
 
-		switch (KMessageBox::questionYesNoCancel (qApp->mainWidget (),
+		switch (KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget (),
 												  i18n
 												  ("The Jabber user %1 wants to add you to their "
 												   "contact list; do you want to authorize them? "
@@ -884,7 +885,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 			mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.userHost ());
 
 			/* If it is not, ask the user if he wants to subscribe in return. */
-			if ((!mc || mc->isTemporary()) && (KMessageBox::questionYesNo (qApp->mainWidget (),
+			if ((!mc || mc->isTemporary()) && (KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget (),
 													i18n
 													("Do you want to add %1 to your contact "
 													 "list in return?").arg (jid.userHost (), 1), i18n ("Add Jabber User?")) == KMessageBox::Yes))
@@ -910,7 +911,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] " << jid.userHost () << " deleted auth!" << endl;
 
 		Jabber::JT_Roster * task = new Jabber::JT_Roster (jabberClient->rootTask ());
-		switch (KMessageBox::warningYesNo (0L,
+		switch (KMessageBox::warningYesNo (Kopete::UI::Global::mainWidget(),
 								  i18n
 								  ("The Jabber user %1 removed %2's subscription to them."
 								   "This account will no longer be able to view their online/offline status."
@@ -1026,7 +1027,7 @@ void JabberAccount::slotReceivedMessage (const Jabber::Message & message)
 		 * in a KopeteEmailWindow now? -DS */
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] New server message for us!" << endl;
 
-		KMessageBox::information (qApp->mainWidget (), message.body (), i18n ("Jabber: Server Message"));
+		KMessageBox::information (Kopete::UI::Global::mainWidget (), message.body (), i18n ("Jabber: Server Message"));
 	}
 	else
 	{
@@ -1062,7 +1063,7 @@ void JabberAccount::slotJoinNewChat ()
 		return;
 	}
 
-	dlgJabberChatJoin *dlg = new dlgJabberChatJoin (this, qApp->mainWidget ());
+	dlgJabberChatJoin *dlg = new dlgJabberChatJoin (this, Kopete::UI::Global::mainWidget ());
 
 	dlg->show ();
 	dlg->raise ();
@@ -1170,10 +1171,10 @@ void JabberAccount::slotRegisterUserDone ()
 	Jabber::JT_Register * task = (Jabber::JT_Register *) sender ();
 
 	if (task->success ())
-		KMessageBox::information (qApp->mainWidget (), i18n ("Account successfully registered."), i18n ("Account Registration"));
+		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Account successfully registered."), i18n ("Account Registration"));
 	else
 	{
-		KMessageBox::information (qApp->mainWidget (), i18n ("Unable to create account on the server."), i18n ("Account Registration"));
+		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Unable to create account on the server."), i18n ("Account Registration"));
 
 	}
 	disconnect ();

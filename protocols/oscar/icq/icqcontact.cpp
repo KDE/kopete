@@ -27,6 +27,7 @@
 #include <kmessagebox.h>
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteuiglobal.h"
 
 #include "icquserinfo.h"
 #include "icqreadaway.h"
@@ -167,7 +168,7 @@ void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// Check to see if we're even online
 	if(!account()->isConnected())
 	{
-		KMessageBox::sorry(qApp->mainWidget(),
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("<qt>You must be logged on to ICQ before you can "
 				"send a message to a user.</qt>"),
 			i18n("Not Signed On"));

@@ -22,6 +22,7 @@
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
 #include "serviceloader.h"
 
 #include "smscontact.h"
@@ -44,14 +45,14 @@ SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 
 void SMSContact::slotSendingSuccess(const KopeteMessage &msg)
 {
-//	KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
+//	KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
 	manager()->messageSucceeded();
 	manager()->appendMessage((KopeteMessage &)msg);
 }
 
 void SMSContact::slotSendingFailure(const KopeteMessage &/*msg*/, const QString &error)
 {
-	KMessageBox::detailedError(0L, i18n("Something went wrong when sending message."), error,
+	KMessageBox::detailedError(Kopete::UI::Global::mainWidget(), i18n("Something went wrong when sending message."), error,
 			i18n("Could Not Send Message"));
 //	manager()->messageFailed();
 	// TODO: swap for failed as above. show it anyway for now to allow closing of window.

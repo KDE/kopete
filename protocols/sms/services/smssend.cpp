@@ -27,6 +27,7 @@
 #include <kdebug.h>
 
 #include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
 
 #include "smssend.h"
 #include "smssendprefs.h"
@@ -52,14 +53,14 @@ void SMSSend::send(const KopeteMessage& msg)
 
 	if (provider.length() < 1)
 	{
-		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could Not Send Message"));
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No provider configured"), i18n("Could Not Send Message"));
 		return;
 	}
 
 	QString prefix = m_account->pluginData(SMSProtocol::protocol(), "SMSSend:Prefix");
 	if (prefix.isNull())
 	{
-		KMessageBox::error(0L, i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No Prefix"));
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No Prefix"));
 		return;
 	}
 

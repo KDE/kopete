@@ -16,6 +16,7 @@
 */
 
 #include "userinfodialog.h"
+#include "kopeteuiglobal.h"
 
 #include <khtml_part.h>
 #include <ktextbrowser.h>
@@ -58,7 +59,7 @@ struct UserInfoDialog::UserInfoDialogPrivate {
 };
 
 UserInfoDialog::UserInfoDialog( const QString& descr )
-: KDialogBase( kapp->mainWidget(), "userinfodialog", true, i18n( "User Info for %1" ).arg( descr ), KDialogBase::Ok )
+: KDialogBase( Kopete::UI::Global::mainWidget(), "userinfodialog", true, i18n( "User Info for %1" ).arg( descr ), KDialogBase::Ok )
 {
 	d = new UserInfoDialogPrivate;
 	d->page = new QWidget( this );

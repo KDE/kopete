@@ -21,6 +21,7 @@
 #include "serviceloader.h"
 #include "smssend.h"
 #include "smsclient.h"
+#include "kopeteuiglobal.h"
 
 SMSService* ServiceLoader::loadService(const QString& name, KopeteAccount* account)
 {
@@ -33,7 +34,7 @@ SMSService* ServiceLoader::loadService(const QString& name, KopeteAccount* accou
 		s = new SMSClient(account);
 	else
 	{
-		KMessageBox::sorry(0L, i18n("Could not load service %1.").arg(name),
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Could not load service %1.").arg(name),
 			i18n("Error Loading Service"));
 		s = 0L;
 	}

@@ -26,6 +26,7 @@
 #include <kmessagebox.h>
 
 #include "kopeteview.h"
+#include "kopeteuiglobal.h"
 #include "kcodecaction.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanagerfactory.h"
@@ -308,7 +309,7 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 	}
 	else
 	{
-		KMessageBox::error(0l, r, i18n("IRC Plugin"));
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), r, i18n("IRC Plugin"));
 		manager()->view()->closeView();
 	}
 }
@@ -424,7 +425,7 @@ void IRCChannelContact::slotModeChanged()
 void IRCChannelContact::failedChanBanned()
 {
 	manager()->deleteLater();
-	KMessageBox::error( 0l,
+	KMessageBox::error( Kopete::UI::Global::mainWidget(),
 		i18n("<qt>You can not join %1 because you have been banned.</qt>").arg(m_nickName),
 		i18n("IRC Plugin") );
 }
@@ -432,14 +433,14 @@ void IRCChannelContact::failedChanBanned()
 void IRCChannelContact::failedChanInvite()
 {
 	manager()->deleteLater();
-	KMessageBox::error( 0l,
+	KMessageBox::error( Kopete::UI::Global::mainWidget(),
 		i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>").arg(m_nickName), i18n("IRC Plugin") );
 }
 
 void IRCChannelContact::failedChanFull()
 {
 	manager()->deleteLater();
-	KMessageBox::error( 0l,
+	KMessageBox::error( Kopete::UI::Global::mainWidget(),
 		i18n("<qt>You can not join %1 because it has reached its user limit.</qt>").arg(m_nickName),
 		i18n("IRC Plugin") );
 }

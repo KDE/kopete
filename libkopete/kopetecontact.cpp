@@ -37,6 +37,7 @@
 #include <kmessagebox.h>
 
 #include "kopetecontactlist.h"
+#include "kopeteuiglobal.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -310,7 +311,7 @@ void KopeteContact::slotChangeDisplayName()
 
 void KopeteContact::slotChangeMetaContact()
 {
-	KDialogBase *moveDialog = new KDialogBase( qApp->mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
+	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	QVBox *w = new QVBox( moveDialog );
@@ -377,7 +378,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		int result=KMessageBox::No;
 		if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result = KMessageBox::questionYesNoCancel( 0, i18n( "You are moving the contact `%1 <%2>' to `%3'.\n"
+			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1 <%2>' to `%3'.\n"
 				"`%4' will be empty afterwards. Do you want to delete this contact?" )
 #if QT_VERSION < 0x030200
 					.arg(displayName()).arg(contactId()).arg(m ? m->displayName() : QString::null).arg(old->displayName())
@@ -468,7 +469,7 @@ void KopeteContact::execute()
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Sorry,
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 			i18n( "This user is not reachable at the moment. Please try a protocol that supports offline sending, or wait "
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}

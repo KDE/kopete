@@ -36,6 +36,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
+#include "kopeteuiglobal.h"
 
 #include "aim.h"
 #include "aimbuddy.h"
@@ -279,7 +280,7 @@ void OscarContact::slotBlock()
 		" removed later in the preferences dialog.</qt>").arg(mName);
 
 	int result = KMessageBox::questionYesNo(
-		qApp->mainWidget(),
+		Kopete::UI::Global::mainWidget(),
 		message,
 		i18n("Block User %1?").arg(mName),
 		i18n("Block"));
@@ -294,7 +295,7 @@ void OscarContact::slotDirectConnect()
 	kdDebug(14150) << k_funcinfo << "Requesting direct IM with " << mName << endl;
 
 	int result = KMessageBox::questionYesNo(
-		qApp->mainWidget(),
+		Kopete::UI::Global::mainWidget(),
 		i18n("<qt>Are you sure you want to establish a direct connection to %1? \
 		This will allow %2 to know your IP address, which can be dangerous if \
 		you do not trust this contact.</qt>")

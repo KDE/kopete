@@ -32,6 +32,7 @@
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteuiglobal.h"
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
@@ -307,7 +308,7 @@ void MSNMessageManager::slotInviteOtherContact()
 
 	if( handle.contains('@') != 1 || handle.contains('.') <1)
 	{
-			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 					i18n("<qt>You must enter a valid email address.</qt>"), i18n("MSN Plugin"));
 			return;
 	}

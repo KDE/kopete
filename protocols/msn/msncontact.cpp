@@ -36,6 +36,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
+#include "kopeteuiglobal.h"
 
 #include "msninfo.h"
 #include "msnmessagemanager.h"
@@ -140,7 +141,7 @@ void MSNContact::slotBlockUser()
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( !notify )
 	{
-		KMessageBox::error( 0l,
+		KMessageBox::error( Kopete::UI::Global::mainWidget(),
 			i18n( "<qt>Please go online to block or unblock a contact.</qt>" ),
 			i18n( "MSN Plugin" ));
 		return;
@@ -206,7 +207,7 @@ void MSNContact::slotDeleteContact()
 	{
 		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
 		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
-		KMessageBox::error( 0L, i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
 	}
 }
 
@@ -428,7 +429,7 @@ void MSNContact::rename( const QString &newName )
 	else
 	{
 		// FIXME: Move this to libkopete instead - Martijn
-		KMessageBox::information( 0L,
+		KMessageBox::information( Kopete::UI::Global::mainWidget(),
 			i18n( "<qt>Changes to your contact list when you are offline will not be updated on the MSN server. "
 				"Your changes will be lost when you reconnect.</qt>" ),
 			i18n( "MSN Plugin" ), "msn_OfflineContactList" );

@@ -628,7 +628,7 @@ void KopeteWindow::slotSaveContactList()
 
 void KopeteWindow::showAddContactDialog()
 {
-	(new AddContactWizard(qApp->mainWidget()))->show();
+	(new AddContactWizard(this))->show();
 }
 
 void KopeteWindow::slotSettingsChanged()

@@ -191,7 +191,7 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 	}
 	else
 	{
-//		KMessageBox::error(0, "\"" + line + "\"", "Unmatched line");
+//		KMessageBox::error(Kopete::UI::Global::mainWidget(), "\"" + line + "\"", "Unmatched line");
 		kdDebug(14120) << "Unmatched line:\"" << newLine << "\"" << endl;
 	}
 	return msg;

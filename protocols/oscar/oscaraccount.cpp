@@ -26,6 +26,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteawaydialog.h"
 #include "kopetegroup.h"
+#include "kopeteuiglobal.h"
 
 #include <assert.h>
 
@@ -215,7 +216,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
 		OscarAccount::disconnect();
 
-	KMessageBox::queuedMessageBox(0, KMessageBox::Error, errmsg,
+	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errmsg,
 		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
 }
 
@@ -577,7 +578,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 			.arg(sn,sn);
 #endif
 
-	int result = KMessageBox::questionYesNo(0, message, title);
+	int result = KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), message, title);
 
 	if (result == KMessageBox::Yes)
 		engine()->sendDirectIMAccept(sn);

@@ -22,6 +22,8 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
+#include "kopeteuiglobal.h"
+
 #include "smsaccount.h"
 #include "smsprotocol.h"
 #include "smscontact.h"
@@ -58,7 +60,7 @@ const bool SMSAccount::splitNowMsgTooLong(int max, int msgLength)
 {
 	if(theLongMsgAction == ACT_CANCEL) return false;
 	if(theLongMsgAction == ACT_SPLIT) return true;
-	if(KMessageBox::questionYesNo(0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(max).arg(msgLength / max + 1),
+	if(KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(max).arg(msgLength / max + 1),
 		i18n("Message Too Long")) == KMessageBox::Yes)
 		return true;
 	else

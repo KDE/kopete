@@ -248,7 +248,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 
 void IRCAccount::slotNickInUseAlert( const QString &nick )
 {
-	KMessageBox::error(0l, i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
+	KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
 }
 
 void IRCAccount::setAltNick( const QString &altNick )

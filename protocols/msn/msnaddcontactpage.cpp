@@ -8,6 +8,7 @@
 #include "msnaddcontactpage.h"
 #include "msnprotocol.h"
 #include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
 
 MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
@@ -56,7 +57,7 @@ bool MSNAddContactPage::validateData()
 	if(MSNProtocol::validContactId(userid))
 		return true;
 
-	KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 			i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "MSN Plugin" )  );
 
 	return false;

@@ -34,6 +34,8 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 
+#include "kopeteuiglobal.h"
+
 #include "msnaccount.h"
 #include "msncontact.h"
 #include "msneditaccountui.h"
@@ -181,7 +183,7 @@ bool MSNEditAccountWidget::validateData()
 	if ( MSNProtocol::validContactId( userid ) )
 		return true;
 
-	KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 		i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "MSN Plugin" ) );
 	return false;
 }

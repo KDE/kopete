@@ -26,6 +26,8 @@
 #include <kmessagebox.h>
 #include <krestrictedline.h>
 
+#include "kopeteuiglobal.h"
+
 #include "smseditaccountwidget.h"
 #include "smsactprefs.h"
 #include "serviceloader.h"
@@ -129,7 +131,7 @@ void SMSEditAccountWidget::showDescription()
 
 	QString d = s->description();
 
-	KMessageBox::information(0L, d, i18n("Description"));
+	KMessageBox::information(Kopete::UI::Global::mainWidget(), d, i18n("Description"));
 }
 
 #include "smseditaccountwidget.moc"

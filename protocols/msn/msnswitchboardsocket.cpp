@@ -44,6 +44,7 @@
 #include "msnaccount.h"
 #include "kopetemessage.h"
 #include "kopetecontact.h"
+#include "kopeteuiglobal.h"
 
 
 
@@ -97,21 +98,21 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		{
 			QString msg = i18n( "Invalid user! \n"
 				"This MSN user does not exist. Please check the MSN ID." );
-			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle , i18n("user never joined"));
 			break;
 		}
 		case 215:
 		{
 			QString msg = i18n( "The user %1 is already in this chat." ).arg( m_msgHandle );
-			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			//userLeftChat(m_msgHandle , i18n("user was twice in this chat") ); //(the user shouln't join there
 			break;
 		}
 		case 216:
 		{
 			QString msg = i18n( "The user %1 is online but has blocked you.\nYou can't talk to this user." ).arg( m_msgHandle );
-			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
 			break;
 		}
@@ -119,14 +120,14 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		{
 			// TODO: we need to know the nickname instead of the handle.
 			QString msg = i18n( "The user %1 is currently not signed in.\n" "Messages will not be delivered." ).arg( m_msgHandle );
-			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle, i18n("user disconnected"));
 			break;
 		}
 		case 713:
 		{
 			QString msg = i18n( "You are trying to invite too many contact to this chat in the same time" ).arg( m_msgHandle );
-			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
 			break;
 		}

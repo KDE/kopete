@@ -20,6 +20,7 @@
 
 #include "kopeteawayaction.h"
 #include "kopetestdaction.h"
+#include "kopeteuiglobal.h"
 
 #include "aim.h"
 
@@ -151,11 +152,11 @@ void AIMAccount::slotGotWarning(int newlevel, QString warner)
 			warnMessage = i18n("...warned by...", "by %1").arg(warner);
 
 #if QT_VERSION < 0x030200
-		KMessageBox::sorry(0L,
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("You have been warned %1. Your new warning level is %2%.").arg(
 				warnMessage).arg(newlevel));
 #else
-		KMessageBox::sorry(0L,
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("You have been warned %1. Your new warning level is %2%.").arg(
 				warnMessage, newlevel));
 #endif

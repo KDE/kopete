@@ -24,6 +24,7 @@
 #include <kio/observer.h>
 
 #include "kopetemetacontact.h"
+#include "kopeteuiglobal.h"
 
 #include "kopetetransfermanager.h"
 #include "kopetefileconfirmdialog.h"
@@ -285,7 +286,7 @@ void KopeteTransferManager::sendFile( const KURL &file, const QString &fname, un
 	{
 		if( mustBeLocal && !url.isLocalFile() )
 		{
-			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 				i18n( "Sorry, sending files which are not stored locally is not yet supported by this protocol.\n"
 				"Please copy this file to your computer and try again." ) );
 		}

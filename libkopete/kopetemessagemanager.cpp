@@ -36,6 +36,7 @@
 #include "kopetemetacontact.h"
 #include "kopetenotifyclient.h"
 #include "kopeteprefs.h"
+#include "kopeteuiglobal.h"
 #include "kopeteview.h"
 
 class KMMPrivate
@@ -352,7 +353,7 @@ KopeteView* KopeteMessageManager::view( bool canCreate, KopeteMessage::MessageTy
 		}
 		else
 		{
-			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Error,
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 				i18n( "<qt>An error has occurred while creating a new chat window. The chat window has not been created.</qt>" ),
 				i18n( "Error While Creating Chat Window" ) );
 		}

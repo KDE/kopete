@@ -27,6 +27,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteuiglobal.h"
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
@@ -249,7 +250,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		else encryptOptions+=" --cryptography6 ";
 	}*/
 
-// if (selec==NULL) {KMessageBox::sorry(0,i18n("You have not chosen an encryption key..."));return;}
+// if (selec==NULL) {KMessageBox::sorry(Kopete::UI::Global::mainWidget(),i18n("You have not chosen an encryption key..."));return;}
 
 	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
 	if (!resultat.isEmpty())

@@ -39,6 +39,7 @@
 #include "kopeteaccount.h"
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
+#include "kopeteuiglobal.h"
 
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
@@ -267,7 +268,7 @@ KopeteContact *KopeteMetaContact::sendMessage()
 
 	if( !c )
 	{
-		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Sorry,
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 			i18n( "This user is not reachable at the moment. Please make sure you are connected and using a protocol that supports offline sending, or wait "
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
@@ -285,7 +286,7 @@ KopeteContact *KopeteMetaContact::startChat()
 
 	if( !c )
 	{
-		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Sorry,
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 			i18n( "This user is not reachable at the moment. Please make sure you are connected and using a protocol that supports offline sending, or wait "
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
