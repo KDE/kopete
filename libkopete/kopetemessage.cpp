@@ -403,8 +403,11 @@ QString KopeteMessage::unescape( const QString &xml )
 {
 	QString data = xml;
 
-	//Can someone (Jason?) explain to me why unescaping "" to " ?? thanks - Olivier
-	data.replace( QString::fromLatin1( "\"\"" ), QString::fromLatin1( "\"" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ) , false ), QString::fromLatin1( "\\1" ) );  //escape smeleys, return to the original code
+	data.replace( QRegExp( QString::fromLatin1( "< *p[^>/]*/ *>" ) , false ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+
 	data.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
 	data.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
 	data.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
@@ -425,8 +428,6 @@ QString KopeteMessage::plainBody() const
 
 	if( d->format & RichText )
 	{
-		body.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
-		body.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 		body = unescape( body );
 	}
 	return body;

@@ -285,9 +285,6 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 		}
 	}
 
-	htmlString.replace( QRegExp( QString::fromLatin1( "<p.*>(.*)</p>" ) ), QString::fromLatin1("\\1\n") );
-	htmlString.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
-
 	QStringList messages = QStringList::split( '\n', KopeteMessage::unescape( htmlString ) );
 	for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
 		m_engine->messageContact(m_nickName, *it );
