@@ -2,11 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Perl Scripting Plugin
-Name[es]=Plugin de Script para Perl .
-Name[pt]='Plugin' de 'Scripting' em Perl
-Name[pt_BR]=Plug-in para Usar Scripts em Perl
-Name[sv]=Insticksprogram för Perl-skript
-Icon=autoaway_plugin
+Icon=source_pl
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_perlscript
 X-Kopete-Plugin-Id=perlscript

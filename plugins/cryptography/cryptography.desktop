@@ -1,15 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Icon=cryptography_plugin
+Icon=kpgp
 Name=Cryptography
-Name[es]=Criptografía
-Name[fr]=Cryptographie
-Name[he]=קריפטוגרפיה
-Name[pt]=Cifra
-Name[pt_BR]=Criptografia
-Name[sv]=Kryptering
-Name[zh_CN]=加密
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_cryptography
 X-Kopete-Plugin-Id=cryptography
@@ -18,10 +11,3 @@ X-Kopete-Site=http://kopete.kde.org
 X-Kopete-Email=ogoffart@tiscalinet.be
 X-Kopete-License=GPL
 Comment=Encrypt and decrypt messages with GPG
-Comment[es]=Cifrado y descifrado de mensajes con GPG
-Comment[fr]=Crypte et décrypte des messages avec GPG
-Comment[he]=קודד ופתח קידוד של הודעות עם GPG
-Comment[pt]=Cifrar e decifrar mensagens com o GPG
-Comment[pt_BR]=Criptografar e descriptografar mensagens com GPG
-Comment[sv]=Kryptera och avkoda meddelanden med GPG
-Comment[zh_CN]=用 GPG 加密和解密讯息

@@ -1,13 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Icon=webpresence_plugin
+Icon=html
 Name=Web Presence
-Name[fr]=Présence Web
-Name[pt]=Presença na Web
-Name[pt_BR]=Presença na Web
-Name[sv]=Webbnärvaro
-Name[zh_CN]=Web 出席
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_webpresence
 X-Kopete-Plugin-Id=webpresence
@@ -16,9 +11,3 @@ X-Kopete-Site=http://www.cs.ncl.ac.uk/old/people/william.stephenson
 X-Kopete-Email=will@stevello.free-online.co.uk
 X-Kopete-License=GPL
 Comment=Show the status of (parts of) your contactlist on a webpage
-Comment[es]=Muestra el estado (partes de) de su listín en un página web.
-Comment[fr]=Affiche l'état des (ou d'une partie des) contacts de votre liste sur une page web
-Comment[pt]=Mostra o estado (de parte) da sua lista de contactos numa página Web
-Comment[pt_BR]=Mostra o status de (partes da) sua lista de contatos em uma página da web
-Comment[sv]=Visa status för (delar av) din kontaktlista på en webbsida
-Comment[zh_CN]=在一个网页上显示您的联系人列表(部分)的状态

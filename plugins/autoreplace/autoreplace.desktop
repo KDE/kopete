@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Icon=color
+Icon=autoreplace
 Name=Auto Replace
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_autoreplace
