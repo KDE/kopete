@@ -6,7 +6,7 @@ noinst_LTLIBRARIES = libkopeteui.la
 
 libkopeteui_la_SOURCES = kopetecontactaction.cpp addcontactpage.cpp \
 	editaccountwidget.cpp kopetepassworddialog.ui kopetestdaction.cpp \
-	kopeteawaydialogbase.ui kopetefiletransferui.ui kopetefileconfirmdialog.cpp \
+	kopeteawaydialogbase.ui kopetefileconfirmdialog.cpp \
 	fileconfirmbase.ui userinfodialog.cpp kopeteview.cpp kopetepasswordwidgetbase.ui \
 	kopetepasswordwidget.cpp accountselector.cpp
 
