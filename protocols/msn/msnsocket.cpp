@@ -75,7 +75,9 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_port = port;
 	m_socket = new KExtendedSocket( server, port, 0x600000 );
 	m_socket->enableRead( true );
-	m_socket->enableWrite( true );
+	// enableWrite eats the CPU, and we only need it when the queue is
+	// non-empty, so disable it until we have actual data in the queue
+	m_socket->enableWrite( false );
 
 	QObject::connect( m_socket, SIGNAL( readyRead() ),
 		this, SLOT( slotDataReceived() ) );
@@ -373,9 +375,9 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 
 //	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
 
-
-	//the command will be sent in slotReadyWrite
-	m_sendQueue.append(data);
+	// the command will be sent in slotReadyWrite
+	m_sendQueue.append( data );
+	m_socket->enableWrite( true );
 
 	if(addId)
 	{
@@ -393,6 +395,11 @@ void MSNSocket::slotReadyWrite()
 		kdDebug() << "MSNSocket::slotReadyWrite: Sending command " << *it << endl;
 		m_socket->writeBlock( *it, (*it).length() );
 		m_sendQueue.remove( it );
+
+		// If the queue is empty again stop waiting for readyWrite signals
+		// because of the CPU usage
+		if( m_sendQueue.isEmpty() )
+			m_socket->enableWrite( false );
 	}
 }
 
