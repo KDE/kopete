@@ -57,7 +57,7 @@
         	PassivePopup = 16,
 	        Execute      = 23
 	    };
-	}
+	};
 #endif
 
 using namespace KNotify;
