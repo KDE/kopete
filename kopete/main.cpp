@@ -23,7 +23,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Messenger");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
-static const char *version="0.0.1";	
+static const char *version="0.2";	
 	
 static KCmdLineOptions options[] =
 {
