@@ -26,7 +26,8 @@ struct DirectInfo { //info used for keeping track of direct connections
 	char cookie[8];
 	QString sn;
 	QString host;
-	QFileInfo finfo;
+	int port;
+	const KFileItem *finfo;
 };
 
 #define DIRECTIM_PORT		4443
@@ -52,11 +53,15 @@ public:
 			If no such connection is found, return NULL */
   OscarConnection * findConnection(const QString &name);
   /** Adds the connection to the list of pending connections, returns it */
-  DirectInfo *addPendingConnection(const QString &sn, char cookie[8], const QFileInfo &finfo=QFileInfo());
+  DirectInfo *addPendingConnection(const QString &sn, char cookie[8], const KFileItem *finfo, const QString &host, int port);
   /** Adds an outgoing connection to the list and attempts to connect */
-  void addOutgoingConnection(const QString &sn, char * cook, const QString &host, int port);
+  bool establishOutgoingConnection(const QString &sn);
   /** Removes the named connection from the connection list and disconnects it. */
   void removeConnection(const QString &name);
+  /** Adds the passed file info to the appropriate screen name in the list of pending connections */
+  void addFileInfo(const QString &sn, KFileItem *finfo);
+  /** Gets the cookie associated with the pending connection for @sn, stores it in cook */
+  bool getPendingCookie(const QString &sn, char cook[8]);
 private:
   /** A list of all connections */
   QPtrList<OscarConnection> mConns;

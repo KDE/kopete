@@ -1163,7 +1163,10 @@ void OscarSocket::parseIM(Buffer &inbuf)
     QString message;
     WORD msgtype = 0; //used to tell whether it is a direct IM requst, deny, or accept
     DWORD capflag = 0; //used to tell what kind of rendezvous this is
-    OncomingSocket *sockToUse; //used to tell which listening socket to use
+    OncomingSocket *sockToUse; //used to tell which listening socket to use 
+    QString fileName; //the name of the file to be transferred (if any)
+    long unsigned int fileSize = 0; //the size of the file(s) to be transferred
+
     switch(channel)
 		{
  		case 0x0001: //normal IM
@@ -1345,6 +1348,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								//Invitation message/ chat description
 								else if (cur->type == 0x000c)
 								{
+										message = cur->data;
 										kdDebug(14150) << "[OSCAR] Invited to chat " << cur->data << endl;
 								}
 								//Character set
@@ -1356,6 +1360,24 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								else if (cur->type == 0x000e)
 								{
 										kdDebug(14150) << "[OSCAR] Using language " << cur->data << endl;
+								}
+								//File transfer
+								else if (cur->type == 0x2711)
+								{
+                	Buffer thebuf;
+                	thebuf.setBuf(cur->data,cur->length);
+                 //more than 1 file? (0x0002 for multiple files)
+									thebuf.getWord();
+									//number of files
+									thebuf.getWord();
+									//total size
+									fileSize = thebuf.getDWord();
+									//file name
+									char *fname = thebuf.getBlock(cur->length - 2 - 2 - 4 - 4);
+									//DWord of 0x00000000
+									thebuf.getDWord();
+									fileName = fname;
+									delete [] fname;
 								}
 								else
 										kdDebug(14150) << "[OSCAR] ICBM ch2: unknown tlv type " << cur->type << endl;
@@ -1374,14 +1396,14 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				{
 					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
 					{
-						sendDirectIMAccept(u.sn);
-						remotePort = 4443;
+						emit gotDirectIMRequest(u.sn);
 					}
 					else // file send
 					{
-						sendFileSendAccept(u.sn);
+						emit gotFileSendRequest(u.sn, message, fileName, fileSize);
 					}
-					sockToUse->addOutgoingConnection(u.sn, cook, qh.toString(), remotePort);
+					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
+					sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), remotePort);
 				}
 				else if (msgtype == 0x0001) //deny
 				{
@@ -1966,22 +1988,30 @@ void OscarSocket::parseError(Buffer &inbuf)
 type == 0: request
 type == 1: deny
 type == 2: accept  */
-void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const QFileInfo &finfo)
+void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo)
 {
 		OncomingSocket *sockToUse = serverSocket(rendezvousType);
     Buffer outbuf;
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
     char ck[8];
-    //generate a random message cookie
-    for (int i=0;i<8;i++)
-		{
-	    ck[i] = static_cast<BYTE>(rand());
+    if ( type == 1 ) //we need to send the same cookie if it's an accept
+    {
+    	if ( !sockToUse->getPendingCookie(sn, ck) )
+     		kdDebug() << k_funcinfo << sn << " not found in list of pending connections..." << endl;
+    }
+    else
+    {
+    	//generate a random message cookie
+    	for (int i=0;i<8;i++)
+			{
+	   	 ck[i] = static_cast<BYTE>(rand());
+			}
 		}
 
 		//add this to the list of pending connections if it is a request
 		if ( type == 0 )
 		{
-			sockToUse->addPendingConnection(sn, ck, finfo);
+			sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0);
 		}
     outbuf.addString(ck,8);
     //channel 2
@@ -1993,7 +2023,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     outbuf.addTLV(0x0003,0x0000,NULL);
     //add a huge TLV of type 5
     outbuf.addWord(0x0005);
-    if ( finfo.fileName().isNull() ) //this is a simple direct IM
+    if ( !finfo ) //this is a simple direct IM
     {
     	if (type == 0x0000)
      		outbuf.addWord(2+8+16+6+8+6+4);
@@ -2003,7 +2033,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     else //this is a file transfer request
     {
     	if (type == 0x0000)
-	    	outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+finfo.fileName().length()+4);
+	    	outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+finfo->url().fileName().length()+4);
       else
       	outbuf.addWord(2+8+16);
     }
@@ -2040,14 +2070,14 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     	//TLV (type f)
     	outbuf.addTLV(0x000f,0x0000,NULL); //4
     	
-   	 if ( !finfo.fileName().isNull() )
+   	 if ( finfo )
    	 {
     		outbuf.addWord(0x2711); //2
-     		outbuf.addWord(2+2+4+finfo.fileName().length()+4); //2
+     		outbuf.addWord(2+2+4+finfo->url().fileName().length()+4); //2
       	outbuf.addWord(0x0001); //more than 1 file? (0x0002 for multiple -- implement later)
       	outbuf.addWord(0x0001); //number of files
-				outbuf.addDWord(finfo.size());
-				outbuf.addString(finfo.fileName().latin1(),finfo.fileName().length());
+				outbuf.addDWord(finfo->size());
+				outbuf.addString(finfo->url().fileName().latin1(),finfo->url().fileName().length());
 				outbuf.addDWord(0x00000000);
     	}
     }
@@ -2366,15 +2396,18 @@ void OscarSocket::OnDirectIMReady(QString name)
 }
 
 /** Initiate a transfer of the given file to the given sn */
-void OscarSocket::sendFileSendRequest(const QString &sn, const QFileInfo &finfo)
+void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 {
-	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, finfo);
+	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, &finfo);
 }
 
 /** Accepts a file transfer from sn */
-void OscarSocket::sendFileSendAccept(const QString &sn)
+void OscarSocket::sendFileSendAccept(const QString &sn, const QString &fileName)
 {
 	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
+	mFileTransferMgr->addFileInfo(sn, new KFileItem(KFileItem::Unknown, KFileItem::Unknown, fileName));
+	if ( !mFileTransferMgr->establishOutgoingConnection(sn) )
+		kdDebug(14150) << k_funcinfo << sn << " not found in pending connection list" << endl;
 }
 
 /** Returns the appropriate server socket, based on the capability flag it is passed. */
@@ -2384,6 +2417,12 @@ OncomingSocket * OscarSocket::serverSocket(DWORD capflag)
 		return mDirectIMMgr;
 	else  //must be a file transfer?
 		return mFileTransferMgr;
+}
+
+/** Sends a file transfer deny to @sn */
+void OscarSocket::sendFileSendDeny(const QString &sn)
+{
+	sendRendezvous(sn, 0x0002, AIM_CAPS_SENDFILE);
 }
 
 /*

@@ -1,24 +1,25 @@
-/***************************************************************************
-                          oscarfilesendconnection.h  -  description
-                             -------------------
-    begin                : Thu Jan 9 2003
-    copyright            : (C) 2003 by Kopete developers
-    email                : kopete-devel@kde.org
- ***************************************************************************/
+/*
+    oscarfilesendconnection.h  -  Implementation of an oscar file transfer connection
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef OSCARFILESENDCONNECTION_H
 #define OSCARFILESENDCONNECTION_H
 
-#include <qfileinfo.h>
+#include <kio/job.h>
+#include <kfileitem.h>
 #include <oscarconnection.h>
 
 /**Implementation of a direct connection used to send files
@@ -59,7 +60,7 @@ struct OFT2 { //OFT2 header
 class OscarFileSendConnection : public OscarConnection  {
 	Q_OBJECT
 public: 
-	OscarFileSendConnection(const QFileInfo &finfo, const QString &sn, const QString &connName, char cookie[8], QObject *parent=0, const char *name=0);
+	OscarFileSendConnection(const KFileItem *finfo, const QString &sn, const QString &connName, char cookie[8], QObject *parent=0, const char *name=0);
 	~OscarFileSendConnection();
   /** Sends out an OFT2 block to the peer, using the specified header and buffer data */
   void sendOFT2Block(const OFT2 &oft, const Buffer &data, bool nullCookie);
@@ -85,16 +86,25 @@ protected slots:
 
 private: // Private members
 	/** Information on the file we are going to transfer */
-	QFileInfo mFileInfo;
+	KFileItem *mFileInfo;
 	/** Tells whether the peer is currently sending data */
 	bool mSending;
 	/** Tells how many bytes we have transferred */
 	unsigned long mBytesTransferred;
 	/** The actual file we are writing to or reading from */
-	QFile mFile;
+	KIO::TransferJob *mFile;
 	/** The size of the file to be transferred */
 	unsigned long mFileSize;
+  /** The read buffer (for file data) */
+  Buffer mBuffer;
 
+private slots: // Private slots
+  /** Called when the kio job is done */
+  void slotKIOResult(KIO::Job *);
+  /** Called when the KIO job sends data */
+  void slotKIOData(KIO::Job *job, const QByteArray &data);
+  /** Called when the KIO slave wants data */
+  void slotKIODataReq(KIO::Job *job, QByteArray &data);
 };
 
 #endif

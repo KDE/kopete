@@ -1,5 +1,5 @@
 /*
-    oscarconnection.h  -  Implementation of an oscar direct connection
+    oscardirectconnection.cpp  -  Implementation of an oscar direct connection
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
 

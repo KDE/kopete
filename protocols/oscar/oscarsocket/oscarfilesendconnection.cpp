@@ -1,29 +1,33 @@
-/***************************************************************************
-                          oscarfilesendconnection.cpp  -  description
-                             -------------------
-    begin                : Thu Jan 9 2003
-    copyright            : (C) 2003 by Kopete developers
-    email                : kopete-devel@kde.org
- ***************************************************************************/
+/*
+    oscarfilesendconnection.cpp  -  Implementation of an oscar file send connection
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <kdebug.h>
+#include <unistd.h>
 #include "oscardebugdialog.h"
 #include "oscarfilesendconnection.h"
 
-OscarFileSendConnection::OscarFileSendConnection(const QFileInfo &finfo, const QString &sn,
+OscarFileSendConnection::OscarFileSendConnection(const KFileItem *finfo, const QString &sn,
 	const QString &connName, char cookie[8], QObject *parent, const char *name)
 	: OscarConnection(sn, connName, SendFile, cookie, parent, name)
 {
-	mFileInfo = finfo;
+	if (finfo)
+		mFileInfo = new KFileItem(*finfo);
+	else
+		mFileInfo = 0L;
 	mBytesTransferred = 0;
 	mFileSize = 0;
 	mSending = false;
@@ -52,6 +56,7 @@ void OscarFileSendConnection::slotRead(void)
 		{
 			emit transferComplete(connectionName());
 			close();
+			emit connectionClosed(connectionName());
 		}
 		if (hdr.filename)
 			delete [] hdr.filename;
@@ -71,14 +76,16 @@ void OscarFileSendConnection::slotRead(void)
 			bytesToRead = bytesAvailable();
 		else
 			bytesToRead = mFileSize - mBytesTransferred;
+
 		char *data = new char[bytesToRead];
 		mBytesTransferred += readBlock(data,bytesToRead);
-		mFile.writeBlock(data,bytesToRead);
+    mBuffer.addString(data,bytesToRead);
+    mFile->resume(); //resume processing of KIO transfer
 		delete [] data;
 		if ( mBytesTransferred >= mFileSize ) //we are done
 		{
 			mSending = false;
-			mFile.close();
+			mFile->resume();
 			kdDebug() << "[OscarFileSendConnection] Sending read confirm.  filesize: " << mFileSize << ", bytes transferred: " << mBytesTransferred << endl;
 			sendReadConfirm();
 		}
@@ -239,15 +246,15 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 	oft.partsleft = 0x0001;
 
 	//this will need to be changed when we go for multiple file support
-	oft.totsize = mFileInfo.size();
+	oft.totsize = mFileInfo->size();
 	
-	oft.size = mFileInfo.size();
-	oft.modtime = mFileInfo.lastModified().toTime_t();
+	oft.size = mFileInfo->size();
+	oft.modtime = mFileInfo->time(KIO::UDS_MODIFICATION_TIME);
 	
 	oft.checksum = 0x00000000; //we might get crap about this
 	oft.rfrcsum = 0x00000000;
 	oft.rfsize = 0x00000000;
-	oft.cretime = mFileInfo.created().toTime_t();
+	oft.cretime = mFileInfo->time(KIO::UDS_CREATION_TIME);
 	oft.rfcsum = 0x00000000;
 	oft.nrecvd = 0x00000000;
 	oft.recvcsum = 0x00000000;
@@ -263,11 +270,11 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
 	oft.filename = new char[64];
-	for (unsigned int i=0;i<mFileInfo.fileName().length();i++)
+	for (unsigned int i=0;i<mFileInfo->url().fileName().length();i++)
 	{
-		oft.filename[i] = mFileInfo.fileName()[i].latin1();	
+		oft.filename[i] = mFileInfo->url().fileName()[i].latin1();	
 	}
-	for (unsigned int i=mFileInfo.fileName().length();i<64;i++)
+	for (unsigned int i=mFileInfo->url().fileName().length();i<64;i++)
 		oft.filename[i] = 0;
 
 	Buffer thebuf;
@@ -281,12 +288,27 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 {
 	hdr.channel = 0x0202; //this means accept the transfer
+
 	mFileSize = hdr.size;
-	mFile.setName(hdr.filename);
-	kdDebug() << "[OscarFileSendConnection] Accepting transfer of " << mFile.name() << ", size: " << mFileSize << endl;
-	mFile.open(IO_WriteOnly);
+	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " << hdr.filename << ", size: " << mFileSize << endl;
+
 	Buffer outbuf;
 	sendOFT2Block(hdr, outbuf, false);
+
+	if ( !mFileInfo )
+	{
+		kdDebug(14150) << k_funcinfo << "mfileinfo is null :-(  can't accept transfer" << endl;
+		return;
+	}
+	
+ 	mFile = KIO::put(mFileInfo->url(), -1, true, false, true);
+	mFile->suspend();
+	connect( mFile, SIGNAL(result(KIO::Job*)),
+		this, SLOT(slotKIOResult(KIO::Job*)) );
+  //allow the KIO to write to file
+  connect( mFile, SIGNAL(dataReq(KIO::Job*, QByteArray &)),
+		this, SLOT(slotKIODataReq(KIO::Job*, QByteArray &)) );
+
 	mSending = true;
 }
 
@@ -294,14 +316,11 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 void OscarFileSendConnection::sendFile(void)
 {
 	mSending = true;
-  mFile.setName(mFileInfo.filePath());
-	mFile.open(IO_ReadOnly);
-	kdDebug() << "[OscarFileSendConnection] Sending file " << mFileInfo.fileName() << ", size " << mFile.size() << endl;
-	QByteArray data = mFile.readAll();
-	mBytesTransferred += writeBlock(data.data(),data.size());
-	mSending = false;
-	mFile.close();
-	kdDebug() << "[OscarFileSendConnection] Finished sending file" << endl;
+	mFile = KIO::get(mFileInfo->url(), true, true);
+	connect( mFile, SIGNAL(result(KIO::Job*)),
+  	this, SLOT(slotKIOResult(KIO::Job*)) );
+  connect( mFile, SIGNAL(data(KIO::Job*, const QByteArray &)),
+  	this, SLOT(slotKIOData(KIO::Job*, const QByteArray &)) );
 }
 
 /** Tells the peer we have received the file */
@@ -323,18 +342,20 @@ void OscarFileSendConnection::sendReadConfirm()
 	oft.totsize = 0x00000000;
 
 	oft.size = 0x00000000;
+	oft.modtime = 0x00000000;
 	//oft.modtime = mFileInfo.lastModified().toTime_t();
 
 	oft.checksum = 0x00000000; //we might get crap about this
 	oft.rfrcsum = 0x00000000;
 	oft.rfsize = 0x00000000;
+	oft.cretime = 0x00000000;
 	//oft.cretime = mFileInfo.created().toTime_t();
 	oft.rfcsum = 0x00000000;
 	oft.nrecvd = mBytesTransferred;
-	mFile.open(IO_ReadOnly);
-	QByteArray data = mFile.readAll();
-	oft.recvcsum = qChecksum(data.data(),data.size());
-	//oft.recvcsum = 0x00000000;
+//	mFile.open(IO_ReadOnly);
+//	QByteArray data = mFile.readAll();
+//	oft.recvcsum = qChecksum(data.data(),data.size());
+	oft.recvcsum = 0x00000000;
 	oft.flags = 0x02;
 	oft.lnameoffset = 0x00;
 	oft.lsizeoffset = 0x00;
@@ -347,18 +368,47 @@ void OscarFileSendConnection::sendReadConfirm()
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
 	oft.filename = new char[64];
-	for (unsigned int i=0;i<mFile.name().length();i++)
-	{
-		oft.filename[i] = mFile.name()[i].latin1();
-	}
-	for (unsigned int i=mFile.name().length();i<64;i++)
-		oft.filename[i] = 0;
+//	for (unsigned int i=0;i<mFile.name().length();i++)
+//	{
+//		oft.filename[i] = mFile.name()[i].latin1();
+//	}
+//	for (unsigned int i=mFile.name().length();i<64;i++)
+//		oft.filename[i] = 0;
 
 	Buffer thebuf;
 	sendOFT2Block(oft, thebuf, false);
 	delete [] oft.dummy;
 	delete [] oft.macinfo;
 	delete [] oft.filename;
+}
+
+/** Called when the kio job is done */
+void OscarFileSendConnection::slotKIOResult(KIO::Job *job)
+{
+	if (job->error())
+  	job->showErrorDialog();
+  else
+  {
+		mSending = false;
+		kdDebug(14150) << "[OscarFileSendConnection] Finished transferring file" << endl;
+  }
+}
+
+/** Called when the KIO job sends data */
+void OscarFileSendConnection::slotKIOData(KIO::Job *job, const QByteArray &data)
+{
+	kdDebug(14150) << "[OscarFileSendConnection] got data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
+	mBytesTransferred += writeBlock(data.data(),data.size());
+}
+
+/** Called when the KIO slave wants data */
+void OscarFileSendConnection::slotKIODataReq(KIO::Job *job, QByteArray &data)
+{
+  int len = mBuffer.getLength();
+	data.assign(mBuffer.getBlock(len), len);
+	kdDebug(14150) << "[OscarFileSendConnection] writing data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
+	if ( mSending )
+		((KIO::TransferJob *)job)->suspend();
 }
 
 #include "oscarfilesendconnection.moc"

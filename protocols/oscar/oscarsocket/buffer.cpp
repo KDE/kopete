@@ -77,7 +77,7 @@ int Buffer::addDWord(const DWORD dw)
 int Buffer::addString(const char * s, const DWORD len)
 {
 	doResize(len);
-	for (int i=0;i<len;i++) //concatenate the new string onto the buffer
+	for (unsigned int i=0;i<len;i++) //concatenate the new string onto the buffer
 		buf[length+i] = s[i];
 	length = length + len;
 	return length;
@@ -128,7 +128,7 @@ void Buffer::print() const
 QString Buffer::toString() const
 {
 	QString output;
-	for (int i=0;i<length;i++)
+	for (unsigned int i=0;i<length;i++)
 	{
 		if (static_cast<unsigned char>(buf[i]) < 0x10)
 			output += "0";
@@ -298,14 +298,27 @@ void Buffer::doResize(int inc)
 {
 	if ( (length + inc + buf - alloc_buf) > alloc_length ) //if we need a new array
 	{
-		char *tmp;
-		tmp = new char[(length + inc)*2];
-		for (DWORD i=0;i<length;i++)
-			tmp[i] = buf[i];
-		if (alloc_buf)
-			delete[] alloc_buf;
-		alloc_buf = tmp;
-		buf = alloc_buf;
-		alloc_length = (length + inc)*2;
+		//don't worry, I'll be changing this to a QByteArray pretty soon
+		//in the meantime:
+    // before allocating memory, check to see if we can use what is already discarded
+    // if more than half the buffer has been discarded, we'll just relocate what we have
+    if ( (buf - alloc_buf) > (length + inc) )
+    {
+    	for (DWORD i=0;i<length;i++)
+     		alloc_buf[i] = buf[i];
+      buf = alloc_buf;	
+    }
+    else
+    {
+			char *tmp;
+			tmp = new char[(length + inc)*2];
+			for (DWORD i=0;i<length;i++)
+				tmp[i] = buf[i];
+			if (alloc_buf)
+				delete[] alloc_buf;
+			alloc_buf = tmp;
+			buf = alloc_buf;
+			alloc_length = (length + inc)*2;
+		}
 	}
 }

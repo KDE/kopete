@@ -19,6 +19,7 @@
 #define OSCARCONTACT_H
 
 #include <qwidget.h>
+#include "kopetetransfermanager.h"
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -158,6 +159,12 @@ private slots: // Private slots
   void slotDirectIMReady(QString name);
   /** Called when the direct connection to name has been terminated */
   void slotDirectIMConnectionClosed(QString name);
+  /** Called when someone wants to send us a file */
+  void slotGotFileSendRequest(QString sn, QString message, QString filename, unsigned long filesize);
+  /** Called when we deny a transfer */
+  void slotTransferDenied(KopeteTransfer *tr);
+  /** Called when a pending transfer has been accepted */
+  void slotTransferAccepted(KopeteTransfer *, const QString &fileName);
 };
 
 #endif

@@ -20,7 +20,7 @@
 
 #include "oscardirectconnection.h"
 #include <qptrlist.h>
-#include <qfileinfo.h>
+#include <kfileitem.h>
 #include "oncomingsocket.h"
 #include "ssidata.h"
 #include "tbuddylist.h"
@@ -156,15 +156,17 @@ public:
 	 */
 	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
   /** Initiate a transfer of the given file to the given sn */
-  void sendFileSendRequest(const QString &sn, const QFileInfo &finfo);
+  void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
+  /** Sends a file transfer deny to @sn */
+  void sendFileSendDeny(const QString &sn);
+  /** Accepts a file transfer from sn */
+  void sendFileSendAccept(const QString &sn, const QString &fileName);
 
 public slots:
   /** This is called when a connection is established */
   void OnConnect(void);
   /** This function is called when there is data to be read */
   virtual void slotRead(void);
-  /** Accepts a file transfer from sn */
-  void sendFileSendAccept(const QString &sn);
 	
 private: // Private methods
   /** adds the flap version to the buffer */
@@ -279,7 +281,7 @@ private: // Private methods
 		type == 1: deny
 		type == 2: accept  */
   void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType,
-  	const QFileInfo &finfo=QFileInfo());
+  	const KFileItem *finfo=0L);
   /** Sends a 0x0013,0x0002 (requests SSI rights information) */
   void sendSSIRightsRequest(void);
   /** Sends a 0x0013,0x0004 (requests SSI data?) */
@@ -338,6 +340,10 @@ signals: // Signals
      WARNING: this is emitted every time the server notifies us about our warning level,
      so natural decreases in level will be signalled.*/
   void gotWarning(int, QString);
+  /** Emitted when someone has requested a direct IM session with us */
+  void gotDirectIMRequest(QString);
+  /** Emitted when someone has requested to send a file to us */
+  void gotFileSendRequest(QString, QString, QString, unsigned long);
 private: // Private attributes
   /** The key used to encrypt the password */
   char * key;

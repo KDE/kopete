@@ -81,6 +81,14 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	// Set up the mTypingTimer
 	QObject::connect(mTypingTimer, SIGNAL(timeout()),
 					this, SLOT(slotTextEntered()));
+	//File transfer request
+	QObject::connect(mProtocol->engine, SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
+		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
+  //File transfer manager stuff
+	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
+		this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
+	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(KopeteTransfer *, const QString &)),
+		this, SLOT(slotTransferDeleted(KopeteTransfer *, const QString &)) );
 		
 	if(parent){
 		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
@@ -777,21 +785,54 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 void OscarContact::sendFile(const KURL &sourceURL, const QString &altFileName,
 	const long unsigned int fileSize)
 {
-	QString filePath;
+	KURL filePath;
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
+		filePath = KFileDialog::getOpenURL( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
 	else
-		filePath = sourceURL.path(-1);
+		filePath = sourceURL;
 
 	if ( !filePath.isEmpty() )
 	{
-    QFileInfo finfo(filePath);
-		kdDebug(14150) << "[OscarContact] File size is " << finfo.size() << endl;
+    KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
+		kdDebug(14150) << "[OscarContact] File size is " << (unsigned long)finfo.size() << endl;
 		//Send the file
 		mProtocol->engine->sendFileSendRequest( mName, finfo );
 	}
+}
+
+/** Called when someone wants to send us a file */
+void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename, unsigned long filesize)
+{
+	// Check if we're the one who is directly connected
+	if ( tocNormalize(sn) != tocNormalize(mName) )
+		return;
+
+	kdDebug(14150) << "[OscarContact] Got file x-fer request for " << mName << endl;
+	KopeteTransferManager::transferManager()->askIncomingTransfer(this, filename, filesize, message);
+}
+
+/** Called when a pending transfer has been accepted */
+void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileName)
+{
+	// Check if we're the one who is directly connected
+	if ( tr->info().contact() != this )
+		return;
+	
+	kdDebug(14150) << k_funcinfo << "Transfer of " << fileName << " accepted." << endl;
+	mProtocol->engine->sendFileSendAccept(mName, fileName);
+}
+
+/** Called when we deny a transfer */
+void OscarContact::slotTransferDenied(KopeteTransfer *tr)
+{
+	// Check if we're the one who is directly connected
+	if ( tr->info().contact() != this )
+		return;
+
+	kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
+	mProtocol->engine->sendFileSendDeny(mName);
 }
 
 /*	if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
