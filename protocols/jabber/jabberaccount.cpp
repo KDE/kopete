@@ -1126,20 +1126,6 @@ bool JabberAccount::addContact( const QString &contactId, const QString &display
 
 }
 
-void JabberAccount::updateContact (const Jabber::RosterItem & item)
-{
-	if (!isConnected ())
-	{
-		errorConnectFirst ();
-		return;
-	}
-
-	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (jabberClient->rootTask ());
-
-	rosterTask->set (item.jid (), item.name (), item.groups ());
-	rosterTask->go (true);
-}
-
 void JabberAccount::removeContact (const Jabber::RosterItem & item)
 {
 	if (!isConnected ())

@@ -120,7 +120,6 @@ private:
 	Jabber::Client *jabberClient;
 
 	void setAvailable ();
-	void updateContact (const RosterItem &);
 	void removeContact (const RosterItem &);
 
 	/* Set up our actions for the status menu. */

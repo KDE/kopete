@@ -65,7 +65,7 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 
 	// create a default (empty) resource for the contact
 	JabberResource *defaultResource = new JabberResource (QString::null, -1, QDateTime::currentDateTime (),
-														  dynamic_cast<JabberProtocol *>(protocol())->JabberOffline, "");
+														  static_cast<JabberProtocol *>(protocol())->JabberOffline, "");
 
 	//JabberProtocol::JabberOffline(), "");
 
@@ -77,8 +77,8 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	setDisplayName (rosterItem.name ());
 
 	// specifically cause this instance to update this contact as offline
-	slotUpdatePresence (dynamic_cast<JabberProtocol *>(protocol())->JabberOffline, QString::null);
-	//slotUpdatePresence(p->JabberOffline, QString::null);
+	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberOffline, QString::null);
+
 }
 
 /* Return the user ID */
@@ -229,9 +229,6 @@ void JabberContact::slotUpdateContact (const Jabber::RosterItem & item)
 
 void JabberContact::slotRenameContact ()
 {
-
-	kdDebug (14130) << "[JabberContact] Renaming contact." << endl;
-
 	dlgJabberRename *renameDialog = new dlgJabberRename;
 
 	renameDialog->setUserId (userId ());
@@ -247,6 +244,8 @@ void JabberContact::slotDoRenameContact (const QString & nickname)
 {
 	QString name = nickname;
 
+	kdDebug (14130) << k_funcinfo << "Renaming contact." << endl;
+
 	// if the name has been deleted, revert
 	// to using the user ID instead
 	if (name == QString (""))
@@ -255,7 +254,16 @@ void JabberContact::slotDoRenameContact (const QString & nickname)
 	rosterItem.setName (name);
 
 	// send rename request to protocol backend
-	//protocol->updateContact(rosterItem);
+	if (!account()->isConnected())
+	{
+		static_cast<JabberAccount *>(account())->errorConnectFirst();
+		return;
+	}
+
+	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+
+	rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
+	rosterTask->go (true);
 
 	// update display (we cannot use setDisplayName()
 	// as parameter here as the above call is asynch
@@ -267,11 +275,19 @@ void JabberContact::slotDoRenameContact (const QString & nickname)
 
 void JabberContact::slotDeleteContact ()
 {
-
-	kdDebug (14130) << "[JabberContact] Removing user " << userId () << endl;
+	kdDebug (14130) << k_funcinfo << "Removing user " << userId () << endl;
 
 	// unsubscribe
-	//protocol->removeContact(rosterItem);
+	if (!account()->isConnected ())
+	{
+		static_cast<JabberAccount *>(account())->errorConnectFirst ();
+		return;
+	}
+
+	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+
+	rosterTask->remove (rosterItem.jid ());
+	rosterTask->go (true);
 
 }
 
@@ -280,7 +296,7 @@ void JabberContact::slotSendAuth ()
 
 	kdDebug (14130) << "[JabberContact] (Re)send auth " << userId () << endl;
 
-	dynamic_cast<JabberAccount *>(account())->subscribed (Jabber::Jid (userId ()));
+	static_cast<JabberAccount *>(account())->subscribed (Jabber::Jid (userId ()));
 
 }
 
@@ -289,7 +305,7 @@ void JabberContact::slotRequestAuth ()
 
 	kdDebug (14130) << "[JabberContact] (Re)request auth " << userId () << endl;
 
-	dynamic_cast<JabberAccount *>(account())->subscribe (Jabber::Jid (userId ()));
+	static_cast<JabberAccount *>(account())->subscribe (Jabber::Jid (userId ()));
 
 }
 
@@ -298,20 +314,28 @@ void JabberContact::syncGroups ()
 	QStringList groups;
 	KopeteGroupList groupList = metaContact ()->groups ();
 
-	for (KopeteGroup * g = groupList.first (); g; g = groupList.next ())
+	if (!account()->isConnected())
 	{
-		if (!g->displayName ().isEmpty ())
-			groups.append (g->displayName ());
+		static_cast<JabberAccount *>(account())->errorConnectFirst();
+		return;
 	}
-	//FIXME: isn't there a problem is there are no groups (top-level only)
+
+	for (KopeteGroup * g = groupList.first (); g; g = groupList.next ())
+		groups += g->displayName();
+
 	rosterItem.setGroups (groups);
-	//protocol->updateContact(rosterItem);
+
+	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+
+	rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
+	rosterTask->go (true);
+
 }
 
 void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
 {
-	JabberContact *to = dynamic_cast < JabberContact * >(km.to ().first ());
-	const JabberContact *from = dynamic_cast < const JabberContact * >(km.from ());
+	JabberContact *to = static_cast < JabberContact * >(km.to ().first ());
+	const JabberContact *from = static_cast < const JabberContact * >(km.from ());
 
 	if (!to || !from)
 		return;
@@ -375,7 +399,7 @@ void JabberContact::slotSendMessage (KopeteMessage & message)
 		km2jm (message, jabberMessage);
 
 		// send it
-		dynamic_cast<JabberAccount *>(account())->client()->sendMessage (jabberMessage);
+		static_cast<JabberAccount *>(account())->client()->sendMessage (jabberMessage);
 
 		// append the message to the manager
 		manager ()->appendMessage (message);
@@ -385,7 +409,7 @@ void JabberContact::slotSendMessage (KopeteMessage & message)
 	}
 	else
 	{
-		dynamic_cast<JabberAccount *>(account())->errorConnectFirst ();
+		static_cast<JabberAccount *>(account())->errorConnectFirst ();
 
 		// FIXME: there is no messageFailed() yet,
 		// but we need to stop the animation etc.
@@ -461,23 +485,23 @@ void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Re
 		}
 	}
 
-	KopeteOnlineStatus status = dynamic_cast<JabberProtocol *>(protocol())->JabberOnline;
+	KopeteOnlineStatus status = static_cast<JabberProtocol *>(protocol())->JabberOnline;
 
 	if (resource.status ().show () == "chat")
 	{
-		status = dynamic_cast<JabberProtocol *>(protocol())->JabberChatty;
+		status = static_cast<JabberProtocol *>(protocol())->JabberChatty;
 	}
 	else if (resource.status ().show () == "away")
 	{
-		status = dynamic_cast<JabberProtocol *>(protocol())->JabberAway;
+		status = static_cast<JabberProtocol *>(protocol())->JabberAway;
 	}
 	else if (resource.status ().show () == "xa")
 	{
-		status = dynamic_cast<JabberProtocol *>(protocol())->JabberXA;
+		status = static_cast<JabberProtocol *>(protocol())->JabberXA;
 	}
 	else if (resource.status ().show () == "dnd")
 	{
-		status = dynamic_cast<JabberProtocol *>(protocol())->JabberDND;
+		status = static_cast<JabberProtocol *>(protocol())->JabberDND;
 	}
 
 	JabberResource *newResource = new JabberResource (resource.name (), resource.priority (),
@@ -570,13 +594,13 @@ void JabberContact::slotSelectResource ()
 void JabberContact::slotUserInfo ()
 {
 
-	if (!dynamic_cast<JabberAccount *>(account())->isConnected ())
+	if (!static_cast<JabberAccount *>(account())->isConnected ())
 	{
-		dynamic_cast<JabberAccount *>(account())->errorConnectFirst ();
+		static_cast<JabberAccount *>(account())->errorConnectFirst ();
 		return;
 	}
 
-	Jabber::JT_VCard * task = new Jabber::JT_VCard (dynamic_cast<JabberAccount *>(account())->client()->rootTask ());
+	Jabber::JT_VCard * task = new Jabber::JT_VCard (static_cast<JabberAccount *>(account())->client()->rootTask ());
 
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotGotVCard ()));
@@ -627,13 +651,13 @@ void JabberContact::slotEditVCard ()
 void JabberContact::slotSaveVCard (QDomElement & vCardXML)
 {
 
-	if (!dynamic_cast<JabberAccount *>(account())->isConnected ())
+	if (!static_cast<JabberAccount *>(account())->isConnected ())
 	{
-		dynamic_cast<JabberAccount *>(account())->errorConnectFirst ();
+		static_cast<JabberAccount *>(account())->errorConnectFirst ();
 		return;
 	}
 
-	Jabber::JT_VCard * task = new Jabber::JT_VCard (dynamic_cast<JabberAccount *>(account())->client()->rootTask ());
+	Jabber::JT_VCard * task = new Jabber::JT_VCard (static_cast<JabberAccount *>(account())->client()->rootTask ());
 	Jabber::VCard vCard = Jabber::VCard ();
 
 	vCard.fromXml (vCardXML);
@@ -651,7 +675,7 @@ void JabberContact::slotStatusOnline ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	dynamic_cast<JabberAccount *>(account())->sendPresenceToNode (dynamic_cast<JabberProtocol *>(protocol())->JabberOnline, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberOnline, id);
 
 }
 
@@ -663,7 +687,7 @@ void JabberContact::slotStatusChatty ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	dynamic_cast<JabberAccount *>(account())->sendPresenceToNode (dynamic_cast<JabberProtocol *>(protocol())->JabberChatty, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberChatty, id);
 
 }
 
@@ -675,7 +699,7 @@ void JabberContact::slotStatusAway ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	dynamic_cast<JabberAccount *>(account())->sendPresenceToNode (dynamic_cast<JabberProtocol *>(protocol())->JabberAway, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberAway, id);
 
 }
 
@@ -687,7 +711,7 @@ void JabberContact::slotStatusXA ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	dynamic_cast<JabberAccount *>(account())->sendPresenceToNode (dynamic_cast<JabberProtocol *>(protocol())->JabberXA, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberXA, id);
 
 }
 
@@ -698,7 +722,7 @@ void JabberContact::slotStatusDND ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	dynamic_cast<JabberAccount *>(account())->sendPresenceToNode (dynamic_cast<JabberProtocol *>(protocol())->JabberDND, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberDND, id);
 
 }
 
@@ -709,7 +733,7 @@ void JabberContact::slotStatusInvisible ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	dynamic_cast<JabberAccount *>(account())->sendPresenceToNode (dynamic_cast<JabberProtocol *>(protocol())->JabberInvisible, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberInvisible, id);
 }
 
 void JabberContact::serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > & /* addressBookData */ )
