@@ -138,8 +138,9 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	body=KgpgInterface::KgpgDecryptText(body, m_prefs->privateKey());
 
+	body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><b>"+i18n("Begin Encrypted Message")+"</b></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+body+"</td></tr><tr bgcolor=\"#41FF41\"><td><b>"+i18n("End Encrypted Message")+"</b></td></tr></table>";
 	if (body!="")
-		msg.setBody(body,KopeteMessage::PlainText);
+		msg.setBody(body,KopeteMessage::RichText);
 }
 
 void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
