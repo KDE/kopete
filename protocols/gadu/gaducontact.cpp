@@ -27,11 +27,13 @@
 #include "gaduprotocol.h"
 #include "gaducontact.h"
 #include "gadupubdir.h"
+#include "gadueditcontact.h"
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
+#include "kopeteuiglobal.h"
 
 #include "userinfodialog.h"
 
@@ -145,8 +147,20 @@ GaduContact::customContextMenuActions()
 						this, "actionShowPublicProfile" );
 
 	fakeCollection->append( actionShowProfile );
+	
+	KAction* actionEditContact = new KAction( i18n("Edit...") , "edit", 0,  
+						this, SLOT( slotEditContact() ),
+						this, "actionEditContact" );
+
+	fakeCollection->append( actionEditContact );
 
 	return fakeCollection;
+}
+
+void
+GaduContact::slotEditContact()
+{
+	new GaduEditContact( static_cast<GaduAccount*>(account()), this, Kopete::UI::Global::mainWidget() );
 }
 
 void

@@ -71,6 +71,7 @@ public slots:
 	void messageSend( KopeteMessage&, KopeteMessageManager* );
 	void messageAck();
 	void slotShowPublicProfile();
+	void slotEditContact();
 
 protected:
 	virtual KopeteMessageManager* manager( bool canCreate = false );
