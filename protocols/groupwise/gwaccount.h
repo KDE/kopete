@@ -90,11 +90,11 @@ public:
 	/** 
 	 * Utility access to the server given by the user
 	 */
-	const QString GroupWiseAccount::server() const;
+	const QString server() const;
 	/**
 	 * Utility access to our protocol
 	 */
-	GroupWiseProtocol * GroupWiseAccount::protocol() const;
+	GroupWiseProtocol * protocol() const;
 	/**
 	 * Utility access to the @ref Client which is the main interface exposed by libgroupwise.
 	 * Most protocol actions are carried out using the client's member functions but the possibility exists

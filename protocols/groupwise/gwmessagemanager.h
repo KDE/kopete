@@ -112,7 +112,7 @@ protected:
 	/**
 	 * Start the process of creating a conference for this GWMM on the server.
 	 */
-	void GroupWiseMessageManager::createConference();
+	void createConference();
 	/** 
 	 * Sends any messages and invitations that were queued while waiting for the conference to be created
 	 */
