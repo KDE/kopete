@@ -71,7 +71,6 @@ private:
 	bool queryExit(void);
 	void loadOptions(void);
 	void saveOptions(void);
-	QWidget *mainwidget;
 };
 
 #endif

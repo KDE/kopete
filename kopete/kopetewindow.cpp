@@ -55,7 +55,7 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 void KopeteWindow::initView ( void )
 {
 	contactlist = new ContactList(this);
-	setCentralWidget(mainwidget);
+	setCentralWidget(contactlist);
 
 	connect( contactlist, SIGNAL(executed(QListViewItem *)), this, SLOT(slotExecuted(QListViewItem *)) );
 }
