@@ -40,10 +40,25 @@ JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const Jab
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
 
+	updateDisplayName ();
+
 }
 
 JabberMessageManager::~JabberMessageManager ()
 {
+
+}
+
+void JabberMessageManager::updateDisplayName ()
+{
+	KopeteContactPtrList chatMembers = members ();
+
+	XMPP::Jid jid ( chatMembers.first()->contactId () );
+
+	if ( !mResource.isEmpty () )
+		jid.setResource ( mResource );
+
+	setDisplayName ( jid.full () );
 
 }
 
@@ -72,6 +87,8 @@ void JabberMessageManager::appendMessage ( KopeteMessage &msg, const QString &fr
 {
 
 	mResource = fromResource;
+
+	updateDisplayName ();
 
 	KopeteMessageManager::appendMessage ( msg );
 

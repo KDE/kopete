@@ -57,6 +57,11 @@ public:
 	 */
 	const QString &resource () const;
 
+	/**
+	 * Re-generate the display name
+	 */
+	void updateDisplayName ();
+
 public slots:
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
