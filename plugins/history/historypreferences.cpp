@@ -25,6 +25,7 @@
 #include <klineedit.h>
 #include <kconfig.h>
 #include <knuminput.h>
+#include <kcolorbutton.h>
 
 #include "historyprefsui.h"
 #include "historypreferences.h"
@@ -51,6 +52,8 @@ void HistoryPreferences::reopen()
 	m_widget->newView->setChecked(KGlobal::config()->readBoolEntry("Auto chatwindow" , false ));
 	m_widget->nbNewView->setValue(KGlobal::config()->readNumEntry( "Number Auto chatwindow" , 7) );
 	m_widget->nbChatWindow->setValue(KGlobal::config()->readNumEntry( "Number ChatWindow", 20) );
+	QColor defaultcolor("dimgrey");
+	m_widget->m_color->setColor(KGlobal::config()->readColorEntry( "Number ChatWindow", &defaultcolor));
 }
 
 void HistoryPreferences::save()
@@ -60,6 +63,7 @@ void HistoryPreferences::save()
 	config->writeEntry("Auto chatwindow", m_widget->newView->isChecked() );
 	config->writeEntry("Number Auto chatwindow",  m_widget->nbNewView->value() );
 	config->writeEntry("Number ChatWindow",  m_widget->nbChatWindow->value() );
+	config->writeEntry("History Color",  m_widget->m_color->color() );
 
 	config->sync();
 }
@@ -75,6 +79,11 @@ int HistoryPreferences::nbAutoChatwindow()
 int HistoryPreferences::nbChatwindow()
 {
 	return m_widget->nbChatWindow->value();
+}
+
+QColor  HistoryPreferences::historyColor()
+{
+	return m_widget->m_color->color();
 }
 
 #include "historypreferences.moc"

@@ -19,6 +19,7 @@
 #define HISTORYPREFERENCES_H
 
 #include "configmodule.h"
+#include <qcolor.h>
 
 class HistoryPrefsUI;
 
@@ -38,6 +39,7 @@ public:
 
 	int nbChatwindow();
 	int nbAutoChatwindow();
+	QColor historyColor();
 private:
 	HistoryPrefsUI *m_widget;
 };

@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>546</width>
+            <width>571</width>
             <height>548</height>
         </rect>
     </property>
@@ -20,7 +20,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="4">
+        <widget class="QLabel" row="4" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>textLabel2</cstring>
             </property>
@@ -32,15 +32,7 @@ TODO: -add a selection of differents accounts here
 Help welcome</string>
             </property>
         </widget>
-        <widget class="QCheckBox" row="0" column="0">
-            <property name="name">
-                <cstring>newView</cstring>
-            </property>
-            <property name="text">
-                <string>When a new chatwindow is open, show </string>
-            </property>
-        </widget>
-        <widget class="KIntSpinBox" row="0" column="1">
+        <widget class="KIntSpinBox" row="0" column="2">
             <property name="name">
                 <cstring>nbNewView</cstring>
             </property>
@@ -53,7 +45,7 @@ Help welcome</string>
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="2" rowspan="1" colspan="2">
+        <widget class="QLabel" row="0" column="3">
             <property name="name">
                 <cstring>textLabel3</cstring>
             </property>
@@ -61,7 +53,7 @@ Help welcome</string>
                 <string>previous messages</string>
             </property>
         </widget>
-        <spacer row="2" column="0">
+        <spacer row="3" column="0">
             <property name="name">
                 <cstring>spacer1</cstring>
             </property>
@@ -74,24 +66,11 @@ Help welcome</string>
             <property name="sizeHint">
                 <size>
                     <width>81</width>
-                    <height>281</height>
+                    <height>280</height>
                 </size>
             </property>
         </spacer>
-        <widget class="KIntSpinBox" row="1" column="3">
-            <property name="name">
-                <cstring>nbChatWindow</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="3">
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>textLabel4</cstring>
             </property>
@@ -105,6 +84,43 @@ Help welcome</string>
             </property>
             <property name="text">
                 <string>number of message when using previous on the chatwindow:</string>
+            </property>
+        </widget>
+        <widget class="KIntSpinBox" row="2" column="3">
+            <property name="name">
+                <cstring>nbChatWindow</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>newView</cstring>
+            </property>
+            <property name="text">
+                <string>When a new chatwindow is open, show </string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Color to use in the chatwindow</string>
+            </property>
+        </widget>
+        <widget class="KColorButton" row="1" column="1">
+            <property name="name">
+                <cstring>m_color</cstring>
+            </property>
+            <property name="text">
+                <string></string>
             </property>
         </widget>
     </grid>
@@ -121,5 +137,6 @@ Help welcome</string>
 <includehints>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
 </includehints>
 </UI>
