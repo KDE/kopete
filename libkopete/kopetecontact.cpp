@@ -501,7 +501,7 @@ KActionCollection * KopeteContact::customContextMenuActions()
 	return 0L;
 }
 
-KActionCollection * KopeteContact::customContextMenuActions( KopeteMessageManager *manager )
+KActionCollection * KopeteContact::customContextMenuActions( KopeteMessageManager * /* manager */ )
 {
 	return customContextMenuActions();
 }
