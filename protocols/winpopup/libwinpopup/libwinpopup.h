@@ -89,6 +89,7 @@ private:
 
 	void messageHandler();
 	QPair<stringMap, stringMap> grabData(const QString &Host, QString *theGroup = 0, QString *theOS = 0, QString *theSoftware = 0);	// theGroup gets populated
+	QPair<stringMap, stringMap> newGrabData(const QString &Host, QString *theGroup = 0, QString *theOS = 0, QString *theSoftware = 0);	// theGroup gets populated
 
 	void doUpdate();
 

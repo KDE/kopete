@@ -67,6 +67,8 @@ private:
 							// holds all the protocol specific actions (not many!)
 	KopeteMessageManager *myEmailManager, *myChatManager;
 							// holds the two message managers - one for email and one for chat
+	KopeteHistoryDialog *myHistoryDialog;
+							// the semi-permanent history dialog
 
 public slots:
 	void slotCheckStatus();	// the call back for the checkStatus timer
@@ -74,6 +76,8 @@ public slots:
 							// the call back for the winpopup protocol
 	void slotSendMessage(const KopeteMessage& message);
 							// carries out sending of a message (supporting a hacked-up subject field)
+	void slotCloseHistoryDialog();
+							// deletes and resets the hisory dialog (needed by slotViewHistory)
 
 public:
 	WPContact(const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent);
@@ -109,13 +113,12 @@ public slots:
 	// not quite so basic actions
 	void execute();
 
-	void slotViewHistory() { /* show history */ }
+	void slotViewHistory();
 	void slotDeleteContact() { delete this; }
 	void slotUserInfo() { /* show user info? */ }
 
 signals:
 	void statusChanged(KopeteContact *contact, KopeteContact::ContactStatus status);
-//	void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 };
 
 #endif

@@ -34,6 +34,7 @@ using namespace std;
 
 // KDE Includes
 #include <kapplication.h>
+#include <kprocio.h>
 
 // Local Includes
 #include "libwinpopup.h"
@@ -48,10 +49,11 @@ KWinPopup::KWinPopup(const QString &SMBClientPath, const QString &InitialSearchH
 	checkForMessages.connect(&checkForMessages, SIGNAL(timeout()), this, SLOT(doCheck()));
 	checkForMessages.start(1000, false);
 	connect(&updateData, SIGNAL(timeout()), this, SLOT(updateNoWait()));
-	updateData.start(10000, false);
+	updateData.start(10000, false);		// should be made into a process - it holds up the gui!
 	mySMBClientPath = SMBClientPath;
 	myInitialSearchHost = InitialSearchHost;
 	myHostName = HostName;
+	updateNoWait();
 }
 
 KWinPopup::~KWinPopup()
@@ -222,6 +224,46 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 		if(sep.search(Line) != -1 || Line == "") Phase++;
 	}
 
+	delete sender;
+
+	return QPair<stringMap, stringMap>(hosts, groups);
+}
+
+QPair<stringMap, stringMap> KWinPopup::newGrabData(const QString &Host, QString *theGroup, QString *theOS, QString *theSoftware)	// populates theGroup!
+{
+	KProcIO *sender = new KProcIO();
+	*sender << mySMBClientPath << "-L" << Host << "-N";
+
+	if(!sender->start())
+	{	qDebug("Couldn't launch smbclient");
+		return QPair<stringMap, stringMap>();
+	}
+	sender->closeStdin();
+
+	int Phase = 0;
+	QRegExp pair("^\\t([^\\s]+)\\s+([^\\s].*)$"), base("^\\t([^\\s]+)\\s*$"), sep("^\\t-{9}"), info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
+	stringMap hosts, groups;
+	
+
+	for(QString Line = ""; sender->isRunning() || sender->readln(Line) > -1; Line = "")
+	{
+		if(Line == "") while(sender->readln(Line) == -1 && sender->isRunning());
+		if(Phase == 0 && info.search(Line) != -1)
+		{	if(theGroup) *theGroup = info.cap(1);
+			if(theOS) *theOS = info.cap(2);
+			if(theSoftware) *theSoftware = info.cap(3);
+		}
+		if(Phase == 4 && pair.search(Line) != -1)
+			hosts[pair.cap(1)] = pair.cap(2);
+		if(Phase == 4 && base.search(Line) != -1)
+			hosts[base.cap(1)] = "";
+		if(Phase == 6 && pair.search(Line) != -1)
+			groups[pair.cap(1)] = pair.cap(2);
+		if(sep.search(Line) != -1 || Line == "") Phase++;
+	}
+
+	sender->closeStdout();
+	sender->closeStderr();
 	delete sender;
 
 	return QPair<stringMap, stringMap>(hosts, groups);

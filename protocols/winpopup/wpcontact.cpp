@@ -52,6 +52,7 @@ WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContac
 	setDisplayName(newDisplayName);
 	myProtocol = protocol;
 	myHost = host;
+	myHistoryDialog = 0;
 
 	// Initialise and start the periodical checking for contact's status
 	myIsOnline = true;
@@ -119,124 +120,28 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 
 void WPContact::slotSendMessage(const KopeteMessage& message)
 {
+	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
+	
 	QString Message = (message.subject() != "" ? "Subject: " + message.subject() + "\n" : QString("")) + message.body();
 	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
 }
 
-/*KopeteMessageManager *WPContact::msgManagerKEW()
+// TODO: could be done better with permenant dialog & show/hide?
+
+void WPContact::slotViewHistory()
 {
-	DEBUG(WPDMETHOD, "WPContact::msgManagerKEW()");
-
-	if(!mMsgManagerKEW)
-	{	QPtrList<KopeteContact> singleContact;
-		singleContact.append(this);
-		mMsgManagerKEW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::Email);
-		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&,KopeteMessageManager*)),
-			this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
-	}
-	return mMsgManagerKEW;
-}
-
-KopeteMessageManager *WPContact::msgManagerKCW()
-{
-	DEBUG(WPDMETHOD, "WPContact::msgManagerKCW()");
-
-	if(!mMsgManagerKCW)
-	{	QPtrList<KopeteContact> singleContact;
-		singleContact.append(this);
-		mMsgManagerKCW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::ChatWindow);
-		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&,KopeteMessageManager*)),
-			this, SLOT(slotSendMsgKCW(const KopeteMessage&)));
-	}
-	return mMsgManagerKCW;
-}
-*/
-/*
-void WPContact::initActions()
-{
-	DEBUG(WPDMETHOD, "WPContact::initActions()");
-
-	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
-	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
-	actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
-	actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
-	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
-}
-*/
-/*void WPContact::showContextMenu(const QPoint& position, const QString& group)
-{
-	DEBUG(WPDMETHOD, "WPContact::showContextMenu(<position>, " << group << ")");
-
-	popup = new KPopupMenu();	// XXX: Needs deleting at some time?
-	popup->insertTitle(mUserID);
-
-	KGlobal::config()->setGroup("WinPopup");
-	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
+	if(!myHistoryDialog)
 	{
-		actionMessage->plug(popup);
-		actionChat->plug(popup);
-	}
-	else
-	{
-		actionChat->plug(popup);
-		actionMessage->plug(popup);
-	}
-	popup->insertSeparator();
-	actionHistory->plug(popup);
-	popup->insertSeparator();
-
-	popup->popup(position);
-
-}*/
-
-
-/*
-void WPContact::slotUpdateContact(QString handle, int status)
-{
-	DEBUG(WPDMETHOD, "WPContact::slotUpdateContact(" << handle << ", " << status << ")");
-
-    if(handle != userID())
-		return;
-	if(status != -1)
-		mStatus = status;
-    emit statusChanged(this, this->status());
-}
-*/
-
-/*void WPContact::slotChatThisUser()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotChatThisUser()");
-	msgManagerKCW()->readMessages();
-}
-
-void WPContact::slotEmailUser()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotEmailThisUser()");
-	msgManagerKEW()->readMessages();
-	msgManagerKEW()->slotSendEnabled(true);
-}*/
-/*
-	DEBUG(WPDMETHOD, "WPContact::execute()");
-
-	slotChatThisUser();
-}
-
-*/
-/*void WPContact::slotViewHistory()
-{
-	if(!historyDialog)
-	{
-		historyDialog = new KopeteHistoryDialog(QString("wp_logs/%1.log").arg(mUserID), displayName(), true, 50, 0, "WPHistoryDialog");
-		connect(historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
+		myHistoryDialog = new KopeteHistoryDialog(QString("wp_logs/%1.log").arg(myHost), displayName(), true, 50, 0, "WPHistoryDialog");
+		connect(myHistoryDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
 	}
 }
 
 void WPContact::slotCloseHistoryDialog()
 {
-	delete historyDialog;
-	historyDialog = 0;
-}*/
-/*
-*/
+	delete myHistoryDialog;
+	myHistoryDialog = 0;
+}
+
 #include "wpcontact.moc"
 

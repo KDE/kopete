@@ -212,7 +212,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 	if(!theMetaContact)
 	{
 		// Should really ask to see if they want the contact adding to their list first...
-		theMetaContact = l->findContact(this->id(), "smb://" + Name, QString::null);
+		theMetaContact = l->findContact(this->id(), Name, "smb://" + Name);
 		if(!theMetaContact)
 		{	DEBUG(WPDINFO, "Adding " << Name << " to the contact list...");
 			theMetaContact = new KopeteMetaContact();
@@ -220,7 +220,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 		}
 	}
 
-	KopeteContact *theContact = theMetaContact->findContact(this->id(), "smb://" + Name, QString::null);
+	KopeteContact *theContact = theMetaContact->findContact(this->id(), Name, "smb://" + Name);
 	if(!theContact)
 	{	theContact = new WPContact(Name, this, theMetaContact);
 		theMetaContact->addContact(theContact);
