@@ -148,6 +148,11 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QString codecMib = config->readEntry(CONFIG_CODECMIB);
 	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
 
+	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", 2 );
+	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", 2 );
+	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", 1 );
+	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", 2 );
+
 	if( !codecMib.isEmpty() )
 	{
 		mCodec = QTextCodec::codecForMib( codecMib.toInt() );
@@ -396,6 +401,22 @@ const QStringList IRCAccount::connectCommands() const
 {
 	KConfigGroup *config =  configGroup() ;
 	return config->readListEntry( "ConnectCommands" );
+}
+
+void IRCAccount::setMessageDestinations( int serverNotices, int serverMessages,
+			     int informationReplies, int errorMessages )
+{
+	KConfigGroup *config =  configGroup();
+	config->writeEntry( "ServerNotices", serverNotices );
+	config->writeEntry( "ServerMessages", serverMessages );
+	config->writeEntry( "InformationReplies", informationReplies );
+	config->writeEntry( "ErrorMessages", errorMessages );
+	config->sync();
+
+	m_serverNotices = (MessageDestination)serverNotices;
+	m_serverMessages = (MessageDestination)serverMessages;
+	m_informationReplies = (MessageDestination)informationReplies;
+	m_errorMessages = (MessageDestination)errorMessages;
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -733,17 +754,31 @@ void IRCAccount::slotNewCtcpReply(const QString &type, const QString &target, co
 
 void IRCAccount::appendMessage( const QString &message, MessageType type )
 {
+	// TODO: Impliment a UI where people can pick  multiple destinations
+	// for a message type, and make codethis handle it
+
 	MessageDestination destination;
-	//if( !manager )
-	//{
-		//No manager was passed. Use current active manager
-		destination = ActiveWindow;
-	//}
-	/*else
+
+	switch( type )
 	{
-		//FIXME: Implement this!
-		destination = type;
-	} */
+		case ConnectReply:
+			destination = m_serverMessages;
+			break;
+		case InfoReply:
+			destination = m_informationReplies;
+			break;
+		case NoticeReply:
+			destination = m_serverNotices;
+			break;
+		case ErrorReply:
+			destination = m_errorMessages;
+			break;
+		case UnknownReply:
+		default:
+			destination = ActiveWindow;
+			break;
+	}
+
 
 	if( destination & ActiveWindow )
 	{

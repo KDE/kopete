@@ -89,76 +89,76 @@ QString KSParser::_parse(const QString &message)
 	QColor fgColor; /*KopeteMesage::fg().name()*/
 	QColor bgColor; /*KopeteMesage::bg().name()*/
 
-	for(uint i=0; i<message.length(); i++)
+	for(uint i = 0; i < message.length(); ++i)
 	{
-		QChar cur = message[i];
-//		char cur = message[i].latin1();
+		const QChar &cur = message[i];
+
 		switch (cur)
 		{
-		case 0x02:	//Bold: ^B
-			res += toggleTag("b");
-			break;
-		case 0x03:	//Color code: ^C
-			if (colorsModeRegexp.search(message, i+1) == i+1)
-			{
-				i += colorsModeRegexp.matchedLength(); // + 1 will be added by ++
-				QString tagStyle;
+			case 0x02:	//Bold: ^B
+				res += toggleTag("b");
+				break;
+			case 0x03:	//Color code: ^C
+				if (colorsModeRegexp.search(message, i+1) == i+1)
+				{
+					i += colorsModeRegexp.matchedLength(); // + 1 will be added by ++
+					QString tagStyle;
 
-				kdDebug(14120)	<< k_funcinfo
-					<< "fg:" << colorsModeRegexp.cap(1)
-					<< "\tbg:" << colorsModeRegexp.cap(2) << endl;
+					kdDebug(14120)	<< k_funcinfo
+						<< "fg:" << colorsModeRegexp.cap(1)
+						<< "\tbg:" << colorsModeRegexp.cap(2) << endl;
 
-				fgColor = ircColor(colorsModeRegexp.cap(1));
-				bgColor = ircColor(colorsModeRegexp.cap(2));
+					fgColor = ircColor(colorsModeRegexp.cap(1));
+					bgColor = ircColor(colorsModeRegexp.cap(2));
 
-				kdDebug(14120)	<< k_funcinfo
-					<< "fg:" << fgColor.name()
-					<< "\tbg:" << bgColor.name() << endl;
+					kdDebug(14120)	<< k_funcinfo
+						<< "fg:" << fgColor.name()
+						<< "\tbg:" << bgColor.name() << endl;
 
+					res += pushColorTag(fgColor, bgColor);
+				}
+				else
+				{
+					kdDebug(14120)	<< k_funcinfo << "reverting colors" << endl;
+					res += popTag(QString::fromLatin1("span"));
+				}
+				break;
+			case 0x07:	//System bell: ^G
+				KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
+				break;
+			case '\t':	// 0x09
+				res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
+				break;
+			case '\n':	// 0x0D
+				res += QString::fromLatin1("<br/>");
+				break;
+			case 0x0D:	// Italics: ^N
+				res += toggleTag("i");
+				break;
+			case 0x0F:	//Plain Text, close all tags: ^O
+				res.append( popAll() );
+				break;
+	//		case 0x12:	// Reverse original text colors: ^R
+	//			break;
+			case 0x16:	//Invert Colors: ^V
+				swap(fgColor, bgColor);
 				res += pushColorTag(fgColor, bgColor);
-			}
-			else
-			{
-				kdDebug(14120)	<< k_funcinfo << "reverting colors" << endl;
-				res += popTag(QString::fromLatin1("span"));
-			}
-			break;
-		case 0x07:	//System bell: ^G
-			KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
-			break;
-		case '\t':	// 0x09
-			res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
-			break;
-		case '\n':	// 0x0D
-			res += QString::fromLatin1("<br/>");
-			break;
-		case 0x0D:	// Italics: ^N
-			res += toggleTag("i");
-			break;
-		case 0x0F:	//Plain Text, close all tags: ^O
-			res.append( popAll() );
-			break;
-//		case 0x12:	// Reverse original text colors: ^R
-//			break;
-		case 0x16:	//Invert Colors: ^V
-			swap(fgColor, bgColor);
-			res += pushColorTag(fgColor, bgColor);
-			break;
-		case 0x1F:	//Underline
-			res += toggleTag("u");
-			break;
-		case '<':
-			res += QString::fromLatin1("&lt;");
-			break;
-		case '>':
-			res += QString::fromLatin1("&gt;");
-			break;
-		default:
-			if (cur < QChar(' ')) // search for control characters
-//				res += QString::fromLatin1("&#%1;").arg(cur, 2, 16).upper();
-				res += QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).upper();
-			else
-				res += QStyleSheet::escape(cur);
+				break;
+			case 0x1F:	//Underline
+				res += toggleTag("u");
+				break;
+			case '<':
+				res += QString::fromLatin1("&lt;");
+				break;
+			case '>':
+				res += QString::fromLatin1("&gt;");
+				break;
+			default:
+				if (cur < QChar(' ')) // search for control characters
+	//				res += QString::fromLatin1("&#%1;").arg(cur, 2, 16).upper();
+					res += QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).upper();
+				else
+					res += QStyleSheet::escape(cur);
 		}
 	}
 	res.append(popAll());

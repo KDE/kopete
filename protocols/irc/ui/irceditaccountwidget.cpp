@@ -73,6 +73,17 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
+		KConfigGroup *config = account()->configGroup();
+
+		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", 2 ) );
+		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", 2 ) );
+		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", 1 ) );
+		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", 2 ) );
+
+		account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
+		informationReplies->currentItem(), errorMessages->currentItem()
+						     );
+
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
 			new QListViewItem( commandList, *i );
@@ -234,6 +245,9 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setExcludeConnect( autoConnect->isChecked() );
+	account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
+		informationReplies->currentItem(), errorMessages->currentItem()
+	);
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 

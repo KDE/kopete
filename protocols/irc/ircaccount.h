@@ -144,6 +144,9 @@ public:
 
 	void setCodec( QTextCodec *codec );
 
+	void setMessageDestinations( int serverNotices, int serverMessages,
+		int informationReplies, int errorMessages );
+
 	QTextCodec *codec() const;
 
 	const QString defaultPart() const;
@@ -225,6 +228,11 @@ private:
 	IRCNetwork *m_network;
 	uint currentHost;
 	QTextCodec *mCodec;
+
+	MessageDestination m_serverNotices;
+	MessageDestination m_serverMessages;
+	MessageDestination m_informationReplies;
+	MessageDestination m_errorMessages;
 
 	ChannelListDialog *m_channelList;
 
