@@ -4,14 +4,13 @@ INCLUDES = -I$(top_srcdir)/kopete/libkopete $(all_includes)
 noinst_LTLIBRARIES = libkopeteui.la
 noinst_HEADERS = configmodule.h \
 	preferencesdialog.h \
-	protocolboxitem.h addcontactpage.h systemtray.h \
+	addcontactpage.h systemtray.h \
 	kopeteballoon.h \
 	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
 	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp \
-	protocolboxitem.cpp \
 	addcontactpage.cpp systemtray.cpp \
 	kopeteballoon.cpp \
 	kopetehistorydialog.cpp \
