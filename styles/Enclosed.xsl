@@ -9,42 +9,55 @@
 			<div style="border:1px solid grey;padding:1px;">
 				<div>
 					<xsl:choose>
-						<xsl:when test="@direction='3'"><!-- action message -->
+						<xsl:when test="@direction='3'">
+							<!-- action message -->
 							<xsl:attribute name="style">
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
 							Message from 
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							(<span>
-								<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></xsl:attribute>
+							(
+							<span>
+								<xsl:attribute name="title">
+									<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+								</xsl:attribute>
 								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
 							</span>)
 						</xsl:when>
-						<xsl:when test="@direction='2'"><!-- internal message -->
+						<xsl:when test="@direction='2'">
+							<!-- internal message -->
 							<xsl:attribute name="style">
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
 							System Message
 						</xsl:when>
-						<xsl:when test="@direction='1'"><!-- Outgoing -->
+						<xsl:when test="@direction='1'">
+							<!-- Outgoing -->
 							<xsl:attribute name="style">
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
-							Message to 
+							Message to
 							<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
-							(from <span>
-								<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></xsl:attribute>
+							(from
+							<span>
+								<xsl:attribute name="title">
+									<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+								</xsl:attribute>
 								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
 							</span>)
 						</xsl:when>
-						<xsl:otherwise><!-- Incoming -->
+						<xsl:otherwise>
+							<!-- Incoming -->
 							<xsl:attribute name="style">
 								<xsl:text>color:blue;font-weight:bold;</xsl:text>
 							</xsl:attribute>
 							Message from
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							(<span>
-								<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></xsl:attribute>
+							(
+							<span>
+								<xsl:attribute name="title">
+									<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+								</xsl:attribute>
 								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
 							</span>)
 						</xsl:otherwise>
@@ -56,7 +69,8 @@
 				<div>
 					<xsl:attribute name="style">
 						<xsl:text>padding-left:15px;padding-right:15px;</xsl:text>
-						<xsl:if test="body/@color"><xsl:text>color:</xsl:text>
+						<xsl:if test="body/@color">
+							<xsl:text>color:</xsl:text>
 							<xsl:value-of select="body/@color"/>
 							<xsl:text>;</xsl:text>
 						</xsl:if>
@@ -75,7 +89,8 @@
 						</xsl:attribute>
 					</xsl:if>
 					<xsl:choose>
-						<xsl:when test="@direction='3'"><!--action message-->
+						<xsl:when test="@direction='3'">
+							<!--action message-->
 							<span style="color:darkgreen">
 								<xsl:text>* </xsl:text>
 								<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
@@ -83,7 +98,8 @@
 								<xsl:value-of disable-output-escaping="yes" select="body"/>
 							</span>
 						</xsl:when>
-						<xsl:when test="@direction='2'"><!--internal message-->
+						<xsl:when test="@direction='2'">
+							<!--internal message-->
 							<span style="color:darkviolet;font-weight:bold;">
 								<xsl:value-of disable-output-escaping="yes" select="body"/>
 							</span>
@@ -97,3 +113,4 @@
 		</div>
 	</xsl:template>
 </xsl:stylesheet>
+
