@@ -124,7 +124,8 @@ public:
 public slots:
 	virtual void slotUserInfo();
 	virtual void deleteContact();
-	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, uint fileSize);
+	virtual void sendFile( const KURL &sourceURL = KURL(),
+						   const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
 	 * Every time the kopete's contactlist is modified, we sync the serverlist with it
