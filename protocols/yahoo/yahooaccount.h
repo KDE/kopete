@@ -34,9 +34,7 @@
 
 class KAction;
 class KActionMenu;
-
 class YahooContact;
-
 class YahooAccount;
 
 class YahooAwayDialog : public KopeteAwayDialog
@@ -175,6 +173,7 @@ private:
 	/**
 	 * External Settings and Descriptors
 	 */
+	bool m_useServerGroups;		// Use the groups on the server for import
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
