@@ -1598,8 +1598,17 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 
 	KopeteContactList::contactList ()->addMetaContact ( metaContact );
 
+	/**
+	 * Add an initial resource for this contact to the pool. We need
+	 * to do this to be able to lock the group status to our own presence.
+	 * Our own presence will be updated right after this method returned
+	 * by slotGroupChatPresence(), since the server will signal our own
+	 * presence back to us.
+	 */
+	resourcePool()->addResource ( jid, XMPP::Resource ( jid.resource () ) );
+
 	// lock the room to our own status
-	resourcePool()->lockToResource ( jid, jid.resource () );
+	resourcePool()->lockToResource ( XMPP::Jid ( jid.userHost () ), jid.resource () );
 
 }
 

@@ -174,10 +174,10 @@ void JabberResourcePool::clear ()
 void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Resource &resource )
 {
 
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Locking " << jid.full() << " to " << resource.name() << endl;
+
 	// remove all existing locks first
 	removeLock ( jid );
-
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Locking " << jid.full() << " to " << resource.name() << endl;
 
 	// find the resource in our dictionary that matches
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
