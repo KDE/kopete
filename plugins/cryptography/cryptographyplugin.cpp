@@ -161,9 +161,9 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 					.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 			}
 
-			msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>")
+			msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
 				+ i18n("Outgoing Encrypted Message: ")
-				+ QString::fromLatin1("</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>")
+				+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 				+ plainBody
 				+ QString::fromLatin1(" </td></tr></table>")
 				, KopeteMessage::RichText );
@@ -190,9 +190,9 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 		}
 
-		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>")
+		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
 			+ i18n("Incoming Encrypted Message: ") 
-			+ QString::fromLatin1("</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>")
+			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 			+ body 
 			+ QString::fromLatin1(" </td></tr></table>")
 			, KopeteMessage::RichText );
