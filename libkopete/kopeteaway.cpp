@@ -34,6 +34,7 @@
 #include <kdebug.h>
 #include <ksettings/dispatcher.h>
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xresource.h>
@@ -44,6 +45,7 @@
 #define HasScreenSaver
 #include <X11/extensions/scrnsaver.h>
 #endif
+#endif // Q_WS_X11
 
 // As this is an untested X extension we better leave it off
 #undef HAVE_XIDLE
@@ -66,10 +68,12 @@ struct KopeteAwayPrivate
 	int mouse_x;
 	int mouse_y;
 	unsigned int mouse_mask;
+#ifdef Q_WS_X11
 	Window    root;               /* root window the pointer is on */
 	Screen*   screen;             /* screen the pointer is on      */
 
 	Time xIdleTime;
+#endif
 	bool useXidle;
 	bool useMit;
 };
@@ -93,12 +97,15 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	d->awayMessageList.clear();
 
 	// set the XAutoLock info
+#ifdef Q_WS_X11
 	Display *dsp = qt_xdisplay();
+#endif
 	d->mouse_x = d->mouse_y=0;
 	d->mouse_mask = 0;
+#ifdef Q_WS_X11
 	d->root = DefaultRootWindow (dsp);
 	d->screen = ScreenOfDisplay (dsp, DefaultScreen (dsp));
-
+#endif
 	d->useXidle = false;
 	d->useMit = false;
 #ifdef HasXidle
@@ -108,8 +115,9 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	if(!d->useXidle)
 		d->useMit = XScreenSaverQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
+#ifdef Q_WS_X11
 	d->xIdleTime = 0;
-
+#endif
 	if (d->useXidle)
 		kdDebug(14010) << "using X11 Xidle extension" << endl;
 	if(d->useMit)
@@ -343,6 +351,7 @@ void KopeteAway::slotTimerTimeout()
 	// This module is a heavily modified xautolock.
 	// In fact as of KDE 2.0 this code is practically unrecognisable as xautolock.
 
+#ifdef Q_WS_X11
 	Display *dsp = qt_xdisplay();
 	Window           dummy_w;
 	int              dummy_c;
@@ -376,9 +385,9 @@ void KopeteAway::slotTimerTimeout()
 			}
 		}
 	}
-
+#endif
 	// =================================================================================
-
+#ifdef Q_WS_X11
 	Time xIdleTime = 0; // millisecs since last input event
 
 	#ifdef HasXidle
@@ -412,7 +421,7 @@ void KopeteAway::slotTimerTimeout()
 		d->mouse_mask = mask;
 		d->xIdleTime = xIdleTime;
 	}
-
+#endif // Q_WS_X11
 	// =================================================================================
 
 	if(!d->autoaway && d->useAutoAway && idleTime() > d->awayTimeout)
