@@ -40,8 +40,7 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 	mFullName = fullName;
 	mGroup = group;
 
-	mStatus = Offline;
-	mStatusText = "";
+	mStatus.setStatus(YahooStatus::Offline);
 
 	// Update ContactList
 	setDisplayName(mFullName);
@@ -60,19 +59,10 @@ YahooContact::~YahooContact()
 }
 
 // Return status
-YahooContact::ContactStatus YahooContact::status() const
+KopeteContact::ContactStatus YahooContact::status() const
 {
-	kdDebug() << "Yahoo::ContactStatus()" << endl;
-
-	if(mStatus == Offline || mStatus == Invisible) {
-		return KopeteContact::Offline;
-	}
-	else if(mStatus == Idle) {
-		return Away;
-	}
-	else {
-		return Online;
-	}
+	kdDebug() << "YahooContact::status()" << endl;
+	return mStatus.translate();
 }
 
 const QString& YahooContact::group()
@@ -85,74 +75,13 @@ const QString& YahooContact::group()
 QString YahooContact::statusText() const
 {
 	kdDebug() << "Yahoo::statusText()";
-
-	if(mStatus == Offline || mStatus == Available || mStatus == Mobile ||
-			mStatus == Invisible)
-		return "";
-	else if(mStatus == Idle)
-		return i18n("Idle");
-	else if(mStatus == Custom || mStatus == CustomBusy ||
-			mStatus == CustomMobile)
-		return mStatusText;
-	else if(mStatus == BeRightBack)
-		return i18n(YSTBeRightBack);
-	else if(mStatus == Busy)
-		return i18n(YSTBusy);
-	else if(mStatus == NotAtHome)
-		return i18n(YSTNotAtHome);
-	else if(mStatus == NotAtMyDesk)
-		return i18n(YSTNotAtMyDesk);
-	else if(mStatus == NotInTheOffice)
-		return i18n(YSTNotInTheOffice);
-	else if(mStatus == OnThePhone)
-		return i18n(YSTOnThePhone);
-	else if(mStatus == OnVacation)
-		return i18n(YSTOnVacation);
-	else if(mStatus == OutToLunch)
-		return i18n(YSTOutToLunch);
-	else if(mStatus == SteppedOut)
-		return i18n(YSTSteppedOut);
-	else
-	{
-		kdDebug() << "Invalid status" << endl;
-		return "?";
-	}
+	return mStatus.text();
 }
 
 // Return status icon
 QString YahooContact::statusIcon() const
 {
-	kdDebug() << "Yahoo::statusIcon()" << endl;
-
-	if(mStatus == Offline || mStatus == Invisible)
-	{
-		return "yahoo_offline";
-	}
-	else if(mStatus == Idle)
-	{
-		return "yahoo_idle";
-	}
-	else if(mStatus == Mobile || mStatus == CustomMobile)
-	{
-		return "yahoo_mobile";
-	}
-	else if(mStatus == Available || mStatus == Custom)
-	{
-		return "yahoo_online";
-	}
-	else if(mStatus == BeRightBack || mStatus == Busy || mStatus == NotAtHome
-			|| mStatus == NotAtMyDesk || mStatus == NotInTheOffice
-			|| mStatus == OnThePhone || mStatus == OnVacation
-			|| mStatus == OutToLunch || mStatus == SteppedOut
-			|| mStatus == CustomBusy)
-	{
-		return "yahoo_busy";
-	}
-	else
-	{
-		kdDebug() << "Unknown status" << endl;
-		return "yahoo_unknown";
-	}
+	return mStatus.icon();
 }
 
 

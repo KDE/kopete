@@ -45,10 +45,9 @@ class YahooContact : public KopeteContact
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QString identityId() const;
-	virtual ContactStatus status() const;
+	virtual KopeteContact::ContactStatus status() const;
 	virtual QString statusText() const;
 	virtual QString statusIcon() const;
-	//virtual QPixmap scaledStatusIcon(int size);
 	virtual int importance() const;
 	virtual KActionCollection *customContextMenuActions();
 	virtual void addThisTemporaryContact(KopeteGroup *group = 0L);
@@ -64,34 +63,12 @@ public slots:
 	private slots:
 
 	private:
-		
-		enum YahooStatus 
-		{ 
-			Offline,		// Disconnected
-			Available,		// 0
-			Mobile,			// 0+Mobile
-			BeRightBack,	// 1+Busy
-			Busy,			// 2+Busy
-			NotAtHome,		// 3+Busy
-			NotAtMyDesk,	// 4+Busy
-			NotInTheOffice,	// 5+Busy
-			OnThePhone,		// 6+Busy
-			OnVacation,		// 7+Busy
-			OutToLunch,		// 8+Busy
-			SteppedOut,		// 9+Busy
-			Invisible,		// 12
-			Custom,			// 99
-			CustomBusy,		// 99+Busy
-			CustomMobile,	// 99+Mobile
-			Idle			// 999
-		};
 
 	/* User id, full name, group, status code, and status description */
 	QString mUserID;
 	QString mFullName;
 	QString mGroup;
 	YahooStatus mStatus;
-	QString mStatusText;
 
 private slots: // Private slots
 	void slotMovedToMetaContact();

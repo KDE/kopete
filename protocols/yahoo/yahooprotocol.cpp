@@ -452,11 +452,20 @@ void YahooProtocol::slotGotIdentities( const QStringList &ids)
 void YahooProtocol::slotStatusChanged( const QString &who, int stat, const QString &msg, int away)
 {
 	kdDebug() << "[YahooProtocol::slotStatusChanged]" << endl;
+	
+	if ( ! m_contactsMap.contains(who) )
+	{
+		
+	}
+	else
+	{
+		kdDebug() << "[YahooProtocol::slotStatusChanged] Unknown User!?????" << endl;
+	}
 }
 
 void YahooProtocol::slotGotIm( const QString &who, const QString &msg, long tm, int stat)
 {
-	kdDebug() << "[YahooProtocol::slotGotIm]" << endl;
+	kdDebug() << "[YahooProtocol::slotGotIm] " << who << " " << msg << " " << tm << " " << stat << endl;
 }
 
 void YahooProtocol::slotGotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members)
