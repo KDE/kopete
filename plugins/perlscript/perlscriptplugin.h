@@ -79,6 +79,7 @@ class PerlPlugin : public KopetePlugin
 		void slotOutgoingMessage( KopeteMessage& msg );
 		void slotAddScript( const QString &scriptPath, const QString &scriptName, const QString &desc );
 		void slotRemoveScript( const QString &scriptPath );
+		void slotClearScripts();
 		void slotScriptModified( const QString &scriptPath );
 		void slotContextScript( const QString &scriptPath );
 		QString executeScript( const QString &scriptText, const QString &subName, QStringList &args );

@@ -118,7 +118,7 @@ void PerlScriptPreferences::reopen()
 void PerlScriptPreferences::save()
 {
 	preferencesDialog->editDocument->save();
-	emit( scriptModified( preferencesDialog->scriptView->currentItem()->text(2) ) );
+	emit( saved() );
 	
 	scriptsLoaded = 0;
 	

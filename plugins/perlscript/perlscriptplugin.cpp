@@ -63,6 +63,7 @@ PerlPlugin::PerlPlugin( QObject *parent, const char *name, const QStringList &) 
 	
 	connect( m_prefs, SIGNAL(scriptAdded( const QString &, const QString &, const QString & )), this, SLOT( slotAddScript( const QString &, const QString &, const QString & ) ));
 	connect( m_prefs, SIGNAL(scriptRemoved( const QString &)), this, SLOT(slotRemoveScript( const QString & )) );
+	connect( m_prefs, SIGNAL(saved()), this, SLOT(slotClearScripts()) );
 	
 	m_prefs->reopen();
 	
@@ -123,9 +124,16 @@ void PerlPlugin::slotRemoveScript( const QString &scriptPath )
 	delete script;
 }
 
+void PerlPlugin::slotClearScripts()
+{
+	m_allScripts.clear();
+	m_incomingScripts.clear();
+	m_outgoingScripts.clear();
+	m_actionScripts.clear();
+}
+
 void PerlPlugin::slotScriptModified( const QString &scriptPath )
 {
-	
 	PerlScript *script = m_allScripts[ scriptPath ];
 	QString scriptName = script->name;
 	QString scriptDesc = script->description;
