@@ -411,11 +411,11 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 				switch(capFlag)
 				{
-					case AIM_CAPS_ISICQ:
+					case CAP_ISICQ:
 						// found in direct-connection stuff?
 						break;
 
-					case AIM_CAPS_ICQSERVERRELAY:
+					case CAP_ICQSERVERRELAY:
 					{
 						Buffer messageBuf(msgTLV->data, msgTLV->length);
 						WORD len = messageBuf.getLEWord();
@@ -962,7 +962,7 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 		}
 	}
 
-	if(!codec && contact->hasCap(AIM_CAPS_UTF8))
+	if(!codec && contact->hasCap(CAP_UTF8))
 	{
 		// use UTF is peer supports it and encoding as US-ASCII failed
 		length=message.length()*2;
@@ -1185,6 +1185,7 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 	type == 1: deny
 	type == 2: accept
 */
+#if 0
 void OscarSocket::sendDirectIMRequest(const QString &sn)
 {
 	sendRendezvous(sn,0x0000,AIM_CAPS_IMIMAGE);
@@ -1211,3 +1212,4 @@ void OscarSocket::sendDirectIMAccept(const QString &sn)
 	}
 	*/
 }
+#endif

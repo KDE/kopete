@@ -26,6 +26,7 @@
 #include "ssidata.h"
 #include "oscarmessage.h"
 #include "oscarsocket.icq.h"
+#include "oscarcaps.h"
 
 #include <klocale.h>
 
@@ -57,170 +58,43 @@ struct AckBuddy
 
 class UserInfo
 {
+	// FIXME: UserInfo was a bad idea, invent something clever instead!
+
+	public:
+		bool hasCap(int capNumber);
+		void updateInfo(UserInfo other);
+
 	public:
 		QString sn;
 		int evil;
-		int userclass;
-		QDateTime membersince;
-		QDateTime onlinesince;
-		DWORD capabilities;
+
+		int userclass; // TLV 0x01
+
+		QDateTime membersince; // TLV 0x02
+
+		QDateTime onlinesince; // TLV 0x03
+
+		WORD idletime;  // TLV 0x04
+
+		DWORD icqextstatus;  // TLV 0x06 ICQ-only
+
+		DWORD capabilities; // TLV 0x0D
 		QString clientVersion;
-		long sessionlen;
-		unsigned int idletime;
-		unsigned long realip;
-		unsigned long localip;
-		unsigned int  port;
-		unsigned int  fwType;
-		unsigned int version;
-		unsigned long icqextstatus;
+
+		long sessionlen; // TLV 0x0F
+
+		DWORD realip; // TLV 0x0A, ICQ-only
+
+		DWORD localip; // TLV 0x0C, DC Info ICQ-only
+		DWORD port;
+		BYTE fwType;
+		WORD version;
+		DWORD dcCookie;
+		DWORD clientFeatures;
+		DWORD lastInfoUpdateTime;
+		DWORD lastExtInfoUpdateTime;
+		DWORD lastExtStatusUpdateTime;
 };
-
-
-
-const DWORD AIM_CAPS_BUDDYICON 		= 0x00000001;
-const DWORD AIM_CAPS_VOICE				= 0x00000002;
-const DWORD AIM_CAPS_IMIMAGE			= 0x00000004;
-const DWORD AIM_CAPS_CHAT				= 0x00000008;
-const DWORD AIM_CAPS_GETFILE			= 0x00000010;
-const DWORD AIM_CAPS_SENDFILE			= 0x00000020;
-const DWORD AIM_CAPS_GAMES				= 0x00000040;
-const DWORD AIM_CAPS_SAVESTOCKS		= 0x00000080;
-const DWORD AIM_CAPS_SENDBUDDYLIST	= 0x00000100;
-const DWORD AIM_CAPS_GAMES2			= 0x00000200;
-const DWORD AIM_CAPS_ISICQ				= 0x00000400;
-const DWORD AIM_CAPS_APINFO			= 0x00000800;
-const DWORD AIM_CAPS_RTFMSGS			= 0x00001000;
-const DWORD AIM_CAPS_EMPTY				= 0x00002000;
-const DWORD AIM_CAPS_ICQSERVERRELAY	= 0x00004000;
-const DWORD AIM_CAPS_IS_2001			= 0x00008000;
-const DWORD AIM_CAPS_TRILLIANCRYPT	= 0x00010000;
-const DWORD AIM_CAPS_UTF8				= 0x00020000;
-const DWORD AIM_CAPS_IS_WEB			= 0x00040000;
-const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
-const DWORD AIM_CAPS_KOPETE			= 0x00100000;
-const DWORD AIM_CAPS_MICQ				= 0x00200000;
-const DWORD AIM_CAPS_MACICQ			= 0x00400000;
-const DWORD AIM_CAPS_SIMNEW			= 0x00800000;
-const DWORD AIM_CAPS_LAST				= 0x01000000;
-
-const struct
-{
-	DWORD flag;
-	unsigned char data[16];
-} oscar_caps[] =
-{
-	// Chat is oddball.
-	{AIM_CAPS_CHAT,
-	{0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	// These are mostly in order.
-	{AIM_CAPS_VOICE,
-	{0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_SENDFILE,
-	{0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	// Advertised by the EveryBuddy client.
-	{AIM_CAPS_ISICQ,
-	{0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_IMIMAGE,
-	{0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_BUDDYICON,
-	{0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_SAVESTOCKS,
-	{0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_GETFILE,
-	{0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_ICQSERVERRELAY,
-	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_GAMES,
-	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_GAMES2,
-	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_SENDBUDDYLIST,
-	{0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_RTFMSGS,
-	{0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
-	 0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
-
-	{AIM_CAPS_IS_2001,
-	{0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
-	 0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
-
-	{AIM_CAPS_EMPTY,
-	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
-
-	{AIM_CAPS_TRILLIANCRYPT,
-	{0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
-	 0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
-
-	{AIM_CAPS_APINFO,
-	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
-	 0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
-
-	{AIM_CAPS_UTF8,
-	{0x09, 0x46, 0x13, 0x4E, 0x4C, 0x7F, 0x11, 0xD1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_IS_WEB,
-	{0x56, 0x3F, 0xC8, 0x09, 0x0B, 0x6f, 0x41, 0xBD,
-	 0x9F, 0x79, 0x42, 0x26, 0x09, 0xDF, 0xA2, 0xF3}},
-
-	{AIM_CAPS_INTEROPERATE,
-	{0x09, 0x46, 0x13, 0x4D, 0x4C, 0x7F, 0x11, 0xD1,
-	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_KOPETE,
-	{'K', 'o', 'p', 'e', 't', 'e', ' ', 'I',
-	 'C', 'Q', ' ', ' ', 0, 8, 9, 0}}, // TODO: change with each Kopete Release!
-
-	{AIM_CAPS_MICQ,
-	{0x6d, 0x49, 0x43, 0x51, 0x20, 0xa9, 0x20, 0x52,
-	 0x2e, 0x4b, 0x2e, 0x20, 0x00, 0x00, 0x00, 0x00}}, // last 4 bytes determine version
-
-	{AIM_CAPS_MACICQ,
-	{0xDD, 0x16, 0xF2, 0x02, 0x84, 0xE6, 0x11, 0xD4,
-	 0x90, 0xDB, 0x00, 0x10, 0x4B, 0x9B, 0x4B, 0x7D}},
-
-	{AIM_CAPS_SIMNEW,
-	{'S', 'I', 'M', ' ', 'c', 'l', 'i', 'e',
-	 'n', 't', ' ', ' ',  0 ,  0 ,  0 , 0}}, // last 4 bytes determine version (US-ASCII encoded)
-
-	{AIM_CAPS_LAST,
-	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
-};
-
-// DON'T touch these if you're not 100% sure what they are for!
-//#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-
-//our aim client is as stupid as bread
-#define KOPETE_AIM_CAPS			AIM_CAPS_KOPETE
-
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ | AIM_CAPS_KOPETE | AIM_CAPS_RTFMSGS
-//ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
 
 const QString msgerrreason[] =
@@ -389,21 +263,20 @@ class OscarSocket : public OscarConnection
 		void sendChangePassword(const QString &newpw, const QString &oldpw);
 
 		/** Sends a request for direct IM */
-		void sendDirectIMRequest(const QString &sn);
+		//void sendDirectIMRequest(const QString &sn);
 
 		/** Sends a direct IM denial */
-		void sendDirectIMDeny(const QString &sn);
+		//void sendDirectIMDeny(const QString &sn);
 
 		/** Sends a direct IM accept */
-		void sendDirectIMAccept(const QString &sn);
+		//void sendDirectIMAccept(const QString &sn);
 
 		/**
 		 * Sends our capabilities to the server
 		 * for AIM this also sends the userprofile
 		 * @param profile AIM UserProfile or QString:null if no profile to send
-		 * @param caps supported capabilities or 0 if you want default caps to be sent
 		 */
-		void sendLocationInfo(const QString &profile, const unsigned long caps=0);
+		void sendLocationInfo(const QString &profile);
 
 		/**
 		 * Signs ourselves off
@@ -606,7 +479,7 @@ class OscarSocket : public OscarConnection
 		/**
 		 * Methods to convert incoming/outgoing text to/from the encoding needed.
 		 */
-		const QString ServerToQString(const char* string, OscarContact *contact, bool isUtf8=false);
+		const QString ServerToQString(const char* string, OscarContact *contact, bool isUtf8=false, bool isRTF=false);
 		//const char *QStringtoServer(const char* string, OscarContact *contact);
 
 
@@ -875,10 +748,10 @@ class OscarSocket : public OscarConnection
 		*/
 		void sendMsgParams();
 
+#if 0
 		/**
 		* Returns the appropriate server socket, based on the capability flag it is passed.
 		*/
-#if 0
 		OncomingSocket * serverSocket(DWORD capflag);
 #endif
 
@@ -907,8 +780,8 @@ class OscarSocket : public OscarConnection
 		// see oscarcaps.cpp
 		DWORD parseCap(char *cap);
 		//DWORD parseCapString(char *cap);
-		const QString CapToString(char *cap);
-
+		const QString capToString(char *cap);
+		const QString capName(int capNumber); // return CAP_ string for cap number
 
 	private slots:
 		/** Immediately send data */

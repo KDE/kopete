@@ -864,20 +864,21 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			BYTE r = messageBuf.getLEByte();
 			BYTE g = messageBuf.getLEByte();
 			BYTE b = messageBuf.getLEByte();
-			BYTE n = messageBuf.getLEByte();
-			kdDebug(14150) << k_funcinfo << "fg color=(" << (int)r << ", " << (int)g << ", " << (int)b <<
-				", " << (int)n << ")" << endl;
+			/*BYTE n =*/ messageBuf.getLEByte();
+			/*kdDebug(14150) << k_funcinfo << "fg color=(" << (int)r << ", " << (int)g << ", " << (int)b <<
+				", " << (int)n << ")" << endl;*/
 			oMsg.fgColor.setRgb((int)r, (int)g, (int)b);
 
 			r = messageBuf.getLEByte();
 			g = messageBuf.getLEByte();
 			b = messageBuf.getLEByte();
-			n = messageBuf.getLEByte();
-			kdDebug(14150) << k_funcinfo << "bg color=(" << (int)r << ", " << (int)g << ", " << (int)b <<
-				", " << (int)n << ")" << endl;
+			/*n =*/ messageBuf.getLEByte();
+			/*kdDebug(14150) << k_funcinfo << "bg color=(" << (int)r << ", " << (int)g << ", " << (int)b <<
+				", " << (int)n << ")" << endl;*/
 			oMsg.bgColor.setRgb((int)r, (int)g, (int)b);
 
 			bool utf = false;
+			bool rtf = false;
 			if(messageBuf.length() > 0)
 			{
 				DWORD guidlen = messageBuf.getLEDWord();
@@ -887,10 +888,14 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 					//kdDebug(14150) << k_funcinfo << "Peer announces message is UTF!" << endl;
 					utf = true;
 				}
+				else if (QString::fromLatin1(guid) == QString::fromLatin1("{97B12751-243C-4334-AD22-D6ABF73F1492}"))
+				{
+					rtf = true;
+				}
 				else
 				{
 					kdDebug(14150) << k_funcinfo <<
-					"TYPE-2 guid (not UTF GUID!) = '" << guid << "'" << endl;
+					"TYPE-2 guid (neither UTF nor RTF GUID!) = '" << guid << "'" << endl;
 				}
 				delete [] guid;
 			}
@@ -899,8 +904,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 
 			OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[tocNormalize(user.sn)]);
 
-			QString msgText = ServerToQString(messagetext, contact, utf);
-			if (msgText.startsWith("{\\rtf"))
+			QString msgText = ServerToQString(messagetext, contact, utf, rtf);
+			if (rtf /*msgText.startsWith("{\\rtf")*/)
 				oMsg.setText(msgText, OscarMessage::Rtf);
 			else
 				oMsg.setText(msgText, OscarMessage::Plain);
@@ -983,7 +988,7 @@ bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
 	if(!c)
 		return false;
 
-	if(!c->hasCap(AIM_CAPS_ICQSERVERRELAY))
+	if(!c->hasCap(CAP_ICQSERVERRELAY))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Contact '" << c->displayName() <<

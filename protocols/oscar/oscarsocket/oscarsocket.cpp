@@ -970,6 +970,11 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 	u.version = 0;
 	u.icqextstatus=0;
 	u.capabilities=0;
+	u.dcCookie=0;
+	u.clientFeatures=0;
+	u.lastInfoUpdateTime=0;
+	u.lastExtInfoUpdateTime=0;
+	u.lastExtStatusUpdateTime=0;
 
 	if(inbuf.length() == 0)
 	{
@@ -987,9 +992,19 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 
 	WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
 
-	/*kdDebug(14150) << k_funcinfo
-		<< "Contact: '" << u.sn <<
-		"', number of TLVs following " << tlvlen << endl;*/
+	/*
+	OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[u.sn]);
+	if (contact)
+	{
+		kdDebug(14150) << k_funcinfo
+			<< "Contact: '" << contact->displayName() <<endl;
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo
+			<< "Contact: '" << u.sn << endl;
+	}
+	*/
 
 	for (unsigned int i=0; i<tlvlen; i++)
 	{
@@ -1033,8 +1048,14 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 			{
 				u.localip = htonl(tlvBuf.getDWord());
 				u.port = tlvBuf.getDWord();
-				u.fwType = static_cast<int>(tlvBuf.getWord());
+				u.fwType = tlvBuf.getByte();
 				u.version = tlvBuf.getWord();
+				u.dcCookie = tlvBuf.getDWord(); // DC auth cookie
+				u.clientFeatures = tlvBuf.getDWord();
+				u.lastInfoUpdateTime = tlvBuf.getDWord();
+				u.lastExtInfoUpdateTime = tlvBuf.getDWord();
+				u.lastExtStatusUpdateTime = tlvBuf.getDWord();
+				tlvBuf.getWord(); // unknown
 				// ignore the rest of the packet for now
 				break;
 			}
@@ -1061,176 +1082,9 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 		tlvBuf.clear(); // unlink tmpBuf from tlv data
 		delete [] t.data; // get rid of tlv data.
 	} // END for (unsigned int i=0; i<tlvlen; i++)
+
 	return true;
 }
-
-
-
-const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString)
-{
-//
-// FIXME: port capabilities array to some qt based list class, makes usage of memcmp obsolete
-//
-	DWORD capflags = 0;
-
-	#ifdef OSCAR_CAP_DEBUG
-	QString dbgCaps = "CAPS: ";
-	#endif
-
-	while(inbuf.length() >= 16)
-	{
-		char *cap;
-		cap = inbuf.getBlock(16);
-
-		for (unsigned int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
-		{
-			if (oscar_caps[i].flag == AIM_CAPS_KOPETE)
-			{
-				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
-				{
-
-					kdDebug(14150) << "KOPETE version : <" <<
-						(int)cap[12] << ":" << (int)cap[13] << ":" <<
-						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
-
-					capflags |= oscar_caps[i].flag;
-
-					// Did a bad mistake in CVS :(
-					if (
-						((int)cap[12] == 0 &&
-						(int)cap[13] == 8 &&
-						(int)cap[14] == 90 &&
-						(int)cap[15] == 0) || ((int)cap[14] + (int)cap[15] == 0))
-					{
-						versionString.sprintf("%d.%d.%d",
-							cap[12], cap[13], cap[14]);
-					}
-					else
-					{
-						versionString.sprintf("%d.%d.%d%d",
-							cap[12], cap[13], cap[14], cap[15]);
-					}
-				}
-			}
-			else if (oscar_caps[i].flag == AIM_CAPS_MICQ)
-			{
-				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
-				{
-					kdDebug(14150) << "MICQ version : <" <<
-						(int)cap[12] << ":" << (int)cap[13] << ":" <<
-						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
-
-					capflags |= oscar_caps[i].flag;
-
-					// FIXME: how to decode this micq version mess? [mETz - 08.06.2004]
-					/*versionString.sprintf("%d.%d.%d%d",
-						cap[12], cap[13], cap[14], cap[15]);*/
-				}
-			}
-			else if (oscar_caps[i].flag == AIM_CAPS_SIMNEW)
-			{
-				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
-				{
-					kdDebug(14150) << "SIM version : <" <<
-						(int)cap[12] << ":" << (int)cap[13] << ":" <<
-						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
-
-					capflags |= oscar_caps[i].flag;
-					versionString.sprintf("%d.%d.%d%d",
-						cap[12], cap[13], cap[14], cap[15]);
-				}
-			}
-			else if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
-			{
-				capflags |= oscar_caps[i].flag;
-
-#ifdef OSCAR_CAP_DEBUG
-				switch(oscar_caps[i].flag)
-				{
-					case AIM_CAPS_BUDDYICON:
-						dbgCaps += "AIM_CAPS_BUDDYICON ";
-						break;
-					case AIM_CAPS_VOICE:
-						dbgCaps += "AIM_CAPS_VOICE ";
-						break;
-					case AIM_CAPS_IMIMAGE:
-						dbgCaps += "AIM_CAPS_IMIMAGE ";
-						break;
-					case AIM_CAPS_CHAT:
-						dbgCaps += "AIM_CAPS_CHAT ";
-						break;
-					case AIM_CAPS_GETFILE:
-						dbgCaps += "AIM_CAPS_GETFILE ";
-						break;
-					case AIM_CAPS_SENDFILE:
-						dbgCaps += "AIM_CAPS_SENDFILE ";
-						break;
-					case AIM_CAPS_GAMES2:
-					case AIM_CAPS_GAMES:
-						dbgCaps += "AIM_CAPS_GAMES ";
-						break;
-					case AIM_CAPS_SAVESTOCKS:
-						dbgCaps += "AIM_CAPS_SAVESTOCKS ";
-						break;
-					case AIM_CAPS_SENDBUDDYLIST:
-						dbgCaps += "AIM_CAPS_SENDBUDDYLIST ";
-						break;
-					case AIM_CAPS_ISICQ:
-						dbgCaps += "AIM_CAPS_ISICQ ";
-						break;
-					case AIM_CAPS_APINFO:
-						dbgCaps += "AIM_CAPS_APINFO ";
-						break;
-					case AIM_CAPS_RTFMSGS:
-						dbgCaps += "AIM_CAPS_RTFMSGS ";
-						break;
-					case AIM_CAPS_EMPTY:
-						dbgCaps += "AIM_CAPS_EMPTY ";
-						break;
-					case AIM_CAPS_ICQSERVERRELAY:
-						dbgCaps += "AIM_CAPS_ICQSERVERRELAY ";
-						break;
-					case AIM_CAPS_IS_2001:
-						dbgCaps += "AIM_CAPS_IS_2001 ";
-						break;
-					case AIM_CAPS_TRILLIANCRYPT:
-						dbgCaps += "AIM_CAPS_TRILLIANCRYPT ";
-						break;
-					case AIM_CAPS_UTF8:
-						dbgCaps += "AIM_CAPS_UTF8 ";
-						break;
-					case AIM_CAPS_IS_WEB:
-						dbgCaps += "AIM_CAPS_IS_WEB ";
-						break;
-					case AIM_CAPS_INTEROPERATE:
-						dbgCaps += "AIM_CAPS_INTEROPERATE ";
-						break;
-					case AIM_CAPS_MACICQ:
-						dbgCaps += "AIM_CAPS_MACICQ";
- 						break;
-
-					default:
-						QString capstring;
-						capstring.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-							cap[0], cap[1], cap[2], cap[3],cap[4], cap[5],
-							cap[6], cap[7], cap[8], cap[9],
-							cap[10], cap[11], cap[12], cap[13],
-							cap[14], cap[15]);
-						kdDebug(14150) << k_funcinfo << "Unknown Capability: " << capstring << endl;
-				} // END switch
-#endif // OSCAR_CAP_DEBUG
-
-				break;
-			} // END if(memcmp...
-		} // END for...
-		delete [] cap;
-	}
-	#ifdef OSCAR_CAP_DEBUG
-	kdDebug(14150) << k_funcinfo << dbgCaps << endl;
-	#endif
-	return capflags;
-}
-
 
 void OscarSocket::parseUserOnline(Buffer &inbuf)
 {
@@ -1335,18 +1189,12 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 
 
 
-void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long caps)
+void OscarSocket::sendLocationInfo(const QString &profile)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
 	Buffer outbuf, capBuf;
 
-	unsigned long sendCaps;
-	if(caps==0)
-		sendCaps = mIsICQ ? KOPETE_ICQ_CAPS : KOPETE_AIM_CAPS;
-	else
-		sendCaps = caps;
-
-	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
+	outbuf.addSnac(OSCAR_FAM_2,0x0004,0x0000,0x00000000);
 	if(!profile.isNull() && !mIsICQ)
 	{
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
@@ -1355,11 +1203,19 @@ void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long c
 		//kdDebug(14150) << k_funcinfo << "adding profile=" << profile << endl;
 	}
 
-	for (int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
+	if (mIsICQ)
 	{
-		if (oscar_caps[i].flag & sendCaps)
-			capBuf.addString(oscar_caps[i].data, 16);
+		capBuf.addString(oscar_caps[CAP_ICQSERVERRELAY], 16);
+		capBuf.addString(oscar_caps[CAP_UTF8], 16);
+		capBuf.addString(oscar_caps[CAP_ISICQ], 16);
+		capBuf.addString(oscar_caps[CAP_KOPETE], 16);
+		capBuf.addString(oscar_caps[CAP_RTFMSGS], 16);
 	}
+	else
+	{
+		capBuf.addString(oscar_caps[CAP_KOPETE], 16);
+	}
+
 	//kdDebug(14150) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
 	outbuf.addTLV(0x0005, capBuf.length(), capBuf.buffer());
 
@@ -1632,13 +1488,13 @@ void OscarSocket::OnDirectIMReady(QString name)
 void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
-	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, &finfo);
+	sendRendezvous(sn, 0x0000, CAP_SENDFILE, &finfo);
 }
 
 OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn,
 	const QString &fileName)
 {
-	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
+	sendRendezvous(sn, 0x0001, CAP_SENDFILE);
 	mFileTransferMgr->addFileInfo(sn,
 		new KFileItem(KFileItem::Unknown, KFileItem::Unknown, fileName));
 
@@ -1647,7 +1503,7 @@ OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn,
 
 void OscarSocket::sendFileSendDeny(const QString &sn)
 {
-	sendRendezvous(sn, 0x0002, AIM_CAPS_SENDFILE);
+	sendRendezvous(sn, 0x0002, CAP_SENDFILE);
 }
 
 void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
@@ -1659,7 +1515,7 @@ void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
 
 OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 {
-	if ( capflag & AIM_CAPS_IMIMAGE ) //direct im
+	if ( capflag & CAP_IMIMAGE ) //direct im
 		return mDirectIMMgr;
 	else  //must be a file transfer?
 		return mFileTransferMgr;
@@ -1879,13 +1735,20 @@ void OscarSocket::sendBuddylistDel(QStringList &contacts)
 }
 
 
-const QString OscarSocket::ServerToQString(const char* string, OscarContact *contact, bool isUtf8)
+const QString OscarSocket::ServerToQString(const char* string, OscarContact *contact, bool isUtf8, bool isRTF)
 {
 	//kdDebug(14150) << k_funcinfo << "called" << endl;
 
 	int length = strlen(string);
 	int cresult = -1;
 	QTextCodec *codec = 0L;
+
+	/* TODO check how encodings are handled inside RTF,
+	 * I assume it's part of the rtf and I do not have to decode it here
+	 */
+	if (isRTF)
+		return QString::fromLatin1(string);
+
 
 	if(contact != 0L)
 	{
@@ -1902,7 +1765,9 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 #endif
 	}
 
-	if(!codec && isUtf8) // in case the per-contact codec didn't work we check if the caller thinks this message is utf8
+	// in case the per-contact codec didn't work we check if the caller
+	// thinks this message is utf8
+	if(!codec && isUtf8)
 	{
 		codec = QTextCodec::codecForMib(106); //UTF-8
 		if(codec)
@@ -1919,6 +1784,54 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 	}
 
 	return KopeteMessage::decodeString( string, codec );
+}
+
+
+
+
+
+bool UserInfo::hasCap(int capNumber)
+{
+	return (capabilities & (1 << capNumber)) != 0;
+}
+
+void UserInfo::updateInfo(UserInfo other)
+{
+	sn = other.sn;
+	evil = other.evil;
+
+	if (other.userclass != 0)
+		userclass = other.userclass;
+
+	idletime = other.idletime;
+	onlinesince = other.onlinesince;
+	icqextstatus = other.icqextstatus;
+
+	if(other.capabilities != 0)
+	{
+		//kdDebug(14150)<< k_funcinfo << "Merging capabilities" << endl;
+		capabilities = other.capabilities;
+		clientVersion = other.clientVersion;
+	}
+
+	// TLV 0x0C, optional
+	if(other.localip != 0 && other.port != 0 && other.version != 0)
+	{
+		//kdDebug(14150)<< k_funcinfo << "Merging DC info" << endl;
+		localip = other.version;
+		port = other.version;
+		fwType = other.version;
+		version = other.version;
+		dcCookie = other.dcCookie;
+		clientFeatures = other.clientFeatures;
+		lastInfoUpdateTime = other.lastInfoUpdateTime;
+		lastExtInfoUpdateTime = other.lastExtInfoUpdateTime;
+		lastExtStatusUpdateTime = other.lastExtStatusUpdateTime;
+	}
+
+	// TLV 0x0A, optional
+	if (other.realip != 0)
+		realip = other.realip;
 }
 
 #include "oscarsocket.moc"

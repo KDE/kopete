@@ -121,31 +121,133 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	if (u.sn != contactName())
 		return;
 
+	// update mInfo and general stuff from OscarContact
+	slotParseUserInfo(u);
+
 	/*kdDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
-	if (u.capabilities & AIM_CAPS_BUDDYICON)
-		capList << i18n("Buddyicon");
-	if (u.capabilities & AIM_CAPS_TRILLIANCRYPT)
-		capList << i18n("Trillian Encryption");
-	if (u.capabilities & AIM_CAPS_UTF8)
-		capList << i18n("UTF-8");
-	if (u.capabilities & AIM_CAPS_IS_WEB)
-		capList << i18n("Lite/Web-Client");
-	if (u.capabilities & AIM_CAPS_RTFMSGS)
-		capList << i18n("RTF-Messages");
-	if (u.capabilities & AIM_CAPS_KOPETE)
-		capList << i18n("Kopete %1").arg(u.clientVersion);
-	if (u.capabilities & AIM_CAPS_MICQ)
+
+	if (hasCap(CAP_KOPETE))
+	{
+		capList << i18n("Kopete %1").arg(mInfo.clientVersion);
+	}
+	else if (hasCap(CAP_MICQ))
+	{
 		capList << i18n("MICQ");
-		//capList << i18n("MICQ %1").arg(u.clientVersion);
-	if (u.capabilities & AIM_CAPS_SIMNEW)
-		capList << i18n("SIM %1").arg(u.clientVersion);
-	if (u.capabilities & AIM_CAPS_MACICQ)
+		//capList << i18n("MICQ %1").arg(mInfo.clientVersion);
+	}
+	else if (hasCap(CAP_SIMNEW) || hasCap(CAP_SIMOLD))
+	{
+		capList << i18n("SIM %1").arg(mInfo.clientVersion);
+	}
+	else if (hasCap(CAP_TRILLIANCRYPT) || hasCap(CAP_TRILLIAN))
+	{
+		capList << i18n("Trillian");
+	}
+	else if (hasCap(CAP_MACICQ))
+	{
 		capList << i18n("MacICQ");
-	if (u.capabilities & AIM_CAPS_IMIMAGE)
+	}
+	else if (hasCap(CAP_IS_WEB))
+	{
+		kdDebug(14190) << k_funcinfo << "'"
+			<< displayName() << "' client protocol version = " << mInfo.version << endl;
+
+		switch (mInfo.version)
+		{
+			case 10:
+				capList << i18n("ICQ 2003b");
+				break;
+			case 9:
+				capList << i18n("ICQ Lite");
+				break;
+			default:
+				capList << i18n("ICQ2go");
+		}
+	}
+	else if (hasCap(CAP_BUDDYICON)) // only gaim seems to advertize this on ICQ
+	{
+		capList << i18n("Gaim");
+	}
+	else if (hasCap(CAP_XTRAZ))
+	{
+		capList << i18n("ICQ 4.0 Lite");
+	}
+	else if ((hasCap(CAP_STR_2001) || hasCap(CAP_ICQSERVERRELAY)) &&
+		hasCap(CAP_IS_2001))
+	{
+		capList << i18n("ICQ 2001");
+	}
+	else if ((hasCap(CAP_STR_2001) || hasCap(CAP_ICQSERVERRELAY)) &&
+		hasCap(CAP_STR_2002))
+	{
+		capList << i18n("ICQ 2002");
+	}
+	else if (hasCap(CAP_RTFMSGS) && hasCap(CAP_UTF8) &&
+		hasCap(CAP_ICQSERVERRELAY) && hasCap(CAP_ISICQ))
+	{
+		capList << i18n("ICQ 2003a");
+	}
+	else if (hasCap(CAP_ICQSERVERRELAY) && hasCap(CAP_ISICQ))
+	{
+		capList << i18n("ICQ 2001b");
+	}
+	else if ((mInfo.version == 7) && hasCap(CAP_RTFMSGS))
+	{
+		capList << i18n("GnomeICU");
+	}
+	else // some client we could not detect using capabilities
+	{
+		switch (mInfo.lastInfoUpdateTime > 0)
+		{
+			case 0xFFFFFFFFL:
+				if ((mInfo.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
+					(mInfo.lastExtInfoUpdateTime == 0xFFFFFFFFL))
+				{
+					capList << i18n("Gaim");
+				}
+				else
+				{
+					if (mInfo.lastExtStatusUpdateTime & 0x80000000)
+						capList << i18n("Miranda alpha");
+					else
+						capList << i18n("Miranda");
+				}
+				break;
+			case 0xFFFFFF8FL:
+				capList << i18n("StrICQ");
+				break;
+			case 0xFFFFFF42L:
+				capList << i18n("mICQ");
+				break;
+			case 0xFFFFFFBEL:
+				capList << i18n("alicq");
+				break;
+			case 0xFFFFFF7FL:
+				capList << i18n("&RQ");
+				break;
+			case 0xFFFFFFABL:
+				capList << i18n("YSM");
+				break;
+			case 0x3AA773EEL:
+				if ((mInfo.lastExtStatusUpdateTime == 0x3AA66380L) &&
+					(mInfo.lastExtInfoUpdateTime == 0x3A877A42L))
+				{
+					capList << i18n("libicq2000");
+				}
+				break;
+		}
+	}
+
+
+	if (hasCap(CAP_UTF8))
+		capList << i18n("UTF-8");
+	if (hasCap(CAP_RTFMSGS))
+		capList << i18n("RTF-Messages");
+	if (hasCap(CAP_IMIMAGE))
 		capList << i18n("DirectIM/IMImage");
-	if (u.capabilities & AIM_CAPS_CHAT)
+	if (hasCap(CAP_CHAT))
 		capList << i18n("Groupchat");
 
 	if (capList.count() > 0)
@@ -155,17 +257,17 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	}
 
 	unsigned int newStatus = 0;
-	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
+	mInvisible = (mInfo.icqextstatus & ICQ_STATUS_IS_INVIS);
 
-	if (u.icqextstatus & ICQ_STATUS_IS_FFC)
+	if (mInfo.icqextstatus & ICQ_STATUS_IS_FFC)
 		newStatus = OSCAR_FFC;
-	else if (u.icqextstatus & ICQ_STATUS_IS_DND)
+	else if (mInfo.icqextstatus & ICQ_STATUS_IS_DND)
 		newStatus = OSCAR_DND;
-	else if (u.icqextstatus & ICQ_STATUS_IS_OCC)
+	else if (mInfo.icqextstatus & ICQ_STATUS_IS_OCC)
 		newStatus = OSCAR_OCC;
-	else if (u.icqextstatus & ICQ_STATUS_IS_NA)
+	else if (mInfo.icqextstatus & ICQ_STATUS_IS_NA)
 		newStatus = OSCAR_NA;
-	else if (u.icqextstatus & ICQ_STATUS_IS_AWAY)
+	else if (mInfo.icqextstatus & ICQ_STATUS_IS_AWAY)
 		newStatus = OSCAR_AWAY;
 	else
 		newStatus = OSCAR_ONLINE;

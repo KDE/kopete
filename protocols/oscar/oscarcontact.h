@@ -86,7 +86,7 @@ class OscarContact : public KopeteContact
 //		bool waitAuth() const;
 //		void setWaitAuth(bool b) const;
 		const UserInfo &userInfo() { return mInfo; }
-		bool hasCap(DWORD cap) { return mInfo.capabilities & cap; }
+		bool hasCap(int capNumber);
 
 		int requestAuth();
 

@@ -215,65 +215,44 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if (tocNormalize(u.sn) != contactName())
 		return;
 
-	/*QString uclass = "";
-	if(u.userclass & CLASS_AWAY)
-		uclass += " AWAY ";
-	else
-		uclass += " ONLINE ";
-	if(u.userclass & CLASS_AIM)
-		uclass += " AIM User ";
-	if(u.userclass & CLASS_ICQ)
-		uclass += " ICQ user ";
-	if(u.userclass & CLASS_WIRELESS)
-		uclass += " Wireless user ";
-	if(u.userclass & CLASS_COMMERCIAL)
-		uclass += " AOL commercial account ";
-	if(u.userclass & CLASS_TRIAL)
-		uclass += " AOL trial account ";
-	if(u.userclass & CLASS_ADMINISTRATOR)
-		uclass += " AOL administrator account ";
-	if(u.userclass & CLASS_UNKNOWN400)
-		uclass += " Active contact ";
-
-	kdDebug(14190) << k_funcinfo << displayName() <<
-		"; decoded userclass=[" << uclass << "]" << endl;*/
+	// update mInfo and general stuff from OscarContact
+	slotParseUserInfo(u);
 
 	QStringList capList;
-	if (u.capabilities & AIM_CAPS_KOPETE)
-		capList << i18n("Kopete %1").arg(u.clientVersion);
-	if (u.capabilities & AIM_CAPS_MICQ)
+	if (hasCap(CAP_KOPETE))
+		capList << i18n("Kopete %1").arg(mInfo.clientVersion);
+	if (hasCap(CAP_MICQ))
 		capList << i18n("MICQ");
-		//capList << i18n("MICQ %1").arg(u.clientVersion);
-	if (u.capabilities & AIM_CAPS_SIMNEW)
-		capList << i18n("SIM %1").arg(u.clientVersion);
-	if (u.capabilities & AIM_CAPS_MACICQ)
+		//capList << i18n("MICQ %1").arg(mInfo.clientVersion);
+	if (hasCap(CAP_SIMNEW))
+		capList << i18n("SIM %1").arg(mInfo.clientVersion);
+	if (hasCap(CAP_MACICQ))
 		capList << i18n("MacICQ");
-	if (u.capabilities & AIM_CAPS_BUDDYICON)
+	if (hasCap(CAP_BUDDYICON))
 		capList << i18n("Buddyicons");
-	if (u.capabilities & AIM_CAPS_TRILLIANCRYPT)
+	if (hasCap(CAP_TRILLIANCRYPT))
 		capList << i18n("Trillian Encryption");
-	if (u.capabilities & AIM_CAPS_UTF8)
+	if (hasCap(CAP_UTF8))
 		capList << i18n("UTF-8");
-	if (u.capabilities & AIM_CAPS_IS_WEB)
+	if (hasCap(CAP_IS_WEB))
 		capList << i18n("Lite/Web-Client");
-	if (u.capabilities & AIM_CAPS_RTFMSGS)
+	if (hasCap(CAP_RTFMSGS))
 		capList << i18n("RTF-Messages");
-	if (u.capabilities & AIM_CAPS_CHAT)
+	if (hasCap(CAP_CHAT))
 		capList << i18n("Groupchat");
-	if (u.capabilities & AIM_CAPS_VOICE)
+	if (hasCap(CAP_VOICE))
 		capList << i18n("Voicechat");
-	if (u.capabilities & AIM_CAPS_IMIMAGE)
+	if (hasCap(CAP_IMIMAGE))
 		capList << i18n("DirectIM/IMImage");
-	if (u.capabilities & AIM_CAPS_SENDBUDDYLIST)
+	if (hasCap(CAP_SENDBUDDYLIST))
 		capList << i18n("Send Buddylist");
-	if (u.capabilities & AIM_CAPS_SENDFILE)
+	if (hasCap(CAP_SENDFILE))
 		capList << i18n("Send Files");
-	if (u.capabilities & AIM_CAPS_GETFILE)
+	if (hasCap(CAP_GETFILE))
 		capList << i18n("Receive Files");
 
 	if (capList.count() > 0)
 		setProperty(mProtocol->clientFeatures, capList.join(", "));
-
 
 
 	if(u.userclass & CLASS_AWAY)

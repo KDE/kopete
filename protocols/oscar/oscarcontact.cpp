@@ -73,6 +73,7 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mInfo.capabilities = 0;
 	mInfo.icqextstatus = ICQ_STATUS_OFFLINE;
 	mInfo.idletime = 0;
+	mInfo.version = 0;
 
 	initSignals();
 }
@@ -91,9 +92,9 @@ void OscarContact::initSignals()
 		mAccount->engine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotMainStatusChanged(const unsigned int)));
 
-	connect(
+	/*connect(
 		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
-		this, SLOT(slotParseUserInfo(const UserInfo &)));
+		this, SLOT(slotParseUserInfo(const UserInfo &)));*/
 
 	connect(
 		mAccount->engine(), SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
@@ -470,13 +471,14 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 		removeProperty(Kopete::Global::Properties::self()->onlineSince());
 	}
 
-	// FIXME: UserInfo was a bad idea, invent something clever instead!
-	DWORD oldCaps = mInfo.capabilities;
-	mInfo = u;
-	if(u.capabilities == 0)
-		mInfo.capabilities = oldCaps;
+	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	mInfo.updateInfo(u); // merge data from mInfo and u
 }
 
+bool OscarContact::hasCap(int capNumber)
+{
+	return (mInfo.hasCap(capNumber));
+}
 
 void OscarContact::slotRequestAuth()
 {
