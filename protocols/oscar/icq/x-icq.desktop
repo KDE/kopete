@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Comment=ICQ Contact
+Comment[ar]=جهة اتصال على ICQ
 Comment[be]=Кантакт ICQ
 Comment[bg]=Връзка с ICQ Contact
 Comment[bs]=ICQ kontakt
@@ -22,6 +23,7 @@ Comment[hu]=ICQ-kapcsolat
 Comment[is]=ICQ tengiliður
 Comment[it]=Contatto ICQ
 Comment[ja]=ICQコンタクト
+Comment[mk]=Контакт на ICQ 
 Comment[nb]=ICQ kontakt
 Comment[nl]=ICQ contact
 Comment[nn]=ICQ-kontakt
@@ -34,7 +36,7 @@ Comment[sr]=ICQ контакт
 Comment[sr@Latn]=ICQ kontakt
 Comment[sv]=ICQ-kontakt
 Comment[ta]=ICQ தொடர்பு
-Comment[tg]=Пайвастшавии ICQ 
+Comment[tg]=Робитаи ICQ 
 Comment[tr]=ICQ Bağlantısı
 Comment[uk]=Контакт ICQ
 Comment[zh_CN]=ICQ 联系人
