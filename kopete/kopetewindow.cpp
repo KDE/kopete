@@ -43,7 +43,7 @@
 #include <kinputdialog.h>
 
 #include "addcontactwizard.h"
-#include "kopete.h"
+#include "kopeteapplication.h"
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
 #include "kopeteaccountmanager.h"

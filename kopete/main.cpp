@@ -19,7 +19,7 @@
 
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-#include "kopete.h"
+#include "kopeteapplication.h"
 
 #include <dcopclient.h>
 #include "kopeteiface.h"

@@ -18,7 +18,7 @@
     *************************************************************************
 */
 
-#include "kopete.h"
+#include "kopeteapplication.h"
 
 #include <qtimer.h>
 #include <qregexp.h>
@@ -278,7 +278,7 @@ void KopeteApplication::commitData( QSessionManager &sm )
 	KUniqueApplication::commitData( sm );
 }
 
-#include "kopete.moc"
+#include "kopeteapplication.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 
