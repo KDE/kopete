@@ -236,7 +236,13 @@ void KMSNServiceSocket::parseCommand(QString str)
 	// suffering from this the below will work, otherwise we might be in
 	// need for a better solution...
 */
-	uint id = str.section( ' ', 1, 1 ).toUInt();
+	bool isNum;
+	uint id = str.section( ' ', 1, 1 ).toUInt( &isNum );
+
+	// In some rare cases, like the 'NLN' / 'FLN' commands no id at all
+	// is sent. Here it's actually a real parameter...
+	if( !isNum )
+		data = str.section( ' ', 1, 1 ) + " " + data;
 
 	kdDebug() << "KMSNServiceSocket::parseCommand: Parsing command " << cmd <<
 		" (ID " << id << "): '" << data << "'" << endl;
@@ -330,9 +336,9 @@ void KMSNServiceSocket::parseCommand(QString str)
 	else if( cmd == "NLN" )
 	{
 		// handle, publicName, status
-		emit contactStatusChanged( data.section( ' ', 0, 0 ),
-			data.section( ' ', 1, 1 ).replace( QRegExp( "%20" ), " " ),
-			data.section( ' ', 2, 2 ) );
+		emit contactStatusChanged( data.section( ' ', 1, 1 ),
+			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ),
+			data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "LST" )
 	{
@@ -375,7 +381,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 	}
 	else if( cmd == "FLN" )
 	{
-		emit contactStatusChanged( data.section( ' ', 1, 1 ), "", "FLN" );
+		emit contactStatusChanged( data.section( ' ', 0, 0 ), "", "FLN" );
 	}
 	else if( cmd == "ILN" )
 	{

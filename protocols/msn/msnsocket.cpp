@@ -257,7 +257,14 @@ void MSNSocket::parseLine( const QString &str )
 	QString cmd  = str.section( ' ', 0, 0 );
 	QString data = str.section( ' ', 2 ).replace( QRegExp( "\r\n" ), "" );
 
+	bool isNum;
 	uint id = str.section( ' ', 1, 1 ).toUInt();
+
+	// In some rare cases, like the 'NLN' / 'FLN' commands no id at all
+	// is sent. Here it's actually a real parameter...
+	if( !isNum )
+		data = str.section( ' ', 1, 1 ) + " " + data;
+
 
 	kdDebug() << "MSNSocket::parseCommand: Parsing command " << cmd <<
 		" (ID " << id << "): '" << data << "'" << endl;
