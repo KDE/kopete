@@ -129,9 +129,6 @@
                     <property name="text">
                         <string>&amp;Register</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
                     <property name="autoDefault">
                         <bool>true</bool>
                     </property>
@@ -145,9 +142,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Cancel</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
                     </property>
                     <property name="autoDefault">
                         <bool>true</bool>

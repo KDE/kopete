@@ -81,9 +81,6 @@
                     <property name="text">
                         <string>Remember &amp;password</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to save your password.</string>
                     </property>
@@ -183,9 +180,6 @@
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to connect automatically when Kopete is started.</string>
                     </property>
@@ -199,9 +193,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Import contacts from the server</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Whether or not you would like to import contacts from your contact list on the server when you connect.</string>
@@ -244,9 +235,6 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Use the group names from the server</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+U</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Whether you would like to use the group names from the server when importing.</string>

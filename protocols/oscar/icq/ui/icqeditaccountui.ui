@@ -81,9 +81,6 @@
                     <property name="text">
                         <string>Remember &amp;password</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to save your password.</string>
                     </property>
@@ -174,9 +171,6 @@
                     </property>
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to connect automatically when Kopete is started.</string>
@@ -285,9 +279,6 @@
                             <property name="text">
                                 <string>&amp;Defaults</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
-                            </property>
                             <property name="toolTip" stdset="0">
                                 <string>Restore the server and port values to their defaults.</string>
                             </property>
@@ -317,9 +308,6 @@
                     <property name="text">
                         <string>Hide &amp;IP</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check this to hide your IP address from other users.</string>
                     </property>
@@ -334,9 +322,6 @@
                     <property name="text">
                         <string>W&amp;eb aware</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check this box to enable Web Aware functionality.</string>
                     </property>
@@ -350,9 +335,6 @@
                     </property>
                     <property name="text">
                         <string>Require authori&amp;zation</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+Z</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>

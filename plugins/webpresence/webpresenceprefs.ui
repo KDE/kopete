@@ -132,9 +132,6 @@
                     <property name="text">
                         <string>&amp;XML</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+X</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -142,9 +139,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;HTML using default (boring) stylesheet</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+H</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -156,9 +150,6 @@
                     </property>
                     <property name="text">
                         <string>HTML &amp;using this stylesheet:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
                     </property>
                 </widget>
             </grid>
@@ -212,9 +203,6 @@
                     <property name="text">
                         <string>Include &amp;IM addresses</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -222,9 +210,6 @@
                     </property>
                     <property name="text">
                         <string>Use one of &amp;your IM names</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+Y</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -236,9 +221,6 @@
                     </property>
                     <property name="text">
                         <string>Use another &amp;name:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
                     </property>
                 </widget>
             </grid>

@@ -161,9 +161,6 @@
                     <property name="text">
                         <string>Remember &amp;password</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to save your password.</string>
                     </property>
@@ -270,9 +267,6 @@
                             <property name="text">
                                 <string>Re&amp;gister New Account</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+G</string>
-                            </property>
                             <property name="toolTip" stdset="0">
                                 <string>Register a new account on this network.</string>
                             </property>
@@ -302,9 +296,6 @@
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to connect automatically when Kopete is started.</string>
                     </property>
@@ -321,9 +312,6 @@
                     </property>
                     <property name="text">
                         <string>C&amp;ache server information</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Cache connection information for each server connected to in case the main load-balancing server fails.</string>

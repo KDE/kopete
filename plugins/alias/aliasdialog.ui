@@ -101,9 +101,6 @@
             <property name="text">
                 <string>&amp;Save</string>
             </property>
-            <property name="accel">
-                <string>Alt+S</string>
-            </property>
         </widget>
         <widget class="KPushButton" row="3" column="2">
             <property name="name">
@@ -111,9 +108,6 @@
             </property>
             <property name="text">
                 <string>&amp;Cancel</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
             </property>
         </widget>
         <widget class="QLabel" row="2" column="0">

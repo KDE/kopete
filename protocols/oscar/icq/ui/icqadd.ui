@@ -60,9 +60,6 @@
                     <property name="text">
                         <string>&amp;Search</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                 </widget>
                 <widget class="QPushButton">
                     <property name="name">
@@ -78,9 +75,6 @@
                     </property>
                     <property name="text">
                         <string>Clear &amp;Results</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
                     </property>
                 </widget>
             </vbox>

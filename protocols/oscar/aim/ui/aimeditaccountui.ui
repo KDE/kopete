@@ -89,9 +89,6 @@
                     <property name="text">
                         <string>Remember &amp;password</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to save your password.</string>
                     </property>
@@ -182,9 +179,6 @@
                     </property>
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to connect automatically when Kopete is started.</string>
@@ -292,9 +286,6 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Defaults</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Restore the server and port values to their defaults.</string>

@@ -131,9 +131,6 @@
                             <property name="text">
                                 <string>&amp;Description</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
-                            </property>
                             <property name="toolTip" stdset="0">
                                 <string>Description of the SMS delivery service.</string>
                             </property>
@@ -215,9 +212,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Enable phone number internationalization</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Check if you would like to enable phone number internationalization.</string>

@@ -106,9 +106,6 @@
                             <property name="text">
                                 <string>&amp;Install Into Samba</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+I</string>
-                            </property>
                             <property name="toolTip" stdset="0">
                                 <string>Install support into Samba to enable this service.</string>
                             </property>
@@ -137,9 +134,6 @@
                     </property>
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Check to connect automatically when Kopete is started.</string>

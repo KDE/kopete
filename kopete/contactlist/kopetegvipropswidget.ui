@@ -91,9 +91,6 @@
                     <property name="text">
                         <string>Use custom &amp;icons</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                 </widget>
                 <spacer row="1" column="2">
                     <property name="name">

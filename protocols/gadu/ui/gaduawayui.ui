@@ -70,9 +70,6 @@ Choosing Offline status will disconnect you, with given description.</string>
                                     <property name="text">
                                         <string>O&amp;nline</string>
                                     </property>
-                                    <property name="accel">
-                                        <string>Alt+N</string>
-                                    </property>
                                     <property name="buttonGroupId">
                                         <number>4</number>
                                     </property>
@@ -89,9 +86,6 @@ Choosing Offline status will disconnect you, with given description.</string>
                                     </property>
                                     <property name="text">
                                         <string>&amp;Busy</string>
-                                    </property>
-                                    <property name="accel">
-                                        <string>Alt+B</string>
                                     </property>
                                     <property name="buttonGroupId">
                                         <number>5</number>
@@ -110,9 +104,6 @@ Choosing Offline status will disconnect you, with given description.</string>
                                     <property name="text">
                                         <string>&amp;Invisible</string>
                                     </property>
-                                    <property name="accel">
-                                        <string>Alt+I</string>
-                                    </property>
                                     <property name="buttonGroupId">
                                         <number>22</number>
                                     </property>
@@ -129,9 +120,6 @@ Choosing Offline status will disconnect you, with given description.</string>
                                     </property>
                                     <property name="text">
                                         <string>O&amp;ffline</string>
-                                    </property>
-                                    <property name="accel">
-                                        <string>Alt+F</string>
                                     </property>
                                     <property name="buttonGroupId">
                                         <number>21</number>

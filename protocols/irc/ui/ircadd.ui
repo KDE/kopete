@@ -174,9 +174,6 @@
                                 <property name="text">
                                     <string>S&amp;earch</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+E</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Perform a channel search.</string>
                                 </property>
