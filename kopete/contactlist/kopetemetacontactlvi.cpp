@@ -343,6 +343,8 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 		m_parentGroup->refreshDisplayName();
 
 #if KDE_VERSION > 0x030100
+	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
+	// multiple times if the user is in multiple groups - Jason
 	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ? "kopete_online" : "kopete_status_change";
 	int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 	KNotifyClient::event( winId, event,
