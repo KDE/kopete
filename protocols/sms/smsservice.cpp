@@ -1,9 +1,9 @@
 #include "smsservice.h"
 
-SMSService::SMSService()
+SMSService::SMSService(QString userName)
 	: QObject()
 {
-
+	uName = userName;
 }
 
 SMSService::~SMSService()

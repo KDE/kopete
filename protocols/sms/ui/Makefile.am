@@ -7,6 +7,6 @@ INCLUDES = -I$(srcdir)/../../../libkopete \
 
 noinst_LTLIBRARIES = libkopetesmsui.la
 
-libkopetesmsui_la_SOURCES = smsadd.ui smsprefs.ui empty.cpp
+libkopetesmsui_la_SOURCES = smsadd.ui smsprefs.ui smsuserprefs.ui empty.cpp
 
-EXTRA_DIST = smsadd.ui smsprefs.ui empty.cpp
+EXTRA_DIST = smsadd.ui smsprefs.ui smsuserprefs.ui empty.cpp

@@ -21,6 +21,9 @@ class KopeteHistoryDialog;
 class KopeteMessageManager;
 class KopeteMetaContact;
 
+class KActionCollection;
+class KAction;
+
 
 class SMSContact : public KopeteContact
 {
@@ -33,11 +36,12 @@ public:
 
 	virtual QString id() const;
 
+	KActionCollection* customContextMenuActions();
+
 	ContactStatus status() const;
 	int importance() const;
 
 	QString smsId() const;
-	void setSmsId( const QString &id );
 
 	virtual bool isReachable() { return true; };
 
@@ -48,11 +52,19 @@ public slots:
 	virtual void execute();
 	virtual void slotViewHistory();
 	void slotSendMessage(const KopeteMessage &msg);
+	void setSmsId( const QString id );
 
 	void slotCloseHistoryDialog();
 
+private slots:
+	void userPrefs();
+
 private:
 	KopeteMessageManager* msgManager();
+
+	void initActions();
+	KActionCollection* actionCollection;
+	KAction* actionPrefs;
 
 	QString m_smsId;
 	SMSProtocol* m_protocol;

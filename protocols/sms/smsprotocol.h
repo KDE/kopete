@@ -28,7 +28,6 @@ class KopeteMetaContact;
 class KopeteMessage;
 class KopeteMessageManager;
 class SMSContact;
-class SMSPreferences;
 class StatusBarIcon;
 
 class SMSProtocol : public KopeteProtocol
@@ -62,15 +61,10 @@ public:
 
 	KopeteContact *myself() const;
 
-private slots:
-	void slotPreferencesSaved();
-
 private:
 	static SMSProtocol* s_protocol;
 
 	StatusBarIcon *statusBarIcon;
-
-	SMSPreferences *mPrefs;
 
 	SMSContact *m_mySelf;
 signals:

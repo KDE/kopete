@@ -25,15 +25,12 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 		kdDebug() << "SMSProtocol::SMSProtocol: WARNING s_protocol already defined!" << endl;
 	else
 		s_protocol = this;
+	
+	new SMSPreferences("sms_protocol", this);
 
 	QString protocolId = this->id();
 
-	mPrefs= new SMSPreferences( "sms_protocol", this );
-	connect( mPrefs, SIGNAL(saved()) , this , SLOT ( slotPreferencesSaved() ));
-	slotPreferencesSaved();
-
 	m_mySelf = new SMSContact(protocol(), "", "", 0);
-
 }
 
 SMSProtocol::~SMSProtocol()
@@ -99,10 +96,6 @@ SMSProtocol* SMSProtocol::s_protocol = 0L;
 SMSProtocol* SMSProtocol::protocol()
 {
 	return s_protocol;
-}
-
-void SMSProtocol::slotPreferencesSaved()
-{
 }
 
 bool SMSProtocol::serialize( KopeteMetaContact *metaContact,

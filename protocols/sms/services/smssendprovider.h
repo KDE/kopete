@@ -10,7 +10,7 @@ class QListViewItem;
 class SMSSendProvider
 {
 public:
-	SMSSendProvider(QString providerName, QString prefixValue);
+	SMSSendProvider(QString providerName, QString prefixValue, QString userName);
 	~SMSSendProvider();
 
 	QListViewItem* listItem(KListView* parent, int pos);
@@ -26,6 +26,7 @@ private:
 
 	QString provider;
 	QString prefix;
+	QString uName;
 
 	bool canSend;
 } ;

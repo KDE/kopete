@@ -12,31 +12,24 @@
 
 #include "configmodule.h"
 #include "kopeteprefs.h"
+#include "smspreferencesbase.h"
 
 class QVBoxLayout;
 class SMSService;
-class smsPrefsUI;
 
 class SMSPreferences : public ConfigModule
 {
 	Q_OBJECT
-
 public:
 	SMSPreferences( const QString &pixmap, QObject *parent = 0 );
 	~SMSPreferences();
-	virtual void save();
 
+	void reopen();
+	void save();
+private:
+	SMSPreferencesBase* prefBase;
 signals:
 	void saved();
-
-private:
-	smsPrefsUI *preferencesDialog;
-	QWidget *configWidget;
-	SMSService *service;
-public slots:
-
-  virtual void reopen();
-  void setServicePreferences(const QString& name);
 };
 
 #endif

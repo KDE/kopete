@@ -7,7 +7,7 @@
 class ServiceLoader
 {
 public:
-	static SMSService* loadService(QString name);
+	static SMSService* loadService(QString name, QString uName);
 } ;
 
 #endif //SERVICELOADER_H

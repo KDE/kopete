@@ -13,6 +13,8 @@
 #include "serviceloader.h"
 #include "smsprotocol.h"
 #include "smscontact.h"
+#include "smsuserpreferences.h"
+#include "smsglobal.h"
 
 #include "kopetehistorydialog.h"
 #include "kopetemessagemanager.h"
@@ -26,7 +28,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kconfig.h>
 
 SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 	const QString &displayName, KopeteMetaContact *parent )
@@ -39,6 +40,8 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 	setDisplayName( displayName );
 
 	m_protocol = protocol;
+
+	initActions();
 
 	mMsgManager = 0L;
 }
@@ -81,11 +84,9 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 	QString nr = id();
 	SMSService* s;
 
-	KConfig *config=KGlobal::config();
-	config->setGroup("SMS");
-	QString sName = config->readEntry("ServiceName", QString::null);
+	QString sName = SMSGlobal::readConfig("SMS", "ServiceName", m_smsId);
 
-	s = ServiceLoader::loadService(sName);
+	s = ServiceLoader::loadService(sName, m_smsId);
 
 	if ( s == 0L)
 		return;
@@ -140,9 +141,36 @@ QString SMSContact::smsId() const
 	return m_smsId;
 }
 
-void SMSContact::setSmsId( const QString &id )
+void SMSContact::setSmsId( const QString id )
 {
 	m_smsId = id;
+}
+
+void SMSContact::initActions()
+{
+	actionCollection = 0L;
+	actionPrefs = 0L;
+}
+
+KActionCollection* SMSContact::customContextMenuActions()
+{
+	if( actionCollection != 0L )
+		delete actionCollection;
+	if( actionPrefs != 0L )
+		delete actionPrefs;
+	
+	actionCollection = new KActionCollection(this, "userColl");
+	actionPrefs = new KAction(i18n("&User preferences"), 0, this, SLOT(userPrefs()), actionCollection, "userPrefs");
+	actionCollection->insert(actionPrefs);
+	return actionCollection;
+}
+
+void SMSContact::userPrefs()
+{
+	kdDebug() << "SMSContact::userPrefs()" << endl;
+	SMSUserPreferences* p = new SMSUserPreferences( m_smsId );
+	p->show();
+	connect (p, SIGNAL(updateUserId(const QString)), this, SLOT(setSmsId(const QString)));
 }
 
 #include "smscontact.moc"

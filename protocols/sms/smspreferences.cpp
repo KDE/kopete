@@ -9,94 +9,32 @@
 */
 
 #include "smspreferences.h"
-#include "smsservice.h"
-#include "serviceloader.h"
-#include "smsprefs.h"
 
-#include <qlayout.h>
-#include <qcombobox.h>
-#include <qgroupbox.h>
-#include <qpoint.h>
-#include <qsizepolicy.h>
-
-#include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
+#include <qlayout.h>
 
 SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
-: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ),
-	pixmap, parent )
+	: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ), pixmap, parent )
 {
-	(new QVBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
+	(new QBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
+	prefBase = new SMSPreferencesBase( QString::null, this );
 
-	preferencesDialog = new smsPrefsUI(this);
-
-	service = 0L;
-	configWidget = 0L;
-
-	preferencesDialog->serviceName->insertItem("SMSSend");
-
-	connect (preferencesDialog->serviceName, SIGNAL(activated(const QString &)), this, SLOT(setServicePreferences(const QString &)));
-
-	reopen();
+	connect (prefBase, SIGNAL(saved()), this, SIGNAL(saved()));
 }
 
 SMSPreferences::~SMSPreferences()
 {
-	if (service != 0L)
-		delete service;
+	delete prefBase;
+}
+
+void SMSPreferences::save()
+{
+	prefBase->save();
 }
 
 void SMSPreferences::reopen()
 {
-	KGlobal::config()->setGroup("SMS");
-	QString sName = KGlobal::config()->readEntry( "ServiceName", QString::null );
-	
-	for (int i=0; i < preferencesDialog->serviceName->count(); i++)
-	{
-		if (preferencesDialog->serviceName->text(i) == sName)
-		{
-			preferencesDialog->serviceName->setCurrentItem(i);
-			break;
-		}
-	}
-	setServicePreferences(preferencesDialog->serviceName->currentText());
-}
-
-
-void SMSPreferences::save()
-{
-	KConfig *config=KGlobal::config();
-	config->setGroup("SMS");
-	config->writeEntry("ServiceName", preferencesDialog->serviceName->currentText());
-	config->sync();
-
-	if ( service != 0L && configWidget != 0L )
-		service->savePreferences();
-	
-	emit saved();
-
-}
-
-void SMSPreferences::setServicePreferences(const QString& name)
-{
-	if (service != 0L)
-	{
-		service->savePreferences();
-		delete service;
-	}
-
-	if (configWidget != 0L)
-		delete configWidget;
-	
-	service = ServiceLoader::loadService(name);
-
-	if ( service == 0L)
-		return;
-
-	configWidget = service->configureWidget(this);
-	configWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	configWidget->show();
+	prefBase->reopen();
 }
 
 #include "smspreferences.moc"

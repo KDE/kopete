@@ -3,11 +3,11 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-SMSService* ServiceLoader::loadService(QString name)
+SMSService* ServiceLoader::loadService(QString name, QString uName)
 {
 	SMSService* s;
 	if (name == "SMSSend")
-		s = new SMSSend;
+		s = new SMSSend(uName);
 	else
 	{
 		KMessageBox::sorry(0L, QString(i18n("Could not load service %1").arg(name)), 

@@ -12,11 +12,13 @@ class SMSSend : public SMSService
 {
 	Q_OBJECT
 public:
-	SMSSend();
+	SMSSend(QString userName);
 	~SMSSend();
 
 	bool send(QString nr, QString message);
 	QWidget* configureWidget(QWidget* parent);
+
+public slots:
 	void savePreferences();
 
 private slots:

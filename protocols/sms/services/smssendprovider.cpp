@@ -1,13 +1,13 @@
 #include "smssendprovider.h"
+#include "smsglobal.h"
 
 #include <kprocio.h>
 #include <qregexp.h>
 #include <klistview.h>
 #include <kmessagebox.h>
-#include <kconfig.h>
 #include <klocale.h>
 
-SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue)
+SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, QString userName)
 {
 	QString n = "  ([^ ]*) ";
 	QString valueInfo = ".*"; // Should be changed later to match "(info abut the format)"
@@ -15,11 +15,11 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue)
 
 	provider = providerName;
 	prefix = prefixValue;
+	uName = userName;
 
 	QRegExp r = n + valueInfo + valueDesc;
 
-	KConfig *config = KGlobal::config();
-	config->setGroup(QString("SMSSend-%1").arg(provider));
+	QString group = QString("SMSSend-%1").arg(provider);
 
 	KProcIO* p = new KProcIO;
 	p->setUseShell(true);
@@ -43,7 +43,7 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue)
 
 			descriptions.append(r.cap(3));
 			rules.append("");
-			values.append(config->readEntry(r.cap(1), QString::null));
+			values.append(SMSGlobal::readConfig(group, r.cap(1), uName));
 		}
 	}
 
@@ -80,16 +80,15 @@ QListViewItem* SMSSendProvider::listItem(KListView* parent, int pos)
 void SMSSendProvider::save(KListView* data)
 {
 	QListViewItem* p;
-	KConfig* config = KGlobal::config();
-	config->setGroup(QString("SMSSend-%1").arg(provider));
+	QString group = QString("SMSSend-%1").arg(provider);
 
 	for (int i=0; i < data->childCount(); i++)
 	{
 		p = data->itemAtIndex(i);
 		if (p->text(1) == "")
-			config->deleteEntry(p->text(0));
+			SMSGlobal::deleteConfig(group, p->text(0), uName);
 		else
-			config->writeEntry(p->text(0), p->text(1));
+			SMSGlobal::writeConfig(group, p->text(0), uName, p->text(1));
 	}
 }
 
@@ -144,6 +143,7 @@ bool SMSSendProvider::send(QString nr, QString message)
 			return false;
 		}
 	}
+	return false;
 }
 
 

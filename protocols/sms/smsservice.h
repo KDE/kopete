@@ -8,12 +8,15 @@
 class SMSService : public QObject
 {
 public:
-	SMSService();
+	SMSService(QString user);
 	virtual ~SMSService();
 
 	virtual bool send(QString nr, QString message) = 0;
 	virtual QWidget* configureWidget(QWidget* parent) = 0;
+public slots:
 	virtual void savePreferences() = 0;
+protected:
+	QString uName;
 } ;
 
 #endif //SMSSERVICE_H
