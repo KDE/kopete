@@ -140,6 +140,11 @@ KopeteAccount *JabberEditAccountWidget::apply ()
 
 void JabberEditAccountWidget::writeConfig ()
 {
+
+	// FIXME: The call below represents a flaw in the current Kopete API.
+	// Once the API is cleaned up, this will most likely require a change.
+	//m_account->setAccountId(mID->text());
+	
 	m_account->setPluginData (m_protocol, "Server", mServer->text ());
 	m_account->setPluginData (m_protocol, "Resource", mResource->text ());
 	m_account->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
