@@ -5,7 +5,7 @@ beer.png boy.png cake.png \
 camera.png cat.png clock.png \
 cocktail.png confused.png cry.png \
 cup.png devil.png dog.png \
-dude_hug.png embarassed.png envelope.png \
+dude_hug.png embarassed.png email.png \
 film.png girl.png girl_hug.png \
 kiss.png lightbulb.png love.png \
 messenger.png note.png \
