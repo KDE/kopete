@@ -131,9 +131,6 @@
                     <property name="text">
                         <string>&amp;Select</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="default">
                         <bool>true</bool>
                     </property>
@@ -144,9 +141,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Cancel</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+C</string>
                     </property>
                 </widget>
                 <spacer>
