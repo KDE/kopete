@@ -330,6 +330,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	if( !metaContact())
 		return;
 	// Get the (kopete) group that we belong to
@@ -349,12 +350,16 @@ void OscarContact::syncGroups()
 		return;
 	}
 
+	kdDebug(14150) << k_funcinfo << "SSI Data before change of group" << endl;
+	mAccount->engine()->ssiData().print();
 	if ( !mAccount->engine()->ssiData().findGroup( firstKopeteGroup->displayName() ) )
 	{
 		//We don't have the group in SSI yet. Add it.
 		kdDebug(14150) << "Adding missing group " << firstKopeteGroup->displayName() << endl;
 		mAccount->engine()->sendAddGroup( firstKopeteGroup->displayName() );
 	}
+	else
+		kdDebug(14150) << "New group found in SSI already" << endl;
 
 	/*
 	* temporary contact's have their display name set to what the contactID would be
@@ -363,16 +368,9 @@ void OscarContact::syncGroups()
 	* Another possibility is moving a buddy in the blm, but in that case, we don't need
         * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
 	* 
+	* Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
 	*/
-	if ( !mAccount->engine()->ssiData().findContact( displayName() ) && metaContact()->isTemporary() )
-	{ /*contact not in SSI and is temporary. add to SSI
-	   the group should be created already in this case */
-		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' appears"
-			<< "to be temporary. Adding to SSI" << endl;
-		mAccount->engine()->sendAddBuddy( displayName(), firstKopeteGroup->displayName(), false );
-	}
-	
-	SSI* movedItem = mAccount->engine()->ssiData().findContact( displayName() );
+	SSI* movedItem = mAccount->engine()->ssiData().findContact( contactId() );
 	if ( movedItem )
 	{	//hey, contact's on SSI, move him
 		SSI* oldGroup = mAccount->engine()->ssiData().findGroup( movedItem->gid );
@@ -381,6 +379,10 @@ void OscarContact::syncGroups()
 		mAccount->engine()->sendChangeBuddyGroup( movedItem->name, oldGroup->name,
 			firstKopeteGroup->displayName() );
 	}
+	else
+		kdDebug(14150) << "Contact must be in BLM. Doing nothing" << endl;
+	kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
+	mAccount->engine()->ssiData().print();
 }
 
 #if 0

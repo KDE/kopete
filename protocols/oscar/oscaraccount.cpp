@@ -414,8 +414,6 @@ void OscarAccount::slotGotServerBuddyList()
 				groupName = i18n("Buddies");
 			}
 
-			engine()->ssiData().print();
-
 			OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
 			if ( !contact )
 			{
