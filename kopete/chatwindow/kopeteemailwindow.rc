@@ -1,11 +1,11 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="12" name="kopeteemailwindow">
+<kpartgui version="13" name="kopeteemailwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
 			<Action name="chat_send" />
 			<Separator lineSeparator="true"/>
-			</Merge>
+			<Merge />
 			<Separator lineSeparator="true"/>
 			<Action name="file_quit" />
 		</Menu>
