@@ -69,6 +69,7 @@ private slots:
 	void slotBanUserDomain();
 	void slotKick();
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+	void slotIncomingUserIsAway( const QString &nick, const QString &message );
 	void slotUserOnline(const QString &nick);
 	void slotUserOffline();
 	

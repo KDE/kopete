@@ -111,6 +111,8 @@ void KopeteMessageManager::setContactOnlineStatus( const KopeteContact *contact,
 {
 	KopeteOnlineStatus oldStatus = d->contactStatus[ contact ];
 	d->contactStatus[ contact ] = status;
+	disconnect( contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &,
+		const KopeteOnlineStatus & ) ), this, SIGNAL( contactChanged() ) );
 	emit onlineStatusChanged( (KopeteContact*)contact, status, oldStatus );
 }
 
@@ -268,12 +270,10 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 			d->mContactList.append( c );
 			emit contactAdded( c, suppress );
 		}
-		//c->setConversations( c->conversations() + 1 );
-		//connect( c, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
+
 		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			this, SIGNAL( contactChanged() ) );
-		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+;
 		if ( c->metaContact() )
 			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );

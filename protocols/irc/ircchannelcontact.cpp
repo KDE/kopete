@@ -68,16 +68,19 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 		this, SLOT(slotConnectedToServer()));
 
 	QObject::connect(m_engine, SIGNAL(incomingFailedChankey(const QString &)),
-			this, SLOT(slotFailedChankey(const QString&)));
+		this, SLOT(slotFailedChankey(const QString&)));
 		
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanFull(const QString &)),
-			this, SLOT(slotFailedChanFull(const QString&)));
+		this, SLOT(slotFailedChanFull(const QString&)));
 			
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanInvite(const QString &)),
-			this, SLOT(slotFailedChanInvite(const QString&)));
+		this, SLOT(slotFailedChanInvite(const QString&)));
 			
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanBanned(const QString &)),
-			this, SLOT(slotFailedChanBanned(const QString&)));
+		this, SLOT(slotFailedChanBanned(const QString&)));
+			
+	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
+		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));	
 
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), this );
@@ -204,6 +207,27 @@ void IRCChannelContact::part()
 	kdDebug(14120) << k_funcinfo << "Part channel:" << m_nickName << endl;
 	if( m_isConnected )
 		m_engine->partChannel( m_nickName, m_account->defaultPart() );
+}
+
+void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QString & )
+{
+	IRCUserContact *c = m_account->findUser( nick );
+	if( m_isConnected && manager()->members().contains( c ) )
+	{
+		KopeteOnlineStatus status = manager()->contactOnlineStatus( c );
+		if( status == m_protocol->m_UserStatusOp )
+			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOpAway );
+		else if( status == m_protocol->m_UserStatusOpAway )
+			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOp );
+		else if( status == m_protocol->m_UserStatusVoice )
+			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoiceAway );
+		else if( status == m_protocol->m_UserStatusVoiceAway )
+			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoice );
+		else if( status == m_protocol->m_UserStatusAway )
+			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOnline );
+		else
+			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusAway );
+	}
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)

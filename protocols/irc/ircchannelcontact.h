@@ -111,6 +111,7 @@ private slots:
 	void slotNamesList(const QString &channel, const QStringList &nicknames);
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
+	void slotIncomingUserIsAway( const QString &nick, const QString &reason );
 	void slotModeChanged();
 	void slotAddNicknames();
 	void slotFailedChankey(const QString &channame);

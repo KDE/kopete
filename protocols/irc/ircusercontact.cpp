@@ -41,6 +41,9 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 	QObject::connect(m_engine, SIGNAL(userOnline( const QString & )),
 		this, SLOT(slotUserOnline(const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
+		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));	
+	
 
 	updateStatus();
 }
@@ -88,6 +91,21 @@ void IRCUserContact::setAway(bool isAway)
 {
 	m_isAway = isAway;
 	updateStatus();
+}
+
+void IRCUserContact::slotIncomingUserIsAway( const QString &nick, const QString &reason )
+{
+	if( nick.lower() == m_nickName.lower() )
+	{
+		/*
+		Uncomment after string freeze
+		if( manager(false ) )
+		{
+			KopeteMessage msg( , to->manager()->members(), i18n("%1 is away (%2)")
+				.arg( m_nickName ).arg( reason ), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+			manager()->appendMessage(msg);
+		}*/
+	}
 }
 
 void IRCUserContact::slotUserOnline( const QString &nick )

@@ -73,7 +73,9 @@ public:
 	const KopeteOnlineStatus m_ChannelStatusOffline;
 
 	const KopeteOnlineStatus m_UserStatusOp;
+	const KopeteOnlineStatus m_UserStatusOpAway;
 	const KopeteOnlineStatus m_UserStatusVoice;
+	const KopeteOnlineStatus m_UserStatusVoiceAway;
 	const KopeteOnlineStatus m_UserStatusOnline;
 	const KopeteOnlineStatus m_UserStatusAway;
 	const KopeteOnlineStatus m_UserStatusConnecting;
