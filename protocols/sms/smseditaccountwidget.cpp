@@ -1,6 +1,7 @@
 /*  *************************************************************************
     *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
     *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
+    *   copyright: (C) 2003 Grzegorz Jaskiewicz <gj@pointblue.com.pl>       *
     *************************************************************************
 */
 
@@ -56,9 +57,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 		sName = m_account->pluginData(protocol, "ServiceName");
 		preferencesDialog->subEnable->setChecked(m_account->pluginData(protocol, "SubEnable") == "true");
 		preferencesDialog->subCode->setText(m_account->pluginData(protocol, "SubCode"));
-		preferencesDialog->msgAsk->setChecked((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt() == ACT_ASK);
-		preferencesDialog->msgCancel->setChecked((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt() == ACT_CANCEL);
-		preferencesDialog->msgSplit->setChecked((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt() == ACT_SPLIT);
+		preferencesDialog->ifMessageTooLong->setCurrentItem((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt());
 	}
 
 	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());
@@ -104,7 +103,7 @@ KopeteAccount* SMSEditAccountWidget::apply()
 	m_account->setPluginData(m_protocol, "ServiceName", preferencesDialog->serviceName->currentText());
 	m_account->setPluginData(m_protocol, "SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
 	m_account->setPluginData(m_protocol, "SubCode", preferencesDialog->subCode->text());
-	m_account->setPluginData(m_protocol, "MsgAction", QString().setNum((int)(preferencesDialog->msgAsk->isChecked() ? ACT_ASK : preferencesDialog->msgSplit->isChecked() ? ACT_SPLIT : ACT_CANCEL)));
+	m_account->setPluginData(m_protocol, "MsgAction", QString().setNum((int)(preferencesDialog->ifMessageTooLong->currentItem())));
 
 	emit saved();
 	return m_account;
