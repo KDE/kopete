@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <iostream>
+#include <stdlib.h>
 
 #include <qdatastream.h>
 #include <qdatetime.h>
@@ -182,6 +183,8 @@ void cp_dump( const QByteArray &bytes )
 		printf( "%02x ", bytes[ i ] );
 	}
 	printf( "\n" );
+#else
+	Q_UNUSED(bytes);
 #endif
 }
 
