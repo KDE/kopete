@@ -1096,33 +1096,6 @@ void MSNProtocol::slotCreateChat( QString address, QString auth)
 	slotCreateChat( 0L, address, auth, m_msgHandle, publicName() );
 }
 
-void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
-{
-	kdDebug() << "MSNProtocol::slotMessageReceived: Message received from " <<
-		msg.from()->displayName() << endl;
-
-	KopeteContactPtrList chatmembers;
-
-	if ( msg.direction() == KopeteMessage::Inbound )
-	{
-		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
-			<< "session (Inbound)" << endl;
-		chatmembers.append( msg.from() );
-	}
-	else if ( msg.direction() == KopeteMessage::Outbound )
-    {
-		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
-			<< "session (Outbound)" << endl;
-		chatmembers = msg.to();
-	}
-
-	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-		m_myself, chatmembers, this );
-
-	if( manager )
-		manager->appendMessage( msg );
-}
-
 void MSNProtocol::slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager )
 {
 	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
@@ -1180,7 +1153,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		m_switchBoardSockets.insert( manager, chatService );
 
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
-			this, SLOT( slotMessageReceived( const KopeteMessage & ) ) );
+			manager, SLOT( appendMessage( const KopeteMessage & ) ) );
 		connect( chatService,
 			SIGNAL( switchBoardClosed(MSNSwitchBoardSocket *) ),
 			this, SLOT( slotSwitchBoardClosed(MSNSwitchBoardSocket * ) ) );

@@ -198,10 +198,6 @@ private slots:
 	void slotGoOffline();
 	void slotGoAway();
 
-	/**
-	 * We received a message
-	 */
-	void slotMessageReceived( const KopeteMessage &msg );
 	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
 
 	/**

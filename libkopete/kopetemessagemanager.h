@@ -68,11 +68,6 @@ public:
 	void newReplyWindow();
 
 	/**
-	 * Append a message to the queue
-	 */
-	void appendMessage( const KopeteMessage &msg );
-
-	/**
 	 * Add a contact to the session
 	 */
 	void addContact( const KopeteContact *c );
@@ -140,6 +135,12 @@ signals:
 public slots:
 	void readModeChanged();
 	void slotSendEnabled(bool);
+
+  	/**
+	 * Append a message to the queue
+	 */
+	void appendMessage( const KopeteMessage &msg );
+
 protected slots:
 	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
