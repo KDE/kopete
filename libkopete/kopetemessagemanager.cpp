@@ -15,8 +15,18 @@
     *************************************************************************
 */
 
-#include "kopeteaway.h"
+#include <kcolorbutton.h>
+#include <kdebug.h>
+#include <klocale.h>
+#include <kdockwidget.h>
+#include <knotifyclient.h>
+#include <kwin.h>
+#include <qstylesheet.h>
+#include <qregexp.h>
+#include <qmap.h>
+
 #include "kopetechatwindow.h"
+#include "kopeteaway.h"
 #include "kopeteemailwindow.h"
 #include "kopeteevent.h"
 #include "kopetemessagelog.h"
@@ -24,28 +34,22 @@
 #include "kopetenotifier.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
-
 #include "kopetemetacontact.h"
+#include "chatview.h"
 
-#include <qregexp.h>
-
-#include <kcolorbutton.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <knotifyclient.h>
-#include <kwin.h>
-
-#include <qstylesheet.h>
+#define NEW_WINDOW 0
+#define GROUP_BY_PROTOCOL 1
+#define GROUP_ALL 2
 
 struct KMMPrivate
 {
 	KopeteContactPtrList mContactList;
 	const KopeteContact *mUser;
-	KopeteChatWindow *mChatWindow;
 	KopeteEmailWindow *mEmailWindow, *mEmailReplyWindow;
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;
+	ChatView	*mView;
 	int mReadMode;
 	KopeteMessageManager::WidgetType mWidget;
 	QMap<const KopeteContact *, QStringList> resources;
@@ -70,8 +74,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mSendEnabled = true;
 	d->mContactList = others;
 	d->mUser = user;
-	d->mChatWindow = 0L;
 	d->mEmailWindow = 0L;
+	d->mView = 0L;
 	d->mEmailReplyWindow = 0L;
 	d->mUnreadMessageEvent = 0L;
 	d->mProtocol = protocol;
@@ -109,11 +113,6 @@ KopeteMessageManager::~KopeteMessageManager()
 void KopeteMessageManager::slotSendEnabled(bool e)
 {
 	d->mSendEnabled = e;
-	if (d->mWidget == ChatWindow)
-	{
-		if (d->mChatWindow)
-			d->mChatWindow->setSendEnabled(e);
-	}
 	if (d->mWidget == Email)
 	{
 		if (d->mEmailWindow)
@@ -131,22 +130,100 @@ bool KopeteMessageManager::logging() const
 	return d->mLog;
 }
 
+const QString KopeteMessageManager::chatName()
+{
+	QString chatName, nextDisplayName;
+	
+	KopeteContact *c = d->mContactList.first();
+	if( c->metaContact() )
+		chatName = c->metaContact()->displayName();
+	else
+		chatName = c->displayName();
+		
+	while( ( c = d->mContactList.next() ) )
+	{
+		if( c->metaContact() )
+			nextDisplayName = c->metaContact()->displayName();
+		else
+			nextDisplayName = c->displayName();
+		chatName.append(", ").append( nextDisplayName );
+	}
+	
+	return chatName;
+}
+
+KopeteChatWindow *KopeteMessageManager::mainWindow(bool remove)
+{
+	static KopeteChatWindow *mainWindow = 0L;
+	static QMap<KopeteProtocol*,KopeteChatWindow*> chatWindowMap;
+	
+	if( !remove )
+	{
+		//Determine tabbed window settings
+		switch( KopetePrefs::prefs()->chatWindowPolicy() )
+		{
+			case NEW_WINDOW: //Open every chat in a new window
+				mainWindow = new KopeteChatWindow();
+				connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+				break;
+
+			case GROUP_BY_PROTOCOL: //Open chats in the same protocol in the same window
+				if( chatWindowMap.contains( d->mProtocol ) )
+					mainWindow = chatWindowMap[d->mProtocol];
+				else
+				{
+					mainWindow = new KopeteChatWindow();
+					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+				}
+				break;
+
+			case GROUP_ALL: //Open all chats in the same window
+				if( mainWindow == 0L ) {
+					kdDebug(14010) << "KopeteMessageManager::mainWindow() : Creating new chat window" << endl;
+					mainWindow = new KopeteChatWindow();
+					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+				}
+				break;
+		}
+		
+		//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
+		if( !chatWindowMap.contains( d->mProtocol ) )
+			chatWindowMap.insert(d->mProtocol, mainWindow);
+	}
+	else
+	{
+		//We are deleting this window instance
+		kdDebug(14010) << "KopeteMessageManager::mainWindow() : Chat Window closed, now 0L" << endl;
+		if( chatWindowMap.contains( d->mProtocol ) )
+			chatWindowMap.remove( d->mProtocol );
+		mainWindow = 0L;
+	}
+	
+	return mainWindow;
+}
+
 void KopeteMessageManager::newChatWindow()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		d->mChatWindow = new KopeteChatWindow(this);
-		d->mChatWindow->setSendEnabled(d->mSendEnabled);
-
+		if(d->mView == 0L)
+		{
+			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat window/view" << endl;
+			d->mView = mainWindow()->addChatView( this );
+		} else {
+			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat view" << endl;
+			d->mView = mainWindow()->addChatView( this );
+		}
+		
 		/* When the window is shown, we have to delete this contact event */
-//		kdDebug(14010) << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
-		connect( d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
-		connect( d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
-		connect( d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
-
-		connect( this, SIGNAL(contactAdded(const KopeteContact *)), d->mChatWindow, SLOT(slotContactAdded(const KopeteContact *)));
-		connect( this, SIGNAL(contactRemoved(const KopeteContact *)), d->mChatWindow, SLOT(slotContactRemoved(const KopeteContact *)));
-		connect( d->mChatWindow, SIGNAL( typingMessage( bool ) ), this, SIGNAL( typingMsg( bool ) ) );
+		//kdDebug(14010) << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
+		connect (d->mView, SIGNAL(Shown()), this, SLOT(slotCancelUnreadMessageEvent()));
+		connect (d->mView, SIGNAL(SendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (d->mView, SIGNAL(Closing()), this, SLOT(slotChatViewClosing()));
+		connect (d->mView, SIGNAL(Typing(bool)), this, SLOT(slotTyping(bool)));
+		
+		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mView, SLOT(contactAdded(const KopeteContact *)));
+		connect (this, SIGNAL(contactRemoved(const KopeteContact *)), d->mView, SLOT(contactRemoved(const KopeteContact *)));
 	}
 
 	if (d->mWidget == Email)
@@ -155,7 +232,7 @@ void KopeteMessageManager::newChatWindow()
 		d->mEmailWindow->setSendEnabled(d->mSendEnabled);
 		connect (d->mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mEmailWindow, SIGNAL(sendMessage(KopeteMessage &)),
-			 this, SLOT(slotMessageSent(KopeteMessage &)));
+			 this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (d->mEmailWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
 		connect (d->mEmailWindow, SIGNAL(replyClicked()), this, SLOT(slotReply()));
 	}
@@ -171,8 +248,8 @@ void KopeteMessageManager::newReplyWindow()
 		d->mEmailReplyWindow->setReplyMode(true);
 		d->mEmailReplyWindow->show();
 		d->mEmailReplyWindow->raise();
-		connect (d->mEmailReplyWindow, SIGNAL(sendMessage(KopeteMessage &)),
-			 this, SLOT(slotMessageSent(KopeteMessage &)));
+		connect (d->mEmailReplyWindow, SIGNAL(sendMessage(const KopeteMessage &)),
+			 this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (d->mEmailReplyWindow, SIGNAL(closeClicked()),
 			 this, SLOT(slotReplyWindowClosing()));
 	}
@@ -204,7 +281,7 @@ KopeteMessageManager::WidgetType KopeteMessageManager::widgetType() const
 QWidget *KopeteMessageManager::widget()  const
 {
 	if (d->mWidget == ChatWindow)
-		return d->mChatWindow;
+		return d->mView;
 	if(d->mWidget == Email)
 		return d->mEmailWindow;
 	return 0L;
@@ -215,7 +292,7 @@ bool KopeteMessageManager::emptyMessageBuffer()
 {
 	if (!widget() )
 	{
-		kdDebug(14010) << "KopeteMessageManager::emptyMessageBuffer: mChatWindow just doesn't exist" << endl;
+		kdDebug(14010) << "KopeteMessageManager::emptyMessageBuffer: ChatView doesn't exist" << endl;
 		newChatWindow();
 	}
 
@@ -228,7 +305,7 @@ bool KopeteMessageManager::emptyMessageBuffer()
 
 		emit messageReceived( *it );
 		if ( d->mWidget == ChatWindow ) // ### why don't they implement the same interface?
-			d->mChatWindow->messageReceived(*it);
+			d->mView->messageReceived(*it);
 		else if ( d->mWidget == Email )
 			d->mEmailWindow->messageReceived(*it);
 
@@ -246,23 +323,18 @@ void KopeteMessageManager::readMessages()
 		return;
 	}
 
-	if (!widget())
+	if ( widget() == 0L )
 	{
-		kdDebug(14010) << "KopeteMessageManager::readMessages: mChatWindow just doesn't exist" << endl;
+		kdDebug(14010) << "KopeteMessageManager::readMessages: ChatView doesn't exist" << endl;
 		newChatWindow();
 	}
-	QWidget *window = widget();
-	if ( !window )
+	QWidget *mainView = widget();
+	if ( mainView == 0L )
 	{
 		kdDebug(14010) << "KopeteMessageManager::readMessages: WARNING: cannot get the ChatWindow"  << endl;
 		d->mMessageQueue.clear();
 		return;
 	}
-
-/*	if (window->isMinimized())
-		kdDebug(14010) << "[KopeteMessageManager] window is minimized" << endl;
-	if (window->isHidden())
-		kdDebug(14010) << "[KopeteMessageManager] window is hidden" << endl;*/
 
 	d->isBusy=true;
 	bool queueEmpty = d->mMessageQueue.isEmpty();
@@ -274,10 +346,10 @@ void KopeteMessageManager::readMessages()
 	{
 		if(KopetePrefs::prefs()->raiseMsgWindow())
 		{
-			KWin::setOnDesktop(window->winId() , KWin::currentDesktop()); //set on the desktop
-			window->raise(); // make it top window
+			KWin::setOnDesktop(mainWindow()->winId() , KWin::currentDesktop()); //set on the desktop
+			mainWindow()->raise(); // make it top window
 		}
-		window->show();	// show message window again (but not for own messages)
+		mainWindow()->makeWidgetDockVisible(mainView);
 	}
 	d->isBusy=false;
 }
@@ -327,12 +399,12 @@ void KopeteMessageManager::slotReply()
 	}
 }
 
-void KopeteMessageManager::slotMessageSent(KopeteMessage &message)
+void KopeteMessageManager::slotMessageSent(const KopeteMessage &message)
 {
-
-	emit messageQueued( message );
-	emit messageSent(message, this);
-
+	KopeteMessage sentMessage = message;
+	emit messageQueued( sentMessage );
+	emit messageSent(sentMessage, this);
+	
 	if ( KopetePrefs::prefs()->soundNotify() )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
@@ -340,12 +412,23 @@ void KopeteMessageManager::slotMessageSent(KopeteMessage &message)
 	}
 }
 
+void KopeteMessageManager::slotChatViewClosing()
+{
+	d->mView = 0L;
+	if(d->mCanBeDeleted)
+	{
+		kdDebug(14010) << "KopeteMessageManager::slotChatViewClosing : delete KMM" << endl;
+		deleteLater();
+	}
+}
+
 void KopeteMessageManager::slotChatWindowClosing()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing : Chat Window closed, now 0L" << endl;
-		d->mChatWindow = 0L;
+		mainWindow(true); // Delete this mainWindow
+		d->mView = 0L;
+		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing" << endl;
 	}
 	else if (d->mWidget == Email)
 	{
@@ -511,8 +594,10 @@ void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )
 {
 	if( d->mWidget == ChatWindow )
 	{
-		if( d->mChatWindow )
-			d->mChatWindow->slotReceivedTypingMsg( c , t );
+		if (d->mView)
+		{
+			d->mView->anyTyping( c , t );
+		}
 	}
 }
 
@@ -528,6 +613,11 @@ void KopeteMessageManager::receivedTypingMsg( const QString &contactId , bool t 
 	}
 }
 
+void KopeteMessageManager::slotTyping ( bool t )
+{
+	emit typingMsg(t);
+}
+
 void KopeteMessageManager::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted =b;
@@ -539,8 +629,8 @@ KopeteMessage KopeteMessageManager::currentMessage()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		if (d->mChatWindow)
-			return d->mChatWindow->currentMessage();
+		//if (d->mView)
+		//	return d->mView->currentMessage();
 	}
 	kdDebug(14010) << "KopeteMessageManager::currentMessage(); ChatWindow does not exist!" <<endl;
 	return KopeteMessage();
@@ -550,8 +640,8 @@ void KopeteMessageManager::setCurrentMessage(const KopeteMessage& t)
 {
 	if (d->mWidget == ChatWindow)
 	{
-		if (d->mChatWindow)
-			d->mChatWindow->setCurrentMessage(t);
+		//if (d->mView)
+		//	d->mView->setCurrentMessage(t);
 	}
 }
 

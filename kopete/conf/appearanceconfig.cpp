@@ -24,6 +24,8 @@
 #include <qpixmap.h>
 #include <qpushbutton.h>
 #include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qvbuttongroup.h>
 #include <qstringlist.h>
 #include <qtextedit.h>
 #include <qvgroupbox.h>
@@ -68,15 +70,24 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	generalLayout->addWidget( mUseQueueChk );
 
 	notifyGroupBox = new QVGroupBox ( i18n("&Notifications"), mGeneralTab, "notifyGroupBox" );
-	mBalloonNotifyChk		= new QCheckBox ( i18n("S&how bubble"), notifyGroupBox );
-	mTrayflashNotifyChk		= new QCheckBox ( i18n("Flash system &tray"), notifyGroupBox );
+	mBalloonNotifyChk	= new QCheckBox ( i18n("S&how bubble"), notifyGroupBox );
+	mTrayflashNotifyChk	= new QCheckBox ( i18n("Flash system &tray"), notifyGroupBox );
 	mBeepNotifyChk		= new QCheckBox ( i18n("&Beep"), notifyGroupBox );
 	mSoundNotifyChk		= new QCheckBox ( i18n("Play &sounds"), notifyGroupBox );
 	mSoundIfAwayChk		= new QCheckBox ( i18n("Play sounds if away"), notifyGroupBox );
 	configSound		= new QPushButton( i18n("C&onfigure Sounds..."), notifyGroupBox );
 	generalLayout->addWidget( notifyGroupBox );
+	
+	chatWindowGroup = new QVButtonGroup( i18n("Chat Window Appearance"), mGeneralTab, "chatWindowGroup");
+	chatWindowGroup->setExclusive( true );
+	mNewWindow = new QRadioButton( i18n("Open all messages in a new chat window"), chatWindowGroup);
+	mTabProtocolWindow = new QRadioButton( i18n("Group messages from the same protocol in the same chat window"), chatWindowGroup);
+	mTabWindow = new QRadioButton( i18n("Group all messages in the same chat window"), chatWindowGroup);
+	generalLayout->addWidget( chatWindowGroup );
+	
 	generalLayout->addStretch();
 
+		
 	connect(configSound, SIGNAL(clicked()), this, SLOT(slotConfigSound()));
 	connect(mSoundNotifyChk, SIGNAL(clicked()), this, SLOT(slotSoundChanged()));
 
@@ -153,7 +164,7 @@ void AppearanceConfig::save()
 	p->setUseEmoticons ( mUseEmoticonsChk->isChecked() );
 	p->setTreeView ( mTreeContactList->isChecked() );
 	p->setStartDocked ( mStartDockedChk->isChecked() );
-
+	p->setChatWindowPolicy ( chatWindowGroup->id( chatWindowGroup->selected() ) );
 	p->setUseQueue ( mUseQueueChk->isChecked() );
 	p->setTrayflashNotify ( mTrayflashNotifyChk->isChecked() );
 	p->setBalloonNotify ( mBalloonNotifyChk->isChecked() );
@@ -240,6 +251,7 @@ void AppearanceConfig::reopen()
 	#if KDE_VERSION >= 306
 	mNotifyOnlineUsers->setChecked( p->notifyOnline() );
 	#endif
+	chatWindowGroup->setButton( p->chatWindowPolicy() );
 	mTreeContactList->setChecked( p->treeView() );
 	mSortByGroup->setChecked( p->sortByGroup() );
 	mStartDockedChk->setChecked( p->startDocked() );

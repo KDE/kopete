@@ -26,14 +26,13 @@
 #include "kopetecontact.h"
 
 class KopeteContact;
-class KopeteMessage;
 class KopeteMessageManager;
 class QObject;
+
 class KopeteChatWindow;
 class KopeteEvent;
 class KopeteMessageLog;
 class KopeteProtocol;
-
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
@@ -110,13 +109,15 @@ public:
 	int mmId() const;
 
 	KopeteMessage currentMessage();
+	
+	virtual const QString chatName();
 
 signals:
 	/**
 	 * A message has been sent by the user or a plugin. The protocol should
 	 * connect to this signal to actually send the message over the wire.
 	 */
-	void messageSent(const KopeteMessage& msg, KopeteMessageManager *);
+	void messageSent( const KopeteMessage& msg, KopeteMessageManager *);
 	void dying(KopeteMessageManager *);
 
 	/**
@@ -186,8 +187,12 @@ public slots:
 	/**
 	 * Send a message to the user
 	 */
-	void slotMessageSent(KopeteMessage &message);
+	void slotMessageSent(const KopeteMessage &message);
 
+private slots:
+	void slotChatViewClosing();
+	void slotTyping(bool t);
+	
 protected slots:
 	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
@@ -206,15 +211,18 @@ protected:
 		KopeteContactPtrList others, KopeteProtocol *protocol, int id = 0,
 		enum WidgetType widget = ChatWindow, QObject *parent = 0,
 		const char *name = 0 );
+	
 	void setMMId( int );
-
+	
 private:
 	/**
 	 * Empties Message buffer, filling the window and returning true
 	 * if a foreign message exists
 	 */
 	bool emptyMessageBuffer();
-
+	bool dockChatWindows;
+	KopeteChatWindow *mainWindow(bool remove = false);
+			
 	KMMPrivate *d;
 };
 

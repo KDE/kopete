@@ -26,6 +26,8 @@ class KTabCtl;
 
 class KListBox;
 class QVGroupBox;
+class QVButtonGroup;
+class QRadioButton;
 class QCheckBox;
 class QFrame;
 class QPushButton;
@@ -71,6 +73,11 @@ private:
 	QCheckBox *mSoundIfAwayChk;
 	QCheckBox *mUseEmoticonsChk;
 	QPushButton *configSound;
+	
+	QVButtonGroup *chatWindowGroup;
+	QRadioButton *mNewWindow;
+	QRadioButton *mTabWindow;
+	QRadioButton *mTabProtocolWindow;
 
 	// Widgets for Contactlist TAB
 	QFrame* mContactListTab;

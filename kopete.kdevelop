@@ -71,7 +71,7 @@
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
     <run>
-      <mainprogram>kopete/kopete</mainprogram>
+      <mainprogram></mainprogram>
       <programargs></programargs>
     </run>
     <envvars/>
@@ -81,17 +81,14 @@
       <dontact>false</dontact>
       <makebin></makebin>
     </make>
-    <general>
-      <activetarget>libkopete/libkopete.la</activetarget>
-    </general>
   </kdevautoproject>
   <cppsupportpart>
     <codecompletion>
-      <codehinting outputview="1" enablech="1" selectview="0" />
+      <codehinting outputview="1" enablech="0" selectview="0" />
     </codecompletion>
     <classstore>
       <enablepcs>false</enablepcs>
-      <enablepp>true</enablepp>
+      <enablepp>false</enablepp>
       <preparsing/>
     </classstore>
     <filetemplates>
@@ -115,5 +112,6 @@
     <removeoptions>-f</removeoptions>
     <diffoptions>-u3 -p</diffoptions>
     <logoptions></logoptions>
+    <rshoptions></rshoptions>
   </kdevcvs>
 </kdevelop>
