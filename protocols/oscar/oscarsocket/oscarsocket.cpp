@@ -3447,7 +3447,8 @@ void OscarSocket::parseError(WORD family, Buffer &inbuf)
 			msg = i18n("Generic Packet error: Unknown Error");
 	}
 
-	emit protocolError(msg,reason);
+	if (!(family == 21 && reason == 5 ) ) // don't emit a signal causing a disconnect if we just failed to fetch offline messages
+		emit protocolError(msg,reason);
 }
 
 /* Request, deny, or accept a rendezvous session with someone
