@@ -95,7 +95,7 @@ signals:
 	void incomingTotalChannels(const QString &amount);
 	void incomingHostedClients(const QString &);
 	void userJoinedChannel(const QString &user, const QString &channel);
-	void incomingNamesList(const QString &channel, const QString &nickname, const int);
+	void incomingNamesList(const QString &channel, const QStringList &nicknames);
 	void incomingMessage(const QString &originating, const QString &target, const QString &message);
 	void incomingEndOfNames(const QString &channel);
 	void incomingEndOfMotd();

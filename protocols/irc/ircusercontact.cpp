@@ -69,6 +69,27 @@ IRCUserContact::~IRCUserContact()
 	delete mOnlineTimer;
 }
 
+KopeteMessageManager* IRCUserContact::manager(bool)
+{
+	if (!mMsgManager)
+	{
+		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
+
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), mContact, (KopeteProtocol *)mIdentity->protocol());
+		mMsgManager->setDisplayName( caption() );
+		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
+		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		isConnected = true;
+	}
+	return mMsgManager;
+}
+
+void IRCUserContact::slotMessageManagerDestroyed()
+{
+	mIdentity->unregisterUser( mNickName );
+	mMsgManager = 0L;
+}
+
 void IRCUserContact::slotUserOnline( const QString &nick )
 {
 	if( nick.lower() == mNickName.lower() )

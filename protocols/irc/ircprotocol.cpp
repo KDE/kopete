@@ -103,7 +103,11 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, co
 	}
 
 	if ( contact.startsWith( QString::fromLatin1("#") ) )
+	{
 		c = static_cast<IRCContact*>( identity->findChannel(contact, m) );
+		if( identity->engine()->state() == QSocket::Connected)
+			c->setOnlineStatus( KopeteContact::Online );
+	}
 	else
 	{
 		identity->engine()->addToNotifyList( contact );

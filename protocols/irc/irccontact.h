@@ -47,7 +47,6 @@ class IRCContact : public KopeteContact
 		void setNickName(const QString &nickname) { mNickName = nickname; }
 		const QString &nickName() const { return mNickName; }
 
-		virtual KopeteMessageManager* manager( bool canCreate = false );
 		virtual const QString caption() const;
 
 		KopeteContact *locateUser( const QString &nickName );
@@ -57,7 +56,6 @@ class IRCContact : public KopeteContact
 
 	private slots:
 		void slotConnectionClosed();
-		void slotMessageManagerDestroyed();
 		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
 		void slotNewAction(const QString &originating, const QString &target, const QString &message);
 		void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);

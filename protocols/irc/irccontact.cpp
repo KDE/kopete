@@ -88,36 +88,6 @@ void IRCContact::slotConnectionClosed()
 	setOnlineStatus( KopeteContact::Offline );
 }
 
-KopeteMessageManager* IRCContact::manager(bool)
-{
-	if (!mMsgManager)
-	{
-		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
-
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), mContact, (KopeteProtocol *)mIdentity->protocol());
-		mMsgManager->setDisplayName( caption() );
-		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
-		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		if( inherits("IRCChannelContact") && mEngine->isLoggedIn() )
-			mEngine->joinChannel(mNickName);
-		else
-			isConnected = true;
-	}
-	return mMsgManager;
-}
-
-void IRCContact::slotMessageManagerDestroyed()
-{
-	KopeteContactPtrList contacts = mMsgManager->members();
-	for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
-	{
-		mIdentity->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
-	}
-
-	emit( endSession() );
-	mMsgManager = 0L;
-}
-
 bool IRCContact::processMessage( const KopeteMessage &msg )
 {
 	QStringList commandLine = QStringList::split( QRegExp( QString::fromLatin1("\\s+") ), msg.plainBody() );

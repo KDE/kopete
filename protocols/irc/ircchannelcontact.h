@@ -44,6 +44,7 @@ class IRCChannelContact : public IRCContact
 		virtual QString statusIcon() const;
 		virtual const QString caption() const;
 		const QString &topic() const { return mTopic; };
+		virtual KopeteMessageManager* manager( bool canCreate = false );
 		// FINISH
 
 	public slots:
@@ -51,6 +52,7 @@ class IRCChannelContact : public IRCContact
 		void setMode( const QString &mode = QString::null );
 
 	private slots:
+		void slotMessageManagerDestroyed();
 		void slotConnectedToServer();
 		void slotUserJoinedChannel(const QString &, const QString &);
 		void slotJoin();
@@ -58,7 +60,7 @@ class IRCChannelContact : public IRCContact
 		void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
 		void slotChannelTopic(const QString &channel, const QString &topic);
 		void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);
-		void slotNamesList(const QString &channel, const QString &nickname, const int);
+		void slotNamesList(const QString &channel, const QStringList &nicknames);
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 		void slotModeChanged();
 

@@ -18,6 +18,7 @@
 #ifndef IRCUSERCONTACT_H
 #define IRCUSERCONTACT_H
 
+#include "kopetemessagemanagerfactory.h"
 #include "irccontact.h"
 
 class IRCIdentity;
@@ -44,8 +45,10 @@ class IRCUserContact : public IRCContact
 		virtual QString statusIcon() const;
 		virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
 		virtual const QString caption() const;
+		virtual KopeteMessageManager* manager( bool canCreate = false );
 
 	private slots:
+		void slotMessageManagerDestroyed();
 		virtual void slotUserInfo();
 		void slotOp();
 		void slotDeop();

@@ -607,27 +607,8 @@ void KIRC::slotReadyRead()
 					names = names.remove(0, 1);
 					kdDebug(14120) << "Case 353: names before preprocessing == \"" << names << "\"" << endl;
 					QStringList namesList = QStringList::split(' ', names);
-					for (QStringList::Iterator it = namesList.begin(); it != namesList.end(); it++)
-					{
-						if ((*it).lower() == mNickname.lower())
-						{
-							continue;
-						}
-						if ((*it)[0] == '@')
-						{
-							(*it) = (*it).remove(0, 1);
-							emit incomingNamesList(channel, (*it), KIRC::Operator);
-							continue;
-						}
-						if ((*it)[0] == '+')
-						{
-							(*it) = (*it).remove(0,1);
-							emit incomingNamesList(channel, (*it), KIRC::Voiced);
-							continue;
-						}
-						emit incomingNamesList(channel, (*it), KIRC::Normal);
-						continue;
-					}
+					emit incomingNamesList( channel, namesList );
+
 					break;
 				}
 				case 366:
