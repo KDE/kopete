@@ -8,8 +8,7 @@ SUBDIRS = private ui $(COMPAT_DIR) .
 METASOURCES = AUTO
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui \
-	$(KOPETE_KCDIALOG_INCLUDES) $(all_includes)
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
