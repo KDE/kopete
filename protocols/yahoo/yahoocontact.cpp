@@ -46,7 +46,7 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 
 	// XXX initActions();
 
-	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
+//	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
 //	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));
 	//TODO: Probably doesn't save contacts now!
 
@@ -64,7 +64,10 @@ void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QStrin
 void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int /*away*/)
 {
 	kdDebug(14180) << "Yahoo::setYahooStatus( " << status_ << ", " << msg << ")" << endl;
-	m_status.setStatus(status_);
+	if (status_ == 13)
+		m_status.setStatus(status_, msg);
+	else
+		m_status.setStatus(status_);
 	setOnlineStatus( m_status.ys2kos() );
 }
 

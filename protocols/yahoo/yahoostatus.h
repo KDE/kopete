@@ -57,7 +57,7 @@ public:
 		OutToLunch,		// 8+Busy
 		SteppedOut,		// 9+Busy
 		Invisible,		// 12
-		Custom,			// 99
+		Custom,			// 13
 		CustomBusy,		// 99+Busy
 		CustomMobile,	// 99+Mobile
 		Idle,			// 999
