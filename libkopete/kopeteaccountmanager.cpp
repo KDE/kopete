@@ -83,7 +83,7 @@ void KopeteAccountManager::setAwayAll( const QString &awayReason )
 	{
 		++it;
 		if( account->isConnected() && !account->isAway() )
-			account->setAway( true, awayReason.isNull ? KopeteAway::message() : awayReason );
+			account->setAway( true, awayReason.isNull() ? KopeteAway::message() : awayReason );
 	}
 }
 
@@ -172,6 +172,7 @@ const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
 
 QDict<KopeteAccount> KopeteAccountManager::accounts(const KopeteProtocol *p)
 {
+	QDict<KopeteAccount> dict;
 	QPtrListIterator<KopeteAccount> it( m_accounts );
 	KopeteAccount *account;
 	while ( ( account = it.current() ) != 0 )
