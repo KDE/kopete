@@ -415,7 +415,7 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 	const QString &icon )
 {
-	kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged()" << endl;
+	kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << icon << endl;
 
 	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ p ] );
 	if( !i )
@@ -424,13 +424,17 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
-	QPixmap pm = loader->loadIcon( icon, KIcon::User, 0, KIcon::DefaultState, 0L,
-		true );
-	if( pm.isNull() )
+	
+	QMovie mv = loader->loadMovie( icon, KIcon::User, 0 );
+	
+	if ( mv.isNull() )
 	{
-		QString path = loader->moviePath( icon, KIcon::User, 0 );
-		if( path.isEmpty() )
+		/* No movie found, fallback to pixmap */
+		QPixmap pm = loader->loadIcon( icon, KIcon::User, 0, KIcon::DefaultState, 0L, true );
+		
+		if( pm.isNull() )
 		{
+			/* No Pixmap found, fallback to Unknown */
 			kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
 				<< "Using unknown pixmap for status icon '" << icon << "'."
 				<< endl;
@@ -438,14 +442,15 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 		}
 		else
 		{
-			kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
-				<< "Using movie: " << path << endl;
-			i->setMovie( QMovie( path ) );
+			i->setPixmap( pm );
 		}
 	}
 	else
 	{
-		i->setPixmap( pm );
+		
+		kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
+				<< "Using movie."  << endl;
+		i->setMovie( mv );
 	}
 }
 
