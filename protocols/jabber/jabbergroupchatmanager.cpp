@@ -18,6 +18,7 @@
 #include "jabbergroupchatmanager.h"
 
 #include <qptrlist.h>
+#include <klocale.h>
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
 #include "jabberprotocol.h"
