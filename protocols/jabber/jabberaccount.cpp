@@ -20,12 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qstring.h>
+#include "jabberaccount.h"
+
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qmap.h>
-#include <qtimer.h>
 #include <qpixmap.h>
+#include <qregexp.h>
+#include <qstring.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -58,8 +61,6 @@
 #include "xmpp_tasks.h"
 #include "xmpp_types.h"
 #include "xmpp_vcard.h"
-
-#include "jabberaccount.h"
 
 #include <sys/utsname.h>
 
@@ -298,9 +299,11 @@ void JabberAccount::connect ()
 
 }
 
-void JabberAccount::slotPsiDebug (const QString & msg)
+void JabberAccount::slotPsiDebug (const QString & _msg)
 {
-	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: " << msg << endl;
+	QString msg = _msg;
+	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: "
+		<< msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" ) << endl;
 }
 
 void JabberAccount::slotHandshaken ()
@@ -1257,3 +1260,6 @@ void JabberAccount::slotGetServices ()
 }
 
 #include "jabberaccount.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+
