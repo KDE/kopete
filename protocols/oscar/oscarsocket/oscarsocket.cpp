@@ -277,8 +277,8 @@ void OscarSocket::slotRead()
 			SNAC s;
 			s=inbuf.getSnacHeader();
 
-			/*kdDebug(14150) << k_funcinfo <<
-				"SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;*/
+			kdDebug(14150) << k_funcinfo <<
+				"SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
 
 			switch(s.family)
 			{
@@ -4229,6 +4229,28 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 	return codec->toUnicode(string);
 }
 
+
+void OscarSocket::addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id)
+{
+	AckBuddy buddy;
+	buddy.contactName = contactName;
+	buddy.groupName = groupName;
+	m_ackBuddyMap[id] = &buddy;
+}
+
+AckBuddy* OscarSocket::ackBuddy(const DWORD id)
+{
+	QMap<DWORD, AckBuddy*>::Iterator it;
+	for (it = m_ackBuddyMap.begin() ; it != m_ackBuddyMap.end() ; it++)
+	{
+		if (it.key() == id)
+		{
+			m_ackBuddyMap.remove(it);
+			return(it.data());
+		}
+	}
+	return(0L);
+}
 
 OscarMessage::OscarMessage()
 {

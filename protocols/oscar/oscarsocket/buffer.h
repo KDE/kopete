@@ -157,8 +157,8 @@ class Buffer
 		 * Adds a SNAC to the end of the buffer with given
 		 * family, subtype, flags, and request ID
 		 */
-		int addSnac(const WORD family, const WORD subtype,
-			const WORD flags, const DWORD id);
+		const DWORD addSnac(const WORD family, const WORD subtype,
+			const WORD flags, DWORD id);
 
 		/**
 		 * gets a DWord out of the buffer

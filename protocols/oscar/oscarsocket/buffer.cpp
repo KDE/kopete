@@ -17,6 +17,7 @@
 */
 
 #include <kdebug.h>
+#include <kapplication.h>
 #include "buffer.h"
 
 #include <ctype.h>
@@ -213,18 +214,20 @@ int Buffer::addFlap(const BYTE channel, const WORD flapSequenceNum)
 	return mBuffer.size();
 }
 
-int Buffer::addSnac(const WORD family, const WORD subtype,
-	const WORD flags, const DWORD id)
+const DWORD Buffer::addSnac(const WORD family, const WORD subtype,
+	const WORD flags, DWORD id)
 {
 #ifdef BUFFER_DEBUG
 	kdDebug(14150) << k_funcinfo <<
 		family << ", " << subtype << ", " << flags << ", " << id << endl;
 #endif
-
 	addWord(family);
 	addWord(subtype);
 	addWord(flags);
-	return addDWord(id);
+	if (!id)
+		id = KApplication::random();
+	addDWord(id);
+	return (id);
 }
 
 SNAC Buffer::getSnacHeader()

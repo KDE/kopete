@@ -68,6 +68,13 @@ struct RateClass
 	QPtrList<SnacPair> members;
 };
 
+struct AckBuddy
+{
+	//buddy info for ack tracking
+	QString contactName;
+	QString groupName;
+};
+
 class UserInfo
 {
 	public:
@@ -588,6 +595,10 @@ class OscarSocket : public OscarConnection
 		void sendAuthRequest(const QString &contact, const QString &reason);
 		void sendAuthReply(const QString &contact, const QString &reason, bool grant);
 
+		/* Map a buddy and his group to a request id */
+		void addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id);
+		/* Get the buddy for a given request id (will remove the entry from the map) */
+		AckBuddy* ackBuddy(const DWORD id);
 
 		/*
 		 * Methods to convert incoming/outgoing text to/from the encoding needed.
@@ -1165,6 +1176,9 @@ class OscarSocket : public OscarConnection
 		FirstPresenceBlock awaitingFirstPresenceBlock;
 
 		bool bSomethingOutgoing;
+
+		/* Used to map a buddy and his group to a server ack */
+		QMap<DWORD, AckBuddy*> m_ackBuddyMap;
 
 		/** Used to determine if a contact requires auth */
 		bool addAuthBuddy;
