@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Name=Add Bookmarks
+Name=Bookmarks
 Comment=Automatically bookmark links in incoming messages
 Icon=konqueror
 ServiceTypes=Kopete/Plugin

@@ -21,14 +21,14 @@
 #include <qnamespace.h>
 #include <qradiobutton.h>
 
-typedef KGenericFactory<AddBookmarksPreferences> AddBookmarksPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, AddBookmarksPreferencesFactory("kcm_kopete_addbookmarks") )
+typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory("kcm_kopete_addbookmarks") )
 
-AddBookmarksPreferences::AddBookmarksPreferences(QWidget *parent, const char *name, const QStringList &args)
- : KCModule(AddBookmarksPreferencesFactory::instance(), parent, args)
+BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, const QStringList &args)
+ : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
 {
 	( new QVBoxLayout (this) )->setAutoAdd( true );
-	p_dialog = new AddBookmarksPrefsUI( this );
+	p_dialog = new BookmarksPrefsUI( this );
 	load();
 	connect( p_dialog->radioButton1 , SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->radioButton2 , SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
@@ -39,17 +39,17 @@ AddBookmarksPreferences::AddBookmarksPreferences(QWidget *parent, const char *na
 }
 
 
-AddBookmarksPreferences::~AddBookmarksPreferences()
+BookmarksPreferences::~BookmarksPreferences()
 {
 }
 
-void AddBookmarksPreferences::save()
+void BookmarksPreferences::save()
 {
 	QStringList list;
 	QStringList::iterator it;
 
-	m_settings.setFolderForEachContact( (AddBookmarksPrefsSettings::UseSubfolders)p_dialog->buttonGroup1->selectedId() );
-	if(m_settings.isFolderForEachContact()==AddBookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==AddBookmarksPrefsSettings::OnlyContactsNotInList ){
+	m_settings.setFolderForEachContact( (BookmarksPrefsSettings::UseSubfolders)p_dialog->buttonGroup1->selectedId() );
+	if(m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsNotInList ){
 		for( uint i = 0; i < p_dialog->listBox1->count() ; ++i ){
 			if( p_dialog->listBox1->isSelected( i ) ){
 				list += p_dialog->listBox1->text( i );
@@ -62,12 +62,12 @@ void AddBookmarksPreferences::save()
 	emit KCModule::changed(false);
 }
 
-void AddBookmarksPreferences::slotSetStatusChanged()
+void BookmarksPreferences::slotSetStatusChanged()
 {
 	emit KCModule::changed(true);
 }
 
-void AddBookmarksPreferences::load()
+void BookmarksPreferences::load()
 {
 	QStringList list;
 	QStringList::iterator it;
@@ -79,7 +79,7 @@ void AddBookmarksPreferences::load()
 		p_dialog->listBox1->insertStringList( Kopete::ContactList::contactList()->contacts() );
 	}
 	p_dialog->listBox1->clearSelection();
-	p_dialog->listBox1->setEnabled(m_settings.isFolderForEachContact()==AddBookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==AddBookmarksPrefsSettings::OnlyContactsNotInList );
+	p_dialog->listBox1->setEnabled(m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsNotInList );
 	list = m_settings.getContactsList();
 	for( it = list.begin() ; it != list.end() ; ++it){
 		if( item = p_dialog->listBox1->findItem(*it, Qt::ExactMatch ) ){

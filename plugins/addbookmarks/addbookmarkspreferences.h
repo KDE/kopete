@@ -19,13 +19,13 @@
 /**
 @author Roie Kerstein <sf_kersteinroie@bezeqint.net>
 */
-class AddBookmarksPreferences : public KCModule
+class BookmarksPreferences : public KCModule
 {
 Q_OBJECT
 public:
-    AddBookmarksPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+    BookmarksPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
 
-    ~AddBookmarksPreferences();
+    ~BookmarksPreferences();
     
     virtual void load();
     virtual void save();
@@ -34,8 +34,8 @@ signals:
     void PreferencesChanged();
     
 private:
-    AddBookmarksPrefsUI *p_dialog;
-    AddBookmarksPrefsSettings m_settings;
+    BookmarksPrefsUI *p_dialog;
+    BookmarksPrefsSettings m_settings;
 
 private slots:
     void slotSetStatusChanged();

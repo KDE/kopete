@@ -18,15 +18,15 @@
 /**
 @author Roie Kerstein <sf_kersteinroie@bezeqint.net>
 */
-class AddBookmarksPrefsSettings : public QObject
+class BookmarksPrefsSettings : public QObject
 {
 Q_OBJECT
 public:
     enum UseSubfolders { Yes=0, No=1, OnlyContactsInList=2, OnlyContactsNotInList=3 };
 
-    AddBookmarksPrefsSettings(QObject *parent = 0, const char *name = 0);
+    BookmarksPrefsSettings(QObject *parent = 0, const char *name = 0);
 
-    ~AddBookmarksPrefsSettings();
+    ~BookmarksPrefsSettings();
     
     void load();
     void save();

@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>AddBookmarksPrefsUI</class>
+<class>BookmarksPrefsUI</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>AddBookmarksPrefsUI</cstring>
+        <cstring>BookmarksPrefsUI</cstring>
     </property>
     <property name="geometry">
         <rect>

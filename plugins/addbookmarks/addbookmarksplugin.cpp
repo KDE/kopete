@@ -19,17 +19,17 @@
 #include <kopeteglobal.h>
 #include <qtextcodec.h>
 
-K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, AddBookmarksPluginFactory( "kopete_addbookmarks" )  )
+K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
 
-AddBookmarksPlugin::AddBookmarksPlugin(QObject *parent, const char *name, const QStringList &args)
- : Kopete::Plugin(AddBookmarksPluginFactory::instance(), parent, name)
+BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &args)
+ : Kopete::Plugin(BookmarksPluginFactory::instance(), parent, name)
 {
 	//kdDebug(14501) << "plugin loading" << endl;
 	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotBookmarkURLsInMessage( KopeteMessage & ) ) );
 }
 
 
-AddBookmarksPlugin::~AddBookmarksPlugin()
+BookmarksPlugin::~BookmarksPlugin()
 {
 }
 
@@ -38,9 +38,9 @@ AddBookmarksPlugin::~AddBookmarksPlugin()
 
 
 /*!
-    \fn AddBookmarksPlugin::slotBookmarkURLsInMessage(KopeteMessage & msg)
+    \fn BookmarksPlugin::slotBookmarkURLsInMessage(KopeteMessage & msg)
  */
-void AddBookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
+void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 {
 	//kdDebug(14501) << "recieved message:" << endl << msg.parsedBody() << endl;
 	if(msg.direction() != Kopete::Message::Inbound)
@@ -57,7 +57,7 @@ void AddBookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 	delete URLsList;
 }
 
-void AddBookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data )
+void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data )
 {
 	QTextCodec *codec = GetPageEncoding( data );
 	QString htmlpage = codec->toUnicode( data );
@@ -80,7 +80,7 @@ void AddBookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteA
 	transfer->kill();
 }
 
-KURL::List* AddBookmarksPlugin::ExtractURLsFromString(QString text)
+KURL::List* BookmarksPlugin::ExtractURLsFromString(QString text)
 {
 	KURL::List *list = new KURL::List;
 	QRegExp rx("<a href=\"[^\\s\"]+\"");
@@ -97,7 +97,7 @@ KURL::List* AddBookmarksPlugin::ExtractURLsFromString(QString text)
 	return list;
 }
 
-void AddBookmarksPlugin::AddKopeteBookmark (KURL url, QString sender )
+void BookmarksPlugin::AddKopeteBookmark (KURL url, QString sender )
 {
 	KBookmarkGroup group = GetKopeteFolder();
 	KIO::TransferJob *transfer;
@@ -112,14 +112,14 @@ void AddBookmarksPlugin::AddKopeteBookmark (KURL url, QString sender )
 	}
 }
 
-KBookmarkGroup AddBookmarksPlugin::GetKopeteFolder()
+KBookmarkGroup BookmarksPlugin::GetKopeteFolder()
 {
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 
 	return GetFolder( mgr->root(), "kopete" );
 }
 
-bool AddBookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
+bool BookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
 {
 	KBookmark bookmark = group.first();
 	
@@ -131,7 +131,7 @@ bool AddBookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
 	return false;
 }
 
-KBookmarkGroup AddBookmarksPlugin::GetFolder( KBookmarkGroup group, QString folder )
+KBookmarkGroup BookmarksPlugin::GetFolder( KBookmarkGroup group, QString folder )
 {
 	KBookmark bookmark;
 
@@ -147,7 +147,7 @@ KBookmarkGroup AddBookmarksPlugin::GetFolder( KBookmarkGroup group, QString fold
 	return group;
 }
 
-QTextCodec* AddBookmarksPlugin::GetPageEncoding( QByteArray data )
+QTextCodec* BookmarksPlugin::GetPageEncoding( QByteArray data )
 {
 	QString temp = QString::fromLatin1(data);
 	QRegExp rx("<meta[^>]*(charset|CHARSET)\\s*=\\s*[^>]*>");
@@ -172,7 +172,7 @@ QTextCodec* AddBookmarksPlugin::GetPageEncoding( QByteArray data )
 	return codec;
 }
 
-void AddBookmarksPlugin::slotReloadSettings()
+void BookmarksPlugin::slotReloadSettings()
 {
 	m_settings.load();
 }

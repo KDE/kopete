@@ -13,18 +13,18 @@
 #include <kdebug.h>
 #include <kconfig.h>
 
-AddBookmarksPrefsSettings::AddBookmarksPrefsSettings(QObject *parent, const char *name)
+BookmarksPrefsSettings::BookmarksPrefsSettings(QObject *parent, const char *name)
  : QObject(parent, name)
 {
 	load();
 }
 
 
-AddBookmarksPrefsSettings::~AddBookmarksPrefsSettings()
+BookmarksPrefsSettings::~BookmarksPrefsSettings()
 {
 }
 
-void AddBookmarksPrefsSettings::load()
+void BookmarksPrefsSettings::load()
 {
 	KConfig configfile(QString::fromLatin1("kopeterc") , true);
 	m_isfolderforeachcontact = Yes;
@@ -33,16 +33,16 @@ void AddBookmarksPrefsSettings::load()
 		kdDebug( 14501 ) << "load: failed to open config file for reading" << endl;
 		return;
 	}
-	if( !configfile.hasGroup("AddBookmarks Plugin") ){
+	if( !configfile.hasGroup("Bookmarks Plugin") ){
 		kdDebug( 14501 ) << "load: no config found in file" << endl;
 		return;
 	}
-	configfile.setGroup("AddBookmarks Plugin");
+	configfile.setGroup("Bookmarks Plugin");
 	m_isfolderforeachcontact = (UseSubfolders)configfile.readNumEntry("UseSubfolderForEachContact", 0);
 	m_contactslist = configfile.readListEntry("ContactsList");
 }
 
-void AddBookmarksPrefsSettings::save()
+void BookmarksPrefsSettings::save()
 {
 	KConfig configfile(QString::fromLatin1("kopeterc"));
 	
@@ -50,13 +50,13 @@ void AddBookmarksPrefsSettings::save()
 		kdDebug( 14501 ) << "save: failed to open config file for writing" << endl;
 		return;
 	}
-	configfile.setGroup("AddBookmarks Plugin");
+	configfile.setGroup("Bookmarks Plugin");
 	configfile.writeEntry("UseSubfolderForEachContact", (int)m_isfolderforeachcontact);
 	configfile.writeEntry("ContactsList", m_contactslist);
 	configfile.sync();
 }
 
-bool AddBookmarksPrefsSettings::isUseSubfolderForContact( QString nickname )
+bool BookmarksPrefsSettings::isUseSubfolderForContact( QString nickname )
 {
 	switch( m_isfolderforeachcontact ){
 	case Yes:

@@ -24,13 +24,13 @@
 @author Roie Kerstein <sf_kersteinroie@bezeqint.net>
 */
 
-class AddBookmarksPlugin : public Kopete::Plugin
+class BookmarksPlugin : public Kopete::Plugin
 {
 Q_OBJECT
 public:
-    AddBookmarksPlugin(QObject *parent, const char *name, const QStringList &args);
+    BookmarksPlugin(QObject *parent, const char *name, const QStringList &args);
 
-    ~AddBookmarksPlugin();
+    ~BookmarksPlugin();
     
 private:
     typedef struct S_URLANDNAME{
@@ -40,7 +40,7 @@ private:
     typedef QMap<KIO::TransferJob*,URLandName> JobsToURLsMap;
     
     JobsToURLsMap m_map;
-    AddBookmarksPrefsSettings m_settings;
+    BookmarksPrefsSettings m_settings;
     
     void AddKopeteBookmark(KURL url, QString sender );
     KURL::List* ExtractURLsFromString(QString text);
@@ -56,6 +56,6 @@ private slots:
     void slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data );
 };
 
-typedef KGenericFactory<AddBookmarksPlugin> AddBookmarksPluginFactory;
+typedef KGenericFactory<BookmarksPlugin> BookmarksPluginFactory;
 
 #endif
