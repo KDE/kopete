@@ -32,6 +32,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
+#include "kopeteglobal.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
@@ -46,6 +47,8 @@ KopeteApplication::KopeteApplication()
 {
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+
+	Kopete::UI::Global::setMainWidget( m_mainWindow );
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
