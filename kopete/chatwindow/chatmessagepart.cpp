@@ -363,7 +363,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
 		QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
 
-		QString direction = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+		QString direction = ( message.plainBody().isRightToLeft() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 		DOM::HTMLElement newNode = document().createElement( QString::fromLatin1("span") );
 		newNode.setAttribute( QString::fromLatin1("dir"), direction );
 		newNode.setInnerHTML( resultHTML );
