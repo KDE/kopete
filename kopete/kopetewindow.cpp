@@ -166,10 +166,26 @@ void KopeteWindow::initActions ( void )
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
 		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, KopeteViewManager::viewManager(), SLOT(nextEvent()) );
+
+	globalAccel->insert( QString::fromLatin1("Show / Hide Contact List"), i18n("Show / Hide Contact List"), i18n("Show or hide the contact list"),
+		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );
+
 	globalAccel->readSettings();
         globalAccel->updateConnections();
 
 	createGUI ( "kopeteui.rc" );
+}
+
+void KopeteWindow::slotShowHide()
+{
+	if( isActiveWindow() )
+		hide();
+	else
+	{
+		show();
+		raise();
+		setActiveWindow();
+	}
 }
 
 void KopeteWindow::initSystray ( void )

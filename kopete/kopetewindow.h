@@ -159,6 +159,7 @@ private slots:
 	void slotShowPreferencesDialog();
 	void slotSaveContactList();
 	void slotConfGlobalKeys();
+	void slotShowHide();
 };
 
 #endif
