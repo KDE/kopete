@@ -25,6 +25,7 @@
 #include <qdom.h>
 
 #include "jabbercontact.h"
+#include "jabcommon.h"
 #include "jabberaddcontactpage.h"
 #include "jabberprefs.h"
 #include "kopeteprotocol.h"
@@ -88,8 +89,8 @@ class JabberProtocol:public QObject, public KopeteProtocol {
 
     void slotIconRightClicked(const QPoint);
 
-    void slotNewContact(QString, QString, QString);
-    void slotContactUpdated(QString, QString, QString, QString);
+    void slotNewContact(JabRosterEntry *);
+    void slotContactUpdated(JabRosterEntry *);
     void slotUserWantsAuth(QString);
     void slotSettingsChanged(void);
 
@@ -101,6 +102,7 @@ class JabberProtocol:public QObject, public KopeteProtocol {
     void contactUpdated(QString, QString, QString, QString);
     void nukeContacts(bool);
     void newMessage(QString, QString);
+	void resourceAvailable(const Jid &, const JabResource &);
 
   private:
     void initIcons();

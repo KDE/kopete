@@ -39,16 +39,12 @@ KopeteProtocol()
 
     authContact = new KMessageBox;
     protocol = new Jabber;
-/*  connect(protocol,
-	    SIGNAL(contactUpdated(QString, QString, QString, QString)),
-	    this,
-	    SLOT(slotContactUpdated(QString, QString, QString, QString)));
-    connect(protocol, SIGNAL(userWantsAuth(QString)), this,
-	    SLOT(slotUserWantsAuth(QString)));
-    connect(protocol, SIGNAL(newContact(QString, QString, QString)), this,
-	    SLOT(slotNewContact(QString, QString, QString)));
-    connect(protocol, SIGNAL(gotMessage(QString, QString)), this,
-	    SLOT(slotNewMessage(QString, QString))); */
+    connect(protocol, SIGNAL(contactNew(JabRosterEntry *)), this,
+	    SLOT(slotNewContact(JabRosterEntry *)));
+	connect(protocol, SIGNAL(contactChanged(JabRosterEntry *)), this,
+		SLOT(slotContactUpdated(JabRosterEntry *)));
+	connect(protocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this,
+		SIGNAL(resourceAvailable(const Jid &, const JabResource &)));
 
     statusBarIcon = new StatusBarIcon();
     QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)),
@@ -334,20 +330,20 @@ void JabberProtocol::slotUserWantsAuth(QString userID)
     }
 }
 
-void JabberProtocol::slotContactUpdated(QString userID, QString name,
-					QString status, QString reason)
-{
-    emit contactUpdated(userID, name, status, reason);
+void JabberProtocol::slotContactUpdated(JabRosterEntry *contact) {
+	QString strStatus;
+	int status = contact->localStatus();
+	if (status == STATUS_OFFLINE) { strStatus = "offline"; }
+	if (status == STATUS_ONLINE) { strStatus = "online"; }
+	if (status == STATUS_AWAY) { strStatus = "away"; }
+	if (status == STATUS_XA) { strStatus = "xa"; }
+	if (status == STATUS_DND) { strStatus = "dnd"; }
+    emit contactUpdated(contact->jid.latin1(), contact->nick.latin1(), strStatus, contact->unavailableStatusString.latin1());
 }
 
-void JabberProtocol::slotNewContact(QString userID, QString name,
-				    QString group)
-{
-    if (group == QString("")) {
-		group = i18n("Unknown");
-    }
-    kopeteapp->contactList()->
-	addContact(new JabberContact(userID, name, group, this), group);
+void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
+	QString group = i18n("Unknown");
+    kopeteapp->contactList()->addContact(new JabberContact(contact->jid, contact->nick, group, this), group);
 }
 
 void JabberProtocol::slotSettingsChanged()

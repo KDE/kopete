@@ -23,6 +23,7 @@
 #include "kopetechatwindow.h"
 #include "kopetehistorydialog.h"
 #include "dlgrename.h"
+#include "jabcommon.h"
 
 #include <kopete.h>
 #include <contactlist.h>
@@ -31,6 +32,7 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qcursor.h>
+#include <qptrlist.h>
 
 
 class QTimer;
@@ -42,6 +44,7 @@ class KAction;
 class KListAction;
 
 class JabberProtocol;
+class JabberResource;
 
 class JabberContact:public KopeteContact {
   Q_OBJECT
@@ -64,14 +67,17 @@ class JabberContact:public KopeteContact {
     
     virtual void showContextMenu(QPoint, QString);
 
+    JabberResource *bestResource();
+
   public slots:
     void slotNewMessage(QString, QString);
     void slotCloseHistoryDialog();
     void slotViewHistory();
     void slotSendMsg(const QString &);
-
+    void slotResourceAvailable(const Jid &, const JabResource &);
+    
   private slots:
-    void slotUpdateContact(QString, QString, QString, QString);
+    void slotUpdateContact(QString, QString, int, QString);
     void slotDeleteMySelf(bool);
     void slotRemoveThisUser();
     void slotRenameContact();
@@ -87,22 +93,15 @@ class JabberContact:public KopeteContact {
     void initActions();
     
     JabberProtocol *mProtocol;
+
+    QPtrList<JabberResource> resources;
     
     bool hasLocalGroup;
-    QString mUserID;
-    QString mName;
-    QString mResource;
-    QString mGroup;
-    QString mStatus;
-    QString mReason;
-
+    QString mUserID, mName, mResource, mGroup, mReason;
+    int mStatus;
+    
     KPopupMenu *popup;
-    KAction *actionRemove;
-    KAction *actionRemoveFromGroup;
-    KAction *actionChat;
-    KAction *actionInfo;
-    KAction *actionHistory;
-    KAction *actionRename;
+    KAction *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename;
     KListAction *actionContactMove;
 
     dlgJabberRename *dlgRename;
@@ -110,4 +109,22 @@ class JabberContact:public KopeteContact {
     KopeteHistoryDialog *historyDialog;
 };
 
+class JabberResource : public QObject {
+    Q_OBJECT
+  public:
+    JabberResource();
+    JabberResource(const QString &, const int &, const QDateTime &, const int &, const QString &);
+    ~JabberResource();
+    
+    QString resource() { return mResource; }
+    int priority() { return mPriority; }
+    QDateTime timestamp() { return mTimestamp; }
+    int status() { return mStatus; }
+    QString reason() { return mReason; }
+
+  private:
+    QString mResource, mReason;
+    int mPriority, mStatus;
+    QDateTime mTimestamp;
+};
 #endif

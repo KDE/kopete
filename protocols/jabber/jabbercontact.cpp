@@ -24,6 +24,7 @@
 #include "jabbermessage.h"
 #include "kopetechatwindow.h"
 #include "jabberprotocol.h"
+#include "jabcommon.h"
 
 // Constructor for no-groups
 JabberContact::JabberContact(QString userid, QString name, QString group,
@@ -41,6 +42,8 @@ JabberContact::JabberContact(QString userid, QString name, QString group,
 	    SLOT(slotUpdateContact(QString, QString, QString, QString)));
     connect(protocol, SIGNAL(nukeContacts(bool)), this,
 	    SLOT(slotDeleteMySelf(bool)));
+	connect(protocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this,
+		SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
     connect(protocol, SIGNAL(newMessage(QString, QString)), this,
 	    SLOT(slotNewMessage(QString, QString)));
 
@@ -54,7 +57,7 @@ void JabberContact::initContact(QString, QString name)
 {
     setName(name);
     initActions();
-    slotUpdateContact(mUserID, "", "offline", "");
+    slotUpdateContact(mUserID, "", STATUS_OFFLINE, "");
 }
 
 void JabberContact::initActions()
@@ -95,23 +98,20 @@ void JabberContact::showContextMenu(QPoint, QString /*group */ )
 }
 
 void JabberContact::slotUpdateContact(QString handle, QString resource,
-				      QString status, QString reason)
-{
+				      int status, QString reason) {
     if (handle != mUserID)
-	return;
-
+		return;
     kdDebug() << "Jabber plugin: Contact - updating " << handle << " to "
 	<< status << "." << endl;
-
-    if (status != QString("")) {
-	mStatus = status;
-	kdDebug() << "Jabber plugin: Updating status." << endl;
+    if (status != 0) {
+		mStatus = status;
+		kdDebug() << "Jabber plugin: Updating status." << endl;
     }
     if (resource != QString("")) {
-	mResource = resource;
+		mResource = resource;
     }
     if (reason != QString("")) {
-	mReason = reason;
+		mReason = reason;
     }
     emit statusChanged();
 }
@@ -143,14 +143,14 @@ void JabberContact::slotDeleteMySelf(bool)
 
 JabberContact::ContactStatus JabberContact::status() const
 {
-    if (mStatus == QString("online")) {
-	return Online;
+    if (mStatus == STATUS_ONLINE) {
+		return Online;
     }
-    if (mStatus == QString("away") || mStatus == QString("xa")
-	|| mStatus == QString("dnd")) {
-	return Away;
+    if (mStatus == STATUS_AWAY || mStatus == STATUS_XA
+	|| mStatus == STATUS_DND) {
+		return Away;
     } else {
-	return Offline;
+		return Offline;
     }
 }
 
@@ -161,14 +161,14 @@ QString JabberContact::statusText() const
 
 QString JabberContact::statusIcon() const
 {
-    if (mStatus == QString("online")) {
-	return "jabber_online";
+    if (mStatus == STATUS_ONLINE) {
+		return "jabber_online";
     }
-    if (mStatus == QString("away") || mStatus == QString("xa")) {
-	return "jabber_away";
+    if (mStatus == STATUS_AWAY || mStatus == STATUS_XA) {
+		return "jabber_away";
     }
-    if (mStatus == QString("dnd")) {
-	return "jabber_na";
+    if (mStatus == STATUS_DND) {
+		return "jabber_na";
     }
     return "jabber_offline";
 }
@@ -264,6 +264,57 @@ void JabberContact::slotSendMsg(const QString &message) {
 	mProtocol->slotSendMsg(mUserID, message);
 	JabberMessage jMessage(this, mProtocol->myself()->userID(), "", message, JabberMessage::Outbound);
 	msgDialog->messageReceived(jMessage);
+}
+
+void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &resource) {
+	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
+	kdDebug() << "Jabber plugin: New resource - they want " << theirJID << ", we're " << mUserID << endl;
+	if (theirJID != mUserID) { return; }
+	kdDebug() << "Jabber plugin: Adding new resource for " << mUserID << endl;
+	resources.append(new JabberResource(resource.name, resource.priority, resource.timeStamp, resource.status, resource.statusString));	
+	JabberResource *newResource = bestResource();
+	kdDebug() << "Jabber contact: Best resource is now " << newResource->resource() << "." << endl;
+	slotUpdateContact(theirJID, newResource->resource(), newResource->status(), newResource->reason());
+}	
+
+JabberResource *JabberContact::bestResource() {
+	JabberResource *resource, *tmpResource;
+	for (resource = tmpResource = resources.first(); tmpResource; tmpResource = resources.next()) {
+		kdDebug() << "Jabber contact: Processing resource " << tmpResource->resource() << endl;
+		if (tmpResource->priority() > resource->priority()) {
+			kdDebug() << "Jabber contact: Got better resource " << tmpResource->resource() << " through better priority." << endl;
+			resource = tmpResource;
+		}
+		else if (tmpResource->priority() == resource->priority()) {
+			if (tmpResource->timestamp() > resource->timestamp()) {
+				kdDebug() << "Jabber contact: Got better resource " << tmpResource->resource() << " through newer timestamp." << endl;
+				resource = tmpResource;
+			}
+			else {
+				kdDebug() << "Jabber contact: Discarding resource " << tmpResource->resource() << " with older timestamp." << endl;
+			}
+		}
+		else {
+			kdDebug() << "Jabber contact: Discarding resource " << tmpResource->resource() << " with worse priority." << endl;
+		}
+	}
+	return resource;
+}
+
+JabberResource::JabberResource() { 
+	kdDebug() << "Jabber plugin: New Jabber resource (no params)." << endl;
+}
+
+JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const int &status, const QString &reason) {
+	kdDebug() << QString("Jabber plugin: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
+	mResource = resource;
+	mPriority = priority;
+	mTimestamp = timestamp;
+	mStatus = status;
+	mReason = reason;
+}
+
+JabberResource::~JabberResource() {
 }
 
 #include "jabbercontact.moc"
