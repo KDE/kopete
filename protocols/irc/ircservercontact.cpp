@@ -66,7 +66,13 @@ IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 	mProtocol = protocol;
 	mManager = mProtocol->manager;
 	mNickname = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	mServer = "(Console)";
+	QString tmpServer = KGlobal::config()->readEntry("Server", "");
+	if (tmpServer.isEmpty())
+	{
+		mServer = "(Console)";
+	} else {
+		mServer = tmpServer;
+	}
 
 	init();
 

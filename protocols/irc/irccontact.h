@@ -72,7 +72,6 @@ private:
 	QVBox *mTabPage;
 	IRCQueryView *queryView;
 	void init();
-	bool minimizeQuery;
 
 	KAction* actionAddGroup;
 	KListAction *actionContactMove;

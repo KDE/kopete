@@ -134,7 +134,6 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
 	mPendingMessage = pendingMessage;
-	minimizeQuery = KGlobal::config()->readBoolEntry("MinimizeNewQueries", false);
 
 	if (joinOnConnect == true)
 	{
@@ -153,7 +152,6 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	engine = contact->engine;
 	requestedQuit = false;
 	KGlobal::config()->setGroup("IRC");
-	minimizeQuery = false;
 	QString newServer;
 
 	initActions();
@@ -465,9 +463,17 @@ void IRCContact::joinNow()
 	}
 
 	mContact->mWindow->show();
-	if (!minimizeQuery)
+
+	KGlobal::config()->setGroup("IRC");
+	bool minimize = KGlobal::config()->readBoolEntry("MinimizeNewQueries", false);
+	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 	{
 		mContact->mWindow->mTabWidget->showPage(mTabPage);
+	} else {
+		if (!minimize)
+		{
+			mContact->mWindow->mTabWidget->showPage(mTabPage);
+		}
 	}
 }
 
@@ -481,7 +487,7 @@ void IRCContact::slotMoveThisUser() {
 	mContact->mProtocol->mConfig->sync();
 }
 
-void IRCContact::initActions() 
+void IRCContact::initActions()
 {
 	actionAddGroup = KopeteStdAction::addGroup( kopeteapp->contactList(), SLOT(addGroup()), this, "actionAddGroup" );
 	actionContactMove = KopeteStdAction::moveContact( this, SLOT(slotMoveThisUser()), this, "actionMove" );

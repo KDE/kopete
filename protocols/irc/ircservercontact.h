@@ -63,6 +63,7 @@ public:
 	bool tryingQuit;
 	bool closing;
 	IRCProtocol *mProtocol;
+	const IRCConsoleView *consoleView() { return mConsoleView; };
 private:
 	IRCConsoleView *mConsoleView;
 	KPopupMenu *popup;
