@@ -197,6 +197,9 @@ void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
 {
 	// enable next if a valid addressee is selected
 	setNextEnabled( selectAddressee, addressee ? addressee->isSelected() : false );
+
+	if ( KABC::AddresseeItem* i = static_cast<KABC::AddresseeItem *>( addressee ) )
+		mDisplayName->setText( i->addressee().realName() );
 }
 
 void AddContactWizard::slotAddGroupClicked()
@@ -351,7 +354,7 @@ void AddContactWizard::showPage( QWidget *page )
 {
 	if ( page == intro )
 	{
-		if ( chkAddressee->isChecked() ) // We must check this as we might be showing this page because the back button was pressed
+		if ( chkAddressee->isChecked() && addresseeListView->firstChild() == 0 ) // We must check this as we might be showing this page because the back button was pressed
 		{
 			// Get a reference to the address book
 			if ( m_addressBook == 0L )
@@ -362,16 +365,6 @@ void AddContactWizard::showPage( QWidget *page )
 			disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 			connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 			slotLoadAddressees();
-		}
-	}
-	if ( page == selectGroup )
-	{
-		if ( addresseeListView->isEnabled() )
-		{
-			if ( KABC::AddresseeItem* i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() ) )
-				mDisplayName->setText( i->addressee().realName() );
-			else
-				mDisplayName->setText( QString::null );
 		}
 	}
 	QWizard::showPage( page );
