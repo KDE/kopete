@@ -123,20 +123,31 @@ bool SMSSendProvider::send(QString nr, QString message)
 	p->start(KProcess::Block);
 	if (p->normalExit())
 	{
-		KMessageBox::information(0L, i18n("Message sent"), i18n("Message sent"));
-		return true;
-	}
-	else
-	{
-		QString eMsg, tmp;
-		while ( p->readln(tmp) != -1)
-			eMsg += tmp;
+		if (p->exitStatus() == 0)
+		{
+			QStringList msg;
+			QString tmp;
+			while ( p->readln(tmp) != -1)
+				 msg.append(tmp);
+		
+			KMessageBox::informationList(0L, i18n("Message sent"), msg, i18n("Message sent"));
+			return true;
+		}
+		else
+		{
+			QString eMsg, tmp;
+			while ( p->readln(tmp) != -1)
+				eMsg += tmp + "\n";
 
-	KMessageBox::error(0L, i18n("Something went wrong when sending message\nError message was:\n%1").arg(eMsg),
-			i18n("Could not send message"));
-		return false;
+			KMessageBox::detailedError(0L, i18n("Something went wrong when sending message"), eMsg,
+				i18n("Could not send message"));
+			return false;
+		}
 	}
 }
+
+
+
 
 /*
  * Local variables:
