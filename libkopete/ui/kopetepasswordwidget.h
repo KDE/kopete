@@ -41,10 +41,10 @@ public:
 	/**
 	 * Creates a Kopete::PasswordWidget.
 	 * @param parent The widget to nest this one inside
-	 * @param from The password to load the data for this widget from, or 0 if none
 	 * @param name The name of this QObject
+	 * @param from The password to load the data for this widget from, or 0 if none
 	 */
-	PasswordWidget( QWidget *parent, Kopete::Password *from = 0, const char *name = 0 );
+	PasswordWidget( QWidget *parent, const char *name = 0, Kopete::Password *from = 0 );
 	~PasswordWidget();
 
 	/**

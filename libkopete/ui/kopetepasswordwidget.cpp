@@ -28,7 +28,7 @@ public:
 	uint maxLength;
 };
 
-Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, Kopete::Password *from, const char *name )
+Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, const char *name, Kopete::Password *from )
  : KopetePasswordWidgetBase( parent, name ), d( new Private )
 {
 	load( from );
