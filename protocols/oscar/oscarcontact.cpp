@@ -155,12 +155,6 @@ KopeteMessageManager* OscarContact::manager( bool )
 					SIGNAL(typingMsg(bool)),
 					this,
 					SLOT(slotTyping(bool)));
-		QObject::connect(
-					this,
-					SIGNAL(messageSuccess()),
-					mMsgManager,
-					SIGNAL(messageSuccess()));
-
 
 		return mMsgManager;
 	}
@@ -434,7 +428,7 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
 
-	emit( messageSuccess() );
+	manager()->messageSuccess();
 }
 
 /** Called when nickname needs to be updated */

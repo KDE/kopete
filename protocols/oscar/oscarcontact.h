@@ -83,8 +83,6 @@ public: // Public attributes
 	int mStatus;
 	/** List of contacts.. I don't want this to be here */
 	QPtrList<KopeteContact> theContacts;
-signals:
-	void messageSuccess();
 
 private: // Private members
 
