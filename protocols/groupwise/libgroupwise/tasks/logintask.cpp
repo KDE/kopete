@@ -13,6 +13,7 @@
 #include "request.h"
 #include "requestfactory.h"
 #include "response.h"
+#include "iostream.h"
 
 #include "logintask.h"
 
@@ -42,6 +43,7 @@ void LoginTask::initialise()
 
 void LoginTask::onGo()
 {
+	cout << "LoginTask::onGo() - sending login fields" << endl;
 	send( static_cast<Request *>( transfer() ) );
 }
 
@@ -54,20 +56,43 @@ bool LoginTask::take( Transfer * transfer )
 		return false;
 	
 	// read in myself()'s metadata fields and emit signal
-/*	
 	Field::FieldList loginResponseFields = response->fields();
 	emit gotMyself( loginResponseFields );
 	
 	// create contact list
 	// locate contact list
-	 
+	Field::MultiField * contactList = static_cast<Field::MultiField *>( 
+			*( loginResponseFields.find( NM_A_FA_CONTACT_LIST ) ) );
 	// extract folder fields 
-	while ( findFolder() )
+	// find a field in the contact list containing a folder
+	Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
+	// get the field
+	Field::MultiField * folderContainer = static_cast<Field::MultiField *>( *it );
+	while ( folderContainer )
 	{
-		emit gotFolder( fields );
+		GWFolderItem folder;
+		// object id
+		Field::FieldListIterator currentIt = folderContainer->fields().find( NM_A_SZ_OBJECT_ID );
+		Field::SingleField * current = static_cast<Field::SingleField * >( *currentIt );
+		folder.id = current->value().toInt();
+		// sequence number
+		currentIt = folderContainer->fields().find( NM_A_SZ_SEQUENCE_NUMBER );
+		current = static_cast<Field::SingleField * >( *currentIt );
+		folder.sequence = current->value().toInt();
+		// name 
+		currentIt = folderContainer->fields().find( NM_A_SZ_DISPLAY_NAME );
+		current = static_cast<Field::SingleField * >( *currentIt );
+		folder.name = current->value().toString();
+		cout << "Got folder: " << folder.name.ascii() << ", obj: " << folder.id << ", seq:" << folder.sequence << endl;
+		// tell the world about it
+		emit gotFolder( folder );
+		// and look for the next folder
+		it = contactList->fields().find( it, NM_A_FA_FOLDER );
+		folderContainer = static_cast<Field::MultiField *>( *( ++it ) );
+		// THIS LINE IS NOT SAFE - WE'RE OFF THE END OF THE FIELD LIST OR SOMETHING
 	}
 	// extract contact fields 
-	while ( findContact() )
+/*	while ( findContact() )
 	{
 		emit gotContact( fields );
 		if ( findUserDetails( fields );

@@ -22,6 +22,7 @@
 #define TESTBEDACCOUNT_H
 
 #include <kopeteaccount.h>
+#include <kopetepasswordedaccount.h>
 
 #include "gwfield.h"
 
@@ -31,12 +32,25 @@ class KopeteMetaContact;
 
 class GroupWiseContact;
 class GroupWiseProtocol;
+class KNetworkConnector;
+namespace QCA {
+	class TLS;
+}
+class QCATLSHandler;
+class ClientStream;
+class Client;
 
 /**
  * This represents an account connected to GroupWise
- * @author Will Stephenson
+ * @author Will Stephensonconst int GroupWiseAccount::port() const
+{
+	return pluginData( protocol(), "Port" ).toInt();
+}
+
+const QString GroupWiseAccount::server() const
+
 */
-class GroupWiseAccount : public KopeteAccount
+class GroupWiseAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 public:
@@ -56,15 +70,23 @@ public:
 	 * Called when Kopete is set globally away
 	 */
 	virtual void setAway(bool away, const QString& reason);
-	/**
-	 * 'Connect' to the groupwise server.  Only sets myself() online.
+	/** 
+	 * Utility access to the port given by the user
 	 */
-	virtual void connect();
-	/**
-	 * Disconnect from the server.  Only sets myself() offline.
+	const int port() const;
+	/** 
+	 * Utility access to the server given by the user
 	 */
-	virtual void disconnect();
+	const QString GroupWiseAccount::server() const;
+
 public slots:
+
+	/* Connects to the server. */
+	virtual void connectWithPassword ( const QString &password );
+
+	/* Disconnects from the server. */
+	virtual void disconnect ();
+	
 	/**
 	 * Called by the server when it has a message for us.  
 	 * This identifies the sending KopeteContact and passes it a KopeteMessage
@@ -90,6 +112,17 @@ protected slots:
 	 * Update the local user's metadata
 	 */
 	void slotGotMyDetails( Field::FieldList & fields );
+	/** The TLS handshake has happened, check the result */
+	void slotTLSHandshaken();
+	/** The connection is ready for a login */
+	void slotTLSReady( int secLayerCode );
+
+private:
+	KNetworkConnector * m_connector;
+	QCA::TLS * m_QCATLS;
+	QCATLSHandler *	m_tlsHandler;
+	ClientStream * m_clientStream;
+	Client * m_client;
 };
 
 #endif

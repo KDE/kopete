@@ -136,7 +136,7 @@ ClientStream::ClientStream(Connector *conn, TLSHandler *tlsHandler, QObject *par
 	connect( d->conn, SIGNAL(connected()), SLOT(cr_connected()) );
 	connect( d->conn, SIGNAL(error()), SLOT(cr_error()) );
 	connect( &d->client, SIGNAL( outgoingData( const QByteArray& ) ), SLOT ( cp_outgoingData( const QByteArray & ) ) );
-	connect( &d->client, SIGNAL( incomingData( const QByteArray& ) ), SLOT ( cp_incomingData() ) );
+	connect( &d->client, SIGNAL( incomingData() ), SLOT ( cp_incomingData() ) );
 
 	d->noop_time = 0;
 	connect(&d->noopTimer, SIGNAL(timeout()), SLOT(doNoop()));
@@ -386,6 +386,8 @@ Transfer * ClientStream::read()
 
 void ClientStream::write( Request *request )
 {
+	cout << "ClientStream::write()" << endl;
+
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
 }
@@ -431,16 +433,16 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 
 void ClientStream::cp_incomingData()
 {
-	qDebug( "ClientStream::cp_outgoingData:" );
+	qDebug( "ClientStream::cp_incomingData:" );
 	Transfer * incoming = d->client.incomingTransfer();
 	if ( d->client.state() == CoreProtocol::Available && incoming )
 	{
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
+		emit doReadyRead();
 	}
 	else
-		qDebug( "ClientStream::cp_outgoingData: client signalled incomingData but none was available" );
-	emit readyRead();
+		qDebug( "ClientStream::cp_incomingData: client signalled incomingData but none was available" );
 }
 
 void ClientStream::cr_connected()

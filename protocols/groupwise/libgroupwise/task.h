@@ -34,7 +34,7 @@ public:
 	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
 	 * for further processing.
 	 */
-	virtual bool take( const Transfer* transfer );
+	virtual bool take( Transfer* transfer );
 	void safeDelete();
 
 signals:

@@ -105,17 +105,17 @@ Q_OBJECT
 		/**
 		 * The current user's user ID
 		 */
-		QCString userId();
+		QString userId();
 		
 		/**
 		 * The current user's password
 		 */
-		QCString password();
+		QString password();
 		
 		/**
 		 * User agent details for this host
 		 */
-		QCString userAgent();
+		QString userAgent();
 		
 		/**
 		 * Host's IP address
@@ -128,7 +128,10 @@ Q_OBJECT
 		 * for this connection
 		 */
 		RequestFactory * requestFactory();
-		 
+	public slots:
+		// INTERNAL, FOR USE BY TASKS' SIGNALS //
+		void lt_LoginFinished();
+		
 	protected slots:
 		/**
 		 * Used by the client stream to notify errors to upper layers.
@@ -139,8 +142,9 @@ Q_OBJECT
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
+		
 	private:
-		void distribute( const Transfer *transfer );
+		void distribute( Transfer *transfer );
 		Task* rootTask();
 		class ClientPrivate;
 		ClientPrivate* d;

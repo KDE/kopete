@@ -43,7 +43,7 @@ public:
 	
 signals:
 	void gotMyself( Field::FieldList & );
-	void gotFolder( Field::FieldList & );
+	void gotFolder( GWFolderItem & );
 	void gotContact( Field::FieldList & );
 	void gotContactUserRecord( Field::FieldList & );
 };

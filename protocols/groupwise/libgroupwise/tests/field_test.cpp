@@ -11,15 +11,15 @@ int main()
 	buildList();
 	// look for a field in the list
 	if ( fl.find( NM_A_FA_MESSAGE ) != fl.end() )
-		printf( "Found a field, where there was supposed to be one :)" );
+		printf( "Found a field, where there was supposed to be one :)\n" );
 	else
-		printf( "Didn't find a field, where there was supposed to be one :(" );
-		
-	if ( fl.find( NM_A_SZ_OBJECT_ID ) != fl.end() )
-		printf( "Found a field, where there was NOT supposed to be one :(" );
+		printf( "Didn't find a field, where there was supposed to be one :(\n" );
+	Field::FieldListIterator it;
+	if ( (it = fl.find( NM_A_SZ_OBJECT_ID ) ) != fl.end() )
+		printf( "Found a field, where there was NOT supposed to be one :(\n" );
 	else
-		printf( "Didn't find a field, where there wasn't supposed to be one :)" );
-				
+		printf( "Didn't find a field, where there wasn't supposed to be one :)\n" );
+	printf( "%i\n", static_cast<Field::MultiField*>(*it) );				
 	extractFields( fl );
 	return 0;
 }

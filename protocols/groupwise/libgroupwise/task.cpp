@@ -106,7 +106,7 @@ void Task::go(bool autoDelete)
 	onGo();
 }
 
-bool Task::take( const Transfer * transfer)
+bool Task::take( Transfer * transfer)
 {
 	const QObjectList *p = children();
 	if(!p)

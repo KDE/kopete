@@ -129,7 +129,22 @@
 #include <qvariant.h>
 #include <qvaluelist.h>	
 
-//class FieldBase;
+struct GWFolderItem
+{
+	int id; 
+	int sequence;
+	QString name;
+};
+
+struct GWContactItem
+{
+	int id;
+	int parentId;
+	int sequence;
+	QString dn;
+	QString displayName;
+
+};
 
 namespace Field
 {

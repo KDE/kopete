@@ -26,20 +26,33 @@
 #include <kpopupmenu.h>
 
 #include "kopetemetacontact.h"
+#include "kopetepassword.h"
 
+#include "client.h"
+#include "qca.h"
 #include "gwcontact.h"
 #include "gwfakeserver.h"
 #include "gwprotocol.h"
+#include "gwclientstream.h"
+#include "gwconnector.h"
+#include "qcatlshandler.h"
 
+#include <sys/utsname.h>
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
-: KopeteAccount ( parent, accountID , name )
+: Kopete::PasswordedAccount ( parent, accountID, 0, name )
 {
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
 	KopeteMetaContact *metaContact = new KopeteMetaContact;
 	setMyself( new GroupWiseContact( this, accountId(), metaContact, "myself", 0, 0, 0 ) );
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+	
+	m_connector = 0;
+	m_QCATLS = 0;
+	m_tlsHandler = 0;
+	m_clientStream = 0;
+	m_client= 0;
 }
 
 GroupWiseAccount::~GroupWiseAccount()
@@ -80,6 +93,18 @@ bool GroupWiseAccount::addContactToMetaContact(const QString& contactId, const Q
 	return false;
 }
 
+const int GroupWiseAccount::port() const
+{
+	return 8300;
+	return pluginData( protocol(), "Port" ).toInt();
+}
+
+const QString GroupWiseAccount::server() const
+{
+	return "reiser.suse.de";
+	return pluginData( protocol(), "Server" );
+}
+
 void GroupWiseAccount::setAway( bool away, const QString & /* reason */ )
 {
 	if ( away )
@@ -88,11 +113,59 @@ void GroupWiseAccount::setAway( bool away, const QString & /* reason */ )
 		slotGoOnline();
 }
 
-void GroupWiseAccount::connect()
+void GroupWiseAccount::connectWithPassword( const QString &password )
 {
-	//client->connectToServer()
-	kdDebug ( 14220 ) << k_funcinfo << endl;
-	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
+	// set up network classes
+	m_connector = new KNetworkConnector( 0 );
+	//myConnector->setOptHostPort( "localhost", 8300 );
+	m_connector->setOptHostPort( server(), port() );
+	m_connector->setOptSSL( true );
+	Q_ASSERT( QCA::isSupported(QCA::CAP_TLS) );
+	m_QCATLS = new QCA::TLS;
+	m_tlsHandler = new QCATLSHandler( m_QCATLS );
+	m_clientStream = new ClientStream( m_connector, m_tlsHandler, 0);
+	
+	QObject::connect (m_clientStream, SIGNAL (connectionClosed ()),
+				this, SLOT (slotCSDisconnected ()));
+	QObject::connect (m_clientStream, SIGNAL (delayedCloseFinished ()),
+				this, SLOT (slotCSDisconnected ()));
+	// Notify us when the transport layer is connected
+	QObject::connect( m_clientStream, SIGNAL( connected() ), SLOT( slotConnected() ) );
+	// it's necessary to catch this signal and tell the TLS handler to proceed
+	// even if we don't check cert validity
+	QObject::connect( m_tlsHandler, SIGNAL(tlsHandshaken()), SLOT( slotTLSHandshaken()) );
+	// starts the client once the security layer is up, but see below
+	QObject::connect( m_clientStream, SIGNAL( securityLayerActivated(int) ), SLOT( slotTLSReady(int) ) );
+	// we could handle login etc in start(), in which case we would emit this signal after that
+	//QObject::connect (jabberClientStream, SIGNAL (authenticated()),
+	//			this, SLOT (slotCSAuthenticated ()));
+	// we could also get do the actual login in response to this..
+	//QObject::connect (m_clientStream, SIGNAL (needAuthParams(bool, bool, bool)),
+	//			this, SLOT (slotCSNeedAuthParams (bool, bool, bool)));
+	
+	// not implemented: warning 
+	QObject::connect( m_clientStream, SIGNAL( warning(int) ), SLOT( slotWarning(int) ) );
+	// not implemented: error 
+	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotError(int) ) );
+	
+	m_client = new Client( this );
+	
+	// TODO: Connect Client signals
+	
+	struct utsname utsBuf;
+
+	uname (&utsBuf);
+	
+	/*jabberClient->setClientName ("Kopete");
+	jabberClient->setClientVersion (kapp->aboutData ()->version ());
+	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2)); */
+
+	kdDebug ( 14220 ) << k_funcinfo << "Connecting to GroupWise server " << server() << ":" << port() << endl;
+
+	NovellDN dn;
+	dn.dn = "maeuschen";
+	dn.server = "reiser.suse.de";
+	m_client->connectToServer( m_clientStream, dn, true ); 
 }
 
 void GroupWiseAccount::disconnect()
@@ -146,6 +219,41 @@ void GroupWiseAccount::slotGoOffline ()
 	if (isConnected ())
 		disconnect ();
 	updateContactStatus();
+}
+
+void GroupWiseAccount::slotTLSHandshaken()
+{
+	kdDebug ( 14220 ) << k_funcinfo << "TLS handshake complete" << endl;
+	int validityResult = m_QCATLS->certificateValidityResult ();
+
+	if( validityResult == QCA::TLS::Valid )
+	{
+		kdDebug ( 14220 ) << "Certificate is valid, continuing." << endl;
+		// valid certificate, continue
+		m_tlsHandler->continueAfterHandshake ();
+	}
+	else
+	{
+		kdDebug ( 14220 ) << "Certificate is not valid, continuing anyway" << endl;
+		// certificate is not valid, query the user
+		/*			if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
+					{*/
+		m_tlsHandler->continueAfterHandshake ();
+		/*			}
+					else
+					{
+					disconnect ( KopeteAccount::Manual );
+					}*/
+	}
+
+
+}
+
+void GroupWiseAccount::slotTLSReady( int secLayerCode )
+{
+	// i don't know what secLayerCode is for...
+	kdDebug( 14220 ) << k_funcinfo << endl;
+	m_client->start( server(), accountId(), password().cachedValue() );
 }
 
 void GroupWiseAccount::receivedMessage( const QString &message )

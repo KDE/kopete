@@ -127,6 +127,7 @@ void cp_dump( const QByteArray &bytes )
 
 void CoreProtocol::outgoingTransfer( Request* outgoing )
 {
+	cout << "CoreProtocol::outgoingTransfer()" << endl;
 	// Convert the outgoing data into wire format
 	Request * request = dynamic_cast<Request *>( outgoing );
 	Field::FieldList fields = request->fields();
@@ -295,9 +296,10 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 		// is 'HTTP' -> response
 		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
 		{
-			cout << "CoreProtocol::wireToTransfer() - got RESPONSE " << endl;
+			cout << "CoreProtocol::wireToTransfer() - looks like a RESPONSE " << endl;
 			if ( readResponse() )
 			{
+				cout << "CoreProtocol::wireToTransfer() - got a RESPONSE " << endl;
 				m_state = Available;
 				emit incomingData();
 			}
@@ -307,7 +309,7 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 		else	
 		// otherwise -> event
 		{
-			cout << "CoreProtocol::wireToTransfer() - got EVENT " << endl;
+			cout << "CoreProtocol::wireToTransfer() - looks like an EVENT " << endl;
 			readEvent( val );
 			emit incomingData();
 		}
@@ -412,7 +414,7 @@ bool CoreProtocol::readResponse()
 	it = m_collatingFields.find( NM_A_SZ_TRANSACTION_ID );
 	if ( it != end )
 	{
-		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( field );
+		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( *it );
 		if ( sf )
 		{
 			tId = sf->value().toInt();
@@ -449,7 +451,8 @@ void CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 	cout << "CoreProtocol::readFields()" << endl;
 	cout << fieldCount << " reading " << fieldCount << "fields" << endl;
 	Field::FieldList currentList;
-	while ( fieldCount != 0 )
+	int safetyCheck = 0;
+	while ( fieldCount != 0 && safetyCheck ++ < 1000 )  // prevents input data from ruining our day
 	{
 		cout << fieldCount << " fields left to read" << endl;
 		// the field being read

@@ -1,6 +1,6 @@
-METASOURCES = ignore_global_warming.moc
 
-SUBDIRS = . icons libgroupwise ui tests
+
+SUBDIRS = . icons libgroupwise ui
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
@@ -17,5 +17,6 @@ kopete_groupwise_la_LIBADD = ui/libkopetegroupwiseui.la \
 
 service_DATA = kopete_groupwise.desktop
 servicedir = $(kde_servicesdir)
-INCLUDES = -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise
+INCLUDES = -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/tasks \
+	-I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/qca/src -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise
 

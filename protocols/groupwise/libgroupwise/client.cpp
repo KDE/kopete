@@ -3,6 +3,7 @@
 #include "gwclientstream.h"
 #include "requestfactory.h"
 #include "task.h"
+#include "tasks/logintask.h"
 
 #include "client.h"
 
@@ -66,6 +67,21 @@ void Client::start( const QString &host, const QString &user, const QString &pas
 	d->user = user;
 	d->pass = pass;
 
+	LoginTask * login = new LoginTask( d->root );
+	connect( login, SIGNAL( gotMyself( Field::FieldList & ) ), 
+			this, SIGNAL( gotMyself( Field::FieldList & ) ) );
+	connect( login, SIGNAL( gotFolder( GWFolderItem &  ) ), 
+			this, SIGNAL( gotFolder( GWFolderItem &  ) ) );
+	connect( login, SIGNAL( gotContact( Field::FieldList & ) ), 
+			this, SIGNAL( gotContact( Field::FieldList & ) ) );
+	connect( login, SIGNAL( gotContactUserRecord( Field::FieldList & ) ), 
+			this, SIGNAL( gotContactUserRecord( Field::FieldList & ) ) ) ;
+			
+	connect( login, SIGNAL( finished() ), this, SLOT( lt_LoginFinished() ) );
+	
+	login->initialise();
+	login->go( true );
+	
 // 	Status stat;
 // 	stat.setIsAvailable(false);
 // 
@@ -142,19 +158,28 @@ void Client::streamReadyRead()
 	distribute( transfer );
 }
 
+void Client::lt_LoginFinished()
+{
+	const LoginTask * lt = (LoginTask *)sender();
+	if ( lt->success() )
+	{
+		//SetStatusTask * sst = new SetStatusTask( d->root );
+		qDebug( "LOGIN FINISHED" );
+	}
+}
 // INTERNALS //
 
-QCString Client::userId()
+QString Client::userId()
 {
 	return "maeuschen";
 }
 
-QCString Client::password()
+QString Client::password()
 {
 	return "maeuschen";
 }
 
-QCString Client::userAgent()
+QString Client::userAgent()
 {
 	return "libgroupwise/0.1 (Linux, 2.6.5-7.97-smp)";
 }
@@ -164,7 +189,7 @@ QCString Client::ipAddress()
 	return "10.10.11.103";
 }
 
-void Client::distribute( const Transfer * transfer )
+void Client::distribute( Transfer * transfer )
 {
 	if( !rootTask()->take( transfer ) )
 		qDebug( "CLIENT: root task refused transfer" );
@@ -172,9 +197,12 @@ void Client::distribute( const Transfer * transfer )
 
 void Client::send( Request * request )
 {
+	qDebug( "CLIENT::send()" );
 	if( !d->stream )
+	{	
+		qDebug( "CLIENT - NO STREAM TO SEND ON!");
 		return;
-
+	}
 // 	QString out = request.toString();
 // 	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
 // 	xmlOutgoing(out);

@@ -21,17 +21,19 @@
 #include <qcstring.h>
 
 #include "gwfield.h"
+#include <iostream.h>
 
 using namespace Field;
 
 /* === FieldList ==================================================== */
 FieldList::~FieldList()
 {
-	FieldListIterator it = begin();
-	FieldListIterator theEnd = end();
-	int index = 0;
-	for ( ; it != theEnd; ++it, ++index )
-		delete( *it );
+	// This isn't going to work, we need to delete on the shared inner's destruction, not on the outer class
+// 	FieldListIterator it = begin();
+// 	FieldListIterator theEnd = end();
+// 	int index = 0;
+// 	for ( ; it != theEnd; ++it, ++index )
+// 		delete *it;
 }
 
 FieldListIterator FieldList::find( QCString tag )
@@ -43,9 +45,13 @@ FieldListIterator FieldList::find( QCString tag )
 FieldListIterator FieldList::find( FieldListIterator it, QCString tag )
 {
 	FieldListIterator theEnd = end();
+	cout << "FieldList::find() looking for " << tag.data() << endl;
 	for ( ; it != theEnd; ++it )
+	{
+		cout << " - on " << (*it)->tag().data() << endl;
 		if ( (*it)->tag() == tag )
 			break;
+	}
 	return it;
 }
 
