@@ -248,14 +248,6 @@ class JabberContact:public KopeteContact
 	 */
 	KopeteMessageManager *messageManager;
 
-	KActionCollection *actionCollection;
-
-	KAction *actionRename,
-		*actionSendAuth, *actionRequestAuth,
-		*actionInfo, *actionStatusAway, *actionStatusOnline, *actionStatusChatty, *actionStatusXA, *actionStatusDND, *actionStatusInvisible;
-
-	KSelectAction *actionSelectResource;
-	KActionMenu *actionSetAvailability;
 	KopeteMessageManager *m_manager;
 
 	dlgJabberVCard *dlgVCard;

@@ -140,26 +140,20 @@ bool JabberContact::isReachable ()
 
 KActionCollection *JabberContact::customContextMenuActions ()
 {
-	actionCollection = new KActionCollection (this);
-	actionRename = new KAction (i18n ("Rename Contact"), "editrename", 0, this, SLOT (slotRenameContact ()), actionCollection, "actionRename");
-	actionSendAuth = new KAction (i18n ("(Re)send Authorization To"), "", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
-	actionRequestAuth = new KAction (i18n ("(Re)request Authorization From"), "", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
-	actionSetAvailability = new KActionMenu (i18n ("Set Availability"), 0, actionCollection, "jabber_online");
+	KActionCollection *actionCollection = new KActionCollection (this);
 
-	actionStatusOnline = new KAction (i18n ("Online"), "jabber_online", 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline");
-	actionStatusChatty = new KAction (i18n ("Free to Chat"), "jabber_chatty", 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty");
-	actionStatusAway = new KAction (i18n ("Away"), "jabber_away", 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway");
-	actionStatusXA = new KAction (i18n ("Extended Away"), "jabber_away", 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA");
-	actionStatusDND = new KAction (i18n ("Do Not Disturb"), "jabber_na", 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND");
-	actionStatusInvisible =
-		new KAction (i18n ("Invisible"), "jabber_invisible", 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible");
-	
-	actionSetAvailability->insert(actionStatusOnline );
-	actionSetAvailability->insert(actionStatusChatty );
-	actionSetAvailability->insert(actionStatusAway );
-	actionSetAvailability->insert(actionStatusXA);
-	actionSetAvailability->insert(actionStatusDND);
-	actionSetAvailability->insert(actionStatusInvisible);
+	new KAction (i18n ("Rename Contact"), "editrename", 0, this, SLOT (slotRenameContact ()), actionCollection, "actionRename");
+	new KAction (i18n ("(Re)send Authorization To"), "", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
+	new KAction (i18n ("(Re)request Authorization From"), "", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
+
+	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), 0, actionCollection, "jabber_online");
+
+	actionSetAvailability->insert(new KAction (i18n ("Online"),         static_cast<JabberProtocol *>(protocol())->JabberOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
+	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),   static_cast<JabberProtocol *>(protocol())->JabberChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
+	actionSetAvailability->insert(new KAction (i18n ("Away"),           static_cast<JabberProtocol *>(protocol())->JabberAway.iconFor(this), 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
+	actionSetAvailability->insert(new KAction (i18n ("Extended Away"),  static_cast<JabberProtocol *>(protocol())->JabberXA.iconFor(this), 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
+	actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"), static_cast<JabberProtocol *>(protocol())->JabberDND.iconFor(this), 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
+	actionSetAvailability->insert(new KAction (i18n ("Invisible"),      static_cast<JabberProtocol *>(protocol())->JabberInvisible.iconFor(this), 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
 
 	KGlobal::config ()->setGroup ("Jabber");
 
@@ -202,7 +196,7 @@ KActionCollection *JabberContact::customContextMenuActions ()
 			}
 		}
 
-		actionSelectResource =
+		KSelectAction *actionSelectResource =
 			new KSelectAction (i18n ("Select Resource"), "selectresource", 0, this, SLOT (slotSelectResource ()), actionCollection, "actionSelectResource");
 
 		// attach list to the menu action
@@ -568,6 +562,7 @@ void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 
 void JabberContact::slotSelectResource ()
 {
+	const KSelectAction *actionSelectResource = static_cast<const KSelectAction *>(sender());
 
 	if (actionSelectResource->currentItem () == 0)
 	{
