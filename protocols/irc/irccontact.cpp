@@ -198,11 +198,17 @@ void IRCContact::slotNewAction(const QString &originating, const QString &target
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
-		if ( user || mIdentity->mySelf()->nickName().lower() == originating.lower() )
+		if ( user )
 		{
 			KopeteMessage msg( user, mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
 		}
+		else if( mIdentity->mySelf()->nickName().lower() == originating.lower() )
+		{
+			KopeteMessage msg( (KopeteContact*)mIdentity->mySelf(), mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
+			manager()->appendMessage(msg);
+		}
+
 	}
 }
 
