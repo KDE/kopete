@@ -96,8 +96,8 @@ void KopeteMessageManager::setContactOnlineStatus( const KopeteContact *contact,
 
 const KopeteOnlineStatus &KopeteMessageManager::contactOnlineStatus( const KopeteContact *contact ) const
 {
-	if( d->contactStatus.contains( contact ) )
-		return d->contactStatus[ contact ];
+	//if( d->contactStatus.contains( contact ) )
+	//	return d->contactStatus[ contact ];
 
 	return contact->onlineStatus();
 }
