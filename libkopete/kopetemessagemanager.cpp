@@ -206,7 +206,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 	{
 		emit( messageReceived( msg, this ) );
 
-		if( msg.plainBody().contains( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( d->mUser->displayName() ) ) ) )
+		if( KopetePrefs::prefs()->highlightEnabled()  && msg.plainBody().contains( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( d->mUser->displayName() ) ) ) )
 			msg.highlight();
 	}
 

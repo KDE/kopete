@@ -37,7 +37,7 @@ PreferencesDialog::PreferencesDialog()
 : KDialogBase( IconList, i18n( "Configure - Kopete" ), Ok | Apply | Cancel,
 	Ok, qApp->mainWidget(), 0, false )
 {
-//	resize(640, 480); // KDE is required to support 800x600 min.
+	resize(600, 575); // KDE is required to support 800x600 min.
 }
 
 PreferencesDialog::~PreferencesDialog()

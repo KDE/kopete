@@ -29,6 +29,7 @@
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteprefs.h"
 
 class KopeteMessagePrivate
 {
@@ -139,9 +140,8 @@ void KopeteMessage::setFont( const QFont &font )
 
 void KopeteMessage::highlight()
 {
-	//FIXME: Config option for this color, bold? Italic? Font?
-	setBg( Qt::yellow );
-	setFg( Qt::black );
+	setBg( KopetePrefs::prefs()->highlightBackground() );
+	setFg( KopetePrefs::prefs()->highlightForeground() );
 }
 
 void KopeteMessage::setBody( const QString &body, MessageFormat f )

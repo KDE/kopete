@@ -36,6 +36,7 @@
 #include <qslider.h>
 
 #include <kcolorcombo.h>
+#include <kcolorbutton.h>
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -178,6 +179,9 @@ void AppearanceConfig::save()
 // 	p->setCTransparencyEnabled( mPrfsChatWindow->mCTransparencyEnabled->isChecked() );
 // 	p->setCTransparencyValue( mPrfsChatWindow->mCTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
+	p->setHighlightEnabled(mPrfsChatAppearance->highlightEnabled->isChecked());
+	p->setHighlightBackground(mPrfsChatAppearance->foregroundColor->color());
+	p->setHighlightForeground(mPrfsChatAppearance->backgroundColor->color());
 
 	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
 	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
@@ -257,6 +261,10 @@ void AppearanceConfig::reopen()
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
 	mPrfsChatWindow->interfaceGroup->setButton( p->interfacePreference() );
+	mPrfsChatAppearance->highlightEnabled->setChecked( p->highlightEnabled() );
+	mPrfsChatAppearance->foregroundColor->setColor( p->highlightForeground() );
+	mPrfsChatAppearance->backgroundColor->setColor( p->highlightBackground() );
+
 
 	// "Chat Appearance" TAB
   const QString wthis = i18n("Code:                                <br>\
@@ -329,6 +337,8 @@ void AppearanceConfig::slotUpdatePreview()
 	KopeteMessage *msgIn = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
 	KopeteMessage *msgOut = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
 	KopeteMessage *msgInt = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
+	KopeteMessage *msgHigh = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an highlighted message"),KopeteMessage::Inbound );
+	KopeteMessage *msgAct = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
 
 	QString model = mPrfsChatAppearance->mle_codehtml->text();
 
@@ -343,16 +353,15 @@ void AppearanceConfig::slotUpdatePreview()
 	preview->write( msgIn->transformMessage( model ) );
 	// -------------------
 
-	// outgoing messages
-	preview->write( msgOut->transformMessage( model ) );
-	msgOut->setFg(Qt::white);
-	msgOut->setBg(Qt::blue);
-	msgOut->setBody( QString::fromLatin1("This is a colored outgoing message") );
-	preview->write( msgOut->transformMessage( model ) );
-	// -------------------
-
 	// internal message
 	preview->write( msgInt->transformMessage( model ) );
+
+	//highlighted message
+	msgHigh->setFg( mPrfsChatAppearance->foregroundColor->color() );
+	msgHigh->setBg( mPrfsChatAppearance->backgroundColor->color() );
+	preview->write( msgHigh->transformMessage( model ) );
+
+	preview->write( msgAct->transformMessage( model ) );
 
 	preview->write( QString::fromLatin1( "</body></html>" ) );
 	preview->end();
@@ -360,6 +369,8 @@ void AppearanceConfig::slotUpdatePreview()
 	delete msgIn;
 	delete msgOut;
 	delete msgInt;
+	delete msgHigh;
+	delete msgAct;
 	delete cFrom;
 	delete cTo;
 }
