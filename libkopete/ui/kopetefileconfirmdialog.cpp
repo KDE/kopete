@@ -31,15 +31,16 @@
 #include "kopetemetacontact.h"
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &info,const QString& description,QWidget *parent, const char *name )
-	: KDialogBase(parent,name, true, i18n("A User Would Like to Send You a File") , KDialogBase::User1|KDialogBase::User2, KDialogBase::User1, true, i18n("&Accept"), i18n("&Refuse"))
+	: KDialogBase(parent,name, true, i18n("A User Would Like to Send You a File") , KDialogBase::User1|KDialogBase::User2, KDialogBase::User1, true, i18n("&Accept"), i18n("&Refuse")),
+	  m_info( info )
 {
+	setWFlags( WDestructiveClose );
 	m_emited=false;
-	m_info=KopeteFileTransferInfo(info);
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
 	m_view->m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
 		info.contact()->contactId() + QString::fromLatin1( "> " ) );
-	m_view->m_size->setText( QString::number(info.size()) );
+	m_view->m_size->setText( KGlobal::locale()->formatNumber( info.size() ) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );
 	m_view->m_saveto->setText( QDir::homeDirPath() + QString::fromLatin1( "/" ) + info.file() );
