@@ -499,25 +499,31 @@ QString JabberProtocol::protocolIcon() const
 
 }
 
-bool JabberProtocol::serialize(KopeteMetaContact *contact, QStringList &data) const
+bool JabberProtocol::serialize(KopeteMetaContact *mc, QStringList &data) const
 {
 
-	kdDebug() << "[JabberProtocol] Serializing data for metacontact " << contact->displayName() << endl;
+	kdDebug() << "[JabberProtocol] Serializing data for metacontact " << mc->displayName() << endl;
 
-	if(metaContactMap.contains(contact))
+	QPtrList<KopeteContact> contacts = mc->contacts();
+
+	bool done = false;
+	
+	// iterate through all contacts that the metacontact has
+	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
 	{
-		JabberContact *jc = metaContactMap[contact];
+		if(c->protocol() != this->id())
+			continue;
+
+		JabberContact *jc = (JabberContact *)c;
 		
+		kdDebug() << "[JabberProtocol] Subcontact " << jc->userId() << " is ours, serializing." << endl;
+
 		data << jc->identityId() << jc->userId() << jc->displayName() << jc->groups().join(",");
-		
-		return true;
+
+		done = true;
 	}
-	else
-	{
-		kdDebug() << "[JabberProtocol] Contact " << contact->displayName() << " not found in the map! Can't serialize." << endl;
-		
-		return false;
-	}
+
+	return done;
 
 }
 
