@@ -24,6 +24,7 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -37,8 +38,8 @@
 
 AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 	QWidget *parent, const char* name)
-	: KDialogBase(parent, name, modal, i18n("User Information on %1").arg(c->displayName()), Close | User1, Close, true,
-		i18n("&Save Nickname"))
+	: KDialogBase(parent, name, modal, i18n("User Information on %1").arg(c->displayName()), Cancel | Ok | User1, Ok, true,
+			i18n("&Update Nickname"))
 {
 	kdDebug(14200) << k_funcinfo << "for contact '" << c->displayName() << "'" << endl;
 
@@ -48,8 +49,9 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 	mMainWidget = new AIMUserInfoWidget(this, "aimuserinfowidget");
 	setMainWidget(mMainWidget);
 
-	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveClicked()));
-	QObject::connect(this, SIGNAL(closeClicked()), this, SLOT(slotCloseClicked()));
+	QObject::connect(this, SIGNAL(okClicked()), this, SLOT(slotSaveClicked()));
+	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUpdateClicked()));
+	QObject::connect(this, SIGNAL(cancelClicked()), this, SLOT(slotCloseClicked()));
 	QObject::connect(mContact, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
 
 	mMainWidget->txtScreenName->setText(c->contactName());
@@ -77,7 +79,8 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 			mMainWidget->userInfoFrame, "userInfoEdit");
 		userInfoEdit->setTextFormat(PlainText);
 		userInfoEdit->setText(mContact->userProfile());
-		setButtonText(User1, "&Save Profile");
+		setButtonText(Ok, i18n("&Save Profile"));
+		showButton(User1, false);
 		l->addWidget(userInfoEdit);
 	}
 	else
@@ -87,8 +90,10 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoView = new KTextBrowser( mMainWidget->userInfoFrame, "userInfoView" );
 		userInfoView->setTextFormat(AutoText);
+		showButton(Cancel, false);
+		setButtonText(Ok, i18n("Close"));
+		setEscapeButton(Ok);
 		l->addWidget(userInfoView);
-
 
 		if(mAccount->isConnected())
 		{  // And our buddy is not offline
@@ -109,7 +114,7 @@ AIMUserInfoDialog::~AIMUserInfoDialog()
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 }
 
-void AIMUserInfoDialog::slotSaveClicked()
+void AIMUserInfoDialog::slotUpdateClicked()
 {
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 	QString newNick = mMainWidget->txtNickName->text();
@@ -120,8 +125,25 @@ void AIMUserInfoDialog::slotSaveClicked()
 		setCaption(i18n("User Information on %1").arg(newNick));
 	}
 
-	if (userInfoEdit) // editable mode, set profile
+}
+
+void AIMUserInfoDialog::slotSaveClicked()
+{
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+
+	if (userInfoEdit){ // editable mode, set profile
+		QString newNick = mMainWidget->txtNickName->text();
+		if(!newNick.isEmpty() && (newNick != mContact->displayName()))
+		{
+			mContact->rename(newNick);
+//			emit updateNickname(newNick);
+			setCaption(i18n("User Information on %1").arg(newNick));
+		}
+
 		mAccount->setUserProfile(userInfoEdit->text());
+	}
+
+	emit closing();
 }
 
 void AIMUserInfoDialog::slotCloseClicked()

@@ -46,6 +46,7 @@ class AIMUserInfoDialog : public KDialogBase
 	private slots:
 		void slotSaveClicked();
 		void slotCloseClicked();
+		void slotUpdateClicked();
 		void slotUpdateProfile();
 
 	signals:
