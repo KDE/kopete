@@ -8,6 +8,28 @@ Some support for buddy icons is needed in libkopete. Maybe just a simple contact
 metacontact property computed from it will do.
 
 
+ Properties:
+=============
+
+The current properties system is a bit of a mess. With the PluginDataObjects, the ContactProperties,
+KopeteContact's serializeProperties, and the various properties which are stored specially but
+shouldn't be (such as KopeteGroup::expanded) it's hard to know where you are. I (Richard) would like
+to replace this whole set of different property systems with a unified one. The way I see this
+working is as follows:
+- An object is created for each property. That object represents the property, and knows how to read
+  set store and manipulate that property.
+- Properties on objects supporting them (KopeteContact, KopeteMetaContact, KopeteGroup, and so on)
+  will be accessed in a uniform manner, eg:
+    contact(myProperty) = 42;
+    metaContact(displayName) = i18n("Ford Prefect");
+  The exact notation is not finalised yet. Maybe X[...] or X.property(...) would be clearer?
+- New types of properties with different serialization requirements and so on can easily be created
+- MetaContact properties can be computed from Contact properties (eg, for buddy icon, away message,
+  idle time and so on) by writing an appropriate property class.
+- This system would be extended to plugin configuration, so plugin authors can easily deal with
+  configuration variables without having to use strings as keys.
+
+
  KopeteMessageManager:
 =======================
 
