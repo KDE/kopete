@@ -303,11 +303,20 @@ GaduSession::pubDirSearch(QString &name, QString &surname, QString &nick, int UI
   }
 
   if (!UIN){
-	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_FIRSTNAME, (const char *)textcodec->fromUnicode( name ) );
-	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_LASTNAME, (const char *)textcodec->fromUnicode( surname ) );
-	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_NICKNAME, (const char *)textcodec->fromUnicode( nick ) );
-	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_CITY, (const char *)textcodec->fromUnicode( city ) );
-
+  
+	if (name.length()){
+	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_FIRSTNAME, (const char *)textcodec->fromUnicode( name ) );
+	}
+	if (surname.length()){
+	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_LASTNAME, (const char *)textcodec->fromUnicode( surname ) );
+	}  
+	if (nick.length()){
+	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_NICKNAME, (const char *)textcodec->fromUnicode( nick ) );
+	}
+	if (city.length()){ 
+	    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_CITY, (const char *)textcodec->fromUnicode( city ) );
+	}
+	
     if (ageFrom || ageTo){
       QString yearFrom = QString::number(QDate::currentDate().year() - ageFrom );
       QString yearTo = QString::number(QDate::currentDate().year() - ageTo );
