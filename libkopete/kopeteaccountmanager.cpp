@@ -25,6 +25,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kplugininfo.h>
 
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
@@ -203,6 +204,8 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 {
 	kdDebug(14010) << k_funcinfo << "Removing account and cleanning up config" << account->accountId() << endl;
 
+	KopeteProtocol *protocol=account->protocol();
+
 	KConfig *config = KGlobal::config();
 	QString groupName = account->configGroup();
 
@@ -211,6 +214,15 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 	// Clean up configuration
 	config->deleteGroup( groupName );
 	config->sync();
+
+	if(KopeteAccountManager::manager()->accounts(protocol).isEmpty())
+	{
+		//FIXME: we should use a decent way to do that
+		QString protocol_name=protocol->pluginId().remove( QString::fromLatin1("Protocol") ).lower();
+
+		KopetePluginManager::self()->setPluginEnabled( protocol_name , false );
+		KopetePluginManager::self()->unloadPlugin( protocol_name );
+	}
 }
 
 void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
