@@ -20,6 +20,7 @@
 #include <qstring.h>
 #include <kconfig.h>
 #include <qmultilineedit.h>
+#include <klocale.h>
 
 #include <kopete.h>
 #include "kopeteawaydialog.h"
@@ -51,14 +52,14 @@ KopeteAway::KopeteAway()
 		/* There are no away messages, so we'll create a default one */
 		/* Create an away message */
 		KopeteAwayMessage temp;
-		temp.title = "Busy";
-		temp.message = "Sorry, I'm busy right now";
+		temp.title = i18n("Busy");
+		temp.message = i18n("Sorry, I'm busy right now");
 		
 		/* Add it to the vector */
 		mAwayMessageList.append(temp);
 		
-		temp.title = "Gone";
-		temp.message = "I'm gone right now, but I'll be back later";
+		temp.title = i18n("Gone");
+		temp.message = i18n("I'm gone right now, but I'll be back later");
 		mAwayMessageList.append(temp);
 		
 		/* Save this list to disk */
@@ -162,16 +163,13 @@ bool KopeteAway::addMessage(QString title, QString message)
 bool KopeteAway::deleteMessage(QString title)
 {
 	/* Search for the message */
-	QValueList<KopeteAwayMessage>::iterator itemToDelete = NULL;
-	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
-		if((*i).title == title){
-			itemToDelete = i;
-			break;
-		}
+	QValueList<KopeteAwayMessage>::iterator itemToDelete = mAwayMessageList.begin();
+	while( (itemToDelete != mAwayMessageList.end()) && ((*itemToDelete).title != title) ){      
+		itemToDelete++;
 	}
 	
 	/* If it was found, delete it */
-	if(itemToDelete != NULL){
+	if(itemToDelete != mAwayMessageList.end()){
 		/* Remove it from the config entry, if it's there */
 		if(config->hasKey((*itemToDelete).title)){
 			config->deleteEntry((*itemToDelete).title);
@@ -188,16 +186,13 @@ bool KopeteAway::deleteMessage(QString title)
 bool KopeteAway::updateMessage(QString title, QString message)
 {
 	/* Search for the message */
-	QValueList<KopeteAwayMessage>::iterator itemToUpdate = NULL;
-	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
-		if((*i).title == title){
-			itemToUpdate = i;
-			break;
-		}
+	QValueList<KopeteAwayMessage>::iterator itemToUpdate = mAwayMessageList.begin();
+	while( (itemToUpdate != mAwayMessageList.end()) && ((*itemToUpdate).title != title) ){      
+		itemToUpdate++;
 	}
 	
 	/* If it was found, update it */
-	if(itemToUpdate != NULL){
+	if(itemToUpdate != mAwayMessageList.end()){
 		(*itemToUpdate).message = message;
 		return true;
 	} else {

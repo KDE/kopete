@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>402</width>
-            <height>115</height>
+            <width>400</width>
+            <height>135</height>
         </rect>
     </property>
     <property name="caption">
@@ -26,9 +26,9 @@
         <property name="geometry">
             <rect>
                 <x>0</x>
-                <y>1</y>
+                <y>2</y>
                 <width>400</width>
-                <height>110</height>
+                <height>131</height>
             </rect>
         </property>
         <grid>
@@ -41,6 +41,53 @@
             <property name="spacing">
                 <number>6</number>
             </property>
+            <widget class="KComboBox" row="2" column="0" rowspan="1" colspan="3">
+                <property name="name">
+                    <cstring>cmbHistory</cstring>
+                </property>
+                <property name="editable">
+                    <bool>false</bool>
+                </property>
+                <property name="insertionPolicy">
+                    <enum>AtCurrent</enum>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="3" column="0">
+                <property name="name">
+                    <cstring>cmdOkay</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;OK</string>
+                </property>
+                <property name="default">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="3" column="2">
+                <property name="name">
+                    <cstring>cmdCancel</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Cancel</string>
+                </property>
+            </widget>
+            <spacer row="3" column="1">
+                <property name="name">
+                    <cstring>Spacer1</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>251</width>
+                        <height>0</height>
+                    </size>
+                </property>
+            </spacer>
             <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
                 <property name="name">
                     <cstring>TextLabel1</cstring>
@@ -54,53 +101,11 @@
                 <property name="wordwrap" stdset="0">
                 </property>
             </widget>
-            <widget class="QPushButton" row="2" column="0">
+            <widget class="KLineEdit" row="1" column="0" rowspan="1" colspan="3">
                 <property name="name">
-                    <cstring>cmdOkay</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;OK</string>
-                </property>
-                <property name="default">
-                    <bool>true</bool>
+                    <cstring>txtOneShot</cstring>
                 </property>
             </widget>
-            <widget class="KComboBox" row="1" column="0" rowspan="1" colspan="3">
-                <property name="name">
-                    <cstring>cmbHistory</cstring>
-                </property>
-                <property name="editable">
-                    <bool>false</bool>
-                </property>
-                <property name="insertionPolicy">
-                    <enum>AtCurrent</enum>
-                </property>
-            </widget>
-            <widget class="QPushButton" row="2" column="2">
-                <property name="name">
-                    <cstring>cmdCancel</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;Cancel</string>
-                </property>
-            </widget>
-            <spacer row="2" column="1">
-                <property name="name">
-                    <cstring>Spacer1</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>0</height>
-                    </size>
-                </property>
-            </spacer>
         </grid>
     </widget>
 </widget>
