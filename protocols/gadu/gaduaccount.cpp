@@ -1,3 +1,4 @@
+
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
@@ -75,20 +76,20 @@ GaduAccount::initConnections()
 {
 	QObject::connect( session_, SIGNAL( error( const QString&, const QString& ) ),
 				SLOT( error( const QString&, const QString& ) ) );
-	QObject::connect( session_, SIGNAL( messageReceived( struct gg_event* ) ),
-				SLOT( messageReceived( struct gg_event*) )  );
-	QObject::connect( session_, SIGNAL( notify( struct gg_event* ) ),
-				SLOT( notify( struct gg_event* ) ) );
-	QObject::connect( session_, SIGNAL( statusChanged( struct gg_event* ) ),
-				SLOT( statusChanged( struct gg_event* ) ) );
+	QObject::connect( session_, SIGNAL( messageReceived( KGaduMessage* ) ),
+				SLOT( messageReceived( KGaduMessage* ) )  );
+	QObject::connect( session_, SIGNAL( notify( KGaduNotifyList* ) ),
+				SLOT( notify( KGaduNotifyList* ) ) );
+	QObject::connect( session_, SIGNAL( statusChanged( KGaduNotify* ) ),
+				SLOT( statusChanged( KGaduNotify* ) ) );
 	QObject::connect( session_, SIGNAL( connectionFailed( gg_failure_t )),
 				SLOT( connectionFailed( gg_failure_t ) ) );
-	QObject::connect( session_, SIGNAL( connectionSucceed( struct gg_event* ) ),
-				SLOT( connectionSucceed( struct gg_event* ) ) );
+	QObject::connect( session_, SIGNAL( connectionSucceed( ) ),
+				SLOT( connectionSucceed( ) ) );
 	QObject::connect( session_, SIGNAL( disconnect() ),
 				SLOT( slotSessionDisconnect() ) );
-	QObject::connect( session_, SIGNAL( ackReceived( struct gg_event* ) ),
-				SLOT( ackReceived( struct gg_event* ) ) );
+	QObject::connect( session_, SIGNAL( ackReceived( unsigned int ) ),
+				SLOT( ackReceived( unsigned int ) ) );
 	QObject::connect( session_, SIGNAL( pubDirSearchResult( const searchResult& ) ),
 				SLOT( slotSearchResult( const searchResult& ) ) );
 	QObject::connect( session_, SIGNAL( userListExported() ),
@@ -359,75 +360,59 @@ GaduAccount::error( const QString& title, const QString& message )
 }
 
 void
-GaduAccount::messageReceived( struct gg_event* e )
+GaduAccount::messageReceived( KGaduMessage* km )
 {
 	GaduContact* c = 0;
 	KopeteContactPtrList tmp;
 	KopeteContactPtrList tmpPtrList;
-	QString message;
-
-	if ( !e->event.msg.message ) {
-		return;
-	}
 
 	// FIXME:check for ignored users list
 	// FIXME:anonymous (those not on the list) users should be ignored, as an option
 
-	message = textcodec_->toUnicode( (const char*) e->event.msg.message );
-
-	if ( e->event.msg.sender == 0 ) {
+	if ( km->sender_id == 0 ) {
 		//system message, display them or not?
-		kdDebug(14100) << "####" << " System Message " << message << endl;
+		kdDebug(14100) << "####" << " System Message " << km->message << endl;
 		return;
 	}
 
-	c = static_cast<GaduContact*> ( contacts()[ QString::number( e->event.msg.sender ) ] );
+	c = static_cast<GaduContact*> ( contacts()[ QString::number( km->sender_id ) ] );
 
 	if ( !c ) {
 		KopeteMetaContact* metaContact = new KopeteMetaContact ();
 		metaContact->setTemporary ( true );
-		c = new GaduContact( e->event.msg.sender,
-				QString::number( e->event.msg.sender ), this, metaContact );
+		c = new GaduContact( km->sender_id,
+				QString::number( km->sender_id ), this, metaContact );
 		KopeteContactList::contactList ()->addMetaContact( metaContact );
-		addNotify( e->event.msg.sender );
+		addNotify( km->sender_id );
 	}
 
 	tmpPtrList.append( myself() );
-	KopeteMessage msg( c, tmpPtrList, message, KopeteMessage::Inbound );
+	KopeteMessage msg( c, tmpPtrList, km->message, KopeteMessage::Inbound );
 	c->messageReceived( msg );
 }
 
 void
-GaduAccount::ackReceived( struct gg_event* e  )
+GaduAccount::ackReceived( unsigned int recipient  )
 {
 	GaduContact* c;
 
-	c = static_cast<GaduContact*> ( contacts()[ QString::number( e->event.ack.recipient ) ] );
+	c = static_cast<GaduContact*> ( contacts()[ QString::number( recipient ) ] );
 	if ( c ) {
 		kdDebug(14100) << "####" << "Received an ACK from " << c->uin() << endl;
 		c->messageAck();
 	}
 	else {
-		kdDebug(14100) << "####" << "Received an ACK from an unknown user : " << e->event.ack.recipient << endl;
+		kdDebug(14100) << "####" << "Received an ACK from an unknown user : " << recipient << endl;
 	}
 }
 
 
 void
-GaduAccount::notify( struct gg_event* e )
+GaduAccount::notify( KGaduNotifyList* nl )
 {
 	GaduContact* c;
-	unsigned int n;
-
-	for( n=0 ; e->event.notify60[n].uin ; n++ ) {
-		kdDebug(14100) << "### NOTIFY " << e->event.notify60[n].uin << " " << e->event.notify60[n].status << endl;
-		c = static_cast<GaduContact*> ( contacts()[ QString::number( e->event.notify60[n].uin ) ] );
-
-		if ( !c ) {
-			kdDebug(14100) << "Notify not in the list " << e->event.notify60[n].uin << endl;
-			session_->removeNotify( e->event.notify60[n].uin );
-			continue;
-		}
+	QPtrListIterator<KGaduNotify>li( *nl );
+	unsigned int i;
 
 // FIXME:store this info in GaduContact, be usefull in dcc and custom images
 //		n->remote_ip;
@@ -435,40 +420,50 @@ GaduAccount::notify( struct gg_event* e )
 //		n->version;
 //		n->image_size;
 
-		if ( e->event.notify60[n].descr ) {
-			c->setDescription( textcodec_->toUnicode( e->event.notify60[n].descr )  );
-			c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.notify60[n].status ), c->description() );
+	for ( i = nl->count() ; i-- ; ++li ) {
+		kdDebug(14100) << "### NOTIFY " << (*li)->contact_id << " " << (*li)->status << endl;
+		c = static_cast<GaduContact*> ( contacts()[ QString::number( (*li)->contact_id ) ] );
+
+		if ( !c ) {
+			kdDebug(14100) << "Notify not in the list " << (*li)->contact_id << endl;
+			session_->removeNotify( (*li)->contact_id );
+			continue;
+		}
+
+		if ( (*li)->description.isNull() ) {
+			c->setDescription( QString::null );
+			c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( (*li)->status ) );
 		}
 		else {
-			c->setDescription( QString::null );
-			c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( e->event.notify60[n].status ) );
+			c->setDescription( (*li)->description  );
+			c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*li)->status ), c->description() );
 		}
 	}
 }
 
 void
-GaduAccount::statusChanged( struct gg_event* e )
+GaduAccount::statusChanged( KGaduNotify* s )
 {
-	kdDebug(14100) << "####" << " status changed, uin:" << e->event.status60.uin <<endl;
+	kdDebug(14100) << "####" << " status changed, uin:" << s->contact_id <<endl;
 
 	GaduContact* c;
 
-	c = static_cast<GaduContact*>( contacts()[ QString::number( e->event.status60.uin ) ] );
+	c = static_cast<GaduContact*>( contacts()[ QString::number( s->contact_id ) ] );
 	if( !c ) {
 		return;
 	}
 
-	if ( e->event.status60.descr ) {
-		c->setDescription( textcodec_->toUnicode( e->event.status60.descr ) );
-		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status60.status ), c->description()  );
+	if ( s->description.isEmpty() ) {
+		c->setDescription( QString::null );
+		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( s->status ) );
 	}
 	else {
-		c->setDescription( QString::null );
-		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status60.status )  );
+		c->setDescription( s->description );
+		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( s->status ), c->description() );
 	}
 
 /// FIXME: again, store this information
-//	e->event.status60.remote_ip;
+//	e->event.status60.r emote_ip;
 //	e->event.status60.remote_port;
 //	e->event.status60.version;
 //	e->event.status60.image_size;
@@ -505,11 +500,11 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 }
 
 void
-GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
+GaduAccount::connectionSucceed( )
 {
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
 	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
-	myself()->setOnlineStatus( status_ );
+	myself()->setOnlineStatus( status_, lastDescription );
 	startNotify();
 
 	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
@@ -692,7 +687,7 @@ GaduAccount::userlist()
 
 	for( i=0 ; it.current() ; ++it ) {
 		contact = static_cast<GaduContact*>(*it);
-		if ( contact->uin() != myself()->uin() ) {
+		if ( contact->uin() != static_cast<GaduContact*>( myself() )->uin() ) {
 			gaducontactslist->append( contact->contactDetails() );
 		}
 	}

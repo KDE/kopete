@@ -113,18 +113,18 @@ protected:
 
 private slots:
 	void startNotify();
-	void notify( struct gg_event* e );
-
-	void messageReceived( struct gg_event* e );
-	void ackReceived( struct gg_event* /* e */ );
-	void statusChanged( struct gg_event* e );
+	void notify( KGaduNotifyList* );
+	
+	void messageReceived( KGaduMessage* );
+	void ackReceived( unsigned int );
+	void statusChanged( KGaduNotify* );
 	void slotSessionDisconnect();
 
 	void userlist( const QString& contacts );
 	gaduContactsList* userlist();
 
 	void connectionFailed( gg_failure_t failure );
-	void connectionSucceed( struct gg_event* /*e*/ );
+	void connectionSucceed( );
 
 	void slotChangePassword();
 	void slotSearch();
@@ -145,7 +145,6 @@ private:
 
 	QTimer*			pingTimer_;
 
-	GaduContact*		myself_;
 	KopeteOnlineStatus	status_;
 	QString			nick_;
 

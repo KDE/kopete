@@ -156,6 +156,7 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 	params_.async = 1;
 	params_.tls = useTls;
 
+	kdDebug(14100)<<"gadusession::login"<<endl;
 	login( &params_ );
 }
 
@@ -612,11 +613,38 @@ GaduSession::failureDescription( gg_failure_t f )
 }
 
 void
+GaduSession::notify60( gg_event* e )
+{
+	KGaduNotifyList nl;
+	KGaduNotify* gn;
+	unsigned int n;
+	nl.setAutoDelete( TRUE );
+
+
+	for( n=0 ; e->event.notify60[n].uin ; n++ ) {
+		gn = new KGaduNotify;
+		gn->contact_id = e->event.notify60[n].uin;
+		gn->status = e->event.notify60[n].status;
+		gn->remote_ip = e->event.notify60[n].remote_ip;
+		gn->remote_port = e->event.notify60[n].remote_port;
+		gn->version = e->event.notify60[n].version;
+		gn->image_size = e->event.notify60[n].image_size;
+		gn->description = textcodec->toUnicode( e->event.notify60[n].descr );
+		nl.append( gn );
+	}
+	if ( n ) {
+		emit notify( &nl );
+	}
+}
+
+void
 GaduSession::checkDescriptor()
 {
 	disableNotifiers();
 
-	struct gg_event *e;
+	struct gg_event* e;
+	KGaduMessage	gaduMessage;
+	KGaduNotify	gaduNotify;
 
 	if ( !( e = gg_watch_fd( session_ ) ) ) {
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
@@ -637,23 +665,54 @@ GaduSession::checkDescriptor()
 				// TODO: DCC CONNECTION
 			}
 			else {
-				emit messageReceived( e );
+				gaduMessage.message =
+					textcodec->toUnicode((const char*)e->event.msg.message);
+				gaduMessage.sender_id = e->event.msg.sender;
+				emit messageReceived( &gaduMessage );
 			}
 		break;
 		case GG_EVENT_ACK:
-			emit ackReceived( e );
+			emit ackReceived( e->event.ack.recipient );
 		break;
 		case GG_EVENT_STATUS:
-			kdDebug(14100)<<"event status < 60, i should not get it boy"<<endl;
+			gaduNotify.status = e->event.status.status;
+			gaduNotify.contact_id = e->event.status.uin;
+			if ( e->event.status.descr ) {
+				gaduNotify.description = textcodec->toUnicode( e->event.status.descr );
+			}
+			else {
+				gaduNotify.description = QString::null;
+			}
+			gaduNotify.remote_ip = 0;
+			gaduNotify.remote_port = 0;
+			gaduNotify.version = 0;			
+			gaduNotify.image_size = 0;
+			gaduNotify.time = 0;
+
+			emit statusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_STATUS60:
-			emit statusChanged( e );
+			gaduNotify.status = e->event.status60.status;
+			gaduNotify.contact_id = e->event.status60.uin;
+			if ( e->event.status60.descr ) {
+				gaduNotify.description = textcodec->toUnicode( e->event.status60.descr );
+			}
+			else {
+				gaduNotify.description = QString::null;
+			}
+			gaduNotify.remote_ip = e->event.status60.remote_ip;
+			gaduNotify.remote_port = e->event.status60.remote_port;
+			gaduNotify.version = e->event.status60.version;			
+			gaduNotify.image_size = e->event.status60.image_size;
+			gaduNotify.time = e->event.status60.time;
+
+			emit statusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_NOTIFY60:
-			emit notify( e );
+			notify60( e );
 		break;
 		case GG_EVENT_CONN_SUCCESS:
-			emit connectionSucceed( e );
+			emit connectionSucceed();
 		break;
 		case GG_EVENT_CONN_FAILED:
 			destroySession();

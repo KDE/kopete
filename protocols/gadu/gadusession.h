@@ -31,7 +31,7 @@
 
 #include <libgadu.h>
 
-struct contactLine{
+struct contactLine {
 	QString name;
 	QString group;
 	QString uin;
@@ -43,6 +43,24 @@ struct contactLine{
 };
 
 typedef QPtrList<contactLine> gaduContactsList;
+
+struct KGaduMessage {
+    QString message;		// Unicode
+    unsigned int sender_id;	// sender's UIN
+};
+
+struct KGaduNotify {
+	int status;
+	unsigned int remote_ip;
+	unsigned short remote_port;
+	int version;
+	int image_size;
+	int time;
+	QString description;
+	unsigned int contact_id;
+};
+
+typedef QPtrList<KGaduNotify> KGaduNotifyList;
 
 struct resLine{
 	QString uin;
@@ -108,13 +126,13 @@ public slots:
 
 signals:
 	void error( const QString&, const QString& );
-	void messageReceived( struct gg_event* );
-	void ackReceived( struct gg_event* );
-	void notify( struct gg_event* );
-	void statusChanged( struct gg_event* );
+	void messageReceived( KGaduMessage* );
+	void ackReceived( unsigned int );
+	void notify( KGaduNotifyList* );
+	void statusChanged( KGaduNotify* );
 	void pong();
 	void connectionFailed( gg_failure_t failure );
-	void connectionSucceed( struct gg_event* );
+	void connectionSucceed( );
 	void disconnect();
 	void pubDirSearchResult( const searchResult& );
 	void userListRecieved( const QString& );
@@ -129,6 +147,7 @@ private:
 
 	void sendResult( gg_pubdir50_t );
 	void handleUserlist( gg_event* );
+	void notify60( gg_event* );
 	void destroySession();
 	void destroyNotifiers();
 	void createNotifiers( bool connect );
