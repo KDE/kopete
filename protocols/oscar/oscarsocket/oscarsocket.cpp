@@ -25,6 +25,7 @@ extern "C" {
 #include <unistd.h>
 #include <stdlib.h>
 #include <kdebug.h>
+#include <klocale.h>
 #define DIRECTCONNECT		0x0f1f
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
@@ -226,7 +227,7 @@ void OscarSocket::OnRead(void)
 		case 0x0001:  //error
 		    kdDebug() << "[OSCAR] Generic service error.. remaining data is:" << endl;
 		    inbuf.print();
-		    emit protocolError("Generic service error: 0x0001/0x0001");
+		    emit protocolError(i18n("An unknown error occured. Please report this to the Kopete development team by visiting http://kopete.kde.org. The error message was: \"Generic service error: 0x0001/0x0001\""), 0);
 		    break;
 		case 0x0003: //server ready
 		    parseServerReady(inbuf);
@@ -416,6 +417,7 @@ void OscarSocket::putFlapVer(Buffer &outbuf)
 /** Called when a connection has been closed */
 void OscarSocket::OnConnectionClosed(void)
 {
+    emit statusChanged(OSCAR_OFFLINE);
     kdDebug() << "[OSCAR] Connection closed by server" << endl;
 }
 
@@ -641,7 +643,16 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
     if (cookie)
 	delete cookie;
     if (err)
-	emit protocolError(QString("Signon error %1 occured").arg((err->data[0] << 8)|err->data[1]));
+    {
+	QString errorString;
+	int errorCode = 0;
+	switch((err->data[0] << 8)|err->data[1])
+	{
+		case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); errorCode = 1; break;  }
+		case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); errorCode = 5; break; }
+	}
+	emit protocolError(errorString, errorCode);
+     }
     if (bosip)
 	{
 	    QString ip = bosip->data;
@@ -716,7 +727,7 @@ void OscarSocket::sendClientReady(void)
     outbuf.addWord(0x0004);
     outbuf.addWord(0x0001);
     sendBuf(outbuf,0x02);
-    emit online();
+    emit statusChanged(OSCAR_ONLINE);
     TAimConfig cnf;
     cnf.revision = 0;
     sendBuddyListRequest(cnf);
@@ -926,7 +937,7 @@ void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 {
 	WORD id = inbuf.getWord();
 	if (id < 4)
-		emit protocolError(QString("AOL MOTD Error: your connection may be lost. ID: %1").arg(id));
+		emit protocolError(i18n("An unknown error occured. Your connection may be lost. The error was: \"AOL MOTD Error: your connection may be lost. ID: %1\"").arg(id), 0);
 }
 
 /** Requests location rights */
@@ -1157,7 +1168,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			    else if (cur->type == 0x000b)
 				{
 				    kdDebug() << "[OSCAR] ICBM ch 2 error code " <<  ((cur->data[1] << 8) | cur->data[0]) << endl;
-				    emit protocolError(QString("Rendezvous with buddy failed.  Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]));
+				    emit protocolError(i18n("Rendezvous with buddy failed. Please check your internet connection or try the operation again later. Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]), 0);
 				}
 			    //Invitation message/ chat description
 			    else if (cur->type == 0x000c)
@@ -1467,7 +1478,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
     if (!findTLV(tl,0x0006) && !findTLV(tl,0x0005) && !findTLV(tl,0x000e))
 	{
 	    tl.clear();
-	    emit protocolError("Not enough information found in server redirect\n");
+	    emit protocolError(i18n("An unknown error occured. Please check your internet connection. The error message was: \"Not enough information found in server redirect\""), 0);
 	    return;
 	}
     for (TLV *tmp = tl.first(); tmp; tmp = tl.next())
