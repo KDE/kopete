@@ -66,6 +66,9 @@ o Better chatwindow
     UNASSIGNED
 
 - icq
+  + add authorization support
+  -> In progress, 50% done
+     ASSIGNED: DMV
   + store users on server/icq2001b (although that's more of a kxengine item)
     -> In progress, almost finished in kxicq/kxengine
        ASSIGNED: Herwin "Gompy" Jan Steehouwer (kxicq author)
