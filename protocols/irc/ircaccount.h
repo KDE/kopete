@@ -25,6 +25,7 @@
 
 class KAction;
 class KActionMenu;
+class KopeteAwayAction;
 
 class KopeteMetaContact;
 class KopeteMessage;
@@ -169,7 +170,8 @@ private:
 	IRCProtocol *m_protocol;
 	KopeteMessageManager *m_manager;
 	QString mNickName;
-	
+	KopeteAwayAction *mAwayAction;
+
 	QString m_server;
 	uint m_port;
 	bool triedAltNick;
