@@ -114,8 +114,8 @@ void OscarSocket::slotConnectionClosed()
 	clearPendingData();
 	kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
 
-	QObject::disconnect(this, SIGNAL(connAckReceived()));
-	QObject::disconnect(this, SIGNAL(connected()));
+	QObject::disconnect(this, SIGNAL(connAckReceived()), 0, 0);
+	QObject::disconnect(this, SIGNAL(connected()), 0, 0);
 
 	if (mDirectIMMgr)
 	{
@@ -526,11 +526,11 @@ void OscarSocket::doLogin(
 
 	kdDebug(14150) << k_funcinfo << "Connecting to '" << host << "', port=" << port << endl;
 
-	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
-	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
+	QObject::disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
+	QObject::connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
 
-	disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
-	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
+	QObject::disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
+	QObject::connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	//TODO: start connecting animation after host has been found
 //	connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
 
@@ -562,11 +562,11 @@ void OscarSocket::connectToBos()
 
 //	emit connectionChanged(4,"Connecting to server...");
 
-	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
-	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
+	QObject::disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
+	QObject::connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
 
-	disconnect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
-	connect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
+	QObject::disconnect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
+	QObject::connect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
 
 	connectToHost(bosServer,bosPort);
 }
