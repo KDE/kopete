@@ -33,15 +33,16 @@
 
 #include "preferencesdialog.h"
 #include "kopetewindow.h"
-#include <kopeteevent.h>
-#include <kopetenotifier.h>
+#include "kopeteevent.h"
+#include "kopetenotifier.h"
 
 #include "plugin.h"
 #include "configmodule.h"
 #include "pluginmodule.h"
 #include "pluginloader.h"
 
-#include "appearanceconfig.h" // included so every plugon can access global appeareance-prefs
+/* included so every plugon can access global appeareance-prefs */
+#include "appearanceconfig.h"
 
 class LibraryLoader;
 class KopeteLibraryInfo;
@@ -64,7 +65,16 @@ struct KopeteEmoticons
 };
 
 
-/** Kopete is the base class of the project */
+/**
+* Kopete is the main class.
+* Almost all the common tasks you will need
+* for plugin development are here.
+*
+* You can should Kopete API like this:
+* 1- #include <kopete.h>
+* 2- kopeteapp->someFunction();
+**/
+
 class Kopete : public KUniqueApplication
 {
 	Q_OBJECT
@@ -73,16 +83,58 @@ public:
 	Kopete();
 	~Kopete();
 
+	/**
+	* This is the preferences dialog, where Kopete's general
+	* preferences are, and where plugins embedd its preferences.
+	**/
 	PreferencesDialog *preferencesBox() const { return mPref; }
+	/**
+	* Use it to access the appearance preferences module
+	* preferences are, and where plugins embedd its preferences.
+	**/
 	AppearanceConfig *appearance() const { return mAppearance; }
+	/**
+	* Use it to access Kopete's plugin loader.
+	* You wouldnt need to use it from a plugin.
+	**/
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
+	/**
+	* Use it to access Kopete's icon loader.
+	* You wouldnt need to use it from a plugin.
+	**/
 	KIconLoader *iconLoader() const { return mIconLoader; }
+	/**
+	* Use it to access Kopete's Main App window.
+	**/
 	KopeteWindow *mainWindow() const { return m_mainWindow; }
+	/**
+	* Use it to access Kopete's Contact List.
+	**/
 	ContactList *contactList() const;
+	/**
+	* Use it to access the status bar
+	* The plugins can dock status bar icons to
+	* show informatin about the plugin itself
+	**/
 	KStatusBar *statusBar() const;
+	/**
+	* Use it to access Kopete's system tray
+	**/
 	KopeteSystemTray *systemTray() const;
-
+	/**
+	* Use it to parse emoticons in a text.
+	* You dont need to use this for chat windows,
+	* There is a special class that abstract a chat view
+	* and uses emoticons parser.
+	* This function will use the selected emoticon theme.
+	**/
 	QString parseEmoticons(QString);
+	/**
+	* Use it to parse HTML in text.
+	* You dont need to use this for chat windows,
+	* There is a special class that abstract a chat view
+	* and uses HTML parser.
+	**/
 	QString parseHTML( QString message, bool parseURLs = true );
 
 	void initEmoticons();
@@ -101,11 +153,16 @@ private:
 	void loadPlugins();
 
 public slots:
-	// Only use notify event for system-wide messages
-	// and things like online notification
-	// Messages from specific contacts should use KopeteContact's
-	// incomingEvent signal
+	/**
+	* Only use notify event for system-wide messages
+	* and things like online notification
+	* Messages from specific contacts should use KopeteContact's
+	* incomingEvent signal
+	*/
 	void notifyEvent( KopeteEvent *);
+	/**
+	* Cancel an event.
+	**/
 	void cancelEvent( KopeteEvent *);
 
 	void slotPreferences();
