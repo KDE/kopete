@@ -212,8 +212,7 @@ QWidget *KopeteMessageManager::widget()  const
 
 bool KopeteMessageManager::emptyMessageBuffer()
 {
-	if ((d->mWidget == ChatWindow && !d->mChatWindow) ||
-	    (d->mWidget == Email && !d->mEmailWindow) )
+	if (!widget() )
 	{
 		kdDebug() << "KopeteMessageManager::emptyMessageBuffer: mChatWindow just doesn't exist" << endl;
 		newChatWindow();
@@ -404,36 +403,11 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	/* First stage, see what to do */
 	bool isvisible = false;
 
-	if (d->mWidget == ChatWindow)
-	{
-		if (d->mChatWindow == 0L)
-		{
-			newChatWindow();
-		}
-		else if (!d->mChatWindow->isVisible())
-		{
-			isvisible = false;
-        }
-		else
-		{
-			isvisible = true;
-		}
-	}
-	else if (d->mWidget == Email)
-	{
-		if (d->mEmailWindow == 0L)
-		{
-			newChatWindow(); // FIXME!!!
-		}
-		else if (!d->mEmailWindow->isVisible())
-		{
-			isvisible = false;
-		}
-		else
-		{
-			isvisible = true;
-		}
-	}
+	if (!widget())
+		newChatWindow();
+	else
+		isvisible=widget()->isVisible();
+
 
 	if (d->mReadMode == Popup)
 	{
@@ -460,7 +434,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 		}
 	}
 
-	if ( KopetePrefs::prefs()->soundNotify() && isvisible && (msg.direction() != KopeteMessage::Outbound) )
+	if ( KopetePrefs::prefs()->soundNotify() && (isvisible || d->mReadMode == Popup) && (msg.direction() != KopeteMessage::Outbound) )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 		    KNotifyClient::event("kopete_incoming");
