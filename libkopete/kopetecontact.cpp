@@ -669,28 +669,17 @@ QString KopeteContact::toolTip() const
 	if ( displayName() == contactId() )
 	{
 		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<b>%3</b><br><img src=\"%2\">&nbsp;%1" ).
-#if QT_VERSION < 0x030200
-			arg( onlineStatus().description() ).
-			arg( iconName ).
-			arg( QStyleSheet::escape( displayName() ) );
-#else
-			arg( onlineStatus().description(), iconName, QStyleSheet::escape( displayName() ) );
-#endif
+		            "<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1" ).
+		      arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
+		           QStyleSheet::escape( displayName() ) );
 	}
 	else
 	{
 		tip = i18n( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<b>%4</b> (%3)<br><img src=\"%2\">&nbsp;%1" ).
-#if QT_VERSION < 0x030200
-			arg( onlineStatus().description() ).
-			arg( iconName ).
-			arg( QStyleSheet::escape( contactId() ) ).
-			arg( QStyleSheet::escape( displayName() ) );
-#else
-			arg( onlineStatus().description(), iconName, QStyleSheet::escape( contactId() ),
-				QStyleSheet::escape( displayName() ) );
-#endif
+		            "<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
+		      arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
+		           QStyleSheet::escape( contactId() ),
+		           QStyleSheet::escape( displayName() ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -702,22 +691,30 @@ QString KopeteContact::toolTip() const
 		{
 			QString name = formattedName();
 			if(!name.isEmpty())
+			{
 				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
-					"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
+				            "<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
+			}
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
 		{
 			QString time = formattedIdleTime();
 			if(!time.isEmpty())
+			{
 				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
-					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
+				            "<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
+			}
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
 		{
 			QString url = property(*it).value().toString();
 			if(!url.isEmpty())
+			{
 				url += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
-					"<br><b>Home Page:</b>&nbsp;<nobr><a href=\"%1\">%1</a></nobr>").arg(url).arg(url);
+				            "<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
+				       arg( KURL::encode_string( url ),
+				            QStyleSheet::escape( url ) );
+			}
 		}
 		else
 		{
@@ -741,9 +738,8 @@ QString KopeteContact::toolTip() const
 						valueText = val.toString();
 				}
 
-				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE", "<br><nobr><b>%2:</b></nobr>&nbsp;%1")
-					.arg(valueText)
-					.arg(p.label());
+				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE", "<br><nobr><b>%2:</b></nobr>&nbsp;%1").
+				       arg( QStyleSheet::escape( valueText ), p.label() );
 			}
 		}
 	}
