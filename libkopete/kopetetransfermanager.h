@@ -135,16 +135,6 @@ class Transfer : public KIO::Job
 	Q_OBJECT
 
 public:
-	/** FIXME: remove */
-	enum KopeteTransferError
-	{
-		CanceledLocal,
-		CanceledRemote,
-		Timeout,
-		Refused,
-		Other
-	};
-
 	/**
 	 * Constructor
 	 */
@@ -162,11 +152,6 @@ public:
 
 	/** @brief Get the info for this file transfer */
 	const FileTransferInfo &info() const { return mInfo; }
-
-	/**
-	 * Use @ref slotError instead.
-	 */
-	void setError(KopeteTransferError error) KDE_DEPRECATED;
 
 	/**
 	 * Retrieve a URL indicating where the file is being copied from.

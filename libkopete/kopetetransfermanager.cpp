@@ -128,34 +128,6 @@ void Kopete::Transfer::slotComplete()
 	emitResult();
 }
 
-void Kopete::Transfer::setError(KopeteTransferError kopeteError)
-{
-	QString errorText;
-	int error;
-
-	switch (kopeteError)
-	{
-		case CanceledLocal:
-			errorText = i18n( "Aborted" );
-			error = KIO::ERR_USER_CANCELED;
-			break;
-		case CanceledRemote:
-			errorText = i18n( "The remote user aborted" );
-			error = KIO::ERR_ABORTED;
-			break;
-		case Timeout:
-			errorText = i18n( "Connection timed out" );
-			error = KIO::ERR_CONNECTION_BROKEN;
-			break;
-		default:
-			errorText = i18n( "An unknown error occurred" );
-			error = KIO::ERR_UNKNOWN;
-			break;
-	}
-
-	slotError( error, errorText );
-}
-
 void Kopete::Transfer::slotError( int error, const QString &errorText )
 {
 	m_error = error;

@@ -252,9 +252,7 @@ void
 GaduDCCTransaction::slotTransferResult()
 {
 	if ( transfer_->error() == KIO::ERR_USER_CANCELED ) {
-		if ( transfer_ ) {
-			transfer_->slotError( Kopete::Transfer::CanceledLocal, i18n( "File transfer was cancelled" ) );
-		}
+		transfer_->slotError( KIO::ERR_USER_CANCELED, QString::null );
 		closeDCC();
 		deleteLater();
 	}
@@ -351,24 +349,24 @@ GaduDCCTransaction::watcher() {
 				switch( dccEvent->event.dcc_error ) {
 
 					case GG_ERROR_DCC_REFUSED:
-						transfer_->slotError( Kopete::Transfer::Refused, i18n( "Connection to peer was refused; it possibly does not listen for incoming connections." ) );
+						transfer_->slotError( KIO::ERR_SLAVE_DEFINED, i18n( "Connection to peer was refused; it possibly does not listen for incoming connections." ) );
 					break;
 
 					case GG_ERROR_DCC_EOF:
-						transfer_->slotError( Kopete::Transfer::CanceledRemote, i18n( "File transfer transaction was not agreed by peer." ) );
+						transfer_->slotError( KIO::ERR_SLAVE_DEFINED, i18n( "File transfer transaction was not agreed by peer." ) );
 					break;
 
 					case GG_ERROR_DCC_HANDSHAKE:
-						transfer_->slotError( Kopete::Transfer::Other, i18n( "File-transfer handshake failure." ) );
+						transfer_->slotError( KIO::ERR_SLAVE_DEFINED, i18n( "File-transfer handshake failure." ) );
 					break;
 					case GG_ERROR_DCC_FILE:
-						transfer_->slotError( Kopete::Transfer::Other, i18n( "File transfer had problems with the file." ) );
+						transfer_->slotError( KIO::ERR_SLAVE_DEFINED, i18n( "File transfer had problems with the file." ) );
 					break;
 					case GG_ERROR_DCC_NET:
-						transfer_->slotError( Kopete::Transfer::Other, i18n( "There was network error during file transfer." ) );
+						transfer_->slotError( KIO::ERR_SLAVE_DEFINED, i18n( "There was network error during file transfer." ) );
 					break;
 					default:
-						transfer_->slotError( Kopete::Transfer::Other, i18n( "Unknown File-Transfer error." ) );
+						transfer_->slotError( KIO::ERR_SLAVE_DEFINED, i18n( "Unknown File-Transfer error." ) );
 					break;
 				}
 			}
