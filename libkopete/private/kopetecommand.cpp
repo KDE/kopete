@@ -16,6 +16,7 @@
 #include <qstringlist.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -56,12 +57,13 @@ void KopeteCommand::slotAction()
 {
 	KopeteMessageManager *manager = KopeteMessageManagerFactory::factory()->activeView()->msgManager();
 
+	QString args;
 	if( m_minArgs > 0 )
 	{
-		//TODO: Get arguments from a GUI dialog
+		args = KInputDialog::getText( i18n("Enter Arguments"), i18n("Enter the arguments to %1:").arg(m_command) );
 	}
 
-	processCommand( QString::null, manager, true );
+	processCommand( args, manager, true );
 }
 
 void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *manager, bool gui )
