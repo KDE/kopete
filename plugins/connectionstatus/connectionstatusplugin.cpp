@@ -34,6 +34,7 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 	qtTimer->start(60000);
 
 	kpIfconfig = new KProcess;
+        *kpIfconfig << "netstat" << "-r";
 	connect(kpIfconfig, SIGNAL(receivedStdout(KProcess *, char *, int)),
 		this, SLOT(slotProcessStdout(KProcess *, char *, int)));
 
@@ -54,7 +55,6 @@ void ConnectionStatusPlugin::slotCheckStatus()
 	* default gateway. If so, we're connected, if not, we're offline */
 
 	kdDebug(14301) << "ConnectionStatusPlugin::checkStatus()" << endl;
-	*kpIfconfig << "netstat" << "-r";
 	kpIfconfig->start(KProcess::DontCare, KProcess::Stdout);
 }
 
