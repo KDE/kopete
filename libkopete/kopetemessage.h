@@ -1,9 +1,9 @@
 /*
-	kopetemessage.h  -  Base class for Kopete messages
+    kopetemessage.h  -  Base class for Kopete messages
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,43 +15,38 @@
     *************************************************************************
 */
 
-#ifndef _KOPETE_MESSAGE_H
-#define _KOPETE_MESSAGE_H
+#ifndef __KOPETE_MESSAGE_H__
+#define __KOPETE_MESSAGE_H__
 
 #include <qdatetime.h>
 #include <qstring.h>
-#include <qfont.h>
-#include <qcolor.h>
-#include <qobject.h>
 
 #include "kopeteviewmanager.h"
 #include "kopetecontact.h"
-#include "qptrlist.h"
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
+class KopeteMessagePrivate;
+
 /**
  * @author Martijn Klingens <klingens@kde.org>
- *
  */
-
 class KopeteMessage
 {
-
 public:
 	/**
-		Direction of a message. Inbound is from the chat partner, Outbound is
-		from the user.
-	*/
-	enum MessageDirection { Inbound, Outbound, Internal};
+	 * Direction of a message. Inbound is from the chat partner, Outbound is
+	 * from the user.
+	 */
+	enum MessageDirection { Inbound, Outbound, Internal };
 
 	/**
-		Format of the body
-		-PlainText: Just a simple text
-		-RichText: Text already HTML escaped and which can contains some tags
-		-ParsedHTML: only used by the chatwindow, this text is parsed and ready to
-			show into the chatwindow
-	*/
+	 * Format of the body
+	 * -PlainText: Just a simple text
+	 * -RichText: Text already HTML escaped and which can contains some tags
+	 * -ParsedHTML: only used by the chatwindow, this text is parsed and ready to
+	 *  show into the chatwindow
+	 */
 	enum MessageFormat  { PlainText, RichText, ParsedHTML };
 
 	/**
@@ -60,6 +55,11 @@ public:
 	KopeteMessage();
 
 	/**
+	 * Deref and clean private object if refcount == 0
+	 */
+	~KopeteMessage();
+
+	/**
 	 * Constructs a new message
 	 * @param fromKC The KopeteContact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
@@ -67,8 +67,8 @@ public:
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
 	 */
-	KopeteMessage(const KopeteContact *fromKC, KopeteContactPtrList toKC,
-				QString body, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
+	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+		MessageDirection direction, MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Constructs a new message
@@ -79,8 +79,8 @@ public:
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
 	 */
-	KopeteMessage(const KopeteContact* fromKC, KopeteContactPtrList toKC, QString body,
-				QString subject, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat  );
+	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Constructs a new message
@@ -91,8 +91,8 @@ public:
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
 	 */
-	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
-				QString body, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
+	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
+		const QString &body, MessageDirection direction, MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Constructs a new message
@@ -104,98 +104,108 @@ public:
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
 	 */
-	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
-				QString body, QString subject, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
+	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
+		const QString &body, const QString &subject, MessageDirection direction,
+		MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
+	/**
+	 * Copy constructor
+	 * Just adds a reference, doesn't actually copy.
+	 */
+	KopeteMessage( const KopeteMessage &other );
 
-	// Accessors
+	/**
+	 * Assignment operator
+	 * Just like the copy constructor it just refs and doesn't copy.
+	 */
+	KopeteMessage & operator=( const KopeteMessage &other );
 
 	/**
 	 * Accessor method for the timestamp of the message
 	 * @return The message's timestamp
 	 */
-	QDateTime timestamp() const { return mTimestamp; }
+	QDateTime timestamp() const;
 
 	/**
 	 * Accessor method for the KopeteContact that sent this message
 	 * @return The KopeteContact who sent this message
 	 */
-	const KopeteContact *from() const { return mFrom; }
+	const KopeteContact * from() const;
 
 	/**
 	 * Accessor method for the KopeteContacts that this message was sent to
 	 * @return Pointer list of the KopeteContacts this message was sent to
 	 */
-	KopeteContactPtrList to() const { return mTo; }
+	KopeteContactPtrList to() const;
 
-	KopeteView::ViewType type() const { return m_type; }
+	KopeteView::ViewType type() const;
 
 	/**
 	 * Acessor method for the foreground color
 	 * @return The message's foreground color
 	 */
-	QColor fg() const { return mFg; }
+	QColor fg() const;
 
 	/**
 	 * Accessor method for the background color of the message
 	 * @return The message's background color
 	 */
-	QColor bg() const { return mBg; }
+	QColor bg() const;
 
 	/**
 	 * Accessor method for the font used in the message
 	 * @return The message's font
 	 */
-	QFont font() const { return mFont; }
+	QFont font() const;
 
 	/**
 	 * Accessor method for the body of the message in the current format
 	 * @return The message body
 	 */
-	QString body() const { return mBody; }
+	QString body() const;
 
 	/**
 	 * Accessor method for the subject of the message
 	 * @return The message subject
 	 */
-	QString subject() const { return mSubject; }
+	QString subject() const;
 
 	/**
 	 * Accessor method for the format of the message
 	 * @return The message format
 	 */
-	MessageFormat format() const { return mFormat; }
+	MessageFormat format() const;
 
 	/**
 	 * Accessor method for the direction of the message
 	 * @return The message direction
 	 */
-	MessageDirection direction() const { return mDirection; }
+	MessageDirection direction() const;
 
 	/**
 	 * Sets the foreground color for the message
 	 * @param color The color
 	 */
-	void setFg(QColor color);
+	void setFg( const QColor &color );
 
 	/**
 	 * Sets the background color for the message
 	 * @param The color
 	 */
-	void setBg(QColor color);
+	void setBg( const QColor &color );
 
 	/**
 	 * Sets the font for the message
 	 * @param font The font
 	 */
-	void setFont(QFont font);
+	void setFont( const QFont &font );
 
 	/**
 	 * Sets the body of the message
 	 * @param body The body
 	 * @param format The format of the message
 	 */
-	void setBody( const QString& body , MessageFormat format=PlainText );
+	void setBody( const QString &body, MessageFormat format = PlainText );
 
 	/**
 	 * Get the message body back as plain text
@@ -221,59 +231,36 @@ public:
 	 *
 	 */
 	QString asHTML() const;
-	
+
 	QString transformMessage( const QString &model ) const;
-	
+
 	void setBgOverride( bool enable );
 
-protected:
-	// Helper for constructors
-	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to,
-			  QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType);
-
-	/** Timestamp */
-	QDateTime mTimestamp;
-	/** Contact the message came from */
-	const KopeteContact *mFrom;
-	/** Pointer list of contacts the message is going to */
-	KopeteContactPtrList mTo;
-	/** Message body */
-	QString mBody;
-	/** Message subject */
-	QString mSubject;
-	/** Message font */
-	QFont mFont;
-	/** The foreground color */
-	QColor mFg;
-	/** The background color */
-	QColor mBg;
-	/** The message direction */
-	MessageDirection mDirection;
-	/** The message format */
-	MessageFormat mFormat;
-
-	KopeteView::ViewType m_type;
-	
-	bool mBgOverride;
-
-public:
 	/**
 	 * Use it to parse HTML in text.
 	 * You dont need to use this for chat windows,
 	 * There is a special class that abstract a chat view
 	 * and uses HTML parser.
-	 **/
-	static QString parseHTML( QString message, bool parseURLs = true );
-	
+	 */
+	static QString parseHTML( const QString &message, bool parseURLs = true );
+
+private:
+	/**
+	 * Helper for constructors
+	 */
+	void init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
+		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type );
+
+	/**
+	 * KopeteMessage is implicitly shared.
+	 * Detach the instance when modifying data.
+	 */
+	void detach();
+
+	KopeteMessagePrivate *d;
 };
 
 #endif
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
+
