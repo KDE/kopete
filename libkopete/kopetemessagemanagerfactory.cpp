@@ -148,7 +148,7 @@ const Kopete::MessageManagerDict& Kopete::MessageManagerFactory::sessions( )
 	return mSessionDict;
 }
 
-KopeteView * Kopete::MessageManagerFactory::createView( Kopete::MessageManager *kmm , Kopete::Message::MessageType type )
+KopeteView * Kopete::MessageManagerFactory::createView( Kopete::MessageManager *kmm , Kopete::Message::ViewType type )
 {
 	KopeteView *newView=0L;
 	emit requestView( newView , kmm , type  );

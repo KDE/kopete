@@ -80,7 +80,7 @@ public:
 	 * - Chat: Two way chat
 	 * - Email: Single shot messaging
 	 */
-	enum MessageType { Undefined, Chat, Email };
+	enum ViewType { Undefined, Chat, Email };
 
 	/**
 	 * Specifies the type of notification that will be sent with this message
@@ -107,10 +107,10 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @param type Type of the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const ContactPtrList &toKC, const QString &body,
-		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
+		MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -119,10 +119,10 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @param type Type of the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
+		MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
 
 
 	/**
@@ -133,10 +133,10 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @param type Type of the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const ContactPtrList &toKC, const QString &body,
-		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
+		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -146,10 +146,10 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @param type Type of the message, see @ref ViewType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const ContactPtrList &toKC,
-		const QString &body, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
+		const QString &body, MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -160,11 +160,11 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @param type Type of the message, see @ref ViewType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const ContactPtrList &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, MessageType type = Undefined );
+		MessageFormat format = PlainText, ViewType type = Undefined );
 
 	/**
 	 * Copy constructor.
@@ -197,9 +197,9 @@ public:
 	Kopete::ContactPtrList to() const;
 
 	/**
-	 * @return the @ref MessageType of this message
+	 * @return the @ref ViewType of this message
 	 */
-	MessageType type() const;
+	ViewType type() const;
 
 	/**
 	 * Accessor method for the foreground color
@@ -367,7 +367,7 @@ private:
 	 * Helper for constructors
 	 */
 	void init( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
-		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type );
+		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType type );
 
 	/**
 	 * Kopete::Message is implicitly shared.

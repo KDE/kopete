@@ -33,6 +33,7 @@
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
 #include "kopetenotifyclient.h"
 #include "kopeteprefs.h"
@@ -348,7 +349,7 @@ void Kopete::MessageManager::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
-KopeteView* Kopete::MessageManager::view( bool canCreate, Kopete::Message::MessageType type )
+KopeteView* Kopete::MessageManager::view( bool canCreate, Kopete::Message::ViewType type )
 {
 	if ( !d->view && canCreate )
 	{

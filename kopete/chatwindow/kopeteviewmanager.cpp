@@ -68,8 +68,8 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 	d->activeView = 0L;
 	d->foreignMessage=false;
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
-	connect( Kopete::MessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  ) ) ,
-		this, SLOT (slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  )));
+	connect( Kopete::MessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType  ) ) ,
+		this, SLOT (slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType  )));
 	connect( Kopete::MessageManagerFactory::factory() , SIGNAL( display( Kopete::Message &, Kopete::MessageManager *) ),
 		this, SLOT ( messageAppended( Kopete::Message &, Kopete::MessageManager *) ) );
 
@@ -101,7 +101,7 @@ void KopeteViewManager::slotPrefsChanged()
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 }
 
-KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*foreignMessage*/, Kopete::Message::MessageType type )
+KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*foreignMessage*/, Kopete::Message::ViewType type )
 {
 	/*if( d->eventMap.contains( manager ) )
 	{
@@ -121,7 +121,7 @@ KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*for
 		if( type == Kopete::Message::Undefined )
 		{
 			int t = KopetePrefs::prefs()->interfacePreference();
-			type = static_cast<Kopete::Message::MessageType>( t );
+			type = static_cast<Kopete::Message::ViewType>( t );
 		}
 
 		if( type == Kopete::Message::Chat )
@@ -328,7 +328,7 @@ KopeteView* KopeteViewManager::activeView() const
 	return d->activeView;
 }
 
-void KopeteViewManager::slotRequestView(KopeteView*& v, Kopete::MessageManager *kmm , Kopete::Message::MessageType type )
+void KopeteViewManager::slotRequestView(KopeteView*& v, Kopete::MessageManager *kmm , Kopete::Message::ViewType type )
 {
 	v=view(kmm, false , type);
 }

@@ -103,7 +103,7 @@ public:
 	 * create a new view for the manager.
 	 * only the manager should call this function
 	 */
-	KopeteView *createView( Kopete::MessageManager * , Kopete::Message::MessageType type );
+	KopeteView *createView( Kopete::MessageManager * , Kopete::Message::ViewType type );
 
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal
@@ -165,7 +165,7 @@ signals:
 	/*
 	 * Request the creation of a new view
 	 */
-	void requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType type );
+	void requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType type );
 
 	/**
 	 * the message is ready to be displayed

@@ -58,7 +58,7 @@ class KopeteViewManager : public Kopete::Plugin
 		 * @param foreignMessage Whether the message is inbound or outbound.
 		 * @param type Specifies the type of view.
 		 */
-		KopeteView *view( Kopete::MessageManager *, bool foreignMessage, Kopete::Message::MessageType type = Kopete::Message::Undefined );
+		KopeteView *view( Kopete::MessageManager *, bool foreignMessage, Kopete::Message::ViewType type = Kopete::Message::Undefined );
 
 		/**
 		 * Provide access to the list of KopeteChatWindow the class maintains.
@@ -101,7 +101,7 @@ class KopeteViewManager : public Kopete::Plugin
 		void slotPrefsChanged();
 		void slotViewActivated( KopeteView * );
 
-		void slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType type );
+		void slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType type );
 
 		//obsolete, used only by spellchecking plugin
 		void slotGetActiveView(KopeteView*&);

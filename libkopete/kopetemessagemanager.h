@@ -148,7 +148,7 @@ public:
 	 * @param type Specifies the type of view if we have to create one.
 	 */
 	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
-	KopeteView* view( bool canCreate = false, Message::MessageType type = Message::Undefined );
+	KopeteView* view( bool canCreate = false, Message::ViewType type = Message::Undefined );
 	
 	/**
 	 * says if you may invite contact from the same account to this chat with @ref inviteContact

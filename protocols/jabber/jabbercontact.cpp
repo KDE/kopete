@@ -216,7 +216,7 @@ void JabberContact::rename ( const QString &newName )
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	Kopete::Message::MessageType type;
+	Kopete::Message::ViewType type;
 	Kopete::Message *newMessage = 0L;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;

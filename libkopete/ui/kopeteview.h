@@ -63,7 +63,7 @@ class KopeteView
 		 * @brief Get the view type
 		 * @return The KopeteView::ViewType of the view
 		 */
-		Kopete::Message::MessageType viewType();
+		Kopete::Message::ViewType viewType();
 
 		/**
 		 * @brief add a message to the view
@@ -142,7 +142,7 @@ class KopeteView
 		/**
 		 * the type of this view
 		 */
-		Kopete::Message::MessageType m_type;
+		Kopete::Message::ViewType m_type;
 };
 
 #endif
