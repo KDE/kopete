@@ -686,6 +686,9 @@ void IRCProtocol::editNetworks( const QString &networkName )
 		connect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
 	}
 
+	disconnect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
+	disconnect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
+
 	netConf->networkList->clear();
 
 	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
@@ -695,6 +698,9 @@ void IRCProtocol::editNetworks( const QString &networkName )
 	}
 
 	netConf->networkList->sort();
+
+	connect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
+	connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 
 	if( !networkName.isEmpty() )
 		netConf->networkList->setSelected( netConf->networkList->findItem( networkName ), true );
@@ -772,11 +778,10 @@ void IRCProtocol::slotUpdateNetworkHostConfig()
 {
 	storeCurrentHost();
 
-	m_uiCurrentHostSelection = netConf->hostList->currentText().section(':', 0, 0);
-
 	if ( netConf->hostList->selectedItem() )
 	{
-		IRCHost *host = m_hosts[ netConf->hostList->currentText().section(':', 0, 0) ];
+		m_uiCurrentHostSelection = netConf->hostList->currentText().section(':', 0, 0);
+		IRCHost *host = m_hosts[ m_uiCurrentHostSelection ];
 
 		if( host )
 		{
@@ -788,6 +793,7 @@ void IRCProtocol::slotUpdateNetworkHostConfig()
 	}
 	else
 	{
+		m_uiCurrentHostSelection = QString();
 		disconnect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
 		netConf->host->clear();
 		netConf->password->clear();
@@ -1068,7 +1074,7 @@ void IRCProtocol::slotMoveServerUp()
 		selectedNetwork->hosts.remove( pos );
 	}
 
-	int currentPos = netConf->hostList->currentItem();
+	unsigned int currentPos = netConf->hostList->currentItem();
 	if( currentPos > 0 )
 	{
 		netConf->hostList->removeItem( currentPos );
@@ -1095,7 +1101,7 @@ void IRCProtocol::slotMoveServerDown()
 		selectedNetwork->hosts.remove( pos );
 	}
 
-	int currentPos = netConf->hostList->currentItem();
+	unsigned int currentPos = netConf->hostList->currentItem();
 	if( currentPos < ( netConf->hostList->count() - 1 ) )
 	{
 		netConf->hostList->removeItem( currentPos );

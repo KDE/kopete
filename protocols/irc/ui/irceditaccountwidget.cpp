@@ -62,10 +62,12 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		if( m_IRCAccount->codec() )
 			currentCodec = m_IRCAccount->codec()->mibEnum();
 
-// 		mPass->load ( &m_IRCAccount->password() );
+		//mPass->load ( &m_IRCAccount->password() );
 
 		preferSSL->setChecked(
 			account()->pluginData (m_protocol, "PreferSSL") == QString::fromLatin1("true") );
+
+		autoConnect->setChecked( m_IRCAccount->autoLogin(  ) );
 
 		//if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 
@@ -225,8 +227,7 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	m_IRCAccount->setAltNick( mAltNickname->text() );
 	m_IRCAccount->setDefaultPart( partMessage->text() );
 	m_IRCAccount->setDefaultQuit( quitMessage->text() );
-	// Doesn't work
-	//m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
+	m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
 	// what about?:
 	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3 
 	// remember password cb - disabling the UI for this.
