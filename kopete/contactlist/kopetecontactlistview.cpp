@@ -5,7 +5,7 @@
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher           <nbetcher@usinternet.com>
-    Copyright (c) 2002      by Stefan Gehn            <sgehn@gmx.net>
+    Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -58,9 +58,8 @@
 #include <qtooltip.h>
 #endif
 
-KopeteContactListView::KopeteContactListView( QWidget *parent,
-	const char *name )
-: KListView( parent, name )
+KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
+	: KListView( parent, name )
 {
 	mShowAsTree = KopetePrefs::prefs()->treeView();
 	if ( mShowAsTree )
@@ -184,26 +183,32 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ), ac, "contactSendFile" );
 
 	actionAddContact= new KActionMenu( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
-	actionAddContact->popupMenu()->insertTitle(i18n("Select Account"));
+	actionAddContact->popupMenu()->insertTitle( i18n("Select Account") );
 
-
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionSendMessage , SLOT(setEnabled(bool)));
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionStartChat   , SLOT(setEnabled(bool)));
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionMove        , SLOT(setEnabled(bool))); //TODO: make available for several contacts
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionCopy        , SLOT(setEnabled(bool))); //TODO: make available for several contacts
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)),actionRemoveFromGroup,SLOT(setEnabled(bool))); //TODO: make available for several contacts, and unavailable when the contact is only in one group
-	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionAddContact  , SLOT(setEnabled(bool)));
-
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		actionSendMessage, SLOT(setEnabled(bool)));
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		actionStartChat, SLOT(setEnabled(bool)));
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		actionMove, SLOT(setEnabled(bool))); //TODO: make available for several contacts
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		actionCopy, SLOT(setEnabled(bool))); //TODO: make available for several contacts
+	//TODO: make available for several contacts, and unavailable when the contact is only in one group
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		actionRemoveFromGroup, SLOT(setEnabled(bool)));
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		actionAddContact, SLOT(setEnabled(bool)));
 
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
+	KAction *aa;
 	for( KopeteAccount *a = accounts.first() ; a ; a = accounts.next() )
 	{
-		KAction *aa=new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , this, SLOT( slotAddContact() ) , a);
+		aa = new KAction( a->accountId(), a->protocol()->pluginIcon(), 0,
+			this, SLOT( slotAddContact() ), a);
 		actionAddContact->insert(aa);
 		//m_addContactActions.insert(aa,a);
 	}
-
 
 	//TODO
 	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0, this, SLOT( slotAddTemporaryContact() ), ac, "actionAddTemporaryContact" );
@@ -211,8 +216,6 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 	//update enabled/disabled actions
 	slotSelectionChanged();
 }
-
-
 
 KopeteContactListView::~KopeteContactListView()
 {
@@ -222,7 +225,6 @@ void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )
 {
 	if(KopetePrefs::prefs()->sortByGroup() || mc->isTemporary())
 	{
-	   // if the contact is a toplevel
 		if( mc->isTopLevel() )
 		{
 			m_metaContacts.append( new KopeteMetaContactLVI( mc, this ) );
@@ -354,7 +356,9 @@ void KopeteContactListView::slotRemovedFromGroup( KopeteMetaContact *mc, KopeteG
 			break;
 		}
 	}
+
 	group_item->refreshDisplayName();
+
 	//delete temporary-group if it is empty
 	if(from == KopeteGroup::temporary)
 	{
@@ -543,13 +547,16 @@ void KopeteContactListView::slotExpanded( QListViewItem *item )
 
 void KopeteContactListView::slotDoubleClicked( QListViewItem *item )
 {
-	if ( item == NULL )
+	if( !item )
 		return;
+
+	kdDebug(14000) << k_funcinfo << endl;
 
 	KopeteMetaContactLVI *metaItem = dynamic_cast<KopeteMetaContactLVI*>(item);
 	if ( !metaItem || !mShowAsTree )
 	{
 		setOpen( item, !isOpen( item ) );
+		kdDebug(14000) << k_funcinfo << "setOpen(item, " << !isOpen(item) << ")" << endl;
 	}
 }
 
@@ -576,29 +583,28 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 	KopeteGroupViewItem *groupvi =
 		dynamic_cast<KopeteGroupViewItem*>( item );
 
-	if(item && !item->isSelected())
+	if( item && !item->isSelected() )
 	{
 		clearSelection();
 		item->setSelected(true);
 	}
-	if(!item)
+	if( !item )
 	{
 		clearSelection();
 	}
 
-	int nb=KopeteContactList::contactList()->selectedMetaContacts().count() + KopeteContactList::contactList()->selectedGroups().count();
+	int nb = KopeteContactList::contactList()->selectedMetaContacts().count() +
+		KopeteContactList::contactList()->selectedGroups().count();
 
-
-	//FIXME: this assume that the parent is the main window. That should be the case, but it is not good desing
-	//       for me, the KopeteWindow should be moved into contactlist/ and be accessed easily with it
-	KMainWindow *window=dynamic_cast<KMainWindow*>(parent());
-	if(!window)
+	KMainWindow *window = dynamic_cast<KMainWindow *>(kapp->mainWidget());
+	if( !window )
 	{
-		kdWarning(14000) << "KopeteContactListView::showContextMenu: WARNING main window not found" << endl;
+		kdError(14000) << k_funcinfo <<
+			"ERROR: main window not found, cannot display context-menu" << endl;
 		return;
 	}
 
-	if( metaLVI && nb==1)
+	if( metaLVI && nb == 1 )
 	{
 		int px = mapFromGlobal( point ).x() -
 			( header()->sectionPos( header()->mapToIndex( 0 ) ) +
@@ -618,67 +624,69 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 		else
 		{
 			KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contact_popup",window));
-			QString title=i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
-#if QT_VERSION < 0x030200
-				arg( metaLVI->metaContact()->displayName() ).arg( metaLVI->metaContact()->statusString() );
-#else
-				arg( metaLVI->metaContact()->displayName() , metaLVI->metaContact()->statusString() );
-#endif
-			if(title.length() > 43 )
-				title = title.left(40) + QString::fromLatin1("...");
-
-			if(popup->title(0).isNull())
-				popup->insertTitle (title ,0,0);
-			else
-				popup->changeTitle (0,title);
-
-			//-- Submenus for separate contacts actions
-			bool sep=false;  //FIXME: find if there is already a separator in the end
-			QPtrList<KopeteContact> it = metaLVI->metaContact()->contacts();
-			for( KopeteContact *c = it.first(); c; c = it.next() )
+			if(popup)
 			{
-				if( sep )
+				QString title=i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
+#if QT_VERSION < 0x030200
+					arg( metaLVI->metaContact()->displayName() ).arg( metaLVI->metaContact()->statusString() );
+#else
+					arg( metaLVI->metaContact()->displayName() , metaLVI->metaContact()->statusString() );
+#endif
+				if(title.length() > 43 )
+					title = title.left( 40 ) + QString::fromLatin1( "..." );
+
+				if(popup->title(0).isNull())
+					popup->insertTitle ( title, 0, 0 );
+				else
+					popup->changeTitle ( 0, title );
+
+				//-- Submenus for separate contacts actions
+				bool sep=false;  //FIXME: find if there is already a separator in the end
+				QPtrList<KopeteContact> it = metaLVI->metaContact()->contacts();
+				for( KopeteContact *c = it.first(); c; c = it.next() )
 				{
-					popup->insertSeparator();
-					sep = false;
+					if( sep )
+					{
+						popup->insertSeparator();
+						sep = false;
+					}
+
+					KPopupMenu *contactMenu = it.current()->popupMenu();
+					connect( popup, SIGNAL(aboutToHide()) , contactMenu , SLOT(deleteLater()));
+					QString text= i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ).
+#if QT_VERSION < 0x030200
+						arg( c->contactId() ).arg( c->displayName() );
+#else
+						arg( c->contactId(), c->displayName() );
+#endif
+					if(text.length() > 41 )
+						text = text.left(38) + QString::fromLatin1("...");
+
+					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
 				}
 
-				KPopupMenu *contactMenu = it.current()->popupMenu();
-				connect( popup, SIGNAL(aboutToHide()) , contactMenu , SLOT(deleteLater()));
-				QString text= i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ).
-#if QT_VERSION < 0x030200
-					arg( c->contactId() ).arg( c->displayName() );
-#else
-					arg( c->contactId(), c->displayName() );
-#endif
-				if(text.length() > 41 )
-					text = text.left(38) + QString::fromLatin1("...");
-
-				popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
-			}
-
-			if(popup)
 				popup->exec(point);
+			} // END if(popup)
 		}
 	}
-	else if(groupvi && nb==1)
+	else if( groupvi && nb==1 )
 	{
 		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("group_popup",window));
-		QString title=groupvi->group()->displayName();
-		if(title.length() > 32 )
-			title = title.left(30) + QString::fromLatin1("...");
-		//popup->insertTitle (title,0,0);
-		if(popup->title(0).isNull())
-			popup->insertTitle (title ,0,0);
-		else
-			popup->changeTitle (0,title);
-
-		popup->changeTitle(0,title);
-
 		if(popup)
+		{
+			QString title=groupvi->group()->displayName();
+			if(title.length() > 32 )
+				title = title.left(30) + QString::fromLatin1("...");
+
+			if(popup->title(0).isNull())
+				popup->insertTitle ( title, 0, 0 );
+			else
+				popup->changeTitle ( 0, title );
+
 			popup->exec(point);
+		}
 	}
-	else if(nb>=1)
+	else if( nb >= 1 )
 	{
 		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contactlistitems_popup",window));
 		if(popup)
@@ -687,15 +695,14 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 	else
 	{
 		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contactlist_popup",window));
+		if( popup )
+		{
+			if( popup->title(0).isNull() )
+				popup->insertTitle( i18n("Kopete") , 0, 0 );
 
-		if(popup->title(0).isNull())
-			popup->insertTitle(i18n("Kopete") ,0,0);
-
-		if(popup)
-			popup->exec(point);
+			popup->exec( point );
+		}
 	}
-
-//		popup->popup( QCursor::pos() );
 }
 
 void KopeteContactListView::slotShowAddContactDialog()
@@ -1206,7 +1213,6 @@ void KopeteContactListView::keyPressEvent( QKeyEvent *e )
 	}
 	else
 		KListView::keyPressEvent(e);
-
 }
 
 void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
@@ -1327,7 +1333,6 @@ void KopeteContactListView::slotNewMessageEvent(KopeteEvent *event)
 		KopeteMetaContact *m=msg.from()->metaContact();
 		if(!m)
 			return;
-
 
 		for(KopeteMetaContactLVI *li = m_metaContacts.first(); li; li = m_metaContacts.next() )
 		{
@@ -1640,7 +1645,7 @@ void KopeteContactListView::slotAddContact()
 		AddContactPage *addContactPage = account->protocol()->createAddContactWidget(addDialog, account);
 		if (!addContactPage)
 		{
-			kdDebug(14000) << "KopeteContactListView::slotAddContact : error while creating addcontactpage" <<endl;
+			kdDebug(14000) << k_funcinfo << "Error while creating addcontactpage" <<endl;
 		}
 		else
 		{

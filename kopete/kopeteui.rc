@@ -5,7 +5,6 @@
 			<text>&amp;File</text>
 			<Action name="Connection"/>
 			<Action name="Status"/>
-			<!-- <Action name="ShowTransfers"/> -->
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
 			<Action name="AddGroup"/>
@@ -30,7 +29,7 @@
 		<Menu name="settings">
 			<text>&amp;Settings</text>
 			<Action name="settings_showmenubar" />
-			<Action name="settings_showtoolbar" />
+			<Merge name="StandardToolBarMenuHandler" />
 			<Action name="settings_showstatusbar" />
 			<Separator lineSeparator="true" />
 			<Action name="settings_keys" />
@@ -41,6 +40,7 @@
 			<Action name="settings_show_offliners" />
 		</Menu>
 	</MenuBar>
+
 	<ToolBar fullWidth="true" name="mainToolBar">
 		<Action name="ConnectAll"/>
 		<Action name="DisconnectAll"/>
@@ -63,7 +63,7 @@
 		<Separator lineSeparator="true" />
 		<Merge />
 		<Separator lineSeparator="true" />
-  	</Menu>
+	</Menu>
 	<Menu name="group_popup">
 		<Action name="contactRemove" />
 		<Action name="contactRename" />

@@ -8,10 +8,6 @@
 #include <kguiitem.h>
 #include <kicontheme.h>
 
-/**
- * @author Stefan Gehn <sgehn@gmx.net>
- */
-
 class KopeteEmoticonAction : public KAction
 {
 	Q_OBJECT

@@ -2,7 +2,7 @@
     kopetewindow.h  -  Kopete Main Window
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
-    Copyright (c) 2001-2002 by Stefan Gehn <sgehn@gmx.net>
+    Copyright (c) 2001-2002 by Stefan Gehn <metz AT gehn.net>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -59,13 +59,14 @@ protected:
 	virtual bool queryExit();
 
 private slots:
-	void showToolbar();
+//	void showToolbar();
 	void showMenubar();
 	void showStatusbar();
 	void slotToggleShowOffliners();
 	void slotConfigChanged();
 	void slotConfKeys();
 	void slotConfToolbar();
+    void slotUpdateToolbar();
 	/**
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
@@ -74,15 +75,10 @@ private slots:
 	void slotQuit();
 
 	/**
-	 * Get a notification when a plugin is loaded, so we can add a status bar
-	 * icon if it's a protocol
+	 * Get a notification when a plugin is loaded, so we can merge
+	 * XMLGUI cruft
 	 */
 	void slotPluginLoaded( KopetePlugin *p );
-
-	/**
-	 * Cleanup the status bar icon when the plugin is destroyed
-	 */
-	void slotProtocolDestroyed( QObject *o );
 
 	/**
 	 * Get a notification when an account is created, so we can add a status bar
@@ -151,7 +147,7 @@ public:
 	KAction* actionPrefs;
 	KAction* actionQuit;
 	KAction* actionSave;
-	KToggleAction *toolbarAction;
+//	KToggleAction *toolbarAction;
 	KToggleAction *menubarAction;
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;

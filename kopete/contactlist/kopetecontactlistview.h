@@ -5,7 +5,7 @@
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
-    Copyright (c) 2002      by Stefan Gehn <sgehn@gmx.net>
+    Copyright (c) 2002      by Stefan Gehn <metz AT gehn.net>
     Copyright (c) 2002-2003 by Olivier Goffart <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>

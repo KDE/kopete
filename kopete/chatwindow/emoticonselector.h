@@ -4,8 +4,7 @@
     a button that pops up a list of all emoticons and returns
     the emoticon-string if one is selected in the list
 
-    Copyright (c) 2002 by Stefan Gehn            <sgehn@gmx.net>
-
+    Copyright (c) 2002 by Stefan Gehn            <metz AT gehn.net>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -24,10 +23,6 @@
 #include <qlabel.h>
 #include <qwidget.h>
 class QGridLayout;
-
-/**
- * @author Stefan Gehn <sgehn@gmx.net>
- */
 
 class EmoticonLabel : public QLabel
 {

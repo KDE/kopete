@@ -231,6 +231,7 @@ void KopeteSystemTray::addBalloon()
 			msg.from() )
 		{
 			QString msgText = msg.plainBody();
+			kdDebug(14010) << k_funcinfo << "msgText=" << msgText << endl;
 			if( msgText.length() > 30 )
 				msgText = msgText.left(30) + QString::fromLatin1("...");
 
@@ -241,7 +242,7 @@ void KopeteSystemTray::addBalloon()
 				msgFrom = msg.from()->displayName();
 
 			m_balloon = new KopeteBalloon(
-				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><br><nobr>\"%2\"</nobr></qt>" )
+				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>" )
 #if QT_VERSION < 0x030200
 					.arg( msgFrom ).arg( msgText ),
 #else

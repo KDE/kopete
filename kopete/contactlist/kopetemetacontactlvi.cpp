@@ -131,13 +131,6 @@ KopeteMetaContactLVI::~KopeteMetaContactLVI()
 //		m_parentGroup->refreshDisplayName();
 }
 
-/*void KopeteMetaContactLVI::setup()
-{
-	KListViewItem::setup();
-	// Do custom layouting here...
-	//setHeight( 150 );
-}*/
-
 void KopeteMetaContactLVI::movedToGroup(KopeteGroup *to)
 {
 	KopeteContactListView *lv =

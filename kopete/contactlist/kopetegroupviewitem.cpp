@@ -23,20 +23,22 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
 
-KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_ , QListView *parent, const char *name )
-		: QObject(group_) , QListViewItem(parent,name)
+KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_, QListView *parent, const char *name )
+		: QObject(group_), QListViewItem(parent,name)
 {
 	m_group=group_;
 	refreshDisplayName();
-	connect( m_group , SIGNAL ( renamed(KopeteGroup*, const QString&)) , this, SLOT(refreshDisplayName()));
+	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
+		this, SLOT( refreshDisplayName() ) );
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_ , QListViewItem *parent, const char *name )
-		: QObject(group_) , QListViewItem(parent,name)
+KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_, QListViewItem *parent, const char *name )
+		: QObject(group_), QListViewItem(parent,name)
 {
 	m_group=group_;
 	refreshDisplayName();
-	connect( m_group , SIGNAL ( renamed(KopeteGroup*, const QString&)) , this, SLOT(refreshDisplayName()));
+	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
+		this, SLOT( refreshDisplayName() ) );
 }
 
 KopeteGroupViewItem::~KopeteGroupViewItem()
@@ -51,13 +53,14 @@ KopeteGroup* KopeteGroupViewItem::group() const
 void KopeteGroupViewItem::refreshDisplayName()
 {
 //	if(!m_group) return;
-	QString text=m_group->displayName();
-	if(m_group== KopeteGroup::temporary)
-		text=i18n( "Not in your contact list" );
+	QString newText = m_group->displayName();
+
+	if( m_group == KopeteGroup::temporary )
+		newText = i18n( "Not in your contact list" );
 
 	unsigned int tot=0;
 	unsigned int onl=0;
-	
+
 	for(QListViewItem *lvi = firstChild() ; lvi; lvi = lvi->nextSibling() )
 	{
 		KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
@@ -69,13 +72,13 @@ void KopeteGroupViewItem::refreshDisplayName()
 		}
 	}
 
-	m_renameText = text;
-//	text= QStyleSheet::escape(text)+ " <font color='gray' size='-1'><i>("+QString::number(onl)+"/"+QString::number(tot)+")</i></font>";
-	text= text +"  ("+QString::number(onl)+"/"+QString::number(tot)+")";
+	m_renameText = newText;
+	newText += "  ("+QString::number(onl)+"/"+QString::number(tot)+")";
 
-//	kdDebug(14000) << "KopeteGroupViewItem::refreshDisplayName : " << text << endl;
+//	kdDebug(14000) << k_funcinfo << "newText='" << newText <<
+//		"', old text= " << text(0) << endl;
 
-	setText( 0, text );
+	setText( 0, newText );
 	listView()->sort();
 }
 
@@ -90,13 +93,15 @@ QString KopeteGroupViewItem::key( int, bool ) const
 
 void KopeteGroupViewItem::startRename( int col )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	refreshDisplayName();
-	setText(0,m_renameText);
+	setText( 0, m_renameText );
 	QListViewItem::startRename(col);
 }
 
 void KopeteGroupViewItem::okRename( int col )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	QListViewItem::okRename(col);
 	if ( col == 0 )
 		group()->setDisplayName(text(0));
@@ -105,11 +110,8 @@ void KopeteGroupViewItem::okRename( int col )
 
 void KopeteGroupViewItem::cancelRename( int col )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	QListViewItem::cancelRename(col);
 	refreshDisplayName();
 }
-
-
-
 #include "kopetegroupviewitem.moc"
-

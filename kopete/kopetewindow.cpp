@@ -2,9 +2,9 @@
     kopetewindow.cpp  -  Kopete Main Window
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
-    Copyright (c) 2001-2002 by Stefan Gehn <sgehn@gmx.net>
+    Copyright (c) 2001-2002 by Stefan Gehn <metz AT gehn.net>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +19,7 @@
 #include "kopetewindow.h"
 
 #include <qhbox.h>
+#include <qtooltip.h>
 
 #include <kaction.h>
 #include <kconfig.h>
@@ -35,7 +36,6 @@
 #include <kglobalaccel.h>
 #include <kwin.h>
 #include <kdeversion.h>
-#include <qtooltip.h>
 
 #include "addcontactwizard.h"
 #include "kopete.h"
@@ -55,9 +55,6 @@
 #include "kopeteprotocolstatusbaricon.h"
 
 
-//#include "addaccountwizard.h"
-
-
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
 {
@@ -73,24 +70,28 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setMargin( 2 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
-	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
-		SLOT( slotSettingsChanged() ) );
+	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 
-	/* -------------------------------------------------------------------------------- */
+	// --------------------------------------------------------------------------------
 	initView();
 	initActions();
 	contactlist->initActions(actionCollection());
 	initSystray();
-	/* -------------------------------------------------------------------------------- */
+	// --------------------------------------------------------------------------------
 
-	loadOptions();
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
-	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin * ) ), this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
+		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 	// And accounts too
-	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)), this, SLOT(slotAccountRegistered(KopeteAccount*)));
-	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)), this, SLOT(slotAccountUnregistered(KopeteAccount*)));
+	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
+		this, SLOT(slotAccountRegistered(KopeteAccount*)));
+	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
+		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
 
-	createGUI ( "kopeteui.rc"  , false);
+	createGUI ( "kopeteui.rc", false );
+
+	// call this _after_ createGUI(), otherwise menubar is not set up correctly
+	loadOptions();
 
 	//-- if some plugins are already loaded, merge the GUI
 	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
@@ -98,8 +99,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	{
 		slotPluginLoaded(p);
 	}
-
-
 }
 
 void KopeteWindow::initView()
@@ -155,8 +154,9 @@ void KopeteWindow::initActions()
 
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
-	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection(), "settings_showtoolbar" );
+//	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection(), "settings_showtoolbar" );
 	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
+	setStandardToolBarMenuEnabled(true);
 	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection(), "settings_keys");
@@ -215,8 +215,9 @@ void KopeteWindow::initSystray()
 	actionConnectionMenu->plug ( tm,1 );
 	tm->insertSeparator(1);
 
-	QObject::connect( tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ), this, SLOT( slotTrayAboutToShowMenu( KPopupMenu * ) ) );
-	QObject::connect( tray, SIGNAL(quitSelected() ), this, SLOT( slotQuit() ) );
+	QObject::connect( tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ),
+		this, SLOT( slotTrayAboutToShowMenu( KPopupMenu * ) ) );
+	QObject::connect( tray, SIGNAL( quitSelected() ), this, SLOT( slotQuit() ) );
 }
 
 KopeteWindow::~KopeteWindow()
@@ -275,7 +276,7 @@ void KopeteWindow::loadOptions()
 			show();
 	}
 
-	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
+//	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
 	menubarAction->setChecked( !menuBar()->isHidden() );
 	statusbarAction->setChecked( !statusBar()->isHidden() );
 }
@@ -309,17 +310,17 @@ void KopeteWindow::saveOptions()
 	config->sync();
 }
 
-void KopeteWindow::showToolbar()
+/*void KopeteWindow::showToolbar()
 {
 	if( toolbarAction->isChecked() )
 		toolBar("mainToolBar")->show();
 	else
 		toolBar("mainToolBar")->hide();
-}
+}*/
 
 void KopeteWindow::showMenubar()
 {
-	if( menubarAction->isChecked() )
+	if(menubarAction->isChecked())
 		menuBar()->show();
 	else
 		menuBar()->hide();
@@ -353,7 +354,6 @@ void KopeteWindow::slotConfigChanged()
 	actionShowOffliners->setChecked( pref->showOffline() );
 }
 
-
 void KopeteWindow::slotConfKeys()
 {
 	KKeyDialog::configureKeys(actionCollection(), xmlFile(), true, this);
@@ -368,12 +368,16 @@ void KopeteWindow::slotConfToolbar()
 {
 	saveMainWindowSettings(KGlobal::config(), "General Options");
 	KEditToolbar *dlg = new KEditToolbar(actionCollection(), "kopeteui.rc");
-	if (dlg->exec())
-	{
-		createGUI("kopeteui.rc");
-		applyMainWindowSettings(KGlobal::config(), "General Options");
-	}
+	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
+
+	dlg->exec();
 	delete dlg;
+}
+
+void KopeteWindow::slotUpdateToolbar()
+{
+	createGUI("kopeteui.rc", false);
+	applyMainWindowSettings(KGlobal::config(), "General Options");
 }
 
 void KopeteWindow::slotGlobalAwayMessageSelect()
@@ -412,46 +416,6 @@ void KopeteWindow::slotQuit()
 void KopeteWindow::slotPluginLoaded( KopetePlugin *  p  )
 {
 	guiFactory()->addClient(p);
-
-//	kdDebug(14000) << "KopeteWindow::slotPluginLoaded()" << endl;
-/*
-	KopeteProtocol *proto = dynamic_cast<KopeteProtocol *>( p );
-	if( !proto )
-		return;
-
-	connect( proto,
-		SIGNAL( statusIconChanged( const KopeteOnlineStatus& ) ),
-		SLOT( slotProtocolStatusIconChanged( const KopeteOnlineStatus& ) ) );
-	connect( proto, SIGNAL( destroyed( QObject * ) ),
-		SLOT( slotProtocolDestroyed( QObject * ) ) );
-
-	StatusBarIcon *i = new StatusBarIcon( proto, m_statusBarWidget );
-	connect( i, SIGNAL( rightClicked( KopeteProtocol *, const QPoint & ) ),
-		SLOT( slotProtocolStatusIconRightClicked( KopeteProtocol *,
-		const QPoint & ) ) );
-
-	m_statusBarIcons.insert( proto, i );
-
-	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
-
-	KActionMenu *menu = proto->protocolActions();
-	if( menu )
-		menu->plug( tray->contextMenu(), 1 );
-*/
-}
-
-void KopeteWindow::slotProtocolDestroyed( QObject */*o */)
-{
-/*
-//	kdDebug(14000) << "KopeteWindow::slotProtocolDestroyed()" << endl;
-
-	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ o ] );
-	if( !i )
-		return;
-
-	delete i;
-	m_statusBarIcons.remove( o );
-*/
 }
 
 void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
@@ -510,13 +474,13 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	if( !i )
 		return;
 
-	
+
 	// Adds tooltip for each status icon,
 	// useful in case you have many accounts
 	// over one protocol
-	
+
 	QToolTip::remove( i );
-	
+
 	QString contactLabel;
 	if ( contact->displayName() == contact->account()->accountId() )
 	{
@@ -540,7 +504,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 #else
 		arg( contactLabel, status.description() );
 #endif
-	
+
 	if ( !contact->statusDescription().isNull() )
 		tooltip += QString::fromLatin1( "\n" ) + contact->statusDescription();
 
@@ -560,6 +524,8 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 
 		//QPixmap pm = SmallIcon( icon );
 		QPixmap pm = status.iconFor( contact->account() );
+
+		// BEGIN REMOVE
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
 		if( pm.isNull() )
@@ -569,11 +535,13 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 			pm = loader->loadIcon( status.overlayIcon(),
 				 KIcon::User, 0, KIcon::DefaultState, 0L, true );
 		}
+		// END REMOVE
+
 		if( pm.isNull() )
 		{
-			/* No Pixmap found, fallback to Unknown */
-			kdDebug(14000) << k_funcinfo
-				<< "Using unknown pixmap for status icon '" << status.overlayIcon() << "'."
+			// No Pixmap found, fallback to Unknown
+			kdDebug(14000) << k_funcinfo <<
+				"Using unknown pixmap for status icon '" << status.overlayIcon() << "'."
 				<< endl;
 			i->setPixmap( KIconLoader::unknown() );
 		}
@@ -589,7 +557,6 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	}
 }
 
-
 void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
 	const QPoint &p )
 {
@@ -597,7 +564,6 @@ void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
 }
 
 void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
-/*KopeteProtocol * p,	const QString &icon )*/
 {
 //	kdDebug(14000) << k_funcinfo << "Icon: " <<
 //		status.overlayIcon() << endl;
@@ -657,17 +623,9 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	// otherwise just show a menu containing "Add New Account"
 	KActionMenu *menu = 0L;
 
-	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts( proto );
+	QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( proto );
 	if ( dict.count() > 0 )
 		menu = proto->protocolActions();
-/*	else
-	{  // Fuck Kopete, this code won't be reached anyway, see slotAddAccount() [mETz]
-
-		// FIXME: use the commented out KAction when we've solved using the addaccountwizard from
-		// this class
-		menu = new KActionMenu( proto->displayName(), proto->pluginIcon(), this);
-		menu->insert( new KAction( i18n("Create Account"), QString::null, 0, qApp->mainWidget(), SLOT( slotAddAccount() ), menu, "actionKWAddAccount" ) );
-	}*/
 
 	if( menu )
 	{
@@ -676,18 +634,6 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	}
 }
 
-/*
-// TODO: Now I wasted 30mins on fixing addaccountwizard so this code works and
-// suddenly I find out it's not needed anyway
-// thanks pals for not removing the FIXME note in here :P [mETz]
-void KopeteWindow::slotAddAccount()
-{
-	AddAccountWizard *mAddwizard;
-	mAddwizard  = new AddAccountWizard( this , "addAccountWizard" , true);
-	//connect(m_addwizard, SIGNAL( destroyed(QObject*)) , this, SLOT (slotAddWizardDone()));
-	mAddwizard->show();
-}
-*/
 void KopeteWindow::slotShowPreferencesDialog()
 {
 	// Although show() itself is a slot too we can't connect actions to it
@@ -715,10 +661,12 @@ void KopeteWindow::slotSettingsChanged()
 {
 	// Account colouring may have changed, so tell our status bar to redraw
 //	kdDebug(14000) << k_funcinfo << endl;
+
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 	QPtrListIterator<KopetePlugin> it( plugins );
 	KopetePlugin *plugin = 0L;
-	while ( ( plugin = it.current() ) != 0 )
+
+	while( ( plugin = it.current() ) != 0 )
 	{
 		++it;
 		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( plugin );
@@ -727,7 +675,7 @@ void KopeteWindow::slotSettingsChanged()
 		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( proto );
 		QDictIterator<KopeteAccount> it( dict );
 		KopeteAccount *a;
-		while ( ( a = it.current() ) != 0 )
+		while( ( a = it.current() ) != 0 )
 		{
 			++it;
 			slotAccountStatusIconChanged( a->myself() );
@@ -736,6 +684,3 @@ void KopeteWindow::slotSettingsChanged()
 }
 #include "kopetewindow.moc"
 // vim: set noet ts=4 sts=4 sw=4:
-
-
-
