@@ -86,7 +86,7 @@ void runTests( QString description, TestSet tests )
 	// Use the KMess-Cartoon theme because it has a smiley for the troublesome ':/' pattern, which
 	// also exists in http:// URIs. (Default doesn't have such a smiley, making it useless for
 	// the test.)
-	QString path = KGlobal::dirs()->findResource( "data", "kopete/pics/emoticons/KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
+	QString path = KGlobal::dirs()->findResource( "emoticons", "KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
 
 	_out << endl;
 	_out << "* Running test set '" << description << "'" << endl;

@@ -355,7 +355,7 @@ void AppearanceConfig::updateEmoticonlist()
 
 	mPrfsEmoticons->icon_theme_list->clear(); // Wipe out old list
 	// Get a list of directories in our icon theme dir
-	QStringList themeDirs = KGlobal::dirs()->findDirs("data", "kopete/pics/emoticons");
+	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
 	// loop adding themes from all dirs into theme-list
 	for(unsigned int x = 0;x < themeDirs.count();x++)
 	{
@@ -368,8 +368,8 @@ void AppearanceConfig::updateEmoticonlist()
 			// We don't care for '.' and '..'
 			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
 			{
-				// Add ourselves to the list, using our directory name
-				QPixmap previewPixmap = QPixmap(locate("data", "kopete/pics/emoticons/"+themeQDir[y]+"/smile.png"));
+				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
+				QPixmap previewPixmap = QPixmap(locate("emoticons", themeQDir[y]+"/smile.png"));
 				mPrfsEmoticons->icon_theme_list->insertItem(previewPixmap,themeQDir[y]);
 			}
 		}
@@ -392,8 +392,7 @@ void AppearanceConfig::slotUseEmoticonsChanged( bool  )
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
 	QString themeName = mPrfsEmoticons->icon_theme_list->currentText();
-	QFileInfo fileInf(KGlobal::dirs()->findResource("data",
-		"kopete/pics/emoticons/"+themeName+"/"));
+	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
 	mPrfsEmoticons->btnRemoveTheme->setEnabled( fileInf.isWritable() );
 
 	Kopete::Emoticons emoticons( themeName );
@@ -744,7 +743,7 @@ void AppearanceConfig::removeSelectedTheme()
 	if (res!=KMessageBox::Yes)
 		return;
 
-	KURL themeUrl(KGlobal::dirs()->findResource("data", "kopete/pics/emoticons/"+themeName+"/"));
+	KURL themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
 	KIO::NetAccess::del(themeUrl, this);
 
 	updateEmoticonlist();

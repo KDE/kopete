@@ -222,8 +222,7 @@ void installEmoticonTheme(const QString &archiveName)
 	KProgressDialog *progressDlg = 0L;
 	KTar *archive = 0L;
 
-	QString localThemesDir(locateLocal("data",
-		QString::fromLatin1("kopete/pics/emoticons/")));
+	QString localThemesDir(locateLocal("emoticons", QString::null) );
 
 	if(localThemesDir.isEmpty())
 	{

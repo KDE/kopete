@@ -2,9 +2,9 @@
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -29,6 +29,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <kdeversion.h>
 
 #include <set>
 #include <algorithm>
@@ -40,7 +41,8 @@
  */
 
 
-namespace Kopete {   
+namespace Kopete {
+
 
 struct Emoticons::Emoticon
 {
@@ -109,18 +111,14 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 	QString pic;
 
 	//maybe an extension was given, so try to find the exact file
-	pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + d->theme +
-		QString::fromLatin1( "/" ) + filenameNoExt );
+	pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt );
 
 	if( pic.isNull() )
-		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + d->theme +
-			QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".mng" ) );
+		pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".mng" ) );
 	if ( pic.isNull() )
-		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
-				d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".png" ) );
+		pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".png" ) );
 	if ( pic.isNull() )
-		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
-				d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".gif" ) );
+		pic = dir->findResource( "emoticons", d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".gif" ) );
 
 	if( !pic.isNull() ) // only add if we found one file
 	{
@@ -161,8 +159,7 @@ void Emoticons::initEmoticons( const QString &theme )
 	d->emoticonMap.clear();
 
 	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
-	QString filename = KGlobal::dirs()->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
-			d->theme + QString::fromLatin1( "/emoticons.xml" ) );
+	QString filename = KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
 
 	if( filename.isEmpty() )
 	{
@@ -436,9 +433,14 @@ QString Emoticons::parse( const QString &message )
 }
 
 
+
+
+
 } //END namesapce Kopete
 
 #include "kopeteemoticons.moc"
+
+
 
 // vim: set noet ts=4 sts=4 sw=4:
 
