@@ -59,7 +59,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, const QString &ser
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
 			this, SLOT(checkOnlineNotifyList()));
-	m_NotifyTimer->start(60000); // check online every 60sec
+	m_NotifyTimer->start(30000); // check online every 60sec
 }
 
 void IRCContactManager::slotNewMessage(const QString &originating, const QString &channel, const QString &message)

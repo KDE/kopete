@@ -69,6 +69,7 @@ private slots:
 	void slotKick();
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void slotUserOnline(const QString &nick);
+	void slotUserOffline();
 
 	virtual void slotUserInfo();
 
@@ -85,6 +86,7 @@ private:
 	QTimer *mOnlineTimer;
 
 	bool m_isAway;
+	bool m_isOnline;
 
 	void contactMode(const QString &mode);
 };
