@@ -244,7 +244,7 @@ public:
 	/**
 	 * return the time in second the contact is idle.
 	 */
-	unsigned long idleTime() const;
+	unsigned long int idleTime() const;
 
 	/**
 	 * Return a XML representation of the metacontact
