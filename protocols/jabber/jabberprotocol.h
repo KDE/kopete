@@ -47,6 +47,8 @@ class JabberProtocol : public KopeteProtocol
 
 	Q_OBJECT
 
+	friend class JabberContact; /* Friends can touch each other's private parts. */
+
 public:
 	/*********************************************************************
 	 *
@@ -252,8 +254,6 @@ private slots:
 	 */
 	void slotError(const StreamError &);
 
-	void slotRosterReceived(bool success);
-	
 	/**
 	 * Slot for going online
 	 */
@@ -433,7 +433,19 @@ private:
 	 * Note: this does not affect the Jabber roster at all
 	 */
 	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item);
-	
+
+	/**
+	 * Sends a presence element with
+	 * type="subscribe" to ask for authorization
+	 */
+	void subscribe(const Jabber::Jid &jid);
+
+	/**
+	 * Sends a presence element with
+	 * type="subscribed" to acknowledge authorization
+	 */
+	void subscribed(const Jabber::Jid &jid);
+
 };
 
 #endif

@@ -725,6 +725,26 @@ void JabberProtocol::sendRawMessage(const QString &packet)
 
 }
 
+void JabberProtocol::subscribe(const Jabber::Jid &jid)
+{
+
+	Jabber::JT_Presence *task = new Jabber::JT_Presence(jabberClient->rootTask());
+
+	task->sub(jid, "subscribe");
+	task->go(true);
+
+}
+
+void JabberProtocol::subscribed(const Jabber::Jid &jid)
+{
+
+	Jabber::JT_Presence *task = new Jabber::JT_Presence(jabberClient->rootTask());
+
+	task->sub(jid, "subscribed");
+	task->go(true);
+
+}
+
 void JabberProtocol::sendPresenceToNode(const Presence &pres,const QString &userId )
 {
 
@@ -862,10 +882,7 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 
 			case KMessageBox::Yes:
 					// authorize user
-					task = new Jabber::JT_Presence(jabberClient->rootTask());
-
-					task->sub(jid, "subscribed");
-					task->go(true);
+					subscribed(jid);
 
 					// is the user already in our contact list?
 					mc = KopeteContactList::contactList()->findContact(this->id(), myContact->userId(), jid.userHost());
@@ -876,10 +893,7 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 						i18n("Add Jabber User?")) == KMessageBox::Yes))
 					{
 						// subscribe to user
-						task = new Jabber::JT_Presence(jabberClient->rootTask());
-
-						task->sub(jid, "subscribe");
-						task->go(true);
+						subscribe(jid);
 					}
 
 					break;
@@ -1200,9 +1214,7 @@ void JabberProtocol::addContact(KopeteMetaContact *mc, const QString &userId)
 	rosterTask->go(true);
 
 	// send a subscription request
-	Jabber::JT_Presence *subTask = new Jabber::JT_Presence(jabberClient->rootTask());
-	subTask->sub(item.jid(), "subscribe");
-	subTask->go(true);
+	subscribe(item.jid());
 
 }
 

@@ -279,9 +279,14 @@ class JabberContact : public KopeteContact
 		void slotSendMsgKCW(const KopeteMessage &message);
 
 		/**
-		 * Send type="subscribe" to contact
+		 * Send type="subscribed" to contact
 		 */
 		void slotSendAuth();
+
+		/**
+		 * Send type="subscribe" to contact
+		 */
+		void slotRequestAuth();
 
 		void slotStatusChat();
 		void slotStatusAway();
@@ -367,7 +372,7 @@ class JabberContact : public KopeteContact
 		KAction *actionMessage, *actionChat,
 				*actionHistory, *actionRetrieveVCard,
 				*actionRename,
-	 			*actionSendAuth,
+	 			*actionSendAuth, *actionRequestAuth,
 				*actionRemove, *actionInfo,
 				*actionStatusAway, *actionStatusChat, *actionStatusXA, *actionStatusDND;
 		

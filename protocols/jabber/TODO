@@ -56,3 +56,5 @@ TODO for Jabber (kdepsi branch):
   completely or at least updates its status
 - find out if slotContactDestroyed() is called before the contact is destroyed
   or not. If called before, update contactMap as well as metaContactMap
+- JabberProtocol and JabberContact are now friends. Move all methods that only
+  relate to the API between them to private

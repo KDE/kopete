@@ -163,6 +163,7 @@ void JabberContact::initActions()
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
 	actionRetrieveVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotRetrieveVCard()), this, "actionRetrieveVCard");
 	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
+	actionRequestAuth = new KAction(i18n("(Re)request authorization from"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	actionStatusChat = new KAction(i18n("Free to chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
 	actionStatusXA = new KAction(i18n("Extended away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
@@ -249,6 +250,7 @@ void JabberContact::showContextMenu(const QPoint& point, const QString&)
 	popup->insertSeparator();
 	actionRename->plug(popup);
 	actionSendAuth->plug(popup);
+	actionRequestAuth->plug(popup);
 
 	// Availability popup menu
 	KPopupMenu *popup_status = new KPopupMenu();
@@ -467,9 +469,18 @@ void JabberContact::slotRemoveThisUser()
 void JabberContact::slotSendAuth()
 {
 
-	kdDebug() << "[JabberContact] (Re)sendAuth -> recall subscribe() " << userId() << endl;
+	kdDebug() << "[JabberContact] (Re)send auth " << userId() << endl;
 
-//	protocol->addContact(userId());
+	protocol->subscribe(Jabber::Jid(userId()));
+
+}
+
+void JabberContact::slotRequestAuth()
+{
+
+	kdDebug() << "[JabberContact] (Re)request auth " << userId() << endl;
+
+	protocol->subscribe(Jabber::Jid(userId()));
 
 }
 
