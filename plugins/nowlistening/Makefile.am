@@ -5,8 +5,8 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(XMMS_INCLUDES) $(all_includes)
 kde_module_LTLIBRARIES = kopete_nowlistening.la kcm_kopete_nowlistening.la
 
 kopete_nowlistening_la_SOURCES = nowlisteningconfig.cpp nowlisteningplugin.cpp nlkscd.cpp nlnoatun.cpp nlxmms.cpp nowlisteningguiclient.cpp nljuk.cpp nlamarok.cpp nlkaffeine.cpp
-kopete_nowlistening_la_LDFLAGS     = -module $(KDE_PLUGIN) $(XMMS_LIBS)
-kopete_nowlistening_la_LIBADD      = ../../libkopete/libkopete.la
+kopete_nowlistening_la_LDFLAGS     = -module $(KDE_PLUGIN) $(XMMS_LDFLAGS)
+kopete_nowlistening_la_LIBADD      = ../../libkopete/libkopete.la $(XMMS_LIBS)
 
 kcm_kopete_nowlistening_la_SOURCES = nowlisteningprefs.ui nowlisteningpreferences.cpp nowlisteningconfig.cpp
 kcm_kopete_nowlistening_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
