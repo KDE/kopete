@@ -28,16 +28,20 @@
 #include <kabc/addressbook.h>
 #include "addcontactwizard_base.h"
 
-
 class AddContactPage;
 class QCheckListItem;
-class AddressBookSelectorWidget;
 
 namespace Kopete
 {
 class Protocol;
 class Account;
 class Group;
+
+namespace UI
+{
+class AddressBookSelectorWidget;
+}
+
 }
 
 /**
@@ -58,7 +62,7 @@ private:
 	QMap <Kopete::Account*,AddContactPage*> protocolPages;
 	QMap <QCheckListItem*,Kopete::Account*> m_accountItems;
 	QMap <QCheckListItem*,Kopete::Group*> m_groupItems;
-	AddressBookSelectorWidget *m_addressbookSelectorWidget;
+	Kopete::UI::AddressBookSelectorWidget *m_addressbookSelectorWidget;
 
 public slots:
 	virtual void accept();

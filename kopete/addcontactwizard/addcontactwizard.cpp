@@ -75,7 +75,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
     //QVBox *kabcPageVbox = new QVBox(this->page(1));
-	m_addressbookSelectorWidget = new AddressBookSelectorWidget(this->page(1));
+	m_addressbookSelectorWidget = new Kopete::UI::AddressBookSelectorWidget(this->page(1));
 	selectAddresseeLayout->addWidget(m_addressbookSelectorWidget);
 
 	// Populate the groups list
