@@ -209,6 +209,13 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 	mInfo.userName = username;
 	mInfo.hostName = hostname;
 	mInfo.realName = realname;
+
+	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
+	{
+		setProperty( QString::fromLatin1("userInfo"), i18n("User"), QString::fromLatin1("%1@%2")
+			.arg(mInfo.userName).arg(mInfo.hostName) );
+		setProperty( QString::fromLatin1("server"), i18n("Server"), mInfo.serverName );
+	}
 }
 
 void IRCUserContact::newWhoIsServer(const QString &servername, const QString &serverinfo)
