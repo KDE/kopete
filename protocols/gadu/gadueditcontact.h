@@ -24,8 +24,11 @@
 #define GADUAWAY_H
 
 #include <kdialogbase.h>
+
 #include <qstring.h>
 #include <qwidget.h>
+
+#include "gaducontactlist.h"
 #include "gaduadd.h"
 
 class GaduAccount;
@@ -43,9 +46,13 @@ protected slots:
 	void slotApply();
 
 private:
+
+	void fillIn();
+
 	GaduAccount*	account_;
 	GaduContact*	contact_;
 	gaduAddUI*	ui_;
+	GaduContactsList::ContactLine* cl;
 };
 
 #endif

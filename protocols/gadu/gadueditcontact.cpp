@@ -31,6 +31,7 @@
 #include <qradiobutton.h>
 #include <qlineedit.h>
 #include <qlayout.h>
+#include <krestrictedline.h>
 
 GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 		    QWidget* parent, const char* name )
@@ -43,15 +44,47 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 		return;
 	}
 
+	cl = contact->contactDetails();
+	if ( !cl ) {
+		return;
+	}
+
 	ui_ = new gaduAddUI( this );
 	setMainWidget( ui_ );
+	
+	// fill values from cl into proper fields on widget
+	fillIn();
+	
 	show();
-	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
+	connect( this, SIGNAL( okClicked() ), SLOT( slotApply() ) );
+}
+
+void
+GaduEditContact::fillIn()
+{
+// grey it out, it shouldn't be editable
+	ui_->addEdit_->setDisabled( true );
+	ui_->addEdit_->setText( QString::number( contact_->uin() ) );
+
+	ui_->fornameEdit_->setText( cl->firstname );
+	ui_->snameEdit_->setText( cl->surname );
+	ui_->nickEdit_->setText( cl->nickname );
+	ui_->emailEdit_->setText( cl->email );
+	ui_->telephoneEdit_->setText( cl->phonenr );
+//	ui_->notAFriend_;
+
 }
 
 void
 GaduEditContact::slotApply()
 {
+	cl->firstname = ui_->fornameEdit_->text();
+	cl->surname = ui_->snameEdit_->text();
+	cl->nickname = ui_->nickEdit_->text();
+	cl->email = ui_->emailEdit_->text();
+	cl->phonenr = ui_->telephoneEdit_->text();
+
+	contact_->setContactDetails( cl );
 }
 
 #include "gadueditcontact.moc"
