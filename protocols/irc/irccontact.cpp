@@ -339,7 +339,7 @@ void IRCContact::slotOpenConnect()
 	}
 }
 
-void IRCContact::showContextMenu(QPoint point, QString /*group*/)
+void IRCContact::showContextMenu(const QPoint& point, const QString& /*group*/)
 {
 	popup = new KPopupMenu();
 	popup->insertTitle(mTarget);
@@ -524,7 +524,7 @@ QString IRCContact::id() const
 QString IRCContact::data() const
 {
 	return mUsername+mNickname; //FIXME Is this the righway(TM)
-}	
+}
 #include "irccontact.moc"
 /*
  * Local variables:

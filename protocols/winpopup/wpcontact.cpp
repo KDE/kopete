@@ -108,7 +108,7 @@ void WPContact::initActions()
 //	actionRedisplayName() = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 }
 
-void WPContact::showContextMenu(QPoint position, QString group)
+void WPContact::showContextMenu(const QPoint& position, const QString& group)
 {
 	DEBUG(WPDMETHOD, "WPContact::showContextMenu(<position>, " << group << ")");
 

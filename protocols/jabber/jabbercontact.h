@@ -73,7 +73,7 @@ class JabberContact:public KopeteContact {
     QString userID() const { return mUserID; }
     bool localGroup() { return hasLocalGroup; }
 
-    virtual void showContextMenu(QPoint, QString);
+    virtual void showContextMenu(const QPoint&, const QString&);
 
     JabberResource *bestResource();
 

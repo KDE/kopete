@@ -50,7 +50,7 @@ public:
 	virtual ContactStatus status() const;
 	virtual QString statusIcon() const;
 	virtual void execute();
-	virtual void showContextMenu(QPoint, QString);
+	virtual void showContextMenu(const QPoint&, const QString&);
 	KIRC *engine;
 	bool waitingPart;
 	bool requestedQuit;
@@ -63,7 +63,7 @@ public:
 
 	virtual QString id() const;
 	virtual QString data() const;
-	
+
 private:
 	void initActions();
 	unsigned int mPort;

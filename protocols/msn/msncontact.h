@@ -42,7 +42,7 @@ public:
 
 	void initContact( const QString &msnId, const QString &displayName,
 						const QString &group );
-	virtual void showContextMenu(QPoint, QString group);
+	virtual void showContextMenu( const QPoint&, const QString& group );
 	virtual void execute();
 
 	virtual QString id() const;

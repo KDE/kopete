@@ -92,7 +92,7 @@ public:
 	QString group() const { return mGroup; }
 	QString userID() const { return mUserID; }
 
-	virtual void showContextMenu(QPoint, QString);
+	virtual void showContextMenu(const QPoint&, const QString&);
 
 	virtual QString id() const;
 	virtual QString data() const;

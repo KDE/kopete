@@ -83,7 +83,7 @@ void JabberContact::initActions() {
 	actionSnarfVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
 }
 
-void JabberContact::showContextMenu(QPoint, QString)
+void JabberContact::showContextMenu(const QPoint&, const QString&)
 {
 	popup = new KPopupMenu();
 	popup->insertTitle(userID() + " (" + mResource + ")");

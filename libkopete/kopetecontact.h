@@ -155,7 +155,7 @@ public:
 	 * a contact can be in multiple groups and you have to move
 	 * a specific instance from one group to another.
 	 */
-	virtual void showContextMenu( QPoint p, QString group ) = 0;
+	virtual void showContextMenu( const QPoint& p, const QString& group ) = 0;
 
 	/**
 	 * Return the unique id that identifies a contact. Id is required
