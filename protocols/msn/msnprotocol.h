@@ -21,6 +21,7 @@
 #include <qmap.h>
 #include <qmovie.h>
 #include <qpixmap.h>
+#include <qptrdict.h>
 #include <qptrlist.h>
 
 #include "kopeteprotocol.h"
@@ -321,8 +322,7 @@ private:
 	KopeteContact *m_myself;
 
 	MSNIdentity *m_identity;
-	KopeteMessageManager *m_manager;
-	KMSNChatService *m_chatService;
+	QPtrDict<KMSNChatService> m_chatServices;
 };
 
 #endif

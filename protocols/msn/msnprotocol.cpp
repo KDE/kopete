@@ -919,9 +919,10 @@ void MSNProtocol::slotExecute( QString userid )
 		KopeteContactList chatmembers;
 
 		chatmembers.append( m_contacts[ userid ] );
-		m_manager = kopeteapp->sessionFactory()->create( m_myself,
-			chatmembers, this, QString( "msnlogs/" + userid + ".log" ) );
-		m_manager->readMessages();
+		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+			m_myself, chatmembers, this,
+			QString( "msnlogs/" + userid + ".log" ) );
+		manager->readMessages();
 	}
 }
 
@@ -937,24 +938,21 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
 			<< "session (Inbound)" << endl;
 		chatmembers.append( msg.from() );
-		m_manager = kopeteapp->sessionFactory()->create( m_myself,
-		chatmembers, this );
-		if ( m_manager )
-		{
-			m_manager->appendMessage( msg );
-		}
+		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+			m_myself, chatmembers, this );
+
+		if( manager )
+			manager->appendMessage( msg );
 	}
 	else if ( msg.direction() == KopeteMessage::Outbound )
     {
 		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
 			<< "session (Outbound)" << endl;
 		chatmembers = msg.to();
-		m_manager = kopeteapp->sessionFactory()->create( m_myself,
-		chatmembers, this );
-		if ( m_manager )
-		{
-			m_manager->appendMessage( msg );
-		}
+		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+			m_myself, chatmembers, this );
+		if( manager )
+			manager->appendMessage( msg );
 	}
 			
 }
@@ -963,7 +961,18 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 {
 	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
 		msg.to().first()->name() << endl;
-	m_chatService->slotSendMsg( msg );
+
+	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+		m_myself, msg.to(), this );
+
+	KMSNChatService *service = m_chatServices[ manager ];
+	if( service )
+		service->slotSendMsg( msg );
+	else
+	{
+		kdDebug() << "WARNING: No chat service active for thse recipients!"
+			<< endl;
+	}
 }
 
 void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
@@ -972,46 +981,28 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	kdDebug() << "MSNProtocol::slotCreateChat: Creating chat for " <<
 		handle << endl;
 
-	// FIXME: Don't we leak this ?
-	m_chatService = new KMSNChatService();
-	m_chatService->setHandle( m_msnId );
-	m_chatService->msgHandle = handle;
-	m_chatService->connectToSwitchBoard( ID, address, auth );
-
 	KopeteContact *c = m_contacts[ handle ];
 	if ( c && m_myself )
 	{
 		KopeteContactList chatmembers;
-
 		chatmembers.append(c);
-		m_manager = kopeteapp->sessionFactory()->create(m_myself, chatmembers, this,QString("msnlogs/"+ ID +".log") );
 
-		connect( m_chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
+		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+			m_myself, chatmembers, this, QString( "msnlogs/" + ID + ".log" ) );
+
+		// FIXME: Don't we leak this ?
+		KMSNChatService *chatService = new KMSNChatService();
+		chatService->setHandle( m_msnId );
+		chatService->msgHandle = handle;
+		chatService->connectToSwitchBoard( ID, address, auth );
+		m_chatServices.insert( manager, chatService );
+
+		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
 			this, SLOT( slotMessageReceived( const KopeteMessage & ) ) );
-		connect( m_manager, SIGNAL( messageSent( const KopeteMessage ) ),
+		connect( manager, SIGNAL( messageSent( const KopeteMessage ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage ) ) );
-		m_manager->readMessages();
+		manager->readMessages();
 	}
-	// Maybe we have a copy of us in another group
-
-/*	if( messageDialog && messageDialog->isVisible() )
-	{
-		kdDebug() << "MSN Plugin: Incoming chat but Window already opened for " << handle <<"\n";
-		messageDialog->setBoard( chatService );
-		messageDialog->raise();
-	}
-	else
-	{
-		kdDebug() << "MSN Plugin: Incoming chat, no window, creating window for " << handle <<"\n";
-		// FIXME: MSN message dialog needs status
-
-		messageDialog = new MSNMessageDialog( m_contacts[ handle ], chatService, this );
-//		connect( this, SIGNAL(userStateChanged(QString)), messageDialog, SLOT(slotUserStateChanged(QString)) );
-		connect( messageDialog, SIGNAL(closing(QString)), this, SLOT(slotMessageDialogClosing(QString)) );
-
-		mChatWindows.append( messageDialog );
-		messageDialog->show();
-	}*/
 }
 
 void MSNProtocol::slotStartChatSession( QString handle )

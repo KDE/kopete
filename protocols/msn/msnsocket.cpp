@@ -56,6 +56,7 @@ void MSNSocket::connect( const QString &server, uint port )
 
 	setOnlineStatus( Connecting );
 	m_id = 0;
+	m_waitBlockSize = 0L;
 
 	m_socket = new KExtendedSocket( server, port, 0x600000 );
 	m_socket->enableRead( true );
@@ -200,7 +201,7 @@ void MSNSocket::slotReadLine()
 
 	// We have data, first check if it's meant for a block read, otherwise
 	// parse the first line (which will recursively parse the other lines)
-	if( pollReadBlock() )
+	if( !pollReadBlock() )
 	{
 		int index = m_buffer.find( "\r\n" );
 		if( index != -1 )
