@@ -476,11 +476,6 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 	m_accountStatusBarIcons.insert( a, i );
 
-	// Adds tooltip for each status icon,
-	// useful in case you have many accounts
-	// over one protocol
-        QToolTip::add(i, a->accountId() );
-
 	// FIXME -Will
 	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 
@@ -515,7 +510,11 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	if( !i )
 		return;
 
-	// probably we have to change tooltip :-)
+	
+	// Adds tooltip for each status icon,
+	// useful in case you have many accounts
+	// over one protocol
+	
 	QToolTip::remove(i);
 	QToolTip::add(i, contact->account()->accountId());
 
