@@ -187,6 +187,8 @@ public:
 	// extensions
 	QDateTime timeStamp;
 	UrlList urlList;
+	QValueList<MsgEvent> eventList;
+	QString eventId;
 	QString xencrypted, invite;
 
 	bool spooled, wasEncrypted;
@@ -389,6 +391,35 @@ void Message::setUrlList(const UrlList &list)
 	d->urlList = list;
 }
 
+QString Message::eventId() const
+{
+	return d->eventId;
+}
+
+void Message::setEventId(const QString& id)
+{
+	d->eventId = id;
+}
+
+bool Message::containsEvents() const
+{
+	return !d->eventList.isEmpty();
+}
+
+bool Message::containsEvent(MsgEvent e) const
+{
+	return d->eventList.contains(e);
+}
+
+void Message::addEvent(MsgEvent e)
+{
+	if (!d->eventList.contains(e)) {
+		if (e == CancelEvent || containsEvent(CancelEvent)) 
+			d->eventList.clear(); // Reset list
+		d->eventList += e;
+	}
+}
+
 QString Message::xencrypted() const
 {
 	return d->xencrypted;
@@ -478,6 +509,39 @@ Stanza Message::toStanza(Stream *stream) const
 		s.appendChild(x);
 	}
 
+	// events
+	if (!d->eventList.isEmpty()) {
+		QDomElement x = s.createElement("jabber:x:event", "x");
+
+		if (d->body.isEmpty()) {
+			if (d->eventId.isEmpty())
+				x.appendChild(s.createElement("jabber:x:event","id"));
+			else
+				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
+		}
+
+		for(QValueList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+			switch (*ev) {
+				case OfflineEvent:
+					x.appendChild(s.createElement("jabber:x:event", "offline"));
+					break;
+				case DeliveredEvent:
+					x.appendChild(s.createElement("jabber:x:event", "delivered"));
+					break;
+				case DisplayedEvent:
+					x.appendChild(s.createElement("jabber:x:event", "displayed"));
+					break;
+				case ComposingEvent: 
+					x.appendChild(s.createElement("jabber:x:event", "composing"));
+					break;
+				case CancelEvent:
+					// Add nothing
+					break;
+			}
+		}
+		s.appendChild(x);
+	} 
+
 	// xencrypted
 	if(!d->xencrypted.isEmpty())
 		s.appendChild(s.createTextElement("jabber:x:encrypted", "x", d->xencrypted));
@@ -557,6 +621,27 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 		u.setUrl(t.elementsByTagName("url").item(0).toElement().text());
 		u.setDesc(t.elementsByTagName("desc").item(0).toElement().text());
 		d->urlList += u;
+	}
+	
+        // events
+	d->eventList.clear();
+	nl = root.elementsByTagNameNS("jabber:x:event", "x");
+	if (nl.count()) {
+		nl = nl.item(0).childNodes();
+		for(n = 0; n < nl.count(); ++n) {
+			QString evtag = nl.item(n).toElement().tagName();
+			if (evtag == "id") {
+				d->eventId =  nl.item(n).toElement().text();
+			}
+			else if (evtag == "displayed")
+				d->eventList += DisplayedEvent;
+			else if (evtag == "composing")
+				d->eventList += ComposingEvent;
+			else if (evtag == "delivered")
+				d->eventList += DeliveredEvent;
+		}
+		if (d->eventList.isEmpty())
+			d->eventList += CancelEvent;
 	}
 
 	// xencrypted

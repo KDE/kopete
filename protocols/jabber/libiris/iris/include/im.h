@@ -47,6 +47,9 @@ namespace XMPP
 
 	typedef QValueList<Url> UrlList;
 	typedef QMap<QString, QString> StringMap;
+	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
+			ComposingEvent, CancelEvent } MsgEvent;
+                                           
 	class Message
 	{
 	public:
@@ -85,6 +88,13 @@ namespace XMPP
 		void urlsClear();
 		void setUrlList(const UrlList &list);
 
+		// JEP-0022
+		QString eventId() const;
+		void setEventId(const QString& id);
+		bool containsEvents() const;
+		bool containsEvent(MsgEvent e) const;
+		void addEvent(MsgEvent e);
+ 
 		// JEP-0027
 		QString xencrypted() const;
 		void setXEncrypted(const QString &s);

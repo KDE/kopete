@@ -78,6 +78,7 @@ public slots:
 	void appendMessage ( KopeteMessage &msg, const QString &fromResource );
 
 private slots:
+	void slotSendTypingNotification ( bool typing );
 	void slotMessageSent ( KopeteMessage &message, KopeteMessageManager *kmm );
 
 private:

@@ -17,6 +17,7 @@
 
 #include "jabbermessagemanager.h"
 
+#include <qptrlist.h>
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
 #include "jabberprotocol.h"
@@ -27,12 +28,15 @@ JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const Jab
 											 KopeteContactPtrList others, const QString &resource, const char *name )
 											 : KopeteMessageManager ( user, others, protocol, 0, name )
 {
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	// make sure Kopete knows about this instance
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
 
 	connect ( this, SIGNAL ( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
 			  this, SLOT ( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
+
+	connect ( this, SIGNAL ( typingMsg ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
 
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
@@ -51,6 +55,8 @@ JabberMessageManager::~JabberMessageManager ()
 
 void JabberMessageManager::updateDisplayName ()
 {
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
+
 	KopeteContactPtrList chatMembers = members ();
 
 	XMPP::Jid jid ( chatMembers.first()->contactId () );
@@ -94,6 +100,43 @@ void JabberMessageManager::appendMessage ( KopeteMessage &msg, const QString &fr
 	updateDisplayName ();
 
 	KopeteMessageManager::appendMessage ( msg );
+
+}
+
+void JabberMessageManager::slotSendTypingNotification ( bool typing )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
+
+	KopeteContact *contact;
+	QPtrListIterator<KopeteContact> listIterator ( members () );
+
+	while ( ( contact = listIterator.current () ) != 0 )
+	{
+		++listIterator;
+
+		// create JID for us as sender
+		XMPP::Jid fromJid ( user()->contactId () );
+		fromJid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
+
+		// create JID for the recipient
+		XMPP::Jid toJid ( contact->contactId () );
+
+		// set resource properly if it has been selected already
+		if ( !resource().isEmpty () )
+			toJid.setResource ( resource () );
+
+		XMPP::Message message;
+
+		message.setFrom ( fromJid );
+		message.setTo ( toJid );
+
+		// store composing event depending on state
+		typing ? message.addEvent ( ComposingEvent ) : message.addEvent ( CancelEvent );
+
+		// send message
+		account()->client()->sendMessage ( message );
+
+	}
 
 }
 

@@ -415,8 +415,20 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
-	// FIXME: bugfix for current libxmpp which reports typing events
-	// as regular message
+	// fetch message manager
+	JabberMessageManager *mManager = manager ( message.from().resource (), true );
+
+	// evaluate typing notifications
+	if ( message.containsEvent ( CancelEvent ) )
+		mManager->receivedTypingMsg ( this, false );
+	else
+		if ( message.containsEvent ( ComposingEvent ) )
+			mManager->receivedTypingMsg ( this, true );
+
+	/**
+	 * Don't display empty messages, these were most likely just carrying
+	 * event notifications or other payload.
+	 */
 	if ( message.type().isEmpty () && message.body().isEmpty () )
 		return;
 
@@ -450,9 +462,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 										 message.subject (), KopeteMessage::Inbound,
 										 KopeteMessage::PlainText, type );
 	}
-
-	// fetch message manager
-	JabberMessageManager *mManager = manager ( message.from().resource (), true );
 
 	// append message to (eventually new) manager and preselect the originating resource
 	mManager->appendMessage ( *newMessage, message.from().resource () );

@@ -19,3 +19,12 @@ uses qmake.
 This library depends on: libidn (compile time), qca-tls (runtime)
 
 27.02.2004, Till Gerken (till@tantalo.net)
+
+Patches:
+
+001_typing_notifications_jep22.patch		(21.05.2004)
+
+Taken from http://psi.affinix.com/flyspray/index.php?do=details&id=80, this
+patch implements basic support for typing notifications, namely the
+"composing" event. It's being reviewed upstream and will hopefully be
+accepted.
