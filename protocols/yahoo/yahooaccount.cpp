@@ -102,7 +102,6 @@ void YahooAccount::connect()
 
 	QString server = static_cast<YahooProtocol *>(protocol())->server();
 	int port = static_cast<YahooProtocol *>(protocol())->port();
-	// TODO: do something with them! :-)
 	kdDebug(14180) << "YahooAccount::connect()" << endl;
 
 	if(!isConnected())
@@ -135,7 +134,6 @@ void YahooAccount::connect()
 				QObject::connect( session_ , SIGNAL(mailNotify( const QString &, const QString &, int )), this , SLOT(slotMailNotify( const QString &, const QString &, int )) );
 				QObject::connect( session_ , SIGNAL(systemMessage( const QString &)), this , SLOT(slotSystemMessage( const QString &)) );
 				QObject::connect( session_ , SIGNAL(error( const QString &, int )), this , SLOT(slotError( const QString &, int )) );
-				// doesn't actually work!
 				QObject::connect( session_ , SIGNAL(gotIdentities( const QStringList & )), this , SLOT(slotGotIdentities( const QStringList & )) );
 			}
 			else
@@ -171,8 +169,8 @@ void YahooAccount::disconnect()
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
 {
-	kdDebug(14180) << "YahooAccount::setAway(" << status << ")" << awayMessage << endl;
-	// TODO: make it work!
+	kdDebug(14180) << "YahooAccount::setAway(" << status << ", " << awayMessage << ")" << endl;
+	slotGoStatus(status ? 2 : 0);   // or SteppedOut?
 }
 
 void YahooAccount::slotConnected()
@@ -213,12 +211,10 @@ void YahooAccount::initActions()
 	theActionMenu->insert(new KAction(i18n(YSTOnVacation), "yahoo_away", 0, this, SLOT(slotGoStatus007()), this, "actionYahooGoStatus007"));
 	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), "yahoo_away", 0, this, SLOT(slotGoStatus008()), this, "actionYahooGoStatus008"));
 	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), "yahoo_away", 0, this, SLOT(slotGoStatus009()), this, "actionYahooGoStatus009"));
-//	TODO: uncomment when connect as invisible is sorted
-//	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012");
-
-/*	// TODO: connect with invisible on
-	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(goStatus012()), this, "actionYahooGoStatus012");
-
+/*	// TODO: uncomment when connect as invisible is sorted
+	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012");
+*/
+/*	// TODO: do something(?!) with them
 	actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online",
 				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",

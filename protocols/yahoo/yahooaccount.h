@@ -45,7 +45,7 @@ public:
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
 	virtual KActionMenu* actionMenu() { return theActionMenu; }
 
-	virtual void setAway(bool, const QString &);					// set away status
+	virtual void setAway(bool, const QString &);			// set away status
 
 	YahooSession *yahooSession();					// the session
 
@@ -68,11 +68,9 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-
 	void slotGoStatus(int status);
 
 	void slotLoginResponse(int succ, const QString &url);
-
 	void slotGotBuddies(const YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotGotIgnore(const QStringList &);
@@ -111,17 +109,21 @@ private slots:
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
 
 private:
+	// internal (to the plugin) controls/flags
 	QMap<QString, QPair<QString, QString> > IDs;
 		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
-	int m_sessionId;			// The Yahoo session descriptor
-
+	int stateOnConnection;		// The state to change to on connection
+	
+	// external settings/descriptors
+	int m_sessionId;		// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
-	int stateOnConnection;		// The state to change to on connection
-	void initActions();			// Load Status Actions
+	
+	// gui related stuff
 	KActionMenu *theActionMenu;	// Statusbar Popup
+	void initActions();		// Load Status Actions
 };
 
 
