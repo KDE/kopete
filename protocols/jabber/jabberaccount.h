@@ -87,13 +87,6 @@ public slots:
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
 
-signals:
-	void settingsChanged ();
-	void statusChanged (KopeteOnlineStatus status);
-	void connected ();
-	void disconnected ();
-	void connectionAttempt ();
-
 protected:
 	/* Create a new contact in the specified metacontact.
 	 * You shouldn't call this method yourself; for adding contacts, see @ref addContact().

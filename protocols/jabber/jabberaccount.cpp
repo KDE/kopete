@@ -293,7 +293,6 @@ void JabberAccount::connect ()
 
 	jabberClient->connectToHost (server(), port(), jidDomain);
 
-	emit connectionAttempt ();
 }
 
 void JabberAccount::slotPsiDebug (const QString & msg)
@@ -329,8 +328,6 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connected to Jabber server." << endl;
 
-		emit connected ();
-
 		/* Request roster. */
 		jabberClient->rosterRequest ();
 
@@ -349,7 +346,6 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 	else
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connection failed! Status: " << statusCode << ", " << statusString << endl;
-		emit disconnected ();
 
 		KMessageBox::error (qApp->mainWidget (), i18n ("Connection failed with reason \"%1\"").arg (statusString, 1), i18n ("Connection Failed"));
 	}
@@ -377,8 +373,6 @@ void JabberAccount::disconnect ()
 	 */
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Disconnected." << endl;
 
-	emit disconnected ();
-
 }
 
 void JabberAccount::slotConnect ()
@@ -400,8 +394,6 @@ void JabberAccount::slotDisconnected ()
 	 * but timers etc prevent us from doing so. (Psi does
 	 * not like to be deleted from a slot).
 	 */
-
-	emit disconnected ();
 
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so update all contacts manually. */
