@@ -216,7 +216,9 @@ void KopeteMessageManager::sendMessage( KopeteMessage &message )
 		}
 	}
 	else
-		emit messageSuccess();
+	{
+		messageSucceeded();
+	}
 }
 
 void KopeteMessageManager::messageSucceeded()

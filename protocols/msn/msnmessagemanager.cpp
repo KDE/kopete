@@ -348,24 +348,25 @@ void MSNMessageManager::sendMessageQueue()
 
 void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 {
-	if(!m_messagesSent.contains(id))
+	if ( !m_messagesSent.contains( id ) )
 	{
-		return;  //this is maybe a ACK/NAK  for a non-messaging message
+		// This is maybe a ACK/NAK for a non-messaging message
+		return;
 	}
 
-
-	if(!ack)
+	if ( !ack )
 	{
-		KopeteMessage m=m_messagesSent[id];
-		QString body=i18n("The following message has not been sent correctly:\n%1").arg(m.plainBody());
-		KopeteMessage msg = KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
-		appendMessage(msg);
+		KopeteMessage m = m_messagesSent[ id ];
+		QString body = i18n( "The following message has not been sent correctly:\n%1" ).arg( m.plainBody() );
+		KopeteMessage msg = KopeteMessage( m.to().first(), members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
+		appendMessage( msg );
 	}
 	else
 	{
-		emit( messageSuccess() );
+		messageSucceeded();
 	}
-	m_messagesSent.remove(id);
+
+	m_messagesSent.remove( id );
 }
 
 void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg)

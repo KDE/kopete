@@ -80,7 +80,6 @@ KopeteMessageManager* WPContact::manager( bool )	// TODO: use the parameter as c
 		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
   		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		connect(this, SIGNAL(messageSuccess()), m_manager, SLOT(messageSucceeded()));
 	}
 
 	return m_manager;
@@ -180,7 +179,7 @@ void WPContact::slotSendMessage( KopeteMessage& message )
 	WPContact *contact = dynamic_cast<WPContact *>( message.to().first() );
 	if (acct && contact) {
 		acct->slotSendMessage( Message, contact->contactId() );
-		emit messageSuccess();
+		m_manager->messageSucceeded();
 	}
 }
 
