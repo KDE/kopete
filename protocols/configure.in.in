@@ -1,0 +1,72 @@
+LIBGG_INCLUDES=""
+LIBGG_LIBS=""
+ac_libgadu_includes=""
+ac_libgadu_libs=""
+
+AC_ARG_WITH(libgadu-includes,
+	[  --with-libgadu-includes=DIR  where the libgadu includes are. ],
+	[  ac_libgadu_includes="$withval" ])
+
+if test "$ac_libgadu_includes" != "" ; then
+LIBGG_INCLUDES="-I$ac_libgadu_includes"
+fi
+
+AC_ARG_WITH(libgadu-libs,
+	[  --with-libgadu-libs=DIR  where the libgadu libraries are. ],
+	[  ac_libgadu_libs="$withval" ])
+
+if test "$ac_libgadu_libs" != "" ; then
+	LIBGG_LIBS="-L$ac_libgadu_libs"
+fi
+
+
+ac_save_LIBS="$LIBS"
+ac_save_CXXFLAGS="$CXXFLAGS"
+LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
+CXXFLAGS="$CXXFLAGS $LIBGG_INCLUDES"
+AC_MSG_CHECKING([for libgadu >= 1.0])
+	AC_TRY_RUN(
+	[
+	#include <libgadu.h>
+	#include <stdio.h>
+
+	int main()
+	{
+		int bar;
+		bar = (int) strlen((char *)gg_libgadu_version());
+		if (bar == 8)
+		{
+			int foo;
+			sscanf (gg_libgadu_version(), "%d", &foo);
+			if (foo >= 20030422)
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			float foo;
+			sscanf (gg_libgadu_version(), "%f", &foo);
+			if (foo >= 1.0)
+			{
+				return 0;
+			}
+		}
+	return 1;
+	}
+	], [
+	LIBGG_LIBS="$LIBGG_LIBS-lgadu $LIBPTHREAD"
+	AC_MSG_RESULT([yes])
+	AC_SUBST(LIBGG_INCLUDES)
+	AC_SUBST(LIBGG_LIBS)
+	COMPILEGADU=true
+	AC_SUBST(COMPILEGADU)
+	], [
+	AC_MSG_RESULT([no])
+	COMPILEGADU=
+	AC_SUBST(COMPILEGADU)
+	])
+AM_CONDITIONAL(include_gadu, test -n "$COMPILEGADU")
+LIBS="$ac_save_LIBS"
+CXXFLAGS="$ac_save_CXXFLAGS"
+
