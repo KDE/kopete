@@ -1,8 +1,8 @@
 /*
     kopeteprotocol.cpp - Kopete Protocol
 
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-	Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -40,14 +40,6 @@ void KopeteProtocol::setIcon( const QString &icon )
 {
 	m_icon = icon;
 }
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 
 // vim: set noet ts=4 sts=4 sw=4:
 

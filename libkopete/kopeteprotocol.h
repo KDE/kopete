@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef IMPROTOCOL_H
-#define IMPROTOCOL_H
+#ifndef KOPETEPROTOCOL_H
+#define KOPETEPROTOCOL_H
 
 #include <qobject.h>
 #include <qwidget.h>
@@ -33,9 +33,7 @@ class KopeteTransfer;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- *
  */
-
 class KopeteProtocol : public Plugin
 {
 public:
@@ -45,7 +43,6 @@ public:
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
-
 	virtual QString protocolIcon() const = 0;
 	virtual void Connect()=0;
 	virtual void Disconnect()=0;
@@ -72,13 +69,6 @@ public:
 	void setIcon( const QString &icon );
 
 	/**
-	 * If the protocol supports the new experimental contact list stuff, set
-	 * this to true. Otherwise, leave the default and don't change!
-	 */
-	bool canStream() const { return m_canStream; }
-	void enableStreaming( bool b ) { m_canStream = b; }
-
-	/**
 	 * Return whether the protocol supports offline messages.
 	 * FIXME: Make pure virtual, or define protected method
 	 *        setOfflineCapable(), instead of default implementation always
@@ -88,8 +78,10 @@ public:
 
 protected slots:
 	void percentCompleted( const KopeteFileTransferInfo *,int percentDone );
+
 signals:
 	void transferCanceled( const KopeteFileTransferInfo * );
+
 	/**
 	 * Function has to be reimplemented in every single protocol
 	 * and return the KopeteContact associated with the 'home' user.
@@ -97,19 +89,12 @@ signals:
 	 * @return contact associated with the currently logged in user
 	 */
 	virtual KopeteContact* myself() const=0;
+
 private:
 	QString m_icon;
-	bool m_canStream;
 };
 
 #endif
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
