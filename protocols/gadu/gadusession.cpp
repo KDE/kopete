@@ -580,12 +580,12 @@ GaduSession::handleUserlist( gg_event* e )
 }
 
 QString
-GaduSesssion::stateDescription( int state )
+GaduSession::stateDescription( int state )
 {
 	switch( state ) {
 		case GG_STATE_IDLE:
 			return i18n( "idle" );
-			break
+			break;
 		case GG_STATE_RESOLVING:
 			return i18n( "resolving host" );
 			break;
