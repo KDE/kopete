@@ -30,7 +30,6 @@ OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	mCookie.duplicate(cookie);
 	mSocket = new KExtendedSocket();
 	mSocket->setSocketFlags(KExtendedSocket::inetSocket | KExtendedSocket::bufferedSocket);
-	mSocket->setBlockingMode(false);
 
 	connect(mSocket, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
 	connect(mSocket, SIGNAL(connectionFailed(int)), this, SLOT(slotError(int)));

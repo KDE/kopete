@@ -19,7 +19,6 @@
 
 #include <stdlib.h>
 #include <netinet/in.h> // for htonl()
-#include <errno.h>
 
 #include "oscaraccount.h"
 
@@ -615,10 +614,6 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 		if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
-			if ( socket()->systemError() == EAGAIN )
-				kdDebug(14150) << k_funcinfo << " EAGAIN error code - non-blocking I/O will block" << endl;
-			if ( socket()->systemError() == EFBIG )
-				kdDebug(14150) << k_funcinfo << " Write exceeded max file size" << endl;
 			kdDebug(14150) << k_funcinfo << 
 				socket()->strError(socket()->socketStatus(), socket()->systemError()) << endl;
 		}
