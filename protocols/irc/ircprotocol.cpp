@@ -114,13 +114,13 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	m_ChannelStatusOffline(Kopete::OnlineStatus::Offline, 70, this, OfflineChannel, QString::null, i18n("Offline")),
 
 	m_UserStatusOpVoice(Kopete::OnlineStatus::Online, 60, this, Operator | Voiced, QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
-	m_UserStatusOpVoiceAway(Kopete::OnlineStatus::Away, 55, this, Operator | Voiced | Away, QStringList::split(' ',"irc_voice irc_op irc_away"), i18n("Away")),
+	m_UserStatusOpVoiceAway(Kopete::OnlineStatus::Away, 55, this, Operator | Voiced | Away, QStringList::split(' ',"irc_voice irc_op contact_away_overlay"), i18n("Away")),
 	m_UserStatusOp(Kopete::OnlineStatus::Online, 50, this, Operator, "irc_op", i18n("Op")),
-	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 45, this, Operator | Away, QStringList::split(' ',"irc_op irc_away"), i18n("Away")),
+	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 45, this, Operator | Away, QStringList::split(' ',"irc_op contact_away_overlay"), i18n("Away")),
 	m_UserStatusVoice(Kopete::OnlineStatus::Online, 30, this, Voiced, "irc_voice", i18n("Voice")),
-	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 35, this, Voiced | Away, QStringList::split(' ',"irc_voice irc_away"),  i18n("Away")),
+	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 35, this, Voiced | Away, QStringList::split(' ',"irc_voice contact_away_overlay"),  i18n("Away")),
 	m_UserStatusOnline(Kopete::OnlineStatus::Online, 25, this, Online, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
-	m_UserStatusAway(Kopete::OnlineStatus::Away, 2, this, Away, "irc_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
+	m_UserStatusAway(Kopete::OnlineStatus::Away, 2, this, Away, "contact_away_overlay", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
 	m_UserStatusConnecting(Kopete::OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
 	m_UserStatusOffline(Kopete::OnlineStatus::Offline, 0, this, Offline, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),
 

@@ -63,10 +63,10 @@ const PresenceTypeData *PresenceTypeData::all()
 	static const PresenceTypeData data[] =
 	{
 		{ Presence::Offline,      OnlineStatus::Offline, OFFLINE,  OFFLINE, i18n("Offline"),        i18n("Offline"), 0 },
-		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), "icq_dnd" },
-		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n("Occupied"),       i18n("Occupied (Invisible)"), "icq_occupied" },
-		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n("Not Available"),  i18n("Not Available (Invisible)"), "icq_na" },
-		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n("Away"),           i18n("Away (Invisible)"), "icq_away" },
+		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), "contact_busy_overlay" },
+		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n("Occupied"),       i18n("Occupied (Invisible)"), "contact_busy_overlay" },
+		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n("Not Available"),  i18n("Not Available (Invisible)"), "contact_xa_overlay" },
+		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n("Away"),           i18n("Away (Invisible)"), "contact_away_overlay" },
 		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n("Free For Chat"),  i18n("Free For Chat (Invisible)"), "icq_ffc" },
 		{ Presence::Online,       OnlineStatus::Online,  ONLINE,   ONLINE,  i18n("Online"),         i18n("Online (Invisible)"), 0 }
 	};
