@@ -104,6 +104,9 @@ void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const
 		case KIRC::UnknownCommand:
 			error = i18n("KIRC Error - Unknown command: ");
 			break;
+		case KIRC::UnknownNumericReply:
+			error = i18n("KIRC Error - Unknown numeric reply: ");
+			break;
 		case KIRC::InvalidNumberOfArguments:
 			error = i18n("KIRC Error - Invalid number of arguments: ");
 			break;
