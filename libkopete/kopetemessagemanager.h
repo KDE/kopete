@@ -129,7 +129,7 @@ signals:
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
 
-	void typingMsg();
+//	void typingMsg();
 
 
 public slots:
@@ -161,7 +161,11 @@ public slots:
 	 * Set any user is typing
 	 */
 	void userTypingMsg ( const KopeteContact *c );
-	 
+
+	/**
+	 * Set if the KMM will be deleted when the chatwindow is deleted
+	 */
+	void setCanBeDeleted ( bool ) ;
 
 
 protected slots:
@@ -172,9 +176,9 @@ protected slots:
 	void slotMessageSent(KopeteMessage &message);
 	void slotReadMessages();
 	void slotReply();
-	void slotTyping(bool t);
+	virtual void slotTyping(bool ) {};
 
-private:
+protected:
 	/**
 	 * Create a message manager. This constructor is private, because the
 	 * static factory method createSession() creates the object. You may
@@ -186,6 +190,7 @@ private:
 			      QObject *parent = 0, const char *name = 0 );
 	void setID( int );
 
+private:
 	/**
 	 * Empties Message buffer, filling the window and returning true
 	 * if a foreign message exists

@@ -48,6 +48,8 @@ struct KMMPrivate
 	bool mSendEnabled;
 	int mId;
 	bool mLog;
+	bool isEmpty;
+	bool mCanBeDeleted;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
@@ -66,6 +68,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	d->mWidget = widget;
 	d->mId = id;
 	d->mLog = (logFile.isEmpty()) ? false : true;
+	d->isEmpty= others.isEmpty();
+	d->mCanBeDeleted= false;
 
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
@@ -80,6 +84,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 
 KopeteMessageManager::~KopeteMessageManager()
 {
+	kdDebug() << "KopeteMessageManager::~KopeteMessageManager" <<endl;
 	emit dying(this);
 	delete d;
 	d = 0;
@@ -315,14 +320,19 @@ void KopeteMessageManager::slotChatWindowClosing()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		kdDebug() << "[KopeteMessageManager] Chat Window closed, now 0L" << endl;
+		kdDebug() << "KopeteMessageManager::slotChatWindowClosing : Chat Window closed, now 0L" << endl;
 		d->mChatWindow = 0L;
 	}
 	else if (d->mWidget == Email)
 	{
-		kdDebug() << "[KopeteMessageManager] Email Window closed, now 0L." << endl;
+		kdDebug() << "KopeteMessageManager::slotChatWindowClosing : Email Window closed, now 0L." << endl;
 		delete d->mEmailWindow;
 		d->mEmailWindow = 0L;
+	}
+	if(d->mCanBeDeleted)
+	{
+		kdDebug() << "KopeteMessageManager::slotChatWindowClosing : delete KMM" << endl;
+		deleteLater();
 	}
 }
 
@@ -434,14 +444,29 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 {
 	if ( d->mContactList.contains(c) )
 	{
-		kdDebug() << "[KopeteMessageManager] Contact already exists" <<endl;
+		kdDebug() << "KopeteMessageManager::addContact: Contact already exists" <<endl;
+		emit contactAdded(c);
 	}
 	else
 	{
-		kdDebug() << "[KopeteMessageManager] Contact Joined session" <<endl;
-		d->mContactList.append(c);
+		if(d->mContactList.count()==1 && d->isEmpty)
+		{
+			KopeteContact *old=d->mContactList.first();
+			kdDebug() << "KopeteMessageManager::addContact: " <<old->displayName() << " left and " << c->displayName() << " joined " <<endl;
+			d->mContactList.remove(old);
+			d->mContactList.append(c);
+			emit contactAdded(c);
+			emit contactRemoved(old);
+		}
+		else
+		{
+			kdDebug() << "KopeteMessageManager::addContact: Contact Joined session : " <<c->displayName() <<endl;
+			d->mContactList.append(c);
+			emit contactAdded(c);
+		}
 	}
-	emit contactAdded(c);
+	d->isEmpty=false;
+	
 }
 
 void KopeteMessageManager::removeContact( const KopeteContact *c )
@@ -449,10 +474,10 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 	if(d->mContactList.count()==1)
 	{
 		kdDebug() << "KopeteMessageManager::removeContact - Contact not removed. Keep always one contact" <<endl;
+		d->isEmpty=true;
 	}
 	else
 	{
-//		d->mContactList.take( d->mContactList.find(c) );
 		d->mContactList.remove( c );
 	}
 	emit contactRemoved(c);
@@ -481,11 +506,18 @@ void KopeteMessageManager::userTypingMsg ( const KopeteContact *c )
 	}
 }
 
-void KopeteMessageManager::slotTyping ( bool t )
+/*void KopeteMessageManager::slotTyping ( bool t )
 {
 	kdDebug() << "KopeteMessageManager::slotTyping "<< t << endl;
 	if(t)
 		emit typingMsg();
+}*/
+
+void KopeteMessageManager::setCanBeDeleted ( bool b)
+{
+	d->mCanBeDeleted =b;
+	if(b && !widget())
+		deleteLater();
 }
 
 

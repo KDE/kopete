@@ -54,6 +54,12 @@ public:
 		QString logFile = QString::null,
 		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
 
+	KopeteMessageManager* findKopeteMessageManager(const KopeteContact *user,
+		KopeteContactPtrList chatContacts, KopeteProtocol *protocol,
+		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
+
+	void addKopeteMessageManager(KopeteMessageManager *);
+
 	KopeteMessageManager *findKopeteMessageManager( int );
 
 	/**

@@ -33,10 +33,11 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 {
 }
 
-KopeteMessageManager *KopeteMessageManagerFactory::create(
-	const KopeteContact *user, KopeteContactPtrList chatContacts,
-	KopeteProtocol *protocol, QString logFile, enum KopeteMessageManager::WidgetType widget)
+KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(const KopeteContact *user,
+		KopeteContactPtrList chatContacts, KopeteProtocol *protocol,
+		KopeteMessageManager::WidgetType widget)
 {
+
 	/* We build the sessions list for this protocol */
 	KopeteMessageManagerDict protocolSessions;
 	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
@@ -95,19 +96,37 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 
 	}
 
-	if (0 == result) {
-		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId, logFile, widget);
-		mSessionDict.insert( mId, result );
+	return result;
+}
 
-		/*
-		 * There's no need for a slot here... just add a public remove()
-		 * method and call from KMM's destructor
-		 */
-		connect( result, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
-		connect( result, SIGNAL(messageReceived(KopeteMessage&)), SIGNAL(messageReceived(KopeteMessage&)) );
-		connect( result, SIGNAL(messageQueued(KopeteMessage&)), SIGNAL(messageQueued(KopeteMessage&)) );
+KopeteMessageManager *KopeteMessageManagerFactory::create( const KopeteContact *user, KopeteContactPtrList chatContacts,
+	KopeteProtocol *protocol, QString logFile, enum KopeteMessageManager::WidgetType widget)
+{
+	KopeteMessageManager *result=findKopeteMessageManager( user,  chatContacts, protocol,  widget);
+	if (!result)
+	{
+		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId, logFile, widget);
+		addKopeteMessageManager(result);
 	}
 	return (result);
+}
+
+void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager * result)
+{
+	if(result->id() == 0)
+	{
+		result->setID(++mId);
+	}
+
+	mSessionDict.insert( mId, result );
+
+	/*
+	 * There's no need for a slot here... just add a public remove()
+	 * method and call from KMM's destructor
+	 */
+	connect( result, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
+	connect( result, SIGNAL(messageReceived(KopeteMessage&)), SIGNAL(messageReceived(KopeteMessage&)) );
+	connect( result, SIGNAL(messageQueued(KopeteMessage&)), SIGNAL(messageQueued(KopeteMessage&)) );
 }
 
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager( int id )
@@ -140,11 +159,10 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 	QIntDictIterator<KopeteMessageManager> it( protocolSessions( protocol ) );
 	for ( ; it.current() ; ++it )
 	{
-		slotRemoveSession( it.current() );
+		//slotRemoveSession( it.current() );
+		it.current()->deleteLater();
 	}
 }
-
-
 
 
 /*
