@@ -65,6 +65,7 @@ public:
 	QString password;
 	bool autologin;
 	bool rememberPassword;
+	uint priority;
 	QDict<KopeteContact> contacts;
 	QColor color;
 	KopeteContact *myself;
@@ -132,6 +133,16 @@ void KopeteAccount::setColor( const QColor &color )
 	d->color = color;
 }
 
+void KopeteAccount::setPriority( uint priority )
+{
+ 	d->priority = priority;
+}
+
+const uint KopeteAccount::priority() const
+{
+	return d->priority;
+}
+
 void KopeteAccount::setAccountId( const QString &accountId )
 {
 	if ( d->id != accountId )
@@ -174,6 +185,7 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 
 	config->writeEntry( "Protocol", d->protocol->pluginId() );
 	config->writeEntry( "AccountId", d->id );
+	config->writeEntry( "Priority", d->priority );
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	config->deleteEntry( "Password" ); // now in KWallet
@@ -203,7 +215,8 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 
 	d->password  = cryptStr( config->readEntry( "Password" ) );
 	d->autologin = config->readBoolEntry( "AutoConnect", false );
-	d->color     = config->readColorEntry( "Color", &d->color );
+	d->color = config->readColorEntry( "Color", &d->color );
+	d->priority = config->readNumEntry( "Priority", 0 );
 	d->rememberPassword = config->readBoolEntry( "RememberPassword", false );
 
 	// Handle the plugin data, if any

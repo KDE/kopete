@@ -98,6 +98,18 @@ public:
 	 */
 	void setAccountId( const QString &accountId );
 
+ 	/**
+	 * Returns the priority of this account. Used for sorting and determining
+	 * the preferred account to message a contact
+	 */
+	const uint priority() const;
+
+	/**
+	 * Sets the account priority. This method is called by the UI, should not
+	 * be called elsewhere.
+	 */
+	void setPriority( uint priority );
+
 	/**
 	 * Get the password for this account. Has the ability to open an input dialog
 	 * if the password is not currently set
@@ -155,12 +167,12 @@ public:
 	 * don't have to set yourself the color.
 	 */
 	void setColor( const QColor &color);
-	
+
 	/**
 	 * return the icon for this account, colored if needed
 	 * Note: there is no cache in this funciton
 	 * @param size is the size of the icon.  If the size is 0, the default size is used
-	 * 
+	 *
 	 */
 	QPixmap accountIcon(const int size=0) const;
 

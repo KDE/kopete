@@ -22,6 +22,7 @@
 #include <qlayout.h>
 
 #include <kcolorbutton.h>
+#include <kpushbutton.h>
 #include <kdebug.h>
 #include <kdialogbase.h>
 #include <kgenericfactory.h>
@@ -32,10 +33,29 @@
 
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
-#include "kopeteaccount.h"
 #include "kopeteaccountconfigbase.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteprotocol.h"
+
+class KopeteAccountLVI : public KListViewItem
+{
+	public:
+		KopeteAccountLVI( KopeteAccount *a, KListView *p ) : KListViewItem( p ){  m_account = a; }
+		KopeteAccount *account() { return m_account; }
+		int compare( QListViewItem *i, int, bool ) const
+		{
+			KopeteAccountLVI *it = static_cast<KopeteAccountLVI*>( i );
+			if( it->account()->priority() == m_account->priority() )
+			 	return 0;
+			else if( it->account()->priority() > m_account->priority() )
+				return -1;
+			else
+				return 1;
+		}
+
+	private:
+		KopeteAccount *m_account;
+};
 
 typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) )
@@ -48,25 +68,33 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	m_view = new KopeteAccountConfigBase( this, "KopeteAccountConfig::m_view" );
 
-	//m_view->mButtonUp->setPixmap( SmallIcon( "up" ) );
-	//m_view->mButtonDown->setPixmap( SmallIcon( "down" ) );
-	m_view->mAccountList->setSorting( -1 );
+	m_view->mButtonUp->setPixmap( SmallIcon( "up" ) );
+	m_view->mButtonDown->setPixmap( SmallIcon( "down" ) );
+	m_view->mAccountList->setSorting( 1 );
 
 	connect( m_view->mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( m_view->mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
 	connect( m_view->mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
-	//connect( m_view->mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
-	//connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
+	connect( m_view->mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
+	connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
 	connect( m_view->mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( m_view->mAccountList,  SIGNAL( doubleClicked( QListViewItem * ) ), this, SLOT( slotEditAccount() ) );
 
 	setButtons( Help );
 	load();
-	
 }
 
 void KopeteAccountConfig::save()
 {
+	uint priority = 0;
+
+	KopeteAccountLVI *i = static_cast<KopeteAccountLVI*>( m_view->mAccountList->firstChild() );
+	while( i )
+	{
+		  i->account()->setPriority( priority++ );
+		  i = static_cast<KopeteAccountLVI*>( i->nextSibling() );
+	}
+
 	if ( previousAccount )
 		previousAccount->setColor( m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
 
@@ -75,50 +103,51 @@ void KopeteAccountConfig::save()
 
 void KopeteAccountConfig::load()
 {
-	QListViewItem *lvi = 0L;
+
+	KopeteAccountLVI *lvi = 0L;
 
 	m_view->mAccountList->clear();
-	m_accountItems.clear();
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
 	for ( KopeteAccount *i = accounts.first() ; i; i = accounts.next() )
 	{
 		// Insert the item after the previous one
-		lvi = new QListViewItem( m_view->mAccountList, lvi );
+		lvi = new KopeteAccountLVI( i, m_view->mAccountList );
 		lvi->setText( 0, i->protocol()->displayName() );
 		lvi->setPixmap( 0, i->accountIcon() );
 		lvi->setText( 1, i->accountId() );
-		m_accountItems.insert( lvi, i );
 	}
+
+	m_view->mAccountList->sort();
+	m_view->mAccountList->setSorting(-1);
 
 	slotItemSelected();
 }
 
 void KopeteAccountConfig::slotItemSelected()
 {
-	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
+	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
+        KopeteAccount *a = 0L;
 
 	m_view->mButtonEdit->setEnabled( itemSelected );
 	m_view->mButtonRemove->setEnabled( itemSelected );
 
-        /* FIXME uncomment when implementing all acc order func        
         if ( itemSelected )
 	{
 		m_view->mButtonUp->setEnabled( itemSelected->itemAbove() );
 		m_view->mButtonDown->setEnabled( itemSelected->itemBelow() );
+		a = itemSelected->account();
 	}
 	else
 	{
 		m_view->mButtonUp->setEnabled( itemSelected );
 		m_view->mButtonDown->setEnabled( itemSelected );
 	}
-        */
 
 	// We shouldn't really save data before apply :-s
 	if ( previousAccount )
 		previousAccount->setColor( m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
 
-	KopeteAccount *a = m_accountItems[ itemSelected ];
 	previousAccount = a;
 	if ( a )
 	{
@@ -136,35 +165,27 @@ void KopeteAccountConfig::slotItemSelected()
 
 void KopeteAccountConfig::slotAccountUp()
 {
-  /*
-	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
+	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
 	if ( !itemSelected )
 		return;
 
 	if ( itemSelected->itemAbove() )
 		itemSelected->itemAbove()->moveItem( itemSelected );
 
-	KopeteAccountManager::manager()->moveAccount( m_accountItems[ itemSelected ] , KopeteAccountManager::Up );
-
 	slotItemSelected();
-	setChanged(true);
-  */
-}        
+	emit changed( true );
+}
 
 void KopeteAccountConfig::slotAccountDown()
 {
-  /*
-	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
+	KopeteAccountLVI *itemSelected = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
 	if ( !itemSelected )
 		return;
 
 	itemSelected->moveItem( itemSelected->itemBelow() );
 
-	KopeteAccountManager::manager()->moveAccount( m_accountItems[ itemSelected ] , KopeteAccountManager::Down );
-
 	slotItemSelected();
-	setChanged(true);
-  */
+	emit changed( true );
 }
 
 void KopeteAccountConfig::slotAddAccount()
@@ -176,11 +197,11 @@ void KopeteAccountConfig::slotAddAccount()
 
 void KopeteAccountConfig::slotEditAccount()
 {
-	QListViewItem *lvi = m_view->mAccountList->selectedItem();
+	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
 	if ( !lvi )
 		return;
 
-	KopeteAccount *ident = m_accountItems[ lvi ];
+	KopeteAccount *ident = lvi->account();
 	KopeteProtocol *proto = ident->protocol();
 
 	KDialogBase *editDialog = new KDialogBase( this, "KopeteAccountConfig::editDialog", true,
@@ -215,16 +236,15 @@ void KopeteAccountConfig::slotEditAccount()
 
 void KopeteAccountConfig::slotRemoveAccount()
 {
-	QListViewItem *lvi = m_view->mAccountList->selectedItem();
+	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
 	if ( !lvi )
 		return;
 
-	KopeteAccount *i = m_accountItems[ lvi ];
+	KopeteAccount *i = lvi->account();
 	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?" ).arg( i->accountId() ),
 		i18n( "Remove Account" ), i18n( "Remove Account" ) ) == KMessageBox::Continue )
 	{
 		previousAccount = 0L;
-		m_accountItems.remove( lvi );
 		KopeteAccountManager::manager()->removeAccount( i );
 		delete lvi;
 	}
@@ -233,7 +253,7 @@ void KopeteAccountConfig::slotRemoveAccount()
 void KopeteAccountConfig::slotAddWizardDone()
 {
 	load();
-	KopeteAccountManager::manager()->save();
+	save();
 }
 
 #include "kopeteaccountconfig.moc"

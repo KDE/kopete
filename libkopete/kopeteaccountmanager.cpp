@@ -26,17 +26,30 @@
 #include <kglobal.h>
 #include <kplugininfo.h>
 
+#include "kopeteaccount.h"
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
-#include "kopeteaccount.h"
+
+class KopeteAccountPtrList : public QPtrList<KopeteAccount>
+{
+	int compareItems(  KopeteAccount *a, KopeteAccount *b )
+	{
+		if( a->priority() == b ->priority() )
+			return 0;
+		else if( a->priority() < b->priority() )
+			return -1;
+		else
+			return 1;
+	}
+};
 
 class KopeteAccountManagerPrivate
 {
 public:
 	static KopeteAccountManager *s_manager;
 
-	QPtrList<KopeteAccount> accounts;
+	KopeteAccountPtrList accounts;
 };
 
 KopeteAccountManager * KopeteAccountManagerPrivate::s_manager = 0L;
@@ -170,7 +183,6 @@ QDict<KopeteAccount> KopeteAccountManager::accounts( const KopeteProtocol *proto
 	return dict;
 }
 
-
 KopeteAccount * KopeteAccountManager::findAccount( const QString &protocolId, const QString &accountId )
 {
 	for ( QPtrListIterator<KopeteAccount> it( d->accounts ); it.current(); ++it )
@@ -217,11 +229,13 @@ void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 void KopeteAccountManager::save()
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
-
+	d->accounts.sort();
 	for ( QPtrListIterator<KopeteAccount> it( d->accounts ); it.current(); ++it )
 		it.current()->writeConfig( it.current()->configGroup() );
 
 	KGlobal::config()->sync();
+
+	emit accountOrderChanged();
 }
 
 void KopeteAccountManager::load()
@@ -276,7 +290,6 @@ void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 		}
 
 		kdDebug( 14010 ) << k_funcinfo << "Creating account for '" << accountId << "'" << endl;
-
 		KopeteAccount *account = protocol->createNewAccount( accountId );
 		if ( !account )
 		{
@@ -298,29 +311,11 @@ void KopeteAccountManager::autoConnect()
 
 void KopeteAccountManager::notifyAccountReady( KopeteAccount *account )
 {
+	kdDebug() << k_funcinfo << account->accountId() << endl;
 	emit accountReady( account );
+	d->accounts.sort();
 }
 
-void KopeteAccountManager::moveAccount( KopeteAccount *account, KopeteAccountManager::MoveDirection direction )
-{
-	int index = d->accounts.findRef( account );
-
-	d->accounts.take( index );
-	switch( direction )
-	{
-	case Up:
-		index--;
-		break;
-	case Down:
-		index++;
-		break;
-	}
-
-	if ( index < 0 )
-		index = 0;
-
-	d->accounts.insert( index, account );
-}
 
 #include "kopeteaccountmanager.moc"
 

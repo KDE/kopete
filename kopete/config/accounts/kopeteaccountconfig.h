@@ -17,15 +17,12 @@
 #define __ACCOUNTCONFIG_H
 
 #include "kcmodule.h"
+#include <kopeteaccount.h>
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
-
 class KopeteAccountConfigBase;
-class KopeteAccount;
-class QListViewItem;
-//class AddAccountWizard;
 
 class KopeteAccountConfig : public KCModule
 {
@@ -39,9 +36,7 @@ public:
 
 private:
 	KopeteAccountConfigBase *m_view;
-	QMap <QListViewItem*,KopeteAccount*> m_accountItems;
 	KopeteAccount *previousAccount;
-
 
 private slots:
 	void slotRemoveAccount();

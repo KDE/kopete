@@ -85,19 +85,6 @@ public:
 	 */
 	QColor guessColor( KopeteProtocol *protocol );
 
-	/**
-	 * The dirrection to move. Used by @ref KopeteAccountManager::moveAccount
-	 */
-	// FIXME: Make this MoveUp, MoveDown - Martijn
-	enum MoveDirection { Up, Down };
-
-	/**
-	 * Move the account up or down in the priority order.
-	 * @param account is the account to move
-	 * @param dirrection can be KopeteAccountManager::Up or KopeteAccountManager::Down
-	 */
-	void moveAccount( KopeteAccount *account, MoveDirection direction );
-
 public slots:
 	/**
 	 * Connect all accounts which have auto connect enabled
@@ -150,6 +137,12 @@ signals:
 	 * An account has been unregistered
 	 */
 	void accountUnregistered( KopeteAccount *account );
+
+	/**
+	 * The account priorities have changed
+
+	 */
+	void accountOrderChanged();
 
 private:
 	/**

@@ -75,7 +75,7 @@ private slots:
 	void slotConfigChanged();
 	void slotConfKeys();
 	void slotConfToolbar();
-    void slotUpdateToolbar();
+    	void slotUpdateToolbar();
 	/**
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
@@ -105,12 +105,17 @@ private slots:
 	 * @param contact The account's contact that changed.
 	 */
 	void slotAccountStatusIconChanged( KopeteContact * contact);
-	
+
 	/**
 	 * This slot is called when a myself contact change his displayname.
 	 * the slot use sender() to know what account has changed
 	 */
 	void slotAccountDisplayNameChanged();
+
+	/**
+	 * The account priorities have changed
+	 */
+	void slotAccountOrderChanged();
 
 	/**
 	 * Show a context menu for a protocol
@@ -135,7 +140,7 @@ private slots:
 	 * Carry out any changes resulting from a change to preferences
 	 */
 	void slotSettingsChanged();
-	
+
 	/**
 	 * Enable the Connect All and Disconnect All buttons here
 	 * along with connecting the accountRegistered and accountUnregistered
@@ -189,7 +194,8 @@ private:
 	bool hidden;
 	int deskRight;
 	QPoint position;
-	QHBox *m_statusBarWidget;
+	QWidget *m_statusBarWidget;
+	QHBoxLayout *m_statusBarWidgetLayout;
 
 	KopetePluginConfig *m_pluginConfig;
 
