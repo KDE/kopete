@@ -50,7 +50,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
-#include "statusbaricon.h"
+#include "systemtray.h"
 #include "jabbercontact.h"
 #include "jabberprefs.h"
 #include "dlgjabberstatus.h"
@@ -60,6 +60,14 @@
 #include "jabbermap.h"
 #include "jabbermessagemanager.h"
 #include "jabberprotocol.h"
+
+/*
+online = jabber_online
+offline = jabber_offline
+away = jabber_na
+na = jabber_na
+connecting = jabber_connecting.mng
+*/
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
@@ -96,8 +104,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config()->setGroup("Jabber");
 
-	// setup icons and actions
-	initIcons();
+	// setup actions
 	initActions();
 
 	// read remaining settings from configuration file
@@ -117,16 +124,10 @@ void JabberProtocol::errorConnectFirst()
 
 }
 
-void JabberProtocol::initIcons()
+KActionMenu *JabberProtocol::protocolActions()
 {
-	KIconLoader *loader = KGlobal::iconLoader();
-	KStandardDirs dir;
 
-	onlineIcon = QPixmap(loader->loadIcon("jabber_online", KIcon::User));
-	offlineIcon = QPixmap(loader->loadIcon("jabber_offline", KIcon::User));
-	awayIcon = QPixmap(loader->loadIcon("jabber_away", KIcon::User));
-	naIcon = QPixmap(loader->loadIcon("jabber_na", KIcon::User));
-	connectingIcon = QMovie(dir.findResource("data", "kopete/pics/jabber_connecting.mng"));
+	return actionStatusMenu;
 
 }
 
@@ -162,7 +163,6 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionEditVCard);
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert(actionEmptyMail);
-	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 
 }
 
@@ -170,9 +170,7 @@ void JabberProtocol::init()
 {
 
 	// initialize icon that sits in Kopete's status bar
-	statusBarIcon = new StatusBarIcon();
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
-	statusBarIcon->setPixmap(offlineIcon);
+	setStatusIcon("jabber_offline");
 
 	KGlobal::config()->setGroup("Jabber");
 
@@ -206,13 +204,6 @@ bool JabberProtocol::unload()
 	// kick the SSL library
 	Jabber::Stream::unloadSSL();
 	
-	// remove the statusbar indicator
-	if (kopeteapp->statusBar())
-	{
-		kopeteapp->statusBar()->removeWidget(statusBarIcon);
-		delete statusBarIcon;
-	}
-
 	// make sure that the next attempt to load Jabber
 	// re-initializes the protocol class
 	protocolInstance = 0L;
@@ -231,7 +222,6 @@ bool JabberProtocol::unload()
 	
 	delete actionStatusMenu;
 
-		
 	return KopeteProtocol::unload();
 
 }
@@ -355,7 +345,7 @@ void JabberProtocol::Connect()
 	jabberClient->connectToHost(server, port);
 
 	// play movie to indicate connection attempt
-	statusBarIcon->setMovie(connectingIcon);
+	setStatusIcon("jabber_connecting");
 
 }
 
@@ -397,7 +387,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 	{
 		kdDebug() << "[JabberProtocol] Connected to Jabber server." << endl;
 
-		statusBarIcon->setPixmap(onlineIcon);
+		setStatusIcon("jabber_online");
 
 		// request roster
 		jabberClient->rosterRequest();
@@ -415,7 +405,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 	else
 	{
 		kdDebug() << "[JabberProtocol] Connection failed! Status: " << statusCode << ", " << statusString << endl;
-		statusBarIcon->setPixmap(offlineIcon);
+		setStatusIcon("jabber_offline");
 		KMessageBox::error(qApp->mainWidget(), i18n("Connection failed with reason \"%1\"").arg(statusString, 1), i18n("Connection Failed"));
 	}
 
@@ -443,8 +433,8 @@ void JabberProtocol::Disconnect()
 	jabberClient = 0L;
 
 	kdDebug() << "[JabberProtocol] Disconnected." << endl;
-		
-	statusBarIcon->setPixmap(offlineIcon);
+
+	setStatusIcon("jabber_offline");
 
 	// it seems that we don't get offline notifications
 	// when going offline with the protocol, so update
@@ -477,8 +467,8 @@ void JabberProtocol::slotDisconnected()
 
 	jabberClient->deleteLater();
 	jabberClient = 0L;
-	
-	statusBarIcon->setPixmap(offlineIcon);
+
+	setStatusIcon("jabber_offline");
 
 }
 
@@ -567,26 +557,26 @@ void JabberProtocol::setPresence(Presence status, const QString &reason, int pri
 		switch(status)
 		{
 			case STATUS_AWAY:
-						statusBarIcon->setPixmap(awayIcon);
+						setStatusIcon("jabber_na");
 						presence.setShow("away");
 						break;
 						
 			case STATUS_XA:
-						statusBarIcon->setPixmap(awayIcon);
+						setStatusIcon("jabber_na");
 						presence.setShow("xa");
 						break;
 
 			case STATUS_DND:
-						statusBarIcon->setPixmap(naIcon);
+						setStatusIcon("jabber_na");
 						presence.setShow("dnd");
 						break;
 			case STATUS_INVISIBLE:
-						statusBarIcon->setPixmap(offlineIcon);
+						setStatusIcon("jabber_offline");
 						presence.setIsInvisible(true);
 						break;
 
 			case STATUS_ONLINE:
-						statusBarIcon->setPixmap(onlineIcon);
+						setStatusIcon("jabber_online");
 						presence.setShow("chat");
 						break;
 
@@ -932,13 +922,6 @@ void JabberProtocol::sendPresenceToNode(const Presence &pres,const QString &user
 
 	task->pres(jid, status);
 	task->go(true);
-
-}
-
-void JabberProtocol::slotIconRightClicked(const QPoint&)
-{
-
-	actionStatusMenu->popup(QCursor::pos());
 
 }
 

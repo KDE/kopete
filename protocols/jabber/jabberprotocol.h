@@ -76,6 +76,8 @@ public:
 	 */
 	QString protocolIcon() const;
 
+	KActionMenu *protocolActions();
+	
 	/**
 	 * Initialization/deinitialization routines called upon
 	 * loading/unloading the plugin
@@ -313,11 +315,6 @@ private slots:
 	void slotMessageManagerDeleted(KopeteMessageManager *manager);
 	
 	/**
-	 * Create popup menu for right clicks on status icon
-	 */
-	void slotIconRightClicked(const QPoint&);
-
-	/**
 	 * Cleans up when a contact is destroyed
 	 */
 	void slotContactDestroyed(KopeteContact *c);
@@ -411,12 +408,6 @@ private:
 	 */
 	JabberMessageManagerMap messageManagerMap;
 
-	QPixmap onlineIcon;
-	QPixmap offlineIcon;
-	QPixmap awayIcon;
-	QPixmap naIcon;
-	QMovie connectingIcon;
-
 	KAction *actionGoOnline;
 	KAction *actionGoAway;
 	KAction *actionGoXA;
@@ -427,10 +418,8 @@ private:
 	KAction *actionSendRaw;
 	KAction *actionEditVCard;
 	KAction *actionEmptyMail;
-	KPopupMenu *popup;
+//	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
-
-	StatusBarIcon *statusBarIcon;
 
 	dlgJabberStatus *reasonDialog;
 	dlgJabberSendRaw *sendRawDialog;
@@ -464,11 +453,6 @@ private:
 	 * Little helper function to tell the user to connect
 	 */
 	void errorConnectFirst();
-
-	/**
-	 * Load and create icons
-	 */
-	void initIcons();
 
 	/**
 	 * Create actions
