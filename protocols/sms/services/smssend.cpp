@@ -13,6 +13,7 @@
 #include <kfile.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
+#include <kdebug.h>
 
 SMSSend::SMSSend(QString userName)
 	: SMSService(userName)
@@ -24,22 +25,27 @@ SMSSend::~SMSSend()
 {
 }
 
-bool SMSSend::send(QString nr, QString message)
+void SMSSend::send(const KopeteMessage& msg)
 {
+	kdDebug() << "SMSSend::send()" << endl;
+
 	QString provider = SMSGlobal::readConfig("SMSSend", "ProviderName", uName);
 
 	if (provider == QString::null)
 	{
 		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could not send message"));
-		return false;
+		return;
 	}
 
 	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", uName);
 	if (prefix == QString::null)
 		prefix = "/usr/";
 
-	SMSSendProvider s(provider, prefix, uName);
-	return s.send(nr, message);
+	SMSSendProvider* s = new SMSSendProvider(provider, prefix, uName, this);
+
+	connect( s, SIGNAL(messageSent(const KopeteMessage &)), this, SIGNAL(messageSent(const KopeteMessage &)));
+
+	s->send(msg);
 }
 
 QWidget* SMSSend::configureWidget(QWidget* parent)
@@ -91,8 +97,8 @@ void SMSSend::savePreferences()
 
 void SMSSend::saveProviderPreferences()
 {
-	SMSSendProvider s(prefWidget->provider->currentText(), prefWidget->program->url(), uName);
-	s.save(prefWidget->providerSettings);
+	SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), uName, this);
+	s->save(prefWidget->providerSettings);
 }
 
 QStringList SMSSend::providers()
@@ -115,16 +121,19 @@ void SMSSend::setOptions(const QString& name)
 	prefWidget->settingsBox->setTitle(name);
 	prefWidget->providerSettings->clear();
 
-	SMSSendProvider s(name, prefWidget->program->url(), uName);
+	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), uName, this);
 
-	for (int i=0; i < s.count(); i++)
-		prefWidget->providerSettings->insertItem(s.listItem(prefWidget->providerSettings, i));
+	for (int i=0; i < s->count(); i++)
+		prefWidget->providerSettings->insertItem(s->listItem(prefWidget->providerSettings, i));
 }
 
 void SMSSend::showDescription()
 {
-	SMSSendProvider s(prefWidget->provider->currentText(), prefWidget->program->url(), uName);
-	s.showDescription(prefWidget->providerSettings->currentItem()->text(0));
+	if (prefWidget->providerSettings->currentItem() != 0L)
+	{
+		SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), uName, this);
+		s->showDescription(prefWidget->providerSettings->currentItem()->text(0));
+	}
 }
 
 void SMSSend::changeOption(QListViewItem* i)

@@ -80,21 +80,24 @@ KopeteMessageManager* SMSContact::msgManager()
 
 void SMSContact::slotSendMessage(const KopeteMessage &msg)
 {
-	QString text = msg.plainBody();
-	QString nr = id();
-	SMSService* s;
-
 	QString sName = SMSGlobal::readConfig("SMS", "ServiceName", m_smsId);
 
-	s = ServiceLoader::loadService(sName, m_smsId);
+	SMSService* s = ServiceLoader::loadService(sName, m_smsId);
 
 	if ( s == 0L)
 		return;
+	
+	connect ( s, SIGNAL(messageSent(const KopeteMessage&)),
+		this, SLOT(messageSent(const KopeteMessage&)));
 
-	if (s->send(nr, text))
-		msgManager()->appendMessage(msg);
+	s->send(msg);
 
 	delete s;
+}
+
+void SMSContact::messageSent(const KopeteMessage& msg)
+{
+	msgManager()->appendMessage(msg);
 }
 
 void SMSContact::slotViewHistory()

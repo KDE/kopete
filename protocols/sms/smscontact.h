@@ -58,6 +58,7 @@ public slots:
 
 private slots:
 	void userPrefs();
+	void messageSent(const KopeteMessage&);
 
 private:
 	KopeteMessageManager* msgManager();

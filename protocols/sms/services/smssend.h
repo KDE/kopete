@@ -15,7 +15,7 @@ public:
 	SMSSend(QString userName);
 	~SMSSend();
 
-	bool send(QString nr, QString message);
+	void send(const KopeteMessage& msg);
 	QWidget* configureWidget(QWidget* parent);
 
 public slots:
