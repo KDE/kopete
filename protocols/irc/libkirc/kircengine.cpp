@@ -178,9 +178,6 @@ void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &
 	if( !m_sock->setAddress(m_Host, m_Port) )
 		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock->socketStatus() << endl;
 
-	if( m_sock->lookup() ) // necessary to avoid QDns
-		kdDebug(14120) << k_funcinfo << "lookup() failed. Status: " << m_sock->socketStatus() << endl;
-
 	if( m_sock->startAsyncConnect() == 0 )
 	{
 		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;

@@ -451,6 +451,15 @@ void IRCAccount::connectWithPassword(const QString &password)
 					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(m_network->name),
 					i18n("Network is Empty"), 0 );
 			}
+			else if( currentHost == hosts.count() )
+			{
+			    KMessageBox::queuedMessageBox(
+				    Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+			    i18n("<qt>Kopete could not connect to any of the servers in the network associated with this account (<b>%1</b>). Please try again later.</qt>").arg(m_network->name),
+			    i18n("Network is Unavailable"), 0 );
+
+			    currentHost = 0;
+			}
 			else
 			{
 				// if prefer SSL is set, sort by SSL first
@@ -472,9 +481,6 @@ void IRCAccount::connectWithPassword(const QString &password)
 
 					hosts = sslFirst;
 				}
-
-				if( currentHost == hosts.count() )
-					currentHost = 0;
 
 				IRCHost *host = hosts[ currentHost++ ];
 				kdDebug( 0 ) << k_funcinfo << "connecting to " << host->host << ", SSL= " << host->ssl << endl;
@@ -506,6 +512,9 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 		break;
 	case KIRC::Engine::Connected:
 		{
+			//Reset the host so re-connection will start over at first server
+			currentHost = 0;
+
 			m_contactManager->addToNotifyList( m_engine->nickName() );
 
 			Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
