@@ -77,7 +77,7 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 		{
 			KMessageBox::queuedMessageBox(
 			    Kopete::UI::Global::mainWidget(),
-			    KMessageBox::Error, i18n("I can't find Magick convert program.\nConvert is required to render the Latex formulas.\nPlease go to www.imagemagick.org or to your distribution site and get the right package.")
+			    KMessageBox::Error, i18n("I cannot find the Magick convert program.\nconvert is required to render the Latex formulas.\nPlease go to www.imagemagick.org or to your distribution site and get the right package.")
 			);
 			mMagickNotFoundShown = true;
 		}
