@@ -829,7 +829,7 @@ void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId )
 	removeKABC();
 	d->metaContactId = newMetaContactId;
 	updateKABC();
-
+	emit onlineStatusChanged( this, d->onlineStatus );
 	emitPersistentDataChanged();
 }
 
