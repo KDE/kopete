@@ -1002,20 +1002,20 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 		yahoo_connect_callback callback, void *callback_data )
 {
 	struct connect_callback_data *ccd;
-	int error;
+	int socketError;
 	kdDebug(14181) << k_funcinfo << endl;
 	m_socket = new KExtendedSocket( host, port );
 
 	// TODO Do an async connect in the future
-	error = m_socket->connect();
+	socketError = m_socket->connect();
 
-	if ( !error )
+	if ( !socketError )
 	{
 		kdDebug(14181) << k_funcinfo << " Connected! fd "<< m_socket->fd() << endl;
 		callback( m_socket->fd(), 0, callback_data );
 		return 0;
 	}
-	else if( error == -1 && errno == EINPROGRESS )
+	else if( socketError == -1 && errno == EINPROGRESS )
 	{
 		kdDebug(14181) << k_funcinfo << " In progress?" << endl;
 		ccd = ( struct connect_callback_data* ) calloc( 1, sizeof( struct connect_callback_data ) );
@@ -1031,6 +1031,7 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 		m_socket->close();
 		delete m_socket;
 		m_socket = 0L;
+		emit error( QString::null , -1 );
 		return -1;
 	}
 }

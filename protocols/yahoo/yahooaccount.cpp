@@ -728,7 +728,7 @@ void YahooAccount::slotError( const QString & err, int fatal )
 {
 	kdDebug(14180) << k_funcinfo << err << endl;
 	m_lastDisconnectCode = fatal;
-	if ( fatal == 1 || fatal == 2 )
+	if ( fatal == 1 || fatal == 2 || fatal == -1 )
 		disconnect();
 }
 
