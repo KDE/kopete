@@ -72,14 +72,17 @@ protected:
 	 */
 	void fieldsToWire( Field::FieldList fields, int depth = 0 );
 	/**
-	 * Read in an event
+	 * Read in an eventconst
 	 */
 	void readEvent( const Q_UINT32 eventType, QDataStream& wireEvent );
 	/**
 	 * Read in a response
 	 */
-	bool readResponse( const QDataStream& wireRequest );
-	
+	bool readResponse( QDataStream& wireRequest );
+	/** 
+	 * Parse received fields and store in m_collatingFields
+	 */
+	void readFields( QDataStream &din, int fieldCount, Field::FieldList * list = 0 );
 	/**
 	 * encodes a method number (usually supplied as a #defined symbol) to a char
 	 */
@@ -90,6 +93,9 @@ private:
 	int m_error;
 	QPtrList<Transfer> m_inQueue;
 	int m_state;
+	// fields from a packet being parsed, before it has been completely received
+	//QValueStack<Field::FieldList> m_collatingFields;
+	Field::FieldList m_collatingFields;
 };
 
 #endif

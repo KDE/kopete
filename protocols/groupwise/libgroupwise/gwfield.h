@@ -190,9 +190,10 @@ namespace Field
 	class MultiField : public FieldBase
 	{
 	public:  
-		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields );
+		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields = FieldList() );
 		~MultiField() {}
 		FieldList fields() const;
+		void setFields( FieldList );
 	private:
 		FieldList m_fields; // nb implicitly shared, copy-on-write - is there a case where this is bad?
 	};

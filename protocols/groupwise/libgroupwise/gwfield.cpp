@@ -94,3 +94,8 @@ FieldList MultiField::fields() const
 {
 	return m_fields;
 }
+
+void MultiField::setFields( FieldList fields )
+{
+	m_fields = fields;
+}

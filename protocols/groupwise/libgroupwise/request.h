@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef REQUEST_H
-#define REQUEST_H
+#ifndef LIBGW_REQUEST_H
+#define LIBGW_REQUEST_H
 
 #include "usertransfer.h"
 

@@ -141,7 +141,7 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 	din.setByteOrder( QDataStream::LittleEndian );
 	
 	// does protocol state indicate we are partially through reading a response?
-	if ( m_state = NeedMore )
+	if ( m_state == NeedMore )
 		readResponse( din );
 	else
 	{
@@ -152,8 +152,13 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 		// is 'HTTP' -> response
 		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
 		{
-			m_state = ( readResponse( din ) ? Available : NeedMore );
-			emit incomingData();
+			if ( readResponse( din ) )
+			{
+				m_state = Available;
+				emit incomingData();
+			}
+			else
+				m_state = NeedMore;
 		}
 		else	
 		// otherwise -> event
@@ -182,7 +187,7 @@ void CoreProtocol::readEvent( const Q_UINT32 eventType, QDataStream& wireEvent )
 	
 }
 
-bool CoreProtocol::readResponse( const QDataStream& wireResponse )
+bool CoreProtocol::readResponse( QDataStream& wireResponse )
 {
 	// read rest of HTTP header and look for a 301 redirect. 
 	// we can treat the rest of the data as a textstream
@@ -193,6 +198,7 @@ bool CoreProtocol::readResponse( const QDataStream& wireResponse )
 	QString rtnField = headerFirst.mid( firstSpace, headerFirst.find( ' ', firstSpace + 1 ) );
 	bool ok = true;
 	int rtnCode;
+	int packetState = -1;
 	rtnCode = rtnField.toInt( &ok );
 	
 	// read rest of header
@@ -206,54 +212,147 @@ bool CoreProtocol::readResponse( const QDataStream& wireResponse )
 	// if it's a redirect, set flag
 	if ( ok && rtnCode == 301 )
 	{	
-		m_state = ServerRedirect;
+		packetState = ServerRedirect;
 		return false;
 	}
 	// other header processing ( 500! )
 	if ( ok && rtnCode == 500 )
 	{	
-		m_state = ServerError;
+		packetState = ServerError;
 		return false;
 	}
-	// find transaction id field and create Response object if nonzero
-	// add fields to Response object
 	
-	// find field type 0 that indicates end of response
-		// append to inQueue
-		// set state to Available
+	// read fields
+	readFields( wireResponse, -1 );
+	// find transaction id field and create Response object if nonzero
+	int tId;
+	Field::FieldBase* field = 0;
+	for ( field = m_collatingFields.first(); field != m_collatingFields.end(); field = m_collatingFields.next() )
+	{
+		if ( field->tag() == "NM_A_SZ_TRANSACTION_ID" )
+		{
+			Field::SingleField * sf = dynamic_cast<Field::SingleField*>( field );
+			if ( sf )
+			{
+				tId = sf->value().toInt();
+				m_collatedFields.remove( f );
+				break;
+			}
+		}
+	}
+	// append to inQueue
+	if ( tId )
+	{
+		UserTransfer * response = new UserTransfer( tId );
+		response->setFields( m_collatedFields );
+		m_inQueue.append( response );
+		packetState = Available;
+	}
+	// TODO - handle broken responses..
 	// didn't find an 0 - Response is in multiple packets...
 		// Gaim doesn't handle this case yet
 		// Reconstruction - if we are just reading top level fields, read next packet until 0
 		// if we were reading a subarray, we know how long it should be, 
 		// store the partial request, partial MultiField and count of total number of fields in the protocol to await next packet
-	return true;
+		
+	return ( packetState == Available );
 }
 
-void CoreProtocol::readFields( QTextStream &tin )
+void CoreProtocol::readFields( QDataStream &din, int fieldCount, Field::FieldList * list )
 {
-	// WHILE
+	// build a list of fields.  
+	// If there is already a list of fields stored in m_collatingFields, 
+	// the list we're reading on this iteration must be a nested list
+	// so when we're done reading it, add it to the MultiList element
+	// that is the last element in the top list in m_collatingFields.
+	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
 	
-	// read fields 
+	Field::FieldList currentList;
+	while ( fieldCount != 0 )
+	{
+		// the field being read
+		// read field
+		Q_UINT8 type, method;
+		Q_UINT32 val;
+		QCString tag;
 		// read uint8 type
-		// if type is 0 SOMETHING_INVALID
-			// break
+		din >> type;
+		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
+		if ( type == 0 )
+		{
+			state = FieldsRead;
+			// do something to indicate we're done
+			break;
+		}
 		// read uint8 method
-		// read length of tag
-		// read tag 
+		din >> method;
+		// read tag and length
+		char* rawData;
+		din.readBytes( rawData, val );
+		// set tag from the raw data.  QDataStream::readBytes() allocates the 
+		// space for rawData and expects us to manage it, and we let 
+		// QCString take care of it
+		tag.setRawData( rawData, val );
+		
 		// if multivalue or array
+		if ( type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY )
+		{
 			// read length uint32
-			// call self
-			// append result to fieldlist
+			din >> val;
+			if ( val > 0 )
+			{
 			// create multifield
-		// if utf8 or dn
-			// read length uint32
-			// read string
-			// convert to unicode
-			// create singlefield
-		// otherwise ( numeric )
-			// read value uint32
-		// append to fieldList
-			
+				Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
+				currentList.append( m );
+				readFields( din, val, &currentList);
+			}
+			else 
+				state = ProtocolError;
+				break;
+		}
+		else 
+		{
+		
+			if ( type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN )
+			{
+				din.readBytes( rawData, val );
+				if ( val > NMFIELD_MAX_STR_LENGTH )
+				{
+					state = ProtocolError;
+					break;
+				}
+				// convert to unicode
+				QString fieldValue = QString::fromUtf8( rawData, val );
+				// create singlefield
+				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
+				currentList.append( s );
+			}
+			else
+			{
+				// otherwise ( numeric )
+				// read value uint32
+				din >> val;
+				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
+				currentList.append( s );
+			}
+		}
+		// decrease the fieldCount if we're using it
+		if ( fieldCount > 0 )
+			fieldCount--;
+	}
+	// got a whole list!
+	// if fieldCount == 0, we've just read a whole nested list, so add this list to the last element in 'list'
+	if ( fieldCount == 0 )
+	{
+		Field::MultiField * m = dynamic_cast<Field::MultiField*>( list->last() );
+		m->setFields( currentList );
+	}
+
+	// if fieldCount == -1; we're done reading the top level fieldlist, so store it.
+	if ( fieldCount == -1 )
+	{
+		m_collatingFields = currentList;
+	}
 }
 
 void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
