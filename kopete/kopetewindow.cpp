@@ -151,7 +151,7 @@ void KopeteWindow::initSystray ( void )
 	actionPrefs->plug( tm );
 //	tm->insertSeparator();
 
-#if KDE_VERSION >= 305
+#if KDE_VERSION >= 306
 	connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
 #endif
 }
@@ -303,7 +303,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		return;
 	}
 	
-#if KDE_VERSION >= 305
+#if KDE_VERSION >= 306
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
 		"system tray. Use Quit from the File menu to quit the "
