@@ -19,7 +19,7 @@
 
 #include <qobject.h>
 
-class KopeteMessageLogger : public QObject
+class KopeteMessage : public QObject
 {
 	Q_OBJECT
 public:
