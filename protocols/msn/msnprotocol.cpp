@@ -332,6 +332,9 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		// duplicated everywhere now - Martijn
 		MSNContact *c = new MSNContact( passport, displayName,
 			groups.first(), metaContact );
+
+		c->setMsnStatus( MSNProtocol::FLN );
+
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			SLOT( slotContactDestroyed( KopeteContact * ) ) );
 		//m_metaContacts.insert( metaContact, c );
@@ -640,7 +643,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		QMap<QString, MSNContact*>::Iterator it;
 		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
 		{
-			(*it)->setMsnStatus( MSNProtocol::UNK );
+			(*it)->setMsnStatus( MSNProtocol::FLN );
 		}
 
 		m_allowList.clear();
@@ -658,6 +661,14 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		// sets the defaults, and the disconnect slot resets those defaults
 		// FIXME: Can't we share this code?
 		m_publicNameSyncMode = SyncFromServer;
+	}
+	else if (status==MSNSocket::Connecting)
+	{
+		QMap<QString, MSNContact*>::Iterator it;
+		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
+		{
+			(*it)->setMsnStatus( MSNProtocol::UNK );
+		}
 	}
 }
 
