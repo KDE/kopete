@@ -331,7 +331,12 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	updateOnlineStatus();
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
 	{
-		KopeteProtocol* p = kopeteapp->libraryLoader()->searchByID(c->protocol());
+		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(kopeteapp->libraryLoader()->searchByID(c->protocol()));
+		if (!p)
+		{
+			kdDebug() <<"KopeteMetaContact::slotContactStatusChanged: KopeteContact is not from a valid Protocol" <<endl;
+			return;
+		}
 		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
 			KNotifyClient::event("kopete_online");
 	}
