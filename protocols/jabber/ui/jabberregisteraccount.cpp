@@ -430,13 +430,14 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
 		enableButtonOK ( false );
-		setButtonCancel ( KStdGuiItem::ok () );
+		setButtonCancel ( KStdGuiItem::close () );
+		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
 	}
 	else
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration failed." ) );
 		KMessageBox::information (Kopete::UI::Global::mainWidget (),
-								  i18n ("Unable to create account on the server. The Jabber ID probably already exists."),
+								  i18n ("Unable to create account on the server. The Jabber ID is probably already in use."),
 								  i18n ("Jabber Account Registration"));
 
 	}
