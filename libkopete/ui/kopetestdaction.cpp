@@ -125,7 +125,7 @@ KAction * KopeteStdAction::chat( const QObject *recvr, const char *slot, QObject
 
 KAction * KopeteStdAction::sendMessage( const QObject *recvr, const char *slot, QObject *parent, const char *name )
 {
-	return new KAction( i18n( "&Send Message..." ), QString::fromLatin1( "mail_generic" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "&Send Single Message..." ), QString::fromLatin1( "mail_generic" ), 0, recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, QObject *parent, const char *name )
