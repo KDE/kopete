@@ -323,43 +323,37 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 
 void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString message )
 {
-	if ( theChat->widget() != 0L )
+	// reduce the recipients to the set of members who are interested
+	// in our output
+	KopeteContactPtrList pl = theChat->members();
+	QStringList myData;
+	// avoid skipping one member when removing
+	// (old version's pl.remove(); pl.next() skipped because
+	// remove() moves on to next for you.
+	pl.first();
+	while ( pl.current() )
 	{
-		// then we have a live session?
-
-		// reduce the recipients to the set of members who are interested
-		// in our output
-		KopeteContactPtrList pl = theChat->members();
-		QStringList myData;
-		// avoid skipping one member when removing 
-		// (old version's pl.remove(); pl.next() skipped because 
-		// remove() moves on to next for you.
-		pl.first();
-		while ( pl.current() )
-		{
-			myData = pl.current()->metaContact()->pluginData( this, NL_DATA_KEY );
-			if ( myData.isEmpty() || myData.first() != "true" )
-				pl.remove();
-			else
-				pl.next();
-		}
-		// get on with it
-		kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() - " <<
-			( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
-		for ( pl.first(); pl.current(); pl.next() )
-			kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl;
-		// if no-one in this KMM wants to be advertised to, don't send
-		// any message
-		if ( pl.isEmpty() )
-			return;
-		KopeteMessage msg( theChat->user(),
-				pl,
-				message,
-				KopeteMessage::Outbound,
-				KopeteMessage::RichText );
-		theChat->slotMessageSent( msg );
+		myData = pl.current()->metaContact()->pluginData( this, NL_DATA_KEY );
+		if ( myData.isEmpty() || myData.first() != "true" )
+			pl.remove();
+		else
+			pl.next();
 	}
-	return;
+	// get on with it
+	kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() - " <<
+		( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
+	for ( pl.first(); pl.current(); pl.next() )
+		kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl;
+	// if no-one in this KMM wants to be advertised to, don't send
+	// any message
+	if ( pl.isEmpty() )
+		return;
+	KopeteMessage msg( theChat->user(),
+			pl,
+			message,
+			KopeteMessage::Outbound,
+			KopeteMessage::RichText );
+	theChat->messageSent( msg );
 }
 void NowListeningPlugin::slotSettingsChanged()
 {
