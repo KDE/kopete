@@ -14,20 +14,19 @@
 class dlgAddContact;
 class JabberProtocol;
 
-class JabberAddContactPage : public AddContactPage
-{
-   Q_OBJECT
-public:
-	JabberAddContactPage(JabberProtocol *owner, QWidget *parent=0, const char *name=0);
-	~JabberAddContactPage();
-	dlgAddContact *jabData;
-	JabberProtocol *plugin;
-	QLabel *noaddMsg1;
-	QLabel *noaddMsg2;
-	bool canadd;
-public slots: // Public slots
+class JabberAddContactPage:public AddContactPage {
+  Q_OBJECT public:
+    JabberAddContactPage(JabberProtocol * owner, QWidget * parent =
+			 0, const char *name = 0);
+    ~JabberAddContactPage();
+    dlgAddContact *jabData;
+    JabberProtocol *plugin;
+    QLabel *noaddMsg1;
+    QLabel *noaddMsg2;
+    bool canadd;
+    public slots:		// Public slots
   /** No descriptions */
-  virtual void slotFinish();
+     virtual void slotFinish();
 
 };
 

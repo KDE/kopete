@@ -21,6 +21,7 @@
 #include "kopetecontact.h"
 #include "jabberprotocol.h"
 #include "jabbermessagedialog.h"
+#include "kopetehistorydialog.h"
 #include "dlgrename.h"
 
 #include <kopete.h>
@@ -42,64 +43,64 @@ class KListAction;
 
 class JabberProtocol;
 
-class JabberContact : public KopeteContact
-{
-	Q_OBJECT
-	public:
-		JabberContact (QString userid, QString name, QString group, JabberProtocol *protocol);
-		
-		void initContact (QString userid, QString name);
+class JabberContact:public KopeteContact {
+  Q_OBJECT public:
+    JabberContact(QString userid, QString name, QString group,
+		  JabberProtocol * protocol);
 
-		QString mUserID;
-		QString mName;
-		QString mResource;
-		bool hasLocalGroup;
+    void initContact(QString userid, QString name);
 
-		ContactStatus status() const;
-		QString statusText() const;
-		QString statusIcon() const;
+    QString mUserID;
+    QString mName;
+    QString mResource;
+    bool hasLocalGroup;
+
+    ContactStatus status() const;
+    QString statusText() const;
+    QString statusIcon() const;
     int importance() const;
     void execute();
 
-		void setResource(QString);
+    void setResource(QString);
     QString userID();
     QString nickname();
+    virtual void showContextMenu(QPoint, QString);
 
-	public slots:
-    void slotMWClosing(void);
+    public slots: void slotMWClosing(void);
     void slotNewMessage(QString, QString);
-	virtual void showContextMenu (QPoint, QString);
+    void slotCloseHistoryDialog();
+    void slotViewHistory();
 
-	private slots:
-		void slotUpdateContact (QString, QString, QString, QString);
-		void slotDeleteMySelf (bool);
-		void slotRemoveThisUser();
-		void slotRenameContact();
-		void slotDoRenameContact();
-		void slotMoveThisUser();
+    private slots:
+	void slotUpdateContact(QString, QString, QString, QString);
+    void slotDeleteMySelf(bool);
+    void slotRemoveThisUser();
+    void slotRenameContact();
+    void slotDoRenameContact();
+    void slotMoveThisUser();
     void slotChatThisUser();
 
-	private:
-		void initActions();
+  private:
+    void initActions();
 
-		QString mGroup;
-		QString mStatus;
-		QString mReason;
-		JabberProtocol *mProtocol;
-		KPopupMenu *popup;
-		KAction* actionRemove;
-		KAction* actionRemoveFromGroup;
-		KAction* actionChat;
-		KAction* actionInfo;
-		KAction* actionHistory;
-		KAction* actionRename;
-		KListAction *actionContactMove;
-		KListAction *actionContactCopy;
-		dlgJabberRename *dlgRename;
+    QString mGroup;
+    QString mStatus;
+    QString mReason;
+    JabberProtocol *mProtocol;
+    KPopupMenu *popup;
+    KAction *actionRemove;
+    KAction *actionRemoveFromGroup;
+    KAction *actionChat;
+    KAction *actionInfo;
+    KAction *actionHistory;
+    KAction *actionRename;
+    KListAction *actionContactMove;
+    KListAction *actionContactCopy;
+    dlgJabberRename *dlgRename;
     JabberMessageDialog *msgDialog;
+    KopeteHistoryDialog *historyDialog;
 
-	signals:
-		void statusChanged();
+     signals: void statusChanged();
     void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 };
 

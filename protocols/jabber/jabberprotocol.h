@@ -46,93 +46,87 @@ class StatusBarIcon;
 /**
  * @author Daniel Stone 
  */
-class JabberProtocol : public QObject, public KopeteProtocol
-{
-	Q_OBJECT
+class JabberProtocol:public QObject, public KopeteProtocol {
+  Q_OBJECT public:
+    JabberProtocol();
+    ~JabberProtocol();
 
-public:
-	JabberProtocol();
-	~JabberProtocol();
+    void init();
+    bool unload();
 
-	void init();
-	bool unload();
+    QString protocolIcon() const;
+    AddContactPage *createAddContactWidget(QWidget * parent);
+    void Connect();
+    void Disconnect();
+    bool isConnected() const;
+    void setAway();
+    void setAvailable();
+    bool isAway() const;
+    void removeUser(QString);
+    void renameContact(QString, QString);
+    void moveUser(QString, QString, QString, JabberContact * contact);
+    void addContact(QString);
 
-	QString protocolIcon() const;
-	AddContactPage *createAddContactWidget(QWidget *parent);
-	void Connect();
-	void Disconnect();
-	bool isConnected() const;
-	void setAway();
-	void setAvailable();
-	bool isAway() const;
-  void removeUser(QString);
-  void renameContact(QString, QString);
-  void moveUser(QString, QString, QString, JabberContact* contact);
-  void addContact(QString);
+    public slots: void slotConnected();
+    void slotDisconnected();
 
-public slots:
-	void slotConnected();
-	void slotDisconnected();
+    void slotGoOnline();
+    void slotGoOffline();
+    void slotSetAway();
+    void slotSetXA();
+    void slotSetDND();
+    void slotConnecting();
 
-	void slotGoOnline();
-	void slotGoOffline();
-	void slotSetAway();
-  void slotSetXA();
-  void slotSetDND();
-	void slotConnecting();
+    void slotIconRightClicked(const QPoint);
+    void slotConnect();
+    void slotDisconnect();
 
-  void slotIconRightClicked (const QPoint);
-  void slotConnect();
-  void slotDisconnect();
+    void slotNewContact(QString, QString, QString);
+    void slotContactUpdated(QString, QString, QString, QString);
+    void slotUserWantsAuth(QString);
+    void slotSettingsChanged(void);
 
-  void slotNewContact(QString, QString, QString);
-  void slotContactUpdated(QString, QString, QString, QString);
-  void slotUserWantsAuth(QString);
-  void slotSettingsChanged(void);
+    void slotSendMsg(QString, QString) const;
+    void slotNewMessage(QString, QString);
 
-  void slotSendMsg(QString, QString) const;
-  void slotNewMessage(QString, QString);
+     signals: void protocolUnloading();
+    void contactUpdated(QString, QString, QString, QString);
+    void nukeContacts(bool);
+    void newMessage(QString, QString);
 
-signals:
-  void protocolUnloading();
-  void contactUpdated(QString, QString, QString, QString);
-  void nukeContacts(bool);
-  void newMessage(QString, QString);
+  private:
+    void initIcons();
+    void initActions();
+    bool mIsConnected;
 
-private:
-	void initIcons();
-  void initActions();
-	bool mIsConnected;
+    StatusBarIcon *statusBarIcon;
 
-	StatusBarIcon *statusBarIcon;
+    QPixmap onlineIcon;
+    QPixmap offlineIcon;
+    QPixmap awayIcon;
+    QPixmap naIcon;
+    QMovie connectingIcon;
+    QString m_Username, m_Password, m_Server, m_Resource;
+    int m_Port;
 
-	QPixmap onlineIcon;
-	QPixmap offlineIcon;
-	QPixmap awayIcon;
-	QPixmap naIcon;
-	QMovie connectingIcon;
-  QString m_Username, m_Password, m_Server, m_Resource;
-  int m_Port;
+    KAction *actionGoOnline;
+    KAction *actionGoOffline;
+    KAction *actionGoAway;
+    KAction *actionGoXA;
+    KAction *actionGoDND;
 
-	KAction* actionGoOnline;
-	KAction* actionGoOffline;
-	KAction* actionGoAway;
-  KAction* actionGoXA;
-  KAction* actionGoDND;
+    KActionMenu *actionStatusMenu;
+    KAction *actionConnect;
+    KAction *actionDisconnect;
+    KPopupMenu *popup;
 
-	KActionMenu *actionStatusMenu;
-	KAction* actionConnect;
-	KAction* actionDisconnect;
-	KPopupMenu *popup;
+    KMessageBox *authContact;
 
-  KMessageBox *authContact;
+    JabberPreferences *mPrefs;
 
-  JabberPreferences *mPrefs;
-
-  KJabber *protocol;
+    KJabber *protocol;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-
