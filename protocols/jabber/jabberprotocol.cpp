@@ -315,6 +315,26 @@ void JabberProtocol::Connect()
 			return;
 		}
 	}
+
+	// parse proxy settings
+	QString proxyTypeStr = KGlobal::config()->readEntry("ProxyType", "None");
+	int proxyType = Jabber::StreamProxy::None;
+
+	if(proxyTypeStr == QString("HTTPS"))
+		proxyType = Jabber::StreamProxy::HTTPS;
+	else
+	if(proxyTypeStr == QString("SOCKS4"))
+		proxyType = Jabber::StreamProxy::SOCKS4;
+	else
+	if(proxyTypeStr == QString("SOCKS5"))
+		proxyType = Jabber::StreamProxy::SOCKS5;
+	
+	Jabber::StreamProxy proxy(proxyType, KGlobal::config()->readEntry("ProxyName", ""), KGlobal::config()->readNumEntry("ProxyPort", 8080));
+	proxy.setUseAuth(KGlobal::config()->readBoolEntry("ProxyAuth", false));
+	proxy.setUser(KGlobal::config()->readEntry("ProxyUser", ""));
+	proxy.setPass(KGlobal::config()->readEntry("ProxyPass", ""));
+
+	jabberClient->setProxy(proxy);
 	
 	if(myContact)
 	{
