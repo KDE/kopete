@@ -46,6 +46,7 @@ KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *pare
 	m_protocolId = protocolId;
 	m_cachedSize = 0;
 	m_cachedOldStatus = Offline;
+	contextMenu = 0L;
 	
 	/* Initialize the context Menu */
 	initActions();
@@ -203,6 +204,7 @@ void KopeteContact::showContextMenu(const QPoint& p, const QString&){
 	
 	contextMenu->exec( p );
 	delete contextMenu;
+	contextMenu = 0L;
 }
 
 void KopeteContact::slotChangeDisplayName(){
