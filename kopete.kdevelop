@@ -9,8 +9,8 @@
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
     </keywords>
-    <version/>
-    <description/>
+    <version></version>
+    <description></description>
     <ignoreparts/>
   </general>
   <kdevfileview>
@@ -41,9 +41,9 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell>libtool</dbgshell>
-      <programargs/>
-      <gdbpath/>
+      <dbgshell>../libtool</dbgshell>
+      <programargs>--nofork</programargs>
+      <gdbpath></gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -63,16 +63,35 @@
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
     <run>
-      <mainprogram/>
-      <programargs/>
+      <mainprogram>kopete/kopete/kopete</mainprogram>
+      <programargs>--nofork</programargs>
     </run>
     <envvars/>
     <make>
       <abortonerror>true</abortonerror>
       <numberofjobs>3</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
     </make>
+    <general>
+      <useconfiguration>default</useconfiguration>
+    </general>
+    <configurations>
+      <default>
+        <configargs>--enable-debug=full</configargs>
+        <builddir>/home/tla/spool/src/kde-cvs/kdenonbeta/</builddir>
+        <topsourcedir>/home/tla/spool/src/kde-cvs/kdenonbeta/</topsourcedir>
+        <ccompiler>GccOptions</ccompiler>
+        <cxxcompiler>GppOptions</cxxcompiler>
+        <f77compiler>G77Options</f77compiler>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags></cflags>
+        <cxxflags></cxxflags>
+        <f77flags></f77flags>
+      </default>
+    </configurations>
   </kdevautoproject>
   <cppsupportpart>
     <codecompletion>
@@ -85,8 +104,8 @@
     </classstore>
     <filetemplates>
       <choosefiles>false</choosefiles>
-      <interfaceURL/>
-      <implementationURL/>
+      <interfaceURL></interfaceURL>
+      <implementationURL></implementationURL>
       <interfacesuffix>.h</interfacesuffix>
       <implementationsuffix>.cpp</implementationsuffix>
       <lowercasefilenames>true</lowercasefilenames>
@@ -101,12 +120,16 @@
   </kdevclassview>
   <kdevcvs>
     <cvsoptions>-f</cvsoptions>
-    <commitoptions/>
+    <commitoptions></commitoptions>
     <updateoptions>-dP</updateoptions>
     <addoptions>-z4</addoptions>
     <removeoptions>-f</removeoptions>
     <diffoptions>-u3 -p</diffoptions>
-    <logoptions/>
-    <rshoptions/>
+    <logoptions></logoptions>
+    <rshoptions></rshoptions>
   </kdevcvs>
+  <kdevfilecreate>
+    <filetypes/>
+    <useglobaltypes/>
+  </kdevfilecreate>
 </kdevelop>
