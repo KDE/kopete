@@ -6,5 +6,7 @@ Type=other
 License=GPL
 Name=Motion Auto-Away
 Name[es]=Autoalejado por movimiento
+Name[pt]=Auto-Ausência por Movimento
+Name[pt_BR]=Auto-Ausência por Movimento
 Name[sv]=Automatisk rörelsefrånvaro
 Comment=Sets away status when not detecting movement near the computer 
