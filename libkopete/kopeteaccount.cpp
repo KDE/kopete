@@ -209,6 +209,16 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		// The folder might exist, try to open the wallet
 		wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
 		QString pwd;
+
+		// Before trying to read from the wallet, check if the config file holds a password.
+		// If so, remove it from the config and set it through KWallet instead.
+		if ( !error && !d->password.isNull() )
+		{
+			pwd = d->password;
+			setPassword( pwd );
+			return pwd;
+		}
+
 		if ( wallet && wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
 			wallet->readPassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pwd ) == 0 )
 		{
@@ -226,7 +236,6 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		if ( error )
 			d->password = QString::null;
 		else
-			// FIXME: Try to move the password to KWallet if possible - Martijn
 			return d->password;
 	}
 
@@ -288,7 +297,17 @@ void KopeteAccount::setPassword( const QString &pass )
 		if ( wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
 			wallet->writePassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pass ) == 0 )
 		{
-			// FIXME: Remove any pass from KConfig if it's set - Martijn
+			// Remove any pass from KConfig if it is still there
+			if ( !d->password.isNull() )
+			{
+				KConfig *config = KGlobal::config();
+				config->setGroup( configGroup() );
+
+				config->deleteEntry( "Password" );
+				config->sync();
+
+				d->password = QString::null;
+			}
 			return;
 		}
 	}
