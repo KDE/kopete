@@ -211,6 +211,14 @@ void JabberProtocol::init()
 	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 		connect();
 
+	// create a contact instance for self
+	QString userId = KGlobal::config()->readEntry("UserID", "");
+	QString server = KGlobal::config()->readEntry("Server", "jabber.org");
+	myContact = new JabberContact(
+					QString("%1@%2").arg(userId, 1).arg(server, 2),
+					userId, QStringList(i18n("Unknown")),
+					this, 0L, QString::null);
+
 }
 
 bool JabberProtocol::unload()
