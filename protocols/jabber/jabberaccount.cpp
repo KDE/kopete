@@ -2,7 +2,7 @@
 /***************************************************************************
                    jabberaccount.cpp  -  core Jabber account class
                              -------------------
-    begin                : Sat M� 8 2003
+    begin                : Sat M??? 8 2003
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
@@ -492,6 +492,12 @@ void JabberAccount::connect ()
 	 */
 	jabberClient = new XMPP::Client (this);
 
+	/*
+	 * Enable file transfer (IP and server will be set after connection
+	 * has been established.
+	 */
+	jabberClient->setFileTransferEnabled ( true );
+
 	/* This should only be done here to connect the signals, otherwise it is a
 	 * bad idea.
 	 */
@@ -704,7 +710,6 @@ void JabberAccount::slotCSAuthenticated ()
 	 * Setup file transfer
 	 */
 	addS5bAddress ( localAddress );
-	jabberClient->setFileTransferEnabled ( true );
 	jabberClient->s5bManager()->setServer ( s5bServer () );
 
 	/* start the client operation */
