@@ -342,6 +342,11 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
+		else
+		{
+			if ( account->autoConnect() )
+				account->connect(); //default to online
+		}
 	}
 }
 
@@ -360,3 +365,4 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 #include "kopeteaccountmanager.moc"
 // vim: set noet ts=4 sts=4 sw=4:
+// kate: tab-width 4; indent-mode csands;
