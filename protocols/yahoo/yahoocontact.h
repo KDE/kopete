@@ -48,7 +48,7 @@ class YahooContact : public KopeteContact
 	virtual QString statusIcon() const;
 	virtual int importance() const;
 	virtual KActionCollection *customContextMenuActions();
-	virtual KopeteMessageManager *manager();
+	virtual KopeteMessageManager *manager( bool canCreate = false );
 
 	void setYahooStatus( YahooStatus::Status , const QString &, int  );
 

@@ -117,7 +117,7 @@ QString YahooContact::identityId() const
 	return QString::null;
 }
 
-KopeteMessageManager *YahooContact::manager()
+KopeteMessageManager *YahooContact::manager( bool )
 {
 	return static_cast<KopeteMessageManager*>( static_cast<YahooProtocol*>( protocol() )->chatMsgManager( contactId() ) );
 }

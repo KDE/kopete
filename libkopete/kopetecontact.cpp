@@ -418,12 +418,12 @@ bool KopeteContact::isReachable()
 
 void KopeteContact::startChat()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager(), KopeteView::Chat);
+	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteView::Chat);
 }
 
 void KopeteContact::sendMessage()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager(), KopeteView::Email);
+	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteView::Email);
 }
 
 void KopeteContact::execute()
@@ -432,7 +432,7 @@ void KopeteContact::execute()
 	startChat();
 }
 
-KopeteMessageManager *KopeteContact::manager()
+KopeteMessageManager *KopeteContact::manager( bool )
 {
 	kdDebug(14010) << "Manager() not implimented for " << protocol()->displayName() << ", crash!" << endl;
 	return 0L;

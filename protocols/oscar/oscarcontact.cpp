@@ -123,7 +123,7 @@ QString OscarContact::data(void) const
 	return QString::null;
 }
 
-KopeteMessageManager* OscarContact::manager()
+KopeteMessageManager* OscarContact::manager( bool )
 {
 	if ( mMsgManager )
 	{

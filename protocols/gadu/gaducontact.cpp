@@ -244,7 +244,7 @@ GaduContact::uin() const
 }
 
 KopeteMessageManager*
-GaduContact::manager()
+GaduContact::manager( bool )
 {
     if ( msgManager_ ) {
         return msgManager_;

@@ -66,7 +66,7 @@ public:
 	 */
 	bool isDirectConnected() const { return mDirectlyConnected; };
 
-	virtual KopeteMessageManager *manager();
+	virtual KopeteMessageManager *manager( bool canCreate = false );
 
 public slots:
 	/** Method to delete a contact from the contact list */

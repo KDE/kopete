@@ -69,7 +69,7 @@ public slots:
     void messageSend( KopeteMessage&, KopeteMessageManager* );
 
 protected:
-    virtual KopeteMessageManager* manager();
+    virtual KopeteMessageManager* manager( bool canCreate = false );
     void initActions();
 
 private:

@@ -314,7 +314,18 @@ public:
 	 */
 	virtual void rename( const QString &newName );
 
-	virtual KopeteMessageManager* manager();
+	/**
+	 * Returns the primary message manager affiliated with this contact
+	 * Although a contact can have more than one active message manager
+	 * (as is the case with MSN at least), only one message manager will
+	 * ever be the contacts "primary" message manager.. aka the 1 on 1 chat.
+	 * This function should always returnt that instance.
+	 *
+	 * @param canCreate If a new message manager can be created in addition
+	 * 	to any existing managers. Current;y, this is only set to true when
+	 *	a chat is initiated by the user by clicking the contact list.
+	 */
+	virtual KopeteMessageManager* manager( bool canCreate = false );
 
 public slots:
 	/**

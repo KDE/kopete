@@ -144,7 +144,7 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
-	virtual KopeteMessageManager *manager();
+	virtual KopeteMessageManager *manager( bool canCreate = false );
 
 public slots:
 	/**

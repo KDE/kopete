@@ -57,7 +57,7 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 	}
 }
 
-KopeteMessageManager* SMSContact::manager()
+KopeteMessageManager* SMSContact::manager( bool )
 {
 	if ( m_msgManager )
 	{

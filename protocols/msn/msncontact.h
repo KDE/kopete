@@ -136,7 +136,7 @@ public:
 	/**
 	 * Returns the MSN Message Manager associated with this contact
 	 */
-	virtual KopeteMessageManager *manager();
+	virtual KopeteMessageManager *manager( bool canCreate = false );
 
 public slots:
 	virtual void slotUserInfo();

@@ -61,6 +61,7 @@ private slots:
 	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
 	void slotFileTransferDone( MSNFileTransferSocket* MFTS );
 	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
+	void slotRemoveManager( const KopeteContact *);
 
 private:
 	KopeteProtocol *m_protocol;

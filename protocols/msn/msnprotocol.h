@@ -39,6 +39,7 @@ class MSNIdentity;
 class MSNPreferences;
 class MSNNotifySocket;
 class MSNSwitchBoardSocket;
+class MSNMessageManager;
 class KopeteMessageManager;
 class KopeteMetaContact;
 class KopeteContact;
@@ -155,6 +156,8 @@ public:
 
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
+
+	QMap<const MSNContact*, MSNMessageManager*> managerMap;
 
 public slots:
 	virtual void connect();

@@ -58,7 +58,11 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 		this,
 		SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
 
+	connect( this, SIGNAL( contactRemoved(const KopeteContact *) ), this,
+		SLOT( slotRemoveManager(const KopeteContact *) ) );
+
 	m_timerOn = false;
+
 }
 
 MSNMessageManager::~MSNMessageManager()
@@ -106,6 +110,13 @@ void MSNMessageManager::createChat( const QString &handle,
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 	connect( m_chatService, SIGNAL( invitation( const QString&, const QString& ) ),
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
+}
+
+void MSNMessageManager::slotRemoveManager( const KopeteContact *contact )
+{
+	MSNProtocol *p = static_cast<MSNProtocol*>( m_protocol );
+	const MSNContact *c = static_cast<const MSNContact*>( &*contact );
+	p->managerMap.remove ( c );
 }
 
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
@@ -208,7 +219,7 @@ KActionCollection * MSNMessageManager::chatActions()
 				SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
 		}
 	}
-	// TODO: invite other contact 
+	// TODO: invite other contact
 	//sl.append( otherString = i18n( "Other..." ) );
 	//actionInvite->setItems( sl );
 	//connect( actionInvite, SIGNAL( activated( const QString & ) ),

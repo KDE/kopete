@@ -78,7 +78,7 @@ public:
 							// the constructor
 	const QString host() { return myHost; }
 							// the host name return method
-	KopeteMessageManager *manager();
+	KopeteMessageManager *manager( bool canCreate = false );
 signals:
 	void messageSuccess();
 //***********************************************************************

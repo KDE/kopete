@@ -118,7 +118,7 @@ QString JabberContact::resource() const
 	return activeResource->resource();
 }
 
-KopeteMessageManager *JabberContact::manager()
+KopeteMessageManager *JabberContact::manager( bool )
 {
 	JabberMessageManager *jmm = protocol->manager( contactId() );
 	if( !jmm )

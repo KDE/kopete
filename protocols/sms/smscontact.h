@@ -60,7 +60,7 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
-	KopeteMessageManager* manager();
+	KopeteMessageManager* manager( bool canCreate = false );
 public slots:
 
 	virtual void slotUserInfo();

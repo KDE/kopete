@@ -66,7 +66,7 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 	myActionCollection = new KActionCollection(this);
 }
 
-KopeteMessageManager* WPContact::manager()
+KopeteMessageManager* WPContact::manager( bool )
 {
 	if( !m_manager )
 	{
