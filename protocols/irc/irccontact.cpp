@@ -39,10 +39,12 @@
 
 #include "kopetestdaction.h"
 #include "ircqueryview.h"
+#include "irc_channel_tabwidget.h"
 #include "irccontact.h"
 #include "ircservercontact.h"
 #include "kopetecontactlist.h"
 #include "kopetewindow.h"
+#include "tabcompleter.h"
 
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
