@@ -172,7 +172,14 @@ void JabberBaseContact::reevaluateStatus ()
 	{
 		if (resource.status ().show () == "")
 		{
-			status = protocol()->JabberKOSOnline;
+			if (resource.status ().isInvisible ())
+			{
+				status = protocol()->JabberKOSInvisible;
+			}
+			else
+			{
+				status = protocol()->JabberKOSOnline;
+			}
 		}
 		else
 		if (resource.status ().show () == "chat")
