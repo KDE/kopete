@@ -168,7 +168,7 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 	m_actionLanguage->setItems( keys );
 
 	QString languageKey = m->pluginData( this, "languageKey" );
-	if( !languageKey.isNull() && languageKey != "null" )
+	if( !languageKey.isEmpty() && languageKey != "null" )
 		m_actionLanguage->setCurrentItem( languageIndex( languageKey ) );
 	else
 		m_actionLanguage->setCurrentItem( languageIndex( "null" ) );
@@ -203,7 +203,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( (msg.direction() == KopeteMessage::Inbound) && ( !msg.plainBody().isNull() ) )
+	if ( (msg.direction() == KopeteMessage::Inbound) && ( !msg.plainBody().isEmpty() ) )
 	{
 		KopeteMetaContact *from = msg.from()->metaContact();
 		if( !from )
@@ -259,7 +259,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.plainBody().isNull() ) )
+	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.plainBody().isEmpty() ) )
 	{
 		src_lang = m_prefs->myLang();
 //		kdDebug(14308) << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
