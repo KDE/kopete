@@ -51,6 +51,8 @@ public:
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
 	KActionMenu* actionMenu();
+
+
 	//}
 public slots:
 	//{
@@ -69,6 +71,8 @@ public slots:
 
 	void removeContact( const GaduContact* c );
 
+	void slotExportContactsList();	
+
 	void addNotify( uin_t uin );
 	void notify( uin_t* userlist, int count );
 	void sendMessage( uin_t recipient, const QString& msg, int msgClass=GG_CLASS_CHAT );
@@ -84,7 +88,7 @@ public slots:
 			    int ageFrom, int ageTo, bool onlyAlive);
                             
 	void pubDirSearchClose();
-	
+
 	// tls 
 	bool isConnectionEncrypted();
 	void useTls( bool ut );
@@ -108,6 +112,7 @@ private slots:
 	void statusChanged( struct gg_event* e );
 	void slotSessionDisconnect();
 	void userlist( const gaduContactsList& );
+	gaduContactsList *userlist();
 	void connectionFailed( struct gg_event* /*e*/ );
 	void connectionSucceed( struct gg_event* /*e*/ );
 
@@ -141,6 +146,7 @@ private:
 	KAction* invisibleAction;
 	KAction* descrAction;
 	KAction* searchAction;
+	KAction* listputAction;
 	
 	bool isUsingTls;
 };

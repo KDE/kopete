@@ -27,6 +27,7 @@
 #include <qpoint.h>
 
 #include "gaduaccount.h"
+#include "gaducommands.h"
 
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
@@ -60,6 +61,8 @@ public:
 	void	setDescription( const QString& descr );
 	QString		description() const;
 	uin_t uin() const;
+	contactLine *contactDetails();
+
 public slots:
 	void slotUserInfo();
 	void slotDeleteContact();

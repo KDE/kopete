@@ -405,30 +405,42 @@ UserlistPutCommand::UserlistPutCommand( QObject* parent, const char* name )
 {
 }
 
-UserlistPutCommand::UserlistPutCommand( uin_t uin, const QString& password, const QStringList& contacts,
-																				QObject* parent, const char* name )
-	:GaduCommand( parent, name ), session_(0), uin_(uin), password_(password), contacts_(contacts)
-{
-}
-
 UserlistPutCommand::~UserlistPutCommand()
 {
 }
 
 void
-UserlistPutCommand::setInfo( uin_t uin, const QString& password, const QStringList& contacts )
+UserlistPutCommand::setInfo( uin_t uin, const QString& password, gaduContactsList *u )
 {
+	QPtrListIterator< contactLine > loo(*u);
+	unsigned int i;
+
 	uin_ = uin;
 	password_ = password;
-	contacts_ = contacts;
+	
+	for ( i=u->count() ; i-- ; ++loo ){ 
+//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
+		contacts_ +=
+			(*loo)->firstname+";"+(*loo)->surname+";"+(*loo)->nickname+";"+(*loo)->name+";"+
+			(*loo)->phonenr+";"+(*loo)->group+";"+(*loo)->uin+";"+(*loo)->email+";0;;0;\n";
+	}
+	
+	kdDebug(14100) <<"--------------------userlists\n" << contacts_ << "\n---------------" << endl;
+	
 }
+
 
 void
 UserlistPutCommand::execute()
 {
-	session_ = gg_userlist_put( uin_, password_.local8Bit(), contacts_.join( "\r\n" ).local8Bit(), 1 );
-	connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
-	checkSocket( session_->fd, session_->check );
+	QString plist;
+	QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
+	
+	plist = textcodec->fromUnicode( contacts_ );
+//	session_ = gg_userlist_put( uin_, password_.local8Bit(), (unsigned char *)(plist.local8Bit()), 1 );
+//	connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
+//	checkSocket( session_->fd, session_->check );
+
 }
 
 void

@@ -3,6 +3,7 @@
 #include <kdebug.h>
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "userinfodialog.h"
@@ -166,6 +167,40 @@ GaduContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QSt
     serializedData["telephone"]	= phonenr_;
     
 }
+
+contactLine *
+GaduContact::contactDetails()
+{
+	KopeteGroupList		groupList;
+	QString			groups;
+
+	contactLine *cl	= new contactLine;
+
+	cl->firstname	= firstName_;
+	cl->surname	= secondName_;
+	cl->nickname	= nickName_;
+	cl->name		= firstName_+" "+secondName_;
+	cl->phonenr	= phonenr_;
+	cl->uin		= QString::number( uin_ );
+	cl->email		= email_;
+	cl->name	= displayName();
+	
+	groupList = metaContact ()->groups ();
+	
+	KopeteGroup * gr;
+	for ( gr = groupList.first (); gr ; gr = groupList.next ()){
+		groups += gr->displayName()+",";
+	}
+	
+	if (groups.length()){
+		
+	groups.truncate( groups.length()-1 );
+	}
+	cl->group	= groups;
+	
+	return cl;
+}
+
 
 void GaduContact::messageAck()
 {

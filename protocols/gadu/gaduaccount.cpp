@@ -55,6 +55,8 @@ GaduAccount::initActions()
 					 SLOT(slotDescription()), this, "actionGaduDescription" );
 	searchAction	= new KAction( i18n("&Search for friends"), "", 0, this,
 				SLOT(slotSearch()), this, "actionSearch" );
+	listputAction	= new KAction( i18n("Export contacts on server"), "", 0, this,
+				SLOT(slotExportContactsList()), this, "actionListput" );
 
 }
 
@@ -134,6 +136,7 @@ KActionMenu* GaduAccount::actionMenu()
 	actionMenu_->insert( invisibleAction );
 	actionMenu_->insert( offlineAction );
 	actionMenu_->insert( descrAction );
+	actionMenu_->insert( listputAction );
 
 	actionMenu_->popupMenu()->insertSeparator();
 
@@ -594,6 +597,46 @@ next_cont:
 	    ++loo;
 	}
 
+}
+
+void 
+GaduAccount::slotExportContactsList()
+{
+	
+	UserlistPutCommand *cmd = new UserlistPutCommand( this, "exportListCmd" );
+	
+	cmd->setInfo( myself_->uin(), password(), userlist() );
+	
+	QObject::connect( cmd, SIGNAL(done(const QString&, const QString&)),
+					SLOT(slotCommandDone(const QString&, const QString&)) );
+	QObject::connect( cmd, SIGNAL(error(const QString&, const QString&)),
+					SLOT(slotCommandError(const QString&, const QString&)) );
+ 
+}
+
+
+gaduContactsList *
+GaduAccount::userlist()
+{
+	GaduContact *contact;
+	gaduContactsList *gaducontactslist=new gaduContactsList; 
+	contactLine cl;
+	int i;
+
+	if (!contacts().count()){
+		return gaducontactslist;
+	}
+
+	QDictIterator<KopeteContact> it( contacts() );
+
+	for( i=0 ; it.current() ; ++it ) {
+		contact = static_cast<GaduContact *>(*it);
+		if (contact->uin()!=myself_->uin()){
+		    gaducontactslist->append( contact->contactDetails() );
+		}
+	}
+
+	return gaducontactslist;
 }
 
 void
