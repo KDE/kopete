@@ -561,8 +561,10 @@ QStringList OscarContact::removeTag ( QString &message, QString tag )
 	return attr;
 }
 */
-void OscarContact::slotMoved(KopeteMetaContact * /*old */)
+void OscarContact::slotMoved(KopeteMetaContact * old )
 {
+	disconnect(old, SIGNAL(aboutToSave(KopeteMetaContact*)), 0, 0);
+
 	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
 		protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
