@@ -142,32 +142,25 @@ QString KopeteGroupViewItem::key( int, bool ) const
 
 void KopeteGroupViewItem::startRename( int col )
 {
-	kdDebug(14000) << k_funcinfo << endl;
-	if ( col != 0 ) return;
-	refreshDisplayName();
-	setText( 0, d->name->text() );
-	setRenameEnabled( 0, true );
+	//kdDebug(14000) << k_funcinfo << endl;
 	KListViewItem::startRename( 0 );
-/*
-	KListView *lv = static_cast<KListView*>( listView() );
-	lv->rename( this, 0 );*/
 }
 
 void KopeteGroupViewItem::okRename( int col )
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	//kdDebug(14000) << k_funcinfo << endl;
 	KListViewItem::okRename(col);
 	if ( col == 0 )
 		group()->setDisplayName(text(0));
-	setText( col, QString::null );
+	setRenameEnabled( 0, false );
 	refreshDisplayName();
 }
 
 void KopeteGroupViewItem::cancelRename( int col )
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	//kdDebug(14000) << k_funcinfo << endl;
 	KListViewItem::cancelRename(col);
-	setText( col, QString::null );
+	setRenameEnabled( 0, false );
 }
 
 void KopeteGroupViewItem::updateVisibility()

@@ -337,23 +337,20 @@ void KopeteMetaContactLVI::slotRemoveFromGroup()
 
 void KopeteMetaContactLVI::startRename( int col )
 {
-	if ( col != 0 ) return;
-	setText( 0, d->nameText->text() );
-	setRenameEnabled( 0, true );
 	KListViewItem::startRename( 0 );
-/*	KListView *lv = static_cast<KListView *>( listView() );
-	lv->rename( this, 0 );*/
 }
 
 void KopeteMetaContactLVI::okRename( int col )
 {
 	KListViewItem::okRename( col );
 	rename( text( 0 ) );
+	setRenameEnabled( 0, false );
 }
 
 void KopeteMetaContactLVI::cancelRename( int col )
 {
 	KListViewItem::cancelRename( col );
+	setRenameEnabled( 0, false );
 }
 
 /*

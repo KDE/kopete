@@ -1679,13 +1679,14 @@ void KopeteContactListView::slotRename()
 {
 	if ( KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( currentItem() ) )
 	{
+		metaLVI->setRenameEnabled( 0, true);
 		metaLVI->startRename( 0 );
 	}
 	else if ( KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( currentItem() ) )
 	{
 		if ( !KopetePrefs::prefs()->sortByGroup() )
 			return;
-
+		groupLVI->setRenameEnabled( 0, true);
 		groupLVI->startRename( 0 );
 	}
 }
