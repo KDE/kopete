@@ -32,7 +32,7 @@ class IRCUserContact : public IRCContact
 
 	public:
 		// This class provides a KopeteContact for each user on the channel.
-		IRCUserContact(IRCIdentity *, const QString &nickname, KIRC::UserClass);
+		IRCUserContact(IRCIdentity *, const QString &nickname, KIRC::UserClass, KopeteMetaContact * = 0L);
 
 		// Userclass stuff
 		void setUserclass(KIRC::UserClass userclass) { mUserclass = userclass; }
@@ -51,7 +51,7 @@ class IRCUserContact : public IRCContact
 		void slotDevoice();
 		void slotCtcpPing();
 		void slotCtcpVersion();
-		void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);	
+		void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 	private:

@@ -26,8 +26,8 @@
 #include <klocale.h>
 #include <kaction.h>
 
-IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass)
-	: IRCContact( identity, nickname, 0L )
+IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass, KopeteMetaContact *m)
+	: IRCContact( identity, nickname, m )
 {
 	mUserclass = userclass;
 	mNickName = nickname;

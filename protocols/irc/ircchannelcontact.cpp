@@ -91,6 +91,7 @@ void IRCChannelContact::slotConnectedToServer()
 {
 	// TODO: make this configurable: (if this channel is join on connetct, run this)
 	//mEngine->joinChannel(mNickName);
+	setOnlineStatus( KopeteContact::Online );
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QString &nickname, const int mode)
@@ -112,7 +113,7 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 	if( mNickName.lower() == channel.lower() )
 	{
 		mTopic = topic;
-		mMsgManager->setDisplayName( caption() );
+		manager()->setDisplayName( caption() );
 		KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(mTopic), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
@@ -120,17 +121,13 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 
 void IRCChannelContact::slotJoin()
 {
-	if ( onlineStatus() == KopeteContact::Offline )
+	if ( onlineStatus() == KopeteContact::Online )
 		mEngine->joinChannel(mNickName);
 }
 
 void IRCChannelContact::slotPart()
 {
-	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away)
-	{
-		mEngine->partChannel(mNickName, QString("Kopete 2.0: http://kopete.kde.org"));
-		manager()->deleteLater();
-	}
+	mEngine->partChannel(mNickName, QString("Kopete 2.0: http://kopete.kde.org"));
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
@@ -138,8 +135,6 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 	QString nickname = user.section('!', 0, 0);
 	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower())
 	{
-		setOnlineStatus( KopeteContact::Online ); // We joined the channel, change status
-
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
@@ -159,14 +154,13 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower())
-		setOnlineStatus( KopeteContact::Offline ); // We parted the channel, change status
-	else {
+	if (! (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower()) )
+	{
 		KopeteContact *user = locateUser( nickname );
 		if ( user )
 		{
 			manager()->removeContact( user, true );
-			delete user;
+			delete user->metaContact();
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason),
