@@ -1,3 +1,20 @@
+/*
+	kopetemessagemanager.cpp - Manages all chats
+
+	Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
+                  (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+
+	Thanks to Daniel Stone for heavy bugfixing and testing.	
+
+	*************************************************************************
+	*                                                                       *
+	* This program is free software; you can redistribute it and/or modify  *
+	* it under the terms of the GNU General Public License as published by  *
+	* the Free Software Foundation; either version 2 of the License, or     *
+	* (at your option) any later version.                                   *
+	*                                                                       *
+	*************************************************************************
+*/
 
 #include "kopetemessagemanager.h"
 #include "kopetechatwindow.h"
@@ -6,6 +23,7 @@
 
 #include "messagelog.h"
 #include <kdebug.h>
+#include <klocale.h>
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
 		QString logFile, QObject *parent, const char *name) : QObject( parent, name)
@@ -131,7 +149,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	/* We dont need an event if it already exits or if we are in popup mode */
 	if ( (mUnreadMessageEvent == 0L) && ( mReadMode != Popup) && (msg.direction() == KopeteMessage::Inbound) )
 	{
-		mUnreadMessageEvent = new KopeteEvent( msg.from(), "newmsg", this, SLOT(slotReadMessages()));
+		mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()), "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
 		kopeteapp->notifyEvent( mUnreadMessageEvent );
 	}
 
