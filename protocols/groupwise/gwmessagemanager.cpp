@@ -51,9 +51,10 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "gwInvite" );
 	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 	
-	m_secure = new KAction( i18n( "Secure Connection Status" ), "encrypted", 0, this, 0, actionCollection(), "gwSecureChat" );
-	m_logging = new KAction( i18n( "Logged Chat" ), "logchat", 0, this, 0, actionCollection(), "gwLoggingChat" );
-
+	m_secure = new KAction( i18n( "Security Status" ), "encrypted", 0, this, 0, actionCollection(), "gwSecureChat" );
+	m_secure->setToolTip( i18n( "Conversation is secure" ) );
+	m_logging = new KAction( i18n( " Archiving Status" ), "logchat", 0, this, 0, actionCollection(), "gwLoggingChat" );
+	m_logging->setToolTip( i18n( "Conversation is not being administratively logged" ) );
 	if ( m_guid.isEmpty() )
 		createConference();
 	setXMLFile("gwchatui.rc");

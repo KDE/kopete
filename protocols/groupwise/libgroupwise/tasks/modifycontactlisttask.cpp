@@ -22,6 +22,8 @@ ModifyContactListTask::~ModifyContactListTask()
 bool ModifyContactListTask::take( Transfer * transfer )
 {
 	qDebug( "ModifyContactListTask::take() NOT IMPLEMENTED" );
+	// scan the contact list received
+	// emit each add and delete as a signal
 	return false;
 }
 
