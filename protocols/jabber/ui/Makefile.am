@@ -10,7 +10,6 @@ noinst_LTLIBRARIES = libkopetejabberui.la
 libkopetejabberui_la_SOURCES = \
 	dlgjabbersendraw.cpp dlgsendraw.ui \
 	jabberaddcontactpage.cpp dlgaddcontact.ui \
-	dlgjabberrename.cpp dlgrename.ui \
 	dlgjabbervcard.cpp dlgvcard.ui \
 	dlgjabberservices.cpp dlgservices.ui \
 	dlgjabberregister.cpp dlgregister.ui \
