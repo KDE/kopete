@@ -57,7 +57,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	// IRCContactManager stuff
 	QObject::connect(contactManager, SIGNAL(privateMessage(IRCContact *, IRCContact *, const QString &)),
 			this, SLOT(privateMessage(IRCContact *, IRCContact *, const QString &)));
-	
+
 	QObject::connect(contactManager, SIGNAL(action(IRCContact *, IRCContact *, const QString &)),
 			this, SLOT(action(IRCContact *, IRCContact *, const QString &)));
 
@@ -89,7 +89,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 
 	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::EngineStatus)),
 			this, SLOT(updateStatus()));
-			
+
 	m_engine->setCodec( m_nickName, codec() );
 }
 
@@ -314,14 +314,19 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	}
 
 	QStringList messages = QStringList::split( '\n', KopeteMessage::unescape( htmlString ) );
-	for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
+	for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
+	{
+		KopeteMessage msg(message.from(), message.to(), htmlString, message.direction(),
+			KopeteMessage::RichText, message.type() );
+
 		m_engine->messageContact(m_nickName, *it );
 
-	message.setBg( QColor() );
-	message.setFg( QColor() );
+		msg.setBg( QColor() );
+		msg.setFg( QColor() );
 
-	appendMessage(message);
-	manager()->messageSucceeded();
+		appendMessage(msg);
+		manager()->messageSucceeded();
+	}
 }
 
 KopeteContact *IRCContact::locateUser( const QString &nick )
@@ -349,7 +354,7 @@ bool IRCContact::isChatting() const
 {
 	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
 	for ( QIntDictIterator<KopeteMessageManager> it( sessions ); it.current() ; ++it )
-	{	
+	{
 		if( it.current()->members().contains(this) )
 			return true;
 	}
