@@ -532,7 +532,7 @@ void KopeteMessageManager::slotChatWindowClosing( KopeteChatWindow* closedWindow
 		//We are deleting this window instance
 		chatWindowList()->remove( closedWindow );
 		ChatWindowMap windowMap = *(chatWindowMap());
-		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
+		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == closedWindow) )
 			chatWindowMap()->remove( d->mProtocol );
 		myWindow = 0L;
 		kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
