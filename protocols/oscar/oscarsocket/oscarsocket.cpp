@@ -15,6 +15,9 @@
     *************************************************************************
 */
 
+//define this if you want to get tons of packets printed out
+//#define OSCAR_PACKETLOG 1
+
 extern "C" {
 #include "md5.h"
 };
@@ -225,179 +228,197 @@ void OscarSocket::OnConnect(void)
 /** This function is called when there is data to be read */
 void OscarSocket::OnRead(void)
 {
-    FLAP fl = getFLAP();
-    char *buf = new char[fl.length];
-    Buffer inbuf;
-    if (bytesAvailable() < fl.length)
-		{
-				while (waitForMore(500) < fl.length)
-						kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
-		}
-    int bytesread = readBlock(buf,fl.length);
-    if (fl.length < bytesAvailable())
-				emit readyRead(); //there is another packet waiting to be read
-    inbuf.setBuf(buf,bytesread);
-    kdDebug() << "[OSCAR] Input: " << endl;
-    inbuf.print();
-    switch(fl.channel)
-		{
+	FLAP fl = getFLAP();
+	char *buf = new char[fl.length];
+	Buffer inbuf;
+
+	if (bytesAvailable() < fl.length)
+	{
+		while (waitForMore(500) < fl.length)
+			kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
+	}
+
+	int bytesread = readBlock(buf,fl.length);
+	if (fl.length < bytesAvailable())
+		emit readyRead(); //there is another packet waiting to be read
+
+	inbuf.setBuf(buf,bytesread);
+
+#ifdef OSCAR_PACKETLOG
+	kdDebug() << "[OSCAR] Input: " << endl;
+	inbuf.print();
+#endif
+
+	switch(fl.channel)
+	{
 		case 0x01: //new connection negotiation channel
-				DWORD flapversion;
-				flapversion = inbuf.getDWord();
-				if (flapversion == 0x00000001)
-				{
-						emit connAckReceived();
-				}
-				else
-				{
-						kdDebug() << "[OSCAR][OnRead()] could not read flapversion on channel 0x01" << endl;
-						return;
-				}
-				break;
+			DWORD flapversion;
+			flapversion = inbuf.getDWord();
+			if (flapversion == 0x00000001)
+			{
+				emit connAckReceived();
+			}
+			else
+			{
+				kdDebug() << "[OSCAR][OnRead()] could not read flapversion on channel 0x01" << endl;
+				return;
+			}
+			break;
+
 		case 0x02: //snac data channel
-				SNAC s;
-				s = inbuf.getSnacHeader();
-				//printf("Snac family is %x, subtype is %x, flags are %x, id is %x\n",s.family,s.subtype,s.flags,s.id);
-				switch(s.family) {
-				case 0x0001: //generic service controls
-						switch(s.subtype) {
-						case 0x0001:  //error
-								kdDebug() << "[OSCAR] Generic service error.. remaining data is:" << endl;
-								inbuf.print();
-								emit protocolError(i18n("An unknown error occured. Please report this to the Kopete development team by visiting http://kopete.kde.org. The error message was: \"Generic service error: 0x0001/0x0001\""), 0);
-								break;
-						case 0x0003: //server ready
-								parseServerReady(inbuf);
-								break;
-						case 0x0005: //redirect
-								parseRedirect(inbuf);
-								break;
-						case 0x0007: //rate info request response
-								parseRateInfoResponse(inbuf);
-								break;
-						case 0x000f: //my user info
-								parseMyUserInfo(inbuf);
-								break;
-						case 0x000a: //rate change
-								parseRateChange(inbuf);
-								break;
-						case 0x0010: //warning notification
-								parseWarningNotify(inbuf);
-								break;
-						case 0x0013: //message of the day
-								parseMessageOfTheDay(inbuf);
-								break;
-						case 0x0018: //server versions
-								parseServerVersions(inbuf);
-								break;
-						case 0x001f: //requests a memory segment, part of aim.exe  EVIL AOL!!!
-								parseMemRequest(inbuf);
-								break;
-						default:
-								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
-						};
-						break;
-				case 0x0002: //locate service
-						switch(s.subtype) {
-						case 0x0003: //locate rights
-								parseLocateRights(inbuf);
-								break;
-						case 0x0006: //user profile
-								parseUserProfile(inbuf);
-								break;
-						default: //invalid subtype
-								kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
-						};
-						break;
-				case 0x0003: //buddy services
-						switch(s.subtype) {
-						case 0x0003: //buddy list rights
-								parseBuddyRights(inbuf);
-								break;
-						case 0x000b: //buddy changed status
-								parseBuddyChange(inbuf);
-								break;
-						case 0x000c: //offgoing buddy
-								parseOffgoingBuddy(inbuf);
-								break;
-						default: //invalid subtype
-								kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
-						};
-						break;
-				case 0x0004: //msg services
-						switch(s.subtype) {
-						case 0x0001: //msg error
-								parseError(inbuf);
-								break;
-						case 0x0005: //msg rights
-								parseMsgRights(inbuf);
-								break;
-						case 0x0007: //incoming IM
-								parseIM(inbuf);
-								break;
-						case 0x000a: //missed messages
-								parseMissedMessage(inbuf);
-								break;
-						case 0x000c: //message ack
-								parseMsgAck(inbuf);
-								break;
-						default: //invalid subtype
-								kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
-						};
-						break;
-				case 0x0009: //bos service
-						switch(s.subtype) {
-						case 0x0003: //bos rights incoming
-								parseBOSRights(inbuf);
-								break;
-						};
-						break;
-				case 0x0013: //buddy list management
-						switch(s.subtype) {
-						case 0x0003: //ssi rights
-								parseSSIRights(inbuf);
-								break;
-						case 0x0006: //buddy list
-								parseSSIData(inbuf);
-								break;
-						case 0x000e: //server ack
-								parseSSIAck(inbuf);
-								break;
-						default:
-								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
-						};
-						break;
-				case 0x0017: //authorization family
-						switch(s.subtype) {
-						case 0x0003: //authorization response (and hash) is being sent
-								parseAuthResponse(inbuf);
-								break;
-						case 0x0007: //encryption key is being sent
-								WORD keylen;
-								keylen = inbuf.getWord();
-								if (key)
-										delete key;
-								key = inbuf.getBlock(keylen);
-								emit keyReceived();
-								break;
-						default: //unknown subtype
-								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
-						};
-						break;
-				default: //unknown family
-						kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
-				};
-				break;
-				//		case 0x03: //FLAP error channel
-				//			break;
-				//		case 0x04: //close connection negotiation channel
-				//			break;
+			SNAC s;
+			s = inbuf.getSnacHeader();
+			//printf("Snac family is %x, subtype is %x, flags are %x, id is %x\n",s.family,s.subtype,s.flags,s.id);
+			switch(s.family)
+			{
+			case 0x0001: //generic service controls
+					switch(s.subtype)
+					{
+					case 0x0001:  //error
+#ifdef OSCAR_PACKETLOG
+							kdDebug() << "[OSCAR] Generic service error.. remaining data is:" << endl;
+							inbuf.print();
+#endif
+							emit protocolError(i18n("An unknown error occured. Please report this to the Kopete development team by visiting http://kopete.kde.org. The error message was: \"Generic service error: 0x0001/0x0001\""), 0);
+							break;
+					case 0x0003: //server ready
+							parseServerReady(inbuf);
+							break;
+					case 0x0005: //redirect
+							parseRedirect(inbuf);
+							break;
+					case 0x0007: //rate info request response
+							parseRateInfoResponse(inbuf);
+							break;
+					case 0x000f: //my user info
+							parseMyUserInfo(inbuf);
+							break;
+					case 0x000a: //rate change
+							parseRateChange(inbuf);
+							break;
+					case 0x0010: //warning notification
+							parseWarningNotify(inbuf);
+							break;
+					case 0x0013: //message of the day
+							parseMessageOfTheDay(inbuf);
+							break;
+					case 0x0018: //server versions
+							parseServerVersions(inbuf);
+							break;
+					case 0x001f: //requests a memory segment, part of aim.exe  EVIL AOL!!!
+							parseMemRequest(inbuf);
+							break;
+					default:
+							kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+					};
+					break;
+			case 0x0002: //locate service
+					switch(s.subtype) {
+					case 0x0003: //locate rights
+							parseLocateRights(inbuf);
+							break;
+					case 0x0006: //user profile
+							parseUserProfile(inbuf);
+							break;
+					default: //invalid subtype
+							kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
+					};
+					break;
+			case 0x0003: //buddy services
+					switch(s.subtype) {
+					case 0x0003: //buddy list rights
+							parseBuddyRights(inbuf);
+							break;
+					case 0x000b: //buddy changed status
+							parseBuddyChange(inbuf);
+							break;
+					case 0x000c: //offgoing buddy
+							parseOffgoingBuddy(inbuf);
+							break;
+					default: //invalid subtype
+							kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
+					};
+					break;
+			case 0x0004: //msg services
+					switch(s.subtype) {
+					case 0x0001: //msg error
+							parseError(inbuf);
+							break;
+					case 0x0005: //msg rights
+							parseMsgRights(inbuf);
+							break;
+					case 0x0007: //incoming IM
+							parseIM(inbuf);
+							break;
+					case 0x000a: //missed messages
+							parseMissedMessage(inbuf);
+							break;
+					case 0x000c: //message ack
+							parseMsgAck(inbuf);
+							break;
+					default: //invalid subtype
+							kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
+					};
+					break;
+			case 0x0009: //bos service
+					switch(s.subtype)
+					{
+					case 0x0003: //bos rights incoming
+							parseBOSRights(inbuf);
+							break;
+					};
+					break;
+			case 0x0013: //buddy list management
+					switch(s.subtype) {
+					case 0x0003: //ssi rights
+							parseSSIRights(inbuf);
+							break;
+					case 0x0006: //buddy list
+							parseSSIData(inbuf);
+							break;
+					case 0x000e: //server ack
+							parseSSIAck(inbuf);
+							break;
+					default:
+							kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+					};
+					break;
+			case 0x0017: //authorization family
+					switch(s.subtype) {
+					case 0x0003: //authorization response (and hash) is being sent
+							parseAuthResponse(inbuf);
+							break;
+					case 0x0007: //encryption key is being sent
+							WORD keylen;
+							keylen = inbuf.getWord();
+							if (key)
+									delete key;
+							key = inbuf.getBlock(keylen);
+							emit keyReceived();
+							break;
+					default: //unknown subtype
+							kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+					};
+					break;
+			default: //unknown family
+					kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
+			};
+			break;
+			//		case 0x03: //FLAP error channel
+			//			break;
+			//		case 0x04: //close connection negotiation channel
+			//			break;
+
 		default: //oh, crap, something's wrong
-				kdDebug() << "[OSCAR] Error: channel " << fl.channel << " does not exist" << endl;
-				kdDebug() << "Input: " << endl;
-				inbuf.print();
+		{
+			kdDebug() << "[OSCAR] Error: channel " << fl.channel << " does not exist" << endl;
+#ifdef OSCAR_PACKETLOG
+			kdDebug() << "Input: " << endl;
+			inbuf.print();
+#endif
 		}
-    delete buf;
+	} // END switch(fl.channel)
+	delete buf;
 }
 
 /** Reads a FLAP header from the input */
@@ -499,11 +520,14 @@ void OscarSocket::OnConnAckReceived(void)
 /** Sends the output buffer, and clears it */
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
-    kdDebug() << "[OSCAR] Output: " << endl;
-    outbuf.print();
-    outbuf.addFlap(chan);
-    writeBlock(outbuf.getBuf(),outbuf.getLength());
-    outbuf.clear();
+#ifdef OSCAR_PACKETLOG
+	kdDebug() << "[OSCAR] Output: " << endl;
+	outbuf.print();
+#endif
+
+	outbuf.addFlap(chan);
+	writeBlock(outbuf.getBuf(),outbuf.getLength());
+	outbuf.clear();
 }
 
 /** Logs in the user! */
@@ -601,30 +625,34 @@ void OscarSocket::sendRateInfoRequest(void)
 /** Parses the rate info response */
 void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 {
-    kdDebug() << "[OSCAR] Parsing Rate Info Response" << endl;
-    RateClass *rc = NULL;
-    WORD numclasses = inbuf.getWord();
-    for (unsigned int i=0;i<numclasses;i++)
-		{
-				rc = new RateClass;
-				rc->classid = inbuf.getWord();
-				rc->windowsize = inbuf.getDWord();
-				rc->clear = inbuf.getDWord();
-				rc->alert = inbuf.getDWord();
-				rc->limit = inbuf.getDWord();
-				rc->disconnect = inbuf.getDWord();
-				rc->current = inbuf.getDWord();
-				rc->max = inbuf.getDWord();
-				//5 unknown bytes, depending on the 0x0001/0x0017 you send
-				for (int j=0;j<5;j++)
-						rc->unknown[j] = inbuf.getByte();
-				rateClasses.append(rc);
-		}
-    kdDebug() << "[OSCAR] The buffer is " << inbuf.getLength() << " bytes long after reading the classes" << endl;;
-    kdDebug() << "[OSCAR] It looks like this: " << endl;
-    inbuf.print();
-    //now here come the members of each class
-    for (unsigned int i=0;i<numclasses;i++)
+	kdDebug() << "[OSCAR] Parsing Rate Info Response" << endl;
+	RateClass *rc = NULL;
+	WORD numclasses = inbuf.getWord();
+	for (unsigned int i=0;i<numclasses;i++)
+	{
+		rc = new RateClass;
+		rc->classid = inbuf.getWord();
+		rc->windowsize = inbuf.getDWord();
+		rc->clear = inbuf.getDWord();
+		rc->alert = inbuf.getDWord();
+		rc->limit = inbuf.getDWord();
+		rc->disconnect = inbuf.getDWord();
+		rc->current = inbuf.getDWord();
+		rc->max = inbuf.getDWord();
+		//5 unknown bytes, depending on the 0x0001/0x0017 you send
+		for (int j=0;j<5;j++)
+				rc->unknown[j] = inbuf.getByte();
+		rateClasses.append(rc);
+	}
+
+	kdDebug() << "[OSCAR] The buffer is " << inbuf.getLength() << " bytes long after reading the classes." << endl;
+#ifdef OSCAR_PACKETLOG
+	kdDebug() << "[OSCAR] It looks like this: " << endl;
+	inbuf.print();
+#endif
+
+	//now here come the members of each class
+	for (unsigned int i=0;i<numclasses;i++)
 		{
 				WORD classid = inbuf.getWord();
 				WORD count = inbuf.getWord();
@@ -916,66 +944,83 @@ void OscarSocket::sendBuddyListRequest(const TAimConfig &a)
 /** parses incoming ssi data */
 void OscarSocket::parseSSIData(Buffer &inbuf)
 {
-    int curgroup = -1;
-    TAimConfig blist;
-    //get fmt version
-    inbuf.getByte();
-    blist.revision = inbuf.getWord(); //gets the revision
-    kdDebug() << "[OSCAR] Receiving buddy list: revision " << blist.revision << endl;
-    while(inbuf.getLength() > 4) //the last 4 bytes are the timestamp
+	int curgroup = -1;
+	TAimConfig blist;
+	//get fmt version
+	inbuf.getByte();
+	blist.revision = inbuf.getWord(); //gets the revision
+
+	kdDebug() << "[OSCAR] Receiving buddy list: revision " << blist.revision << endl;
+
+	while(inbuf.getLength() > 4) //the last 4 bytes are the timestamp
+	{
+		SSI *ssi = new SSI;
+		WORD namelen = inbuf.getWord(); //length of name
+		char *name = inbuf.getBlock(namelen); //name
+		ssi->name = QString(name);
+		ssi->gid = inbuf.getWord();
+		ssi->bid = inbuf.getWord();
+		ssi->type = inbuf.getWord(); //type of the entry
+		ssi->tlvlength = inbuf.getWord(); //length of data
+		if (ssi->tlvlength) //sometimes there is additional info
+				ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
+		ssiData.append(ssi);
+
+		kdDebug() << "[OSCAR] Read server-side list-entry. name: " << ssi->name << ", gid: " << ssi->gid
+				<< ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
+				<< endl;
+
+		TBuddy *bud;
+		switch (ssi->type)
 		{
-				SSI *ssi = new SSI;
-				WORD namelen = inbuf.getWord(); //length of name
-				char *name = inbuf.getBlock(namelen); //name
-				ssi->name = QString(name);
-				ssi->gid = inbuf.getWord();
-				ssi->bid = inbuf.getWord();
-				ssi->type = inbuf.getWord(); //type of the entry
-				ssi->tlvlength = inbuf.getWord(); //length of data
-				if (ssi->tlvlength) //sometimes there is additional info
-						ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
-				ssiData.append(ssi);
-				kdDebug() << "[OSCAR] Read a buddy: name: " << ssi->name << ", gid: " << ssi->gid
-									<< ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
-									<< endl;
-				TBuddy *bud;
-				switch (ssi->type) {
-				case 0x0000: //buddy
-						bud = new TBuddy;
-						bud->name = ssi->name;
-						bud->group = curgroup;
-						bud->status = OSCAR_OFFLINE;
-						kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup
-											<< " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
-						blist.buddyList.add(bud);
-						break;
-				case 0x0001: //group
-						if (namelen) //if it's not the master group
-						{
-							blist.buddyList.addGroup(ssi->name);
-							curgroup++;
-						}
-						break;
-				case 0x0002: // TODO permit buddy
-						break;
-				case 0x0003: // TODO deny buddy
-						bud = new TBuddy;
-						bud->name = ssi->name;
-						kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to deny list." << endl;
-						blist.denyList.add(bud);
-						emit denyAdded(ssi->name);
-						break;	    	
-				case 0x0004: // TODO permit-deny setting
-						break;
-				};
-				if (name)
-						delete name;
-		}
-    blist.timestamp = inbuf.getDWord();
-    kdDebug() << "[OSCAR] Finished getting buddy list" << endl;
-    sendSSIActivate();
-    emit gotConfig(blist);
-    sendInfo();
+			case 0x0000: //buddy
+			{
+				bud = new TBuddy;
+				bud->name = ssi->name;
+				bud->group = curgroup;
+				bud->status = OSCAR_OFFLINE;
+				kdDebug() << "[OSCAR] Adding Buddy " << ssi->name <<  " to group " << curgroup
+						<< " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
+				blist.buddyList.add(bud);
+				break;
+			}
+
+			case 0x0001: //group
+			{
+				if (namelen) //if it's not the master group
+				{
+					blist.buddyList.addGroup(ssi->name);
+					curgroup++;
+				}
+				break;
+			}
+
+			case 0x0002: // TODO permit buddy
+				break;
+
+			case 0x0003: // TODO deny buddy
+			{
+				bud = new TBuddy;
+				bud->name = ssi->name;
+				kdDebug() << "[OSCAR] Adding Buddy " << ssi->name << " to deny list." << endl;
+				blist.denyList.add(bud);
+				emit denyAdded(ssi->name);
+				break;
+			}
+
+			case 0x0004: // TODO permit-deny setting
+				break;
+		} // END switch (ssi->type)
+
+		if (name)
+			delete name;
+	} // END while(inbuf.getLength() > 4)
+
+	blist.timestamp = inbuf.getDWord();
+	kdDebug() << "[OSCAR] Finished getting buddy list" << endl;
+	sendSSIActivate();
+	emit gotConfig(blist);
+	sendInfo();
 }
 
 /** Requests the user's BOS rights */
@@ -1820,22 +1865,25 @@ void OscarSocket::parseSSIAck(Buffer &/*inbuf*/)
 /** Deletes a buddy from the server side contact list */
 void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 {
-    kdDebug() << "[OSCAR] Sending del buddy" << endl;
-    SSI *delitem = ssiData.findBuddy(budName,budGroup);
-    ssiData.print();
-    if (!delitem)
-		{
-	    kdDebug() << "[OSCAR] Item with name " << budName << " and group "
-		      << budGroup << "not found" << endl;
-	    emit protocolError(budName + " in group " + budGroup + " was not found on the server's buddy list and cannot be deleted.",0);
-	    return;
-		}
-    kdDebug() << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
-	      << ", bid " << delitem->bid << ", type " << delitem->type
-	      << ", datalength " << delitem->tlvlength << endl;
-    sendSSIAddModDel(delitem,0x000a);
-    if (!ssiData.remove(delitem))
-	kdDebug() << "[OSCAR][sendDelBuddy] delitem was not found in the SSI list" << endl;
+	kdDebug() << "[OSCAR] Sending del buddy" << endl;
+	SSI *delitem = ssiData.findBuddy(budName,budGroup);
+	ssiData.print();
+	if (!delitem)
+	{
+		kdDebug() << "[OSCAR] Item with name " << budName << " and group "
+			<< budGroup << "not found" << endl;
+		emit protocolError(budName + " in group " + budGroup + " was not found on the server's buddy list and cannot be deleted.",0);
+		return;
+	}
+
+	kdDebug() << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
+			<< ", bid " << delitem->bid << ", type " << delitem->type
+			<< ", datalength " << delitem->tlvlength << endl;
+
+	sendSSIAddModDel(delitem,0x000a);
+
+	if (!ssiData.remove(delitem))
+		kdDebug() << "[OSCAR][sendDelBuddy] delitem was not found in the SSI list" << endl;
 }
 
 /** Parses a warning notification */
