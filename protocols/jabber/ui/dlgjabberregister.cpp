@@ -46,19 +46,17 @@ void DlgJabberRegister::slotGotForm()
 {
 	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
 
+	// remove the "wait" message
+	delete lblWait;
+
 	if(!task->success())
 	{
-		lblWait->setText(i18n("Jabber Error"));
-
 		KMessageBox::information(qApp->mainWidget(),
 								 i18n("Unable to retrieve registration form"),
 								 i18n("Jabber Error"));
 
 		return;
 	}
-
-	// remove the "wait" message
-	delete lblWait;
 
 	QGridLayout *layout = new QGridLayout(grpForm, 1, 1, 20, 10);
 	
