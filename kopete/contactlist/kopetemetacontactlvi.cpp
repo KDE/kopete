@@ -83,7 +83,7 @@ public:
 
 		// We begin with the meta contact display name at the top of the tooltip
 		QString toolTip = QString::fromLatin1("<qt><table cellpadding=\"0\" cellspacing=\"1\">");
-		
+
         toolTip += QString::fromLatin1("<tr><td>");
 
 		if ( ! metaContact->photo().isNull() )
@@ -94,13 +94,13 @@ public:
         }
         else
         {
-			kdDebug( 14010 ) << k_funcinfo << "null picture" << endl; 
+			kdDebug( 14010 ) << k_funcinfo << "null picture" << endl;
         }
-		
+
 		toolTip += QString::fromLatin1("</td><td>");
 		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(Kopete::Emoticons::parseEmoticons( metaContact->displayName()) );
-		
-		QPtrList<Contact> contacts = metaContact->contacts();		
+
+		QPtrList<Contact> contacts = metaContact->contacts();
 		if ( contacts.count() == 1 )
 		{
 			return toolTip + contacts.first()->toolTip() + QString::fromLatin1("</td></tr></table></qt>");
@@ -138,11 +138,11 @@ class KopeteMetaContactLVI::Private
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
 	            metaContactPhoto( 0L ), currentMode( -1 ) {}
-	ListView::ImageComponent *metaContactPhoto;
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
 	ListView::TextComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
+	ListView::ImageComponent *metaContactPhoto;
 	ListView::BoxComponent *spacerBox;
 	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 	// metacontact icon size
@@ -198,18 +198,18 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListV
 void KopeteMetaContactLVI::initLVI()
 {
 	d = new Private;
-	  
+
 	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );
 
 	m_oldStatus = m_metaContact->status();
 	m_oldStatusIcon = m_metaContact->statusIcon();
-	
+
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
-	
+
 	connect( m_metaContact, SIGNAL( photoChanged() ),
 		SLOT( slotPhotoChanged() ) );
-		
+
 	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
 		SLOT( slotPhotoChanged() ) );
 
@@ -307,7 +307,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		}
 		lv->insertUndoItem(u);
 	}
-	
+
 	if ( newName.isEmpty() )
 	{
 		// Reset the last display name
@@ -353,7 +353,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			if(!m_metaContact->photo().isNull())
 			{
 				text= i18n("<qt><table cellpadding=\"0\" cellspacing=\"0\"><tr><td><img src=\"kopete-metacontact-photo:%1\"></td><td>%2 is now %3</td></tr></table></qt>")
-						.arg( KURL::encode_string( m_metaContact->metaContactId()) , 
+						.arg( KURL::encode_string( m_metaContact->metaContactId()) ,
 						 Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(m_metaContact->displayName()) ),
 						 Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(c->onlineStatus().description()) ) );
 			}
@@ -363,7 +363,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), Kopete::Emoticons::parseEmoticons( m_metaContact->displayName() ) );
 			}
 
-			
+
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
@@ -471,7 +471,7 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 	if ( d->nameText )
 	{
 		d->nameText->setText( m_metaContact->displayName() );
-	
+
 		// delay the sort if we can
 		if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
 			lv->delayedSort();
@@ -490,7 +490,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
 			int photoSize = d->photoSize;
-			
+
 			if ( photoImg.width() > photoImg.height() )
 			{
 				photoImg = photoImg.smoothScale( photoSize, photoSize * photoImg.height() / photoImg.width() ) ;
@@ -499,10 +499,12 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			{
 				photoImg = photoImg.smoothScale( photoSize *  photoImg.width() / photoImg.height() , photoSize );
 			}
-			
+
 			KImageEffect *effect = 0L;
 			switch ( m_metaContact->status() )
 			{
+				case Kopete::OnlineStatus::Online:
+				break;
 				case Kopete::OnlineStatus::Away:
 					effect = new KImageEffect();
 					effect->fade(photoImg, 0.5, Qt::white);
@@ -513,6 +515,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 					effect->toGray(photoImg);
 				break;
 				case Kopete::OnlineStatus::Unknown:
+				default:
 					effect = new KImageEffect();
 					effect->fade(photoImg, 0.8, Qt::white);
 			}
@@ -664,7 +667,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	// empty...
 	while ( component( 0 ) )
 		delete component( 0 );
-	
+
 	d->nameText = 0L;
 	d->metaContactPhoto = 0L;
 	d->extraText = 0L;
@@ -732,11 +735,11 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	setMetaContactToolTipSourceForComponent( d->nameText );
 	setMetaContactToolTipSourceForComponent( d->extraText );
 	setMetaContactToolTipSourceForComponent( d->metaContactPhoto );
-	
+
 	// update the display name
 	slotDisplayNameChanged();
 	slotPhotoChanged();
-	
+
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
 	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
 	for ( QPtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
