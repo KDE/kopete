@@ -57,7 +57,6 @@ struct Contact::Private
 {
 public:
 	bool fileCapable;
-	bool photoCapable;
 
 	OnlineStatus onlineStatus;
 	Account *account;
@@ -85,7 +84,6 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->contactId = contactId;
 	d->metaContact = parent;
 	d->fileCapable = false;
-	d->photoCapable = false;
 	d->account = account;
 	d->idleTime = 0;
 	d->icon = icon;
@@ -562,24 +560,6 @@ void Contact::setFileCapable( bool filecap )
 	d->fileCapable = filecap;
 }
 
-bool Contact::isPhotoCapable() const
-{
-	return d->photoCapable;
-}
-
-void Contact::setPhotoCapable( bool photocap )
-{
-	d->photoCapable = photocap;
-}
-
-QImage Contact::photo() const
-{
-	kdWarning( 14010 ) << k_funcinfo << "Plugin "
-		<< protocol()->pluginId() << " has enabled photo providing, "
-		<< "but didn't implement it!" << endl;
-	// FIXME Duncan: provide a default question mark image or something
-	return QImage();
-}
 
 bool Contact::canAcceptFiles() const
 {

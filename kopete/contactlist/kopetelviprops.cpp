@@ -195,7 +195,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	for( ; itp.current(); ++itp )
 	{
 		Kopete::Contact *citem = itp.current();
-		if ( citem->isPhotoCapable() )
+		if ( citem->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
 			m_countPhotoCapable++;
 			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + ">";

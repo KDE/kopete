@@ -578,7 +578,17 @@ QImage MetaContact::photo() const
 	}
 	else
 	{
-		return photoSource()->photo();
+		QVariant photoProp=photoSource()->property( Kopete::Global::Properties::self()->photo().key() ).value();
+		QImage img;
+		if(photoProp.canCast( QVariant::Image ))
+			img=photoProp.toImage();
+		else if(photoProp.canCast( QVariant::Pixmap ))
+			img=photoProp.toPixmap().convertToImage();
+		else if(!photoProp.asString().isEmpty())
+		{
+			img=QPixmap( photoProp.toString() ).convertToImage();
+		}
+		return img;
 	}
 }
 
@@ -680,16 +690,16 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 			setNameSource( ns );
 		}
 	}
-	/* disabled until gof fixes msn
+#if 0 //the export of the image to the adressbook is actualy disabled.
 	else if ( key == Global::Properties::self()->photo().key() )
 	{
 		// If the metacontact is linked to a kabc entry
 		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
 		{
 			KABC::Addressee theAddressee = addressBook()->findByUid( metaContactId() );
-			if ( !theAddressee.isEmpty() && (d->isTrackingPhoto || photo().isNull() ) )
+			
+			if ( !theAddressee.isEmpty() && (subcontact== photoSource() || photo().isNull() ) )
 			{
-				d->isTrackingPhoto=true;
 				QImage img;
 				if(newValue.canCast( QVariant::Image ))
 					img=newValue.toImage();
@@ -703,10 +713,11 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 
 				addressBook()->insertAddressee(theAddressee);
 				writeAddressBook();
+				setPhotoSource(subcontact);
 			}
 		}
 	}
-	*/
+#endif
 
 	//TODO:  check if the property was persistent, and emit, not only when it's the displayname
 	emit persistentDataChanged();
