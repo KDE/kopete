@@ -72,6 +72,10 @@ bool ModifyContactListTask::take( Transfer * transfer )
 		}
 	}
 	// TODO: call virtual here to read any fields after the contact list...
+	if ( response->resultCode() == GroupWise::None )
+		setSuccess();
+	else
+		setError( response->resultCode() );
 	return true;
 }
 

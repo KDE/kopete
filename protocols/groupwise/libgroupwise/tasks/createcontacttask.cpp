@@ -68,80 +68,31 @@ void CreateContactTask::onGo()
 	QValueList<FolderItem>::ConstIterator it = m_folders.begin();
 	const QValueList<FolderItem>::ConstIterator end = m_folders.end();
 	
-	// for each folder that isn't on the server, start off a CreateFolderTask
-	// connect their gotFolderAdded signals to the client's folderReceived signal, 
-	// so the client program will see these and update its folders ( which already exist locally )
-	// connect it also to our slotFolderAdded where we assess if all the folders were added ok.
-	bool foldersToAdd = false;
+	// create contacts on the server
 	for ( ; it != end; ++it )
 	{
-		if ( (*it).id == 0 ) // caller asserts that this isn't on the server...
-		{
-			foldersToAdd = true;
-			int sequence = m_firstSequenceNumber++;
-			qDebug( "CreateContactTask::onGo() - Creating folder %s with sequence number %u", (*it).name.ascii(), sequence );
-			CreateFolderTask * cct = new CreateFolderTask( client()->rootTask() );
-			cct->folder( 0, sequence, (*it).name );
-			connect( cct, SIGNAL( gotFolderAdded( const FolderItem & ) ), client(), SIGNAL( folderReceived( const FolderItem & ) ) );
-			connect( cct, SIGNAL( gotFolderAdded( const FolderItem & ) ), SLOT( slotFolderAdded( const FolderItem & ) ) );
-			cct->go( true );
-		}
-	}
-	// if there aren't any folders to add, proceed straight to creating the contacts.
-	if ( !foldersToAdd )
-		createContactInstances();
-}
-
-void CreateContactTask::slotFolderAdded( const FolderItem& addedFolder )
-{
-	qDebug( "CreateContactTask::slotFolderAdded()" );
-	// check that all the folders now exist on the server
-	// once they do, we can add the contact instances
-	bool allAdded = true;
-	QValueList<FolderItem>::Iterator it = m_folders.begin();
-	const QValueList<FolderItem>::Iterator end = m_folders.end();
-	for ( ; it != end; ++it )
-	{
-		if ( (*it).id == 0 ) // is there a folder that hasn't yet been added on the server?
-		{
-			// if we have an id for it, record that
-			if ( (*it).name == addedFolder.name )
-			{
-				qDebug( "CreateContactTask::slotFolderAdded() - Folder %s was created on the server, now has objectId %i", addedFolder.name.ascii(), addedFolder.id );
-				(*it).id = addedFolder.id;
-			}
-			else // wait for the next add
-				allAdded = false;
-		}
-	}
-	if ( allAdded ) // now add the contact instances
-		createContactInstances();
-}
-		
-void CreateContactTask::createContactInstances()
-{
-	qDebug( "CreateContactTask::createContactInstances() - created all folders, or didn't need to create any, creating contacts" );
-	// one for each folder the contact is in
-	const QValueList<FolderItem>::Iterator end = m_folders.end();
-	for ( QValueList<FolderItem>::Iterator it = m_folders.begin(); it != end; ++it )
-	{
-		qDebug( "CreateContactTask::slotFolderAdded() - Creating contact %s in folder %u", m_userId.ascii(), (*it).id );
+		qDebug( " - contact is in folder %s with id %i", (*it).name.ascii(), (*it).id );
 		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
-		ccit->contactFromUserId( m_userId, m_displayName, (*it).id );
 		// the add contact action may cause other contacts' sequence numbers to change
 		// CreateContactInstanceTask signals these changes, so we propagate the signal via the Client, to the GroupWiseAccount
 		// This updates our local versions of those contacts using the same mechanism by which they are updated at login.
-		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
 		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+		if ( (*it).id == 0 ) // caller asserts that this isn't on the server...
+		{
+			ccit->contactFromDNAndFolder( m_userId, m_displayName, m_firstSequenceNumber++, ( *it ).name );
+		}
+		else
+			ccit->contactFromDN( m_userId, m_displayName, (*it).id );
+
 		ccit->go( true );
 	}
-	// now add in top level if necessary
+
 	if ( m_topLevel )
-	{	
+	{
+		qDebug( " - contact is in top level folder " );
 		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
-		ccit->contactFromUserId( m_userId, m_displayName, 0 );
-		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
 		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+		ccit->contactFromDN( m_userId, m_displayName, 0 );
 		ccit->go( true );
 	}
 }
@@ -158,24 +109,24 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 		qDebug( " - addedContact is not the one we were trying to add, ignoring it ( Account will update it )" );
 		return;
 	}
-	QValueList<FolderItem>::Iterator it = m_folders.begin();
+/*	QValueList<FolderItem>::Iterator it = m_folders.begin();
 	const QValueList<FolderItem>::Iterator end = m_folders.end();
 	while ( it != end )
 	{
 		QValueList<FolderItem>::Iterator current = it;
 		++it;
 		if ( (*current).id == addedContact.parentId )
-		{
+		{*/
 			qDebug( "CreateContactTask::slotContactAdded() - Contact Instance %s was created on the server, with objectId %i in folder %i",
 					addedContact.displayName.ascii(), addedContact.id, addedContact.parentId );
 			
 			if ( m_dn.isEmpty() )
 				m_dn = addedContact.dn;
 				
-			m_folders.remove( current );
-			break;
+			m_folders.remove( /*current*/m_folders.begin() );
+/*			break;
 		}
-	}
+	}*/
 	
 	// clear the topLevel flag once the corresponding server side entry has been successfully created
 	if ( addedContact.parentId == 0 )

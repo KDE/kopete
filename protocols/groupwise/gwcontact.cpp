@@ -420,9 +420,21 @@ void GroupWiseContact::syncGroups()
 		// 3) Any remaining entries in MCG list are adds, carry out
 		// 4) Any remaining entries in CLI list are removes, carry out
 
+		// start by discoverint the next free group sequence number in case we have to add any groups
+		int nextFreeSequence = 0;
+		QPtrList< KopeteGroup > groupList = KopeteContactList::contactList()->groups();
+		QPtrListIterator< KopeteGroup > it( groupList );
+		while( *it )
+		{
+			bool ok = true;
+			int sequence = ( (*it)->pluginData( protocol(), account()->accountId() + " sequence" ) ).toInt( &ok );
+			if ( sequence >= nextFreeSequence )
+				nextFreeSequence = sequence + 1;
+			++it;
+		}
 		// 1)
 		// make a list of all the groups the metacontact is in
-		QPtrList< KopeteGroup > groupList = metaContact()->groups();
+		groupList = metaContact()->groups();
 		// make a list of all the groups this contact is in, according to its CLInstances
 		CLInstanceList contactInstanceList = m_instances;
 		// seek corresponding pairs in both lists and remove
@@ -471,11 +483,10 @@ void GroupWiseContact::syncGroups()
 			groupList.remove( candidateGrp );
 			contactInstanceList.remove( instIt );
 		}
-		
+
 		// 3) look for adds
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR ADDS" << endl;
 		grpIt.toFirst();
-		// ( add each remaining MC group, because it's not on the server yet )
 		while ( *grpIt )
 		{
 			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
@@ -483,18 +494,20 @@ void GroupWiseContact::syncGroups()
 			++grpIt;
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - add a contact instance for group '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "'" << endl;
 
+			CreateContactInstanceTask * ccit = new CreateContactInstanceTask( account()->client()->rootTask() );
+			// connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+
+			// does this group exist on the server?  Create the contact appropriately
 			bool ok = false;
 			int parentId = ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ).toInt( &ok );
 			if ( ok )
-			{
-				CreateContactInstanceTask * ccit = new CreateContactInstanceTask( account()->client()->rootTask() );
-				ccit->contactFromUserId( m_dn, m_displayName, parentId );
-				// connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
-				// connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
-				ccit->go( true );
-			}
+				ccit->contactFromUserId( m_dn, metaContact()->displayName(), parentId );
 			else
-				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - not adding to group '" << ( *candidateGrp )->displayName() << "', it does not exist on the server - add a queuing function to CreateContactInstanceTask" << endl;
+			{
+				// discover the next free sequence number and add the group using that
+				ccit->contactFromUserIdAndFolder( m_dn, metaContact()->displayName(), nextFreeSequence++, ( *candidateGrp )->displayName() );
+			}
+			ccit->go( true );
 			groupList.remove( candidateGrp );
 		}
 
@@ -510,7 +523,7 @@ void GroupWiseContact::syncGroups()
 
 			DeleteItemTask * dit = new DeleteItemTask( account()->client()->rootTask() );
 			dit->item( (*candidateInst).parentId, (*candidateInst).objectId );
-			// connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
 			dit->go( true );
 
 			contactInstanceList.remove( candidateInst );

@@ -21,14 +21,14 @@
 #ifndef CreateContactInstanceTask_H
 #define CreateContactInstanceTask_H
 
-#include "modifycontactlisttask.h"
+#include "needfoldertask.h"
 
 /**
 Creates a contact on the server.  The response to this action is handled by its parent
 
 @author SUSE AG
 */
-class CreateContactInstanceTask : public ModifyContactListTask
+class CreateContactInstanceTask : public NeedFolderTask
 {
 Q_OBJECT
 public:
@@ -39,8 +39,16 @@ public:
 	 */
 	void contactFromUserId( const QString & userId, const QString & displayName, const int parentFolder );
 	void contactFromDN( const QString & dn, const QString & displayName, const int parentFolder );
+	void contactFromUserIdAndFolder( const QString & userId, const QString & displayName, const int folderSequence, const QString & folderDisplayName );
+	void contactFromDNAndFolder( const QString & dn, const QString & displayName, const int folderSequence, const QString & folderDisplayName );
+	void onGo();
 protected:
 	void contact( Field::SingleField * id, const QString & displayName, const int parentFolder );
+	void onFolderCreated();
+private:
+	QString m_userId;
+	QString m_dn;
+	QString m_displayName;
 };
 
 #endif

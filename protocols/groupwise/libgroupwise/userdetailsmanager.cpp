@@ -58,12 +58,12 @@ QStringList UserDetailsManager::knownDNs()
 
 void UserDetailsManager::addDetails( const ContactDetails & details )
 {
-	qDebug( "UserDetailsManager::addContact, got %s, we now know: ", details.dn.ascii() );
+	//qDebug( "UserDetailsManager::addContact, got %s, we now know: ", details.dn.ascii() );
 	m_detailsMap.insert( details.dn, details );
-	QStringList keys = m_detailsMap.keys();
+/*	QStringList keys = m_detailsMap.keys();
 	dump( keys );
 	qDebug( "UserDetailsManager::addContact, pending: " );
-	dump( m_pendingDNs );
+	dump( m_pendingDNs );*/
 }
 
 void UserDetailsManager::removeContact( const QString & dn )

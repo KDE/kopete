@@ -73,10 +73,7 @@ public:
 	 * Starts off the whole process
 	 */
 	void onGo();
-protected:
-	void createContactInstances();
 protected slots:
-	void slotFolderAdded( const FolderItem & );
 	void slotContactAdded( const ContactItem & );
 private:
 	int m_firstSequenceNumber;

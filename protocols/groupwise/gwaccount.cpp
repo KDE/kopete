@@ -694,14 +694,15 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		}
 		KopeteContactList::contactList()->addMetaContact( metaContact );
 	}
-	// set the contact's display name
-	c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
 	// finally, record this contact list instance in the contact
 	ContactListInstance inst;
 	inst.objectId = contact.id;
 	inst.parentId = contact.parentId;
 	inst.sequence = contact.sequence;
 	c->addCLInstance( inst );
+	// set the contact's display name - this usually renames the metacontact, triggering a syncGroups. so we do this AFTER adding the CLInstance
+	// otherwise, syncGroups thinks the contact does not exist yet on the server and generates a redundant createcontacttask
+	c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
 }
 
 void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
@@ -846,7 +847,7 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	KopeteGroupList groupList = parentContact->groups();
 	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
 	{
-		if ( group->topLevel() ) // no need to create it on the server
+		if ( group->type() == KopeteGroup::TopLevel ) // no need to create it on the server
 		{
 			topLevel = true;
 			continue;
@@ -1103,6 +1104,5 @@ void GroupWiseAccount::dumpManagers()
 	for ( it = m_managers.begin() ; it != m_managers.end(); ++it )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.key() << endl;
 }
-
 
 #include "gwaccount.moc"
