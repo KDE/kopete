@@ -272,7 +272,7 @@ void KopeteRichTextEditPart::setFont( const QFont &newFont )
 void KopeteRichTextEditPart::setFont( const QString &newFont )
 {
 	editor->setFamily(newFont);
-	mFont = editor->font();
+	mFont = editor->currentFont();
 }
 
 void KopeteRichTextEditPart::setAlignLeft( bool yes )
