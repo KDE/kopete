@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>WPPreferencesBase</class>
 <author>Gav Wood</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>426</width>
-            <height>389</height>
+            <height>393</height>
         </rect>
     </property>
     <property name="font">
@@ -76,12 +76,12 @@
                         <string>&amp;Initial search host:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>mInitialSearchHost</cstring>
+                        <cstring>InitialSearchHost</cstring>
                     </property>
                 </widget>
                 <widget class="KURLRequester" row="0" column="1">
                     <property name="name">
-                        <cstring>mSMBClientPath</cstring>
+                        <cstring>SMBClientPath</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
@@ -92,12 +92,12 @@
                         <string>&amp;Path to 'smbclient' executable:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>mSMBClientPath</cstring>
+                        <cstring>SMBClientPath</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
                     <property name="name">
-                        <cstring>mInitialSearchHost</cstring>
+                        <cstring>InitialSearchHost</cstring>
                     </property>
                 </widget>
             </grid>
@@ -153,7 +153,7 @@
                 </property>
                 <widget class="QSlider" row="0" column="1">
                     <property name="name">
-                        <cstring>mMessageCheckFrequency</cstring>
+                        <cstring>MessageCheckFrequency</cstring>
                     </property>
                     <property name="minimumSize">
                         <size>
@@ -199,7 +199,7 @@
                 </widget>
                 <widget class="QSlider" row="1" column="1">
                     <property name="name">
-                        <cstring>mHostCheckFrequency</cstring>
+                        <cstring>HostCheckFrequency</cstring>
                     </property>
                     <property name="minValue">
                         <number>10</number>
@@ -231,10 +231,10 @@
                         <cstring>TextLabel1_4</cstring>
                     </property>
                     <property name="text">
-                        <string>Message check frequency:</string>
+                        <string>&amp;Message check frequency:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>mMessageCheckFrequency</cstring>
+                        <cstring>MessageCheckFrequency</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -242,10 +242,10 @@
                         <cstring>TextLabel1_4_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Host check frequency:</string>
+                        <string>&amp;Host check frequency:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>mHostCheckFrequency</cstring>
+                        <cstring>HostCheckFrequency</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="2">
@@ -285,13 +285,13 @@
 </widget>
 <connections>
     <connection>
-        <sender>mMessageCheckFrequency</sender>
+        <sender>MessageCheckFrequency</sender>
         <signal>valueChanged(int)</signal>
         <receiver>WPPreferencesBase</receiver>
         <slot>doRefreshDisplay()</slot>
     </connection>
     <connection>
-        <sender>mHostCheckFrequency</sender>
+        <sender>HostCheckFrequency</sender>
         <signal>valueChanged(int)</signal>
         <receiver>WPPreferencesBase</receiver>
         <slot>doRefreshDisplay()</slot>

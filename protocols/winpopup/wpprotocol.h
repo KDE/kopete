@@ -34,7 +34,6 @@
 #include "kopeteonlinestatus.h"
 
 // Local Includes
-#include "wppreferences.h"
 #include "libwinpopup.h"
 #include "wpaddcontact.h"
 
@@ -102,7 +101,6 @@ public slots:
 	void installSamba();					// Modify smb.conf to use winpopup-send.sh script
 
 private:
-	WPPreferences *mPrefs;					// Preferences Object
 	QPtrList<KopeteWinPopup> theInterfaces;	// List of all the interfaces created
 	static WPProtocol *sProtocol;			// Singleton
 };

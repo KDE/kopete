@@ -1,8 +1,8 @@
 /***************************************************************************
-                          wppreferences.h  -  description
+                          wppreferences.cpp  -  description
                              -------------------
-    begin                : Wed Jan 23 2002
-    copyright            : (C) 2002 by Gav Wood
+    begin                : Fri Apr 26 2002
+    copyright            : (C) 2003 by Gav Wood
     email                : gav@kde.org
  ***************************************************************************/
 
@@ -15,47 +15,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPPREFERENCES_H
-#define __WPPREFERENCES_H
-
-// Local Includes
-#include "wppreferencesbase.h"
-
-// Kopete Includes
-#include <configmodule.h>
-
 // QT Includes
 
 // KDE Includes
+#include <klocale.h>
+#include <kurlrequester.h>
+#include <kgenericfactory.h>
+#include <kcautoconfigmodule.h>
 
-class WPProtocol;
+// Kopete Includes
 
-class WPPreferences : public ConfigModule
+// Local Includes
+#include "wppreferences.h"
+
+typedef KGenericFactory<WPPreferences> WPProtocolConfigFactory;
+K_EXPORT_COMPONENT_FACTORY(kcm_kopete_wp, WPProtocolConfigFactory("kcm_kopete_wp"))
+
+// WinPopup Preferences
+WPPreferences::WPPreferences(QWidget *parent, const char *, const QStringList &args) : KCAutoConfigModule(WPProtocolConfigFactory::instance(), parent, args)
 {
-	Q_OBJECT
-private:
-	WPProtocol *theProtocol;
-	WPPreferencesBase *preferencesDialog;	// Preferences Dialog
-
-public:
-	WPPreferences(const QString & pixmap, QObject * parent = 0);
-	~WPPreferences();
-	virtual void save();	// save preferences method
-
-public slots:
-	void installSamba();
-
-signals:
-	void saved();			// Parent slot saved
-};
-
-#endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
-
+	preferencesDialog = new WPPreferencesBase(this);
+	preferencesDialog->SMBClientPath->setFilter(i18n("smbclient|Samba Client Binary\n*|All Files"));
+	setMainWidget(preferencesDialog, "WinPopup");
+}

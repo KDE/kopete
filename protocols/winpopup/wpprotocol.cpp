@@ -70,12 +70,10 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 	KGlobal::config()->writeEntry("HostCheckFrequency", theHostCheckFrequency);
 	KGlobal::config()->writeEntry("MessageCheckFrequency", theMessageCheckFrequency);
 
-	// Create preferences menu
-	mPrefs = new WPPreferences("wp_protocol", this);
-	QObject::connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
-
 	// Call slotSettingsChanged() to get it all registered.
 	slotSettingsChanged();
+
+	connect(this, SIGNAL(settingsChanged()), SLOT(slotSettingsChanged()));
 
 	addAddressBookField( "messaging/winpopup", KopetePlugin::MakeIndexField );
 }
@@ -158,15 +156,15 @@ void WPProtocol::slotSettingsChanged()
 
 void WPProtocol::installSamba()
 {
-	DEBUG(WPDMETHOD, "WPPreferences::installSamba()");
+	DEBUG(WPDMETHOD, "WPProtocol::installSamba()");
 
 	QStringList args;
 	args += KStandardDirs::findExe("winpopup-install.sh");
 	args += KStandardDirs::findExe("winpopup-send.sh");
 	if (KApplication::kdeinitExecWait("kdesu", args) == 0)
-		KMessageBox::information(mPrefs, i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
+		KMessageBox::information(0, i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
 	else
-		KMessageBox::error(mPrefs, i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
+		KMessageBox::error(0, i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
 }
 
 #include "wpprotocol.moc"

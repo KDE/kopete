@@ -33,7 +33,6 @@
 #include "kopeteonlinestatus.h"
 
 // Local Includes
-#include "wppreferences.h"
 #include "libwinpopup.h"
 #include "wpcontact.h"
 #include "wpaddcontact.h"

@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui icons libwinpopup
+SUBDIRS = config ui icons libwinpopup
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/libwinpopup \
@@ -8,7 +8,7 @@ AM_CPPFLAGS = -I$(srcdir)/ui \
 
 kde_module_LTLIBRARIES = kopete_wp.la
 
-kopete_wp_la_SOURCES = wpprotocol.cpp wppreferences.cpp wpcontact.cpp 	wpaddcontact.cpp wpeditaccount.cpp  wpaccount.cpp wpuserinfo.cpp
+kopete_wp_la_SOURCES = wpprotocol.cpp wpcontact.cpp  wpaddcontact.cpp wpeditaccount.cpp  wpaccount.cpp wpuserinfo.cpp
 kopete_wp_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_wp_la_LIBADD  = ../../libkopete/libkopete.la \
 	./ui/libkopetewpui.la \
