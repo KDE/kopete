@@ -285,13 +285,16 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 	return 0L;
 }
 
-bool IRCContact::isChatting() const
+bool IRCContact::isChatting( KopeteMessageManager *avoid ) const
 {
 	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
 	for ( QIntDictIterator<KopeteMessageManager> it( sessions ); it.current() ; ++it )
 	{
-		if( it.current()->members().contains(this) )
+		if( it.current() != avoid && it.current()->account() == m_account &&
+			it.current()->members().contains(this) )
+		{
 			return true;
+		}
 	}
 
 	return false;

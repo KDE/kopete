@@ -28,6 +28,7 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 #include "kcodecaction.h"
+#include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanagerfactory.h"
 
@@ -127,9 +128,13 @@ void IRCChannelContact::messageManagerDestroyed()
 	{
 		part();
 		KopeteContactPtrList contacts = manager()->members();
+
 		// remove all the users on the channel
 		for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
-			m_account->contactManager()->unregisterUser(c);
+		{
+			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager() ) )
+				c->deleteLater();
+		}
 	}
 
 	IRCContact::messageManagerDestroyed();
@@ -137,12 +142,6 @@ void IRCChannelContact::messageManagerDestroyed()
 
 void IRCChannelContact::initConversation()
 {
-	kdDebug() << k_funcinfo << "Me:" << this << endl;
-	kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-	kdDebug() << k_funcinfo << "My manager:" << manager(false) << endl;
-		if( manager(false) )
-			kdDebug() << k_funcinfo << "My view:" << manager(false)->view(false) << endl;
-
 	m_engine->joinChannel(m_nickName, password());
 }
 

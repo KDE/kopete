@@ -166,7 +166,6 @@ void IRCContactManager::unregisterChannel(KopeteContact *contact)
 		channel->metaContact()->isTemporary() )
 	{
 		m_channels.remove( channel->nickName() );
-		channel->deleteLater();
 	}
 }
 
@@ -235,7 +234,6 @@ void IRCContactManager::unregisterUser(KopeteContact *contact)
 	{
 		kdDebug(14120) << k_funcinfo << user->nickName() << endl;
 		m_users.remove( user->nickName() );
-		user->deleteLater();
 	}
 }
 

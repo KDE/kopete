@@ -18,13 +18,11 @@
 #ifndef KIRCMESSAGE_H
 #define KIRCMESSAGE_H
 
-#include <pcre.h>
-
 #include <qdict.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qtextcodec.h>
-
+#include <kregexp.h>
 #include <kbufferedio.h>
 
 #include "kircentity.h" // Don't remove this prefix should/could(MUST?) be returned as a KIRCEntity
@@ -34,24 +32,6 @@
 // #define _IRC_STRICTNESS_
 
 class KIRC;
-
-class KIRCRegExp
-{
-	public:
-		KIRCRegExp( const char* regex );
-		~KIRCRegExp();
-
-		bool exactMatch( QCString str );
-
-		QCString cap( int idx );
-
-	private:
-		QCString subject;
-		pcre *re;
-		pcre_extra *pe;
-		int caps;
-		int ovector[30];
-};
 
 class KIRCMessage
 {
@@ -138,24 +118,24 @@ private:
 
 	// low level quoting, message quoting
 	static QString quote(const QString &str);
-	static QCString unquote(const QCString &str);
+	static QCString unquote(const char* str);
 
 	// ctcp level quoting
 	static QString ctcpQuote(const QString &str);
 
 	static bool extractCtcpCommand(QCString &str, QCString &ctcpline);
 	static bool matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRCMessage &message);
-	static bool matchForIRCRegExp(KIRCRegExp &regexp, const QTextCodec *codec,
+	static bool matchForIRCRegExp(KRegExp &regexp, const QTextCodec *codec,
 		const QCString &line, KIRCMessage &message);
 
 	class KIRCMessage *m_ctcpMessage;
 
-	static KIRCRegExp m_IRCCommandType1;
+	static KRegExp m_IRCCommandType1;
 #ifdef _IRC_STRICTNESS_
-	static KIRCRegExp m_IRCCommandType2;
+	static KRegExp m_IRCCommandType2;
 #endif // _IRC_STRICTNESS_
 
-	static KIRCRegExp m_IRCNumericCommand;
+	static KRegExp m_IRCNumericCommand;
 };
 
 #endif // KIRCMESSAGE_H

@@ -25,22 +25,22 @@
 #include "kirc.h"
 #include "ksparser.h"
 #include "kircmessage.h"
-
+ /*
 KIRCRegExp::KIRCRegExp( const char* regex )
 {
 	const char *error;
 	int erroffset;
 	re = pcre_compile(
-		regex,          /* the pattern */
-		PCRE_NO_UTF8_CHECK, /* default options */
-		&error,           /* for error message */
-		&erroffset,       /* for error offset */
+		regex,
+		PCRE_NO_UTF8_CHECK,
+		&error,
+		&erroffset,
 		NULL
 	);
 
 	pe = pcre_study(
-		re,             /* result of pcre_compile() */
-		0,              /* no options exist */
+		re,
+		0,
 		&error
 	);
 }
@@ -55,14 +55,14 @@ bool KIRCRegExp::exactMatch( QCString str )
 {
 	subject = str;
 	caps = pcre_exec(
-		re,		/* result of pcre_compile() */
-		pe,	    	/* we didn't study the pattern */
-		str,		/* the subject string */
-		subject.length(),		/* the length of the subject string */
-		0,		/* start at offset 0 in the subject */
-		0,		/* default options */
-		ovector,	/* vector for substring information */
-		30		/* number of elements in the vector */
+		re,
+		pe,
+		str,
+		subject.length(),
+		0,
+		0,
+		ovector,
+		30
 	);
 
 	if( caps > 0 )
@@ -77,27 +77,30 @@ bool KIRCRegExp::exactMatch( QCString str )
 
 QCString KIRCRegExp::cap( int idx )
 {
-	char buffer[4096];
-	if( caps > 0 )
+	if( caps >= idx )
 	{
+		char buffer[4096];
 		pcre_copy_substring( subject, ovector, caps, idx, buffer, 4096 );
+		return buffer;
 	}
-
-	return buffer;
-}
+	else
+	{
+		return "";
+	}
+}   */
 
 #ifndef _IRC_STRICTNESS_
-KIRCRegExp KIRCMessage::m_IRCCommandType1(
+KRegExp KIRCMessage::m_IRCCommandType1(
 	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*)*) ?(?: :(.*))?$");
 	// Extra end arg space check -------------------------^
 #else // _IRC_STRICTNESS_
-KIRCRegExp KIRCMessage::m_IRCCommandType1(
+KRegExp KIRCMessage::m_IRCCommandType1(
 	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,13})(?: :(.*))?$");
-KIRCRegExp KIRCMessage::m_IRCCommandType2(
+KRegExp KIRCMessage::m_IRCCommandType2(
 	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
 
-KIRCRegExp KIRCMessage::m_IRCNumericCommand("^\\d{3,3}$");
+KRegExp KIRCMessage::m_IRCNumericCommand("^\\d{3,3}$");
 
 KIRCMessage::KIRCMessage() : m_ctcpMessage(0)
 {
@@ -234,27 +237,34 @@ QString KIRCMessage::quote(const QString &str)
 }
 
 // FIXME: The unquote system is buggy.
-QCString KIRCMessage::unquote(const QCString &str)
+QCString KIRCMessage::unquote(const char* str)
 {
-	QCString tmp = str;
+	if( str )
+	{
+		QCString tmp = str;
 
-	char b[3];
-	b[0] = 20; b[1] = 20; b[2] = '\0';
-	char b2[2];
-	b2[0] = (char)20; b2[1] = '\0';
+		char b[3];
+		b[0] = 20; b[1] = 20; b[2] = '\0';
+		char b2[2];
+		b2[0] = (char)20; b2[1] = '\0';
 
-	tmp.replace( b, b2 );
-	b[1] = 'r';
-	tmp.replace( b, "\r");
-	b[1] = 'n';
-	tmp.replace( b, "\n");
-	b[1] = '0';
-	tmp.replace( b, "\0");
+		tmp.replace( b, b2 );
+		b[1] = 'r';
+		tmp.replace( b, "\r");
+		b[1] = 'n';
+		tmp.replace( b, "\n");
+		b[1] = '0';
+		tmp.replace( b, "\0");
 
-	tmp.replace("\\\\", "\\");
-	tmp.replace("\\1", "\1" );
+		tmp.replace("\\\\", "\\");
+		tmp.replace("\\1", "\1" );
 
-	return tmp;;
+		return tmp;
+	}
+	else
+	{
+		return "";
+	}
 }
 
 QString KIRCMessage::ctcpQuote(const QString &str)
@@ -276,42 +286,49 @@ bool KIRCMessage::matchForIRCRegExp(const QCString &line, const QTextCodec *code
 	return false;
 }
 
-bool KIRCMessage::matchForIRCRegExp(KIRCRegExp &regexp, const QTextCodec *codec, const QCString &line, KIRCMessage &msg )
+bool KIRCMessage::matchForIRCRegExp(KRegExp &regexp, const QTextCodec *codec, const QCString &line, KIRCMessage &msg )
 {
-	if(regexp.exactMatch(line))
+	if(regexp.match(line))
 	{
 		msg.m_raw = line;
-		msg.m_prefix  = QString::fromLatin1( unquote( regexp.cap(1) ) );
-		msg.m_command = QString::fromLatin1( unquote( regexp.cap(2) ) );
-		msg.m_args = QStringList::split(' ', QString::fromLatin1( regexp.cap(3) ) );
+		msg.m_prefix  = QString::fromLatin1( unquote( regexp.group(1) ) );
+		msg.m_command = QString::fromLatin1( unquote( regexp.group(2) ) );
+		msg.m_args = QStringList::split(' ', QString::fromLatin1( regexp.group(3) ) );
 
-		QCString suffix = unquote( regexp.cap(4) );
-		if( extractCtcpCommand( suffix, msg.m_ctcpRaw ) )
+		QCString suffix = unquote( regexp.group(4) );
+		if( !suffix.isNull() && suffix.length() > 0 )
 		{
-			msg.m_ctcpMessage = new KIRCMessage();
-			msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
-
-			int space = msg.m_ctcpRaw.find(' ');
-			if( !matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage) )
+			if( extractCtcpCommand( suffix, msg.m_ctcpRaw ) )
 			{
-				if( space > 0 )
+				msg.m_ctcpMessage = new KIRCMessage();
+				msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
+
+				int space = msg.m_ctcpRaw.find(' ');
+				if( !matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage) )
 				{
-					msg.m_ctcpMessage->m_command = QString::fromLatin1(
-						msg.m_ctcpRaw.mid(0, space).upper()
-					);
+					if( space > 0 )
+					{
+						msg.m_ctcpMessage->m_command = QString::fromLatin1(
+							msg.m_ctcpRaw.mid(0, space).upper()
+						);
+					}
+					else
+						msg.m_ctcpMessage->m_command = QString::null;
 				}
-				else
-					msg.m_ctcpMessage->m_command = QString::null;
+
+				if( space > 0 )
+					msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.mid( space );
+
+				msg.m_suffix = QString::null;
 			}
-
-			if( space > 0 )
-				msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.mid( space );
-
-			msg.m_suffix = QString::null;
+			else
+			{
+				msg.m_suffix = KopeteMessage::decodeString( KSParser::parse( unquote( suffix ) ), codec );
+			}
 		}
 		else
 		{
-			msg.m_suffix = KopeteMessage::decodeString( KSParser::parse( unquote( suffix ) ), codec );
+			msg.m_suffix = QString::null;
 		}
 
 		return true;
@@ -337,7 +354,7 @@ QString KIRCMessage::toString() const
 
 bool KIRCMessage::isNumeric() const
 {
-	return m_IRCNumericCommand.exactMatch( m_command.utf8() );
+	return m_IRCNumericCommand.match( m_command.latin1() );
 }
 
 bool KIRCMessage::isValid() const
