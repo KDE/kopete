@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
 		KOPETE_VERSION, description, KAboutData::License_GPL,
-		I18N_NOOP("(c) 2001,2003, Duncan Mac-Vicar Prett\n(c) 2002,2003, The Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
+		I18N_NOOP("(c) 2001-2003, Duncan Mac-Vicar Prett\n(c) 2002-2003, Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@kde.org");
@@ -65,11 +65,10 @@ int main(int argc, char *argv[])
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine icq code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
-	//aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM code") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 
-	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
+	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin"), "daniel@fooishbar.org", "http://fooishbar.org");
 	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Former developer"), "ryan@kde.org" );
 	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Former Developer"), "remenic@linuxfromscratch.org");
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
