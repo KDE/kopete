@@ -37,7 +37,7 @@ public:
 		: QToolTip( parent->viewport() ), m_listView ( parent )
 	{
 	}
-	
+
 	~ToolTip()
 	{
 		remove( m_listView->viewport() );
@@ -52,7 +52,7 @@ public:
 				tip( itemRect, static_cast<ContactItem*>( item )->contact()->toolTip() );
 		}
 	}
-	
+
 private:
 	KListView *m_listView;
 };
@@ -69,10 +69,10 @@ ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, 
 	if ( nick.isEmpty() )
 		nick = m_contact->contactId();
 	setText( 0, nick );
-	
+
 	connect( m_contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-	
+
 	setStatus( parent->session()->contactOnlineStatus(m_contact) );
 	reposition();
 }
@@ -99,22 +99,25 @@ void ChatMembersListWidget::ContactItem::reposition()
 	// when its key changes, without re-sorting the whole list. Plus, the whole list gets
 	// re-sorted whenever an item is added/removed. So, we do manual sorting.
 	// In particular, this makes adding N items O(N^2) not O(N^2 log N).
+	Kopete::ChatSession *session = static_cast<ChatMembersListWidget*>( listView() )->session();
+	int ourWeight = session->contactOnlineStatus(m_contact).weight();
 	QListViewItem *after = 0;
+
 	for ( QListViewItem *it = KListViewItem::listView()->firstChild(); it; it = it->nextSibling() )
 	{
-		if ( ChatMembersListWidget::ContactItem *item = dynamic_cast<ChatMembersListWidget::ContactItem*>(it) )
+		ChatMembersListWidget::ContactItem *item = static_cast<ChatMembersListWidget::ContactItem*>(it);
+		int theirWeight = session->contactOnlineStatus(item->m_contact).weight();
+
+		if( theirWeight < ourWeight ||
+			(theirWeight == ourWeight && item->text(0).lower().localeAwareCompare( text(0).lower() ) > 0 ) )
 		{
-			int theirWeight = item->m_contact->onlineStatus().weight();
-			int ourWeight = m_contact->onlineStatus().weight();
-			if ( theirWeight < ourWeight ||
-			     (theirWeight == ourWeight && item->text(0).lower().localeAwareCompare( text(0).lower() ) > 0 ) )
-			{
-				break;
-			}
+			break;
 		}
+
 		after = it;
 	}
-	static_cast<KListView*>(KListViewItem::listView())->moveItem( this, 0, after );
+
+	moveItem( after );
 }
 
 //END ChatMembersListWidget::ContactItem
@@ -128,26 +131,26 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 	// use our own custom tooltips
 	setShowToolTips( false );
 	m_toolTip = new ToolTip( this );
-	
+
 	// set up display: no header
 	setAllColumnsShowFocus( true );
 	addColumn( QString::null, -1 );
 	header()->setStretchEnabled( true, 0 );
 	header()->hide();
-	
+
 	// list is sorted by us, not by Qt
 	setSorting( -1 );
-	
+
 	// add chat members
 	slotContactAdded( session->myself() );
 	for ( QPtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
 		slotContactAdded( *it );
-	
+
 	connect( this, SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
 	         SLOT( slotContextMenu(KListView*, QListViewItem *, const QPoint & ) ) );
 	connect( this, SIGNAL( executed( QListViewItem* ) ),
 	         SLOT( slotExecute( QListViewItem * ) ) );
-	
+
 	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
 	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
 	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ),
