@@ -65,7 +65,7 @@ FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------
 ALPHABETICAL_INDEX     = YES
 COLS_IN_ALPHA_INDEX    = 1
-IGNORE_PREFIX          = 
+IGNORE_PREFIX          = Kopete
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
 #---------------------------------------------------------------------------
