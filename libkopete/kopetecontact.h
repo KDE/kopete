@@ -300,6 +300,12 @@ public:
 	 * awayMessage		- QString	- "Away Message"
 	 * ircChannel		- QString	- "Channel"
 	 * onlineSince		- QDateTime	- "Online Since"
+	 *
+	 * NOTE: Setting a NULL value removes the property if it already existed
+	 * DON'T abuse this for property-removal, instead use @ref removeProperty()
+	 * if you want to remove on purpose.
+	 * Removal on NULL is to clean up the list of properties and to purge them
+	 * from UI
 	 **/
 	void setProperty(const QString &key, const QVariant &value);
 	/**

@@ -625,9 +625,8 @@ void KopeteContact::setProperty(const QString &key, const QString &label, const 
 {
 	if(value.isNull())
 	{
-		kdDebug(14000) << k_funcinfo <<
-			"Tried setting null value for property '" << key << "'" << endl;
 		removeProperty(key);
+		return;
 	}
 
 	KopeteContactProperty prop( label, value );
