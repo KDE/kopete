@@ -39,6 +39,7 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 
+#include "kopetepassword.h"
 #include "kopeteawayaction.h"
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
@@ -59,7 +60,8 @@
 XMPP::S5BServer *JabberAccount::m_s5bServer = 0L;
 QStringList JabberAccount::m_s5bAddressList;
 
-JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name):KopeteAccount (parent, accountId, name)
+JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name)
+			  :Kopete::PasswordedAccount ( parent, accountId, 0, name )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId << endl;
 
@@ -89,7 +91,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 JabberAccount::~JabberAccount ()
 {
-	disconnect ();
+	KopeteAccount::disconnect ( KopeteAccount::Manual );
 
 	cleanup ();
 
@@ -323,10 +325,16 @@ bool JabberAccount::isConnecting ()
 
 }
 
-
-void JabberAccount::connect ()
+void JabberAccount::connectWithPassword ( const QString &password )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called" << endl;
+
+	/* Cancel connection process if no password has been supplied. */
+	if ( password.isEmpty () )
+	{
+		KopeteAccount::disconnect ( KopeteAccount::Manual );
+		return;
+	}
 
 	/* Don't do anything if we are already connected. */
 	if (isConnected ())
@@ -344,24 +352,6 @@ void JabberAccount::connect ()
 		jabberClient->close ();
 
 		cleanup ();
-	}
-
-	/**
-	 * Try to cache password before attempting to connect
-	 */
-	bool okPressed;
-	cachedPassword = password( false, &okPressed );
-	if ( !okPressed )
-	{
-		// user canceled connection request, abort
-		return;
-	}
-
-	if ( cachedPassword.isEmpty () )
-	{
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Information,
-								i18n("Passwordless logins are not supported. Please provide a password."), i18n("Jabber Requires Password"));
-		return;
 	}
 
 	/*
@@ -631,20 +621,20 @@ int JabberAccount::handleTLSWarning (int warning, QString server)
 void JabberAccount::slotTLSHandshaken ()
 {
 
-	kdDebug(14131) << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
 
 	int validityResult = jabberTLS->certificateValidityResult ();
 
 	if(validityResult == QCA::TLS::Valid)
 	{
-		kdDebug(14131) << k_funcinfo << "Certificate is valid, continuing." << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is valid, continuing." << endl;
 
 		// valid certificate, continue
 		jabberTLSHandler->continueAfterHandshake ();
 	}
 	else
 	{
-		kdDebug(14131) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
 
 		// certificate is not valid, query the user
 		if(handleTLSWarning (validityResult, server ()) == KMessageBox::Continue)
@@ -653,7 +643,7 @@ void JabberAccount::slotTLSHandshaken ()
 		}
 		else
 		{
-			disconnect ();
+			KopeteAccount::disconnect ( KopeteAccount::Manual );
 		}
 	}
 
@@ -673,9 +663,7 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 
 	if(pass)
 	{
-		jabberClientStream->setPassword(cachedPassword);
-
-		cachedPassword = QString::null;
+		jabberClientStream->setPassword(password().cachedValue());
 	}
 
 	if(realm)
@@ -720,7 +708,7 @@ void JabberAccount::slotCSAuthenticated ()
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());
-	jabberClient->start ( jid.domain(), jid.node(), password(), pluginData( protocol (), "Resource") );
+	jabberClient->start ( jid.domain(), jid.node(), password().cachedValue(), pluginData( protocol (), "Resource") );
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 
@@ -1053,16 +1041,31 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 
 void JabberAccount::slotCSError (int error)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled." << endl;
 
-	// display message to user
-	handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server ());
+	if ( ( error == XMPP::ClientStream::ErrAuth ) 
+		&& ( jabberClientStream->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Incorrect password, retrying." << endl;
 
-	disconnect ();
+		// FIXME: This should be unified in libkopete as disconnect(IncorrectPassword)
+		password().setWrong ();
+		disconnect ();
+		connect ();
+	}
+	else
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
-	// manually force the slot to be called since in case of an error,
-	// libpsi will most likely be confused and not emit signals anymore
-	slotCSDisconnected();
+		// display message to user
+		handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server ());
+
+		KopeteAccount::disconnect ( KopeteAccount::ConnectionReset );
+
+		// manually force the slot to be called since in case of an error,
+		// libpsi will most likely be confused and not emit signals anymore
+		slotCSDisconnected();
+	}
 
 }
 
@@ -1157,7 +1160,7 @@ void JabberAccount::slotGoOffline ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
-	disconnect ();
+	KopeteAccount::disconnect ( KopeteAccount::Manual );
 }
 
 void JabberAccount::slotGoChatty ()

@@ -29,7 +29,7 @@
 #include <s5b.h>
 
 // we need these for type reasons
-#include <kopeteaccount.h>
+#include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>
 
 class JabberProtocol;
@@ -47,7 +47,7 @@ using namespace XMPP;
 
 /* @author Daniel Stone, Till Gerken */
 
-class JabberAccount : public KopeteAccount
+class JabberAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 
@@ -125,7 +125,7 @@ public:
 
 public slots:
 	/* Connects to the server. */
-	void connect ();
+	void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	void disconnect ();
@@ -163,7 +163,6 @@ private:
 	JabberContactPool *mContactPool;
 
 	QString localAddress;
-	QString cachedPassword;
 
 	/*
 	 * Current penalty time
