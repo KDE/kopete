@@ -25,6 +25,7 @@
 #include <qstringlist.h>
 
 #include <kdebug.h>
+#include <kdebugclasses.h>
 #include <kextsock.h>
 #include <ksockaddr.h>
 
