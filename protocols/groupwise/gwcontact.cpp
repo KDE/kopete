@@ -61,7 +61,6 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 : KopeteContact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
 {
-	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
 	if ( dn.find( '=' ) != -1 )
 	{
 		m_dn = dn;
@@ -142,14 +141,6 @@ bool GroupWiseContact::isReachable()
 
 void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
-/*    QString value;
-	switch ( m_type )
-	{
-	case Null:
-		value = "null";
-	case Echo:
-		value = "echo";
-	}*/
 	serializedData[ "DN" ] = m_dn;
 }
 
@@ -161,21 +152,6 @@ KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
 	chatMembers.append( this );
 
 	return manager( chatMembers, canCreate );
-
-/*	if ( m_msgManager )
-	{
-		return m_msgManager;
-	}
-	else
-	{
-		QPtrList<KopeteContact> contacts;
-		contacts.append(this);
-		m_msgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
-				this, SLOT( sendMessage( KopeteMessage& ) ) );
-		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		return m_msgManager;
-	}*/
 }
 
 GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMembers, bool canCreate )
