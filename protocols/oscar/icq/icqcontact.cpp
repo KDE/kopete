@@ -216,8 +216,8 @@ KActionCollection *ICQContact::customContextMenuActions()
 	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
 		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
 
-	actionRequestAuth->setEnabled(waitAuth() && isOnline());
-	actionSendAuth->setEnabled(isOnline());
+	actionRequestAuth->setEnabled(waitAuth() && account()->isConnected());
+	actionSendAuth->setEnabled(account()->isConnected());
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 
 	actionCollection->insert(actionRequestAuth);
