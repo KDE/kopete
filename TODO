@@ -4,6 +4,7 @@ to fix before the next release.
 Beware: It's totally unsorted ;)
 
 ================================================================================
+- Fix removing accounts from kopeterc
 
 - Once and for all fix the way displayName is used in KopeteContact. With
   serverside contact lists it's now impossible to rename contacts on the server
@@ -17,6 +18,7 @@ Beware: It's totally unsorted ;)
   try a reconnect first and only leave the protocol offline if the reconnect
   fails. Alternatively, retry reconnecting with increasing intervals.
 
+- Prevent attempting to send while offline where appropriate
 ================================================================================
 
 OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
