@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>569</width>
-            <height>399</height>
+            <width>420</width>
+            <height>405</height>
         </rect>
     </property>
     <property name="caption">
@@ -18,6 +18,9 @@
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
         </property>
         <widget class="QLabel">
             <property name="name">
@@ -61,10 +64,10 @@
                         <cstring>label1</cstring>
                     </property>
                     <property name="text">
-                        <string>Your computer's network name:</string>
+                        <string>Your Computer's Network &amp;Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>mScreenName</cstring>
+                        <cstring>mHostName</cstring>
                     </property>
                 </widget>
             </grid>
@@ -74,7 +77,7 @@
                 <cstring>TextLabel1_3</cstring>
             </property>
             <property name="text">
-                <string>Note: This &lt;b&gt;must&lt;/b&gt; be set to this machine's host name or you will have trouble receiving messages.</string>
+                <string>Note: This must be set to this machine's host name to receive messages.</string>
             </property>
         </widget>
         <widget class="QLayoutWidget">
@@ -107,7 +110,10 @@
                         <cstring>doInstallSamba</cstring>
                     </property>
                     <property name="text">
-                        <string>Install Into Samba</string>
+                        <string>&amp;Install Into Samba</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
                     </property>
                 </widget>
             </hbox>
@@ -173,13 +179,11 @@
 </connections>
 <tabstops>
     <tabstop>mHostName</tabstop>
+    <tabstop>doInstallSamba</tabstop>
     <tabstop>mAutoConnect</tabstop>
 </tabstops>
 <slots>
     <slot>installSamba()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>

@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>426</width>
-            <height>387</height>
+            <height>389</height>
         </rect>
     </property>
     <property name="font">
@@ -177,7 +177,7 @@
                         <enum>Horizontal</enum>
                     </property>
                     <property name="tickmarks">
-                        <enum>Right</enum>
+                        <enum>NoMarks</enum>
                     </property>
                     <property name="tickInterval">
                         <number>10</number>
@@ -220,7 +220,7 @@
                         <enum>Horizontal</enum>
                     </property>
                     <property name="tickmarks">
-                        <enum>Right</enum>
+                        <enum>NoMarks</enum>
                     </property>
                     <property name="tickInterval">
                         <number>60</number>
@@ -309,9 +309,4 @@
     <slot>doRefreshDisplay()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>
