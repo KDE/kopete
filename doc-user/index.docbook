@@ -24,7 +24,7 @@ Using Kopete
 			Start a chat
             Organising contacts
                 Adding contacts
-					Metacontacts - What are they and why do I want them? should probably be the first item under adding contacts. People new to a unified client or coming from Gaim will have no clue why metacontacts are good.
+					Metacontacts
 				Grouping Contacts
 					Within Metacontacts
 			configure &kopete;
@@ -40,10 +40,10 @@ Using Kopete
 	        File transfers?
 Configuring Kopete
 	Global Shortcuts
-        Adding/Editing Accounts
-        Behaviour/Notifications
-        Look and Feel
-        Loading Plugins
+	Adding/Editing Accounts
+	Behaviour/Notifications
+	Look and Feel
+	Loading Plugins
 Plugins
         (Section on each plugin, use, and configuration)
 Menus
@@ -219,19 +219,143 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 			</sect2>
 			<sect2 id="organise-contacts">
 				<title>Organising Contacts</title>
-				<para>One of the principles behind &kopete; is that it offers a standardised way to use &im; systems.  Differences between &im; systems are smoothed over, making it easier to communicate.  We follow this principle in the way contacts are organised.  When you use &kopete; you just find contacts by name; the actual &im; system used is less important.  Some people have more than one &im; account - &kopete; puts the person using the account first.</para>
-				<para>To support this, &kopete; introduced <quote>Metacontacts</quote>, which represent the person you want to chat with.  All the different &im; accounts they may have are attached to their Metacontact, making it easy to see at a glance whether someone is available, regardless of which &im; system they are using right now.</para>
+				<sect3 id="organise-contacts-metacontacts">
+					<title>A Word about Metacontacts</title>
+					<para>One of the principles behind &kopete; is that it offers a standardised way to use &im; systems.  Differences between &im; systems are smoothed over, making it easier to communicate.  We follow this principle in the way contacts are organised.  When you use &kopete; you just find contacts by name; the actual &im; system used is less important.  Some people have more than one &im; account - &kopete; puts the person using the account first.</para>
+					<para>To support this, &kopete; introduced <quote>Metacontacts</quote>, which represent the person you want to chat with.  All the different &im; accounts they may have are attached to their Metacontact, making it easy to see at a glance whether someone is available, regardless of which &im; system they are using right now.</para>
+				</sect3>
+
+				<sect3 id="organise-contacts-adding">
+					<title>Adding Contacts</title>
+					<para>To add a contact...</para>
+				</sect3>
+				<sect3 id="organise-contacts-grouping">
+					<title>Grouping Contacts</title>
+					<para>Within Groups</para>
+					<para>Within Metacontacts</para>
+				</sect3>
+				<sect3 id="organise-contacts-removing">
+					<title>Removing Contacts</title>
+					<para>If you no longer want a contact in the contact list...</para>
+				</sect3>
+			</sect2>
+			<sect2 id="chat-window-configure">
+				<title>Configure Kopete</title>
+				<para>You can configure &kopete; using <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Kopete...</guimenuitem></menuchoice>.  See the <link linkend="configuring">next chapter</link> for details.</para>
 			</sect2>
 		</sect1><!-- chat-window -->
 		<sect1 id="chat-window">
 			<title>The Chat Window</title>
 			<para>The Chat Window </para>
+			<sect2 id="chat-window-layout"><title>Layout of the Chat window</title>
+				<para>Chat members list</para>
+				<para>Status bar (typing notifications, etc )</para>
+				<para>Tabbing</para>
+			</sect2>
+			<sect2 id="chat-window-group">
+				<title>Group Chats in &kopete;</title>
+				<para>You can use &kopete; to chat one to one, or in a group, where the &im; system supports this.</para>
+			</sect2>
+			<sect2 id="chat-window-shortcuts">
+				<title>Chat Window Shortcuts</title>
+				<para>Here are the default shortcuts you can use in the chat window.</para>
+			</sect2>
+			<sect2 id="chat-window-file-xfer">
+				<title>File transfers</title>
+				<para>Some &im; systems allow you to send and receive files.</para>
+			</sect2>
 		</sect1><!-- chat-window -->
 	</chapter><!-- Using-kopete -->
+	<chapter id="configuring">
+		<title>Configuring &kopete;</title>
+		<para>To configure &kopete;...</para>
+		<sect1 id="configuring-global-shortcuts">
+			<title>Global Shortcuts</title>
+			<para>Kopete defines some shortcuts which are valid in any KDE application.</para>
+		</sect1>
+		<sect1 id="configuring-accounts">
+			<title>Adding and Editing Accounts</title>
+			<para>We briefly showed you how to add an account in <link linkend="getting-started">Getting Started</link>.  To change an account's setting later...</para>
+		</sect1>
+		<sect1 id="configuring-behaviour-notifications">
+			<title>Behaviour and Notifications</title>
+			<para>Behaviour and Notifications covers the way &kopete; integrates with your desktop, <quote>Away</quote> settings, and chat user interface options.</para>
+		</sect1>
+		<sect1 id="configuring-appearance">
+			<title>Appearance</title>
+			<para>Appearance governs the style of the Chat window, its colours and fonts, and lets you choose your preferred emoticons.</para>
+		</sect1>
+		<sect1 id="configuring-loading-plugins">
+			<title>Loading Plugins</title>
+			<para>You can customise Kopete with special functions that may be useful or just a bit of fun.</para>
+			<!--FIND OUT WHAT THE FINAL PLUGIN LOADING UI WILL BE LIKE -->
+		</sect1>
+	</chapter> <!-- configuring -->
+	<chapter id="plugins">
+		<title>&kopete;'s plugins</title>
+		<para>Kopete is designed to make it easy to create plugins that give &kopete; more functions.</para>
+		<sect1 id="plugins-auto-replace">
+			<title>Auto Replace</title>
+			<para>Auto Replace allows you to correct frequently misspelled words or save typing certain words using abbreviations.</para>
+		</sect1>
+		<sect1 id="plugins-connection-status">
+			<title>Connection Status</title>
+			<para>Connection Status is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
+		</sect1>
+		<sect1 id="plugins-contact-notes">
+			<title>Contact Notes</title>
+			<para>Contact Notes allows you to note down any useful bits of information on a metacontact.</para>
+		</sect1>
+		<sect1 id="plugins-cryptography">
+			<title>Cryptography</title>
+			<para>Cryptography lets you use <acronym>GPG</acronym> to encrypt conversations.  Note that this is not the same as an SSL secured chat session - this kind of encryption not only ensures the message cannot be tampered with, it also guarantees that only the intended recipient can read the messages.</para>
+		</sect1>
+		<sect1 id="plugins-highlight">
+			<title>Highlight</title>
+			<para>Highlight works a little like e-mail filters, in that it allows you to make things happen in response to particular messages.  As well as highlighting the text, you can play sounds.</para>
+		</sect1>
+		<sect1 id="plugins-history">
+			<title>History</title>
+			<para>The History plugin, when activated, records conversations using any &im; system and allows you to view old conversations later.  A <menuchoice><guimenuitem>History</guimenuitem></menuchoice> appears in each Metacontact's context menu, to view the message history for that metacontact.</para>
+		</sect1>
+		<sect1 id="plugins-motion-auto-away">
+			<title>Motion Auto-Away</title>
+			<para>In conjunction with a webcam and the Video4Linux package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <quote>Away</quote>.</para>
+		</sect1>
+		<sect1 id="plugins-now-listening">
+			<title>Now Listening</title>
+			<para>With the Now Listening plugin, let people you're chatting with know what you're listening to, by typing <userinput>/media</userinput> in a chat, or from the <menuchoice><guimenu>File</guimenu><guimenu>Actions</guimenu></menuchoice> menu.</para>
+		</sect1>
+		<sect1 id="plugins-text-effect">
+			<title>Text Effect</title>
+			<para>Text Effect applies funny effects to your messages before sending them, like colouring them or changing the case of the words.  Just don't forget you have activated it - we've had bug reports from forgetful Text Effect users!</para>
+		</sect1>
+		<sect1 id="plugins-translator">
+			<title>Translator</title>
+			<para>The Translator plugin lets you define a preferred language for each Metacontact, and then translates messages to or from them using web based translation services such as <trademark>Google</trademark> and <trademark>Babelfish</trademark>.</para>
+		</sect1>
+		<sect1 id="plugins-web-presence">
+			<title>Web Presence</title>
+			<para>Web Presence allows you to publicise your &im; presence on the Web.  Give it the path to a file on an FTP server, (for example), and it will upload a short piece of HTML to that file, which you can include in your homepage.  Good for bloggers to make friends with, or you could use it to use &im; in your business.</para>
+		</sect1>
+	</chapter><!-- plugins -->
+	<chapter id="menus">
+		<title>Menu Structure</title>
+		<para>File Menu</para>
+	</chapter> <!-- menus -->
+	<chapter id="faq">
+		<title>Frequently Asked Questions</title>
+		<para>Question:</para>
+		<para>Answer:</para>
+	</chapter> <!-- faq -->
+	<chapter id="specialised">
+		<title>Specialised Actions</title>
+		<para>Command line parameters</para>
+	</chapter> <!-- specialised -->
 	<chapter id="credits-and-licenses">
 		<title>Credits and Licenses</title>
 		<para>
-			&kopete; copyright 2003, Will Stephenson
+			&kopete; copyright 2003, Kopete Developers
 		</para>
 		<para>
 			Documentation copyright 2003, Will Stephenson
@@ -239,7 +363,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 		&underFDL;
 		&underGPL;
-	</chapter>
+	</chapter><!-- credits-and-licenses -->
 &documentation.index;
 </book>
 
