@@ -29,11 +29,16 @@ KopeteContactList::removeGroup should remove the group from all
 metacontacts. Move code from KopeteContactListView to KopeteContactList for
 this.
 
+KopeteContactList::findContact and KopeteMetaContact::findContact should maybe be removed,
+or at least contains ptr to accounts insteads of id.
+
 KopeteContact::slotDeleteContact  should be renamed,  maybe return a bool to cancel the deletion of the contact.
 
 Add an iconName() function to contacts, metacontacts and accounts returning a string that
 can be put in an <img src="%1"> in any rich text to give the appropriate icon. See the
 MimeSourceFactory.
+
+
 
 
  KopeteEmoticon
@@ -62,7 +67,11 @@ Add a way to register automaticaly KOS,  KopeteAccount should creates itself his
 
 
 
-
+ KopeteAccount
+===============
+KopeteAccount::password should be split in two method: KopeteAccount::password which return the
+remembered password if any, but which does not try to ask it to the user.  and getPassword which
+acts like the acutal function.
 
 
 

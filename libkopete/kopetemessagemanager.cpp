@@ -373,6 +373,9 @@ void KopeteMessageManager::slotContactDestroyed( KopeteContact *contact )
 	if ( !contact || !d->mContactList.contains( contact ) )
 		return;
 
+	//This is a workaround to prevent crash if the contact get deleted.
+	// in the best case, we should ask the protocol to recreate a temporary contact.
+	// (remember: the contact may be deleted when the users removes it from the contactlist, or when closing kopete )
 	d->mContactList.remove( contact );
 	emit contactRemoved( contact, QString::null );
 
