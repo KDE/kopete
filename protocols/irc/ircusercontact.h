@@ -68,8 +68,6 @@ public:
 	virtual QPtrList<KAction> *customContextMenuActions( Kopete::ChatSession *manager );
 	virtual const QString caption() const;
 
-	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
-
 	void setAway(bool isAway);
 
 	QString formattedName() const;
@@ -92,6 +90,8 @@ public:
 
 public slots:
 	virtual void updateStatus();
+
+	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
 
 protected slots:
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);

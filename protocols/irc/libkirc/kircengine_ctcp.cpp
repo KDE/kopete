@@ -19,7 +19,8 @@
 
 #include "kircengine.h"
 #include "kirctransferhandler.h"
-
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <kextsock.h>
 
 #include <qfileinfo.h>
@@ -143,18 +144,8 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 			QString ip = m_sock->localAddress()->nodeName();
-			QRegExp reg("^(\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})$");
-			if (!reg.exactMatch(ip))
-			{
-				kdDebug(14120) << "Not an ipv4:" << ip << endl;
-				return;
-			}
+			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
 
-			// FIXME: This is very an ugly way to do it
-			QString ipNumber = QString::number(	(Q_UINT32)reg.cap(1).toUShort()*(256*256*256)+
-								reg.cap(2).toUShort()*(256*256)+
-								reg.cap(3).toUShort()*256+
-								reg.cap(4).toUShort());
 			kdDebug(14120) << "Starting DCC file outgoing transfer." << endl;
 
 			writeCtcpQueryMessage(nickname, QString::null,

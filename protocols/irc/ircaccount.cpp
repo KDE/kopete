@@ -517,7 +517,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 				IRCHost *host = hosts[ currentHost++ ];
 				myServer()->appendMessage( i18n("Connecting to %1...").arg( host->host ) );
 				if( host->ssl )
-					myServer()->appendMessage("Using SSL");
+					myServer()->appendMessage( i18n("Using SSL") );
 
 				m_engine->setPassword(password);
 				m_engine->connectToServer( host->host, host->port, mNickName, host->ssl );
