@@ -275,7 +275,7 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 				}
 
 				if (space > 0)
-					msg.m_ctcpMessage->m_ctcpRaw = KSParser::parse(msg.m_ctcpRaw.mid(space).latin1());
+					msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.mid(space).latin1();
 			}
 
 			msg.m_suffix = Kopete::Message::decodeString( KSParser::parse(suffix), codec );
@@ -330,7 +330,7 @@ bool Message::extractCtcpCommand(QCString &message, QString &ctcpline, const QTe
 
 	if( message[0] == 1 && message[len-1] == 1 )
 	{
-		ctcpline = ctcpUnquote( unquote( Kopete::Message::decodeString(message.mid(1,len-2), codec) ) );
+		ctcpline = ctcpUnquote( unquote( Kopete::Message::decodeString(KSParser::parse(message.mid(1,len-2)), codec) ) );
 		message.truncate(0);
 
 		return true;

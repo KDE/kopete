@@ -197,17 +197,22 @@ void IRCChannelContact::slotAddNicknames()
 			//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 			user = account->contactManager()->findUser(nickToAdd);
 			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
-			manager()->addContact(static_cast<Kopete::Contact*>(user) , true);
 		}
 		else
 		{
 			user = account->mySelf();
 		}
 
+		Kopete::OnlineStatus status;
 		if ( firstChar == '@' || firstChar == '%' )
-			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
+			status = m_protocol->m_UserStatusOp;
 		else if( firstChar == '+')
-			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusVoice );
+			status = m_protocol->m_UserStatusVoice;
+
+		if( user != account->mySelf() )
+			manager()->addContact(static_cast<Kopete::Contact*>(user) , status, true);
+		else
+			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), status );
 
 		mJoinedNicks.pop_front();
 	}
