@@ -39,21 +39,6 @@ class MSNMessageDialog;
 class MSNPreferences;
 class StatusBarIcon;
 
-struct MSNContactStruct
-{
-	QString UserID;
-	QString Nick;
-	bool isdeleted;
-	bool isnew;
-};
-
-struct MSNGroupStruct
-{
-	QString Name;
-	bool isdeleted;
-	bool isnew;
-};
-
 /**
  * @author duncan
  */
