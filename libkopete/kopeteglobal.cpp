@@ -107,43 +107,43 @@ bool Properties::isRegistered(const QString &key)
 const ContactPropertyTmpl &Properties::fullName() const
 {
 	return createProp(QString::fromLatin1("FormattedName"),
-		QString::fromLatin1("Full Name"));
+		i18n("Full Name"));
 }
 
 const ContactPropertyTmpl &Properties::idleTime() const
 {
 	return createProp(QString::fromLatin1("idleTime"),
-		QString::fromLatin1("Idle Time"));
+		i18n("Idle Time"));
 }
 
 const ContactPropertyTmpl &Properties::onlineSince() const
 {
 	return createProp(QString::fromLatin1("onlineSince"),
-		QString::fromLatin1("Online Since"));
+		i18n("Online Since"));
 }
 
 const ContactPropertyTmpl &Properties::lastSeen() const
 {
 	return createProp(QString::fromLatin1("lastSeen"),
-		QString::fromLatin1("Last Seen"), QString::null, true);
+		i18n("Last Seen"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::awayMessage() const
 {
 	return createProp(QString::fromLatin1("awayMessage"),
-		QString::fromLatin1("Away Message"));
+		i18n("Away Message"));
 }
 
 const ContactPropertyTmpl &Properties::firstName() const
 {
 	return createProp(QString::fromLatin1("firstName"),
-		QString::fromLatin1("First Name"), QString::null, true);
+		i18n("First Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::lastName() const
 {
 	return createProp(QString::fromLatin1("lastName"),
-		QString::fromLatin1("Last Name"), QString::null, true);
+		i18n("Last Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::privatePhone() const
