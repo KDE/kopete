@@ -35,7 +35,6 @@
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetemessage.h"
-#include "kopeteviewmanager.h"
 
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
 : KopeteAccount ( parent, AccountID , name )
@@ -924,11 +923,12 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	if ( c && myself() )
 	{
 		static_cast<MSNMessageManager*>( c->manager(true) )->createChat( handle, address, auth, ID );
+
 		if(ID && MSNPreferences::notifyNewChat() )
 		{
+			//this temporary message should open the window if they not exist
 			QString body=i18n("%1 has opened a new chat").arg(c->displayName());
 			KopeteMessage tmpMsg = KopeteMessage( c , c->manager()->members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
-			KopeteViewManager::viewManager()->readMessages( c->manager(), true );
 			c->manager()->appendMessage(tmpMsg);
 		}
 	}

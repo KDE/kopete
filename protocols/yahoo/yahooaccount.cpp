@@ -29,7 +29,6 @@
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetemessage.h"
-#include "kopeteviewmanager.h"
 #include "kopetemessagemanager.h"
 #include "kopeteonlinestatus.h"
 

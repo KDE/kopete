@@ -12,6 +12,8 @@
     <version></version>
     <description></description>
     <ignoreparts/>
+    <projectdirectory>.</projectdirectory>
+    <absoluteprojectpath>false</absoluteprojectpath>
   </general>
   <kdevfileview>
     <groups>
@@ -79,8 +81,8 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full</configargs>
-        <builddir>/home/tla/spool/src/kde-cvs/kdenonbeta/</builddir>
-        <topsourcedir>/home/tla/spool/src/kde-cvs/kdenonbeta/</topsourcedir>
+        <builddir>.</builddir>
+        <topsourcedir>.</topsourcedir>
         <ccompiler>GccOptions</ccompiler>
         <cxxcompiler>GppOptions</cxxcompiler>
         <f77compiler>G77Options</f77compiler>
