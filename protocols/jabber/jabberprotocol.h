@@ -49,7 +49,8 @@ class JabberProtocol : public KopeteProtocol
 	Q_OBJECT
 
 	/* Friends can touch each other's private parts. */
-	friend class JabberContact; 
+	friend class JabberContact;
+	friend class JabberGroupChat;
 	friend class DlgJabberServices;
 	friend class DlgJabberRegister;
 	friend class DlgJabberBrowse;

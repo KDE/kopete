@@ -1369,10 +1369,12 @@ void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
 	mc->setTemporary(true);
 
 	// the group chat object basically works like a JabberContact
-	JabberGroupChat *groupChat = new JabberGroupChat(jid.userHost(), jid.userHost(), QStringList(), this, mc, myContact->userId());
+	JabberGroupChat *groupChat = new JabberGroupChat(jid, QStringList(), this, mc, myContact->userId());
 
 	// add the group chat class to the meta contact
 	mc->addContact(groupChat);
+
+	KopeteContactList::contactList()->addMetaContact(mc);
 
 }
 
@@ -1386,6 +1388,8 @@ void JabberProtocol::slotGroupChatLeft(const Jabber::Jid &jid)
 void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid, const Jabber::Status &status)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Received groupchat presence for room " << jid.full() << endl;
+
+	static_cast<JabberGroupChat*>( contacts()[jid.userHost()] )->updatePresence(jid, status);
 
 }
 

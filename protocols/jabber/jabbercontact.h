@@ -188,6 +188,12 @@ public slots:
 	 */
 	void slotReceivedMessage(const Jabber::Message &message);
 
+protected slots:
+	/**
+	 * Catch a dying message manager
+	 */
+	virtual void slotMessageManagerDeleted();
+
 private slots:
 	/**
 	 * Display a rename dialog
@@ -228,11 +234,6 @@ private slots:
 	void slotStatusXA();
 	void slotStatusDND();
 	void slotStatusInvisible();
-
-	/**
-	 * Catch a dying message manager
-	 */
-	void slotMessageManagerDeleted();
 
 	/**
 	 * Send a message to somebody

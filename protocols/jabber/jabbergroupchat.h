@@ -18,7 +18,8 @@
 #ifndef JABBERGROUPCHAT_H
 #define JABBERGROUPCHAT_H
 
-#include <jabbercontact.h>
+#include <psi/types.h>
+#include "jabbercontact.h"
 
 /**
   *@author Kopete developers
@@ -28,12 +29,17 @@ class JabberGroupChat : public JabberContact
 {
 
 public: 
-	JabberGroupChat(QString userId, QString nickname, QStringList groups,
+	JabberGroupChat(Jabber::Jid room, QStringList groups,
 					JabberProtocol *p, KopeteMetaContact *mc, QString identity);
 	~JabberGroupChat();
 
+	void updatePresence(const Jabber::Jid &jid, const Jabber::Status &status);
+
+private slots:
+	virtual void slotMessageManagerDeleted();
+
 private:
-	QDict<JabberContact*> members;
+	Jabber::Jid room;
 
 };
 
