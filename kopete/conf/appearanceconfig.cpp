@@ -216,6 +216,7 @@ void AppearanceConfig::save()
 
 	p->setStyleSheet( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
 
+	p->setNotifyAway( mAwayConfigUI->m_notifyAway->isChecked());
 	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
 	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
 	/* Tells KopeteAway to save it's messages */
@@ -327,6 +328,7 @@ void AppearanceConfig::reopen()
 	mPrfsChatAppearance->styleList->sort();
 
 	mAwayConfigUI->updateView();
+	mAwayConfigUI->m_notifyAway->setChecked( p->notifyAway() );
 }
 
 void AppearanceConfig::slotConfigSound()

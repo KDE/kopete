@@ -76,6 +76,7 @@ public:
 	bool bgOverride() const { return mBgOverride; }
 	int interfacePreference() const { return mInterfacePreference; }
 	bool showTray() const { return mShowTray; }
+	bool notifyAway() const { return mNotifyAway; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
 	QString styleSheet() const { return mStyleSheet; }
@@ -112,6 +113,7 @@ public:
 	void setFontFace( const QFont & );
 	void setLinkColor( const QColor & );
 	void setShowTray(bool);
+	void setNotifyAway(bool);
 
 signals:
 	/**
@@ -164,6 +166,7 @@ private:
 	bool mShowTray;
 	bool mTransparancyChanged;
 	bool mWindowAppearanceChanged;
+	bool mNotifyAway;
 
 	int mChatWindowPolicy;
 	QString mStyleSheet;

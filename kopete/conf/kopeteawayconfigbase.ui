@@ -83,7 +83,36 @@
         </widget>
         <widget class="QGroupBox">
             <property name="name">
+                <cstring>groupBox3</cstring>
+            </property>
+            <property name="title">
+                <string>Notifications</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>m_notifyAway</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Notify when i go away to all open chat  (unrecomanded)</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
                 <cstring>predefinedGroupBox</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <property name="title">
                 <string>Predefined Messages</string>
@@ -220,7 +249,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>51</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>

@@ -73,6 +73,7 @@ void KopetePrefs::load()
 	mChatWindowPolicy	= config->readNumEntry("Chatwindow Policy", 0);
 	mTransparencyEnabled	= config->readBoolEntry("ChatView Transparency Enabled", false);
 	mTransparencyValue	= config->readNumEntry("ChatView Transparency Value", 50);
+	mNotifyAway			= config->readBoolEntry("Notification Away", false);
 
 	mTransparencyColor	= config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize	= config->readNumEntry("ChatView BufferSize", 250);
@@ -120,6 +121,7 @@ void KopetePrefs::save()
 	config->writeEntry("Trayflash Notification", mTrayflashNotify);
 	config->writeEntry("Balloon Notification", mBalloonNotify);
 	config->writeEntry("Sound Notification If Away", mSoundIfAway);
+	config->writeEntry("Notification Away", mNotifyAway);
 	config->writeEntry("Chatwindow Policy", mChatWindowPolicy);
 	config->writeEntry("ChatView Transparency Enabled", mTransparencyEnabled);
 	config->writeEntry("ChatView Transparency Value", mTransparencyValue);
@@ -318,6 +320,11 @@ void KopetePrefs::setShowTray(bool value)
 	mShowTray = value;
 }
 
+void KopetePrefs::setNotifyAway(bool value)
+{
+	mNotifyAway=value;
+}
+
 QString KopetePrefs::fileContents( const QString &path )
 {
  	QString contents;
@@ -333,6 +340,10 @@ QString KopetePrefs::fileContents( const QString &path )
 }
 
 
+
+
 #include "kopeteprefs.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
+
