@@ -365,7 +365,7 @@ void KopeteWindow::slotConfKeys()
 
 void KopeteWindow::slotConfGlobalKeys()
 {
-	KKeyDialog::configureKeys( globalAccel );
+	KKeyDialog::configure( globalAccel );
 }
 
 void KopeteWindow::slotConfToolbar()
