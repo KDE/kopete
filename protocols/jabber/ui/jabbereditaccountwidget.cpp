@@ -78,6 +78,11 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	{
 		this->reopen ();
 	}
+	else
+	{
+		this->btnRegister->setEnabled(true);
+	}
+
 }
 
 JabberEditAccountWidget::~JabberEditAccountWidget ()

@@ -248,6 +248,9 @@
                                         <property name="text">
                                             <string>Re&amp;gister New Account</string>
                                         </property>
+					<property name="enabled">
+						<bool>false</bool>
+					</property>
                                         <property name="toolTip" stdset="0">
                                             <string>Register a new account on this network.</string>
                                         </property>
