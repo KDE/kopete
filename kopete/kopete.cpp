@@ -50,8 +50,6 @@ Kopete::Kopete()
 	new AppearanceConfig( mainWindow );
 	new KopeteUserPreferencesConfig( mainWindow );
 
-	KopeteContactList::contactList()->load();
-
 	/*
 	 * This is a workaround for a quite odd problem:
 	 * When starting up kopete and the msn plugin gets loaded it can bring up
@@ -83,6 +81,8 @@ Kopete::~Kopete()
 
 void Kopete::slotLoadPlugins()
 {
+	KopeteContactList::contactList()->load();
+
 	KConfig *config = KGlobal::config();
 	config->setGroup("");
 
