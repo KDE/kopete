@@ -18,7 +18,10 @@
 
 #include "task.h"
 #include <qstring.h>
+#include <qcstring.h>
 #include "oscartypeclasses.h"
+
+class QTextCodec;
 
 /**
  * Handles receiving messages. 
@@ -50,6 +53,7 @@ private:
 	//!Handles messages from channel 4 (type 4 messages)
 	void handleType4Message();
 	
+	QTextCodec* guessCodec( const QCString& string );
 private:
 	
 	QByteArray m_icbmCookie;

@@ -16,7 +16,6 @@
 
 #include "messagereceivertask.h"
 
-#include <qcstring.h>
 #include <qtextcodec.h>
 #include <kdebug.h>
 #include "transfer.h"
@@ -133,9 +132,14 @@ void MessageReceiverTask::handleType1Message()
 			else
 			{
 				msg.addProperty( Oscar::Message::UTF8 );
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Attempting to decode message with QTextCodec" << endl;
-				QCString rawMessage( message.getBlock( ( *it ).length - 4 ) );
-				msg.setText( QString( rawMessage ) );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Attempting to decode message with QChar array" << endl;
+				int messageLength = ( ( *it ).length - 4 );
+				QChar* testString = new QChar[messageLength];
+				for ( int i = 0; i < messageLength; i++ )
+					testString[i] = message.getByte();
+				
+				msg.setText( QString( testString, messageLength ) );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
 			}
 			break;
 		} //end case
@@ -207,6 +211,12 @@ void MessageReceiverTask::handleType4Message()
 	msg.setReceiver( client()->userId() );
 	msg.setText( QString::fromUtf8( msgText, msgText.length() ) );
 	emit receivedMessage( msg );
+}
+
+QTextCodec* MessageReceiverTask::guessCodec( const QCString& string )
+{
+	Q_UNUSED( string );
+	return 0;
 }
 
 #include "messagereceivertask.moc"
