@@ -1,6 +1,7 @@
 /*
     kopetelistview.h - List View providing extra support for ListView::Items
-
+    
+    Copyright (c) 2005      by Engin AYDOGAN <engin@bzzzt.biz>
     Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
 
     Kopete    (c) 2004      by the Kopete developers <kopete-devel@kde.org>
@@ -25,14 +26,13 @@ namespace UI {
 namespace ListView {
 
 /**
- * This class is a List View with extra support for component enabled list view items
- *
- * @author Engin AYDOGAN <engin.bzzzt.biz>
+ * @author Engin AYDOGAN <engin@bzzzt.biz>
  * @author Richard Smith <kde@metafoo.co.uk>
  */
 class ListView : public KListView
 {
 	Q_OBJECT
+
 public:
 	ListView( QWidget *parent = 0, const char *name = 0 );
 	~ListView();
@@ -50,46 +50,64 @@ public:
 	 */
 	void setShowTreeLines( bool bShowAsTree );
 
+	/**
+	 * Sets the smooth scrolling.
+	 */
+	void setSmoothScrolling( bool );
+
+	/**
+	 * Gets the smooth scrolling status
+	 */
+	bool smoothScrolling();
+
+	/**
+	 * Sets the update interval of smooth scrolling animation.
+	 * @param interval is the interval in ms.
+	 */
+	void setSmoothScrollingTimerInterval( int interval );
+
+	/**
+	 * Gets the current update interval.
+	 */
+	int smoothScrollingTimerInterval();
+
 public slots:
 	/**
 	 * Calls QListView::sort()
 	 */
 	void slotSort() { sort(); }
+
+	/**
+	 * The function to be triggered when the configuration is changed.
+	 */
 	void slotConfigChanged();
 
 protected:
 	virtual void keyPressEvent( QKeyEvent *e );
-	virtual void enterEvent( QEvent *e );
-	virtual void leaveEvent( QEvent *e );
-	virtual void contentsMouseMoveEvent( QMouseEvent *e );
-/*
-	virtual void contentsDragEnterEvent( QDragEnterEvent *e );
-	virtual void contentsDragLeaveEvent( QDragLeaveEvent *e );
-	virtual void contentsDragMoveEvent( QDragMoveEvent *e );
-*/
-	virtual void mousePressEvent( QMouseEvent *e );
-/*
-	virtual void mouseDragEnterEvent( QDragEnterEvent *e );
-	virtual void mouseDragMoveEvent( QDragMoveEvent *e );
-	virtual void mouseDragLeaveEvent( QDragLeaveEvent *e );
-*/
-	virtual void contentsWheelEvent( QWheelEvent *e );
+	/**
+	 * Invoked on each timeout of a QTimer of this listview,
+	 * This will manage the smooth scrolling animation, continuous presses to the scrollbars.
+	 */
 	virtual void timerEvent( QTimerEvent *e );
-	virtual bool eventFilter ( QObject * o, QEvent * e );
+	
+	/**
+	 * To make smooth scrolling work well, we need extensive event intercepting.
+	 * This event filter is suppposed to achive that.
+	 */
+	virtual bool eventFilter( QObject *o, QEvent *e );
+
 private slots:
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
 	void slotDoubleClicked( QListViewItem *item );
-	void slotOnItem( QListViewItem *item );
+	/**
+	 * To enable smooth scroll to focus on highlighted items when they are highlighted
+	 * by a key press we use this slot. slotCurrentChanged is connected to the currentChanged
+	 * signal, it's being invoked in every selection change. If the selection change was made
+	 * by the mouse, then we don't do anything, since the item is on the viewable area already.
+	 * Otherwise, we focus (bring it to the center of the list) smoothly.
+	 */
 	void slotCurrentChanged( QListViewItem *item );
-	void slotSliderPress();
-	void slotSliderRelease();
-	void slotSliderMoved( int pos );
-	void slotSliderNextPage();
-	void slotSliderPrevPage();
-	void slotSliderNextLine();
-	void slotSliderPrevLine();
 private:
-	void transformListViewYtoScrollY( int y );
 	struct Private;
 	Private *d;
 };
