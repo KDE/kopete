@@ -439,13 +439,24 @@ int ICQProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map)
 
 void ICQProtocol::fillTZCombo(QComboBox *combo)
 {
-// 	unsigned n = 0;
-	QString tmp("");
-	for (int i = 24; i >= -24; i--)
+	QTime time(12, 0);
+	QTime done(0, 0);
+
+	while(time > done)
 	{
-		tmp.sprintf("GMT%+.f:%02u", -i/2.0, (i & 1) * 30);
-		combo->insertItem(tmp);
-		tmp="";
+		combo->insertItem("GMT-" + time.toString("h:mm"));
+		// subtract 30 minutes
+		time = time.addSecs(-30 * 60);
+	}
+
+	time = QTime(0, 0);
+	done = QTime(12, 0);
+
+	while(time <= done)
+	{
+		combo->insertItem("GMT+" + time.toString("h:mm"));
+		// add 30 minutes
+		time = time.addSecs(30 * 60);
 	}
 }
 
