@@ -43,7 +43,7 @@ public:
 	unsigned weight;
 	Protocol *protocol;
 	unsigned internalStatus;
-	QString overlayIcon;
+	QStringList overlayIcons;
 	QString description;
 	unsigned refCount;
 
@@ -58,38 +58,38 @@ public:
  * This is required by some plugins, when a status need to be stored on
  * the disk, to avoid problems.
  */
-static struct 
+static struct
 {
-	OnlineStatus::StatusType status; 
-	const char *name; 
-} statusNames[] = { 
+	OnlineStatus::StatusType status;
+	const char *name;
+} statusNames[] = {
 	{ OnlineStatus::Unknown, "Unknown" },
 	{ OnlineStatus::Offline, "Offline" },
 	{ OnlineStatus::Connecting, "Connecting" },
 	{ OnlineStatus::Invisible, "Invisible" },
-	{ OnlineStatus::Online, "Online"}, 
+	{ OnlineStatus::Online, "Online"},
 	{ OnlineStatus::Away, "Away" } };
 
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
-	unsigned internalStatus, const QString &overlayIcon,  const QString &description )
+	unsigned internalStatus, const QStringList &overlayIcons,  const QString &description )
 	 : d( new Private )
 {
 	d->status = status;
 	d->internalStatus = internalStatus;
 	d->weight = weight;
-	d->overlayIcon = overlayIcon;
+	d->overlayIcons = overlayIcons;
 	d->protocol = protocol;
 	d->description = description;
 }
 
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus,
-   const QString &overlayIcon, const QString &description, const QString &caption, unsigned int categories , unsigned int options )
+   const QStringList &overlayIcons, const QString &description, const QString &caption, unsigned int categories , unsigned int options )
 	 : d( new Private )
 {
 	d->status = status;
 	d->internalStatus = internalStatus;
 	d->weight = weight;
-	d->overlayIcon = overlayIcon;
+	d->overlayIcons = overlayIcons;
 	d->protocol = protocol;
 	d->description = description;
 
@@ -123,7 +123,7 @@ OnlineStatus::OnlineStatus( StatusType status )
 	case Unknown:
 	default:
 		d->description = i18n( "Unknown" );
-		d->overlayIcon = "status_unknown";
+		d->overlayIcons = QString::fromLatin1("status_unknown");
 		break;
 
 	}
@@ -136,7 +136,7 @@ OnlineStatus::OnlineStatus()
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
-	d->overlayIcon = QString::fromLatin1( "status_unknown" );
+	d->overlayIcons = QString::fromLatin1( "status_unknown" );
 }
 
 OnlineStatus::OnlineStatus( const OnlineStatus &other )
@@ -198,7 +198,12 @@ unsigned OnlineStatus::weight() const
 
 QString OnlineStatus::overlayIcon() const
 {
-	return d->overlayIcon;
+	return d->overlayIcons.first();
+}
+
+QStringList OnlineStatus::overlayIcons() const
+{
+	return d->overlayIcons;
 }
 
 QString OnlineStatus::description() const
@@ -267,23 +272,23 @@ QString OnlineStatus::mimeSource( const QString& icon, int size, QColor color, b
 QString OnlineStatus::statusTypeToString(OnlineStatus::StatusType statusType)
 {
 	const int size = sizeof(statusNames) / sizeof(statusNames[0]);
-	
+
 	for (int i=0; i< size; i++)
-		if (statusNames[i].status == statusType) 
+		if (statusNames[i].status == statusType)
 			return QString::fromLatin1(statusNames[i].name);
-	
+
 	return QString::fromLatin1(statusNames[0].name); // Unknown
 }
 
 OnlineStatus::StatusType OnlineStatus::statusStringToType(QString& string)
 {
 	int size = sizeof(statusNames) / sizeof(statusNames[0]);
-	
+
 	for (int i=0; i< size; i++)
-		if (QString::fromLatin1(statusNames[i].name) == string) 
+		if (QString::fromLatin1(statusNames[i].name) == string)
 			return statusNames[i].status;
-	
-	return OnlineStatus::Unknown; 
+
+	return OnlineStatus::Unknown;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -136,8 +136,8 @@ public:
 		 */
 		AccountOffline = 0x80000001
 	};
-	
-	
+
+
 	/**
 	 * Constructor.
 	 *
@@ -173,12 +173,12 @@ public:
 	 * @param description is a description in e.g. tooltips.
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
-		unsigned internalStatus, const QString &overlayIcon, const QString &description );
+		unsigned internalStatus, const QStringList &overlayIcon, const QString &description );
 
 	/**
 	 * Constructor.
 	 *
-	 * @p Creates a new OnlineStatus object and registers it with the @ref Kopete::OnlineStatusManager. 
+	 * @p Creates a new OnlineStatus object and registers it with the @ref Kopete::OnlineStatusManager.
 	 * Registration allows you to generate a KActionMenu filled with KActions for changing to this OnlineStatus,
 	 * using Kopete::Account::accountMenu().
 	 *
@@ -208,7 +208,7 @@ public:
 	 * @param options the options of this online status
 	 * @see Kopete::OnlineStatusManager::registerOnlineStatus for more info about the categories and options parameters
 	 */
-	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QString &overlayIcon,
+	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcon,
 		const QString &description, const QString& caption,  unsigned int categories=0x0 , unsigned int options=0x0 );
 
 
@@ -250,27 +250,32 @@ public:
 	unsigned weight() const;
 
 	/**
-	 * \brief Return the icon
+	 * \brief Return the first icon
+	 * @deprecated Use overlayIcons
 	 */
 	QString overlayIcon() const;
+
+	/**
+	 * \brief Return the list of overlay icons
+	 */
+	QStringList overlayIcons() const;
 
 	/**
 	 * \brief Return the description
 	 */
 	QString description() const;
 
-
 	/**
 	 * \brief Return the protocol this applies to
 	 */
 	Protocol* protocol() const;
-	
+
 	/**
 	 * @return @c true if this a contact with this status is definitely online,
 	 *         @c false if the contact is Offline, Connecting or Unknown.
 	 */
 	bool isDefinitelyOnline() const;
-	
+
 
 	/**
 	 * \brief Return a status icon generated for the given Contact
@@ -380,23 +385,23 @@ public:
 	bool operator<( const OnlineStatus &other ) const;
 
 	/**
-	 * \brief returns a QString from a StatusType 
+	 * \brief returns a QString from a StatusType
 	 *
 	 * Static method to convert a Kopete::OnlineStatus::StatusType to a string to avoid
 	 * many issues when saving StatusType to disk
 	 */
 	 static QString statusTypeToString(OnlineStatus::StatusType status);
-	 
+
 	 /**
-	 * \brief returns a StatusType from a QString 
+	 * \brief returns a StatusType from a QString
 	 *
 	 * Static method to convert a QString representing a StatusType to a StatusType to avoid
 	 * many issues when saving StatusType to disk
 	 */
 	 static OnlineStatus::StatusType statusStringToType(QString& string);
-	 
-	 
-	
+
+
+
 private:
 
 	class Private;

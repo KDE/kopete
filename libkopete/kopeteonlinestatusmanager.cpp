@@ -3,7 +3,7 @@
 
     Copyright (c) 2004 by Olivier Goffart  <ogoffart @ tiscalinet . be>
     Copyright (c) 2003 by Will Stephenson <lists@stevello.free-online.co.uk>
-	
+
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -47,7 +47,7 @@ class OnlineStatusManager::Private
 	};
 
 	typedef QMap< OnlineStatus , RegisteredStatusStruct >  ProtocolMap ;
-		
+
 	QPixmap *nullPixmap;
 	QMap<Protocol* , ProtocolMap > registeredStatus;
 	QDict< QPixmap > iconCache;
@@ -60,7 +60,7 @@ OnlineStatusManager *OnlineStatusManager::self()
 	static KStaticDeleter<OnlineStatusManager> deleter;
 	if(!s_self)
 		deleter.setObject( s_self, new OnlineStatusManager() );
-	return s_self;	
+	return s_self;
 }
 
 OnlineStatusManager::OnlineStatusManager()
@@ -141,30 +141,30 @@ static void blendOnLower( const QImage &upper_, QImage &lower )
 		return;
 	if ( lower.width() <= 0 || lower.height() <= 0 )
 		return;
-	
+
 	QImage upper = upper_;
 	if ( upper.depth() != 32 )
 		upper = upper.convertDepth( 32 );
 	if ( lower.depth() != 32 )
 		lower = lower.convertDepth( 32 );
-	
+
 	int cw = std::min( upper.width(), lower.width() ),
 	    ch = std::min( upper.height(), lower.height() );
 	const int m = 255;
-	
+
 	for ( int j = 0; j < ch; j++ )
 	{
 		QRgb *u = (QRgb*)upper.scanLine(j);
 		QRgb *l = (QRgb*)lower.scanLine(j);
-		
+
 		for( int k = cw; k; ++u, ++l, --k )
 		{
 			int ua = qAlpha(*u);
 			if ( !ua )
 				continue;
-			
+
 			int la = qAlpha(*l);
-			
+
 			int   d =                       ua * m +              la * (m - ua);
 			uchar r = uchar( (   qRed(*u) * ua * m +   qRed(*l) * la * (m - ua) ) / d );
 			uchar g = uchar( ( qGreen(*u) * ua * m + qGreen(*l) * la * (m - ua) ) / d );
@@ -182,7 +182,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 
 	if ( baseIcon == statusFor.overlayIcon() )
 		kdWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible." << endl;
-	
+
 	QPixmap* basis = new QPixmap( SmallIcon( baseIcon ) );
 
 	// Colorize
@@ -196,19 +196,25 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 		*basis = KIconEffect().apply( *basis, KIcon::Small, KIcon::DisabledState );
 
 	//composite the iconOverlay for this status and the supplied baseIcon
-	if ( !( statusFor.overlayIcon().isNull() ) ) // otherwise leave the basis as-is
+	QStringList overlays = statusFor.overlayIcons();
+	if ( !( overlays.isEmpty() ) ) // otherwise leave the basis as-is
 	{
 		KIconLoader *loader = KGlobal::instance()->iconLoader();
-		QPixmap overlay = loader->loadIcon(statusFor.overlayIcon(), KIcon::Small, 0 ,  KIcon::DefaultState, 0L, /*canReturnNull=*/ true );
-		
-		if ( !overlay.isNull() )
+
+		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )
 		{
-			// we want to preserve the alpha channels of both basis and overlay.
-			// there's no way to do this in Qt. In fact, there's no way to do this
-			// in KDE since KImageEffect is so badly broken.
-			QImage basisImage = basis->convertToImage();
-			blendOnLower( overlay.convertToImage(), basisImage );
-			basis->convertFromImage( basisImage );
+			QPixmap overlay = loader->loadIcon(*it, KIcon::Small, 0 ,
+				KIcon::DefaultState, 0L, /*canReturnNull=*/ true );
+
+			if ( !overlay.isNull() )
+			{
+				// we want to preserve the alpha channels of both basis and overlay.
+				// there's no way to do this in Qt. In fact, there's no way to do this
+				// in KDE since KImageEffect is so badly broken.
+				QImage basisImage = basis->convertToImage();
+				blendOnLower( overlay.convertToImage(), basisImage );
+				basis->convertFromImage( basisImage );
+			}
 		}
 	}
 
@@ -242,13 +248,13 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		unsigned int options=it.data().options;
 		if(options & OnlineStatusManager::HideFromMenu)
 			continue;
-		
+
 		OnlineStatus status=it.key();
 		QString caption=it.data().caption;
 		KAction *action;
 
-		// Any existing actions owned by the account are reused by recovering them 
-		// from the parent's child list. 
+		// Any existing actions owned by the account are reused by recovering them
+		// from the parent's child list.
 		// The description of the onlinestatus is used as the qobject name
 		// This is safe as long as OnlineStatus are immutable
 		QCString actionName = status.description().ascii();
@@ -263,7 +269,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 			else
 			{
 				action=new OnlineStatusAction( status, caption, status.iconFor(account) , account, actionName );
-				connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , 
+				connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) ,
 						account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 			}
 		}
@@ -273,10 +279,10 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		if(options & OnlineStatusManager::DisabledIfOffline  && !account->isConnected())
 			action->setEnabled(false);
 #endif
-		
+
 		if(parent)
 			parent->insert(action);
-		
+
 	}
 }
 
@@ -293,7 +299,7 @@ void OnlineStatusAction::slotActivated()
 }
 
 
-} //END namespace Kopete 
+} //END namespace Kopete
 
 #include "kopeteonlinestatusmanager.moc"
 
