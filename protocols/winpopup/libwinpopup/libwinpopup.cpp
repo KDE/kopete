@@ -291,6 +291,18 @@ const Host KWinPopup::getHostInfo(const QString &Group, const QString &aHost)
 	return ret;
 }
 
+const QStringList KWinPopup::getHostDetails( const QString &Host )
+{
+	QStringList theHostDetails;
+	QString theGroup, theOS, theSoftware;
+
+	//QPair<stringMap, stringMap> thisPair = grabData( Host, &theGroup, &theOS, &theSoftware );
+	grabData( Host, &theGroup, &theOS, &theSoftware );
+
+	theHostDetails << theGroup << theOS << theSoftware;
+	return( theHostDetails );
+}
+
 const QStringList KWinPopup::getGroups()
 {
 	QStringList ret;

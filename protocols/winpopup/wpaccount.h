@@ -72,6 +72,7 @@ public slots:
 public:
 	const QStringList getGroups();
 	const QStringList getHosts(const QString &Group);
+	const QStringList getHostDetails( const QString &Host );
 
 // Stuff used by WPContact
 public:

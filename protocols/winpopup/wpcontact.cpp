@@ -32,7 +32,7 @@ WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const Q
 	: KopeteContact(account, newHostName, metaContact)
 {
 	DEBUG(WPDMETHOD, "WPContact::WPContact(<account>, " << newHostName << ", " << displayName << ", <parent>)");
-	DEBUG(WPDINFO, "I am " << this);
+	DEBUG(WPDINFO, "I am " << this << "!");
 
 	QString newDisplayName;
 	for(unsigned i = 0; i < newHostName.length(); i++)
@@ -51,7 +51,7 @@ WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const Q
 	checkStatus.start(1000, false);
 
 	m_manager = 0L;
-
+	m_infoDialog = 0L;
 }
 
 KActionCollection * WPContact::customContextMenuActions()
@@ -106,6 +106,27 @@ void WPContact::slotMessageManagerDestroyed()
 void WPContact::slotUserInfo()
 {
 	// TODO: show user info?
+	kdDebug( 14180 ) << k_funcinfo << endl;
+
+
+	if ( !m_infoDialog )
+	{
+		m_infoDialog = new WPUserInfo( this, static_cast<WPAccount*>( account() ) );
+		if( !m_infoDialog )
+			return;
+		connect( m_infoDialog, SIGNAL( closing() ), this, SLOT( slotCloseUserInfoDialog() ) );
+		m_infoDialog->show();
+	}
+	else
+	{
+		m_infoDialog->raise();
+	}
+}
+
+void WPContact::slotCloseUserInfoDialog()
+{
+	m_infoDialog->delayedDestruct();
+	m_infoDialog = 0L;
 }
 
 void slotDeleteContact()

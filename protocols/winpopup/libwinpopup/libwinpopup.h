@@ -125,7 +125,8 @@ public:
 	const QStringList getHosts(const QString &Group);
 	const Host getHostInfo(const QString &Group, const QString &Host);
 	bool checkHost(const QString &Name);
-
+	const QStringList getHostDetails( const QString &Host );
+	
 	KWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName, int HostCheckFrequency, int MessageCheckFrequency);
 	~KWinPopup();
 };

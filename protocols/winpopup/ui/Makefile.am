@@ -5,5 +5,5 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 libkopetewpui_la_METASOURCES = AUTO
 
-libkopetewpui_la_SOURCES = wpaddcontactbase.ui wppreferencesbase.ui wpeditaccountbase.ui empty.cpp
+libkopetewpui_la_SOURCES = wpaddcontactbase.ui wppreferencesbase.ui wpeditaccountbase.ui empty.cpp wpuserinfowidget.ui
 EXTRA_DIST = wppreferencesbase.ui wpaddcontactbase.ui wpeditaccountbase.ui

@@ -77,6 +77,12 @@ const QStringList WPAccount::getHosts(const QString &Group)
 	return theInterface->getHosts(Group);
 }
 
+const QStringList WPAccount::getHostDetails( const QString &Host )
+{
+	kdDebug( 14180 ) << k_funcinfo << endl;
+	return theInterface->getHostDetails( Host );
+}
+
 bool WPAccount::checkHost(const QString &Name)
 {
 	return theInterface->checkHost(Name);

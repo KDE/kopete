@@ -37,6 +37,7 @@
 
 // Local Includes
 #include "wpprotocol.h"
+#include "wpuserinfo.h"
 
 class QTimer;
 class QListView;
@@ -70,6 +71,7 @@ signals:
 private slots:
 	void slotMessageManagerDestroyed();
 	void slotSendMessage(KopeteMessage &message);
+	void slotCloseUserInfoDialog(); // Called when the userinfo dialog is getting closed
 
 private:
 	bool myWasConnected;	// true if protocol connected at last check
@@ -79,6 +81,7 @@ private:
 							// holds all the protocol specific actions (not many!)
 	KopeteMessageManager *m_manager;
 							// holds the two message managers - one for email and one for chat
+	WPUserInfo *m_infoDialog;
 };
 
 #endif
