@@ -268,7 +268,7 @@ KopeteContact *KopeteMetaContact::sendMessage()
 	if( !c )
 	{
 		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Sorry,
-			i18n( "This user is not reachable at the moment. Please try a protocol that supports offline sending, or wait "
+			i18n( "This user is not reachable at the moment. Please make sure you are connected and using a protocol that supports offline sending, or wait "
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
 	else
@@ -286,7 +286,7 @@ KopeteContact *KopeteMetaContact::startChat()
 	if( !c )
 	{
 		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Sorry,
-			i18n( "This user is not reachable at the moment. Please try a protocol that supports offline sending, or wait "
+			i18n( "This user is not reachable at the moment. Please make sure you are connected and using a protocol that supports offline sending, or wait "
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
 	else
