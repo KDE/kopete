@@ -2,8 +2,9 @@
     kopetemessage.cpp  -  Base class for Kopete messages
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -401,6 +402,10 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 	result.replace(
 		QRegExp( makeRegExp("%1@%2").arg( name, domain ) ),
 		QString::fromLatin1("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
+		
+	//Workaround for Bug 85061: Highlighted URLs adds a ' ' after the URL itself
+	// the trailing  &nbsp; is included in the url.
+	result.replace( QRegExp( QString::fromLatin1("(<a href=\"[^\"]+)(&nbsp;)(\")")  ) , QString::fromLatin1("\\1\\3") );
 
 	return result;
 }
