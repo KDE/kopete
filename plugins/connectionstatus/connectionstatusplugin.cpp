@@ -2,7 +2,7 @@
                           connectionstatusplugin.cpp
                              -------------------
     begin                : 26th Oct 2002
-    copyright            : (C) 2002 by Chris Howells
+    copyright            : (C) 2002-2003 Chris Howells
     email                : howells@kde.org
  ***************************************************************************/
 
