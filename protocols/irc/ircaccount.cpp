@@ -128,6 +128,7 @@ void IRCAccount::setConnectCommands( const QStringList &commands )
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup() );
 	config->writeEntry( "ConnectCommands", m_connectCommands );
+	config->sync();
 }
 
 KActionMenu *IRCAccount::actionMenu()
