@@ -22,6 +22,7 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <qvaluestack.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -53,6 +54,9 @@ public:
 	// if all plugins are gone
 	enum ShutdownMode { Running, ShuttingDown, DoneShutdown };
 	ShutdownMode shutdownMode;
+
+	// Plugins pending for loading
+	QValueStack<QString> pluginsToLoad;
 };
 
 // Put the static deleter in its anonymous namespace
@@ -143,6 +147,9 @@ void KopetePluginManager::shutdown()
 
 	d->shutdownMode = KopetePluginManagerPrivate::ShuttingDown;
 
+	// Remove any pending plugins to load, we're shutting down now :)
+	d->pluginsToLoad.clear();
+
 	//first: save the accounts before unloading them
 	//FIXME: i don't like this depedence between KopetePluginManager and KopeteAccountManager
 	KopeteAccountManager::manager()->save();
@@ -211,21 +218,32 @@ void KopetePluginManager::loadAllPlugins()
 			if ( it.data() == QString::fromLatin1( "true" ) )
 			{
 				if ( !plugin( key ) )
-				{
-					loadPlugin( key );
-
-					// FIXME: processEvents is evil, we need to use a queue and
-					//        a singleshot timer instead - Martijn
-					kapp->processEvents();
-				}
+					d->pluginsToLoad.push( key );
 			}
 			else
 			{
+				// FIXME: Does this ever happen? As loadAllPlugins is only called on startup I'd say 'no'.
+				//        If it does, it should be made async though. - Martijn
 				if ( plugin( key ) )
 					unloadPlugin( key );
 			}
 		}
 	}
+
+	// Schedule the plugins to load
+	QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
+}
+
+void KopetePluginManager::slotLoadNextPlugin()
+{
+	if ( d->pluginsToLoad.isEmpty() )
+		return;
+
+	QString key = d->pluginsToLoad.pop();
+	loadPlugin( key );
+
+	if ( !d->pluginsToLoad.isEmpty() )
+		QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
 }
 
 KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )

@@ -190,6 +190,12 @@ private slots:
 	 */
 	void slotPluginReadyForUnload();
 
+	/**
+	 * Load a plugin from our queue. Does nothing if the queue is empty.
+	 * Schedules itself again if more plugins are pending.
+	 */
+	void slotLoadNextPlugin();
+
 private:
 	/**
 	 * @internal
