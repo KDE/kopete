@@ -92,9 +92,9 @@ GaduSession::login( uin_t uin, const QString& password,
 
     memset( &p, 0, sizeof(p) );
     p.uin = uin;
-    strcpy(p.password, password.latin1());
+    p.password = const_cast<char*>(password.latin1());
     p.status = status;
-    strcpy(p.status_descr, statusDescr.latin1());
+    p.status_descr = const_cast<char*>(statusDescr.latin1());
     p.async = 1;
     login( p );
 }
