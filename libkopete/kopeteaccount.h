@@ -70,7 +70,10 @@ public:
 	 */
 	QString getPassword( bool error = false, bool *ok =0L );
 	/*
-	 * Set the password for this account. A null account mean that the password is not remember
+	 * Set the password for this account.
+	 * @param pass set to Qtring::null means that
+	 * the password is not remembered, otherwise sets the new password
+	 * for this account
 	 * Should be called only by EditAccountWidget
 	 */
 	void setPassword(const QString &pass = QString::null);
