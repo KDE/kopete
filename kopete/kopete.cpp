@@ -253,36 +253,24 @@ ContactList *Kopete::contactList()
 void Kopete::initEmoticons()
 {
 	KStandardDirs dir;
-	mEmoticonTheme = "set1";
+	mEmoticonTheme = "Default";
+	/* Happy emoticons */
+	/* :-) */
 	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.png");
+	/* ;-) */
 	mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/wink.png");
-
-	mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/biggrin.png");
-	mEmoticons.clown = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/clown.png");
-	mEmoticons.confused = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/confused.png");
-	mEmoticons.coool = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/coool.png");
+    /* :-P */
+	mEmoticons.tongue = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/tongue.png");
+	/* :-D*/
+	mEmoticons.biggrin = findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/bigrin.png");
+	
+	/* Sad emoticons */
+    mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.png");
 	mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.png");
-	mEmoticons.devil = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/devil.png");
-	mEmoticons.edit = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/edit.png");
-	mEmoticons.frown = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/frown.png");
-	mEmoticons.heart = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/heart.png");
-	mEmoticons.homepage = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/homepage.png");
-	mEmoticons.kwijl = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/kwijl.png");
-	mEmoticons.loveit = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/loveit.png");
-	mEmoticons.michel = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/michel.png");
-	mEmoticons.profile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/profile.png");
-	mEmoticons.puh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/puh.png");
-	mEmoticons.puh2 = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/puh2.png");
-	mEmoticons.quote = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/quote.png");
-	mEmoticons.rc5 = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/rc5.png");
-	mEmoticons.redface = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/redface.png");
-	mEmoticons.sadley = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/sadley.png");
-	mEmoticons.shadey = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/shadey.png");
-	mEmoticons.sleephappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/sleephappy.png");
-	
-	mEmoticons.vork = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/vork.png");
-	
-	mEmoticons.yummie = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/yummie.png");
+
+	/* Surprise */
+	mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.png");
+
 }
 
 QString Kopete::parseEmoticons( QString message )
@@ -290,16 +278,34 @@ QString Kopete::parseEmoticons( QString message )
 	message = message.replace(QRegExp(":-\\)"),"<img src=\""+mEmoticons.smile+"\">");
 	message = message.replace(QRegExp(":\\)"),"<img src=\""+mEmoticons.smile+"\">");
 
-	message = message.replace(QRegExp(":-\\("),"<img src=\""+mEmoticons.sadley+"\">");
-	message = message.replace(QRegExp(":\\("),"<img src=\""+mEmoticons.sadley+"\">");
-
 	message = message.replace(QRegExp(";-\\)"),"<img src=\""+mEmoticons.wink+"\">");
 	message = message.replace(QRegExp(";\\)"),"<img src=\""+mEmoticons.wink+"\">");
 
-	//message = message.replace(QRegExp(":o"),"<img src=\""+strSmilie4+"\">");
-	//message = message.replace(QRegExp(":O"),"<img src=\""+strSmilie4+"\">");
-	//message = message.replace(QRegExp(":-o"),"<img src=\""+strSmilie4+"\">");
-	//message = message.replace(QRegExp(":-O"),"<img src=\""+strSmilie4+"\">");
+	message = message.replace(QRegExp(":p"),"<img src=\""+mEmoticons.tongue+"\">");
+	message = message.replace(QRegExp(":P"),"<img src=\""+mEmoticons.tongue+"\">");
+	message = message.replace(QRegExp(":-p"),"<img src=\""+mEmoticons.tongue+"\">");
+	message = message.replace(QRegExp(":-P"),"<img src=\""+mEmoticons.tongue+"\">");
+	
+	message = message.replace(QRegExp(":D"),"<img src=\""+mEmoticons.biggrin+"\">");
+	message = message.replace(QRegExp(":d"),"<img src=\""+mEmoticons.biggrin+"\">");
+	message = message.replace(QRegExp(":-D"),"<img src=\""+mEmoticons.biggrin+"\">");
+	message = message.replace(QRegExp(":-d"),"<img src=\""+mEmoticons.biggrin+"\">");
+	message = message.replace(QRegExp(":>"),"<img src=\""+mEmoticons.biggrin+"\">");
+	message = message.replace(QRegExp(":->"),"<img src=\""+mEmoticons.biggrin+"\">");
+	
+
+	message = message.replace(QRegExp(":-\\("),"<img src=\""+mEmoticons.unhappy+"\">");
+	message = message.replace(QRegExp(":\\("),"<img src=\""+mEmoticons.unhappy+"\">");
+
+	message = message.replace(QRegExp(":'-\\("),"<img src=\""+mEmoticons.cry+"\">");
+	message = message.replace(QRegExp(":'\\("),"<img src=\""+mEmoticons.cry+"\">");
+
+	message = message.replace(QRegExp(":o"),"<img src=\""+mEmoticons.oh+"\">");
+	message = message.replace(QRegExp(":O"),"<img src=\""+mEmoticons.oh+"\">");
+	message = message.replace(QRegExp(":-o"),"<img src=\""+mEmoticons.oh+"\">");
+	message = message.replace(QRegExp(":-O"),"<img src=\""+mEmoticons.oh+"\">");
+	
+	#warning "TODO: Sleep emoticon parsing pending"
 	
 	return message;
 }

@@ -1,4 +1,4 @@
-SUBDIRS = set1
+SUBDIRS = Default set1
 
 
 

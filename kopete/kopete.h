@@ -48,32 +48,19 @@ class KopeteSystemTray;
 
 struct KopeteEmoticons
 {
-	QString biggrin;
-	QString clown;
-	QString confused;
-	QString coool;
-	QString cry;
-	QString devil;
-	QString edit;
-	QString frown;
-	QString heart;
-	QString homepage;
-	QString kwijl;
-	QString loveit;
-	QString michel;
-	QString profile;
-	QString puh;
-	QString puh2;
-	QString quote;
-	QString rc5;
-	QString redface;
-	QString sadley;
-	QString shadey;
-	QString sleephappy;
+	/* Happy */
 	QString smile;
-	QString vork;
 	QString wink;
-	QString yummie;
+	QString tongue;
+	QString biggrin;
+
+	/* Sad */
+	QString unhappy;
+    QString cry;
+	/* Surprise */
+	QString oh;
+	/* Other */
+	QString sleep;
 };
 
 
