@@ -85,6 +85,12 @@ public:
 	 */
 	bool isReachable() const;
 
+	/**
+	 * Get/set the display name
+	 */
+	QString displayName() const;
+	void setDisplayName( const QString &name );
+
 public slots:
 	/**
 	 * Contact another user.
@@ -116,6 +122,11 @@ signals:
 	void onlineStatusChanged( KopeteMetaContact *contact,
 		KopeteMetaContact::OnlineStatus status );
 
+	/**
+	 * The meta contact's display name changed
+	 */
+	void displayNameChanged( KopeteMetaContact *c, const QString &name );
+
 private slots:
 	/**
 	 * One of the child contact's online status changed
@@ -123,8 +134,26 @@ private slots:
 	void slotContactStatusChanged( KopeteContact *c,
 		KopeteContact::ContactStatus s );
 
+	/**
+	 * One of the child contact's display names changed
+	 * FIXME: Add a KopeteContact * to this method and the associated signal
+	 *        in KopeteContact!
+	 */
+	void slotContactNameChanged( const QString &name );
+
 private:
 	QPtrList<KopeteContact> m_contacts;
+
+	/**
+	 * Display name as shown
+	 */
+	QString m_displayName;
+
+	/**
+	 * When true, track changes in child contact's display name and update
+	 * the meta contact's display name too
+	 */
+	bool m_trackChildNameChanges;
 };
 
 #endif

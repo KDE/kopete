@@ -26,6 +26,7 @@
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
+	m_trackChildNameChanges = true;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -50,8 +51,10 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 			this, SLOT( slotContactStatusChanged( KopeteContact *,
 			KopeteContact::ContactStatus ) ) );
 
-		// FIXME: Naming!!!
-		setName( c->name() );
+		connect( c, SIGNAL( nameChanged( const QString & ) ),
+			this, SLOT( slotContactNameChanged( const QString & ) ) );
+
+		setDisplayName( c->name() );
 
 		// FIXME: Group handling!!!!
 		for( QStringList::ConstIterator it = groups.begin();
@@ -217,6 +220,23 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
 {
 	kdDebug() << "KopeteMetaContact::slotContactStatusChanged" << endl;
 	emit onlineStatusChanged( this, status() );
+}
+
+void KopeteMetaContact::setDisplayName( const QString &name )
+{
+	m_displayName = name;
+	emit displayNameChanged( this, name );
+}
+
+QString KopeteMetaContact::displayName() const
+{
+	return m_displayName;
+}
+
+void KopeteMetaContact::slotContactNameChanged( const QString &name )
+{
+	if( m_trackChildNameChanges )
+		setDisplayName( name );
 }
 
 #include "kopetemetacontact.moc"
