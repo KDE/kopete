@@ -198,7 +198,7 @@ DWORD Buffer::getDWord()
 }
 
 /** Called when a buffer error occurs */
-void Buffer::OnBufError(QString s)
+void Buffer::OnBufError(QString /*s*/)
 {
 	// Taking this out for now....
 	//kdDebug(14150) << "Buffer error: " << s << endl;
@@ -322,3 +322,5 @@ void Buffer::doResize(int inc)
 		}
 	}
 }
+
+// vim: set noet ts=4 sts=4 sw=4:

@@ -4,7 +4,7 @@
 //
 // For copyright and license, see accompanying documentation
 
-#include "config.h"
+//#include "config.h"
 
 #include <qstring.h>
 #include "aim.h"
@@ -12,11 +12,13 @@
 
 //#define tocNormalize(s) (s.lower().replace(QRegExp(" "),""))
 
-QString tocNormalize(const QString &oldstr){
-  return oldstr.lower().replace(QRegExp(" "),"");
+QString tocNormalize(const QString &oldstr)
+{
+	return oldstr.lower().replace(QRegExp(" "),"");
 }
-
-QString tocRoast(const QString &oldstr){
+/*
+QString tocRoast(const QString &oldstr)
+{
 	const QString tocRoast_string = "Tic/Toc";
 	const int tocRoast_length = tocRoast_string.length();
 
@@ -35,12 +37,16 @@ QString tocRoast(const QString &oldstr){
 
 	return newstr;
 }
+*/
+/*
 QString tocProcess(const QString &oldstr)
 {
-	/*Arguments
-with whitespace characters should be enclosed in quotes.  Dollar signs, 
-curly brackets, square brackets, parentheses, quotes, and backslashes 
-must all be backslashed whether in quotes or not.*/
+*/
+	/* Arguments
+	 * with whitespace characters should be enclosed in quotes. Dollar signs,
+	 * curly brackets, square brackets, parentheses, quotes, and backslashes
+	 * must all be backslashed whether in quotes or not. */
+/*
 	QString newstr = "\"";
 	for(unsigned int i = 0; i < oldstr.length(); i++)
 	{
@@ -67,3 +73,4 @@ must all be backslashed whether in quotes or not.*/
 	newstr += "\"";
 	return newstr;
 }
+*/

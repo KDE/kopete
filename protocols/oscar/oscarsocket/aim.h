@@ -6,7 +6,7 @@
 
 #ifndef AIM_H
 #define AIM_H
-
+/*
 #define TOC_PERMITALL 1
 #define TOC_DENYALL 2
 #define TOC_PERMITSOME 3
@@ -26,19 +26,16 @@
 //#define TOC_AUTH_PORT "5190"
 
 #define TOC_LANG "english"
-
 //#include "../config.h"
-
 #define KIT_VER "Kinkatta 0.90"
-
 //#define KIT_VER "\"kit client\"" KIT_VER_NUM
-
 #define TOC_VER_INT 1
-
+*/
 #include <qstring.h>
 
 QString tocNormalize(const QString &);
-QString tocRoast(const QString &);
-QString tocProcess(const QString &);
+// UNUSED
+//QString tocRoast(const QString &);
+//QString tocProcess(const QString &);
 
 #endif

@@ -122,7 +122,7 @@ class OscarSocket : public OscarConnection
 	/** Sets idle time */
 	void sendIdleTime(DWORD time);
 	/** requests ssi data from the server */
-	/*void sendBuddyListRequest(const TAimConfig &);*/
+	void sendBuddyListRequest(void);
 	/** Sends message to dest */
 	void sendIM(const QString &message, const QString &dest, bool isAuto);
 	/** Requests sn's user info */
@@ -175,6 +175,9 @@ class OscarSocket : public OscarConnection
 	void sendFileSendDeny(const QString &sn);
 	/** Accepts a file transfer from sn, returns OscarConnection created */
 	OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
+
+	/** send status (ICQ method) */
+	void sendStatus(unsigned long status);
 
 	public slots:
 	/** This is called when a connection is established */
@@ -407,6 +410,11 @@ class OscarSocket : public OscarConnection
 	QString myUserProfile;
 	/** Tells if we are connected to the server and ready to operate */
 	bool isConnected;
+
+	/** counter to find out if we got all packets needed before sending
+	  * out more info and the final CLI_READY command which is the end of a login procedure
+	  */
+	int gotAllRights;
 
 	signals:
 	/** Called when an SSI acknowledgement is recieved */

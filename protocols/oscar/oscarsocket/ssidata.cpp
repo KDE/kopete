@@ -79,7 +79,7 @@ SSI * SSIData::addGroup(const QString &name)
 				return NULL;
 			if (i->gid > maxgid)
 				maxgid = i->gid;
-		} 
+		}
 		newitem->gid = maxgid + 1;
 	}
 	else  //this is the master group
@@ -90,12 +90,12 @@ SSI * SSIData::addGroup(const QString &name)
 	newitem->bid = 0;
 	newitem->tlvlength = 0;
 	newitem->tlvlist = NULL;
-  append(newitem);
-  return newitem;
+	append(newitem);
+	return newitem;
 }
 
-/** Finds the buddy with given name and group... returns NULL if not found */
-SSI * SSIData::findBuddy(const QString &name, const QString &group)
+// Finds the buddy with given name and group... returns NULL if not found
+SSI *SSIData::findBuddy(const QString &name, const QString &group)
 {
 	SSI *gr = findGroup(group); //find the parent group
 	if (gr)
@@ -104,28 +104,27 @@ SSI * SSIData::findBuddy(const QString &name, const QString &group)
 		for (SSI *i=first(); i; i = next())
 		{
 			//if the ssi item has the right name, is a buddy, and has the right group
-      printf("i->gid is %x, gr->gid is %x \n",i->gid, gr->gid);
+			kdDebug(14150) << "i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;
 			if ((i->name == name) && (i->type == 0x0000) && (i->gid == gr->gid))
 			{
 				//we have found our buddy
-				printf("Found buddy %s in SSI data\n",name.latin1());
+				kdDebug(14150) << "Found buddy " << name << " in SSI data" << endl;
 				return i;
 			}
 		}
 	}
 	else
-		printf("Group %s not found\n",group.latin1());
+		kdDebug(14150) << "Group " << group << " not found" << endl;
 	return 0L;
 }
 
-/** Prints out the SSI data */
 void SSIData::print(void)
 {
 	for (SSI *i=first(); i; i = next())
-		{
-			kdDebug(14150) << "[OSCAR][SSIData] name: " << i->name << ", gid: " << i->gid << ", bid: " << i->bid << ", type: "
-				  << i->type << ", tbslen: " << i->tlvlength << endl;
-		} 
+	{
+		kdDebug(14150) << "[OSCAR][SSIData] name: " << i->name << ", gid: " << i->gid << ", bid: " << i->bid << ", type: "
+			  << i->type << ", tbslen: " << i->tlvlength << endl;
+	}
 }
 
 /** Adds the given sn to the list of blocked sn's */
@@ -160,11 +159,4 @@ SSI *SSIData::findDeny(const QString &name)
 	return 0L;
 }
 
-
-/*
- * Local variables:
- * c-indentation-style: gnu
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+// vim: set noet ts=4 sts=4 sw=4:

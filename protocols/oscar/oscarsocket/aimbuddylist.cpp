@@ -18,17 +18,11 @@
 
 #include "aimbuddylist.h"
 #include "oscarprotocol.h"
-
-// Project includes
 #include "aim.h"
-
-// KDE Includes
 #include <kdebug.h>
 
-AIMBuddyList::AIMBuddyList()
-	: QObject()
+AIMBuddyList::AIMBuddyList() : QObject()
 {
-
 }
 
 AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
@@ -42,18 +36,20 @@ AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
 	for (QMap<QString, AIMBuddy * >::Iterator it = original.mBuddyNameMap.begin(); it != original.mBuddyNameMap.end(); ++it)
 	{
 		if ((*it))
+		{
 			if (mBuddyNameMap.find((*it)->screenname()) != mBuddyNameMap.end())
 				continue; //already have this in our list
-
+		}
 		mBuddyNameMap.insert((*it)->screenname(), (*it));
 	}
 
 	for (QMap<int, AIMGroup * >::Iterator it = original.mGroupMap.begin(); it != original.mGroupMap.end(); ++it)
 	{
 		if ((*it))
+		{
 			if (mGroupMap.find((*it)->ID()) != mGroupMap.end())
 				continue; //already have this in our list
-
+		}
 		mGroupMap.insert((*it)->ID(), (*it));
 		if (!(*it)->name().isNull())
 			mGroupNameMap.insert((*it)->name(), (*it));
@@ -185,8 +181,7 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mGroupID = groupID;
 	mScreenName = screenName;
 	// By default set it's status to offline
-	mStatus = OscarProtocol::protocol()->getOnlineStatus(
-	    OscarProtocol::OFFLINE);
+	mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE);
 }
 
 AIMBuddyCaps::AIMBuddyCaps()

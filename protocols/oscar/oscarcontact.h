@@ -126,7 +126,7 @@ class OscarContact : public KopeteContact
 		/** Tells whether or not we have a direct connection with the contact */
 		bool mDirectlyConnected;
 
-	private slots: // Private slots
+	private slots:
 		/** Called when a buddy changes */
 		void slotUpdateBuddy();
 		/** Called when a buddy has changed status */
@@ -181,12 +181,4 @@ class OscarContact : public KopeteContact
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -30,7 +30,6 @@
 #include <kpopupmenu.h>
 #include <kfiledialog.h>
 
-#include "aim.h"
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
@@ -40,6 +39,7 @@
 #include "kopetegroup.h"
 #include "kopeteaccount.h"
 
+#include "aim.h"
 #include "aimbuddylist.h"
 #include "oscarprotocol.h"
 #include "oscarsocket.h"
@@ -47,10 +47,11 @@
 #include "oscaraccount.h"
 
 OscarContact::OscarContact(const QString name, const QString displayName,
-			   KopeteAccount *account, KopeteMetaContact *parent)
-    : KopeteContact(account, name, parent)
+	KopeteAccount *account, KopeteMetaContact *parent)
+	: KopeteContact(account, name, parent)
 {
-	kdDebug(14150) << "[OscarContact] OscarContact(), name=" << name << endl;
+	kdDebug(14150) << "[OscarContact] OscarContact(), name='" <<
+		name << "', displayName='" << displayName << "'"<< endl;
 
 	// Save the OscarAccount object using static_cast
 	if (!account)
@@ -59,14 +60,14 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	}
 	else
 	{
-		kdDebug(14150) << "[OscarContact] Casting account to OscarAccount" <<  endl;
+//		kdDebug(14150) << "[OscarContact] Casting account to OscarAccount" << endl;
 		mAccount = static_cast<OscarAccount*>(account);
 	}
 
 	// We store normalized names (lowercase no spaces)
 	mName = tocNormalize(name);
 	mMsgManager = 0L;
-	kdDebug(14150) << "[OscarContact] Attempting to get the internal buddy list for this account" << endl;
+//	kdDebug(14150) << "[OscarContact] Attempting to get the internal buddy list for this account" << endl;
 	mListContact = mAccount->internalBuddyList()->findBuddy(mName);
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
@@ -83,18 +84,18 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	// Sets our display name (from KopeteContact)
 	if (!displayName.isEmpty())
 	{
-		kdDebug(14150) << "[OscarContact] Setting display name to displayname var: " << displayName << endl;
+//		kdDebug(14150) << "[OscarContact] Setting display name to displayname var: " << displayName << endl;
 		setDisplayName(displayName);
 	}
 	else
 	{
-		kdDebug(14150) << "[OscarContact] Setting display name to name var: " << name << endl;
+//		kdDebug(14150) << "[OscarContact] Setting display name to name var: " << name << endl;
 		setDisplayName(name);
 	}
 
 	if (!mListContact)
 	{
-		kdDebug(14150) << "[OscarContact] Internal buddy list did not contain this contact, creating it..." << endl;
+//		kdDebug(14150) << "[OscarContact] Internal buddy list did not contain this contact, creating it..." << endl;
 		mListContact = new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
 		mAccount->internalBuddyList()->addBuddy(mListContact);
 		if (!mListContact) // Do a double check
@@ -120,13 +121,13 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	slotUpdateBuddy();
 */
 
-//	kdDebug(14150) << "[OscarContact]  " << mName << endl;
-	theContacts.append( this );
+//	kdDebug(14150) << "[OscarContact] " << mName << endl;
+	theContacts.append(this);
 }
 
 void OscarContact::initSignals()
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
+//	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	// Buddy Changed
 	QObject::connect(
 		mAccount->getEngine(), SIGNAL(gotBuddyChange(UserInfo)),
@@ -187,16 +188,9 @@ void OscarContact::initSignals()
 //	kdDebug(14150) << "[OscarContact] Finished initializing signal connections" << endl;
 }
 
-
-// void OscarContact::serialize(QMap< QString, QString > &serializedData,
-// 			     QMap< QString, QString > &addressBookData)
-// {
-//     // I believe, by default, our contact name and alias
-//     // are already stored for us, so we don't really want to do anything
-// }
-
 OscarContact::~OscarContact()
 {
+//	kdDebug(14150) << k_funcinfo << "Called for '" << mName << "'" << endl;
 }
 
 KopeteMessageManager* OscarContact::manager( bool )
@@ -230,7 +224,7 @@ void OscarContact::slotMessageManagerDestroyed()
 
 void OscarContact::slotMainStatusChanged(const KopeteOnlineStatus &newStatus)
 {
-	kdDebug(14150) << k_funcinfo << "called, with status '" << newStatus.description() << "'" << endl;
+//	kdDebug(14150) << k_funcinfo << "called, with status '" << newStatus.description() << "'" << endl;
 
 	if(newStatus == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
 	{
@@ -256,19 +250,19 @@ void OscarContact::slotUpdateBuddy()
 		return;
 
 	setOnlineStatus( mListContact->status() );
-	kdDebug( 14150 ) << k_funcinfo << "Contact '" << mName << "' is now " << onlineStatus().description() << endl;
+	kdDebug( 14150 ) << k_funcinfo << "Contact '" << mName << "' is now '" << onlineStatus().description() << "'" << endl;
 
 	// if we have become idle
 	if (mAccount->isConnected())
 	{
 		if ( mListContact->idleTime() > 0 )
 		{
-			kdDebug(14150) << "[OscarContact] '" << mName << "' IDLE, idletime=" << mListContact->idleTime() << endl;
+//			kdDebug(14150) << k_funcinfo << "'" << mName << "' is IDLE, idletime=" << mListContact->idleTime() << endl;
 			setIdleState(Idle);
 		}
 		else // we are not idling anymore
 		{
-			kdDebug(14150) << "[OscarContact] '" << mName << "' ACTIVE" << endl;
+//			kdDebug(14150) << k_funcinfo << "'" << mName << "' is ACTIVE" << endl;
 			setIdleState(Active);
 		}
 		mIdle = mListContact->idleTime();
@@ -293,12 +287,12 @@ void OscarContact::slotUpdateBuddy()
 			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
 			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
 		}
-   }
+	}
 }
 
 void OscarContact::initActions()
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
+//	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	actionCollection = 0L;
 	actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()), this, "actionWarn");
 	actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()), this, "actionBlock");
@@ -515,7 +509,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
 	if ( message.plainBody().isEmpty() ) // no text, do nothing
-	return;
+		return;
 
 	// Check to see if we're even online
 	if (!mAccount->isConnected())
@@ -527,14 +521,15 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	if( mListContact->status() ==
-		OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) ||
-		onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
+	if((!mAccount->isICQ()) &&
+		(mListContact->status() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE)) ||
+		(onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
+		)
 	{
-		KMessageBox::sorry( qApp->mainWidget(),
-			i18n( "<qt>This user is not online at the moment for you to message him/her. "
-				"AIM users must be online for you to be able to message them.</qt>" ),
-			i18n( "User not Online" ) );
+		KMessageBox::sorry(qApp->mainWidget(),
+			i18n("<qt>This user is not online at the moment for you to message him/her. "
+				"AIM users must be online for you to be able to message them.</qt>"),
+			i18n("User not Online"));
 		return;
 	}
 
@@ -545,7 +540,7 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	manager()->messageSucceeded();
 }
 
-/** Called when nickname needs to be updated */
+// Called when nickname needs to be updated
 void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName( newNickname );
@@ -553,7 +548,7 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 	mListContact->setAlias(newNickname);
 }
 
-/** Return whether or not this contact is REACHABLE. */
+// Return whether or not this contact is REACHABLE.
 bool OscarContact::isReachable()
 {
 	// With AIM you have to be online to be reachable
@@ -563,7 +558,7 @@ bool OscarContact::isReachable()
 		return isOnline();
 }
 
-/** Returns a set of custom menu items for the context menu */
+// Returns a set of custom menu items for the context menu
 KActionCollection *OscarContact::customContextMenuActions(void)
 {
 	if( actionCollection != 0L )
@@ -576,7 +571,7 @@ KActionCollection *OscarContact::customContextMenuActions(void)
 	return actionCollection;
 }
 
-/** Method to delete a contact from the contact list */
+// Method to delete a contact from the contact list
 void OscarContact::slotDeleteContact(void)
 {
 	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
@@ -634,24 +629,22 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 /*	============================================================================================
 	Original AIM-Messages, just a few to get the idea of the weird format[tm]:
 
-	From original AIM:
+	From original AIM: --------------------------------------------------------------------
 	<HTML><BODY BGCOLOR="#ffffff"><FONT FACE="Verdana" SIZE=4>some text message</FONT></BODY></HTML>
-
-	From Trillian 0.7something:
+	From Trillian 0.7something: ---------------------------------------------
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><b>bin ich ueberhaupt ein standard?</b></BODY></HTML>
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font color="#ffff00">ups</BODY></HTML>
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00">bggruen</BODY></HTML>
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00"><font color="#ffff00">both</BODY></HTML>
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial">LOL</BODY></HTML>
-
-	From GAIM:
+	From GAIM: ----------------------------------------------------------
 	<FONT COLOR="#0002A6"><FONT SIZE="2">cool cool</FONT></FONT>
 	============================================================================================ */
 
-	kdDebug(14150) << "AIM Plugin: original message: " << m << endl;
+	kdDebug(14150) << k_funcinfo << "Original MSG: " << m << endl;
 
-    // This code relies on QT 3.1, when we support that,
-    // put it back in
+	// TODO: This code relies on QT 3.1, when we support that,
+	// put it back in
 //	QRegExp expr;
 //	expr.setCaseSensitive( false );
 //	expr.setWildcard( true );
@@ -667,50 +660,48 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 //	expr.setPattern( "</body>$" );
 //	result.remove( expr );
 
-    bool removeMoreTags = true;
-    int pos;
-    while(removeMoreTags){
-	// If there are more beginning html tags
-	pos = result.find("<html>",0,false);
-	if(pos != -1){
-	    result.remove(pos, 6);
-	}
+	bool removeMoreTags = true;
+	int pos;
 
-	// If there are more ending html tags
-	pos = result.find("</html>",0,false);
-	if(pos != -1){
-	    result.remove(pos, 7);
-	}
+	while(removeMoreTags)
+	{
+		// If there are more beginning html tags
+		pos = result.find("<html>",0,false);
+		if(pos != -1)
+			result.remove(pos, 6);
 
-	// If there are more beginning body tags
-	pos = result.find("<body>",0,false);
-	if(pos != -1){
-	    result.remove(pos, 6);
-	}
+		// If there are more ending html tags
+		pos = result.find("</html>",0,false);
+		if(pos != -1)
+			result.remove(pos, 7);
 
-	// If there are more ending body tags
-	pos = result.find("</body>",0,false);
-	if(pos != -1){
-	    result.remove(pos, 7);
-	}
+		// If there are more beginning body tags
+		pos = result.find("<body>",0,false);
+		if(pos != -1)
+			result.remove(pos, 6);
 
-	// Check if there are more tags to remove
-	removeMoreTags = false;
-	if((result.find("<html>",0,false) > -1) ||
-	   (result.find("</html>",0,false) > -1) ||
-	   (result.find("<body>",0,false) > -1) ||
-	   (result.find("</body>",0,false) > -1)){
-	    removeMoreTags = true;
-	}
-    }
+		// If there are more ending body tags
+		pos = result.find("</body>",0,false);
+		if(pos != -1)
+			result.remove(pos, 7);
 
-    KopeteContactPtrList tmpList;
-    tmpList.append(mAccount->myself());
-    KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
+		// Check if there are more tags to remove
+		removeMoreTags = false;
+		if((result.find("<html>",0,false) > -1) ||
+			(result.find("</html>",0,false) > -1) ||
+			(result.find("<body>",0,false) > -1) ||
+			(result.find("</body>",0,false) > -1))
+		{
+			removeMoreTags = true;
+		}
+	} // END while()
 
-    // We don't actually do anything in there yet, but we might eventually
+	KopeteContactPtrList tmpList;
+	tmpList.append(mAccount->myself());
+	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
 
-    return msg;
+	// We don't actually do anything in there yet, but we might eventually
+	return msg;
 }
 
 /** Called when we want to block the contact */
@@ -841,15 +832,14 @@ void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 /** Called when a file transfer begins */
 void OscarContact::slotTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
 {
-    if ( tocNormalize(con->connectionName()) != tocNormalize(mName) )
-	return;
-
-    kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
-    KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer( this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
-
-    //connect to transfer manager
-    QObject::connect( con, SIGNAL( percentComplete( unsigned int ) ),
-		      tr, SLOT(slotPercentCompleted( unsigned int )) );
+	if (tocNormalize(con->connectionName()) != tocNormalize(mName))
+		return;
+	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
+	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer( this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
+	//connect to transfer manager
+	QObject::connect(
+		con, SIGNAL(percentComplete(unsigned int)),
+		tr, SLOT(slotPercentCompleted(unsigned int)));
 }
 
 void OscarContact::rename(const QString &newNick)
