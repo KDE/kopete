@@ -315,7 +315,7 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 
 	KopeteEmoticons emoticons( themeName );
 	QStringList smileys = emoticons.picList();
-	QString newContentText = "<qt>";
+	QString newContentText("<qt>");
 
 	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
 		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
