@@ -48,24 +48,40 @@
 		<xsl:choose>
 			<xsl:when test=".='MSNProtocol'">
 				<!-- MSN gubbins here -->
-				<img src="images/msn_protocol.png"/>
+				MSN 
 			</xsl:when>
 			<xsl:when test=".='ICQProtocol'">
 				<!-- ICQ gubbins here -->
-				<img src="images/icq_protocol.png"/>
+				ICQ
 			</xsl:when>
 			<xsl:when test=".='JabberProtocol'">
 				<!-- Jabber gubbins here -->
-				<img src="images/jabber_protocol_32.png"/>
+				Jabber
 			</xsl:when>
 			<xsl:when test=".='YahooProtocol'">
 				<!-- Yahoo gubbins here -->
-				<img src="images/yahoo_protocol_32.png"/>
+				Yahoo
 			</xsl:when>
 			<xsl:when test=".='OscarProtocol'">
 				<!-- Oscar gubbins here -->
-				<img src="images/oscar_protocol.png"/>
+				AIM
 			</xsl:when>
+			<xsl:when test=".='GaduProtocol'">
+				<!-- Gadu-gadu gubbins here -->
+				Gadu-gadu
+			</xsl:when>
+			<xsl:when test=".='WPProtocol'">
+				<!-- WinPopup gubbins here -->
+				WinPopup
+			</xsl:when>
+			<xsl:when test=".='SMSProtocol'">
+				<!-- SMS gubbins here -->
+				SMS
+			</xsl:when>
+			<xsl:otherwise>
+				<!-- default case -->
+				Unknown protocol, amend stylesheet
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
