@@ -102,7 +102,7 @@ void JabberProtocol::Connect() {
 
 void JabberProtocol::Disconnect() {
 	if (isConnected()) {
-    delete protocol;
+    protocol->Disconnect();
     kdDebug() << "Jabber plugin: Disconnected." << endl;
     mIsConnected = false;
     statusBarIcon->setPixmap(offlineIcon);
@@ -274,6 +274,9 @@ void JabberProtocol::slotContactUpdated(QString userID, QString name, QString st
 }
 
 void JabberProtocol::slotNewContact(QString userID, QString name, QString group) {
+  if (group.isNull()) {
+    group = i18n("Unknown");
+  }
   kopeteapp->contactList()->addContact(new JabberContact(userID, name, group, this), group);
 }
 
