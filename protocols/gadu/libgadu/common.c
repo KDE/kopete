@@ -39,7 +39,7 @@
 
 #include "libgadu.h"
 
-FILE *gg_debug_file = NULL;
+FILE *gg_debug_file;
 
 #ifndef GG_DEBUG_DISABLE
 
