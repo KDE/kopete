@@ -1,6 +1,6 @@
 if compile_LIBKOPETE_COMPAT
 COMPAT_DIR = compat
-COMPAT_LIBS = $(LIB_KOPETECOMPAT) ../libkopete/compat/kcdialog/libkopetecompat_kcdialog.la
+COMPAT_LIBS = compat/libkopetecompat.la
 endif
 
 SUBDIRS = private ui $(COMPAT_DIR) .
