@@ -9,12 +9,12 @@ AC_DEFUN(AC_CHECK_LIBPERL,
     CPPFLAGS="$CPPFLAGS `perl -MExtUtils::Embed -e ccopts`"
     ac_LDFLAGS_save="$LDFLAGS"
     LDFLAGS="$LDFLAGS $all_libraries"
-    AC_TRY_LINK(
-      [#include <EXTERN.h>],
-      [#include <perl.h>],
-      [static PerlInterpreter *my_perl;],
-      [ac_cv_have_libperl="yes"],
-      [ac_cv_have_libperl="no"]
+    AC_TRY_LINK([
+      #include <EXTERN.h>
+      #include <perl.h>
+      ], [static PerlInterpreter *my_perl;],
+      ac_cv_have_libperl="yes",
+      ac_cv_have_libperl="no"
     )
     LIBS="$ac_save_libs"
     LDFLAGS="$ac_LDFLAGS_save"
