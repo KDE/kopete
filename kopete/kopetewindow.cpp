@@ -135,7 +135,7 @@ void KopeteWindow::initActions()
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 
-	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), UserIcon("kopeteaway"), 0, 
+	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0, 
 		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
 		"SetAwayAll" );
 
