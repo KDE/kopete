@@ -23,7 +23,6 @@
 GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
   : KopeteAccount( parent, accountID, name ), pingTimer_(0)
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::GaduAccount"<<endl;
 
 	session_ = new GaduSession( this, "GaduSession" );
 
@@ -44,7 +43,6 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 void
 GaduAccount::initActions()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::InitActions"<<endl;
 	KAction* onlineAction    = new KAction( i18n("Go O&nline"), "gg_online", 0, this,
                                           SLOT(slotGoOnline()), this, "actionGaduConnect" );
 	KAction* offlineAction   = new KAction( i18n("Go &Offline"), "gg_offline", 0, this,
@@ -76,7 +74,6 @@ GaduAccount::initActions()
 void
 GaduAccount::initConnections()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::InitConnections"<<endl;
 
 	QObject::connect( session_, SIGNAL(error(const QString&,const QString&)),
 				SLOT(error(const QString&, const QString&)) );
@@ -100,7 +97,6 @@ GaduAccount::initConnections()
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::SetAway"<<endl;
 
   if ( isAway ) {
     uint status = (awayMessage.isEmpty()) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
@@ -110,37 +106,27 @@ void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 
 KopeteContact* GaduAccount::myself() const
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::myself"<<endl;
-
 	return myself_;
 }
 
 KActionMenu* GaduAccount::actionMenu()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::actionMenu"<<endl;
-
 	return actionMenu_;
 }
 
 void GaduAccount::connect()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::connect"<<endl;
-
 	slotGoOnline();
 }
 
 void GaduAccount::disconnect()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::disconnect"<<endl;
-
 	slotGoOffline();
 }
 
 bool GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
 																					 KopeteMetaContact* parentContact )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::AddcontactToMetaContact"<<endl;
-
 	uin_t uinNumber = contactId.toUInt();
 
 	if ( !parentContact->findContact( protocol()->pluginId(), myself_->contactId(), contactId ) ) {
@@ -156,8 +142,6 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 void
 GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& descr )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::ChangeStatus"<<endl;
-
   kdDebug()<<"### Status = "<<session_->isConnected()<<endl;
 
 	if ( GG_S_NA( status.internalStatus() ) ) {
@@ -197,7 +181,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 void
 GaduAccount::slotLogin( int status, const QString& dscr  )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::SlotLogin"<<endl;
+
 // this will never happend
 /*
 	if ( (accountId().toInt() == 0) || getPassword().isEmpty() ) {
@@ -218,8 +202,6 @@ GaduAccount::slotLogin( int status, const QString& dscr  )
 void
 GaduAccount::slotLogoff()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::SlotLogoff"<<endl;
-
 	if ( session_->isConnected() ) {
 		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		changeStatus( status_ );
@@ -230,8 +212,6 @@ GaduAccount::slotLogoff()
 void
 GaduAccount::slotGoOnline()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::SlotGoOnline"<<endl;
-
 	if ( !session_->isConnected() ) {
 		kdDebug(14100)<<"#### Connecting..."<<endl;
 		slotLogin();
@@ -242,32 +222,24 @@ GaduAccount::slotGoOnline()
 void
 GaduAccount::slotGoOffline()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotGoOffline"<<endl;
-
 	slotLogoff();
 }
 
 void
 GaduAccount::slotGoInvisible()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotGoInvisible"<<endl;
-
 	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ) );
 }
 
 void
 GaduAccount::slotGoBusy()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::SlotGoBusy"<<endl;
-
 	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ) );
 }
 
 void
 GaduAccount::removeContact( const GaduContact* c )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::RemoveContact"<<endl;
-
 	if ( isConnected() ) {
 		const uin_t u = c->uin();
 		session_->removeNotify( u );
@@ -281,8 +253,6 @@ GaduAccount::removeContact( const GaduContact* c )
 void
 GaduAccount::addNotify( uin_t uin )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::AddNotify"<<endl;
-
 	if ( session_->isConnected() )
 		session_->addNotify( uin );
 }
@@ -290,8 +260,6 @@ GaduAccount::addNotify( uin_t uin )
 void
 GaduAccount::notify( uin_t* userlist, int count )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::notify"<<endl;
-
 	if ( session_->isConnected() )
 		session_->notify( userlist, count );
 }
@@ -299,8 +267,6 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::SendMessage"<<endl;
-
 	kdDebug(14100)<<"Sending \"" << msg <<"\""<<endl;
 	QString sendMsg = msg;
 	sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
@@ -311,8 +277,6 @@ GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 void
 GaduAccount::error( const QString& title, const QString& message )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::Error"<<endl;
-
 	KMessageBox::error( qApp->mainWidget(), message, title );
 }
 
@@ -364,8 +328,6 @@ GaduAccount::ackReceived( struct gg_event* e  )
 void
 GaduAccount::notify( struct gg_event* e )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::notify"<<endl;
-
 	GaduContact *c;
 
 	struct gg_notify_reply *n = e->event.notify;
@@ -391,8 +353,6 @@ GaduAccount::notify( struct gg_event* e )
 void
 GaduAccount::notifyDescription( struct gg_event* e )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::notifyDescryption"<<endl;
-
 	GaduContact *c;
 	struct gg_notify_reply *n;
 
@@ -412,8 +372,6 @@ GaduAccount::notifyDescription( struct gg_event* e )
 void
 GaduAccount::statusChanged( struct gg_event* e )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::StatusChanged"<<endl;
-
 	GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
 	if( !c )
 		return;
@@ -430,8 +388,6 @@ GaduAccount::pong()
 void
 GaduAccount::connectionFailed( struct gg_event* /*e*/ )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::ConnectionFailed"<<endl;
-
   status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
   myself_->setOnlineStatus( status_ );
 	KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
@@ -462,8 +418,6 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
 void
 GaduAccount::startNotify()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::StartNotify"<<endl;
-
 	int i = 0;
 	QValueList<uin_t> l = contactsMap_.keys();
 
@@ -482,8 +436,6 @@ GaduAccount::startNotify()
 void
 GaduAccount::slotSessionDisconnect()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotSessionDisconnect"<<endl;
-
 	kdDebug(14100)<<"Disconnecting"<<endl;
 	
 	if (pingTimer_){
@@ -502,8 +454,6 @@ GaduAccount::slotSessionDisconnect()
 void
 GaduAccount::userlist( const QStringList& u )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::userlist"<<endl;
-
 	int i;
 	QString name, group, uin;
 	kdDebug(14100)<<"### Got userlist"<<endl;
@@ -528,16 +478,12 @@ GaduAccount::userlist( const QStringList& u )
 void
 GaduAccount::pingServer()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::pingServer"<<endl;
-
 	session_->ping();
 }
 
 void
 GaduAccount::slotChangePassword()
 {
-
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotChangePassword"<<endl;
 /*
 	QCString password;
 	int result = KPasswordDialog::getPassword( password, i18n("Enter new password") );
@@ -556,24 +502,18 @@ GaduAccount::slotChangePassword()
 void
 GaduAccount::slotCommandDone( const QString& title, const QString& what )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotCommandDone"<<endl;
-
 	KMessageBox::information( qApp->mainWidget(), title, what );
 }
 
 void
 GaduAccount::slotCommandError(const QString& title, const QString& what )
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotCommandError"<<endl;
-
 	KMessageBox::error( qApp->mainWidget(), title, what );
 }
 
 void
 GaduAccount::slotDescription()
 {
-	kdDebug(14100)<<"GJ"<<"GaduAccount::slotDescription"<<endl;
-
 	GaduAway *away = new GaduAway( this );
 
 	if( away->exec() == QDialog::Accepted ) {
