@@ -42,7 +42,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Basic &amp;Setup</string>
+                    <string>B&amp;asic Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -210,12 +210,29 @@
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout120</cstring>
+                                    <cstring>layout57</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer19</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>17</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
                                     <widget class="QLabel">
                                         <property name="name">
                                             <cstring>passwordLabel</cstring>
@@ -230,12 +247,29 @@
                                             <cstring>mPassword</cstring>
                                         </property>
                                     </widget>
-                                    <widget class="KPasswordEdit">
+                                    <widget class="QLineEdit">
                                         <property name="name">
                                             <cstring>mPassword</cstring>
                                         </property>
                                         <property name="enabled">
                                             <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="echoMode">
+                                            <enum>Password</enum>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>If the IRC server requires a password, you may enter it here.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -291,181 +325,287 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Connec&amp;tion</string>
+                    <string>Connection</string>
                 </attribute>
-                <grid>
+                <widget class="QGroupBox">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>groupBox1</cstring>
                     </property>
-                    <spacer row="1" column="0">
+                    <property name="geometry">
+                        <rect>
+                            <x>11</x>
+                            <y>11</y>
+                            <width>612</width>
+                            <height>177</height>
+                        </rect>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="title">
+                        <string>Connection Preferences</string>
+                    </property>
+                    <grid>
                         <property name="name">
-                            <cstring>spacer72</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>150</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QGroupBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>groupBox1</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="title">
-                            <string>Connection Preferences</string>
-                        </property>
-                        <grid>
+                        <widget class="QComboBox" row="0" column="2">
                             <property name="name">
-                                <cstring>unnamed</cstring>
+                                <cstring>network</cstring>
                             </property>
-                            <widget class="QComboBox" row="0" column="2">
+                        </widget>
+                        <widget class="QLabel" row="5" column="0">
+                            <property name="name">
+                                <cstring>textLabel1_2_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Default &amp;charset:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>charset</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>charset</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
+                            <property name="name">
+                                <cstring>autoConnect</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Connect automatically at &amp;startup</string>
+                            </property>
+                        </widget>
+                        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+                            <property name="name">
+                                <cstring>preferSSL</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Prefer SSL-based connections</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="2" rowspan="1" colspan="3">
+                            <property name="name">
+                                <cstring>description</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>textLabel11</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Description:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>textLabel1_3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Network:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>network</cstring>
+                            </property>
+                        </widget>
+                        <spacer row="5" column="3" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>spacer6_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>141</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton" row="0" column="3">
+                            <property name="name">
+                                <cstring>editButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Edit</string>
+                            </property>
+                        </widget>
+                        <spacer row="0" column="4">
+                            <property name="name">
+                                <cstring>spacer1</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>240</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <spacer row="2" column="0">
+                            <property name="name">
+                                <cstring>spacer6</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Vertical</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </grid>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer72</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>150</height>
+                        </size>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>307</x>
+                            <y>303</y>
+                            <width>20</width>
+                            <height>150</height>
+                        </rect>
+                    </property>
+                </spacer>
+                <widget class="QGroupBox">
+                    <property name="name">
+                        <cstring>groupBox5</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>210</y>
+                            <width>612</width>
+                            <height>83</height>
+                        </rect>
+                    </property>
+                    <property name="title">
+                        <string>Default Messages</string>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLayoutWidget" row="0" column="0">
+                            <property name="name">
+                                <cstring>layout44</cstring>
+                            </property>
+                            <hbox>
                                 <property name="name">
-                                    <cstring>network</cstring>
+                                    <cstring>unnamed</cstring>
                                 </property>
-                            </widget>
-                            <widget class="QLabel" row="5" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_2_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Default cha&amp;rset:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>charset</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>charset</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>autoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Connect a&amp;utomatically at startup</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>preferSSL</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Prefer SSL-based connections</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="2" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>description</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>textLabel11</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Description:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Net&amp;work:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>network</cstring>
-                                </property>
-                            </widget>
-                            <spacer row="5" column="3" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>spacer6_2</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>141</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QPushButton" row="0" column="3">
-                                <property name="name">
-                                    <cstring>editButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Edit</string>
-                                </property>
-                            </widget>
-                            <spacer row="0" column="4">
-                                <property name="name">
-                                    <cstring>spacer1</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>240</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <spacer row="2" column="0">
-                                <property name="name">
-                                    <cstring>spacer6</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Fixed</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </grid>
-                    </widget>
-                </grid>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>layout43</cstring>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>textLabel1</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;Part message:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>partMessage</cstring>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>textLabel2</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;Quit message:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>quitMessage</cstring>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>layout42</cstring>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLineEdit">
+                                            <property name="name">
+                                                <cstring>partMessage</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLineEdit">
+                                            <property name="name">
+                                                <cstring>quitMessage</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                            </hbox>
+                        </widget>
+                    </grid>
+                </widget>
             </widget>
             <widget class="QWidget">
                 <property name="name">
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Advanced Configuration</string>
+                    <string>A&amp;dvanced Configuration</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -473,88 +613,222 @@
                     </property>
                     <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>groupBox5</cstring>
+                            <cstring>groupBox7</cstring>
                         </property>
                         <property name="title">
-                            <string>Custom Default Messages</string>
+                            <string>Message Desintations</string>
                         </property>
                         <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget" row="0" column="0">
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>layout44</cstring>
+                                    <cstring>textLabel4_3</cstring>
                                 </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
+                                <property name="text">
+                                    <string>Server Notices:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Server Messages:</string>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="0" column="1">
+                                <item>
+                                    <property name="text">
+                                        <string>Active Window</string>
                                     </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout43</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&amp;Part message:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>partMessage</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel2</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&amp;Quit message:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>quitMessage</cstring>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout42</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>partMessage</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>quitMessage</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                </hbox>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Server Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Anonymous Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>KNotify</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Ignore</string>
+                                    </property>
+                                </item>
+                                <property name="name">
+                                    <cstring>serverMessages</cstring>
+                                </property>
+                                <property name="currentItem">
+                                    <number>1</number>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="1" column="1">
+                                <item>
+                                    <property name="text">
+                                        <string>Active Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Server Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Anonymous Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>KNotify</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Ignore</string>
+                                    </property>
+                                </item>
+                                <property name="name">
+                                    <cstring>serverNotices</cstring>
+                                </property>
+                                <property name="currentItem">
+                                    <number>1</number>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="1" column="4">
+                                <item>
+                                    <property name="text">
+                                        <string>Active Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Server Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Anonymous Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>KNotify</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Ignore</string>
+                                    </property>
+                                </item>
+                                <property name="name">
+                                    <cstring>errorMessages</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="0" column="4">
+                                <item>
+                                    <property name="text">
+                                        <string>Active Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Server Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Anonymous Window</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>KNotify</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Ignore</string>
+                                    </property>
+                                </item>
+                                <property name="name">
+                                    <cstring>informationReplies</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="3">
+                                <property name="name">
+                                    <cstring>textLabel2_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Information Replies:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="3">
+                                <property name="name">
+                                    <cstring>textLabel3_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Error Messages:</string>
+                                </property>
+                            </widget>
+                            <spacer row="0" column="2">
+                                <property name="name">
+                                    <cstring>spacer8_2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>41</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <spacer row="1" column="2">
+                                <property name="name">
+                                    <cstring>spacer9</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>41</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>checkBox4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Auto-show the server window</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="2" column="2" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>checkBox5</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Auto-show anonymous windows</string>
+                                </property>
                             </widget>
                         </grid>
                     </widget>
@@ -822,7 +1096,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>0</height>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -831,6 +1105,8 @@
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>mRememberPassword</sender>
@@ -850,14 +1126,8 @@
     <tabstop>mNickName</tabstop>
     <tabstop>mAltNickname</tabstop>
     <tabstop>mUserName</tabstop>
+    <tabstop>mPassword</tabstop>
     <tabstop>mRememberPassword</tabstop>
-    <tabstop>network</tabstop>
-    <tabstop>editButton</tabstop>
-    <tabstop>preferSSL</tabstop>
-    <tabstop>autoConnect</tabstop>
-    <tabstop>charset</tabstop>
-    <tabstop>partMessage</tabstop>
-    <tabstop>quitMessage</tabstop>
     <tabstop>ctcpList</tabstop>
     <tabstop>newCTCP</tabstop>
     <tabstop>newReply</tabstop>
@@ -865,10 +1135,14 @@
     <tabstop>commandList</tabstop>
     <tabstop>commandEdit</tabstop>
     <tabstop>addButton</tabstop>
+    <tabstop>network</tabstop>
+    <tabstop>charset</tabstop>
+    <tabstop>autoConnect</tabstop>
+    <tabstop>preferSSL</tabstop>
+    <tabstop>editButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpassdlg.h</includehint>
     <includehint>klistview.h</includehint>
     <includehint>klistview.h</includehint>
 </includehints>
