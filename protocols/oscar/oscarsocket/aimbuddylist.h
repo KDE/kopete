@@ -118,12 +118,6 @@ class AIMBuddyList : public QObject
 		// Returns a list of all the buddies in the permit list
 		QPtrList<AIMBuddy> permitBuddies() const { return mBuddiesPermit; }
 
-		// length of this list
-		int length;
-
-		// Timestamp of the list
-		int timestamp;
-
 	signals:
 		/* "Why?" you ask, do I have a signal that lets us know such a useless thing?
 			Well, basically the AOL server can and often does (on certain accounts) send

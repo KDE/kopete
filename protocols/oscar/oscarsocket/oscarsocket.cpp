@@ -1101,11 +1101,11 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	AIMBuddyList blist;
 
 	inbuf.getByte(); //get fmt version
-	blist.length = inbuf.getWord(); //gets the contactlist length
+	uint length = inbuf.getWord();
 
 	kdDebug(14150) << k_funcinfo <<
-		"RECV (SRV_REPLYROSTER) received contactlist, " <<
-		"length=" << blist.length << endl;
+		"RECV (SRV_REPLYROSTER) received contactlist of length " <<
+			length << endl;
 
 	while(inbuf.length() > 4) //the last 4 bytes are the timestamp
 	{
@@ -1325,10 +1325,10 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 		} // END switch (ssi->type)
 	} // END while(inbuf.length() > 4)
 
-	blist.timestamp = inbuf.getDWord();
+	int timestamp = inbuf.getDWord();
 
 	kdDebug(14150) << k_funcinfo <<
-		"Finished getting contact list, timestamp=" << blist.timestamp << endl;
+		"Finished getting contact list, timestamp=" << timestamp << endl;
 
 	sendSSIActivate(); // send CLI_ROSTERACK
 	emit gotConfig(blist);
