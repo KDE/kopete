@@ -112,7 +112,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			mAccount->rememberPassword());
 
 		if(mAccountSettings->chkSavePassword->isChecked())
-			mAccountSettings->edtPassword->setText(mAccount->getPassword(false, 0L, 8));
+			mAccountSettings->edtPassword->setText(mAccount->password(false, 0L, 8));
 
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
 		//Remove me after we can change Account IDs (Matt)

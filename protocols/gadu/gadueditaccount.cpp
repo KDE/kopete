@@ -64,7 +64,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
 	passwordEdit2__->setDisabled(true);
 	loginEdit_->setText(m_account->accountId());
 	if (m_account->rememberPassword()){
-	    passwordEdit_->setText(m_account->getPassword());
+	    passwordEdit_->setText(m_account->password());
 	}
 	else{
 	    passwordEdit_->setText("");

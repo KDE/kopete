@@ -114,7 +114,7 @@ void YahooAccount::connect()
 	if(!isConnected())
 	{	kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
 		YahooSessionManager::manager()->setPager(server, port);
-		session_ = YahooSessionManager::manager()->createSession(accountId(), getPassword(), YAHOO_STATUS_AVAILABLE);
+		session_ = YahooSessionManager::manager()->createSession(accountId(), password(), YAHOO_STATUS_AVAILABLE);
 		m_session = session_;
 		if(session_ > 0)
 		{	if(session_->Id() > 0)

@@ -96,7 +96,7 @@ public:
 	/**
 	 * Get the password for this account. Has the ability to open an input dialog
 	 * if the password is not currently set
-	 * @param error Set this value to true if you previously called getPassword and the
+	 * @param error Set this value to true if you previously called password and the
 	 * result was incorrect (the password was wrong). It adds a label in the input
 	 * dialog saying that the password was wrong
 	 * @param ok is set to false if the user returned cancel
@@ -104,7 +104,8 @@ public:
 	 * lineedit accordingly, the default is no limit at all
 	 * @return The password or QString::null if the user has canceled
 	 */
-	QString getPassword( bool error = false, bool *ok =0L, unsigned int maxLength=0 );
+	QString password( bool error = false, bool *ok =0L, unsigned int maxLength=0 );
+
 	/**
 	 * Set the password for this account.
 	 * @param pass set to Qtring::null means that
@@ -117,7 +118,7 @@ public:
 	/**
 	 * @brief say if the password is remembered.
 	 *
-	 * if it return false, that mean a call to @ref getPassword() will popup a window.
+	 * if it return false, that mean a call to @ref password() will popup a window.
 	 *
 	 * This function should be used by the editAccountPage (and only by the editAccountPage)
 	 */

@@ -45,7 +45,7 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 		if(ident->rememberPassword())
 		{
 			m_rememberpasswd->setChecked(true);
-			m_password->setText(ident->getPassword());
+			m_password->setText(ident->password());
 		}
 		m_login->setText(ident->accountId());
 		//remove me after we can change account ids (Matt)

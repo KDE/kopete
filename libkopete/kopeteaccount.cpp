@@ -192,7 +192,7 @@ void KopeteAccount::loaded()
 	/* do nothing in default implementation */
 }
 
-QString KopeteAccount::getPassword( bool error, bool *ok, unsigned int maxLength )
+QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
 	if(ok) *ok=true;
 	if ( !d->password.isNull() )

@@ -69,9 +69,8 @@ MSNNotifySocket::~MSNNotifySocket()
 	kdDebug(14140) << "MSNNotifySocket::~MSNNotifySocket" << endl;
 }
 
-void MSNNotifySocket::connect( const QString &pwd )
+void MSNNotifySocket::connect()
 {
-	m_password = pwd;
 	dispatchOK=false;
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -452,7 +451,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		time(&actualTime);
 		QString sl = QString::number( ( unsigned long ) actualTime - m_loginTime.toULong() );
 
-		QString md5this( m_MSPAuth + sl + m_password );
+		QString md5this( m_MSPAuth + sl + m_account->password() );
 		KMD5 md5( md5this.utf8() );
 
 		QString hotmailRequest = "<html>\n"
@@ -525,11 +524,11 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		rx.search(m_authData);
 
 		/*QString authURL="https://loginnet.passport.com/ppsecure/post.srf?lc=" + rx.cap(1) + "&id=" +rx.cap(2) +"&tw=" +rx.cap(3) +"&cbid=" + rx.cap(2)
-			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=hotmail.com&passwd=" + escape ( m_password ) ;*/
+			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=hotmail.com&passwd=" + escape ( m_account->password() ) ;*/
 
 
 		QString authURL="https://login.passport.com/ppsecure/post.srf?lc=" + rx.cap(1) + "&id=" +rx.cap(2) +"&tw=" +rx.cap(3) +"&cbid=" + rx.cap(2)
-			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=passport.com&passwd=" + escape ( m_password ) ;
+			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=passport.com&passwd=" + escape ( m_account->password() ) ;
 
 		kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: " << authURL << endl;
 

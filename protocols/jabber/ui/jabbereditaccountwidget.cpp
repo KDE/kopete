@@ -76,7 +76,7 @@ void JabberEditAccountWidget::reopen ()
 	mID->setDisabled(true);
 
 	mID->setText (m_account->accountId ());
-	mPass->setText (m_account->getPassword ());
+	mPass->setText (m_account->password ());
 	mResource->setText (m_account->pluginData (m_protocol, "Resource"));
 	mServer->setText (m_account->pluginData (m_protocol, "Server"));
 

@@ -49,7 +49,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	m_engine->setVersionString( version  );
 	if( rememberPassword() )
-		m_engine->setPassword( getPassword() );
+		m_engine->setPassword( password() );
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));

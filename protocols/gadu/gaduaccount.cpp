@@ -20,8 +20,6 @@
 #include <qtextcodec.h>
 #include <qptrlist.h>
 
-
-
 GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
   : KopeteAccount( parent, accountID, name ), pingTimer_(0)
 {
@@ -220,7 +218,7 @@ GaduAccount::slotLogin( int status, const QString& dscr  )
 
 // this will never happend
 /*
-	if ( (accountId().toInt() == 0) || getPassword().isEmpty() ) {
+	if ( (accountId().toInt() == 0) || password().isEmpty() ) {
 		KMessageBox::error( qApp->mainWidget(),
 			i18n("You must fill in UIN and password fields in the preferences dialog before you can login."),
 			i18n("Unable to Login") );
@@ -229,7 +227,7 @@ GaduAccount::slotLogin( int status, const QString& dscr  )
 */
 	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 	if ( !session_->isConnected() ) {
-		session_->login( accountId().toInt(), getPassword(), status, dscr );
+		session_->login( accountId().toInt(), password(), status, dscr );
 	} else {
 		session_->changeStatus( status );
 	}
@@ -453,7 +451,7 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
     myself_->setOnlineStatus( status_ );
     startNotify();
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
-    cmd->setInfo( accountId().toInt(), getPassword() );
+    cmd->setInfo( accountId().toInt(), password() );
     QObject::connect( cmd, SIGNAL(done(const gaduContactsList&)),
     			SLOT(userlist(const gaduContactsList&)) );
     cmd->execute();
@@ -604,7 +602,7 @@ GaduAccount::slotChangePassword()
 
 //	if ( result == KPasswordDialog::Accepted ) {
 //		ChangePasswordCommand *cmd = new ChangePasswordCommand( this, "changePassCmd" );
-//		cmd->setInfo( myself_->uin(), getPassword(), password, "zackrat@att.net" );
+//		cmd->setInfo( myself_->uin(), password(), password, "zackrat@att.net" );
 //		QObject::connect( cmd, SIGNAL(done(const QString&, const QString&)),
 //											SLOT(slotCommandDone(const QString&, const QString&)) );
 //		QObject::connect( cmd, SIGNAL(error(const QString&, const QString&)),

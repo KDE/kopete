@@ -43,7 +43,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		mUserName->setText( m_IRCAccount->userName() );
 
-		if(m_account->rememberPassword()) mPassword->setText( m_IRCAccount->getPassword() );
+		if(m_account->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 	}
 }
 

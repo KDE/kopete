@@ -106,7 +106,7 @@ void MSNAccount::connect()
 	}
 
 
-	QString passwd=getPassword(m_badpassword);
+	QString passwd=password(m_badpassword);
 	m_badpassword=false;
 	if(passwd.isNull())
 	{
@@ -120,7 +120,6 @@ void MSNAccount::connect()
 		// (the 1 is for the myself contact)
 		setPluginData(protocol() , "serial" , "0" );
 	}
-
 
 	m_notifySocket = new MSNNotifySocket( this, accountId() );
 
@@ -155,13 +154,12 @@ void MSNAccount::connect()
 	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
 
-
 	m_notifySocket->setStatus( m_connectstatus );
-	m_notifySocket->connect( passwd );
+	m_notifySocket->connect();
 	m_myself->setOnlineStatus( MSNProtocol::protocol()->CNT );
 	m_openInboxAction->setEnabled(false);
-
 }
+
 void MSNAccount::disconnect()
 {
 	if( m_notifySocket )

@@ -43,7 +43,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
 		mScreenName->setDisabled(true);
 		if(m_account->rememberPassword())
-			mPassword->setText(m_account->getPassword());
+			mPassword->setText(m_account->password());
 		mAutoConnect->setChecked(m_account->autoLogin());
 		mRememberPassword->setChecked(true);
 	}

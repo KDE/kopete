@@ -245,8 +245,8 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 	}
 	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
 	{
-		QString password = getPassword(false, 0L, 8);
-		if (password.isEmpty())
+		QString _password = password(false, 0L, 8);
+		if (_password.isEmpty())
 		{
 			slotError(i18n("Kopete is unable to attempt to signon to the " \
 				"ICQ network because no password was specified in the " \
@@ -262,7 +262,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 				server,
 				port.toInt(),
 				screenName,
-				password,
+				_password,
 				static_cast<AIMContact *>(mMyself)->userProfile(),
 				status,
 				awMessage);

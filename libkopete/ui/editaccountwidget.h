@@ -36,7 +36,7 @@ class KopeteAccount;
  *     to be marked as ReadOnly when the account already exists. Remember that accountId should be constant
  *
  * - The password, and the remember password checkboxes.  First, you have to get if the password is remember, with @ref KopeteAccount::rememberPassword
- *    if it return true, you can use @ref KopeteAccount::getPassword() to set the password field. WARNING: do not use getPassword if the password is not
+ *    if it return true, you can use @ref KopeteAccount::password() to set the password field. WARNING: do not use password if the password is not
  *    remember, or kopete will popup a dialog to ask the password.
  *    To set the password use @ref KopeteAccount::setPassword()  if the user has unselected the remember password checkboxes, set QString::null as password
  *
