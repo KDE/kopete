@@ -686,7 +686,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		mailCount++;
 
 		KNotifyClient::event( 0, "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) , 0,
-			i18n( "Open &inbox..." ), this, SLOT( slotOpenInbox() ) );
+			i18n( "Open &Inbox..." ), this, SLOT( slotOpenInbox() ) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
 	{
