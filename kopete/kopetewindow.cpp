@@ -477,7 +477,13 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 
 	connect( account->myself(),
 		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
-		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
+		this, SLOT(  ) );
+	//FIXME  add a KopeteContact::displayNameChanged(KopeteContact * , ..... )  and connect
+	//  it dirrectly to slotAccountStatusIconChanged( KopeteContact * )
+	connect( account->myself(),
+		SIGNAL(displayNameChanged(const QString&, const QString& ) ),
+		this, SLOT( slotAccountDisplayNameChanged() ) );
+
 
 	KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon( account, m_statusBarWidget );
 	connect( sbIcon, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
@@ -517,6 +523,13 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 	m_accountStatusBarIcons.remove( account );
 }
 
+void KopeteWindow::slotAccountDisplayNameChanged()
+{
+	const KopeteContact *contact=dynamic_cast<const KopeteContact *>(sender());
+	if(contact)
+		slotAccountStatusIconChanged((KopeteContact*)c);
+}
+
 void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 {
 	KopeteOnlineStatus status = contact->onlineStatus();
@@ -541,7 +554,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	}
 	else
 	{
-		// FIXME: Make this string i18n() after 0.7 - Martijn
+		// FIXME: Make this string i18n() after kde3.2 - Martijn
 		contactLabel = QString::fromLatin1( "%1 <%2>" ).
 #if QT_VERSION < 0x030200
 			arg( contact->displayName() ).arg( contact->account()->accountId() );
@@ -549,8 +562,8 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 			arg( contact->displayName(), contact->account()->accountId() );
 #endif
 	}
-
-	// FIXME: Make this string i18n() after 0.7 - Martijn
+	
+	// FIXME: Make this string i18n() after kde3.2 - Martijn
 	QString tooltip = QString::fromLatin1( "%1 (%2)" ).
 #if QT_VERSION < 0x030200
 		arg( contactLabel ).arg( status.description() );

@@ -105,6 +105,12 @@ private slots:
 	 * @param contact The account's contact that changed.
 	 */
 	void slotAccountStatusIconChanged( KopeteContact * contact);
+	
+	/**
+	 * This slot is called when a myself contact change his displayname.
+	 * the slot use sender() to know what account has changed
+	 */
+	void slotAccountDisplayNameChanged();
 
 	/**
 	 * Show a context menu for a protocol
