@@ -14,11 +14,18 @@
     *************************************************************************
 */
 
+#include "config.h"
+
 #include "oscarsocket.h"
 #include "rateclass.h"
 #include "oscardebug.h"
 
 #include <stdlib.h>
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #include <netinet/in.h> // for htonl()
 
 #include "oscaraccount.h"

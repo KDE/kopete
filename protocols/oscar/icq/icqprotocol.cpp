@@ -14,6 +14,8 @@
   *************************************************************************
   */
 
+#include "config.h"
+
 #include "icqprotocol.h"
 #include "icqaccount.h"
 #include "icqcontact.h"
@@ -25,6 +27,10 @@
 #include "kopeteuiglobal.h"
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
 
 #include <netinet/in.h> // for ntohl()
 
