@@ -829,10 +829,18 @@ void JabberProtocol::slotUserWantsAuth(const Jid &jid)
 void JabberProtocol::slotUserDeletedAuth(const Jid &jid)
 {
 
-	QString userID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
+	QString jidString = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 	
-	kdDebug() << "[JabberProtocol] " << userID << " deleted auth!" << endl;
+	kdDebug() << "[JabberProtocol] " << jidString << " deleted auth!" << endl;
 	
+	// set user offline, but how to mark we are unsubscrbed? move contact to 
+	// a dir "Need Authorization" like in psi? ....
+	// btw it's just a notification, so can also send a unsubscribe message
+	// without to "unsubscribed user"! ,)
+	contactList[jidString]->slotUpdateContact("", STATUS_OFFLINE, "");
+
+	KMessageBox::information(0L, i18n("%1 unsubscribed you!").arg(jidString), i18n("Notification"));
+
 }
 
 /*
