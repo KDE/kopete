@@ -41,6 +41,8 @@
 #include <kurldrag.h>
 #include <kglobalsettings.h>
 
+#include <khtmlview.h>
+#include <qscrollview.h>
 #include <qtimer.h>
 
 class KopeteChatViewPrivate
@@ -872,7 +874,9 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			}
 		}
 	}
-	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
+	// make sure it doesn't come from the current chat view - then it's an emoticon 
+	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
+				 ( event->source() != (QWidget*)m_messagePart->view()->viewport() ) )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
@@ -929,7 +933,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 
-		if ( !contact || !contact->canAcceptFiles() || !QUriDrag::canDecode( event )  )
+		if ( !contact || !contact->canAcceptFiles() || !QUriDrag::canDecode( event ) )
 		{
 			event->ignore();
 			return;
