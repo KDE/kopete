@@ -467,11 +467,8 @@ void KIRC::slotReadyRead()
 				{
 					// FIXME: should also check for args[0] == m_nickname/"*" for nummeric replies
 					// If the m_nickname is given, the nickname change is successful(ie we are in).
-					if (method->operator()(msg))
-					{
 						emit receivedMessage(msg);
-					}
-					else
+					if (!method->operator()(msg))
 					{
 						kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
 						emit internalError(MethodFailed, msg);
