@@ -8,10 +8,28 @@ Goals:
 *) Or games, desktop sharing
 *) Ability to put IM-delivered contact data into the KDE addressbook
 
+Spaze's goals
+1. Share data with the other PIM apps. Notably groups, display names, GPG keys, email addresses and other IM UIDs
+2. Allow other apps to retrieve all IM-enabled contacts and their online status for e.g. presence display in kmail or invitations for desktop sharing
+3. Allow other IM apps to share the same data that Kopete uses in a standardized way
+4. Allow other apps to start a chat with selected persons in a standardized way _regardless of client used_
+
+mETz' goals
+1. well, I just think Kopete should never edit my addressbook without me knowing
 What does Kopete get out of the association?
 *) Ability to view KABC information on that metacontact
 *) Use information in the KABC such as GPG key?
 *) Can store/use KABC information in the metacontact like contact photo
+
+Gof's goals
+1. my goal is to have the kopete contactlist a kind of adress book  (i.e. i want to view and modify kabc entry from kopete, like if i am in the kab interface.  i do not want to open KAB
+2. and i want to share fields (gpg key) with other application, like kmail
+3.  technicaly, i think that should be transparent.
+Goals (-ve):
+*) don't store information that's not worth sharing in the address book
+
+gregj's goals
+kopete should not replace  server side data with kabc derived data?
 
 Use cases
 
