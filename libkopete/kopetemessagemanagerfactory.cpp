@@ -52,7 +52,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 
 	it = QIntDictIterator<KopeteMessageManager>( protocolSessions );
 	for ( KopeteMessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  ) {
-		if ( user == kmm->user() && widget == kmm->widget()) {
+		if ( user == kmm->user() && widget == kmm->widgetType()) {
 
 			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;
 			QPtrList<KopeteContact> contactlist = kmm->members();

@@ -81,8 +81,9 @@ public:
 	 */
 	bool logging() const;
 
-	WidgetType widget() const;
+	WidgetType widgetType() const;
 
+	QWidget *widget() const;
 	/**
 	 * Read Messages
 	 */

@@ -22,6 +22,7 @@
 #include <qobject.h>
 
 class KopeteMetaContact;
+class KopeteMessageManager;
 class KActionCollection;
 
 /**
@@ -57,6 +58,11 @@ public:
 	 * Returns a set of custom menu items for the meta contact's context menu
 	 */
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*) { return 0l; };
+
+	/**
+	 * Returns a set of action items for the chatWindows
+	 */
+	virtual KActionCollection *customChatActions(KopeteMessageManager*) { return 0l; };
 
 
 public slots:

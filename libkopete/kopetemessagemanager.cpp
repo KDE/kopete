@@ -114,7 +114,7 @@ void KopeteMessageManager::newChatWindow()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		d->mChatWindow = new KopeteChatWindow(d->mUser, d->mContactList);
+		d->mChatWindow = new KopeteChatWindow(this);
 		d->mChatWindow->setSendEnabled(d->mSendEnabled);
 
 		/* When the window is shown, we have to delete this contact event */
@@ -176,10 +176,20 @@ int KopeteMessageManager::readMode() const
 	return d->mReadMode;
 }
 
-KopeteMessageManager::WidgetType KopeteMessageManager::widget() const
+KopeteMessageManager::WidgetType KopeteMessageManager::widgetType() const
 {
 	return d->mWidget;
 }
+
+QWidget *KopeteMessageManager::widget()  const
+{
+	if (d->mWidget == ChatWindow)
+		return d->mChatWindow;
+	if(d->mWidget == Email)
+		return d->mEmailWindow;
+	return 0L;
+}
+
 
 bool KopeteMessageManager::emptyMessageBuffer()
 {
@@ -216,14 +226,7 @@ void KopeteMessageManager::readMessages()
 		newChatWindow();
 	}
 
-	// for some reason gcc 2.96 doesn't like the line below (and gcc 2.65.3 give a warnign)
-	//QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : ((d->mWidget == Email) ? d->mEmailWindow : 0L);
-	QWidget *window = 0L;
-
-	if (d->mWidget == ChatWindow)
-		window=d->mChatWindow;
-	if(d->mWidget == Email)
-		window=d->mEmailWindow;
+	QWidget *window = widget();
 
 	if ( !window )
 	{
