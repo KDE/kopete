@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- TRANSFORM_ALL_MESSAGES -->
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html"/>
-	
+
 	<xsl:template match="document">
 		<xsl:variable name="messages" select="message"/>
 		<xsl:for-each select="message">
@@ -10,7 +13,7 @@
 			</xsl:call-template>
 		</xsl:for-each>
 	</xsl:template>
-	
+
 	<xsl:template name="processMessage">
 		<xsl:param name="messages"/>
 		<xsl:variable name="position" select="position()"/>
@@ -64,7 +67,7 @@
 			</table>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template name="renderRest">
 		<xsl:param name="messages"/>
 		<xsl:param name="withId"/>
@@ -87,7 +90,7 @@
 	<xsl:template name="renderFirstMessage">
 		<xsl:call-template name="renderMessageBody"/>
 	</xsl:template>
-	
+
 	<xsl:template name="renderLaterMessage">
 		<hr>
 			<xsl:attribute name="style">
@@ -97,7 +100,7 @@
 		</hr>
 		<xsl:call-template name="renderMessageBody"/>
 	</xsl:template>
-	
+
 	<xsl:template name="renderMessageBody">
 		<xsl:choose>
 			<xsl:when test="@type='action'">
@@ -113,7 +116,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<xsl:template name="lightenColour">
 		<xsl:param name="colour"/>
 		<xsl:value-of select="translate($colour,'0123456789AaBbCcDdEeFf','8899aabbccddddeeeeffff')"/>
