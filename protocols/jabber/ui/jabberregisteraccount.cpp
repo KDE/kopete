@@ -432,7 +432,8 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
-		slotDeleteDialog ();
+		enableButtonOK ( false );
+		setButtonCancel ( KStdGuiItem::ok () );
 	}
 	else
 	{
@@ -441,10 +442,11 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 								  i18n ("Unable to create account on the server. The Jabber ID probably already exists."),
 								  i18n ("Jabber Account Registration"));
 
-		// FIXME: this is required because Iris crashes if we try
-		//        to disconnect here. Hopefully Justin can fix this.
-		QTimer::singleShot(0, this, SLOT(disconnect ()));
 	}
+
+	// FIXME: this is required because Iris crashes if we try
+	//        to disconnect here. Hopefully Justin can fix this.
+	QTimer::singleShot(0, this, SLOT(disconnect ()));
 
 }
 
