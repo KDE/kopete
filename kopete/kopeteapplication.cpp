@@ -27,8 +27,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
-#include <kio/netaccess.h>
-#include <kmimetype.h>
 #include <kmessagebox.h>
 
 #include "kopeteaccount.h"
@@ -97,6 +95,9 @@ KopeteApplication::KopeteApplication()
 	 * there is a secondary benefit as well here. (Martijn)
 	 */
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
+
+	//Create the emoticon installer
+	emoticonHandler = new Kopete::EmoticonHandler;
 }
 
 KopeteApplication::~KopeteApplication()
@@ -104,6 +105,7 @@ KopeteApplication::~KopeteApplication()
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	delete m_mainWindow;
+	delete emoticonHandler;
 	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
 
@@ -265,55 +267,7 @@ void KopeteApplication::handleURLArgs()
 			if ( !u.isValid() )
 				continue;
 
-			QString type;
-			if( u.isLocalFile() )
-				type = KMimeType::findByFileContent( u.path() )->name();
-			else
-				type = KMimeType::findByURL( u, 0, false )->name();
-
-			// emoticon theme archive
-			if( type == "application/x-kopete-emoticons" ||
-				 type == "application/x-gzip" ||
-				 type == "application/x-bzip2" )
-			{
-				QString file;
-				#if KDE_IS_VERSION( 3, 1, 90 )
-				if( !KIO::NetAccess::download( u, file,
-					Kopete::UI::Global::mainWidget() ) )
-				#else
-				if( !KIO::NetAccess::download( u, file ) )
-				#endif
-				{
-					QString sorryText;
-					if ( u.isLocalFile() )
-					{
-						sorryText =
-							i18n("Unable to find the emoticon theme archive %1!");
-					}
-					else
-					{
-						sorryText = i18n( "<qt>Unable to download the emoticon " \
-							"theme archive!<br>Please check that address %1 is " \
-							"correct.</qt>");
-					}
-					KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
-						sorryText.arg( u.prettyURL() ) );
-					continue;
-				}
-
-				if ( !Kopete::Global::installTheme( file ) )
-				{
-					KMessageBox::error( Kopete::UI::Global::mainWidget(),
-						i18n( "<qt>A problem occurred during the installation " \
-						"process. However, most of the emoticon themes in the " \
-						"archive have been installed</qt>" ) );
-				}
-				KIO::NetAccess::removeTempFile( file );
-			}
-			else
-			{
-				kdDebug( 14000 ) << "URL with unhandled mimetype passed!" << endl;
-			}
+			Kopete::Global::handleURL( u );
 		} // END for()
 	} // END args->count() > 0
 }

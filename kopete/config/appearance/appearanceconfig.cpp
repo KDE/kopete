@@ -605,8 +605,8 @@ void AppearanceConfig::slotUpdatePreview()
 		// Parsing a XSLT message is incredibly slow! that's why I commented out some preview messages
 		QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ style ]) );
 		d->xsltParser->setXSLT( fileContents(stylePath) );
-		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
-		preview->write( d->xsltParser->transform( msgOut.asXML().toString()) );
+		preview->write( d->xsltParser->transform( msgIn.asXML().toString(), QString::null ) );
+		preview->write( d->xsltParser->transform( msgOut.asXML().toString(), QString::null ) );
 		msgIn.setFg( QColor( "DodgerBlue" ) );
 		msgIn.setBg( QColor( "LightSteelBlue" ) );
 		msgIn.setBody( i18n( "Here is an incoming colored message" ) );
@@ -657,38 +657,9 @@ void AppearanceConfig::installNewTheme()
 {
 	KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
-	if (themeURL.url().isEmpty())
-		return;
 
-	kdDebug(14000) <<
-		k_funcinfo << "Selected URL:" << themeURL.prettyURL() << endl;
-
-	QString themeTmpFile;
-	// themeTmpFile contains the name of the downloaded file
-#if KDE_IS_VERSION( 3, 1, 90 )
-	if (!KIO::NetAccess::download(themeURL, themeTmpFile, this))
-#else
-	if (!KIO::NetAccess::download(themeURL, themeTmpFile))
-#endif
-	{
-		QString sorryText;
-		if (themeURL.isLocalFile())
-		{
-			sorryText = i18n("Unable to find the emoticon theme archive %1!");
-		}
-		else
-		{
-			sorryText = i18n("<qt>Unable to download the emoticon theme " \
-				"archive!<br>Please check that address %1 is correct.</qt>");
-		}
-		KMessageBox::sorry(this, sorryText.arg(themeURL.prettyURL()));
-		return;
-	}
-
-	if (Kopete::Global::installTheme(themeTmpFile))
+	if( Kopete::Global::handleURL(themeURL) )
 		updateEmoticonlist();
-
-	KIO::NetAccess::removeTempFile(themeTmpFile);
 }
 
 void AppearanceConfig::removeSelectedTheme()

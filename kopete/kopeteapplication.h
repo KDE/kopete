@@ -31,6 +31,11 @@
 class KopeteWindow;
 class QSessionManager;
 
+namespace Kopete
+{
+	class MimeTypeHandler;
+}
+
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
@@ -75,6 +80,7 @@ private:
 	// so use a guarded pointer
 	QGuardedPtr<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
+	Kopete::MimeTypeHandler *emoticonHandler;
 
 private:
 	void handleURLArgs();
