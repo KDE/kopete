@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kio/kmdcodec.h>
+#include <kmdcodec.h>
 
 //qt
 #include <qregexp.h>
