@@ -41,7 +41,7 @@ class KopeteAccount : public KopetePluginDataObject
 	Q_OBJECT
 
 public:
-	KopeteAccount(KopeteProtocol *parent,const QString& accountID, const char *name=0L);
+	KopeteAccount(KopeteProtocol *parent, const QString &accountID, const char *name=0L);
 	~KopeteAccount();
 
 	/**
@@ -88,7 +88,7 @@ public:
 	 * this will be called if main-kopete wants
 	 * the plugin to set the user's mode to away
 	 */
-	virtual void setAway( bool isAway, const QString &awayMessage = QString::null ) = 0;
+	virtual void setStatus( KopeteOnlineStatus status, const QString &reason = QString::null ) = 0;
 
 	/**
 	 * Indicate whether the account is connected at all.
