@@ -16,6 +16,11 @@ KopeteContactList::removeGroup should remove the group from all
 metacontacts. Move code from KopeteContactListView to KopeteContactList for
 this.
 
+Allow emoticons and emoticon sets to be flagged as being for only a specific protocol.
+Allow the user to have more than one emoticon set enabled at once, and to set priorities.
+This way, the user will be able to have a base theme, a set of MSN-specific emoticons, a
+set of Gadu-Gadu-specific emoticons and so on.
+
 Some sort of async message processing API needs to be designed and implemented
 Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
