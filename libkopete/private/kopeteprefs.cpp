@@ -110,14 +110,15 @@ void KopetePrefs::load()
 			"\t</div>\n"
 			"\t<xsl:text disable-output-escaping=\"yes\">&#160;&#160;&#160;&#160;</xsl:text>\n"
 			"\t<span>\n"
-			"\t<xsl:attribute name=\"style\">\n\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
+			"\t<xsl:attribute name=\"style\">\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
 			"\t<xsl:if test=\"@importance='2'\">\n\t\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
 			"\t</xsl:if>\n<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/></span>\n</div>"
 		) + end;
 
 		QString xchatStyle = start + QString::fromLatin1(
-			"<div>\n<xsl:if test=\"@importance='2'\">\n"
-			"\t<xsl:attribute name=\"style\">\n\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
+			"<div>\n"
+			"<xsl:attribute name=\"style\">\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
+			"\n<xsl:if test=\"@importance='2'\">\n"
 			"\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
 			"</xsl:if>\n<xsl:if test=\"@direction='3'\">\n"
 			"\t<xsl:attribute name=\"style\"><xsl:text>color:darkgreen</xsl:text></xsl:attribute>\n"
@@ -157,7 +158,7 @@ void KopetePrefs::load()
 			"\t\t<xsl:text disable-output-escaping=\"yes\">&#160;&#160;&#160;&#160;</xsl:text>\n"
 			"\t</xsl:if>\n"
 			"\t<span>\n"
-			"\t<xsl:attribute name=\"style\">\n\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
+			"\t<xsl:attribute name=\"style\">\t\t<xsl:if test=\"body/@color\"><xsl:text>color:</xsl:text><xsl:value-of select=\"body/@color\"/><xsl:text>;</xsl:text></xsl:if><xsl:if test=\"body/@bgcolor\"><xsl:text>background-color:</xsl:text><xsl:value-of select=\"body/@bgcolor\"/></xsl:if></xsl:attribute>\n"
 			"\t\t<xsl:if test=\"@importance='2'\">\n"
 			"\t\t\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
 			"\t\t</xsl:if>\n"
