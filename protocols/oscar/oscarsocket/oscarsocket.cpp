@@ -452,7 +452,7 @@ void OscarSocket::slotRead()
 
 	} // END switch(fl.channel)
 
-	inbuf.clear(); // seperate buf from inbuf again
+	inbuf.clear(); // separate buf from inbuf again
 	delete [] buf;
 
 //	kdDebug(14150) << k_funcinfo << "END" << endl;
@@ -1972,7 +1972,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 			{
 				case 0x0001: //user class
 				{
-					u.userclass = tlvBuf.getWord();;
+					u.userclass = tlvBuf.getWord();
 					break;
 				}
 				case 0x0002: //member since time

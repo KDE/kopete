@@ -255,7 +255,7 @@ RemindPasswordCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_DONE) {
 		struct gg_pubdir *p = static_cast<struct gg_pubdir *>(session_->data);
-		QString finished = (p->success)?i18n("Successfully"):i18n("Unsuccessfull. Please retry.");
+		QString finished = (p->success)?i18n("Successfully"):i18n("Unsuccessful. Please retry.");
 		emit done( i18n("Remind Password"),
 							 i18n("Remind password finished: ") + finished );
 		gg_free_remind_passwd( session_ );

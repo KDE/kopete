@@ -58,7 +58,7 @@ void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, QStringList e
 	KStandardDirs *dir = KGlobal::dirs();
 	QString pic;
 
-	//maybe an extention was given, so try to find the exact file
+	//maybe an extension was given, so try to find the exact file
 	pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + m_theme +
 		QString::fromLatin1( "/" ) + filenameNoExt );
 

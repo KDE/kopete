@@ -108,7 +108,7 @@ JabberProtocol::~JabberProtocol ()
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, KopeteAccount * i)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n" << endl;;
+	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n" << endl;
 	return new JabberAddContactPage (i, parent);
 }
 

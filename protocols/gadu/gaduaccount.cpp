@@ -521,7 +521,7 @@ GaduAccount::userlist( const gaduContactsList& u)
 	    }
 
  	    if (contactsMap_.contains((*loo)->uin.toUInt())){
-		kdDebug(14100) << "UIN allready exists in contacts "<< (*loo)->uin << endl; 
+		kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl; 
 	    }
 	    else{
     
