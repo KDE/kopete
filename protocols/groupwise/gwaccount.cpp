@@ -238,6 +238,10 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 		disconnect();
 		return;
 	}
+	// don't try and connect if we are already connected
+	if ( isConnected () )
+		return;
+
 	bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
 
 	if (!sslPossible)
