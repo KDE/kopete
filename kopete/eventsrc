@@ -3,6 +3,7 @@ IconName=kopete
 Comment=Kopete Messenger
 Comment[he]=תוכנית המסרים המיידיים Kopete
 Comment[sv]=Kopete Instant Messenger
+Comment[id]=Bersurat Tercapat Kopete
 
 [kopete_event]
 Name=message_all
