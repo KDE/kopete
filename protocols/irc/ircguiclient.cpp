@@ -15,7 +15,11 @@
 */
 
 #include <klocale.h>
-#include <kactioncollection.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
+	#include <kactioncollection.h>
+#else
+	#include <kaction.h>	
+#endif
 #include <qptrlist.h>
 #include <kdebug.h>
 #include <qdom.h>
