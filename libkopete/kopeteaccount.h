@@ -240,7 +240,7 @@ public:
 	 *
 	 * @param contactId the @ref Contact::contactId of the contact to create
 	 * @param displayName the displayname (alias) of the new metacontact. Leave as QString::null if
-	 *                    no name is known.
+	 *                    no alias is known, then by default, the nick will be taken as alias and tracked if changed.
 	 * @param group the group to add the created metacontact to, or 0 for the top-level group.
 	 * @param mode the mode used to add the contact. Use DontChangeKABC when deserializing.
 	 * @return @c true if creation of the contact succeeded or the contact was already in the list,
