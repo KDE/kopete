@@ -344,7 +344,7 @@ QString KopeteMessage::parsedBody() const
 
 static QString makeRegExp( const char *pattern )
 {
-	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_," );
+	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
 	const QString boundaryStart = QString::fromLatin1( "(^|[^%1])(" ).arg( urlChar );
 	const QString boundaryEnd = QString::fromLatin1( ")([^%1]|$)" ).arg( urlChar );
 
@@ -390,7 +390,7 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 	// common subpatterns - may not contain matching parens!
 	const QString name = QString::fromLatin1( "[\\w\\+\\-=_\\.]+" );
 	const QString userAndPassword = QString::fromLatin1( "(?:%1(?::%1)?\\@)" ).arg( name );
-	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_," );
+	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
 	const QString urlSection = QString::fromLatin1( "[%1]+" ).arg( urlChar );
 	const QString domain = QString::fromLatin1( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
 
