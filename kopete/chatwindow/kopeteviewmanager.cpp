@@ -169,7 +169,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			if( msgText.length() > 90 )
 				msgText = msgText.left(88) + QString::fromLatin1("...");
 
+#if KDE_VERSION >= 0x030101
 			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
+#endif
 
 			switch( msg.importance() )
 			{
@@ -187,10 +189,14 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 					}
 
+#if KDE_VERSION >= 0x030101
 #if QT_VERSION < 0x030200
 					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) );
 #else
 					KNotifyClient::event( winId, event, body.arg( msgFrom, msgText ) );
+#endif
+#else
+					KNotifyClient::event( event, body.arg( msgFrom ).arg( msgText ) );
 #endif
 					break;
 				}

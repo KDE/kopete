@@ -191,6 +191,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ?
 		"kopete_online" : "kopete_status_change";
 
+#if KDE_VERSION >= 0x030101
 	int winId = KopeteSystemTray::systemTray() ?
 		KopeteSystemTray::systemTray()->winId() : 0;
 
@@ -198,6 +199,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 		i18n("%2 is now %1!")
 			.arg(m_metaContact->statusString())
 			.arg(m_metaContact->displayName()));
+#else
+	KNotifyClient::event(event,
+		i18n("%2 is now %1!")
+			.arg(m_metaContact->statusString())
+			.arg(m_metaContact->displayName()));
+#endif
 }
 
 void KopeteMetaContactLVI::slotUpdateIcons()
