@@ -217,6 +217,7 @@ void JabberAccount::connect ()
 	/*
 	 * Setup authentication layer
 	 */
+	bool trySSL = false;
 	if (pluginData (protocol (), "UseSSL") == "true")
 	{
 		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
@@ -229,6 +230,8 @@ void JabberAccount::connect ()
 		}
 		else
 		{
+			trySSL = true;
+
 			jabberTLS = new QCA::TLS;
 			jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
 
@@ -283,6 +286,7 @@ void JabberAccount::connect ()
 	jabberClientConnector = new XMPP::AdvancedConnector;
 	jabberClientConnector->setOptHostPort (server (), port ());
 	jabberClientConnector->setProxy(proxy);
+	jabberClientConnector->setOptSSL(trySSL);
 
 	/*
 	 * Instantiate client stream which handles the network communication by referring
@@ -357,7 +361,7 @@ void JabberAccount::connect ()
 
 	setPresence(protocol()->JabberKOSConnecting, "");
 
-	jabberClient->connectToServer ( jabberClientStream, XMPP::Jid(accountId()) );
+	jabberClientStream->connectToServer ( XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")) );
 
 }
 
@@ -405,6 +409,8 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 			jabberClientStream->setRealm(jid.domain());
 		}
 
+		jabberClientStream->continueAfterParams();
+
 	}
 
 }
@@ -412,6 +418,10 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 void JabberAccount::slotCSAuthenticated ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connected to Jabber server." << endl;
+
+	/* start the client operation */
+	XMPP::Jid jid(accountId());
+	jabberClient->start ( jid.domain(), jid.node(), password(), jid.resource() );
 
 	/* Request roster. */
 	jabberClient->rosterRequest ();
