@@ -26,9 +26,6 @@
             <height>575</height>
         </size>
     </property>
-    <property name="caption">
-        <string>IRCEditAccountBase</string>
-    </property>
     <hbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -325,9 +322,6 @@
                                         <property name="text">
                                             <string>&amp;Edit</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+E</string>
-                                        </property>
                                     </widget>
                                     <spacer>
                                         <property name="name">
@@ -387,9 +381,6 @@
                                 <property name="text">
                                     <string>&amp;Prefer SSL-based connections</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
-                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -397,9 +388,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">

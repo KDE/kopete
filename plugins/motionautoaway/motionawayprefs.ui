@@ -21,9 +21,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>motionawayPrefsUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -151,9 +148,6 @@
                             </property>
                             <property name="text">
                                 <string>Become available when &amp;detecting activity again</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
