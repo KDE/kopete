@@ -305,13 +305,14 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		return;
 	}
 
+	
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
 	YahooSessionManager::manager()->setPager( server, port );
 
 	m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
-	if(!isConnected())
+	if(!isConnected() && myself()->onlineStatus() != m_protocol->Connecting)
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
 
