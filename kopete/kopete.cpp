@@ -25,8 +25,9 @@
 #include <kdebug.h>
 #include <kcmdlineargs.h>
 
-#include "appearanceconfig.h"
 #include "accountconfig.h"
+#include "appearanceconfig.h"
+#include "behaviorconfig.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
@@ -56,6 +57,7 @@ Kopete::Kopete()
 	new PluginConfig( this );
 	new AccountConfig( m_mainWindow );
 	new AppearanceConfig( m_mainWindow );
+	new BehaviorConfig( m_mainWindow );
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:

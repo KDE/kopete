@@ -23,8 +23,7 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
-
- struct KopeteAwayMessage{
+struct KopeteAwayMessage{
 	QString title;
 	QString message;
 };
@@ -175,14 +174,17 @@ public:
 	bool goAvailable() const;
 
 	/**
-	 * set the time before going automaticaly away.
+	 * set the time before going away automatically.
 	 * set to 0 to not going away
 	 */
-	void setAutoAwayTimeout(int );
+	void setAutoAwayTimeout(int);
 	/**
-	 *  the time before going automaticaly away.
+	 * the time before going away automatically.
 	 */
 	int autoAwayTimeout();
+
+	void setUseAutoAway(bool);
+	bool useAutoAway();
 
 private:
 	KopeteAway();
@@ -191,14 +193,17 @@ private:
 	//KopeteAway &operator=( const KopeteAway &rhs );
 	static KopeteAway *instance;
 	KopeteAwayPrivate *d;
+
 private slots:
 	void slotTimerTimeout();
+
 public slots:
 	/**
 	 * Set the activity
 	 * Plugins can set the activity if they discover activity bu another way that the mouse
 	 */
 	void setActivity();
+
 signals:
 	/**
 	 * Activity was detected

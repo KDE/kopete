@@ -24,7 +24,6 @@
 class QFrame;
 class QTabWidget;
 class QCheckBox;
-class QSplitter;
 class KListBox;
 class KIconView;
 class KHTMLPart;
@@ -36,7 +35,6 @@ class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_ChatAppearance;
 class AppearanceConfig_Contactlist;
-class KopeteAwayConfigUI;
 
 namespace KTextEditor {
 	class View;
@@ -85,7 +83,6 @@ private:
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
 	KIconView *icon_theme_preview;
-// 	QSplitter *icon_theme_splitter;
 	KHTMLPart *preview;
 	KTextEditor::Document* editDocument;
 
@@ -94,7 +91,6 @@ private:
 	AppearanceConfig_Contactlist *mPrfsContactlist;
 	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
-	KopeteAwayConfigUI *mAwayConfigUI;
 
 	StyleEditDialog *styleEditor;
 	QListBoxItem *editedItem;

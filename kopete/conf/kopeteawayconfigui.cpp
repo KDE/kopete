@@ -42,11 +42,15 @@ KopeteAwayConfigUI::KopeteAwayConfigUI(QWidget *parent) :
 void KopeteAwayConfigUI::newButtonClicked()
 {
 	bool createNewTitle = false;
-	QString newTitle = KLineEditDlg::getText(i18n("New Away Message"), i18n("Enter away message title:"),
-						i18n("Title"), &createNewTitle, this);
-	if( createNewTitle )
+	QString newTitle = KLineEditDlg::getText(
+		i18n("New Away Message"),
+		i18n("Enter away message title:"),
+		i18n("Title"), &createNewTitle, this);
+
+	if(createNewTitle)
 	{
-		KopeteAway::getInstance()->addMessage( newTitle, QString::null ); // Add a new empty away message
+		KopeteAway::getInstance()->addMessage( newTitle,
+			QString::null ); // Add a new empty away message
 		updateView();
 	}
 }
@@ -83,16 +87,16 @@ void KopeteAwayConfigUI::titleSelected()
 
 void KopeteAwayConfigUI::updateView()
 {
-	/* Clear the contents of the listbox */
+	KopeteAway *ka = KopeteAway::getInstance();
+
 	lstTitles->clear();
-	/* Get all the titles of away messages */
-	QStringList titles = KopeteAway::getInstance()->getTitles();
-	/* For every title... */
+	QStringList titles = ka->getTitles();
 	for( QStringList::iterator i = titles.begin(); i != titles.end(); i++ )
 		lstTitles->insertItem( ( *i ) ); // Insert the Title into the list
 
 	txtMessage->setText( QString::null );
-	
-	mAwayTimeout->setValue((int)(KopeteAway::getInstance()->autoAwayTimeout()/60));
-	mGoAvailable->setChecked(KopeteAway::getInstance()->goAvailable());
+
+	mUseAutoAway->setChecked(ka->useAutoAway());
+	mAutoAwayTimeout->setValue((int)(ka->autoAwayTimeout()/60));
+	mGoAvailable->setChecked(ka->goAvailable());
 }

@@ -8,17 +8,25 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>551</width>
-            <height>486</height>
+            <width>513</width>
+            <height>406</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>Away Config</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mNotifyAway</cstring>
+            </property>
+            <property name="text">
+                <string>Notify all open chats when I go away</string>
+            </property>
+        </widget>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>autoAwayGroupBox</cstring>
@@ -30,15 +38,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>mGoAvailable</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Become available when detecting activity again</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>TextLabel2</cstring>
                     </property>
@@ -46,15 +46,15 @@
                         <string>Become away after</string>
                     </property>
                 </widget>
-                <widget class="QSpinBox" row="0" column="1">
+                <widget class="QSpinBox" row="1" column="1">
                     <property name="name">
-                        <cstring>mAwayTimeout</cstring>
+                        <cstring>mAutoAwayTimeout</cstring>
                     </property>
                     <property name="maxValue">
                         <number>999</number>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="2">
+                <widget class="QLabel" row="1" column="2">
                     <property name="name">
                         <cstring>TextLabel3</cstring>
                     </property>
@@ -62,7 +62,7 @@
                         <string>minutes of user inactivity</string>
                     </property>
                 </widget>
-                <spacer row="0" column="3">
+                <spacer row="1" column="3">
                     <property name="name">
                         <cstring>spacer2</cstring>
                     </property>
@@ -79,28 +79,23 @@
                         </size>
                     </property>
                 </spacer>
-            </grid>
-        </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox3</cstring>
-            </property>
-            <property name="title">
-                <string>Notifications</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>m_notifyAway</cstring>
+                        <cstring>mUseAutoAway</cstring>
                     </property>
                     <property name="text">
-                        <string>Notify all open chats when I go away</string>
+                        <string>Use Auto Away</string>
                     </property>
                 </widget>
-            </vbox>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>mGoAvailable</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Become available when detecting activity again</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -249,12 +244,23 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>30</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<tabstops>
+    <tabstop>mNotifyAway</tabstop>
+    <tabstop>mUseAutoAway</tabstop>
+    <tabstop>mAutoAwayTimeout</tabstop>
+    <tabstop>mGoAvailable</tabstop>
+    <tabstop>lstTitles</tabstop>
+    <tabstop>txtMessage</tabstop>
+    <tabstop>btnNew</tabstop>
+    <tabstop>btnDelete</tabstop>
+    <tabstop>btnSave</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistbox.h</includehint>

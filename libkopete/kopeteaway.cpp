@@ -45,6 +45,7 @@ struct KopeteAwayPrivate
 	bool autoaway;
 	bool goAvailable;
 	int awayTimeout;
+	bool useAutoAway;
 	QPtrList<KopeteAccount> autoAwayAccounts;
 
 	int mouse_x;
@@ -64,6 +65,7 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	d->awayMessage = "";
 	d->globalAway = false;
 	d->autoaway = false;
+	d->useAutoAway = true;
 
 	// Empty the list
 	d->awayMessageList.clear();
@@ -81,9 +83,11 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	config->setGroup("AutoAway");
 	d->awayTimeout=config->readNumEntry("Timeout", 600);
 	d->goAvailable=config->readBoolEntry("GoAvailable", true);
+	d->useAutoAway=config->readBoolEntry("UseAutoAway", true);
 
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
+
 	/* If Kopete has been run before, this will be true.
 	* It's only false the first time Kopete is run
 	*/
@@ -140,17 +144,16 @@ void KopeteAway::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
-		kdDebug( 14013 ) << "[KOPETE AWAY] Setting global away message: " << message << endl;
+		kdDebug( 14013 ) << k_funcinfo <<
+			"Setting global away message: " << message << endl;
 		d->awayMessage = message;
 	}
 }
 
 KopeteAway *KopeteAway::getInstance()
 {
-	if (instance == 0L)
-	{
+	if (!instance)
 		instance = new KopeteAway;
-	}
 	return instance;
 }
 
@@ -182,6 +185,7 @@ void KopeteAway::save()
 	config->setGroup("AutoAway");
 	config->writeEntry("Timeout", d->awayTimeout);
 	config->writeEntry("GoAvailable", d->goAvailable);
+	config->writeEntry("UseAutoAway", d->useAutoAway);
 	config->sync();
 }
 
@@ -280,7 +284,7 @@ bool KopeteAway::updateMessage(const QString &title, const QString &message)
 
 long int KopeteAway::idleTime()
 {
-	//FIXME: the time is restted to zero if more than 24 hours are elapsed
+	//FIXME: the time is reset to zero if more than 24 hours are elapsed
 	// we can imagine someone who leave his PC for several weeks
 	return (d->idleTime.elapsed() / 1000);
 }
@@ -337,7 +341,7 @@ void KopeteAway::slotTimerTimeout()
 	}
 
 	//----------------
-	if(!d->autoaway && d->awayTimeout!=0 && idleTime() > d->awayTimeout)
+	if(!d->autoaway && d->useAutoAway && idleTime() > d->awayTimeout)
 	{
 		d->autoaway = true;
 
@@ -399,6 +403,17 @@ void KopeteAway::setGoAvailable(bool t)
 {
 	d->goAvailable = t;
 }
+
+void KopeteAway::setUseAutoAway(bool b)
+{
+	d->useAutoAway = b;
+}
+
+bool KopeteAway::useAutoAway()
+{
+	return d->useAutoAway;
+}
+
 
 #include "kopeteaway.moc"
 

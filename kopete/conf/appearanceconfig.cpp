@@ -22,7 +22,6 @@
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qslider.h>
-// #include <qsplitter.h>
 
 #include <klineedit.h>
 #include <kcolorcombo.h>
@@ -54,8 +53,6 @@
 #include "appearanceconfig_chatappearance.h"
 #include "kopeteprefs.h"
 #include "kopetemessage.h"
-#include "kopeteaway.h"
-#include "kopeteawayconfigui.h"
 #include "styleeditdialog.h"
 #include "kopetexsl.h"
 #include "kopetecontact.h"
@@ -66,13 +63,13 @@
 
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
-		i18n("Behavior"),
+		i18n("Appearance"),
 		i18n("Here You Can Personalize Kopete"),
 		"appearance",
 		parent )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	mAppearanceTabCtl = new QTabWidget(this,"mAppearanceTabCtl");
+	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
 
 	editedItem = 0L;
 
@@ -82,10 +79,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(toggled(bool)), this, SLOT(slotShowTrayChanged(bool)));
 	mAppearanceTabCtl->addTab( mPrfsGeneral, i18n("&General") );
 
-	// "Away" TAB ========================================================
-	mAwayConfigUI = new KopeteAwayConfigUI(mAppearanceTabCtl);
-	mAppearanceTabCtl->addTab( mAwayConfigUI, i18n("&Away Settings") );
-
 	// "Contact List" TAB ========================================================
 	mPrfsContactlist = new AppearanceConfig_Contactlist(mAppearanceTabCtl);
 	mAppearanceTabCtl->addTab( mPrfsContactlist, i18n("Contact &List") );
@@ -94,7 +87,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mEmoticonsTab = new QFrame(mAppearanceTabCtl);
 	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
 	mUseEmoticonsChk = new QCheckBox ( i18n("&Use emoticons"), mEmoticonsTab );
-//	icon_theme_splitter = new QSplitter ( Qt::Vertical, mEmoticonsTab, "icon_theme_splitter" );
 	icon_theme_list = new KListBox(mEmoticonsTab, "icon_theme_list");
 	icon_theme_preview = new KIconView(mEmoticonsTab, "icon_theme_preview");
 	icon_theme_preview->setFixedHeight(64);
@@ -202,12 +194,6 @@ void AppearanceConfig::save()
 
 	p->setStyleSheet( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
 
-	p->setNotifyAway( mAwayConfigUI->m_notifyAway->isChecked());
-	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
-	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
-	/* Tells KopeteAway to save it's messages */
-	KopeteAway::getInstance()->save();
-
 	// disconnect or else we will end up in an endless loop
 	p->save();
 	errorAlert = false;
@@ -308,9 +294,6 @@ void AppearanceConfig::reopen()
 	}
 
 	mPrfsChatAppearance->styleList->sort();
-
-	mAwayConfigUI->updateView();
-	mAwayConfigUI->m_notifyAway->setChecked( p->notifyAway() );
 }
 
 void AppearanceConfig::slotConfigSound()

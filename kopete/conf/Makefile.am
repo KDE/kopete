@@ -6,12 +6,14 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
         -I$(top_builddir)/kopete/kopete/conf
 
 noinst_LTLIBRARIES = libkopeteconf.la
-noinst_HEADERS = pluginconfig.h appearanceconfig.h accountconfig.h addaccountwizard.h
+noinst_HEADERS = pluginconfig.h appearanceconfig.h accountconfig.h addaccountwizard.h \
+	behaviorconfig.h
 
 libkopeteconf_la_SOURCES = pluginconfig.cpp \
 	appearanceconfig_general.ui appearanceconfig_contactlist.ui \
 	appearanceconfig_chatwindow.ui appearanceconfig_chatappearance.ui \
 	appearanceconfig.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
+	behaviorconfig.cpp \
 	accountconfigbase.ui accountconfig.cpp \
 	addaccountwizardpage1.ui addaccountwizardpage2.ui addaccountwizardpage3.ui \
 	addaccountwizard.cpp styleeditdialog.ui
@@ -20,4 +22,3 @@ libkopeteconf_la_LDFLAGS = $(all_libraries)
 libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
 
 # vim: set noet:
-
