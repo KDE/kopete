@@ -57,9 +57,6 @@
 #include "kopeteprefs.h"
 #include "kopetexsl.h"
 
-#if !KDE_IS_VERSION(3, 1, 90)
-#include "loadmovie.h"
-#endif
 
 class KopeteEmailWindowPrivate
 {
