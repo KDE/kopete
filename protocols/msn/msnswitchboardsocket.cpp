@@ -462,7 +462,10 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 			head += "U";
 		head += "; ";
 	}
-	else head+="FN=MS%20Serif; EF=; ";
+	/**
+	 * I don't know what to set by default, so i decided to set nothing.  CF Bug 82734
+	  else head+="FN=MS%20Serif; EF=; ";
+	 */
 
 	// Color support
 	if (msg.fg().isValid())
