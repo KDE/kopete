@@ -328,11 +328,15 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 
 		statusBarIcon->setPixmap(onlineIcon);
 
-		// since we are online now, set initial presence
-		setPresence(initialPresence, myContact->reason());
-		
 		// request roster
 		jabberClient->rosterRequest();
+
+		// since we are online now, set initial presence
+		// don't do this before the roster request or we will receive
+		// presence information before we have updated our roster
+		// with actual contacts from the server! (libpsi won't forward
+		// presence information in that case either)
+		setPresence(initialPresence, myContact->reason());
 
 		// initiate anti-idle timer (will be triggered every 10 seconds)
 		jabberClient->setNoopTime(10000);
