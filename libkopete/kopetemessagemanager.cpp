@@ -147,13 +147,21 @@ const QString KopeteMessageManager::chatName()
 	else
 		chatName = c->displayName();
 
-	while( ( c = d->mContactList.next() ) )
+	//If we have only 1 contact, add the status of him
+	if( d->mContactList.count() == 1 )
 	{
-		if( c->metaContact() )
-			nextDisplayName = c->metaContact()->displayName();
-		else
-			nextDisplayName = c->displayName();
-		chatName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
+		chatName.append( QString::fromLatin1(" (") + c->statusText() + QString::fromLatin1(")") );
+	}
+	else
+	{
+		while( ( c = d->mContactList.next() ) )
+		{
+			if( c->metaContact() )
+				nextDisplayName = c->metaContact()->displayName();
+			else
+				nextDisplayName = c->displayName();
+			chatName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
+		}
 	}
 
 	return chatName;
