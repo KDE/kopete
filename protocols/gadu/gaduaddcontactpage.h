@@ -40,9 +40,6 @@ public:
 	virtual bool validateData();
 	virtual bool apply( KopeteAccount* , KopeteMetaContact * );
 
-private slots:
-	void recreateStrings( const QString& );
-
 private:
 	GaduAccount*	account_;
 	gaduAddUI*	addUI_;

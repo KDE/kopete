@@ -44,41 +44,11 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 	account_	= owner;
 	canAdd_	= true;
 	addUI_->addEdit_->setValidChars( "1234567890" );
-	connect( addUI_->fornameEdit_, SIGNAL( textChanged( const QString &) ), SLOT( recreateStrings( const QString & ) ) );
-	connect( addUI_->snameEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
-	connect( addUI_->nickEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
-	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
 
-// FIXME: Again, bug in libkopete, i am not able to get metacontact name that user typed in on previus step!
-	addUI_->dnEdit_->insertItem( "" ,0 );
-	addUI_->dnEdit_->insertItem( "", 1 );
-	addUI_->dnEdit_->insertItem( "", 2 );
-	addUI_->dnEdit_->insertItem( "", 3 );
 }
 
 GaduAddContactPage::~GaduAddContactPage()
 {
-}
-
-void
-GaduAddContactPage::recreateStrings( const QString& )
-{
-	// recreate string(s) in dropdown
-	//- Nickname
-	//- Name Surname
-	//- Name
-	//- Surname
-	
-	QString fname = addUI_->fornameEdit_->text();
-	QString sname = addUI_->snameEdit_->text();
-	QString nname = addUI_->nickEdit_->text();
-	QString uname = addUI_->addEdit_->text();
-	
-	addUI_->dnEdit_->changeItem( fname + " " + sname, 0 );
-	addUI_->dnEdit_->changeItem( nname, 1 );
-	addUI_->dnEdit_->changeItem( fname, 2 );
-	addUI_->dnEdit_->changeItem( sname, 3 );
-	
 }
 
 bool
@@ -96,18 +66,11 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 		if ( validateData() ) {
 			QString userid	= addUI_->addEdit_->text();
 			QString name	= addUI_->nickEdit_->text();
-			QString dname;
 			if ( a != account_ ) {
 				kdDebug(14001) << "Problem since accounts differ: " << a->accountId()
 								<< " , " << account_->accountId() << endl;
 			}
-			if ( addUI_->dnEdit_->currentText().isEmpty() ) {
-				dname = mc->displayName();
-			}
-			else {
-				dname = addUI_->dnEdit_->currentText();
-			}
-			if ( a->addContact( userid, dname, mc, KopeteAccount::ChangeKABC ) == false ) {
+			if ( a->addContact( userid, name, mc, KopeteAccount::ChangeKABC ) == false ) {
 				return false;
 			}
 			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
@@ -118,6 +81,7 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			contact->rename( addUI_->nickEdit_->text() );
 			contact->setProperty( "privPhoneNum", addUI_->telephoneEdit_ ->text() );
 			contact->setProperty( "ignored", i18n( "ignored" ), "false" );
+			contact->setProperty( "nickName", i18n( "nick name" ), name );
 		}
 	}
 	else {

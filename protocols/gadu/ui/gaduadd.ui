@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>425</width>
-            <height>346</height>
+            <height>297</height>
         </rect>
     </property>
     <property name="caption">
@@ -27,7 +27,7 @@
         </property>
         <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>layout10</cstring>
+                <cstring>layout12</cstring>
             </property>
             <vbox>
                 <property name="name">
@@ -35,78 +35,78 @@
                 </property>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout9</cstring>
+                        <cstring>layout39</cstring>
                     </property>
-                    <vbox>
+                    <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout39</cstring>
-                            </property>
-                            <hbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>TextLabel1</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>0</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="text">
-                                        <string>Gadu-Gadu &amp;UIN:</string>
-                                    </property>
-                                    <property name="textFormat">
-                                        <enum>AutoText</enum>
-                                    </property>
-                                    <property name="scaledContents">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="alignment">
-                                        <set>AlignVCenter</set>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>addEdit_</cstring>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The user ID of the Gadu-Gadu account you would like to add.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The user ID of the Gadu-Gadu account you would like to add.  This should be in the form of a number (no decimals, no spaces).  This field is mandatory.</string>
-                                    </property>
-                                </widget>
-                                <widget class="KRestrictedLine">
-                                    <property name="name">
-                                        <cstring>addEdit_</cstring>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The user ID of the Gadu-Gadu account you would like to add.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The user ID of the Gadu-Gadu account you would like to add.  This should be in the form of a number (no decimals, no spaces).  This field is mandatory.</string>
-                                    </property>
-                                </widget>
-                            </hbox>
-                        </widget>
                         <widget class="QLabel">
                             <property name="name">
-                                <cstring>textLabel2</cstring>
+                                <cstring>TextLabel1</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
                             </property>
                             <property name="text">
-                                <string>&lt;i&gt;(for example: 1234567)&lt;/i&gt;</string>
+                                <string>Gadu-Gadu &amp;UIN:</string>
+                            </property>
+                            <property name="textFormat">
+                                <enum>AutoText</enum>
+                            </property>
+                            <property name="scaledContents">
+                                <bool>false</bool>
                             </property>
                             <property name="alignment">
-                                <set>AlignVCenter|AlignRight</set>
+                                <set>AlignVCenter</set>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>addEdit_</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The user ID of the Gadu-Gadu account you would like to add.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The user ID of the Gadu-Gadu account you would like to add.  This should be in the form of a number (no decimals, no spaces).  This field is mandatory.</string>
                             </property>
                         </widget>
+                        <widget class="KRestrictedLine">
+                            <property name="name">
+                                <cstring>addEdit_</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The user ID of the Gadu-Gadu account you would like to add.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The user ID of the Gadu-Gadu account you would like to add.  This should be in the form of a number (no decimals, no spaces).  This field is mandatory.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&lt;i&gt;(for example: 1234567)&lt;/i&gt;</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout10</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
                         <widget class="QLayoutWidget">
                             <property name="name">
                                 <cstring>layout8</cstring>
@@ -115,305 +115,227 @@
                                 <property name="name">
                                     <cstring>unnamed</cstring>
                                 </property>
-                                <widget class="QLayoutWidget">
+                                <widget class="QLabel">
                                     <property name="name">
-                                        <cstring>layout7</cstring>
-                                    </property>
-                                    <hbox>
-                                        <property name="name">
-                                            <cstring>unnamed</cstring>
-                                        </property>
-                                        <widget class="QLayoutWidget">
-                                            <property name="name">
-                                                <cstring>layout5</cstring>
-                                            </property>
-                                            <vbox>
-                                                <property name="name">
-                                                    <cstring>unnamed</cstring>
-                                                </property>
-                                                <widget class="QLabel">
-                                                    <property name="name">
-                                                        <cstring>textLabel1</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&amp;Forename:</string>
-                                                    </property>
-                                                    <property name="buddy" stdset="0">
-                                                        <cstring>fornameEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>The forename of the contact you wish to add.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>The forename (first name) of the contact you wish to add.  Optionally this may include a middle name.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLabel">
-                                                    <property name="name">
-                                                        <cstring>TextLabel1_2</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&amp;Surname:</string>
-                                                    </property>
-                                                    <property name="buddy" stdset="0">
-                                                        <cstring>snameEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>The surname of the contact you wish to add.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>The surname (last name) of the contact you wish to add.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLabel">
-                                                    <property name="name">
-                                                        <cstring>TextLabel1_2_2</cstring>
-                                                    </property>
-                                                    <property name="sizePolicy">
-                                                        <sizepolicy>
-                                                            <hsizetype>0</hsizetype>
-                                                            <vsizetype>1</vsizetype>
-                                                            <horstretch>0</horstretch>
-                                                            <verstretch>0</verstretch>
-                                                        </sizepolicy>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>N&amp;ickname:</string>
-                                                    </property>
-                                                    <property name="buddy" stdset="0">
-                                                        <cstring>nickEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>A nickname for the contact you wish to add.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>A nickname for the contact you wish to add.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLabel">
-                                                    <property name="name">
-                                                        <cstring>TextLabel1_3</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="sizePolicy">
-                                                        <sizepolicy>
-                                                            <hsizetype>0</hsizetype>
-                                                            <vsizetype>1</vsizetype>
-                                                            <horstretch>0</horstretch>
-                                                            <verstretch>0</verstretch>
-                                                        </sizepolicy>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&amp;Display name:</string>
-                                                    </property>
-                                                    <property name="buddy" stdset="0">
-                                                        <cstring>dnEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>The alias you would like this contact to be shown as.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>The alias you would like this contact to be shown as.  This name will be shown as the contact name.  By default it will use (if present) one of those:&lt;br&gt;
-&lt;br&gt;
-- Nickname&lt;br&gt;
-- Name Surname&lt;br&gt;
-- Name&lt;br&gt;
-- Surname</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLabel">
-                                                    <property name="name">
-                                                        <cstring>TextLabel1_4</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="sizePolicy">
-                                                        <sizepolicy>
-                                                            <hsizetype>0</hsizetype>
-                                                            <vsizetype>5</vsizetype>
-                                                            <horstretch>0</horstretch>
-                                                            <verstretch>0</verstretch>
-                                                        </sizepolicy>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&amp;Email address:</string>
-                                                    </property>
-                                                    <property name="buddy" stdset="0">
-                                                        <cstring>emailEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLabel">
-                                                    <property name="name">
-                                                        <cstring>TextLabel1_4_2</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="sizePolicy">
-                                                        <sizepolicy>
-                                                            <hsizetype>0</hsizetype>
-                                                            <vsizetype>5</vsizetype>
-                                                            <horstretch>0</horstretch>
-                                                            <verstretch>0</verstretch>
-                                                        </sizepolicy>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&amp;Telephone number:</string>
-                                                    </property>
-                                                    <property name="buddy" stdset="0">
-                                                        <cstring>emailEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                </widget>
-                                            </vbox>
-                                        </widget>
-                                        <widget class="QLayoutWidget">
-                                            <property name="name">
-                                                <cstring>layout6</cstring>
-                                            </property>
-                                            <vbox>
-                                                <property name="name">
-                                                    <cstring>unnamed</cstring>
-                                                </property>
-                                                <widget class="QLineEdit">
-                                                    <property name="name">
-                                                        <cstring>fornameEdit_</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>The forename of the contact you wish to add.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>The forename (first name) of the contact you wish to add.  Optionally this may include a middle name.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLineEdit">
-                                                    <property name="name">
-                                                        <cstring>snameEdit_</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>The surname of the contact you wish to add.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>The surname (last name) of the contact you wish to add.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLineEdit">
-                                                    <property name="name">
-                                                        <cstring>nickEdit_</cstring>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>A nickname for the contact you wish to add.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>A nickname for the contact you wish to add.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QComboBox">
-                                                    <property name="name">
-                                                        <cstring>dnEdit_</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="editable">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="autoCompletion">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="duplicatesEnabled">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>The alias you would like this contact to be shown as.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>The alias you would like this contact to be shown as.  This name will be shown as the contact name.  By default it will use (if present) one of those:&lt;br&gt;
-&lt;br&gt;
-- Nickname&lt;br&gt;
-- Name Surname&lt;br&gt;
-- Name&lt;br&gt;
-- Surname</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLineEdit">
-                                                    <property name="name">
-                                                        <cstring>emailEdit_</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                </widget>
-                                                <widget class="QLineEdit">
-                                                    <property name="name">
-                                                        <cstring>telephoneEdit_</cstring>
-                                                    </property>
-                                                    <property name="enabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="toolTip" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                    <property name="whatsThis" stdset="0">
-                                                        <string>E-Mail address for this contact.</string>
-                                                    </property>
-                                                </widget>
-                                            </vbox>
-                                        </widget>
-                                    </hbox>
-                                </widget>
-                                <widget class="QCheckBox">
-                                    <property name="name">
-                                        <cstring>notAFriend_</cstring>
+                                        <cstring>textLabel1</cstring>
                                     </property>
                                     <property name="enabled">
-                                        <bool>false</bool>
+                                        <bool>true</bool>
                                     </property>
                                     <property name="text">
-                                        <string>Offline to contact when you set "&amp;Just for friends"</string>
+                                        <string>&amp;Forename:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>fornameEdit_</cstring>
                                     </property>
                                     <property name="toolTip" stdset="0">
-                                        <string>Check if you want to exclude this contact from the "Just for friends" status mode.</string>
+                                        <string>The forename of the contact you wish to add.</string>
                                     </property>
                                     <property name="whatsThis" stdset="0">
-                                        <string>Check if you want to exclude this contact from the "Just for friends" status mode.</string>
+                                        <string>The forename (first name) of the contact you wish to add.  Optionally this may include a middle name.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel1_2</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Surname:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>snameEdit_</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The surname of the contact you wish to add.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The surname (last name) of the contact you wish to add.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel1_2_2</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>1</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>N&amp;ickname:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>nickEdit_</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>A nickname for the contact you wish to add.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>A nickname for the contact you wish to add.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel1_4</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>5</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Email address:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>emailEdit_</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel1_4_2</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>5</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Telephone number:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>emailEdit_</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
                                     </property>
                                 </widget>
                             </vbox>
                         </widget>
-                    </vbox>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>layout9</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>fornameEdit_</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The forename of the contact you wish to add.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The forename (first name) of the contact you wish to add.  Optionally this may include a middle name.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>snameEdit_</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The surname of the contact you wish to add.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The surname (last name) of the contact you wish to add.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>nickEdit_</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>A nickname for the contact you wish to add.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>A nickname for the contact you wish to add.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>emailEdit_</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>telephoneEdit_</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>E-Mail address for this contact.</string>
+                                    </property>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>notAFriend_</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Offline to contact when you set "&amp;Just for friends"</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+J</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check if you want to exclude this contact from the "Just for friends" status mode.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check if you want to exclude this contact from the "Just for friends" status mode.</string>
+                    </property>
                 </widget>
                 <spacer>
                     <property name="name">
@@ -428,7 +350,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>90</height>
+                            <height>58</height>
                         </size>
                     </property>
                 </spacer>
@@ -437,7 +359,4 @@
     </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>krestrictedline.h</includehint>
-</includehints>
 </UI>
