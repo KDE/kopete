@@ -18,6 +18,7 @@
 #include "kopetepluginconfig.h"
 
 #include <qlayout.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -79,6 +80,7 @@ void KopetePluginConfig::apply()
 	if( d->isChanged )
 	{
 		d->pluginSelector->save();
+		KopetePluginManager::self()->loadAllPlugins();
 		setChanged( false );
 	}
 }
