@@ -68,16 +68,6 @@ namespace Global
 			const ContactPropertyTmpl &tmpl(const QString &key) const;
 
 			/**
-			 * \brief Returns the server-set contact alias
-			 */
-			const ContactPropertyTmpl &serverAlias() const;
-
-			/**
-			 * \brief Returns the user-set contact alias, if any
-			 */
-			const ContactPropertyTmpl &customAlias() const;
-
-			/**
 			 * \brief Return a ready-to-use template for a contact's full name.
 			 * This is actually no real property, it makes use of
 			 * firstName() and lastName() to assemble an name that consists of

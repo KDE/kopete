@@ -110,18 +110,6 @@ const ContactPropertyTmpl &Properties::fullName() const
 		QString::fromLatin1("Full Name"));
 }
 
-const ContactPropertyTmpl &Properties::serverAlias() const
-{
-	return createProp(QString::fromLatin1("ServerAlias"),
-		i18n("Server Alias"), QString::null, true);
-}
-
-const ContactPropertyTmpl &Properties::customAlias() const
-{
-	return createProp(QString::fromLatin1("CustomAlias"),
-		i18n("Custom Alias"), QString::null, true);
-}
-
 const ContactPropertyTmpl &Properties::idleTime() const
 {
 	return createProp(QString::fromLatin1("idleTime"),

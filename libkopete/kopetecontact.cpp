@@ -20,7 +20,6 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
-#include <qvalidator.h>
 #include <qstylesheet.h>
 
 #include <kdebug.h>
@@ -56,6 +55,7 @@
 struct KopeteContactPrivate
 {
 public:
+	QString displayName;
 	bool fileCapable;
 
 	KopeteOnlineStatus onlineStatus;
@@ -93,7 +93,7 @@ KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId,
 
 	d->metaContact = parent;
 	d->fileCapable = false;
-
+	d->displayName = contactId;
 	d->account = account;
 	d->idleTime = 0;
 
@@ -128,30 +128,17 @@ void KopeteContact::rename( const QString &name )
 
 void KopeteContact::setDisplayName( const QString &name )
 {
-	QString oldName = property( Kopete::Global::Properties::self()->serverAlias() ).value().toString();
-	if( name == oldName )
+	if( name == d->displayName )
 		return;
 
-	setProperty( Kopete::Global::Properties::self()->serverAlias(), name );
-
-	if( property( Kopete::Global::Properties::self()->customAlias() ).value().toString().isEmpty() )
-	{
-		emit displayNameChanged( oldName , name );
-	}
+	QString old = d->displayName;
+	d->displayName = name;
+	emit displayNameChanged( old , name );
 }
 
 QString KopeteContact::displayName() const
 {
-	QString customAlias = property( Kopete::Global::Properties::self()->customAlias() ).value().toString();
-	QString serverAlias = property( Kopete::Global::Properties::self()->serverAlias() ).value().toString();
-
-	if( !customAlias.isEmpty() )
-		return customAlias;
-
-	if( !serverAlias.isEmpty() )
-		return serverAlias;
-
-	return d->contactId;
+	return d->displayName;
 }
 
 const KopeteOnlineStatus& KopeteContact::onlineStatus() const
@@ -283,7 +270,7 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 
 	d->actionUserInfo->plug( menu );
 
-	if( metaContact() && !metaContact()->isTemporary() && this != d->account->myself() )
+	if( metaContact() && !metaContact()->isTemporary() )
 	{
 		d->actionChangeAlias->plug( menu );
 		d->actionDeleteContact->plug( menu );
@@ -294,30 +281,11 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 
 void KopeteContact::slotChangeDisplayName()
 {
-	QRegExpValidator validator( QString::fromLatin1(".*"), this );
-	bool ok;
-
-	QString oldName = displayName();
 	QString newName =
-		KInputDialog::getText(
-			i18n( "Change Alias" ),
-			i18n( "New alias for %1:" ).arg( contactId() ),
-			 displayName(),
-			 &ok,
-			 Kopete::UI::Global::mainWidget(),
-			 0,
-			 &validator);
+		KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ), displayName());
 
-	if( ok )
-	{
-		setProperty( Kopete::Global::Properties::self()->customAlias(), newName );
-
-		//Call rename instead of setDisplayName, rename could go to server
+	if( !newName.isNull() )
 		rename( newName );
-
-		//This won't be emitted by setDisplayName because we have a custom name, emit it ourselves
-		emit displayNameChanged( oldName , newName );
-	}
 }
 
 void KopeteContact::slotChangeMetaContact()
@@ -451,7 +419,7 @@ void KopeteContact::serializeProperties(QMap<QString, QString> &serializedData)
 		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
 
 		kdDebug(14010) << k_funcinfo << "storing data of property '" <<
-			it.key() << "' for contact " << displayName() <<
+			it.key() << "' for contact " << d->displayName <<
 			" using xmlized key " << key << endl;
 
 		serializedData[key] = val.toString();
