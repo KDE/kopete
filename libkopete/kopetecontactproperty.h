@@ -17,6 +17,9 @@
     *************************************************************************
 */
 
+#ifndef _KOPETECONTACTPROPERTY_H_
+#define _KOPETECONTACTPROPERTY_H_
+
 #include <qvariant.h>
 
 /**
@@ -64,3 +67,5 @@ class KopeteContactProperty
 		QString mLabel;
 		QVariant mValue;
 };
+
+#endif //_KOPETECONTACTPROPERTY_H_
