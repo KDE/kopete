@@ -128,19 +128,20 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_displayPicture->setPixmap( locateLocal( "appdata", "msnpicture-" +
 			account->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" ) );
 
-		connect( d->ui->m_allowButton, SIGNAL( pressed() ), this, SLOT( slotAllow() ) );
-		connect( d->ui->m_blockButton, SIGNAL( pressed() ), this, SLOT( slotBlock() ) );
-		connect( d->ui->m_selectImage, SIGNAL( pressed() ), this, SLOT( slotSelectImage() ) );
-		connect( d->ui->m_RLButton, SIGNAL( pressed() ), this, SLOT( slotShowReverseList() ) );
-		QObject::connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
-
 		d->ui->m_useDisplayPicture->setChecked( config->readBoolEntry( "exportCustomPicture" ));
 	}
 	else
 	{
 		d->ui->tab_contacts->setDisabled( true );
-		d->ui->tab_info->setDisabled( true );
+		d->ui->m_displayName->setDisabled( true );
+		d->ui->m_phones->setDisabled( true );
 	}
+
+	connect( d->ui->m_allowButton, SIGNAL( pressed() ), this, SLOT( slotAllow() ) );
+	connect( d->ui->m_blockButton, SIGNAL( pressed() ), this, SLOT( slotBlock() ) );
+	connect( d->ui->m_selectImage, SIGNAL( pressed() ), this, SLOT( slotSelectImage() ) );
+	connect( d->ui->m_RLButton, SIGNAL( pressed() ), this, SLOT( slotShowReverseList() ) );
+	connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 }
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
