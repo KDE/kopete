@@ -57,15 +57,8 @@
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
 
-#if QT_VERSION >= 0x030200
-	#include <qtoolbutton.h>
-#endif
-
-#if KDE_IS_VERSION( 3, 1, 90 )
-	#include <kactionclasses.h>
-#else
-	#include "loadmovie.h"
-#endif
+#include <qtoolbutton.h>
+#include <kactionclasses.h>
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
