@@ -171,12 +171,24 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 
+	// Contact changed from Offline to another status
+	if( oldStatus.status() == KopeteOnlineStatus::Offline &&
+		status.status() != KopeteOnlineStatus::Offline )
+	{
+		setProperty( QString::fromLatin1("onlineSince"), QDateTime::currentDateTime() );
+	}
+	else if( status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
+	{
+		removeProperty( QString::fromLatin1("onlineSince") );
+	}
+
 	emit onlineStatusChanged( this, status, oldStatus );
 }
 
-void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* fileName */, uint /* fileSize */ )
+void KopeteContact::sendFile( const KURL &, const QString &, uint )
 {
-	kdWarning( 14010 ) << k_funcinfo << "Plugin " << protocol()->pluginId() << " has enabled file sending, "
+	kdWarning( 14010 ) << k_funcinfo << "Plugin "
+		<< protocol()->pluginId() << " has enabled file sending, "
 		<< "but didn't implement it!" << endl;
 }
 
@@ -192,8 +204,8 @@ void KopeteContact::slotAddContact()
 KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 {
 	// FIXME:
-	// This should perhaps be KActionCollection * KopeteContact::contactActions() to
-	// avoid passing around KPopupMenu's (Jason)
+	// This should perhaps be KActionCollection * KopeteContact::contactActions()
+	// to avoid passing around KPopupMenu's (Jason)
 	//
 	// KActionCollections are bad for popup menus because they are unordered.
 	// in fact, I think customContextMenuActions should be remade into a popupmenu,
@@ -600,6 +612,8 @@ void KopeteContact::setProperty(const QString &key, const QVariant &value)
 		label = i18n("Away Message");
 	else if (key == QString::fromLatin1("ircChannel"))
 		label = i18n("Channel");
+	else if (key == QString::fromLatin1("onlineSince"))
+		label = i18n("Online Since");
 
 	if(!label.isNull())
 		setProperty(key, label, value);
@@ -703,8 +717,25 @@ QString KopeteContact::toolTip() const
 			p = property(*it);
 			if(!p.isNull())
 			{
-				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE", "<br><b>%2:</b>&nbsp;%1")
-					.arg(p.value().toString())
+				QVariant val = p.value();
+				QString valueText;
+				switch(val.type())
+				{
+					case QVariant::DateTime:
+						valueText = KGlobal::locale()->formatDateTime(val.toDateTime());
+						break;
+					case QVariant::Date:
+						valueText = KGlobal::locale()->formatDate(val.toDate());
+						break;
+					case QVariant::Time:
+						valueText = KGlobal::locale()->formatTime(val.toTime());
+						break;
+					default:
+						valueText = val.toString();
+				}
+
+				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE", "<br><nobr><b>%2:</b></nobr>&nbsp;%1")
+					.arg(valueText)
 					.arg(p.label());
 			}
 		}

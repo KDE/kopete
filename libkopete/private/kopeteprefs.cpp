@@ -97,6 +97,7 @@ void KopetePrefs::load()
 		mToolTipContents
 			<< QString::fromLatin1("FormattedName")
 			<< QString::fromLatin1("emailAddress")
+			<< QString::fromLatin1("onlineSince");
 			<< QString::fromLatin1("awayMessage");
 	}
 
