@@ -83,7 +83,6 @@ public:
 	 * Initialization/deinitialization routines called upon
 	 * loading/unloading the plugin
 	 */
-	void init();
 	bool unload();
 
 	/**

@@ -27,10 +27,6 @@ KopetePlugin::~KopetePlugin()
 {
 }
 
-void KopetePlugin::init()
-{
-}
-
 bool KopetePlugin::unload()
 {
 	emit unloading();

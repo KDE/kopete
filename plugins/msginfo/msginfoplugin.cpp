@@ -30,11 +30,6 @@ MsgInfoPlugin::~MsgInfoPlugin()
 {
 }
 
-void
-MsgInfoPlugin::init()
-{
-}
-
 bool
 MsgInfoPlugin::unload()
 {

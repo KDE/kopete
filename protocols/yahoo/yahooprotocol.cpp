@@ -135,10 +135,6 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	addContact( contactId, serializedData[ "displayName" ], metaContact, serializedData[ "group" ] );
 }
 
-void YahooProtocol::init()
-{
-}
-
 /***************************************************************************
  *                                                                         *
  *   Re-implementation of KopeteContact Class Methods                      *

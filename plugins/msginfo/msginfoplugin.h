@@ -39,7 +39,6 @@ public:
 	MsgInfoPlugin( QObject *parent, const char *name, const QStringList &args );
 	~MsgInfoPlugin();
 
-	void init();
 	bool unload();
 
 	bool serialize( KopeteMetaContact *metaContact,

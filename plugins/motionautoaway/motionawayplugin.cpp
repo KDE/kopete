@@ -132,10 +132,6 @@ MotionAwayPlugin::~MotionAwayPlugin()
 	kdDebug(14305) << "[MotionAway Plugin] : Freeing memory" << endl;
 }
 
-void MotionAwayPlugin::init()
-{
-}
-
 bool MotionAwayPlugin::unload()
 {
 	return true;

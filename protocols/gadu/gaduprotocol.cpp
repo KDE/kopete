@@ -156,11 +156,6 @@ GaduProtocol::protocol()
 }
 
 void
-GaduProtocol::init()
-{
-}
-
-void
 GaduProtocol::connect()
 {
     slotGoOnline();

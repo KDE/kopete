@@ -28,7 +28,7 @@
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qmap.h>
-#include <qmovie.h>
+#include <qtimer.h>
 #include <qpixmap.h>
 #include <qstringlist.h>
 
@@ -184,11 +184,6 @@ void JabberProtocol::initActions()
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert(actionEmptyMail);
 
-}
-
-void JabberProtocol::init()
-{
-
 	// initialize icon that sits in Kopete's status bar
 	setStatusIcon("jabber_offline");
 
@@ -211,7 +206,7 @@ void JabberProtocol::init()
 
 	// if we need to connect on startup, do it now
 	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
-		connect();
+		QTimer::singleShot( 0, this, SLOT( connect() ) );
 
 	// create a contact instance for self
 	QString userId = KGlobal::config()->readEntry("UserID", "");

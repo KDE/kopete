@@ -234,8 +234,6 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 		// Automatically load the i18n catalogue for the plugin
 		KGlobal::locale()->insertCatalogue( info.filename );
 
-		plugin->init();
-
 		m_addressBookFields.insert( plugin, plugin->addressBookFields() );
 
 		kdDebug(14010) << "LibraryLoader::loadPlugin: Successfully loaded plugin '" << spec << "'."<< endl;

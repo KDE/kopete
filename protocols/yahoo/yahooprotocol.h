@@ -50,7 +50,6 @@ public:
 	static YahooProtocol *protocol();
 
 	/* Plugin reimplementation */
-	void init();
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 

@@ -42,7 +42,6 @@ public:
 	KopetePlugin( QObject *parent = 0L, const char *name = 0L );
 	virtual ~KopetePlugin();
 
-	virtual void init();
 	virtual bool unload();
 	virtual const char *pluginId() const;
 

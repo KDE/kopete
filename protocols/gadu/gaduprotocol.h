@@ -56,8 +56,6 @@ public:
 
     // Plugin reimplementation
     // {
-    void init();
-
     void setAway();
     void setAvailable();
 
