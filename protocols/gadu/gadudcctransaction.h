@@ -37,11 +37,11 @@ class GaduDCC;
 class GaduDCCTransaction: QObject {
 	Q_OBJECT
 public:
-	GaduDCCTransaction( gg_dcc*, GaduDCC*, const char* name = NULL );
-	GaduDCCTransaction( gg_dcc*, GaduContact*, GaduDCC*, const char* name = NULL );
+	GaduDCCTransaction( GaduDCC*, const char* name = NULL );
 	~GaduDCCTransaction();
-	
-	bool setupIncoming( unsigned int p = 0 );
+
+	bool setupIncoming( const unsigned int, GaduContact* );
+	bool setupIncoming( gg_dcc* );
 	unsigned int recvUIN();
 	unsigned int peerUIN();
 
@@ -73,9 +73,8 @@ private:
 	QSocketNotifier* read_;
 	QSocketNotifier* write_;
 
-	GaduAccount* account;
 	GaduContact* contact;
-	
+
 	KopeteTransfer* transfer_;
 	long transferId_;
 	QFile localFile_;

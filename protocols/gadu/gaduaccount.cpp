@@ -135,7 +135,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 	p->loginInfo.forFriends		= false;
 	p->loginInfo.client_port	= 0;
 	p->loginInfo.client_addr	= 0;
-	
+
 	p->pingTimer_ = new QTimer( this );
 
 	p->gaduDcc_ = NULL;
@@ -192,7 +192,7 @@ GaduAccount::initConnections()
 				SLOT( userlist( const QString& ) ) );
 	QObject::connect( p->session_, SIGNAL( incomingCtcp( unsigned int ) ),
 				SLOT( slotIncomingDcc( unsigned int ) ) );
-	
+
 	QObject::connect( p->pingTimer_, SIGNAL( timeout() ),
 				SLOT( pingServer() ) );
 }
@@ -698,18 +698,12 @@ GaduAccount::slotIncomingDcc( unsigned int UIN )
 	if ( contact->contactPort() < 10 ) {
 		return;
 	}
-	
-	dcc = gg_dcc_get_file( htonl( contact->contactIp().ip4Addr() ), contact->contactPort(), p->loginInfo.uin ,UIN );
-	
-	if ( !dcc) {
-		kdDebug(14100) << "gg_dcc_get_file failed" << endl;
-		return;
-	}
-	
-	trans = new GaduDCCTransaction( dcc, contact, p->gaduDcc_ );
-	if ( trans->setupIncoming( UIN ) == false ) {
+
+	trans = new GaduDCCTransaction( p->gaduDcc_ );
+	if ( trans->setupIncoming( p->loginInfo.uin, contact ) == false ) {
 		delete trans;
 	}
+
 }
 
 void

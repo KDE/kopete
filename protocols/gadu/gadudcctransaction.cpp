@@ -43,18 +43,14 @@
 
 #include "libgadu.h"
 
-GaduDCCTransaction::GaduDCCTransaction( gg_dcc* socket, GaduDCC* parent, const char* name )
-:QObject( parent, name ), read_( NULL ), write_( NULL ), account( NULL ), contact( NULL ), transfer_( NULL )
+GaduDCCTransaction::GaduDCCTransaction( GaduDCC* parent, const char* name )
+:QObject( parent, name ), gaduDCC_( parent )
 {
-	dccSock_ = socket;
-	gaduDCC_ = parent;
-}
-
-GaduDCCTransaction::GaduDCCTransaction( gg_dcc* socket, GaduContact* cont, GaduDCC* parent, const char* name )
-:QObject( parent, name), read_( NULL ), write_( NULL ), account( NULL ), contact( cont ), transfer_( NULL )
-{
-	dccSock_ = socket;
-	gaduDCC_ = parent;
+	read_		= NULL;
+	write_		= NULL;
+	contact		= NULL;
+	transfer_	= NULL;
+	dccSock_	= NULL;
 }
 
 GaduDCCTransaction::~GaduDCCTransaction()
@@ -81,12 +77,33 @@ GaduDCCTransaction::peerUIN()
 }
 
 bool
-GaduDCCTransaction::setupIncoming( unsigned int p )
+GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerContact )
 {
-	if ( dccSock_ == NULL ){
-		kdDebug(14100) << "attempt to initialize gadu-dcc transaction with NULL dccsocket " << endl;
+
+	if ( !peerContact ) {
+		kdDebug( 14100 ) << "setupIncoming called with peerContact == NULL " << endl;
+	}
+
+	peer = peerContact->uin();
+
+	dccSock_ = gg_dcc_get_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), uin, peer );
+
+	contact = peerContact;
+	return setupIncoming( dccSock_ );
+
+}
+
+bool
+GaduDCCTransaction::setupIncoming( gg_dcc* dccS )
+{
+	if ( !dccS ) {
+		kdDebug(14100) << "gg_dcc_get_file failed in GaduDCCTransaction::setupIncoming" << endl;
 		return false;
 	}
+
+	dccSock_ = dccS;
+
+	peer = dccS->uin;
 
 	connect ( KopeteTransferManager::transferManager(), SIGNAL( accepted( KopeteTransfer *, const QString & ) ),
 			  this, SLOT( slotIncomingTransferAccepted ( KopeteTransfer *, const QString & ) ) );
@@ -94,8 +111,6 @@ GaduDCCTransaction::setupIncoming( unsigned int p )
 			  this, SLOT( slotTransferRefused( const KopeteFileTransferInfo & ) ) );
 
 	incoming = true;
-	peer = p;
-
 	createNotifiers( true );
 	enableNotifiers( dccSock_->check  );
 
@@ -186,21 +201,23 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 							i18n( "The file %1 already exists, do you want to resume or overwrite it?" ).arg( fileName ),
 							i18n( "File Exists: %1" ).arg( fileName ), resumeButton, overwriteButton ) )
 		{
-			case KMessageBox::Yes:		// resume
+			// resume
+			case KMessageBox::Yes:
 				if ( localFile_.open( IO_WriteOnly | IO_Append ) ) {
 					dccSock_->offset  = localFile_.size();
 					dccSock_->file_fd = localFile_.handle();
 				}
 			break;
-
-			case KMessageBox::No:		// overwrite
+			// overwrite
+			case KMessageBox::No:
 				if ( localFile_.open( IO_ReadWrite ) ) {
 					dccSock_->offset  = 0;
 					dccSock_->file_fd = localFile_.handle();
 				}
 			break;
 
-			default:			// cancel
+			// cancel
+			default:
 				closeDCC();
 				deleteLater();
 				return;
@@ -236,7 +253,7 @@ GaduDCCTransaction::slotTransferResult()
 {
 	if ( transfer_->error() == KIO::ERR_USER_CANCELED ) {
 		if ( transfer_ ) {
-			transfer_->setError( KopeteTransfer::CanceledLocal );
+			transfer_->slotError( KopeteTransfer::CanceledLocal, i18n( "File transfer was cancelled" ) );
 		}
 		closeDCC();
 		deleteLater();
@@ -265,10 +282,11 @@ void
 GaduDCCTransaction::watcher() {
 
 	gg_event* dccEvent;
+	GaduAccount* account;
 
 	disableNotifiers();
 
-	dccEvent = gg_dcc_watch_fd(dccSock_ );
+	dccEvent = gg_dcc_watch_fd( dccSock_ );
 	if ( ! dccEvent ) {
 		// connection is fucked
 		closeDCC();
@@ -314,10 +332,10 @@ GaduDCCTransaction::watcher() {
 			break;
 		case GG_EVENT_NONE:
 			kdDebug(14100) << " GG_EVENT_NONE" << endl;
+			// update gui with progress
 			if ( transfer_ ) {
 				transfer_->slotProcessed( dccSock_->offset );
 			}
-			// update gui with progress
 			break;
 
 		case GG_EVENT_DCC_NEED_FILE_ACK:
@@ -333,18 +351,24 @@ GaduDCCTransaction::watcher() {
 				switch( dccEvent->event.dcc_error ) {
 
 					case GG_ERROR_DCC_REFUSED:
-						transfer_->setError( KopeteTransfer::Refused );
+						transfer_->slotError( KopeteTransfer::Refused, i18n( "Connection to peer was refused, possibly it doesn't listein for incomming connections" ) );
 					break;
 
 					case GG_ERROR_DCC_EOF:
-						transfer_->setError( KopeteTransfer::CanceledRemote );
+						transfer_->slotError( KopeteTransfer::CanceledRemote, i18n( "File transfer transaction wasn't agreed by peer" ) );
 					break;
 
 					case GG_ERROR_DCC_HANDSHAKE:
+						transfer_->slotError( KopeteTransfer::Other, i18n( "File transfer handshake failure" ) );
+					break;
 					case GG_ERROR_DCC_FILE:
+						transfer_->slotError( KopeteTransfer::Other, i18n( "File transfer had problems with the file" ) );
+					break;
 					case GG_ERROR_DCC_NET:
+						transfer_->slotError( KopeteTransfer::Other, i18n( "There was network error during file transfer" ) );
+					break;
 					default:
-						transfer_->setError( KopeteTransfer::Other );
+						transfer_->slotError( KopeteTransfer::Other, i18n( "Unknown File Transfer error" ) );
 					break;
 				}
 			}

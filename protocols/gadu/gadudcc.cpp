@@ -62,7 +62,7 @@ GaduDCC::unregisterAccount()
 }
 
 GaduAccount*
-GaduDCC::account( unsigned int uin ) 
+GaduDCC::account( unsigned int uin )
 {
 	return accounts[ uin ];
 }
@@ -148,13 +148,13 @@ GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 	GaduDCCTransaction* dt;
 
 	kdDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
-		
+
 	handled = true;
 	// TODO: limit number of connections per contact, or maybe even use parametr for that
 	newdcc = new gg_dcc;
 	memcpy( newdcc, incoming, sizeof( gg_dcc ) );
-	dt = new GaduDCCTransaction( incoming, this );
-	if ( dt->setupIncoming() == false ) {
+	dt = new GaduDCCTransaction( this );
+	if ( dt->setupIncoming( newdcc ) == false ) {
 		// FIXME: write something to user, maybe, or not...
 		delete dt;
 	}
