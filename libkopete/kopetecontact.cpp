@@ -294,13 +294,24 @@ void KopeteContact::slotAddContact()
 
 KPopupMenu* KopeteContact::createContextMenu()
 {
-	//FIXME: this should perhaps be KActionCollection * KopeteContact::contactActions()
-	//FIXME: to avoid passing around KPopupMenu's
+	//FIXME: This should perhaps be KActionCollection * KopeteContact::contactActions() to
+	//FIXME: 	avoid passing around KPopupMenu's
+	//FIXME: (Jason) - KActionCollections are bad for popup menus because they are unordered..
+	//FIXME: 	in fact, I think customContextMenuActions should be remade into a popupmenu,
+	//FIXME:	or a QPtrList<KAction>, or something that has a notion of order, because
+	//FIXME:	currently the customContextMenuActions do not return in the order they are
+	//FIXME:	added, which makes for a mess when you want certain things at the top and
+	//FIXME:	others later on
 
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
 
-	menu->insertTitle( QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() ) );
+	QString titleText;
+	if( displayName() != contactId() )
+		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( statusText() );
+	else
+		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() );
+	menu->insertTitle( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() )
 	{
