@@ -943,14 +943,30 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	//TODO: don't display a menu with one contact in it, display that
 	// contact's menu instead. Will require changing text and icon of
 	// 'Contacts' action, or something cleverer.
-	for ( contact = m_them.first(); contact != 0; contact = m_them.next() )
+	uint contactCount = 0;
+
+	for ( contact = m_them.first(); contact; contact = m_them.next() )
 	{
 		KPopupMenu *p = contact->popupMenu();
-		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()), p, SLOT(deleteLater() ) );
+		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()), 
+			p, SLOT(deleteLater() ) );
+		
 		if( contact->metaContact() )
 			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
 		else
 			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->displayName(), p );
+		
+		//FIXME: This number should be a config option	
+		if( ++contactCount == 15 && contact != m_them.getLast() )
+		{
+			KActionMenu *moreMenu = new KActionMenu( i18n("More..."),
+				 QString::fromLatin1("folder_open"), contactsMenu );
+			connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()), 
+				moreMenu, SLOT(deleteLater() ) );
+			moreMenu->plug( contactsMenu );
+			contactsMenu = moreMenu->popupMenu();
+			contactCount = 0;
+		}
 	}
 }
 
