@@ -35,9 +35,8 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, KGenericFactory<CryptographyPlugin> );
 
-CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name,
-	const QStringList &/*args*/ )
-: KopetePlugin( parent, name ) ,
+CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
+: KopetePlugin( KGlobal::instance(), parent, name ),
 		m_cachedPass()
 {
 	if( !pluginStatic_ )

@@ -5,8 +5,8 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libkopetemsnui.la
 
-libkopetemsnui_la_SOURCES = msnadd.ui msnprefs.ui msndebugrawcommand_base.ui \
+libkopetemsnui_la_SOURCES = msnadd.ui msndebugrawcommand_base.ui \
     msninfo.ui newuser.ui newuserimpl.cpp msneditaccountwidget.cpp
 
-EXTRA_DIST = msnadd.ui msnprefs.ui msninfo.ui newuser.ui newuserimpl.cpp
+EXTRA_DIST = msnadd.ui msninfo.ui newuser.ui newuserimpl.cpp
 

@@ -43,7 +43,7 @@
 K_EXPORT_COMPONENT_FACTORY(  kopete_nowlistening, KGenericFactory<NowListeningPlugin> );
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const QStringList & /*args*/ )
-	: KopetePlugin( parent, name )
+: KopetePlugin( KGlobal::instance(), parent, name )
 {
 	if ( pluginStatic_ )
 		kdDebug(14307)<<"####"<<"Now Listening already initialized"<<endl;

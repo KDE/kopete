@@ -33,7 +33,6 @@ class KActionMenu;
 
 class MSNContact;
 class MSNAccount;
-class MSNPreferences;
 class MSNNotifySocket;
 class MSNSwitchBoardSocket;
 class MSNMessageManager;
@@ -125,7 +124,6 @@ private slots:
 private:
 
 	static MSNProtocol *s_protocol;
-	MSNPreferences *mPrefs;
 
 signals:
 	/**

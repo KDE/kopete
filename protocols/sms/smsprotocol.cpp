@@ -33,7 +33,7 @@ K_EXPORT_COMPONENT_FACTORY(kopete_sms, KGenericFactory<SMSProtocol>);
 SMSProtocol* SMSProtocol::s_protocol = 0L;
 
 SMSProtocol::SMSProtocol(QObject *parent, const char *name, const QStringList &/*args*/)
-: KopeteProtocol( parent, name ),
+: KopeteProtocol( KGlobal::instance(), parent, name ),
 	SMSOnline(  KopeteOnlineStatus::Online,  25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
 	SMSUnknown( KopeteOnlineStatus::Unknown, 25, this, 1,  QString::null, "FIXME: Make optional", i18n( "Unknown" ) ),
 	SMSOffline( KopeteOnlineStatus::Offline, 25, this, 2,  QString::null, i18n( "Go O&ffline" ),  i18n( "Offline" ) )

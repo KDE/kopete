@@ -52,7 +52,8 @@ xs_init(pTHX)
         newXS( qstrdup("DynaLoader::boot_DynaLoader"), boot_DynaLoader, file);
 }
 
-PerlPlugin::PerlPlugin( QObject *parent, const char *name, const QStringList &) : KopetePlugin( parent, name )
+PerlPlugin::PerlPlugin( QObject *parent, const char *name, const QStringList &)
+: KopetePlugin( KGlobal::instance(), parent, name )
 {
 	kdDebug(14010) << k_funcinfo << "Loaded PerlScript" << endl;
 	if ( !pluginStatic_ )

@@ -15,7 +15,6 @@
 
 #include "netmeetingplugin.h"
 
-
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kaction.h>
@@ -34,7 +33,7 @@
 K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin> );
 
 NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-	: KopetePlugin( parent, name )
+: KopetePlugin( KGlobal::instance(), parent, name )
 {
 	if(MSNProtocol::protocol())
 		slotPluginLoaded(MSNProtocol::protocol());

@@ -21,7 +21,6 @@
 #define KOPETEPROTOCOL_H
 
 #include "kopeteplugin.h"
-//FIXME - How can I avoid this?
 #include "kopeteonlinestatus.h"
 
 #include <qdict.h>
@@ -44,7 +43,7 @@ class KopeteProtocol : public KopetePlugin
 	Q_OBJECT
 
 public:
-	KopeteProtocol( QObject *parent = 0L, const char *name = 0L );
+	KopeteProtocol( KInstance *instance, QObject *parent, const char *name );
 	virtual ~KopeteProtocol();
 
 	/**

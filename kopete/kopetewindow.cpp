@@ -53,6 +53,7 @@
 #include "systemtray.h"
 #include "kopeteaccountstatusbaricon.h"
 #include "kopeteprotocolstatusbaricon.h"
+#include <kconfiguredialog.h>
 
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
@@ -144,9 +145,10 @@ void KopeteWindow::initActions()
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
-	actionPrefs = KStdAction::preferences(
-		this, SLOT( slotShowPreferencesDialog() ),
+	actionPrefs = KStdAction::preferences( this, SLOT( slotShowPreferencesDialog() ),
 		actionCollection(), "settings_prefs" );
+	actionPrefs = KStdAction::preferences( this, SLOT( slotShowOldPreferencesDialog() ),
+		actionCollection(), "settings_old_prefs" );
 
 	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							this, SLOT(slotSaveContactList()),
@@ -656,6 +658,12 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 }
 
 void KopeteWindow::slotShowPreferencesDialog()
+{
+	KConfigureDialog *kcd = new KConfigureDialog( this );
+	kcd->show();
+}
+
+void KopeteWindow::slotShowOldPreferencesDialog()
 {
 	// Although show() itself is a slot too we can't connect actions to it
 	// from the KopeteWindow constructor, because we cannot access the

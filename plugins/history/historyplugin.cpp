@@ -31,12 +31,10 @@
 #include "historypreferences.h"
 #include "historyguiclient.h"
 
-
-
 K_EXPORT_COMPONENT_FACTORY( kopete_history, KGenericFactory<HistoryPlugin> );
 
-HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-		: KopetePlugin( parent, name )
+HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
+: KopetePlugin( KGlobal::instance(), parent, name )
 {
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotMessageDisplayed( KopeteMessage & ) ) );
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ), this, SLOT( slotViewCreated( KopeteView* ) ) );

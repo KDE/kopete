@@ -23,7 +23,6 @@
 #include "msnnotifysocket.h"
 #include "msndispatchsocket.h"
 #include "msncontact.h"
-#include "msnpreferences.h"
 #include "msnaccount.h"
 
 #include <qregexp.h>

@@ -36,7 +36,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, KGenericFactory<SpellCheckPlugin>
 SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
 
 SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QStringList & )
-: KopetePlugin( parent, name )
+: KopetePlugin( KGlobal::instance(), parent, name )
 {
 	if ( !pluginStatic_ )
 		pluginStatic_ = this;

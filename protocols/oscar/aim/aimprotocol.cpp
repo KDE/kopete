@@ -30,11 +30,10 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_aim, KGenericFactory<AIMProtocol> );
 
-
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
-	: KopeteProtocol(parent,name),
+: KopeteProtocol( KGlobal::instance(), parent, name ),
 	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"), i18n("Online")),
 	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
 	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away")),

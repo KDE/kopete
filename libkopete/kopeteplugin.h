@@ -20,10 +20,11 @@
 #define KOPETEPLUGIN_H
 
 #include <qobject.h>
-#include <kxmlguiclient.h>
 #include <qstringlist.h>
 
 #include <dom/dom_node.h>
+#include <kglobal.h>
+#include <kxmlguiclient.h>
 
 class KopeteMetaContact;
 class KopeteMessageManager;
@@ -45,7 +46,7 @@ class KopetePlugin : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	KopetePlugin( QObject *parent = 0L, const char *name = 0L );
+	KopetePlugin( KInstance *instance, QObject *parent, const char *name );
 	virtual ~KopetePlugin();
 
 	/**
@@ -110,6 +111,13 @@ public:
 	 * This is a convenience method that simply calls @ref PluginLoader::pluginName().
 	 */
 	QString displayName() const;
+	
+signals:
+	/**
+	 * Notify that the settings of a plugin were changed.
+	 * These changes are passed on from the new KCDialog code in kdelibs/kutils.
+	 */
+	void settingsChanged();
 
 public slots:
 	/**

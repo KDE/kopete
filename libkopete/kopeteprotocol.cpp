@@ -28,17 +28,16 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 
-KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
-    : KopetePlugin( parent, name )
+KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char *name )
+: KopetePlugin( instance, parent, name )
 {
 	// FIXME: avoid having to use an arbitrary number like 765
 	// and *hope* that protocols won't declare their own KOS with
 	// the same internalStatus
-	m_status = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0,
-			this, 765, QString::fromLatin1( "status_unknown" )
-			, QString::null, QString::null );
+	m_status = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 765,
+		QString::fromLatin1( "status_unknown" ) , QString::null, QString::null );
 	connect ( KopeteAccountManager::manager(), SIGNAL( accountReady(KopeteAccount *) ),
-				this, SLOT( refreshAccounts() ) );
+		this, SLOT( refreshAccounts() ) );
 }
 
 KopeteProtocol::~KopeteProtocol()

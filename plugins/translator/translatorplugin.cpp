@@ -40,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_translator, KGenericFactory<TranslatorPlugin>
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	const QStringList &/*args*/ )
-: KopetePlugin( parent, name )
+: KopetePlugin( KGlobal::instance(), parent, name )
 {
 	m_lc = 0; m_sc = 0;
 

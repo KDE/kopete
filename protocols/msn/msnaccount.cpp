@@ -14,23 +14,25 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
+#include "msnaccount.h"
+
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kconfig.h>
+#include <kdebug.h>
 #include <klineeditdlg.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 
-#include "msnaccount.h"
 #include "msncontact.h"
 #include "msnnotifysocket.h"
 #include "msnmessagemanager.h"
-#include "msnpreferences.h"
 #include "newuserimpl.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
+#include <kglobal.h>
 #endif
 
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
@@ -914,7 +916,9 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	{
 		static_cast<MSNMessageManager*>( c->manager(true) )->createChat( handle, address, auth, ID );
 
-		if(ID && MSNPreferences::notifyNewChat() )
+		KGlobal::config()->setGroup( "MSN" );
+		bool notifyNewChat = KGlobal::config()->readBoolEntry( "NotifyNewChat", false );
+		if ( ID && notifyNewChat )
 		{
 			//this temporary message should open the window if they not exist
 			QString body=i18n("%1 has opened a new chat").arg(c->displayName());

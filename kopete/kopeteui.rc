@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kkopete" version="9">
+<kpartgui name="kopete" version="11">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -40,6 +40,7 @@
 			<Action name="settings_global" />
 			<Action name="settings_toolbars" />
 			<Action name="settings_prefs" />
+			<Action name="settings_old_prefs"/>
 			<Separator lineSeparator="true" />
 			<Action name="settings_show_offliners" />
 			<Action name="settings_show_empty_groups" />
