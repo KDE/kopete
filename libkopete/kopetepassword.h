@@ -79,8 +79,9 @@ public:
 
 	/**
 	 * @brief Returns whether the password currently stored by this object is known to be incorrect.
-	 * This flag gets reset whenever the user enters a new password, and is expected to be set
-	 * by the user of this class if it is detected that the password the user entered is wrong.
+	 * This flag gets reset whenever the user enters a new password, and is
+	 * expected to be set by the user of this class if it is detected that the
+	 * password the user entered is wrong.
 	 */
 	bool isWrong();
 	/**
@@ -91,8 +92,10 @@ public:
 
 	/**
 	 * Type of password request to perform:
-	 * FromConfigOrUser : get the password from the config file, or from the user if no password in config.
-	 * FromUser : always ask the user for a password (ie, if last password was wrong or you know the password has changed).
+	 * FromConfigOrUser : get the password from the config file, or from the user
+	 * if no password in config.
+	 * FromUser : always ask the user for a password (ie, if last password was
+	 * wrong or you know the password has changed).
 	 */
 	enum PasswordSource { FromConfigOrUser, FromUser };
 
@@ -104,7 +107,8 @@ public:
 	 * @return The password or QString::null if the user has canceled
 	 * @note will not update the cachedValue() property
 	 */
-	QString retrieve( const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser ) KDE_DEPRECATED;
+	QString retrieve( const QPixmap &image, const QString &prompt,
+		PasswordSource source = FromConfigOrUser ) KDE_DEPRECATED;
 
 	/**
 	 * @brief Start an asynchronous call to get the password.
@@ -116,17 +120,11 @@ public:
 	 * @param slot The slot on receiver to call at the end of the request. The signature
 	 *        of this function should be slot( const QString &password ). password will
 	 *        be the password if successful, or QString::null if failed.
-	 * @param image An image to display in the enter password dialog.
 	 * @param prompt The message to display to the user, asking for a
 	 *        password. Can be any Qt RichText string.
-	 * @param error Set this value to true if you previously called
-	 *        password and the result was incorrect (the password was
-	 *        wrong). It adds a label in the input dialog saying that the
-	 *        password was wrong.
-	 * @param maxLength The maximum length for a password, restricts the
-	 *        length of the password that can be entered. 0 means no limit.
 	 */
-	void request( QObject *receiver, const char *slot, const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser );
+	void request( QObject *receiver, const char *slot, const QPixmap &image,
+		const QString &prompt, PasswordSource source = FromConfigOrUser );
 
 	/**
 	 * Start an asynchronous password request. Do not pop up a password entry dialog

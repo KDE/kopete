@@ -32,7 +32,7 @@ namespace Global
 	 * \brief Installs one or more kopete emoticon themes from a tarball
 	 * (either .kopete-emoticons or .tar.gz or .tar.bz2)
 	 *
-	 * @p archiveName Full path to a local emoticon archive, use KIO to download
+	 * @p localPath Full path to a local emoticon archive, use KIO to download
 	 * files in case their are non-local.
 	 *
 	 * @return true in case install was successful, false otherwise. Errors are
@@ -43,32 +43,89 @@ namespace Global
 	void installEmoticonTheme(const QString &localPath);
 
 	/**
-	 * \brief TODO
+	 * \brief Global facility to query/store templates that are needed by KopeteContactProperty
+	 *
+	 * Basically all a plugin author needs to worry about is creating ContactPropertyTmpl
+	 * objects for all the properties he wants to set for a KopeteContact,
+	 * everything else is handled behind the scenes.
 	 **/
 	class Properties
 	{
 		friend class ContactPropertyTmpl;
 		public:
+			/**
+			 * \brief Singleton accessor for this class.
+			 * Use it to access the global list of property-templates or to get
+			 * a reference to one of the common ContactPropertyTmpl objects
+			 */
 			static Properties *self();
 
+			/**
+			 * \brief Return a template with key @p key, if no such template has
+			 * been registered ContactPropertyTmpl::null will be returned
+			 */
 			const ContactPropertyTmpl &tmpl(const QString &key) const;
 
+			/**
+			 * \brief Return a ready-to-use template for a contact's full name.
+			 * This is actually no real property, it makes use of
+			 * firstName() and lastName() to assemble an name that consists of
+			 * both name parts
+			 */
 			const ContactPropertyTmpl &fullName() const;
+
+			/**
+			 * \brief Return default template for a contact's idle-time
+			 */
 			const ContactPropertyTmpl &idleTime() const;
+			/**
+			 * \brief Return default template for a contact's online-since time
+			 * (i.e. time since he went from offline to online)
+			 */
 			const ContactPropertyTmpl &onlineSince() const;
+			/**
+			 * \brief Return default template for a contact's last-seen time
+			 */
 			const ContactPropertyTmpl &lastSeen() const;
+			/**
+			 * \brief Return default template for a contact's away-message
+			 */
 			const ContactPropertyTmpl &awayMessage() const;
+			/**
+			 * \brief Return default template for a contact's first name
+			 */
 			const ContactPropertyTmpl &firstName() const;
+			/**
+			 * \brief Return default template for a contact's last name
+			 */
 			const ContactPropertyTmpl &lastName() const;
+			/**
+			 * \brief Return default template for a contact's email-address
+			 */
 			const ContactPropertyTmpl &emailAddress() const;
+			/**
+			 * \brief Return default template for a contact's private phone number
+			 */
 			const ContactPropertyTmpl &privatePhone() const;
+			/**
+			 * \brief Return default template for a contact's private mobile number
+			 */
 			const ContactPropertyTmpl &privateMobilePhone() const;
+			/**
+			 * \brief Return default template for a contact's work phone number
+			 */
 			const ContactPropertyTmpl &workPhone() const;
+			/**
+			 * \brief Return default template for a contact's work mobile number
+			 */
 			const ContactPropertyTmpl &workMobilePhone() const;
 
+			/**
+			 * \brief Returns a map of all registered ContactPropertyTmpl object
+			 */
 			const ContactPropertyTmpl::Map &templateMap() const;
 			/**
-			 * return true is a template with key @p key is already registered,
+			 * return true if a template with key @p key is already registered,
 			 * false otherwise
 			 */
 			bool isRegistered(const QString &key);
@@ -77,7 +134,6 @@ namespace Global
 			Properties();
 			~Properties();
 
-		protected:
 			bool registerTemplate(const QString &key,
 				const ContactPropertyTmpl &tmpl);
 			void unregisterTemplate(const QString &key);

@@ -26,12 +26,13 @@ namespace Kopete
 /**
  * @brief A mime source factory for providing kopete's various icons for labels and tooltips
  *
- * The following 'protocols' are supported, and provide appropriate icons for various situations:
- *  kopete-contact-icon:<protocolId>:<accountId>:<contactId>
- *  kopete-account-icon:<protocolId>:<accountId>
- *  kopete-metacontact-icon:<metaContactId>
- * Note that the various id strings should be URL-encoded (with, for instance, KURL::encode_string) if
- * they might contain colons.
+ * The following 'protocols' are supported, and provide appropriate icons for
+ * various situations:
+ *  kopete-contact-icon:\<protocolId\>:\<accountId\>:\<contactId\>
+ *  kopete-account-icon:\<protocolId\>:\<accountId\>
+ *  kopete-metacontact-icon:\<metaContactId\>
+ * Note that the various id strings should be URL-encoded (with, for instance,
+ * KURL::encode_string) if they might contain colons.
  */
 class MimeSourceFactory : public QMimeSourceFactory
 {

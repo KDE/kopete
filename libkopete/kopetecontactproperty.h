@@ -96,8 +96,8 @@ class ContactPropertyTmpl
 /**
  * @author Stefan Gehn <metz AT gehn.net>
  *
- * This class is a data container for whatever information
- * kopete or any of its plugins want to store for a KopeteContact
+ * A data container for whatever information kopete or any of its
+ * plugins want to store for a KopeteContact
  **/
 class ContactProperty
 {
@@ -112,8 +112,6 @@ class ContactProperty
 
 		/**
 		 * @param value The value this Property holds
-		 * @param label The i18ned label for this Property, used for display
-		 * @param icon  The icon to show instead or aside of the i18ned label
 		 **/
 		ContactProperty(const ContactPropertyTmpl &tmpl, const QVariant &value);
 
@@ -129,18 +127,25 @@ class ContactProperty
 		 **/
 		const QVariant &value() const;
 
+		/**
+		 * The null, i.e. empty, ContactProperty
+		 */
 		static ContactProperty null;
 
 		/**
-		 * Returns true if this object is an empty Property (i.e. it holds no value)
+		 * Returns true if this object is an empty Property (i.e. it holds no
+		 * value), false otherwise.
 		 **/
 		bool isNull() const;
 
+		/**
+		 * A map of key,ContactProperty items
+		 **/
 		typedef QMap<QString, ContactProperty> Map;
 
 	private:
 		QVariant mValue;
-		/*const*/ ContactPropertyTmpl mTemplate;
+		ContactPropertyTmpl mTemplate;
 };
 
 } // END namespace Kopete
