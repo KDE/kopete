@@ -50,6 +50,8 @@ protected:
 
 private slots:
 	void showToolbar();
+	void showMenubar();
+	void showStatusbar();
 	void slotToggleShowOffliners(void);
 	void slotConfigChanged(void);
 	void slotConfKeys(void);
@@ -74,6 +76,8 @@ public:
 	KAction* actionQuit;
 	KAction* actionSave;
 	KToggleAction *toolbarAction;
+	KToggleAction *menubarAction;
+	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
 	KAction *actionShowTransfers;
 

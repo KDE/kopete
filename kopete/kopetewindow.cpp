@@ -30,6 +30,8 @@
 #include <kaccel.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
+#include <kmenubar.h>
+#include <kstatusbar.h>
 #include <kwin.h>
 
 #include "kopete.h"
@@ -122,6 +124,9 @@ void KopeteWindow::initActions ( void )
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());
+	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection());
+	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection());
+
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection());
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection());
 
@@ -209,6 +214,8 @@ void KopeteWindow::loadOptions(void)
 	}
 
 	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
+	menubarAction->setChecked( !menuBar()->isHidden() );
+	statusbarAction->setChecked( !statusBar()->isHidden() );
 }
 
 void KopeteWindow::saveOptions(void)
@@ -245,6 +252,22 @@ void KopeteWindow::showToolbar(void)
 		toolBar("mainToolBar")->show();
 	else
 		toolBar("mainToolBar")->hide();
+}
+
+void KopeteWindow::showMenubar(void)
+{
+        if( menubarAction->isChecked() )
+                menuBar()->show();
+        else
+                menuBar()->hide();
+}
+
+void KopeteWindow::showStatusbar(void)
+{
+        if( statusbarAction->isChecked() )
+                statusBar()->show();
+        else
+                statusBar()->hide();
 }
 
 void KopeteWindow::slotToggleShowOffliners ( void )
