@@ -1,7 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=plugin
-Icon=winpopup_protocol
+Icon=wp_protocol
 Type=Service
 ServiceTypes=KCModule
 
