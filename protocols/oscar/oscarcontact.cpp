@@ -349,7 +349,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	if ( !engine()->ssiData().findGroup( firstKopeteGroup->displayName() ) )
+	if ( !mAccount->engine()->ssiData().findGroup( firstKopeteGroup->displayName() ) )
 	{
 		//We don't have the group in SSI yet. Add it.
 		kdDebug(14150) << "Adding missing group " << firstKopeteGroup->displayName() << endl;
@@ -364,7 +364,7 @@ void OscarContact::syncGroups()
         * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
 	* 
 	*/
-	if ( !engine()->ssiData().findContact( displayName() && metacontact()->isTemporary() )
+	if ( !mAccount->engine()->ssiData().findContact( displayName() ) && metaContact()->isTemporary() )
 	{ /*contact not in SSI and is temporary. add to SSI
 	   the group should be created already in this case */
 		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' appears"
@@ -372,10 +372,10 @@ void OscarContact::syncGroups()
 		mAccount->engine()->sendAddBuddy( displayName(), firstKopeteGroup->displayName(), false );
 	}
 	
-	SSI* movedItem = engine()->ssiData().findContact( displayName() )
+	SSI* movedItem = mAccount->engine()->ssiData().findContact( displayName() );
 	if ( movedItem )
 	{	//hey, contact's on SSI, move him
-		SSI* oldGroup = engine()->ssiData().findGroup( movedItem->gid );
+		SSI* oldGroup = mAccount->engine()->ssiData().findGroup( movedItem->gid );
 		//I'm not checking the old group pointer because since we're using
 		//the gid, the group is guaranteed to be found.
 		mAccount->engine()->sendChangeBuddyGroup( movedItem->name, oldGroup->name,
