@@ -33,7 +33,7 @@
 #include <kdeversion.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#if KDE_IS_VERSION( 3, 1, 3 )
+#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kmacroexpander.h>
 #endif
 #include <kmessagebox.h>
@@ -90,6 +90,7 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 	// display message box for specified event level
 		switch( level ) {
 		default:
+#if KDE_IS_VERSION( 3, 1, 90 )
 		case KNotifyClient::Notification:
 			KMessageBox::informationWId( winId, text, i18n( "Notification" ) );
 			break;
@@ -102,7 +103,21 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 		case KNotifyClient::Catastrophe:
 			KMessageBox::errorWId( winId, text, i18n( "Fatal" ) );
 			break;
-	}
+#else
+		case KNotifyClient::Notification:
+			KMessageBox::information( 0, text, i18n( "Notification" ) );
+			break;
+		case KNotifyClient::Warning:
+			KMessageBox::sorry( 0, text, i18n( "Warning" ) );
+			break;
+		case KNotifyClient::Error:
+			KMessageBox::error( 0, text, i18n( "Error" ) );
+			break;
+		case KNotifyClient::Catastrophe:
+			KMessageBox::errorWId( 0, text, i18n( "Fatal" ) );
+			break;
+#endif
+		}
     } else { //we may show the specific action button
 		int result=0;
 		QSignal signal;
@@ -168,7 +183,7 @@ static bool notifyByExecute( const QString &command, const QString& event,
 		int winId, int eventId ) {
     if (!command.isEmpty()) {
 		QString execLine;
-#if KDE_IS_VERSION( 3, 1, 3 )
+#if KDE_IS_VERSION( 3, 1, 90 )
 	// kdDebug() << "executing command '" << command << "'" << endl;
 		QMap<QChar,QString> subst;
 		subst.insert( 'e', event );
