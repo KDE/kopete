@@ -374,7 +374,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	{
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 		//FIXME: this is really slow in channels with lots of contacts
-		QString parsed_nick = KopeteEmoticons::parseEmoticons( nick );
+		QString parsed_nick = Kopete::Emoticons::parseEmoticons( nick );
 		
 		if ( nick != parsed_nick )
 		{
@@ -393,7 +393,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	}
 	QString nick = m_manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
-		.arg( QRegExp::escape( KopeteEmoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
+			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
 	
 	return retVal;
 }

@@ -396,8 +396,8 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 		"kopete/pics/emoticons/"+themeName+"/"));
 	mPrfsEmoticons->btnRemoveTheme->setEnabled( fileInf.isWritable() );
 
-	KopeteEmoticons emoticons( themeName );
-	QStringList smileys = emoticons.picList();
+	Kopete::Emoticons emoticons( themeName );
+	QStringList smileys = emoticons.emoticonAndPicList().values();
 	QString newContentText = "<qt>";
 
 	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )

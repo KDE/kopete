@@ -2,9 +2,9 @@
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Copyright (c) 2002      by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -34,36 +34,53 @@
 #include <algorithm>
 #include <iterator>
 
+
 /*
  * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
  */
 
-struct KopeteEmoticons::Emoticon
+
+namespace Kopete {   
+
+struct Emoticons::Emoticon
 {
 	QString matchText;
 	QString replacement;
 };
 
 
-class KopeteEmoticons::Private
+class Emoticons::Private
 {
 public:
 	QMap <QChar , QValueList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
+		
+	/**
+	 * The current icon theme from KopetePrefs
+	 */
+	QString theme;
+
+
 };
 
 
-KopeteEmoticons *KopeteEmoticons::s_instance = 0L;
+Emoticons *Emoticons::s_self = 0L;
 
-KopeteEmoticons *KopeteEmoticons::emoticons()
+Emoticons *Emoticons::self()
 {
-	if( !s_instance )
-		s_instance = new KopeteEmoticons;
-	return s_instance;
+	if( !s_self )
+		s_self = new Emoticons;
+	return s_self;
 }
 
 
-KopeteEmoticons::KopeteEmoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" )
+QString Emoticons::parseEmoticons(const QString& message)  //static
+{
+	 return self()->parse( message );
+}
+
+
+Emoticons::Emoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" )
 {
 //	kdDebug(14010) << "KopeteEmoticons::KopeteEmoticons" << endl;
 	d=new Private;
@@ -79,31 +96,31 @@ KopeteEmoticons::KopeteEmoticons( const QString &theme ) : QObject( kapp, "Kopet
 }
 
 
-KopeteEmoticons::~KopeteEmoticons(  ) 
+Emoticons::~Emoticons(  )
 {
 	delete d;
 }
 
 
 
-void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, const QStringList &emoticons )
+void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &emoticons )
 {
 	KStandardDirs *dir = KGlobal::dirs();
 	QString pic;
 
 	//maybe an extension was given, so try to find the exact file
-	pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + m_theme +
+	pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + d->theme +
 		QString::fromLatin1( "/" ) + filenameNoExt );
 
 	if( pic.isNull() )
-		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + m_theme +
+		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + d->theme +
 			QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".mng" ) );
 	if ( pic.isNull() )
 		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
-			m_theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".png" ) );
+				d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".png" ) );
 	if ( pic.isNull() )
 		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
-			m_theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".gif" ) );
+				d->theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".gif" ) );
 
 	if( !pic.isNull() ) // only add if we found one file
 	{
@@ -127,17 +144,17 @@ void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, const QString
 	}
 }
 
-void KopeteEmoticons::initEmoticons( const QString &theme )
+void Emoticons::initEmoticons( const QString &theme )
 {
 	if(theme.isNull())
 	{
-		if ( m_theme == KopetePrefs::prefs()->iconTheme() )
+		if ( d->theme == KopetePrefs::prefs()->iconTheme() )
 			return;
 
-		m_theme = KopetePrefs::prefs()->iconTheme();
+		d->theme = KopetePrefs::prefs()->iconTheme();
 	}
 	else
-		m_theme = theme;
+		d->theme = theme;
 
 //	kdDebug(14010) << k_funcinfo << "Called" << endl;
 	d->emoticonAndPicList.clear();
@@ -145,7 +162,7 @@ void KopeteEmoticons::initEmoticons( const QString &theme )
 
 	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
 	QString filename = KGlobal::dirs()->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
-		m_theme + QString::fromLatin1( "/emoticons.xml" ) );
+			d->theme + QString::fromLatin1( "/emoticons.xml" ) );
 
 	if( filename.isEmpty() )
 	{
@@ -203,26 +220,14 @@ void KopeteEmoticons::initEmoticons( const QString &theme )
 	mapFile.close();
 }
 
-QString KopeteEmoticons::emoticonToPicPath ( const QString& em )
-{
-	if(d->emoticonAndPicList.contains(em))
-		return d->emoticonAndPicList[em];
-	return QString::null;
-}
 
-QStringList KopeteEmoticons::picList()
-{
-	return d->emoticonAndPicList.values();
-}
-
-
-QMap<QString, QString> KopeteEmoticons::emoticonAndPicList()
+QMap<QString, QString> Emoticons::emoticonAndPicList()
 {
 	return d->emoticonAndPicList;
 }
 
 
-QString KopeteEmoticons::parse( const QString &message )
+QString Emoticons::parse( const QString &message )
 {
 	// if emoticons are disabled, we do nothing
 	if ( !KopetePrefs::prefs()->useEmoticons() )
@@ -429,6 +434,9 @@ QString KopeteEmoticons::parse( const QString &message )
 
 	return result+message.right(message.length()-pos);
 }
+
+
+} //END namesapce Kopete
 
 #include "kopeteemoticons.moc"
 

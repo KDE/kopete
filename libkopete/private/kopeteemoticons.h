@@ -2,7 +2,7 @@
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
     Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,7 +23,9 @@
 
 #include <kopete_export.h>
 
-class KOPETE_EXPORT KopeteEmoticons : public QObject
+namespace Kopete {
+
+class KOPETE_EXPORT Emoticons : public QObject
 {
 	Q_OBJECT
 
@@ -33,15 +35,15 @@ public:
 	 * chosen by the user.
 	 * For that one use the singleton stuff
 	 **/
-	KopeteEmoticons( const QString &theme = QString::null );
+	Emoticons( const QString &theme = QString::null );
 
-	~KopeteEmoticons(  );
+	~Emoticons(  );
 
 	/**
 	 * The emoticons container-class by default is a singleton object.
 	 * Use this method to retrieve the instance.
 	 */
-	static KopeteEmoticons *emoticons();
+	static Emoticons *self();
 
 	/**
 	 * Use it to parse emoticons in a text.
@@ -52,30 +54,10 @@ public:
 	 * If nicks is provided, they will not be parsed if they 
 	 * exist in message.
 	 */
-	static QString parseEmoticons( const QString &message ) { return emoticons()->parse( message ); }
+	static QString parseEmoticons( const QString &message ) ;
 	
 	QString parse( const QString &message );
 	
-	/**
-	 * returns the path to an animation or pixmap
-	 * that should be used to replace the given emoticon
-	 * if the emoticon has no corresponding pixmap
-	 * a null-QString is returned
-	 *
-	 * (This is only used by the chatwindow to provide the icon of the emoticon button   (it's used with ':)' )
-	 **/
-	QString emoticonToPicPath ( const QString& em );
-
-
-	/**
-	 * creates a list of all animation/pixmap paths
-	 * that are used to replace emoticons
-	 *
-	 * used in AppearanceConfig::slotSelectedEmoticonsThemeChanged
-	 * @todo deprecated it and use emoticonAndPicList instead
-	 **/
-	QStringList picList ();
-
 	/**
 	 * Return all emoticons and the corresponding icon.
 	 * (only one emoticon per image)
@@ -87,12 +69,7 @@ private:
 	/**
 	 * Our instance
 	 **/
-	static KopeteEmoticons *s_instance;
-
-	/**
-	 * The current icon theme from KopetePrefs
-	 */
-	QString m_theme;
+	static Emoticons *s_self;
 
 	/**
 	 * add an emoticon to our mapping if
@@ -111,6 +88,9 @@ private slots:
 	 **/
 	void initEmoticons ( const QString &theme = QString::null );
 };
+
+
+} //END namespace Kopete
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

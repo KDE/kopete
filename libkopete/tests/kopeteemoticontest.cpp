@@ -94,7 +94,7 @@ void runTests( QString description, TestSet tests )
 	uint i = 0;
 	while ( tests[ i ][ 0 ] && tests[ i ][ 1 ] )
 	{
-		QString result = KopeteEmoticons::parseEmoticons( tests[ i ][ 0 ] ).replace( path, QString::null );
+		QString result = Kopete::Emoticons::parseEmoticons( tests[ i ][ 0 ] ).replace( path, QString::null );
 
 		if ( result == tests[ i ][ 1 ] )
 		{

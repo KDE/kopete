@@ -298,7 +298,7 @@ QString Message::parsedBody() const
 	}
 	else
 	{
-		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
+		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
 	}
 }
 
