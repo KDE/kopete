@@ -394,6 +394,7 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 	 * o/~ don't mean to brag, don't mean to boast/but I'm intercontinental when I eat French toast */
 	QString group = *(contact->groups.begin());
     kopeteapp->contactList()->addContact(new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this), group ? group : i18n("Unknown"));
+	slotContactUpdated(contact); /* More kludges! Ugh. */
 }
 
 void JabberProtocol::slotSettingsChanged()

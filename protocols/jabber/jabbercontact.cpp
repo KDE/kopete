@@ -33,17 +33,17 @@ JabberContact::JabberContact(QString userid, QString name, QString group, Jabber
     mUserID = userid;
     if (mGroup == QString("")) { hasLocalGroup = false; }
 	else { hasLocalGroup = true; }
-    connect(protocol,
+    connect(mProtocol,
 	    SIGNAL(contactUpdated(QString, QString, int, QString)),
 	    this,
 	    SLOT(slotUpdateContact(QString, QString, int, QString)));
-    connect(protocol, SIGNAL(nukeContacts(bool)), this,
+    connect(mProtocol, SIGNAL(nukeContacts(bool)), this,
 	    SLOT(slotDeleteMySelf(bool)));
-	connect(protocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this,
+	connect(mProtocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this,
 		SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
-	connect(protocol, SIGNAL(resourceUnavailable(const Jid &)), this,
+	connect(mProtocol, SIGNAL(resourceUnavailable(const Jid &)), this,
 		SLOT(slotResourceUnavailable(const Jid &)));
-    connect(protocol, SIGNAL(newMessage(const JabMessage &)), this,
+    connect(mProtocol, SIGNAL(newMessage(const JabMessage &)), this,
 	    SLOT(slotNewMessage(const JabMessage &)));
 
 	historyDialog = 0L;
