@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>517</width>
-            <height>374</height>
+            <width>582</width>
+            <height>381</height>
         </rect>
     </property>
     <property name="caption">
@@ -69,7 +69,7 @@
         </widget>
         <widget class="QGroupBox" row="0" column="0">
             <property name="name">
-                <cstring>grpForm</cstring>
+                <cstring>dynamicFormLayout</cstring>
             </property>
             <property name="title">
                 <string>Search for...</string>
@@ -80,7 +80,7 @@
                 </property>
                 <spacer>
                     <property name="name">
-                        <cstring>spacer2</cstring>
+                        <cstring>upFormSpacer</cstring>
                     </property>
                     <property name="orientation">
                         <enum>Vertical</enum>
@@ -111,7 +111,7 @@
                 </widget>
                 <spacer>
                     <property name="name">
-                        <cstring>spacer3</cstring>
+                        <cstring>downFormSpacer</cstring>
                     </property>
                     <property name="orientation">
                         <enum>Vertical</enum>
@@ -130,7 +130,7 @@
         </widget>
         <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>layout7</cstring>
+                <cstring>buttonsLayout</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -138,7 +138,7 @@
                 </property>
                 <spacer>
                     <property name="name">
-                        <cstring>spacer4</cstring>
+                        <cstring>buttonsSpacer</cstring>
                     </property>
                     <property name="orientation">
                         <enum>Horizontal</enum>
