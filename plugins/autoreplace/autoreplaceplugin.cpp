@@ -46,17 +46,17 @@ AutoReplacePlugin::AutoReplacePlugin(
 
 	// autoreplace INCOMING messages
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		SIGNAL( aboutToSend( KopeteMessage & ) ),
 		SLOT( slotAutoReplaceIncomingMessage( KopeteMessage & ) ) );
 
 	// add a dot at the end of each line
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		SIGNAL( aboutToSend( KopeteMessage & ) ),
 		SLOT( slotAddDot( KopeteMessage & ) ) );
 	
 	// start with capital letter
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		SIGNAL( aboutToSend( KopeteMessage & ) ),
 		SLOT( slotCapitolize( KopeteMessage & ) ) );
 }
 
