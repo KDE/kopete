@@ -53,6 +53,7 @@
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 #include "linkaddressbookui.h"
+#include "addressbookselectordialog.h"
 
 #include "customnotificationprops.h"
 #include "customnotifications.h"
@@ -389,11 +390,8 @@ void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 {
-	LinkAddressbookUI dialog( item->metaContact(), this, "link_addr_book_dialog" );
-	if ( dialog.exec() == QDialog::Rejected )
-		return;
-	
-	KABC::Addressee a = dialog.addressee();
+	KABC::Addressee a = AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(item->metaContact()->displayName() ), item->metaContact()->metaContactId() , this);
+
 	if ( a.isEmpty() )
 	{
 		mainWidget->edtAddressee->setText( QString::null ) ;
@@ -429,7 +427,6 @@ void KopeteMetaLVIProps::slotImportClicked()
 																	 i18n( "No contacts were imported from the address book." ),
 																	 i18n( "No Change" ) );
 }
-
 
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {
