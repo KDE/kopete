@@ -49,11 +49,12 @@ public:
 	// KopeteContact stuff
 	virtual KActionCollection *customContextMenuActions();
 	virtual const QString caption() const;
-
-private slots:
-	virtual void updateStatus();
-public:
+	
 	void setAway(bool isAway);
+
+protected slots:
+	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
+	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
 
 private slots:
 	void slotOp();
@@ -70,13 +71,10 @@ private slots:
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void slotUserOnline(const QString &nick);
 	void slotUserOffline();
-
+	
+	virtual void updateStatus();
 	virtual void slotUserInfo();
-
-protected slots:
-	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
-
+	
 private:
 	KActionCollection *mCustomActions;
 	KActionMenu *actionModeMenu;

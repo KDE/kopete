@@ -38,7 +38,6 @@ public:
 
 	~KIRCMessage();
 
-public:
 	static KIRCMessage writeString(QIODevice *dev, const QString &str, QTextCodec *codec=0);
 	static KIRCMessage writeMessage(QIODevice *dev,
 			const QString &command, const QStringList &args, const QString &suffix,
@@ -56,31 +55,13 @@ public:
 		{ return prefix.section('!', 0, 0); }
 
 	static KIRCMessage parse(KBufferedIO *dev, bool *parseSuccess=0, QTextCodec *codec=0);
-protected:
-	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
 
-	// low level quoting, message quoting
-	static QString quote(const QString &str);
-	static QString unquote(const QString &str);
-
-	// ctcp level quoting
-	static QString ctcpQuote(const QString &str);
-	static QString ctcpUnquote(const QString &str);
-
-protected:
-	static bool extractCtcpCommand(QString &str, QString &ctcpline);
-	static bool matchForIRCRegExp(const QString &line, KIRCMessage &message);
-	static bool matchForIRCRegExp(QRegExp &regexp, const QString &line,
-		QString &prefix, QString &command, QStringList &args, QString &suffix);
-
-public:
 	QString toString() const;
 
 	bool isNumericMessage() const;
 	bool isValid() const;
 	void dump() const;
 
-public:
 	// The raw message
 	inline const QCString &raw() const
 		{ return m_raw; }
@@ -129,10 +110,24 @@ protected:
 	 * If it is a ctcp message contains the completely dequoted rawCtcpArgsLine.
 	 */
 	QString m_ctcpRaw;
+	
+	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
+
+	// low level quoting, message quoting
+	static QString quote(const QString &str);
+	static QString unquote(const QString &str);
+
+	// ctcp level quoting
+	static QString ctcpQuote(const QString &str);
+	static QString ctcpUnquote(const QString &str);
+
+	static bool extractCtcpCommand(QString &str, QString &ctcpline);
+	static bool matchForIRCRegExp(const QString &line, KIRCMessage &message);
+	static bool matchForIRCRegExp(QRegExp &regexp, const QString &line,
+	QString &prefix, QString &command, QStringList &args, QString &suffix);
 
 	class KIRCMessage *m_ctcpMessage;
 
-protected:
 	static const QRegExp m_IRCCommandType1;
 #ifdef _IRC_STRICTNESS_
 	static const QRegExp m_IRCCommandType2;

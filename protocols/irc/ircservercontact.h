@@ -48,12 +48,9 @@ public:
 	// KopeteContact stuff
 	virtual KActionCollection *customContextMenuActions();
 	virtual const QString caption() const;
-
-private slots:
-	virtual void updateStatus();
-
-	void slotServerOnline(const QString &server);
-	void slotServerOffline();
+	
+	virtual void appendMessage(KopeteMessage &);
+	void startServerChat();
 
 protected slots:
 	void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
@@ -62,10 +59,12 @@ protected slots:
 
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
+	
+private slots:
+	virtual void updateStatus();
 
-public:
-	virtual void appendMessage(KopeteMessage &);
-	void startServerChat();
+	void slotServerOnline(const QString &server);
+	void slotServerOffline();
 
 private:
 	KActionCollection *m_customActions;

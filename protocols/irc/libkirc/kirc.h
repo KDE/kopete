@@ -52,6 +52,23 @@ class KIRC
 	Q_OBJECT
 
 public:
+	typedef enum EngineError
+	{
+		ParsingFailed,
+		UnknownCommand,
+		InvalidNumberOfArguments,
+		MethodFailed
+	};
+	
+	typedef enum EngineStatus
+	{
+		Disconnected,
+		Connecting,
+		Authentifying,
+		Connected,
+		Closing
+	};
+	
 	KIRC(const QString &host, const Q_UINT16 port, QObject *parent=0, const char *name=0);
 	~KIRC();
 
@@ -66,99 +83,16 @@ public:
 
 	const QString &userName() const {return m_Username; }
 	void setUserName(const QString &newName);
+	
+	EngineStatus status() const { return m_status; }
+	inline bool isDisconnected() const { return m_status == Disconnected; }
+	inline bool isConnected() const { return m_status == Connected; }
 
 public slots:
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
-
-public:
-	typedef enum EngineError
-	{
-		ParsingFailed,
-		UnknownCommand,
-		InvalidNumberOfArguments,
-		MethodFailed
-	};
-signals:
-	void internalError(KIRC::EngineError, const KIRCMessage &);
-
-public:
-	typedef enum EngineStatus
-	{
-		Disconnected,
-		Connecting,
-		Authentifying,
-		Connected,
-		Closing
-	};
-	EngineStatus status() const { return m_status; }
-	inline bool isDisconnected() const { return m_status == Disconnected; }
-	inline bool isConnected() const { return m_status == Connected; }
-private:
-	void setStatus(EngineStatus status);
-signals:
-	void statusChanged(KIRC::EngineStatus newStatus);
-
-private slots:
-	void slotHostFound();
-	void slotConnected();
-	void slotConnectionClosed();
-	void slotReadyRead();
-	void error();
-	void quitTimeout();
-signals:
-	void sentMessage(const KIRCMessage &);
-	void receivedMessage(const KIRCMessage &);
-
-protected:
-	bool canSend( bool mustBeConnected ) const;
-
-	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
-
-	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true);
-	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true)
-		{ return writeMessage(QString::fromLatin1(command), args, suffix, mustBeConnected); }
-
-	KIRCMessage writeMessage( const QString &command, const QString &arg = QString::null,
-		const QString &suffix = QString::null, bool mustBeConnected = true );
-	inline KIRCMessage writeMessage(const char *command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true)
-		{ return writeMessage(QString::fromLatin1(command), arg, suffix, mustBeConnected); }
-
-	KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true);
-
-	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
-			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpQueryMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-
-	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
-			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpReplyMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-
-	inline KIRCMessage writeCtcpErrorMessage(const QString &to /*prefix*/,
-			const QString &ctcpLine, const char *errorMsg,
-			bool emitRepliedCtcp=true)
-		{ return writeCtcpReplyMessage(to, QString::null,
-			"ERRMSG", QStringList(ctcpLine), QString::fromLatin1(errorMsg),
-			emitRepliedCtcp); }
-
-	// FIXME: short term solution move me to the the KIRCEntity class
-	inline static QString getNickFromPrefix(const QString &prefix)
-		{ return prefix.section('!', 0, 0); }
-
-public slots:
+	
 	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
 
 	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
@@ -195,6 +129,12 @@ public slots:
 	void sendCtcpVersion(const QString &target);
 
 signals:
+	void internalError(KIRC::EngineError, const KIRCMessage &);
+	void statusChanged(KIRC::EngineStatus newStatus);
+	
+	void sentMessage(const KIRCMessage &);
+	void receivedMessage(const KIRCMessage &);
+	
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingTopicChange(const QString &, const QString &, const QString &); /* */
 	void successfulQuit();
@@ -259,6 +199,52 @@ signals:
 	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 
 protected:
+	bool canSend( bool mustBeConnected ) const;
+
+	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
+
+	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true);
+	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true)
+		{ return writeMessage(QString::fromLatin1(command), args, suffix, mustBeConnected); }
+
+	KIRCMessage writeMessage( const QString &command, const QString &arg = QString::null,
+		const QString &suffix = QString::null, bool mustBeConnected = true );
+	inline KIRCMessage writeMessage(const char *command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true)
+		{ return writeMessage(QString::fromLatin1(command), arg, suffix, mustBeConnected); }
+
+	KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
+			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true);
+
+	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
+			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
+			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpQueryMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+
+	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
+			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
+			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpReplyMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+
+	inline KIRCMessage writeCtcpErrorMessage(const QString &to /*prefix*/,
+			const QString &ctcpLine, const char *errorMsg,
+			bool emitRepliedCtcp=true)
+		{ return writeCtcpReplyMessage(to, QString::null,
+			"ERRMSG", QStringList(ctcpLine), QString::fromLatin1(errorMsg),
+			emitRepliedCtcp); }
+
+	// FIXME: short term solution move me to the the KIRCEntity class
+	inline static QString getNickFromPrefix(const QString &prefix)
+		{ return prefix.section('!', 0, 0); }
+
 	typedef bool ircMethod(const KIRCMessage &msg);
 	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
 
@@ -373,6 +359,19 @@ protected:
 
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
+
+private slots:
+	void slotHostFound();
+	void slotConnected();
+	void slotConnectionClosed();
+	void slotReadyRead();
+	void error();
+	void quitTimeout();
+	
+private:
+	void setStatus(EngineStatus status);
+	
+
 };
 
 #endif // KIRC_H

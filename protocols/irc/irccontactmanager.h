@@ -48,64 +48,52 @@ class IRCContactManager
 
 public:
 	IRCContactManager(const QString &nickName, const QString &serverName, IRCAccount *account, const char *name=0);
+	
+	IRCAccount *account() const { return m_account; }
+	IRCServerContact *myServer() const { return m_myServer; }
+	IRCUserContact *mySelf() const { return m_mySelf; }
+	KIRC *engine() const { return m_engine; }
+	
+	IRCServerContact *findServer(const QString &server, KopeteMetaContact *m=0);
+	bool existServer(const QString &server);
 
-protected slots:
-//	KIRC slots
-	void slotNewMessage(const QString &originating, const QString &channel, const QString &message);
-	void slotNewPrivMessage(const QString &originating, const QString &, const QString &message);
-	void slotNewAction(const QString &originating, const QString &channel, const QString &action);
-	void slotNewPrivAction(const QString &originating, const QString &, const QString &action);
+	IRCChannelContact *findChannel(const QString &channel, KopeteMetaContact *m=0);
+	bool existChannel(const QString &channel);
+	
+	IRCUserContact *findUser(const QString &nick, KopeteMetaContact *m=0);
+	bool existUser(const QString &nick);
+	
+public slots:
+	void unregister(KopeteContact *contact);
+	
+	void unregisterUser(const QString &nick);
+	void unregisterUser(KopeteContact *contact);
+	
+	void addToNotifyList(const QString &nick);
+	void removeFromNotifyList(const QString &nick);
+	
+	void unregisterChannel(const QString &channel);
+	void unregisterChannel(KopeteContact *contact);
+	
+	void unregisterServer(const QString &server);
+	void unregisterServer(KopeteContact *contact);
+
 
 signals:
 	void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	void action(IRCContact *from, IRCContact *to, const QString &action);
 
 protected slots:
-//	ViewManagement slots
+	//KIRC slots
+	void slotNewMessage(const QString &originating, const QString &channel, const QString &message);
+	void slotNewPrivMessage(const QString &originating, const QString &, const QString &message);
+	void slotNewAction(const QString &originating, const QString &channel, const QString &action);
+	void slotNewPrivAction(const QString &originating, const QString &, const QString &action);
+	
+	//ViewManagement slots
 	void viewCreated(KopeteView *view);
 	void viewActivated(KopeteView *view);
 	void viewClosing(KopeteView *view);
-
-public slots:
-	void unregister(KopeteContact *contact);
-
-public:
-	IRCServerContact *findServer(const QString &server, KopeteMetaContact *m=0);
-	bool existServer(const QString &server);
-public slots:
-	void unregisterServer(const QString &server);
-	void unregisterServer(KopeteContact *contact);
-
-public:
-	IRCChannelContact *findChannel(const QString &channel, KopeteMetaContact *m=0);
-	bool existChannel(const QString &channel);
-public slots:
-	void unregisterChannel(const QString &channel);
-	void unregisterChannel(KopeteContact *contact);
-
-public:
-
-	IRCUserContact *findUser(const QString &nick, KopeteMetaContact *m=0);
-	bool existUser(const QString &nick);
-public slots:
-	void unregisterUser(const QString &nick);
-	void unregisterUser(KopeteContact *contact);
-
-public slots:
-	void addToNotifyList(const QString &nick);
-	void removeFromNotifyList(const QString &nick);
-private slots:
-	void checkOnlineNotifyList();
-
-public:
-	IRCAccount *account() const
-		{ return m_account; }
-	IRCServerContact *myServer() const
-		{ return m_myServer; }
-	IRCUserContact *mySelf() const
-		{ return m_mySelf; }
-	KIRC *engine() const
-		{ return m_engine; }
 
 protected:
 	IRCAccount *m_account;
@@ -120,7 +108,14 @@ protected:
 
 	QStringList m_NotifyList;
 	QTimer *m_NotifyTimer;
+
+private slots:
+	void checkOnlineNotifyList();
+
 };
+
+
+
 
 #endif // IRCCONTACTMANAGER_H
 

@@ -84,41 +84,36 @@ public:
 	virtual const QString caption() const = 0;
 
 	virtual KopeteMessageManager *manager(bool canCreate = true);
-
-protected slots:
-	virtual void updateStatus()=0;
-	virtual void messageManagerDestroyed();
-
-	protected slots:
-		void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
-		void slotNewWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
-		void slotNewWhoIsOperator(const QString &nickname);
-		void slotNewWhoIsIdle(const QString &nickname, unsigned long seconds);
-		void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
-		void slotWhoIsComplete(const QString &nickname);
-		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
-		void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
-		void slotUserDisconnected( const QString &nickname, const QString &reason);
-
-protected slots:
-	virtual void slotDeleteContact();
-
-protected slots:
-	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message)=0;
-	virtual void action(IRCContact *from, IRCContact *to, const QString &action)=0;
-
-protected:
-	void listedChannel(const QString &channel, uint users, const QString &topic);
-
-public:
+	
 	virtual void appendMessage( KopeteMessage & );
-public:
+
 	KopeteView *view();
 
 	protected slots:
 		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
 
+protected slots:
+	virtual void updateStatus()=0;
+	virtual void messageManagerDestroyed();
+
+	void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+	void slotNewWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
+	void slotNewWhoIsOperator(const QString &nickname);
+	void slotNewWhoIsIdle(const QString &nickname, unsigned long seconds);
+	void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
+	void slotWhoIsComplete(const QString &nickname);
+	void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
+	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
+	void slotUserDisconnected( const QString &nickname, const QString &reason);
+
+	virtual void slotDeleteContact();
+
+	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message)=0;
+	virtual void action(IRCContact *from, IRCContact *to, const QString &action)=0;
+
 protected:
+	void listedChannel(const QString &channel, uint users, const QString &topic);
+	
 	IRCProtocol *m_protocol;
 	IRCAccount *m_account;
 	KIRC *m_engine;

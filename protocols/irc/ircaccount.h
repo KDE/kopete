@@ -51,10 +51,7 @@ public:
 	virtual void loaded();
 
 	QString userName();
-public slots:
-	void setUserName(QString userName);
 
-public:
 	void unregister(KopeteContact *);
 
 	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);
@@ -102,21 +99,7 @@ public:
 	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
 
 	virtual bool isConnected();
-
-protected:
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
-
-public slots:
-	void successfullyChangedNick(const QString &, const QString &);
-	virtual void connect();
-	virtual void disconnect();
-
-private slots:
-	void slotGoAway();
-	void slotJoinChannel();
-	void slotShowServerWindow();
-
-public:
+	
 	// Returns the KIRC engine instance
 	KIRC *engine() const
 		{ return m_engine; }
@@ -135,6 +118,21 @@ public:
 
 	// Returns the KopeteContact of the server of the user
 	IRCServerContact *myServer() const;
+
+public slots:
+	void successfullyChangedNick(const QString &, const QString &);
+	virtual void connect();
+	virtual void disconnect();
+	void setUserName(QString userName);
+	
+protected:
+	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
+
+
+private slots:
+	void slotGoAway();
+	void slotJoinChannel();
+	void slotShowServerWindow();
 
 private:
 	IRCProtocol *m_protocol;
