@@ -31,7 +31,7 @@
 #include <kdebug.h>
 #include <klineeditdlg.h>
 #include <qapplication.h>
-
+#include <qtimer.h>
 IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel, KopeteMetaContact *metac) :
 		IRCContact( account, channel, metac )
 {
@@ -88,8 +88,7 @@ KopeteMessageManager* IRCChannelContact::manager(bool)
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		isConnected = true;
-
-		mEngine->joinChannel(mNickName);
+		QTimer::singleShot( 1000, this, SLOT( slotJoinChannel() ) );
 	}
 	return mMsgManager;
 }
@@ -105,6 +104,11 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 	slotPart();
 	isConnected = false;
 	mMsgManager = 0L;
+}
+
+void IRCChannelContact::slotJoinChannel()
+{
+	mEngine->joinChannel(mNickName);
 }
 
 void IRCChannelContact::slotConnectedToServer()

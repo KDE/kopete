@@ -80,6 +80,7 @@ class IRCChannelContact : public IRCContact
 	private slots:
 		void slotMessageManagerDestroyed();
 		void slotConnectedToServer();
+		void slotJoinChannel();
 		void slotUserJoinedChannel(const QString &, const QString &);
 		void slotJoin();
 		void slotPart();
