@@ -62,6 +62,7 @@ public:
 	ListView::TextComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
 	ListView::ImageComponent *buddyIcon;
+	int iconSize;
 };
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
@@ -149,22 +150,48 @@ void KopeteMetaContactLVI::initLVI()
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->metaContactIcon = new ImageComponent( hbox );
-	Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
-	d->nameText = new TextComponent( vbox, listView()->font() );
 
-	QFont smallFont = listView()->font();
-	int size = smallFont.pixelSize();
-	if ( size != -1 )
-		smallFont.setPixelSize( (size * 3) / 2 );
-	else
-		smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.667 );
-	d->extraText = new TextComponent( vbox, smallFont );
-	//FIXME: fill in d->extraText
+	static int type = 0; ++type; type %= 3;
+	if( type == 0 )    // new funky contact
+	{
+		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+		d->nameText = new TextComponent( vbox, listView()->font() );
 
-	d->contactIconBox = new BoxComponent( vbox, BoxComponent::Horizontal );
+		QFont smallFont = listView()->font();
+		int size = smallFont.pixelSize();
+		if ( size != -1 )
+			smallFont.setPixelSize( (size * 3) / 2 );
+		else
+			smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.667 );
+		d->extraText = new TextComponent( vbox, smallFont );
+		//FIXME: fill in d->extraText
 
-	d->buddyIcon = new ImageComponent( hbox );
-	d->buddyIcon->setPixmap( SmallIcon(QString::fromLatin1("newmsg")) );
+		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
+		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
+		new HSpacerComponent( box );
+
+		d->buddyIcon = new ImageComponent( hbox );
+		d->buddyIcon->setPixmap( SmallIcon(QString::fromLatin1("newmsg")) );
+		d->iconSize = 32;
+	}
+	else if( type == 1 ) // old right-aligned contact
+	{
+		d->nameText = new TextComponent( hbox, listView()->font() );
+		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
+		d->buddyIcon = 0;
+		d->extraText = 0;
+		d->iconSize = 16;
+	}
+	else                 // older left-aligned contact
+	{
+		d->nameText = new TextComponent( hbox, listView()->font() );
+		d->nameText->setFixedWidth( true );
+		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
+		new HSpacerComponent( hbox );
+		d->buddyIcon = 0;
+		d->extraText = 0;
+		d->iconSize = 16;
+	}
 
 	slotUpdateIcons();
 	slotDisplayNameChanged();
@@ -413,7 +440,6 @@ void KopeteMetaContactLVI::updateContactIcons()
 		QPixmap image = ( *it )->onlineStatus().iconFor( *it, 12 );
 		icon->setPixmap( image );
 	}
-	new ListView::HSpacerComponent( d->contactIconBox );
 }
 
 KopeteContact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
@@ -491,7 +517,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 void KopeteMetaContactLVI::slotIdleStateChanged()
 {
-	QPixmap icon = SmallIcon( m_metaContact->statusIcon(), 32 );
+	QPixmap icon = SmallIcon( m_metaContact->statusIcon(), d->iconSize );
 	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
 	{
 		KIconEffect::semiTransparent( icon );
@@ -536,7 +562,7 @@ void KopeteMetaContactLVI::slotBlink()
 {
 	if ( mIsBlinkIcon )
 	{
-		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), 32 ) );
+		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
 		if ( !m_event && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
@@ -548,11 +574,11 @@ void KopeteMetaContactLVI::slotBlink()
 	{
 		if ( m_event )
 		{
-			d->metaContactIcon->setPixmap( SmallIcon( "newmsg", 32 ) );
+			d->metaContactIcon->setPixmap( SmallIcon( "newmsg", d->iconSize ) );
 		}
 		else
 		{
-			d->metaContactIcon->setPixmap( SmallIcon( m_oldStatusIcon, 32 ) );
+			d->metaContactIcon->setPixmap( SmallIcon( m_oldStatusIcon, d->iconSize ) );
 			m_blinkLeft--;
 		}
 	}
@@ -571,7 +597,7 @@ void KopeteMetaContactLVI::slotEventDone( KopeteEvent * /* event */ )
 		updateVisibility();
 	}
 
-	d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), 32 ) );
+	d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
 	mIsBlinkIcon = false;
 }
 

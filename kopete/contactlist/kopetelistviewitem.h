@@ -131,7 +131,7 @@ protected:
 	 *         the previous values. if it returns true, you do not need to relayout,
 	 *         since the parent component will do that for you.
 	 */
-	bool setMinWidth( int width, bool canUseMore = true );
+	bool setMinWidth( int width, bool canUseMore = false );
 	/**
 	 * Change the minimum height, in pixels, this component requires in order
 	 * to be at all useful. Note: do not call this from your layout() function.
@@ -142,7 +142,7 @@ protected:
 	 *         the previous values. If it returns true, you do not need to relayout,
 	 *         since the parent component will do that for you.
 	 */
-	bool setMinHeight( int height, bool canUseMore = true );
+	bool setMinHeight( int height, bool canUseMore = false );
 
 	void componentAdded( Component *component );
 	void componentRemoved( Component *component );

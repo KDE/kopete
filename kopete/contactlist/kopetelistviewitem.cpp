@@ -256,10 +256,10 @@ void BoxComponent::calcMinSize()
 		if ( setMinHeight( sum, stretchV ) ) sizeChanged = true;
 	}
 
-//	if ( sizeChanged )
+	if ( sizeChanged )
 		repaint();
-//	else
-//		relayout();
+	else
+		relayout();
 }
 
 void BoxComponent::layout( const QRect &rect )
@@ -399,8 +399,8 @@ ImageComponent::~ImageComponent()
 void ImageComponent::setPixmap( const QPixmap &img )
 {
 	d->image = img;
-	setMinWidth( img.width(), false );
-	setMinHeight( img.height(), false );
+	setMinWidth( img.width() );
+	setMinHeight( img.height() );
 	repaint();
 }
 
@@ -489,14 +489,14 @@ void TextComponent::setFixedWidth( bool fixedWidth )
 void TextComponent::calcMinSize()
 {
 	if ( d->fixedWidth )
-		setMinWidth( QFontMetrics( font() ).width( d->text ), false );
+		setMinWidth( QFontMetrics( font() ).width( d->text ) );
 	else
 		setMinWidth( 0, true );
 
 	if ( !d->text.isEmpty() )
-		setMinHeight( QFontMetrics( font() ).height(), false );
+		setMinHeight( QFontMetrics( font() ).height() );
 	else
-		setMinHeight( 0, false );
+		setMinHeight( 0 );
 
 	repaint();
 }
@@ -536,7 +536,7 @@ HSpacerComponent::HSpacerComponent( ComponentBase *parent )
  : Component( parent )
 {
 	setMinWidth( 0, true );
-	setMinHeight( 0, false );
+	setMinHeight( 0 );
 }
 
 // VSpacerComponent --------
@@ -544,8 +544,8 @@ HSpacerComponent::HSpacerComponent( ComponentBase *parent )
 VSpacerComponent::VSpacerComponent( ComponentBase *parent )
  : Component( parent )
 {
-	setMinWidth( 0, true );
-	setMinHeight( 0, false );
+	setMinWidth( 0 );
+	setMinHeight( 0, true );
 }
 
 // Item --------
