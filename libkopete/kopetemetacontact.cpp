@@ -481,6 +481,7 @@ bool KopeteMetaContact::trackChildNameChanges() const
 
 void KopeteMetaContact::setTrackChildNameChanges(bool track)
 {
+/*
 	if (track && (m_contacts.count() == 1))
 	{
 		kdDebug(14010) << "[KopeteMetaContact] setTrackChildNameChanges(); ENABLING TrackChildNameChanges" << endl;
@@ -492,6 +493,7 @@ void KopeteMetaContact::setTrackChildNameChanges(bool track)
 		kdDebug(14010) << "[KopeteMetaContact] setTrackChildNameChanges(); DISABLING TrackChildNameChanges" << endl;
 		m_trackChildNameChanges = false;
 	}
+*/
 }
 
 void KopeteMetaContact::slotContactNameChanged( const QString &name )
@@ -754,7 +756,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
 	// track changes only works if ONE Contact is inside the MetaContact
-	if (m_contacts.count() > 1)
+//	if (m_contacts.count() > 1) // Does NOT work as intended
 		m_trackChildNameChanges=false;
 
 //	kdDebug(14010) << "[KopeteMetaContact] END fromXML(), m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
