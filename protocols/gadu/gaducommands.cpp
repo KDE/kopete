@@ -203,6 +203,7 @@ void RegisterCommand::watcher()
 
 		kdDebug( 14100 ) << "4  " << session_->state << endl;
 		gg_pub = (struct gg_pubdir *)session_->data;
+		emit operationStatus( i18n( "Token retrieving status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
 				kdDebug( 14100 ) << "Recreating notifiers " << endl;
@@ -211,7 +212,7 @@ void RegisterCommand::watcher()
 				break;
 			case GG_STATE_ERROR:
 				deleteNotifiers();
-				emit error( i18n( "Gadu-Gadu token retrive problem" ), GaduSession::errorDescription(  session_->error )  );
+				emit error( i18n( "Gadu-Gadu token retrieve problem" ), GaduSession::errorDescription(  session_->error )  );
 				gg_token_free( session_ );
 				session_ = NULL;
 				state = RegisterStateNoToken;
@@ -254,6 +255,7 @@ void RegisterCommand::watcher()
 		}
 		kdDebug( 14100 ) << "4  " << session_->state << endl;
 		gg_pub = (gg_pubdir*) session_->data;
+		emit operationStatus( i18n( "Registration status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
 				kdDebug( 14100 ) << "Recreating notifiers " << endl;

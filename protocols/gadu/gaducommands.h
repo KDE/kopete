@@ -53,6 +53,7 @@ signals:
 	void done( const QString& title, const QString& what );
 	void error( const QString& title, const QString& error );
 	void socketReady();
+	void operationStatus( const QString );
 
 protected:
 	void checkSocket( int, int );
