@@ -2,19 +2,19 @@
 <messaging-emoticon-map >
 
 <emoticon file="angel">
+	<string>(A)</string>
+	<string>(a)</string>
 	<string>O:-)</string>
 	<string>O:)</string>
 	<string>o:-)</string>
 	<string>o:)</string>
-	<string>(A)</string>
-	<string>(a)</string>
 </emoticon>
 
 <emoticon file="angry">
-	<string>&gt;:-(</string>
-	<string>&gt;:(</string>
 	<string>:-@</string>
 	<string>:@</string>
+	<string>&gt;:-(</string>
+	<string>&gt;:(</string>
 </emoticon>
 
 <emoticon file="bat">
@@ -43,7 +43,6 @@
 
 <emoticon file="cat">
 	<string>(@)</string>
-	<string>(@)</string>
 </emoticon>
 
 <emoticon file="clock">
@@ -64,8 +63,8 @@
 </emoticon>
 
 <emoticon file="cry">
-	<string>:'-(</string>
 	<string>:'(</string>
+	<string>:'-(</string>
 	<string>;-(</string>
 	<string>;(</string>
 </emoticon>
@@ -76,11 +75,11 @@
 </emoticon>
 
 <emoticon file="devil">
+	<string>(6)</string>
 	<string>&gt;:-)</string>
 	<string>&gt;:)</string>
 	<string>}:-&gt;</string>
 	<string>}:&gt;</string>
-	<string>(6)</string>
 </emoticon>
 
 <emoticon file="dog">
@@ -115,12 +114,12 @@
 </emoticon>
 
 <emoticon file="kiss">
+	<string>(K)</string>
+	<string>(k)</string>
 	<string>:-X</string>
 	<string>:X</string>
 	<string>:-x</string>
 	<string>:x</string>
-	<string>(K)</string>
-	<string>(k)</string>
 </emoticon>
 
 <emoticon file="lightbulb">
@@ -170,6 +169,7 @@
 </emoticon>
 
 <emoticon file="shade">
+	<string>(H)</string>
 	<string>8-)</string>
 	<string>8)</string>
 </emoticon>
