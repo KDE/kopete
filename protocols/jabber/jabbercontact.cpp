@@ -519,7 +519,7 @@ int JabberContact::importance() const
 {
 	int value;
 
-	switch(status())
+	switch(presence)
 	{
 		case JabberProtocol::STATUS_CHATTY:
 					value = 20;
