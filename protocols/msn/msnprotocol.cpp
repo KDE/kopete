@@ -60,7 +60,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	connect(engine, SIGNAL(connectingToService()), this, SLOT(slotConnecting()) );
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
-	connect(engine, SIGNAL(statusChanged( uint)), this, SIGNAL(slotStateChanged ( uint) ) );
+	connect(engine, SIGNAL(statusChanged( uint)), this, SLOT(slotStateChanged ( uint) ) );
 	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ) );
 	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotInitContacts(QString, QString, QString) ) );
 	//connect(engine, SIGNAL(userSetOffline (QString) ), this, SLOT(slotUserSetOffline(QString) ) );
@@ -310,7 +310,10 @@ void MSNProtocol::slotGoOnline()
 		kdDebug() << "MSN Plugin: Ups! we have to connect before going online" << endl;
 		Connect();
 	}
-	engine->changeStatus( NLN );		
+	else
+	{
+		engine->changeStatus( NLN );		
+	}
 }
 void MSNProtocol::slotGoOffline()
 {
