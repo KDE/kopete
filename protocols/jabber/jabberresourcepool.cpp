@@ -111,7 +111,7 @@ void JabberResourcePool::removeResource ( const XMPP::Jid &jid, const XMPP::Reso
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
-			mPool.removeNode ( mPool.currentNode() );
+			mPool.remove ();
 			notifyRelevantContacts ( jid );
 			return;
 		}
@@ -129,7 +129,7 @@ void JabberResourcePool::removeAllResources ( const XMPP::Jid &jid )
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
-			mPool.removeNode ( mPool.currentNode() );
+			mPool.remove ();
 		}
 	}
 
@@ -184,9 +184,7 @@ void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Reso
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
-			if ( !mLockList.contains ( mResource ) )
-				mLockList.append ( mResource );
-
+			mLockList.append ( mResource );
 			return;
 		}
 	}
@@ -204,8 +202,7 @@ void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) )
 		{
-			mLockList.remove ( mResource );
-			return;
+			mLockList.remove ();
 		}
 	}
 

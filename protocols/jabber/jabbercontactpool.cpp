@@ -99,7 +99,7 @@ void JabberContactPool::slotContactDestroyed ( KopeteContact *contact )
 	{
 		if ( mContactItem->contact() == jabberContact )
 		{
-			mPool.removeNode ( mPool.currentNode() );
+			mPool.remove ();
 			break;
 		}
 	}
