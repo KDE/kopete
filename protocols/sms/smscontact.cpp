@@ -46,6 +46,7 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 
 	m_protocol = protocol;
 
+	mMsgManager = 0L;
 }
 
 SMSContact::~SMSContact()
