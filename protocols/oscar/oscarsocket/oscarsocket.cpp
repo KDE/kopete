@@ -2017,34 +2017,31 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 		// get reason for missed messages 
 		WORD reason = inbuf.getWord();
 
-		QString errstring = QString(i18n("You missed %1 ")).arg(nummissed);
-		errstring += (nummissed == 1) ?
-			i18n("message ") :
-			i18n("messages ");
-		errstring += i18n("from ") + u.sn + i18n(" becuase ");
+		QString errstring = i18n(
+			"You missed one message from %1. Reason given:\n",
+			"You missed %n messages from %1. Reason given:\n",
+			nummissed);
 		switch (reason)
 		{
 			case 0: //invalid message
-				errstring += (nummissed == 1) ?
-					i18n("it was invalid.") :
-					i18n("they were invalid.");
+				errstring += i18n("It was invalid.",
+					"They were invalid.", nummissed);
 				break;
 			case 1: //message(s) too large
-				errstring += (nummissed == 1) ?
-					i18n("it was too large.") :
-					i18n("they were too large.");
+				errstring += i18n("It was too large.",
+					"They were too large.", nummissed);
 				break;
 			case 2: //rate limit exceeded
-				errstring += i18n("the client exceeded the rate limit.");
+				errstring += i18n("The client exceeded the rate limit.");
 				break;
 			case 3: //evil sender
-				errstring += i18n("the sender's warning level is too high.");
+				errstring += i18n("The sender's warning level is too high.");
 				break;
 			case 4: //evil receiver
-				errstring += i18n("your warning level is too high.");
+				errstring += i18n("Your warning level is too high.");
 				break;
 			default: //unknown reason
-				errstring += i18n("of unknown reasons.");
+				errstring += i18n("Unknown reasons.");
 				break;
 		};
 		emit protocolError(errstring,0);
