@@ -70,7 +70,10 @@ public:
 	 * Construct the context menu used for the status bar icon
 	 */
 	virtual KActionMenu* actionMenu();
-
+	
+	// DEBUG ONLY
+	void dumpManagers();
+	// DEBUG ONLY
 	/**
 	 * Creates a protocol specific KopeteContact subclass and adds it to the supplie
 	 * KopeteMetaContact

@@ -158,7 +158,11 @@ GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact*
 		// we will receive a conferenceCreated signal back from the correct manager
 		// and insert the guid into the map 
 		if ( !guid.isEmpty() )
+		{
 			m_managers.insert( guid, mgr );
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dumping managers " << endl;
+			dumpManagers();
+		}
 		QObject::connect( mgr, SIGNAL( destroyed( QObject * ) ), SLOT( slotMessageManagerDestroyed( QObject * ) ) );
 		QObject::connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotMessageManagerGotGuid() ) );
 
@@ -861,8 +865,7 @@ void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStrin
 		GroupWiseContact * c = contactForDN( *it );
 		if ( c )
 		{
-			mgr->addContact( c, true );
-			c->joinConference( guid );
+			mgr->joined( c );
 		}
 		else
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for participant DN: " << *it << endl;
@@ -905,8 +908,7 @@ void GroupWiseAccount::receiveConferenceLeft( const ConferenceEvent & event )
 		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
-			mgr->removeContact( c );
-			c->leaveConference( event.guid );
+			mgr->left( c );
 		}
 		else 
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << event.user << endl;
@@ -953,6 +955,8 @@ void GroupWiseAccount::slotMessageManagerGotGuid()
 	GroupWiseMessageManager * mgr = ( GroupWiseMessageManager * )sender();
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "registering message manager" << mgr->guid() << endl;
 	m_managers.insert( mgr->guid(), mgr );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dumping managers " << endl;
+	dumpManagers();
 }
 
 void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
@@ -963,6 +967,8 @@ void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
 	// leave the conference
 	m_client->leaveConference( mgr->guid() );
 	m_managers.remove( mgr->guid() );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dumping managers " << endl;
+	dumpManagers();
 }
 
 void GroupWiseAccount::slotSetAutoReply()
@@ -1009,5 +1015,14 @@ bool GroupWiseAccount::isContactBlocked( const QString & dn )
 	else 
 		return false;
 }
+
+void GroupWiseAccount::dumpManagers()
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << accountId() << endl;
+	QDictIterator< GroupWiseMessageManager > it( m_managers );
+	for ( ; it.current(); ++it )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.currentKey() << endl;
+}
+
 
 #include "gwaccount.moc"

@@ -322,8 +322,8 @@ void GroupWiseContact::joinConference( const QString & guid )
 
 void GroupWiseContact::leaveConference( const QString & guid )
 {
-	//TODO: Implement leaveConference.
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo <<  endl;
+	m_msgManagers.remove( guid );
 }
 
 void GroupWiseContact::addCLInstance( const ContactListInstance & instance )

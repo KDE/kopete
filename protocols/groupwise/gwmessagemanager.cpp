@@ -38,10 +38,10 @@
 
 #include "gwmessagemanager.h"
 
-GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 )
+GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_memberCount( others.count() )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
-	
+
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
 	setInstance( protocol->instance() );
 	
@@ -160,6 +160,7 @@ void GroupWiseMessageManager::receiveGuid( const int newMmId, const QString & gu
 	if ( newMmId == mmId() )
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got GUID from server" << endl;
+		m_memberCount = members().count();
 		setGuid( guid );
 		// notify the contact(s) using this message manager that it's been instantiated on the server
 		emit conferenceCreated();
@@ -183,7 +184,7 @@ void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int 
 void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 {
 	// only send a notification if we've got a conference going and we are not Appear Offline
-	if ( !m_guid.isEmpty() &&
+	if ( !m_guid.isEmpty() && m_memberCount &&
 		  ( account()->myself()->onlineStatus() != GroupWiseProtocol::protocol()->groupwiseAppearOffline ) )
 				account()->client()->sendTyping( guid(), typing );
 }
@@ -205,15 +206,28 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
-
 		else
 		{
-			if ( m_guid.isEmpty() )
+			// if the conference has not been instantiated yet, or if all the members have left
+			if ( m_guid.isEmpty() || m_memberCount == 0 )
 			{
-				kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
-				// the conference hasn't been instantiated on the server yet, so queue the message
-				createConference();
-				m_pendingOutgoingMessages.append( message );
+				// if there are still invitees, the conference is instantiated, and there are only 
+				if ( m_invitees.count() )
+				{
+					KopeteMessage failureNotify = KopeteMessage( user(), members(), 
+							i18n("Your message could not be sent. All the other participants have left, and other invitations are still pending. "), 
+							KopeteMessage::Internal, KopeteMessage::PlainText );
+					appendMessage( failureNotify );
+					messageSucceeded();
+				}
+				else
+				{
+					kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
+					// the conference hasn't been instantiated on the server yet, so queue the message
+					m_guid = QString();
+					createConference();
+					m_pendingOutgoingMessages.append( message );
+				}
 			}
 			else 
 			{
@@ -249,6 +263,7 @@ void GroupWiseMessageManager::dequeMessages()
 	{
 		slotMessageSent( *it, this );
 	}
+	m_pendingOutgoingMessages.clear();
 }
 
 void GroupWiseMessageManager::slotActionInviteAboutToShow()
@@ -360,6 +375,14 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 
 	addContact( c );
 	c->joinConference( m_guid );
+	++m_memberCount;
+}
+
+void GroupWiseMessageManager::left( GroupWiseContact * c )
+{
+	removeContact( c );
+	c->leaveConference( m_guid );
+	--m_memberCount;
 }
 
 void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )

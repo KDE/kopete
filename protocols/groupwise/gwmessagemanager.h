@@ -72,6 +72,10 @@ public:
 	 */
 	void joined( GroupWiseContact * );
 	/** 
+	 * Remove members from conference
+	 */
+	void left( GroupWiseContact * );
+	/** 
 	 * An invitation was declined
 	 */
 	void inviteDeclined( GroupWiseContact * );
@@ -144,6 +148,9 @@ private:
 	// search widget used for inviting contacts
 	GroupWiseSearch * m_search;
 	KopeteContactPtrList m_invitees;
+	// track the number of members actually in the chat
+	uint m_memberCount;
+
 };
 
 #endif
