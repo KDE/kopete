@@ -26,11 +26,11 @@
 #include "jabberaccount.h"
 #include "dlgjabberregister.h"
 
-dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)
+dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)
 {
 	m_account = account;
 
-	Jabber::JT_Register * task = new Jabber::JT_Register(m_account->client()->rootTask ());
+	XMPP::JT_Register * task = new XMPP::JT_Register(m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
 
@@ -43,7 +43,7 @@ dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const Jabber::Jid 
 
 void dlgJabberRegister::slotGotForm ()
 {
-	Jabber::JT_Register * task = (Jabber::JT_Register *) sender ();
+	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
 
 	// remove the "wait" message
 	delete lblWait;
@@ -72,7 +72,7 @@ void dlgJabberRegister::slotGotForm ()
 void dlgJabberRegister::slotSendForm ()
 {
 
-	Jabber::JT_Register * task = new Jabber::JT_Register (m_account->client()->rootTask ());
+	XMPP::JT_Register * task = new XMPP::JT_Register (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));
 
@@ -86,7 +86,7 @@ void dlgJabberRegister::slotSendForm ()
 
 void dlgJabberRegister::slotSentForm ()
 {
-	Jabber::JT_Register * task = (Jabber::JT_Register *) sender ();
+	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
 
 	if (task->success ())
 	{

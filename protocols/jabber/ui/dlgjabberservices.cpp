@@ -104,7 +104,7 @@ void dlgJabberServices::slotQuery ()
 	// create the jabber task
 	delete serviceTask;
 
-	serviceTask = new Jabber::JT_GetServices (m_account->client()->rootTask ());
+	serviceTask = new XMPP::JT_GetServices (m_account->client()->rootTask ());
 	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotQueryFinished ()));
 
 	/* populate server field if it is empty */
@@ -122,7 +122,7 @@ void dlgJabberServices::slotQueryFinished ()
 {
 	kdDebug (14130) << "[dlgJabberServices] Query task finished" << endl;
 
-	Jabber::JT_GetServices * task = (Jabber::JT_GetServices *) sender ();
+	XMPP::JT_GetServices * task = (XMPP::JT_GetServices *) sender ();
 
 	if (!task->success ())
 	{
@@ -134,7 +134,7 @@ void dlgJabberServices::slotQueryFinished ()
 
 	int row = 0;
 
-	for (Jabber::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); it++)
+	for (XMPP::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); it++)
 	{
 		tblServices->setText (row, 0, (*it).name ());
 		tblServices->setText (row, 1, (*it).jid ().userHost ());

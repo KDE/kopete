@@ -1,0 +1,21 @@
+This library is the xmpp backend also used in Psi. (http://psi.affinix.com)
+The main author is Justin Karneges (infiniti@affinix.com) and other
+Psi developers, see the Psi homepage for details.
+
+Please DO NOT change the source unless really necessary. This is a
+third-party library and any change will make synching very hard in the
+future. It is best to send patches upstream so they'll end up in the
+main tree. We will benefit from them at the next synch point.
+
+If you really really need to make a change to one of the source files,
+please make sure to commit a diff to the original file in this directory in
+the form of 001_your_fix_name.patch. Always pick the next free number
+for your patch, the version found in this directory is meant to have
+all patches applied in order. When committing, CCMAIL kopete-devel@kde.org.
+
+Changes to the Makefile.am files are fine and require no diffs, since Psi
+uses qmake.
+
+This library depends on: libidn (compile time), qca-tls (runtime)
+
+27.02.2004, Till Gerken (till@tantalo.net)

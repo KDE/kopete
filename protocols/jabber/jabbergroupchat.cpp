@@ -20,7 +20,7 @@
 
 #include "jabbergroupchat.h"
 
-JabberGroupChat::JabberGroupChat (Jabber::Jid jid, QStringList groups, JabberAccount * p, KopeteMetaContact * mc):JabberContact (jid.userHost (), jid.userHost (), groups, p, mc)
+JabberGroupChat::JabberGroupChat (XMPP::Jid jid, QStringList groups, JabberAccount * p, KopeteMetaContact * mc):JabberContact (jid.userHost (), jid.userHost (), groups, p, mc)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Joined room " << jid.user () << " at " << jid.host () << endl;
 
@@ -44,7 +44,7 @@ void JabberGroupChat::slotMessageManagerDeleted ()
 
 }
 
-void JabberGroupChat::updatePresence (const Jabber::Jid & jid, const Jabber::Status & /* status */ )
+void JabberGroupChat::updatePresence (const XMPP::Jid & jid, const XMPP::Status & /* status */ )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "JID " << jid.full () << endl;
 

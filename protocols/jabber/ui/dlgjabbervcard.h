@@ -23,7 +23,8 @@
 #include <jabberaccount.h>
 #include <qstring.h>
 #include "dlgvcard.h"
-#include "xmpp_types.h"
+#include "im.h"
+#include "xmpp.h"
 #include "xmpp_vcard.h"
 
 class dlgJabberVCard : public KDialogBase
@@ -47,7 +48,7 @@ private:
 	QString m_jid;
 	dlgVCard *m_mainWidget;
 
-	void assignVCard(const Jabber::VCard &vCard);
+	void assignVCard(const XMPP::VCard &vCard);
 	void setReadOnly(bool state);
 
 };

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>dlgVCard</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>592</width>
-            <height>402</height>
+            <height>404</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>dlgVCard</string>
     </property>
     <grid>
         <property name="name">
@@ -818,6 +821,41 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
+<tabstops>
+    <tabstop>tabWidget3</tabstop>
+    <tabstop>leNick</tabstop>
+    <tabstop>leName</tabstop>
+    <tabstop>leJID</tabstop>
+    <tabstop>leBirthday</tabstop>
+    <tabstop>leTimezone</tabstop>
+    <tabstop>leHomepage</tabstop>
+    <tabstop>btnSaveNick</tabstop>
+    <tabstop>leHomeStreet</tabstop>
+    <tabstop>leHomeExtAddr</tabstop>
+    <tabstop>leHomePOBox</tabstop>
+    <tabstop>leHomeCity</tabstop>
+    <tabstop>leHomePostalCode</tabstop>
+    <tabstop>leHomeCountry</tabstop>
+    <tabstop>leHomeEmail</tabstop>
+    <tabstop>leWorkStreet</tabstop>
+    <tabstop>leWorkExtAddr</tabstop>
+    <tabstop>leWorkPOBox</tabstop>
+    <tabstop>leWorkCity</tabstop>
+    <tabstop>leWorkPostalCode</tabstop>
+    <tabstop>leWorkCountry</tabstop>
+    <tabstop>leWorkEmail</tabstop>
+    <tabstop>leCompany</tabstop>
+    <tabstop>leDepartment</tabstop>
+    <tabstop>lePosition</tabstop>
+    <tabstop>leRole</tabstop>
+    <tabstop>lePhoneHome</tabstop>
+    <tabstop>lePhoneWork</tabstop>
+    <tabstop>lePhoneFax</tabstop>
+    <tabstop>lePhoneCell</tabstop>
+    <tabstop>teAbout</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>

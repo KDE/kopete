@@ -31,9 +31,8 @@
 #include "jabberprotocol.h"
 #include "kopeteonlinestatus.h"
 #include "ui/dlgjabbersendraw.h"
-#include "xmpp_jid.h"
-#include "xmpp_client.h"
-#include "xmpp_types.h"
+#include "im.h"
+#include "xmpp.h"
 
 // forward declaration required due to cyclic includes
 class JabberAwayDialog;
@@ -63,7 +62,7 @@ public:
 	const QString server () const;
 	const int port () const;
 
-	Jabber::Client *client();
+	XMPP::Client *client();
 
 	/* to get the protocol from the account */
 	JabberProtocol *protocol () const
@@ -96,7 +95,7 @@ public slots:
 	 * @return Pointer to the KopeteContact object which was added
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const KopeteAccount::AddMode mode = KopeteAccount::DontChangeKABC, 
+		KopeteMetaContact *parentContact = 0L, const KopeteAccount::AddMode mode = KopeteAccount::DontChangeKABC,
 		const QString &groupName = QString::null, bool isTemporary = false) ;
 
 protected:
@@ -111,7 +110,11 @@ protected:
 
 private:
 	/* Psi backend for this account. */
-	Jabber::Client *jabberClient;
+	XMPP::Client *jabberClient;
+	XMPP::ClientStream *jabberClientStream;
+	XMPP::AdvancedConnector *jabberClientConnector;
+	QCA::TLS *jabberTLS;
+	XMPP::QCATLSHandler *jabberTLSHandler;
 
 	/* away dialog instance */
 	JabberAwayDialog *awayDialog;
@@ -130,6 +133,8 @@ private:
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
+
+	void cleanup ();
 
 	JabberProtocol *mProtocol;
 
@@ -161,20 +166,26 @@ private slots:
 	/* Disconnects from the server. */
 	void slotDisconnect ();
 
-	/* Called from Psi: tells us when we've connected OK. */
-	void slotConnected (bool success, int statusCode, const QString & statusString);
-
 	/* Login if the connection was OK. */
-	void slotHandshaken ();
+	void slotCSNeedAuthParams (bool user, bool pass, bool realm);
+
+	/* Called from Psi: tells us when we're logged in OK. */
+	void slotCSAuthenticated ();
 
 	/* Called from Psi: tells us when we've been disconnected from the server. */
-	void slotDisconnected ();
+	void slotCSDisconnected ();
+
+	/* Called from Psi: alerts us to a protocol warning. */
+	void slotCSWarning (int);
+
+	/* Called from Psi: alerts us to a protocol error. */
+	void slotCSError (int);
+
+	/* Called from Psi: report certificate status */
+	void slotTLSHandshaken ();
 
 	/* Called from Psi: debug messages from the backend. */
 	void slotPsiDebug (const QString & msg);
-
-	/* Called from Psi: alerts us to a protocol error. */
-	void slotError (const StreamError &);
 
 	/* Set online mode (presence-wise, and connection-wise). */
 	void slotGoOnline ();

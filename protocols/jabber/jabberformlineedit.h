@@ -21,7 +21,6 @@
 #include <qwidget.h>
 #include <qlineedit.h>
 
-#include "xmpp_types.h"
 #include "xmpp_tasks.h"
 
 /**
@@ -35,7 +34,7 @@ class JabberFormLineEdit:public QLineEdit
 	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = 0, const char *name = 0);
 	 ~JabberFormLineEdit ();
 
-	public slots:void slotGatherData (Jabber::Form & form);
+	public slots:void slotGatherData (XMPP::Form & form);
 
   private:
 	int fieldType;

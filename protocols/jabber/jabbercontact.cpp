@@ -31,7 +31,6 @@
 #include <kpopupmenu.h>
 
 #include "xmpp_tasks.h"
-#include "xmpp_types.h"
 
 #include "dlgjabbervcard.h"
 #include "jabbercontact.h"
@@ -60,7 +59,7 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 
 	messageManager = 0L;
 
-	rosterItem.setJid (Jabber::Jid (userId));
+	rosterItem.setJid (XMPP::Jid (userId));
 	rosterItem.setName (nickname);
 	rosterItem.setGroups (groups);
 
@@ -79,7 +78,7 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, QString::null);
 
 	connect(this, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SLOT(slotRenameContact(const QString &, const QString &)));
-	
+
 	actionSendAuth = 0L;
 }
 
@@ -149,29 +148,29 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 	if( !actionSendAuth )
 	{
-		actionSendAuth = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0, 
+		actionSendAuth = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
 			this, SLOT (slotSendAuth ()), this, "actionSendAuth");
-		actionRequestAuth = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0, 
+		actionRequestAuth = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
 			this, SLOT (slotRequestAuth ()), this, "actionRequestAuth");
-		actionRemoveAuth = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0, 
+		actionRemoveAuth = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
 			this, SLOT (slotRemoveAuth ()), this, "actionRemoveAuth");
-	
+
 		actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", this, "jabber_online");
-	
+
 		actionSetAvailability->insert(new KAction (i18n ("Online"),
 			static_cast<JabberProtocol *>(protocol())->JabberKOSOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
 		actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),
 			static_cast<JabberProtocol *>(protocol())->JabberKOSChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
 		actionSetAvailability->insert(new KAction (i18n ("Away"),
 			static_cast<JabberProtocol *>(protocol())->JabberKOSAway.iconFor(this), 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
-		actionSetAvailability->insert(new KAction (i18n ("Extended Away"), 
+		actionSetAvailability->insert(new KAction (i18n ("Extended Away"),
 			static_cast<JabberProtocol *>(protocol())->JabberKOSXA.iconFor(this), 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
 		actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"),
 			static_cast<JabberProtocol *>(protocol())->JabberKOSDND.iconFor(this), 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
 		actionSetAvailability->insert(new KAction (i18n ("Invisible"),
 			static_cast<JabberProtocol *>(protocol())->JabberKOSInvisible.iconFor(this), 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
 	}
-	
+
 	actionCollection->append( actionSendAuth );
 	actionCollection->append( actionRequestAuth );
 	actionCollection->append( actionRemoveAuth );
@@ -189,7 +188,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 		*/
 		KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no",
 			this, "actionSelectResource");
-				
+
 		QStringList items;
 		int activeItem = 0;
 		JabberResource *tmpBestResource = bestResource ();
@@ -242,10 +241,10 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 			i++;
 		}
-		
+
 		actionCollection->append( actionSelectResource );
 	}
-	
+
 	return actionCollection;
 }
 
@@ -256,7 +255,7 @@ void JabberContact::slotUpdatePresence (const KopeteOnlineStatus & newStatus, co
 	setOnlineStatus (newStatus);
 }
 
-void JabberContact::slotUpdateContact (const Jabber::RosterItem & item)
+void JabberContact::slotUpdateContact (const XMPP::RosterItem & item)
 {
 
 	rosterItem = item;
@@ -287,7 +286,7 @@ void JabberContact::slotRenameContact (const QString &oldName, const QString &ne
 		return;
 	}
 
-	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
 
 	rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
 	rosterTask->go (true);
@@ -305,7 +304,7 @@ void JabberContact::slotDeleteContact ()
 		return;
 	}
 
-	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
 
 	rosterTask->remove (rosterItem.jid ());
 	rosterTask->go (true);
@@ -338,7 +337,7 @@ void JabberContact::sendSubscription (const QString& subType)
 		return;
 	}
 
-	Jabber::JT_Presence * task = new Jabber::JT_Presence (static_cast<JabberAccount *>(account())->client()->rootTask ());
+	XMPP::JT_Presence * task = new XMPP::JT_Presence (static_cast<JabberAccount *>(account())->client()->rootTask ());
 
 	task->sub (userId(), subType);
 	task->go (true);
@@ -361,14 +360,14 @@ void JabberContact::syncGroups ()
 
 	rosterItem.setGroups (groups);
 
-	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
 
 	rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
 	rosterTask->go (true);
 
 }
 
-void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
+void JabberContact::km2jm (const KopeteMessage & km, XMPP::Message & jm)
 {
 	JabberContact *to = static_cast < JabberContact * >(km.to ().first ());
 	const JabberContact *from = static_cast < const JabberContact * >(km.from ());
@@ -376,16 +375,16 @@ void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
 	if (!to || !from)
 		return;
 
-	// ugly hack, Jabber::Message does not have a setFrom() method
-	Jabber::Message jabMessage (Jabber::Jid (from->userId ()));
+	// ugly hack, XMPP::Message does not have a setFrom() method
+	XMPP::Message jabMessage (XMPP::Jid (from->userId ()));
 
 	// if a resource has been selected for this contact,
 	// send to this special resource - otherwise,
 	// just send to the server and let the server decide
 	if (!to->resource ().isNull ())
-		jabMessage.setTo (Jabber::Jid (QString ("%1/%2").arg (to->userId (), 1).arg (to->resource (), 2)));
+		jabMessage.setTo (XMPP::Jid (QString ("%1/%2").arg (to->userId (), 1).arg (to->resource (), 2)));
 	else
-		jabMessage.setTo (Jabber::Jid (to->userId ()));
+		jabMessage.setTo (XMPP::Jid (to->userId ()));
 
 	//jabMessage.setFrom(from->userId();
 	jabMessage.setSubject (km.subject ());
@@ -422,7 +421,7 @@ void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
 
 }
 
-void JabberContact::slotReceivedMessage (const Jabber::Message & message)
+void JabberContact::slotReceivedMessage (const XMPP::Message & message)
 {
 	KopeteMessage::MessageType type;
 	KopeteContactPtrList contactList;
@@ -460,7 +459,7 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 			body = QString("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted() + QString("\n-----END PGP MESSAGE-----\n");
 		}
 
-		// convert Jabber::Message into KopeteMessage
+		// convert XMPP::Message into KopeteMessage
 		newMessage = new KopeteMessage(message.timeStamp (), this, contactList, body,
 				  message.subject (), KopeteMessage::Inbound,
 				  KopeteMessage::PlainText, type);
@@ -475,7 +474,7 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 
 void JabberContact::slotSendMessage (KopeteMessage & message)
 {
-	Jabber::Message jabberMessage;
+	XMPP::Message jabberMessage;
 
 	if (account()->isConnected ())
 	{
@@ -544,7 +543,7 @@ JabberResource *JabberContact::bestResource ()
 
 }
 
-void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Resource & resource)
+void JabberContact::slotResourceAvailable (const XMPP::Jid &, const XMPP::Resource & resource)
 {
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Adding new resource '" << resource.
@@ -606,7 +605,7 @@ void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Re
 
 }
 
-void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabber::Resource & resource)
+void JabberContact::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
 {
 	JabberResource *tmpResource;
 
@@ -704,8 +703,8 @@ void JabberContact::slotSaveVCard (QDomElement & vCardXML)
 		return;
 	}
 
-	Jabber::JT_VCard * task = new Jabber::JT_VCard (static_cast<JabberAccount *>(account())->client()->rootTask ());
-	Jabber::VCard vCard = Jabber::VCard ();
+	XMPP::JT_VCard * task = new XMPP::JT_VCard (static_cast<JabberAccount *>(account())->client()->rootTask ());
+	XMPP::VCard vCard = XMPP::VCard ();
 
 	vCard.fromXml (vCardXML);
 

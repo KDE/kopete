@@ -45,3 +45,6 @@ TODO for Jabber:
 - get rid of the createAddContact mess
 - make sure Jabber account editor also calls validateJID() when adding a
   new contact (integrate it into validateData())
+- support advanced auth methods
+- subclass TLS to make use of KDE classes
+- allow SSL fallback with setOptProbe

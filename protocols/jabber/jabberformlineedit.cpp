@@ -1,10 +1,10 @@
  /*
   * jabberformlineedit.cpp
-  * 
+  *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
-  * 
+  *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -27,10 +27,10 @@ JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName
 
 }
 
-void JabberFormLineEdit::slotGatherData (Jabber::Form & form)
+void JabberFormLineEdit::slotGatherData (XMPP::Form & form)
 {
 
-	form += Jabber::FormField (fieldName, text ());
+	form += XMPP::FormField (fieldName, text ());
 
 }
 

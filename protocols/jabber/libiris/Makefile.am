@@ -1,0 +1,2 @@
+SUBDIRS = iris qca cutestuff
+

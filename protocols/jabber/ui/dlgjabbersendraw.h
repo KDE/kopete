@@ -20,7 +20,8 @@
 #define DLGJABBERSENDRAW_H
 
 #include <qwidget.h>
-#include "xmpp_client.h"
+#include "im.h"
+#include "xmpp.h"
 #include "dlgsendraw.h"
 
 
@@ -40,7 +41,7 @@ class dlgJabberSendRaw:public DlgSendRaw
   Q_OBJECT
 
 	public:
-	  dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
+	  dlgJabberSendRaw (XMPP::Client * engine, QWidget * parent = 0, const char *name = 0);
 	  virtual ~ dlgJabberSendRaw ();
 
 	public slots:
@@ -72,7 +73,7 @@ class dlgJabberSendRaw:public DlgSendRaw
 		/**
 		 * This is what we talk through
 		 */
-		Jabber::Client * mEngine;
+		XMPP::Client * mEngine;
 };
 
 

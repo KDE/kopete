@@ -32,6 +32,8 @@
 #include <kmessagebox.h>
 #include <krun.h>
 
+#include "im.h"
+#include "xmpp.h"
 #include "xmpp_tasks.h"
 
 #include "jabberaccount.h"
@@ -45,7 +47,7 @@
  *
  */
 dlgJabberVCard::dlgJabberVCard (JabberAccount *account, const QString &jid, QWidget * parent, const char *name)
-	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1, Close, false, i18n("&Save vCard"))
+	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1, Close, false, i18n("&Save User Info"))
 {
 
 	m_account = account;
@@ -65,7 +67,7 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, const QString &jid, QWid
 	else
 		setReadOnly (true);
 
-	Jabber::JT_VCard *task = new Jabber::JT_VCard (m_account->client()->rootTask ());
+	XMPP::JT_VCard *task = new XMPP::JT_VCard (m_account->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotGotVCard ()));
 	task->get (m_jid);
@@ -95,7 +97,7 @@ void dlgJabberVCard::slotClose()
  */
 void dlgJabberVCard::slotGotVCard()
 {
-	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
+	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
 
 	if (!vCard->success() && !vCard->vcard().isEmpty())
 	{
@@ -116,7 +118,7 @@ void dlgJabberVCard::slotGotVCard()
 /*
  * Assign new vCard data to this dialog
  */
-void dlgJabberVCard::assignVCard (const Jabber::VCard &vCard)
+void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 {
 
 	// general tab
@@ -130,9 +132,9 @@ void dlgJabberVCard::assignVCard (const Jabber::VCard &vCard)
 	m_mainWidget->urlHomepage->setURL (vCard.url());
 
 	// addresses
-	for(Jabber::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
 	{
-		Jabber::VCard::Address address = (*it);
+		XMPP::VCard::Address address = (*it);
 
 		if(address.work)
 		{
@@ -156,9 +158,9 @@ void dlgJabberVCard::assignVCard (const Jabber::VCard &vCard)
 	}
 
 	// email
-	for(Jabber::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
 	{
-		Jabber::VCard::Email email = (*it);
+		XMPP::VCard::Email email = (*it);
 
 		if(email.work)
 		{
@@ -182,9 +184,9 @@ void dlgJabberVCard::assignVCard (const Jabber::VCard &vCard)
 	m_mainWidget->leRole->setText (vCard.role());
 
 	// phone numbers tab
-	for(Jabber::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); it++)
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); it++)
 	{
-		Jabber::VCard::Phone phone = (*it);
+		XMPP::VCard::Phone phone = (*it);
 
 		if(phone.work)
 		{
@@ -276,6 +278,9 @@ void dlgJabberVCard::setReadOnly (bool state)
 	// about tab
 	m_mainWidget->teAbout->setReadOnly (state);
 
+	// save button
+	enableButton(User1, !state);
+
 }
 
 /*
@@ -283,10 +288,10 @@ void dlgJabberVCard::setReadOnly (bool state)
  */
 void dlgJabberVCard::slotSaveVCard()
 {
-	Jabber::VCard vCard;
-	Jabber::VCard::AddressList addressList;
-	Jabber::VCard::EmailList emailList;
-	Jabber::VCard::PhoneList phoneList;
+	XMPP::VCard vCard;
+	XMPP::VCard::AddressList addressList;
+	XMPP::VCard::EmailList emailList;
+	XMPP::VCard::PhoneList phoneList;
 
 	// general tab
 	vCard.setNickName (m_mainWidget->leNick->text());
@@ -297,7 +302,7 @@ void dlgJabberVCard::slotSaveVCard()
 	vCard.setUrl (m_mainWidget->leHomepage->text());
 
 	// home address tab
-	Jabber::VCard::Address homeAddress;
+	XMPP::VCard::Address homeAddress;
 
 	homeAddress.home = true;
 	homeAddress.street = m_mainWidget->leHomeStreet->text();
@@ -308,7 +313,7 @@ void dlgJabberVCard::slotSaveVCard()
 	homeAddress.country = m_mainWidget->leHomeCountry->text();
 
 	// work address tab
-	Jabber::VCard::Address workAddress;
+	XMPP::VCard::Address workAddress;
 
 	workAddress.work = true;
 	workAddress.street = m_mainWidget->leWorkStreet->text();
@@ -324,13 +329,13 @@ void dlgJabberVCard::slotSaveVCard()
 	vCard.setAddressList(addressList);
 
 	// home email
-	Jabber::VCard::Email homeEmail;
+	XMPP::VCard::Email homeEmail;
 
 	homeEmail.home = true;
 	homeEmail.userid = m_mainWidget->leHomeEmail->text();
 
 	// work email
-	Jabber::VCard::Email workEmail;
+	XMPP::VCard::Email workEmail;
 
 	workEmail.home = true;
 	workEmail.userid = m_mainWidget->leWorkEmail->text();
@@ -341,7 +346,7 @@ void dlgJabberVCard::slotSaveVCard()
 	vCard.setEmailList(emailList);
 
 	// work information tab
-	Jabber::VCard::Org org;
+	XMPP::VCard::Org org;
 	org.name = m_mainWidget->leCompany->text();
 	org.unit = QStringList::split(",", m_mainWidget->leDepartment->text());
 	vCard.setOrg(org);
@@ -349,19 +354,19 @@ void dlgJabberVCard::slotSaveVCard()
 	vCard.setRole (m_mainWidget->leRole->text());
 
 	// phone numbers tab
-	Jabber::VCard::Phone phoneHome;
+	XMPP::VCard::Phone phoneHome;
 	phoneHome.home = true;
 	phoneHome.number = m_mainWidget->lePhoneHome->text();
 
-	Jabber::VCard::Phone phoneWork;
+	XMPP::VCard::Phone phoneWork;
 	phoneWork.work = true;
 	phoneWork.number = m_mainWidget->lePhoneWork->text();
 
-	Jabber::VCard::Phone phoneFax;
+	XMPP::VCard::Phone phoneFax;
 	phoneFax.fax = true;
 	phoneFax.number = m_mainWidget->lePhoneFax->text();
 
-	Jabber::VCard::Phone phoneCell;
+	XMPP::VCard::Phone phoneCell;
 	phoneCell.cell = true;
 	phoneCell.number = m_mainWidget->lePhoneCell->text();
 
@@ -378,7 +383,7 @@ void dlgJabberVCard::slotSaveVCard()
 	vCard.setVersion("3.0");
 	vCard.setProdId("Kopete");
 
-	Jabber::JT_VCard *task = new Jabber::JT_VCard (m_account->client()->rootTask ());
+	XMPP::JT_VCard *task = new XMPP::JT_VCard (m_account->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
 	task->set (vCard);
@@ -388,7 +393,7 @@ void dlgJabberVCard::slotSaveVCard()
 
 void dlgJabberVCard::slotSentVCard()
 {
-	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
+	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
 
 	if (!vCard->success())
 	{

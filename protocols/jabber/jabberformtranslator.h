@@ -21,7 +21,6 @@
 #include <qwidget.h>
 #include <qlayout.h>
 
-#include "xmpp_types.h"
 #include "xmpp_tasks.h"
 
 /**
@@ -32,15 +31,15 @@ class JabberFormTranslator:public QWidget
 {
 
   Q_OBJECT public:
-	  JabberFormTranslator (const Jabber::Form & form, QWidget * parent = 0, const char *name = 0);
+	  JabberFormTranslator (const XMPP::Form & form, QWidget * parent = 0, const char *name = 0);
 	 ~JabberFormTranslator ();
 
-	  Jabber::Form & resultData ();
+	  XMPP::Form & resultData ();
 
-	  signals:void gatherData (Jabber::Form & form);
+	  signals:void gatherData (XMPP::Form & form);
 
   private:
-	  Jabber::Form privForm;
+	  XMPP::Form privForm;
 
 };
 

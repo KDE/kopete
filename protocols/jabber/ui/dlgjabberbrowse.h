@@ -21,7 +21,6 @@
 
 #include <qwidget.h>
 
-#include "xmpp_types.h"
 #include "xmpp_tasks.h"
 
 #include "jabberaccount.h"
@@ -38,7 +37,7 @@ class dlgJabberBrowse:public dlgBrowse
 	Q_OBJECT
 
 public:
-	dlgJabberBrowse (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0, const char *name = 0);
 	~dlgJabberBrowse ();
 
 private slots:
