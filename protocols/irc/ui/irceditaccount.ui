@@ -387,7 +387,7 @@
                                     <cstring>autoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Exclude from conneciton</string>
+                                    <string>Exclude from connection</string>
                                 </property>
                                 <property name="accel">
                                     <string></string>
