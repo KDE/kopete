@@ -15,6 +15,10 @@
     *************************************************************************
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "kopetelistviewitem.h"
 
 #include <kdebug.h>
@@ -27,8 +31,6 @@
 #include <qrect.h>
 #include <qtimer.h>
 #include <qheader.h>
-
-#define HAVE_XRENDER
 
 #ifdef HAVE_XRENDER
 #  include <X11/Xlib.h>
@@ -578,7 +580,11 @@ public:
 	int visibilityLevel;
 	bool visibilityTarget;
 	static const int visibilityFoldSteps = 7;
+#ifdef HAVE_XRENDER
 	static const int visibilityFadeSteps = 7;
+#else
+	static const int visibilityFadeSteps = 0;
+#endif
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
 };
 
