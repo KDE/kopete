@@ -100,11 +100,11 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
-		if(mAccount->rememberPassword())
-		{
-			mAccountSettings->chkSavePassword->setChecked(true);
+		mAccountSettings->chkSavePassword->setChecked(
+			mAccount->rememberPassword());
+
+		if(mAccountSettings->chkSavePassword->isChecked())
 			mAccountSettings->edtPassword->setText(mAccount->getPassword());
-		}
 
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());

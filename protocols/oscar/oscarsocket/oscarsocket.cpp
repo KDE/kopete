@@ -502,7 +502,43 @@ void OscarSocket::slotRead(void)
 				err = findTLV(lst,0x0009);
 			if (err)
 			{
-				kdDebug(14150) << "found TLV(8) [ERROR] error=" << ((err->data[0] << 8)|err->data[1]) << endl;
+				kdDebug(14150) << k_funcinfo << "found TLV(8) [ERROR] error= " <<
+					((err->data[0] << 8)|err->data[1]) << endl;
+
+				switch(((err->data[0] << 8)|err->data[1]))
+				{
+					// TODO: add signal for connection errors and emit them
+
+					case 0x0001: // multiple logins (on same UIN)
+						kdDebug(14150) << k_funcinfo <<
+							"multiple logins (on same UIN)!!!" << endl;
+						doLogoff();
+						break;
+					case 0x0004:
+					case 0x0005: // bad password
+						kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
+						doLogoff();
+						break;
+					case 0x0007: // non-existant ICQ#
+					case 0x0008: // non-existant ICQ#
+						kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
+						doLogoff();
+						break;
+					case 0x0015: // too many clients from same IP
+					case 0x0016: // too many clients from same IP
+						kdDebug(14150) << k_funcinfo <<
+							"too many clients from same IP" << endl;
+						break;
+					case 0x0018: // rate exceeded (turboing)
+						kdDebug(14150) << k_funcinfo <<
+							"rate exceeded (maybe reconnecting too fast), " \
+							"server-ban for at least 10 mins!!!" << endl;
+						break;
+				}
+
+				if (err->data != 0x0000)
+					doLogoff();
+
 				delete [] err->data;
 			}
 
