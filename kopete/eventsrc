@@ -744,6 +744,7 @@ default_presentation=2
 [icq_authorization]
 Name=ICQ Authorization
 Name[bg]=Оторизация на ICQ
+Name[da]=ICQ-godkendelse
 Name[ga]=Údárú ICQ
 Name[nl]=ICQ-autorisatie
 Name[pt]=Autorização ICQ
@@ -751,4 +752,8 @@ Name[pt_BR]=Autorização ICQ
 Name[sv]=ICQ-behörighetskontroll
 Name[zh_CN]=ICQ 身份验证
 Comment=An ICQ user has authorized/declined your authorization request
+Comment[da]=En ICQ-bruger har godkendt/afslået din godkendelsesforespørgsel
+Comment[pt]=Um utilizador ICQ autorizou/rejeitou o seu pedido de autorização
+Comment[pt_BR]=Um utilizador ICQ autorizou/rejeitou o seu pedido de autorização
+Comment[sv]=En ICQ-användare har tillåtit eller nekat till din begäran om behörighetskontroll
 default_presentation=16
