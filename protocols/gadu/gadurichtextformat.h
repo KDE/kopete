@@ -41,8 +41,8 @@ private:
 	QString formatClosingTag( const QString& );
 	bool insertRtf( uint );
 	QString unescapeGaduMessage( QString& );
-	void parseAttributes( QString, QString );
-
+	void parseAttributes( const QString, const QString );
+	QString escapeBody( QString& );
 	QColor 			color;
 	gg_msg_richtext_format	rtfs;
 	gg_msg_richtext_color	rtcs;

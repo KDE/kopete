@@ -40,15 +40,6 @@ GaduRichTextFormat::~GaduRichTextFormat()
 QString
 GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, void* formatStructure)
 {
-	if ( formatStructure == NULL ) {
-		kdDebug(14100) << "no rtf structure, plain message" << endl;
-		return msg;
-	}
-	if ( formats == 0 ) {
-		kdDebug(14100) << "rtf structure size 0 , plain message" << endl;
-		return msg;
-	}
-
 	QString tmp;
 	gg_msg_richtext_format *format;
 	char *pointer = (char*) formatStructure;
@@ -57,6 +48,14 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 	int r, g, b;
 	r = g = b = 0;
 	bool opened = false;
+
+	if ( formatStructure == NULL || formats == 0 ) {
+		tmp = msg;
+		escapeBody( tmp );
+		kdDebug(14100) << "no rtf structure, plain message" << endl;
+		return tmp;
+	}
+
 	for ( i = 0, j = 0 ; i < formats ; ) {
 		format = (gg_msg_richtext_format*) pointer;
 		unsigned int position = format->position;
@@ -76,9 +75,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			QString nb;
 
 			nb = msg.mid( j, position - j );
-			nb.replace( '\n', QString::fromLatin1( "<br />" ) );
-			nb.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
-			nb.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
+			escapeBody( nb );
 			tmp += nb;
 
 			j = position;
@@ -238,7 +235,7 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 }
 
 void
-GaduRichTextFormat::parseAttributes( QString attribute, QString value )
+GaduRichTextFormat::parseAttributes( const QString attribute, const QString value )
 {
 	if( attribute == QString::fromLatin1("color") ) {
 		color.setNamedColor( value );
@@ -297,4 +294,13 @@ GaduRichTextFormat::insertRtf( uint position)
 		}
 	}
 	return true;
+}
+
+QString
+GaduRichTextFormat::escapeBody( QString& input )
+{
+	input.replace( '\n', QString::fromLatin1( "<br />" ) );
+	input.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+	input.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
+	return input;
 }
