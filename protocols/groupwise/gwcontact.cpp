@@ -23,12 +23,14 @@
 #include <klocale.h>
 
 #include "kopeteaccount.h"
+#include "kopetemessage.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwfakeserver.h"
+#include "gwmessagemanager.h"
 #include "gwprotocol.h"
 
 #include "gwcontact.h"
@@ -96,10 +98,16 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 	serializedData[ "contactType" ] = value;*/
 }
 
-KopeteMessageManager* GroupWiseContact::manager( bool )
+KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	if ( m_msgManager )
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called, canCreate: " << canCreate << endl;
+
+	KopeteContactPtrList chatMembers;
+	chatMembers.append( this );
+
+	return manager( chatMembers, canCreate );
+
+/*	if ( m_msgManager )
 	{
 		return m_msgManager;
 	}
@@ -112,9 +120,60 @@ KopeteMessageManager* GroupWiseContact::manager( bool )
 				this, SLOT( sendMessage( KopeteMessage& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		return m_msgManager;
-	}
+	}*/
 }
 
+GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMembers, bool canCreate )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED!" << endl;
+	
+	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager ( account()->myself(), chatMembers, protocol() );
+	GroupWiseMessageManager *mgr = dynamic_cast<GroupWiseMessageManager*>( _manager );
+
+	/*
+	 * If we didn't find a message manager for this contact,
+	 * instantiate a new one if we are allowed to. (otherwise return 0)
+	 */
+	if ( !mgr && canCreate )
+	{
+		mgr = new GroupWiseMessageManager( static_cast<GroupWiseContact *>( account()->myself() ), chatMembers, protocol(), QString::null );
+		connect( mgr, SIGNAL( destroyed ( QObject * ) ), SLOT( slotMessageManagerDeleted ( QObject * ) ) );
+		connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotConferenceCreated() ) );
+		//m_pendingManagers.append( mgr );
+	
+	}
+
+	return mgr;
+}
+
+GroupWiseMessageManager * GroupWiseContact::manager( const QString & guid, bool canCreate )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called for guid: " << guid << ", canCreate: " << canCreate << endl;
+	if ( !guid.isNull() )
+	{
+		GroupWiseMessageManager * mgr = m_msgManagers[ guid ];
+		if ( !mgr )
+		{
+			// we've received the first message from a new conference.
+			// create a message manager with the given guid
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - creating a new GroupWiseMessageManager for this guid. " << endl;
+			KopeteContactPtrList chatMembers;
+			chatMembers.append ( this );
+			mgr = new GroupWiseMessageManager( this, chatMembers, protocol(), guid );
+			connect( mgr, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotMessageManagerDeleted ( QObject * ) ) );
+			m_msgManagers.insert( guid, mgr );
+		}
+		else
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - found an existing GroupWiseMessageManager for this guid. " << endl;
+		
+		return mgr;
+	}
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "GUID is empty, grabbing first available manager." << endl;
+	/*
+	 * The guid supplied is empty, so just return the first available manager.
+	 */
+	return dynamic_cast<GroupWiseMessageManager *>( manager( canCreate ) );
+}
 
 QPtrList<KAction> *GroupWiseContact::customContextMenuActions() //OBSOLETE
 {
@@ -148,30 +207,44 @@ void GroupWiseContact::sendMessage( KopeteMessage &message )
 	manager()->messageSucceeded();
 }
 
-void GroupWiseContact::receivedMessage( const QString &message )
+void GroupWiseContact::dumpManagers()
 {
-	// Create a KopeteMessage
-	KopeteMessage *newMessage;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << contactId() << endl;
+	QDictIterator< GroupWiseMessageManager > it( m_msgManagers );
+	for ( ; it.current(); ++it )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.currentKey() << endl;
+}
+
+void GroupWiseContact::slotConferenceCreated()
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	const GroupWiseMessageManager * mgr = (GroupWiseMessageManager *)sender();
+	m_msgManagers.insert( mgr->guid(), mgr );
+	dumpManagers();
+}
+
+void GroupWiseContact::slotMessageManagerDeleted( QObject *sender )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Message manager deleted, collecting the pieces..." << endl;
+
+	GroupWiseMessageManager *manager = static_cast<GroupWiseMessageManager *>(sender);
+
+	m_msgManagers.remove( manager->guid() );
+}
+
+void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got a message for conference: " << message.guid << ", message: " << message.message << endl; 
 	KopeteContactPtrList contactList;
-	account();
-	contactList.append( account()->myself() );
-	newMessage = new KopeteMessage( this, contactList, message, KopeteMessage::Inbound );
-
-	// Add it to the manager
-	manager()->appendMessage (*newMessage);
-
+	contactList.append ( account()->myself () );
+	GroupWiseMessageManager *mgr = manager( message.guid, true );
+	// strip RTF using protocol's utility function
+	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, this, contactList, message.message,
+									KopeteMessage::Inbound,
+									KopeteMessage::PlainText );;
+	Q_ASSERT( mgr );
+	mgr->appendMessage( *newMessage );
 	delete newMessage;
-}
-
-void GroupWiseContact::slotMessageManagerDestroyed()
-{
-	//FIXME: the chat window was closed?  Take appropriate steps.
-	m_msgManager = 0L;
-}
-
-void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & event )
-{
-	//TODO: implement
 }
 #include "gwcontact.moc"
 

@@ -178,6 +178,8 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	
+	QObject::connect( m_client, SIGNAL( conferenceCreated( const int, const QString & ) ), SIGNAL( conferenceCreated( const int, const QString & ) ) );
+	
 	struct utsname utsBuf;
 
 	uname (&utsBuf);
@@ -218,6 +220,13 @@ void GroupWiseAccount::setStatus( GroupWise::Status status, const QString & reas
 			connect();
 		}
 	}
+}
+
+void GroupWiseAccount::createConference( const int clientId, const QStringList& invitees )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	// TODO: remove this it prevents sending a list of participants with the createconf
+	m_client->createConference( clientId /*, invitees */);
 }
 
 void GroupWiseAccount::slotGoOnline()
@@ -540,5 +549,20 @@ void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString 
 	myself()->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
 	myself()->setProperty( protocol()->propAwayMessage, awayMessage );
 	myself()->setProperty( protocol()->propAutoReply, autoReply );
+}
+
+void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & message )
+{
+	// make an outgoing message
+	GroupWise::OutgoingMessage outMsg;
+	outMsg.guid = guid;
+	outMsg.message = message.plainBody();
+	// make a list of DNs to send to
+	QStringList addresseeDNs;
+	KopeteContactPtrList addressees = message.to();
+	for ( KopeteContact * contact = addressees.first(); contact; contact = addressees.next() )
+		addresseeDNs.append( contact->contactId() );
+	// send the message 
+	m_client->sendMessage( addresseeDNs, outMsg );
 }
 #include "gwaccount.moc"

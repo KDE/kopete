@@ -21,7 +21,9 @@
 #ifndef GW_CONTACT_H
 #define GW_CONTACT_H
 
+#include <qdict.h>
 #include <qmap.h>
+
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -30,7 +32,7 @@
 class KAction;
 class KActionCollection;
 class KopeteAccount;
-class KopeteMessageManager;
+class GroupWiseMessageManager;
 class KopeteMetaContact;
 
 /**
@@ -77,10 +79,16 @@ public:
 	 * Return the actions for this contact
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
+	
 	/**
 	 * Returns a KopeteMessageManager associated with this contact
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
+	/** 
+	 * Locate or create a messagemanager for the specified group of contacts
+	 */
+	GroupWiseMessageManager *manager ( KopeteContactPtrList chatMembers, bool canCreate = false );
+	
 	
 	/**
 	 * Received a message from the server.
@@ -95,27 +103,29 @@ public slots:
 	 * (in response to the relevant KopeteMessageManager signal)
 	 */
 	void sendMessage( KopeteMessage &message );
-	/**
-	 * Called when an incoming message arrived
-	 * This displays it in the chatwindow
-	 */
-	void receivedMessage( const QString &message );
-
 protected:
-	
+	/**
+	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
+	 */
+	GroupWiseMessageManager *manager( const QString & guid, bool canCreate = false );
+	// debug function to see what message managers we have on the server
+	void dumpManagers();
 protected slots:
 	/**
 	 * Show the settings dialog
 	 */
 	void showContactSettings();
 	/**
-	 * Notify the contact that its current KopeteMessageManager was
+	 * A message manager was instantiated as a conference on the server, so record it.
+	 */
+	void slotConferenceCreated();
+	/**
+	 * Notify the contact that a KopeteMessageManager was
 	 * destroyed - probably by the chatwindow being closed
 	 */
-	void slotMessageManagerDestroyed();
+	void slotMessageManagerDeleted( QObject *sender );
 	
 protected:
-	KopeteMessageManager* m_msgManager;
 	KActionCollection* m_actionCollection;
 	
 	int m_objectId;
@@ -123,6 +133,9 @@ protected:
 	int m_sequence;
 	
 	KAction* m_actionPrefs;
+	QDict< GroupWiseMessageManager > m_msgManagers;
+	// message managers that don't exist on the server yet
+	//QPtrList m_pendingManagers;
 };
 
 #endif

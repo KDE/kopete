@@ -24,6 +24,7 @@
 #include <qvaluelist.h>
 
 #include <kopeteaccount.h>
+#include <kopetemessage.h>
 #include <kopetepasswordedaccount.h>
 
 #include "gwerror.h"
@@ -90,6 +91,15 @@ public:
 	 */
 	GroupWiseProtocol * GroupWiseAccount::protocol();
 
+	/**
+	 * Create a conference (start a chat) on the server
+	 */
+	void createConference( const int clientId, const QStringList& invitees );
+	
+	/**
+	 * Send a message
+	 */ 
+	void sendMessage( const QString & guid, const KopeteMessage & message );
 public slots:
 
 	/* Connects to the server. */
@@ -140,7 +150,8 @@ public slots:
 	/** Debug slots */
 	void slotConnError();
 	void slotConnConnected();
-
+signals: 
+	void conferenceCreated( const int mmId, const QString & guid );
 protected:
 	/**
 	 * This simulates contacts going on and offline in sync with the account's status changes
