@@ -42,7 +42,7 @@ const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1("(?![^<]+>)[^<>]+(
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
 #if KDE_IS_VERSION(3,2,90)
 static const KAboutData aboutdata("kopete_cryptography", I18N_NOOP("Cryptography") , "1.0" );
-K_EXPORT_COMPONENT_FACTORY( kopete_translator, CryptographyPluginFactory( &aboutdata )  )
+K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( &aboutdata )  )
 #else
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( "kopete_cryptography" ) )
 #endif
