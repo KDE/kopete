@@ -28,6 +28,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <knotifyclient.h>
+#include <kwin.h>
 
 #include <qstylesheet.h>
 
@@ -226,10 +227,14 @@ void KopeteMessageManager::readMessages()
 
 	// only show the window when a message from someone else (i.e. not an own message) arrived or
 	// when no message at all arrived (happens when you click on a contact, creating the window)
+	// FIXME: mMessageQueue is always empty (cleared in emptyMessageBuffer()) 
 	if ( foreignMessage || d->mMessageQueue.isEmpty() )
 	{
 		if(KopetePrefs::prefs()->raiseMsgWindow())
+		{
+			KWin::setOnDesktop(window->winId() , KWin::currentDesktop()); //set on the desktop
 			window->raise(); // make it top window
+		}
 
 		window->show();	// show message window again (but not for own messages)
 	}
