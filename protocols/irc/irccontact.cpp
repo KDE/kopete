@@ -431,7 +431,6 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 IRCContact::~IRCContact()
 {
-	kopeteapp->contactList()->removeContact(this);
 	if (mTarget[0] != '#' && mTarget[0] != '!' && mTarget[0] == '&')
 	{
 		mContact->activeQueries.remove(mTarget.lower());
@@ -491,6 +490,6 @@ void IRCContact::initActions()
 {
 	actionAddGroup = KopeteStdAction::addGroup( kopeteapp->contactList(), SLOT(addGroup()), this, "actionAddGroup" );
 	actionContactMove = KopeteStdAction::moveContact( this, SLOT(slotMoveThisUser()), this, "actionMove" );
-	actionRemove = KopeteStdAction::deleteContact( this, SLOT(removeThisUser()), this, "actionDelete" );
+	actionRemove = KopeteStdAction::deleteContact( this, SLOT(slotRemoveThis()), this, "actionDelete" );
 }
 #include "irccontact.moc"
