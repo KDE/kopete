@@ -14,6 +14,7 @@
     *                                                                       *
     *************************************************************************
 */
+
 #include <kdebug.h>
 
 #include <kopetetransfermanager.h>
@@ -33,10 +34,10 @@ IRCTransferHandler::IRCTransferHandler()
 	connect(handler(), SIGNAL(transferCreated(KIRCTransfer *)),
 		this, SLOT(transferCreated(KIRCTransfer *)));
 
-	connect(KopeteTransferManager::transferManager(), SIGNAL(accepted( KopeteTransfer *, const QString&)),
+	connect(KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
 		this, SLOT(transferAccepted(KopeteTransfer *, const QString&)));
 	connect( KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
-		this, SLOT(slotFileTransferRefused(const KopeteFileTransferInfo &)));
+		this, SLOT(transferRefused(const KopeteFileTransferInfo &)));
 }
 
 void IRCTransferHandler::transferCreated(KIRCTransfer *t)
@@ -77,6 +78,8 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 
 void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString &file)
 {
+	kdDebug(14120) << k_funcinfo << endl;
+
 	KIRCTransfer *t = getKIRCTransfer(kt->info());
 	if(t)
 	{
@@ -86,6 +89,8 @@ void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString &fil
 }
 void IRCTransferHandler::transferRefused(const KopeteFileTransferInfo &info)
 {
+	kdDebug(14120) << k_funcinfo << endl;
+
 	KIRCTransfer *t = getKIRCTransfer(info);
 	if(t)
 	{
@@ -117,41 +122,43 @@ void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer 
 		connect(t , SIGNAL(complete()),
 			kt, SLOT(slotComplete()));
 
-		connect(kt, SIGNAL(transferCanceled()),
-			t , SLOT(userCancel())); // Should be the following ...
-//		connect(kt, SIGNAL(result(KIO *)),
-//			this , SLOT(kioresult(KIO *)));
+		connect(kt, SIGNAL(result(KIO::Job *)),
+			this , SLOT(kioresult(KIO::Job *)));
 
 		t->initiate();
 	}
 }
-/*
-void IRCTransferHandler::kioresult(KIO *kio)
-{
-	KIRCTransfer *t = m_transfers[kio];
 
-	if(!t)
+void IRCTransferHandler::kioresult(KIO::Job *job)
+{
+//	KIRCTransfer *t = m_transfers[job];
+	KopeteTransfer *kt= (KopeteTransfer *)job;
+
+	if(!kt)
 	{
-		kdDebug(14120) << k_funcinfo << "Transfer not found from kio:" << kio << endl;
+		kdDebug(14120) << k_funcinfo << "KopeteTransfer not found from kio:" << job << endl;
 		return;
 	}
 
-	switch(kio->error())
+	switch(kt->error())
 	{
 		case 0:	// 0 means no error
 			break;
-		case ERR_USER_CANCELLED:
+		case KIO::ERR_USER_CANCELED:
+			kdDebug(14120) << k_funcinfo << "User canceled transfer." << endl;
 			// KIO::buildErrorString form error don't provide a result string ...
-			if()
-				t->userAbort(i18n("User canceled transfer."));
-			else
-				t->userAbort(i18n("User canceled transfer for file:%1").arg(t->fileName()));
+//			if (t->)
+//				kt->userAbort(i18n("User canceled transfer."));
+//			else
+//				kt->userAbort(i18n("User canceled transfer for file:%1").arg(t->fileName()));
 			break;
 		default:
-			t->userAbort(KIO::buildErrorString(kio->error(),t->fileName()));
+			kdDebug(14120) << k_funcinfo << "Transfer halted:" << kt->error() << endl;
+//			kt->userAbort(KIO::buildErrorString(kt->error(), kt->fileName()));
+			break;
 	}
 }
-*/
+
 KIRCTransfer *IRCTransferHandler::getKIRCTransfer(const KopeteFileTransferInfo &info)
 {
 	KIRCTransfer *t = m_idMap[info.transferId()];

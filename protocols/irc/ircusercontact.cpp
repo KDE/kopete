@@ -20,6 +20,8 @@
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
+#include <kfiledialog.h>
+
 #include <qtimer.h>
 
 #include "ircusercontact.h"
@@ -36,6 +38,8 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	: IRCContact(contactManager, nickname, m ),
 	  m_isAway(false)
 {
+	setFileCapable(true);
+
 	mOnlineTimer = new QTimer( this );
 	m_isOnline = metaContact()->isTemporary();
 
@@ -84,6 +88,25 @@ void IRCUserContact::updateStatus()
 
 		default:
 			setOnlineStatus(m_protocol->m_StatusUnknown);
+	}
+}
+
+void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned int)
+{
+	QString filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n("Kopete File Transfer"));
+	else
+		filePath = sourceURL.path(-1);
+
+	kdDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
+
+	if ( !filePath.isEmpty() )
+	{
+		//Send the file
+		MYACCOUNT->engine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRCTransfer::FileOutgoing);
 	}
 }
 

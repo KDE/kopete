@@ -68,6 +68,8 @@ public:
 	virtual QPtrList<KAction> *customContextMenuActions( KopeteMessageManager *manager );
 	virtual const QString caption() const;
 
+	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
+
 	void setAway(bool isAway);
 
 	QString formattedName() const;

@@ -21,13 +21,12 @@
 #include <qhostaddress.h>
 
 #include "kirctransfer.h"
+#include "kirctransferserver.h"
 
 class QFile;
 class QTextCodec;
 
 class KExtendedSocket;
-
-class KIRCTransferServer;
 
 class KIRCTransferHandler
 	: public QObject
@@ -40,6 +39,10 @@ public:
 
 	KIRCTransferServer *server();
 	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
+
+	KIRCTransferServer *createServer(QString m_userName,
+			KIRCTransfer::Type type,
+			QString fileName, Q_UINT32 fileSize);
 
 	KIRCTransfer *createClient(
 		KIRC *engine, QString nick,// QString nick_peer_adress,

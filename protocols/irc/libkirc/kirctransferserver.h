@@ -18,6 +18,8 @@
 #ifndef KIRCTRANSFERSERVER_H
 #define KIRCTRANSFERSERVER_H
 
+#include "kirctransfer.h"
+
 #include <qobject.h>
 
 class KExtendedSocket;
@@ -31,23 +33,36 @@ class KIRCTransferServer
 	Q_OBJECT
 
 public:
-	KIRCTransferServer( QObject *parent = 0, const char *name = 0 );
-	KIRCTransferServer( Q_UINT16 port, int backlog = 1, QObject *parent = 0, const char *name = 0 );
+	KIRCTransferServer(QObject *parent = 0, const char *name = 0);
+	KIRCTransferServer(Q_UINT16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
+	KIRCTransferServer(QString userName,
+			KIRCTransfer::Type type,
+			QString fileName, Q_UINT32 fileSize,
+			QObject *parent = 0, const char *name = 0);
 
-//signals:
-//	void incomingNewConnection();
+	int port()
+	{ return m_port; }
 
 protected:
 	bool initServer();
 	bool initServer( Q_UINT16 port, int backlog = 1 );
 
+signals:
+	void incomingNewTransfer(KIRCTransfer *transfer);
+
 protected slots:
 	void readyAccept();
+	void connectionFailed(int error);
 
 private:
 	KExtendedSocket *	m_socket;
 	Q_UINT16		m_port;
 	int			m_backlog;
+	QString			m_userName;
+	KIRCTransfer::Type	m_type;
+	QString			m_fileName;
+	Q_UINT32		m_fileSize;
+
 };
 
 #endif

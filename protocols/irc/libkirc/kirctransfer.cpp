@@ -37,6 +37,24 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 }
 
 KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+				KIRCTransfer::Type type,
+				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
+				QObject *parent, const char *name )
+	: QObject( parent, name ),
+	  m_engine(engine), m_nick(nick),
+	  m_type(type), m_socket(0),
+	  m_initiated(false),
+	  m_file(0), m_fileName(fileName), m_fileSize(fileSize), m_fileSizeCur(0), m_fileSizeAck(0),
+	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
+{
+	connect(this, SIGNAL(complete()),
+		this, SLOT(closeSocket()));
+
+	connect(this, SIGNAL(abort(QString)),
+		this, SLOT(closeSocket()));
+}
+
+KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
 				QHostAddress hostAdress, Q_UINT16 port, // put this in a QVariant ?
 				KIRCTransfer::Type type,
 				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?

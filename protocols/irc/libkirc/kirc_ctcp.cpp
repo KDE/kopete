@@ -17,11 +17,13 @@
     *************************************************************************
 */
 
-#include <qfileinfo.h>
-#include <kextsock.h>
-
 #include "kirctransferhandler.h"
 #include "kirc.h"
+
+#include <kextsock.h>
+
+#include <qfileinfo.h>
+#include <qregexp.h>
 
 void KIRC::registerCtcp()
 {
@@ -108,7 +110,7 @@ bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uint port, KIRCTransfer::Type type)
+void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, KIRCTransfer::Type type)
 {
 	if(	m_status != Connected ||
 		m_sock->localAddress() == 0 ||
@@ -126,15 +128,32 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uin
 		);
 		break;
 	case KIRCTransfer::FileOutgoing:
-		QFileInfo file(filename);
+		QFileInfo file(fileName);
 		QString noWhiteSpace = file.fileName();
 		if (noWhiteSpace.contains(' ') > 0)
 			noWhiteSpace.replace(QRegExp("\\s+"), "_");
 
+		KIRCTransferServer *server = KIRCTransferHandler::self()->createServer(nickname, type, fileName, file.size());
+
+		QString ip = m_sock->localAddress()->nodeName();
+		QRegExp reg("^(\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})$");
+		if (!reg.exactMatch(ip))
+		{
+			kdDebug(14120) << "Not an ipv4:" << ip << endl;
+			return;
+		}
+
+		// FIXME: This is very an ugly way to do it
+		QString ipNumber = QString::number(	(Q_UINT32)reg.cap(1).toUShort()*(256*256*256)+
+							reg.cap(2).toUShort()*(256*256)+
+							reg.cap(3).toUShort()*256+
+							reg.cap(4).toUShort());
+		kdDebug(14120) << "Starting DCC file outgoing transfer." << endl;
+
 		writeCtcpQueryMessage(nickname, QString::null,
 			QString::fromLatin1("DCC"),
-			KIRC::join( QString::fromLatin1( "SEND" ), noWhiteSpace, m_sock->localAddress()->nodeName(),
-				QString::number( port ), QString::number( file.size() )
+			KIRC::join( QString::fromLatin1( "SEND" ), noWhiteSpace, ipNumber,
+				QString::number( server->port() ), QString::number( file.size() )
 			)
 		);
 		break;

@@ -41,7 +41,20 @@ KIRCTransferServer *KIRCTransferHandler::server( Q_UINT16 port, int backlog )
 {
 //	if( m_server )
 //		m_server->terminate();
-	m_server = new KIRCTransferServer( port, backlog, this );
+	KIRCTransferServer *m_server = new KIRCTransferServer( port, backlog, this );
+
+	// here connect the slots of the server
+
+	return m_server;
+}
+
+KIRCTransferServer *KIRCTransferHandler::createServer(QString m_userName,
+		KIRCTransfer::Type type,
+		QString fileName, Q_UINT32 fileSize)
+{
+//	if( m_server )
+//		m_server->terminate();
+	KIRCTransferServer *m_server = new KIRCTransferServer( m_userName, type, fileName, fileSize, this );
 
 	// here connect the slots of the server
 

@@ -115,7 +115,7 @@ KopeteMessageManager *IRCContact::manager(bool canCreate)
 		if(MYACCOUNT->engine()->status() == KIRC::Disconnected)
 			MYACCOUNT->connect();
 
-		m_msgManager = KopeteMessageManagerFactory::factory()->create( MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
+		m_msgManager = KopeteMessageManagerFactory::factory()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
 		m_msgManager->setDisplayName(caption());
 
 		QObject::connect( m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
