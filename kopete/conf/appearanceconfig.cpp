@@ -183,8 +183,8 @@ void AppearanceConfig::save()
 // 	p->setCTransparencyValue( mPrfsChatWindow->mCTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
 	p->setHighlightEnabled(mPrfsChatAppearance->highlightEnabled->isChecked());
-	p->setHighlightBackground(mPrfsChatAppearance->foregroundColor->color());
-	p->setHighlightForeground(mPrfsChatAppearance->backgroundColor->color());
+	p->setHighlightBackground(mPrfsChatAppearance->backgroundColor->color());
+	p->setHighlightForeground(mPrfsChatAppearance->foregroundColor->color());
 
 	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
 	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
