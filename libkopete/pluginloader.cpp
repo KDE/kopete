@@ -102,6 +102,17 @@ bool LibraryLoader::loadAll(const QStringList &modules)
 			kdDebug() << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
 	}
 
+	// load all misc plugins
+	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
+	{
+		KopeteLibraryInfo info=getInfo(*i);
+		if (!info.type.contains("other"))
+			continue;
+
+		if ( !loadSO(*i) )
+			kdDebug() << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
+	}
+
 	return true;
 }
 

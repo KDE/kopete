@@ -1,5 +1,5 @@
 INCLUDES = -I$(srcdir)/library -I$(srcdir)/library/ui -I$(srcdir)/protocols/icq -I$(srcdir)/protocols/icq/kxengine $(all_includes)
-SUBDIRS = library protocols pics
+SUBDIRS = library protocols plugins pics
 
 KDE_ICON = AUTO
 
