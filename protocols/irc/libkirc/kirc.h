@@ -57,6 +57,7 @@ private slots:
 	void slotBytesWritten(int);
 	void slotError(int);
 signals:
+	void connecting();
 	void incomingMotd(const QString &motd);
 	void incomingWelcome(const QString &welcome);
 	void incomingYourHost(const QString &hostInfo);
@@ -89,6 +90,8 @@ signals:
 	void incomingWasNoNick(const QString &);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 	void incomingUnknown(const QString &);
+	void incomingPrivAction(const QString &, const QString &, const QString &);
+	void incomingPrivMessage(const QString &, const QString &, const QString &);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

@@ -52,7 +52,6 @@ public:
 	KIRC *engine;
 	bool waitingPart;
 	bool requestedQuit;
-	void unloading();
 	IRCServerContact *mContact;
 	QVBox *tabPage() { return mTabPage; };
 	IRCChatView *getChatView() { return chatView; };
@@ -70,19 +69,17 @@ private:
 	IRCQueryView *queryView;
 	void init();
 private slots:
-	void slotQuitServer();
 //	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
-	void slotServerIsQuitting();
-	void slotServerHasQuit();
 	void slotRemoveThis();
-	void slotClose();
-	void slotServerQuit();
 	void slotOpen();
 	void slotOpenConnect();
+	void incomingPrivMessage(const QString &, const QString &, const QString &);
+	void incomingPrivAction(const QString &, const QString &, const QString &);
 public slots:
 	void slotPart();
 	void joinNow();
+	void unloading();
 };
 
 #endif

@@ -73,7 +73,7 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 
 	init();
 
-	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
+	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
 	if (joinOnConnect == true)
 	{
@@ -125,7 +125,7 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 
 	init();
 
-	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
+	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
 	mPendingMessage = pendingMessage;
 
@@ -181,7 +181,7 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	kopeteapp->contactList()->addContact(this, groupName);
 	setName(QString("%1@%2").arg(target).arg(mServer));
 
-	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
+	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
 	if (joinOnConnect == true)
 	{
@@ -192,6 +192,27 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 			QObject::connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
 		}
 	}
+}
+
+void IRCContact::init()
+{
+	// Split up into init() so we can call this multiple times and have multiple constructors
+	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
+	{
+		// What to do here, what to do, hmm
+	} else {
+		// Gosh darn it I love NULL pointer checks ;)
+		if (mContact->activeQueries.find(mTarget.lower()) != mContact->activeQueries.end())
+		{
+			delete this;
+			return;
+		}
+		mContact->activeQueries.append(mTarget.lower());
+	}
+	connect(mContact->engine, SIGNAL(successfulQuit()), this, SLOT(unloading()));
+	connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotPartedChannel(const QString &, const QString &, const QString &)));
+	connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
+	connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 }
 
 KopeteContact::ContactStatus IRCContact::status() const
@@ -213,77 +234,28 @@ QString IRCContact::statusIcon() const
 	}
 }
 
-void IRCContact::slotServerQuit()
+void IRCContact::incomingPrivMessage(const QString &originating, const QString &target, const QString &message)
 {
-	if (mTabPage != 0)
+	if (mTarget.lower() == target.lower())
 	{
-		delete mTabPage;
-		mTabPage = 0L;
-		queryView = 0L;
-		chatView = 0L;
-	}
-}
-
-void IRCContact::init()
-{
-	// Split up into init() so we can call this multiple times and have multiple constructors
-	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
-	{
-		// What to do here, what to do, hmm
-	} else {
-		// Gosh darn it I love NULL pointer checks ;)
-		if (mContact->activeQueries.find(mTarget.lower()) != mContact->activeQueries.end())
+		if (mTabPage == 0)
 		{
-			if (mContact->mWindow != 0 && mContact->mWindow->mTabWidget != 0)
-			{
-				for (int i = 0; i != mContact->mWindow->mTabWidget->count(); i++)
-				{
-					if (mContact->mWindow->mTabWidget->label(i).lower() == mTarget.lower())
-					{
-						QWidget *page = mContact->mWindow->mTabWidget->page(i);
-						mContact->mWindow->show();
-						if (page != 0)
-						{
-							mContact->mWindow->mTabWidget->showPage(page);
-							break;
-						}
-					}
-				}
-			}
-			delete this;
-			return;
-		}
-		if (mContact->activeQueries.find(mTarget.lower()) == mContact->activeQueries.end())
-		{
-			mContact->activeQueries.append(mTarget.lower());
+			mPendingMessage.clear();
+			mPendingMessage << "message" << originating << target << message;
+			joinNow();
 		}
 	}
-	connect(mContact, SIGNAL(quittingServer()), this, SLOT(slotServerIsQuitting()));
-	connect(mContact, SIGNAL(serverQuit()), this, SLOT(slotServerHasQuit()));
-	connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotPartedChannel(const QString &, const QString &, const QString &)));
-
 }
 
-void IRCContact::slotServerHasQuit()
+void IRCContact::incomingPrivAction(const QString &originating, const QString &target, const QString &message)
 {
-	unloading();
-}
-
-void IRCContact::slotServerIsQuitting()
-{
-	if (requestedQuit == false)
+	if (mTarget.lower() == target.lower())
 	{
-		QColor color(175, 8, 8);
-		QString partWarning = "<font color=";
-		partWarning.append(color.name());
-		partWarning.append(i18n(">Attempting to quit server. If this takes an unusual amount of time, please click the red stop button on the toolbar.</font><br>"));
-		if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
+		if (mTabPage != 0)
 		{
-			if (chatView !=0)
-			{
-				chatView->chatView->append(partWarning);
-				chatView->chatView->scrollToBottom();
-			}
+			mPendingMessage.clear();
+			mPendingMessage << "action" << originating << target << message;
+			joinNow();
 		}
 	}
 }
@@ -294,47 +266,17 @@ void IRCContact::slotRemoveThis()
 	{
 		return;
 	}
-	for (int i = 0; i != mContact->mWindow->mTabWidget->count(); i++)
+	if (mTabPage !=0)
 	{
-		if (mContact->mWindow->mTabWidget->count() <= 0)
-		{
-			break;
-		}
-		if (mContact->mWindow->mTabWidget->label(i).lower() == mTarget.lower())
-		{
-			QWidget *page = mContact->mWindow->mTabWidget->page(i);
-			if (page != 0)
-			{
-				mContact->mWindow->mTabWidget->removePage(page);
-				if (mTabPage !=0)
-				{
-					delete mTabPage;
-					mTabPage = 0L;
-					queryView = 0L;
-					chatView = 0L;
-				}
-				delete this;
-				return;
-			}
-		}
-		if (i > 1000)
-		{
-			// just make sure that it doesn't cause an infinite loop, and since people aren't going to be in 1000 channel or queries on server, it's okay
-			break;
-		}
-	}
-	delete this;
-}
-
-void IRCContact::slotClose()
-{
-	if (mTabPage != 0)
-	{
+		mContact->mWindow->mTabWidget->removePage(mTabPage);
 		delete mTabPage;
 		mTabPage = 0L;
 		queryView = 0L;
 		chatView = 0L;
+		delete this;
+		return;
 	}
+	delete this;
 }
 
 void IRCContact::slotOpen()
@@ -376,7 +318,7 @@ void IRCContact::showContextMenu(QPoint point)
 	} else {
 		if (mTabPage != 0)
 		{
-			popup->insertItem("Close", this, SLOT(slotClose()));
+			popup->insertItem("Close", this, SLOT(unloading()));
 		} else {
 			if (mContact->engine->isLoggedIn())
 			{
@@ -388,12 +330,6 @@ void IRCContact::showContextMenu(QPoint point)
 		popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
 	}
 	popup->popup(point);
-}
-
-void IRCContact::slotQuitServer()
-{
-	requestedQuit = true;
-	mContact->slotQuitServer();
 }
 
 void IRCContact::execute()
@@ -449,10 +385,11 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 IRCContact::~IRCContact()
 {
-	mContact->activeContacts.remove(this);
 	kopeteapp->contactList()->removeContact(this);
-	mContact->activeQueries.remove(mTarget);
-
+	if (mTarget[0] != '#' && mTarget[0] != '!' && mTarget[0] == '&')
+	{
+		mContact->activeQueries.remove(mTarget.lower());
+	}
 }
 
 void IRCContact::unloading()
@@ -461,6 +398,8 @@ void IRCContact::unloading()
 	{
 		delete mTabPage;
 		mTabPage = 0L;
+		chatView = 0L;
+		queryView = 0L;
 	}
 }
 
@@ -472,22 +411,9 @@ void IRCContact::joinNow()
 	{
 		chatView = new IRCChatView(mServer, mTarget, this, mTabPage);
 		mContact->mWindow->mTabWidget->addTab(mTabPage, SmallIconSet("irc_privmsg.xpm"), mTarget);
-		QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingNamesList(const QString &, const QString &, const int)), chatView, SLOT(incomingNamesList(const QString &, const QString &, const int)));
-		QObject::connect(mContact->engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), chatView, SLOT(incomingAction(const QString &, const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingQuitIRC(const QString &,  const QString &)), chatView, SLOT(userQuitIRC(const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingNickChange(const QString &,  const QString &)), chatView, SLOT(nickNameChanged(const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), chatView, SLOT(incomingNewTopic(const QString &, const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingExistingTopic(const QString &,  const QString &)), chatView, SLOT(receivedExistingTopic(const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingNoNickChan(const QString &)), chatView, SLOT(incomingNoNickChan(const QString &)));
 	} else {
 		queryView = new IRCQueryView(mServer, mTarget, mContact, mTabPage, this);
 		mContact->mWindow->mTabWidget->addTab(mTabPage, SmallIconSet("irc_querymsg.xpm"), mTarget);
-		QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), queryView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), queryView, SLOT(incomingAction(const QString &, const QString &, const QString &)));
-		QObject::connect(mContact->engine, SIGNAL(incomingNoNickChan(const QString &)), queryView, SLOT(incomingNoNickChan(const QString &)));
 	}
 
 	mContact->mWindow->show();

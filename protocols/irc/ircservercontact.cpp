@@ -40,32 +40,12 @@
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
-	parser = new IRCCmdParser(this);
-	messenger = new IRCMessage();
-	tryingQuit = false;
-	closing = false;
-	engine = new KIRC();
-	mQuitMessage = "Using Kopete IRC Plugin";
-	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
-	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
-	QObject::connect(engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(incomingAction(const QString &, const QString &, const QString &)));
 	mProtocol = protocol;
 	mManager = mProtocol->manager;
 	mNickname = nickname;
 	mServer = server;
-	mWindow = new IRCChatWindow(mServer, this);
-	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
-	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 
-	mTabView = new QVBox(mWindow->mTabWidget);
-	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
-	mWindow->mTabWidget->addTab(mTabView, mServer);
-
-	QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
-	QObject::connect(this, SIGNAL(connecting()), mConsoleView, SLOT(slotConnecting()));
-	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
+	init();
 
 	mWindow->show();
 	mConsoleView->show();
@@ -75,7 +55,6 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 		// GCC didn't like me calling connectNow(), not sure why
 		mWindow->mToolBar->removeItem(1);
 		mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
-		emit connecting();
 		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
 	} else {
 		mWindow->hide();
@@ -85,6 +64,23 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 {
 	mProtocol = protocol;
+	mManager = mProtocol->manager;
+	mNickname = KGlobal::config()->readEntry("Nickname", "KopeteUser");
+	mServer = "(Console)";
+
+	init();
+
+	if (connectNow == true)
+	{
+		mWindow->show();
+		mConsoleView->messageBox->setFocus();
+	} else {
+		mWindow->hide();
+	}
+}
+
+void IRCServerContact::init()
+{
 	parser = new IRCCmdParser(this);
 	messenger = new IRCMessage();
 	tryingQuit = false;
@@ -94,17 +90,9 @@ IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
-	QObject::connect(engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(incomingAction(const QString &, const QString &, const QString &)));
-	mManager = mProtocol->manager;
-	mNickname = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	mServer = "(Console)";
-
+	QObject::connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
+	QObject::connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 	mWindow = new IRCChatWindow(mServer, this);
-	if (connectNow == false)
-	{
-		mWindow->hide();
-	}
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 
@@ -112,16 +100,7 @@ IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
 	mWindow->mTabWidget->addTab(mTabView, mServer);
 
-	if (connectNow == true)
-	{
-		mWindow->show();
-		mConsoleView->messageBox->setFocus();
-	} else {
-		mWindow->hide();
-	}
-
 	QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
-	QObject::connect(this, SIGNAL(connecting()), mConsoleView, SLOT(slotConnecting()));
 	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
 }
 
@@ -139,7 +118,6 @@ void IRCServerContact::connectNow()
 
 		mConsoleView->messageBox->setFocus();
 		QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
-		QObject::connect(this, SIGNAL(connecting()), mConsoleView, SLOT(slotConnecting()));
 		QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
 	}
 	if (mServer == "(Console)")
@@ -156,13 +134,10 @@ void IRCServerContact::connectNow()
 	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
 	if (engine->isLoggedIn() == false && engine->state() == QSocket::Idle)
 	{
-		emit connecting();
 		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
 	} else {
-		emit quittingServer();
 		engine->close();
 		slotQuitServer();
-		emit connecting();
 		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
 	}
 }
@@ -180,12 +155,8 @@ void IRCServerContact::disconnectNow()
 	}
 }
 
-void IRCServerContact::incomingMessage(const QString &originating, const QString &target, const QString &message)
+void IRCServerContact::incomingPrivMessage(const QString &originating, const QString &target, const QString &message)
 {
-	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-	{
-		return;
-	}
 	QString queryName = originating.section('!', 0, 0);
 	if (queryName.lower() == engine->nickName().lower())
 	{
@@ -196,31 +167,11 @@ void IRCServerContact::incomingMessage(const QString &originating, const QString
 	if (activeQueries.find(queryName.lower()) == activeQueries.end())
 	{
 		(void)new IRCContact(mServer, queryName, 6667, true, this, pendingMessage);
-	} else {
-		for (IRCContact *it = activeContacts.first(); it != 0; it = activeContacts.next())
-		{
-			if (it != 0)
-			{
-				if (it->mTarget.lower() == queryName.lower())
-				{
-					if (it->tabPage() == 0)
-					{
-						it->mPendingMessage = pendingMessage;
-						it->joinNow();
-					}
-					return;
-				}
-			}
-		}
 	}
 }
 
-void IRCServerContact::incomingAction(const QString &originating, const QString &target, const QString &message)
+void IRCServerContact::incomingPrivAction(const QString &originating, const QString &target, const QString &message)
 {
-	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-	{
-		return;
-	}
 	QString queryName = originating.section('!', 0, 0);
 	if (queryName.lower() == engine->nickName().lower())
 	{
@@ -231,22 +182,6 @@ void IRCServerContact::incomingAction(const QString &originating, const QString 
 	if (activeQueries.find(queryName.lower()) == activeQueries.end())
 	{
 		(void)new IRCContact(mServer, queryName, 6667, true, this, pendingMessage);
-	} else {
-		for (IRCContact *it = activeContacts.first(); it != 0; it = activeContacts.next())
-		{
-			if (it != 0)
-			{
-				if (it->mTarget.lower() == queryName.lower())
-				{
-					if (it->tabPage() == 0)
-					{
-						it->mPendingMessage = pendingMessage;
-						it->joinNow();
-					}
-					return;
-				}
-			}
-		}
 	}
 }
 
@@ -284,7 +219,6 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 
 void IRCServerContact::forceDisconnect()
 {
-	emit quittingServer();
 	engine->close();
 	slotQuitServer();
 	mWindow->mToolBar->removeItem(1);
@@ -311,10 +245,8 @@ void IRCServerContact::slotQuitServer()
 	if (tryingQuit == false)
 	{
 		tryingQuit = true;
-		emit quittingServer();
 		engine->quitIRC(mQuitMessage);
 	} else {
-		emit serverQuit();
 		mManager->removeServer(QString("%1@%2").arg(mNickname).arg(mServer));
 		if (closing == false)
 		{
@@ -350,7 +282,6 @@ bool IRCServerContact::parentClosing()
 	{
 		if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connected to the IRC server, are you sure you want to quit now?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAsk") == KMessageBox::Yes)
 		{
-			tryingQuit = false;
 			closing = true;
 			slotQuitServer();
 			// We do this here because we want to wait for the server to disconnect first, then later we destroy this class

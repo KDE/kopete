@@ -89,10 +89,20 @@ void KIRC::slotReadyRead()
 				message = message.remove(0, 1);
 				message = message.remove((message.length() -1), 1);
 				message = message.section(' ', 1);
-				emit incomingAction(originating, target, message);
+				if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+				{
+					emit incomingAction(originating, target, message);
+				} else {
+					emit incomingPrivAction(originating, target, message);
+				}
 				return;
 			}
-			emit incomingMessage(originating, target, message);
+			if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+			{
+				emit incomingMessage(originating, target, message);
+			} else {
+				emit incomingPrivMessage(originating, target, message);
+			}
 		}
 		if (command == QString("PART"))
 		{
@@ -532,5 +542,6 @@ void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString user
 	mNickname = nickname;
 	mHost = host;
 	connectToHost(host.latin1(), port);
+	emit connecting();
 }
 #include "kirc.moc"

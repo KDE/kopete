@@ -66,21 +66,21 @@ public:
 private:
 	IRCConsoleView *mConsoleView;
 	KPopupMenu *popup;
+	void init();
 private slots:
 	void nickInUseOnLogin(const QString &);
 	void slotChangedNick(const QString &, const QString &);
 	void slotServerHasQuit();
 	void forceDisconnect();
 	void updateToolbar();
-	void incomingMessage(const QString &, const QString &, const QString &);
-	void incomingAction(const QString &, const QString &, const QString &);
+	void incomingPrivMessage(const QString &, const QString &, const QString &);
+	void incomingPrivAction(const QString &, const QString &, const QString &);
 public slots:
 	void slotQuitServer();
 	void connectNow();
 	void promptChannelJoin();
 	void disconnectNow();
 signals:
-	void quittingServer();
 	void serverQuit();
 	void connecting();
 };
