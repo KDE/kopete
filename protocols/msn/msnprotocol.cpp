@@ -40,7 +40,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 : KopeteProtocol( parent, name ),
 	NLN( KopeteOnlineStatus::Online,  25, this, 1, QString::null,    i18n( "Go O&nline" ),         i18n( "Online" ) ),
 	BSY( KopeteOnlineStatus::Away,    20, this, 2, "msn_busy",      i18n( "Set &Busy" ),          i18n( "Busy" ) ),
-	BRB( KopeteOnlineStatus::Away,    22, this, 3, "msn_away",      i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
+	BRB( KopeteOnlineStatus::Away,    22, this, 3, "msn_brb",      i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
 	AWY( KopeteOnlineStatus::Away,    18, this, 4, "msn_away",      i18n( "Set &Away" ),          i18n( "Away From Computer" ) ),
 	PHN( KopeteOnlineStatus::Away,    12, this, 5, "msn_phone",     i18n( "Set On The &Phone" ),  i18n( "On the Phone" ) ),
 	LUN( KopeteOnlineStatus::Away,    15, this, 6, "msn_lunch",     i18n( "Set Out To &Lunch" ),  i18n( "Out to Lunch" ) ),
