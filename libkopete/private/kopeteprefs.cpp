@@ -24,6 +24,8 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 
+#define KOPETE_DEFAULT_CHATSTYLE  "styles/Kopete.xsl"
+
 KopetePrefs *KopetePrefs::s_prefs = 0L;
 
 KopetePrefs *KopetePrefs::prefs()
@@ -86,9 +88,9 @@ void KopetePrefs::load()
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
-	mStyleSheet = config->readEntry("Stylesheet", locate("appdata", QString::fromLatin1("styles/Kopete.xsl")));
+	mStyleSheet = config->readEntry("Stylesheet", locate("appdata", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
 	if ( !QFile::exists( mStyleSheet ) )
-		mStyleSheet = locate( "appdata", QString::fromLatin1("styles/Kopete.xsl") );
+		mStyleSheet = locate( "appdata", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE) );
 	mStyleContents = fileContents(mStyleSheet);
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
@@ -242,7 +244,11 @@ void KopetePrefs::setSoundIfAway(bool value)
 
 void KopetePrefs::setStyleSheet(const QString &value)
 {
-	mStyleSheet = value;
+	if ( !QFile::exists( value ) || value.isEmpty())
+		mStyleSheet = locate( "appdata", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE) );
+	else
+		mStyleSheet = value;
+	
 	mStyleContents = fileContents( mStyleSheet );
 	emit( messageAppearanceChanged() );
 }
