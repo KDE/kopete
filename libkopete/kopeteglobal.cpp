@@ -35,46 +35,48 @@ namespace Kopete
 
 namespace
 {
-	QDict<Kopete::MimeTypeHandler> g_mimeHandlers;
+	static QDict<Kopete::MimeTypeHandler> g_mimeHandlers;
 }
 
-struct MimeTypeHandlerPrivate
+class MimeTypeHandler::Private
 {
+public:
+	Private( bool carf ) : canAcceptRemoteFiles( carf ) {}
 	bool canAcceptRemoteFiles;
 	QStringList mimeTypes;
 };
 
-MimeTypeHandler::MimeTypeHandler(  bool canAcceptRemoteFiles )
+MimeTypeHandler::MimeTypeHandler( bool canAcceptRemoteFiles )
+ : d( new Private( canAcceptRemoteFiles ) )
 {
-	d = new MimeTypeHandlerPrivate;
-	d->canAcceptRemoteFiles = canAcceptRemoteFiles;
-	d->mimeTypes = mimeTypes();
-
-	for( QStringList::iterator it = d->mimeTypes.begin(); it != d->mimeTypes.end(); ++it )
-	{
-		if( g_mimeHandlers[ *it ] )
-		{
-			kdWarning(14000) << k_funcinfo << "Warning: Two mime type handlers attempting"
-				" to handle " << *it << endl;
-		}
-
-		g_mimeHandlers.insert( *it, this );
-	}
 }
 
 MimeTypeHandler::~MimeTypeHandler()
 {
 	for( QStringList::iterator it = d->mimeTypes.begin(); it != d->mimeTypes.end(); ++it )
-	{
 		g_mimeHandlers.remove( *it );
-	}
 
 	delete d;
 }
 
+bool MimeTypeHandler::registerAsHandler( const QString &mimeType )
+{
+	if( g_mimeHandlers[ mimeType ] )
+	{
+		kdWarning(14010) << k_funcinfo << "Warning: Two mime type handlers attempting"
+			" to handle " << mimeType << endl;
+		return false;
+	}
+
+	g_mimeHandlers.insert( mimeType, this );
+	d->mimeTypes.append( mimeType );
+	kdDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered" << endl;
+	return true;
+}
+
 const QStringList MimeTypeHandler::mimeTypes() const
 {
-	return QStringList();
+	return d->mimeTypes;
 }
 
 bool MimeTypeHandler::canAcceptRemoteFiles() const
@@ -82,22 +84,17 @@ bool MimeTypeHandler::canAcceptRemoteFiles() const
 	return d->canAcceptRemoteFiles;
 }
 
-EmoticonHandler::EmoticonHandler() : MimeTypeHandler( false ){}
-
-const QStringList EmoticonHandler::mimeTypes() const
+EmoticonHandler::EmoticonHandler()
+ : MimeTypeHandler( false )
 {
-	QStringList types;
-
-	types << QString::fromLatin1("application/x-kopete-emoticons");
-	types << QString::fromLatin1("application/x-gzip");
-	types << QString::fromLatin1("application/x-bzip2");
-
-	return types;
+	registerAsHandler( QString::fromLatin1("application/x-kopete-emoticons") );
+	registerAsHandler( QString::fromLatin1("application/x-tgz") );
+	registerAsHandler( QString::fromLatin1("application/x-tbz") );
 }
 
 void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 {
-	QString archiveName = url.path() + QString::fromLatin1("/") + url.fileName();
+	QString archiveName = url.path();
 	QStringList foundThemes;
 	KArchiveEntry *currentEntry = 0L;
 	KArchiveDirectory* currentDir = 0L;
@@ -122,7 +119,7 @@ void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 	kapp->processEvents();
 
 	archive = new KTar(archiveName);
-	if(archive->open(IO_ReadOnly) == false)
+	if ( !archive->open(IO_ReadOnly) )
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,
@@ -172,7 +169,7 @@ void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(*it));
 		if (currentEntry == 0)
 		{
-			kdDebug(14000) << k_funcinfo << "couldn't get next archive entry" << endl;
+			kdDebug(14010) << k_funcinfo << "couldn't get next archive entry" << endl;
 			continue;
 		}
 
@@ -181,7 +178,7 @@ void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 			currentDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
 			if (currentDir == 0)
 			{
-				kdDebug(14000) << k_funcinfo <<
+				kdDebug(14010) << k_funcinfo <<
 					"couldn't cast archive entry to KArchiveDirectory" << endl;
 				continue;
 			}
@@ -202,7 +199,7 @@ void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 			KMessageBox::Error,
 			i18n("<qt>A problem occurred during the installation process. "
 			"However, most of the emoticon themes in the archive have been " \
-			"installed</qt>"));
+			"installed.</qt>"));
 	}
 
 	delete progressDlg;
@@ -215,55 +212,49 @@ bool Global::handleURL( const KURL &url )
 	if( url.isEmpty() )
 		return false;
 
-	QString type;
-	if( url.isLocalFile() )
-		type = KMimeType::findByFileContent( url.path() )->name();
-	else
-		type = KMimeType::findByURL( url, 0, false )->name();
+	QString type = KMimeType::findByURL( url )->name();
 
 	MimeTypeHandler *handler = g_mimeHandlers[ type ];
-	if( handler )
+	if( !handler )
 	{
-		if( !handler->canAcceptRemoteFiles() )
-		{
-			QString file;
-			#if KDE_IS_VERSION( 3, 1, 90 )
-			if( !KIO::NetAccess::download( url, file,
-				Kopete::UI::Global::mainWidget() ) )
-			#else
-			if( !KIO::NetAccess::download( url, file ) )
-			#endif
-			{
-				QString sorryText;
-				if ( url.isLocalFile() )
-				{
-					sorryText =
-						i18n("Unable to find the emoticon theme archive %1!");
-				}
-				else
-				{
-					sorryText = i18n( "<qt>Unable to download the emoticon " \
-						"theme archive!<br>Please check that address %1 is " \
-						"correct.</qt>");
-				}
+		kdDebug(14010) << "No mime type handler found for " << url.prettyURL() << " of type " << type << endl;
+		return false;
+	}
 
-				KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
-					sorryText.arg( url.prettyURL() ) );
+	if( !handler->canAcceptRemoteFiles() )
+	{
+		QString file;
+		#if KDE_IS_VERSION( 3, 1, 90 )
+		if( !KIO::NetAccess::download( url, file, Kopete::UI::Global::mainWidget() ) )
+		#else
+		if( !KIO::NetAccess::download( url, file ) )
+		#endif
+		{
+			QString sorryText;
+			if ( url.isLocalFile() )
+			{
+				sorryText = i18n( "Unable to find the file %1!" );
+			}
+			else
+			{
+				sorryText = i18n( "<qt>Unable to download the requested file.<br>"
+				                  "Please check that address %1 is correct.</qt>" );
 			}
 
-			handler->handleURL( type, KURL(file) );
-		}
-		else
-		{
-			handler->handleURL( type, url );
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+			                    sorryText.arg( url.prettyURL() ) );
+			return false;
 		}
 
-		return true;
+		KURL dest; dest.setPath( file );
+		handler->handleURL( type, dest );
 	}
 	else
 	{
-		return false;
+		handler->handleURL( type, url );
 	}
+
+	return true;
 }
 
 } // END namespace Kopete
