@@ -20,13 +20,9 @@
 
 #include <qdatetime.h>
 #include <qstring.h>
-#include <qfont.h>
-#include <qcolor.h>
-#include <qobject.h>
 
 #include "kopeteviewmanager.h"
 #include "kopetecontact.h"
-#include "qptrlist.h"
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
@@ -34,6 +30,8 @@ typedef QPtrList<KopeteContact> KopeteContactPtrList;
  * @author Martijn Klingens <klingens@kde.org>
  *
  */
+
+class KopeteMessagePrivate;
 
 class KopeteMessage
 {
@@ -53,6 +51,8 @@ public:
 			show into the chatwindow
 	*/
 	enum MessageFormat  { PlainText, RichText, ParsedHTML };
+
+	KopeteMessagePrivate *d;
 
 	/**
 	 * Constructs a new empty message
@@ -107,6 +107,10 @@ public:
 	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
 				QString body, QString subject, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
+	/**
+	 * Destructor
+	 */
+	~KopeteMessage();
 
 	// Accessors
 
@@ -114,63 +118,63 @@ public:
 	 * Accessor method for the timestamp of the message
 	 * @return The message's timestamp
 	 */
-	QDateTime timestamp() const { return mTimestamp; }
+	const QDateTime & timestamp() const;
 
 	/**
 	 * Accessor method for the KopeteContact that sent this message
 	 * @return The KopeteContact who sent this message
 	 */
-	const KopeteContact *from() const { return mFrom; }
+	const KopeteContact *from() const;
 
 	/**
 	 * Accessor method for the KopeteContacts that this message was sent to
 	 * @return Pointer list of the KopeteContacts this message was sent to
 	 */
-	KopeteContactPtrList to() const { return mTo; }
+	KopeteContactPtrList & to() const;
 
-	KopeteView::ViewType type() const { return m_type; }
+	KopeteView::ViewType & type() const;
 
 	/**
 	 * Acessor method for the foreground color
 	 * @return The message's foreground color
 	 */
-	QColor fg() const { return mFg; }
+	const QColor & fg() const;
 
 	/**
 	 * Accessor method for the background color of the message
 	 * @return The message's background color
 	 */
-	QColor bg() const { return mBg; }
+	const QColor & bg() const;
 
 	/**
 	 * Accessor method for the font used in the message
 	 * @return The message's font
 	 */
-	QFont font() const { return mFont; }
+	const QFont & font() const;
 
 	/**
 	 * Accessor method for the body of the message in the current format
 	 * @return The message body
 	 */
-	QString body() const { return mBody; }
+	QString & body() const;
 
 	/**
 	 * Accessor method for the subject of the message
 	 * @return The message subject
 	 */
-	QString subject() const { return mSubject; }
+	QString & subject() const;
 
 	/**
 	 * Accessor method for the format of the message
 	 * @return The message format
 	 */
-	MessageFormat format() const { return mFormat; }
+	MessageFormat & format() const;
 
 	/**
 	 * Accessor method for the direction of the message
 	 * @return The message direction
 	 */
-	MessageDirection direction() const { return mDirection; }
+	MessageDirection & direction() const;
 
 	/**
 	 * Sets the foreground color for the message
@@ -230,31 +234,6 @@ protected:
 	// Helper for constructors
 	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to,
 			  QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType);
-
-	/** Timestamp */
-	QDateTime mTimestamp;
-	/** Contact the message came from */
-	const KopeteContact *mFrom;
-	/** Pointer list of contacts the message is going to */
-	KopeteContactPtrList mTo;
-	/** Message body */
-	QString mBody;
-	/** Message subject */
-	QString mSubject;
-	/** Message font */
-	QFont mFont;
-	/** The foreground color */
-	QColor mFg;
-	/** The background color */
-	QColor mBg;
-	/** The message direction */
-	MessageDirection mDirection;
-	/** The message format */
-	MessageFormat mFormat;
-
-	KopeteView::ViewType m_type;
-	
-	bool mBgOverride;
 
 public:
 	/**
