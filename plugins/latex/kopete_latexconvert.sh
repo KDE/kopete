@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #############################################################
 # TEX2IM:   Converts LaTeX formulas to pixel graphics which #
 #           can be easily included in Text-Processors like  #
