@@ -355,9 +355,9 @@ void MSNNotifySocket::slotOpenInbox()
 		// we use the improved KRun that auto-deletes the temp file when done.
 
 #if defined(KDE_IS_VERSION) && KDE_IS_VERSION(3,1,90)
-		KRun::runURL( tmpFile.name(), "text/html" );
-#else
 		KRun::runURL( tmpFile.name(), "text/html", true );
+#else
+		KRun::runURL( tmpFile.name(), "text/html" );
 #endif
 	}
 }
