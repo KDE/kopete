@@ -75,8 +75,6 @@ public:
 	QString contactId;
 
 	QString icon;
-
-	KopeteProtocol *protocol; //obsolete
 };
 
 // Used in slotChangeMetaContact()
@@ -102,7 +100,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
 
 	d->metaContact = parent;
-	d->protocol = 0l;
 	//d->cachedSize = 0;
 	d->fileCapable = false;
 	d->conversations = 0;
@@ -113,7 +110,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 
 	if( account )
 	{
-		d->protocol=account->protocol();
 		account->registerContact( this );
 	}
 
@@ -481,9 +477,7 @@ QString KopeteContact::contactId() const
 
 KopeteProtocol * KopeteContact::protocol() const
 {
-	if(d->account)
-		return d->account->protocol();
-	return d->protocol;
+	return d->account ? d->account->protocol() : 0L;
 }
 
 KopeteAccount * KopeteContact::account() const

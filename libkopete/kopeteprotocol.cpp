@@ -82,36 +82,6 @@ KActionMenu* KopeteProtocol::protocolActions()
 	return m_menu;
 }
 
-/*const QDict<KopeteContact>& KopeteProtocol::contacts()
-{
-	return m_contacts;
-}
-
-QDict<KopeteContact> KopeteProtocol::contacts( KopeteMetaContact *mc )
-{
-	QDict<KopeteContact> result;
-
-	QPtrList<KopeteContact> contacts=mc->c;
-	for (KopeteContact *c=contacts.first() ; c ; c=contacts.next() )
-	{
-		if( c->protocol= )
-			result.insert( ( *it )->contactId(), *it );
-	}
-	return result;
-}
-
-void KopeteProtocol::registerContact( KopeteContact *c )
-{
-	m_contacts.insert( c->contactId(), c );
-	QObject::connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
-		SLOT( slotKopeteContactDestroyed( KopeteContact * ) ) );
-}
-
-void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
-{
-//	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
-	m_contacts.remove( c->contactId() );
-}*/
 
 void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact )
 {
