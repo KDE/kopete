@@ -55,7 +55,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 
 	mAppearance = new AppearanceConfig(mainwindow);
 	connect( mAppearance , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
-	mNotifier = new KopeteNotifier;
+	mNotifier = new KopeteNotifier(this, "mNotifier");
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
@@ -79,9 +79,13 @@ Kopete::~Kopete()
 	kdDebug() << "[Kopete] ~Kopete()" << endl;
 
 	delete mPref;
-	delete mLibraryLoader;
 
 	kdDebug() << "[Kopete] END ~Kopete()" << endl;
+}
+
+void Kopete::unloadPlugins(void)
+{
+	delete mLibraryLoader;
 }
 
 void Kopete::slotPreferences()

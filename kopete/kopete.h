@@ -80,6 +80,7 @@ class Kopete : public KUniqueApplication
 	ContactList *contactList() const { return mainwindow->contactlist; }
 	KStatusBar *statusBar() const { return mainwindow->statusBar(); }
 	KopeteSystemTray *systemTray() const { return mainwindow->tray; }
+	void unloadPlugins(void);
 
 	QString parseEmoticons(QString);
 	QString parseHTML( QString message, bool parseURLs = true );
