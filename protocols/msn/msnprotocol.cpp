@@ -202,6 +202,10 @@ void MSNProtocol::Disconnect()
 	m_serviceSocket->disconnect();
 	delete m_serviceSocket;
 	m_serviceSocket = 0L;
+
+	m_chatServices.setAutoDelete( true );
+	m_chatServices.clear();
+	m_chatServices.setAutoDelete( false );
 }
 
 bool MSNProtocol::isConnected() const
@@ -725,6 +729,11 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 	{
 		m_contacts[ handle ]->setMsnStatus( status );
 		m_contacts[ handle ]->setNickname( publicName );
+
+		if( status == FLN )
+		{
+			// TODO: Remove all users from the list!
+		}
 	}
 }
 
