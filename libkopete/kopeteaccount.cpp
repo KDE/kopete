@@ -75,7 +75,8 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
  : KopetePluginDataObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
 {
 	d->suppressStatusTimer = new QTimer( this, "suppressStatusTimer" );
-	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ), this, SLOT( slotStopSuppression() ) );
+	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ),
+		this, SLOT( slotStopSuppression() ) );
 
 	KopeteAccountManager::manager()->registerAccount( this );
 
@@ -138,20 +139,21 @@ void KopeteAccount::setAccountId( const QString &accountId )
 
 QPixmap KopeteAccount::accountIcon(const int size) const
 {
-	QPixmap basis = KGlobal::instance()->iconLoader()->loadIcon( d->protocol->pluginIcon(), KIcon::Small, size );
+	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
+		d->protocol->pluginIcon(), KIcon::Small, size );
 
 	if ( d->color.isValid() )
 	{
 		KIconEffect effect;
-		basis = effect.apply( basis, KIconEffect::Colorize, 1, d->color, 0);
+		base = effect.apply( base, KIconEffect::Colorize, 1, d->color, 0);
 	}
 
-	if ( size > 0 && basis.width() != size )
+	if ( size > 0 && base.width() != size )
 	{
-		basis = QPixmap( basis.convertToImage().smoothScale( size, size ) );
+		base = QPixmap( base.convertToImage().smoothScale( size, size ) );
 	}
 
-	return basis;
+	return base;
 }
 
 QString KopeteAccount::configGroup() const
@@ -214,7 +216,10 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 		if ( plugin )
 			setPluginData( plugin, pluginDataIt.data() );
 		else
-			kdDebug( 14010 ) << k_funcinfo << "No plugin object found for id '" << pluginDataIt.key() << "'" << endl;
+		{
+			kdDebug( 14010 ) << k_funcinfo <<
+				"No plugin object for id '" << pluginDataIt.key() << "'" << endl;
+		}
 	}
 
 	loaded();
@@ -230,12 +235,23 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength ) 
 	d->password.setMaximumLength( maxLength );
 	QString prompt;
 	if ( error )
-		prompt = i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+	{
+		prompt = i18n( "<b>The password was wrong!</b> Please re-enter your"\
+			" password for %1 account <b>%2</b>" ).arg( protocol()->displayName(),
+				accountId() );
+	}
 	else
-		prompt = i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+	{
+		prompt = i18n( "Please enter your password for %1 account <b>%2</b>" )
+			.arg( protocol()->displayName(), accountId() );
+	}
 
-	QString pass = d->password.retrieve( accountIcon( Kopete::Password::preferredImageSize() ), prompt, error ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser );
-	if ( ok ) *ok = !pass.isNull();
+	QString pass = d->password.retrieve(
+		accountIcon( Kopete::Password::preferredImageSize() ), prompt,
+		error ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser );
+
+	if ( ok )
+		*ok = !pass.isNull();
 	return pass;
 }
 
@@ -296,7 +312,8 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 {
 	if ( contactId == accountId() )
 	{
-		kdDebug( 14010 ) << "KopeteAccount::addContact: WARNING: the user try to add myself to his contactlist - abort" << endl;
+		kdDebug( 14010 ) << k_funcinfo <<
+			"WARNING: the user try to add myself to his contactlist - abort" << endl;
 		return false;
 	}
 
@@ -314,7 +331,8 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kdDebug( 14010 ) << "KopeteAccount::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
+			kdDebug( 14010 ) <<
+				"KopeteAccount::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
 			/* //FIXME: calling this can produce a message to delete the old contazct which should be deleted in many case.
 			if(c->metaContact() != parentContact)
 				c->setMetaContact(parentContact);*/
@@ -404,17 +422,19 @@ void KopeteAccount::setMyself( KopeteContact *myself )
 		this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 }
 
-void KopeteAccount::slotOnlineStatusChanged( KopeteContact * /* contact */, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
+void KopeteAccount::slotOnlineStatusChanged( KopeteContact * /* contact */,
+	const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
 {
-	if ( oldStatus.status() == KopeteOnlineStatus::Offline || oldStatus.status() == KopeteOnlineStatus::Connecting ||
+	if ( oldStatus.status() == KopeteOnlineStatus::Offline ||
+		oldStatus.status() == KopeteOnlineStatus::Connecting ||
 		newStatus.status() == KopeteOnlineStatus::Offline )
 	{
-		// Wait for five seconds until we treat status notifications for contacts as
-		// unrelated to our own status change.
-		// Five seconds may seem like a long time, but just after your own connection
-		// it's basically neglectible, and depending on your own contact list's size,
-		// the protocol you are using, your internet connection's speed and your
-		// computer's speed you *will* need it.
+		// Wait for five seconds until we treat status notifications for contacts
+		// as unrelated to our own status change.
+		// Five seconds may seem like a long time, but just after your own
+		// connection it's basically neglectible, and depending on your own
+		// contact list's size, the protocol you are using, your internet
+		// connection's speed and your computer's speed you *will* need it.
 		d->suppressStatusNotification = true;
 		d->suppressStatusTimer->start( 5000, true );
 	}
@@ -431,6 +451,4 @@ bool KopeteAccount::suppressStatusNotification() const
 }
 
 #include "kopeteaccount.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
