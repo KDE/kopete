@@ -107,8 +107,6 @@ IRCChannelContact::~IRCChannelContact()
 
 void IRCChannelContact::updateStatus()
 {
-	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
-
 	KIRC::EngineStatus status = m_engine->status();
 	switch( status )
 	{
@@ -128,7 +126,6 @@ void IRCChannelContact::updateStatus()
 
 void IRCChannelContact::messageManagerDestroyed()
 {
-	kdDebug(14120) << k_funcinfo << "for: " << m_nickName << endl;
 	if(manager(false))
 	{
 		part();
@@ -158,8 +155,6 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 {
 	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
-		kdDebug(14120) << k_funcinfo << "Names List:" << channel << endl;
-
 		mJoinedNicks += nicknames;
 		if( mJoinedNicks.count() == nicknames.count() )
 			slotAddNicknames();
@@ -231,7 +226,6 @@ void IRCChannelContact::slotJoin()
 
 void IRCChannelContact::part()
 {
-	kdDebug(14120) << k_funcinfo << "Part channel:" << m_nickName << endl;
 	if( m_isConnected )
 		m_engine->partChannel( m_nickName, m_account->defaultPart() );
 }
@@ -367,7 +361,6 @@ void IRCChannelContact::setTopic(const QString &topic)
 
 void IRCChannelContact::slotTopicChanged(const QString &nick, const QString &channel, const QString &newtopic)
 {
-	kdDebug(14120) << k_funcinfo << "Chan:" << channel << ", nick:" << nick << ", topic:" << newtopic << endl;
 	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		mTopic = newtopic;
@@ -381,7 +374,6 @@ void IRCChannelContact::slotTopicChanged(const QString &nick, const QString &cha
 
 void IRCChannelContact::slotTopicUser(const QString &channel, const QString &nick, const QDateTime &time)
 {
- 	kdDebug(14120) << k_funcinfo << "Chan:" << channel << ", nick:" << nick << ", date:" << time << endl;
 	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		KopeteMessage msg( m_account->myServer(), mMyself,
@@ -395,7 +387,6 @@ void IRCChannelContact::slotTopicUser(const QString &channel, const QString &nic
 
 void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QString &channel, const QString &mode )
 {
-	kdDebug(14120) << k_funcinfo << "Nick: " << nick << " : " << mode << endl;
 	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -433,7 +424,6 @@ void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QStri
 
 void IRCChannelContact::slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params )
 {
-	kdDebug(14120) << k_funcinfo << channel << " : " << mode << " (" << mode.length() << ") " << " : " << params << " : " << m_nickName << endl;
 	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
 	{
 		for( uint i=1; i < mode.length(); i++ )
@@ -495,7 +485,6 @@ void IRCChannelContact::slotFailedChankey(const QString &channel)
 	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
 		bool ok;
-		kdDebug(14120) << k_funcinfo << "NEED PASSWORD FOR CHAN: " << channel << endl;
 		QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
 			i18n( "Please enter key for channel %1: ").arg(channel),
 			QString::null,
@@ -551,10 +540,9 @@ void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
 
 bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 {
-	kdDebug(14120) << k_funcinfo << "Mode for " << QString(mode) << ": " << modeMap[mode] << " value: " << value << endl;
-	if( !value ) {
+	if( !value )
 		return modeMap[mode];
-	}
+	
 	return false;
 }
 

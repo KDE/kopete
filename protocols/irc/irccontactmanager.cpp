@@ -16,6 +16,8 @@
 */
 
 #include <qtimer.h>
+
+#include <kconfig.h>
 #include <kstandarddirs.h>
 
 #include "kopetemetacontact.h"
