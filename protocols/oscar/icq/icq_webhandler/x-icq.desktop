@@ -1,11 +1,22 @@
 [Desktop Entry]
 Encoding=UTF-8
 Comment=ICQ Contact
-Comment[fr]=Contact ICQ
-Comment[pt]=Contacto do ICQ
-Comment[pt_BR]=Contato do ICQ
+Comment[be]=Кантакт ICQ
+Comment[ca]=Contacte ICQ
+Comment[cs]=ICQ kontakt
+Comment[da]=ICQ-Kontakt
+Comment[de]=ICQ-Kontakt
+Comment[es]=Contacto de ICQ
+Comment[et]=ICQ kontakt
+Comment[hu]=ICQ-kapcsolat
+Comment[it]=Contatto ICQ
+Comment[nl]=ICQ contact
+Comment[pt]=Contacto de ICQ
+Comment[pt_BR]=Contato ICQ
+Comment[ru]=Контакт ICQ
+Comment[sr]=ICQ контакт
 Comment[sv]=ICQ-kontakt
-Comment[zh_CN]=ICQ 联系人
+Comment[xx]=xxICQ Contactxx
 Type=MimeType
 MimeType=application/x-icq
 

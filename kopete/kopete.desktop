@@ -1,7 +1,16 @@
 [Desktop Entry]
 Name=Kopete
+Name[xx]=xxKopetexx
 Comment=Instant Messenger
+Comment[ca]=Missatger a l'instant
+Comment[es]=Mensajería instantánea
+Comment[et]=Kiirsuhtlemisrakendus
+Comment[hu]=Azonnali üzenetküldő
+Comment[it]=Messaggistica istantanea
+Comment[pt_BR]=Mensageiro Instantâneo
+Comment[ru]=Мгновенные сообщения
 Comment[sv]=Instant Messenger-klient
+Comment[xx]=xxInstant Messengerxx
 Exec=kopete %i %m -caption "%c"
 Type=Application
 Terminal=0
