@@ -25,7 +25,6 @@ class QFrame;
 class QTabWidget;
 class QCheckBox;
 class KListBox;
-//class KIconView;
 class KTextEdit;
 class KHTMLPart;
 class KopeteContact;
@@ -55,7 +54,7 @@ class AppearanceConfig : public KCModule
 	Q_OBJECT
 
 public:
-	AppearanceConfig(QWidget *parent, const char *name, const QStringList &args );
+	AppearanceConfig( QWidget *parent, const char *name, const QStringList &args );
 	~AppearanceConfig();
 
 	virtual void save();

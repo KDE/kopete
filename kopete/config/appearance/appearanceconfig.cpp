@@ -84,6 +84,8 @@ public:
 AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
 : KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
 {
+	editedItem = 0L;
+
 	d = new KopeteAppearanceConfigPrivate;
 
 	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents(), this );
@@ -91,7 +93,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
 
-	editedItem = 0L;
 
 	// "Emoticons" TAB ==========================================================
 	mPrfsEmoticons = new AppearanceConfig_Emoticons(mAppearanceTabCtl);
