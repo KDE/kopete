@@ -56,7 +56,7 @@ struct KopeteEmoticons
 
 	/* Sad */
 	QString unhappy;
-    QString cry;
+	QString cry;
 	/* Surprise */
 	QString oh;
 	/* Other */
@@ -84,8 +84,7 @@ public:
 
 	QString parseEmoticons(QString);
 	QString parseHTML( QString message, bool parseURLs = true );
-	void notifyEvent( KopeteEvent *);
-	void cancelEvent( KopeteEvent *);
+
 	void initEmoticons();
 
 private:
@@ -98,10 +97,17 @@ private:
 	KopeteEmoticons mEmoticons;
 	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
-    KopeteNotifier *mNotifier;
+	KopeteNotifier *mNotifier;
 	void loadPlugins();
 
 public slots:
+	// Only use notify event for system-wide messages
+	// and things like online notification
+	// Messages from specific contacts should use KopeteContact's
+	// incomingEvent signal
+	void notifyEvent( KopeteEvent *);
+	void cancelEvent( KopeteEvent *);
+
 	void slotPreferences();
 //	void slotExit();
 	void slotConnectAll();

@@ -53,16 +53,13 @@ MSNContact::MSNContact(QString userid, const QString name, QString group, MSNPro
 
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
 {
-//	messageTimer = new QTimer();
 	messageQueue = new QValueStack<MSNMessageStruct>;
-	isMessageIcon = false;
 
 	// We connect this signal so that we can tell when a user's status changes
 	connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
 	connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
 
 	connect ( this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
-//	connect ( messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
 	connect ( protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
 
 	QString tmp = name;
@@ -158,68 +155,15 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 
 	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
 	mStatus = status;
-	isMessageIcon = false;
 	QString tmppublicname = mProtocol->engine->getPublicName( handle);
 
-	if ( status == FLN ) // offline
+	if (mStatus == BLO)
+		setName( i18n("%1 (Blocked)").arg(tmppublicname) );
+	else
 		setName( tmppublicname );
 
-	switch ( status )
-	{
-		case BLO: // blocked
-		{
-			setName( i18n("%1 (Blocked)").arg(tmppublicname) );
-			break;
-		}
-		case NLN: // Online
-		{
-			setName( tmppublicname );
-			break;
-		}
-		case BSY: // Busy
-		{
-			setName( tmppublicname );
-			break;
-		}
-		case IDL: // Idle
-		{
-			setName( tmppublicname );
-			break;
-		}
-		case AWY: // Away from computer
-		{
-			setName( tmppublicname );
-			break;
-		}
-		case PHN: // On the phone
-		{
-			setName( tmppublicname );
-			break;
-		}
-		case BRB: // Be right back
-		{
-			setName( tmppublicname );
-			break;
-		}
-		case LUN: // Out to lunch
-		{
-			setName( tmppublicname );
-			break;
-		}
-	}
+	emit statusChanged();
 }
-
-/*
-void MSNContact::slotNewMessage(QString userid, QString publicname, QString message)
-{
-	if (uin == mUIN)
-	{
-		messageQueue->prepend(message);
-		messageTimer->start(1000, false);
-	}
-}
-*/
-
 
 void MSNContact::slotDeleteMySelf(bool connected)
 {
@@ -262,3 +206,167 @@ void MSNContact::slotHistoryDialogClosing()
 	}
 }
 
+MSNContact::ContactStatus MSNContact::status() const
+{
+	switch ( mStatus )
+	{
+		case NLN: // Online
+		{
+			return Online;
+			break;
+		}
+		case BSY: // Busy
+		case IDL: // Idle
+		case AWY: // Away from computer
+		case PHN: // On the phone
+		case BRB: // Be right back
+		case LUN: // Out to lunch
+		{
+			return Away;
+			break;
+		}
+
+		default:
+		{
+			return Offline;
+			break;
+		}
+	}
+
+}
+
+QString MSNContact::statusText() const
+{
+	switch ( mStatus )
+	{
+		case BLO: // blocked
+		{
+			return i18n("Blocked");
+			break;
+		}
+		case NLN: // Online
+		{
+			return i18n("Online");
+			break;
+		}
+		case BSY: // Busy
+		{
+			return i18n("Busy");
+			break;
+		}
+		case IDL: // Idle
+		{
+			return i18n("Idle");
+			break;
+		}
+		case AWY: // Away from computer
+		{
+			return i18n("Away From Computer");
+			break;
+		}
+		case PHN: // On the phone
+		{
+			return i18n("On The Phone");
+			break;
+		}
+		case BRB: // Be right back
+		{
+			return i18n("Be Right Back");
+			break;
+		}
+		case LUN: // Out to lunch
+		{
+			return i18n("Out To Lunch");
+			break;
+		}
+
+		default:
+		{
+			return i18n("Offline");
+		}
+	}
+}
+
+QString MSNContact::statusIcon() const
+{
+	switch ( mStatus )
+	{
+		case NLN: // Online
+		{
+			return "msn_online";
+			break;
+		}
+		case BSY: // Busy
+		case PHN: // On the phone
+		{
+			return "msn_na";
+			break;
+		}
+		case IDL: // Idle
+		case AWY: // Away from computer
+		case BRB: // Be right back
+		case LUN: // Out to lunch
+		{
+			return "msn_away";
+			break;
+		}
+
+		default:
+		{
+			return "msn_offline";
+		}
+	}
+
+}
+
+int MSNContact::importance() const
+{
+	switch ( mStatus )
+	{
+		case BLO: // blocked
+		{
+			return 1;
+			break;
+		}
+		case NLN: // Online
+		{
+			return 20;
+			break;
+		}
+		case BSY: // Busy
+		{
+			return 13;
+			break;
+		}
+		case IDL: // Idle
+		{
+			return 15;
+			break;
+		}
+		case AWY: // Away from computer
+		{
+			return 10;
+			break;
+		}
+		case PHN: // On the phone
+		{
+			return 12;
+			break;
+		}
+		case BRB: // Be right back
+		{
+			return 14;
+			break;
+		}
+		case LUN: // Out to lunch
+		{
+			return 11;
+			break;
+		}
+
+		default:
+		{
+			return 0;
+		}
+	}
+}

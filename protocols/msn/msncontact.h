@@ -60,6 +60,11 @@ class MSNContact : public KopeteContact
 		QString mName;
 		bool hasLocalGroup;
 
+		ContactStatus status() const;
+		QString statusText() const;
+		QString statusIcon() const;
+		int importance() const;
+
 	public slots:
 		void slotContactRemoved(QString, QString);
 		void slotChatThisUser();
@@ -87,11 +92,9 @@ class MSNContact : public KopeteContact
 
 		QString mGroup;
 		uint mStatus;
-		bool isMessageIcon;
 		MSNProtocol *mProtocol;
 		KopeteHistoryDialog *historyDialog;
 		QValueStack<MSNMessageStruct> *messageQueue;
-		QTimer *messageTimer;
 		KPopupMenu *popup;
 		KAction* actionRemove;
 		KAction* actionRemoveFromGroup;

@@ -26,6 +26,7 @@
 KopeteContact::KopeteContact(QObject *parent)
 	: QObject(parent)
 {
+	connect(this, SIGNAL(incomingEvent(KopeteEvent *)), kopeteapp, SLOT(notifyEvent(KopeteEvent *)));
 }
 
 KopeteContact::~KopeteContact()
