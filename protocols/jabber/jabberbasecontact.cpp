@@ -127,7 +127,18 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			groupsToAddTo.append ( KopeteContactList::contactList()->getGroup ( *item.groups().at(i) ) );
 		}
 	}
-	
+
+	/*
+	 * Special case: if we don't add the contact to any group and the
+	 * list of groups to remove from contains the top level group, we
+	 * risk removing the contact from the visible contact list. In this
+	 * case, we need to make sure at least the top level group stays.
+	 */
+	if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( KopeteGroup::topLevel () ) ) )
+	{
+		groupsToRemoveFrom.remove ( KopeteGroup::topLevel () );
+	}
+
 	for ( KopeteGroup *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;

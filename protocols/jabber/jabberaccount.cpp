@@ -1474,28 +1474,18 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
 			metaContact->addToGroup (KopeteContactList::contactList ()->getGroup (*it));
 
-		/*
-		 * Add the contact to our pool.
-		 * The "dirty" flag is false here, because we just received the contact from
-		 * the server's roster. As such, it is now a synchronized entry.
-		 */
-		JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
-
-		// add contact to meta contact
-		metaContact->addContact ( contact );
-
 		// put it onto contact list
 		KopeteContactList::contactList ()->addMetaContact ( metaContact );
 	}
-	else
-	{
-		/*
-		 * Update the contact in our pool.
-		 * The "dirty" flag is false here, because we just received the contact from
-		 * the server's roster. As such, it is now a synchronized entry.
-		 */
-		contactPool()->addContact ( item, metaContact, false );
-	}
+
+	/*
+	 * Add / update the contact in our pool. In case the contact is already there,
+	 * it will be updated. In case the contact is not in the meta contact yet, it
+	 * will be added to it.
+	 * The "dirty" flag is false here, because we just received the contact from
+	 * the server's roster. As such, it is now a synchronized entry.
+	 */
+	contactPool()->addContact ( item, metaContact, false );
 
 }
 
