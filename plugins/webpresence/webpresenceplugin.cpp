@@ -106,7 +106,7 @@ void WebPresencePlugin::listenToAllAccounts()
 
 void WebPresencePlugin::listenToAccount( KopeteAccount* account )
 {
-	if(account->myself())
+	if(account && account->myself())
 	{
 		// Connect to the account's status changed signal
 		// because we can't know if the account has already connected
