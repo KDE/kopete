@@ -23,9 +23,9 @@
 #include <qstring.h>
 #include <qwidget.h>
 
-#include "oscaraccount.h"
-#include "oscarsocket.h"
-#include "oscarsocket.icq.h"
+#include <oscaraccount.h>
+#include <oscarsocket.h>
+#include <oscarsocket.icq.h>
 
 class KActionMenu;
 class KopeteProtocol;

@@ -36,10 +36,7 @@
 #include "kopetecontactlist.h"
 #include "kopetestdaction.h"
 
-#include "oscaraccount.h"
-#include "oscarsocket.h"
-#include "oscarsocket.icq.h"
-#include "oscarcontact.h"
+#include <oscarcontact.h>
 
 #include "icqchangestatus.h"
 //#include "icquserinfo.h"

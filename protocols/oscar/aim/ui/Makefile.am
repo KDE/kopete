@@ -8,5 +8,6 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 noinst_LTLIBRARIES = libkopeteaimui.la
 
 libkopeteaimui_la_SOURCES = aimaddcontactui.ui aimeditaccountui.ui aiminfobase.ui aimaddcontactpage.cpp aimeditaccountwidget.cpp
+libkopeteaimui_la_LIBADD = $(top_builddir)/kopete/libkopete/libkopete.la
 
 

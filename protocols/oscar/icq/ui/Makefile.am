@@ -9,4 +9,5 @@ AM_CPPFLAGS = -I$(srcdir)/../ \
 noinst_LTLIBRARIES = libkopeteicqui.la
 
 libkopeteicqui_la_SOURCES = icqadd.ui icquserinfowidget.ui icqaddcontactpage.cpp icqeditaccountui.ui icqeditaccountwidget.cpp
+libkopeteicqui_la_LIBADD = $(top_builddir)/kopete/libkopete/libkopete.la
 
