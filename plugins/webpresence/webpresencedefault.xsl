@@ -2,13 +2,12 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-	<xsl:template match="contacts">
+	<xsl:template match="webpresence">
 		<html>
 			<head><title>My IM Status</title></head>
 			<body>
-				<table>
-					<xsl:apply-templates select="contact"/>
-				</table>
+				<xsl:value-of select="name"/>
+				<xsl:apply-templates select="accounts"/>
 				<hr/>
 				<font size="-2">
 					Last update at:
@@ -18,39 +17,18 @@
 		</html>
 	</xsl:template>
 
-	<xsl:template match="contact">
-		<tr>
-			<td>
-				<xsl:value-of select="name"/>
-			</td>
-			<td>
-				<xsl:apply-templates select="protocols"/>
-			</td>
-		</tr>
-	</xsl:template>
 
-	<xsl:template match="protocols">
+	<xsl:template match="accounts">
 		<table>
-			<xsl:apply-templates select="protocol"/>
-		</table>
-	</xsl:template>
-
-	<xsl:template match="account">
-		<table>
-			<xsl:apply-templates/>
-		</table>
-	</xsl:template>
-
-	<xsl:template match="protocol">
-		<tr>
-			<td>
-				<xsl:apply-templates select="protoname"/>
-			</td>
 			<xsl:apply-templates select="account"/>
-		</tr>
+		</table>
 	</xsl:template>
 
 	<xsl:template match="account">
+		<tr>
+			<td>
+				<xsl:value-of select="protocol"/>
+			</td>
 			<td>
 				<xsl:value-of select="accountname"/>
 			</td>
@@ -60,9 +38,10 @@
 			<td>
 				<xsl:value-of select="accountaddress"/>
 			</td>
+		</tr>
 	</xsl:template>
 
-	<xsl:template match="protoname">
+	<xsl:template match="protocol">
 		<xsl:choose>
 			<xsl:when test=".='AIMProtocol'">
 				<!-- AIM gubbins here -->

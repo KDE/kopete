@@ -3,9 +3,9 @@
 
    Kopete Web Presence plugin
 
-   Copyright (c) 2002 by Will Stephenson <will@stevello.free-online.co.uk>
+   Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
 
-   Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+   Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************
  *                                                                    	*
@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+#include <qdom.h>
 #include <qtimer.h>
 #include <qfile.h>
 
@@ -105,7 +106,7 @@ void WebPresencePlugin::listenToAllAccounts()
 		{
 			 listenToAccount( account );
 		}
- 	}
+	}
 	slotWaitMoreStatusChanges();
 }
 
@@ -143,7 +144,7 @@ void WebPresencePlugin::slotWriteFile()
 	// generate the (temporary) XML file representing the current contactlist
 	KTempFile* xml = generateFile();
 	xml->setAutoDelete( true );
-	
+
 	if ( url.isEmpty() )
 	{
 		kdDebug(14309) << "url is empty. NOT UPDATING!" << endl;
@@ -193,83 +194,88 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 
 KTempFile* WebPresencePlugin::generateFile()
 {
-	// generate the (temporary) file representing the current contactlist
+	// generate the (temporary) XML file representing the current contactlist
 	kdDebug( 14309 ) << k_funcinfo << endl;
-
-	KTempFile* theFile = new KTempFile();
-	QTextStream* qout =  theFile->textStream() ;
-	QString output;
 	QString notKnown = i18n( "Not yet known" );
-	QPtrList<KopeteProtocol> protocols = allProtocols();
 
-	XMLHelper h;
-	output += h.content( "<?xml version=\"1.0\"?>" );
-	output += h.openTag( "contacts" );
+	QDomDocument doc( "webpresence" );
+	QDomElement root = doc.createElement( "webpresence" );
+	doc.appendChild( root );
 
 	// insert the current date/time
-	output += h.oneLineTag( "listdate",
+	QDomElement date = doc.createElement( "listdate" );
+	QDomText t = doc.createTextNode( 
 			KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
-
-	output += h.openTag( "contact", "type=\"self\"" );
+	date.appendChild( t );
+	root.appendChild( date );
 
 	// insert the user's name
+	QDomElement name = doc.createElement( "name" );
+	QDomText nameText;
 	if ( !useImName && !userName.isEmpty() )
-		output += h.oneLineTag( "name", userName );
+		nameText = doc.createTextNode( userName );
 	else
-		output += h.oneLineTag( "name", notKnown );
+		nameText = doc.createTextNode( notKnown );
+	name.appendChild( nameText );
+	root.appendChild( name );
 
-	// insert the list of the contact's protocols
-	output += h.openTag( "protocols" );
+	// insert the list of the user's accounts
+	QDomElement accounts = doc.createElement( "accounts" );
+	root.appendChild( accounts );
 
-	for ( KopeteProtocol *p = protocols.first();
-			p; p = protocols.next() )
+	QPtrList<KopeteAccount> list = KopeteAccountManager::manager()->accounts();
+	// If no accounts, stop here
+	if ( !list.isEmpty() )
 	{
-		// get all the accounts per protocol
-		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( p );
-		// If no accounts, stop here
-		if ( dict.isEmpty() )
-			continue;
-
-		output += h.openTag( "protocol" );
-		output += h.oneLineTag( "protoname", p->pluginId() );
-
-		for( QDictIterator<KopeteAccount> it( dict );
+		for( QPtrListIterator<KopeteAccount> it( list );
 			 KopeteAccount *account=it.current();
 			 ++it )
 		{
-			output += h.openTag( "account" );
+			QDomElement acc = doc.createElement( "account" );
+			//output += h.openTag( "account" );
+
+		QDomElement protoName = doc.createElement( "protocol" );
+		QDomText protoNameText = doc.createTextNode(
+				account->protocol()->pluginId() );
+		protoName.appendChild( protoNameText );
+		acc.appendChild( protoName );
 
 			KopeteContact* me = account->myself();
-			output += h.oneLineTag( "accountname",
-					( me )
+			QDomElement accName = doc.createElement( "accountname" );
+			QDomText accNameText = doc.createTextNode( ( me )
 					? me->displayName().latin1()
 					: notKnown.latin1() );
-			output += h.oneLineTag( "accountstatus",
-					( me )
+			accName.appendChild( accNameText );
+			acc.appendChild( accName );
+
+			QDomElement accStatus = doc.createElement( "accountstatus" );
+			QDomText statusText = doc.createTextNode( ( me )
 					? statusAsString( me->onlineStatus() )
-					: notKnown );
+					: notKnown.latin1() ) ;
+			accStatus.appendChild( statusText );
+			acc.appendChild( accStatus );
 
 			if ( showAddresses )
-				output += h.oneLineTag( "accountaddress",
-						( me )
+			{
+				QDomElement accAddress = doc.createElement( "accountaddress" );
+				QDomText addressText = doc.createTextNode( ( me )
 						? me->contactId().latin1()
 						: notKnown.latin1() );
+				accAddress.appendChild( addressText );
+				acc.appendChild( accAddress );
+			}
 
-			output += h.closeTag();
+			accounts.appendChild( acc );
 		}
-		output += h.closeTag();
 	}
 
-	// finish off neatly
-	output += h.closeTag();
-	output += h.closeTag();
-	output += h.closeTag();
-
-	// write our XML
-	*qout << output;
-	
-	theFile->close();
-	return theFile;
+	// write the XML to a temporary file
+	KTempFile* file = new KTempFile();
+	QTextStream *stream = file->textStream();
+	stream->setEncoding( QTextStream::UnicodeUTF8 );
+	doc.save( *stream, 0 );
+	file->close();
+	return file;
 }
 
 bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
@@ -379,75 +385,6 @@ QString WebPresencePlugin::statusAsString( const KopeteOnlineStatus &newStatus )
 	}
 
 	return status;
-}
-
-WebPresencePlugin::XMLHelper::XMLHelper()
-{
-	depth = 0;
-	stack = new QValueStack<QString>();
-}
-
-WebPresencePlugin::XMLHelper::~XMLHelper()
-{
-	delete stack;
-}
-
-QString WebPresencePlugin::XMLHelper::oneLineTag( QString name, QString content, QString attrs )
-{
-	QString out;
-	out.fill( '\t', depth );
-	out += "<" + name;
-	if ( !attrs.isEmpty() )
-		out += " " + attrs;
-	if ( !content.isEmpty() )
-		out += ">" + content + "</" + name + ">\n";
-	else
-		out += "/>\n";
-	return out;
-}
-
-QString WebPresencePlugin::XMLHelper::openTag( QString name, QString attrs )
-{
-	QString out;
-	out.fill( '\t', depth++ );
-	out += "<" + name;
-	if ( !attrs.isEmpty() )
-		out += " " + attrs;
-	out += ">\n";
-
-	stack->push( name );
-
-	return out;
-}
-
-QString WebPresencePlugin::XMLHelper::content( QString content )
-{
-	QString out;
-	out.fill( '\t', depth );
-	out += content + "\n";
-
-	return out;
-}
-
-QString WebPresencePlugin::XMLHelper::closeTag()
-{
-	QString out;
-	out.fill(  '\t', --depth );
-	out += "</" + stack->pop () + ">\n";
-
-	return out;
-}
-
-QString WebPresencePlugin::XMLHelper::closeAll()
-{
-	QString out;
-	while ( !stack->isEmpty() )
-	{
-		out.fill(   '\t', --depth );
-		out += "</" + stack->pop () + ">\n";
-	}
-
-	return out;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

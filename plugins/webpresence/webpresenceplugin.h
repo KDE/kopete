@@ -3,9 +3,9 @@
 
     Kopete Web Presence plugin
 
-    Copyright (c) 2002 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                    	*
@@ -106,24 +106,6 @@ protected:
 
 	// The file to be uploaded to the WWW
 	KTempFile *m_output;
-
-	// Helper class to produce the XML
-	class XMLHelper
-	{
-		public:
-			XMLHelper();
-			virtual ~XMLHelper();
-			QString oneLineTag( QString name,
-					QString content = QString::null,
-					QString attrs = QString::null);
-			QString openTag( QString name, QString attrs = QString::null );
-			QString content( QString content );
-			QString closeTag();
-			QString closeAll();
-		private:
-			QValueStack<QString> *stack;
-			int depth;
-	};
 };
 
 #endif

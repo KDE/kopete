@@ -2,49 +2,33 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <!-- NB You will have to create a dir 'images' at the upload location containing the files named below -->
-	<xsl:template match="contacts">
+	<xsl:template match="webpresence">
 		<html>
-			<head><title>My IM Status</title></head>
+			<head><title>My IM Status with images</title></head>
 			<body>
-				<table>
-					<xsl:apply-templates select="contact"/>
-				</table>
+				<xsl:value-of select="name"/>
+				<xsl:apply-templates select="accounts"/>
 				<hr/>
 				<font size="-2">
-					Last update at: 
+					Last update at:
 					<xsl:value-of select="listdate"/>
 				</font>
 			</body>
 		</html>
 	</xsl:template>
 
-	<xsl:template match="contact">
-		<tr>
-			<td>
-				<xsl:value-of select="name"/>
-			</td>
-			<td>
-				<xsl:apply-templates select="protocols"/>
-			</td>
-		</tr>
-	</xsl:template>
 
-	<xsl:template match="protocols">
+	<xsl:template match="accounts">
 		<table>
-			<xsl:apply-templates select="protocol"/>
+			<xsl:apply-templates select="account"/>
 		</table>
 	</xsl:template>
 
-	<xsl:template match="protocol">
+	<xsl:template match="account">
 		<tr>
 			<td>
-				<xsl:apply-templates select="protoname"/>
+				<xsl:apply-templates select="protocol"/>
 			</td>
-			<xsl:apply-templates select="account"/>
-		</tr>
-	</xsl:template>
-
-	<xsl:template match="account">
 			<td>
 				<xsl:value-of select="accountname"/>
 			</td>
@@ -54,9 +38,10 @@
 			<td>
 				<xsl:value-of select="accountaddress"/>
 			</td>
+		</tr>
 	</xsl:template>
 
-	<xsl:template match="protoname">
+	<xsl:template match="protocol">
 		<xsl:choose>
 			<xsl:when test=".='MSNProtocol'">
 				<!-- MSN gubbins here -->
