@@ -58,9 +58,9 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 		pluginStatic_ = this;
 
 	m_services.insert("babelfish", "BabelFish");
-    m_services.insert("google", "Google");
+	m_services.insert("google", "Google");
 
-    m_langs.insert("null", i18n("Unknown"));
+	m_langs.insert("null", i18n("Unknown"));
 	m_langs.insert("en", i18n("English"));
 	m_langs.insert("zh", i18n("Chinese"));
 	m_langs.insert("fr", i18n("French"));
@@ -99,18 +99,18 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 
 	/* Google Service */
 	m_supported["google"].append("en_de");
-    m_supported["google"].append("en_es");
+	m_supported["google"].append("en_es");
 	m_supported["google"].append("en_fr");
 	m_supported["google"].append("en_it");
 	m_supported["google"].append("en_pt");
 	m_supported["google"].append("de_en");
 	m_supported["google"].append("es_en");
 	m_supported["google"].append("fr_en");
-    m_supported["google"].append("fr_de");
+	m_supported["google"].append("fr_de");
 	m_supported["google"].append("it_en");
 	m_supported["google"].append("pt_en");
 
-    QMap<QString,QString>::ConstIterator i;
+	QMap<QString,QString>::ConstIterator i;
 
 	for ( i = m_langs.begin(); i != m_langs.end() ; ++i )
 	{
@@ -124,7 +124,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 		m_servicesIntKeyMap[m_sc] = i.key();
 		m_servicesKeyIntMap[i.key()] = m_sc;
 		m_sc++;
-	}	
+	}
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
  
@@ -192,8 +192,10 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 
 	m_actionLanguage->setItems( keys );
 
-	if ( ( m_langMap[m] != 0L ) || ( m_langMap[m] != "null") )
-		m_actionLanguage->setCurrentItem( languageIndex(m_langMap[m]) );
+	if ( ( m_langMap[m] == 0L ) || ( m_langMap[m] == "" ) )
+		m_langMap[m] = "null";
+
+	m_actionLanguage->setCurrentItem( languageIndex(m_langMap[m]) );
 
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
 	m_actionCollection->insert(m_actionLanguage);
@@ -203,21 +205,21 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 
 void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
-    kdDebug() << "[Translator] Incoming message " << msg.timestamp().toString("hhmmsszzz") << endl;
+	kdDebug() << "[Translator] Incoming message " << msg.timestamp().toString("hhmmsszzz") << endl;
 
 	QString src_lang;
-    QString dst_lang;
+	QString dst_lang;
 
 	if ( (msg.direction() == KopeteMessage::Inbound) && ( msg.body() != QString::null ) )
-    {
-        KopeteMetaContact *from = msg.from()->metaContact();
+	{
+		KopeteMetaContact *from = msg.from()->metaContact();
 		if ( m_langMap.contains( from ) && (m_langMap[from] != "null"))
-    	{
+		{
 			src_lang = m_langMap[ from ];
 		}
 		else
 		{
-            kdDebug() << "[Translator] ( Incoming) Cannot determine src Metacontact language (" << from->displayName() << ")" << endl;
+			kdDebug() << "[Translator] ( Incoming) Cannot determine src Metacontact language (" << from->displayName() << ")" << endl;
 			return;
 		}
 
@@ -225,7 +227,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 		if ( src_lang == dst_lang )
 		{
-            kdDebug() << "[Translator] ( Incoming) Src and Dst languages are the same" << endl;
+			kdDebug() << "[Translator] ( Incoming) Src and Dst languages are the same" << endl;
 			return;
 		}
 
@@ -233,7 +235,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 		QStringList s = m_supported[ m_prefs->service() ];
 		QStringList::ConstIterator i;
-        
+
 		for ( i = s.begin(); i != s.end() ; ++i )
 		{
 			if ( *i == src_lang + "_" + dst_lang )
@@ -241,43 +243,43 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 				translateMessage( msg , src_lang, dst_lang);
 				return;
 			}
-		}				
+		}
 	}
 	else
 	{
 		kdDebug() << "[Translator] Incoming, but empty body" << endl;
-	}	
+	}
 }
 
 void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
-    kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
-    kdDebug() << "[Translator] Outgoing info: " << endl
-				<< msg.body() << endl << "Direction: " << msg.direction();
-    QString src_lang;
-    QString dst_lang;
+	kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
+	kdDebug() << "[Translator] Outgoing info: " << endl
+		<< msg.body() << endl << "Direction: " << msg.direction();
+	QString src_lang;
+	QString dst_lang;
 
 	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( msg.body() != QString::null ) )
-    {
+	{
 		src_lang = m_prefs->myLang();
 		kdDebug() << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
 
 		/* Sad, we have to consideer only the first To: metacontact only */
 		KopeteMetaContact *to = msg.to().first()->metaContact();
 		if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
-    	{
+		{
 			dst_lang = m_langMap[ to ];
-            kdDebug() << "[Translator] ( Outgoing ) remote lang is: " << dst_lang << endl;
+			kdDebug() << "[Translator] ( Outgoing ) remote lang is: " << dst_lang << endl;
 		}
 		else
 		{
-            kdDebug() << "[Translator] ( Outgoing ) Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+			kdDebug() << "[Translator] ( Outgoing ) Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
 			return;
 		}
 
 		if ( src_lang == dst_lang )
 		{
-            kdDebug() << "[Translator] ( Outgoing ) Src and Dst languages are the same" << endl;
+			kdDebug() << "[Translator] ( Outgoing ) Src and Dst languages are the same" << endl;
 			return;
 		}
 
@@ -298,7 +300,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 			{
 				kdDebug() << "[Translator] ( Outgoing ) " << src_lang << " and " << dst_lang << " != " << *i<< endl;
 			}
-		}				
+		}
 	}
 	else
 	{
@@ -316,8 +318,8 @@ void TranslatorPlugin::translateMessage( KopeteMessage &msg , const QString &fro
 
 void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
 {
-		kdDebug() << "[Translator] Google Translating: [" << from << "_" << to << "] " << endl
-			<< msg.body() << endl << endl;
+	kdDebug() << "[Translator] Google Translating: [" << from << "_" << to << "] " << endl
+		<< msg.body() << endl << endl;
 
 	QString body, lp;
 	KURL translatorURL;
@@ -327,7 +329,7 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 	translatorURL = "http://translate.google.com/translate_t";
 
 	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
-    body = KURL::encode_string( msg.body() );
+	body = KURL::encode_string( msg.body() );
 
 	lp = from + "|" + to;
 
@@ -359,7 +361,7 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 	kdDebug() << "[Translator]: Google response: "<< endl << data << endl;
 
 	//QRegExp re("*-*-* (.*) *-*-*");
-    QRegExp re("<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>");
+	QRegExp re("<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>");
 	re.setMinimal(true);
 	re.match( data );
 
@@ -369,13 +371,12 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 		msg.setBody(translated);
 	else
 		msg.setBody(msg.body());
-
 }
 
 void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
 {
 	kdDebug() << "[Translator] Babel Translating: [" << from << "_" << to << "] " << endl
-			<< msg.body() << endl << endl;
+		<< msg.body() << endl << endl;
 	
 	QString body, lp;
 	KURL translatorURL;
@@ -385,7 +386,7 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 	translatorURL = "http://babel.altavista.com/tr";
 
 	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
-    body = KURL::encode_string( msg.body() );
+	body = KURL::encode_string( msg.body() );
 
 	lp = from + "_" + to;
 
@@ -417,7 +418,7 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 	kdDebug() << "[Translator]: Babelfish response: "<< endl << data << endl;
 
 	//QRegExp re("*-*-* (.*) *-*-*");
-    QRegExp re("<Div style=padding:10px;>(.*)</div");
+	QRegExp re("<Div style=padding:10px;>(.*)</div");
 	re.setMinimal(true);
 	re.match( data );
 
@@ -449,3 +450,13 @@ void TranslatorPlugin::slotSetLanguage()
 		m_langMap[ m_currentMetaContact ]= languageKey( m_actionLanguage->currentItem() );
 	}
 }
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
+

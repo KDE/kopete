@@ -53,10 +53,10 @@ TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *pare
 
 	for ( i = m.begin(); i != m.end() ; ++i )
 		preferencesDialog->m_ServiceBox->insertItem( i.data(), TranslatorPlugin::plugin()->serviceIndex(i.key()) );
-    
+
 	KGlobal::config()->setGroup("Translator Plugin");
 
-	preferencesDialog->m_LangBox->setCurrentItem( TranslatorPlugin::plugin()->languageIndex(KGlobal::config()->readEntry("myLang", "en")));
+	preferencesDialog->m_LangBox->setCurrentItem( TranslatorPlugin::plugin()->languageIndex(KGlobal::config()->readEntry("myLang", "null")));
 	preferencesDialog->m_ServiceBox->setCurrentItem( TranslatorPlugin::plugin()->serviceIndex(KGlobal::config()->readEntry("Service", "babelfish")));
 }
 

@@ -44,7 +44,7 @@ Q_OBJECT
 public:
 	TranslatorPreferences(const QString &pixmap,QObject *parent=0);
 	~TranslatorPreferences();
-   virtual void save();
+	virtual void save();
 
 	/**
 	 * Default's user language
@@ -63,6 +63,7 @@ private:
 };
 
 #endif
+
 /*
  * Local variables:
  * c-indentation-style: k&r

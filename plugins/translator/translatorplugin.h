@@ -52,7 +52,7 @@ class TranslatorPlugin : public KopetePlugin
 	Q_OBJECT
 
 public:
-    static  TranslatorPlugin  *plugin();
+	static  TranslatorPlugin  *plugin();
 
 	TranslatorPlugin( QObject *parent, const char *name, const QStringList &args );
 	~TranslatorPlugin();
@@ -96,7 +96,7 @@ public:
 
 	const QString& serviceKey( const int index )
 	{ return  m_servicesIntKeyMap[index]; };
-    
+
 public slots:
 
 	void slotIncomingMessage( KopeteMessage& msg );
@@ -117,7 +117,7 @@ private:
 	/* Known Languages key -> desc ie: en -> English */
 	QMap< QString, QString> m_langs;
 
-    /* Known Services key -> desc ie: en -> English */
+	/* Known Services key -> desc ie: en -> English */
 	QMap< QString, QString> m_services;
 	/* Supported translations per service, src_dst format ( ie: en_es )*/
 	QMap< QString, QStringList > m_supported;
@@ -125,18 +125,18 @@ private:
 	/* Each person language */
 	QMap<const KopeteMetaContact*, QString> m_langMap;
 
-   	/* My language for each metacontact */
-    QMap<const KopeteMetaContact*, QString> m_myLangMap;
+	/* My language for each metacontact */
+	QMap<const KopeteMetaContact*, QString> m_myLangMap;
 
 	/* My default language */
 	QString m_myLang;
 
 	/* int to lang key and viceversa*/
-    QMap<int, QString> m_langIntKeyMap;
+	QMap<int, QString> m_langIntKeyMap;
 	QMap<QString, int> m_langKeyIntMap;
 
 	/* int to lang key and viceversa*/
-    QMap<int, QString> m_servicesIntKeyMap;
+	QMap<int, QString> m_servicesIntKeyMap;
 	QMap<QString, int> m_servicesKeyIntMap;
 
 	/* Lang counter */
@@ -160,4 +160,12 @@ private:
 
 #endif
 
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
 
