@@ -73,8 +73,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 
 	QObject::connect( this, SIGNAL( needReconnect() ), this, SLOT( slotNeedReconnect() ) );
 
-	if ( autoLogin() )
-		connect();
 }
 
 YahooAccount::~YahooAccount()
