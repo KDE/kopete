@@ -29,31 +29,32 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
-
+#include <qlineedit.h>
 // KDE Includes
-#include <kconfig.h>
+
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
 
 
 // Yahoo Preferences
-YahooPreferences::YahooPreferences(const QString & pixmap,
-					QObject * parent) : ConfigModule(i18n("Yahoo Plugin"),
-					i18n("Yahoo Protocol"), pixmap, parent)
+YahooPreferences::YahooPreferences(const QString &pixmap, QObject *parent)
+	: ConfigModule(i18n("Yahoo Plugin"), i18n("Yahoo Protocol"), pixmap, parent)
 {
 	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap << ", <parent>)");
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	m_preferencesDialog = new dlgPreferences(this);
-	m_preferencesDialog->show();
+	m_yahooPrefsDialog = new dlgPreferences(this);
+	m_yahooPrefsDialog->show();
 
-	KGlobal::config()->setGroup("Yahoo");
-	m_preferencesDialog->mServer->setText(KGlobal::config()->readEntry("Server", "scs.yahoo.com"));
-	m_preferencesDialog->mPort->setValue(KGlobal::config()->readNumEntry("Port", 5050));
-	m_preferencesDialog->mLogAll->setChecked(KGlobal::config()->readBoolEntry("LogAll", true));
-	m_preferencesDialog->mImportContacts->setChecked(KGlobal::config()->readBoolEntry("ImportContacts", true));
-	m_preferencesDialog->mUseGroupNames->setChecked(KGlobal::config()->readBoolEntry("UseGroupNames", false));
+	m_config = KGlobal::config();
+
+	m_config->setGroup("Yahoo");
+	m_yahooPrefsDialog->mServer->setText(m_config->readEntry("Server", "scs.yahoo.com"));
+	m_yahooPrefsDialog->mPort->setValue(m_config->readNumEntry("Port", 5050));
+	m_yahooPrefsDialog->mLogAll->setChecked(m_config->readBoolEntry("LogAll", true));
+	m_yahooPrefsDialog->mImportContacts->setChecked(m_config->readBoolEntry("ImportContacts", true));
+	m_yahooPrefsDialog->mUseGroupNames->setChecked(m_config->readBoolEntry("UseGroupNames", false));
 }
 
 
@@ -68,14 +69,14 @@ YahooPreferences::~YahooPreferences()
 void YahooPreferences::save()
 {
 	DEBUG(YDMETHOD, "YahooPreferences::save()");
-	KConfig *config = KGlobal::config();
-	config->setGroup("Yahoo");
-	config->writeEntry("Server", m_preferencesDialog->mServer->text());
-	config->writeEntry("Port", m_preferencesDialog->mPort->text());
-	config->writeEntry("LogAll", m_preferencesDialog->mLogAll->isChecked());
-	config->writeEntry("ImportContacts", m_preferencesDialog->mImportContacts->isChecked());
-	config->writeEntry("UseGroupNames", m_preferencesDialog->mUseGroupNames->isChecked());
-	config->sync();
+
+	m_config->setGroup("Yahoo");
+	m_config->writeEntry("Server", m_yahooPrefsDialog->mServer->text());
+	m_config->writeEntry("Port", m_yahooPrefsDialog->mPort->text());
+	m_config->writeEntry("LogAll", m_yahooPrefsDialog->mLogAll->isChecked());
+	m_config->writeEntry("ImportContacts", m_yahooPrefsDialog->mImportContacts->isChecked());
+	m_config->writeEntry("UseGroupNames", m_yahooPrefsDialog->mUseGroupNames->isChecked());
+	m_config->sync();
 	emit saved();
 }
 

@@ -26,7 +26,8 @@
 
 // Kopete Includes
 #include <configmodule.h>
-#include <qlineedit.h>
+#include <kconfig.h>
+
 #include <dlgpreferences.h>
 
 // QT Includes
@@ -40,8 +41,8 @@ class YahooPreferences : public ConfigModule
 	Q_OBJECT
 public:
 
-	YahooPreferences(const QString & pixmap, QObject * parent = 0);
-	~YahooPreferences();	// Destructor
+	YahooPreferences(const QString &pixmap, QObject *parent = 0);
+	~YahooPreferences();
 
 	/**
 	 * Method that saves preferences
@@ -54,7 +55,8 @@ signals:
 
 private:
 
-	dlgPreferences *m_preferencesDialog;	// Preferences Dialog
+	dlgPreferences *m_yahooPrefsDialog;	// Preferences Dialog
+	KConfig *m_config;
 };
 
 #endif

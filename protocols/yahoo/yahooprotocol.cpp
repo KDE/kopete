@@ -2,6 +2,7 @@
     yahooprotocol.cpp - Yahoo Plugin for Kopete
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2003 by Matt Rogers <matt@matt.rogers.name>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -37,10 +38,8 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 {
 	kdDebug(14180) << "YahooProtocol::YahooProtocol()" << endl;
 
-	if(!s_protocolStatic_)
-		s_protocolStatic_ = this;
-	else
-		kdDebug(14180) << "YahooProtocol already initialized" << endl;
+	s_protocolStatic_ = this;
+
 
 	// Init actions and icons and create the status bar icon
 	// TODO: this will be useful for introduing yahoo specific actions in the future, but i cant be bothered yet.
@@ -59,10 +58,11 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
 }
 
+
 YahooProtocol::~YahooProtocol()
 {
 	kdDebug(14180) << "YahooProtocol::~YahooProtocol()" << endl;
-	delete m_prefs;
+	//delete m_prefs;
 	s_protocolStatic_ = 0L;
 }
 
@@ -86,12 +86,12 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	QString accountId = serializedData[ "accountId" ];
 
 	YahooAccount *theAccount = static_cast<YahooAccount*>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
-	
+
 	if(!theAccount)
 	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
 		return;
 	}
-	
+
 	if(theAccount->contact(contactId))
 	{	kdDebug( 14180 ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
 		return;
@@ -103,12 +103,12 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 void YahooProtocol::slotSettingsChanged()
 {
 	kdDebug(14180) << "YahooProtocol::slotSettingsChanged()" <<endl;
-	m_server   = KGlobal::config()->readEntry("Server", "scs.yahoo.com");	
+	m_server   = KGlobal::config()->readEntry("Server", "scs.yahoo.com");
 	m_port     = KGlobal::config()->readNumEntry("Port", 5050);
 	m_logAll   = KGlobal::config()->readBoolEntry("LogAll", true);
 	m_importContacts   = KGlobal::config()->readBoolEntry("ImportContacts", true);
 	m_useGroupNames     = KGlobal::config()->readNumEntry("UseGroupNames", false);
-	
+
 	if(m_server == "cs.yahoo.com") m_server = "scs.yahoo.com";
 	// FIXME: take out the above line asap --- it's a nasty fix for people with a broken config from old versions.
 }

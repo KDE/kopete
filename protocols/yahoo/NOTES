@@ -1,18 +1,11 @@
-2003-05-26 - Stuff (by mattr)
-yahoo doesn't seem to do XSL parsing correctly.
-sending <b>bold text</b> shows up as "<b>bold text</b>" in the chat window
+2003-06-10 - General Status (mattr)
+The config dialog doesn't destroy itself when unloaded.
+XSL parsing works now.
 kopete currently crashes with a custom away mode
-
-
-2003.04.06 - General status
 Pretty much all basic functionality is there now.
-Chatting works fine, away messages fine, contact status fine.
-All away modes are supported, except idle, cos I don't know what to do with it.
 Main thing to note is invisible mode, which won't work if you go straight from
   offline->invisible, since it will go offline->online->invisible and the
   opposite end will notice you go online.
 
-2002.04.27 - Away mode
-Away mode is Idle mode in yahoo.
 
 

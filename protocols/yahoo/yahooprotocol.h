@@ -2,6 +2,7 @@
     yahooprotocol.h - Yahoo Plugin for Kopete
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2003 by Matt Rogers <matt@matt.rogers.name>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -48,13 +49,12 @@ class YahooProtocol : public KopeteProtocol
 public:
 	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
 	~YahooProtocol();
-	
+
 	static YahooProtocol *protocol();
 
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
-									 const QMap<QString,
-									 QString> &serializedData,
-									 const QMap<QString, QString> &addressBookData );
+					 const QMap<QString,QString> &serializedData,
+					 const QMap<QString, QString> &addressBookData );
 
 	QString server() { return m_server; }
 	int port() { return m_port; }
@@ -74,7 +74,7 @@ public slots:
 private:
 	static YahooProtocol* s_protocolStatic_;
 	YahooPreferences *m_prefs;
-	
+
 	// Configuration data
 	QString m_server;
 	int m_port;
