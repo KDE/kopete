@@ -44,14 +44,14 @@
 #include "libgadu.h"
 
 GaduDCCTransaction::GaduDCCTransaction( gg_dcc* socket, GaduDCC* parent, const char* name )
-:QObject( parent, name ), read_( NULL ), write_( NULL ), account( NULL ), contact( NULL ), transfer_( NULL ) 
+:QObject( parent, name ), read_( NULL ), write_( NULL ), account( NULL ), contact( NULL ), transfer_( NULL ), peer( 0 ) 
 {
 	dccSock_ = socket;
 	gaduDCC_ = parent;
 }
 
 GaduDCCTransaction::GaduDCCTransaction( gg_dcc* socket, GaduContact* cont, GaduDCC* parent, const char* name )
-:QObject( parent, name), read_( NULL ), write_( NULL ), account( NULL ), contact( cont ), transfer_( NULL )
+:QObject( parent, name), read_( NULL ), write_( NULL ), account( NULL ), contact( cont ), transfer_( NULL ), peer( 0 )
 {
 	dccSock_ = socket;
 	gaduDCC_ = parent;

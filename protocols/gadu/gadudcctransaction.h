@@ -79,7 +79,7 @@ private:
 	KopeteTransfer* transfer_;
 	long transferId_;
 	QFile localFile_;
-	bool peer;
+	int peer;
 	unsigned int incoming;
 	GaduDCC* gaduDCC_;
 };
