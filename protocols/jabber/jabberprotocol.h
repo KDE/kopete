@@ -50,6 +50,7 @@ class JabberProtocol : public KopeteProtocol
 
 	friend class JabberContact; /* Friends can touch each other's private parts. */
 	friend class DlgJabberServices;
+	friend class DlgJabberRegister;
 
 public:
 	/*********************************************************************

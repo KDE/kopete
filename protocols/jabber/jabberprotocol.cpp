@@ -1521,7 +1521,7 @@ void JabberProtocol::slotGetServices()
 
 	dialog->show();
 	dialog->raise();
-	
+
 }
 
 #include "jabberprotocol.moc"
