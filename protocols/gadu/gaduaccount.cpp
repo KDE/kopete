@@ -848,7 +848,7 @@ GaduAccount::slotExportContactsListToFile()
 
 	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-save", false );
-	p->saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	p->saveListDialog->setCaption( i18n("Save Contacts List for Account %1 As").arg( myself()->displayName() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
 
@@ -856,7 +856,7 @@ GaduAccount::slotExportContactsListToFile()
 
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....
-			error( i18n( "Unable to create temporary file" ), i18n( "Save Contacts list failed" ) );
+			error( i18n( "Unable to create temporary file." ), i18n( "Save Contacts List Failed" ) );
 		}
 		else {
 			QTextStream* tempStream = tempFile.textStream();
@@ -870,7 +870,7 @@ GaduAccount::slotExportContactsListToFile()
 								);
 			if ( !res ) {
 				// say it failed
-				error( KIO::NetAccess::lastErrorString(), i18n( "Save Contacts list failed" ) );
+				error( KIO::NetAccess::lastErrorString(), i18n( "Save Contacts List Failed" ) );
 			}
 		}
 
@@ -890,7 +890,7 @@ GaduAccount::slotImportContactsFromFile()
 
 	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-load", true );
-	p->loadListDialog->setCaption( i18n(" Load Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	p->loadListDialog->setCaption( i18n("Load Contacts List for Account %1 As").arg( myself()->displayName() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
 
@@ -917,13 +917,13 @@ GaduAccount::slotImportContactsFromFile()
 			}
 			else {
 				error( tempFile.errorString(),
-					i18n( "Contacts list Load has failed" ) );
+					i18n( "Contacts List Load Has Failed" ) );
 			}
 		}
 		else {
 			// say, it failed misourably
 			error( KIO::NetAccess::lastErrorString(),
-				i18n( "Contacts list Load has failed" ) );
+				i18n( "Contacts List Load Has Failed" ) );
 		}
 
 	}

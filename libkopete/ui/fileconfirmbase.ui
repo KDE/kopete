@@ -30,7 +30,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>A user is trying to send you a file. The file will only be downloaded if you accept this dialog. If you do not wish to receive it, please click 'Decline'. This file will never be executed by Kopete at any point during or after the transfer.</string>
+                <string>A user is trying to send you a file. The file will only be downloaded if you accept this dialog. If you do not wish to receive it, please click 'Refuse'. This file will never be executed by Kopete at any point during or after the transfer.</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>
