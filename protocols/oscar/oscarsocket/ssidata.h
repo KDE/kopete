@@ -47,6 +47,7 @@ struct SSI
 	int type;
 	char *tlvlist;
 	int tlvlength;
+	bool waitingAuth;
 };
 
 /*
@@ -143,6 +144,9 @@ class SSIData : public QPtrList<SSI>
 
 		// ===============================================================================
 
+		void setWaitingAuth( SSI* item, bool waiting );
+
+		bool waitingAuth( SSI* item );
 		/*
 		 * Prints out the SSI data
 		 */

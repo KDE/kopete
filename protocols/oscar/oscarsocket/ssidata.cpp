@@ -40,6 +40,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 	SSI *newitem = new SSI;
 	newitem->name = name;
 	newitem->gid = tmp->gid;
+	newitem->waitingAuth = false;
 
 	//find the largest bid (=contact id) in our group
 	unsigned short maxbid = 0;
@@ -61,6 +62,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 		// TLV(0x0066) with no data
 		newitem->tlvlist = "\x00\x66\x00\x00";
 		newitem->tlvlength = 4;
+		newItem->waitingAuth = true;
 	}
 
 	append(newitem);
@@ -252,6 +254,19 @@ unsigned short SSIData::maxGroupId()
 	}
 	return maxId;
 }
+
+void SSIData::setWaitingAuth( SSI* item, bool waiting )
+{
+	if ( item )
+		item->waitingAuth = waiting;
+}
+
+bool SSIData::waitingAuth( SSI* item );
+{
+	if ( item )
+		return item->waitingAuth;
+}
+
 
 void SSIData::print()
 {

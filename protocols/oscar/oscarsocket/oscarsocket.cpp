@@ -1134,6 +1134,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 		else
 			ssi->tlvlist = 0L;
+		ssi->waitingAuth = false;
 		mSSIData.append(ssi);
 
 
@@ -1146,10 +1147,11 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 		{
 			case 0x0000: // normal contact
 			{
-				// In case we already know that contact
-				OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[ssi->name]);
-
+				SSI* group = mSSIData.findGroup( ssi->gid );
 				QString groupName = "\"Group not found\"";
+
+				if ( group )
+					groupName = ssi->name;
 
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to group " << ssi->gid << " (" <<  groupName << ")" << endl;
@@ -1167,7 +1169,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 						{
 							if(t->length > 0)
 							{
-								// TODO: reimplement
+								kdDebug(14150) << k_funcinfo << "sent nickname '"
+									 << t->data << "'" << endl;
 							}
 							break;
 						}
@@ -1184,6 +1187,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 							/*kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;*/
 							//TODO: reimplement somehow. Set waitauth flag and add to blm lists
+							ssi->waitingAuth = true;
+							blmBuddies << ssi->name;
 							
 							break;
 						}
@@ -1224,7 +1229,6 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				} // END for()
 
 				lst.clear();
-				//TODO Find new way to add buddy
 				break;
 			}
 
@@ -1246,7 +1250,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Adding Group " <<
 						ssi->gid << " (" <<  ssi->name << ")" << endl;
-					//TODO Add group new way
+					mAccount->addGroup( ssi->name );
 				}
 				break;
 			}
@@ -3346,6 +3350,8 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 
 	OscarContact *contact = 0L;
 
+	SSI* ssiItem = mSSIData.findContact( buddy.contactName, buddy.groupName );
+
 	if ( !buddy.contactName.isEmpty() )
 		contact = static_cast<OscarContact*>(mAccount->contacts()[buddy.contactName]);
 
@@ -3376,6 +3382,7 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 			contact->requestAuth();
 			sendAddBuddy(buddy.contactName, buddy.groupName, true);
 			sendAddBuddylist(buddy.contactName);
+			ssiItem->waitingAuth = true;
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
