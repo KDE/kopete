@@ -6,7 +6,7 @@ INCLUDES = -I$(srcdir)/../../libkopete \
         $(all_includes)
 kde_module_LTLIBRARIES = kopete_jabber.la
 
-kopete_jabber_la_SOURCES     = jabberprotocol.cpp kjabber.cpp jabbercontact.cpp protocol.cpp
+kopete_jabber_la_SOURCES     = jabberprotocol.cpp kjabber.cpp jabbercontact.cpp jabberprefs.cpp protocol.cpp
 kopete_jabber_la_METASOURCES = AUTO
 kopete_jabber_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_jabber_la_LIBADD      = ../../libkopete/libkopete.la ui/libkopetejabberui.la

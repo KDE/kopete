@@ -27,6 +27,7 @@
 #include "jabbercontact.h"
 #include "jabberaddcontactpage.h"
 #include "kjabber.h"
+#include "jabberprefs.h"
 #include "kopeteprotocol.h"
 #include <kmessagebox.h>
 
@@ -87,6 +88,7 @@ public slots:
   void slotNewContact(QString, QString, QString);
   void slotContactUpdated(QString, QString, QString, QString);
   void slotUserWantsAuth(QString);
+  void slotSettingsChanged(void);
 
 signals:
   void protocolUnloading();
@@ -120,6 +122,8 @@ private:
 	KPopupMenu *popup;
 
   KMessageBox *authContact;
+
+  JabberPreferences *mPrefs;
 
   KJabber *protocol;
 };

@@ -44,13 +44,22 @@ JabberProtocol::JabberProtocol(): QObject(0, "JabberProtocol"), KopeteProtocol()
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
 	statusBarIcon->setPixmap(offlineIcon);
 
-	m_Username = "fooishbar";
-	m_Password = "moocows49";
-	m_Server = "jabber.org";
-  m_Resource = "tsubasa (Kopete)";
-	m_Port = 5222;
+  mPrefs = new JabberPreferences("jabber_protocol_32", this);
+  connect(mPrefs, SIGNAL(saved(void)), this, SLOT(settingsChanged(void)));
 
-	Connect();
+  KGlobal::config()->setGroup("Jabber");
+	if ((KGlobal::config()->readEntry("UserID", "") == "" ) || (KGlobal::config()->readEntry("Password", "") == "" )) 	{
+		QString emptyText = i18n( "<qt>If you have a Jabber account, please configure it in the Kopete Settings. If you don't, please create one with another app; registering is not yet supported in Kopete.</qt>" );
+		QString emptyCaption = i18n( "No Jabber Configuration found!" );
+
+		KMessageBox::error(kopeteapp->mainWindow(), emptyText, emptyCaption);
+	}
+	/** Autoconnect if is selected in config */
+	if (KGlobal::config()->readBoolEntry("AutoConnect", "0")) {
+		Connect();
+	}
+
+  slotSettingsChanged();
 }
 
 JabberProtocol::~JabberProtocol()
@@ -260,6 +269,14 @@ void JabberProtocol::slotContactUpdated(QString userID, QString name, QString st
 
 void JabberProtocol::slotNewContact(QString userID, QString name, QString group) {
   kopeteapp->contactList()->addContact(new JabberContact(userID, name, group, this), group);
+}
+
+void JabberProtocol::slotSettingsChanged() {
+  m_Username = KGlobal::config()->readEntry("UserID", "");
+  m_Password = KGlobal::config()->readEntry("Password", "");
+  m_Resource = KGlobal::config()->readEntry("Resource", "Kopete");
+  m_Server = KGlobal::config()->readEntry("Server", "jabber.org");
+  m_Port = KGlobal::config()->readNumEntry("Port", 5222);
 }
 
 #include "jabberprotocol.moc"
