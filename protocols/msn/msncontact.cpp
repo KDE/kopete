@@ -236,7 +236,9 @@ void MSNContact::setBlocked( bool blocked )
 	{
 		m_blocked = blocked;
 		//update the status
-		setOnlineStatus(onlineStatus());
+		setOnlineStatus(m_currentStatus);
+		//m_currentStatus is used here.  previously it was  onlineStatus()  but this may cause problem when
+		// the account is offline because of the  Kopete::Contact::OnlineStatus()  account offline hack.
 	}
 }
 
@@ -548,47 +550,45 @@ void MSNContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked") ,  i18n("%1|Blocked").arg( status.description() ) ) );
 	}
-	else
-	{
-		if(status.internalStatus() >= 15)
-		{	//the user is not blocked, but the status is blocked
-			switch(status.internalStatus()-15)
-			{
-				case 1:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->NLN);
-					break;
-				case 2:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->BSY);
-					break;
-				case 3:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->BRB);
-					break;
-				case 4:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->AWY);
-					break;
-				case 5:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->PHN);
-					break;
-				case 6:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->LUN);
-					break;
-				case 7:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->FLN);
-					break;
-				case 8:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->HDN);
-					break;
-				case 9:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->IDL);
-					break;
-				default:
-					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->UNK);
-					break;
-			}
+	else if(!isBlocked() && status.internalStatus() >= 15)
+	{	//the user is not blocked, but the status is blocked
+		switch(status.internalStatus()-15)
+		{
+			case 1:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->NLN);
+				break;
+			case 2:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->BSY);
+				break;
+			case 3:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->BRB);
+				break;
+			case 4:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->AWY);
+				break;
+			case 5:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->PHN);
+				break;
+			case 6:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->LUN);
+				break;
+			case 7:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->FLN);
+				break;
+			case 8:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->HDN);
+				break;
+			case 9:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->IDL);
+				break;
+			default:
+				Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->UNK);
+				break;
 		}
-		else
-			Kopete::Contact::setOnlineStatus(status);
 	}
+	else
+		Kopete::Contact::setOnlineStatus(status);
+	m_currentStatus=status;
 }
 
 void MSNContact::slotSendMail()
@@ -632,6 +632,8 @@ void MSNContact::setObject(const QString &obj)
 
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
+
+//	manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
 
 #include "msncontact.moc"

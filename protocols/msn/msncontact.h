@@ -23,6 +23,7 @@
 #define MSNCONTACT_H
 
 #include "kopetecontact.h"
+#include "kopeteonlinestatus.h"
 
 #include <kurl.h>
 
@@ -169,6 +170,12 @@ private:
 	KAction *actionSendMail;
 
 	QString m_obj; //the MSNObject
+
+	/**
+	 * keep the current status here.  (it's normally already in Kopete::Contact::d->onlineStatus)
+	 * This is a workaround to prevent problems with the account offline status.
+	 */
+	Kopete::OnlineStatus m_currentStatus;
 
 	//MSNProtocol::deserializeContact need to acess some contact insternals
 	friend class MSNProtocol;
