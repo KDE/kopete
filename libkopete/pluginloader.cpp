@@ -210,8 +210,21 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 	QString pluginId = spec;
 	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 
-	KopetePlugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>( QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-Kopete-Plugin-Id]=='%1'" ).arg( pluginId ), this );
+	KopetePlugin *plugin;
+
+	plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
+		QString::fromLatin1("Kopete/Plugin"),
+		QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this);
+
+	// BEGIN ===========================================================================
+	// TODO: REMOVE THIS ASAP, WORKAROUND FOR BROKEN KDELIBS AROUND APRIL 2003!
+	if( !plugin ) // maybe it's a protocol?
+	{
+		plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
+			QString::fromLatin1("Kopete/Protocol"),
+			QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this);
+	}
+	// END =============================================================================
 
 	//KopetePlugin *plugin = m_loadedPlugins[ spec ];
 	if( plugin )
