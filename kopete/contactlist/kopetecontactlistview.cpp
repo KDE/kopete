@@ -206,7 +206,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 #ifndef QT_QLISTVIEW_FIXED_TOOLTIPS
 	QToolTip::remove( viewport() );
 #endif
-    new KopeteContactListViewToolTip( viewport(), this );
+	m_tooltip = new KopeteContactListViewToolTip( viewport(), this );
 
 	connect( this,
 		SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
@@ -336,6 +336,8 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 
 KopeteContactListView::~KopeteContactListView()
 {
+	QToolTip::remove( viewport() );
+	delete m_tooltip;
 }
 
 void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )

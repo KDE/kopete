@@ -42,6 +42,8 @@ class KAction;
 class KListAction;
 class KActionMenu;
 
+class KopeteContactListViewToolTip;
+
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
@@ -153,6 +155,7 @@ private:
 
 	QPoint m_startDragPos;
 
+	KopeteContactListViewToolTip *m_tooltip;
 
 	/* ACTIONS */
 	KAction *actionSendFile;
