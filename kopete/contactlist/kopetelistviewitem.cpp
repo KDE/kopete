@@ -37,6 +37,8 @@
 #  include <X11/extensions/Xrender.h>
 #endif
 
+#include <limits>
+
 namespace Kopete {
 namespace UI {
 namespace ListView {
@@ -146,23 +148,19 @@ int Component::minWidth() { return d->minWidth; }
 int Component::minHeight() { return d->minHeight; }
 int Component::widthForHeight( int ) { return minWidth(); }
 int Component::heightForWidth( int ) { return minHeight(); }
-bool Component::stretchHoriz() { return d->growHoriz; }
-bool Component::stretchVert() { return d->growVert; }
 
-bool Component::setMinWidth( int width, bool canUseMore )
+bool Component::setMinWidth( int width )
 {
-	if ( d->minWidth == width && d->growHoriz == canUseMore ) return false;
+	if ( d->minWidth == width ) return false;
 	d->minWidth = width;
-	d->growHoriz = canUseMore;
 	
 	d->parent->componentResized( this );
 	return true;
 }
-bool Component::setMinHeight( int height, bool canUseMore )
+bool Component::setMinHeight( int height )
 {
-	if ( d->minHeight == height && d->growVert == canUseMore ) return false;
+	if ( d->minHeight == height ) return false;
 	d->minHeight = height;
-	d->growVert = canUseMore;
 
 	d->parent->componentResized( this );
 	return true;
@@ -236,29 +234,42 @@ BoxComponent::~BoxComponent()
 int BoxComponent::widthForHeight( int height )
 {
 	if ( d->direction != Horizontal )
-		return Component::widthForHeight( height );
-
-	int width = (components() - 1) * Private::padding;
-	for ( uint n = 0; n < components(); ++n )
-		width += component( n )->widthForHeight( height );
-	return width;
+	{
+		int width = 0;
+		for ( uint n = 0; n < components(); ++n )
+			width = QMAX( width, component( n )->widthForHeight( height ) );
+		return width;
+	}
+	else
+	{
+		int width = (components() - 1) * Private::padding;
+		for ( uint n = 0; n < components(); ++n )
+			width += component( n )->widthForHeight( height );
+		return width;
+	}
 }
 
 int BoxComponent::heightForWidth( int width )
 {
 	if ( d->direction == Horizontal )
-		return Component::heightForWidth( width );
-
-	int height = (components() - 1) * Private::padding;
-	for ( uint n = 0; n < components(); ++n )
-		height += component( n )->heightForWidth( width );
-	return height;
+	{
+		int height = 0;
+		for ( uint n = 0; n < components(); ++n )
+			height = QMAX( height, component( n )->heightForWidth( width ) );
+		return height;
+	}
+	else
+	{
+		int height = (components() - 1) * Private::padding;
+		for ( uint n = 0; n < components(); ++n )
+			height += component( n )->heightForWidth( width );
+		return height;
+	}
 }
 
 void BoxComponent::calcMinSize()
 {
 	int sum = (components() - 1) * Private::padding, max = 0;
-	bool stretchH = false, stretchV = false;
 	for ( uint n = 0; n < components(); ++n )
 	{
 		Component *comp = component( n );
@@ -272,20 +283,18 @@ void BoxComponent::calcMinSize()
 			max = QMAX( max, comp->minWidth() );
 			sum += comp->minHeight();
 		}
-		if ( comp->stretchHoriz() ) stretchH = true;
-		if ( comp->stretchVert() ) stretchV = true;
 	}
 
 	bool sizeChanged = false;
 	if ( d->direction == Horizontal )
 	{
-		if ( setMinWidth( sum, stretchH ) ) sizeChanged = true;
-		if ( setMinHeight( max, stretchV ) ) sizeChanged = true;
+		if ( setMinWidth( sum ) ) sizeChanged = true;
+		if ( setMinHeight( max ) ) sizeChanged = true;
 	}
 	else
 	{
-		if ( setMinWidth( max, stretchH ) ) sizeChanged = true;
-		if ( setMinHeight( sum, stretchV ) ) sizeChanged = true;
+		if ( setMinWidth( max ) ) sizeChanged = true;
+		if ( setMinHeight( sum ) ) sizeChanged = true;
 	}
 
 	if ( sizeChanged )
@@ -300,24 +309,14 @@ void BoxComponent::layout( const QRect &rect )
 
 	bool horiz = (d->direction == Horizontal);
 	int fixedSize = 0;
-	int numVariable = 0;
 	for ( uint n = 0; n < components(); ++n )
 	{
 		Component *comp = component( n );
 		if ( horiz )
-		{
-			if ( comp->stretchHoriz() )
-				numVariable++;
 			fixedSize += comp->minWidth();
-		}
 		else
-		{
-			if ( comp->stretchVert() )
-				numVariable++;
 			fixedSize += comp->minHeight();
-		}
 	}
-	int numFixed = components() - numVariable;
 
 	// remaining space after all fixed items have been allocated
 	int padding = Private::padding;
@@ -333,13 +332,6 @@ void BoxComponent::layout( const QRect &rect )
 
 	int remaining = total - fixedSize - padding * (components() - 1);
 
-	// extra space for each variable-size and each fixed-size item
-	int eachVariable = 0;
-	if ( numVariable > 0 )
-		eachVariable = remaining / numVariable;
-	else if ( numFixed > 1 )
-		padding += remaining / ( numFixed - 1 );
-
 	// finally, lay everything out
 	int pos = 0;
 	for ( uint n = 0; n < components(); ++n )
@@ -351,22 +343,22 @@ void BoxComponent::layout( const QRect &rect )
 			rc.setLeft( rect.left() + pos );
 			rc.setTop( rect.top() );
 			rc.setHeight( rect.height() );
-			if ( comp->stretchHoriz() )
-				rc.setWidth( comp->minWidth() + eachVariable );
-			else
-				rc.setWidth( comp->minWidth() );
+			int minWidth = comp->minWidth();
+			int desiredWidth = comp->widthForHeight( rect.height() );
+			rc.setWidth( QMIN( remaining + minWidth, desiredWidth ) );
 			pos += rc.width();
+			remaining -= rc.width() - minWidth;
 		}
 		else
 		{
 			rc.setLeft( rect.left() );
 			rc.setTop( rect.top() + pos );
 			rc.setWidth( rect.width() );
-			if ( comp->stretchVert() )
-				rc.setHeight( comp->minHeight() + eachVariable );
-			else
-				rc.setHeight( comp->minHeight() );
+			int minHeight = comp->minHeight();
+			int desiredHeight = comp->heightForWidth( rect.width() );
+			rc.setHeight( QMIN( remaining + minHeight, desiredHeight ) );
 			pos += rc.height();
+			remaining -= rc.height() - minHeight;
 		}
 		comp->layout( rc & rect );
 		pos += padding;
@@ -442,20 +434,18 @@ void ImageComponent::paint( QPainter *painter, const QColorGroup & )
 class TextComponent::Private
 {
 public:
-	Private() : fixedWidth( false ), customColor( false ) {}
+	Private() : customColor( false ) {}
 	QString text;
-	bool fixedWidth;
 	bool customColor;
 	QColor color;
 	QFont font;
 };
 
-TextComponent::TextComponent( ComponentBase *parent, const QFont &font, const QString &text, bool fixedWidth )
+TextComponent::TextComponent( ComponentBase *parent, const QFont &font, const QString &text )
  : Component( parent ), d( new Private )
 {
 	setFont( font );
 	setText( text );
-	setFixedWidth( fixedWidth );
 }
 
 TextComponent::~TextComponent()
@@ -487,24 +477,9 @@ void TextComponent::setFont( const QFont &font )
 	calcMinSize();
 }
 
-bool TextComponent::fixedWidth()
-{
-	return d->fixedWidth;
-}
-
-void TextComponent::setFixedWidth( bool fixedWidth )
-{
-	if ( fixedWidth == d->fixedWidth ) return;
-	d->fixedWidth = fixedWidth;
-	calcMinSize();
-}
-
 void TextComponent::calcMinSize()
 {
-	if ( d->fixedWidth )
-		setMinWidth( QFontMetrics( font() ).width( d->text ) + 2 );
-	else
-		setMinWidth( 0, true );
+	setMinWidth( 0 );
 
 	if ( !d->text.isEmpty() )
 		setMinHeight( QFontMetrics( font() ).height() );
@@ -512,6 +487,15 @@ void TextComponent::calcMinSize()
 		setMinHeight( 0 );
 
 	repaint();
+}
+
+int TextComponent::widthForHeight( int )
+{
+	// add 2 to place an extra gap between the text and things to its right.
+	// allegedly if this is not done the protocol icons overlap the text.
+	// i however have never seen this problem (which would almost certainly
+	// be a bug somewhere else).
+	return QFontMetrics( font() ).width( d->text ) + 2;
 }
 
 QColor TextComponent::color()
@@ -548,8 +532,13 @@ void TextComponent::paint( QPainter *painter, const QColorGroup &cg )
 HSpacerComponent::HSpacerComponent( ComponentBase *parent )
  : Component( parent )
 {
-	setMinWidth( 0, true );
+	setMinWidth( 0 );
 	setMinHeight( 0 );
+}
+
+int HSpacerComponent::widthForHeight( int )
+{
+	return std::numeric_limits<int>::max();
 }
 
 // VSpacerComponent --------
@@ -558,7 +547,12 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
  : Component( parent )
 {
 	setMinWidth( 0 );
-	setMinHeight( 0, true );
+	setMinHeight( 0 );
+}
+
+int VSpacerComponent::heightForWidth( int )
+{
+	return std::numeric_limits<int>::max();
 }
 
 // Item --------

@@ -102,49 +102,37 @@ public:
 	 * being useful.
 	 */
 	int minHeight();
-	/**
-	 * Returns true if this component can make use of more horizontal space
-	 */
-	bool stretchHoriz();
-	/**
-	 * Returns true if this component can make use of more vertical space
-	 */
-	bool stretchVert();
 
 	/**
-	 * Request the width this component desires for a given @a height. By default
+	 * Returns the width this component desires for a given @a height. By default
 	 * this function returns minWidth().
 	 */
 	virtual int widthForHeight( int height );
 	/**
-	 * Request the height this component desires for a given @a width. By default
+	 * Returns the height this component desires for a given @a width. By default
 	 * this function returns minHeight().
 	 */
 	virtual int heightForWidth( int width );
-	
+
 protected:
 	/**
 	 * Change the minimum width, in pixels, this component requires in order
 	 * to be at all useful. Note: do not call this from your layout() function.
 	 * @param width the minimum width
-	 * @param canUseMore set to true if this component can usefully use more
-	 *        pixels in the X direction, false otherwise.
 	 * @return true if the size has actually changed, false if it's been set to
-	 *         the previous values. if it returns true, you do not need to relayout,
+	 *         the existing values. if it returns true, you do not need to relayout,
 	 *         since the parent component will do that for you.
 	 */
-	bool setMinWidth( int width, bool canUseMore = false );
+	bool setMinWidth( int width );
 	/**
 	 * Change the minimum height, in pixels, this component requires in order
 	 * to be at all useful. Note: do not call this from your layout() function.
 	 * @param height the minimum height
-	 * @param canUseMore set to true if this component can usefully use more
-	 *        pixels in the Y direction, false otherwise.
 	 * @return true if the size has actually changed, false if it's been set to
-	 *         the previous values. If it returns true, you do not need to relayout,
+	 *         the existing values. If it returns true, you do not need to relayout,
 	 *         since the parent component will do that for you.
 	 */
-	bool setMinHeight( int height, bool canUseMore = false );
+	bool setMinHeight( int height );
 
 	void componentAdded( Component *component );
 	void componentRemoved( Component *component );
@@ -189,7 +177,7 @@ private:
 class TextComponent : public Component
 {
 public:
-	TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null, bool fixedWidth = false );
+	TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );
 	~TextComponent();
 
 	QString text();
@@ -202,8 +190,7 @@ public:
 	void setColor( const QColor &color );
 	void setDefaultColor();
 
-	bool fixedWidth();
-	void setFixedWidth( bool fixedWidth );
+	int widthForHeight( int );
 
 	void paint( QPainter *painter, const QColorGroup &cg );
 
@@ -232,12 +219,14 @@ class HSpacerComponent : public Component
 {
 public:
 	HSpacerComponent( ComponentBase *parent );
+	int widthForHeight( int );
 };
 
 class VSpacerComponent : public Component
 {
 public:
 	VSpacerComponent( ComponentBase *parent );
+	int heightForWidth( int );
 };
 
 /**

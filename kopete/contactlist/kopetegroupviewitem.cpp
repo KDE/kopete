@@ -66,10 +66,7 @@ void KopeteGroupViewItem::initLVI()
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->image = new ImageComponent( hbox );
-
 	d->name = new TextComponent( hbox );
-	d->name->setFixedWidth( true );
-
 	d->count = new TextComponent( hbox );
 
 	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),

@@ -463,8 +463,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-		new HSpacerComponent( box );
 
+		new HSpacerComponent( hbox );
 		d->buddyIcon = new ImageComponent( hbox );
 		d->iconSize = IconSize( KIcon::Toolbar );
 	}
@@ -476,8 +476,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-		new HSpacerComponent( box );
 
+		new HSpacerComponent( hbox );
 		d->buddyIcon = new ImageComponent( hbox );
 		d->iconSize = IconSize( KIcon::Toolbar );
 		d->metaContactIcon = new ImageComponent( hbox );
@@ -486,15 +486,14 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	{
 		d->metaContactIcon = new ImageComponent( hbox );
 		d->nameText = new TextComponent( hbox );
+		new HSpacerComponent( hbox );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	}
 	else                                               // older left-aligned contact
 	{
 		d->metaContactIcon = new ImageComponent( hbox );
 		d->nameText = new TextComponent( hbox );
-		d->nameText->setFixedWidth( true );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
-		new HSpacerComponent( hbox );
 	}
 
 	// update the display name
