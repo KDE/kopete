@@ -201,6 +201,11 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	appendMessage(msg);
 }
 
+void IRCChannelContact::channelHomePage(const QString &url)
+{
+	setProperty( QString::fromLatin1("HomePage"), i18n("homePage"), url );
+}
+
 void IRCChannelContact::slotJoin()
 {
 	if ( !m_isConnected && onlineStatus().status() == KopeteOnlineStatus::Online )

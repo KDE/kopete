@@ -40,7 +40,7 @@
 #include "kopetecommandhandler.h"
 #include "kopeteview.h"
 #include "ksparser.h"
-#include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
 
 #include "networkconfig.h"
 #include "channellist.h"

@@ -52,6 +52,9 @@ IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager
 	mapSingle<IRCChannelContact>( m, SIGNAL(incomingExistingTopic(const QString &, const QString &)),
 		&IRCChannelContact::channelTopic );
 
+	mapSingle<IRCChannelContact>( m, SIGNAL(incomingChannelHomePage(const QString &, const QString &)),
+		&IRCChannelContact::channelHomePage );
+
 	mapDouble<IRCChannelContact>( m,
 		SIGNAL(incomingPartedChannel(const QString &, const QString &,const QString &)),
 		&IRCChannelContact::userPartedChannel );

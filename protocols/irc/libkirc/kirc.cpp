@@ -49,7 +49,8 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_useSSL(false),
 	  m_IrcMethods(101, false),
 	  m_IrcCTCPQueryMethods(17, false),
-	  m_IrcCTCPReplyMethods(17, false)
+	  m_IrcCTCPReplyMethods(17, false),
+	  codecs( QDict<QTextCodec>(577,false) )
 {
 	m_IrcMethods.setAutoDelete(true);
 	m_IrcCTCPQueryMethods.setAutoDelete(true);
@@ -190,6 +191,7 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	addIrcMethod("323",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingEndOfList));
 
 	addIrcMethod("324",	&KIRC::numericReply_324,	2,	4);
+	addIrcMethod("324",	&KIRC::numericReply_328,	2,	2);
 	addIrcMethod("329",	&KIRC::numericReply_329,	3,	3);
 	addIrcMethod("331",	&KIRC::numericReply_331,	2,	2);
 	addIrcMethod("332",	&KIRC::numericReply_332,	2,	2);

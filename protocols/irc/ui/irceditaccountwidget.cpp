@@ -188,15 +188,19 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	QString networkName = network->currentText();
 
 	if( !m_IRCAccount )
+	{
 		m_IRCAccount = new IRCAccount( mProtocol, generateAccountId(networkName) );
 
-	m_IRCAccount->setNickName( nickName );
-	m_IRCAccount->setNetwork( networkName );
-	m_IRCAccount->setUserName( mUserName->text() );
-	m_IRCAccount->setDefaultPart( partMessage->text() );
-	m_IRCAccount->setDefaultQuit( quitMessage->text() );
-	m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
-	m_IRCAccount->setAltNick( mAltNickname->text() );
+		m_IRCAccount->setNickName( nickName );
+		m_IRCAccount->setNetwork( networkName );
+		m_IRCAccount->setUserName( mUserName->text() );
+		m_IRCAccount->setDefaultPart( partMessage->text() );
+		m_IRCAccount->setDefaultQuit( quitMessage->text() );
+		m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
+		m_IRCAccount->setAltNick( mAltNickname->text() );
+
+		m_IRCAccount->loaded();
+	}
 
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )

@@ -81,6 +81,7 @@ public:
 	void userPartedChannel(const QString &user, const QString &reason);
 	void userKicked(const QString &nick, const QString &nickKicked, const QString &reason);
 	void channelTopic(const QString &topic);
+	void channelHomePage(const QString &url);
 	void topicChanged(const QString &nick, const QString &newtopic);
 	void topicUser(const QString &nick, const QDateTime &time);
 	void namesList(const QStringList &nicknames);

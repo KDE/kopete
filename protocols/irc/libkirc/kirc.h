@@ -190,6 +190,7 @@ signals:
 	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
 	void incomingCannotSendToChannel(const QString  &channel, const QString &message);
 	void incomingChannelModeChange(const QString &channel, const QString &nick, const QString &mode);
+	void incomingChannelHomePage(const QString &channel, const QString &url);
 
 	//Contact Signals
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
@@ -372,6 +373,7 @@ private:
 	ircMethod numericReply_319;
 	ircMethod numericReply_322;
 	ircMethod numericReply_324;
+	ircMethod numericReply_328;
 	ircMethod numericReply_329;
 	ircMethod numericReply_331;
 	ircMethod numericReply_332;

@@ -28,7 +28,7 @@
 #include <knotifyclient.h>
 
 #include "kopeteaway.h"
-#include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
 #include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -302,7 +302,8 @@ void IRCAccount::setNickName( const QString &nick )
 {
 	mNickName = nick;
 	setPluginData(protocol(), QString::fromLatin1( "NickName" ), mNickName );
-	mySelf()->setNickName( mNickName );
+	if( mySelf() )
+		mySelf()->setNickName( mNickName );
 }
 
 void IRCAccount::setCodec( QTextCodec *codec )

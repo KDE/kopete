@@ -161,6 +161,14 @@ bool KIRC::numericReply_324(const KIRCMessage &msg)
 	return true;
 }
 
+bool KIRC::numericReply_328(const KIRCMessage &msg)
+{
+	/* "<channel> <mode> <mode params>"
+	 */
+	emit incomingChannelHomePage(msg.args()[1], msg.suffix());
+	return true;
+}
+
 bool KIRC::numericReply_329( const KIRCMessage & /* msg */ )
 {
 	/* NOT IN RFC1459 NOR RFC2812

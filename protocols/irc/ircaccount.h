@@ -78,6 +78,8 @@ class ChannelListDialog : public KDialogBase
 
 class IRCAccount:  public KopeteAccount
 {
+	friend class IRCEditAccountWidget;
+
 	Q_OBJECT
 
 public:
