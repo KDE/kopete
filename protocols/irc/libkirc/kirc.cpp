@@ -94,14 +94,14 @@ void KIRC::slotReadyRead()
 				// Fun!
 				message = message.remove(0, 1);
 				message = message.remove((message.length() -1), 1);
-				QString special = message.section(' ', 0, 0);
-				if (special.lower() == "ping")
+				QString special = message.section(' ', 0, 0).lower();
+				if (special == "ping")
 				{
 					QString reply = QString("NOTICE %1 :%2PING %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(message.section(' ', 1, 1)).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("PING", originating.section('!', 0, 0), message.section(' ', 1, 1));
 					continue;
-				} else if (special.lower() == "version")
+				} else if (special == "version")
 				{
 					// Just remove newlines and line feeds because we don't want to user to get clever ;)
 					mVersionString.replace(QRegExp("[\\r\\n]*$"), "");
@@ -114,7 +114,7 @@ void KIRC::slotReadyRead()
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("VERSION", originating.section('!', 0, 0), mVersionString);
 					continue;
-				} else if (special.lower() == "userinfo")
+				} else if (special == "userinfo")
 				{
 					mUserString.replace(QRegExp("[\\r\\n]*$"), "");
 					if (mUserString.isEmpty())
@@ -125,21 +125,21 @@ void KIRC::slotReadyRead()
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("USERINFO", originating.section('!', 0, 0), mUserString);
 					continue;
-				} else if (special.lower() == "clientinfo")
+				} else if (special == "clientinfo")
 				{
 					QString response = "The following commands are supported, but without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.";
 					QString reply = QString("NOTICE %1 :%2CLIENTINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(response).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("CLIENTINFO", originating.section('!', 0, 0), response);
 					continue;
-				} else if (special.lower() == "time")
+				} else if (special == "time")
 				{
 					QString dateTime = QDateTime::currentDateTime().toString();
 					QString reply = QString("NOTICE %1 :%2TIME %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(dateTime).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("TIME", originating.section('!', 0, 0), dateTime);
 					continue;
-				} else if (special.lower() == "source")
+				} else if (special == "source")
 				{
 					mSourceString.replace(QRegExp("[\\r\\n]*$"), "");
 					if (mSourceString.isEmpty())
@@ -150,10 +150,10 @@ void KIRC::slotReadyRead()
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("TIME", originating.section('!', 0, 0), mSourceString);
 					continue;
-				} else if (special.lower() == "finger")
+				} else if (special == "finger")
 				{
 					// Not implemented yet
-				} else if (special.lower() == "action")
+				} else if (special == "action")
 				{
 					message = message.section(' ', 1);
 					if (target[0] == '#' || target[0] == '!' || target[0] == '&')
@@ -163,7 +163,7 @@ void KIRC::slotReadyRead()
 						emit incomingPrivAction(originating, target, message);
 					}
 					continue;
-				} else if (special.lower() == "dcc")
+				} else if (special == "dcc")
 				{
 					if (message.section(' ', 1, 1).lower() == "chat")
 					{
