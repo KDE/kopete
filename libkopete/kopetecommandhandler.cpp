@@ -75,7 +75,7 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 
 	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
-		" -o is specified, the results are output to all members of the chat.") );
+		" -o is specified, the output is sent to all members of the chat.") );
 
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
 }
