@@ -2,15 +2,17 @@
 IconName=kopete
 Comment=Kopete Messenger
 Comment[he]=תוכנית המסרים המיידיים Kopete
+Comment[pt_BR]=Mensageiro Kopete
 Comment[sv]=Kopete Instant Messenger
-Comment[id]=Bersurat Tercapat Kopete
 
 [kopete_event]
 Name=message_all
+Name[pt_BR]=mensagens
 Name[sv]=Alla meddelanden
 Comment=Sound Notification for Kopete Events
 Comment[da]=Lydbesked for Kopete-begivenheder
 Comment[he]=הודעות צליל לאירועים של Kopete
+Comment[pt_BR]=Notificação de Som para eventos Kopete
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
 default_sound=kopete_event.wav
 default_presentation=1
