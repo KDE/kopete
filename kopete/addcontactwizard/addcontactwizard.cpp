@@ -100,7 +100,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	setNextEnabled( selectService, ( accounts.count() == 1 ) );
 	setNextEnabled( selectAddressee, false );
 	setFinishEnabled( finis, true );
-	
+
 	// Addressee validation connections
 	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
 	connect( chkAddressee, SIGNAL( toggled( bool ) ),
@@ -136,29 +136,31 @@ void AddContactWizard::slotLoadAddressees()
 
 void AddContactWizard::slotAddAddresseeClicked()
 {
-	bool* ok;
-	*ok = false;
 	// Pop up add addressee dialog
 #if KDE_IS_VERSION (3,1,90)
 	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ),
 												   i18n( "Name the new entry:" ),
-												   QString::null, ok, this ); 
+												   QString::null, 0, this );
 #else
 	QString addresseeName = KLineEditDlg::getText( i18n( "New Address Book Entry" ),
 												   i18n( "Name the new entry:" ),
-												   QString::null, ok, this ); 
-#endif												  
+												   QString::null, 0, this );
+#endif
 
-	if ( *ok && !addresseeName.isEmpty() )
+	if ( !addresseeName.isEmpty() )
 	{
 		KABC::Addressee addr;
 		addr.setNameFromString( addresseeName );
 		m_addressBook->insertAddressee( addr );
 		KABC::Ticket *ticket = m_addressBook->requestSaveTicket();
-		if ( !ticket ) {
+		if ( !ticket )
+		{
 			kdError() << "Resource is locked by other application!" << endl;
-		} else {
-			if ( !m_addressBook->save( ticket ) ) {
+		}
+		else
+		{
+			if ( !m_addressBook->save( ticket ) )
+			{
 				kdError() << "Saving failed!" << endl;
 			}
 #if KDE_IS_VERSION (3,1,90)
@@ -174,18 +176,18 @@ void AddContactWizard::slotCheckAddresseeChoice( bool on )
 	if ( on )
 	{
 		// Get a reference to the address book
-		if ( m_addressBook == 0L )
-		{	
+		if ( !m_addressBook )
+		{
 			m_addressBook = KABC::StdAddressBook::self( true );
 			KABC::StdAddressBook::setAutomaticSave( false );
 		}
-		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), 
+		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
 										   this, SLOT( slotLoadAddressees() ) );
 		connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
 										this, SLOT( slotLoadAddressees() ) );
 	}
 	else
-		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), 
+		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
 										   this, SLOT( slotLoadAddressees() ) );
 }
 
@@ -275,15 +277,15 @@ void AddContactWizard::accept()
 	}
 	else
 		delete metaContact;
-	
+
 	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
-	
+
 	deleteLater();
 }
 
 void AddContactWizard::reject()
 {
-	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );	
+	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 	QWizard::reject();
 }
 
@@ -350,7 +352,7 @@ void AddContactWizard::showPage( QWidget *page )
 		{
 			// Get a reference to the address book
 			if ( m_addressBook == 0L )
-			{	
+			{
 				m_addressBook = KABC::StdAddressBook::self( true );
 				KABC::StdAddressBook::setAutomaticSave( false );
 			}
