@@ -203,53 +203,58 @@ QPixmap KopeteOnlineStatus::customIcon( const QString& baseIcon ) const
 	// use reasonable defaults if not provided or protocol not set
 	QPixmap basis;
 
-	if ( d->status == Offline )
+	switch ( d->status )
 	{
-		// Apply standard Disabled effect to generate Offline iconOverlay
-		// This will probably look crap on the Unknown icon
-		// FIXME This won't return icons that are not installed using Martijn's
-		// automake magic so we'd have to use UserIcon instead of SmallIcon
-		if ( baseIcon.isNull() )
-			if ( d->protocol )
-				basis = SmallIcon( d->protocol->pluginIcon(), 0,
-						KIcon::DisabledState );
+		case Offline:
+			// Apply standard Disabled effect to generate Offline iconOverlay
+			// This will probably look crap on the Unknown icon
+			// FIXME This won't return icons that are not installed using Martijn's
+			// automake magic so we'd have to use UserIcon instead of SmallIcon
+			if ( baseIcon.isNull() )
+				if ( d->protocol )
+					basis = SmallIcon( d->protocol->pluginIcon(), 0,
+							KIcon::DisabledState );
+				else
+					basis = SmallIcon( QString::fromLatin1( "unknown" ), 0,
+							KIcon::DisabledState );
 			else
-				basis = SmallIcon( QString::fromLatin1( "unknown" ), 0,
-						KIcon::DisabledState );
-		else
-			basis = SmallIcon( baseIcon, 0, KIcon::DisabledState );
-	}
-	else
-	{
-		// get the base icon
-		if ( baseIcon.isNull() )
-			if ( d->protocol )
-				basis = SmallIcon( d->protocol->pluginIcon() );
+				basis = SmallIcon( baseIcon, 0, KIcon::DisabledState );
+			break;
+		case Online:
+			// FIXME This should be the protocol's protocol_online icon...
+			basis = SmallIcon( d->protocol->pluginIcon() );
+			break;
+		default:
+			// get the base icon
+			if ( baseIcon.isNull() )
+				if ( d->protocol )
+					basis = SmallIcon( d->protocol->pluginIcon() );
+				else
+					basis = SmallIcon( QString::fromLatin1( "unknown" ) );
 			else
-				basis = SmallIcon( QString::fromLatin1( "unknown" ) );
-		else
-			basis = SmallIcon( baseIcon );
+				basis = SmallIcon( baseIcon );
 
-		//composite the iconOverlay for this status and the supplied baseIcon
-		if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is
-		{
-			QPixmap overlay = SmallIcon( d->overlayIcon );
-			if ( !overlay.isNull() )
+			//composite the iconOverlay for this status and the supplied baseIcon
+			if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is
 			{
-				// first combine the masks of both pixmaps
-				if ( overlay.mask() )
+				QPixmap overlay = SmallIcon( d->overlayIcon );
+				if ( !overlay.isNull() )
 				{
-					QBitmap mask = *basis.mask();
-					bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
-						0, 0, overlay.width(), overlay.height(), Qt::OrROP );
+					// first combine the masks of both pixmaps
+					if ( overlay.mask() )
+					{
+						QBitmap mask = *basis.mask();
+						bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
+							0, 0, overlay.width(), overlay.height(), Qt::OrROP );
 
-					basis.setMask(mask);
+						basis.setMask(mask);
+					}
+					// draw the overlay on top of it
+					QPainter p( &basis );
+					p.drawPixmap( 0, 0, overlay );
 				}
-				// draw the overlay on top of it
-				QPainter p( &basis );
-				p.drawPixmap( 0, 0, overlay );
 			}
-		}
+			break;
 	}
 	return basis;
 }
