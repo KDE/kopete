@@ -1723,6 +1723,42 @@ void MSNProtocol::slotUserTypingMsg( QString handle ,MSNSwitchBoardSocket* servi
 
 }
 
+KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
+{
+	MSNSwitchBoardSocket *service = m_switchBoardSockets[ manager ];
+
+	if( !service )
+		return 0L;
+
+	//FIXME: when service is deleted, nothing happend
+	
+	KActionCollection *collection= new KActionCollection(manager->widget());
+
+	KAction *actionClose = new KAction( i18n ("Leave the chat"), 0,
+		service, SLOT( slotCloseSession() ), collection, "actionClose" );
+
+	collection->insert( actionClose );
+
+	KListAction *actionInvite=new KListAction(i18n("&Invite"),"",0,  collection ,"actionInvite");
+
+	QStringList sl;
+	QMap<QString, MSNContact*>::Iterator it;
+	for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
+	{
+		if((*it)->isOnline())
+		{
+			sl.append((*it)->id());
+		}
+	}
+	actionInvite->setItems( sl );
+
+	connect( actionInvite, SIGNAL( activated(const QString&) ), service, SLOT(slotInviteContact(const QString&)) );
+	collection->insert(actionInvite);
+
+	return collection;
+}
+
+
 
 #include "msnprotocol.moc"
 

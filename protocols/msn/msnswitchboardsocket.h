@@ -83,7 +83,7 @@ public slots:
 	void slotReadMessage( const QString &msg );
 	void slotSendMsg( const KopeteMessage &msg );
 	void slotCloseSession();
-	void slotInviteContact(QString handle);
+	void slotInviteContact(const QString &handle);
 	void slotTypingMsg();
 
 private slots:

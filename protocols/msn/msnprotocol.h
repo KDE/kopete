@@ -172,6 +172,10 @@ public:
 	void blockContact( QString passport ) const;
 
   void setStatus(Status);
+  /** 
+	 * Returns a set of action items for the chatWindows
+	 */
+  KActionCollection * customChatActions(KopeteMessageManager * );
 
 signals:
 	void protocolUnloading();

@@ -33,6 +33,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <klineeditdlg.h>
 #include <kfiledialog.h>
 
 
@@ -365,9 +366,19 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 }
 
 // this Invites an Contact
-void MSNSwitchBoardSocket::slotInviteContact(QString handle)
+void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 {
-	sendCommand( "CAL", handle );
+	QString handle2=handle;
+	if(handle.isEmpty())
+	{
+		bool ok;
+		handle2 = KLineEditDlg::getText(i18n( "MSN Plugin" ),
+			i18n( "Please enter the email address of the person you want to invite" ),
+			QString::null, &ok );
+		if( !ok )
+			return;
+	}
+	sendCommand( "CAL", handle2 );
 }
 
 // this sends a short message to the server
@@ -415,6 +426,11 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 
 void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 {
+	for( QStringList::Iterator it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
+	{
+		emit updateChatMember( (*it), QString::null, false, this );
+	}
+
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
 	emit switchBoardIsActive(false);
 	emit switchBoardClosed( this );
@@ -434,28 +450,25 @@ void MSNSwitchBoardSocket::callUser()
 // Check if we are connected. If so, then send the handshake.
 void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 {
-	if ( status != Connected )
-		return;
-
-	QCString command;
-	QString args;
-
-	if( !m_ID ) // we're inviting
+	if (status == Connected)
 	{
-		command = "USR";
-		args = m_myHandle + " " + m_auth;
-	}
-	else // we're invited
-	{
-		command = "ANS";
-		args = m_myHandle + " " + m_auth + " " + m_ID;
-	}
-	
-	sendCommand( command, args );
-	
-	// send active message
-	emit switchBoardIsActive(true);
+		QCString command;
+		QString args;
 
+		if( !m_ID ) // we're inviting
+		{
+			command = "USR";
+			args = m_myHandle + " " + m_auth;
+		}
+		else // we're invited
+		{
+			command = "ANS";
+			args = m_myHandle + " " + m_auth + " " + m_ID;
+		}
+		sendCommand( command, args );
+		// send active message
+		emit switchBoardIsActive(true);
+	}
 }
 
 

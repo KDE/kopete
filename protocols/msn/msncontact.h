@@ -123,12 +123,11 @@ public:
 	
 	virtual void addThisTemporaryContact(QString group=QString::null);
 
-	virtual bool isReachable() { return false; };
+	virtual bool isReachable() { return true; };
 
 	virtual KActionCollection *customContextMenuActions();
 
 public slots:
-
 
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
