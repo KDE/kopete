@@ -103,7 +103,7 @@ void MSNMessageManager::slotUpdateChatMember(QString handle, QString publicName,
 			connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				MSNProtocol::protocol(), SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
-			m->addContact( c, QStringList() );
+			m->addContact( c );
 			KopeteContactList::contactList()->addMetaContact(m);
 
 			MSNProtocol::protocol()->contacts().insert( handle, c );

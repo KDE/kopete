@@ -21,16 +21,18 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
-#include <qstringlist.h>
+//#include <qstringlist.h>
 #include <qmap.h>
 
 #include "kopetecontact.h"
+#include "kopetegroup.h"
 
 class QDomNode;
 class QStringList;
 
 class KopetePlugin;
 class KopetePlugin;
+
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -55,7 +57,7 @@ public:
 	 * Add contact to the meta contact
 	 */
 	void addContact( KopeteContact *c);
-	void addContact( KopeteContact *c, const QStringList &groups );
+//	void addContact( KopeteContact *c, const QStringList &groups );
 	
 	/**
 	 * Find the KopeteContact to a given contact. If contact
@@ -111,7 +113,7 @@ public:
 	/**
 	 * The groups the contact is stored in
 	 */
-	QStringList groups() const;
+	KopeteGroupList groups() const;
 
 	/**
 	 * Return a XML representation of the metacontact
@@ -129,22 +131,22 @@ public:
 	/**
 	 * Move a contact from one group to another.
 	 */
-	void moveToGroup( const QString &from, const QString &to );
+	void moveToGroup( KopeteGroup *from, KopeteGroup *to );
     /**
 	 * Remove a contact from one group
 	 */
-	void removeFromGroup( const QString &from);
+	void removeFromGroup( KopeteGroup *from);
 
 	/**
 	 * Add a contact to another group.
 	 */
-	void addToGroup( const QString &to );
+	void addToGroup( KopeteGroup *to );
 
 	/**
 	 * Temporary contacts will not be sarialized
 	 */
 	bool isTemporary() const;
-	void setTemporary( bool b = true ,QString group=QString::null );
+	void setTemporary( bool b = true ,KopeteGroup *group=KopeteGroup::null );
 
 	/**
 	 * When true, the meta-contact needs to be serialized
@@ -230,26 +232,20 @@ signals:
 	/**
 	 * The contact was moved
 	 */
-	void movedToGroup( KopeteMetaContact *contact, const QString &from,
-		const QString &to );
+	void movedToGroup( KopeteGroup *from, KopeteGroup *to, KopeteMetaContact *contact);
 
 	/**
 	 * The contact was removed from group
 	 */
-	void removedFromGroup( KopeteMetaContact *contact, const QString &from);
+	void removedFromGroup(KopeteGroup *from, KopeteMetaContact *contact);
 
 	/**
 	 * The contact was added to another group
 	 */
-	void addedToGroup( KopeteMetaContact *contact, const QString &to );
+	void addedToGroup( KopeteGroup * to, KopeteMetaContact *contact);
 
 	void contactAdded( KopeteContact *c );
 	void contactRemoved( KopeteContact *c );
-
-	/**
-	 * The metacontact is at top level
-	 */
-	void topLevel ( KopeteMetaContact *contact, const bool b );
 
 private slots:
 	/**
@@ -296,8 +292,8 @@ private:
 	 */
 	bool m_trackChildNameChanges;
 
-	QStringList m_groups;
-	bool m_isTopLevel;
+	KopeteGroupList m_groups;
+//	bool m_isTopLevel;
 
 	/**
 	 * Data to store in the XML file

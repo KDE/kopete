@@ -224,23 +224,21 @@ void
 GaduProtocol::addContact( const QString& uin, const QString& nick,
                           KopeteMetaContact* parent, const QString& group )
 {
-    KopeteContactList *l = KopeteContactList::contactList();
-    KopeteMetaContact *m;
+	KopeteMetaContact *m=0l;
 
-    if ( !parent )
-    {
-        m = l->findContact( this->id(),  QString::number( userUin_ ), uin );
-        if( !m )
-        {
-            //TODO: make this better
-            m = new KopeteMetaContact();
-            if ( !group.isEmpty() )
-                m->addToGroup( group );
-            KopeteContactList::contactList()->addMetaContact(m);
-        }
-    } else {
-        m = parent;
-    }
+	if ( !parent )
+	{
+		m = KopeteContactList::contactList()->findContact( this->id(),  QString::number( userUin_ ), uin );
+		if( !m )
+		{
+			m = new KopeteMetaContact();
+			m->addToGroup(KopeteContactList::contactList()->getGroup(group));
+			KopeteContactList::contactList()->addMetaContact(m);
+		}
+	}
+	else
+		m = parent;
+
 
     KopeteContact *c = m->findContact( this->id(), QString::number( userUin_ ) , uin );
 

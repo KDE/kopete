@@ -20,11 +20,16 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
-#include <qstringlist.h>
+//#include <qstringlist.h>
+
+#include "kopetegroup.h"
 
 class QDomDocument;
 
 class KopeteMetaContact;
+/*class KopeteGroup;
+class KopeteGroupList;*/
+
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -89,7 +94,7 @@ public:
 	/**
 	 * Return all available groups
 	 */
-	QStringList groups() const;
+	KopeteGroupList groups() const;
 
 	/**
 	 * add a metacontact into the contact list
@@ -112,12 +117,13 @@ public:
 	QPtrList<KopeteMetaContact> metaContacts() const;
 
 
-	void addGroup(QString g);
-	void removeGroup(QString g);
-//	void renameGroup(QString to, QString from);
+	void addGroup(KopeteGroup *);
+	void removeGroup(KopeteGroup *);
+  /** No descriptions */
+  KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
 
 public slots:
-	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
+//	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 signals:
 	/**
@@ -128,14 +134,14 @@ signals:
 	void metaContactAdded( KopeteMetaContact *mc );
 	void metaContactDeleted( KopeteMetaContact *mc );
 
-	void groupAdded( const QString &group );
-	void groupRemoved( const QString &group );
+	void groupAdded(  KopeteGroup * );
+	void groupRemoved(  KopeteGroup * );
 //	void groupRenamed( const QString &from, const QString &to );
 
 
 	/* Not used yet.... */
-	void addedToGroup( KopeteMetaContact *mc, const QString &to );
-	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
+//	void addedToGroup( KopeteMetaContact *mc, const QString &to );
+//	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
 	
 private:
 	/**
@@ -166,7 +172,7 @@ private:
 	/**
 	 * List of groups
 	 */
-	QStringList m_groupStringList;
+	 KopeteGroupList m_groupList;
 
 	/**
 	 * Our contact list instance

@@ -606,8 +606,8 @@ void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &
 		contactMap.insert(userId, jc);
 	
 		connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
-	
-		contact->addContact(jc, jc->groups());
+
+		contact->addContact(jc);
 	}
 
 }
@@ -933,6 +933,11 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 	{
 		isContactInList = false;
 		mc = new KopeteMetaContact();
+		QStringList groups=item.groups();
+		for( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
+		{
+			mc->addToGroup( KopeteContactList::contactList()->getGroup(*it) );
+		}
 	}
 
 	QString contactName;
@@ -946,7 +951,7 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 
 	connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
 
-	mc->addContact(jc, isContactInList ? QStringList() : item.groups());
+	mc->addContact(jc );
 
 	contactMap.insert(item.jid().userHost(), jc);
 	metaContactMap.insert(jc, mc);
@@ -1304,7 +1309,7 @@ void JabberProtocol::addContact(KopeteMetaContact *mc, const QString &userId)
 
 	item.setJid(Jabber::Jid(userId));
 	item.setName(userId);
-	item.setGroups(mc->groups());
+	item.setGroups(mc->groups().toStringList());
 
 	createAddContact(mc, item);
 	

@@ -93,7 +93,7 @@ public:
 	// very basic actions
 	bool isOnline() const { return myIsOnline; }
 	bool isReachable() { return myIsOnline; }
-	QStringList groups() { return QStringList(); }
+//	QStringList groups() { return QStringList(); }
 	KopeteContact::ContactStatus status() const { return myIsOnline ? Online : Offline; }
 	QString statusText() const { return myIsOnline ? "Online" : "Offline"; }
 	QString statusIcon() const { return myIsOnline ? "wp_available" : "wp_offline"; }
@@ -105,9 +105,9 @@ public:
 	QString id() const { return "smb://" + myHost; }
 
 	// null actions
-	void addToGroup(const QString &) {}
+/*	void addToGroup(const QString &) {}
 	void removeFromGroup(const QString &) {}
-	void moveToGroup(const QString &, const QString &) {}
+	void moveToGroup(const QString &, const QString &) {}*/
 
 public slots:
 	// not quite so basic actions

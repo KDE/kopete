@@ -23,6 +23,8 @@
 #include <qpixmap.h>
 #include <qlistbox.h>
 
+#include "kopetegroup.h"
+
 class QString;
 class QPixmap;
 
@@ -93,10 +95,8 @@ public:
 	 * can be different from the logical groups!
 	 * Not the whole API supports multi-group membership yet, be careful
 	 * relying on this for now!
-	 * FIXME: When all protocols support the group API, make these methods
-	 *        pure virtual or have different defaults!
 	 */
-	virtual QStringList groups();
+//	virtual QStringList groups();
 
 	/**
 	 * Add a contact to a physical group. If the protocol doesn't support
@@ -104,20 +104,20 @@ public:
 	 * passed is the logical group. Protocols with server-side contact lists
 	 * can use this to keep the local and remote lists in sync.
 	 */
-	virtual void addToGroup( const QString &group );
+//	virtual void addToGroup( const QString &group );
 
 	/**
 	 * Remove a contact from a physical group.
 	 * If the logical group passed is different from the physical group, or
 	 * if this kind of changes is not supported this method may do nothing.
 	 */
-	virtual void removeFromGroup( const QString &group );
+//	virtual void removeFromGroup( const QString &group );
 
 	/**
 	 * Move a contact from one group to another. Again, this method may do
 	 * nothing if there's no support for this in the protocol.
 	 */
-	virtual void moveToGroup( const QString &from, const QString &to );
+//	virtual void moveToGroup( const QString &from, const QString &to );
 
 	/**
 	 * Sets the display name, or alias, for the contact.
@@ -214,7 +214,7 @@ public:
 	 *
 	 * @return Collection of menu items to be show on the context menu
 	 */
-	 virtual KActionCollection *customContextMenuActions() = 0;
+	 virtual KActionCollection *customContextMenuActions() {return 0L;};
 	 
 	 /**
 	  * Show a context menu of actions pertaining to this contact
@@ -235,7 +235,7 @@ public:
 	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
 	  * TODO: Write a better description of this, this doc doesn't make sense
 	  */
-	 virtual void addThisTemporaryContact(QString group=QString::null);
+	 virtual void addThisTemporaryContact(KopeteGroup *group=KopeteGroup::null);
 	 
 	 
 public slots:
@@ -313,7 +313,7 @@ signals:
 	/**
 	 * Called when the contact is moved to another MetaContact
 	 */
-	void moved(KopeteContact *)  ;
+	void moved(KopeteMetaContact *from , KopeteContact *)  ;
 
 private:
 	

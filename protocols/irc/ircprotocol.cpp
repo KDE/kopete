@@ -347,7 +347,7 @@ void IRCProtocol::importOldContactList()
 			server = KGlobal::config()->readEntry("Server", "irc.unknown.com");
 		}
 		KopeteMetaContact *m = new KopeteMetaContact();
-		m->addToGroup(groupName);
+//		m->addToGroup(groupName);
 		addContact( server, (*it), false, false,m);
 		KopeteContactList::contactList()->addMetaContact(m);
 	}

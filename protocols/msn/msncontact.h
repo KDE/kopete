@@ -20,6 +20,7 @@
 
 #include "kopetecontact.h"
 #include "kopetehistorydialog.h"
+#include "kopetegroup.h"
 #include "msnprotocol.h"
 
 class QListView;
@@ -32,6 +33,7 @@ class KActionCollection;
 class KListAction;
 
 class KopeteHistoryDialog;
+
 
 class MSNContact : public KopeteContact
 {
@@ -114,14 +116,7 @@ public:
 	MSNProtocol::Status msnStatus() const;
 	void setMsnStatus( MSNProtocol::Status status );
 
-	/**
-	 * Add/Remove user to/from a group
-	 */
-	virtual void addToGroup( const QString &group );
-	virtual void removeFromGroup( const QString &group );
-	virtual void moveToGroup( const QString &from, const QString &to );
-	
-	virtual void addThisTemporaryContact(QString group=QString::null);
+	virtual void addThisTemporaryContact(KopeteGroup *group=KopeteGroup::null);
 
 	virtual bool isReachable() { return true; };
 
@@ -137,6 +132,14 @@ public slots:
 	void removedFromGroup(QString group);
 	void addedToGroup(QString group);
 
+	/**
+	 * Add/Remove user to/from a group
+	 */
+	void addToGroup( KopeteGroup * );
+	void removeFromGroup( KopeteGroup * );
+	void moveToGroup( KopeteGroup * , KopeteGroup * );
+
+
 signals:
 	void chatToUser( QString );
 
@@ -146,6 +149,8 @@ private slots:
 
 	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();
+  /** No descriptions */
+  void slotMoved(KopeteMetaContact* from);
 
 
 private:

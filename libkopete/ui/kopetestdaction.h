@@ -45,16 +45,17 @@ class KopeteStdAction
 		static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KListAction *addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KAction *changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+
 };
 
 // Fuckin' moc will only see signals/slots if they're defined in the .h
 // This is a private class :(
-class KopeteGroupList : public KListAction
+class KopeteGroupListAction : public KListAction
 {
 	Q_OBJECT
 	public:
-		KopeteGroupList(const QString &, const QString &, const KShortcut &, const QObject *, const char *, QObject *, const char *);
-		~KopeteGroupList();
+		KopeteGroupListAction(const QString &, const QString &, const KShortcut &, const QObject *, const char *, QObject *, const char *);
+		~KopeteGroupListAction();
 
 	protected slots:
 		void slotUpdateList();

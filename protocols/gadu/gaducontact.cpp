@@ -22,7 +22,7 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
     historyDialog_ = 0L;
     msgManager_ = 0L;
     uin_ = uin;
-    name_ = name;
+//    name_ = name;
     protocol_ = GaduProtocol::protocol();
     status_ = 0;
 
@@ -32,8 +32,8 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
     thisContact_.append( this );
 }
 
-void
-GaduContact::showContextMenu( const QPoint& p, const QString& /*group*/ )
+/*void
+GaduContact::showContextMenu( const QPoint& p, const QString&  )
 {
     KPopupMenu *popup = new KPopupMenu();
 
@@ -51,7 +51,7 @@ GaduContact::showContextMenu( const QPoint& p, const QString& /*group*/ )
     popup->exec( p );
 
     delete popup;
-}
+} */
 
 void
 GaduContact::execute()
@@ -59,7 +59,7 @@ GaduContact::execute()
     msgManager()->readMessages();
 }
 
-void
+/*void
 GaduContact::addToGroup( const QString& group )
 {
     groups_.append( group );
@@ -72,7 +72,7 @@ GaduContact::removeFromGroup( const QString& group )
 }
 
 void
-GaduContact::moveToGroup( const QString& /*from*/, const QString& /*to*/ )
+GaduContact::moveToGroup( const QString& from, const QString& to )
 {
     //GaduProtocol::protocol()->moveContact( this, from, to );
 }
@@ -81,19 +81,19 @@ QStringList
 GaduContact::groups() const
 {
     return groups_;
-}
+} */
 
-void
+/*void
 GaduContact::setName( const QString& name )
 {
     name_ = name;
-}
+} 
 
 QString
 GaduContact::name() const
 {
     return name_;
-}
+} */
 
 KopeteContact::ContactStatus
 GaduContact::status() const

@@ -39,7 +39,7 @@ KopeteMetaContact::KopeteMetaContact()
 	//TODO: implement m_trackChildNameChanges
 	m_trackChildNameChanges = false;
 	m_temporary=false;
-	m_isTopLevel=false;
+//	m_isTopLevel=false;
 
 	m_onlineStatus = Offline;
 }
@@ -49,18 +49,6 @@ KopeteMetaContact::~KopeteMetaContact()
 }
 
 void KopeteMetaContact::addContact( KopeteContact *c )
-{
-	// If the meta contact isn't in any group, make them member of the
-	// new contact's groups, otherwise don't care about the groups
-	// (FIXME: Why is this? - Martijn)
-	if( m_groups.isEmpty() )
-		addContact( c, c->groups() );
-	else
-		addContact( c, QStringList() );
-}
-
-void KopeteMetaContact::addContact( KopeteContact *c,
-	const QStringList &groups )
 {
 	if( m_contacts.contains( c ) )
 	{
@@ -86,10 +74,10 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 		 if (m_displayName == QString::null)
 			 setDisplayName( c->displayName() );
 
-		for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
+	/*	for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
 		{
 			addToGroup(*it);
-		}
+		}*/
 		emit contactAdded(c);
 	}
 
@@ -159,17 +147,21 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 bool KopeteMetaContact::isTopLevel()
 {
-	if(groups().isEmpty())
-		m_isTopLevel=true;
-	return m_isTopLevel;
+	if(m_groups.isEmpty())
+		m_groups.append(KopeteGroup::toplevel);	
+	return (m_groups.contains(KopeteGroup::toplevel));
 }
 
 void KopeteMetaContact::setTopLevel( bool b )
 {
-	if(m_isTopLevel!=b)
+	if(b)
 	{
-		m_isTopLevel = b;
-		emit topLevel(this, b);
+		if(!isTopLevel())
+			m_groups.append(KopeteGroup::toplevel);
+	}
+	else
+	{
+			m_groups.remove(KopeteGroup::toplevel);
 	}
 }
 
@@ -352,117 +344,92 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 		setDisplayName( name );
 }
 
-void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
+void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
 {
-	if(m_temporary && to!="temporaryGroup")
+	if(m_temporary && to!=KopeteGroup::temporary)
 		return;
 
-	if(  m_groups.contains( to ) || (to.isNull() && isTopLevel()) ||  (!m_groups.contains( from ) && !from.isNull() ) || (from.isNull() && !isTopLevel()))
+	if (!m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()) || from==KopeteGroup::null)
+	{
+		addToGroup(to);
 		return;
+	}
 	
-	if ( from.isNull() && to.isNull() )
+	if(  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) || to==KopeteGroup::null)
+	{
+		removeFromGroup(from);
 		return;
-
-	kdDebug() << "KopeteMetaContact::moveToGroup: "<<from <<" => "<<to << endl;
-
-
-	if (from.isNull())
-	{    // from top-level to a group
-		m_isTopLevel=false;
 	}
-	else
-		m_groups.remove( from );
 
-	if (to.isNull())
-	{    // from group to top-level	
-      m_isTopLevel=true; 
-	}
-	else
-		m_groups.append( to );	
+//	kdDebug() << "KopeteMetaContact::moveToGroup: "<<from.string() <<" => "<<to.string() << endl;
 
-	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	m_groups.remove( from );
+
+	m_groups.append( to );	
+
+/*	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 	{
 		c->moveToGroup(from,to);
-	}
+	}*/
 
-	emit movedToGroup(this, from, to );
+	emit movedToGroup(from, to, this );
 }
 
-void KopeteMetaContact::removeFromGroup( const QString &from)
+void KopeteMetaContact::removeFromGroup(  KopeteGroup *from)
 {
-	if(m_temporary && from=="temporaryGroup")
+	if(m_temporary && from==KopeteGroup::temporary)
 		return ;
 
-	if( from.isNull() && groups().isEmpty())
+	if (!m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()) || from==KopeteGroup::null)
 	{
-		kdDebug() << "KopeteMetaContact::removeFromGroup: This contact is removed from all groups, deleting contact" <<endl;
-		KopeteContactList::contactList()->removeMetaContact(this);
-	   return ;
-	}
-	
-	if ( from.isNull() )
-	{
-		if(!isTopLevel())
-			return;
-		m_isTopLevel=false;
-	}
-	else
-	{
-		if( !m_groups.contains( from ) )
-			return;
-
-		m_groups.remove( from );
+		/*kdDebug() << "KopeteMetaContact::removeFromGroup: This contact is removed from all groups, deleting contact" <<endl;
+		KopeteContactList::contactList()->removeMetaContact(this);*/
+		return;
 	}
 
-	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	m_groups.remove( from );
+
+
+	/*for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 	{
 		c->removeFromGroup(from);
-	}
+	} */
 
-	emit removedFromGroup( this, from);
-
+	emit removedFromGroup(  from, this);
 }
 
-void KopeteMetaContact::addToGroup( const QString &to )
+void KopeteMetaContact::addToGroup(  KopeteGroup *to )
 {
-	if(m_temporary && to!="temporaryGroup")
+	if(m_temporary && to!=KopeteGroup::temporary)
 		return;
 
-	if ( to.isNull() )
+	if(  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) || to==KopeteGroup::null)
 	{
-		if(isTopLevel())
-			return;
-			
-		m_isTopLevel=true;
+		return;
 	}
-	else
-	{
-		if( m_groups.contains( to ) )
-			return ;
 
-		m_groups.append( to );
-   }
-	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	m_groups.append( to );
+
+	/*for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 	{
 		c->addToGroup(to);
-	}
+	}*/
 
-	emit addedToGroup( this, to );
-
+	emit addedToGroup( to ,this );
 }
 
-QStringList KopeteMetaContact::groups() const
+KopeteGroupList KopeteMetaContact::groups() const
 {
+/*	if(m_groups.isEmpty())
+		m_groups.append(KopeteGroup::toplevel);*/
 	return m_groups;
 }
 
 void KopeteMetaContact::slotContactDestroyed( QObject *obj )
 {
-
 	KopeteContact *contact = static_cast<KopeteContact *>( obj );
 
 	removeContact(contact,true);
-	
 }
 
 QString KopeteMetaContact::toXML()
@@ -476,18 +443,21 @@ QString KopeteMetaContact::toXML()
 	if ( !m_groups.isEmpty() )
 	{
 		xml += "    <groups>\n";
-		for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
+		KopeteGroup *g;;
+		for ( g = m_groups.first(); g; g = m_groups.next() )
 		{
-			if ( !(*it).isEmpty() )
-				xml += "      <group>" + QStyleSheet::escape( *it ) +
-				       "</group>\n";
-			else
-				xml += "      <group>" + QStyleSheet::escape( i18n("Unknown") ) +
-				       "</group>\n";
+			QString group_s=g->displayName();
+			if(!group_s.isNull())
+			{
+				if ( !group_s.isEmpty() )
+					xml += "      <group>" + QStyleSheet::escape( group_s) + "</group>\n";
+				else
+				  xml += "      <group>" + QStyleSheet::escape( i18n("Unknown") ) + "</group>\n";
+			}
 		}
 
 		// The contact is also at top-level
-		if ( m_isTopLevel )
+		if ( isTopLevel() )
 		{
 			xml += "      <top-level/>\n";
 		}
@@ -503,8 +473,7 @@ QString KopeteMetaContact::toXML()
 		   hided contact, also for toplevel contacts saved before
 		   we added the <top-level> tag.
 		*/
-		if ( ! m_isTopLevel )
-			xml += "    <groups><top-level/></groups>\n";
+		xml += "    <groups><top-level/></groups>\n";
 	}
 
 	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
@@ -557,8 +526,6 @@ QString KopeteMetaContact::toXML()
 
 bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 {
-	m_isTopLevel = false;
-
 	QDomNode contactNode = cnode;
 	while( !contactNode.isNull() )
 	{
@@ -576,14 +543,14 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				QDomNode group = contactElement.firstChild();
 				while( !group.isNull() )
 				{
-                    QDomElement groupElement = group.toElement();
+					QDomElement groupElement = group.toElement();
 					if ( groupElement.tagName() == "group" )
 					{
-						m_groups << groupElement.text();
+						m_groups.append(KopeteContactList::contactList()->getGroup(groupElement.text()));
 					}
 					else if ( groupElement.tagName() == "top-level" )
 					{
-						m_isTopLevel = true;
+						m_groups.append(KopeteGroup::toplevel);
 					}
 	
 					group = group.nextSibling();
@@ -631,9 +598,6 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	connect( kopeteapp->libraryLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
-	if ( m_groups.isEmpty() && ! m_isTopLevel )
-		m_isTopLevel = true;
-
 	return true;
 }
 
@@ -669,21 +633,23 @@ bool KopeteMetaContact::isTemporary() const
 {
 	return m_temporary;
 }
-void KopeteMetaContact::setTemporary( bool b , QString group )
+void KopeteMetaContact::setTemporary( bool b , KopeteGroup *group )
 {
 	m_temporary=b;
+	KopeteGroup *temporaryGroup=KopeteGroup::temporary;
 
 	if(m_temporary)
 	{
-		addToGroup ("temporaryGroup");
-		for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
+		addToGroup (temporaryGroup);
+		KopeteGroup *g;
+		for ( g = m_groups.first(); g; g = m_groups.next() )
 		{
-			if(*it != "temporaryGroup")
-				removeFromGroup("temporaryGroup");
+			if(g != temporaryGroup)
+				removeFromGroup(g);
 		}
 	}
 	else
-		moveToGroup("temporaryGroup",group);
+		moveToGroup(temporaryGroup,group);
 }
 
 bool KopeteMetaContact::isDirty() const

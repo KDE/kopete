@@ -44,6 +44,8 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopetegroup.h"
+#include "kopetecontactlist.h"
 #include "ui/kopetehistorydialog.h"
 
 /**
@@ -85,6 +87,17 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	// specifically cause this instance to update this contact as offline
 	slotUpdatePresence(JabberProtocol::STATUS_OFFLINE, "");
 
+	if(mc)
+	{
+		connect (mc , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
+				this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
+		connect (mc , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
+				this, SLOT (addToGroup(KopeteGroup*) ));
+		connect (mc , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
+				this, SLOT (removeFromGroup(KopeteGroup*) ));
+		connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
+				this, SLOT (slotMoved(KopeteMetaContact*) ));
+	}
 }
 
 /**
@@ -463,40 +476,40 @@ void JabberContact::slotRequestAuth()
 
 }
 
-void JabberContact::addToGroup(const QString &group)
+void JabberContact::addToGroup(KopeteGroup *group)
 {
 
-	kdDebug() << "[JabberContact] Adding user " << userId() << " to group " << group << endl;
+	kdDebug() << "[JabberContact] Adding user " << userId() << " to group " << group->displayName() << endl;
 
 	QStringList groups = rosterItem.groups();
-	groups.append(group);
+	groups.append(group->displayName());
 	rosterItem.setGroups(groups);
 
 	protocol->updateContact(rosterItem);
 
 }
 
-void JabberContact::moveToGroup(const QString &from, const QString &to)
+void JabberContact::moveToGroup(KopeteGroup *from, KopeteGroup *to)
 {
 
-	kdDebug() << "[JabberContact] Moving user " << userId() << " from group " << from << " to group " << to << endl;
+	kdDebug() << "[JabberContact] Moving user " << userId() << " from group " << from->displayName() << " to group " << to->displayName() << endl;
 
 	QStringList groups = rosterItem.groups();
-	groups.append(to);
-	groups.remove(from);
+	groups.append(to->displayName());
+	groups.remove(from->displayName());
 	rosterItem.setGroups(groups);
 
 	protocol->updateContact(rosterItem);
 
 }
 
-void JabberContact::removeFromGroup(const QString &group)
+void JabberContact::removeFromGroup(KopeteGroup *group)
 {
 
-	kdDebug() << "[JabberContact] Removing user " << userId() << " from group " << group << endl;
+	kdDebug() << "[JabberContact] Removing user " << userId() << " from group " << group->displayName() << endl;
 
 	QStringList groups = rosterItem.groups();
-	groups.remove(group);
+	groups.remove(group->displayName());
 	rosterItem.setGroups(groups);
 
 	protocol->updateContact(rosterItem);
@@ -949,6 +962,44 @@ void JabberContact::slotStatusDND()
 	protocol->sendPresenceToNode(JabberProtocol::STATUS_DND, id);
 
 }
+
+void JabberContact::slotMoved(KopeteMetaContact* from)
+{
+//	kdDebug() <<"JabberContact::slotMoved" <<endl;
+	QStringList groups_new=metaContact()->groups().toStringList();
+	QStringList groups_old=from->groups().toStringList();
+	QStringList groups_current=groups();
+
+	for( QStringList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
+	{
+		QString group=*it;
+		if(!groups_current.contains(group))
+			addToGroup(KopeteContactList::contactList()->getGroup(group));
+	}
+	for( QStringList::ConstIterator it = groups_old.begin(); it != groups_old.end(); ++it )
+	{
+		QString group=*it;
+		if(groups_current.contains(group) && !groups_new.contains(group))
+			removeFromGroup(KopeteContactList::contactList()->getGroup(group));
+	}
+
+	disconnect (from , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
+			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
+	disconnect (from , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
+			this, SLOT (addToGroup(KopeteGroup*) ));
+	disconnect (from , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
+			this, SLOT (removeFromGroup(KopeteGroup*) ));
+
+	connect (metaContact() , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
+			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
+	connect (metaContact() , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
+			this, SLOT (addToGroup(KopeteGroup*) ));
+	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
+			this, SLOT (removeFromGroup(KopeteGroup*) ));
+
+
+}
+
 
 #include "jabbercontact.moc"
 

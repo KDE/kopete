@@ -60,7 +60,7 @@ public:
 
 	QString serverName() { return m_serverName; };
 	QString targetName() { return m_targetName; } ;
-	QString groupName() { return m_groupName; };
+//	QString groupName() { return m_groupName; };
 
 	virtual QString id() const;
 
@@ -75,7 +75,7 @@ private:
 
 	QString m_serverName;
 	QString m_targetName;
-	QString m_groupName;
+//	QString m_groupName;
 
 	bool m_waitingPart;
 	bool m_requestedQuit;

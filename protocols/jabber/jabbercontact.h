@@ -38,6 +38,7 @@ class KopeteHistoryDialog;
 class KopeteMessage;
 class KopeteMessageManager;
 class KopeteMetaContact;
+class KopeteGroup;
 
 class Jabber::Jid;
 class Jabber::Message;
@@ -163,17 +164,17 @@ class JabberContact : public KopeteContact
 		/**
 		 * Add contact to a group
 		 */
-		virtual void addToGroup( const QString &group );
+//		virtual void addToGroup( const QString &group );
 
 		/**
 		 * Remove contact from a group
 		 */
-		virtual void removeFromGroup( const QString &group );
+//		virtual void removeFromGroup( const QString &group );
 		
 		/**
 		 * Move contact to a different group
 		 */
-		virtual void moveToGroup( const QString &from, const QString &to );
+//		virtual void moveToGroup( const QString &from, const QString &to );
 
 	public slots:
 
@@ -243,6 +244,14 @@ class JabberContact : public KopeteContact
 		 */
 		void slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason);
 
+		/**
+		 * Add/Remove user to/from a group
+		 */
+		void addToGroup( KopeteGroup * );
+		void removeFromGroup( KopeteGroup * );
+		void moveToGroup( KopeteGroup * , KopeteGroup * );
+
+
 	private slots:
 		
 		/**
@@ -301,6 +310,12 @@ class JabberContact : public KopeteContact
 		void slotStatusAway();
 		void slotStatusXA();
 		void slotStatusDND();
+
+
+		/**
+		 *  the contact is moved to another metaContact
+		 */
+	  void slotMoved(KopeteMetaContact* from);
 
 		
 	signals:

@@ -356,7 +356,7 @@ private:
 	KopeteMetaContact *m_addWizard_metaContact;
 
 	MSNNotifySocket *m_notifySocket;
-	KopeteContact *m_myself;
+	MSNContact *m_myself;
 
 	MSNIdentity *m_identity;
 //	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;

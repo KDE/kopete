@@ -20,8 +20,8 @@
 
 #include <qdom.h>
 #include <qfile.h>
-#include <qptrlist.h>
-#include <qstringlist.h>
+//#include <qptrlist.h>
+//#include <qstringlist.h>
 #include <qstylesheet.h>
 
 #include <kapplication.h>
@@ -32,11 +32,10 @@
 #include <kstandarddirs.h>
 
 #include "kopete.h"
-#include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
-#include "kopetemetacontactlvi.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
+#include "kopetegroup.h"
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -74,15 +73,15 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {
 	m_contacts.append( mc );
 
-	connect( mc,
+/*	connect( mc,
 		SIGNAL( removedFromGroup( KopeteMetaContact *, const QString & ) ),
-		SLOT( slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );
+		SLOT( slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );*/
 
 	emit metaContactAdded( mc );
 }
 
-void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
-	const QString & /* from */ )
+/*void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
+	const QString &  )
 {
 	if( mc->groups().isEmpty() )
 	{
@@ -91,7 +90,7 @@ void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
 		//m_contacts.remove( mc );
 		//mc->deleteLater();
 	}
-}
+}                  */
 
 void KopeteContactList::loadXML()
 {
@@ -259,10 +258,9 @@ QStringList KopeteContactList::onlineContacts() const
 	return contacts;
 }
 
-QStringList KopeteContactList::groups() const
+KopeteGroupList KopeteContactList::groups() const
 {
-	return m_groupStringList;
-
+	return m_groupList;
 }
 
 void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
@@ -281,29 +279,34 @@ QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const
 	return m_contacts;
 }
 
-void KopeteContactList::addGroup(QString g)
+void KopeteContactList::addGroup( KopeteGroup * g)
 {
-	m_groupStringList.append( g );
-	emit groupAdded( g );
+	if(!m_groupList.contains(g) )
+	{
+		m_groupList.append( g );
+		emit groupAdded( g );
+	}
 }
 
-void KopeteContactList::removeGroup(QString g)
+void KopeteContactList::removeGroup( KopeteGroup *g)
 {
-	m_groupStringList.remove( g );
+	m_groupList.remove( g );
 	emit groupRemoved( g );
 }
 
-/*void KopeteContactList::renameGroup(QString from, QString to)
+KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)
 {
-	kdDebug() << "KopeteContactList::renameGroup()" << endl;
-	int i=m_groupStringList.findIndex(from);
-	if(i>=0)
-		m_groupStringList[i]=to;
-//	emit groupRenamed(from,to);
-	emit groupAdded( to )
-	emit groupRemoved (from )
-}    */
+	KopeteGroup *g;;
+	for ( g = m_groupList.first(); g; g = m_groupList.next() )
+	{
+		if(g->type() == type && g->displayName()==displayName)
+			return g;
+	}
 
+	KopeteGroup *rep=new KopeteGroup(displayName,type);
+	addGroup(rep);
+	return  rep;
+}
 
 
 #include "kopetecontactlist.moc"

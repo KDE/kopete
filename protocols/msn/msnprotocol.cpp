@@ -70,6 +70,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_connectstatus=NLN;
 	mIsConnected = false;
 	m_notifySocket = 0L;
+	m_myself=0L;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
 
@@ -343,7 +344,7 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		for( ; it != groups.end(); ++it )
 			c->addedToGroup( groupName( (*it).toUInt() ) );
 
-		metaContact->addContact( c, QStringList() );
+		metaContact->addContact( c);
 
 		m_contacts.insert( c->msnId(), c );
 
@@ -587,7 +588,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 
 		// FIXME: is there any way to do a faster sync of msn groups?
 		/* Now we sync local groups that don't exist on server */
-		QStringList localgroups = (KopeteContactList::contactList()->groups()) ;
+		QStringList localgroups = KopeteContactList::contactList()->groups().toStringList() ;
 		QStringList servergroups = groups();
 		QString localgroup;
 		QString remotegroup;
@@ -721,7 +722,7 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m, cons
 
 		if(m && !m->groups().isEmpty())
 		{
-			QStringList gprs=m->groups();
+			QStringList gprs=m->groups().toStringList();
 			for( QStringList::ConstIterator it = gprs.begin(); it != gprs.end(); ++it )
 			{
 				int g = groupNumber( *it );
@@ -987,7 +988,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 				if(!contactGroups.contains(serverGroup))
 				{
 					c->addedToGroup(serverGroup);
-					m->addToGroup(serverGroup);
+					m->addToGroup(KopeteContactList::contactList()->getGroup(serverGroup));
 				}
 			}
 			for( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
@@ -996,7 +997,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 				if(!serverGroups.contains(cGroup))
 				{
 					c->removedFromGroup(cGroup);
-					m->removeFromGroup(cGroup);
+					m->removeFromGroup(KopeteContactList::contactList()->getGroup(cGroup));
 				}
 			}
 		}
@@ -1015,8 +1016,9 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 				it != groups.end(); ++it )
 			{
 				msnContact->addedToGroup( groupName( (*it).toUInt() ) );
+				m->addToGroup(KopeteContactList::contactList()->getGroup(groupName( (*it).toUInt() ) ) );
 			}
-			m->addContact( msnContact, msnContact->groups() );
+			m->addContact( msnContact );
 			KopeteContactList::contactList()->addMetaContact(m);
 
 			m_contacts.insert( msnContact->msnId(), msnContact );
@@ -1152,11 +1154,10 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 
 				if(!m_addWizard_metaContact)
 				{
-					m->addContact( c, gn );
+					m->addToGroup(KopeteContactList::contactList()->getGroup(gn));
 					KopeteContactList::contactList()->addMetaContact(m);
 				}
-				else
-					m->addContact( c, QStringList() );
+				m->addContact( c);
 
 				m_addWizard_metaContact=0L;
 
@@ -1168,7 +1169,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			MSNContact *c=m_contacts[ handle ];
 			c->addedToGroup( gn );
 			if(c->metaContact()->isTemporary())
-				c->metaContact()->setTemporary(false,gn);
+				c->metaContact()->setTemporary(false,KopeteContactList::contactList()->getGroup(gn));
 		}
 		
 		if(!m_allowList.contains(handle))
@@ -1280,7 +1281,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 				SLOT( slotContactDestroyed( KopeteContact * ) ) );
 			//m_metaContacts.insert( m, msnContact );
 
-			m->addContact( msnContact, QStringList() );
+			m->addContact( msnContact);
 			KopeteContactList::contactList()->addMetaContact(m);
 
 			m_contacts.insert( msnContact->msnId(), msnContact );
@@ -1449,9 +1450,15 @@ MSNContact *MSNProtocol::contact( const QString &handle )
 
 void MSNProtocol::slotPreferencesSaved()
 {
-	m_msnId      = mPrefs->msnId();
 	m_password   = mPrefs->password();
-	m_publicName = mPrefs->publicName();
+//	m_publicName = mPrefs->publicName();
+
+	if(m_msnId != mPrefs->msnId())
+	{
+		m_msnId  = mPrefs->msnId();
+		if(m_myself)
+			m_myself->setMsnId(m_msnId);
+	}
 }
 
 

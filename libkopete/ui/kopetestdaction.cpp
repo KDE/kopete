@@ -20,6 +20,7 @@
 #include <kdebug.h>
 
 #include "kopete.h"
+#include "kopetegroup.h"
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
@@ -29,25 +30,25 @@
 
 
 /** KopeteGroupList **/
-KopeteGroupList::KopeteGroupList(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
+KopeteGroupListAction::KopeteGroupListAction(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
                 : KListAction(text, pix, cut, parent, name)
 {
 	connect( this, SIGNAL( activated() ), receiver, slot );
 
-	connect(KopeteContactList::contactList(), SIGNAL(groupAdded(const QString &)), this, SLOT(slotUpdateList()));
-	connect(KopeteContactList::contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotUpdateList()));
+	connect(KopeteContactList::contactList(), SIGNAL(groupAdded( KopeteGroup *)), this, SLOT(slotUpdateList()));
+	connect(KopeteContactList::contactList(), SIGNAL(groupRemoved( KopeteGroup *)), this, SLOT(slotUpdateList()));
 	slotUpdateList();
 }
 
-KopeteGroupList::~KopeteGroupList()
+KopeteGroupListAction::~KopeteGroupListAction()
 {
 }
 
-void KopeteGroupList::slotUpdateList()
+void KopeteGroupListAction::slotUpdateList()
 {
-    m_groupList = QStringList();
+	m_groupList = QStringList();
 	m_groupList << "Top Level";
-	m_groupList += KopeteContactList::contactList()->groups();
+	m_groupList += KopeteContactList::contactList()->groups().toStringList();
 	setItems( m_groupList );
 }
 
@@ -90,14 +91,14 @@ KAction* KopeteStdAction::changeMetaContact(const QObject *recvr, const char *sl
 
 KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KopeteGroupList( i18n("&Move Contact"), "editcut", 0, recvr, slot,
+	return new KopeteGroupListAction( i18n("&Move Contact"), "editcut", 0, recvr, slot,
 		parent, name );
 }
 
 KListAction *KopeteStdAction::copyContact( const QObject *recvr,
 	const char *slot, QObject* parent, const char *name )
 {
-	return new KopeteGroupList( i18n("Cop&y Contact"), "editcopy", 0, recvr, slot,
+	return new KopeteGroupListAction( i18n("Cop&y Contact"), "editcopy", 0, recvr, slot,
 		parent, name );
 }
 

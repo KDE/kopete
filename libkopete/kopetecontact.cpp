@@ -142,29 +142,28 @@ int KopeteContact::importance() const
 	return 0;
 }
 
-QStringList KopeteContact::groups()
+/*QStringList KopeteContact::groups()
 {
 	return QStringList();
 }
 
-void KopeteContact::addToGroup( const QString & /* group */ )
+void KopeteContact::addToGroup( const QString &  )
 {
 	kdDebug() << "KopeteContact::addToGroup: WARNING: "
 		<< "Default implementation called! Function not implemented?" << endl;
 }
 
-void KopeteContact::removeFromGroup( const QString & /* group */ )
+void KopeteContact::removeFromGroup( const QString &  )
 {
 	kdDebug() << "KopeteContact::removeFromGroup: WARNING: "
 		<< "Default implementation called! Function not implemented?" << endl;
 }
 
-void KopeteContact::moveToGroup( const QString & /* from */,
-	const QString & /* to */ )
+void KopeteContact::moveToGroup( const QString & , const QString &  )
 {
 	kdDebug() << "KopeteContact::moveToGroup: WARNING: "
 		<< "Default implementation called! Function not implemented?" << endl;
-}
+} */
 
 void KopeteContact::initActions()
 {
@@ -179,10 +178,10 @@ void KopeteContact::initActions()
 
 void KopeteContact::showContextMenu(const QPoint& p)
 {
-	/* Build the menu */	
+	/* Build the menu */
 	contextMenu = new KPopupMenu();
-	contextMenu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );   
-	
+	contextMenu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );
+
 	actionSendMessage->plug( contextMenu );
 	actionSendMessage->setEnabled( isReachable() );
 
@@ -204,13 +203,13 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	{
 		if ( !customActions->isEmpty() )
 			contextMenu->insertSeparator();
-			
+
 		for(unsigned int i = 0; i < customActions->count(); i++)
 		{
 			customActions->action(i)->plug( contextMenu );
 		}
 	}
-	
+
 	contextMenu->exec( p );
 	delete contextMenu;
 	contextMenu = 0L;
@@ -222,10 +221,10 @@ void KopeteContact::slotChangeDisplayName(){
 											 displayName(), &okClicked);
 	if(okClicked){
 		setDisplayName( newName );
-	}	
+	}
 }
 
-void KopeteContact::addThisTemporaryContact(QString group)
+void KopeteContact::addThisTemporaryContact(KopeteGroup *group)
 {
 	if(m_metaContact->isTemporary())
 		m_metaContact->setTemporary(false,group);
@@ -263,32 +262,32 @@ void KopeteContact::slotMoveDialogOkClicked()
 
 void KopeteContact::moveToMetaContact(KopeteMetaContact *m)
 {
+	KopeteMetaContact *old=m_metaContact;
 	m_metaContact->removeContact(this);
 	m->addContact(this);
 
-	QStringList groups_new=m->groups();
-	QStringList groups_old=m_metaContact->groups();
-	QStringList groups_current=groups();
+/*	KopeteGroupList groups_new=m->groups();
+	KopeteGroupList groups_old=m_metaContact->groups();
+	KopeteGroupList groups_current=groups();*/
 
 	m_metaContact->removeChild(this);
 	m->insertChild(this);
 	m_metaContact=m;
 
-	for( QStringList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
+/*	for( KopeteGroupList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
 	{
-		QString group=*it;
+		KopeteGroup group=*it;
 		if(!groups_current.contains(group))
 			addToGroup(group);
 	}
-	for( QStringList::ConstIterator it = groups_old.begin(); it != groups_old.end(); ++it )
+	for( KopeteGroupList::ConstIterator it = groups_old.begin(); it != groups_old.end(); ++it )
 	{
-		QString group=*it;
+		KopeteGroup group=*it;
 		if(groups_current.contains(group) && !groups_new.contains(group))
 			removeFromGroup(group);
-	}
+	}*/
 
-	//TODO: connect this signal in each protocol for uptade the KopeteMetaContact map
-	emit moved(this);
+	emit moved(old, this);
 }
 
 KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p)
