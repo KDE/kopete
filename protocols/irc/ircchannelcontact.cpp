@@ -22,8 +22,7 @@
 
 #include "kirc.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopeteviewmanager.h"
-#include  "kopeteview.h"
+#include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "../kopete/kopete.h"
@@ -89,7 +88,7 @@ KopeteMessageManager* IRCChannelContact::manager(bool)
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(closing(KopeteMessageManager*)), this, SLOT(slotMessageManagerDestroyed()));
 		isConnected = true;
-		QObject::connect( KopeteViewManager::viewManager(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
+		QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
 	}
 	return mMsgManager;
 }
@@ -111,7 +110,7 @@ void IRCChannelContact::slotJoinChannel( KopeteView *view )
 	if( view->msgManager() == mMsgManager )
 	{
 		mEngine->joinChannel(mNickName);
-		QObject::disconnect( KopeteViewManager::viewManager(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
+		QObject::disconnect( KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
 	}
 }
 

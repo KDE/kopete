@@ -50,7 +50,7 @@ SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QSt
 	connect( mPrefs, SIGNAL(saved()), this, SLOT( slotPrefsSaved() ) );
 
 	//Connect to the viewCreated signal to install our event filter
-	connect( KopeteViewManager::viewManager(), SIGNAL( viewCreated( KopeteView * ) ), this, SLOT( slotBindToView( KopeteView * ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView * ) ), this, SLOT( slotBindToView( KopeteView * ) ) );
 }
 
 SpellCheckPlugin::~SpellCheckPlugin()

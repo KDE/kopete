@@ -23,6 +23,7 @@
 #include <qvaluelist.h>
 
 #include "kopetemessagemanager.h"
+#include "kopetemessage.h"
 
 /**
  * @author Duncan Mac-Vicar Prett
@@ -32,6 +33,7 @@ class KopeteMessage;
 class KopeteContact;
 class KopeteProtocol;
 class KopeteEvent;
+class KopeteView;
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>      KopeteMessageList;
@@ -100,6 +102,12 @@ public:
 
 	void removeSession( KopeteMessageManager *session );
 
+	/**
+	 * create a new view for the manager.
+	 * only the manager should call this fuction
+	 */
+	KopeteView *createView( KopeteMessageManager * , KopeteMessage::MessageType type );
+
 signals:
 	/**
 	 * This signal is emitted whenever a message
@@ -125,6 +133,17 @@ signals:
 	 */
 	void aboutToReceive( KopeteMessage& message );
 
+	/**
+	 * A new view has been created
+	 */
+	void viewCreated( KopeteView * );
+
+	/*
+	 *	Request the creation of a new view
+	 */
+	void requestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType type );
+
+
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 
@@ -132,6 +151,7 @@ private:
 	KopeteMessageManagerDict mSessionDict;
 
 	static KopeteMessageManagerFactory *s_factory;
+
 };
 
 #endif

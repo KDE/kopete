@@ -49,7 +49,6 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 	for ( ; it.current() ; ++it )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM: Why this KMM isn't yet unloaded?" << endl;
-		KopeteMessageManager *kmm;
 		delete it.current();
 	}
 }
@@ -174,6 +173,20 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 		}
 	}
 }
+
+KopeteView * KopeteMessageManagerFactory::createView( KopeteMessageManager *kmm , KopeteMessage::MessageType type )
+{
+	KopeteView *newView=0L;
+	emit requestView( newView , kmm , type  );
+	if(!newView)
+	{
+		kdDebug(14010) << k_funcinfo << "View not successfuly created" << endl;
+		return 0L;
+	}
+	emit viewCreated( newView ) ;
+	return newView;
+}
+
 
 #include "kopetemessagemanagerfactory.moc"
 

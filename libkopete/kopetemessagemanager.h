@@ -205,6 +205,7 @@ public slots:
 
 private slots:
 	void slotUpdateDisplayName();
+	void slotViewDestroyed();
 
 protected:
 	/**

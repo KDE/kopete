@@ -20,6 +20,7 @@
 #include <knotifyclient.h>
 #include <qregexp.h>
 #include <qmap.h>
+#include <qwidget.h>
 
 #include "kopeteaway.h"
 #include "kopetemessagelog.h"
@@ -29,6 +30,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
+#include "kopeteview.h"
 
 struct KMMPrivate
 {
@@ -42,6 +44,7 @@ struct KMMPrivate
 	bool isEmpty;
 	bool mCanBeDeleted;
 	QString displayName;
+	KopeteView *view;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
@@ -57,6 +60,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mLog = true;
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted = false;
+	d->view=0L;
 
 	for( KopeteContact *c = others.first(); c; c = others.next() )
 		c->setConversations( c->conversations() + 1 );
@@ -306,13 +310,20 @@ void KopeteMessageManager::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
-	//TODO: make the kmm the knowledge of the view
-#include "kopeteviewmanager.h"
 KopeteView* KopeteMessageManager::view(bool /*canCreate*/  , KopeteMessage::MessageType type )
 {
-	return KopeteViewManager::viewManager()->view(this, false , type);
+	if(!d->view)
+	{
+		d->view=KopeteMessageManagerFactory::factory()->createView( this , type );
+		connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
+	}
+	return d->view;
 }
 
+void KopeteMessageManager::slotViewDestroyed()
+{
+	d->view=0L;
+}
 
 #include "kopetemessagemanager.moc"
 
