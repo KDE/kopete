@@ -73,6 +73,12 @@ void SpellCheckPreferences::save()
 	config->writeEntry( QString::fromLatin1("Check As You Type"), autoCheck );
 	config->writeEntry( QString::fromLatin1("Shortcut Key"), m_shortCut.toString() );
 
+	config->writeEntry( QString::fromLatin1("NoRootAffix"), m_spellConfig->noRootAffix() );
+	config->writeEntry( QString::fromLatin1("RunTogether"), m_spellConfig->runTogether() );
+	config->writeEntry( QString::fromLatin1("Dictionary"), m_spellConfig->dictionary() );
+	config->writeEntry( QString::fromLatin1("Encoding"), m_spellConfig->encoding() );
+	config->writeEntry( QString::fromLatin1("Client"), m_spellConfig->client() );
+
 	config->sync();
 
 	reopen();
@@ -89,6 +95,15 @@ void SpellCheckPreferences::reopen()
 	KShortcut newCut = KShortcut( config->readEntry( QString::fromLatin1("Shortcut Key"), QString::fromLatin1("CTRL+ALT+S") ) );
 	if( !newCut.isNull() )
 		slotShortcutChanged( newCut );
+
+	m_spellConfig-> setNoRootAffix( config->readBoolEntry( QString::fromLatin1("NoRootAffix"), false ) );
+	m_spellConfig->setRunTogether( config->readBoolEntry( QString::fromLatin1("RunTogether"), false ) );
+	QString dict = config->readEntry( QString::fromLatin1("Dictionary") );
+	if( !dict.isNull() && !dict.isEmpty() )
+		m_spellConfig->setDictionary( dict );
+
+	m_spellConfig->setEncoding( config->readNumEntry( QString::fromLatin1("Encoding"), 0 ) );
+	m_spellConfig->setClient( config->readNumEntry( QString::fromLatin1("Client"), 0 ) );
 
 	preferencesDialog->autoCheck->setChecked( autoCheck );
 }

@@ -46,18 +46,15 @@ SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QSt
 	spellCheckerReady = false;
 	manualCheckInProgress = false;
 
+	connect( mPrefs, SIGNAL(saved()), this, SLOT( slotPrefsSaved() ) );
+
 	//Connect to the viewCreated signal to install our event filter
 	connect( KopeteViewManager::viewManager(), SIGNAL( viewCreated( KopeteView * ) ), this, SLOT( slotBindToView( KopeteView * ) ) );
 }
 
 SpellCheckPlugin::~SpellCheckPlugin()
 {
-	delete mPrefs;
-	if( mSpell )
-	{
-		mSpell->cleanUp();
-		delete mSpell;
-	}
+	slotPrefsSaved();
 
 	singleSpellers.setAutoDelete( true );
 	singleSpellers.clear();
@@ -72,6 +69,17 @@ SpellCheckPlugin* SpellCheckPlugin::plugin()
 
 SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
 
+void SpellCheckPlugin::slotPrefsSaved()
+{
+	// Destroy the spelling instance so that new prefs will be reloaded
+	if( mSpell )
+	{
+		mSpell->cleanUp();
+		delete mSpell;
+		mSpell = 0L;
+	}
+}
+
 KSpell *SpellCheckPlugin::speller()
 {
 	if( !mSpell )
@@ -80,6 +88,12 @@ KSpell *SpellCheckPlugin::speller()
 		connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
 		connect( mSpell, SIGNAL( corrected( const QString&, const QString&, unsigned int ) ), this, SLOT( slotCorrection( const QString&, const QString&, unsigned int ) ) );
 		connect( mSpell, SIGNAL( done( const QString & ) ), this, SLOT( slotSpellDone( const QString &) ) );
+
+		if( !singleSpellers.isEmpty() )
+		{
+			for ( SingleSpellInstance *it = singleSpellers.first(); it; it = singleSpellers.next() )
+				connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), it, SLOT( misspelling( const QString&, const QStringList&, unsigned int ) ) );
+		}
 
 		while( !spellCheckerReady )
 			qApp->processEvents();

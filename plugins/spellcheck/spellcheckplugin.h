@@ -36,6 +36,7 @@ class SpellCheckPlugin : public KopetePlugin
 		~SpellCheckPlugin();
 		virtual KActionCollection *customChatActions( KopeteMessageManager * );
 		KSpell *speller();
+		QPtrList<SingleSpellInstance> singleSpellers;
 
 	private:
 		static SpellCheckPlugin* pluginStatic_;
@@ -43,11 +44,11 @@ class SpellCheckPlugin : public KopetePlugin
 		KSpell *mSpell;
 		KopeteMessage mBuffer;
 		SpellCheckPreferences *mPrefs;
-		QPtrList<SingleSpellInstance> singleSpellers;
 		bool spellCheckerReady;
 		bool manualCheckInProgress;
 
 	private slots:
+		void slotPrefsSaved();
 		void slotCheckSpelling();
 		void slotBindToView( KopeteView * );
 		void slotSpellCheckerReady(KSpell *);

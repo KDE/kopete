@@ -43,8 +43,10 @@ class SingleSpellInstance : public QObject
 		ReplacementMap mReplacements;
 		SpellCheckPlugin *mPlugin;
 
+	public slots:
+		void misspelling( const QString &, const QStringList &, unsigned int );
+		
 	private slots:
-		void slotMisspelling( const QString &, const QStringList &, unsigned int );
 		void slotUpdateTextEdit();
 		void slotViewDestroyed();
 

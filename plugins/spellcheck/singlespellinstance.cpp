@@ -42,13 +42,13 @@ SingleSpellInstance::SingleSpellInstance( SpellCheckPlugin *plugin, KopeteView *
 	//We can't use \b because QT barfs when trying to split on it
 	mBound = QRegExp( QString::fromLatin1("[\\s\\W]") );
 
-	connect( mPlugin->speller(), SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
 	connect( dynamic_cast<QObject*>(mView), SIGNAL( destroyed() ), this, SLOT( slotViewDestroyed() ) );
 }
 
 SingleSpellInstance::~SingleSpellInstance()
 {
 	kdDebug() << k_funcinfo << "Destroying single speller instance" << endl;
+	mPlugin->singleSpellers.remove( this );
 }
 
 void SingleSpellInstance::slotViewDestroyed()
@@ -98,7 +98,7 @@ void SingleSpellInstance::slotUpdateTextEdit()
 		t->setSelection( selParFrom, selTxtFrom, selParTo, selTxtTo );
 }
 
-void SingleSpellInstance::slotMisspelling( const QString &originalword, const QStringList &suggestions, unsigned int )
+void SingleSpellInstance::misspelling( const QString &originalword, const QStringList &suggestions, unsigned int )
 {
 	//kdDebug() << k_funcinfo << originalword << "IS MISSPELLED!" << endl;
 
