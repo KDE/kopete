@@ -430,8 +430,8 @@ void KIRC::slotReadyRead()
 			}
 			else
 			{
-				kdDebug(14120) << "Unknow IRC command for line:" << msg.raw();
-				KMessageBox::error(0, msg.raw(), "Unknow IRC line");
+				kdDebug(14120) << "Unknown IRC command for line:" << msg.raw();
+				KMessageBox::error(0, msg.raw(), "Unknown IRC line");
 				emit incomingUnknown(msg.raw());
 			}
 		}
