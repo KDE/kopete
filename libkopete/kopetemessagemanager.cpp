@@ -458,7 +458,7 @@ void KopeteMessageManager::slotChatWindowClosing()
 	{
 		//We are deleting this window instance
 		kdDebug(14010) << "KopeteMessageManager::mainWindow() : Chat Window closed, now 0L" << endl;
-		if( chatWindowMap().contains( d->mProtocol ) )
+		if( chatWindowMap().contains( d->mProtocol ) && (chatWindowMap()[ d->mProtocol ] == myWindow) )
 			chatWindowMap().remove( d->mProtocol );
 		
 		//Close *our* window
