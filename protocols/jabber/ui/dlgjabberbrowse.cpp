@@ -136,3 +136,5 @@ void DlgJabberBrowse::slotSentForm()
 DlgJabberBrowse::~DlgJabberBrowse()
 {
 }
+
+#include "dlgjabberbrowse.moc"
