@@ -26,3 +26,4 @@ TODO for Jabber:
 - make awaydialog autodelete itself
 - remove KOS from all classes, make them contact specific for Greg's enhancements,
   make all classes use JabberProtocol::OnlineStatus instead
+- allow account ID changes

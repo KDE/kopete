@@ -60,6 +60,9 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	connect (chkUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
+	// FIXME: this is temporary until Kopete supports accound ID changes!
+	mID->setDisabled(true);
+
 	if (m_account)
 	{
 		this->reopen ();
@@ -145,7 +148,7 @@ void JabberEditAccountWidget::writeConfig ()
 	// FIXME: The call below represents a flaw in the current Kopete API.
 	// Once the API is cleaned up, this will most likely require a change.
 	//m_account->setAccountId(mID->text());
-	
+
 	m_account->setPluginData (m_protocol, "Server", mServer->text ());
 	m_account->setPluginData (m_protocol, "Resource", mResource->text ());
 	m_account->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
