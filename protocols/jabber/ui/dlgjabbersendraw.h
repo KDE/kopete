@@ -28,27 +28,34 @@
 
 
 /**
- * A dialog to send raw strings to the jabber server
+ * A dialog to send raw strings to the jabber server.
+ *
+ * It comes with a QComboBox to choose some "template" strings
+ * like "Availability Status", "Subscription",...
  *
  * @author Till <till@tantalo.net>
  * @author Chris TenHarmsel <tenharmsel@users.sf.net>
  */
 class dlgJabberSendRaw:public DlgSendRaw
 {
-  Q_OBJECT public:
+  Q_OBJECT 
+	
+	public:
 	  dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
 	  virtual ~ dlgJabberSendRaw ();
 
 	public slots:
-		void slotFinish ();
 		void slotCancel ();
-		void slotCreateMessage(int );
+		void slotClear ();
+		void slotCreateMessage (int);
+		void slotSend();
 
-  private:
+	private:
 
-		/** This is what we talk through */
-	  Jabber::Client * mEngine;
-
+		/** 
+		 * This is what we talk through 
+		 */
+		Jabber::Client * mEngine;
 };
 
 

@@ -78,7 +78,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	jabberClient = 0L;
 	registerFlag = 0;
-	sendRawDialog = 0L;
 
 	initialPresence = protocol()->JabberOnline;
 
@@ -635,12 +634,8 @@ void JabberAccount::slotSendRaw ()
 		return;
 	}
 
-	/* Check if we have a dialog already displayed. */
-	if (sendRawDialog == 0L)
-	{
-		sendRawDialog = new dlgJabberSendRaw (jabberClient, qApp->mainWidget ());
-	}
-	sendRawDialog->show ();
+	// TODO: only create one instance
+	sendRawDialog = new dlgJabberSendRaw (jabberClient, 0L);
 }
 
 void JabberAccount::subscribe (const Jabber::Jid & jid)

@@ -68,7 +68,12 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>Message</string>
+                            <string>Last Active Time</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Message with Body</string>
                         </property>
                     </item>
                     <item>
@@ -100,7 +105,7 @@
                         </property>
                         <widget class="QPushButton">
                             <property name="name">
-                                <cstring>btnClaer</cstring>
+                                <cstring>btnClear</cstring>
                             </property>
                             <property name="text">
                                 <string>Clea&amp;r</string>

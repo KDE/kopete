@@ -24,16 +24,16 @@
 #include "dlgjabbersendraw.h"
 
 
-dlgJabberSendRaw::dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent, const char *name):DlgSendRaw (parent, name)
+dlgJabberSendRaw::dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent, const char *name)
+	: DlgSendRaw (parent, name), mEngine(engine)
 {
-
-	// Grab the thing that lets us talk
-	mEngine = engine;
-
 	// Connect the GUI elements to things that do stuff
-	connect (btnSend, SIGNAL (clicked ()), this, SLOT (slotFinish ()));
+	connect (btnSend, SIGNAL (clicked ()), this, SLOT (slotSend ()));
 	connect (btnClose, SIGNAL (clicked ()), this, SLOT (slotCancel ()));
-	connect (inputWidget, SIGNAL (activated (int)), this, SLOT (sloCtreateMessage(int)));
+	connect (btnClear, SIGNAL (clicked ()), this, SLOT (slotClear ()));
+	connect (inputWidget, SIGNAL (activated (int)), this, SLOT (slotCreateMessage (int)));
+
+	show();
 }
 
 dlgJabberSendRaw::~dlgJabberSendRaw ()
@@ -41,26 +41,48 @@ dlgJabberSendRaw::~dlgJabberSendRaw ()
 	// Nothing yet
 }
 
-void dlgJabberSendRaw::slotFinish ()
-{
-	// Debugging output
-	kdDebug (14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
-	// Tell our engine to send
-	mEngine->send (tePacket->text ());
-	// Hide ourselves
-	hide ();
-}
-
 void dlgJabberSendRaw::slotCancel ()
 {
-	// Clear the contents
-	tePacket->clear ();
-	// Hide ourselves
-	hide ();
+	close(true);
+}
+
+void dlgJabberSendRaw::slotClear ()
+{
+	inputWidget->setCurrentItem(0);
+	tePacket->clear();
 }
 
 void dlgJabberSendRaw::slotCreateMessage(int index)
 {
+	switch (index) {
+		case 2:
+			tePacket->setText("<presence>\n<show>\?\?\?</show>\n<status>\?\?\?</status>\n</presence>");
+			break;
+		case 3:
+			tePacket->setText("<iq type='get' to='USER@DOMAIN'>\n<query xmlns='jabber:iq:last'/></iq>");
+			break;
+		case 4:
+			tePacket->setText(QString("<message to='USER@DOMAIN' from='%1@%2/%3'>\n<body>Body text</body>\n</message>")
+						.arg(mEngine->user())
+						.arg(mEngine->host())
+						.arg(mEngine->resource()));
+			break;
+		default:
+			tePacket->clear();
+			break;
+	}
+}
+
+void dlgJabberSendRaw::slotSend()
+{
+	kdDebug (14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
+
+	// Tell our engine to send
+	mEngine->send (tePacket->text ());
+
+	// set temlapte combobox to "User Defined" and clear content
+	inputWidget->setCurrentItem(0);
+	tePacket->clear();
 }
 
 #include "dlgjabbersendraw.moc"
