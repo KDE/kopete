@@ -110,7 +110,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	slotSettingsChanged();
 
 	setAvailable();
-	QObject::connect( );
+	connect();
 
 	// FIXME: I guess 'myself' should be a metacontact as well...
 	theMyself = new WPContact(theHostName, this, 0L);		// XXX: Should be from config file!!!
