@@ -128,7 +128,7 @@ void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::ChatSession *manag
 {
 	manager->messageSucceeded();
 	Kopete::Message msg( manager->myself(), manager->members(),
-		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	manager->appendMessage(msg);
 }
 
@@ -137,7 +137,7 @@ void IRCServerContact::appendMessage( const QString &message )
 	Kopete::ContactPtrList members;
 	members.append( this );
 	Kopete::Message msg( this, members, message, Kopete::Message::Internal,
-		Kopete::Message::RichText, Kopete::Message::Chat );
+		Kopete::Message::RichText, CHAT_VIEW );
 	appendMessage(msg);
 }
 

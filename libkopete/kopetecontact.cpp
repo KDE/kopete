@@ -442,34 +442,26 @@ bool Contact::isReachable()
 
 void Contact::startChat()
 {
-	KopeteView *v=manager( CanCreate )->view(true, Kopete::Message::Chat );
+	KopeteView *v=manager( CanCreate )->view(true, QString::fromLatin1("kopete_chatwindow") );
 	if(v)
 		v->raise(true);
 }
 
 void Contact::sendMessage()
 {
-	KopeteView *v=manager( CanCreate )->view(true, Kopete::Message::Email );
+	KopeteView *v=manager( CanCreate )->view(true, QString::fromLatin1("kopete_emailwindow") );
 	if(v)
 		v->raise(true);
 }
 
 void Contact::execute()
 {
-
 	// FIXME: After KDE 3.2 remove the isConnected check and move it to isReachable - Martijn
 	if ( account()->isConnected() && isReachable() )
 	{
-		switch ( KopetePrefs::prefs()->interfacePreference() )
-		{
-			case KopetePrefs::EmailWindow:
-				sendMessage();
-				break;
-			case KopetePrefs::ChatWindow:
-			default:
-				startChat();
-				break;
-		}
+		KopeteView *v=manager( CanCreate )->view(true, KopetePrefs::prefs()->interfacePreference() );
+		if(v)
+			v->raise(true);
 	}
 	else
 	{

@@ -143,22 +143,22 @@ public:
 	 * exists, it will be returned, otherwise, 0L will be returned or a new one
 	 * if canCreate=true
 	 * @param canCreate create a new one if it does not exist
-	 * @param type Specifies the type of view if we have to create one.
+	 * @param requestedPlugin Specifies the view plugin to use if we have to create one.
 	 */
 	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
-	KopeteView* view( bool canCreate = false, Message::ViewType type = Message::Undefined );
-	
+	KopeteView* view( bool canCreate = false, const QString &requestedPlugin = QString::null );
+
 	/**
 	 * says if you may invite contact from the same account to this chat with @ref inviteContact
 	 * @see setMayInvite
 	 * @return true if it is possible to invite contact to this chat.
 	 */
 	bool mayInvite() const ;
-	
+
 	/**
 	 * this method is called when a contact is dragged to the contactlist.
 	 * @p contactId is the id of the contact. the contact is supposed to be of the same account as
-	 * the @ref account() but we can't be sure the Kopete::Contact is realy on the contactlist 
+	 * the @ref account() but we can't be sure the Kopete::Contact is realy on the contactlist
 	 *
 	 * It is possible to drag contact only if @ref mayInvite return true
 	 *
@@ -247,7 +247,7 @@ signals:
 	 * The chatwindow connects to this signal to update the statusbar.
 	 */
 	void eventNotification( const QString& notificationText);
-    
+
 public slots:
 	/**
 	 * @brief Got a typing notification from a user
@@ -267,7 +267,7 @@ public slots:
 	 * and plugins to change chatwindow statusBar text.
 	 */
 	void receivedEventNotification(  const QString& notificationText );
-     
+
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
 	 * This is the function protocols HAVE TO call for both incoming and outgoing messages
@@ -343,10 +343,10 @@ protected:
 	 * @see mayInvite()
 	 */
 	void setMayInvite(bool);
-	
+
 private:
 	KMMPrivate *d;
-	
+
 	// FIXME: remove
 	friend class TemporaryKMMCallbackAppendMessageHandler;
 };

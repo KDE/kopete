@@ -8,7 +8,7 @@ libkopeteui_la_SOURCES = kopetecontactaction.cpp addcontactpage.cpp \
 	editaccountwidget.cpp kopetepassworddialog.ui kopetestdaction.cpp \
 	kopeteawaydialogbase.ui kopetefileconfirmdialog.cpp \
 	fileconfirmbase.ui userinfodialog.cpp kopeteview.cpp kopetepasswordwidgetbase.ui \
-	kopetepasswordwidget.cpp accountselector.cpp
+	kopetepasswordwidget.cpp accountselector.cpp kopeteviewplugin.cpp
 
 libkopeteui_la_LDFLAGS = $(all_libraries)
 libkopeteui_la_LIBADD = ../private/libkopeteprivate.la $(LIB_KHTML) $(LIBXML_LIBS) $(LIBXSLT_LIBS)

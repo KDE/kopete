@@ -131,7 +131,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason)
 	{
 		Kopete::Message msg( (Kopete::Contact*)ircAccount()->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
-			Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
+			Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW );
 		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	}
 }
@@ -472,8 +472,8 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 	{
 		if(to==account()->myself())
 		{
-		 Kopete::Message msg(from, from->manager(Kopete::Contact::CanCreate)->members(), message,
-			                    Kopete::Message::Inbound, Kopete::Message::RichText, Kopete::Message::Chat);
+			Kopete::Message msg(from, from->manager(Kopete::Contact::CanCreate)->members(), message,
+				Kopete::Message::Inbound, Kopete::Message::RichText, CHAT_VIEW);
 			from->appendMessage(msg);
 		}
 		else
@@ -493,7 +493,7 @@ void IRCUserContact::newAction(const QString &to, const QString &action)
 	Kopete::Message::MessageDirection dir =
 		(this == account->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
 	Kopete::Message msg(this, t, action, dir, Kopete::Message::RichText,
-	                    Kopete::Message::Chat, Kopete::Message::TypeAction);
+			CHAT_VIEW, Kopete::Message::TypeAction);
 
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
 	if (dir == Kopete::Message::Outbound)

@@ -279,7 +279,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 	Kopete::Message::MessageDirection chainDirection = msg.direction();
 	if( chainDirection == Kopete::Message::Outbound )
 		chainDirection = Kopete::Message::Inbound;
-	
+
 	chainForDirection( chainDirection )->processMessage( msg );
 //	emit messageAppended( msg, this );
 }
@@ -399,11 +399,11 @@ void Kopete::ChatSession::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
-KopeteView* Kopete::ChatSession::view( bool canCreate, Kopete::Message::ViewType type )
+KopeteView* Kopete::ChatSession::view( bool canCreate, const QString &requestedPlugin )
 {
 	if ( !d->view && canCreate )
 	{
-		d->view = Kopete::ChatSessionManager::self()->createView( this, type );
+		d->view = Kopete::ChatSessionManager::self()->createView( this, requestedPlugin );
 		if ( d->view )
 		{
 			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );

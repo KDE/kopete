@@ -30,7 +30,7 @@
 
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
-#include "kopeteonlinestatus.h"  
+#include "kopeteonlinestatus.h"
 
 class QDomNode;
 
@@ -68,7 +68,7 @@ class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataOb
 
 public:
 
-	/** 
+	/**
 	 * constructor
 	 */
 	MetaContact();
@@ -76,7 +76,7 @@ public:
 	 * destructor
 	 */
 	~MetaContact();
-	
+
 	/**
 	 * @brief Returns this metacontact's ID.
 	 *
@@ -92,7 +92,7 @@ public:
 	 * a KDE addressbook contact, it will return the picture stored in the addressbook
 	 */
 	QImage photo() const;
-	
+
 	/**
 	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
 	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
@@ -103,7 +103,7 @@ public:
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
 	QPtrList<Contact> contacts() const;
-	
+
 	/**
 	 * @brief The groups the contact is stored in
 	 */
@@ -115,7 +115,7 @@ public:
 	 * if @p protocolId or @p accountId are null, it is searched over all protocols/accounts
 	 */
 	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
-	
+
 	/**
 	 * @return the display name showed in the contactlist window, or in the chatwindow
 	 */
@@ -132,15 +132,15 @@ public:
 	/**
 	 * @brief get the subcontact being tracked for its displayname (null if not tracking)
 	 *
-	 * The MetaContact will adjust its displayName() every time the 
+	 * The MetaContact will adjust its displayName() every time the
 	 * "nameSource" changes its name.
 	 */
 	Contact *nameSource() const;
-	
+
 	/**
 	 * @brief get the subcontact being tracked for its photo(null if not tracking)
 	 *
-	 * The MetaContact will adjust its photo() every time the 
+	 * The MetaContact will adjust its photo() every time the
 	 * "nameSource" changes its name.
 	 */
 	Contact *photoSource() const;
@@ -149,7 +149,7 @@ public:
 	 * @brief set the subcontact whose name is to be tracked (set to null to disable tracking)
 	 */
 	void setNameSource( Contact* contact );
-	
+
 	/**
 	 * @brief set the subcontact whose photo is to be tracked (set to null to disable tracking)
 	 */
@@ -163,12 +163,12 @@ public:
 	bool isTemporary() const;
 
 	/**
-	 * @brief Add a brand new contact to the meta contact. 
+	 * @brief Add a brand new contact to the meta contact.
 	 *  Updates KABC
 	 * @param c The Contact being added
 	 */
 	void addContact( Contact *c );
-	
+
 	/**
 	 * @brief remove the contact from this metacontact
 	 *
@@ -178,7 +178,7 @@ public:
 	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
 	 */
 	void removeContact( Contact *c , bool deleted = false );
-	
+
 	/**
 	 * @return the preferred child Contact for communication, or 0 if none is suitable (all unreachable).
 	 */
@@ -266,7 +266,7 @@ public:
 	 *        properly :( - Martijn
 	 */
 	QString addressBookField( Plugin *p, const QString &app, const QString &key ) const;
-	
+
 	/**
 	 * @brief set an address book field
 	 *
@@ -274,9 +274,9 @@ public:
 	 * @param p The Plugin by which uses this field
 	 */
 	void setAddressBookField( Plugin *p, const QString &app, const QString &key, const QString &value );
-	
+
 public slots:
-	
+
 	/**
 	 * @brief Send a file to this metacontact
 	 *
@@ -305,7 +305,7 @@ public slots:
 	 * @brief Remove any KABC data for this meta contact
 	 */
 	void removeKABC();
-	
+
 	/**
 	 * Check for any new addresses added to this contact's KABC entry
 	 * and prompt if they should be added in Kopete too.
@@ -313,7 +313,7 @@ public slots:
 	 */
 	bool syncWithKABC();
 
-	
+
 signals:
 	/**
 	 * This metaContact is going to be saved to the contactlist. Plugins should
@@ -326,7 +326,7 @@ signals:
 	 * this can occur without the metacontact changing idle state
 	 */
 	void contactIdleStateChanged( Kopete::Contact *contact );
-	
+
 
 public slots:
 
@@ -353,7 +353,7 @@ public slots:
 	 *  if group is null, it will be moved to top-level
 	 */
 	void setTemporary( bool b = true, Kopete::Group *group = 0L );
-	
+
 	/**
 	 * @brief Contact another user.
 	 *
@@ -407,7 +407,7 @@ signals:
 	 * @brief The meta contact's display name changed
 	 */
 	void displayNameChanged( const QString &oldName, const QString &newName );
-	
+
 	/**
 	 * @brief The meta contact's photo changed
 	 */
@@ -441,12 +441,12 @@ signals:
 	 * This signal is emitted when a contact is removed from this metacontact
 	 */
 	void contactRemoved( Kopete::Contact *c );
-	
+
 	/**
 	 * Some part of this object's persistent data (as returned by toXML) has changed.
 	 */
 	void persistentDataChanged(  );
-	
+
 private slots:
 	/**
 	 * Update the contact's online status and emit onlineStatusChanged
@@ -463,7 +463,7 @@ private slots:
 	 * One of the child contact's property changed
 	 */
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
-	
+
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still
 	 * there
@@ -491,9 +491,9 @@ private:
 	void writeAddressBook();
 
 	static KABC::AddressBook* addressBook();
-    
+
 	static void splitField( const QString &str, QString &app, QString &name, QString &value );
-	
+
 	static KABC::AddressBook* m_addressBook;
 };
 

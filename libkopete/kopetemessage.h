@@ -82,14 +82,6 @@ public:
 	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
 
 	/**
-	 * Specifies the type of the view.
-	 * May currently be of type
-	 * - Chat: Two way chat
-	 * - Email: Single shot messaging
-	 */
-	enum ViewType { Undefined, Chat, Email };
-
-	/**
 	 * Specifies the type of the message.
 	 * Currently supported types are:
 	 * - Normal: a message
@@ -122,11 +114,12 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
 	 * @param format Format of the message
+	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
-	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-			 MessageDirection direction, MessageFormat format = PlainText, ViewType view = Undefined, MessageType type = TypeNormal );
+		 MessageDirection direction, MessageFormat format = PlainText,
+		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -135,12 +128,12 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
 	 * @param format Format of the message
+	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
-	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-			 MessageDirection direction, MessageFormat format = PlainText, ViewType view = Undefined, MessageType type = TypeNormal );
-
+		 MessageDirection direction, MessageFormat format = PlainText,
+		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -150,11 +143,12 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
 	 * @param format Format of the message
+	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
-	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-			 const QString &subject, MessageDirection direction, MessageFormat format = PlainText, ViewType view = Undefined, MessageType type = TypeNormal );
+		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
+		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -164,11 +158,12 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
 	 * @param format Format of the message
+	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
-	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
-			 const QString &body, MessageDirection direction, MessageFormat format = PlainText, ViewType view = Undefined, MessageType type = TypeNormal );
+		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
+		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -179,12 +174,13 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
 	 * @param format Format of the message
+	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
-	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, ViewType view = Undefined, MessageType type = TypeNormal );
+		MessageFormat format = PlainText, const QString &requestedPlugin = QString::null,
+		MessageType type = TypeNormal );
 
 	/**
 	 * Copy constructor.
@@ -222,9 +218,10 @@ public:
 	MessageType type() const;
 
 	/**
-	 * @return the @ref ViewType of this message
+	 * @return the view plugin you would prefer to use to read this message. If
+	 *	null, Kopete will use the user's preferred plugin.
 	 */
-	ViewType viewType() const;
+	QString requestedPlugin() const;
 
 	/**
 	 * Accessor method for the foreground color
@@ -359,8 +356,8 @@ public:
 	 * @param enable A flag to indicate if the RTF formatting should be enabled or disabled.
 	 */
 	void setRtfOverride( bool enable );
-		
-		
+
+
 public:  /* static helpers */
 
 	/**

@@ -17,29 +17,25 @@
 #ifndef KOPETEVIEWMANAGER_H
 #define KOPETEVIEWMANAGER_H
 
-#include <kopeteplugin.h>
-
 #include "kopetemessage.h"
 
 namespace Kopete
 {
-class ChatSession;
-class Protocol;
-class Contact;
-class MessageEvent;
+	class ChatSession;
+	class Protocol;
+	class Contact;
+	class MessageEvent;
 }
 
 class KopeteView;
 class QTextEdit;
-
-
 
 struct KopeteViewManagerPrivate;
 
 /**
  * Relates an actual chat to the means used to view it.
  */
-class KopeteViewManager : public Kopete::Plugin
+class KopeteViewManager : public QObject
 {
 	Q_OBJECT
 	public:
@@ -48,17 +44,16 @@ class KopeteViewManager : public Kopete::Plugin
 		 */
 		static KopeteViewManager *viewManager();
 
-		KopeteViewManager( QObject *parent, const char *name, const QStringList &args );
+		KopeteViewManager();
 		~KopeteViewManager();
 
 		/**
 		 * Return a view for the supplied Kopete::ChatSession.  If one already
 		 * exists, it will be returned, otherwise, a new view is created.
-		 * @param manager The Kopete::ChatSession we are viewing.
-		 * @param foreignMessage Whether the message is inbound or outbound.
-		 * @param type Specifies the type of view.
+		 * @param session The Kopete::ChatSession we are viewing.
+		 * @param requestedPlugin Specifies the view plugin to use.
 		 */
-		KopeteView *view( Kopete::ChatSession *, bool foreignMessage, Kopete::Message::ViewType type = Kopete::Message::Undefined );
+		KopeteView *view( Kopete::ChatSession *session, const QString &requestedPlugin = QString::null );
 
 		/**
 		 * Provide access to the list of KopeteChatWindow the class maintains.
@@ -100,11 +95,6 @@ class KopeteViewManager : public Kopete::Plugin
 
 		void slotPrefsChanged();
 		void slotViewActivated( KopeteView * );
-
-		void slotRequestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType type );
-
-		//obsolete, used only by spellchecking plugin
-		void slotGetActiveView(KopeteView*&);
 };
 
 #endif

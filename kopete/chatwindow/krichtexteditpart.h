@@ -65,7 +65,7 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void setFont();
 		void setFont( const QFont & );
 		void setFont( const QString & );
-		
+
 		void setUnderline( bool );
 		void setBold( bool );
 		void setItalic( bool );
@@ -99,7 +99,7 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void updateAligment();
 
 		void slotSetRichTextEnabled( bool enable );
-		
+
 	private:
 		void readConfig();
 		void writeConfig();

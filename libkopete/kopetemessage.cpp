@@ -44,7 +44,7 @@ class Message::Private
 public:
 	Private( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
 	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
-	         ViewType view, MessageType type );
+	         const QString &requestedPlugin, MessageType type );
 
 	const Contact *from;
 	ContactPtrList to;
@@ -53,7 +53,7 @@ public:
 	MessageDirection direction;
 	MessageFormat format;
 	MessageType type;
-	ViewType view;
+	QString requestedPlugin;
 	MessageImportance importance;
 	bool bgOverride;
 	bool fgOverride;
@@ -69,9 +69,9 @@ public:
 
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
              const ContactPtrList &to, const QString &body, const QString &subject,
-				 MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
+				 MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
 	: from(from), to(to), manager(0), direction(direction), format(f), type(type)
-	, view(view), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
+	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
 	if( format == RichText )
@@ -95,40 +95,41 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 
 
 Message::Message()
-  : d( new Private( QDateTime::currentDateTime(), 0L, QPtrList<Contact>(), QString::null, QString::null, Internal, PlainText, Chat, TypeNormal ) )
+    : d( new Private( QDateTime::currentDateTime(), 0L, QPtrList<Contact>(), QString::null, QString::null, Internal,
+	PlainText, QString::null, TypeNormal ) )
 {
 }
 
 Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-	                       MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
-	: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, view, type ) )
+		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
 {
 }
 
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-				  MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
+		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
 {
 	QPtrList<Contact> to;
 	to.append(toKC);
-	d = new Private( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, view, type );
+	d = new Private( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, requestedPlugin, type );
 }
 
 Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-				  const QString &subject, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
-  	: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, view, type ) )
+		  const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
 {
 }
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
-				  const QString &body, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
-  : d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, view, type ) )
+		  const QString &body, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+    : d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
 {
 }
 
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
-				  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
-  : d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, view, type ) )
+		  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+    : d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
 {
 }
 
@@ -401,12 +402,12 @@ QPtrList<Contact> Message::to() const
 
 Message::MessageType Message::type() const
 {
-  return d->type;
+	return d->type;
 }
 
-Message::ViewType Message::viewType() const
+QString Message::requestedPlugin() const
 {
-  return d->view;
+	return d->requestedPlugin;
 }
 
 QColor Message::fg() const

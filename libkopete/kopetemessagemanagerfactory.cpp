@@ -16,6 +16,7 @@
 */
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteviewmanager.h"
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -31,8 +32,6 @@ class ChatSessionManager::Private
 	QValueList <ChatSession*> sessions;
 //	UI::ChatView *activeView;
 };
-
-
 
 ChatSessionManager* ChatSessionManager::s_self = 0L;
 
@@ -154,10 +153,9 @@ QValueList<ChatSession*> ChatSessionManager::sessions( )
 	return d->sessions;
 }
 
-KopeteView * ChatSessionManager::createView( ChatSession *kmm , Message::ViewType type )
+KopeteView * ChatSessionManager::createView( ChatSession *kmm , const QString &requestedPlugin )
 {
-	KopeteView *newView=0L;
-	emit requestView( newView , kmm , type  );
+	KopeteView *newView = KopeteViewManager::viewManager()->view(kmm,requestedPlugin);
 	if(!newView)
 	{
 		kdDebug(14010) << k_funcinfo << "View not successfuly created" << endl;
@@ -188,15 +186,7 @@ void ChatSessionManager::postNewEvent(MessageEvent *e)
 
 KopeteView *ChatSessionManager::activeView()
 {
-	/**
-	 * FIXME: This is an awful retarded way to do this. Why can't
-	 we just make the KMM factory a friend of the view manager and
-	 return activeView directly?
-	 */
-
-	KopeteView *v = 0L;
-	emit getActiveView(v);
-	return v;
+    return KopeteViewManager::viewManager()->activeView();
 }
 
 } //END namespace Kopete

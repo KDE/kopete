@@ -164,7 +164,7 @@ private slots:
 	void slotProperties();
 	void slotUndo();
 	void slotRedo();
-	
+
 	void slotTimeout();
 
 private:
@@ -198,7 +198,7 @@ private:
 
 	KopeteContactListViewPrivate *d;
 
-public:	
+public:
 	struct UndoItem;
 	UndoItem *m_undo;
 	UndoItem *m_redo;
@@ -219,7 +219,7 @@ struct KopeteContactListView::UndoItem
 	QGuardedPtr<Kopete::Group> group;
 	UndoItem *next;
 	bool isStep;
-	
+
 	UndoItem() : isStep(true) {}
 	UndoItem(Type t, Kopete::MetaContact *m=0L ,Kopete::Group *g=0L)
 	{

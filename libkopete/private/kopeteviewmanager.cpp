@@ -18,25 +18,22 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kgenericfactory.h>
 #include <qptrlist.h>
-#include "kopetenotifyclient.h"
+#include <qstylesheet.h>
+#include <kplugininfo.h>
 
+#include "kopetenotifyclient.h"
 #include "kopeteprefs.h"
 #include "kopeteaccount.h"
+#include "kopetepluginmanager.h"
+#include "kopeteviewplugin.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "chatview.h"
-#include "kopeteemailwindow.h"
 #include "kopetemessageevent.h"
+#include "kopeteview.h"
 //#include "systemtray.h"
 
 #include "kopeteviewmanager.h"
-
-typedef KGenericFactory<KopeteViewManager> ViewManagerFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatwindow" )  )
-
-
 
 typedef QMap<Kopete::ChatSession*,KopeteView*> ManagerMap;
 typedef QPtrList<Kopete::MessageEvent> EventList;
@@ -56,29 +53,25 @@ KopeteViewManager *KopeteViewManager::s_viewManager = 0L;
 
 KopeteViewManager *KopeteViewManager::viewManager()
 {
+	if( !s_viewManager )
+		s_viewManager = new KopeteViewManager();
 	return s_viewManager;
 }
 
-KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const QStringList &/*args*/ )
-	: Kopete::Plugin( ViewManagerFactory::instance(), parent, name )
-
+KopeteViewManager::KopeteViewManager()
 {
 	s_viewManager=this;
 	d = new KopeteViewManagerPrivate;
 	d->activeView = 0L;
 	d->foreignMessage=false;
+
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
-	connect( Kopete::ChatSessionManager::self() , SIGNAL ( requestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType  ) ) ,
-		this, SLOT (slotRequestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType  )));
+
 	connect( Kopete::ChatSessionManager::self() , SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ),
 		this, SLOT ( messageAppended( Kopete::Message &, Kopete::ChatSession *) ) );
 
-	connect( Kopete::ChatSessionManager::self() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
-		this, SLOT (slotGetActiveView(KopeteView*&)));
-
 	connect( Kopete::ChatSessionManager::self() , SIGNAL( readMessage() ),
 		this, SLOT ( nextEvent() ) );
-
 
 	slotPrefsChanged();
 }
@@ -101,54 +94,50 @@ void KopeteViewManager::slotPrefsChanged()
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 }
 
-KopeteView *KopeteViewManager::view( Kopete::ChatSession* manager, bool /*foreignMessage*/, Kopete::Message::ViewType type )
+KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString &requestedPlugin )
 {
-	/*if( d->eventMap.contains( manager ) )
-	{
-		d->eventMap[ manager ]->deleteLater();
-		d->eventMap.remove( manager );
-	}*/
 	kdDebug(14000) << k_funcinfo << endl;
-	if( d->managerMap.contains( manager ) && d->managerMap[ manager ] )
+
+	if( d->managerMap.contains( session ) && d->managerMap[ session ] )
 	{
-		return d->managerMap[ manager ];
+		return d->managerMap[ session ];
 	}
 	else
 	{
-		KopeteView *newView;
-		QWidget *newViewWidget;
+		Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
+		Kopete::ViewPlugin *viewPlugin = 0L;
 
-		if( type == Kopete::Message::Undefined )
+		if( !requestedPlugin.isNull() )
 		{
-			int t = KopetePrefs::prefs()->interfacePreference();
-			type = static_cast<Kopete::Message::ViewType>( t );
+			viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( requestedPlugin );
+
+			if( !viewPlugin )
+			{
+				kdWarning(14000) << "Requested view plugin, " << requestedPlugin <<
+				    ", was not found. Falling back to chat window plugin" << endl;
+			}
 		}
 
-		if( type == Kopete::Message::Chat )
-		{
-			newView = new ChatView( manager );
-			newViewWidget = newView->mainWidget();
+		if( !viewPlugin )
+			viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( QString::fromLatin1("kopete_chatwindow") );
 
-			connect (newViewWidget, SIGNAL( typing(bool) ), manager, SLOT( typing(bool) ) );
-			connect (manager, SIGNAL( remoteTyping( const Kopete::Contact *, bool) ), newViewWidget, SLOT( remoteTyping(const Kopete::Contact *, bool) ) );
-			connect (manager, SIGNAL( eventNotification( const QString& ) ), newViewWidget, SLOT( setStatusText( const QString& ) ) );
+		if( viewPlugin )
+		{
+			KopeteView *newView = viewPlugin->createView(session);
+
+			d->foreignMessage = false;
+			d->managerMap.insert( session, newView );
+
+			connect( session, SIGNAL( closing(Kopete::ChatSession *) ),
+					this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)) );
+
+			return newView;
 		}
 		else
 		{
-			newView = new KopeteEmailWindow( manager, d->foreignMessage );
-			newViewWidget = newView->mainWidget();
+			kdError(14000) << "Could not create a view, no plugins available!" << endl;
+			return 0L;
 		}
-		d->foreignMessage=false;
-
-		d->managerMap.insert( manager, newView );
-
-		connect( newViewWidget, SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( KopeteView * ) ) );
-		connect( newViewWidget, SIGNAL( messageSent(Kopete::Message &) ), manager, SLOT( sendMessage(Kopete::Message &) ) );
-		connect( newViewWidget, SIGNAL( activated( KopeteView * ) ), this, SLOT( slotViewActivated( KopeteView * ) ) );
-		connect( manager, SIGNAL( messageSuccess() ), newViewWidget, SLOT( messageSentSuccessfully() ));
-		connect( manager, SIGNAL( closing(Kopete::ChatSession *) ), this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)) );
-
-		return newView;
 	}
 }
 
@@ -165,7 +154,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		manager->view(true)->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
-		if ( d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
+		if ( d->useQueue && !view( manager )->isVisible()  )
 		{
 			if ( !outgoingMessage )
 			{
@@ -332,16 +321,6 @@ void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *manager )
 KopeteView* KopeteViewManager::activeView() const
 {
 	return d->activeView;
-}
-
-void KopeteViewManager::slotRequestView(KopeteView*& v, Kopete::ChatSession *kmm , Kopete::Message::ViewType type )
-{
-	v=view(kmm, false , type);
-}
-
-void KopeteViewManager::slotGetActiveView(KopeteView*&v)
-{
-	v=activeView();
 }
 
 

@@ -83,8 +83,7 @@ public:
 	bool fgOverride() const { return mFgOverride; }
 	bool rtfOverride() const { return mRtfOverride; }
 
-	enum ChatWindowPref { EmailWindow=0, ChatWindow };
-	ChatWindowPref interfacePreference() const { return mInterfacePreference; }
+	QString interfacePreference() const { return mInterfacePreference; }
 	bool showTray() const { return mShowTray; }
 	bool richText() const { return mRichText; }
 	bool chatWShowSend() const { return mChatWShowSend; }
@@ -111,7 +110,7 @@ public:
 	bool contactListFolding() const { return mContactListFolding; }
 
 	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
-	
+
 	bool truncateContactNames() const { return mTruncateContactNames; }
 	int maxConactNameLength() const { return mMaxContactNameLength; }
 
@@ -142,7 +141,7 @@ public:
 	void setBgOverride(bool);
 	void setFgOverride(bool);
 	void setRtfOverride(bool);
-	void setInterfacePreference(ChatWindowPref);
+	void setInterfacePreference(const QString &viewPlugin);
 	void setTextColor(const QColor &);
 	void setBgColor(const QColor &);
 	void setLinkColor(const QColor &);
@@ -211,7 +210,7 @@ private:
 	bool mTransparencyEnabled;
 	int mTransparencyValue;
 	int mRememberedMessages;
-	ChatWindowPref mInterfacePreference;
+	QString mInterfacePreference;
 	QColor mTransparencyColor;
 	int mChatViewBufferSize;
 	QColor mHighlightBackground;
@@ -234,7 +233,7 @@ private:
 	bool mAutoConnect;
 
 	int mChatWindowPolicy;
-	
+
 	bool mTruncateContactNames;
 	int mMaxContactNameLength;
 

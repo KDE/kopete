@@ -19,10 +19,9 @@
 #define CHATVIEW_H
 
 #include "kopeteview.h"
-
+#include "kopeteviewplugin.h"
 #include <kdockwidget.h>
 #include <ktextedit.h> // for covariant return type of editWidget
-
 #include <qptrdict.h>
 
 class QTimer;
@@ -36,16 +35,17 @@ class KopeteChatWindow;
 class KTabWidget;
 
 class KopeteChatViewPrivate;
-
-namespace Kopete
-{
-class Contact;
-class ChatSession;
-}
+class ChatWindowPlugin;
 
 namespace KParts
 {
-class Part;
+    class Part;
+}
+
+namespace Kopete
+{
+	class Contact;
+	class ChatSession;
 }
 
 /**
@@ -55,7 +55,7 @@ class ChatView : public KDockMainWindow, public KopeteView
 {
 	Q_OBJECT
 public:
-	ChatView( Kopete::ChatSession *manager, const char *name = 0 );
+	ChatView( Kopete::ChatSession *manager, ChatWindowPlugin *parent, const char *name = 0 );
 	~ChatView();
 
 	ChatMembersListWidget *membersList() const { return m_membersList; }
@@ -163,10 +163,9 @@ public:
 	virtual bool isVisible();
 
 	/** Reimplemented from KopeteView **/
-	virtual KTextEdit *editWidget();
-
-	/** Reimplemented from KopeteView **/
 	virtual QWidget *mainWidget();
+
+	KTextEdit *editWidget();
 
 	bool canSend();
 
@@ -213,7 +212,7 @@ public slots:
 	 * show a Font dialog and set the font selected by the user
 	 */
 	void setFont();
-	
+
 	/**
 	 * Get the font used in the format toolbar for Rich Text formatting
 	 */
@@ -250,7 +249,7 @@ public slots:
 	 * @param text The text to be displayed
 	 */
 	void setStatusText( const QString &text );
-    
+
 	/** Reimplemented from KopeteView **/
 	virtual void messageSentSuccessfully();
 
@@ -264,12 +263,6 @@ signals:
 	 * @param message The message sent
 	 */
 	void messageSent( Kopete::Message & );
-
-	/**
-	 * Emitted every 4 seconds while the user is typing
-	 * @param bool if the user is typing right now
-	 */
-	void typing( bool );
 
 	void messageSuccess( ChatView* );
 
@@ -383,6 +376,16 @@ private:
 	void sendInternalMessage( const QString &msg, Kopete::Message::MessageFormat format = Kopete::Message::PlainText );
 
 	KopeteChatViewPrivate *d;
+};
+
+/**
+ * This is the class that makes the chatwindow a plugin
+ */
+class ChatWindowPlugin : public Kopete::ViewPlugin
+{
+	public:
+		ChatWindowPlugin(QObject *parent, const char *name, const QStringList &args);
+		KopeteView* createView( Kopete::ChatSession *manager );
 };
 
 #endif

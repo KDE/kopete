@@ -19,10 +19,13 @@
 
 #include <qcheckbox.h>
 #include <qlayout.h>
+#include <qlabel.h>
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
+#include <qcombobox.h>
 
 #include <kdebug.h>
+#include <kplugininfo.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kgenericfactory.h>
@@ -32,6 +35,7 @@
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigbase.h"
+#include "kopetepluginmanager.h"
 
 #include <qtabwidget.h>
 
@@ -59,6 +63,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
 	mBehaviorTabCtl->addTab(mPrfsChat, i18n("&Chat"));
 
+	Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
+	viewPlugins = pluginManager->availablePlugins("Views");
 
 	load();
 
@@ -97,6 +103,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mPrfsChat->mMaxContactNameLength, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
+	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
+		 this, SLOT(slotValueChanged(int)));
+	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
+		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
@@ -139,9 +149,11 @@ void BehaviorConfig::save()
 	p->setShowEvents(mPrfsChat->cb_ShowEventsChk->isChecked());
 	p->setHighlightEnabled(mPrfsChat->highlightEnabled->isChecked());
 	p->setChatWindowPolicy(mPrfsChat->chatWindowGroup->id(
-			mPrfsChat->chatWindowGroup->selected()));
-	p->setInterfacePreference(static_cast<KopetePrefs::ChatWindowPref>
-		(mPrfsChat->interfaceGroup->id(mPrfsChat->interfaceGroup->selected())) );
+		mPrfsChat->chatWindowGroup->selected())
+	);
+
+	p->setInterfacePreference( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
+
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 	p->setTruncateContactNames(mPrfsChat->truncateContactNameEnabled->isChecked());
 	p->setMaxContactNameLength(mPrfsChat->mMaxContactNameLength->value());
@@ -180,14 +192,25 @@ void BehaviorConfig::load()
 	mPrfsChat->cb_ShowEventsChk->setChecked(p->showEvents());
 	mPrfsChat->highlightEnabled->setChecked(p->highlightEnabled());
 	mPrfsChat->chatWindowGroup->setButton(p->chatWindowPolicy());
-	mPrfsChat->interfaceGroup->setButton(p->interfacePreference());
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
 	mPrfsChat->truncateContactNameEnabled->setChecked(p->truncateContactNames());
 	mPrfsChat->mMaxContactNameLength->setValue(p->maxConactNameLength());
 
-	//TODO: make the whole thing working correctly insteads of this ugly hack...
-	// emit changed(false);
-	// emit changed(true);
+	int selectedIdx = 0, i = 0;
+	for(  QValueList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
+	{
+		if( (*it)->pluginName() == p->interfacePreference() )
+			selectedIdx = i;
+		mPrfsChat->viewPlugin->insertItem( (*it)->name(), i++ );
+	}
+
+	mPrfsChat->viewPlugin->setCurrentItem(selectedIdx);
+	slotUpdatePluginLabel(selectedIdx);
+}
+
+void BehaviorConfig::slotUpdatePluginLabel(int)
+{
+	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentItem() ]->comment() );
 }
 
 void BehaviorConfig::slotShowTrayChanged(bool check)

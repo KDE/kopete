@@ -221,7 +221,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName(caption());
 	Kopete::Message msg((Kopete::Contact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
-	                    Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
+	                    Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 	appendMessage(msg);
 }
 
@@ -291,7 +291,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),
 			Kopete::Message::Internal, Kopete::Message::PlainText,
-			Kopete::Message::Chat);
+			CHAT_VIEW);
 		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 		appendMessage(msg);
 	}
@@ -302,7 +302,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 		manager()->addContact((Kopete::Contact *)contact, true);
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("User <b>%1</b> joined channel %2").arg(nickname).arg(m_nickName),
-			Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
+			Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 		manager()->appendMessage(msg);
 	}
@@ -339,7 +339,7 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 		{
 			manager()->removeContact( c, r );
 			Kopete::Message msg( (Kopete::Contact *)this, mMyself,
-			                     r, Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+					      r, Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 			msg.setImportance(Kopete::Message::Low);
 			appendMessage(msg);
 			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(Kopete::Contact::CannotCreate) ) )
@@ -378,7 +378,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 		{
 			Kopete::Message msg(account->myServer(), manager()->members(),
 				i18n("You must be a channel operator on %1 to do that.").arg(m_nickName),
-				Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+				Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 			manager()->appendMessage(msg);
 		}
 	}
@@ -393,7 +393,7 @@ void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopi
 	manager()->setDisplayName( caption() );
 	Kopete::Message msg(account->myServer(), mMyself,
 		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
-		Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
+		Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
 	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 }
@@ -405,14 +405,14 @@ void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 	Kopete::Message msg(account->myServer(), mMyself,
 		i18n("Topic set by %1 at %2").arg(nick).arg(
 			KGlobal::locale()->formatDateTime(time, true)
-		), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+	), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 }
 
 void IRCChannelContact::incomingModeChange( const QString &nick, const QString &mode )
 {
-	Kopete::Message msg((Kopete::Contact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+	Kopete::Message msg((Kopete::Contact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 
@@ -636,7 +636,7 @@ void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const Q
 	if(to == this)
 	{
 		Kopete::Message msg(from, manager()->members(), message, Kopete::Message::Inbound,
-		                    Kopete::Message::RichText, Kopete::Message::Chat);
+				    Kopete::Message::RichText, CHAT_VIEW);
 		appendMessage(msg);
 	}
 }
@@ -649,7 +649,7 @@ void IRCChannelContact::newAction(const QString &from, const QString &action)
 	Kopete::Message::MessageDirection dir =
 		(f == account->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
 	Kopete::Message msg(f, manager()->members(), action, dir, Kopete::Message::RichText,
-	                    Kopete::Message::Chat, Kopete::Message::TypeAction);
+			    CHAT_VIEW, Kopete::Message::TypeAction);
 	appendMessage(msg);
 }
 

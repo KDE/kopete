@@ -220,7 +220,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		// Set new name and photo tracking (or disable if no subcontacts left -- implicit
 		if( wasTrackingName )
 			setNameSource( d->contacts.first() );
-			
+
 		if( wasTrackingPhoto )
 			setPhotoSource( d->contacts.first() );
 
@@ -367,18 +367,22 @@ Contact *MetaContact::preferredContact()
 
 Contact *MetaContact::execute()
 {
-	switch ( KopetePrefs::prefs()->interfacePreference() )
+	Contact *c = preferredContact();
+
+	if( !c )
 	{
-		case KopetePrefs::EmailWindow:
-			return sendMessage();
-			break;
-		case KopetePrefs::ChatWindow:
-		default:
-			return startChat();
+		KMessageBox::queuedMessageBox( UI::Global::mainWidget(), KMessageBox::Sorry,
+			i18n( "This user is not reachable at the moment. Please make sure you are connected and using a protocol that supports offline sending, or wait "
+			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
+	else
+	{
+		c->execute();
+		return c;
+	}
+
+	return 0L;
 }
-
-
 
 unsigned long int MetaContact::idleTime() const
 {
@@ -546,9 +550,9 @@ QImage MetaContact::photo() const
 	{
 		// no photo source, try to get from addressbook
 		// if the metacontact has a kabc association
-		
+
 		KABC::AddressBook* ab = addressBook();
-			
+
 		// If the metacontact is linked to a kabc entry
 		if ( !d->metaContactId.isEmpty() )
 		{
@@ -562,7 +566,7 @@ QImage MetaContact::photo() const
 				KABC::Picture pic = theAddressee.photo();
 				if ( pic.data().isNull() && pic.url().isEmpty() )
 					pic = theAddressee.logo();
-				
+
 				if ( pic.isIntern())
 				{
 					return pic.data();
@@ -597,7 +601,7 @@ Contact *MetaContact::nameSource() const
 	// quick-out for contacts not tracking
 	if( d->nameSourceCID.isEmpty() )
 		return 0;
-	
+
 	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
 	{
 		if( d->nameSourceCID == it.current()->contactId() &&
@@ -607,8 +611,8 @@ Contact *MetaContact::nameSource() const
 			return it;
 		}
 	}
-	
-	// Invalid tracking information.  We don't clear the tracking  it in case the contact 
+
+	// Invalid tracking information.  We don't clear the tracking  it in case the contact
 	// is only temporarily unavailable (ie. plugin was disabled / broken).
 	return 0;
 }
@@ -618,7 +622,7 @@ Contact *MetaContact::photoSource() const
 	// quick-out for contacts not tracking
 	if( d->photoSourceCID.isEmpty() )
 		return 0;
-	
+
 	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
 	{
 		if( d->photoSourceCID == it.current()->contactId() &&
@@ -628,8 +632,8 @@ Contact *MetaContact::photoSource() const
 			return it;
 		}
 	}
-	
-	// Invalid tracking information.  We don't clear the tracking  it in case the contact 
+
+	// Invalid tracking information.  We don't clear the tracking  it in case the contact
 	// is only temporarily unavailable (ie. plugin was disabled / broken).
 	return 0;
 }
@@ -682,7 +686,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 		Contact* ns = nameSource();
 		bool isTrackedSubcontact = ( subcontact == ns );
 		QString newNick=newValue.toString();
-		
+
 		if( isTrackedSubcontact && !newNick.isEmpty() )
 		{
 			// The subcontact we are tracking just changed its name.
@@ -698,7 +702,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
 		{
 			KABC::Addressee theAddressee = addressBook()->findByUid( metaContactId() );
-			
+
 			if ( !theAddressee.isEmpty() && (subcontact== photoSource() || photo().isNull() ) )
 			{
 				QImage img;
@@ -940,7 +944,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 	// If a plugin is loaded, load data cached
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
 		this, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
-	
+
 	// track changes only works if ONE Contact is inside the MetaContact
 //	if (d->contacts.count() > 1) // Does NOT work as intended
 //		d->trackChildNameChanges=false;

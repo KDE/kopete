@@ -82,7 +82,7 @@ void KopetePrefs::load()
 	mBgOverride = config->readBoolEntry("ChatView Override Background", false);
 	mFgOverride = config->readBoolEntry("ChatView Override Foreground", false);
 	mRtfOverride = config->readBoolEntry("ChatView Override RTF", false);
-	mInterfacePreference = (ChatWindowPref)config->readNumEntry("Interface Preference", ChatWindow);
+	mInterfacePreference = config->readEntry("View Plugin", QString::fromLatin1("kopete_chatwindow") );
 	tmpColor = KGlobalSettings::textColor();
 	mTextColor = config->readColorEntry("Text Color", &tmpColor );
 	tmpColor = KGlobalSettings::baseColor();
@@ -191,7 +191,7 @@ void KopetePrefs::save()
 	config->writeEntry("TruncateContactNames", mTruncateContactNames);
 	config->writeEntry("MaxContactNameLength", mMaxContactNameLength);
 
-	config->writeEntry("Interface Preference", mInterfacePreference);
+	config->writeEntry("View Plugin", mInterfacePreference);
 
 	config->writeEntry("Show Systemtray", mShowTray);
 	config->writeEntry("Stylesheet", mStyleSheet);
@@ -386,7 +386,7 @@ void KopetePrefs::setMaxContactNameLength( int value )
 	mMaxContactNameLength = value;
 }
 
-void KopetePrefs::setInterfacePreference(ChatWindowPref value)
+void KopetePrefs::setInterfacePreference(const QString &value)
 {
 	mInterfacePreference = value;
 }

@@ -17,19 +17,14 @@
 
 #include "kopeteview.h"
 
-KopeteView::KopeteView( Kopete::ChatSession *manager )
+KopeteView::KopeteView( Kopete::ChatSession *manager, Kopete::ViewPlugin *plugin )
+    : m_manager(manager), m_plugin(plugin)
 {
-	m_manager = manager;
 }
 
 Kopete::ChatSession *KopeteView::msgManager() const
 {
 	return m_manager;
-}
-
-Kopete::Message::ViewType KopeteView::viewType()
-{
-	return m_type;
 }
 
 void KopeteView::clear()
@@ -40,10 +35,15 @@ void KopeteView::clear()
 void KopeteView::appendMessages(QValueList<Kopete::Message> msgs)
 {
 	QValueList<Kopete::Message>::iterator it;
-    for ( it = msgs.begin(); it != msgs.end(); ++it )
+	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
 		appendMessage(*it);
 	}
 
+}
+
+Kopete::ViewPlugin *KopeteView::plugin()
+{
+	return m_plugin;
 }
 

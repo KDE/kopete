@@ -193,9 +193,6 @@ void KopeteApplication::slotLoadPlugins()
 	connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
 		this, SLOT( slotAllPluginsLoaded() ));
 
-	//load the default chatwindow
-	Kopete::PluginManager::self()->loadPlugin( "kopete_chatwindow" );
-
 	if( showConfigDialog )
 	{
 		// No plugins specified. Show the config dialog.

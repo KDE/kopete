@@ -24,6 +24,7 @@ class QTabWidget;
 class BehaviorConfig_General;
 class BehaviorConfig_Chat;
 class KopeteAwayConfigBaseUI;
+class KPluginInfo;
 
 class BehaviorConfig : public KCModule
 {
@@ -39,12 +40,14 @@ class BehaviorConfig : public KCModule
 		void slotShowTrayChanged(bool);
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);
+		void slotUpdatePluginLabel(int);
 
 	private:
 		QTabWidget* mBehaviorTabCtl;
 		BehaviorConfig_General *mPrfsGeneral;
 		BehaviorConfig_Chat *mPrfsChat;
 		KopeteAwayConfigBaseUI *mAwayConfigUI;
+		QValueList<KPluginInfo*> viewPlugins;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

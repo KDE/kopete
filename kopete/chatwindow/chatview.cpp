@@ -30,6 +30,7 @@
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
 #include "kopetecontactlist.h"
+#include "kopeteviewmanager.h"
 
 #include <ktabwidget.h>
 #include <kdebug.h>
@@ -40,10 +41,22 @@
 #include <kwin.h>
 #include <kurldrag.h>
 #include <kglobalsettings.h>
-
+#include <kgenericfactory.h>
 #include <khtmlview.h>
 #include <qscrollview.h>
 #include <qtimer.h>
+
+typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
+
+ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const char *name, const QStringList &) :
+	Kopete::ViewPlugin( ChatWindowPluginFactory::instance(), parent, name )
+{}
+
+KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
+{
+    return (KopeteView*)new ChatView(manager,this);
+};
 
 class KopeteChatViewPrivate
 {
@@ -55,15 +68,14 @@ public:
 	bool visibleMembers;
 };
 
-ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
-	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr )
+ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const char *name )
+	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr, parent )
 {
 	d = new KopeteChatViewPrivate;
 	d->isActive = false;
 	d->visibleMembers = false;
 	d->sendInProgress = false;
 
-	m_type = Kopete::Message::Chat;
 	m_mainWindow = 0L;
 	membersDock = 0L;
 	m_tabBar = 0L;
@@ -95,7 +107,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	connect( editPart(), SIGNAL( canSendChanged( bool ) ),
 	         this, SIGNAL( canSendChanged(bool) ) );
 	connect( editPart(), SIGNAL( typing(bool) ),
-	         this, SIGNAL( typing(bool) ) );
+		 mgr, SLOT( typing(bool) ) );
 
 	//Make the edit area dockable for now
 	editDock->setWidget( editPart()->widget() );
@@ -113,6 +125,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 
 	m_remoteTypingMap.setAutoDelete( true );
 
+	//Manager signals
 	connect( mgr, SIGNAL( displayNameChanged() ),
 	         this, SLOT( slotChatDisplayNameChanged() ) );
 	connect( mgr, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
@@ -121,6 +134,20 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ) );
 	connect( mgr, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	connect( mgr, SIGNAL( remoteTyping( const Kopete::Contact *, bool) ),
+		 this, SLOT( remoteTyping(const Kopete::Contact *, bool) ) );
+	connect( mgr, SIGNAL( eventNotification( const QString& ) ),
+		 this, SLOT( setStatusText( const QString& ) ) );
+
+	//Connections to the manager and the ViewManager that every view should have
+	connect( this, SIGNAL( closing( KopeteView * ) ),
+		 KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
+	connect( this, SIGNAL( activated( KopeteView * ) ),
+		 KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
+	connect( this, SIGNAL( messageSent(Kopete::Message &) ),
+		 mgr, SLOT( sendMessage(Kopete::Message &) ) );
+	connect( mgr, SIGNAL( messageSuccess() ),
+		 this, SLOT( messageSentSuccessfully() ));
 
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
@@ -884,7 +911,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			}
 		}
 	}
-	// make sure it doesn't come from the current chat view - then it's an emoticon 
+	// make sure it doesn't come from the current chat view - then it's an emoticon
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
 				 ( event->source() != (QWidget*)m_messagePart->view()->viewport() ) )
 	{

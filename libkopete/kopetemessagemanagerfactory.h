@@ -97,7 +97,7 @@ public:
 	 * create a new view for the manager.
 	 * only the manager should call this function
 	 */
-	KopeteView *createView( Kopete::ChatSession * , Kopete::Message::ViewType type );
+	KopeteView *createView( Kopete::ChatSession * , const QString &requestedPlugin = QString::null );
 
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal
@@ -156,11 +156,6 @@ signals:
 	 */
 	void chatSessionCreated( Kopete::ChatSession *);
 
-	/*
-	 * Request the creation of a new view
-	 */
-	void requestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType type );
-
 	/**
 	 * the message is ready to be displayed
 	 */
@@ -175,14 +170,6 @@ signals:
 	 * The global shortcut for sending message has been used
 	 */
 	void readMessage();
-
-	/**
-	 * Emit this signal to obtain the avtive view from the
-	 * KopeteViewManager
-	 *
-	 * FIXME: This is realy dumb API
-	 */
-	 void getActiveView( KopeteView *& );
 
 public slots:
 	void slotReadMessage();

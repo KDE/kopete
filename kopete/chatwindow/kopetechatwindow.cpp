@@ -161,7 +161,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 	return myWindow;
 }
 
-KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name ) 
+KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	: KParts::MainWindow( parent, name )
 {
 	m_activeView = 0L;
@@ -169,7 +169,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	backgroundFile = 0L;
 	updateBg = true;
 	m_tabBar = 0L;
-	
+
 	initActions();
 
 	QVBox *vBox = new QVBox( this );
@@ -362,7 +362,7 @@ void KopeteChatWindow::initActions(void)
 
 	KStdAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
 	KStdAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
-	
+
 	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), QString::null, 0,
@@ -408,7 +408,7 @@ void KopeteChatWindow::initActions(void)
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
-	
+
 
 	new KWidgetAction( anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
 
@@ -644,7 +644,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 
 	if ( !m_alwaysShowTabs && chatViewList.count() == 1 )
 		setPrimaryChatView( newView );
-	else 
+	else
 	{
 		if ( !m_tabBar )
 			createTabBar();
@@ -652,9 +652,10 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 			addTab( newView );
 		newView->setActive( false );
 	}
-	newView->setMainWindow( this );
 
+	newView->setMainWindow( this );
 	newView->editWidget()->installEventFilter( this );
+
 	KCursor::setAutoHideCursor( newView->editWidget(), true, true );
 	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
@@ -800,7 +801,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	guiFactory()->addClient(view->msgManager());
 	createGUI( view->part() );
-	
+
 	if( m_activeView )
 		m_activeView->setActive( false );
 

@@ -21,11 +21,12 @@
 #define KOPETEEMAILWINDOW_H
 
 #include "kopeteview.h"
-
+#include "kopeteviewplugin.h"
 #include <kmainwindow.h>
 #include <kparts/mainwindow.h>
 
 namespace KParts { struct URLArgs; }
+class EmailWindowPlugin;
 
 class KopeteEmailWindow : KParts::MainWindow, public KopeteView
 {
@@ -34,7 +35,7 @@ class KopeteEmailWindow : KParts::MainWindow, public KopeteView
 public:
 	enum WindowMode { Send, Read, Reply };
 
-	KopeteEmailWindow( Kopete::ChatSession *, bool foreignMessage );
+	KopeteEmailWindow( Kopete::ChatSession *, EmailWindowPlugin *parent, bool foreignMessage );
 	~KopeteEmailWindow();
 
 	virtual Kopete::Message currentMessage();
@@ -43,7 +44,6 @@ public:
 	virtual void makeVisible();
 	virtual bool closeView( bool force = false );
 	virtual bool isVisible();
-	virtual QTextEdit *editWidget();
 	virtual QWidget *mainWidget() { return this; }
 
 public slots:
@@ -85,6 +85,17 @@ private:
 	void updateNextButton();
 	void initActions();
 	void writeMessage( Kopete::Message & );
+};
+
+
+/**
+ * This is the class that makes the emailwindow a plugin
+ */
+class EmailWindowPlugin : public Kopete::ViewPlugin
+{
+    public:
+	EmailWindowPlugin(QObject *parent, const char *name, const QStringList &args);
+	KopeteView* createView( Kopete::ChatSession *manager );
 };
 
 #endif // __KOPETEEMAILWINDOW_H__

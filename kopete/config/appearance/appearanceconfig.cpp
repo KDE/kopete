@@ -282,8 +282,8 @@ void AppearanceConfig::load()
 {
 	//we will change the state of somme controls, which will call some signals.
 	//so to don't refresh everything several times, we memorize we are loading.
-	loading=true; 
-	
+	loading=true;
+
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
@@ -343,7 +343,7 @@ void AppearanceConfig::load()
 	mPrfsColors->mBgOverride->setChecked( p->bgOverride() );
 	mPrfsColors->mFgOverride->setChecked( p->fgOverride() );
 	mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
-	
+
 	loading=false;
 	slotUpdatePreview();
 }
@@ -636,7 +636,7 @@ static QString sampleConversationXML()
 	//Kopete::MetaContact jackMC;
 	FakeContact myself( i18n( "Myself" ), 0 );
 	FakeContact jack( i18n( "Jack" ), /*&jackMC*/ 0 );
-	
+
 	Kopete::Message msgIn  ( &jack,   &myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
 	Kopete::Message msgOut ( &myself, &jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
 	Kopete::Message msgCol ( &jack,   &myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
@@ -644,11 +644,11 @@ static QString sampleConversationXML()
 	msgCol.setBg( QColor( "LightSteelBlue" ) );
 	Kopete::Message msgInt ( &jack,   &myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
 	Kopete::Message msgAct ( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Inbound,
-	                        Kopete::Message::PlainText, Kopete::Message::Chat, Kopete::Message::TypeAction );
+				  Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction );
 	Kopete::Message msgHigh( &jack,   &myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
 	Kopete::Message msgBye ( &myself, &jack,   i18n( "Bye" ), Kopete::Message::Outbound );
-	
+
 	return QString::fromLatin1( "<document>" ) + msgIn.asXML().toString() + msgOut.asXML().toString()
 	       + msgCol.asXML().toString() + msgInt.asXML().toString() + msgAct.asXML().toString()
 	       + msgHigh.asXML().toString() + msgBye.asXML().toString() + QString::fromLatin1( "</document>" );
@@ -676,13 +676,13 @@ void AppearanceConfig::slotUpdatePreview()
 			.arg( mPrfsColors->foregroundColor->color().name() ).arg( mPrfsColors->backgroundColor->color().name() )
 			.arg( mPrfsColors->bgColor->color().name() ).arg( mPrfsColors->linkColor->color().name() )
 			.arg( mPrfsColors->linkColor->color().name() ) );
-		
+
 		QString stylePath = itemMap[ style ];
 		d->xsltParser->setXSLT( fileContents(stylePath) );
 		preview->write( d->xsltParser->transform( sampleConversationXML() ) );
 		preview->write( QString::fromLatin1( "</body></html>" ) );
 		preview->end();
-		
+
 		emitChanged();
 	}
 }

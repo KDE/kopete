@@ -21,20 +21,20 @@
 
 #include "kopetemessage.h"
 #include <qvaluelist.h>
-
 #include <kopete_export.h>
 
-class Kopete::ChatSession;
-class QTextEdit;
-class Kopete::Message;
-
+namespace Kopete
+{
+	class ViewPlugin;
+};
 
 /**
  * @author Jason Keirstead
  *
- * Abstract parent class for all types of views used for messaging.  At present
- * these may be either KopeteView::Chat or KopeteView::Email.
+ * Abstract parent class for all types of views used for messaging.These view objects
+ * are provided by a @ref Kopete::ViewPlugin
  *
+ * @see Kopete::ViewPlugin
  */
 class KOPETE_EXPORT KopeteView
 {
@@ -42,7 +42,7 @@ class KOPETE_EXPORT KopeteView
 		/**
 		 * constructor
 		 */
-		KopeteView( Kopete::ChatSession *manager );
+		KopeteView( Kopete::ChatSession *manager, Kopete::ViewPlugin *parent );
 
 		/**
 		 * @brief Returns the message currently in the edit area
@@ -60,12 +60,6 @@ class KOPETE_EXPORT KopeteView
 		 * @return The Kopete::ChatSession that the view is in communication with.
 		 */
 		Kopete::ChatSession *msgManager() const;
-
-		/**
-		 * @brief Get the view type
-		 * @return The KopeteView::ViewType of the view
-		 */
-		Kopete::Message::ViewType viewType();
 
 		/**
 		 * @brief add a message to the view
@@ -116,12 +110,6 @@ class KOPETE_EXPORT KopeteView
 		virtual bool isVisible() = 0;
 
 		/**
-		 * @brief Get the widget used to compose messages
-		 * @return The QTextEdit object used to compose messages
-		 */
-		virtual QTextEdit *editWidget() = 0;
-
-		/**
 		 * @brief Get the view widget
 		 *
 		 * Can be reimplemented to return this if derived object is a widget
@@ -167,15 +155,21 @@ class KOPETE_EXPORT KopeteView
 		*/
 		virtual void registerTooltipHandler( QObject */*target*/, const char*/*slot*/ ){};
 
+		/**
+		 * @brief Returns the Kopete::ViewPlugin responsible for this view
+		 *
+		 * KopeteView objects are created by plugins. This returns a pointer to the plugin
+		 * that created this view. You can use this to infer other information on this view
+		 * and it's capabilities.
+		 */
+		Kopete::ViewPlugin *plugin();
+
 	protected:
 		/**
 		 * a pointer to the Kopete::ChatSession given in the constructor
 		 */
 		Kopete::ChatSession *m_manager;
-		/**
-		 * the type of this view
-		 */
-		Kopete::Message::ViewType m_type;
+		Kopete::ViewPlugin *m_plugin;
 };
 
 #endif

@@ -513,7 +513,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 		if( !rest.isEmpty() )
 		{
 			Kopete::Message msg( c->manager()->myself(), c->manager()->members(), rest,
-				Kopete::Message::Outbound, Kopete::Message::PlainText, Kopete::Message::Chat);
+				Kopete::Message::Outbound, Kopete::Message::PlainText, CHAT_VIEW);
 			c->manager()->sendMessage(msg);
 		}
 	}

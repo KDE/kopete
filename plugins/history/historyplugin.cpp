@@ -28,6 +28,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
 #include "kopetemessageevent.h"
+#include "kopeteviewplugin.h"
 
 #include "historydialog.h"
 #include "historyplugin.h"
@@ -139,7 +140,7 @@ void HistoryPlugin::slotViewHistory()
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
 //	kdDebug(14310) << k_funcinfo << "called." << endl;
-	if (v->viewType() == Kopete::Message::Email)
+	if(v->plugin()->name() != QString::fromLatin1("kopete_chatwindow") )
 		return;  //Email chat windows are not supported.
 
 	bool autoChatWindow = HistoryConfig::auto_chatwindow();

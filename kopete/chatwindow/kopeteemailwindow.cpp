@@ -29,6 +29,7 @@
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
 #include "kopetestdaction.h"
+#include "kopeteviewmanager.h"
 
 #include <kaction.h>
 #include <kapplication.h>
@@ -51,11 +52,25 @@
 #include <kpushbutton.h>
 #include <ktextedit.h>
 #include <kwin.h>
+#include <kgenericfactory.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qvbox.h>
+
+typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
+
+EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const char *name, const QStringList &) :
+	Kopete::ViewPlugin( EmailWindowPluginFactory::instance(), parent, name )
+{}
+
+KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
+{
+	//TODO: foreignMessage, how will we do this cleanly?
+	return (KopeteView*)new KopeteEmailWindow(manager,this, false);
+};
 
 class KopeteEmailWindow::Private
 {
@@ -82,8 +97,8 @@ public:
 	KopeteEmoticonAction *actionSmileyMenu;
 };
 
-KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreignMessage )
-:  KParts::MainWindow( ), KopeteView( manager ), d( new Private )
+KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowPlugin *parent, bool foreignMessage )
+	:  KParts::MainWindow( ), KopeteView( manager, parent ), d( new Private )
 {
 	QVBox *v = new QVBox( this );
 	setCentralWidget( v );
@@ -119,8 +134,18 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreign
 	connect( d->editPart, SIGNAL( canSendChanged( bool ) ),
 	         this, SLOT( slotUpdateReplySend() ) );
 	connect( d->editPart, SIGNAL( typing(bool) ),
-	         this, SIGNAL( typing(bool) ) );
-	
+		 manager, SIGNAL( typing(bool) ) );
+
+	//Connections to the manager and the ViewManager that every view should have
+	connect( this, SIGNAL( closing( KopeteView * ) ),
+		 KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
+	connect( this, SIGNAL( activated( KopeteView * ) ),
+		 KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
+	connect( this, SIGNAL( messageSent(Kopete::Message &) ),
+		 manager, SLOT( sendMessage(Kopete::Message &) ) );
+	connect( manager, SIGNAL( messageSuccess() ),
+		 this, SLOT( messageSentSuccessfully() ));
+
 	QWidget *containerWidget = new QWidget( v );
 	containerWidget->setSizePolicy( QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) );
 
@@ -144,7 +169,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreign
 	setWFlags(Qt::WDestructiveClose);
 
 	d->showingMessage = false;
-	
+
 	if( foreignMessage )
 		toggleMode( Read );
 	else
@@ -161,8 +186,6 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreign
 	d->queuePosition = 0;
 
 	setCaption( manager->displayName() );
-
-	m_type = Kopete::Message::Email;
 
 	slotUpdateReplySend();
 }
@@ -203,7 +226,7 @@ void KopeteEmailWindow::initActions(void)
 
 	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	setStandardToolBarMenuEnabled( true );
-	
+
 	d->actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	d->actionSmileyMenu->setDelayed( false );
 	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
@@ -294,7 +317,7 @@ void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 			updateNextButton();
 		}
 
-		d->unreadMessageFrom = message.from()->metaContact() ? 
+		d->unreadMessageFrom = message.from()->metaContact() ?
 			message.from()->metaContact()->displayName() : message.from()->contactId();
 		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
 	}
@@ -331,7 +354,7 @@ void KopeteEmailWindow::slotUpdateReplySend()
 		canSend = true;
 	else
 		canSend = d->editPart->canSend();
-	
+
 	d->btnReplySend->setEnabled( canSend );
 	d->chatSend->setEnabled( canSend );
 }
@@ -482,10 +505,10 @@ void KopeteEmailWindow::slotReplySend()
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
-	
+
 	if ( !KWin::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
 		KWin::setOnDesktop( winId(), KWin::currentDesktop() );
-	
+
 	KMainWindow::raise();
 
 	/* Removed Nov 2003
@@ -528,11 +551,6 @@ Kopete::Message KopeteEmailWindow::currentMessage()
 void KopeteEmailWindow::setCurrentMessage( const Kopete::Message &newMessage )
 {
 	d->editPart->setContents( newMessage );
-}
-
-QTextEdit * KopeteEmailWindow::editWidget()
-{
-	return d->editPart->widget();
 }
 
 void KopeteEmailWindow::slotCloseView()

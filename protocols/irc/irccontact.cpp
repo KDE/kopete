@@ -246,7 +246,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
 			Kopete::Message msg(message.from(), message.to(), *it, message.direction(),
-			                    Kopete::Message::RichText, message.viewType(), message.type());
+			                    Kopete::Message::RichText, CHAT_VIEW, message.type());
 
 			engine->privmsg(m_nickName, *it );
 
