@@ -23,16 +23,16 @@
 #include "oncomingsocket.h"
 #include "aim.h"
 
-OncomingSocket::OncomingSocket(QObject *parent, const char *name )
+OncomingSocket::OncomingSocket(QObject *parent, const char *name ) : QObject( parent, name )
 {
 }
 
 OncomingSocket::OncomingSocket(OscarSocket *server, const QString &address,
 	OscarConnection::ConnectionType type,
 	Q_UINT16 port,
-	int backlog,
+	int /* backlog */,
 	QObject *parent,
-	const char *name)
+	const char *name) : QObject( parent, name )
 {
 	mType = type;
 	mServer = server;
