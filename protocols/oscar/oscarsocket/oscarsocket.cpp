@@ -2830,7 +2830,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "currentState=" << currentState << endl;
 
 	//Predict the new rate level
-	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize) * lastTime;
+	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
 	kdDebug(14150) << "New Level is: " << newLevel << endl;
 
 	if (currentLevel <= disconnectLevel)
