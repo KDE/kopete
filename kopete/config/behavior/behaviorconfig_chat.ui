@@ -164,6 +164,23 @@
                         <string>Limit the maximum number of lines visible in a chat window to improve speed for complex layouts.</string>
                     </property>
                 </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer6</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>111</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
                 <widget class="QSpinBox">
                     <property name="name">
                         <cstring>mChatViewBufferSize</cstring>

@@ -27,78 +27,107 @@
                 <string>Notify all open chats when I go away</string>
             </property>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QCheckBox">
             <property name="name">
-                <cstring>autoAwayGroupBox</cstring>
+                <cstring>mUseAutoAway</cstring>
             </property>
-            <property name="title">
-                <string>Auto Away</string>
+            <property name="text">
+                <string>Use auto away</string>
             </property>
-            <grid>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout13</cstring>
+            </property>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="1" column="0">
+                <spacer>
                     <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Become away after</string>
-                    </property>
-                </widget>
-                <widget class="QSpinBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>mAutoAwayTimeout</cstring>
-                    </property>
-                    <property name="maxValue">
-                        <number>999</number>
-                    </property>
-                    <property name="minValue">
-                        <number>1</number>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="2">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>minutes of user inactivity</string>
-                    </property>
-                </widget>
-                <spacer row="1" column="3">
-                    <property name="name">
-                        <cstring>spacer2</cstring>
+                        <cstring>spacer69</cstring>
                     </property>
                     <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
                     <property name="sizeType">
-                        <enum>Expanding</enum>
+                        <enum>Fixed</enum>
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>61</width>
+                            <width>17</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>mUseAutoAway</cstring>
+                        <cstring>layout11</cstring>
                     </property>
-                    <property name="text">
-                        <string>Use auto away</string>
-                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>layout10</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel2</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Become away after</string>
+                                    </property>
+                                </widget>
+                                <widget class="QSpinBox">
+                                    <property name="name">
+                                        <cstring>mAutoAwayTimeout</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="maxValue">
+                                        <number>999</number>
+                                    </property>
+                                    <property name="minValue">
+                                        <number>1</number>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel3</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>minutes of user inactivity</string>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mGoAvailable</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>Become available when detecting activity again</string>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
-                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>mGoAvailable</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Become available when detecting activity again</string>
-                    </property>
-                </widget>
-            </grid>
+            </hbox>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -253,6 +282,32 @@
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>mUseAutoAway</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TextLabel2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mUseAutoAway</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mAutoAwayTimeout</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mUseAutoAway</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TextLabel3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mUseAutoAway</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mGoAvailable</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>mNotifyAway</tabstop>
     <tabstop>mUseAutoAway</tabstop>
