@@ -76,7 +76,9 @@ JabberContact::JabberContact(QString userId, QString nickname,
     // create a default (empty) resource for the contact
     JabberResource *defaultResource =
 	new JabberResource(QString::null, -1, QDateTime::currentDateTime(),
-			   JabberProtocol::protocol()->JabberOffline, "");
+			   JabberProtocol::getJabberOffline(), "");
+			   //JabberProtocol::JabberOffline(), "");
+
     resources.append(defaultResource);
 
     activeResource = defaultResource;
@@ -85,7 +87,8 @@ JabberContact::JabberContact(QString userId, QString nickname,
     setDisplayName(rosterItem.name());
 
     // specifically cause this instance to update this contact as offline
-    slotUpdatePresence(p->JabberOffline, QString::null);
+    slotUpdatePresence(JabberProtocol::getJabberOffline(), QString::null);
+    //slotUpdatePresence(p->JabberOffline, QString::null);
 }
 
 /* Return the identity ID */
