@@ -1116,7 +1116,7 @@ void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 	m_offlineItem->setText(0,i18n("Offline contacts (%1)").arg(m_offlineItem->childCount()));
 }
 
-void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *  parent , QListViewItem *after)
+void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListViewItem *after)
 {
 	if(!acceptDrag(e))
 		return;
