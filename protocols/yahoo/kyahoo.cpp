@@ -154,7 +154,10 @@ void YahooSession::login(int initial)
 
 YahooSession::~YahooSession()
 {
-	yahoo_close( m_connId ) ;
+	yahoo_logoff( m_connId );
+	yahoo_close( m_connId );
+	delete m_socket;
+
 }
 
 int YahooSession::setLogLevel(enum yahoo_log_level level)
