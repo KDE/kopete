@@ -28,20 +28,14 @@
 #include <qsocket.h>
 #include <kdebug.h>
 
-IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac)
-	: KopeteContact((KopeteProtocol *)identity->protocol(), QString("%1:%2@%3/%4")
-	.arg(identity->mySelf()->nickName()).arg(identity->engine()->password())
-	.arg(identity->engine()->host()).arg(channel), metac)
+IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac) :
+		IRCContact( identity, metac )
 {
 	// Variable assignments
 	mChannelName = channel;
-	mIdentity = identity;
-	mEngine = mIdentity->engine();
-	mMetaContact = metac;
-	mMsgManager = 0L;
 
 	// Registers this IRCChannelContact with the identity
-	mIdentity->registerChannel(mChannelName, this);
+	identity->registerChannel(mChannelName, this);
 
 	// Contact list display name
 	setDisplayName(channel);
@@ -53,25 +47,47 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 
 	// KopeteMessageManagerFactory stuff
 	mContact.append((KopeteContact *)this);
-	mMyself.append((KopeteContact *)mIdentity->mySelf());
+	mMyself.append((KopeteContact *)identity->mySelf());
 
 	// KIRC Engine stuff
-	QObject::connect(mEngine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
-	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
-	QObject::connect(mEngine, SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
-	QObject::connect(mEngine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
-	QObject::connect(mEngine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
-	QObject::connect(mEngine, SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
+	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
+	QObject::connect(identity->engine(), SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+	QObject::connect(identity->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
+	QObject::connect(identity->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
+	QObject::connect(identity->engine(), SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
+	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
 
 	// TODO: make this configurable: (on connect, join)
 	if (mEngine->state() == QSocket::Idle)
-		mEngine->connectToServer(identity->mySelf()->nickName());
+		identity->engine()->connectToServer(identity->mySelf()->nickName());
 
 }
 
 IRCChannelContact::~IRCChannelContact()
 {
 	mIdentity->unregisterChannel(mChannelName);
+}
+
+KopeteMessageManager* IRCChannelContact::manager(bool)
+{
+	if (!mMsgManager)
+	{
+		kdDebug(14120) << k_funcinfo << "Creating new KMM" << endl;
+
+		KopeteContactPtrList initialContact;
+		initialContact.append((KopeteContact *)mIdentity->mySelf());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), initialContact, (KopeteProtocol *)mIdentity->protocol());
+		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
+		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		if( mEngine->isLoggedIn() )
+			mEngine->joinChannel(mChannelName);
+	}
+	return mMsgManager;
+}
+
+void IRCChannelContact::slotMessageManagerDestroyed()
+{
+	mMsgManager = 0L;
 }
 
 void IRCChannelContact::slotConnectedToServer()
@@ -170,40 +186,18 @@ void IRCChannelContact::slotConnectionClosed()
 	setOnlineStatus( KopeteContact::Offline );
 }
 
-KopeteMessageManager* IRCChannelContact::manager(bool)
-{
-	if (!mMsgManager)
-	{
-		kdDebug(14120) << k_funcinfo << "Creating new KMM" << endl;
-
-		KopeteContactPtrList initialContact;
-		initialContact.append((KopeteContact *)mIdentity->mySelf());
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), initialContact, (KopeteProtocol *)mIdentity->protocol());
-		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
-		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		if( mEngine->isLoggedIn() )
-			mEngine->joinChannel(mChannelName);
-	}
-	return mMsgManager;
-}
-
-void IRCChannelContact::slotMessageManagerDestroyed()
-{
-	mMsgManager = 0L;
-}
-
 void IRCChannelContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	if( onlineStatus() != KopeteContact::Online )
 		mEngine->joinChannel(mChannelName);
 
-	if( mIdentity->processMessage( message ) )
+	if( processMessage( message ) )
 	{
 		// If the above was false, there was a server command
 		mEngine->messageContact(mChannelName, message.plainBody());
 		manager()->appendMessage(message);
 	}
-	
+
 	manager()->messageSucceeded();
 }
 
@@ -233,8 +227,7 @@ QString IRCChannelContact::statusIcon() const
 }
 
 IRCChanPrivUser::IRCChanPrivUser(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass)
-	: KopeteContact((KopeteProtocol *)identity->protocol(), QString("%1@%3/%4")
-	.arg(identity->mySelf()->nickName()).arg(identity->engine()->host()).arg(nickname), 0L)
+	: IRCContact( identity, 0L )
 {
 	mUserclass = userclass;
 	mNickname = nickname;

@@ -15,9 +15,30 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifndef IRCCONTACT_H
+#define IRCCONTACT_H
 
-class IRCContact
+#include "kirc.h"
+#include "kopetecontact.h"
+
+class KopeteMessageManager;
+class KopeteMetaContact;
+class IRCIdentity;
+class KopeteMessage;
+
+class IRCContact : public KopeteContact
 {
-public:
-	IRCContact();
+	public:
+		IRCContact(IRCIdentity *identity, KopeteMetaContact *metac);
+
+		// Checks a message for server commands
+		bool processMessage( const KopeteMessage & );
+
+	protected:
+		KopeteMetaContact *mMetaContact;
+		KIRC *mEngine;
+		KopeteMessageManager *mMsgManager;
+		IRCIdentity *mIdentity;
 };
+
+#endif

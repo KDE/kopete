@@ -18,8 +18,7 @@
 #ifndef IRCCHANNELCONTACT_H
 #define IRCCHANNELCONTACT_H
 
-#include "kopetecontact.h"
-#include "kirc.h"
+#include "irccontact.h"
 
 #include <qptrlist.h>
 
@@ -30,69 +29,67 @@ class KAction;
 class KopeteMessageManager;
 class KopeteMessage;
 
-class IRCChanPrivUser : public KopeteContact
+class IRCChanPrivUser : public IRCContact
 {
-public:
-	/* This class provides a KopeteContact for each user on the channel.
-	I decided not to make these all IRCContacts since that would be a waste
-	of memory and completely unneeded. */
-	IRCChanPrivUser(IRCIdentity *, const QString &nickname, KIRC::UserClass);
+	public:
+		/* This class provides a KopeteContact for each user on the channel.
+		I decided not to make these all IRCContacts since that would be a waste
+		of memory and completely unneeded. */
+		IRCChanPrivUser(IRCIdentity *, const QString &nickname, KIRC::UserClass);
 
-	// Nickname stuff
-	void setNickname(const QString &nickname) { mNickname = nickname; }
-	const QString &nickname() { return mNickname; }
+		// Nickname stuff
+		void setNickname(const QString &nickname) { mNickname = nickname; }
+		const QString &nickname() { return mNickname; }
 
-	// Userclass stuff
-	void setUserclass(KIRC::UserClass userclass) { mUserclass = userclass; }
-	KIRC::UserClass userclass() { return mUserclass; }
+		// Userclass stuff
+		void setUserclass(KIRC::UserClass userclass) { mUserclass = userclass; }
+		KIRC::UserClass userclass() { return mUserclass; }
 
-	// KopeteContact stuff
-	QString statusIcon() const;
-private:
-	KIRC::UserClass mUserclass;
-	QString mNickname;
+		// KopeteContact stuff
+		QString statusIcon() const;
+	private:
+		KIRC::UserClass mUserclass;
+		QString mNickname;
 };
 
-class IRCChannelContact : public KopeteContact
+class IRCChannelContact : public IRCContact
 {
-Q_OBJECT
-public:
-	IRCChannelContact(IRCIdentity *, const QString &channel, KopeteMetaContact *metac);
+	Q_OBJECT
+	public:
+		IRCChannelContact(IRCIdentity *, const QString &channel, KopeteMetaContact *metac);
 
-	~IRCChannelContact();
+		~IRCChannelContact();
 
-	// START: Virtual reimplmentations from KopeteContact, see kopetecontact.h:
-	bool isReachable();
-	KActionCollection *customContextMenuActions();
-	KopeteMessageManager* manager( bool canCreate = false );
-	QString statusIcon() const;
-	// FINISH
-	
-private slots:
-	void slotConnectedToServer();
-	void slotUserJoinedChannel(const QString &, const QString &);
-	void slotJoin();
-	void slotPart();
-	void slotMessageManagerDestroyed();
-	void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
-	void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
-	void slotConnectionClosed();
-	void slotNewMessage(const QString &originating, const QString &target, const QString &message);
-	void slotNamesList(const QString &channel, const QString &nickname, const int);
-private:
-	IRCIdentity *mIdentity;
-	QString mChannelName;
-	KopeteMetaContact *mMetaContact;
-	KIRC *mEngine;
-	QPtrList<KopeteContact> mContact;
-	QPtrList<KopeteContact> mMyself;
-	KopeteMessageManager *mMsgManager;
-	QMap<QString, IRCChanPrivUser * > mMembers;
+		// START: Virtual reimplmentations from KopeteContact, see kopetecontact.h:
+		bool isReachable();
+		KActionCollection *customContextMenuActions();
+		QString statusIcon() const;
+		// FINISH
+		KopeteMessageManager* manager( bool canCreate = false );
 
-	// KAction stuff:
-	KActionCollection *mCustomActions;
-	KAction *actionJoin;
-	KAction *actionPart;
+	private slots:
+		void slotMessageManagerDestroyed();
+		void slotConnectedToServer();
+		void slotUserJoinedChannel(const QString &, const QString &);
+		void slotJoin();
+		void slotPart();
+		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
+		void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
+		void slotConnectionClosed();
+		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
+		void slotNamesList(const QString &channel, const QString &nickname, const int);
+	private:
+		QString mChannelName;
+
+		QPtrList<KopeteContact> mContact;
+		QPtrList<KopeteContact> mMyself;
+
+		QMap<QString, IRCChanPrivUser * > mMembers;
+
+		// KAction stuff:
+		KActionCollection *mCustomActions;
+		KAction *actionJoin;
+		KAction *actionPart;
 };
 
 #endif
