@@ -49,6 +49,7 @@ public:
 	virtual void Disconnect();
 	virtual bool isConnected();
 	virtual void setAway(void);
+	virtual void setAvailable(void);
 	virtual bool isAway(void);
 	/** Internal */
 	StatusBarIcon *statusBarIcon;

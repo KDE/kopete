@@ -167,12 +167,37 @@ bool MSNProtocol::isConnected()
 
 void MSNProtocol::setAway(void)
 {
-// TODO
+	slotGoAway();
+}
+
+void MSNProtocol::setAvailable(void)
+{
+	slotGoOnline();
 }
 
 bool MSNProtocol::isAway(void)
 {
-// TODO
+	uint status;
+	status = engine->getStatus();
+	switch(status)
+	{
+		case NLN:
+		{
+			return false;
+			break;
+		}
+		case FLN:
+		case BSY:
+		case IDL:
+		case AWY:
+		case PHN:
+		case BRB:
+		case LUN:
+		{
+    		return true;
+			break;
+		}
+	}
 	return false;
 }
 

@@ -1,1 +1,1 @@
-SUBDIRS = icq aim
+SUBDIRS = icq aim msn

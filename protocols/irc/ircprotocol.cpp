@@ -150,6 +150,11 @@ void IRCProtocol::setAway(void)
 // TODO
 }
 
+void IRCProtocol::setAvailable(void)
+{
+// TODO
+}
+
 bool IRCProtocol::isAway(void)
 {
 // TODO
