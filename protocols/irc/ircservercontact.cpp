@@ -18,23 +18,27 @@
 #include "ircservercontact.h"
 #include <qinputdialog.h>
 #include <klocale.h>
+#include <qinputdialog.h>
 #include <kdebug.h>
 #include <qlayout.h>
 #include "ircconsoleview.h"
 #include <qtabwidget.h>
 #include <qvbox.h>
 #include <ktoolbar.h>
-#include <ktoolbarbutton.h>
 #include <qsocket.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 #include "kirc.h"
+#include "imcontact.h"
+#include "irccontact.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
-	: KListViewItem( kopeteapp->contactList() )
+	: IMContact( kopeteapp->contactList() )
 {
 	tryingQuit = false;
-	completedDisconnect = true;
+	closing = false;
 	engine = new KIRC();
+	mQuitMessage = "Using Kopete IRC Plugin";
 	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
@@ -45,16 +49,16 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 
-	QVBox *tabView = new QVBox(mWindow->mTabWidget);
-	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, this, tabView);
-	mWindow->mTabWidget->addTab(tabView, mServer);
+	mTabView = new QVBox(mWindow->mTabWidget);
+	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
+	mWindow->mTabWidget->addTab(mTabView, mServer);
 
-	QObject::connect(consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
-	QObject::connect(this, SIGNAL(connecting()), consoleView, SLOT(slotConnecting()));
+	QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
+	QObject::connect(this, SIGNAL(connecting()), mConsoleView, SLOT(slotConnecting()));
 	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
 
 	mWindow->show();
-	consoleView->show();
+	mConsoleView->show();
 
 	QString title = nickname;
 	title.append("@");
@@ -89,7 +93,6 @@ void IRCServerContact::connectNow()
 
 void IRCServerContact::disconnectNow()
 {
-	completedDisconnect = false;
 	mWindow->mToolBar->removeItem(1);
 	mWindow->mToolBar->insertButton("stop", 1, SIGNAL(clicked()), this, SLOT(forceDisconnect()));
 	tryingQuit = false;
@@ -139,16 +142,66 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 
 void IRCServerContact::forceDisconnect()
 {
-	if (completedDisconnect == false)
-	{
-		tryingQuit = true;
-		emit quittingServer();
-		engine->close();
-		slotQuitServer();
-		completedDisconnect = true;
-	}
+	emit quittingServer();
+	engine->close();
+	slotQuitServer();
 	mWindow->mToolBar->removeItem(1);
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+}
+
+void IRCServerContact::rightButtonPressed(const QPoint &point)
+{
+	popup = new KPopupMenu();
+	popup->insertTitle(QString(mNickname + "@" + mServer));
+	if (engine->state() != QSocket::Idle)
+	{
+		if (engine->isLoggedIn() == true)
+		{
+			if (tryingQuit == false)
+			{
+				popup->insertItem("Join Channel...", this, SLOT(promptChannelJoin()));
+				popup->insertItem("Quit Server", this, SLOT(slotQuitServer()));
+			} else {
+				popup->insertItem("Force Disconnect", this, SLOT(forceDisconnect()));
+			}
+		} else {
+			popup->insertItem("Abort Connection Attempt", this, SLOT(forceDisconnect()));
+		}
+	} else {
+		popup->insertItem("Connect to Server", this, SLOT(connectNow()));
+	}
+	popup->popup(point);
+}
+
+void IRCServerContact::promptChannelJoin()
+{
+	bool okay = false;
+	QString target = QInputDialog::getText(i18n("Enter the channel to join..."), i18n("<qt>What channel would you like to join?</qt>"), QLineEdit::Normal, QString::null, &okay, mWindow);
+	if (okay == true && target.isEmpty() == false)
+	{
+		if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+		{
+			(void) new IRCContact(this, mServer, target, 6667, true, this);
+		} else {
+			KMessageBox::sorry(mWindow, i18n("<qt>Sorry, you entered an invalid response. Channels are required to begin with a '#', '!', or a '&' by IRC. Please try again.</qt>"), i18n("Invalid Response"));
+		}
+	}
+}
+
+void IRCServerContact::leftButtonDoubleClicked()
+{
+	if (mWindow != 0)
+	{
+		mWindow->raise();
+		if (mTabView !=0)
+		{
+			mWindow->mTabWidget->showPage(mTabView);
+		}
+		if (mConsoleView != 0)
+		{
+			mConsoleView->messageBox->setFocus();
+		}
+	}
 }
 
 void IRCServerContact::slotQuitServer()
@@ -157,15 +210,20 @@ void IRCServerContact::slotQuitServer()
 	{
 		tryingQuit = true;
 		emit quittingServer();
-		engine->quitIRC("Using Kopete IRC Plugin");
-		completedDisconnect = false;
-		QTimer::singleShot(10000, this, SLOT(forceDisconnect()));
+		engine->quitIRC(mQuitMessage);
 	} else {
-		completedDisconnect = true;
 		emit serverQuit();
 		mManager->removeServer(text(0));
-		mWindow->mToolBar->removeItem(1);
-		mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+		// Crashes when we are closing the dialog for some reason :(
+		if (closing == false)
+		{
+			mWindow->mToolBar->removeItem(1);
+			mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+		} else {
+			delete this;
+		}
+		tryingQuit = false;
+		closing = false;
 	}
 }
 
@@ -188,10 +246,26 @@ bool IRCServerContact::parentClosing()
 		if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connected to the IRC server, are you sure you want to quit now?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAsk") == KMessageBox::Yes)
 		{
 			tryingQuit = false;
+			closing = true;
 			slotQuitServer();
 			return true;
 		} else {
 			return false;
+		}
+	} else {
+		if (engine->state() != QSocket::Idle)
+		{
+			if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connecting to an IRC server, are you sure you want to abort connecting and close this window?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAskNotOnline") == KMessageBox::Yes)
+			{
+				forceDisconnect();
+				mManager->removeServer(text(0));
+				delete this;
+			} else {
+				return false;
+			}
+		} else {
+			mManager->removeServer(text(0));
+			delete this;
 		}
 	}
 	return true;

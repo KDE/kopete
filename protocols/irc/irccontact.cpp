@@ -107,8 +107,6 @@ void IRCContact::rightButtonPressed(const QPoint &point)
 	popup->insertItem("Part", this, SLOT(slotPart()));
 // TODO:	popup->insertItem("Hop (Part and Re-join)", this, SLOT(slotHop()));
 // TODO:	popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
-	popup->insertTitle(((QListViewItem *)mContact)->text(0));
-	popup->insertItem("Quit IRC Server", this, SLOT(slotQuitServer()));
 	popup->popup(point);
 }
 
@@ -120,14 +118,21 @@ void IRCContact::slotQuitServer()
 
 void IRCContact::leftButtonDoubleClicked()
 {
+	// Null pointer paranoia city, check out IRCServerContact, it's pretty h4x0r too :)
 	if (chatView != 0)
 	{
-		if (mContact->mWindow->isVisible() == true)
+		if (mContact != 0)
 		{
-			mContact->mWindow->raise();
-			chatView->setFocus();
-			chatView->messageBox->setFocus();
+			if (mContact->mWindow != 0)
+			{
+				mContact->mWindow->raise();
+				if (mTabPage !=0)
+				{
+					mContact->mWindow->mTabWidget->showPage(mTabPage);
+				}
+			}
 		}
+		chatView->messageBox->setFocus();
 	}
 }
 

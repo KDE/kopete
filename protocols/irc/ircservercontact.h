@@ -29,8 +29,12 @@
 #include <qdict.h>
 
 class KIRC;
+class IMContact;
+class QVBox;
+class IRCConsoleView;
+class KPopupMenu;
 
-class IRCServerContact : public QObject, public KListViewItem
+class IRCServerContact : public IMContact
 {
 Q_OBJECT
 public:
@@ -44,9 +48,15 @@ public:
 	QString mNickname;
 	QString mServer;
 	bool parentClosing();
+	virtual void rightButtonPressed(const QPoint &);
+	virtual void leftButtonDoubleClicked();
+	QString mQuitMessage;
 private:
 	bool tryingQuit;
-	bool completedDisconnect;
+	QVBox *mTabView;
+	IRCConsoleView *mConsoleView;
+	KPopupMenu *popup;
+	bool closing;
 private slots:
 	void nickInUseOnLogin(const QString &);
 	void slotChangedNick(const QString &, const QString &);
@@ -57,6 +67,7 @@ private slots:
 public slots:
 	void slotQuitServer();
 	void connectNow();
+	void promptChannelJoin();
 signals:
 	void quittingServer();
 	void serverQuit();
