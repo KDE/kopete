@@ -2,8 +2,8 @@
     kopeteaccount.cpp - Kopete Account
 
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
-    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -69,6 +69,8 @@ public:
 	QDict<KopeteContact> contacts;
 	QColor color;
 	KopeteContact *myself;
+	QTimer *suppressStatusTimer;
+	bool suppressStatusNotification;
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	static KWallet::Wallet *s_wallet;
@@ -94,6 +96,9 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	d->usingWallet = false;
 #endif
+	d->suppressStatusTimer = new QTimer( this, "suppressStatusTimer" );
+	d->suppressStatusNotification = false;
+	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ), this, SLOT( slotStopSuppression() ) );
 
 	KopeteAccountManager::manager()->registerAccount( this );
 	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
@@ -108,6 +113,7 @@ KopeteAccount::~KopeteAccount()
 
 	walletClosed();
 
+	delete d->suppressStatusTimer;
 	delete d;
 }
 
@@ -592,6 +598,34 @@ KopeteContact * KopeteAccount::myself() const
 void KopeteAccount::setMyself( KopeteContact *myself )
 {
 	d->myself = myself;
+
+	QObject::connect( myself, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+		this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+}
+
+void KopeteAccount::slotOnlineStatusChanged( KopeteContact * /* contact */, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
+{
+	if ( oldStatus.status() == KopeteOnlineStatus::Offline || oldStatus.status() == KopeteOnlineStatus::Connecting )
+	{
+		// Wait for five seconds until we treat status notifications for contacts as
+		// unrelated to our own status change.
+		// Five seconds may seem like a long time, but just after your own connection
+		// it's basically neglectible, and depending on your own contact list's size,
+		// the protocol you are using, your internet connection's speed and your
+		// computer's speed you *will* need it.
+		d->suppressStatusNotification = true;
+		d->suppressStatusTimer->start( 5000, true );
+	}
+}
+
+void KopeteAccount::slotStopSuppression()
+{
+	d->suppressStatusNotification = false;
+}
+
+bool KopeteAccount::suppressStatusNotification() const
+{
+	return d->suppressStatusNotification;
 }
 
 void KopeteAccount::walletClosed()

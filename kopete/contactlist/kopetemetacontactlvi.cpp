@@ -1,11 +1,11 @@
 /*
     kopetemetacontactlvi.cpp - Kopete Meta Contact KListViewItem
 
-    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2004 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
 
-    Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -177,7 +177,8 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 {
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
-	if ( c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting &&
+	if ( !c->account()->suppressStatusNotification() &&
+		c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting &&
 		( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
 	{
 		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;

@@ -2,8 +2,8 @@
     kopeteaccount.h - Kopete Account
 
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
-    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -252,6 +252,13 @@ public:
 	 */
 	QString configGroup() const;
 
+	/**
+	 * @return whether we should suppress status notifications for contacts
+	 * belonging to this account. When true, no passive popups and other
+	 * notifications should be used
+	 */
+	bool suppressStatusNotification() const;
+
 protected:
 	/**
 	 * Set the 'myself' contact. This contact HAS to be defined for every
@@ -342,6 +349,19 @@ private slots:
 	 * Called when the wallet is closed externally.
 	 */
 	void walletClosed();
+
+	/**
+	 * Our online status changed.
+	 *
+	 * Currently this slot is used to set a timer that allows suppressing online status
+	 * notifications just after connecting.
+	 */
+	void slotOnlineStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus );
+
+	/**
+	 * Stop the suppression of status notification
+	 */
+	void slotStopSuppression();
 
 private:
 	KopeteAccountPrivate *d;
