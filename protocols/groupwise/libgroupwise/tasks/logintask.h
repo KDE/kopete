@@ -18,6 +18,8 @@
 
 typedef QString ContactListItem; // temp typedef pending impl
 
+using namespace GroupWise;
+
 /**
 @author Kopete Developers
 */
@@ -40,13 +42,16 @@ public:
 	 * processes it and notifies the client of the contactlist
 	 */
 	bool take( Transfer * transfer );
+protected:
 	void extractFolder( Field::MultiField * folderContainer );
-	
+	void extractContact( Field::MultiField * contactContainer );
+	ContactDetails extractUserDetails(Field::MultiField * details );
+
 signals:
-	void gotMyself( Field::FieldList & );
-	void gotFolder( GWFolderItem & );
-	void gotContact( Field::FieldList & );
-	void gotContactUserRecord( Field::FieldList & );
+	void gotMyself( const ContactItem & );
+	void gotFolder( const FolderItem & );
+	void gotContact( const ContactItem & );
+	void gotContactUserDetails( const ContactDetails & );
 };
 
 #endif

@@ -13,7 +13,6 @@
 #include "request.h"
 #include "requestfactory.h"
 #include "response.h"
-#include "iostream.h"
 
 #include "logintask.h"
 
@@ -42,7 +41,7 @@ void LoginTask::initialise()
 
 void LoginTask::onGo()
 {
-	cout << "LoginTask::onGo() - sending login fields" << endl;
+	qDebug( "LoginTask::onGo() - sending login fields" );
 	send( static_cast<Request *>( transfer() ) );
 }
 
@@ -57,47 +56,37 @@ bool LoginTask::take( Transfer * transfer )
 	
 	// read in myself()'s metadata fields and emit signal
 	Field::FieldList loginResponseFields = response->fields();
-	emit gotMyself( loginResponseFields );
+	//emit gotMyself( loginResponseFields );
 	
-	// create contact list
+	// CREATE CONTACT LIST
 	// locate contact list
-	Field::MultiField * contactList = static_cast<Field::MultiField *>( 
-			*( loginResponseFields.find( NM_A_FA_CONTACT_LIST ) ) );
-	// extract folder fields 
-	// find a field in the contact list containing a folder
+	Field::MultiField * contactList = loginResponseFields.findMultiField( NM_A_FA_CONTACT_LIST );
 	Field::FieldList contactListFields = contactList->fields();
-	//Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
-	//Field::FieldListIterator end = contactList->fields().end();
-	// get the field and bump the iterator
-	Field::MultiField * folderContainer;
-
+	Field::MultiField * container;
+	// read folders
 	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_FOLDER );
 		  it != contactListFields.end();
 		  it = contactListFields.find( ++it, NM_A_FA_FOLDER ) )
 	{
-		folderContainer = static_cast<Field::MultiField *>( *it );
-		extractFolder( folderContainer );
+		container = static_cast<Field::MultiField *>( *it );
+		extractFolder( container );
 	}
 		  
-/*	while ( folderContainer = dynamic_cast<Field::MultiField *>( *it ) )
+	// read contacts
+	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_CONTACT );
+		  it != contactListFields.end();
+		  it = contactListFields.find( ++it, NM_A_FA_CONTACT ) )
 	{
-		//Q_ASSERT( it != end );
-		// and look for the next folder
-		extractFolder( folderContainer );
-		// THIS LINE IS NOT SAFE - WE'RE OFF THE END OF THE FIELD LIST OR SOMETHING
-		it = contactList->fields().find( ++it, NM_A_FA_FOLDER );
-		cout << "- it now points to " << ios::hex << *it << endl;
-		folderContainer = dynamic_cast<Field::MultiField *>( *it );
-		
-	}*/
-	// extract contact fields 
+		container = static_cast<Field::MultiField *>( *it );
+		extractContact( container );
+	}
 /*	while ( findContact() )
 	{
 		emit gotContact( fields );
 		if ( findUserDetails( fields );
 			emit gotContactUserRecord( fields );
 	}
-	
+	cout << 
 	// create privacy list
 	*/
 	setSuccess();
@@ -107,22 +96,80 @@ bool LoginTask::take( Transfer * transfer )
 
 void LoginTask::extractFolder( Field::MultiField * folderContainer )
 {
-	GWFolderItem folder;
+	FolderItem folder;
+	Field::SingleField * current;
+	Field::FieldList fl = folderContainer->fields();
 	// object id
-	Field::FieldListIterator currentIt = folderContainer->fields().find( NM_A_SZ_OBJECT_ID );
-	Field::SingleField * current = static_cast<Field::SingleField * >( *currentIt );
+	current = fl.findSingleField( NM_A_SZ_OBJECT_ID );
 	folder.id = current->value().toInt();
 	// sequence number
-	currentIt = folderContainer->fields().find( NM_A_SZ_SEQUENCE_NUMBER );
-	current = static_cast<Field::SingleField * >( *currentIt );
+	current = fl.findSingleField( NM_A_SZ_SEQUENCE_NUMBER );
 	folder.sequence = current->value().toInt();
 	// name 
-	currentIt = folderContainer->fields().find( NM_A_SZ_DISPLAY_NAME );
-	current = static_cast<Field::SingleField * >( *currentIt );
+	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
 	folder.name = current->value().toString();
-	cout << "Got folder: " << folder.name.ascii() << ", obj: " << folder.id << ", seq:" << folder.sequence << endl;
+	// parent
+	current = fl.findSingleField( NM_A_SZ_PARENT_ID );
+	folder.parentId = current->value().toInt();
+	
+	qDebug( "Got folder: %s, obj: %i, parent: %i, seq: %i.", folder.name.ascii(), folder.id, folder.parentId, folder.sequence );
 	// tell the world about it
 	emit gotFolder( folder );
+}
+
+void LoginTask::extractContact( Field::MultiField * contactContainer )
+{
+	if ( contactContainer->tag() != NM_A_FA_CONTACT )
+		return;
+	ContactItem contact;
+	Field::SingleField * current;
+	Field::FieldList fl = contactContainer->fields();
+	// sequence number, object and parent IDs are a numeric values but are stored as strings...
+	current = fl.findSingleField( NM_A_SZ_OBJECT_ID );
+	contact.id = current->value().toInt();
+	current = fl.findSingleField( NM_A_SZ_PARENT_ID );
+	contact.parentId = current->value().toInt();
+	current = fl.findSingleField( NM_A_SZ_SEQUENCE_NUMBER );
+	contact.sequence = current->value().toInt();
+	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
+	contact.displayName = current->value().toString();
+	current = fl.findSingleField( NM_A_SZ_DN );
+	contact.dn = current->value().toString();
+	emit gotContact( contact );
+	Field::MultiField * details = fl.findMultiField( NM_A_FA_USER_DETAILS );
+	ContactDetails cd = extractUserDetails( details );
+	cd.dn = contact.dn;
+	emit gotContactUserDetails( cd );
+}
+
+ContactDetails LoginTask::extractUserDetails(Field::MultiField * details )
+{
+	ContactDetails cd;
+	cd.status = GroupWise::Invalid;
+	// read the supplied fields, set metadata and status.
+	if ( details->tag() == NM_A_FA_USER_DETAILS )
+	{
+		Field::FieldList fields = details->fields();
+		// TODO: not sure what this means, ask Mike
+		Field::SingleField * sf;
+		if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
+			cd.authAttribute = sf->value().toString();
+		if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
+			cd.dn =sf->value().toString();
+		if ( ( sf = fields.findSingleField ( "CN" ) ) )
+			cd.cn = sf->value().toString();
+		if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
+			cd.givenName = sf->value().toString();
+		if ( ( sf = fields.findSingleField ( "Surname" ) ) )
+			cd.surname = sf->value().toString();
+		if ( ( sf = fields.findSingleField ( "Full Name" ) ) )
+			cd.fullName = sf->value().toString();
+		if ( ( sf = fields.findSingleField ( NM_A_SZ_STATUS ) ) )
+			cd.status = sf->value().toInt();
+		if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
+			cd.awayMessage = sf->value().toString();
+	}
+	return cd;
 }
 
 #include "logintask.moc"
