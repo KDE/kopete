@@ -138,7 +138,11 @@ public:
 	 */
 	void addToGroup( const QString &to );
 
-
+	/**
+	 * Temporary contacts will not be sarialized
+	 */
+	bool isTemporary() const;
+	void setTemporary( bool b = true );
 
 public slots:
 	/**
@@ -249,6 +253,8 @@ private:
 	 */
 	QMap<QString, QString> m_pluginData;
 	AddressBookFields m_addressBook;
+
+	bool m_temporary;
 };
 
 #endif

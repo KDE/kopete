@@ -68,16 +68,6 @@ public:
 	void newReplyWindow();
 
 	/**
-	 * Add a contact to the session
-	 */
-	void addContact( const KopeteContact *c );
-
-	/**
-	 * Remove a contact from the session
-	 */
-	void removeContact( const KopeteContact *c );
-
-	/**
 	 * Set Reading mode
 	 */
 	void setReadMode( int mode );
@@ -120,7 +110,7 @@ signals:
 	 */
 	void messageSent(const KopeteMessage& msg, KopeteMessageManager *);
 	void dying(KopeteMessageManager *);
-
+	
 	/**
 	 * The following signals are used internally by Kopete.
 	 * They allow plugins to change message before
@@ -131,6 +121,9 @@ signals:
 	void messageReceived( KopeteMessage& msg );
 	void messageQueued( KopeteMessage& msg );
 
+	void contactAdded(const KopeteContact *);
+	void contactRemoved(const KopeteContact *);
+
 
 public slots:
 	void readModeChanged();
@@ -140,6 +133,17 @@ public slots:
 	 * Append a message to the queue
 	 */
 	void appendMessage( const KopeteMessage &msg );
+
+	/**
+	 * Add a contact to the session
+	 */
+	void addContact( const KopeteContact *c );
+
+	/**
+	 * Remove a contact from the session
+	 */
+	void removeContact( const KopeteContact *c );
+
 
 protected slots:
 	void slotCancelUnreadMessageEvent();

@@ -103,6 +103,9 @@ void KopeteMessageManager::newChatWindow() {
 		connect (d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
 		connect (d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
+
+		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mChatWindow, SLOT(slotContactAdded(const KopeteContact *)));
+		connect (this, SIGNAL(contactRemoved(const KopeteContact *)), d->mChatWindow, SLOT(slotContactRemoved(const KopeteContact *)));
 	}
 	if (d->mWidget == Email) {
 		d->mEmailWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
@@ -340,9 +343,8 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg ) {
 }
 void KopeteMessageManager::addContact( const KopeteContact *c )
 {
-	KopeteContact *tmp;
-
-	for ( tmp = d->mContactList.first(); tmp; tmp = d->mContactList.next() )
+	kdDebug() << "KopeteMessageManager::addContact" <<endl;
+	for ( KopeteContact *tmp = d->mContactList.first(); tmp; tmp = d->mContactList.next() )
 	{
 		if ( tmp == c )
 		{
@@ -353,11 +355,20 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 
 	kdDebug() << "[KopeteMessageManager] Contact Joined session" <<endl;
 	d->mContactList.append(c);
+	emit contactAdded(c);
 }
 
 void KopeteMessageManager::removeContact( const KopeteContact *c )
 {
-	d->mContactList.take( d->mContactList.find(c) );
+	if(d->mContactList.count()==1)
+	{
+		kdDebug() << "KopeteMessageManager::removeContact - Contact not removed. Keep always one contact" <<endl;
+	}
+	else
+	{
+		d->mContactList.take( d->mContactList.find(c) );
+		emit contactRemoved(c);
+	}
 }
 
 void KopeteMessageManager::readModeChanged()

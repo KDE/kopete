@@ -252,9 +252,12 @@ QString KopeteContactList::toXML()
 	QPtrListIterator<KopeteMetaContact> metaContactIt( m_contacts );
 	for( ; metaContactIt.current(); ++metaContactIt )
 	{
-		kdDebug() << "KopeteContactList::toXML: Saving meta contact "
-			<< ( *metaContactIt )->displayName() << endl;
-		xml +=  ( *metaContactIt)->toXML();
+		if(!(*metaContactIt)->isTemporary())
+		{
+			kdDebug() << "KopeteContactList::toXML: Saving meta contact "
+				<< ( *metaContactIt )->displayName() << endl;
+			xml +=  ( *metaContactIt)->toXML();
+		}
 	}
 
 	xml += "</messaging-contact-list>\n";

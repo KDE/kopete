@@ -37,6 +37,7 @@ KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
 	m_trackChildNameChanges = true;
+	m_temporary=false;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -82,7 +83,6 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 			addToGroup(*it);
 		}
 		emit contactAdded(c);
-
 	}
 }
 
@@ -281,6 +281,9 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 
 void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 {
+	if(m_temporary && to!="temporaryGroup")  
+		return;
+		
 	kdDebug() << "KopeteMetaContact::moveToGroup: "<<from <<" => "<<to << endl;
 	if(  m_groups.contains( to ) || to.isNull() ||  (!m_groups.contains( from ) && !from.isNull()))
 		return;
@@ -292,6 +295,9 @@ void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 
 void KopeteMetaContact::removeFromGroup( const QString &from)
 {
+	if(m_temporary && from=="temporaryGroup")
+		return ;
+	
   if( !m_groups.contains( from ) )
 		return;
 
@@ -303,6 +309,9 @@ void KopeteMetaContact::removeFromGroup( const QString &from)
 
 void KopeteMetaContact::addToGroup( const QString &to )
 {
+	if(m_temporary && to!="temporaryGroup")
+		return;
+
 	if( m_groups.contains( to ) || to.isNull() )
 		return ;
 
@@ -474,6 +483,25 @@ void KopeteMetaContact::setAddressBookField( KopetePlugin * p ,
 KopeteMetaContact::AddressBookFields KopeteMetaContact::addressBookFields() const
 {
 	return m_addressBook;
+}
+
+bool KopeteMetaContact::isTemporary() const
+{
+	return m_temporary;
+}
+void KopeteMetaContact::setTemporary( bool b  )
+{
+	m_temporary=b;
+
+	if(m_temporary)
+	{
+		addToGroup ("temporaryGroup");
+		for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
+		{
+			if(*it != "temporaryGroup")
+				removeFromGroup("temporaryGroup");
+		}
+	}
 }
 
 #include "kopetemetacontact.moc"
