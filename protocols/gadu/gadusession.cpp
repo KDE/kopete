@@ -75,7 +75,7 @@ GaduSession::login( struct gg_login_params* p )
 
 		kdDebug(14100) << "Login" << endl;
 
-		if ( !(session_ = gg_login( p ) ) ) {
+		if ( !( session_ = gg_login( p ) ) ) {
 			gg_free_session( session_ );
 			session_ = 0;
 			emit connectionFailed( i18n( "Internal gg_login error.Please contact author." ) );
