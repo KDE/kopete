@@ -931,7 +931,6 @@ void KgpgInterface::sigprocess(KProcIO *p)//ess *p,char *buf, int buflen)
 		  p->writeStdin("quit");
 		  p->closeWhenDone();
 /-*
-#if (KDE_VERSION >= 310)
 pop = new KPassivePopup();
 pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI mode... switching to konsole"),KGlobal::iconLoader()->loadIcon("kgpg",KIcon::Desktop));
 		pop->setTimeout(3200);
@@ -940,23 +939,7 @@ pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI
 		int iXpos=qRect.width()/2-pop->width()/2;
 		int iYpos=qRect.height()/2-pop->height()/2;
       	pop->move(iXpos,iYpos);
-#else
-	clippop = new QDialog( 0,0,false,WStyle_Customize | WStyle_NormalBorder);
-              QVBoxLayout *vbox=new QVBoxLayout(clippop,3);
-              QLabel *tex=new QLabel(clippop);
-              tex->setText(i18n("<b>Unexpected gpg query</b>"));
-			  QLabel *tex2=new QLabel(clippop);
-			  //tex2->setTextFormat(Qt::PlainText);
-			  tex2->setText(i18n("Kgpg cannot sign this key in GUI mode... switching to konsole"));
-              vbox->addWidget(tex);
-			  vbox->addWidget(tex2);
-              clippop->setMinimumWidth(250);
-              clippop->adjustSize();
-			  clippop->show();
- QTimer::singleShot( 3200, this, SLOT(signkillDisplayClip()));
-#endif
-		  		  
-		  
+
           KProcess *conprocess=new KProcess();
           *conprocess<< "konsole"<<"-e"<<"gpg";
           *conprocess<<"--no-secmem-warning"<<"-u"<<konsSignKey;

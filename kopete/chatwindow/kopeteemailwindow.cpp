@@ -248,8 +248,6 @@ void KopeteEmailWindow::initActions(void)
 	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
 		this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
 
-	// THIS CODE IS SPECIFIC TO KDE < 3.1
-	// maybe #if KDE_VERSION < 310 around it?
 	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), coll );
 
