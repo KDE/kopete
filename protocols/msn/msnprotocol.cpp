@@ -49,26 +49,23 @@ MSNProtocol *MSNProtocol::s_protocol = 0L;
 
 MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopeteProtocol( parent, name ),
-	NLN( KopeteOnlineStatus::Online,  25, this, 1, "msn_online",  i18n( "Go O&nline" ),         i18n( "Online" ) ),
-	BSY( KopeteOnlineStatus::Away,    20, this, 2, "msn_na",      i18n( "Set &Busy" ),          i18n( "Busy" ) ),
-	BRB( KopeteOnlineStatus::Away,     5, this, 3, "msn_away",    i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
-	AWY( KopeteOnlineStatus::Away,    25, this, 4, "msn_away",    i18n( "Set &Away" ),          i18n( "Away From Computer" ) ),
-	PHN( KopeteOnlineStatus::Away,    10, this, 5, "msn_na",      i18n( "Set on the &Phone" ),  i18n( "On the Phone" ) ),
-	LUN( KopeteOnlineStatus::Away,    15, this, 6, "msn_away",    i18n( "Set Out to &Lunch" ),  i18n( "Out to Lunch" ) ),
-	FLN( KopeteOnlineStatus::Offline, 25, this, 7, "msn_offline", i18n( "Go &Offline" ),        i18n( "Offline" ) ),
-	HDN( KopeteOnlineStatus::Online,  10, this, 8, "msn_offline", i18n( "Set &Invisible" ),     i18n( "Invisible" ) ),
-	IDL( KopeteOnlineStatus::Away,     5, this, 9, "msn_online",  "FIXME: Make this unselectable", i18n( "Idle" ) ),
-	UNK( KopeteOnlineStatus::Unknown, 25, this, 0, "msn_offline", "FIXME: Make this unselectable", i18n( "Status not available" ) )
+	NLN( KopeteOnlineStatus::Online,  25, this, 1, "msn_online",    i18n( "Go O&nline" ),         i18n( "Online" ) ),
+	BSY( KopeteOnlineStatus::Away,    20, this, 2, "msn_na",        i18n( "Set &Busy" ),          i18n( "Busy" ) ),
+	BRB( KopeteOnlineStatus::Away,     5, this, 3, "msn_away",      i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
+	AWY( KopeteOnlineStatus::Away,    25, this, 4, "msn_away",      i18n( "Set &Away" ),          i18n( "Away From Computer" ) ),
+	PHN( KopeteOnlineStatus::Away,    10, this, 5, "msn_na",        i18n( "Set on the &Phone" ),  i18n( "On the Phone" ) ),
+	LUN( KopeteOnlineStatus::Away,    15, this, 6, "msn_away",      i18n( "Set Out to &Lunch" ),  i18n( "Out to Lunch" ) ),
+	FLN( KopeteOnlineStatus::Offline, 25, this, 7, "msn_offline",   i18n( "Go &Offline" ),        i18n( "Offline" ) ),
+	HDN( KopeteOnlineStatus::Online,  10, this, 8, "msn_offline",   i18n( "Set &Invisible" ),     i18n( "Invisible" ) ),
+	IDL( KopeteOnlineStatus::Away,     5, this, 9, "msn_online",    "FIXME: Make this unselectable", i18n( "Idle" ) ),
+	UNK( KopeteOnlineStatus::Unknown, 25, this, 0, "msn_offline",   "FIXME: Make this unselectable", i18n( "Status not available" ) ),
+	CNT( KopeteOnlineStatus::Unknown,  1, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) )
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
 
 	s_protocol = this;
 
 	mPrefs = new MSNPreferences( "msn_protocol", this );
-
-
-
-	setStatusIcon( "msn_offline" );
 
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
 }

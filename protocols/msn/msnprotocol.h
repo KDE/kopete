@@ -46,6 +46,7 @@ class KopeteGroup;
 /**
  * @author duncan
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
 class MSNProtocol : public KopeteProtocol
 {
@@ -87,16 +88,17 @@ public:
 	/**
 	 * The possible MSN online statuses
 	 */
-	const KopeteOnlineStatus NLN;
-	const KopeteOnlineStatus BSY;
-	const KopeteOnlineStatus BRB;
-	const KopeteOnlineStatus AWY;
-	const KopeteOnlineStatus PHN;
-	const KopeteOnlineStatus LUN;
-	const KopeteOnlineStatus FLN;
-	const KopeteOnlineStatus HDN;
-	const KopeteOnlineStatus IDL;
-	const KopeteOnlineStatus UNK;
+	const KopeteOnlineStatus NLN;  //online
+	const KopeteOnlineStatus BSY;  //busy
+	const KopeteOnlineStatus BRB;  //be right back
+	const KopeteOnlineStatus AWY;  //away
+	const KopeteOnlineStatus PHN;  //on the phone
+	const KopeteOnlineStatus LUN;  //out to lunch
+	const KopeteOnlineStatus FLN;  //offline
+	const KopeteOnlineStatus HDN;  //invisible
+	const KopeteOnlineStatus IDL;  //idle
+	const KopeteOnlineStatus UNK;  //inknown (internal)
+	const KopeteOnlineStatus CNT;  //connecting (internal)
 
 	enum List
 	{
