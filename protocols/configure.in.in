@@ -145,7 +145,7 @@ fi
 AC_MSG_CHECKING([if Libidn can be used])
 AC_MSG_RESULT($libidn)
 
-AM_CONDITIONAL(include_jabber, test "$libidn" != "yes")
+AM_CONDITIONAL(include_jabber, test "$libidn" = "yes")
 
 AC_SUBST(IDN_LDFLAGS)
 AC_SUBST(IDN_CPPFLAGS)
