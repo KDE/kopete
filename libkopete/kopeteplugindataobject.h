@@ -133,7 +133,12 @@ signals:
 	/**
 	 * The icon to use for some state has changed
 	 */
-	void iconChanged( KopetePluginDataObject::IconState state, const QString &icon );
+	void iconChanged( KopetePluginDataObject::IconState, const QString & );
+
+	/**
+	 * The visual appearance of some of our icons has changed
+	 */
+	void iconAppearanceChanged();
 
 	/**
 	 * The useCustomIcon property has changed

@@ -79,6 +79,12 @@ public:
 	 */
 	void delayedSort();
 
+	/**
+	 * Are we displaying as a tree view (true), or in a flat list (false)?
+	 * @todo make this an enum
+	 */
+	bool showAsTree() { return mShowAsTree; }
+
 public slots:
 	/**
 	 * Remove all KopeteMetaContactLVI of a metaContact
@@ -118,6 +124,7 @@ private slots:
 	void slotDoubleClicked( QListViewItem *item );
 
 	void slotSettingsChanged( void );
+	void slotUpdateAllGroupIcons();
 	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
 
 	void slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );

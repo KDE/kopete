@@ -20,6 +20,8 @@
 #ifndef __kopeteonlinestatus_h__
 #define __kopeteonlinestatus_h__
 
+#include <qobject.h>
+
 class QString;
 class QPixmap;
 class QColor;
@@ -27,6 +29,11 @@ class KopeteContact;
 class KopeteAccount;
 
 class KopeteProtocol;
+
+namespace Kopete
+{
+	class OnlineStatusIconCache;
+}
 
 struct KopeteOnlineStatusPrivate;
 
@@ -266,9 +273,41 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
-	QPixmap* cacheLookup( const QString& icon, const int size, const QColor color , const bool idle = false) const;
-	QPixmap* renderIcon( const QString& baseicon, const int size, const QColor color, const bool idle = false) const;
+	QPixmap cacheLookup( const QString& icon, int size, QColor color, bool idle = false) const;
+	friend class Kopete::OnlineStatusIconCache;
 };
+
+namespace Kopete
+{
+
+namespace Global
+{
+	OnlineStatusIconCache *onlineStatusIconCache();
+}
+
+class OnlineStatusIconCache : public QObject
+{
+	Q_OBJECT
+	OnlineStatusIconCache();
+public:
+	~OnlineStatusIconCache();
+	QPixmap cacheLookup( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
+
+signals:
+	void iconsChanged();
+
+private slots:
+	void slotIconsChanged();
+
+private:
+	QPixmap* renderIcon( const KopeteOnlineStatus &statusFor, const QString& baseicon, int size, QColor color, bool idle = false) const;
+	
+	friend OnlineStatusIconCache *Global::onlineStatusIconCache();
+	class Private;
+	Private *d;
+};
+
+}
 
 #endif
 

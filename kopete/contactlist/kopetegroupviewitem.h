@@ -40,7 +40,6 @@ public:
 	KopeteGroup * group() const;
 
 	virtual void startRename( int col );
-	void updateCustomIcons( bool );
 
 protected:
 	virtual void okRename( int col );
@@ -59,6 +58,7 @@ private:
 
 public slots:
 	void refreshDisplayName();
+	void updateIcon();
 	void updateVisibility();
 };
 

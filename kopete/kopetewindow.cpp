@@ -466,6 +466,9 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 	connect( account->myself(),
 		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
 		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
+
+	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
+
 	//FIXME  add a KopeteContact::displayNameChanged(KopeteContact * , ..... )  and connect
 	//  it dirrectly to slotAccountStatusIconChanged( KopeteContact * )
 	connect( account->myself(),
@@ -512,9 +515,14 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 
 void KopeteWindow::slotAccountDisplayNameChanged()
 {
-	const KopeteContact *contact=dynamic_cast<const KopeteContact *>(sender());
-	if(contact)
+	if( const KopeteContact *contact=dynamic_cast<const KopeteContact *>(sender()) )
 		slotAccountStatusIconChanged((KopeteContact*)contact);
+}
+
+void KopeteWindow::slotAccountStatusIconChanged()
+{
+	if ( const KopeteAccount *from = dynamic_cast<const KopeteAccount*>(sender()) )
+		slotAccountStatusIconChanged( from->myself() );
 }
 
 void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )

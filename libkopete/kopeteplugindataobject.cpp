@@ -17,6 +17,7 @@
 */
 
 #include "kopeteplugindataobject.h"
+#include "kopeteonlinestatus.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -38,6 +39,8 @@ KopetePluginDataObject::KopetePluginDataObject( QObject *parent, const char *nam
 	d = new KopetePluginDataObjectPrivate;
 
 	d->useCustomIcon = false;
+
+	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
 }
 
 KopetePluginDataObject::~KopetePluginDataObject()
@@ -255,6 +258,7 @@ void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObje
 		d->icons[ state ] = icon;
 
 	emit iconChanged( state, icon );
+	emit iconAppearanceChanged();
 }
 
 bool KopetePluginDataObject::useCustomIcon() const

@@ -23,6 +23,7 @@
 #include "kopetecontactlistview.h"
 #include "kopetegroupviewitem.h"
 #include "kopetegroup.h"
+#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
@@ -37,6 +38,7 @@ KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent
 		this, SLOT( refreshDisplayName() ) );
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
 		SLOT( updateVisibility() ) );
+	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
 }
 
 KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_,
@@ -50,6 +52,7 @@ KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_,
 		this, SLOT( refreshDisplayName() ) );
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
 		SLOT( updateVisibility() ) );
+	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
 }
 
 KopeteGroupViewItem::~KopeteGroupViewItem()
@@ -177,8 +180,11 @@ void KopeteGroupViewItem::updateVisibility()
 	}
 }
 
-void KopeteGroupViewItem::updateCustomIcons(bool treeView)
+void KopeteGroupViewItem::updateIcon()
 {
+	bool treeView = true;
+	if ( KopeteContactListView *lv = dynamic_cast<KopeteContactListView*>( listView() ) )
+		treeView = lv->showAsTree();
 	//kdDebug( 14000 ) << k_funcinfo << "treeView=" << treeView << endl;
 
 	// TODO: clever caching

@@ -701,10 +701,7 @@ void KopeteContactListView::slotExpanded( QListViewItem *item )
 	if ( groupLVI )
 	{
 		groupLVI->group()->setExpanded( true );
-		if ( groupLVI->group()->useCustomIcon() )
-			groupLVI->updateCustomIcons( mShowAsTree );
-		else
-			item->setPixmap( 0, mShowAsTree ? open : classic );
+		groupLVI->updateIcon();
 	}
 }
 
@@ -714,10 +711,7 @@ void KopeteContactListView::slotCollapsed( QListViewItem *item )
 	if ( groupLVI )
 	{
 		groupLVI->group()->setExpanded( false );
-		if ( groupLVI->group()->useCustomIcon() )
-			groupLVI->updateCustomIcons( mShowAsTree );
-		else
-			item->setPixmap( 0, mShowAsTree ? closed : classic );
+		groupLVI->updateIcon();
 	}
 }
 
@@ -866,7 +860,6 @@ void KopeteContactListView::slotShowAddContactDialog()
 
 void KopeteContactListView::slotSettingsChanged( void )
 {
-	KopeteGroupViewItem *gi;
 	mShowAsTree = KopetePrefs::prefs()->treeView();
 	if ( mShowAsTree )
 	{
@@ -936,7 +929,7 @@ void KopeteContactListView::slotSettingsChanged( void )
 			}
 		} while ( cont );
 
-		gi = mGroups.first();
+		KopeteGroupViewItem *gi = mGroups.first();
 		while ( ( gi = mGroups.current() ) != 0L )
 		{
 			if ( gi->group()->type() != KopeteGroup::Temporary )
@@ -950,23 +943,15 @@ void KopeteContactListView::slotSettingsChanged( void )
 			}
 		}
 	}
-
-	for ( gi = mGroups.first(); gi; gi = mGroups.next() )
-	{
-		if ( gi->group()->useCustomIcon() )
-		{
-			gi->updateCustomIcons( mShowAsTree );
-		}
-		else
-		{
-			if ( mShowAsTree )
-				gi->setPixmap( 0, isOpen( gi ) ? open : closed );
-			else
-				gi->setPixmap( 0, classic );
-		}
-	}
-	delete gi;
+	slotUpdateAllGroupIcons();
 	update();
+}
+
+void KopeteContactListView::slotUpdateAllGroupIcons()
+{
+	KopeteGroupViewItem *gi;
+	for ( gi = mGroups.first(); gi; gi = mGroups.next() )
+		gi->updateIcon();
 }
 
 void KopeteContactListView::slotExecuted( QListViewItem *item, const QPoint &p, int /* col */ )
@@ -1783,17 +1768,7 @@ void KopeteContactListView::slotProperties()
 		propsDialog->exec(); // modal
 		delete propsDialog;
 
-		if( groupLVI->group()->useCustomIcon() )
-		{
-			groupLVI->updateCustomIcons( mShowAsTree );
-		}
-		else
-		{
-			if (mShowAsTree)
-				groupLVI->setPixmap( 0, isOpen(groupLVI) ? open : closed );
-			else
-				groupLVI->setPixmap( 0, classic );
-		}
+		groupLVI->updateIcon();
 	}
 }
 

@@ -98,6 +98,11 @@ private slots:
 	void slotAccountStatusIconChanged( KopeteContact * contact);
 
 	/**
+	 * The status icon of some account changed. Must be sent by the account in question.
+	 */
+	void slotAccountStatusIconChanged();
+
+	/**
 	 * This slot is called when a myself contact change his displayname.
 	 * the slot use sender() to know what account has changed
 	 */

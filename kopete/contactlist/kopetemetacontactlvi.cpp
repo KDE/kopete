@@ -108,7 +108,7 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( contactRemoved( KopeteContact * ) ),
 		SLOT( slotUpdateIcons() ) );
 
-	connect( m_metaContact, SIGNAL( iconChanged( KopetePluginDataObject::IconState, const QString & ) ),
+	connect( m_metaContact, SIGNAL( iconAppearanceChanged() ),
 		SLOT( slotUpdateIcons() ) );
 
 	connect( m_metaContact, SIGNAL( useCustomIconChanged( bool ) ),
