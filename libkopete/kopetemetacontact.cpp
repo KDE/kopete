@@ -505,7 +505,7 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 //	kdDebug(14010) << "[KopeteMetaContact] slotContactNameChanged(); name=" << name <<
 //		", m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
 
-	if( m_trackChildNameChanges )
+	if( m_trackChildNameChanges || m_displayName.isEmpty() )
 	{
 		setDisplayName( name );
 		//because m_trackChildNameChanges is set to false in setDisplayName
@@ -513,7 +513,7 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 	}
 	else
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Tracking is off, ignored KopeteContact name change" << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Tracking is off and we already have a display name, ignored KopeteContact name change" << endl;
 	}
 }
 
