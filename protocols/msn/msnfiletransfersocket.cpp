@@ -129,7 +129,7 @@ void MSNFileTransferSocket::bytesReceived(const QByteArray & head)
 	if(head[0]!='\0')
 	{
 		kdDebug(14140) << "MSNFileTransferSocket::bytesReceived: transfer aborted" <<endl;
-		disconnect();
+		QTimer::singleShot(0,this,SLOT(disconnect()));
 	}
 	unsigned int sz=(int)((unsigned char)head.data()[2])*256+(int)((unsigned char)head.data()[1]);
 //	kdDebug(14140) << "MSNFileTransferSocket::bytesReceived: " << sz <<endl;
