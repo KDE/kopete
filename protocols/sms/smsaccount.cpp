@@ -29,7 +29,7 @@
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
 	: KopeteAccount( parent, accountID, name )
 {
-	m_myself = new SMSContact(this, accountID, accountID, 0L);
+	setMyself( new SMSContact(this, accountID, accountID, 0L) );
 }
 
 SMSAccount::~SMSAccount()
@@ -71,7 +71,7 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 
 void SMSAccount::connect()
 {
-//	m_mySelf->setOnlineStatus( SMSOnline );
+//	myself()->setOnlineStatus( SMSOnline );
 
 	// FIXME: Set all contacts to SMSUnknown here
 }
@@ -79,21 +79,16 @@ void SMSAccount::connect()
 KActionMenu* SMSAccount::actionMenu()
 {
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
-	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), i18n("SMS (%1)").arg(accountId()));
+	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("SMS (%1)").arg(accountId()));
 
 	return theActionMenu;
 }
 
 void SMSAccount::disconnect()
 {
-//	m_mySelf->setOnlineStatus( SMSOffline );
+//	myself()->setOnlineStatus( SMSOffline );
 
 	// FIXME: Set all contacts to SMSOffline here
-}
-
-KopeteContact* SMSAccount::myself() const
-{
-	return m_myself;
 }
 
 bool SMSAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,

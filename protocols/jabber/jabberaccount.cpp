@@ -72,9 +72,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	mProtocol = parent;
 
-	/* Create a new JabberContact for this account, to be returned from
-	 * myself(). */
-	myContact = new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L);
+	setMyself( new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L) );
 
 	jabberClient = 0L;
 	registerFlag = 0;
@@ -108,13 +106,6 @@ JabberAccount::~JabberAccount ()
 	}
 
 	delete awayDialog;
-	delete myContact;
-
-}
-
-KopeteContact *JabberAccount::myself () const
-{
-	return myContact;
 }
 
 KActionMenu *JabberAccount::actionMenu ()
@@ -122,12 +113,12 @@ KActionMenu *JabberAccount::actionMenu ()
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor(this),  this );
 
 	m_actionMenu->popupMenu()->insertTitle(
-		myContact->onlineStatus().iconFor(myContact),
+		myself()->onlineStatus().iconFor(myself()),
 		i18n("%2 <%1>")
 #if QT_VERSION < 0x030200
-			.arg(accountId()).arg(myContact->displayName()));
+			.arg(accountId()).arg(myself()->displayName()));
 #else
-			.arg(accountId(), myContact->displayName()));
+			.arg(accountId(), myself()->displayName()));
 #endif
 
 	m_actionMenu->insert(new KAction (mProtocol->JabberKOSOnline.caption(),
@@ -348,7 +339,7 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 		 * contacts from the server! (libpsi won't forward presence
 		 * information in that case either). */
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting Presence." << endl;
-		setPresence (initialPresence, myContact->reason ());
+		setPresence (initialPresence, static_cast<JabberContact *>( myself() )->reason ());
 
 		/* Initiate anti-idle timer (will be triggered every 120
 		 * seconds). */
@@ -504,7 +495,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence locally (-> connecting)." << endl;
 
-		myContact->slotUpdatePresence (status, reason);
+		static_cast<JabberContact *>( myself() )->slotUpdatePresence (status, reason);
 	}
 	else
 	{
@@ -544,7 +535,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 
 			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to show(" << presence.show () << "), status(" << presence.status () << "), with reason \"" << reason << endl;
 
-			myContact->slotUpdatePresence (status, reason);
+			static_cast<JabberContact *>( myself() )->slotUpdatePresence (status, reason);
 
 			Jabber::JT_Presence * task = new Jabber::JT_Presence (jabberClient->rootTask ());
 
@@ -1124,7 +1115,7 @@ void JabberAccount::slotResourceAvailable (const Jabber::Jid & jid, const Jabber
 		return;
 	}
 
-	if(static_cast<JabberContact *>(contacts ()[jid.userHost().lower()]) == myContact)
+	if(static_cast<JabberContact *>(contacts ()[jid.userHost().lower()]) == myself())
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ignoring resource by other client for ourselves." << endl;
 		return;
@@ -1144,7 +1135,7 @@ void JabberAccount::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 		return;
 	}
 
-	if(static_cast<JabberContact *>(contacts ()[jid.userHost().lower()]) == myContact)
+	if(static_cast<JabberContact *>(contacts ()[jid.userHost().lower()]) == myself())
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ignoring resource by other client for ourselves." << endl;
 		return;
@@ -1156,7 +1147,7 @@ void JabberAccount::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 
 void JabberAccount::slotEditVCard ()
 {
-	myContact->slotEditVCard ();
+	static_cast<JabberContact *>( myself() )->slotEditVCard ();
 }
 
 void JabberAccount::registerUser ()

@@ -115,8 +115,6 @@ public slots:
 	IRCContactManager *contactManager() const
 		{ return m_contactManager; }
 
-	virtual KopeteContact *myself() const;
-
 	// Returns the KopeteContact of the user
 	IRCUserContact *mySelf() const;
 
@@ -153,7 +151,6 @@ private:
 
 	IRCContactManager *m_contactManager;
 	IRCServerContact *m_myServer;
-	IRCUserContact *m_mySelf;
 };
 
 #endif

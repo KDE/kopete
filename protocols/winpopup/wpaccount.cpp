@@ -45,7 +45,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	theInterface = parent->createInterface(theHostName);
 
 	// we need this before initActions
-	theMyself = new WPContact(this, theHostName, theHostName, 0);
+	setMyself( new WPContact(this, theHostName, theHostName, 0) );
 
 	if(autoLogin()) connect();
 
@@ -59,11 +59,6 @@ WPAccount::~WPAccount()
 	DEBUG(WPDMETHOD, "WPAccount::~WPAccount()");
 
 	static_cast<WPProtocol *>(protocol())->destroyInterface(theInterface);
-}
-
-KopeteContact *WPAccount::myself() const
-{
-	return theMyself;
 }
 
 const QStringList WPAccount::getGroups()
@@ -138,9 +133,9 @@ void WPAccount::disconnect()
 /* I commented this code because deleting myself may have *dangerous* side effect, for example, for the status tracking.
 void WPAccount::updateAccountId()
 {
-	delete theMyself;
+	delete myself();
 	theInterface->setHostName(accountId());
-	theMyself = new WPContact(this, accountId(), accountId(), 0);
+	myself() = new WPContact(this, accountId(), accountId(), 0);
 }*/
 
 void WPAccount::setAway(bool status, const QString &awayMessage)
@@ -160,7 +155,7 @@ KActionMenu* WPAccount::actionMenu()
 
 	WPProtocol *theProtocol = dynamic_cast<WPProtocol *>(protocol());
 	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), this);
-	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), i18n("WinPopup (%1)").arg(accountId()));
+	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("WinPopup (%1)").arg(accountId()));
 
 	if (theProtocol)
 	{

@@ -52,7 +52,6 @@ public:
 	GaduAccount( KopeteProtocol*, const QString& accountID,  const char* name = 0L );
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
-	KopeteContact* myself() const;
 	KActionMenu* actionMenu();
 	//}
 

@@ -33,8 +33,8 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 {
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
-	m_myself = new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), 0L );
-	m_myself->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
+	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), 0L ) );
+	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
 
@@ -46,7 +46,7 @@ TestbedAccount::~TestbedAccount()
 KActionMenu* TestbedAccount::actionMenu()
 {
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
-	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), i18n("Testbed (%1)").arg(accountId()));
+	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("Testbed (%1)").arg(accountId()));
 	// NEED FSCKING GO ONLINE OFFLINE ACTIONS HERE!
 	theActionMenu->insert(new KAction (TestbedProtocol::protocol()->testbedOnline.caption(),
 		TestbedProtocol::protocol()->testbedOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
@@ -61,11 +61,6 @@ KActionMenu* TestbedAccount::actionMenu()
 		"actionTestbedOfflineDisconnect"));
 	
 	return theActionMenu;
-}
-
-KopeteContact* TestbedAccount::myself() const
-{
-    return m_myself;
 }
 
 bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact)
@@ -87,7 +82,7 @@ void TestbedAccount::setAway( bool away, const QString & /* reason */ )
 void TestbedAccount::connect()
 {
 	kdDebug ( 14210 ) << k_funcinfo << endl;
-	m_myself->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
+	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
 	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
 			this, SLOT ( receivedMessage( const QString & ) ) );
 }
@@ -95,7 +90,7 @@ void TestbedAccount::connect()
 void TestbedAccount::disconnect()
 {
 	kdDebug ( 14210 ) << k_funcinfo << endl;
-	m_myself->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
+	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	QObject::disconnect ( m_server, 0, 0, 0 );
 }
 
@@ -111,7 +106,7 @@ void TestbedAccount::slotGoOnline ()
 	if (!isConnected ())
 		connect ();
 	else
-		m_myself->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
+		myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
 	updateContactStatus();
 }
 void TestbedAccount::slotGoAway ()
@@ -121,7 +116,7 @@ void TestbedAccount::slotGoAway ()
 	if (!isConnected ())
 		connect();
 	
-	m_myself->setOnlineStatus( TestbedProtocol::protocol()->testbedAway );
+	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedAway );
 	updateContactStatus();
 }
 
@@ -154,7 +149,7 @@ void TestbedAccount::updateContactStatus()
 {
 	QDictIterator<KopeteContact> itr( contacts() );
 	for ( ; itr.current(); ++itr )
-		itr.current()->setOnlineStatus( m_myself->onlineStatus() );
+		itr.current()->setOnlineStatus( myself()->onlineStatus() );
 }
 
 

@@ -61,11 +61,6 @@ public:
 	virtual void setAway(bool away, const QString &awayMessage = QString::null)=0;
 
 	/*
-	 * Accessor method for this account's contact
-	 */
-	virtual KopeteContact* myself() const;
-
-	/*
 	 * Accessor method for our engine object
 	 */
 	virtual OscarSocket* engine() const;
@@ -228,7 +223,6 @@ protected:
 	AIMGroup * findOrCreateGroup( const QString& localGroup, AIMBuddyList& serverList );
 
 protected:
-
 	/*
 	 * Our Internal buddy list (from the server)
 	 */
@@ -281,8 +275,6 @@ protected:
 	 * the server
 	 */
 	QTimer *mIdleTimer;
-
-	OscarContact* mMyself;
 
 	QString mAwayMessage;
 };

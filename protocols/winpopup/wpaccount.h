@@ -56,7 +56,6 @@ public:
 	WPAccount(WPProtocol *parent, const QString& accountID, const char *name = 0);
 	~WPAccount();
 
-	virtual KopeteContact *myself() const;			// Return the user's contact object
 	virtual KActionMenu* actionMenu();			// Per-protocol actions for the systray and the status bar
 	virtual void setAway(bool status, const QString &);	// Set user away
 
@@ -99,7 +98,6 @@ private slots:
 private:
 	QString theAwayMessage;			// The message to give when the user is away
 	KopeteWinPopup *theInterface;		// Our KopeteWinPopup instance
-	WPContact *theMyself;			// A contact to return for the API
 };
 
 #endif

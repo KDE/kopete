@@ -37,7 +37,6 @@ public:
 	virtual KActionMenu* actionMenu();			// Per-protocol actions for the systray and the status bar
 
 	virtual void setAway( bool away, const QString & );
-	virtual KopeteContact* myself() const;
 
 	void translateNumber(QString &theNumber);
 
@@ -63,8 +62,6 @@ private:
 	bool theSubEnable;
 	QString theSubCode;
 	SMSMsgAction theLongMsgAction;
-
-	SMSContact* m_myself;
 };
 
 #endif

@@ -41,10 +41,8 @@ class MSNAccount : public KopeteAccount
 
 public:
 	MSNAccount( MSNProtocol *parent, const QString &accountID, const char *name = 0L );
-	~MSNAccount();
 
 	virtual void setAway( bool away, const QString & );
-	virtual KopeteContact* myself() const;
 
 	/*
 	 * return the menu for this account

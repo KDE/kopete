@@ -44,7 +44,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		"', isICQ=" << isICQ << endl;
 
 	mEngine = 0L;
-	mMyself = 0L;
 	// Set our random new numbers
 	mRandomNewBuddyNum = 0;
 	mRandomNewGroupNum = 0;
@@ -131,11 +130,6 @@ OscarAccount::~OscarAccount()
 		//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'; delayed deleting of mEngine" << endl;
 		mEngine->deleteLater();
 	}
-}
-
-KopeteContact* OscarAccount::myself() const
-{
-	return mMyself;
 }
 
 OscarSocket* OscarAccount::engine() const
@@ -389,7 +383,7 @@ void OscarAccount::slotDelayedListSync()
 // in the server side list.
 //
 
-void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList &serverList)
+void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList & /* serverList*/ )
 {
 	kdDebug(14150) << k_funcinfo << "Called but DISABLED" << endl;
 #if 0
@@ -404,7 +398,7 @@ void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList &serverList)
 
 		AIMBuddy *buddy = serverList.findBuddy( contactId );
 
-		if(!buddy && it.current() != mMyself)
+		if(!buddy && it.current() != myself())
 		{
 			kdDebug(14150) << "###### Serverside list doesn't contain local buddy: " << contactId << endl;
 			kdDebug(14150) << "-> creating server side contact for it." << endl;
@@ -463,7 +457,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 
 	//screennames are case insensitive and formatting which server
 	//pushes might be different
-	if(mMyself->contactId().contains(buddy->screenname(), false))
+	if(myself()->contactId().contains(buddy->screenname(), false))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"EEEK! Cannot have yourself on your own list! Aborting" << endl;
@@ -772,7 +766,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 {
 	kdDebug(14150) << k_funcinfo << "Called; newStatus=" << newStatus << endl;
-	mMyself->setStatus(newStatus);
+	static_cast<OscarContact *>( myself() )->setStatus(newStatus);
 
 	if(newStatus == OSCAR_OFFLINE)
 		mIdleTimer->stop();

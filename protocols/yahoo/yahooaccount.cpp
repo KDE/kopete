@@ -61,8 +61,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
-	m_myself = new YahooContact(this, accountId(), accountId(), 0);
-	m_myself->setYahooStatus(YahooStatus::Offline, "", 0);
+	setMyself( new YahooContact(this, accountId(), accountId(), 0) );
+	static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline, "", 0);
 
 	if(autoLogin()) connect();
 }
@@ -85,8 +85,9 @@ void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
 		stateOnConnection = status;
 	}
 	else
-	{	m_session->setAway(yahoo_status(status), awayMessage, status ? 1 : 0);
-		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(status));
+	{
+		m_session->setAway(yahoo_status(status), awayMessage, status ? 1 : 0);
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::fromLibYahoo2(status));
 	}
 }
 
@@ -97,7 +98,7 @@ void YahooAccount::loaded()
 
 	newPluginData = pluginData(protocol(), QString::fromLatin1("displayName"));
 	if(!newPluginData.isEmpty())
-		m_myself->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
+		myself()->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
 
 	newPluginData = pluginData(protocol(), QString::fromLatin1("UseServerGroups"));
 	if (newPluginData.lower() == "true")
@@ -112,11 +113,6 @@ void YahooAccount::loaded()
 YahooSession *YahooAccount::yahooSession()
 {
 	return m_session ? m_session : 0L;
-}
-
-KopeteContact *YahooAccount::myself() const
-{
-	return m_myself ? m_myself : 0L;
 }
 
 void YahooAccount::setUseServerGroups(bool newSetting)
@@ -176,7 +172,7 @@ void YahooAccount::connect()
 				QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this , SLOT(slotGotIdentities( const QStringList&)));
 
 				kdDebug(14180) << "We appear to have connected on session: " << m_session << endl;
-				m_myself->setYahooStatus(YahooStatus::Available);
+				static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
 				kdDebug(14180) << "Starting the login connection" << endl;
 				m_session->login(YAHOO_STATUS_AVAILABLE);
 
@@ -203,7 +199,7 @@ void YahooAccount::disconnect()
 	if(isConnected())
 	{	kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 		m_session->logOff();
-		m_myself->setYahooStatus(YahooStatus::Offline);
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
 			static_cast<YahooContact *>(i.current())->setYahooStatus(YahooStatus::Offline);
 	}
@@ -238,15 +234,15 @@ void YahooAccount::slotGoOffline()
 	if(isConnected())
 		disconnect();
 	else
-		m_myself->setYahooStatus(YahooStatus::Offline);
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 }
 
 KActionMenu *YahooAccount::actionMenu()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 
-	KActionMenu *theActionMenu = new KActionMenu(m_myself->displayName(), myself()->onlineStatus().iconFor(this) ,this);
-	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
+	KActionMenu *theActionMenu = new KActionMenu(myself()->displayName(), myself()->onlineStatus().iconFor(this) ,this);
+	theActionMenu->popupMenu()->insertTitle(myself()->icon(), "Yahoo ("+myself()->displayName()+")");
 
 	theActionMenu->insert(new KAction(i18n(YSTAvailable), YahooStatus(YahooStatus::Available).ys2kos().iconFor(this), 0, this, SLOT(slotGoOnline()), this, "actionYahooGoOnline"));
 	theActionMenu->insert(new KAction(i18n(YSTBeRightBack), YahooStatus(YahooStatus::BeRightBack).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus001()), this, "actionYahooGoStatus001"));
@@ -327,7 +323,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		if(stateOnConnection)
 		{
 			m_session->setAway(yahoo_status(stateOnConnection), "", 0);
-			m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(stateOnConnection));
+			static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::fromLibYahoo2(stateOnConnection));
 			stateOnConnection = 0;
 		}
 		return;
@@ -336,25 +332,23 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	{
 		errorMsg = i18n("Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
 		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
-		m_myself->setYahooStatus(YahooStatus::Offline);
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_LOCK)
 	{
 		errorMsg = i18n("Could not log into Yahoo service.  Your account has been locked.\nVisit %1 to reactivate it.").arg(url);
 		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
-		m_myself->setYahooStatus(YahooStatus::Offline);
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_DUPL)
 	{
 		errorMsg = i18n("You have been logged out of the yahoo service, possibly due to a duplicate login.");
 		KMessageBox::queuedMessageBox(kapp->mainWidget(), KMessageBox::Error, errorMsg);
-		m_myself->setYahooStatus(YahooStatus::Offline);
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Offline);
 		return;
 	}
-
-
 }
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )

@@ -53,7 +53,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 	// Connect if possible using SSL
 	isTls = 0;
 	connectWithSSL=true;
-	myself_ = new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() );
+	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() ) );
 	lastStatus = GG_STATUS_AVAIL;
 	lastDescription = QString::null;
 
@@ -104,7 +104,7 @@ void GaduAccount::loaded()
 		isTls = 0;
 	}
 	if ( !nick.isNull() ) {
-		myself_->rename( nick );
+		myself()->rename( nick );
 	}
 }
 
@@ -121,22 +121,17 @@ void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
 }
 
-KopeteContact* GaduAccount::myself() const
-{
-	return myself_;
-}
-
 KActionMenu* GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
 
 	actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
-	actionMenu_->popupMenu()->insertTitle( myself_->onlineStatus().iconFor( myself_ ), i18n( "%1 <%2> " ).
+	actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 
 #if QT_VERSION < 0x030200
-	arg( myself_->displayName() ).arg( accountId() ) );
+	arg( myself()->displayName() ).arg( accountId() ) );
 #else
-	arg( myself_->displayName(), accountId() ) );
+	arg( myself()->displayName(), accountId() ) );
 #endif
 
 	if ( session_->isConnected() ) {
@@ -238,7 +233,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 
 	status_ = status;
-	myself_->setOnlineStatus( status_, descr );
+	myself()->setOnlineStatus( status_, descr );
 
 	if ( status_.internalStatus() == GG_STATUS_NOT_AVAIL || status_.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( pingTimer_ ){
@@ -255,7 +250,7 @@ GaduAccount::slotLogin( int status, const QString& dscr, bool lastAttemptFailed 
 	lastStatus		= status;
 	lastDescription	= dscr;
 
-	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
+	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 
 	if ( !session_->isConnected() || lastAttemptFailed ) {
 		pass = password( lastAttemptFailed );
@@ -263,12 +258,12 @@ GaduAccount::slotLogin( int status, const QString& dscr, bool lastAttemptFailed 
 			slotCommandDone( QString::null,
 					i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
 			// and set status disconnected, so icon on toolbar won't blink
-			myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+			myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 			return;
 		}
 		if ( pass.isNull() && lastAttemptFailed ){
 			// user pressed CANCEL
-			myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+			myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 			return;
 		}
 		session_->login( accountId().toInt(), pass, connectWithSSL, status, dscr );
@@ -397,7 +392,7 @@ GaduAccount::messageReceived( struct gg_event* e )
 		addNotify( e->event.msg.sender );
 	}
 
-	tmpPtrList.append( myself_ );
+	tmpPtrList.append( myself() );
 	KopeteMessage msg( c, tmpPtrList, message, KopeteMessage::Inbound );
 	c->messageReceived( msg );
 }
@@ -489,7 +484,7 @@ void
 GaduAccount::connectionFailed( gg_failure_t failure )
 {
 	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-	myself_->setOnlineStatus( status_ );
+	myself()->setOnlineStatus( status_ );
 
 	if ( failure == GG_FAILURE_PASSWORD ) {
 		slotLogin( lastStatus, lastDescription, true );
@@ -514,7 +509,7 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
 {
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
 	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
-	myself_->setOnlineStatus( status_ );
+	myself()->setOnlineStatus( status_ );
 	startNotify();
 
 	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
@@ -566,9 +561,9 @@ GaduAccount::slotSessionDisconnect()
 				GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 	}
 
-	status = myself_->onlineStatus().internalStatus();
+	status = myself()->onlineStatus().internalStatus();
 	if ( status != GG_STATUS_NOT_AVAIL || status!= GG_STATUS_NOT_AVAIL_DESCR ) {
-		myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+		myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 	}
 }
 
@@ -697,7 +692,7 @@ GaduAccount::userlist()
 
 	for( i=0 ; it.current() ; ++it ) {
 		contact = static_cast<GaduContact*>(*it);
-		if ( contact->uin() != myself_->uin() ) {
+		if ( contact->uin() != myself()->uin() ) {
 			gaducontactslist->append( contact->contactDetails() );
 		}
 	}
@@ -726,7 +721,7 @@ GaduAccount::slotChangePassword()
 
 //	if ( result == KPasswordDialog::Accepted ) {
 //		ChangePasswordCommand *cmd = new ChangePasswordCommand( this, "changePassCmd" );
-//		cmd->setInfo( myself_->uin(), password(), password, "zackrat@att.net" );
+//		cmd->setInfo( myself()->uin(), password(), password, "zackrat@att.net" );
 //		QObject::connect( cmd, SIGNAL(done(const QString&, const QString&)),
 //											SLOT(slotCommandDone(const QString&, const QString&)) );
 //		QObject::connect( cmd, SIGNAL(error(const QString&, const QString&)),

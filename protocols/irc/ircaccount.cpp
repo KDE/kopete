@@ -62,7 +62,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 			this, SLOT(slotNickInUse( const QString &)) );
 
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
-	m_mySelf = m_contactManager->mySelf();
+	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
 
 	//Warning: requesting the password may ask to kwallet, this will open a dcop call and call QApplication::enter_loop
@@ -118,10 +118,10 @@ void IRCAccount::setUserName(QString userName)
 
 KActionMenu *IRCAccount::actionMenu()
 {
-	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( m_mySelf->onlineStatus().description() );
+	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( myself()->onlineStatus().description() );
 
 	KActionMenu *mActionMenu = new KActionMenu( accountId(),myself()->onlineStatus().iconFor(this), this, "IRCAccount::mActionMenu" );
-	mActionMenu->popupMenu()->insertTitle( m_mySelf->onlineStatus().iconFor( m_mySelf ), menuTitle );
+	mActionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), menuTitle );
 
 	mActionMenu->insert( new KAction ( i18n("Go Online"), m_protocol->m_UserStatusOnline.iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
 	mActionMenu->insert( new KopeteAwayAction ( i18n("Set Away"), m_protocol->m_UserStatusAway.iconFor( this ), 0, this, SLOT(slotGoAway( const QString & )), mActionMenu ) );
@@ -142,7 +142,7 @@ void IRCAccount::connect()
 	}
 	else if( m_engine->isDisconnected() )
 	{
-		m_engine->connectToServer( m_mySelf->nickName() );
+		m_engine->connectToServer( static_cast<IRCUserContact *>( myself() )->nickName() );
 	}
 }
 
@@ -168,7 +168,7 @@ void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
 	if(m_engine->isConnected())
 	{
-		m_mySelf->setAway( isAway );
+		static_cast<IRCUserContact *>( myself() )->setAway( isAway );
 		engine()->setAway( isAway, awayMessage );
 	}
 }
@@ -195,7 +195,7 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
-	return (m_mySelf->onlineStatus().status() == KopeteOnlineStatus::Online);
+	return (myself()->onlineStatus().status() == KopeteOnlineStatus::Online);
 }
 
 void IRCAccount::unregister(KopeteContact *contact)
@@ -236,7 +236,7 @@ void IRCAccount::unregisterUser( const QString &name )
 void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
-	m_mySelf->manager()->setDisplayName( m_mySelf->caption() );
+	myself()->manager()->setDisplayName( static_cast<IRCUserContact *>( myself() )->caption() );
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
@@ -293,14 +293,9 @@ void IRCAccount::slotJoinChannel()
 	}
 }
 
-KopeteContact *IRCAccount::myself() const
-{
-	return m_mySelf;
-}
-
 IRCUserContact *IRCAccount::mySelf() const
 {
-	return m_mySelf;
+	return static_cast<IRCUserContact *>( myself() );
 }
 
 IRCServerContact *IRCAccount::myServer() const
@@ -309,3 +304,6 @@ IRCServerContact *IRCAccount::myServer() const
 }
 
 #include "ircaccount.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

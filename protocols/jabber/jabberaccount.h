@@ -49,9 +49,6 @@ public:
 	/* Standard null destructor. */
 	 ~JabberAccount ();
 
-	/* Returns the contact for this account, must be created in ctor. */
-	virtual KopeteContact *myself () const;
-
 	/* Returns the action menu for this account. */
 	virtual KActionMenu *actionMenu ();
 
@@ -113,9 +110,6 @@ protected:
 	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, KopeteMetaContact * parentContact);
 
 private:
-	/* JabberContact for this account. */
-	JabberContact * myContact;
-
 	/* Psi backend for this account. */
 	Jabber::Client *jabberClient;
 

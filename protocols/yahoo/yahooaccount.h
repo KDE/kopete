@@ -55,11 +55,6 @@ public:
 	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
 	~YahooAccount();
 
-	/**
-	 * Returns our Yahoo Contact
-	 */
-	virtual KopeteContact *myself() const;
-
 	/*
 	 * Returns a contact of name @p id
 	 */
@@ -185,7 +180,6 @@ private:
 	bool m_importContacts;		// Import the contacts from the server
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooSession *m_session;	// Connection Object
-	YahooContact *m_myself;		// Ourself
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 };

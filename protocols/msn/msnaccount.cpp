@@ -57,8 +57,8 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact ( Olivier )
-	m_myself = new MSNContact( this, accountId(), accountId(), 0L );
-	//m_myself->setOnlineStatus( MSNProtocol::protocol()->FLN );
+	setMyself( new MSNContact( this, accountId(), accountId(), 0L ) );
+	//myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
 		SLOT( slotKopeteGroupRenamed( KopeteGroup * ) ) );
@@ -69,23 +69,18 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_openInboxAction->setEnabled( false );
 }
 
-MSNAccount::~MSNAccount()
-{
-}
-
 void MSNAccount::loaded()
 {
 	QString publicName = pluginData( protocol(), QString::fromLatin1( "displayName" ) );
 	if ( !publicName.isNull() )
-		m_myself->setDisplayName( publicName );
-	m_blockList = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "blockList" ) ) );
-	m_allowList = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "allowList" ) ) );
+		static_cast<MSNContact *>( myself() )->setDisplayName( publicName );
+	m_blockList   = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "blockList" ) ) );
+	m_allowList   = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "allowList" ) ) );
 	m_reverseList = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "reverseList" ) ) );
 
-	m_myself->setInfo( "PHH", pluginData( protocol(), "PHH" ) );
-	m_myself->setInfo( "PHM", pluginData( protocol(), "PHM" ) );
-	m_myself->setInfo( "PHW", pluginData( protocol(), "PHW" ) );
-
+	static_cast<MSNContact *>( myself() )->setInfo( "PHH", pluginData( protocol(), "PHH" ) );
+	static_cast<MSNContact *>( myself() )->setInfo( "PHM", pluginData( protocol(), "PHM" ) );
+	static_cast<MSNContact *>( myself() )->setInfo( "PHW", pluginData( protocol(), "PHW" ) );
 }
 
 void MSNAccount::setAway( bool away, const QString & awayReason )
@@ -93,13 +88,8 @@ void MSNAccount::setAway( bool away, const QString & awayReason )
 	m_awayReason = awayReason;
 	if ( away )
 		setOnlineStatus( MSNProtocol::protocol()->IDL );
-	else // if ( m_myself->onlineStatus() == MSNProtocol::statusIDL )
+	else // if ( myself()->onlineStatus() == MSNProtocol::statusIDL )
 		setOnlineStatus( MSNProtocol::protocol()->NLN );
-}
-
-KopeteContact * MSNAccount::myself() const
-{
-	return m_myself;
 }
 
 void MSNAccount::connect()
@@ -168,7 +158,7 @@ void MSNAccount::connect()
 
 	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect();
-	m_myself->setOnlineStatus( MSNProtocol::protocol()->CNT );
+	myself()->setOnlineStatus( MSNProtocol::protocol()->CNT );
 	m_openInboxAction->setEnabled( false );
 }
 
@@ -181,11 +171,11 @@ void MSNAccount::disconnect()
 KActionMenu * MSNAccount::actionMenu()
 {
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
-	m_actionMenu->popupMenu()->insertTitle( m_myself->onlineStatus().iconFor( m_myself ), i18n( "%2 <%1>" ).
+	m_actionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%2 <%1>" ).
 #if QT_VERSION < 0x030200
-		arg( accountId() ).arg( m_myself->displayName() )
+		arg( accountId() ).arg( myself()->displayName() )
 #else
-		arg( accountId(), m_myself->displayName() )
+		arg( accountId(), myself()->displayName() )
 #endif
  );
 
@@ -348,7 +338,7 @@ void MSNAccount::slotChangePublicName()
 	bool ok;
 	QString name = KInputDialog::getText( i18n( "Change Nickname - MSN Plugin" ),
 		i18n( "Enter the new public name by which you want to be visible to your friends on MSN:" ),
-		m_myself->displayName(), &ok );
+		myself()->displayName(), &ok );
 
 	if ( ok )
 	{
@@ -460,7 +450,7 @@ void MSNAccount::slotNotifySocketClosed( int  state  )
 	m_badpassword = m_notifySocket->badPassword();
 	m_notifySocket->deleteLater();
 	m_notifySocket = 0l;
-	m_myself->setOnlineStatus( MSNProtocol::protocol()->FLN );
+	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	if ( m_badpassword )
 		connect();
 	else if ( state == 0x10 ) // connection died unexpectedly
@@ -475,16 +465,16 @@ void MSNAccount::slotNotifySocketClosed( int  state  )
 void MSNAccount::slotStatusChanged( const KopeteOnlineStatus &status )
 {
 	kdDebug( 14140 ) << "MSNAccount::slotStatusChanged: " << status.internalStatus() <<  endl;
-	m_myself->setOnlineStatus( status );
+	myself()->setOnlineStatus( status );
 }
 
 void MSNAccount::slotPublicNameChanged( const QString& publicName )
 {
-	if ( publicName != m_myself->displayName() )
+	if ( publicName != myself()->displayName() )
 	{
 		// if ( m_publicNameSyncMode & SyncFromServer )
 		// {
-			m_myself->setDisplayName( publicName );
+			static_cast<MSNContact *>( myself() )->setDisplayName( publicName );
 			setPluginData( protocol(), QString::fromLatin1( "displayName" ), publicName );
 
 /*

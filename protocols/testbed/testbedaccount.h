@@ -41,10 +41,7 @@ public:
 	 * Construct the context menu used for the status bar icon
 	 */
 	virtual KActionMenu* actionMenu();
-	/**
-	 * Return the KopeteContact representing your own status
-	 */
-	virtual KopeteContact* myself() const;
+
 	/**
 	 * Creates a protocol specific KopeteContact subclass and adds it to the supplie
 	 * KopeteMetaContact
@@ -78,7 +75,6 @@ protected:
 	 * This simulates contacts going on and offline in sync with the account's status changes
 	 */
 	void updateContactStatus();
-	TestbedContact *m_myself;
 	TestbedFakeServer* m_server;
 
 protected slots:
