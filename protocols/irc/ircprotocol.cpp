@@ -33,7 +33,6 @@
 #include <qregexp.h>
 
 #include "ircprotocol.h"
-
 #include "ircadd.h"
 #include "ircaddcontactpage.h"
 #include "ircchatview.h"
@@ -63,7 +62,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 {
 	kdDebug() << "IRCProtocol::IRCProtocol"<<endl;
 	// Load all ICQ icons from KDE standard dirs
-	setIcon( "irc_protocol_small" );
+	setStatusIcon( "irc_protocol_small" );
 
 	initIcons();
 	m_serverManager = new IRCServerManager();
