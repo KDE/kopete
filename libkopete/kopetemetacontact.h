@@ -429,7 +429,6 @@ private:
 	static KABC::AddressBook* addressBook();
 	
 	static KABC::AddressBook* m_addressBook;
-	static bool m_addrBookWritePending;
 };
 
 #endif

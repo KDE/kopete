@@ -58,11 +58,11 @@ struct KopeteMetaContactPrivate
 //	bool dirty;
 	QString metaContactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
+	static bool s_addrBookWritePending;
 };
 
 KABC::AddressBook* KopeteMetaContact::m_addressBook = 0L;
-
-bool KopeteMetaContact::m_addrBookWritePending = false;
+bool KopeteMetaContactPrivate::s_addrBookWritePending = false;
 
 KopeteMetaContact::KopeteMetaContact()
 : KopetePluginDataObject( KopeteContactList::contactList() )
@@ -879,9 +879,9 @@ KABC::AddressBook* KopeteMetaContact::addressBook()
 
 void KopeteMetaContact::writeAddressBook()
 {
-	if ( !m_addrBookWritePending )
+	if ( !KopeteMetaContactPrivate::s_addrBookWritePending )
 	{
-		m_addrBookWritePending = true;
+		KopeteMetaContactPrivate::s_addrBookWritePending = true;
 		QTimer::singleShot( 2000, this, SLOT( slotWriteAddressBook() ) );
 	}
 }
@@ -902,7 +902,7 @@ void KopeteMetaContact::slotWriteAddressBook()
 #endif
 	}
 	kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC" << endl;
-	m_addrBookWritePending = false;
+	KopeteMetaContactPrivate::s_addrBookWritePending = false;
 }
 #include "kopetemetacontact.moc"
 
