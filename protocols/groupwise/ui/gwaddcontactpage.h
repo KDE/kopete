@@ -52,8 +52,6 @@ public:
 	 * Is the data correct?
 	 */
     virtual bool validateData();
-protected slots:
-	void slotAddMethodChanged();
 protected:
 	QValueList< GroupWise::ContactDetails > m_searchResults;
 	unsigned char searchOperation( int comboIndex );

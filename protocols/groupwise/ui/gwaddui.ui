@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>GroupWiseAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -37,92 +37,107 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;User ID</string>
+                    <string>&amp;Basic</string>
                 </attribute>
-                <widget class="QButtonGroup">
+                <vbox>
                     <property name="name">
-                        <cstring>bg_addMethod</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>0</x>
-                            <y>0</y>
-                            <width>390</width>
-                            <height>108</height>
-                        </rect>
-                    </property>
-                    <property name="title">
-                        <string>Add Using:</string>
-                    </property>
-                    <grid>
+                    <widget class="QButtonGroup">
                         <property name="name">
-                            <cstring>unnamed</cstring>
+                            <cstring>bg_addMethod</cstring>
                         </property>
-                        <widget class="QLineEdit" row="0" column="1">
+                        <property name="title">
+                            <string>Add Using:</string>
+                        </property>
+                        <grid>
                             <property name="name">
-                                <cstring>m_userName</cstring>
+                                <cstring>unnamed</cstring>
                             </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>A full or partial name. Asterisks are ignored</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Type some or all of the contact's name.  Matches will be shown below</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>rb_userId</cstring>
-                            </property>
-                            <property name="text">
-                                <string>User &amp;ID:</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="0" column="0">
-                            <property name="name">
-                                <cstring>rb_userName</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>User na&amp;me</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="1" column="1">
-                            <property name="name">
-                                <cstring>m_userId</cstring>
-                            </property>
-                            <property name="focusPolicy">
-                                <enum>StrongFocus</enum>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>A correct User ID</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Use this field to add a contact if you already know the user's exact User ID</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
+                            <widget class="QLineEdit" row="0" column="1">
+                                <property name="name">
+                                    <cstring>m_userName</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>A full or partial name. Asterisks are ignored</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Type some or all of the contact's name.  Matches will be shown below</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="1" column="0">
+                                <property name="name">
+                                    <cstring>rb_userId</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>User &amp;ID:</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+I</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>rb_userName</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>User na&amp;me:</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+M</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>m_userId</cstring>
+                                </property>
+                                <property name="focusPolicy">
+                                    <enum>StrongFocus</enum>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>A correct User ID</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Use this field to add a contact if you already know the user's exact User ID</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Search</string>
+                    <string>Ad&amp;vanced</string>
                 </attribute>
             </widget>
         </widget>
     </vbox>
 </widget>
-<tabstops>
-</tabstops>
+<connections>
+    <connection>
+        <sender>rb_userId</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_userId</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>rb_userName</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_userName</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -53,23 +53,19 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	if (owner->isConnected ())
 	{
-		m_gwAddUI = new GroupWiseAddUI( this );
-		connect( m_gwAddUI->rb_userId, SIGNAL( toggled( bool ) ), SLOT( slotAddMethodChanged() ) );
-		connect( m_gwAddUI->rb_userName, SIGNAL( toggled( bool ) ), SLOT( slotAddMethodChanged() ) );
-		
 		// add search widget
-		( new QVBoxLayout( m_gwAddUI->m_tabWidget->page( 1 ) ) )->setAutoAdd( true );
+		( new QVBoxLayout( this ) )->setAutoAdd( true );
  		m_searchUI = new GroupWiseSearch( m_account, QListView::Single, false,
-				 m_gwAddUI->m_tabWidget->page( 1 ), "searchwidget" );
-		QHBoxLayout * hb = new QHBoxLayout( m_gwAddUI->m_tabWidget->page( 1 ) );
-		hb->addStretch( 2 );
+				 this, "searchwidget" );
+		QHBoxLayout * hb = new QHBoxLayout( /*m_gwAddUI->m_tabWidget->page( 1 )*/ this );
 		hb->setAutoAdd( true );
-		QPushButton * searchButton = new QPushButton( i18n( "&Search" ), m_gwAddUI->m_tabWidget->page( 1 ), "searchbutton" );
+		QPushButton * searchButton = new QPushButton( i18n( "&Search" ),/* m_gwAddUI->m_tabWidget->page( 1 )*/ this, "searchbutton" );
+		hb->addWidget( searchButton );
+		hb->addStretch( 2 );
 
 		connect( searchButton, SIGNAL( clicked() ), m_searchUI, SLOT( doSearch() ) );
 
-		m_gwAddUI->show ();
-
+		show();
 		m_canadd = true;
 	}
 	else
@@ -87,40 +83,23 @@ GroupWiseAddContactPage::~GroupWiseAddContactPage()
 // i18n( "There was an error while carrying out your search.  Please change your search terms or try again later." )
 }
 
-void GroupWiseAddContactPage::slotAddMethodChanged()
-{
-	if ( m_gwAddUI->rb_userId->isChecked() )
-		m_gwAddUI->m_userId->setFocus();
-	else
-		m_gwAddUI->m_userName->setFocus();
-}
-
 bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* parentContact )
 {
 	if ( m_canadd && validateData() )
 	{
 		QString contactId;
 		QString displayName;
-		// take the entered userId if that tab is at the front, otherwise the selected search results.
-		displayName = parentContact->displayName();
-		if ( m_gwAddUI->m_tabWidget->currentPageIndex() == 0 )
-		{	contactId = m_gwAddUI->m_userId->text();
-			if ( displayName.isEmpty() )
-				displayName = contactId;
+
+		QValueList< ContactDetails > selected = m_searchUI->selectedResults();
+		if ( selected.count() == 1 )
+		{
+			ContactDetails dt = selected.first();
+			m_account->client()->userDetailsManager()->addDetails( dt );
+			contactId = dt.dn;
+			displayName = dt.givenName + " " + dt.surname;
 		}
 		else
-		{
-			QValueList< ContactDetails > selected = m_searchUI->selectedResults();
-			if ( selected.count() == 1 )
-			{
-				ContactDetails dt = selected.first();
-				m_account->client()->userDetailsManager()->addDetails( dt );
-				contactId = dt.dn;
-				displayName = dt.givenName + " " + dt.surname;
-			}
-			else
-				return false;
-		}
+			return false;
 
 		return ( account->addContact ( contactId, displayName, parentContact, KopeteAccount::ChangeKABC ) );
 	}
@@ -130,10 +109,7 @@ bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* 
 
 bool GroupWiseAddContactPage::validateData()
 {
-	if ( m_gwAddUI->m_tabWidget->currentPageIndex() == 0 )
-		return ( !m_gwAddUI->m_userId->text().isEmpty() );
-	else
-		return ( m_searchUI->m_results->selectedItem() );
+	return ( m_searchUI->m_results->selectedItem() );
 }
 
 #include "gwaddcontactpage.moc"
