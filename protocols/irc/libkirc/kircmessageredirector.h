@@ -67,10 +67,6 @@ public:
 signals:
 	void redirect(KIRC::Message &);
 
-protected:
-	virtual void connectNotify(const char *signal);
-	virtual void disconnectNotify(const char * signal);
-
 private:
 	/**
 	 * Check that the given message as the correct number of args
@@ -79,8 +75,6 @@ private:
 	bool checkValidity(const KIRC::Message &msg);
 
 	QStringList m_errors;
-
-	Q_UINT32 m_connectedObjects;
 
 	int m_argsSize_min;
 	int m_argsSize_max;

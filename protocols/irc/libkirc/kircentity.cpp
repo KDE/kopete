@@ -123,53 +123,5 @@ QString Entity::userInfo(const QString &s, int num)
 	return userRegExp.cap(num);
 }
 
-
-
-
-
-
-
-
-
-KResolverResults Entity::resolve(bool *success)
-{
-	resolveAsync();
-
-	KResolver *resolver = getResolver();
-	resolver->wait();
-	if(success) *success = resolver->status() == KResolver::Success;
-	return resolver->results();
-}
-
-void Entity::resolveAsync()
-{
-	KResolver *resolver = getResolver();
-	switch(resolver->status())
-	{
-	case KResolver::Idle:
-//	case QResolver::Canceled:
-//	case QResolver::Failed:
-		resolver->start();
-	case KResolver::Success:
-		break;
-	default:
-		kdDebug(14121) << k_funcinfo << "Resolver not started(" << resolver->status() << ")" << endl;
-	}
-}
-
-KResolver *Entity::getResolver()
-{
-	if (!m_resolver)
-	{
-		m_resolver = new KResolver(host(), QString::null, this);
-//		m_resolver->setFlags(flags);
-//		m_resolver->setFamily(families)
-		connect(m_resolver, SIGNAL(finished(KResolverResults)),
-			this, SIGNAL(resolverResults(KResolverResults)));
-	}
-
-	return m_resolver;
-}
-
 #include "kircentity.moc"
 

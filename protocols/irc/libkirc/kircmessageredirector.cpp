@@ -26,20 +26,14 @@ MessageRedirector::MessageRedirector(KIRC::Engine *engine,
 	: QObject(engine, "KIRC::MessageRedirector"),
 	  m_argsSize_min(argsSize_min),
 	  m_argsSize_max(argsSize_max),
-	  m_helpMessage(helpMessage),
-	  m_connectedObjects(0)
+	  m_helpMessage(helpMessage)
 {
 }
 
 bool MessageRedirector::connect(QObject *object, const char *member)
 {
-	bool success = QObject::connect(this, SIGNAL(redirect(KIRC::Message &)),
+	return QObject::connect(this, SIGNAL(redirect(KIRC::Message &)),
 					object, member);
-
-	if (m_connectedObjects == 0)
-		deleteLater();
-
-	return success;
 }
 
 QStringList MessageRedirector::operator () (Message &msg)
@@ -63,19 +57,6 @@ QString MessageRedirector::helpMessage()
 void MessageRedirector::error(QString &message)
 {
 	m_errors.append(message);
-}
-
-void MessageRedirector::connectNotify(const char *signal)
-{
-	QObject::connectNotify(signal);
-	++m_connectedObjects;
-}
-
-void MessageRedirector::disconnectNotify(const char * signal)
-{
-	QObject::disconnectNotify(signal);
-	if(--m_connectedObjects == 0)
-		deleteLater();
 }
 
 bool MessageRedirector::checkValidity(const Message &msg)

@@ -74,22 +74,7 @@ public:
 	QString userHost() const;
 	static QString userHost(const QString &s);
 
-
-
-
-	inline KNetwork::KResolver::StatusCodes resolverStatus()
-		{ return (KNetwork::KResolver::StatusCodes)getResolver()->status(); }
-
-	KNetwork::KResolverResults resolve(bool *success = 0);
-	void resolveAsync();
-	KNetwork::KResolverResults resolverResults()
-		{ return getResolver()->results(); }
-
-signals:
-	void resolverResults(KNetwork::KResolverResults);
-
 private:
-	KNetwork::KResolver *getResolver();
 
 	static QString userInfo(const QString &s, int num_cap);
 
@@ -102,7 +87,6 @@ private:
 
 	// peer ip address if the entity is a User.
 	QString m_address;
-	KNetwork::KResolver *m_resolver;
 };
 
 class EntityPtr

@@ -65,6 +65,10 @@ Engine::Engine(QObject *parent, const char *name)
 {
 	setUserName(QString::null);
 
+	m_commands.setAutoDelete(true);
+	m_ctcpQueries.setAutoDelete(true);
+	m_ctcpReplies.setAutoDelete(true);
+
 	bindCommands();
 	bindNumericReplies();
 	bindCtcp();
@@ -273,8 +277,6 @@ bool Engine::_bind(QDict<KIRC::MessageRedirector> &dict,
 		mr = new MessageRedirector(this, minArgs, maxArgs, helpMessage);
 		dict.replace(command, mr);
 	}
-//	else
-//		mr->setArgs();
 
 	return mr->connect(object, member);
 }
