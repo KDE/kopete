@@ -104,7 +104,7 @@ void KCModuleInfo::init(KService::Ptr s)
   // get the keyword list
   setKeywords(_service->keywords());
 
-  setGroups( _service->property("X-KDE-Groups", QVariant::StringList).toStringList() );
+  setGroups( _service->property("X-KDE-Groups").toStringList() );
 }
 
 void
@@ -113,28 +113,29 @@ KCModuleInfo::loadAll()
   _allLoaded = true;
 
   // library and factory
-  setHandle(_service->property("X-KDE-FactoryName", QVariant::String).toString());
+  setHandle( _service->property("X-KDE-FactoryName").toString() );
 
   // KCD parent
-  setParentComponents(
-      _service->property("X-KDE-ParentComponents", QVariant::StringList).toStringList());
+  setParentComponents( _service->property("X-KDE-ParentComponents").toStringList() );
 
   // read weight
-  QVariant v = _service->property( "X-KDE-Weight", QVariant::Int );
-  if (v.isValid())
-     setWeight( v.toInt() );
+  setWeight( _service->property( "X-KDE-Weight" ).toInt() );
+  bool ok;
+  int v = _service->property("X-KDE-Weight").toInt( &ok );
+  if ( ok )
+     setWeight( v );
   else
      setWeight( -1 );
 
   // does the module need super user privileges?
-  setNeedsRootPrivileges( _service->property( "X-KDE-RootOnly", QVariant::Bool ).toBool() );
+  setNeedsRootPrivileges( _service->property( "X-KDE-RootOnly" ).toBool() );
 
   // does the module need to be shown to root only?
   // Deprecated !
-  setIsHiddenByDefault( _service->property( "X-KDE-IsHiddenByDefault", QVariant::Bool ).toBool() );
+  setIsHiddenByDefault( _service->property( "X-KDE-IsHiddenByDefault" ).toBool() );
 
   // get the documentation path
-  setDocPath( _service->property( "DocPath", QVariant::String ).toString() );
+  setDocPath( _service->property( "DocPath" ).toString() );
 }
 
 QStringList

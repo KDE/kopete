@@ -1,0 +1,134 @@
+Index: kcdialog/kcmodule.h
+===================================================================
+RCS file: /home/kde/./kdenetwork/kopete/libkopete/compat/kcdialog/kcmodule.h,v
+retrieving revision 1.2
+diff -u -3 -p -r1.2 kcmodule.h
+--- kcdialog/kcmodule.h	28 Aug 2003 23:24:24 -0000	1.2
++++ kcdialog/kcmodule.h	6 Sep 2003 20:18:56 -0000
+@@ -63,6 +63,8 @@ class KCModule : public QWidget
+ {
+   Q_OBJECT
+ 
++friend class KCMultiDialog;
++
+ public:
+ 
+   /**
+Index: kcdialog/kcmoduleinfo.cpp
+===================================================================
+RCS file: /home/kde/./kdenetwork/kopete/libkopete/compat/kcdialog/kcmoduleinfo.cpp,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 kcmoduleinfo.cpp
+--- kcdialog/kcmoduleinfo.cpp	6 Sep 2003 15:05:27 -0000	1.4
++++ kcdialog/kcmoduleinfo.cpp	6 Sep 2003 20:18:56 -0000
+@@ -104,7 +104,7 @@ void KCModuleInfo::init(KService::Ptr s)
+   // get the keyword list
+   setKeywords(_service->keywords());
+ 
+-  setGroups( _service->property("X-KDE-Groups", QVariant::StringList).toStringList() );
++  setGroups( _service->property("X-KDE-Groups").toStringList() );
+ }
+ 
+ void
+@@ -113,28 +113,29 @@ KCModuleInfo::loadAll() 
+   _allLoaded = true;
+ 
+   // library and factory
+-  setHandle(_service->property("X-KDE-FactoryName", QVariant::String).toString());
++  setHandle( _service->property("X-KDE-FactoryName").toString() );
+ 
+   // KCD parent
+-  setParentComponents(
+-      _service->property("X-KDE-ParentComponents", QVariant::StringList).toStringList());
++  setParentComponents( _service->property("X-KDE-ParentComponents").toStringList() );
+ 
+   // read weight
+-  QVariant v = _service->property( "X-KDE-Weight", QVariant::Int );
+-  if (v.isValid())
+-     setWeight( v.toInt() );
++  setWeight( _service->property( "X-KDE-Weight" ).toInt() );
++  bool ok;
++  int v = _service->property("X-KDE-Weight").toInt( &ok );
++  if ( ok )
++     setWeight( v );
+   else
+      setWeight( -1 );
+ 
+   // does the module need super user privileges?
+-  setNeedsRootPrivileges( _service->property( "X-KDE-RootOnly", QVariant::Bool ).toBool() );
++  setNeedsRootPrivileges( _service->property( "X-KDE-RootOnly" ).toBool() );
+ 
+   // does the module need to be shown to root only?
+   // Deprecated !
+-  setIsHiddenByDefault( _service->property( "X-KDE-IsHiddenByDefault", QVariant::Bool ).toBool() );
++  setIsHiddenByDefault( _service->property( "X-KDE-IsHiddenByDefault" ).toBool() );
+ 
+   // get the documentation path
+-  setDocPath( _service->property( "DocPath", QVariant::String ).toString() );
++  setDocPath( _service->property( "DocPath" ).toString() );
+ }
+ 
+ QStringList
+Index: kcdialog/kcmultidialog.cpp
+===================================================================
+RCS file: /home/kde/./kdenetwork/kopete/libkopete/compat/kcdialog/kcmultidialog.cpp,v
+retrieving revision 1.6
+diff -u -3 -p -r1.6 kcmultidialog.cpp
+--- kcdialog/kcmultidialog.cpp	6 Sep 2003 15:05:27 -0000	1.6
++++ kcdialog/kcmultidialog.cpp	6 Sep 2003 20:18:56 -0000
+@@ -102,7 +102,7 @@ void KCMultiDialog::apply()
+                 m->setChanged( false );
+             }
+             QStringList * names = moduleParentComponents[ m ];
+-            kdDebug(710) << k_funcinfo << *names << " saved and added to the list" << endl;
++            //kdDebug(710) << k_funcinfo << *names << " saved and added to the list" << endl;
+             for( QStringList::ConstIterator it = names->begin(); it != names->end(); ++it )
+                 if( updatedModules.find( *it ) == updatedModules.end() )
+                     updatedModules.append( *it );
+@@ -172,8 +172,8 @@ void KCMultiDialog::addModule(const QStr
+ 
+ void KCMultiDialog::addModule(const KCModuleInfo& moduleinfo, bool withfallback)
+ {
+-    kdDebug(710) << "KCMultiDialog::addModule " << moduleinfo.moduleName() <<
+-        " for ParentComponents=" << moduleinfo.parentComponents() << endl;
++//    kdDebug(710) << "KCMultiDialog::addModule " << moduleinfo.moduleName() <<
++//        " for ParentComponents=" << moduleinfo.parentComponents() << endl;
+ 
+     QHBox* page = 0;
+     if (!moduleinfo.service()->noDisplay())
+@@ -191,7 +191,7 @@ void KCMultiDialog::addModule(const KCMo
+     moduleDict.insert(page, new LoadInfo(moduleinfo, withfallback));
+     if (modules.isEmpty())
+     {
+-        kdDebug(710) << k_funcinfo << moduleinfo.parentComponents() << endl;
++        //kdDebug(710) << k_funcinfo << moduleinfo.parentComponents() << endl;
+         slotAboutToShow(page);
+     }
+ }
+@@ -220,7 +220,7 @@ void KCMultiDialog::slotAboutToShow(QWid
+     if (!loadInfo)
+        return;
+ 
+-    kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
++    //kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
+ 
+     QApplication::setOverrideCursor(Qt::WaitCursor);
+ 
+@@ -228,7 +228,7 @@ void KCMultiDialog::slotAboutToShow(QWid
+ 
+     KCModule *module = KCModuleLoader::loadModule(loadInfo->info, loadInfo->withfallback);
+ 
+-    kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
++    //kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
+ 
+     if (!module)
+     {
+@@ -238,7 +238,7 @@ void KCMultiDialog::slotAboutToShow(QWid
+         return;
+     }
+ 
+-    kdDebug(710) << k_funcinfo << "ParentComponents=" << loadInfo->info.parentComponents() << endl;
++    //kdDebug(710) << k_funcinfo << "ParentComponents=" << loadInfo->info.parentComponents() << endl;
+     moduleParentComponents.insert( module, new QStringList( loadInfo->info.parentComponents() ) );
+     module->reparent(page,0,QPoint(0,0),true);
+     connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));

@@ -63,6 +63,8 @@ class KCModule : public QWidget
 {
   Q_OBJECT
 
+friend class KCMultiDialog;
+
 public:
 
   /**
