@@ -224,12 +224,20 @@ void MSNFileTransferSocket::abort()
 	if(m_incoming)
 	{
 		sendCommand( "CCL" , NULL ,false);
-		//the timer wait one second, the time to send the CCL
-		//i suspect also than retarding the disconnection may keep away from a crash
-		QTimer::singleShot( 1000, this, SLOT(disconnect()) );
 	}
 	else
-		disconnect();
+	{
+		QByteArray bytes(3);
+		bytes[0]='\1';
+		bytes[1]='\0';
+		bytes[2]='\0';
+		sendBytes( bytes );
+		m_downsize=m_size; //we don't want to send data anymore;
+	}
+	//the timer wait one second, the time to send the CCL or the binary header
+	//retarding the disconnection keep away from a crash. (in KIO::Job::emitResult when `delete this`)
+	QTimer::singleShot( 1000, this, SLOT(disconnect()) );
+	ready=false;
 }
 
 void MSNFileTransferSocket::setFile( const QString &fn, long unsigned int fileSize )
