@@ -23,28 +23,14 @@
 #include <time.h>
 
 #include <qapplication.h>
-#include <qregexp.h>
-#include <qstylesheet.h>
-#include <qtimer.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
-#include <kfiledialog.h>
 
-#include "kopeteaway.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetemetacontact.h"
-#include "kopetestdaction.h"
-#include "kopetecontactlist.h"
-#include "kopetegroup.h"
 
-#include "icqaccount.h"
 #include "icquserinfo.h"
-#include "aim.h"
-#include "oscarsocket.icq.h"
 
 ICQContact::ICQContact(const QString name, const QString displayName,
 	ICQAccount *acc, KopeteMetaContact *parent)

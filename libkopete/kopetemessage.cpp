@@ -18,20 +18,16 @@
 #include <stdlib.h>
 
 #include <qdatetime.h>
-#include <qfont.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kmdcodec.h>
 
 #include "kopeteemoticons.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopeteprefs.h"
-#include "kopetexsl.h"
 
 struct KopeteMessagePrivate
 {

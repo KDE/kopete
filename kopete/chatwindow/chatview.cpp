@@ -15,13 +15,8 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qfile.h>
-#include <qtimer.h>
 #include <qclipboard.h>
-#include <qcolor.h>
-#include <qregexp.h>
 #include <qheader.h>
-#include <qdom.h>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
@@ -30,42 +25,26 @@
 #include <dom/html_inline.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
-#include <kparts/part.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <kapplication.h>
 #include <krun.h>
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kdialog.h>
 #include <klocale.h>
-#include <kaction.h>
-#include <kstdaccel.h>
-#include <kstandarddirs.h>
-#include <klistview.h>
-#include <kdockwidget.h>
-#include <kfontdialog.h>
 #include <kcolordialog.h>
-#include <kglobalsettings.h>
 #include <krootpixmap.h>
 #include <ktempfile.h>
-#include <kshortcut.h>
 #include <kiconeffect.h>
 #include <kwin.h>
 #include <kmessagebox.h>
 #include <kcompletion.h>
 #include <kpopupmenu.h>
-#include <klibloader.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
-#include "kopeteemoticons.h"
-#include "kopetemessage.h"
 #include "kopeteprotocol.h"
-#include "kopeteplugin.h"
 #include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopetexsl.h"
 #include "pluginloader.h"

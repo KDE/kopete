@@ -18,25 +18,13 @@
 */
 
 #include <qapplication.h>
-#include <qcolor.h>
-#include <qcstring.h>
-#include <qstring.h>
 #include <qregexp.h>
-#include <qmap.h>
 
 #include <kdebug.h>
 #include <kaction.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
-#include <kio/global.h>
-#include <kio/job.h>
-#include <kstandarddirs.h>
-#include <kurl.h>
 
-#include "kopetecontact.h"
-#include "kopetemessage.h"
 #include "kopetemetacontact.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
 

@@ -21,7 +21,6 @@
 #include <qpointarray.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
-#include <qlabel.h>
 #include <qlayout.h>
 
 #include <kdeversion.h>

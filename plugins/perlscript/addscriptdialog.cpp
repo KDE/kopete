@@ -10,14 +10,10 @@
 
 #include "addscriptdialog.h"
 
-#include <qvariant.h>
 #include <klineedit.h>
 #include <kurlrequester.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
 #include <qlayout.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
 #include <kmessagebox.h>
 
 /* 

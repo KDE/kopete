@@ -15,11 +15,7 @@
 */
 
 #include <kapplication.h>
-#include <qstringlist.h>
 #include <qregexp.h>
-#include <qptrlist.h>
-#include <qmap.h>
-#include <qpair.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>

@@ -20,8 +20,6 @@
 
 #include "kopeteiface.h"
 #include "kopetecontactlist.h"
-#include "kopetecontact.h"
-#include "kopetemessage.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 

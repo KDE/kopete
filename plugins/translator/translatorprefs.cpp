@@ -26,14 +26,9 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <klineedit.h>
 #include <kdebug.h>
-#include <qlabel.h>
-#include <qgroupbox.h>
 #include <qbuttongroup.h>
-#include <qmap.h>
 
-#include <knuminput.h>
 
 TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *parent)
 							: ConfigModule(i18n("Translator"),i18n("Translator Plugin"),pixmap,parent)

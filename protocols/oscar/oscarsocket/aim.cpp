@@ -6,7 +6,6 @@
 
 //#include "config.h"
 
-#include <qstring.h>
 #include "aim.h"
 #include <qregexp.h>
 
@@ -74,3 +73,4 @@ QString tocProcess(const QString &oldstr)
 	return newstr;
 }
 */
+

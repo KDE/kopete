@@ -20,13 +20,11 @@
  ***************************************************************************/
 
 #include <qstring.h>
-#include <qstringlist.h>
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qmap.h>
 #include <qtimer.h>
 #include <qpixmap.h>
-#include <qstringlist.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -46,7 +44,6 @@
 #include "kopeteaccount.h"
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
-#include "jabbercontact.h"
 #include "jabberprefs.h"
 #include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
@@ -55,7 +52,6 @@
 #include "jabberaddcontactpage.h"
 #include "jabbermap.h"
 #include "jabbergroupchat.h"
-#include "jabberprotocol.h"
 
 #include "jid.h"
 #include "client.h"
@@ -64,8 +60,6 @@
 #include "types.h"
 #include "vcard.h"
 
-#include "jabbercontact.h"
-#include "jabberprotocol.h"
 #include "jabberaccount.h"
 
 #include <sys/utsname.h>

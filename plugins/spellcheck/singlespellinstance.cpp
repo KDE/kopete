@@ -25,7 +25,6 @@
 
 #include "kopeteview.h"
 #include "singlespellinstance.h"
-#include "spellcheckpreferences.h"
 #include "spellcheckplugin.h"
 
 SpellingHighlighter::SpellingHighlighter( ReplacementMap *replacements, QTextEdit *textEdit) : QSyntaxHighlighter ( textEdit )

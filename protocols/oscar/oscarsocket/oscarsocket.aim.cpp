@@ -20,7 +20,6 @@ extern "C"
 
 #include "oscarsocket.h"
 
-#include "oscaraccount.h"
 #include <kdebug.h>
 
 // ----------------------------------------------------------------------------------------

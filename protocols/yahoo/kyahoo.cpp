@@ -16,13 +16,9 @@
 */
 
 // Local Includes
-#include "yahoodebug.h"
 #include "kyahoo.h"
 
 // QT Includes
-#include <qregexp.h>
-#include <qsocketnotifier.h>
-#include <qstringlist.h>
 #include <qfile.h>
 
 // KDE Includes
@@ -33,10 +29,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "libyahoo2/yahoo2.h"
-#include "libyahoo2/yahoo2_callbacks.h"
-#include "libyahoo2/yahoo2_types.h"
-#include "libyahoo2/yahoo_list.h"
 #include <iostream>
 #include <errno.h>
 

@@ -16,11 +16,9 @@
     *************************************************************************
 */
 
-#include <kaction.h>
 #include <klocale.h>
 #include <kdebug.h>
 
-#include "kopetegroup.h"
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
 #include "kopeteprotocol.h"

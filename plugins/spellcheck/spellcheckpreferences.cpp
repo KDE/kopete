@@ -19,8 +19,6 @@
 #include <qlayout.h>
 #include <qvgroupbox.h>
 #include <qcheckbox.h>
-#include <qsizepolicy.h>
-#include <qcolor.h>
 
 #include <kspell.h>
 #include <kkeybutton.h>

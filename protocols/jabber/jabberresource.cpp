@@ -15,10 +15,7 @@
   * *************************************************************************
   */
 
-#include <qdatetime.h>
 #include <kdebug.h>
-#include "types.h"
-#include "jabberprotocol.h"
 #include "jabberresource.h"
 
 JabberResource::JabberResource() {

@@ -21,13 +21,10 @@
 #include "configmodule.h"
 #include "preferencesdialog.h"
 
-#include <qlabel.h>
 #include <qlayout.h>
 
-#include <kglobal.h>
-#include <kapplication.h>
+#include <kdeversion.h>
 #include <kiconloader.h>
-#include <klocale.h>
 
 ConfigModule::ConfigModule(const QString &name, const QString &description, QObject *owner)
 	: QWidget( PreferencesDialog::preferencesDialog()->addPage( name, description ) )

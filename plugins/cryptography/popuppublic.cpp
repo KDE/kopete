@@ -17,17 +17,13 @@
 
 ////////////////////////////////////////////////////////   code  for choosing a public key from a list for encryption
 
-#include <qptrlist.h>
 #include <qwhatsthis.h>
 #include <qpainter.h>
-#include <qiconset.h>
 #include <qhbuttongroup.h>
 #include <kconfig.h>
 #include <klistview.h>
 #include <klocale.h>
-#include <kglobal.h>
 #include <kiconloader.h>
-#include <kprocess.h>
 #include <kprocio.h>
 #include <qcheckbox.h>
 #include <qlayout.h>

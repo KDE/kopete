@@ -23,7 +23,6 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <kcmdlineargs.h>
 
 #include "appearanceconfig.h"
@@ -32,7 +31,6 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetewindow.h"
-#include "pluginloader.h"
 #include "pluginconfig.h"
 
 #ifdef HAVE_CONFIG_H

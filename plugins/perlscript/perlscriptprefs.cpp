@@ -23,14 +23,11 @@
 
 #include <qlayout.h>
 #include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <ktexteditor/editor.h>
 #include <klistview.h>
 #include <kpushbutton.h>
 #include <kmessagebox.h>
-#include <kurl.h>
 #include <ktexteditor/document.h>
 
 PerlScriptPreferences::PerlScriptPreferences(const QString &pixmap, QObject *parent): ConfigModule( i18n("Perl Scripting"), i18n("Perl Scripting Plugin"), pixmap, parent)

@@ -21,16 +21,12 @@
 #include "icqaddcontactpage.h"
 #include "icqeditaccountwidget.h"
 
-#include <kconfig.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <klocale.h>
 
 #include <kopeteaccountmanager.h>
-#include <kopeteaccount.h>
 
 #include "oscarpreferences.h"
-#include "oscarsocket.h"
 
 
 K_EXPORT_COMPONENT_FACTORY( kopete_icq, KGenericFactory<ICQProtocol> );

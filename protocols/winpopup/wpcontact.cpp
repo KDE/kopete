@@ -16,27 +16,15 @@
  ***************************************************************************/
 
 // Qt Includes
-#include <qdatetime.h>
-#include <qfont.h>
 #include <qregexp.h>
 
 // KDE Includes
-#include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
-#include <kpopupmenu.h>
 
 // Kopete Includes
-#include "kopeteaccount.h"
-#include "kopetestdaction.h"
-#include "kopetemessage.h"
-#include "kopetemessagemanager.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
 
 // Local Includes
 #include "wpcontact.h"
-#include "wpprotocol.h"
 #include "wpaccount.h"
 #include "wpdebug.h"
 

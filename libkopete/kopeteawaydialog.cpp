@@ -17,9 +17,7 @@
 
 #include "kopeteawaydialog.h"
 
-#include <qdialog.h>
 #include <qpushbutton.h>
-#include <qevent.h>
 
 #include <kcombobox.h>
 #include <klineedit.h>

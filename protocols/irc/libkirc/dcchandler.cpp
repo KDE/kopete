@@ -24,7 +24,6 @@
 #include <kglobal.h>
 #include <klocale.h>
 
-#include <qcstring.h>
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtextcodec.h>

@@ -20,8 +20,6 @@
 #include <math.h>
 
 //qt
-#include <qfile.h>
-#include <qregexp.h>
 #include <qtimer.h>
 
 // kde
@@ -29,10 +27,7 @@
 #include <kextendedsocket.h>
 #include <kfiledialog.h>
 #include <klocale.h>
-#include <kmessagebox.h>
-#include <ksockaddr.h>
 
-#include "kopetecontact.h"
 #include "kopetetransfermanager.h"
 #include "msnmessagemanager.h"
 #include "msnswitchboardsocket.h"

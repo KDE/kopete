@@ -14,8 +14,6 @@
     *************************************************************************
 */
 
-#include <qstylesheet.h>
-#include <qdom.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -26,12 +24,10 @@
 #include <kdialogbase.h>
 #include <qtimer.h>
 
-#include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
 #include "kopetepassworddialog.h"
 #include "kopeteprotocol.h"
 

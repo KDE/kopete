@@ -19,8 +19,6 @@
 #include "kopeteaccountmanager.h"
 
 #include <qapplication.h>
-#include <qstylesheet.h>
-#include <qdom.h>
 #include <qfile.h>
 
 #include <kdebug.h>

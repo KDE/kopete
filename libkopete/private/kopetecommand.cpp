@@ -12,8 +12,6 @@
     *                                                                       *
     *************************************************************************
 */
-#include "kopeteplugin.h"
-#include "kopetemessagemanager.h"
 
 #include "kopetecommand.h"
 

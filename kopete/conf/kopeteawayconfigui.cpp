@@ -18,13 +18,11 @@
 #include "kopeteawayconfigui.h"
 #include "kopeteawayconfigui.moc"
 
-#include <qstringlist.h>
 #include <qtextedit.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
 #include <klineeditdlg.h>
-#include <klistbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpushbutton.h>

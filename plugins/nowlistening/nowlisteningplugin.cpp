@@ -18,7 +18,6 @@
 */
 
 #include <qtimer.h>
-#include <qdict.h>
 #if QT_VERSION < 0x030100
 #include <qregexp.h>
 #endif
@@ -28,7 +27,6 @@
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <kaction.h>
-#include <kstdguiitem.h>
 
 //#include "kopete.h"
 #include "kopetemessagemanagerfactory.h"

@@ -18,21 +18,16 @@
 */
 #include "kopetegroup.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopeteonlinestatus.h"
 
 // Local Includes
-#include "yahoodebug.h"
-#include "yahoostatus.h"
 #include "yahoocontact.h"
 #include "yahooaccount.h"
 
 // QT Includes
-#include <qstring.h>
 #include <qregexp.h>
 
 // KDE Includes
 #include <kdebug.h>
-#include <kmessagebox.h>
 
 YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
 	: KopeteContact(account, userId, metaContact)

@@ -17,35 +17,21 @@
 
 #include "ircprotocol.h"
 
-#include <qapplication.h>
-#include <qcursor.h>
 #include <qregexp.h>
-#include <qdict.h>
 #include <dom/html_element.h>
 #include <kaction.h>
-#include <kconfig.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kglobal.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kpopupmenu.h>
 #include <ksimpleconfig.h>
-#include <kstandarddirs.h>
 
-#include "ircadd.h"
 #include "ircaccount.h"
 #include "ircaddcontactpage.h"
 #include "ircpreferences.h"
-#include "kopetemetacontact.h"
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 #include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
-#include "kopetemessagemanagerfactory.h"
 #include "kopetecommandhandler.h"
-#include "kirc.h"
 #include "ksparser.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );

@@ -19,33 +19,18 @@
  ***************************************************************************/
 
 
-#include <qdialog.h>
-#include <qclipboard.h>
-#include <qlayout.h>
 #include <qregexp.h>
-#include <qstring.h>
 
-#include <kmessagebox.h>
-#include <kapplication.h>
 #include <klocale.h>
 #include <kpassdlg.h>
-#include <kmdcodec.h>
-#include <klineedit.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <qfile.h>
-#include <qlabel.h>
 
-#include <kled.h>
-#include <kprocess.h>
 #include <kprocio.h>
-#include <kdialogbase.h>
-#include <kurl.h>
-#include <kiconloader.h>
-#include <kio/netaccess.h>
 
 
 //#include "kdetailedconsole.h"

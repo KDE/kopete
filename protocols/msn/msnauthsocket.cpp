@@ -20,7 +20,6 @@
 
 #include "msnauthsocket.h"
 
-#include <qtimer.h>
 
 #include <kdebug.h>
 #include <klocale.h>

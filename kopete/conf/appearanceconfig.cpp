@@ -17,34 +17,16 @@
 #include "appearanceconfig.h"
 
 #include <qcheckbox.h>
-#include <qframe.h>
-#include <qlabel.h>
 #include <qdir.h>
-#include <qtextstream.h>
 #include <qlayout.h>
-#include <qpixmap.h>
-#include <qwhatsthis.h>
-#include <qradiobutton.h>
-#include <qvbuttongroup.h>
 #include <qhbuttongroup.h>
-#include <qstringlist.h>
-#include <qtextedit.h>
-#include <qfileinfo.h>
-#include <qvgroupbox.h>
 #include <qspinbox.h>
 #include <qslider.h>
 
 #include <klineedit.h>
-#include <klistbox.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
-#include <kcombobox.h>
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kdeversion.h>
-#include <kdialog.h>
-#include <kglobal.h>
-#include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
@@ -53,10 +35,7 @@
 #include <knotifydialog.h>
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
-#include <ktabctl.h>
-#include <kglobalsettings.h>
 #include <kurlrequesterdlg.h>
-#include <kurl.h>
 #include <kpushbutton.h>
 #include <kfontdialog.h>
 #include <ktrader.h>
@@ -71,15 +50,12 @@
 #include "appearanceconfig_contactlist.h"
 #include "appearanceconfig_chatwindow.h"
 #include "appearanceconfig_chatappearance.h"
-#include "configmodule.h"
 #include "kopeteprefs.h"
 #include "kopetemessage.h"
-#include "kopetecontact.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigui.h"
 #include "styleeditdialog.h"
 #include "kopetexsl.h"
-#include "preferencesdialog.h"
 
 #include <qtabwidget.h>
 

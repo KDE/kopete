@@ -24,7 +24,6 @@
 #include <kmessagebox.h>
 
 #include "msneditaccountwidget.h"
-#include "msnprotocol.h"
 #include "msnaccount.h"
 
 MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *ident, QWidget *parent, const char * )

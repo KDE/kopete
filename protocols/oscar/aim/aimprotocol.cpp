@@ -17,19 +17,13 @@
 
 
 #include <kgenericfactory.h>
-#include <klocale.h>
 #include <kdebug.h>
-#include <kopeteaccountmanager.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
-#include "oscarcontact.h"
-#include "oscarsocket.h"
 #include "aimaddcontactpage.h"
 #include "aimeditaccountwidget.h"
 
-#include "kopeteaccount.h"
-#include "kopeteonlinestatus.h"
 #include "kopeteaccountmanager.h"
 #include "aimcontact.h"
 #include "oscarpreferences.h"

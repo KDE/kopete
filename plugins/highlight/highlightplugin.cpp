@@ -17,22 +17,14 @@
 
 #include <qstylesheet.h>
 #include <qregexp.h>
-#include <qtimer.h>
-#include <qfile.h>
 #include <qdir.h>
-#include <qdom.h>
 
-#include <kaction.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
 
 
-#include "kopetemessage.h"
-#include "kopetemetacontact.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 
 #include "filter.h"

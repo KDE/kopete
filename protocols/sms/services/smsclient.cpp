@@ -1,16 +1,12 @@
 #include "smsclient.h"
 #include "smsclientprefs.h"
-#include "smscontact.h"
 #include "smsprotocol.h"
 #include "kopeteaccount.h"
 
-#include <qdir.h>
 #include <qcombobox.h>
 #include <klocale.h>
-#include <kfile.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
-#include <kdeversion.h>
 #include <kprocess.h>
 
 SMSClient::SMSClient(KopeteAccount* account)

@@ -17,7 +17,6 @@
 
 #include <kdebug.h>
 #include "oscardirectconnection.h"
-#include "oscarsocket.h"
 
 OscarDirectConnection::OscarDirectConnection(const QString &sn, const QString &connName,
 	const QByteArray &cookie,	QObject *parent, const char *name)

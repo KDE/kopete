@@ -17,18 +17,12 @@
 
 #include "aimuserinfo.h"
 
-#include "aimprotocol.h"
 #include "aimaccount.h"
 
-#include <qlayout.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qstring.h>
 
 #include <klocale.h>
-#include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <ktextbrowser.h>
 #include <kdebug.h>

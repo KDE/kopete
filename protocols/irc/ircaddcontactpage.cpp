@@ -18,21 +18,16 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <qlistview.h>
 #include <qpushbutton.h>
-#include <kmessagebox.h>
 
 #include "ircaddcontactpage.h"
 #include "ircadd.h"
-#include "ircprotocol.h"
 #include "ircaccount.h"
 #include "kirc.h"
-#include "kopetecontactlist.h"
 
 class ChannelListItem : public QListViewItem
 {

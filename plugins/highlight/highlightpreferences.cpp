@@ -17,11 +17,9 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <qpushbutton.h>
 
 #include <kcombobox.h>
 #include <klineedit.h>
-#include <kconfig.h>
 #include <kparts/componentfactory.h>
 #include <klocale.h>
 #include <klistview.h>

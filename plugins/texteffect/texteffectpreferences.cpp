@@ -16,15 +16,10 @@
  ***************************************************************************/
 
 #include <qlayout.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qtimer.h>
 
 
 #include <klocale.h>
-#include <klineedit.h>
 #include <keditlistbox.h>
 #include <kconfig.h>
 #include <kglobal.h>

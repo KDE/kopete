@@ -16,22 +16,17 @@
     *************************************************************************
 */
 
-#include <qlayout.h>
 
-#include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <kpushbutton.h>
-#include <kstandarddirs.h>
 #include <kdebug.h>
 #include <klistview.h>
 
 #include <addcontactpage.h>
 #include "addcontactwizard.h"
-#include "kopetegroup.h"
 #include "kopetecontactlist.h"
-#include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"

@@ -19,23 +19,16 @@
 #include "kopetecontactlist.h"
 
 #include <qdir.h>
-#include <qdom.h>
-#include <qfile.h>
 #include <qregexp.h>
-#include <qstylesheet.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
-#include "pluginloader.h"
-#include "kopetegroup.h"
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 

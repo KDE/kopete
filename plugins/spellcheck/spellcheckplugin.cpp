@@ -21,7 +21,6 @@
 
 #include <kdebug.h>
 #include <kspell.h>
-#include <klocale.h>
 #include <kaction.h>
 #include <kmessagebox.h>
 #include <kgenericfactory.h>

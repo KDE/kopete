@@ -17,17 +17,10 @@
 */
 
 #include <qapplication.h>
-#include <qcolor.h>
-#include <qimage.h>
-#include <qlistview.h>
 #include <qpainter.h>
-#include <qpixmap.h>
 #include <qtimer.h>
-#include <qptrlist.h>
 
 #include <kdebug.h>
-#include <kaction.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
@@ -40,17 +33,12 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetegroupviewitem.h"
 #include "kopetecontactlist.h"
-#include "kopeteonlinestatus.h"
-#include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "addcontactpage.h"
-#include "kopeteprotocol.h"
-#include "kopeteplugin.h"
 #include "pluginloader.h"
-#include "kopeteevent.h"
 #include "kopeteprefs.h"
-#include "kopeteaway.h"
 
+#include <kdeversion.h>
 #if KDE_VERSION >= 0x030006
 #include "systemtray.h"
 #include "kpassivepopup.h"

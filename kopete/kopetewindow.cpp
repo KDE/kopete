@@ -18,8 +18,6 @@
 
 #include "kopetewindow.h"
 
-#include <kapplication.h>
-#include <qlayout.h>
 #include <qhbox.h>
 
 #include <kaction.h>
@@ -29,29 +27,24 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kstdaction.h>
 #include <kaccel.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
 #include <kglobalaccel.h>
+#include <kdeversion.h>
 
 #include "addcontactwizard.h"
 #include "kopete.h"
 #include "kopeteaccount.h"
-#include "kopeteballoon.h"
-#include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
-#include "kopeteevent.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
-#include "kopetetransfermanager.h"
 #include "kopeteviewmanager.h"
 #include "kopeteglobalawaydialog.h"
-#include "kopeteonlinestatus.h"
 #include "pluginloader.h"
 #include "preferencesdialog.h"
 #include "systemtray.h"

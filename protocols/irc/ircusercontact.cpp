@@ -19,10 +19,7 @@
 #include "ircchannelcontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
-#include "kopetemessagemanager.h"
-#include "kopeteview.h"
 
-#include "kirc.h"
 
 #include <kdebug.h>
 #include <klocale.h>

@@ -18,18 +18,15 @@
 
 #include <qclipboard.h>
 #include <qlayout.h>
-#include <qsplitter.h>
 #include <qvbox.h>
 #include <qlabel.h>
 #include <qtimer.h>
-#include <qmovie.h>
 
 #include <kaction.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kdeversion.h>
 #include <kedittoolbar.h>
 #include <kfontdialog.h>
 #include <kglobalsettings.h>
@@ -41,7 +38,6 @@
 #include "kopeteplugin.h"
 #include <kpopupmenu.h>
 #include <kpushbutton.h>
-#include <kstdaction.h>
 #include <kwin.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>

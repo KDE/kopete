@@ -18,7 +18,6 @@
 #include <kdebug.h>
 
 #include "oscarsocket.h"
-#include "oscardirectconnection.h"
 #include "oscarfilesendconnection.h"
 #include "oncomingsocket.h"
 #include "aim.h"

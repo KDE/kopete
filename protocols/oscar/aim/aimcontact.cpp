@@ -22,7 +22,6 @@
 
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
-#include "oscarsocket.h"
 #include "aimprotocol.h"
 #include "aimcontact.h"
 #include "aimaccount.h"

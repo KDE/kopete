@@ -27,9 +27,6 @@ using namespace std;
 
 // QT Includes
 #include <qprocess.h>
-#include <qdatetime.h>
-#include <qthread.h>
-#include <qsemaphore.h>
 #include <qregexp.h>
 
 // KDE Includes

@@ -18,27 +18,16 @@
     *************************************************************************
 */
 
-#include <qcursor.h>
-#include <qpixmap.h>
 #include <qtimer.h>
 #include <qvbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
-#include <qregexp.h>
 
 #include <kcursor.h>
-#include <ktoolbar.h>
 #include <klocale.h>
-#include <kstdaction.h>
-#include <kdockwidget.h>
-#include <kaction.h>
 #include <kmenubar.h>
-#include <khelpmenu.h>
 #include <kconfig.h>
-#include <kglobal.h>
 #include <kpopupmenu.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwin.h>
@@ -48,19 +37,14 @@
 #include <ksqueezedtextlabel.h>
 #include <kpushbutton.h>
 
-#include "kopetemessage.h"
-#include "kopeteemoticons.h"
 #include "kopeteprotocol.h"
-#include "kopeteplugin.h"
 #include "kopeteprefs.h"
 #include "pluginloader.h"
-#include "kopetestdaction.h"
 #include "kopetemetacontact.h"
 #include "preferencesdialog.h"
 
 #include "kopetechatwindow.h"
 #include "kopetemessagemanager.h"
-#include "kopeteonlinestatus.h"
 #include "ktabwidget.h"
 #include "kopeteviewmanager.h"
 #include "chatview.h"

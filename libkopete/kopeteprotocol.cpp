@@ -19,19 +19,14 @@
 
 #include "kopeteprotocol.h"
 
-#include <qstringlist.h>
 
 #include <kdebug.h>
 #include <kaction.h>
-#include <klocale.h>
 
-#include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
-#include "kopeteonlinestatus.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )

@@ -24,7 +24,6 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kstandarddirs.h>
 
 #include <qtimer.h>
 

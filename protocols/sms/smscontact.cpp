@@ -10,21 +10,13 @@
 */
 
 #include "smscontact.h"
-#include "smsservice.h"
 #include "serviceloader.h"
 #include "smsprotocol.h"
 #include "smsuserpreferences.h"
-#include "smsaccount.h"
 
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetemetacontact.h"
 #include "kopeteaccount.h"
 
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qregexp.h>
-#include <kdialogbase.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>

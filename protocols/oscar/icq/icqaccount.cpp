@@ -19,21 +19,11 @@
 #include "icqcontact.h"
 #include "icqprotocol.h"
 
-#include <qapplication.h>
-#include <qwidget.h>
-#include <qtimer.h>
 
-#include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
-#include <kmessagebox.h>
 
-#include "kopetecontact.h"
-#include "kopetegroup.h"
-#include "kopeteaway.h"
-#include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
 #include "kopetestdaction.h"
 
 #include <oscarcontact.h>
@@ -41,7 +31,6 @@
 #include "icqchangestatus.h"
 //#include "icquserinfo.h"
 
-#include <klineeditdlg.h>
 //	OscarAccount(KopeteProtocol *parent, QString accountID, const char *name=0L, bool isICQ=false);
 
 ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *name)

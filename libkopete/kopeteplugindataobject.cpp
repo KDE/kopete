@@ -14,8 +14,6 @@
     *************************************************************************
 */
 
-#include <qdom.h>
-#include <qstylesheet.h>
 #include <kdebug.h>
 
 #include "kopeteplugin.h"

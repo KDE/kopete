@@ -24,7 +24,6 @@
 
 #include <kaction.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
 #include <kfiledialog.h>
 #include <klineedit.h>
 #include <klocale.h>
@@ -34,12 +33,10 @@
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
 
 #include "msninfo.h"
 #include "msnmessagemanager.h"
 #include "msnnotifysocket.h"
-#include "msnprotocol.h"
 #include "msnaccount.h"
 
 MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )

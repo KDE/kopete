@@ -19,30 +19,16 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qwidget.h>
-#include <qlayout.h>
-#include <qspinbox.h>
 #include <qcheckbox.h>
 
 // KDE Includes
-#include <kcombobox.h>
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <kiconloader.h>
-#include <klistbox.h>
-#include <klocale.h>
-#include <kurlrequester.h>
-#include <klineedit.h>
 #include <kmessagebox.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
-#include <kopeteaccount.h>
 
 // Local Includes
-#include "yahooadd.h"
-#include "yahooprotocol.h"
 #include "yahooaccount.h"
 #include "yahoocontact.h"
 #include "yahooeditaccount.h"

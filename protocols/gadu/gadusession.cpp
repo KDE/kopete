@@ -1,7 +1,6 @@
 #include <klocale.h>
 
 #include <qsocketnotifier.h>
-#include <qobject.h>
 #include <kdebug.h>
 #include <errno.h>
 #include <string.h>

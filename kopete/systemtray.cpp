@@ -19,22 +19,15 @@
 
 #include "systemtray.h"
 
-#include <qcursor.h>
 //#include <qpixmap.h>
-#include <qpoint.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 
-#include <klocale.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kiconloader.h>
-#include <kpopupmenu.h>
-#include "kopeteevent.h"
 #include "kopeteviewmanager.h"
-#include "kopetemessage.h"
 #include "kopeteballoon.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"

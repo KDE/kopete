@@ -11,13 +11,10 @@
 #include "smseditaccountwidget.h"
 #include "smscontact.h"
 #include "smsaddcontactpage.h"
-#include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
-#include "kopeteaccount.h"
 #include "smsaccount.h"
 #include "smspreferences.h"
 #include <kgenericfactory.h>
-#include <kmessagebox.h>
 #include <kdebug.h>
 #include <kconfig.h>
 

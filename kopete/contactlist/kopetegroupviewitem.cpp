@@ -15,14 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qstylesheet.h>
 #include <klocale.h>
 #include <kdebug.h>
  
 #include "kopetegroupviewitem.h"
 #include "kopetegroup.h"
 #include "kopetemetacontactlvi.h"
-#include "kopetemetacontact.h"
 
 KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_ , QListView *parent, const char *name )
 		: QObject(group_) , QListViewItem(parent,name)

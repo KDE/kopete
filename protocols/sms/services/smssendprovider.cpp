@@ -1,11 +1,8 @@
 #include "smssendprovider.h"
-#include "smscontact.h"
 #include "smsprotocol.h"
 #include "kopeteaccount.h"
 
-#include <kdeversion.h>
 #include <kprocess.h>
-#include <qregexp.h>
 #include <qlabel.h>
 #include <qfile.h>
 #include <klineedit.h>

@@ -26,21 +26,15 @@
 // Kopete Includes
 
 // QT Includes
-#include <qwidget.h>
 #include <qlayout.h>
-#include <qspinbox.h>
-#include <qcheckbox.h>
 #include <qslider.h>
 
 // KDE Includes
 #include <kconfig.h>
 #include <klineedit.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kurlrequester.h>
-#include <kapplication.h>
-#include <kstandarddirs.h>
 
 // WinPopup Preferences
 WPPreferences::WPPreferences(const QString & pixmap,

@@ -19,15 +19,12 @@
 #include "kopetemetacontact.h"
 
 #include <qapplication.h>
-#include <qstylesheet.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
 
 #include "kopetecontactlist.h"
-#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"

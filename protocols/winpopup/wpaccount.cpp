@@ -19,35 +19,16 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qcursor.h>
-#include <qprocess.h>
-#include <qfile.h>
-#include <qregexp.h>
 
 // KDE Includes
-#include <kaction.h>
-#include <kapplication.h>
 #include <kdebug.h>
-#include <kgenericfactory.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kpushbutton.h>
-#include <ksimpleconfig.h>
-#include <kstandarddirs.h>
-#include <kstdguiitem.h>
 
 // Local Includes
 #include "wpaccount.h"
 #include "wpdebug.h"
-#include "wpcontact.h"
-#include "wpprotocol.h"
-#include "wpaddcontact.h"
-#include "wppreferences.h"
 
 // Kopete Includes
-#include "kopetemetacontact.h"
 
 class KPopupMenu;
 

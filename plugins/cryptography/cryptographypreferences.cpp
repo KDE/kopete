@@ -20,7 +20,6 @@
 #include <qspinbox.h>
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qtimer.h>
 
 #include <klocale.h>
 #include <klineedit.h>

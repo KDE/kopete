@@ -23,36 +23,23 @@
 #include "kopetecontactlist.h"
 
 #include <qcursor.h>
-#include <qinputdialog.h>
-#include <qpoint.h>
-#include <qptrlist.h>
 #include <qheader.h>
-#include <qrect.h>
 #include <qtooltip.h>
 #include <qstylesheet.h>
 #include <kurldrag.h>
 
 #include <kapplication.h>
-#include <kconfig.h>
-#include <kaction.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
-#include <klistview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kurl.h>
 
 #include "addcontactwizard.h"
-#include "kopetecontact.h"
 #include "kopeteevent.h"
-#include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
-#include "kopetemetacontact.h"
 #include "kopetemetacontactlvi.h"
-#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopetestatusgroupviewitem.h"
 #include "kopeteviewmanager.h"

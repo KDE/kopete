@@ -14,10 +14,8 @@
     *                                                                       *
     *************************************************************************
 */
-#include <klocale.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-#include <kiconloader.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <klineeditdlg.h>
@@ -30,13 +28,9 @@
 
 #include "kopeteaway.h"
 #include "kopetecontactlist.h"
-#include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
-#include "kopetemessage.h"
 #include "kdebug.h"
 #include "ksparser.h"
-#include "kirc.h"
 
 IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : KopeteAccount( (KopeteProtocol*)protocol, accountId )
 {

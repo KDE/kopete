@@ -18,10 +18,8 @@
 #include "kirc.h"
 
 #include <kdebug.h>
-#include <kglobal.h>
 #include <klocale.h>
 
-#include <qdatetime.h>
 #include <qfileinfo.h>
 #include <qregexp.h>
 #include <qtextcodec.h>

@@ -19,18 +19,12 @@
 
 #include "ircprefs.h"
 
-#include <kcolorbutton.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
 
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
 #include <qlayout.h>
-#include <qlineedit.h>
-#include <qradiobutton.h>
 
 IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	: ConfigModule(i18n("IRC Plugin"),i18n("Internet Relay Chat Protocol"),pixmap,parent)

@@ -15,21 +15,15 @@
     *************************************************************************
 */
 
-#include <qlayout.h>
 
-#include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <klineeditdlg.h>
-#include <kpushbutton.h>
-#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
 
 #include "addaccountwizard.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
-#include "kopetemetacontact.h"
 #include "editaccountwidget.h"
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modale )

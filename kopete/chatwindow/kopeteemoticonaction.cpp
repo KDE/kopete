@@ -1,13 +1,11 @@
 
 
 #include "kopeteemoticonaction.h"
-#include "kopeteemoticons.h"
 
 #include <assert.h>
 #include <math.h>
 
 #include <kapplication.h>
-#include <kaccel.h>
 #include <kdebug.h>
 #include <kmenubar.h>
 #include <kpopupmenu.h>

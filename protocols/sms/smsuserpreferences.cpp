@@ -2,10 +2,8 @@
 #include "smsuserprefs.h"
 #include "smscontact.h"
 
-#include <qcheckbox.h>
 
 #include <klocale.h>
-#include <kconfig.h>
 #include <klineedit.h>
 
 SMSUserPreferences::SMSUserPreferences( SMSContact* contact )

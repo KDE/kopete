@@ -17,30 +17,22 @@
 
 #include "oscaraccount.h"
 #include <qapplication.h>
-#include <qwidget.h>
 #include <qtimer.h>
 
-#include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
 #include <kmessagebox.h>
 
-#include "kopetecontact.h"
 #include "kopeteprotocol.h"
-#include "kopetegroup.h"
 #include "kopeteaway.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopetestdaction.h"
 #include "kopeteawaydialog.h"
 
 // TODO: get rid of the next include
 #include "aim.h" // For tocNormalize()
 
-#include "aimbuddylist.h" // TODO: remove buddylist
 #include "oscarsocket.h"
-#include "oscarcontact.h"
 
 #include <klineeditdlg.h>
 

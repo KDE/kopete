@@ -11,7 +11,6 @@
 #include "smseditaccountwidget.h"
 #include "smsprefs.h"
 #include "serviceloader.h"
-#include "kopeteaccount.h"
 #include "smsprotocol.h"
 #include "smsaccount.h"
 

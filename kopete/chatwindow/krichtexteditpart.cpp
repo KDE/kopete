@@ -1,5 +1,3 @@
-#include <qfile.h>
-#include <qtextstream.h>
 #include <qpainter.h>
 #include <qpaintdevicemetrics.h>
 #include <qsimplerichtext.h>
@@ -9,15 +7,9 @@
 #include <kcolordialog.h>
 #include <kdebug.h>
 #include <kfiledialog.h>
-#include <kinstance.h>
-#include <klocale.h>
 #include <kparts/genericfactory.h>
 #include <kspell.h>
-#include <kstdaction.h>
 #include <kprinter.h>
-#include <kfinddialog.h>
-#include <kfind.h>
-#include <kreplacedialog.h>
 #include <kreplace.h>
 
 #include "krichtexteditpart.h"

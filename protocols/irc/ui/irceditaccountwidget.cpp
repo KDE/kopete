@@ -21,7 +21,6 @@
 #include <qcheckbox.h>
 
 #include "ircaccount.h"
-#include "ircprotocol.h"
 #include "irceditaccountwidget.h"
 
 IRCEditAccountWidget::IRCEditAccountWidget(const IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )

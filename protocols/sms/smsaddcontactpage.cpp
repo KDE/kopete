@@ -1,13 +1,10 @@
 #include "smsadd.h"
 #include "smsaddcontactpage.h"
-#include "smsprotocol.h"
 #include "kopeteaccount.h"
 
 #include <qlayout.h>
 #include <qlineedit.h>
 
-#include <klocale.h>
-#include <kmessagebox.h>
 
 
 SMSAddContactPage::SMSAddContactPage(QWidget *parent, const char *name )

@@ -19,7 +19,6 @@
 
 #include <kdebug.h>
 #include "kopetestatusgroupviewitem.h"
-#include "kopeteonlinestatus.h"
 
 KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( KopeteOnlineStatus::OnlineStatus status_ , QListView *parent, const char *name )
 		: QListViewItem(parent,name)

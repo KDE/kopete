@@ -20,14 +20,9 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 
-#include "kirc.h"
-#include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
-#include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 
-#include <klocale.h>
-#include <qsocket.h>
 #include <kdebug.h>
 #include <klineeditdlg.h>
 #include <kapplication.h>

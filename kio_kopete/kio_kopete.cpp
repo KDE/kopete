@@ -29,7 +29,6 @@
 #include <kinstance.h>
 #include <kfileitem.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <dcopclient.h>
 #include <fstream>
  

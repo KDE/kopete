@@ -18,36 +18,16 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA                //
 // 02111-1307, USA.                                                         //
 //////////////////////////////////////////////////////////////////////////////
-#include <qapplication.h>
-#include <qcursor.h>
-#include <qtimer.h>
-#include <qstringlist.h>
 
-#include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kiconloader.h>
-#include <klineeditdlg.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kpopupmenu.h>
-#include <ksimpleconfig.h>
-#include <kstandarddirs.h>
 
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetegroup.h"
 
 #include "gaduprotocol.h"
-#include "gaducontact.h"
 #include "gaduaccount.h"
 #include "gadueditaccount.h"
 #include "gaduaddcontactpage.h"
 #include "gadupreferences.h"
-#include "gadusession.h"
-#include "gaducommands.h"
 
 #include <libgadu.h>
 

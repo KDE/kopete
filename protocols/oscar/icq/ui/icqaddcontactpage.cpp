@@ -18,7 +18,6 @@
 #include "icqaddcontactpage.h"
 
 #include "icqadd.h"
-#include "icqprotocol.h"
 #include "icqaccount.h"
 
 //#include <kopetecontactlist.h>
@@ -29,13 +28,10 @@
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qtabwidget.h>
-#include <qlistview.h>
 #include <qlabel.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kmessagebox.h>
-#include <kstandarddirs.h>
 
 ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const char *name)
 	: AddContactPage(parent,name)

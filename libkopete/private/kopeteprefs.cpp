@@ -18,14 +18,10 @@
 #include "kopeteprefs.h"
 
 #include <qfile.h>
-#include <qtextstream.h>
 
 #include <kapplication.h>
 #include <kglobalsettings.h>
-#include <klocale.h>
-#include <qcolor.h>
 #include <kconfig.h>
-#include <kglobal.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
 //#include <kopetechatwindow.h> // FIXME: I do not like this dependency; mETz

@@ -18,14 +18,10 @@
 #include "aimaddcontactui.h"
 #include "aimaddcontactpage.h"
 
-#include "aimaccount.h"
 #include "kopeteaccount.h"
-#include "kopetemetacontact.h"
 
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 

@@ -1,6 +1,5 @@
 #include <klocale.h>
 
-#include <qstring.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>

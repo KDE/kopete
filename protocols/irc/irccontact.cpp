@@ -17,19 +17,12 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <qstringlist.h>
 #include <qregexp.h>
-#include <qapplication.h>
 
-#include "ircchannelcontact.h"
 #include "ircaccount.h"
 
-#include "kirc.h"
 #include "ksparser.h"
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopeteview.h"
 #include "ircusercontact.h"
 #include "irccontact.h"
 #include "ircprotocol.h"

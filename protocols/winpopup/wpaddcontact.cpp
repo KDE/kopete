@@ -18,19 +18,12 @@
  *                                                                         *
  ***************************************************************************/
 // QT Includes
-#include <qwidget.h>
 #include <qlayout.h>
-#include <qspinbox.h>
-#include <qcheckbox.h>
 
 // KDE Includes
 #include <kcombobox.h>
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kiconloader.h>
-#include <klistbox.h>
-#include <klocale.h>
 #include <kurlrequester.h>
 
 // Kopete Includes
@@ -38,7 +31,6 @@
 
 // Local Includes
 #include "wpaddcontactbase.h"
-#include "wpprotocol.h"
 #include "wpaccount.h"
 #include "wpdebug.h"
 #include "wpaddcontact.h"

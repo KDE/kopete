@@ -15,20 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qgroupbox.h>
 #include <qpushbutton.h>
 
 #include <kmessagebox.h>
 #include <klocale.h>
  
-#include "types.h"
-#include "tasks.h"
 
 #include "jabberprotocol.h"
-#include "jabberformtranslator.h"
 #include "dlgjabberregister.h"
 
 dlgJabberRegister::dlgJabberRegister(const Jabber::Jid &jid, QWidget *parent, const char *name ) : dlgRegister(parent,name)

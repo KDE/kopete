@@ -20,14 +20,8 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
-#include "kopeteplugin.h"
-#include "kopeteprotocol.h"
-#include "pluginloader.h"
 
-#include <qstring.h>
-#include <qdatetime.h>
 #include <kconfig.h>
-#include <qmultilineedit.h>
 #include <qtimer.h>
 #include <kapplication.h>
 

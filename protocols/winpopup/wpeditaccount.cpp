@@ -19,20 +19,10 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qwidget.h>
-#include <qlayout.h>
-#include <qspinbox.h>
 #include <qcheckbox.h>
-#include <qfile.h>
-#include <qregexp.h>
 
 // KDE Includes
-#include <kcombobox.h>
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <kiconloader.h>
-#include <klistbox.h>
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <klineedit.h>
@@ -40,12 +30,9 @@
 
 // Kopete Includes
 #include <addcontactpage.h>
-#include <kopeteaccount.h>
 
 // Local Includes
-#include "wpprotocol.h"
 #include "wpaccount.h"
-#include "wpcontact.h"
 #include "wpeditaccount.h"
 
 WPEditAccount::WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): WPEditAccountBase(parent), EditAccountWidget(theAccount)

@@ -2,11 +2,9 @@
 #include "aimeditaccountui.h"
 
 #include <qlayout.h>
-#include <qstring.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-#include <qradiobutton.h>
 
 #include <kdebug.h>
 

@@ -24,22 +24,13 @@
 #include <time.h>
 
 // qt
-#include <qdatetime.h>
-#include <qfont.h>
-#include <qcolor.h>
-#include <qstylesheet.h>
 
 // kde
 #include <kdebug.h>
-#include <kfiledialog.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
 
-#include "kopetemessage.h"
-#include "msncontact.h"
 #include "msnaccount.h"
 
 MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account )

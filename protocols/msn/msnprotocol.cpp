@@ -17,23 +17,12 @@
     *************************************************************************
 */
 
-#include <qapplication.h>
-#include <qtimer.h>
 
-#include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kiconloader.h>
-#include <klineeditdlg.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kpopupmenu.h>
 #include <kconfig.h>
-#include <kglobal.h>
 
-#include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
-#include "kopetemetacontact.h"
 
 #include "msnaddcontactpage.h"
 #include "msneditaccountwidget.h"

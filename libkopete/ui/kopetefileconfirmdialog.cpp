@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-#include <qdir.h>
 #include <qtextedit.h>
 
 #include <klineedit.h>
@@ -27,7 +26,6 @@
 #include "fileconfirmbase.h"
 #include "kopetefileconfirmdialog.h"
 
-#include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &info,const QString& description,QWidget *parent, const char *name )

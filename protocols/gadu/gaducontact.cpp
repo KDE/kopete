@@ -1,16 +1,10 @@
-#include <kpopupmenu.h>
-#include <kaction.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kmessagebox.h>
 
-#include <qstring.h>
 
 #include "kopetemessagemanagerfactory.h"
-#include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
-#include "kopeteaway.h"
 #include "userinfodialog.h"
 using Kopete::UserInfoDialog;
 

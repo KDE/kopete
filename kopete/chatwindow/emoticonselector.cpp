@@ -26,7 +26,6 @@
 #include <qpixmap.h>
 #include <qlayout.h>
 #include <qobjectlist.h>
-#include <qmap.h>
 #include <qtooltip.h>
 
 #include <kdebug.h>

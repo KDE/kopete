@@ -19,8 +19,7 @@
 #include <libxml/parser.h>
 
 #include <kdebug.h>
-#include <kopetexsl.h>
-#include <qregexp.h>
+#include "kopetexsl.h"
 #include <qsignal.h>
 
 /**

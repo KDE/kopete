@@ -19,14 +19,10 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
-#include <qimage.h>
 #include <qlabel.h>
-#include <qpixmap.h>
 #include <qvbox.h>
 
 #include <kdebug.h>
-#include <kiconeffect.h>
-#include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <klistview.h>
 #include <klocale.h>
@@ -34,7 +30,6 @@
 
 #include "kopetecontactlist.h"
 #include "kopetehistorydialog.h"
-#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"

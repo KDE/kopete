@@ -1,15 +1,9 @@
 #include "gaduaccount.h"
 #include "gadusession.h"
 #include "gaducontact.h"
-#include "gaducommands.h"
 #include "gaduprotocol.h"
 
-#include "kopetecontact.h"
-#include "kopetegroup.h"
-#include "kopeteaway.h"
 #include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "kopetestdaction.h"
 
 #include <kaction.h>
 #include <kconfig.h>

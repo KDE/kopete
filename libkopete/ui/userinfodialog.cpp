@@ -9,10 +9,7 @@
 
 #include <qlabel.h>
 #include <qvbox.h>
-#include <qhbox.h>
 #include <qlayout.h>
-#include <qmap.h>
-#include <qstring.h>
 
 namespace Kopete {
 

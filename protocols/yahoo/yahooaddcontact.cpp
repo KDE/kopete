@@ -19,20 +19,10 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qwidget.h>
 #include <qlayout.h>
-#include <qspinbox.h>
-#include <qcheckbox.h>
 
 // KDE Includes
-#include <kcombobox.h>
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <kiconloader.h>
-#include <klistbox.h>
-#include <klocale.h>
-#include <kurlrequester.h>
 #include <klineedit.h>
 
 // Kopete Includes
@@ -41,9 +31,7 @@
 
 // Local Includes
 #include "yahooadd.h"
-#include "yahooprotocol.h"
 #include "yahooaddcontact.h"
-#include "yahoocontact.h"
 
 // Yahoo Add Contact page
 YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)

@@ -24,8 +24,6 @@
 #include <netinet/in.h> // for ntohl()
 
 #include <qcombobox.h>
-#include <qhostaddress.h>
-#include <qdatetime.h>
 #include <qspinbox.h>
 #include <qtextedit.h>
 
@@ -38,7 +36,6 @@
 
 #include "icqaccount.h"
 #include "icqcontact.h"
-#include "oscarsocket.h"
 #include "icquserinfowidget.h"
 
 ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,

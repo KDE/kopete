@@ -22,19 +22,14 @@
 #include "pluginloader.h"
 
 #include <qapplication.h>
-#include <qdir.h>
 #include <qfile.h>
 #include <qregexp.h>
 
 #include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <knotifyclient.h>
 #include <kparts/componentfactory.h>
 #include <ksimpleconfig.h>
 #include <kstaticdeleter.h>
 #include <kstandarddirs.h>
-#include <kurl.h>
 
 #include "kopeteplugin.h"
 

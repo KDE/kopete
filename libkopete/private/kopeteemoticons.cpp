@@ -23,13 +23,11 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qregexp.h>
-#include <qstringlist.h>
 #include <qstylesheet.h>
 #include <qimage.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
 
 KopeteEmoticons *KopeteEmoticons::s_instance = 0L;

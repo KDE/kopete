@@ -15,23 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qpainter.h>
-#include <qpixmap.h>
-#include <qfontmetrics.h>
 
 #include <klocale.h>
-#include <kpushbutton.h>
-#include <kdialogbase.h>
 #include <kstaticdeleter.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
 #include <kio/observer.h>
 
-#include "kopetecontactlist.h"
-#include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
-#include "kopetecontact.h"
 
 #include "kopetetransfermanager.h"
 #include "kopetefileconfirmdialog.h"

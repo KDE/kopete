@@ -17,7 +17,6 @@
 
 #include <kdebug.h>
 
-#include "types.h"
 #include "jabbergroupchat.h"
 
 JabberGroupChat::JabberGroupChat(Jabber::Jid jid, QStringList groups,

@@ -18,16 +18,13 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <knotifyclient.h>
-#include <kwin.h>
 
 #include "kopeteprefs.h"
 #include "kopeteaccount.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "chatview.h"
 #include "kopeteemailwindow.h"
-#include "kopeteevent.h"
 #include "systemtray.h"
 
 #include "kopeteviewmanager.h"

@@ -17,10 +17,7 @@
 
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
-#include "kopeteplugin.h"
 
-#include <qregexp.h>
-#include <qstylesheet.h>
 
 #include <klocale.h>
 

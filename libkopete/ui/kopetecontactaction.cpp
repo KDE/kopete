@@ -17,9 +17,7 @@
 
 #include "kopetecontactaction.h"
 
-#include "kopetecontact.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
 
 KopeteContactAction::KopeteContactAction( KopeteContact *contact, const QObject *receiver,
 	const char *slot, KAction *parent )

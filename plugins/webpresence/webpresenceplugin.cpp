@@ -18,22 +18,11 @@
  */
 
 #include <qtimer.h>
-#include <qptrlist.h>
-#include <qfile.h>
-#include <qdatetime.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <ktempfile.h>
-#include <kio/job.h>
-#include <knotifyclient.h>
-#include <kaction.h>
-#include <kstdguiitem.h>
-#include <kstandarddirs.h>
-#include <kglobal.h>
-#include <klocale.h>
 
-#include "config.h"
 #ifdef HAVE_XSLT
 #include <libxml/xmlmemory.h>
 #include <libxml/debugXML.h>
@@ -49,10 +38,8 @@
 #include <libxslt/xsltutils.h>
 #endif
 
-#include "kopetecontactlist.h"
 #include "pluginloader.h"
 #include "kopeteprotocol.h"
-#include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 

@@ -25,11 +25,8 @@
 
 #include "oscaraccount.h"
 
-#include <qdatetime.h>
-#include <qtimer.h>
 #include <qtextcodec.h>
 
-#include <kfileitem.h>
 #include <kdebug.h>
 #include <klocale.h>
 

@@ -15,9 +15,7 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
 
-#include <kaction.h>
 #include <kdebug.h>
 #include <klineeditdlg.h>
 #include <klocale.h>
@@ -26,12 +24,10 @@
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetemetacontact.h"
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
 #include "msnmessagemanager.h"
-#include "msnprotocol.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 

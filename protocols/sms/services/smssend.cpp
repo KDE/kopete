@@ -4,16 +4,11 @@
 #include "smsprotocol.h"
 #include "kopeteaccount.h"
 
-#include <qdir.h>
 #include <qcombobox.h>
 #include <qvgroupbox.h>
-#include <qpushbutton.h>
-#include <qinputdialog.h>
-#include <qlayout.h>
 #include <qlabel.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <kfile.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
 

@@ -19,35 +19,21 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qcursor.h>
-#include <qprocess.h>
-#include <qfile.h>
-#include <qregexp.h>
 
 // KDE Includes
-#include <kaction.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kiconloader.h>
-#include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
-#include <kpushbutton.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <kstdguiitem.h>
 
 // Kopete Includes
-#include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 
 // Local Includes
 #include "wpprotocol.h"
 #include "wpdebug.h"
-#include "wpcontact.h"
-#include "wpaddcontact.h"
-#include "wppreferences.h"
 #include "wpeditaccount.h"
 #include "wpaccount.h"
 

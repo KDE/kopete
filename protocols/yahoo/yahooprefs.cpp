@@ -26,14 +26,12 @@
 // Kopete Includes
 
 // QT Includes
-#include <qwidget.h>
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
 // KDE Includes
 #include <kconfig.h>
-#include <klineedit.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>

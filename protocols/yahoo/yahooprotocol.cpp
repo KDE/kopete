@@ -16,39 +16,20 @@
 */
 
 /* QT Includes */
-#include <qapplication.h>
-#include <qcursor.h>
-#include <qwidget.h>
-#include <qobject.h>
-#include <qtimer.h>
 
 /* KDE Includes */
 #include <kdebug.h>
-#include <kaction.h>
-#include <kpopupmenu.h>
 #include <kgenericfactory.h>
-#include <kiconloader.h>
-#include <kstandarddirs.h>
 #include <ksimpleconfig.h>
-#include <klocale.h>
-#include <kmessagebox.h>
 
 /* Local Includes */
-#include "yahoodebug.h"
-#include "yahoostatus.h"
 #include "yahooprotocol.h"
 #include "yahooaccount.h"
-#include "yahoocontact.h"
 #include "yahooaddcontact.h"
 #include "yahooeditaccount.h"
 
 /* Kopete Includes */
 #include "kopeteaccountmanager.h"
-#include "kopetecontact.h"
-#include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
 

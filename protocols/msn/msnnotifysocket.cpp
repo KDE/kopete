@@ -22,17 +22,14 @@
 
 #include "msnnotifysocket.h"
 #include "msndispatchsocket.h"
-#include "msnprotocol.h"
 #include "msncontact.h"
 #include "msnpreferences.h"
 #include "msnaccount.h"
 
 #include <qregexp.h>
 
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kdeversion.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kmdcodec.h>
 #include <kmessagebox.h>

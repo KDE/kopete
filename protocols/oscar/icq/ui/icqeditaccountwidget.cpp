@@ -2,17 +2,14 @@
 #include "icqeditaccountui.h"
 
 #include <qlayout.h>
-#include <qstring.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-#include <qradiobutton.h>
 
 #include <kdebug.h>
 
 #include "icqprotocol.h"
 #include "icqaccount.h"
-#include "oscarsocket.icq.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)

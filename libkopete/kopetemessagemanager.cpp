@@ -18,21 +18,14 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <knotifyclient.h>
-#include <qregexp.h>
-#include <qmap.h>
-#include <qwidget.h>
-#include <qdatetime.h>
 #include <qapplication.h>
 #include <kglobal.h>
 
-#include "kopeteaway.h"
 #include "kopeteaccount.h"
 #include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
-#include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
 #include "kopetecommandhandler.h"
 #include "kopeteview.h"

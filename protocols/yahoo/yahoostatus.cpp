@@ -15,11 +15,9 @@
     *************************************************************************
 */
 
-#include <qstring.h>
 #include <kdebug.h>
 #include "yahoostatus.h"
 #include "yahooprotocol.h"
-#include "kopeteonlinestatus.h"
 
 YahooStatus::YahooStatus( Status status_ )
 {

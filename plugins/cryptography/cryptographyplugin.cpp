@@ -20,12 +20,9 @@
 
 #include <kdebug.h>
 #include <kaction.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
 
-#include "kopetemessage.h"
 #include "kopetemetacontact.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 
 #include "cryptographyplugin.h"

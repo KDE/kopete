@@ -2,12 +2,8 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <qlineedit.h>
 #include <kdebug.h>
-#include <qlabel.h>
-#include <qgroupbox.h>
 #include <qcheckbox.h>
-#include <knuminput.h>
 #include <klineedit.h>
 #include <gaduprefs.h>
 #include "gadupreferences.h"

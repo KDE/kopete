@@ -18,24 +18,14 @@
 // KDE
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-#include <klineeditdlg.h>
-#include <kmessagebox.h>
-#include <kiconloader.h>
 
 // Kopete
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopetegroup.h"
-#include "kopetemessage.h"
 #include "kopetemessagemanager.h"
-#include "kopeteonlinestatus.h"
 
 // Yahoo
 #include "yahooaccount.h"
-#include "yahooprotocol.h"
 #include "yahoocontact.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)

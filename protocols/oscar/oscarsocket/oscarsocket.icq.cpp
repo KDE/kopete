@@ -17,8 +17,6 @@
 #include "oscarsocket.h"
 #include "oscarsocket.icq.h"
 
-#include "oscaraccount.h"
-#include <qdatetime.h>
 #include <qtimer.h>
 
 #include <kdebug.h>

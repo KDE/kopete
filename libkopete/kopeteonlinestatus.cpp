@@ -18,13 +18,9 @@
 
 #include "kopeteonlinestatus.h"
 
-#include <qapplication.h>
-#include <qstring.h>
 // necessary for renderIcon, remove after!
 #include <qpainter.h>
-#include <qpixmap.h>
 #include <qbitmap.h>
-#include <qmap.h>
 #include "kopeteprotocol.h"
 #include <kiconloader.h>
 #include <kiconeffect.h>

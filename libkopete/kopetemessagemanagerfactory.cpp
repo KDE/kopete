@@ -18,9 +18,6 @@
 
 #include <kapplication.h>
 
-#include "kopetemessagemanager.h"
-#include "kopeteprotocol.h"
-#include "kopetecontact.h"
 
 #include <kdebug.h>
 

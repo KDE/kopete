@@ -19,28 +19,17 @@
 #include <time.h>
 
 #include <qapplication.h>
-#include <qregexp.h>
-#include <qstylesheet.h>
-#include <qtimer.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
 #include <kfiledialog.h>
 
-#include "kopeteaway.h"
-#include "kopeteprotocol.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopetestdaction.h"
 #include "kopetecontactlist.h"
-#include "kopetegroup.h"
-#include "kopeteaccount.h"
 
 #include "aim.h"
-#include "aimbuddylist.h"
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 

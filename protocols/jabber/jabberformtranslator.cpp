@@ -16,7 +16,6 @@
   */
 
 #include <qlabel.h>
-#include <qlineedit.h>
 
 #include <kdebug.h>
 

@@ -19,15 +19,11 @@
     *************************************************************************
 */
 
-#include <qheader.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
 #include <qtabwidget.h>
 
 #include <kdialog.h>
-#include <kglobal.h>
-#include <kiconloader.h>
 #include <klocale.h>
 
 #include "pluginconfig.h"

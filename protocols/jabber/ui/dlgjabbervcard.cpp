@@ -20,15 +20,12 @@
 
 #include <qpushbutton.h>
 #include <qtextedit.h>
-#include <qdom.h>
 
 #include <klineedit.h>
 #include <klocale.h>
 #include <kurllabel.h>
 
 #include "tasks.h"
-#include "types.h"
-#include "vcard.h"
 
 #include "dlgjabbervcard.h"
 

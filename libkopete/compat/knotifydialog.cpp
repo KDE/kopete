@@ -22,32 +22,20 @@
 #include <kapplication.h>
 #include <kaudioplayer.h>
 #include <kcombobox.h>
-#include <kconfig.h>
-#include <kcursor.h>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
-#include <kicontheme.h>
-#include <klineedit.h>
-#include <klocale.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
-#include <knotifydialog.h>
+#include "knotifydialog.h"
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
 #include <kdeversion.h>
 
 #include <qcheckbox.h>
-#include <qgroupbox.h>
 #include <qheader.h>
-#include <qlabel.h>
-#include <qlistview.h>
 #include <qlayout.h>
-#include <qptrlist.h>
-#include <qpushbutton.h>
-#include <qstring.h>
 #include <qtooltip.h>
-#include <qtimer.h>
 #include <qvbox.h>
 
 #if KDE_VERSION < 310

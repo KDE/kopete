@@ -15,25 +15,19 @@
 */
 
 #include <kdebug.h>
-#include <klocale.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <klineeditdlg.h>
 #include <kmessagebox.h>
-#include <kiconloader.h>
 
 #include "msnaccount.h"
-#include "msnprotocol.h"
 #include "msncontact.h"
 #include "msnnotifysocket.h"
 #include "msnmessagemanager.h"
 #include "msnpreferences.h"
 #include "newuserimpl.h"
-#include "kopetegroup.h"
-#include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"

@@ -23,27 +23,13 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#include <qdir.h>
-#include <qfile.h>
 #include <qlayout.h>
-#include <qvariant.h>
-#include <qregexp.h>
-#include <qpainter.h>
-#include <qvbox.h>
-#include <qclipboard.h>
-#include <qkeysequence.h>
-#include <qtextcodec.h>
 #include <qlabel.h>
 
-#include <kio/netaccess.h>
 #include <klistview.h>
-#include <kurl.h>
 #include <klocale.h>
 #include <qcheckbox.h>
-#include <kfiledialog.h>
 #include <kprocess.h>
-#include <kshortcut.h>
-#include <kstdaccel.h>
 #include <kiconloader.h>
 
 #include "kgpgselkey.h"

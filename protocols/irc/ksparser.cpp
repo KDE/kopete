@@ -23,9 +23,6 @@ Modified by Jason Keirstead <jason@keirstead.org>
 
 // $Id$
 
-#include <qstring.h>
-#include <qcolor.h>
-#include <qregexp.h>
 #include <knotifyclient.h>
 #include <kdebug.h>
 #include "ksparser.h"
