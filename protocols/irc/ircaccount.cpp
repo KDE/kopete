@@ -356,6 +356,8 @@ void IRCAccount::unregisterUser( const QString &name )
 void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
+	mNickName = newnick;
+	mySelf()->setNickName( mNickName );
 	/*myself()->manager()->setDisplayName( static_cast<IRCUserContact *>( myself() )->caption() );*/
 }
 

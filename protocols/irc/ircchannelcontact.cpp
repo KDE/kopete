@@ -175,6 +175,7 @@ void IRCChannelContact::slotAddNicknames()
 
 		manager()->addContact( static_cast<KopeteContact*>(user) , true);
 	}
+
 	QTimer::singleShot(0, this, SLOT( slotAddNicknames() ) );
 }
 
@@ -494,15 +495,9 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 
 const QString IRCChannelContact::caption() const
 {
-	QString cap;
-	if ( m_isConnected )
-	{
-		cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(m_engine->host());
+	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(m_engine->host());
 		if( !mTopic.isNull() && !mTopic.isEmpty() )
 			cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
-	}
-	else
-		cap = QString::null;
 
 	return cap;
 }
