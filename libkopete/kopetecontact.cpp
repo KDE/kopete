@@ -394,12 +394,29 @@ void KopeteContact::slotMoveDialogOkClicked()
 void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
 	KopeteMetaContact *old = d->metaContact;
-	d->metaContact->removeContact( this );
-	m->addContact( this );
-
 	KopeteGroupList newGroups = m->groups();
-	KopeteGroupList oldGroups = d->metaContact->groups();
-	KopeteGroupList currentGroups = groups();
+
+	if( old )
+	{
+		d->metaContact->removeContact( this );
+		KopeteGroupList oldGroups = d->metaContact->groups();
+		disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+
+		for( KopeteGroup *group = oldGroups.first(); group; group = oldGroups.next() )
+		{
+			if( oldGroups.contains( group ) && !newGroups.contains( group ) )
+				removeFromGroup( group );
+		}
+
+		if( old->contacts().isEmpty() )
+		{
+			//Delete an empty MC after a move
+			KopeteContactList::contactList()->removeMetaContact( old );
+		}
+	}
+
+	m->addContact( this );
 
 	// Reparent the contact
 	d->metaContact->removeChild( this );
@@ -407,33 +424,20 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	d->metaContact = m;
 
 	// Reconnect signals to the new meta contact
-	disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
-		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+
 	connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
 	// Sync groups
 	for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
 	{
-		if( !currentGroups.contains( group ) )
+		if( !groups().contains( group ) )
 			addToGroup( group );
-	}
-
-	for( KopeteGroup *group = oldGroups.first(); group; group = oldGroups.next() )
-	{
-		if( currentGroups.contains( group ) && !newGroups.contains( group ) )
-			removeFromGroup( group );
 	}
 
 	//the aboutToSave signal is disconnected from "old", but it still contains
 	//cached data in it, then, i serialize the old contact for removing old data
 	protocol()->slotMetaContactAboutToSave( old );
-
-	if( old->contacts().isEmpty() )
-	{
-		//Delete an empty MC after a move
-		KopeteContactList::contactList()->removeMetaContact( old );
-	}
 }
 
 MetaContactListViewItem::MetaContactListViewItem( KopeteMetaContact *m, QListView *p )
