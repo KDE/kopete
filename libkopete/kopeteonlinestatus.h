@@ -288,6 +288,7 @@ namespace Global
 	OnlineStatusIconCache *onlineStatusIconCache();
 }
 
+/** Caches icons for KopeteOnlineStatus **/
 class OnlineStatusIconCache : public QObject
 {
 	Q_OBJECT
@@ -304,7 +305,7 @@ private slots:
 
 private:
 	QPixmap* renderIcon( const KopeteOnlineStatus &statusFor, const QString& baseicon, int size, QColor color, bool idle = false) const;
-	
+
 	friend OnlineStatusIconCache *Global::onlineStatusIconCache();
 	class Private;
 	Private *d;

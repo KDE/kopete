@@ -24,22 +24,57 @@
 class AccountSelectorPrivate;
 class QListViewItem;
 /**
+ * \brief widget to select an account, based on KListView
  * @author Stefan Gehn <metz AT gehn.net>
  */
 class AccountSelector : public QWidget
 {
 Q_OBJECT
 
-public:
-	AccountSelector(QWidget *parent=0, const char *name=0);
-	AccountSelector(KopeteProtocol *proto, QWidget *parent=0, const char *name=0);
-	~AccountSelector();
+	public:
+		/**
+		 * Constructor.
+		 *
+		 * The parameters @p parent and @p name are handled by
+		 * KListView.
+		 */
+		AccountSelector(QWidget *parent=0, const char *name=0);
 
-	void setSelected(KopeteAccount *account);
-	bool isSelected(KopeteAccount *account);
-	KopeteAccount *selectedItem();
+		/**
+		 * Constructor for a list of accounts for one protocol only
+		 *
+		 * The parameters @p parent and @p name are handled by
+		 * KListView. @p proto defines the protocol whose accounts are
+		 * shown in the list
+		 */
+		AccountSelector(KopeteProtocol *proto, QWidget *parent=0, const char *name=0);
+
+		/**
+		 * Destructor.
+		 */
+		~AccountSelector();
+
+		/**
+		 * Select @p account in the list, in case it's part of the list
+		 */
+		void setSelected(KopeteAccount *account);
+
+		/**
+		 * Returns true in case @p account is in the list and
+		 * the currently selected item, false otherwise
+		 */
+		bool isSelected(KopeteAccount *account);
+
+		/**
+		 * @return the currently selected account.
+		 */
+		KopeteAccount *selectedItem();
 
 	signals:
+		/**
+		 * Emitted whenever the selection changed, @p acc is a pointer to the
+		 * newly selected account
+		 */
 		void selectionChanged(KopeteAccount *acc);
 
 	private slots:

@@ -39,8 +39,6 @@ can be put in an <img src="%1"> in any rich text to give the appropriate icon. S
 MimeSourceFactory.
 
 
-
-
  KopeteEmoticon
 ================
 
@@ -65,8 +63,6 @@ and the KOS for every protocols)
 Add a way to register automaticaly KOS,  KopeteAccount should creates itself his menu in the systemtray.
 
 
-
-
  KopeteAccount
 ===============
 KopeteAccount::password should be split in two method: KopeteAccount::password which return the
@@ -74,8 +70,8 @@ remembered password if any, but which does not try to ask it to the user.  and g
 acts like the acutal function.
 
 
-
-
+ DCOP
+===============
 The DCOP interface needs to be totally re-done so as to be usefull, and to hopefully not rely on
 display names. Obsolete functions previously used only for DCOP should be removed from KopeteContactList
 where applicable.

@@ -39,17 +39,29 @@ class ContactPropertyTmpl
 		/**
 		 * Constructor only used for empty ContactPropertyTmpl objects
 		 *
-		 * Note: Only useful for the Null object
+		 * Note: Only useful for the null object
 		 **/
 		ContactPropertyTmpl();
 
+		/**
+		 * Constructor
+		 * @param key internal unique key for this template
+		 * @param label a label to show for properties based on this template
+		 * @param icon name of the icon to show for properties based on this template
+		 * @param persistent if true, properties based on this template will be
+		 *  saved to the contactlist
+		 **/
 		ContactPropertyTmpl(const QString &key,
 			const QString &label,
 			const QString &icon = QString::null,
 			bool persistent = false);
 
+		/**
+		 * Copy constructor
+		 **/
 		ContactPropertyTmpl(const ContactPropertyTmpl &other);
 
+		/** Destructor */
 		~ContactPropertyTmpl();
 
 		ContactPropertyTmpl &operator=(const ContactPropertyTmpl &other);
@@ -58,8 +70,8 @@ class ContactPropertyTmpl
 		bool operator!=(const ContactPropertyTmpl &other) const;
 
 		/**
-		 * Getter for the key properties based on this template will be
-		 * stored with
+		 * Getter for the unique key. Properties based on this template will be
+		 * stored with this key
 		 **/
 		const QString &key() const;
 
@@ -74,11 +86,14 @@ class ContactPropertyTmpl
 		const QString &icon() const;
 
 		/**
-		 * Returns true if this property should be saved across Kopete
-		 * sessions, false otherwise.
+		 * Returns true if properties based on this template should
+		 * be saved across Kopete sessions, false otherwise.
 		 **/
 		bool persistent() const;
 
+		/**
+		 * An empty template, check for it using isNull()
+		 */
 		static ContactPropertyTmpl null;
 
 		/**
@@ -86,6 +101,9 @@ class ContactPropertyTmpl
 		 **/
 		bool isNull() const;
 
+		/**
+		 * A Map of QString and ContactPropertyTmpl objects, based on QMap
+		 **/
 		typedef QMap<QString, ContactPropertyTmpl>  Map;
 
 	private:
@@ -96,7 +114,7 @@ class ContactPropertyTmpl
 /**
  * @author Stefan Gehn <metz AT gehn.net>
  *
- * A data container for whatever information kopete or any of its
+ * A data container for whatever information Kopete or any of its
  * plugins want to store for a KopeteContact
  **/
 class ContactProperty
@@ -106,7 +124,7 @@ class ContactProperty
 		/**
 		 * Constructor only used for empty ContactProperty objects
 		 *
-		 * Note: you cannot set label or value later on!
+		 * Note: you cannot set a label or value later on!
 		 **/
 		ContactProperty();
 
@@ -115,6 +133,7 @@ class ContactProperty
 		 **/
 		ContactProperty(const ContactPropertyTmpl &tmpl, const QVariant &value);
 
+		/** Destructor **/
 		~ContactProperty();
 
 		/**

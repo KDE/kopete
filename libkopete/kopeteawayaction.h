@@ -30,13 +30,20 @@
  *
  * @author Jason Keirstead   <jason@keirstead.org>
  */
- 
+
 class KopeteAwayAction : public KSelectAction
 {
 	Q_OBJECT
 	public:
-		KopeteAwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut, const QObject *receiver, const char *slot, QObject *parent, const char *name = 0);
-	
+		/**
+		 * Constructor
+		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
+		 * @p name are all handled by KSelectAction.
+		 **/
+		KopeteAwayAction(const QString &text, const QIconSet &pix,
+			const KShortcut &cut, const QObject *receiver, const char *slot,
+			QObject *parent, const char *name = 0);
+
 	signals:
 		/**
 		* @brief Emits when the user selects an away message

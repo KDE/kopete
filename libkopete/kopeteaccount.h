@@ -46,7 +46,7 @@ struct KopeteAccountPrivate;
  * \li \ref addContactToMetaContact()
  *
  * The accountId is an <b>constant</b> unique id, which represents the login.
- * The @ref myself() contact is one of the most important contacts, which represents 
+ * The @ref myself() contact is one of the most important contacts, which represents
  * the user tied to this account.
  *
  * All account data is automatically saved to @ref KConfig. This includes the
@@ -138,7 +138,7 @@ public:
 
 	/**
 	 * \brief Get the password for this account.
-	 * 
+	 *
 	 * The user will be prompted if for a password if the password is not currently set
 	 * @param error Set this value to true if you previously called password and the
 	 * result was incorrect (the password was wrong). It adds a label in the input
@@ -192,7 +192,7 @@ public:
 
 	/**
 	 * \brief Set the color for this account.
-	 * 
+	 *
 	 * The color will be used to differentiate this account from the other accounts
 	 * Normally, this should be called by Kopete's account config page so you
 	 * don't have to set the color yourself
@@ -255,7 +255,7 @@ public:
 
 	/**
 	 * \brief Read the account's configuration
-	 * 
+	 *
 	 * Uses KConfig to read the configuration for this account
 	 *
 	 * @param configGroup the group in the config file to use.
@@ -270,7 +270,7 @@ public:
 	void writeConfig( const QString &configGroup );
 
 	/**
-	 * @internal
+	 * \internal
 	 * Register a new KopeteContact with the account
 	 * To be called <b>only</b> from @ref KopeteContact constructor
 	 * not from any other class! (Not even a derived class).
@@ -284,7 +284,7 @@ public:
 
 	/**
 	 * Indicates whether or not we should suppress status notifications
-	 * for contacts belonging to this account. 
+	 * for contacts belonging to this account.
 	 * \return true if notifications should not be used, false if
 	 * notifications should be used
 	 */
@@ -292,7 +292,7 @@ public:
 
 protected:
 	/**
-	 * \brief Set the 'myself' contact. 
+	 * \brief Set the 'myself' contact.
 	 *
 	 * This contact HAS to be defined for every  account, because it
 	 * holds the online status of an account!

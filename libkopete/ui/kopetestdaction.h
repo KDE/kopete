@@ -32,67 +32,79 @@ public:
 	/**
 	 * Standard action to start a chat
 	 */
-	static KAction *chat( const QObject *recvr, const char *slot, QObject* parent, const char *name = 0 );
+	static KAction *chat( const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0 );
 	/**
 	 * Standard action to send a single message
 	 */
-	static KAction *sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *sendMessage(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to open a user info dialog
 	 */
-	static KAction *contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *contactInfo(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to open a history dialog or something similar
 	 */
-	static KAction *viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *viewHistory(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to initiate sending a file to a contact
 	 */
-	static KAction *sendFile(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *sendFile(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to change a contacts @ref KopeteMetaContact
 	 */
-	static KAction *changeMetaContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *changeMetaContact(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to add a group
 	 */
-	static KAction *addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *addGroup(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to move a contact into another group
 	 */
-	static KListAction *moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KListAction *moveContact(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to copy a contact to another group
 	 */
-	static KListAction *copyContact( const QObject *recvr, const char *slot, QObject* parent, const char *name = 0 );
+	static KListAction *copyContact( const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0 );
 	/**
 	 * Standard action to delete a contact
 	 */
-	static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *deleteContact(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 	/**
 	 * Standard action to change a contact alias/nickname in your contactlist
 	 */
-	static KAction *changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+	static KAction *changeAlias(const QObject *recvr, const char *slot,
+		QObject* parent, const char *name = 0);
 
 	/**
 	 * Return an action to change the Kopete preferences.
 	 *
 	 * The object has no signal/slot, the prefs are automatically shown
 	 */
-	static KAction *preferences( KActionCollection *parent, const char *name = 0 );
+	static KAction *preferences(KActionCollection *parent, const char *name = 0);
 };
 
 /**
  * @internal
  * moc only sees signals/slots if they're defined in the .h
- * This is a private class :(
+ * This is a private class
  */
 class KopeteGroupListAction : public KListAction
 {
 	Q_OBJECT
 
 public:
-	KopeteGroupListAction( const QString &, const QString &, const KShortcut &, const QObject *, const char *, QObject *, const char * );
+	KopeteGroupListAction( const QString &, const QString &, const KShortcut &,
+		const QObject *, const char *, QObject *, const char * );
 	~KopeteGroupListAction();
 
 protected slots:
@@ -121,6 +133,4 @@ private:
 };
 
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-

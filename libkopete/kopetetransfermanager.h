@@ -4,7 +4,7 @@
     Copyright (c) 2002-2003 by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2002-2003 by Richard Smith <kopete@metafoo.co.uk>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -142,17 +142,29 @@ public:
 		Refused,
 		Other
 	};
+
+	/**
+	 * Constructor
+	 */
 	KopeteTransfer( const KopeteFileTransferInfo &, const QString &localFile, bool showProgressInfo = true);
+
+	/**
+	 * Constructor
+	 */
 	KopeteTransfer( const KopeteFileTransferInfo &, const KopeteContact *toUser, bool showProgressInfo = true);
+
+	/**
+	 * Destructor
+	 */
 	~KopeteTransfer();
 
 	/** @brief Get the info for this file transfer */
 	const KopeteFileTransferInfo &info() const { return mInfo; }
 
 	/**
-	 * Deprecated! Use @ref slotError instead.
+	 * Use @ref slotError instead.
 	 */
-	void setError(KopeteTransferError error);
+	void setError(KopeteTransferError error) KDE_DEPRECATED;
 
 	/**
 	 * Retrieve a URL indicating where the file is being copied from.
@@ -160,6 +172,7 @@ public:
 	 * refers to a real file being transferred.
 	 */
 	KURL sourceURL();
+
 	/**
 	 * Retrieve a URL indicating where the file is being copied to.
 	 * See @ref sourceURL
@@ -188,9 +201,9 @@ public slots:
 
 signals:
 	/**
-	 * Deprecated; use result() and check error() for ERR_USER_CANCELLED
+	 * Use result() and check error() for ERR_USER_CANCELLED
 	 */
-	void transferCanceled();
+	void transferCanceled() KDE_DEPRECATED;
 
 private:
 	void init( const KURL &, bool );
@@ -206,6 +219,4 @@ private slots:
 };
 
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -56,14 +56,14 @@ class KopeteCommandHandler : public QObject
 		static KopeteCommandHandler *commandHandler();
 
 		/**
-		 * \brief Register a command with the command handler. 
+		 * \brief Register a command with the command handler.
 		 *
 		 * Command matching is case insensitive. All commands are registered,
-		 * regardless of whether  or not they are already handled by another 
-		 * handler. This is so that if the first plugin is unloaded, the next 
+		 * regardless of whether  or not they are already handled by another
+		 * handler. This is so that if the first plugin is unloaded, the next
 		 * handler in the sequence will handle the command. However, there are
-		 * certain commands which are reserved (internally handled by the 
-		 * KopeteCommandHandler). These commands can also be overridden by 
+		 * certain commands which are reserved (internally handled by the
+		 * KopeteCommandHandler). These commands can also be overridden by
 		 * registering a new duplicate command.
 		 *
 		 * @param parent The plugin who owns this command
@@ -73,6 +73,10 @@ class KopeteCommandHandler : public QObject
 		 *   pointer to the manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help \<command\>
+		 * @param minArgs the minimum number of arguments for this command
+		 * @param maxArgs the maximum number of arguments this command takes
+		 * @param cut a default keyboard shortcut
+		 * @param pix icon name, the icon will be shown in menus
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 			const QString &help = QString::null, uint minArgs = 0, int maxArgs = -1,
@@ -88,16 +92,28 @@ class KopeteCommandHandler : public QObject
 		 *    followed by any other arguments. The variables %1, %2... %9 will be substituted
 		 *    with the arguments passed into the alias. The variable %s will be substituted with
 		 *    the entire argument string
+		 * @param help An optional help string to be shown when the user uses
+		 *   /help \<command\>
+		 * @param minArgs the minimum number of arguments for this command
+		 * @param maxArgs the maximum number of arguments this command takes
+		 * @param cut a default keyboard shortcut
+		 * @param pix icon name, the icon will be shown in menus
 		 */
-		void registerAlias( QObject *parent, const QString &alias, const QString &formatString,
-			const QString &help = QString::null, CommandType = SystemAlias, uint minArgs = 0,
-			int maxArgs = -1, const KShortcut &cut = 0, const QString &pix = QString::null );
+		void registerAlias( QObject *parent,
+			const QString &alias,
+			const QString &formatString,
+			const QString &help = QString::null,
+			CommandType = SystemAlias,
+			uint minArgs = 0,
+			int maxArgs = -1,
+			const KShortcut &cut = 0,
+			const QString &pix = QString::null );
 
 		/**
 		 * \brief Unregister a command.
 		 *
 		 * When a plugin unloads, all commands are automaticlly unregistered and deleted.
-		 * This function should only be called in the case of a plugin which loads and 
+		 * This function should only be called in the case of a plugin which loads and
 		 * unloads commands dynamically.
 		 *
 		 * @param parent The plugin who owns this command
@@ -106,7 +122,7 @@ class KopeteCommandHandler : public QObject
 		void unregisterCommand( QObject *parent, const QString &command );
 
 		/**
-		 * \brief Unregister an alias. 
+		 * \brief Unregister an alias.
 		 *
 		 * \see unregisterCommand( QObject *parent, const QString &command )
 		 * @param parent The plugin who owns this alias

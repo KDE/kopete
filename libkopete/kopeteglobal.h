@@ -28,6 +28,8 @@ namespace Kopete
  */
 namespace Global
 {
+	class PropertiesPrivate;
+
 	/**
 	 * \brief Installs one or more kopete emoticon themes from a tarball
 	 * (either .kopete-emoticons or .tar.gz or .tar.bz2)
@@ -49,26 +51,27 @@ namespace Global
 	 * objects for all the properties he wants to set for a KopeteContact,
 	 * everything else is handled behind the scenes.
 	 **/
-	class PropertiesPrivate;
 	class Properties
 	{
 		friend class ContactPropertyTmpl;
 		public:
 			/**
 			 * \brief Singleton accessor for this class.
+			 *
 			 * Use it to access the global list of property-templates or to get
 			 * a reference to one of the common ContactPropertyTmpl objects
 			 */
 			static Properties *self();
 
 			/**
-			 * \brief Return a template with key @p key, if no such template has
+			 * Return a template with defined by @param key, if no such template has
 			 * been registered ContactPropertyTmpl::null will be returned
 			 */
 			const ContactPropertyTmpl &tmpl(const QString &key) const;
 
 			/**
-			 * \brief Return a ready-to-use template for a contact's full name.
+			 * @return a ready-to-use template for a contact's full name.
+			 *
 			 * This is actually no real property, it makes use of
 			 * firstName() and lastName() to assemble an name that consists of
 			 * both name parts
@@ -76,53 +79,53 @@ namespace Global
 			const ContactPropertyTmpl &fullName() const;
 
 			/**
-			 * \brief Return default template for a contact's idle-time
+			 * Return default template for a contact's idle-time
 			 */
 			const ContactPropertyTmpl &idleTime() const;
 			/**
-			 * \brief Return default template for a contact's online-since time
+			 * Return default template for a contact's online-since time
 			 * (i.e. time since he went from offline to online)
 			 */
 			const ContactPropertyTmpl &onlineSince() const;
 			/**
-			 * \brief Return default template for a contact's last-seen time
+			 * @return default template for a contact's last-seen time
 			 */
 			const ContactPropertyTmpl &lastSeen() const;
 			/**
-			 * \brief Return default template for a contact's away-message
+			 * @return default template for a contact's away-message
 			 */
 			const ContactPropertyTmpl &awayMessage() const;
 			/**
-			 * \brief Return default template for a contact's first name
+			 * @return default template for a contact's first name
 			 */
 			const ContactPropertyTmpl &firstName() const;
 			/**
-			 * \brief Return default template for a contact's last name
+			 * @return default template for a contact's last name
 			 */
 			const ContactPropertyTmpl &lastName() const;
 			/**
-			 * \brief Return default template for a contact's email-address
+			 * @return default template for a contact's email-address
 			 */
 			const ContactPropertyTmpl &emailAddress() const;
 			/**
-			 * \brief Return default template for a contact's private phone number
+			 * @return default template for a contact's private phone number
 			 */
 			const ContactPropertyTmpl &privatePhone() const;
 			/**
-			 * \brief Return default template for a contact's private mobile number
+			 * @return default template for a contact's private mobile number
 			 */
 			const ContactPropertyTmpl &privateMobilePhone() const;
 			/**
-			 * \brief Return default template for a contact's work phone number
+			 * @return default template for a contact's work phone number
 			 */
 			const ContactPropertyTmpl &workPhone() const;
 			/**
-			 * \brief Return default template for a contact's work mobile number
+			 * @return default template for a contact's work mobile number
 			 */
 			const ContactPropertyTmpl &workMobilePhone() const;
 
 			/**
-			 * \brief Returns a map of all registered ContactPropertyTmpl object
+			 * @return a map of all registered ContactPropertyTmpl object
 			 */
 			const ContactPropertyTmpl::Map &templateMap() const;
 			/**
