@@ -97,9 +97,9 @@ void JabberEditAccountWidget::reopen ()
 	cbProxyType->setCurrentItem (0);
 	if (proxyType == QString ("HTTPS"))
 		cbProxyType->setCurrentItem (1);
-	else if (proxyType == QString ("SOCKS4"))
+	else if (proxyType == QString ("HTTPPoll"))
 		cbProxyType->setCurrentItem (2);
-	else if (proxyType == QString ("SOCKS5"))
+	else if (proxyType == QString ("SOCKS"))
 		cbProxyType->setCurrentItem (3);
 
 	leProxyName->setText (account()->pluginData (m_protocol, "ProxyName"));
@@ -182,10 +182,10 @@ void JabberEditAccountWidget::writeConfig ()
 		account()->setPluginData (m_protocol, "ProxyType", "HTTPS");
 		break;
 	case 2:
-		account()->setPluginData (m_protocol, "ProxyType", "SOCKS4");
+		account()->setPluginData (m_protocol, "ProxyType", "HTTPPoll");
 		break;
 	case 3:
-		account()->setPluginData (m_protocol, "ProxyType", "SOCKS5");
+		account()->setPluginData (m_protocol, "ProxyType", "SOCKS");
 		break;
 	default:					// this case should never happen, just
 		// implemented for safety
