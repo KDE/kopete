@@ -185,9 +185,13 @@ void JabberContact::slotRemoveThisUser() {
 }
 
 void JabberContact::slotMoveThisUser() {
-    mProtocol->moveUser(userID(), actionContactMove->currentText(), name(), this);
-    mGroup = actionContactMove->currentText();
-	hasLocalGroup = true;
+	if (!(mGroup = actionContactMove->currentText())) {
+		hasLocalGroup = false;
+	}
+	else {
+		hasLocalGroup = true;
+	}
+	mProtocol->moveUser(userID(), mGroup, name(), this);
 }
 
 int JabberContact::importance() const {
@@ -378,7 +382,7 @@ JabberResource *JabberContact::bestResource() {
 }
 
 void JabberContact::slotRemoveFromGroup() {
-	mProtocol->moveUser(userID(), mGroup = "", name(), this);
+	mProtocol->moveUser(userID(), mGroup = QString(""), name(), this);
 	hasLocalGroup = false;
 }
 

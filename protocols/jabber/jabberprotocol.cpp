@@ -355,7 +355,7 @@ void JabberProtocol::moveUser(QString userID, QString group, QString name,
 			      JabberContact *contact)
 {
 	QString localGroup;
-	if (group.isNull()) { 
+	if (group == QString("")) { 
 		kdDebug() << "Jabber plugin: Protocol moving user " << userID << " out of a group." << endl;
 		localGroup = i18n("Unknown");
 	}

@@ -9,7 +9,7 @@
 export DH_COMPAT=3
 
 # Build docs or not?
-export DOXYGEN_BLOWS_ME=1
+export DOXYGEN_BLOWS_ME=0
 
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -g
