@@ -298,10 +298,21 @@ bool IRCContact::isChatting( KopeteMessageManager *avoid ) const
 void IRCContact::slotDeleteContact()
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
+
+	if( manager(false) )
+		delete manager();
+
 	if( !isChatting() )
 	{
 		kdDebug(14120) << k_funcinfo << "will delete " << m_nickName << endl;
 		KopeteContact::slotDeleteContact();
+	}
+	else
+	{
+		metaContact()->removeContact( this );
+		KopeteMetaContact *m = new KopeteMetaContact();
+		m->setTemporary( true );
+		setMetaContact( m );
 	}
 }
 
