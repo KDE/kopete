@@ -19,3 +19,4 @@ TODO for Jabber:
   collide with "rename contact" (change alias) -> disabled for now
 - "Remove Authorization From" in contact popup menu has wrong position
 - support different icons for contacts from servers with broken connections etc.
+- show (i.e. with a QToolTip) the subscription status: both, to, from

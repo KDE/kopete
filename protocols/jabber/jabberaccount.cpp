@@ -866,7 +866,6 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 												   "Selecting Cancel will ignore the request.").
 												  arg (jid.userHost (), 1), i18n ("Authorize Jabber User?"), i18n ("Authorize"), i18n ("Deny")))
 		{
-			Jabber::JT_Presence * task;
 			KopeteMetaContact *mc;
 
 		case KMessageBox::Yes:
@@ -902,17 +901,25 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 		/* Someone else removed us from their roster. */
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] " << jid.userHost () << " deleted auth!" << endl;
 
-		KMessageBox::information (0L,
-								  i18n
-								  ("The Jabber user %1 removed %2's subscription to them. This account will no longer be able to view their online/offline status.").
-								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification"));
-
-		/* FIXME: Do we really want that behavior ? 
-		 * Delete the item from the roster. */
 		Jabber::JT_Roster * task = new Jabber::JT_Roster (jabberClient->rootTask ());
+		switch (KMessageBox::warningYesNo (0L,
+								  i18n
+								  ("The Jabber user %1 removed %2's subscription to them." 
+								   "This account will no longer be able to view their online/offline status."
+								   "\nDo you want to delete the contact?").
+								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification")))
+		{
 
-		task->remove (jid);
-		task->go (true);
+		case KMessageBox::Yes:
+			task->remove (jid);
+			task->go (true);
+			break;
+
+		default:
+			/* We want to leave the contact in our contact list, so do nothing. */
+			break;
+
+		}
 	}
 }
 
