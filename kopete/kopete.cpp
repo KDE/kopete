@@ -4,6 +4,7 @@
     Kopete Instant Messenger Main Class
 
     Copyright (c) 2001-2002  by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2002-2003  by Martijn Klingens         <klingens@kde.org>
 
     Kopete    (c) 2002-2003  by the Kopete developers    <kopete-devel@kde.org>
 
@@ -28,13 +29,13 @@
 #include <kcmdlineargs.h>
 
 #include "kopeteaccount.h"
-#include "kopeteprotocol.h"
-#include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
-#include "kopetewindow.h"
+#include "kopetecontactlist.h"
 #include "kopetepluginmanager.h"
-#include "preferencesdialog.h"
+#include "kopeteprotocol.h"
+#include "kopetestdaction.h"
+#include "kopetewindow.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -219,7 +220,9 @@ void Kopete::slotLoadPlugins()
 		//        nothing at all. - Martijn
 		// FIXME: Possibly we need to influence the showConfigDialog bool based on the
 		//        command line arguments processed below. But how exactly? - Martijn
-		PreferencesDialog::preferencesDialog()->show();
+		KAction *action = KopeteStdAction::preferences( 0L );
+		action->activate();
+		delete action;
 	}
 }
 

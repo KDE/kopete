@@ -24,18 +24,21 @@
 
 #include <kmainwindow.h>
 
-#include <ksettings/dialog.h>
-
 class QHBox;
 class QLabel;
 class QListViewItem;
 
 class KAction;
 class KActionMenu;
-class KSettings::Dialog;
+
 class KGlobalAccel;
 class KSelectAction;
 class KToggleAction;
+
+namespace KSettings
+{
+	class Dialog;
+}
 
 class KopeteContactListView;
 class KopetePlugin;
@@ -164,12 +167,6 @@ public:
 	KopeteSystemTray *tray;
 
 private slots:
-	/**
-	 * Show the prefs dialog. See also the source for a description
-	 * why this is needed.
-	 */
-	void slotShowPreferencesDialog();
-	void slotShowOldPreferencesDialog();
 //	void slotAddAccount();
 	void slotSaveContactList();
 	void slotConfGlobalKeys();
@@ -182,7 +179,6 @@ private:
 	void loadOptions();
 	void saveOptions();
 
-	KSettings::Dialog *m_configDialog;
 	int docked;
 	bool hidden;
 	int deskRight;

@@ -19,35 +19,31 @@
 */
 
 #include "configmodule.h"
-#include "preferencesdialog.h"
 
 #include <qlayout.h>
 
 #include <kdeversion.h>
+#include <kdebug.h>
 #include <kiconloader.h>
+
+#include <stdlib.h>
 
 #if QT_VERSION < 0x030102 && KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 #include <kapplication.h>
 #endif
 
-ConfigModule::ConfigModule(const QString &name, const QString &description, QObject *owner)
-	: QWidget( PreferencesDialog::preferencesDialog()->addPage( name, description ) )
+ConfigModule::ConfigModule(const QString & /* name */, const QString & /* description */, QObject * /* owner */ )
+: QWidget( 0L )
 {
-	if (owner)
-		connect(owner, SIGNAL(destroyed()), parent(), SLOT(deleteLater()));
-	PreferencesDialog::preferencesDialog()->add(this);
-
-	(new QHBoxLayout(parentWidget()))->addWidget(this);
+	kdWarning() << k_funcinfo << "Creating obsolete ConfigModule. This is no longer supported. Fix your plugin." << endl << kdBacktrace() << endl;
+	abort();
 }
 
-ConfigModule::ConfigModule(const QString &name, const QString &description, const QString &pixmap, QObject *owner)
-	: QWidget(PreferencesDialog::preferencesDialog()->addPage(name, description, KGlobal::iconLoader()->loadIcon(pixmap,KIcon::NoGroup, KIcon::SizeMedium)  ))
+ConfigModule::ConfigModule( const QString & /* name */, const QString & /* description */, const QString & /* pixmap */, QObject * /* owner */ )
+: QWidget( 0L )
 {
-	if (owner)
-		connect(owner, SIGNAL(destroyed()), parent(), SLOT(deleteLater()));
-	PreferencesDialog::preferencesDialog()->add(this);
-
-	(new QHBoxLayout(parentWidget()))->addWidget(this);
+	kdWarning() << k_funcinfo << "Creating obsolete ConfigModule. This is no longer supported. Fix your plugin." << endl << kdBacktrace() << endl;
+	abort();
 }
 
 
@@ -62,16 +58,10 @@ ConfigModule::~ConfigModule()
 	// Qt 3.1.2.
 	kapp->sendPostedEvents();
 #endif
-
-	PreferencesDialog::preferencesDialog()->remove(this);
 }
 
 void ConfigModule::activate()
 {
-	PreferencesDialog::preferencesDialog()->showPage(
-		PreferencesDialog::preferencesDialog()->pageIndex(parentWidget()));
-	PreferencesDialog::preferencesDialog()->show();
-	PreferencesDialog::preferencesDialog()->raise();
 }
 
 #include "configmodule.moc"

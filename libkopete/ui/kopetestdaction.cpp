@@ -16,20 +16,28 @@
     *************************************************************************
 */
 
-#include <klocale.h>
-#include <kdebug.h>
-
 #include "kopetestdaction.h"
+
+#include <qapplication.h>
+
+#include <kdebug.h>
+#include <kdeversion.h>
+#include <kguiitem.h>
+#include <klocale.h>
+#include <ksettings/dialog.h>
+#include <kstdaction.h>
+#include <kstdguiitem.h>
+
 #include "kopetecontactlist.h"
 
-/** KopeteGroupList **/
-KopeteGroupListAction::KopeteGroupListAction(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
-                : KListAction(text, pix, cut, parent, name)
+KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
+	const char *slot, QObject *parent, const char *name )
+: KListAction( text, pix, cut, parent, name )
 {
 	connect( this, SIGNAL( activated() ), receiver, slot );
 
-	connect(KopeteContactList::contactList(), SIGNAL(groupAdded( KopeteGroup *)), this, SLOT(slotUpdateList()));
-	connect(KopeteContactList::contactList(), SIGNAL(groupRemoved( KopeteGroup *)), this, SLOT(slotUpdateList()));
+	connect( KopeteContactList::contactList(), SIGNAL( groupAdded( KopeteGroup * ) ), this, SLOT( slotUpdateList() ) );
+	connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ), this, SLOT( slotUpdateList() ) );
 	slotUpdateList();
 }
 
@@ -67,6 +75,39 @@ void KopeteGroupListAction::slotUpdateList()
 	}
 
 	setItems( groupList );
+}
+
+KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
+
+KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
+// FIXME: Pending kdelibs change, uncomment when it's in - Martijn
+//#if KDE_IS_VERSION( 3, 1, 90 )
+//: KAction( KStdGuiItem::preferences(), 0, 0, 0, parent, name )
+//#else
+: KAction( KGuiItem( i18n( "Translators: No translation needed for KDE 3.2, it's only used in 3.1", "&Configure Kopete..." ),
+	QString::fromLatin1( "configure" ) ), 0, 0, 0, parent, name )
+//#endif
+{
+	connect( this, SIGNAL( activated() ), this, SLOT( slotShowPreferences() ) );
+}
+
+KopetePreferencesAction::~KopetePreferencesAction()
+{
+}
+
+void KopetePreferencesAction::slotShowPreferences()
+{
+	kdDebug() << k_funcinfo << endl;
+
+	// FIXME: Use static deleter - Martijn
+	if ( !s_settingsDialog )
+		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, qApp->mainWidget() );
+	s_settingsDialog->show();
+}
+
+KAction* KopeteStdAction::preferences( KActionCollection *parent, const char *name )
+{
+	return new KopetePreferencesAction( parent, name );
 }
 
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot, QObject* parent, const char *name )

@@ -41,20 +41,19 @@
 #include "addcontactwizard.h"
 #include "kopete.h"
 #include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccountstatusbaricon.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
-#include "kopeteaccountmanager.h"
+#include "kopeteglobalawaydialog.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopeteglobalawaydialog.h"
-#include "kopetepluginmanager.h"
-#include "preferencesdialog.h"
-#include "systemtray.h"
-#include "kopeteaccountstatusbaricon.h"
 #include "kopeteprotocolstatusbaricon.h"
-
+#include "kopetestdaction.h"
+#include "systemtray.h"
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
@@ -68,8 +67,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setSpacing( 2 );
 	m_statusBarWidget->setMargin( 2 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
-
-	m_configDialog = 0L;
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 
@@ -144,10 +141,7 @@ void KopeteWindow::initActions()
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
-	actionPrefs = KStdAction::preferences( this, SLOT( slotShowPreferencesDialog() ),
-		actionCollection(), "settings_prefs" );
-	actionPrefs = KStdAction::preferences( this, SLOT( slotShowOldPreferencesDialog() ),
-		actionCollection(), "settings_old_prefs" );
+	actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
 	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							this, SLOT(slotSaveContactList()),
@@ -654,25 +648,6 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 		menu->popupMenu()->exec( p );
 		delete menu;
 	}
-}
-
-void KopeteWindow::slotShowPreferencesDialog()
-{
-	if ( !m_configDialog )
-		m_configDialog = new KSettings::Dialog( KSettings::Dialog::Static, this );
-	m_configDialog->show();
-}
-
-void KopeteWindow::slotShowOldPreferencesDialog()
-{
-	// Although show() itself is a slot too we can't connect actions to it
-	// from the KopeteWindow constructor, because we cannot access the
-	// preferences dialog there yet.
-	// If we did, qApp->mainWidget would still be 0L, and the dialog would
-	// get no parent and wouldn't get deleted. In itself not that bad on
-	// exit, but the KJanusWidget can't handle it properly and will cause
-	// crashes.
-	PreferencesDialog::preferencesDialog()->show();
 }
 
 void KopeteWindow::slotSaveContactList()

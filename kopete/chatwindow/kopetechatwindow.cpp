@@ -38,28 +38,21 @@
 #include <kpushbutton.h>
 #include <ktabwidget.h>
 
-#include "kopeteprotocol.h"
-#include "kopeteprefs.h"
-#include "kopetepluginmanager.h"
-#include "kopetemetacontact.h"
-#include "preferencesdialog.h"
-
-#include "kopetegroup.h"
-#include "kopetechatwindow.h"
-#include "kopetemessagemanager.h"
-#include "kopeteviewmanager.h"
 #include "chatview.h"
-
-//#include "emoticonselector.h"
+#include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
-
-
-
+#include "kopetegroup.h"
+#include "kopetemessagemanager.h"
+#include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
+#include "kopeteprefs.h"
+#include "kopeteprotocol.h"
+#include "kopetestdaction.h"
+#include "kopeteviewmanager.h"
 
 #if QT_VERSION >= 0x030200
 	#include <qtoolbutton.h>
 #endif
-
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
@@ -435,8 +428,7 @@ void KopeteChatWindow::initActions(void)
 	// add configure key bindings menu item
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), coll);
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
-	KStdAction::preferences( PreferencesDialog::preferencesDialog() , SLOT( show() ), coll );
-
+	KopeteStdAction::preferences( coll );
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
