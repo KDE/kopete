@@ -279,6 +279,8 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 		else
 			connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
+
+		slotUpdateDisplayName();
 	}
 	d->isEmpty = false;
 }
@@ -306,6 +308,8 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		else
 			disconnect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
+
+		slotUpdateDisplayName();
 	}
 
 	d->contactStatus.remove( c );
