@@ -22,6 +22,7 @@ class RequestTask : public Task
 Q_OBJECT
 	public:
 		RequestTask( Task *parent );
+		bool take( Transfer * transfer );
 	protected:
 		bool forMe( Transfer * transfer ) const;
 		void setTransfer( Transfer * transfer );

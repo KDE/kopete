@@ -35,4 +35,15 @@ void RequestTask::setTransfer( Transfer * transfer )
 	Task::setTransfer( transfer );
 }
 
+bool RequestTask::take( Transfer * transfer )
+{
+	if ( forMe( transfer ) )
+	{
+		qDebug( "RequestTask::take() - Default take() Accepting transaction ack, taking no further action" );
+		return true;
+	}
+	else
+		return false;
+}
+
 #include "requesttask.moc"
