@@ -122,7 +122,7 @@ void KIRC::slotReadyRead()
 		else
 			line = rawline;
 
-		line.replace( *mRemoveLinefeeds, QString::null );
+		line.replace( *mRemoveLinefeeds, QString::fromLatin1("") );
 		QString number = line.mid((line.find(' ', 0, false)+1), 3);
 		int commandIndex = line.find(' ', 0, false);
 		QString command = line.section(' ', 1, 1);

@@ -109,6 +109,7 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 
 void IRCChannelContact::slotConnectedToServer()
 {
+	kdDebug(14120) << k_funcinfo << endl;
 	setOnlineStatus( IRCProtocol::IRCChannelOnline() );
 }
 

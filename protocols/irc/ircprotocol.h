@@ -57,7 +57,7 @@ public:
 
 	virtual KopeteAccount* createNewAccount(const QString &accountId);
 
-	/*
+	/**
 	 * Returns a pointer to the KSParser. The KSParser changes IRC color codes into HTML
 	 * for use in KopeteMessage.
 	 */
@@ -74,8 +74,6 @@ public:
 private:
 	/** FIXME: Do something with this when Account support is added!!!!!!!! */
 	IRCAccount *account;
-
-	QMap<QString,IRCAccount*> mAccountMap;
 
 	static IRCProtocol *s_protocol;
 

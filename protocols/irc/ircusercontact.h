@@ -33,7 +33,7 @@ class QTimer;
  * @author Jason Keirstead <jason@keirstead.org
  *
  * This class is the @ref KopeteContact object representing IRC Users, not channels.
- * It is derrived from IRCContact where much of its functionaolity is shared with @ref IRCChannelContact.
+ * It is derrived from IRCContact where much of its functionality is shared with @ref IRCChannelContact.
  */
 class IRCUserContact : public IRCContact
 {
@@ -44,14 +44,14 @@ class IRCUserContact : public IRCContact
 		IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
 		~IRCUserContact();
 
-		/*
+		/**
 		 * This sets this UserClass of the contact, to either Op, Voiced, or Normal.
 		 * This setting invluences menu options of the KopeteAccount::myself() user, as well
 		 * as alters the user icons in the chat members display.
 		 */
 		void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }
 
-		/*
+		/**
 		 * Returns the user class of this contact
 		 */
 		const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }

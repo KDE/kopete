@@ -45,12 +45,12 @@ public:
 	IRCUserContact *mySelf() { return mMySelf; }
 
 	// Returns the KIRC engine instance
-	KIRC *engine();
+	KIRC *engine() { return mEngine; }
 
 	// Returns the IRCProtocol instance for contacts
 	const IRCProtocol *protocol() { return mProtocol; }
 
-	/*
+	/**
 	 * Attempts to find a IRCChannelContact with the specified name in
 	 * our registered channels list. If one exists, it is returned. If not, a new contact
 	 * is created for it, and either assigned to the passed in @ref KopeteMestaContact
@@ -60,7 +60,7 @@ public:
 	 */
 	IRCChannelContact *findChannel(const QString &name, KopeteMetaContact *m = 0L);
 
-	/*
+	/**
 	 * Attempts to find a IRCUserContact with the specified name in
 	 * our registered users list. If one exists, it is returned. If not, a new contact
 	 * is created for it, and either assigned to the passed in @ref KopeteMestaContact
@@ -70,7 +70,7 @@ public:
 	 */
 	IRCUserContact *findUser(const QString &name, KopeteMetaContact *m = 0L);
 
-	/*
+	/**
 	 * Unregisters a channel contact. This function checks the channels conversation
 	 * count (the number of conversations it is taking part in), and if it is 0, it deletes the
 	 * contact and removes it from the registered channels list. Channels in the contact
@@ -78,7 +78,7 @@ public:
 	 */
 	void unregisterChannel(const QString &name);
 
-	/*
+	/**
 	 * Unregisters a user contact. This function checks the users conversation
 	 * count (the number of conversations it is taking part in), and if it is 0, it deletes the
 	 * contact and removes it from the registered channels list. Users in the contact
@@ -86,7 +86,7 @@ public:
 	 */
 	void unregisterUser(const QString &name);
 
-	void addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m);
+	virtual bool addContactToMetaContact( const QString &contact, const QString &displayName, KopeteMetaContact *m);
 
 	virtual KActionMenu *actionMenu();
 
@@ -94,17 +94,16 @@ public:
 
 	virtual void setAway(bool);
 
+	virtual bool isConnected();
+
 public slots:
 	void successfullyChangedNick(const QString &, const QString &);
 	virtual void connect();
 	virtual void disconnect();
 
 private slots:
-	void slotEngineDestroyed();
 	void slotConnectedToServer();
 	void slotConnectionClosed();
-	void slotAccountIdChanged();
-	void slotPasswordChanged();
 	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 
 private:

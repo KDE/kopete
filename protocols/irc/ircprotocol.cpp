@@ -112,12 +112,7 @@ EditAccountWidget *IRCProtocol::createEditAccountWidget(KopeteAccount *account, 
 
 KopeteAccount *IRCProtocol::createNewAccount(const QString &accountId)
 {
-	kdDebug(14120) << k_funcinfo << endl;
-
-	IRCAccount *id = new IRCAccount( accountId, this );
-	mAccountMap[ accountId ] = id;
-
-	return id;
+	return new IRCAccount( accountId, this );
 }
 
 void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
@@ -127,29 +122,15 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
-	QStringList accounts  = QStringList::split( ",", serializedData[ "accounts" ] );
 
 	if( displayName.isEmpty() )
 		displayName = contactId;
 
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	if( !accounts.isEmpty() )
-	{
-		for( uint i=0 ; i<accounts.count(); i++ )
-		{
-			QString account = accounts[i];
-			if( mAccountMap.contains( account ) )
-				mAccountMap[ account ]->addContact( contactId, displayName, metaContact );
-			else if( mAccountMap.count() > 0 )
-				mAccountMap.begin().data()->addContact( contactId, displayName, metaContact );
-		}
-	}
-	else if( mAccountMap.count() > 0 )
-	{
-		//This guy does not have an account. Must be old data.
-		//Just add him to the first server we have, which would be the default server if
-		//the migration code was run at the beginning
-		mAccountMap.begin().data()->addContact( contactId, displayName, metaContact );
-	}
+		accounts[ serializedData[ "accountId" ] ]->addContact( contactId, displayName, metaContact );
+	else
+		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
 }
 
 #include "ircprotocol.moc"

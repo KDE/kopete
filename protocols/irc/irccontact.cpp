@@ -163,6 +163,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 		return false;
 	}
 
+	//No command, so return true to continue processing
 	return true;
 }
 

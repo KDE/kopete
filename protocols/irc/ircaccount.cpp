@@ -36,16 +36,26 @@
 IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : KopeteAccount( (KopeteProtocol*)protocol, accountId )
 {
 	mManager = 0L;
-	mMySelf = 0L;
-	mEngine = 0L;
 	mProtocol = protocol;
+
+	mNickName = accountId.section('@',0,0);
+	QString serverInfo = accountId.section('@',1);
+	mServer = serverInfo.section(':',0,0);
+	mPort = serverInfo.section(':',1).toUInt();
 
 	actionOnline = new KAction ( i18n("Online"), "", 0, this, SLOT(connect()), this );
 	actionOffline =  new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this);
-	QObject::connect( this, SIGNAL(accountIdChanged()), this, SLOT(slotAccountIdChanged()) );
-	QObject::connect( this, SIGNAL(passwordChangeded()), this, SLOT(slotPasswordChanged()) );
 
-	slotAccountIdChanged();
+	mEngine = new KIRC( mServer, mPort );
+	if( rememberPassword() )
+		mEngine->setPassword( getPassword() );
+
+	QObject::connect(mEngine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(successfullyChangedNick(const QString &, const QString &)));
+	QObject::connect(mEngine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
+	QObject::connect(mEngine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
+	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+
+	mMySelf = findUser( mNickName );
 }
 
 IRCAccount::~IRCAccount()
@@ -55,69 +65,6 @@ IRCAccount::~IRCAccount()
 		engine()->quitIRC( i18n("Plugin Unloaded") );
 
 	delete engine();
-}
-
-void IRCAccount::slotAccountIdChanged()
-{
-	mNickName = accountId().section('@',0,0);
-	QString serverInfo = accountId().section('@',1);
-	mServer = serverInfo.section(':',0,0);
-	mPort = serverInfo.section(':',1).toUInt();
-
-	if( !mMySelf )
-		mMySelf = findUser( mNickName );
-
-	bool reConnect = engine()->isLoggedIn();
-
-	if( mServer == engine()->host() && mPort == engine()->port() )
-	{
-		if( mNickName != mMySelf->nickName() )
-			successfullyChangedNick( mMySelf->nickName(), mNickName );
-	}
-	else
-	{
-		if( reConnect )
-			disconnect();
-
-		if( mNickName != mMySelf->nickName() )
-		{
-			unregisterUser( mMySelf->nickName() );
-			mMySelf = findUser( mNickName );
-		}
-
-		delete engine();
-	}
-
-	if( reConnect )
-		connect();
-}
-
-void IRCAccount::slotPasswordChanged()
-{
-	if( !isConnected() )
-		delete engine();
-}
-
-KIRC *IRCAccount::engine()
-{
-	if( !mEngine )
-	{
-		mEngine = new KIRC( mServer, mPort );
-		if( rememberPassword() )
-			mEngine->setPassword( getPassword() );
-
-		QObject::connect(mEngine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(successfullyChangedNick(const QString &, const QString &)));
-		QObject::connect(mEngine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
-		QObject::connect(mEngine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
-		QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
-		QObject::connect(mEngine, SIGNAL(destroyed()), this, SLOT(slotEngineDestroyed()));
-	}
-	return mEngine;
-}
-
-void IRCAccount::slotEngineDestroyed()
-{
-	mEngine = 0L;
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -153,7 +100,6 @@ void IRCAccount::connect()
 void IRCAccount::disconnect()
 {
  	engine()->quitIRC("Kopete IRC 2.0. http://kopete.kde.org");
-	delete engine();
 }
 
 void IRCAccount::setAway(bool)
@@ -161,7 +107,12 @@ void IRCAccount::setAway(bool)
 
 }
 
-void IRCAccount::addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
+bool IRCAccount::isConnected()
+{
+	return (mMySelf->onlineStatus().status() == KopeteOnlineStatus::Online);
+}
+
+bool IRCAccount::addContactToMetaContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
 {
 	IRCContact *c;
 
@@ -190,6 +141,8 @@ void IRCAccount::addContact( const QString &contact, const QString &displayName,
 	}
 	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
+
+	return true;
 }
 
 IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContact *m  )
@@ -273,11 +226,13 @@ void IRCAccount::unregisterUser( const QString &name )
 
 void IRCAccount::slotConnectedToServer()
 {
+	kdDebug(14120) << k_funcinfo << endl;
 	mMySelf->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 }
 
 void IRCAccount::slotConnectionClosed()
 {
+	kdDebug(14120) << k_funcinfo << endl;
 	mMySelf->setOnlineStatus( IRCProtocol::IRCUserOffline() );
 }
 

@@ -34,7 +34,7 @@ class KopeteMessage;
  * @author Jason Keirstead <jason@keirstead.org
  *
  * This class is the @ref KopeteContact object representing IRC Channels, not users.
- * It is derrived from IRCContact where much of its functionaolity is shared with @ref IRCUserContact.
+ * It is derrived from IRCContact where much of its functionality is shared with @ref IRCUserContact.
  */
 class IRCChannelContact : public IRCContact
 {
@@ -44,12 +44,12 @@ class IRCChannelContact : public IRCContact
 		IRCChannelContact(IRCAccount *, const QString &channel, KopeteMetaContact *metac);
 		~IRCChannelContact();
 
-		/*
+		/**
 		 * Returns the current topic for this channel.
 		 */
 		 const QString &topic() const { return mTopic; };
 
-		/*
+		/**
 		 * Returns if a mode is enabled for this channel.
 		 * @param mode The mode you want to check ( 't', 'n', etc. )
 		 * @param value This is a pointer to a QString which is set to
@@ -65,13 +65,13 @@ class IRCChannelContact : public IRCContact
 		virtual const QString caption() const;
 
 	public slots:
-		/*
+		/**
 		 * Sets the topic of this channel
 		 * @param topic The topic you want set
 		 */
 		void setTopic( const QString &topic = QString::null );
 
-		/*
+		/**
 		 * Sets or unsets a mode on this channel
 		 * @param mode The full text of the mode change you want performed
 		 */

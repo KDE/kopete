@@ -47,21 +47,18 @@ class IRCContact : public KopeteContact
 		IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac);
 		~IRCContact();
 
-		// Checks a message for server commands
-		bool processMessage( const KopeteMessage & );
-
-		/*
+		/**
 		 * Sets the nickname of this contact. The nickname is distinct from the displayName
 		 * in case trackNameChanges is disabled.
 		 */
 		void setNickName(const QString &nickname) { mNickName = nickname; }
 
-		/*
-		 * Returns the nickname
+		/**
+		 * Returns the nickname / channel name
 		 */
 		const QString &nickName() const { return mNickName; }
 
-		/*
+		/**
 		 * This function attempts to find the nickname specified within the current chat
 		 * session. Returns a pointer to that IRCUserContact, or 0L if the user does not
 		 * exist in this session. More usefull for channels. Calling IRCChannelContact::locateUser()
@@ -89,9 +86,13 @@ class IRCContact : public KopeteContact
 		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
 
 	protected:
+		/**
+		 * Checks a message for server commands
+		 */
+		bool processMessage( const KopeteMessage & );
+
 		QPtrList<KopeteContact> mContact;
 		QPtrList<KopeteContact> mMyself;
-
 		QMap<QString, whoIsInfo*> mWhoisMap;
 		KopeteMetaContact *mMetaContact;
 		KIRC *mEngine;
