@@ -99,7 +99,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( AIMContact *c, AIMAccount *acc, bool modal
 			userInfoView, SIGNAL(mailClick(const QString&, const QString&)),
 			this, SLOT(slotMailClicked(const QString&, const QString&)));
 		showButton(Cancel, false);
-		setButtonText(Ok, i18n("Close"));
+		setButtonText(Ok, i18n("&Close"));
 		setEscapeButton(Ok);
 		l->addWidget(userInfoView);
 

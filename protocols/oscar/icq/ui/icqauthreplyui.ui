@@ -105,10 +105,7 @@
                                 <cstring>rbGrant</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Grant Authorization</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+G</string>
+                                <string>&amp;Grant authorization</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -119,10 +116,7 @@
                                 <cstring>rbDecline</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Decline Authorization</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
+                                <string>&amp;Decline authorization</string>
                             </property>
                         </widget>
                     </grid>

@@ -26,9 +26,6 @@
             <height>575</height>
         </size>
     </property>
-    <property name="caption">
-        <string>IRCEditAccountBase</string>
-    </property>
     <hbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -386,9 +383,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Prefer SSL-based connections</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">

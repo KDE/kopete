@@ -12,9 +12,6 @@
             <height>410</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>Form1</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -406,7 +403,7 @@
                         <string>&amp;Birthday:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>daySpinBox</cstring>
+                        <cstring>birthday</cstring>
                     </property>
                 </widget>
                 <widget class="QSpinBox" row="3" column="3">

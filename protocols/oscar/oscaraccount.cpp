@@ -211,7 +211,7 @@ void OscarAccount:: protocolError( int error, int psError, const QString& messag
 	
 	if ( error == Client::NotConnectedError )
 	{
-		KMessageBox::queuedMessageBox( 0, KMessageBox::Error, message, i18n( "%1 Not Connected To %2" )
+		KMessageBox::queuedMessageBox( 0, KMessageBox::Error, message, i18n( "%1 Not Connected to %2" )
 		                               .arg( d->engine->userId(), d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) ) );
 	}
 	
