@@ -35,6 +35,15 @@ rc_DATA = kopetecommandui.rc
 servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop
 servicetypedir = $(kde_servicetypesdir)
 
-noinst_HEADERS = kopeteblacklister.h
+kopeteincludedir = $(includedir)/kopete
+kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.h kopeteawaydialog.h kopeteaway.h \
+	kopeteblacklister.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
+	kopetecontactproperty.h kopeteeventpresentation.h kopete_export.h kopeteglobal.h kopetegroup.h \
+	kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h \
+	kopetemessagemanagerfactory.h kopetemessagemanager.h kopetemetacontact.h kopetemimetypehandler.h \
+	kopetenotifyclient.h kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
+	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
+	kopetetransfermanager.h kopeteuiglobal.h kopetexsl.h
 
 # vim: set noet:
+
