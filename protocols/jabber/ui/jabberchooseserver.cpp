@@ -44,8 +44,6 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const ch
 	mMainWidget->lblStatus->setText ( i18n ( "Retrieving server list...") );
 
 	mMainWidget->listServers->setLeftMargin ( 0 );
-	mMainWidget->listServers->setColumnStretchable ( 0, true );
-	mMainWidget->listServers->setColumnStretchable ( 1, true );
 
 	// retrieve server list
 	mTransferJob = KIO::get ( "http://www.jabber.org/servers.xml" );

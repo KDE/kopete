@@ -8,9 +8,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>377</width>
-            <height>444</height>
+            <width>345</width>
+            <height>345</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>300</width>
+            <height>300</height>
+        </size>
     </property>
     <property name="caption">
         <string>Register Account - Jabber</string>
@@ -39,12 +45,6 @@
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>102</height>
-                </size>
             </property>
         </spacer>
         <widget class="QLayoutWidget" row="0" column="0">
@@ -135,6 +135,14 @@
                     <property name="name">
                         <cstring>sbPort</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="maxValue">
                         <number>65535</number>
                     </property>
@@ -143,8 +151,19 @@
                     <property name="name">
                         <cstring>cbUseSSL</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="text">
                         <string>Use protocol encr&amp;yption (SSL)</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+Y</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>

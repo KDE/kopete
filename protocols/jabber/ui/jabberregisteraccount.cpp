@@ -187,7 +187,7 @@ void JabberRegisterAccount::slotJIDInformation ()
 		 ( mMainWidget->leJID->text().section ( "@", 1 ) != mMainWidget->leServer->text () ) ) )
 	{
 		mMainWidget->lblJIDInformation->setText ( i18n ( "Unless you know what you are doing, your JID should be of the form "
-														 "\"<i>username</i>@server.com\".  In your case for example \"<i>username</i>@%1\"." ).
+														 "\"username@server.com\".  In your case for example \"username@%1\"." ).
 													arg ( mMainWidget->leServer->text () ) );
 	}
 	else

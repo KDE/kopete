@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>334</width>
-            <height>339</height>
+            <height>343</height>
         </rect>
     </property>
     <property name="minimumSize">
@@ -46,10 +46,10 @@
                 <enum>NoFocus</enum>
             </property>
             <property name="resizePolicy">
-                <enum>AutoOneFit</enum>
+                <enum>Default</enum>
             </property>
             <property name="hScrollBarMode">
-                <enum>AlwaysOn</enum>
+                <enum>Auto</enum>
             </property>
             <property name="numRows">
                 <number>0</number>
