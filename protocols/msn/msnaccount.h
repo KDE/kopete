@@ -183,7 +183,7 @@ private:
 	bool m_badpassword;
 
 public: //FIXME: should be private
-	QMap< QString, QStringList > tmp_addToNewGroup;
+	QMap<unsigned int, KopeteGroup*> m_groupList;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
@@ -193,8 +193,8 @@ private:
 	QStringList m_blockList;
 	QStringList m_reverseList;
 
-	QMap<unsigned int, KopeteGroup*> m_groupList;
 	KopeteMetaContact *m_addWizard_metaContact;
+	QMap< QString, QStringList > tmp_addToNewGroup;
 
 	QString m_awayReason;
 

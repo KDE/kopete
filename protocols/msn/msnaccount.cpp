@@ -432,9 +432,9 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 		m_allowList.clear();
 		m_blockList.clear();
 		m_reverseList.clear();
-*/
-		m_groupList.clear();
 
+		m_groupList.clear();
+*/
 		// setStatusIcon( "msn_offline" );
 
 		// Reset flags. They can't be set in the connect method, because
@@ -683,15 +683,15 @@ void MSNAccount::slotKopeteGroupRemoved( KopeteGroup *g )
 
 		if ( m_notifySocket )
 		{
+			/*  -not needed anymore  remember that contact are supposed to be deleted when a group is deleted.
 			// if contact are contains only in the group we are removing, move it from the group 0
-			// FIXME: use only contact for this account
 			QDictIterator<KopeteContact> it( contacts() );
 			for ( ; it.current(); ++it )
 			{
 				MSNContact *c = static_cast<MSNContact *>( it.current() );
 				if ( c->serverGroups().contains( groupNumber ) && c->serverGroups().count() == 1 )
 					m_notifySocket->addContact( c->contactId(), c->displayName(), 0, MSNProtocol::FL );
-			}
+			}*/
 			m_notifySocket->removeGroup( groupNumber );
 		}
 	}
@@ -760,7 +760,30 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					// The contact has been removed from a group by another client
 					c->contactRemovedFromGroup( it.key() );
 					c->setDontSync( true ); // prevent the moving of the metacontact change the server
-					metaContact->removeFromGroup( m_groupList[ it.key() ] );
+					
+					KopeteGroup *old_group=m_groupList.contains( it.key() ) ? m_groupList[it.key()] : it.data();
+					if(!old_group)
+					{	//the group is not anymore on the msn server.
+						QPtrList<KopeteGroup> mc_groups = c->metaContact()->groups();
+						if(mc_groups.count() > 1) 
+							for(KopeteGroup *g_it=mc_groups.first() ; g_it ; g_it=mc_groups.next() )
+						{
+							QString Gid=g_it->pluginData(protocol() , accountId() +" id");
+							if(Gid.isEmpty())
+							{
+								//maybe it's that one, it has not id
+								old_group=g_it;
+								continue; //but continue searching, another is maybe better
+							}
+							else if( Gid.toUInt()==it.key() )
+							{
+								old_group=g_it;
+								break;
+							}
+						}
+						
+					}
+					metaContact->removeFromGroup( old_group );
 				}
 			}
 
@@ -838,7 +861,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			if ( c->onlineStatus() == MSNProtocol::protocol()->UNK )
 				c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
-			if ( c->metaContact()->isTemporary() )
+			if ( c->metaContact() && c->metaContact()->isTemporary() )
 				c->metaContact()->setTemporary( false, m_groupList[ group ] );
 			else
 				c->contactAddedToGroup( group, m_groupList[ group ] );
@@ -870,7 +893,8 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 	else if ( list == "RL" )
 	{
 		// search for new Contacts
-		if ( !contacts()[ handle ] || contacts()[ handle ]->metaContact()->isTemporary() )
+		KopeteContact *ct=contacts()[ handle ];
+		if ( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
 		{
 			// Users in the allow list or block list now never trigger the
 			// 'new user' dialog, which makes it impossible to add those here.
@@ -889,7 +913,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		}
 		else
 		{
-			static_cast<MSNContact *>( contacts()[ handle ] )->setReversed( true );
+			static_cast<MSNContact *>( ct )->setReversed( true );
 		}
 		m_reverseList.append( handle );
 		setPluginData( protocol(), QString::fromLatin1( "reverseList" ), m_reverseList.join( "," ) );
@@ -1072,11 +1096,25 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 				// For each group, ensure it is on the MSN server
 				if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 				{
+					int Gid=group->pluginData( protocol(), accountId() + " id" ).toUInt();
+					if(!m_groupList.contains(Gid))
+					{ // ohoh!   something is corrupted on the contactlist.xml  
+					  // anyway, we never should add a contact to an unexisting group on the server.
+					  
+						//repair the problem
+						group->setPluginData( protocol() , accountId() + " id" , QString::null);
+						group->setPluginData( protocol() , accountId() + " displayName" , QString::null);
+						kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
+
+					}
+					else
+					{
 					// Add the contact to the group on the server
-					m_notifySocket->addContact( contactId, displayName, group->pluginData( protocol(), accountId() + " id" ).toUInt(), MSNProtocol::FL );
+						m_notifySocket->addContact( contactId, displayName, Gid, MSNProtocol::FL );
 					added = true;
 				}
-				else
+				}
+				if(!added)
 				{
 					if ( !group->displayName().isEmpty() && group->type() == KopeteGroup::Normal ) 
 					{  // not the top-level
