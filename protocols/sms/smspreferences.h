@@ -11,7 +11,6 @@
 #define SMSPREFERENCES_H
 
 #include "configmodule.h"
-#include "kopeteprefs.h"
 #include "smspreferencesbase.h"
 
 class QVBoxLayout;
