@@ -79,11 +79,12 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	sms_nr=NULL;
 
 	m_captureTimer = new QTimer(this);
+	m_awayTimer = new QTimer(this);
 
 	mPrefs = new MotionAwayPreferences ( "camera_umount", this );
 	connect( mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()) );
 	connect( m_captureTimer, SIGNAL(timeout()), this, SLOT(slotCapture()) );
-
+    connect( m_awayTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 
 	filepath[0]=0;
 	signal(SIGCHLD, SIG_IGN);
@@ -106,9 +107,11 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 		this->getImage (this->dev, this->image_ref, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
 	    	VIDEO_PALETTE_RGB24);
 
+        /* We have the first image now */
 		m_tookFirst = true;
-
-		m_captureTimer->start( 500 );
+     
+		m_captureTimer->start( 1000 );
+		m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
 	}
 }
 
@@ -178,15 +181,6 @@ int MotionAwayPlugin::getImage(int _dev, char *_image, int _width, int _height, 
 	return read (_dev, _image, _width * _height * 3);
 }
 
-void MotionAwayPlugin::slotTimeout()
-{
-	if ( !KopeteAway::globalAway() )
-	{
-		kdDebug() << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
-		kopeteapp->setAwayAll();
-	}
-}
-
 void MotionAwayPlugin::slotCapture()
 {
     int i, diffs;
@@ -224,6 +218,14 @@ void MotionAwayPlugin::slotCapture()
 		if (diffs > max_changes)
 		{
             kdDebug() << "[MotionAway Plugin] : Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
+
+			/* If we were away, now we are available again */
+			if ( mPrefs->goAvailable() && KopeteAway::globalAway() )
+				slotActivity();
+
+			/* We reset the away timer */
+            m_awayTimer->stop();
+			m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );	
 		}
 
 		/* Old image slowly decays, this will make it even harder on
@@ -244,16 +246,22 @@ void MotionAwayPlugin::slotCapture()
 
 void MotionAwayPlugin::slotActivity()
 {
-	if ( mPrefs->goAvailable() && !KopeteAway::globalAway() )
-	{
 		kdDebug() << "[MotionAway Plugin] : User activity!, going available" << endl;
 		kopeteapp->slotSetAvailableAll();
+}
+
+void MotionAwayPlugin::slotTimeout()
+{
+	if ( !KopeteAway::globalAway() )
+	{
+		kdDebug() << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
+		kopeteapp->setAwayAll();
 	}
 }
 
 void MotionAwayPlugin::slotSettingsChanged()
 {
-	//mWatcher->setTimeout( mPrefs->awayTimeout() * 60);
+	m_awayTimer->changeInterval( mPrefs->awayTimeout() * 60 * 1000);
 }
 
 #include "motionawayplugin.moc"

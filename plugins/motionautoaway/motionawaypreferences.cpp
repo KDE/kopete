@@ -39,8 +39,8 @@ MotionAwayPreferences::MotionAwayPreferences(const QString &pixmap,QObject *pare
 	preferencesDialog = new motionawayPrefsUI(this);
 
 	KGlobal::config()->setGroup("MotionAway Plugin");
-	preferencesDialog->mAwayTimeout->setValue(KGlobal::config()->readNumEntry("Timeout", 10));
-	preferencesDialog->mGoAvailable->setChecked(KGlobal::config()->readBoolEntry("GoAvailable", false));
+	preferencesDialog->mAwayTimeout->setValue(KGlobal::config()->readNumEntry("Timeout", 1));
+	preferencesDialog->mGoAvailable->setChecked(KGlobal::config()->readBoolEntry("GoAvailable", true));
 }
 
 MotionAwayPreferences::~MotionAwayPreferences()
