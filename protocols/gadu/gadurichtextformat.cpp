@@ -282,10 +282,10 @@ GaduRichTextFormat::insertRtf( uint position)
 QString
 GaduRichTextFormat::escapeBody( QString& input )
 {
+	input.replace( '<', QString::fromLatin1("&lt;") );
+	input.replace( '>', QString::fromLatin1("&gt;") );
 	input.replace( '\n', QString::fromLatin1( "<br />" ) );
 	input.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 	input.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
-	input.replace( '<', QString::fromLatin1("&lt;") );
-	input.replace( '>', QString::fromLatin1("&gt;") );
 	return input;
 }
