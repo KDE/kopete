@@ -17,6 +17,7 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
+#include <qcolor.h>
 #include <qapplication.h>
 
 #include <kdebug.h>
@@ -53,14 +54,8 @@ struct KopeteAccountPrivate
 	QString password;
 	bool autologin;
 	QDict<KopeteContact> contacts;
-	static QMap<KopeteProtocol *, int> accountCounter;
-	/*
-	 * This is the account number X for the parent protocol
-	 */
-	int count;
+	QColor color;
 };
-
-QMap<KopeteProtocol *, int> KopeteAccountPrivate::accountCounter = QMap<KopeteProtocol *, int>();
 
 KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):  KopetePluginDataObject (parent, name)
 {
@@ -69,17 +64,8 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 	d->id=_accountId;
 	d->autologin=false;
 	d->password=QString::null;
+	d->color = QColor();
 
-	if ( ! (d->accountCounter).contains(parent) )
-	{
-		d->accountCounter[parent] = 1;
-	}
-	else
-	{
-		(d->accountCounter[parent])++;
-	}
-
-	d->count = d->accountCounter[parent];
 	KopeteAccountManager::manager()->registerAccount(this);
 
 	//the prococol need to acess to myself, which is create later, in the customAccount constructor
@@ -125,9 +111,14 @@ QString KopeteAccount::accountId()
 	return d->id;
 }
 
-int KopeteAccount::count()
+const QColor KopeteAccount::color() const
 {
-	return d->count;
+	return d->color;
+}
+
+void KopeteAccount::setColor( QColor color )
+{
+	d->color = color;
 }
 
 

@@ -74,6 +74,11 @@ public:
 	 */
 	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
+	/**
+	 * Tries to guess a color for this account based on the already registered ones
+	 */
+	QColor guessColor( KopeteAccount* account );
+
 public slots:
 	/**
 	 * Connect all accounts which have auto connect enabled

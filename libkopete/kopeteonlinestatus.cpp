@@ -1,9 +1,9 @@
 /*
     kopeteonlinestatus.cpp - Kopete Online Status
 
-    Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2003 by Martijn Klingens <klingens@kde.org>
+    Copyright (c) 2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2003 by Will Stephenson <lists@stevello.free-online.co.uk>
-                                                      (icon generating code)
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -21,8 +21,10 @@
 
 // necessary for renderIcon, remove after!
 #include <qpainter.h>
+#include <qcolor.h>
 #include <qbitmap.h>
 #include "kopeteprotocol.h"
+#include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include <kiconloader.h>
 #include <kiconeffect.h>
@@ -216,7 +218,7 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact, int size ) co
 	else
 		iconName = contact->icon();
 
-	return *cacheLookup( iconName, size, contact->idleState() == KopeteContact::Idle );
+	return *cacheLookup( iconName, size, contact->account()->color(),contact->idleState() == KopeteContact::Idle );
 
 }
 
@@ -229,7 +231,9 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account, int size ) co
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return *cacheLookup( iconName, size );
+	QColor color = account->color();
+
+	return *cacheLookup( iconName, size, color, false );
 }
 
 QPixmap KopeteOnlineStatus::protocolIcon() const
@@ -240,18 +244,21 @@ QPixmap KopeteOnlineStatus::protocolIcon() const
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return *cacheLookup( iconName, 16 );
+	return *cacheLookup( iconName, 16, QColor() );
 }
 
-QPixmap* KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, const bool idle ) const
+QPixmap* KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, const QColor color,const bool idle) const
 {
 	// create a 'fingerprint' to use as a hash key
 	QString fingerprint;
 
-	// fingerprint consists of description/icon name/overlay name/size/idle state
+	// fingerprint consists of description/icon name/color/overlay name/size/idle state
 	fingerprint.sprintf( "%s/%s/%s/%i/%c",
 			d->description.latin1(),
 			icon.latin1(),
+			QString::number(color.red()).latin1(),
+			QString::number(color.green()).latin1(),
+			QString::number(color.blue()).latin1(),
 			d->overlayIcon.latin1(),
 			size,
 			idle ? 'i' : 'a' );
@@ -267,13 +274,13 @@ QPixmap* KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, c
 	{
 		// cache miss
 //		kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;
-		theIcon = renderIcon( icon, size, idle );
+		theIcon = renderIcon( icon, size, color, idle);
 		d->iconCache.insert( fingerprint, theIcon );
 	}
 	return theIcon;
 }
 
-QPixmap* KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size, const bool idle ) const
+QPixmap* KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size, const QColor color, const bool idle) const
 {
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
@@ -286,6 +293,14 @@ QPixmap* KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size
 			*basis = SmallIcon( QString::fromLatin1( "unknown" ) );
 	else
 		*basis = SmallIcon( baseIcon );
+
+	// Colorize
+
+	if ( color.isValid() )
+	{
+		KIconEffect effect;
+		*basis = effect.apply( *basis, KIconEffect::Colorize, 1, color, 0);
+	}
 
 	//composite the iconOverlay for this status and the supplied baseIcon
 	if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is

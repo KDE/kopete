@@ -507,7 +507,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account, const K
 		// Get the icon for our status
 
 		//QPixmap pm = SmallIcon( icon );
-		QPixmap pm = status.protocolIcon();
+		QPixmap pm = status.iconFor( account );
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
 		if( pm.isNull() )

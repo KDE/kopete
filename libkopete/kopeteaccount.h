@@ -53,11 +53,6 @@ public:
 	 * return the unique id of this account used as the login
 	 */
 	QString accountId();
-	/**
-	 * return the account sequence number for this protocol
-	 */
-	int count();
-
 
 	/**
 	 * The account ID should be constant, don't use this method.
@@ -93,6 +88,15 @@ public:
 	 * Say if the account should log in automaticaly
 	 */
 	bool autoLogin();
+
+	/*
+	 * returns the user color for this account
+	 */
+	const QColor color() const;
+	/*
+	 * Set the color this account will use to differenciatte from the other accounts
+	 */
+	void setColor( QColor color);
 
 	/**
 	 * this will be called if main-kopete wants

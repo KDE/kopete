@@ -101,8 +101,52 @@ void KopeteAccountManager::setAvailableAll()
 	}
 }
 
+QColor KopeteAccountManager::guessColor( KopeteAccount* account )
+{
+	/* counter for accounts of this protocol */
+	int thisProtocolCounter = 0;
+
+	for ( KopeteAccount *acc = m_accounts.first() ; acc ; acc = m_accounts.next() )
+	{
+		if(  account->protocol() == acc->protocol() )
+		{
+			thisProtocolCounter++;
+		}
+	}
+
+	QColor color;
+	/* lets figure a color */
+	switch ( thisProtocolCounter )
+	{
+		case 0:
+		color = QColor();
+		break;
+		case 1:
+		color = Qt::red;
+		break;
+		case 2:
+		color = Qt::green;
+		break;
+		case 3:
+		color = Qt::blue;
+		break;
+		case 4:
+		color = Qt::yellow;
+		break;
+		case 5:
+		color = Qt::magenta;
+		break;
+		case 6:
+		color = Qt::cyan;
+		break;
+	}
+
+	return color;
+}
+
 void KopeteAccountManager::registerAccount(KopeteAccount *i)
 {
+
 	/* Anti-Crash: Valid account pointer? */
 	if ( !i )
 		return;
@@ -113,13 +157,13 @@ void KopeteAccountManager::registerAccount(KopeteAccount *i)
 		/* Lets check if account exists already in protocol namespace */
 		for ( KopeteAccount *acc = m_accounts.first() ; acc ; acc = m_accounts.next() )
 		{
-			if( ( i->protocol() == acc->protocol() ) && ( i->accountId() == acc->accountId() ) )
+			if(  (i->protocol() == acc->protocol()) && ( i->accountId() == acc->accountId() ) )
 			{
-				/* Duplicate!! */
-				return;
+					/* Duplicate!! */
+					return;
 			}
 		}
-		/* Ok seems sane */
+
 		m_accounts.append( i );
 		emit accountRegistered(i);
 	}
