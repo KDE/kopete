@@ -183,7 +183,7 @@ void KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
 		ctcpMsg += QChar(' ') + ctcpArgs.join( QChar(' ') ).stripWhiteSpace(); // some extra check should be done here
 
 	if (!ctcpSuffix.isNull())
-		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
+		ctcpMsg += ctcpSuffix;
 
 	writeMessage(engine, codec, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMsg) + QChar(0x01));
 }
