@@ -92,8 +92,7 @@ public:
 
 	QDict<IRCNetwork> &networks(){ return m_networks; }
 
-public slots:
-	void editNetworks();
+	void editNetworks( const QString &networkName = QString::null );
 
 signals:
 	void networkConfigUpdated();

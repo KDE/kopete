@@ -95,7 +95,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
-	connect( editButton, SIGNAL( clicked() ), IRCProtocol::protocol(), SLOT(editNetworks() ) );
+	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
 	connect( addReply, SIGNAL( clicked() ), this, SLOT( slotAddCtcp() ) );
 
 	connect( network, SIGNAL( activated( const QString & ) ),
@@ -126,6 +126,11 @@ void IRCEditAccountWidget::slotUpdateNetworks()
 		}
 		++i;
 	}
+}
+
+void IRCEditAccountWidget::slotEditNetworks()
+{
+	IRCProtocol::protocol()->editNetworks( network->currentText() );
 }
 
 void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )
