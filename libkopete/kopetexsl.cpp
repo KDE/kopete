@@ -140,25 +140,25 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString
 				}
 				else
 				{
-					errorMsg = i18n( "Transformed document is null!" );
+					errorMsg = i18n( "Message is null." );
 				}
 				xsltFreeStylesheet( styleSheet );
 			}
 			else
 			{
-				errorMsg = i18n( "Document is not valid XSL!" );
+				errorMsg = i18n( "The selected chat style is invalid." );
 				xmlFreeDoc( xslDoc );
 			}
 		}
 		else
 		{
-			errorMsg = i18n( "The XSL document could not be parsed!" );
+			errorMsg = i18n( "The selected chat style is invalid." );
 		}
 		xmlFreeDoc( xmlDoc );
 	}
 	else
 	{
-		errorMsg = i18n( "XML document could not be parsed. This is likely due to an encoding problem. Please ensure you have selected the correct encoding for this contact." );
+		errorMsg = i18n( "Message could not be parsed. This is likely due to an encoding problem. Please ensure you have selected the correct encoding for this contact." );
 	}
 
 	if ( resultString.isEmpty() )
