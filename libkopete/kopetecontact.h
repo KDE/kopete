@@ -70,11 +70,6 @@ public:
 	~KopeteContact();
 
 	/**
-	 * Contact's idle status
-	 */
-	enum IdleState { Unspecified, Idle, Active };
-
-	/**
 	 * Return whether this contact is online or not.
 	 * @return bool indicating whhether the contact is online
 	 */
@@ -139,9 +134,9 @@ public:
 	 * Returns QString::null if protocol do not use it,
 	 * or current status does not require description.
 	 */
-	   
+
 	QString statusDescription() const;
-	
+
 	/**
 	 * Return the unique id that identifies a contact. Id is required
 	 * to be unique per protocol and per account. Across those boundaries
@@ -226,18 +221,6 @@ public:
 	bool canAcceptFiles() const;
 
 	/**
-	 * Accessor function for the idle state of the contact
-	 * @return Idle state of the contact
-	 */
-	IdleState idleState() const;
-
-	/**
-	 * Sets the idle state to newState
-	 * If this function is not called by a plugin, the idle state is set to Unknown
-	 */
-	void setIdleState( KopeteContact::IdleState newState );
-
-	/**
 	 * @brief Rename a contact's display name.
 	 *
 	 * This method can be asynchronous, i.e. it starts the rename, but the
@@ -270,6 +253,21 @@ public:
 	 * Returns the name of the icon to use for this contact
 	 */
 	virtual QString& icon() const;
+
+	/**
+	 * Return the time (in seconds) this contact has been idle
+	 * It will return the time set in @ref setIdleTime() with an addition of the time
+	 * since you set this last time
+	 */
+	virtual unsigned long int idleTime() const;
+
+	/**
+	 * Set the current idle time in seconds.
+	 * Kopete will automaticaly calculate the time in @ref idleTime
+	 * exepted if you set 0.
+	 */
+	void setIdleTime(unsigned long int);
+
 
 
 public slots:
@@ -380,9 +378,11 @@ signals:
 	void contactDestroyed( KopeteContact *contact );
 
 	/**
-	 * The contact's idle state changed
+	 * The contact's idle state changed.
+	 * You need to emit this signal to update the view.
+	 * That mean when activity has been noticed
 	 */
-	void idleStateChanged( KopeteContact *contact, KopeteContact::IdleState newState );
+	void idleStateChanged( KopeteContact *contact );
 
 private:
 	KopeteContactPrivate *d;

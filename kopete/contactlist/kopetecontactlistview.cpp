@@ -107,7 +107,6 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		{
 			QRect iconRect = metaLVI->contactRect( contact );
 			itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust, iconRect.width(), iconRect.height() );
-			// FIXME: Make this i18n after 0.7 - Martijn
 			toolTip = i18n( "<b>%3</b><br>%2<br>%1" ).
 #if QT_VERSION < 0x030200
 				arg( contact->onlineStatus().description() ).arg( QStyleSheet::escape( contact->contactId() ) ).
@@ -116,17 +115,21 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 				arg( contact->onlineStatus().description(), QStyleSheet::escape( contact->contactId() ),
 					QStyleSheet::escape( contact->displayName() ) );
 #endif
+			if(contact->idleTime() !=0)
+				toolTip+=i18n("<br>Idle: %1'%2").arg(contact->idleTime()/60).arg(contact->idleTime()%60);
 		}
 		else
 		{
 			KopeteMetaContact *mc = metaLVI->metaContact();
-			// FIXME: Make this i18n after 0.7 - Martijn
 			toolTip = i18n( "<b>%2</b><br>%1" ).
 #if QT_VERSION < 0x030200
 				arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
 #else
 				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
 #endif
+			if(mc->idleTime() !=0)
+				toolTip+=i18n("<br>Idle: %1'%2").arg(mc->idleTime()/60).arg(mc->idleTime()%60);
+
 			// Adjust the item rect on the right
 			uint first = metaLVI->firstContactIconX();
 			uint last  = metaLVI->lastContactIconX();

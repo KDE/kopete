@@ -49,7 +49,6 @@ public:
 	QString displayName;
 	bool fileCapable;
 
-	KopeteContact::IdleState idleState;
 	KopeteOnlineStatus onlineStatus;
 	KopeteAccount *account;
 
@@ -67,6 +66,9 @@ public:
 	QString contactId;
 	QString icon;
 	QString statusDescription;
+
+	QTime idleTimer;
+	unsigned long int idleTime;
 };
 
 
@@ -83,9 +85,9 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 
 	d->metaContact = parent;
 	d->fileCapable = false;
-	d->idleState = Unspecified;
 	d->displayName = contactId;
 	d->account=account;
+	d->idleTime=0;
 
 	if( account )
 	{
@@ -151,7 +153,7 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status,
 {
 	if( status == d->onlineStatus && statusDescription==d->statusDescription )
 		return;
-	
+
 	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 	d->statusDescription=statusDescription;
@@ -385,12 +387,6 @@ void KopeteContact::serialize( QMap<QString, QString> & /*serializedData */,
 	// Do nothing in the default implementation
 }
 
-void KopeteContact::setIdleState( KopeteContact::IdleState newState )
-{
-	d->idleState = newState;
-	emit idleStateChanged( this, d->idleState );
-}
-
 bool KopeteContact::isReachable()
 {
 	return false;
@@ -483,9 +479,21 @@ bool KopeteContact::canAcceptFiles() const
 	return isOnline() && d->fileCapable;
 }
 
-KopeteContact::IdleState KopeteContact::idleState() const
+unsigned long int KopeteContact::idleTime() const
 {
-	return d->idleState;
+	if(d->idleTime==0)
+		return 0;
+
+	return d->idleTime+(d->idleTimer.elapsed()/1000);
+}
+
+void KopeteContact::setIdleTime(unsigned long int t )
+{
+	d->idleTime=t;
+	if(t)
+		d->idleTimer.start();
+//	else
+//		d->idleTimer.stop();
 }
 
 void KopeteContact::syncGroups()

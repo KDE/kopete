@@ -96,12 +96,7 @@ public:
 	 */
 	bool canAcceptFiles() const;
 
-	/**
-	 * Contact's idle state
-	 */
-	enum IdleState { Unspecified, Idle, Active };
-
-	/**
+		/**
 	 * Return a more fine-grained status.
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself
@@ -118,12 +113,9 @@ public:
 	bool isReachable() const;
 
 	/**
-	 * Unspecified means that none of the contacts' protocols advertise idle time
-	 * Idle means that at least one sub-contact is idle
-	 * Active means that no subcontacts are idle and at least one are active
-	 * @return the idle state of the meta contact
+	 * return the time in second the contact is idle.
 	 */
-	IdleState idleState() const;
+	unsigned long int idleTime() const;
 
 	/**
 	 * @return the display name showed in the contactlist window, or in the chatwindow
@@ -208,17 +200,6 @@ public:
 	 *  if group is null, it will be moved to top-level
 	 */
 	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
-
-	/**
-	 * When true, the meta-contact needs to be serialized
-	 * and the previous serialize can't be used anymore
-	 */
-	//bool isDirty() const;
-	/**
-	 * Plugins should set the metacontact to dirty
-	 * as a "save me" request
-	 */
-	//void setDirty( bool b = true );
 
 	/**
 	 * @brief Return true if the contact is shown at toplevel.
@@ -385,16 +366,10 @@ signals:
 	void aboutToSave(KopeteMetaContact*);
 
 	/**
-	 * The metacontact's idle status changed.  KopeteMetaContactLVI should
-	 * connect to this signal
-	 */
-	void idleStateChanged( KopeteMetaContact *contact, KopeteMetaContact::IdleState newState );
-
-	/**
 	 * One of the subcontacts' idle status has changed.  As with online status,
 	 * this can occur without the metacontact changing idle state
 	 */
-	void contactIdleStateChanged( KopeteContact *contact, KopeteContact::IdleState newState );
+	void contactIdleStateChanged( KopeteContact *contact);
 
 private slots:
 	/**
@@ -402,12 +377,6 @@ private slots:
 	 * when appropriate
 	 */
 	void updateOnlineStatus();
-
-	/**
-	  * Update the contact's idle status and emit idleStateChanged when
-	  * appropriate
-	  */
-	void updateIdleState();
 
 	/**
 	 * One of the child contact's online status changed
@@ -429,12 +398,6 @@ private slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded(KopetePlugin *p);
-
-	/**
-	 * One of the child contact's idle state changed
-	 */
-	void slotContactIdleStateChanged( KopeteContact *c,
-		KopeteContact::IdleState s );
 
 
 private:

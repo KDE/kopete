@@ -482,7 +482,9 @@ void OscarAccount::slotIdleTimeout()
 
 	int idletime = KopeteAway::getInstance()->idleTime();
 
-	// not doing anything for more than 5 mins and still not idle
+	engine()->sendIdleTime( idletime );
+
+/*	// not doing anything for more than 5 mins and still not idle
 	if(idletime > 5*60)
 	{
 		if (idletime > lastIdleValue + 60)
@@ -506,7 +508,7 @@ void OscarAccount::slotIdleTimeout()
 			mAreIdle = false;
 			lastIdleValue = 0;
 		}
-	}
+	}*/
 }
 
 int OscarAccount::randomNewBuddyNum()

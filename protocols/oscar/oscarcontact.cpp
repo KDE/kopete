@@ -506,10 +506,13 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	if (mIdle != u.idletime)
 	{
 		mIdle = u.idletime;
-		if(mIdle > 0)
+		setIdleTime(mIdle*60);
+/*		if(mIdle > 0)
 			setIdleState(Idle);
 		else // we are not idling anymore
-			setIdleState(Active);
+			setIdleState(Active);*/
+		if(mIdle == 0)
+			emit idleStateChanged(this);
 	}
 	mSignonTime.setTime_t(u.onlinesince);
 }

@@ -50,7 +50,6 @@ struct KopeteMetaContactPrivate
 //	bool dirty;
 	QString contactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
-	KopeteMetaContact::IdleState    idleState;
 };
 
 KopeteMetaContact::KopeteMetaContact()
@@ -62,7 +61,6 @@ KopeteMetaContact::KopeteMetaContact()
 	d->temporary = false;
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
-	d->idleState = Unspecified;
 	d->contactId = QString::null;
 }
 
@@ -90,8 +88,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
-		connect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
-			this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
+		connect( c, SIGNAL( idleStateChanged( KopeteContact * ) ),
+			this, SIGNAL( contactIdleStateChanged( KopeteContact * ) ) );
 
 		if( d->displayName.isNull() )
 		{
@@ -136,33 +134,21 @@ void KopeteMetaContact::updateOnlineStatus()
 	}
 }
 
-void KopeteMetaContact::updateIdleState()
+unsigned long int KopeteMetaContact::idleTime() const
 {
-	IdleState newStatus = Unspecified;
+	unsigned long int time=0;
 
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		KopeteContact::IdleState s = it.current()->idleState();
+		unsigned long int i= it.current()->idleTime();
 
-		if ( s == KopeteContact::Active )
+		if(i!=0 && (i < time || time==0))
 		{
-			newStatus = Active;
-			break;
-		}
-		else if ( s == KopeteContact::Idle )
-		{
-			// Set status, but don't stop searching, since 'Active' overrules
-			// 'Idle'
-			newStatus = Idle;
+			time=i;
 		}
 	}
-
-	if( newStatus != d->idleState )
-	{
-		d->idleState = newStatus;
-		emit idleStateChanged( this, d->idleState );
-	}
+	return time;
 }
 
 void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
@@ -186,8 +172,8 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
-			disconnect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
-				this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
+			disconnect( c, SIGNAL( idleStateChanged( KopeteContact * ) ),
+				this, SIGNAL( contactIdleStateChanged( KopeteContact *) ) );
 
 			kdDebug( 14010 ) << k_funcinfo << "Contact disconected" << endl;
 		}
@@ -735,16 +721,6 @@ void KopeteMetaContact::setTemporary( bool isTemporary, KopeteGroup *group )
 		moveToGroup(temporaryGroup, group);
 }
 
-/*bool KopeteMetaContact::isDirty() const
-{
-	return d->dirty;
-}
-
-void KopeteMetaContact::setDirty( bool b  )
-{
-	d->dirty = b;
-}*/
-
 void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 {
 	if( !p )
@@ -757,11 +733,6 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	}
 }
 
-KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
-{
-	return d->idleState;
-}
-
 QString KopeteMetaContact::contactId() const
 {
 	if( (d->contactId).isEmpty() )
@@ -769,13 +740,6 @@ QString KopeteMetaContact::contactId() const
 
 	return d->contactId;
 }
-
-void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c, KopeteContact::IdleState s )
-{
-	emit contactIdleStateChanged(c,s);
-	updateIdleState();
-}
-
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
 {

@@ -103,7 +103,7 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( contactRemoved( KopeteContact * ) ),
 		SLOT( slotUpdateIcons() ) );
 
-	connect( m_metaContact, SIGNAL( idleStateChanged( KopeteMetaContact *, KopeteMetaContact::IdleState ) ),
+	connect( m_metaContact, SIGNAL( contactIdleStateChanged( KopeteContact * ) ),
 		SLOT( slotIdleStateChanged() ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
@@ -214,7 +214,7 @@ void KopeteMetaContactLVI::slotUpdateIcons()
 	QPixmap statusIcon = SmallIcon( m_metaContact->statusIcon() );
 	if(
 		prefs->greyIdleMetaContacts() &&
-		(m_metaContact->idleState() == KopeteMetaContact::Idle) )
+		(m_metaContact->idleTime() >= 10*60) )
 	{
 		KIconEffect::semiTransparent( statusIcon );
 	}
@@ -368,7 +368,7 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 		QColorGroup modcg = cg;
 		KopetePrefs *prefs = KopetePrefs::prefs();
 		if (prefs->greyIdleMetaContacts() &&
-			(m_metaContact->idleState() == KopeteMetaContact::Idle)
+			(m_metaContact->idleTime() >= 10*60)
 			)
 		{
 			modcg.setColor(QColorGroup::Text, prefs->idleContactColor());
@@ -530,7 +530,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 void KopeteMetaContactLVI::slotIdleStateChanged()
 {
 	QPixmap theIcon = SmallIcon( m_metaContact->statusIcon() );
-	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleState() == KopeteMetaContact::Idle ) )
+	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10*60 ) )
 	{
 		KIconEffect::semiTransparent(theIcon);
 	}

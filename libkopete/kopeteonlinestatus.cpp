@@ -217,7 +217,7 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact, int size ) co
 	else
 		iconName = contact->icon();
 
-	return *cacheLookup( iconName, size, contact->account()->color(),contact->idleState() == KopeteContact::Idle );
+	return *cacheLookup( iconName, size, contact->account()->color(),contact->idleTime() >= 10*60 );
 
 }
 

@@ -69,10 +69,7 @@ class OscarContact : public KopeteContact
 		 */
 		virtual void setStatus(const unsigned int newStatus)=0;
 
-		/*
-		 * Returns the idle time
-		 */
-		const unsigned int idleTime() const { return mIdle; }
+//		virtual unsigned long int idleTime() const  {return mIdle;}
 
 		const unsigned long realIP() const { return mRealIP; }
 		const unsigned long localIP() const { return mLocalIP; }
