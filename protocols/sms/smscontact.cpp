@@ -93,42 +93,27 @@ void SMSContact::slotSendMessage(KopeteMessage &msg)
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	QString sName = account()->pluginData(protocol(), "ServiceName");
 
-	kdWarning( 14160 ) << "***" << endl;
-	SMSService* s = ServiceLoader::loadService( sName, account() );
+	SMSService *s = ServiceLoader::loadService(sName, account());
 
-	kdWarning( 14160 ) << "***" << endl;
-	if ( s == 0L)
-		return;
+	if (s == 0L) return;
 
-	kdWarning( 14160 ) << "***" << endl;
-	connect (s, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendingSuccess(const KopeteMessage&)));
-	connect (s, SIGNAL(messageNotSent(const KopeteMessage&, const QString &)), this, SLOT(slotSendingFailure(const KopeteMessage&, const QString &)));
+	connect (s, SIGNAL(messageSent(const KopeteMessage &)), this, SLOT(slotSendingSuccess(const KopeteMessage &)));
+	connect (s, SIGNAL(messageNotSent(const KopeteMessage &, const QString &)), this, SLOT(slotSendingFailure(const KopeteMessage &, const QString &)));
 
-	kdWarning( 14160 ) << "***" << endl;
 	int msgLength = msg.plainBody().length();
 
-	kdWarning( 14160 ) << "***" << endl;
 	if (s->maxSize() == -1)
 		s->send(msg);
 	else if (s->maxSize() < msgLength)
-	{
-		int res = KMessageBox::questionYesNo( 0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(s->maxSize()).arg(msgLength/(s->maxSize())+1), i18n("Message Too Long") );
-		switch (res)
-		{
-		case KMessageBox::Yes:
-			for (int i=0; i < (msgLength/(s->maxSize())+1); i++)
-			{
-				QString text = msg.plainBody();
-				text = text.mid( (s->maxSize())*i, s->maxSize() );
+	{	if (dynamic_cast<SMSProtocol *>(protocol())->splitNowMsgTooLong(s->maxSize(), msgLength))
+			for (int i=0; i < msgLength / s->maxSize() + 1; i++)
+			{	QString text = msg.plainBody();
+				text = text.mid( s->maxSize() * i, s->maxSize() );
 				KopeteMessage m( msg.from(), msg.to(), text, KopeteMessage::Outbound);
 				s->send(m);
 			}
-			break;
-		case KMessageBox::No:
-			break;
-		default:
-			break;
-		}
+		else
+			slotSendingFailure(msg, i18n("Message too long."));
 	}
 	else
 		s->send(msg);
@@ -161,7 +146,7 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 KActionCollection* SMSContact::customContextMenuActions()
 {
 	m_actionCollection = new KActionCollection(this, "userColl");
-	m_actionPrefs = new KAction(i18n("&User Preferences"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
+	m_actionPrefs = new KAction(i18n("&Contact Settings"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
 
 	return m_actionCollection;
 }

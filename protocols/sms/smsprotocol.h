@@ -28,6 +28,8 @@
 #include "kopeteonlinestatus.h"
 #include "kopetecontact.h"
 
+#include "smspreferences.h"
+
 class KAction;
 class KActionMenu;
 
@@ -42,7 +44,7 @@ class SMSProtocol : public KopeteProtocol
 	Q_OBJECT
 
 public:
-	SMSProtocol( QObject *parent, const char *name, const QStringList& args);
+	SMSProtocol(QObject *parent, const char *name, const QStringList &args);
 	~SMSProtocol();
 
 	static SMSProtocol *protocol();
@@ -50,10 +52,10 @@ public:
 	/**
 	 * Deserialize contact data
 	 */
-	virtual void deserializeContact( KopeteMetaContact *metaContact,
+	virtual void deserializeContact(KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteAccount *i);
+	virtual AddContactPage *createAddContactWidget(QWidget *parent , KopeteAccount *i);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
@@ -63,13 +65,21 @@ public:
 
 	void translateNumber(QString &theNumber);
 
+	/**
+	 * Checks to see if the message should be split or not, in case it is too long.
+	 *
+	 * Only ever call in case of message being too long - may result in user interaction.
+	 */
+	const bool splitNowMsgTooLong(int max, int msgLength);
+
 public slots:
 	void loadConfig();
 
 private:
 	bool theSubEnable;
 	QString theSubCode;
-	static SMSProtocol* s_protocol;
+	static SMSProtocol *s_protocol;
+	SMSMsgAction theLongMsgAction;
 };
 
 #endif

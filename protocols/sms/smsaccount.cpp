@@ -19,6 +19,7 @@
 #include <kprocess.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <klocale.h>
 
 #include "smsaccount.h"
 #include "smsprotocol.h"
@@ -27,7 +28,7 @@
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
 	: KopeteAccount( parent, accountID, name )
 {
-	m_myself = new SMSContact( this, accountID, accountID, 0L );
+	m_myself = new SMSContact(this, accountID, accountID, 0L);
 }
 
 SMSAccount::~SMSAccount()
@@ -50,7 +51,7 @@ void SMSAccount::connect()
 KActionMenu* SMSAccount::actionMenu()
 {
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
-	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "SMS (" + accountId() + ")");
+	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), i18n("SMS (%1)").arg(accountId()));
 
 	return theActionMenu;
 }

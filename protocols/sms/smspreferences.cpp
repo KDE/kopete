@@ -15,6 +15,7 @@
 */
 
 #include <qlayout.h>
+#include <qradiobutton.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
 
@@ -35,6 +36,9 @@ SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 	KGlobal::config()->setGroup("SMS");
 	theUI->subEnable->setChecked(KGlobal::config()->readBoolEntry("SubEnable", false));
 	theUI->subCode->setText(KGlobal::config()->readEntry("SubCode", "+44"));
+	theUI->msgAsk->setChecked(KGlobal::config()->readNumEntry("MsgAction", ACT_ASK) == ACT_ASK);
+	theUI->msgCancel->setChecked(KGlobal::config()->readNumEntry("MsgAction", ACT_ASK) == ACT_CANCEL);
+	theUI->msgSplit->setChecked(KGlobal::config()->readNumEntry("MsgAction", ACT_ASK) == ACT_SPLIT);
 }
 
 SMSPreferences::~SMSPreferences()
@@ -46,6 +50,7 @@ void SMSPreferences::save()
 	KGlobal::config()->setGroup("SMS");
 	KGlobal::config()->writeEntry("SubEnable", theUI->subEnable->isChecked());
 	KGlobal::config()->writeEntry("SubCode", theUI->subCode->text());
+	KGlobal::config()->writeEntry("MsgAction", int(theUI->msgAsk->isChecked() ? ACT_ASK : theUI->msgSplit->isChecked() ? ACT_SPLIT : ACT_CANCEL));
 	KGlobal::config()->sync();
 	emit saved();
 }

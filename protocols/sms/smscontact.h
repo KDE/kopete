@@ -50,8 +50,8 @@ public:
 		QMap<QString, QString> &addressBookData );
 
 	KopeteMessageManager* manager( bool canCreate = false );
-public slots:
 
+public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	void slotSendMessage(KopeteMessage &msg);
@@ -66,7 +66,6 @@ signals:
 private slots:
 	void userPrefs();
 	void slotMessageManagerDestroyed();
-
 
 private:
 	KActionCollection* m_actionCollection;

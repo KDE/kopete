@@ -23,6 +23,8 @@ class QVBoxLayout;
 class SMSService;
 class SMSPrefsUI;
 
+enum SMSMsgAction { ACT_CANCEL, ACT_ASK, ACT_SPLIT };
+
 class SMSPreferences : public ConfigModule
 {
 	Q_OBJECT

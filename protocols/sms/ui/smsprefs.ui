@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>507</width>
-            <height>190</height>
+            <height>314</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -101,13 +101,13 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>+44</string>
+                        <string>+</string>
+                    </property>
+                    <property name="inputMask">
+                        <string>+##; </string>
                     </property>
                     <property name="validChars">
                         <string>1234567890+</string>
-                    </property>
-                    <property name="inputMask" stdset="0">
-                        <string>+##; </string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
@@ -125,6 +125,96 @@
         </widget>
         <spacer>
             <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>541</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Behaviour</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line1_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>If A Message Is Too Long</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>msgCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel The Message Without Sending</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>msgAsk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Ask How To Proceed (Recommended)</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>msgSplit</cstring>
+                    </property>
+                    <property name="text">
+                        <string>S&amp;plit The Message Into Smaller Sections And Send</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <spacer>
+            <property name="name">
                 <cstring>spacer5</cstring>
             </property>
             <property name="orientation">
@@ -135,8 +225,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>16</width>
-                    <height>101</height>
+                    <width>20</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
@@ -164,7 +254,4 @@
     <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>krestrictedline.h</includehint>
-</includehints>
 </UI>
