@@ -18,6 +18,9 @@
 #include "kopetecontactlist.h"
 
 #include "kopetemetacontact.h"
+#include "kopete.h"
+#include "pluginloader.h"
+#include "kopeteprotocol.h"
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -92,7 +95,9 @@ void KopeteContactList::loadXML()
 			if ( elementl1.tagName() == "person" )
 			{
 				QString person_name = elementl1.attribute("name", "No Name");
-				kdDebug() << "XML Reader: New Person" << person_name << endl;
+				kdDebug() << "XML Reader: New Person " << person_name << endl;
+				KopeteMetaContact *mc = findContact(person_name);
+				mc->setDisplayName(person_name);
 
 				/* Now we have to find all contacts and metadata for this person */
 				QDomNode nodel2;
@@ -106,13 +111,22 @@ void KopeteContactList::loadXML()
                     /* Was it an element ? */
 					if ( ! elementl2.isNull())
 					{
-						kdDebug() << "XML Reader: " << elementl2.tagName() << endl;
             			/* We have found a plugin contact */
 						if ( elementl2.tagName() == "contact" )
 						{
 							QString contactid = elementl2.attribute("id", "Help!");
 							QString protocol = elementl2.attribute("protocol", "Unknown");
-							kdDebug() << "XML Reader: \tNew Contact ID:" << person_name << " Protocol: " << protocol << endl;
+							QString serializedData = elementl2.attribute("data", "none");
+							kdDebug() << "XML Reader: \tNew Contact ID:" << contactid << " Protocol: " << protocol << " Data: " << serializedData << endl;
+							Plugin *tmpprot = kopeteapp->libraryLoader()->searchByID(protocol);
+							if (tmpprot)
+							{
+								KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
+								KopeteContact *c = prot->createContact(mc, contactid, serializedData);	
+								mc->addContact(c, "Unknown"); //FIXME add groups here
+							}
+							else
+								kdDebug() << "Protocol " << protocol << " could not be found!" << endl;
 
 						}
 						if ( elementl2.tagName() == "metadata" )
@@ -120,6 +134,7 @@ void KopeteContactList::loadXML()
 							QString pluginid = elementl2.attribute("pluginid", "Ups");
 							QString mdkey = elementl2.attribute("key", "No key");
 							kdDebug() << "XML Reader: \tNew Metadata PluginID: " << pluginid << " Key: " << mdkey << endl;
+							//FIXME metadata is not supported
 
 						}
 					}

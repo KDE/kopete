@@ -38,7 +38,7 @@ public:
 	virtual ~KopeteProtocol();
 
     /* This will be called when Kopete read the contact list, implement it */
-    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData );
+    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData ) = 0;
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
