@@ -243,6 +243,7 @@ void OscarAccount:: protocolError( int error, int psError, const QString& messag
 			disconnected( Kopete::Account::Manual );
 			realMessage = i18n("The %1 service is temporarily unavailable. Please try again later.")
 			              .arg( d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) );
+		}
 		
 		if ( psError == 0 ) //zero is a generic error when i don't know what's wrong. :/
 		{
