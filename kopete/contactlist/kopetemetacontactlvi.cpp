@@ -530,6 +530,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				break;
 				case Kopete::OnlineStatus::Offline:
 					effect = new KImageEffect();
+					effect->fade(photoImg, 0.4, Qt::white);
 					effect->toGray(photoImg);
 				break;
 				case Kopete::OnlineStatus::Unknown:
