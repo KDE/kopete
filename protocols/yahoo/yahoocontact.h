@@ -26,6 +26,7 @@
 
 // Kopete Includes
 #include "kopetecontact.h"
+#include "kopetemetacontact.h"
 
 // QT Includes
 
@@ -40,7 +41,7 @@ class YahooContact : public KopeteContact
 	Q_OBJECT public:
 
 		YahooContact(QString userID, QString fullName, QString group,
-				YahooProtocol *protocol);	// Constructor
+				YahooProtocol *protocol, KopeteMetaContact *metaContact);	// Constructor
 		~YahooContact();
 
 		ContactStatus status() const;	// Return status 

@@ -132,7 +132,7 @@ extern char *yahoo_crypt(char *, char *);
 #ifdef DEBUG
 #define debug_printf printf
 #else
-static void debug_printf(char */*fmt*/, ...)
+static void debug_printf(char *fmt, ...)
 {
 }
 #endif

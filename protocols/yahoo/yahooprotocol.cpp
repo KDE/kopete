@@ -27,13 +27,20 @@
 
 // Kopete Includes
 #include "kopete.h"
+#include "kopetecontact.h"
+#include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 #include "statusbaricon.h"
-
+#include "systemtray.h"
 // QT Includes
 #include <qcursor.h>
-
+#include <qwidget.h>
+#include <qobject.h>
 // KDE Includes
 #include <kdebug.h>
+#include <kaction.h>
+#include <kpopupmenu.h>
+#include <kstatusbar.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
@@ -53,9 +60,14 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 
 	DEBUG(YDINFO, "Loading Yahoo Plugin...");
 
+	if ( !protocolStatic_ )
+		protocolStatic_ = this;
+	else
+		kdDebug() << "YahooProtocol already initialized" << endl;
+
 	// Create Connection
-    protocol = new KYahoo;
-    connect(protocol, SIGNAL(newContact(QString, QString, QString)), this,
+    m_engine = new KYahoo;
+    connect(m_engine, SIGNAL(newContact(QString, QString, QString)), this,
 	    SLOT(slotNewContact(QString, QString, QString)));
 
 	// Load icons
@@ -85,13 +97,106 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 		Connect();
 }
 
+/***************************************************************************
+ *                                                                         *
+ *   Re-implementation of Plugin class methods                             *
+ *                                                                         *
+ ***************************************************************************/
+
+bool YahooProtocol::serialize( KopeteMetaContact *metaContact,
+                             QStringList &strList ) const
+{
+/*
+//	kdDebug() << "[ICQProtocol] Serializing metacontact" << endl;
+	KopeteContact *c;
+	bool done = false;
+	for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
+	{
+		if ( c->protocol() == this->id() )
+		{
+			kdDebug() << "Found ICQ-Contact in MetaContact" << endl;
+			ICQContact *g = static_cast<ICQContact*>(c);
+
+			if ( !g )		// try the next one :)
+				continue;
+
+			// TODO, only use displayName() and make sure that var is always valid
+			if ( !QString(g->mUser->Alias).isEmpty() )
+				strList << QString(g->mUser->Alias);
+			else
+				strList << g->displayName();
+
+			metaContact->setAddressBookField( ICQProtocol::protocol(), "messaging/icq" , g->id() );
+			done = true;
+		}
+	}
+	return done;
+	*/
+	return true;
+}
+
+YahooProtocol *YahooProtocol::protocol()
+{
+	return protocolStatic_;
+}
+
+
+void YahooProtocol::deserialize( KopeteMetaContact *metaContact,
+                           const QStringList &strList )
+{
+//	kdDebug() << "[ICQProtocol] Deserializing metacontact" << endl;
+    /*
+	QString protocolId = this->id();
+
+	QString uin, alias;
+	uin = metaContact->addressBookField( this, "messaging/icq" ) ;
+
+	alias = strList.first();
+
+	if ( alias == "TODOdisplayName" ) // fix for stupid old icq-plugin
+		alias = "";
+
+	uint UIN = uin.toUInt();
+
+	if (UIN <= 0 || contactsMap.contains(UIN)) return ;
+	ICQUser *user = engine->getUser(UIN, true);
+	if (!user) return;
+
+	//ICQGroup *group = findGroup(groupName, true);
+	//if (!group) return 0L;
+
+	//user->GrpId = group->Id;
+	//engine->moveUser(user, group);
+
+	//if (!alias.isEmpty() && QString(user->Alias).isEmpty())
+	user->Alias = alias;
+
+	ICQContact *contact = new ICQContact(protocolId, metaContact, user, this);
+	KopeteContact *c = contact;
+
+	metaContact->addContact( c, QStringList() );
+	contactsMap.insert(UIN, contact);
+
+//	ICQEvent e(EVENT_INFO_CHANGED);
+//	engine->process_event(&e);
+	*/
+}
+
+QStringList YahooProtocol::addressBookFields() const
+{
+    return QStringList("messaging/yahoo");
+}
+
+/*********************************************************************/
 
 // Destructor
 YahooProtocol::~YahooProtocol()
 {
 	DEBUG(YDMETHOD, "YahooProtocol::~YahooProtocol()");
+	protocolStatic_ = 0L;
 }
 
+YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
 
 // Unload statusbar icon
 bool YahooProtocol::unload()
@@ -109,11 +214,12 @@ bool YahooProtocol::unload()
 }
 
 
-KopeteContact YahooProtocol::myself() const
+KopeteContact *YahooProtocol::myself() const
 {
 #warning "For future maintainers : reimplement this!"
 	return 0L;
 }
+
 
 // Connect to server
 void YahooProtocol::Connect()
@@ -123,7 +229,7 @@ void YahooProtocol::Connect()
     if (!isConnected()) {
 		DEBUG(YDINFO, "Attempting to connect to Yahoo server <"
 			<< mServer << ":" << mPort << "< with user <" << mUsername << ">");
-		protocol->Connect(mServer, mPort, mUsername, mPassword);
+		m_engine->Connect(mServer, mPort, mUsername, mPassword);
     }
 	else if (isAway()) {	// They're really away, and they want to un-away.
 		// XXX slotGoOnline();
@@ -143,7 +249,7 @@ void YahooProtocol::Disconnect()
     if (isConnected()) {
 		DEBUG(YDINFO, "Attempting to disconnect from Yahoo server "
 			<< mServer);
-		protocol->Disconnect();
+		m_engine->Disconnect();
     }
 	else {			// Again, what's with the crack? Sheez.
 		DEBUG(YDINFO,
@@ -250,7 +356,7 @@ void YahooProtocol::slotNewContact(QString userID, QString name,
     if (group == QString("")) {
 		group = i18n("Unknown");
     }
-    kopeteapp->contactList()->addContact( new YahooContact(userID, name, group, this), group);
+    //kopeteapp->contactList()->addContact( new YahooContact(userID, name, group, this), group);
 }
 
 

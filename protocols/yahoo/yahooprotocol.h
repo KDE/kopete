@@ -38,6 +38,7 @@ class StatusBarIcon;	// libkopete::ui::statusbaricon
 class KPopupMenu;
 class KActionMenu;
 class KAction;
+class KopeteMetaContact;
 
 // Yahoo Protocol
 class YahooProtocol : public KopeteProtocol
@@ -45,9 +46,18 @@ class YahooProtocol : public KopeteProtocol
 	Q_OBJECT
 
 public:
+
+	static YahooProtocol *protocol();
+
+	/* Plugin reimplementation */
+	void init();
+	bool unload();
+	bool serialize( KopeteMetaContact *metaContact, QStringList &strList ) const;
+	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
+	QStringList addressBookFields() const;
+
 	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
 	~YahooProtocol();	// Destructor
-	bool unload();		// Unload statusbar icon
 
 	KopeteContact* myself() const;
 	void addContact(QString);
@@ -85,7 +95,7 @@ private:
 	StatusBarIcon *statusBarIcon;	// Statusbar Icon Object
 	KPopupMenu *popup;				// Statusbar Popup
 	YahooPreferences *mPrefs;		// Preferences Object
-	KYahoo *protocol;				// Connection Object
+	KYahoo *m_engine;				// Connection Object
 
 	QPixmap onlineIcon;				// Icons
 	QPixmap offlineIcon;
@@ -111,6 +121,9 @@ private:
 	KAction *actionGoStatus012; // Invisible
 	KAction *actionGoStatus099; // Custom
 	KAction *actionGoStatus999; // Idle
+
+	static YahooProtocol* protocolStatic_;
+
 };
 
 #endif
