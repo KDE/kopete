@@ -180,7 +180,7 @@ public:
 
 	bool docked() { return ( m_tabBar != 0L ); }
 
-	QString &caption() { return m_captionText; }
+	QString &caption() const;
 
 	bool sendInProgress() { return m_sendInProgress; }
 
@@ -475,11 +475,6 @@ private:
 
 	QTimer *m_typingRepeatTimer;
 	QTimer *m_typingStopTimer;
-
-	/**
-	 * Holds the string to be displayed on the tabs and window title
-	 */
-	QString m_captionText;
 
 	void setTabState( KopeteTabState state = Undefined );
 
