@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@pandora.be" );
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, icons, plugins"), "lists@stevello.free-online.co.uk" );
-	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Yahoo plugin maintainer"), "mattrogers@sbcglobal.net" );
+	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, Yahoo plugin maintainer"), "mattrogers@sbcglobal.net" );
 
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
