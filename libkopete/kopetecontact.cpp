@@ -22,44 +22,87 @@
 #include <qimage.h>
 #include <qlabel.h>
 #include <qpixmap.h>
-#include <qregexp.h>
 #include <qvbox.h>
 
 #include <kdebug.h>
+#include <kiconeffect.h>
 #include <kiconloader.h>
+#include <klineeditdlg.h>
+#include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
-#include <kaction.h>
-#include <klineeditdlg.h>
-#include <kiconeffect.h>
 
 #include "kopetecontactlist.h"
 #include "kopetehistorydialog.h"
-#include "kopetemetacontact.h"
+#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
-#include "kopeteprefs.h"
 
+// FIXME: What are these doing here and why are they #defines and not const ints? - Martijn
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
+
+class KopeteContactPrivate
+{
+public:
+	KopeteHistoryDialog *historyDialog;
+	QString displayName;
+	bool fileCapable;
+	KopeteProtocol *protocol;
+
+	QPixmap cachedScaledIcon;
+	int cachedSize;
+	int cachedOldImportance;
+
+	//idle state
+	KopeteContact::IdleState idleState;
+
+	KopeteMetaContact *metaContact;
+
+	KAction *actionSendMessage;
+	KAction *actionChat;
+	KAction *actionDeleteContact;
+	KAction *actionChangeMetaContact;
+	KAction *actionViewHistory;
+	KAction *actionChangeAlias;
+	KAction *actionUserInfo;
+	KAction *actionSendFile;
+
+	KListView *selectMetaContactListBox;
+
+	KPopupMenu *contextMenu;
+
+	QString contactId;
+};
+
+// Used in slotChangeMetaContact()
+// FIXME: How about reusing KopeteMetaContactLVI ? - Martijn
+class MetaContactListViewItem : public QListViewItem
+{
+public:
+	KopeteMetaContact *metaContact;
+	MetaContactListViewItem( KopeteMetaContact *m, QListView *p );
+};
 
 KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
 : QObject( parent )
 {
+	d = new KopeteContactPrivate;
+
 //	kdDebug() << "KopeteContact::KopeteContact: Creating contact with id " << contactId << endl;
 
-	m_contactId = contactId;
+	d->contactId = contactId;
 
-	m_metaContact = parent;
-	m_protocol = protocol;
-	m_cachedSize = 0;
-	m_cachedOldImportance = 0;
-	contextMenu = 0L;
-	mFileCapable = false;
-	m_historyDialog = 0L;
-	m_idleState = Unspecified;
-	m_displayName = contactId;
+	d->metaContact = parent;
+	d->protocol = protocol;
+	d->cachedSize = 0;
+	d->cachedOldImportance = 0;
+	d->contextMenu = 0L;
+	d->fileCapable = false;
+	d->historyDialog = 0L;
+	d->idleState = Unspecified;
+	d->displayName = contactId;
 
 	if( protocol )
 	{
@@ -68,22 +111,14 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	}
 
 	// Initialize the context menu
-	actionSendMessage = KopeteStdAction::sendMessage( this,
-		SLOT( sendMessage() ), this, "actionSendMessage" );
-	actionChat = KopeteStdAction::chat( this,
-		SLOT( startChat() ), this, "actionChat" );
-	actionViewHistory = KopeteStdAction::viewHistory( this,
-		SLOT( slotViewHistory() ), this, "actionViewHistory" );
-	actionChangeMetaContact = KopeteStdAction::changeMetaContact( this,
-		SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
-	actionDeleteContact = KopeteStdAction::deleteContact( this,
-		SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
-	actionUserInfo = KopeteStdAction::contactInfo( this,
-		SLOT( slotUserInfo() ), this, "actionUserInfo" );
-	actionChangeAlias = KopeteStdAction::changeAlias( this,
-		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
-	actionSendFile = KopeteStdAction::sendFile( this,
-		SLOT( sendFile() ), this, "actionSendFile");
+	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             this, "actionChat" );
+	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              this, "actionSendFile" );
+	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          this, "actionUserInfo" );
+	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           this, "actionSendMessage" );
+	d->actionViewHistory = KopeteStdAction::viewHistory( this, SLOT( slotViewHistory() ),       this, "actionViewHistory" );
+	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
+	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
+	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
 
 	// Need to check this because myself() has no parent
 	if( parent )
@@ -98,6 +133,8 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 KopeteContact::~KopeteContact()
 {
 	emit( contactDestroyed( this ) );
+
+	delete d;
 }
 
 void KopeteContact::slotProtocolUnloading()
@@ -118,16 +155,16 @@ void KopeteContact::rename( const QString &name )
 
 void KopeteContact::setDisplayName( const QString &name )
 {
-	if( name == m_displayName )
+	if( name == d->displayName )
 		return;
 
-	m_displayName = name;
+	d->displayName = name;
 	emit displayNameChanged( name );
 }
 
 QString KopeteContact::displayName() const
 {
-	return m_displayName;
+	return d->displayName;
 }
 
 KopeteContact::ContactStatus KopeteContact::status() const
@@ -139,19 +176,19 @@ QString KopeteContact::statusText() const
 {
 	ContactStatus stat = status();
 
-	//kdDebug(14010) << "[KopeteContact] statusText() with status= " << stat << endl;
+	//kdDebug( 14010 ) << "[KopeteContact] statusText() with status= " << stat << endl;
 
 	switch( stat )
 	{
 	case Online:
-		return i18n("Online");
+		return i18n( "Online" );
 	case Away:
-		return i18n("Away");
+		return i18n( "Away" );
 	case Unknown:
-		return i18n("Status not available");
+		return i18n( "Status not available" );
 	case Offline:
 	default:
-		return i18n("Offline");
+		return i18n( "Offline" );
 	}
 }
 
@@ -160,35 +197,35 @@ QString KopeteContact::statusIcon() const
 	return QString::fromLatin1( "unknown" );
 }
 
-QPixmap KopeteContact::scaledStatusIcon(int size)
+QPixmap KopeteContact::scaledStatusIcon( int size )
 {
-	if ( (importance() != m_cachedOldImportance) || ( size != m_cachedSize ) )
+	if ( ( importance() != d->cachedOldImportance ) || ( size != d->cachedSize ) )
 	{
-		QImage afScal = ((QPixmap(SmallIcon(statusIcon()))).convertToImage()).smoothScale( size, size );
-		m_cachedScaledIcon = QPixmap(afScal);
-		m_cachedOldImportance = importance();
-		m_cachedSize = size;
+		QImage afScal = ( ( QPixmap( SmallIcon( statusIcon() ) ) ).convertToImage() ).smoothScale( size, size );
+		d->cachedScaledIcon = QPixmap( afScal );
+		d->cachedOldImportance = importance();
+		d->cachedSize = size;
 	}
-	if ( m_idleState == Idle )
+	if ( d->idleState == Idle )
 	{
-		QPixmap tmp = m_cachedScaledIcon;
-		KIconEffect::semiTransparent(tmp);
+		QPixmap tmp = d->cachedScaledIcon;
+		KIconEffect::semiTransparent( tmp );
 		return tmp;
 	}
-	return m_cachedScaledIcon;
+	return d->cachedScaledIcon;
 }
 
 int KopeteContact::importance() const
 {
 	ContactStatus stat = status();
 
-	if (stat == Online)
+	if( stat == Online )
 		return 20;
 
-	if (stat == Away)
+	if( stat == Away )
 		return 10;
 
-	if (stat == Offline)
+	if( stat == Offline )
 		return 0;
 
 	return 0;
@@ -196,30 +233,29 @@ int KopeteContact::importance() const
 
 void KopeteContact::slotViewHistory()
 {
-	kdDebug(14010) << "KopteContact::slotViewHistory()" << endl;
+	kdDebug( 14010 ) << k_funcinfo << endl;
 
-	if( m_historyDialog )
+	if( d->historyDialog )
 	{
-		m_historyDialog->raise();
+		d->historyDialog->raise();
 	}
 	else
 	{
-		m_historyDialog = new KopeteHistoryDialog(this,
-			true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
+		d->historyDialog = new KopeteHistoryDialog( this, true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
 
-		connect ( m_historyDialog, SIGNAL( destroyed()),
-			this, SLOT( slotHistoryDialogDestroyed() ) );
+		connect ( d->historyDialog, SIGNAL( destroyed() ), SLOT( slotHistoryDialogDestroyed() ) );
 	}
 }
 
 void KopeteContact::slotHistoryDialogDestroyed()
 {
-	m_historyDialog = 0L;
+	d->historyDialog = 0L;
 }
 
-void KopeteContact::sendFile( const KURL &, const QString &, const long unsigned int)
+void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* fileName */, uint /* fileSize */ )
 {
-	kdDebug(14010) << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
+	kdWarning( 14010 ) << k_funcinfo << "Plugin " << protocol()->pluginId() << " has enabled file sending, "
+		<< "but didn't implement it!" << endl;
 }
 
 KPopupMenu* KopeteContact::createContextMenu()
@@ -230,34 +266,33 @@ KPopupMenu* KopeteContact::createContextMenu()
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
 
-	menu->insertTitle( QString::fromLatin1("%1 <%2> (%3)").arg(displayName()).arg(contactId()).arg(statusText()) );
+	menu->insertTitle( QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() ) );
 
+	d->actionSendMessage->plug( menu );
+	d->actionChat->plug( menu );
+	d->actionSendFile->setEnabled( d->fileCapable );
+	d->actionSendFile->plug( menu );
 
-	actionSendMessage->plug( menu );
-	actionChat->plug( menu );
-	if (mFileCapable)
-		actionSendFile->plug( menu );
-
-	actionViewHistory->plug( menu );
+	d->actionViewHistory->plug( menu );
 	menu->insertSeparator();
-	actionChangeMetaContact->plug( menu );
-	actionUserInfo->plug( menu );
-	actionChangeAlias->plug( menu );
-	actionDeleteContact->plug( menu );
+	d->actionChangeMetaContact->plug( menu );
+	d->actionUserInfo->plug( menu );
+	d->actionChangeAlias->plug( menu );
+	d->actionDeleteContact->plug( menu );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function
 
-	// Get the custom actions from the protocols (pure virtual function)
+	// Get the custom actions from the protocols ( pure virtual function )
 	KActionCollection *customActions = customContextMenuActions();
-	if(customActions != 0L)
+	if( customActions != 0L )
 	{
 		if ( !customActions->isEmpty() )
 			menu->insertSeparator();
 
-		for(unsigned int i = 0; i < customActions->count(); i++)
+		for( uint i = 0; i < customActions->count(); i++ )
 		{
-			customActions->action(i)->plug( menu );
+			customActions->action( i )->plug( menu );
 		}
 	}
 
@@ -266,57 +301,60 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 KPopupMenu *KopeteContact::popupMenu()
 {
-	contextMenu = createContextMenu();
-	return contextMenu;
+	if( d->contextMenu )
+		delete d->contextMenu;
+
+	d->contextMenu = createContextMenu();
+	return d->contextMenu;
 }
 
-void KopeteContact::showContextMenu(const QPoint& p)
+void KopeteContact::showContextMenu( const QPoint& p )
 {
-	contextMenu = createContextMenu();
-	contextMenu->exec( p );
-	delete contextMenu;
-	contextMenu = 0L;
+	popupMenu()->exec( p );
+	delete d->contextMenu;
+	d->contextMenu = 0L;
 }
 
 void KopeteContact::slotChangeDisplayName(){
 	bool okClicked;
-	QString newName = KLineEditDlg::getText(i18n("Change Alias"), i18n("New alias for %1:").arg(contactId()),
-		displayName(), &okClicked);
+	QString newName = KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
+		displayName(), &okClicked );
 
-	if(okClicked)
+	if( okClicked )
 		setDisplayName( newName );
 }
 
 void KopeteContact::slotChangeMetaContact()
 {
-	KDialogBase *moveDialog= new KDialogBase( qApp->mainWidget(), "moveDialog" , true, i18n("Move Contact") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )  ;
-	QVBox *w = new QVBox(moveDialog);
+	KDialogBase *moveDialog= new KDialogBase( qApp->mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
+		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+	QVBox *w = new QVBox( moveDialog );
 	w->setSpacing( 8 );
-	new QLabel(i18n("Choose the meta contact into which you want to move this contact.") , w);
-	m_selectMetaContactListBox = new KListView ( w , "m_selectMetaContactListBox");
-	m_selectMetaContactListBox->addColumn( i18n("Display Name") );
-	m_selectMetaContactListBox->addColumn( i18n("Contact IDs") );
+	new QLabel( i18n( "Choose the meta contact into which you want to move this contact." ), w );
+	d->selectMetaContactListBox = new KListView ( w, "selectMetaContactListBox" );
+	d->selectMetaContactListBox->addColumn( i18n( "Display Name" ) );
+	d->selectMetaContactListBox->addColumn( i18n( "Contact IDs" ) );
 
 	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
 	for( KopeteMetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
-		if(!mc->isTemporary())
-			new MetaContactListViewItem(mc , m_selectMetaContactListBox  ) ;
+		if( !mc->isTemporary() )
+			new MetaContactListViewItem( mc, d->selectMetaContactListBox  ) ;
 	}
 
-	m_selectMetaContactListBox->sort();
+	d->selectMetaContactListBox->sort();
 
-	moveDialog->setMainWidget(w);
-	connect( moveDialog, SIGNAL( okClicked()) , this, SLOT( slotMoveDialogOkClicked() ) );
+	moveDialog->setMainWidget( w );
+	connect( moveDialog, SIGNAL( okClicked() ), this, SLOT( slotMoveDialogOkClicked() ) );
 	moveDialog->show();
 }
 
 void KopeteContact::slotMoveDialogOkClicked()
 {
-	KopeteMetaContact *mc= static_cast<MetaContactListViewItem*>( m_selectMetaContactListBox->currentItem() ) ->metaContact;
-	if(!mc)
+	KopeteMetaContact *mc = static_cast<MetaContactListViewItem*>( d->selectMetaContactListBox->currentItem() )->metaContact;
+	if( !mc )
 	{
-		kdDebug(14010) << "KopeteContact::slotMoveDialogOkClicked : metaContact not found, will create a new one" << endl;
+		kdDebug( 14010 ) << "KopeteContact::slotMoveDialogOkClicked : metaContact not found, will create a new one" << endl;
 		return;
 	}
 	setMetaContact( mc );
@@ -324,23 +362,23 @@ void KopeteContact::slotMoveDialogOkClicked()
 
 void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
-	KopeteMetaContact *old = m_metaContact;
-	m_metaContact->removeContact( this );
+	KopeteMetaContact *old = d->metaContact;
+	d->metaContact->removeContact( this );
 	m->addContact( this );
 
 	KopeteGroupList newGroups = m->groups();
-	KopeteGroupList oldGroups = m_metaContact->groups();
+	KopeteGroupList oldGroups = d->metaContact->groups();
 	KopeteGroupList currentGroups = groups();
 
 	// Reparent the contact
-	m_metaContact->removeChild( this );
+	d->metaContact->removeChild( this );
 	m->insertChild( this );
-	m_metaContact = m;
+	d->metaContact = m;
 
 	// Reconnect signals to the new meta contact
 	disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
-	connect( m_metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+	connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
 	// Sync groups
@@ -356,9 +394,9 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 			removeFromGroup( group );
 	}
 
-	//the aboutToSave signal is disconnected from "old" , but it still contains
+	//the aboutToSave signal is disconnected from "old", but it still contains
 	//cached data in it, then, i serialize the old contact for removing old data
-	protocol()->slotMetaContactAboutToSave(old);
+	protocol()->slotMetaContactAboutToSave( old );
 
 	if( old->contacts().isEmpty() )
 	{
@@ -367,8 +405,8 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	}
 }
 
-KopeteContact::MetaContactListViewItem::MetaContactListViewItem(KopeteMetaContact *m, QListView *p)
-		:QListViewItem(p)
+MetaContactListViewItem::MetaContactListViewItem( KopeteMetaContact *m, QListView *p )
+: QListViewItem( p )
 {
 	metaContact=m;
 	setText( 0, m->displayName() );
@@ -401,8 +439,8 @@ void KopeteContact::serialize( QMap<QString, QString> & /*serializedData */,
 
 void KopeteContact::setIdleState( KopeteContact::IdleState newState )
 {
-	m_idleState = newState;
-	emit idleStateChanged( this, m_idleState );
+	d->idleState = newState;
+	emit idleStateChanged( this, d->idleState );
 }
 
 void KopeteContact::addToGroup( KopeteGroup * /* newGroup */ )
@@ -422,32 +460,32 @@ bool KopeteContact::isReachable()
 
 void KopeteContact::startChat()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteMessage::Chat);
+	KopeteViewManager::viewManager()->launchWindow( manager( true ), KopeteMessage::Chat );
 }
 
 void KopeteContact::sendMessage()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteMessage::Email);
+	KopeteViewManager::viewManager()->launchWindow( manager( true ), KopeteMessage::Email );
 }
 
 void KopeteContact::execute()
 {
 	switch( KopetePrefs::prefs()->interfacePreference() )
 	{
-		case EMAIL_WINDOW:
-			sendMessage();
-			break;
+	case EMAIL_WINDOW:
+		sendMessage();
+		break;
 
-		case CHAT_WINDOW:
-		default:
-			startChat();
-			break;
+	case CHAT_WINDOW:
+	default:
+		startChat();
+		break;
 	}
 }
 
 KopeteMessageManager *KopeteContact::manager( bool )
 {
-	kdDebug(14010) << "Manager() not implimented for " << protocol()->displayName() << ", crash!" << endl;
+	kdDebug( 14010 ) << "Manager() not implimented for " << protocol()->displayName() << ", crash!" << endl;
 	return 0L;
 }
 
@@ -470,6 +508,51 @@ KopeteGroupList KopeteContact::groups() const
 {
 	/* Default implementation does nothing */
 	return KopeteGroupList();
+}
+
+bool KopeteContact::isOnline() const
+{
+	return status() != Offline && status() != Unknown;
+}
+
+KopeteMetaContact * KopeteContact::metaContact() const
+{
+	return d->metaContact;
+}
+
+QString KopeteContact::contactId() const
+{
+	return d->contactId;
+}
+
+KopeteProtocol * KopeteContact::protocol() const
+{
+	return d->protocol;
+}
+
+KActionCollection * KopeteContact::customContextMenuActions()
+{
+	return 0L;
+};
+
+bool KopeteContact::isFileCapable() const
+{
+	return d->fileCapable;
+}
+
+void KopeteContact::setFileCapable( bool filecap )
+{
+	d->fileCapable = filecap;
+}
+
+bool KopeteContact::canAcceptFiles() const
+{
+	return isOnline() && d->fileCapable;
+}
+
+KopeteContact::IdleState KopeteContact::idleState() const
+{
+	return d->idleState;
 }
 
 #include "kopetecontact.moc"

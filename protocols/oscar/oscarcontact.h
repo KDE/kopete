@@ -25,17 +25,17 @@
 
 class AIMBuddy;
 
-/**
-  * Contact for oscar protocol
-  * @author Tom Linsky <twl6@po.cwru.edu>
-  */
-
 struct UserInfo;
 class QTimer;
 class OscarProtocol;
 class KopeteMessageManager;
 class OscarConnection;
+class KAction;
 
+/**
+ * Contact for oscar protocol
+ * @author Tom Linsky <twl6@po.cwru.edu>
+ */
 class OscarContact : public KopeteContact
 {
    Q_OBJECT

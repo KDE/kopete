@@ -90,7 +90,7 @@ void KopeteProtocol::put( const KURL& dest_url, int perms, bool overWrite, bool 
 	//Create the FIFO for output if it doesn't exist
 	mkfifo("/tmp/kopete_kio_test", 0600);
 	
-	if (client->call("kopete", "KopeteIface", "sendFile(QString &, KURL &, QString &, unsigned long)", data, replyType, replyData)) {
+	if (client->call("kopete", "KopeteIface", "sendFile(QString &, KURL &, QString &, unsigned)", data, replyType, replyData)) {
 		
 		//Open the FIFO
 		FILE *fp = fopen("/tmp/kopete_kio_test","wb");

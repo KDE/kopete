@@ -23,7 +23,7 @@ kopete_SOURCES = main.cpp \
 	statusbaricon.cpp kopetecontactlistview.cpp systemtray.cpp \
 	kopeteballoon.cpp
 
-kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
 kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
 	addcontactwizard/libkopeteaddcontactwizard.la
 

@@ -1,10 +1,10 @@
 /*
     kopetecontact.h - Kopete Contact
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,35 +16,27 @@
     *************************************************************************
 */
 
-#ifndef KOPETECONTACT_H
-#define KOPETECONTACT_H
+#ifndef __KOPETECONTACT_H__
+#define __KOPETECONTACT_H__
 
-#include <klistview.h>
-#include <qmap.h>
 #include <qobject.h>
-#include <qpixmap.h>
 
-#include <kurl.h>
+class KopeteContactPrivate;
 
-#include "kopetegroup.h"
-
-class QString;
-class QPixmap;
-
-class KAction;
 class KActionCollection;
-class KListBox;
 class KPopupMenu;
+class KURL;
 
-class KopeteEvent;
 class KopeteGroup;
-class KopeteHistoryDialog;
+class KopeteGroupList;
 class KopeteMetaContact;
-class KopeteProtocol;
 class KopeteMessageManager;
+class KopetePlugin;
+class KopeteProtocol;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @author Martijn Klingens <klingens@kde.org>
  *
  * This class abstracts a generic contact/buddie.
  * Use it for inserting contacts in the contact list for example.
@@ -75,7 +67,7 @@ public:
 	 * @return bool indicating whhether the contact is online
 	 * FIXME: When all plugins support this, make this pure virtual!
 	 */
-	virtual bool isOnline() const { return status() != Offline && status() != Unknown; }
+	virtual bool isOnline() const;
 
 	/**
 	 * Function used in determining if the contact is able to
@@ -90,7 +82,7 @@ public:
 	 * Accessor function for the contact's MetaContact
 	 * @return The contact's metacontact
 	 */
-	KopeteMetaContact *metaContact() const { return m_metaContact; }
+	KopeteMetaContact *metaContact() const;
 
 	/**
 	 * Returns the identity this contact belongs to (i.e. for
@@ -119,8 +111,7 @@ public:
 	 * contact id as value. If no index field is available the QMap is
 	 * simply passed as an empty map.
 	 */
-	virtual void serialize( QMap<QString, QString> &serializedData,
-		QMap<QString, QString> &addressBookData );
+	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	/**
 	 * The groups in which the user is physically located.
@@ -224,7 +215,7 @@ public:
 	 *
 	 * @return The unique id of the contact
 	 */
-	QString contactId() const { return m_contactId; }
+	QString contactId() const;
 
 	/**
 	 * Return the protocol that the contact belongs to.
@@ -238,7 +229,7 @@ public:
 	 *
 	 * @return the contact's protocol
 	 */
-	KopeteProtocol* protocol() const { return m_protocol; }
+	KopeteProtocol* protocol() const;
 
 	/**
 	 * Returns a set of custom menu items for the context menu
@@ -248,7 +239,7 @@ public:
 	 *
 	 * @return Collection of menu items to be show on the context menu
 	 */
-	virtual KActionCollection *customContextMenuActions() {return 0L;};
+	virtual KActionCollection *customContextMenuActions();
 
 	/**
 	 * Show a context menu of actions pertaining to this contact
@@ -274,33 +265,33 @@ public:
 	/**
 	 * Returns whether or not this contact is capable of file transfers or not
 	 */
-	bool isFileCapable() const { return mFileCapable; }
+	bool isFileCapable() const;
 
 	/*
 	 * Sets the capability of file transfers for this user. Once this is changed it will
 	 * immediately add a new menu entry called "Send File...", and will call the
 	 * virtual slotSendFile
 	 */
-	 void setFileCapable(bool filecap) { mFileCapable = filecap; }
+	void setFileCapable( bool filecap );
 
 	/*
 	 * Returns if this contact can accept file transfers
 	 * @return True if this contact is online and is capable of sending files, False otherwise
 	 */
-	 bool canAcceptFiles() const { return isOnline() && mFileCapable; }
+	bool canAcceptFiles() const;
 
 	/**
 	 * Accessor function for the idle state of the contact
 	 * @return Idle state of the contact
 	 */
-	IdleState idleState() const { return m_idleState; };
+	IdleState idleState() const;
 
 	/**
 	 * Sets the idle state to newState
 	 * If this function is not called by a plugin, the idle state is set to Unknown
 	 */
 	void setIdleState( KopeteContact::IdleState newState );
-	
+
 	KPopupMenu *popupMenu();
 
 	/**
@@ -322,10 +313,10 @@ public:
 	 * This function should always returnt that instance.
 	 *
 	 * @param canCreate If a new message manager can be created in addition
-	 * 	to any existing managers. Current;y, this is only set to true when
-	 *	a chat is initiated by the user by clicking the contact list.
+	 * to any existing managers. Current;y, this is only set to true when
+	 * a chat is initiated by the user by clicking the contact list.
 	 */
-	virtual KopeteMessageManager* manager( bool canCreate = false );
+	virtual KopeteMessageManager * manager( bool canCreate = false );
 
 public slots:
 	/**
@@ -362,7 +353,7 @@ public slots:
 	virtual void slotUserInfo();
 
 	/**
-	 * This is the KopeteContact level slot for sending files. It should be implemented by all 
+	 * This is the KopeteContact level slot for sending files. It should be implemented by all
 	 * contacts which have the setFileCapable() flag set to true. If the function is called through
 	 * the GUI, no parameters are sent and they take on default values (the file is chosen with
 	 * a file open dialog)
@@ -372,8 +363,7 @@ public slots:
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
 	 *                file size (such as over  asocket
 	 */
-	virtual void sendFile( const KURL &sourceURL = 0L, const QString &fileName = QString::null,
-		const long unsigned int fileSize = 0L );
+	virtual void sendFile( const KURL &sourceURL, const QString &fileName = QString::null, uint fileSize = 0L );
 
 protected:
 	/**
@@ -431,51 +421,10 @@ signals:
 	/**
 	 * The contact's idle state changed
 	 */
-	void idleStateChanged( KopeteContact *contact,
-		KopeteContact::IdleState newState );
+	void idleStateChanged( KopeteContact *contact, KopeteContact::IdleState newState );
 
 private:
-	KopeteHistoryDialog *m_historyDialog;
-	QString m_displayName;
-	KopeteProtocol *m_protocol;
-	bool mFileCapable;
-
-	/**
-	 * Scaled icon cache
-	 */
-	QPixmap m_cachedScaledIcon;
-	int m_cachedSize;
-	int m_cachedOldImportance;
-
-	//idle state
-	IdleState m_idleState;
-
-	KopeteMetaContact *m_metaContact;
-
-	/* Context Menu Entries */
-	KAction *actionSendMessage;
-	KAction *actionChat;
-	KAction *actionDeleteContact;
-	KAction *actionChangeMetaContact;
-	KAction *actionViewHistory;
-	KAction *actionChangeAlias;
-	KAction *actionUserInfo;
-	KAction *actionSendFile;
-
-	KPopupMenu *contextMenu;
-
-	/**
-	 * Followed declarations are needed to move a contact into another metacontact
-	 */
-	KListView *m_selectMetaContactListBox;
-	class MetaContactListViewItem : public QListViewItem
-	{
-		public:
-			KopeteMetaContact *metaContact;
-			MetaContactListViewItem(KopeteMetaContact *m, QListView *p);
-	};
-
-	QString m_contactId;
+	KopeteContactPrivate *d;
 };
 
 #endif

@@ -14,8 +14,12 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include <qdatetime.h>
+#include <qfont.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
+
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>

@@ -39,7 +39,7 @@ k_dcop:
 	QStringList fileTransferContacts();
 	QStringList contactFileProtocols(const QString &displayName);
 	/*void sendFile(const QString &displayName, const KURL &sourceURL,
-		const QString &altFileName, const unsigned long fileSize);*/
+		const QString &altFileName, uint fileSize);*/
 
 	// FIXME: Do we *need* this one? Sounds error prone to me, because
 	// nicknames can contain parentheses too.

@@ -20,7 +20,6 @@
 #define KOPETEPROTOCOL_H
 
 #include "kopeteplugin.h"
-#include "kopetemetacontact.h"
 
 #include <qdict.h>
 

@@ -67,7 +67,7 @@ void KopeteIface::messageContact( const QString &displayName, const QString &mes
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
-	const QString &altFileName = QString::null, const unsigned long fileSize = 0L)
+	const QString &altFileName = QString::null, uint fileSize = 0)
 {
 	return KopeteContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
 }
@@ -79,12 +79,6 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &contac
 	return KopeteContactList::contactList()->dcopAddContact( protocolName, contactId, displayName, 0L, groupName );
 }
 */
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

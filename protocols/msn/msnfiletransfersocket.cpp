@@ -32,7 +32,9 @@
 #include <kmessagebox.h>
 #include <ksockaddr.h>
 
+#include "kopetecontact.h"
 #include "kopetetransfermanager.h"
+
 #include "msnprotocol.h"
 
 MSNFileTransferSocket::MSNFileTransferSocket(KopeteProtocol *protocol, bool incoming, QObject* parent) : MSNSocket(parent)

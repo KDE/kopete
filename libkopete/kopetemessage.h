@@ -18,12 +18,14 @@
 #ifndef __KOPETE_MESSAGE_H__
 #define __KOPETE_MESSAGE_H__
 
-#include <qdatetime.h>
+#include <qptrlist.h>
 #include <qstring.h>
 
 #include "kopetecontact.h"
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
+
+class QDateTime;
 
 class KopeteMessagePrivate;
 
