@@ -39,8 +39,6 @@ TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *pare
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
-	m_lc = 0; m_sc = 0;
-
 	preferencesDialog = new TranslatorPrefsUI(this);
 
     QMap<QString,QString>::ConstIterator i;
@@ -49,31 +47,17 @@ TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *pare
 	m = TranslatorPlugin::plugin()->languagesMap();
 
 	for ( i = m.begin(); i != m.end() ; ++i )
-	{
-		m_langIntKeyMap[m_lc] = i.key();
-		m_langKeyIntMap[i.key()] = m_lc;
-
-		preferencesDialog->m_LangBox->insertItem( i.data(), m_lc);
-
-		m_lc++;
-	}
+		preferencesDialog->m_LangBox->insertItem( i.data(), TranslatorPlugin::plugin()->languageIndex(i.key()) );
 
 	m = TranslatorPlugin::plugin()->servicesMap();
 
 	for ( i = m.begin(); i != m.end() ; ++i )
-	{
-		m_servicesIntKeyMap[m_sc] = i.key();
-		m_servicesKeyIntMap[i.key()] = m_sc;
-
-		preferencesDialog->m_ServiceBox->insertItem( i.data(), m_sc);
-
-		m_sc++;
-	}	
-
+		preferencesDialog->m_ServiceBox->insertItem( i.data(), TranslatorPlugin::plugin()->serviceIndex(i.key()) );
+    
 	KGlobal::config()->setGroup("Translator Plugin");
 
-	preferencesDialog->m_LangBox->setCurrentItem( m_langKeyIntMap[KGlobal::config()->readEntry("myLang", "en")]);
-	preferencesDialog->m_ServiceBox->setCurrentItem( m_servicesKeyIntMap[KGlobal::config()->readEntry("Service", "babelfish")]);
+	preferencesDialog->m_LangBox->setCurrentItem( TranslatorPlugin::plugin()->languageIndex(KGlobal::config()->readEntry("myLang", "en")));
+	preferencesDialog->m_ServiceBox->setCurrentItem( TranslatorPlugin::plugin()->serviceIndex(KGlobal::config()->readEntry("Service", "babelfish")));
 }
 
 TranslatorPreferences::~TranslatorPreferences()
@@ -82,12 +66,12 @@ TranslatorPreferences::~TranslatorPreferences()
 
 const QString& TranslatorPreferences::myLang()
 {
-	return m_langIntKeyMap[ preferencesDialog->m_LangBox->currentItem() ];
+	return TranslatorPlugin::plugin()->languageKey(preferencesDialog->m_LangBox->currentItem());
 }
 
 const QString& TranslatorPreferences::service()
 {
-	return m_servicesIntKeyMap[ preferencesDialog->m_ServiceBox->currentItem() ];
+	return TranslatorPlugin::plugin()->serviceKey(preferencesDialog->m_ServiceBox->currentItem());
 }
 
 void TranslatorPreferences::save()
@@ -95,10 +79,9 @@ void TranslatorPreferences::save()
 	KConfig *config = KGlobal::config();
 	config->setGroup("Translator Plugin");
 	config->writeEntry("myLang", myLang() );
-	config->writeEntry("Service", myLang() );
+	config->writeEntry("Service", service() );
 	config->sync();
 	emit saved();
-
 }
 
 /*

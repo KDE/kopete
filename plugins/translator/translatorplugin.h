@@ -23,6 +23,8 @@
 #include <qobject.h>
 #include <qmap.h>
 #include <qcstring.h>
+#include <qintdict.h>
+#include <qstring.h>
 
 #include <kio/job.h>
 
@@ -74,6 +76,12 @@ public:
 	const QString& languageName( const QString &key )
 	{ return m_langs[key]; };
 
+	const int languageIndex	( const QString &key )
+	{ return m_langKeyIntMap[key]; };
+
+	const QString& languageKey( const int index )
+	{ return  m_langIntKeyMap[index]; };
+
 	const QMap<QString,QString>& languagesMap()
 	{ return m_langs; };
 
@@ -82,6 +90,12 @@ public:
 
 	const QStringList& supported( const QString &servicekey)
 	{ return m_supported[servicekey]; };
+
+	const int serviceIndex	( const QString &key )
+	{ return m_servicesKeyIntMap[key]; };
+
+	const QString& serviceKey( const int index )
+	{ return  m_servicesIntKeyMap[index]; };
     
 public slots:
 
@@ -98,6 +112,7 @@ protected:
 private:
 	/* Known Languages key -> desc ie: en -> English */
 	QMap< QString, QString> m_langs;
+
     /* Known Services key -> desc ie: en -> English */
 	QMap< QString, QString> m_services;
 	/* Supported translations per service, src_dst format ( ie: en_es )*/
@@ -111,6 +126,19 @@ private:
 
 	/* My default language */
 	QString m_myLang;
+
+	/* int to lang key and viceversa*/
+    QMap<int, QString> m_langIntKeyMap;
+	QMap<QString, int> m_langKeyIntMap;
+
+	/* int to lang key and viceversa*/
+    QMap<int, QString> m_servicesIntKeyMap;
+	QMap<QString, int> m_servicesKeyIntMap;
+
+	/* Lang counter */
+	int m_lc;
+	/* Service counter */
+	int m_sc;
 
 	/* Translator plugin Preferences */
 	TranslatorPreferences *m_prefs;

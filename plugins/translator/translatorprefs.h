@@ -60,20 +60,6 @@ signals:
 
 private:
 	TranslatorPrefsUI *preferencesDialog;	
-
-	/* int to lang key and viceversa*/
-    QMap<int, QString> m_langIntKeyMap;
-	QMap<QString, int> m_langKeyIntMap;
-
-	/* int to lang key and viceversa*/
-    QMap<int, QString> m_servicesIntKeyMap;
-	QMap<QString, int> m_servicesKeyIntMap;
-
-	/* Lang counter */
-	int m_lc;
-	/* Service counter */
-	int m_sc;
-
 };
 
 #endif

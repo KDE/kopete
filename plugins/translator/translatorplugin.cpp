@@ -18,9 +18,11 @@
 */
 
 #include "translatorplugin.h"
+#include "translatorplugin.moc"
 
 #include <qcolor.h>
 #include <qcstring.h>
+#include <qstring.h>
 #include <qregexp.h>
 #include <qmap.h>
 
@@ -48,13 +50,16 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_actionCollection=0L;
 	m_actionLanguage=0L;
 
+	m_lc = 0; m_sc = 0;
+
 	if ( pluginStatic_ )
 		kdDebug()<<"####"<<"Translator already initialized"<<endl;
 	else
 		pluginStatic_ = this;
-	
+
 	m_services.insert("babelfish", "BabelFish");
 
+    m_langs.insert("null", i18n("Unknown"));
 	m_langs.insert("en", i18n("English"));
 	m_langs.insert("zh", i18n("Chinese"));
 	m_langs.insert("fr", i18n("French"));
@@ -90,6 +95,22 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_supported["babelfish"].append("pt_en");
 	m_supported["babelfish"].append("ru_en");
 	m_supported["babelfish"].append("es_en");
+
+    QMap<QString,QString>::ConstIterator i;
+
+	for ( i = m_langs.begin(); i != m_langs.end() ; ++i )
+	{
+		m_langIntKeyMap[m_lc] = i.key();
+		m_langKeyIntMap[i.key()] = m_lc;
+		m_lc++;
+	}
+
+	for ( i = m_services.begin(); i != m_services.end() ; ++i )
+	{
+		m_servicesIntKeyMap[m_sc] = i.key();
+		m_servicesKeyIntMap[i.key()] = m_sc;
+		m_sc++;
+	}	
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
  
@@ -142,9 +163,11 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
     QStringList keys;
 
 	QMap<QString,QString>::ConstIterator it;
-	for ( it = m_langs.begin(); it != m_langs.end(); ++it)
+	int k;
+
+	for ( k=0; k <= m_lc; k++)
 	{
-		keys << it.key();
+		keys << m_langs[ languageKey(k) ];
 	}
 
 	if(m_actionLanguage)
@@ -155,7 +178,12 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 
 	m_actionCollection = new KActionCollection(this);
 	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  m_actionCollection ,"m_actionLanguage");
+
 	m_actionLanguage->setItems( keys );
+
+	if ( ( m_langMap[m] != 0L ) || ( m_langMap[m] != "null") )
+		m_actionLanguage->setCurrentItem( languageIndex(m_langMap[m]) );
+
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
 	m_actionCollection->insert(m_actionLanguage);
 	m_currentMetaContact=m;
@@ -341,6 +369,6 @@ void TranslatorPlugin::slotSetLanguage()
 {
 	if( m_actionLanguage && m_currentMetaContact)
 	{
-		m_langMap[ m_currentMetaContact ]=m_actionLanguage->currentText();
+		m_langMap[ m_currentMetaContact ]= languageKey( m_actionLanguage->currentItem() );
 	}
 }
