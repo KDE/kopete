@@ -18,9 +18,7 @@ Beware: It's totally unsorted ;)
 
 - Prevent attempting to send while offline where appropriate
 
-- First time wizard (mETz, low priority)
-
-- Import emoticon themes and/or styles (mETz, low priority)
+- First time wizard
 
 - Save the account order in the config file (IMPORTANT)
 
