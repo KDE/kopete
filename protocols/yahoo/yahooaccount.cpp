@@ -135,7 +135,7 @@ void YahooAccount::setImportContacts(bool newSetting)
 
 void YahooAccount::connect()
 {
-	QString server = "scs.yahoo.com";
+	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
 	YahooSessionManager::manager()->setPager(server, port);
