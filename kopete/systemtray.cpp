@@ -237,9 +237,9 @@ void KopeteSystemTray::addBalloon()
 
 		if ( msg.from() )
 		{
-			//kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
+			kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
 			QString msgText = squashMessage( msg );
-			//kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
+			kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
 
 			QString msgFrom;
 			if( msg.from()->metaContact() )
@@ -324,15 +324,16 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 
 QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 {
-	QString msgText = msg.parsedBody();
+	QString msgText = msg.plainBody();
 
 	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
 	rx.setMinimal( true );
 	if ( rx.search( msgText ) == -1 )
 	{
 		// no URLs in text, just pick the first 30 chars of
-		// the plain text if necessary
-		msgText = msg.plainBody();
+		// the parsed text if necessary. We used parsed text
+		// so that things like "<knuff>" show correctly
+		msgText = msg.parsedBody();
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
 	}
