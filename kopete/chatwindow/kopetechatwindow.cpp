@@ -411,8 +411,6 @@ void KopeteChatWindow::initActions(void)
 
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( 0L );
-
-	mStatusbarAction->setChecked(!statusBar()->isHidden());
 }
 
 const QString KopeteChatWindow::fileContents( const QString &path ) const
