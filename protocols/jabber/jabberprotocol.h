@@ -34,7 +34,6 @@
 #include "addcontactpage.h"
 #include "jabberprefs.h"
 #include "jabbermap.h"
-#include "jabbermessagemanager.h"
 
 #define JABBER_DEBUG_GLOBAL		14130
 #define JABBER_DEBUG_PROTOCOL	14131
@@ -47,170 +46,161 @@ using namespace Jabber;
 
 class JabberProtocol : public KopeteProtocol
 {
-		Q_OBJECT
+	Q_OBJECT
 
-		/* Friends can touch each other's private parts. */
-		friend class JabberContact; 
-		friend class DlgJabberServices;
-		friend class DlgJabberRegister;
-		friend class DlgJabberBrowse;
-		friend class DlgJabberChatJoin;
+	/* Friends can touch each other's private parts. */
+	friend class JabberContact; 
+	friend class DlgJabberServices;
+	friend class DlgJabberRegister;
+	friend class DlgJabberBrowse;
+	friend class DlgJabberChatJoin;
 
 public:
-		/*********************************************************************
-		 *
-		 * KopeteProtocol reimplementation start
-		 *
-		 ********************************************************************/
+	/*********************************************************************
+	 *
+	 * KopeteProtocol reimplementation start
+	 *
+	 ********************************************************************/
 	 
-		/**
-		 * Object constructor and destructor
-		 */
-		JabberProtocol(QObject *parent, QString name, QStringList);
-		~JabberProtocol();
+	/**
+	 * Object constructor and destructor
+	 */
+	JabberProtocol(QObject *parent, QString name, QStringList);
+	~JabberProtocol();
 
-		/**
-		 * Our own Jabber contact associated with the Jabber account
-		 */
-		KopeteContact *myself() const;
+	/**
+	 * Our own Jabber contact associated with the Jabber account
+	 */
+	KopeteContact *myself() const;
 
-		KActionMenu *protocolActions();
+	KActionMenu *protocolActions();
+
+	/**
+	 * Initialization/deinitialization routines called upon
+	 * loading/unloading the plugin
+	 */
+	void init();
+	bool unload();
+
+	/**
+	 * Creates the "add contact" dialog specific to this protocol
+	 */
+	AddContactPage *createAddContactWidget(QWidget * parent);
+
+	/**
+	 * Set Stats to "Away"
+	 */
+	void setAway();
+
+	/**
+	 * Set status to "Online"/"Available"
+	 */
+	void setAvailable();
+
+	/**
+	 * Return connection status
+	 */
+	bool isConnected() const;
+
+
+	/**
+	 * Determine away status
+	 */
+	bool isAway() const;
+
+	/**
+	 * Are we able to relay messages to offline users?
+	 */
+	bool canSendOffline() const;
 	
-		/**
-		 * Initialization/deinitialization routines called upon
-		 * loading/unloading the plugin
-		 */
-		void init();
-		bool unload();
+	/**
+	 * Deserialize contact data
+	 */
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+					const QMap<QString, QString> &serializedData,
+					const QMap<QString, QString> &addressBookData );
 
-		/**
-		 * Creates the "add contact" dialog specific to this protocol
-		 */
-		AddContactPage *createAddContactWidget(QWidget * parent);
+	/**
+	 * addressBookFieldChanged() is a notification slot for changes
+	 */
+//	virtual void addressBookFieldChanged(KopeteMetaContact *contact,
+//					const QString &key);
 
-		/**
-		 * Set Stats to "Away"
-		 */
-		void setAway();
+	/*********************************************************************
+	 *
+	 * KopeteProtocol reimplementation end
+	 *
+	 ********************************************************************/
 
-		/**
-		 * Set status to "Online"/"Available"
-		 */
-		void setAvailable();
+	/**
+	 * Internal enum for passing on the status as a constant
+	 * (instead of a string, how Psi handles it)
+	 */
+	enum Presence
+	{
+			STATUS_ONLINE,
+			STATUS_CHATTY,
+			STATUS_AWAY,
+			STATUS_XA,
+			STATUS_DND,
+			STATUS_INVISIBLE,
+			STATUS_OFFLINE
+	};
 
-		/**
-		 * Return connection status
-		 */
-		bool isConnected() const;
+	/**
+	 * This returns our protocol instance
+	 */
+	static JabberProtocol *protocol();
 
+	/**
+	 * Function called by the configuration dialog,
+	 * it will register the account currently specified
+	 * in the dialog.
+	 */
+	void registerUser();
 
-		/**
-		 * Determine away status
-		 */
-		bool isAway() const;
+	/**
+	 * Function called by the add contact widget,
+	 * it will send a subscription request to the
+	 * specified user.
+	 */
+	void addContact(KopeteMetaContact *mc, const QString &userId);
 
-		/**
-		 * Are we able to relay messages to offline users?
-		 */
-		bool canSendOffline() const;
-	
-		/**
-		 * Deserialize contact data
-		 */
-		virtual void deserializeContact( KopeteMetaContact *metaContact,
-						const QMap<QString, QString> &serializedData,
-						const QMap<QString, QString> &addressBookData );
+	/**
+	 * Function called by JabberContact via
+	 * the various widgetd to update roster
+	 * information (groups, name)
+	 */
+	void updateContact(const Jabber::RosterItem &item);
 
-		/**
-		 * addressBookFieldChanged() is a notification slot for changes
-		 */
-// 		virtual void addressBookFieldChanged(KopeteMetaContact *contact,
-// 						const QString &key);
+	/**
+	 * Removes a contact from the roster
+	 */
+	void removeContact(const Jabber::RosterItem &item);
 
-		/*********************************************************************
-		 *
-		 * KopeteProtocol reimplementation end
-		 *
-		 ********************************************************************/
-
-		/**
-		 * Internal enum for passing on the status as a constant
-		 * (instead of a string, how Psi handles it)
-		 */
-		enum Presence
-		{
-				STATUS_ONLINE,
-				STATUS_CHATTY,
-				STATUS_AWAY,
-				STATUS_XA,
-				STATUS_DND,
-				STATUS_INVISIBLE,
-				STATUS_OFFLINE
-		};
-
-		/**
-		 * This returns our protocol instance
-		 */
-		static JabberProtocol *protocol();
-
-		/**
-		 * Function called by the configuration dialog,
-		 * it will register the account currently specified
-		 * in the dialog.
-		 */
-		void registerUser();
-
-		/**
-		 * Function called by the add contact widget,
-		 * it will send a subscription request to the
-		 * specified user.
-		 */
-		void addContact(KopeteMetaContact *mc, const QString &userId);
-
-		/**
-		 * Function called by JabberContact via
-		 * the various widgetd to update roster
-		 * information (groups, name)
-		 */
-		void updateContact(const Jabber::RosterItem &item);
-
-		/**
-		 * Removes a contact from the roster
-		 */
-		void removeContact(const Jabber::RosterItem &item);
-
-		/**
-		 * Slot for sending a message
-		 */
-		void slotSendMessage(Message);
-
-		virtual const QString protocolIcon();
-
-		JabberMessageManager *manager( const QString &key );
-
-		JabberMessageManager *createMessageManager(JabberContact *to);
+	virtual const QString protocolIcon();
 
 public slots:
-		/**
-		 * Function to connect to the server
-		 */
-		virtual void connect();
+	/**
+	 * Function to connect to the server
+	 */
+	virtual void connect();
 
-		/**
-		 * Function to disconnect from server
-		 */
-		virtual void disconnect();
+	/**
+	 * Function to disconnect from server
+	 */
+	virtual void disconnect();
 
-		void setPresence(Presence status, const QString &reason = 0,
-						int priority = 5);
+	void setPresence(Presence status, const QString &reason = 0,
+					int priority = 5);
 
-		/**
-		 * Sends a presence packet to a node
-		 */
-		void sendPresenceToNode(const Presence &, const QString &);
+	/**
+	 * Sends a presence packet to a node
+	 */
+	void sendPresenceToNode(const Presence &, const QString &);
 
 signals:		
-		void settingsChanged();
+	void settingsChanged();
 
 private slots:
 
@@ -307,11 +297,6 @@ private slots:
 	void slotGroupChatError(const Jid &jid, int error, QString &reason);
 
 	/*
-	 * Slot to catch a dying message manager
-	 */
-	void slotMessageManagerDeleted(KopeteMessageManager *manager);
-
-	/*
 	 * Incoming subscription request
 	 */
 	void slotSubscription(const Jid &jid, const QString &type);
@@ -371,18 +356,10 @@ private slots:
 	void slotGetServices();
 
 private:
-	typedef QMap<QString, JabberMessageManager*> JabberMessageManagerMap;
-
 	/*
 	 * Singleton instance of our protocol class
 	 */
 	static JabberProtocol *protocolInstance;
-
-	/*
-	 * This map associates message managers to
-	 * a contact's (or chatroom's) userhost
-	 */
-	JabberMessageManagerMap messageManagerMap;
 
 	KAction *actionGoOnline;
 	KAction *actionGoChatty;

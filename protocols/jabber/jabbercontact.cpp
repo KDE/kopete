@@ -62,6 +62,8 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 
 	resourceOverride = false;
 
+	messageManager = 0L;
+
 	mIdentityId = identity;
 
 	rosterItem.setJid(Jabber::Jid(userId));
@@ -121,11 +123,35 @@ QString JabberContact::resource() const
 
 KopeteMessageManager *JabberContact::manager( bool )
 {
-	JabberMessageManager *jmm = protocol->manager( contactId() );
-	if( !jmm )
-		jmm = protocol->createMessageManager( this );
 
-	return static_cast<KopeteMessageManager*>( jmm );
+	// create a new message manager if there is none
+	if(!messageManager)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberContact] Creating new message manager." << endl;
+
+		KopeteContactPtrList contactList;
+		contactList.append(this);
+
+		messageManager = KopeteMessageManagerFactory::factory()->create(
+							protocol->myself(), contactList, protocol);
+
+		QObject::connect(messageManager, SIGNAL(destroyed()),
+			this, SLOT(slotMessageManagerDeleted()));
+		QObject::connect(messageManager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)),
+			this, SLOT(slotSendMessage(KopeteMessage &)));
+	}
+
+	return static_cast<KopeteMessageManager*>(messageManager);
+
+}
+
+void JabberContact::slotMessageManagerDeleted()
+{
+
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberContact] Message manager has been deleted." << endl;
+
+	messageManager = 0L;
+
 }
 
 /* Return the group this contact resides in */
@@ -340,13 +366,6 @@ void JabberContact::slotDoRenameContact(const QString &nickname)
 
 }
 
-void JabberContact::slotDeleteMySelf(bool)
-{
-
-	delete this;
-
-}
-
 JabberContact::ContactStatus JabberContact::status() const
 {
 	JabberContact::ContactStatus retval;
@@ -542,6 +561,82 @@ int JabberContact::importance() const
 	}
 
 	return value;
+
+}
+
+void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
+{
+	JabberContact *to = dynamic_cast<JabberContact *>(km.to().first());
+	const JabberContact *from = dynamic_cast<const JabberContact *>(km.from());
+
+	// ugly hack, Jabber::Message does not have a setFrom() method
+	Jabber::Message jabMessage(Jabber::Jid(from->userId()));
+
+	// if a resource has been selected for this contact,
+	// send to this special resource - otherwise,
+	// just send to the server and let the server decide
+	if (!to->resource().isNull())
+		jabMessage.setTo(Jabber::Jid(QString("%1/%2").arg(to->userId(), 1).arg(to->resource(), 2)));
+	else
+		jabMessage.setTo(Jabber::Jid(to->userId()));
+
+	//jabMessage.setFrom(from->userId();
+	jabMessage.setBody(km.plainBody());
+	jabMessage.setSubject(km.subject());
+
+	// determine type of the widget and set message type accordingly
+	KopeteView::ViewType type = KopeteViewManager::viewManager()->view(manager(), false)->viewType();
+	if( type == KopeteView::Chat )
+		jabMessage.setType("chat");
+	else
+		jabMessage.setType("normal");
+
+	jm = jabMessage;
+
+}
+
+void JabberContact::slotReceivedMessage(const Jabber::Message &message)
+{
+	KopeteView::ViewType type;
+	KopeteContactPtrList contactList;
+
+	// determine message type
+	if( message.type() == "chat" )
+		type = KopeteView::Chat;
+	else
+		type = KopeteView::Email;
+
+	contactList.append(protocol->myself());
+
+	// convert Jabber::Message into KopeteMessage
+	KopeteMessage newMessage( message.timeStamp(),
+			this,
+			contactList,
+			message.body(),
+			message.subject(),
+			KopeteMessage::Inbound,
+			KopeteMessage::PlainText, type );
+
+	// add it to the manager
+	manager()->appendMessage(newMessage);
+
+}
+
+void JabberContact::slotSendMessage(KopeteMessage &message)
+{
+	Jabber::Message jabberMessage;
+
+	if(protocol->isConnected())
+	{
+		// convert the message
+		km2jm(message, jabberMessage);
+
+		// send it
+		protocol->jabberClient->sendMessage(jabberMessage);
+
+		// append the message to the manager
+		manager()->appendMessage(message);
+	}
 
 }
 

@@ -57,7 +57,6 @@
 #include "dlgjabberchatjoin.h"
 #include "jabberaddcontactpage.h"
 #include "jabbermap.h"
-#include "jabbermessagemanager.h"
 #include "jabberprotocol.h"
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
@@ -1008,7 +1007,8 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc,
 	if(!mc)
 	{
 		mc = KopeteContactList::contactList()->findContact(pluginId(),
-			myContact->userId(), item.jid().userHost());
+				myContact->userId(), item.jid().userHost());
+
 		if(mc)
 		{
 			JabberContact *jc = (JabberContact *)mc->findContact(pluginId(),
@@ -1252,48 +1252,15 @@ void JabberProtocol::slotSettingsChanged()
 
 }
 
-void JabberProtocol::slotSendMessage(Jabber::Message message)
-{
-
-	// just pass the message on to the Psi backend if we are connected
-	if (isConnected())
-		jabberClient->sendMessage(message);
-
-}
-
-JabberMessageManager *JabberProtocol::createMessageManager(JabberContact *to)
-{
-
-	KopeteContactPtrList chatMembers;
-	chatMembers.append(to);
-	JabberMessageManager *manager = new JabberMessageManager(myself(), chatMembers);
-	QObject::connect(manager, SIGNAL(dying(KopeteMessageManager *)),
-		this, SLOT(slotMessageManagerDeleted(KopeteMessageManager *)));
-
-	return manager;
-
-}
-
-void JabberProtocol::slotMessageManagerDeleted(KopeteMessageManager *manager)
-{
-
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotMessageManagerDeleted() message "
-			 << "manager deleted, removing from map"
-			 << endl;
-
-	messageManagerMap.remove(manager->user()->contactId());
-
-}
-
 void JabberProtocol::slotReceivedMessage(const Jabber::Message &message)
 {
-	QString userHost_;
-	JabberContact *contactFrom_;
+	QString userHost;
+	JabberContact *contactFrom;
 
-	userHost_ = message.from().userHost();
-	contactFrom_ = static_cast<JabberContact *>( contacts()[ userHost_ ] );
+	userHost = message.from().userHost();
+	contactFrom = static_cast<JabberContact *>( contacts()[ userHost ] );
 
-	if ( userHost_.isEmpty() )
+	if ( userHost.isEmpty() )
 	{
 		// if the sender field is empty, it is a server message
 		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] New server message for us!"
@@ -1305,65 +1272,24 @@ void JabberProtocol::slotReceivedMessage(const Jabber::Message &message)
 	else
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] New message from '"
-			 << userHost_ << "'" << endl;
+			 << userHost << "'" << endl;
+
 		// see if the contact is actually in our roster
-		if( !contactFrom_ )
+		if( !contactFrom )
 		{
 			// this case happens if we are getting a message from a chat room
 			// FIXME: this can also happen with contacts we did not
 			// previously subscribe to! (especially via transports etc)
 			kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Message received from an "
 			 << "unknown contact, is it groupchat?" << endl;
-
-			if(!messageManagerMap.contains(userHost_))
-			{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Not a groupchat message "
-					 << "either (no message manager found), "
-					 << "ignoring." << endl;
-				return;
-			}
-		}
-
-		// now we know that the contact is in our roster, see
-		// if we already have a message manager for this contact
-		JabberMessageManager *manager = 0L;
-
-		//KGlobal::config()->setGroup("Jabber");
-		//bool emailType = KGlobal::config()->readBoolEntry("EmailDefault", false);
-
-		KopeteView::ViewType type;
-		if( message.type() == "chat" )
-			type = KopeteView::Chat;
-		else
-			type = KopeteView::Email;
-
-		if( ! messageManagerMap.contains(userHost_) )
-		{
-			// we don't have a widget yet, create one
-			manager = createMessageManager(contactFrom_);
-
-			// add this manager to the map
-			messageManagerMap[userHost_] = manager;
 		}
 		else
 		{
-			manager = messageManagerMap[userHost_];
+			// pass the message on to the contact
+			contactFrom->slotReceivedMessage(message);
 		}
-
-		KopeteContactPtrList contactList;
-		contactList.append(myself());
-
-		KopeteMessage newMessage( message.timeStamp(),
-				contactFrom_,
-				contactList,
-				message.body(),
-				message.subject(),
-				KopeteMessage::Inbound,
-				KopeteMessage::PlainText, type );
-
-		// pass the message on to the manager
-		manager->appendMessage(newMessage);
 	}
+
 }
 
 void JabberProtocol::slotEmptyMail()
@@ -1392,6 +1318,8 @@ void JabberProtocol::slotOpenEmptyMail()
 
 	if( !emailAddress.isEmpty() && !emailAddress.isNull() )
 	{
+		// FIXME: this always creates a new contact, we should check
+		// for existing contacts
 		KopeteMetaContact *metaContact = new KopeteMetaContact();
 		metaContact->setTemporary(true);
 
@@ -1400,9 +1328,7 @@ void JabberProtocol::slotOpenEmptyMail()
 
 		KopeteContactList::contactList()->addMetaContact(metaContact);
 
-		messageManagerMap[emailAddress] = createMessageManager(contact);
-
-		KopeteViewManager::viewManager()->launchWindow( messageManagerMap[emailAddress], KopeteView::Email );
+		KopeteViewManager::viewManager()->launchWindow( contact->manager(), KopeteView::Email );
 	}
 
 }
@@ -1442,23 +1368,17 @@ void JabberProtocol::slotJoinChat()
 
 void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Joined group chat " << jid.full() << endl;
+/*	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Joined group chat " << jid.full() << endl;
 
 	messageManagerMap[jid.userHost()] = createMessageManager(myContact);
 
 	KopeteViewManager::viewManager()->launchWindow( messageManagerMap[jid.userHost()], KopeteView::Chat );
-}
-
-JabberMessageManager *JabberProtocol::manager( const QString &key )
-{
-	if( messageManagerMap.contains( key ) )
-		return messageManagerMap[ key ];
-
-	return 0L;
+*/
 }
 
 void JabberProtocol::slotGroupChatLeave()
 {
+/*
 	JabberMessageManager *manager = (JabberMessageManager *)sender();
 
 	KopeteContactPtrList memberList = manager->members();
@@ -1467,7 +1387,7 @@ void JabberProtocol::slotGroupChatLeave()
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Message manager has been closed, leaving groupchat " << contact->userId() << endl;
 
 //	jabberClient->groupChatLeave(
-
+*/
 }
 
 void JabberProtocol::slotGroupChatLeft(const Jabber::Jid &jid)
@@ -1478,6 +1398,7 @@ void JabberProtocol::slotGroupChatLeft(const Jabber::Jid &jid)
 
 void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid, const Jabber::Status &status)
 {
+/*
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Received groupchat presence for room " << jid.full() << endl;
 
 	if(status.isAvailable())
@@ -1511,7 +1432,7 @@ void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid, const Jabber:
 		// delete it here for good
 		delete contact;
 	}
-
+*/
 }
 
 void JabberProtocol::slotGroupChatError(const Jabber::Jid &jid,

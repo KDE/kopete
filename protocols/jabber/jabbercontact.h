@@ -188,12 +188,12 @@ public slots:
 	 */
 	void slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason);
 
-private slots:
 	/**
-	 * Delete this contact instance
+	 * Received a message for this contact
 	 */
-	void slotDeleteMySelf(bool);
+	void slotReceivedMessage(const Jabber::Message &message);
 
+private slots:
 	/**
 	 * Display a rename dialog
 	 */
@@ -224,6 +224,9 @@ private slots:
 	 */
 	void slotRequestAuth();
 
+	/**
+	 * Change this contact's status
+	 */
 	void slotStatusOnline();
 	void slotStatusChatty();
 	void slotStatusAway();
@@ -231,11 +234,26 @@ private slots:
 	void slotStatusDND();
 	void slotStatusInvisible();
 
+	/**
+	 * Catch a dying message manager
+	 */
+	void slotMessageManagerDeleted();
+
+	/**
+	 * Send a message to somebody
+	 */
+	void slotSendMessage(KopeteMessage &message);
+
 private:
 	/**
 	 * Initialize popup menu
 	 */
 	void initActions();
+
+	/**
+	 * Convert KopeteMessage to Jabber::Message
+	 */
+	void km2jm(const KopeteMessage &km, Jabber::Message &jm);
 
 	/**
 	 * Protocol identity (user ID) that this
@@ -286,6 +304,11 @@ private:
 	 * autoselection?
 	 */
 	bool resourceOverride, mEditingVCard;
+
+	/**
+	 * Message manager in use to display a message
+	 */
+	KopeteMessageManager *messageManager;
 
 	KActionCollection *actionCollection;
 
