@@ -22,28 +22,28 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <kgenericfactory.h>
+#include "config.h"
+
+#include "motionawayplugin.h"
+
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <sys/poll.h>
+#include <sys/types.h>
+#include <time.h>
+#include <unistd.h>
 
 #include <qtimer.h>
 
-#include "motionawayplugin.h"
-#include "kopeteaway.h"
-#include "kopeteaccountmanager.h"
 #include <kconfig.h>
+#include <kdebug.h>
+#include <kgenericfactory.h>
 
-// motion.c includes
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <time.h>
-#include <signal.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/poll.h>
-
-#if 0
+#include "kopeteaccountmanager.h"
+#include "kopeteaway.h"
 /* The following is a hack:
  * e.g. Mandrake 9.x ships with a patched
  * kernel which doesn't define this 64 bit types (we need GNU C lib
@@ -51,22 +51,25 @@
  *
  * This is caused by the !defined(__STRICT_ANSI__) check in
  * /usr/include/asm/types.h
- *
- * Warning: enabling this code breaks 64bits archs!
- * If compilation fails for you, change the "#if 0" above to "#if 1"
  */
 #if !defined(__u64) && defined(__GNUC__)
-//#warning "defining __u64"
+#if SIZEOF_UNSIGNED_LONG >= 8
+typedef unsigned long __u64;
+#else
 typedef unsigned long long __u64;
 #endif
+#endif
+
 #if !defined(__s64) && defined(__GNUC__)
-//#warning "defining __s64"
+#if SIZEOF_LONG >= 8
+typedef signed long __s64;
+#else
 typedef __signed__ long long __s64;
+#endif
 #endif
 /*
  * End hack
  */
-#endif
 
 #include <linux/version.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,50)
