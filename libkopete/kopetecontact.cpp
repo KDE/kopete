@@ -307,7 +307,7 @@ KPopupMenu* KopeteContact::createContextMenu()
 	KPopupMenu *menu = new KPopupMenu();
 
 	QString titleText;
-	if( displayName() != contactId() )
+	if( displayName() == contactId() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( statusText() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() );
