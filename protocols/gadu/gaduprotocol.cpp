@@ -124,7 +124,7 @@ GaduProtocol::statusToWithDescription( KopeteOnlineStatus status )
 	return GG_STATUS_INVISIBLE_DESCR;
     }	
 
-    // this and anything else matches next return
+    // this and everything else matches next return
     //	
     //if ( status==gaduStatusAvailDescr_ || status==gaduStatusAvail_){
     //	return GG_STATUS_AVAIL_DESCR;
@@ -186,9 +186,8 @@ GaduProtocol::convertStatus( uint status ) const
 KopeteAccount*
 GaduProtocol::createNewAccount( const QString& accountId )
 {
-	GaduAccount *account = new GaduAccount( this, accountId );
-	defaultAccount_ = account;
-	return account;
+	defaultAccount_ = new GaduAccount( this, accountId );
+	return defaultAccount_ ;
 }
 
 EditAccountWidget*
