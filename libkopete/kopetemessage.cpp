@@ -475,11 +475,16 @@ QString KopeteMessage::parsedBody() const
 		return d->body;
 #endif
 	}
+	/*
+	// FIXME: Should be uncommented as soon as ICQ and other plugins are free of stuff like:
+	// text=i18n("<b>[Email Message:]</b> %1").arg(text);
+	// where text is not yet parsed
 	else if( d->format & RichText )
 	{
 		// Richtext should already have <a href ...> around URLs, so no link parsing takes place
 		return KopeteEmoticons::parseEmoticons(escapedBody());
 	}
+	*/
 	else
 	{
 		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody()));
