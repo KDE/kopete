@@ -8,12 +8,9 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>449</width>
-            <height>433</height>
+            <width>471</width>
+            <height>419</height>
         </rect>
-    </property>
-    <property name="caption">
-        <string>ICQEditAccountUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -53,13 +50,13 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout57</cstring>
+                                    <cstring>layout58</cstring>
                                 </property>
-                                <grid>
+                                <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLabel" row="0" column="0">
+                                    <widget class="QLabel">
                                         <property name="name">
                                             <cstring>lblAccountId</cstring>
                                         </property>
@@ -76,7 +73,59 @@
                                             <string>The user ID of your ICQ account.  This should be in the form of a number (no decimals, no spaces).</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="1" column="0">
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>edtAccountId</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The user ID of your ICQ account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The user ID of your ICQ account.  This should be in the form of a number (no decimals, no spaces).</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>chkSavePassword</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Remember &amp;password</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check to save your password.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout59</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer69</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>16</width>
+                                                <height>16</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel">
                                         <property name="name">
                                             <cstring>lblPassword</cstring>
                                         </property>
@@ -96,7 +145,7 @@
                                             <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLineEdit" row="1" column="1">
+                                    <widget class="QLineEdit">
                                         <property name="name">
                                             <cstring>edtPassword</cstring>
                                         </property>
@@ -116,45 +165,7 @@
                                             <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLayoutWidget" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>layout56</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>edtAccountId</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The user ID of your ICQ account.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The user ID of your ICQ account.  This should be in the form of a number (no decimals, no spaces).</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QCheckBox">
-                                                <property name="name">
-                                                    <cstring>chkSavePassword</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Remember &amp;password</string>
-                                                </property>
-                                                <property name="accel">
-                                                    <string>Alt+P</string>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>Check to save your password.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                </grid>
+                                </hbox>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -162,9 +173,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Hide &amp;IP</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+I</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this to hide your IP address from other users.</string>
@@ -203,112 +211,17 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QGroupBox">
+                    <widget class="QLabel">
                         <property name="name">
-                            <cstring>groupBox5</cstring>
+                            <cstring>textLabel9</cstring>
                         </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>1</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
+                        <property name="text">
+                            <string>&lt;i&gt;To connect to the ICQ network, you will need an ICQ account.&lt;br&gt;
+If you do not currently have an ICQ account, you may register for one at the site linked below.&lt;/i&gt;</string>
                         </property>
-                        <property name="title">
-                            <string>Registration</string>
+                        <property name="alignment">
+                            <set>WordBreak|AlignVCenter</set>
                         </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel6</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>&lt;i&gt;To connect to the ICQ network, you will need an ICQ account.&lt;br&gt;&lt;br&gt;
-If you do not currently have an ICQ account, please click the &lt;b&gt;Register for an ICQ account&lt;/b&gt; link.&lt;/i&gt;</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>WordBreak|AlignVCenter</set>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout80</cstring>
-                                </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer61</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>31</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="KActiveLabel">
-                                        <property name="name">
-                                            <cstring>kActiveLabel7</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>3</hsizetype>
-                                                <vsizetype>1</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>&lt;center&gt;&lt;a href="http://go.icq.com/register/"&gt;Register for an&lt;br&gt;ICQ account&lt;/a&gt;&lt;/center&gt;</string>
-                                        </property>
-                                    </widget>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer62</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>31</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </vbox>
-                            </widget>
-                        </hbox>
                     </widget>
                     <spacer>
                         <property name="name">
@@ -327,6 +240,22 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                             </size>
                         </property>
                     </spacer>
+                    <widget class="KActiveLabel">
+                        <property name="name">
+                            <cstring>kActiveLabel7</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>&lt;a href="http://go.icq.com/register/"&gt;Register for an ICQ account&lt;/a&gt;</string>
+                        </property>
+                    </widget>
                 </vbox>
             </widget>
             <widget class="QWidget">
@@ -347,108 +276,27 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
+                            <widget class="QLayoutWidget" row="1" column="0">
                                 <property name="name">
-                                    <cstring>chkAutoLogin</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>optionOverrideServer</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Override default server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout82</cstring>
+                                    <cstring>layout60</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLayoutWidget">
+                                    <widget class="QLabel">
                                         <property name="name">
-                                            <cstring>layout81</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <property name="spacing">
-                                                <number>3</number>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblServer</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Ser&amp;ver /</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>edtServerAddress</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblServerPort</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Po&amp;rt:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>edtServerPort</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The port on the ICQ server that you would like to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>edtServerAddress</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
+                                            <cstring>lblServer</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>login.icq.com</string>
+                                            <string>Ser&amp;ver:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>edtServerAddress</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
@@ -457,12 +305,47 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                                             <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
                                         </property>
                                     </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>edtServerAddress</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="1">
+                                <property name="name">
+                                    <cstring>layout61</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblServerPort</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Po&amp;rt:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>edtServerPort</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the ICQ server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
+                                        </property>
+                                    </widget>
                                     <widget class="QSpinBox">
                                         <property name="name">
                                             <cstring>edtServerPort</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
                                         </property>
                                         <property name="maxValue">
                                             <number>65534</number>
@@ -471,7 +354,7 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                                             <number>1</number>
                                         </property>
                                         <property name="value">
-                                            <number>5190</number>
+                                            <number>1</number>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>The port on the ICQ server that you would like to connect to.</string>
@@ -482,7 +365,35 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
+                            <widget class="QPushButton" row="1" column="2">
+                                <property name="name">
+                                    <cstring>btnServerDefaults</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Defaults</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Restore the server and port values to their defaults.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Restore the server and port values to their defaults.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="0">
+                                <property name="name">
+                                    <cstring>chkAutoLogin</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
                     <spacer>
                         <property name="name">
@@ -496,24 +407,13 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
-                                <height>310</height>
+                                <width>16</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
                 </vbox>
             </widget>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>labelStatusMessage</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
         </widget>
     </vbox>
 </widget>
@@ -530,30 +430,6 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
         <receiver>lblPassword</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
-    <connection>
-        <sender>optionOverrideServer</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lblServer</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>optionOverrideServer</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lblServerPort</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>optionOverrideServer</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>edtServerAddress</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>optionOverrideServer</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>edtServerPort</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
 </connections>
 <tabstops>
     <tabstop>edtAccountId</tabstop>
@@ -562,13 +438,11 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
     <tabstop>chkAutoLogin</tabstop>
     <tabstop>edtServerAddress</tabstop>
     <tabstop>edtServerPort</tabstop>
+    <tabstop>btnServerDefaults</tabstop>
     <tabstop>chkHideIP</tabstop>
     <tabstop>chkWebAware</tabstop>
     <tabstop>chkRequireAuth</tabstop>
     <tabstop>kActiveLabel7</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kactivelabel.h</includehint>
-</includehints>
 </UI>
