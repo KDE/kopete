@@ -1762,7 +1762,7 @@ void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::St
 
 }
 
-void JabberAccount::slotGroupChatError (const XMPP::Jid & jid, int error, const QString & reason)
+void JabberAccount::slotGroupChatError (const XMPP::Jid & /*jid*/, int /*error*/, const QString & /*reason*/)
 {
 	/* FIXME: Present this to the user, damnit! */
 // 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Group chat error - room " << jid.userHost () << " had error " << error << " (" << reason << ")!" << endl;

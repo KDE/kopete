@@ -627,7 +627,7 @@ class FakeContact : public Kopete::Contact
 {
 public:
 	FakeContact ( const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( 0, id, mc ) {}
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags c) { return 0L; }
+	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
 	virtual void slotUserInfo() {};
 };
 
