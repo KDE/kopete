@@ -21,9 +21,11 @@
 
 #include <kdebug.h>
 #include <kaction.h>
+#include <qdict.h>
 
-//#include "kopeteaccountmanager.h"
-//#include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
+#include "kopetecontact.h"
 //#include "kopeteglobal.h"
 //#include "kopetecontactproperty.h"
 
@@ -59,9 +61,8 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 
 Protocol::~Protocol()
 {
-#if 0 //TODO
 	// Remove all active accounts
-	QDict<Account> accounts = AccountManager::manager()->accounts( this );
+	QDict<Account> accounts = AccountManager::self()->accounts( this );
 	if ( !accounts.isEmpty() )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
@@ -69,7 +70,6 @@ Protocol::~Protocol()
 		for( QDictIterator<Account> it( accounts ); it.current() ; ++it )
 			delete *it;
 	}
-#endif
 
 	delete d;
 }
@@ -84,24 +84,20 @@ void Protocol::setCapabilities( unsigned int capabilities )
 	d->capabilities = capabilities;
 }
 
-void Protocol::slotAccountOnlineStatusChanged( Contact */*self*/ )
+void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 {//slot connected in aboutToUnload
-
-#if 0 //TODO
-	if ( !self || !self->account() || self->account()->isOnline())
+	if ( !self || !self->account() || self->account()->isConnected())
 		return;
 
 	connect( self->account(), SIGNAL( destroyed( QObject * ) ),
 		this, SLOT( slotAccountDestroyed( QObject * ) ) );
 
 	self->account()->deleteLater();
-#endif
 }
 
 void Protocol::slotAccountDestroyed( QObject * /* account */ )
 {
-#if 0 //TODO
-	QDict<Account> dict = AccountManager::slef()->accounts( this );
+	QDict<Account> dict = AccountManager::self()->accounts( this );
 	if ( dict.isEmpty() )
 	{
 		// While at this point we are still in a stack trace from the destroyed
@@ -110,7 +106,6 @@ void Protocol::slotAccountDestroyed( QObject * /* account */ )
 		// API managable
 		emit( readyForUnload() );
 	}
-#endif
 }
 
 void Protocol::aboutToUnload()
@@ -118,14 +113,13 @@ void Protocol::aboutToUnload()
 
 	d->unloading = true;
 
-#if 0 //TODO
-
 	bool allDisconnected = true;
 
 	// Disconnect all accounts
 	QDict<Account> accounts = AccountManager::self()->accounts( this );
 	for ( QDictIterator<Account> it( accounts ); it.current() ; ++it )
 	{
+#if 0 //TODO		
 		if ( it.current()->myself() && it.current()->myself()->isOnline() )
 		{
 			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
@@ -148,8 +142,8 @@ void Protocol::aboutToUnload()
 				this, SLOT( slotAccountDestroyed( QObject * ) ) );
 			it.current()->deleteLater();
 		}
-	}
 #endif
+	}
 }
 
 

@@ -274,6 +274,20 @@ public:
 	 */
 	KConfigGroup *configGroup() const;
 
+	
+	/**
+	 * @brief remove the account on the server.
+	 * reimplement it if your protocol support removing the removing of the account on the server.
+	 * that function is called by @ref AccountManager::removeAccount tipicaly when you remove the
+	 * account on the account config page.
+	 *
+	 * You probably should add a confirmation message box before removing the account.
+	 *
+	 * the default implementation do nothing
+	 *
+	 * @return false only if the account deletion need to be canceled,  return true in other cases
+	 */
+	virtual bool removeAccount();
 
 protected:
 	/**

@@ -449,7 +449,7 @@ signals:
 	 * Some part of this object's persistent data (as returned by toXML) has changed.
 	 */
 	void persistentDataChanged(  );
-
+	
 
 private slots:
 	/**

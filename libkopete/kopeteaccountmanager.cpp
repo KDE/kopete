@@ -30,7 +30,7 @@
 #include "kopeteaccount.h"
 //#include "kopeteaway.h"
 #include "kopeteprotocol.h"
-//#include "kopetecontact.h"
+#include "kopetecontact.h"
 #include "kopetepluginmanager.h"
 
 namespace Kopete
@@ -236,26 +236,24 @@ Account * AccountManager::findAccount( const QString &protocolId, const QString 
 
 void AccountManager::removeAccount( Account *account )
 {
-	kdDebug( 14010 ) << k_funcinfo << "Removing account '" <<
-		account->accountId() << "' and cleaning up config" << endl;
+//	kdDebug( 14010 ) << k_funcinfo << "Removing account '" << account->accountId() << "' and cleaning up config" << endl;
+
+	if(!account->removeAccount())
+		return;
 
 	Protocol *protocol = account->protocol();
 
-#if 0
-	KConfig *config = KGlobal::config();
-	QString groupName = account->configGroup();
+
+	KConfigGroup *configgroup = account->configGroup();
 
 	// Clean up the account list
 	d->accounts.remove( account );
 
 	// Clean up configuration
-	config->deleteGroup( groupName );
-	config->sync();
-#endif
-
+	configgroup->deleteGroup();
+	configgroup->sync();
 
 	delete account;
-
 
 	if ( accounts( protocol ).isEmpty() )
 	{
@@ -356,14 +354,12 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 	const OnlineStatus &oldStatus, const OnlineStatus &newStatus)
 {
-#if 0 //TODO
 	Account *account = c->account();
 	if (!account)
 		return;
 
 	//kdDebug(14010) << k_funcinfo << endl;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
-#endif
 }
 
 } //END namespace Kopete

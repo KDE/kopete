@@ -26,13 +26,14 @@
 #include <kiconloader.h>
 #include <kiconeffect.h>
 
-//#include "kopetecontactlist.h"
+#include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
-//#include "kopetemetacontact.h"
+#include "kopetecontact.h"
+#include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
-//#include "kopetegroup.h"
+#include "kopetegroup.h"
 
 namespace Kopete 
 {
@@ -184,20 +185,15 @@ bool Account::autoConnect() const
 
 void Account::registerContact( Contact *c )
 {
-#if 0 //TODO
-
 	d->contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( Contact * ) ),
 		SLOT( slotContactDestroyed( Contact * ) ) );
-#endif
 }
 
 void Account::slotContactDestroyed( Contact *c )
 {
-#if 0 //TODO
 	//kdDebug( 14010 ) << "Protocol::slotContactDestroyed: " << c->contactId() << endl;
 	d->contacts.remove( c->contactId() );
-#endif
 }
 
 const QDict<Contact>& Account::contacts()
@@ -209,20 +205,18 @@ const QDict<Contact>& Account::contacts()
 
 MetaContact *Account::addMetaContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  ) 
 {
-#if 0 //TODO
 	if ( contactId == d->myself->contactId() )
 	{
 		kdDebug( 14010 ) << k_funcinfo <<
 			"WARNING: the user try to add myself to his contactlist - abort" << endl;
 		return 0L;
 	}
-#endif
 	bool isTemporary = mode == Temporary;
 	
 	Contact *c = d->contacts[ contactId ];
-#if 0 //TODO
+
 	if(!group)
-		group=Group::toplevel
+		group=Group::topLevel();
 
 	if ( c && c->metaContact() )
 	{
@@ -240,10 +234,8 @@ MetaContact *Account::addMetaContact( const QString &contactId, const QString &d
 		}
 		return c->metaContact();
 	}
-#endif
-	MetaContact *parentContact;
-#if 0 //TODO
-	parentContact= new MetaContact();
+
+	MetaContact *parentContact = new MetaContact();
 	if(!displayName.isEmpty())
 		parentContact->setDisplayName( displayName );
 
@@ -252,12 +244,11 @@ MetaContact *Account::addMetaContact( const QString &contactId, const QString &d
 		parentContact->setTemporary( true );
 	else
 		parentContact->addToGroup( group );
-#endif
 
 	if ( c )
 	{
-		#if 0 //TODO
 		c->setMetaContact( parentContact );
+		#if 0 //TODO
 		if ( mode == ChangeKABC )
 		{
 			parentContact->updateKABC();
@@ -266,16 +257,14 @@ MetaContact *Account::addMetaContact( const QString &contactId, const QString &d
 	}
 	else
 	{
-		if ( !addContact( contactId, parentContact, mode ) )
+		if ( !createContact( contactId, parentContact ) )
 		{
 			delete parentContact;
 			return 0L;
 		}
 	}
 		
-#if 0 //TODO
-	ContactList::self()->addMetaContact( parentContact );	
-#endif
+	ContactList::self()->addMetaContact( parentContact );
 	return parentContact;
 }
 
@@ -283,8 +272,6 @@ MetaContact *Account::addMetaContact( const QString &contactId, const QString &d
 		
 bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode mode )
 {
-#if 0 //TODO
-
 	if ( contactId == myself()->contactId() )
 	{
 		kdDebug( 14010 ) << k_funcinfo <<
@@ -292,8 +279,8 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		return 0L;
 	}
 
-		bool isTemporary= parent->isTemporary();
-		Contact *c = d->contacts[ contactId ];
+	bool isTemporary= parent->isTemporary();
+	Contact *c = d->contacts[ contactId ];
 	if ( c && c->metaContact() )
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
@@ -312,7 +299,6 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
-#endif
 
 	bool success= createContact(contactId, parent);
 
@@ -359,10 +345,8 @@ Contact * Account::myself() const
 void Account::setMyself( Contact *myself )
 {
 	d->myself = myself;
-#if 0
 	QObject::connect( myself, SIGNAL( onlineStatusChanged( Contact *, const OnlineStatus &, const OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Contact *, const OnlineStatus &, const OnlineStatus & ) ) );
-#endif
 }
 
 void Account::slotOnlineStatusChanged( Contact * /* contact */,
@@ -393,6 +377,11 @@ void Account::slotStopSuppression()
 bool Account::suppressStatusNotification() const
 {
 	return d->suppressStatusNotification;
+}
+
+bool Account::removeAccount()
+{
+	return true;
 }
 
 } //END namespace Kopete

@@ -84,6 +84,8 @@ public:
 
 	/**
 	 * \brief Delete the account and clean the config data
+	 *
+	 * This is praticaly called by the account config page when you remove the account.
 	 */
 	void removeAccount( Account *account );
 

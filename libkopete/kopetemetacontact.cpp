@@ -40,7 +40,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetepluginmanager.h"
-//#include "kopetegroup.h"
+#include "kopetegroup.h"
 //#include "kopeteuiglobal.h"
 //#include "kopeteglobal.h"
 
@@ -91,9 +91,8 @@ MetaContact::MetaContact()
 	d->temporary = false;
 
 	
-#if 0 //TODO
 	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( iconChanged( KopetePluginDataObject::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
+	connect( this, SIGNAL( iconChanged( ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( displayNameChanged( const QString &, const QString & ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( movedToGroup( MetaContact *, Group *, Group * ) ), SIGNAL( persistentDataChanged() ) );
@@ -102,11 +101,14 @@ MetaContact::MetaContact()
 	connect( this, SIGNAL( contactAdded( Contact * ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( contactRemoved( Contact * ) ), SIGNAL( persistentDataChanged() ) );
 
+#if 0 //TODO
 	d->onlineStatus = OnlineStatus::Offline;
+#endif
 	// make sure MetaContact is at least in one group
 	addToGroup( Group::topLevel() ); 
 			 //i'm not sure this is correct -Olivier
-#endif
+			 // we probably should do the check in groups() instead
+
 }
 
 MetaContact::~MetaContact()
@@ -584,15 +586,14 @@ void MetaContact::slotPropertyChanged( Contact*, const QString &key,
 
 void MetaContact::moveToGroup( Group *from, Group *to )
 {
-#if 0 //TODO
-	if ( !from || !d->groups.contains( from ) || ( !isTopLevel() && from->type() == Group::TopLevel ) )
+	if ( !from || !groups().contains( from )  )
 	{
 		// We're adding, not moving, because 'from' is illegal
 		addToGroup( to );
 		return;
 	}
 
-	if ( !to || d->groups.contains( to ) || ( isTopLevel() && to->type() == Group::TopLevel ) )
+	if ( !to || groups().contains( to )  )
 	{
 		// We're removing, not moving, because 'to' is illegal
 		removeFromGroup( from );
@@ -607,7 +608,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 
 	d->groups.remove( from );
 	d->groups.append( to );
-#endif
+
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
 		c->sync();
 
@@ -616,9 +617,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 
 void MetaContact::removeFromGroup( Group *group )
 {
-#if 0 //TODO
-	if ( !group || !d->groups.contains( group ) || ( !isTopLevel() && group->type() == Group::TopLevel ) ||
-		( isTemporary() && group->type() == Group::Temporary ) )
+	if ( !group || !groups().contains( group ) || ( isTemporary() && group->type() == Group::Temporary ) )
 	{
 		return;
 	}
@@ -631,7 +630,7 @@ void MetaContact::removeFromGroup( Group *group )
 		d->groups.append( Group::topLevel() );
 		emit addedToGroup( this, Group::topLevel() );
 	}
-#endif 
+
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
 		c->sync();
 	
@@ -640,19 +639,18 @@ void MetaContact::removeFromGroup( Group *group )
 
 void MetaContact::addToGroup( Group *to )
 {
-#if 0 //TODO
-	if ( !to || d->groups.contains( to ) || ( to->type() == Group::TopLevel && isTopLevel() ) )
+	if ( !to || groups().contains( to )  )
 		return;
 
 	if ( d->temporary && to->type() != Group::Temporary )
 		return;
 
-	if ( isTopLevel() )
+	if ( d->groups.contains( Group::topLevel() ) )
 	{
 		d->groups.remove( Group::topLevel() );
 		emit removedFromGroup( this, Group::topLevel() );
 	}
-#endif
+
 	d->groups.append( to );
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
@@ -818,7 +816,6 @@ bool MetaContact::isTemporary() const
 
 void MetaContact::setTemporary( bool isTemporary, Group *group )
 {
-#if 0 //TODO
 	d->temporary = isTemporary;
 	Group *temporaryGroup = Group::temporary();
 	if ( d->temporary )
@@ -833,7 +830,6 @@ void MetaContact::setTemporary( bool isTemporary, Group *group )
 	}
 	else
 		moveToGroup(temporaryGroup, group ? group : Group::topLevel());
-#endif
 }
 
 QString MetaContact::metaContactId() const

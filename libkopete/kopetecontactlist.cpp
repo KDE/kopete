@@ -36,7 +36,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
-//#include "kopetegroup.h"
+#include "kopetegroup.h"
 
 
 namespace  Kopete
@@ -127,10 +127,8 @@ Group * ContactList::group(unsigned int groupId) const
 	Group *groupIterator;
 	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() ) 
 	{
-#if 0 //TODO
 		if( groupIterator->groupId()==groupId )
 			return groupIterator;
-#endif
 	}
 	return 0L;
 }
@@ -186,7 +184,6 @@ MetaContact* ContactList::findMetaContactByContactId( const QString &contactId )
 
 Group * ContactList::findGroup(const QString& displayName, int type)
 {
-#if 0 //TODO
 	if( type == Group::Temporary )
 		return Group::temporary();
 
@@ -200,7 +197,6 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 	Group *newGroup = new Group( displayName, (Group::GroupType)type );
 	addGroup( newGroup );
 	return  newGroup;
-#endif
 }
 
 
@@ -262,9 +258,7 @@ void ContactList::addGroup( Group * g )
 	{
 		d->groups.append( g );
 		emit groupAdded( g );
-#if 0 // TODO
 		connect( g , SIGNAL ( renamed(Group* , const QString & )) , this , SIGNAL ( groupRenamed(Group* , const QString & )) ) ;
-#endif
 	}
 }
 
@@ -278,9 +272,7 @@ void ContactList::removeGroup( Group *g )
 
 	d->groups.remove( g );
 	emit groupRemoved( g );
-#if 0 //TODO   (juste car group j'ai pas encore fait)
 	g->deleteLater();
-#endif
 }
 
 
