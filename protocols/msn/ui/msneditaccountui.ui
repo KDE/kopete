@@ -9,9 +9,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>429</width>
+            <width>651</width>
             <height>470</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
     </property>
     <vbox>
         <property name="name">
@@ -333,7 +336,7 @@
                                     <cstring>m_selectImage</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Select Image</string>
+                                    <string>Select Image...</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
@@ -455,7 +458,7 @@
                                     <cstring>textLabel2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Blocked contacts</string>
+                                    <string>Blocked contacts:</string>
                                 </property>
                             </widget>
                             <widget class="QListBox" row="1" column="0">
@@ -511,7 +514,7 @@
                                     <cstring>textLabel1</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Allowed contacts</string>
+                                    <string>Allowed contacts:</string>
                                 </property>
                             </widget>
                             <widget class="QListBox" row="1" column="2">
@@ -561,7 +564,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>View the reverse list</string>
+                                    <string>View Reverse List</string>
                                 </property>
                             </widget>
                             <widget class="QLabel">
@@ -577,7 +580,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>The reverse list is the list of contact who added you in their own contact list</string>
+                                    <string>The reverse list is the list of contact who added you in their own contact list.</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignVCenter</set>

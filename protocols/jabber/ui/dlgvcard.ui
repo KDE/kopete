@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>592</width>
-            <height>385</height>
+            <height>402</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>dlgVCard</string>
     </property>
     <grid>
         <property name="name">
@@ -70,7 +73,7 @@
                                     <cstring>lblName</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Full Name:</string>
+                                    <string>Full name:</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit" row="0" column="3">
@@ -257,7 +260,7 @@
                                     <cstring>lblState</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Postal Code:</string>
+                                    <string>Postal code:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="2" column="0">
@@ -265,7 +268,7 @@
                                     <cstring>lblPOBox</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>PO Box:</string>
+                                    <string>PO box:</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit" row="1" column="1">
@@ -495,7 +498,7 @@
                                     <cstring>lblPOBox_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>PO Box:</string>
+                                    <string>PO box:</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit" row="3" column="1">
@@ -551,7 +554,7 @@
                                     <cstring>lblState_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Postal Code:</string>
+                                    <string>Postal code:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">

@@ -18,6 +18,9 @@
             <height>400</height>
         </size>
     </property>
+    <property name="caption">
+        <string>AIMUserInfoWidget</string>
+    </property>
     <property name="layoutMargin" stdset="0">
     </property>
     <vbox>
@@ -103,7 +106,7 @@
                         <cstring>lblWarnLevel</cstring>
                     </property>
                     <property name="text">
-                        <string>Warning Level:</string>
+                        <string>Warning level:</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -119,7 +122,7 @@
                         <cstring>lblIdleTime</cstring>
                     </property>
                     <property name="text">
-                        <string>Idle Minutes:</string>
+                        <string>Idle minutes:</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -145,7 +148,7 @@
                         <cstring>lblOnlineSince</cstring>
                     </property>
                     <property name="text">
-                        <string>Online Since:</string>
+                        <string>Online since:</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -171,7 +174,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Away Message:</string>
+                <string>Away message:</string>
             </property>
             <property name="alignment">
                 <set>AlignTop</set>

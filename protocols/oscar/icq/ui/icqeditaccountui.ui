@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>424</width>
-            <height>344</height>
+            <width>483</width>
+            <height>407</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>ICQEditAccountUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -188,7 +191,7 @@
                 <cstring>chkRequireAuth</cstring>
             </property>
             <property name="text">
-                <string>Re&amp;quire Authorization</string>
+                <string>Re&amp;quire authorization</string>
             </property>
             <property name="accel">
                 <string>Alt+Q</string>

@@ -32,7 +32,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Unique name</string>
+                        <string>&amp;Unique name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_uniqueName</cstring>
@@ -50,7 +50,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Contact type</string>
+                <string>Contact Type</string>
             </property>
             <widget class="QRadioButton">
                 <property name="name">

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>517</width>
-            <height>176</height>
+            <width>719</width>
+            <height>200</height>
         </rect>
     </property>
     <property name="caption">
@@ -89,7 +89,7 @@
                                 </sizepolicy>
                             </property>
                             <property name="text">
-                                <string>Display Name:</string>
+                                <string>Display name:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>addEdit_</cstring>
@@ -244,7 +244,7 @@
                         <cstring>notAFriend_</cstring>
                     </property>
                     <property name="text">
-                        <string>Set to offline for him, when status option "Just for friends" is used. </string>
+                        <string>Set to offline for him when status option "Just for friends" is used</string>
                     </property>
                 </widget>
             </grid>

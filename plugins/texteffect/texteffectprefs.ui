@@ -9,9 +9,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>383</width>
+            <width>402</width>
             <height>409</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>TextEffectPrefs</string>
     </property>
     <grid>
         <property name="name">
@@ -140,7 +143,7 @@
                             <cstring>m_char</cstring>
                         </property>
                         <property name="text">
-                            <string>Change color every letters</string>
+                            <string>Change color every letter</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox">
@@ -148,7 +151,7 @@
                             <cstring>m_words</cstring>
                         </property>
                         <property name="text">
-                            <string>Change color every words</string>
+                            <string>Change color every word</string>
                         </property>
                     </widget>
                 </vbox>

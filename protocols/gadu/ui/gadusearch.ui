@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>841</width>
-            <height>297</height>
+            <height>298</height>
         </rect>
     </property>
     <property name="caption">
@@ -47,7 +47,7 @@
                                     <cstring>textLabel1</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Name</string>
+                                    <string>Name:</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit">
@@ -156,7 +156,7 @@
                                     <cstring>textLabel1_2_3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string> to</string>
+                                    <string>to:</string>
                                 </property>
                             </widget>
                             <widget class="QSpinBox">
@@ -240,7 +240,7 @@
                                     <cstring>textLabel1_4</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Gender</string>
+                                    <string>Gender:</string>
                                 </property>
                                 <property name="textFormat">
                                     <enum>PlainText</enum>
@@ -336,7 +336,7 @@
                     <widget class="KListView" row="0" column="0">
                         <column>
                             <property name="text">
-                                <string>status</string>
+                                <string>Status</string>
                             </property>
                             <property name="pixmap">
                                 <pixmap>image0</pixmap>
@@ -361,7 +361,7 @@
                         </column>
                         <column>
                             <property name="text">
-                                <string>Nick name</string>
+                                <string>Nick Name</string>
                             </property>
                             <property name="clickable">
                                 <bool>true</bool>
@@ -465,13 +465,13 @@
                         <property name="fullWidth">
                             <bool>true</bool>
                         </property>
-                        <property name="itemsMovable">
+                        <property name="autoOpen" stdset="0">
                             <bool>false</bool>
                         </property>
-                        <property name="autoOpen">
+                        <property name="dropVisualizer" stdset="0">
                             <bool>false</bool>
                         </property>
-                        <property name="dropVisualizer">
+                        <property name="itemsMovable" stdset="0">
                             <bool>false</bool>
                         </property>
                     </widget>

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>654</width>
+            <width>786</width>
             <height>482</height>
         </rect>
     </property>
@@ -244,7 +244,7 @@
                             <cstring>chkNoAddressee</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Do not use the KDE address book for this contact.</string>
+                            <string>&amp;Do not use the KDE address book for this contact</string>
                         </property>
                         <property name="accel">
                             <string>Alt+D</string>
@@ -320,7 +320,7 @@
                         </property>
                         <property name="text">
                             <string>&lt;p&gt;&lt;h2&gt;Select Display Name and Group&lt;/h2&gt;&lt;/p&gt;
-&lt;p&gt;Enter the contact's Display Name.  This is how the contact will appear in Kopete.&lt;/p&gt;</string>
+&lt;p&gt;Enter the contact's Display Name.  This is how the contact will appear in Kopete:&lt;/p&gt;</string>
                         </property>
                     </widget>
                     <widget class="QLineEdit">
