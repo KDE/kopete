@@ -76,6 +76,17 @@ class JabberProtocol:public KopeteProtocol {
 
     KActionMenu *protocolActions();
 
+
+    static KopeteOnlineStatus getJabberOnline() { return JabberOnline; };
+    static KopeteOnlineStatus getJabberChatty() { return JabberChatty; };
+    static KopeteOnlineStatus getJabberAway() { return JabberAway; };
+    static KopeteOnlineStatus getJabberXA() { return JabberXA; };
+    static KopeteOnlineStatus getJabberDND() { return JabberDND; };
+    static KopeteOnlineStatus getJabberOffline() { return JabberOffline; };
+    static KopeteOnlineStatus getJabberInvisible() { return JabberInvisible; };
+
+
+	
 	/**
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
@@ -300,13 +311,13 @@ class JabberProtocol:public KopeteProtocol {
      */
     static JabberProtocol *protocolInstance;
 
-    const KopeteOnlineStatus JabberOnline;
-    const KopeteOnlineStatus JabberChatty;
-    const KopeteOnlineStatus JabberAway;
-    const KopeteOnlineStatus JabberXA;
-    const KopeteOnlineStatus JabberDND;
-    const KopeteOnlineStatus JabberOffline;
-    const KopeteOnlineStatus JabberInvisible;
+    static KopeteOnlineStatus JabberOnline;
+    static KopeteOnlineStatus JabberChatty;
+    static KopeteOnlineStatus JabberAway;
+    static KopeteOnlineStatus JabberXA;
+    static KopeteOnlineStatus JabberDND;
+    static KopeteOnlineStatus JabberOffline;
+    static KopeteOnlineStatus JabberInvisible;
 
     JabberDefaultPreferences *preferences;
 

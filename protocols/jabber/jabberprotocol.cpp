@@ -68,27 +68,39 @@
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
+KopeteOnlineStatus JabberProtocol::JabberOnline;
+KopeteOnlineStatus JabberProtocol::JabberChatty;
+KopeteOnlineStatus JabberProtocol::JabberAway;
+KopeteOnlineStatus JabberProtocol::JabberXA;
+KopeteOnlineStatus JabberProtocol::JabberDND;
+KopeteOnlineStatus JabberProtocol::JabberOffline;
+KopeteOnlineStatus JabberProtocol::JabberInvisible;
+
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory <JabberProtocol>);
 
 JabberProtocol::JabberProtocol(QObject * parent, QString name, QStringList)
-:  KopeteProtocol(parent, name),
-	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, QString::null,
-		     i18n("Go O&nline"), i18n("Online")),
-	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty",
-	     i18n("Set F&ree to Chat"), i18n("Free to Chat")),
-	JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away",
-		   i18n("Set A&way"), i18n("Away")), JabberXA(KopeteOnlineStatus::Away,
-							      20, this, 3,
-							      "jabber_away",
-							      i18n
-							      ("Set E&xtended Away"),
-							      i18n("Extended Away")),
-	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na",
-		  i18n("Set &Do not Disturb"), i18n("Do not Disturb")),
-	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, QString::null,
-	      i18n("Go O&ffline"), i18n("Offline")),
-	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, QString::null,
-		i18n("Set I&nvisible"), i18n("Invisible")) {
+:  KopeteProtocol(parent, name) {
+
+	JabberOnline = KopeteOnlineStatus(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online",
+		                          i18n("Go O&nline"), i18n("Online"));
+
+	JabberChatty = KopeteOnlineStatus(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty",
+	     	                          i18n("Set F&ree to Chat"), i18n("Free to Chat"));
+
+	JabberAway = KopeteOnlineStatus(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away",
+		                        i18n("Set A&way"), i18n("Away")); 
+	JabberXA = KopeteOnlineStatus(KopeteOnlineStatus::Away, 20, this, 3, "jabber_away",
+		                      i18n ("Set E&xtended Away"), i18n("Extended Away"));
+
+	JabberDND = KopeteOnlineStatus(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na",
+		                       i18n("Set &Do not Disturb"), i18n("Do not Disturb"));
+
+	JabberOffline = KopeteOnlineStatus(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline",
+	                                   i18n("Go O&ffline"), i18n("Offline"));
+
+	JabberInvisible = KopeteOnlineStatus(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline",
+		                             i18n("Set I&nvisible"), i18n("Invisible")); 
+
     	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
 
     /* This is meant to be a singleton, so we will check if we have
@@ -142,7 +154,7 @@ EditAccountWidget *JabberProtocol::createEditAccountWidget(KopeteAccount *accoun
 
 KopeteAccount *JabberProtocol::createNewAccount(const QString &accountId)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account\n";
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n";
         return new JabberAccount(this, accountId);
 }
 
@@ -154,9 +166,11 @@ void JabberProtocol::errorConnectFirst() {
 
 KActionMenu *JabberProtocol::protocolActions() {
     KActionMenu *protocolMenu = new KActionMenu();
-    /*for (JabberAccount * tmpAccount = accounts.first();
+    /*QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+    for (JabberAccount * tmpAccount = accounts.first();
 	 tmpAccount != accounts.last(); tmpAccount = accounts.next())
-	protocolMenu->insert(tmpAccount->actionMenu());*/
+	 protocolMenu->insert(tmpAccount->actionMenu());
+	 */
     return protocolMenu;
 }
 
@@ -226,15 +240,29 @@ void JabberProtocol::deserializeContact(KopeteMetaContact * metaContact,
 					QString > &serializedData,
 					const QMap < QString,
 					QString > & /* addressBookData */ ) {
-    kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo <<
-	"Deserializing data for metacontact " << metaContact->
-	displayName() << endl;
-	/*
-     for (JabberAccount *tmpAccount = accounts.first(); tmpAccount;
-tmpAccount++)
-	tmpContact->deserializeContact(metaContact, serializedData, QMap<QString,
-QString>());
-*/
+    kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " 
+                                 << metaContact->displayName() << "\n" << endl;
+
+    QString contactId = serializedData[ "contactId" ];
+    QString displayName = serializedData[ "displayName" ];
+
+    kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "ContactId: " << contactId << "\n" << endl; 
+
+    if( displayName.isEmpty() )
+    	displayName = contactId;
+				 
+    QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+    if( !accounts.isEmpty() ) {
+	KopeteAccount *a = accounts[ serializedData[ "accountId" ] ];
+	if( a )
+		a->addContact( contactId, displayName, metaContact );
+	else
+		kdDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
+		                  " but we dont have it in the accounts list" << endl;
+	}
+    else
+	kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+
 }
 
 #include "jabberprotocol.moc"

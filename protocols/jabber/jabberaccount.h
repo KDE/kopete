@@ -26,8 +26,13 @@
 #include "ui/dlgjabberstatus.h"
 #include "ui/dlgjabbersendraw.h"
 #include "jabberprefs.h"
+#include "jid.h"
+#include "client.h"
+#include "types.h"
 
 /* @author Daniel Stone, Till Gerken */
+
+using namespace Jabber;
 
 class JabberAccount:public KopeteAccount {
     Q_OBJECT
@@ -151,8 +156,8 @@ class JabberAccount:public KopeteAccount {
     int port;
 
     void setAvailable();
-    void updateContact(const Jabber::RosterItem &);
-    void removeContact(const Jabber::RosterItem &);
+    void updateContact(const RosterItem &);
+    void removeContact(const RosterItem &);
 
     /* Set up our actions for the status menu. */
     void initActions();
@@ -186,7 +191,7 @@ class JabberAccount:public KopeteAccount {
     const KopeteOnlineStatus JabberOffline;
     const KopeteOnlineStatus JabberInvisible;
 
-    JabberPreferences *preferences;
+    //JabberPreferences *preferences;
 
     /* Initial presence to set after connecting. */
     KopeteOnlineStatus initialPresence;
@@ -215,13 +220,13 @@ class JabberAccount:public KopeteAccount {
     /* Add new contact to the Kopete contact list; this doesn't actually
      * affect the Jabber roster, it's just an internal method. */
     void createAddContact(KopeteMetaContact * mc,
-			  const Jabber::RosterItem & item);
+			  const RosterItem & item);
 
     /* Asks the specified JID for authorization. */
-    void subscribe(const Jabber::Jid & jid);
+    void subscribe(const Jid & jid);
 
     /* Accepts another JID's request for authorization. */
-    void subscribed(const Jabber::Jid & jid);
+    void subscribed(const Jid & jid);
 
 
     private slots:
@@ -247,7 +252,7 @@ class JabberAccount:public KopeteAccount {
     void slotPsiDebug(const QString & msg);
 
     /* Called from Psi: alerts us to a protocol error. */
-    void slotError(const Jabber::StreamError &);
+    void slotError(const StreamError &);
 
     /* Set online mode (presence-wise, and connection-wise). */
     void slotGoOnline();
@@ -278,35 +283,35 @@ class JabberAccount:public KopeteAccount {
 
     /* Slots for handling group chats. */
     void slotJoinNewChat();
-    void slotGroupChatJoined(const Jabber::Jid & jid);
-    void slotGroupChatLeft(const Jabber::Jid & jid);
-    void slotGroupChatPresence(const Jabber::Jid & jid, const Jabber::Status & status);
-    void slotGroupChatError(const Jabber::Jid & jid, int error, QString & reason);
+    void slotGroupChatJoined(const Jid & jid);
+    void slotGroupChatLeft(const Jid & jid);
+    void slotGroupChatPresence(const Jid & jid, const Status & status);
+    void slotGroupChatError(const Jid & jid, int error, QString & reason);
 
     /* Incoming subscription request. */
-    void slotSubscription(const Jabber::Jid & jid, const QString & type);
+    void slotSubscription(const Jid & jid, const QString & type);
 
     /* A new item was added to our roster, so update our contact list.
      * If this is a new subscription, make sure we action it. */
-    void slotNewContact(const Jabber::RosterItem &);
+    void slotNewContact(const RosterItem &);
 
     /* Update a contact's details. */
-    void slotContactUpdated(const Jabber::RosterItem &);
+    void slotContactUpdated(const RosterItem &);
 
     /* Someone on our contact list revoked their authorization. */
-    void slotContactDeleted(const Jabber::RosterItem &);
+    void slotContactDeleted(const RosterItem &);
 
     /* Updates the configuration data. */
     void slotSettingsChanged(void);
 
     /* Someone on our contact list had (another) resource come online. */
-    void slotResourceAvailable(const Jabber::Jid &, const Jabber::Resource &);
+    void slotResourceAvailable(const Jid &, const Resource &);
 
     /* Someone on our contact list had (another) resource go offline. */
-    void slotResourceUnavailable(const Jabber::Jid &, const Jabber::Resource &);
+    void slotResourceUnavailable(const Jid &, const Resource &);
 
     /* Displays a new message. */
-    void slotReceivedMessage(const Jabber::Message &);
+    void slotReceivedMessage(const Message &);
 
     /* Checks if we registered OK; proceeds if we did. */
     void slotRegisterUserDone();

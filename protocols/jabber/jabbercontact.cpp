@@ -50,8 +50,8 @@
  */
 JabberContact::JabberContact(QString userId, QString nickname,
 			     QStringList groups, JabberAccount * p,
-			     KopeteMetaContact * mc, QString identity)
-:  KopeteContact(p, userId, mc) {
+			     KopeteMetaContact * mc, QString identity, const QString &icon)
+:  KopeteContact(p, userId, mc, icon) {
 
     // save parent protocol object
     protocol = p;
