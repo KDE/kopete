@@ -102,10 +102,11 @@ public:
 	/** 
 	 * Attempt to parse the supplied data into an @ref EventTransfer object.  
 	 * The exact state of the parse attempt can be read using @ref state. 
-	 * @param transfer The supplied pointer is set allocated EventTransfer on a successful parse ( This object should be deleted manually).  If the data was incomplete, the pointer is set to 0.
-	 * @return The number of bytes read from the supplied data.
+	 * @param rawData The unparsed data.
+	 * @param bytes An integer used to return the number of bytes read.
+	 * @return A pointer to an EventTransfer object if successfull, otherwise 0.  The caller is responsible for deleting this object.
 	 */
-	uint parse( const QByteArray &, EventTransfer *& transfer );
+	EventTransfer * parse( const QByteArray &, uint & bytes );
 	/**
 	 * Returns a value describing the state of the object.  
 	 * If the object is given data to parse that does not begin with a recognised event code, 

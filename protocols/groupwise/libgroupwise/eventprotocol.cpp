@@ -26,16 +26,15 @@ EventProtocol::~EventProtocol()
 {
 }
 
-uint EventProtocol::parse( const QByteArray & wire, EventTransfer *& transfer )
+EventTransfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 {
 	m_bytes = 0;
-	transfer = 0;
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	Q_UINT32 type;
 
 	if ( !okToProceed() )
-		return m_bytes;
+		return 0;
 	// read the event type
 	*m_din >> type;
 	m_bytes += sizeof( Q_UINT32 );	
@@ -45,17 +44,17 @@ uint EventProtocol::parse( const QByteArray & wire, EventTransfer *& transfer )
 	{
 		qDebug( "EventProtocol::parse() - found unexpected event type %i - assuming out of sync", type );
 		m_state = OutOfSync;
-		return m_bytes;
+		return 0;
 	}
 
 	// read the event source
 	QString source;
 	if ( !readString( source ) )
-		return m_bytes;
+		return 0;
 	
 	// now create an event object
 	//HACK: lowercased DN
-	transfer = new EventTransfer( type, source.lower(), QDateTime::currentDateTime() );
+	EventTransfer * tentative = new EventTransfer( type, source.lower(), QDateTime::currentDateTime() );
 
 	// add any additional data depending on the type of event
 	// Note: if there are any errors in the way the data is read below, we will soon be OutOfSync
@@ -69,24 +68,24 @@ uint EventProtocol::parse( const QByteArray & wire, EventTransfer *& transfer )
 	{
 		case StatusChange: //103 - STATUS + STATUSTEXT
 			if ( !okToProceed() )
-				return m_bytes;
+				return 0;
 			*m_din >> status;
 			m_bytes += sizeof( Q_UINT16 );
 			if ( !readString( statusText ) )
-				return m_bytes;
+				return 0;
 			qDebug( "got status: %i", status );
-			transfer->setStatus( status );
-			qDebug( "transfer status: %i", transfer->status() );
-			transfer->setStatusText( statusText );
+			tentative->setStatus( status );
+			qDebug( "tentative status: %i", tentative->status() );
+			tentative->setStatusText( statusText );
 			break;
 		case ConferenceJoined:		// 106 - GUID + FLAGS
 		case ConferenceLeft:		// 107
 			if ( !readString( guid ) )
-				return m_bytes;
-			transfer->setGuid( guid );
+				return 0;
+			tentative->setGuid( guid );
 			if ( !readFlags( flags ) )
-				return m_bytes;
-			transfer->setFlags( flags );
+				return 0;
+			tentative->setFlags( flags );
 			break;
 		case UndeliverableStatus:	//102 - GUID
 		case ConferenceClosed:		//105
@@ -95,33 +94,33 @@ uint EventProtocol::parse( const QByteArray & wire, EventTransfer *& transfer )
 		case UserTyping:			//112
 		case UserNotTyping:			//113
 			if ( !readString( guid ) )
-				return m_bytes;
-			transfer->setGuid( guid );
+				return 0;
+			tentative->setGuid( guid );
 			break;
 		case ReceiveAutoReply:		//121 - GUID + FLAGS + MESSAGE
 		case ReceiveMessage:		//108
 			// guid
 			if ( !readString( guid ) )
-				return m_bytes;
-			transfer->setGuid( guid );
+				return 0;
+			tentative->setGuid( guid );
 			// flags
 			if ( !readFlags( flags ) )
-				return m_bytes;
-			transfer->setFlags( flags );
+				return 0;
+			tentative->setFlags( flags );
 			// message
 			if ( !readString( message ) )
-				return m_bytes;
-			transfer->setMessage( message );
+				return 0;
+			tentative->setMessage( message );
 			break;
 		case ConferenceInvite:		//117 GUID + MESSAGE
 			// guid
 			if ( !readString( guid ) )
-				return m_bytes;
-			transfer->setGuid( guid );
+				return 0;
+			tentative->setGuid( guid );
 			// message
 			if ( !readString( message ) )
-				return m_bytes;
-			transfer->setMessage( message );
+				return 0;
+			tentative->setMessage( message );
 			break;
 		case UserDisconnect:		//114 (NOTHING)
 		case ServerDisconnect:		//115
@@ -137,9 +136,11 @@ uint EventProtocol::parse( const QByteArray & wire, EventTransfer *& transfer )
 			qDebug( "EventProtocol::parse() - found unexpected event type %i", type );
 			break;
 	}
+	// if we got this far, the parse succeeded, return the Transfer
 	m_state = Success;
 	delete m_din;
-	return m_bytes;
+	bytes = m_bytes;
+	return tentative;
 }
 
 uint EventProtocol::state() const

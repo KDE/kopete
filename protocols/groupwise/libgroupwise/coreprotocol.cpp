@@ -392,7 +392,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 {
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
-	int bytesParsed = 0;
+	uint bytesParsed = 0;
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
@@ -419,8 +419,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		else // otherwise -> Event code
 		{	
 			qDebug( "CoreProtocol::wireToTransfer() - looks like an EVENT: %i, length %i", val, wire.size() );
-			EventTransfer * t;
-			bytesParsed = m_eventProtocol->parse( wire, t );
+			EventTransfer * t = m_eventProtocol->parse( wire, bytesParsed );
 			if ( t )
 			{
 				m_inTransfer = t;
