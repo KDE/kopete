@@ -487,7 +487,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
 
-	QRegExp expr( "<HTML*>" );
+	QRegExp expr;
 	expr.setCaseSensitive( false );
 	expr.setWildcard( true );
 	expr.setMinimal( true );
