@@ -54,8 +54,8 @@ KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *pare
 
 KopeteContact::~KopeteContact()
 {
-	if(contextMenu != 0L) 
-		delete contextMenu;
+//	if(contextMenu != 0L)
+	delete contextMenu;
 	delete actionSendMessage;
 	delete actionDeleteContact;
 	delete actionChangeMetaContact;
