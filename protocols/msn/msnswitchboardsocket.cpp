@@ -599,7 +599,7 @@ void MSNSwitchBoardSocket::slotSocketClosed( )
 {
 	for( QStringList::Iterator it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 	{
-		emit userLeft( (*it), i18n("socket closed"));
+		emit userLeft( (*it), i18n("connection closed"));
 	}
 
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
