@@ -209,6 +209,8 @@ private: // Private methods
   void parseRedirect(Buffer &inbuf);
   /** Parses a message ack from the server */
   void parseMsgAck(Buffer &inbuf);
+	/** Parses a minityping notification from server */
+	void parseMiniTypeNotify(Buffer &inbuf);
   /** Parses a rate change */
   void parseRateChange(Buffer &inbuf);
   /** Sends SSI add, modify, or delete request to reuse code */

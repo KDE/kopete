@@ -359,6 +359,9 @@ void OscarSocket::OnRead(void)
 					case 0x000c: //message ack
 							parseMsgAck(inbuf);
 							break;
+					case 0x0014: // Mini-Typing notification
+							parseMiniTypeNotify(inbuf);
+							break;
 					default: //invalid subtype
 							kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
 					};
@@ -1771,6 +1774,45 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
     delete sn;
     delete ck;
     emit gotAck(nm,typ);
+}
+
+// Parses a minityping notification from the server
+void OscarSocket::parseMiniTypeNotify(Buffer &inbuf){
+		//TODO
+		// Throw away 8 bytes which are all zeros
+		inbuf.getDWord();
+		inbuf.getDWord();
+		// Throw away two bytes (0x0001) which are always there
+		inbuf.getWord();
+		// The length of the screen name
+		int snlen = inbuf.getByte();
+		kdDebug() << "Trying to find username of length: " << snlen << endl;
+		// The screen name
+		char *sn = inbuf.getBlock(snlen);
+		QString screenName = sn;
+		delete sn;
+		// Get the actual notification
+		WORD notification = inbuf.getWord();
+		// DEBUG STATEMENT
+		kdDebug() << "[OSCAR] Determining Minitype from user "
+							<< screenName << endl;
+		
+		switch(notification){
+		case 0x0000:
+				emit gotMiniTypeNotification(screenName, 0);
+				break;
+		case 0x0001:
+				// Text Typed
+				emit gotMiniTypeNotification(screenName, 1);
+				break;
+		case 0x0002:
+				// Typing Begun
+				emit gotMiniTypeNotification(screenName, 2);
+				break;
+		default:
+				kdDebug() << "[OSCAR] MiniType Error: " << notification << endl;
+		}
+				
 }
 
 /** Sends our capabilities to the server */

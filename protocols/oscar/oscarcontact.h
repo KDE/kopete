@@ -107,6 +107,8 @@ private slots: // Private slots
 	void slotUpdateBuddy(int buddyNum);
 	/** Called when a buddy has changed status */
 	void slotBuddyChanged(UserInfo u);
+	/** Called when we get a minityping notification */
+	void slotGotMiniType(QString screenName, int type);
 	/** Called when a buddy is offgoing */
 	void slotOffgoingBuddy(QString sn);
 	/** Called when user info is requested */

@@ -49,13 +49,25 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mMsgManager = 0L;
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
-	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),this,SLOT(slotBuddyChanged(UserInfo)));
-	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),this,SLOT(slotOffgoingBuddy(QString)));
-	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),this,SLOT(slotIMReceived(QString,QString,bool)));
-	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)), this, SLOT(slotMainStatusChanged(int)));
-
-	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
+	// Buddy Changed
+	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
+					this,SLOT(slotBuddyChanged(UserInfo)));
+	// Buddy offline
+	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),
+					this,SLOT(slotOffgoingBuddy(QString)));
+	// Got IM
+	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),
+					this,SLOT(slotIMReceived(QString,QString,bool)));
+	// User's status changed (I don't understand this)
+	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)),
+					this, SLOT(slotMainStatusChanged(int)));
+	// Contact moved
+	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
 			this, SLOT (slotMoved(KopeteMetaContact*) ));
+	// Incoming minitype notification
+	QObject::connect(mProtocol->engine, SIGNAL(gotMiniTypeNotification(QString, int)),
+					this, SLOT(slotGotMiniType(QString, int)));
+	
 	if(parent){
 		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
 				protocol, SLOT (serialize(KopeteMetaContact*) ));
@@ -268,6 +280,31 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 	}
 }
 
+// Called when we get a minityping notification
+void OscarContact::slotGotMiniType(QString screenName, int type){
+		//TODO
+		// Check to see if it's us
+		kdDebug() << "[OSCAR] Minitype: Comparing "
+							<< tocNormalize(screenName) << " and "
+							<< tocNormalize(mName) << endl;
+		
+		if(tocNormalize(screenName) != tocNormalize(mName)){
+				return;
+		}
+		
+		kdDebug() << "[OSCAR] OscarContact got minitype notification" << endl;
+		
+		// If we already have a message manager
+		if(mMsgManager){
+				if(type == 2){
+						mMsgManager->userTypingMsg(this, true);
+				} else {
+						mMsgManager->userTypingMsg(this, false);
+				}
+		}
+		
+}
+
 /** Called when a buddy is offgoing */
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
@@ -329,6 +366,9 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 	TBuddy tmpBuddy;
 	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
+	// Tell the message manager that the buddy is done typing
+	msgManager()->userTypingMsg(this, false);
+		
 	// Build a KopeteMessage and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
