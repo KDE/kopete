@@ -58,10 +58,9 @@ public:
 	/**
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
-	 * For now, just compare the ID field.
-	 * FIXME: Also take protocol and identity into account!
 	 */
-	KopeteContact *findContact( const QString &protocolId, const QString &contactId );
+	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString &contactId );
+	
 	/**
 	 * The name of the icon associated with the contact's status
 	 */
@@ -106,7 +105,7 @@ public:
 	 */
 	QString displayName() const;
 	void setDisplayName( const QString &name );
-
+	
 	/**
 	 * The groups the contact is stored in
 	 */

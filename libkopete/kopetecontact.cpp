@@ -46,6 +46,11 @@ KopeteContact::~KopeteContact()
 	emit( contactDestroyed( this ) );
 }
 
+QString KopeteContact::identityId() const
+{
+	return QString::null;
+}
+
 void KopeteContact::setDisplayName( const QString &name )
 {
 	m_displayName = name;

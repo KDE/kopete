@@ -226,11 +226,11 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
     KopeteMetaContact *m;
 
     if ( !parent ) {
-        m = l->findContact( this->id(), uin );
+        m = l->findContact( this->id(), QString::null, uin );
     } else
         m = parent;
 
-    KopeteContact *c = m->findContact( this->id(), uin );
+    KopeteContact *c = m->findContact( this->id(), QString::null, uin );
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();

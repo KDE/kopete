@@ -59,6 +59,11 @@ public:
 	KopeteMetaContact *metaContact() const { return m_metaContact; }
 
 	/**
+	 * Return the ID of the identity this contact belongs to
+	 */
+	virtual QString identityId() const;
+	
+	/**
 	 * The groups in which the user is physically located.
 	 * The logical groups are stored in the Meta Contact. Physical groups
 	 * can be different from the logical groups!

@@ -54,14 +54,14 @@ KopeteContactList::~KopeteContactList()
 {
 }
 
-KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId, const QString &contactId )
+KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId, const QString &identityId, const QString &contactId )
 {
 	//kdDebug() << "*** Looking for contact " << contactId << ", proto " << protocolId << endl;
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 		{
 		//kdDebug() << "*** Iterating " << it.current()->displayName() << endl;
-		KopeteContact *c = it.current()->findContact( protocolId, contactId );
+		KopeteContact *c = it.current()->findContact( protocolId, identityId, contactId );
 		if( c )
 				return it.current();
 		}

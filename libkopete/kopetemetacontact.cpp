@@ -113,14 +113,14 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 	}
 }
 
-KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &contactId )
+KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &identityId, const QString &contactId )
 {
 	//kdDebug() << "*** Num contacts: " << m_contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		//kdDebug() << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
-		if( (it.current()->id() == contactId ) && (it.current()->protocol() == protocolId ))
+		if( (it.current()->id() == contactId ) && (it.current()->protocol() == protocolId ) && (it.current()->identityId() == identityId))
 			return it.current();
 	}
 

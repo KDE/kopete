@@ -53,7 +53,8 @@ public:
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
 	 */
-	KopeteMetaContact *findContact( const QString &protocolId, const QString &contactId );
+	KopeteMetaContact *findContact( const QString &protocolId, const QString &identityId,
+	                                const QString &contactId );
 
 	/**
 	 * Return all meta contacts

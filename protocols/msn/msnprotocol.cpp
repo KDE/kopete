@@ -877,8 +877,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	if( list == "FL" )
 	{
 		KopeteContactList *l = KopeteContactList::contactList();
-		KopeteMetaContact *m = l->findContact( id(), handle );
-		KopeteContact *c = m->findContact( id(), handle );
+		KopeteMetaContact *m = l->findContact( id(), QString::null, handle );
+		KopeteContact *c = m->findContact( id(), QString::null, handle );
 
 		if( c )
 		{
@@ -1017,8 +1017,8 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		if( list == "FL" )
 		{
 			KopeteContactList *l = KopeteContactList::contactList();
-			KopeteMetaContact *m = l->findContact( this->id(), handle );
-			KopeteContact *c = m->findContact( this->id(), handle );
+			KopeteMetaContact *m = l->findContact( this->id(), QString::null, handle );
+			KopeteContact *c = m->findContact( this->id(), QString::null, handle );
 
 			if( c )
 			{
