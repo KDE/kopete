@@ -66,7 +66,7 @@ OscarAccount::~OscarAccount()
 	kdDebug(14150) << k_funcinfo << "'" << accountId() <<
 		"' deleted, Disconnecting..." << endl;
 
-	disconnect();
+	OscarAccount::disconnect();
 
 	delete mAwayDialog; // has no parent
 
@@ -103,7 +103,7 @@ void OscarAccount::connect()
 	// Get the screen name for this account
 	QString screenName = accountId();
 
-	if ( screenName != i18n("(No ScreenName Set)") )
+	if (screenName != i18n("(No ScreenName Set)") )
 	{	// If we have a screen name set
 		// Get the password
 		QString password = getPassword();
@@ -122,6 +122,12 @@ void OscarAccount::connect()
 			// TODO: check server and port are set
 			QString server = pluginData(protocol(), "Server");
 			QString port = pluginData(protocol(), "Port");
+
+			if(server.isEmpty() || port.isEmpty())
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"Thank pluginData() for this one to break, no server and/or port set => can't connect." << endl;
+			}
 
 			// Connect, need to normalize the name first
 			mEngine->doLogin(server, port.toInt(), tocNormalize(screenName), password);
@@ -227,7 +233,7 @@ void OscarAccount::slotGoOnline()
 		kdDebug(14150) << k_funcinfo << accountId() <<
 			": Was OFFLINE, now connecting" << endl;
 
-		connect();
+		OscarAccount::connect();
 	}
 	else
 	{

@@ -800,32 +800,23 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	QString accountId=serializedData["accountId"];
 	QString displayName=serializedData["displayName"];
 
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
-
 	if(accountId.isNull())
 	{
 		//Kopete 0.6.x contactlist
 		KGlobal::config()->setGroup("ICQ");
 		// Set the account ID to whatever the old single account used to be
- 		accountId = KGlobal::config()->readEntry("UIN", "");
+		accountId = KGlobal::config()->readEntry("UIN", "");
 	}
 
 	// Get the account it belongs to
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
 	KopeteAccount *account = accounts[accountId];
+
 	if(!account)
 	{
-		kdDebug(14200) << k_funcinfo << "Account '" <<
-			accountId << "' was not found, creating new account..." << endl;
-
-		if(!accountId.isEmpty())
-			account = createNewAccount(accountId);
-		else
-			return;
-		// FIXME: What is account failed?
-		if (!account)
-			kdDebug(14200) << k_funcinfo << "Error creating new account" << endl;
+		kdDebug(14200) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		return;
 	}
-
 	new ICQContact(contactId, displayName, static_cast<ICQAccount*>(account), metaContact);
 }
 

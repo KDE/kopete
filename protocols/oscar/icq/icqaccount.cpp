@@ -49,8 +49,9 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 void ICQAccount::loaded()
 {
 	// needs to be here because pluginData() does not work in constructor
-	static_cast<ICQContact *>(mMyself)->setOwnDisplayName(
-		pluginData(protocol(), "NickName"));
+	QString nickName = pluginData(protocol(), QString::fromLatin1("NickName"));
+	if(!nickName.isNull())
+		static_cast<ICQContact *>(mMyself)->setOwnDisplayName(nickName);
 
 	reloadPluginData();
 }

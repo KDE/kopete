@@ -614,7 +614,7 @@ void OscarSocket::sendLoginRequest()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	Buffer outbuf;
-	outbuf.addSnac(0x0017,0x0006,0x0000,0x00000000);
+	outbuf.addSnac(OSCAR_FAM_23,0x0006,0x0000,0x00000000);
 	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
 	sendBuf(outbuf,0x02);
 //	emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));

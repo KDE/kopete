@@ -68,8 +68,6 @@ void AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	QString accountId=serializedData["accountId"];
 	QString displayName=serializedData["displayName"];
 
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
-
 	if(accountId.isNull())
 	{
 		//Kopete 0.6.x contactlist
@@ -80,23 +78,16 @@ void AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	}
 
 	// Get the account it belongs to
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
 	KopeteAccount *account = accounts[accountId];
+
 	if(!account)
 	{
-		kdDebug(14190) << k_funcinfo << "Account '" <<
-			accountId << "' was not found, creating new account..." << endl;
-
-		if(!accountId.isEmpty())
-			account = createNewAccount(accountId);
-		else
-			return;
-
-		if (!account)
-			kdDebug(14190) << k_funcinfo << "Error creating new account" << endl;
+		kdDebug(14190) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		return;
 	}
-
 	// Create Oscar contact, this adds it to the proper account
-	//TODO
+	// TODO
 	new AIMContact(contactId, displayName, static_cast<AIMAccount*>(account), metaContact);
 
 }
