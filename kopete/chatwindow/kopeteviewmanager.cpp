@@ -181,11 +181,19 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 					//TODO: add an event for this (like a litle beep)
 					break;
 				case KopeteMessage::Highlight:
+#if KDE_VERSION > 0x030100
 					KNotifyClient::event( winId , QString::fromLatin1( "kopete_highlight"), i18n("<qt>An Highlighted message arrived from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+#else
+					KNotifyClient::event( QString::fromLatin1( "kopete_highlight"), i18n("<qt>An Highlighted message arrived from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+#endif
 					break;
 				case KopeteMessage::Normal:
 				default:
+#if KDE_VERSION > 0x030100
 					KNotifyClient::event( winId , QString::fromLatin1( "kopete_incoming"), i18n("<qt>Incoming message from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+#else
+					KNotifyClient::event( QString::fromLatin1( "kopete_incoming"), i18n("<qt>Incoming message from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+#endif
 					break;
 			}
 		}
