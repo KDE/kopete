@@ -48,22 +48,25 @@ class KopeteAccountManager : public QObject
 
 public:
 	/**
-	 * Retrieve the instance of KopeteAccountManager.
+	 * \brief Retrieve the instance of KopeteAccountManager.
+	 *
 	 * The account manager is a singleton class of which only a single
 	 * instance will exist. If no manager exists yet this function will
 	 * create one for you.
+	 *
+	 * \return the instance of the KopeteAccountManager
 	 */
 	static KopeteAccountManager* manager();
 
 	~KopeteAccountManager();
 
 	/**
-	 * Retrieve the list of accounts
+	 * \brief Retrieve the list of accounts
 	 */
 	const QPtrList<KopeteAccount> & accounts() const;
 
 	/**
-	 * Retrieve a QDict of accounts for the given protocol
+	 * \brief Retrieve a QDict of accounts for the given protocol
 	 *
 	 * The list is guaranteed to contain only accounts for the specified
 	 * protocol
@@ -71,46 +74,52 @@ public:
 	QDict<KopeteAccount> accounts( const KopeteProtocol *p );
 
 	/**
-	 * Return the account asked
+	 * \brief Return the account asked
 	 */
 	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
 	/**
-	 * Delete the account and cleans the config data
+	 * \brief Delete the account and clean the config data
 	 */
 	void removeAccount( KopeteAccount *account );
 
 	/**
-	 * Tries to guess a color for the next account in the given protocol based on the already registered ones
+	 * \brief Guess the color for a new account
+	 * 
+	 * Guesses a color for the next account of a given protocol based on the already registered colors
 	 */
 	QColor guessColor( KopeteProtocol *protocol );
 
 public slots:
 	/**
-	 * Connect all accounts which have auto connect enabled
+	 * \brief Connect all accounts which have auto connect enabled
 	 */
 	 void autoConnect();
 
 	/**
-	 * Connect all accounts at once.
+	 * \brief Connect all accounts at once.
+	 *
 	 * This is a slot, so you can connect directly to it from a KAction, for example.
 	 */
 	void connectAll();
 
 	/**
-	 * Disconnect all accounts at once.
+	 * \brief Disconnect all accounts at once.
+	 * 
 	 * This is a slot, so you can connect directly to it from a KAction, for example.
 	 */
 	void disconnectAll();
 
 	/**
-	 * Set all accounts to away at once.
+	 * \brief Set all accounts to away at once.
+	 *
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAwayAll( const QString &awayReason = QString::null );
 
 	/**
-	 * Remove the away status from all accounts at once.
+	 * \brief  Remove the away status from all accounts at once.
+	 *
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAvailableAll();
@@ -129,12 +138,12 @@ public slots:
 
 signals:
 	/**
-	 * An account is ready for use
+	 * \brief An account is ready for use
 	 */
 	void accountReady( KopeteAccount *account );
 
 	/**
-	 * An account has been unregistered
+	 * \brief An account has been unregistered
 	 */
 	void accountUnregistered( KopeteAccount *account );
 
