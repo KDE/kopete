@@ -143,8 +143,6 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString
 					errorMsg = i18n( "Transformed document is null!" );
 				}
 				xsltFreeStylesheet( styleSheet );
-
-				// FIXME: No xmlFreeDoc( xslDoc ) here? - Martijn
 			}
 			else
 			{
@@ -230,12 +228,12 @@ void KopeteXSLT::setXSLT( const QString &_document )
 			{
 				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
 					"<xsl:choose>"
-						"<xsl:when test='from/contact/@contactId=from/contact/@metaContactDisplayName'>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/>"
+						"<xsl:when test='from/contact/@contactId=from/contact/@contactDisplayName'>"
+							"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@metaContactDisplayName\"/>"
 						"</xsl:when>"
 						"<xsl:otherwise>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/>"
-							"&#160;<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@metaContactDisplayName\"/>"
+							"<xsl:value-of disable-output-escaping=\"yes\"	select=\"from/contact/@metaContactDisplayName\"/>&#160;"
+							"(<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/>)"
 						"</xsl:otherwise>"
 					"</xsl:choose></xsl:attribute>"
 					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactDisplayName\"/></span>" );
@@ -244,12 +242,12 @@ void KopeteXSLT::setXSLT( const QString &_document )
 			{
 				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
 					"<xsl:choose>"
-						"<xsl:when test='to/contact/@contactId=to/contact/@metaContactDisplayName'>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/>"
+						"<xsl:when test='to/contact/@contactId=from/contact/@contactDisplayName'>"
+							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>"
 						"</xsl:when>"
 						"<xsl:otherwise>"
-							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/>"
-							"&#160;<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>"
+							"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>&#160;"
+							"(<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/>)"
 						"</xsl:otherwise>"
 					"</xsl:choose></xsl:attribute>"
 					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactDisplayName\"/></span>" );

@@ -321,6 +321,7 @@ private slots:
 	void slotRepeatTimer();
 	void slotRemoteTypingTimeout();
 	void slotScrollView();
+	void slotAppearanceChanged();
 	void slotContactNameChanged( const QString &oldName, const QString &newName );
 
 	/**

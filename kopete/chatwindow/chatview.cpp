@@ -120,7 +120,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	connect( KopetePrefs::prefs(), SIGNAL(transparencyChanged()),
 		this, SLOT( slotTransparencyChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()),
-		this, SLOT( slotRefreshNodes() ) );
+		this, SLOT( slotAppearanceChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
 		this, SLOT( slotRefreshView() ) );
 
@@ -997,6 +997,12 @@ void ChatView::addText(const QString &text)
 void ChatView::setStylesheet( const QString &style )
 {
 	d->xsltParser->setXSLT( style );
+	slotRefreshNodes();
+}
+
+void ChatView::slotAppearanceChanged()
+{
+	d->xsltParser->setXSLT( KopetePrefs::prefs()->styleContents() );
 	slotRefreshNodes();
 }
 

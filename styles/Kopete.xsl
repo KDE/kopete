@@ -19,7 +19,7 @@
 							<xsl:attribute name="style">
 								<xsl:text>color:blue;font-weight:bold;</xsl:text>
 							</xsl:attribute>
-							<kopete-i18n>Message to %FROM_CONTACT_DISPLAYNAME% at %TIME%</kopete-i18n>
+							<kopete-i18n>Message from %FROM_CONTACT_DISPLAYNAME% at %TIME%</kopete-i18n>
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>
