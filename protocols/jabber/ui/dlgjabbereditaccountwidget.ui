@@ -57,102 +57,126 @@
                         <property name="title">
                             <string>Account Information</string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>TextLabel1_3</cstring>
+                                    <cstring>layout38</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>&amp;Jabber ID:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>mID</cstring>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The Jabber ID for the account you would like to use.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="0" column="1">
-                                <property name="name">
-                                    <cstring>layout61</cstring>
-                                </property>
-                                <hbox>
+                                <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLineEdit">
+                                    <widget class="KPasswordEdit" row="1" column="1">
                                         <property name="name">
-                                            <cstring>mID</cstring>
+                                            <cstring>mPass</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="0" column="1">
+                                        <property name="name">
+                                            <cstring>layout61</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>mID</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string></string>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The Jabber ID for the account you would like to use.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (for example, joe@jabber.org), as there are many Jabber servers.</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QCheckBox">
+                                                <property name="name">
+                                                    <cstring>cbRemPass</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>1</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Remember &amp;password</string>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>Check to save your password.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLabel" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>TextLabel2_2</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string></string>
+                                            <string>Pass&amp;word:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>mPass</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The password for your account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>TextLabel1_3</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Jabber ID:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>mID</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>The Jabber ID for the account you would like to use.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (for example, joe@jabber.org), as there are many Jabber servers.</string>
+                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
                                         </property>
                                     </widget>
-                                    <widget class="QCheckBox">
-                                        <property name="name">
-                                            <cstring>cbRemPass</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>1</hsizetype>
-                                                <vsizetype>0</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>Remember &amp;password</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Check to save your password.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
+                                </grid>
                             </widget>
-                            <widget class="QLabel" row="1" column="0">
+                            <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>TextLabel2_2</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
+                                    <cstring>cbAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Pass&amp;word:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>mPass</cstring>
+                                    <string>Connect automatically at &amp;startup</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>The password for your account.</string>
+                                    <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                                 </property>
                             </widget>
-                            <widget class="KPasswordEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>mPass</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                            </widget>
-                        </grid>
+                        </vbox>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -227,7 +251,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>130</height>
+                                <height>180</height>
                             </size>
                         </property>
                     </spacer>
@@ -255,20 +279,6 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbAutoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-                                </property>
-                            </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>cbUseSSL</cstring>
@@ -759,7 +769,6 @@
     <tabstop>cbRemPass</tabstop>
     <tabstop>btnRegister</tabstop>
     <tabstop>tabWidget10</tabstop>
-    <tabstop>cbAutoConnect</tabstop>
     <tabstop>cbUseSSL</tabstop>
     <tabstop>cbAllowPlainTextPassword</tabstop>
     <tabstop>cbCustomServer</tabstop>

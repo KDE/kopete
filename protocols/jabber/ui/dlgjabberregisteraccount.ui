@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>DlgJabberRegisterAccount</class>
 <widget class="QWidget">
     <property name="name">
@@ -117,9 +117,6 @@
                             <property name="text">
                                 <string>C&amp;hoose...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+H</string>
-                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -148,9 +145,6 @@
                     </property>
                     <property name="text">
                         <string>Use protocol encr&amp;yption (SSL)</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+Y</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
