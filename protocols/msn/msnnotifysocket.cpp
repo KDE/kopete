@@ -195,8 +195,15 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		{
 			m_authData=data.section( ' ' , 2 , 2 );
 			m_kv=QString::null;
-		//	QString authURL="https://loginnet.passport.com/login.srf?" + m_authData;
-			QString authURL="https://login.passport.com/login.srf?" + m_authData;
+
+			if( m_account->accountId().contains("@hotmail.com") )
+				m_sid="loginnet.passport.com";
+			else if( m_account->accountId().contains("@msn.com") ||  m_account->accountId().contains("@compaq.net") ||  m_account->accountId().contains("@webtv.net") )
+				m_sid="msnialogin.passport.com";
+			else
+				m_sid="login.passport.com";
+
+			QString authURL="https://"+m_sid+"/login.srf?" + m_authData;
 			authURL.replace("," , "&" ) ;
 
 			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
@@ -514,10 +521,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		QRegExp rx("lc=([0-9]*),id=([0-9]*),tw=([0-9]*),.*kv=([0-9]*),");
 		rx.search(m_authData);
 
-		/*QString authURL="https://loginnet.passport.com/ppsecure/post.srf?lc=" + rx.cap(1) + "&id=" +rx.cap(2) +"&tw=" +rx.cap(3) +"&cbid=" + rx.cap(2)
-			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=hotmail.com&passwd=" + escape ( m_account->password() ) ;*/
-
-		QString authURL = "https://login.passport.com/ppsecure/post.srf?lc=" + rx.cap( 1 ) + "&id=" +
+		QString authURL = "https://" + m_sid + "/ppsecure/post.srf?lc=" + rx.cap( 1 ) + "&id=" +
 			rx.cap( 2 ) + "&tw=" + rx.cap( 3 ) + "&cbid=" + rx.cap( 2 ) + "&da=passport.com&login=" +
 			m_account->accountId() + "&domain=passport.com&passwd=";
 
