@@ -24,12 +24,17 @@
 #include <time.h>
 
 // qt
+#include <qstylesheet.h>
+#include <qregexp.h>
+#include <qimage.h>
 
 // kde
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
+#include <ktempfile.h>
+#include <kconfig.h>
 
 // for the display picture
 #include "msnp2p.h"
@@ -52,6 +57,14 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
 	kdDebug(14140) <<"MSNSwitchBoardSocket::~MSNSwitchBoardSocket" <<endl;
+
+	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
+	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
+	{
+		delete it.data().second;
+	}
+
+
 }
 
 void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QString auth)
@@ -265,11 +278,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		QPtrList<KopeteContact> others;
 		others.append( m_account->myself() );
-		QStringList::iterator it;
-		for( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
+		QStringList::iterator it2;
+		for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
 		{
-			if( *it != m_msgHandle )
-				others.append( m_account->contacts()[ *it ] );
+			if( *it2 != m_msgHandle )
+				others.append( m_account->contacts()[ *it2 ] );
 		}
 
 		QString message=msg.right( msg.length() - msg.find("\r\n\r\n") - 4 );
@@ -294,7 +307,70 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		kmsg.setFg( fontColor );
 		kmsg.setFont( font );
 
+		m_lastMessage=message;
+		message=kmsg.escapedBody();
+		QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
+		for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
+		{
+			QString es=QStyleSheet::escape(it.data().first);
+			KTempFile *f=it.data().second;
+			if(message.contains(es))
+			{
+				if(!f)
+				{
+					continue;
+				}
+
+				QString em = QRegExp::escape( es );
+
+				QString imgPath = f->name();
+
+				QImage iconImage(imgPath);
+				message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
+					QString::fromLatin1("\\1<img align=\"center\" width=\"") +
+					QString::number(iconImage.width()) +
+					QString::fromLatin1("\" height=\"") +
+					QString::number(iconImage.height()) +
+					QString::fromLatin1("\" src=\"") + imgPath +
+					QString::fromLatin1("\" title=\"") + es +
+				QString::fromLatin1( "\"/>" ) );
+				kmsg.setBody(message , KopeteMessage::RichText);
+			}
+		}
+
 		emit msgReceived( kmsg );
+	}
+	else if( type== "text/x-mms-emoticon" )
+	{
+		KConfig *config = KGlobal::config();
+		config->setGroup( "MSN" );
+		if ( config->readBoolEntry( "useCustomEmoticons", false ) )
+		{
+			QRegExp rx("\r\n([^\\s]*)[\\s]*(<msnobj [^>]*>)");
+			rx.search(msg);
+			QString msnobj=rx.cap(2);
+			QString txt=rx.cap(1);
+			kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: emoticon: " <<  txt << "    msnobj: " << msnobj<<  endl;
+
+			if( !m_emoticons.contains(msnobj) || !m_emoticons[msnobj].second )
+			{
+				m_emoticons.insert(msnobj, qMakePair(txt,(KTempFile*)0L));
+				MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
+				if(!c)
+					return;
+
+				if(!m_p2p)
+				{
+					m_p2p=new MSNP2P(this , "msnp2p protocol" );
+					QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+					QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+							this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+					QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
+				}
+
+				m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, msnobj );
+			}
+		}
 	}
 	else if( type== "application/x-msnmsgrp2p" )
 	{
@@ -304,6 +380,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 			QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+			QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
 		}
 	}
 	else
@@ -449,10 +526,65 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
 	}
 
 	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
-	QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile * ) ) , c , SLOT(setDisplayPicture( KTempFile *) ) ) ;
+}
+
+void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
+{
+	if(m_emoticons.contains(msnObj))
+	{
+		m_emoticons[msnObj].second=file;
+	}
+	else
+	{
+		MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
+		if(c && c->object()==msnObj)
+			c->setDisplayPicture(file);
+		else
+			delete file;
+	}
+
+
+	if( !m_lastMessage.isEmpty() )
+	{
+		QString message=QStyleSheet::escape(m_lastMessage);
+		bool hasEmoticon=false;
+		QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
+		for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
+		{
+			QString es=QStyleSheet::escape(it.data().first);
+			KTempFile *f=it.data().second;
+			kdDebug(14140) << "MSNSwitchBoardSocket::slotEmoticonReceived: search for " << es << "  in "<< message <<  endl;
+			if(message.contains(es) && f)
+			{
+				hasEmoticon=true;
+				QString em = QRegExp::escape( es );
+
+				QString imgPath = f->name();
+
+				QImage iconImage(imgPath);
+				message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
+					QString::fromLatin1("\\1<img align=\"center\" width=\"") +
+					QString::number(iconImage.width()) +
+					QString::fromLatin1("\" height=\"") +
+					QString::number(iconImage.height()) +
+					QString::fromLatin1("\" src=\"") + imgPath +
+					QString::fromLatin1("\" title=\"") + es +
+				QString::fromLatin1( "\"/>" ) );
+			}
+		}
+		if(hasEmoticon)
+		{
+			KopeteMessage kmsg( m_account->contacts()[ m_msgHandle ], m_account->myself(),
+				message,  KopeteMessage::Inbound , KopeteMessage::RichText );
+			emit msgReceived( kmsg );
+		}
+	}
+
+
 }
 
 

@@ -13,6 +13,9 @@
             <height>347</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>msnPrefsUI</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -66,6 +69,14 @@
             </property>
             <property name="checked">
                 <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>useCustomEmoticons</cstring>
+            </property>
+            <property name="text">
+                <string>Download and show custom emoticons (Experimental)</string>
             </property>
         </widget>
         <widget class="QLabel">
@@ -191,6 +202,13 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>NotifyNewChat</tabstop>
+    <tabstop>AutoDownloadPicture</tabstop>
+    <tabstop>useCustomEmoticons</tabstop>
+    <tabstop>SendAwayMessages</tabstop>
+    <tabstop>AwayMessageSeconds</tabstop>
+</tabstops>
 <includes>
     <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>

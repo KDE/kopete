@@ -52,7 +52,7 @@ signals:
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
-	void fileReceived( KTempFile * );
+	void fileReceived( KTempFile * , const QString &msnObject );
 
 private:
 	/**
@@ -84,6 +84,8 @@ private:
 	//for the display image
 	KTempFile *m_file;
 	QFile *m_Sfile;
+	QString m_obj;
+	QString m_CallID;
 
 	QString m_myHandle;
 	QString m_msgHandle;

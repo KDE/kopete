@@ -132,7 +132,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 				#endif
 
 				delete m_file;*/
-				emit fileReceived(m_file);
+				emit fileReceived(m_file , m_obj);
 				m_file=0;
 
 				//send the bye message
@@ -142,7 +142,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						"From: <msnmsgr:"+m_myHandle+">\r\n"
 						"Via: MSNSLP/1.0/TLP ;branch={A0D624A6-6C0C-4283-A9E0-BC97B4B46D32}\r\n"
  						"CSeq: 0\r\n"
- 						"Call-ID: {9D79AE57-1BD5-444B-B14E-3FC9BB2B5D58}\r\n"
+ 						"Call-ID: {"+m_CallID.upper()+"}\r\n"
  						"Max-Forwards: 0\r\n"
  						"Content-Type: application/x-msnmsgr-sessionclosebody\r\n"
  						"Content-Length: 3\r\n\r\n" ).utf8();
@@ -223,20 +223,24 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 void MSNP2P::requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject)
 {
 	//reset some field
-	m_file=0l;
+/*	m_file=0l;
 	m_Sfile=0L;
 	m_msgIdentifier=0;
 	m_sessionId=0;
 	m_totalDataSize=0;
-	m_offset=0;
+	m_offset=0;*/
+	m_sessionId=0;
 
 	m_myHandle=myHandle;
 	m_msgHandle=msgHandle;
+	m_obj=msnObject;
 
 	msnObject=QString::fromUtf8(KCodecs::base64Encode( msnObject.utf8() ));
 	msnObject.replace("=" , QString::null ) ;
 
 	unsigned long int sessID=rand()%0xFFFFFF00+4;
+	QString branch= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)  + "-" + QString::number(rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
+	m_CallID= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)  + "-" + QString::number(rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16); ;
 
 	QString content="EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
  			"SessionID: "+ QString::number(sessID)+"\r\n"
@@ -247,9 +251,9 @@ void MSNP2P::requestDisplayPicture( const QString &myHandle, const QString &msgH
 			"INVITE MSNMSGR:"+ msgHandle + "  MSNSLP/1.0\r\n"
  			"To: <msnmsgr:"+msgHandle+">\r\n"
  			"From: <msnmsgr:"+myHandle+">\r\n"
-			"Via: MSNSLP/1.0/TLP ;branch={33517CE4-02FC-4428-B6F4-39927229B722}\r\n"
+			"Via: MSNSLP/1.0/TLP ;branch={"+branch.upper()+"}\r\n"
 			"CSeq: 0\r\n"
-			"Call-ID: {9D79AE57-1BD5-444B-B14E-3FC9BB2B5D58}\r\n"
+			"Call-ID: {"+m_CallID.upper()+"}\r\n"
  			"Max-Forwards: 0\r\n"
  			"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
 			"Content-Length: "+ QString::number(content.length()+5)+"\r\n"

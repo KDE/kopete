@@ -32,10 +32,8 @@ class KopeteMessage;
 class MSNAccount;
 
 class MSNP2P;
+class KTempFile;
 
-/**
- * @author Olaf Lueg
- */
 class MSNSwitchBoardSocket : public MSNSocket
 {
 	Q_OBJECT
@@ -61,8 +59,12 @@ private:
 	QString m_auth;
 	QStringList m_chatMembers;
 
-
 	MSNP2P *m_p2p ;
+
+	//used for emoticons
+	QString m_lastMessage;
+
+	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
 
 protected:
 	/**
@@ -104,6 +106,7 @@ private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );
 	void slotReadMessage( const QString &msg );
+	void slotEmoticonReceived( KTempFile *, const QString& );
 
 signals:
 	void msgReceived( KopeteMessage &msg );
