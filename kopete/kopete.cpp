@@ -322,6 +322,8 @@ QString Kopete::parseEmoticons( QString message )
 	{
 		message = message.replace(QRegExp(":'-\\("),"<img src=\""+mEmoticons.cry+"\">");
 		message = message.replace(QRegExp(":'\\("),"<img src=\""+mEmoticons.cry+"\">");
+		message = message.replace(QRegExp(";-\\("),"<img src=\""+mEmoticons.cry+"\">");
+		message = message.replace(QRegExp(";\\("),"<img src=\""+mEmoticons.cry+"\">");
     }
 	if ( !mEmoticons.oh.isNull() )
 	{

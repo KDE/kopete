@@ -38,7 +38,7 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
 	contactlist = new ContactList(mainwidget);
-	layout->insertWidget ( -1,contactlist );
+	layout->insertWidget ( -1, contactlist );
 	
 	/* ---------------------------------- */
 	
@@ -62,7 +62,7 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 
 	/* ---------------------------------- */
 
-	createGUI("kopeteui.rc");
+	createGUI ( "kopeteui.rc" );
 	
 	loadOptions();
 	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
