@@ -59,12 +59,12 @@ static TestSet knownGood =
 	{ "<img src=\"...\" title=\":-)\" />", "<img src=\"...\" title=\":-)\" />" },
 	{ "End of sentence:p", "End of sentence<img align=\"center\" width=\"20\" height=\"20\" src=\"tongue.png\" title=\":p\"/>" },
 	{ "http://www.kde.org", "http://www.kde.org" },
+	{ "&gt;:-)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"devil.png\" title=\"&gt;:-)\"/>" },
 	{ NULL, NULL }
 };
 
 static TestSet knownBroken =
 {
-	{ "&gt;:-)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"devil.png\" title=\"&gt;:-)\"/>" },
 	{ ":))", ":))" },
 	{ "In a sentence:practical example", "In a sentence:practical example" },
 	{ "Bla (&nbsp;)", "Bla (&nbsp;)" },
