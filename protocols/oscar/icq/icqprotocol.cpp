@@ -596,7 +596,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	{
 		if (email.isEmpty()) // either NULL or ""
 		{
-			widget->prsEmailLabel->setText(i18n("unspecified"));
+			widget->prsEmailLabel->setText(i18n("Unspecified"));
 			widget->prsEmailLabel->setURL(QString::null);
 			widget->prsEmailLabel->setDisabled( true );
 			widget->prsEmailLabel->setUseCursor( false ); // disable hand cursor on mouseover
@@ -628,7 +628,8 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	// TIMEZONE ======================================
 	fillTZCombo(widget->rwTimezone);
 	setTZComboValue(widget->rwTimezone, c->generalInfo.timezoneCode);
-	kdDebug(14200) << k_funcinfo << "timezonecode=" << c->generalInfo.timezoneCode << endl;
+	kdDebug(14200) << k_funcinfo << "timezonecode=" <<
+		c->generalInfo.timezoneCode << endl;
 	/*
 	widget->rwTimezone->setCurrentText(c->generalInfo.timezoneCode)
 		QString("GMT%1%2:%3")
@@ -862,7 +863,6 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 
 } // END contactInfo2UserInfoWidget()
 
-// Called when we want to return the active instance of the protocol
 ICQProtocol *ICQProtocol::protocol()
 {
 	return protocolStatic_;
@@ -873,24 +873,23 @@ bool ICQProtocol::canSendOffline() const
 	return true;
 }
 
-// This will be called when Kopete reads the contact list
 void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
-	QString contactId=serializedData["contactId"];
-	QString accountId=serializedData["accountId"];
-	QString displayName=serializedData["displayName"];
-
-	// Get the account it belongs to
+	QString accountId = serializedData["accountId"];
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
 	ICQAccount *account = static_cast<ICQAccount*>(accounts[accountId]);
 
 	if(!account)
 	{
-		kdDebug(14200) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		kdDebug(14200) << k_funcinfo <<
+			"WARNING: Account for contact does not exist, skipping." << endl;
 		return;
 	}
+
+	QString displayName=serializedData["displayName"];
+	QString contactId=serializedData["contactId"];
 	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact);
 	c->setGroupId(serializedData["groupID"].toInt());
 	c->setEncoding(serializedData["Encoding"].toInt());

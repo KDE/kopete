@@ -902,7 +902,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			//kdDebug(14150) << k_funcinfo << "messagetext='" << messagetext << "'" << endl;
 
 			OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[tocNormalize(user.sn)]);
-			oMsg.setText(ServerToQString(messagetext, contact, utf), OscarMessage::Plain);
+			oMsg.setText(ServerToQString(messagetext, contact, utf), OscarMessage::Rtf);
 
 			if(!oMsg.text().isEmpty())
 				parseMessage(user, oMsg, msgType, msgFlags);
@@ -1328,17 +1328,9 @@ void OscarSocket::sendCLI_METASETGENERAL(const ICQGeneralUserInfo &i)
 	Buffer req; // ! LITTLE-ENDIAN
 	req.addLEWord(0x03ea); // subtype: 1002
 	req.addLELNTS(i.nickName.latin1()); // TODO: check encoding
-	kdDebug(14150) << "nickName=" << i.nickName.latin1() << endl;
-
 	req.addLELNTS(i.firstName.latin1());
-	kdDebug(14150) << "firstName=" << i.firstName.latin1() << endl;
-
 	req.addLELNTS(i.lastName.latin1());
-	kdDebug(14150) << "lastName=" << i.lastName.latin1() << endl;
-
 	req.addLELNTS(i.eMail.latin1());
-	kdDebug(14150) << "eMail=" << i.eMail.latin1() << endl;
-
 	req.addLELNTS(i.city.latin1());
 	req.addLELNTS(i.state.latin1());
 	req.addLELNTS(i.phoneNumber.latin1());
@@ -1348,10 +1340,7 @@ void OscarSocket::sendCLI_METASETGENERAL(const ICQGeneralUserInfo &i)
 	req.addLELNTS(i.zip.latin1());
 	req.addLEWord(i.countryCode);
 	req.addLEByte(i.timezoneCode);
-	if (i.publishEmail)
-		req.addLEByte(0x00);
-	else
-		req.addLEByte(0x01);
+	req.addLEByte(i.publishEmail ? 0x00 : 0x01);
 
 	sendCLI_TOICQSRV(0x07d0, req);
 }
@@ -1412,42 +1401,38 @@ void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware,
 
 	Buffer req; // ! LITTLE-ENDIAN
 	req.addLEWord(0x0424); // subtype: 1060
-	if (requireauth)
-		req.addLEByte(0x01);
-	else
-		req.addLEByte(0x00);
-
-	if (webaware)
-		req.addLEByte(0x00);
-	else
-		req.addLEByte(0x01);
-
+	req.addLEByte(requireauth ? 0x01 : 0x00);
+	req.addLEByte(webaware ? 0x00 : 0x01);
 	req.addLEByte(direct);
 	req.addLEByte(0x00); // KIND: user kind, unknown
 
 	sendCLI_TOICQSRV(0x07d0, req);
 }
 
-void OscarSocket::sendCLI_SENDSMS(const QString &phonenumber, const QString &message, const QString &senderUIN, const QString &senderNick)
+void OscarSocket::sendCLI_SENDSMS(const QString &phonenumber,
+	const QString &message, const QString &senderUIN, const QString &senderNick)
 {
 	kdDebug(14150) << k_funcinfo <<
-		"SEND (CLI_SENDSMS), sending SMS to '" << phonenumber << "', message=" << message << endl;
+		"SEND (CLI_SENDSMS), sending SMS to '" << phonenumber <<
+		"', message=" << message << endl;
 
 	QTextCodec *codec = QTextCodec::codecForMib(2252);
 	if(!codec)
 		return;
 
-	QString time = QDateTime::currentDateTime(Qt::UTC).toString("dddd, dd MMM yyyy hh::mm:ss GMT");
+	QString time = QDateTime::currentDateTime(Qt::UTC).
+		toString("dddd, dd MMM yyyy hh::mm:ss GMT");
 
-	QCString xml = "<icq_sms_message>";
-	xml += "<destination>";
-	xml += phonenumber.latin1();
-	xml += "</destination>";
-	xml += "<text>" + message.utf8() +"</text>";
-	xml += "<codepage>1252</codepage><encoding>utf8</encoding>";
-	xml += "<senders_UIN>" + senderUIN.utf8() + "</senders_UIN><senders_name>" + senderNick.utf8() + "</senders_name>";
-	xml += "<delivery_receipt>Yes</delivery_receipt><time>" + time.utf8() + "</time>";
-	xml += "</icq_sms_message>";
+	QCString xml = "<icq_sms_message><destination>";
+		xml += phonenumber.latin1();
+		xml += "</destination>";
+		xml += "<text>" + message.utf8() + "</text>";
+		xml += "<codepage>1252</codepage><encoding>utf8</encoding>";
+		xml += "<senders_UIN>" + senderUIN.utf8() + "</senders_UIN><senders_name>";
+		xml += senderNick.utf8();
+		xml += "</senders_name>";
+		xml += "<delivery_receipt>Yes</delivery_receipt><time>" + time.utf8() + "</time>";
+		xml += "</icq_sms_message>";
 
 	Buffer req; // ! LITTLE-ENDIAN
 	req.addLEWord(5250); // subtype: 5250

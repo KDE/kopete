@@ -83,7 +83,7 @@ public:
 	/**
 	 * \brief Add a group to the contact list from the server
 	 *
-	 * Used on initial contactlist fetch in order to add groups to 
+	 * Used on initial contactlist fetch in order to add groups to
 	 * the contact list that may or may not exist yet.
 	 * Also takes care of adding contacts that are waiting in the queue
 	 * because their group hasn't arrived yet.
@@ -94,13 +94,13 @@ public:
 	 * \brief Add a already existing server contacts to the Kopete list
 	 *
 	 * Used on initial contactlist fetch to add contacts to the Kopete contact list
-	 * 
+	 *
 	 */
 	void addOldContact( SSI* ssiItem, KopeteMetaContact* meta = 0L );
 
 	/**
 	 * \brief Add contacts that were missing groups to the contact list
-	 * 
+	 *
 	 * Use on initial contactlist fetch to add contacts to the contact list
 	 * that were missing a group
 	 */
@@ -167,7 +167,7 @@ protected slots:
 	/*
 	 * Called when we've received an IM
 	 */
-	void slotReceivedMessage(const QString &sender, OscarMessage &message, OscarSocket::OscarMessageType type);
+	void slotReceivedMessage(const QString &sender, OscarMessage &message);
 
 	void slotReceivedAwayMessage(const QString &sender, const QString &message);
 

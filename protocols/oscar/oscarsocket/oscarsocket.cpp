@@ -26,8 +26,6 @@
 #include <qobject.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
-#include <qregexp.h>
-#include <qstylesheet.h>
 
 #include <kdebug.h>
 #include <kextsock.h>
@@ -132,10 +130,10 @@ SSIData& OscarSocket::ssiData()
 
 void OscarSocket::slotConnected()
 {
-	kdDebug(14150) << k_funcinfo << 
+	kdDebug(14150) << k_funcinfo <<
 		"Connected to '" << socket()->host() <<
 		"', port '" << socket()->port() << "'" << endl;
-		
+
 #if 0
 	QString h=socket()->localAddress()->nodeName();
 	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
@@ -235,7 +233,7 @@ void OscarSocket::slotRead()
 	}
 
 	inbuf.setBuf(buf, bytesread);
-	
+
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
 #endif
@@ -579,21 +577,21 @@ void OscarSocket::OnConnAckReceived()
 
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
-	
+
 	//For now, we use 0 as the sequence number because rate
 	//limiting can cause packets from different classes to be
 	//sent out in different order
 	outbuf.addFlap(chan, 0);
-	
+
 	//Read SNAC family/type from buffer if able
 	SNAC s = outbuf.readSnacHeader();
-	
-	//if the snac was read without a problem, find its rate class 
+
+	//if the snac was read without a problem, find its rate class
 	if ( !s.error )
 	{
 		//Pointer to proper rate class
-		RateClass *rc = 0L; 
-		
+		RateClass *rc = 0L;
+
 		//Determine rate class
 		for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
 		{
@@ -604,8 +602,8 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 				break;
 			}
 		}
-		
-		if ( rc ) 
+
+		if ( rc )
 			rc->enqueue(outbuf);
 		else
 			writeData(outbuf);
@@ -622,26 +620,26 @@ void OscarSocket::writeData(Buffer &outbuf)
 	//Update packet sequence number
 	outbuf.changeSeqNum(flapSequenceNum);
 	flapSequenceNum++;
-	
+
 	if(socket()->socketStatus() != KExtendedSocket::connected)
 	{
 		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
 		return;
 	}
-		
+
 	kdDebug(14150) << k_funcinfo << "Writing data" << endl;
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
 #endif
-	
+
 	//actually put the data onto the wire
 	if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 	{
 		kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
-		kdDebug(14150) << k_funcinfo << 
+		kdDebug(14150) << k_funcinfo <<
 		socket()->strError(socket()->socketStatus(), socket()->systemError()) << endl;
 	}
-	
+
 	if ( sender() && sender()->isA("RateClass") )
 		((RateClass *)sender())->dequeue();
 }
@@ -653,7 +651,7 @@ void OscarSocket::doLogin(
 	const QString &userProfile, const unsigned long initialStatus,
 	const QString &/*awayMessage*/)
 {
-	QString realHost = host;	
+	QString realHost = host;
 
 	if (isLoggedIn)
 	{
@@ -766,7 +764,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		DWORD windowsize, clear, alert, limit, disconnect,
 			current, max, lastTime;
 		BYTE currentState;
-		
+
 		rc = new RateClass;
 		classid = inbuf.getWord();
 		//kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
@@ -779,11 +777,11 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		max = inbuf.getDWord();
 		lastTime = inbuf.getDWord();
 		currentState = inbuf.getByte();
-		rc->setRateInfo( classid, windowsize, clear, alert, limit, 
+		rc->setRateInfo( classid, windowsize, clear, alert, limit,
 			disconnect, current, max, lastTime, currentState );
-			
+
 		QObject::connect(rc, SIGNAL(dataReady(Buffer &)), this, SLOT(writeData(Buffer &)));
-		
+
 		/*//5 unknown bytes, depending on the 0x0001/0x0017 you send
 		for (int j=0;j<5;j++)
 				rc->unknown[j] = inbuf.getByte();*/
@@ -1056,7 +1054,7 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 	WORD val;
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x0017,0x0000,0x00000000);
-	
+
 	for(int i=0;i<len;i++)
 	{
 		outbuf.addWord(families[i]);
@@ -1078,7 +1076,7 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 		outbuf.addWord(val);
 	}
 	sendBuf(outbuf,0x02);
-	
+
 }
 
 void OscarSocket::sendIdleTime(DWORD time)
@@ -1188,7 +1186,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 							//TODO: reimplement somehow. Set waitauth flag and add to blm lists
 							ssi->waitingAuth = true;
 							blmBuddies << ssi->name;
-							
+
 							break;
 						}
 
@@ -1972,14 +1970,16 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					{
 						//kdDebug(14150) << k_funcinfo << "UTF-16BE message" << endl;
 						const unsigned short *txt = msgBuf.getWordBlock((int)messageLength/2);
-						oMsg.setText(QString::fromUcs2(txt), mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
+						oMsg.setText(QString::fromUcs2(txt),
+							mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
 						delete [] txt;
 					}
 					else if (charsetNumber == 0x0003) // local encoding, usually iso8859-1
 					{
 						//kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
 						const char *messagetext = msgBuf.getBlock(messageLength);
-						oMsg.setText(QString::fromLatin1(messagetext), mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
+						oMsg.setText(QString::fromLatin1(messagetext),
+							mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
 						delete [] messagetext;
 					}
 					else
@@ -2107,37 +2107,44 @@ void OscarSocket::parseMessage(const UserInfo &u, OscarMessage &message, const B
 			kdDebug(14150) << k_funcinfo <<
 				"Got an automatic message: " << message.text() << endl;
 			emit receivedAwayMessage(u.sn, message.text()); // only sets contacts away message var
-			emit receivedMessage(u.sn, message, Away); // also displays message in chatwin
+			message.setType(OscarMessage::Away);
+			emit receivedMessage(u.sn, message); // also displays message in chatwin
 			break;
 		case MSG_NORM:
 			kdDebug(14150) << k_funcinfo <<
 				"Got a normal message: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, Normal);
+			message.setType(OscarMessage::Normal);
+			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_URL:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an URL message: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, URL);
+			message.setType(OscarMessage::URL);
+			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_AUTHREJ:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an 'auth rejected' message: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, DeclinedAuth);
+			message.setType(OscarMessage::DeclinedAuth);
+			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_AUTHACC:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an 'auth granted' message: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, GrantedAuth);
+			message.setType(OscarMessage::GrantedAuth);
+			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_WEB:
 			kdDebug(14150) << k_funcinfo <<
 				"Got a web panel message: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, WebPanel);
+			message.setType(OscarMessage::WebPanel);
+			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_EMAIL:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an email message: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, EMail);
+			message.setType(OscarMessage::EMail);
+			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_CHAT:
 		case MSG_FILE:
@@ -2149,7 +2156,8 @@ void OscarSocket::parseMessage(const UserInfo &u, OscarMessage &message, const B
 		default:
 			kdDebug(14150) << k_funcinfo <<
 				"Got unknown message type, treating as normal: " << message.text() << endl;
-			emit receivedMessage(u.sn, message, Normal);
+			message.setType(OscarMessage::Normal);
+			emit receivedMessage(u.sn, message);
 			break;
 	} // END switch
 }
@@ -2831,7 +2839,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	//int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
 	//if (newLevel <= 0)
 	//	newLevel = 250; //seems like a good default
-	
+
 	//kdDebug(14150) << "New Level is: " << newLevel << endl;
 
 	if (currentLevel <= disconnectLevel)
@@ -3274,7 +3282,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 	// list
 	if (!mSSIData.remove(delGroup))
 	{
-		kdDebug(14150) << k_funcinfo << delGroup 
+		kdDebug(14150) << k_funcinfo << delGroup
 			<< " was not found in the SSI list" << endl;
 	}
 }
@@ -3865,11 +3873,9 @@ void OscarSocket::OnDirectIMReceived(QString message, QString sender, bool isAut
 
 	OscarMessage oMsg;
 	oMsg.setText(message, OscarMessage::Plain);
+	oMsg.setType(isAuto ? OscarMessage::Away : OscarMessage::Normal);
 
-	if(isAuto)
-		emit receivedMessage(sender, oMsg, Away);
-	else
-		emit receivedMessage(sender, oMsg, Normal);
+	emit receivedMessage(sender, oMsg);
 }
 
 // Called when a direct IM connection suffers an error
@@ -4265,52 +4271,7 @@ AckBuddy OscarSocket::ackBuddy(const DWORD id)
 	return(buddy);
 }
 
-OscarMessage::OscarMessage()
-{
-	timestamp = QDateTime::currentDateTime();
-}
 
-void OscarMessage::setText(const QString &txt, MessageFormat format)
-{
-	if(format == AimHtml)
-	{
-		mText = txt;
-		mText.replace( QRegExp(
-			QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
-			QString::fromLatin1("\\1") );
-		mText.replace( QRegExp(
-			QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
-			QString::fromLatin1("\\1") );
-		mText.replace( QRegExp(
-			QString::fromLatin1("<[bB][rR]>") ),
-			QString::fromLatin1("<br />") );
-		mText.replace( QRegExp(
-			QString::fromLatin1("<[fF][oO][nN][tT].*[bB][aA][cC][kK]=(.*).*>") ),
-			QString::fromLatin1("<span style=\"background-color:\\1 ;\"") );
-		mText.replace( QRegExp(
-			QString::fromLatin1("</[fF][oO][nN][tT]>") ),
-			QString::fromLatin1("</span>") );
-	}
-	else if (format == Plain)
-	{
-		mText = QStyleSheet::escape(txt);
-		mText.replace(QString::fromLatin1("\n"),
-			QString::fromLatin1("<br/>"));
-		mText.replace(QString::fromLatin1("\t"),
-			QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp; "));
-		mText.replace(QRegExp(QString::fromLatin1("\\s\\s")),
-			QString::fromLatin1("&nbsp; "));
-	}
-	else
-	{
-	// TODO: rtf
-	}
-}
-
-const QString &OscarMessage::text()
-{
-	return mText;
-}
 
 #include "oscarsocket.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -21,6 +21,7 @@
 #include "oscardirectconnection.h"
 #include "ssidata.h"
 #include "oncomingsocket.h"
+#include "oscarmessage.h"
 #include "oscarsocket.icq.h"
 
 #include <klocale.h>
@@ -29,7 +30,6 @@
 #include <qvaluelist.h>
 #include <qdatetime.h>
 
-//class KFileItem;
 class OscarAccount;
 class OscarContact;
 class QTimer;
@@ -71,26 +71,6 @@ class UserInfo
 		unsigned long icqextstatus;
 };
 
-class OscarMessage
-{
-	public:
-		enum MessageFormat
-		{
-			Plain=0, Rtf, AimHtml
-		};
-
-		OscarMessage();
-		void setText(const QString &txt, MessageFormat format);
-		const QString &text();
-
-	public:
-		QDateTime timestamp;
-		QColor fgColor;
-		QColor bgColor;
-
-	private:
-		QString mText;
-};
 
 
 const DWORD AIM_CAPS_BUDDYICON 		= 0x00000001;
@@ -217,7 +197,7 @@ const struct
 // DON'T touch these if you're not 100% sure what they are for!
 //#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 #define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ | AIM_CAPS_KOPETE
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ | AIM_CAPS_KOPETE | AIM_CAPS_RTFMSGS
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
 
@@ -285,11 +265,6 @@ class OscarSocket : public OscarConnection
 	Q_OBJECT
 
 	public:
-		enum OscarMessageType
-		{
-			Normal=0, Away, URL, SMS, WebPanel, EMail, GrantedAuth, DeclinedAuth
-		};
-
 		OscarSocket(const QString &connName, const QByteArray &cookie,
 			OscarAccount *account, QObject *parent=0, const char *name=0, bool=false);
 
@@ -934,9 +909,8 @@ class OscarSocket : public OscarConnection
 		 * emitted when any kind of Instant Message was received
 		 * @p contact contains the screenname/UIN of the sender
 		 * @p message contains the message as received
-		 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
 		 */
-		void receivedMessage(const QString &contact, OscarMessage &message, OscarSocket::OscarMessageType type);
+		void receivedMessage(const QString &contact, OscarMessage &message);
 
 		void receivedAwayMessage(const QString &contact, const QString &message);
 
