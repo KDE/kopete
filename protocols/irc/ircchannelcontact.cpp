@@ -25,6 +25,7 @@
 
 #include "kopeteview.h"
 #include "kopetestdaction.h"
+#include "kopetemessagemanagerfactory.h"
 
 #include "irccontactmanager.h"
 #include "ircchannelcontact.h"
@@ -36,6 +37,9 @@
 IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, KopeteMetaContact *metac)
 	: IRCContact(contactManager, channel, metac, "irc_channel")
 {
+	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
+			this, SLOT(slotJoinChannel(KopeteView*)) );
+	
 	// KIRC Engine stuff
 	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
 		this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
@@ -127,7 +131,6 @@ void IRCChannelContact::messageManagerDestroyed()
 
 void IRCChannelContact::slotJoinChannel( KopeteView *view )
 {
-	kdDebug(14120) << k_funcinfo << "SLOTJOINCHANNEL" << endl;
 	if( view->msgManager() == manager(false) )
 		m_engine->joinChannel(m_nickName, password());
 }
