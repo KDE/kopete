@@ -39,7 +39,13 @@
 
 #include "kgpginterface.h"
 
-const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1("(?![^<]+>)[^<>]+(?![^<]+>)") );
+//This regexp try to match an HTML text,  but only some authorized tags.
+// used in slotIncomingMessage
+//There are not rules to know if the test should be sent in html or not.
+//In Jabber, the JEP says it's not. so we don't use richtext in our message, but some client did.
+//We limit the html to some basis tag to limit security problem (bad links)
+//    - Olivier
+const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , false );
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
 #if KDE_IS_VERSION(3,2,90)
@@ -172,7 +178,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 		if( !plainBody.isEmpty() )
 		{
 			//Check if this is a RTF message before escaping it
-			if( isHTML.exactMatch( plainBody ) )
+			if( !isHTML.exactMatch( plainBody ) )
 			{
 				plainBody = QStyleSheet::escape( plainBody );
 
@@ -208,13 +214,9 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 	if( !body.isEmpty() )
 	{
 		//Check if this is a RTF message before escaping it
-		if( isHTML.exactMatch( body ) )
+		if( !isHTML.exactMatch( body ) )
 		{
-			//this is the same algoritm as in Kopete::Message::escapedBody();
-			body = QStyleSheet::escape( body );
-			body.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
-				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
-				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+			body = Kopete::Message::escape( body );
 		}
 
 		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
