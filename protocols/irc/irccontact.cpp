@@ -120,22 +120,14 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 void IRCContact::slotUserDisconnected( const QString &user, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	if ( nickname.lower() == mEngine->nickName().lower() )
+	KopeteContact *user = locateUser( nickname );
+	if ( user )
 	{
-		mMsgManager->setCanBeDeleted(true);
-		setOnlineStatus( KopeteContact::Offline ); // We parted the channel, change status
+		manager()->removeContact( user );
+		delete user;
 	}
-	else
-	{
-		KopeteContact *user = locateUser( nickname );
-		if ( user )
-		{
-			manager()->removeContact( user );
-			delete user;
-		}
-		KopeteMessage msg((KopeteContact *)this, mContact, i18n(QString("User %1 has quit (\"%2\")").arg(nickname).arg(reason)), KopeteMessage::Internal);
-		manager()->appendMessage(msg);
-	}
+	KopeteMessage msg((KopeteContact *)this, mContact, i18n(QString("User %1 has quit (\"%2\")").arg(nickname).arg(reason)), KopeteMessage::Internal);
+	manager()->appendMessage(msg);
 }
 
 void IRCContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
