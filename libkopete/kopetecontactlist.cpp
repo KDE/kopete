@@ -84,69 +84,37 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 
 void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {
-	QStringList groups;
-
-	groups = mc->groups();
-
 	m_contacts.append( mc );
 
-	connect( mc, SIGNAL( addedToGroup( KopeteMetaContact *, const QString & ) ),
-		this, SLOT(slotAddedToGroup( KopeteMetaContact *, const QString & ) ) );
-	connect( mc, SIGNAL( removedFromGroup( KopeteMetaContact *, const QString & ) ),
-		this, SLOT(slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );
-	connect( mc, SIGNAL( movedToGroup( KopeteMetaContact *, const QString &,const QString & ) ),
-		this, SLOT(slotMovedToGroup( KopeteMetaContact *, const QString &,const QString & ) ) );
+	connect( mc,
+		SIGNAL( addedToGroup( KopeteMetaContact *, const QString & ) ),
+		SLOT( slotAddedToGroup( KopeteMetaContact *, const QString & ) ) );
+	connect( mc,
+		SIGNAL( removedFromGroup( KopeteMetaContact *, const QString & ) ),
+		SLOT( slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );
+	connect( mc,
+		SIGNAL( movedToGroup( KopeteMetaContact *, const QString &,
+			const QString & ) ),
+		SLOT( slotMovedToGroup( KopeteMetaContact *, const QString &,
+			const QString & ) ) );
 
-
-	
-	if ( groups.isEmpty() )
-	{
-		kdDebug() << "KopeteContactList::addMetaContact : adding metacontact with no groups" <<endl;
-		kopeteapp->contactList()->addContact( mc );
-	}
-	else
-	{
-		QStringList::ConstIterator it = groups.begin();
-		for( ; it != groups.end(); ++it )
-		{
-			QString group = *it;
-			kdDebug() << "KopeteContactList::addMetaContact: "
-				<< "adding metacontact to group " << group <<endl;
-			kopeteapp->contactList()->addContact( mc, group );
-		}
-	}
+	kdDebug() << "KopeteContactList::addMetaContact: "
+		<< "Adding meta contact to groups '" << mc->groups().join( "', '" )
+		<< "'" << endl;
+	kopeteapp->contactList()->addContact( mc );
 }
 
-void KopeteContactList::slotAddedToGroup( KopeteMetaContact *mc, const QString &to )
+void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
+	const QString & /* from */ )
 {
-	kopeteapp->contactList()->addContact( mc, to );
-
-	if ( (mc->groups()).count() == 1 )
-	{
-		kopeteapp->contactList()->removeContact(mc,QString::null);
-	}  
-}
-
-void KopeteContactList::slotRemovedFromGroup(KopeteMetaContact *mc, const QString &from )
-{
-	kopeteapp->contactList()->removeContact( mc, from );
-
 	if( mc->groups().isEmpty() )
 	{
-		kdDebug() << "KopeteContactList::slotRemovedFromGroup: contact removed from all groups: remove contact"  <<endl;
-		removeMetaContact(mc);
-		//kopeteapp->contactList()->addContact(mc);
+		kdDebug() << "KopeteContactList::slotRemovedFromGroup: "
+			<< "contact removed from all groups: remove contact." << endl;
+		m_contacts.remove( mc );
+		mc->deleteLater();
 	}
-
 }
-
-
-void KopeteContactList::slotMovedToGroup(KopeteMetaContact *mc, const QString &from, const QString &to)
-{
-	kopeteapp->contactList()->moveContact( mc, from, to );
-}
-
-
 
 void KopeteContactList::loadXML()
 {

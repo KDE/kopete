@@ -102,13 +102,10 @@ public:
   void removeMetaContact(KopeteMetaContact *contact);
 
 public slots:
-	void slotAddedToGroup( KopeteMetaContact *mc, const QString &to );
 	void slotRemovedFromGroup(KopeteMetaContact *mc, const QString &from );
-  
-	void slotMovedToGroup(KopeteMetaContact *mc, const QString &from, const QString &to);
 
 signals:
-    /* Not used yet.... */
+	/* Not used yet.... */
 	void addedToGroup(KopeteMetaContact *mc, const QString &to );
 	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
 
