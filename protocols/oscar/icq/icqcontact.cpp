@@ -206,11 +206,6 @@ KActionCollection *ICQContact::customContextMenuActions()
 {
 	actionCollection = new KActionCollection(this);
 
-	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), 0,
-		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
-	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), 0,
-		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
-
 	QString awTxt;
 	QString awIcn;
 	int status = onlineStatus().internalStatus();
@@ -219,30 +214,36 @@ KActionCollection *ICQContact::customContextMenuActions()
 	switch(status)
 	{
 		case OSCAR_FFC:
-			awTxt = i18n("Read Free For Chat &Message");
+			awTxt = i18n("Read 'Free For Chat' &Message");
 			awIcn = "icq_ffc";
 			break;
-		case OSCAR_AWAY:
-			awTxt = i18n("Read Away &Message");
-			awIcn = "icq_away";
-			break;
 		case OSCAR_DND:
-			awTxt = i18n("Read Do Not Disturb &Message");
+			awTxt = i18n("Read 'Do Not Disturb' &Message");
 			awIcn = "icq_dnd";
 			break;
 		case OSCAR_NA:
-			awTxt = i18n("Read Not Available &Message");
+			awTxt = i18n("Read 'Not Available' &Message");
 			awIcn = "icq_na";
 			break;
 		case OSCAR_OCC:
-			awTxt = i18n("Read Occupied &Message");
-			awIcn = "icq_occ" ;
+			awTxt = i18n("Read 'Occupied' &Message");
+			awIcn = "icq_occ";
+			break;
+		default:
+			awTxt = i18n("Read 'Away' &Message");
+			awIcn = "icq_away";
 			break;
 	}
 	KAction* actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
 		this, SLOT(slotReadAwayMessage()), actionCollection, "actionReadAwayMessage");
+	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
+		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
+	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
+		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
 
-	actionRequestAuth->setEnabled(waitAuth());
+	actionRequestAuth->setEnabled(waitAuth() && isOnline());
+	actionSendAuth->setEnabled(isOnline());
+	actionReadAwayMessage->setEnabled(onlineStatus().status() == KopeteOnlineStatus::Away);
 
 	actionCollection->insert(actionRequestAuth);
 	actionCollection->insert(actionSendAuth);

@@ -2403,18 +2403,14 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 	{
 		if(codec->canEncode(message))
 		{
-			kdDebug(14150) << k_funcinfo << "Going to encode as US-ASCII" << endl;
+			//kdDebug(14150) << k_funcinfo << "Going to encode as US-ASCII" << endl;
 			charset=0x0000; // send US-ASCII
 		}
 		else
 		{
 			codec=0L; // we failed encoding it as US-ASCII
-			kdDebug(14150) << k_funcinfo << "Cannot encode as US-ASCII" << endl;
+			//kdDebug(14150) << k_funcinfo << "Cannot encode as US-ASCII" << endl;
 		}
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo << "Could not find QTextCodec for US-ASCII encoding!" << endl;
 	}
 
 	if(!codec && contact->hasCap(AIM_CAPS_UTF8))
@@ -2431,7 +2427,7 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "Won't send as UTF-16BE, codec value=" << (void *)codec << endl;
+		//kdDebug(14150) << k_funcinfo << "Won't send as UTF-16BE, codec value=" << (void *)codec << endl;
 	}
 
 	// no codec and no charset and per-contact encoding set
@@ -2441,17 +2437,17 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 		if(codec)
 		{
 			charset=0x0003;
-			kdDebug(14150) << k_funcinfo <<
-				"Using per-contact encoding, encoding name:" << codec->name() << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"Using per-contact encoding, encoding name:" << codec->name() << endl;*/
 		}
 		else
 		{
-			kdDebug(14150) << k_funcinfo << "Could not find QTextCodec for per-contact encoding!" << endl;
+			//kdDebug(14150) << k_funcinfo << "Could not find QTextCodec for per-contact encoding!" << endl;
 		}
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "Won't use per-contact encoding, codec value=" << (void *)codec << endl;
+		//kdDebug(14150) << k_funcinfo << "Won't use per-contact encoding, codec value=" << (void *)codec << endl;
 	}
 
 	if(!codec && charset != 0x0002) // it's neither unicode nor did we find a codec so far!

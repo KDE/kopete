@@ -58,7 +58,7 @@ class OscarContact : public KopeteContact
 		* true = a direct connection is established with the contact
 		* false = a direct connection is not established with the contact
 		*/
-		bool isDirectConnected() const { return mDirectlyConnected; };
+		bool directlyConnected() const { return mDirectlyConnected; };
 
 		virtual void rename(const QString &);
 
@@ -171,13 +171,16 @@ class OscarContact : public KopeteContact
 		void slotMessageManagerDestroyed();
 		/** Called when we want to block the contact */
 		void slotBlock();
-		/** Called when we want to connect directly to this contact */
-		void slotDirectConnect();
-		/** Called when we become directly connected to the contact */
-		void slotDirectIMReady(QString name);
-		/** Called when the direct connection to name has been terminated */
-		void slotDirectIMConnectionClosed(QString name);
+
+
 /*
+		// Called when we want to connect directly to this contact
+		void slotDirectConnect();
+		// Called when we become directly connected to the contact
+		void slotDirectIMReady(QString name);
+		// Called when the direct connection to name has been terminated
+		void slotDirectIMConnectionClosed(QString name);
+
 		// Called when someone wants to send us a file
 		void slotGotFileSendRequest(QString sn, QString message,
 			QString filename, unsigned long filesize);
@@ -192,9 +195,9 @@ class OscarContact : public KopeteContact
 		void slotTransferBegun(OscarConnection *con, const QString& file,
 			const unsigned long size, const QString &recipient);
 */
-		/*
-		 * Called when a contact from the Kopete contact list has been removed
-		 */
+
+
+		// Called when a contact from the Kopete contact list has been removed
 		void slotGroupRemoved(KopeteGroup *);
 
 		void slotParseUserInfo(const UserInfo &);

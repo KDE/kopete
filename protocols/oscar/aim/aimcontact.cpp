@@ -38,20 +38,10 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	mUserProfile="";
 	infoDialog=0L;
 
-	/*if(name == account()->accountId())
-	{
-		kdDebug(14200) << k_funcinfo << "Called for MYSELF contact" << endl;
-		QObject::connect(
-			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
-			this, SLOT(slotContactChanged(const UserInfo &)));
-	}
-	else*/
-	{
-		// Buddy Changed
-		QObject::connect(
-			acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
-			this, SLOT(slotContactChanged(const UserInfo &)));
-	}
+	// Contact changed his online status
+	QObject::connect(
+		acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
+		this, SLOT(slotContactChanged(const UserInfo &)));
 
 	// Incoming minitype notification
 	QObject::connect(
@@ -63,9 +53,13 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 		acc->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
 		this, SLOT(slotGotProfile(const UserInfo &, const QString &, const QString &)));
 
-	kdDebug(14190) << k_funcinfo <<
+	/*kdDebug(14190) << k_funcinfo <<
 		"contactName()='" << contactName() <<
-		"', displayName()='" << displayName << "'" << endl;
+		"', displayName()='" << displayName << "'" << endl;*/
+}
+
+AIMContact::~AIMContact()
+{
 }
 
 void AIMContact::setOwnProfile(const QString &profile)
@@ -89,11 +83,6 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 	emit updatedProfile();
 }
 
-
-AIMContact::~AIMContact()
-{
-}
-
 bool AIMContact::isReachable()
 {
 	return isOnline();
@@ -103,22 +92,27 @@ KActionCollection *AIMContact::customContextMenuActions()
 {
 	actionCollection = new KActionCollection(this);
 
-	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), 0,
+	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
 		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
-	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), 0,
+	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
 		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
 	KAction* actionWarn = new KAction(i18n("&Warn"), 0,
 		this, SLOT(slotWarn()), actionCollection, "actionWarn");
 	KAction* actionBlock = new KAction(i18n("&Block"), 0,
 		this, SLOT(slotBlock()), actionCollection, "actionBlock");
-	KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
-		this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");
+	/*KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
+		this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");*/
+
+	actionRequestAuth->setEnabled(isOnline());
+	actionSendAuth->setEnabled(isOnline());
+	actionWarn->setEnabled(isOnline());
+	actionBlock->setEnabled(mAccount->isConnected()); // works if contact is offline
 
 	actionCollection->insert(actionRequestAuth);
 	actionCollection->insert(actionSendAuth);
 	actionCollection->insert(actionWarn);
 	actionCollection->insert(actionBlock);
-	actionCollection->insert(actionDirectConnect);
+	//actionCollection->insert(actionDirectConnect);
 
 	return actionCollection;
 }

@@ -100,25 +100,23 @@ void OscarContact::initSignals()
 	QObject::connect(
 		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 		this, SLOT(slotParseUserInfo(const UserInfo &)));
-	// Got IM
+
 /*
-	QObject::connect(
-		mAccount->engine(), SIGNAL(gotIM(QString,QString,bool)),
-		this, SLOT(slotIMReceived(QString,QString,bool)));
-*/
 	// New direct connection
 	QObject::connect(
 		mAccount->engine(), SIGNAL(connectionReady(QString)),
 		this, SLOT(slotDirectIMReady(QString)));
+
 	// Direct connection closed
 	QObject::connect(
 		mAccount->engine(), SIGNAL(directIMConnectionClosed(QString)),
 		this, SLOT(slotDirectIMConnectionClosed(QString)));
-/*
+
 	// File transfer request
 	QObject::connect(
 		mAccount->engine(), SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
 		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
+
 	// File transfer started
 	QObject::connect(
 		mAccount->engine(), SIGNAL(transferBegun(OscarConnection *, const QString &,
@@ -127,10 +125,12 @@ void OscarContact::initSignals()
 			const QString &,
 			const unsigned long,
 			const QString &)));
+
 	// File transfer manager stuff
 	QObject::connect(
 		KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
 				this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
+
 	// When the file transfer is refused
 	QObject::connect(
 		KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
@@ -310,6 +310,7 @@ void OscarContact::slotBlock()
 		mAccount->engine()->sendBlock(mName);
 }
 
+#if 0
 void OscarContact::slotDirectConnect()
 {
 	kdDebug(14150) << k_funcinfo << "Requesting direct IM with " << mName << endl;
@@ -360,7 +361,6 @@ void OscarContact::slotDirectIMReady(QString name)
 	manager()->appendMessage(msg);
 }
 
-/** Called when the direct connection to contact @name has been terminated */
 void OscarContact::slotDirectIMConnectionClosed(QString name)
 {
 	// Check if we're the one who is directly connected
@@ -372,7 +372,7 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 
 	mDirectlyConnected = false;
 }
-#if 0
+
 void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
 	const long unsigned int /*fileSize*/)
 {
@@ -396,6 +396,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 	}
 }
 #endif
+
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {

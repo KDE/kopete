@@ -207,38 +207,37 @@ void ICQAccount::slotGoOnline()
 
 void ICQAccount::slotGoNA()
 {
-	kdDebug(14200) << k_funcinfo << "Called" << endl;
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	mAwayDialog->show(OSCAR_NA);
 }
 
 void ICQAccount::slotGoOCC()
 {
-	kdDebug(14200) << k_funcinfo << "Called" << endl;
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	mAwayDialog->show(OSCAR_OCC);
 }
 
 void ICQAccount::slotGoFFC()
 {
-	kdDebug(14200) << k_funcinfo << "Called" << endl;
-	// TODO: Find out if FFC has a some kind of "away message"
-	setStatus(ICQ_STATUS_SET_FFC);
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	mAwayDialog->show(OSCAR_FFC);
 }
 
 void ICQAccount::slotGoDND()
 {
-	kdDebug(14200) << k_funcinfo << "Called" << endl;
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	mAwayDialog->show(OSCAR_DND);
 }
 
 void ICQAccount::slotToggleInvisible()
 {
-	kdDebug(14200) << k_funcinfo << "Called" << endl;
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setInvisible(!mInvisible);
 }
 
 void ICQAccount::setAway(bool away, const QString &awayReason)
 {
-	kdDebug(14200) << k_funcinfo << "'" << accountId() << "'" << endl;
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	if(away)
 		setStatus(ICQ_STATUS_SET_AWAY, awayReason);
 	else
@@ -321,20 +320,19 @@ void ICQAccount::slotAwayDialogReturned(const int awaytype, const QString &messa
 	switch(awaytype)
 	{
 		case OSCAR_AWAY:
-//			kdDebug(14200) << k_funcinfo << "calling setStatus for AWAY" << endl;
 			setStatus(ICQ_STATUS_SET_AWAY, message);
 			break;
 		case OSCAR_DND:
-//			kdDebug(14200) << k_funcinfo << "calling setStatus for DND" << endl;
 			setStatus(ICQ_STATUS_SET_DND, message);
 			break;
 		case OSCAR_NA:
-//			kdDebug(14200) << k_funcinfo << "calling setStatus for NA" << endl;
 			setStatus(ICQ_STATUS_SET_NA, message);
 			break;
 		case OSCAR_OCC:
-//			kdDebug(14200) << k_funcinfo << "calling setStatus for OCC" << endl;
 			setStatus(ICQ_STATUS_SET_OCC, message);
+			break;
+		case OSCAR_FFC:
+			setStatus(ICQ_STATUS_SET_FFC, message);
 			break;
 	}
 }
@@ -362,8 +360,10 @@ OscarContact *ICQAccount::createNewContact(
 	const QString &displayName,
 	KopeteMetaContact *parentContact)
 {
-	kdDebug(14200) << k_funcinfo << "contactId='" << contactId << "', displayName='" <<
-		displayName << /*"', ptr parentContact=" << parentContact <<*/ endl;
+	/*kdDebug(14200) << k_funcinfo <<
+		"contactId='" << contactId <<
+		"', displayName='" << displayName << endl;*/
+
 	return new ICQContact(contactId,displayName,this,parentContact);
 }
 
