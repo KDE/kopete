@@ -45,7 +45,7 @@ QString cryptStr(const QString &aStr);
  * The accountId is an *constant* unique id. which represent the login.
  * The @ref myself() contact one of the most importent contact, which represent the user
  *
- * All account data are automaticaly saved in a accounts.xml file. that include the
+ * All account data is automatically saved to @ref KConfig. This includes the
  * accountId, the password (in a encrypted format) , the autoconnect flag, the color,
  * and all PluginData. KopeteAccount is a @ref KopetePluginDataObject. in the account,
  * you can call setPluginData( protocol() , "key" , "value") and pluginData( protocol , "key")
