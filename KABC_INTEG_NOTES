@@ -23,19 +23,36 @@ Use cases
 
 6)  Protocols may deliver contact data that users may want to aggregate into the kabc entry.
 
+7)  The user used another KDE IM Client.  But he discover Kopete which is finaly the best, so he decide to use it, and he would like to use information already existing in KABC
+
 Side Issues
 -----------
 
 It's not possible to add >1 contact per protocol using the ACW.  Martijn: >1 contact per MC is for power users, they can add extra contacts using the MC's context menu.
 
+
 Possible ACW order including kabc
 ---------------------------------
 1) Welcome :P
-2) Choose protocol
+2) Choose Account
 3) Fill in protocol details
-4) Select kabc contact from list | create new | create none
+4) Select Group
+5) Select kabc contact from list | create new | create none
 
-( 4) could come after the welcome but this might be too different for users to swallow... Will)
+6) - if the user selected to create a new entry in the KAB, show the page showed when you add normaly a new KAB entry (if possible where some fields are
+   - if the user selected to search in the existing KABC database, show a nice widget to search one user.
+       (I hope there is nice KParts in KABC)
+
+( 5) could come after the welcome but this might be too different for users to swallow... Will)
+        agreed - Olivier
+
+Olivier: I think a step (the first?) should be to ask a displayname for the metacontact.
+
+
+
+wow wow wow...  this make a big ACW, in regard of this bug report:
+Bug 53062: Adding contacts more quickly
+
 
 Fields to put in kabc
 ~~~~~~~~~~~~~~~~~~~~~
@@ -45,6 +62,9 @@ In Kopete contact list:
 include UID from related kabc entry
 
 In kabc
+
+
+do we need to insert nicknames? or other?
 
 
 KABC Participation
@@ -77,7 +97,7 @@ Against
 .) less consistent
 .) may confuse user?
 
-Mandatory 
+Mandatory
 ~~~~~~~~~
 Scenario 1
 1) When fetching SSCL, automatically create synthetic kabc entries.
@@ -96,4 +116,79 @@ Against
 User has control of address book, this removes that control.
 Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
 Hybrid approach may be too complex for user to comprehend.
+
+How slow this will be to add hundred of contacts when syncing the contactlist for the first time?
+
+
+
+
+
+ Usage of kopete information by others applications
+=====================================================
+
+Showing the IM status of a contact in KMail, in KAdressBook....
+A "reply-by-IM" action in KMail
+
+such as things could be done. but how?
+
+The application could know if this user is registered to an IM by looking at messaging fields
+But how to use such as information available only at runtime, like the Status.
+
+1) Saving the status to KABC
+   --the problem is that the status can not be reseted to offline if kopete crashed
+
+2) KMail could contact Kopete via DCop
+   --too bad if i want to use another IM Client
+
+
+3) add an interface in kabc (or other) which could contact Kopete, or the IM which is actualy running
+
+
+
+
+
+
+
+
+ What about the API?
+=====================
+
+ In KABC
+---------
+
+Here is a suggestion. I don't know if that already works like that in KABC.
+AFAIK by reading the KABC API documentation, it use somme different c++ function to access/modify some stuff.
+With this implementation, it is not possible to make that transparent for plugin.  That mean the PGP plugin need to call dirrectly the KABC API (with Adressee::pgpKey()) for example.
+
+My idea is to give for each fields a String, like for MIME-Type
+so fields could be application/pgp-public-key    (do you see what i mean?)
+We can even add the possibility to have several entries for one field (StringList)  (several emails for example)
+
+Theses key could be stendardized (freedesktop.org ?)
+
+
+ In Kopete:
+------------
+
+I think we will need to vhange the xml format of the contactlist, and the whole pluginData thing.
+
+The idea is to have the same fields in Kopete than in KABC.
+
+so for example, the pgp plugin will request the public key:
+metacontact->data("application/pgp-public-key");
+if the contact is in KABC, then libkopete will request info from kabc. Else, it will take the data stored internaly in the contactlist.xml
+
+for contacts same things.
+Anyway? what if we have several contact in one metacontact.
+for example:
+
+messenging/msn         =>   xxx@msn.com ; yyy@msn.com   (it's a StringList)
+messenging/nickname    =>    Mr. X ; Mr. Y
+
+that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other?
+
+
+
+
+
 
