@@ -324,6 +324,8 @@ QDomDocument KopeteMessage::asXML()
 			cNode.setAttribute( QString::fromLatin1("contactDisplayName"), c->displayName() );
 			if( c->metaContact() )
 				cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact()->displayName() );
+			else
+				cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->displayName() );
 			toNode.appendChild( cNode );
 		}
 
