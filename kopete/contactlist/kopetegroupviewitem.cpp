@@ -215,41 +215,24 @@ void KopeteGroupViewItem::updateVisibility()
 
 void KopeteGroupViewItem::updateIcon()
 {
-	bool treeView = true;
-	if ( KopeteContactListView *lv = dynamic_cast<KopeteContactListView*>( listView() ) )
-		treeView = lv->showAsTree();
-	//kdDebug(14000) << k_funcinfo << "treeView=" << treeView << endl;
-
 	// TODO: clever caching
-	if ( treeView )
-	{
-		if ( isOpen() )
-		{
-			if ( group()->useCustomIcon() )
-				open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
-			else
-				open = SmallIcon( "folder_green_open" );
-
-			d->image->setPixmap( open );
-		}
-		else
-		{
-			if ( group()->useCustomIcon() )
-				closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
-			else
-				closed = SmallIcon( "folder_green" );
-
-			d->image->setPixmap( closed );
-		}
-	}
-	else // classic view
+	if ( isOpen() )
 	{
 		if ( group()->useCustomIcon() )
 			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
 		else
-			open = SmallIcon( "folder_blue" );
+			open = SmallIcon( "folder_green_open" );
 
 		d->image->setPixmap( open );
+	}
+	else
+	{
+		if ( group()->useCustomIcon() )
+			closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
+		else
+			closed = SmallIcon( "folder_green" );
+
+		d->image->setPixmap( closed );
 	}
 }
 
