@@ -169,6 +169,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	mainWidget->chkTrackChildPhoto->setChecked( item->metaContact()->photoSource() != 0 );
 	mainWidget->chkTrackChildDisplayName->setEnabled( item->metaContact()->contacts().count() > 0 );
 	mainWidget->chkTrackChildPhoto->setEnabled( item->metaContact()->contacts().count() > 0 );
+	mainWidget->chkSyncPhoto->setChecked( item->metaContact()->isPhotoSyncedWithKABC() );
 	mainWidget->cmbAccount->setEnabled( mainWidget->chkTrackChildDisplayName->isChecked() );
 	
 	slotSetNameComboEnabled(mainWidget->chkTrackChildDisplayName->isChecked());
@@ -316,9 +317,15 @@ void KopeteMetaLVIProps::slotOkClicked()
 	
 	// set photo source
 	if ( mainWidget->chkTrackChildPhoto->isChecked() )
+	{
 		item->metaContact()->setPhotoSource( item->metaContact()->contacts().at( mainWidget->cmbAccountPhoto->currentItem() ) );
+		item->metaContact()->setPhotoSyncedWithKABC( mainWidget->chkSyncPhoto->isChecked() );
+	}
 	else
+	{
 		item->metaContact()->setPhotoSource( 0L );
+		item->metaContact()->setPhotoSyncedWithKABC(false);
+	}
 	
 	
 	item->metaContact()->setUseCustomIcon(
