@@ -47,6 +47,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mServer->setReadOnly(true);
 
 		mUserName->setText( m_IRCAccount->userName() );
+		mAltNickname->setText( m_IRCAccount->altNick() );
 		partMessage->setText( m_IRCAccount->defaultPart() );
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
 
@@ -115,6 +116,7 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	m_IRCAccount->setDefaultPart( partMessage->text() );
 	m_IRCAccount->setDefaultQuit( quitMessage->text() );
 	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
+	m_IRCAccount->setAltNick( mAltNickname->text() );
 	
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )

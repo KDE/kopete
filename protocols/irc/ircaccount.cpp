@@ -46,7 +46,8 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QString serverInfo = accountId.section('@',1);
 	m_server = serverInfo.section(':',0,0);
 	m_port = serverInfo.section(':',1).toUInt();
-
+	triedAltNick = false;
+	
 	m_engine = new KIRC( m_server, m_port );
 	QMap< QString, QString> replies = customCtcpReplies();
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
@@ -104,9 +105,16 @@ void IRCAccount::loaded()
 
 void IRCAccount::slotNickInUse( const QString &nick )
 {
-	QString newNick = KInputDialog::getText( i18n( "IRC Plugin" ),
-		i18n( "The nickname %1 is already in use. Please enter an alternate nickname:" ).arg( nick ), QString::null);
-	m_engine->changeNickname( newNick );
+	QString altNickName = altNick();
+	if( triedAltNick || altNickName.isEmpty() )
+	{
+		QString newNick = KInputDialog::getText( i18n( "IRC Plugin" ),
+			i18n( "The nickname %1 is already in use. Please enter an alternate nickname:" ).arg( nick ), nick );
+	
+		m_engine->changeNickname( newNick );
+	}
+	else
+		m_engine->changeNickname( altNickName );
 }
 
 void IRCAccount::slotNickInUseAlert( const QString &nick )
@@ -114,16 +122,27 @@ void IRCAccount::slotNickInUseAlert( const QString &nick )
 	KMessageBox::error(0l, i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
 }
 
-QString IRCAccount::userName()
+void IRCAccount::setAltNick( const QString &altNick )
 {
-	return pluginData(protocol(), QString::fromLatin1("userName"));
+	setPluginData(protocol(), QString::fromLatin1( "altNick" ), altNick);
 }
 
-void IRCAccount::setUserName(QString userName)
+const QString IRCAccount::altNick() const
+{
+	return pluginData(protocol(), QString::fromLatin1("altNick"));
+}
+
+void IRCAccount::setUserName( const QString &userName )
 {
 	m_engine->setUserName(userName);
 	setPluginData(protocol(), QString::fromLatin1( "userName" ), userName);
 }
+
+const QString IRCAccount::userName() const
+{
+	return pluginData(protocol(), QString::fromLatin1("userName"));
+}
+
 
 void IRCAccount::setDefaultPart( const QString &defaultPart )
 {

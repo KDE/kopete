@@ -67,10 +67,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	addAddressBookField("messaging/irc", KopetePlugin::MakeIndexField);
 
-	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("list"),
-		SLOT( slotListCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /list - List the public channels on the server.") );
-
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("join"),
 		SLOT( slotJoinCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /join <#channel> - Joins the specified channel.") );
@@ -234,11 +230,6 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	}
 	else
 		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
-}
-
-void IRCProtocol::slotListCommand( const QString &/*args*/, KopeteMessageManager *manager )
-{
-	static_cast<IRCAccount*>( manager->account() )->engine()->list();
 }
 
 void IRCProtocol::slotTopicCommand( const QString &args, KopeteMessageManager *manager )

@@ -51,7 +51,7 @@ public:
 	// Load the user preferences.
 	virtual void loaded();
 
-	QString userName();
+	const QString userName() const;
 	
 	const QStringList connectCommands() const;
 	
@@ -61,9 +61,15 @@ public:
 	
 	void setDefaultQuit( const QString & );
 	
+	void setUserName( const QString & );
+	
+	void setAltNick( const QString & );
+	
 	const QString defaultPart() const;
 	
 	const QString defaultQuit() const;
+	
+	const QString altNick() const;
 	
 	QMap< QString, QString > customCtcp() const;
 	
@@ -72,7 +78,6 @@ public:
 	const QMap<QString, QString> customCtcpReplies() const;
 	
 public slots:
-	void setUserName(QString userName);
 
 	void unregister(KopeteContact *);
 
@@ -165,6 +170,7 @@ private:
 	
 	QString m_server;
 	uint m_port;
+	bool triedAltNick;
 
 	KIRC *m_engine;
 

@@ -1063,6 +1063,8 @@ bool KIRC::numericReply_322(const KIRCMessage &msg)
 {
 	/* "<channel> <# visible> :<topic>"
 	 */
+	//kdDebug(14120) << k_funcinfo << "Listed " << msg.args()[1] << endl;
+	 
 	emit incomingListedChan(msg.args()[1], msg.args()[2].toUInt(), msg.suffix());
 	return true;
 }
