@@ -164,11 +164,11 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 
 QPtrList<KAction>* SMSContact::customContextMenuActions()
 {
-	QPtrList<KAction> m_actionCollection = new QPtrList<KAction>();
+	QPtrList<KAction> *m_actionCollection = new QPtrList<KAction>();
 	if( !m_actionPrefs )
 		m_actionPrefs = new KAction(i18n("&Contact Settings"), 0, this, SLOT(userPrefs()), this, "userPrefs");
 
-	m_actionCollection.append( m_actionPrefs );
+	m_actionCollection->append( m_actionPrefs );
 
 	return m_actionCollection;
 }
