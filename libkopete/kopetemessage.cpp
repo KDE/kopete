@@ -637,7 +637,6 @@ const QDomDocument KopeteMessage::asXML() const
 				QStyleSheet::escape( c->metaContact()->displayName() ) : QStyleSheet::escape( c->displayName() ) );
 			QString iconPath = KGlobal::iconLoader()->iconPath(c->protocol()->pluginIcon(), 		KIcon::Small );
 			cNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
-			kdDebug() << "Protocol Icon:" << iconPath << endl;
 			toNode.appendChild( cNode );
 		}
 	//}

@@ -192,7 +192,6 @@ void KopetePluginManager::slotShutdownDone()
 void KopetePluginManager::loadAllPlugins()
 {
 	// FIXME: We need session management here - Martijn
-	kdDebug() << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
 	QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
@@ -203,7 +202,7 @@ void KopetePluginManager::loadAllPlugins()
 		if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 		{
 			key.setLength( key.length() - 7 );
-			kdDebug() << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+//			kdDebug() << k_funcinfo << "Set " << key << " to " << it.data() << endl;
 
 			if ( it.data() == QString::fromLatin1( "true" ) )
 			{
@@ -254,7 +253,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 		kdWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << spec << "'!" << endl;
 		return 0L;
 	}
-	
+
 	if ( d->loadedPlugins.contains( info ) )
 		return d->loadedPlugins[ info ];
 
@@ -387,7 +386,7 @@ KopetePlugin* KopetePluginManager::plugin( const QString &_pluginId ) const
 
 	if ( !info )
 		return 0L;
-	
+
 	if ( d->loadedPlugins.contains( info ) )
 		return d->loadedPlugins[ info ];
 	else

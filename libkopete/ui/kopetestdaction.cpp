@@ -54,7 +54,6 @@ void KopeteGroupListAction::slotUpdateList()
 	KopeteGroupList groups = KopeteContactList::contactList()->groups();
 	for ( KopeteGroup *it = groups.first(); it; it = groups.next() )
 	{
-		kdDebug() << k_funcinfo << "Name: " << it->displayName() << ", Type: " << it->type() << endl;
 		// FIXME: I think handling the i18n for temporary and top level
 		//        groups belongs in KopeteGroup instead.
 		//        It's now duplicated in KopeteGroupListAction and
@@ -98,8 +97,6 @@ KopetePreferencesAction::~KopetePreferencesAction()
 
 void KopetePreferencesAction::slotShowPreferences()
 {
-	kdDebug() << k_funcinfo << endl;
-
 	// FIXME: Use static deleter - Martijn
 	if ( !s_settingsDialog )
 		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, qApp->mainWidget() );
