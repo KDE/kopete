@@ -329,6 +329,17 @@ bool KopeteEmailWindow::eventFilter( QObject *o, QEvent *e )
 	return false;
 }
 
+void KopeteEmailWindow::closeEvent( QCloseEvent *e )
+{
+	// DO NOT call base class's closeEvent - see comment in KopeteApplication constructor for reason
+
+	// Save settings if auto-save is enabled, and settings have changed
+	if ( settingsDirty() && autoSaveSettings() )
+		saveAutoSaveSettings();
+
+	e->accept();
+}
+
 void KopeteEmailWindow::slotViewToolBar()
 {
 	if(toolBar()->isVisible())
@@ -368,13 +379,6 @@ void KopeteEmailWindow::slotConfToolbar()
 	delete dlg;
 }
 
-
-
-bool KopeteEmailWindow::queryExit()
-{
-//	 never quit kopete
-	return false;
-}
 
 void KopeteEmailWindow::slotSetFont()
 {

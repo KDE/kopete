@@ -1125,10 +1125,13 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 
 	if ( canClose )
 	{
-		// Call the parent class's closeEvent, which will accept() the event,
-		// but also make sure that we deref() KApplication if we're the last
-		// open window
-		KParts::MainWindow::closeEvent( e );
+		// Save settings if auto-save is enabled, and settings have changed
+		if ( settingsDirty() && autoSaveSettings() )
+			saveAutoSaveSettings();
+
+		e->accept();
+
+		// DO NOT call base class's closeEvent - see comment in KopeteApplication constructor for reason
 	}
 	else
 	{

@@ -48,6 +48,26 @@ KopeteApplication::KopeteApplication()
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
 
+	/* KMainWindow is very broken from our point of view - it deref()'s the app
+	 * when the last visible KMainWindow is destroyed. This is broken for a number
+	 * of reasons, not least because it can happen more than once within a single
+	 * instance of Kopete. Also, our main window is hidden when it's in the tray,
+	 * and closing the last chatwindow when in that state can cause the app to quit.
+	 *
+	 * KopeteApplication's reference counting scheme is different to that of a normal
+	 * KDE application. It works as follows: the KopetePluginManager has a reference
+	 * to the application. No windows ever call KMainWindow::closeEvent, so KMainWindow
+	 * doesn't stupidly deref() our application. This ensures that the application
+	 * reference counting still works properly, and that the application terminates
+	 * neither too early (bug 75805) nor too late (bug 71657). - Richard
+	 */
+
+	// KApplication sets the reference count to 1 on startup. KopetePluginManager has a
+	// reference to us once created, so create it and drop our own reference.
+	KopetePluginManager::self();
+	deref();
+
+
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
 
 	/*

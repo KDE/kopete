@@ -415,7 +415,12 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 	// also close if our tray icon is hidden!
 	if( app->isShuttingDown() || !KopetePrefs::prefs()->showTray() || !isShown() )
 	{
-		KMainWindow::closeEvent( e );
+		// DO NOT call base class's closeEvent - see comment in KopeteApplication constructor for reason
+		// Save settings if auto-save is enabled, and settings have changed
+		if ( settingsDirty() && autoSaveSettings() )
+			saveAutoSaveSettings();
+
+		e->accept();
 		return;
 	}
 
@@ -425,13 +430,6 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		"system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),
 		i18n( "Docking in System Tray" ), "hideOnCloseInfo" );
 
-	// FIXME: Instead of ignoring the close event it's much better to have
-	//        KopeteSystemTray ref() the KApplication object and deref it on
-	//        quit. This way we can pass on the event to Qt unmodified instead.
-	//        We may or may not need to remove the destructive close from the
-	//        WFlags of the window though when doing this. Ideally the code
-	//        should be able to handle the case where no main window exists,
-	//        but I'm not 100% sure this is actually the case. - Martijn
 	hide();
 	e->ignore();
 }
