@@ -5,6 +5,4 @@ Email=duncan@kde.org
 Type=other
 License=GPL
 Name=Motion Auto-Away
-Name[cs]=Automaticky pryè
 Comment=Sets away status when not detecting movement near the computer 
-Comment[cs]=Automaticky nastaví "pryè" pøi neèinnosti u¾ivatele
