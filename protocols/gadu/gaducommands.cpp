@@ -169,6 +169,14 @@ RegisterCommand::setUserinfo( const QString& email, const QString& password, con
 }
 
 void
+RegisterCommand::cancel()
+{
+	deleteNotifiers();
+	session_ = NULL;
+
+}
+
+void
 RegisterCommand::execute()
 {
 	if ( state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
@@ -188,7 +196,7 @@ RegisterCommand::execute()
 
 void RegisterCommand::watcher()
 {
-	gg_pubdir* gg_pub;
+	gg_pubdir* pubDir;
 
 	if ( state == RegisterStateWaitingForToken  ) {
 		disableNotifiers();
@@ -201,7 +209,7 @@ void RegisterCommand::watcher()
 			return;
 		}
 
-		gg_pub = (struct gg_pubdir *)session_->data;
+		pubDir = (struct gg_pubdir *)session_->data;
 		emit operationStatus( i18n( "Token retrieving status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
@@ -221,7 +229,7 @@ void RegisterCommand::watcher()
 				struct gg_token* sp	= ( struct gg_token* )session_->data;
 				tokenId = (char *)sp->tokenid;
 				kdDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
-				if ( gg_pub->success ) {
+				if ( pubDir->success ) {
 					tokenImg = new QPixmap;
 						tokenImg->loadFromData( (const unsigned char *)session_->body, session_->body_size );
 					state = RegisterStateGotToken;
@@ -251,7 +259,7 @@ void RegisterCommand::watcher()
 			state = RegisterStateGotToken;
 			return;
 		}
-		gg_pub = (gg_pubdir*) session_->data;
+		pubDir = (gg_pubdir*) session_->data;
 		emit operationStatus( i18n( "Registration status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
@@ -269,8 +277,8 @@ void RegisterCommand::watcher()
 				break;
 	
 			case GG_STATE_DONE:
-				if ( gg_pub->success && gg_pub->uin ) {
-					uin= gg_pub->uin;
+				if ( pubDir->success && pubDir->uin ) {
+					uin= pubDir->uin;
 					state = RegisterStateDone;
 					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
 				}
@@ -314,9 +322,11 @@ RemindPasswordCommand::setUIN( uin_t uin )
 void
 RemindPasswordCommand::execute()
 {
+/*
 	session_ = gg_remind_passwd( uin_, 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
+	*/
 }
 
 void
@@ -373,6 +383,7 @@ ChangePasswordCommand::setInfo( uin_t uin, const QString& passwd, const QString&
 void
 ChangePasswordCommand::execute()
 {
+/*
 	session_ = gg_change_passwd2( uin_,
 							passwd_.ascii(),
 							newpasswd_.ascii(),
@@ -380,6 +391,7 @@ ChangePasswordCommand::execute()
 							newemail_.ascii(), 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
+	*/
 }
 
 void
@@ -426,10 +438,10 @@ ChangeInfoCommand::~ChangeInfoCommand()
 }
 
 void
-ChangeInfoCommand::setInfo( uin_t uin, const QString& passwd,
-						const QString& firstName, const QString& lastName,
-						const QString& nickname, const QString& email,
-						int born, int gender, const QString& city )
+ChangeInfoCommand::setInfo( uin_t /*uin*/, const QString& /*passwd*/,
+						const QString& /*firstName*/, const QString& /*lastName*/,
+						const QString& /*nickname*/, const QString& /*email*/,
+						int /*born*/, int /*gender*/, const QString& /*city*/ )
 {
 // FIXME: update for 6.0 and add support in plugin
 /*
@@ -449,9 +461,11 @@ ChangeInfoCommand::setInfo( uin_t uin, const QString& passwd,
 void
 ChangeInfoCommand::execute()
 {
+/*
 	session_ = gg_change_info( uin_, passwd_.ascii(), &info_, 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
+	*/
 }
 
 void

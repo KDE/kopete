@@ -51,6 +51,7 @@ signals:
 
 protected slots:
 	void slotApply();
+	void slotCancel();
 	void displayToken( QPixmap, QString );
 	void registrationError(  const QString&, const QString& );
 	void registrationDone(  const QString&,  const QString& );

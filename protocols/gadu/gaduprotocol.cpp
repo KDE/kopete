@@ -113,17 +113,18 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 
 	KopeteAccount* account = daccounts[ aid ];
 	if (!account) {
-	    account = createNewAccount(aid);
+		account = createNewAccount(aid);
 	}
 
 	GaduAccount* gaccount = static_cast<GaduAccount *>( account );
 
-	GaduContact* c= new GaduContact( cid.toUInt(), dn, account, metaContact );
+	GaduContact* contact = new GaduContact( cid.toUInt(), dn, account, metaContact );
 
-	c->setParentIdentity( aid );
+	contact->setParentIdentity( aid );
 	gaccount->addNotify( cid.toUInt() );
 
-	c->setInfo(	 serializedData["email"],
+	contact->setInfo(
+			serializedData["email"],
 			serializedData["FirstName"],
 			serializedData["SecondName"],
 			serializedData["NickName"],
@@ -146,12 +147,6 @@ GaduProtocol::statusToWithDescription( KopeteOnlineStatus status )
 	if ( status == gaduStatusInvisibleDescr_ || status == gaduStatusInvisible_){
 		return GG_STATUS_INVISIBLE_DESCR;
 	}
-
-    // this and everything else matches next return
-    //
-    //if ( status==gaduStatusAvailDescr_ || status==gaduStatusAvail_){
-    //	return GG_STATUS_AVAIL_DESCR;
-    //}
 
     return GG_STATUS_AVAIL_DESCR;
 }

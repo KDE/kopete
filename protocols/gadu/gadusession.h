@@ -92,20 +92,18 @@ public:
 	static QString stateDescription( int state );
 
 public slots:
-	void login( struct gg_login_params* );
-	void login( uin_t uin, const QString&, bool, int status = GG_STATUS_AVAIL,
+	void	login( struct gg_login_params* );
+	void	login( uin_t uin, const QString&, bool, int status = GG_STATUS_AVAIL,
 			const QString& statusDescr = "", unsigned int server = 0 );
-	void logoff();
-	int	 notify( uin_t*, int );
-	int	 addNotify( uin_t );
-	int	 removeNotify( uin_t );
-	int	 sendMessage( uin_t, const unsigned char*, int );
-	int	 sendMessageCtcp( uin_t , const QString&, int );
-	int	 changeStatus( int );
-	int	 changeStatusDescription( int, const QString& );
-	int	 ping();
+	void	logoff();
+	int	notify( uin_t*, int );
+	int	addNotify( uin_t );
+	int	removeNotify( uin_t );
+	int	sendMessage( uin_t recipient, const QString& msg, int msgClass );
+	int	changeStatus( int );
+	int	changeStatusDescription( int, const QString& );
+	int	ping();
 
-	int	 dccRequest( uin_t );
 	void	requestContacts();
 
 	/*

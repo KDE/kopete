@@ -51,18 +51,21 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent, const char* name )
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
 }
 
-int GaduAway::status() const
+int 
+GaduAway::status() const
 {
 	return ui_->statusGroup_->id( ui_->statusGroup_->selected() );
 }
 
-QString GaduAway::awayText() const
+QString 
+GaduAway::awayText() const
 {
 	return ui_->textEdit_->text();
 }
 
 
-void GaduAway::slotApply()
+void 
+GaduAway::slotApply()
 {
 	if ( account_ ) {
 		account_->changeStatus( GaduProtocol::protocol()->convertStatus( status() ),awayText() );

@@ -216,25 +216,16 @@ GaduSession::removeNotify( uin_t uin )
 }
 
 int
-GaduSession::sendMessage( uin_t recipient, const unsigned char* message, int msgClass )
+GaduSession::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-	if ( isConnected() ) {
-		return gg_send_message( session_, msgClass, recipient, message );
-	}
-	else {
-		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
-	}
+	QString sendMsg, cpMsg;
 
-	return 1;
-}
-
-int
-GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg, int msgClass )
-{
 	if ( isConnected() ) {
-		return gg_send_message_ctcp( session_, msgClass, recipient,
-							reinterpret_cast<const unsigned char*>( msg.ascii() ),
-							 msg.length() );
+		sendMsg = msg;
+		sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
+		cpMsg = textcodec->fromUnicode( sendMsg );
+
+		return gg_send_message( session_, msgClass, recipient, reinterpret_cast<const unsigned char*>( cpMsg.ascii() ) );
 	}
 	else {
 		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
@@ -279,19 +270,6 @@ GaduSession::ping()
 {
 	if ( isConnected() ) {
 		return gg_ping( session_ );
-	}
-
-	return 1;
-}
-
-int
-GaduSession::dccRequest( uin_t uin )
-{
-	if ( isConnected() ) {
-		return gg_dcc_request( session_, uin );
-	}
-	else {
-		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
 	}
 
 	return 1;
@@ -385,7 +363,7 @@ void
 GaduSession::sendResult( gg_pubdir50_t result )
 {
 	int i, count, age;
-	resLine *rl = NULL;
+	resLine *resultLine = NULL;
 	searchResult sres;
 
 	count = gg_pubdir50_count( result );
@@ -393,25 +371,25 @@ GaduSession::sendResult( gg_pubdir50_t result )
 	sres.setAutoDelete( TRUE );
 
 	for ( i = 0; i < count; i++ ) {
-		rl = new resLine;
+		resultLine = new resLine;
 
-		rl->uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
-		rl->firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
-		rl->surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
-		rl->nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
-		rl->age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
-		rl->city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
-		QString stat	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
-		rl->status		= stat.toInt();
-		age = rl->age.toInt();
+		resultLine->uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
+		resultLine->firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
+		resultLine->surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
+		resultLine->nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
+		resultLine->age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
+		resultLine->city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
+		QString stat		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
+		resultLine->status	= stat.toInt();
+		age = resultLine->age.toInt();
 		if ( age ) {
-			rl->age = QString::number( QDate::currentDate().year() - age );
+			resultLine->age = QString::number( QDate::currentDate().year() - age );
 		}
 		else {
-			rl->age.truncate( 0 );
+			resultLine->age.truncate( 0 );
 		}
-		sres.append( rl );
-		kdDebug(14100) << "found line "<< rl->uin << " " << rl->firstname << endl;
+		sres.append( resultLine );
+		kdDebug(14100) << "found line "<< resultLine->uin << " " << resultLine->firstname << endl;
 	}
 
 	searchSeqNr_ = gg_pubdir50_next( result );
@@ -435,9 +413,9 @@ GaduSession::requestContacts()
 }
 
 void
-GaduSession::exportContacts( gaduContactsList* u )
+GaduSession::exportContacts( gaduContactsList* contactsList )
 {
-	QPtrListIterator<contactLine>loo( *u );
+	QPtrListIterator<contactLine>contactsListIterator( *contactsList );
 	unsigned int i;
 	QString plist, contacts;
 
@@ -446,11 +424,12 @@ GaduSession::exportContacts( gaduContactsList* u )
 		return;
 	}
 
-	for ( i=u->count() ; i-- ; ++loo ) {
+	for ( i = contactsList->count() ; i-- ; ++contactsListIterator ) {
 //	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
 		contacts +=
-			(*loo)->firstname+";"+(*loo)->surname+";"+(*loo)->nickname+";"+(*loo)->displayname+";"+
-			(*loo)->phonenr+";"+(*loo)->group+";"+(*loo)->uin+";"+(*loo)->email+";0;;0;\n";
+			(*contactsListIterator)->firstname+";"+(*contactsListIterator)->surname+";"+(*contactsListIterator)->nickname+";"+
+			(*contactsListIterator)->displayname+";"+(*contactsListIterator)->phonenr+";"+(*contactsListIterator)->group+";"+
+			(*contactsListIterator)->uin+";"+(*contactsListIterator)->email+";0;;0;\n";
 	}
 
 	// FIXME:Remove before release
@@ -467,10 +446,9 @@ GaduSession::exportContacts( gaduContactsList* u )
 
 
 bool
-GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QString& sList )
+GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QString& sList )
 {
-	QString cline;
-	QStringList::iterator it;
+	QStringList::iterator stringIterator;
 	QStringList strList ;
 	contactLine* cl = NULL;
 	bool email = false;
@@ -498,7 +476,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 	QStringList::iterator lni = ln.begin( );
 
 	while( lni != ln.end() ) {
-		cline = (*lni);
+		QString cline = (*lni);
 		if ( cline.isNull() ) {
 			break;
 		}
@@ -516,22 +494,22 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 			continue;
 		}
 
-		it = strList.begin();
+		stringIterator = strList.begin();
 //each line ((firstname);(secondname);(nickname).;(displayname);(tel);(group);(uin);
 
 		if ( cl == NULL ) {
 			cl = new contactLine;
 		}
 
-		cl->firstname	= (*it);
-		cl->surname	= (*++it);
-		cl->nickname	= (*++it);
-		cl->displayname	= (*++it);
-		cl->phonenr	= (*++it);
-		cl->group		= (*++it);
-		cl->uin		= (*++it);
+		cl->firstname	= (*stringIterator);
+		cl->surname	= (*++stringIterator);
+		cl->nickname	= (*++stringIterator);
+		cl->displayname	= (*++stringIterator);
+		cl->phonenr	= (*++stringIterator);
+		cl->group		= (*++stringIterator);
+		cl->uin		= (*++stringIterator);
 		if ( email ) {
-			cl->email	= (*++it);
+			cl->email	= (*++stringIterator);
         	}
 		else {
 			 cl->email	= "";
@@ -546,7 +524,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 			continue;
 		}
 
-		gaducontactslist.append( cl );
+		gaducontactsList.append( cl );
 		kdDebug(14100) << "adding to list ,uin:" << cl->uin <<endl;
 
 		cl = NULL;
@@ -555,13 +533,13 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 }
 
 void
-GaduSession::handleUserlist( gg_event* e )
+GaduSession::handleUserlist( gg_event* event )
 {
 	QString ul;
-	switch( e->event.userlist.type ) {
+	switch( event->event.userlist.type ) {
 		case GG_USERLIST_GET_REPLY:
-			if ( e->event.userlist.reply ) {
-				ul = e->event.userlist.reply;
+			if ( event->event.userlist.reply ) {
+				ul = event->event.userlist.reply;
 				kdDebug( 14100 ) << "Got Contacts list  OK " << endl;
 			}
 			else {
@@ -685,7 +663,7 @@ GaduSession::failureDescription( gg_failure_t f )
 }
 
 void
-GaduSession::notify60( gg_event* e )
+GaduSession::notify60( gg_event* event )
 {
 	KGaduNotifyList nl;
 	KGaduNotify* gn;
@@ -693,15 +671,15 @@ GaduSession::notify60( gg_event* e )
 	nl.setAutoDelete( TRUE );
 
 
-	for( n=0 ; e->event.notify60[n].uin ; n++ ) {
+	for( n=0 ; event->event.notify60[n].uin ; n++ ) {
 		gn = new KGaduNotify;
-		gn->contact_id = e->event.notify60[n].uin;
-		gn->status = e->event.notify60[n].status;
-		gn->remote_ip = e->event.notify60[n].remote_ip;
-		gn->remote_port = e->event.notify60[n].remote_port;
-		gn->version = e->event.notify60[n].version;
-		gn->image_size = e->event.notify60[n].image_size;
-		gn->description = textcodec->toUnicode( e->event.notify60[n].descr );
+		gn->contact_id = event->event.notify60[n].uin;
+		gn->status = event->event.notify60[n].status;
+		gn->remote_ip = event->event.notify60[n].remote_ip;
+		gn->remote_port = event->event.notify60[n].remote_port;
+		gn->version = event->event.notify60[n].version;
+		gn->image_size = event->event.notify60[n].image_size;
+		gn->description = textcodec->toUnicode( event->event.notify60[n].descr );
 		nl.append( gn );
 	}
 	if ( n ) {
@@ -714,11 +692,11 @@ GaduSession::checkDescriptor()
 {
 	disableNotifiers();
 
-	struct gg_event* e;
+	struct gg_event* event;
 	KGaduMessage	gaduMessage;
 	KGaduNotify	gaduNotify;
 
-	if ( !( e = gg_watch_fd( session_ ) ) ) {
+	if ( !( event = gg_watch_fd( session_ ) ) ) {
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		logoff();
 		return;
@@ -731,26 +709,26 @@ GaduSession::checkDescriptor()
 		createNotifiers( true );
 	}
 
-	switch( e->type ) {
+	switch( event->type ) {
 		case GG_EVENT_MSG:
-			if ( e->event.msg.msgclass == GG_CLASS_CTCP ) {
+			if ( event->event.msg.msgclass == GG_CLASS_CTCP ) {
 				// TODO: DCC CONNECTION
 			}
 			else {
 				gaduMessage.message =
-					textcodec->toUnicode((const char*)e->event.msg.message);
-				gaduMessage.sender_id = e->event.msg.sender;
+					textcodec->toUnicode((const char*)event->event.msg.message);
+				gaduMessage.sender_id = event->event.msg.sender;
 				emit messageReceived( &gaduMessage );
 			}
 		break;
 		case GG_EVENT_ACK:
-			emit ackReceived( e->event.ack.recipient );
+			emit ackReceived( event->event.ack.recipient );
 		break;
 		case GG_EVENT_STATUS:
-			gaduNotify.status = e->event.status.status;
-			gaduNotify.contact_id = e->event.status.uin;
-			if ( e->event.status.descr ) {
-				gaduNotify.description = textcodec->toUnicode( e->event.status.descr );
+			gaduNotify.status = event->event.status.status;
+			gaduNotify.contact_id = event->event.status.uin;
+			if ( event->event.status.descr ) {
+				gaduNotify.description = textcodec->toUnicode( event->event.status.descr );
 			}
 			else {
 				gaduNotify.description = QString::null;
@@ -764,32 +742,32 @@ GaduSession::checkDescriptor()
 			emit contactStatusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_STATUS60:
-			gaduNotify.status = e->event.status60.status;
-			gaduNotify.contact_id = e->event.status60.uin;
-			if ( e->event.status60.descr ) {
-				gaduNotify.description = textcodec->toUnicode( e->event.status60.descr );
+			gaduNotify.status = event->event.status60.status;
+			gaduNotify.contact_id = event->event.status60.uin;
+			if ( event->event.status60.descr ) {
+				gaduNotify.description = textcodec->toUnicode( event->event.status60.descr );
 			}
 			else {
 				gaduNotify.description = QString::null;
 			}
-			gaduNotify.remote_ip = e->event.status60.remote_ip;
-			gaduNotify.remote_port = e->event.status60.remote_port;
-			gaduNotify.version = e->event.status60.version;			
-			gaduNotify.image_size = e->event.status60.image_size;
-			gaduNotify.time = e->event.status60.time;
+			gaduNotify.remote_ip		= event->event.status60.remote_ip;
+			gaduNotify.remote_port	= event->event.status60.remote_port;
+			gaduNotify.version		= event->event.status60.version;			
+			gaduNotify.image_size	= event->event.status60.image_size;
+			gaduNotify.time			= event->event.status60.time;
 
 			emit contactStatusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_NOTIFY60:
-			notify60( e );
+			notify60( event );
 		break;
 		case GG_EVENT_CONN_SUCCESS:
 			emit connectionSucceed();
 		break;
 		case GG_EVENT_CONN_FAILED:
 			destroySession();
-			kdDebug(14100) << "emit connection failed(" << e->event.failure << ") signal" << endl;
-			emit connectionFailed( (gg_failure_t)e->event.failure );
+			kdDebug(14100) << "emit connection failed(" << event->event.failure << ") signal" << endl;
+			emit connectionFailed( (gg_failure_t)event->event.failure );
 			break;
 		case GG_EVENT_DISCONNECT:
 			kdDebug(14100)<<"event Disconnected"<<endl;
@@ -803,18 +781,18 @@ GaduSession::checkDescriptor()
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 		case GG_EVENT_PUBDIR50_WRITE:
 		case GG_EVENT_PUBDIR50_READ:
-			sendResult( e->event.pubdir50 );
+			sendResult( event->event.pubdir50 );
 	        break;
 		case GG_EVENT_USERLIST:
-			handleUserlist( e );
+			handleUserlist( event );
 		break;
 		default:
-			kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<e->type<<endl;
+			kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<event->type<<endl;
 		break;
 	}
 
-	if ( e ) {
-		gg_free_event( e );
+	if ( event ) {
+		gg_free_event( event );
 	}
 
 	if ( session_ ) {

@@ -85,6 +85,7 @@ public:
 	void execute();
 	unsigned int newUin();
 	void requestToken();
+	void cancel();
 
 signals:
 	void tokenRecieved( QPixmap, QString );

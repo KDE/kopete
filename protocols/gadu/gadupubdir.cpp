@@ -78,7 +78,8 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 
 }
 
-void GaduPublicDir::createWidget()
+void 
+GaduPublicDir::createWidget()
 {
 	setCaption( i18n( "Gadu-Gadu Public Directory" ) );
 
@@ -99,7 +100,8 @@ void GaduPublicDir::createWidget()
 
 }
 
-void GaduPublicDir::initConnections()
+void 
+GaduPublicDir::initConnections()
 {
 	connect( this, SIGNAL( user2Clicked() ), SLOT( slotSearch() ) );
 	connect( this, SIGNAL( user1Clicked() ), SLOT( slotNewSearch() ) );
@@ -108,7 +110,8 @@ void GaduPublicDir::initConnections()
 				SLOT( slotSearchResult( const searchResult& ) ) );
 }
 
-void GaduPublicDir::getData()
+void 
+GaduPublicDir::getData()
 {
 	fName	= mMainWidget->nameS->text();
 	fSurname	= mMainWidget->surname->text();
@@ -121,13 +124,15 @@ void GaduPublicDir::getData()
 	fCity		= mMainWidget->cityS->text();
 }
 
-bool GaduPublicDir::validateData()
+bool 
+GaduPublicDir::validateData()
 {
 	return true;
 }
 
 // Move to GaduProtocol someday
-QPixmap GaduPublicDir::iconForStatus( uint status )
+QPixmap 
+GaduPublicDir::iconForStatus( uint status )
 {
 	QPixmap n;
 
@@ -137,7 +142,8 @@ QPixmap GaduPublicDir::iconForStatus( uint status )
 	return n;
 }
 
-void GaduPublicDir::slotSearchResult( const searchResult& result )
+void 
+GaduPublicDir::slotSearchResult( const searchResult& result )
 {
 	QListView* list = mMainWidget->listFound;
 	int i;
@@ -171,7 +177,8 @@ void GaduPublicDir::slotSearchResult( const searchResult& result )
 	}
 }
 
-void GaduPublicDir::slotNewSearch()
+void 
+GaduPublicDir::slotNewSearch()
 {
 	mMainWidget->pubsearch->raiseWidget( 0 );
 
@@ -183,7 +190,8 @@ void GaduPublicDir::slotNewSearch()
 	mAccount->pubDirSearchClose();
 }
 
-void GaduPublicDir::slotSearch()
+void 
+GaduPublicDir::slotSearch()
 {
 
 	// search more, or search ?

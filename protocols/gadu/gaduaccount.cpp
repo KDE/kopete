@@ -130,15 +130,15 @@ GaduAccount::loaded()
 void 
 GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
-	uint status;
+	unsigned int currentStatus;
 
 	if ( isAway ) {
-		status = ( awayMessage.isEmpty() ) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
+		currentStatus = ( awayMessage.isEmpty() ) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
 	}
 	else{
-		status = ( awayMessage.isEmpty() ) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
+		currentStatus = ( awayMessage.isEmpty() ) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
 	}
-	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
+	changeStatus( GaduProtocol::protocol()->convertStatus( currentStatus ), awayMessage );
 }
 
 
@@ -353,13 +353,8 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-	QString sendMsg, cpMsg;
-
 	if ( session_->isConnected() ) {
-		sendMsg = msg;
-		sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
-		cpMsg = textcodec_->fromUnicode( sendMsg );
-		session_->sendMessage( recipient, (unsigned char *)cpMsg.ascii(), msgClass );
+		session_->sendMessage( recipient, msg, msgClass );
 	}
 }
 
@@ -370,46 +365,45 @@ GaduAccount::error( const QString& title, const QString& message )
 }
 
 void
-GaduAccount::messageReceived( KGaduMessage* km )
+GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 {
-	GaduContact* c = 0;
-	KopeteContactPtrList tmp;
-	KopeteContactPtrList tmpPtrList;
+	GaduContact* contact = 0;
+	KopeteContactPtrList contactsListTmp;
 
 	// FIXME:check for ignored users list
 	// FIXME:anonymous (those not on the list) users should be ignored, as an option
 
-	if ( km->sender_id == 0 ) {
+	if ( gaduMessage->sender_id == 0 ) {
 		//system message, display them or not?
-		kdDebug(14100) << "####" << " System Message " << km->message << endl;
+		kdDebug(14100) << "####" << " System Message " << gaduMessage->message << endl;
 		return;
 	}
 
-	c = static_cast<GaduContact*> ( contacts()[ QString::number( km->sender_id ) ] );
+	contact = static_cast<GaduContact*> ( contacts()[ QString::number( gaduMessage->sender_id ) ] );
 
-	if ( !c ) {
+	if ( !contact ) {
 		KopeteMetaContact* metaContact = new KopeteMetaContact ();
 		metaContact->setTemporary ( true );
-		c = new GaduContact( km->sender_id,
-				QString::number( km->sender_id ), this, metaContact );
+		contact = new GaduContact( gaduMessage->sender_id,
+				QString::number( gaduMessage->sender_id ), this, metaContact );
 		KopeteContactList::contactList ()->addMetaContact( metaContact );
-		addNotify( km->sender_id );
+		addNotify( gaduMessage->sender_id );
 	}
 
-	tmpPtrList.append( myself() );
-	KopeteMessage msg( c, tmpPtrList, km->message, KopeteMessage::Inbound );
-	c->messageReceived( msg );
+	contactsListTmp.append( myself() );
+	KopeteMessage msg( contact, contactsListTmp, gaduMessage->message, KopeteMessage::Inbound );
+	contact->messageReceived( msg );
 }
 
 void
 GaduAccount::ackReceived( unsigned int recipient  )
 {
-	GaduContact* c;
+	GaduContact* contact;
 
-	c = static_cast<GaduContact*> ( contacts()[ QString::number( recipient ) ] );
-	if ( c ) {
-		kdDebug(14100) << "####" << "Received an ACK from " << c->uin() << endl;
-		c->messageAck();
+	contact = static_cast<GaduContact*> ( contacts()[ QString::number( recipient ) ] );
+	if ( contact ) {
+		kdDebug(14100) << "####" << "Received an ACK from " << contact->uin() << endl;
+		contact->messageAck();
 	}
 	else {
 		kdDebug(14100) << "####" << "Received an ACK from an unknown user : " << recipient << endl;
@@ -418,10 +412,10 @@ GaduAccount::ackReceived( unsigned int recipient  )
 
 
 void
-GaduAccount::notify( KGaduNotifyList* nl )
+GaduAccount::notify( KGaduNotifyList* notifyList )
 {
-	GaduContact* c;
-	QPtrListIterator<KGaduNotify>li( *nl );
+	GaduContact* contact;
+	QPtrListIterator<KGaduNotify>notifyListIterator( *notifyList );
 	unsigned int i;
 
 // FIXME:store this info in GaduContact, be usefull in dcc and custom images
@@ -430,46 +424,46 @@ GaduAccount::notify( KGaduNotifyList* nl )
 //		n->version;
 //		n->image_size;
 
-	for ( i = nl->count() ; i-- ; ++li ) {
-		kdDebug(14100) << "### NOTIFY " << (*li)->contact_id << " " << (*li)->status << endl;
-		c = static_cast<GaduContact*> ( contacts()[ QString::number( (*li)->contact_id ) ] );
+	for ( i = notifyList->count() ; i-- ; ++notifyListIterator ) {
+		kdDebug(14100) << "### NOTIFY " << (*notifyListIterator)->contact_id << " " << (*notifyListIterator)->status << endl;
+		contact = static_cast<GaduContact*> ( contacts()[ QString::number( (*notifyListIterator)->contact_id ) ] );
 
-		if ( !c ) {
-			kdDebug(14100) << "Notify not in the list " << (*li)->contact_id << endl;
-			session_->removeNotify( (*li)->contact_id );
+		if ( !contact) {
+			kdDebug(14100) << "Notify not in the list " << (*notifyListIterator)->contact_id << endl;
+			session_->removeNotify((*notifyListIterator)->contact_id );
 			continue;
 		}
 
-		if ( (*li)->description.isNull() ) {
-			c->setDescription( QString::null );
-			c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( (*li)->status ) );
+		if ( (*notifyListIterator)->description.isNull() ) {
+			contact->setDescription( QString::null );
+			contact->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
 		}
 		else {
-			c->setDescription( (*li)->description  );
-			c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*li)->status ), c->description() );
+			contact->setDescription( (*notifyListIterator)->description  );
+			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ), contact->description() );
 		}
 	}
 }
 
 void
-GaduAccount::contactStatusChanged( KGaduNotify* s )
+GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 {
-	kdDebug(14100) << "####" << " contact's status changed, uin:" << s->contact_id <<endl;
+	kdDebug(14100) << "####" << " contact's status changed, uin:" << gaduNotify->contact_id <<endl;
 
-	GaduContact* c;
+	GaduContact* contact;
 
-	c = static_cast<GaduContact*>( contacts()[ QString::number( s->contact_id ) ] );
-	if( !c ) {
+	contact = static_cast<GaduContact*>( contacts()[ QString::number( gaduNotify->contact_id ) ] );
+	if( !contact ) {
 		return;
 	}
 
-	if ( s->description.isEmpty() ) {
-		c->setDescription( QString::null );
-		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( s->status ) );
+	if ( gaduNotify->description.isEmpty() ) {
+		contact->setDescription( QString::null );
+		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
 	}
 	else {
-		c->setDescription( s->description );
-		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( s->status ), c->description() );
+		contact->setDescription( gaduNotify->description );
+		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ), contact->description() );
 	}
 
 /// FIXME: again, store this information
@@ -483,6 +477,13 @@ void
 GaduAccount::pong()
 {
 	kdDebug(14100) << "####" << " Pong..." << endl;
+}
+
+void
+GaduAccount::pingServer()
+{
+	kdDebug(14100) << "####" << " Ping..." << endl;
+	session_->ping();
 }
 
 void
@@ -575,13 +576,13 @@ GaduAccount::startNotify()
 		return;
 	}
 
-	QDictIterator<KopeteContact> it( contacts() );
+	QDictIterator<KopeteContact> kopeteContactsList( contacts() );
 
 	uin_t* userlist = 0;
 	userlist = new uin_t[ contacts().count() ];
 
-	for( i=0 ; it.current() ; ++it ) {
-		userlist[i++] = static_cast<GaduContact*> ((*it))->uin();
+	for( i=0 ; kopeteContactsList.current() ; ++kopeteContactsList ) {
+		userlist[i++] = static_cast<GaduContact*> ((*kopeteContactsList))->uin();
 	}
 
 	session_->notify( userlist, contacts().count() );
@@ -612,97 +613,97 @@ GaduAccount::slotSessionDisconnect()
 
 
 void
-GaduAccount::userlist( const QString& list )
+GaduAccount::userlist( const QString& contactsListString )
 {
 	kdDebug(14100)<<"### Got userlist - gadu account"<<endl;
 
-	gaduContactsList u;
-	QString contactname;
-	QStringList groupsl;
-	GaduContact* ucontact;
-	KopeteMetaContact* metac;
-	bool s;
+	gaduContactsList contactsList;
+	QString contactName;
+	QStringList groups;
+	GaduContact* contact;
+	KopeteMetaContact* metaContact;
 	int i;
 
 	// FIXME: give feedback about error
-	if ( session_->stringToContacts( u , list ) == false ) {
+	if ( session_->stringToContacts( contactsList, contactsListString ) == false ) {
 		return;
 	}
 
-	QPtrListIterator< contactLine > loo( u );
+	QPtrListIterator< contactLine >contactLine( contactsList );
 
-	for ( i=u.count() ; i-- ;  ) {
-		kdDebug(14100) << "uin " << (*loo)->uin << endl;
+	for ( i = contactsList.count() ; i-- ;  ) {
+		kdDebug(14100) << "uin " << (*contactLine)->uin << endl;
 
-		if ( (*loo)->uin.isNull() ) {
+		if ( (*contactLine)->uin.isNull() ) {
 			kdDebug(14100) << "no Uin, strange.. "<<endl;
 			goto next_cont;
 		}
 
-		if ( contacts()[ (*loo)->uin ] ) {
-			kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl;
+		if ( contacts()[ (*contactLine)->uin ] ) {
+			kdDebug(14100) << "UIN already exists in contacts "<< (*contactLine)->uin << endl;
 		}
 		else {
-			if ( (*loo)->displayname.length() ) {
-				contactname = (*loo)->displayname;
+			if ( (*contactLine)->displayname.length() ) {
+				contactName = (*contactLine)->displayname;
 			}
 
 			// if there is no nickname
-			if ( (*loo)->nickname.isNull() ) {
+			if ( (*contactLine)->nickname.isNull() ) {
 				// no name either
-				if ( (*loo)->displayname.isNull() ) {
+				if ( (*contactLine)->displayname.isNull() ) {
 					// maybe we can use fistname + surname ?
-					if ( (*loo)->firstname.isNull() && (*loo)->surname.isNull() ) {
-						contactname = (*loo)->uin;
+					if ( (*contactLine)->firstname.isNull() && (*contactLine)->surname.isNull() ) {
+						contactName = (*contactLine)->uin;
 					}
 					// what a shame, i have to use UIN than :/
 					else {
-						if ( (*loo)->firstname.isNull() ) {
-							contactname = (*loo)->surname;
+						if ( (*contactLine)->firstname.isNull() ) {
+							contactName = (*contactLine)->surname;
 						}
 						else {
-							if ( (*loo)->surname.isNull() ) {
-								contactname = (*loo)->firstname;
+							if ( (*contactLine)->surname.isNull() ) {
+								contactName = (*contactLine)->firstname;
 							}
 							else {
-								contactname = (*loo)->firstname+" "+(*loo)->surname;
+								contactName = (*contactLine)->firstname+" "+(*contactLine)->surname;
 							}
 						}
 					}
 				}
 				else {
-					contactname = (*loo)->displayname;
+					contactName = (*contactLine)->displayname;
 				}
 			}
 			else {
-				contactname = (*loo)->nickname;
+				contactName = (*contactLine)->nickname;
 			}
 
-			s = addContact( (*loo)->uin, contactname, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
+			bool s = addContact( (*contactLine)->uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
 			if ( s == false ) {
-				kdDebug(14100) << "There was a problem adding UIN "<< (*loo)->uin << "to users list" << endl;
+				kdDebug(14100) << "There was a problem adding UIN "<< (*contactLine)->uin << "to users list" << endl;
 				goto next_cont;
 			}
 		}
-		ucontact = static_cast<GaduContact*>( contacts()[ (*loo)->uin ] );
+		contact = static_cast<GaduContact*>( contacts()[ (*contactLine)->uin ] );
 
 		// update/add infor for contact
-		ucontact->setInfo( (*loo)->email, (*loo)->firstname, (*loo)->surname, (*loo)->nickname, (*loo)->phonenr );
+		contact->setInfo( (*contactLine)->email, (*contactLine)->firstname, (*contactLine)->surname, (*contactLine)->nickname, (*contactLine)->phonenr );
 
-		if ( !( (*loo)->group.isEmpty() ) ) {
+		if ( !( (*contactLine)->group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
 			// if user desrired to see contact somewhere else, remove it from top level one
-			metac = ucontact->metaContact();
-			metac->removeFromGroup( KopeteGroup::topLevel() );
+			metaContact = contact->metaContact();
+			metaContact->removeFromGroup( KopeteGroup::topLevel() );
 			// put him in all desired groups:
-			groupsl = QStringList::split( ",", (*loo)->group );
-			for ( QStringList::Iterator g = groupsl.begin(); g != groupsl.end(); ++g ) {
-				metac->addToGroup( KopeteContactList::contactList ()->getGroup ( *g ) );
+			groups = QStringList::split( ",", (*contactLine)->group );
+			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
+				metaContact->addToGroup( KopeteContactList::contactList ()->getGroup ( *groupsIterator) );
 			}
 		}
 
 next_cont:
-		++loo;
+		// next contact line
+		++contactLine;
 	}
 }
 
@@ -723,30 +724,23 @@ gaduContactsList*
 GaduAccount::userlist()
 {
 	GaduContact* contact;
-	gaduContactsList* gaducontactslist = new gaduContactsList;
-	contactLine cl;
+	gaduContactsList* contactsList = new gaduContactsList;
 	int i;
 
 	if ( !contacts().count() ) {
-		return gaducontactslist;
+		return contactsList;
 	}
 
-	QDictIterator<KopeteContact> it( contacts() );
+	QDictIterator<KopeteContact> contactsIterator( contacts() );
 
-	for( i=0 ; it.current() ; ++it ) {
-		contact = static_cast<GaduContact*>(*it);
+	for( i=0 ; contactsIterator.current() ; ++contactsIterator ) {
+		contact = static_cast<GaduContact*>( *contactsIterator );
 		if ( contact->uin() != static_cast<GaduContact*>( myself() )->uin() ) {
-			gaducontactslist->append( contact->contactDetails() );
+			contactsList->append( contact->contactDetails() );
 		}
 	}
 
-	return gaducontactslist;
-}
-
-void
-GaduAccount::pingServer()
-{
-	session_->ping();
+	return contactsList;
 }
 
 void
