@@ -377,9 +377,10 @@ void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &old
 	engine()->sendChangeGroupName(oldName, group->displayName());
 }
 
+
 void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 {
-	if ( !isConnected() )
+	if (!isConnected())
 		return;
 
 	// This method should be called after the contacts have been removed
@@ -389,7 +390,7 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 		group->displayName() << "'" << endl;
 
 	QString groupName = group->displayName();
-	if ( groupName.isEmpty() )
+	if (groupName.isEmpty())
 	{
 		kdDebug(14150) << k_funcinfo << "Removing a group with no name!" << endl;
 		return;
@@ -398,8 +399,8 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 	/* Check to make sure group is found in SSI, then delete */
 	if ( engine()->ssiData().findGroup( groupName ) )
 		engine()->sendDelGroup( groupName );
-
 }
+
 
 void OscarAccount::slotGotServerBuddyList()
 {
@@ -421,7 +422,7 @@ void OscarAccount::slotGotServerBuddyList()
 	}
 
 	//groups are added. Add the contacts
-	QPtrListIterator<SSI> bit( engine()->ssiData() );
+	QPtrListIterator<SSI> bit(engine()->ssiData());
 	QString groupName;
 	OscarContact* contact = 0;
 
@@ -431,7 +432,7 @@ void OscarAccount::slotGotServerBuddyList()
 		{
 			case ROSTER_CONTACT:
 			{ //active contact on SSI
-				SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
+				SSI* ssiGroup = engine()->ssiData().findGroup(bit.current()->gid);
 				if (ssiGroup==0)
 				{
 					kdDebug(14150) << k_funcinfo <<
@@ -502,6 +503,7 @@ void OscarAccount::slotGotServerBuddyList()
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
 }
 
+
 void OscarAccount::slotLoggedIn()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
@@ -509,15 +511,18 @@ void OscarAccount::slotLoggedIn()
 	d->passwordWrong = false;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
+#if 0
 	if ( engine()->ssiData().isEmpty() )
 	{
-		// FIXME: Use proper rate limiting rather than a fixed 2 second delay - Martijn
-		QTimer::singleShot( 2000, this, SLOT( slotDelayedListSync() ) );
+		QTimer::singleShot(2000, this, SLOT(slotDelayedListSync()));
 	}
+#endif
 
 	d->idleTimer->start(10 * 1000);
 }
 
+
+#if 0
 void OscarAccount::slotDelayedListSync()
 {
 	kdDebug(14150) << k_funcinfo << "Called ==============================================" << endl;
@@ -534,7 +539,6 @@ void OscarAccount::slotDelayedListSync()
 void OscarAccount::syncLocalWithServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "Called but DISABLED =========================================" << endl;
-#if 0
 	//FIXME: Does not work [mETz]
 	const QDict<KopeteContact>& contactList = contacts();
 	QDictIterator<KopeteContact> it( contactList );
@@ -571,8 +575,9 @@ void OscarAccount::syncLocalWithServerBuddyList()
 			engine()->sendAddBuddy(tocNormalize(contactId), group->name());
 		}
 	}
-#endif
 }
+#endif
+
 
 void OscarAccount::slotGotDirectIMRequest(QString sn)
 {
@@ -600,6 +605,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 	else if (result == KMessageBox::No)
 		engine()->sendDirectIMDeny(sn);
 }
+
 
 void OscarAccount::slotIdleTimeout()
 {
@@ -632,15 +638,18 @@ void OscarAccount::slotIdleTimeout()
 	}
 }
 
+
 int OscarAccount::randomNewBuddyNum()
 {
 	return d->randomNewBuddyNum++;
 }
 
+
 int OscarAccount::randomNewGroupNum()
 {
 	return d->randomNewGroupNum++;
 }
+
 
 void OscarAccount::setServerAddress(const QString &server)
 {
@@ -661,6 +670,8 @@ void OscarAccount::addGroup( const QString& groupName )
 	Q_UNUSED( group );
 }
 
+
+#if 0
 void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
 {
 	bool temporary = false;
@@ -705,7 +716,7 @@ void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
 			KopeteContactList::contactList()->addMetaContact( m );
 	}
 }
-
+#endif
 
 
 bool OscarAccount::addContactToMetaContact(const QString &contactId,
@@ -837,6 +848,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 		}
 	} // END not ssiItem
 }
+
 
 void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 {

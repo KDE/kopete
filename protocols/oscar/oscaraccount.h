@@ -97,7 +97,7 @@ public:
 	 * Used on initial contactlist fetch to add contacts to the Kopete contact list
 	 *
 	 */
-	void addOldContact( SSI* ssiItem, KopeteMetaContact* meta = 0L );
+	//void addOldContact( SSI* ssiItem, KopeteMetaContact* meta = 0L );
 
 	/**
 	 * \brief Add contacts that were missing groups to the contact list
@@ -107,12 +107,12 @@ public:
 	 */
 	void addServerContact( SSI* ssiItem );
 
-	/*
+	/**
 	 * Sets the port we connect to
 	 */
 	void setServerPort(int port);
 
-	/*
+	/**
 	 * Sets the server we connect to
 	 */
 	void setServerAddress(const QString &server);
@@ -123,7 +123,8 @@ public:
 	void setAwayMessage(const QString&);
 	const QString awayMessage();
 
-	/* Pure virtual to be implemented by ICQAccount and AIMAccount
+	/**
+	 * Pure virtual to be implemented by ICQAccount and AIMAccount
 	 * sets the users status and if connected should send a status update to the server
 	 * in disconnected state it just updates the local status variable that
 	 * gets used on connect
@@ -189,7 +190,7 @@ protected slots:
 
 	void slotLoggedIn();
 
-	void slotDelayedListSync();
+	//void slotDelayedListSync();
 
 protected:
 	/*
@@ -214,8 +215,7 @@ protected:
 	 */
 	virtual void initEngine(bool);
 
-	void syncLocalWithServerBuddyList();
-
+	//void syncLocalWithServerBuddyList();
 
 private:
 	OscarAccountPrivate *d;

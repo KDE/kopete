@@ -369,9 +369,6 @@ class OscarSocket : public OscarConnection
 		/** Changes a user's password (AIM Method) */
 		void sendChangePassword(const QString &newpw, const QString &oldpw);
 
-		/** Joins the given chat room */
-		void sendChatJoin(const QString &name, const int exchange);
-
 		/** Sends a request for direct IM */
 		void sendDirectIMRequest(const QString &sn);
 
@@ -712,6 +709,14 @@ class OscarSocket : public OscarConnection
 
 		/** Parses the server ready response */
 		void parseServerReady(Buffer &inbuf);
+
+
+
+		/**
+		 * SNAC(01,04)  CLI_SERVICExREQ
+		 * Request new service with SNAC family @p serviceFamily
+		 */
+		void sendRequestService(const WORD serviceFamily);
 
 		/** parses server version info */
 		void parseServerVersions(Buffer &inbuf);

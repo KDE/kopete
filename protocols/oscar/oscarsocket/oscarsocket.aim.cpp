@@ -19,7 +19,6 @@ extern "C"
 }
 
 #include "oscarsocket.h"
-
 #include <kdebug.h>
 
 // ----------------------------------------------------------------------------------------
@@ -81,43 +80,6 @@ void OscarSocket::encodePassword(char *digest)
 	md5_finish(&state, (md5_byte_t *)digest);
 }
 
-/** Handles AOL's evil attempt to thwart 3rd party apps using Oscar.
- *  It requests a length and offset of aim.exe.  We can thwart it with
- *  help from the good people at Gaim */
-void OscarSocket::parseMemRequest(Buffer &inbuf)
-{
-	/* DWORD offset = */ inbuf.getDWord();
-	DWORD len = inbuf.getDWord();
-
-	QPtrList<TLV> ql = inbuf.getTLVList();
-	ql.setAutoDelete(TRUE);
-
-//	kdDebug(14150) << k_funcinfo <<
-//		"requested offset " << offset << ", length " << len << endl;
-
-	if (len == 0)
-	{
-		kdDebug(14150) << k_funcinfo <<  "Length is 0, hashing null!" << endl;
-		md5_state_t state;
-		BYTE nil = '\0';
-		md5_byte_t digest[0x10];
-			/*
-			* These MD5 routines are stupid in that you have to have
-			* at least one append.  So thats why this doesn't look
-			* real logical.
-			*/
-		md5_init(&state);
-		md5_append(&state, (const md5_byte_t *)&nil, 0);
-		md5_finish(&state, digest);
-		Buffer outbuf;
-		outbuf.addSnac(0x0001,0x0020,0x0000,0x00000000);
-		outbuf.addWord(0x0010); //hash is always 0x10 bytes
-		outbuf.addString((char *)digest, 0x10);
-		sendBuf(outbuf,0x02);
-	}
-	ql.clear();
-}
-
 
 void OscarSocket::sendAIMAway(bool away, const QString &message)
 {
@@ -151,22 +113,6 @@ void OscarSocket::sendAIMAway(bool away, const QString &message)
 	requestMyUserInfo();
 }
 
-void OscarSocket::parseWarningNotify(Buffer &inbuf)
-{
-	//aol multiplies warning % by 10, don't know why
-	int newevil = inbuf.getWord() / 10;
-	kdDebug(14150) << k_funcinfo <<
-		"Got a warning: new warning level is " << newevil << endl;
-
-	if (inbuf.length() != 0)
-	{
-		UserInfo u;
-		parseUserInfo(inbuf, u);
-		emit gotWarning(newevil,u.sn);
-	}
-	else
-		emit gotWarning(newevil,QString::null);
-}
 
 void OscarSocket::sendUserLocationInfoRequest(const QString &name, WORD type)
 {

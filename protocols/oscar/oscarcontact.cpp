@@ -76,41 +76,46 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	initSignals();
 }
 
+
 void OscarContact::initSignals()
 {
 //	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	// Buddy offline
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(gotOffgoingBuddy(QString)),
 		this, SLOT(slotOffgoingBuddy(QString)));
 
 	// kopete-users's status changed
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotMainStatusChanged(const unsigned int)));
 
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 		this, SLOT(slotParseUserInfo(const UserInfo &)));
 
+	connect(
+		mAccount->engine(), SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
+		this, SLOT(slotGotAuthReply(const QString &, const QString &, bool)));
+
 #if 0
 	// New direct connection
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(connectionReady(QString)),
 		this, SLOT(slotDirectIMReady(QString)));
 
 	// Direct connection closed
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(directIMConnectionClosed(QString)),
 		this, SLOT(slotDirectIMConnectionClosed(QString)));
 
 	// File transfer request
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
 		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
 
 	// File transfer started
-	QObject::connect(
+	connect(
 		mAccount->engine(), SIGNAL(transferBegun(OscarConnection *, const QString &,
 			const unsigned long, const QString &)),
 		this, SLOT(slotTransferBegun(OscarConnection *,
@@ -119,24 +124,22 @@ void OscarContact::initSignals()
 			const QString &)));
 
 	// File transfer manager stuff
-	QObject::connect(
+	connect(
 		KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
 				this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
 
 	// When the file transfer is refused
-	QObject::connect(
+	connect(
 		KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)));
 #endif
-
-	QObject::connect(
-		mAccount->engine(), SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
-		this, SLOT(slotGotAuthReply(const QString &, const QString &, bool)));
 }
+
 
 OscarContact::~OscarContact()
 {
 }
+
 
 KopeteMessageManager* OscarContact::manager(bool /*canCreate*/)
 {
@@ -153,13 +156,14 @@ KopeteMessageManager* OscarContact::manager(bool /*canCreate*/)
 		mMsgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
-		QObject::connect(mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
+		connect(mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
 			this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		// For when the message manager is destroyed
-		QObject::connect(mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		connect(mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 	}
 	return mMsgManager;
 }
+
 
 void OscarContact::slotMessageManagerDestroyed()
 {
@@ -167,6 +171,7 @@ void OscarContact::slotMessageManagerDestroyed()
 		"MessageManager for contact '" << displayName() << "' destroyed" << endl;*/
 	mMsgManager = 0L;
 }
+
 
 void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
@@ -303,21 +308,24 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
-	if( !metaContact())
+	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() <<
+		"' (" << contactId() << ")" << endl;
+
+	if (!metaContact())
 		return;
 	// Get the (kopete) group that we belong to
 	KopeteGroupList groups = metaContact()->groups();
 	if(groups.count() == 0)
 	{
-		kdDebug(14150) << k_funcinfo << "Contact is in no Group in Kopete Contactlist, aborting" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Contact is in no Group in Kopete Contactlist, aborting" << endl;
 		return;
 	}
 
 	//Don't modify the group if we're moving the contact to the top-level
 	//or the temporary group. This modifies our local list, but doesn't change
 	//the server.
-	if ( groups.contains( KopeteGroup::topLevel() ) || groups.contains( KopeteGroup::temporary() ) )
+	if (groups.contains(KopeteGroup::topLevel()) || groups.contains(KopeteGroup::temporary()))
 		return;
 
 	// Oscar only supports one group per contact, so just get the first one
@@ -325,13 +333,14 @@ void OscarContact::syncGroups()
 
 	if(!firstKopeteGroup)
 	{
-		kdDebug(14150) << k_funcinfo << "Could not get kopete group" << endl;
+		kdDebug(14150) << k_funcinfo << "Could not get first kopete group" << endl;
 		return;
 	}
 
 	kdDebug(14150) << k_funcinfo << "SSI Data before change of group" << endl;
 	mAccount->engine()->ssiData().print();
-	if ( !mAccount->engine()->ssiData().findGroup( firstKopeteGroup->displayName() ) )
+
+	if (!mAccount->engine()->ssiData().findGroup(firstKopeteGroup->displayName()))
 	{
 		//We don't have the group in SSI yet. Add it.
 		kdDebug(14150) << "Adding missing group " << firstKopeteGroup->displayName() << endl;
@@ -342,24 +351,29 @@ void OscarContact::syncGroups()
 
 	/*
 	 * Another possibility is moving a buddy in the blm, but in that case, we don't need
-         * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
+	 * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
 	 *
 	 * Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
 	 */
-	SSI* movedItem = mAccount->engine()->ssiData().findContact( contactId() );
-	if ( movedItem )
-	{	//hey, contact's on SSI, move him
-		SSI* oldGroup = mAccount->engine()->ssiData().findGroup( movedItem->gid );
+	SSI* movedItem = mAccount->engine()->ssiData().findContact(contactId());
+	if (movedItem)
+	{
+		//hey, contact is on SSI, move him
+		SSI* oldGroup = mAccount->engine()->ssiData().findGroup(movedItem->gid);
 		//I'm not checking the old group pointer because since we're using
 		//the gid, the group is guaranteed to be found.
-		mAccount->engine()->sendChangeBuddyGroup( movedItem->name, oldGroup->name,
-			firstKopeteGroup->displayName() );
+		mAccount->engine()->sendChangeBuddyGroup(movedItem->name, oldGroup->name,
+			firstKopeteGroup->displayName());
 	}
 	else
+	{
 		kdDebug(14150) << "Contact must be in BLM. Doing nothing" << endl;
+	}
+
 	kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
 	mAccount->engine()->ssiData().print();
 }
+
 
 #if 0
 void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename,
@@ -386,7 +400,7 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 	OscarConnection *fs = mAccount->engine()->sendFileSendAccept(mName, fileName);
 
 	//connect to transfer manager
-	QObject::connect(
+	connect(
 		fs, SIGNAL(percentComplete(unsigned int)),
 		tr, SLOT(slotPercentCompleted(unsigned int)));
 }
@@ -414,11 +428,12 @@ void OscarContact::slotTransferBegun(OscarConnection *con,
 		this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
 
 	//connect to transfer manager
-	QObject::connect(
+	connect(
 		con, SIGNAL(percentComplete(unsigned int)),
 		tr, SLOT(slotPercentCompleted(unsigned int)));
 }
 #endif
+
 
 void OscarContact::rename(const QString &newNick)
 {
@@ -426,9 +441,9 @@ void OscarContact::rename(const QString &newNick)
 		newNick << "'" << endl;
 
 	//TODO: group handling!
-
 	setDisplayName(newNick);
 }
+
 
 void OscarContact::slotParseUserInfo(const UserInfo &u)
 {
@@ -461,11 +476,13 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 		mInfo.capabilities = oldCaps;
 }
 
+
 void OscarContact::slotRequestAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
 	requestAuth();
 }
+
 
 int OscarContact::requestAuth()
 {
@@ -497,6 +514,7 @@ void OscarContact::slotSendAuth()
 		mAccount->engine()->sendAuthReply(contactName(), reason, true);
 	}
 }
+
 
 void OscarContact::slotGotAuthReply(const QString &contact, const QString &reason, bool granted)
 {
