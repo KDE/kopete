@@ -438,18 +438,21 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	============================================================================================ */
 
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
-        QRegExp html("<HTML*>");
-        QRegExp body("<BODY*>");
-        html.setCaseSensitive( false );
-        body.setCaseSensitive( false );
-        html.setWildcard( true );
-        body.setWildcard( true );
-        html.setMinimal( true );
-        body.setMinimal( true );
+
+	QRegExp expr;( "<HTML*>" );
+	expr.setCaseSensitive( false );
+	expr.setWildcard( true );
+	expr.setMinimal( true );
 
 	QString result = m;
-        result.remove( html );
-        result.remove( body );
+	expr.setPattern( "^<html.*>" );
+	result.remove( expr );
+	expr.setPattern( "^<body.*>" );
+	result.remove( expr );
+	expr.setPattern( "</html>$" );
+	result.remove( expr );
+	expr.setPattern( "</body>$" );
+	result.remove( expr );
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
