@@ -98,7 +98,7 @@ public:
 
 private:
 	// All KopeteChatWindows are created by the findWindow function
-	KopeteChatWindow(QWidget *parent = 0, const char* name = "KopeteChatWindow" );
+	KopeteChatWindow( QWidget *parent = 0, const char* name = "KopeteChatWindow" );
 
 	/**
 	 * The window list has changed:
@@ -155,10 +155,10 @@ private:
 	QString statusMsg;
 
 signals:
-	void closing(KopeteChatWindow*);
+	void closing( KopeteChatWindow* );
 
 public slots:
-	void slotSmileyActivated(const QString &);
+	void slotSmileyActivated( const QString & );
 	void setActiveView( QWidget *active );
 	void updateBackground( const QPixmap &pm );
 
@@ -210,8 +210,8 @@ private slots:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual void windowActivationChange(bool);
-	virtual bool eventFilter( QObject *o, QEvent *e );
+	virtual void windowActivationChange( bool );
+	virtual bool eventFilter( QObject *object, QEvent *event );
 };
 
 #endif

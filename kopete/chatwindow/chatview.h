@@ -189,7 +189,7 @@ public:
 	void historyDown();
 
 	/** Reimplemented from KopeteView **/
-	virtual void raise(bool activate=false);
+	virtual void raise( bool activate=false );
 
 	/** Reimplemented from KopeteView **/
 	virtual void makeVisible();
@@ -267,7 +267,7 @@ public slots:
 	/**
 	 * show a Font dialog and set the font selected by the user
 	 */
-	void setFont( );
+	void setFont();
 
 	/**
 	 * Sets the background color of the entry area, and outgoing messages
@@ -330,11 +330,11 @@ signals:
 
 	void closing( KopeteView* );
 
-	void activated( KopeteView * );
+	void activated( KopeteView* );
 
 	void captionChanged( bool active );
 
-	void updateStatusIcon( const ChatView * );
+	void updateStatusIcon( const ChatView* );
 
 	/**
 	 * Our send-button-enabled flag has changed
@@ -403,7 +403,7 @@ private slots:
 	 */
 	void slotUpdateBackground( const QPixmap &pm );
 
-	void slotScrollingTo( int x, int y);
+	void slotScrollingTo( int x, int y );
 
 	void slotRefreshNodes();
 
@@ -437,7 +437,7 @@ private:
 	int historyPos;
 	bool bgChanged;
 	QString unreadMessageFrom;
-	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
+	QMap<const KopeteContact*, KopeteContactLVI*> memberContactMap;
 	KTextEdit* m_edit;
 	KListView *membersList;
 	bool transparencyEnabled;
@@ -481,7 +481,7 @@ private:
 	 */
 	QString m_captionText;
 
-	void setTabState( KopeteTabState state = Undefined);
+	void setTabState( KopeteTabState state = Undefined );
 
 	/**
 	 * Creates the members list widget
@@ -499,7 +499,7 @@ private:
 	void refreshView();
 
 	KopeteMessage messageFromNode( Node &n );
-	void sendInternalMessage(const QString &msg, KopeteMessage::MessageFormat format = KopeteMessage::PlainText );
+	void sendInternalMessage( const QString &msg, KopeteMessage::MessageFormat format = KopeteMessage::PlainText );
 
 	const QString styleHTML() const;
 
