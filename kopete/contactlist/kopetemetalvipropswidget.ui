@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KopeteMetaLVIPropsWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>283</width>
-            <height>398</height>
+            <width>304</width>
+            <height>430</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>KopeteMetaLVIPropsWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -238,6 +241,17 @@ This option is only available if there is exactly one child contact </string>
                 </widget>
             </hbox>
         </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnMerge</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Merge with Address Book</string>
+            </property>
+        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer9</cstring>
@@ -274,10 +288,4 @@ This option is only available if there is exactly one child contact </string>
     <tabstop>icnbUnknown</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kicondialog.h</includehint>
-</includehints>
 </UI>

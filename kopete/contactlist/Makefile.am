@@ -10,12 +10,13 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libkopetecontactlist.la
 
-libkopetecontactlist_la_SOURCES = kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \
-	kopetecontactlistview.cpp kopetegvipropswidget.ui kopetemetalvipropswidget.ui kopetelviprops.cpp \
-	kopetelistviewitem.cpp
+libkopetecontactlist_la_SOURCES = kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \ 
+	kopetecontactlistview.cpp kopetegvipropswidget.ui kopetemetalvipropswidget.ui kopetelviprops.cpp \ 
+	kopetelistviewitem.cpp kopeteaddrbookexport.cpp kopeteaddrbookexportui.ui
 
 libkopetecontactlist_la_LDFLAGS = $(all_libraries)
 libkopetecontactlist_la_LIBADD = -lkabc ../../libkopete/libkopete.la ../addcontactwizard/libkopeteaddcontactwizard.la $(LIB_KDEUI) $(LIB_XRENDER)
 
 # vim: set noet:
 
+noinst_HEADERS =  kopeteaddrbookexport.h

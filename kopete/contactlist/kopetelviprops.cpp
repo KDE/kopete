@@ -28,6 +28,8 @@
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
 
+#include "kopeteaddrbookexport.h"
+
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
 
@@ -147,6 +149,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	
 	QString kabcUid = item->metaContact()->metaContactId();
 
+	mExport = 0L;
+	
 	if ( !kabcUid.isEmpty() )
 	{
 		KABC::AddressBook *ab = KABC::StdAddressBook::self();
@@ -154,11 +158,13 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		KABC::Addressee a = ab->findByUid( kabcUid );
 		mainWidget->edtAddressee->setText( a.realName() );
 		mainWidget->btnSelectAddressee->setEnabled( true );
+		mainWidget->btnMerge->setEnabled( true );
 		mainWidget->edtAddressee->setEnabled( true );
 		mainWidget->lblAddressee->setEnabled( true );
 		mainWidget->chkHasAddressbookEntry->setChecked( true );
+		mExport = new KopeteAddressBookExport( this, item->metaContact() );
 	}
-
+	
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
 	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
 		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
@@ -166,6 +172,9 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotHasAddressbookEntryToggled( bool ) ) );
 	connect( mainWidget->btnSelectAddressee, SIGNAL( clicked() ),
 		this, SLOT( slotSelectAddresseeClicked() ) );
+	connect( mainWidget->btnMerge, SIGNAL( clicked() ),
+		this, SLOT( slotMergeClicked() ) );
+		
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 }
 
@@ -226,6 +235,8 @@ void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
 	mainWidget->lblAddressee->setEnabled( on );
 	mainWidget->edtAddressee->setEnabled( on );
 	mainWidget->btnSelectAddressee->setEnabled( on );
+	if ( !on )
+		mainWidget->btnMerge->setEnabled( false );
 }
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
@@ -234,13 +245,23 @@ void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 	 if ( a.isEmpty() )
 	 {
 	 	mainWidget->edtAddressee->setText( QString::null ) ;
+		mainWidget->btnMerge->setEnabled( false );
 	 }
 	 else
 	 {
+	 	mainWidget->btnMerge->setEnabled( true );
 		// set the lineedit to the Addressee's name
 		mainWidget->edtAddressee->setText( a.realName() );
 		// set/update the MC's addressee uin field
 		item->metaContact()->setMetaContactId( a.uid() );
+		delete mExport;
+		mExport = new KopeteAddressBookExport( this, item->metaContact() );
 	 }
+}
+
+void KopeteMetaLVIProps::slotMergeClicked()
+{
+	if ( mExport->showDialog() == QDialog::Accepted )
+		mExport->exportData();
 }
 #include "kopetelviprops.moc"

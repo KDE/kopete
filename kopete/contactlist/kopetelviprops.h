@@ -26,6 +26,7 @@
 
 class KopeteGroupViewItem;
 class KopeteMetaContactLVI;
+class KopeteAddressBookExport;
 
 class KopeteGVIProps: public KDialogBase
 {
@@ -56,12 +57,14 @@ class KopeteMetaLVIProps: public KDialogBase
 	private:
 		KopeteMetaLVIPropsWidget *mainWidget;
 		KopeteMetaContactLVI *item;
+		KopeteAddressBookExport *mExport;
 
 	private slots:
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
 		void slotHasAddressbookEntryToggled( bool on );
 		void slotSelectAddresseeClicked();
+		void slotMergeClicked();
 };
 
 #endif
