@@ -1,0 +1,93 @@
+Porting from Kopete 0.9 to Kopete 0.10
+
+
+*) KopetePluginManager has been renamed Kopete::PluginManager
+	.) QMap<KPluginInfo *, KopetePlugin *> loadedPlugins( const QString &category = QString::null ) const;
+		the QMap has been replaced by a QPtrList<KopetePlugin>   the KPluginInfo is not interesting here.
+	.) addressBookFields( KopetePlugin *p )   has been removed
+	.) pluginName, pluginId, pluginIcon  has been removed  (they are acessible from pluginInfo)
+	.) KPluginInfo *pluginInfo( KopetePlugin* )  has been added
+
+
+*) KopetePlugin has been renamed Kopete::Plugin
+	.) addressBookFields, addressBookIndexField and addAddressBookField have been removed (they were useless)
+	.) customChatWindowPopupActions( const KopeteMessage &, DOM::Node &node ) has been removed.
+		It was used to show the channel's menu when you right click on a IRC channel. Better to show the contact menu in the chatwindow for every contact.
+	.) KPluginInfo *pluginInfo()
+
+
+*) KopeteProtocol has been renamed Kopete::Protocol
+	.) protocolAction() has been removed
+	.) the broken canSendOffline()  has been removed, and we can uses capabilities insteads
+	.) (set)RichTextCapabilities  has been renamed to (set)Capabilities
+
+
+*) KopeteAccountManager has been renamed to Kopete::AccountManager
+	.) manager()  has been renamed to self()
+	.) registerAccount is now public, and MUST be called manualy on account creation
+	.) autoConnect has been merged with connectAll  which only connect accounts with the flag autoConnect
+	.) accountReady has been renamed again to accountRegistered
+	.) accountUnregistered signal takes now a const Account.
+
+
+*) KopeteAccount has been renamed to Kopete::Account
+	.) Account no longer inerits from PluginDataObject.  you can access directly to the config with configGroup()  
+		The config now uses the KConfig cache dirrectly and not internal cache.
+	.) loaded() has been removed since properties are available dirrectly in the constructor.
+	.) setAccountId  and accountIdChanged has been removed
+	.) password()  setPassword()  rememberPassword()  has been removed.  if the account has a pssword, uses PasswordedAccount
+	.) addContactToMetaContact has been renamed createContact. it  has loose his displayName param,  uses the metacontact one if you want.
+	.) addContact has been splitted into addMetaContact and addContact
+	.) connect now takes the initial status as parameter
+	.) autoLogin has been renamed autoConnect for consistency
+	
+
+*) KopeteContactList has been renamed to Kopete::ContactList
+	.) contactList() has been renamed to self()
+	.) getGroup has been renamed to group() or findGroup()
+	.) findContact now return a Contact
+	.) findContactByDisplayName has been renamed findMetaContactByDisplayName
+	.) metaContactDeleted signal has been renamed metaContactRemoved for consistency
+
+	
+*) KopeteMetaContact has been renamed to Kopete::MetaContact
+	.) persistentDataChanged  take no more argument
+	.) isTopLevel has been removed
+	.) groupSyncMode has been removed because it is broken
+
+	
+*) KopeteContact has been renamed to Kopete::Contact
+	.) displayName has finaly been totaly removed
+	.) slotDeleteContact has been renamed to deleteContact
+	.) slotUserInfo has been renamed userInfo and is now pure virtual
+
+	
+*) KopeteGroup has been renamed to Kopete::Group
+	.) renamed() signal has been renamed into displayNameChanged()  for consistancy
+	.) internalName has been removed
+
+
+*) KopetePluginDataObject has been replaced Kopete::ContactListElement
+
+
+*) KopeteOnlineStatus has been renamed Kopete::OnlineStatus
+	.) caption has been removed   (moved to OnlineStatusManager
+
+
+*) OnlineStatusIconCache has been replaced by OnlineStatusManager
+
+
+*) KopeteMessage  =>  Kopete::Message
+
+
+*) KopeteMessageManager  =>  Kopete::ChatSession
+	.) there are not anymore mmId()
+	.) user() has been renamed myself()
+	.) closed() has been renamed  chatSessionDestroyed();
+	.) typingMsg has been renamed  userTyping
+	
+
+*) KopeteMessageManagerFactory =>  Kopete::ChatSessionManager
+	.) every function with messageManager has been renamed with ChatSession 
+		.) addKopeteMessageManager  => registerChatSession
+	
