@@ -62,7 +62,8 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	mMainWidget->lstUsedItems->setSorting( -1 );
 	mMainWidget->lstUnusedItems->setSorting( 0 );
 
-	const Kopete::ContactProperty::Map propmap(Kopete::Global::Properties::self()->map());
+	const Kopete::ContactPropertyTmpl::Map propmap(
+		Kopete::Global::Properties::self()->templateMap());
 	QStringList usedKeys = KopetePrefs::prefs()->toolTipContents();
 
 	// first fill the "used" list
@@ -70,13 +71,17 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	do
 	{
 		usedIt--;
-		if(propmap.contains(*usedIt)) // only add if that property key is really known
-			new TooltipItem(mMainWidget->lstUsedItems, propmap[*usedIt].label(), *usedIt);
+		// only add if that property key is really known
+		if(propmap.contains(*usedIt))
+		{
+			new TooltipItem(mMainWidget->lstUsedItems,
+				propmap[*usedIt].label(), *usedIt);
+		}
 	} while(usedIt != usedKeys.begin());
 
 	// then iterate over all known properties and insert the remaining ones
 	// into the "unused" list
-	Kopete::ContactProperty::Map::ConstIterator it;
+	Kopete::ContactPropertyTmpl::Map::ConstIterator it;
 	for(it = propmap.begin(); it != propmap.end(); ++it)
 	{
 		if(usedKeys.contains(it.key())==0)

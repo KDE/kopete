@@ -28,6 +28,7 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 
+
 namespace Kopete
 {
 
@@ -39,55 +40,147 @@ Properties *Properties::mSelf = 0L;
 Properties *Properties::self()
 {
 	if(!mSelf)
-		mSelf = new Properties;
+	{
+		//kdDebug(14000) << k_funcinfo << endl;
+		mSelf = new Properties();
+	}
 	return mSelf;
 }
 
 Properties::Properties()
 {
-	// TODO: move uncommon ones to their respective protocols
-
-	mProps.insert(QString::fromLatin1("FormattedName"),
-		ContactProperty(QVariant(), i18n("Full Name")));
-	mProps.insert(QString::fromLatin1("FormattedIdleTime"),
-		ContactProperty(QVariant(), i18n("Idle time")));
-	mProps.insert(QString::fromLatin1("firstName"),
-		ContactProperty(QVariant(), i18n("First Name")));
-	mProps.insert(QString::fromLatin1("lastName"),
-		ContactProperty(QVariant(), i18n("Last Name")));
-	mProps.insert(QString::fromLatin1("emailAddress"),
-		ContactProperty(QVariant(), i18n("Email Address"),
-			QString::fromLatin1("mail_generic")));
-	mProps.insert(QString::fromLatin1("privPhoneNum"),
-		ContactProperty(QVariant(), i18n("Private Phone")));
-	mProps.insert(QString::fromLatin1("privFaxNum"),
-		ContactProperty(QVariant(), i18n("Private Fax")));
-	mProps.insert(QString::fromLatin1("privMobileNum"),
-		ContactProperty(QVariant(), i18n("Private Mobile")));
-	mProps.insert(QString::fromLatin1("awayMessage"),
-		ContactProperty(QVariant(), i18n("Away Message")));
-	mProps.insert(QString::fromLatin1("ircChannel"),
-		ContactProperty(QVariant(), i18n("Channel")));
-	mProps.insert(QString::fromLatin1("onlineSince"),
-		ContactProperty(QVariant(), i18n("Online Since")));
-	mProps.insert(QString::fromLatin1("lastSeen"),
-		ContactProperty(QVariant(), i18n("Last Seen")));
+	kdDebug(14000) << k_funcinfo << endl;
 }
 
-const ContactProperty &Properties::property(const QString &key) const
+Properties::~Properties()
 {
-	if(mProps.contains(key))
-		return mProps[key];
+	kdDebug(14000) << k_funcinfo << endl;
+}
+
+const ContactPropertyTmpl &Properties::tmpl(const QString &key) const
+{
+
+	if(mTemplates.contains(key))
+	{
+		/*kdDebug(14000) << k_funcinfo <<
+			"Found template for key = '" << key << "'" << endl;*/
+		return mTemplates[key];
+	}
 	else
-		return ContactProperty::null;
+		return ContactPropertyTmpl::null;
 }
 
-const ContactProperty::Map &Properties::map() const
+bool Properties::registerTemplate(const QString &key,
+	const ContactPropertyTmpl &tmpl)
 {
-	return mProps;
+	if(mTemplates.contains(key))
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"Called for EXISTING key = '" << key << "'" << endl;
+		return false;
+	}
+	else
+	{
+		mTemplates.insert(key, tmpl);
+		return true;
+	}
+}
+
+void Properties::unregisterTemplate(const QString &key)
+{
+	kdDebug(14000) << k_funcinfo << "called for key: '" << key << "'" << endl;
+	mTemplates.remove(key);
+}
+
+bool Properties::isRegistered(const QString &key)
+{
+	return mTemplates.contains(key);
+}
+
+const ContactPropertyTmpl &Properties::fullName() const
+{
+	return createProp(QString::fromLatin1("FormattedName"), QString::fromLatin1("Full Name"));
+}
+
+const ContactPropertyTmpl &Properties::idleTime() const
+{
+	return createProp(QString::fromLatin1("idleTime"), QString::fromLatin1("Idle Time"));
+}
+
+const ContactPropertyTmpl &Properties::onlineSince() const
+{
+	return createProp(QString::fromLatin1("onlineSince"), QString::fromLatin1("Online Since"));
+}
+
+const ContactPropertyTmpl &Properties::lastSeen() const
+{
+	return createProp(QString::fromLatin1("lastSeen"), QString::fromLatin1("Last Seen"));
+}
+
+const ContactPropertyTmpl &Properties::awayMessage() const
+{
+	return createProp(QString::fromLatin1("awayMessage"), QString::fromLatin1("Away Message"));
+}
+
+const ContactPropertyTmpl &Properties::firstName() const
+{
+	return createProp(QString::fromLatin1("firstName"), QString::fromLatin1("First Name"));
+}
+
+const ContactPropertyTmpl &Properties::lastName() const
+{
+	return createProp(QString::fromLatin1("lastName"), QString::fromLatin1("Last Name"));
+}
+
+const ContactPropertyTmpl &Properties::privatePhone() const
+{
+	return createProp(QString::fromLatin1("privatePhoneNumber"), i18n("Private Phone"));
+}
+
+const ContactPropertyTmpl &Properties::privateMobilePhone() const
+{
+	return createProp(QString::fromLatin1("privateMobilePhoneNumber"), i18n("Private Mobile Phone"));
+}
+
+const ContactPropertyTmpl &Properties::workPhone() const
+{
+	return createProp(QString::fromLatin1("workPhoneNumber"), i18n("Work Phone"));
+}
+
+const ContactPropertyTmpl &Properties::workMobilePhone() const
+{
+	return createProp(QString::fromLatin1("workMobilePhoneNumber"), i18n("Work Mobile Phone"));
 }
 
 
+const ContactPropertyTmpl &Properties::emailAddress() const
+{
+	return createProp(QString::fromLatin1("emailAddress"),
+		i18n("Email Address"), QString::fromLatin1("mail_generic"));
+}
+
+const ContactPropertyTmpl &Properties::createProp(const QString &key,
+	const QString &label, const QString &icon) const
+{
+	/*kdDebug(14000) << k_funcinfo <<
+		"key = " << key  << ", label = " << label << endl;*/
+
+	if(!mTemplates.contains(key))
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"CREATING NEW ContactPropertyTmpl WITH key = " << key  <<
+			", label = " << label << endl;
+		new ContactPropertyTmpl(key, label, icon);
+	}
+	return tmpl(key);
+}
+
+const ContactPropertyTmpl::Map &Properties::templateMap() const
+{
+	return mTemplates;
+}
+
+// -----------------------------------------------------------------------------
 
 void installEmoticonTheme(const QString &archiveName)
 {

@@ -18,9 +18,138 @@
 
 #include "kopetecontactproperty.h"
 #include <kdebug.h>
+#include "kopeteglobal.h"
 
 namespace Kopete
 {
+
+struct ContactPropertyTmplPrivate
+{
+	QString key;
+	QString label;
+	QString icon;
+	bool persistent;
+	unsigned int refCount;
+};
+
+ContactPropertyTmpl ContactPropertyTmpl::null;
+
+
+ContactPropertyTmpl::ContactPropertyTmpl()
+{
+	d = new ContactPropertyTmplPrivate;
+	d->refCount = 1;
+	d->persistent = false;
+	// Don't register empty template
+}
+
+ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
+	const QString &label, const QString &icon, bool persistent)
+{
+	ContactPropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
+	if(other.isNull())
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"Creating new template for key = '" << key << "'" << endl;
+
+		d = new ContactPropertyTmplPrivate;
+		d->refCount = 1;
+		d->key = key;
+		d->label = label;
+		d->icon = icon;
+		d->persistent = persistent;
+		Kopete::Global::Properties::self()->registerTemplate(key, (*this));
+	}
+	else
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"Using existing template for key = '" << key << "'" << endl;
+		d = other.d;
+		d->refCount++;
+	}
+}
+
+ContactPropertyTmpl::ContactPropertyTmpl(const ContactPropertyTmpl &other)
+{
+	d = other.d;
+	d->refCount++;
+}
+
+ContactPropertyTmpl &ContactPropertyTmpl::operator=(
+	const ContactPropertyTmpl &other)
+{
+	d->refCount--;
+	if(d->refCount == 0)
+	{
+		if (!d->key.isEmpty()) // null property
+			Kopete::Global::Properties::self()->unregisterTemplate(d->key);
+		delete d;
+	}
+
+	d = other.d;
+	d->refCount++;
+
+	return *this;
+}
+
+ContactPropertyTmpl::~ContactPropertyTmpl()
+{
+	d->refCount--;
+	if(d->refCount == 0)
+	{
+		if (!d->key.isEmpty()) // null property
+			Kopete::Global::Properties::self()->unregisterTemplate(d->key);
+		delete d;
+	}
+}
+
+bool ContactPropertyTmpl::operator==(const ContactPropertyTmpl &other) const
+{
+	return (d && other.d &&
+		d->key == other.d->key &&
+		d->label == other.d->label &&
+		d->icon == other.d->key &&
+		d->persistent == other.d->persistent);
+}
+
+bool ContactPropertyTmpl::operator!=(const ContactPropertyTmpl &other) const
+{
+	return (!d || !other.d ||
+		d->key != other.d->key ||
+		d->label != other.d->label ||
+		d->icon != other.d->key ||
+		d->persistent != other.d->persistent);
+}
+
+
+const QString &ContactPropertyTmpl::key() const
+{
+	return d->key;
+}
+
+const QString &ContactPropertyTmpl::label() const
+{
+	return d->label;
+}
+
+const QString &ContactPropertyTmpl::icon() const
+{
+	return d->icon;
+}
+
+bool ContactPropertyTmpl::persistent() const
+{
+	return d->persistent;
+}
+
+bool ContactPropertyTmpl::isNull() const
+{
+	return (!d || d->key.isNull());
+}
+
+
+// -----------------------------------------------------------------------------
+
 
 ContactProperty ContactProperty::null;
 
@@ -28,12 +157,11 @@ ContactProperty::ContactProperty()
 {
 }
 
-ContactProperty::ContactProperty(const QVariant &value,
-	const QString &label, const QString &icon)
+ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
+	const QVariant &val)
 {
-	mValue = value;
-	mLabel = label;
-	mIcon = icon;
+	mTemplate = tmpl;
+	mValue = val;
 }
 
 ContactProperty::~ContactProperty()
@@ -41,24 +169,19 @@ ContactProperty::~ContactProperty()
 	//kdDebug(14000) << k_funcinfo << "this = " << (void *)this << endl;
 }
 
-const QString &ContactProperty::label() const
-{
-	return mLabel;
-}
-
-const QString &ContactProperty::icon() const
-{
-	return mIcon;
-}
-
 const QVariant &ContactProperty::value() const
 {
 	return mValue;
 }
 
+const ContactPropertyTmpl &ContactProperty::tmpl() const
+{
+	return mTemplate;
+}
+
 bool ContactProperty::isNull() const
 {
-	return (mValue.isNull() && mLabel.isNull());
+	return mValue.isNull();
 }
 
 } // END namespace Kopete

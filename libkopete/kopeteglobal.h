@@ -20,8 +20,6 @@
 
 #include "kopetecontactproperty.h"
 
-//class QString;
-
 namespace Kopete
 {
 
@@ -49,17 +47,53 @@ namespace Global
 	 **/
 	class Properties
 	{
+		friend class ContactPropertyTmpl;
 		public:
 			static Properties *self();
-			const ContactProperty &property(const QString &key) const;
-			const ContactProperty::Map &map() const;
+
+			const ContactPropertyTmpl &tmpl(const QString &key) const;
+
+			const ContactPropertyTmpl &fullName() const;
+			const ContactPropertyTmpl &idleTime() const;
+			const ContactPropertyTmpl &onlineSince() const;
+			const ContactPropertyTmpl &lastSeen() const;
+			const ContactPropertyTmpl &awayMessage() const;
+			const ContactPropertyTmpl &firstName() const;
+			const ContactPropertyTmpl &lastName() const;
+			const ContactPropertyTmpl &emailAddress() const;
+			const ContactPropertyTmpl &privatePhone() const;
+			const ContactPropertyTmpl &privateMobilePhone() const;
+			const ContactPropertyTmpl &workPhone() const;
+			const ContactPropertyTmpl &workMobilePhone() const;
+
+			const ContactPropertyTmpl::Map &templateMap() const;
+			/**
+			 * return true is a template with key @p key is already registered,
+			 * false otherwise
+			 */
+			bool isRegistered(const QString &key);
 
 		private:
 			Properties();
+			~Properties();
+
+		protected:
+			bool registerTemplate(const QString &key,
+				const ContactPropertyTmpl &tmpl);
+			void unregisterTemplate(const QString &key);
+
+			const ContactPropertyTmpl &Properties::createProp(const QString &key,
+				const QString &label, const QString &icon=QString::null) const;
 
 		private:
+			ContactPropertyTmpl::Map mTemplates;
+			ContactPropertyTmpl mFullName;
+			ContactPropertyTmpl mIdleTime;
+			ContactPropertyTmpl mOnlineSince;
+			ContactPropertyTmpl mLastSeen;
+			ContactPropertyTmpl mAwayMessage;
+
 			static Properties *mSelf;
-			ContactProperty::Map mProps;
 	}; // END class Properties
 
 } // Global

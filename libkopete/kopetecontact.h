@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -276,64 +276,6 @@ public:
 	 */
 	void setIdleTime(unsigned long int);
 
-	/**
-	 * Return the value of a property with key "key".
-	 * You should either know the type of the returned QVariant
-	 * or check for it.
-	 **/
-	const Kopete::ContactProperty &property(const QString &key) const;
-
-	/**
-	 * Return the i18ned name for a property with "key"
-	 * Useful to present properties in a GUI
-	 *
-	 * @return Label for property defined by "key"
-	 **/
-	const QString &propertyLabel(const QString &key) const;
-
-	/**
-	 * Add or Set a 'known' property for this contact.
-	 *
-	 * @param key Key this property will be accessible through, if the key is
-	 * not from a known property no property will be set!
-	 * @param value The value to store
-	 *
-	 * Known property keys, their QVariant types and i18n label
-	 * (and optional description if the key might be unclear):
-	 *
-	 * firstName		- QString	- "First Name"
-	 * lastName			- QString	- "Last Name"
-	 * emailAddress	- QString	- "Email Address"
-	 * privPhoneNum	- QString	- "Private Phone"
-	 * privFaxNum		- QString	- "Private Fax"
-	 * privMobileNum	- QString	- "Private Mobile"
-	 * awayMessage		- QString	- "Away Message"
-	 * ircChannel		- QString	- "Channel"
-	 * onlineSince		- QDateTime	- "Online Since"
-	 *
-	 * NOTE: Setting a NULL value removes the property if it already existed
-	 * DON'T abuse this for property-removal, instead use @ref removeProperty()
-	 * if you want to remove on purpose.
-	 * Removal on NULL is to clean up the list of properties and to purge them
-	 * from UI
-	 **/
-	void setProperty(const QString &key, const QVariant &value);
-
-	/**
-	 * Add or Set a property for this contact.
-	 *
-	 * @param key Key this property will be accessible through
-	 * @param label An i18ned description, mainly useful for UI display
-	 * @param value The value to store
-	 **/
-	void setProperty(const QString &key, const QString &label, const QVariant &value);
-
-	/**
-	 * Remove a property if it exists
-	 *
-	 * @param key Key of the to-be-deleted property
-	 **/
-	void removeProperty(const QString &key);
 
 	/**
 	 * @return A QStringList containing all property keys
@@ -345,6 +287,36 @@ public:
 	 * using "key".
 	 **/
 	bool hasProperty(const QString &key) const;
+
+	/**
+	 * Return the value of a property with key "key".
+	 * You should either know the type of the returned QVariant
+	 * or check for it.
+	 **/
+	const Kopete::ContactProperty &property(const QString &key) const;
+	const Kopete::ContactProperty &property(const Kopete::ContactPropertyTmpl &tmpl) const;
+
+	/**
+	 * Add or Set a property for this contact.
+	 *
+	 * @param tmpl The template this property is based on, key, label etc. are
+	 * taken from this one
+	 * @param value The value to store
+	 *
+	 * NOTE: Setting a NULL value removes the property if it already existed
+	 * <b>don't</b> abuse this for property-removal, instead use
+	 * @ref removeProperty() if you want to remove on purpose.
+	 * Removal on NULL is to clean up the list of properties and to purge them
+	 * from UI
+	 **/
+	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
+
+	/**
+	 * Remove a property if it exists
+	 *
+	 * @param tmpl the template this property is based on
+	 **/
+	void removeProperty(const Kopete::ContactPropertyTmpl &tmpl);
 
 	/**
 	 * Returns an RTF tooltip depending on KopetePrefs settings
@@ -491,7 +463,9 @@ signals:
 	 * @param oldValue the value before the change, or an invalid QVariant if the property is new
 	 * @param newValue the value after the change, or an invalid QVariant if the property was removed
 	 */
-	void propertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue );
+	void propertyChanged( KopeteContact *contact, const QString &key,
+		const QVariant &oldValue, const QVariant &newValue );
+
 private:
 	KopeteContactPrivate *d;
 };

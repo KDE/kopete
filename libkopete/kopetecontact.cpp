@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -168,17 +168,17 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	if( oldStatus.status() == KopeteOnlineStatus::Offline &&
 		status.status() != KopeteOnlineStatus::Offline )
 	{
-		setProperty( QString::fromLatin1("onlineSince"), QDateTime::currentDateTime() );
-		removeProperty( QString::fromLatin1("lastSeen") );
+		setProperty(Kopete::Global::Properties::self()->onlineSince(), QDateTime::currentDateTime());
+		removeProperty(Kopete::Global::Properties::self()->lastSeen());
 	}
 	else if( oldStatus.status() != KopeteOnlineStatus::Offline &&
 		status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
 	{
-		removeProperty( QString::fromLatin1("onlineSince") );
-		setProperty( QString::fromLatin1("lastSeen"), QDateTime::currentDateTime() );
+		removeProperty(Kopete::Global::Properties::self()->onlineSince());
+		setProperty(Kopete::Global::Properties::self()->lastSeen(), QDateTime::currentDateTime());
 	}
 
-	emit onlineStatusChanged( this, status, oldStatus );
+	emit onlineStatusChanged(this, status, oldStatus);
 }
 
 void KopeteContact::sendFile( const KURL &, const QString &, uint )
@@ -548,62 +548,8 @@ void KopeteContact::setIcon( const QString& icon )
 	return;
 }
 
-const Kopete::ContactProperty &KopeteContact::property(const QString &key) const
-{
-	if(hasProperty(key))
-		return d->properties[key];
-	else
-	{
-		//kdDebug(14000) << k_funcinfo << "Property not found, returning null-property" << endl;
-		return Kopete::ContactProperty::null;
-	}
-}
 
-const QString &KopeteContact::propertyLabel(const QString &key) const
-{
-	if(hasProperty(key))
-		return d->properties[key].label();
-	else
-		return QString::null;
-}
 
-void KopeteContact::setProperty(const QString &key, const QVariant &value)
-{
-	Kopete::ContactProperty tmpl(Kopete::Global::Properties::self()->property(key));
-	if(!tmpl.isNull())
-	{
-		// TODO: icon
-		setProperty(key, tmpl.label(), value);
-	}
-	else
-	{
-		kdDebug(14000) << k_funcinfo <<
-			"No known default property with key: " << key << endl;
-	}
-}
-
-void KopeteContact::setProperty(const QString &key, const QString &label, const QVariant &value)
-{
-	QVariant oldValue = property( key ).value();
-
-	if(value.isNull())
-	{
-		removeProperty(key);
-		emit propertyChanged( this, key, oldValue, QVariant() );
-		return;
-	}
-
-	Kopete::ContactProperty prop(value, label);
-	d->properties.insert(key, prop);
-
-	emit propertyChanged( this, key, oldValue, value );
-}
-
-void KopeteContact::removeProperty(const QString &key)
-{
-	//kdDebug(14000) << k_funcinfo << "removing property " << key << endl;
-	d->properties.remove(key);
-}
 
 QStringList KopeteContact::properties() const
 {
@@ -615,6 +561,65 @@ bool KopeteContact::hasProperty(const QString &key) const
 	//kdDebug(14000) << k_funcinfo << "For key " << key << endl;
 	return d->properties.contains(key);
 }
+
+const Kopete::ContactProperty &KopeteContact::property(const QString &key) const
+{
+	if(hasProperty(key))
+		return d->properties[key];
+	else
+		return Kopete::ContactProperty::null;
+}
+
+const Kopete::ContactProperty &KopeteContact::property(
+	const Kopete::ContactPropertyTmpl &tmpl) const
+{
+	if(hasProperty(tmpl.key()))
+		return d->properties[tmpl.key()];
+	else
+		return Kopete::ContactProperty::null;
+}
+
+
+void KopeteContact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
+	const QVariant &value)
+{
+	if(tmpl.isNull() || tmpl.key().isEmpty())
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"No valid template for property passed!" << endl;
+		return;
+	}
+
+	QVariant oldValue = property(tmpl.key()).value();
+
+	if(value.isNull())
+	{
+		removeProperty(tmpl);
+		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
+		return;
+	}
+	else
+	{
+		Kopete::ContactProperty prop(tmpl, value);
+		d->properties.insert(tmpl.key(), prop);
+
+		emit propertyChanged(this, tmpl.key(), oldValue, value);
+	}
+}
+
+void KopeteContact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
+{
+	if(!tmpl.isNull() && !tmpl.key().isEmpty())
+	{
+		//kdDebug(14000) << k_funcinfo << "removing property " << key << endl;
+		d->properties.remove(tmpl.key());
+	}
+}
+
+
+
+
+
 
 QString KopeteContact::toolTip() const
 {
@@ -714,7 +719,7 @@ QString KopeteContact::toolTip() const
 
 				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
 					"<br><nobr><b>%2:</b></nobr>&nbsp;%1").
-					arg( QStyleSheet::escape( valueText ), p.label() );
+					arg( QStyleSheet::escape( valueText ), p.tmpl().label() );
 			}
 		}
 	}
