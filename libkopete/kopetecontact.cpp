@@ -141,7 +141,7 @@ QString KopeteContact::statusText() const
 	case Away:
 		return i18n("Away");
 	case Unknown:
-		return i18n("Status not avaliable");
+		return i18n("Status not available");
 	case Offline:
 	default:
 		return i18n("Offline");
