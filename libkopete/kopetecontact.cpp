@@ -68,6 +68,7 @@ public:
 	KAction *actionChangeAlias;
 	KAction *actionUserInfo;
 	KAction *actionSendFile;
+	KAction *actionAddContact;
 
 	KListView *selectMetaContactListBox;
 
@@ -120,6 +121,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
+	d->actionAddContact = KopeteStdAction::addContact( this, SLOT( slotAddContact() ), this, "actionAddContact" );
 
 	// Need to check this because myself() has no parent
 	if( parent )
@@ -269,6 +271,12 @@ void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* f
 		<< "but didn't implement it!" << endl;
 }
 
+void KopeteContact::slotAddContact()
+{
+	if( metaContact() )
+		metaContact()->setTemporary( false );
+}
+
 KPopupMenu* KopeteContact::createContextMenu()
 {
 	//FIXME: this should perhaps be KActionCollection * KopeteContact::contactActions()
@@ -278,6 +286,12 @@ KPopupMenu* KopeteContact::createContextMenu()
 	KPopupMenu *menu = new KPopupMenu();
 
 	menu->insertTitle( QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() ) );
+
+	if( metaContact() && metaContact()->isTemporary() )
+	{
+		d->actionAddContact->plug( menu );
+		menu->insertSeparator();
+	}
 
 	d->actionSendMessage->plug( menu );
 	d->actionChat->plug( menu );
@@ -302,10 +316,16 @@ KPopupMenu* KopeteContact::createContextMenu()
 	}
 
 	menu->insertSeparator();
-	d->actionChangeMetaContact->plug( menu );
+	if( metaContact() && !metaContact()->isTemporary() )
+		d->actionChangeMetaContact->plug( menu );
+
 	d->actionUserInfo->plug( menu );
-	d->actionChangeAlias->plug( menu );
-	d->actionDeleteContact->plug( menu );
+
+	if( metaContact() && !metaContact()->isTemporary() )
+	{
+		d->actionChangeAlias->plug( menu );
+		d->actionDeleteContact->plug( menu );
+	}
 
 	return menu;
 }

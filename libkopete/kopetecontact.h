@@ -401,6 +401,8 @@ private slots:
 	 */
 	void slotHistoryDialogDestroyed();
 
+	void slotAddContact();
+
 signals:
 	/**
 	 * The contact's online status changed
