@@ -310,28 +310,28 @@ void ICQProtocol::initCountries()
 	mCountries.insert(255, kl->twoAlphaToCountryName("tz"));
 	mCountries.insert(66, kl->twoAlphaToCountryName("th"));
 	mCountries.insert(6702, i18n("Tinian Island"));
-	mCountries.insert(228, kl->twoAlphaToCountryName("tg"));
-	mCountries.insert(690, kl->twoAlphaToCountryName("tk"));
-	mCountries.insert(676, kl->twoAlphaToCountryName("to"));
-	mCountries.insert(117, kl->twoAlphaToCountryName("tt"));
-	mCountries.insert(216, kl->twoAlphaToCountryName("tn"));
+	mCountries.insert(228, kl->twoAlphaToCountryName("tg")); // Togo
+	mCountries.insert(690, kl->twoAlphaToCountryName("tk")); // Tokelau
+	mCountries.insert(676, kl->twoAlphaToCountryName("to")); // Tonga
+	mCountries.insert(117, kl->twoAlphaToCountryName("tt")); // Trinidad and Tobago
+	mCountries.insert(216, kl->twoAlphaToCountryName("tn")); // Tunisia
 	mCountries.insert(90, kl->twoAlphaToCountryName("tr"));
 	mCountries.insert(709, kl->twoAlphaToCountryName("tm"));
-	mCountries.insert(118, kl->twoAlphaToCountryName("tc"));
-	mCountries.insert(688, kl->twoAlphaToCountryName("ug"));
-	mCountries.insert(1, kl->twoAlphaToCountryName("us"));
-	mCountries.insert(256, kl->twoAlphaToCountryName("ug"));
-	mCountries.insert(380, kl->twoAlphaToCountryName("ua"));
-	mCountries.insert(971, kl->twoAlphaToCountryName("ae"));
-	mCountries.insert(44, kl->twoAlphaToCountryName("gb"));
-	mCountries.insert(123, kl->twoAlphaToCountryName("vi"));
-	mCountries.insert(598, kl->twoAlphaToCountryName("uy"));
-	mCountries.insert(711, kl->twoAlphaToCountryName("uz"));
-	mCountries.insert(678, kl->twoAlphaToCountryName("vu"));
-	mCountries.insert(379, kl->twoAlphaToCountryName("va"));
-	mCountries.insert(58, kl->twoAlphaToCountryName("ve"));
-	mCountries.insert(84, kl->twoAlphaToCountryName("vn"));
-	mCountries.insert(681, kl->twoAlphaToCountryName("wf"));
+	mCountries.insert(118, kl->twoAlphaToCountryName("tc")); // Turks and Caicos Island
+	mCountries.insert(688, kl->twoAlphaToCountryName("tv")); // Tuvalu
+	mCountries.insert(1, kl->twoAlphaToCountryName("us")); // United States of America
+	mCountries.insert(256, kl->twoAlphaToCountryName("ug")); // Uganda
+	mCountries.insert(380, kl->twoAlphaToCountryName("ua")); // Ukraine
+	mCountries.insert(971, kl->twoAlphaToCountryName("ae")); // United Arab Emirates
+	mCountries.insert(44, kl->twoAlphaToCountryName("gb")); // United Kingdom
+	mCountries.insert(123, kl->twoAlphaToCountryName("vi")); // United States Virgin Islands
+	mCountries.insert(598, kl->twoAlphaToCountryName("uy")); // Uruguay
+	mCountries.insert(711, kl->twoAlphaToCountryName("uz")); // Uzbekistan
+	mCountries.insert(678, kl->twoAlphaToCountryName("vu")); // Vanuatu
+	mCountries.insert(379, kl->twoAlphaToCountryName("va")); // Vatican City
+	mCountries.insert(58, kl->twoAlphaToCountryName("ve")); // Venezuela
+	mCountries.insert(84, kl->twoAlphaToCountryName("vn")); // Vietnam
+	mCountries.insert(681, kl->twoAlphaToCountryName("wf")); // Wallis and Futuna Islands
 	mCountries.insert(685, kl->twoAlphaToCountryName("eh"));
 	mCountries.insert(967, kl->twoAlphaToCountryName("ye"));
 	mCountries.insert(381, kl->twoAlphaToCountryName("yu"));
