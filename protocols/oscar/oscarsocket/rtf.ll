@@ -708,6 +708,10 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
         case IMG:{
                 cur_level.flush();
                 const char ICQIMAGE[] = "icqimage";
+				const char *smiles[] = { ":-)" , ":-O" , ":-|" , ":-/" , // 0-3
+										 ":-(" , ":-*" , ":-/" , ":'(" , // 4-7
+										 ";-)" , ":-@" , ":-$" , ":-X" , // 8-B
+										 ":-P" , "8-)" , "O:)" , ":-D" }; // C-F
                 const char *p = yytext + 3;
                 if ((strlen(p) > strlen(ICQIMAGE)) && !memcmp(p, ICQIMAGE, strlen(ICQIMAGE))){
                     unsigned n = 0;
@@ -729,8 +733,8 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
                         }
                         break;
                     }
-					if (n < 26)
-						PrintUnquoted("<img src=\"icon:smile%X\">", n);
+					if (n < 16)
+						PrintUnquoted(" %s ", smiles[n] );
                 }else{
 						kdDebug(14200) << "Unknown image " << yytext << endl;
                 }

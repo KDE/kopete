@@ -653,7 +653,7 @@ YY_DECL
 #line 46 "rtf.ll"
 
 
-#line 657 "rtf.cc"
+#line 655 "rtf.cc"
 
 	if ( (yy_init) )
 		{
@@ -788,7 +788,7 @@ YY_RULE_SETUP
 #line 57 "rtf.ll"
 ECHO;
 	YY_BREAK
-#line 792 "rtf.cc"
+#line 790 "rtf.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1489,10 +1489,10 @@ YY_BUFFER_STATE rtf_scan_buffer  (char * base, yy_size_t  size )
  * @note If you want to scan bytes that may contain NUL values, then use
  *       rtf_scan_bytes() instead.
  */
-YY_BUFFER_STATE rtf_scan_string (yyconst char * yy_str )
+YY_BUFFER_STATE rtf_scan_string (yyconst char * str )
 {
     
-	return rtf_scan_bytes(yy_str,strlen(yy_str) );
+	return rtf_scan_bytes(str,strlen(str) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to rtflex() will
@@ -2373,6 +2373,10 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
         case IMG:{
                 cur_level.flush();
                 const char ICQIMAGE[] = "icqimage";
+				const char *smiles[] = { ":-)" , ":-O" , ":-|" , ":-/" , // 0-3
+										 ":-(" , ":-*" , ":-/" , ":'(" , // 4-7
+										 ";-)" , ":-@" , ":-$" , ":-X" , // 8-B
+										 ":-P" , "8-)" , "O:)" , ":-D" }; // C-F
                 const char *p = rtftext + 3;
                 if ((strlen(p) > strlen(ICQIMAGE)) && !memcmp(p, ICQIMAGE, strlen(ICQIMAGE))){
                     unsigned n = 0;
@@ -2394,8 +2398,8 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
                         }
                         break;
                     }
-					if (n < 26)
-						PrintUnquoted("<img src=\"icon:smile%X\">", n);
+					if (n < 16)
+						PrintUnquoted(" %s ", smiles[n] );
                 }else{
 						kdDebug(14200) << "Unknown image " << rtftext << endl;
                 }
