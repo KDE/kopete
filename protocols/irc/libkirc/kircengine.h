@@ -359,6 +359,7 @@ private slots:
 	void slotReadyRead();
 
 	void slotConnected();
+	void slotConnectionClosed();
 	void error(int errCode = 0);
 
 //	void echo(KIRC::Message &msg);

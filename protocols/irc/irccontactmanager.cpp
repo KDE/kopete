@@ -53,12 +53,6 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 	QObject::connect(account->engine(), SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 
-	QObject::connect(account->engine(), SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
-			this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
-
-	QObject::connect(account->engine(), SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
-			this, SLOT(slotNewPrivAction(const QString &, const QString &, const QString &)));
-
 	QObject::connect(account->engine(), SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
 

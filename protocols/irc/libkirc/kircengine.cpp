@@ -195,6 +195,11 @@ void Engine::slotConnected()
 	setStatus(Authentifying);
 }
 
+void Engine::slotConnectionClosed()
+{
+    setStatus(Disconnected);
+}
+
 void Engine::error(int errCode)
 {
 	kdDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;

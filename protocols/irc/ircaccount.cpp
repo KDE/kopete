@@ -133,18 +133,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::Engine::Status)),
 			 this, SLOT(engineStatusChanged(KIRC::Engine::Status)));
 
-	QObject::connect(m_engine, SIGNAL(connectedToServer()),
-		this, SLOT(slotConnectedToServer()));
-
-	QObject::connect(m_engine, SIGNAL(connectionTimeout()),
-		this, SLOT(connect()));
-
-	QObject::connect(m_engine, SIGNAL(successfulQuit()),
-		this, SLOT(slotDisconnected()));
-
-	QObject::connect(m_engine, SIGNAL(disconnected()),
-		this, SLOT(slotDisconnected()));
-
 	QObject::connect(m_engine, SIGNAL(incomingServerLoadTooHigh()),
 		this, SLOT(slotServerBusy()));
 
@@ -540,30 +528,14 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 	case KIRC::Engine::AuthentifyingFailed:
 		break;
 	case KIRC::Engine::Timeout:
+		//Try next server
+		connect();
 		break;
 	case KIRC::Engine::Disconnected:
 		break;
 	}
 }
-/*
-void IRCAccount::slotConnectedToServer()
-{
-	kdDebug(14120) << k_funcinfo << autoConnect << endl;
 
-	m_contactManager->addToNotifyList( m_engine->nickName() );
-
-	Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
-	if (!manager)
-		return;
-
-	if(!autoConnect.isEmpty())
-		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
-
-	QStringList m_connectCommands = connectCommands();
-	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
-		Kopete::CommandHandler::commandHandler()->processMessage( *it, manager );
-}
-*/
 void IRCAccount::slotJoinedUnknownChannel(const QString &channel, const QString &nick)
 {
 	if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
@@ -571,17 +543,7 @@ void IRCAccount::slotJoinedUnknownChannel(const QString &channel, const QString 
 		m_contactManager->findChannel(channel)->join();
 	}
 }
-/*
-void IRCAccount::slotDisconnected()
-{
-	triedAltNick = false;
-	mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
-	m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
-//	if (m_contactManager && !autoConnect.isNull())
-//		Kopete::AccountManager::self()->removeAccount( this );
-}
-*/
 void IRCAccount::disconnect()
 {
 	quit();
