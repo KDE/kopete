@@ -22,8 +22,25 @@
 #define KOPETEBALLOON_H
 
 #include <qwidget.h>
+#include <kactivelabel.h>
 
-//class QLabel;
+/**
+ * A class derived from KActiveLabel so we can handle how
+ * links are opened.
+ */
+class KopeteActiveLabel : public KActiveLabel
+{
+	Q_OBJECT
+
+public:
+	KopeteActiveLabel( QWidget *parent = 0, const char* name = 0 );
+	KopeteActiveLabel( const QString& text, QWidget *parent = 0, const char* name = 0 );
+
+public slots:
+	virtual void openLink( const QString &link );
+};
+
+
 
 /**
  * A little balloon for notifications
