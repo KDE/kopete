@@ -57,10 +57,13 @@ class JabberContact:public KopeteContact {
     void initContact(QString userid, QString name);
 
 
-    ContactStatus status() const;
-    QString statusText() const;
-    QString statusIcon() const;
-    int importance() const;
+	// Reimplementations of the (uninteresting)
+	// members in KopeteContact
+	virtual ContactStatus status() const;
+	QString statusText() const;
+	QString statusIcon() const;
+	int importance() const;
+
     void execute();
 
     QString resource() const { return mResource; }
@@ -94,7 +97,7 @@ class JabberContact:public KopeteContact {
     void slotEmailUser();
 
   signals:
-    void statusChanged();
+//    void statusChanged();
     void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 
   private:
