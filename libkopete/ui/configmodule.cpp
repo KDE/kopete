@@ -32,6 +32,18 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, QObj
 	(new QHBoxLayout(page))->addWidget(this);
 }
 
+ConfigModule::ConfigModule(const QString &name, const QString &description, const QPixmap &pixmap, QObject *owner)
+	: QWidget(kopeteapp->preferencesBox()->addPage(name, description, pixmap))
+{
+	if (owner)
+		connect(owner, SIGNAL(destroyed()), SLOT(ownerDeleted()));
+	kopeteapp->preferencesBox()->add(this);
+
+	QFrame *page=static_cast<QFrame*>(parent());
+	(new QHBoxLayout(page))->addWidget(this);
+}
+
+
 ConfigModule::~ConfigModule()
 {
 	kopeteapp->preferencesBox()->remove(this);
