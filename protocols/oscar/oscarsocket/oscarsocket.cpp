@@ -2607,6 +2607,54 @@ void OscarSocket::sendAddBuddy(const QString &name, const QString &group)
     //now we need to modify the group our buddy is in
 }
 
+// Changes the group a buddy is in on the server
+void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
+									   const QString &oldGroup,
+									   const QString &newGroup)
+{
+	kdDebug(14150) << k_funcinfo
+				   << ": Moving " << buddyName
+				   << " into group " << newGroup
+				   << endl;
+	// Check to make sure that the group has actually changed
+	SSI *buddyItem = ssiData.findBuddy(buddyName, oldGroup);
+	SSI *groupItem = ssiData.findGroup(newGroup);
+	if (buddyItem == 0L || groupItem == 0L)
+	{
+		kdDebug(14150) << k_funcinfo
+					   << ": Buddy or group not found, doing nothing"
+					   << endl;
+		return;
+	}
+
+	if (buddyItem->gid != groupItem->gid)
+	{ // The buddy isn't in the group
+		kdDebug(14150) << k_funcinfo
+					   << ": Modifying buddy's group number in the SSI Data"
+					   << endl;
+		// Change the buddy's group number
+		buddyItem->gid = groupItem->gid;
+
+		kdDebug(14150) << k_funcinfo
+					   << ": Sending SSI Data to server"
+					   << endl;
+		// Make the call to sendSSIAddModDel requesting a "modify"
+		// SNAC (0x0009) with the buddy with the modified group number
+		sendSSIAddModDel(buddyItem, 0x0009);
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo
+					   << "Buddy already in group, doing nothing"
+					   << endl;
+		return;
+	}
+
+	// Send debugging info that we're done
+	kdDebug(14150) << k_funcinfo
+				   << ": Completed" << endl;
+}
+
 /** Renames a buddy on the server side buddy list */
 /*
 void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGroup, const QString &newAlias)
@@ -2676,7 +2724,7 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 									  const QString &newName)
 {
 	kdDebug(14150) << k_funcinfo
-				   << "Renaming" << currentName << " to "
+				   << "Renaming " << currentName << " to "
 				   << newName << endl;
 	// Check to make sure that the name has actually changed
 	if (currentName == newName)
@@ -2693,6 +2741,43 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 	// Make the call to sendSSIAddModDel requesting a "modify"
 	// SNAC (0x0009)
 	sendSSIAddModDel(updatedItem, 0x0009);
+}
+
+void OscarSocket::sendDelGroup(const QString &groupName)
+{
+	kdDebug(14150) << k_funcinfo
+				   << "Removing group " << groupName
+				   << endl;
+	// Get the SSIData for this operation
+	SSI *delGroup = ssiData.findGroup(groupName);
+	// Print out the SSI Data for debugging purposes
+	ssiData.print();
+	if (delGroup == 0L)
+	{ // There was an error finding the group
+		kdDebug(14150) << "[OSCAR] Group with name " << groupName
+					   << " not found" << endl;
+		emit protocolError(
+			i18n("Group %1 was not found on the server's " \
+				 "buddy list and cannot be deleted.").arg(groupName),0);
+		return;
+	}
+
+	// We found it, print out a debugging statement saying so
+	kdDebug(14150) << k_funcinfo
+				   << "Group found, removing"
+				   << endl;
+	// Send the remove request, which is family 0x0013
+	// subtype 0x000a
+	sendSSIAddModDel(delGroup,0x000a);
+
+	// Remove it from the internal Server Side Information
+	// list
+	if (!ssiData.remove(delGroup))
+	{
+		kdDebug(14150) << k_funcinfo
+					   << "delGroup was not found in the SSI list"
+					   << endl;
+	}
 }
 
 // Sends SSI add, modify, or delete request, to reuse code

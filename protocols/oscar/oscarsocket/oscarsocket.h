@@ -148,11 +148,17 @@ class OscarSocket : public OscarConnection
 	virtual void doLogoff();
 	/** Adds a buddy to the server side buddy list */
 	virtual void sendAddBuddy(const QString &name, const QString &group);
+	/** Changes a buddy's group on the server */
+	virtual void sendChangeBuddyGroup(const QString &buddyName,
+									  const QString &oldGroup,
+									  const QString &newGroup);
 	/** Adds a group to the server side buddy list */
 	virtual void sendAddGroup(const QString &name);
 	/** Changes a group's name on the server side buddy list */
 	virtual void sendChangeGroupName(const QString &currentName,
 									 const QString &newName);
+	/** Removes a group from the server side information */
+	virtual void sendDelGroup(const QString &groupName);
 	/** Deletes a buddy from the server side buddy list */
 	virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
 	/** Sends the server lots of  information about the currently logged in user */
