@@ -218,33 +218,19 @@ void KopeteSystemTray::slotEventDone(KopeteEvent *event)
 
 void KopeteSystemTray::addBalloon()
 {
+	kdDebug(14010) << k_funcinfo << m_balloon << ":" << KopetePrefs::prefs()->showTray() << ":" << KopetePrefs::prefs()->balloonNotify()
+			<< ":" << !mEventList.isEmpty() << endl;
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
 		KopeteMessage msg = mEventList.first()->message();
 
 		if ( msg.from() )
 		{
-			QString msgText = msg.parsedBody();
-			kdDebug(14010) << k_funcinfo << "msgText=" << msgText << endl;
-			QRegExp rx( "(<a[^>]+[^<]+</a>)" );
-			if ( rx.search( msgText ) == -1 )
-			{
-				// no URLs in text, just pick the first 30 chars of
-				// the plain text if necessary
-				msgText = msg.plainBody();
-				if( msgText.length() > 30 )
-					msgText = msgText.left( 30 ) + QString::fromLatin1( "..." );
-			}
-			else
-			{
-				if( msgText.length() > 30 )
-				{
-					// pull the first URL out and use that in the balloon
-					msgText = QString::fromLatin1( "..." ) + rx.cap( 1 )
-						+ QString::fromLatin1( "..." );
-				}
-			}
-			kdDebug(14010) << k_funcinfo << "msgText=" << msgText << endl;
+			kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
+			
+			QString msgText = squashMessage( msg );
+			
+			kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
 
 			QString msgFrom;
 			if( msg.from()->metaContact() )
@@ -279,6 +265,50 @@ void KopeteSystemTray::slotConfigChanged()
 		hide(); // for users without kicker or a similar docking app
 }
 
+QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
+{
+	QString msgText = msg.parsedBody();
+
+	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
+	rx.setMinimal( true );
+	if ( rx.search( msgText ) == -1 )
+	{
+		// no URLs in text, just pick the first 30 chars of
+		// the plain text if necessary
+		msgText = msg.plainBody();
+		if( msgText.length() > 30 )
+			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
+	}
+	else
+	{
+		QString plainText = msg.plainBody();
+		if ( plainText.length() > 30 )
+		{
+			QString fullUrl = rx.cap( 2 );
+			QString shorterUrl;
+			if ( fullUrl.length() > 30 )
+			{
+				QString urlWithoutProtocol = rx.cap( 4 );
+				shorterUrl = urlWithoutProtocol.left( 27 ) 
+						+ QString::fromLatin1( "... " );
+			}
+			else
+			{
+				shorterUrl = fullUrl.left( 27 ) 
+						+ QString::fromLatin1( "... " );
+			}
+			// remove message text
+			msgText = QString::fromLatin1( "... " ) +
+					rx.cap( 1 ) +
+					QString::fromLatin1( " ..." );
+			// find last occurrence of URL (the one inside the <a> tag)
+			int revUrlOffset = msgText.findRev( fullUrl );
+			msgText.replace( revUrlOffset,
+						fullUrl.length(), shorterUrl );
+		}
+	}
+	return msgText;
+}
 #include "systemtray.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

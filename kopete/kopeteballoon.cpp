@@ -32,7 +32,7 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-//#include <kactivelabel.h>
+#include <kactivelabel.h>
 
 #include "kopeteballoon.h"
 #include "systemtray.h"
@@ -49,10 +49,11 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	// BEGIN Layout1
 	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout,
 		KDialog::spacingHint(), "Layout1");
-	QLabel *mCaption = new QLabel(text, this, "mCaption");
-	/*KActiveLabel *mCaption = new KActiveLabel(text, this, "mCaption");
-	mCaption->setPalette(QToolTip::palette());*/
-
+	//QLabel *mCaption = new QLabel(text, this, "mCaption");
+	KActiveLabel *mCaption = new KActiveLabel(text, this, "mCaption");
+	mCaption->setPalette(QToolTip::palette());
+	mCaption->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+	
 	if (!pix.isEmpty())
 	{
 		QLabel *mImage = new QLabel(this, "mImage");

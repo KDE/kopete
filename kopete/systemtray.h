@@ -78,7 +78,8 @@ private slots:
 private:
 	KopeteSystemTray( QWidget* parent, const char* name );
 	void addBalloon();
-
+	QString squashMessage( const KopeteMessage& msgText );
+	
 	QTimer *mBlinkTimer;
 	QPixmap mKopeteIcon;
 	QPixmap mBlinkIcon;
