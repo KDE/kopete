@@ -67,7 +67,7 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 	if ( canAdd_ ) {
 		if ( validateData() ) {
 			QString userid	= addUI_->addEdit_->text();
-			QString name	= addUI_->nameEdit_->text();
+			QString name	= addUI_->nickEdit_->text();
 			if ( a != account_ ) {
 				kdDebug(14001) << "Problem since accounts differ: " << a->accountId()
 								<< " , " << account_->accountId() << endl;
