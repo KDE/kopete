@@ -40,6 +40,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 {	
 	mainWidget = new StatisticsWidget(this);
 	setMainWidget(mainWidget);
+	
 	setMinimumWidth(300);
 	setMinimumHeight(400);
 	adjustSize();
