@@ -48,7 +48,7 @@ KopeteGroup * KopeteGroup::topLevel()
 KopeteGroup * KopeteGroup::temporary()
 {
 	// Do not translate the internal name, it's not shown in the GUI
-	if ( s_temporary )
+	if ( !s_temporary )
 		s_temporary = new KopeteGroup( QString::fromLatin1( "Temporary" ), KopeteGroup::Temporary );
 
 	return s_temporary;
