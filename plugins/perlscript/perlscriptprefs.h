@@ -49,7 +49,6 @@ private:
 private slots:
 	void slotAddScript( const QString &scriptPath, const QString &scriptName, const QString &scriptDesc, bool init = false );
 	void slotNewScript();
-	void slotSaveScript();
 	void slotRemoveScript();
 	void slotSelectionChanged( QListViewItem *selectedScript ); 
 };

@@ -64,6 +64,8 @@ PerlPlugin::PerlPlugin( QObject *parent, const char *name, const QStringList &) 
 	connect( m_prefs, SIGNAL(scriptAdded( const QString &, const QString &, const QString & )), this, SLOT( slotAddScript( const QString &, const QString &, const QString & ) ));
 	connect( m_prefs, SIGNAL(scriptRemoved( const QString &)), this, SLOT(slotRemoveScript( const QString & )) );
 	
+	m_prefs->reopen();
+	
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotIncomingMessage( KopeteMessage & ) ) );
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( KopeteMessage & ) ), SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
 }
@@ -144,6 +146,9 @@ KActionCollection *PerlPlugin::customContextMenuActions(KopeteMetaContact *m)
 	if( !m_actionScripts.isEmpty() )
 	{
 		m_actionCollection = new KActionCollection(this);
+		KActionMenu *actionMenu = new KActionMenu( i18n("Perl Scripts") );
+		m_actionCollection->insert( actionMenu );
+		
 		QSignalMapper *actionMapper = new QSignalMapper( this );
  		connect( actionMapper, SIGNAL( mapped( const QString & ) ),this, SLOT( slotContextScript( const QString & ) ) );
 		
@@ -155,7 +160,7 @@ KActionCollection *PerlPlugin::customContextMenuActions(KopeteMetaContact *m)
 			KAction *scriptAction = new KAction( script->name );
 			connect( scriptAction, SIGNAL( activated() ), actionMapper, SLOT( map() ) );
 			actionMapper->setMapping( scriptAction, script->path );
-			m_actionCollection->insert( scriptAction );
+			actionMenu->insert( scriptAction );
 		}
 	}
 	

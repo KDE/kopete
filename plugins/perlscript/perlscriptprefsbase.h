@@ -33,7 +33,6 @@ public:
     PerlScriptPrefsUI( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
     ~PerlScriptPrefsUI();
 
-    KPushButton* saveButton;
     KPushButton* addButton;
     KPushButton* removeButton;
     KListView* scriptView;

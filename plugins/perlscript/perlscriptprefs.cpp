@@ -40,7 +40,6 @@ PerlScriptPreferences::PerlScriptPreferences(const QString &pixmap, QObject *par
 	scriptsLoaded = 0;
 	
 	connect( preferencesDialog->addButton, SIGNAL(pressed()), this, SLOT(slotNewScript()) );
-	connect( preferencesDialog->saveButton, SIGNAL(pressed()), this, SLOT(slotSaveScript()) );
 	connect( preferencesDialog->removeButton, SIGNAL(pressed()), this, SLOT(slotRemoveScript()) );
 	connect( preferencesDialog->scriptView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotSelectionChanged(QListViewItem *)) );
 }
@@ -55,12 +54,6 @@ void PerlScriptPreferences::slotNewScript()
 	AddScriptDialog *dialog = new AddScriptDialog();
 	dialog->show();
 	connect( dialog, SIGNAL(scriptChosen(const QString &, const QString &, const QString &)), this, SLOT(slotAddScript( const QString &, const QString &, const QString & )) );
-}
-
-void PerlScriptPreferences::slotSaveScript()
-{
-	preferencesDialog->editDocument->save();
-	emit( scriptModified( preferencesDialog->scriptView->currentItem()->text(2) ) );
 }
 
 void PerlScriptPreferences::slotRemoveScript()
@@ -105,6 +98,7 @@ void PerlScriptPreferences::reopen()
 	QString keyBase = QString::fromLatin1("Script");
 	scriptsLoaded = 0;
 	QString scriptNum = keyBase + QString::number(0);
+	preferencesDialog->scriptView->clear();
 	
 	while( config->hasKey( scriptNum + QString::fromLatin1(" Name") ) )
 	{
@@ -117,10 +111,15 @@ void PerlScriptPreferences::reopen()
 		scriptsLoaded++;
 		scriptNum = keyBase + QString::number(scriptsLoaded);
 	}
+	
+	preferencesDialog->scriptView->setSelected( preferencesDialog->scriptView->firstChild(), true );
 }
 
 void PerlScriptPreferences::save()
 {
+	preferencesDialog->editDocument->save();
+	emit( scriptModified( preferencesDialog->scriptView->currentItem()->text(2) ) );
+	
 	scriptsLoaded = 0;
 	
 	KConfig *config = KGlobal::config();
