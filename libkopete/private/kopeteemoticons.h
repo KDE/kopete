@@ -18,9 +18,24 @@
 #define __kopeteemoticons_h__
 
 #include <qobject.h>
-#include <qmap.h>
+#include <qvaluelist.h>
+#include <qregexp.h>
 
-typedef QMap<QString, QStringList> EmoticonMap;
+struct Emoticon
+{
+	Emoticon();
+	Emoticon( const QString &filename, const QString &matchText );
+	void parse( QString &message ) const;
+	QString filename() const { return m_filename; }
+	QString matchText() const { return m_matchText; }
+private:
+	QString m_filename;
+	QString m_matchText;
+	QString m_matchTextEscaped;
+	QRegExp m_regExp;
+	QString m_replacement;
+};
+typedef QValueList<Emoticon> EmoticonList;
 
 class KopeteEmoticons : public QObject
 {
@@ -49,8 +64,10 @@ public:
 	 * If nicks is provided, they will not be parsed if they 
 	 * exist in message.
 	 */
-	static QString parseEmoticons ( QString message );
-
+	static QString parseEmoticons( const QString &message ) { return emoticons()->parse( message ); }
+	
+	QString parse( const QString &message );
+	
 	/**
 	 * returns the path to an animation or pixmap
 	 * that should be used to replace the given emoticon
@@ -90,7 +107,7 @@ private:
 	/**
 	 * Our data, the heart of this class
 	 **/
-	EmoticonMap map;
+	EmoticonList m_emoticons;
 
 	/**
 	 * The current icon theme from KopetePrefs
@@ -101,7 +118,7 @@ private:
 	 * add an emoticon to our mapping if
 	 * an animation/pixmap has been found for it
 	 **/
-	void addIfPossible( const QString& filenameNoExt, QStringList emoticons );
+	void addIfPossible( const QString& filenameNoExt, const QStringList &emoticons );
 
 private slots:
 

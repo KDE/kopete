@@ -22,13 +22,70 @@
 
 #include <qdom.h>
 #include <qfile.h>
-#include <qregexp.h>
 #include <qstylesheet.h>
 #include <qimage.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
+
+#include <set>
+#include <algorithm>
+#include <iterator>
+
+/*
+ * FIXME: do proper emoticon support
+ *
+ * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
+ */
+
+// QValueList requires this due to a poorly-thought-out implementation
+Emoticon::Emoticon()
+{
+}
+
+Emoticon::Emoticon( const QString &filename, const QString &matchText )
+: m_filename(filename), m_matchText(matchText), m_matchTextEscaped(QStyleSheet::escape(matchText))
+{
+	QImage image( filename );
+	int width = image.width(), height = image.height();
+
+	// Due to the nature of the regexp replacing and the lack of lookbacks in
+	// QRegExp we need a workaround for URIs like http://www.kde.org, as these
+	// would replace the ':/' part with an emoticon.
+	// The workaround is to add a special condition that the pattern should
+	// not be followed by a '/' if it already ends with a slash itself.
+	QString endLookahead = QString::fromLatin1( "(?![^<]+>)" );
+	if ( m_matchTextEscaped.endsWith( QString::fromLatin1( "/" ) ) )
+		endLookahead += QString::fromLatin1( "(?!/)" );
+	
+	// Explanation of the below regexp:
+	// "(?![^<]+>)"              - Negative lookahead for "[^<]+>", i.e. don't match when the emoticon
+	//                             pattern is directly preceded by an HTML tag.
+	//                             FIXME: What's the use of this part? Testcase? - Martijn
+	// "(?!(https?://|mailto:))" - Another negative lookahead. Don't match if there is a protocol URI
+	//                             directly in front of the emoticon
+	// "(%1)"                    - The actual emoticon pattern
+	// "(?![^<]+>)"              - Last lookahead: don't match if the emoticon pattern is part of an
+	//                             HTML tag.
+	m_regExp = QRegExp( QString::fromLatin1( "(?![^<]+>)(?!(https?://|mailto:))(%1)%2" )
+	                  .arg( QRegExp::escape( m_matchTextEscaped ), endLookahead ) );
+	m_replacement = QString::fromLatin1( "<img align=\"center\" width=\"%1\" height=\"%2\" src=\"%3\" title=\"%4\"" )
+		.arg( QString::number( width ), QString::number( height ), m_filename, m_matchTextEscaped );
+	
+	// FIXME: It would seem to me a more correct way of doing things
+	// would be to only analyze non-special fields.  Any special field
+	// should be pre-escaped and not considered in emoticon parsing.
+	// Such fields include: URLs, Contact IDs, Display Aliases,
+	// Metacontact names, Status/system messages, HTML tags/entities.
+	// - Casey
+}
+
+void Emoticon::parse( QString &message ) const
+{
+	if ( message.contains( m_matchTextEscaped ) )
+		message.replace( m_regExp, m_replacement );
+}
 
 KopeteEmoticons *KopeteEmoticons::s_instance = 0L;
 
@@ -53,7 +110,7 @@ KopeteEmoticons::KopeteEmoticons( const QString &theme ) : QObject( kapp, "Kopet
 	}
 }
 
-void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, QStringList emoticons )
+void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, const QStringList &emoticons )
 {
 	KStandardDirs *dir = KGlobal::dirs();
 	QString pic;
@@ -74,8 +131,11 @@ void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, QStringList e
 
 	if( !pic.isNull() ) // only add if we found one file
 	{
-//		kdDebug(14010) << "KopeteEmoticons::addIfPossible : found pixmap for emoticons" <<endl;
-		map[pic] = emoticons;
+		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
+		      it != end; ++it )
+		{
+			m_emoticons.push_back( Emoticon(pic, *it) );
+		}
 	}
 }
 
@@ -92,7 +152,7 @@ void KopeteEmoticons::initEmoticons( const QString &theme )
 		m_theme = theme;
 
 //	kdDebug(14010) << k_funcinfo << "Called" << endl;
-	map.clear(); // empty the mapping
+	m_emoticons.clear();
 
 	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
 	QString filename = KGlobal::dirs()->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
@@ -156,122 +216,92 @@ void KopeteEmoticons::initEmoticons( const QString &theme )
 
 QString KopeteEmoticons::emoticonToPicPath ( const QString& em )
 {
-	EmoticonMap::Iterator it;
-	for ( it = map.begin(); it != map.end(); ++it )
+	for ( EmoticonList::const_iterator it = m_emoticons.constBegin(), end = m_emoticons.constEnd();
+	      it != end; ++it )
 	{
 		// search in QStringList data for emoticon
-		if ( it.data().findIndex(em) != -1 )
-			return it.key();
+		if ( (*it).matchText() == em )
+			return (*it).filename();
 		// if found return path for corresponding animation or pixmap
 	}
 
-	return QString();
+	return QString::null;
 }
 
 QStringList KopeteEmoticons::picPathToEmoticon ( const QString& path )
 {
-	EmoticonMap::Iterator it = map.find( path );
-	if ( it != map.end() )
-		return it.data();
-
-	return QStringList();
+	QStringList result;
+	
+	for ( EmoticonList::const_iterator it = m_emoticons.constBegin(), end = m_emoticons.constEnd();
+	      it != end; ++it )
+	{
+		if ( (*it).filename() == path )
+			result += (*it).matchText();
+	}
+	
+	return result;
 }
 
 QStringList KopeteEmoticons::emoticonList()
 {
-	QStringList retVal;
-	EmoticonMap::Iterator it;
+	QStringList result;
+	
+	for ( EmoticonList::const_iterator it = m_emoticons.constBegin(), end = m_emoticons.constEnd();
+	      it != end; ++it )
+	{
+		result += (*it).matchText();
+	}
 
-	for ( it = map.begin(); it != map.end(); ++it )
-		retVal += it.data();
-
-	return retVal;
+	return result;
 }
+
+struct KopeteEmoticonsQStringCompare
+{
+	bool operator()(const QString &a, const QString &b) { return QString::compare(a,b); }
+};
 
 QStringList KopeteEmoticons::picList()
 {
-	QStringList retVal;
-	EmoticonMap::Iterator it;
-
-	for ( it = map.begin(); it != map.end(); ++it )
-		retVal += it.key();
-
-	return retVal;
+	std::set<QString, KopeteEmoticonsQStringCompare> files;
+	
+	for ( EmoticonList::const_iterator it = m_emoticons.constBegin(), end = m_emoticons.constEnd();
+	      it != end; ++it )
+	{
+		files.insert( (*it).filename() );
+	}
+	
+	QStringList result;
+	std::copy( files.begin(), files.end(), std::back_inserter(result) );
+	return result;
 }
 
 
 QMap<QString, QString> KopeteEmoticons::emoticonAndPicList()
 {
-	QMap<QString, QString> retVal;
-	EmoticonMap::Iterator it;
-
-	for ( it = map.begin(); it != map.end(); ++it )
-		retVal[it.data().first()] = it.key();
-
-	return retVal;
+	QMap<QString, QString> result;
+	
+	for ( EmoticonList::const_iterator it = m_emoticons.constBegin(), end = m_emoticons.constEnd();
+	      it != end; ++it )
+	{
+		result[(*it).matchText()] = (*it).filename();
+	}
+	
+	return result;
 }
 
-QString KopeteEmoticons::parseEmoticons( QString message )
+QString KopeteEmoticons::parse( const QString &message )
 {
 	// if emoticons are disabled, we do nothing
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 		return message;
 
-	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
-
-	/*
-	 * FIXME: do proper emoticon support
-	 *
-	 * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
-	 */
-	
-	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
+	QString result = message;
+	for ( EmoticonList::const_iterator it = m_emoticons.constBegin(), end = m_emoticons.constEnd();
+	      it != end; ++it )
 	{
-		QString escaped = QStyleSheet::escape( *it );
-		if ( message.contains( escaped ) )
-		{
-			QString imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
-			QImage iconImage( imgPath );
-
-			// Due to the nature of the regexp replacing and the lack of lookbacks in
-			// QRegExp we need a workaround for URIs like http://www.kde.org, as these
-			// would replace the ':/' part with an emoticon.
-			// The workaround is to add a special condition that the pattern should
-			// not be followed by a '/' if it already ends with a slash itself.
-			QString doubleSlashPattern;
-			if ( escaped.endsWith( QString::fromLatin1( "/" ) ) )
-				doubleSlashPattern = QString::fromLatin1( "(?!/)" );
-
-			// Explanation of the below regexp:
-			// "(?![^<]+>)"              - Negative lookahead for "[^<]+>", i.e. don't match when the emoticon
-			//                             pattern is directly preceded by an HTML tag.
-			//                             FIXME: What's the use of this part? Testcase? - Martijn
-			// "(?!(https?://|mailto:))" - Another negative lookahead. Don't match if there is a protocol URI
-			//                             directly in front of the emoticon
-			// "(%1)"                    - The actual emoticon pattern
-			// "(?![^<]+>)"              - Last lookahead: don't match if the emoticon pattern is part of an
-			//                             HTML tag.
-			QRegExp regex = QRegExp( QString::fromLatin1( "(?![^<]+>)(?!(https?://|mailto:))(%1)" ).arg( QRegExp::escape( escaped ) ) +
-				doubleSlashPattern + QString::fromLatin1( "(?![^<]+>)" ) );
-
-			message.replace( regex,
-				QString::fromLatin1( "<img align=\"center\" width=\"" ) +
-				QString::number( iconImage.width() ) +
-				QString::fromLatin1( "\" height=\"" ) +
-				QString::number( iconImage.height() ) +
-				QString::fromLatin1( "\" src=\"" ) + imgPath +
-				QString::fromLatin1( "\" title=\"" ) + escaped +
-				QString::fromLatin1( "\"/>" ) );
-			// FIXME: It would seem to me a more correct way of doing things
-			// would be to only analyze non-special fields.  Any special field
-			// should be pre-escaped and not considered in emoticon parsing.
-			// Such fields include: URLs, Contact IDs, Display Aliases,
-			// Metacontact names, Status/system messages, HTML tags/entities.
-			// - Casey
-		}
+		(*it).parse( result );
 	}
-
-	return message;
+	return result;
 }
 
 #include "kopeteemoticons.moc"
