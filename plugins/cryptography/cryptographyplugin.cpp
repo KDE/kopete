@@ -129,7 +129,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	if(msg.direction() != KopeteMessage::Inbound)
 	{
-		kdDebug() << "CryptographyPlugin::slotIncommingMessage: inbound messages" <<endl;
+		kdDebug() << "CryptographyPlugin::slotIncomingMessage: inbound messages" <<endl;
 		if(m_cachedMessages.contains(body))
 		{
 			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(m_cachedMessages[body])+"</td></tr></table>"
@@ -146,7 +146,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	if(!body.isEmpty())
 	{
-		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incomming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body)+"</td></tr></table>";
+		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incoming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body)+"</td></tr></table>";
 		msg.setBody(body,KopeteMessage::RichText);
 	}
 
