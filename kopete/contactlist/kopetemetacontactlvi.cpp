@@ -42,6 +42,7 @@
 #include "kopeteaccount.h"
 #include "kopeteprefs.h"
 
+#include <kdeversion.h>
 #if KDE_VERSION >= 0x030006
 #include "systemtray.h"
 #include "kpassivepopup.h"

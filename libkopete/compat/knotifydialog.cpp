@@ -30,6 +30,7 @@
 #include "knotifydialog.h"
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
+#include <kdeversion.h>
 
 #include <qcheckbox.h>
 #include <qheader.h>

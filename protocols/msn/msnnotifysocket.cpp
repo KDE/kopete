@@ -29,6 +29,7 @@
 #include <qregexp.h>
 
 #include <kdebug.h>
+#include <kdeversion.h>
 #include <klocale.h>
 #include <kmdcodec.h>
 #include <kmessagebox.h>

@@ -23,6 +23,7 @@
 #include <qtooltip.h>
 #include <qlayout.h>
 
+#include <kdeversion.h>
 #if KDE_VERSION > 0x030190
 #include <kglobalsettings.h>
 #endif

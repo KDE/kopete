@@ -34,6 +34,7 @@
 #include <kstatusbar.h>
 #include <kglobalaccel.h>
 #include <kwin.h>
+#include <kdeversion.h>
 
 #include "addcontactwizard.h"
 #include "kopete.h"
