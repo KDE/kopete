@@ -542,7 +542,7 @@ int YahooSessionManager::hostConnectReceiver(char *host, int port)
 	_socket = new KExtendedSocket( host, port );
 	if (! _socket->connect() )
 	{
-		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Connected!" << endl;
+		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Connected! fd "<< _socket->fd() << endl;
 		return _socket->fd();
 	}
 	else
