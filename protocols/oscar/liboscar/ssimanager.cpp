@@ -129,7 +129,7 @@ void SSIManager::loadFromExisting( const QValueList<Oscar::SSI*>& newList )
 	//FIXME: NOT Implemented!
 }
 
-SSI SSIManager::findGroup( const QString &group ) const
+Oscar::SSI SSIManager::findGroup( const QString &group ) const
 {
 	QValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
@@ -141,7 +141,7 @@ SSI SSIManager::findGroup( const QString &group ) const
 	return m_dummyItem;
 }
 
-SSI SSIManager::findGroup( int groupId ) const
+Oscar::SSI SSIManager::findGroup( int groupId ) const
 {
 	QValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
@@ -152,7 +152,7 @@ SSI SSIManager::findGroup( int groupId ) const
 	return m_dummyItem;
 }
 
-SSI SSIManager::findContact( const QString &contact, const QString &group ) const
+Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group ) const
 {
 	
 	if ( contact.isNull() || group.isNull() )
@@ -163,7 +163,7 @@ SSI SSIManager::findContact( const QString &contact, const QString &group ) cons
 		return m_dummyItem;
 	}
 	
-	SSI gr = findGroup( group ); // find the parent group
+	Oscar::SSI gr = findGroup( group ); // find the parent group
 	if ( gr.isValid() )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "gr->name= " << gr.name() <<
@@ -192,7 +192,7 @@ SSI SSIManager::findContact( const QString &contact, const QString &group ) cons
 	return m_dummyItem;
 }
 
-SSI SSIManager::findContact( const QString &contact ) const
+Oscar::SSI SSIManager::findContact( const QString &contact ) const
 {
 	
 	QValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
@@ -204,7 +204,7 @@ SSI SSIManager::findContact( const QString &contact ) const
 	return m_dummyItem;
 }
 
-SSI SSIManager::findContact( int contactId ) const
+Oscar::SSI SSIManager::findContact( int contactId ) const
 {
 	QValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
 	
@@ -267,7 +267,7 @@ QValueList<Oscar::SSI> SSIManager::contactsFromGroup( const QString &group ) con
 {
 	QValueList<Oscar::SSI> list;
 	
-	SSI gr = findGroup( group );
+	Oscar::SSI gr = findGroup( group );
 	if ( gr.isValid() )
 	{
 		QValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
@@ -314,7 +314,7 @@ bool SSIManager::listComplete() const
 	return d->lastModTime != 0; 
 }
 
-bool SSIManager::newGroup( const SSI& group )
+bool SSIManager::newGroup( const Oscar::SSI& group )
 {
 	//trying to find the group by its ID
 	QValueList<Oscar::SSI>::iterator it, listEnd = d->SSIList.end();
@@ -334,7 +334,7 @@ bool SSIManager::newGroup( const SSI& group )
 	return false;
 }
 
-bool SSIManager::removeGroup( const SSI& group )
+bool SSIManager::removeGroup( const Oscar::SSI& group )
 {
 	QString groupName = group.name();
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name() << endl;
@@ -351,7 +351,7 @@ bool SSIManager::removeGroup( const SSI& group )
 
 bool SSIManager::removeGroup( const QString &group )
 {
-	SSI gr = findGroup( group );
+	Oscar::SSI gr = findGroup( group );
 	
 	if ( gr.isValid() && removeGroup( gr )  )
 	{
@@ -363,7 +363,7 @@ bool SSIManager::removeGroup( const QString &group )
 	return false;
 }
 
-bool SSIManager::newContact( const SSI& contact )
+bool SSIManager::newContact( const Oscar::SSI& contact )
 {
 	//what to validate?
 	if ( contact.bid() > d->nextContactId )
@@ -383,7 +383,7 @@ bool SSIManager::newContact( const SSI& contact )
 	return true;
 }
 
-bool SSIManager::removeContact( const SSI& contact )
+bool SSIManager::removeContact( const Oscar::SSI& contact )
 {
 	QString contactName = contact.name();
 	int remcount = d->SSIList.remove( contact );
@@ -400,7 +400,7 @@ bool SSIManager::removeContact( const SSI& contact )
 
 bool SSIManager::removeContact( const QString &contact )
 {
-	SSI ct = findContact( contact );
+	Oscar::SSI ct = findContact( contact );
 	
 	if ( ct.isValid() && removeContact( ct ) )
 		return true;

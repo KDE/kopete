@@ -87,7 +87,7 @@ void ChangeVisibilityTask::onGo()
 	//change in visibility.
 	manager->removeItem( item );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found visibility item. changing setting" << endl;
-	newSSI = SSI( item.name(), item.gid(), item.bid(), item.type(), QValueList<TLV>(), 0 );
+	newSSI = Oscar::SSI( item.name(), item.gid(), item.bid(), item.type(), QValueList<TLV>(), 0 );
 	QValueList<TLV> newList;
 	QValueList<TLV>::const_iterator it = item.tlvList().begin(), listEnd = item.tlvList().end();
 	for ( ; it != listEnd; ++it )

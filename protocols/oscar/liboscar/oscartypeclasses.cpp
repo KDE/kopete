@@ -155,7 +155,7 @@ Oscar::Message::operator bool() const
 	return m_channel != -1 && m_properties != -1;
 }
 
-SSI::SSI()
+Oscar::SSI::SSI()
 {
 	m_gid = 0;
 	m_bid = 0;
@@ -164,7 +164,7 @@ SSI::SSI()
 	m_waitingAuth = false;
 }
 
-SSI::SSI( const QString &name, int gid, int bid, int type, const QValueList<TLV> &tlvlist, int tlvLength )
+Oscar::SSI::SSI( const QString &name, int gid, int bid, int type, const QValueList<TLV> &tlvlist, int tlvLength )
 {
 	m_name = name;
 	m_gid = gid;
@@ -181,7 +181,7 @@ SSI::SSI( const QString &name, int gid, int bid, int type, const QValueList<TLV>
 	checkTLVs();
 }
 
-SSI::SSI( const SSI& other )
+Oscar::SSI::SSI( const Oscar::SSI& other )
 {
 	m_name = other.m_name;
 	m_gid = other.m_gid;
@@ -198,51 +198,51 @@ SSI::SSI( const SSI& other )
 		refreshTLVLength();
 }
 
-SSI::~SSI()
+Oscar::SSI::~SSI()
 {
 }
 
-bool SSI::isValid() const
+bool Oscar::SSI::isValid() const
 {
 	return m_type != 0xFFFF;
 }
 
-QString SSI::name() const
+QString Oscar::SSI::name() const
 {
 	return m_name;
 }
 
-Q_UINT16 SSI::gid() const
+Q_UINT16 Oscar::SSI::gid() const
 {
 	return m_gid;
 }
 
-Q_UINT16 SSI::bid() const
+Q_UINT16 Oscar::SSI::bid() const
 {
 	return m_bid;
 }
 
-Q_UINT16 SSI::type() const
+Q_UINT16 Oscar::SSI::type() const
 {
 	return m_type;
 }
 
-const QValueList<TLV>& SSI::tlvList() const
+const QValueList<TLV>& Oscar::SSI::tlvList() const
 {
 	return m_tlvList;
 }
 
-void SSI::setTLVListLength( Q_UINT16 newLength )
+void Oscar::SSI::setTLVListLength( Q_UINT16 newLength )
 {
 	m_tlvLength = newLength;
 }
 
-Q_UINT16 SSI::tlvListLength() const
+Q_UINT16 Oscar::SSI::tlvListLength() const
 {
 	return m_tlvLength;
 }
 
-void SSI::setTLVList( QValueList<TLV> list )
+void Oscar::SSI::setTLVList( QValueList<TLV> list )
 {
 	//deepcopy the tlvs
 	m_tlvList = QDeepCopy< QValueList<TLV> >( list );
@@ -250,7 +250,7 @@ void SSI::setTLVList( QValueList<TLV> list )
 	checkTLVs();
 }
 
-void SSI::refreshTLVLength()
+void Oscar::SSI::refreshTLVLength()
 {
 	QValueList<TLV>::iterator it = m_tlvList.begin();
 	for( ; it != m_tlvList.end(); ++it )
@@ -260,7 +260,7 @@ void SSI::refreshTLVLength()
 	}
 }
 
-void SSI::checkTLVs()
+void Oscar::SSI::checkTLVs()
 {
 	Buffer evil;
 	QValueList<TLV>::iterator it = m_tlvList.begin();
@@ -297,27 +297,27 @@ void SSI::checkTLVs()
 		kdDebug(14151) << k_funcinfo << "Found 'allow others to see...' options " << infoTLV.data << endl;
 }
 
-QString SSI::alias() const
+QString Oscar::SSI::alias() const
 {
 	return m_alias;
 }
 
-void SSI::setAlias( const QString& newAlias )
+void Oscar::SSI::setAlias( const QString& newAlias )
 {
 	m_alias = newAlias;
 }
 
-bool SSI::waitingAuth() const
+bool Oscar::SSI::waitingAuth() const
 {
 	return m_waitingAuth;
 }
 
-void SSI::setWaitingAuth( bool waiting )
+void Oscar::SSI::setWaitingAuth( bool waiting )
 {
 	m_waitingAuth = waiting;
 }
 
-QString SSI::toString() const
+QString Oscar::SSI::toString() const
 {
 	QString ssiString = QString::fromLatin1( "name: " );
 	ssiString += m_name;
@@ -333,7 +333,7 @@ QString SSI::toString() const
 	return ssiString;
 }
 
-bool SSI::operator==( const SSI& item ) const
+bool Oscar::SSI::operator==( const SSI& item ) const
 {
 	if ( m_name == item.name() && m_gid == item.gid() && m_bid == item.bid() && m_type == item.type() )
 		return true;
@@ -341,7 +341,7 @@ bool SSI::operator==( const SSI& item ) const
 		return false;
 }
 
-SSI::operator bool() const
+Oscar::SSI::operator bool() const
 {
 	return isValid();
 }
