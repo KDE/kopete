@@ -169,8 +169,8 @@ KActionCollection *IRCUserContact::customContextMenuActions()
 	mCustomActions = new KActionCollection(this);
 
 	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
-	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), mCustomActions) );
-	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), mCustomActions) );
+	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), actionCtcpMenu) );
+	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), actionCtcpMenu) );
 
 	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
 	actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), actionModeMenu, "actionOp") );

@@ -259,15 +259,10 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 
 void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
-	if( isConnected )
+	if( isConnected && locateUser( target ) )
 	{
-	//FIXME: i don't understand how does that works, but it seems ugly
-		//KopeteView *myView = manager(true)->view(true);
-		//if( myView == KopeteViewManager::viewManager()->activeView() )
-		//{
-			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-			manager()->appendMessage(msg);
-		//}
+		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		manager()->appendMessage(msg);
 	}
 }
 
