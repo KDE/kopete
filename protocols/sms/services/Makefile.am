@@ -8,5 +8,5 @@ INCLUDES = -I$(srcdir)/../../../libkopete \
 
 noinst_LTLIBRARIES = libkopetesmsservices.la
 
-libkopetesmsservices_la_SOURCES = spray.cpp sprayprefs.ui
+libkopetesmsservices_la_SOURCES = smssend.cpp smssendprefs.ui smssendprovider.cpp
 
