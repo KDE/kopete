@@ -15,14 +15,42 @@
     *                                                                       *
     *************************************************************************
 */
+//	CONDITIONS FOR PROGRESSING:
+//	Welcome page
+//		true
+//	|
+//	V
+//	Select Address Book Entry
+//		( Addressee is selected AND is not already associated with a contact )
+//			OR Do not use address book is checked
+//	|
+//	V
+//	Select Display Name and Group
+//		true
+//	|
+//	V
+//	Select Account
+//		( Only 1 account ) OR ( An account is selected )
+//	|
+//	V
+//	(Each AddContactPage)
+//		( Own conditions)
+//	|
+//	V
+//	Finish
+//		true
 
-
+#include <qcheckbox.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <klistview.h>
+// used for its AddresseeItem class
+#include <kabc/addresseedialog.h>
+#include <kabc/addressbook.h>
+#include <kabc/stdaddressbook.h>
 
 #include <addcontactpage.h>
 #include "addcontactwizard.h"
@@ -34,6 +62,7 @@
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
+	// Populate the groups list
 	KopeteGroupList groups=KopeteContactList::contactList()->groups();
 	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
 	{
@@ -45,6 +74,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	protocolListView->clear();
 	m_accountItems.clear();
 
+	// Populate the accounts list
 	QCheckListItem* accountLVI=0L;
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
@@ -55,17 +85,39 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		m_accountItems.insert(accountLVI,i);
 	}
 
-
+	// Populate the addressee list
+	// This could be slow - is there a better way of doing it (progressive loading?)
+	loadAddressees();
+	
+	
+	
 	if ( accounts.count() == 1 )
 	{
 		accountLVI->setOn( true );
 		setAppropriate( selectService, false );
 	}
 
+	setNextEnabled( selectAddressee, false );
 	setNextEnabled(selectService, (accounts.count() == 1));
 	setFinishEnabled(finis, true);
+	
+	// FIXME: steal/add a create addressee widget
+	addAddresseeButton->setEnabled( false );
+	// Addressee validation connections
+	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
+	connect( chkNoAddressee, SIGNAL( toggled( bool ) ),
+			SLOT( slotCheckAddresseeChoice( bool ) ) );
+	connect( addresseeListView, SIGNAL( clicked(QListViewItem * ) ),
+			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
+	connect( addresseeListView, SIGNAL( selectionChanged( QListViewItem * ) ),
+			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
+	connect( addresseeListView, SIGNAL( spacePressed( QListViewItem * ) ),
+			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
 
+	// Group manipulation connection
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
+	
+	// Account choice validation connections
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
@@ -73,6 +125,54 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 AddContactWizard::~AddContactWizard()
 {
+}
+
+void AddContactWizard::loadAddressees()
+{
+	addresseeListView->clear();
+	KABC::AddressBook* ab = KABC::StdAddressBook::self();
+	KABC::AddressBook::Iterator it;
+	for( it = ab->begin(); it != ab->end(); ++it )
+		KABC::AddresseeItem *item = new KABC::AddresseeItem( addresseeListView, (*it) ); 
+}
+
+void AddContactWizard::slotAddAddresseeClicked()
+{
+	// Pop up add addressee dialog
+}
+
+void AddContactWizard::slotCheckAddresseeChoice( bool on )
+{
+	// Disable addressee selection widgets
+	addresseeListView->setEnabled( !on );
+	addAddresseeButton->setEnabled( !on );
+	if ( on )
+		setNextEnabled( selectAddressee, true );
+	else
+	{
+		if ( addresseeListView->selectedItem() )
+			setNextEnabled( selectAddressee, true );
+		else
+			setNextEnabled( selectAddressee, false );
+	}
+}
+
+void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
+{
+	// check a valid addressee is selected
+	setNextEnabled( selectAddressee, addressee ? addressee->isSelected() : false );
+}
+
+void AddContactWizard::slotAddGroupClicked()
+{
+	bool ok;
+	QString groupName = KLineEditDlg::getText(
+		i18n( "New Group" ),
+		i18n( "Please enter the name for the new group:" ),
+		QString::null, &ok );
+
+	if ( !groupName.isNull() && ok)
+		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox);
 }
 
 void AddContactWizard::slotProtocolListClicked( QListViewItem *)
@@ -93,22 +193,24 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 	setNextEnabled(selectService, oneIsChecked);
 }
 
-void AddContactWizard::slotAddGroupClicked()
-{
-	bool ok;
-	QString groupName = KLineEditDlg::getText(
-		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" ),
-		QString::null, &ok );
-
-	if ( !groupName.isNull() && ok)
-		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox);
-}
-
-
 void AddContactWizard::accept()
 {
 	KopeteMetaContact *m = new KopeteMetaContact();
+	
+	// set the display name if required
+	if ( !mDisplayName->text().isEmpty() )
+	{
+		m->setTrackChildNameChanges( false );
+		m->setDisplayName( mDisplayName->text() );
+	}
+	
+	// set the KABC uid in the metacontact
+	KABC::AddresseeItem* i = 0L;
+	i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
+	if ( addresseeListView->isEnabled() && i )
+		m->setMetaContactId( i->addressee().uid() );
+	
+	// set the metacontact's groups
 	bool topLevel = true;
 	for (QListViewItemIterator it(groupList); it.current(); ++it)
 	{
@@ -122,12 +224,15 @@ void AddContactWizard::accept()
 	m->setTopLevel(topLevel);
 
 	bool ok=false;
-
+	
+	// get each protocol's contact
 	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
 	{
 		ok |= it.data()->apply(it.key(),m); 
 	}
+	
+	// add it to the contact list
 	if(ok)
 		KopeteContactList::contactList()->addMetaContact(m);
 	else
@@ -137,6 +242,9 @@ void AddContactWizard::accept()
 
 void AddContactWizard::next()
 {
+	// If the we're on the select account page
+	// follow it with the add contact pages for
+	// the chosen protocols
 	if (currentPage() == selectService ||
 		(currentPage() == intro && !appropriate( selectService )))
 	{
@@ -170,7 +278,11 @@ void AddContactWizard::next()
 		QWizard::next();
 		return;
 	}
-	if (currentPage() != intro && 
+	
+	// If we're not on any account specific pages, 
+	// we must be on an add account page, so make sure it validates
+	if (currentPage() != intro &&
+		currentPage() != selectAddressee &&
 		currentPage() != selectService && 
 		currentPage() != selectGroup && 
 		currentPage() != finis)
@@ -179,7 +291,23 @@ void AddContactWizard::next()
 		if (!ePage || !ePage->validateData())
 			return;
 	}
+	
 	QWizard::next();
+}
+
+void AddContactWizard::showPage( QWidget *page )
+{
+	if ( page == selectGroup )
+	{
+		if ( addresseeListView->isEnabled() ) 
+		{
+			if ( KABC::AddresseeItem* i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() ) ) 
+				mDisplayName->setText( i->addressee().realName() );
+			else 
+				mDisplayName->setText( QString::null );
+		}
+	}
+	QWizard::showPage( page );
 }
 
 #include "addcontactwizard.moc"

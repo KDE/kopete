@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>654</width>
-            <height>476</height>
+            <height>482</height>
         </rect>
     </property>
     <property name="caption">
@@ -85,7 +85,7 @@
                 <property name="text">
                     <string>&lt;h2&gt;Welcome to the Add Contact Wizard!&lt;/h2&gt;
 
-&lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete&lt;/p&gt;
+&lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete.&lt;/p&gt;
 
 &lt;p&gt;Press the "Next" button to begin...&lt;/p&gt;</string>
                 </property>
@@ -97,10 +97,10 @@
     </widget>
     <widget class="QWidget">
         <property name="name">
-            <cstring>selectService</cstring>
+            <cstring>selectAddressee</cstring>
         </property>
         <attribute name="title">
-            <string>Step One: Select the Account to Use</string>
+            <string>Select Address Book Entry</string>
         </attribute>
         <hbox>
             <property name="name">
@@ -108,7 +108,7 @@
             </property>
             <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>layout12</cstring>
+                    <cstring>layout17_2</cstring>
                 </property>
                 <vbox>
                     <property name="name">
@@ -116,10 +116,16 @@
                     </property>
                     <widget class="QLabel">
                         <property name="name">
-                            <cstring>PixmapLabel1_2_2</cstring>
+                            <cstring>PixmapLabel1_2</cstring>
+                        </property>
+                        <property name="frameShape">
+                            <enum>NoFrame</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Plain</enum>
                         </property>
                         <property name="pixmap">
-                            <pixmap>image1</pixmap>
+                            <pixmap>image0</pixmap>
                         </property>
                         <property name="scaledContents">
                             <bool>false</bool>
@@ -127,76 +133,7 @@
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer14</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>21</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout14</cstring>
-                </property>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>TextLabel5</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p&gt;Select the account(s) you would like to use for this contact from the list below.&lt;/p&gt;
-&lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If a messaging service is missing from the list, please confirm that it is enabled in the Kopete configuration window and that it supports adding new contacts.&lt;/p&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
-                        </property>
-                    </widget>
-                    <widget class="KListView">
-                        <column>
-                            <property name="text">
-                                <string>Account</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Protocol</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <property name="name">
-                            <cstring>protocolListView</cstring>
-                        </property>
-                        <property name="fullWidth">
-                            <bool>false</bool>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer15</cstring>
+                            <cstring>spacer17_2</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -213,23 +150,111 @@
                     </spacer>
                 </vbox>
             </widget>
-            <spacer>
+            <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>Spacer7</cstring>
+                    <cstring>layout12</cstring>
                 </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>16</width>
-                        <height>89</height>
-                    </size>
-                </property>
-            </spacer>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;h2&gt;Select Address Book Entry&lt;/h2&gt;
+&lt;p&gt;Kopete shares contact information with the KDE Addressbook.  This gives you seamless integration between instant messaging, e-mail and other personal information management applications.&lt;/p&gt;
+&lt;p&gt;Choose a contact to continue:&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QListView">
+                        <column>
+                            <property name="text">
+                                <string>Name</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>true</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>E-mail</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>true</bool>
+                            </property>
+                        </column>
+                        <property name="name">
+                            <cstring>addresseeListView</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Select the contact you want to communicate with via Instant Messaging</string>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout10</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>addAddresseeButton</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Create New &amp;Entry...</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+E</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Create a new entry in your address book</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer11</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>221</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>chkNoAddressee</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Do not use the KDE address book for this contact.</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+D</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Check box this if you don't want to integrate other KDE applications with Kopete</string>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
         </hbox>
     </widget>
     <widget class="QWidget">
@@ -237,7 +262,7 @@
             <cstring>selectGroup</cstring>
         </property>
         <attribute name="title">
-            <string>Step Two: Selecting a Group</string>
+            <string>Select Display Name and Group</string>
         </attribute>
         <hbox>
             <property name="name">
@@ -283,7 +308,7 @@
             </widget>
             <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>layout16</cstring>
+                    <cstring>layout14</cstring>
                 </property>
                 <vbox>
                     <property name="name">
@@ -291,10 +316,58 @@
                     </property>
                     <widget class="QLabel">
                         <property name="name">
+                            <cstring>textLabel2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;p&gt;&lt;h2&gt;Select Display Name and Group&lt;/h2&gt;&lt;/p&gt;
+&lt;p&gt;Enter the contact's Display Name.  This is how the contact will appear in Kopete.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit">
+                        <property name="name">
+                            <cstring>mDisplayName</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Leave this blank to use any display name set by the contact themself</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer14_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>28</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="Line">
+                        <property name="name">
+                            <cstring>line1</cstring>
+                        </property>
+                        <property name="frameShape">
+                            <enum>HLine</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Sunken</enum>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
                             <cstring>TextLabel1_3</cstring>
                         </property>
                         <property name="text">
-                            <string>&lt;p&gt;Select from the following list which group(s), if any, you would like this contact to be added to.&lt;/p&gt;</string>
+                            <string>&lt;p&gt;Select the group(s) that this contact should belong to:&lt;/p&gt;</string>
                         </property>
                         <property name="alignment">
                             <set>WordBreak|AlignVCenter</set>
@@ -318,10 +391,13 @@
                         <property name="fullWidth">
                             <bool>true</bool>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>A contact may be present in more than one group</string>
+                        </property>
                     </widget>
                     <widget class="QLayoutWidget">
                         <property name="name">
-                            <cstring>layout15</cstring>
+                            <cstring>layout21</cstring>
                         </property>
                         <hbox>
                             <property name="name">
@@ -333,6 +409,12 @@
                                 </property>
                                 <property name="text">
                                     <string>Create New &amp;Group...</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+G</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Click here to create a new group</string>
                                 </property>
                             </widget>
                             <spacer>
@@ -347,7 +429,7 @@
                                 </property>
                                 <property name="sizeHint">
                                     <size>
-                                        <width>298</width>
+                                        <width>328</width>
                                         <height>16</height>
                                     </size>
                                 </property>
@@ -356,7 +438,144 @@
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer16</cstring>
+                            <cstring>spacer15_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+        </hbox>
+    </widget>
+    <widget class="QWidget">
+        <property name="name">
+            <cstring>selectService</cstring>
+        </property>
+        <attribute name="title">
+            <string>Select Instant Messaging Accounts</string>
+        </attribute>
+        <hbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <widget class="QLayoutWidget">
+                <property name="name">
+                    <cstring>layout12</cstring>
+                </property>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>PixmapLabel1_2_2</cstring>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap>image1</pixmap>
+                        </property>
+                        <property name="scaledContents">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer14</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>21</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QLayoutWidget">
+                <property name="name">
+                    <cstring>layout13</cstring>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
+                </property>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>TextLabel5</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;p&gt;&lt;h2&gt;Select IM Accounts&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;Select the account(s) you would like to use for this contact from the list below.&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If a messaging service is missing from the list, please make sure that it is enabled in the Kopete configuration window and that it supports adding new contacts.&lt;/p&gt;</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignVCenter</set>
+                        </property>
+                    </widget>
+                    <widget class="KListView">
+                        <column>
+                            <property name="text">
+                                <string>Account</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>true</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Protocol</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>true</bool>
+                            </property>
+                        </column>
+                        <property name="name">
+                            <cstring>protocolListView</cstring>
+                        </property>
+                        <property name="fullWidth">
+                            <bool>false</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Select the Instant Messaging systems to message the contact.  If they use more than one IM system, select them all here</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>You can always add more ways to message this contact later.</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer15</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -369,6 +588,9 @@
                                 <width>20</width>
                                 <height>20</height>
                             </size>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
                         </property>
                     </spacer>
                 </vbox>
@@ -445,9 +667,9 @@
                             </sizepolicy>
                         </property>
                         <property name="text">
-                            <string>&lt;h2&gt;Congratulations!&lt;/h2&gt; 
+                            <string>&lt;p&gt;&lt;h2&gt;Congratulations!&lt;/h2&gt;&lt;/p&gt;
 
-&lt;p&gt;You have finished configuring a contact. Please click the finish button and your contact will be added to your contact list.&lt;/p&gt;
+&lt;p&gt;You have finished configuring a contact. Please click Finish and your contact will be added to your contact list.&lt;/p&gt;
 
 &lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If adding this contact requires authorization from one or more of the messaging services, Kopete may prompt you for further information after this screen.&lt;/p&gt;</string>
                         </property>
@@ -493,7 +715,7 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistview.h</includehint>
-    <includehint>klistview.h</includehint>
     <includehint>kpushbutton.h</includehint>
+    <includehint>klistview.h</includehint>
 </includehints>
 </UI>

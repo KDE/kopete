@@ -1,7 +1,8 @@
 /*
     addcontactwizard.h - Kopete's Add Contact Wizard
 
-    Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
+	Copyright (c) 2003 by Will Stephenson		 <will@stevello.free-online.co.uk>
+	Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -42,13 +43,18 @@ class AddContactWizard : public AddContactWizard_Base
 public:
 	AddContactWizard( QWidget *parent = 0, const char *name = 0 );
 	~AddContactWizard();
-
+	virtual void showPage( QWidget *page );
+	
 private:
 	//KopeteProtocol *currentProtocol;
 	//AddContactPage *currentDataWidget;
 	QMap <KopeteAccount*,AddContactPage*> protocolPages;
 	QMap <QCheckListItem*,KopeteAccount*> m_accountItems;
-
+	/**
+	 * Utility function, populates the addressee list
+	 */
+	void loadAddressees();
+	
 public slots:
 	virtual void accept();
 	void slotProtocolListClicked( QListViewItem * );
@@ -57,6 +63,9 @@ public slots:
 
 protected slots:
 	virtual void next();
+	void slotAddAddresseeClicked();
+	void slotCheckAddresseeChoice( bool on );
+	void slotAddresseeListClicked( QListViewItem *addressee );
 };
 
 #endif
