@@ -212,7 +212,7 @@ void KopeteWindow::slotShowHide()
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
 			KWin::deIconifyWindow(winId());
-		if(!KWin::info(winId()).onAllDesktops)
+		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
 			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
 		setActiveWindow();
@@ -428,7 +428,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		return;
 	}
 
-	// FIXME: KDE 3.3:  use gueuedMessageBox
+	// FIXME: KDE 3.3:  use queuedMessageBox
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
 		"system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),
