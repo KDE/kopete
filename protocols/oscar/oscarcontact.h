@@ -56,7 +56,7 @@ class KToggleAction;
  * \li get/set the ignore setting for the contact
  * \li get/set the visibility setting for the contact ( i.e. are we visible to the contact )
  */
-class OscarContact : public Kopete::Contact
+class KDE_EXPORT OscarContact : public Kopete::Contact
 {
 Q_OBJECT
 
