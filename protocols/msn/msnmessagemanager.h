@@ -43,9 +43,18 @@ public:
 
 private:
 	MSNSwitchBoardSocket *m_chatService;
-	KopeteMessage *m_msgQueued;
+//	KopeteMessage *m_msgQueued;
 	QString otherString;
 	KActionCollection *m_actions;
+	bool m_timerOn;
+	QMap<const KopeteContact*,QTime> typingMap ;
+
+	//Messages sent before the ending of the connection are queued
+	QValueList<KopeteMessage> m_messagesQueue;
+	void sendMessageQueue();
+
+	QMap<unsigned int, KopeteMessage> m_messagesSent;
+
 	
 protected slots: // Protected slots
 	virtual void slotTyping(bool t);
@@ -56,9 +65,12 @@ private slots: // Private slots
 	void slotUserTypingMsg( QString );
 	void slotSwitchBoardClosed();
 	void slotInviteContact(const QString &_handle);
+	void slotAcknowledgement(unsigned int id, bool ack);
 
 public slots:
-	void slotCloseSession();	
+	void slotCloseSession();
+  /** No descriptions */
+  void slotTimer();
 };
 
 #endif

@@ -65,12 +65,12 @@ void MSNSocket::connect( const QString &server, uint port )
 
 	setOnlineStatus( Connecting );
 	m_id = 0;
-	m_lastId = 0;
+//	m_lastId = 0;
 	m_waitBlockSize = 0L;
 
 	m_lookupStatus = Processing;
 
-	m_sendQueue.clear();
+//	m_sendQueue.clear();
 
 	m_server = server;
 	m_port = port;
@@ -209,7 +209,7 @@ void MSNSocket::slotDataReceived()
 		}
 
 		buf[ ret ] = '\0'; // Make it properly null-terminated
-		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
+//		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
     
 		m_buffer.add(buf,ret); // fill the buffer with the received data
 
@@ -223,7 +223,7 @@ void MSNSocket::slotDataReceived()
 
 void MSNSocket::slotReadLine()
 {
-	// See if we have pending changes in the queue...
+/*	// See if we have pending changes in the queue...
 	if( !m_sendQueue.isEmpty() )
 	{
 		kdDebug() << "MSNSocket::slotReadLine: Send queue not empty,"
@@ -238,7 +238,7 @@ void MSNSocket::slotReadLine()
 				m_sendQueue.remove( it );
 			}
 		}
-	}
+	}*/
 
 	// We have data, first check if it's meant for a block read, otherwise
 	// parse the first line (which will recursively parse the other lines)
@@ -332,8 +332,8 @@ void MSNSocket::parseLine( const QString &str )
 	if( !isNum )
 		data = str.section( ' ', 1, 1 ) + " " + data;
 
-	if( isNum && id )
-		m_lastId = id;
+//	if( isNum && id )
+//		m_lastId = id;
 
 //	kdDebug() << "MSNSocket::parseCommand: Parsing command " << cmd <<
 //		" (ID " << id << "): '" << data << "'" << endl;
@@ -369,7 +369,7 @@ void MSNSocket::handleError( uint code, uint id )
 	KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 }
 
-void MSNSocket::sendCommand( const QString &cmd, const QString &args,
+int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	bool addId, const QString &body )
 {
 	QCString data = cmd.utf8();
@@ -394,15 +394,16 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	// Otherwise, queue. Command without Id are always sent.
 	// In case of queuing it is reasonable to assume the server will send
 	// a response, so the queue handling can be done in the read handler.
-	if( !m_lastId || !addId || ( m_lastId && m_lastId >= m_id - 1 ) )
+	//if( !m_lastId || !addId || ( m_lastId && m_lastId >= m_id - 1 ) )
 		m_socket->writeBlock( data, data.length() );
-	else
+	/*else
 	{
 		kdDebug() << "MSNSocket::sendCommand: Not sending directly. Entry "
 			<< "added to send queue with id " << m_id << endl;
 		m_sendQueue.insert( m_id, data );
-	}
+	} */
 	m_id++;
+	return addId ? (m_id-1) : 0;
 }
 
 QString MSNSocket::escape( const QString &str )

@@ -112,7 +112,8 @@ public:
 		FLN,    // Offline
 		HDN,    // Invisible
 		IDL,    // Idle
-		BLO     // blocked
+//		BLO,     // blocked (not used)
+		UNK     // Unknown (Not in the contact list)
 	};
 
 	enum List

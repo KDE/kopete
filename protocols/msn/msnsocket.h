@@ -79,8 +79,10 @@ public:
 	 * The size of the body (if any) is automatically added to the argument
 	 * list and shouldn't be explicitly specified! This size is in bytes
 	 * instead of characters to reflect what actually goes over the wire.
+	 *
+	 * return the id
 	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
+	int sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addId = true, const QString &body = QString::null );
 
 signals:
@@ -169,7 +171,7 @@ protected:
  	/**
 	 * The last confirmed ID by the server
 	 */
-	uint m_lastId;
+	//uint m_lastId;
 
   
 
@@ -218,7 +220,7 @@ private:
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)
 	 */
-	QMap<uint, QCString> m_sendQueue;
+//	QMap<uint, QCString> m_sendQueue;
 
 	/**
 	 * Parse a single line of data.

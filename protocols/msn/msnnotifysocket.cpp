@@ -458,11 +458,10 @@ void MSNNotifySocket::addContact( const QString &handle,
 		args = "FL " + handle + " " + handle + " " + QString::number( group );
 		break;
 	case MSNProtocol::AL:
-		args = "AL " + handle + " " + escape( publicName );
+		args = "AL " + handle + " "  + escape( publicName );
 		break;
 	case MSNProtocol::BL:
-		args = "BL " + handle + " " +
-			escape( publicName );
+		args = "BL " + handle + " "  + escape( publicName );
 		break;
 	default:
 		kdDebug() << "MSNNotifySocket::addContact: WARNING! Unknown list " <<

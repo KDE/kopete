@@ -110,28 +110,25 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 	}
 }
 
-void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
+void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 	const QString &data )
 {
 	if( cmd == "NAK" )
 	{
-		emit msgAcknowledgement(false);    // msg was not accepted
+		emit msgAcknowledgement(id, false);    // msg was not accepted
 	}
 	else if( cmd == "ACK" )
 	{
-		emit msgAcknowledgement(true);   // msg has received
+		emit msgAcknowledgement(id, true);   // msg has received
 	}
 	else if( cmd == "JOI" )
 	{
 		// new user joins the chat, update user in chat list
 		QString handle = data.section( ' ', 0, 0 );
 		QString screenname = unescape(data.section( ' ', 1, 1 ));
-		emit updateChatMember( handle, screenname, true );
-
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
-
-		if(!m_messagesQueue.empty()) sendMessageQueue();
+		emit updateChatMember( handle, screenname, true );
 	}
 	else if( cmd == "IRO" )
 	{
@@ -247,7 +244,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				QCString args = QString( "N" ).utf8();
 				sendCommand( command , args, true, message );
 			}
-			m_lastId++;  //FIXME:  there is no ACK for prev command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
+//			m_lastId++;  
 		}
 	}
 	else if(msg.contains("MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:"))
@@ -357,7 +354,7 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 	// Length is appended by sendCommand()
 	QString args = "U";
 	sendCommand( "MSG", args, true, message );
-	m_lastId++;  //FIXME:  there is no ACK for this command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
+//	m_lastId++;  
 }
 
 // this Invites an Contact
@@ -368,12 +365,12 @@ void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 }
 
 // this sends a short message to the server
-void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
+int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 {
 	if ( onlineStatus() != Connected || m_chatMembers.empty())
 	{
-		m_messagesQueue.append(msg);
-		return;
+//		m_messagesQueue.append(msg);
+		return -1;
 	}
 
 	kdDebug() << "MSNSwitchBoardSocket::slotSendMsg" << endl;
@@ -393,16 +390,17 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 
 	head += "; CS=0; PF=0\r\n"
 		"\r\n";
+	// TODO: send our fonts as well
 
 	head += msg.plainBody().replace( QRegExp( "\n" ), "\r\n" );
 	QString args = "A";
-	sendCommand( "MSG", args, true, head );
-
-	// TODO: send our fonts as well
-	KopeteMessage msg2=msg;
+	
+	return sendCommand( "MSG", args, true, head );
+   
+	/*KopeteMessage msg2=msg;
 	msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
 	emit msgReceived( msg2);    
-	// send the own msg to chat window
+	// send the own msg to chat window*/
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( )
@@ -445,18 +443,6 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 	}
 }
 
-
-void MSNSwitchBoardSocket::sendMessageQueue() //O.G.
-{
-	if ( onlineStatus() != Connected || m_chatMembers.empty())
-		return;
-
-	for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
-	{
-		slotSendMsg( *it)  ;
-		m_messagesQueue.remove(it);
-	}
-}
 
 void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
 {

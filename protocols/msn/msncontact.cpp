@@ -45,7 +45,7 @@ MSNContact::MSNContact( const QString &msnId,
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
 
-	m_status = MSNProtocol::FLN;
+	m_status = MSNProtocol::UNK;
 
 //	m_deleted = false;
 	m_allowed = false;
@@ -137,14 +137,15 @@ void MSNContact::slotBlockUser()
 	if( m_blocked )
 	{
 		notify->removeContact( m_msnId, 0, MSNProtocol::BL );
-		if( !m_allowed )
-			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::AL );
+//		if( !m_allowed )
+//			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::AL );
 	}
 	else
 	{
 		if(m_allowed)
 			notify->removeContact( m_msnId, 0, MSNProtocol::AL);
-		notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::BL );
+		else
+			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::BL );
 	}
 }
 
@@ -205,7 +206,7 @@ void MSNContact::slotDeleteContact()
 	{
 		m_moving=false;
 
-		if(m_groups.isEmpty())
+		if(m_groups.isEmpty() || m_status==MSNProtocol::UNK)
 		{
 			kdDebug() << "MSNContact::slotDeleteContact : ohoh, contact already removed from server, just delete it" <<endl;
 			delete this;
@@ -246,10 +247,14 @@ KopeteContact::ContactStatus MSNContact::status() const
 			break;
 		}
 		case MSNProtocol::FLN: // Offline
-		default:
 		{
 			return Offline;
 			break;
+		}
+		case MSNProtocol::UNK:
+		default:
+		{
+			return Unknown;
 		}
 	}
 }
@@ -259,11 +264,11 @@ QString MSNContact::statusText() const
 	QString statusText="";
 	switch ( m_status )
 	{
-		case MSNProtocol::BLO: // blocked -- not used
+/*		case MSNProtocol::BLO: // blocked -- not used
 		{
 			return i18n("Blocked");
 			break;
-		}
+		}*/
 		case MSNProtocol::NLN: // Online
 		{
 			statusText= i18n("Online");
@@ -299,9 +304,14 @@ QString MSNContact::statusText() const
 			statusText= i18n("Out to Lunch");
 			break;
 		}
-		default:
+		case MSNProtocol::FLN: // offline
 		{
 			statusText= i18n("Offline");
+			break;
+		}
+		default:
+		{
+			statusText= i18n("Status not avaliable");
 		}
 	}
 	if(isBlocked())
@@ -341,11 +351,11 @@ int MSNContact::importance() const
 {
 	switch ( m_status )
 	{
-		case MSNProtocol::BLO: // blocked
+/*		case MSNProtocol::BLO: // blocked
 		{
 			return 1;
 			break;
-		}
+		}*/
 		case MSNProtocol::NLN: // Online
 		{
 			return 20;
@@ -409,8 +419,8 @@ void MSNContact::setMsnStatus( MSNProtocol::Status _status )
 	if( m_status == _status )
 		return;
 
-	kdDebug() << "MSNContact::setMsnStatus: Setting status for " << m_msnId <<
-		" to " << _status << endl;
+//	kdDebug() << "MSNContact::setMsnStatus: Setting status for " << m_msnId <<
+//		" to " << _status << endl;
 	m_status = _status;
 
 	emit statusChanged( this, status() );

@@ -640,7 +640,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		QMap<QString, MSNContact*>::Iterator it;
 		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
 		{
-			(*it)->setMsnStatus( MSNProtocol::FLN );
+			(*it)->setMsnStatus( MSNProtocol::UNK );
 		}
 
 		m_allowList.clear();
@@ -709,7 +709,7 @@ void MSNProtocol::slotBlockContact( QString handle ) const
 {
 	if(m_allowList.contains(handle))
 		m_notifySocket->removeContact( handle, 0, AL);
-	if(!m_blockList.contains(handle))
+	else if(!m_blockList.contains(handle))
 		m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
@@ -923,6 +923,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			//Contact exists, update data.
 			//Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
 			MSNContact *c = static_cast<MSNContact*>(m->findContact( id(), QString::null, handle ));
+			c->setMsnStatus(FLN);
 			QStringList contactGroups=c->groups();
 
 			QStringList serverGroups;
@@ -960,6 +961,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			connect( msnContact, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				SLOT( slotContactDestroyed( KopeteContact * ) ) );
 //			m_metaContacts.insert( m, msnContact );
+
+			msnContact->setMsnStatus(FLN);
 
 			for( QStringList::Iterator it = groups.begin();
 				it != groups.end(); ++it )
@@ -1020,10 +1023,16 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 	if( list == "BL" )
 	{
 		m_blockList.remove(handle);
+		if(!m_allowList.contains(handle))
+			m_notifySocket->addContact( handle, handle, 0, AL );
+
 	}
 	if( list == "AL" )
 	{
 		m_allowList.remove(handle);
+		if(!m_blockList.contains(handle))
+			m_notifySocket->addContact( handle, handle, 0, BL );
+
 	}
 
 	MSNContact *c=contact(handle);
@@ -1106,6 +1115,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 					KopeteContactList::contactList()->addMetaContact(m);
 				}
 				m->addContact( c);
+				c->setMsnStatus(FLN);
 
 				m_addWizard_metaContact=0L;
 
@@ -1115,12 +1125,15 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		if(!new_contact)
 		{
 			MSNContact *c=m_contacts[ handle ];
+			if(c->msnStatus()==UNK)
+				c->setMsnStatus(FLN);
+
 			c->addedToGroup( gn );
 			if(c->metaContact()->isTemporary())
 				c->metaContact()->setTemporary(false,KopeteContactList::contactList()->getGroup(gn));
 		}
 		
-		if(!m_allowList.contains(handle))
+		if(!m_allowList.contains(handle) && !m_blockList.contains(handle))
 			m_notifySocket->addContact( handle, handle, 0, AL );
 	}
 	if( list == "BL" )

@@ -75,11 +75,10 @@ public:
 
 	const QStringList &chatMembers() { return m_chatMembers; }
 
- 	void userLeftChat( QString handle );
+	void userLeftChat( QString handle );
+	int sendMsg( const KopeteMessage &msg );
 
 public slots:
-	void slotReadMessage( const QString &msg );
-	void slotSendMsg( const KopeteMessage &msg );
 	void slotCloseSession();
 	void slotInviteContact(const QString &handle);
 	void slotTypingMsg();
@@ -87,12 +86,13 @@ public slots:
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );
+	void slotReadMessage( const QString &msg );
 
 signals:
 	void msgReceived( const KopeteMessage &msg );
 	//void startChat(MSNSwitchBoardSocket* switchoard);
 	void userTypingMsg(QString );
-	void msgAcknowledgement(bool);
+	void msgAcknowledgement(unsigned int, bool);
 	//void switchBoardIsActive(bool);
 	/**
 	 *  updateChatMember();
@@ -103,10 +103,6 @@ signals:
 
 private:
 	QStringList m_chatMembers;
-
-	//Messages sent before the ending of the connection are queued
-	QValueList<KopeteMessage> m_messagesQueue;
-	void sendMessageQueue();
 };
 
 #endif

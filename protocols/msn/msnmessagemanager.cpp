@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qtimer.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kaction.h>
@@ -37,11 +39,13 @@ MSNMessageManager::MSNMessageManager(const KopeteContact *user, KopeteContactPtr
 {
 	kopeteapp->sessionFactory()->addKopeteMessageManager(this);
 	m_chatService=0l;
-	m_msgQueued=0L;
+//	m_msgQueued=0L;
 	m_actions=0L;
 
 	connect( this, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
+
+	m_timerOn=false;
 
 }
 MSNMessageManager::~MSNMessageManager()
@@ -56,7 +60,7 @@ void MSNMessageManager::createChat(QString handle, QString address, QString auth
 	if(m_chatService)
 	{
 		kdDebug() << "MSNMessageManager::createChat - Service already exists, disconnect thmem " <<endl;
-		m_chatService->slotCloseSession();
+		delete m_chatService;
 	}
 
 	setCanBeDeleted(false);
@@ -74,13 +78,9 @@ void MSNMessageManager::createChat(QString handle, QString address, QString auth
 			this, SLOT( slotSwitchBoardClosed() ) );
 	connect( m_chatService, SIGNAL( userTypingMsg( QString ) ),
 			this, SLOT( slotUserTypingMsg( QString  ) ) );
+	connect( m_chatService, SIGNAL( msgAcknowledgement(unsigned int, bool) ),
+			this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 
-	if(m_msgQueued)
-	{
-		m_chatService->slotSendMsg( *m_msgQueued );
-		delete m_msgQueued;
-		m_msgQueued=0L;
-	}
 }
 
 void MSNMessageManager::slotUpdateChatMember(QString handle, QString publicName, bool add)
@@ -114,10 +114,12 @@ void MSNMessageManager::slotUpdateChatMember(QString handle, QString publicName,
 	}
 
 	if(add)
+	{
 		addContact(c);
+		if(!m_messagesQueue.empty()) sendMessageQueue();
+	}
 	else if(c)
 		removeContact(c);
-
 }
 
 void MSNMessageManager::slotSwitchBoardClosed()
@@ -125,6 +127,17 @@ void MSNMessageManager::slotSwitchBoardClosed()
 	kdDebug() << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
 	delete m_chatService; //->deleteLater();
 	m_chatService=0l;
+
+	for ( QMap<unsigned int , KopeteMessage>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
+	{
+		KopeteMessage m=it.data();
+		QString body=i18n("The following message has not been sent correctly: \n%1").arg(m.plainBody());
+		appendMessage(KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
+
+		m_messagesSent.remove(it);
+	}
+
+
 	setCanBeDeleted(true);
 }
 
@@ -138,6 +151,12 @@ void MSNMessageManager::slotUserTypingMsg( QString handle )
 		return;
 	}
 	userTypingMsg(c);
+	typingMap[c]=QTime::currentTime();
+	if(!m_timerOn)
+	{
+		m_timerOn=true;
+		QTimer::singleShot( 7000, this, SLOT(slotTimer()) );
+	}
 }
 
 void MSNMessageManager::slotTyping(bool t)
@@ -145,7 +164,14 @@ void MSNMessageManager::slotTyping(bool t)
 	if(t)
 	{
 		if(m_chatService)
+		{
 			m_chatService->slotTypingMsg();
+			if(!m_timerOn)
+			{
+				m_timerOn=true;
+				QTimer::singleShot( 4000, this, SLOT(slotTimer()) );
+			}
+		}
 		else
 		{
 			MSNProtocol::protocol()->slotStartChatSession( QPtrList<KopeteContact>(members()).first()->id() );
@@ -156,11 +182,27 @@ void MSNMessageManager::slotTyping(bool t)
 void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessageManager *)
 {
 	if(m_chatService)
-		m_chatService->slotSendMsg(message);
+	{
+		int id= m_chatService->sendMsg(message);
+		if(id == -1)
+		{
+			m_messagesQueue.append(message);
+			kdDebug() << "MSNMessageManager::slotMessageSent: message added to the queue" <<endl;
+		}
+		else
+		{
+			m_messagesSent.insert( id, message );
+			KopeteMessage msg2=message;
+			msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
+			appendMessage(msg2);
+			// send the own msg to chat window
+		}
+	}
 	else // There's no switchboard available, so we must create a new one!
 	{
 		MSNProtocol::protocol()->slotStartChatSession( message.to().first()->id() );
-		m_msgQueued=new KopeteMessage(message);
+		m_messagesQueue.append(message);
+		//m_msgQueued=new KopeteMessage(message);
 	}
 }
 
@@ -225,5 +267,60 @@ void MSNMessageManager::slotInviteContact(const QString &_handle)
 		MSNProtocol::protocol()->slotStartChatSession( handle );	
 }
 
+void MSNMessageManager::sendMessageQueue() 
+{
+	if(!m_chatService)
+	{
+		kdDebug() << "MSNMessageManager::sendMessageQueue: service doesn't exist" <<endl;
+		return;
+	}
+	kdDebug() << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+	for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+	{
+		//m_chatService->sendMsg( *it)  ;
+		slotMessageSent(*it , this);
+		m_messagesQueue.remove(it);
+	}
+}
+
+void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
+{
+	if(!ack)
+	{
+		KopeteMessage m=m_messagesSent[id];
+		QString body=i18n("The following message has not been sent correctly: \n%1").arg(m.plainBody());
+		appendMessage(KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
+	}
+
+	m_messagesSent.remove(id);
+}
+
+
+void MSNMessageManager::slotTimer()
+{
+	m_timerOn=false;
+	if(!currentMessage().plainBody().isEmpty())
+		if(m_chatService)
+		{
+			m_chatService->slotTypingMsg();
+			m_timerOn=true;
+		}
+
+	QMap<const KopeteContact*,QTime>::Iterator it;
+	for( it = typingMap.begin(); it != typingMap.end(); ++it )
+	{
+		if ( it.data() <= QTime::currentTime().addSecs(-6) )
+		{
+			userTypingMsg(it.key(),false);
+		}
+		else
+			m_timerOn=true;
+	}
+
+	if(m_timerOn)
+		QTimer::singleShot( 4000, this, SLOT(slotTimer()) );
+	else
+		typingMap.clear();
+}
 
 #include "msnmessagemanager.moc"
