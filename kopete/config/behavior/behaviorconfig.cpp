@@ -96,8 +96,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mAwayConfigUI->mUseAutoAway, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect( mAwayConfigUI->mNotifyAway, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
 }
 
 void BehaviorConfig::save()
@@ -115,7 +113,6 @@ void BehaviorConfig::save()
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
 
 	// "Away" TAB ===============================================================
-	p->setNotifyAway( mAwayConfigUI->mNotifyAway->isChecked());
 	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
 
 	KConfig *config = KGlobal::config();
@@ -160,7 +157,6 @@ void BehaviorConfig::load()
 	mAwayConfigUI->mAutoAwayTimeout->setValue(config->readNumEntry("Timeout", 600)/60);
 	mAwayConfigUI->mGoAvailable->setChecked(config->readBoolEntry("GoAvailable", true));
 	mAwayConfigUI->mUseAutoAway->setChecked(config->readBoolEntry("UseAutoAway", true));
-	mAwayConfigUI->mNotifyAway->setChecked( p->notifyAway() );
 	mAwayConfigUI->rememberedMessages->setValue( p->rememberedMessages() );
 
 	// "Chat" TAB ===============================================================
