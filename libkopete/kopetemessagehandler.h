@@ -66,8 +66,28 @@ public:
 	 * @brief Performs any processing necessary on the message
 	 *
 	 * @param event The message event to process. Should not be null.
+	 * 
+	 * Overriders of this handler @em must cause (possibly asynchronously)
+	 * one of the following to happen:
+	 *  - @p event->discard() to be called
+	 *  - @p event->continue() to be called
+	 *  - this base class implementation to be called (equivalent to event->continue() but faster)
+	 * 
+	 * The base class implementation passes the event on to the next
+	 * handler in the chain.
+	 * 
+	 * @note If you store @p event, be aware that it could be deleted at any time, and either
+	 *       connect to the its discarded(Kopete::MessageEvent*) signal or store it in a QGuardedPtr.
 	 */
 	virtual void handleMessage( MessageEvent *event );
+
+	/** @internal */
+	void handleMessageInternal( MessageEvent *event );
+private slots:
+	/**
+	 * @internal The message has been accepted. Pass it on to the next handler.
+	 */
+	void messageAccepted( Kopete::MessageEvent *event );
 
 private:
 	class Private;
@@ -116,6 +136,16 @@ public:
 	 * @return the @ref MessageHandler object to put in the chain, or 0 if none is needed.
 	 */
 	virtual MessageHandler *create( MessageManager *manager, Message::MessageDirection direction ) = 0;
+	
+	/**
+	 * Special stages usable with any message direction
+	 */
+	enum SpecialStage
+	{
+		StageDoNotCreate = -10000, ///< do not create a filter for this stage
+		StageStart = 0,            ///< start of processing
+		StageEnd = 10000           ///< end of processing
+	};
 	
 	/**
 	 * Processing stages for handlers in inbound message handler chains
@@ -174,6 +204,7 @@ public:
 	 * @param direction The direction of the chain that is being created.
 	 * @return a member of the InboundStage, OutboundStage or InternalStage enumeration, as
 	 *         appropriate, optionally combined with a member of the Offset enumeration.
+	 * @retval StageDoNotCreate No filter should be created for this chain.
 	 */
 	virtual int filterPosition( MessageManager *manager, Message::MessageDirection direction ) = 0;
 	

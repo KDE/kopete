@@ -33,7 +33,7 @@ public:
 	void handleMessage( MessageEvent *event )
 	{
 		kdError( 14010 ) << k_funcinfo << "message got to end of chain!" << endl;
-		event->ignore();
+		event->discard();
 	}
 	int capabilities()
 	{
@@ -68,6 +68,8 @@ MessageHandlerChain::Ptr MessageHandlerChain::create( MessageManager *manager, M
 	for( FactoryList::Iterator it = factories.begin(); it != factories.end(); ++it )
 	{
 		int position = (*it)->filterPosition( manager, direction );
+		if ( position == MessageHandlerFactory::StageDoNotCreate )
+			continue;
 		MessageHandler *handler = (*it)->create( manager, direction );
 		if ( handler )
 		{
@@ -159,7 +161,7 @@ ProcessMessageTask::~ProcessMessageTask()
 
 void ProcessMessageTask::slotStart()
 {
-	d->chain->d->first->handleMessage( d->event );
+	d->chain->d->first->handleMessageInternal( d->event );
 }
 
 void ProcessMessageTask::slotDone()
