@@ -8,90 +8,106 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>314</width>
-            <height>175</height>
+            <width>352</width>
+            <height>112</height>
         </rect>
     </property>
     <property name="caption">
         <string>Away Dialog</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget">
+        <widget class="QLineEdit" row="1" column="0">
             <property name="name">
-                <cstring>layout2</cstring>
+                <cstring>textEdit_</cstring>
             </property>
-            <hbox>
+            <property name="maxLength">
+                <number>40</number>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>type in your status descryption here</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup" row="0" column="0">
+            <property name="name">
+                <cstring>statusGroup_</cstring>
+            </property>
+            <property name="title">
+                <string>Status</string>
+            </property>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QButtonGroup">
+                <widget class="QRadioButton" row="0" column="0">
                     <property name="name">
-                        <cstring>statusGroup_</cstring>
+                        <cstring>onlineButton_</cstring>
                     </property>
-                    <property name="title">
-                        <string>Status</string>
+                    <property name="font">
+                        <font>
+                            <pointsize>11</pointsize>
+                        </font>
                     </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>onlineButton_</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Online</string>
-                            </property>
-                            <property name="buttonGroupId">
-                                <number>4</number>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>awayButton_</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Busy</string>
-                            </property>
-                            <property name="buttonGroupId">
-                                <number>5</number>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>invisibleButton_</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Invisible</string>
-                            </property>
-                            <property name="buttonGroupId">
-                                <number>22</number>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>offlineButton_</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Offline</string>
-                            </property>
-                            <property name="buttonGroupId">
-                                <number>21</number>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget class="KTextEdit">
-                    <property name="name">
-                        <cstring>textEdit_</cstring>
+                    <property name="text">
+                        <string>Online</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>4</number>
                     </property>
                 </widget>
-            </hbox>
+                <widget class="QRadioButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>invisibleButton_</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <pointsize>11</pointsize>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Invisible</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>22</number>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>awayButton_</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <pointsize>11</pointsize>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Busy</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>5</number>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="3">
+                    <property name="name">
+                        <cstring>offlineButton_</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <pointsize>11</pointsize>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Offline</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>21</number>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-    </vbox>
+    </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

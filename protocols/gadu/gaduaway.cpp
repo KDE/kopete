@@ -11,6 +11,7 @@
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
+#include <qlineedit.h>
 
 GaduAway::GaduAway( GaduAccount *account, QWidget* parent,
 										const char* name )
@@ -20,6 +21,9 @@ GaduAway::GaduAway( GaduAccount *account, QWidget* parent,
 {
 	ui_ = new GaduAwayUI( this );
 	setMainWidget( ui_ );
+	
+//	ui_->statusGroup_->setButton(account->myself()->onlineStatus());
+//	ui_->textEdit_->setText(account->myself()->onlineStatus().caption());
 	connect( this, SIGNAL(applyClicked()), SLOT(slotApply()) );
 }
 
