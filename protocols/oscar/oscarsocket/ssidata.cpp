@@ -97,6 +97,24 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 	return 0L;
 }
 
+SSI *SSIData::findContact( const QString& name )
+{
+	for (SSI *i=first(); i; i = next())
+	{
+		//if the ssi item has the right name, is a contact, and has the right group
+		/*kdDebug(14150) << k_funcinfo <<
+			"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
+		if ((i->name == name) && (i->type == ROSTER_CONTACT))
+		{
+			//we have found our contact
+			kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
+			return i;
+		}
+	}
+	
+	return 0L;
+}
+
 // ========================================================================================
 
 SSI *SSIData::findGroup(const QString &name)

@@ -1261,7 +1261,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 			case 0x0003: // TODO deny buddy AKA invisible list
 			{
-				kdDebug(14150) << k_funcinfo << "[TODO] Implement deny lists" << endl;
+				kdDebug(14150) << k_funcinfo << "[TODO] Add contact '" << ssi->name << "'"
+					<< " to INVISIBLE/DENY list." << endl;
 				break;
 			}
 

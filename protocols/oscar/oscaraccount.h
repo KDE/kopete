@@ -80,6 +80,32 @@ public:
 	 */
 	int randomNewGroupNum();
 
+	/**
+	 * \brief Add a group to the contact list from the server
+	 *
+	 * Used on initial contactlist fetch in order to add groups to 
+	 * the contact list that may or may not exist yet.
+	 * Also takes care of adding contacts that are waiting in the queue
+	 * because their group hasn't arrived yet.
+	 */
+	void addGroup( const QString& groupName );
+
+	/**
+	 * \brief Add a already existing server contacts to the Kopete list
+	 *
+	 * Used on initial contactlist fetch to add contacts to the Kopete contact list
+	 * 
+	 */
+	void addOldContact( SSI* ssiItem, KopeteMetaContact* meta );
+
+	/**
+	 * \brief Add contacts that were missing groups to the contact list
+	 * 
+	 * Use on initial contactlist fetch to add contacts to the contact list
+	 * that were missing a group
+	 */
+	void addServerContact( SSI* ssiItem );
+
 	/*
 	 * Sets the port we connect to
 	 */

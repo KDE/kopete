@@ -17,6 +17,7 @@
 
 #include "oscaraccount.h"
 #include "aim.h"
+#include "ssidata.h"
 
 #include "kopeteprotocol.h"
 #include "kopeteaway.h"
@@ -45,7 +46,7 @@ public:
 	 * their group has not yet been sent from the server
 	 * We queue them so that we can create KopeteContacts for them later
 	 */
-	//TODO: Use a different way to do this
+	QPtrList<SSI> groupQueue;
 
 	/*
 	 * Our OSCAR socket object
@@ -536,6 +537,73 @@ void OscarAccount::setServerPort(int port)
 		setPluginData(protocol(), "Port", QString::number(port));
 }
 
+void OscarAccount::addGroup( const QString& groupName )
+{
+	KopeteGroup* = KopeteContactList::contactList()->getGroup( groupName );
+	if ( !group ) //group was not found and group creation failed
+		return;
+
+	
+	QPtrListIterator<SSI> it ( d->groupQueue );
+	int i = 0;
+	int gid = d->engine->ssiData()->findGroup( groupName )->gid;
+	for ( ; it.current(); ++it )
+	{
+		if ( it.current()->gid == gid )
+		{ //add the contact from the group queue to the contact list
+			d->groupQueue.remove( i );
+			addOldContact( it.current() );
+		}
+	}
+}
+
+void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
+{
+	bool temporary = false;
+	SSI* group = d->engine->ssiData()->findGroup( ssiItem->gid );
+
+	if ( !group )
+	{	// group not yet found
+		kdDebug(14150) << k_funcinfo << "Adding '" << ssi-Name << "' to groupQueue " <<
+			<< "to add later when group is received" << endl;
+		d->groupQueue.append( ssiItem );
+		return;
+	}
+
+	KopeteMetaContact* m = KopeteContactList::contactList()->findContact( 
+		protocol()->pluginId(), accountId(), ssiItem->name);
+
+	if ( m && m->isTemporary() )
+	{
+		m->setTemporary( false );
+		//m->moveToGroup( KopeteGroup::topLevel(), KopeteContactList::contactList()->getGroup( group->name ) );
+	}
+	else
+	{
+		//New Contact
+		kdDebug(14150) << k_funcinfo << "Adding old contact '" <<
+			ssi->name << "'" << endl;
+
+		if ( meta )
+			m = meta;
+		else
+		{
+			m = new KopeteMetaContact();
+			m->addToGroup( KopeteContactList::contactList()->getGroup( group->name ) );
+		}
+
+		if ( temporary )
+			m->setTemporary( true );
+
+		createNewContact( tocNormalize(ssiItem->name), ssiItem->name, m);
+
+		if ( !meta )
+			KopeteContactList::contactList()->addMetaContact( m );
+	}
+}
+
+
+
 bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	const QString &displayName, KopeteMetaContact *parentContact)
 {
@@ -568,7 +636,104 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 		return false;
 	}
 	
-	//TODO Fix this!
+	// Next check our internal list to see if we have this buddy
+	SSI* ssiItem = d->engine->ssiData()->findContact( contactId )
+	if ( ssiItem )
+	{
+		OscarContact* newContact == createNewContact(contactId, displayName, parentContact);
+		if ( newContact )
+		{
+			newContact->setStatus( OSCAR_OFFLINE );
+			return true;
+		}
+		else
+			return false;
+	}
+	else // Not on SSI. Must be new contact
+	{
+		kdDebug(14150) << k_funcinfo << "New contact '" << contactId << "' not in SSI." 
+			<< " Creating new contact" << endl;
+
+		if ( !parentContact->isTemporary() )
+		{
+			kdDebug(14150) << k_funcinfo << "Adding contact to the server side list" << endl;
+			
+			QString groupName;
+			KopeteGroupList kopeteGroups = parentContact->groups(); //get the group list
+
+			if ( kopeteGroups.isEmpty() || kopeteGroups.first()->displayName() == "Top-Level" )
+			{
+				kdDebug(14150) << k_funcinfo << "Contact with no group. "
+					<< "Adding to group 'Buddies'" << endl;
+				groupName = i18n("Buddies");
+			}
+			else
+			{
+				kdDebug(14150) << k_funcinfo << "Contact with group, grouplist count="
+					<< kopeteGroups.count() << endl;
+
+				//OSCAR doesn't support multiple groups for a contact. Add to the
+				//first one
+				KopeteGroup* group = kopeteGroups.first();
+				groupName = group->displayName();
+			}
+
+			if(groupName.isEmpty())
+			{ // emergency exit, should never occur
+				kdDebug(14150) << k_funcinfo << "Could not add Contact because no " <<
+					"groupname was given" << endl;
+				return false;
+			}
+
+			// See if it exists in our internal group list already
+			SSI *internalGroup = d->engine->ssiData()->findGroup(groupName);
+
+			// If the group didn't exist
+			if (!internalGroup)
+			{
+				internalGroup = addGroup(d->randomNewGroupNum, groupName);
+				kdDebug(14150) << "created internal group for new contact" << endl;
+				// Add the group on the server list
+				engine()->sendAddGroup(internalGroup->name());
+			}
+
+			// Add the buddy to the server's list, with the group,
+			// need to normalize the contact name
+			engine()->sendAddBuddy(tocNormalize(contactId), internalGroup->name, false);
+
+			// Increase these counters, I'm not sure what this does
+			d->randomNewGroupNum++;
+			d->randomNewBuddyNum++;
+
+			// Create the actual contact, which adds it to the metacontact
+			return(createNewContact(contactId, displayName, parentContact));
+		}
+		else
+		{
+			kdDebug(14150) << "Temporary new contact, only adding him to local list" << endl;
+			// This is a temporary contact, so don't add it to the server list
+			// Create the contact, which adds it to the parent contact
+			if(!createNewContact(contactId, displayName, parentContact))
+				return false;
+
+			// Get user status through BLM if contact is temporary (ICQ only)
+			if ( engine()->isICQ() )
+				engine()->sendAddBuddylist(tocNormalize(contactId));
+
+			// Set it's initial status
+			// This requests the buddy's info from the server
+			// I'm not sure what it does if they're offline, but there
+			// is code in oscarcontact to handle the signal from
+			// the engine that this causes
+			//if(!d->engine->isICQ())
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"Requesting user info for '" << contactId << "'" << endl;
+				engine()->sendUserLocationInfoRequest(tocNormalize(contactId), AIM_LOCINFO_SHORTINFO);
+			}
+			return true;
+		}
+	} // END not ssiItem
 }
 
 void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)

@@ -90,6 +90,13 @@ class SSIData : public QPtrList<SSI>
 		 */
 		SSI *findContact(const QString &name, const QString &group);
 
+		/**
+		 * Find the contact with the given name. Group here doesn't matter.
+		 * This is a convienence function and behaves much like the above function
+		 * \return NULL if not found
+		 */
+		SSI *findContact(const QString &name);
+
 		// ===============================================================================
 
 		/*
