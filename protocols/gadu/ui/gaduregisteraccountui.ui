@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>342</width>
-            <height>306</height>
+            <height>318</height>
         </rect>
     </property>
     <property name="caption">
@@ -21,7 +21,7 @@
         </property>
         <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>layout11</cstring>
+                <cstring>layout13</cstring>
             </property>
             <vbox>
                 <property name="name">
@@ -168,129 +168,150 @@ This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout10</cstring>
+                        <cstring>layout12</cstring>
                     </property>
-                    <hbox>
+                    <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer3</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>30</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
                         <widget class="QLayoutWidget">
                             <property name="name">
-                                <cstring>layout9</cstring>
+                                <cstring>layout10</cstring>
                             </property>
-                            <vbox>
+                            <hbox>
                                 <property name="name">
                                     <cstring>unnamed</cstring>
                                 </property>
-                                <widget class="QLabel">
+                                <spacer>
                                     <property name="name">
-                                        <cstring>pixmapToken</cstring>
+                                        <cstring>spacer3</cstring>
                                     </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>0</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>20</horstretch>
-                                            <verstretch>13</verstretch>
-                                        </sizepolicy>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
                                     </property>
-                                    <property name="minimumSize">
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
                                         <size>
-                                            <width>256</width>
-                                            <height>64</height>
+                                            <width>30</width>
+                                            <height>20</height>
                                         </size>
                                     </property>
-                                    <property name="maximumSize">
+                                </spacer>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>layout9</cstring>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>pixmapToken</cstring>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>0</hsizetype>
+                                                    <vsizetype>0</vsizetype>
+                                                    <horstretch>20</horstretch>
+                                                    <verstretch>13</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="minimumSize">
+                                                <size>
+                                                    <width>256</width>
+                                                    <height>64</height>
+                                                </size>
+                                            </property>
+                                            <property name="maximumSize">
+                                                <size>
+                                                    <width>256</width>
+                                                    <height>64</height>
+                                                </size>
+                                            </property>
+                                            <property name="backgroundMode">
+                                                <enum>PaletteForeground</enum>
+                                            </property>
+                                            <property name="paletteForegroundColor">
+                                                <color>
+                                                    <red>255</red>
+                                                    <green>255</green>
+                                                    <blue>255</blue>
+                                                </color>
+                                            </property>
+                                            <property name="scaledContents">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Registration token</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>This field contains bitmap with number that you need to type in in field below to register new account.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLineEdit">
+                                            <property name="name">
+                                                <cstring>textToken</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The text from the picture above.</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The text from the picture above.  This is used to prevent abusive automated registration scripts.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>submitData</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>Register</string>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Press to begin registration.</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>When you finished filling out token information, email and password - press this button to query for new User ID</string>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>spacer4</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
                                         <size>
-                                            <width>256</width>
-                                            <height>64</height>
+                                            <width>30</width>
+                                            <height>20</height>
                                         </size>
                                     </property>
-                                    <property name="backgroundMode">
-                                        <enum>PaletteForeground</enum>
-                                    </property>
-                                    <property name="paletteForegroundColor">
-                                        <color>
-                                            <red>255</red>
-                                            <green>255</green>
-                                            <blue>255</blue>
-                                        </color>
-                                    </property>
-                                    <property name="scaledContents">
-                                        <bool>true</bool>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>Registration token</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>This field contains bitmap with number that you need to type in in field below to register new account.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QLineEdit">
-                                    <property name="name">
-                                        <cstring>textToken</cstring>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The text from the picture above.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The text from the picture above.  This is used to prevent abusive automated registration scripts.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton">
-                                    <property name="name">
-                                        <cstring>submitData</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>Register</string>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>Press to begin registration.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>When you finished filling out token information, email and password - press this button to query for new User ID</string>
-                                    </property>
-                                </widget>
-                            </vbox>
+                                </spacer>
+                            </hbox>
                         </widget>
-                        <spacer>
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>spacer4</cstring>
+                                <cstring>statusLabel</cstring>
                             </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
+                            <property name="text">
+                                <string></string>
                             </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
+                            <property name="scaledContents">
+                                <bool>true</bool>
                             </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>30</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </hbox>
+                        </widget>
+                    </vbox>
                 </widget>
                 <spacer>
                     <property name="name">
@@ -305,7 +326,7 @@ This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>30</height>
+                            <height>38</height>
                         </size>
                     </property>
                 </spacer>
