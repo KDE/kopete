@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = libkmerlin ui pixmaps
+SUBDIRS = libkmerlin ui . pixmaps
 INCLUDES = -I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/libkmerlin \
