@@ -123,8 +123,6 @@ KActionCollection *SpellCheckPlugin::customChatActions( KopeteMessageManager *km
 
 void SpellCheckPlugin::slotBindToView( KopeteView *view )
 {
-	/* FIXME , redo when we have found a way to do that without activeView
-
 	//Install event filter on the edit widget
 	if( mPrefs->autoCheckEnabled() && view->editWidget()->inherits("QTextEdit") )
 	{
@@ -132,7 +130,7 @@ void SpellCheckPlugin::slotBindToView( KopeteView *view )
 		SingleSpellInstance *spell = new SingleSpellInstance( this, view );
 		singleSpellers.append( spell );
 		connect( speller(), SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), spell, SLOT( misspelling( const QString&, const QStringList&, unsigned int ) ) );
-	}*/
+	}
 }
 
 void SpellCheckPlugin::slotCheckSpelling()
@@ -159,9 +157,9 @@ void SpellCheckPlugin::slotCorrection( const QString &originalword, const QStrin
 {
 	if( manualCheckInProgress )
 	{
-		//KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 		//FIXME
-		KopeteView *activeView = m_currentKMM->view();
+		KopeteView *activeView = 0L;//m_currentKMM->view();
+		KopeteMessageManagerFactory::factory()->activeView(activeView);
 
 		QString mBuff = mBuffer.plainBody();
 		mBuff.replace( pos,originalword.length(), newword );
@@ -175,10 +173,10 @@ void SpellCheckPlugin::slotMisspelling( const QString &originalword, const QStri
 {
 	if( manualCheckInProgress )
 	{
-		//KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 		//FIXME
-		KopeteView *activeView = m_currentKMM->view();
-		
+		KopeteView *activeView = 0L;//m_currentKMM->view();
+		KopeteMessageManagerFactory::factory()->activeView(activeView);
+
 		if( QTextEdit *t = dynamic_cast<QTextEdit*>( activeView->editWidget() ) )
 		{
 			//Select the misspelled text

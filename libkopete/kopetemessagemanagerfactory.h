@@ -148,6 +148,11 @@ signals:
 	 */
 	void display( KopeteMessage& message, KopeteMessageManager * );
 
+	/*
+	 * obsolete temporary method used by the spellchecking plugin (ugly workaround)
+	 */
+	void getActiveView(KopeteView*& ); public: void activeView(KopeteView*&v) { emit getActiveView(v); }
+
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 
