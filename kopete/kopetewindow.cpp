@@ -95,6 +95,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
 		slotPluginLoaded( it.data() );
+
+	// If some account alrady loaded, build the status icon
+	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
+		slotAccountRegistered(a);
 }
 
 void KopeteWindow::initView()
