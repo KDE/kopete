@@ -27,7 +27,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-KopeteContact::KopeteContact( QString &protocolId, KopeteMetaContact *parent )
+KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *parent )
 	: QObject( parent )
 {
 	connect(this, SIGNAL(incomingEvent(KopeteEvent *)), kopeteapp, SLOT(notifyEvent(KopeteEvent *)));
