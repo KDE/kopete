@@ -51,7 +51,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /home/sheeplet/KDE/source/kdenonbeta/kopete/protocols/oscar/
+INPUT                  = .
 FILE_PATTERNS          = *.h
 RECURSIVE              = YES
 EXCLUDE                = 
@@ -135,7 +135,7 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = NO
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = /home/sheeplet/KDE/source/kdenonbeta/kopete/libkopete/
+INCLUDE_PATH           = ../../libkopete/
 INCLUDE_FILE_PATTERNS  = *.h
 PREDEFINED             = 
 EXPAND_AS_DEFINED      = 
