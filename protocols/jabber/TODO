@@ -8,10 +8,8 @@ TODO for Jabber:
   integrated into the Kopete filtering API
 - support all message types (chat/ticker/etc)
 - do a std translation of resource.status().show() to JabberProtocol::Presence
-- should the away dialog pop up when going away using the account context menu?
 - verify FIXMEs in JabberContact
 - group chat needs a bit of rework
-- when opening the prefs dialog, make sure that the password dialog does not pop up
 - add a button for server defaults
 - on a failed connection attempt, the animation does not stop
 - port dialogs to KDialogBase
