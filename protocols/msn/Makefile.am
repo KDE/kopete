@@ -23,8 +23,9 @@ kopete_msn_la_LIBADD = libkopete_msn_shared.la
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 
 dummy.cpp: $(srcdir)/Makefile.am
-	echo 'extern "C" void *init_libkopete_msn_shared();' > $@
-	echo 'extern "C" void *init_kopete_msn() { return init_libkopete_msn_shared(); }' >> $@
+	echo '#include "kdemacros.h"' > $@
+	echo 'extern "C" KDE_EXPORT void *init_libkopete_msn_shared();' >> $@
+	echo 'extern "C" KDE_EXPORT void *init_kopete_msn() { return init_libkopete_msn_shared(); }' >> $@
 
 service_DATA = kopete_msn.desktop
 servicedir = $(kde_servicesdir)
