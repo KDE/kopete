@@ -7,6 +7,8 @@
 #include "contactlist.h"
 #include "connectionlabel.h"
 
+class QLabel;
+
 class KopeteWindow : public KMainWindow
 {
 Q_OBJECT
