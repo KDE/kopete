@@ -199,7 +199,17 @@ void KopetePluginManager::slotPluginReadyForUnload()
 
 void KopetePluginManager::slotShutdownTimeout()
 {
+	// When we were already done the timer might still fire.
+	// Do nothing in that case.
+	if ( d->shutdownMode == KopetePluginManagerPrivate::DoneShutdown )
+		return;
+
+	QStringList remaining;
+	for ( QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+		remaining.append( it.data()->pluginId() );
+
 	kdWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
+		<< "Remaining plugins: " << remaining.join( QString::fromLatin1( ", " ) ) << endl
 		<< "Forcing Kopete shutdown now." << endl;
 
 	slotShutdownDone();
