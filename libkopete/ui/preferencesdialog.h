@@ -17,33 +17,38 @@
 
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
-#include <klocale.h>
+
 #include <kdialogbase.h>
 #include <qlist.h>
+
+class ConfigModule;
 
 /**
   *@author Duncan Mac-Vicar Prett
   */
-class ConfigModule;
-
 class PreferencesDialog : public KDialogBase
 {
 	friend class ConfigModule;
-   Q_OBJECT
-public:
-	PreferencesDialog(QWidget *parent=0);
-	~PreferencesDialog();
-public:
-  virtual void show();
-public slots:
-  virtual void slotApply();
-  virtual void slotOk();
-private:
-	void add(ConfigModule *page);
-	void remove(ConfigModule *page);
 
-private:
-	QList<ConfigModule> mModules;
+	Q_OBJECT
+	
+	public:
+		PreferencesDialog(QWidget *parent=0);
+		~PreferencesDialog();
+	
+	public:
+		virtual void show();
+	
+	public slots:
+		virtual void slotApply();
+		virtual void slotOk();
+
+	private:
+		void add(ConfigModule *page);
+		void remove(ConfigModule *page);
+
+	private:
+		QList<ConfigModule> mModules;
 
 };
 

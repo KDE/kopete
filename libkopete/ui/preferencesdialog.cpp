@@ -22,16 +22,15 @@
 #include <klocale.h>
 
 PreferencesDialog::PreferencesDialog(QWidget *parent)
-								: KDialogBase(IconList, i18n("Preferences"),
-                  Ok|Apply|Close, Ok, parent, 0, false)
+	: KDialogBase(IconList, i18n("Preferences"), Ok|Apply|Close, Ok, parent, 0, false)
 {
-	resize(640, 480); // KDE is required to support 800x600 min.
+//	resize(640, 480); // KDE is required to support 800x600 min.
 }
 
 PreferencesDialog::~PreferencesDialog()
 {
-
 }
+
 void PreferencesDialog::show()
 {
 	for (ConfigModule *i=mModules.first(); i != 0; i=mModules.next())
@@ -47,15 +46,17 @@ void PreferencesDialog::slotApply()
 
 void PreferencesDialog::slotOk()
 {
-		slotApply();
-		hide();
+	slotApply();
+	hide();
 }
+
 void PreferencesDialog::add(ConfigModule *page)
 {
-		mModules.append(page);
+	mModules.append(page);
 }
+
 void PreferencesDialog::remove(ConfigModule *page)
 {
-		mModules.removeRef(page);
+	mModules.removeRef(page);
 }
 
