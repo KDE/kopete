@@ -290,6 +290,9 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 		
 		// request roster
 		jabberClient->rosterRequest();
+
+		// initiate anti-idle timer (will be triggered every 10 seconds)
+		jabberClient->setNoopTime(10000);
 	}
 	else
 	{
