@@ -52,6 +52,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
 	setFileCapable(true);
+	mStatus = OSCAR_OFFLINE;
 
 	// Buddy Changed
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
@@ -80,7 +81,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	//File transfer started
 	QObject::connect(mProtocol->engine, SIGNAL(transferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)),
 		this, SLOT(slotTransferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)));
-  //File transfer manager stuff
+	//File transfer manager stuff
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
 		this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
@@ -96,7 +97,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		} else {
 			setDisplayName(tmpBuddy.name);
 		}
-		
+
 		slotUpdateBuddy(num);
 	}	else 	{
 		setDisplayName(mName);
@@ -162,7 +163,7 @@ KopeteMessageManager* OscarContact::msgManager()
 						SIGNAL(typingMsg(bool)),
 						this,
 						SLOT(slotTyping(bool)));
-		
+
 		return mMsgManager;
 	}
 }
@@ -206,16 +207,16 @@ void OscarContact::slotUpdateBuddy(int buddyNum)
 		if ( tmpBuddy.idleTime > 0 )
 		{
 			kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
-			setIdleState(Idle);			
+			setIdleState(Idle);
 		}
 		// we have become un-idle
-		else if ( mProtocol->isConnected() ) 
+		else if ( mProtocol->isConnected() )
 		{
 			kdDebug(14150) << "[OscarContact] setting " << mName << " active!" << endl;
 			setIdleState(Active);
 		}
-	  mIdle = tmpBuddy.idleTime;
-  }
+		mIdle = tmpBuddy.idleTime;
+	}
 	mStatus = tmpBuddy.status;
 	kdDebug(14150) << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
 
@@ -553,7 +554,7 @@ void OscarContact::slotWarn()
 	else if (result == KMessageBox::No)
 	{
 		mProtocol->engine->sendWarning(mName, false);
-	} 
+	}
 }
 
 
@@ -581,20 +582,20 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	// This code relies on QT 3.1, when we support that,
 	// put it back in
-// 	QRegExp expr;
-// 	expr.setCaseSensitive( false );
-// 	expr.setWildcard( true );
-// 	expr.setMinimal( true );
+//	QRegExp expr;
+//	expr.setCaseSensitive( false );
+//	expr.setWildcard( true );
+//	expr.setMinimal( true );
 
- 	QString result = m;
-// 	expr.setPattern( "^<html.*>" );
-// 	result.remove( expr );
-// 	expr.setPattern( "^<body.*>" );
-// 	result.remove( expr );
-// 	expr.setPattern( "</html>$" );
-// 	result.remove( expr );
-// 	expr.setPattern( "</body>$" );
-// 	result.remove( expr );
+	QString result = m;
+//	expr.setPattern( "^<html.*>" );
+//	result.remove( expr );
+//	expr.setPattern( "^<body.*>" );
+//	result.remove( expr );
+//	expr.setPattern( "</html>$" );
+//	result.remove( expr );
+//	expr.setPattern( "</body>$" );
+//	result.remove( expr );
 
 	bool removeMoreTags = true;
 	int pos;
@@ -632,7 +633,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 					removeMoreTags = true;
 			}
 	}
-	
+
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
 	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
@@ -644,7 +645,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 
 
-	
+
 
 // removes a weird html-tag (and returns the attributes it contained)
 /*
@@ -758,7 +759,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 
 	if ( !filePath.isEmpty() )
 	{
-    KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
+		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
 		kdDebug(14150) << "[OscarContact] File size is " << (unsigned long)finfo.size() << endl;
 		//Send the file
 		mProtocol->engine->sendFileSendRequest( mName, finfo );
@@ -782,13 +783,13 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 	// Check if we're the one who is directly connected
 	if ( tr->info().contact() != this )
 		return;
-	
+
 	kdDebug(14150) << k_funcinfo << "Transfer of " << fileName << " accepted." << endl;
 	OscarConnection *fs = mProtocol->engine->sendFileSendAccept(mName, fileName);
-	
+
 	//connect to transfer manager
 	QObject::connect( fs, SIGNAL( percentComplete( unsigned int ) ),
-		tr, SLOT(slotPercentCompleted( unsigned int )) ); 
+		tr, SLOT(slotPercentCompleted( unsigned int )) );
 }
 
 /** Called when we deny a transfer */
@@ -805,10 +806,10 @@ void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 /** Called when a file transfer begins */
 void OscarContact::slotTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
 {
-  if ( tocNormalize(con->connectionName()) != tocNormalize(mName) )
-  	return;
+	if ( tocNormalize(con->connectionName()) != tocNormalize(mName) )
+		return;
 
-  kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl; 
+	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
 	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer( this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
 
 	//connect to transfer manager
@@ -837,13 +838,6 @@ void OscarContact::slotTransferBegun(OscarConnection *con, const QString& file, 
 	}
 	return m_cachedScaledIcon; */
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
 #include "oscarcontact.moc"
