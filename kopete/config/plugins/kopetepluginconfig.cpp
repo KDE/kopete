@@ -34,6 +34,11 @@ public:
 	bool isChanged;
 };
 
+KopetePluginConfig::~KopetePluginConfig()
+{
+	delete d;
+}
+
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
 : KDialogBase( Plain, i18n( "Configure" ), Help | Default | Cancel | Apply | Ok | User1,
 	Ok, parent, name, false, true, KGuiItem( i18n( "&Reset" ), "undo" ) )
