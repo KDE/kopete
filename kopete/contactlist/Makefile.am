@@ -1,6 +1,12 @@
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private $(all_includes) -I$(top_srcdir)/kopete/kopete -I$(top_srcdir)/kopete/kopete/chatwindow -I$(top_srcdir)/kopete/kopete/addcontactwizard
+AM_CPPFLAGS = $(KOPETE_INCLUDES) \
+	-I$(top_srcdir)/kopete/libkopete/private \
+	$(all_includes) \
+	-I$(top_srcdir)/kopete/kopete \
+	-I$(top_srcdir)/kopete/kopete/chatwindow \
+	-I$(top_srcdir)/kopete/kopete/addcontactwizard \
+        -I$(top_builddir)/kopete/kopete/addcontactwizard
 
 noinst_LTLIBRARIES = libkopetecontactlist.la
 

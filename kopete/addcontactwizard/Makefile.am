@@ -1,6 +1,8 @@
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes) -I$(top_srcdir)/kopete/kopete/addcontactwizard
+AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes) \
+	-I$(top_srcdir)/kopete/kopete/addcontactwizard \
+	-I$(top_builddir)/kopete/kopete/addcontactwizard
 
 noinst_LTLIBRARIES = libkopeteaddcontactwizard.la
 noinst_HEADERS = addcontactwizard.h 
