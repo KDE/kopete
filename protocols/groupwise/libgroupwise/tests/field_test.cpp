@@ -4,13 +4,14 @@
 static Field::FieldList fl;
 
 void buildList();
+void buildFakeContactList();
 void extractFields( Field::FieldList );
 
 int main()
 {
-	buildList();
+	buildFakeContactList();
 	// look for a field in the list
-	if ( fl.find( NM_A_FA_MESSAGE ) != fl.end() )
+/*	if ( fl.find( NM_A_FA_MESSAGE ) != fl.end() )
 		printf( "Found a field, where there was supposed to be one :)\n" );
 	else
 		printf( "Didn't find a field, where there was supposed to be one :(\n" );
@@ -18,11 +19,35 @@ int main()
 	if ( (it = fl.find( NM_A_SZ_OBJECT_ID ) ) != fl.end() )
 		printf( "Found a field, where there was NOT supposed to be one :(\n" );
 	else
-		printf( "Didn't find a field, where there wasn't supposed to be one :)\n" );
+		printf( "Didn't find a field, where there wasn't supposed to be one :)\n" );*/
 	//printf( "%i\n", static_cast<Field::MultiField*>(*it) );
 	// dump the list
 	fl.dump( true );
-	extractFields( fl );
+	
+	printf( "\nNow testing find routines.\n");
+	// find the field containing the contact list
+	Field::MultiField * clf = dynamic_cast< Field::MultiField * >( *(fl.find( NM_A_FA_CONTACT_LIST ) ) );
+	if ( clf )
+	{
+		Field::FieldList cl = clf->fields();
+		// look for a folder in the list
+		Field::FieldListIterator it = cl.find( NM_A_FA_FOLDER );
+		if ( it != cl.end() )
+			printf( "Found the first folder :)\n");
+		else
+			printf( "Didn't find the first folder, where did it go? :(\n");
+		
+		printf( "Looking for a second folder :)\n");
+		it = cl.find( ++it, NM_A_FA_FOLDER );
+		if ( it == cl.end() )
+			printf( "Didn't find a second folder :)\n" );
+		else
+			printf( "Found a second folder, now did that get there? :(\n");
+	}
+	else 
+		printf( "Didn't find the contact list, where did it go? :(\n");
+				
+	//extractFields( fl );
 	return 0;
 }
 // test Field subclasses by creating various FieldLists and recovering the data
@@ -53,6 +78,55 @@ void buildList()
 	
 /*	Field::SingleField * ext = sf;
 	printf( "tag: %s  flags: %i type: %i value: %s\n", ext->tag().data(), ext->flags(), ext->type(), ext->value().toString().ascii() );*/
+}
+
+void buildFakeContactList()
+{
+	using namespace Field;
+	
+	FieldList contactlist;
+	// add a few contacts
+	{
+		const char* names[] = { "apple", "banana", "cherry", "damson", "elderberry", "framboise" };
+		for ( int i = 0; i < 6; i ++ )
+		{
+			FieldList contact;
+			Field::SingleField* sf = new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( i ) );
+			contact.append( sf );
+			sf = new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, names[i] );
+			contact.append( sf );
+			MultiField* mf = new MultiField( NM_A_FA_CONTACT, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, contact );
+			contactlist.append( mf );
+		}
+	}
+	// add a folder
+	{
+		FieldList folder;
+		Field::SingleField* sf = new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( 1 ) );
+		folder.append( sf );
+		sf = new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, "buddies" );
+		folder.append( sf );
+		MultiField* mf = new MultiField( NM_A_FA_FOLDER, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, folder );
+		contactlist.append( mf );
+	}
+	// add some more contacts
+	{
+		const char* names[] = { "aardvark", "boar", "cat" };
+		for ( int i = 0; i < 3; i ++ )
+		{
+			FieldList contact;
+			Field::SingleField* sf = new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( i ) );
+			contact.append( sf );
+			sf = new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, names[i] );
+			contact.append( sf );
+			MultiField* mf = new MultiField( NM_A_FA_CONTACT, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, contact );
+			contactlist.append( mf );
+		}
+	}
+	
+	
+	MultiField * cl = new MultiField( NM_A_FA_CONTACT_LIST, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, contactlist );
+	fl.append( cl );
 }
 
 void extractFields( Field::FieldList l )
