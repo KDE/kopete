@@ -12,7 +12,7 @@ kcm_kopete_nowlistening_la_SOURCES = nowlisteningprefs.ui nowlisteningpreference
 kcm_kopete_nowlistening_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_nowlistening_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
-service_DATA = nowlistening.desktop
+service_DATA = kopete_nowlistening.desktop
 servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_nowlistening_config.desktop

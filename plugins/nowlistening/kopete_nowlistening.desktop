@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
+X-Kopete-Version=1000793
 Icon=kaboodle
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_nowlistening
@@ -20,6 +21,7 @@ Name[da]=Lytter nu
 Name[de]=Im Hintergrund läuft
 Name[es]=Escuchando
 Name[et]=Praegu kuulan
+Name[fr]=En écoute
 Name[hu]=Most figyelek
 Name[it]=Adesso sto ascoltando
 Name[nl]=Luistert naar
@@ -34,9 +36,11 @@ Comment[da]=Fortæller dine venner hvad du lytter til
 Comment[de]=Teilt Ihren Freunden mit, welche Musik Sie gerade hören
 Comment[es]=Le cuenta a sus contactos lo que está escuchando
 Comment[et]=Semudele teatamine, mida parajasti kuulad
+Comment[fr]=Indique à vos contacts ce que vous êtes en train d'écouter
 Comment[hu]=A partnerek értesítése arról, hogy Ön mit hallgat
 Comment[it]=Di' ai tuoi amici stai ascoltando
 Comment[nl]=Vertelt je vrienden naar welke muziek je luistert
+Comment[pt]=Indica aos seus amigos o que você está a ouvir
 Comment[pt_BR]=Diz a seus colegas o que você está escutando
 Comment[sr]=Говори вашим другарима шта тренутно слушате
 Comment[sv]=Talar om för kompisar vad du lyssnar på
