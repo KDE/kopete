@@ -25,31 +25,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>Channel or nickname:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>addID</cstring>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>For exmaple, #kopete or SomeNickname</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="0" column="2">
-            <property name="name">
-                <cstring>searchButton</cstring>
-            </property>
-            <property name="text">
-                <string>Search</string>
-            </property>
-        </widget>
-        <widget class="QListView" row="1" column="0" rowspan="1" colspan="3">
+        <widget class="QListView" row="2" column="0" rowspan="1" colspan="3">
             <column>
                 <property name="text">
                     <string>Channel</string>
@@ -91,6 +67,43 @@
             </property>
             <property name="showSortIndicator">
                 <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="1" column="2">
+            <property name="name">
+                <cstring>searchButton</cstring>
+            </property>
+            <property name="text">
+                <string>Search</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Search Channels For:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1">
+            <property name="name">
+                <cstring>searchText</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Channel or nickname:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>addID</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>For exmaple, #kopete or SomeNickname</string>
             </property>
         </widget>
     </grid>

@@ -23,6 +23,7 @@
 class ircAddUI;
 class KopeteMetaContact;
 class IRCAccount;
+class QListViewItem;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
@@ -42,6 +43,7 @@ private slots:
 	void slotSearch();
 	void slotListedChannel( const QString &channel, uint users, const QString &topic );
 	void slotListEnd();
+	void slotSelectionChanged( QListViewItem *i );
 private:
 	IRCAccount *mAccount;
 	QString search;

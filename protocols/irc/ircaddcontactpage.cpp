@@ -25,6 +25,7 @@
 #include <kmessagebox.h>
 #include <qlistview.h>
 #include <qpushbutton.h>
+#include <kmessagebox.h>
 
 #include "ircaddcontactpage.h"
 #include "ircadd.h"
@@ -66,6 +67,8 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddCont
 	mAccount = a;
 
 	connect( ircdata->searchButton, SIGNAL( clicked() ), this, SLOT( slotSearch() ) );
+	connect( ircdata->searchResults, SIGNAL( selectionChanged( QListViewItem*)), this,
+		SLOT( slotSelectionChanged( QListViewItem *) ) );
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
@@ -76,12 +79,14 @@ void IRCAddContactPage::slotSearch()
 	ircdata->searchResults->clear();
 	if( mAccount->isConnected() )
 	{
-		search = ircdata->addID->text();
+		search = ircdata->searchText->text();
 		connect( mAccount->engine(), SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ), this,
 			SLOT( slotListedChannel( const QString &, uint, const QString & ) ) );
 		connect( mAccount->engine(), SIGNAL( incomingEndOfList() ), this, SLOT( slotListEnd() ) );
 		mAccount->engine()->list();
 	}
+	else
+		KMessageBox::error( this, i18n("You must be connected to the IRC server to perform a search."), i18n("Not Connected") );
 }
 
 void IRCAddContactPage::slotListedChannel( const QString &channel, uint users, const QString &topic )
@@ -96,6 +101,11 @@ void IRCAddContactPage::slotListedChannel( const QString &channel, uint users, c
 void IRCAddContactPage::slotListEnd()
 {
 	disconnect( mAccount->engine(), 0, this, 0 );
+}
+
+void IRCAddContactPage::slotSelectionChanged( QListViewItem *i )
+{
+	ircdata->addID->setText( i->text(0) );
 }
 
 bool IRCAddContactPage::apply(KopeteAccount *account , KopeteMetaContact *m)
