@@ -45,6 +45,9 @@ MSNMessageManager::MSNMessageManager(const KopeteContact *user, KopeteContactPtr
 }
 MSNMessageManager::~MSNMessageManager()
 {
+	//force to disconnect the switchboard
+	if(m_chatService)
+		delete m_chatService;
 }
 
 void MSNMessageManager::createChat(QString handle, QString address, QString auth, QString ID)
@@ -97,9 +100,8 @@ void MSNMessageManager::slotUpdateChatMember(QString handle, QString publicName,
 		{
 			m=new KopeteMetaContact();
 			m->setTemporary(true);
-			QString protocolid = MSNProtocol::protocol()->id();
 
-			c = new MSNContact( protocolid, handle, publicName, QString::null, m );
+			c = new MSNContact(  handle, publicName, QString::null, m );
 			connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				MSNProtocol::protocol(), SLOT( slotContactDestroyed( KopeteContact * ) ) );
 

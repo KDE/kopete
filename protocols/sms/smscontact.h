@@ -49,7 +49,6 @@ public:
 
 public slots:
 
-	void slotUnloading ( void );
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();

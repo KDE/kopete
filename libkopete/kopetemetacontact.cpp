@@ -176,7 +176,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	for( ; it.current(); ++it )
 	{
 		//kdDebug() << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
-		if( (it.current()->id() == contactId ) && (it.current()->protocol() == protocolId ) && (it.current()->identityId() == identityId))
+		if( (it.current()->id() == contactId ) && (it.current()->protocol()->id() == protocolId ) && (it.current()->identityId() == identityId))
 			return it.current();
 	}
 
@@ -331,7 +331,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	updateOnlineStatus();
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
 	{
-		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(kopeteapp->libraryLoader()->searchByID(c->protocol()));
+		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(c->protocol());
 		if (!p)
 		{
 			kdDebug() <<"KopeteMetaContact::slotContactStatusChanged: KopeteContact is not from a valid Protocol" <<endl;

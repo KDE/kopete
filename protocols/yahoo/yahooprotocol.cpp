@@ -104,7 +104,7 @@ bool YahooProtocol::serialize( KopeteMetaContact *metaContact,
 	bool done = false;
 	for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
 	{
-		if ( c->protocol() == this->id() )
+		if ( c->protocol() == this )
 		{
 			kdDebug() << "Found ICQ-Contact in MetaContact" << endl;
 			ICQContact *g = static_cast<ICQContact*>(c);
@@ -190,7 +190,7 @@ bool YahooProtocol::unload()
 		delete statusBarIcon;
     }
 
-    emit protocolUnloading();
+//    emit protocolUnloading();
     return true;
 }
 
@@ -298,7 +298,7 @@ QString YahooProtocol::protocolIcon() const
 
 // Return "add contact" dialog
 AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
-{
+ {
 	DEBUG(YDMETHOD, "YahooProtocol::createAddContactWidget(<parent>)");
 
 	return NULL; // XXX

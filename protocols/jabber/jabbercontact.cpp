@@ -51,7 +51,7 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact(QString userId, QString nickname, QStringList groups, JabberProtocol *p, KopeteMetaContact *mc, QString identity) : KopeteContact(p->id(), mc)
+JabberContact::JabberContact(QString userId, QString nickname, QStringList groups, JabberProtocol *p, KopeteMetaContact *mc, QString identity) : KopeteContact(p, mc)
 {
 
 	// save parent protocol object

@@ -113,7 +113,7 @@ bool SMSProtocol::serialize( KopeteMetaContact *metaContact,
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		if ( c->protocol() != this->id() )
+		if ( c->protocol()->id() != this->id() )
 			continue;
 
 		SMSContact *g = static_cast<SMSContact*>(c);

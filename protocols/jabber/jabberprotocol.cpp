@@ -143,16 +143,16 @@ bool JabberProtocol::unload()
 	}
 
 	// delete all contacts
-	for(JabberContactMap::iterator it = contactMap.begin(); it != contactMap.end(); it++)
+/*	for(JabberContactMap::iterator it = contactMap.begin(); it != contactMap.end(); it++)
 	{
 		delete it.data();
-	}
+	}*/
 
 	// make sure that the next attempt to load Jabber
 	// re-initializes the protocol class
 	protocolInstance = 0L;
 	
-	emit protocolUnloading();
+//	emit protocolUnloading();
 	return true;
 
 }
@@ -560,7 +560,7 @@ bool JabberProtocol::serialize(KopeteMetaContact *mc, QStringList &data) const
 	// iterate through all contacts that the metacontact has
 	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
 	{
-		if(c->protocol() != this->id())
+		if(c->protocol()->id() != this->id())
 			continue;
 
 		JabberContact *jc = (JabberContact *)c;

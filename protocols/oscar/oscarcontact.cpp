@@ -38,7 +38,7 @@
 #include "aim.h"
 
 OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
-		KopeteMetaContact *parent) : KopeteContact(protocol->id(), parent)
+		KopeteMetaContact *parent) : KopeteContact(protocol, parent)
 {
 	mName = name;
 	mProtocol = protocol;

@@ -19,7 +19,7 @@
 
 GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
                           const QString& name, KopeteMetaContact* parent )
-    : KopeteContact( GaduProtocol::protocol()->id(), parent )
+    : KopeteContact( GaduProtocol::protocol(), parent )
 {
     historyDialog_ = 0L;
     msgManager_ = 0L;

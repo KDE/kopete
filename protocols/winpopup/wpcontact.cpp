@@ -40,7 +40,7 @@
 #include "wpprotocol.h"
 #include "wpdebug.h"
 
-WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContact *parent) : KopeteContact(protocol->id(), parent)
+WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContact *parent) : KopeteContact(protocol, parent)
 {
 	DEBUG(WPDMETHOD, "WPContact::WPContact(" << host << ", <protocol>, <parent>)");
 

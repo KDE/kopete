@@ -35,6 +35,7 @@ class KAction;
 class KActionCollection;
 class KListBox;
 class KPopupMenu;
+class KopeteProtocol;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -51,7 +52,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( const QString &protocolId, KopeteMetaContact *parent );
+	KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent );
 	~KopeteContact();
 	
 	/**
@@ -205,7 +206,7 @@ public:
 	 *
 	 * @return the unique protocol id of the contact
 	 */
-	QString protocol() const { return m_protocolId; }
+	KopeteProtocol* protocol() const { return m_protocol; }
 	
 	/**
 	 * Returns a set of custom menu items for the context menu
@@ -296,6 +297,8 @@ private slots:
 	void slotChangeDisplayName();
 
 	void slotMoveDialogOkClicked();
+  /** No descriptions */
+  void slotProtocolUnloading();
 
 signals:
 	/**
@@ -335,7 +338,7 @@ signals:
 private:
 	
 	QString m_displayName;
-	QString m_protocolId;
+	KopeteProtocol *m_protocol;
 	bool mFileCapable;
 
 	/**

@@ -17,9 +17,8 @@
 */
 
 #include "kopeteprotocol.h"
-#include "kopetemetacontact.h"
-#include "kopetecontact.h"
 #include "kopete.h"
+#include "kopetemessagemanagerfactory.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
@@ -28,6 +27,7 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 
 KopeteProtocol::~KopeteProtocol()
 {
+	kopeteapp->sessionFactory()->cleanSessions(this);
 }
 
 QString KopeteProtocol::icon() const

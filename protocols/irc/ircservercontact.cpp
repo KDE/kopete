@@ -248,7 +248,7 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 			//kdDebug() << "IRCServerContact::incomingPrivMessage: add contact: " << queryName <<endl;
 			m=new KopeteMetaContact();
 			m->setTemporary(true);
-			m->addContact(new IRCContact(m_serverName, queryName, 0, this, QStringList(message), m, protocolID));
+			m->addContact(new IRCContact(m_serverName, queryName, 0, this, QStringList(message), m, m_protocol));
 			KopeteContactList::contactList()->addMetaContact(m);
 		}
 	}
@@ -279,7 +279,7 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 
 			m=new KopeteMetaContact();
 			m->setTemporary(true);
-			m->addContact(new IRCContact(m_serverName, queryName, 0, true, this, m, protocolID));
+			m->addContact(new IRCContact(m_serverName, queryName, 0, true, this, m, m_protocol));
 			KopeteContactList::contactList()->addMetaContact(m);
 		}
 	}

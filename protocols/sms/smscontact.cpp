@@ -36,7 +36,7 @@
 
 SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( protocol->id(), parent )
+: KopeteContact( protocol, parent )
 {
 	historyDialog = 0L;
 
@@ -46,17 +46,12 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 
 	m_protocol = protocol;
 
-	connect ( m_protocol, SIGNAL(unloading()), this, SLOT(slotUnloading()));
 }
 
 SMSContact::~SMSContact()
 {
 }
 
-void SMSContact::slotUnloading()
-{
-	delete this;
-}
 
 QString SMSContact::id() const
 {

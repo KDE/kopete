@@ -584,7 +584,7 @@ GaduProtocol::serialize( KopeteMetaContact *metaContact,
     KopeteContact *c;
     bool done = false;
     for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() ) {
-        if ( c->protocol() == this->id() ) {
+        if ( c->protocol()->id() == this->id() ) {
             GaduContact *g = static_cast<GaduContact*>(c);
             strList << g->name();
             done = true;

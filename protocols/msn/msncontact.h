@@ -40,7 +40,7 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-	MSNContact( QString &protocolId, const QString &msnId,
+	MSNContact( const QString &msnId,
 		const QString &displayName, const QString &group,
 		KopeteMetaContact *parent );
 	~MSNContact();

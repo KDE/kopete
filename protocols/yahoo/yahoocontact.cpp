@@ -37,7 +37,7 @@
 
 YahooContact::YahooContact(QString userID, QString fullName, QString group,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
-:  KopeteContact( protocol->id(), metaContact)
+:  KopeteContact( protocol, metaContact)
 {
 	DEBUG(YDMETHOD, "YahooContact::YahooContact("<< userID << ", " << fullName << 
 			", " << group << ", <protocol>)");

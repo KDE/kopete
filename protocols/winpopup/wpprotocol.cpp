@@ -167,7 +167,7 @@ bool WPProtocol::serialize(KopeteMetaContact *metaContact, QStringList &strList)
 
 	bool done = false;
 	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
-		if(c->protocol() == this->id())
+		if(c->protocol()->id() == this->id())
 		{
 			WPContact *curContact = static_cast<WPContact*>(c);
 			DEBUG(WPDINFO, "Sub-Contact " << curContact->host() << " is ours - serialising.");

@@ -29,6 +29,7 @@
 class IRCChatView;
 class IRCQueryView;
 class IRCServerContact;
+class KopeteProtocol;
 class KIRC;
 
 class QStringList;
@@ -40,8 +41,8 @@ class IRCContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID);
-	IRCContact(const QString &server, const QString &target, unsigned int port, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, QString &protocolID);
+	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol*);
+	IRCContact(const QString &server, const QString &target, unsigned int port, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, KopeteProtocol*);
 	~IRCContact();
 	// KopeteContact virtual functions
 	virtual ContactStatus status() const;

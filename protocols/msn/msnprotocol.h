@@ -182,7 +182,7 @@ public:
 
 
 signals:
-	void protocolUnloading();
+//	void protocolUnloading();
 
 public slots:
 	/**

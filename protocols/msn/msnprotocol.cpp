@@ -95,7 +95,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	statusBarIcon->setPixmap( offlineIcon );
 
 	// FIXME: I think we should add a global self metaContact (Olivier)
-	m_myself = new MSNContact( protocolId, m_msnId,m_publicName, "", 0L );
+	m_myself = new MSNContact( m_msnId,m_publicName, "", 0L );
 
 	if ( mPrefs->autoConnect() )
 		Connect();             
@@ -158,7 +158,7 @@ bool MSNProtocol::unload()
 		delete statusBarIcon;
 	}
 
-	emit protocolUnloading();
+//	emit protocolUnloading();
 	kdDebug() << "MSNProtocol::unload - done" << endl;
 	return true;
 }
@@ -296,7 +296,7 @@ bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		if ( c->protocol() != this->id() ) // not our contact, next one please
+		if ( c->protocol()->id() != this->id() ) // not our contact, next one please
 				continue;
 		
 		MSNContact *g = static_cast<MSNContact*>(c);
@@ -332,7 +332,7 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		// Create MSN contact
 		// FIXME: I think this should go in a single method, as it is
 		// duplicated everywhere now - Martijn
-		MSNContact *c = new MSNContact( protocolId, passport, displayName,
+		MSNContact *c = new MSNContact( passport, displayName,
 			groups.first(), metaContact );
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -558,10 +558,10 @@ void MSNProtocol::slotStartChat()
 
 void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 {
-	mIsConnected = status == MSNSocket::Connected;
+	mIsConnected = (status == MSNSocket::Connected);
 	if ( mIsConnected )
 	{
-		kopeteapp->sessionFactory()->cleanSessions(this);
+		//kopeteapp->sessionFactory()->cleanSessions(this);
 		// Sync public name when needed
 		if( m_publicNameSyncNeeded )
 		{
@@ -576,7 +576,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 				<< m_publicName << endl;
 		}
 
-		mIsConnected = true;
+//		mIsConnected = true;
 
 		// Now pending changes are updated we want to sync both ways
 		m_publicNameSyncMode = SyncBoth;
@@ -628,7 +628,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 	else if( status == MSNSocket::Disconnected )
 	{
 
-		QIntDictIterator<KopeteMessageManager> kmmIt( kopeteapp->sessionFactory()->protocolSessions( this ) );
+/*		QIntDictIterator<KopeteMessageManager> kmmIt( kopeteapp->sessionFactory()->protocolSessions( this ) );
 		for ( ; kmmIt.current() ; ++kmmIt )
 		{
 			kmmIt.current()->slotSendEnabled(false);
@@ -637,7 +637,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 				msnMM->slotCloseSession();
 			else
 				kdDebug()    << "MSNProtocol::slotOnlineStatusChanged - WARNING : msnMM is not valid" <<endl;
-		}
+		}*/
 
 		QMap<QString, MSNContact*>::Iterator it;
 		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
@@ -649,7 +649,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 		m_blockList.clear();
 		m_groupList.clear();
 
-		mIsConnected = false;
+//		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
 		m_openInboxAction->setEnabled(false);
 
@@ -1005,9 +1005,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 		else
 		{
 			m=new KopeteMetaContact();
-			QString protocolid = this->id();
 
-			MSNContact *msnContact = new MSNContact( protocolid, handle,
+			MSNContact *msnContact = new MSNContact( handle,
 				publicName, QString::null, m );
 			connect( msnContact, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -1141,14 +1140,13 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			else
 			{
 				new_contact=true;
-				QString protocol = this->id();
 
 				if(m_addWizard_metaContact)
 					m=m_addWizard_metaContact;
 				else
 					m=new KopeteMetaContact();
 
-				MSNContact *c = new MSNContact( protocol, handle, publicName, gn, m );
+				MSNContact *c = new MSNContact( handle, publicName, gn, m );
 				connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 					SLOT( slotContactDestroyed( KopeteContact * ) ) );
 				//m_metaContacts.insert( m, c );
@@ -1274,7 +1272,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			m->setTemporary(true);
 			QString protocolid = this->id();
 
-			MSNContact *msnContact = new MSNContact( protocolid, handle, publicName, QString::null, m );
+			MSNContact *msnContact = new MSNContact( handle, publicName, QString::null, m );
 			connect( msnContact, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				SLOT( slotContactDestroyed( KopeteContact * ) ) );
 			//m_metaContacts.insert( m, msnContact );
@@ -1308,6 +1306,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			manager->readMessages();
 		}
 	}
+
 }
 
 void MSNProtocol::slotStartChatSession( QString handle )

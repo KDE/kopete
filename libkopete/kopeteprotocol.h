@@ -76,12 +76,6 @@ public:
 	 */
 	bool canSendOffline() const { return false; }
 
-protected slots:
-	void percentCompleted( const KopeteFileTransferInfo *,int percentDone );
-
-signals:
-	void transferCanceled( const KopeteFileTransferInfo * );
-
 	/**
 	 * Function has to be reimplemented in every single protocol
 	 * and return the KopeteContact associated with the 'home' user.
@@ -92,6 +86,7 @@ signals:
 
 private:
 	QString m_icon;
+
 };
 
 #endif

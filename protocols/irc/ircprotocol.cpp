@@ -182,14 +182,14 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
 	if (serverContact != 0)
 	{
-		m->addContact( new IRCContact(server, contact, 0, joinNow, serverContact, m, protocolID));
+		m->addContact( new IRCContact(server, contact, 0, joinNow, serverContact, m, this));
 	}
 	else
 	{
 		IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
 		if (serverItem != 0)
 		{
-			m->addContact(new IRCContact(server, contact, 0, joinNow, serverItem, m, protocolID));
+			m->addContact(new IRCContact(server, contact, 0, joinNow, serverItem, m, this));
 		}
 	}
 }
@@ -272,7 +272,7 @@ bool IRCProtocol::serialize(KopeteMetaContact * metaContact, QStringList & strLi
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		if ( c->protocol() != this->id() ) // not our contact, next one please
+		if ( c->protocol()->id() != this->id() ) // not our contact, next one please
 				continue;
 
 		IRCContact *g = static_cast<IRCContact*>(c);

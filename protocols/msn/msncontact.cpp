@@ -35,10 +35,10 @@
 
 #include "msninfo.h"
 
-MSNContact::MSNContact( QString &protocolId, const QString &msnId,
+MSNContact::MSNContact( const QString &msnId,
 	const QString &displayName, const QString &group,
 	KopeteMetaContact *parent )
-: KopeteContact( protocolId, parent )
+: KopeteContact( MSNProtocol::protocol(), parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;

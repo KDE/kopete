@@ -22,7 +22,7 @@
 #include "irc_channel_tabwidget.h"
 #include "ircchatview.h"
 #include "ircchatwindow.h"
-#include "ircprotocol.h"
+//#include "ircprotocol.h"
 #include "ircqueryview.h"
 #include "ircservercontact.h"
 #include "kirc.h"
@@ -46,8 +46,8 @@
 #include <qtextedit.h>
 #include <qvbox.h>
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
-	: KopeteContact(protocolID, parent),
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol)
+	: KopeteContact(protocol, parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
@@ -62,8 +62,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, 
 		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
-		       KopeteMetaContact *parent, QString &protocolID)
-	: KopeteContact(protocolID, parent),
+		       KopeteMetaContact *parent, KopeteProtocol *protocol)
+	: KopeteContact(protocol, parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;

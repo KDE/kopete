@@ -73,7 +73,11 @@ public slots:
 private:
 	KopeteFileTransferInfo *mInfo;
 	int mPercent;
+
+//protected slots:
+//	void percentCompleted( const KopeteFileTransferInfo *,int percentDone );
 signals:
+	void transferCanceled( const KopeteFileTransferInfo * );
 	void done( KopeteTransfer* );
 };
 

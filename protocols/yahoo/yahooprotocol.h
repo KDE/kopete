@@ -83,7 +83,7 @@ public slots:
 	// XXX void slotDisconnect();
 
 signals:
-	void protocolUnloading();	// Unload Protocol
+//	void protocolUnloading();	// Unload Protocol
 
 protected slots:
 	void slotConnected();

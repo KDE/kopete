@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <klistview.h>
+//#include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kaction.h>
@@ -35,19 +35,22 @@
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
+#include "kopeteprotocol.h"
 #include "kopetecontactlistview.h"
 
-KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *parent )
+KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent )
 	: QObject( parent )
 {
 	connect(this, SIGNAL(incomingEvent(KopeteEvent *)), kopeteapp, SLOT(notifyEvent(KopeteEvent *)));
 
 	m_metaContact = parent;
-	m_protocolId = protocolId;
+	m_protocol = protocol;
 	m_cachedSize = 0;
 	m_cachedOldStatus = Offline;
 	contextMenu = 0L;
 	mFileCapable = false;
+
+	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
 	
 	/* Initialize the context Menu */
 	initActions();
@@ -56,17 +59,23 @@ KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *pare
 KopeteContact::~KopeteContact()
 {
 //	if(contextMenu != 0L)
-	delete contextMenu;
+/*	delete contextMenu;
 	delete actionSendMessage;
 	delete actionDeleteContact;
 	delete actionChangeMetaContact;
 	delete actionViewHistory;
 	delete actionChangeAlias;
 	delete actionUserInfo;
-	delete actionSendFile;
+	delete actionSendFile;*/
 	
 	emit( contactDestroyed( this ) );
 }
+
+void KopeteContact::slotProtocolUnloading()
+{
+	delete this;
+}
+
 
 QString KopeteContact::identityId() const
 {

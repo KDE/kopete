@@ -81,12 +81,16 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	}
 	else
 		d->mLogger = 0L;
+
+	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
 }
 
 KopeteMessageManager::~KopeteMessageManager()
 {
 	kdDebug() << "KopeteMessageManager::~KopeteMessageManager" <<endl;
+	d->mCanBeDeleted=false; //prevent double deletion
 	emit dying(this);
+	delete widget();
 	delete d;
 	d = 0;
 }

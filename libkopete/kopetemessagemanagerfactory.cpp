@@ -149,6 +149,7 @@ KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopetePr
 		if ( it.current()->protocol() == protocol )
 		{
 			protocolSessions.insert( it.current()->id(), it.current() );
+//			kdDebug() << "KopeteMessageManagerFactory::protocolSessions : found one" << endl;
 		}
 	}
 	return protocolSessions;
@@ -156,9 +157,13 @@ KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopetePr
 
 void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
-	QIntDictIterator<KopeteMessageManager> it( protocolSessions( protocol ) );
+	KopeteMessageManagerDict sessions=protocolSessions( protocol );
+//	kdDebug() << "KopeteMessageManagerFactory::cleanSessions " <<sessions.count() << endl;
+	QIntDictIterator<KopeteMessageManager> it( sessions );
+	
 	for ( ; it.current() ; ++it )
 	{
+//		kdDebug() << "KopeteMessageManagerFactory::cleanSessions : delete one later" << endl;
 		//slotRemoveSession( it.current() );
 		it.current()->deleteLater();
 	}

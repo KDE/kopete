@@ -213,7 +213,7 @@ public slots:
 	void slotRetrieveVCard (const Jid &);
 
 signals:
-	void protocolUnloading();
+//	void protocolUnloading();
 	void settingsChanged();
 
 private slots:
