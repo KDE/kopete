@@ -248,8 +248,12 @@ void KopeteEmailWindow::initActions(void)
 	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
 		this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
 
+/*
+	// FIXME: This code was marked as KDE < 3.1 specific. Can we remove it?
+	//        Commented out for now, see if (and if so, where) it breaks - Martijn
 	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), coll );
+*/
 
 	d->actionSmileyMenu = new KopeteEmoticonAction( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
 	d->actionSmileyMenu->setDelayed( false );

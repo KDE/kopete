@@ -356,8 +356,12 @@ void KopeteChatWindow::initActions(void)
 		this, SLOT( slotHistoryDown() ), coll, "history_down" );
 	historyDown->setShortcut( QKeySequence(CTRL + Key_Down) );
 
+/*
+	// FIXME: This code was marked as KDE < 3.1 specific. Can we remove it?
+	//        Commented out for now, see if (and if so, where) it breaks - Martijn
 	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 	viewStatusBar = KStdAction::showStatusbar( this, SLOT(slotViewStatusBar()), coll );
+*/
 
 	membersLeft = new KToggleAction( i18n( "Place Left of Chat Area" ), QString::null, 0,
 		this, SLOT( slotViewMembersLeft() ), coll, "options_membersleft" );
