@@ -94,10 +94,10 @@ void KopeteMessageManager::setContactOnlineStatus( const KopeteContact *contact,
 	d->contactStatus[ contact ] = status;
 }
 
-const KopeteOnlineStatus &KopeteMessageManager::contactOnlineStatus( const KopeteContact *contact ) const
+const KopeteOnlineStatus KopeteMessageManager::contactOnlineStatus( const KopeteContact *contact ) const
 {
-	//if( d->contactStatus.contains( contact ) )
-	//	return d->contactStatus[ contact ];
+	if( d->contactStatus.contains( contact ) )
+		return d->contactStatus[ contact ];
 
 	return contact->onlineStatus();
 }

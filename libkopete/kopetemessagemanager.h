@@ -101,7 +101,7 @@ public:
 
 	void setContactOnlineStatus( const KopeteContact*, const KopeteOnlineStatus & );
 
-	const KopeteOnlineStatus &contactOnlineStatus( const KopeteContact* ) const;
+	const KopeteOnlineStatus contactOnlineStatus( const KopeteContact* ) const;
 
 signals:
 	/**
@@ -139,8 +139,6 @@ signals:
 	 * Signals that a remote user is typing a message.
 	 */
 	void remoteTyping( const KopeteContact *, bool );
-
-	void dying( QWidget* );
 
 public slots:
 	/**
