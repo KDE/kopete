@@ -37,10 +37,16 @@ int main(int argc, char *argv[])
   KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
     version, description, KAboutData::License_GPL,
     "(c) 2001, Duncan Mac-Vicar Prett", 0, 0, "duncan@puc.cl");
-  aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@puc.cl","http://www.mac-vicar.com");
-  aboutData.addAuthor ("Nick Betcher", "core developer","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
-  KCmdLineArgs::init( argc, argv, &aboutData );
-  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+ 	
+	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@puc.cl","http://www.mac-vicar.com");
+	aboutData.addAuthor ("Nick Betcher", "core developer","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
+
+	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
+	aboutData.addCredit("Olaf Lueg", I18N_NOOP("Kmerlin MSN Code"));
+	aboutData.addCredit("Neil Stevens", I18N_NOOP("TAim engine AIM Code"));
+	
+	KCmdLineArgs::init( argc, argv, &aboutData );
+	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
 
   Kopete kopete;
