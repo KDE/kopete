@@ -90,9 +90,6 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
 
-	for ( KopeteContact *contact = d->mContactList.first(); contact; contact = d->mContactList.next() )
-		connect (contact->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
-
 	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
@@ -103,6 +100,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mLogger = new KopeteMessageLog( logFileName, this );
 
 //	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
+
+	kdDebug(14010) << k_funcinfo << endl;
 }
 
 KopeteMessageManager::~KopeteMessageManager()
@@ -209,6 +208,8 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 {
 	bool mappedWindowCreated = false;
 
+	kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
+
 	//Determine tabbed window settings
 	switch( KopetePrefs::prefs()->chatWindowPolicy() )
 	{
@@ -267,8 +268,6 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			break;
 	}
 
-	kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
-
 	//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
 	if( mappedWindowCreated )
 	{
@@ -276,6 +275,8 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			chatWindowMap()->insert(d->mProtocol, static_cast<KopeteChatWindow*>(myWindow) );
 		chatWindowList()->append( static_cast<KopeteChatWindow*>(myWindow) );
 	}
+
+	kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
 
 	return static_cast<KopeteChatWindow *>( myWindow );
 }
