@@ -1,6 +1,10 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+o ICQ Plugin
+	 o New ICQ-Userinfo Dialog, now tabbed and more infos (Stefan)
+	 o Make 'Web Awareness' and 'Hide IP' configurable (Stefan)
+
 01-Jun-2002 Released Kopete 0.4
 ==============================
 
