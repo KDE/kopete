@@ -194,7 +194,9 @@ void KopeteAccount::loaded()
 
 QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
-	if(ok) *ok=true;
+	if( ok )
+		*ok = true;
+
 	if ( !d->password.isNull() )
 	{
 		//if the cached password was wrong, we remove it
@@ -210,33 +212,39 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
 
 	if ( error )
-		view->m_text->setText(i18n("<b>The password was wrong! Please re-enter your password for %1</b>").arg(protocol()->displayName()));
+	{
+		view->m_text->setText( i18n( "<b>The password was wrong! Please re-enter your password for %1</b>" ).
+			arg( protocol()->displayName() ) );
+	}
 	else
-		view->m_text->setText(i18n("Please enter password for %1").arg(protocol()->displayName()));
+	{
+		view->m_text->setText( i18n( "Please enter password for %1" ).arg( protocol()->displayName() ) );
+	}
 
-	passwdDialog->setMainWidget(view);
+	passwdDialog->setMainWidget( view );
 
-	view->m_login->setText(d->id);
+	view->m_login->setText( d->id );
 	view->m_autologin->setChecked( d->autologin );
-	if(maxLength!=0)
-		view->m_password->setMaxLength(maxLength);
+	if ( maxLength != 0 )
+		view->m_password->setMaxLength( maxLength );
 
 	view->adjustSize();
 	passwdDialog->adjustSize();
 
 	QString pass;
-	if(passwdDialog->exec() == QDialog::Accepted )
+	if( passwdDialog->exec() == QDialog::Accepted )
 	{
-		pass=view->m_password->text();
-		if(view->m_save_passwd->isChecked())
-			setPassword(pass);
-		d->autologin=view->m_autologin->isChecked();
+		pass = view->m_password->text();
+		if ( view->m_save_passwd->isChecked() )
+			setPassword( pass );
+		d->autologin = view->m_autologin->isChecked();
 	}
 	else
 	{
 		if ( ok )
             *ok = false;
 	}
+
 	passwdDialog->deleteLater();
 	return pass;
 }
