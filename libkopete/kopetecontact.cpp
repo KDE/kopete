@@ -218,11 +218,12 @@ void KopeteContact::sendFile( const KURL &, const QString &, const long unsigned
 KPopupMenu* KopeteContact::createContextMenu()
 {
 	//FIXME: this should perhaps be KActionCollection * KopeteContact::contactActions()
-	//FIXME: to avoid passing aorund KPopupMenu's
+	//FIXME: to avoid passing around KPopupMenu's
 
-	/* Build the menu */
+	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
-	menu->insertTitle( i18n( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() ) );
+
+	menu->insertTitle( QString::fromLatin1("%1 <%2> (%3)").arg(displayName()).arg(contactId()).arg(statusText()) );
 
 	actionSendMessage->plug( menu );
 	actionSendMessage->setEnabled( isReachable() );
@@ -240,10 +241,10 @@ KPopupMenu* KopeteContact::createContextMenu()
 	if (mFileCapable)
 		actionSendFile->plug( menu );
 
-	/* Protocol specific options will go below this separator
-	 * through the use of the customContextMenuActions() function
-	 */
-	/* Get the custom actions from the protocols (pure virtual function) */
+	// Protocol specific options will go below this separator
+	// through the use of the customContextMenuActions() function
+
+	// Get the custom actions from the protocols (pure virtual function)
 	KActionCollection *customActions = customContextMenuActions();
 	if(customActions != 0L)
 	{
@@ -276,10 +277,10 @@ void KopeteContact::showContextMenu(const QPoint& p)
 void KopeteContact::slotChangeDisplayName(){
 	bool okClicked;
 	QString newName = KLineEditDlg::getText(i18n("Change Alias"), i18n("New alias for %1").arg(contactId()),
-											 displayName(), &okClicked);
-	if(okClicked){
+		displayName(), &okClicked);
+
+	if(okClicked)
 		setDisplayName( newName );
-	}
 }
 
 void KopeteContact::slotChangeMetaContact()
