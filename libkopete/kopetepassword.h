@@ -87,6 +87,7 @@ public:
 	 *
 	 * @see request for description of arguments
 	 * @return The password or QString::null if the user has canceled
+	 * @note will not update the cachedValue() property
 	 */
 	QString retrieve( const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser ) KDE_DEPRECATED;
 
@@ -128,6 +129,13 @@ public:
 	 * pop up an Enter Password window.
 	 */
 	bool remembered();
+
+	/**
+	 * When a password request succeeds, the password is cached. This function
+	 * returns the cached password, if there is one, or QString::null if there
+	 * is not.
+	 */
+	QString cachedValue();
 
 public slots:
 	/**

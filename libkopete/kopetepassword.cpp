@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+#include "kopeteuiglobal.h"
 #include "kopetepassword.h"
 #include "kopetepassworddialog.h"
 #include "kopetewalletmanager.h"
@@ -72,6 +73,8 @@ struct KopetePassword::KopetePasswordPrivate
 	uint maximumLength;
 	/** Is the current password known to be wrong? */
 	bool isWrong;
+	/** The cached password */
+	QString cachedValue;
 };
 
 /**
@@ -152,6 +155,7 @@ public:
 
 	void finished( const QString &result )
 	{
+		mPassword.d->cachedValue = result;
 		emit requestFinished( result );
 		delete this;
 	}
@@ -178,7 +182,7 @@ public:
 	{
 		kdDebug( 14010 ) << k_funcinfo << endl;
 
-		KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
+		KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 			KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 	
 		mView = new KopetePasswordDialog( passwdDialog );
@@ -260,17 +264,21 @@ public:
 	void processRequest()
 	{
 		if ( setPassword() )
+		{
 			mPassword.setWrong( false );
+			mPassword.d->cachedValue = mNewPass;
+		}
 		delete this;
 	}
 	bool setPassword()
 	{
 		//TODO: refactor this function to remove duplication
 		// and possibly to make it not need to be a friend of KopetePassword
+
 		if ( mNewPass.isNull() )
 		{
 			kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
-	
+
 			mPassword.d->remembered = false;
 			mPassword.d->passwordFromKConfig = QString::null;
 			mPassword.writeConfig();
@@ -278,9 +286,9 @@ public:
 				mWallet->removeEntry( mPassword.d->configGroup );
 			return true;
 		}
-	
+
 		kdDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
-	
+
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
 			mPassword.d->remembered = true;
@@ -298,10 +306,10 @@ public:
 			// nested event loop, and the user clicks 'Store Unsafe', we will crash!
 
 			// solution: reparent to none, and track the parent. if it's deleted, don't use it.
-			parent()->removeChild( this );
+			mPassword.removeChild( this );
 			QGuardedPtr<KopetePassword> watchParent = &mPassword;
 
-			if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
+			if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 			        i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
 			              "Do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
 			        i18n( "Unable to Store Secure Password" ),
@@ -316,14 +324,15 @@ public:
 			// sure we don't crash; tell the user and abort.
 			//TODO: either handle this properly (ie make sure we actually save the password) or
 			//      don't stop the app from closing when we're waiting to save it.
+			// solution: reference count the password object. (TODO)
 			if ( watchParent.isNull() )
 			{
-				KMessageBox::error( qApp->mainWidget(), i18n( "Sorry, your password could not be saved at this time." ),
+				KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "Sorry, your password could not be saved at this time." ),
 				                    i18n( "Unable to Store Password" ) );
 				return false;
 			}
 		}
-	
+
 		mPassword.d->remembered = true;
 		mPassword.d->passwordFromKConfig = mNewPass;
 		mPassword.writeConfig();
@@ -398,6 +407,8 @@ void KopetePassword::setWrong( bool bWrong )
 {
 	d->isWrong = bWrong;
 	writeConfig();
+
+	if ( bWrong ) d->cachedValue = QString::null;
 }
 
 void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot )
@@ -440,7 +451,7 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, K
 			return d->passwordFromKConfig;
 	}
 	
-	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
+	KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
@@ -468,8 +479,18 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, K
 	return pass;
 }
 
+QString KopetePassword::cachedValue()
+{
+	return d->cachedValue;
+}
+
 void KopetePassword::set( const QString &pass )
 {
+	// if we're being told to forget the password, and we aren't remembering one,
+	// don't try to open the wallet. fixes bug #71804.
+	if ( pass.isNull() && !remembered() )
+		return;
+
 	KopetePasswordRequest *request = new KopetePasswordSetRequest( *this, pass );
 	request->begin();
 }
