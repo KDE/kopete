@@ -14,10 +14,12 @@ enhancements and bugfixes since the last release and should bring your
 Kopete experience to a whole new level.
 
 Additionally there are some new plugins, but not all of them are considered
-fully usable yet. The Gadu-Gadu plugin is complete and supported. WinPopup
-should be complete, but is not yet supported in this release. The Yahoo
-plugin and the new Oscar plugin (which is scheduled to replace both the ICQ
-and AIM plugins) are under development and not ready for general use yet.
+fully usable yet. The Gadu-Gadu plugin is complete and supported. To use 
+Gadu-Gadu plugin you have to set up libgadu in your system, both runtime
+and development part. WinPopup should be complete, but is not yet supported 
+in this release. The Yahoo plugin and the new Oscar plugin (which is scheduled 
+to replace both the ICQ and AIM plugins) are under development and not ready 
+for general use yet.
 
 As always, bug reports and patches are welcome, but especially for the new
 'unsupported' plugins we'd like you to check the current development version
