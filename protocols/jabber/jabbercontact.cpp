@@ -76,6 +76,10 @@ void JabberContact::initContact(QString &userID, QString &nickname, QString &gro
 		nickname = userID;
 		hasLocalName = false;
 	}
+	else
+	{
+		hasLocalName = true;
+	}
 
 	// initialize protocol-specific variables
 	mGroup = group;
@@ -290,7 +294,11 @@ void JabberContact::slotRenameContact()
 	dlgRename = new dlgJabberRename;
 
 	dlgRename->lblUserID->setText(userID());
-	dlgRename->leNickname->setText(name());
+	
+	if(hasLocalName)
+		dlgRename->leNickname->setText(displayName());
+	else
+		dlgRename->leNickname->setText(userID());
 
 	connect(dlgRename->btnRename, SIGNAL(clicked()), this, SLOT(slotDoRenameContact()));
 
