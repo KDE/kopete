@@ -17,13 +17,14 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qcheckbox.h>
+#include <qgroupbox.h>
 #include <qlistview.h>
 
 #include <klocale.h>
 #include <klineedit.h>
 #include <kglobal.h>
 #include <kgenericfactory.h>
+#include <kautoconfig.h>
 
 #include "autoreplaceprefs.h"
 #include "autoreplacepreferences.h"
@@ -34,7 +35,7 @@ typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) )
 
 AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /* name */, const QStringList &args )
-: KCModule( AutoReplacePreferencesFactory::instance(), parent, args )
+: KCAutoConfigModule( AutoReplacePreferencesFactory::instance(), parent, args )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new AutoReplacePrefsUI( this );
@@ -53,8 +54,11 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 	connect( preferencesDialog->m_value, SIGNAL(textChanged ( const QString & )),
 		SLOT( slotEnableAdd()) ); */
 
-	m_config = new AutoReplaceConfig;
+	m_wordListChanged=false;
 
+	setMainWidget( preferencesDialog->gb_options , "AutoReplace Plugin" );
+
+	m_config = new AutoReplaceConfig;
 	load();
 }
 
@@ -80,13 +84,8 @@ void AutoReplacePreferences::load()
 		new QListViewItem( preferencesDialog->m_list, it.key(), it.data() );
 	}
 
-	// checkboxes
-	preferencesDialog->m_cb_incoming->setChecked( m_config->autoReplaceIncoming() );
-	preferencesDialog->m_cb_outgoing->setChecked( m_config->autoReplaceOutgoing() );
-	preferencesDialog->m_cb_dot->setChecked( m_config->dotEndSentence() );
-	preferencesDialog->m_cb_upper->setChecked( m_config->capitalizeBeginningSentence() );
-
-	setChanged( false );
+	m_wordListChanged=false;
+	KCAutoConfigModule::load();
 }
 
 // save list to kopeterc and creates map out of it
@@ -99,17 +98,10 @@ void AutoReplacePreferences::save()
 
 	// save the words list
 	m_config->setMap( newWords );
-
-	// save checkboxes
-	m_config->setAutoReplaceIncoming( preferencesDialog->m_cb_incoming->isChecked() );
-	m_config->setAutoReplaceOutgoing( preferencesDialog->m_cb_outgoing->isChecked() );
-	m_config->setDotEndSentence( preferencesDialog->m_cb_dot->isChecked() );
-	m_config->setCapitalizeBeginningSentence( preferencesDialog->m_cb_upper->isChecked() );
-
-	// save all config to kopeterc
 	m_config->save();
 
-	setChanged( false ); 
+	m_wordListChanged=false;
+	KCAutoConfigModule::save();
 }
 
 // read m_key m_value, create a QListViewItem
@@ -129,8 +121,9 @@ void AutoReplacePreferences::slotAddCouple()
 		// select last added
 		preferencesDialog->m_list->setSelected(lvi, true);
 	}
-	
-	setChanged( true );
+
+	m_wordListChanged=true;
+	slotWidgetModified();
 }
 
 // Returns a pointer to the selected item if the list view is in
@@ -140,8 +133,9 @@ void AutoReplacePreferences::slotRemoveCouple()
 	QListViewItem * lvi = preferencesDialog->m_list->selectedItem();
 	if( lvi )
 		delete lvi;
-	
-	setChanged( true );	
+
+	m_wordListChanged=true;
+	slotWidgetModified();
 }
 
 /*
@@ -155,6 +149,11 @@ void AutoReplacePreferences::slotEnableRemove()
 	preferencesDialog->m_remove->setEnabled( true );
 }
 */
+
+void AutoReplacePreferences::slotWidgetModified()
+{
+	setChanged( m_wordListChanged || autoConfig()->hasChanged() ) ;
+}
 
 #include "autoreplacepreferences.moc"
 

@@ -10,8 +10,11 @@
             <x>0</x>
             <y>0</y>
             <width>542</width>
-            <height>387</height>
+            <height>391</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>AutoReplacePrefsUI</string>
     </property>
     <grid>
         <property name="name">
@@ -59,7 +62,34 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLayoutWidget" row="1" column="1" rowspan="2" colspan="1">
+        <widget class="QGroupBox" row="1" column="0">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Words to Replace</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QListView" row="0" column="0">
+                    <property name="name">
+                        <cstring>m_list</cstring>
+                    </property>
+                    <property name="selectionMode">
+                        <enum>Single</enum>
+                    </property>
+                    <property name="allColumnsShowFocus">
+                        <bool>true</bool>
+                    </property>
+                    <property name="showSortIndicator">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLayoutWidget" row="1" column="1">
             <property name="name">
                 <cstring>layout3</cstring>
             </property>
@@ -104,43 +134,16 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>21</width>
-                            <height>251</height>
+                            <width>20</width>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>
             </vbox>
         </widget>
-        <widget class="QGroupBox" row="1" column="0">
+        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>groupBox1</cstring>
-            </property>
-            <property name="title">
-                <string>Words to Replace</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QListView" row="0" column="0">
-                    <property name="name">
-                        <cstring>m_list</cstring>
-                    </property>
-                    <property name="selectionMode">
-                        <enum>Single</enum>
-                    </property>
-                    <property name="allColumnsShowFocus">
-                        <bool>true</bool>
-                    </property>
-                    <property name="showSortIndicator">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QGroupBox" row="2" column="0">
-            <property name="name">
-                <cstring>groupBox2</cstring>
+                <cstring>gb_options</cstring>
             </property>
             <property name="title">
                 <string>Options</string>
@@ -151,7 +154,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_cb_incoming</cstring>
+                        <cstring>AutoReplaceIncoming</cstring>
                     </property>
                     <property name="text">
                         <string>Auto replace on incoming messages</string>
@@ -159,15 +162,18 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_cb_outgoing</cstring>
+                        <cstring>AutoReplaceOutgoing</cstring>
                     </property>
                     <property name="text">
                         <string>Auto replace on outgoing messages</string>
                     </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_cb_dot</cstring>
+                        <cstring>DotEndSentence</cstring>
                     </property>
                     <property name="text">
                         <string>Add a dot at the end of each sent line</string>
@@ -175,7 +181,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_cb_upper</cstring>
+                        <cstring>CapitalizeBeginningSentence</cstring>
                     </property>
                     <property name="text">
                         <string>Start each sent line with a capital letter</string>

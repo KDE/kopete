@@ -82,26 +82,6 @@ void AutoReplaceConfig::setMap( const WordsToReplace &w )
 	m_map = w;
 }
 
-void AutoReplaceConfig::setAutoReplaceIncoming( bool b )
-{
-	m_autoreplaceIncoming = b;
-}
-
-void AutoReplaceConfig::setAutoReplaceOutgoing( bool b )
-{
-	m_autoreplaceOutgoing = b;
-}
-
-void AutoReplaceConfig::setDotEndSentence( bool b )
-{
-	m_addDot = b;
-}
-
-void AutoReplaceConfig::setCapitalizeBeginningSentence( bool b )
-{
-	m_upper = b;
-}
-
 AutoReplaceConfig::WordsToReplace AutoReplaceConfig::map() const
 {
 	return m_map;
@@ -121,10 +101,6 @@ void AutoReplaceConfig::save()
 	}
 
 	config->writeEntry( "WordsToReplace", newWords );
-	config->writeEntry( "AutoReplaceIncoming", m_autoreplaceIncoming );
-	config->writeEntry( "AutoReplaceOutgoing", m_autoreplaceOutgoing );
-	config->writeEntry( "DotEndSentence", m_addDot );
-	config->writeEntry( "CapitalizeBeginningSentence", m_upper );
 
 	config->sync();
 }

@@ -18,18 +18,18 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-#include <kcmodule.h>
+#include <kcautoconfigmodule.h>
 
 class AutoReplacePrefsUI;
 class AutoReplaceConfig;
 
 	// TODO
-	// add button enabled only when k and v are present 
-	// remove button enabled only when a QListViewItem is selected 
+	// add button enabled only when k and v are present
+	// remove button enabled only when a QListViewItem is selected
 	// signal/slot when map changes (needed?)
 	// capital letter not just at the beginning but always after ". ", "! "...
 
-class AutoReplacePreferences : public KCModule
+class AutoReplacePreferences : public KCAutoConfigModule
 {
 	Q_OBJECT
 
@@ -47,10 +47,13 @@ private slots:
 	/* void slotEnableAdd();
 	void slotEnableRemove(); */
 
+protected slots:
+	virtual void slotWidgetModified();
 private:
 	AutoReplacePrefsUI * preferencesDialog;
-
 	AutoReplaceConfig *m_config;
+
+	bool m_wordListChanged;
 };
 
 #endif

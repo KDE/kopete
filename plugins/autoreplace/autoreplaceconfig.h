@@ -39,10 +39,6 @@ public:
 	bool capitalizeBeginningSentence() const;
 
 	void setMap( const WordsToReplace &w );
-	void setAutoReplaceIncoming( bool b );
-	void setAutoReplaceOutgoing( bool b );
-	void setDotEndSentence( bool b );
-	void setCapitalizeBeginningSentence( bool b );
 
 private:
 	WordsToReplace m_map;
