@@ -63,7 +63,7 @@ KopeteMetaContact::KopeteMetaContact()
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
 	d->idleState = Unspecified;
-	d->contactId = QString();
+	d->contactId = QString::null;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
