@@ -783,3 +783,8 @@ Comment[sv]=En ICQ-användare har tillåtit eller nekat till din begäran om beh
 Comment[uk]=Користувач ICQ затвердив/відхилив ваш запит на авторизацію
 Comment[zh_CN]=ICQ 用户同意/拒绝了您的身份验证请求
 default_presentation=16
+
+[irc_event]
+Name=IRC Event
+Comment=An IRC event has occurred
+default_presentation=16
