@@ -51,7 +51,8 @@ class KopeteView
 		 * @return The KopeteMessageManager that the view is in communication
 		 * with.
 		 */
-		KopeteMessageManager *msgManager() ;
+		KopeteMessageManager *msgManager();
+		const KopeteMessageManager *msgManager() const;
 
 		/**
 		 * @return The KopeteView::ViewType of the view

@@ -27,6 +27,11 @@ KopeteMessageManager *KopeteView::msgManager()
 	return m_manager;
 }
 
+const KopeteMessageManager *KopeteView::msgManager() const
+{
+	return m_manager;
+}
+
 KopeteMessage::MessageType KopeteView::viewType()
 {
 	return m_type;
