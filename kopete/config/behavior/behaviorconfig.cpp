@@ -37,7 +37,7 @@
 #include <qtabwidget.h>
 
 typedef KGenericFactory<BehaviorConfig, QWidget> KopeteBehaviorConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFactory( "kcm_kopete_behaviorconfig" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFactory( "kcm_kopete_behaviorconfig" ) )
 
 
 BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const QStringList &args) :

@@ -32,7 +32,7 @@
 #include "kopeteviewmanager.h"
 
 typedef KGenericFactory<KopeteViewManager> ViewManagerFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatwindow" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatwindow" )  )
 
 
 

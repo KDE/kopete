@@ -301,10 +301,6 @@
     <include location="local" impldecl="in implementation">wppreferences.h</include>
     <include location="local" impldecl="in implementation">wppreferencesbase.ui.h</include>
 </includes>
-<forwards>
-    <forward></forward>
-    <forward></forward>
-</forwards>
 <slots>
     <slot>doRefreshDisplay()</slot>
 </slots>

@@ -481,7 +481,7 @@ KopeteAccount * KopeteContact::account() const
 KActionCollection * KopeteContact::customContextMenuActions()
 {
 	return 0L;
-};
+}
 
 bool KopeteContact::isFileCapable() const
 {

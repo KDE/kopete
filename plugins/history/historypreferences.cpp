@@ -31,7 +31,7 @@
 
 typedef KGenericFactory<HistoryPreferences> HistoryConfigFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) )
 
 HistoryPreferences::HistoryPreferences( QWidget *parent, const char * /* name */, const QStringList &args )
 : KCModule( HistoryConfigFactory::instance(), parent, args )

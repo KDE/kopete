@@ -970,7 +970,7 @@ int YahooSession::_hostAsyncConnectReceiver(char *host, int port,  yahoo_connect
 	else if(error == -1 && errno == EINPROGRESS)
 	{
 		kdDebug(14180) << k_funcinfo << " In progress?" << endl;
-		ccd = calloc(1, sizeof(struct connect_callback_data));
+		ccd = ( struct connect_callback_data* ) calloc(1, sizeof(struct connect_callback_data));
 		ccd->callback = callback;
 		ccd->callback_data = callback_data;
 		ccd->id = m_connId;

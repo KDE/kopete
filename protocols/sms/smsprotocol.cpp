@@ -29,7 +29,7 @@
 #include "smspreferences.h"
 
 typedef KGenericFactory<SMSProtocol> SMSProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  )
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
 

@@ -36,7 +36,7 @@
 
 typedef KGenericFactory<MSNPreferences> MSNProtocolConfigFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_msn, MSNProtocolConfigFactory( "kcm_kopete_msn" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_msn, MSNProtocolConfigFactory( "kcm_kopete_msn" ) )
 
 MSNPreferences::MSNPreferences( QWidget *parent, const char * /* name */, const QStringList &args )
 : KCModule( MSNProtocolConfigFactory::instance(), parent, args )

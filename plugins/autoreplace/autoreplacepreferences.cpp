@@ -31,7 +31,7 @@
 
 typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) )
 
 AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /* name */, const QStringList &args )
 : KCModule( AutoReplacePreferencesFactory::instance(), parent, args )

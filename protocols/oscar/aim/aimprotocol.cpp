@@ -30,7 +30,7 @@
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim_protocol" ) );
+K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim_protocol" ) )
 
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 

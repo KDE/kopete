@@ -25,7 +25,7 @@
 #include "webpresencepreferences.h"
 
 typedef KGenericFactory<WebPrecencePreferences> WebPrecencePreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPrecencePreferencesFactory("kcm_kopete_webpresence"));
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPrecencePreferencesFactory("kcm_kopete_webpresence"))
 
 WebPrecencePreferences::WebPrecencePreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(WebPrecencePreferencesFactory::instance(), parent, args)

@@ -36,7 +36,7 @@
 #include "highlightpreferences.h"
 
 typedef KGenericFactory<HighlightPreferences> HighlightPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_highlight, HighlightPreferencesFactory( "kcm_kopete_highlight" )  );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_highlight, HighlightPreferencesFactory( "kcm_kopete_highlight" )  )
 
 HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(HighlightPreferencesFactory::instance(), parent, args)

@@ -22,7 +22,7 @@ struct Data
 };
 
 typedef KParts::GenericFactory<KRichTextEditPart> KRichTextEditPartFactory;
-K_EXPORT_COMPONENT_FACTORY( libkrichtexteditpart,  KRichTextEditPartFactory );
+K_EXPORT_COMPONENT_FACTORY( libkrichtexteditpart,  KRichTextEditPartFactory )
 
 KRichTextEditPart::KRichTextEditPart( QWidget *wparent, const char *wname,
 				      QObject *parent, const char *name,

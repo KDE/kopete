@@ -39,7 +39,7 @@
 
 
 typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) )
 
 
 KopeteAccountConfig::KopeteAccountConfig(QWidget *parent, const char * /* name */, const QStringList &args) :

@@ -27,7 +27,7 @@
 #include "kgpgselkey.h"
 
 typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"));
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"))
 
 CryptographyPreferences::CryptographyPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(CryptographyPreferencesFactory::instance(), parent, args)

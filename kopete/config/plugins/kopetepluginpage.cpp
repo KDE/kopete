@@ -25,7 +25,7 @@
 #include "kopetepluginmanager.h"
 
 typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) )
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
 : KSettings::PluginPage( KopetePluginConfigFactory::instance(), parent, args )

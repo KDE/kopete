@@ -27,7 +27,7 @@
 #include "highlightconfig.h"
 
 typedef KGenericFactory<HighlightPlugin> HighlightPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_highlight, HighlightPluginFactory( "kopete_highlight" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_highlight, HighlightPluginFactory( "kopete_highlight" )  )
 
 HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : KopetePlugin( HighlightPluginFactory::instance(), parent, name )

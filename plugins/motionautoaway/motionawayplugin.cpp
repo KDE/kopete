@@ -75,7 +75,7 @@ typedef __signed__ long long __s64;
 #define IN_DEFAULT		8
 
 typedef KGenericFactory<MotionAwayPlugin> MotionAwayPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory( "kopete_motionaway" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory( "kopete_motionaway" )  )
 
 MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( MotionAwayPluginFactory::instance(), parent, name )

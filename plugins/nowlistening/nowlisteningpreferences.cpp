@@ -29,7 +29,7 @@
 #include "nowlisteningpreferences.moc"
 
 typedef KGenericFactory<NowListeningPreferences> NowListeningPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFactory( "kcm_kopete_nowlistening" )  );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFactory( "kcm_kopete_nowlistening" )  )
 
 
 NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)

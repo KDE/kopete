@@ -64,10 +64,10 @@
 #include <qtabwidget.h>
 
 typedef KGenericFactory<AppearanceConfig, QWidget> KopeteAppearanceConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) )
 
 
-AppearanceConfig::AppearanceConfig(QWidget *parent, const char */*name*/, const QStringList &args )
+AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
 	: KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);

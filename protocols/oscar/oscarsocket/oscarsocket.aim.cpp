@@ -16,7 +16,7 @@
 extern "C"
 {
 #include "md5.h"
-};
+}
 
 #include "oscarsocket.h"
 

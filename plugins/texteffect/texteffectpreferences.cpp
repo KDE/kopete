@@ -31,7 +31,7 @@
 #include "texteffectconfig.h"
 
 typedef KGenericFactory<TextEffectPreferences> TextEffectPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_texteffect, TextEffectPreferencesFactory( "kcm_kopete_texteffect" )  );
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_texteffect, TextEffectPreferencesFactory( "kcm_kopete_texteffect" )  )
 
 TextEffectPreferences::TextEffectPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 			: KCModule(TextEffectPreferencesFactory::instance(), parent, args)
