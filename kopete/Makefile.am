@@ -25,8 +25,9 @@ kopete_SOURCES = main.cpp \
 	kopeteballoon.cpp kopetewindow.cpp kopeteglobalawaydialog.cpp
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
-kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
-	addcontactwizard/libkopeteaddcontactwizard.la  contactlist/libkopetecontactlist.la chatwindow/libkopetechatwindow.la $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+kopete_LDADD = \
+	addcontactwizard/libkopeteaddcontactwizard.la  contactlist/libkopetecontactlist.la \
+	chatwindow/libkopetechatwindow.la conf/libkopeteconf.la ../libkopete/libkopete.la
 
 icondir = $(kde_datadir)/kopete/pics
 icon_DATA =
