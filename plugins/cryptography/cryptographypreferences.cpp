@@ -102,12 +102,12 @@ CryptographyPreferences::CacheMode CryptographyPreferences::cacheMode()
 	return (CryptographyPreferences::CacheMode) preferencesDialog->m_cache->id(preferencesDialog->m_cache->selected() );
 }
 
-unsigned int CryptographyPreferences::cacheTime()
+unsigned int CryptographyPreferences::cacheTime() const
 {
 	return preferencesDialog->m_time->value();
 }
 
-bool CryptographyPreferences::alsoMyKey()
+bool CryptographyPreferences::alsoMyKey() const
 {
 	return preferencesDialog->m_alsoMyKey->isChecked();
 }

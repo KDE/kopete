@@ -19,14 +19,14 @@
 #include <klineedit.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
- 
+
 #include "cryptographyuserkey_ui.h"
 #include "kopetemetacontact.h"
 #include "popuppublic.h"
- 
+
 #include "cryptographyselectuserkey.h"
 
-CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,KopeteMetaContact *mc) : KDialogBase( 0l, "CryptographySelectUserKey", /*modal = */true, i18n("Select Contact's Public Key") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok )  
+CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,KopeteMetaContact *mc) : KDialogBase( 0l, "CryptographySelectUserKey", /*modal = */true, i18n("Select Contact's Public Key") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok )
 {
 	m_metaContact=mc;
 	view = new CryptographyUserKey_ui(this,"CryptographyUserKey_ui");
@@ -61,7 +61,7 @@ void CryptographySelectUserKey::slotRemovePressed()
 	view->m_editKey->setText("");
 }
 
-QString CryptographySelectUserKey::publicKey()
+QString CryptographySelectUserKey::publicKey() const
 {
 	return view->m_editKey->text();
 }

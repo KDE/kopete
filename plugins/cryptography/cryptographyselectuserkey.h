@@ -29,12 +29,12 @@ class CryptographyUserKey_ui;
 
 class CryptographySelectUserKey : public KDialogBase {
 	Q_OBJECT
-public: 
+public:
 	CryptographySelectUserKey(const QString &key, KopeteMetaContact *mc);
 	~CryptographySelectUserKey();
 
-	
-  QString publicKey();
+
+  QString publicKey() const;
 
 private slots:
 	void keySelected(QString &);

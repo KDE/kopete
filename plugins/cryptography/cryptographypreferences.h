@@ -45,10 +45,10 @@ public:
 	virtual void reopen();
 
 	const QString &privateKey();
-	
+
 	CacheMode cacheMode();
-	unsigned int cacheTime();
-	bool alsoMyKey();
+	unsigned int cacheTime() const;
+	bool alsoMyKey() const;
 private:
 	CryptographyPrefsUI *preferencesDialog;
 	QString m_signKeyID;
