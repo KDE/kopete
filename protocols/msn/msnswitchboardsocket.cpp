@@ -323,10 +323,10 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			kdDebug(14140) << k_funcinfo << "Not all icons received => append to queue.  Emoticon left: " << m_recvIcons <<endl;
 			m_msgQueue.append( kmsg );
 			if(!m_emoticonTimer) //to be sure no message will be lost, we will appends message to
-			{                    // the queue in 30 secondes even if we have not received emoticons
+			{                    // the queue in 15 secondes even if we have not received emoticons
 				m_emoticonTimer=new QTimer(this);
 				QObject::connect(m_emoticonTimer , SIGNAL(timeout()) , this, SLOT(cleanQueue()));
-				m_emoticonTimer->start( 30000 , true );
+				m_emoticonTimer->start( 15000 , true );
 			}
 		} 
 		else
