@@ -517,9 +517,15 @@ void OscarAccount::slotKopeteGroupRenamed( KopeteGroup *group,
 
 }
 
-void OscarAccount::slotKopeteGroupRemoved( KopeteGroup */*group*/ )
+void OscarAccount::slotKopeteGroupRemoved( KopeteGroup *group )
 {
-	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
+	// This method should be called after the contacts have been removed
+	// We should then be able to remove the group from the server
+	kdDebug(14150) << k_funcinfo
+				   << "Telling the server to delete group "
+				   << group->displayName() << endl;
+
+	getEngine()->sendDelGroup(group->displayName());
 }
 
 // Called when we have gotten an IM
