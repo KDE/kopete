@@ -434,20 +434,11 @@ QStringList KopeteMetaContact::groups() const
 
 void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
 {
-//	kdDebug() << "slotMetaContactDestroyed() in metacontact " << displayName() << endl;
-//	kdDebug() << "removing contact with contact-pointer " << (obj) << endl;
 
-	// Try removing the item. The contact might be removed already, but
-	// that's safely handled inside QPtrList::remove()
 	KopeteContact *contact = static_cast<KopeteContact *>( obj );
-//	kdDebug() << "casted QObject to KopeteContact has pointer " << (contact) << endl;
-	
-	bool ret = m_contacts.remove( contact );
-	if ( !ret )
-	{
-		kdDebug() << "REMOVAL of Contact failed !!! going to crash soon" << endl;
-	}
 
+	removeContact(contact);
+	
 	// If a contact has been removed, we need to re-evaluate the
 	// online status
 	emit onlineStatusChanged( this, status() );
