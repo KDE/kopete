@@ -44,6 +44,7 @@ public slots:
 	 */
 	void slotReadMessage( const QByteArray &msg );
 
+public:
 	unsigned long int m_msgIdentifier;
 
 signals:
