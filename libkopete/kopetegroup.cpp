@@ -96,6 +96,10 @@ Kopete::Group::Group( const QString &_displayName, const QString &_internalName,
 
 Kopete::Group::~Group()
 {
+	if(d->type == TopLevel)
+		s_topLevel=0L;
+	if(d->type == Temporary)
+		s_temporary=0L;
 	delete d;
 }
 
