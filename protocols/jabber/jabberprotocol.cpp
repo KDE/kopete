@@ -37,6 +37,8 @@
 #include <psi/types.h>
 #include <psi/vcard.h>
 
+#include <sys/utsname.h>
+
 #include "kopete.h"
 #include "systemtray.h"   // I believe that this belongs into kopete.h
 #include "kopetecontact.h"
@@ -220,8 +222,12 @@ void JabberProtocol::Connect()
 
 		connect(jabberClient, SIGNAL(debugText(const QString &)), this, SLOT(slotPsiDebug(const QString &)));
 
+		utsname utsBuf;
+		uname(&utsBuf);
+		
 		jabberClient->setClientName("Kopete Jabber Plugin");
 		jabberClient->setClientVersion("0.5.1");
+		jabberClient->setOSName(QString("%1 %2").arg(utsBuf.sysname, 1).arg(utsBuf.release, 2));
 
 	}
 
