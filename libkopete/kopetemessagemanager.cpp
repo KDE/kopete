@@ -122,7 +122,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	}
 
 	/* We dont need an event if it already exits or if we are in popup mode */
-	if ( (mUnreadMessageEvent == 0L) && ( mReadMode != Popup) )
+	if ( (mUnreadMessageEvent == 0L) && ( mReadMode != Popup) && (msg.direction() == KopeteMessage::Inbound) )
 	{
 		mUnreadMessageEvent = new KopeteEvent( msg.from(), "newmsg", this, SLOT(readMessages()));
 		kopeteapp->notifyEvent( mUnreadMessageEvent );
