@@ -1,10 +1,44 @@
-Sun Dec 30 04:08:00 CLST 2001 - Duncan Mac-Vicar Prett <duncan@kdedevelopers.net>
-    o First Line of code
+Kopete Messenger ChangeLog
+--------------------------
 
-03-03-2002
-==========
+o Main App
+
+	o Event Notifier
+		o Balloon Style (Duncan)
+		o Flashing Tray Style (Duncan)
+	o History Widget (Richard)
+	o XML History Logger (Ryan)
+
+o IRC Plugin
+
+	o Misc Enhancements (Nick)
+	o Tabbed UI (Nick)
+
+o ICQ Plugin
+
+	o ICQ Engine
+		o Uses KExtendedSocket now (Herwin Steehouwer)
+	
+	o Contact move (Duncan)
+	o Notifier support (Duncan)
+	o History support (Richard)
+	o Hide offline contacts (Stefan)
+	
+o MSN Plugin
+
+	o Hiding offline contacts (Stefan)
+
+
+03-03-2002 - Kopete 0.2
+=======================
 
 o ICQ, AIM, MSN Support
 o Released as 0.2
 
- 
+30-12-2001 - Start
+=======================
+
+Duncan Mac-Vicar Prett 
+<duncan@kdedevelopers.net>
+    
+o First Line of code 
