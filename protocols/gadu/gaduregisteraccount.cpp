@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
 //
-// gadueditaccount.h
+// gaduregisteraccount.cpp
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,33 +19,18 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 
-#ifndef GADUEDITACCOUNT_H
-#define GADUEDITACCOUNT_H
-
-#include "gadueditaccountui.h"
-#include "editaccountwidget.h"
-#include "gaduaccount.h"
-#include "gaduprotocol.h"
 #include "gaduregisteraccount.h"
 
-class GaduAccount;
-class GaduProtocol;
-class KopeteAccount;
-
-class GaduEditAccount : public GaduAccountEditUI, public KopeteEditAccountWidget
+GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
+:GaduRegisterAccountUI( parent, name )
 {
-    Q_OBJECT
+}
 
-public:
-	GaduEditAccount( GaduProtocol*, KopeteAccount*, QWidget* parent = 0, const char* name = 0 );
-	virtual bool validateData();
-	KopeteAccount* apply();
-
-private:
-	GaduProtocol*		protocol_;
-	bool				reg_in_progress;
-	bool				isSsl;
-	RegisterCommand*	rcmd;
-};
-
-#endif
+GaduRegisterAccount::~GaduRegisterAccount( )
+{
+}
+unsigned int GaduRegisterAccount::registered_number()
+{
+// return 0 if failed
+	return 0;
+}
