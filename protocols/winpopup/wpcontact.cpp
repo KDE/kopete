@@ -77,10 +77,13 @@ WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContac
 
 void WPContact::slotCheckStatus()
 {
-//	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
+	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
 
 	bool oldIsOnline = myIsOnline;
-	myIsOnline = myProtocol->checkHost(myHost);
+	if(myProtocol)
+		myIsOnline = myProtocol->checkHost(myHost);
+	else
+		myIsOnline = false;
 	if(oldIsOnline != myIsOnline)
 	{
 		emit statusChanged(this, status());

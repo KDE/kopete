@@ -82,7 +82,7 @@ public:
 	// OBSELETE
 //	WPContact *addContact(const QString &Name, KopeteMetaContact* theMetaContact);
 
-	// Returns either the existing contact for Name, or creates a new one of not existant.
+	// Returns either the existing contact for Name, or creates a new one if not existant.
 	// Creates a new metacontact with Name, if one doesn't already exist.
 	// *** USE FOR SAFELY CREATING CONTACTS WITHOUT NECESSARILY HAVING A METACONTACT ***
 	WPContact *getContact(const QString &Name, KopeteMetaContact* theMetaContact = 0);

@@ -132,8 +132,24 @@ WPProtocol::~WPProtocol()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
 
+	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
+	for(KopeteMetaContact *i = metaContacts.first(); i; i = metaContacts.next())
+	{	DEBUG(WPDINFO, "Checking metacontact: " << i->displayName());
+		QPtrList<KopeteContact> contacts = i->contacts();
+		for(KopeteContact *j = contacts.first(); j; j = contacts.next())
+		{	DEBUG(WPDINFO, "Checking contact " << j->displayName() << " of type: " << j->protocol());
+			if(j->protocol() == "WPProtocol")
+			{	contacts.remove(j);
+				delete j;
+			}
+		}
+	}
+
 	delete theInterface;
 	delete theMyself;
+	sProtocol = 0;
+
+	DEBUG(WPDINFO, "Deleted OK.");
 }
 
 /*KopeteContact *WPProtocol::createContact(KopeteMetaContact *parent, const QString &serializedData)

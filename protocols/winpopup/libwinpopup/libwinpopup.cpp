@@ -48,7 +48,7 @@ KWinPopup::KWinPopup(const QString &SMBClientPath, const QString &InitialSearchH
 {
 	checkForMessages.connect(&checkForMessages, SIGNAL(timeout()), this, SLOT(doCheck()));
 	checkForMessages.start(1000, false);
-	connect(&updateData, SIGNAL(timeout()), this, SLOT(updateNoWait()));
+	connect(&updateData, SIGNAL(timeout()), this, SLOT(updateInBackground()));
 	updateData.start(10000, false);		// should be made into a process - it holds up the gui!
 	mySMBClientPath = SMBClientPath;
 	myInitialSearchHost = InitialSearchHost;
@@ -71,10 +71,6 @@ bool KWinPopup::sendMessage(const QString &Body, const QString &Destination)
 	sender.addArgument(myHostName);
 	if(!sender.launch(Body + "\n")) return 1;
 
-/*	sender.writeToStdin(Body);
-	sender.writeToStdin("\n");
-	sender.closeStdin();
-*/
 	int i;
 	for(i = 0; i < 150 && sender.isRunning(); i++)
 	{	KApplication::kApplication()->processEvents();

@@ -96,6 +96,7 @@ private:
 public slots:
 	void doCheck();
 	void updateNoWait() { update(false); }
+	void updateInBackground() { theUpdateThread.start(); }
 	void update(bool Wait = true);
 
 // API section:
