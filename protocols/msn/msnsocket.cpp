@@ -50,10 +50,9 @@ MSNSocket::~MSNSocket()
 
 void MSNSocket::connect( const QString &server, uint port )
 {
-	if( m_onlineStatus == Connected || m_onlineStatus == Connecting )
+	if ( m_onlineStatus == Connected || m_onlineStatus == Connecting )
 	{
-		kdWarning(14140) << "MSNSocket::connect: WARNING: Already connected or "
-			<< "connecting! Not connecting again." << endl;
+		kdWarning( 14140 ) << k_funcinfo << "Already connected or connecting! Not connecting again." << endl;
 		return;
 	}
 
@@ -61,7 +60,7 @@ void MSNSocket::connect( const QString &server, uint port )
 	{
 		// Cleanup first.
 		// FIXME: More generic!!!
-		kdDebug(14140) << "MSNSocket::connect: WARNING: status is set to 'Disconnecting'" << endl;
+		kdWarning( 14140 ) << k_funcinfo << "We're still disconnecting! Deleting socket the hard way first." << endl;
 		delete m_socket;
 	}
 
@@ -153,10 +152,9 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 
 void MSNSocket::slotSocketError( int error )
 {
-	kdDebug(14140) << "MSNSocket::slotSocketError: error: " << error << endl;
+	kdDebug( 14140 ) << k_funcinfo << "Error: " << error << endl;
 
 	m_socket->cancelAsyncConnect();
-
 
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
 	if ( m_lookupStatus == Failed )
@@ -191,35 +189,30 @@ void MSNSocket::slotDataReceived()
 	// incoming data
 	char *buf = new char[ avail ];
 	int ret = m_socket->readBlock( buf, avail );
-	if( ret < 0 )
+	if ( ret < 0 )
 	{
-		kdDebug(14140) << "MSNSocket:slotDataReceived: WARNING: "
-			"readBlock() returned " << ret << "!" <<endl;
+		kdWarning( 14140 ) << k_funcinfo << "readBlock() returned " << ret << "!" <<endl;
 	}
-	else if( ret == 0 )
+	else if ( ret == 0 )
 	{
-		kdDebug(14140) << "MSNSocket:slotDataReceived: WARNING: "
-			"readBlock() returned no data!" <<endl;
+		kdWarning( 14140 ) << k_funcinfo << "readBlock() returned no data!" <<endl;
 	}
 	else
 	{
-		if( avail )
+		if ( avail )
 		{
-			if( ret != avail)
+			if ( ret != avail)
 			{
-				kdDebug(14140) << "MSNSocket:slotDataReceived: WARNING: "
-					<< avail << " bytes were reported available, "
-					<< "but readBlock() returned only " << ret
-					<< " bytes! Proceeding anyway." << endl;
+				kdWarning( 14140 ) << k_funcinfo << avail << " bytes were reported available, "
+					<< "but readBlock() returned only " << ret << " bytes! Proceeding anyway." << endl;
 			}
 		}
 		else
 		{
-			kdDebug(14140) << "MSNSocket:slotDataReceived: Info: "
-				<< "Read " << ret << " bytes into 4kb block." << endl;
+			kdDebug( 14140 ) << k_funcinfo << "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-		kdDebug( 14141 ) << "MSNSocket:slotDataReceived: " << QString( QCString( buf, avail ) ).stripWhiteSpace() << endl;
+		kdDebug( 14141 ) << k_funcinfo << QString( QCString( buf, avail ) ).stripWhiteSpace() << endl;
 
 		m_buffer.add(buf,ret); // fill the buffer with the received data
 
@@ -259,7 +252,7 @@ void MSNSocket::slotReadLine()
 
 			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
 			command.replace( "\r\n" , "" );
-//			kdDebug(14141) << "MSNSocket::slotReadLine: " << command << endl;
+			//kdDebug( 14141 ) << k_funcinfo << command << endl;
 
 			parseLine(command);
 			//WARNING: since here, this can be deleted (when disconnecitng)
@@ -269,17 +262,16 @@ void MSNSocket::slotReadLine()
 
 void MSNSocket::readBlock( uint len )
 {
-	if( m_waitBlockSize )
+	if ( m_waitBlockSize )
 	{
-		kdDebug(14140) << "MSNSocket::readBlock: WARNING: cannot wait for data "
-			<< "block: still waiting for other block of size "
+		kdWarning( 14140 ) << k_funcinfo << "Cannot wait for data block: still waiting for other block of size "
 			<< m_waitBlockSize << "! Data will not be returned." << endl;
 		return;
 	}
 
 	m_waitBlockSize = len;
 
-//	kdDebug(14140) << "MSNSocket::readBlock: Preparing for block read of size " << len << endl;
+	//kdDebug( 14140 ) << k_funcinfo << "Preparing for block read of size " << len << endl;
 
 	// Try to return the data now, if available. Otherwise slotDataReady
 	// will do this whenever all data is there.
@@ -290,10 +282,9 @@ bool MSNSocket::pollReadBlock()
 {
 	if( !m_waitBlockSize )
 		return false;
-	else if( m_buffer.size() < m_waitBlockSize )
+	else if ( m_buffer.size() < m_waitBlockSize )
 	{
-		kdDebug(14140) << "MSNSocket::pollReadBlock: Waiting for data. Received: "
-			<< m_buffer.size() << ", required: " << m_waitBlockSize << endl;
+		kdDebug( 14140 ) << k_funcinfo << "Waiting for data. Received: " << m_buffer.size() << ", required: " << m_waitBlockSize << endl;
 		return true;
 	}
 
@@ -301,7 +292,7 @@ bool MSNSocket::pollReadBlock()
 	QString block = QString::fromUtf8(baBlock, m_waitBlockSize);
 
 
-//	kdDebug(14140) << "MSNSocket::pollReadBlock: Successfully read block of size " << m_waitBlockSize << endl;
+	//kdDebug( 14140 ) << k_funcinfo << "Successfully read block of size " << m_waitBlockSize << endl;
 
 	m_waitBlockSize = 0;
 	emit blockRead( block );
@@ -326,8 +317,7 @@ void MSNSocket::parseLine( const QString &str )
 //	if( isNum && id )
 //		m_lastId = id;
 
-//	kdDebug(14140) << "MSNSocket::parseCommand: Parsing command " << cmd <<
-//		" (ID " << id << "): '" << data << "'" << endl;
+	//kdDebug( 14140 ) << k_funcinfo << "Parsing command " << cmd << " (ID " << id << "): '" << data << "'" << endl;
 
 	data.replace(  "\r\n", "" );
 	bool isError;
@@ -409,9 +399,9 @@ void MSNSocket::handleError( uint code, uint /*id*/ )
 int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	bool addId, const QByteArray &body , bool binary)
 {
-	if(!m_socket)
+	if ( !m_socket )
 	{
-		kdWarning(14140) << "MSNSocket::sendCommand : WARNING: socket=0L" <<endl;
+		kdWarning( 14140 ) << k_funcinfo << "m_socket == NULL!" << endl;
 		return -1;
 	}
 
@@ -433,7 +423,7 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 		if( !body.isEmpty() )
 			data += QCString(body,body.size()+1);
 
-	//	kdDebug(14141) << "MSNSocket::sendCommand: Sending command " << data << endl;
+		//kdDebug( 14141 ) << k_funcinfo << "Sending command " << data << endl;
 
 		// the command will be sent in slotReadyWrite
 		m_sendQueue.append( data );
@@ -449,7 +439,7 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 
 		sendBytes( data2 ) ;
 
-		kdDebug(14141) << "MSNSocket::sendCommand : " << data2.data() <<endl;
+		kdDebug( 14141 ) << k_funcinfo << data2.data() << endl;
 	}
 
 	if(addId)
@@ -465,7 +455,7 @@ void MSNSocket::slotReadyWrite()
 	if( !m_sendQueue.isEmpty() )
 	{
 		QValueList<QCString>::Iterator it = m_sendQueue.begin();
-		kdDebug(14141) << "MSNSocket::slotReadyWrite: Sending command: " << QString(*it).stripWhiteSpace() << endl;
+		kdDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).stripWhiteSpace() << endl;
 		m_socket->writeBlock( *it, (*it).length() );
 		m_sendQueue.remove( it );
 		emit( commandSent() );
@@ -487,13 +477,13 @@ QString MSNSocket::escape( const QString &str )
 
 QString MSNSocket::unescape( const QString &str )
 {
-	//GRRRRR FU*CKING MSN PLUS USERS!  they insert theses stupid colors code in their nickname, and message are not correctly showed
+	//GRRRRR F*CKING MSN PLUS USERS!  they insert theses stupid colors code in their nickname, and message are not correctly showed
 	return KURL::decode_string( str , 106 ).replace("\3" , "").replace("\4" , "").replace("\2" , "");
 }
 
 void MSNSocket::slotConnectionSuccess()
 {
-//	kdDebug(14140) << "MSNSocket::slotConnectionSuccess" << endl;
+	//kdDebug( 14140 ) << k_funcinfo << endl;
 	doneConnect();
 }
 
@@ -507,12 +497,11 @@ void MSNSocket::slotLookupFinished( int count )
 
 void MSNSocket::slotSocketClosed( int state )
 {
-	kdDebug(14140) << "MSNSocket::slotSocketClosed: socket closed. State: 0x" <<
-		QString::number( state, 16 ) << endl;
+	kdDebug( 14140 ) << k_funcinfo << "Socket closed. State: 0x" << QString::number( state, 16 ) << endl;
 
-	if(!m_socket ||  m_onlineStatus == Disconnected )
+	if ( !m_socket ||  m_onlineStatus == Disconnected )
 	{
-		kdDebug(14140) << "MSNSocket::slotSocketClosed: socket already deleted or already disconnected" << endl;
+		kdDebug( 14140 ) << k_funcinfo << "Socket already deleted or already disconnected" << endl;
 		return;
 	}
 
@@ -526,34 +515,33 @@ void MSNSocket::slotSocketClosed( int state )
 	emit( socketClosed( state ) );
 }
 
-
-/** Used in MSNFileTransferSocket */
-void MSNSocket::bytesReceived(const QByteArray &)
+// Used in MSNFileTransferSocket
+// FIXME: Why is this here if it's only used for file transfer? - Martijn
+void MSNSocket::bytesReceived( const QByteArray & /* data */ )
 {
-	kdWarning(14140) << "MSNSocket::bytesReceived : WARNING: unknow bytes were received" <<endl  ;
+	kdWarning( 14140 ) << k_funcinfo << "Unknown bytes were received" << endl;
 }
 
-void MSNSocket::sendBytes(const QByteArray &data)
+void MSNSocket::sendBytes( const QByteArray &data )
 {
-	if(!m_socket)
+	if ( !m_socket )
 	{
-		kdWarning(14140) << "MSNSocket::sendBytes: WARNING: not yet connected" <<endl  ;
+		kdWarning( 14140 ) << k_funcinfo << "Not yet connected" << endl;
 		return;
 	}
 	m_socket->writeBlock( data, data.size() );
 	m_socket->enableWrite( true );
 }
 
-
-bool MSNSocket::accept(KExtendedSocket *server)
+bool MSNSocket::accept( KExtendedSocket *server )
 {
-	if(m_socket)
+	if ( m_socket )
 	{
-		kdWarning(14140) << "MSNSocket::accept : WARNING: Socket already exists" <<endl  ;
+		kdWarning( 14140 ) << k_funcinfo << "Socket already exists!" << endl;
 		return false;
 	}
 	int acceptResult = server->accept(m_socket);
-	kdDebug(14140) << "MSNSocket::accept: result: "<< acceptResult << "  m_socket create : " <<m_socket <<endl  ;
+	kdDebug( 14140 ) << k_funcinfo << "Result: " << acceptResult << ", m_socket: " << m_socket << endl;
 	if(acceptResult !=0)
 		return false;
 	if(!m_socket)
@@ -594,7 +582,7 @@ QString MSNSocket::getLocalIP()
 	const KSocketAddress *address= m_socket->localAddress();
 	if ( !address  )
 	{
-		kdWarning(14140) << "MSNFileTransferSocket::getLocalIP: ip not found" <<endl;
+		kdWarning( 14140 ) << k_funcinfo << "IP not found!" << endl;
 		return QString::null;
 	}
 	QString ip = address->pretty();
@@ -603,7 +591,7 @@ QString MSNSocket::getLocalIP()
 	{
 		ip = ip.left( ip.find(" ") );
 	}
-	kdDebug(14140) << "MSNFileTransferSocket::getLocalIP: ip: "<< ip  <<endl;
+	kdDebug( 14140 ) << k_funcinfo << "IP: " << ip  <<endl;
 //	delete address;
 	return ip;
 }
@@ -626,10 +614,9 @@ void MSNSocket::Buffer::add(char *str, unsigned int sz)
 
 QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 {
-	if( size() < blockSize )
+	if ( size() < blockSize )
 	{
-		kdWarning() << "MSNSocket::Buffer::take: [WARNING] buffer size "
-			<< size() <<" < asked size " << blockSize << "!" << endl;
+		kdWarning( 14140 ) << k_funcinfo << "Buffer size " << size() << " < asked size " << blockSize << "!" << endl;
 		return QByteArray();
 	}
 
