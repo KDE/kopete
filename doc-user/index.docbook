@@ -15,8 +15,8 @@ Getting Started (1st draft, Will)
         Add an account
         Go online
         Start chatting
-Using Kopete
-        Contact List window (1st draft, Will)
+Using Kopete (1st draft, Will)
+        Contact List window
 		Layout
 			Menu
 			Toolbar
@@ -32,21 +32,21 @@ Using Kopete
 		Configure &kopete;
 		Quit.
 		Shortcuts
-        Chat window (WIP, Will)
+        Chat window
 		Layout
 			Chat members list
 			Status bar (typing notifications, etc )
 			Tabbing
 		Starting group chats
 		Shortcuts
-	        File transfers?
+	        File transfers
 Configuring Kopete
 	Global Shortcuts
 	Adding/Editing Accounts
 	Behaviour/Notifications
 	Look and Feel
 	Loading Plugins
-Plugins
+Plugins (Outlined, Will)
         (Section on each plugin, use, and configuration)
 Menus
         (Short description of each menu item)
@@ -290,11 +290,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <entry>Show/Hide the menu bar.</entry>
 </row>
 <row>
-<entry><keycombo action="simul">&Ctrl;<keycap>F</keycap></keycombo></entry>
+<entry><keycombo action="simul">&Ctrl;<keycap>U</keycap></keycombo></entry>
 <entry>Show/Hide offline users.</entry>
 </row>
 <row>
-<entry><keycombo action="simul">&Ctrl;<keycap>E</keycap></keycombo></entry>
+<entry><keycombo action="simul">&Ctrl;<keycap>G</keycap></keycombo></entry>
 <entry>Show/Hide empty groups.</entry>
 </row>
 </tbody>
@@ -305,7 +305,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 
 <sect1 id="chat-window">
 <title>The Chat Window</title>
-<sect2 id="chat-window-layout"><title>Layout of the Chat window</title>
+<sect2 id="chat-window-layout"><title>Layout of the Chat Window</title>
 <sect3 id="chat-window-layout-chatview"><title>The Chat View</title><para>The Chat View usually takes up most of the Chat window and is where the conversation between you and your contacts takes place.  Messages appear in the order they are received, with the earliest messages at the top of the view.</para>
 <para>You can <link linkend="configuring-appearance">control</link> the appearance of the <interface>Chat View</interface>, making it look like other &im; clients or create a completely individual look.</para>
 </sect3>
@@ -313,20 +313,71 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>Since some &im; systems allow you to chat as a group, it's useful to see who's chatting at the moment.  The Chat Members List appears to the left or the right of the Chat View.  You can change this using <menuchoice><guimenu>Settings</guimenu><guisubmenu>Chat Members List</guisubmenu></menuchoice>.  The contact context menu is available in the Chat Members List.</para></sect3>
 <sect3 id="chat-window-layout-input-area"><title>Input Area</title><para>The Input Area is below the Chat View.  This is where you type messages before sending them.  You can change the font and colour of the message using the usual tools on the toolbar.  If the &im; system supports this, your messages will appear in colour when your contacts read them.</para><para>By default, the keyboard shortcut to send messages is <keycombo action="simul">&Ctrl;&Enter;</keycombo>.</para></sect3>
 <sect3 id="chat-window-layout-statusbar"><title>Status Bar</title><para>The Status Bar contains temporary messages, such as notification that someone else is typing, as well as the <guibutton>Send</guibutton> button.</para></sect3>
-<sect3 id="chat-window-layout-tabbing"><title>Tabbing</title><para>&kopete; lets you carry on multiple conversations in one window, by putting each one in its own tab within the window.  There are several different ways to control grouping.  To configure this behaviour, go to the Chat tab of the Behaviour page of the Configure &kopete; dialog.</para></sect3>
+<sect3 id="chat-window-layout-tabbing"><title>Tabbing</title><para>&kopete; lets you carry on multiple conversations in one window, by putting each one in its own tab within the window.  The tab titles change colour to show when a new message has been received:</para>
+<variablelist>
+<varlistentry><term>Red</term><listitem><para>Someone typed a message.</para></listitem></varlistentry>
+<varlistentry><term>Blue</term><listitem><para>Someone typed a message containing your nickname.</para></listitem></varlistentry>
+</variablelist> 
+<para>There are several different ways to control grouping.  To configure this behaviour, go to the Chat tab of the Behaviour page of the Configure &kopete; dialog.  You can also move chats between windows using the <menuchoice><guimenu>Tabs</guimenu></menuchoice> menu, and control the placement of the tabs in the window.</para></sect3>
 </sect2>
 <sect2 id="chat-window-group">
 <title>Group Chats in &kopete;</title>
 <para>You can use &kopete; to chat one to one, or in a group, where the &im; system supports this.</para>
-</sect2>
-<sect2 id="chat-window-shortcuts">
-<title>Chat Window Shortcuts</title>
-<para>Here are the default shortcuts you can use in the chat window.</para>
+<para>MSN lets you invite others into a chat using <menuchoice><guimenu>Chat</guimenu><guisubmenu>Invite</guisubmenu><guimenuitem>&lt;contact name&gt;</guimenuitem></menuchoice>.</para>
 </sect2>
 <sect2 id="chat-window-file-xfer">
-<title>File transfers</title>
-<para>Some &im; systems allow you to send and receive files.</para>
+<title>File Transfers</title>
+<para>Some &im; systems allow you to send and receive files.  You can access this function from the contact's context menu.  If you're already chatting, and want to send a file, select the recipient from the <menuchoice><guimenu>Chat</guimenu><guisubmenu>Contacts</guisubmenu></menuchoice> menu.</para>
 </sect2>
+<sect2 id="chat-window-shortcuts">
+<title>Keyboard Shortcuts</title>
+<para>The following keyboard shortcuts are supported in the Chat window:</para>
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry>Keyboard Shortcut</entry>
+<entry>Action</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry><keycombo action="simul">&Ctrl;&Enter;</keycombo></entry>
+<entry>Send the message in the <interface>Input Area</interface>.</entry>
+</row>
+<row>
+<entry><keycombo action="simul">&Ctrl;<keycap>P</keycap></keycombo></entry>
+<entry>Print the contents of the Chat View.</entry>
+</row>
+<row>
+<entry><keycombo action="simul">&Ctrl;<keycap>S</keycap></keycombo></entry>
+<entry>Save the contents of the Chat View.</entry>
+</row>
+<row>
+<entry><keycombo action="simul">&Ctrl;<keycap>W</keycap></keycombo></entry>
+<entry>Close the current Chat View.  The Chat window will close unless there is more than one tab in the window.</entry>
+</row>
+<row>
+<entry><keycombo action="simul">&Alt;<keycap>Left Arrow</keycap></keycombo></entry>
+<entry>Change to the previous tab.</entry>
+</row>
+<row>
+<entry><keycombo action="simul">&Alt;<keycap>Right Arrow</keycap></keycombo></entry>
+<entry>Change to the next tab.</entry>
+</row>
+<row>
+<entry><keycombo action="simul">&Ctrl;&Shift;<keycap>B</keycap></keycombo></entry>
+<entry>Detach a tabbed chat into a separate window.</entry>
+</row>
+<row>
+<entry><keycap>Tab</keycap></entry>
+<entry>Complete a partially typed nickname belonging to someone you're chatting with.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect2>
+
 </sect1><!-- chat-window -->
 </chapter><!-- Using-kopete -->
 
