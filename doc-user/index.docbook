@@ -492,6 +492,9 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrol; for more information.</para>
 <para>You can use the <quote>Execute a program</quote> notification to perform custom notifications.  As an example, if you have <application>XOSD</application> (X On-Screen Display) installed, you can get OSD online notifications by executing the following command when the <quote>User goes online</quote> event takes place:</para>
 <para><userinput>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput></para>
+<para>OhReally at the KDE Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
+<para><userinput>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput></para>
+<para>The 'sed' in the middle phoneticises Kopete's output to so the synthesizer has a better Dutch pronunciation.</para>
 </listitem>
 </varlistentry>
 </variablelist>
