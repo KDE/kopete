@@ -130,7 +130,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 715:
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n( "<qt>An internal error occured in the MSN plugin.<br>"
+			i18n( "<qt>An internal error occurred in the MSN plugin.<br>"
 			      "MSN Error: %1<br>"
 			      "please send us a detailed bug report "
 			      "at kopete-devel@kde.org containing the raw debug output on the "

@@ -257,7 +257,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					QString error = QString::fromLatin1(errorstring);
 					delete [] errorstring;
 
-					emit protocolError(i18n("An error occured. Message was: %1").arg(error), (int)result);
+					emit protocolError(i18n("An error occurred. Message was: %1").arg(error), (int)result);
 					break;
 				}
 				case 0x01a4: // SRV_METAFOUND
