@@ -108,8 +108,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 201:
 	case 205:
 	{
-		QString msg = i18n( "Invalid user! \n"
-			"This MSN user does not exist: %1 \n Please check the MSN ID." ).arg(m_tmpLastHandle);
+		QString msg = i18n( "<qt>Invalid user!<br>"
+			"This MSN user does not exist: <b>%1</b>.<br>Please check the MSN ID.</qt>" ).arg(m_tmpLastHandle);
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -131,10 +131,10 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 215:
 	{
-		QString msg = i18n( "The user %1 already exists in this group!\n"
+		QString msg = i18n( "<qt>The user <b>%1</b> already exists in this group!<br>"
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
-			"console (in gzipped format, as it is probably a lot of output!)" ).arg(m_tmpLastHandle);
+			"console (in gzipped format, as it is probably a lot of output!)</qt>" ).arg(m_tmpLastHandle);
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -162,7 +162,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 800:
 	{
 		QString msg = i18n( "You are trying to change your status, or your nickname too rapidely.\n"
-		 		"This might happends if you added yourself on your contactlist" );
+		 		"This might happends if you added yourself on your contact list" );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		//FIXME: try to fix this problem
 		break;
