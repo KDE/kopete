@@ -61,32 +61,33 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 void IRCUserContact::updateStatus()
 {
 	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
+
 	switch( status )
 	{
-		case KIRC::Engine::Disconnected:
+	case KIRC::Engine::Idle:
+		setOnlineStatus(m_protocol->m_UserStatusOffline);
+		break;
+
+	case KIRC::Engine::Connecting:
+	case KIRC::Engine::Authentifying:
+		if(this == MYACCOUNT->mySelf())
+			setOnlineStatus(m_protocol->m_UserStatusConnecting);
+		else
 			setOnlineStatus(m_protocol->m_UserStatusOffline);
-			break;
+		break;
 
-		case KIRC::Engine::Connecting:
-		case KIRC::Engine::Authentifying:
-			if(this == MYACCOUNT->mySelf())
-				setOnlineStatus(m_protocol->m_UserStatusConnecting);
-			else
-				setOnlineStatus(m_protocol->m_UserStatusOffline);
-			break;
+	case KIRC::Engine::Connected:
+	case KIRC::Engine::Closing:
+		if (m_isAway)
+			setOnlineStatus(m_protocol->m_UserStatusAway);
+		else if (m_isOnline)
+			setOnlineStatus(m_protocol->m_UserStatusOnline);
+//		else
+//			setOnlineStatus(m_protocol->m_UserStatusOffline);
+		break;
 
-		case KIRC::Engine::Connected:
-		case KIRC::Engine::Closing:
-			if( m_isAway )
-				setOnlineStatus(m_protocol->m_UserStatusAway);
-			else if( m_isOnline )
-				setOnlineStatus(m_protocol->m_UserStatusOnline);
-			else
-				setOnlineStatus(m_protocol->m_UserStatusOffline);
-			break;
-
-		default:
-			setOnlineStatus(m_protocol->m_StatusUnknown);
+	default:
+		setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
 }
 

@@ -21,6 +21,8 @@
 
 #include "ircprotocol.h"
 
+#include "kircengine.h"
+
 #include "kopeteaccount.h"
 
 #include <kdialogbase.h>
@@ -34,11 +36,6 @@ class IRCContactManager;
 class IRCServerContact;
 class IRCProtocol;
 class IRCUserContact;
-
-namespace KIRC
-{
-class Engine;
-}
 
 namespace Kopete
 {
@@ -199,6 +196,8 @@ protected slots:
 	virtual void loaded();
 
 private slots:
+	void engineStatusChanged(KIRC::Engine::Status newStatus);
+
 	void slotFailedServerPassword();
 	void slotGoAway( const QString &reason );
 	void slotJoinNamedChannel( const QString &channel );
@@ -206,8 +205,8 @@ private slots:
 	void slotShowServerWindow();
 	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
-	void slotConnectedToServer();
-	void slotDisconnected();
+//	void slotConnectedToServer();
+//	void slotDisconnected();
 	void slotServerBusy();
 	void slotSearchChannels();
 	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);

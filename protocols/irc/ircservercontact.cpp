@@ -68,7 +68,7 @@ void IRCServerContact::updateStatus()
 	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
 	switch( status )
 	{
-		case KIRC::Engine::Disconnected:
+		case KIRC::Engine::Idle:
 		case KIRC::Engine::Connecting:
 			setOnlineStatus( m_protocol->m_ServerStatusOffline );
 			break;

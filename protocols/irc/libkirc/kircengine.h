@@ -71,8 +71,10 @@ class Engine
 //	Q_PROPERTY(QString nick READ nick)
 //	Q_PROPERTY(QStringList portList)
 
+	Q_ENUMS(Status)
+
 public:
-	typedef enum Error
+	enum Error
 	{
 		ParsingFailed,
 		UnknownCommand,
@@ -81,13 +83,16 @@ public:
 		MethodFailed
 	};
 
-	typedef enum Status
+	enum Status
 	{
-		Disconnected = 0,
-		Connecting = 1,
-		Authentifying = 2,
-		Connected = 3,
-		Closing = 4
+		Idle,
+		Connecting,
+		Authentifying,
+		Connected,
+		Closing,
+		AuthentifyingFailed,
+		Timeout,
+		Disconnected
 	};
 
 	Engine( QObject *parent = 0, const char* name = 0 );
@@ -253,17 +258,11 @@ public slots:
 	void showInfoDialog();
 
 signals:
-	//Engine Signals
-//	void engineError(KIRC::Engine::Error, const KIRC::Message &);
-//	void engineStatusChanged(KIRC::Engine::Status newStatus);
-
-	void connectedToServer();
-	void disconnected();
-	void successfulQuit();
-	void connectionTimeout();
-	void internalError(KIRC::Engine::Error, const KIRC::Message &);
 	void statusChanged(KIRC::Engine::Status newStatus);
+	void internalError(KIRC::Engine::Error, const KIRC::Message &);
+
 	void receivedMessage(const KIRC::Message &);
+
 	void successfullyChangedNick(const QString &, const QString &);
 
 	/** Give a server message as a string.
@@ -355,16 +354,17 @@ signals:
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 
 private slots:
-	void slotConnected();
-	void slotConnectionClosed();
-	void slotAuthFailed();
 	void slotReadyRead();
+
+	void slotConnected();
 	void error(int errCode = 0);
+
 	void quitTimeout();
 
 //	void echo(const KIRC::Message &msg);
 //	void ignore(const KIRC::Message &msg);
 
+	void error(const KIRC::Message &msg);
 	void join(const KIRC::Message &msg);
 	void kick(const KIRC::Message &msg);
 	void mode(const KIRC::Message &msg);

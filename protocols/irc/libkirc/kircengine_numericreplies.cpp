@@ -112,7 +112,6 @@ void Engine::numericReply_001(const Message &msg)
 	 */
 	emit incomingConnectString(msg.suffix());
 	m_connectTimer->stop();
-	emit connectedToServer();
 
 	setStatus(Connected);
 }

@@ -27,6 +27,7 @@ using namespace KIRC;
 
 void Engine::bindCommands()
 {
+	bind("ERROR",	this, SLOT(error(const KIRC::Message &)),	0, 0);
 	bind("JOIN",	this, SLOT(join(const KIRC::Message &)),	0, 1);
 	bind("KICK",	this, SLOT(kick(const KIRC::Message &)),	2, 2);
 	bind("NICK",	this, SLOT(nick(const KIRC::Message &)),	0, 0);
@@ -50,6 +51,12 @@ void Engine::away(bool isAway, const QString &awayMessage)
 		writeMessage("AWAY", QString::null, QString::fromLatin1("I'm away."));
 	else
 		writeMessage("AWAY", QString::null);
+}
+
+// FIXME: Really handle this message
+void Engine::error(const Message &msg)
+{
+	setStatus(Closing);
 }
 
 void Engine::ison(const QStringList &nickList)

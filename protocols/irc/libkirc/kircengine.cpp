@@ -39,6 +39,8 @@
 
 using namespace KIRC;
 
+// FIXME: Remove slotConnected() and error(int errCode) while going to KNetwork namespace
+
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
@@ -46,7 +48,7 @@ const QRegExp Engine::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
 Engine::Engine(QObject *parent, const char *name)
 	: QObject(parent, QString::fromLatin1("[KIRC::Engine]%1").arg(name).latin1()),
-	  m_status(Disconnected),
+	  m_status(Idle),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
 	  m_commands(101, false),
@@ -112,23 +114,69 @@ void Engine::setUseSSL( bool useSSL )
 			m_sock->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
 		}
 
-		QObject::connect(m_sock, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
-		QObject::connect(m_sock, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-		QObject::connect(m_sock, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-		QObject::connect(m_sock, SIGNAL(connectionFailed(int)), this, SLOT(error(int)));
+		QObject::connect(m_sock, SIGNAL(closed(int)),
+				 this, SLOT(slotConnectionClosed()));
+		QObject::connect(m_sock, SIGNAL(readyRead()),
+				 this, SLOT(slotReadyRead()));
+		QObject::connect(m_sock, SIGNAL(connectionSuccess()),
+				 this, SLOT(slotConnected()));
+		QObject::connect(m_sock, SIGNAL(connectionFailed(int)),
+				 this, SLOT(error(int)));
 	}
 }
 
 void Engine::setStatus(Engine::Status status)
 {
 	kdDebug(14120) << k_funcinfo << status << endl;
-	if( status == Disconnected && m_status != Closing )
-	{
-		emit disconnected();
-	}
 
+	if (m_status == status)
+		return;
+
+//	Engine::Status oldStatus = m_status;
 	m_status = status;
 	emit statusChanged(status);
+
+	switch (m_status)
+	{
+	case Idle:
+		// Do nothing.
+		break;
+	case Connecting:
+		// Do nothing.
+		break;
+	case Authentifying:
+		m_sock->enableRead(true);
+		m_sock->enableWrite(true);
+
+		// If password is given for this server, send it now, and don't expect a reply
+		if (!(password()).isEmpty())
+			writeMessage("PASS", password() , m_Realname, false);
+
+		user(m_Username, 0, QString::fromLatin1("Kopete User"));
+		nick(m_Nickname);
+
+		//If we don't get a reply within xx seconds, give up
+		m_connectTimer->start(connectTimeout);
+		break;
+	case Connected:
+		m_connectTimer->stop();
+		// Do nothing.
+		break;
+	case Closing:
+		m_sock->close();
+		m_sock->reset();
+		setStatus(Idle);
+		break;
+	case AuthentifyingFailed:
+		setStatus(Closing);
+		break;
+	case Timeout:
+		setStatus(Closing);
+		break;
+	case Disconnected:
+		setStatus(Closing);
+		break;
+	}
 }
 
 void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL )
@@ -163,44 +211,9 @@ void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &
 	}
 }
 
-void Engine::slotAuthFailed()
-{
-	kdDebug(14120) << k_funcinfo << endl;
-	if( m_status != Connected )
-	{
-		setStatus(Disconnected);
-		m_sock->close();
-		m_sock->reset();
-		emit connectionTimeout();
-	}
-}
-
 void Engine::slotConnected()
 {
-	kdDebug(14120) << k_funcinfo << "Connected" << endl;
 	setStatus(Authentifying);
-	m_sock->enableRead(true);
-
-	// If password is given for this server, send it now, and don't expect a reply
-	if (!(password()).isEmpty())
-		writeMessage("PASS", password() , m_Realname, false);
-
-	user(m_Username, 0, QString::fromLatin1("Kopete User"));
-	nick(m_Nickname);
-
-	//If we don't get a reply within 15 seconds, give up
-	m_connectTimer->start( connectTimeout );
-}
-
-void Engine::slotConnectionClosed()
-{
-	kdDebug(14120) << k_funcinfo << "Connection Closed - local status: " << m_status << " sock status: " << m_sock->socketStatus() << endl;
-	if(m_status == Closing)
-		emit successfulQuit();
-
-	if(m_status!=Disconnected)
-		setStatus(Disconnected);
-	m_sock->reset();
 }
 
 void Engine::error(int errCode)
@@ -210,7 +223,6 @@ void Engine::error(int errCode)
 	{
 		// Connection in progress.. This is a signal fired wrong
 		setStatus(Disconnected);
-		m_sock->reset();
 	}
 }
 
@@ -351,9 +363,12 @@ void Engine::slotReadyRead()
 			emit receivedMessage(msg);
 
 			KIRC::MessageRedirector *mr;
-//			if( msg.isNumeric() )
+			if( msg.isNumeric() )
 //				mr = m_numericCommands[ msg.command().toInt() ];
-//			else
+				// we do this conversion because some dummy servers sends 1 instead of 001
+				// numbers are stored as "1" instead of "001" to make convertion faster (no 0 pading).
+				mr = m_commands[ QString::number(msg.command().toInt()) ];
+			else
 				mr = m_commands[ msg.command() ];
 
 			if (mr)

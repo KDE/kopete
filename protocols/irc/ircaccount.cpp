@@ -128,6 +128,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)),
 			this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
 
+	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::Engine::Status)),
+			 this, SLOT(engineStatusChanged(KIRC::Engine::Status)));
+
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
 
@@ -476,6 +479,52 @@ void IRCAccount::connect()
 	}
 }
 
+void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
+{
+	kdDebug(14120) << k_funcinfo << endl;
+
+	mySelf()->updateStatus();
+
+	switch (newStatus)
+	{
+	case KIRC::Engine::Idle:
+		// Do nothing.
+		break;
+	case KIRC::Engine::Connecting:
+		// Do nothing.
+		break;
+	case KIRC::Engine::Authentifying:
+		break;
+	case KIRC::Engine::Connected:
+		{
+			m_contactManager->addToNotifyList( m_engine->nickName() );
+
+			Kopete::MessageManager *manager = myServer()->manager();
+			if (!autoConnect.isEmpty())
+				Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
+
+			QStringList commands(connectCommands());
+			for (QStringList::Iterator it=commands.begin(); it != commands.end(); ++it)
+				Kopete::CommandHandler::commandHandler()->processMessage(*it, manager);
+		}
+		break;
+	case KIRC::Engine::Closing:
+		triedAltNick = false;
+//		mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
+		m_contactManager->removeFromNotifyList( m_engine->nickName() );
+
+//		if (m_contactManager && !autoConnect.isNull())
+//			Kopete::AccountManager::self()->removeAccount( this );
+		break;
+	case KIRC::Engine::AuthentifyingFailed:
+		break;
+	case KIRC::Engine::Timeout:
+		break;
+	case KIRC::Engine::Disconnected:
+		break;
+	}
+}
+/*
 void IRCAccount::slotConnectedToServer()
 {
 	kdDebug(14120) << k_funcinfo << autoConnect << endl;
@@ -490,7 +539,7 @@ void IRCAccount::slotConnectedToServer()
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
 		Kopete::CommandHandler::commandHandler()->processMessage( *it, manager );
 }
-
+*/
 void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString &nick )
 {
 	if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
@@ -498,7 +547,7 @@ void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString
 		m_contactManager->findChannel( channel )->join();
 	}
 }
-
+/*
 void IRCAccount::slotDisconnected()
 {
 	triedAltNick = false;
@@ -508,7 +557,7 @@ void IRCAccount::slotDisconnected()
 //	if (m_contactManager && !autoConnect.isNull())
 //		Kopete::AccountManager::self()->removeAccount( this );
 }
-
+*/
 void IRCAccount::disconnect()
 {
 	quit();

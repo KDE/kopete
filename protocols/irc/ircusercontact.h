@@ -90,6 +90,9 @@ public:
 		const QString &server, bool away, const QString &flags, uint hops,
 		const QString &realName );
 
+public slots:
+	virtual void updateStatus();
+
 protected slots:
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 
@@ -107,7 +110,6 @@ private slots:
 	void slotKick();
 	void slotUserOffline();
 
-	virtual void updateStatus();
 	virtual void slotUserInfo();
 
 	//This can't be handled by the contact manager since

@@ -106,6 +106,7 @@ public:
 
 public slots:
 	void setCodec( const QTextCodec *codec );
+	virtual void updateStatus() = 0;
 
 protected slots:
 	virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
@@ -117,7 +118,6 @@ protected slots:
 
 	virtual void slotDeleteContact();
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-	virtual void updateStatus() = 0;
 	virtual void initConversation() {};
 
 protected:

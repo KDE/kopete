@@ -92,15 +92,14 @@ Message::~Message()
 
 void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QString &str)
 {
-	QCString s;
 	QString txt = str + QString::fromLatin1("\r\n");
 
-	s = codec->fromUnicode(txt);
-
-	kdDebug(14121) << ">> " << s;
+	QCString s(codec->fromUnicode(txt));
 
 	// FIXME: Should check the amount of data really writen.
-	engine->socket()->writeBlock(s.data(), s.length());
+	int wrote = engine->socket()->writeBlock(s.data(), s.length());
+
+	kdDebug(14121) << QString::fromLatin1(">> %1 (%2 bytes)").arg(str).arg(wrote) << endl;
 }
 
 void Message::writeMessage(Engine *engine, const QTextCodec *codec, const QString &message)
