@@ -2,6 +2,8 @@ METASOURCES = AUTO
 
 INCLUDES = $(KOPETE_INCLUDES) $(all_includes)
 
+SUBDIRS = sqlite
+
 kde_module_LTLIBRARIES = kopete_statistics.la
 
 kopete_statistics_la_SOURCES = statisticsplugin.cpp statisticsdb.cpp statisticsdialog.cpp statisticswidget.ui statisticscontact.cpp
