@@ -18,6 +18,7 @@
 
 #include "kopetemetacontact.h"
 
+#include <qapplication.h>
 #include <qdom.h>
 #include <qptrlist.h>
 #include <qstylesheet.h>
@@ -25,6 +26,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <knotifyclient.h>
 
 #include "kopetecontactlist.h"
@@ -256,14 +258,28 @@ void KopeteMetaContact::startChat()
 	if( m_contacts.isEmpty() )
 		return;
 
-	KopeteContact *c=m_contacts.first();
-	for(QPtrListIterator<KopeteContact> it( m_contacts ) ; it.current(); ++it )
+	KopeteContact *c = 0L;
+	for( QPtrListIterator<KopeteContact> it( m_contacts ) ; it.current(); ++it )
 	{
-		if( (*it)->importance() > c->importance())
-			c=*it;
+		if( ( !c || ( *it )->importance() > c->importance() ) &&
+			( *it )->isReachable() )
+		{
+			c = *it;
+		}
 	}
 
-	c->execute();
+	if( c )
+	{
+		c->execute();
+	}
+	else
+	{
+		KMessageBox::error( qApp->mainWidget(),
+			i18n( "This user is not reachable at the moment. Please"
+				"try a protocol that supports offline sending, or wait "
+				"until this user goes online." ),
+			i18n( "User is not reachable - Kopete" ) );
+	}
 }
 
 void KopeteMetaContact::execute()
@@ -636,26 +652,6 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 		}
 		contactNode = contactNode.nextSibling();
 	}
-
-/*	// Deserialize when the *whole* meta contact has been read!
-//Not needed anymore since plugins are loaded after contactlist
-	QMap<QString, QString>::ConstIterator it;
-	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
-	{
-		KopetePlugin *plugin = LibraryLoader::pluginLoader()->searchByID( it.key() );
-		if( plugin )
-		{
-			QStringList strList = QStringList::split( "||", it.data() );
-
-			for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
-			{
-				//unescape '||'
-				(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
-			}
-
-			plugin->deserialize( this, strList );
-		}
-	}*/
 
 	// If a plugin is loaded, load data cached
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
