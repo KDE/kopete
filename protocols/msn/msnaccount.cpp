@@ -1246,7 +1246,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			QString sha1d= QString((KCodecs::base64Encode(SHA1::hash(ar))));
 
 			QString size=QString::number( pictFile.size() );
-			QString all= "Creator"+accountId()+"Size"+size+"Type3LocationTFR2C.tmpFriendlyAAA=SHA1D"+ sha1d;
+			QString all= "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
 			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"TFR2C.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
 		}
 	}

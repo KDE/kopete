@@ -44,6 +44,7 @@
 
 //kopete
 #include "msnaccount.h"
+#include "msnprotocol.h"
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
@@ -209,6 +210,17 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	QRegExp rx("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
 	rx.search(msg);
 	QString type=rx.cap(1);
+
+	rx=QRegExp("User-Agent: ([A-Za-z0-9.$!*/\\-]*)");
+	rx.search(msg);
+	QString clientStr=rx.cap(1);
+
+	if( !clientStr.isNull() && !m_msgHandle.isNull())
+	{
+		Kopete::Contact *c=m_account->contacts()[m_msgHandle];
+		if(c)
+			c->setProperty(  MSNProtocol::protocol()->propClient , clientStr );
+	}
 
 	// incoming message for File-transfer
 	if( type== "text/x-msmsgsinvite"  )

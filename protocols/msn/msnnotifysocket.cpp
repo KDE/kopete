@@ -322,15 +322,30 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if (publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString())
 				changePublicName(publicName,c->contactId());
-			c->setObject( unescape(data.section( ' ', 4, 4 )) );
+			QString obj=unescape(data.section( ' ', 4, 4 ));
+			c->setObject( obj );
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
+
+			if(!c->hasProperty( MSNProtocol::protocol()->propClient.key() ))
+			{
+				unsigned int clientID=data.section( ' ', 3, 3 ).toUInt();
+				if( clientID & 512)
+					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Web Messenger") );
+				else if(clientID & 64)
+					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("MSN Mobile") );
+				else if(obj.contains("kopete")  )
+					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
+			}
 		}
 	}
 	else if( cmd == "FLN" )
 	{
 		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
+		{
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
+			c->removeProperty(  MSNProtocol::protocol()->propClient );
+		}
 	}
 	else if( cmd == "XFR" )
 	{
