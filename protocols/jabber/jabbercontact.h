@@ -53,8 +53,6 @@ public:
 	JabberContact( QString userid, QString name, QStringList groups,
 			JabberProtocol *protocol, KopeteMetaContact *mc, QString identity);
 
-	~JabberContact();
-
 	/********************************************************************
 	 *
 	 * KopeteContact reimplementation start

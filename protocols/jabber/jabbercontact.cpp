@@ -85,24 +85,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	slotUpdatePresence( p->JabberOffline, QString::null );
 }
 
-/**
- * JabberContact destructor
- */
-JabberContact::~JabberContact()
-{
-	delete actionCollection;
-	delete actionRename;
-	delete actionSelectResource;
-	delete actionSetAvailability;
-	delete actionSendAuth;
-	delete actionStatusOnline;
-	delete actionStatusChatty;
-	delete actionStatusAway;
-	delete actionStatusXA;
-	delete actionStatusDND;
-	delete actionStatusInvisible;
-}
-
 /* Return the identity ID */
 QString JabberContact::identityId() const
 {
