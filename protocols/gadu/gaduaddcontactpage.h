@@ -41,13 +41,17 @@ public:
 	virtual bool validateData();
 	virtual bool apply( KopeteAccount* , KopeteMetaContact * );
 
+	protected:
+		void showEvent(QShowEvent *e);
+
+public slots:
+	void  slotUinChanged( const QString& );
 
 private:
 	GaduAccount*	account_;
 	gaduAddUI*	addUI_;
 	QLabel*		noaddMsg1_;
 	QLabel*		noaddMsg2_;
-	bool		canAdd_;
 };
 
 #endif

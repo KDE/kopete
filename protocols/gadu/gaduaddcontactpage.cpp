@@ -40,54 +40,68 @@
 GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, const char* name )
 : AddContactPage( parent, name )
 {
+	account_	= owner;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	addUI_	= new gaduAddUI( this );
-	account_	= owner;
-	canAdd_	= true;
+	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( slotUinChanged( const QString & ) ) );
 	addUI_->addEdit_->setValidChars( "1234567890" );
-
+	addUI_->addEdit_->setText( "" );
 }
 
 GaduAddContactPage::~GaduAddContactPage()
 {
 }
 
+void
+GaduAddContactPage::showEvent( QShowEvent* e )
+{
+	slotUinChanged( QString::null );
+	AddContactPage::showEvent( e );
+}
+
+void
+GaduAddContactPage::slotUinChanged( const QString & )
+{
+	emit dataValid( validateData() );
+}
+
 bool
 GaduAddContactPage::validateData()
 {
 	bool ok;
-	addUI_->addEdit_->text().toULong( &ok );
+	long u;
+
+	u = addUI_->addEdit_->text().toULong( &ok );
+	if ( u == 0 ) {
+		return false;
+	}
+
 	return ok;
 }
 
 bool
 GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 {
-	if ( canAdd_ ) {
-		if ( validateData() ) {
-			QString userid	= addUI_->addEdit_->text().stripWhiteSpace();
-			QString name	= addUI_->nickEdit_->text().stripWhiteSpace();
-			if ( a != account_ ) {
-				kdDebug(14100) << "Problem because accounts differ: " << a->accountId()
-								<< " , " << account_->accountId() << endl;
-			}
-			if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, KopeteAccount::ChangeKABC ) == false ) {
-				return false;
-			}
-			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
-
-			contact->setProperty( GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().stripWhiteSpace() );
-			contact->setProperty( GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().stripWhiteSpace() );
-			contact->setProperty( GaduProtocol::protocol()->propLastName, addUI_->snameEdit_->text().stripWhiteSpace() );
-			contact->setProperty( GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_ ->text().stripWhiteSpace() );
-			/*
-			contact->setProperty( "ignored", i18n( "ignored" ), "false" );
-			contact->setProperty( "nickName", i18n( "nick name" ), name );
-			*/
+	if ( validateData() ) {
+		QString userid	= addUI_->addEdit_->text().stripWhiteSpace();
+		QString name	= addUI_->nickEdit_->text().stripWhiteSpace();
+		if ( a != account_ ) {
+			kdDebug(14100) << "Problem because accounts differ: " << a->accountId()
+							<< " , " << account_->accountId() << endl;
 		}
-	}
-	else {
-		return false;
+		if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, KopeteAccount::ChangeKABC ) == false ) {
+			return false;
+		}
+		GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
+
+		contact->setProperty( GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().stripWhiteSpace() );
+		contact->setProperty( GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().stripWhiteSpace() );
+		contact->setProperty( GaduProtocol::protocol()->propLastName, addUI_->snameEdit_->text().stripWhiteSpace() );
+		contact->setProperty( GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_ ->text().stripWhiteSpace() );
+		/*
+		contact->setProperty( "ignored", i18n( "ignored" ), "false" );
+		contact->setProperty( "nickName", i18n( "nick name" ), name );
+		*/
 	}
 	return true;
 }
