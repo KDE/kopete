@@ -314,6 +314,10 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 void IRCContact::unloading()
 {
+	if (mTabPage !=0)
+	{
+		delete mTabPage;
+	}
 	delete this;
 }
 

@@ -52,8 +52,8 @@ public:
 	QVBox *tabPage() { return mTabPage; };
 	IRCChatView *getChatView() { return chatView; };
 	QStringList mPendingMessage;
-private:
 	QString mServer;
+private:
 	QString mTarget;
 	unsigned int mPort;
 	QString mUsername;
