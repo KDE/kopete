@@ -100,10 +100,10 @@ void AddAccountWizard::next()
 			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L,this);
 
 			if (!accountPage) {
-        KMessageBox::error( this, i18n( "The author of this protocol hasn't implemented Adding of Accounts" ),
+				KMessageBox::error( this, i18n( "The author of this protocol hasn't implemented Adding of Accounts" ),
 														i18n( "Error while adding account" ) );
 				return;
-      }
+			}
 
 			insertPage( dynamic_cast<QWidget*>(accountPage), i18n( "Step Two: Account Information" ), indexOf(finis) );
 			QWizard::next();

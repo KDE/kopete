@@ -31,9 +31,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,
 	session_ = new GaduSession( this, "GaduSession" );
 
 	KGlobal::config()->setGroup("Gadu");
-	setAccountId( KGlobal::config()->readEntry("Uin", "0") );
-	userUin_ = accountId().toUInt();
-	setPassword( KGlobal::config()->readEntry("Password", "") );
+	userUin_ = accountID.toUInt();
 	nick_    = KGlobal::config()->readEntry("Nick", "");
 	myself_ = new GaduContact(  userUin_, nick_, this,
                               new KopeteMetaContact() );
@@ -153,14 +151,14 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 void
 GaduAccount::slotLogin()
 {
-	if ( (userUin_ == 0) || password_.isEmpty() ) {
+	if ( (userUin_ == 0) || getPassword().isEmpty() ) {
 		KMessageBox::error( qApp->mainWidget(),
 												i18n("You must fill in UIN and password fields in the preferences dialog before you can login"),
 												i18n("Unable to Login") );
 		return;
 	}
 	if ( !session_->isConnected() ) {
-		session_->login( userUin_, password_, GG_STATUS_AVAIL );
+		session_->login( userUin_, getPassword(), GG_STATUS_AVAIL );
 		changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 	} else {
 		session_->changeStatus( GG_STATUS_AVAIL );
@@ -355,7 +353,7 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
 {
 	kdDebug(14100)<<"#### Gadu-Gadu connected!"<<endl;
 	UserlistGetCommand *cmd = new UserlistGetCommand( this );
-	cmd->setInfo( userUin_, password_ );
+	cmd->setInfo( userUin_, getPassword() );
 	QObject::connect( cmd, SIGNAL(done(const QStringList&)),
 										SLOT(userlist(const QStringList&)) );
 	cmd->execute();

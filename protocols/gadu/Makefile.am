@@ -8,9 +8,10 @@ AM_CPPFLAGS = -I$(srcdir)/ui \
 
 kde_module_LTLIBRARIES = kopete_gadu.la
 
-kopete_gadu_la_SOURCES = gaducommands.cpp gadusession.cpp     \
+kopete_gadu_la_SOURCES = gaducommands.cpp gadusession.cpp      \
 		       gaducontact.cpp gaduaddcontactpage.cpp  \
-		       gadupreferences.cpp gaduprotocol.cpp gaduaccount.cpp
+		       gadupreferences.cpp gaduprotocol.cpp    \
+		       gaduaccount.cpp gadueditaccount.cpp
 
 kopete_gadu_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_gadu_la_LIBADD  = ./ui/libgaduui.la \

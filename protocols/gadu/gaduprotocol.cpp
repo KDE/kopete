@@ -43,6 +43,7 @@
 #include "gaduprotocol.h"
 #include "gaducontact.h"
 #include "gaduaccount.h"
+#include "gadueditaccount.h"
 #include "gaduaddcontactpage.h"
 #include "gadupreferences.h"
 #include "gadusession.h"
@@ -133,6 +134,19 @@ GaduProtocol::convertStatus( uint status ) const
     default:
         return gaduStatusOffline_;
     }
+}
+
+KopeteAccount*
+GaduProtocol::createNewAccount( const QString& accountId )
+{
+  GaduAccount *account = new GaduAccount( this, accountId );
+  return account;
+}
+
+EditAccountWidget*
+GaduProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
+{
+  return  (new GaduEditAccount( this, account, parent ) );
 }
 
 #include "gaduprotocol.moc"

@@ -104,7 +104,6 @@ private:
 	GaduContact         *myself_;
 	Q_UINT32             userUin_;
 	KopeteOnlineStatus   status_;
-	QString              password_;
 	QString              nick_;
 };
 
