@@ -163,7 +163,7 @@ void KopeteMessageManager::slotUpdateDisplayName()
 		return;
 
 	d->displayName=QString::null;
-	while ( ( c = d->mContactList.next() ) != 0L )
+	do
 	{
 		if(! d->displayName.isNull() )
 			d->displayName.append( QString::fromLatin1( ", " ) ) ;
@@ -175,7 +175,8 @@ void KopeteMessageManager::slotUpdateDisplayName()
 			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 			d->displayName.append( nick.isEmpty() ? c->contactId() : nick );
 		}
-	}
+		c=d->mContactList.next();
+	} while (c);
 
 	//If we have only 1 contact, add the status of him
 	if ( d->mContactList.count() == 1 )
