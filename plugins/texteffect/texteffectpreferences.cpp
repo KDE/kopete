@@ -81,8 +81,8 @@ void TextEffectPreferences::save()
 	config->setWaves(preferencesDialog->m_casewaves->isChecked());
 
 	config->save();
-#if KDE_VERSION >= KDE_MAKE_VERSION( 3, 1, 90 )
-	emit setChanged(false);
+#if KDE_IS_VERSION( 3, 1, 90 )
+	setChanged( false );
 #endif
 }
 
