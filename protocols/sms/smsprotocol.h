@@ -28,7 +28,6 @@ class KopeteMetaContact;
 class KopeteMessage;
 class KopeteMessageManager;
 class SMSContact;
-class StatusBarIcon;
 
 class SMSProtocol : public KopeteProtocol
 {
@@ -40,7 +39,7 @@ public:
 
 	static SMSProtocol *protocol();
 
-    bool unload();
+	bool unload();
 	typedef QMap<QString, SMSContact*> ContactList;
 
 	virtual void deserialize( KopeteMetaContact *metaContact,
@@ -59,27 +58,16 @@ public:
 
 	KopeteContact *myself() const;
 
+public slots:
+	void serialize( KopeteMetaContact *metaContact);
+
 private:
 	static SMSProtocol* s_protocol;
 
-	StatusBarIcon *statusBarIcon;
-
 	SMSContact *m_mySelf;
-
-public slots:
-	void serialize( KopeteMetaContact *metaContact);
 };
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
