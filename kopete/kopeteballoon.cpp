@@ -91,10 +91,10 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 		this, SIGNAL(signalIgnoreButtonClicked()));
 	connect(mIgnoreButton, SIGNAL(clicked()),
 		this, SLOT(deleteLater()));
-	/*connect(mCaption, SIGNAL(linkClicked(const QString &)),
+	connect(mCaption, SIGNAL(linkClicked(const QString &)),
 		this, SIGNAL(signalIgnoreButtonClicked()));
 	connect(mCaption, SIGNAL(linkClicked(const QString &)),
-		this, SLOT(deleteLater()));*/
+		this, SLOT(deleteLater()));
 }
 
 void KopeteBalloon::setAnchor(const QPoint &anchor)
