@@ -107,6 +107,9 @@
 					<xsl:value-of select="."/>
 				</font>
 			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="."/>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
