@@ -218,7 +218,7 @@ void MSNSocket::slotDataReceived()
 		bool isBinary = false;
 		for ( uint i = 0; i < 3 ; ++i )
 		{
-			if ( rawData[ i ] < 'A' || rawData[ i ] > 'Z' )
+			if ( (rawData[ i ] < 'A' || rawData[ i ] > 'Z') && (rawData[ i ] < '0' || rawData[ i ] > '9')  )
 				isBinary = true;
 		}
 
