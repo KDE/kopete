@@ -8,22 +8,16 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>425</width>
-            <height>297</height>
+            <width>394</width>
+            <height>282</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Gadu-Gadu: Add Contact</string>
+        <string>Form1</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
         </property>
         <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
