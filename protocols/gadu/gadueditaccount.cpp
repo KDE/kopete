@@ -182,15 +182,10 @@ KopeteAccount* GaduEditAccount::apply()
     
     if(rememberCheck_->isChecked()){
         m_account->setPassword(passwordEdit_->text());
-	kdDebug(14100) << "password remembered "<<endl;
     }
     else{
-	kdDebug(14100) << "password should not be remembered" <<endl;
         m_account->setPassword();
     }
-    
-    kdDebug(14100) << "password " << m_account->getPassword() <<endl;
-    
     
     m_account->myself()->rename(nickName->text());
     
