@@ -619,8 +619,8 @@ QString KopeteMetaContact::toXML()
 			{
 				if ( !group_s.isEmpty() )
 					xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( group_s ) + QString::fromLatin1( "</group>\n" );
-				else
-					xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( i18n("Unknown" ) ) + QString::fromLatin1( "</group>\n" );
+				//else
+				//	xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( i18n("Unknown" ) ) + QString::fromLatin1( "</group>\n" );
 			}
 		}
 
