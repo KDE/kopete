@@ -209,13 +209,20 @@ void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
 	{
 		case JABERR_CONNECT:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("There was an error connecting to the Jabber server (%1).").arg(error->msg, 1),
-					   i18n("Error Connecting to Jabber Server"));
+					   i18n("Error connecting to Jabber Server"));
 			break;
 		case JABERR_AUTH:   /* FIXME FIXME FIXME FIXME!!! */
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("Login failed. Please check your Jabber ID and password."),
+					   i18n("Error connecting to Jabber Server"));
+			break;
 		case JABERR_CREATE:
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("The Jabber account could not be created. Maybe it exists already?"),
+					   i18n("Error creating Jabber Account"));
+			break;
 		default:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("You were disconnected for an unspecified reason (%1).").arg(error->type, 1),
 								    i18n("Disconnected From Jabber Server"));
+			break;
 	}
 	
 	/* basically all errors mean disconnection, so disconnect for real here */
@@ -441,8 +448,6 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 
 	if (c) {
 		/* Existing contact, update data. */
-		// !FIXME! seems b0rked to update the data
-		/* YOU'RE ON SPEED!! IT'S OK! */
 		QString &tmpGroup = (!group.isNull() ? group : QString("") );
 		((JabberContact *)c)->initContact(contact->jid, contact->nick, tmpGroup);
 	}
