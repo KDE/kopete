@@ -109,7 +109,6 @@ int Buffer::addLEDWord(const DWORD dw)
 	return length;
 }
 
-/** adds the given string to the buffer (make sure it's NULL-terminated) */
 int Buffer::addString(const char * s, const DWORD len)
 {
 	doResize(len);
@@ -117,6 +116,11 @@ int Buffer::addString(const char * s, const DWORD len)
 		buf[length+i] = s[i];
 	length = length + len;
 	return length;
+}
+
+int Buffer::addString(const unsigned char *s, const DWORD len)
+{
+	return addString((const char*)s, len);
 }
 
 int Buffer::addLEString(const char * s, const DWORD len)

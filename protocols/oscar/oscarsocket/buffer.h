@@ -60,6 +60,7 @@ class Buffer : public QObject
 
 		/** adds the given string to the buffer (make sure it's NULL-terminated) */
 		int addString(const char *, const DWORD);
+		int addString(const unsigned char *, const DWORD);
 		int addLEString(const char *, const DWORD);
 
 		/* adds the given string to the buffer with the length in front of it
@@ -209,7 +210,7 @@ class Buffer : public QObject
 	public slots:
 		/*
 		 * Called when a buffer error occurs
-		 * i.e. reading more bytes the buffer actually contains
+		 * i.e. reading more bytes than the buffer actually contains
 		 */
 		void OnBufError(QString);
 };

@@ -32,7 +32,7 @@
 
 // ---------------------------------------------------------------------------------------
 
-//#define DIRECTCONNECT				0x0f1f
+//#define DIRECTCONNECT				0x0f1f // WHAT IS THAT FOR??? [mETz, 21.05.2003]
 
 /* This was in the oscarsocket.h before. i move them here because too warning
  *   (warning: overflow in implicit constant conversion)
@@ -41,8 +41,8 @@
  */
 static const struct
 {
-    DWORD flag;
-    char data[16];
+	DWORD flag;
+	unsigned char data[16];
 } oscar_caps[] =
 {
 	// Chat is oddball.
@@ -82,52 +82,58 @@ static const struct
 
 	{AIM_CAPS_ICQSERVERRELAY,
 	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_GAMES,
 	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_GAMES2,
 	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-		0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_SENDBUDDYLIST,
 	{0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_ICQRTF,
+	{AIM_CAPS_RTFMSGS,
 	{0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
-		0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
+	 0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
 
 	{AIM_CAPS_IS_2001,
 	{0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
-		0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
+	 0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
 
 	{AIM_CAPS_EMPTY,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 
 	{AIM_CAPS_TRILLIANCRYPT,
 	{0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
-		0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
+	 0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
 
 	{AIM_CAPS_APINFO,
 	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
-		0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
+	 0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
 
 	{AIM_CAPS_UTF8,
 	{0x09, 0x46, 0x13, 0x4E, 0x4C, 0x7F, 0x11, 0xD1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_IS_WEB,
+	{0x56, 0x3F, 0xC8, 0x09, 0x0B, 0x6f, 0x41, 0xBD,
+	 0x9F, 0x79, 0x42, 0x26, 0x09, 0xDF, 0xA2, 0xF3}},
+
+	{AIM_CAPS_INTEROPERATE,
+	{0x09, 0x46, 0x13, 0x4D, 0x4C, 0x7F, 0x11, 0xD1,
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_LAST,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
 };
 
 
-
-// TODO: replace this by some i18n() compatible method
 static const QString msgerrreason[] =
 {
 	I18N_NOOP("Invalid error"),
@@ -1031,11 +1037,7 @@ void OscarSocket::sendIdleTime(DWORD time)
 		return;
 
 	kdDebug(14150) << k_funcinfo "SEND (CLI_SNAC1_11), sending idle time, time=" << time << endl;
-	bool newidle;
-	if (time==0)
-		newidle = false;
-	else
-		newidle = true;
+	bool newidle = (time!=0);
 
 	if (newidle != idle) //only do stuff if idle status changed
 	{
@@ -1113,16 +1115,21 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 					switch(t->type)
 					{
 						case 0x0131: // nickname
+						{
 							if(t->length > 0)
 								bud->setAlias(QString::fromLocal8Bit(t->data));
 							break;
+						}
 
 						case 0x0066: // waitauth flag
+						{
 							kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;
 							break;
+						}
 
 						default:
+						{
 							kdDebug(14150) << k_funcinfo <<
 								"UNKNOWN TLV(" << t->type << "), length=" << t->length << endl;
 							QString tmpStr;
@@ -1136,6 +1143,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 							}
 							kdDebug(14150) << k_funcinfo << tmpStr << endl;
 							break;
+						}
 					} // END switch()
 				} // END for()
 
@@ -2303,8 +2311,9 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 void OscarSocket::sendCapabilities(unsigned long caps)
 {
 	Buffer outbuf;
-	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
 	int sz = 0;
+
+	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
 	for (int i=0;oscar_caps[i].flag != AIM_CAPS_LAST;i++)
 	{
 		if (oscar_caps[i].flag & caps)
@@ -2316,10 +2325,10 @@ void OscarSocket::sendCapabilities(unsigned long caps)
 	outbuf.addWord(0x0005); //TLV (type 5)
 	outbuf.addWord(sz);
 
-	for (int i=0;oscar_caps[i].flag != AIM_CAPS_LAST;i++)
+	for (int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
 	{
 		if (oscar_caps[i].flag & caps)
-			outbuf.addString(oscar_caps[i].data,16);
+			outbuf.addString(oscar_caps[i].data, 16);
 	}
 
 	outbuf.print();
@@ -2369,8 +2378,8 @@ void OscarSocket::sendAddBuddy(const QString &name, const QString &group)
 		newitem = ssiData.addBuddy(name,group);
 	}
 
-	kdDebug(14150) << k_funcinfo << "Adding " << newitem->name << ", gid " << newitem->gid
-		<< ", bid " << newitem->bid << ", type " << newitem->type
+	kdDebug(14150) << k_funcinfo << "Adding " << newitem->name << ", gid " <<
+		newitem->gid << ", bid " << newitem->bid << ", type " << newitem->type
 		<< ", datalength " << newitem->tlvlength << endl;
 
 	sendSSIAddModDel(newitem,0x0008);
@@ -2424,7 +2433,8 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 
 /** Renames a buddy on the server side buddy list */
 /*
-void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGroup, const QString &newAlias)
+void OscarSocket::sendRenameBuddy(const QString &budName,
+	const QString &budGroup, const QString &newAlias)
 {
 	kdDebug(14150) << k_funcinfo << "Sending rename buddy..." << endl;
 	SSI *renameitem = ssiData.findBuddy(budName,budGroup);
@@ -2448,23 +2458,25 @@ void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGrou
 	TLV *t;
 	for(t=lst.first(); t; t=lst.next())
 	{
-		kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") with length " << t->length << endl;
+		kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") with length " <<
+			t->length << endl;
 	}
 	lst.setAutoDelete(TRUE);
 	TLV *nick= findTLV(lst,0x0131);
 	if(nick && nick->length > 0)
 	{
 
-    //ATÜ
-	kdDebug(14150) << k_funcinfo << "Renaming " << renameitem->name << ", gid " << renameitem->gid
-			<< ", bid " << renameitem->bid << ", type " << renameitem->type
-			<< ", datalength " << renameitem->tlvlength << endl;
+	kdDebug(14150) << k_funcinfo << "Renaming " << renameitem->name <<
+		", gid " << renameitem->gid << ", bid " << renameitem->bid <<
+		", type " << renameitem->type << ", datalength " <<
+		renameitem->tlvlength << endl;
 
 	sendSSIAddModDel(renameitem,0x0009);
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "FIXME: cannot rename a buddy without an alias set on the server!" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"FIXME: cannot rename a buddy without an alias set on the server!" << endl;
 	}
 }
 */
@@ -2477,11 +2489,13 @@ void OscarSocket::sendAddGroup(const QString &name)
 	SSI *newitem = ssiData.addGroup(name);
 	if(!newitem)
 	{
-		kdDebug(14150) << k_funcinfo << "Null SSI returned from addGroup(), group must already exist!" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Null SSI returned from addGroup(), group must already exist!" << endl;
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << "Adding group, name='" << name << "' gid=" << newitem->gid << endl;
+	kdDebug(14150) << k_funcinfo << "Adding group, name='" << name <<
+		"' gid=" << newitem->gid << endl;
 	sendSSIAddModDel(newitem,0x0008);
 }
 
@@ -2591,21 +2605,27 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << "Deleting " << delitem->name << ", gid " << delitem->gid
-			<< ", bid " << delitem->bid << ", type " << delitem->type
-			<< ", datalength " << delitem->tlvlength << endl;
+	kdDebug(14150) << k_funcinfo << "Deleting " << delitem->name << ", gid " <<
+		delitem->gid << ", bid " << delitem->bid << ", type " << delitem->type <<
+		", datalength " << delitem->tlvlength << endl;
 
 	sendSSIAddModDel(delitem,0x000a);
 
 	if (!ssiData.remove(delitem))
-		kdDebug(14150) << k_funcinfo << "delitem was not found in the SSI list" << endl;
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"delitem was not found in the SSI list" << endl;
+	}
 }
 
 /** Parses a warning notification */
 void OscarSocket::parseWarningNotify(Buffer &inbuf)
 {
-	int newevil = inbuf.getWord() / 10; //aol multiplies warning % by 10, don't know why
-	kdDebug(14150) << "[OSCAR} Got a warning: new warning level is " << newevil << endl;
+	//aol multiplies warning % by 10, don't know why
+	int newevil = inbuf.getWord() / 10;
+	kdDebug(14150) << "[OSCAR} Got a warning: new warning level is " <<
+		newevil << endl;
+
 	if (inbuf.getLength() != 0)
 	{
 		UserInfo u = parseUserInfo(inbuf);
@@ -2620,7 +2640,8 @@ void OscarSocket::parseError(Buffer &inbuf)
 {
 	QString msg;
 	WORD reason = inbuf.getWord();
-	kdDebug(14150) << k_funcinfo << "Got an error: " << QTextStream::hex << reason << endl;
+	kdDebug(14150) << k_funcinfo << "Got an error: " << QTextStream::hex <<
+		reason << endl;
 
 	if (reason < msgerrreasonlen)
 		msg = i18n("Your message did not get sent: %1").arg(msgerrreason[reason]);
@@ -2634,7 +2655,8 @@ void OscarSocket::parseError(Buffer &inbuf)
 type == 0: request
 type == 1: deny
 type == 2: accept  */
-void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo)
+void OscarSocket::sendRendezvous(const QString &sn, WORD type,
+	DWORD rendezvousType, const KFileItem *finfo)
 {
 	OncomingSocket *sockToUse = serverSocket(rendezvousType);
 	Buffer outbuf;
@@ -2649,7 +2671,8 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 	//add this to the list of pending connections if it is a request
 	if ( type == 0 )
 	{
-		sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0, DirectInfo::Incoming);
+		sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0,
+			DirectInfo::Incoming);
 	}
 
 	outbuf.addString(ck,8);
@@ -2672,10 +2695,16 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 	else //this is a file transfer request
 	{
 		if (type == 0x0000)
-			outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+finfo->url().fileName().length()+4);
+		{
+			outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+
+				finfo->url().fileName().length()+4);
+		}
 		else
+		{
 			outbuf.addWord(2+8+16);
+		}
 	}
+
 	outbuf.addWord(type); //2
 	outbuf.addString(ck,8); //8
 	for (int i=0;oscar_caps[i].flag != AIM_CAPS_LAST;i++)
@@ -2699,8 +2728,11 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 
 		if (!sockToUse->ok()) //make sure the socket stuff is properly set up
 		{
-			kdDebug(14150) << "[Oscar] SERVER SOCKET NOT SET UP... returning from sendRendezvous" << endl;
-			emit protocolError(i18n("Error setting up listening socket.  The request will not be send."),0);
+			kdDebug(14150) << k_funcinfo << "SERVER SOCKET NOT SET UP... " <<
+			"returning from sendRendezvous" << endl;
+
+			emit protocolError(i18n("Error setting up listening socket." \
+					" The request will not be send."), 0);
 			return;
 		}
 
@@ -2719,12 +2751,15 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 			outbuf.addWord(0x0001); //more than 1 file? (0x0002 for multiple -- implement later)
 			outbuf.addWord(0x0001); //number of files
 			outbuf.addDWord(finfo->size());
-			outbuf.addString(finfo->url().fileName().latin1(),finfo->url().fileName().length());
+			outbuf.addString(finfo->url().fileName().latin1(),
+				finfo->url().fileName().length());
 			outbuf.addDWord(0x00000000);
 		}
 	}
 
-	kdDebug(14150) << "Sending direct IM, type " << type << " from " << sockToUse->address().toString() << ", port " << sockToUse->port() << endl;
+	kdDebug(14150) << "Sending direct IM, type " << type << " from " <<
+		sockToUse->address().toString() << ", port " << sockToUse->port() << endl;
+
 	sendBuf(outbuf,0x02);
 }
 
@@ -2739,7 +2774,8 @@ void OscarSocket::sendDirectIMAccept(const QString &sn)
 {
 	sendRendezvous(sn,0x0002,AIM_CAPS_IMIMAGE);
 	if ( !mDirectIMMgr->establishOutgoingConnection(sn) )
-		kdDebug(14150) << k_funcinfo <<  sn << " not found in pending connection list" << endl;
+		kdDebug(14150) << k_funcinfo << sn <<
+			" not found in pending connection list" << endl;
 }
 
 /** Parses a missed message notification */
@@ -2803,7 +2839,8 @@ void OscarSocket::sendSSIRightsRequest()
 
 void OscarSocket::sendSSIRequest(void)
 {
-	kdDebug(14150) << "SEND (CLI_REQROSTER), requesting serverside contactlist for the FIRST time" << endl;
+	kdDebug(14150) << "SEND (CLI_REQROSTER), " <<
+		"requesting serverside contactlist for the FIRST time" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0004,0x0000,0x00020004);
 	sendBuf(outbuf,0x02);
@@ -2914,9 +2951,10 @@ void OscarSocket::sendBlock(const QString &sname)
 	if (!newitem)
 		return;
 
-	kdDebug(14150) << "Adding DENY:" << newitem->name << ", gid " << newitem->gid
-		<< ", bid " << newitem->bid << ", type " << newitem->type
-		<< ", datalength " << newitem->tlvlength << endl;
+	kdDebug(14150) << "Adding DENY:" << newitem->name << ", gid " <<
+		newitem->gid << ", bid " << newitem->bid << ", type " <<
+		newitem->type << ", datalength " << newitem->tlvlength << endl;
+
 	sendSSIAddModDel(newitem,0x0008);
 
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
@@ -2942,7 +2980,10 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	sendSSIAddModDel(delitem,0x000a);
 
 	if (!ssiData.remove(delitem))
-		kdDebug(14150) << "[OSCAR][sendRemoveBlock] delitem was not found in the SSI list" << endl;
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"delitem was not found in the SSI list" << endl;
+	}
 
 	ssiData.print();
 
@@ -2965,7 +3006,8 @@ FLAP OscarSocket::getFLAP(void)
 		//get the channel ID
 		if ( (chan = getch()) == -1)
 		{
-			kdDebug(14150) << "Error reading channel ID: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading channel ID: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -2976,12 +3018,14 @@ FLAP OscarSocket::getFLAP(void)
 		//get the sequence number
 		if((theword = getch()) == -1)
 		{
-			kdDebug(14150) << "Error reading sequence number: nothing to be read" << endl;;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading sequence number: nothing to be read" << endl;;
 			fl.error = true;
 		}
 		else if((theword2 = getch()) == -1)
 		{
-			kdDebug(14150) << "Error reading data field length: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading data field length: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -2993,12 +3037,14 @@ FLAP OscarSocket::getFLAP(void)
 		//get the data field length
 		if ((theword = getch()) == -1)
 		{
-			kdDebug(14150) << "Error reading sequence number: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading sequence number: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else if((theword2 = getch()) == -1)
 		{
-			kdDebug(14150) << "Error reading data field length: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading data field length: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -3008,7 +3054,8 @@ FLAP OscarSocket::getFLAP(void)
 	}
 	else
 	{
-		kdDebug(14150) << "Error reading FLAP... start byte is " << start << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Error reading FLAP... start byte is " << start << endl;
 		fl.error = true;
 		putch(start);
 	}
@@ -3017,7 +3064,8 @@ FLAP OscarSocket::getFLAP(void)
 }
 
 // Called when a direct IM is received
-void OscarSocket::OnDirectIMReceived(QString message, QString sender, bool isAuto)
+void OscarSocket::OnDirectIMReceived(QString message, QString sender,
+	bool isAuto)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	//for now, let's just emit a gotIM as though it came from the server
@@ -3056,7 +3104,8 @@ void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, &finfo);
 }
 
-OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn, const QString &fileName)
+OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn,
+	const QString &fileName)
 {
 	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
 	mFileTransferMgr->addFileInfo(sn,
@@ -3085,11 +3134,13 @@ OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 		return mFileTransferMgr;
 }
 
-void OscarSocket::sendStatus(const unsigned int status, const QString &awayMessage)
+void OscarSocket::sendStatus(const unsigned int status,
+	const QString &awayMessage)
 {
 	if(mIsICQ)
 	{
-		kdDebug(14150) << k_funcinfo << "Called for ICQ, status=" <<  status << endl;
+		kdDebug(14150) << k_funcinfo << "Called for ICQ, status=" <<
+			status << endl;
 		switch(status)
 		{
 			case OSCAR_AWAY:
@@ -3113,7 +3164,8 @@ void OscarSocket::sendStatus(const unsigned int status, const QString &awayMessa
 	}
 	else // AIM
 	{
-		kdDebug(14150) << k_funcinfo << "Called for AIM, status=" <<  status << endl;
+		kdDebug(14150) << k_funcinfo << "Called for AIM, status=" <<
+			status << endl;
 		if (status == OSCAR_AWAY)
 			sendAIMAway(true, awayMessage);
 		else

@@ -549,7 +549,7 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 
 void OscarSocket::sendKeepalive()
 {
-	kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
+//	kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
 	Buffer outbuf;
 //	outbuf.print();
 	sendBuf(outbuf, 0x05);
@@ -598,7 +598,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 	{
 		tlv = buf.getTLV();
 
-		kdDebug(14150) << k_funcinfo << "Found TLV(" << tlv.type << "), length=" << tlv.length << endl;
+		kdDebug(14150) << k_funcinfo << "Found TLV(" << tlv.type <<
+			"), length=" << tlv.length << endl;
 
 		switch(tlv.type)
 		{

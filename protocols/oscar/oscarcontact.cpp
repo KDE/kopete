@@ -124,8 +124,8 @@ void OscarContact::initSignals()
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)));
 	// When the contact is being removed (whether from a group or not)
 	QObject::connect(
-		this, SIGNAL( contactDestroyed( KopeteContact * )),
-		this, SLOT( slotContactDestroyed( KopeteContact * )));
+		this, SIGNAL(contactDestroyed(KopeteContact *)),
+		this, SLOT(slotContactDestroyed(KopeteContact *)));
 	// When a group in the contact list is being removed, we're notified
 	QObject::connect(
 		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup*)),
@@ -252,20 +252,23 @@ void OscarContact::slotContactDestroyed(KopeteContact */*contact*/)
 	slotDeleteContact();
 }
 
-void OscarContact::slotGroupRemoved( KopeteGroup *group )
+void OscarContact::slotGroupRemoved(KopeteGroup *removedGroup)
 {
-	QString groupName=group->displayName();
-
-	kdDebug(14150) << k_funcinfo << "Called for group '" << groupName << "'" << endl;
-
 	AIMGroup *aGroup = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
-
 	if (!aGroup)
+	{
+		kdDebug(14150) << k_funcinfo << "contact '" << displayName() <<
+			"' has no AIMGroup associated with it!" << endl;
 		return;
-	if (aGroup->name() != groupName)
+	}
+
+	if (aGroup->name() != removedGroup->displayName()) // our group did not get removed
 		return;
 
-	kdDebug(14150) << "[OscarContact] slotGroupRemoved() calling slotDeleteContact()" << endl;
+	kdDebug(14150) << k_funcinfo << "displayName=" << displayName() <<
+		", groupname=" << aGroup->name() <<
+		", Calling slotDeleteContact()" << endl;
+
 	slotDeleteContact();
 }
 
