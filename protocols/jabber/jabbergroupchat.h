@@ -1,8 +1,8 @@
 /***************************************************************************
-                          dlgjabberchatjoin.cpp  -  description
+                          jabbergroupchat.h  -  description
                              -------------------
-    begin                : Fri Dec 13 2002
-    copyright            : (C) 2002 by Kopete developers
+    begin                : Fre Feb 28 2003
+    copyright            : (C) 2003 by Till Gerken (till@tantalo.net)
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -15,32 +15,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include "jabberprotocol.h"
-#include "dlgjabberchatjoin.h"
+#ifndef JABBERGROUPCHAT_H
+#define JABBERGROUPCHAT_H
 
-DlgJabberChatJoin::DlgJabberChatJoin(QWidget *parent, const char *name ) : dlgChatJoin(parent,name)
+#include <jabbercontact.h>
+
+/**
+  *@author Kopete developers
+  */
+
+class JabberGroupChat : public JabberContact
 {
-	connect(buttonOk, SIGNAL(clicked()), this, SLOT(slotDialogDone()));
-}
 
-void DlgJabberChatJoin::slotDialogDone()
-{
+public: 
+	JabberGroupChat(QString userId, QString nickname, QStringList groups,
+					JabberProtocol *p, KopeteMetaContact *mc, QString identity);
+	~JabberGroupChat();
 
-	if(!JabberProtocol::protocol()->isConnected())
-	{
-			JabberProtocol::protocol()->errorConnectFirst();
-			return;
-	}
+private:
+	QDict<JabberContact*> members;
 
-	// send the join request
-	JabberProtocol::protocol()->jabberClient->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
+};
 
-}
-
-DlgJabberChatJoin::~DlgJabberChatJoin()
-{
-}
-
-#include "dlgjabberchatjoin.moc"
+#endif

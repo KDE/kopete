@@ -34,13 +34,6 @@ public:
 	DlgJabberChatJoin(QWidget *parent=0, const char *name=0);
 	~DlgJabberChatJoin();
 
-	const QString host() const;
-	const QString room() const;
-	const QString nick() const;
-
-signals:
-	void okClicked();
-
 private slots:
 	void slotDialogDone();
 

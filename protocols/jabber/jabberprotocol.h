@@ -286,12 +286,10 @@ private slots:
 	void slotOpenEmptyMail();
 
 	/*
-	 * Slot for joining a new group chat
+	 * Slots for handling group chats
 	 */
 	void slotJoinNewChat();
-	void slotJoinChat();
 	void slotGroupChatJoined(const Jid &jid);
-	void slotGroupChatLeave();
 	void slotGroupChatLeft(const Jid &jid);
 	void slotGroupChatPresence(const Jid &jid, const Status &status);
 	void slotGroupChatError(const Jid &jid, int error, QString &reason);

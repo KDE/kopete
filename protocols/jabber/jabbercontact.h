@@ -312,7 +312,7 @@ private:
 
 	KActionCollection *actionCollection;
 
-	KAction 	*actionRename,
+	KAction *actionRename,
 			*actionSendAuth, *actionRequestAuth,
 			*actionInfo, *actionStatusAway,
 			*actionStatusOnline, *actionStatusChatty,
