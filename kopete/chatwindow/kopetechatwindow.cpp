@@ -210,6 +210,7 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	setWFlags( Qt::WDestructiveClose );
 
 	windows.append( this );
+	windowListChanged();
 
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 }
@@ -245,6 +246,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	}
 
 	windows.remove( this );
+	windowListChanged();
 
 //	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
 
@@ -258,6 +260,13 @@ KopeteChatWindow::~KopeteChatWindow()
 	}
 
 	delete anim;
+}
+
+void KopeteChatWindow::windowListChanged()
+{
+	// update all windows' Move Tab to Window action
+	for ( QPtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
+		(*it)->checkDetachEnable();
 }
 
 bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
