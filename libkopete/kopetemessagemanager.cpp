@@ -131,7 +131,8 @@ void KopeteMessageManager::readMessages()
 			kdDebug() << "[KopeteMessageManager] mChatWindow is minimized" << endl;
 		if (mChatWindow->isHidden())
 			kdDebug() << "[KopeteMessageManager] mChatWindow is hidden" << endl;
-		mChatWindow->raise();	// make it top window
+		if(KopetePrefs::prefs()->raiseMsgWindow())
+			mChatWindow->raise();	// make it top window
 		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++)
 		{
 			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
@@ -148,7 +149,8 @@ void KopeteMessageManager::readMessages()
 			kdDebug() << "[KopeteMessageManager] mEmailWindow is minimized" << endl;
 		if (mEmailWindow->isHidden())
 			kdDebug() << "[KopeteMessageManager] mEmailWindow is hidden" << endl;
-		mEmailWindow->raise();
+		if(KopetePrefs::prefs()->raiseMsgWindow())
+			mEmailWindow->raise();
 		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++) {
 			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
 			mEmailWindow->messageReceived(*it);
