@@ -21,16 +21,18 @@
 #include "msncontact.h"
 #include "msnpreferences.h"
 
-//#include <kconfig.h>
+#include <qregexp.h>
+
+#include <kapplication.h>
 #include <kdebug.h>
+#include <kdeversion.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmdcodec.h>
 #include <kmessagebox.h>
-#include <qregexp.h>
 #include <kstandarddirs.h>
 #include <ktempfile.h>
-#include <kapplication.h>
+#include <krun.h>
 
 MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
 : MSNAuthSocket( msnId, protocol )
@@ -129,7 +131,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline." );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
-	}     
+	}
 	default:
 		MSNAuthSocket::handleError( code, id );
 		break;
@@ -310,7 +312,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			_serial = serial;
 		}*/
 		//emit connected(true);
-		// set the status 
+		// set the status
 		setStatus(m_newstatus);
 	}
 	else if( cmd == "BPR" )
@@ -340,7 +342,15 @@ void MSNNotifySocket::slotOpenInbox()
 		KTempFile tmpFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
 		*tmpFile.textStream() << m_hotmailRequest;
 
-		kapp->invokeBrowser( tmpFile.name() );
+		// In KDE 3.1 and older this will leave a stale temp file lying
+		// around. There's no easy way for us to detect the browser exiting
+		// though, so we can't do anything about it. For KDE 3.2 and newer
+		// we use the improved KRun that auto-deletes the temp file when done.
+#if KDE_VERSION >= 319
+		KRun::runURL( tmpFile.name(), "text/html", true );
+#else
+		KRun::runURL( tmpFile.name(), "text/html" );
+#endif
 	}
 }
 
