@@ -575,6 +575,11 @@ KMSNService* MSNProtocol::msnService() const
 	return m_msnService;
 }
 
+void MSNProtocol::addContact( const QString &userID )
+{
+	m_msnService->contactAdd( userID );
+}
+
 void MSNProtocol::removeContact( const QString &userID )
 {
 	m_msnService->contactDelete( userID );

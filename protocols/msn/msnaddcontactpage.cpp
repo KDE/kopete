@@ -3,7 +3,6 @@
 
 #include <klocale.h>
 
-#include "kmsnservice.h"
 #include "msnadd.h"
 #include "msnaddcontactpage.h"
 #include "msnprotocol.h"
@@ -16,7 +15,7 @@ MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const 
 	{
 			msndata = new msnAddUI(this);
 			/*			
-			msndata->cmbGroup->insertStringList(owner->msnService()->getGroups());
+			msndata->cmbGroup->insertStringList(owner->getGroups());
 			msndata->cmbGroup->setCurrentItem(0);
 			*/
 			plugin = owner;
@@ -48,7 +47,7 @@ void MSNAddContactPage::slotFinish()
 		}
 		*/
 		QString userid = msndata->addID->text();
-		plugin->msnService()->contactAdd(userid);
+		plugin->addContact( userid );
 	}
 	else
 	{

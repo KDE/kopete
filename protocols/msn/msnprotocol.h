@@ -79,6 +79,7 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
+	void addContact( const QString &userID );
 	void removeContact( const QString &userID );
 	void removeFromGroup( const QString &userID, const QString &group );
 	void moveContact( const QString &userID, const QString &oldGroup,
