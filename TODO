@@ -82,3 +82,20 @@ OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 
 ================================================================================
 
+
+================================================================================
+ MSN TODO  (for the Kopete 1.0 release)
+---------------------------------------
+
+	- Search for an MSN User
+	- Improve the EditAccountWidget, add privacy setting, phone number setting,
+	   and a way to handle the ''hidden'' contactlist
+	- Handle the MSN PLUS! color codes
+	  Handle the MSN6 cutoms emoticon (at least add the capacity to view them)
+	- Show internals messages in chat window when filetransfers, and make the
+	   possibility to send files without opening previously a chat
+
+================================================================================
+
+
+
