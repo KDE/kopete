@@ -83,6 +83,8 @@ public:
 	 */
 	KopeteProtocol* protocol() const;
 
+	const KopeteAccount *account() const { return user()->account(); };
+
 	/**
 	 * @return Returns a unique identifier associated with this
 	 *         manager
