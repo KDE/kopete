@@ -201,7 +201,7 @@ void OscarSocket::slotBytesWritten(int n)
 {
 	if (n > 0 && !bSomethingOutgoing)
 	{
-		kdDebug(14150) << k_funcinfo << "Setting bSomethingOutgoing = true" << endl;
+		//kdDebug(14150) << k_funcinfo << "Setting bSomethingOutgoing = true" << endl;
 		bSomethingOutgoing = true;
 	}
 }

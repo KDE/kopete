@@ -733,8 +733,8 @@ void OscarSocket::startKeepalive()
 
 	if (!keepaliveTimer)
 	{
-		kdDebug(14150) << k_funcinfo << "Creating keepaliveTimer" << endl;
-		keepaliveTimer=new QTimer(this, "keepaliveTimer");
+		//kdDebug(14150) << k_funcinfo << "Creating keepaliveTimer" << endl;
+		keepaliveTimer = new QTimer(this, "keepaliveTimer");
 		QObject::connect(keepaliveTimer,SIGNAL(timeout()),this,SLOT(slotKeepaliveTimer()));
 		bSomethingOutgoing = true;
 		keepaliveTimer->start(keepaliveTime*1000);
@@ -746,15 +746,15 @@ void OscarSocket::stopKeepalive()
 //	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if(keepaliveTimer)
 	{
-		kdDebug(14150) << k_funcinfo << "Deleting keepaliveTimer" << endl;
+		//kdDebug(14150) << k_funcinfo << "Deleting keepaliveTimer" << endl;
 		delete keepaliveTimer;
-		keepaliveTimer=0L;
+		keepaliveTimer = 0L;
 	}
 }
 
 void OscarSocket::slotKeepaliveTimer()
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	//kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if(!bSomethingOutgoing)
 	{
 		kdDebug(14150) << k_funcinfo << "EEEEK, didn send something since last ping sent to socket!" << endl;
