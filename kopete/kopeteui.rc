@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kkopete" version="2">
+<kpartgui name="kkopete" version="3">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -17,12 +17,12 @@
 			<Action name="settings_showmenubar" />
 			<Action name="settings_showtoolbar" />
 			<Action name="settings_showstatusbar" />
-			<Separator lineseperator="true" />
+			<Separator lineSeparator="true" />
 			<Action name="settings_keys" />
 			<Action name="settings_global" />
 			<Action name="settings_toolbars" />
 			<Action name="settings_prefs" />
-			<Separator lineseperator="true" />
+			<Separator lineSeparator="true" />
 			<Action name="settings_show_offliners" />
 		</Menu>
 	</MenuBar>

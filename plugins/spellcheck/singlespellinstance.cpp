@@ -64,7 +64,7 @@ SingleSpellInstance::SingleSpellInstance( SpellCheckPlugin *plugin, KopeteView *
 	t->viewport()->installEventFilter( this );
 	mHighlightEngine = new SpellingHighlighter( &mReplacements, t );
 
-	//Define our word seperator regexp
+	//Define our word separator regexp
 	//We can't use \b because QT barfs when trying to split on it
 	mBound = QRegExp( QString::fromLatin1("[\\s\\W]") );
 

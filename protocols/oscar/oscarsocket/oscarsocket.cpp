@@ -1534,7 +1534,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 	// Note that although this contains TLVs that appear contiguous
 	// with the TLVs read below, they are two different pieces.  The
 	// userinfo block contains the number of TLVs that contain user
-	// information, the rest are not even though there is no seperation.
+	// information, the rest are not even though there is no separation.
 	//
 	// That also means that TLV types can be duplicated between the
 	// userinfo block and the rest of the message, however there should
