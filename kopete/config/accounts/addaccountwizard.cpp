@@ -117,11 +117,11 @@ void AddAccountWizard::accept()
 		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
 		Kopete::PluginManager::self()->setPluginEnabled( protocol_name , true );
 	}
-	
+
 	KWizard::accept();
 
 	//Bug 76583: If "Connect automatically at startup" box is checked, Kopete should connect to that account upon creation 
-	if(account && !account->excludeConnect())
+	if(account && m_finish->mConnectNow->isChecked())
 		account->connect();
 }
 
