@@ -143,6 +143,10 @@ signals:
 	 */
 	void requestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType type );
 
+	/**
+	 * the message is ready to be displayed
+	 */
+	void display( KopeteMessage& message, KopeteMessageManager * );
 
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );

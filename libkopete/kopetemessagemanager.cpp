@@ -217,7 +217,7 @@ void KopeteMessageManager::messageSucceeded()
 
 void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	if( msg.direction() == KopeteMessage::Inbound )
 	{

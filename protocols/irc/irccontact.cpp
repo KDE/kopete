@@ -30,7 +30,6 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopeteviewmanager.h"
 #include "kopeteview.h"
 #include "ircusercontact.h"
 #include "irccontact.h"
@@ -401,13 +400,13 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 {
 	if( isConnected )
 	{
-		//FIXME: i don't understand how does that works, but it seems ugly
-		KopeteView *myView = manager(true)->view(true);
-		if( myView == KopeteViewManager::viewManager()->activeView() )
-		{
+	//FIXME: i don't understand how does that works, but it seems ugly
+		//KopeteView *myView = manager(true)->view(true);
+		//if( myView == KopeteViewManager::viewManager()->activeView() )
+		//{
 			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
-		}
+		//}
 	}
 }
 

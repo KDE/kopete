@@ -51,6 +51,7 @@ class SpellCheckPlugin : public KopetePlugin
 		SpellCheckPreferences *mPrefs;
 		bool spellCheckerReady;
 		bool manualCheckInProgress;
+		KopeteMessageManager *m_currentKMM;
 
 	private slots:
 		void slotPrefsSaved();

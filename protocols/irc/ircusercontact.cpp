@@ -20,7 +20,6 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 #include "kopetemessagemanager.h"
-#include "kopeteviewmanager.h"
 #include "kopeteview.h"
 
 #include "kirc.h"
@@ -156,24 +155,24 @@ void IRCUserContact::slotBanUserDomain()
 
 void IRCUserContact::slotKick()
 {
-	//FIXME: Eh! what is this UGLY thing!
+	/* TODO: rewrite this code
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
 	{
 		QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
 		mEngine->kickUser(mNickName, channelName, QString::null);
-	}
+	}*/
 }
 
 void IRCUserContact::contactMode( const QString &mode )
 {
-	//FIXME: Eh! what is this UGLY thing!
+	/* TODO: rewrite this code
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
 	{
 		QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
 		mEngine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(mNickName) );
-	}
+	}*/
 }
 
 void IRCUserContact::slotCtcpPing()

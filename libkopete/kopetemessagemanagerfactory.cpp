@@ -21,7 +21,6 @@
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
-#include "kopeteviewmanager.h"
 
 #include <kdebug.h>
 
@@ -125,8 +124,8 @@ void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager *
 	connect( result, SIGNAL( messageReceived( KopeteMessage &, KopeteMessageManager * ) ),
 		SIGNAL( aboutToReceive(KopeteMessage & ) ) );
 
-	connect( result, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ), KopeteViewManager::viewManager(),
-		SLOT( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
+	connect( result, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ),
+		SIGNAL( display( KopeteMessage &, KopeteMessageManager *) ) );
 }
 
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager( int id )
