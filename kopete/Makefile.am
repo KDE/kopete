@@ -16,7 +16,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = addcontactwizard contactlist . config chatwindow kconf_update 
+SUBDIRS = addcontactwizard contactlist config . chatwindow kconf_update 
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
