@@ -155,8 +155,9 @@ public:
 	/**
 	 * \brief Get the current display name
 	 * @return The display name
+	 * @deprecated  Use the nickname property instead
 	 */
-	QString displayName() const;
+	QString displayName() const KDE_DEPRECATED;
 
 	/**
 	 * @brief Get the online status of the contact
@@ -264,17 +265,14 @@ public:
 	 */
 	bool canAcceptFiles() const;
 
-        /**
+    /**
 	 * @brief Rename a contact's display name.
 	 *
-	 * This method can be asynchronous, i.e. it starts the rename, but the
-	 * result may not be instant. Whenever the rename is done the contact
-	 * will call @ref setDisplayName() (which emits @ref displayNameChanged() )
-	 * to confirm the change.
-	 *
 	 * The default implementation calls @ref setDisplayName() immediately.
+	 *
+	 * @deprecated if you want to rename the alias on the server, use syncGroups()
 	 */
-	virtual void rename( const QString &newName );
+	virtual void rename( const QString &newName ) KDE_DEPRECATED;
 
 
 	/**
@@ -451,8 +449,9 @@ protected:
 	 * Sets the display name, for the contact.
 	 * this is what is shown in the contact list.
 	 * @param name Then new display name
+	 * @deprecated use the nickname property
 	 */
-	void setDisplayName( const QString &name );
+	void setDisplayName( const QString &name ) KDE_DEPRECATED;
 
 private slots:
 
