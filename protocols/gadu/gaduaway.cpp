@@ -25,7 +25,7 @@ GaduAway::GaduAway( GaduAccount *account, QWidget* parent,
 
 int GaduAway::status() const
 {
-	return ui_->statusGroup_->selectedId();
+	return ui_->statusGroup_->id(ui_->statusGroup_->selected());
 }
 
 QString GaduAway::awayText() const
