@@ -230,7 +230,7 @@ KActionMenu*
 GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
-	
+
 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
 	p->actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 	    arg( myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
@@ -372,7 +372,7 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 				connect( status/*, descr*/ );
 				return;
 			}
-			
+
 			if ( useTls() != TLS_no ) {
 				p->connectWithSSL = true;
 			}
@@ -700,12 +700,14 @@ GaduAccount::slotIncomingDcc( unsigned int UIN )
 	contact = static_cast<GaduContact*>( contacts()[ QString::number( UIN ) ] );
 
 	if ( !contact ) {
+	  kdDebug(14100) << "attempt to make dcc connection from unknown uin " << UIN << endl;
 		return;
 	}
 
 	// if incapabile to transfer files, forget about it.
 	if ( contact->contactPort() < 10 ) {
-		return;
+	  kdDebug(14100) << "can't respond to " << UIN << " request, his listeing port is too low" << endl;
+	  return;
 	}
 
 	trans = new GaduDCCTransaction( p->gaduDcc_ );
@@ -855,7 +857,7 @@ GaduAccount::slotExportContactsListToFile()
 
 	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-save", false );
-	p->saveListDialog->setCaption( 
+	p->saveListDialog->setCaption(
 	    i18n("Save Contacts List for Account %1 As").arg(
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
@@ -899,7 +901,7 @@ GaduAccount::slotImportContactsFromFile()
 
 	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-load", true );
-	p->loadListDialog->setCaption( 
+	p->loadListDialog->setCaption(
 	    i18n("Load Contacts List for Account %1 As").arg(
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
