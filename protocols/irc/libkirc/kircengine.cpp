@@ -150,7 +150,7 @@ void Engine::setStatus(Engine::Status status)
 
 		// If password is given for this server, send it now, and don't expect a reply
 		if (!(password()).isEmpty())
-			writeMessage("PASS", password() , m_Realname, false);
+			writeMessage("PASS", password(), m_Realname);
 
 		user(m_Username, 0, QString::fromLatin1("Kopete User"));
 		nick(m_Nickname);
@@ -301,43 +301,28 @@ bool Engine::bindCtcpReply(const QString &command, QObject *object, const char *
 		minArgs, maxArgs, helpMessage);
 }
 
-bool Engine::canSend( bool mustBeConnected ) const
-{
-	return	( !mustBeConnected || m_status == Connected );
-}
-
 /* Message will be send as passed.
  */
-void Engine::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
+void Engine::writeRawMessage(const QString &rawMsg)
 {
-	if(canSend(mustBeConnected))
-	{
-		Message::writeRawMessage(this, defaultCodec, rawMsg);
-	}
+	Message::writeRawMessage(this, defaultCodec, rawMsg);
 }
 
 /* Message will be quoted before beeing send.
  */
-void Engine::writeMessage(const QString &msg, bool mustBeConnected)
+void Engine::writeMessage(const QString &msg)
 {
-	if(canSend(mustBeConnected))
-	{
-		Message::writeMessage(this, defaultCodec, msg);
-	}
+	Message::writeMessage(this, defaultCodec, msg);
 }
 
-void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
+void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix)
 {
-	if(canSend(mustBeConnected))
-	{
-		Message::writeMessage(this, defaultCodec, command, args, suffix );
-	}
+	Message::writeMessage(this, defaultCodec, command, args, suffix );
 }
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
 {
-	if (canSend(true))
-		Message::writeCtcpMessage(this, defaultCodec, command, to, ctcpMessage);
+	Message::writeCtcpMessage(this, defaultCodec, command, to, ctcpMessage);
 }
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,

@@ -92,6 +92,13 @@ Message::~Message()
 
 void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QString &str)
 {
+	// FIXME: Really handle this
+	if (!engine->socket())
+	{
+		kdDebug(14121) << k_funcinfo << "Not connected while attempting to write:" << str << endl;
+		return;
+	}
+
 	QString txt = str + QString::fromLatin1("\r\n");
 
 	QCString s(codec->fromUnicode(txt));
@@ -99,7 +106,7 @@ void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QSt
 	// FIXME: Should check the amount of data really writen.
 	int wrote = engine->socket()->writeBlock(s.data(), s.length());
 
-	kdDebug(14121) << QString::fromLatin1(">> %1 (%2 bytes)").arg(str).arg(wrote) << endl;
+	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(str) << endl;
 }
 
 void Message::writeMessage(Engine *engine, const QTextCodec *codec, const QString &message)

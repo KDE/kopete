@@ -171,12 +171,10 @@ public:
 
 public slots:
 	//Message output
-	void writeRawMessage(const QString &message, bool mustBeConnected = true );
+	void writeRawMessage(const QString &message);
 
-	void writeMessage(const QString &message, bool mustBeConnected = true);
-
-	void writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null,
-		bool mustBeConnected = true );
+	void writeMessage(const QString &message);
+	void writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null);
 
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage);
 
@@ -359,8 +357,6 @@ private slots:
 	void slotConnected();
 	void error(int errCode = 0);
 
-	void quitTimeout();
-
 //	void echo(KIRC::Message &msg);
 //	void ignore(KIRC::Message &msg);
 
@@ -444,7 +440,6 @@ private:
 	void bindCtcp();
 
 	void setStatus(KIRC::Engine::Status status);
-	bool canSend( bool mustBeConnected ) const;
 	bool invokeCtcpCommandOfMessage(const QDict<KIRC::MessageRedirector> &map, KIRC::Message &message);
 
 	/*

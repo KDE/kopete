@@ -135,7 +135,7 @@ void Engine::mode(Message &msg)
 void Engine::nick(const QString &newNickname)
 {
 	m_PendingNick = newNickname;
-	writeMessage("NICK", newNickname, QString::null, false);
+	writeMessage("NICK", newNickname);
 }
 
 void Engine::nick(Message &msg)
@@ -179,7 +179,7 @@ void Engine::part(Message &msg)
 
 void Engine::ping(Message &msg)
 {
-	writeMessage("PONG", msg.arg(0), msg.suffix(), false);
+	writeMessage("PONG", msg.arg(0), msg.suffix());
 }
 
 void Engine::pong(Message &/*msg*/)
@@ -190,33 +190,11 @@ void Engine::quit(const QString &reason, bool now)
 {
 	kdDebug(14120) << k_funcinfo << reason << endl;
 
-	if(isDisconnected())
+	if (isDisconnected())
 		return;
 
-	if( now || !canSend(true) )
-	{
-		setStatus(Disconnected);
-		m_sock->close();
-		m_sock->reset();
-	}
-	else
-	{
-		writeMessage("QUIT", QString::null, reason, false);
-		setStatus(Closing);
-		QTimer::singleShot(5000, this, SLOT(quitTimeout()));
-	}
-}
-
-void Engine::quitTimeout()
-{
-	if(	m_sock->socketStatus() > KExtendedSocket::nothing &&
-		m_sock->socketStatus() < KExtendedSocket::done &&
-		m_status == Closing)
-	{
-		setStatus(Disconnected);
-		m_sock->close();
-		m_sock->reset();
-	}
+	writeMessage("QUIT", QString::null, reason);
+	setStatus(Closing);
 }
 
 void Engine::quit(Message &msg)
@@ -236,7 +214,7 @@ void Engine::user(const QString &newUsername, const QString &hostname, const QSt
 	m_Username = newUsername;
 	m_Realname = newRealname;
 
-	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_Realname, false);
+	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_Realname);
 }
 
 void Engine::user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
@@ -249,7 +227,7 @@ void Engine::user(const QString &newUsername, Q_UINT8 mode, const QString &newRe
 	m_Username = newUsername;
 	m_Realname = newRealname;
 
-	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_Realname, false);
+	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_Realname);
 }
 
 void Engine::topic(const QString &channel, const QString &topic)

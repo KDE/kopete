@@ -365,13 +365,13 @@ Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaConta
 
 void IRCProtocol::slotRawCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	if( !args.isEmpty() )
+	if (!args.isEmpty())
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeRawMessage( args, false );
+		static_cast<IRCAccount*>(manager->account())->engine()->writeRawMessage(args);
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+		static_cast<IRCAccount*>(manager->account())->appendMessage(
 			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply );
 	}
 }
@@ -426,8 +426,8 @@ void IRCProtocol::slotTopicCommand( const QString &args, Kopete::ChatSession *ma
 			chan->setTopic( args );
 		else
 		{
-			static_cast<IRCAccount*>( manager->account() )->engine()->
-				writeRawMessage( QString::fromLatin1("TOPIC %1").arg( chan->nickName() ), false );
+			static_cast<IRCAccount*>(manager->account())->engine()->
+				writeRawMessage(QString::fromLatin1("TOPIC %1").arg(chan->nickName()));
 		}
 	}
 	else
