@@ -56,7 +56,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Color for history messages in the chatwindow:</string>
+                        <string>Color for history messages in the chat window:</string>
                     </property>
                 </widget>
                 <widget class="KColorButton">

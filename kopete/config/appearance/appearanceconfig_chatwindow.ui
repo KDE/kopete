@@ -21,7 +21,7 @@
         </sizepolicy>
     </property>
     <property name="caption">
-        <string>Chatwindow Appearance</string>
+        <string>Chat Window Appearance</string>
     </property>
     <vbox>
         <property name="name">
