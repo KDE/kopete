@@ -730,7 +730,9 @@ public:
 	// grab the paragraph as plain text - very very evil.
 	QString plainText( int para )
 	{
-		return document()->paragAt( para )->string()->toString();
+		QString str = document()->paragAt( para )->string()->toString();
+		// str includes an extra space on the end (from the newline character?) - remove it
+		return str.left( str.length() - 1 );
 	}
 };
 
@@ -752,7 +754,7 @@ void ChatView::nickComplete()
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
 		QString match;
 
-		kdDebug() << k_funcinfo << word << endl;
+		kdDebug() << k_funcinfo << word << " from '" << txt << "'" << endl;
 
 		if( word != m_lastMatch )
 		{
