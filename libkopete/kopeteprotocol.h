@@ -28,8 +28,8 @@ class KActionMenu;
 class AddContactPage;
 class KopeteContact;
 class KopeteMetaContact;
-class EditIdentityWidget;
-class KopeteIdentity;
+class EditAccountWidget;
+class KopeteAccount;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -50,10 +50,10 @@ public:
 	/**
 	 * return a new AddContact widget showed in the addContactWizzard.
 	 * parent is the parent widget.
-	 * the identity is given 
+	 * the account is given 
 	 * TODO: make pure virtual
 	 */	
-	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteIdentity* /*identity*/)
+	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount* /*account*/)
 	{
 		return createAddContactWidget(parent);
 	}
@@ -64,18 +64,18 @@ public:
 	}
 
 	/**
-	 * return a new EditIdentity widget showed in the identity part of the configurations
-	 * identity is the KopeteIdentity to edit, if it is egal to 0l, then, we are creating a 
-	 * new identity
+	 * return a new EditAccount widget showed in the account part of the configurations
+	 * account is the KopeteAccount to edit, if it is egal to 0l, then, we are creating a 
+	 * new account
 	 */
-	virtual EditIdentityWidget *createEditIdentityWidget( KopeteIdentity * /*identity*/, QWidget * /*parent*/ )
+	virtual EditAccountWidget *createEditAccountWidget( KopeteAccount * /*account*/, QWidget * /*parent*/ )
 		{ return 0L; }  //TODO: make this pure virtual
 		
 	/**
-	 * create a new empty KopeteIdentity with the id identityId
+	 * create a new empty KopeteAccount with the id accountId
 	 * this method is called durring the loading from the xml file
 	 */
-	virtual KopeteIdentity *createNewIdentity( const QString & /* identityId */ )
+	virtual KopeteAccount *createNewAccount( const QString & /* accountId */ )
 		{ return 0L; }  //TODO: make this pure virtual
 
 	/**
@@ -170,7 +170,7 @@ public:
 	 * Register a new KopeteContact with the protocol.
 	 * To be called ONLY from KopeteContact, not from any other class!
 	 * (Not even a derived class).
-	 * (and by KopeteIdentity::registerContact )
+	 * (and by KopeteAccount::registerContact )
 	 */
 	void registerContact( KopeteContact *c );
 
@@ -202,7 +202,7 @@ private slots:
 	void slotKopeteContactDestroyed( KopeteContact * );
 
 	void slotRefreshStatusIcon();
-	void slotIdentityAdded();
+	void slotAccountAdded();
 
 private:
 	QString m_statusIcon;

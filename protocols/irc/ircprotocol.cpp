@@ -80,7 +80,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	//Migration code
 	if( cfg->hasKey("Nickname") )
 	{
-		createNewIdentity( cfg->readEntry("Nickname") + "@" + cfg->readEntry("Server") + ":" + cfg->readEntry("Port") );
+		createNewAccount( cfg->readEntry("Nickname") + "@" + cfg->readEntry("Server") + ":" + cfg->readEntry("Port") );
 
 		cfg->deleteEntry("Nickname");
 		cfg->deleteEntry("Server");
@@ -103,17 +103,17 @@ IRCProtocol::~IRCProtocol()
 KActionMenu* IRCProtocol::protocolActions()
 {
 	KActionMenu *mActionMenu;
-	QDict<KopeteIdentity> mIdentities = KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( mIdentities );
+	QDict<KopeteAccount> mAccounts = KopeteAccountManager::manager()->accounts(this);
+	QDictIterator<KopeteAccount> it( mAccounts );
 
-	if( mIdentities.count() == 1 )
-		mActionMenu = static_cast<IRCIdentity*>( it.current() )->actionMenu();
+	if( mAccounts.count() == 1 )
+		mActionMenu = static_cast<IRCAccount*>( it.current() )->actionMenu();
 	else
 	{
 		mActionMenu = new KActionMenu( "IRC", this );
 		for( ; it.current(); ++it )
 		{
-			mActionMenu->insert( static_cast<IRCIdentity*>( it.current() )->actionMenu() );
+			mActionMenu->insert( static_cast<IRCAccount*>( it.current() )->actionMenu() );
 		}
 	}
 
@@ -125,17 +125,17 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 	return new IRCAddContactPage(this,parent);
 }
 
-EditIdentityWidget *IRCProtocol::createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
+EditAccountWidget *IRCProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
-	return new IRCEditIdentityWidget(this, static_cast<IRCIdentity*>(identity),parent);
+	return new IRCEditAccountWidget(this, static_cast<IRCAccount*>(account),parent);
 }
 
-KopeteIdentity *IRCProtocol::createNewIdentity(const QString &identityId)
+KopeteAccount *IRCProtocol::createNewAccount(const QString &accountId)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
-	IRCIdentity *id = new IRCIdentity( identityId, this );
-	mIdentityMap[ identityId.section('@',1) ] = id;
+	IRCAccount *id = new IRCAccount( accountId, this );
+	mAccountMap[ accountId.section('@',1) ] = id;
 
 	return id;
 }
@@ -147,29 +147,29 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
-	QStringList identities  = QStringList::split( ",", serializedData[ "identities" ] );
+	QStringList accounts  = QStringList::split( ",", serializedData[ "accounts" ] );
 
 	if( displayName.isEmpty() )
 		displayName = contactId;
 
-	if( !identities.isEmpty() )
+	if( !accounts.isEmpty() )
 	{
-		for( uint i=0 ; i<identities.count(); i++ )
+		for( uint i=0 ; i<accounts.count(); i++ )
 		{
 			kdDebug(14120) << k_funcinfo << i << endl;
-			QString server = identities[i].section('@',1);
-			if( mIdentityMap.contains( server ) )
-				mIdentityMap[ server ]->addContact( contactId, displayName, metaContact );
+			QString server = accounts[i].section('@',1);
+			if( mAccountMap.contains( server ) )
+				mAccountMap[ server ]->addContact( contactId, displayName, metaContact );
 			else
-				mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact );
+				mAccountMap.begin().data()->addContact( contactId, displayName, metaContact );
 		}
 	}
 	else
 	{
-		//This guy does not have an identity. Must be old data.
+		//This guy does not have an account. Must be old data.
 		//Just add him to the first server we have, which would be the default server if
 		//the migration code was run at the beginning
-		mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact );
+		mAccountMap.begin().data()->addContact( contactId, displayName, metaContact );
 	}
 }
 

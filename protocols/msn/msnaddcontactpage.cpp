@@ -35,7 +35,7 @@ MSNAddContactPage::~MSNAddContactPage()
 {
 }
 
-bool MSNAddContactPage::apply( KopeteIdentity* i, KopeteMetaContact*m )
+bool MSNAddContactPage::apply( KopeteAccount* i, KopeteMetaContact*m )
 {
 	if ( validateData() )
 	{

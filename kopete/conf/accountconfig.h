@@ -1,5 +1,5 @@
 /*
-    identityconfig.h  -  Kopete identity config page
+    accountconfig.h  -  Kopete account config page
 
     Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
     
@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#ifndef __IDENTITYCONFIG_H
-#define __IDENTITYCONFIG_H
+#ifndef __ACCOUNTCONFIG_H
+#define __ACCOUNTCONFIG_H
 
 #include "configmodule.h"
 
@@ -22,34 +22,34 @@
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
  
-class IdentityConfigBase;
-class KopeteIdentity;
+class AccountConfigBase;
+class KopeteAccount;
 class QListViewItem;
-//class AddIdentityWizard;
+//class AddAccountWizard;
  
-class IdentityConfig : public ConfigModule
+class AccountConfig : public ConfigModule
 {
 	Q_OBJECT
 
 public:
-	IdentityConfig(QWidget * parent);
-	~IdentityConfig();
+	AccountConfig(QWidget * parent);
+	~AccountConfig();
 
 	virtual void save();
 	virtual void reopen();
 
 private:
-	IdentityConfigBase *m_view;
-	QMap <QListViewItem*,KopeteIdentity*> m_identityItems;
+	AccountConfigBase *m_view;
+	QMap <QListViewItem*,KopeteAccount*> m_accountItems;
 
 private slots:
-	void slotRemoveIdentity();
-	void slotEditIdentity();
-	void slotAddIdentity();
+	void slotRemoveAccount();
+	void slotEditAccount();
+	void slotAddAccount();
 	void slotAddWizardDone();
 	void slotItemSelected();
-	void slotIdentityUp();
-	void slotIdentityDown();
+	void slotAccountUp();
+	void slotAccountDown();
 };
 #endif
 

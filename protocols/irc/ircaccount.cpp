@@ -1,5 +1,5 @@
 /*
-    ircidentity.cpp - IRC Identity
+    ircaccount.cpp - IRC Account
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
@@ -33,7 +33,7 @@
 #include "ksparser.h"
 #include "kirc.h"
 
-IRCIdentity::IRCIdentity(const QString &identityId, const IRCProtocol *protocol) : KopeteIdentity( (KopeteProtocol*)protocol, identityId )
+IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : KopeteAccount( (KopeteProtocol*)protocol, accountId )
 {
 	mManager = 0L;
 	mMySelf = 0L;
@@ -42,13 +42,13 @@ IRCIdentity::IRCIdentity(const QString &identityId, const IRCProtocol *protocol)
 
 	actionOnline = new KAction ( i18n("Online"), "", 0, this, SLOT(connect()), this );
 	actionOffline =  new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this);
-	QObject::connect( this, SIGNAL(identityIdChanged()), this, SLOT(slotIdentityIdChanged()) );
+	QObject::connect( this, SIGNAL(accountIdChanged()), this, SLOT(slotAccountIdChanged()) );
 	QObject::connect( this, SIGNAL(passwordChangeded()), this, SLOT(slotPasswordChanged()) );
 
-	slotIdentityIdChanged();
+	slotAccountIdChanged();
 }
 
-IRCIdentity::~IRCIdentity()
+IRCAccount::~IRCAccount()
 {
 	kdDebug(14120) << k_funcinfo << endl;
 	if ( mEngine && mEngine->state() != QSocket::Idle )
@@ -57,10 +57,10 @@ IRCIdentity::~IRCIdentity()
 	delete mEngine;
 }
 
-void IRCIdentity::slotIdentityIdChanged()
+void IRCAccount::slotAccountIdChanged()
 {
-	mNickName = identityId().section('@',0,0);
-	QString serverInfo = identityId().section('@',1);
+	mNickName = accountId().section('@',0,0);
+	QString serverInfo = accountId().section('@',1);
 	mServer = serverInfo.section(':',0,0);
 	mPort = serverInfo.section(':',1).toUInt();
 	if( !mMySelf )
@@ -91,13 +91,13 @@ void IRCIdentity::slotIdentityIdChanged()
 		connect();
 }
 
-void IRCIdentity::slotPasswordChanged()
+void IRCAccount::slotPasswordChanged()
 {
 	if( !isConnected() )
 		delete mEngine;
 }
 
-KIRC *IRCIdentity::engine()
+KIRC *IRCAccount::engine()
 {
 	if( !mEngine )
 	{
@@ -113,11 +113,11 @@ KIRC *IRCIdentity::engine()
 	return mEngine;
 }
 
-KActionMenu *IRCIdentity::actionMenu()
+KActionMenu *IRCAccount::actionMenu()
 {
-	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( identityId() ).arg( mMySelf->onlineStatus().description() );
+	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( mMySelf->onlineStatus().description() );
 
-	KActionMenu *mActionMenu = new KActionMenu( identityId(), this );
+	KActionMenu *mActionMenu = new KActionMenu( accountId(), this );
 	mActionMenu->popupMenu()->insertTitle( SmallIcon( mMySelf->onlineStatus().icon() ), menuTitle, 1 );
 	mActionMenu->setIcon( mMySelf->onlineStatus().icon() );
 
@@ -127,7 +127,7 @@ KActionMenu *IRCIdentity::actionMenu()
 	return mActionMenu;
 }
 
-void IRCIdentity::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)
+void IRCAccount::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
 	KopeteContactPtrList others;
@@ -138,23 +138,23 @@ void IRCIdentity::slotNewPrivMessage(const QString &originating, const QString &
 	c->manager()->appendMessage(msg);
 }
 
-void IRCIdentity::connect()
+void IRCAccount::connect()
 {
 	engine()->connectToServer( mMySelf->nickName() );
 }
 
-void IRCIdentity::disconnect()
+void IRCAccount::disconnect()
 {
  	engine()->quitIRC("Kopete IRC 2.0. http://kopete.kde.org");
 	delete mEngine;
 }
 
-void IRCIdentity::setAway(bool)
+void IRCAccount::setAway(bool)
 {
 
 }
 
-void IRCIdentity::addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
+void IRCAccount::addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
 {
 	IRCContact *c;
 
@@ -185,7 +185,7 @@ void IRCIdentity::addContact( const QString &contact, const QString &displayName
 		m->setTemporary(false);
 }
 
-IRCChannelContact *IRCIdentity::findChannel(const QString &name, KopeteMetaContact *m  )
+IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContact *m  )
 {
 	if( !m )
 	{
@@ -211,7 +211,7 @@ IRCChannelContact *IRCIdentity::findChannel(const QString &name, KopeteMetaConta
 	return channel;
 }
 
-void IRCIdentity::unregisterChannel( const QString &name )
+void IRCAccount::unregisterChannel( const QString &name )
 {
 	QString lowerName = name.lower();
 	if( mChannels.contains( lowerName ) )
@@ -225,7 +225,7 @@ void IRCIdentity::unregisterChannel( const QString &name )
 	}
 }
 
-IRCUserContact *IRCIdentity::findUser(const QString &name, KopeteMetaContact *m)
+IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
 {
 	if( !m )
 	{
@@ -249,7 +249,7 @@ IRCUserContact *IRCIdentity::findUser(const QString &name, KopeteMetaContact *m)
 	return user;
 }
 
-void IRCIdentity::unregisterUser( const QString &name )
+void IRCAccount::unregisterUser( const QString &name )
 {
 	QString lowerName = name.lower();
 	if( mUsers.contains( lowerName ) )
@@ -264,17 +264,17 @@ void IRCIdentity::unregisterUser( const QString &name )
 	}
 }
 
-void IRCIdentity::slotConnectedToServer()
+void IRCAccount::slotConnectedToServer()
 {
 	mMySelf->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 }
 
-void IRCIdentity::slotConnectionClosed()
+void IRCAccount::slotConnectionClosed()
 {
 	mMySelf->setOnlineStatus( IRCProtocol::IRCUserOffline() );
 }
 
-void IRCIdentity::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
+void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
 

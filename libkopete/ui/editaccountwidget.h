@@ -1,5 +1,5 @@
 /*
-    editaccountwidget.h - Kopete Identity Widget
+    editaccountwidget.h - Kopete Account Widget
 
     Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
 
@@ -15,25 +15,25 @@
     *************************************************************************
 */
 
-#ifndef EDITIDENTITYWIDGET_H
-#define EDITIDENTITYWIDGET_H
+#ifndef EDITACCOUNTWIDGET_H
+#define EDITACCOUNTWIDGET_H
 
-class KopeteIdentity;
+class KopeteAccount;
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
 
-class EditIdentityWidget
+class EditAccountWidget
 {
 	public:
-		EditIdentityWidget(KopeteIdentity *);
+		EditAccountWidget(KopeteAccount *);
 
 		virtual bool validateData()=0;
-		virtual KopeteIdentity *apply()=0;
+		virtual KopeteAccount *apply()=0;
 
 	protected :
-		KopeteIdentity *m_identity;
+		KopeteAccount *m_account;
 };
 #endif
 

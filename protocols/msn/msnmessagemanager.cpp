@@ -86,8 +86,8 @@ void MSNMessageManager::createChat( const QString &handle,
 
 	setCanBeDeleted( false );
 
-	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNIdentity*>( user()->identity() ) );
-	m_chatService->setHandle( user()->identity()->identityId() );
+	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( user()->account() ) );
+	m_chatService->setHandle( user()->account()->accountId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
 
@@ -109,10 +109,10 @@ void MSNMessageManager::createChat( const QString &handle,
 
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
 {
-	if( add && !user()->identity()->contacts()[ handle ] )
-		user()->identity()->addContact( handle, publicName, 0L, QString::null, true );
+	if( add && !user()->account()->contacts()[ handle ] )
+		user()->account()->addContact( handle, publicName, 0L, QString::null, true );
 		
-	MSNContact *c = static_cast<MSNContact*>( user()->identity()->contacts()[ handle ] );
+	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
 
 	if(add)
 	{
@@ -163,7 +163,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
-		static_cast<MSNIdentity*>( user()->identity() )->slotStartChatSession( message.to().first()->contactId() );
+		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
 //		sendMessageQueue();
 		//m_msgQueued=new KopeteMessage(message);
@@ -208,7 +208,7 @@ void MSNMessageManager::slotInviteContact( KopeteContact *contact )
 	if( m_chatService )
 		m_chatService->slotInviteContact( contact->contactId() );
 	else
-		static_cast<MSNIdentity*>( user()->identity() )->slotStartChatSession( contact->contactId() );
+		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( contact->contactId() );
 }
 
 
@@ -230,7 +230,7 @@ void MSNMessageManager::slotInviteOtherContact()
 	if( m_chatService )
 		m_chatService->slotInviteContact( handle );
 	else
-		static_cast<MSNIdentity*>( user()->identity() )->slotStartChatSession( handle );
+		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( handle );
 }
 
 
@@ -268,8 +268,8 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 
 void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg)
 {
-	//FIXME! a contact from another identity can send a file
-	MSNContact *c = static_cast<MSNContact*>( user()->identity()->contacts()[ handle ] );
+	//FIXME! a contact from another account can send a file
+	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
 	if(!c)
 		return;
 

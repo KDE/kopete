@@ -40,8 +40,8 @@
 #include "msnprotocol.h"
 #include "msnaccount.h"
 
-MSNContact::MSNContact( KopeteIdentity *identity, const QString &id, const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( identity, id, parent )
+MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )
+: KopeteContact( account, id, parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
@@ -63,10 +63,10 @@ KopeteMessageManager *MSNContact::manager( bool canCreate )
 	KopeteContactPtrList chatmembers;
 	chatmembers.append(this);
 
-	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  identity()->myself(), chatmembers, protocol() );
+	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  account()->myself(), chatmembers, protocol() );
 	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
 	if(!manager &&  canCreate)
-			manager = new MSNMessageManager( protocol(), identity()->myself(), chatmembers );
+			manager = new MSNMessageManager( protocol(), account()->myself(), chatmembers );
 	return manager;
 }
 
@@ -93,7 +93,7 @@ KActionCollection *MSNContact::customContextMenuActions()
 
 void MSNContact::slotBlockUser()
 {
-	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( !notify )
 	{
 		KMessageBox::error( 0l,
@@ -137,7 +137,7 @@ void MSNContact::slotDeleteContact()
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
 
-	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
 		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
@@ -284,7 +284,7 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	}
 
 	if( ( to->displayName().isNull() || to->type() != KopeteGroup::Classic ) &&
-		to->pluginData(protocol(), identity()->identityId() + " id").isEmpty() && m_serverGroups.count() == 1 )
+		to->pluginData(protocol(), account()->accountId() + " id").isEmpty() && m_serverGroups.count() == 1 )
 	{
 		// If this contact is in the last group and the contact moved to top level, do nothing
 		// (except when group 0 is the top-level group)
@@ -292,15 +292,15 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		return;
 	}
 
-	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
 		addToGroup( to );
 
-		if( !from->pluginData(protocol(),identity()->identityId() + " id").isEmpty() )
+		if( !from->pluginData(protocol(),account()->accountId() + " id").isEmpty() )
 		{
-			if( m_serverGroups.contains( from->pluginData(protocol(),identity()->identityId() + " id").toUInt() ) )
-				notify->removeContact( contactId(), from->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
+			if( m_serverGroups.contains( from->pluginData(protocol(),account()->accountId() + " id").toUInt() ) )
+				notify->removeContact( contactId(), from->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
 		}
 	}
 	else
@@ -319,7 +319,7 @@ void MSNContact::rename( const QString &newName )
 	if( newName == displayName() )
 		return;
 
-	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
 		notify->changePublicName( newName, contactId() );
@@ -341,13 +341,13 @@ void MSNContact::addToGroup( KopeteGroup *group )
 	if( !group )
 		return;
 
-	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
-		if( !group->pluginData( protocol() , identity()->identityId() + " id" ).isEmpty() )
+		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
 		{
-			if( !m_serverGroups.contains( group->pluginData(protocol(),identity()->identityId() + " id").toUInt() ) )
-				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
+			if( !m_serverGroups.contains( group->pluginData(protocol(),account()->accountId() + " id").toUInt() ) )
+				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
 		}
 		else if( group->displayName().isNull() || group->type() != KopeteGroup::Classic )
 		{	//top-level group
@@ -360,7 +360,7 @@ void MSNContact::addToGroup( KopeteGroup *group )
 		}
 		else
 		{
-			static_cast<MSNIdentity*>( identity() )->addGroup( group->displayName(), contactId() );
+			static_cast<MSNAccount*>( account() )->addGroup( group->displayName(), contactId() );
 		}
 	}
 	else
@@ -379,7 +379,7 @@ void MSNContact::removeFromGroup( KopeteGroup *group )
 	if( !group )
 		return;
 
-	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
 		if( m_serverGroups.count() == 1 )
@@ -390,10 +390,10 @@ void MSNContact::removeFromGroup( KopeteGroup *group )
 			return;
 		}
 
-		if( !group->pluginData( protocol() , identity()->identityId() + " id" ).isEmpty() )
+		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
 		{
-			if( m_serverGroups.contains( group->pluginData(protocol(),identity()->identityId() + " id").toUInt() ) )
-				notify->removeContact( contactId(), group->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
+			if( m_serverGroups.contains( group->pluginData(protocol(),account()->accountId() + " id").toUInt() ) )
+				notify->removeContact( contactId(), group->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
 		}
 	}
 	else

@@ -32,10 +32,10 @@
 #include "kopetemetacontact.h"
 #include "editaccountwidget.h"
 
-AddIdentityWizard::AddIdentityWizard( QWidget *parent, const char *name, bool modale )
-: AddIdentityWizard_Base( parent, name, modale )
+AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modale )
+: AddAccountWizard_Base( parent, name, modale )
 {
-	identityPage=0L;
+	accountPage=0L;
 	int pluginCount = 0;
 	QListViewItem *pluginItem=0L;
 	
@@ -67,40 +67,40 @@ AddIdentityWizard::AddIdentityWizard( QWidget *parent, const char *name, bool mo
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 }
 
-AddIdentityWizard::~AddIdentityWizard()
+AddAccountWizard::~AddAccountWizard()
 {
 }
 
-void AddIdentityWizard::slotProtocolListClicked( QListViewItem *)
+void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 {
 	// Just makes sure only one protocol is selected before allowing the user to continue
 	setNextEnabled(selectService, (bool)(protocolListView->selectedItem()));
 }
 
-void AddIdentityWizard::accept()
+void AddAccountWizard::accept()
 {
-	identityPage->apply();
+	accountPage->apply();
 	deleteLater();
 }
 
-void AddIdentityWizard::next()
+void AddAccountWizard::next()
 {
 	if (currentPage() == selectService ||
 		(currentPage() == intro && !appropriate( selectService )))
 	{
-		if(identityPage)
-			delete identityPage;
+		if(accountPage)
+			delete accountPage;
 			
 		QListViewItem *lvi=protocolListView->selectedItem();
 		if(KopeteProtocol *p=m_protocolItems[lvi] )
 		{
-			identityPage = p->createEditIdentityWidget(0L,this);
+			accountPage = p->createEditAccountWidget(0L,this);
 
 			//that will not be possible, but if a protocol doesn't have yet this page, we should show a inform text or textbox
-			if (!identityPage)
+			if (!accountPage)
 				return;
 
-			QWidget *qWidget = dynamic_cast<QWidget*>( identityPage );
+			QWidget *qWidget = dynamic_cast<QWidget*>( accountPage );
 			insertPage( qWidget, i18n( "Step Two: Account Information" ) , indexOf( finis) );
 			QWizard::next();
 		}
@@ -110,7 +110,7 @@ void AddIdentityWizard::next()
 		currentPage() != selectService &&
 		currentPage() != finis)
 	{
-		if (identityPage && !identityPage->validateData())
+		if (accountPage && !accountPage->validateData())
 			return;
 	}
 	QWizard::next();

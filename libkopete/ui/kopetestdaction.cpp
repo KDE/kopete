@@ -71,7 +71,7 @@ KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QO
 
 KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "User &Info" ), QString::fromLatin1( "identity" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "User &Info" ), QString::fromLatin1( "account" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::sendFile(const QObject *recvr, const char *slot, QObject* parent, const char *name)

@@ -37,10 +37,10 @@
 #include "msncontact.h"
 #include "msnaccount.h"
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNIdentity *identity )
-: MSNSocket( identity )
+MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account )
+: MSNSocket( account )
 {
-	m_identity = identity;
+	m_account = account;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -336,15 +336,15 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			<< m_msgHandle << endl;*/
 
 		KopeteContactPtrList others;
-		others.append( m_identity->myself() );
+		others.append( m_account->myself() );
 		QStringList::iterator it;
 		for( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 		{
 			if( *it != m_msgHandle )
-				others.append( m_identity->contacts()[ *it ] );
+				others.append( m_account->contacts()[ *it ] );
 		}
 
-		KopeteMessage kmsg( m_identity->contacts()[ m_msgHandle ], others,
+		KopeteMessage kmsg( m_account->contacts()[ m_msgHandle ], others,
 			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
 			KopeteMessage::Inbound , KopeteMessage::PlainText );
 

@@ -56,8 +56,8 @@ KActionMenu* KopeteProtocol::protocolActions()
 {
 	delete m_menu;
 	m_menu=0L;
-	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
+	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
+	QDictIterator<KopeteAccount> it( dict ); 
 	if(dict.count() == 1 )
 	{
 		return (it.current())->actionMenu();
@@ -65,9 +65,9 @@ KActionMenu* KopeteProtocol::protocolActions()
 
 	KActionMenu *m_menu=new KActionMenu(displayName(),pluginIcon(),this);
 
-	for( ; KopeteIdentity *identity=it.current(); ++it )
+	for( ; KopeteAccount *account=it.current(); ++it )
 	{
-		m_menu->insert(identity->actionMenu());
+		m_menu->insert(account->actionMenu());
 	}
 	return m_menu;
 }
@@ -125,8 +125,8 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   contactIt.current()->contactId();
 		sd[ QString::fromLatin1( "displayName" ) ] = contactIt.current()->displayName();
-		if(contactIt.current()->identity())
-			sd[ QString::fromLatin1( "identityId" ) ] =   contactIt.current()->identity()->identityId();
+		if(contactIt.current()->account())
+			sd[ QString::fromLatin1( "accountId" ) ] =   contactIt.current()->account()->accountId();
 		
 
 		// If there's an index field preset it too
@@ -299,16 +299,16 @@ bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, 
 	return false;
 }
 
-void KopeteProtocol::slotIdentityAdded()
+void KopeteProtocol::slotAccountAdded()
 {
-	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
-	for( ; KopeteIdentity *identity=it.current(); ++it )
+	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
+	QDictIterator<KopeteAccount> it( dict ); 
+	for( ; KopeteAccount *account=it.current(); ++it )
 	{
-		if(identity->myself())
-		{	//because we can't know if the identity has already connected
-			QObject::disconnect(identity->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
-			QObject::connect   (identity->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+		if(account->myself())
+		{	//because we can't know if the account has already connected
+			QObject::disconnect(account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+			QObject::connect   (account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
 		}
 	}
 	slotRefreshStatusIcon();
@@ -317,15 +317,15 @@ void KopeteProtocol::slotIdentityAdded()
 void KopeteProtocol::slotRefreshStatusIcon()
 {
 	KopeteOnlineStatus status;
-	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
-	for( ; KopeteIdentity *identity=it.current(); ++it )
+	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
+	QDictIterator<KopeteAccount> it( dict ); 
+	for( ; KopeteAccount *account=it.current(); ++it )
 	{
-		if(identity->myself())
+		if(account->myself())
 		{
-			if(identity->myself()->onlineStatus() > status)
+			if(account->myself()->onlineStatus() > status)
 			{
-				status=identity->myself()->onlineStatus();
+				status=account->myself()->onlineStatus();
 			}
 		}
 	}
@@ -340,13 +340,13 @@ void KopeteProtocol::slotRefreshStatusIcon()
 //-------- OBSOLETE
 KopeteContact* KopeteProtocol::myself() const
 {
-	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
-	for( ; KopeteIdentity *identity=it.current(); ++it )
+	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
+	QDictIterator<KopeteAccount> it( dict ); 
+	for( ; KopeteAccount *account=it.current(); ++it )
 	{
-		if(identity->myself())
+		if(account->myself())
 		{
-			return identity->myself();
+			return account->myself();
 		}
 	}
 	return 0L;

@@ -1,5 +1,5 @@
 /*
-    kopeteaccount.cpp - Kopete Identity
+    kopeteaccount.cpp - Kopete Account
 
     Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -47,7 +47,7 @@ QString cryptStr(const QString &aStr) {
 	return result;
 }
 
-struct KopeteIdentityPrivate
+struct KopeteAccountPrivate
 {
 	KopeteProtocol *protocol;
 	QString id;
@@ -57,48 +57,48 @@ struct KopeteIdentityPrivate
 	QDict<KopeteContact> contacts;
 };
 
-KopeteIdentity::KopeteIdentity(KopeteProtocol *parent, const QString& _identityId , const char *name):   QObject(parent, name)
+KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):   QObject(parent, name)
 {
-	d=new KopeteIdentityPrivate;
+	d=new KopeteAccountPrivate;
 	d->protocol=parent;
-	d->id=_identityId;
+	d->id=_accountId;
 	d->autologin=false;
 	d->password=QString::null;
 	
-	//we have to delete the identity before the custom protocol.
-	//because contact are deleted when the identity is deleted
+	//we have to delete the account before the custom protocol.
+	//because contact are deleted when the account is deleted
 	QObject::connect( parent , SIGNAL(unloading() ) , this , SLOT(deleteLater())); 
-	KopeteIdentityManager::manager()->registerIdentity(this);
+	KopeteAccountManager::manager()->registerAccount(this);
 	
-	//the prococol need to acess to myself, which is create later, in the customIdentity constructor
-	QTimer::singleShot( 0, parent, SLOT( slotIdentityAdded() ) );
+	//the prococol need to acess to myself, which is create later, in the customAccount constructor
+	QTimer::singleShot( 0, parent, SLOT( slotAccountAdded() ) );
 }
 
-KopeteIdentity::~KopeteIdentity()
+KopeteAccount::~KopeteAccount()
 {
-	emit identityDestroyed(this);
+	emit accountDestroyed(this);
 	delete d;
 }
 
-KopeteProtocol *KopeteIdentity::protocol() const
+KopeteProtocol *KopeteAccount::protocol() const
 {
 	return d->protocol;
 }
 
-QString KopeteIdentity::identityId()
+QString KopeteAccount::accountId()
 {
 	return d->id;
 }
 
-void KopeteIdentity::setIdentityId( const QString &identityId )
+void KopeteAccount::setAccountId( const QString &accountId )
 {
-	d->id = identityId;
-	emit ( identityIdChanged() );
+	d->id = accountId;
+	emit ( accountIdChanged() );
 }
 
-QString KopeteIdentity::toXML()
+QString KopeteAccount::toXML()
 {
-	QString xml = QString::fromLatin1( "  <identity identity-id=\"" ) + QStyleSheet::escape(d->id) + 
+	QString xml = QString::fromLatin1( "  <account account-id=\"" ) + QStyleSheet::escape(d->id) + 
 			QString::fromLatin1( "\" protocol-id=\"" )  + QStyleSheet::escape(QString::fromLatin1(d->protocol->pluginId())) + QString::fromLatin1( "\">\n" );
 
 	if( !d->password.isNull())
@@ -130,34 +130,34 @@ QString KopeteIdentity::toXML()
 		}
 	}
 
-	xml += QString::fromLatin1( "  </identity>\n" );
+	xml += QString::fromLatin1( "  </account>\n" );
 
 	return xml;
 
 }
 
-bool KopeteIdentity::fromXML(const QDomNode& cnode)
+bool KopeteAccount::fromXML(const QDomNode& cnode)
 {
-	QDomNode identityNode = cnode;
-	while( !identityNode.isNull() )
+	QDomNode accountNode = cnode;
+	while( !accountNode.isNull() )
 	{
-		QDomElement identityElement = identityNode.toElement();
-		if( !identityElement.isNull() )
+		QDomElement accountElement = accountNode.toElement();
+		if( !accountElement.isNull() )
 		{
-			if( identityElement.tagName() == QString::fromLatin1( "password" ) )
+			if( accountElement.tagName() == QString::fromLatin1( "password" ) )
 			{
-				d->password= cryptStr(identityElement.text());
+				d->password= cryptStr(accountElement.text());
 			}
-			else if( identityElement.tagName() == QString::fromLatin1( "autologin" ) )
+			else if( accountElement.tagName() == QString::fromLatin1( "autologin" ) )
 			{
 				d->autologin=true;
 			}
-			else if( identityElement.tagName() == QString::fromLatin1( "plugin-data" ) )
+			else if( accountElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 			{
 				QMap<QString, QString> pluginData;
-				QString pluginId = identityElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
+				QString pluginId = accountElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
 
-				QDomNode field = identityElement.firstChild();
+				QDomNode field = accountElement.firstChild();
 				while( !field.isNull() )
 				{
 					QDomElement fieldElement = field.toElement();
@@ -174,24 +174,24 @@ bool KopeteIdentity::fromXML(const QDomNode& cnode)
 			}
 			else
 			{
-				kdDebug(14010) << "KopeteIdentity::fromXML: unknown tag " << identityElement.tagName() <<  endl;
+				kdDebug(14010) << "KopeteAccount::fromXML: unknown tag " << accountElement.tagName() <<  endl;
 			}
 		}
-		identityNode = identityNode.nextSibling();
+		accountNode = accountNode.nextSibling();
 	}
 	loaded();
 	return true;
 }
 
 
-void KopeteIdentity::loaded()
+void KopeteAccount::loaded()
 {
 	//do nothing in default implementation
 }
 
 
 
-QString KopeteIdentity::getPassword( bool error, bool *ok )
+QString KopeteAccount::getPassword( bool error, bool *ok )
 {
 	if(ok) *ok=true;
 	if(!d->password.isNull())
@@ -237,32 +237,32 @@ QString KopeteIdentity::getPassword( bool error, bool *ok )
 	return pass;
 }
 
-void KopeteIdentity::setPassword(const QString& pass)
+void KopeteAccount::setPassword(const QString& pass)
 {
 	d->password=pass;
 	emit( passwordChanged() );
 }
 
-void KopeteIdentity::setAutoLogin(bool b)
+void KopeteAccount::setAutoLogin(bool b)
 {
 	d->autologin=b;
 }
-bool KopeteIdentity::autoLogin()
+bool KopeteAccount::autoLogin()
 {
 	return d->autologin;
 }
-bool KopeteIdentity::rememberPassword()
+bool KopeteAccount::rememberPassword()
 {
 	return !d->password.isNull();
 }
 
 
-void KopeteIdentity::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
+void KopeteAccount::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
 	d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
 }
 
-QString KopeteIdentity::pluginData( KopetePlugin *p, const QString &key ) const
+QString KopeteAccount::pluginData( KopetePlugin *p, const QString &key ) const
 {
 	if( !d->pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !d->pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
 		return QString::null;
@@ -270,7 +270,7 @@ QString KopeteIdentity::pluginData( KopetePlugin *p, const QString &key ) const
 	return d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
 }
 
-void KopeteIdentity::registerContact( KopeteContact *c )
+void KopeteAccount::registerContact( KopeteContact *c )
 {
 	d->contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
@@ -278,18 +278,18 @@ void KopeteIdentity::registerContact( KopeteContact *c )
 	protocol()->registerContact(c);
 }
 
-void KopeteIdentity::slotKopeteContactDestroyed( KopeteContact *c )
+void KopeteAccount::slotKopeteContactDestroyed( KopeteContact *c )
 {
 //	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
 	d->contacts.remove( c->contactId() );
 }
 
-const QDict<KopeteContact>& KopeteIdentity::contacts()
+const QDict<KopeteContact>& KopeteAccount::contacts()
 {
 	return d->contacts;
 }
 
-/*QDict<KopeteContact> KopeteIdentity::contacts( KopeteMetaContact *mc )
+/*QDict<KopeteContact> KopeteAccount::contacts( KopeteMetaContact *mc )
 {
 	QDict<KopeteContact> result;
 
@@ -303,7 +303,7 @@ const QDict<KopeteContact>& KopeteIdentity::contacts()
 }*/
 
 
-bool KopeteIdentity::addContact( const QString &contactId, const QString &displayName,
+bool KopeteAccount::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
 	KopeteContact *c=d->contacts[contactId];
@@ -311,11 +311,11 @@ bool KopeteIdentity::addContact( const QString &contactId, const QString &displa
 	{
 		if(c->metaContact()->isTemporary() && !isTemporary)
 		{
-			kdDebug(14010) << "KopeteIdentity::addContact: You are triying to add an existing temporary contact. Just add it on the list" << endl;
+			kdDebug(14010) << "KopeteAccount::addContact: You are triying to add an existing temporary contact. Just add it on the list" << endl;
 			parentContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
 		}
 		else // should we here add the contact to the parentContact if any?
-			kdDebug(14010) << "KopeteIdentity::addContact: Contact already exist" << endl;
+			kdDebug(14010) << "KopeteAccount::addContact: Contact already exist" << endl;
 		return false;
 	}
 
@@ -357,24 +357,24 @@ bool KopeteIdentity::addContact( const QString &contactId, const QString &displa
 		return addContactToMetaContact( contactId, displayName, parentContact );
 }
 
-bool KopeteIdentity::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
+bool KopeteAccount::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
 {
-	kdDebug(14010) << "KopeteIdentity::addContactToMetaContact() Not Implemented!!!" << endl;
+	kdDebug(14010) << "KopeteAccount::addContactToMetaContact() Not Implemented!!!" << endl;
 	return false;
 }
 
-KActionMenu* KopeteIdentity::actionMenu()
+KActionMenu* KopeteAccount::actionMenu()
 {
 	//default implementation
 	return 0L;
 }
 
-bool KopeteIdentity::isConnected() const
+bool KopeteAccount::isConnected() const
 {
     return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
 }
 
-bool KopeteIdentity::isAway() const
+bool KopeteAccount::isAway() const
 {
     return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
 }

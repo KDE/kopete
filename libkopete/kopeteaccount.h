@@ -1,5 +1,5 @@
 /*
-    kopeteaccount.h - Kopete Identity
+    kopeteaccount.h - Kopete Account
 
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETEIDENTITY_H
-#define KOPETEIDENTITY_H
+#ifndef KOPETEACCOUNT_H
+#define KOPETEACCOUNT_H
 
 #include <qobject.h>
 #include <qdict.h>
@@ -29,34 +29,34 @@ class KopetePlugin;
 class KopeteProtocol;
 class KopeteMetaContact;
 
-struct KopeteIdentityPrivate;
+struct KopeteAccountPrivate;
 
 QString cryptStr(const QString &aStr);
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
-class KopeteIdentity : public QObject
+class KopeteAccount : public QObject
 {
 	Q_OBJECT
 
 public:
-	KopeteIdentity(KopeteProtocol *parent,const QString& identityID, const char *name=0L);
-	~KopeteIdentity();
+	KopeteAccount(KopeteProtocol *parent,const QString& accountID, const char *name=0L);
+	~KopeteAccount();
 
 	/**
-	 * retrurn to protocol of this identity
+	 * retrurn to protocol of this account
 	 */
 	KopeteProtocol *protocol() const ;
 	/**
-	 * return the unique id of this identity which is the login
+	 * return the unique id of this account which is the login
 	 */
-	QString identityId();
+	QString accountId();
 
-	void setIdentityId( const QString &identityId );
+	void setAccountId( const QString &accountId );
 
 	/**
-	 * Get the password for this identity. Has the ability to open an input dialog
+	 * Get the password for this account. Has the ability to open an input dialog
 	 * if the password is not currently set
 	 * @param error Set this value to true if you previously called getPassword and the
 	 * result was incorrect
@@ -65,8 +65,8 @@ public:
 	 */
 	QString getPassword( bool error = false, bool *ok =0L );
 	/*
-	 * Set the password for this identity. A null identity mean that the password is not remember
-	 * Should be called only by EditIdentityWidget
+	 * Set the password for this account. A null account mean that the password is not remember
+	 * Should be called only by EditAccountWidget
 	 */
 	void setPassword(const QString &pass = QString::null);
 
@@ -76,11 +76,11 @@ public:
 	 bool rememberPassword();
 
 	/*
-	 * Set if the identity should log in automaticaly or not
+	 * Set if the account should log in automaticaly or not
 	 */
 	void setAutoLogin(bool);
 	/*
-	 * Say if the identity should log in automaticaly
+	 * Say if the account should log in automaticaly
 	 */
 	bool autoLogin();
 
@@ -102,7 +102,7 @@ public:
 	virtual void setAway(bool) = 0;
 
 	/**
-	 * Indicate whether the identity is connected at all.
+	 * Indicate whether the account is connected at all.
 	 *
 	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
 	 * on @ref myself()
@@ -110,7 +110,7 @@ public:
 	bool isConnected() const;
 
 	/**
-	 * Indicate whether the identity is away.
+	 * Indicate whether the account is away.
 	 *
 	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
 	 * on @ref myself()
@@ -120,21 +120,21 @@ public:
 	/**
 	 * Function has to be reimplemented in every single protocol
 	 * and return the KopeteContact associated with the 'home' user.
-	 * the myself contact MUST be created in the identity constructor!
+	 * the myself contact MUST be created in the account constructor!
 	 *
 	 * @return contact associated with the currently logged in user
 	 */
 	virtual KopeteContact* myself() const = 0;
 
 	/**
-	 * return the menu for this identity
+	 * return the menu for this account
 	 */
 	virtual KActionMenu* actionMenu();
 
 	/**
 	 * Retrieve the list of contacts for this protocol
 	 *
-	 * The list is guaranteed to contain only contacts for this identity,
+	 * The list is guaranteed to contain only contacts for this account,
 	 * so you can safely use static_cast to your own derived contact class
 	 * if needed.
 	 */
@@ -157,18 +157,18 @@ public:
 	//QDict<KopeteContact> contacts( KopeteMetaContact *mc );
 
 	/**
-	 * Save the identity to an XML string. Only used internaly
+	 * Save the account to an XML string. Only used internaly
 	 */
 	QString toXML();
 
 	/**
-	 * Load identity from XML
+	 * Load account from XML
 	 */
 	bool fromXML(const QDomNode& cnode);
 
 	/**
 	 * @internal
-	 * Register a new KopeteContact with the identity
+	 * Register a new KopeteContact with the account
 	 * To be called ONLY from KopeteContact, not from any other class!
 	 * (Not even a derived class).
 	 */
@@ -214,11 +214,11 @@ public slots:
 
 signals:
 	/**
-	 * this signal is emitted when this identity is deleted
+	 * this signal is emitted when this account is deleted
 	 */
-	void identityDestroyed(KopeteIdentity * );
+	void accountDestroyed(KopeteAccount * );
 
-	void identityIdChanged();
+	void accountIdChanged();
 
 	void passwordChanged();
 
@@ -236,7 +236,7 @@ private slots:
 	void slotKopeteContactDestroyed( KopeteContact * );
 
 private:
-	KopeteIdentityPrivate *d;
+	KopeteAccountPrivate *d;
 };
 
 #endif

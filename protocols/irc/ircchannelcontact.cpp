@@ -32,8 +32,8 @@
 #include <klineeditdlg.h>
 #include <qapplication.h>
 
-IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac) :
-		IRCContact( identity, channel, metac )
+IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel, KopeteMetaContact *metac) :
+		IRCContact( account, channel, metac )
 {
 	// Variable assignments
 	mNickName = channel;
@@ -60,14 +60,14 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	slotModeChanged();
 
 	// KIRC Engine stuff
-	QObject::connect(identity->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
-	QObject::connect(identity->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
-	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QStringList &)), this, SLOT(slotNamesList(const QString &, const QStringList &)));
-	QObject::connect(identity->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
-	QObject::connect(identity->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
-	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-	QObject::connect(identity->engine(), SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
-	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
+	QObject::connect(account->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
+	QObject::connect(account->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
+	QObject::connect(account->engine(), SIGNAL(incomingNamesList(const QString &, const QStringList &)), this, SLOT(slotNamesList(const QString &, const QStringList &)));
+	QObject::connect(account->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
+	QObject::connect(account->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
+	QObject::connect(account->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	QObject::connect(account->engine(), SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
+	QObject::connect(account->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
 
 	isConnected = false;
 
@@ -76,14 +76,14 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 
 IRCChannelContact::~IRCChannelContact()
 {
-	mIdentity->unregisterChannel(mNickName);
+	mAccount->unregisterChannel(mNickName);
 }
 
 KopeteMessageManager* IRCChannelContact::manager(bool)
 {
 	if ( !mMsgManager && mEngine->isLoggedIn() )
 	{
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), mContact, (KopeteProtocol *)mIdentity->protocol());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mContact, (KopeteProtocol *)mAccount->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
@@ -99,7 +99,7 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 	KopeteContactPtrList contacts = mMsgManager->members();
 	for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
 	{
-		mIdentity->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
+		mAccount->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
 	}
 
 	slotPart();
@@ -138,7 +138,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 			else
 				userclass = KIRC::Normal;
 
-			IRCUserContact *user = mIdentity->findUser( *it );
+			IRCUserContact *user = mAccount->findUser( *it );
 			user->setUserclass( mNickName, userclass );
 			user->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 
@@ -192,7 +192,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		}
 		else
 		{
-			IRCUserContact *contact = mIdentity->findUser( nickname );
+			IRCUserContact *contact = mAccount->findUser( nickname );
 			contact->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 			manager()->addContact((KopeteContact *)contact, true);
 
@@ -212,7 +212,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 		if ( c )
 		{
 			manager()->removeContact( c, true );
-			mIdentity->unregisterUser( nickname );
+			mAccount->unregisterUser( nickname );
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -357,7 +357,7 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
-	bool isOperator = (mIdentity->mySelf()->userclass( mNickName ) == KIRC::Operator);
+	bool isOperator = (mAccount->mySelf()->userclass( mNickName ) == KIRC::Operator);
 	bool amOnline = onlineStatus().status() == KopeteOnlineStatus::Online || onlineStatus().status() == KopeteOnlineStatus::Away;
 
 	actionJoin->setEnabled( !isConnected && amOnline );

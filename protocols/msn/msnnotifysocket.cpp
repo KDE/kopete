@@ -46,12 +46,12 @@
 #define KDE_IS_VERSION(x,y,z) 0
 #endif
 
-MSNNotifySocket::MSNNotifySocket( MSNIdentity *identity, const QString &msnId )
-: MSNAuthSocket( msnId, identity )
+MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString &msnId )
+: MSNAuthSocket( msnId, account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
 
-	m_identity = identity;
+	m_account = account;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
@@ -185,7 +185,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, status
 
-		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 1, 1 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
@@ -207,14 +207,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 0, 0 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	}
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 1, 1 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
@@ -280,7 +280,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 		else
 		{
-			MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ handle ] );
+			MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ handle ] );
 			if( c )
 				c->setDisplayName( unescape( data.section( ' ', 2, 2 ) ) );
 		}
@@ -331,7 +331,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "BPR" )
 	{
-		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 0, 0 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
 		{
 			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
@@ -440,7 +440,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			}
 
 			//write the tmp file
-			QString UserID=m_identity->identityId();
+			QString UserID=m_account->accountId();
 
 			QString md5this(m_MSPAuth+"1"+m_password);
 			KMD5 md5(md5this);

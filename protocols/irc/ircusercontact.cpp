@@ -29,8 +29,8 @@
 #include <kaction.h>
 #include <qtimer.h>
 
-IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KopeteMetaContact *m)
-	: IRCContact( identity, nickname, m )
+IRCUserContact::IRCUserContact(IRCAccount *account, const QString &nickname, KopeteMetaContact *m)
+	: IRCContact( account, nickname, m )
 {
 	mNickName = nickname;
 
@@ -58,8 +58,8 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	mOnlineTimer = new QTimer( this );
 	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
-	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-	QObject::connect(identity->engine(), SIGNAL(userOnline( const QString & )), this, SLOT(slotUserOnline(const QString &)));
+	QObject::connect(account->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	QObject::connect(account->engine(), SIGNAL(userOnline( const QString & )), this, SLOT(slotUserOnline(const QString &)));
 
 	isConnected = false;
 
@@ -77,7 +77,7 @@ KopeteMessageManager* IRCUserContact::manager(bool)
 	{
 		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
 
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), mContact, (KopeteProtocol *)mIdentity->protocol());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mContact, (KopeteProtocol *)mAccount->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
@@ -88,7 +88,7 @@ KopeteMessageManager* IRCUserContact::manager(bool)
 
 void IRCUserContact::slotMessageManagerDestroyed()
 {
-	mIdentity->unregisterUser( mNickName );
+	mAccount->unregisterUser( mNickName );
 	mMsgManager = 0L;
 	isConnected = false;
 }
@@ -190,7 +190,7 @@ void IRCUserContact::slotCtcpVersion()
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
-	if( mIdentity->findChannel( channel )->locateUser( mNickName ) )
+	if( mAccount->findChannel( channel )->locateUser( mNickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
 		if( user == mNickName )
@@ -206,7 +206,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 				mUserClassMap[channel.lower()] = KIRC::Normal;
 		}
 
-		bool isOperator = mIdentity->mySelf()->userclass(channel) == KIRC::Operator;
+		bool isOperator = mAccount->mySelf()->userclass(channel) == KIRC::Operator;
 		actionModeMenu->setEnabled(isOperator);
 		actionBanMenu->setEnabled(isOperator);
 		actionKick->setEnabled(isOperator);

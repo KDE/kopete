@@ -76,26 +76,26 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId   = serializedData[ "contactId" ] ;
-	QString identityId =  serializedData[ "identityId" ] ;
+	QString accountId =  serializedData[ "accountId" ] ;
 	QString displayName = serializedData[ "displayName" ];
 	QString lists = serializedData[ "lists" ];
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
 	
-	QDict<KopeteIdentity> identities=KopeteIdentityManager::manager()->identities(this);
+	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
 
-	if(identityId.isNull())
+	if(accountId.isNull())
 	{
 		//Kopete 0.6.x contactlist
 		// FIXME: This should be in a KConfUpdate - Martijn
 		KGlobal::config()->setGroup("MSN");
-		identityId=KGlobal::config()->readEntry( "UserID", "" );;
+		accountId=KGlobal::config()->readEntry( "UserID", "" );;
 	}
-	KopeteIdentity *identity=identities[identityId];
-	if( !identity )
-		identity = createNewIdentity( identityId );
+	KopeteAccount *account=accounts[accountId];
+	if( !account )
+		account = createNewAccount( accountId );
 
 	// Create MSN contact
-	MSNContact *c = new MSNContact( identity, contactId, displayName, metaContact );
+	MSNContact *c = new MSNContact( account, contactId, displayName, metaContact );
 	c->setOnlineStatus( FLN );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
@@ -111,19 +111,19 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	c->setReversed( (bool)(lists.contains('R')) );
 }
 
-AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , KopeteIdentity *i)
+AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , KopeteAccount *i)
 {
 	return (new MSNAddContactPage(i->isConnected(),parent));
 }
 
-EditIdentityWidget *MSNProtocol::createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
+EditAccountWidget *MSNProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
-	return new MSNEditIdentityWidget(this,identity,parent);
+	return new MSNEditAccountWidget(this,account,parent);
 }
 
-KopeteIdentity *MSNProtocol::createNewIdentity(const QString &identityId)
+KopeteAccount *MSNProtocol::createNewAccount(const QString &accountId)
 {
-	return new MSNIdentity(this, identityId);
+	return new MSNAccount(this, accountId);
 }
 
 

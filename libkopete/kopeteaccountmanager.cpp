@@ -1,5 +1,5 @@
 /*
-	kopeteaccountmanager.cpp - Kopete Identity Manager
+	kopeteaccountmanager.cpp - Kopete Account Manager
 
 	Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 	Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
@@ -32,30 +32,30 @@
 #include "pluginloader.h"
 #include "kopeteaccount.h"
 
-KopeteIdentityManager* KopeteIdentityManager::s_manager = 0L;
+KopeteAccountManager* KopeteAccountManager::s_manager = 0L;
 
-KopeteIdentityManager* KopeteIdentityManager::manager()
+KopeteAccountManager* KopeteAccountManager::manager()
 {
 		if( !s_manager )
-				s_manager = new KopeteIdentityManager;
+				s_manager = new KopeteAccountManager;
 
 		return s_manager;
 }
 
-KopeteIdentityManager::KopeteIdentityManager()
-				: QObject( qApp, "KopeteIdentityManager" )
+KopeteAccountManager::KopeteAccountManager()
+				: QObject( qApp, "KopeteAccountManager" )
 {
 }
 
-KopeteIdentityManager::~KopeteIdentityManager()
+KopeteAccountManager::~KopeteAccountManager()
 {
 		s_manager = 0L;
 }
 
 
-void KopeteIdentityManager::connectAll()
+void KopeteAccountManager::connectAll()
 {
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		i->connect();
 	}
@@ -71,7 +71,7 @@ void KopeteIdentityManager::connectAll()
 
 				if( !proto->isConnected() )
 				{
-						kdDebug(14010) << "KopeteIdentityManager::connectAll: "
+						kdDebug(14010) << "KopeteAccountManager::connectAll: "
 													 << "Connecting plugin: " << proto->pluginId() << endl;
 
 						proto->connect();
@@ -79,9 +79,9 @@ void KopeteIdentityManager::connectAll()
 		}
 }
 
-void KopeteIdentityManager::disconnectAll()
+void KopeteAccountManager::disconnectAll()
 {
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		i->disconnect();
 	}
@@ -97,7 +97,7 @@ void KopeteIdentityManager::disconnectAll()
 
 				if( proto->isConnected() )
 				{
-						kdDebug(14010) << "KopeteIdentityManager::disconnectAll: "
+						kdDebug(14010) << "KopeteAccountManager::disconnectAll: "
 													 << "Disonnecting plugin: " << proto->pluginId() << endl;
 
 						proto->disconnect();
@@ -105,11 +105,11 @@ void KopeteIdentityManager::disconnectAll()
 		}
 }
 
-void KopeteIdentityManager::setAwayAll()
+void KopeteAccountManager::setAwayAll()
 {
 	KopeteAway::setGlobalAway( true );
 	
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		if(i->isConnected() && !i->isAway())
 			i->setAway(true);
@@ -127,7 +127,7 @@ void KopeteIdentityManager::setAwayAll()
 
 				if( proto->isConnected() && !proto->isAway() )
 				{
-						kdDebug(14010) << "KopeteIdentityManager::setAwayAll: "
+						kdDebug(14010) << "KopeteAccountManager::setAwayAll: "
 													 << "Setting plugin to away: " << proto->pluginId() << endl;
 
 						proto->setAway();
@@ -135,11 +135,11 @@ void KopeteIdentityManager::setAwayAll()
 		}
 }
 
-void KopeteIdentityManager::setAvailableAll()
+void KopeteAccountManager::setAvailableAll()
 {
 	KopeteAway::setGlobalAway( false );
 	
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		if(i->isConnected() && i->isAway())
 			i->setAway(false);
@@ -156,7 +156,7 @@ void KopeteIdentityManager::setAvailableAll()
 
 				if( proto->isConnected() && proto->isAway() )
 				{
-						kdDebug(14010) << "KopeteIdentityManager::setAvailableAll: "
+						kdDebug(14010) << "KopeteAccountManager::setAvailableAll: "
 													 << "Setting plugin to available: " << proto->pluginId() << endl;
 
 						proto->setAvailable();
@@ -164,34 +164,34 @@ void KopeteIdentityManager::setAvailableAll()
 		}
 }
 
-void KopeteIdentityManager::registerIdentity(KopeteIdentity *i)
+void KopeteAccountManager::registerAccount(KopeteAccount *i)
 {
-	m_identities.append( i );
-	QObject::connect( i, SIGNAL( identityDestroyed( KopeteIdentity * ) ), this , SLOT( slotIdentityDestroyed( KopeteIdentity * ) ) );
+	m_accounts.append( i );
+	QObject::connect( i, SIGNAL( accountDestroyed( KopeteAccount * ) ), this , SLOT( slotAccountDestroyed( KopeteAccount * ) ) );
 }
 
-const QPtrList<KopeteIdentity>& KopeteIdentityManager::identities() const
+const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
 {
-	return m_identities;
+	return m_accounts;
 }
 
-QDict<KopeteIdentity> KopeteIdentityManager::identities(const KopeteProtocol *p)
+QDict<KopeteAccount> KopeteAccountManager::accounts(const KopeteProtocol *p)
 {
-	QDict<KopeteIdentity> dict;
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	QDict<KopeteAccount> dict;
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		if(i->protocol() == p)
-			dict.insert(i->identityId() , i);
+			dict.insert(i->accountId() , i);
 	}
 	return dict;
 }
 
 
-KopeteIdentity* KopeteIdentityManager::findIdentity(const QString& protocolId, const QString& identityId)
+KopeteAccount* KopeteAccountManager::findAccount(const QString& protocolId, const QString& accountId)
 {
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
-		if(QString::fromLatin1(i->protocol()->pluginId()) == protocolId && i->identityId() == identityId)
+		if(QString::fromLatin1(i->protocol()->pluginId()) == protocolId && i->accountId() == accountId)
 			return i;
 	}
 	return 0L;
@@ -199,16 +199,16 @@ KopeteIdentity* KopeteIdentityManager::findIdentity(const QString& protocolId, c
 
 
 
-void KopeteIdentityManager::slotIdentityDestroyed(KopeteIdentity* i)
+void KopeteAccountManager::slotAccountDestroyed(KopeteAccount* i)
 {
-	m_identities.remove(i);
+	m_accounts.remove(i);
 }
 
 
 
-void KopeteIdentityManager::save()
+void KopeteAccountManager::save()
 {
-	QString fileName = locateLocal( "appdata", QString::fromLatin1( "identities.xml" ) );
+	QString fileName = locateLocal( "appdata", QString::fromLatin1( "accounts.xml" ) );
 
 	KSaveFile file( fileName );
 	if( file.status() == 0 )
@@ -217,41 +217,41 @@ void KopeteIdentityManager::save()
 		stream->setEncoding( QTextStream::UnicodeUTF8 );
 
 		QString xml = QString::fromLatin1("<?xml version=\"1.0\"?>\n"
-			"<!DOCTYPE kopete-identities>\n"
-		"<kopete-identities version=\"1.0\">\n" );
+			"<!DOCTYPE kopete-accounts>\n"
+		"<kopete-accounts version=\"1.0\">\n" );
 
-		for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+		for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 		{
 			xml +=  i->toXML();
 		}
 
-		xml += QString::fromLatin1( "</kopete-identities>\n" );
+		xml += QString::fromLatin1( "</kopete-accounts>\n" );
 
 		*stream << xml;
 		if ( !file.close() )
 		{
-			kdDebug(14010) << "KopeteIdentityManager::save: ERROR: failed to write identities, error code is: " << file.status() << endl;
+			kdDebug(14010) << "KopeteAccountManager::save: ERROR: failed to write accounts, error code is: " << file.status() << endl;
 		}
 	}
 	else
 	{
-		kdWarning(14010) << "KopeteIdentityManager::save: ERROR: Couldn't open identities file " << fileName << " identities not saved." << endl;
+		kdWarning(14010) << "KopeteAccountManager::save: ERROR: Couldn't open accounts file " << fileName << " accounts not saved." << endl;
 	}
 }
 
-void KopeteIdentityManager::load()
+void KopeteAccountManager::load()
 {
-	QString filename = locateLocal( "appdata", QString::fromLatin1( "identities.xml" ) );
+	QString filename = locateLocal( "appdata", QString::fromLatin1( "accounts.xml" ) );
 	if( filename.isEmpty() )
 		return ;
 		
 	kdDebug(14010) << k_funcinfo <<endl;
 
-	m_identityList = QDomDocument( QString::fromLatin1( "kopete-identities" ) );
+	m_accountList = QDomDocument( QString::fromLatin1( "kopete-accounts" ) );
 
 	QFile file( filename );
 	file.open( IO_ReadOnly );
-	m_identityList.setContent( &file );
+	m_accountList.setContent( &file );
 
 	file.close();
 	
@@ -260,7 +260,7 @@ void KopeteIdentityManager::load()
 
 }
 
-void KopeteIdentityManager::loadProtocol( KopetePlugin *plu )
+void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 {
 	KopeteProtocol* protocol=dynamic_cast<KopeteProtocol*>(plu);
 	if(!protocol)
@@ -268,25 +268,25 @@ void KopeteIdentityManager::loadProtocol( KopetePlugin *plu )
 
 	kdDebug(14010) << k_funcinfo <<endl;
 
-	QDomNode node = m_identityList.documentElement().firstChild();
+	QDomNode node = m_accountList.documentElement().firstChild();
 	while( !node.isNull() )
 	{
 		QDomElement element = node.toElement();
 		if( !element.isNull() )
 		{
-			if( element.tagName() == QString::fromLatin1("identity") )
+			if( element.tagName() == QString::fromLatin1("account") )
 			{
-				QString identityId = element.attribute( QString::fromLatin1("identity-id"), QString::null );
+				QString accountId = element.attribute( QString::fromLatin1("account-id"), QString::null );
 				QString protocolId = element.attribute( QString::fromLatin1("protocol-id"), QString::null );
 
 				if( protocolId == QString::fromLatin1(protocol->pluginId()) )
 				{
-					KopeteIdentity *identity = protocol->createNewIdentity(identityId);
-					QDomNode identityNode = node.firstChild();
-					if (identity && !identity->fromXML( identityNode ) )
+					KopeteAccount *account = protocol->createNewAccount(accountId);
+					QDomNode accountNode = node.firstChild();
+					if (account && !account->fromXML( accountNode ) )
 					{
-						delete identity;
-						identity = 0L;
+						delete account;
+						account = 0L;
 					}
 				}
 			}
@@ -300,9 +300,9 @@ void KopeteIdentityManager::loadProtocol( KopetePlugin *plu )
 	}
 }
 
-void KopeteIdentityManager::autoConnect()
+void KopeteAccountManager::autoConnect()
 {
-	for(KopeteIdentity *i=m_identities.first() ; i; i=m_identities.next() )
+	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		if(i->autoLogin())
 			i->connect();

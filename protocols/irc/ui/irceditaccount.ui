@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>IRCEditIdentityBase</class>
+<class>IRCEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>IRCEditIdentityBase</cstring>
+        <cstring>IRCEditAccountBase</cstring>
     </property>
     <property name="geometry">
         <rect>

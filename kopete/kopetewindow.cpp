@@ -101,11 +101,11 @@ void KopeteWindow::initActions ( void )
 		actionCollection(), "AddContact" );
 
 	actionConnect = new KAction( i18n( "&Connect All" ), "connect_creating",
-		0, KopeteIdentityManager::manager(), SLOT( connectAll() ),
+		0, KopeteAccountManager::manager(), SLOT( connectAll() ),
 		actionCollection(), "ConnectAll" );
 
 	actionDisconnect = new KAction( i18n( "&Disconnect All" ), "connect_no",
-		0, KopeteIdentityManager::manager(), SLOT( disconnectAll() ),
+		0, KopeteAccountManager::manager(), SLOT( disconnectAll() ),
 		actionCollection(), "DisconnectAll" );
 
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
@@ -119,7 +119,7 @@ void KopeteWindow::initActions ( void )
 		actionCollection(), "SetAwayAll" );
 
 	actionSetAvailable = new KAction( i18n( "Set Availa&ble Globally" ),
-		"kopeteavailable", 0 , KopeteIdentityManager::manager(),
+		"kopeteavailable", 0 , KopeteAccountManager::manager(),
 		SLOT( setAvailableAll() ), actionCollection(),
 		"SetAvailableAll" );
 
@@ -350,7 +350,7 @@ void KopeteWindow::slotConfToolbar()
 
 void KopeteWindow::slotGlobalAwayMessageSelect(){
 	// Show the dialog and set the message
-	// This also tells the identity manager to
+	// This also tells the account manager to
 	// set the away on all protocols
 	m_awayMessageDialog->show();
 }

@@ -1,5 +1,5 @@
 /*
-    editaccountwidget.cpp - Kopete Identity Widget
+    editaccountwidget.cpp - Kopete Account Widget
 
     Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
 
@@ -18,8 +18,8 @@
 #include "editaccountwidget.h"
 #include "kopeteaccount.h"
 
-EditIdentityWidget::EditIdentityWidget(KopeteIdentity *i)
+EditAccountWidget::EditAccountWidget(KopeteAccount *i)
 {
-	m_identity = i;
+	m_account = i;
 }
 

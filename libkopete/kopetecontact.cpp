@@ -60,7 +60,7 @@ public:
 	KopeteContact::IdleState idleState;
 	KopeteOnlineStatus onlineStatus;
 	KopeteOnlineStatus oldStatus;
-	KopeteIdentity *identity;
+	KopeteAccount *account;
 
 	KopeteMetaContact *metaContact;
 
@@ -94,7 +94,7 @@ public:
 };
 
 
-KopeteContact::KopeteContact( KopeteIdentity *identity, const QString &contactId, KopeteMetaContact *parent )
+KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, KopeteMetaContact *parent )
 : QObject( parent )
 {
 	d = new KopeteContactPrivate;
@@ -113,13 +113,13 @@ KopeteContact::KopeteContact( KopeteIdentity *identity, const QString &contactId
 	d->historyDialog = 0L;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
-	d->identity=identity;
+	d->account=account;
 
-	if( identity )
+	if( account )
 	{
-		d->protocol=identity->protocol();
-		identity->registerContact( this );
-		connect( identity, SIGNAL( identityDestroyed(KopeteIdentity*) ), SLOT( slotIdentityDestroyed() ) );
+		d->protocol=account->protocol();
+		account->registerContact( this );
+		connect( account, SIGNAL( accountDestroyed(KopeteAccount*) ), SLOT( slotAccountDestroyed() ) );
 	}
 
 	// Initialize the context menu
@@ -162,12 +162,12 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->historyDialog = 0L;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
-	d->identity=0l;
+	d->account=0l;
 	
 	if( protocol )
 	{
 		protocol->registerContact( this );
-		connect( protocol, SIGNAL( unloading() ), SLOT( slotIdentityDestroyed() ) );
+		connect( protocol, SIGNAL( unloading() ), SLOT( slotAccountDestroyed() ) );
 	}
 
 	// Initialize the context menu
@@ -198,7 +198,7 @@ KopeteContact::~KopeteContact()
 	delete d;
 }
 
-void KopeteContact::slotIdentityDestroyed()
+void KopeteContact::slotAccountDestroyed()
 {
 	//use of delete this and not deleteLater because later is too late :-D
 	//we have to delete contacts _before_ the deletion of the protocol
@@ -605,14 +605,14 @@ QString KopeteContact::contactId() const
 
 KopeteProtocol * KopeteContact::protocol() const
 {
-	if(d->identity)
-		return d->identity->protocol();
+	if(d->account)
+		return d->account->protocol();
 	return d->protocol;
 }
 
-KopeteIdentity * KopeteContact::identity() const
+KopeteAccount * KopeteContact::account() const
 {
-	return d->identity;
+	return d->account;
 }
 
 

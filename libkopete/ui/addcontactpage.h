@@ -41,11 +41,11 @@ public:
 	virtual bool validateData()=0;
 	
 	/**
-	 * add the contact the the specified meta contact, with the given identity
+	 * add the contact the the specified meta contact, with the given account
 	 * return false if the contact has not been added
 	 * TODO: make pure virtual
 	 */
-	virtual bool apply(KopeteIdentity * , KopeteMetaContact *) { return false; };
+	virtual bool apply(KopeteAccount * , KopeteMetaContact *) { return false; };
 public slots: // Public slots
 
    //*** OBSOLETE **/

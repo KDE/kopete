@@ -57,7 +57,7 @@ public:
 	 *       new contacts having been added upon reconnect.
 	 */
 	KopeteMetaContact *findContact( const QString &protocolId,
-		const QString &identityId, const QString &contactId );
+		const QString &accountId, const QString &contactId );
 
 	/**
 	 * Return all meta contacts

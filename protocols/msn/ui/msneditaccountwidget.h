@@ -1,5 +1,5 @@
 /*
-    msneditaccountwidget.h - MSN Identity Widget
+    msneditaccountwidget.h - MSN Account Widget
 
     Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
 
@@ -17,8 +17,8 @@
 
 
 
-#ifndef MSNEDITIDENTITYWIDEGET_H
-#define MSNEDITIDENTITYWIDEGET_H
+#ifndef MSNEDITACCOUNTWIDEGET_H
+#define MSNEDITACCOUNTWIDEGET_H
 
 #include <qwidget.h>
 #include "editaccountwidget.h"
@@ -31,15 +31,15 @@ class MSNProtocol;
 class QCheckBox;
 class QLineEdit;
 
-class MSNEditIdentityWidget : public QWidget, public EditIdentityWidget
+class MSNEditAccountWidget : public QWidget, public EditAccountWidget
 {
 	Q_OBJECT
 
 	public:
-		MSNEditIdentityWidget(MSNProtocol *proto, KopeteIdentity *, QWidget *parent=0, const char *name=0);
-		~MSNEditIdentityWidget();
+		MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *, QWidget *parent=0, const char *name=0);
+		~MSNEditAccountWidget();
 		virtual bool validateData();
-		virtual KopeteIdentity *apply();
+		virtual KopeteAccount *apply();
 		
 
 	private:

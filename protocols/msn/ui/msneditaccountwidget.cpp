@@ -1,5 +1,5 @@
 /*
-    msneditaccountwidget.cpp - MSN Identity Widget
+    msneditaccountwidget.cpp - MSN Account Widget
 
     Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
 
@@ -27,8 +27,8 @@
 #include "msnprotocol.h"
 #include "msnaccount.h"
 
-MSNEditIdentityWidget::MSNEditIdentityWidget(MSNProtocol *proto, KopeteIdentity *ident, QWidget *parent, const char * )
-				  : QWidget(parent), EditIdentityWidget(ident)
+MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *ident, QWidget *parent, const char * )
+				  : QWidget(parent), EditAccountWidget(ident)
 {
 	//default fields
 	QVBoxLayout *layout=new QVBoxLayout(this);
@@ -54,7 +54,7 @@ MSNEditIdentityWidget::MSNEditIdentityWidget(MSNProtocol *proto, KopeteIdentity 
 			m_rememberpasswd->setChecked(true);
 			m_password->setText(ident->getPassword());
 		}
-		m_login->setText(ident->identityId());
+		m_login->setText(ident->accountId());
 		m_autologin->setChecked((ident && ident->autoLogin()));
 	}
 	else
@@ -63,27 +63,27 @@ MSNEditIdentityWidget::MSNEditIdentityWidget(MSNProtocol *proto, KopeteIdentity 
 	m_protocol=proto;
 }
 
-MSNEditIdentityWidget::~MSNEditIdentityWidget()
+MSNEditAccountWidget::~MSNEditAccountWidget()
 {
 }
 
-KopeteIdentity *MSNEditIdentityWidget::apply()
+KopeteAccount *MSNEditAccountWidget::apply()
 {
-	if(!m_identity)
-		m_identity=new MSNIdentity(m_protocol, m_login->text() );
+	if(!m_account)
+		m_account=new MSNAccount(m_protocol, m_login->text() );
 	if(m_rememberpasswd->isChecked())
 	{
-		m_identity->setPassword( m_password->text() );
+		m_account->setPassword( m_password->text() );
 	}
 	else
-		m_identity->setPassword( QString::null );
+		m_account->setPassword( QString::null );
 
-	m_identity->setAutoLogin(m_autologin->isChecked());
-	return m_identity;
+	m_account->setAutoLogin(m_autologin->isChecked());
+	return m_account;
 }
 
 
-bool MSNEditIdentityWidget::validateData()
+bool MSNEditAccountWidget::validateData()
 {
 	QString userid = m_login->text();
 	if( MSNProtocol::validContactId(userid) )

@@ -1,5 +1,5 @@
 /*
-    msneditaccountwidget.cpp - MSN Identity Widget
+    msneditaccountwidget.cpp - MSN Account Widget
 
     Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
 
@@ -24,45 +24,45 @@
 #include "ircprotocol.h"
 #include "irceditaccountwidget.h"
 
-IRCEditIdentityWidget::IRCEditIdentityWidget(const IRCProtocol *proto, IRCIdentity *ident, QWidget *parent, const char * )
-				  : IRCEditIdentityBase(parent), EditIdentityWidget(ident)
+IRCEditAccountWidget::IRCEditAccountWidget(const IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
+				  : IRCEditAccountBase(parent), EditAccountWidget(ident)
 {
 	mProtocol = proto;
 
-	if( m_identity )
+	if( m_account )
 	{
-		QString nickName = m_identity->identityId().section( '@', 0, 0);
-		QString serverInfo = m_identity->identityId().section( '@', 1);
+		QString nickName = m_account->accountId().section( '@', 0, 0);
+		QString serverInfo = m_account->accountId().section( '@', 1);
 
 		mNickName->setText( nickName );
 		mServer->setText( serverInfo.section(':', 0, 0) );
 		mPort->setValue( serverInfo.section(':',1).toUInt() );
 
-		if(m_identity->rememberPassword()) mPassword->setText( m_identity->getPassword() );
+		if(m_account->rememberPassword()) mPassword->setText( m_account->getPassword() );
 	}
 }
 
-IRCEditIdentityWidget::~IRCEditIdentityWidget()
+IRCEditAccountWidget::~IRCEditAccountWidget()
 {
 }
 
-KopeteIdentity *IRCEditIdentityWidget::apply()
+KopeteAccount *IRCEditAccountWidget::apply()
 {
-	QString mIdentityId = mNickName->text() + QString::fromLatin1("@") + mServer->text() + QString::fromLatin1(":") + QString::number( mPort->value() );
+	QString mAccountId = mNickName->text() + QString::fromLatin1("@") + mServer->text() + QString::fromLatin1(":") + QString::number( mPort->value() );
 
-	if( !m_identity )
-		m_identity = new IRCIdentity( mIdentityId, mProtocol );
+	if( !m_account )
+		m_account = new IRCAccount( mAccountId, mProtocol );
 	else
-		m_identity->setIdentityId( mIdentityId );
+		m_account->setAccountId( mAccountId );
 
-	m_identity->setPassword( mPassword->text() );
-	m_identity->setAutoLogin( mAutoConnect->isChecked() );
+	m_account->setPassword( mPassword->text() );
+	m_account->setAutoLogin( mAutoConnect->isChecked() );
 
-	return m_identity;
+	return m_account;
 }
 
 
-bool IRCEditIdentityWidget::validateData()
+bool IRCEditAccountWidget::validateData()
 {
 	if( mNickName->text().isEmpty() )
 		KMessageBox::sorry(this, i18n("<qt>You must enter a nickname</qt>"), i18n("Kopete"));

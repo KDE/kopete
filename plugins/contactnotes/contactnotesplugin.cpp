@@ -59,7 +59,7 @@ KActionCollection *ContactNotesPlugin::customContextMenuActions(KopeteMetaContac
 	delete m_actionCollection;
 
 	m_actionCollection = new KActionCollection(this);
-	m_actionEdit=new KAction( i18n("&Notes..."), "identity", 0, this, SLOT (slotEditInfo()), m_actionCollection);
+	m_actionEdit=new KAction( i18n("&Notes..."), "account", 0, this, SLOT (slotEditInfo()), m_actionCollection);
 
 	m_actionCollection->insert(m_actionEdit);
 	m_currentMetaContact=m;

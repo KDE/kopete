@@ -32,7 +32,7 @@ class KAction;
 class KActionMenu;
 
 class MSNContact;
-class MSNIdentity;
+class MSNAccount;
 class MSNPreferences;
 class MSNNotifySocket;
 class MSNSwitchBoardSocket;
@@ -111,9 +111,9 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteIdentity *i);
-	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
-	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
+	virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteAccount *i);
+	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 	/**
 	 * Returns a set of action items for the chatWindows

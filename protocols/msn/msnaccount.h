@@ -1,5 +1,5 @@
 /*
-    msnaccount.h - Manages a single MSN identity
+    msnaccount.h - Manages a single MSN account
 
     Copyright (c) 2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Kopete    (c) 2003 by The Kopete developers <kopete-devel@kde.org>
@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef MSNIDENTITY_H
-#define MSNIDENTITY_H
+#ifndef MSNACCOUNT_H
+#define MSNACCOUNT_H
 
 #include <qobject.h>
 
@@ -30,24 +30,24 @@ class MSNNotifySocket;
 class MSNContact;
 
 /**
- * MSNIdentity encapsulates everything that is identity-based, as opposed to
+ * MSNAccount encapsulates everything that is account-based, as opposed to
  * protocol based. This basically means sockets, current status, and account
- * info are stored in the identity, whereas the protocol is only the
- * 'manager' class that creates and manages identities.
+ * info are stored in the account, whereas the protocol is only the
+ * 'manager' class that creates and manages accounts.
  */
-class MSNIdentity : public KopeteIdentity
+class MSNAccount : public KopeteAccount
 {
 	Q_OBJECT
 
 public:
-	MSNIdentity( MSNProtocol *parent, const QString &identityID, const char *name = 0L );
-	~MSNIdentity();
+	MSNAccount( MSNProtocol *parent, const QString &accountID, const char *name = 0L );
+	~MSNAccount();
 
 	virtual void setAway( bool away );
 	virtual KopeteContact* myself() const;
 
 	/*
-	 * return the menu for this identity
+	 * return the menu for this account
 	 */
 	virtual KActionMenu* actionMenu();
 
@@ -67,7 +67,7 @@ public slots:
 	virtual void disconnect() ;
 
 	/**
-	 * Ask to the identity to create a new chat session
+	 * Ask to the account to create a new chat session
 	 */
 	void slotStartChatSession( QString handle );
 

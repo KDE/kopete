@@ -21,7 +21,7 @@
 
 #include "irccontact.h"
 
-class IRCIdentity;
+class IRCAccount;
 class KopeteMetaContact;
 class KActionCollection;
 class KAction;
@@ -41,7 +41,7 @@ class IRCChannelContact : public IRCContact
 	Q_OBJECT
 
 	public:
-		IRCChannelContact(IRCIdentity *, const QString &channel, KopeteMetaContact *metac);
+		IRCChannelContact(IRCAccount *, const QString &channel, KopeteMetaContact *metac);
 		~IRCChannelContact();
 
 		/*

@@ -350,7 +350,7 @@ void KopeteAway::slotTimerTimeout()
 	if(!d->autoaway && d->awayTimeout!=0 && idleTime() > d->awayTimeout) 
 	{
 		d->autoaway = true;
-		KopeteIdentityManager::manager()->setAwayAll();
+		KopeteAccountManager::manager()->setAwayAll();
 	}
 
 }
@@ -363,7 +363,7 @@ void KopeteAway::setActivity()
 		d->autoaway=false;
 		emit activity();
 		if (d->goAvailable)
-			KopeteIdentityManager::manager()->setAvailableAll();
+			KopeteAccountManager::manager()->setAvailableAll();
 	}
 }
 

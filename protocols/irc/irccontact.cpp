@@ -45,11 +45,11 @@ struct whoIsInfo
 	bool isOperator;
 };
 
-IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac) :
-	KopeteContact(identity, nick, metac )
+IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac) :
+	KopeteContact(account, nick, metac )
 {
-	mIdentity = identity;
-	mEngine = mIdentity->engine();
+	mAccount = account;
+	mEngine = mAccount->engine();
 	mMetaContact = metac;
 	mMsgManager = 0L;
 	mNickName = nick;
@@ -59,7 +59,7 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 
 	// KopeteMessageManagerFactory stuff
 	mContact.append((KopeteContact *)this);
-	mMyself.append((KopeteContact *)identity->mySelf());
+	mMyself.append((KopeteContact *)account->mySelf());
 
 	QObject::connect(mEngine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
@@ -104,7 +104,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 		{
 			// These commands only work when we are connected
 			if( command == QString::fromLatin1("nick") && commandCount > 1 )
-				mIdentity->successfullyChangedNick( QString::null, *commandLine.at(1) );
+				mAccount->successfullyChangedNick( QString::null, *commandLine.at(1) );
 
 			else if( command == QString::fromLatin1("me") && commandCount > 1 )
 				mEngine->actionContact( displayName(), commandArgs );
@@ -131,7 +131,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			else if( command == QString::fromLatin1("query") && commandCount > 1 )
 			{
 				if( !(*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
-					mIdentity->findUser( *commandLine.at(1) )->startChat();
+					mAccount->findUser( *commandLine.at(1) )->startChat();
 				else
 				{
 					KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -141,7 +141,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			else if( command == QString::fromLatin1("join") && commandCount > 1 )
 			{
 				if( (*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
-					mIdentity->findChannel( *commandLine.at(1) )->startChat();
+					mAccount->findChannel( *commandLine.at(1) )->startChat();
 				else
 				{
 					KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -186,7 +186,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 			manager()->appendMessage(msg);
 			manager()->removeContact( c, true );
 			c->setOnlineStatus( IRCProtocol::IRCUserOffline() );
-			mIdentity->unregisterUser( nickname );
+			mAccount->unregisterUser( nickname );
 		}
 	}
 }
@@ -201,7 +201,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 		if ( user )
 		{
 			KopeteMessage msg( user, mContact, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
-			msg.setBody( mIdentity->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+			msg.setBody( mAccount->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
 			manager()->appendMessage(msg);
 		}
 	}
@@ -219,9 +219,9 @@ void IRCContact::slotNewAction(const QString &originating, const QString &target
 			KopeteMessage msg( user, mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
 		}
-		else if( mIdentity->mySelf()->nickName().lower() == originating.lower() )
+		else if( mAccount->mySelf()->nickName().lower() == originating.lower() )
 		{
-			KopeteMessage msg( (KopeteContact*)mIdentity->mySelf(), mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
+			KopeteMessage msg( (KopeteContact*)mAccount->mySelf(), mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
 		}
 

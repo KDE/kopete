@@ -234,25 +234,25 @@ void KopeteMetaContact::setTopLevel( bool b )
 }
 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
-	const QString &identityId, const QString &contactId )
+	const QString &accountId, const QString &contactId )
 {
 	//kdDebug(14010) << "*** Num contacts: " << d->contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto "
-		//<< it.current()->protocol()->pluginId() << ", identity " << it.current()->identityId() << endl;
+		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
 		if( ( it.current()->contactId() == contactId ) &&
 				( QString::fromLatin1( it.current()->protocol()->pluginId() ) == protocolId ) )
 		{
-			if ( identityId.isEmpty() )
+			if ( accountId.isEmpty() )
 			{
 				return it.current();
 			}
 		
-			if(it.current()->identity())
+			if(it.current()->account())
 			{
-				if(it.current()->identity()->identityId() == identityId)
+				if(it.current()->account()->accountId() == accountId)
 					return it.current();
 			}
 		}

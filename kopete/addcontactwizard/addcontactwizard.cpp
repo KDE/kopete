@@ -52,26 +52,26 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	}
 
 	protocolListView->clear();
-	m_identityItems.clear();
+	m_accountItems.clear();
 	
-	QCheckListItem* identityLVI=0L;
-	QPtrList<KopeteIdentity>  identities = KopeteIdentityManager::manager()->identities();
-	for(KopeteIdentity *i=identities.first() ; i; i=identities.next() )
+	QCheckListItem* accountLVI=0L;
+	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
-		identityLVI= new QCheckListItem( protocolListView, i->identityId(), QCheckListItem::CheckBox); 
-		identityLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
-		identityLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
-		m_identityItems.insert(identityLVI,i);
+		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox); 
+		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
+		accountLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
+		m_accountItems.insert(accountLVI,i);
 	}
 	
 
-	if ( identities.count() == 1 )
+	if ( accounts.count() == 1 )
 	{
-		identityLVI->setOn( true );
+		accountLVI->setOn( true );
 		setAppropriate( selectService, false );
 	}
 
-	setNextEnabled(selectService, (identities.count() == 1));
+	setNextEnabled(selectService, (accounts.count() == 1));
 	setFinishEnabled(finis, true);
 
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
@@ -153,7 +153,7 @@ void AddContactWizard::accept()
 	}
 	m->setTopLevel(topLevel);
 
-	QMap <KopeteIdentity*,AddContactPage*>::Iterator it;
+	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
 	{
 		it.data()->apply(it.key(),m); 
@@ -167,7 +167,7 @@ void AddContactWizard::next()
 	if (currentPage() == selectService ||
 		(currentPage() == intro && !appropriate( selectService )))
 	{
-		QMap <KopeteIdentity*,AddContactPage*>::Iterator it;
+		QMap <KopeteAccount*,AddContactPage*>::Iterator it;
 		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
 		{
 			delete it.data();
@@ -181,17 +181,17 @@ void AddContactWizard::next()
 			if (item && item->isOn())
 			{
 				// this shouldn't happen either, but I hate crashes
-				if (!m_identityItems[item]) continue;
+				if (!m_accountItems[item]) continue;
 
-				AddContactPage *addPage = m_identityItems[item]->protocol()->createAddContactWidget(this, m_identityItems[item] );
+				AddContactPage *addPage = m_accountItems[item]->protocol()->createAddContactWidget(this, m_accountItems[item] );
 				if (!addPage) continue;
 
-				QString title = i18n( "The identity name is prepended here",
+				QString title = i18n( "The account name is prepended here",
 									  "%1 contact information" )
 									 .arg( item->text(0) );
 				addPage->show();
 				insertPage( addPage, title, indexOf( selectGroup) );
-				protocolPages.insert( m_identityItems[item] , addPage );
+				protocolPages.insert( m_accountItems[item] , addPage );
 			}
 		}
 		QWizard::next();

@@ -1,9 +1,9 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>IdentityConfigBase</class>
+<class>AccountConfigBase</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>IdentityConfigBase</cstring>
+        <cstring>AccountConfigBase</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -101,7 +101,7 @@
                 </property>
             </column>
             <property name="name">
-                <cstring>mIdentityList</cstring>
+                <cstring>mAccountList</cstring>
             </property>
             <property name="allColumnsShowFocus">
                 <bool>true</bool>

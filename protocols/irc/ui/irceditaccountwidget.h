@@ -1,5 +1,5 @@
 /*
-   irceditaccountwidget.h - MSN Identity Widget
+   irceditaccountwidget.h - MSN Account Widget
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -15,25 +15,25 @@
 
 
 
-#ifndef IRCEDITIDENTITYWIDEGET_H
-#define IRCEDITIDENTITYWIDEGET_H
+#ifndef IRCEDITACCOUNTWIDEGET_H
+#define IRCEDITACCOUNTWIDEGET_H
 
 #include "editaccountwidget.h"
 #include "irceditaccount.h"
 
 class IRCProtocol;
-class IRCIdentity;
+class IRCAccount;
 
-class IRCEditIdentityWidget : public IRCEditIdentityBase, public EditIdentityWidget
+class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
 {
 	Q_OBJECT
 
 	public:
-		IRCEditIdentityWidget(const IRCProtocol *proto, IRCIdentity *, QWidget *parent=0, const char *name=0);
-		~IRCEditIdentityWidget();
+		IRCEditAccountWidget(const IRCProtocol *proto, IRCAccount *, QWidget *parent=0, const char *name=0);
+		~IRCEditAccountWidget();
 
 		virtual bool validateData();
-		virtual KopeteIdentity *apply();
+		virtual KopeteAccount *apply();
 
 	private:
 		const IRCProtocol *mProtocol;

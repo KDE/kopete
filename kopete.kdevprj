@@ -954,7 +954,7 @@ install_location=
 type=HEADER
 
 [libkopete/Makefile.am]
-files=libkopete/kopete.cpp,libkopete/kopete.h,libkopete/kopetecontact.cpp,libkopete/plugin.cpp,libkopete/kopeteevent.cpp,libkopete/kopeteevent.h,libkopete/kopetemessage.cpp,libkopete/kopetemessage.h,libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h,libkopete/kopetenotifier.cpp,libkopete/kopetenotifier.h,libkopete/kopeteprotocol.cpp,libkopete/kopeteprotocol.h,libkopete/kopetecontactlist.cpp,libkopete/kopetecontactlist.h,libkopete/kopetecontact.h,libkopete/plugin.h,libkopete/kopetemessagelog.h,libkopete/kopeteaway.h,libkopete/kopetemessagelog.cpp,libkopete/kopetecontactlist.h.orig,libkopete/kopetemetacontact.cpp,libkopete/kopetetransfermanager.cpp,libkopete/kopetetransfermanager.h,libkopete/kopetemetacontact.h,libkopete/kopetecontactlist.cpp.orig,libkopete/kopeteuserpreferences.cpp,libkopete/kopeteuserpreferences.h,libkopete/kopeteaway.cpp,libkopete/kopeteawaydialog.cpp,libkopete/kopeteprefs.cpp,libkopete/pluginloader.cpp,libkopete/pluginloader.h,libkopete/kopeteprefs.h,libkopete/kopeteawaydialog.h,libkopete/kopeteemoticons.cpp,libkopete/kopeteemoticons.h,libkopete/kopeteplugin.cpp,libkopete/kopeteplugin.h,libkopete/kopetegroup.cpp,libkopete/kopetegroup.h,libkopete/kopeteidentitymanager.cpp,libkopete/kopeteidentitymanager.h
+files=libkopete/kopete.cpp,libkopete/kopete.h,libkopete/kopetecontact.cpp,libkopete/plugin.cpp,libkopete/kopeteevent.cpp,libkopete/kopeteevent.h,libkopete/kopetemessage.cpp,libkopete/kopetemessage.h,libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h,libkopete/kopetenotifier.cpp,libkopete/kopetenotifier.h,libkopete/kopeteprotocol.cpp,libkopete/kopeteprotocol.h,libkopete/kopetecontactlist.cpp,libkopete/kopetecontactlist.h,libkopete/kopetecontact.h,libkopete/plugin.h,libkopete/kopetemessagelog.h,libkopete/kopeteaway.h,libkopete/kopetemessagelog.cpp,libkopete/kopetecontactlist.h.orig,libkopete/kopetemetacontact.cpp,libkopete/kopetetransfermanager.cpp,libkopete/kopetetransfermanager.h,libkopete/kopetemetacontact.h,libkopete/kopetecontactlist.cpp.orig,libkopete/kopeteuserpreferences.cpp,libkopete/kopeteuserpreferences.h,libkopete/kopeteaway.cpp,libkopete/kopeteawaydialog.cpp,libkopete/kopeteprefs.cpp,libkopete/pluginloader.cpp,libkopete/pluginloader.h,libkopete/kopeteprefs.h,libkopete/kopeteawaydialog.h,libkopete/kopeteemoticons.cpp,libkopete/kopeteemoticons.h,libkopete/kopeteplugin.cpp,libkopete/kopeteplugin.h,libkopete/kopetegroup.cpp,libkopete/kopetegroup.h,libkopete/kopeteaccountmanager.cpp,libkopete/kopeteaccountmanager.h
 sub_dirs=ui,
 type=static_library
 
@@ -1066,13 +1066,13 @@ install=false
 install_location=
 type=HEADER
 
-[libkopete/kopeteidentitymanager.cpp]
+[libkopete/kopeteaccountmanager.cpp]
 dist=true
 install=false
 install_location=
 type=SOURCE
 
-[libkopete/kopeteidentitymanager.h]
+[libkopete/kopeteaccountmanager.h]
 dist=true
 install=false
 install_location=
@@ -4409,7 +4409,7 @@ install_location=
 type=DATA
 
 [protocols/msn/Makefile.am]
-files=protocols/msn/Changelog,protocols/msn/ReleaseNotes,protocols/msn/msn.plugin,protocols/msn/msnaddcontactpage.cpp,protocols/msn/msnaddcontactpage.h,protocols/msn/msnauthsocket.cpp,protocols/msn/msnauthsocket.h,protocols/msn/msncontact.cpp,protocols/msn/msncontact.h,protocols/msn/msndebugrawcmddlg.cpp,protocols/msn/msndebugrawcmddlg.h,protocols/msn/msndispatchsocket.cpp,protocols/msn/msndispatchsocket.h,protocols/msn/msnidentity.cpp,protocols/msn/msnidentity.h,protocols/msn/msnpreferences.cpp,protocols/msn/msnpreferences.h,protocols/msn/msnprotocol.cpp,protocols/msn/msnsocket.h,protocols/msn/msnfiletransfersocket.cpp,protocols/msn/msnfiletransfersocket.h,protocols/msn/msnsocket.cpp,protocols/msn/msnswitchboardsocket.cpp,protocols/msn/msnswitchboardsocket.h,protocols/msn/msnprotocol.h,protocols/msn/msnnotifysocket.cpp,protocols/msn/msnnotifysocket.h,protocols/msn/msnmessagemanager.cpp,protocols/msn/msnmessagemanager.h
+files=protocols/msn/Changelog,protocols/msn/ReleaseNotes,protocols/msn/msn.plugin,protocols/msn/msnaddcontactpage.cpp,protocols/msn/msnaddcontactpage.h,protocols/msn/msnauthsocket.cpp,protocols/msn/msnauthsocket.h,protocols/msn/msncontact.cpp,protocols/msn/msncontact.h,protocols/msn/msndebugrawcmddlg.cpp,protocols/msn/msndebugrawcmddlg.h,protocols/msn/msndispatchsocket.cpp,protocols/msn/msndispatchsocket.h,protocols/msn/msnaccount.cpp,protocols/msn/msnaccount.h,protocols/msn/msnpreferences.cpp,protocols/msn/msnpreferences.h,protocols/msn/msnprotocol.cpp,protocols/msn/msnsocket.h,protocols/msn/msnfiletransfersocket.cpp,protocols/msn/msnfiletransfersocket.h,protocols/msn/msnsocket.cpp,protocols/msn/msnswitchboardsocket.cpp,protocols/msn/msnswitchboardsocket.h,protocols/msn/msnprotocol.h,protocols/msn/msnnotifysocket.cpp,protocols/msn/msnnotifysocket.h,protocols/msn/msnmessagemanager.cpp,protocols/msn/msnmessagemanager.h
 sub_dirs=libkmerlin,pixmaps,ui,
 type=static_library
 
@@ -4520,13 +4520,13 @@ install=false
 install_location=
 type=HEADER
 
-[protocols/msn/msnidentity.cpp]
+[protocols/msn/msnaccount.cpp]
 dist=true
 install=false
 install_location=
 type=SOURCE
 
-[protocols/msn/msnidentity.h]
+[protocols/msn/msnaccount.h]
 dist=true
 install=false
 install_location=

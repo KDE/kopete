@@ -27,7 +27,7 @@
 #include "msnprotocol.h"
 
 class MSNDispatchSocket;
-class MSNIdentity;
+class MSNAccount;
 
 /**
  * @author Olaf Lueg
@@ -37,7 +37,7 @@ class MSNNotifySocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNNotifySocket( MSNIdentity* identity, const QString &msnId );
+	MSNNotifySocket( MSNAccount* account, const QString &msnId );
 	~MSNNotifySocket();
 
 	void connect( const QString &password );
@@ -124,7 +124,7 @@ private:
 	 */
 	KopeteOnlineStatus convertOnlineStatus( const QString &statusString );
 
-	MSNIdentity *m_identity;
+	MSNAccount *m_account;
 
 	unsigned int mailCount;
 	QString m_password;

@@ -55,7 +55,7 @@ Kopete::Kopete()
 
 	// Create the plugin preferences module
 	new PluginConfig( this );
-	new IdentityConfig( m_mainWindow );
+	new AccountConfig( m_mainWindow );
 	new AppearanceConfig( m_mainWindow );
 
 	/*
@@ -86,7 +86,7 @@ Kopete::Kopete()
 Kopete::~Kopete()
 {
 	KopeteContactList::contactList()->save();
-	KopeteIdentityManager::manager()->save();
+	KopeteAccountManager::manager()->save();
 	delete m_mainWindow;
 //	kdDebug(14000) << "Kopete::~Kopete: done" <<endl;
 }
@@ -94,7 +94,7 @@ Kopete::~Kopete()
 void Kopete::slotLoadPlugins()
 {
 
-	KopeteIdentityManager::manager()->load();
+	KopeteAccountManager::manager()->load();
 	KopeteContactList::contactList()->load();
 
 	KConfig *config = KGlobal::config();
@@ -152,7 +152,7 @@ void Kopete::slotLoadPlugins()
 
 	LibraryLoader::pluginLoader()->loadAll();
 
-	KopeteIdentityManager::manager()->autoConnect();
+	KopeteAccountManager::manager()->autoConnect();
 
 }
 

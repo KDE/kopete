@@ -27,7 +27,7 @@
 
 class KopeteMessageManager;
 class KopeteMetaContact;
-class IRCIdentity;
+class IRCAccount;
 class KopeteMessage;
 
 struct whoIsInfo;
@@ -44,7 +44,7 @@ class IRCContact : public KopeteContact
 	Q_OBJECT
 	
 	public:
-		IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac);
+		IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac);
 		~IRCContact();
 
 		// Checks a message for server commands
@@ -96,7 +96,7 @@ class IRCContact : public KopeteContact
 		KopeteMetaContact *mMetaContact;
 		KIRC *mEngine;
 		KopeteMessageManager *mMsgManager;
-		IRCIdentity *mIdentity;
+		IRCAccount *mAccount;
 		QString mNickName;
 		QValueList<KopeteMessage> messageQueue;
 		bool isConnected;

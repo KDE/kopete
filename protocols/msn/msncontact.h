@@ -40,7 +40,7 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-	MSNContact( KopeteIdentity *identity, const QString &id, const QString &displayName, KopeteMetaContact *parent );
+	MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent );
 
 	/**
 	 * Indicate whether this contact is blocked
@@ -114,7 +114,7 @@ public:
 
 
 	/**
-	 * MSNIdentity and MSNSwhitchBoardSocket need to change the displayName of contacts.
+	 * MSNAccount and MSNSwhitchBoardSocket need to change the displayName of contacts.
 	 * Then, we do this fuction public  
 	 **/
 	void setDisplayName(const QString &Dname);

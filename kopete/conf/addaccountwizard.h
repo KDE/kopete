@@ -1,5 +1,5 @@
 /*
-    addidentitywizard.h - Kopete Add Identity Wizard
+    addaccountwizard.h - Kopete Add Account Wizard
 
     Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
 
@@ -13,33 +13,33 @@
     *************************************************************************
 */
 
-#ifndef ADDIDENTITYWIZARD_H
-#define ADDIDENTITYWIZARD_H
+#ifndef ADDACCOUNTWIZARD_H
+#define ADDACCOUNTWIZARD_H
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qptrlist.h>
 #include <klistview.h>
 
-#include "addidentitywizard_base.h"
+#include "addaccountwizard_base.h"
 
 
-class EditIdentityWidget;
+class EditAccountWidget;
 class KopeteProtocol;
 
 /**
  * @author  Olivier Goffart <ogoffart@tiscalinet.be>
  */
-class AddIdentityWizard : public AddIdentityWizard_Base
+class AddAccountWizard : public AddAccountWizard_Base
 {
 	Q_OBJECT
 
 public:
-	AddIdentityWizard( QWidget *parent = 0, const char *name = 0 , bool modale=false );
-	~AddIdentityWizard();
+	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modale=false );
+	~AddAccountWizard();
 
 private:
-	EditIdentityWidget *identityPage;
+	EditAccountWidget *accountPage;
 
 private slots:
 	void slotProtocolListClicked( QListViewItem * );

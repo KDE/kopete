@@ -60,12 +60,12 @@ KopeteContactList::~KopeteContactList()
 }
 
 KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
-	const QString &identityId, const QString &contactId )
+	const QString &accountId, const QString &contactId )
 {
-	KopeteIdentity *i=KopeteIdentityManager::manager()->findIdentity(protocolId,identityId);
+	KopeteAccount *i=KopeteAccountManager::manager()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kdDebug() << k_funcinfo << "Identity not found" << endl;
+		kdDebug() << k_funcinfo << "Account not found" << endl;
 		return 0L;
 	}
 	KopeteContact *c=i->contacts()[contactId];
@@ -75,7 +75,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	/*QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		if( it.current()->findContact( protocolId, identityId, contactId ) )
+		if( it.current()->findContact( protocolId, accountId, contactId ) )
 			return it.current();
 	}*/
 	return 0L;
@@ -435,7 +435,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
-										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "identityId" ) );
+										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "accountId" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
 
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );

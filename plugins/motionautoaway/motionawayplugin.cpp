@@ -257,7 +257,7 @@ void MotionAwayPlugin::slotActivity()
 {
 		kdDebug(14305) << "[MotionAway Plugin] : User activity!, going available" << endl;
 		m_wentAway = false;
-		KopeteIdentityManager::manager()->setAvailableAll();
+		KopeteAccountManager::manager()->setAvailableAll();
 }
 
 void MotionAwayPlugin::slotTimeout()
@@ -266,7 +266,7 @@ void MotionAwayPlugin::slotTimeout()
 	{
 		kdDebug(14305) << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
 		m_wentAway = true;
-		KopeteIdentityManager::manager()->setAwayAll();
+		KopeteAccountManager::manager()->setAwayAll();
 	}
 }
 

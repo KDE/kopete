@@ -22,7 +22,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "irccontact.h"
 
-class IRCIdentity;
+class IRCAccount;
 class KActionCollection;
 class KAction;
 class KActionMenu;
@@ -41,12 +41,12 @@ class IRCUserContact : public IRCContact
 
 	public:
 		// This class provides a KopeteContact for each user on the channel.
-		IRCUserContact(IRCIdentity *, const QString &nickname,KopeteMetaContact *mc  );
+		IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
 		~IRCUserContact();
 
 		/*
 		 * This sets this UserClass of the contact, to either Op, Voiced, or Normal.
-		 * This setting invluences menu options of the KopeteIdentity::myself() user, as well
+		 * This setting invluences menu options of the KopeteAccount::myself() user, as well
 		 * as alters the user icons in the chat members display.
 		 */
 		void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }

@@ -1,5 +1,5 @@
 /*
-    ircaccount.h - IRC Identity
+    ircaccount.h - IRC Account
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef IRCIDENTITY_H
-#define IRCIDENTITY_H
+#ifndef IRCACCOUNT_H
+#define IRCACCOUNT_H
 
 #include "kopeteaccount.h"
 
@@ -33,13 +33,13 @@ class KIRC;
 class KAction;
 class KActionMenu;
 
-class IRCIdentity : public KopeteIdentity
+class IRCAccount : public KopeteAccount
 {
 	Q_OBJECT
 
 public:
-	IRCIdentity(const QString &identityid, const IRCProtocol *p);
-	~IRCIdentity();
+	IRCAccount(const QString &accountid, const IRCProtocol *p);
+	~IRCAccount();
 
 	// Returns the KopeteContact of the user
 	IRCUserContact *mySelf() { return mMySelf; }
@@ -102,7 +102,7 @@ public slots:
 private slots:
 	void slotConnectedToServer();
 	void slotConnectionClosed();
-	void slotIdentityIdChanged();
+	void slotAccountIdChanged();
 	void slotPasswordChanged();
 	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 

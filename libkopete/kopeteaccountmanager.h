@@ -1,5 +1,5 @@
 /*
-	kopeteaccountmanager.h - Kopete Identity Manager
+	kopeteaccountmanager.h - Kopete Account Manager
 
 	Copyright (c) 2002      by Martijn Klingens      <klingens@kde.org>
 	Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
@@ -24,90 +24,90 @@
 #include <qdict.h>
 #include <qdom.h>
 
-class KopeteIdentity;
+class KopeteAccount;
 class KopeteProtocol;
 class KopetePlugin;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  *
- * KopeteIdentityManager manages all defined identities in Kopete. You can
+ * KopeteAccountManager manages all defined accounts in Kopete. You can
  * query them, and globally set them all online or offline from here.
  */
-class KopeteIdentityManager : public QObject
+class KopeteAccountManager : public QObject
 {
 		Q_OBJECT
 
 public:
 	/**
-	 * Retrieve the instance of KopeteIdentityManager.
-	 * The identity manager is a singleton class of which only a single
+	 * Retrieve the instance of KopeteAccountManager.
+	 * The account manager is a singleton class of which only a single
 	 * instance will exist. If no manager exists yet this function will
 	 * create one for you.
 	 */
-	static KopeteIdentityManager* manager();
+	static KopeteAccountManager* manager();
 		
-	~KopeteIdentityManager();
+	~KopeteAccountManager();
 	
 	/**
 	 * @internal
-	 * Register the identity. 
+	 * Register the account. 
 	 * To be called ONLY from KopeteContact, not from any other class!
 	 * (Not even a derived class).
 	 */
-	void registerIdentity(KopeteIdentity* );
+	void registerAccount(KopeteAccount* );
 
 	/**
-	 * Retrieve the list of identities
+	 * Retrieve the list of accounts
 	 */
-	const QPtrList<KopeteIdentity>& identities() const;
+	const QPtrList<KopeteAccount>& accounts() const;
 	
 	/**
-	 * Retrieve a QDict of identities for the given protocol 
+	 * Retrieve a QDict of accounts for the given protocol 
 	 *
 	 * The list is guaranteed to contain only contacts for the specified
 	 * protocol
 	 */
-	QDict<KopeteIdentity> identities(const KopeteProtocol *p);
+	QDict<KopeteAccount> accounts(const KopeteProtocol *p);
 
-	KopeteIdentity* findIdentity(const QString& protocolId, const QString& identityId);
+	KopeteAccount* findAccount(const QString& protocolId, const QString& accountId);
 
 public slots:
 	/**
-	 * Connect all identities which have auto connect enabled
+	 * Connect all accounts which have auto connect enabled
 	 */
 	 void autoConnect();
 
 	/**
-	 * Connect all identities at once.
+	 * Connect all accounts at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void connectAll();
 		
 	/**
-	 * Disconnect all identities at once.
+	 * Disconnect all accounts at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void disconnectAll();
 
 	/**
-	 * Set all identities to away at once.
+	 * Set all accounts to away at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAwayAll();
 	
 	/**
-	 * Remove the away status from all identities at once.
+	 * Remove the away status from all accounts at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAvailableAll();
 		
 	/**
-	 * save to identities.xml
+	 * save to accounts.xml
 	 */
 	void save();
 	/**
-	 * load identities.xml
+	 * load accounts.xml
 	 */
 	void load();
 
@@ -115,14 +115,14 @@ private:
 		/**
 		 * Private constructor, because we're a singleton
 		 */
-	KopeteIdentityManager();
-	static KopeteIdentityManager *s_manager;
+	KopeteAccountManager();
+	static KopeteAccountManager *s_manager;
 
-	QPtrList<KopeteIdentity> m_identities;
-	QDomDocument m_identityList;
+	QPtrList<KopeteAccount> m_accounts;
+	QDomDocument m_accountList;
 
 private slots:
-	void slotIdentityDestroyed(KopeteIdentity* );
+	void slotAccountDestroyed(KopeteAccount* );
 	void loadProtocol(KopetePlugin* );
 	
 };

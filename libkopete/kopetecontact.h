@@ -37,7 +37,7 @@ class KopeteMessageManager;
 class KopeteOnlineStatus;
 class KopetePlugin;
 class KopeteProtocol;
-class KopeteIdentity;
+class KopeteAccount;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteIdentity *protocol, const QString &id, KopeteMetaContact *parent );
+	KopeteContact( KopeteAccount *protocol, const QString &id, KopeteMetaContact *parent );
 	//obsolete one
 	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent );
 	~KopeteContact();
@@ -170,7 +170,7 @@ public:
 
 	/**
 	 * Return the unique id that identifies a contact. Id is required
-	 * to be unique per protocol and per identity. Across those boundaries
+	 * to be unique per protocol and per account. Across those boundaries
 	 * ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
@@ -184,7 +184,7 @@ public:
 	/**
 	 * Return the protocol that the contact belongs to.
 	 *
-	 * Note: Id is required to be unique per protocol and per identity.
+	 * Note: Id is required to be unique per protocol and per account.
 	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
@@ -196,18 +196,18 @@ public:
 	KopeteProtocol* protocol() const;
 	
 	/**
-	 * Return the identity that the contact belongs to.
+	 * Return the account that the contact belongs to.
 	 *
-	 * Note: Id is required to be unique per protocol and per identity.
+	 * Note: Id is required to be unique per protocol and per account.
 	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
 	 * this is undefined and may change at any time!
 	 *
-	 * @return the contact's identity
+	 * @return the contact's account
 	 */
-	KopeteIdentity* identity() const;
+	KopeteAccount* account() const;
 	
 
 
@@ -366,7 +366,7 @@ private slots:
 	void slotChangeDisplayName();
 
 	void slotMoveDialogOkClicked();
-	void slotIdentityDestroyed();
+	void slotAccountDestroyed();
 
 	/**
 	 * View the chat history

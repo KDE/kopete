@@ -103,7 +103,7 @@
             <cstring>selectService</cstring>
         </property>
         <attribute name="title">
-            <string>Step One: Select the identity to use</string>
+            <string>Step One: Select the account to use</string>
         </attribute>
         <vbox>
             <property name="name">
@@ -156,7 +156,7 @@
                                     <cstring>TextLabel5</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;p&gt;Select the identitie(s) you would like to use for this contact from the list below.&lt;/p&gt;
+                                    <string>&lt;p&gt;Select the account(s) you would like to use for this contact from the list below.&lt;/p&gt;
 &lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If a messaging service is missing from the list, please confirm that it is enabled in the Kopete configuration window and that it supports adding new contacts.&lt;/p&gt;</string>
                                 </property>
                                 <property name="alignment">
@@ -166,7 +166,7 @@
                             <widget class="KListView">
                                 <column>
                                     <property name="text">
-                                        <string>Identity</string>
+                                        <string>Account</string>
                                     </property>
                                     <property name="clickable">
                                         <bool>true</bool>

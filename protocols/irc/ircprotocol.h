@@ -25,9 +25,9 @@ class KopeteMetaContact;
 class AddContactPage;
 class KIRC;
 
-class EditIdentityWidget;
-class KopeteIdentity;
-class IRCIdentity;
+class EditAccountWidget;
+class KopeteAccount;
+class IRCAccount;
 
 class QStringList;
 class QWidget;
@@ -54,9 +54,9 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual EditIdentityWidget* createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
+	virtual EditAccountWidget* createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 
-	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
+	virtual KopeteAccount* createNewAccount(const QString &accountId);
 
 	/*
 	 * Returns a pointer to the KSParser. The KSParser changes IRC color codes into HTML
@@ -73,10 +73,10 @@ public:
 
 
 private:
-	/** FIXME: Do something with this when Identity support is added!!!!!!!! */
-	IRCIdentity *identity;
+	/** FIXME: Do something with this when Account support is added!!!!!!!! */
+	IRCAccount *account;
 
-	QMap<QString,IRCIdentity*> mIdentityMap;
+	QMap<QString,IRCAccount*> mAccountMap;
 
 	static IRCProtocol *s_protocol;
 
