@@ -21,8 +21,15 @@
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteglobal.h"
+#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
+#include "kopetemetacontact.h"
 
+#include <kabc/stdaddressbook.h>
+#include <kabc/addressee.h>
+#include <kabc/vcardconverter.h>
 #include <kdebug.h>
+#include <kmultipledrag.h>
 #include <kpopupmenu.h>
 
 #include <qheader.h>
@@ -69,6 +76,7 @@ ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, 
 	if ( nick.isEmpty() )
 		nick = m_contact->contactId();
 	setText( 0, nick );
+	setDragEnabled(true);
 
 	connect( m_contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
@@ -201,6 +209,45 @@ void ChatMembersListWidget::slotExecute( QListViewItem *item )
 	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item ) )
 		contactItem->contact()->execute();
 }
+
+QDragObject *ChatMembersListWidget::dragObject()
+{
+	QListViewItem *currentLVI = currentItem();
+	if( !currentLVI )
+		return 0L;
+
+	ContactItem *lvi = dynamic_cast<ContactItem*>( currentLVI );
+	if( !lvi )
+		return 0L;
+
+	Kopete::Contact *c = lvi->contact();
+	KMultipleDrag *drag = new KMultipleDrag( this );
+	drag->addDragObject( new QStoredDrag("application/x-qlistviewitem", 0L ) );
+
+	QStoredDrag *d = new QStoredDrag("kopete/x-contact", 0L );
+	d->setEncodedData( QString( c->protocol()->pluginId()+QChar( 0xE000 )+c->account()->accountId()+QChar( 0xE000 )+ c->contactId() ).utf8() );
+	drag->addDragObject( d );
+
+	KABC::Addressee address = KABC::StdAddressBook::self()->findByUid(c->metaContact()->metaContactId());
+
+	if( !address.isEmpty() )
+	{
+		drag->addDragObject( new QTextDrag( address.fullEmail(), 0L ) );
+		KABC::VCardConverter converter;
+		QString vcard = converter.createVCard( address );
+		if( !vcard.isNull() )
+		{
+			QStoredDrag *vcardDrag = new QStoredDrag("text/x-vcard", 0L );
+			vcardDrag->setEncodedData( vcard.utf8() );
+			drag->addDragObject( vcardDrag );
+		}
+	}
+
+	drag->setPixmap( c->onlineStatus().iconFor(c, 12) );
+
+	return drag;
+}
+
 
 //END ChatMembersListWidget
 

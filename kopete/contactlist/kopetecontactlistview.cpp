@@ -51,6 +51,7 @@
 
 #include "addcontactwizard.h"
 #include "addcontactpage.h"
+#include "chatmessagepart.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontactlist.h"
@@ -812,131 +813,82 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(after);
 	KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(after);
-	QPtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
 
-	while ( it.current() )
+	if( const_cast<const QWidget *>( e->source() ) == this )
 	{
-		Kopete::Contact *source_contact=0L;
-		KopeteMetaContactLVI *source_metaLVI = it.current();
-		++it;
+		QPtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
 
-		if(source_metaLVI)
-			source_contact = source_metaLVI->contactForPoint( m_startDragPos );
-
-		if(source_metaLVI  && dest_groupLVI)
+		while ( it.current() )
 		{
-			if(source_metaLVI->group() == dest_groupLVI->group())
-				return;
+			Kopete::Contact *source_contact=0L;
+			KopeteMetaContactLVI *source_metaLVI = it.current();
+			++it;
 
-			if(source_metaLVI->metaContact()->isTemporary())
+			if(source_metaLVI)
+				source_contact = source_metaLVI->contactForPoint( m_startDragPos );
+
+			if(source_metaLVI  && dest_groupLVI)
 			{
-				int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
-					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
-					"addTemporaryWhenMoving" );
+				if(source_metaLVI->group() == dest_groupLVI->group())
+					return;
 
-				if( r == KMessageBox::Yes )
+				if(source_metaLVI->metaContact()->isTemporary())
 				{
-					source_metaLVI->metaContact()->setTemporary( false, dest_groupLVI->group() );
-
-					insertUndoItem( new UndoItem( UndoItem::MetaContactAdd , source_metaLVI->metaContact(),dest_groupLVI->group()  ) );
+					addDraggedContactToGroup(source_contact,dest_groupLVI->group());
+				}
+				else
+				{
+					moveDraggedContactToGroup( source_metaLVI->metaContact(),
+						source_metaLVI->group(), dest_groupLVI->group() );
 				}
 			}
-			else
+			else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
 			{
-				source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , dest_groupLVI->group() );
+				if ( source_metaLVI->group()->type() == Kopete::Group::TopLevel )
+					return;
 
-				insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , source_metaLVI->metaContact() , dest_groupLVI->group() ) );
-
-				UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, source_metaLVI->metaContact(), source_metaLVI->group() );
-				u->isStep=false;
-				insertUndoItem(u);
-			}
-		}
-		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
-		{
-			if ( source_metaLVI->group()->type() == Kopete::Group::TopLevel )
-				return;
-
-			if(source_metaLVI->metaContact()->isTemporary())
-			{
-				int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
-					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
-					"addTemporaryWhenMoving" );
-
-				if ( r == KMessageBox::Yes )
+				if(source_metaLVI->metaContact()->isTemporary())
 				{
-					source_metaLVI->metaContact()->setTemporary( false, Kopete::Group::topLevel() );
-
-					insertUndoItem( new UndoItem(UndoItem::MetaContactAdd, source_metaLVI->metaContact() ) );
+					addDraggedContactToTopLevel( source_contact );
+				}
+				else
+				{
+					moveDraggedContactToGroup( source_metaLVI->metaContact(),
+						source_metaLVI->group(), Kopete::Group::topLevel() );
 				}
 			}
-			else
+			else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
 			{
-				/*kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact "
-					<< source_metaLVI->metaContact()->displayName() << " to top-level " << endl;*/
-				source_metaLVI->metaContact()->moveToGroup( source_metaLVI->group(), Kopete::Group::topLevel() );
-
-				insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , source_metaLVI->metaContact() , Kopete::Group::topLevel() ) );
-
-				UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, source_metaLVI->metaContact(), source_metaLVI->group() );
-				u->isStep=false;
-				insertUndoItem(u);
-			}
-		}
-		else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
-		{
-			if(source_metaLVI->metaContact()->isTemporary())
-			{
-				int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
-					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
-					"addTemporaryWhenMoving" );
-
-				if( r == KMessageBox::Yes )
+				if(source_metaLVI->metaContact()->isTemporary())
 				{
-					source_contact->setMetaContact(dest_metaLVI->metaContact());
-
+					addDraggedContactToMetaContact( source_contact,dest_metaLVI->metaContact() );
+				}
+				else
+				{
 					UndoItem *u=new UndoItem;
-					u->type=UndoItem::ContactAdd;
+					u->type=UndoItem::MetaContactChange;
+					u->metacontact=source_metaLVI->metaContact();
+					u->group=source_metaLVI->group();
 					u->args << source_contact->protocol()->pluginId() << source_contact->account()->accountId() << source_contact->contactId();
+					u->args << source_metaLVI->metaContact()->displayName();
 					insertUndoItem(u);
+
+					source_contact->setMetaContact(dest_metaLVI->metaContact());
 				}
-			}
-			else
-			{
-				//kdDebug(14000) << "KopeteContactListView::slotDropped : moving the contact "
-				//	<< source_contact->contactId()	<< " to metacontact " <<
-				//	dest_metaLVI->metaContact()->displayName() << endl;
-
-
-				UndoItem *u=new UndoItem;
-				u->type=UndoItem::MetaContactChange;
-				u->metacontact=source_metaLVI->metaContact();
-				u->group=source_metaLVI->group();
-				u->args << source_contact->protocol()->pluginId() << source_contact->account()->accountId() << source_contact->contactId();
-				u->args << source_metaLVI->metaContact()->displayName();
-				insertUndoItem(u);
-
-				source_contact->setMetaContact(dest_metaLVI->metaContact());
 			}
 		}
 	}
-/*	else if(source_groupLVI && dest_groupLVI)
+	else if( e->provides("kopete/x-contact") )
 	{
-		if(source_groupLVI->group()->parentGroup()  == dest_groupLVI->group() )
-			return;
-		source_groupLVI->group()->setParentGroup( dest_metaLVI->group() );
-	}
- 	else if(source_groupLVI && !dest_groupLVI && dest_metaLVI)
-	{
-		if(source_groupLVI->group()->parentGroup() == Kopete::Group::toplevel)
-			return;
-		source_groupLVI->group()->setParentGroup( Kopete::Group::toplevel );
-	}*/
+		QString contactInfo = QString::fromUtf8( e->encodedData("kopete/x-contact") );
+		QString protocolId = contactInfo.section( QChar( 0xE000 ), 0, 0 );
+		QString accountId = contactInfo.section( QChar( 0xE000 ), 1, 1 );
+		QString contactId = contactInfo.section( QChar( 0xE000 ), 2 );
 
-	if( e->provides( "text/uri-list" ) )
+		addDraggedContactByInfo( protocolId, accountId, contactId, after );
+
+	}
+	else if( e->provides("text/uri-list") )
 	{
 		if ( !QUriDrag::canDecode( e ) )
 		{
@@ -947,41 +899,155 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 		KURL::List urlList;
 		KURLDrag::decode( e, urlList );
 
-		QPoint p=contentsToViewport(e->pos());
-		int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
-			treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-		int py = p.y() - itemRect( dest_metaLVI ).y();
-		Kopete::Contact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) ) ;
-
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
-			if( (*it).isLocalFile() )
-			{ //send a file
-				if(c)
-					c->sendFile( *it );
-				else
-					dest_metaLVI->metaContact()->sendFile( *it );
+			KURL url = (*it);
+			if( url.protocol() == QString::fromLatin1("kopetemessage") )
+			{
+				//Add a contact
+				addDraggedContactByInfo( url.queryItem("protocolId"),
+					url.queryItem("accountId"), url.host(), after );
 			}
-			else
-			{ //this is a URL, send the URL in a message
-				if(!c)
+			else if( dest_metaLVI )
+			{
+				QPoint p = contentsToViewport(e->pos());
+				int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+					treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+				int py = p.y() - itemRect( dest_metaLVI ).y();
+
+				Kopete::Contact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) );
+
+				if( url.isLocalFile() )
 				{
-					// We need to know which contact was chosen as the preferred
-					// in order to message it
-					c = dest_metaLVI->metaContact()->execute();
+					//send a file
+					if(c)
+						c->sendFile( url );
+					else
+						dest_metaLVI->metaContact()->sendFile( url );
 				}
+				else
+				{
+					//this is a URL, send the URL in a message
+					if(!c)
+					{
+						// We need to know which contact was chosen as the preferred
+						// in order to message it
+						c = dest_metaLVI->metaContact()->execute();
+					}
 
-				if (!c)
-					return;
+					if (!c)
+						return;
 
-				Kopete::Message msg(c->account()->myself(), c, (*it).url(),
-					Kopete::Message::Outbound);
-				c->manager(Kopete::Contact::CanCreate)->sendMessage(msg);
+					Kopete::Message msg(c->account()->myself(), c, url.url(),
+						Kopete::Message::Outbound);
+					c->manager(Kopete::Contact::CanCreate)->sendMessage(msg);
+				}
 			}
 		}
 		e->acceptAction();
 	}
+}
 
+void KopeteContactListView::addDraggedContactToTopLevel( Kopete::Contact *contact )
+{
+	int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
+					  i18n( "<qt>Would you like to add <b>%1</b> to your contact list?</qt>" )
+					.arg( contact->displayName() ),
+					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+					"addTemporaryWhenMoving" );
+
+	if ( r == KMessageBox::Yes )
+	{
+		contact->metaContact()->setTemporary( false, Kopete::Group::topLevel() );
+		insertUndoItem( new UndoItem(UndoItem::MetaContactAdd, contact->metaContact() ) );
+	}
+}
+
+void KopeteContactListView::moveDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *from, Kopete::Group *to )
+{
+	contact->moveToGroup( from, to );
+
+	insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , contact, to ) );
+	UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, contact, to );
+	u->isStep=false;
+	insertUndoItem(u);
+}
+
+void KopeteContactListView::addDraggedContactToGroup( Kopete::Contact *contact, Kopete::Group *group )
+{
+	int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
+					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a member of <b>%2</b>?</qt>" )
+					.arg( contact->displayName(), group->displayName() ),
+					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+					"addTemporaryWhenMoving" );
+
+	if( r == KMessageBox::Yes )
+	{
+		contact->metaContact()->setTemporary( false, group );
+		insertUndoItem( new UndoItem( UndoItem::MetaContactAdd, contact->metaContact(), group ) );
+	}
+}
+
+void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *contact, Kopete::MetaContact *parent )
+{
+	int r = KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
+					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a child contact of <b>%2</b>?</qt>" )
+					.arg( contact->displayName(), parent->displayName() ),
+					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+					"addTemporaryWhenMoving" );
+
+	if( r == KMessageBox::Yes )
+	{
+		contact->setMetaContact(parent);
+
+		UndoItem *u=new UndoItem;
+		u->type=UndoItem::ContactAdd;
+		u->args << contact->protocol()->pluginId() << contact->account()->accountId() << contact->contactId();
+		insertUndoItem(u);
+	}
+}
+
+void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
+			      const QString &contactId, QListViewItem *after )
+{
+	kdDebug(14000) << k_funcinfo << "protocolId=" << protocolId <<
+		", accountId=" << accountId << ", contactId=" << contactId << endl;
+
+	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId,accountId );
+	if( account )
+	{
+		QDict<Kopete::Contact> contacts = account->contacts();
+		Kopete::Contact *source_contact = contacts[ contactId ];
+
+		if( source_contact )
+		{
+			if( source_contact->metaContact()->isTemporary() )
+			{
+				KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(after);
+				KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(after);
+
+				if( dest_metaLVI )
+				{
+					addDraggedContactToMetaContact( source_contact, dest_metaLVI->metaContact() );
+				}
+				else if( dest_groupLVI )
+				{
+					addDraggedContactToGroup( source_contact,dest_groupLVI->group() );
+				}
+				else
+				{
+					addDraggedContactToTopLevel( source_contact );
+				}
+			}
+			else
+			{
+				KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+					i18n("<qt>This contact is already on your contact list. It is a child contact of <b>%1</b></qt>")
+					.arg( source_contact->metaContact()->displayName() )
+				);
+			}
+		}
+	}
 }
 
 bool KopeteContactListView::acceptDrag(QDropEvent *e) const
@@ -1061,45 +1127,52 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	}
 	else
 	{
-		if ( e->provides( "text/uri-list" )  && dest_metaLVI &&
-			dest_metaLVI->metaContact()->canAcceptFiles() )
-		{ //we are sending a file
-			QPoint p=contentsToViewport(e->pos());
-			int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
-				treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-			int py = p.y() - itemRect( dest_metaLVI ).y();
-			Kopete::Contact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) ) ;
-
-			if( c ? !c->isReachable() : !dest_metaLVI->metaContact()->isReachable() )
-				return false; //If the pointed contact is not reachable, abort
-
-			if( c ? c->canAcceptFiles() : dest_metaLVI->metaContact()->canAcceptFiles()  )
+		if( e->provides( "text/uri-list" ) )
+		{
+			//we are sending a file (or dragging from the chat view)
+			if( dest_metaLVI )
 			{
-				// If the pointed contact, or the metacontact if no contact are
-				// pointed can accept file, return true in everycase
-				return true;
-			}
-			else
-			{
-				if ( !QUriDrag::canDecode( e ) )
-					return false;
-				KURL::List urlList;
-				KURLDrag::decode( e, urlList );
+				QPoint p=contentsToViewport(e->pos());
+				int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+					treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+				int py = p.y() - itemRect( dest_metaLVI ).y();
+				Kopete::Contact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) ) ;
 
-				for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+				if( c ? !c->isReachable() : !dest_metaLVI->metaContact()->isReachable() )
+					return false; //If the pointed contact is not reachable, abort
+
+				if( c ? c->canAcceptFiles() : dest_metaLVI->metaContact()->canAcceptFiles() )
 				{
-					if( (*it).isLocalFile() )
-						return false; //we can't send links if a locale file is in link
+					// If the pointed contact, or the metacontact if no contact are
+					// pointed can accept file, return true in everycase
+					return true;
 				}
-				return true; //we will send a link
 			}
+
+			if ( !QUriDrag::canDecode(e) )
+				return false;
+
+			KURL::List urlList;
+			KURLDrag::decode( e, urlList );
+
+			for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+			{
+				if( (*it).protocol() != QString::fromLatin1("kopetemessage") && (*it).isLocalFile() )
+					return false; //we can't send links if a locale file is in link
+			}
+
+			return true; //we will send a link
+		}
+		else if( e->provides( "application/x-qlistviewitem" ) )
+		{
+			//Coming from chat members
+			return true;
 		}
 		else
 		{
 			QString text;
 			QTextDrag::decode(e, text);
-			kdDebug(14000) << k_funcinfo << "drop with mimetype:" <<
-				e->format() << " data as text:" << text << endl;
+			kdDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
 		}
 
 	}
@@ -1277,7 +1350,7 @@ void KopeteContactListView::updateActionsForSelection(
 		QString kabcid=contacts.first()->metaContactId();
 		inkabc= !kabcid.isEmpty() && !kabcid.contains(":");
 	}
-	
+
 	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
 	actionSendEmail->setEnabled( inkabc );

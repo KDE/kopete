@@ -362,20 +362,20 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		QDomDocument domMessage = message.asXML();
 		domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
 		QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
-	
+
 		QString direction = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 		DOM::HTMLElement newNode = document().createElement( QString::fromLatin1("span") );
 		newNode.setAttribute( QString::fromLatin1("dir"), direction );
 		newNode.setInnerHTML( resultHTML );
-	
+
 		htmlDocument().body().appendChild( newNode );
-	
+
 		while ( bufferLen>0 && messageMap.count() >= bufferLen )
 		{
 			htmlDocument().body().removeChild( htmlDocument().body().firstChild() );
 			messageMap.remove( messageMap.begin() );
 		}
-	
+
 		if ( !scrollPressed )
 			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 	}
@@ -402,8 +402,8 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 			retVal.replace(
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
 					.arg( QRegExp::escape( nick ) )  ),
-				QString::fromLatin1("\\1<a href=\"kopetemessage://%1\" class=\"KopeteDisplayName\">\\2</a>\\3")
-				.arg( (*it)->contactId() )
+			QString::fromLatin1("\\1<a href=\"kopetemessage://%1/?protocolId=%2&accountId=%3\" class=\"KopeteDisplayName\">\\2</a>\\3")
+				.arg( (*it)->contactId(), m_manager->protocol()->pluginId(), m_manager->account()->accountId() )
 			);
 		}
 	}
@@ -587,13 +587,13 @@ QString ChatMessagePart::textUnderMouse()
 
 	DOM::Text textNode = activeNode;
 	QString data = textNode.data().string();
-	
+
 	//Ok, we have the whole node. Now, find the text under the mouse.
 	int mouseLeft = view()->mapFromGlobal( QCursor::pos() ).x(),
 		nodeLeft = activeNode.getRect().x(),
 		cPos = 0,
 		dataLen = data.length();
-	
+
 	QFontMetrics metrics( KopetePrefs::prefs()->fontFace() );
 	QString buffer;
 	while( cPos < dataLen && nodeLeft < mouseLeft )
@@ -606,7 +606,7 @@ QString ChatMessagePart::textUnderMouse()
 
 		nodeLeft += metrics.width(c);
 	}
-	
+
 	if( cPos < dataLen )
 	{
 		QChar c = data[cPos++];
@@ -616,7 +616,7 @@ QString ChatMessagePart::textUnderMouse()
 			c = data[cPos++];
 		}
 	}
-	
+
 	return buffer;
 }
 
@@ -770,7 +770,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	if(text.isEmpty()) return;
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
-		
+
 #ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
 	{
@@ -785,14 +785,14 @@ void ChatMessagePart::copy(bool justselection /* default false */)
     	}
     	QApplication::clipboard()->setData( drag, QClipboard::Clipboard );
 	}
-    QApplication::clipboard()->setText( text, QClipboard::Selection );		
+    QApplication::clipboard()->setText( text, QClipboard::Selection );
 #else
 	if(!justselection)
     	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
 #endif
 	connect( kapp->clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
-		
+
 }
 
 void ChatMessagePart::print()

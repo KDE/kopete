@@ -22,7 +22,7 @@
 
 #include <qmap.h>
 
-namespace Kopete 
+namespace Kopete
 {
 class ChatSession;
 class Contact;
@@ -43,20 +43,32 @@ public:
 
 	class ToolTip;
 	class ContactItem;
-	
+
+protected:
+
+	/**
+	 * Start a drag operation
+	 * @return a KMultipleDrag containing:
+	 *	1) A QStoredDrag of type "application/x-qlistviewitem",
+	 *	2) If the contact is associated with a KABC entry,
+	 *		i) a QTextDrag containing their email address, and
+	 *		ii) their vCard representation.
+	 */
+	virtual QDragObject *dragObject();
+
 private slots:
 	/**
 	 * Show the context menu for @p item at @p point
 	 */
 	void slotContextMenu( KListView*, QListViewItem *item, const QPoint &point );
-	
+
 	/**
 	 * Called when a contact is added to the chat session.
 	 * Adds this contact to the contact list view.
 	 * @param c The contact that joined the chat
 	 */
 	void slotContactAdded( const Kopete::Contact *c );
-	
+
 	/**
 	 * Called when a contact is removed from the chat session.
 	 * Removes this contact from the contact list view.
@@ -70,7 +82,7 @@ private slots:
 	 * @param status The new status of the contact
 	 */
 	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
-	
+
 	/**
 	 * Called when a contact is clicked.
 	 * @param item The list view item representing the clicked contact
@@ -89,16 +101,16 @@ class ChatMembersListWidget::ContactItem : public QObject, public KListViewItem
 public:
 	ContactItem( ChatMembersListWidget *list, Kopete::Contact *contact );
 	Kopete::Contact *contact() const { return m_contact; }
-	
+
 private slots:
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
-	
+
 private:
 	friend class ChatMembersListWidget;
-	
+
 	void reposition();
 	void setStatus( const Kopete::OnlineStatus &status );
-	
+
 	Kopete::Contact *m_contact;
 };
 
