@@ -47,7 +47,7 @@ private:
 protected slots: // Protected slots
 	virtual void slotOk();
 signals: // Signals
-	void notesChanged(QString , KopeteMetaContact*);
+	void notesChanged(const QString, KopeteMetaContact*);
 };
 
 #endif

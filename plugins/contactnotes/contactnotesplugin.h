@@ -51,7 +51,7 @@ public:
 
 
 public slots:
-	void setNotes(const QString &n, KopeteMetaContact *m);
+	void setNotes(const QString n, KopeteMetaContact *m);
 
 private:
 	static ContactNotesPlugin* pluginStatic_;
