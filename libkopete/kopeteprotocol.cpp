@@ -215,7 +215,7 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 	/* Default implementation does nothing */
 }
 
-void KopeteProtocol::slotAccountAdded()
+void KopeteProtocol::refreshAccounts()
 {
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
 	QDictIterator<KopeteAccount> it( dict );

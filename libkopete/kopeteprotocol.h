@@ -117,12 +117,12 @@ public slots:
 	 * Call serialize() for all contained contacts for this protocol.
 	 */
 	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
-
+	
 	/**
 	 * @internal
 	 * kopeteAccount call this slot when accounts created or deleted
 	 */
-	void slotAccountAdded();
+	void refreshAccounts();
 
 signals:
 	/**

@@ -67,7 +67,7 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 	KopeteAccountManager::manager()->registerAccount(this);
 
 	//the prococol need to acess to myself, which is create later, in the customAccount constructor
-	QTimer::singleShot( 0, parent, SLOT( slotAccountAdded() ) );
+	QTimer::singleShot( 0, parent, SLOT( refreshAccounts() ) );
 	QTimer::singleShot( 0, this, SLOT( slotMyselfCreated() ) );
 }
 
@@ -80,7 +80,7 @@ KopeteAccount::~KopeteAccount()
 
 	// Let the protocol know that one of its accounts
 	// is no longer there
-	d->protocol->slotAccountAdded();
+	d->protocol->refreshAccounts();
 
 	delete d;
 }
