@@ -181,7 +181,17 @@ void KopeteAccountConfig::slotEditAccount()
 	if ( !m_accountWidget )
 		return;
 
-	editDialog->setMainWidget( static_cast<QWidget *>( m_accountWidget ) );
+	// FIXME: Why the #### is EditAccountWidget not a QWidget?!? This sideways casting
+	//        is braindead and error-prone. Looking at MSN the only reason I can see is
+	//        because it allows direct subclassing of designer widgets. But what is
+	//        wrong with embedding the designer widget in an empty QWidget instead?
+	//        Also, if this REALLY has to be a pure class and not a widget, then the
+	//        class should at least be renamed to EditAccountIface instead - Martijn
+	QWidget *w = dynamic_cast<QWidget *>( m_accountWidget );
+	if ( !w )
+		return;
+
+	editDialog->setMainWidget( w );
 	if ( editDialog->exec() == QDialog::Accepted )
 	{
 		if( m_accountWidget->validateData() )
