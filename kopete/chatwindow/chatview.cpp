@@ -851,7 +851,7 @@ void ChatView::messageSentSuccessfully()
 void ChatView::slotTextChanged()
 {
 	QString txt = m_edit->text();
-	if(editpart) //remove all <p><br> and other html tags
+	if(!editpart->simple()) //remove all <p><br> and other html tags
 		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 
 	bool typing=!txt.stripWhiteSpace().isEmpty();
@@ -874,7 +874,7 @@ void ChatView::slotTextChanged()
 void ChatView::historyUp()
 {
 	QString txt = m_edit->text();
-	if(editpart) //remove all <p><br> and other html tags
+	if(!editpart->simple()) //remove all <p><br> and other html tags
 		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 	bool empty=txt.stripWhiteSpace().isEmpty();
 
@@ -908,7 +908,7 @@ void ChatView::historyUp()
 void ChatView::historyDown()
 {
 	QString txt = m_edit->text();
-	if(editpart) //remove all <p><br> and other html tags
+	if(!editpart->simple()) //remove all <p><br> and other html tags
 		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 	bool empty=txt.stripWhiteSpace().isEmpty();
 
