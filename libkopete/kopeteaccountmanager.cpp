@@ -255,23 +255,27 @@ void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 	{
 		config->setGroup( *it );
 
-		if ( config->readEntry("Protocol") != protocol->pluginId() )
+		if ( config->readEntry( "Protocol" ) != protocol->pluginId() )
+			continue;
+
+		// There's no GUI for this, but developers may want to disable an account.
+		if ( !config->readBoolEntry( "Enabled", true ) )
 			continue;
 
 		QString accountId = config->readEntry( "AccountId" );
 		if ( accountId.isEmpty() )
 		{
-			kdDebug(14010) << k_funcinfo << "NOT creating account for empty accountId." << endl;
-			continue; //return;
+			kdWarning( 14010 ) << k_funcinfo << "Not creating account for empty accountId." << endl;
+			continue;
 		}
 
-		kdDebug(14010) << k_funcinfo << "Creating account for '" << accountId << "'" << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Creating account for '" << accountId << "'" << endl;
 
 		KopeteAccount *account = protocol->createNewAccount( accountId );
-		if (!account)
+		if ( !account )
 		{
-			kdDebug(14010) << k_funcinfo << "FAILED creating account for " << accountId << endl;
-			continue; //return;
+			kdWarning( 14010 ) << k_funcinfo << "Failed to create account for '" << accountId << "'" << endl;
+			continue;
 		}
 		account->readConfig( *it );
 	}
