@@ -4,6 +4,7 @@
 		<Menu name="file" noMerge="1"><text>&amp;File</text>
 			<Action name="Connection"/>
 			<Action name="Status"/>
+			<Action name="ShowTransfers"/>
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
 			<Separator lineSeparator="true"/>
@@ -21,7 +22,6 @@
 		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="options_configure"/>
-		<Action name="ShowTransfers"/>
 		<Action name="file_quit"/>
 	</ToolBar>
 </kpartgui>
