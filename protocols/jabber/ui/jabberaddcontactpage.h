@@ -34,7 +34,9 @@ class JabberAccount;
 
 class JabberAddContactPage:public AddContactPage
 {
-  Q_OBJECT public:
+  Q_OBJECT
+
+public:
 	  JabberAddContactPage (KopeteAccount * owner, QWidget * parent = 0, const char *name = 0);
 	 ~JabberAddContactPage ();
 	virtual bool validateData ();
@@ -47,6 +49,7 @@ class JabberAddContactPage:public AddContactPage
 
 
 #endif
+
 
 /*
  * Local variables:
