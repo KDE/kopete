@@ -410,7 +410,7 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 	result.replace(
 		QRegExp( makeRegExp("%1@%2").arg( name, domain ) ),
 		QString::fromLatin1("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
-		
+
 	//Workaround for Bug 85061: Highlighted URLs adds a ' ' after the URL itself
 	// the trailing  &nbsp; is included in the url.
 	result.replace( QRegExp( QString::fromLatin1("(<a href=\"[^\"]+)(&nbsp;)(\")")  ) , QString::fromLatin1("\\1\\3") );
@@ -638,12 +638,16 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 	decoded properly.
 	*/
 
+	if( success )
+		*success = true;
+
+	// Avoid heavy codec tests on empty message.
+	if( message.isEmpty() )
+		return QString(message);
+
 	//Check first 128 chars
 	int charsToCheck = message.length();
 	charsToCheck = 128 > charsToCheck ? charsToCheck : 128;
-
-	if( success )
-		*success = true;
 
 	//They are providing a possible codec. Check if it is valid
 	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
