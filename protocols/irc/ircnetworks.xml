@@ -12,74 +12,6 @@
         </servers>
     </network>
     <network>
-        <name>IRCNet</name>
-        <description>IRCNet</description>
-        <servers>
-            <server>
-                <host>irc.slashnet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>eu.ircnet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.ircd.it</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>au.ircnet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.stealth.net</host>
-                <port>6660</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>KewlNet</name>
-        <description>KewlNet</description>
-        <servers>
-            <server>
-                <host>irc.kewl.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>la.defense.fr.eu.kewl.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>nanterre.fr.eu.kewl.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>TrekLink</name>
-        <description>TrekLink</description>
-        <servers>
-            <server>
-                <host>neutron.treklink.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.treklink.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
         <name>SlashNET</name>
         <description>SlashNET</description>
         <servers>
@@ -106,6 +38,74 @@
             <server>
                 <host>devnull.slashnet.org</host>
                 <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>TrekLink</name>
+        <description>TrekLink</description>
+        <servers>
+            <server>
+                <host>neutron.treklink.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>irc.treklink.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>KewlNet</name>
+        <description>KewlNet</description>
+        <servers>
+            <server>
+                <host>irc.kewl.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>la.defense.fr.eu.kewl.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>nanterre.fr.eu.kewl.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>IRCNet</name>
+        <description>IRCNet</description>
+        <servers>
+            <server>
+                <host>irc.slashnet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>eu.ircnet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>irc.ircd.it</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>au.ircnet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>irc.stealth.net</host>
+                <port>6660</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
@@ -147,6 +147,47 @@
         </servers>
     </network>
     <network>
+        <name>Freenode</name>
+        <description>Freenode Peer-directed Projects Network</description>
+        <servers>
+            <server>
+                <host>irc.debian.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>irc.kde.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>brunner.freenode.net</host>
+                <port>993</port>
+                <useSSL>true</useSSL>
+            </server>
+            <server>
+                <host>irc.openprojects.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>us.openprojects.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>eu.openprojects.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>au.openprojects.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
         <name>CoolChat</name>
         <description>CoolChat</description>
         <servers>
@@ -173,27 +214,16 @@
         </servers>
     </network>
     <network>
-        <name>UnderNet</name>
-        <description>UnderNet</description>
+        <name>FDFNet</name>
+        <description>FDFNet</description>
         <servers>
             <server>
-                <host>us.undernet.org</host>
+                <host>irc.fdfnet.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>eu.undernet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>MagicStar</name>
-        <description>MagicStar</description>
-        <servers>
-            <server>
-                <host>irc.magicstar.net</host>
+                <host>irc.eu.fdfnet.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -286,42 +316,53 @@
         </servers>
     </network>
     <network>
-        <name>FDFNet</name>
-        <description>FDFNet</description>
+        <name>MagicStar</name>
+        <description>MagicStar</description>
         <servers>
             <server>
-                <host>irc.fdfnet.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.eu.fdfnet.net</host>
+                <host>irc.magicstar.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
     </network>
     <network>
-        <name>FEFNet</name>
-        <description>FEFNet</description>
+        <name>UnderNet</name>
+        <description>UnderNet</description>
         <servers>
             <server>
-                <host>irc.fef.net</host>
+                <host>us.undernet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>irc.villagenet.com</host>
+                <host>eu.undernet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>AfterNET</name>
+        <description>AfterNET</description>
+        <servers>
+            <server>
+                <host>irc.afternet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>irc.ggn.net</host>
+                <host>ic5.eu.afternet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>irc.vendetta.com</host>
+                <host>baltimore.md.us.afternet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>boston.afternet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -374,26 +415,26 @@
         </servers>
     </network>
     <network>
-        <name>AfterNET</name>
-        <description>AfterNET</description>
+        <name>FEFNet</name>
+        <description>FEFNet</description>
         <servers>
             <server>
-                <host>irc.afternet.org</host>
+                <host>irc.fef.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>ic5.eu.afternet.org</host>
+                <host>irc.villagenet.com</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>baltimore.md.us.afternet.org</host>
+                <host>irc.ggn.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>boston.afternet.org</host>
+                <host>irc.vendetta.com</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -405,6 +446,48 @@
         <servers>
             <server>
                 <host>irc.dragonlynk.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>AstroLINK.Org</name>
+        <description>AstroLINK.Org</description>
+        <servers>
+            <server>
+                <host>irc.astrolink.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>IrcLink</name>
+        <description>IrcLink</description>
+        <servers>
+            <server>
+                <host>irc.irclink.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>Alesund.no.eu.irclink.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>Oslo.no.eu.irclink.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>frogn.no.eu.irclink.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>tonsberg.no.eu.irclink.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -457,84 +540,26 @@
         </servers>
     </network>
     <network>
-        <name>IrcLink</name>
-        <description>IrcLink</description>
+        <name>RebelChat</name>
+        <description>RebelChat</description>
         <servers>
             <server>
-                <host>irc.irclink.net</host>
+                <host>irc.rebelchat.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>Alesund.no.eu.irclink.net</host>
+                <host>interquad.rebelchat.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>Oslo.no.eu.irclink.net</host>
+                <host>rebel.rebelchat.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>frogn.no.eu.irclink.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>tonsberg.no.eu.irclink.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>AstroLINK.Org</name>
-        <description>AstroLINK.Org</description>
-        <servers>
-            <server>
-                <host>irc.astrolink.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>GalaxyNet</name>
-        <description>GalaxyNet</description>
-        <servers>
-            <server>
-                <host>sprynet.us.galaxynet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>atlanta.ga.us.galaxynet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.galaxynet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>SceneNet</name>
-        <description>SceneNet</description>
-        <servers>
-            <server>
-                <host>irc.scene.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.eu.scene.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.us.scene.org</host>
+                <host>bigcove.rebelchat.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -592,28 +617,55 @@
         </servers>
     </network>
     <network>
-        <name>RebelChat</name>
-        <description>RebelChat</description>
+        <name>SceneNet</name>
+        <description>SceneNet</description>
         <servers>
             <server>
-                <host>irc.rebelchat.org</host>
+                <host>irc.scene.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>interquad.rebelchat.org</host>
+                <host>irc.eu.scene.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>rebel.rebelchat.org</host>
+                <host>irc.us.scene.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>GalaxyNet</name>
+        <description>GalaxyNet</description>
+        <servers>
+            <server>
+                <host>sprynet.us.galaxynet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>bigcove.rebelchat.org</host>
+                <host>atlanta.ga.us.galaxynet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>irc.galaxynet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>Alert</name>
+        <description>Alert</description>
+        <servers>
+            <server>
+                <host>irc.indymedia.org</host>
+                <port>994</port>
+                <useSSL>true</useSSL>
             </server>
         </servers>
     </network>
@@ -694,27 +746,6 @@
         </servers>
     </network>
     <network>
-        <name>Librenet</name>
-        <description>Librenet</description>
-        <servers>
-            <server>
-                <host>irc.librenet.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>famipow.fr.librenet.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>ielf.fr.librenet.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
         <name>SubCultNet</name>
         <description>SubCultNet</description>
         <servers>
@@ -736,41 +767,59 @@
         </servers>
     </network>
     <network>
-        <name>Freenode</name>
-        <description>Freenode Peer-directed Projects Network</description>
+        <name>Librenet</name>
+        <description>Librenet</description>
         <servers>
             <server>
-	    	<host>irc.debian.org</host>
-		<port>6667</port>
-		<useSSL>false</useSSL>
-	    </server>
-	    <server>
-	    	<host>irc.kde.org</host>
-		<port>6667</port>
-		<useSSL>false</useSSL>
-	    </server>
-	    <server>
-	    	<host>brunner.freenode.net</host>
-		<port>993</port>
-		<useSSL>true</useSSL>
-	    </server>
-	    <server>
-                <host>irc.openprojects.net</host>
+                <host>irc.librenet.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>us.openprojects.net</host>
+                <host>famipow.fr.librenet.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>eu.openprojects.net</host>
+                <host>ielf.fr.librenet.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>QChat.net</name>
+        <description>QChat.net</description>
+        <servers>
+            <server>
+                <host>irc.qchat.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>Neohorizon</name>
+        <description>Neohorizon</description>
+        <servers>
+            <server>
+                <host>irc.nhn.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>ChatNet</name>
+        <description>ChatNet</description>
+        <servers>
+            <server>
+                <host>US.ChatNet.Org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>au.openprojects.net</host>
+                <host>EU.ChatNet.Org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -818,74 +867,58 @@
         </servers>
     </network>
     <network>
-        <name>ChatNet</name>
-        <description>ChatNet</description>
+        <name>DwarfStarNet</name>
+        <description>DwarfStarNet</description>
         <servers>
             <server>
-                <host>US.ChatNet.Org</host>
+                <host>IRC.dwarfstar.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>EU.ChatNet.Org</host>
+                <host>US.dwarfstar.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>EU.dwarfstar.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>AU.dwarfstar.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
     </network>
     <network>
-        <name>Neohorizon</name>
-        <description>Neohorizon</description>
+        <name>Mellorien</name>
+        <description>Mellorien</description>
         <servers>
             <server>
-                <host>irc.nhn.net</host>
+                <host>Irc.mellorien.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>us.mellorien.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>eu.mellorien.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
     </network>
     <network>
-        <name>QChat.net</name>
-        <description>QChat.net</description>
+        <name>HabberNet</name>
+        <description>HabberNet</description>
         <servers>
             <server>
-                <host>irc.qchat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>StarChat</name>
-        <description>StarChat</description>
-        <servers>
-            <server>
-                <host>irc.starchat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>galatea.starchat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>stargate.starchat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>powerzone.starchat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>utopia.starchat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>cairns.starchat.net</host>
+                <host>irc.habber.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -928,111 +961,36 @@
         </servers>
     </network>
     <network>
-        <name>HabberNet</name>
-        <description>HabberNet</description>
+        <name>StarChat</name>
+        <description>StarChat</description>
         <servers>
             <server>
-                <host>irc.habber.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>Mellorien</name>
-        <description>Mellorien</description>
-        <servers>
-            <server>
-                <host>Irc.mellorien.net</host>
+                <host>irc.starchat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>us.mellorien.net</host>
+                <host>galatea.starchat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>eu.mellorien.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>DwarfStarNet</name>
-        <description>DwarfStarNet</description>
-        <servers>
-            <server>
-                <host>IRC.dwarfstar.net</host>
+                <host>stargate.starchat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>US.dwarfstar.net</host>
+                <host>powerzone.starchat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>EU.dwarfstar.net</host>
+                <host>utopia.starchat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>AU.dwarfstar.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>ChatJunkiesNet</name>
-        <description>ChatJunkiesNet</description>
-        <servers>
-            <server>
-                <host>irc.xchat.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>us.xchat.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>OtherNet</name>
-        <description>OtherNet</description>
-        <servers>
-            <server>
-                <host>irc.othernet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-        </servers>
-    </network>
-    <network>
-        <name>AxeNet</name>
-        <description>AxeNet</description>
-        <servers>
-            <server>
-                <host>irc.axenet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>angel.axenet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>energy.axenet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>python.axenet.org</host>
+                <host>cairns.starchat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -1065,37 +1023,109 @@
         </servers>
     </network>
     <network>
-        <name>DALNet</name>
-        <description>DALNet</description>
+        <name>AxeNet</name>
+        <description>AxeNet</description>
         <servers>
             <server>
-                <host>irc.dal.net</host>
+                <host>irc.axenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>irc.eu.dal.net</host>
+                <host>angel.axenet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>energy.axenet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>python.axenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
     </network>
     <network>
-        <name>AustNet</name>
-        <description>AustNet</description>
+        <name>OtherNet</name>
+        <description>OtherNet</description>
         <servers>
             <server>
-                <host>us.austnet.org</host>
+                <host>irc.othernet.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>ChatJunkiesNet</name>
+        <description>ChatJunkiesNet</description>
+        <servers>
+            <server>
+                <host>irc.xchat.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>ca.austnet.org</host>
+                <host>us.xchat.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>NixHelpNet</name>
+        <description>NixHelpNet</description>
+        <servers>
+            <server>
+                <host>irc.nixhelp.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>au.austnet.org</host>
+                <host>us.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>uk.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>uk2.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>uk3.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>nl.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>ca.ld.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>us.co.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>us.ca.nixhelp.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>us.pa.nixhelp.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -1178,77 +1208,37 @@
         </servers>
     </network>
     <network>
-        <name>NixHelpNet</name>
-        <description>NixHelpNet</description>
+        <name>AustNet</name>
+        <description>AustNet</description>
         <servers>
             <server>
-                <host>irc.nixhelp.org</host>
+                <host>us.austnet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>us.nixhelp.org</host>
+                <host>ca.austnet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>uk.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>uk2.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>uk3.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>nl.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>ca.ld.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>us.co.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>us.ca.nixhelp.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>us.pa.nixhelp.org</host>
+                <host>au.austnet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
     </network>
     <network>
-        <name>Gamma Force</name>
-        <description>Gamma Force</description>
+        <name>DALNet</name>
+        <description>DALNet</description>
         <servers>
             <server>
-                <host>irc.gammaforce.org</host>
+                <host>irc.dal.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>sphinx.or.us.gammaforce.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>monolith.ok.us.gammaforce.org</host>
+                <host>irc.eu.dal.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -1321,52 +1311,52 @@
         </servers>
     </network>
     <network>
-        <name>OzNet</name>
-        <description>OzNet</description>
+        <name>Gamma Force</name>
+        <description>Gamma Force</description>
         <servers>
             <server>
-                <host>sydney.oz.org</host>
+                <host>irc.gammaforce.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>melbourne.oz.org</host>
+                <host>sphinx.or.us.gammaforce.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>monolith.ok.us.gammaforce.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
         </servers>
     </network>
     <network>
-        <name>FoxChat</name>
-        <description>FoxChat</description>
+        <name>AbleNET</name>
+        <description>AbleNET</description>
         <servers>
             <server>
-                <host>irc.FoxChat.net</host>
+                <host>california.ablenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>irc.ac6.org</host>
+                <host>amazon.ablenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>beastie.ac6.org</host>
+                <host>agora.ablenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>wild.FoxChat.net</host>
+                <host>extreme.ablenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>roadkill.FoxChat.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>slick.FoxChat.net</host>
+                <host>irc.ablenet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
@@ -1429,31 +1419,52 @@
         </servers>
     </network>
     <network>
-        <name>AbleNET</name>
-        <description>AbleNET</description>
+        <name>FoxChat</name>
+        <description>FoxChat</description>
         <servers>
             <server>
-                <host>california.ablenet.org</host>
+                <host>irc.FoxChat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>amazon.ablenet.org</host>
+                <host>irc.ac6.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>agora.ablenet.org</host>
+                <host>beastie.ac6.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>extreme.ablenet.org</host>
+                <host>wild.FoxChat.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
             <server>
-                <host>irc.ablenet.org</host>
+                <host>roadkill.FoxChat.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>slick.FoxChat.net</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+        </servers>
+    </network>
+    <network>
+        <name>OzNet</name>
+        <description>OzNet</description>
+        <servers>
+            <server>
+                <host>sydney.oz.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
+                <host>melbourne.oz.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>

@@ -47,7 +47,7 @@ void Engine::bindNumericReplies()
 //	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
 //	bind(266, this, SLOT(numericReply_266(KIRC::Message &)));
 
-//	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2); // incomingUserIsAway
+	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2); // incomingUserIsAway
 	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1); // incomingUserOnline
 //	bind(305, Engine::IgnoreMethod );
 //	bind(306, Engine::IgnoreMethod );
@@ -202,9 +202,10 @@ void Engine::numericReply_254(Message &msg)
 
 /* 301: "<nick> :<away message>"
  */
-// void Engine::numericReply_301(Message &)
-// {
-// }
+void Engine::numericReply_301(Message &msg)
+{
+	emit incomingUserIsAway(msg.arg(1), msg.suffix());
+}
 
 /* 303: ":*1<nick> *(" " <nick> )"
  */
