@@ -4,6 +4,12 @@
   Copyright (c) 2003 by Stefan Gehn <metz AT gehn.net>
   Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
+
+  Much of this code was learned from code of the following apps:
+    gaim - http://gaim.sourceforge.net
+    micq - http://www.micq.org
+    sim-icq - http://sim-icq.sourceforge.net
+
   *************************************************************************
   *                                                                       *
   * This program is free software; you can redistribute it and/or modify  *
@@ -16,6 +22,8 @@
 
 #include "oscarsocket.h"
 #include "oscarsocket.icq.h"
+#include "oscaraccount.h"
+#include <kopeteonlinestatus.h>
 
 #include <netinet/in.h> // for htons()
 #include <stdlib.h>
@@ -23,7 +31,7 @@
 #include <kdebug.h>
 
 /**
- * taken from libfaim !!!
+ * taken from libfaim (gaim)
  * encodePasswordXOR - Encode a password using old XOR method
  * @password: incoming password
  * @encoded: buffer to put encoded password
@@ -63,7 +71,7 @@ void OscarSocket::encodePasswordXOR(const QString &originalPassword, QString &en
 	{
 		if(password[i] == 0)
 		{
-			kdDebug(14150) << k_funcinfo << "found \\0 in password @ " << i << endl;
+			//kdDebug(14150) << k_funcinfo << "found \\0 in password @ " << i << endl;
 			break;
 		}
 		encodedPassword.append(password[i] ^ encoding_table[i]);
@@ -193,21 +201,25 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	WORD sequence = fromicqsrv.getLEWord();
 
 
-	kdDebug(14150) << k_funcinfo << "commandlength=" << commandlength <<
-		", ourUIN='" << ourUIN << "', subcmd=" << subcmd << ", sequence=" << sequence << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"commandlength=" << commandlength <<
+		", ourUIN='" << ourUIN << "', subcmd=" << subcmd <<
+		", sequence=" << sequence << endl;
 
 	switch(subcmd)
 	{
 		case 0x0042: //SRV_DONEOFFLINEMSGS
 		{
-//			kdDebug(14150) << k_funcinfo << "RECV (SRV_DONEOFFLINEMSG), last offline message" << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"RECV (SRV_DONEOFFLINEMSG), last offline message" << endl;*/
 			sendAckOfflineMessages();
 			break;
 		}
 
 		case 0x0041: //SRV_OFFLINEMSG
 		{
-//			kdDebug(14150) << k_funcinfo << "RECV (SRV_OFFLINEMSG), got an offline message" << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"RECV (SRV_OFFLINEMSG), got an offline message" << endl;*/
 			QString UIN = QString::number(fromicqsrv.getLEDWord());
 			/*WORD year =*/ fromicqsrv.getLEWord();
 			/*BYTE month =*/ fromicqsrv.getLEByte();
@@ -242,7 +254,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					char *tmptxt;
 					ICQSearchResult searchResult;
 					// codes taken from libicq, some kind of failure,
-					// have to find out what they are for
+					// TODO: have to find out what they are for
 					if ((result == 0x32) || (result == 0x14) || (result == 0x1E))
 					{
 						searchResult.uin=1;
@@ -293,7 +305,9 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				case 160: // SRV_METASECURITYDONE
 				{
-					kdDebug(14150) << k_funcinfo << "RECV (SRV_METASECURITYDONE), IGNORING, length=" << fromicqsrv.length() << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"RECV (SRV_METASECURITYDONE), IGNORING, length=" <<
+						fromicqsrv.length() << endl;
 					break;
 				}
 
@@ -723,238 +737,170 @@ void OscarSocket::slotKeepaliveTimer()
 	sendKeepalive();
 }
 
-void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
+void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer &ack)
 {
+	WORD ackStatus = P2P_ONLINE;
+	WORD ackFlags = 0x0000;
+	QString ackMessage = "";
+	bool sendAck = true;
+
 	kdDebug(14150) << k_funcinfo << "called" << endl;
 
-	TLV tlv;
-	bool moreTLVs = true; // Flag to indicate if there are more TLV's to parse
+	if(mAccount->myself()->onlineStatus().internalStatus() == OSCAR_NA)
+		ackStatus = P2P_NA;
+	else if(mAccount->myself()->onlineStatus().internalStatus() == OSCAR_AWAY)
+		ackStatus  = P2P_AWAY;
+	else
+		ackStatus = P2P_ONLINE;
 
-	while(moreTLVs)
+
+	WORD unk = messageBuf.getWord(); // unknown
+	ack.addWord(unk);
+
+	WORD seq2 = messageBuf.getWord(); // some stupid sequence
+	ack.addWord(seq2);
+
+	char *unkblock = messageBuf.getBlock(12); // unknown, always zero
+	ack.addString(unkblock,12);
+	delete [] unkblock;
+
+	/*kdDebug(14150) << k_funcinfo <<
+		"rest after 12 empty bytes:" << endl <<
+		"------------------------------------------------------" << endl <<
+		messageBuf.toString() << endl <<
+		"------------------------------------------------------" << endl;*/
+
+	BYTE msgType = messageBuf.getByte(); // message type
+	ack.addByte(msgType);
+	BYTE msgFlags = messageBuf.getByte(); // message flags
+	ack.addByte(msgFlags);
+
+	kdDebug(14150) << k_funcinfo <<
+		"msgType=" << msgType <<
+		", msgFlags=" << msgFlags << endl;
+
+	WORD status = messageBuf.getWord(); // Usually 0, seen 0x2000.
+
+	kdDebug(14150) << k_funcinfo << "status=" << status << endl;
+
+	// Usually 0, seen 0x0002 in information request messages
+	WORD priority = messageBuf.getWord();
+	if(priority == 0x02)
 	{
-		tlv = buf.getTLV();
+		kdDebug(14150) << k_funcinfo <<
+			"priority flag says this is an 'information request'" << endl;
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"priority flag=" << priority << endl;
+	}
 
-		kdDebug(14150) << k_funcinfo << "Found TLV(" << tlv.type <<
-			"), length=" << tlv.length << endl;
+	WORD messageLength = htons(messageBuf.getWord());
+	char *messagetext = messageBuf.getBlock(messageLength);
 
-		switch(tlv.type)
+	switch(msgType)
+	{
+		case 0xE8:
+		case 0xE9:
+		case 0xEA:
+		case 0xEB:
+		case 0xEC:
 		{
-			case 0x0005:
-			{
-				Buffer type2(tlv.data, tlv.length);
-				WORD ackType = type2.getWord();
-				type2.getDWord(); // time
-				type2.getDWord(); // id
-
-				kdDebug(14150) << k_funcinfo << "acktype=" << ackType << endl;
-
-				if (ackType==0x0000) // normal message
-				{
-					char *contentCap = type2.getBlock(16);
-					QString contentCapString;
-					contentCapString.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-						contentCap[0], contentCap[1], contentCap[2], contentCap[3],contentCap[4], contentCap[5],
-						contentCap[6], contentCap[7], contentCap[8], contentCap[9],
-						contentCap[10], contentCap[11], contentCap[12], contentCap[13],
-						contentCap[14], contentCap[15]);
-					kdDebug(14150) << k_funcinfo <<
-					"capability describing the further content:" << contentCapString << endl;
-					delete [] contentCap;
-
-					// From now on only TLVs follow:
-
-					QPtrList<TLV> lst = /*buf.getTLVList(); */type2.getTLVList(true);
-					lst.setAutoDelete(TRUE);
-
-					TLV *messageTLV = findTLV(lst,0x2711); //TLV(10001)
-					if(messageTLV)
-					{
-						Buffer messageBuf(messageTLV->data, messageTLV->length);
-						WORD lenUntilSeq1 = messageBuf.getWord(); //WORD len
-						if (lenUntilSeq1 != 0x1b00)
-							kdDebug(14150) << k_funcinfo << "wrong len till SEQ1!" << endl;
-
-						WORD tcpVer = messageBuf.getWord(); //WORD tcpver
-						kdDebug(14150) << k_funcinfo << "len=" << lenUntilSeq1 << ", tcpver=" << tcpVer << endl;
-/*
-						kdDebug(14150) << k_funcinfo << "rest after this is:" << endl <<
-						"------------------------------------------------------" << endl <<
-						messageBuf.toString() << endl <<
-						"------------------------------------------------------" << endl;
-*/
-						char *cap=messageBuf.getBlock(16);
-
-						QString capString;
-						capString.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-							cap[0], cap[1], cap[2], cap[3],cap[4], cap[5],
-							cap[6], cap[7], cap[8], cap[9],
-							cap[10], cap[11], cap[12], cap[13],
-							cap[14], cap[15]);
-						kdDebug(14150) << k_funcinfo <<
-							"Capability describing the further content again:" <<
-							capString << endl;
-						delete [] cap;
-
-						messageBuf.getByte(); // unknown
-						messageBuf.getByte(); // unknown
-						messageBuf.getByte(); // unknown
-						WORD unkMsgType = messageBuf.getDWord(); // unknown, 0=normal message, 1=file ok...
-						kdDebug(14150) << k_funcinfo << "unk msgtype is " << unkMsgType << endl;
-						WORD seq1 = messageBuf.getWord(); // some stupid sequence
-						WORD unk = messageBuf.getWord(); // unknown
-						if(unk != 0x0e00 && unk != 0x1200)
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"unknown word is neither 0x0e00 nor 0x1200, it's " << unk << endl;
-						}
-
-						WORD seq2 = messageBuf.getWord(); // some stupid sequence
-						if (seq1 != seq2)
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"seq1 != seq2, what shall we do now?" << endl;
-						}
-
-						(void) messageBuf.getBlock(12); // unknown, always zero
-
-						kdDebug(14150) << k_funcinfo <<
-							"rest after 12 empty bytes:" << endl <<
-							"------------------------------------------------------" << endl <<
-							messageBuf.toString() << endl <<
-							"------------------------------------------------------" << endl;
-
-						BYTE msgType = messageBuf.getByte(); // message type
-						BYTE msgFlags = messageBuf.getByte(); // message flags
-
-						kdDebug(14150) << k_funcinfo << "msgType=" << msgType <<
-							", msgFlags=" << msgFlags << endl;
-
-						WORD status = messageBuf.getWord(); // Usually 0, seen 0x2000.
-						kdDebug(14150) << k_funcinfo << "status=" << status << endl;
-
-						// Usually 0, seen 0x0002 in information request messages
-						WORD priority = messageBuf.getWord();
-						if(priority == 0x02)
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"priority flag says this is an 'information request'" << endl;
-						}
-						else
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"priority flag=" << priority << endl;
-						}
-
-						switch(msgType)
-						{
-							case 0xE8:
-							case 0xE9:
-							case 0xEA:
-							case 0xEB:
-							case 0xEC:
-							{
-								kdDebug(14150) << k_funcinfo <<
-									"Unhandled message-type: AWAY" << endl;
-								break;
-							}
-
-							default: // something else than away message
-							{
-								kdDebug(14150) << k_funcinfo <<
-									"fetching type-2 messagtext..." << endl;
-								WORD length = htons(messageBuf.getWord());
-								char *messagetext = messageBuf.getBlock(length);
-								QString message = QString::fromLocal8Bit(messagetext);
-								delete [] messagetext;
-								kdDebug(14150) << k_funcinfo <<
-									"type-2 messagtext='" << message << "'" << endl;
-								if(!message.isEmpty())
-								{
-									DWORD fgColor=messageBuf.getDWord();
-									DWORD bgColor=messageBuf.getDWord();
-
-									kdDebug(14150) << k_funcinfo << "fgcolor=" << fgColor << endl;
-									kdDebug(14150) << k_funcinfo << "bgcolor=" << bgColor << endl;
-
-									kdDebug(14150) << "messageBuf.length() after message and colors=" <<
-										messageBuf.length() << endl;
-
-									if(messageBuf.length() > 0)
-									{
-										DWORD guidlen = htonl(messageBuf.getDWord());
-										kdDebug(14150) << k_funcinfo << "guidlen=" << guidlen << endl;
-										char *guid = messageBuf.getBlock(guidlen);
-										kdDebug(14150) << k_funcinfo <<
-											"type-2 guid='" << guid << "'" << endl;
-										delete [] guid;
-									}
-
-									kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
-										user.sn << "', message='" << message << "'" << endl;
-
-									emit gotIM(Normal, message, user.sn);
-								}
-								else
-								{
-									kdDebug(14150) << "messageBuf.length() after EMPTY message =" <<
-										messageBuf.length() << endl;
-
-									kdDebug(14150) << k_funcinfo << "rest after this is:" << endl <<
-									"======================================================" << endl <<
-									messageBuf.toString() << endl <<
-									"======================================================" << endl;
-
-									char *b = messageBuf.getBlock(16);
-									if (memcmp(b, PLUGINS_SIGN, sizeof(*b)) == 0)
-									{
-										kdDebug(14150) << k_funcinfo << "plugins request" << endl;
-									}
-									else if (memcmp(b, PHONEBOOK_SIGN, sizeof(*b)) == 0)
-									{
-										kdDebug(14150) << k_funcinfo << "phonebook request" << endl;
-									}
-								}
-								break;
-							}
-
-						} // END switch(msgType)
-					} // END found TLV(10001)
-					else
-					{
-						kdDebug(14150) << k_funcinfo <<
-							"Could not find TLV(10001) in advanced message!" << endl;
-						kdDebug(14150) << k_funcinfo <<
-							"contained TLVs:" << endl;
-
-						TLV *t;
-						for(t=lst.first(); t; t=lst.next())
-						{
-							kdDebug(14150) << k_funcinfo << "TLV(" << t->type <<
-								") length=" << t->length << endl;
-						}
-					}
-
-					lst.clear();
-				}
-				else
-				{
-					kdDebug(14150) << k_funcinfo << "UNHANDLED acktype" << endl;
-					delete [] tlv.data;
-				}
-				break;
-			} // END TLV(0x0005)
-
-			default:
-			{
-				kdDebug(14150) << k_funcinfo << "Unhandled TLV(" << tlv.type <<
-					") length=" << tlv.length << endl;
-				delete [] tlv.data;
-				break;
-			}
+			// TODO: per contact away message
+			ackMessage = mAccount->awayMessage();
+			break;
 		}
 
-		moreTLVs=(buf.length() > 0);
-	} // END while(moreTLVs)
+		case 0x0000: // auto
+		case 0x0001: // normal message
+		{
+			kdDebug(14150) << k_funcinfo << "RECV TYPE-2 IM, normal/auto message" << endl;
+
+			/*DWORD fgColor = */messageBuf.getDWord();
+			//kdDebug(14150) << k_funcinfo << "fgcolor=" << fgColor << endl;
+
+			/*DWORD bgColor =*/ messageBuf.getDWord();
+			//kdDebug(14150) << k_funcinfo << "bgcolor=" << bgColor << endl;
+
+			/*kdDebug(14150) << k_funcinfo <<
+				"messageBuf.length() after message and colors=" <<
+				messageBuf.length() << endl;*/
+
+			bool utf = false;
+			if(messageBuf.length() > 0)
+			{
+				DWORD guidlen = htonl(messageBuf.getDWord());
+				char *guid = messageBuf.getBlock(guidlen);
+				kdDebug(14150) << k_funcinfo <<
+					"type-2 guid='" << guid << "'" << endl;
+				if(QString::fromLatin1(guid)==QString::fromLatin1("{0946134E-4C7F-11D1-8222-444553540000}"))
+				{
+					kdDebug(14150) << k_funcinfo << "Peer announces message is UTF!" << endl;
+					utf = true;
+				}
+				delete [] guid;
+			}
+
+			kdDebug(14150) << k_funcinfo << "messagetext='" << messagetext << "'" << endl;
+
+			QString message;
+			if(utf)
+				message = QString::fromUtf8(messagetext);
+			else
+				message = QString::fromLatin1(messagetext); // TODO: encoding
+
+			if(!message.isEmpty())
+			{
+				kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
+					user.sn << "', message='" << message << "'" << endl;
+				emit gotIM(Normal, message, user.sn);
+			}
+
+			kdDebug(14150) << k_funcinfo <<
+				"SEND ACKMSG, status=" << ackStatus <<
+				",flags=" << ackFlags <<
+				", message='" << ackMessage << "'" << endl;
+			ack.addWord(ackStatus);
+			ack.addWord(ackFlags);
+			ack.addLNTS(ackMessage.latin1()); // TODO: encoding
+			if(msgType==0x0001)
+			{
+				ack.addDWord(0x00000000);
+				ack.addDWord(0x00FFFFFF);
+			}
+			sendBuf(ack, 0x2); // send back ack
+			sendAck = false; // already sent
+			break;
+		}
+
+		default: // something else we don't support yet
+		{
+			ackStatus = P2P_REFUSE;
+			ackFlags = 0x0001;
+		}
+	} // END switch(msgType)
+
+	delete [] messagetext;
+
+	if(sendAck)
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"SEND ACKMSG, status=" << ackStatus <<
+			",flags=" << ackFlags <<
+			", message='" << ackMessage << "'" << endl;
+
+		ack.addWord(ackStatus);
+		ack.addWord(ackFlags);
+		ack.addLNTS(ackMessage.latin1()); // TODO: encoding
+
+		/*kdDebug(14150) << k_funcinfo <<
+		"ACK dump:" << endl <<
+		"------------------------------------------------------" << endl <<
+		ack.toString() << endl <<
+		"------------------------------------------------------" << endl;*/
+		sendBuf(ack, 0x2); // send back ack
+	}
 
 	kdDebug(14150) << k_funcinfo << "END" << endl;
 }

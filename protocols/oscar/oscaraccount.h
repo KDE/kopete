@@ -103,6 +103,9 @@ public:
 	bool ignoreUnknownContacts() const { return mIgnoreUnknownContacts; }
 	void setIgnoreUnknownContacts(bool b) { mIgnoreUnknownContacts = b; }
 
+	void setAwayMessage(const QString&);
+	const QString &awayMessage();
+
 	/* Pure virtual to be implemented by ICQAccount and AIMAccount
 	 * sets the users status and if connected should send a status update to the server
 	 * in disconnected state it just updates the local status variable that
@@ -275,6 +278,8 @@ protected:
 	QTimer *mIdleTimer;
 
 	OscarContact* mMyself;
+
+	QString mAwayMessage;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

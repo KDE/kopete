@@ -93,8 +93,6 @@ class AIMAccount : public OscarAccount
 	private:
 		UserInfo mUserInfo;
 		unsigned long mStatus;
-		QString mAwayMessage;
-
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -1074,7 +1074,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	while(inbuf.length() > 4) //the last 4 bytes are the timestamp
 	{
 		SSI *ssi = new SSI;
-		char *name = inbuf.getLNTS(); //name
+		char *name = inbuf.getBSTR(); //name
 		ssi->name = QString::fromLocal8Bit(name); // TODO: check encoding
 		if (name)
 			delete [] name;
@@ -1576,12 +1576,87 @@ void OscarSocket::parseIM(Buffer &inbuf)
 		{
 			if (mIsICQ) // TODO: unify AIM and ICQ in this place
 			{
-				parseAdvanceMessage(inbuf, u);
+				kdDebug(14150) << k_funcinfo << "IM received on channel 2 from " << u.sn << endl;
+				TLV tlv5tlv = inbuf.getTLV();
+				kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
+				if (tlv5tlv.type != 0x0005)
+				{
+					kdDebug(14150) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
+					break;
+				}
+
+				Buffer tlv5(tlv5tlv.data, tlv5tlv.length);
+
+				WORD acktype = tlv5.getWord();
+				DWORD msgTime = tlv5.getDWord();
+				DWORD msgRandomId = tlv5.getDWord();
+				char *capData = tlv5.getBlock(16);
+				DWORD capFlag = parseCap(capData);
+				delete [] capData;
+
+				QPtrList<TLV> lst = tlv5.getTLVList();
+				lst.setAutoDelete(TRUE);
+
+				TLV *msgTLV = findTLV(lst,0x2711);  //message tlv
+				if (!msgTLV)
+				{
+					kdDebug(14150) << k_funcinfo << "Aborting because TLV(10001) wasn't found (no message?)" << endl;
+					break;
+				}
+
+				switch(capFlag)
+				{
+					case AIM_CAPS_ISICQ:
+						// found in direct-connection stuff?
+						break;
+
+					case AIM_CAPS_ICQSERVERRELAY:
+					{
+						Buffer messageBuf(msgTLV->data, msgTLV->length);
+						WORD len = messageBuf.getWord();
+						if (len != 0x1b00)
+							kdDebug(14150) << k_funcinfo << "wrong len till SEQ1!" << endl;
+						WORD tcpVer = messageBuf.getWord();
+						kdDebug(14150) << k_funcinfo << "len=" << len << ", tcpver=" << tcpVer << endl;
+						char *cap=messageBuf.getBlock(16);
+						WORD unk1 = messageBuf.getWord();
+						DWORD unk2 = messageBuf.getDWord();
+						BYTE unk3 = messageBuf.getByte();
+						WORD seq1 = messageBuf.getWord();
+
+
+						Buffer ack; // packet sent back as acknowledgment
+						ack.addSnac(4, 11, 0, 0);
+						ack.addDWord(msgTime);
+						ack.addDWord(msgRandomId);
+						ack.addWord(0x0002); // type-2 ack
+						ack.addByte(u.sn.length()); //dest sn length
+						ack.addString(u.sn.latin1(), u.sn.length()); //dest sn
+						ack.addWord(0x0003); // unknown
+						ack.addWord(len);
+						ack.addWord(tcpVer);
+						ack.addString(cap, 16);
+						ack.addWord(unk1);
+						ack.addDWord(unk2);
+						ack.addByte(unk3);
+						ack.addWord(seq1);
+
+						parseAdvanceMessage(messageBuf, u, ack);
+						break;
+					}
+					default: // TODO
+						break;
+				}
+
 				break;
 			}
 			else
 			{
+
+				// ===========================================
 				// TODO: unify AIM and ICQ parts
+				// ===========================================
+
 				unsigned int remotePort = 0;
 				QString qh;
 				QString message;
@@ -1603,34 +1678,18 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					// 1 - Deny
 					// 2 - Accept
 					msgtype = tmpbuf.getWord();
+
 					//next comes the cookie, which should match the ICBM cookie
 					char *c = tmpbuf.getBlock(8);
 					cook.duplicate(c,8);
 					delete [] c;
+
 					//the next 16 bytes are the capability block (what kind of request is this?)
 					char *cap = tmpbuf.getBlock(0x10);
-					int identified = 0;
-					for (int i = 0; !(oscar_caps[i].flag & AIM_CAPS_LAST); i++)
-					{
-						if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
-						{
-							capflag |= oscar_caps[i].flag;
-							identified++;
-							break; // should only match once...
-						}
-					}
+					capflag = parseCap(cap);
+					if (capflag == 0x00000000)
+						kdDebug(14150) << k_funcinfo << "unknown CAP: " << CapToString(cap) << endl;
 					delete [] cap;
-
-					if (!identified)
-					{
-						printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
-							cap[0], cap[1], cap[2], cap[3],
-							cap[4], cap[5],
-							cap[6], cap[7],
-							cap[8], cap[9],
-							cap[10], cap[11], cap[12], cap[13],
-							cap[14], cap[15]);
-					}
 
 					//Next comes a big TLV chain of stuff that may or may not exist
 					QPtrList<TLV> tlvlist = tmpbuf.getTLVList();
@@ -2061,7 +2120,7 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 		return false;
 	}
 
-	char *cb = inbuf.getBSTR(); // screenname/uin
+	char *cb = inbuf.getBUIN(); // screenname/uin
 	u.sn = tocNormalize(QString::fromLatin1(cb)); // screennames and uin are always us-ascii
 	delete [] cb;
 
@@ -2339,7 +2398,7 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "Cannot send as UTF-16BE, codec value=" << (void *)codec << endl;
+		kdDebug(14150) << k_funcinfo << "Won't send as UTF-16BE, codec value=" << (void *)codec << endl;
 	}
 
 	// no codec and no charset and per-contact encoding set
@@ -2359,14 +2418,14 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "Cannot use per-contact encoding, codec value=" << (void *)codec << endl;
+		kdDebug(14150) << k_funcinfo << "Won't use per-contact encoding, codec value=" << (void *)codec << endl;
 	}
 
 	if(!codec && charset != 0x0002) // it's neither unicode nor did we find a codec so far!
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Couldn't find suitable encoding for outgoing message, " <<
-			"encoding using ISO-8859-1, prepare for receiver getting unredable text :)" << endl;
+			"encoding using ISO-8859-1, prepare for receiver getting unreadable text :)" << endl;
 		charset=0x0003;
 		codec=QTextCodec::codecForMib(4); // ISO-8859-1
 	}
@@ -2557,7 +2616,7 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 	//delete [] ck;
 	WORD typ = inbuf.getWord();
 
-	char *sn = inbuf.getBSTR();
+	char *sn = inbuf.getBUIN();
 	QString nm = QString::fromLatin1(sn);
 	delete [] sn;
 
@@ -3066,7 +3125,7 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,requestType,0x0000,0x00000000);
-	outbuf.addLNTS(item->name.latin1()); // TODO: encoding
+	outbuf.addBSTR(item->name.latin1()); // TODO: encoding
 	outbuf.addWord(item->gid); // TAG
 	outbuf.addWord(item->bid); // ID
 	outbuf.addWord(item->type); // TYPE
@@ -3815,9 +3874,8 @@ void OscarSocket::sendAuthRequest(const QString &contact, const QString &reason)
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0018,0x0000,0x00000000);
 
-	outbuf.addByte(contact.length()); //dest sn length
-	outbuf.addString(contact.ascii(), contact.length()); //dest sn
-	outbuf.addLNTS(reason.local8Bit());
+	outbuf.addBUIN(contact.ascii()); //dest sn
+	outbuf.addBSTR(reason.local8Bit());
 	outbuf.addWord(0x0000);
 	sendBuf(outbuf,0x02);
 }
@@ -3829,14 +3887,9 @@ void OscarSocket::sendAuthReply(const QString &contact, const QString &reason, b
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x001a,0x0000,0x00000000);
-
-	outbuf.addByte(contact.length()); //dest sn length
-	outbuf.addString(contact.ascii(), contact.length()); //dest sn
-	if(grant)
-		outbuf.addByte(0x01);
-	else
-		outbuf.addByte(0x00);
-	outbuf.addLNTS(reason.local8Bit());
+	outbuf.addBUIN(contact.ascii()); //dest sn
+	outbuf.addByte(grant ? 0x01 : 0x00);
+	outbuf.addBSTR(reason.local8Bit());
 	sendBuf(outbuf,0x02);
 }
 
@@ -3844,12 +3897,13 @@ void OscarSocket::parseAuthReply(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
-	BYTE len=inbuf.getByte();
-	char *cb=inbuf.getBlock(len);
+	char *cb=inbuf.getBUIN();
 	QString contact=QString::fromLocal8Bit(cb); // TODO: encoding
 	delete [] cb;
+
 	BYTE grant=inbuf.getByte();
-	char *r=inbuf.getLNTS();
+
+	char *r=inbuf.getBSTR();
 	QString reason=QString::fromLocal8Bit(r); // TODO: encoding
 	delete []r;
 

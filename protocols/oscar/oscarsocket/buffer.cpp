@@ -463,6 +463,7 @@ int Buffer::addLNTS(const char * s)
 	int ret = addWord(len);
 	if(len > 0)
 		ret = addString(s, len);
+	ret = addByte(0x00);
 	return ret;
 }
 
@@ -472,19 +473,34 @@ int Buffer::addLELNTS(const char * s)
 	int ret = addLEWord(len);
 	if(len > 0)
 		ret = addLEString(s, len);
+	ret = addByte(0x00);
 	return ret;
 }
 
 int Buffer::addBSTR(const char * s)
 {
 	unsigned int len = strlen(s);
-	int ret = addByte(len);
+	int ret = addWord(len);
 	if(len > 0)
 		ret = addString(s, len);
 	return ret;
 }
 
 char *Buffer::getBSTR()
+{
+	WORD len = getWord();
+	return getBlock(len);
+}
+
+int Buffer::addBUIN(const char * s)
+{
+	unsigned int len = strlen(s);
+	int ret = addByte(len);
+	ret = addString(s, len);
+	return ret;
+}
+
+char *Buffer::getBUIN()
 {
 	BYTE len = getByte();
 	return getBlock(len);

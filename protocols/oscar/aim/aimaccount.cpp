@@ -34,7 +34,6 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	: OscarAccount(parent, accountID, name, false)
 {
 	kdDebug(14190) << k_funcinfo << accountID << ": Called."<< endl;
-	mAwayMessage = QString::null;
 	mStatus = OSCAR_OFFLINE;
 
 	mMyself = new AIMContact(tocNormalize(accountID), accountID, this, 0L);
@@ -193,7 +192,7 @@ void AIMAccount::setStatus(const unsigned long status,
 	mStatus = status;
 
 	if(!awayMessage.isNull())
-		mAwayMessage = awayMessage;
+		setAwayMessage(awayMessage);
 
 	if (isConnected())
 		engine()->sendAIMAway((status==OSCAR_AWAY), awayMessage);

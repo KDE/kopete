@@ -79,7 +79,7 @@ KActionMenu* ICQAccount::actionMenu()
 		p->statusOffline.iconFor(this), 0,
 		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
 
-	KAction* mActionAway		= new KAction(p->statusAway.caption(),
+	KAction* mActionAway = new KAction(p->statusAway.caption(),
 		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway()), this, "ICQAccount::mActionAway");
 
@@ -278,7 +278,7 @@ void ICQAccount::setStatus(const unsigned long status,
 
 	mStatus = status;
 	if(!awayMessage.isNull())
-		mAwayMessage = awayMessage;
+		setAwayMessage(awayMessage);
 
 	unsigned long outgoingStatus = fullStatus(status);
 	if (isConnected())

@@ -72,7 +72,6 @@ class ICQAccount : public OscarAccount
 
 	private:
 		unsigned long mStatus; // icq status minux flags for web-aware, hide-ip and invisible
-		QString mAwayMessage;
 		bool mWebAware;
 		bool mHideIP;
 		bool mInvisible;

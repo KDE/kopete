@@ -5,9 +5,9 @@ AM_CPPFLAGS = $(all_includes) $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = liboscarsocket.la
 
-liboscarsocket_la_LDFLAGS = -version-info 0:0:0
 liboscarsocket_la_SOURCES = oscarsocket.cpp \
 	oscarsocket.icq.cpp oscarsocket.aim.cpp \
+	oscarcaps.cpp \
 	oncomingsocket.cpp buffer.cpp \
 	md5.c aimbuddylist.cpp \
 	aim.cpp ssidata.cpp \

@@ -109,16 +109,15 @@ const DWORD AIM_CAPS_IS_WEB			= 0x00040000;
 const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
 const DWORD AIM_CAPS_LAST			= 0x00100000;
 
-// DON'T touch these if you're not 100% sure what they are for!
-//#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-#define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
-#define KOPETE_ICQ_CAPS			/*AIM_CAPS_ICQSERVERRELAY |*/ AIM_CAPS_UTF8 | AIM_CAPS_ISICQ
 
-//ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
+// "to contactlist" means only the contactlist flashes, no sound or other display of incoming message
+const WORD P2P_ONLINE	= 0x0000; // user is online, message was received, file transfer accepted
+const WORD P2P_REFUSE	= 0x0100; // refused
+const WORD P2P_AWAY		= 0x0400; // accepted (to contact list) because of away
+const WORD P2P_OCC		= 0x0900; // refused because of occupied (retry by sending to contact list or as urgent)
+const WORD P2P_DND		= 0x0a00; // refused because of dnd (retry by sending to contact list)
+const WORD P2P_NA		= 0x0e00; // accepted (to contact list) because of na
 
-//
-// FIXME: port capabilities array to some qt based list class, makes usage of memcmp obsolete
-//
 const struct
 {
 	DWORD flag;
@@ -128,37 +127,37 @@ const struct
 	// Chat is oddball.
 	{AIM_CAPS_CHAT,
 	{0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	// These are mostly in order.
 	{AIM_CAPS_VOICE,
 	{0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_SENDFILE,
 	{0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	// Advertised by the EveryBuddy client.
 	{AIM_CAPS_ISICQ,
 	{0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_IMIMAGE,
 	{0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_BUDDYICON,
 	{0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_SAVESTOCKS,
 	{0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_GETFILE,
 	{0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	{AIM_CAPS_ICQSERVERRELAY,
 	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
@@ -212,6 +211,13 @@ const struct
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
 };
+
+// DON'T touch these if you're not 100% sure what they are for!
+//#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
+#define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ
+
+//ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
 
 const QString msgerrreason[] =
@@ -569,387 +575,451 @@ class OscarSocket : public OscarConnection
 		void slotConnected();
 
 	private:
-	/** adds the flap version to the buffer */
-	void putFlapVer(Buffer &buf);
+		/*
+		* adds the flap version to the buffer
+		*/
+		void putFlapVer(Buffer &buf);
 
-	/** Reads a FLAP header from the input */
-	FLAP getFLAP();
+		/*
+		* Reads a FLAP header from the input
+		*/
+		FLAP getFLAP();
 
-	/** Sends the output buffer, and clears it */
-	void sendBuf(Buffer &buf, BYTE chan);
+		/*
+		* Sends the output buffer, and clears it
+		*/
+		void sendBuf(Buffer &buf, BYTE chan);
 
-	/**
-	* Sends login information, actually logs
-	* onto the server
-	*/
-	void sendLoginAIM();
-	void sendLoginICQ();
+		/*
+		* Sends login information, actually logs
+		* onto the server
+		*/
+		void sendLoginAIM();
+		void sendLoginICQ();
 
-	/*
-	 * Called when a cookie is received
-	 */
-	void connectToBos();
-	/*
-	 * Sends the authorization cookie to the BOS server
-	 */
-	void sendCookie();
-	/*
-	 * Parses the rate info response
-	 */
-	void parseRateInfoResponse(Buffer &inbuf);
-	/*
-	* Tells the server we accept it's communist rate
-	* limits, even though I have no idea what they mean
-	*/
-	void sendRateAck();
-	/*
-	 * Sends privacy flags to the server
-	 */
-	void sendPrivacyFlags();
-	/*
-	 * parse my user info
-	 */
-	void parseMyUserInfo(Buffer &inbuf);
-	/*
-	 * finds a tlv of type @p typ in the list
-	 */
-	TLV *findTLV(QPtrList<TLV> &l, WORD typ);
-	/*
-	* Parse the server's authorization response
-	* (which hopefully contains the cookie)
-	*/
-	void parseAuthResponse(Buffer &inbuf);
-	/*
-	 * The program does this when a key is received
-	 */
-	void parsePasswordKey(Buffer &inbuf);
-	/*
-	 * tells the server that the client is
-	 * ready to receive commands & stuff
-	 */
-	void sendClientReady();
-	/*
-	 * Sends versions so that we get proper rate info
-	 */
-	void sendVersions(const WORD *families, const int len);
+		/*
+		* Called when a cookie is received
+		*/
+		void connectToBos();
+		/*
+		* Sends the authorization cookie to the BOS server
+		*/
+		void sendCookie();
+		/*
+		* Parses the rate info response
+		*/
+		void parseRateInfoResponse(Buffer &inbuf);
+		/*
+		* Tells the server we accept it's communist rate
+		* limits, even though I have no idea what they mean
+		*/
+		void sendRateAck();
+		/*
+		* Sends privacy flags to the server
+		*/
+		void sendPrivacyFlags();
+		/*
+		* parse my user info
+		*/
+		void parseMyUserInfo(Buffer &inbuf);
+		/*
+		* finds a tlv of type @p typ in the list
+		*/
+		TLV *findTLV(QPtrList<TLV> &l, WORD typ);
+		/*
+		* Parse the server's authorization response
+		* (which hopefully contains the cookie)
+		*/
+		void parseAuthResponse(Buffer &inbuf);
+		/*
+		* The program does this when a key is received
+		*/
+		void parsePasswordKey(Buffer &inbuf);
+		/*
+		* tells the server that the client is
+		* ready to receive commands & stuff
+		*/
+		void sendClientReady();
+		/*
+		* Sends versions so that we get proper rate info
+		*/
+		void sendVersions(const WORD *families, const int len);
 
-	/*
-	* Handles AOL's evil attempt to thwart 3rd
-	* party apps using Oscar.  It requests a
-	* segment and offset of aim.exe.  We can
-	* thwart it with help from the good people
-	* at Gaim
-	*/
-	void parseMemRequest(Buffer &inbuf);
+		/*
+		* Handles AOL's evil attempt to thwart 3rd
+		* party apps using Oscar.  It requests a
+		* segment and offset of aim.exe.  We can
+		* thwart it with help from the good people
+		* at Gaim
+		*/
+		void parseMemRequest(Buffer &inbuf);
 
-	/*
-	 * parses incoming contactlist (roster) data
-	 */
-	void parseRosterData(Buffer &inbuf);
+		/*
+		* parses incoming contactlist (roster) data
+		*/
+		void parseRosterData(Buffer &inbuf);
 
-	/*
-	 * parses incoming ack for current contactlist timestamp/length
-	 * @see sendRosterRequest() for data sent on CLI_CHECKROSTER
-	 */
-	void parseRosterOk(Buffer &inbuf);
+		/*
+		* parses incoming ack for current contactlist timestamp/length
+		* @see sendRosterRequest() for data sent on CLI_CHECKROSTER
+		*/
+		void parseRosterOk(Buffer &inbuf);
 
-	/*
-	 * Requests the user's SSI rights
-	 */
-	void requestBOSRights();
-	/*
-	 * Parses SSI rights data
-	 */
-	void parseBOSRights(Buffer &inbuf);
-	/*
-	 * Parses the server ready response
-	 */
-	void parseServerReady(Buffer &inbuf);
-	/*
-	 * parses server version info
-	 */
-	void parseServerVersions(Buffer &inbuf);
+		/*
+		* Requests the user's SSI rights
+		*/
+		void requestBOSRights();
+		/*
+		* Parses SSI rights data
+		*/
+		void parseBOSRights(Buffer &inbuf);
+		/*
+		* Parses the server ready response
+		*/
+		void parseServerReady(Buffer &inbuf);
+		/*
+		* parses server version info
+		*/
+		void parseServerVersions(Buffer &inbuf);
 
-	/** Parses Message of the day */
-	void parseMessageOfTheDay(Buffer &inbuf);
+		/** Parses Message of the day */
+		void parseMessageOfTheDay(Buffer &inbuf);
 
-	/** Requests location rights */
-	void requestLocateRights();
+		/** Requests location rights */
+		void requestLocateRights();
 
-	/** Requests a bunch of information (permissions, rights, my user info, etc) from server */
-	void requestInfo();
+		/** Requests a bunch of information (permissions, rights, my user info, etc) from server */
+		void requestInfo();
 
-	/** adds a mask of the groups that you want to be able to see you to the buffer */
-	void sendGroupPermissionMask();
+		/** adds a mask of the groups that you want to be able to see you to the buffer */
+		void sendGroupPermissionMask();
 
-	/** adds a request for buddy list rights to the buffer */
-	void requestBuddyRights();
+		/** adds a request for buddy list rights to the buffer */
+		void requestBuddyRights();
 
-	/** adds a request for msg rights to the buffer */
-	void requestMsgRights();
+		/** adds a request for msg rights to the buffer */
+		void requestMsgRights();
 
-	/** Parses the locate rights provided by the server */
-	void parseLocateRights(Buffer &inbuf);
+		/** Parses the locate rights provided by the server */
+		void parseLocateRights(Buffer &inbuf);
 
-	/** Parses buddy list rights from the server */
-	void parseBuddyRights(Buffer &inbuf);
+		/** Parses buddy list rights from the server */
+		void parseBuddyRights(Buffer &inbuf);
 
-	/** Parses msg rights info from server */
-	void parseMsgRights(Buffer &inbuf);
+		/** Parses msg rights info from server */
+		void parseMsgRights(Buffer &inbuf);
 
-	/*
-	 * Parses an incoming IM
-	 */
-	void parseIM(Buffer &inbuf);
+		/*
+		* Parses an incoming IM
+		*/
+		void parseIM(Buffer &inbuf);
 
-	/*
-	 * parses a type-1 message
-	 * called by parseIM
-	 */
-	void parseSimpleIM(Buffer &inbuf, const UserInfo &u);
-	/*
-	 * parses a type-4 message
-	 * called by parseIM
-	 */
-	void parseServerIM(Buffer &inbuf, const UserInfo &u);
+		/*
+		* parses a type-1 message
+		* called by parseIM
+		*/
+		void parseSimpleIM(Buffer &inbuf, const UserInfo &u);
+		/*
+		* parses a type-4 message
+		* called by parseIM
+		*/
+		void parseServerIM(Buffer &inbuf, const UserInfo &u);
 
-	/** parses the aim standard user info block */
-	//UserInfo parseUserInfo(Buffer &inbuf);
-	bool parseUserInfo(Buffer &inbuf, UserInfo &u);
+		/** parses the aim standard user info block */
+		//UserInfo parseUserInfo(Buffer &inbuf);
+		bool parseUserInfo(Buffer &inbuf, UserInfo &u);
 
-	/*
-	 * parses a capabilities block contained in inbuf
-	 * inbuf should NOT contain anything else or it'll break ya neck ;)
-	 */
-	const DWORD parseCapabilities(Buffer &inbuf);
+		/*
+		 * parses a capabilities block contained in inbuf
+		 * inbuf should NOT contain anything else or it'll break ya neck ;)
+		 */
+		const DWORD parseCapabilities(Buffer &inbuf);
 
-	/** Activates the SSI list on the server */
-	void sendSSIActivate();
+		/*
+		 * Activates the SSI list on the server
+		 */
+		void sendSSIActivate();
 
-	/** Parses the oncoming buddy server notification */
-	void parseUserOnline(Buffer &);
+		/*
+		 * Parses the oncoming buddy server notification
+		 */
+		void parseUserOnline(Buffer &);
 
-	/** Parses offgoing buddy message from server */
-	void parseUserOffline(Buffer &);
+		/*
+		 * Parses offgoing buddy message from server
+		 */
+		void parseUserOffline(Buffer &);
 
-	/** Parses someone's user info */
-	void parseUserProfile(Buffer &);
-	/*
-	 * Handles a redirect
-	 * TODO: unused
-	 */
-//	void parseRedirect(Buffer &);
+		/*
+		 * Parses someone's user info
+		 */
+		void parseUserProfile(Buffer &);
 
-	/** Parses a message ack from the server */
-	void parseMsgAck(Buffer &);
+		/*
+		 * Handles a redirect
+		 * TODO: implement and use it!
+		 */
+		// void parseRedirect(Buffer &);
 
-	/** Parses a minityping notification from server */
-	void parseMiniTypeNotify(Buffer &);
+		/*
+		 * Parses a message ack from the server
+		 */
+		void parseMsgAck(Buffer &);
 
-	void parseSRV_FROMICQSRV(Buffer &);
-	void parseAdvanceMessage(Buffer &, UserInfo &);
+		/** Parses a minityping notification from server */
+		void parseMiniTypeNotify(Buffer &);
 
-	/** Parses a rate change */
-	void parseRateChange(Buffer &inbuf);
+		void parseSRV_FROMICQSRV(Buffer &);
+		void parseAdvanceMessage(Buffer &, UserInfo &, Buffer &);
 
-	/** Sends SSI add, modify, or delete request to reuse code */
-	void sendSSIAddModDel(SSI *item, WORD request_type);
+		/** Parses a rate change */
+		void parseRateChange(Buffer &inbuf);
 
-	/** Parses the SSI acknowledgment */
-	void parseSSIAck(Buffer &inbuf);
+		/** Sends SSI add, modify, or delete request to reuse code */
+		void sendSSIAddModDel(SSI *item, WORD request_type);
 
-	/** Parses a warning notification */
-	void parseWarningNotify(Buffer &inbuf);
+		/** Parses the SSI acknowledgment */
+		void parseSSIAck(Buffer &inbuf);
 
-	/** Parses a message sending error */
-	void parseError(WORD family, Buffer &inbuf);
+		/** Parses a warning notification */
+		void parseWarningNotify(Buffer &inbuf);
 
-	/** Parses a missed message notification */
-	void parseMissedMessage(Buffer &inbuf);
+		/** Parses a message sending error */
+		void parseError(WORD family, Buffer &inbuf);
 
-	/** Request, deny, or accept a rendezvous session with someone
-	type == 0: request
-	type == 1: deny
-	type == 2: accept  */
-	void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
+		/** Parses a missed message notification */
+		void parseMissedMessage(Buffer &inbuf);
 
-	/** Sends a 0x0013,0x0002 (requests SSI rights information) */
-	void sendSSIRightsRequest();
+		/** Request, deny, or accept a rendezvous session with someone
+		type == 0: request
+		type == 1: deny
+		type == 2: accept  */
+		void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
 
-	/** Sends a 0x0013,0x0004 (requests SSI data?) */
-	void sendSSIRequest();
+		/** Sends a 0x0013,0x0002 (requests SSI rights information) */
+		void sendSSIRightsRequest();
 
-	/*
-	 * Parses a SNAC(0x0013,0x0003) (SSI rights) from the server
-	 */
-	void parseSSIRights(Buffer &inbuf);
+		/** Sends a 0x0013,0x0004 (requests SSI data?) */
+		void sendSSIRequest();
 
-	/*
-	 * Sends parameters for ICBM messages
-	 */
-	void sendMsgParams();
+		/*
+		* Parses a SNAC(0x0013,0x0003) (SSI rights) from the server
+		*/
+		void parseSSIRights(Buffer &inbuf);
 
-	/*
-	 * Returns the appropriate server socket, based on the capability flag it is passed.
-	 */
+		/*
+		* Sends parameters for ICBM messages
+		*/
+		void sendMsgParams();
+
+		/*
+		* Returns the appropriate server socket, based on the capability flag it is passed.
+		*/
 #if 0
-	OncomingSocket * serverSocket(DWORD capflag);
+		OncomingSocket * serverSocket(DWORD capflag);
 #endif
 
-	// parse DISCONNECT messages on channel 4, ICQ specific
-	void parseConnectionClosed(Buffer &inbuf);
+		// parse DISCONNECT messages on channel 4, ICQ specific
+		void parseConnectionClosed(Buffer &inbuf);
 
-	/*
-	 * send a CLI_TOICQSRV with subcommand and DATA supplied in data
-	 * returns the sequence sent out with the packet
-	 * incoming server replies will have the same sequence!
-	 */
-	WORD sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
+		/*
+		* send a CLI_TOICQSRV with subcommand and DATA supplied in data
+		* returns the sequence sent out with the packet
+		* incoming server replies will have the same sequence!
+		*/
+		WORD sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
 
-	void startKeepalive();
-	void stopKeepalive();
+		void startKeepalive();
+		void stopKeepalive();
 
-	void parseAuthReply(Buffer &inbuf);
+		void parseAuthReply(Buffer &inbuf);
 
-	/*
-	 * Probably important TODO:
-	 * this adds contacts to the "client-side" contactlist, we probably have to call this after
-	 * login with ALL our contactnames and when adding a new contact
-	 */
-	void sendBuddylistAdd(QStringList &contacts);
+		/*
+		* Probably important TODO:
+		* this adds contacts to the "client-side" contactlist, we probably have to call this after
+		* login with ALL our contactnames and when adding a new contact
+		*/
+		void sendBuddylistAdd(QStringList &contacts);
+
+		// see oscarcaps.cpp
+		DWORD parseCap(char *cap);
+		//DWORD parseCapString(char *cap);
+		const QString CapToString(char *cap);
+
 
 	private slots:
-	/** Called when a connection has been closed */
-	void slotConnectionClosed();
-	/** Called when the server aknowledges the connection */
-	void OnConnAckReceived();
-	/** called when a conn ack is received for the BOS connection */
-	void OnBosConnAckReceived();
-	/** Called when the server is ready for normal commands */
-	//void OnServerReady();
-	/** Called on connection to bos server */
-	void OnBosConnect();
-	/** Called when a direct IM is received */
-	void OnDirectIMReceived(QString, QString, bool);
-	/** Called when a direct IM connection suffers an error */
-	void OnDirectIMError(QString, int);
-	/** Called when a direct IM connection bites the dust */
-	void OnDirectIMConnectionClosed(QString);
-	/** Called whenever a direct IM connection gets a typing notification */
-	void OnDirectMiniTypeNotification(QString screenName, int notify);
-	/** Called when a direct connection is set up and ready for use */
-	void OnDirectIMReady(QString name);
-	/** Called when a file transfer begins */
-/*
-	void OnFileTransferBegun(OscarConnection *con, const QString& file,
-		const unsigned long size, const QString &recipient);
-*/
-	void slotKeepaliveTimer();
+		/** Called when a connection has been closed */
+		void slotConnectionClosed();
+		/** Called when the server aknowledges the connection */
+		void OnConnAckReceived();
+		/** called when a conn ack is received for the BOS connection */
+		void OnBosConnAckReceived();
+		/** Called when the server is ready for normal commands */
+		//void OnServerReady();
+		/** Called on connection to bos server */
+		void OnBosConnect();
+		/** Called when a direct IM is received */
+		void OnDirectIMReceived(QString, QString, bool);
+		/** Called when a direct IM connection suffers an error */
+		void OnDirectIMError(QString, int);
+		/** Called when a direct IM connection bites the dust */
+		void OnDirectIMConnectionClosed(QString);
+		/** Called whenever a direct IM connection gets a typing notification */
+		void OnDirectMiniTypeNotification(QString screenName, int notify);
+		/** Called when a direct connection is set up and ready for use */
+		void OnDirectIMReady(QString name);
 
-	/**
-	 * Called by the singleshot timer that is set when we've reached
-	 * the rate limit warning
-	 */
-	void slotToggleSend();
+		/*
+		 * Called when a file transfer begins
+		 */
+		/*void OnFileTransferBegun(OscarConnection *con, const QString& file,
+			const unsigned long size, const QString &recipient);*/
+
+		void slotKeepaliveTimer();
+
+		/*
+		 * Called by the singleshot timer that is set when we've reached
+		 * the rate limit warning
+		 */
+		void slotToggleSend();
+
 
 	signals:
+		/*
+		 * Emitted when there is more information to read from the socket
+		 * This is only used in slotRead() since I haven't found a way to
+		 * emit socket()->readyRead directly yet. (Matt)
+		 */
+		void moreToRead();
 
-	/**
-	 * Emitted when there is more information to read from the socket
-	 * This is only used in slotRead() since I haven't found a way to
-	 * emit socket()->readyRead directly yet. (Matt)
-	 */
-	 void moreToRead();
+		/*
+		 * emitted when any kind of Instant Message was received
+		 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
+		 * @p message contains the message as received
+		 * @p user contains the screenname/UIN of the sender
+		 */
+		void gotIM(OscarSocket::OscarMessageType type, QString &message, const QString &user);
 
-	/*
-	 * emitted when any kind of Instant Message was received
-	 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
-	 * @p message contains the message as received
-	 * @p user contains the screenname/UIN of the sender
-	 */
-	void gotIM(OscarSocket::OscarMessageType type, QString &message, const QString &user);
+		/*
+		 * The server has sent the key with which to encrypt the password
+		 */
+		void keyReceived();
 
-	/*
-	 * The server has sent the key with which to encrypt the password
-	 */
-	void keyReceived();
-	/*
-	 * The bos server is ready to be sent commands
-	 */
-	//void serverReady();
-	/*
-	 * A contact went offline
-	 */
-	void gotOffgoingBuddy(QString);
-	/*
-	 * A contact changed his status to something else then offline
-	 */
-	void gotBuddyChange(const UserInfo &);
-	/*
-	 * A user profile was received
-	 */
-	void gotUserProfile(const UserInfo &, const QString &profile, const QString &away);
-	/*
-	 * Emitted when the status of the connection changes during login
-	 */
-//	void connectionChanged(int, QString);
-	/*
-	 * Emitted when my user info is received
-	 */
-	void gotMyUserInfo(const UserInfo &);
-	/*
-	 * A buddy list has been received
-	 */
-	void gotConfig(AIMBuddyList &);
-	/*
-	 * emitted when we have received an ack from the server
-	 */
-	void gotAck(QString, int);
+		/*
+		 * The bos server is ready to be sent commands
+		 */
+		//void serverReady();
 
-	/*
-	 * Emitted when our status has changed, internalStatus is one of OSCAR_*
-	 */
-	void statusChanged(const unsigned int internalStatus);
+		/*
+		 * A contact went offline
+		 */
+		void gotOffgoingBuddy(QString);
+		/*
+		 * A contact changed his status to something else then offline
+		 */
+		void gotBuddyChange(const UserInfo &);
+		/*
+		 * A user profile was received
+		 */
+		void gotUserProfile(const UserInfo &, const QString &profile, const QString &away);
+		/*
+		 * Emitted when the status of the connection changes during login
+		 */
+		//void connectionChanged(int, QString);
 
-	/** Emitted when the logged in user has been warned
-	 * The int is the new warning level.
-	 * The QString is the name of the user which warned us (QString::null if anonymous)
-	 * WARNING: this is emitted every time the server notifies us about our warning level,
-	 * so natural decreases in level will be signalled.
-	 */
-	void gotWarning(int, QString);
-	/** Emitted when someone has requested a direct IM session with us */
-	void gotDirectIMRequest(QString);
-	/** Emitted when someone has requested to send a file to us */
-	void gotFileSendRequest(QString, QString, QString, unsigned long);
+		/*
+		 * Emitted when my user info is received
+		 */
+		void gotMyUserInfo(const UserInfo &);
+		/*
+		 * A buddy list has been received
+		 */
+		void gotConfig(AIMBuddyList &);
+		/*
+		 * emitted when we have received an ack from the server
+		 */
+		void gotAck(QString, int);
 
-	/*
-	 * emitted when a usersearch yielded a result, ICQ SPECIFIC
-	 */
-	void gotSearchResult(ICQSearchResult &, const int);
+		/*
+		 * Emitted when our status has changed, internalStatus is one of OSCAR_*
+		 */
+		void statusChanged(const unsigned int internalStatus);
 
-	/*
-	 * emitted when a userinfo request yielded a result, ICQ SPECIFIC
-	 * first argument = sequence of the server reply
-	 */
-	void gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &);
-	void gotICQWorkUserInfo(const int, const ICQWorkUserInfo &);
-	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
-	void gotICQAboutUserInfo(const int, const QString &);
-	void gotICQEmailUserInfo(const int, const ICQMailList &);
-	void gotICQInfoItemList(const int, const ICQInfoItemList &);
-	void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
+		/* Emitted when the logged in user has been warned
+		 * The int is the new warning level.
+		 * The QString is the name of the user which warned us (QString::null if anonymous)
+		 * WARNING: this is emitted every time the server notifies us about our warning level,
+		 * so natural decreases in level will be signalled.
+		 */
+		void gotWarning(int, QString);
+		/*
+		 * Emitted when someone has requested a direct IM session with us
+		 */
+		void gotDirectIMRequest(QString);
+		/*
+		 * Emitted when someone has requested to send a file to us
+		 */
+		void gotFileSendRequest(QString, QString, QString, unsigned long);
 
-	/*
-	 * emitted after CLIENT_READY packet, the account can now
-	 * do whatever it likes to do after successful login.
-	 */
-	void loggedIn();
+		/*
+		 * Emitted when a usersearch yielded a result, ICQ SPECIFIC
+		 */
+		void gotSearchResult(ICQSearchResult &, const int);
 
-	/*
-	 * emitted when we received an authorization reply
-	 */
-	void gotAuthReply(const QString &, const QString &, bool);
+		/*
+		 * Emitted when a userinfo request yielded a result, ICQ SPECIFIC
+		 * first argument = sequence of the server reply
+		 */
+		void gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &);
+		void gotICQWorkUserInfo(const int, const ICQWorkUserInfo &);
+		void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
+		void gotICQAboutUserInfo(const int, const QString &);
+		void gotICQEmailUserInfo(const int, const ICQMailList &);
+		void gotICQInfoItemList(const int, const ICQInfoItemList &);
+		void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
+
+		/*
+		 * emitted after CLIENT_READY packet, the account can now
+		 * do whatever it likes to do after successful login.
+		 */
+		void loggedIn();
+
+		/*
+		 * emitted when we received an authorization reply
+		 */
+		void gotAuthReply(const QString &, const QString &, bool);
+
+		/*
+		 * Called when an SSI acknowledgment is received
+		 * FIXME: What was this for, nothing connected to this signal [mETz]
+		 */
+		//void SSIAck();
+
+		/*
+		 * emitted when BOS rights are received
+		 */
+//		void gotBOSRights(WORD,WORD);
+
+		/*
+		 * Emitted when a buddy gets blocked
+		 */
+		void denyAdded(QString);
+
+		/*
+		 * emitted when a block is removed on a buddy
+		 */
+		void denyRemoved(QString);
+
+		/*
+		 * Tells when the connection ack has been received on channel 1
+		 */
+		void connAckReceived();
+
+		/*
+		 * emitted when a direct connection has been terminated
+		 */
+		void directIMConnectionClosed(QString name);
+
 
 	protected slots:
 		/*
@@ -958,10 +1028,12 @@ class OscarSocket : public OscarConnection
 		virtual void slotRead();
 		void slotDelayConnectingPhaseTimeout();
 
-	protected:
+
+	protected: // protected vars
 		ICQInfoItemList extractICQItemList( Buffer& theBuffer );
 
-	private:
+
+	private: // private vars
 		/*
 		 * The OscarAccount we're assocated with
 		 */
@@ -1037,21 +1109,6 @@ class OscarSocket : public OscarConnection
 			Waiting=0, GotSome, GotAll
 		};
 		FirstPresenceBlock awaitingFirstPresenceBlock;
-
-	signals:
-		// Called when an SSI acknowledgment is received
-		// FIXME: What was this for, nothing connected to this signal [mETz]
-		//void SSIAck();
-		// emitted when BOS rights are received
-//		void gotBOSRights(WORD,WORD);
-		// emitted when a buddy gets blocked
-		void denyAdded(QString);
-		// emitted when a block is removed on a buddy
-		void denyRemoved(QString);
-		// Tells when the connection ack has been received on channel 1
-		void connAckReceived();
-		// emitted when a direct connection has been terminated
-		void directIMConnectionClosed(QString name);
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

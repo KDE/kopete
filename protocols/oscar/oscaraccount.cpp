@@ -853,5 +853,17 @@ void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 			KopeteContactList::contactList()->addMetaContact(m);
 	}
 }
+
+
+void OscarAccount::setAwayMessage(const QString &msg)
+{
+	mAwayMessage = msg;
+}
+
+const QString &OscarAccount::awayMessage()
+{
+	return mAwayMessage;
+}
+
 #include "oscaraccount.moc"
 // vim: set noet ts=4 sts=4 sw=4:
