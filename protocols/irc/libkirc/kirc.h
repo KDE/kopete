@@ -200,6 +200,7 @@ signals:
 	//Response Signals
 	void incomingUserOnline(const QString &nick);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+	void incomingWhoWasUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
 	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
@@ -364,6 +365,7 @@ private:
 	ircMethod numericReply_306;
 	ircMethod numericReply_311;
 	ircMethod numericReply_312;
+	ircMethod numericReply_314;
 	ircMethod numericReply_317;
 	ircMethod numericReply_319;
 	ircMethod numericReply_322;

@@ -160,6 +160,10 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	 * "<nick> :is an IRC operator" */
 	addIrcMethod("313",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsOperator, 2, 2));
 
+	/* Show WHOWAS Info
+	 * "<nick> <user> <host> * :<real name>" */
+	addIrcMethod("314",	&KIRC::numericReply_314,	5,	5);
+
 	addIrcMethod("315",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWho, 2, 2));
 
 	addIrcMethod("317",	&KIRC::numericReply_317,	3,	4);

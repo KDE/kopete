@@ -116,6 +116,12 @@ bool KIRC::numericReply_312(const KIRCMessage &msg)
 	return true;
 }
 
+bool KIRC::numericReply_314(const KIRCMessage &msg)
+{
+	emit incomingWhoWasUser( msg.args()[1], msg.args()[2], msg.args()[3], msg.suffix() );
+	return true;
+}
+
 bool KIRC::numericReply_317(const KIRCMessage &msg)
 {
 	/* RFC say: "<nick> <integer> :seconds idle"
