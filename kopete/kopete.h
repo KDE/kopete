@@ -39,7 +39,8 @@
 #include "pluginmodule.h"
 #include "pluginloader.h"
 
-class AppearanceConfig;
+#include "appearanceconfig.h" // included so every plugon can access global appeareance-prefs
+
 class LibraryLoader;
 class KopeteLibraryInfo;
 
@@ -70,12 +71,13 @@ class Kopete : public KUniqueApplication
 	~Kopete();
 
 	PreferencesDialog *preferencesBox() const { return mPref; }
+	AppearanceConfig *appearance() const { return mAppearance; }
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
 	KIconLoader *iconLoader() const { return mIconLoader; }
-	KopeteWindow *mainWindow() const { return mainwindow; };
-	ContactList *contactList() const { return mainwindow->contactlist; };
-	KStatusBar *statusBar() const { return mainwindow->statusBar(); };
-	KopeteSystemTray *systemTray() const {return mainwindow->tray; };
+	KopeteWindow *mainWindow() const { return mainwindow; }
+	ContactList *contactList() const { return mainwindow->contactlist; }
+	KStatusBar *statusBar() const { return mainwindow->statusBar(); }
+	KopeteSystemTray *systemTray() const { return mainwindow->tray; }
 
 	QString parseEmoticons(QString);
 	QString parseHTML( QString message, bool parseURLs = true );

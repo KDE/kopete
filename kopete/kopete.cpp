@@ -53,7 +53,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	mainwindow = new KopeteWindow();
 	setMainWidget(mainwindow);
 
-	mAppearance = new AppearanceConfig(mainwindow);
+	mAppearance = new AppearanceConfig ( mainwindow );
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
@@ -103,7 +103,7 @@ void Kopete::slotConnectAll()
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
     for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		kdDebug() << "Kopete: Connect All: "<<(*i).name << endl;
+		kdDebug() << "Kopete: Connect All: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
 		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
 		if ( !(prot->isConnected()))
