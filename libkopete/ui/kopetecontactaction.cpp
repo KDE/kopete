@@ -23,7 +23,7 @@
 
 KopeteContactAction::KopeteContactAction( KopeteContact *contact, const QObject *receiver,
 	const char *slot, KAction *parent )
-: KAction( contact->metaContact()->displayName(), contact->onlineStatus().iconFor( contact ), KShortcut(),
+: KAction( contact->metaContact()->displayName(), QIconSet( contact->onlineStatus().iconFor( contact ) ), KShortcut(),
 	parent, contact->contactId().latin1() )
 {
 	m_contact = contact;

@@ -17,6 +17,7 @@
 
 #include "kopeteonlinestatus.h"
 
+#include <qapplication.h>
 #include <qstring.h>
 // necessary for renderIcon, remove after!
 #include <qpainter.h>
@@ -39,8 +40,11 @@ struct KopeteOnlineStatusPrivate
 	QString caption;
 	QString description;
 	unsigned refCount;
-	QMap<QString, QPixmap> iconCache;
+	static QMap<QString, QPixmap>* iconCache;
 };
+
+
+QMap<QString, QPixmap>* KopeteOnlineStatusPrivate::iconCache = 0;
 
 KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, KopeteProtocol *protocol,
 	unsigned internalStatus, const QString &overlayIcon, const QString &caption, const QString &description )
@@ -56,6 +60,9 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, Ko
 	d->caption = caption;
 	d->protocol = protocol;
 	d->description = description;
+	if ( !d->iconCache )
+		d->iconCache = new QMap<QString, QPixmap>();
+
 }
 
 KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
@@ -68,6 +75,8 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
+	if ( !d->iconCache )
+		d->iconCache = new QMap<QString, QPixmap>();
 
 	switch( status )
 	{
@@ -237,27 +246,27 @@ QPixmap KopeteOnlineStatus::protocolIcon() const
 	return cacheLookup( iconName, 16 );
 }
 
-QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon, int size, bool idle ) const
+QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, const bool idle ) const
 {
 	// create a 'fingerprint' to use as a hash key
 	QString fingerprint = icon;
 
-	fingerprint.append( '/' ).append( size ).append( '/' ).append(
-			idle ? 'i' : 'a' );
+	fingerprint.append( '/' ).append( d->overlayIcon ).append( '/' ).append(
+			size ).append( '/' ).append(idle ? 'i' : 'a' );
 
 	// look it up in the cache
-	if ( d->iconCache.contains( fingerprint ) )
-		return d->iconCache[ fingerprint ];		// cache hit
+	if ( d->iconCache->contains( fingerprint ) )
+		return (*(d->iconCache))[ fingerprint ];		// cache hit
 	else
 	{
 		// cache miss
 		QPixmap newIcon = renderIcon( icon, size, idle );
-		d->iconCache.insert( fingerprint, newIcon );
+		d->iconCache->insert( fingerprint, newIcon );
 		return newIcon;
 	}
 }
 
-QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, int size, bool idle ) const
+QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size, const bool idle ) const
 {
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set

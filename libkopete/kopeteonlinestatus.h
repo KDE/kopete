@@ -240,8 +240,8 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
-	QPixmap cacheLookup( const QString& icon, int size, bool idle = false ) const;
-	QPixmap renderIcon( const QString& baseicon, int size, bool idle = false ) const;
+	QPixmap cacheLookup( const QString& icon, const int size, const bool idle = false ) const;
+	QPixmap renderIcon( const QString& baseicon, const int size, const bool idle = false ) const;
 };
 
 #endif
