@@ -105,9 +105,9 @@ void YahooAccount::loaded()
 	QString newPluginData;
 
 	newPluginData = pluginData(m_protocol, QString::fromLatin1("displayName"));
-/*	if(!newPluginData.isEmpty())
+	if(!newPluginData.isEmpty())
 		myself()->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
-*/
+
 
 }
 

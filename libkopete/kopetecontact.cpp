@@ -118,6 +118,12 @@ KopeteContact::~KopeteContact()
 }
 
 
+void KopeteContact::rename( const QString &name )
+{
+	// Default implementation immediately sets the new name
+	setDisplayName( name );
+}
+
 void KopeteContact::setDisplayName( const QString &name )
 {
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();

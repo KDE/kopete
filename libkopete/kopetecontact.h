@@ -263,6 +263,19 @@ public:
 	 */
 	bool canAcceptFiles() const;
 
+        /**
+	 * @brief Rename a contact's display name.
+	 *
+	 * This method can be asynchronous, i.e. it starts the rename, but the
+	 * result may not be instant. Whenever the rename is done the contact
+	 * will call @ref setDisplayName() (which emits @ref displayNameChanged() )
+	 * to confirm the change.
+	 *
+	 * The default implementation calls @ref setDisplayName() immediately.
+	 */
+	virtual void rename( const QString &newName );
+	
+
 	/**
 	 * Returns the primary message manager affiliated with this contact
 	 * Although a contact can have more than one active message manager
