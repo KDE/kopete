@@ -68,12 +68,16 @@ OscarSocket::~OscarSocket()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
-	if(socket()->socketStatus() != KExtendedSocket::done)
+	if(socket()->socketStatus() == KExtendedSocket::connecting ||
+		socket()->socketStatus() == KExtendedSocket::connected )
 	{
-		kdDebug(14150) << k_funcinfo << "FIXME: Still not disconnected" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"FIXME: Still not disconnected, status=" << socket()->socketStatus() << endl;
+
 		if(mIsICQ)
 			stopKeepalive();
 
+		QObject::disconnect(socket(), 0, 0, 0);
 		socket()->closeNow();
 	}
 
@@ -182,7 +186,7 @@ void OscarSocket::slotConnectionClosed()
 
 void OscarSocket::slotRead()
 {
-	int waitCount = 0;
+	//int waitCount = 0;
 	char *buf = 0L;
 	Buffer inbuf;
 	FLAP fl;
@@ -194,66 +198,29 @@ void OscarSocket::slotRead()
 	// a buffer without these 6 initial bytes
 	if(socket()->bytesAvailable() < 6)
 	{
-		while(socket()->waitForMore(250) < 6 && (waitCount < 40))
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Not enough data for reading a FLAP, waiting" << endl;
-			waitCount++;
-		}
-
-		if(waitCount == 20)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Server did not send data for 10000ms, must be dead" << endl;
-			doLogoff();
-			return;
-		}
+		kdDebug(14150) << k_funcinfo << "less than 6 bytes available, waiting for 100ms for data" << endl;
+		socket()->waitForMore(100);
+		return;
 	}
 
 	fl = getFLAP();
 
-	if(fl.error) //something went wrong, this shouldn't happen
+	if (fl.error || fl.length == 0)
 	{
-		kdDebug(14150) << k_funcinfo <<
-			"FLAP() read error occurred, waiting for more data..." << endl;
+		// kdDebug(14150) << k_funcinfo << "Error reading FLAP" << endl;
 		return;
 	}
 
-	if(fl.length > 0)
-		buf = new char[fl.length];
-	else
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"fl.length() is zero, channel was " << fl.channel << endl;
-		return;
-	}
-
-
-	if(socket()->bytesAvailable() < fl.length)
-	{
-		waitCount = 0;
-		while(socket()->waitForMore(250) < fl.length && (waitCount < 40))
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Not enough data for reading a packets content, waiting" << endl;
-			waitCount++;
-		}
-
-		if(waitCount == 20)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Server did not send data for 10000ms, must be dead" << endl;
-			doLogoff();
-		}
-	}
+	buf = new char[fl.length];
 
 	bytesread = socket()->readBlock(buf, fl.length);
-	inbuf.setBuf(buf, bytesread);
-
 	if(bytesread != fl.length)
 	{
-		kdDebug(14150) << k_funcinfo << "EEEK, couldn't read all of that packet" << endl;
+		kdDebug(14150) << k_funcinfo <<
+		"WARNING, couldn't read all of that packet, this will probably break things!!!" << endl;
 	}
+
+	inbuf.setBuf(buf, bytesread);
 
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
@@ -694,16 +661,14 @@ void OscarSocket::connectToBos()
 	QObject::disconnect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
 
 	socket()->close();
-	kdDebug(14150) << k_funcinfo << "Resetting the socket" << endl;
+	//kdDebug(14150) << k_funcinfo << "Resetting the socket" << endl;
 	socket()->reset();
-	kdDebug(14150) << k_funcinfo << socket()->socketStatus() << endl;
+	//kdDebug(14150) << k_funcinfo << socket()->socketStatus() << endl;
 	QObject::connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
 	QObject::connect(socket(), SIGNAL(connectionSuccess()), this, SLOT(OnBosConnect()));
 	QObject::connect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
 
-	kdDebug(14150) << k_funcinfo << "Setting address to " << bosServer << ":" << bosPort << endl;
 	socket()->setAddress(bosServer, bosPort);
-	kdDebug(14150) << k_funcinfo << "socket host is " << socket()->host() << "bosServer is " << bosServer << endl;
 	socket()->connect();
 }
 
@@ -2646,11 +2611,12 @@ void OscarSocket::doLogoff()
 	}
 	else
 	{
-		if(socket()->socketStatus() != KExtendedSocket::done)
+		if(socket()->socketStatus() == KExtendedSocket::connecting ||
+			socket()->socketStatus() == KExtendedSocket::connected )
 		{
 			kdDebug(14150) << k_funcinfo <<
-				"we're either not logged in correctly or" <<
-				", closing down socket..." << endl;
+				"we're either not logged in correctly or something" <<
+				"wicked happened, closing down socket..." << endl;
 			socket()->close();
 			emit connectionClosed(QString::null);
 		}
@@ -3460,75 +3426,57 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 // Reads a FLAP header from the input
 FLAP OscarSocket::getFLAP()
 {
+	BYTE start = 0x00;
+	char peek[6];
 	FLAP fl;
-	int theword, theword2;
-	char start = 0x00;
-	int chan;
 	fl.error = false;
 
-	//the FLAP start byte
-	socket()->peekBlock(&start, 1);
+	if (socket()->peekBlock(&peek[0], 6) != 6 )
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Error reading 6 bytes for FLAP" << endl;
+		fl.error = true;
+		return fl;
+	}
+
+	Buffer buf(&peek[0], 6);
+	start = buf.getByte();
+
 	if (start == 0x2a)
 	{
-		start = socket()->getch();
-
 		//get the channel ID
-		if ( (chan = socket()->getch()) == -1)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Error reading channel ID: nothing to be read" << endl;
-			fl.error = true;
-		}
-		else
-		{
-			fl.channel = chan;
-		}
+		fl.channel = buf.getByte();
+		//kdDebug(14150) << k_funcinfo << "FLAP channel=" << fl.channel << endl;
 
 		//get the sequence number
-		if((theword = socket()->getch()) == -1)
+		fl.sequence_number = buf.getWord();
+		//kdDebug(14150) << k_funcinfo << "FLAP sequence_number=" << fl.sequence_number << endl;
+
+		// get the packet length
+		fl.length = buf.getWord();
+		//kdDebug(14150) << k_funcinfo << "FLAP length=" << fl.length << endl;
+		//kdDebug(14150) << k_funcinfo << "bytes available=" << socket()->bytesAvailable() << endl;
+
+		if(socket()->bytesAvailable() < fl.length+6)
 		{
-			kdDebug(14150) << k_funcinfo <<
-				"Error reading sequence number: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo << "Not enough data in recv buffer to read the full FLAP, aborting" << endl;
 			fl.error = true;
-		}
-		else if((theword2 = socket()->getch()) == -1)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Error reading sequence number: nothing to be read" << endl;
-			fl.error = true;
-		}
-		else
-		{
-			// Got both pieces of info we need...
-			fl.sequence_number = (theword << 8) | theword2;
 		}
 
-		//get the data field length
-		if ((theword = socket()->getch()) == -1)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Error reading data field length: nothing to be read" << endl;
-			fl.error = true;
-		}
-		else if((theword2 = socket()->getch()) == -1)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Error reading data field length: nothing to be read" << endl;
-			fl.error = true;
-		}
-		else
-		{
-			fl.length = (theword << 8) | theword2;
-		}
 	}
 	else
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"Error reading FLAP... start byte is " << start << endl;
+			"Error reading FLAP, start byte is '" << start << "'" << endl;
 		fl.error = true;
-		//socket()->putch(start);
 	}
 
+	if (!fl.error)
+	{
+		/*kdDebug(14150) << k_funcinfo <<
+			"Returning FLAP, channel=" << fl.channel << ", length=" << fl.length << endl;*/
+		socket()->readBlock(0L, 6); // get rid of FLAP header because we successfully retrieved it
+	}
 	return fl;
 }
 

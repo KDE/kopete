@@ -71,7 +71,7 @@ void OscarFileSendConnection::slotRead()
 	else //this is part of the file!
 	{
 		int bytesToRead;
-		if(socket()->bytesAvailable() < int(mFileSize))
+		if(socket()->bytesAvailable() < (int)mFileSize)
 			bytesToRead = socket()->bytesAvailable();
 		else
 			bytesToRead = mFileSize - mBytesTransferred;

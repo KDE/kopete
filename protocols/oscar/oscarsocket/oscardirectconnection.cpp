@@ -42,9 +42,9 @@ void OscarDirectConnection::slotRead()
 	char *buf = new char[fl.length];
 	Buffer inbuf;
 
-	if (socket()->bytesAvailable() < int(fl.length))
+	if (socket()->bytesAvailable() < (int)fl.length)
 	{
-		while (socket()->waitForMore(500) < int(fl.length))
+		while (socket()->waitForMore(500) < (int)fl.length)
 			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
 	}
 

@@ -392,6 +392,12 @@ void OscarContact::syncGroups()
 //	kdDebug(14150) << k_funcinfo << ": Entering" << endl;
 	// Get the new (kopete) group that we belong to
 	KopeteGroupList groups = metaContact()->groups();
+	if(groups.count() == 0)
+	{
+		kdDebug(14150) << k_funcinfo << "Contact is in no Group in Kopete Contactlist, aborting" << endl;
+		return;
+	}
+
 	// Oscar only supports one group per contact, so just get the first one
 	KopeteGroup *newKopeteGroup = groups.first();
 	if (newKopeteGroup == 0L)
@@ -439,6 +445,7 @@ void OscarContact::syncGroups()
 			newKopeteGroup->displayName());
 	}
 }
+
 #if 0
 void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename,
 	unsigned long filesize)
