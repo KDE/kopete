@@ -84,7 +84,8 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 	int count = 0;
 	
 	QMap<QString, QString> replaceMap;
-	while (pos >= 0 && pos < messageText.length())
+    // FIXME:  this loop never end for me, that's why i limited count to 30  - Olivier
+	while (pos >= 0 && pos < messageText.length()  && count < 30)
 	{
 		kdDebug() << k_funcinfo  << " searching pos: " << pos << " count: " << count << endl;
 		rg.search(messageText, pos);
@@ -102,7 +103,7 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 			
 			kdDebug() << k_funcinfo << " captured: " << match << endl;
 			QString latexFormula = match;
-			latexFormula.replace("$$","");
+			latexFormula.replace("$$","");  
 			
 			// setup a temp file for the rendered image
 			KTempFile tempFile;
@@ -114,7 +115,8 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 			fileName = tempFile.name();
 			
 			kdDebug() << k_funcinfo  << " Rendering " << latexFormula << " to: " << fileName<< endl;
-			p << m_convScript << "-o " + fileName << +KShellProcess::quote(latexFormula).utf8();
+
+			p << m_convScript << "-o " + fileName << latexFormula  ;
 			
 			// FIXME our sucky sync filter API limitations :-)
 			p.start(KProcess::Block);
@@ -132,23 +134,21 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 				renderedImage.save( &buffer, "PNG" );
 				QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg( KCodecs::base64Encode( ba ) );
 				replaceMap[match] = imageURL;
-				// ok, go for the next one
-				pos += rg.matchedLength();
-				count++;
 			}
 			#else
 			QString imageURL = fileName;
 			replaceMap[match] = imageURL;
+			#endif
 			// ok, go for the next one
 			pos += rg.matchedLength();
 			count++;
-			#endif
+
 		}
 	}
 	
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
-		messageText.replace(it.key(), "<img src=\"" + (*it) + "\"/>;");
+		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + it.key() +"\" title=\"" + it.key() +"\"  /> ");
 	}
 	msg.setBody( messageText, KopeteMessage::RichText );
 	
