@@ -37,7 +37,7 @@
 #  include <X11/extensions/Xrender.h>
 #endif
 
-#include <limits>
+#include <limits.h>
 
 namespace Kopete {
 namespace UI {
@@ -538,7 +538,7 @@ HSpacerComponent::HSpacerComponent( ComponentBase *parent )
 
 int HSpacerComponent::widthForHeight( int )
 {
-	return std::numeric_limits<int>::max();
+	return INT_MAX;
 }
 
 // VSpacerComponent --------
@@ -552,7 +552,7 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
 
 int VSpacerComponent::heightForWidth( int )
 {
-	return std::numeric_limits<int>::max();
+	return INT_MAX;
 }
 
 // Item --------
