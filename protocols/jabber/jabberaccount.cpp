@@ -237,7 +237,7 @@ void JabberAccount::connect ()
 
 			{
 				using namespace XMPP;
-				QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), jabberTLSHandler, SLOT(continueAfterHandshake()));
+				QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
 			}
 		}
 	}
@@ -381,6 +381,98 @@ void JabberAccount::slotPsiDebug (const QString & _msg)
 
 }
 
+void JabberAccount::slotTLSHandshaken ()
+{
+
+	kdDebug() << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
+
+	int validityResult = jabberTLS->certificateValidityResult ();
+
+	if(validityResult == QCA::TLS::Valid)
+	{
+		kdDebug() << k_funcinfo << "Certificate is valid, continuing." << endl;
+
+		// valid certificate, continue
+		jabberTLSHandler->continueAfterHandshake ();
+	}
+	else
+	{
+		kdDebug() << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
+
+		// certificate is not valid, query the user
+		QString validityString;
+		QString code;
+		switch(validityResult)
+		{
+			case QCA::TLS::NoCert:
+				validityString = i18n("No certificate presented.");
+				code = "NoCert";
+				break;
+			case QCA::TLS::HostMismatch:
+				validityString = i18n("The hostname does not match the one in the certificate.");
+				code = "HostMismatch";
+				break;
+			case QCA::TLS::Rejected:
+				validityString = i18n("The Certificate Authority rejected the certificate.");
+				code = "Rejected";
+				break;
+			case QCA::TLS::Untrusted:
+				// FIXME: write better error message here
+				validityString = i18n("The certificate is untrusted.");
+				code = "Untrusted";
+				break;
+			case QCA::TLS::SignatureFailed:
+				validityString = i18n("The signature is invalid.");
+				code = "SignatureFailed";
+				break;
+			case QCA::TLS::InvalidCA:
+				validityString = i18n("The Certificate Authority is invalid.");
+				code = "InvalidCA";
+				break;
+			case QCA::TLS::InvalidPurpose:
+				validityString = i18n("Invalid certificate purpose.");
+				code = "InvalidPurpose";
+				break;
+			case QCA::TLS::SelfSigned:
+				validityString = i18n("The certificate is self-signed.");
+				code = "SelfSigned";
+				break;
+			case QCA::TLS::Revoked:
+				validityString = i18n("The certificate has been revoked.");
+				code = "Revoked";
+				break;
+			case QCA::TLS::PathLengthExceeded:
+				validityString = i18n("Maximum certificate chain length has been exceeded.");
+				code = "PathLengthExceeded";
+				break;
+			case QCA::TLS::Expired:
+				validityString = i18n("The certificate has expired.");
+				code = "Expired";
+				break;
+			case QCA::TLS::Unknown:
+			default:
+				validityString = i18n("An unknown error occured trying to validate the certificate.");
+				code = "Unknown";
+				break;
+		}
+
+		if(KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
+						      i18n("There was a problem while validating the server's certificate: %1").
+						      arg(validityString),
+						      i18n("Connection Certificate Problem"),
+						      KStdGuiItem::cont(),
+						      QString("KopeteTLSWarning") + server() + QString(code)) == KMessageBox::Continue)
+		{
+			jabberTLSHandler->continueAfterHandshake ();
+		}
+		else
+		{
+			disconnect ();
+		}
+	}
+
+}
+
 void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 {
 
@@ -445,14 +537,18 @@ void JabberAccount::slotCSAuthenticated ()
 
 void JabberAccount::disconnect ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] disconnect() called" << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "disconnect() called" << endl;
 
 	if (isConnected ())
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Still connected, closing connection..." << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
 		/* Tell backend class to disconnect. */
 		jabberClient->close ();
 	}
+
+	// make sure that the connection animation gets stopped if we're still
+	// in the process of connecting
+	setPresence (protocol()->JabberKOSOffline, "disconnected");
 
 	/* FIXME:
 	 * We should delete the XMPP::Client instance here,
@@ -462,7 +558,7 @@ void JabberAccount::disconnect ()
 	 * Instead, the instance will lurk until the next
 	 * connection attempt.
 	 */
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Disconnected." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 
 }
 
@@ -490,6 +586,7 @@ void JabberAccount::slotCSDisconnected ()
 	 * with the protocol, so update all contacts manually. */
 	for (QDictIterator < KopeteContact > it (contacts ()); it.current (); ++it)
 		static_cast < JabberContact * >(*it)->slotUpdatePresence (protocol()->JabberKOSOffline, "disconnected");
+
 }
 
 void JabberAccount::slotCSWarning (int warning)
@@ -747,7 +844,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 	 */
 	if(status == protocol()->JabberKOSConnecting)
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence locally (-> connecting)." << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence locally (from or to connecting)." << endl;
 
 		static_cast<JabberContact *>( myself() )->slotUpdatePresence (status, reason);
 	}
@@ -781,13 +878,13 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 				presence.setShow ("dnd");
 			else if (status == protocol()->JabberKOSInvisible)
 				presence.setIsInvisible (true);
-			else
+			else if (status != protocol()->JabberKOSOffline)
 			{
 				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown presence status, " << "ignoring (status == " << status.description () << ")" << endl;
 				return;
 			}
 
-			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to show(" << presence.show () << "), status(" << presence.status () << "), with reason \"" << reason << endl;
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to show(" << presence.show () << "), status(" << presence.status () << "), with reason \"" << reason << "\"" << endl;
 
 			static_cast<JabberContact *>( myself() )->slotUpdatePresence (status, reason);
 

@@ -181,6 +181,9 @@ private slots:
 	/* Called from Psi: alerts us to a protocol error. */
 	void slotCSError (int);
 
+	/* Called from Psi: report certificate status */
+	void slotTLSHandshaken ();
+
 	/* Called from Psi: debug messages from the backend. */
 	void slotPsiDebug (const QString & msg);
 
