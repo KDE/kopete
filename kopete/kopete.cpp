@@ -19,6 +19,7 @@
 
 #include "kopete.h"
 
+#include <qglobal.h>
 #include <qregexp.h>
 #include <qtimer.h>
 
@@ -293,13 +294,18 @@ QString Kopete::parseEmoticons( QString message )
 		em.replace( QRegExp("<"), "\\<" );
 		message = message.replace ( QRegExp(em), "<img src=\""+KopeteEmoticons::emoticons()->emoticonToPicPath(*it)+"\">" );
 		*/
-		
-		while ( (p = message.find( (*it), 0, true )) != -1 )
-		{
-			message = message.remove( p, (*it).length() );
-			message = message.insert( p, "<img src=\""+KopeteEmoticons::emoticons()->emoticonToPicPath(*it)+"\">" );
-			p = -1;
-		}
+
+#if (QT_VERSION-0 >= 0x030100)
+			message.replace( (*it), "<img src=\"" +
+				KopeteEmoticons::emoticons()->emoticonToPicPath(*it) + "\">" );
+#else
+			while ( (p = message.find((*it),0,true)) != -1 )
+			{
+				message = message.remove( p, (*it).length() );
+				message = message.insert( p, "<img src=\"" +
+					KopeteEmoticons::emoticons()->emoticonToPicPath(*it) + "\">" );
+			}
+#endif
 	}
 	return message;
 }
