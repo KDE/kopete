@@ -133,17 +133,17 @@ void YahooContact::slotSendMessage(KopeteMessage &message)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	QString taintedHTML = message.escapedBody();
-	taintedHTML = taintedHTML.replace(QString::fromLatin1("<br/>"), QString::fromLatin1("<br>"));
-
-	kdDebug(14180) << "Sending message: " << taintedHTML << endl;
-
+	// Yahoo does not understand XML/HTML message data, so send plain text
+	// instead.  (Yahoo has its own format for "rich text".)
+	QString messageText = message.plainBody();
+	kdDebug(14180) << "Sending message: " << messageText << endl;
+  
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
 	YahooAccount *i = static_cast<YahooAccount *>(account());
 
 	kdDebug(14180) << "Yahoo: Sending message from " << static_cast<YahooContact *>(i->myself())->m_userId << ", to " << static_cast<YahooContact *>(target)->m_userId << endl;
-	i->yahooSession()->sendIm( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, taintedHTML );
+	i->yahooSession()->sendIm( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, messageText );
 
 	// append message to window
 	manager()->appendMessage(message);
