@@ -221,8 +221,7 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), menu, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
-		//FIXME: after string frezee add a &
-	d->actionAddContact = new KAction( i18n( "Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
+	d->actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
 		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 
 	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
