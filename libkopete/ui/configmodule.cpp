@@ -26,7 +26,7 @@
 #include <kdeversion.h>
 #include <kiconloader.h>
 
-#if (QT_VERSION >= 0x030005 && QT_VERSION < 0x030102) && KDE_IS_VERSION < 0x03015B
+#if QT_VERSION < 0x030102 && KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 #include <kapplication.h>
 #endif
 
@@ -53,7 +53,7 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, cons
 
 ConfigModule::~ConfigModule()
 {
-#if (QT_VERSION >= 0x030005 && QT_VERSION < 0x030102) && KDE_VERSION < 0x03015B
+#if QT_VERSION < 0x030102 && KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 	// Due to a bug in Qt 3.1 and 3.1.1 no close events are sent to hidden
 	// widgets, causing the KJanusWidget to crash. This workaround is
 	// rather intrusive and should be used only in the affected versions
