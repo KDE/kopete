@@ -75,8 +75,8 @@ MSNMessageManager::~MSNMessageManager()
 	QMap<unsigned long int, MSNInvitation*>::Iterator it;
 	for( it = m_invitations.begin(); it != m_invitations.end() ; it = m_invitations.begin())
 	{
-		m_invitations.remove( it );
 		delete *it;
+		m_invitations.remove( it );
 	}
 }
 
