@@ -22,19 +22,22 @@
 #include <kdialogbase.h>
 
 //#include <kopetemessage.h>
+
+#include <kdeversion.h>
 #if KDE_VERSION < 306
-class QTextEdit;
+	class QTextEdit;
 #else
-class KTextEdit;
+	class KTextEdit;
 #endif
 
 /**
-  *@author Olivier Goffart
-  */
+ * @author Olivier Goffart
+ */
+class TranslatorDialog : public KDialogBase
+{
+	Q_OBJECT
 
-class TranslatorDialog : public KDialogBase  {
-   Q_OBJECT
-public: 
+public:
 	TranslatorDialog(const QString &translated, QWidget *parent=0, const char *name=0);
 	~TranslatorDialog();
 
@@ -51,3 +54,6 @@ private slots: // Public slots
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
