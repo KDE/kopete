@@ -84,7 +84,7 @@ KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObje
 
 KAction* KopeteStdAction::changeMetaContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n("Cha&nge MetaContact"), "move", 0, recvr, slot, parent,
+	return new KAction( i18n("Cha&nge MetaContact..."), "move", 0, recvr, slot, parent,
 		name );
 }
 
@@ -129,7 +129,7 @@ KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot,
 
 KAction* KopeteStdAction::changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n("Change A&lias"), "signature", 0, recvr, slot, parent, name );
+	return new KAction( i18n("Change A&lias..."), "signature", 0, recvr, slot, parent, name );
 }
 
 
