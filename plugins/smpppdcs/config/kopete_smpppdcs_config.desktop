@@ -1,0 +1,18 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=smpppdcs
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_smpppdcs
+X-KDE-FactoryName=SMPPPDCSConfigFactory
+X-KDE-ParentApp=kopete_smpppdcs
+X-KDE-ParentComponents=kopete_smpppdcs
+
+X-Kopete-Version=1000900
+
+Name=SUSE SMPPPD Connection Status
+Name[de]=SUSE SMPPPD Verbindungs Status
+Comment=SMPPPDCS Plugin
+Comment[de]=SMPPPD Verbindungs Status Modul
