@@ -56,7 +56,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  		"FIXME: Make this unselectable", i18n( "Idle" ) ),
 	  groupwiseInvalid( Kopete::OnlineStatus::Unknown, 25, this, 6, "status_unknown",
 	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ) ),
-	  groupwiseConnecting( Kopete::OnlineStatus::Unknown, 0, this, 99, "status_connecting",
+	  groupwiseConnecting( Kopete::OnlineStatus::Unknown, 0, this, 99, "groupwise_connecting",
 	  		"FIXME: Make this unselectable", i18n( "Connecting" ) ),
 	  groupwiseAppearOffline( Kopete::OnlineStatus::Online,22, this, 98, "groupwise_invisible",
 	  		i18n( "A&ppear Offline" ), i18n( "Appear Offline" ) ),
