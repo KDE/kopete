@@ -560,7 +560,7 @@ int JabberAccount::handleTLSWarning (int warning, QString server, QString accoun
 			break;
 		case QCA::TLS::Unknown:
 		default:
-			validityString = i18n("An unknown error occured trying to validate the certificate.");
+			validityString = i18n("An unknown error occurred trying to validate the certificate.");
 			code = "Unknown";
 			break;
 		}
@@ -872,7 +872,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("Socket is not bound.");
 					break;
 				case KNetwork::KSocketBase::NotCreated:
-					errorCondition = i18n("Socket hasn't been created.");
+					errorCondition = i18n("Socket has not been created.");
 					break;
 				case KNetwork::KSocketBase::WouldBlock:
 					errorCondition = i18n("Socket operation would block. You should not see this error, please use \"Report Bug\" from the Help menu.");
@@ -1512,11 +1512,11 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 			break;
 		case XMPP::Subscription::To:
 			contact->setProperty ( protocol()->propSubscriptionStatus,
-								   i18n ( "You can see this contact's status but it cannot see your status." ) );
+								   i18n ( "You can see this contact's status but they cannot see your status." ) );
 			break;
 		case XMPP::Subscription::From:
 			contact->setProperty ( protocol()->propSubscriptionStatus,
-								   i18n ( "This contact can see your status but you cannot see its status." ) );
+								   i18n ( "This contact can see your status but you cannot see their status." ) );
 			break;
 		case XMPP::Subscription::Both:
 			contact->setProperty ( protocol()->propSubscriptionStatus,

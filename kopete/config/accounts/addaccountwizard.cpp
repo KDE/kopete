@@ -213,7 +213,7 @@ void AddAccountWizard::next()
 			else
 			{
 				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-					i18n( "Cannot load the %1 protocol plugin!" ).arg( m_protocolItems[ lvi ]->name() ), i18n( "Error While Adding Account" ) );
+					i18n( "Cannot load the %1 protocol plugin." ).arg( m_protocolItems[ lvi ]->name() ), i18n( "Error While Adding Account" ) );
 			}
 		}
 		return;

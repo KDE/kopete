@@ -506,7 +506,7 @@ GaduSession::stateDescription( int state )
 		case GG_STATE_CONNECTING_GG:
 			return i18n( "connecting to server" );
 		case GG_STATE_READING_KEY:
-			return i18n( "retriving key" );
+			return i18n( "retrieving key" );
 		case GG_STATE_READING_REPLY:
 			return i18n( "waiting for reply" );
 		case GG_STATE_CONNECTED:

@@ -1609,7 +1609,7 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 					return;
 				}
 				msg = i18n("Sending userprofile for account %1 failed because " \
-					"the following error occured:\n%2")
+					"the following error occurred:\n%2")
 					.arg(getSN(), msgerrreason[reason]);
 				break;
 			}

@@ -102,7 +102,7 @@ GaduRegisterAccount::validateInput()
 			ui->labelPasswordVerify->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
 		} else if ( ui->valuePassword->text() != ui->valuePasswordVerify->text() )
 		{
-			updateStatus( i18n( "Password entries do not match!" ) );
+			updateStatus( i18n( "Password entries do not match." ) );
 			ui->labelPassword->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
 			ui->labelPasswordVerify->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
 		} else if ( ui->valueVerificationSequence->text().isEmpty() )
@@ -134,7 +134,7 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 	ui->labelInstructions->setDisabled( true );
 	enableButton( User1, false );
 	emit registeredNumber( cRegister->newUin(), ui->valuePassword->text() );
-	updateStatus( i18n( "Account created!  Your new UIN is %1." ).arg(QString::number( cRegister->newUin() )  ) );
+	updateStatus( i18n( "Account created; your new UIN is %1." ).arg(QString::number( cRegister->newUin() )  ) );
 }
 
 void
