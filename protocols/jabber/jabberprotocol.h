@@ -60,6 +60,7 @@ class JabberProtocol : public KopeteProtocol
 	friend class DlgJabberRegister;
 	friend class DlgJabberBrowse;
 	friend class DlgJabberChatJoin;
+	friend class dlgJabberStatus;
 
 public:
 	/*********************************************************************
