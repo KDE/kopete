@@ -6,6 +6,7 @@
 
 #include "gwclientstream.h"
 #include "gwerror.h"
+#include "rtf2html.h"
 #include "transfer.h"
 
 class Task;
@@ -244,19 +245,21 @@ Q_OBJECT
 		 * An attempt to create a conference failed.
 		 */
 		 void conferenceCreationFailed( const int clientId, const int error );
-		 
-	public slots:
-		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
-		void lt_loginFinished();
-		void sst_statusChanged();
-		void cct_conferenceCreated();
-		
 	protected:
 		/**
 		 * Instantiate all the event handling tasks
 		 */
 		void initialiseEventTasks();
 	protected slots:
+		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
+		void lt_loginFinished();
+		void sst_statusChanged();
+		void cct_conferenceCreated();
+		/**
+		 * Transforms an RTF message into an HTML message and emits messageReceived()
+		 */ 
+		void ct_messageReceived( const ConferenceEvent & );
+		
 		/**
 		 * Used by the client stream to notify errors to upper layers.
 		 */
@@ -266,6 +269,8 @@ Q_OBJECT
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
+		
+		
 		
 	private:
 		void distribute( Transfer *transfer );

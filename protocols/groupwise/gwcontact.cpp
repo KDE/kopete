@@ -243,7 +243,7 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message )
 	// strip RTF using protocol's utility function
 	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, this, contactList, message.message,
 									KopeteMessage::Inbound,
-									KopeteMessage::PlainText );;
+									KopeteMessage::RichText );
 	Q_ASSERT( mgr );
 	mgr->appendMessage( *newMessage );
 	delete newMessage;

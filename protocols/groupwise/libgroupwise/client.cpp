@@ -30,9 +30,6 @@ public:
 /*	int tzoffset;*/
 	bool active;
 	RequestFactory * requestFactory;
-/*	LiveRoster roster;
-	ResourceList resourceList;
-	QValueList<GroupChat> groupChatList;*/
 };
 
 Client::Client(QObject *par)
@@ -159,7 +156,7 @@ void Client::initialiseEventTasks()
 	connect( st, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
 	// The ConferenceTask handles incoming conference events, messages, joins, leaves, etc
 	ConferenceTask * ct = new ConferenceTask( d->root ); 
-	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SIGNAL( messageReceived( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SLOT( ct_messageReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( typing( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( notTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( joined( const ConferenceEvent & ) ), SIGNAL( conferenceJoined( const ConferenceEvent & ) ) );
@@ -267,6 +264,15 @@ void Client::sst_statusChanged()
 		qDebug( "status change succeeded" );
 		emit ourStatusChanged( sst->requestedStatus(), sst->awayMessage(), sst->autoReply() );
 	}
+}
+
+void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
+{
+	ConferenceEvent transformedEvent = messageEvent;
+	RTF2HTML parser;
+	QString rtf = messageEvent.message;
+	transformedEvent.message = parser.Parse( rtf.latin1(), "" );
+	emit messageReceived( transformedEvent );
 }
 
 void Client::cct_conferenceCreated()
