@@ -23,7 +23,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Messenger");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
-static const char *version="0.23";	
+static const char *version="0.23";
 	
 static KCmdLineOptions options[] =
 {
@@ -33,15 +33,14 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
+	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
+		version, description, KAboutData::License_GPL,
+		"(c) 2002, Duncan Mac-Vicar Prett", 0, 0, "duncan@kde.org"
+		);
 
-  KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
-    version, description, KAboutData::License_GPL,
-    "(c) 2002, Duncan Mac-Vicar Prett", 0, 0, "duncan@kde.org");
- 	
 	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@kde.org","http://www.mac-vicar.com");
-	aboutData.addAuthor ("Nick Betcher", "core developer, faster plugin developer in the earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
+	aboutData.addAuthor ("Nick Betcher", "core developer, fastest plugin developer on earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 	aboutData.addAuthor ("Ryan Cumming", "core developer","bodnar42@phalynx.dhs.org");
-
 
 	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
 	aboutData.addCredit("Olaf Lueg", I18N_NOOP("Kmerlin MSN Code"));
@@ -51,7 +50,7 @@ int main(int argc, char *argv[])
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
 
-  Kopete kopete;
-//kopete->show();
-  kopete.exec();
+	Kopete kopete;
+//	kopete->show();
+	kopete.exec();
 }
