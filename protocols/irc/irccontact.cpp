@@ -181,7 +181,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 void IRCContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "originating is " << originating << " target is " << target << endl;
-	if ( isConnected && target.lower() == mNickName.lower() )
+	if ( target.lower() == mNickName.lower() )
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
@@ -197,7 +197,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 void IRCContact::slotNewAction(const QString &originating, const QString &target, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "originating is " << originating << " target is " << target << endl;
-	if ( isConnected && target.lower() == mNickName.lower())
+	if ( target.lower() == mNickName.lower())
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
@@ -327,12 +327,12 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
-	if( !isConnected )
+	/*if( !isConnected )
 	{
 		messageQueue.append( message );
 		mEngine->joinChannel(mNickName);
 	}
-	else
+	else*/
 	{
 		if( processMessage( message ) )
 		{
@@ -350,14 +350,11 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 KopeteContact *IRCContact::locateUser( const QString &nick )
 {
 	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
-	if( isConnected )
+	KopeteContactPtrList mMembers = manager()->members();
+	for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
 	{
-		KopeteContactPtrList mMembers = manager()->members();
-		for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
-		{
-			if( static_cast<IRCContact*>(it)->nickName() == nick )
-				return it;
-		}
+		if( static_cast<IRCContact*>(it)->nickName() == nick )
+			return it;
 	}
 
 	return 0L;

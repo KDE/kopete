@@ -390,7 +390,11 @@ QString IRCChannelContact::statusIcon() const
 
 const QString IRCChannelContact::caption() const
 {
-	return QString::fromLatin1("%1 @ %2 - %4").arg(mNickName).arg(mEngine->host()).arg(mTopic);
+	QString cap = QString::fromLatin1("%1 @ %2").arg(mNickName).arg(mEngine->host());
+	if( !mTopic.isNull() && !mTopic.isEmpty() )
+		cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
+
+	return cap;
 }
 
 #include "ircchannelcontact.moc"

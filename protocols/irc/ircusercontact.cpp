@@ -128,7 +128,8 @@ void IRCUserContact::slotNewPrivMessage(const QString &originating, const QStrin
 
 void IRCUserContact::slotUserInfo()
 {
-	mEngine->whoisUser( mNickName );
+	if( conversations() > 0 )
+		mEngine->whoisUser( mNickName );
 }
 
 const QString IRCUserContact::caption() const
