@@ -30,21 +30,20 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-SMSContact::SMSContact( SMSProtocol *protocol, const QString &phoneNumber,
+SMSContact::SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( protocol, parent )
+: KopeteContact( _protocol, parent )
 {
 	setPhoneNumber( phoneNumber );
 	setDisplayName( displayName );
 	m_serviceName = QString::null;
-	m_protocol = protocol;
 
 	initActions();
 
 	m_msgManager = 0L;
 
 	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol, SLOT (serialize(KopeteMetaContact*) ));
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
 
 }
 
@@ -73,7 +72,7 @@ KopeteMessageManager* SMSContact::msgManager()
 	{
 		QPtrList<KopeteContact> contacts;
 		contacts.append(this);
-		m_msgManager = KopeteMessageManagerFactory::factory()->create(m_protocol->myself(), contacts, m_protocol, KopeteMessageManager::Email);
+		m_msgManager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), contacts, protocol(), KopeteMessageManager::Email);
 		connect(m_msgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
 		this, SLOT(slotSendMessage(const KopeteMessage&)));
 		return m_msgManager;
@@ -188,34 +187,32 @@ void SMSContact::clearServicePrefs()
 	m_serviceName = QString::null;
 }
 
-QString SMSContact::servicePrefsString()
-{
-	if (m_servicePrefs.count() > 0)
-	{
-		QStringList prefs;
-
-		for (QMap<QString, QString>::Iterator it = m_servicePrefs.begin();
-				it != m_servicePrefs.end(); ++it)
-		{
-			prefs.append(QString("%1=%2").arg(it.key()).arg(it.data()));
-		}
-
-		return prefs.join(";");
-	}
-	else
-		return QString::null;
-}
-
-void SMSContact::setServicePrefsString(QString servicePrefs)
+QStringList SMSContact::servicePrefs()
 {
 	QStringList prefs;
-	prefs = QStringList::split(";", servicePrefs);
 
+	for (QMap<QString, QString>::Iterator it = m_servicePrefs.begin();
+			it != m_servicePrefs.end(); ++it)
+	{
+		QString key = it.key();
+		if (key.length() == 0)
+			continue;
+		QString data = it.data();
+		if (data.length() == 0)
+			continue;
+		prefs.append(QString("%1=%2").arg(key.replace("=","\\=")).arg(data.replace("=","\\=")));
+	}
+
+	return prefs;
+}
+
+void SMSContact::setServicePrefs(QStringList prefs)
+{
 	for ( QStringList::Iterator it = prefs.begin(); it != prefs.end(); ++it)
 	{
-		QRegExp r("(.*)=(.*)");
+		QRegExp r("(.*)[^\\]=(.*)");
 		r.search(*it);
-		setServicePref(r.cap(1), r.cap(2));
+		setServicePref(r.cap(1).replace("\\=", "="), r.cap(2).replace("\\=", "="));
 	}
 }
 
@@ -248,6 +245,12 @@ void SMSContact::slotMovedToMetaContact()
 
 
 #include "smscontact.moc"
+
+
+
+
+
+
 
 /*
  * Local variables:

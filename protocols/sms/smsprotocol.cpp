@@ -117,14 +117,10 @@ void SMSProtocol::serialize( KopeteMetaContact *metaContact)
 			if (g->serviceName() != QString::null)
 			{
 				stream << g->serviceName();
-				if (g->servicePrefsString() != QString::null)
-					stream << g->servicePrefsString();
-				else
-					stream << " ";
+				stream += g->servicePrefs();
 			}
-			else
-				stream << " " << " ";
 		}
+		stream << ".";
 	}
 	metaContact->setPluginData(this, stream);
 }
@@ -134,27 +130,39 @@ void SMSProtocol::deserialize( KopeteMetaContact *metaContact,
 {
 	QString protocolId = this->id();
 
-	uint idx = 0;
-	while( idx < strList.size() )
-	{
-		QString nr = strList[ idx ];
-		QString name = strList[ idx+1];
-		QString serviceName = strList[ idx+2 ];
-		QString servicePrefs = strList[ idx+3 ];
+	unsigned idx=0;
 
+	while (idx < strList.size())
+	{
+		QString nr = strList[ idx+0 ];
+		QString name = strList[ idx+1 ];
 		SMSContact* c = addContact(nr, name, metaContact);
-		if (serviceName != " " && serviceName != QString::null)
+
+		if (strList.size() > (idx+2) && strList[ idx+2 ] != ".")
 		{
-			c->setServiceName(serviceName);
-			if (servicePrefs != " " && servicePrefs != QString::null)
-				c->setServicePrefsString(servicePrefs);
+			c->setServiceName(strList[ 2 ]);
 		}
-		idx += 4;
+		else
+		{
+			idx += 3;
+			break;
+		}
+
+		QStringList prefs;
+		for (idx+=3; idx < strList.size() && strList[idx] != "."; idx++)
+			prefs << strList[idx];
+		idx++;
+
+		c->setServicePrefs(prefs);
+
 	}
 }
 
 
 #include "smsprotocol.moc"
+
+
+
 
 
 

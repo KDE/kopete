@@ -29,7 +29,7 @@ class SMSContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	SMSContact( SMSProtocol* protocol, const QString &phoneNumber,
+	SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 		const QString &displayName, KopeteMetaContact *parent );
 	~SMSContact();
 
@@ -53,8 +53,8 @@ public:
 	void deleteServicePref(QString name);
 	void clearServicePrefs();
 
-	QString servicePrefsString();
-	void setServicePrefsString(QString servicePrefs);
+	QStringList servicePrefs();
+	void setServicePrefs(QStringList prefs);
 
 public slots:
 
@@ -78,7 +78,6 @@ private:
 	QString m_phoneNumber;
 	QString m_serviceName;
 	QMap<QString, QString> m_servicePrefs;
-	SMSProtocol* m_protocol;
 
 	KopeteMessageManager* m_msgManager;
 };
