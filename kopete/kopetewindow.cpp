@@ -51,10 +51,6 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 
 	loadOptions();
 
-	// we always show our statusbar
-	// it's important because it shows the protocol-icons
-	statusBar()->show();
-	
 	// for now systemtray is also always shown
 	// TODO: make the configurable
 	tray->show();
