@@ -18,6 +18,8 @@
 #define _KOPETE_MESSAGE_H
 
 #include <qobject.h>
+#include <qdatetime.h>
+#include <qstring.h>
 
 class KopeteMessage : public QObject
 {
@@ -28,6 +30,27 @@ public:
 		from the user.
 	*/
 	enum MessageDirection { Inbound, Outbound };
+
+	KopeteMessage(QString from, QString to, QString body, MessageDirection direction);
+	KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction);
+
+	QDateTime timestamp() { return mTimestamp; }
+
+	QString from() { return mFrom; }
+	QString to() { return mTo; }
+
+	QString body() { return mBody; }
+
+	MessageDirection direction() { return mDirection; }
+
+protected:
+	QDateTime mTimestamp;
+
+	QString mFrom;
+	QString mTo;
+	QString mBody;
+
+	MessageDirection mDirection;
 };
 
 #endif

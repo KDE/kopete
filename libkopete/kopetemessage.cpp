@@ -18,5 +18,21 @@
 
 #include "kopetemessage.moc"
 
+KopeteMessage::KopeteMessage(QString from, QString to, QString body, MessageDirection direction) {
+	mTimestamp = QDateTime::currentDateTime();
+	mFrom = from;
+	mTo = to;
+	mBody = body;
+	mDirection = direction;
+}
+
+KopeteMessage::KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction) {
+	mTimestamp = timestamp;
+	mFrom = from;
+	mTo = to;
+	mBody = body;
+	mDirection = direction;
+}
+
 // vim: set noet ts=4 sts=4 sw=4:
 
