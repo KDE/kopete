@@ -134,6 +134,12 @@ public:
 	 * Set up a temporary contact (not on our contact list but is messaging us or involved in a conversation that we have been invited to.
 	 */
 	GroupWiseContact * createTemporaryContact( const QString & dn );
+
+	/**
+	 * Check whether sync is not currently needed
+	 */
+	bool dontSync();
+	
 public slots:
 
 	void slotTestRTFize();
@@ -310,6 +316,7 @@ private:
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
 	GroupWiseChatSession::Dict m_managers;
+	bool m_dontSync;
 };
 
 #endif

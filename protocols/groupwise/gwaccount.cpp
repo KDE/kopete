@@ -87,6 +87,7 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	m_tlsHandler = 0;
 	m_clientStream = 0;
 	m_client= 0;
+	m_dontSync = false;
 }
 
 GroupWiseAccount::~GroupWiseAccount()
@@ -677,7 +678,9 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
 				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - matches, adding." << endl;
+				m_dontSync = true;
 				metaContact->addToGroup( grp ); //addToGroup() is safe to call if already a member
+				m_dontSync = false;
 				break;
 			}
 		}
@@ -693,8 +696,10 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		{
 			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
-				metaContact->addToGroup( grp );
-				break;
+			  m_dontSync = true;
+			  metaContact->addToGroup( grp );
+			  m_dontSync = false;
+			  break;
 			}
 		}
 		Kopete::ContactList::self()->addMetaContact( metaContact );
@@ -1107,6 +1112,11 @@ void GroupWiseAccount::dumpManagers()
 
 	for ( it = m_managers.begin() ; it != m_managers.end(); ++it )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.key() << endl;
+}
+
+bool GroupWiseAccount::dontSync()
+{
+	return m_dontSync;
 }
 
 #include "gwaccount.moc"

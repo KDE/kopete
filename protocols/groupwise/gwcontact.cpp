@@ -406,6 +406,9 @@ void GroupWiseContact::receiveContactDeleted( const ContactItem & instance )
 
 void GroupWiseContact::sync( unsigned int)
 {
+	if ( account()->dontSync() )
+		return;
+	
 	if ( account()->myself() != this )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
