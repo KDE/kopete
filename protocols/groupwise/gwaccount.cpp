@@ -611,9 +611,9 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 	{
 		KopeteMetaContact *metaContact = new KopeteMetaContact();
 		metaContact->setDisplayName( contact.displayName );
-		// HACK: lowercased DN
 		c = new GroupWiseContact( this, contact.dn, metaContact, contact.id, contact.parentId, contact.sequence );
 		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
+
 		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
 		{
 			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
@@ -624,6 +624,8 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		}
 		KopeteContactList::contactList()->addMetaContact( metaContact );
 	}
+	// set the contact's display name
+	c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
 	// finally, record this contact list instance in the contact
 	ContactListInstance inst;
 	inst.objectId = contact.id;
