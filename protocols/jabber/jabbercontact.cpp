@@ -175,7 +175,7 @@ KActionCollection *JabberContact::customContextMenuActions ()
 		 *        instead as a replacement below.
 		 */
 		KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no", actionCollection, "actionSelectResource");
-	
+
 		// put best resource first
 		items.append (i18n ("Automatic (best resource)"));
 
@@ -315,7 +315,7 @@ void JabberContact::sendSubscription (const QString& subType)
 	}
 
 	Jabber::JT_Presence * task = new Jabber::JT_Presence (static_cast<JabberAccount *>(account())->client()->rootTask ());
-	
+
 	task->sub (userId(), subType);
 	task->go (true);
 
@@ -366,6 +366,7 @@ void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
 	//jabMessage.setFrom(from->userId();
 	jabMessage.setBody (km.plainBody (), true);
 	jabMessage.setSubject (km.subject ());
+	jabMessage.setTimeStamp (km.timestamp ());
 
 	// determine type of the widget and set message type accordingly
 	//if (km.type() == KopeteMessage::Chat)
