@@ -48,7 +48,6 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 	m_allowed = false;
 	m_blocked = false;
 	m_reversed = false;
-	m_moving=false;
 
 	connect ( this, SIGNAL( chatToUser( QString ) ),
 		protocol(), SLOT( slotStartChatSession( QString ) ) );
@@ -141,8 +140,6 @@ void MSNContact::slotDeleteContact()
 	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
-		m_moving = false;
-
 		if( m_serverGroups.isEmpty() || m_status == MSNProtocol::UNK )
 		{
 			kdDebug( 14140 ) << k_funcinfo << "Ohoh, contact already removed from server, just delete it" << endl;
@@ -460,6 +457,8 @@ KopeteGroupList MSNContact::groups() const
 
 void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 {
+	kdDebug() << k_funcinfo << from->displayName() << " -> " << to->displayName() << endl;
+
 	if( !to )
 	{
 		removeFromGroup( from );
@@ -481,11 +480,9 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		return;
 	}
 
-	//kdDebug( 14140 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
 	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
-		m_moving = true;
 		addToGroup( to );
 
 		QStringList pluginData = from->pluginData( protocol() );
@@ -545,8 +542,6 @@ void MSNContact::removeFromGroup( KopeteGroup *group )
 	if( !group )
 		return;
 
-	m_moving = false;
-
 	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
@@ -575,11 +570,10 @@ void MSNContact::removeFromGroup( KopeteGroup *group )
 
 void MSNContact::contactAddedToGroup( uint groupNumber, KopeteGroup *group )
 {
-	m_moving = false;
 	m_serverGroups.insert( groupNumber, group );
 }
 
-void MSNContact::slotRemovedFromGroup( unsigned int group )
+void MSNContact::removeFromGroup( unsigned int group )
 {
 	m_serverGroups.remove( group );
 }

@@ -72,14 +72,6 @@ public:
 	void setReversed( bool d );
 
 	/**
-	 * Indicate whether this contact is currently moving to another group
-	 * Flag needed for don't delete the contact if he is removed from a group
-	 *  and not yet add to the other group  ( when the group doesn't exists yet)
-	 */
-	bool isMoving() { return m_moving; }
-	void setMoving(bool b=true) { m_moving=b; }
-
-	/**
 	 * set one phone number
 	 */
 	void setInfo(QString type, QString data);
@@ -120,13 +112,13 @@ public:
 
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
+	void removeFromGroup( unsigned int group );
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
-
-	void slotRemovedFromGroup(unsigned int);
 
 signals:
 	void chatToUser( QString );

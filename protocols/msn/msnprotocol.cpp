@@ -880,7 +880,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName, QString g
 				if( !contactGroups.contains( QString::number( it.key() ) ) )
 				{
 					// The contact has been removed from a group by another client
-					c->slotRemovedFromGroup( it.key() );
+					c->removeFromGroup( it.key() );
 					metaContact->removeFromGroup( m_groupList[ it.key() ] );
 				}
 			}
@@ -966,7 +966,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list, uint /* seri
 			// Contact is removed from the reverse list
 			// only MSN can do this, so this is currently not supported
 			c->setReversed( false );
-/*
+			/*
 			InfoWidget *info = new InfoWidget(0);
 			info->title->setText("<b>" + i18n( "Contact removed!" ) +"</b>" );
 			QString dummy;
@@ -976,27 +976,20 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list, uint /* seri
 			info->infoText->setText(dummy);
 			info->setCaption("KMerlin - Info");
 			info->show();
-*/
-
+			*/
 		}
 		else if( list == "FL" )
 		{
 			// Contact is removed from the FL list, remove it from the group
-			c->slotRemovedFromGroup( group );
+			c->removeFromGroup( group );
 		}
-		else	if( list == "BL" )
+		else if( list == "BL" )
 		{
-			c->setBlocked(false);
+			c->setBlocked( false );
 		}
-		else	if( list == "AL" )
+		else if( list == "AL" )
 		{
-			c->setAllowed(false);
-		}
-
-		if( c->serverGroups().isEmpty()  && !c->isMoving() )
-		{
-			kdDebug(14140) << "MSNProtocol::slotContactRemoved : contact removed from each group, delete contact" << endl;
-			delete c;
+			c->setAllowed( false );
 		}
 	}
 }

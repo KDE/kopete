@@ -490,15 +490,13 @@ void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		return;
 	}
 
-	//kdDebug( 14010 ) << k_funcinfo << from.string() << " => " << to.string() << endl;
+	kdDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
 
 	m_groups.remove( from );
 	m_groups.append( to );
 
 	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
-	{
 		c->moveToGroup( from, to );
-	}
 
 	emit movedToGroup( this, from, to );
 }
