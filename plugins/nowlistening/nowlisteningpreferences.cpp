@@ -60,9 +60,9 @@ void NowListeningPreferences::save()
 	config->setPerTrack( preferencesDialog->m_perTrack->text() );
 	config->setConjunction( preferencesDialog->m_conjunction->text() );
 	config->save();
-	
+
 	KCModule::save();
-	
+
 	emit changed( false );
 }
 
@@ -82,6 +82,14 @@ void NowListeningPreferences::slotSettingsChanged()
 {
 	emit changed( true );
 }
+
+void NowListeningPreferences::defaults()
+{
+	preferencesDialog->m_header->setText( i18n("Now Listening To: "));
+	preferencesDialog->m_perTrack->setText(i18n("%track( by %artist)( on %album)"));
+	preferencesDialog->m_conjunction->setText( i18n(", and "));
+}
+
 /*
 * Local variables:
 * c-indentation-style: k&r

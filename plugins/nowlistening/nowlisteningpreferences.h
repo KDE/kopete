@@ -37,10 +37,11 @@ public:
 	virtual ~NowListeningPreferences();
 	virtual void save();
 	virtual void load();
+	virtual void defaults();
 
 private slots:
 	void slotSettingsChanged();
-	
+
 private:
 	NowListeningPrefsUI *preferencesDialog;
 	NowListeningConfig *config;
