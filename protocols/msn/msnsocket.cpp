@@ -98,6 +98,21 @@ void MSNSocket::connect( const QString &server, uint port )
 		this, SLOT( slotSocketClosed( int ) ) );
 
 	aboutToConnect();
+
+	// FIXME KDE4?
+	// Ideally we want to the full connection to MSN to be handled async,
+	// but due to some design issues in QDns this fails if people with
+	// dialup connections start Kopete before their internet connection.
+	// The workaround from TrollTech is to not use QDns, but use the
+	// libc gethostbyname call instead. The sync calls in KExtendedSocket
+	// use this, only the async lookup uses DNS.
+	// This is slightly annoying as it blocks the GUI for the duration
+	// of the DNS lookup, but properly configured systems will hardly
+	// notice that. Besides, there's nothing we can do about it...
+	// For Qt 4/KDE 4 we can hopefully leave the lookup to the socket
+	// again and remove the manual lookup call. This cannot be fixed
+	// in Qt 3 unfortunately.
+	m_socket->lookup();
 	m_socket->startAsyncConnect();
 }
 
