@@ -213,7 +213,10 @@ int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const Q
 {
 //	if (nextID != 0)
 		nextID++;
-	KopeteFileTransferInfo info(contact, file, size, contact->metaContact()->displayName(), KopeteFileTransferInfo::Incoming , nextID , internalId);
+		
+	QString dn= contact ? (contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId()) : i18n("<unknown>");
+
+	KopeteFileTransferInfo info(contact, file, size, dn, KopeteFileTransferInfo::Incoming , nextID , internalId);
 
 	//FIXME!!! this will not be deleted if it's still open when kopete exits
 	KopeteFileConfirmDialog *diag= new KopeteFileConfirmDialog(info, description , 0 )  ;
