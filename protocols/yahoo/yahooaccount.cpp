@@ -106,8 +106,6 @@ void YahooAccount::loaded()
 	newPluginData = pluginData(m_protocol, QString::fromLatin1("displayName"));
 	if(!newPluginData.isEmpty())
 		myself()->rename(newPluginData);	//TODO: might cause problems depending on rename semantics
-
-
 }
 
 YahooSession *YahooAccount::yahooSession()
@@ -168,7 +166,6 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 {
 	if ( sct == MakeConnections )
 	{
-	
 		QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
 				this, SLOT(slotLoginResponse(int, const QString &)) );
 	
@@ -301,14 +298,12 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
 	}
-
 	
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
 	/* call loaded() here. It shouldn't hurt anything
-	 * and ensures that all our settings get loaded
-	 */
+	 * and ensures that all our settings get loaded */
 	loaded();
 
 	YahooSessionManager::manager()->setPager( server, port );
@@ -471,23 +466,6 @@ KActionMenu *YahooAccount::actionMenu()
 void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-
-/* Do Nothing
-	theHaveContactList = true;
-
-	// Serverside -> local
-	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
-		if(!contacts()[i.key()] && m_importContacts)
-		{	kdDebug(14180) << "SS Contact " << i.key() << " is not in the contact list. Adding..." << endl;
-			QString groupName = m_useServerGroups ? i.data().first : QString("Imported Yahoo Contacts");
-			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, KopeteAccount::ChangeKABC, groupName);
-		}
-
-	// Local -> serverside
-	for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
-		if(i.currentKey() != accountId())
-			static_cast<YahooContact *>(i.current())->syncToServer();
-*/
 }
 
 YahooContact *YahooAccount::contact( const QString &id )
