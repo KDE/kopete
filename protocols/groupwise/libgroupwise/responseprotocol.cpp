@@ -59,7 +59,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	int rtnCode;
 	int packetState = -1;
 	rtnCode = rtnField.toInt( &ok );
-	qDebug( "CoreProtocol::readResponse() got HTTP return code " );
+	debug( "CoreProtocol::readResponse() got HTTP return code " );
 	// read rest of header
 	QStringList headerRest;
 	QCString line;
@@ -71,13 +71,13 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 			return 0;
 		}
 		headerRest.append( line );
-		qDebug( "- read header line - (%i) : %s", line.length(), line.data() );
+		debug( QString( "- read header line - (%1) : %2" ).arg( line.length() ).arg( line.data() ) );
 	}
-	qDebug( "CoreProtocol::readResponse() header finished" );
+	debug( "ResponseProtocol::readResponse() header finished" );
 	// if it's a redirect, set flag
 	if ( ok && rtnCode == 301 )
 	{	
-		qDebug( "- server redirect " );
+		debug( "- server redirect " );
 		packetState = ServerRedirect;
 		m_din.unsetDevice();
 		return 0;
@@ -85,21 +85,21 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	// other header processing ( 500! )
 	if ( ok && rtnCode == 500 )
 	{
-		qDebug( "- server error %i", rtnCode );
+		debug( QString( "- server error %i" ).arg( rtnCode ) );
 		packetState = ServerError;
 		m_din.unsetDevice();
 		return 0;
 	}
 	if ( ok && rtnCode == 404 )
 	{
-		qDebug( "- server error %i", rtnCode );
+		debug( QString( "- server error %i" ).arg( rtnCode ) );
 		packetState = ServerError;
 		m_din.unsetDevice();
 		return 0;
 	}
 	if ( m_din.atEnd() )
 	{
-		qDebug( "- no fields" );
+		debug( "- no fields" );
 		packetState = ProtocolError;
 		m_din.unsetDevice();
 		return 0;
@@ -123,7 +123,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 		if ( sf )
 		{
 			tId = sf->value().toInt();
-			qDebug( "CoreProtocol::readResponse() - transaction ID is %i", tId );
+			debug( QString( "ResponseProtocol::readResponse() - transaction ID is %1" ).arg( tId ) );
 			m_collatingFields.remove( it );
 			delete sf;
 		}
@@ -135,7 +135,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 		if ( sf )
 		{
 			resultCode = sf->value().toInt();
-			qDebug( "CoreProtocol::readResponse() - result code is %i", resultCode );
+			debug( QString( "ResponseProtocol::readResponse() - result code is %1" ).arg( resultCode ) );
 			m_collatingFields.remove( it );
 			delete sf;
 		}
@@ -143,7 +143,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	// append to inQueue
 	if ( tId )
 	{
-		qDebug( "CoreProtocol::readResponse() - setting state Available, got %u fields in base array", (uint)m_collatingFields.count() );
+		debug( QString( "ResponseProtocol::readResponse() - setting state Available, got %1 fields in base array" ).arg(m_collatingFields.count() ) );
 		packetState = Available;
 		bytes = m_bytes;
 		m_din.unsetDevice();
@@ -151,7 +151,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	}
 	else
 	{
-		qDebug( "- WARNING - NO TRANSACTION ID FOUND!" );
+		debug( "- WARNING - NO TRANSACTION ID FOUND!" );
 		m_state = ProtocolError;
 		m_din.unsetDevice();
 		m_collatingFields.purge();
@@ -167,13 +167,12 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// so when we're done reading it, add it to the MultiList element
 	// that is the last element in the top list in m_collatingFields.
 	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
-	qDebug( "CoreProtocol::readFields()" );
+	debug( "ResponseProtocol::readFields()" );
 	if ( fieldCount > 0 )
-		qDebug( "reading %i fields", fieldCount );
+		debug( QString( "reading %1 fields" ).arg( fieldCount ) );
 	Field::FieldList currentList;
 	while ( fieldCount != 0 )  // prevents bad input data from ruining our day
 	{
-		// qDebug( "%i fields left to read", fieldCount );
 		// the field being read
 		// read field
 		Q_UINT8 type, method;
@@ -190,7 +189,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
 		if ( type == 0 ) /*&& m_din->atEnd() )*/
 		{
-			qDebug( "- end of field list" );
+			debug( "- end of field list" );
 			m_packetState = FieldsRead;
 			// do something to indicate we're done
 			break;
@@ -210,7 +209,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			return false;
 		}
 
-		qDebug( "- type: %i, method: %i, tag: %s,", type, method, tag.data() );
+		debug( QString( "- type: %1, method: %2, tag: %3," ).arg( type ).arg( method ).arg( tag.data() ) );
 		// if multivalue or array
 		if ( type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY )
 		{
@@ -224,7 +223,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			m_bytes += sizeof( Q_UINT32 );
 
 			// create multifield
-			qDebug( " multi field containing: %i\n", val );
+			debug( QString( " multi field containing: %1" ).arg( val ) );
 			Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
 			currentList.append( m );
 			if ( !readFields( val, &currentList) )
@@ -251,7 +250,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				}
 				// convert to unicode - ignore the terminating NUL, because Qt<3.3.2 doesn't sanity check val.
 				QString fieldValue = QString::fromUtf8( rawData.data(), val - 1 );
-				qDebug("- utf/dn single field: %s", fieldValue.ascii() );
+				debug( QString( "- utf/dn single field: %1" ).arg( fieldValue ) );
 				// create singlefield
 				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
 				currentList.append( s );
@@ -267,7 +266,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				}
 				m_din >> val;
 				m_bytes += sizeof( Q_UINT32 );
-				qDebug( "- numeric field: %i\n", val );
+				debug( QString( "- numeric field: %1" ).arg( val ) );
 				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
 				currentList.append( s );
 			}
@@ -280,7 +279,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// if fieldCount == 0, we've just read a whole nested list, so add this list to the last element in 'list'
 	if ( fieldCount == 0 && list )
 	{
-		qDebug( "- finished reading nested list" );
+		debug( "- finished reading nested list" );
 		Field::MultiField * m = dynamic_cast<Field::MultiField*>( list->last() );
 		m->setFields( currentList );
 	}
@@ -288,7 +287,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// if fieldCount == -1; we're done reading the top level fieldlist, so store it.
 	if ( fieldCount == -1 )
 	{
-		qDebug( "- finished reading ALL FIELDS!" );
+		debug( "- finished reading ALL FIELDS!" );
 		m_collatingFields = currentList;
 	}
 	return true;

@@ -18,8 +18,6 @@
     *************************************************************************
 */
 
-#include <kdebug.h> 
-
 #include "client.h"
 #include "response.h"
 #include "privacymanager.h"
@@ -123,7 +121,7 @@ void LoginTask::extractFolder( Field::MultiField * folderContainer )
 	current = fl.findSingleField( NM_A_SZ_PARENT_ID );
 	folder.parentId = current->value().toInt();
 	
-	qDebug( "Got folder: %s, obj: %i, parent: %i, seq: %i.", folder.name.ascii(), folder.id, folder.parentId, folder.sequence );
+	client()->debug( QString( "Got folder: %1, obj: %2, parent: %3, seq: %3." ).arg( folder.name ).arg(  folder.id ).arg( folder.parentId ).arg( folder.sequence ) );
 	// tell the world about it
 	emit gotFolder( folder );
 }

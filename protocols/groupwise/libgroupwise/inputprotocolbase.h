@@ -34,6 +34,12 @@ public:
 	enum EventProtocolState { Success, NeedMore, OutOfSync, ProtocolError };
 	InputProtocolBase(QObject *parent = 0, const char *name = 0);
 	~InputProtocolBase();
+
+	/**
+	 * Debug output
+	 */
+	static void debug(const QString &str);
+
 	/**
 	 * Returns a value describing the state of the object.  
 	 * If the object is given data to parse that does not begin with a recognised event code, 

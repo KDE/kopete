@@ -53,10 +53,10 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	m_din >> type;
 	m_bytes += sizeof( Q_UINT32 );
 	
-	qDebug( "EventProtocol::parse() Reading event of type %i", type );
+	debug( QString( "EventProtocol::parse() Reading event of type %i" ).arg( type ) );
 	if ( type > Stop )
 	{
-		qDebug( "EventProtocol::parse() - found unexpected event type %i - assuming out of sync", type );
+		debug( QString ( "EventProtocol::parse() - found unexpected event type %i - assuming out of sync" ).arg( type ) );
 		m_state = OutOfSync;
 		return 0;
 	}
@@ -96,9 +96,9 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 				m_din.unsetDevice();
 				return 0;
 			}
-			qDebug( "got status: %i", status );
+			debug( QString( "got status: %1").arg( status ) );
 			tentative->setStatus( status );
-			qDebug( "tentative status: %i", tentative->status() );
+			debug( QString( "tentative status: %1").arg( tentative->status() ) );
 			tentative->setStatusText( statusText );
 			break;
 		case ConferenceJoined:		// 106 - GUID + FLAGS
@@ -180,7 +180,7 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 			// unhandled because unhandled in Gaim
 			break;
 		default:
-			qDebug( "EventProtocol::parse() - found unexpected event type %i", type );
+			debug( QString( "EventProtocol::parse() - found unexpected event type %1" ).arg( type ) );
 			break;
 	}
 	// if we got this far, the parse succeeded, return the Transfer

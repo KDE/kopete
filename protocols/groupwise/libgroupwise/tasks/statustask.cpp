@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "client.h"
+
 #include "statustask.h"
 
 StatusTask::StatusTask(Task* parent): EventTask(parent)
@@ -34,8 +36,8 @@ bool StatusTask::take( Transfer * transfer )
 	EventTransfer * event;
 	if ( forMe( transfer, event ) )
 	{
-		qDebug( "Got a status change!" );
-		qDebug( "%s changed status to %i, message: %s", event->source().ascii(), event->status(), event->statusText().ascii() );
+		client()->debug( "Got a status change!" );
+		client()->debug( QString( "%1 changed status to %2, message: %3" ).arg( event->source() ).arg( event->status() ).arg( event->statusText() ) );
 		emit gotStatus( event->source().lower(), event->status(), event->statusText() );
 		return true;
 	}

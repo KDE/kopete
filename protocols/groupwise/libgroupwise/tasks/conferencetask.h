@@ -62,6 +62,7 @@ protected:
 	 * @return whether the event was queued pending more data
 	 */
 	bool queueWhileAwaitingData( const ConferenceEvent & event );
+	void dumpConferenceEvent( ConferenceEvent & evt );
 private:
 	// A list of events which are waiting for more data from the server before they can be exposed to the client
 	QValueList< ConferenceEvent > m_pendingEvents; 

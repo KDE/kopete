@@ -50,18 +50,18 @@ void RequestTask::onGo()
 {
 	if ( transfer() )
 	{
-		qDebug( "%s::onGo() - sending %s fields", className(), ( static_cast<Request *>( transfer() )->command().ascii() ) );
+		client()->debug( QString( "%1::onGo() - sending %2 fields" ).arg( className() ).arg( static_cast<Request *>( transfer() )->command() ) );
 		send( static_cast<Request *>( transfer() ) );
 	}
 	else
-		qDebug( "RequestTask::onGo() - called prematurely, no transfer set." );
+		client()->debug( "RequestTask::onGo() - called prematurely, no transfer set." );
 }
 
 bool RequestTask::take( Transfer * transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		qDebug( "RequestTask::take() - Default take() Accepting transaction ack, taking no further action" );
+		client()->debug( "RequestTask::take() - Default take() Accepting transaction ack, taking no further action" );
 		Response * response = dynamic_cast<Response *>( transfer );
 		if ( response->resultCode() == GroupWise::None )
 			setSuccess();

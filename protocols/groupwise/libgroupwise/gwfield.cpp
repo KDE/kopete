@@ -19,6 +19,12 @@
 
 #include <qcstring.h>
 
+#include "gwerror.h"
+
+#ifdef LIBGW_USE_KDEBUG
+  #include <kdebug.h>
+#endif
+
 #include "gwfield.h"
 #include <iostream>
 
@@ -65,18 +71,19 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-		qDebug( "FieldList::dump()%s", ( recursive ? ", recursively" : ", non-recursive" ) );
+		kdDebug( GROUPWISE_DEBUG_LIBGW ) << k_funcinfo << ( recursive ? ", recursively" : ", non-recursive" ) << endl;
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
-		for ( int i = 0; i < offset; i ++ )
-			cout << "  ";
-		cout << (*it)->tag().data();
+		QString s;
+		s.fill(' ', offset*2 );
+		s.append( (*it)->tag() );
 		SingleField * sf;
 		if ( ( sf = dynamic_cast<SingleField*>( *it ) ) )
 		{
-			cout << " :" << sf->value().toString().ascii();
+			s.append( " :" );
+			s.append( sf->value().toString() );
 		}
-		cout << endl;
+		kdDebug( GROUPWISE_DEBUG_LIBGW ) << s << endl;
 		if ( recursive )
 		{
 			MultiField * mf;

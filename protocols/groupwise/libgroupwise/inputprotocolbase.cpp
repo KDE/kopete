@@ -16,9 +16,12 @@
     *************************************************************************
 */
 
-#include "inputprotocolbase.h"
+#include <kdebug.h>
+
+#include "gwerror.h"
 
 #include "gwfield.h"
+#include "inputprotocolbase.h"
 
 InputProtocolBase::InputProtocolBase(QObject *parent, const char *name)
  : QObject(parent, name)
@@ -28,6 +31,15 @@ InputProtocolBase::InputProtocolBase(QObject *parent, const char *name)
 
 InputProtocolBase::~InputProtocolBase()
 {
+}
+
+void InputProtocolBase::debug( const QString &str )
+{
+#ifdef LIBGW_USE_KDEBUG
+	kdDebug( 14191 ) << "debug: " << str << endl;
+#else
+	qDebug( "GW RAW PROTO: %s\n", str.ascii() );
+#endif
 }
 
 uint InputProtocolBase::state() const
@@ -53,7 +65,7 @@ bool InputProtocolBase::okToProceed()
 		if ( m_din.atEnd() )
 		{
 			m_state = NeedMore;
-			qDebug( "InputProtocol::okToProceed() - Server message ended prematurely!" );
+			debug( "InputProtocol::okToProceed() - Server message ended prematurely!" );
 		}
 		else
 			return true;
@@ -86,7 +98,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 		// if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
 		if ( temp.length() < ( val - 1 ) )
 		{
-			qDebug( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %i bytes out of %i",  temp.length(), val );
+			debug( QString( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %1 bytes out of %2" ).arg( temp.length() ).arg( val ) );
 			m_state = NeedMore;
 			return false;
 		}

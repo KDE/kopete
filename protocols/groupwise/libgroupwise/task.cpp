@@ -141,11 +141,9 @@ bool Task::take( Transfer * transfer)
 		
 		if(t->take( transfer ))
 		{
-			qDebug( "Transfer ACCEPTED by: %s", t->className() );
+			client()->debug( QString( "Transfer ACCEPTED by: %1" ).arg( t->className() ) );
 			return true;
 		}
-/*		else
-			qDebug( "Transfer refused by: %s", t->className() );*/
 	}
 
 	return false;
@@ -163,7 +161,7 @@ void Task::safeDelete()
 
 void Task::onGo()
 {
-	qDebug( "ERROR: calling default NULL onGo() for this task, you should reimplement this!");
+	client()->debug( "ERROR: calling default NULL onGo() for this task, you should reimplement this!");
 }
 
 void Task::onDisconnect()

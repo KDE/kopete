@@ -702,12 +702,14 @@ bool autoReply )
 			"Auto reply from %1: " ).arg( sender->metaContact()->displayName() );
 		messageMunged = autoReplyPrefix + message.message;
 	}
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << " message before KopeteMessage and appending: " << messageMunged << endl;
 	Kopete::Message * newMessage = 
 			new Kopete::Message( message.timeStamp, sender, contactList, messageMunged,
 								 Kopete::Message::Inbound, 
 								 autoReply ? Kopete::Message::PlainText : Kopete::Message::RichText );
 	Q_ASSERT( sess );
 	sess->appendMessage( *newMessage );
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << "message from KopeteMessage: plainbody: " << newMessage->plainBody() << " parsedbody: " << newMessage->parsedBody() << endl;
 	delete newMessage;
 }
 
