@@ -139,8 +139,7 @@ void IRCContact::slotNewAction(const QString &originating, const QString &target
 		KopeteContact *user = locateUser( nickname );
 		if ( user || mIdentity->mySelf()->nickName().lower() == originating.lower() )
 		{
-			QString msgText = QString::fromLatin1("* ") + QString::fromLatin1(" ") + message;
-			KopeteMessage msg( user, mContact, msgText, KopeteMessage::Action );
+			KopeteMessage msg( user, mContact, message, KopeteMessage::Action );
 			manager()->appendMessage(msg);
 		}
 	}
@@ -191,18 +190,33 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 	if( mWhoisMap.contains(nickname) )
 	{
 		whoIsInfo *w = mWhoisMap[nickname];
-		QString msgText = QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName);
+		KopeteMessage msg;
+		KopeteContact *c = locateUser( nickname );
+
+		//User info
+		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName), KopeteMessage::Internal );
+		manager()->appendMessage(msg);
+
+		//Channels
 		QString channelText;
 		for(QStringList::Iterator it = w->channels.begin(); it != w->channels.end(); ++it)
 			channelText += *it + QString::fromLatin1(" \n");
-		msgText.append( QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText) );
-		msgText.append( QString::fromLatin1("[%1] %2 : %3\n").arg(nickname).arg(w->serverName).arg(w->serverInfo) );
-		msgText.append( i18n("[%1] idle %2\n").arg(nickname).arg( QString::number(w->idle) ) );
-		msgText.append( i18n("[%1] End of WHOIS list.").arg(nickname) );
-		delete w;
-
-		KopeteMessage msg( locateUser( nickname ) , mContact, msgText, KopeteMessage::Internal );
+		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText), KopeteMessage::Internal );
 		manager()->appendMessage(msg);
+
+		//Server
+		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] %2 : %3\n").arg(nickname).arg(w->serverName).arg(w->serverInfo), KopeteMessage::Internal );
+		manager()->appendMessage(msg);
+
+		//Idle
+		msg = KopeteMessage( c, mContact, i18n("[%1] idle %2\n").arg(nickname).arg( QString::number(w->idle) ), KopeteMessage::Internal );
+		manager()->appendMessage(msg);
+
+		//End
+		msg = KopeteMessage( c, mContact,  i18n("[%1] End of WHOIS list.").arg(nickname), KopeteMessage::Internal );
+		manager()->appendMessage(msg);
+
+		delete w;
 	}
 }
 
