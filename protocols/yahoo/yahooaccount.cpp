@@ -316,8 +316,6 @@ KActionMenu *YahooAccount::actionMenu()
 	theActionMenu->insert(new KAction(i18n(YSTInvisible), YahooStatus(YahooStatus::Invisible).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012"));
 	theActionMenu->insert(new KAction(i18n("Custom"), YahooStatus(YahooStatus::Custom).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus099()), this, "actionYahooGoStatus099"));
 	theActionMenu->insert(new KAction(i18n(YSTOffline), YahooStatus(YahooStatus::Offline).ys2kos().iconFor(this), 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
-	// TODO: do something(?!) with it
-//	theActionMenu->insert(new KAction(i18n(YSTIdle), YahooStatus(YahooStatus::Idle).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus999()), this, "actionYahooGoStatus999");
 
 	return theActionMenu;
 }
