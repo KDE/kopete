@@ -116,7 +116,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 {
 	if(	m_status != Connected ||
 		m_sock->localAddress() == 0 ||
-		m_sock->localAddress()->nodeName() == QString::null)
+		m_sock->localAddress()->nodeName().isNull())
 		return;
 
 	switch(type)
