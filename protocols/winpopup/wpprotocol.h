@@ -114,7 +114,7 @@ public slots:
 
 	AddContactPage *createAddContactWidget(QWidget * parent);
 							// Return "add contact" dialog
-	void slotIconRightClicked(const QPoint);
+	void slotIconRightClicked(const QPoint &);
 							// CallBack when clicking on statusbar icon
 	void slotSettingsChanged(void);
 							// Callback when settings changed

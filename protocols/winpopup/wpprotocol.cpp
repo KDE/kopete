@@ -77,7 +77,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 
 	// Create statusbar Icon
 	statusBarIcon = new StatusBarIcon();
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint &)), this, SLOT(slotIconRightClicked(const QPoint &)));
 	setAvailable();
 	Connect();
 
@@ -370,7 +370,7 @@ AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent)
 
 
 // CallBack when clicking on statusbar icon
-void WPProtocol::slotIconRightClicked(const QPoint)
+void WPProtocol::slotIconRightClicked(const QPoint &)
 {
 	DEBUG(WPDMETHOD, "WPProtocol::slotIconRightClicked(<qpoint>)");
 
