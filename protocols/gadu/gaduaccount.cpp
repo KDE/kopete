@@ -575,17 +575,6 @@ GaduAccount::userlist( const gaduContactsList& u)
 	    }
 	    ucontact = static_cast<GaduContact*>(contacts()[ (*loo)->uin ]);
 	    
-	    kdDebug(14100) << "Adding extra information for " << (*loo)->uin <<endl; 
-	    kdDebug(14100) << (*loo)->email << 
-	                   ",  " << endl <<
-			    (*loo)->firstname <<
-	                   ",  "<< endl <<
-			    (*loo)->surname <<
-	                   ",  "<< endl <<
-			    (*loo)->nickname <<
-	                   ",  "<< endl <<
-			     (*loo)->phonenr
-			     << endl;
 	    // update/add infor for contact
 	    ucontact->setInfo( (*loo)->email, (*loo)->firstname, (*loo)->surname,
 			    (*loo)->nickname, (*loo)->phonenr );
