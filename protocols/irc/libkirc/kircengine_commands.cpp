@@ -293,10 +293,8 @@ void Engine::notice(const QString &target, const QString &message)
 
 void Engine::notice(Message &msg)
 {
-    kdDebug() << k_funcinfo << endl;
-    msg.dump();
-    if(!msg.suffix().isEmpty())
-	emit incomingNotice(msg.arg(0), msg.suffix());
+	if(!msg.suffix().isEmpty())
+		emit incomingNotice(msg.arg(0), msg.suffix());
 
 	if(msg.hasCtcpMessage())
 		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
