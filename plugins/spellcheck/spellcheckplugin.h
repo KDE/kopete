@@ -24,6 +24,7 @@ class KopeteMessageManager;
 class KopeteMessage;
 class KSpell;
 class SpellCheckPreferences;
+class SingleSpellInstance;
 
 class SpellCheckPlugin : public KopetePlugin
 {
@@ -34,6 +35,7 @@ class SpellCheckPlugin : public KopetePlugin
 		SpellCheckPlugin( QObject *parent, const char *name, const QStringList &args );
 		~SpellCheckPlugin();
 		virtual KActionCollection *customChatActions( KopeteMessageManager * );
+		KSpell *speller();
 
 	private:
 		static SpellCheckPlugin* pluginStatic_;
@@ -41,6 +43,9 @@ class SpellCheckPlugin : public KopetePlugin
 		KSpell *mSpell;
 		KopeteMessage mBuffer;
 		SpellCheckPreferences *mPrefs;
+		QPtrList<SingleSpellInstance> singleSpellers;
+		bool spellCheckerReady;
+		bool manualCheckInProgress;
 
 	private slots:
 		void slotCheckSpelling();

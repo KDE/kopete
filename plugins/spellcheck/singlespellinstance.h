@@ -24,7 +24,7 @@
 class KSpell;
 class KopeteView;
 class QTextEdit;
-class SpellCheckPreferences;
+class SpellCheckPlugin;
 
 typedef QMap<QString,QStringList> ReplacementMap;
 
@@ -33,7 +33,7 @@ class SingleSpellInstance : public QObject
 	Q_OBJECT
 
 	public:
-		SingleSpellInstance( KopeteView*, SpellCheckPreferences* );
+		SingleSpellInstance( SpellCheckPlugin*, KopeteView* );
 		~SingleSpellInstance();
 
 	private:
@@ -41,11 +41,9 @@ class SingleSpellInstance : public QObject
 		QTextEdit *t;
 		QRegExp mBound;
 		ReplacementMap mReplacements;
-		bool spellCheckerReady;
-		KSpell *mSpell;
+		SpellCheckPlugin *mPlugin;
 
 	private slots:
-		void slotSpellCheckerReady(KSpell *);
 		void slotMisspelling( const QString &, const QStringList &, unsigned int );
 		void slotUpdateTextEdit();
 		void slotViewDestroyed();

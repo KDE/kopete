@@ -26,44 +26,34 @@
 #include "kopeteviewmanager.h"
 #include "singlespellinstance.h"
 #include "spellcheckpreferences.h"
+#include "spellcheckplugin.h"
 
-SingleSpellInstance::SingleSpellInstance( KopeteView *myView, SpellCheckPreferences *mPrefs ) : QObject( 0L )
+SingleSpellInstance::SingleSpellInstance( SpellCheckPlugin *plugin, KopeteView *myView ) : QObject( 0L )
 {
 	mView = myView;
+	mPlugin = plugin;
 
 	//If this object was created, we know we have a QTextEdit, so this is safe
 	t = static_cast<QTextEdit*>( mView->editWidget() );
 	t->installEventFilter( this );
 	t->viewport()->installEventFilter( this );
 
-	spellCheckerReady = false;
-
 	//Define our word seperator regexp
 	//We can't use \b because QT barfs when trying to split on it
 	mBound = QRegExp( QString::fromLatin1("[\\s\\W]") );
 
-	mSpell = new KSpell(0L, i18n("Spellcheck - Kopete"), this, SLOT( slotSpellCheckerReady( KSpell * )), mPrefs->spellConfig() );
-	connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
+	connect( mPlugin->speller(), SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
 	connect( dynamic_cast<QObject*>(mView), SIGNAL( destroyed() ), this, SLOT( slotViewDestroyed() ) );
 }
 
 SingleSpellInstance::~SingleSpellInstance()
 {
 	kdDebug() << k_funcinfo << "Destroying single speller instance" << endl;
-	spellCheckerReady = false;
-	mSpell->cleanUp();
-	delete mSpell;
 }
 
 void SingleSpellInstance::slotViewDestroyed()
 {
 	delete this;
-}
-
-void SingleSpellInstance::slotSpellCheckerReady( KSpell * )
-{
-	//kdDebug() << k_funcinfo << "Single spell checker prepared!" << endl;
-	spellCheckerReady = true;
 }
 
 void SingleSpellInstance::slotUpdateTextEdit()
@@ -127,90 +117,85 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 		//Keypress event, to do the actual checking
 		case QEvent::KeyPress:
 		{
-			if( spellCheckerReady )
-			{
-				QKeyEvent *event = (QKeyEvent*) e;
+			QKeyEvent *event = (QKeyEvent*) e;
 
-				//Only spellcheck when we hit a word delimiter
-				if( !QChar( event->ascii() ).isLetterOrNumber() )
-					mSpell->check( t->text(), false );
+			//Only spellcheck when we hit a word delimiter
+			if( !QChar( event->ascii() ).isLetterOrNumber() )
+				mPlugin->speller()->check( t->text(), false );
 
-				//Update highlighting
-				slotUpdateTextEdit();
-			}
+			//Update highlighting
+			slotUpdateTextEdit();
+
 			break;
 		}
 
 		//ContextMenu, to enable right click replace menu
 		case QEvent::ContextMenu:
 		{
-			if ( spellCheckerReady )
+			QContextMenuEvent *event = (QContextMenuEvent*) e;
+
+			int para = 1, charPos, firstSpace, lastSpace;
+
+			//Get the character at the position of the click
+			charPos = t->charAt( event->pos(), &para );
+			QString paraText = t->text( para );
+
+			if( !paraText.at(charPos).isSpace() )
 			{
-				QContextMenuEvent *event = (QContextMenuEvent*) e;
+				//Get word right clicked on
+				firstSpace = paraText.findRev( mBound, charPos ) + 1;
+				lastSpace = paraText.find( mBound, charPos );
+				if( lastSpace == -1 )
+					lastSpace = paraText.length();
+				QString word = paraText.mid( firstSpace, lastSpace - firstSpace );
 
-				int para = 1, charPos, firstSpace, lastSpace;
-
-				//Get the character at the position of the click
-				charPos = t->charAt( event->pos(), &para );
-				QString paraText = t->text( para );
-
-				if( !paraText.at(charPos).isSpace() )
+				//Continue if this word was misspelled
+				if( !word.isEmpty() && mReplacements.contains( word ) )
 				{
-					//Get word right clicked on
-					firstSpace = paraText.findRev( mBound, charPos ) + 1;
-					lastSpace = paraText.find( mBound, charPos );
-					if( lastSpace == -1 )
-						lastSpace = paraText.length();
-					QString word = paraText.mid( firstSpace, lastSpace - firstSpace );
+					KPopupMenu p;
+					p.insertTitle( i18n("Suggestions") );
 
-					//Continue if this word was misspelled
-					if( !word.isEmpty() && mReplacements.contains( word ) )
+					//Add the suggestions to the popup menu
+					QStringList reps = mReplacements[word];
+					if( reps.count() > 0 )
 					{
-						KPopupMenu p;
-						p.insertTitle( i18n("Suggestions") );
-
-						//Add the suggestions to the popup menu
-						QStringList reps = mReplacements[word];
-						if( reps.count() > 0 )
-						{
-							int listPos = 0;
-							for ( QStringList::Iterator it = reps.begin(); it != reps.end(); ++it ) {
-								p.insertItem( *it, listPos );
-								listPos++;
-							}
+						int listPos = 0;
+						for ( QStringList::Iterator it = reps.begin(); it != reps.end(); ++it ) {
+							p.insertItem( *it, listPos );
+							listPos++;
 						}
-						else
-						{
-							p.insertItem( QString::fromLatin1("No Suggestions"), -2 );
-						}
-
-						//Execute the popup inline
-						int id = p.exec( w->mapToGlobal( event->pos() ) );
-
-						if( id > -1 )
-						{
-							//Save the cursor position
-							int parIdx = 1, txtIdx = 1;
-							t->getCursorPosition(&parIdx, &txtIdx);
-
-							//Put in our replacement
-							QString txtContents = t->text();
-							QString newContents = txtContents.left(firstSpace) + mReplacements[word][id] +
-								txtContents.right( txtContents.length() - lastSpace );
-							t->setText( newContents );
-
-							//Restore the cursor position
-							if( txtIdx > lastSpace )
-								txtIdx += newContents.length() - txtContents.length();
-							t->setCursorPosition(parIdx, txtIdx);
-
-							//Update highlighting
-							slotUpdateTextEdit();
-						}
-
-						//Cancel original event
-						return true;
 					}
+					else
+					{
+						p.insertItem( QString::fromLatin1("No Suggestions"), -2 );
+					}
+
+					//Execute the popup inline
+					int id = p.exec( w->mapToGlobal( event->pos() ) );
+
+					if( id > -1 )
+					{
+						//Save the cursor position
+						int parIdx = 1, txtIdx = 1;
+						t->getCursorPosition(&parIdx, &txtIdx);
+
+						//Put in our replacement
+						QString txtContents = t->text();
+						QString newContents = txtContents.left(firstSpace) + mReplacements[word][id] +
+							txtContents.right( txtContents.length() - lastSpace );
+						t->setText( newContents );
+
+						//Restore the cursor position
+						if( txtIdx > lastSpace )
+							txtIdx += newContents.length() - txtContents.length();
+						t->setCursorPosition(parIdx, txtIdx);
+
+						//Update highlighting
+						slotUpdateTextEdit();
+					}
+
+					//Cancel original event
+					return true;
 				}
 			}
 
