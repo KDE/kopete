@@ -8,7 +8,7 @@
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
-              (c) 2001 by Olaf Lueg              <olueg@olsd.de>
+              (c) 2001      by Olaf Lueg              <olueg@olsd.de>
 
     *************************************************************************
     *                                                                       *
