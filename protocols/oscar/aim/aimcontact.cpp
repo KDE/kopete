@@ -81,10 +81,19 @@ KActionCollection *AIMContact::customContextMenuActions()
 
 KopeteMessageManager* AIMContact::manager(bool)
 {
-	OscarContact::manager( true );
+	// Check to see if we already have a message manager
+	if (mMsgManager == 0L)
+	{  // We dont' have one, so create it
+		// The true flag here is to tell OscarContact that
+		// it can create the message mananger if it
+		// doesn't exist, which is the case here.
+		OscarContact::manager( true );
+		// Connect the typing signal to the slot here
+		QObject::connect( mMsgManager, SIGNAL(typingMsg(bool)),
+						  this, SLOT(slotTyping(bool)));
+	}
 
- 	QObject::connect( mMsgManager, SIGNAL(typingMsg(bool)),
-		this, SLOT(slotTyping(bool)));
+	// Return the message manager
 	return mMsgManager;
 }
 
@@ -209,8 +218,8 @@ void AIMContact::slotIMReceived(QString message, QString sender, bool isAuto)
 				"sending away-message to annoy buddy :)" << endl;
 			// Send the autoresponse
 			mAccount->getEngine()->sendIM(
-			KopeteAway::getInstance()->message(),
-			mName, true);
+				KopeteAway::getInstance()->message(),
+				mName, true);
 			// Build a pointerlist to insert this contact into
 			KopeteContactPtrList toContact;
 			toContact.append(this);
