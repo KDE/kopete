@@ -18,6 +18,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#include <kopetegroup.h>
+#include <kopetecontactlist.h>
+
 #include "jabberbasecontact.h"
 
 #include "xmpp_tasks.h"
@@ -72,26 +75,71 @@ bool JabberBaseContact::isReachable ()
 
 void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 {
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing local copy of " << contactId() << " with information received from server." << endl;
 
 	mRosterItem = item;
+
+	// if we don't have a meta contact yet, stop processing here
+	if ( !metaContact () )
+		return;
 
 	// only update the nickname if its not empty
 	if ( !item.name ().isEmpty () )
 	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Display name not set, updating." << endl;
 		metaContact()->setDisplayName ( item.name () );
 	}
 
 	/*
-	 * FIXME: synchronize group list here!
-	 * The tricky part: updating the KMC
-	 * group list cannot be done in one
-	 * step, additionally each of these steps
-	 * will cause the KMC to send out a
-	 * synch request which in turn
-	 * causes this method to be called
-	 * once more, resulting in an endless
-	 * loop and a DoS on the server.
+	 * In this method, as opposed to KC::syncGroups(),
+	 * the group list from the server is authoritative.
+	 * As such, we need to find a list of all groups
+	 * that the meta contact resides in but does not
+	 * reside in on the server anymore, as well as all
+	 * groups that the meta contact does not reside in,
+	 * but resides in on the server.
+	 * Then, we'll have to synchronize the KMC using
+	 * that information.
 	 */
+	KopeteGroupList groupsToRemoveFrom, groupsToAddTo;
+
+	// find all groups our contact is in but that are not in the server side roster
+	for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
+	{
+		if ( item.groups().find ( metaContact()->groups().at(i)->displayName () ) == item.groups().end () )
+			groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
+	}
+
+	// now find all groups that are in the server side roster but not in the local group
+	for ( unsigned i = 0; i < item.groups().count (); i++ )
+	{
+		bool found = false;
+		for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
+		{
+			if ( metaContact()->groups().at(i)->displayName () == *item.groups().at(i) )
+			{
+				found = true;
+				break;
+			}
+		}
+		
+		if ( !found )
+		{
+			groupsToAddTo.append ( KopeteContactList::contactList()->getGroup ( *item.groups().at(i) ) );
+		}
+	}
+	
+	for ( KopeteGroup *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
+		metaContact()->removeFromGroup ( group, KopeteMetaContact::DontSyncGroups );
+	}
+	
+	for ( KopeteGroup *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
+		metaContact()->addToGroup ( group, KopeteMetaContact::DontSyncGroups );
+	}
 
 }
 
