@@ -52,7 +52,6 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mPort->setDisabled(true);
 
 		mUserName->setText( m_IRCAccount->userName() );
-		mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
 		mAltNickname->setText( m_IRCAccount->altNick() );
 		partMessage->setText( m_IRCAccount->defaultPart() );
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
@@ -67,6 +66,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 			new QListViewItem( ctcpList, it.key(), it.data() );
 	}
+
+	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
+	mServer->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), mUserName ) );
+	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mUserName ) );
+	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mUserName ) );
 
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
