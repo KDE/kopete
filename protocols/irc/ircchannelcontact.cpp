@@ -38,49 +38,49 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 {
 	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotJoinChannel(KopeteView*)) );
-	
+
 	// KIRC Engine stuff
 	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
 		this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)),
 		this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingKick(const QString &, const QString &,const QString &, const QString &)),
 		this, SLOT(slotUserKicked(const QString &, const QString &, const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
 		this, SLOT(slotNamesList(const QString &, const QStringList &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingExistingTopic(const QString &, const QString &)),
 		this, SLOT(slotChannelTopic(const QString&, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)),
 		this, SLOT(slotTopicChanged(const QString&,const QString&,const QString&)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
-	
+
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
 
 	QObject::connect(m_engine, SIGNAL(incomingFailedChankey(const QString &)),
 		this, SLOT(slotFailedChankey(const QString&)));
-		
+
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanFull(const QString &)),
 		this, SLOT(slotFailedChanFull(const QString&)));
-			
+
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanInvite(const QString &)),
 		this, SLOT(slotFailedChanInvite(const QString&)));
-			
+
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanBanned(const QString &)),
 		this, SLOT(slotFailedChanBanned(const QString&)));
-			
+
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
-		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));	
+		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
 
 	actionJoin = 0L;
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
@@ -88,7 +88,7 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	actionModeS = new KToggleAction(i18n("&Secret"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeM = new KToggleAction(i18n("&Moderated"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeI = new KToggleAction(i18n("&Invite Only"), 0, this, SLOT(slotModeChanged()), this );
-	
+
 	updateStatus();
 }
 
@@ -163,25 +163,31 @@ void IRCChannelContact::slotAddNicknames()
 		return;
 
 	QString nickToAdd = mJoinedNicks.front();
+	QChar firstChar = nickToAdd[0];
+	if( firstChar == '@' || firstChar == '+' )
+		nickToAdd = nickToAdd.remove(0, 1);
+
 	mJoinedNicks.pop_front();
+	IRCContact *user;
 
 	if ( nickToAdd.lower() != m_account->mySelf()->nickName().lower() )
 	{
-		kdDebug(14120) << k_funcinfo << m_nickName << endl;
-		QChar firstChar = nickToAdd[0];
-		if( firstChar == '@' || firstChar == '+' )
-			nickToAdd = nickToAdd.remove(0, 1);
+		kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 
-		IRCContact *user = m_account->findUser( nickToAdd );
+		user = m_account->findUser( nickToAdd );
 		user->setOnlineStatus( m_protocol->m_UserStatusOnline );
-
-		if ( firstChar == '@' )
-			manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusOp );
-		else if( firstChar == '+')
-			manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusVoice );
 
 		manager()->addContact( static_cast<KopeteContact*>(user) , true);
 	}
+	else
+	{
+	        user = m_account->mySelf();
+	}
+
+	if ( firstChar == '@' )
+		manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusOp );
+	else if( firstChar == '+')
+		manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusVoice );
 
 	QTimer::singleShot(0, this, SLOT( slotAddNicknames() ) );
 }
@@ -397,7 +403,7 @@ void IRCChannelContact::slotFailedChanBanned(const QString &channel)
 	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
 		manager()->deleteLater();
-		KMessageBox::error( 0l, 
+		KMessageBox::error( 0l,
 			i18n("<qt>You can not join %1 because you have been banned.</qt>").arg(channel), i18n("IRC Plugin") );
 	}
 }
@@ -407,7 +413,7 @@ void IRCChannelContact::slotFailedChanInvite(const QString &channel)
 	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
 		manager()->deleteLater();
-		KMessageBox::error( 0l, 
+		KMessageBox::error( 0l,
 			i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>").arg(channel), i18n("IRC Plugin") );
 	}
 }
@@ -417,7 +423,7 @@ void IRCChannelContact::slotFailedChanFull(const QString &channel)
 	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
 		manager()->deleteLater();
-		KMessageBox::error( 0l, 
+		KMessageBox::error( 0l,
 			i18n("<qt>You can not join %1 because it has reached its user limit.</qt>").arg(channel),
 			i18n("IRC Plugin") );
 	}
@@ -441,7 +447,7 @@ void IRCChannelContact::slotFailedChankey(const QString &channel)
 			setPassword(diaPassword);
 			m_engine->joinChannel(channel, password());
 		}
-	}	
+	}
 }
 
 void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
@@ -501,7 +507,7 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), this, "actionPart");
 		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
-	
+
 		actionModeMenu->insert( actionModeT );
 		actionModeMenu->insert( actionModeN );
 		actionModeMenu->insert( actionModeS );
@@ -509,7 +515,7 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		actionModeMenu->insert( actionModeI );
 		actionModeMenu->setEnabled( true );
 	}
-	
+
 	mCustomActions->append( actionJoin );
 	mCustomActions->append( actionPart );
 	mCustomActions->append( actionTopic );
