@@ -18,6 +18,8 @@
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
+#include <kapplication.h>
+#include <kaboutdata.h>
 
 #include "ircaccount.h"
 #include "ircprotocol.h"
@@ -47,7 +49,7 @@ IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : 
 	actionOffline =  new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this);
 
 	mEngine = new KIRC( mServer, mPort );
-	QString version=QString::fromLatin1("Kopete IRC Plugin [http://kopete.kde.org]");
+	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	mEngine->setVersionString( version  );
 	if( rememberPassword() )
 		mEngine->setPassword( getPassword() );

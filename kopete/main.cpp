@@ -25,6 +25,8 @@
 #include <dcopclient.h>
 #include "kopeteiface.h"
 
+#define KOPETE_VERSION "0.6.90cvs >= 20030326"
+
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
 
@@ -57,7 +59,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Core developer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@pandora.be" );
-	
+
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Icon Author") );
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine icq code") );
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
 	//aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM code") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
-	
+
 	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Old developer"), "ryan@kde.org" );
 	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Old Developer"), "remenic@linuxfromscratch.org");
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Old Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");

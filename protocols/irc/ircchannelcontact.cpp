@@ -25,13 +25,13 @@
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
-#include "../kopete/kopete.h"
 
 #include <klocale.h>
 #include <qsocket.h>
 #include <kdebug.h>
 #include <klineeditdlg.h>
-#include <qapplication.h>
+#include <kapplication.h>
+#include <kaboutdata.h>
 #include <qtimer.h>
 IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel, KopeteMetaContact *metac) :
 		IRCContact( account, channel, metac, QString::null )
@@ -172,7 +172,7 @@ void IRCChannelContact::slotJoin()
 void IRCChannelContact::slotPart()
 {
 	if( isConnected )
-		mEngine->partChannel(mNickName, QString("Kopete %1 : http://kopete.kde.org").arg(KOPETE_VERSION) );
+		mEngine->partChannel(mNickName, QString("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()) );
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
