@@ -160,7 +160,7 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 
 void YahooAccount::connect()
 {
-	QString server = "scs.msg.yahoo.com";
+	QString server = "scs.yahoo.com";
 	int port = 5050;
 
 	/* call loaded() here. It shouldn't hurt anything

@@ -126,7 +126,7 @@ int yahoo_set_log_level(enum yahoo_log_level level)
 }
 
 /* default values for servers */
-static char pager_host[] = "scs.msg.yahoo.com";
+static char pager_host[] = "scs.yahoo.com";
 static int pager_port = 5050;
 static int fallback_ports[]={23, 25, 80, 20, 119, 8001, 8002, 5050, 0};
 static char filetransfer_host[]="filetransfer.msg.yahoo.com";
