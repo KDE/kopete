@@ -72,7 +72,11 @@ public:
 	 * \return m_lastTalk
 	 */
 	QDateTime lastTalk() { return m_lastTalk; }
-	
+	/**
+	 * \brief Access method
+	 * \return m_lastPresent
+ 	 */
+	QDateTime lastPresent() { return m_lastPresent; }
 	/**
 	 * \brief sets \p m_isChatWindowOpen to true
 	 */
@@ -142,8 +146,9 @@ private:
 	 * \param name the name of the entry to be saved
 	 * \param statVar1 what we are going to store in the first column for this entry
 	 * \param statVar2 the second stat we can save in this table for this entry
+	 * \param statVarChanged if this param is true, we save. Else, we don't. Spare some disk usage.
 	 */
-	void commonStatsSave(const QString name, const QString statVar1, const QString statVar2);
+	void commonStatsSave(const QString name, const QString statVar1, const QString statVar2, const bool statVarChanged);
 	
 	/**
 	 * Kopete::MetaContact linked to this StatisticsContact
@@ -169,6 +174,7 @@ private:
 	 * It may be used to compute a "speed" or "availability" for this contact
 	 */
 	int m_timeBetweenTwoMessages;
+	bool m_timeBetweenTwoMessagesChanged;
 	/// Date at which the last message was received. 
 	/// Used to compute m_timeBetweenTwoMessages
 	QDateTime m_lastMessageReceived;
@@ -181,6 +187,7 @@ private:
 	 * Average length of contact's messages
 	 */
 	int m_messageLength;
+	bool m_messageLengthChanged;
 	/// This is the ponderation corresponding to m_messageLength
 	int m_messageLengthOn;
 	
@@ -188,8 +195,13 @@ private:
 	 * Last time user talked with this contact
 	 */
 	QDateTime m_lastTalk;
+	bool m_lastTalkChanged;
 	
-	
+	/**
+	 * Last time user was present (=online or away)
+	 */
+	QDateTime m_lastPresent;
+	bool m_lastPresentChanged;
 };
 
 

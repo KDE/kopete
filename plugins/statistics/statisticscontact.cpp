@@ -26,7 +26,13 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
 	m_isChatWindowOpen = false;
 	m_oldStatusDateTime = QDateTime::currentDateTime();
 
-	commonStatsCheck("timebetweentwomessages", m_timeBetweenTwoMessages,	 m_timeBetweenTwoMessagesOn, 0, -1);
+	// Last*Changed are always false at start
+	m_timeBetweenTwoMessagesChanged  = false;
+	m_lastTalkChanged = false;
+	m_lastPresentChanged  = false;
+	m_messageLengthChanged = false;
+
+	commonStatsCheck("timebetweentwomessages", m_timeBetweenTwoMessages, m_timeBetweenTwoMessagesOn, 0, -1);
 	commonStatsCheck("messagelength", m_messageLength, m_messageLengthOn);
 	
 	// Check for last talk
@@ -34,13 +40,28 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
 	QString dummy = "";
 	commonStatsCheck("lasttalk", lastTalk, dummy);
 	if (lastTalk.isEmpty())
-		m_lastTalk = QDateTime::QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0));
+	{
+		m_lastTalk.setTime_t(0);
+		m_lastTalkChanged = true;
+	}
 	else
 		m_lastTalk = QDateTime::fromString(lastTalk);
 	
 	
 	// Get last time a message was received
 	m_lastMessageReceived = QDateTime::currentDateTime();
+
+
+	// Check for lastPresent
+	QString lastPresent = "";
+	commonStatsCheck("lastpresent", lastPresent, dummy);
+	if (lastPresent.isEmpty())
+	{
+		m_lastPresent.setTime_t(0);
+		m_lastPresentChanged = true;
+	}
+	else
+		m_lastPresent = QDateTime::fromString(lastPresent);
 }
 
 /**
@@ -48,16 +69,18 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
  */
 StatisticsContact::~StatisticsContact()
 {
-	kdDebug() << "statistics: save commonstats for " << metaContact()->displayName() << endl;
 	commonStatsSave("timebetweentwomessages",QString::number(m_timeBetweenTwoMessages), 
-													QString::number(m_timeBetweenTwoMessagesOn));	 
-	commonStatsSave("messagelength",QString::number(m_messageLength), QString::number(m_messageLengthOn)); 
-	commonStatsSave("lasttalk", m_lastTalk.toString(), "");
+	QString::number(m_timeBetweenTwoMessagesOn), m_timeBetweenTwoMessagesChanged);	 
+	commonStatsSave("messagelength",QString::number(m_messageLength), QString::number(m_messageLengthOn), m_messageLengthChanged); 
+	commonStatsSave("lasttalk", m_lastTalk.toString(), "", m_lastTalkChanged);
+	commonStatsSave("lastpresent", m_lastPresent.toString(), "", m_lastPresentChanged);
 }
 
-/// @todo Only do this if there was a change
-void StatisticsContact::commonStatsSave(const QString name, const QString statVar1, const QString statVar2)
+void StatisticsContact::commonStatsSave(const QString name, const QString statVar1, const QString statVar2, const bool statVarChanged)
 {
+	// Only update the database if there was a change
+	if (!statVarChanged) return;
+
 	m_db->query(QString("UPDATE commonstats SET statvalue1 = '%1', statvalue2='%2'"
 			"WHERE statname LIKE '%3' AND metacontactid LIKE '%4';").arg(statVar1).arg(statVar2).arg(name).arg(metaContact()->metaContactId()));
 	
@@ -84,7 +107,6 @@ void StatisticsContact::commonStatsCheck(const QString name, QString& statVar1, 
 	}
 	else
 	{
-
 		m_db->query(QString("INSERT INTO commonstats (metacontactid, statname, statvalue1, statvalue2) VALUES('%1', '%2', 0, 0);").arg(metaContact()->metaContactId(), name));
 		statVar1 = defaultValue1;
 		statVar2 = defaultValue2;
@@ -136,6 +158,10 @@ void StatisticsContact::newMessageReceived(Kopete::Message& m)
 	// Last talked
 	/// @todo do this in message sent too. So we need setLastTalk()
 	m_lastTalk = currentDateTime;
+	
+	m_messageLengthChanged = true;
+	m_lastTalkChanged = true;
+	m_timeBetweenTwoMessagesChanged = true;
 }
 
 /**
@@ -144,9 +170,6 @@ void StatisticsContact::newMessageReceived(Kopete::Message& m)
 void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType status)
 {
 	QDateTime currentDateTime = QDateTime::currentDateTime();
-
-
-	
 	
 	/// We don't want to log if oldStatus is unknown
 	/// the change could not be a real one; see StatisticsPlugin::slotMySelfOnlineStatusChanged
@@ -155,10 +178,17 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 		
 		kdDebug() << "statistics - status change for "<< metaContact()->displayName() << " : "<< QString::number(m_oldStatus) << endl;
 		m_db->query(QString("INSERT INTO contactstatus "
-		"(metacontactid, status, datetimebegin, datetimeend, selfbegin, selfend) "
-		"VALUES('%1', '%2', '%3', '%4', '%5'," "'%6');").arg(m_metaContact->metaContactId()).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(m_oldStatusDateTime.toString()).arg(currentDateTime.toString()).arg(QString::number(1)).arg(QString::number(1)));
+		"(metacontactid, status, datetimebegin, datetimeend) "
+				"VALUES('%1', '%2', '%3', '%4'" ");").arg(m_metaContact->metaContactId()).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(QString::number(m_oldStatusDateTime.toTime_t())).arg(QString::number(currentDateTime.toTime_t())));
 	}
 	
+	if (m_oldStatus == Kopete::OnlineStatus::Online || m_oldStatus == Kopete::OnlineStatus::Away)
+	// If the last status was Online or Away, the last time contact was present is the time he goes offline
+	{
+		m_lastPresent = currentDateTime;
+		m_lastPresentChanged = true;
+	}
+
 	m_oldStatus = status;
 	m_oldStatusDateTime = currentDateTime;
 

@@ -39,15 +39,15 @@ class StatisticsContact;
 class KopeteView;
 class KActionCollection;
 
-/*! \mainpage Kopete Statistics Plugin
+/** \section Kopete Statistics Plugin
  *
- * \section intro_sec Introduction
+ * \subsection intro_sec Introduction
  *
  * This plugin aims at giving detailed statistics on metacontacts, for instance, how long was
  * the metacontact online, how long was it busy etc. 
  * In the future, it will maybe make prediction on when the contact should be available for chat.
  *
- * \section install_sec How it works ...
+ * \subsection install_sec How it works ...
  * Each Metacontact is bound to a StatisticsContact which has access to the SQLITE database.
  * This StatisticsContact stores the last status of the metacontact; the member function onlineStatusChanged is called when the 
  * metacontact status changed (this is managed in the slot slotOnlineStatusChanged of StatisticsPlugin) and then the DB is 
@@ -80,7 +80,7 @@ class KActionCollection;
  *  
  * etc.
  * 
- * \section install_sec Some little stats
+ * \subsection install_sec Some little stats
  * This plugin is able to record some other stats, not based on events. Theyre saved in the commonstat table in which we store stats
  * like this :
  * 
@@ -88,13 +88,12 @@ class KActionCollection;
  * 
  * Generally, we store the value, and its ponderation. If an average on one hundred messages says that the contact X takes about 
  * 3 seconds between two messages, we store "timebetweentwomessages", "3", "100"
+ *
+ *
+ *
+ * StatisticsPlugin is the main Statistics plugin class.
+ * Contains mainly slots.
  */
-
-
-/**
-* This is the main Statistics plugin class.
-* Contains mainly slots.
-*/
 class StatisticsPlugin : public Kopete::Plugin
 {
 	Q_OBJECT

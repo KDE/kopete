@@ -96,7 +96,10 @@ void StatisticsDialog::generatePageForMonth(const int monthOfYear)
 	
 	for (int i=0; i<values.count(); i+=3)
 	{
-		if (QDateTime::fromString(values[i+1]).date().month() == monthOfYear)
+		QDateTime dateTimeBegin;
+		dateTimeBegin.setTime_t(values[i+1].toInt());
+		/// @todo Same as for Day, check if second datetime is on the same month
+		if (dateTimeBegin.date().month() == monthOfYear)
 		{
 			values2.push_back(values[i]);
 			values2.push_back(values[i+1]);
@@ -115,20 +118,23 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 	
 	for (int i=0; i<values.count(); i+=3)
 	{
-
-		if (QDateTime::fromString(values[i+1]).date().dayOfWeek() == dayOfWeek)
+		QDateTime dateTimeBegin;
+		dateTimeBegin.setTime_t(values[i+1].toInt());
+		QDateTime dateTimeEnd;
+		dateTimeEnd.setTime_t(values[i+2].toInt());
+		if (dateTimeBegin.date().dayOfWeek() == dayOfWeek)
 		{
-		  if (QDateTime::fromString(values[i+1]).date().dayOfWeek() != dayOfWeek)
+			if (dateTimeEnd.date().dayOfWeek() != dayOfWeek)
 		  // Day of week is not the same at beginning and at end of the event
 		  {
 		    values2.push_back(values[i]);
 		    values2.push_back(values[i+1]);
 			
 			// datetime from value[i+1]
-			QDateTime dt1 = QDateTime::fromString(values[i+1]);
-			dt1 = QDateTime(dt1.date(), QTime(0, 0, 0));
-			dt1.addSecs(dt1.time().secsTo(QTime(23, 59, 59)));
-			values2.push_back(dt1.toString());
+			
+			dateTimeBegin = QDateTime(dateTimeBegin.date(), QTime(0, 0, 0));
+			dateTimeBegin.addSecs(dateTimeBegin.time().secsTo(QTime(23, 59, 59)));
+			values2.push_back(QString::number(dateTimeBegin.toTime_t()));
 		  }
 		  else
 		    {
@@ -238,9 +244,11 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		
 		
 		// it is the STARTDATE from the database
-		QDateTime dateTime1 = QDateTime::fromString(values[i+1]);
+		QDateTime dateTime1;
+		dateTime1.setTime_t(values[i+1].toInt());
 		// it is the ENDDATE from the database
-		QDateTime dateTime2 = QDateTime::fromString(values[i+2]);
+		QDateTime dateTime2;
+		dateTime2.setTime_t(values[i+2].toInt());
 		
 		if (dateTime1.date() == QDate::currentDate() || dateTime2.date() == QDate::currentDate())
 			today = true;
@@ -367,6 +375,10 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	
 		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
          generalHTMLPart->write(QString("<b>Last talk :</b> %1").arg(m_contact->lastTalk().toString()));
+		 generalHTMLPart->write(QString("</div>"));
+
+		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
+		 generalHTMLPart->write(QString("<b>Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
 		 generalHTMLPart->write(QString("</div>"));
 	
 	 	generalHTMLPart->write(QString("<div class=\"statgroup\">"));

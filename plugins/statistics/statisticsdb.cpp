@@ -75,10 +75,8 @@ StatisticsDB::StatisticsDB()
 			"(id INTEGER PRIMARY KEY,"
 			"metacontactid TEXT,"
 			"status TEXT,"
-			"datetimebegin TEXT,"
-			"datetimeend TEXT,"
-			"selfbegin INTEGER," // is it the contact itselfs or me that changed the status ?
-			"selfend INTEGER"   // if it's equal to me, i disconnected, or connected myself.
+			"datetimebegin INTEGER,"
+			"datetimeend INTEGER"
 			");"));
 	}
 	
@@ -98,8 +96,8 @@ StatisticsDB::StatisticsDB()
 	{
 		query(QString("CREATE TABLE statsgroup"
 			"(id INTEGER PRIMARY KEY,"
-			"datetimebegin TEXT,"
-			"datetimeend TEXT,"
+			"datetimebegin INTEGER,"
+			"datetimeend INTEGER,"
 			"caption TEXT);"));
 	}
  
