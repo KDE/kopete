@@ -183,7 +183,6 @@ void AppearanceConfig::save()
 	p->setIconTheme( icon_theme_list->currentText() );
 	p->setUseEmoticons ( mUseEmoticonsChk->isChecked() );
 
-
 	// "Chat Window" TAB ========================================================
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
@@ -191,7 +190,6 @@ void AppearanceConfig::save()
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
 	if( styleChanged || p->styleSheet() != itemMap[ mPrfsChatWindow->styleList->selectedItem() ] )
 		p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
-
 
 	// "Colors & Fonts" TAB =====================================================
 	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
@@ -207,7 +205,8 @@ void AppearanceConfig::save()
 	errorAlert = false;
 	styleChanged = false;
 
-	setChanged(false);
+	// FIXME - Doesn't calling KCModule::save() do this for us? - Martijn
+	emit changed( false );
 }
 
 void AppearanceConfig::load()
@@ -252,7 +251,6 @@ void AppearanceConfig::load()
 	mUseEmoticonsChk->setChecked( p->useEmoticons() );
 	slotUseEmoticonsChanged     ( p->useEmoticons() );
 
-
 	// "Chat Window" TAB ========================================================
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
@@ -274,7 +272,6 @@ void AppearanceConfig::load()
 	}
 	mPrfsChatWindow->styleList->sort();
 
-
 	// "Colors & Fonts" TAB =====================================================
 	mPrfsColors->foregroundColor->setColor(p->highlightForeground());
 	mPrfsColors->backgroundColor->setColor(p->highlightBackground());
@@ -288,15 +285,16 @@ void AppearanceConfig::load()
 	slotGreyIdleMetaContactsChanged(p->greyIdleMetaContacts());
 
 	//TODO: make the whole thing working corretly insteads of this ugly hack...
-	setChanged(false);
-	setChanged(true);
+	// FIXME: Why is this needed in the first place? - Martijn
+	emit changed( false );
+	emit changed( true );
 }
 
-void AppearanceConfig::slotUseEmoticonsChanged(bool b)
+void AppearanceConfig::slotUseEmoticonsChanged( bool b )
 {
-	icon_theme_list->setEnabled(b);
-	icon_theme_preview->setEnabled(b);
-	setChanged(true);
+	icon_theme_list->setEnabled( b );
+	icon_theme_preview->setEnabled( b );
+	emit changed( true );
 }
 
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
@@ -310,7 +308,7 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 
 	newContentText += QString::fromLatin1("</qt>");
 	icon_theme_preview->setText(newContentText);
-	setChanged(true);
+	emit changed( true );
 }
 
 void AppearanceConfig::slotTransparencyChanged ( bool checked )
@@ -318,9 +316,8 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 	mPrfsChatWindow->mTransparencyTintColor->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyValue->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyBgOverride->setEnabled( checked );
-	setChanged(true);
+	emit changed( true );
 }
-
 
 void AppearanceConfig::slotHighlightChanged()
 {
@@ -377,7 +374,7 @@ void AppearanceConfig::updateHighlight()
 			break;
 		}
 	}
-	setChanged(true);
+	emit changed( true );
 }
 
 void AppearanceConfig::slotStyleSelected()
@@ -394,7 +391,7 @@ void AppearanceConfig::slotStyleSelected()
 		mPrfsChatWindow->deleteButton->setEnabled( false );
 	}
 	slotUpdatePreview();
-	setChanged(true);
+	emit changed( true );
 }
 
 void AppearanceConfig::slotImportStyle()
@@ -452,7 +449,7 @@ void AppearanceConfig::slotCopyStyle()
 		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
 			i18n("Please select a style to copy."), i18n("No Style Selected") );
 	}
-	setChanged(true);
+	emit changed( true );
 }
 
 void AppearanceConfig::slotEditStyle()
@@ -463,7 +460,7 @@ void AppearanceConfig::slotEditStyle()
 	KTextEditor::editInterface( editDocument )->setText( model );
 	updateHighlight();
 	styleEditor->styleName->setText( editedItem->text() );
-	setChanged(true);
+	emit changed( true );
 }
 
 void AppearanceConfig::slotDeleteStyle()
@@ -486,7 +483,7 @@ void AppearanceConfig::slotDeleteStyle()
 			mPrfsChatWindow->styleList->setSelected( style->prev(), true );
 		delete style;
 	}
-	setChanged(true);
+	emit changed( true );
 }
 
 void AppearanceConfig::slotStyleSaved()
@@ -503,7 +500,7 @@ void AppearanceConfig::slotStyleSaved()
 	delete editedItem;
 
 	styleEditor->deleteLater();
-	setChanged( true );
+	emit changed( true );
 }
 
 void AppearanceConfig::addStyle( const QString &styleName, const QString &styleSheet )
@@ -535,13 +532,13 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	}
 }
 
-	//reimplement KopeteContact and his abstract method
-	class TestContact : public KopeteContact
-	{
-		public:
-			TestContact (  const QString &id  ) : KopeteContact ( (KopeteAccount*)0L, id, 0L ) {}
-			virtual KopeteMessageManager* manager(bool) { return 0L; }
-	};
+//reimplement KopeteContact and his abstract method
+class TestContact : public KopeteContact
+{
+public:
+	TestContact (  const QString &id  ) : KopeteContact ( (KopeteAccount*)0L, id, 0L ) {}
+	virtual KopeteMessageManager* manager(bool) { return 0L; }
+};
 
 void AppearanceConfig::slotUpdatePreview()
 {
@@ -592,7 +589,7 @@ void AppearanceConfig::slotUpdatePreview()
 		delete myself;
 		delete jack;
 
-		setChanged( true );
+		emit changed( true );
 	}
 }
 
@@ -613,9 +610,10 @@ QString AppearanceConfig::fileContents( const QString &path )
 void AppearanceConfig::slotGreyIdleMetaContactsChanged(bool b)
 {
 	mPrfsColors->idleContactColor->setEnabled(b);
-	setChanged(true);
+	emit changed( true );
 }
 
-
 #include "appearanceconfig.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+
