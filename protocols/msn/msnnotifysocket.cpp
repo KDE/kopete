@@ -174,14 +174,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 		QString msnId = data.section( ' ', 2, 2 );
 		uint group;
 		if( data.section( ' ', 0, 0 ) == "FL" )
-		{
 			group = data.section( ' ', 4, 4 ).toUInt();
-
-			// After succesfully adding a user to the Friends List, add to
-			// the Allow List as well. This can't be done in one shot, or
-			// the MSN server would respond with a 215 error (race condition)
-			addContact( msnId, msnId, 0, MSNProtocol::AL );
-		}
 		else
 			group = 0;
 

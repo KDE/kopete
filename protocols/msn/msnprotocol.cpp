@@ -513,19 +513,8 @@ void MSNProtocol::addContact( const QString &userID )
 {
 	if( isConnected() )
 	{
-		if( !m_contacts.contains( userID ) )
-		{
-			kdDebug() << "MSNProtocol::addContact: WARNING: MSN ID " << userID
-				<< " not found in contact list!" << endl;
-			m_serviceSocket->addContact( userID, userID, 0, FL );
-		}
-		else
-			m_serviceSocket->addContact( userID, userID, 0, FL );
-
-		// Note that the user also needs to be added to the Allow List, but
-		// that is something we can't do in a single shot or the server
-		// would give us a 215 error. Instead let the service socket handle
-		// this...
+		m_serviceSocket->addContact( userID, userID, 0, FL );
+		m_serviceSocket->addContact( userID, userID, 0, AL );
 	}
 }
 

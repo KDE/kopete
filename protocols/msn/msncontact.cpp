@@ -155,8 +155,17 @@ void MSNContact::slotMoveThisUser()
 	if( m_actionMove )
 	{
 		kdDebug() << "***** MOVE: Groups: " << m_groups.join( ", " ) << endl;
-		MSNProtocol::protocol()->moveContact( this, m_groups.first(),
-			m_actionMove->currentText() );
+		if( m_movingToGroup == m_actionMove->currentText() )
+		{
+			kdDebug() << "MSNContact::slotMoveThisUser: Suppressing second "
+				<< "slot invocation. Yes, I know this is ugly!" << endl;
+		}
+		else
+		{
+			m_movingToGroup = m_actionMove->currentText();
+			MSNProtocol::protocol()->moveContact( this, m_groups.first(),
+				m_movingToGroup );
+		}
 	}
 }
 
@@ -224,7 +233,6 @@ MSNContact::ContactStatus MSNContact::status() const
 			break;
 		}
 	}
-
 }
 
 QString MSNContact::statusText() const
@@ -453,6 +461,8 @@ QStringList MSNContact::groups() const
 void MSNContact::addToGroup( const QString &group )
 {
 	m_groups.append( group );
+	if( m_movingToGroup == group )
+		m_movingToGroup = QString::null;
 }
 
 void MSNContact::removeFromGroup( const QString &group )

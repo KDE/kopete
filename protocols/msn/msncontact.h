@@ -148,6 +148,14 @@ private:
 	KAction* m_actionHistory;
 	KListAction *m_actionMove;
 	KListAction *m_actionCopy;
+
+	/**
+	 * Most ugly hack ever. You're not seeing this. Nothing to see here.
+	 * I plead the fifth if questions are asked.
+	 * The contact list overhaul planned for Kopete 0.5 will hopefully fix
+	 * this. 'nuff said.
+	 */
+	QString m_movingToGroup;
 };
 
 #endif
