@@ -48,7 +48,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 	isSsl = false;
 #endif
 
-	useTls_->setDisabled( !isSsl );
+	useTls_->setDisabled( false );
 
 	if ( account() == NULL ) {
 		useTls_->setCurrentItem( isSsl ? 0 : 2 );

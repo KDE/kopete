@@ -815,7 +815,7 @@ GaduAccount::useTls()
 	tlsConnection Tls = (tlsConnection) ( pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) ).toInt() );
 	if ( Tls != TLS_ifAvaliable && Tls != TLS_only && Tls != TLS_no ) {
 		// default
-		Tls = TLS_ifAvaliable;
+		Tls = TLS_no;
 	}
 	return Tls;
 }
