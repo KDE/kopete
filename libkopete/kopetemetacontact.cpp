@@ -183,7 +183,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 			setNameSource( d->contacts.first() );
 
 		if( wasTrackingPhoto )
-			setPhotoSource( d->contacts.first() );
+			setPhotoSource( 0L );
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
@@ -660,7 +660,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 	}
 	else if ( key == Global::Properties::self()->photo().key() )
 	{
-		if(photo().isNull() && photoSource() == 0L)
+		if(photoSource() == 0L && !newValue.isNull() &&   photo().isNull() )
 		{
 			setPhotoSource(subcontact);
 			setPhotoSyncedWithKABC(true);
