@@ -10,8 +10,8 @@
 #include <kcombobox.h>
 #include <klineedit.h>
 
-#include "kopete.h"
 #include "kopeteaway.h"
+#include "kopeteidentitymanager.h"
 
 KopeteAwayDialog::KopeteAwayDialog()
 {
@@ -38,7 +38,7 @@ void KopeteAwayDialog::slotOkayClicked()
 	/* Set the global away message */
 	(txtOneShot->text() != "") ?  KopeteAway::getInstance()->mAwayMessage = txtOneShot->text() : KopeteAway::getInstance()->mAwayMessage = KopeteAway::getInstance()->getMessage(cmbHistory->currentText());
 
-	kopeteapp->setAwayAll();
+	KopeteIdentityManager::manager()->setAwayAll();
 	close();
 }
 

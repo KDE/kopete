@@ -41,6 +41,7 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopeteevent.h"
+#include "kopeteidentitymanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
@@ -92,13 +93,13 @@ void KopeteWindow::initActions ( void )
 							qApp, SLOT(slotAddContact()),
 							actionCollection(), "AddContact" );
 
-	actionConnect = new KAction( i18n("&Connect All"),"connect_creating", 0 ,
-							qApp, SLOT(slotConnectAll()),
-							actionCollection(), "Connect" );
+	actionConnect = new KAction( i18n( "&Connect All" ), "connect_creating",
+		0, KopeteIdentityManager::manager(), SLOT( connectAll() ),
+		actionCollection(), "ConnectAll" );
 
-	actionDisconnect = new KAction( i18n("&Disconnect All"),"connect_no", 0 ,
-							qApp, SLOT(slotDisconnectAll()),
-							actionCollection(), "Disconnect" );
+	actionDisconnect = new KAction( i18n( "&Disconnect All" ), "connect_no",
+		0, KopeteIdentityManager::manager(), SLOT( disconnectAll() ),
+		actionCollection(), "DisconnectAll" );
 
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
 							actionCollection(), "Connection" );
@@ -106,13 +107,14 @@ void KopeteWindow::initActions ( void )
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 
-	actionSetAway = new KAction( i18n("&Set Away Globally"), "kopeteaway", 0 ,
-							qApp, SLOT(slotSetAwayAll()),
-							actionCollection(), "SetAway" );
+	actionSetAway = new KAction( i18n( "&Set Away Globally" ), "kopeteaway",
+		0, KopeteIdentityManager::manager(), SLOT( setAwayAll() ),
+		actionCollection(), "SetAwayAll" );
 
-	actionSetAvailable = new KAction( i18n("Set Availa&ble Globally"), "kopeteavailable", 0 ,
-							qApp, SLOT(slotSetAvailableAll()),
-							actionCollection(), "SetAvailable" );
+	actionSetAvailable = new KAction( i18n( "Set Availa&ble Globally" ),
+		"kopeteavailable", 0 , KopeteIdentityManager::manager(),
+		SLOT( setAvailableAll() ), actionCollection(),
+		"SetAvailableAll" );
 
 	actionAwayMenu = new KActionMenu( i18n("Status"),"kopetestatus",
 							actionCollection(), "Status" );

@@ -170,45 +170,7 @@ void Kopete::slotExit()
 }
 */
 
-/** Connect all loaded protocol plugins */
-void Kopete::slotConnectAll()
-{
-	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-//		kdDebug() << "[Kopete] Connect All: " << (*i).name << endl;
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( ( *i ).name );
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-		if (!prot)
-			continue;
-
-		if ( !(prot->isConnected()))
-		{
-			prot->Connect();
-		}
-	}
-}
-
 /** Disconnect all loaded protocol plugins */
-void Kopete::slotDisconnectAll()
-{
-	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-//		kdDebug() << "[Kopete] Disconnect All: "<<(*i).name << endl;
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( ( *i ).name );
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-
-		if (!prot)
-			continue;
-
-		if (prot->isConnected())
-		{
-			prot->Disconnect();
-		}
-	}
-}
-
 
 // Set a meta-away in all protocol plugins
 // This is a fire and forget thing, we do not check if
@@ -217,51 +179,6 @@ void Kopete::slotSetAwayAll(void)
 {
 	KopeteAway::setGlobalAway(true);
 	KopeteAway::show();
-}
-
-// Set a meta-away in all protocol plugins without showing the dialog
-void Kopete::setAwayAll(void)
-{
-	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByID( ( *i ).name );
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-
-		if (!prot)
-			continue;
-
-		if ( prot->isConnected() && !prot->isAway() )
-		{
-			kdDebug() << "[Kopete] setting away-mode for: " << (*i).name << endl;
-			prot->setAway(); // sets protocol-plugin into away-mode
-		}
-	}
-}
-
-// Set a meta-available in all protocol plugins
-// This is a fire and forget thing, we do not check if
-// it worked or if the plugin exits away-mode
-void Kopete::slotSetAvailableAll(void)
-{
-	KopeteAway::setGlobalAway(false);
-	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByID( ( *i ).name );
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-
-		if (!prot)
-			continue;
-
-		if ( prot->isConnected() && prot->isAway() )
-		{
-			kdDebug() << "[Kopete] setting available-mode for: " << (*i).name << endl;
-			prot->setAvailable(); // sets protocol-plugin into away-mode
-		}
-	}
 }
 
 /** Add a contact through Wizard */

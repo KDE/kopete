@@ -47,12 +47,6 @@ public:
 	Kopete();
 	~Kopete();
 
-	/**
-	 * Like slotSetAwayAll, but don't pops up the dialog
-	 * (for the autowayplugin)
-	 */
-	void setAwayAll();
-
 public slots:
 	/**
 	 * Only use notify event for system-wide messages
@@ -66,10 +60,6 @@ public slots:
 	 * Cancel an event.
 	 */
 	void cancelEvent( KopeteEvent * );
-
-	void slotSetAvailableAll();
-	void slotConnectAll();
-	void slotDisconnectAll();
 
 signals:
 	/**
