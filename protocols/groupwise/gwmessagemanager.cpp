@@ -23,9 +23,10 @@
 
 #include <kopetecontact.h>
 #include <kopetecontactaction.h>
-#include <kopeteuiglobal.h>
+#include <kopetemetacontact.h>
 #include <kopetemessagemanagerfactory.h>
 #include <kopeteprotocol.h>
+#include <kopeteuiglobal.h>
 #include <kopeteview.h>
 
 #include "client.h"
@@ -63,11 +64,11 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 	m_logging = new KAction( i18n( " Archiving Status" ), "logchat", 0, this, 0, actionCollection(), "gwLoggingChat" );
 	m_logging->setToolTip( i18n( "Conversation is not being administratively logged" ) );
-	if ( m_guid.isEmpty() )
-		createConference();
+
 	setXMLFile("gwchatui.rc");
 
 	updateDisplayName();
+	m_invitees.setAutoDelete( true );
 }
 
 GroupWiseMessageManager::~GroupWiseMessageManager()
@@ -211,6 +212,7 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 			{
 				kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
 				// the conference hasn't been instantiated on the server yet, so queue the message
+				createConference();
 				m_pendingOutgoingMessages.append( message );
 			}
 			else 
@@ -329,5 +331,57 @@ void GroupWiseMessageManager::slotSearchedForUsers()
 	}
 }
 
+void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
+{
+	// create a placeholder contact for each invitee
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	QString pending = i18n("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
+	KopeteMetaContact * inviteeMC = new KopeteMetaContact();
+	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
+	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
+	addContact( invitee, true );
+	m_invitees.append( invitee );
+}
+
+void GroupWiseMessageManager::joined( GroupWiseContact * c )
+{
+	// look for the invitee and remove it
+	KopeteContact * pending;
+	for ( pending = m_invitees.first(); pending; m_invitees.next() )
+	{
+		if ( pending->contactId().startsWith( c->contactId() ) )
+		{
+			removeContact( pending );
+			break;
+		}
+	}
+
+	m_invitees.remove( pending );
+
+	addContact( c );
+	c->joinConference( m_guid );
+}
+
+void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
+{
+	// look for the invitee and remove it
+	KopeteContact * pending;
+	for ( pending = m_invitees.first(); pending; m_invitees.next() )
+	{
+		if ( pending->contactId().startsWith( c->contactId() ) )
+		{
+			removeContact( pending );
+			break;
+		}
+	}
+	m_invitees.remove( pending );
+	
+	QString from = c->metaContact()->displayName();
+
+	KopeteMessage declined = KopeteMessage( user(), members(), 
+				i18n("%1 has rejected an invitation to join this conversation.").arg( from ), 
+				KopeteMessage::Internal, KopeteMessage::PlainText );
+	appendMessage( declined );
+}
 
 #include "gwmessagemanager.moc"

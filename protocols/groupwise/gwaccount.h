@@ -220,7 +220,7 @@ protected slots:
 	/**
 	 * We joined a conference having accepted an invitation, create a message manager
 	 */
-	void receiveConferenceJoin( const QString & guid, const QStringList & participants );
+ 	void receiveConferenceJoin( const QString & guid, const QStringList & participants, const QStringList & invitees );
 	/**
 	 * Someone joined a conference, add them to the appropriate message manager
 	 */

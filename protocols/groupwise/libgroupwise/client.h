@@ -288,7 +288,7 @@ fd		 * @param password
 		/**
 		 * We joined a conference.
 		 */
-		void conferenceJoined( const QString &, const QStringList & );
+		void conferenceJoined( const QString &, const QStringList &, const QStringList & );
 		/**
 		 * We received an "is typing" event in a conference
 		 */

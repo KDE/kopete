@@ -22,6 +22,7 @@ class QLabel;
 class KAction;
 class KActionMenu;
 class GroupWiseAccount;
+class GroupWiseContact;
 class GroupWiseSearch;
 /**
  * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::messageManager().
@@ -62,6 +63,19 @@ public:
 	bool secure();
 	bool logging();
 	bool closed();
+	/**
+	 * Add invitees to the conference
+	 */
+	void addInvitee( const KopeteContact * );
+	/**
+	 * Add members to the conference
+	 */
+	void joined( GroupWiseContact * );
+	/** 
+	 * An invitation was declined
+	 */
+	void inviteDeclined( GroupWiseContact * );
+	
 signals:
 	/**
 	 * Tell the contact we got a GUID so it can route incoming messages here.
@@ -129,6 +143,7 @@ private:
 	KAction *m_logging;
 	// search widget used for inviting contacts
 	GroupWiseSearch * m_search;
+	KopeteContactPtrList m_invitees;
 };
 
 #endif

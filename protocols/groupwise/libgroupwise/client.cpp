@@ -361,7 +361,11 @@ void Client::jct_joinConfCompleted()
 	QStringList parts = jct->participants();
 	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
 		qDebug( " - %s", (*it).ascii() );
-	emit conferenceJoined( jct->guid(), jct->participants() );
+	qDebug( "invitees are: " );
+	QStringList invitees = jct->invitees();
+	for ( QStringList::Iterator it = invitees.begin(); it != invitees.end(); ++it )
+		qDebug( " - %s", (*it).ascii() );
+	emit conferenceJoined( jct->guid(), jct->participants(), jct->invitees() );
 }
 
 // INTERNALS //

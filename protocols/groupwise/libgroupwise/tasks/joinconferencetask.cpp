@@ -50,8 +50,9 @@ bool JoinConferenceTask::take( Transfer * transfer )
 			{
 				Field::SingleField * contact = 0;
 				Field::FieldList contactList = participants->fields();
+				const Field::FieldListIterator end = contactList.end();
 				for ( Field::FieldListIterator it = contactList.find( NM_A_SZ_DN );
-					 it != contactList.end();
+					 it != end;
 					 it = contactList.find( ++it, NM_A_SZ_DN ) )
 				{
 					contact = static_cast<Field::SingleField *>( *it );
@@ -65,22 +66,49 @@ bool JoinConferenceTask::take( Transfer * transfer )
 							m_unknowns.append( dn );
 					}
 				}
-				if ( m_unknowns.empty() )	// ready to chat
+			}
+			else 
+				setError( GroupWise::Protocol );
+			
+			// now, extract the list of pending invites and store them
+			Field::MultiField * invitees = responseFields.findMultiField( NM_A_FA_RESULTS );
+			if ( invitees )
+			{
+				Field::SingleField * contact = 0;
+				Field::FieldList contactList = invitees->fields();
+				const Field::FieldListIterator end = contactList.end();
+				for ( Field::FieldListIterator it = contactList.find( NM_A_SZ_DN );
+					 it != end;
+					 it = contactList.find( ++it, NM_A_SZ_DN ) )
 				{
-					qDebug( "JoinConferenceTask::finished()" );
-					finished();	
-				}
-				else								// need to get some more details first
-				{
-					qDebug( "JoinConferenceTask::slotReceiveUserDetails(), requesting details" );
-					connect( client()->userDetailsManager(), 
-							SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ),
-							SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
-					client()->userDetailsManager()->requestDetails( m_unknowns );
+					contact = static_cast<Field::SingleField *>( *it );
+					if ( contact )
+					{
+						// HACK: lowercased DN 
+					 	QString dn = contact->value().toString().lower();
+						m_invitees.append( dn );
+						// need to ask for details for these contacts
+						if ( !client()->userDetailsManager()->known( dn )  )
+							m_unknowns.append( dn );
+					}
 				}
 			}
 			else 
 				setError( GroupWise::Protocol );
+
+			if ( m_unknowns.empty() )	// ready to chat
+			{
+				qDebug( "JoinConferenceTask::finished()" );
+				finished();	
+			}
+			else								// need to get some more details first
+			{
+				qDebug( "JoinConferenceTask::slotReceiveUserDetails(), requesting details" );
+				connect( client()->userDetailsManager(), 
+						SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ),
+						SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
+				client()->userDetailsManager()->requestDetails( m_unknowns );
+			}
 		}
 		else
 			setError( response->resultCode() );
@@ -113,11 +141,21 @@ void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details 
 		qDebug( " - finished()" );
 		finished();
 	}
+	else
+	{
+		qDebug( " - ERROR - we requested details for the list of chat participants/invitees, but the server did not send us all the details! - setting finished() anyway, so the chat can take place." );
+		finished();
+	}
 }
 
 QStringList JoinConferenceTask::participants() const
 {
 	return m_participants;
+}
+
+QStringList JoinConferenceTask::invitees() const
+{
+	return m_invitees;
 }
 
 QString JoinConferenceTask::guid() const

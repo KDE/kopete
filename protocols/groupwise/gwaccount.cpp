@@ -277,7 +277,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveInviteNotify( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SLOT( receiveInviteDeclined( const ConferenceEvent & ) ) );
 
-	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList & ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & ) ) );
+	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList &, const QStringList &  ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & , const QStringList & ) ) );
 
 	// typing events
 	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ),
@@ -850,7 +850,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	dlg->show();
 }
 
-void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStringList & participants )
+void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStringList & participants, const QStringList & invitees )
 {
 	// get a new GWMM
 	KopeteContactPtrList others;
@@ -865,7 +865,18 @@ void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStrin
 			c->joinConference( guid );
 		}
 		else
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << *it << endl;
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for participant DN: " << *it << endl;
+	}
+	// add each invitee too
+	for ( QValueList<QString>::ConstIterator it = invitees.begin(); it != invitees.end(); ++it )
+	{
+		GroupWiseContact * c = contactForDN( *it );
+		if ( c )
+		{
+			mgr->addInvitee( c );
+		}
+		else
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for invitee DN: " << *it << endl;
 	}
 	mgr->view( true )->raise( false );
 }
@@ -879,8 +890,7 @@ void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & even
 		GroupWiseContact * c = contactForDN( event.user );
 		if ( !c )
 			c = createTemporaryContact( event.user );
-		mgr->addContact( c );
-		c->joinConference( event.guid );
+		mgr->joined( c );
 	}
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
@@ -914,12 +924,7 @@ void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
-		{
-			QString from = c->metaContact()->displayName();
-
-			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has rejected an invitation to join this conversation.").arg( from ), KopeteMessage::Internal, KopeteMessage::PlainText );
-			mgr->appendMessage( declined );
-		}
+			mgr->inviteDeclined( c );
 	}
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
@@ -934,7 +939,8 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 		GroupWiseContact * c = contactForDN( event.user );
 		if ( !c )
 			c = createTemporaryContact( event.user );
-
+		
+		mgr->addInvitee( c );
 		KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
 		mgr->appendMessage( declined );
 	}
