@@ -69,11 +69,11 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, QStr
 	canSend = true;
 
 	delete p;
-}
 #else
 	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
 	return;
 #endif
+}
 
 SMSSendProvider::~SMSSendProvider()
 {
@@ -153,11 +153,11 @@ bool SMSSendProvider::send(QString nr, QString message)
 		}
 	}
 	return false;
-}
 #else
 	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
 	return false;
 #endif
+}
 
 
 
