@@ -23,10 +23,10 @@
 #include <klocale.h>
 #include <kiconloader.h>
 
-#include "kopeteemoticons.h"
 #include "kopetemessage.h"
+#include "kopeteemoticons.h"
 #include "kopetemetacontact.h"
-
+#include "kopeteprotocol.h"
 
 //
 // This define say if the message is stored internaly as a QDomDocument, or as simples element.
@@ -605,6 +605,8 @@ const QDomDocument KopeteMessage::asXML() const
 		QDomElement fromContactNode = doc.createElement( QString::fromLatin1("contact") );
 		fromContactNode.setAttribute( QString::fromLatin1("contactId"), d->from->contactId() );
 		fromContactNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( d->from->displayName() ) );
+		QString iconPath = KGlobal::iconLoader()->iconPath( d->from->protocol()->pluginIcon(), 		KIcon::Small );
+		fromContactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
 		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName() : d->from->displayName();
 		fromContactNode.setAttribute( QString::fromLatin1("metaContactDisplayName"),  fromName  );
 		fromNode.appendChild( fromContactNode );
@@ -633,6 +635,9 @@ const QDomDocument KopeteMessage::asXML() const
 			cNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( c->displayName() ) );
 			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ?
 				QStyleSheet::escape( c->metaContact()->displayName() ) : QStyleSheet::escape( c->displayName() ) );
+			QString iconPath = KGlobal::iconLoader()->iconPath(c->protocol()->pluginIcon(), 		KIcon::Small );
+			cNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
+			kdDebug() << "Protocol Icon:" << iconPath << endl;
 			toNode.appendChild( cNode );
 		}
 	//}

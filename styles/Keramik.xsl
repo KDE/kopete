@@ -38,6 +38,11 @@
 						<xsl:text>System Message</xsl:text>
 					</xsl:when>
 					<xsl:when test="@direction='1'"><!-- Outgoing -->
+						<img width="16" height="16" align="center" border="0" style="margin-right:6px;">
+							<xsl:attribute name="src">
+								<xsl:value-of select="to/contact/@protocolIcon"/>
+							</xsl:attribute>
+						</img>
 						<xsl:text>To </xsl:text>
 						<span class="KopeteDisplayName">
 							<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
@@ -46,6 +51,11 @@
 						<xsl:value-of select="@time"/>
 					</xsl:when>
 					<xsl:otherwise><!-- Incoming / Action message -->
+						<img width="16" height="16" align="center" border="0" style="margin-right:6px;">
+							<xsl:attribute name="src">
+								<xsl:value-of select="from/contact/@protocolIcon"/>
+							</xsl:attribute>
+						</img>
 						<xsl:text>From </xsl:text>
 						<span class="KopeteDisplayName">
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
