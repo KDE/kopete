@@ -39,3 +39,20 @@ Porting from Kopete 0.9 to Kopete 0.10
 	.) connect now takes the initial status as parameter
 	.) autoLogin has been renamed autoConnect for consistency
 	
+
+*) KopeteContactList has been renamed to Kopete::ContactList
+	.) contactList() has been renamed to self()
+	.) getGroup has been renamed to group() or findGroup()
+	.) findContact now return a Contact
+	.) findContactByDisplayName has been renamed findMetaContactByDisplayName
+	.) metaContactDeleted signal has been renamed MetaContactRemoved for consistency
+	
+*) KopeteMetaContact has been renamed to Kopete::MetaContact
+	.) persistentDataChanged  take no more argument
+	.) isTopLevel has been removed
+	.) groupSyncMode has been removed because it is broken
+	
+*) KopeteContact has been renamed to Kopete::Contact
+	.) displayName has finaly been totaly removed
+	.) slotDeleteContact has been renamed to deleteContact
+	.) slotUserInfo has been renamed userInfo and is now pure virtual

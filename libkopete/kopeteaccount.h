@@ -25,6 +25,7 @@
 
 class QDomNode;
 class KActionMenu;
+class KConfigGroup;
 
 
 namespace Kopete

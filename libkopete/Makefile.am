@@ -14,7 +14,8 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 lib_LTLIBRARIES = libkopete.la
 
 libkopete_la_SOURCES = kopetepluginmanager.cpp kopeteplugin.cpp kopeteprotocol.cpp \
-	kopeteaccountmanager.cpp kopeteaccount.cpp
+	kopeteaccountmanager.cpp kopeteaccount.cpp \
+	kopetecontactlist.cpp kopetecontact.cpp kopetemetacontact.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc -lkutils $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_)
