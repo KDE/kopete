@@ -37,7 +37,7 @@
 // Ugly hack to remain compatible with KDE 3.0 - We can't #ifdef out
 // preprocessor directives :(
 #ifndef KDE_IS_VERSION
-#define KDE_IS_VERSION 0
+#define KDE_IS_VERSION(x,y,z) 0
 #endif
 
 MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
@@ -360,7 +360,7 @@ void MSNNotifySocket::slotOpenInbox()
 		// though, so we can't do anything about it. For KDE 3.2 and newer
 		// we use the improved KRun that auto-deletes the temp file when done.
 
-#if defined(KDE_IS_VERSION) && KDE_IS_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,90)
 		KRun::runURL( tmpFile.name(), "text/html", true );
 #else
 		KRun::runURL( tmpFile.name(), "text/html" );
