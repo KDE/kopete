@@ -22,6 +22,7 @@
 //#include <qpixmap.h>
 #include <qtimer.h>
 #include <qtooltip.h>
+#include <qregexp.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -228,12 +229,29 @@ void KopeteSystemTray::addBalloon()
 	{
 		KopeteMessage msg = mEventList.first()->message();
 
-		if( msg.from() )  
+		if ( msg.from() )
 		{
-			QString msgText = msg.plainBody();
+			QString msgText = msg.parsedBody();
 			kdDebug(14010) << k_funcinfo << "msgText=" << msgText << endl;
-			if( msgText.length() > 30 )
-				msgText = msgText.left(30) + QString::fromLatin1("...");
+			QRegExp rx( "(<a[^>]+[^<]+</a>)" );
+			if ( rx.search( msgText ) == -1 )
+			{
+				// no URLs in text, just pick the first 30 chars of 
+				// the plain text if necessary
+				msgText = msg.plainBody();
+				if( msgText.length() > 30 )
+					msgText = msgText.left( 30 ) + QString::fromLatin1( "..." );
+			}
+			else
+			{
+				if( msgText.length() > 30 )
+				{
+					// pull the first URL out and use that in the balloon
+					msgText = QString::fromLatin1( "..." ) + rx.cap( 1 )
+						+ QString::fromLatin1( "..." );
+				}
+			}
+			kdDebug(14010) << k_funcinfo << "msgText=" << msgText << endl;
 
 			QString msgFrom;
 			if( msg.from()->metaContact() )
