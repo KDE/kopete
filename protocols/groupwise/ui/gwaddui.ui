@@ -90,7 +90,7 @@
                                     <bool>true</bool>
                                 </property>
                                 <property name="text">
-                                    <string>User na&amp;me:</string>
+                                    <string>Userna&amp;me:</string>
                                 </property>
                                 <property name="accel">
                                     <string>Alt+M</string>

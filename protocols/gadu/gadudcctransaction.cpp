@@ -351,24 +351,24 @@ GaduDCCTransaction::watcher() {
 				switch( dccEvent->event.dcc_error ) {
 
 					case GG_ERROR_DCC_REFUSED:
-						transfer_->slotError( KopeteTransfer::Refused, i18n( "Connection to peer was refused, possibly it doesn't listein for incomming connections" ) );
+						transfer_->slotError( KopeteTransfer::Refused, i18n( "Connection to peer was refused; it possibly does not listen for incoming connections." ) );
 					break;
 
 					case GG_ERROR_DCC_EOF:
-						transfer_->slotError( KopeteTransfer::CanceledRemote, i18n( "File transfer transaction wasn't agreed by peer" ) );
+						transfer_->slotError( KopeteTransfer::CanceledRemote, i18n( "File transfer transaction was not agreed by peer." ) );
 					break;
 
 					case GG_ERROR_DCC_HANDSHAKE:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "File transfer handshake failure" ) );
+						transfer_->slotError( KopeteTransfer::Other, i18n( "File-transfer handshake failure." ) );
 					break;
 					case GG_ERROR_DCC_FILE:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "File transfer had problems with the file" ) );
+						transfer_->slotError( KopeteTransfer::Other, i18n( "File transfer had problems with the file." ) );
 					break;
 					case GG_ERROR_DCC_NET:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "There was network error during file transfer" ) );
+						transfer_->slotError( KopeteTransfer::Other, i18n( "There was network error during file transfer." ) );
 					break;
 					default:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "Unknown File Transfer error" ) );
+						transfer_->slotError( KopeteTransfer::Other, i18n( "Unknown File-Transfer error." ) );
 					break;
 				}
 			}
