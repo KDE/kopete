@@ -145,7 +145,7 @@ AppearanceConfig::~AppearanceConfig()
 
 void AppearanceConfig::save()
 {
-	kdDebug() << "[AppearanceConfig] save()" << endl;
+	kdDebug(14000) << "[AppearanceConfig] save()" << endl;
 
 	KopetePrefs *p = KopetePrefs::prefs();
 
@@ -177,21 +177,21 @@ void AppearanceConfig::save()
 	p->setSendMessageShiftEnter(mPrfsChatWindow->cb_ShiftEnter->isChecked());
 
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
-	kdDebug() << "[AppearanceConfig] calling KopetePrefs::save()" << endl;
+	kdDebug(14000) << "[AppearanceConfig] calling KopetePrefs::save()" << endl;
 	p->save();
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 }
 
 void AppearanceConfig::slotConfigChanged(void)
 {
-	kdDebug() << "[AppearanceConfig] slotConfigChanged(), calling reopen() now..." << endl;
+	kdDebug(14000) << "[AppearanceConfig] slotConfigChanged(), calling reopen() now..." << endl;
 
 	reopen(); // I am lazy :P
 }
 
 void AppearanceConfig::reopen()
 {
-	kdDebug() << "[AppearanceConfig] reopen()" << endl;
+	kdDebug(14000) << "[AppearanceConfig] reopen()" << endl;
 
 	KopetePrefs *p = KopetePrefs::prefs();
 

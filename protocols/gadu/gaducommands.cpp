@@ -144,19 +144,19 @@ SearchCommand::watcher()
         switch( session_->error )
         {
         case GG_ERROR_RESOLVING:
-            kdDebug(713)<<"Resolving error."<<endl;
+            kdDebug(14100713)<<"Resolving error."<<endl;
             break;
         case GG_ERROR_CONNECTING:
-            kdDebug(713)<<"Connecting error."<<endl;
+            kdDebug(14100713)<<"Connecting error."<<endl;
             break;
         case GG_ERROR_READING:
-            kdDebug(713)<<"Reading error."<<endl;
+            kdDebug(14100713)<<"Reading error."<<endl;
             break;
         case GG_ERROR_WRITING:
-            kdDebug(713)<<"Writting error."<<endl;
+            kdDebug(14100713)<<"Writting error."<<endl;
             break;
         default:
-            kdDebug(713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
+            kdDebug(14100713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
 
         }
         done_ = true;
@@ -223,19 +223,19 @@ RegisterCommand::watcher()
         switch( session_->error )
         {
         case GG_ERROR_RESOLVING:
-            kdDebug(713)<<"Resolving error."<<endl;
+            kdDebug(14100713)<<"Resolving error."<<endl;
             break;
         case GG_ERROR_CONNECTING:
-            kdDebug(713)<<"Connecting error."<<endl;
+            kdDebug(14100713)<<"Connecting error."<<endl;
             break;
         case GG_ERROR_READING:
-            kdDebug(713)<<"Reading error."<<endl;
+            kdDebug(14100713)<<"Reading error."<<endl;
             break;
         case GG_ERROR_WRITING:
-            kdDebug(713)<<"Writting error."<<endl;
+            kdDebug(14100713)<<"Writting error."<<endl;
             break;
         default:
-            kdDebug(713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
+            kdDebug(14100713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
             break;
         }
         done_ = true;
@@ -520,7 +520,7 @@ UserlistPutCommand::watcher()
 UserlistGetCommand::UserlistGetCommand( QObject* parent, const char* name )
     : GaduCommand( parent, name ), session_(0)
 {
-    kdDebug()<<"Userlist created"<<endl;
+    kdDebug(14100)<<"Userlist created"<<endl;
 }
 
 UserlistGetCommand::~UserlistGetCommand()
@@ -541,9 +541,9 @@ UserlistGetCommand::execute()
 {
     session_ = gg_userlist_get( uin_, password_.local8Bit(), 1 );
     connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
-    kdDebug()<<"userlist executing"<<endl;
+    kdDebug(14100)<<"userlist executing"<<endl;
     checkSocket( session_->fd, session_->check );
-    kdDebug()<<"userlist ending"<<endl;
+    kdDebug(14100)<<"userlist ending"<<endl;
 }
 
 
@@ -551,7 +551,7 @@ void
 UserlistGetCommand::watcher()
 {
     disableNotifiers();
-    kdDebug()<<"Watching start"<<endl;
+    kdDebug(14100)<<"Watching start"<<endl;
 
     if ( gg_userlist_get_watch_fd( session_ ) == -1 ) {
         gg_userlist_get_free( session_ );
@@ -607,7 +607,7 @@ UserlistGetCommand::watcher()
         return;
     }
 
-    kdDebug()<<"Watching end"<<endl;
+    kdDebug(14100)<<"Watching end"<<endl;
     enableNotifiers( session_->check );
 }
 

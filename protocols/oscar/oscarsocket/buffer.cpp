@@ -121,7 +121,7 @@ int Buffer::addFlap(const BYTE channel)
 /** Prints out the buffer */
 void Buffer::print() const
 {
-	kdDebug() << toString() << endl;
+	kdDebug(14150) << toString() << endl;
 }
 
 // Returns a QString representation
@@ -201,7 +201,7 @@ DWORD Buffer::getDWord()
 void Buffer::OnBufError(QString s)
 {
 	// Taking this out for now....
-	//kdDebug() << "Buffer error: " << s << endl;
+	//kdDebug(14150) << "Buffer error: " << s << endl;
 }
 
 /** sets the buffer and length to the given values */

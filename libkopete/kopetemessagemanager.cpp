@@ -98,7 +98,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 
 KopeteMessageManager::~KopeteMessageManager()
 {
-	kdDebug() << "KopeteMessageManager::~KopeteMessageManager" <<endl;
+	kdDebug(14010) << "KopeteMessageManager::~KopeteMessageManager" <<endl;
 	d->mCanBeDeleted=false; //prevent double deletion
 	emit dying(this);
 	delete widget();
@@ -139,7 +139,7 @@ void KopeteMessageManager::newChatWindow()
 		d->mChatWindow->setSendEnabled(d->mSendEnabled);
 
 		/* When the window is shown, we have to delete this contact event */
-//		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
+//		kdDebug(14010) << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect (d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
 		connect (d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
@@ -165,7 +165,7 @@ void KopeteMessageManager::newReplyWindow()
 {
 	if (d->mWidget == Email)
 	{
-		kdDebug() << "[KopeteMessageManager] newReplyWindow() called for email-type window" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] newReplyWindow() called for email-type window" << endl;
 		d->mEmailReplyWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailReplyWindow->setSendEnabled(true);
 		d->mEmailReplyWindow->setReplyMode(true);
@@ -186,7 +186,7 @@ void KopeteMessageManager::setReadMode(int mode)
 	}
 	else
 	{
-		kdDebug() << "[KopeteMessageManager] ERROR: unknown reading method, setting to default" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] ERROR: unknown reading method, setting to default" << endl;
 		d->mReadMode = Queued;
 	}
 }
@@ -215,14 +215,14 @@ bool KopeteMessageManager::emptyMessageBuffer()
 {
 	if (!widget() )
 	{
-		kdDebug() << "KopeteMessageManager::emptyMessageBuffer: mChatWindow just doesn't exist" << endl;
+		kdDebug(14010) << "KopeteMessageManager::emptyMessageBuffer: mChatWindow just doesn't exist" << endl;
 		newChatWindow();
 	}
 
 	bool foreignMessage = false;
 	for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it = d->mMessageQueue.begin())
 	{
-//		kdDebug() << "KopeteMessageManager::emptyMessageBuffer: Inserting message from " << (*it).from()->displayName() << endl;
+//		kdDebug(14010) << "KopeteMessageManager::emptyMessageBuffer: Inserting message from " << (*it).from()->displayName() << endl;
 		if ( (*it).from() != d->mUser )
 			foreignMessage = true;
 
@@ -242,27 +242,27 @@ void KopeteMessageManager::readMessages()
 {
 	if(d->isBusy)
 	{
-		kdDebug() << "KopeteMessageManager::readMessages: Busy! A plugin is working on a precedent message" << endl;
+		kdDebug(14010) << "KopeteMessageManager::readMessages: Busy! A plugin is working on a precedent message" << endl;
 		return;
 	}
 
 	if (!widget())
 	{
-		kdDebug() << "KopeteMessageManager::readMessages: mChatWindow just doesn't exist" << endl;
+		kdDebug(14010) << "KopeteMessageManager::readMessages: mChatWindow just doesn't exist" << endl;
 		newChatWindow();
 	}
 	QWidget *window = widget();
 	if ( !window )
 	{
-		kdDebug() << "KopeteMessageManager::readMessages: WARNING: cannot get the ChatWindow"  << endl;
+		kdDebug(14010) << "KopeteMessageManager::readMessages: WARNING: cannot get the ChatWindow"  << endl;
 		d->mMessageQueue.clear();
 		return;
 	}
 
 /*	if (window->isMinimized())
-		kdDebug() << "[KopeteMessageManager] window is minimized" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] window is minimized" << endl;
 	if (window->isHidden())
-		kdDebug() << "[KopeteMessageManager] window is hidden" << endl;*/
+		kdDebug(14010) << "[KopeteMessageManager] window is hidden" << endl;*/
 
 	d->isBusy=true;
 	bool queueEmpty = d->mMessageQueue.isEmpty();
@@ -314,16 +314,16 @@ void KopeteMessageManager::slotReadMessages()
 
 void KopeteMessageManager::slotReply()
 {
-	kdDebug() << "[KopeteMessageManager] slotReply() called." << endl;
+	kdDebug(14010) << "[KopeteMessageManager] slotReply() called." << endl;
 	if (d->mEmailReplyWindow == 0L)
 	{
 		/* PLTHARG! */
-		kdDebug() << "[KopeteMessageManager] mEmailReplyWindow == 0L, calling nRW()" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] mEmailReplyWindow == 0L, calling nRW()" << endl;
 		newReplyWindow();
 	}
 	else
 	{
-		kdDebug() << "[KopeteMessageManager] mEmailWindow != 0L, not starting a new one (duh)." << endl;
+		kdDebug(14010) << "[KopeteMessageManager] mEmailWindow != 0L, not starting a new one (duh)." << endl;
 	}
 }
 
@@ -344,18 +344,18 @@ void KopeteMessageManager::slotChatWindowClosing()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		kdDebug() << "KopeteMessageManager::slotChatWindowClosing : Chat Window closed, now 0L" << endl;
+		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing : Chat Window closed, now 0L" << endl;
 		d->mChatWindow = 0L;
 	}
 	else if (d->mWidget == Email)
 	{
-		kdDebug() << "KopeteMessageManager::slotChatWindowClosing : Email Window closed, now 0L." << endl;
+		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing : Email Window closed, now 0L." << endl;
 		delete d->mEmailWindow;
 		d->mEmailWindow = 0L;
 	}
 	if(d->mCanBeDeleted)
 	{
-		kdDebug() << "KopeteMessageManager::slotChatWindowClosing : delete KMM" << endl;
+		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing : delete KMM" << endl;
 		deleteLater();
 	}
 }
@@ -373,14 +373,14 @@ void KopeteMessageManager::slotCancelUnreadMessageEvent()
 {
 	if (d->mUnreadMessageEvent == 0L)
 	{
-		kdDebug() << "[KopeteMessageManager] No event to delete" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] No event to delete" << endl;
 	}
 	else
 	{
-		kdDebug() << "[KopeteMessageManager] cancelUnreadMessageEvent Deleting Event" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] cancelUnreadMessageEvent Deleting Event" << endl;
 		delete d->mUnreadMessageEvent;
 		d->mUnreadMessageEvent = 0L;
-		kdDebug() << "[KopeteMessageManager] cancelUnreadMessageEvent Event Deleted" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] cancelUnreadMessageEvent Event Deleted" << endl;
 	}
 	emptyMessageBuffer();
 }
@@ -389,7 +389,7 @@ void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
 {
 	if ( e == d->mUnreadMessageEvent)
 	{
-		kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;
+		kdDebug(14010) << "[KopeteMessageManager] Event done(), now 0L" << endl;
 		d->mUnreadMessageEvent = 0L;
 	}
 }
@@ -454,7 +454,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 {
 	if ( d->mContactList.contains(c) )
 	{
-		kdDebug() << "KopeteMessageManager::addContact: Contact already exists" <<endl;
+		kdDebug(14010) << "KopeteMessageManager::addContact: Contact already exists" <<endl;
 		emit contactAdded(c);
 	}
 	else
@@ -462,7 +462,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 		if(d->mContactList.count()==1 && d->isEmpty)
 		{
 			KopeteContact *old=d->mContactList.first();
-			kdDebug() << "KopeteMessageManager::addContact: " <<old->displayName() << " left and " << c->displayName() << " joined " <<endl;
+			kdDebug(14010) << "KopeteMessageManager::addContact: " <<old->displayName() << " left and " << c->displayName() << " joined " <<endl;
 			d->mContactList.remove(old);
 			d->mContactList.append(c);
 			emit contactAdded(c);
@@ -470,7 +470,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 		}
 		else
 		{
-			kdDebug() << "KopeteMessageManager::addContact: Contact Joined session : " <<c->displayName() <<endl;
+			kdDebug(14010) << "KopeteMessageManager::addContact: Contact Joined session : " <<c->displayName() <<endl;
 			d->mContactList.append(c);
 			emit contactAdded(c);
 		}
@@ -485,7 +485,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 
 	if(d->mContactList.count()==1)
 	{
-		kdDebug() << "KopeteMessageManager::removeContact - Contact not removed. Keep always one contact" <<endl;
+		kdDebug(14010) << "KopeteMessageManager::removeContact - Contact not removed. Keep always one contact" <<endl;
 		d->isEmpty=true;
 	}
 	else
@@ -520,7 +520,7 @@ void KopeteMessageManager::userTypingMsg ( const KopeteContact *c , bool t )
 
 void KopeteMessageManager::slotTyping ( bool t )
 {
-//	kdDebug() << "KopeteMessageManager::slotTyping "<< t << endl;
+//	kdDebug(14010) << "KopeteMessageManager::slotTyping "<< t << endl;
 	emit typingMsg(t);
 }
 
@@ -538,7 +538,7 @@ KopeteMessage KopeteMessageManager::currentMessage()
 		if (d->mChatWindow)
 			return d->mChatWindow->currentMessage();
 	}
-	kdDebug() << "KopeteMessageManager::currentMessage(); ChatWindow does not exist!" <<endl;
+	kdDebug(14010) << "KopeteMessageManager::currentMessage(); ChatWindow does not exist!" <<endl;
 	return KopeteMessage();
 }
 

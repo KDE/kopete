@@ -84,14 +84,14 @@ void KopeteProtocol::registerContact( KopeteContact *c )
 
 void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
 {
-	kdDebug() << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
+	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
 	m_contacts.remove( c->contactId() );
 }
 
 bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName, 
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {	
-	kdDebug() << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
+	kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
 		<< "; groupName: " << groupName  << endl;
 
 	//If this is a temporary contact, use the temporary group
@@ -137,7 +137,7 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 
 bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
 {
-	kdDebug() << "[KopeteProtocol] addContactToMetaContact() Not Implemented!!!" << endl;
+	kdDebug(14010) << "[KopeteProtocol] addContactToMetaContact() Not Implemented!!!" << endl;
 	return false;
 }
 

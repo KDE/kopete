@@ -43,7 +43,7 @@ OscarConnection::~OscarConnection()
 		No need to connect the signal in derived classes, just override this slot */
 void OscarConnection::slotRead()
 {
-	kdDebug() << "[OSCAR] OscarConnection: in slotRead(), " << bytesAvailable() << " bytes, name: " << mConnName << endl;
+	kdDebug(14150) << "[OSCAR] OscarConnection: in slotRead(), " << bytesAvailable() << " bytes, name: " << mConnName << endl;
   Buffer inbuf;
   int len = bytesAvailable();
 	char *buf = new char[len];

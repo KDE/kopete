@@ -56,7 +56,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
 {
 	KWin::setState(winId(), NET::SkipTaskbar);
-	kdDebug() << "[KopeteWindow] KopeteWindow()" << endl;
+	kdDebug(14000) << "[KopeteWindow] KopeteWindow()" << endl;
 
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
@@ -184,12 +184,12 @@ void KopeteWindow::initSystray ( void )
 KopeteWindow::~KopeteWindow()
 {
 //	delete tray;
-	kdDebug() << "[KopeteWindow] ~KopeteWindow()" << endl;
+	kdDebug(14000) << "[KopeteWindow] ~KopeteWindow()" << endl;
 }
 
 bool KopeteWindow::queryExit()
 {
-	kdDebug() << "[KopeteWindow] queryExit()" << endl;
+	kdDebug(14000) << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
 	//Now in Kopete::~Kopete().
 	// (KDE3.1 beta2 did't save contact-list on exit)
@@ -291,8 +291,8 @@ void KopeteWindow::showStatusbar(void)
 
 void KopeteWindow::slotToggleShowOffliners ( void )
 {
-	kdDebug() << "[KopeteWindow] slotToggleShowOffliners()" << endl;
-	kdDebug() << "[KopeteWindow] show offliners KAction is " << actionShowOffliners->isChecked() << endl;
+	kdDebug(14000) << "[KopeteWindow] slotToggleShowOffliners()" << endl;
+	kdDebug(14000) << "[KopeteWindow] show offliners KAction is " << actionShowOffliners->isChecked() << endl;
 
 	KopetePrefs *p = KopetePrefs::prefs();
 	p->setShowOffline ( actionShowOffliners->isChecked() );
@@ -304,8 +304,8 @@ void KopeteWindow::slotToggleShowOffliners ( void )
 
 void KopeteWindow::slotConfigChanged()
 {
-	kdDebug() << "[KopeteWindow] slotConfigChanged()" << endl;
-	kdDebug() << "[KopeteWindow] show offliners is " << KopetePrefs::prefs()->showOffline() << endl;
+	kdDebug(14000) << "[KopeteWindow] slotConfigChanged()" << endl;
+	kdDebug(14000) << "[KopeteWindow] show offliners is " << KopetePrefs::prefs()->showOffline() << endl;
 
 	actionShowOffliners->setChecked( KopetePrefs::prefs()->showOffline() );
 }
@@ -361,7 +361,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
-	kdDebug() << "KopeteWindow::slotQuit()" << endl;
+	kdDebug(14000) << "KopeteWindow::slotQuit()" << endl;
 
 	//I don't know why, but when this slot is called by the toolbar, that work fine
 	// but when this slot is called by the system try, the closeEvent's message is showed
@@ -372,7 +372,7 @@ void KopeteWindow::slotQuit()
 
 void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 {
-	kdDebug() << "KopeteWindow::slotPluginLoaded()" << endl;
+	kdDebug(14000) << "KopeteWindow::slotPluginLoaded()" << endl;
 
 	KopeteProtocol *proto = dynamic_cast<KopeteProtocol *>( p );
 	if( !proto )
@@ -402,7 +402,7 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 
 void KopeteWindow::slotProtocolDestroyed( QObject *o )
 {
-	kdDebug() << "KopeteWindow::slotProtocolDestroyed()" << endl;
+	kdDebug(14000) << "KopeteWindow::slotProtocolDestroyed()" << endl;
 
 	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ o ] );
 	if( !i )
@@ -415,7 +415,7 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 	const QString &icon )
 {
-	kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << icon << endl;
+	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << icon << endl;
 
 	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ p ] );
 	if( !i )
@@ -435,7 +435,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 		if( pm.isNull() )
 		{
 			/* No Pixmap found, fallback to Unknown */
-			kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
+			kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "
 				<< "Using unknown pixmap for status icon '" << icon << "'."
 				<< endl;
 			i->setPixmap( KIconLoader::unknown() );
@@ -448,7 +448,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 	else
 	{
 		
-		kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
+		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "
 				<< "Using movie."  << endl;
 		i->setMovie( mv );
 	}
@@ -457,7 +457,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	const QPoint &p )
 {
-	kdDebug() << "KopeteWindow::slotProtocolStatusIconRightClicked()" << endl;
+	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconRightClicked()" << endl;
 	KActionMenu *menu = proto->protocolActions();
 	if( menu )
 		menu->popup( p );

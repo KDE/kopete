@@ -294,7 +294,7 @@ GaduSession::checkDescriptor()
     default:
         emit error( i18n("Unknown event..."),
                     i18n("Can't handle an event. Please report this to zack@kde.org") );
-        kdDebug()<<"GaduGadu Event = "<<e->type<<endl;
+        kdDebug(14100)<<"GaduGadu Event = "<<e->type<<endl;
         break;
     }
 

@@ -123,7 +123,7 @@ void SSIData::print(void)
 {
 	for (SSI *i=first(); i; i = next())
 		{
-			kdDebug() << "[OSCAR][SSIData] name: " << i->name << ", gid: " << i->gid << ", bid: " << i->bid << ", type: "
+			kdDebug(14150) << "[OSCAR][SSIData] name: " << i->name << ", gid: " << i->gid << ", bid: " << i->bid << ", type: "
 				  << i->type << ", tbslen: " << i->tlvlength << endl;
 		} 
 }

@@ -87,7 +87,7 @@ Kopete::~Kopete()
 {
 	KopeteContactList::contactList()->save();
 	delete m_mainWindow;
-//	kdDebug() << "Kopete::~Kopete: done" <<endl;
+//	kdDebug(14000) << "Kopete::~Kopete: done" <<endl;
 }
 
 void Kopete::slotLoadPlugins()

@@ -67,7 +67,7 @@ KopeteContact::ContactStatus YahooStatus::translate() const
 
 QString YahooStatus::text() const
 {
-	kdDebug() << "YahooStatus::text()";
+	kdDebug(14180) << "YahooStatus::text()";
 
 	if(m_status == Offline || m_status == Available || m_status == Mobile || m_status == Invisible)
 		return "";
@@ -95,14 +95,14 @@ QString YahooStatus::text() const
 		return i18n(YSTSteppedOut);
 	else
 	{
-		kdDebug() << "Invalid status" << endl;
+		kdDebug(14180) << "Invalid status" << endl;
 		return "?";
 	}
 }
 
 QString YahooStatus::icon() const
 {
-	kdDebug() << "YahooStatus::icon()" << endl;
+	kdDebug(14180) << "YahooStatus::icon()" << endl;
 
 	if(m_status == Offline || m_status == Invisible)
 	{
@@ -130,7 +130,7 @@ QString YahooStatus::icon() const
 	}
 	else
 	{
-		kdDebug() << "Unknown status" << endl;
+		kdDebug(14180) << "Unknown status" << endl;
 		return "yahoo_unknown";
 	}
 }

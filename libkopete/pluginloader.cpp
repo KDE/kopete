@@ -81,7 +81,7 @@ LibraryLoader::~LibraryLoader()
 	while( i.current() )
 		remove( i.current() );
 
-	kdDebug() << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
+	kdDebug(14010) << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const
@@ -132,7 +132,7 @@ bool LibraryLoader::loadAll()
 			continue;
 
 		if ( !loadPlugin( *i ) )
-			kdDebug() << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
+			kdDebug(14010) << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
 	}
 
 	// load all misc plugins
@@ -143,7 +143,7 @@ bool LibraryLoader::loadAll()
 			continue;
 
 		if ( !loadPlugin( *i ) )
-			kdDebug() << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
+			kdDebug(14010) << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
 	}
 
 	return true;
@@ -219,7 +219,7 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 		KLibrary *lib = loader->library( QFile::encodeName( info.filename) );
 		if( !lib )
 		{
-			kdDebug() << "LibraryLoader::loadPlugin: Error while loading plugin: " << loader->lastErrorMessage() << endl;
+			kdDebug(14010) << "LibraryLoader::loadPlugin: Error while loading plugin: " << loader->lastErrorMessage() << endl;
 			return false;
 		}
 		plugin = KParts::ComponentFactory::createInstanceFromFactory<KopetePlugin> ( lib->factory(), this );
@@ -235,13 +235,13 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 
 		m_addressBookFields.insert( plugin, plugin->addressBookFields() );
 
-		kdDebug() << "LibraryLoader::loadPlugin: Successfully loaded plugin '" << spec << "'."<< endl;
+		kdDebug(14010) << "LibraryLoader::loadPlugin: Successfully loaded plugin '" << spec << "'."<< endl;
 		emit pluginLoaded( plugin );
 		return true;
 	}
 	else
 	{
-		kdDebug() << "LibraryLoader::loadPlugin: Plugin '" << spec << "' is already loaded!" << endl;
+		kdDebug(14010) << "LibraryLoader::loadPlugin: Plugin '" << spec << "' is already loaded!" << endl;
 		return false;
 	}
 }
@@ -261,7 +261,7 @@ bool LibraryLoader::remove( KopetePlugin *p )
 	if( !p )
 		return false;
 
-	kdDebug() << "LibraryLoader::remove: Removing plugin: " << p->pluginId() << endl;
+	kdDebug(14010) << "LibraryLoader::remove: Removing plugin: " << p->pluginId() << endl;
 
 	// Added by Duncan 20/01/2002
 	// We need to call unload function for the plugin

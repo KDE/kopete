@@ -53,7 +53,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     : KopeteProtocol( parent, name )
 {
     if ( protocolStatic_ )
-        kdDebug()<<"####"<<"GaduProtocol already initialized"<<endl;
+        kdDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;
     else
         protocolStatic_ = this;
 
@@ -168,7 +168,7 @@ GaduProtocol::isConnected() const
 KopeteContact*
 GaduProtocol::createContact( KopeteMetaContact* /*parent*/, const QString& serializedData )
 {
-    kdDebug()<<"####"<<"createContact() called with \""<<serializedData<<"\""<<endl;
+    kdDebug(14100)<<"####"<<"createContact() called with \""<<serializedData<<"\""<<endl;
     return 0L;
 }
 
@@ -350,14 +350,14 @@ GaduProtocol::error( const QString& title, const QString& message )
 void
 GaduProtocol::messageReceived( struct gg_event* e )
 {
-    //kdDebug()<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
+    //kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
 
     if ( !e->event.msg.message )
         return;
 
     if ( e->event.msg.sender == 0 ) {
         //system message, display them or not?
-        kdDebug()<<"####"<<" System Message "<<endl;
+        kdDebug(14100)<<"####"<<" System Message "<<endl;
         return;
     }
 
@@ -380,7 +380,7 @@ GaduProtocol::messageReceived( struct gg_event* e )
 void
 GaduProtocol::ackReceived( struct gg_event* e )
 {
-    kdDebug()<<"####"<<"Received an ACK from "<<e->event.ack.recipient<<endl;
+    kdDebug(14100)<<"####"<<"Received an ACK from "<<e->event.ack.recipient<<endl;
 }
 
 void
@@ -391,7 +391,7 @@ GaduProtocol::notify( struct gg_event* e )
     struct gg_notify_reply *n = e->event.notify;
 
     while( n && n->uin ) {
-        kdDebug()<<"### NOTIFY "<<n->uin<<endl;
+        kdDebug(14100)<<"### NOTIFY "<<n->uin<<endl;
         if ( !(c=contactsMap_.find(n->uin).data()) ) {
             ++n;
             continue;
@@ -433,7 +433,7 @@ GaduProtocol::statusChanged( struct gg_event* e )
 void
 GaduProtocol::pong()
 {
-    kdDebug()<<"####"<<" Pong..."<<endl;
+    kdDebug(14100)<<"####"<<" Pong..."<<endl;
 }
 
 void
@@ -447,7 +447,7 @@ GaduProtocol::connectionFailed( struct gg_event* /*e*/ )
 void
 GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
 {
-    kdDebug()<<"#### Gadu-Gadu connected!"<<endl;
+    kdDebug(14100)<<"#### Gadu-Gadu connected!"<<endl;
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( userUin_, password_ );
     QObject::connect( cmd, SIGNAL(done(const QStringList&)),
@@ -473,7 +473,7 @@ GaduProtocol::userlist( const QStringList& u )
 {
     int i;
     QString name, group, uin;
-    kdDebug()<<"### Got userlist"<<endl;
+    kdDebug(14100)<<"### Got userlist"<<endl;
     for ( QStringList::ConstIterator it = u.begin(); it != u.end(); ++it ) {
         QStringList user = QStringList::split( ";", *it );
         i = 0;
@@ -494,7 +494,7 @@ void
 GaduProtocol::slotGoOnline()
 {
     if ( !session_->isConnected() ) {
-        kdDebug()<<"#### Connecting..."<<endl;
+        kdDebug(14100)<<"#### Connecting..."<<endl;
         slotLogin();
     } else
         changeStatus( GG_STATUS_AVAIL );

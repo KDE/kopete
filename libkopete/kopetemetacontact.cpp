@@ -60,7 +60,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 {
 	if( m_contacts.contains( c ) )
 	{
-		kdDebug() << "KopeteMetaContact::addContact: WARNING: "
+		kdDebug(14010) << "KopeteMetaContact::addContact: WARNING: "
 			<< "Ignoring attempt to add duplicate contact " << c->contactId()
 			<< "!" << endl;
 	}
@@ -164,7 +164,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 {
 	if( !m_contacts.contains( c ) )
 	{
-		kdDebug() << "KopeteMetaContact::removeContact: Contact is not in this metaContact " << endl;
+		kdDebug(14010) << "KopeteMetaContact::removeContact: Contact is not in this metaContact " << endl;
 	}
 	else
 	{
@@ -186,7 +186,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
 				this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
 
-			kdDebug() << "KopeteMetaContact::removeContact: Contact disconected" << endl;
+			kdDebug(14010) << "KopeteMetaContact::removeContact: Contact disconected" << endl;
 		}
 		emit contactRemoved(c);
 	}
@@ -217,11 +217,11 @@ void KopeteMetaContact::setTopLevel( bool b )
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	const QString &identityId, const QString &contactId )
 {
-	//kdDebug() << "*** Num contacts: " << m_contacts.count() << endl;
+	//kdDebug(14010) << "*** Num contacts: " << m_contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		//kdDebug() << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
+		//kdDebug(14010) << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
 		if( (it.current()->contactId() == contactId ) && (it.current()->protocol()->pluginId() == protocolId ) && (it.current()->identityId() == identityId))
 			return it.current();
 	}
@@ -232,7 +232,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 
 void KopeteMetaContact::sendMessage()
 {
-	kdDebug() << "KopeteMetaContact::sendMessage() not implemented!" << endl;
+	kdDebug(14010) << "KopeteMetaContact::sendMessage() not implemented!" << endl;
 
 	/*
 		Algorithm:
@@ -260,7 +260,7 @@ void KopeteMetaContact::sendMessage()
 
 void KopeteMetaContact::startChat()
 {
-	kdDebug() << "KopeteMetaContact::startChat() not implemented!" << endl;
+	kdDebug(14010) << "KopeteMetaContact::startChat() not implemented!" << endl;
 
 	/*
 		Algorithm:
@@ -441,7 +441,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(c->protocol());
 		if (!p)
 		{
-			kdDebug() <<"KopeteMetaContact::slotContactStatusChanged: KopeteContact is not from a valid Protocol" <<endl;
+			kdDebug(14010) <<"KopeteMetaContact::slotContactStatusChanged: KopeteContact is not from a valid Protocol" <<endl;
 			return;
 		}
 		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
@@ -488,7 +488,7 @@ void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
 		return;
 	}
 
-//	kdDebug() << "KopeteMetaContact::moveToGroup: "<<from.string() <<" => "<<to.string() << endl;
+//	kdDebug(14010) << "KopeteMetaContact::moveToGroup: "<<from.string() <<" => "<<to.string() << endl;
 
 	m_groups.remove( from );
 
@@ -509,7 +509,7 @@ void KopeteMetaContact::removeFromGroup(  KopeteGroup *from)
 
 	if (!from || !m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()))
 	{
-		/*kdDebug() << "KopeteMetaContact::removeFromGroup: This contact is removed from all groups, deleting contact" <<endl;
+		/*kdDebug(14010) << "KopeteMetaContact::removeFromGroup: This contact is removed from all groups, deleting contact" <<endl;
 		KopeteContactList::contactList()->removeMetaContact(this);*/
 		return;
 	}
@@ -719,7 +719,7 @@ void KopeteMetaContact::setAddressBookField( KopetePlugin * p ,
 	if ( p && p->addressBookFields().contains( key ) )
 		m_addressBook.insert( key, value );
 	else
-		kdDebug() << "[KopeteMetaContact::setAddressBookField] Sorry, plugin "
+		kdDebug(14010) << "[KopeteMetaContact::setAddressBookField] Sorry, plugin "
 			  << p->pluginId() << " doesn't have field "
 			  << key << " registered" << endl;
 }

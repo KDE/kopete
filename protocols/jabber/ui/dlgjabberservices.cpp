@@ -109,7 +109,7 @@ void DlgJabberServices::slotQuery()
 	if(leServer->text().isEmpty())
 		leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 
-	kdDebug() << "[DlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
+	kdDebug(14130) << "[DlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
 
 	serviceTask->get(leServer->text());
 	serviceTask->go(false);
@@ -118,7 +118,7 @@ void DlgJabberServices::slotQuery()
 
 void DlgJabberServices::slotQueryFinished()
 {
-	kdDebug() << "[DlgJabberServices] Query task finished" << endl;
+	kdDebug(14130) << "[DlgJabberServices] Query task finished" << endl;
 
 	Jabber::JT_GetServices *task = (Jabber::JT_GetServices *)sender();
 

@@ -53,7 +53,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	kdDebug() << "IRCProtocol::IRCProtocol"<<endl;
+	kdDebug(14120) << "IRCProtocol::IRCProtocol"<<endl;
 	// Load all ICQ icons from KDE standard dirs
 	setStatusIcon( "irc_protocol_small" );
 
@@ -81,7 +81,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	QString listVersion=cfg->readEntry( "ContactList Version", "0.4.x" ) ;
 	if ( listVersion=="0.4.x" )
 	{
-		kdDebug() << "IRCProtocol::IRCProtocol: import contact from kopete 0.4.x" << endl;
+		kdDebug(14120) << "IRCProtocol::IRCProtocol: import contact from kopete 0.4.x" << endl;
 		importOldContactList();
 		cfg->setGroup("IRC");
 		cfg->writeEntry ( "ContactList Version", "0.5" );
@@ -109,7 +109,7 @@ KActionMenu* IRCProtocol::protocolActions()
 
 void IRCProtocol::slotNewConsole()
 {
-	kdDebug() << "IRCProtocol::slotNewConsole";
+	kdDebug(14120) << "IRCProtocol::slotNewConsole";
 	KGlobal::config()->setGroup("IRC");
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
 	QString server = KGlobal::config()->readEntry("Server", "(Console)");
@@ -134,7 +134,7 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 	KopeteMetaContact *m=KopeteContactList::contactList()->findContact( protocolID, QString::null, contactID);
 	if(m)
 	{
-		kdDebug() << "IRCProtocol::slotContactList: Warnign: "
+		kdDebug(14120) << "IRCProtocol::slotContactList: Warnign: "
 			<< "Contact already exists " << contactID << endl;
 		if(m->isTemporary())
 			m->setTemporary(false);

@@ -33,7 +33,7 @@ YahooContact::YahooContact(QString userID, QString fullName,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
 :  KopeteContact( protocol, userID, metaContact)
 {
-	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName << ")" << endl;
+	kdDebug(14180) << "YahooContact::YahooContact("<< userID << ", " << fullName << ")" << endl;
 
 	mUserID = userID;
 	mFullName = fullName;
@@ -53,20 +53,20 @@ YahooContact::YahooContact(QString userID, QString fullName,
 
 YahooContact::~YahooContact()
 {
-	kdDebug() << "Yahoo::~YahooContact()" << endl;
+	kdDebug(14180) << "Yahoo::~YahooContact()" << endl;
 }
 
 // Return status
 KopeteContact::ContactStatus YahooContact::status() const
 {
-	kdDebug() << "YahooContact::status()" << endl;
+	kdDebug(14180) << "YahooContact::status()" << endl;
 	return mStatus.translate();
 }
 
 // Return status text
 QString YahooContact::statusText() const
 {
-	kdDebug() << "Yahoo::statusText()";
+	kdDebug(14180) << "Yahoo::statusText()";
 	return mStatus.text();
 }
 
@@ -92,7 +92,7 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 
 	if (status != QString("")) {
 		mStatus = status;
-		kdDebug() << "Yahoo plugin: Updating status." << endl;
+		kdDebug(14180) << "Yahoo plugin: Updating status." << endl;
 	}
 	mStatusText = statusText;
 	emit statusChanged();
@@ -101,19 +101,19 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 
 bool YahooContact::isOnline() const
 {
-	kdDebug() << "[YahooContact::isOnline()]" << endl;
+	kdDebug(14180) << "[YahooContact::isOnline()]" << endl;
 	return status() != Offline && status() != Unknown;
 }
 
 bool YahooContact::isReachable()
 {
-	kdDebug() << "[YahooContact::isReachable()]" << endl;
+	kdDebug(14180) << "[YahooContact::isReachable()]" << endl;
 	return true;
 }
 
 QString YahooContact::identityId() const
 {
-	kdDebug() << "[YahooContact::identityId()]" << endl;
+	kdDebug(14180) << "[YahooContact::identityId()]" << endl;
 	return QString::null;
 }
 
@@ -126,39 +126,39 @@ QPixmap YahooContact::scaledStatusIcon(int size)
 
 int YahooContact::importance() const
 {
-	kdDebug() << "[YahooContact::importance()]" << endl;
+	kdDebug(14180) << "[YahooContact::importance()]" << endl;
 	return 0;
 }
 
 KActionCollection *YahooContact::customContextMenuActions()
 {
-	kdDebug() << "[YahooContact::customContextMenuActions()]" << endl;
+	kdDebug(14180) << "[YahooContact::customContextMenuActions()]" << endl;
 	return 0L;
 }
 
 void YahooContact::execute()
 {
-	kdDebug() << "[YahooContact::execute()]" << endl;
+	kdDebug(14180) << "[YahooContact::execute()]" << endl;
 }
 
 void YahooContact::slotViewHistory()
 {
-	kdDebug() << "[YahooContact::slotViewHistory()]" << endl;
+	kdDebug(14180) << "[YahooContact::slotViewHistory()]" << endl;
 }
 
 void YahooContact::slotDeleteContact()
 {
-	kdDebug() << "[YahooContact::slotDeleteContact()]" << endl;
+	kdDebug(14180) << "[YahooContact::slotDeleteContact()]" << endl;
 }
 
 void YahooContact::slotUserInfo()
 {
-	kdDebug() << "[YahooContact::slotUserInfo()]" << endl;
+	kdDebug(14180) << "[YahooContact::slotUserInfo()]" << endl;
 }
 
 void YahooContact::slotSendFile()
 {
-	kdDebug() << "[YahooContact::slotSendFile()]" << endl;
+	kdDebug(14180) << "[YahooContact::slotSendFile()]" << endl;
 }
 
 void YahooContact::slotMovedToMetaContact()

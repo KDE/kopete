@@ -24,14 +24,14 @@
 JabberResource::JabberResource()
 {
 
-	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
+	kdDebug(14130) << "Jabber resource: New Jabber resource (no params)." << endl;
 
 }
 
 JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const JabberProtocol::Presence &status, const QString &reason)
 {
 	
-	kdDebug() << QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
+	kdDebug(14130) << QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
 	
 	mResource = resource;
 	mPriority = priority;

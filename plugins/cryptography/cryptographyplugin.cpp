@@ -116,7 +116,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	if(msg.direction() != KopeteMessage::Inbound)
 	{
-		kdDebug() << "CryptographyPlugin::slotIncomingMessage: inbound messages" <<endl;
+		kdDebug(14303) << "CryptographyPlugin::slotIncomingMessage: inbound messages" <<endl;
 		if(m_cachedMessages.contains(body))
 		{
 			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(m_cachedMessages[body])+"</td></tr></table>"
@@ -152,7 +152,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		QStringList strlist= c->metaContact()->pluginData(this);
 		if(strlist.isEmpty())
 		{
-			kdDebug() << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
+			kdDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
 			return;
 		}
 		if(!key.isNull())
@@ -162,7 +162,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 	if(key.isEmpty())
 	{
-		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
+		kdDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
 		return;
 	}
 
@@ -193,7 +193,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		m_cachedMessages.insert(resultat,original);
 	}
 	else
-		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
+		kdDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
 
 }
 

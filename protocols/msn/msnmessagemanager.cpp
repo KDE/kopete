@@ -79,7 +79,7 @@ void MSNMessageManager::createChat( const QString &handle,
 {
 	if( m_chatService )
 	{
-		kdDebug() << "MSNMessageManager::createChat: "
+		kdDebug(14140) << "MSNMessageManager::createChat: "
 			<< "Service already exists, disconnect them." << endl;
 		delete m_chatService;
 	}
@@ -116,7 +116,7 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 		{
 			KopeteContact *kc=m->findContact( protocol()->pluginId(), QString::null, handle );
 			c=static_cast<MSNContact*>(kc);
-			kdDebug() << "MSNMessageManager::slotUpdateChatMember : WARNING - KopeteContact was found, but not on the protocl"  << endl;
+			kdDebug(14140) << "MSNMessageManager::slotUpdateChatMember : WARNING - KopeteContact was found, but not on the protocl"  << endl;
 		}
 		else
 		{
@@ -142,7 +142,7 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 
 void MSNMessageManager::slotSwitchBoardClosed()
 {
-	kdDebug() << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
+	kdDebug(14140) << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
 	delete m_chatService; //->deleteLater();
 	m_chatService=0l;
 
@@ -165,7 +165,7 @@ void MSNMessageManager::slotUserTypingMsg( const QString &handle )
 	MSNContact *c = static_cast<MSNContact*>( protocol()->contacts()[ handle.lower() ] );
 	if(!c)
 	{
-		kdDebug() << "MSNMessageManager::slotUserTypingMsg : WARNING - KopeteContact not found"  << endl;
+		kdDebug(14140) << "MSNMessageManager::slotUserTypingMsg : WARNING - KopeteContact not found"  << endl;
 		return;
 	}
 	userTypingMsg(c);
@@ -205,7 +205,7 @@ void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessa
 		if(id == -1)
 		{
 			m_messagesQueue.append(message);
-			kdDebug() << "MSNMessageManager::slotMessageSent: message added to the queue" <<endl;
+			kdDebug(14140) << "MSNMessageManager::slotMessageSent: message added to the queue" <<endl;
 		}
 		else
 		{
@@ -282,10 +282,10 @@ void MSNMessageManager::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
-		kdDebug() << "MSNMessageManager::sendMessageQueue: service doesn't exist" <<endl;
+		kdDebug(14140) << "MSNMessageManager::sendMessageQueue: service doesn't exist" <<endl;
 		return;
 	}
-	kdDebug() << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+	kdDebug(14140) << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
 	for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
 		//m_chatService->sendMsg( *it)  ;
@@ -362,7 +362,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 				rx.search(msg);
 				QString port = rx.cap(1);
 
-				kdDebug() << " MSNMessageManager::slotInvitation: filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
+				kdDebug(14140) << " MSNMessageManager::slotInvitation: filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
 
 				MFTS->setAuthCookie(authcook);
 				MFTS->connect(ip_adress, port.toUInt());
@@ -396,7 +396,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	{
 		if(m_invitations.contains(cookie))
 		{
-			kdDebug() << " MSNMessageManager::slotInvitation: canceled "<<  endl;
+			kdDebug(14140) << " MSNMessageManager::slotInvitation: canceled "<<  endl;
 			MSNFileTransferSocket *MFTS=m_invitations[cookie];
 			if(MFTS && MFTS->incoming())
 			{

@@ -167,7 +167,7 @@ QString IRCContact::statusIcon() const
 
 void IRCContact::incomingPrivMessage(const QString &originating, const QString &/*target_dest*/, const QString &/*message*/)
 {
-	//kdDebug()<< "IRCContact::incomingPrivMessage :"<<target <<endl;
+	//kdDebug(14120)<< "IRCContact::incomingPrivMessage :"<<target <<endl;
 	QString target= originating.section('!', 0, 0);
 
 	if (m_targetName.lower() == target.lower())
@@ -351,7 +351,7 @@ void IRCContact::unloading()
 {
 	if (mTabPage !=0)
 	{
-		kdDebug()<< "IRCContact::unloading()" <<endl;
+		kdDebug(14120)<< "IRCContact::unloading()" <<endl;
 		if (m_serverContact->closing() == false)
 			delete mTabPage;
 
@@ -364,7 +364,7 @@ void IRCContact::unloading()
 
 void IRCContact::joinNow()
 {
-	kdDebug() << "IRC Plugin: IRCContact::joinNow() creating mTabPage!" << endl;
+	kdDebug(14120) << "IRC Plugin: IRCContact::joinNow() creating mTabPage!" << endl;
 	mTabPage = new QVBox(m_serverContact->chatWindow()->mTabWidget);
 	if (isChannel())
 	{

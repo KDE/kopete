@@ -194,7 +194,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 			// mark the currently active resource
 			if (tmpResource->resource() == activeResource->resource() && resourceOverride)
 			{
-				kdDebug() << "[JabberContact] Activating item " << i << " as active resource." << endl;
+				kdDebug(14130) << "[JabberContact] Activating item " << i << " as active resource." << endl;
 				activeItem = i;
 			}
 		}
@@ -244,7 +244,7 @@ void JabberContact::slotUpdatePresence(const JabberProtocol::Presence newStatus,
 			dbgString += "STATUS_OFFLINE";
 			break;
 	}
-	kdDebug() << dbgString << " (Reason: " << reason << ")" << endl;
+	kdDebug(14130) << dbgString << " (Reason: " << reason << ")" << endl;
 
 	awayReason = reason;
 	presence = newStatus;
@@ -269,7 +269,7 @@ void JabberContact::slotUpdateContact(const Jabber::RosterItem &item)
 void JabberContact::slotRenameContact()
 {
 
-	kdDebug() << "[JabberContact] Renaming contact." << endl;
+	kdDebug(14130) << "[JabberContact] Renaming contact." << endl;
 
 	dlgJabberRename *renameDialog = new dlgJabberRename;
 
@@ -405,7 +405,7 @@ QString JabberContact::statusIcon() const
 void JabberContact::slotDeleteContact()
 {
 
-	kdDebug() << "[JabberContact] Removing user " << userId() << endl;
+	kdDebug(14130) << "[JabberContact] Removing user " << userId() << endl;
 
 	// unsubscribe
 	protocol->removeContact(rosterItem);
@@ -415,7 +415,7 @@ void JabberContact::slotDeleteContact()
 void JabberContact::slotSendAuth()
 {
 
-	kdDebug() << "[JabberContact] (Re)send auth " << userId() << endl;
+	kdDebug(14130) << "[JabberContact] (Re)send auth " << userId() << endl;
 
 	protocol->subscribed(Jabber::Jid(userId()));
 
@@ -424,7 +424,7 @@ void JabberContact::slotSendAuth()
 void JabberContact::slotRequestAuth()
 {
 
-	kdDebug() << "[JabberContact] (Re)request auth " << userId() << endl;
+	kdDebug(14130) << "[JabberContact] (Re)request auth " << userId() << endl;
 
 	protocol->subscribe(Jabber::Jid(userId()));
 
@@ -433,7 +433,7 @@ void JabberContact::slotRequestAuth()
 void JabberContact::addToGroup(KopeteGroup *group)
 {
 
-	kdDebug() << "[JabberContact] Adding user " << userId() << " to group " << group->displayName() << endl;
+	kdDebug(14130) << "[JabberContact] Adding user " << userId() << " to group " << group->displayName() << endl;
 
 	QStringList groups = rosterItem.groups();
 	groups.append(group->displayName());
@@ -446,7 +446,7 @@ void JabberContact::addToGroup(KopeteGroup *group)
 void JabberContact::moveToGroup(KopeteGroup *from, KopeteGroup *to)
 {
 
-	kdDebug() << "[JabberContact] Moving user " << userId() << " from group " << from->displayName() << " to group " << to->displayName() << endl;
+	kdDebug(14130) << "[JabberContact] Moving user " << userId() << " from group " << from->displayName() << " to group " << to->displayName() << endl;
 
 	QStringList groups = rosterItem.groups();
 	groups.append(to->displayName());
@@ -460,7 +460,7 @@ void JabberContact::moveToGroup(KopeteGroup *from, KopeteGroup *to)
 void JabberContact::removeFromGroup(KopeteGroup *group)
 {
 
-	kdDebug() << "[JabberContact] Removing user " << userId() << " from group " << group->displayName() << endl;
+	kdDebug(14130) << "[JabberContact] Removing user " << userId() << " from group " << group->displayName() << endl;
 
 	QStringList groups = rosterItem.groups();
 	groups.remove(group->displayName());
@@ -500,7 +500,7 @@ int JabberContact::importance() const
 void JabberContact::slotChatUser()
 {
 
-	kdDebug() << "[JabberContact] Opening chat with user " << userId() << endl;
+	kdDebug(14130) << "[JabberContact] Opening chat with user " << userId() << endl;
 
 	emit chatUser(this);
 
@@ -509,7 +509,7 @@ void JabberContact::slotChatUser()
 void JabberContact::slotEmailUser()
 {
 
-	kdDebug() << "[JabberContact] Opening message with user " << userId() << endl;
+	kdDebug(14130) << "[JabberContact] Opening message with user " << userId() << endl;
 
 	emit emailUser(this);
 
@@ -539,11 +539,11 @@ JabberResource *JabberContact::bestResource()
 	// iterate through all available resources
 	for (resource = tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
 	{
-		kdDebug() << "[JabberContact] Processing resource " << tmpResource->resource() << endl;
+		kdDebug(14130) << "[JabberContact] Processing resource " << tmpResource->resource() << endl;
 
 		if (tmpResource->priority() > resource->priority())
 		{
-			kdDebug() << "[JabberContact] Got better resource " << tmpResource->resource() << " through better priority." << endl;
+			kdDebug(14130) << "[JabberContact] Got better resource " << tmpResource->resource() << " through better priority." << endl;
 			resource = tmpResource;
 		}
 		else
@@ -552,17 +552,17 @@ JabberResource *JabberContact::bestResource()
 			{
 				if (tmpResource->timestamp() >= resource->timestamp())
 				{
-					kdDebug() << "[JabberContact] Got better resource " << tmpResource->resource() << " through newer timestamp." << endl;
+					kdDebug(14130) << "[JabberContact] Got better resource " << tmpResource->resource() << " through newer timestamp." << endl;
 					resource = tmpResource;
 				}
 				else
 				{
-					kdDebug() << "[JabberContact] Discarding resource " << tmpResource->resource() << " with older timestamp." << endl;
+					kdDebug(14130) << "[JabberContact] Discarding resource " << tmpResource->resource() << " with older timestamp." << endl;
 				}
 			}
 			else
 			{
-				kdDebug() << "[JabberContact] Discarding resource " << tmpResource->resource() << " with worse priority." << endl;
+				kdDebug(14130) << "[JabberContact] Discarding resource " << tmpResource->resource() << " with worse priority." << endl;
 			}
 		}
 	}
@@ -574,7 +574,7 @@ JabberResource *JabberContact::bestResource()
 void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Resource &resource)
 {
 
-	kdDebug() << "[JabberContact] Adding new resource '" << resource.name() << "' for "
+	kdDebug(14130) << "[JabberContact] Adding new resource '" << resource.name() << "' for "
 			  << userId() << ", name [" << resource.name() << "], priority "
 			  << resource.priority() << ", status [" << resource.status().status() << endl;
 
@@ -591,7 +591,7 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Res
 	{
 		if (tmpResource->resource() == resource.name())
 		{
-			kdDebug() << "[JabberContact] Resource " << tmpResource->resource() << " already added, removing instance with older timestamp" << endl;
+			kdDebug(14130) << "[JabberContact] Resource " << tmpResource->resource() << " already added, removing instance with older timestamp" << endl;
 			resources.remove();
 		}
 	}
@@ -617,7 +617,7 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Res
 
 	JabberResource *tmpBestResource = bestResource();
 
-	kdDebug() << "[JabberContact] Best resource is now " << tmpBestResource->resource() << "." << endl;
+	kdDebug(14130) << "[JabberContact] Best resource is now " << tmpBestResource->resource() << "." << endl;
 
 	slotUpdatePresence(tmpBestResource->status(), tmpBestResource->reason());
 
@@ -631,18 +631,18 @@ void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber
 {
 	JabberResource *tmpResource;
 
-	kdDebug() << "[JabberContact] Removing resource '" << jid.resource() << "' for " << userId() << endl;
+	kdDebug(14130) << "[JabberContact] Removing resource '" << jid.resource() << "' for " << userId() << endl;
 
 	for (tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
 	{
 		if (tmpResource->resource() == resource.name())
 		{
-			kdDebug() << "[JabberContact] Got a match in " << tmpResource->resource() << ", removing." << endl;
+			kdDebug(14130) << "[JabberContact] Got a match in " << tmpResource->resource() << ", removing." << endl;
 
 			if (resources.remove())
-				kdDebug() << "[JabberContact] Successfully removed, there are now " << resources.count() << " resources!" << endl;
+				kdDebug(14130) << "[JabberContact] Successfully removed, there are now " << resources.count() << " resources!" << endl;
 			else
-				kdDebug() << "[JabberContact] Ack! Couldn't remove the resource. Bugger!" << endl;
+				kdDebug(14130) << "[JabberContact] Ack! Couldn't remove the resource. Bugger!" << endl;
 
 			break;
 		}
@@ -650,7 +650,7 @@ void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber
 
 	JabberResource *newResource = bestResource();
 
-	kdDebug() << "[JabberContact] Best resource is now " << newResource->resource() << "." << endl;
+	kdDebug(14130) << "[JabberContact] Best resource is now " << newResource->resource() << "." << endl;
 	slotUpdatePresence(newResource->status(), newResource->reason());
 
 	// if override was in effect or we just deleted the current
@@ -668,7 +668,7 @@ void JabberContact::slotSelectResource()
 
 	if (actionSelectResource->currentItem() == 0)
 	{
-		kdDebug() << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
+		kdDebug(14130) << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
 
 		resourceOverride = false;
 		activeResource = bestResource();
@@ -677,7 +677,7 @@ void JabberContact::slotSelectResource()
 	{
 		QString selectedResource = actionSelectResource->currentText();
 
-		kdDebug() << "[JabberContact] Moving to resource " << selectedResource << endl;
+		kdDebug(14130) << "[JabberContact] Moving to resource " << selectedResource << endl;
 
 		resourceOverride = true;
 
@@ -685,7 +685,7 @@ void JabberContact::slotSelectResource()
 		{
 			if (resource->resource() == selectedResource)
 			{
-				kdDebug() << "[JabberContact] New active resource is " << resource->resource() << endl;
+				kdDebug(14130) << "[JabberContact] New active resource is " << resource->resource() << endl;
 
 				activeResource = resource;
 
@@ -708,7 +708,7 @@ void JabberContact::slotUserInfo()
 void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 {
 
-	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid().userHost() << ", displaying." << endl;
+	kdDebug(14130) << "[JabberContact] Got vCard for user " << vCard->jid().userHost() << ", displaying." << endl;
 
 	dlgVCard = new dlgJabberVCard( qApp->mainWidget(), "dlgJabberVCard", vCard );
 
@@ -809,7 +809,7 @@ void JabberContact::slotStatusInvisible()
 
 void JabberContact::slotMoved(KopeteMetaContact* from)
 {
-//	kdDebug() <<"JabberContact::slotMoved" <<endl;
+//	kdDebug(14130) <<"JabberContact::slotMoved" <<endl;
 	QStringList groups_new=metaContact()->groups().toStringList();
 	QStringList groups_old=from->groups().toStringList();
 	QStringList groups_current=groups();

@@ -56,7 +56,7 @@ void OncomingSocket::newConnection( int socket )
 	newsock->setSocket(socket);
 	mPendingConnections.remove(tmp);
 
-	kdDebug() << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
+	kdDebug(14150) << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
 }
 
 /** Finds the connection named name and returns a pointer to it.
@@ -94,11 +94,11 @@ void OncomingSocket::slotConnectionReady(QString name)
 	OscarConnection *dc = findConnection(name);
 	if (!dc)
 	{
-		kdDebug() << "[OncomingSocket] Connection " << name << " not found!!!  exiting slotConnectionReady()" << endl;
+		kdDebug(14150) << "[OncomingSocket] Connection " << name << " not found!!!  exiting slotConnectionReady()" << endl;
 		return;
 	}
 
-	kdDebug() << "[OncomingSocket] slotConnectionReady(): Setting up direct IM signals!" << endl;
+	kdDebug(14150) << "[OncomingSocket] slotConnectionReady(): Setting up direct IM signals!" << endl;
   // Connect protocol error signal
 	QObject::connect(dc, SIGNAL(protocolError(QString, int)),
 			mServer, SLOT(OnDirectIMError(QString, int)));
@@ -144,25 +144,25 @@ void OncomingSocket::addOutgoingConnection(const QString &sn, char * cook, const
 	DirectInfo *tmp = addPendingConnection(sn, ck);
 	OscarConnection *s = createAppropriateType(tmp);
 	setupConnection(s);
-	kdDebug() << "[OncomingSocket] Connecting to " << host << ":" << port << endl;
+	kdDebug(14150) << "[OncomingSocket] Connecting to " << host << ":" << port << endl;
 	s->connectToHost(host,port);
 }
 
 /** Called when connection named name has been closed */
 void OncomingSocket::slotConnectionClosed(QString name)
 {
-	kdDebug() << "[OncomingSocket] direct connection closed, deleting it: " << name << endl;
+	kdDebug(14150) << "[OncomingSocket] direct connection closed, deleting it: " << name << endl;
 	removeConnection(name);
 }
 
 /** Removes the named connection from the connection list and disconnects it. */
 void OncomingSocket::removeConnection(const QString &name)
 {
-	kdDebug() << "[OncomingSocket] deleting direct connection " << name << endl;
+	kdDebug(14150) << "[OncomingSocket] deleting direct connection " << name << endl;
 	OscarConnection *dc = findConnection(name);
 	if ( !dc )
 	{
-		kdDebug() << "[OncomingSocket] no connection to delete" << endl;
+		kdDebug(14150) << "[OncomingSocket] no connection to delete" << endl;
 		return;
 	}
 	mConns.remove(dc);

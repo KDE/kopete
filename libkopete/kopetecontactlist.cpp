@@ -65,7 +65,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 		if( it.current()->findContact( protocolId, identityId, contactId ) )
 			return it.current();
 	}
-	// kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
+	// kdDebug(14010) << "KopeteContactList::findContact  *** Not found!" << endl;
 	return 0L;
 }
 
@@ -85,7 +85,7 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {
 	if( mc->groups().isEmpty() )
 	{
-		kdDebug() << "KopeteContactList::slotRemovedFromGroup: "
+		kdDebug(14010) << "KopeteContactList::slotRemovedFromGroup: "
 			<< "contact removed from all groups: now toplevel." << endl;
 		//m_contacts.remove( mc );
 		//mc->deleteLater();
@@ -147,7 +147,7 @@ void KopeteContactList::loadXML()
 			}
 			else
 			{
-				kdDebug() << "KopeteContactList::loadXML: Warning: "
+				kdDebug(14010) << "KopeteContactList::loadXML: Warning: "
 					  << "Unknown element '" << element.tagName()
 					  << "' in contact list!" << endl;
 			}
@@ -162,7 +162,7 @@ void KopeteContactList::saveXML()
 {
 	QString contactListFileName = locateLocal( "appdata", "contactlist.xml" );
 
-	//kdDebug() << "KopeteContactList::saveXML: Contact List File: "
+	//kdDebug(14010) << "KopeteContactList::saveXML: Contact List File: "
 	//	<< contactListFileName << endl;
 
 	KSaveFile contactListFile( contactListFileName );
@@ -175,12 +175,12 @@ void KopeteContactList::saveXML()
 
 		if ( !contactListFile.close() )
 		{
-			kdDebug() << "failed to write contactlist, error code is: " << contactListFile.status() << endl;
+			kdDebug(14010) << "failed to write contactlist, error code is: " << contactListFile.status() << endl;
 		}
 	}
 	else
 	{
-		kdDebug() << "WARNING: Couldn't open contact list file "
+		kdDebug(14010) << "WARNING: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 
@@ -196,7 +196,7 @@ void KopeteContactList::saveXML()
 	}
 	else
 	{
-		kdDebug() << "WARNING: Couldn't open contact list file "
+		kdDebug(14010) << "WARNING: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 */
@@ -218,7 +218,7 @@ QString KopeteContactList::toXML()
 	{
 		if(!(*metaContactIt)->isTemporary())
 		{
-//			kdDebug() << "KopeteContactList::toXML: Saving meta contact "
+//			kdDebug(14010) << "KopeteContactList::toXML: Saving meta contact "
 //				<< ( *metaContactIt )->displayName() << endl;
 			xml +=  ( *metaContactIt)->toXML();
 		}
@@ -319,12 +319,12 @@ void KopeteContactList::sendFile( const QString &displayName, const KURL &source
 	 * unique identifier is needed for external DCOP refs like this!
 	 */
 	 
-//	kdDebug() << "Send To Display Name: " << displayName << "\n";
+//	kdDebug(14010) << "Send To Display Name: " << displayName << "\n";
 
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-//		kdDebug() << "Display Name: " << it.current()->displayName() << "\n";
+//		kdDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
 		if( it.current()->displayName() == displayName ) {
 			it.current()->sendFile( sourceURL, altFileName, fileSize );
 			return;
@@ -334,22 +334,22 @@ void KopeteContactList::sendFile( const QString &displayName, const KURL &source
 
 QStringList KopeteContactList::contactFileProtocols(QString displayName)
 {
-//	kdDebug() << "Get contacts for: " << displayName << "\n";
+//	kdDebug(14010) << "Get contacts for: " << displayName << "\n";
 	QStringList protocols;
 
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->displayName() == displayName ) {
-//			kdDebug() << "Found them!" << endl;
+//			kdDebug(14010) << "Found them!" << endl;
 			QPtrList<KopeteContact> mContacts = it.current()->contacts();
-			kdDebug() << mContacts.count() << endl;
+			kdDebug(14010) << mContacts.count() << endl;
 			QPtrListIterator<KopeteContact> jt( mContacts );
 			for ( ; jt.current(); ++jt )
 			{
-				kdDebug() << "1" << jt.current()->protocol()->pluginId() << "\n";
+				kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << "\n";
 				if( jt.current()->canAcceptFiles() ) {
-					kdDebug() << jt.current()->protocol()->pluginId() << "\n";
+					kdDebug(14010) << jt.current()->protocol()->pluginId() << "\n";
 					protocols.append ( jt.current()->protocol()->pluginId() );
 				}
 			}

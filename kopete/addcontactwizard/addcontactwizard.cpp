@@ -86,7 +86,7 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 		QCheckListItem *check = dynamic_cast<QCheckListItem *>(listItem);
 		if (!check)
 		{
-			kdDebug() << "WARNING : AddContactWizard::slotProtocolListClicked : one listItem is not a CheckListItem" << endl;
+			kdDebug(14000) << "WARNING : AddContactWizard::slotProtocolListClicked : one listItem is not a CheckListItem" << endl;
 		}
 		else if (check->isOn())
 		{
@@ -107,7 +107,7 @@ void AddContactWizard::slotGroupListClicked( QListViewItem *)
 		QCheckListItem *check = dynamic_cast<QCheckListItem *>(listItem);
 		if (!check) 
 		{
-			kdDebug() << "WARNING : AddContactWizard::slotGroupListClicked : one listItem is not a CheckListItem" << endl;
+			kdDebug(14000) << "WARNING : AddContactWizard::slotGroupListClicked : one listItem is not a CheckListItem" << endl;
 		}
 		else 	if (check->isOn())
 		{
@@ -145,7 +145,7 @@ void AddContactWizard::accept()
 		QCheckListItem *check = dynamic_cast<QCheckListItem *>(listItem);
 		if (!check)
 		{
-			kdDebug() << "WARNING : AddContactWizard::slotGroupListClicked : one listItem is not a CheckListItem" << endl;
+			kdDebug(14000) << "WARNING : AddContactWizard::slotGroupListClicked : one listItem is not a CheckListItem" << endl;
 		}
 		else 	if (check->isOn())
 		{

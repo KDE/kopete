@@ -103,7 +103,7 @@ QString KopeteMessage::plainBody() const
 	if(mFormat==PlainText)
 		return mBody;
 
-//	kdDebug() << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
+//	kdDebug(14010) << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
 
 	//FIXME: is there a better way to unescape HTML?
 	QString r=mBody;
@@ -114,7 +114,7 @@ QString KopeteMessage::plainBody() const
 		replace(QRegExp("&nbsp;"), " ").
 		replace(QRegExp("&amp;"), "&");
 
-	kdDebug() << "KopeteMessage::plainBody: " << r <<endl;
+	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
 	return r;
 }
 
@@ -138,11 +138,11 @@ QString KopeteMessage::escapedBody() const
 		// Lastly, remove trailing whitespace:
 		parsedString.replace( QRegExp( "\\s*$" ), "" );
 
-		kdDebug() << "KopeteMessage::escapeBody: " << parsedString <<endl;
+		kdDebug(14010) << "KopeteMessage::escapeBody: " << parsedString <<endl;
 		return parsedString;
 	}
 
-//	kdDebug() << "KopeteMessage::escapeBody: not escape needed" <<endl;
+//	kdDebug(14010) << "KopeteMessage::escapeBody: not escape needed" <<endl;
 	return mBody;
 }
 
@@ -202,11 +202,11 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 						(text[startIdx-1]!='{') && (text[startIdx-1]!='}')
 						)
 					{
-//						kdDebug() << "searching start of email addy at: " << startIdx << endl;
+//						kdDebug(14010) << "searching start of email addy at: " << startIdx << endl;
 						startIdx--;
 					}
 
-					kdDebug() << "found start of email addy at:" << startIdx << endl;
+					kdDebug(14010) << "found start of email addy at:" << startIdx << endl;
 
 					regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if ( regExp.search(text,startIdx) != -1 )
@@ -231,7 +231,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 						}
 						else
 						{
-//							kdDebug() << "adding email link starting at: " << result.length()-(idx-startIdx) << endl;
+//							kdDebug(14010) << "adding email link starting at: " << result.length()-(idx-startIdx) << endl;
 							result.remove( result.length()-(idx-startIdx), idx-startIdx );
 							QString mailAddr = parseHTML(text.mid(startIdx,matchLen),false);
 							result += QString::fromLatin1("<a href=\"mailto:%1\">%2</a>").arg(mailAddr).arg(mailAddr);
@@ -241,8 +241,8 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 								parseHTML(text.mid(startIdx,matchLen),false) +
 								QString::fromLatin1("</a>"); */
 							idx = startIdx + matchLen - 1;
-							kdDebug() << "index is now: " << idx << endl;
-							kdDebug() << "result is: " << result << endl;
+							kdDebug(14010) << "index is now: " << idx << endl;
+							kdDebug(14010) << "result is: " << result << endl;
 							lastReplacement = idx;
 						}
 						break;

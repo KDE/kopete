@@ -44,7 +44,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		KopeteMetaContact *parent)
 : KopeteContact(protocol, name, parent)
 {
-	kdDebug() << "[OscarContact] OscarContact(), name=" << name << endl;
+	kdDebug(14150) << "[OscarContact] OscarContact(), name=" << name << endl;
 
 	mName = name;
 	mProtocol = protocol;
@@ -107,14 +107,14 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 
 OscarContact::~OscarContact()
 {
-	kdDebug() << "[OscarContact] ~OscarContact()" << endl;
+	kdDebug(14150) << "[OscarContact] ~OscarContact()" << endl;
 	delete mTypingTimer;
 }
 
 /** Pops up a chat window */
 void OscarContact::execute(void)
 {
-	kdDebug() << "[OscarContact] execute()" << endl;
+	kdDebug(14150) << "[OscarContact] execute()" << endl;
 
 	if ( mStatus == OSCAR_OFFLINE )
 	{
@@ -205,19 +205,19 @@ void OscarContact::slotUpdateBuddy(int buddyNum)
 	// if we have become idle
 	if ( tmpBuddy.idleTime > 0 )
 	{
-		kdDebug() << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
+		kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
 		setIdleState(Idle);			
 	}
 	// we have become un-idle
 	else 
 	{
-		kdDebug() << "[OscarContact] setting " << mName << " active!" << endl;
+		kdDebug(14150) << "[OscarContact] setting " << mName << " active!" << endl;
 		setIdleState(Active);
 	}
 
 	mStatus = tmpBuddy.status;
   mIdle = tmpBuddy.idleTime;
-	kdDebug() << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
+	kdDebug(14150) << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
 
 	if ( mProtocol->isConnected() ) // oscar-plugin is online
 	{
@@ -292,10 +292,10 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 	{
 		TBuddy *tmpBuddy;
 		int num = mProtocol->buddyList()->getNum(mName);
-		kdDebug() << "[OscarContact] Names match... " << u.sn << endl;
+		kdDebug(14150) << "[OscarContact] Names match... " << u.sn << endl;
 		if ( (tmpBuddy = mProtocol->buddyList()->getByNum(num)) != NULL )
 		{
-			kdDebug() << "[OscarContact] Setting status for " << u.sn << endl;
+			kdDebug(14150) << "[OscarContact] Setting status for " << u.sn << endl;
 			if ( u.userclass & USERCLASS_AWAY )
 				tmpBuddy->status = OSCAR_AWAY;
 			else
@@ -306,7 +306,7 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 			slotUpdateBuddy(num);
 		}
 		else
-			kdDebug() << "[OscarContact] Buddy is oncoming but is not in buddy list" << endl;
+			kdDebug(14150) << "[OscarContact] Buddy is oncoming but is not in buddy list" << endl;
 	}
 }
 
@@ -314,7 +314,7 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 void OscarContact::slotGotMiniType(QString screenName, int type){
 		//TODO
 		// Check to see if it's us
-		//kdDebug() << "[OSCAR] Minitype: Comparing "
+		//kdDebug(14150) << "[OSCAR] Minitype: Comparing "
 		//					<< tocNormalize(screenName) << " and "
 		//					<< tocNormalize(mName) << endl;
 		
@@ -322,7 +322,7 @@ void OscarContact::slotGotMiniType(QString screenName, int type){
 				return;
 		}
 		
-		kdDebug() << "[OSCAR] OscarContact got minitype notification for " << mName << endl;
+		kdDebug(14150) << "[OSCAR] OscarContact got minitype notification for " << mName << endl;
 		
 		// If we already have a message manager
 		if(mMsgManager){
@@ -338,10 +338,10 @@ void OscarContact::slotGotMiniType(QString screenName, int type){
 // Called when we want to send a typing notification to
 // the other person
 void OscarContact::slotTyping(bool typing){
-		kdDebug() << "[OSCAR] Sending typing notify" << endl;
+		kdDebug(14150) << "[OSCAR] Sending typing notify" << endl;
 		
 		if(typing){
-				kdDebug() << "[OSCAR TYPING] Typing" << endl;
+				kdDebug(14150) << "[OSCAR TYPING] Typing" << endl;
 				if(mTypingTimer->isActive()){
 						mTypingTimer->stop();
 						// Start the timer at 3 seconds
@@ -353,7 +353,7 @@ void OscarContact::slotTyping(bool typing){
 						mTypingTimer->start(1000*3, true);
 				}
 		} else {
-				kdDebug() << "[OSCAR TYPING] Finished" << endl;
+				kdDebug(14150) << "[OSCAR TYPING] Finished" << endl;
 				mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
 								OscarSocket::TypingFinished);
 				// Stop the timer
@@ -380,7 +380,7 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 			slotUpdateBuddy(num);
 		}
 		else
-			kdDebug() << "[OscarContact] Buddy is offgoing but not in buddy list" << endl;
+			kdDebug(14150) << "[OscarContact] Buddy is offgoing but not in buddy list" << endl;
 	}
 }
 
@@ -446,7 +446,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 		// We'll wait 2 minutes between responses
 		if( (currentTime - mLastAutoResponseTime) > 120 )
 		{
-			kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
+			kdDebug(14150) << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
 			// Send the autoresponse
 			mProtocol->engine->sendIM(
 					KopeteAway::getInstance()->message(),
@@ -599,7 +599,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	<FONT COLOR="#0002A6"><FONT SIZE="2">cool cool</FONT></FONT>
 	============================================================================================ */
 
-	kdDebug() << "AIM Plugin: original message: " << m << endl;
+	kdDebug(14150) << "AIM Plugin: original message: " << m << endl;
 
 	// This code relies on QT 3.1, when we support that,
 	// put it back in
@@ -733,7 +733,7 @@ void OscarContact::slotBlock(void)
 /** Called when we want to connect directly to this contact */
 void OscarContact::slotDirectConnect(void)
 {
-	kdDebug() << "[OscarContact] Requesting direct IM with " << mName << endl;
+	kdDebug(14150) << "[OscarContact] Requesting direct IM with " << mName << endl;
 	QString message = i18n( "<qt>Are you sure you want to establish a direct connection to %1? \
 	This will allow %2 to know your IP address, which can be dangerous if you do not trust this contact</qt>" ).arg(mName).arg(mName);
 	QString title = i18n("Request Direct IM with %1?").arg(mName);
@@ -755,7 +755,7 @@ void OscarContact::slotDirectIMReady(QString name)
 	if ( tocNormalize(name) != tocNormalize(mName) )
 		return;
 
-	kdDebug() << "[OscarContact] Setting direct connect state for " << mName << " to true." << endl;
+	kdDebug(14150) << "[OscarContact] Setting direct connect state for " << mName << " to true." << endl;
 	mDirectlyConnected = true;
 	KopeteContactPtrList p;
 	p.append(this);
@@ -769,7 +769,7 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 	if ( tocNormalize(name) != tocNormalize(mName) )
 		return;
 
-	kdDebug() << "[OscarContact] Setting direct connect state for " << mName << " to false." << endl;
+	kdDebug(14150) << "[OscarContact] Setting direct connect state for " << mName << " to false." << endl;
 	mDirectlyConnected = false;
 }
 
@@ -788,7 +788,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &altFileName,
 	if ( !filePath.isEmpty() )
 	{
     QFileInfo finfo(filePath);
-		kdDebug() << "[OscarContact] File size is " << finfo.size() << endl;
+		kdDebug(14150) << "[OscarContact] File size is " << finfo.size() << endl;
 		//Send the file
 		mProtocol->engine->sendFileSendRequest( mName, finfo );
 	}

@@ -65,7 +65,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 	m_identity = new MSNIdentity( this, "m_identity" );
 
-	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
+	kdDebug(14140) << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	mPrefs= new MSNPreferences( "msn_protocol", this );
 	QObject::connect( mPrefs, SIGNAL( saved() ), this , SLOT( slotPreferencesSaved() ) );
@@ -104,7 +104,7 @@ void MSNProtocol::init()
 
 bool MSNProtocol::unload()
 {
-	kdDebug() << "MSNProtocol::unload" << endl;
+	kdDebug(14140) << "MSNProtocol::unload" << endl;
 
 	disconnect();
 
@@ -114,7 +114,7 @@ bool MSNProtocol::unload()
 
 	if(m_notifySocket)
 	{
-		kdDebug() << "MSNProtocol::unload: WARNING NotifySocket was not deleted" <<endl;
+		kdDebug(14140) << "MSNProtocol::unload: WARNING NotifySocket was not deleted" <<endl;
 		delete m_notifySocket;
 	}
 
@@ -125,7 +125,7 @@ void MSNProtocol::connect()
 {
 	if( isConnected() )
 	{
-		kdDebug() << "MSN Plugin: Ignoring Connect request "
+		kdDebug(14140) << "MSN Plugin: Ignoring Connect request "
 			<< "(Already Connected)" << endl;
 		return;
 	}
@@ -150,11 +150,11 @@ void MSNProtocol::connect()
 
 	if(m_notifySocket)
 	{
-		kdDebug() << "MSNProtocol::connect: WARNING NotifySocket was not deleted"  <<endl;
+		kdDebug(14140) << "MSNProtocol::connect: WARNING NotifySocket was not deleted"  <<endl;
 		delete m_notifySocket;
 	}
 
-	kdDebug() << "MSNProtocol::connect: Connecting to MSN with Passport "
+	kdDebug(14140) << "MSNProtocol::connect: Connecting to MSN with Passport "
 		<< m_msnId << endl;
 	m_notifySocket = new MSNNotifySocket( this, m_msnId );
 
@@ -271,7 +271,7 @@ void MSNProtocol::serialize( KopeteMetaContact *metaContact )
 void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 	const QStringList &strList )
 {
-/*	kdDebug() << "MSNProtocol::deserialize: " << metaContact->displayName()
+/*	kdDebug(14140) << "MSNProtocol::deserialize: " << metaContact->displayName()
 		<< ", [ " << strList.join( ", " ) << " ]" << endl;*/
 
 	QString protocolId = this->pluginId();
@@ -399,7 +399,7 @@ void MSNProtocol::slotSyncContactList()
 void MSNProtocol::slotGoOnline()
 {
 	m_connectstatus=NLN;
-	kdDebug() << "MSN Plugin: Going Online" << endl;
+	kdDebug(14140) << "MSN Plugin: Going Online" << endl;
 	if (!isConnected() )
 		connect();
 	else
@@ -484,7 +484,7 @@ void MSNProtocol::slotStartChat()
 
 void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 {
-	kdDebug() << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
+	kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
 	mIsConnected = (status == MSNSocket::Connected);
 	if ( mIsConnected )
 	{
@@ -492,14 +492,14 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		// Sync public name when needed
 		if( m_publicNameSyncNeeded )
 		{
-			kdDebug() << "MSNProtocol::slotOnlineStatusChanged: Syncing public name to "
+			kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: Syncing public name to "
 				<< m_publicName << endl;
 			setPublicName( m_publicName );
 			m_publicNameSyncNeeded = false;
 		}
 		else
 		{
-			kdDebug() << "MSNProtocol::slotOnlineStatusChanged: Leaving public name as "
+			kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: Leaving public name as "
 				<< m_publicName << endl;
 		}
 
@@ -537,7 +537,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 				// Groups doesnt match any server group
 				if ( exists == 0 )
 				{
-					kdDebug() << "MSNProtocol::slotOnlineStatusChanged: Sync: Local group " << localgroup << " doesn't exist on server!" << endl;
+					kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: Sync: Local group " << localgroup << " doesn't exist on server!" << endl;
 					addGroup( localgroup );
 				}
 			}
@@ -557,14 +557,14 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 				dynamic_cast<MSNMessageManager *>( kmmIt.current() );
 			if( msnMM )
 			{
-				kdDebug() << "MSNProtocol::slotOnlineStatusChanged: "
+				kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: "
 					<< "Closed MSNMessageManager because the protocol socket "
 					<< "closed." << endl;
 				msnMM->slotCloseSession();
 			}
 /*			else
 			{
-				kdDebug() << "MSNProtocol::slotOnlineStatusChanged: "
+				kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: "
 					<< "KMM is not an MSN message manager, not closing "
 					<< "connection." << endl;
 			}*/
@@ -607,7 +607,7 @@ void MSNProtocol::slotStatusChanged( QString status )
 	m_status = convertStatus( status );
 	m_myself->setMsnStatus(m_status);
 
-	kdDebug() << "MSN Plugin: My Status Changed to " << m_status <<
+	kdDebug(14140) << "MSN Plugin: My Status Changed to " << m_status <<
 		" (" << status <<")\n";
 
 	switch( m_status )
@@ -665,7 +665,7 @@ bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QStri
 					}
 				}
 			} else {
-				kdDebug() << "[MSNProtocol::addContactToMetaContact() This MetaContact isn't in a group!" << endl;
+				kdDebug(14140) << "[MSNProtocol::addContactToMetaContact() This MetaContact isn't in a group!" << endl;
 			}
 			//TODO: Find out if this contact was reallt added or not!
 			return true;
@@ -690,7 +690,7 @@ bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QStri
 	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
 		result.append( *it );
 
-//	kdDebug() << "MSNProtocol::groups(): " << result.join(", " ) << endl;
+//	kdDebug(14140) << "MSNProtocol::groups(): " << result.join(", " ) << endl;
 	return result;
 } */
 
@@ -702,7 +702,7 @@ void MSNProtocol::slotGroupAdded( QString groupName, uint groupNumber )
 		{
 			if((*it).second==groupName)
 			{
-				kdDebug() << "MSNProtocol::slotGroupAdded : Adding to new group: " << (*it).first <<  endl;
+				kdDebug(14140) << "MSNProtocol::slotGroupAdded : Adding to new group: " << (*it).first <<  endl;
 				m_notifySocket->addContact( (*it).first, (*it).first, groupNumber, FL );
 			}
 		}
@@ -711,7 +711,7 @@ void MSNProtocol::slotGroupAdded( QString groupName, uint groupNumber )
 
 	if( m_groupList.contains( groupNumber ) )
 	{
-		kdDebug() << "MSNProtocol::slotGroupAdded: WARNING: group already in list" <<endl;
+		kdDebug(14140) << "MSNProtocol::slotGroupAdded: WARNING: group already in list" <<endl;
 		return;
 	}
 
@@ -962,7 +962,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 		// before I declare it good :-)
 		if( !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
 		{
-			kdDebug() << "MSNProtocol: Contact not found in list!" << endl;
+			kdDebug(14140) << "MSNProtocol: Contact not found in list!" << endl;
 
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
@@ -1032,7 +1032,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 
 		if( c->groups().isEmpty()  && !c->isMoving())
 		{
-			kdDebug() << "MSNProtocol::slotContactRemoved : contact removed from each group, delete contact" << endl;
+			kdDebug(14140) << "MSNProtocol::slotContactRemoved : contact removed from each group, delete contact" << endl;
 			delete c;
 		}
 	}
@@ -1049,7 +1049,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			KopeteMetaContact *m = KopeteContactList::contactList()->findContact( this->pluginId(), QString::null, handle );
 			if(m)
 			{
-				kdDebug() << "MSNProtocol::slotContactAdded: Warning: the contact was found in the contactlist but not referanced in the protocol" <<endl;
+				kdDebug(14140) << "MSNProtocol::slotContactAdded: Warning: the contact was found in the contactlist but not referanced in the protocol" <<endl;
 				MSNContact *c = static_cast<MSNContact*>(m->findContact( this->pluginId(), QString::null, handle ));
 				c->slotAddedToGroup( group );
 			}
@@ -1124,7 +1124,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 
 void MSNProtocol::slotAddTemporaryContact( const QString &userName )
 {
-	kdDebug() << "[MSNProtocol] slotAddTemporaryContact() for " << userName << endl;
+	kdDebug(14140) << "[MSNProtocol] slotAddTemporaryContact() for " << userName << endl;
 	addContact( userName, QString::null, 0L, QString::null, true);
 }
 
@@ -1155,7 +1155,7 @@ void MSNProtocol::slotPublicNameChanged( QString publicName)
 
 void MSNProtocol::setPublicName( const QString &publicName )
 {
-	kdDebug() << "MSNProtocol::setPublicName: Setting name to "
+	kdDebug(14140) << "MSNProtocol::setPublicName: Setting name to "
 		<< publicName << "..." << endl;
 
 	if(m_notifySocket)
@@ -1174,7 +1174,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 {
 	handle = handle.lower();
 
-	kdDebug() << "MSNProtocol::slotCreateChat: Creating chat for " <<
+	kdDebug(14140) << "MSNProtocol::slotCreateChat: Creating chat for " <<
 		handle << endl;
 
 	if( !contacts()[ handle ] )
@@ -1240,14 +1240,14 @@ void MSNProtocol::slotStartChatSession( QString handle )
 
 		if(manager->service())
 		{
-			kdDebug() << "MSNProtocol::slotStartChatSession: "
+			kdDebug(14140) << "MSNProtocol::slotStartChatSession: "
 				<< "Reusing existing switchboard connection" << endl;
 
 			manager->readMessages();
 		}
 		else
 		{
-			kdDebug() << "MSNProtocol::slotStartChatSession: "
+			kdDebug(14140) << "MSNProtocol::slotStartChatSession: "
 				<< "Creating new switchboard connection" << endl;
 
 			//FIXME: what's happend when the user try to open two socket in the same time????  can the m_msgHandle be altered??
@@ -1312,7 +1312,7 @@ void MSNProtocol::slotDebugRawCommand()
 
 void MSNProtocol::slotNotifySocketClosed( int /*state*/ )
 {
-	kdDebug() << "MSNProtocol::slotNotifySocketClosed" << endl;
+	kdDebug(14140) << "MSNProtocol::slotNotifySocketClosed" << endl;
 	//FIXME: Kopete crash when i show this message box...
 /*	if ( state == 0x10 ) // connection died unexpectedly
 	{
@@ -1324,7 +1324,7 @@ void MSNProtocol::slotNotifySocketClosed( int /*state*/ )
 	mIsConnected = false;
 	setStatusIcon( "msn_offline" );
 	m_openInboxAction->setEnabled(false);
-	kdDebug() << "MSNProtocol::slotNotifySocketClosed - done" << endl;
+	kdDebug(14140) << "MSNProtocol::slotNotifySocketClosed - done" << endl;
 }
 
 KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)

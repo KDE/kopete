@@ -22,7 +22,7 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 : KopeteProtocol( parent, name )
 {
 	if (s_protocol)
-		kdDebug() << "SMSProtocol::SMSProtocol: WARNING s_protocol already defined!" << endl;
+		kdDebug(14160) << "SMSProtocol::SMSProtocol: WARNING s_protocol already defined!" << endl;
 	else
 		s_protocol = this;
 	

@@ -29,7 +29,7 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 	const QStringList& /* args */ )
 : KopetePlugin(parent, name)
 {
-	kdDebug() << "ConnectionStatusPlugin::ConnectionStatusPlugin()" << endl;
+	kdDebug(14301) << "ConnectionStatusPlugin::ConnectionStatusPlugin()" << endl;
 	qtTimer = new QTimer();
 	connect(qtTimer, SIGNAL(timeout()), this,
 		 SLOT(slotCheckStatus()) );
@@ -44,7 +44,7 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 
 ConnectionStatusPlugin::~ConnectionStatusPlugin()
 {
-	kdDebug() << "ConnectionStatusPlugin::~ConnectionStatusPlugin()" << endl;
+	kdDebug(14301) << "ConnectionStatusPlugin::~ConnectionStatusPlugin()" << endl;
 	delete qtTimer;
 	delete kpIfconfig;
 }
@@ -55,7 +55,7 @@ void ConnectionStatusPlugin::slotCheckStatus()
 	* netstat -r in slotProcessStdout() to see if it mentions the
 	* default gateway. If so, we're connected, if not, we're offline */
 
-	kdDebug() << "ConnectionStatusPlugin::checkStatus()" << endl;
+	kdDebug(14301) << "ConnectionStatusPlugin::checkStatus()" << endl;
 	*kpIfconfig << "netstat" << "-r";
 	kpIfconfig->start(KProcess::DontCare, KProcess::Stdout);
 }
@@ -63,9 +63,9 @@ void ConnectionStatusPlugin::slotCheckStatus()
 void ConnectionStatusPlugin::slotProcessStdout(KProcess *, char *buffer, int buflen)
 {
 	// Look for a default gateway
-	kdDebug() << "ConnectionStatusPlugin::slotProcessStdout()" << endl;
+	kdDebug(14301) << "ConnectionStatusPlugin::slotProcessStdout()" << endl;
 	QString qsBuffer = QString::fromLatin1(buffer, buflen);
-	//kdDebug() << qsBuffer << endl;
+	//kdDebug(14301) << qsBuffer << endl;
 	setConnectedStatus(qsBuffer.contains("default"));
 }
 
@@ -79,21 +79,21 @@ void ConnectionStatusPlugin::setConnectedStatus(bool connected)
 	* keep calling slotConnectAll() or slotDisconnectAll() constantly.
 	*/
 
-	kdDebug() << "ConnectionStatusPlugin::setConnectedStatus()" << endl;
+	kdDebug(14301) << "ConnectionStatusPlugin::setConnectedStatus()" << endl;
 
 	if (connected && !m_boolPluginConnected) // the machine is connected and plugin thinks we're disconnected
 	{
-		kdDebug() << "Setting m_boolPluginConnected to true" << endl;
+		kdDebug(14301) << "Setting m_boolPluginConnected to true" << endl;
 		m_boolPluginConnected = true;
-		kdDebug() << "ConnectionStatusPlugin::setConnectedStatus() -- we're connected" << endl;
+		kdDebug(14301) << "ConnectionStatusPlugin::setConnectedStatus() -- we're connected" << endl;
 		KopeteIdentityManager::manager()->connectAll();
 	}
 	else
 	if (!connected && m_boolPluginConnected) // the machine isn't connected and plugin thinks we're connected
 	{
-		kdDebug() << "Setting m_boolPluginConnected to false" << endl;
+		kdDebug(14301) << "Setting m_boolPluginConnected to false" << endl;
 		m_boolPluginConnected = false;
-		kdDebug() << "ConnectionStatusPlugin::setConnectedStatus() -- we're offline" << endl;
+		kdDebug(14301) << "ConnectionStatusPlugin::setConnectedStatus() -- we're offline" << endl;
 		KopeteIdentityManager::manager()->disconnectAll();
 	}
 }

@@ -72,7 +72,7 @@ void WebPresencePlugin::slotWriteFile()
 	KTempFile* xml = generateFile();
 	xml->setAutoDelete( true );
 	
-	kdDebug() << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
+	kdDebug(14309) << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
 		<< endl;
 	
 	if ( m_prefs->justXml() )
@@ -106,7 +106,7 @@ void WebPresencePlugin::slotWriteFile()
 void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 {
 	if (  job->error() ) {
-		kdDebug() << "Error uploading presence info." << endl;
+		kdDebug(14309) << "Error uploading presence info." << endl;
 		job->showErrorDialog( 0 );
 	}
 	delete m_output;
@@ -115,7 +115,7 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 
 KTempFile* WebPresencePlugin::generateFile()
 {
-	kdDebug() << "WebPresencePlugin::generateFile()" << endl;
+	kdDebug(14309) << "WebPresencePlugin::generateFile()" << endl;
 	// generate the (temporary) file representing the current contactlist
 	KTempFile* theFile = new KTempFile();
 	QTextStream* qout =  theFile->textStream() ;
@@ -237,7 +237,7 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 		return true;
 	else
 	{
-		kdDebug() << "WebPresencePlugin::transform() - couldn't "
+		kdDebug(14309) << "WebPresencePlugin::transform() - couldn't "
 			<< error << endl;
 		return false;
 	}
@@ -245,7 +245,7 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 
 QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
 {
-	kdDebug() << "WebPresencePlugin::allProtocols()" << endl;
+	kdDebug(14309) << "WebPresencePlugin::allProtocols()" << endl;
 	QPtrList<KopeteProtocol> protos;
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 

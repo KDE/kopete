@@ -78,26 +78,26 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id,
 {
 	if( cmd == "VER" )
 	{
-		kdDebug() << "MSNAuthSocket: Requesting authentication method"
+		kdDebug(14140) << "MSNAuthSocket: Requesting authentication method"
 			<< endl;
 		sendCommand( "INF" );
 	}
 	else if( cmd == "INF" )
 	{
-		kdDebug() << "MSNAuthSocket: Requesting MD5 authentication "
+		kdDebug(14140) << "MSNAuthSocket: Requesting MD5 authentication "
 			<< "for Passport " << m_msnId << endl;
 		sendCommand( "USR", "MD5 I " + m_msnId);
 	}
 	else
 	{
-		kdDebug() << "MSNAuthSocket::parseCommand: Unimplemented command '"
+		kdDebug(14140) << "MSNAuthSocket::parseCommand: Unimplemented command '"
 			<< cmd << " " << id << " " << data << "' from server!" << endl;
 	}
 }
 
 void MSNAuthSocket::doneConnect()
 {
-	kdDebug() << "MSNAuthSocket: Negotiating server protocol version"
+	kdDebug(14140) << "MSNAuthSocket: Negotiating server protocol version"
 		<< endl;
 	sendCommand( "VER", "MSNP7 MSNP6 MSNP5 MSNP4 CVR0" );
 }

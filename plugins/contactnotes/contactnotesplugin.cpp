@@ -36,7 +36,7 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name,
 	m_actionEdit=0L;
 
 	if ( pluginStatic_ )
-		kdDebug()<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;
+		kdDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;
 	else
 		pluginStatic_ = this;
 

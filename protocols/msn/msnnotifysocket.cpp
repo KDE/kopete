@@ -52,7 +52,7 @@ MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
 
 MSNNotifySocket::~MSNNotifySocket()
 {
-	kdDebug() << "MSNNotifySocket::~MSNNotifySocket" << endl;
+	kdDebug(14140) << "MSNNotifySocket::~MSNNotifySocket" << endl;
 }
 
 void MSNNotifySocket::connect( const QString &pwd )
@@ -147,13 +147,13 @@ void MSNNotifySocket::handleError( uint code, uint id )
 void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
-	//kdDebug() << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
+	//kdDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
 	if( cmd == "USR" )
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			kdDebug() << "Sending response Authentication" << endl;
+			kdDebug(14140) << "Sending response Authentication" << endl;
 
 			KMD5 context( data.section( ' ', 2, 2 ) + m_password );
 			sendCommand( "USR", "MD5 S " + context.hexDigest() );
@@ -161,7 +161,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		else
 		{
 			// Successful auth, sync contact list
-//			kdDebug() << "Sending serial number" << endl;
+//			kdDebug(14140) << "Sending serial number" << endl;
 
 			//sendCommand( "SYN", QString::number( _serial ) );
 			sendCommand( "SYN", "0" );
@@ -303,7 +303,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd  == "CHL" )
 	{
-		kdDebug() << "Sending final Authentication" << endl;
+		kdDebug(14140) << "Sending final Authentication" << endl;
 		KMD5 context( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" );
 		sendCommand( "QRY", "msmsgs@msnmsgr.com", true,
 			context.hexDigest());
@@ -498,7 +498,7 @@ void MSNNotifySocket::addContact( const QString &handle, QString publicName, uin
 		args = "BL " + handle + " "  + escape( publicName );
 		break;
 	default:
-		kdDebug() << "MSNNotifySocket::addContact: WARNING! Unknown list " <<
+		kdDebug(14140) << "MSNNotifySocket::addContact: WARNING! Unknown list " <<
 			list << "!" << endl;
 		return;
 	}
@@ -520,7 +520,7 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 		args = "BL " + handle;
 		break;
 	default:
-		kdDebug() << "MSNNotifySocket::removeContact: " <<
+		kdDebug(14140) << "MSNNotifySocket::removeContact: " <<
 			"WARNING! Unknown list " << list << "!" << endl;
 		return;
 	}
@@ -529,7 +529,7 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 
 void MSNNotifySocket::setStatus( int status )
 {
-	kdDebug() << "MSNNotifySocket::setStatus : " <<statusToString(status) <<endl;
+	kdDebug(14140) << "MSNNotifySocket::setStatus : " <<statusToString(status) <<endl;
 	if(onlineStatus() == Disconnected)
 		m_newstatus=status;
 	else
@@ -573,7 +573,7 @@ QString MSNNotifySocket::statusToString( int status ) const
 	case MSNProtocol::IDL:
 		return "IDL";
 	default:
-		kdDebug() << "MSNNotifySocket::statusToString: " <<
+		kdDebug(14140) << "MSNNotifySocket::statusToString: " <<
 			"WARNING! Unknown status " << status << "!" << endl;
 		return QString::null;
 	}

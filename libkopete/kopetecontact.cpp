@@ -115,7 +115,7 @@ QString KopeteContact::statusText() const
 {
 	ContactStatus stat = status();
 
-	//kdDebug() << "[KopeteContact] statusText() with status= " << stat << endl;
+	//kdDebug(14010) << "[KopeteContact] statusText() with status= " << stat << endl;
 
 	switch( stat )
 	{
@@ -172,7 +172,7 @@ int KopeteContact::importance() const
 
 void KopeteContact::slotViewHistory()
 {
-	kdDebug() << "KopteContact::slotViewHistory()" << endl;
+	kdDebug(14010) << "KopteContact::slotViewHistory()" << endl;
 
 	if( m_historyDialog )
 	{
@@ -197,7 +197,7 @@ void KopeteContact::slotHistoryDialogDestroyed()
 
 void KopeteContact::sendFile( const KURL &, const QString &, const long unsigned int)
 {
-	kdDebug() << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
+	kdDebug(14010) << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
 }
 
 KPopupMenu* KopeteContact::createContextMenu()
@@ -285,7 +285,7 @@ void KopeteContact::slotMoveDialogOkClicked()
 	KopeteMetaContact *mc= static_cast<MetaContactListBoxItem*>(m_selectMetaContactListBox->item(m_selectMetaContactListBox->currentItem())) ->metaContact;
 	if(!mc)
 	{
-		kdDebug() << "KopeteContact::slotMoveDialogOkClicked : WARNING metaContact not found" << endl;
+		kdDebug(14010) << "KopeteContact::slotMoveDialogOkClicked : WARNING metaContact not found" << endl;
 		return;
 	}
 	moveToMetaContact(mc);

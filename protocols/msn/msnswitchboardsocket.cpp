@@ -45,7 +45,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNProtocol *protocol )
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
-	kdDebug() <<"MSNSwitchBoardSocket::~MSNSwitchBoardSocket" <<endl;
+	kdDebug(14140) <<"MSNSwitchBoardSocket::~MSNSwitchBoardSocket" <<endl;
 }
 
 void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QString auth)
@@ -180,7 +180,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString port = msg.right( msg.length() - msg.find(  "Port:" ) - 6 );
 			port.truncate( port.find("\r\n") );
 
-			kdDebug() << "MSNSwitchBoardSocket::slotReadMessage : filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
+			kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage : filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
 
 			MSNFileTransferSocket *MFTS=new  MSNFileTransferSocket(m_myHandle,authcook,m_filetransferName);
 			//FIXME: i think current KopeteFileTransferInfo and KopeteTransfer is not perfect:
@@ -200,7 +200,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString filesize = msg.right( msg.length() - msg.find( "Application-FileSize:" ) - 22 );
 			filesize.truncate( filesize.find("\r\n") );
 
-			kdDebug() << "MSNSwitchBoardService::slotReadMessage: " <<
+			kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: " <<
 				"invitation cookie: " << cookie << endl;
 
 			QString contact = m_protocol->contact(m_msgHandle)->displayName();
@@ -316,7 +316,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// Handle 'MS Serif' as an empty font name
 			if( !fontName.isEmpty() && fontName != "MS Serif" )
 			{
-				kdDebug() << "MSNSwitchBoardService::slotReadMessage: "
+				kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: "
 					<< "Font: '" << fontName << "'" << endl;
 
 				font = QFont( fontName,
@@ -326,11 +326,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 		}
 
-		/*kdDebug() << "MSNSwitchBoardService::slotReadMessage: Message: " <<
+		/*kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: Message: " <<
 			endl << msg.right( msg.length() - msg.find("\r\n\r\n") - 4) <<
 			endl;
 
-		kdDebug() << "MSNSwitchBoardService::slotReadMessage: User handle: "
+		kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: User handle: "
 			<< m_msgHandle << endl;*/
 
 		KopeteContactPtrList others;
@@ -383,7 +383,7 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 		return -1;
 	}
 
-	kdDebug() << "MSNSwitchBoardSocket::slotSendMsg" << endl;
+	kdDebug(14140) << "MSNSwitchBoardSocket::slotSendMsg" << endl;
 
 	QString head =
 		"MIME-Version: 1.0\r\n"
@@ -460,7 +460,7 @@ void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
 		if( m_chatMembers.contains( handle ) )
 			m_chatMembers.remove( handle );
 
-		kdDebug() << "MSNSwitchBoardSocket::userLeftChat: " << handle << " left the chat." << endl;
+		kdDebug(14140) << "MSNSwitchBoardSocket::userLeftChat: " << handle << " left the chat." << endl;
 
 		if(m_chatMembers.isEmpty())
 			disconnect();
