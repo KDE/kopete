@@ -76,6 +76,7 @@ static TestSet knownBroken =
 	{ "a non-breaking space (&nbsp;) character", "a non-breaking space (&nbsp;) character" },
 	{ "-+-[-:-(-:-)-:-]-+-", "-+-[-:-(-:-)-:-]-+-" },
 	{ "::shrugs::", "::shrugs::" },
+	{ ":Ptesting:P", ":Ptesting:P" },
 	{ NULL, NULL }
 };
 
