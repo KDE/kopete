@@ -162,9 +162,9 @@ KopeteView * KopeteMessageManagerFactory::createView( KopeteMessageManager *kmm 
 	if(viewObject)
 	{
 		connect(viewObject, SIGNAL(activated(KopeteView *)),
-			this, SLOT(slotViewActivated(KopeteView *)));
+			this, SIGNAL(viewActivated(KopeteView *)));
 		connect(viewObject, SIGNAL(closing(KopeteView *)),
-			this, SLOT(slotViewClosing(KopeteView *)));
+			this, SIGNAL(viewClosing(KopeteView *)));
 	}
 	else
 	{
@@ -173,16 +173,6 @@ KopeteView * KopeteMessageManagerFactory::createView( KopeteMessageManager *kmm 
 
 	emit viewCreated( newView ) ;
 	return newView;
-}
-
-void KopeteMessageManagerFactory::slotViewActivated(KopeteView *view)
-{
-	emit viewActivated(view);
-}
-
-void KopeteMessageManagerFactory::slotViewClosing(KopeteView *view)
-{
-	emit viewClosing(view);
 }
 
 #include "kopetemessagemanagerfactory.moc"

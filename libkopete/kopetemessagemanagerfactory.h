@@ -165,10 +165,6 @@ signals:
 	 */
 	void getActiveView(KopeteView*& ); public: void activeView(KopeteView*&v) { emit getActiveView(v); }
 
-private slots:
-	void slotViewActivated(KopeteView *view);
-	void slotViewClosing(KopeteView *view);
-
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 
