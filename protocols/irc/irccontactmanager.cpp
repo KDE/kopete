@@ -41,18 +41,21 @@ IRCContactManager::IRCContactManager(const QString &nickName, const QString &ser
 
 	QObject::connect(m_engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivAction(const QString &, const QString &, const QString &)));
-			
+
 	QObject::connect(m_engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
+
+	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
+			this, SLOT( slotNewNickChange(const QString &, const QString &)));
 
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
@@ -162,16 +165,17 @@ void IRCContactManager::unregisterServer(KopeteContact *contact)
 
 IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMetaContact *m)
 {
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		m->setTemporary( true );
-	}
-
 	QString lowerName = name.lower();
 	IRCChannelContact *channel = 0;
+
 	if ( !m_channels.contains( lowerName ) )
 	{
+		if( !m )
+		{
+			m = new KopeteMetaContact();
+			m->setTemporary( true );
+		}
+
 		channel = new IRCChannelContact(this, name, m);
 		m_channels.insert( lowerName, channel );
 		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)),
@@ -213,16 +217,17 @@ void IRCContactManager::unregisterChannel(KopeteContact *contact)
 
 IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaContact *m)
 {
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		m->setTemporary( true );
-	}
-
 	QString lowerName = name.lower();
 	IRCUserContact *user = 0;
+
 	if ( !m_users.contains( lowerName ) )
 	{
+		if( !m )
+		{
+			m = new KopeteMetaContact();
+			m->setTemporary( true );
+		}
+
 		user = new IRCUserContact(this, name, m);
 		m_users.insert( lowerName, user );
 		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)),
