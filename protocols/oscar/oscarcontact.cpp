@@ -663,7 +663,11 @@ void OscarContact::slotDirectConnect(void)
 		execute();
 		KopeteContactPtrList p;
 		p.append(this);
-		KopeteMessage msg = KopeteMessage(this, p, i18n("Waiting for %1 to connect...").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText );
+		KopeteMessage msg = KopeteMessage(
+			this, p,
+			i18n("Waiting for %1 to connect...").arg(mName),
+			KopeteMessage::Internal, KopeteMessage::PlainText );
+
 		manager()->appendMessage(msg);
 		mAccount->getEngine()->sendDirectIMRequest(mName);
 	}
@@ -676,11 +680,17 @@ void OscarContact::slotDirectIMReady(QString name)
 	if ( tocNormalize(name) != tocNormalize(mName) )
 		return;
 
-	kdDebug(14150) << "[OscarContact] Setting direct connect state for " << mName << " to true." << endl;
+	kdDebug(14150) << "[OscarContact] Setting direct connect state for "
+				   << mName << " to true." << endl;
+
 	mDirectlyConnected = true;
 	KopeteContactPtrList p;
 	p.append(this);
-	KopeteMessage msg = KopeteMessage(this, p, i18n("Direct connection to %1 established").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText ) ;
+	KopeteMessage msg = KopeteMessage(
+		this, p,
+		i18n("Direct connection to %1 established").arg(mName),
+		KopeteMessage::Internal, KopeteMessage::PlainText ) ;
+
 	manager()->appendMessage(msg);
 }
 
@@ -691,7 +701,9 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
     if ( tocNormalize(name) != tocNormalize(mName) )
 	return;
 
-    kdDebug(14150) << "[OscarContact] Setting direct connect state for " << mName << " to false." << endl;
+    kdDebug(14150) << "[OscarContact] Setting direct connect state for "
+				   << mName << " to false." << endl;
+
     mDirectlyConnected = false;
 }
 
@@ -715,33 +727,97 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 	if ( !filePath.isEmpty() )
 	{
 		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
-		kdDebug(14150) << "[OscarContact] File size is " << (unsigned long)finfo.size() << endl;
+		kdDebug(14150) << "[OscarContact] File size is "
+					   << (unsigned long)finfo.size() << endl;
 
 		//Send the file
 		mAccount->getEngine()->sendFileSendRequest( mName, finfo );
 	}
 }
 
+// Called when the metacontact owning this contact has changed groups
+void OscarContact::syncGroups()
+{
+	// Log the function entry
+	kdDebug(14150) << k_funcinfo << ": Entering" << endl;
+	// Get the new (kopete) group that we belong to
+	KopeteGroupList groups = metaContact()->groups();
+	// Oscar only supports one group per contact, so just get the first one
+	KopeteGroup *newKopeteGroup = groups.first();
+	if (newKopeteGroup == 0L)
+	{
+		kdDebug(14150) << k_funcinfo << ": Could not get kopete group" << endl;
+		return;
+	}
+
+	kdDebug(14150) << k_funcinfo << ": Getting current oscar group" << endl;
+	// Get the current (oscar) group that this contact belongs to on the server
+	AIMGroup *currentOscarGroup =
+		mAccount->internalBuddyList()->findGroup( mListContact->groupID() );
+	if (currentOscarGroup == 0L)
+	{
+		kdDebug(14150) << k_funcinfo << ": Could not get current Oscar group "
+					   << "for contact" << endl;
+		return;
+	}
+
+	kdDebug(14150) << k_funcinfo << ": Current oscar group id: "
+				   << mListContact->groupID()
+				   << ", Current oscar group name: "
+				   << currentOscarGroup->name() << endl;
+
+	// Compare the two names, to see if they're actually different
+	if (currentOscarGroup->name() != newKopeteGroup->displayName())
+	{ // First check to see if the new group is actually on the server list yet
+		AIMGroup *newOscarGroup =
+			mAccount->internalBuddyList()->findGroup(newKopeteGroup->displayName());
+		if (newOscarGroup == 0L)
+		{ // This is a new group, it doesn't exist on the server yet
+			kdDebug(14150) << k_funcinfo
+						   << ": New group did not exist on server, "
+						   << "asking server to create it first"
+						   << endl;
+			// Ask the server to create the group
+			mAccount->getEngine()->sendAddGroup(newKopeteGroup->displayName());
+		}
+
+		// The group has changed, so ask the engine to change
+		// our group on the server
+		mAccount->getEngine()->sendChangeBuddyGroup(
+			tocNormalize(mListContact->screenname()),
+			currentOscarGroup->name(),
+			newKopeteGroup->displayName());
+	}
+}
+
 /** Called when someone wants to send us a file */
-void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename, unsigned long filesize)
+void OscarContact::slotGotFileSendRequest(QString sn, QString message,
+										  QString filename,
+										  unsigned long filesize)
 {
 	// Check if we're the one who is directly connected
 	if ( tocNormalize(sn) != tocNormalize(mName) )
 		return;
 
-	kdDebug(14150) << "[OscarContact] Got file x-fer request for " << mName << endl;
-	KopeteTransferManager::transferManager()->askIncomingTransfer(this, filename, filesize, message);
+	kdDebug(14150) << "[OscarContact] Got file x-fer request for "
+				   << mName << endl;
+	KopeteTransferManager::transferManager()->askIncomingTransfer(
+		this, filename, filesize, message);
 }
 
 /** Called when a pending transfer has been accepted */
-void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileName)
+void OscarContact::slotTransferAccepted(KopeteTransfer *tr,
+										const QString &fileName)
 {
     // Check if we're the one who is directly connected
     if ( tr->info().contact() != this )
 	return;
 
-    kdDebug(14150) << k_funcinfo << "Transfer of " << fileName << " accepted." << endl;
-    OscarConnection *fs = mAccount->getEngine()->sendFileSendAccept(mName, fileName);
+    kdDebug(14150) << k_funcinfo << "Transfer of " << fileName
+				   << " accepted." << endl;
+
+    OscarConnection *fs =
+		mAccount->getEngine()->sendFileSendAccept(mName, fileName);
 
     //connect to transfer manager
     QObject::connect( fs, SIGNAL( percentComplete( unsigned int ) ),
@@ -760,12 +836,16 @@ void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 }
 
 /** Called when a file transfer begins */
-void OscarContact::slotTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
+void OscarContact::slotTransferBegun(OscarConnection *con,
+									 const QString& file,
+									 const unsigned long size,
+									 const QString &recipient)
 {
 	if (tocNormalize(con->connectionName()) != tocNormalize(mName))
 		return;
 	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
-	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer( this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
+	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer(
+			this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
 	//connect to transfer manager
 	QObject::connect(
 		con, SIGNAL(percentComplete(unsigned int)),
