@@ -110,17 +110,10 @@ void Kopete::slotLoadPlugins()
 
 	bool showConfigDialog = false;
 
-	// --noplugins specified?
-	if ( !args->isSet( "plugins" ) )
-	{
-		config->deleteGroup( "Plugins", true );
-	}
-	else if( !config->hasGroup( "Plugins" ) )
-	{
-		showConfigDialog = true;
-	}
-
 	config->setGroup( "Plugins" );
+
+	if( !config->hasGroup( "Plugins" ) )
+		showConfigDialog = true;
 
 	// Listen to arguments
 	if ( args->count() > 0 )
@@ -128,7 +121,7 @@ void Kopete::slotLoadPlugins()
 		showConfigDialog = false;
 		for ( int i = 0; i < args->count(); i++ )
 		{
-			QString argument = args->arg(i);
+			QString argument = args->arg( i );
 			if ( !argument.startsWith( "kopete_" ) )
 				argument.prepend( "kopete_" );
 
@@ -136,16 +129,39 @@ void Kopete::slotLoadPlugins()
 		}
 	}
 
-	// Prevent plugins from loading?
-	QCStringList disableArgs = args->getOptionList( "disable" );
-	for ( QCStringList::ConstIterator i = disableArgs.begin(); i != disableArgs.end(); ++i )
+	// Prevent plugins from loading? (--disable=foo,bar)
+	QStringList disableArgs = QStringList::split( ',', args->getOption( "disable" ) );
+	for ( QStringList::ConstIterator it = disableArgs.begin(); it != disableArgs.end(); ++it )
 	{
 		showConfigDialog = false;
-		QString argument = QString::fromLatin1( *i );
+		QString argument = *it;
 		if ( !argument.startsWith( "kopete_" ) )
 			argument.prepend( "kopete_" );
 
 		config->writeEntry( argument + "Enabled", false );
+	}
+
+	// Load some plugins exclusively? (--load-plugins=foo,bar)
+	if ( args->isSet( "load-plugins" ) )
+	{
+		config->deleteGroup( "Plugins", true );
+		showConfigDialog = false;
+		QStringList plugins = QStringList::split( ',', args->getOption( "load-plugins" ) );
+		for ( QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it )
+		{
+			QString argument = *it;
+			if ( !argument.startsWith( "kopete_" ) )
+				argument.prepend( "kopete_" );
+
+			config->writeEntry( argument + "Enabled", true );
+		}
+	}
+
+	// Disable plugins altogether? (--noplugins)
+	if ( !args->isSet( "plugins" ) )
+	{
+		config->deleteGroup( "Plugins", true );
+		showConfigDialog = false;
 	}
 
  	config->sync();

@@ -27,19 +27,25 @@
 #define KOPETE_VERSION "0.7.90>=20030826"
 
 static const char description[] =
-	I18N_NOOP("Kopete, the KDE Instant Messenger");
+	I18N_NOOP( "Kopete, the KDE Instant Messenger" );
 
 static KCmdLineOptions options[] =
 {
-	{ "noplugins", I18N_NOOP("Do not load plugins"), 0 },
-	{ "noconnect" , I18N_NOOP("Disable auto-connection") , 0 },
-	{ "autoconnect <account>" , I18N_NOOP("Auto-connect specified account.") , 0 },
-	{ "disable <plugin>", I18N_NOOP("Do not load specified plugin"), 0 },
-	{ "!+[plugin]", I18N_NOOP("Load specified plugins"), 0 },
+	{ "noplugins",              I18N_NOOP( "Do not load plugins. This option overrides all other options." ), 0 },
+	{ "noconnect",              I18N_NOOP( "Disable auto-connection." ), 0 },
+	{ "autoconnect <accounts>", I18N_NOOP( "Auto-connect the specified accounts. Use a comma-separated list\n"
+		"to auto-connect multiple accounts." ), 0 },
+	{ "disable <plugins>",      I18N_NOOP( "Do not load the specified plugin. Use a comma-separated list\n"
+		"to disable multiple plugins." ), 0 },
+	{ "load-plugins <plugins>", I18N_NOOP( "Load only the specified plugins. Use a comma-separated list\n"
+		"to load multiple plugins. This option has no effect when\n"
+		"--noplugins is set and overrides all other plugin related\n"
+		"command line options." ), 0 },
+	{ "!+[plugin]",            I18N_NOOP( "Load specified plugins" ), 0 },
 	KCmdLineLastOption
 };
 
-int main(int argc, char *argv[])
+int main( int argc, char *argv[] )
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
 		KOPETE_VERSION, description, KAboutData::License_GPL,
