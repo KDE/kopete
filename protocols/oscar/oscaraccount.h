@@ -22,10 +22,9 @@ Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 #include <qwidget.h>
 #include <qdict.h>
 #include <qstring.h>
-#include "oscarprotocol.h"
-#include "aimbuddylist.h"
 
 #include "kopeteaccount.h"
+#include "xautolock.h"
 
 class KAction;
 
@@ -110,7 +109,7 @@ protected slots:
 	 * Called when our status on the server has changed
 	 * This is called when disconnected too
 	 */
-	void slotStatusChanged( const KopeteOnlineStatus &newStatus );
+	void slotOurStatusChanged( const KopeteOnlineStatus &newStatus );
 
 	/** 
 	 * Called when we get a contact list from the server
@@ -128,14 +127,17 @@ protected slots:
 	/** Called when we get a request for a direct IM session with @sn */
 	void slotGotDirectIMRequest(QString sn);
 	
+	/** Called when the engine notifies us that it got our user info */
+	void slotGotMyUserInfo(UserInfo newInfo);
+	
+	/** Called when receiving a warning */
+	void slotGotWarning(int newlevel, QString warner);
+	
 	/** Called when there is no activity for a certain amount of time  */
 	void slotIdleTimeout();
 	
 	/** Called when there is mouse/keyboard activity */
 	void slotIdleActivity();
-	
-	/** Called when preferences are saved */
-	void slotPreferencesSaved();
 	
 	/** Displays an error dialog with the given text */
 	void slotError(QString errmsg, int errorCode);
@@ -167,6 +169,9 @@ protected: // Ivars
 	OscarContact *m_myself;
 	/** Our OSCAR socket object */
 	OscarSocket *m_engine;
+	/** Our UserInfo */
+	UserInfo m_userInfo;
+	
 	/** Our action menu */
 	KActionMenu *m_actionMenu;
 
@@ -187,7 +192,9 @@ protected: // Ivars
 	int m_randomNewBuddyNum;
 	/** Random new group number for the engine */
 	int m_randomNewGroupNum;
-		
-		
+	
+	/** Idleness manager */
+	XAutoLock m_idleMgr;
+	
 };
 #endif

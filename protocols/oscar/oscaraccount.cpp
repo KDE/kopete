@@ -46,8 +46,6 @@ OscarAccount::OscarAccount( KopeteProtocol *parent,
 	// Set our random new numbers
 	m_randomNewBuddyNum = 0;
 	m_randomNewGroupNum = 0;
-					
-	
 }
 
 OscarAccount::~OscarAccount()
@@ -98,8 +96,8 @@ void OscarAccount::connect()
 							<< "] Logging in as " << screenName << endl;
 
 			// Get the server and port from the preferences
-			QString server = pluginData(this, "server");
-			QString port = pluginData(this, "port");
+			QString server = pluginData(protocol(), accountId() + "server");
+			QString port = pluginData(protocol(), accountId() + "port");
 			
 			// Connect
 			m_engine->doLogin( server, port, screenName, password );
@@ -281,7 +279,8 @@ void OscarAccount::initEngine()
 					<< "] initEngine() START" << endl;
 	QByteArray cook;
 	cook.duplicate("01234567",8);
-	engine = new OscarSocket( pluginData(this, "server", cook );
+	m_engine = 
+		new OscarSocket( pluginData(protocol(), accountId() + "server", cook );
 	kdDebug( 14150 ) << "[OscarAccount: " 
 					<< "] initEngine() END" << endl;
 }
@@ -304,39 +303,47 @@ void OscarAccount::initSignals()
 		SLOT( slotKopeteGroupAdded(KopeteGroup *) ) );
 		
 	// Protocol error
-	QObject::connect( getEngine(),SIGNAL(protocolError(QString, int)),
+	QObject::connect( getEngine(),
+		SIGNAL(protocolError(QString, int)),
 		this, SLOT(slotError(QString, int)));
 		
 	// Got IM
-	QObject::connect( getEngine(), SIGNAL(gotIM(QString,QString,bool)),
+	QObject::connect( getEngine(), 
+		SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotGotIM(QString,QString,bool)));
 	
 	// Got Config (Buddy List)
-	QObject::connect( getEngine(), SIGNAL(gotConfig(AIMBuddyList &)),
+	QObject::connect( getEngine(), 
+		SIGNAL(gotConfig(AIMBuddyList &)),
 		this, SLOT(slotGotServerBuddyList(AIMBuddyList &)));
 		
 	// Got my user info
-	QObject::connect( getEngine(), SIGNAL(gotMyUserInfo(UserInfo)),
+	QObject::connect( getEngine(), 
+		SIGNAL(gotMyUserInfo(UserInfo)),
 		this, SLOT(slotGotMyUserInfo(UserInfo)));
 	
 	// Status changed (I think my own status)
-	QObject::connect( getEngine(), SIGNAL( statusChanged( const KopeteOnlineStatus & ) ),
-		SLOT( slotStatusChanged( const KopeteOnlineStatus & ) ) );
+	QObject::connect( getEngine(), 
+		SIGNAL( statusChanged( const KopeteOnlineStatus & ) ),
+		SLOT( slotOurStatusChanged( const KopeteOnlineStatus & ) ) );
 
 	// Got warning
-	QObject::connect( getEngine(), SIGNAL(gotWarning(int,QString)),
+	QObject::connect( getEngine(), 
+		SIGNAL(gotWarning(int,QString)),
 		this, SLOT(slotGotWarning(int,QString)));
 		
 	// Got direct IM request
-	QObject::connect( getEngine(), SIGNAL(gotDirectIMRequest(QString)),
+	QObject::connect( getEngine(), 
+		SIGNAL(gotDirectIMRequest(QString)),
 		this, SLOT(slotGotDirectIMRequest(QString)));
 		
 	// We have officially become idle
-	QObject::connect(&mIdleMgr, SIGNAL(timeout()),
+	QObject::connect(&m_dleMgr, 
+		SIGNAL(timeout()),
 		this, SLOT(slotIdleTimeout()));
 		
 	// We have officially become un-idle
-	QObject::connect(&mIdleMgr, SIGNAL(activity()),
+	QObject::connect(&m_dleMgr, SIGNAL(activity()),
 		this, SLOT(slotIdleActivity()));
 }
 
@@ -347,6 +354,7 @@ void OscarAccount::setUserProfile( QString profile )
 	// Save the user profile
 	setPluginData( protocol(), accountId() + "Profile", prof);
 }
+
 KActionMenu* OscarAccount::actionMenu()
 {
 	return m_actionMenu;
@@ -501,3 +509,84 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 		}
 	}
 }
+
+void OscarAccount::slotOurStatusChanged( const KopeteOnlineStatus &newStatus )
+{
+	kdDebug( 14150 ) << k_funcinfo << "status=" << newStatus.internalStatus() 
+					<< endl;
+	// update our own record of our status
+	myContact->setOnlineStatus( newStatus );
+}
+
+// Called when we have received my own user info
+void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
+{
+	m_userInfo = newInfo;
+}
+
+// Called when we have been warned
+void OscarAccount::slotGotWarning(int newlevel, QString warner)
+{  //this is not a natural decrease in level
+	if (m_userInfo.evil < newlevel) 
+	{
+		QString warnMessage;
+		if(warner.isNull())
+		{
+			warnMessage = i18n("anonymously");
+		}
+		else
+		{
+			warnMessage = i18n("...warned by...", "by %1").arg(warner);
+		}
+		
+		QString message = 
+			i18n("You have been warned %1. Your new warning level is %2%.").arg(
+				warnMessage).arg(newlevel);
+		KMessageBox::sorry(0L,message);
+	}
+	m_userInfo.evil = newlevel;
+}
+
+
+void OscarAccount::slotGotDirectIMRequest(QString sn)
+{
+	QString title = i18n("Direct IM session request");
+	QString message = 
+		i18n("%1 has requested a direct IM session with you.  " \
+		"Direct IM sessions allow the remote user to see your IP " \
+		"address, which can lead to security problems if you don't " \
+		"trust him/her.  Do you want to establish a direct connection " \
+		"to %2?").arg(sn).arg(sn);
+		
+	int result = 
+		KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
+		
+	if (result == KMessageBox::Yes)
+	{
+			getEngine()->sendDirectIMAccept(sn);
+	}
+	else if (result == KMessageBox::No)
+	{
+			getEngine()->sendDirectIMDeny(sn);
+	}
+}
+
+** Called when there is mouse/keyboard activity */
+void OscarAccount::slotIdleActivity()
+{
+	kdDebug(14150) << k_funcinfo << "got some activity, setting idle time with server to 0" << endl;
+	getEngine()->sendIdleTime( 0 );
+}
+
+/** Called when there is no activity for a certain amount of time  */
+void OscarAccount::slotIdleTimeout()
+{
+	kdDebug(14150) << k_funcinfo << "got an idle timeout, setting idle time with server" << endl;
+	//idleTimeout() gives a value in minutes, engine wants seconds
+	int idleTimeout = 0;
+	QString idleString = pluginData(protocol(), accountId() + "IdleTimeOut");
+	idleTimeout = idleString.toInt();
+	
+	getEngine()->sendIdleTime( idleTimeout * 60 ); 
+}
+
