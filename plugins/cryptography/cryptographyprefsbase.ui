@@ -164,7 +164,7 @@
                 <cstring>No_Passphrase_Handling</cstring>
             </property>
             <property name="text">
-                <string>Don't ask for the passphrase</string>
+                <string>Do not ask for the passphrase</string>
             </property>
         </widget>
     </grid>

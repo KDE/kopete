@@ -75,7 +75,7 @@
                         <cstring>IncomingDontTranslate</cstring>
                     </property>
                     <property name="text">
-                        <string>Don't translate</string>
+                        <string>Do not translate</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -127,7 +127,7 @@
                         <cstring>OutgoingDontTranslate</cstring>
                     </property>
                     <property name="text">
-                        <string>Don't translate</string>
+                        <string>Do not translate</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>

@@ -80,7 +80,7 @@ popupPublic::popupPublic(QWidget *parent, const char *name,QString sfile,bool fi
   defaultKey=config->readEntry("default key");
   allowcustom=config->readBoolEntry("allow custom option",false);
   if (allowcustom) customOptions=config->readEntry("custom option");
-  
+
 //  encryptfileto=config->readBoolEntry("encrypt files to",false);
 //  filekey=config->readEntry("file key");
 
@@ -100,7 +100,7 @@ defaultName="";
 
   keysList = new KListView( this );
   keysList->setRootIsDecorated(true);
-  
+
   keysList->setShowSortIndicator(true);
   keysList->setFullWidth(true);
   keysList->setSelectionModeExt(KListView::Extended);
@@ -124,7 +124,7 @@ defaultName="";
   QWhatsThis::add(keysList,i18n("<b>Public keys list</b>: select the key that will be used for encryption."));
   QWhatsThis::add(CBarmor,i18n("<b>ASCII encryption</b>: makes it possible to open the encrypted file/message in a text editor"));
   QWhatsThis::add(CBhideid,i18n("<b>Hide user ID</b>: Do not put the keyid into encrypted packets. This option hides the receiver "
-                                 "of the message and is a countermeasure against traffic analysis. It may slow down the decryption process because " 
+                                 "of the message and is a countermeasure against traffic analysis. It may slow down the decryption process because "
 								 "all available secret keys are tried."));
   QWhatsThis::add(CBuntrusted,i18n("<b>Allow encryption with untrusted keys</b>: when you import a public key, it is usually "
                                  "marked as untrusted and you cannot use it unless you sign it in order to make it 'trusted'. Checking this "
@@ -136,7 +136,7 @@ defaultName="";
   QWhatsThis::add(CBshred,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
 
   CBsymmetric=new QCheckBox(i18n("Symmetrical encryption"),boutonboxoptions);
-  QWhatsThis::add(CBsymmetric,i18n("<b>Symmetrical encryption</b>: encryption doesn't use keys. You just need to give a password "
+  QWhatsThis::add(CBsymmetric,i18n("<b>Symmetrical encryption</b>: encryption does not use keys. You just need to give a password "
                                  "to encrypt/decrypt the file"));
   QObject::connect(CBsymmetric,SIGNAL(toggled(bool)),this,SLOT(isSymetric(bool)));
   }
@@ -320,7 +320,7 @@ QString tst;
 
   while (p->readln(tst)!=-1)
   {
-   
+
   //tst=QString::fromUtf8(tst);
        if (tst.startsWith("pub"))
         {

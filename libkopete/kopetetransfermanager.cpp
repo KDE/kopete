@@ -286,7 +286,7 @@ void KopeteTransferManager::sendFile( const KURL &file, const QString &fname, un
 		if( mustBeLocal && !url.isLocalFile() )
 		{
 			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
-				i18n( "Sorry, sending files which aren't stored locally is not yet supported by this protocol.\n"
+				i18n( "Sorry, sending files which are not stored locally is not yet supported by this protocol.\n"
 				"Please copy this file to your computer and try again." ) );
 		}
 		else

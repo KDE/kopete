@@ -480,7 +480,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001: //registration refused!
-							emit protocolError(i18n("Registration refused!"), 0);
+							emit protocolError(i18n("Registration refused."), 0);
 							break;
 						case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
@@ -2832,7 +2832,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
 	if (newLevel <= 0)
 		newLevel = 250; //seems like a good default
-	
+
 	kdDebug(14150) << "New Level is: " << newLevel << endl;
 
 	if (currentLevel <= disconnectLevel)
@@ -3992,7 +3992,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 // 				kdDebug(14150) << k_funcinfo <<
 // 					"multiple logins (on same UIN)!!!" << endl;
 				emit protocolError(
-					i18n("You've logged in more than once with the same %1," \
+					i18n("You have logged in more than once with the same %1," \
 						" this login is now disconnected.").arg((mIsICQ ? "UIN" : "buddy name")), 0);
 				break;
 			}
@@ -4002,7 +4002,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 			{
 // 				kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
 				emit protocolError(
-					i18n("Couldn't log on to %1 with account %2 as the password was" \
+					i18n("Could not log on to %1 with account %2 as the password was" \
 						" incorrect.").arg((mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
 				break;
 			}
@@ -4012,7 +4012,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 			{
 // 				kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
 				emit protocolError(
-					i18n("Couldn't log on to %1 with nonexistent account %2.").arg(
+					i18n("Could not log on to %1 with nonexistent account %2.").arg(
 						(mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
 				break;
 			}
@@ -4023,7 +4023,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 /*				kdDebug(14150) << k_funcinfo <<
 					"too many clients from same IP" << endl;*/
 				emit protocolError(
-					i18n("Couldn't log on to %1 as there are too many clients" \
+					i18n("Could not log on to %1 as there are too many clients" \
 						" from the same computer.").arg(
 							(mIsICQ ? "ICQ" : "AIM")), 0);
 				break;

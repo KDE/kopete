@@ -353,7 +353,7 @@
                             </sizepolicy>
                         </property>
                         <property name="text">
-                            <string>&lt;h2&gt;Welcome to the Add Contact Wizard!&lt;/h2&gt;
+                            <string>&lt;h2&gt;Welcome to the Add Contact Wizard.&lt;/h2&gt;
 
 &lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete.&lt;/p&gt;</string>
                         </property>
@@ -467,7 +467,7 @@
                             <bool>true</bool>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Check box this if you don't want to integrate other KDE applications with Kopete</string>
+                            <string>Check box this if you do not want to integrate other KDE applications with Kopete</string>
                         </property>
                     </widget>
                 </vbox>
@@ -820,7 +820,7 @@
             <cstring>finis</cstring>
         </property>
         <attribute name="title">
-            <string>Finished!</string>
+            <string>Finished.</string>
         </attribute>
         <hbox>
             <property name="name">
@@ -847,7 +847,7 @@
                             </sizepolicy>
                         </property>
                         <property name="text">
-                            <string>&lt;p&gt;&lt;h2&gt;Congratulations!&lt;/h2&gt;&lt;/p&gt;
+                            <string>&lt;p&gt;&lt;h2&gt;Congratulations.&lt;/h2&gt;&lt;/p&gt;
 
 &lt;p&gt;You have finished configuring a contact. Please click Finish and your contact will be added to your contact list.&lt;/p&gt;
 

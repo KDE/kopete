@@ -285,7 +285,7 @@
                         <cstring>mTransparencyBgOverride</cstring>
                     </property>
                     <property name="text">
-                        <string>Don't show user specified &amp;background color</string>
+                        <string>Do not show user specified &amp;background color</string>
                     </property>
                 </widget>
             </grid>

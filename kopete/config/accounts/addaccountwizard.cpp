@@ -119,7 +119,7 @@ void AddAccountWizard::accept()
 	}
 
 	KWizard::accept();
-	
+
 }
 
 void AddAccountWizard::reject()
@@ -199,7 +199,7 @@ void AddAccountWizard::next()
 				if ( !m_accountPage )
 				{
 					KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-						i18n( "The author of this protocol hasn't implemented adding of accounts." ),
+						i18n( "This protocol does not currently support adding accounts." ),
 						i18n( "Error While Adding Account" ) );
 				}
 				else

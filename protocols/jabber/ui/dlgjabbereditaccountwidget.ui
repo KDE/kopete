@@ -574,7 +574,7 @@
                                                     <string>If you need to use a proxy server, indicate the type from this dropdown.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>Normally you don't need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
+                                                    <string>Normally you do not need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -632,7 +632,7 @@
                                                     <string>If you need to use a proxy server, indicate the type from this dropdown.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>Normally you don't need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
+                                                    <string>Normally you do not need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLayoutWidget">
