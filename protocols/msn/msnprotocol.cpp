@@ -52,6 +52,9 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	else
 		s_protocol = this;
 
+	// Go in experimental mode: enable the new API :-)
+	//enableStreaming( true );
+
 	m_status = FLN;
 	mIsConnected = false;
 	m_serial = 0;
@@ -910,11 +913,15 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		}
 		else if( list == "AL" )
 		{
-			// FIXME: Proper MSNContact ctor!
-			MSNContact *c = new MSNContact( handle, publicName, QString::null,
-				0L );
-			c->setBlocked( false );
-			addToContactList( c, gn );
+			// deleted Contacts might still be in allow list.
+			// Don't show them in the GUI, though.
+			if( !m_contacts.contains( handle ) )
+			{
+				// FIXME: Proper MSNContact ctor required!
+				c = new MSNContact( handle, publicName, QString::null, 0L );
+				c->setDeleted( true );
+				m_contacts.insert( c->msnId(), c );
+			}
 		}
 	}
 }
