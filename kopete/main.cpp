@@ -39,13 +39,13 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("core developer, fastest plugin developer on earth."), "nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("core developer"), "bodnar42@phalynx.dhs.org" );
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Patches, bugfixes"), "klingens@kde.org" );
-	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("cleanups, features and bugfixes"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("features and bugfixes"), "remenic@linuxfromscratch.org");
 	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Jabber plugin, random fixes"), "dstone@kde.org", "http://raging.dropbear.id.au");
 
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN Code") );
 	aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM Code") );
+	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("cleanups, features and bugfixes") );
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
