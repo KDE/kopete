@@ -57,12 +57,6 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 		SIGNAL( refused( const KopeteFileTransferInfo & ) ),
 		this,
 		SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
-
-	connect( this, SIGNAL( contactRemoved(const KopeteContact *) ), this,
-		SLOT( slotRemoveManager(const KopeteContact *) ) );
-
-	m_timerOn = false;
-
 }
 
 MSNMessageManager::~MSNMessageManager()
@@ -110,12 +104,6 @@ void MSNMessageManager::createChat( const QString &handle,
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 	connect( m_chatService, SIGNAL( invitation( const QString&, const QString& ) ),
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
-}
-
-void MSNMessageManager::slotRemoveManager( const KopeteContact *contact )
-{
-	MSNProtocol *p = static_cast<MSNProtocol*>( m_protocol );
-	const MSNContact *c = static_cast<const MSNContact*>( &*contact );
 }
 
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
@@ -390,7 +378,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			QString invitname = rx.cap(1);
 
 			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
-			KopeteMessage tmpMsg = KopeteMessage( protocol()->contacts()[ handle ] , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+			KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage(tmpMsg);
 		}
 	}

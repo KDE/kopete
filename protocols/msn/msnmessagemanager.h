@@ -45,6 +45,7 @@ public:
 
 	void sendFile( const QString &fileLocation, const QString &fileName, 
 		long unsigned int fileSize );
+
 public slots:
 	void slotCloseSession();
 
@@ -53,15 +54,13 @@ private slots:
 
 	void slotUpdateChatMember( const QString &handle, const QString &publicName, bool add );
 	void slotSwitchBoardClosed();
-	void
-	slotInviteContact( KopeteContact *contact );
+	void slotInviteContact( KopeteContact *contact );
 	void slotAcknowledgement( unsigned int id, bool ack );
 	void slotInvitation( const QString &handle, const QString &msg );
 
 	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
 	void slotFileTransferDone( MSNFileTransferSocket* MFTS );
 	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
-	void slotRemoveManager( const KopeteContact *);
 
 private:
 	KopeteProtocol *m_protocol;
@@ -70,8 +69,6 @@ private:
 //	KopeteMessage *m_msgQueued;
 	QString otherString;
 	KActionCollection *m_actions;
-	bool m_timerOn;
-	QMap<const KopeteContact *, QTime> typingMap ;
 
 	//Messages sent before the ending of the connection are queued
 	QValueList<KopeteMessage> m_messagesQueue;

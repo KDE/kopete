@@ -1140,6 +1140,12 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	if ( c && m_myself )
 	{
 		static_cast<MSNMessageManager*>( c->manager(true) )->createChat( handle, address, auth, ID );
+		if(ID && mPrefs->notifyNewChat() )
+		{
+			QString body=i18n("%1 has opened a new chat").arg(c->displayName());
+			KopeteMessage tmpMsg = KopeteMessage( c , c->manager()->members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+			c->manager()->appendMessage(tmpMsg);
+		}
 	}
 }
 
