@@ -15,9 +15,9 @@ diff -u -p -r1.1 dialog.cpp
  {
  
 @@ -277,9 +274,11 @@ void Dialog::createDialogFromServices()
-		d->dlg = new KCMultiDialog( KJanusWidget::IconList,
-			i18n( "Preferences" ), d->parentwidget );
- 
+	// touch the plugin selections.
+	// I have no idea how to check that in KPluginSelector::load()...
+	//d->dlg->showButton( KDialogBase::User1, true );
 +#if KDE_IS_VERSION( 3, 1, 90 )
  	if( ! d->staticlistview )
  		d->dlg->addButtonBelowList( i18n( "Configure..." ), this,

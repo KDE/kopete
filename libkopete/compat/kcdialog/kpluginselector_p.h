@@ -112,11 +112,6 @@ class KPluginSelectionWidget : public QWidget
         virtual void save();
 
         /**
-         * Set the default values.
-         */
-        virtual void defaults();
-
-        /**
          * @return whether the plugin is enabled in the ListView or not.
          */
         bool pluginChecked( const QString & pluginName ) const;
@@ -173,6 +168,7 @@ class KPluginSelectionWidget : public QWidget
          * @internal
          */
         void updateConfigPage( KPluginInfo * plugininfo, bool checked );
+        void updateConfigPage();
 
         /**
          * Whenever an embedded KCM emits the changed signal we count the number
@@ -183,9 +179,16 @@ class KPluginSelectionWidget : public QWidget
          */
         void clientChanged( bool );
 
+        /**
+         * Called whenever the tabWidget changes. It checks whether this
+         * KPluginSelectionWidget is shown and sets the currentplugininfo
+         * accordingly.
+         */
+        void tabWidgetChanged( QWidget * );
+
     private:
         /**
-         * Load a KCM from a KCModuleInfo. If successful connect changed
+         * Load a KCM from a KCModuleInfo. If successfull connect changed
          * signal and return the module. If not, create a label showing "Error",
          * show the loaderError and return the label.
          *

@@ -157,7 +157,7 @@ class Dialog : public QObject
 
     public slots:
         /**
-         * Show the config dialog. The slot immediately returns since the dialog
+         * Show the config dialog. The slot immediatly returns since the dialog
          * is non-modal.
          */
         void show();

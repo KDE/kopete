@@ -135,7 +135,7 @@ KCModuleInfo::loadAll()
 QString
 KCModuleInfo::docPath() const
 {
-  if (!_allLoaded)
+  if (!_allLoaded) 
     const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _doc;

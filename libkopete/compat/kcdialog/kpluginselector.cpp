@@ -68,6 +68,7 @@ struct KPluginSelectionWidget::KPluginSelectionWidgetPrivate
         , config( _config )
         , catname( _cat )
         , currentplugininfo( 0 )
+        , visible( true )
         , currentchecked( false )
         , changed( 0 )
     {
@@ -94,6 +95,7 @@ struct KPluginSelectionWidget::KPluginSelectionWidgetPrivate
     QPtrDict<QStringList> moduleParentComponents;
 
     KPluginInfo * currentplugininfo;
+    bool visible;
     bool currentchecked;
     int changed;
 };
@@ -180,6 +182,9 @@ void KPluginSelectionWidget::init( const QValueList<KPluginInfo*> & plugininfos,
     // widgetstack
     d->widgetstack = d->kps->widgetStack();
     load();
+    // select and highlight the first item in the plugin list
+    if( listview->firstChild() )
+        listview->setSelected( listview->firstChild(), true );
 }
 
 KPluginSelectionWidget::~KPluginSelectionWidget()
@@ -195,6 +200,7 @@ bool KPluginSelectionWidget::pluginIsLoaded( const QString & pluginName ) const
             return it.data()->isPluginEnabled();
     return false;
 }
+
 
 QWidget * KPluginSelectionWidget::insertKCM( QWidget * parent,
         const KCModuleInfo & moduleinfo )
@@ -266,12 +272,23 @@ void KPluginSelectionWidget::embeddPluginKCMs( KPluginInfo * plugininfo, bool ch
     QApplication::restoreOverrideCursor();
 }
 
+inline void KPluginSelectionWidget::updateConfigPage()
+{
+    updateConfigPage( d->currentplugininfo, d->currentchecked );
+}
+
 void KPluginSelectionWidget::updateConfigPage( KPluginInfo * plugininfo,
         bool checked )
 {
     kdDebug( 702 ) << k_funcinfo << endl;
     d->currentplugininfo = plugininfo;
     d->currentchecked = checked;
+
+    // if this widget is not currently visible (meaning that it's in a tabwidget
+    // and another tab is currently opened) it's not allowed to change the
+    // widgetstack
+    if( ! d->visible )
+        return;
 
     if( 0 == plugininfo )
     {
@@ -306,6 +323,17 @@ void KPluginSelectionWidget::clientChanged( bool didchange )
         emit changed( false );
     else if( d->changed < 0 )
         kdError( 702 ) << "negative changed value: " << d->changed << endl;
+}
+
+void KPluginSelectionWidget::tabWidgetChanged( QWidget * widget )
+{
+    if( widget == this )
+    {
+        d->visible = true;
+        updateConfigPage();
+    }
+    else
+        d->visible = false;
 }
 
 void KPluginSelectionWidget::executed( QListViewItem * item )
@@ -368,8 +396,16 @@ void KPluginSelectionWidget::load()
         KPluginInfo * info = it.data();
         info->load( d->config );
         it.key()->setOn( info->isPluginEnabled() );
+        if( d->visible && info == d->currentplugininfo )
+            d->currentchecked = info->isPluginEnabled();
     }
-    updateConfigPage( d->currentplugininfo, d->currentchecked );
+
+    for( QValueList<KCModule*>::Iterator it = d->modulelist.begin();
+            it != d->modulelist.end(); ++it )
+        if( ( *it )->changed() )
+            ( *it )->load();
+
+    updateConfigPage();
     // TODO: update changed state
 }
 
@@ -400,25 +436,11 @@ void KPluginSelectionWidget::save()
     for( QStringList::ConstIterator it = updatedModules.begin(); it != updatedModules.end(); ++it )
         emit configCommitted( ( *it ).latin1() );
 
-    updateConfigPage( d->currentplugininfo, d->currentchecked );
+    updateConfigPage();
     kdDebug( 702 ) << "syncing config file" << endl;
     d->config->sync();
     d->changed = 0;
     emit changed( false );
-}
-
-void KPluginSelectionWidget::defaults()
-{
-    kdDebug( 702 ) << k_funcinfo << endl;
-
-    for( QMap<QCheckListItem*, KPluginInfo*>::Iterator it =
-            d->pluginInfoMap.begin(); it != d->pluginInfoMap.end(); ++it )
-    {
-        it.data()->defaults();
-        it.key()->setOn( it.data()->isPluginEnabled() );
-    }
-    updateConfigPage( d->currentplugininfo, d->currentchecked );
-    // TODO: update changed state
 }
 
 void KPluginSelectionWidget::checkDependencies( const KPluginInfo * info )
@@ -478,10 +500,14 @@ class KPluginSelector::KPluginSelectorPrivate
     d->widgetstack->setMinimumSize( 200, 200 );
 
     splitter->setOpaqueResize( true );
+    splitter->setResizeMode( d->widgetstack, QSplitter::FollowSizeHint );
 
     QLabel * label = new QLabel( i18n( "this plugin is not configurable" ),
             d->widgetstack );
+    ( new QVBoxLayout( label, 0, KDialog::spacingHint() ) )->setAutoAdd( true );
     label->setAlignment( Qt::AlignCenter );
+    label->setMinimumSize( 200, 200 );
+
     d->widgetstack->addWidget( label, 1 );
 
     configPage( 1 );
@@ -503,9 +529,12 @@ void KPluginSelector::checkNeedForTabWidget()
         if( w )
         {
             kdDebug( 702 ) << "create TabWidget" << endl;
-            d->tabwidget = new KTabWidget( d->frame, "KPluginSelector TabWidget" );
+            d->tabwidget = new KTabWidget( d->frame,
+                    "KPluginSelector TabWidget" );
             w->reparent( d->tabwidget, QPoint( 0, 0 ) );
             d->tabwidget->addTab( w, w->catName() );
+            connect( d->tabwidget, SIGNAL( currentChanged( QWidget * ) ), w,
+                    SLOT( tabWidgetChanged( QWidget * ) ) );
         }
     }
 }
@@ -524,10 +553,13 @@ void KPluginSelector::addPlugins( const QString & instanceName,
         w = new KPluginSelectionWidget( instanceName, this,
                 d->tabwidget, catname, category, cfgGroup );
         d->tabwidget->addTab( w, catname );
+        connect( d->tabwidget, SIGNAL( currentChanged( QWidget * ) ), w,
+                SLOT( tabWidgetChanged( QWidget * ) ) );
     }
     else
         w = new KPluginSelectionWidget( instanceName, this, d->frame,
                 catname, category, cfgGroup );
+    w->setMinimumSize( 200, 200 );
     connect( w, SIGNAL( changed( bool ) ), this, SIGNAL( changed( bool ) ) );
     connect( w, SIGNAL( configCommitted( const QCString & ) ), this,
             SIGNAL( configCommitted( const QCString & ) ) );
@@ -552,10 +584,13 @@ void KPluginSelector::addPlugins( const QValueList<KPluginInfo*> & plugininfos,
         w = new KPluginSelectionWidget( plugininfos, this,
                 d->tabwidget, catname, category, cfgGroup );
         d->tabwidget->addTab( w, catname );
+        connect( d->tabwidget, SIGNAL( currentChanged( QWidget * ) ), w,
+                SLOT( tabWidgetChanged( QWidget * ) ) );
     }
     else
         w = new KPluginSelectionWidget( plugininfos, this, d->frame,
                 catname, category, cfgGroup );
+    w->setMinimumSize( 200, 200 );
     connect( w, SIGNAL( changed( bool ) ), this, SIGNAL( changed( bool ) ) );
     connect( w, SIGNAL( configCommitted( const QCString & ) ), this,
             SIGNAL( configCommitted( const QCString & ) ) );
@@ -608,11 +643,36 @@ void KPluginSelector::save()
 
 void KPluginSelector::defaults()
 {
-    for( QValueList<KPluginSelectionWidget *>::Iterator it =
-            d->pswidgets.begin(); it != d->pswidgets.end(); ++it )
+    kdDebug( 702 ) << k_funcinfo << endl;
+
+    // what should defaults do? here's what I think:
+    // Pressing a button in the dialog should not change any widgets that are
+    // not visible for the user. Therefor we may only change the currently
+    // visible plugin's KCM. Restoring the default plugin selections is therefor
+    // not possible. (if the plugin has multiple KCMs they will be shown in a
+    // tabwidget - defaults() will be called for all of them)
+
+    QWidget * pluginconfig = d->widgetstack->visibleWidget();
+    KCModule * kcm = ( KCModule* )pluginconfig->qt_cast( "KCModule" );
+    if( kcm )
     {
-        ( *it )->defaults();
+        kdDebug( 702 ) << "call KCModule::defaults() for the plugins KCM"
+            << endl;
+        kcm->defaults();
+        return;
     }
+
+    // doesn't work for plugins with more than one KCM
+    QObjectList * kcms = pluginconfig->queryList( "KCModule", 0, false, false );
+    QObjectListIt it( *kcms );
+    QObject * obj;
+    while( ( obj = it.current() ) != 0 )
+    {
+        ++it;
+        ( ( KCModule* )obj )->defaults();
+    }
+    delete kcms;
+    // FIXME: update changed state
 }
 
 // vim: sw=4 sts=4 et

@@ -7,7 +7,10 @@ Name[ca]=Connector informatiu de KDE
 Name[da]=KDE's plugin-information
 Name[es]=Información de los plugin de KDE
 Name[hu]=A KDE bővítőmodulok áttekintése
+Name[pt_BR]=Informações do Plug-in do KDE
+Name[sr]=Информација о KDE dodatku
 Name[sv]=KDE insticksinformation
+Name[wa]=Informåcion sol tchôke-divins di KDE
 
 [PropertyDef::X-KDE-PluginInfo-Author]
 Type=QString
