@@ -35,6 +35,7 @@
 #include <khtmlview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmultipledrag.h>
 #include <kpopupmenu.h>
 #include <krootpixmap.h>
 #include <krun.h>
@@ -612,25 +613,28 @@ void ChatMessagePart::slotScrollView()
 	view()->scrollBy( 0, view()->contentsHeight() );
 }
 
-void ChatMessagePart::copy()
+void ChatMessagePart::copy(bool justselection /* default false */)
 {
 	/*
-	* The objective of this function is to keep the text of emoticons (of or latex image) when copying.
+	* The objective of this function is to keep the text of emoticons (or of latex image) when copying.
 	*   see Bug 61676
+	* This also copies the text as type text/html
 	* RangeImpl::toHTML  was not implemented before KDE 3.4
 	*/
 
 	QString text;
+	QString htmltext;
 
 #if KDE_IS_VERSION(3,3,90)
-	text=Kopete::Message::unescape( selection().toHTML().string() ).stripWhiteSpace();
+	htmltext = selectedTextAsHTML();
+	text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
 	// Message::unsescape will replace image by his title attribute
 	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 #else
 
 	DOM::Node startNode, endNode;
 	long startOffset, endOffset;
-	selection( startNode, startOffset,  endNode, endOffset );
+	selection( startNode, startOffset, endNode, endOffset );
 
 	//BEGIN: copied from KHTMLPart::selectedText
 
@@ -736,9 +740,36 @@ void ChatMessagePart::copy()
 
 	//END: copied from KHTMLPart::selectedText
 #endif
+	if(text.isEmpty()) return;
 
-	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
+		
+#ifndef QT_NO_MIMECLIPBOARD
+	if(justselection)
+	{
+      	QTextDrag *textdrag = new QTextDrag(text, 0L);
+	    KMultipleDrag *drag = new KMultipleDrag( );
+    	drag->addDragObject( textdrag );
+    	if(!htmltext.isEmpty()) {
+	    	htmltext.replace( QChar( 0xa0 ), ' ' );
+    		QTextDrag *htmltextdrag = new QTextDrag(htmltext, 0L);
+    		htmltextdrag->setSubtype("html");
+            drag->addDragObject( htmltextdrag );
+    	}
+    	QApplication::clipboard()->setData( drag, QClipboard::Clipboard );
+    	QApplication::clipboard()->setText( text, QClipboard::Selection );		
+    } else
+	{
+    	QApplication::clipboard()->setText( text, QClipboard::Selection );		
+	}
+
+#else
+	if(!justselection)
+    	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
+#endif
+	connect( kapp->clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
+		
 }
 
 void ChatMessagePart::print()
@@ -816,6 +847,11 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
+void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) //virtual
+{
+	KHTMLPart::khtmlDrawContentsEvent(event);
+	copy(true /*selection only*/);
+}
 void ChatMessagePart::slotCloseView( bool force )
 {
 	m_manager->view()->closeView( force );

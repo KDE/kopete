@@ -54,9 +54,12 @@ public slots:
 	/**
 	 * Initiates a copy action
 	 * If there is text selected in the HTML view, that text is copied
-	 * Otherwise, the entire edit area is copied.
+	 * Otherwise if @p justselection is false, the entire edit area is copied.
+	 * 
+	 * @param justselection If this is true, then the text will be only copied to the selection buffer only.
+	 *                      In this mode, if nothing is selected, then nothing is copied.
 	 */
-	void copy();
+	void copy(bool justselection = false);
 
 	/**
 	 * Print out the contents of the chatwindow
@@ -125,6 +128,9 @@ private slots:
 
 	void slotCloseView( bool force = false );
 
+protected:
+	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
+	
 private:
 	Kopete::ChatSession *m_manager;
 
