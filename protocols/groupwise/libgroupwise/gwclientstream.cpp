@@ -30,6 +30,8 @@
 
 #include "gwclientstream.h"
 
+#define LIBGW_DEBUG 1
+
 void cs_dump( const QByteArray &bytes );
 
 enum {
@@ -445,14 +447,15 @@ void ClientStream::cp_incomingData()
 {
 	qDebug( "ClientStream::cp_incomingData:" );
 	Transfer * incoming = d->client.incomingTransfer();
-	if ( d->client.state() == CoreProtocol::Available && incoming )
+	if ( incoming )
 	{
+		qDebug( " - got a new transfer" );
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
 		emit doReadyRead();
 	}
 	else
-		qDebug( "ClientStream::cp_incomingData: client signalled incomingData but none was available" );
+		qDebug( " - client signalled incomingData but none was available, state is: %i", d->client.state() );
 }
 
 void ClientStream::cr_connected()

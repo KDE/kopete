@@ -122,14 +122,16 @@ void LoginTask::extractContact( Field::MultiField * contactContainer )
 	contact.dn = current->value().toString().lower();
 	emit gotContact( contact );
 	Field::MultiField * details = fl.findMultiField( NM_A_FA_USER_DETAILS );
-	Field::FieldList detailsFields = details->fields();
-	ContactDetails cd = extractUserDetails( detailsFields );
-	
-	// tell the UserDetailsManager that we have this contact's details
-	client()->userDetailsManager()->addContact( contact.dn );
-	
-	cd.dn = contact.dn.lower(); // HACK: lowercased DN
-	emit gotContactUserDetails( cd );
+	if ( details ) // not all contact list contacts have these
+	{
+		Field::FieldList detailsFields = details->fields();
+		ContactDetails cd = extractUserDetails( detailsFields );
+		// tell the UserDetailsManager that we have this contact's details
+		client()->userDetailsManager()->addContact( contact.dn );
+
+		cd.dn = contact.dn.lower(); // HACK: lowercased DN
+		emit gotContactUserDetails( cd );
+	}
 }
 
 ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
