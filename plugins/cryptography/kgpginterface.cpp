@@ -59,7 +59,7 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	}
 	dests+=" --recipient "+userIDs;
 	
-	QCString gpgcmd = "echo ";
+	QCString gpgcmd = "echo -n ";
 	gpgcmd += KShellProcess::quote( text ).utf8();
 	gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 	gpgcmd += Options.local8Bit();
