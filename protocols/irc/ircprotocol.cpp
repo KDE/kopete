@@ -108,19 +108,19 @@ void IRCProtocolHandler::handleURL( const KURL &url ) const
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Protocol( IRCProtocolFactory::instance(), parent, name ),
 
-	m_ServerStatusOnline(Kopete::OnlineStatus::Online, 90, this, 21, QString::null, i18n("Online"), i18n("Online")),
-	m_ServerStatusOffline(Kopete::OnlineStatus::Offline, 80, this, 20, QString::null, i18n("Offline"), i18n("Offline")),
+	m_ServerStatusOnline(Kopete::OnlineStatus::Online, 90, this, 21, QString::null, i18n("Online")),
+	m_ServerStatusOffline(Kopete::OnlineStatus::Offline, 80, this, 20, QString::null, i18n("Offline")),
 
-	m_ChannelStatusOnline(Kopete::OnlineStatus::Online, 70, this, 11, QString::null, i18n("Online"), i18n("Online")),
-	m_ChannelStatusOffline(Kopete::OnlineStatus::Offline, 60, this, 10, QString::null, i18n("Offline"), i18n("Offline")),
+	m_ChannelStatusOnline(Kopete::OnlineStatus::Online, 70, this, 11, QString::null, i18n("Online")),
+	m_ChannelStatusOffline(Kopete::OnlineStatus::Offline, 60, this, 10, QString::null, i18n("Offline")),
 
-	m_UserStatusOp(Kopete::OnlineStatus::Online, 50, this, 5, "irc_op", i18n("Op"), i18n("Op")),
-	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 50, this, 5, "irc_away", i18n("Away"), i18n("Away")),
-	m_UserStatusVoice(Kopete::OnlineStatus::Online, 40, this, 4, "irc_voice", i18n("Voice"), i18n("Voice")),
-	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 40, this, 4, "irc_away",  i18n("Away"), i18n("Away")),
+	m_UserStatusOp(Kopete::OnlineStatus::Online, 50, this, 5, "irc_op", i18n("Op")),
+	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 50, this, 5, "irc_away", i18n("Away")),
+	m_UserStatusVoice(Kopete::OnlineStatus::Online, 40, this, 4, "irc_voice", i18n("Voice")),
+	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 40, this, 4, "irc_away",  i18n("Away")),
 	m_UserStatusOnline(Kopete::OnlineStatus::Online, 30, this, 3, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
 	m_UserStatusAway(Kopete::OnlineStatus::Away, 20, this, 2, "irc_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
-	m_UserStatusConnecting(Kopete::OnlineStatus::Connecting, 10, this, 1, "irc_connecting", i18n("Connecting"), i18n("Connecting")),
+	m_UserStatusConnecting(Kopete::OnlineStatus::Connecting, 10, this, 1, "irc_connecting", i18n("Connecting")),
 	m_UserStatusOffline(Kopete::OnlineStatus::Offline, 0, this, 0, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),
 
 	m_StatusUnknown(Kopete::OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available")),
