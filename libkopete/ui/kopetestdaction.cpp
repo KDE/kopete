@@ -8,8 +8,10 @@
 
 /** KopeteGroupList **/
 KopeteGroupList::KopeteGroupList(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
-                : KListAction(text, pix, cut, receiver, slot, parent, name)
+                : KListAction(text, pix, cut, parent, name)
 {
+	connect( this, SIGNAL( activated() ), receiver, slot );
+
 	connect(kopeteapp->contactList(), SIGNAL(groupAdded(const QString &)), this, SLOT(slotUpdateList()));
 	connect(kopeteapp->contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotUpdateList()));
 	slotUpdateList();
