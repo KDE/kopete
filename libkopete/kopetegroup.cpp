@@ -99,14 +99,18 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 	if( type == QString::fromLatin1( "temporary" ) )
 	{
 		if(d->type != Temporary) 
+		{
 			temporary->fromXML(data);
-		return false;
+			return false;
+		}
 	}
 	else if( type == QString::fromLatin1( "top-level" ) )
 	{
 		if(d->type != TopLevel)
+		{
 			toplevel->fromXML(data);
-		return false;
+			return false;
+		}
 	}
 	else
 		d->type = Classic;
