@@ -90,7 +90,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( QString &protocolId, KopeteMetaContact *parent );
+	KopeteContact( const QString &protocolId, KopeteMetaContact *parent );
 	~KopeteContact();
 
 	/**
