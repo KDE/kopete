@@ -94,9 +94,9 @@ namespace GroupWise
 	
 	struct ContactItem
 	{
-		int id;
-		int parentId;
-		int sequence;
+		uint id;
+		uint parentId;
+		uint sequence;
 		QString dn;
 		QString displayName;
 	};
