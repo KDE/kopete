@@ -183,6 +183,10 @@ protected slots:
 	 * Called when we've logged in successfully
 	 */
 	void slotLoggedIn();
+	/** 
+	 * Called when a login attempt failed
+	 */
+	void slotLoginFailed();
 	/**
 	 * We joined a conference having accepted an invitation, create a message manager
 	 */

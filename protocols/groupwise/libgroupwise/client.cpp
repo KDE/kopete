@@ -285,15 +285,20 @@ void Client::streamReadyRead()
 
 void Client::lt_loginFinished()
 {
-	qDebug( "got login finished" );
+	qDebug( "Client::lt_loginFinished() got login finished" );
 	const LoginTask * lt = (LoginTask *)sender();
 	if ( lt->success() )
 	{
-		qDebug( "LOGIN SUCCEEDED" );
+		qDebug( "Client::lt_loginFinished() LOGIN SUCCEEDED" );
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString::null, QString::null );
 		sst->go( true );
 		emit loggedIn();
+	}
+	else
+	{
+		qDebug( "Client::lt_loginFinished() LOGIN FAILED" );
+		emit loginFailed();
 	}
 	// otherwise client should disconnect and signal failure that way??
 }

@@ -47,7 +47,7 @@ Q_OBJECT
 		 * Protocol action P1, needed for all
 		 * @param host - probably could obtain this back from the connector - used for outgoing tasks to determine destination
 		 * @param user The user name to log in as.
-		 * @param password 
+fd		 * @param password 
 		 */ 
 		void start( const QString &host, const uint port, const QString &userId, const QString &pass );
 		
@@ -202,6 +202,7 @@ Q_OBJECT
 		 * Notifies that the login process has succeeded.
 		 */
 		void loggedIn();
+		void loginFailed();
 		/**
 		 * Notifies tasks and account so they can react properly
 		 */

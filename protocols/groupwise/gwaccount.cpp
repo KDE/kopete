@@ -154,6 +154,11 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 
 void GroupWiseAccount::connectWithPassword( const QString &password )
 {
+	if ( password.isEmpty () )
+	{
+		disconnect ( KopeteAccount::Manual );
+		return;
+	}
 	// set up network classes
 	m_connector = new KNetworkConnector( 0 );
 	//myConnector->setOptHostPort( "localhost", 8300 );
@@ -193,9 +198,10 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_client = new Client( this );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
-	// TODO: Connect Client signals
 	// we connected successfully
 	QObject::connect( m_client, SIGNAL( loggedIn() ), SLOT( slotLoggedIn() ) );
+	// or connection failed
+	QObject::connect( m_client, SIGNAL( loginFailed() ), SLOT( slotLoginFailed() ) );
 	// folder listed
 	QObject::connect( m_client, SIGNAL( folderReceived( const FolderItem & ) ), SLOT( receiveFolder( const FolderItem & ) ) );
 	// contact listed
@@ -350,6 +356,14 @@ void GroupWiseAccount::slotLoggedIn()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
+}
+
+void GroupWiseAccount::slotLoginFailed()
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	password().setWrong();
+	disconnect();
+	connect();
 }
 
 void GroupWiseAccount::slotConnError()
