@@ -161,6 +161,16 @@ public:
 	virtual void setAway() {}
 	virtual void setAvailable() {}
 	virtual bool isAway() const { return false; }
+	
+	/**
+	 * @internal
+	 * Register a new KopeteContact with the protocol.
+	 * To be called ONLY from KopeteContact, not from any other class!
+	 * (Not even a derived class).
+	 * (and by KopeteIdentity::registerContact )
+	 */
+	void registerContact( KopeteContact *c );
+
 
 public slots:
 	/** OBSOLETE **/	
@@ -179,6 +189,15 @@ public slots:
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
+		
+		
+	
+	/**
+	 * A meta contact is about to save.
+	 * Call serialize() for all contained contacts for this protocol.
+	 */
+	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
+
 
 signals:
 	/**
@@ -194,28 +213,7 @@ private slots:
 	 */
 	void slotKopeteContactDestroyed( KopeteContact * );
 
-	/**
-	 * A meta contact is about to save.
-	 * Call serialize() for all contained contacts for this protocol.
-	 */
-	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
-
 private:
-	/**
-	 * KopeteContact needs to access @ref registerContact(), so it is a
-	 * friend of KopeteProtocol. Please do _NOT_ use this friendship to
-	 * access other members without documenting them here!
-	 */
-	friend class KopeteContact;
-
-	/**
-	 * @internal
-	 * Register a new KopeteContact with the protocol.
-	 * To be called ONLY from KopeteContact, not from any other class!
-	 * (Not even a derived class).
-	 */
-	void registerContact( KopeteContact *c );
-
 	QString m_statusIcon;
 
 	/**

@@ -45,7 +45,7 @@ struct whoIsInfo
 };
 
 IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac, QStringList identities) :
-	KopeteContact((KopeteProtocol *)identity->protocol(), nick, metac, identities )
+	KopeteContact(identity, nick, metac )
 {
 	mIdentity = identity;
 	mEngine = mIdentity->engine();

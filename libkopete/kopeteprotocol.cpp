@@ -70,6 +70,7 @@ const QDict<KopeteContact>& KopeteProtocol::contacts()
 
 QDict<KopeteContact> KopeteProtocol::contacts( KopeteMetaContact *mc )
 {
+	
 	QDict<KopeteContact> result;
 
 	QDictIterator<KopeteContact> it( contacts() );
@@ -115,8 +116,9 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   contactIt.current()->contactId();
 		sd[ QString::fromLatin1( "displayName" ) ] = contactIt.current()->displayName();
-		//FIXME: is there any risk to see the ',' char into an identity id ?
-		sd[ QString::fromLatin1( "identities" ) ] = contactIt.current()->identities().join(QString::fromLatin1(",")); 
+		if(contactIt.current()->identity())
+			sd[ QString::fromLatin1( "identityId" ) ] =   contactIt.current()->identity()->identityId();
+		
 
 		// If there's an index field preset it too
 		QString index = contactIt.current()->protocol()->addressBookIndexField();

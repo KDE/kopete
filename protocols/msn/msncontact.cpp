@@ -37,7 +37,26 @@
 #include "msnprotocol.h"
 
 MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
-	const QString &displayName, KopeteMetaContact *parent , QStringList identities ) : KopeteContact( proto, id, parent, identities )
+	const QString &displayName, KopeteMetaContact *parent  ) : KopeteContact( proto, id, parent )
+{
+	m_actionBlock = 0L;
+	m_actionCollection=0L;
+
+	m_status = MSNProtocol::UNK;
+
+//	m_deleted = false;
+	m_allowed = false;
+	m_blocked = false;
+	m_reversed = false;
+
+	setDisplayName( displayName );
+
+	setFileCapable(true);
+}
+
+
+MSNContact::MSNContact( KopeteIdentity *identity, const QString &id,
+	const QString &displayName, KopeteMetaContact *parent  ) : KopeteContact( identity, id, parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;

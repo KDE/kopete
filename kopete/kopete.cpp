@@ -93,7 +93,9 @@ Kopete::~Kopete()
 
 void Kopete::slotLoadPlugins()
 {
- 	KopeteContactList::contactList()->load();
+
+	KopeteIdentityManager::manager()->load();
+	KopeteContactList::contactList()->load();
 
 	KConfig *config = KGlobal::config();
 	config->setGroup("");
@@ -148,11 +150,7 @@ void Kopete::slotLoadPlugins()
 
 	config->writeEntry( "Plugins", modules );
 
-	KopeteIdentityManager::manager()->load();
-
 	LibraryLoader::pluginLoader()->loadAll();
-
-	//FIXME: identities should be loaded before contacts
 
 	KopeteIdentityManager::manager()->autoConnect();
 

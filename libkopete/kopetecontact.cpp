@@ -36,6 +36,7 @@
 #include "kopetehistorydialog.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
+#include "kopeteidentity.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
 
@@ -50,7 +51,7 @@ public:
 	QString displayName;
 	bool fileCapable;
 	int conversations;
-	KopeteProtocol *protocol;
+
 
 	QPixmap cachedScaledIcon;
 	int cachedSize;
@@ -58,6 +59,7 @@ public:
 
 	KopeteContact::IdleState idleState;
 	KopeteContact::OnlineStatus onlineStatus;
+	KopeteIdentity *identity;
 
 	KopeteMetaContact *metaContact;
 
@@ -76,7 +78,8 @@ public:
 	KPopupMenu *contextMenu;
 
 	QString contactId;
-	QStringList identities;
+
+	KopeteProtocol *protocol; //obsolete
 };
 
 // Used in slotChangeMetaContact()
@@ -89,7 +92,59 @@ public:
 	MetaContactListViewItem( KopeteMetaContact *m, QListView *p );
 };
 
-KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent, QStringList identities )
+
+KopeteContact::KopeteContact( KopeteIdentity *identity, const QString &contactId, KopeteMetaContact *parent )
+: QObject( parent )
+{
+	d = new KopeteContactPrivate;
+
+	//kdDebug() << k_funcinfo << "Creating contact with id " << contactId << endl;
+
+	d->contactId = contactId;
+	d->onlineStatus = Offline;
+
+	d->metaContact = parent;
+	d->protocol = 0l;
+	d->cachedSize = 0;
+	d->cachedOldImportance = 0;
+	d->contextMenu = 0L;
+	d->fileCapable = false;
+	d->conversations = 0;
+	d->historyDialog = 0L;
+	d->idleState = Unspecified;
+	d->displayName = contactId;
+	d->identity=identity;
+	
+
+	if( identity )
+	{
+		d->protocol=identity->protocol();
+		identity->registerContact( this );
+		connect( identity, SIGNAL( identityDestroyed(KopeteIdentity*) ), SLOT( deleteLater() ) );
+	}
+
+	// Initialize the context menu
+	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             this, "actionChat" );
+	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              this, "actionSendFile" );
+	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          this, "actionUserInfo" );
+	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           this, "actionSendMessage" );
+	d->actionViewHistory = KopeteStdAction::viewHistory( this, SLOT( slotViewHistory() ),       this, "actionViewHistory" );
+	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
+	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
+	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
+	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), this, "actionAddContact" );
+
+	// Need to check this because myself() has no parent
+	if( parent )
+	{
+		connect( parent, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+
+		parent->addContact( this );
+	}
+}
+
+KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
 : QObject( parent )
 {
 	d = new KopeteContactPrivate;
@@ -109,8 +164,8 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->historyDialog = 0L;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
-	d->identities = identities;
-
+	d->identity=0l;
+	
 	if( protocol )
 	{
 		protocol->registerContact( this );
@@ -137,6 +192,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 		parent->addContact( this );
 	}
 }
+
 
 KopeteContact::~KopeteContact()
 {
@@ -593,13 +649,18 @@ QString KopeteContact::contactId() const
 
 KopeteProtocol * KopeteContact::protocol() const
 {
+	if(d->identity)
+		return d->identity->protocol();
 	return d->protocol;
 }
 
-QStringList KopeteContact::identities() const
+KopeteIdentity * KopeteContact::identity() const
 {
-	return d->identities;
+	return d->identity;
 }
+
+
+
 
 KActionCollection * KopeteContact::customContextMenuActions()
 {

@@ -82,12 +82,25 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId   = serializedData[ "contactId" ];
+	QString identityId = serializedData[ "identityId" ];
 	QString displayName = serializedData[ "displayName" ];
-	QStringList identities  = QStringList::split( ",", serializedData[ "identities" ] );
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );	
+	
+	QDict<KopeteIdentity> identities=KopeteIdentityManager::manager()->identities(this);
+	
+	//Kopete 0.6.x contactlist
+	if(identityId.isNull())
+	{
+		identityId=mPrefs->msnId();
+	}
+	KopeteIdentity *identity=identities[identityId];
+	if(!identity)
+	{
+		identity=createNewIdentity(identityId);
+	}
 
 	// Create MSN contact
-	MSNContact *c = new MSNContact( this, contactId, displayName, metaContact, identities );
+	MSNContact *c = new MSNContact( identity, contactId, displayName, metaContact );
 	c->setMsnStatus( MSNProtocol::FLN );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );

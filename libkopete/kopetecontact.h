@@ -35,6 +35,7 @@ class KopeteMetaContact;
 class KopeteMessageManager;
 class KopetePlugin;
 class KopeteProtocol;
+class KopeteIdentity;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -51,7 +52,9 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent, QStringList identities=QStringList() );
+	KopeteContact( KopeteIdentity *protocol, const QString &id, KopeteMetaContact *parent );
+	//obsolete one
+	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent );
 	~KopeteContact();
 
 	/**
@@ -93,7 +96,7 @@ public:
 	 *
 	 * @return THe identity of the ID
 	 *
-	 * OBSOLETE: use identities() isteads
+	 * OBSOLETE: use identiy() isteads
 	 */
 	virtual QString identityId() const;
 
@@ -242,9 +245,20 @@ public:
 	KopeteProtocol* protocol() const;
 	
 	/**
-	 * Return a list of identities Id where this contact is
-	 */ 
-	QStringList identities() const;
+	 * Return the identity that the contact belongs to.
+	 *
+	 * Note: Id is required to be unique per protocol and per identity.
+	 * Across those boundaries ids may occur multiple times.
+	 * The id is solely for comparing items safely (using pointers is
+	 * more crash-prone). DO NOT assume anything regarding the id's
+	 * value! Even if it may look like an ICQ UIN or an MSN passport,
+	 * this is undefined and may change at any time!
+	 *
+	 * @return the contact's identity
+	 */
+	KopeteIdentity* identity() const;
+	
+
 
 	/**
 	 * Returns a set of custom menu items for the context menu

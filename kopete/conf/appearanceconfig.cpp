@@ -320,8 +320,8 @@ void AppearanceConfig::slotSelectKind(int k)
 
 void AppearanceConfig::slotUpdatePreview()
 {
-	KopeteContact *cFrom = new KopeteContact(0L, QString::fromLatin1("UserFrom"), 0L);
-	KopeteContact *cTo = new KopeteContact(0L, QString::fromLatin1("UserTo"), 0L);
+	KopeteContact *cFrom = new KopeteContact((KopeteIdentity*)0L, QString::fromLatin1("UserFrom"), 0L);
+	KopeteContact *cTo = new KopeteContact((KopeteIdentity*)0L, QString::fromLatin1("UserTo"), 0L);
 
 	KopeteContactPtrList toList = KopeteContactPtrList();
 	toList.append( cTo );
