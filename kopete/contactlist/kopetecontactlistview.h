@@ -103,8 +103,15 @@ protected:
 	 */
 	virtual void findDrop(const QPoint &pos, QListViewItem *&parent, QListViewItem *&after);
 
+	/**
+	 * The selected items have changed; update our actions to show what's possible.
+	 */
+	void updateActionsForSelection( QPtrList<KopeteMetaContact> contacts, QPtrList<KopeteGroup> groups );
+
+
 private slots:
-	void slotSelectionChanged();
+	void slotViewSelectionChanged();
+	void slotListSelectionChanged();
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
 	void slotExpanded( QListViewItem *item );
 	void slotCollapsed( QListViewItem *item );
