@@ -28,16 +28,16 @@ bool RequestTask::forMe( Transfer * transfer ) const
 	{
 		// if we can locate a transaction id field in its fields
 		Field::FieldList fields = theResponse->fields();
-		Field::FieldBase * field;
-		int index;
-		if ( ( index = fields.locate( NM_A_SZ_TRANSACTION_ID ) ) != -1 )
-			field = theResponse->fields().at( index );
-		if ( field )
+		Field::FieldListIterator it;
+		if ( ( it = fields.find( NM_A_SZ_TRANSACTION_ID ) ) != fields.end() )
 		{
-			// if the transaction id matches ours, return true.
-			Field::SingleField * tIdField = dynamic_cast<Field::SingleField *>( field );
-			if ( tIdField )
-				return ( tIdField->value().toInt() == m_transactionId );
+			if ( *it )
+			{
+				// if the transaction id matches ours, return true.
+				Field::SingleField * tIdField = dynamic_cast<Field::SingleField *>( *it );
+				if ( tIdField )
+					return ( tIdField->value().toInt() == m_transactionId );
+			}
 		}
 	}
 	return false;

@@ -10,12 +10,12 @@ int main()
 {
 	buildList();
 	// look for a field in the list
-	if ( fl.locate( NM_A_FA_MESSAGE ) != -1 )
+	if ( fl.find( NM_A_FA_MESSAGE ) != fl.end() )
 		printf( "Found a field, where there was supposed to be one :)" );
 	else
 		printf( "Didn't find a field, where there was supposed to be one :(" );
 		
-	if ( fl.locate( NM_A_SZ_OBJECT_ID ) != -1 )
+	if ( fl.find( NM_A_SZ_OBJECT_ID ) != fl.end() )
 		printf( "Found a field, where there was NOT supposed to be one :(" );
 	else
 		printf( "Didn't find a field, where there wasn't supposed to be one :)" );
@@ -47,17 +47,17 @@ void buildList()
 
 void extractFields( Field::FieldList l )
 {
-	Field::FieldBase* i;
+	Field::FieldListIterator it;
 	printf ("iterating over %i fields\n", l.count() );
-	for ( i = l.first(); i; i = l.next() )
+	for ( it = l.begin(); it != l.end() ; ++it )
 	{
 		printf ("field\n");
-		Field::SingleField * ext = dynamic_cast<Field::SingleField *>( i );
+		Field::SingleField * ext = dynamic_cast<Field::SingleField *>( *it );
 		if ( ext )
 			printf( "tag: %s  flags: %i type: %i value: %s\n", ext->tag().data(), ext->flags(), ext->type(), ext->value().toString().ascii() );
 		else
 		{
-			Field::MultiField* mf = dynamic_cast<Field::MultiField *>( i );
+			Field::MultiField* mf = dynamic_cast<Field::MultiField *>( *it );
 			if ( mf )
 			{
 			 	printf( "found a multi value field\n" );
@@ -66,6 +66,5 @@ void extractFields( Field::FieldList l )
 		}
 	}
 
-	printf("%i %i\n", l.first(), l.last() );
 	printf ("done\n");
 }

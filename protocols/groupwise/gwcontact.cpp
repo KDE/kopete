@@ -42,17 +42,18 @@ GroupWiseContact* GroupWiseContact::contactFromFields( KopeteAccount* account, K
 	int objectId, parentId, sequence;
 	QString displayName, dn;
 	// sequence number, object and parent IDs are a numeric values but are stored as strings...
-	int index;
-	if ( ( index = fields.locate( NM_A_SZ_OBJECT_ID ) ) != -1 )
-		objectId = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString().toInt();
-	if ( ( index = fields.locate( NM_A_SZ_PARENT_ID ) ) != -1 )
-		parentId = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString().toInt();
-	if ( ( index = fields.locate( NM_A_SZ_SEQUENCE_NUMBER ) ) != -1 )
-		sequence = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString().toInt();
-	if ( ( index = fields.locate( NM_A_SZ_DISPLAY_NAME ) ) != -1 )
-		displayName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( NM_A_SZ_DN ) ) != -1 )
-		dn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	Field::FieldListIterator it;
+	Field::FieldListIterator end = fields.end();
+	if ( ( it = fields.find ( NM_A_SZ_OBJECT_ID ) ) != end )
+		objectId = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
+	if ( ( it = fields.find ( NM_A_SZ_PARENT_ID ) ) != end )
+		parentId = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
+	if ( ( it = fields.find ( NM_A_SZ_SEQUENCE_NUMBER ) ) != end )
+		sequence = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
+	if ( ( it = fields.find ( NM_A_SZ_DISPLAY_NAME ) ) != end )
+		displayName = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( NM_A_SZ_DN ) ) != end )
+		dn = static_cast<Field::SingleField*>( *it )->value().toString();
 
 	return new GroupWiseContact( account, dn, parent, displayName, objectId, parentId, sequence );
 }
@@ -80,24 +81,25 @@ void GroupWiseContact::updateDetailsFromFields( const Field::MultiField & detail
 	Field::FieldBase* current = 0;
 	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
 	int status;
-	int index;
+	Field::FieldListIterator it;
+	Field::FieldListIterator end = fields.end();
 	// TODO: not sure what this means, ask Mike
-	if ( ( index = fields.locate( NM_A_SZ_AUTH_ATTRIBUTE ) ) != -1 )
-		authAttribute = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( NM_A_SZ_DN ) ) != -1 )
-		dn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "CN" ) ) != -1 )
-		cn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "Given Name" ) ) != -1 )
-		givenName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "Surname" ) ) != -1 )
-		surname = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "Full Name" ) ) != -1 )
-		fullName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( NM_A_SZ_STATUS ) ) != -1 )
-		status = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString().toInt();
-	if ( ( index = fields.locate( NM_A_SZ_MESSAGE_BODY ) ) != -1 )
-		awayMessage = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( it = fields.find ( NM_A_SZ_AUTH_ATTRIBUTE ) ) != end )
+		authAttribute = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( NM_A_SZ_DN ) ) != end )
+		dn = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "CN" ) ) != end )
+		cn = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "Given Name" ) ) != end )
+		givenName = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "Surname" ) ) != end )
+		surname = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "Full Name" ) ) != end )
+		fullName = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( NM_A_SZ_STATUS ) ) != end )
+		status = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
+	if ( ( it = fields.find ( NM_A_SZ_MESSAGE_BODY ) ) != end )
+		awayMessage = static_cast<Field::SingleField*>( *it )->value().toString();
 	
 	setProperty( protocol()->propCN, cn );
 	setProperty( protocol()->propGivenName, givenName );

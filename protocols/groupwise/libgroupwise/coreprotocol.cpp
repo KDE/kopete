@@ -176,12 +176,12 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 	int subFieldCount = 0;
 	
 	// TODO: consider constructing this as a QStringList and then join()ing it.
-	QPtrListIterator<Field::FieldBase> it( fields );
-	Field::FieldList::const_iterator end = fields.end();
+	Field::FieldListIterator it;
+	Field::FieldListIterator end = fields.end();
 	Field::FieldBase* field;
-	while ( ( field = it.current()) != 0 )
+	for ( it = fields.begin(); it != end ; ++it )
 	{
-		++it;
+		field = *it;
 		//cout << " - writing a field" << endl;
 		QByteArray bytesOut;
 		QDataStream dout( bytesOut, IO_WriteOnly );
@@ -405,22 +405,18 @@ bool CoreProtocol::readResponse()
 	// read fields
 	readFields( -1 ); // only read 20 in case we don't end the loop properly.
 	// find transaction id field and create Response object if nonzero
-	int tId;
-	Field::FieldBase* field = 0;
-	QPtrListIterator<Field::FieldBase> it( m_collatingFields );
-	Field::FieldList::const_iterator end = m_collatingFields.end();
-	while ( ( field = it.current()) != 0 )
+	int tId = 0;
+	Field::FieldListIterator it;
+	Field::FieldListIterator end = m_collatingFields.end();
+	Field::FieldBase* field;
+	it = m_collatingFields.find( NM_A_SZ_TRANSACTION_ID );
+	if ( it != end )
 	{
-		++it;
-		if ( field->tag() == NM_A_SZ_TRANSACTION_ID )
+		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( field );
+		if ( sf )
 		{
-			Field::SingleField * sf = dynamic_cast<Field::SingleField*>( field );
-			if ( sf )
-			{
-				tId = sf->value().toInt();
-				m_collatingFields.remove( sf );
-				break;
-			}
+			tId = sf->value().toInt();
+			m_collatingFields.remove( it );
 		}
 	}
 	// append to inQueue
@@ -430,6 +426,8 @@ bool CoreProtocol::readResponse()
 		m_collatingFields.clear();
 		packetState = Available;
 	}
+	else
+		cout << "- WARNING - NO TRANSACTION ID FOUND!" << endl;
 	// TODO - handle broken responses..
 	// didn't find an 0 - Response is in multiple packets...
 		// Gaim doesn't handle this case yet

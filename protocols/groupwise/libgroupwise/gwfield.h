@@ -155,19 +155,36 @@ namespace Field
 		Q_UINT8 m_flags;
 		Q_UINT8 m_type;  // doch needed
 	};
+	
+	typedef QValueListIterator<FieldBase *> FieldListIterator;
+	typedef QValueListConstIterator<FieldBase *> FieldListConstIterator;
 
-	class FieldList : public QPtrList<FieldBase>
+	class FieldList : public QValueList<FieldBase *>
 	{
 		public:
 			/** 
-			 * Locate the first occurrence of a given field in the list
-			 * @param tag The tag name of the field to search for.
-			 * @param offset Optional offset to begin searching at.
-			 * @return The index of the first occurrence found, or -1 if none was found.
+			 * Destructor, deletes all the Fields (including nested FieldLists) that this list contains.
 			 */
-			int locate( QCString tag, uint offset = 0 );
+			virtual ~FieldList();
+			/** 
+			 * Locate the first occurrence of a given field in the list.  Same semantics as QValueList::find().
+			 * @param tag The tag name of the field to search for.
+			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
+			 */
+			FieldListIterator find( QCString tag );
+			/** 
+			 * Locate the first occurrence of a given field in the list, starting at the supplied iterator
+			 * @param tag The tag name of the field to search for.
+			 * @param it An iterator within the list, to start searching from.
+			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
+			 */
+			FieldListIterator find( FieldListIterator it, QCString tag );
+			/**
+			 * Get the index of the first occurrence of tag, or -1 if not found
+			 */
+			int findIndex( QCString tag );
 	};
-	
+
 	/** 
 	 * This class is responsible for storing all Groupwise single value field types, eg
 	 * NMFIELD_TYPE_INVALID, NMFIELD_TYPE_NUMBER, NMFIELD_TYPE_BINARY, NMFIELD_TYPE_BYTE

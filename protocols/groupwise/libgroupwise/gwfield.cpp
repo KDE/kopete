@@ -25,27 +25,40 @@
 using namespace Field;
 
 /* === FieldList ==================================================== */
-
-int FieldList::locate( QCString tag, uint offset )
+FieldList::~FieldList()
 {
-	if ( offset > ( count() - 1 ) )
-		return -1;
-	QPtrListIterator<Field::FieldBase> it( *this );
-	Field::FieldBase* field;
-	uint index = 0;
-	while ( ( index < offset ) )
-	{
-		++it;
-		++index;
-	}
-	while ( ( field = it.current() ) != 0 )
-	{
-		if ( field->tag() == tag )
+	FieldListIterator it = begin();
+	FieldListIterator theEnd = end();
+	int index = 0;
+	for ( ; it != theEnd; ++it, ++index )
+		delete( *it );
+}
+
+FieldListIterator FieldList::find( QCString tag )
+{
+	FieldListIterator it = begin();
+	return find( it, tag );
+}
+
+FieldListIterator FieldList::find( FieldListIterator it, QCString tag )
+{
+	FieldListIterator theEnd = end();
+	for ( ; it != theEnd; ++it )
+		if ( (*it)->tag() == tag )
+			break;
+	return it;
+}
+
+int FieldList::findIndex( QCString tag )
+{
+	FieldListIterator it = begin();
+	FieldListIterator theEnd = end();
+	int index = 0;
+	for ( ; it != theEnd; ++it, ++index )
+		if ( (*it)->tag() == tag )
 			return index;
-		++it;
-		++index;
-	}
-	return -1;	
+			
+	return -1;
 }
 
 /* === FieldBase ========================================================= */

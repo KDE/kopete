@@ -175,23 +175,24 @@ void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
 	Field::FieldBase* current = 0;
 	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
 	int status;
-	int index;
-	if ( ( index = fields.locate( NM_A_SZ_AUTH_ATTRIBUTE ) ) != -1 )
-		authAttribute = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( NM_A_SZ_DN ) ) != -1 )
-		dn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "CN" ) ) != -1 )
-		cn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "Given Name" ) ) != -1 )
-		givenName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "Surname" ) ) != -1 )
-		surname = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( "Full Name" ) ) != -1 )
-		fullName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
-	if ( ( index = fields.locate( NM_A_SZ_STATUS ) ) != -1 )
-		status = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString().toInt();
-	if ( ( index = fields.locate( NM_A_SZ_MESSAGE_BODY ) ) != -1 )
-		awayMessage = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	Field::FieldListIterator it;
+	Field::FieldListIterator end = fields.end();
+	if ( ( it = fields.find ( NM_A_SZ_AUTH_ATTRIBUTE ) ) != end )
+		authAttribute = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( NM_A_SZ_DN ) ) != end )
+		dn = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "CN" ) ) != end )
+		cn = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "Given Name" ) ) != end )
+		givenName = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "Surname" ) ) != end )
+		surname = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( "Full Name" ) ) != end )
+		fullName = static_cast<Field::SingleField*>( *it )->value().toString();
+	if ( ( it = fields.find ( NM_A_SZ_STATUS ) ) != end )
+		status = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
+	if ( ( it = fields.find ( NM_A_SZ_MESSAGE_BODY ) ) != end )
+		awayMessage = static_cast<Field::SingleField*>( *it )->value().toString();
 	
 	myself()->setProperty( GroupWiseProtocol::protocol()->propCN, cn );
 	myself()->setProperty( GroupWiseProtocol::protocol()->propGivenName, givenName );

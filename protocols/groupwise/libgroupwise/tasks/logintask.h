@@ -42,9 +42,10 @@ public:
 	bool LoginTask::take( Transfer * transfer );
 	
 signals:
-	void contactListItemAdded( ContactListItem & );
-	//void userRecord( UserRecord &, bool myself );
 	void gotMyself( Field::FieldList & );
+	void gotFolder( Field::FieldList & );
+	void gotContact( Field::FieldList & );
+	void gotContactUserRecord( Field::FieldList & );
 };
 
 #endif

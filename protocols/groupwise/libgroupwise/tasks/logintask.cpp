@@ -54,7 +54,7 @@ bool LoginTask::take( Transfer * transfer )
 		return false;
 	
 	// read in myself()'s metadata fields and emit signal
-	
+/*	
 	Field::FieldList loginResponseFields = response->fields();
 	emit gotMyself( loginResponseFields );
 	
@@ -62,15 +62,20 @@ bool LoginTask::take( Transfer * transfer )
 	// locate contact list
 	 
 	// extract folder fields 
-	
-	// emit folder signal
+	while ( findFolder() )
+	{
+		emit gotFolder( fields );
+	}
 	// extract contact fields 
-	// emit contact signal
-	// extract contact details
-	// emit contact details signal
+	while ( findContact() )
+	{
+		emit gotContact( fields );
+		if ( findUserDetails( fields );
+			emit gotContactUserRecord( fields );
+	}
 	
 	// create privacy list
-	// process the incoming contact list and spam libkopete with new contacts :D*/
+	*/
 	return true;
 }
 
