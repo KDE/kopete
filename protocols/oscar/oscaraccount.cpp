@@ -383,7 +383,7 @@ void OscarAccount::slotLoggedIn()
 // in the server side list.
 //
 
-void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList& serverList)
+void OscarAccount::syncLocalWithServerBuddyList( AIMBuddyList & /* serverList */ )
 {
 	kdDebug(14150) << k_funcinfo << "Called but DISABLED" << endl;
 #if 0
