@@ -302,14 +302,14 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
 		"\r\n").utf8();
-	QCString args = QString( "U %1 \r\n" ).arg( message.length() ).utf8();
-	sendCommand( "MSG", args + message, false );
+	QString args = QString( "U %1" ).arg( message.length() );
+	sendCommand( "MSG", args, true, message );
 }
 
 // this Invites an Contact
 void MSNSwitchBoardSocket::slotInviteContact(QString handle)
 {
-	sendCommand( "CAL", handle.utf8());
+	sendCommand( "CAL", handle);
 }
 
 // this sends a short message to the server
@@ -338,8 +338,8 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 		"\r\n";
 
 	head += msg.body().replace( QRegExp( "\n" ), "\r\n" ).utf8();
-	QCString args = QString( "A %1\r\n" ).arg( head.length() ).utf8();
-	sendCommand( "MSG", args + head, false );
+	QString args = QString( "A %1" ).arg( head.length() );
+	sendCommand( "MSG", args, true, head );
 
 	// TODO: send our fonts and colors as well
 	KopeteContactPtrList others;
@@ -357,12 +357,12 @@ void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 
 void MSNSwitchBoardSocket::slotCloseSession()
 {
-	sendCommand( "OUT", "", true, false );
+	sendCommand( "OUT", QString::null, false );
 }
 
 void MSNSwitchBoardSocket::callUser()
 {
-	sendCommand( "CAL", m_msgHandle.utf8() );
+	sendCommand( "CAL", m_msgHandle );
 }
 
 // Check if we are connected. If so, then send the handshake.
@@ -385,7 +385,7 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 		args = m_myHandle + " " + m_auth + " " + m_ID;
 	}
 	
-	sendCommand( command, args.utf8() );
+	sendCommand( command, args );
 	
 	// send active message
 	emit switchBoardIsActive(true);

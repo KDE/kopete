@@ -337,22 +337,23 @@ void MSNSocket::handleError( uint code, uint id )
 	KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 }
 
-void MSNSocket::sendCommand( const QCString &cmd, const QCString &args,
-	bool addNewLine, bool addId )
+void MSNSocket::sendCommand( const QString &cmd, const QString &args,
+			     bool addId, const QCString &body )
 {
-	QCString data=cmd;
+	QCString data=cmd.utf8();
 	if( addId ) {
 	        char buf[50];
 		sprintf(buf," %d",m_id);
 		data += buf;
 	}
 	if( !args.isEmpty() )
-		data += " " + args;
+		data += " " + args.utf8();
+	data += "\r\n";
+	if( !body.isEmpty() )
+	        data += body;
 
 	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
 
-	if( addNewLine )
-		data += "\r\n";
 
 	// If the last confirmed Id is the last we sent, sent directly.
 	// Otherwise, queue. Command without Id are always sent.
@@ -368,6 +369,13 @@ void MSNSocket::sendCommand( const QCString &cmd, const QCString &args,
 	}
 
 	m_id++;
+}
+
+void MSNSocket::sendCommand( const QString &cmd, const QString &args,
+			     bool addId, const QString &body )
+{
+        kdDebug() << "MSNSocket::sendCommand: Forgot to utf8 convert the body " << cmd <<
+	  ": '" << args << "'" << endl;
 }
 
 QString MSNSocket::escape( const QString &str )

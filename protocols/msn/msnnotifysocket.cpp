@@ -67,7 +67,7 @@ void MSNNotifySocket::slotReceivedServer( const QString &server, uint port )
 void MSNNotifySocket::disconnect()
 {
 	if( onlineStatus() != Disconnected )
-		sendCommand( "OUT", "", true, false );
+		sendCommand( "OUT", QString::null, false );
 
 	MSNAuthSocket::disconnect();
 }
@@ -268,8 +268,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		kdDebug() << "Sending final Authentication" << endl;
 		KMD5 context( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" );
-		sendCommand( "QRY", "msmsgs@msnmsgr.com 32\r\n" +
-			context.hexDigest(), false );
+		sendCommand( "QRY", "msmsgs@msnmsgr.com 32",true,
+			     context.hexDigest());
 	}
 	else if( cmd == "SYN" )
 	{
@@ -328,19 +328,19 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 void MSNNotifySocket::addGroup(QString groupName)
 {
 	// escape spaces
-	sendCommand( "ADG", (escape( groupName ) + " 0").utf8() );
+	sendCommand( "ADG", escape( groupName ) + " 0" );
 }
 
 void MSNNotifySocket::renameGroup( QString groupName, uint group )
 {
 	// escape spaces
-	sendCommand( "REG", (QString::number( group ) + " " +
-		escape( groupName ) + " 0").utf8() );
+	sendCommand( "REG", QString::number( group ) + " " +
+		     escape( groupName ) + " 0" );
 }
 
 void MSNNotifySocket::removeGroup( uint group )
 {
-	sendCommand( "RMG", QString::number( group ).utf8() );
+	sendCommand( "RMG", QString::number( group ) );
 }
 
 void MSNNotifySocket::addContact( const QString &handle,
@@ -364,7 +364,7 @@ void MSNNotifySocket::addContact( const QString &handle,
 			list << "!" << endl;
 		return;
 	}
-	sendCommand( "ADD", args.utf8() );
+	sendCommand( "ADD", args );
 }
 
 void MSNNotifySocket::removeContact( const QString &handle, uint group,
@@ -387,18 +387,18 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,
 			"WARNING! Unknown list " << list << "!" << endl;
 		return;
 	}
-	sendCommand( "REM", args.utf8() );
+	sendCommand( "REM", args );
 }
 
 void MSNNotifySocket::setStatus( int status )
 {
-	sendCommand( "CHG", statusToString( status ).utf8() );
+	sendCommand( "CHG", statusToString( status ) );
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName )
 {
 	QString pn = publicName;
-	sendCommand( "REA", (msnId() + " " + escape( pn )).utf8() );
+	sendCommand( "REA", msnId() + " " + escape( pn ) );
 }
 
 void MSNNotifySocket::createChatSession()

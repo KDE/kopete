@@ -76,7 +76,7 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id,
 	{
 		kdDebug() << "MSNAuthSocket: Requesting MD5 authentication "
 			<< "for Passport " << m_msnId << endl;
-		sendCommand( "USR", ("MD5 I " + m_msnId).utf8());
+		sendCommand( "USR", "MD5 I " + m_msnId);
 	}
 	else
 	{
