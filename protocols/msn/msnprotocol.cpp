@@ -448,10 +448,12 @@ void MSNProtocol::initActions()
 	actionStatusMenu->insert( m_renameAction );
 	actionStatusMenu->insert( m_startChatAction );
 
+#if !defined NDEBUG
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert( m_debugMenu );
 
 	m_debugMenu->insert( m_debugRawCommand );
+#endif
 
 	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
