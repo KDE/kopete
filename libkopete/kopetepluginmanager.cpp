@@ -240,13 +240,13 @@ void KopetePluginManager::slotLoadNextPlugin()
 		return;
 
 	QString key = d->pluginsToLoad.pop();
-	loadPlugin( key );
+	loadPluginInternal( key );
 
 	if ( !d->pluginsToLoad.isEmpty() )
 		QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
 }
 
-KopetePlugin *KopetePluginManager::loadPlugin( const QString &_pluginId )
+KopetePlugin * KopetePluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mode /* = LoadSync */ )
 {
 	QString pluginId = _pluginId;
 
@@ -257,6 +257,20 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &_pluginId )
 		pluginId = pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 	}
 
+	if ( mode == LoadSync )
+	{
+		return loadPluginInternal( pluginId );
+	}
+	else
+	{
+		d->pluginsToLoad.push( pluginId );
+		QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
+		return 0L;
+	}
+}
+
+KopetePlugin *KopetePluginManager::loadPluginInternal( const QString &pluginId )
+{
 	kdDebug( 14010 ) << k_funcinfo << pluginId << endl;
 
 	KPluginInfo *info = infoForPluginId( pluginId );

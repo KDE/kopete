@@ -145,14 +145,25 @@ public:
 	 */
 	bool setPluginEnabled( const QString &name, bool enabled = true );
 
+	/**
+	 * Plugin loading mode. Used by @loadPlugin. Code that doesn't want to block
+	 * the GUI and/or lot a lot of plugins at once should use Async loading.
+	 * The default is sync loading.
+	 */
+	enum PluginLoadMode { LoadSync, LoadAsync };
+
 public slots:
 	/**
 	 * @brief Load a single plugin by plugin name. Returns an existing plugin
 	 * if one is already loaded in memory.
 	 *
+	 * If mode is set to Async, the plugin will be queued and loaded in
+	 * the background. This method will return a null pointer. To get
+	 * the loaded plugin you can track the @ref pluginLoaded() signal.
+	 *
 	 * See also @ref plugin().
 	 */
-	KopetePlugin *loadPlugin( const QString &pluginName );
+	KopetePlugin * loadPlugin( const QString &pluginId, PluginLoadMode mode = LoadSync );
 
 	/**
 	 * @brief Loads all the enabled plugins. Also used to reread the
@@ -197,6 +208,15 @@ private slots:
 	void slotLoadNextPlugin();
 
 private:
+	/**
+	 * @internal
+	 *
+	 * The internal method for loading plugins.
+	 * Called by @ref loadPlugin directly or through the queue for async plugin
+	 * loading.
+	 */
+	KopetePlugin * loadPluginInternal( const QString &pluginId );
+
 	/**
 	 * @internal
 	 *
