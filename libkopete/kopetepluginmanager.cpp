@@ -20,7 +20,7 @@
 
 #include "kopetepluginmanager.h"
 
-#if HAVE_VALGRIND_H && !defined NDEBUG
+#if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
 // We don't want the per-skin includes, so pretend we have a skin header already
 #define __VALGRIND_SOMESKIN_H
 #include <valgrind/valgrind.h>
@@ -174,7 +174,7 @@ void KopetePluginManager::shutdown()
 
 	// When running under valgrind, don't enable the timer because it will almost
 	// certainly fire due to valgrind's much slower processing
-#if HAVE_VALGRIND_H && !defined NDEBUG
+#if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
 	if ( RUNNING_ON_VALGRIND )
 		kdDebug() << k_funcinfo << "Running under valgrind, disabling plugin unload timeout guard" << endl;
 	else
