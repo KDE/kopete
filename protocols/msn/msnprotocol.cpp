@@ -1134,43 +1134,16 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		handle << endl;
 
 	if( !contacts()[ handle ] )
-	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( pluginId(), QString::null, handle );
-		if( !m )
-		{
-			m = new KopeteMetaContact();
-			m->setTemporary(true);
-			QString protocolid = pluginId();
+		addContact( handle, publicName, 0L, QString::null, true);
 
-			/*MSNContact *msnContact =*/ new MSNContact( this, handle, publicName, m );
+	MSNContact *c = static_cast<MSNContact*>( contacts()[ handle ] );
 
-			KopeteContactList::contactList()->addMetaContact(m);
-		}
-	}
-
-	KopeteContact *c = contacts()[ handle ];
 	if ( c && m_myself )
 	{
-		KopeteContactPtrList chatmembers;
-		chatmembers.append(c);
-
-		KopeteMessageManager *_manager =
-			KopeteMessageManagerFactory::factory()->findKopeteMessageManager( m_myself,
-				chatmembers, this  );
-		MSNMessageManager *manager =
-			dynamic_cast<MSNMessageManager*>( _manager );
-
-		if( !manager )
-		{
-			manager = new MSNMessageManager( this, m_myself, chatmembers );
-		}
-		manager->createChat( handle, address, auth, ID );
-
-		//		m_switchBoardSockets.insert( manager, chatService );
-
+		c->manager()->createChat( handle, address, auth, ID );
 		if( mPrefs->openWindow() || !ID )
 		{
-			manager->readMessages();
+			c->manager()->readMessages();
 		}
 	}
 }
@@ -1180,25 +1153,17 @@ void MSNProtocol::slotStartChatSession( QString handle )
 	// First create a message manager, because we might get an existing
 	// manager back, in which case we likely also have an active switchboard
 	// connection to reuse...
-	KopeteContact *c = contacts()[ handle ];
+	MSNContact *c = static_cast<MSNContact*>( contacts()[ handle ] );
 	if( isConnected() && c && m_myself && handle != m_msnId )
 	{
 		KopeteContactPtrList chatmembers;
-		chatmembers.append(c);
 
-		KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager( m_myself, chatmembers, this  );
-		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
-		if(!manager)
-		{
-			manager = new MSNMessageManager( this, m_myself, chatmembers );
-		}
-
-		if(manager->service())
+		if(c->manager()->service())
 		{
 			kdDebug(14140) << "MSNProtocol::slotStartChatSession: "
 				<< "Reusing existing switchboard connection" << endl;
 
-			manager->readMessages();
+			c->manager()->readMessages();
 		}
 		else
 		{

@@ -41,6 +41,7 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
+	m_manager = 0L;
 
 	m_status = MSNProtocol::UNK;
 
@@ -58,6 +59,24 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 
 MSNContact::~MSNContact()
 {
+}
+
+MSNMessageManager *MSNContact::manager()
+{
+	if( !m_manager )
+	{
+		KopeteContactPtrList chatmembers;
+		chatmembers.append( this );
+		m_manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
+		connect( m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+	}
+
+	return m_manager;
+}
+
+void MSNContact::slotMessageManagerDestroyed()
+{
+	m_manager = 0L;
 }
 
 KActionCollection *MSNContact::customContextMenuActions()
@@ -611,18 +630,8 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, co
 
 	if ( !filePath.isEmpty() )
 	{
-		KopeteContactPtrList chatmembers;
-		chatmembers.append( this );
-		KopeteMessageManager *_manager =
-			KopeteMessageManagerFactory::factory()->findKopeteMessageManager(
-				protocol()->myself(), chatmembers,
-				protocol() );
-		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
-		if( !manager )
-			manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
-
 		//Send the file
-		manager->sendFile( filePath, altFileName, fileSize );
+		manager()->sendFile( filePath, altFileName, fileSize );
 	}
 }
 

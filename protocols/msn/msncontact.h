@@ -27,6 +27,7 @@ class QListViewItem;
 class QPixmap;
 class QTimer;
 
+class MSNMessageManager;
 class KAction;
 class KActionCollection;
 class KListAction;
@@ -132,6 +133,11 @@ public:
 	 */
 	virtual void rename( const QString &newName );
 
+	/**
+	 * Returns the MSN Message Manager associated with this contact
+	 */
+	MSNMessageManager *manager();
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
@@ -143,6 +149,7 @@ signals:
 
 private slots:
 	void slotBlockUser();
+	void slotMessageManagerDestroyed();
 
 private:
 	QMap<uint, KopeteGroup *> m_serverGroups;
@@ -163,6 +170,8 @@ private:
 	QString m_phoneWork;
 	QString m_phoneMobile;
 	bool m_phone_mob;
+
+	MSNMessageManager *m_manager;
 };
 
 #endif
