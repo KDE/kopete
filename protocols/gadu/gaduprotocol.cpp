@@ -24,6 +24,8 @@
 #include <kgenericfactory.h>
 #include <kconfig.h>
 
+#include <libgadu.h>
+
 #include "gaduaccount.h"
 #include "gaducontact.h"
 #include "gaduprotocol.h"

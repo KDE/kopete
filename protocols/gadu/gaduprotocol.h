@@ -23,8 +23,6 @@
 #ifndef GADUPROTOCOL_H
 #define GADUPROTOCOL_H
 
-#include <libgadu.h>
-
 #include <qmap.h>
 
 #include "kopeteprotocol.h"
