@@ -1,6 +1,7 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
+Comment[ar]=مرسال Kopete
 Comment[bg]=Месинджър
 Comment[ca]=Missatger Kopete
 Comment[cy]=Negesydd Kopete
@@ -26,11 +27,13 @@ Comment[sr@Latn]=Glasnik Kopete
 Comment[sv]=Kopete meddelandeklient
 Comment[ta]=உடனடி தூதர்
 Comment[tg]=Пайёмбари Kopete
+Comment[uk]=Програма обміну повідомленнями Kopete
 Comment[ven]=Murumiwa wa Kopete
 Comment[zh_CN]=Kopete 信使
 
 [kopete_event]
 Name=Event
+Name[ar]=الحدث
 Name[be]=Падзея
 Name[bg]=Събитие
 Name[bs]=Događaj
@@ -82,6 +85,7 @@ Comment[da]=Lydpåmindelse for Kopete-begivenheder
 Comment[de]=Sound-Signale für Kopete-Ereignisse
 Comment[es]=Notificación sonora para los eventos de Kopete
 Comment[et]=Kopete sündmuste helisignaalid
+Comment[fi]=Kopeten tapahtumien äänet
 Comment[fr]=Notifications sonores pour les évènements de Kopete
 Comment[hu]=Értesítési hangok Kopete-eseményekhez
 Comment[is]=Hljóðtilkynningar við Kopete atburði
@@ -106,6 +110,7 @@ default_presentation=65
 
 [kopete_contact_incoming]
 Name=Incoming
+Name[ar]=وارد
 Name[bg]=Пристигна ново съобщение
 Name[bs]=Ulazni
 Name[ca]=Entrant
@@ -155,6 +160,7 @@ Comment[da]=En indkommende besked er blevet modtaget
 Comment[de]=Eingehende Nachricht
 Comment[es]=Se ha recibido un mensaje entrante
 Comment[et]=Saabus sõnum
+Comment[fi]=Viesti on saapunut
 Comment[fr]=Un message entrant a été reçu
 Comment[hr]=Primljena je dolazna poruka
 Comment[hu]=Bejövő üzenet érkezett
@@ -181,6 +187,7 @@ default_presentation=64
 
 [kopete_outgoing]
 Name=Outgoing
+Name[ar]=خارج
 Name[bg]=Изпратено е съобщение
 Name[bs]=Izlazni
 Name[ca]=Sortint
@@ -230,6 +237,7 @@ Comment[da]=En udgående besked er blevet sendt
 Comment[de]=Ausgehende Nachricht wurde versendet
 Comment[es]=Se ha enviado un mensaje entrante
 Comment[et]=Saadeti sõnum
+Comment[fi]=Viesti on lähetetty
 Comment[fr]=Un message sortant a été envoyé
 Comment[hr]=Primljena je odlazna poruka
 Comment[hu]=Kimenő üzenet továbbítódott
@@ -257,6 +265,7 @@ default_presentation=0
 
 [kopete_contact_online]
 Name=Online
+Name[ar]=متصل
 Name[bg]=Включи се приятел
 Name[ca]=Connectat
 Name[cy]=Ar-lein
@@ -299,6 +308,7 @@ Comment[da]=En kontakt er gået på nettet
 Comment[de]=Ein Benutzer wechselt auf Online
 Comment[es]=Se ha conectado un contacto
 Comment[et]=Kontakt tuli võrku
+Comment[fi]=Yhteyshenkilö on saapunut verkkoon
 Comment[fr]=Un contact s'est connecté
 Comment[hu]=Egy partner online állapotúvá vált
 Comment[is]=Notandi tengist
@@ -324,6 +334,7 @@ default_presentation=16
 
 [kopete_contact_offline]
 Name=Offline
+Name[ar]=غير متصل
 Name[bg]=Изключи се приятел
 Name[ca]=Desconnectat
 Name[cy]=All-lein
@@ -366,6 +377,7 @@ Comment[da]=En kontakt er gået af nettet
 Comment[de]=Ein Benutzer wechselt auf Offline
 Comment[es]=Se ha desconectado un contacto
 Comment[et]=Kontakt läks võrgust ära
+Comment[fi]=Yhteyshenkilö on lähtenyt verkosta
 Comment[fr]=Un contact s'est déconnecté
 Comment[hu]=Egy partner offline állapotúvá vált
 Comment[is]=Notandi aftengist
@@ -392,6 +404,7 @@ default_presentation=0
 
 [kopete_contact_status_change]
 Name=Status Change
+Name[ar]=تغير حالة
 Name[be]=Зьмяненьне статусу
 Name[bg]=Променено състояние на приятел
 Name[bs]=Izmjena statusa
@@ -441,6 +454,7 @@ Comment[da]=En kontakts status på nettet er ændret
 Comment[de]=Ein Benutzer wechselt seinen Status.
 Comment[es]=El estado de conexión de un contacto ha cambiado
 Comment[et]=Kontakt muutis oma võrgusoleku staatust
+Comment[fi]=Yhteyshenkilön online-tila on muuttunut
 Comment[fr]=Un contact a changé son état de connexion
 Comment[hu]=Egy partner állapota megváltozott
 Comment[is]=Notandi breytir um stöðu
@@ -465,11 +479,12 @@ default_presentation=0
 
 [kopete_contact_highlight]
 Name=Highlight
+Name[ar]=تمييز
 Name[be]=Падсьветка
 Name[bg]=Пристигна специално съобщение
 Name[bs]=Isticanje
 Name[ca]=Ressaltat
-Name[cs]=Zvýraznit
+Name[cs]=Zvýraznění
 Name[cy]=Amlygu
 Name[da]=Fremhæv
 Name[de]=Hervorhebung
@@ -511,6 +526,7 @@ Comment[da]=En fremhævet besked er blevet modtaget
 Comment[de]=Eine hervorgehobene Nachricht ist eingegangen
 Comment[es]=Se ha recibido un mensaje resaltado
 Comment[et]=Saabus esiletõstetud sõnum
+Comment[fi]=Korostettu viesti on saapunut
 Comment[fr]=Un message surligné a été reçu
 Comment[hr]=Osvijetljena poruka je primljena
 Comment[hu]=Kiemelt üzenet érkezett
@@ -545,6 +561,7 @@ Name[da]=Breve med lav prioritet
 Name[de]=Nachrichten mit niedriger Priorität
 Name[es]=Mensajes de prioridad baja
 Name[et]=Madala prioriteediga sõnumid
+Name[fi]=Matalan prioriteetin viestit
 Name[fr]=Messages de basse priorité
 Name[hu]=Alacsony prioritású üzenetek
 Name[is]=Skilaboð með lágum forgangi
@@ -573,6 +590,7 @@ Comment[da]=En indkommende besked med lav prioritet er blevet modtaget
 Comment[de]=Eine Nachricht mit niedriger Priorität ist eingegangen
 Comment[es]=Se ha recibido un mensaje marcado con poca prioridad
 Comment[et]=Saabus madalaprioriteediline sõnum
+Comment[fi]=Matalalla prioriteetilla merkitty viesti on saapunut
 Comment[fr]=Un message marqué avec une basse priorité a été reçu
 Comment[hu]=Alacsony prioritású üzenet érkezett
 Comment[is]=Nýtt skeyti með lágum forgangi kemur
@@ -603,6 +621,7 @@ Name[bg]=Пристигна нова поща в Yahoo
 Name[bs]=Yahoo mail
 Name[ca]=Correu Yahoo
 Name[es]=Correo de Yahoo
+Name[fi]=Yahoo-sähköposti
 Name[fr]=Courrier Yahoo
 Name[is]=Yahoo póstur
 Name[nb]=Yahoo e-post
@@ -626,6 +645,7 @@ Comment[da]=Ny e-mail ankom til din Yahoo-indbakke
 Comment[de]=Eine neue Nachricht befindet sich im Yahoo-Eingangsordner
 Comment[es]=Tiene correo nuevo en la cuenta de Yahoo
 Comment[et]=Saabus uus meil sinu Yahoo Inboxi
+Comment[fi]=Uutta postia saapunut Yahoo-sähköpostilaatikkoosi
 Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres Yahoo
 Comment[hu]=Új levél érkezett a Yahoo postaládába
 Comment[is]=Nýr póstur kominn í Yahoo innhólfið
@@ -649,6 +669,7 @@ default_presentation=16
 
 [msn_mail]
 Name=MSN Mail
+Name[ar]=بريد MSN
 Name[be]=Пошта MSN
 Name[bg]=Пристигна нова поща в MSN
 Name[bs]=MSN mail
@@ -690,6 +711,7 @@ Comment[da]=Ny e-mail ankom til din MSN-indbakke
 Comment[de]=Eine neue Nachricht befindet sich im MSN-Eingangsordner
 Comment[es]=Tiene correo nuevo en la cuenta de MSN
 Comment[et]=Saabus uus meil sinu MSN Inboxi
+Comment[fi]=Uutta postia saapunut MSN-sähköpostilaatikkoosi
 Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres MSN
 Comment[hr]=Nova pošta je stigla u vaš MSN sandučić
 Comment[hu]=Új levél érkezett az MSN postaládába
