@@ -386,12 +386,14 @@ void KopeteWindow::slotConfGlobalKeys()
 {
 	if(KKeyDialog::configure( globalAccel, this ) )
 	{
+#if !KDE_IS_VERSION( 3, 2, 92 )
 		//KKeyDialog::configure is supposed to save itself. but it does it wrong.
 		// KGlobalAccel::writeSettings / readSettings  uses the group "Global Shortcuts"
 		// but KAccelShortcutList::save() which is called by the KKeyDialog, use an empty
 		//  group which is replaced by "Shortcuts" in KShortcutList::writeSettings
 		globalAccel->writeSettings();
 		//as the result: the config is saved in two different group. - Olivier  07-2004
+#endif    //(fixed in KDE 3.3)
 	}
 
 }
@@ -527,7 +529,7 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 
 	m_accountStatusBarIcons.remove( account );
 	delete sbIcon;
-	
+
 	makeTrayToolTip();
 }
 
@@ -582,7 +584,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 }
 
 void KopeteWindow::makeTrayToolTip()
-{	
+{
 	//the tool-tip of the systemtray.
 	if(m_tray)
 	{
