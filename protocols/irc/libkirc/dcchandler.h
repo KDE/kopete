@@ -17,13 +17,19 @@
 #ifndef DCCHANDLER_H
 #define DCCHANDLER_H
 
+
+
 #include <qhostaddress.h>
-#include <qstring.h>
 #include <qsocket.h>
+
 #include <qserversocket.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <qtextcodec.h>
+
+
+
+class QFile;
+class QTextCodec;
+
+
 
 class DCCClient : public QSocket
 {

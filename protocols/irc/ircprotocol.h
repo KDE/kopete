@@ -18,19 +18,26 @@
 #ifndef IRCPROTOCOL_H
 #define IRCPROTOCOL_H
 
-#include <qpixmap.h>
-#include <qwidget.h>
-#include <qstringlist.h>
-#include "ircpreferences.h"
-#include <statusbaricon.h>
-#include <addcontactpage.h>
-#include "kopeteprotocol.h"
-#include "kirc.h"
 
-class IRCServerContact;
+
+#include "kopeteprotocol.h"
+
+#include <qpixmap.h>
+
+
+
+class AddContactPage;
 class IRCServerManager;
+class KIRC;
+class StatusBarIcon;
+
 class KPopupMenu;
 class KSimpleConfig;
+
+class QStringList;
+class QWidget;
+
+
 
 /**
   *@author duncan

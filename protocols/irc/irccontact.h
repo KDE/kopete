@@ -18,25 +18,27 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
-#include <qobject.h>
-#include <qframe.h>
-#include <qpixmap.h>
-#include <qstring.h>
-#include <qtimer.h>
-#include "kopete.h"
-#include <kpopupmenu.h>
 
-#include "ircprotocol.h"
-#include "ircchatview.h"
-#include "kirc.h"
+
 #include "kopetecontact.h"
 
+#include <qstring.h>
+
+
+
+class IRCChatView;
 class IRCQueryView;
-class QVBox;
-class QStringList;
 class IRCServerContact;
+class KIRC;
+
 class KAction;
 class KListAction;
+class KPopupMenu;
+
+class QStringList;
+class QVBox;
+
+
 
 class IRCContact : public KopeteContact
 {

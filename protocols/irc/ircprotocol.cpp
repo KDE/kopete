@@ -14,32 +14,41 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include <kdebug.h>
+
+
+
+#include "ircprotocol.h"
+
+#include "ircadd.h"
+#include "ircaddcontactpage.h"
+#include "ircchatview.h"
+#include "irccontact.h"
+#include "ircmessage.h"
+#include "ircpreferences.h"
+#include "ircservercontact.h"
+#include "ircservermanager.h"
+#include "kopete.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "kopetewindow.h"
+#include "statusbaricon.h"
+
 #include <kconfig.h>
+#include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <klocale.h>
-#include <qcursor.h>
-#include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
 
-#include "ircprotocol.h"
-#include "irccontact.h"
-#include "ircadd.h"
-#include "kopete.h"
-#include "kopetemetacontact.h"
-#include "ircaddcontactpage.h"
-#include "ircchatview.h"
-#include "ircservercontact.h"
-#include "ircmessage.h"
-#include "ircservermanager.h"
-#include "kopetecontactlist.h"
-#include "kopetewindow.h"
+#include <qcursor.h>
+#include <qregexp.h>
+
+
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor

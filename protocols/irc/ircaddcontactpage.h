@@ -2,15 +2,20 @@
 #ifndef IRCADDCONTACTPAGE_H
 #define IRCADDCONTACTPAGE_H
 
-#include <qwidget.h>
-#include <addcontactpage.h>
+
+
+#include "addcontactpage.h"
+
+
+
+class ircAddUI;
+class IRCProtocol;
+
+
 
 /**
   *@author duncan
   */
-class ircAddUI;
-class IRCProtocol;
-
 class IRCAddContactPage : public AddContactPage
 {
    Q_OBJECT

@@ -15,41 +15,45 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qinputdialog.h>
-#include <qlayout.h>
-#include <qtabwidget.h>
-#include <qvbox.h>
-#include <qstringlist.h>
-#include <qsocket.h>
 
-#include <kdebug.h>
-#include <ktextbrowser.h>
-#include <ktoolbar.h>
+
+#include "ircservercontact.h"
+
+#include "dccconfirm.h"
+#include "irc_channel_tabwidget.h"
+#include "ircchatwindow.h"
+#include "irccmdparser.h"
+#include "ircconsoleview.h"
+#include "irccontact.h"
+#include "ircdccreceive.h"
+#include "ircdccsend.h"
+#include "ircdccview.h"
+#include "ircmessage.h"
+#include "ircprotocol.h"
+#include "ircservermanager.h"
+#include "kirc.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "messagetransport.h"
+#include "tabcompleter.h"
+
 #include <kconfig.h>
+#include <kdebug.h>
+#include <kfiledialog.h>
+#include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kfiledialog.h>
-#include <kstddirs.h>
-#include <kiconloader.h>
+#include <kstandarddirs.h>
+#include <ktextbrowser.h>
+#include <ktoolbar.h>
 
-#include "kirc.h"
-#include "dccconfirm.h"
-#include "ircmessage.h"
-#include "ircservercontact.h"
-#include "irccmdparser.h"
-#include "irccontact.h"
-#include "ircservermanager.h"
-#include "ircmessage.h"
-#include "ircdccsend.h"
-#include "ircdccview.h"
-#include "ircdccreceive.h"
-#include "ircconsoleview.h"
-#include "messagetransport.h"
-#include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "tabcompleter.h"
-#include "irc_channel_tabwidget.h"
+#include <qinputdialog.h>
+#include <qlayout.h>
+#include <qsocket.h>
+#include <qvbox.h>
+
+
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {

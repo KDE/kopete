@@ -17,18 +17,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "kirc.h"
-#include <kdebug.h>
-#include <qregexp.h>
-#include <sys/time.h>
-#include <qdatetime.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <qfileinfo.h>
-#include "dcchandler.h"
 
+
+#include "kirc.h"
+
+#include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
+
+#include <qdatetime.h>
+#include <qfileinfo.h>
+#include <qregexp.h>
+#include <qtextcodec.h>
+
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+
+
 
 KIRC::KIRC()
 	: QSocket()

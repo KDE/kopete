@@ -18,27 +18,30 @@
 #ifndef IRCSERVERCONTACT_H
 #define IRCSERVERCONTACT_H
 
-#include <qobject.h>
-#include <qstring.h>
-#include "kopete.h"
-#include <klistview.h>
-#include <qtimer.h>
-#include <ircchatwindow.h>
-#include <qdict.h>
-#include <qptrlist.h>
-#include "irccontact.h"
 
-class KIRC;
-class IMContact;
-class QVBox;
-class IRCConsoleView;
-class KPopupMenu;
-class QStringList;
+
+#include <qobject.h>
+
+#include "dcchandler.h"
+
+#include <qstring.h>
+#include <qstringlist.h>
+
+
+
+class IRCChatWindow;
 class IRCCmdParser;
-class IRCServerManager;
+class IRCConsoleView;
 class IRCMessage;
 class IRCProtocol;
-class DCCChat;
+class IRCServerManager;
+class KIRC;
+
+class KPopupMenu;
+
+class QVBox;
+
+
 
 class IRCServerContact : public QObject
 {

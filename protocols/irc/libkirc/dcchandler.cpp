@@ -17,10 +17,18 @@
  *                                                                         *
  ***************************************************************************/
 
+
+
 #include "dcchandler.h"
-#include <qdatastream.h>
-#include <qregexp.h>
+
+#include <kglobal.h>
+#include <klocale.h>
+
 #include <qcstring.h>
+#include <qfile.h>
+#include <qregexp.h>
+#include <qtextcodec.h>
+
 #ifdef NEED_TYPES_H
 #include <sys/types.h>
 #endif
@@ -30,8 +38,7 @@
 #endif
 #include <unistd.h>
 
-#include <kglobal.h>
-#include <klocale.h>
+
 
 DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
 	: QSocket()

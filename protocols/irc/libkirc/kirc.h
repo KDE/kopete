@@ -20,11 +20,20 @@
 #ifndef KIRC_H
 #define KIRC_H
 
+
+
 #include <qsocket.h>
-#include <qstring.h>
-#include <qhostaddress.h>
-#include <qtextcodec.h>
+
 #include "dcchandler.h"
+
+#include <qstring.h>
+
+
+
+class QHostAddress;
+class QTextCodec;
+
+
 
 /**
   *@author nbetcher

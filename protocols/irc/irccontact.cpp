@@ -15,36 +15,36 @@
  *                                                                         *
  ***************************************************************************/
 
+
+
+#include "irccontact.h"
+
+#include "irc_channel_tabwidget.h"
+#include "ircchatview.h"
+#include "ircchatwindow.h"
+#include "ircprotocol.h"
+#include "ircqueryview.h"
+#include "ircservercontact.h"
+#include "kirc.h"
+#include "kopete.h"
+#include "kopetecontactlist.h"
+#include "kopetestdaction.h"
+#include "kopetewindow.h"
+#include "tabcompleter.h"
+
 #include <qlayout.h>
-#include <qtabwidget.h>
-#include <qvbox.h>
 #include <qiconset.h>
 #include <qvbox.h>
-#include <qstringlist.h>
 
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kdialog.h>
 #include <kdebug.h>
 #include <kconfig.h>
-#include <ktabctl.h>
-#include <kstddirs.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kpopupmenu.h>
 #include <ksimpleconfig.h>
 #include <ktextbrowser.h>
 #include <kiconloader.h>
 
-#include <ircchatwindow.h>
-
-#include "kopetestdaction.h"
-#include "ircqueryview.h"
-#include "irc_channel_tabwidget.h"
-#include "irccontact.h"
-#include "ircservercontact.h"
-#include "kopetecontactlist.h"
-#include "kopetewindow.h"
-#include "tabcompleter.h"
 
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
