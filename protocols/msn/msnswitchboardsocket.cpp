@@ -165,6 +165,13 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 		// we need to know who's sending is the block...
 		m_msgHandle = data.section( ' ', 0, 0 );
 
+		if(m_account->contacts()[ m_msgHandle ])
+		{
+			QString displayName=data.section( ' ', 1, 1 );
+			if(m_account->contacts()[ m_msgHandle ]->displayName() != displayName)
+				m_account->contacts()[ m_msgHandle ]->rename(displayName);
+		}
+
 		readBlock(len.toUInt());
 	}
 }
