@@ -112,7 +112,7 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Password = password;
 	m_Status = initial;
 	m_connId = id;
-	QObject::connect ( this,SIGNAL(loginResponse(int,char*)),this,SLOT(loginResponseReceiver(int,char*)));
+	QObject::connect ( this,SIGNAL(loginResponse(int,char*)),this,SLOT(slotLoginResponseReceiver(int,char*)));
 }
 
 YahooSession::~YahooSession()
@@ -273,11 +273,11 @@ const char  * YahooSession::getProfile_url( void )
 	return yahoo_get_profile_url();
 }
 
-void YahooSession::loginResponseReceiver(int succ, char *url)
+void YahooSession::slotLoginResponseReceiver(int succ, char *url)
 {
 	char buff[1024];
 
-	kdDebug()<<"[YahooSession::loginResponseReceiver]"<<endl;
+	kdDebug()<<"[YahooSession::slotLoginResponseReceiver]"<<endl;
 	if (succ == YAHOO_LOGIN_OK)
 	{
 		m_Status = yahoo_current_status(m_connId);
@@ -307,14 +307,14 @@ void YahooSession::addHandler(int fd)
 	m_fd = fd;
 }
 
-void YahooSession::dataReceived()
+void YahooSession::slotDataReceived()
 {
 	int ret=1;
 	/* FIXME!!!!! */
     //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
 	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
 
-	kdDebug() << "YahooSession::dataReceived" << fd << endl;
+	kdDebug() << "YahooSession::slotDataReceived" << fd << endl;
 	ret = yahoo_read_ready( m_connId , fd );
 
 	if ( ret == -1)
@@ -322,6 +322,23 @@ void YahooSession::dataReceived()
 	else if ( ret == 0)
 		kdDebug() << "Server closed socket" << endl;
 }
+
+void YahooSession::slotSendReady()
+{
+	int ret=1;
+	/* FIXME!!!!! */
+    //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
+	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
+
+	kdDebug() << "YahooSession::slotSendReady" << fd << endl;
+	ret = yahoo_write_ready( m_connId , fd );
+
+	if ( ret == -1)
+		kdDebug() <<"Read Error (" << errno << ": " << strerror(errno) << endl;
+	else if ( ret == 0)
+		kdDebug() << "Server closed socket" << endl;
+}
+
 /* Callbacks implementation */
 
 extern "C" {
@@ -608,26 +625,44 @@ void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_conditi
 	m_idMap[fd] = id;
 	m_fdMap[id] = fd;
 
-	kdDebug() << "[YahooSessionManager::addHandlerReceiver]" <<id<< " " << fd<< endl;
+	kdDebug() << "[YahooSessionManager::addHandlerReceiver] Session: " <<id<< " Socket: " << fd<< endl;
 
 	YahooSession *_session = m_sessionsMap[id];
 	if ( cond == YAHOO_INPUT_READ && _session )
 	{
-		kdDebug() << "[YahooSessionManager::addHandlerReceiver] Socket connected to sessions data handler!";
+		kdDebug() << "[YahooSessionManager::addHandlerReceiver] add handler read";
 		_socket->enableRead(true);
-		connect (_socket,SIGNAL(readyRead()),_session,SLOT(dataReceived()));
+		connect (_socket,SIGNAL(readyRead()),_session,SLOT(slotDataReceived()));
 	}
 	else if ( cond == YAHOO_INPUT_WRITE )
 	{
-		// cachar que hacer al reves
+		kdDebug() << "[YahooSessionManager::addHandlerReceiver] add handler write";
+		_socket->enableWrite(true);
+		connect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotSendReady()));
 	}
 }
 
 void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]" << endl;
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver]" << endl;
 	YahooSession *session = getSession(id);
-	//emit session->removeHandler(fd);	
+	
+	KExtendedSocket *_socket = m_socketsMap[fd];
+
+	m_idMap[fd] = id;
+	m_fdMap[id] = fd;
+
+	kdDebug() << "[YahooSessionManager::removeReceiver] Session: " <<id<< " Socket: " << fd<< endl;
+
+	YahooSession *_session = m_sessionsMap[id];
+		
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] read off";
+	//_socket->enableRead(false);
+	disconnect (_socket,SIGNAL(readyRead()),_session,SLOT(slotDataReceived()));
+	
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] write off";
+	//_socket->enableRead(false);
+	disconnect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotSendReady()));
 }
 
 int YahooSessionManager::hostConnectReceiver(char *host, int port)

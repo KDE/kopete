@@ -79,29 +79,29 @@ char *yahoo_crypt(char *key, char *salt)
 	md5_init(&ctx);
 
 	/* Add the key string.  */
-	md5_append(&ctx, key, key_len);
+	md5_append(&ctx, (md5_byte_t *)key, key_len);
 
 	/* Because the SALT argument need not always have the salt prefix we
 	   add it separately.  */
-	md5_append(&ctx, md5_salt_prefix, sizeof (md5_salt_prefix) - 1);
+	md5_append(&ctx, (md5_byte_t *)md5_salt_prefix, sizeof (md5_salt_prefix) - 1);
 
 	/* The last part is the salt string.  This must be at most 8
 	   characters and it ends at the first `$' character (for
 	   compatibility which existing solutions).  */
-	md5_append(&ctx, salt, salt_len);
+	md5_append(&ctx, (md5_byte_t *)salt, salt_len);
 
 	/* Compute alternate MD5 sum with input KEY, SALT, and KEY.  The
 	   final result will be added to the first context.  */
 	md5_init(&alt_ctx);
 
 	/* Add key.  */
-	md5_append(&alt_ctx, key, key_len);
+	md5_append(&alt_ctx, (md5_byte_t *)key, key_len);
 
 	/* Add salt.  */
-	md5_append(&alt_ctx, salt, salt_len);
+	md5_append(&alt_ctx, (md5_byte_t *)salt, salt_len);
 
 	/* Add key again.  */
-	md5_append(&alt_ctx, key, key_len);
+	md5_append(&alt_ctx, (md5_byte_t *)key, key_len);
 
 	/* Now get result of this (16 bytes) and add it to the other
 	   context.  */
@@ -134,23 +134,23 @@ char *yahoo_crypt(char *key, char *salt)
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
-			md5_append(&ctx, key, key_len);
+			md5_append(&ctx, (md5_byte_t *)key, key_len);
 		else
 			md5_append(&ctx, alt_result, 16);
 
 		/* Add salt for numbers not divisible by 3.  */
 		if (cnt % 3 != 0)
-			md5_append(&ctx, salt, salt_len);
+			md5_append(&ctx, (md5_byte_t *)salt, salt_len);
 
 		/* Add key for numbers not divisible by 7.  */
 		if (cnt % 7 != 0)
-			md5_append(&ctx, key, key_len);
+			md5_append(&ctx, (md5_byte_t *)key, key_len);
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
 			md5_append(&ctx, alt_result, 16);
 		else
-			md5_append(&ctx, key, key_len);
+			md5_append(&ctx, (md5_byte_t *)key, key_len);
 
 		/* Create intermediate result.  */
 		md5_finish(&ctx, alt_result);

@@ -51,6 +51,9 @@
 #include <yahoo2_callbacks.h>
 #include "yahoo_util.h"
 
+int fileno(FILE * stream);
+
+
 #define MAX_PREF_LEN 255
 
 static int do_mail_notify = 0;
@@ -515,24 +518,27 @@ void yahoo_set_current_state(int yahoo_state)
 int ext_yahoo_connect(char *host, int port)
 {
 	struct sockaddr_in serv_addr;
-	struct hostent *server;
+	static struct hostent *server;
+	static char last_host[256];
 	int servfd;
-	int res;
 	char **p;
 
-	if(!(server = gethostbyname(host))) {
-		WARNING(("failed to look up server (%s:%d)\n%d: %s", host, port,
-					h_errno, hstrerror(h_errno)));
-		return -1;
+	if(last_host[0] || strcasecmp(last_host, host)!=0) {
+		if(!(server = gethostbyname(host))) {
+			WARNING(("failed to look up server (%s:%d)\n%d: %s", 
+						host, port,
+						h_errno, strerror(h_errno)));
+			return -1;
+		}
+		strncpy(last_host, host, 255);
 	}
 
 	if((servfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		WARNING(("Socket create error (%d): %s", errno, 
-					strerror(errno)));
+		WARNING(("Socket create error (%d): %s", errno, strerror(errno)));
 		return -1;
 	}
 
-	LOG(("connecting to %s:%d\n", host, port));
+	LOG(("connecting to %s:%d", host, port));
 
 	for (p = server->h_addr_list; *p; p++)
 	{
@@ -541,18 +547,21 @@ int ext_yahoo_connect(char *host, int port)
 		memcpy(&serv_addr.sin_addr.s_addr, *p, server->h_length);
 		serv_addr.sin_port = htons(port);
 
-		res = -1;
-		res = connect(servfd, (struct sockaddr *) &serv_addr, 
-				sizeof(serv_addr));
-
-		if(res == 0 ) {
+		LOG(("trying %s", *p));
+		if(connect(servfd, (struct sockaddr *) &serv_addr, 
+					sizeof(serv_addr)) == -1) {
+			if(errno!=ECONNREFUSED && errno!=ETIMEDOUT && 
+					errno!=ENETUNREACH) {
+				break;
+			}
+		} else {
 			LOG(("connected"));
 			return servfd;
 		}
 	}
 
-	WARNING(("Could not connect to %s:%d\n%d:%s", host, port,
-				errno, strerror(errno)));
+	WARNING(("Could not connect to %s:%d\n%d:%s", host, port, errno, 
+				strerror(errno)));
 	close(servfd);
 	return -1;
 }
@@ -611,8 +620,8 @@ static void process_commands(char *line)
 		copy = NULL;
 	}
 
-	if(!strcasecmp(cmd, "MSG")) {
-		// send a message
+	if(!strncasecmp(cmd, "MSG", strlen("MSG"))) {
+		/* send a message */
 		to = copy;
 		tmp = strchr(copy, ' ');
 		if(tmp) {
@@ -622,8 +631,8 @@ static void process_commands(char *line)
 		msg = copy;
 		if(to && msg)
 			yahoo_send_im(ylad->id, NULL, to, msg);
-	} else if(!strcasecmp(cmd, "CMS")) {
-		// send a message
+	} else if(!strncasecmp(cmd, "CMS", strlen("CMS"))) {
+		/* send a message */
 		conf_room * cr;
 		to = copy;
 		tmp = strchr(copy, ' ');
@@ -639,7 +648,7 @@ static void process_commands(char *line)
 		}
 		if(msg)
 			yahoo_conference_message(ylad->id, NULL, cr->members, to, msg);
-	} else if(!strcasecmp(cmd, "CLS")) {
+	} else if(!strncasecmp(cmd, "CLS", strlen("CLS"))) {
 		YList * l;
 		if(copy) {
 			conf_room * cr = find_conf_room_by_name_and_id(ylad->id, copy);
@@ -659,7 +668,7 @@ static void process_commands(char *line)
 			}
 		}
 
-	} else if(!strcasecmp(cmd, "CCR")) {
+	} else if(!strncasecmp(cmd, "CCR", strlen("CCR"))) {
 		conf_room * cr = y_new0(conf_room, 1);
 		while((tmp = strchr(copy, ' ')) != NULL) {
 			*tmp = '\0';
@@ -681,7 +690,7 @@ static void process_commands(char *line)
 			yahoo_conference_invite(ylad->id, NULL, cr->members, cr->room_name, "Join my conference");
 			cr->members = y_list_append(cr->members,strdup(ylad->yahoo_id));
 		}
-	} else if(!strcasecmp(cmd, "CIN")) {
+	} else if(!strncasecmp(cmd, "CIN", strlen("CIN"))) {
 		conf_room * cr;
 		char * room=copy;
 		YList * l1, *l = NULL;
@@ -706,7 +715,7 @@ static void process_commands(char *line)
 		}
 		y_list_free(l);
 
-	} else if(!strcasecmp(cmd, "CLN")) {
+	} else if(!strncasecmp(cmd, "CLN", strlen("CLN"))) {
 		conf_room * cr = find_conf_room_by_name_and_id(ylad->id, copy);
 		YList * l;
 		if(!cr) {
@@ -724,7 +733,7 @@ static void process_commands(char *line)
 			cr->members = y_list_append(cr->members, strdup(ylad->yahoo_id));
 		yahoo_conference_logon(ylad->id, NULL, cr->members, copy);
 
-	} else if(!strcasecmp(cmd, "CLF")) {
+	} else if(!strncasecmp(cmd, "CLF", strlen("CLF"))) {
 		conf_room * cr = find_conf_room_by_name_and_id(ylad->id, copy);
 		
 		if(!cr) {
@@ -745,7 +754,7 @@ static void process_commands(char *line)
 		}
 		FREE(cr);
 
-	} else if(!strcasecmp(cmd, "CDC")) {
+	} else if(!strncasecmp(cmd, "CDC", strlen("CDC"))) {
 		conf_room * cr;
 		char * room = copy;
 		tmp = strchr(copy, ' ');
@@ -776,7 +785,7 @@ static void process_commands(char *line)
 		}
 		FREE(cr);
 
-	} else if(!strcasecmp(cmd, "STA")) {
+	} else if(!strncasecmp(cmd, "STA", strlen("STA"))) {
 		if(isdigit(copy[0])) {
 			state = (enum yahoo_status)atoi(copy);
 			copy = strchr(copy, ' ');
@@ -794,23 +803,23 @@ static void process_commands(char *line)
 
 		yahoo_set_away(ylad->id, state, msg, 1);
 
-	} else if(!strcasecmp(cmd, "OFF")) {
-		// go offline
+	} else if(!strncasecmp(cmd, "OFF", strlen("OFF"))) {
+		/* go offline */
 		poll_loop=0;
-	} else if(!strcasecmp(cmd, "IDS")) {
-		// print identities
+	} else if(!strncasecmp(cmd, "IDS", strlen("IDS"))) {
+		/* print identities */
 		const YList * ids = yahoo_get_identities(ylad->id);
 		printf("Identities: ");
 		for(; ids; ids = ids->next)
 			printf("%s, ", (char *)ids->data);
 		printf("\n");
-	} else if(!strcasecmp(cmd, "AID")) {
-		// activate identity
+	} else if(!strncasecmp(cmd, "AID", strlen("AID"))) {
+		/* activate identity */
 		yahoo_set_identity_status(ylad->id, copy, 1);
-	} else if(!strcasecmp(cmd, "DID")) {
-		// deactivate identity
+	} else if(!strncasecmp(cmd, "DID", strlen("DID"))) {
+		/* deactivate identity */
 		yahoo_set_identity_status(ylad->id, copy, 0);
-	} else if(!strcasecmp(cmd, "LST")) {
+	} else if(!strncasecmp(cmd, "LST", strlen("LST"))) {
 		YList * b = buddies;
 		for(; b; b=b->next) {
 			yahoo_account * ya = b->data;
@@ -897,6 +906,7 @@ int main(int argc, char * argv[])
 
 	printf("Log Level: ");
 	scanf("%d", &log_level);
+	do_yahoo_debug=log_level;
 
 	register_callbacks();
 	yahoo_set_log_level(log_level);

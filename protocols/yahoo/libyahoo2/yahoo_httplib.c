@@ -59,9 +59,12 @@ int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 	char c;
 
 	for (n = 1; n < maxlen; n++) {
-	again:
 
-		if ((rc = read(fd, &c, 1)) == 1) {
+		do {
+			rc = read(fd, &c, 1);
+		} while(rc == -1 && errno == EINTR);
+
+		if (rc == 1) {
 			if(c == '\r')			/* get rid of \r */
 				continue;
 			*ptr = c;
@@ -74,8 +77,6 @@ int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 			else
 				break;			/* EOF, w/ data */
 		} else {
-			if (errno == EINTR)
-				goto again;
 			return -1;
 		}
 	}
@@ -159,7 +160,7 @@ char *yahoo_urlencode(const char *instr)
 	}
 	str[bpos]='\0';
 
-	/*free extra alloc'ed mem. */
+	/* free extra alloc'ed mem. */
 	len = strlen(str);
 	str = y_renew(char, str, len+1);
 
@@ -195,7 +196,7 @@ char *yahoo_urldecode(const char *instr)
 	}
 	str[bpos]='\0';
 
-	/*free extra alloc'ed mem. */
+	/* free extra alloc'ed mem. */
 	len = strlen(str);
 	str = y_renew(char, str, len+1);
 

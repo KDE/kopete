@@ -1,23 +1,21 @@
-/***************************************************************************
-                          yahoocontact.cpp  -  description
-                             -------------------
-    begin                : Fri Apr 26 2002
-    copyright            : (C) 2002 by Bruno Rodrigues
-    email                : bruno.rodrigues@litux.org
+/*
+    yahoocontact.cpp - Yahoo Contact
 
-    Based on code from   : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
- ***************************************************************************
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    
+    Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
 
- ***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 // Local Includes
 #include "yahoodebug.h"
@@ -29,6 +27,7 @@
 #include "kopete.h"
 
 // QT Includes
+#include <qstring.h>
 
 // KDE Includes
 #include <kdebug.h>
@@ -39,19 +38,18 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
 :  KopeteContact( protocol, metaContact)
 {
-	DEBUG(YDMETHOD, "YahooContact::YahooContact("<< userID << ", " << fullName << 
-			", " << group << ", <protocol>)");
-
-    mUserID = userID;
-    mFullName = fullName;
-    mGroup = group;
-    mProtocol = protocol;
+	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName << 
+			", " << group << ", <protocol>)" ;
+	
+	mUserID = userID;
+	mFullName = fullName;
+	mGroup = group;
 
 	mStatus = Offline;
 	mStatusText = "";
 
 	// Update ContactList
-    setDisplayName(mFullName);
+	setDisplayName(mFullName);
 	emit statusChanged(this, status());
 
     // XXX initActions();
@@ -60,14 +58,14 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 
 YahooContact::~YahooContact()
 {
-	DEBUG(YDMETHOD, "Yahoo::~YahooContact()");
+	kdDebug() << "Yahoo::~YahooContact()" << endl;
 }
 
 
 // Return status
 YahooContact::ContactStatus YahooContact::status() const
 {
-	DEBUG(YDMETHOD, "Yahoo::ContactStatus()");
+	kdDebug() << "Yahoo::ContactStatus()" << endl;
 
 	if(mStatus == Offline || mStatus == Invisible) { 
 		return KopeteContact::Offline;
@@ -84,9 +82,8 @@ YahooContact::ContactStatus YahooContact::status() const
 // Return status text
 QString YahooContact::statusText() const
 {
-	DEBUG(YDMETHOD, "Yahoo::statusText()");
+	kdDebug() << "Yahoo::statusText()";
 
-	DEBUG(YDMETHOD, "Yahoo::setStatus()");
 	if(mStatus == Offline || mStatus == Available || mStatus == Mobile ||
 			mStatus == Invisible) 
 		return "";
@@ -113,8 +110,9 @@ QString YahooContact::statusText() const
 		return YSTOutToLunch;
 	else if(mStatus == SteppedOut)
 		return YSTSteppedOut;
-	else {
-		DEBUG(YDERROR, "Invalid status");
+	else
+	{
+		kdDebug() << "Invalid status" << endl;
 		return "?";
 	}
 }
@@ -122,24 +120,35 @@ QString YahooContact::statusText() const
 // Return status icon
 QString YahooContact::statusIcon() const
 {
-	DEBUG(YDMETHOD, "Yahoo::statusIcon()");
+	kdDebug() << "Yahoo::statusIcon()" << endl;
 
 	if(mStatus == Offline || mStatus == Invisible)
+	{
 		return "yahoo_offline";
+	}
 	else if(mStatus == Idle) 
+	{	
 		return "yahoo_idle";
+	}
 	else if(mStatus == Mobile || mStatus == CustomMobile) 
+	{		
 		return "yahoo_mobile";
+	}
 	else if(mStatus == Available || mStatus == Custom)
+	{
 		return "yahoo_online";
+	}
 	else if(mStatus == BeRightBack || mStatus == Busy || mStatus == NotAtHome 
 			|| mStatus == NotAtMyDesk || mStatus == NotInTheOffice
 			|| mStatus == OnThePhone || mStatus == OnVacation 
 			|| mStatus == OutToLunch || mStatus == SteppedOut
 			|| mStatus == CustomBusy)
+	{
 		return "yahoo_busy";
-	else {
-		DEBUG(YDERROR, "Unknown status");
+	}
+	else
+	{
+		kdDebug() << "Unknown status" << endl;
 		return "yahoo_unknown";
 	}
 }
@@ -162,8 +171,80 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 }
 */
 
-#include "yahoocontact.moc"
+bool YahooContact::isOnline() const
+{ 
+	kdDebug() << "[YahooContact::isOnline()]" << endl;
+	return status() != Offline && status() != Unknown;
+}
 
+bool YahooContact::isReachable()
+{
+	kdDebug() << "[YahooContact::isReachable()]" << endl;
+	return true;
+}
+
+QString YahooContact::identityId() const
+{
+	kdDebug() << "[YahooContact::identityId()]" << endl;
+	return QString::null;
+}
+
+/*
+QPixmap YahooContact::scaledStatusIcon(int size)
+{
+
+}
+*/
+
+int YahooContact::importance() const
+{
+	kdDebug() << "[YahooContact::importance()]" << endl;
+	return 0;
+}
+
+QString YahooContact::id() const
+{
+	kdDebug() << "[YahooContact::id()]" << endl;
+	return mUserID;
+}
+
+KActionCollection *YahooContact::customContextMenuActions()
+{
+	kdDebug() << "[YahooContact::customContextMenuActions()]" << endl;
+	return 0L;
+}
+
+void YahooContact::addThisTemporaryContact(KopeteGroup *group)
+{
+	kdDebug() << "[addThisTemporaryContact]" << endl;
+}
+	
+void YahooContact::execute()
+{
+	kdDebug() << "[YahooContact::execute()]" << endl;
+}
+
+void YahooContact::slotViewHistory()
+{
+	kdDebug() << "[YahooContact::slotViewHistory()]" << endl;
+}
+
+void YahooContact::slotDeleteContact()
+{
+	kdDebug() << "[YahooContact::slotDeleteContact()]" << endl;
+}
+
+void YahooContact::slotUserInfo()
+{
+	kdDebug() << "[YahooContact::slotUserInfo()]" << endl;
+}
+
+void YahooContact::slotSendFile()
+{
+	kdDebug() << "[YahooContact::slotSendFile()]" << endl;
+}
+
+#include "yahoocontact.moc"
 
 /*
  * Local variables:

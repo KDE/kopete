@@ -41,6 +41,10 @@
 # ifndef strdup
 #  define strdup	g_strdup
 # endif
+# ifndef strncasecmp
+#  define strncasecmp	g_strncasecmp
+#  define strcasecmp	g_strcasecmp
+# endif
 
 #else
 
@@ -55,6 +59,9 @@
 void * y_memdup(const void * addr, int n);
 char ** y_strsplit(char * str, char * sep, int nelem);
 void y_strfreev(char ** vector);
+
+int strncasecmp(const char * s1, const char * s2, size_t n);
+int strcasecmp(const char * s1, const char * s2);
 
 #endif
 
@@ -77,3 +84,4 @@ void y_strfreev(char ** vector);
 char * y_string_append(char * str, char * append);
 
 #endif
+

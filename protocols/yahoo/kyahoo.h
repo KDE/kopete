@@ -95,8 +95,7 @@ private:
 	/* fd to id */
 	QMap< int,int> m_idMap;
 
-	static YahooSessionManager *managerStatic_;
-	
+	static YahooSessionManager *managerStatic_;	
 };
 
 // Yahoo Protocol Connection
@@ -169,8 +168,9 @@ signals:
 	//void hostConnect(char *host, int port);
 
 	private slots:
-	void loginResponseReceiver( int succ, char *url);
-	void dataReceived();
+	void slotLoginResponseReceiver( int succ, char *url);
+	void slotDataReceived();
+	void slotSendReady();
 	private:
 	void addHandler(int fd);
 	YahooSession(int id, const QString username, const QString password, int initial);

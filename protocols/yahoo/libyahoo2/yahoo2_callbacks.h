@@ -327,7 +327,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_system_message)(int id, char *msg);
  * 	Called on error.
  * Params:
  * 	id   - the id that identifies the server connection
- * 	err  - the error message if num == E_CUSTOM
+ * 	err  - the error message
  * 	fatal- whether this error is fatal to the connection or not
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_error)(int id, char *err, int fatal);

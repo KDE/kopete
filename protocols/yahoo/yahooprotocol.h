@@ -29,10 +29,12 @@
 
 // QT Includes
 #include <qpixmap.h>
+#include <qmap.h>
 
 // KDE Includes
 #include "kopeteprotocol.h"
 
+class YahooContact;
 class StatusBarIcon;	// libkopete::ui::statusbaricon
 class KPopupMenu;
 class KActionMenu;
@@ -111,6 +113,9 @@ protected slots:
 	void slotConnected();
 
 private:
+
+	QMap <QString, YahooContact *> m_contactsMap;
+
 	int m_sessionId;	
 	
 	bool mIsConnected;				// Am I connected ?

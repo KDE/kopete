@@ -1,22 +1,21 @@
-/***************************************************************************
-                          yahoocontact.h  -  description
-                             -------------------
-    begin                : Fri Apr 26 2002
-    copyright            : (C) 2002 by Bruno Rodrigues
-    email                : bruno.rodrigues@litux.org
+/*
+    yahoocontact.h - Yahoo Contact
 
-    Based on code from   : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
- ***************************************************************************/
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    
+    Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef YAHOOCONTACT_H
 #define YAHOOCONTACT_H
@@ -32,28 +31,42 @@
 
 // KDE Includes
 
-
 class YahooProtocol;
-
 
 class YahooContact : public KopeteContact 
 {
 	Q_OBJECT public:
 
-		YahooContact(QString userID, QString fullName, QString group,
-				YahooProtocol *protocol, KopeteMetaContact *metaContact);	// Constructor
-		~YahooContact();
+	YahooContact(QString userID, QString fullName, QString group,
+		YahooProtocol *protocol, KopeteMetaContact *metaContact);	// Constructor
+	~YahooContact();
 
-		ContactStatus status() const;	// Return status 
-		QString statusText() const;		// Return status text
-		QString statusIcon() const;		// Return statusIcon 
-
+	virtual bool isOnline() const;
+	virtual bool isReachable();
+	virtual QString identityId() const;
+	virtual ContactStatus status() const;
+	virtual QString statusText() const;
+	virtual QString statusIcon() const;
+	//virtual QPixmap scaledStatusIcon(int size);
+	virtual int importance() const;
+	virtual QString id() const;
+	virtual KActionCollection *customContextMenuActions();
+	virtual void addThisTemporaryContact(KopeteGroup *group=0l);
+	
+public slots:
+	
+	virtual void execute();
+	virtual void slotViewHistory();
+	virtual void slotDeleteContact();
+	virtual void slotUserInfo();
+	virtual void slotSendFile();	
+		
 	private slots:
 
-	signals:
-
 	private:
-		enum YahooStatus { 
+		
+		enum YahooStatus 
+		{ 
 			Offline,		// Disconnected
 			Available,		// 0
 			Mobile,			// 0+Mobile
@@ -73,13 +86,11 @@ class YahooContact : public KopeteContact
 			Idle			// 999
 		};
 
-		YahooProtocol *mProtocol;	// Parent Object
-
-		QString mUserID;			// User ID
-		QString mFullName;			// Full Name
-		QString mGroup;				// Group
-		YahooStatus mStatus;		// Status
-		QString mStatusText;		// StatusText
+	QString mUserID;			// User ID
+	QString mFullName;			// Full Name
+	QString mGroup;				// Group
+	YahooStatus mStatus;		// Status
+	QString mStatusText;		// StatusText
 
 };
 	

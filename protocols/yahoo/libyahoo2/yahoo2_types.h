@@ -88,6 +88,7 @@ enum yahoo_log_level {
 #define YAHOO_COLOR_ORANGE "\033[37m"
 #define YAHOO_COLOR_RED "\033[38m"
 #define YAHOO_COLOR_OLIVE "\033[39m"
+#define YAHOO_COLOR_ANY "\033[#"
 #define YAHOO_STYLE_ITALICON "\033[2m"
 #define YAHOO_STYLE_ITALICOFF "\033[x2m"
 #define YAHOO_STYLE_BOLDON "\033[1m"
