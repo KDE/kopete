@@ -1498,7 +1498,8 @@ void KopeteContactListView::slotSendFile()
 		KABC::Addressee addressee = KABC::StdAddressBook::self()->findByUid( m->metaContactId() );
 		if ( !addressee.isEmpty() )
 		{
-			QString emailAddr = addressee.preferredEmail();
+			QString emailAddr = addressee.fullEmail();
+
 			kdDebug( 14000 ) << "Email: " << emailAddr << "!" << endl;
 			if ( !emailAddr.isEmpty() )
 				kapp->invokeMailer( emailAddr, QString::null );
