@@ -505,7 +505,7 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 	// Update the status area
 	if( !typingList.isEmpty() )
 	{
-		setStatus ( i18n( "%1 is typing a message...", "%1 are typing a message...", typingList.count() ).arg( statusTyping ) );
+		setStatus ( i18n( "%1 is typing a message", "%1 are typing a message", typingList.count() ).arg( statusTyping ) );
 		setTabState( Typing );
 	}
 	else
