@@ -24,23 +24,25 @@ ac_save_LIBS="$LIBS"
 ac_save_CXXFLAGS="$CXXFLAGS"
 LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
 CFLAGS="$CFLAGS $LIBGG_INCLUDES"
-AC_MSG_CHECKING([for libgadu >= 1.0])
+AC_MSG_CHECKING([for libgadu >= 1.3 with pthread support])
 	AC_TRY_RUN(
 	[
+	
 	#include <libgadu.h>
 	#include <stdio.h>
 	#include <string.h>
 		
 	int main()
 	{
-#ifdef __GG_LIBGADU_HAVE_PTHREAD
+#if defined __GG_LIBGADU_HAVE_PTHREAD && defined GG_LOGIN60
+		
 		int bar;
 		bar = (int) strlen((char *)gg_libgadu_version());
 		if (bar == 8)
 		{
 			int foo;
 			sscanf (gg_libgadu_version(), "%d", &foo);
-			if (foo >= 20030422)
+			if (foo >= 20030901)
 			{
 				return 0;
 			}
@@ -49,7 +51,7 @@ AC_MSG_CHECKING([for libgadu >= 1.0])
 		{
 			float foo;
 			sscanf (gg_libgadu_version(), "%f", &foo);
-			if (foo >= 1.0)
+			if (foo >= 1.3)
 			{
 				return 0;
 			}
