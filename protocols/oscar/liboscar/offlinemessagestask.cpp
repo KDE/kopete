@@ -15,7 +15,7 @@
    *                                                                       *
    *************************************************************************
 */
-
+#include "config.h"
 #include "offlinemessagestask.h"
 
 #include <time.h>
@@ -112,6 +112,9 @@ void OfflineMessagesTask::handleOfflineMessage()
 	
 	QDate date(year, month, day);
 	QTime time(hour,minute);
+#ifdef TIMEZONE_IS_INT
+	int tz = -( ::timezone );
+#else
 	int tz;
 	time_t now;
 	struct tm *tm;
@@ -119,6 +122,7 @@ void OfflineMessagesTask::handleOfflineMessage()
 	tm = ::localtime(&now);
 	/* daylight = tm->tm_isdst; // another linuxism */
 	tz = (tm->tm_gmtoff) / (60 * 60);
+#endif
 	time = time.addSecs( tz );
 	
 	QDateTime hackyTime( date, time );
