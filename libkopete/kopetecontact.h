@@ -292,7 +292,7 @@ public slots:
 	/**
 	 * Method to send a file. Should be implemented by the protocols
 	 */
-	virtual void slotSendFile( QString fileName = QString::null );
+	virtual void slotSendFile( QString &fileLocation, QString fileName, long unsigned int fileSize );
 
 private slots:
 	/**

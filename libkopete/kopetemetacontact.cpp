@@ -365,7 +365,7 @@ bool KopeteMetaContact::canAcceptFiles() const
 	return false;
 }
 
-void KopeteMetaContact::sendFile( QString fileName )
+void KopeteMetaContact::sendFile( QString fileLocation, QString fileName, unsigned long fileSize )
 {
 	if( m_contacts.isEmpty() || !canAcceptFiles() )
 		return;
@@ -377,7 +377,7 @@ void KopeteMetaContact::sendFile( QString fileName )
 			c=*it;
 	}
 
-	c->slotSendFile( fileName );
+	c->slotSendFile( fileLocation, fileName, fileSize );
 }
 
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,

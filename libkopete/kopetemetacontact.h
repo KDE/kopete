@@ -31,8 +31,6 @@ class QDomNode;
 class QStringList;
 
 class KopetePlugin;
-class KopetePlugin;
-
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -224,8 +222,8 @@ public slots:
 	 */
 	void startChat();
 	
-	void sendFile(QString fileName = QString::null);
-
+	void sendFile(QString fileLocation = QString::null, QString fileName = QString::null, unsigned long fileSize = 0L);
+	
 signals:
 	/**
 	 * The contact's online status changed
@@ -309,7 +307,7 @@ private slots:
 	 * If a plugin is loaded, maybe dada about this plugins are already cached in the metacontact
 	 */
 	void slotPluginLoaded(KopetePlugin *p);
-
+		
 private:
 	QPtrList<KopeteContact> m_contacts;
 

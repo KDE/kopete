@@ -310,7 +310,7 @@ QStringList KopeteContactList::fileTransferContacts() const
 	return contacts;
 }
 
-void KopeteContactList::sendFile( QString displayName, QString fileName)
+void KopeteContactList::sendFile( QString displayName, QString fileLocation, QString fileName = QString::null, long unsigned int fileSize = 0L)
 {
 	/*
 	 * FIXME: We should be using either some kind of unique ID (kabc ID?)
@@ -323,7 +323,7 @@ void KopeteContactList::sendFile( QString displayName, QString fileName)
 	{
 //		kdDebug() << "Display Name: " << it.current()->displayName() << "\n";
 		if( it.current()->displayName() == displayName ) {
-			it.current()->sendFile( fileName );
+			it.current()->sendFile( fileLocation, fileName, fileSize );
 			return;
 		}
 	}

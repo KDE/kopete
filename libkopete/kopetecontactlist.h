@@ -88,7 +88,7 @@ public:
 
 	QStringList contactFileProtocols(QString displayName);
 
-	void sendFile(QString displayName, QString fileName);
+	void sendFile(QString displayName, QString fileLocation, QString fileName, long unsigned int fileSize);
 
 	/**
 	 * Return all meta contacts with their current status

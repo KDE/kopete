@@ -37,7 +37,8 @@ k_dcop:
 	QStringList onlineContacts();
 	QStringList fileTransferContacts();
 	QStringList contactFileProtocols(QString displayName);
-	void sendFile(QString displayName, QString fileName);
+	void sendFile(QString displayName, QString fileLocation, QString fileName, unsigned long fileSize);
+	
 	// FIXME: Do we *need* this one? Sounds error prone to me, because
 	// nicknames can contain parentheses too.
 	// Better add a contactStatus( const QString id ) I'd say - Martijn
