@@ -741,7 +741,6 @@ void KopeteChatWindow::checkDetachEnable()
 
 void KopeteChatWindow::detachChatView( ChatView *view )
 {
-	kdDebug() << "######################## " << k_funcinfo << endl;
 	if( !chatViewList.removeRef( view ) )
 		return;
 
@@ -770,7 +769,6 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 			setActiveView( static_cast<ChatView*>(m_tabBar->currentPage()) );
 	}
 
-	kdDebug() << "######################## count: " << chatViewList.count() << endl;
 	if( chatViewList.isEmpty() )
 		close();
 	else if( chatViewList.count() == 1)
@@ -1113,7 +1111,6 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 		}
 	}
 
-	kdDebug() << "########## " << k_funcinfo << "Canclose: " << canClose << endl;
 	if ( canClose )
 	{
 		// Call the parent class's closeEvent, which will accept() the event,
