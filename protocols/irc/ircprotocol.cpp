@@ -27,7 +27,6 @@
 
 #include "ircaccount.h"
 #include "ircaddcontactpage.h"
-#include "ircpreferences.h"
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 #include "kopeteaccountmanager.h"
@@ -64,14 +63,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	mActions = 0L;
 
 	//m_status = m_unknownStatus = m_Unknown;
-
-	/* TODO:
-	 * This is commented out until there is stuff in the prefs page that is valid. I didn't
-	 * actually remove the prefs files because I know in 0.8 there will be stuff there, so
-	 * no point removing it all then re-adding it later
-	 */
-	//new IRCPreferences("irc_protocol", this);
-
 
 	addAddressBookField("messaging/irc", KopetePlugin::MakeIndexField);
 

@@ -114,7 +114,7 @@ void IRCContactManager::viewCreated(KopeteView *view)
 
 void IRCContactManager::viewActivated(KopeteView */*view*/)
 {
-	kdDebug(14120) << "View activated" << endl;
+//	kdDebug(14120) << "View activated" << endl;
 }
 
 void IRCContactManager::viewClosing(KopeteView */*view*/)
