@@ -57,9 +57,6 @@
 #include "kopeteglobal.h"
 #include "kopeteemoticons.h"
 
-// uncomment this to transform all messages every time, for styles where
-// messages aren't processed independently (eg, Adium) to work.
-#define TRANSFORM_ALL_MESSAGES
 
 #if !(KDE_IS_VERSION(3,3,90))
 //From  kdelibs/khtml/misc/htmltags.h
@@ -98,12 +95,11 @@ public:
 	bool bgOverride;
 	bool fgOverride;
 	bool rtfOverride;
-#ifdef TRANSFORM_ALL_MESSAGES
 	/**
 	 * we want to render several messages in one pass if several message are apended at the same time.
 	 */
 	QTimer refreshtimer;
-#endif
+	bool transformAllMessages;
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -164,6 +160,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	: KHTMLPart( parent, name ), m_manager( mgr ), d( new Private )
 {
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
+	d->transformAllMessages=KopetePrefs::prefs()->styleContents().contains("TRANSFORM_ALL_MESSAGES");
 
 	backgroundFile = 0;
 	root = 0;
@@ -207,10 +204,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	connect( view(), SIGNAL(contentsMoving(int,int)),
 	         this, SLOT(slotScrollingTo(int,int)) );
 
-#ifdef TRANSFORM_ALL_MESSAGES
 	connect( &d->refreshtimer , SIGNAL(timeout()) , this, SLOT(slotRefreshNodes()));
-#endif
-
 
 	//initActions
 	copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
@@ -330,6 +324,7 @@ void ChatMessagePart::readOverrides()
 void ChatMessagePart::setStylesheet( const QString &style )
 {
 	d->xsltParser->setXSLT( style );
+	d->transformAllMessages=style.contains("TRANSFORM_ALL_MESSAGES");
 	slotRefreshNodes();
 }
 
@@ -355,34 +350,35 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
 	// transform all messages every time. needed for Adium style.
-#ifdef TRANSFORM_ALL_MESSAGES
-	if ( messageMap.count() >= bufferLen )
-		messageMap.pop_front();
-
-	d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
-	return;
-#else
-
-	QDomDocument domMessage = message.asXML();
-	domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
-	QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
-
-	QString direction = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	DOM::HTMLElement newNode = document().createElement( QString::fromLatin1("span") );
-	newNode.setAttribute( QString::fromLatin1("dir"), direction );
-	newNode.setInnerHTML( resultHTML );
-
-	htmlDocument().body().appendChild( newNode );
-
-	if ( messageMap.count() >= bufferLen )
+	if(d->transformAllMessages)
 	{
-		htmlDocument().body().removeChild( htmlDocument().body().firstChild() );
-		messageMap.remove( messageMap.begin() );
-	}
+		while ( bufferLen>0 && messageMap.count() >= bufferLen )
+			messageMap.pop_front();
 
-	if ( !scrollPressed )
-		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
-#endif
+		d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
+	}
+	else
+	{
+		QDomDocument domMessage = message.asXML();
+		domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
+		QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
+	
+		QString direction = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+		DOM::HTMLElement newNode = document().createElement( QString::fromLatin1("span") );
+		newNode.setAttribute( QString::fromLatin1("dir"), direction );
+		newNode.setInnerHTML( resultHTML );
+	
+		htmlDocument().body().appendChild( newNode );
+	
+		while ( bufferLen>0 && messageMap.count() >= bufferLen )
+		{
+			htmlDocument().body().removeChild( htmlDocument().body().firstChild() );
+			messageMap.remove( messageMap.begin() );
+		}
+	
+		if ( !scrollPressed )
+			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+	}
 }
 
 const QString ChatMessagePart::addNickLinks( const QString &html ) const
@@ -420,9 +416,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 
 void ChatMessagePart::slotRefreshNodes()
 {
-#ifdef TRANSFORM_ALL_MESSAGES
 	d->refreshtimer.stop();
-#endif
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 
 	QString xmlString = QString::fromLatin1( "<document>" );
