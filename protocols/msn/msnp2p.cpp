@@ -40,6 +40,18 @@
 #include <kopetetransfermanager.h>
 
 
+static QString randomid()
+{
+	return QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
+}
+
 
 
 MSNP2P::MSNP2P( unsigned long int sessionID , MSNP2PDisplatcher *parent ) : QObject (parent)
@@ -803,22 +815,8 @@ void MSNP2PDisplatcher::requestDisplayPicture( const QString &myHandle, const QS
 	kdDebug(14141) << k_funcinfo << msnObject << endl;
 
 
-	p2p->m_branch= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
-	p2p->m_CallID= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
+	p2p->m_branch=randomid();
+	p2p->m_CallID=randomid();
 
 	msnObject=QString::fromUtf8(KCodecs::base64Encode( msnObject.utf8() ));
 	msnObject.replace("=" , QString::null ) ;
@@ -949,6 +947,8 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 	m_p2pList.insert(sid , p2p);
 	p2p->m_msgHandle=m_msgHandle;
 	p2p->m_myHandle=m_myHandle;
+	p2p->m_branch=randomid();
+	p2p->m_CallID=randomid();
 
 	//Send the OK message.
 	QString content="SessionID: " + QString::number( sid ) + "\r\n\r\n" ;
@@ -959,7 +959,7 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 	p2p->m_imageToSend=toSend;
 	p2p->m_offset=0;
 	p2p->m_totalDataSize= toSend.size();
-	QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
+	QTimer::singleShot( 10, p2p, SLOT(slotSendData()) ); //Go for upload
 }
 
 
