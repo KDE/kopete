@@ -333,13 +333,17 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 	if(groupName.isEmpty())
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"FUCK KOPETE, I'm not deleting groups with no names" << endl;
+			"[EXPLETIVE REMOVED], Removing a group with no name!" << endl;
 		return;
 	}
 
 	AIMGroup *aGroup = mInternalBuddyList->findGroup(groupName);
 	if (aGroup)
+	{
 		engine()->sendDelGroup(groupName);
+		// and remove the group from our AIMBuddyList
+		mInternalBuddyList->removeGroup( aGroup->ID() );
+	}
 }
 
 // Called when we have gotten an IM
