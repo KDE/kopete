@@ -41,7 +41,7 @@ class KSSLSocket : public KExtendedSocket
 		int peekBlock( char *data, uint maxLen );
 		int bytesAvailable() const;
 
-		void showInfoDialog( QWidget *parent = 0L, bool modal = false );
+		void showInfoDialog();
 
 	signals:
 		void sslFailure();

@@ -35,7 +35,6 @@ struct KSSLSocketPrivate
 	mutable KSSL *kssl;
 	KSSLCertificateCache *cc;
 	DCOPClient *dcc;
-	bool militantSSL;
 	QMap<QString,QString> metaData;
 	QSocketNotifier *socketNotifier;
 };
@@ -47,7 +46,6 @@ KSSLSocket::KSSLSocket() : KExtendedSocket()
 	d->dcc = KApplication::kApplication()->dcopClient();
 	d->cc = new KSSLCertificateCache;
 	d->cc->reload();
-	d->militantSSL = false;
 
 	//No blocking
 	setBlockingMode(false);
@@ -169,17 +167,21 @@ void KSSLSocket::slotDisconnected()
 		readNotifier()->setEnabled(false);
 }
 
-void KSSLSocket::showInfoDialog( QWidget *parent, bool modal )
+void KSSLSocket::showInfoDialog()
 {
 	if( socketStatus() == connected )
 	{
-		KSSLPeerInfo &peer = d->kssl->peerInfo();
-		KSSLConnectionInfo &conn = d->kssl->connectionInfo();
-		KSSLInfoDlg *dialog = new KSSLInfoDlg(peer.getPeerCertificate().isValid(), parent,  "", modal );
-		dialog->setup( &peer.getPeerCertificate(), host(), QString::null, conn.getCipher(),
-			conn.getCipherDescription(), conn.getCipherVersion(), conn.getCipherUsedBits(),
-			conn.getCipherBits(), peer.getPeerCertificate().validate() );
-		dialog->show();
+		if (!d->dcc->isApplicationRegistered("kio_uiserver"))
+		{
+			KApplication::startServiceByDesktopPath("kio_uiserver.desktop",QStringList());
+		}
+
+		QByteArray data, ignore;
+		QCString ignoretype;
+		QDataStream arg(data, IO_WriteOnly);
+		arg << "irc://" + peerAddress()->pretty() + ":" + port() << d->metaData;
+		d->dcc->call("kio_uiserver", "UIServer",
+			"showSSLInfoDialog(QString,KIO::MetaData)", data, ignoretype, ignore);
 	}
 }
 
@@ -222,11 +224,6 @@ int KSSLSocket::verifyCertificate()
 	QString ourIp = peerAddress()->pretty();
 
 	QString theurl = "irc://" + ourHost + ":" + port();
-
-	if (!hasMetaData("ssl_militant") || metaData("ssl_militant") == "FALSE")
-		d->militantSSL = false;
-	else if (metaData("ssl_militant") == "TRUE")
-		d->militantSSL = true;
 
 	if (!d->cc)
 		d->cc = new KSSLCertificateCache;
@@ -298,9 +295,6 @@ int KSSLSocket::verifyCertificate()
 	//  - validation code
 	if (ksv != KSSLCertificate::Ok)
 	{
-		if (d->militantSSL)
-			return -1;
-
 		if( cp == KSSLCertificateCache::Unknown || cp == KSSLCertificateCache::Ambiguous)
 		{
 			cp = KSSLCertificateCache::Prompt;
@@ -321,12 +315,10 @@ int KSSLSocket::verifyCertificate()
 		{
 			case KSSLCertificateCache::Accept:
 				rc = 1;
-				setMetaData("ssl_action", "accept");
 				break;
 
 			case KSSLCertificateCache::Reject:
 				rc = -1;
-				setMetaData("ssl_action", "reject");
 				break;
 
 			case KSSLCertificateCache::Prompt:
@@ -357,26 +349,13 @@ int KSSLSocket::verifyCertificate()
 
 					if (result == KMessageBox::Yes)
 					{
-						if (!d->dcc->isApplicationRegistered("kio_uiserver"))
-						{
-							KApplication::startServiceByDesktopPath("kio_uiserver.desktop",
-							QStringList() );
-						}
-
-						QByteArray data, ignore;
-						QCString ignoretype;
-						QDataStream arg(data, IO_WriteOnly);
-						arg << theurl << d->metaData;
-							d->dcc->call("kio_uiserver", "UIServer",
-								"showSSLInfoDialog(QString,KIO::MetaData)",
-								data, ignoretype, ignore);
+						showInfoDialog();
 					}
 				}
 				while (result == KMessageBox::Yes);
 
 				if (result == KMessageBox::No)
 				{
-					setMetaData("ssl_action", "accept");
 					rc = 1;
 					cp = KSSLCertificateCache::Accept;
 					doAddHost = true;
@@ -394,7 +373,6 @@ int KSSLSocket::verifyCertificate()
 				}
 				else
 				{
-					setMetaData("ssl_action", "reject");
 					rc = -1;
 					cp = KSSLCertificateCache::Prompt;
 				}
