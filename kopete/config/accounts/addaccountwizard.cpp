@@ -40,6 +40,8 @@
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
 : KWizard( parent, name, modal )
 {
+	setWFlags( WDestructiveClose );
+
 	//kdDebug( 14100 ) << k_funcinfo << endl;
 	m_accountPage = 0L;
 	m_proto = 0L;
@@ -119,7 +121,6 @@ void AddAccountWizard::accept()
 
 	KWizard::accept();
 	
-	deleteLater();
 }
 
 void AddAccountWizard::reject()
@@ -136,7 +137,6 @@ void AddAccountWizard::reject()
 
 	KWizard::reject();
 
-	deleteLater();
 }
 
 void AddAccountWizard::back()
