@@ -158,10 +158,19 @@ private:
 
 	KopeteEvent *m_event;
 	QTimer *mBlinkTimer;
-	QPixmap mBlinkIcon;
-	bool mIsBlinkIcon;
 
 	QPtrDict<KopeteAccount> m_addContactActions;
+
+	bool mIsBlinkIcon;
+
+	/**
+	 * this is the ison used by the LVI when a event is pending.
+	 * this is a pointer because i can't create static QPixmap
+	 * (QPaintDevice: Must construct a QApplication before a QPaintDevice)
+	 */
+	static QPixmap *mBlinkIcon;
+
+
 };
 
 #endif

@@ -111,13 +111,19 @@ void KopeteMetaContactLVI::initLVI()
 
 	mBlinkTimer = new QTimer(this, "mBlinkTimer" );
 	QObject::connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-	mBlinkIcon = KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User);
 	mIsBlinkIcon=false;
 	m_event=0L;
+
+	if(!mBlinkIcon)
+	{
+		mBlinkIcon = new QPixmap(KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User));
+	}
 
 	slotUpdateIcons();
 	slotDisplayNameChanged();
 }
+
+QPixmap *KopeteMetaContactLVI::mBlinkIcon=0L;
 
 KopeteMetaContactLVI::~KopeteMetaContactLVI()
 {
@@ -223,7 +229,14 @@ void KopeteMetaContactLVI::slotUpdateIcons()
 
 void KopeteMetaContactLVI::execute() const
 {
-	m_metaContact->execute();
+	if(m_event)
+	{
+		m_event->apply();
+	}
+	else
+	{
+		m_metaContact->execute();
+	}
 }
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()
@@ -501,7 +514,7 @@ void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)
 	if (mBlinkTimer->isActive())
 		mBlinkTimer->stop();
 
-	mBlinkTimer->start(1000, false);
+	mBlinkTimer->start(500, false);
 }
 
 void KopeteMetaContactLVI::slotBlink()
@@ -513,7 +526,7 @@ void KopeteMetaContactLVI::slotBlink()
 	}
 	else
 	{
-		setPixmap(0,mBlinkIcon);
+		setPixmap(0,*mBlinkIcon);
 		mIsBlinkIcon = true;
 	}
 }

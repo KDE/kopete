@@ -96,15 +96,9 @@ class KopeteViewManager : public QObject
 		void slotViewDestroyed( KopeteView *);
 		void slotMessageManagerDestroyed( KopeteMessageManager * );
 
-		/**
-		 * An event has been applied. This slot shows the view
-		 * associated with the event
-		 */
-		void slotEventApplied( KopeteEvent * );
 
 		/**
-		 * An event has been deleted. If this view was never shown,
-		 * we close the view (the message has been ignored)
+		 * An event has been deleted. 
 		 */
 		void slotEventDeleted( KopeteEvent * );
 

@@ -40,7 +40,20 @@ public:
 	KopeteEvent(const KopeteMessage& , QObject* parent=0L, const char *name=0L);
 	~KopeteEvent();
 
+	/**
+	 * @return the message
+	 */
 	KopeteMessage message();
+
+	/**
+	 * The state of the event.
+	 * - Nothing means that the event has not been accepted, nor ignored
+	 * - Aplied if the event has been applied
+	 * - Ignored if the event has been ignored
+	 */
+	enum EventState { Nothing , Applied , Ignored };
+
+	EventState state();
 
 
 signals:
@@ -48,19 +61,17 @@ signals:
 	 * The event is processed
 	 **/
 	void done(KopeteEvent *);
-	void applied(KopeteEvent*);
-
 
 private:
 	KopeteMessage m_message;
-
-public slots: 
+	EventState m_state;
+public slots:
 	/**
 	 * execute the event
 	 */
 	void apply();
 	void ignore();
-	
+
 };
 
 #endif

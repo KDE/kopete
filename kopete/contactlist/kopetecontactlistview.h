@@ -165,7 +165,6 @@ private:
 	KAction *actionAddTemporaryContact;
 public: KActionMenu *actionAddContact; //it is public so the chatwinodw can handle sub actions
 
-
 };
 
 #endif

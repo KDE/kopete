@@ -1,11 +1,11 @@
 /*
     kopetemetacontact.h - Kopete Meta Contact
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -42,9 +42,9 @@ struct KopeteMetaContactPrivate;
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * A metacontact represent a person. This is a kind of entry to
- * the contactlist. All information of a contact is contained in 
+ * the contactlist. All information of a contact is contained in
  * the metacontact. Plugins can store data in it with all
- * @KopetePluginData methods
+ * @ref KopetePluginData methods
  */
 class KopeteMetaContact : public KopetePluginDataObject
 {
@@ -55,12 +55,12 @@ public:
 	~KopeteMetaContact();
 
 	/**
-	 * Retrieve the list of contacts that are part of the meta contact
+	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
 	QPtrList<KopeteContact> contacts() const;
 
 	/**
-	 * Add a contact to the meta contact
+	 * @brief Add a contact to the meta contact
 	 */
 	void addContact( KopeteContact *c );
 
@@ -70,12 +70,14 @@ public:
 	 */
 	KopeteContact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
 	/**
-	 * The name of the icon associated with the contact's status
+	 * @brief The name of the icon associated with the contact's status
 	 */
 	virtual QString statusIcon() const;
 
 	/**
-	 * The status string of the contact
+	 * @brief The status string of the contact
+	 *
+	 * @see @ref status()
 	 */
 	QString statusString() const;
 
@@ -109,6 +111,7 @@ public:
 	/**
 	 * Like isOnline, but returns true even if the contact is not online, but
 	 * can be reached trough offline-messages.
+	 * it it return false, you are unable to open a chatwindow
 	 * FIXME: Here too, use preference order, not append order!
 	 * FIXME: Here too an enum.
 	 */
@@ -123,13 +126,20 @@ public:
 	IdleState idleState() const;
 
 	/**
-	 * Get/set the display name
+	 * @return the display name showed in the contactlist window, or in the chatwindow
 	 */
 	QString displayName() const;
+	/**
+	 * @brief Set the displayName.
+	 *
+	 * this metohd may emit @ref displayNameChanged signal.
+	 * If @ref trackChildNameChanges was true, this will automaticaly set it to false
+	 */
 	void setDisplayName( const QString &name );
 
 	/**
-	 * Get/set the tracking of contact names
+	 * @brief get the tracking of contact names
+	 *
 	 * The MetaContact will adjust its displayName() every time the contact
 	 * inside changes its name.
 	 * This should only work for MCs with exactly ONE contact inside in order
@@ -137,15 +147,26 @@ public:
 	 * changes nickname...)
 	 */
 	bool trackChildNameChanges() const;
+	/**
+	 * @brief set if the metacontact dysplayname follow subcontacts displayname
+	 *
+	 * When setting it to true, it will refresh the dysplayname to the subcontactone instentaneous,
+	 * and each time the contact change.
+	 *
+	 * Note that this method has an effect only if there is exactly one subcontact.
+	 *
+	 * @see @ref trackChildNameChanges , @ref setDisplayName
+	 */
 	void setTrackChildNameChanges( bool track );
 
 	/**
-	 * The groups the contact is stored in
+	 * @brief The groups the contact is stored in
 	 */
 	KopeteGroupList groups() const;
 
 	/**
 	 * Return a XML representation of the metacontact
+	 * @internal
 	 */
 	const QDomElement toXML();
 
@@ -154,28 +175,38 @@ public:
 	 * Return value of false indicated that
 	 * creation failed and this contact should be
 	 * discarded.
+	 * @internal
 	 */
 	bool fromXML( const QDomElement& cnode );
 
 	/**
-	 * Move a contact from one group to another.
+	 * @brief Move a contact from one group to another.
 	 */
 	void moveToGroup( KopeteGroup *from, KopeteGroup *to );
 
 	/**
-	 * Remove a contact from one group
+	 * @brief Remove a contact from one group
 	 */
 	void removeFromGroup( KopeteGroup *from );
 
 	/**
-	 * Add a contact to another group.
+	 * @brief Add a contact to another group.
 	 */
 	void addToGroup( KopeteGroup *to );
 
 	/**
-	 * Temporary contacts will not be serialized
+	 * Temporary contacts will not be serialized.
+	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
+	 * (the @ref KopeteGroup::temporary  group)
 	 */
 	bool isTemporary() const;
+	/**
+	 * Set if this is a temporary contact. (see @ref isTemporary)
+	 *
+	 * @param b if the contact is or not temporary
+	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
+	 *  if group is null, it will be moved to top-level
+	 */
 	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
 
 	/**
@@ -190,25 +221,32 @@ public:
 	//void setDirty( bool b = true );
 
 	/**
-	 * Return true if the contact is shown at toplevel
+	 * @brief Return true if the contact is shown at toplevel.
+	 * You may now check if @ref groups() contains @ref KopeteGroup::toplevel
 	 */
 	bool isTopLevel();
 
 	/**
 	 * add or remove from top-level
 	 * @obsolete
-	 * use @ref addToGroup() with KopeteGroup::topLevel
+	 * use @ref addToGroup() with @ref KopeteGroup::toplevel
 	 */
 	void setTopLevel( bool b = true );
 
 	/**
-	 * remove the contact from this metacontact
+	 * @brief remove the contact from this metacontact
+	 *
 	 * set 'deleted' to true if the KopeteContact is already deleted
+	 *
+	 * @param c is the contact to remove
+	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
 	 */
 	void removeContact( KopeteContact *c , bool deleted = false );
 
 	/**
-	 * Returns this metacontact's ID. Every metacontact has a unique id.
+	 * @brief Returns this metacontact's ID.
+	 *
+	 * Every metacontact has a unique id, set by kopete when creating the contact, or reading the contactlist
 	 */
 	ulong contactId() const;
 
@@ -231,15 +269,16 @@ public:
 	 */
 	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
 	/**
-	 * set an address book field
+	 * @bief set an address book field
 	 *
-	 * see also @ref addressBookField()
+	 * @see also @ref addressBookField()
 	 */
 	void setAddressBookField( KopetePlugin *p, const QString &app, const QString &key, const QString &value );
 
 public slots:
 	/**
-	 * Contact another user.
+	 * @brief Contact another user.
+	 *
 	 * Depending on the config settings, call sendMessage() or
 	 * startChat()
 	 *
@@ -248,7 +287,8 @@ public slots:
 	KopeteContact *execute();
 
 	/**
-	 * Send a single message, classic ICQ style.
+	 * @brief Send a single message, classic ICQ style.
+	 *
 	 * The actual sending is done by the KopeteContact, but the meta contact
 	 * does the GUI side of things.
 	 * This is a slot to allow being called easily from e.g. a GUI.
@@ -258,6 +298,8 @@ public slots:
 	KopeteContact *sendMessage();
 
 	/**
+	 * @brief start a chat in a persistent chat window
+	 *
 	 * Like sendMessage, but this time a full-blown chat will be opened.
 	 * Most protocols can't distinguish between the two and are either
 	 * completely session based like MSN or completely message based like
@@ -285,7 +327,8 @@ public slots:
 
 signals:
 	/**
-	 * The MetaContact online status changed
+	 *  @brief The MetaContact online status changed
+	 *
 	 * Do *NOT* emit this signal directly, unless you also update the
 	 * cache m_onlineStatus value! In all other cases, just call
 	 * updateOnlineStatus() instead.
@@ -293,38 +336,44 @@ signals:
 	void onlineStatusChanged( KopeteMetaContact *contact, KopeteOnlineStatus::OnlineStatus status );
 
 	/**
-	 * A contact's online status changed
-	 * this signal differs from onlineStatusChanged because a contact can
-	 * change his status without changing MetaContact status
+	 * @brief A contact's online status changed
+	 *
+	 * this signal differs from @ref onlineStatusChanged because a contact can
+	 * change his status without changing MetaContact status. It is mainly used to update the small icons
+	 * in the contactlist
 	 */
 	void contactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status );
 
 	/**
-	 * The meta contact's display name changed
+	 * @brief The meta contact's display name changed
 	 */
 	void displayNameChanged( const QString &oldName, const QString &newName );
 
 	/**
-	 * The contact was moved
+	 * @brief  The contact was moved
 	 */
 	void movedToGroup( KopeteMetaContact *contact, KopeteGroup *from, KopeteGroup *to );
 
 	/**
-	 * The contact was removed from group
+	 * @brief The contact was removed from group
 	 */
 	void removedFromGroup( KopeteMetaContact *contact, KopeteGroup *group );
 
 	/**
-	 * The contact was added to another group
+	 * @brief The contact was added to another group
 	 */
 	void addedToGroup( KopeteMetaContact *contact, KopeteGroup *to );
 
 	/**
+	 * @brief a contact has been added into this metacontact
+	 *
 	 * This signal is emitted when a contact is added to this metacontact
 	 */
 	void contactAdded( KopeteContact *c );
 
 	/**
+	 * @brief a contact has been removed from this metacontactµ
+	 *
 	 * This signal is emitted when a contact is removed from this metacontact
 	 */
 	void contactRemoved( KopeteContact *c );

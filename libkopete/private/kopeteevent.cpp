@@ -27,6 +27,7 @@
 KopeteEvent::KopeteEvent( const KopeteMessage& m, QObject *parent, const char *name ) : QObject(parent,name)
 {
 	m_message=m;
+	m_state= Nothing;
 }
 KopeteEvent::~KopeteEvent()
 {
@@ -39,10 +40,15 @@ KopeteMessage KopeteEvent::message()
 	return m_message;
 }
 
+KopeteEvent::EventState KopeteEvent::state()
+{
+	return m_state;
+}
+
 void KopeteEvent::apply()
 {
 	kdDebug(14010) << "KopeteEvent::apply" << endl;
-	emit( applied(this) );
+	m_state= Applied;
 	deleteLater();
 }
 
@@ -50,7 +56,7 @@ void KopeteEvent::ignore()
 {
 	if( m_message.from()->metaContact()->isTemporary() )
 		KopeteContactList::contactList()->removeMetaContact( m_message.from()->metaContact() );
-
+	m_state= Ignored;
 	deleteLater();
 }
 

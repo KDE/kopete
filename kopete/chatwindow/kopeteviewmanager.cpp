@@ -31,14 +31,12 @@
 
 typedef QMap<KopeteMessageManager*,KopeteView*> ManagerMap;
 typedef QMap<KopeteMessageManager*,KopeteEvent*> EventMap;
-typedef QPtrList<KopeteEvent> EventQueue;
 
 struct KopeteViewManagerPrivate
 {
 	ManagerMap managerMap;
 	EventMap eventMap;
 	KopeteView *activeView;
-	EventQueue eventQueue;
 
 	bool useQueue;
 	bool raiseWindow;
@@ -86,11 +84,11 @@ void KopeteViewManager::slotPrefsChanged()
 
 KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*foreignMessage*/, KopeteMessage::MessageType type )
 {
-	if( d->eventMap.contains( manager ) )
+	/*if( d->eventMap.contains( manager ) )
 	{
 		d->eventMap[ manager ]->deleteLater();
 		d->eventMap.remove( manager );
-	}
+	}*/
 
 	if( d->managerMap.contains( manager ) && d->managerMap[ manager ] )
 	{
@@ -150,8 +148,6 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 				//FIXME: currently there are maximum only one event per kmm.
 				KopeteEvent *event=new KopeteEvent(msg,manager);
 				d->eventMap.insert( manager, event );
-				d->eventQueue.append( event );
-				connect(event, SIGNAL(applied(KopeteEvent *)), this, SLOT(slotEventApplied(KopeteEvent *)));
 				connect(event, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
 				emit newMessageEvent(event);
 			}
@@ -218,16 +214,6 @@ void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoi
 		d->eventMap[manager]->apply();
 }
 
-
-void KopeteViewManager::slotEventApplied( KopeteEvent *event )
-{
-	KopeteMessageManager *kmm=event->message().manager();
-	if(!kmm)
-		return;
-	d->eventMap.remove( kmm );
-	readMessages( kmm, false );
-}
-
 void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 {
 	KopeteMessageManager *kmm=event->message().manager();
@@ -235,10 +221,16 @@ void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 		return;
 	if(d->eventMap.contains(kmm) && d->eventMap[kmm]==event)
 	{
-		//If this event is still in the map, then it has not been applied.
-		//Close the view associated with it.
-		view( kmm , false )->closeView();
-		d->eventQueue.remove( event );
+		if(event->state()==KopeteEvent::Applied)
+		{
+			readMessages( kmm, false );
+		}
+		else if(event->state()==KopeteEvent::Ignored)
+		{
+			if(kmm->view(false))
+				kmm->view()->closeView();
+		}
+
 		d->eventMap.remove(kmm);
 	}
 }
@@ -247,17 +239,26 @@ void KopeteViewManager::nextEvent()
 {
 //	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	if( d->eventQueue.isEmpty() )
+	if( d->eventMap.isEmpty() )
 		return;
 
-	d->eventQueue.first()->apply();
-	d->eventQueue.removeFirst();
+	KopeteEvent *e= *(d->eventMap.begin());
+
+	if(e)
+		e->apply();
 }
 
 void KopeteViewManager::slotViewActivated( KopeteView *view )
 {
 //	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->activeView = view;
+	if(d->eventMap.contains(view->msgManager()))
+	{
+		KopeteEvent *e=d->eventMap[view->msgManager()];
+		if(e)
+			e->deleteLater();
+	}
+
 }
 
 void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
