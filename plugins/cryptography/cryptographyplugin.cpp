@@ -182,7 +182,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 	if( !body.isEmpty() )
 	{
 		//Check if this is a RTF message before escaping it
-		if( !isHTML.exactMatch( body ) )
+		if( isHTML.exactMatch( body ) )
 		{
 			//this is the same algoritm as in KopeteMessage::escapedBody();
 			body = QStyleSheet::escape( body );
