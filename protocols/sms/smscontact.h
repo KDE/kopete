@@ -53,7 +53,6 @@ public slots:
 	virtual void slotDeleteContact();
 	virtual void execute();
 	virtual void slotViewHistory();
-	void slotSendFile();
 	void slotSendMessage(const KopeteMessage &msg);
 
 	void slotCloseHistoryDialog();

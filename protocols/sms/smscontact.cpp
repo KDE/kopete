@@ -85,7 +85,13 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 {
 	QString text = msg.plainBody();
 	QString nr = id();
-	SMSService* s = new SMSService;
+	SMSService* s;
+	/*
+		if (config?protocol? == someservicename)
+		s = new someservice
+		else if ...
+	*/
+	s = new SMSService;
 	s->send(nr, text);
 
 	msgManager()->appendMessage(msg);
@@ -115,11 +121,6 @@ void SMSContact::slotCloseHistoryDialog()
 
 void SMSContact::slotUserInfo()
 {
-}
-
-void SMSContact::slotSendFile()
-{
-	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, you can't send a file with SMS"), i18n("Cant' send file"));
 }
 
 void SMSContact::slotDeleteContact()

@@ -9,9 +9,12 @@
 */
 
 #include "smspreferences.h"
+#include "smsservice.h"
 
 #include <qlayout.h>
 #include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qpoint.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -24,6 +27,18 @@ SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new smsPrefsUI(this);
+
+	service = 0L;
+	configWidget = 0L;
+
+	preferencesDialog->serviceName->insertItem("Testservice");
+
+	configVBox = new QGroupBox(this, "configVBox");
+	configLayout = new QHBoxLayout(configVBox);
+	configLayout->setAutoAdd(true);
+    
+	connect (preferencesDialog->serviceName, SIGNAL(activated(const QString &)), this, SLOT(setServicePreferences(const QString &)));
+
 	reopen();
 }
 
@@ -36,7 +51,6 @@ void SMSPreferences::reopen()
 	KGlobal::config()->setGroup("SMS");
 	preferencesDialog->serviceName->setCurrentText(
 		KGlobal::config()->readEntry( "ServiceName", QString::null ) );
-                              
 }
 
 
@@ -48,6 +62,26 @@ void SMSPreferences::save()
 	config->sync();
 	emit saved();
 
+}
+
+void SMSPreferences::setServicePreferences(const QString& name)
+{
+	if (service != 0L)
+		delete service;
+
+	// Should be changed when we have a working service
+	if (name == "SomeServiceName")
+		service = new SMSService;
+	// else if otherservice...
+	else
+		service = new SMSService; 
+
+	if (configWidget != 0L)
+		delete configWidget;
+	
+	configWidget = service->configureWidget();
+	configWidget->reparent(configVBox, QPoint(0,0));
+	configWidget->show();
 }
 
 #include "smspreferences.moc"

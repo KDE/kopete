@@ -14,6 +14,9 @@
 #include "kopeteprefs.h"
 #include "smsprefs.h"
 
+class QBoxLayout;
+class SMSService;
+
 class SMSPreferences : public ConfigModule
 {
 	Q_OBJECT
@@ -28,9 +31,14 @@ signals:
 
 private:
 	smsPrefsUI *preferencesDialog;
+	QGroupBox *configVBox;
+	QBoxLayout *configLayout;
+	QWidget *configWidget;
+	SMSService *service;
 public slots: // Public slots
   /** No descriptions */
   virtual void reopen();
+  void setServicePreferences(const QString& name);
 };
 
 #endif
