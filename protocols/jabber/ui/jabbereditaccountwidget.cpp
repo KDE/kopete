@@ -60,9 +60,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	connect (chkUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
-	// FIXME: this is temporary until Kopete supports accound ID changes!
-	mID->setDisabled(true);
-
 	if (m_account)
 	{
 		this->reopen ();
@@ -76,6 +73,9 @@ JabberEditAccountWidget::~JabberEditAccountWidget ()
 
 void JabberEditAccountWidget::reopen ()
 {
+
+	// FIXME: this is temporary until Kopete supports accound ID changes!
+	mID->setDisabled(true);
 
 	mID->setText (m_account->accountId ());
 	mPass->setText (m_account->getPassword ());
