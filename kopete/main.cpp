@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Core developer, Gadu plugin"), "zack@kde.org" );
 	aboutData.addAuthor ( "Carsten Pfeiffer", I18N_NOOP("Misc Bugfixes and Enhancelets"), "pfeiffer@kde.org" );
 	aboutData.addAuthor ( "Chris TenHarmsel", I18N_NOOP("Developer"), "tenharmsel@users.sourceforge.net", "http://bemis.kicks-ass.net");
+	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Icon Author") );
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
