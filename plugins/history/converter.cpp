@@ -253,9 +253,9 @@ void HistoryPlugin::convertOldHistory()
 								contactElem.setAttribute( "contactId", contactId );
 								headElem.appendChild(contactElem);
 								QDomElement importElem = doc.createElement( "imported" );
-								myselfElem.setAttribute( "from",  fi->fileName() );
-								myselfElem.setAttribute( "date", QDateTime::currentDateTime().toString()  );
-								headElem.appendChild(myselfElem);
+								importElem.setAttribute( "from",  fi->fileName() );
+								importElem.setAttribute( "date", QDateTime::currentDateTime().toString()  );
+								headElem.appendChild(importElem);
 							}
 							QDomElement msgElem = doc.createElement( "msg" );
 							msgElem.setAttribute( "in",  dir==KopeteMessage::Outbound ? "0" : "1" );
