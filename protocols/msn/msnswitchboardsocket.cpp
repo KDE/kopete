@@ -303,14 +303,17 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// not possible.
 			// When importing kopete into kdenetwork, convert this to
 			// KRegExp3 from libkdenetwork, which does exactly this.
-			fontName = fontInfo.replace(
-				QRegExp( ".*FN=" ), "" ).replace(
+			fontName = fontInfo.replace( QRegExp( ".*FN=" ), "" ).replace(
 				QRegExp( ";.*" ), "" ).replace( QRegExp( "%20" ), " " );
 
-			if( !fontName.isEmpty() )
+			// Some clients like Trillian and Kopete itself send a font
+			// name of 'MS Serif' since MS changed the server to
+			// _require_ a font name specified in june 2002.
+			// Handle 'MS Serif' as an empty font name
+			if( !fontName.isEmpty() && fontName != "MS Serif" )
 			{
-				kdDebug() << "MSNSwitchBoardService::slotReadMessage: Font: '" <<
-					fontName << "'" << endl;
+				kdDebug() << "MSNSwitchBoardService::slotReadMessage: "
+					<< "Font: '" << fontName << "'" << endl;
 
 				font = QFont( fontName,
 					parseFontAttr( fontInfo, "PF" ).toInt(), // font size
