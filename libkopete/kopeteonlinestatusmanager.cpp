@@ -100,7 +100,7 @@ QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const Q
 	                           .arg( statusFor.description() )
 	                           .arg( icon )
 	                           .arg( color.name() )
-	                           .arg( statusFor.overlayIcon())
+	                           .arg( statusFor.overlayIcons().join( QString::fromLatin1( "," ) ) )
 	                           .arg( size )
 	                           .arg( idle ? 'i' : 'a' );
 }
@@ -180,7 +180,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	if ( baseIcon == statusFor.overlayIcon() )
+	if ( baseIcon == statusFor.overlayIcons().first() )
 		kdWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible." << endl;
 
 	QPixmap* basis = new QPixmap( SmallIcon( baseIcon ) );

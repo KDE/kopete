@@ -196,11 +196,6 @@ unsigned OnlineStatus::weight() const
 	return d->weight;
 }
 
-QString OnlineStatus::overlayIcon() const
-{
-	return d->overlayIcons.first();
-}
-
 QStringList OnlineStatus::overlayIcons() const
 {
 	return d->overlayIcons;

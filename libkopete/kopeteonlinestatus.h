@@ -167,13 +167,15 @@ public:
 	 * @param internalStatus is the status as used internally by the protocol.
 	 * This status is usually a lot more fine-grained than the status as used
 	 * by libkopete and should be unique per protocol.
-	 * @param overlayIcon is a string returning the name of the status icon to be
-	 * used by the KDE icon loader. (Status whiwh doesn't have icon to overlay like
-	 * Online and Offline should use QString::null as icon string)
+	 * @param overlayIcons is a list of QStrings which are the name of status
+	 * icons to be used by the KDE icon loader. (Statuses which don't have icons
+	 * to overlay like Online and Offline should use QString::null as icon 
+	 * name ).  NOTE if the string is a movie ( *.mng ) it must be the first string in the list.
+	 * TODO: KDE4 sort out movies and overlay icons.
 	 * @param description is a description in e.g. tooltips.
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
-		unsigned internalStatus, const QStringList &overlayIcon, const QString &description );
+		unsigned internalStatus, const QStringList &overlayIcons, const QString &description );
 
 	/**
 	 * Constructor.
@@ -248,12 +250,6 @@ public:
 	 * \brief Return the weight
 	 */
 	unsigned weight() const;
-
-	/**
-	 * \brief Return the first icon
-	 * @deprecated Use overlayIcons
-	 */
-	QString overlayIcon() const;
 
 	/**
 	 * \brief Return the list of overlay icons

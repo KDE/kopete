@@ -571,8 +571,8 @@ void KopeteWindow::slotAccountStatusIconChanged()
 void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 {
 	Kopete::OnlineStatus status = contact->onlineStatus();
-//	kdDebug(14000) << k_funcinfo << "Icon: '" <<
-//		status.overlayIcon() << "'" << endl;
+//	kdDebug(14000) << k_funcinfo << "Icons: '" <<
+//		status.overlayIcons() << "'" << endl;
 
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ contact->account() ] );
 	if( !i )
@@ -588,7 +588,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
-	QMovie mv = loader->loadMovie( status.overlayIcon(), KIcon::Small );
+	QMovie mv = loader->loadMovie( status.overlayIcons().first(), KIcon::Small );
 
 	if ( mv.isNull() )
 	{
