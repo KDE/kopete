@@ -74,9 +74,9 @@ private: // Private members
 	void initActions(void);
 
 	/* parses HTML AIM-Clients send to us and strips off most of it */
-	QString parseAIMHTML ( QString m );
+	KopeteMessage parseAIMHTML ( QString m );
 	/* used by above to stripp off a tag*/
-	void removeTag ( QString &message, QString tag );
+	QStringList removeTag ( QString &message, QString tag );
 
 private: // Private attributes
 	KopeteMessageManager *mMsgManager;

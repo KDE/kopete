@@ -298,12 +298,8 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 	TBuddy tmpBuddy;
 	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
-	KopeteContactPtrList tmpList;
-	tmpList.append(mProtocol->myself());
-	
-	QString parsedMessage = parseAIMHTML( message );
-	KopeteMessage msg ( this, tmpList, parsedMessage, KopeteMessage::Inbound);
-	msgManager()->appendMessage(msg);
+	KopeteMessage parsedMessage = parseAIMHTML( message );
+	msgManager()->appendMessage(parsedMessage);
 	
 	if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
 	{
@@ -457,7 +453,7 @@ void OscarContact::slotWarn()
 
 
 
-QString OscarContact::parseAIMHTML ( QString m )
+KopeteMessage OscarContact::parseAIMHTML ( QString m )
 {
 /*	============================================================================================
 	Original AIM-Messages, just a few to get the idea of the weird format[tm]:
@@ -476,8 +472,12 @@ QString OscarContact::parseAIMHTML ( QString m )
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
 
 	QString result = m;
-	int htmlStart	= result.find( QRegExp(QString("^<HTML>"),false) );
-	int htmlEnd		= result.findRev( QRegExp(QString("</HTML>$"),false) );
+	KopeteContactPtrList tmpList;
+	tmpList.append(mProtocol->myself());
+	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound);
+	
+	int htmlStart = result.find( QRegExp(QString("^<HTML>"),false) );
+	int htmlEnd = result.findRev( QRegExp(QString("</HTML>$"),false) );
 
 	kdDebug() << "AIM Plugin: Start of HTML: " << htmlStart << " End of HTML: " << htmlEnd << endl;
 
@@ -491,34 +491,64 @@ QString OscarContact::parseAIMHTML ( QString m )
 
 		removeTag ( result, "BODY" );
 		kdDebug() << "AIM Plugin: message after BODY removal: " << result << endl;
-//		removeTag ( result, "FONT" );
+		QStringList colors = removeTag ( result, "FONT" );
+		for (QStringList::Iterator it = colors.begin(); it != colors.end(); it++)
+		{
+			QString modifier = (*it).section('=', 0, 0);
+			QString value = (*it).section('=', 1);
+			value.remove(0, 1);
+			value.remove(value.length() -1, 1);
+			if (!modifier.isEmpty() && !value.isEmpty())
+			{
+				if (modifier.lower() == "color")
+					msg.setFg(QColor(value));
+				if (modifier.lower() == "back")
+					msg.setBg(QColor(value));
+			}
+		}
 	}
 
 	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
-	return result;
+	msg.setBody(result);
+	return msg;
 }
 
 // removes a weird html-tag (and returns the attributes it contained)
-void OscarContact::removeTag ( QString &message, QString tag )
+QStringList OscarContact::removeTag ( QString &message, QString tag )
 {
 	QStringList attr;
 	// first occurance of <TAG *> where * is anything except a '>'
 	// regexp is NOT case-sensitive
-	int tagStart	= message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
-	int tagStartEnd	= message.find ( ">", tagStart+4, false );
-
-	// TODO: get attributes and insert into a to be returned QStringList
-
-	if ( tagStart != -1 && tagStartEnd != -1 && (tagStart > tagStartEnd) )
-	{	// we found a proper opening-tag
-		message.remove ( tagStart, tagStartEnd - tagStart + 1 ); // remove the opening-tag
-		// find last closing of TAG (NOT case-sensitive)
-		int tagEnd = message.findRev( QString("</"+tag+">"), -1, false );
-		if ( tagEnd != -1 )	// found closing of font-tag
+	int tagStart = message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
+	int tagStartEnd = message.find ( ">", tagStart+4, false );
+	
+	while((tagStart != -1 && tagStart != -1))
+	{
+		if ( tagStart != -1 && tagStartEnd != -1)
 		{
-			message.remove ( tagEnd, tag.length()+3  );
+			// we found a proper opening-tag
+			QString tagAttr = message.mid(tagStart, (tagStartEnd - tagStart));
+			
+			// Strip the <>'s
+			tagAttr.remove(0, 1);
+			tagAttr.remove(tagAttr.length(), 1);
+			
+			// Now grab the attributes
+			tagAttr = tagAttr.section(' ', 1);
+			attr += QStringList::split(' ', tagAttr);
+			
+			message.remove ( tagStart, tagStartEnd - tagStart + 1 ); // remove the opening-tag
+			// find last closing of TAG (NOT case-sensitive)
+			int tagEnd = message.findRev( QString("</"+tag+">"), -1, false );
+			if ( tagEnd != -1 ) // found closing of font-tag
+			{
+				message.remove ( tagEnd, tag.length()+3  );
+			}
 		}
+		tagStart = message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
+		tagStartEnd = message.find ( ">", tagStart+4, false );
 	}
+	return attr;
 }
 
 /*
