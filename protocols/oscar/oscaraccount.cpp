@@ -116,6 +116,7 @@ void OscarAccount::connect()
 				": Logging in as " << screenName << endl;
 
 			// Get the server and port from the preferences
+			// TODO: check server and port are set
 			QString server = pluginData(protocol(), "Server");
 			QString port = pluginData(protocol(), "Port");
 
@@ -369,8 +370,8 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		return;
 	}
 
-	// This gets the contact in the kopete contact list for our account
-	// that has this name, need to normalize once again
+	// Try and find an already existing Kopete side contact
+	// with this buddy name
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(buddy->screenname())]);
 
 	QString nick;
@@ -513,6 +514,9 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	 * To cope with this situation we need to first check if
 	 * the contact already exists in the internal list.
 	 *
+	 * FIXME: it seems at the moment we are re-adding the
+	 * server-side contact to the server-side list!
+	 *
 	 * The third situation is when somebody new messages you
 	 */
 
@@ -536,6 +540,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 	if (internalBuddy) // We found the buddy internally
 	{
+		kdDebug(14150) << k_funcinfo << "Found buddy internally, just make"
+				<< " a new OscarContact subclass for it." << endl;
 		// Create an OscarContact for the metacontact
 		if ( OscarContact* newContact = createNewContact( contactId, displayName, parentContact ) )
 		{
