@@ -18,11 +18,17 @@
 #include <qstylesheet.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <qfile.h>
+#include <qdir.h>
+#include <qdom.h>
 
-#include <kdebug.h>
 #include <kaction.h>
+#include <kdebug.h>
 #include <klocale.h>
+#include <ksavefile.h>
+#include <kstandarddirs.h>
 #include <kgenericfactory.h>
+
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -131,6 +137,61 @@ void HighlightPlugin::removeFilter(Filter *f)
 	m_filters.remove(f);
 	delete f;
 }
+
+void HighlightPlugin::save()
+{
+	QString fileName = locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
+
+	KSaveFile file( fileName );
+	if( file.status() == 0 )
+	{
+		QTextStream *stream = file.textStream();
+		stream->setEncoding( QTextStream::UnicodeUTF8 );
+
+		QString xml = QString::fromLatin1(
+			"<?xml version=\"1.0\"?>\n"
+			"<!DOCTYPE kopete-highlight-plugin>\n"
+			"<highlight-plugin>\n" );
+
+			// Save metacontact information.
+		QPtrListIterator<Filter> filtreIt( m_filters );
+		for( ; filtreIt.current(); ++filtreIt )
+		{
+			Filter *filtre = *filtreIt;
+			xml += QString::fromLatin1( "  <filtre>\n    <display-name>" ) 
+				+ QStyleSheet::escape(filtre->displayName)
+				+ QString::fromLatin1( "</display-name>\n" );
+				
+			xml += QString::fromLatin1("    <search caseSensitive=\"") + QString::number( static_cast<int>( filtre->caseSensitive ) ) +
+				QString::fromLatin1("\" regExp=\"") + QString::number( static_cast<int>( filtre->isRegExp ) ) +
+				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
+
+			xml += QString::fromLatin1("    <BG set=\"") + QString::number( static_cast<int>( filtre->setBG ) ) +
+				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->BG.name() ) + QString::fromLatin1( "</BG>\n" );
+			xml += QString::fromLatin1("    <FG set=\"") + QString::number( static_cast<int>( filtre->setFG ) ) +
+				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->FG.name() ) + QString::fromLatin1( "</FG>\n" );
+
+			xml += QString::fromLatin1("    <importance set=\"") + QString::number( static_cast<int>( filtre->setImportance ) ) +
+				QString::fromLatin1( "\">" ) + QString::number( filtre->importance ) + QString::fromLatin1( "</importance>\n" );
+				
+			xml += QString::fromLatin1("    <sound set=\"") + QString::number( static_cast<int>( filtre->playSound ) ) +
+				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
+			
+			xml += QString::fromLatin1( "  </filtre>\n" );
+		}
+	
+		xml += QString::fromLatin1( "</highlight-plugin>\n" );
+
+		*stream << xml;
+	}
+	
+}
+
+void HighlightPlugin::load()
+{
+}
+
+
 
 
 #include "highlightplugin.moc"

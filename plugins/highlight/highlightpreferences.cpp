@@ -96,6 +96,7 @@ void HighlightPreferences::reopen()
 
 void HighlightPreferences::save()
 {
+	HighlightPlugin::plugin()->save();
 }
 
 

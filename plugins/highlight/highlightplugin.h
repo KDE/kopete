@@ -54,11 +54,10 @@ public:
 	QPtrList<Filter> filters();
 	Filter* newFilter();
 	void removeFilter(Filter *f);
+	
+	void load();
+	void save();
 
-
-	/***************************************************************************
-	 *   Re-implementation of KopetePlugin class methods                       *
-	 ***************************************************************************/
 
 //	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 
