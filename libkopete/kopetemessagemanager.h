@@ -128,6 +128,8 @@ signals:
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
 
+	void typingMsg();
+
 
 public slots:
 	void readModeChanged();
@@ -154,6 +156,12 @@ public slots:
 	 */
 	void removeContact( const KopeteContact *c );
 
+	/**
+	 * Set any user is typing
+	 */
+	void userTypingMsg ( const KopeteContact *c );
+	 
+
 
 protected slots:
 	void slotCancelUnreadMessageEvent();
@@ -163,6 +171,7 @@ protected slots:
 	void slotMessageSent(KopeteMessage &message);
 	void slotReadMessages();
 	void slotReply();
+	void slotTyping(bool t);
 
 private:
 	/**

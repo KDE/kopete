@@ -125,6 +125,9 @@ void KopeteMessageManager::newChatWindow()
 
 		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mChatWindow, SLOT(slotContactAdded(const KopeteContact *)));
 		connect (this, SIGNAL(contactRemoved(const KopeteContact *)), d->mChatWindow, SLOT(slotContactRemoved(const KopeteContact *)));
+		connect (d->mChatWindow, SIGNAL(TypingMessage(bool)), this, SLOT(slotTyping(bool)));
+
+
 	}
 	if (d->mWidget == Email)
 	{
@@ -426,18 +429,15 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 
 void KopeteMessageManager::addContact( const KopeteContact *c )
 {
-	kdDebug() << "KopeteMessageManager::addContact" <<endl;
-	for ( KopeteContact *tmp = d->mContactList.first(); tmp; tmp = d->mContactList.next() )
+	if ( d->mContactList.contains(c) )
 	{
-		if ( tmp == c )
-		{
-			kdDebug() << "[KopeteMessageManager] Contact already exists" <<endl;
-			return;
-		}
+		kdDebug() << "[KopeteMessageManager] Contact already exists" <<endl;
 	}
-
-	kdDebug() << "[KopeteMessageManager] Contact Joined session" <<endl;
-	d->mContactList.append(c);
+	else
+	{
+		kdDebug() << "[KopeteMessageManager] Contact Joined session" <<endl;
+		d->mContactList.append(c);
+	}
 	emit contactAdded(c);
 }
 
@@ -449,9 +449,10 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 	}
 	else
 	{
-		d->mContactList.take( d->mContactList.find(c) );
-		emit contactRemoved(c);
+//		d->mContactList.take( d->mContactList.find(c) );
+		d->mContactList.remove( c );
 	}
+	emit contactRemoved(c);
 }
 
 void KopeteMessageManager::readModeChanged()
@@ -465,6 +466,25 @@ void KopeteMessageManager::readModeChanged()
 		d->mReadMode = Popup;
 	}
 }
+
+void KopeteMessageManager::userTypingMsg ( const KopeteContact *c )
+{
+	if (d->mWidget == ChatWindow)
+	{
+		if (d->mChatWindow)
+		{
+			d->mChatWindow->slotAnyTyping( c , true );
+		}
+	}
+}
+
+void KopeteMessageManager::slotTyping ( bool t )
+{
+	kdDebug() << "KopeteMessageManager::slotTyping "<< t << endl;
+	if(t)
+		emit typingMsg();
+}
+
 
 
 #include "kopetemessagemanager.moc"
