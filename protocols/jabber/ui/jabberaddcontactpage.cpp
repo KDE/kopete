@@ -37,6 +37,11 @@ JabberAddContactPage::~JabberAddContactPage()
 {
 }
 
+bool JabberAddContactPage::validateData()
+{
+    return true;
+}
+
 void JabberAddContactPage::slotFinish()
 {
     if (canadd) {

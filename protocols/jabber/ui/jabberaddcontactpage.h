@@ -19,6 +19,7 @@ class JabberAddContactPage:public AddContactPage {
     JabberAddContactPage(JabberProtocol * owner, QWidget * parent =
 			 0, const char *name = 0);
     ~JabberAddContactPage();
+    virtual bool validateData();
     dlgAddContact *jabData;
     JabberProtocol *plugin;
     QLabel *noaddMsg1;
