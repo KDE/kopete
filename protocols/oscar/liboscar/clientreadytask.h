@@ -1,8 +1,7 @@
 /*
   Kopete Oscar Protocol
-  $FILENAME.h
 
-  Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+  Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
 
   Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -35,8 +34,11 @@ public:
 	~ClientReadyTask();
 	virtual void onGo();
 
+	void setFamilies( const QValueList<int>& families );
+
 private:
 	QValueList<RateClass*> m_classList;
+	QValueList<int> m_familyList;
 };
 
 #endif

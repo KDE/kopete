@@ -95,8 +95,18 @@ void ServiceSetupTask::childTaskFinished()
 
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending DC info and client ready" << endl;
 		SendIdleTimeTask* sitt = new SendIdleTimeTask( client()->rootTask() );
+		QValueList<int> familyList;
+		familyList.append( 0x0001 );
+		familyList.append( 0x0002 );
+		familyList.append( 0x0003 );
+		familyList.append( 0x0004 );
+		familyList.append( 0x0006 );
+		familyList.append( 0x0008 );
+		familyList.append( 0x0009 );
+		familyList.append( 0x000A );
+		familyList.append( 0x0013 );
 		ClientReadyTask* crt = new ClientReadyTask( client()->rootTask() );
-		
+		crt->setFamilies( familyList );
 		sitt->go( true );
 		crt->go( true ); //autodelete
 	}

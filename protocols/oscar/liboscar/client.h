@@ -227,6 +227,12 @@ public:
 	//! Update the user's AIM profile
 	void updateProfile( const QString& profile );
 	
+	//! Get buddy icon information for a person
+	void requestBuddyIcon( const QString& user, const QByteArray& hash );
+
+	//! Start a server redirect for a different service
+	void requestServerRedirect( WORD family );
+
 	/** Accessors needed for login */
 	QString host();
 	int port();
@@ -322,6 +328,10 @@ signals:
 	/* Typing signals */
 	void userStartedTyping( const QString& contact );
 	void userStoppedTyping( const QString& contact );
+
+	/* Buddy icons */
+	void haveIconForContact( const QString&, const QByteArray& iconData );
+
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 
@@ -364,6 +374,8 @@ protected slots:
 	
 	void offlineUser( const QString&, const UserDetails& );
 	
+	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );
+
 private:
 	/** Delete the connections */
 	void deleteConnections();

@@ -21,6 +21,7 @@
 
 #include "task.h"
 #include <qvaluelist.h>
+#include "oscartypes.h"
 
 class Transfer;
 
@@ -52,6 +53,7 @@ private:
 	
 private:
 	QValueList<int> m_familiesList;
+	WORD m_family;
 };
 
 #endif

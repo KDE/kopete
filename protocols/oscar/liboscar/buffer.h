@@ -227,9 +227,11 @@ class Buffer
 		 */
 		int addBSTR(const char * s);
 		QByteArray getBSTR();
+		QString peekBSTR();
 
 		int addBUIN(const char * s);
 		QByteArray getBUIN();
+		QString peekBUIN();
 
 	private:
 		/**

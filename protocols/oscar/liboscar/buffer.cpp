@@ -471,4 +471,18 @@ QString Buffer::toString() const
 	return output;
 }
 
+QString Buffer::peekBSTR()
+{
+	int lastPos = mReadPos;
+	QByteArray qba = getBSTR();
+	mReadPos = lastPos;
+	return QString( qba );
+}
+QString Buffer::peekBUIN()
+{
+	int lastPos = mReadPos;
+	QByteArray qba = getBUIN();
+	mReadPos = lastPos;
+	return QString( qba );
+}
 //kate: tab-width 4; indent-mode csands;

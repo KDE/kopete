@@ -43,7 +43,8 @@ public:
 	QDateTime onlineSinceTime() const; //! Online since accessor
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
-	DWORD extendedStatus() const;
+	DWORD extendedStatus() const; //!User status accessor
+	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	
 	/** 
 	 * Fill the class with data from a buffer
@@ -79,6 +80,8 @@ private:
 	DWORD m_dcLastInfoUpdateTime; /// DC last info update time - TLV 0x0C
 	DWORD m_dcLastExtInfoUpdateTime; /// DC last exteneded info update time - TLV 0x0C
 	DWORD m_dcLastExtStatusUpdateTime; /// DC last extended status update time - TLV 0x0C
+	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
+	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
 	
 };
 

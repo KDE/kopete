@@ -32,6 +32,7 @@ using namespace Oscar;
 ServerVersionsTask::ServerVersionsTask( Task* parent )
  : Task( parent )
 {
+    m_family = 0;
 }
 
 

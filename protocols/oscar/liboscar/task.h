@@ -63,6 +63,11 @@ public:
 	virtual bool take( Transfer* transfer );
 	void safeDelete();
 
+	/**
+	 * Direct setter for Tasks which don't have any fields
+	 */
+	void setTransfer( Transfer * transfer );
+	
 signals:
 	void finished();
 
@@ -96,10 +101,6 @@ protected:
 	 */
 	Transfer* createTransfer( Buffer* buffer );
 	
-	/**
-	 * Direct setter for Tasks which don't have any fields
-	 */
-	void setTransfer( Transfer * transfer );
 private slots:
 	void clientDisconnected();
 	void done();

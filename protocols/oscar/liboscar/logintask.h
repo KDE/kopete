@@ -20,8 +20,8 @@
 #define _OSCAR_LOGINTASK_H_
 
 #include <qcstring.h>
-#include <oscartypes.h>
-#include <task.h>
+#include "oscartypes.h"
+#include "task.h"
 
 #include "aimlogintask.h"
 #include "icqlogintask.h"

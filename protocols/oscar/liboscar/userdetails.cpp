@@ -100,6 +100,11 @@ DWORD UserDetails::extendedStatus() const
 	return m_extendedStatus;
 }
 
+QByteArray UserDetails::buddyIconHash() const
+{
+	return m_md5IconHash;
+}
+
 void UserDetails::fill( Buffer * buffer )
 {
 	BYTE snLen = buffer->getByte();
@@ -168,6 +173,47 @@ void UserDetails::fill( Buffer * buffer )
 				m_numSecondsOnline = b.getDWord();
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
 				break;
+			case 0x001D:
+			{
+				//AOL decided to crap a bunch of shit in here.
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
+
+				while ( b.length() > 0 )
+				{
+					WORD type2 = b.getWord();
+					BYTE number = b.getByte();
+					BYTE length = b.getByte();
+					switch( type2 )
+					{
+					case 0x0000:
+						b.skipBytes(length);
+						break;
+					case 0x0001:
+						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got icon checksum" << endl;
+ 						if ( length > 0 && number == 0x01 )
+ 							m_md5IconHash.duplicate( b.getBlock( length ), length );
+ 						else
+							b.skipBytes( length );
+						break;
+					case 0x0002:
+						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got an available message" << endl;
+						if ( length >= 4 )
+						{
+							m_availableMessage = QString( b.getBSTR() );
+							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
+							if ( b.length() >= 4 && b.getWord() == 0x0001 )
+							{
+								b.skipBytes( 2 );
+								kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR() << endl;
+							}
+						}
+						break;
+					default:
+						break;
+					}
+				}
+				break;
+			}
 			default:
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unknown TLV, type=" << t.type << ", length=" << t.length
 					<< " in userinfo" << endl;

@@ -38,6 +38,11 @@ ClientReadyTask::~ClientReadyTask()
 {
 }
 
+void ClientReadyTask::setFamilies( const QValueList<int>& families )
+{
+	m_familyList = families;
+}
+
 
 void ClientReadyTask::onGo()
 {
@@ -47,18 +52,8 @@ void ClientReadyTask::onGo()
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending client ready, end of login" << endl;
 	//nasty nasty nasty hack to get all the packets to work
-	QValueList<int> familyList;
-	familyList.append( 0x0001 );
-	familyList.append( 0x0002 );
-	familyList.append( 0x0003 );
-	familyList.append( 0x0004 );
-	familyList.append( 0x0006 );
-	familyList.append( 0x0008 );
-	familyList.append( 0x0009 );
-	familyList.append( 0x000A );
-	familyList.append( 0x0013 );
-	QValueList<int>::const_iterator rcEnd = familyList.constEnd();
-	for ( QValueList<int>::const_iterator it = familyList.constBegin(); it != rcEnd; ++it )
+	QValueList<int>::const_iterator rcEnd = m_familyList.constEnd();
+	for ( QValueList<int>::const_iterator it = m_familyList.constBegin(); it != rcEnd; ++it )
 	{
 		//I have no idea what any of these values mean. I just copied them from oscarsocket
 		kdDebug( OSCAR_RAW_DEBUG ) << "Adding family " << ( *it ) << " to CLI_READY packet" << endl;
