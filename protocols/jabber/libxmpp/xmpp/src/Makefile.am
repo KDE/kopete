@@ -7,9 +7,6 @@ libxmpp_la_LDFLAGS = -avoid-version -module
 
 KDE_OPTIONS = nofinal
 
-xmpp_types.moc: xmpp_types.cpp
-	moc xmpp_types.cpp > xmpp_types.moc
-
 libxmpp_la_SOURCES = \
 	xmpp_bytestream.cpp \
 	xmpp_client.cpp \
