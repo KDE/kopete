@@ -34,10 +34,11 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
-#include "kopeteuiglobal.h"
+#include "kopetemimetypehandler.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
+#include "kopeteuiglobal.h"
 #include "kopetewindow.h"
 
 #ifdef HAVE_CONFIG_H
@@ -97,7 +98,7 @@ KopeteApplication::KopeteApplication()
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 
 	//Create the emoticon installer
-	emoticonHandler = new Kopete::EmoticonHandler;
+	emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
 }
 
 KopeteApplication::~KopeteApplication()
@@ -267,7 +268,7 @@ void KopeteApplication::handleURLArgs()
 			if ( !u.isValid() )
 				continue;
 
-			Kopete::Global::handleURL( u );
+			Kopete::MimeTypeHandler::dispatchURL( u );
 		} // END for()
 	} // END args->count() > 0
 }

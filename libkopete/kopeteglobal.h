@@ -25,60 +25,6 @@ class QString;
 namespace Kopete
 {
 
-class MimeTypeHandler
-{
-protected:
-	MimeTypeHandler( bool canAcceptRemoteFiles = false );
-public:
-	virtual ~MimeTypeHandler();
-
-	/**
-	 * Returns a list of mime types this object is registered to handle
-	 */
-	const QStringList mimeTypes() const;
-
-	/**
-	 * Returns true if this handler can accept remote files direcltly;
-	 * If false, remote files are downloaded via KIO::NetAccess before
-	 * being passed to handleURL
-	 */
-	bool canAcceptRemoteFiles() const;
-
-	/**
-	 * Handles the URL @p url, which has the mime type @p mimeType
-	 *
-	 * @param mimeType The mime type of the URL
-	 * @param url The url to handle
-	 */
-	virtual void handleURL( const QString &mimeType, const KURL &url ) const = 0;
-
-protected:
-	/**
-	 * Register this object as the handler of type @p mimeType.
-	 * @param mimeType the mime type to handle
-	 * @return true if registration succeeded, false if another handler is
-	 *         already set for this mime type.
-	 */
-	bool registerAsHandler( const QString &mimeType );
-
-private:
-	class Private;
-	Private *d;
-};
-
-/**
- * Mime-type handler class for Kopete emotiocon files
- */
-class EmoticonHandler : public MimeTypeHandler
-{
-public:
-	EmoticonHandler();
-
-	const QStringList mimeTypes() const;
-
-	void handleURL( const QString &mimeType, const KURL &url ) const;
-};
-
 /**
  * This namespace contains Kopete's global settings and functions
  */
@@ -97,15 +43,6 @@ namespace Global
 	 * TODO: If possible, port it to KIO instead of using ugly blocking KTar
 	 **/
 	void installEmoticonTheme( const QString &localPath );
-
-	/**
-	 * Handles a URL argument with a registered MimeTypeHandler.
-	 *
-	 * @param url The url passed to Kopete
-	 *
-	 * @return True if the type was handled, false otherwise
-	 */
-	bool handleURL( const KURL &url );
 } // Global
 
 } // Kopete
