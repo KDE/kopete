@@ -437,7 +437,7 @@ void ICQEditAccountWidget::slotSend()
 	if(osocket)
 	{
 		osocket->sendCLI_METASETGENERAL(generalInfo);
-		//osocket->sendCLI_METASETWORK(workInfo);
+		osocket->sendCLI_METASETWORK(workInfo);
 		osocket->sendCLI_METASETSECURITY(
 			mAccountSettings->chkRequireAuth->isChecked(),
 			mAccountSettings->chkWebAware->isChecked(),

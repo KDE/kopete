@@ -42,7 +42,7 @@
 
 typedef KGenericFactory<ICQProtocol> ICQProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory( "kopete_icq_protocol" ) );
 
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
