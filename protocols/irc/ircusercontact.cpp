@@ -30,10 +30,8 @@
 IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass, KopeteMetaContact *m)
 	: IRCContact( identity, nickname, m )
 {
-	mConversations = 0;
 	mUserclass = userclass;
 	mNickName = nickname;
-	setDisplayName(mNickName);
 
 	mCustomActions = new KActionCollection(this);
 

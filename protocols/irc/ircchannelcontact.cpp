@@ -39,9 +39,6 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	// Registers this IRCChannelContact with the identity
 	identity->registerChannel(mNickName, this);
 
-	// Contact list display name
-	setDisplayName(channel);
-
 	// KAction stuff
 	mCustomActions = new KActionCollection(this);
 	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
@@ -103,7 +100,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 		if (newNick.startsWith("@") || newNick.startsWith("+"))
 			newNick.remove(0, 1);
 
-		IRCUserContact *user = new IRCUserContact(mIdentity, newNick, (KIRC::UserClass)mode);
+		IRCUserContact *user = mIdentity->findUser( nickname );
 		user->setOnlineStatus( KopeteContact::Online );
 		manager()->addContact((KopeteContact *)user, true);
 	}

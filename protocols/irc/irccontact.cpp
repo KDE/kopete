@@ -54,6 +54,9 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	mNickName = nick;
 	mParser = new KSParser();
 
+	// Contact list display name
+	setDisplayName(mNickName);
+
 	// KopeteMessageManagerFactory stuff
 	mContact.append((KopeteContact *)this);
 	mMyself.append((KopeteContact *)identity->mySelf());

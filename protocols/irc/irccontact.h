@@ -52,6 +52,9 @@ class IRCContact : public KopeteContact
 
 		KopeteContact *locateUser( const QString &nickName );
 
+		uint conversations() const { return mConversations; };
+		void setConversations( uint conversations ) { mConversations = conversations; };
+
 	signals:
 		void endSession();
 
@@ -85,6 +88,7 @@ class IRCContact : public KopeteContact
 		KSParser *mParser;
 		QValueList<KopeteMessage> messageQueue;
 		bool isConnected;
+		uint mConversations;
 };
 
 #endif

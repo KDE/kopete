@@ -94,32 +94,7 @@ const QString IRCProtocol::protocolIcon()
 void IRCProtocol::addContact(  const QString &server, const QString &contact, bool isChannel, KopeteMetaContact *m)
 {
 	kdDebug(14120) << "[IRCProtocol] addContact called" << endl;
-	IRCUserContact *user;
-	IRCChannelContact *channel;
-	if (isChannel)
-	{
-		channel = identity->findChannel(contact);
-		if (channel)
-		{
-			kdWarning(14120) << k_funcinfo << "Contact already exists " << endl;
-			if(m->isTemporary())
-				m->setTemporary(false);
-			return;
-		}
-	} else {
-		user = identity->findUser(contact);
-		if (user)
-		{
-		// TODO: Uncomment when IRCContact is implemented
-/*			kdWarning(14120) << k_funcinfo << "Contact already exists " << endl;
-			if(query->metaContact()->isTemporary())
-				query->metaContact()->setTemporary(false);
-			return;
-*/
-		}
-	}
-
-	kdDebug(14120) << "[IRCProtocol] addContact: contact established" << endl;
+	IRCContact *c;
 
 	if( !m )
 	{
@@ -127,14 +102,17 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 		KopeteContactList::contactList()->addMetaContact(m);
 	}
 
-	kdDebug(14120) << "[IRCProtocol] addContact: channel is " << channel << " trying to add to metacontact" << endl;
 	if (isChannel)
-	{
-		IRCChannelContact *c = new IRCChannelContact(identity, contact, m);
-		m->addContact(c);
-		if( identity->engine()->state() == QSocket::Connected )
-			c->setOnlineStatus( KopeteContact::Online );
-	}
+		c = static_cast<IRCContact*>( identity->findChannel(contact, m) );
+	else
+		c = static_cast<IRCContact*>( identity->findUser(contact, m) );
+
+
+	if( c->metaContact()->isTemporary() )
+		c->metaContact()->setTemporary(false);
+
+	if( identity->engine()->state() == QSocket::Connected )
+		c->setOnlineStatus( KopeteContact::Online );
 }
 
 void IRCProtocol::slotConnectedToServer()
