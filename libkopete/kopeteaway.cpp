@@ -19,13 +19,13 @@ KopeteAway::KopeteAway()
 
 QString KopeteAway::message()
 {
-	return KopeteAway::getInstance()->mAwayMessage;
+	return getInstance()->mAwayMessage;
 }
 
 void KopeteAway::show()
 {
 	KopeteAwayDialog awaydialog;
-	awaydialog.mleMessage->setText(KopeteAway::getInstance()->mAwayMessage);
+	awaydialog.mleMessage->setText(getInstance()->mAwayMessage);
 	awaydialog.exec();
 }
 
@@ -37,4 +37,16 @@ KopeteAway *KopeteAway::getInstance()
 	}
 	return instance;
 }
+
+bool KopeteAway::globalAway()
+{
+	return getInstance()->mGlobalAway;
+}
+
+void KopeteAway::setGlobalAway(bool status)
+{
+	getInstance()->mGlobalAway = status;	
+}
+
+
 

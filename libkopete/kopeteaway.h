@@ -13,12 +13,15 @@ friend class KopeteAwayDialog;
 	
 	static QString message();
 	static void show();
+	static void setGlobalAway(bool status);
+	static bool globalAway();
 
 	private:
 	KopeteAway();
 	static KopeteAway *instance;
 	QString mAwayMessage;
 	KConfig *config;
+	bool mGlobalAway;
 };
 
 #endif

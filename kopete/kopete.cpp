@@ -181,6 +181,7 @@ void Kopete::slotDisconnectAll()
 // it worked or if the plugin exits away-mode
 void Kopete::slotSetAwayAll(void)
 {
+	KopeteAway::setGlobalAway(true);
 	KopeteAway::show();
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
@@ -205,6 +206,7 @@ void Kopete::slotSetAwayAll(void)
 // it worked or if the plugin exits away-mode
 void Kopete::slotSetAvailableAll(void)
 {
+	KopeteAway::setGlobalAway(false);
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
