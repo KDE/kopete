@@ -10,12 +10,14 @@ Comment[sv]=Kopete Instant Messenger
 [kopete_event]
 Name=Event
 Name[be]=Падзея
+Name[bs]=Događaj
 Name[da]=Begivenhed
 Name[de]=Ereignis
 Name[es]=Evento
 Name[pt_BR]=Evento
 Name[sv]=Händelse
 Comment=Sound Notification for Kopete Events
+Comment[bs]=Zvučna obavještenja za Kopete događaje
 Comment[da]=Lydbesked for Kopete-begivenheder
 Comment[de]=Sound-Signale für Kopete-Ereignisse
 Comment[es]=Notificación de sonido para eventos de Kopete
@@ -28,12 +30,14 @@ default_presentation=1
 
 [kopete_incoming]
 Name=Incoming
+Name[bs]=Ulazni
 Name[da]=Indkommende
 Name[de]=Eingang
 Name[es]=Entrante
 Name[pt_BR]=Entrada
 Name[sv]=Inkommande
 Comment=Incoming message arrives
+Comment[bs]=Dolazi poruka
 Comment[da]=Indkommende besked ankommer
 Comment[de]=Eingehende Nachrichten
 Comment[es]=LLega mensaje entrante
@@ -44,12 +48,14 @@ default_presentation=0
 
 [kopete_outgoing]
 Name=Outgoing
+Name[bs]=Izlazni
 Name[da]=Udgående
 Name[de]=Ausgang
 Name[es]=Saliente
 Name[pt_BR]=Saída
 Name[sv]=Utgående
 Comment=Outgoing message is sent
+Comment[bs]=Poslana je poruka
 Comment[da]=Udgående besked er sendt
 Comment[de]=Nachricht wird versendet
 Comment[es]=Mensaje saliente es enviado
@@ -61,7 +67,9 @@ default_presentation=0
 
 [kopete_online]
 Name=Online
+Name[pt_BR]=On-line
 Comment=User goes online
+Comment[pt_BR]=O usuário fica conectado
 default_sound=kopete_online.wav
 default_presentation=0
 
