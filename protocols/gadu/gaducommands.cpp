@@ -229,6 +229,7 @@ void RegisterCommand::watcher()
 				else {
 					emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
 					state = RegisterStateNoToken;
+					deleteLater();
 				}
 				deleteNotifiers();
 				gg_token_free( session_ );
