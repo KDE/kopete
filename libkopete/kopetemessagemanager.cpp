@@ -520,6 +520,30 @@ void KopeteMessageManager::setCanBeDeleted ( bool b)
 		deleteLater();
 }
 
+QString KopeteMessageManager::currentText()
+{
+	if (d->mWidget == ChatWindow)
+	{
+		if (d->mChatWindow)
+		{
+			return d->mChatWindow->currentText();
+		}
+	}
+	kdDebug() << "KopeteMessageManager::currentText - Chat Window doesn't exits " <<endl;
+	return QString::null;
+}
+
+void KopeteMessageManager::setCurrentText(const QString& t)
+{
+	if (d->mWidget == ChatWindow)
+	{
+		if (d->mChatWindow)
+		{
+			return d->mChatWindow->setCurrentText(t);
+		}
+	}
+}
+
 
 
 #include "kopetemessagemanager.moc"

@@ -107,6 +107,8 @@ public:
 	 *         manager
 	 */
 	int id() const;
+  /** No descriptions */
+  QString currentText();
 
 signals:
 	/**
@@ -166,6 +168,8 @@ public slots:
 	 * Set if the KMM will be deleted when the chatwindow is deleted
 	 */
 	void setCanBeDeleted ( bool ) ;
+	
+	void setCurrentText(const QString&);
 
 
 protected slots:
