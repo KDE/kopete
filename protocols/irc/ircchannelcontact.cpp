@@ -132,29 +132,33 @@ void IRCChannelContact::slotPart()
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
 {
-	QString nickname = user.section('!', 0, 0);
-	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower())
+	if( channel.lower() == mNickName.lower() )
 	{
-		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal);
-		manager()->appendMessage(msg);
-	}
-	else {
-		IRCUserContact *contact = new IRCUserContact(mIdentity, nickname, KIRC::Normal);
-		contact->setOnlineStatus( KopeteContact::Online );
-		manager()->addContact((KopeteContact *)contact, true);
+		QString nickname = user.section('!', 0, 0);
+		if ( nickname.lower() == mEngine->nickName().lower() )
+		{
+			KopeteMessage msg((KopeteContact *)this, mContact,
+			i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal);
+			manager()->appendMessage(msg);
+		}
+		else
+		{
+			IRCUserContact *contact = new IRCUserContact(mIdentity, nickname, KIRC::Normal);
+			contact->setOnlineStatus( KopeteContact::Online );
+			manager()->addContact((KopeteContact *)contact, true);
 
-		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName),
-		KopeteMessage::Internal);
-		manager()->appendMessage(msg);
+			KopeteMessage msg((KopeteContact *)this, mContact,
+			i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName),
+			KopeteMessage::Internal);
+			manager()->appendMessage(msg);
+		}
 	}
 }
 
 void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	if (! (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower()) )
+	if ( channel.lower() == mNickName.lower() && nickname.lower() != mEngine->nickName().lower() )
 	{
 		KopeteContact *user = locateUser( nickname );
 		if ( user )

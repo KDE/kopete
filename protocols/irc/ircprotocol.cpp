@@ -91,12 +91,10 @@ const QString IRCProtocol::protocolIcon()
 	return "irc_protocol_small";
 }
 
-void IRCProtocol::addContact(  const QString &server, const QString &contact, bool isChannel, KopeteMetaContact *meta)
+void IRCProtocol::addContact(  const QString &server, const QString &contact, bool isChannel, KopeteMetaContact *m)
 {
 	kdDebug(14120) << "[IRCProtocol] addContact called" << endl;
-	KopeteMetaContact *m = 0L;
-
-	IRCContact *query;
+	IRCUserContact *query;
 	IRCChannelContact *channel;
 	if (isChannel)
 	{
@@ -123,16 +121,20 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 
 	kdDebug(14120) << "[IRCProtocol] addContact: contact established" << endl;
 
-	if (meta)
-		m=meta;
-	else
+	if( !m )
 	{
 		m = new KopeteMetaContact();
 		KopeteContactList::contactList()->addMetaContact(m);
 	}
+
 	kdDebug(14120) << "[IRCProtocol] addContact: channel is " << channel << " trying to add to metacontact" << endl;
 	if (isChannel)
-		m->addContact(new IRCChannelContact(identity, contact, m));
+	{
+		IRCChannelContact *c = new IRCChannelContact(identity, contact, m);
+		m->addContact(c);
+		if( identity->engine()->state() == QSocket::Connected )
+			c->setOnlineStatus( KopeteContact::Online );
+	}
 }
 
 void IRCProtocol::slotConnectedToServer()
@@ -209,7 +211,7 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 		if( displayName.isEmpty() )
 			displayName = contactId;
 
-		addContact( serializedData[ "serverName" ], displayName, true, metaContact );
+		addContact( serializedData[ "serverName" ], contactId, true, metaContact );
 	}
 }
 
