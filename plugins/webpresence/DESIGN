@@ -1,0 +1,12 @@
+Kopete Web Presence Plugin
+
+What It Does
+Provides a view of the current state of your contact list as a webpage.
+
+How It Does It
+Every so often, it writes a file containing a snapshot of who is online and who is not in your contactlist to a location you specify.  This can be a local file, an FTP server, a HTTP server, or anywhere else that KIO can access.
+
+Use KIO::NetAccess to upload the files!
+
+Getting Info about Local User's Status
+Goal is to allow ppl who don't have us on their contactlist to see what our current status is and what our UIN/id is for each protocol.  So we need to know (protocol, uin, status).
