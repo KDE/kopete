@@ -119,7 +119,7 @@ void KopeteXSLThread::run()
 	emit( documentComplete( m_result ) );
 
 	//Delete ourselves
-	QTimer::singleShot( 100, this, SLOT( deleteLater() ) );
+	QTimer::singleShot( 500, this, SLOT( deleteLater() ) );
 }
 
 int KopeteXSLThread::writeToQString( void * context, const char * buffer, int len )
@@ -135,3 +135,6 @@ int KopeteXSLThread::closeQString( void * context )
 	*t += QString::fromLatin1("\n");
 	return 0;
 }
+
+#include "kopetexsl.moc"
+

@@ -23,7 +23,7 @@
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  *
- * This class provides an easy to us einterface to basic
+ * This class provides an easy to use interface to basic
  * libxslt transformations. All functions are static so there
  * is no need to create instances of this class.
  */
@@ -31,7 +31,7 @@ class KopeteXSL
 {
 	public:
 		/**
-		 * Transforms the XML string using the XSL String, asynchronously
+		 * Transforms the XML string using the XSL String, synchronously
 		 *
 		 * @param xmlString The source XML
 		 * @param xslString The source XSL
@@ -52,7 +52,7 @@ class KopeteXSL
 			QObject *target, const char* slotCompleted );
 
 		/**
-		 * Transforms the XML string using the XSL String, asynchronously
+		 * Transforms the XML string using the XSL String, synchronously
 		 *
 		 * @param xmlDocument The source XML
 		 * @param xslDocument The source XSL
@@ -79,8 +79,10 @@ class KopeteXSL
  * The thread class that actually performs the XSL processing.
  * Using a thread allows for async operation.
  */
-class KopeteXSLThread : public QThread, public QObject
+class KopeteXSLThread : public QObject, public QThread
 {
+	Q_OBJECT
+
 	public:
 		/**
 		 * Thread constructor
