@@ -161,7 +161,7 @@ void MSNContact::slotViewHistory()
 	}
 	else
 	{
-		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(mUserID), mName, 0, "MSNHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(mUserID), mName, true, 50, 0, "MSNHistoryDialog");
 
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
 		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
