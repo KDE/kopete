@@ -521,7 +521,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 		cl->nickname	= (*++stringIterator);
 		cl->displayname	= (*++stringIterator);
 		cl->phonenr	= (*++stringIterator);
-		cl->group		= (*++stringIterator);
+		cl->group	= (*++stringIterator);
 		cl->uin		= (*++stringIterator);
 		if ( email ) {
 			cl->email	= (*++stringIterator);
