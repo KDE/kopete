@@ -1,5 +1,5 @@
 /*
-    kopeteuserpreferences.cpp  -  Kopete User Preferences
+    kopetegroup.cpp  -  Kopete Group
 
     Copyright (c) 2002      by Olivier Goffart        <ogoffart@tiscalinet.be>
 
@@ -28,7 +28,6 @@
 KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::null , KopeteGroup::TopLevel);
 KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
 
-//-----------------------------------------------------------------------------
 struct KopeteGroupPrivate
 {
 	QString displayName;
@@ -38,14 +37,14 @@ struct KopeteGroupPrivate
 
 KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : KopetePluginDataObject(KopeteContactList::contactList())
 {
-	d=new KopeteGroupPrivate;
+	d = new KopeteGroupPrivate;
 	d->displayName=_name;
 	d->type=_type;
 	d->expanded = true;
 }
 KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactList())
 {
-	d=new KopeteGroupPrivate;
+	d = new KopeteGroupPrivate;
 	d->expanded = true;
 	d->type=Classic;
 	d->displayName=QString::null;
@@ -83,7 +82,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
 	if( type == QString::fromLatin1( "temporary" ) )
 	{
-		if(d->type != Temporary) 
+		if(d->type != Temporary)
 		{
 			temporary->fromXML(data);
 			return false;
@@ -127,10 +126,10 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 
 void KopeteGroup::setDisplayName(const QString &s)
 {
-	if(d->displayName!=s)
+	if( d->displayName != s )
 	{
-		QString oldname=d->displayName;
-		d->displayName=s;
+		QString oldname = d->displayName;
+		d->displayName = s;
 		emit renamed(this,oldname);
 	}
 }
@@ -146,17 +145,17 @@ KopeteGroup::GroupType KopeteGroup::type() const
 }
 void KopeteGroup::setType(GroupType t)
 {
-	d->type=t;
+	d->type = t;
 }
 
 void KopeteGroup::setExpanded(bool in_expanded)
 {
-	d->expanded = in_expanded; 
+	d->expanded = in_expanded;
 }
 bool KopeteGroup::expanded()
 {
 	return d->expanded;
 }
 
-
 #include "kopetegroup.moc"
+
