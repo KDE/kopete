@@ -474,24 +474,24 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 QString KopeteMetaContact::addressBookField( KopetePlugin * p,
 	const QString & key ) const
 {
-	if ( p->addressBookFields().contains( key ) ) {
+	if ( p && p->addressBookFields().contains( key ) ) {
 		if ( m_addressBook.contains( key ) ) {
 			return m_addressBook[ key ];
 		} else
 			return QString::null;
 	} else
-	return QString::null;
+		return QString::null;
 }
 
 void KopeteMetaContact::setAddressBookField( KopetePlugin * p ,
 	const QString & key, const QString & value )
 {
-	if ( p->addressBookFields().contains( key ) )
+	if ( p && p->addressBookFields().contains( key ) )
 		m_addressBook.insert( key, value );
 	else
 		kdDebug() << "[KopeteMetaContact::setAddressBookField] Sorry, plugin "
-					<< p->id() << " doesn't have field "
-					<< key << " registered" << endl;
+			  << p->id() << " doesn't have field "
+			  << key << " registered" << endl;
 }
 
 KopeteMetaContact::AddressBookFields KopeteMetaContact::addressBookFields() const
