@@ -323,7 +323,7 @@ void OscarContact::slotDirectConnect()
 #if QT_VERSION < 0x030200
 			.arg(mName).arg(mName),
 #else
-			.arg(nName).arg(mName),
+			.arg(mName).arg(mName),
 #endif
 		i18n("Request Direct IM with %1?").arg(mName));
 	if(result == KMessageBox::Yes)
