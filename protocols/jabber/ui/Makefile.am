@@ -10,7 +10,7 @@ INCLUDES = -I$(srcdir)/../../../libkopete \
 noinst_LTLIBRARIES = libkopetejabberui.la
 
 libkopetejabberui_la_SOURCES = dlgrename.ui dlgaddcontact.ui \
-	dlgpreferences.ui dlgsendraw.ui dlgjabberprefs.cpp \
+	dlgpreferences.ui dlgsendraw.ui dlgvcard.ui dlgjabberprefs.cpp \
 	jabberaddcontactpage.cpp dlgstatus.ui dlgjabberstatus.cpp \
 	dlgjabbervcard.cpp empty.cpp
 
