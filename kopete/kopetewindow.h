@@ -24,6 +24,7 @@
 #include <kmainwindow.h>
 
 class QLabel;
+class QHBox;
 class QListViewItem;
 class KGlobalAccel;
 class KAction;
@@ -135,6 +136,7 @@ private:
 	bool hidden;
 	int deskRight;
 	QPoint position;
+	QHBox *m_statusBarWidget;
 
 	/**
 	 * This is really a dictionary of StatusBarIcon objects, but

@@ -20,6 +20,7 @@
 
 #include <kapplication.h>
 #include <qlayout.h>
+#include <qhbox.h>
 
 #include <kaction.h>
 #include <kconfig.h>
@@ -66,6 +67,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
 	statusBar();
+	m_statusBarWidget = new QHBox(statusBar(), "m_statusBarWidget");
+	m_statusBarWidget->setSpacing( 2 );
+	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
 	/* -------------------------------------------------------------------------------- */
 	initView();
@@ -395,8 +399,7 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 	connect( proto, SIGNAL( destroyed( QObject * ) ),
 		SLOT( slotProtocolDestroyed( QObject * ) ) );
 
-	StatusBarIcon *i = new StatusBarIcon( proto, statusBar() );
-	statusBar()->addWidget( i, 0, true );
+	StatusBarIcon *i = new StatusBarIcon( proto, m_statusBarWidget );
 	connect( i, SIGNAL( rightClicked( KopeteProtocol *, const QPoint & ) ),
 		SLOT( slotProtocolStatusIconRightClicked( KopeteProtocol *,
 		const QPoint & ) ) );
