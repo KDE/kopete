@@ -30,7 +30,6 @@ struct UserInfo;
 class OscarProtocol;
 class KopeteMessageManager;
 class OscarProtocol;
-class  KopeteHistoryDialog;
 
 class OscarContact : public KopeteContact  {
    Q_OBJECT
@@ -84,7 +83,6 @@ private: // Private attributes
 	KActionCollection* actionCollection;
 
 	OscarProtocol *mProtocol;
-	KopeteHistoryDialog *historyDialog;
 
 private slots: // Private slots
 	/** Called when a buddy changes */
@@ -99,12 +97,8 @@ private slots: // Private slots
 	void slotSendMsg(const KopeteMessage&, KopeteMessageManager *);
 	/** Called when an IM is received */
 	void slotIMReceived(QString sender, QString msg, bool isAuto);
-	/** Called when history dialog is closed */
-	void slotCloseHistoryDialog(void);
 	/** Called when nickname needs to be updated */
 	void slotUpdateNickname(const QString);
-	/** View the history dialog */
-	void slotViewHistory(void);
 	/** Warn the user */
 	void slotWarn(void);
 	/** Called when the status of the Kopete user(behind this computer)'s status has changed */

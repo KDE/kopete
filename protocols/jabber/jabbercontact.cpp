@@ -45,7 +45,6 @@
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
-#include "ui/kopetehistorydialog.h"
 
 /**
  * JabberContact constructor
@@ -58,7 +57,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	
 	parentMetaContact = mc;
 	
-	historyDialog = 0L;
 	mMsgManagerKCW = 0L;
 	mMsgManagerKEW = 0L;
 
@@ -108,7 +106,6 @@ JabberContact::~JabberContact()
 	delete actionCollection;
 	delete actionMessage;
 	delete actionChat;
-	delete actionHistory;
 	delete actionRename;
 	delete actionSelectResource;
 	delete actionSetAvailability;
@@ -172,7 +169,6 @@ void JabberContact::initActions()
 
 	actionChat = new KAction(i18n("Send Chat Message"), "mail_generic", 0, this, SLOT(slotChatUser()), this, "actionChat");
 	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
-	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
 	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
 	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
@@ -594,28 +590,6 @@ void JabberContact::slotNewMessage(const Jabber::Message &message)
 	{
 		msgManagerKCW()->appendMessage(newMessage);
 	}
-
-}
-
-void JabberContact::slotViewHistory()
-{
-
-	if (historyDialog == 0L)
-	{
-		historyDialog = new KopeteHistoryDialog(QString("jabber_logs/%1.log").arg(userId()), displayName(), true, 50, 0, "JabberHistoryDialog");
-		connect(historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
-	}
-	
-	historyDialog->show();
-	historyDialog->raise();
-
-}
-
-void JabberContact::slotCloseHistoryDialog()
-{
-    
-	delete historyDialog;
-	historyDialog = 0L;
 
 }
 

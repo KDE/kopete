@@ -30,9 +30,6 @@ class KAction;
 class KActionCollection;
 class KListAction;
 
-class KopeteHistoryDialog;
-
-
 class MSNContact : public KopeteContact
 {
 	Q_OBJECT
@@ -125,9 +122,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
-	virtual void slotViewHistory();
-  /** No descriptions */
-  virtual void slotSendFile();
+	virtual void slotSendFile();
 
 	void removedFromGroup(QString group);
 	void addedToGroup(QString group);
@@ -143,12 +138,9 @@ signals:
 	void chatToUser( QString );
 
 private slots:
-
 	void slotBlockUser();
 
-	void slotCloseHistoryDialog();
 	void slotMoved(KopeteMetaContact* from);
-
 
 private:
 	QString m_msnId;
@@ -160,8 +152,6 @@ private:
 	bool m_reversed;
 
 	MSNProtocol::Status m_status;
-
-	KopeteHistoryDialog *historyDialog;
 
 	KActionCollection* m_actionCollection;
 	KAction* m_actionBlock;

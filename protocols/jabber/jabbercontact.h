@@ -34,7 +34,6 @@ class dlgJabberVCard;
 class JabberProtocol;
 class JabberResource;
 class JabberMessage;
-class KopeteHistoryDialog;
 class KopeteMessage;
 class KopeteMessageManager;
 class KopeteMetaContact;
@@ -187,16 +186,6 @@ class JabberContact : public KopeteContact
 		 * Handle incoming message
 		 */
 		void slotNewMessage(const Jabber::Message &message);
-		
-		/**
-		 * Handle the removal of the log viewer
-		 */
-		void slotCloseHistoryDialog();
-
-		/**
-		 * View chat log
-		 */
-		void slotViewHistory();
 		
 		/**
 		 * Retrieve a vCard for the contact
@@ -395,8 +384,8 @@ class JabberContact : public KopeteContact
 		KActionCollection *actionCollection;
 		
 		KAction *actionMessage, *actionChat,
-				*actionHistory, *actionRename,
-	 			*actionSendAuth, *actionRequestAuth,
+				*actionRename,
+				*actionSendAuth, *actionRequestAuth,
 				*actionInfo, *actionStatusAway,
 				*actionStatusChat, *actionStatusXA,
 				*actionStatusDND;
@@ -406,19 +395,12 @@ class JabberContact : public KopeteContact
 
 		dlgJabberVCard *dlgVCard;
 
-		KopeteHistoryDialog *historyDialog;
 		KopeteMessageManager *mMsgManagerKCW;
 		KopeteMessageManager *mMsgManagerKEW;
 
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

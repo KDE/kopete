@@ -27,14 +27,9 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-//#include "kopete.h"
 #include "kopetecontactlist.h"
-//#include "kopetecontactlistview.h"
-//#include "kopetegroup.h"
-#include "kopetehistorydialog.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-//#include "kopetestdaction.h"
 
 #include "msninfo.h"
 #include "msnmessagemanager.h"
@@ -57,8 +52,6 @@ MSNContact::MSNContact( const QString &msnId,
 	m_reversed = false;
 
 	m_moving=false;
-
-	historyDialog = 0L;
 
 	m_msnId = msnId;
 	if( !group.isEmpty() )
@@ -153,30 +146,6 @@ void MSNContact::slotBlockUser()
 		else
 			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::BL );
 	}
-}
-
-void MSNContact::slotViewHistory()
-{
-	kdDebug() << "MSN Plugin: slotViewHistory()" << endl;
-
-	if (historyDialog != 0L)
-	{
-		historyDialog->raise();
-	}
-	else
-	{
-		historyDialog = new KopeteHistoryDialog(
-			QString( protocol()->id() ) + "/" + m_msnId + ".log", displayName(),
-			true, 50, 0, "MSNHistoryDialog" );
-
-		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
-	}
-}
-
-void MSNContact::slotCloseHistoryDialog()
-{
-	delete historyDialog;
-	historyDialog = 0L;
 }
 
 void MSNContact::slotUserInfo()

@@ -10,7 +10,6 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemessagemanager.h"
 #include "kopetestdaction.h"
-#include "kopetehistorydialog.h"
 #include "kopeteaway.h"
 
 #include "gaduprotocol.h"
@@ -20,7 +19,6 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
                           const QString& name, KopeteMetaContact* parent )
     : KopeteContact( GaduProtocol::protocol(), parent )
 {
-    historyDialog_ = 0L;
     msgManager_ = 0L;
     uin_ = uin;
 //    name_ = name;
@@ -44,7 +42,6 @@ GaduContact::showContextMenu( const QPoint& p, const QString&  )
     popup->insertSeparator();
 
     actionInfo_->plug( popup );
-    actionViewHistory_->plug( popup );
     popup->insertSeparator();
 
     actionRemove_->plug( popup );
@@ -280,8 +277,6 @@ GaduContact::initActions()
                                                       this, "actionMessage" );
     actionInfo_ = KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()),
                                                 this, "actionInfo" );
-    actionViewHistory_ = KopeteStdAction::viewHistory( this, SLOT(slotViewHistory()),
-                                                       this, "viewHistory" );
     actionRemove_ = KopeteStdAction::deleteContact( this, SLOT(removeThisUser()),
                                                     this, "actionDelete" );
 }
@@ -317,24 +312,6 @@ GaduContact::customContextMenuActions()
 void
 GaduContact::slotUserInfo()
 {
-}
-
-void
-GaduContact::slotViewHistory()
-{
-    if ( historyDialog_ != 0L ) {
-        historyDialog_->raise();
-    } else {
-        historyDialog_ = new KopeteHistoryDialog( QString("gadu_logs/%1.log ").arg( id() ), displayName(), true, 50, 0, "GaduHistoryDialog" );
-        connect ( historyDialog_, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
-    }
-}
-
-void
-GaduContact::slotCloseHistoryDialog()
-{
-    delete historyDialog_;
-    historyDialog_ = 0L;
 }
 
 void

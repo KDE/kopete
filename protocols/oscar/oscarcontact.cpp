@@ -29,7 +29,6 @@
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetehistorydialog.h"
 
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
@@ -42,7 +41,6 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mName = name;
 	mProtocol = protocol;
 	mMsgManager = 0L;
-	historyDialog = 0L;
 	QObject::connect(mProtocol->engine, SIGNAL(gotOncomingBuddy(UserInfo)),this,SLOT(slotOncomingBuddy(UserInfo)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),this,SLOT(slotOffgoingBuddy(QString)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),this,SLOT(slotIMReceived(QString,QString,bool)));
@@ -372,27 +370,6 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 	TBuddy *tmp;
 	tmp = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
 	tmp->alias = newNickname;
-}
-
-/** View the history dialog */
-void OscarContact::slotViewHistory(void)
-{
-	if (historyDialog != 0L)
-	{
-		historyDialog->raise();
-	}
-	else
-	{
-		historyDialog = new KopeteHistoryDialog(QString("oscar_logs/%1.log").arg(mName), mName, true, 50, 0, "OscarHistoryDialog");
-
-		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
-	}
-}
-
-/** Called when history dialog is closed */
-void OscarContact::slotCloseHistoryDialog(void)
-{
-	delete historyDialog;
 }
 
 /** Return whether or not this contact is REACHABLE. */

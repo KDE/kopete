@@ -32,7 +32,6 @@
 class KAction;
 class GaduProtocol;
 class KopeteMessageManager;
-class KopeteHistoryDialog;
 
 class GaduContact : public KopeteContact
 {
@@ -68,17 +67,14 @@ public slots:
 
     void slotUserInfo();
     void slotDeleteContact();
-    void slotViewHistory();
     void messageReceived( const KopeteMessage& );
     void messageSend( const KopeteMessage&, KopeteMessageManager* );
-    void slotCloseHistoryDialog();
 
 protected:
     KopeteMessageManager* msgManager();
     void initActions();
 
 private:
-    KopeteHistoryDialog  *historyDialog_;
     KopeteMessageManager *msgManager_;
     uin_t                 uin_;
 //    QString               name_;
@@ -91,7 +87,6 @@ private:
 
     KAction     *actionSendMessage_;
     KAction     *actionInfo_;
-    KAction     *actionViewHistory_;
     KAction     *actionRemove_;
 };
 
