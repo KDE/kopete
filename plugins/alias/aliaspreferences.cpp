@@ -216,7 +216,10 @@ void AliasPreferences::slotPluginLoaded( KopetePlugin *plugin )
 
 							AliasItem *item = aliasMap[ *it ];
 							if( item )
+							{
 								item->protocolList.append( protocol );
+								item->repaint();
+							}
 							else
 							{
 								ProtocolList pList;
