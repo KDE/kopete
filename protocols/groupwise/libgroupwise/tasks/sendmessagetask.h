@@ -26,7 +26,7 @@ public:
 	SendMessageTask(Task* parent);
 	~SendMessageTask();
 	
-	void message( const QString & guid, const QStringList & recipientDNList, const Message & msg );
+	void message( const QStringList & recipientDNList, const OutgoingMessage & msg );
 	void onGo();
 	
 

@@ -23,21 +23,23 @@ SendMessageTask::~SendMessageTask()
 {
 }
 
-void SendMessageTask::message( const QString & guid, const QStringList & recipientDNList, const Message & msg )
+void SendMessageTask::message( const QStringList & recipientDNList, const OutgoingMessage & msg )
 {
 	// Assumes the conference is instantiated, unlike Gaim's nm_send_message
 	QCString command = "sendmessage";
 	Request * sendRequest = client()->requestFactory()->request( command );
-	Field::FieldList lst, tmp;
+	Field::FieldList lst, tmp, msgBodies;
 	// list containing GUID
-	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );
+	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, msg.guid ) );
 	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
 	// message body as rtf : FIXME RTFIZE TEXT - HOPE 
-	lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, QString("") ) );
+	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, QString("") ) );
 	// message body type indicator / separator?
-	lst.append( new Field::SingleField( NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
+	msgBodies.append( new Field::SingleField( NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
 	// message body plaintext
-	lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_TEXT, 0, NMFIELD_TYPE_UTF8, msg ) );
+	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_TEXT, 0, NMFIELD_TYPE_UTF8, msg.message ) );
+	// list containing message bodies
+	lst.append( new Field::MultiField( NM_A_FA_MESSAGE, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, msgBodies ) );
 	// series of participants (may be empty )
 	QValueListConstIterator<QString> end = recipientDNList.end();
 	for ( QValueListConstIterator<QString> it = recipientDNList.begin(); it != end; ++it )
