@@ -140,7 +140,7 @@ public:
 	 */
 	bool trackChildNameChanges() const;
 	/**
-	 * @brief set if the metacontact dysplayname follow subcontacts displayname
+	 * @brief set if the metacontact displayname follow subcontacts displayname
 	 *
 	 * When setting it to true, it will refresh the dysplayname to the subcontactone instentaneous,
 	 * and each time the contact change.

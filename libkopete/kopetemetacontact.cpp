@@ -330,14 +330,29 @@ QString KopeteMetaContact::statusIcon() const
 	switch( status() )
 	{
 		case KopeteOnlineStatus::Online:
-			return QString::fromLatin1( "metacontact_online" );
+			if( useCustomIcon() )
+				return icon( KopetePluginDataObject::Online );
+			else
+				return QString::fromLatin1( "metacontact_online" );
+
 		case KopeteOnlineStatus::Away:
-			return QString::fromLatin1( "metacontact_away" );
+			if( useCustomIcon() )
+				return icon( KopetePluginDataObject::Away );
+			else
+				return QString::fromLatin1( "metacontact_away" );
+
 		case KopeteOnlineStatus::Unknown:
-			return QString::fromLatin1( "metacontact_unknown" );
+			if( useCustomIcon() )
+				return icon( KopetePluginDataObject::Unknown );
+			else
+				return QString::fromLatin1( "metacontact_unknown" );
+
 		case KopeteOnlineStatus::Offline:
 		default:
-			return QString::fromLatin1( "metacontact_offline" );
+			if( useCustomIcon() )
+				return icon( KopetePluginDataObject::Offline );
+			else
+				return QString::fromLatin1( "metacontact_offline" );
 	}
 }
 
@@ -444,7 +459,7 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 
 	emit displayNameChanged( d->displayName, name );
 
-	//The name is setted by the user, disable tracking
+	//The name is set by the user, disable tracking
 	d->trackChildNameChanges = false;
 
 	// Don't rename contacts on the server automagically as not everyone seems
