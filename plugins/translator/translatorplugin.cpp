@@ -261,7 +261,8 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 		// Sad, we have to consider only the first To: metacontact
 		KopeteMetaContact *to = msg.to().first()->metaContact();
-		dst_lang = to->pluginData( this, "languageKey" );
+		if( to )
+			dst_lang = to->pluginData( this, "languageKey" );
 		if( dst_lang.isEmpty() || dst_lang == "null" )
 		{
 			kdDebug(14308) << "TranslatorPlugin::slotOutgoingMessage :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
