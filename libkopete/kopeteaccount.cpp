@@ -409,6 +409,9 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 
 void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 {
+	d->suppressStatusNotification = true;
+	d->suppressStatusTimer.start( 5000, true );
+
 	for ( QDictIterator<Contact> it( d->contacts ); it.current(); ++it )
 		if ( it.current() != d->myself )
 			it.current()->setOnlineStatus( status );
