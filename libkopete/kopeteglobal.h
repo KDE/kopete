@@ -58,7 +58,7 @@ namespace Global
 	 **/
 	class KOPETE_EXPORT Properties
 	{
-		friend class ContactPropertyTmpl;
+		friend class Kopete::ContactPropertyTmpl;
 		public:
 			/**
 			 * \brief Singleton accessor for this class.

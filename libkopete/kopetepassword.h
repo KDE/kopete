@@ -159,8 +159,8 @@ private:
 	Private *d;
 
 	//TODO: can we rearrange things so these aren't friends?
-	friend class KopetePasswordGetRequest;
-	friend class KopetePasswordSetRequest;
+	friend class ::KopetePasswordGetRequest;
+	friend class ::KopetePasswordSetRequest;
 };
 
 }

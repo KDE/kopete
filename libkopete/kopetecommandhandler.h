@@ -47,7 +47,7 @@ typedef QDict<Command> CommandList;
  */
 class KOPETE_EXPORT CommandHandler : public QObject
 {
-	friend class KopeteCommandGUIClient;
+	friend class ::KopeteCommandGUIClient;
 
 	Q_OBJECT
 
