@@ -49,7 +49,6 @@ class JabberContact : public KopeteContact
 		JabberContact (QString userid, QString name, QString group, JabberProtocol *protocol);
 		
 		void initContact (QString userid, QString name);
-		void showContextMenu (QPoint, QString);
 
 		QString mUserID;
 		QString mName;
@@ -69,6 +68,7 @@ class JabberContact : public KopeteContact
 	public slots:
     void slotMWClosing(void);
     void slotNewMessage(QString, QString);
+	virtual void showContextMenu (QPoint, QString);
 
 	private slots:
 		void slotUpdateContact (QString, QString, QString, QString);
