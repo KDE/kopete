@@ -388,8 +388,11 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		msg = i18n ( "It is no longer possible to perform this operation. The MSN server does not allow it anymore." );
 		break;
 	case 600:
+	case 910:
+	case 912:
+	case 922:
 		disconnect();
-		msg = i18n ( "The server is busy. Please try again later." );
+		msg = i18n ( "The MSN server is busy. Please try again later." );
 		break;
 	case 601:
 	case 604:

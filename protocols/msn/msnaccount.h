@@ -180,6 +180,12 @@ private slots:
 	/** add contact ui **/
 	void slotBlockContact( const QString& passport ) ;
 	void slotAddContact( const QString &userName , const QString& displayName);
+	
+	/**
+	 * When the dispatch server sends us the notification server to use.
+	 */
+	void createNotificationServer( const QString &host, uint port );
+
 
 private:
 	MSNNotifySocket *m_notifySocket;
@@ -212,11 +218,16 @@ private:
 
 	QString m_pictureObj; //a cache of the <msnobj>
 
-
-	
 	//this is the translation between old to new groups id when syncing from server.
 	QMap<unsigned int, KopeteGroup*> m_oldGroupList;
-
+	
+	/**
+	 * I need the password in createNotificationServer.
+	 * but i can't ask it there with password() because a nested loop will provoque crash 
+	 * at this place.   so i'm forced to keep it here.
+	 * I would like an API to request the password WITHOUT askling it.
+	 */
+	QString m_password;
 };
 
 #endif

@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions taken from
     KMerlin   (c) 2001      by Olaf Lueg              <olueg@olsd.de>
@@ -21,7 +21,6 @@
 */
 
 #include "msnnotifysocket.h"
-#include "msndispatchsocket.h"
 #include "msncontact.h"
 #include "msnaccount.h"
 
@@ -44,17 +43,19 @@
 
 #include <ctime>
 
-MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId, const QString &password )
-: MSNAuthSocket( msnId, account )
+MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/, const QString &password )
+: MSNSocket( account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
+	
+	m_isHotmailAccount=false;
+	m_ping=false;
 
 	m_account = account;
 	m_password=password;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
-	m_dispatchSocket = 0L;
 	m_tmpMailFile = 0L;
 
 	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
@@ -69,29 +70,12 @@ MSNNotifySocket::~MSNNotifySocket()
 	kdDebug(14140) << "MSNNotifySocket::~MSNNotifySocket" << endl;
 }
 
-void MSNNotifySocket::connect()
+void MSNNotifySocket::doneConnect()
 {
-	dispatchOK=false;
-	m_isHotmailAccount=false;
-	m_ping=false;
-
-	m_dispatchSocket = new MSNDispatchSocket( m_account, msnId() ,this);
-	QObject::connect( m_dispatchSocket,
-		SIGNAL( receivedNotificationServer( const QString &, uint ) ),
-		this,
-		SLOT( slotReceivedServer( const QString &, uint ) ) );
-
-	//QObject::connect( m_dispatchSocket, SIGNAL( connectionFailed( ) ), SLOT( slotDispatchFailed( ) ) );
-	QObject::connect( m_dispatchSocket, SIGNAL( socketClosed( int ) ), SLOT( slotDispatchClosed( ) ) );
-
-	m_dispatchSocket->connect();
+//	kdDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
+	sendCommand( "VER", "MSNP9" );
 }
 
-void MSNNotifySocket::slotReceivedServer( const QString &server, uint port )
-{
-	dispatchOK=true;
-	MSNAuthSocket::connect( server, port );
-}
 
 void MSNNotifySocket::disconnect()
 {
@@ -100,15 +84,11 @@ void MSNNotifySocket::disconnect()
 
 	m_keepaliveTimer->stop();
 
-	dispatchOK=true; // without this MSNNotifySocket will assume that an error has ocurred and display a message box
-	if (m_dispatchSocket)
-		m_dispatchSocket->disconnect();
-
 	// the socket is not connected yet, so I should force the signals
 	if ( onlineStatus() == Disconnected || onlineStatus() == Connecting )
 		emit socketClosed(-1);
 	else
-		MSNAuthSocket::disconnect();
+		MSNSocket::disconnect();
 }
 
 void MSNNotifySocket::handleError( uint code, uint id )
@@ -142,7 +122,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 209:
 	{
-		if(m_tmpLastHandle==msnId())
+		if(m_tmpLastHandle==m_account->accountId())
 		{
 			QString msg = i18n( "Unable to change your display name.\nPlease ensure your display name neither contains 'forbidden' " 				"words nor is too long." );
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
@@ -225,18 +205,16 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		//FIXME: try to fix this problem
 		break;
 	}
+	case 911:
+		m_badPassword = true;
+		disconnect();
+		break;
 	case 913:
 	{
 		QString msg = i18n( "You can not send messages when you are offline or when you are invisible." );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
-	case 910:
-	case 921:
-	case 922:
-	    KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n( "The MSN Server is busy or temporarily unavailable; try to reconnect later." ), i18n( "MSN Plugin" ) );
-		break;
 	case 923:
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 			i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'" ) ,
@@ -244,7 +222,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		break;
 
 	default:
-		MSNAuthSocket::handleError( code, id );
+		MSNSocket::handleError( code, id );
 		break;
 	}
 }
@@ -254,8 +232,24 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 {
 	//kdDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
-	//// here follow the auth processus
-	if( cmd == "USR" )
+	
+	if ( cmd == "VER" )
+	{
+		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0602 MSMSGS " + m_account->accountId() );
+/*
+		struct utsname utsBuf;
+		uname ( &utsBuf );
+
+		sendCommand( "CVR", i18n( "MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx", "0x0409" ) +
+			" " + escape( utsBuf.sysname ) + " " + escape( utsBuf.release ) + " " + escape( utsBuf.machine ) + " Kopete " +
+			escape( kapp->aboutData()->version() ) + " Kopete " + m_msnId );
+*/
+	}
+	else if ( cmd == "CVR" ) //else if ( cmd == "INF" )
+	{
+		sendCommand( "USR", "TWN I " + m_account->accountId() );
+	}
+	else if( cmd == "USR" ) //// here follow the auth processus
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
@@ -335,8 +329,22 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "XFR" )
 	{
-		// Address, AuthInfo
-		emit startChat( data.section( ' ', 1, 1 ), data.section( ' ', 3, 3 ) );
+		QString stype=data.section( ' ', 0, 0 ); 
+		if( stype=="SB" ) //switchboard connection (chat)
+		{ 
+			// Address, AuthInfo
+			emit startChat( data.section( ' ', 1, 1 ), data.section( ' ', 3, 3 ) );
+		}
+		else if( stype=="NS" ) //notifysocket  ; Got our notification server
+		{ //we are connecting and we receive the initial NS, or the msn server encounter a problem, and we are switching to another switchboard
+			QString host = data.section( ' ', 1, 1 );
+			QString server = host.section( ':', 0, 0 );
+			uint port = host.section( ':', 1, 1 ).toUInt();
+			setOnlineStatus( Connected );
+			emit receivedNotificationServer( server, port );
+			disconnect();
+		}
+		
 	}
 	else if( cmd == "RNG" )
 	{
@@ -388,7 +396,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "REA" )
 	{
 		QString handle=data.section( ' ', 1, 1 );
-		if( handle == msnId() )
+		if( handle == m_account->accountId() )
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 		else
 		{
@@ -549,7 +557,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else
 	{
 		// Let the base class handle the rest
-		MSNAuthSocket::parseCommand( cmd, id, data );
+		//MSNSocket::parseCommand( cmd, id, data );
+		kdDebug( 14140 ) << k_funcinfo << "Unimplemented command '" << cmd << " " << id << " " << data << "' from server!" << endl;
 	}
 }
 
@@ -799,8 +808,8 @@ void MSNNotifySocket::changePublicName(  QString publicName, const QString &hand
 	m_tmpLastHandle=handle;
 	if( handle.isNull() )
 	{
-		sendCommand( "REA", msnId() + " " + escape ( publicName ) );
-		m_tmpLastHandle=msnId();
+		sendCommand( "REA", m_account->accountId() + " " + escape ( publicName ) );
+		m_tmpLastHandle=m_account->accountId();
 	}
 	else
 		sendCommand( "REA", handle + " " + escape ( publicName ) );
@@ -841,22 +850,6 @@ QString MSNNotifySocket::statusToString( const KopeteOnlineStatus &status ) cons
 	{
 		kdWarning( 14140 ) << k_funcinfo << "Unknown status " << status.internalStatus() << "!" << endl;
 		return "UNK";
-	}
-}
-
-void MSNNotifySocket::slotDispatchClosed()
-{
-	m_badPassword = m_dispatchSocket->badPassword();
-	delete m_dispatchSocket;
-	m_dispatchSocket = 0L;
-	if(!dispatchOK)
-	{
-		if(!badPassword())
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-				i18n( "Connection failed.\nTry again later." ) , i18n ("MSN Plugin") );
-		//because "this socket" isn't already connected, doing this manualy
-		emit onlineStatusChanged( Disconnected );
-		emit socketClosed(-1);
 	}
 }
 

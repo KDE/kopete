@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions taken from
     KMerlin   (c) 2001      by Olaf Lueg              <olueg@olsd.de>
@@ -23,7 +23,7 @@
 #ifndef MSNNOTIFYSOCKET_H
 #define MSNNOTIFYSOCKET_H
 
-#include "msnauthsocket.h"
+#include "msnsocket.h"
 #include "msnprotocol.h"
 
 class MSNDispatchSocket;
@@ -35,8 +35,9 @@ class KTempFile;
 
 /**
  * @author Olaf Lueg
+ * @author Olivier Goffart
  */
-class MSNNotifySocket : public MSNAuthSocket
+class MSNNotifySocket : public MSNSocket
 {
 	Q_OBJECT
 
@@ -44,7 +45,6 @@ public:
 	MSNNotifySocket( MSNAccount* account, const QString &msnId, const QString &password );
 	~MSNNotifySocket();
 
-	void connect();
 	virtual void disconnect();
 
 	void setStatus( const KopeteOnlineStatus &status );
@@ -62,6 +62,8 @@ public:
 	void createChatSession();
 
 	void sendMail(const QString &email);
+	
+	bool badPassword() { return m_badPassword; }
 
 public slots:
 	void slotOpenInbox();
@@ -86,6 +88,14 @@ signals:
 	void statusChanged( const KopeteOnlineStatus &newStatus );
 
 	void hotmailSeted(bool) ;
+	
+	
+	/**
+	 * When the dispatch server sends us the notification server to use, this
+	 * signal is emitted. After this the socket is automatically closed.
+	 */
+	void receivedNotificationServer( const QString &host, uint port );
+
 
 protected:
 	/**
@@ -97,21 +107,23 @@ protected:
 	/**
 	 * Handle an MSN error condition.
 	 * This reimplementation handles most of the other MSN error codes.
-	 * FIXME: It *should* do this, but currently implements only a very
-	 * limited subset...
 	 */
 	virtual void handleError( uint code, uint id );
+	
+	/**
+	 * This reimplementation sets up the negotiating with the server and
+	 * suppresses the change of the status to online until the handshake
+	 * is complete.
+	 */
+	virtual void doneConnect();
+
 
 private slots:
-	void slotReceivedServer( const QString &server, uint port );
-
 	/**
 	 * We received a message from the server, which is sent as raw data,
 	 * instead of cr/lf line-based text.
 	 */
 	void slotReadMessage( const QString &msg );
-
-	void slotDispatchClosed();
 
 	/**
 	 * Send a keepalive to the server to avoid idle connections to cause
@@ -150,9 +162,6 @@ private:
 	 */
 	QString statusToString( const KopeteOnlineStatus &status ) const;
 
-	MSNDispatchSocket *m_dispatchSocket;
-	bool dispatchOK;
-
 	//know the last handle used
 	QString m_tmpLastHandle;
 
@@ -167,7 +176,8 @@ private:
 	QTimer *m_keepaliveTimer;
 
 	bool m_ping;
-
+	
+	bool m_badPassword;
 };
 
 #endif

@@ -139,15 +139,15 @@ void MSNAccount::connect()
 		kdDebug( 14140 ) << "MSNAccount::connect: Ignoring Connect request (Already connecting)"  << endl;
 		return;
 	}
+	m_password = password( m_badpassword ); 
+	m_badpassword=false;
 
-
-	QString passwd = password( m_badpassword );
-	m_badpassword = false;
-	if ( passwd.isNull() )
+	if ( m_password.isNull() )
 	{
 		kdDebug( 14140 ) << "MSNAccount::connect: Abort connection (null password)"  << endl;
 		return;
 	}
+
 
 	if ( contacts().count() <= 1 )
 	{
@@ -155,8 +155,28 @@ void MSNAccount::connect()
 		// ( the 1 is for the myself contact )
 		setPluginData( protocol(), "serial", "0" );
 	}
+	
+	m_openInboxAction->setEnabled( false );
+	
+	createNotificationServer(serverName(), serverPort());
+}
 
-	m_notifySocket = new MSNNotifySocket( this, accountId() , passwd);
+void MSNAccount::createNotificationServer( const QString &host, uint port )
+{
+	if(m_notifySocket) //we are switching from one to another notifysocket.
+	{
+		//remove every slots to that socket, so we won't delete receive signals
+		// from the old socket thinking they are from the new one
+		QObject::disconnect( m_notifySocket , 0, this, 0 ); 
+		m_notifySocket->deleteLater(); //be sure it will be deleted
+		m_notifySocket=0L; 
+	}
+
+
+	myself()->setOnlineStatus( MSNProtocol::protocol()->CNT );
+
+
+	m_notifySocket = new MSNNotifySocket( this, accountId() , m_password);
 
 	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, uint ) ),
 		SLOT( slotGroupAdded( const QString&, uint ) ) );
@@ -186,13 +206,13 @@ void MSNAccount::connect()
 		SLOT( slotNotifySocketClosed( int ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
 		SLOT( slotNewContactList() ) );
+	QObject::connect( m_notifySocket, SIGNAL( receivedNotificationServer(const QString&, uint )  ), 
+		SLOT(createNotificationServer(const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
-
+	
 	m_notifySocket->setStatus( m_connectstatus );
-	m_notifySocket->connect();
-	myself()->setOnlineStatus( MSNProtocol::protocol()->CNT );
-	m_openInboxAction->setEnabled( false );
+	m_notifySocket->connect(host, port);
 }
 
 void MSNAccount::disconnect()
