@@ -218,7 +218,11 @@ void ChatView::raise(bool activate)
 	if(!m_mainWindow || !m_mainWindow->isActiveWindow() || activate)
 		makeVisible();
 
-	if( !KWin::info( m_mainWindow->winId() ).onAllDesktops )
+#if KDE_IS_VERSION(3, 1, 90)
+		if( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
+#else
+		if( !KWin::info( m_mainWindow->winId() ).onAllDesktops )
+#endif
 		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
 
 	m_mainWindow->show();
@@ -1007,7 +1011,7 @@ void ChatView::readOptions()
 	}
 	dockKey.append( QString::fromLatin1(",editDock:sepPos") );
 
-	int splitterPos = config->readNumEntry( dockKey, 70);
+	int splitterPos = config->readNumEntry(dockKey, 70);
 	editDock->manualDock( viewDock, KDockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite(KDockWidget::DockLeft | KDockWidget::DockRight );
 	editDock->setEnableDocking(KDockWidget::DockNone);
