@@ -50,6 +50,8 @@ JabberContact::JabberContact(QString userid, QString name, QString group,
     connect(protocol, SIGNAL(newMessage(QString, QString)), this,
 	    SLOT(slotNewMessage(QString, QString)));
 
+	historyDialog = 0L;
+
     initContact(userid, name);
 }
 
@@ -261,7 +263,7 @@ void JabberContact::slotMWClosing()
 
 void JabberContact::slotViewHistory()
 {
-    if (!historyDialog) {
+    if (historyDialog == 0L) {
 	historyDialog =
 	    new KopeteHistoryDialog(QString("kopete/jabber_logs/%1.log").
 				    arg(mUserID), name(), true, 50, 0,
@@ -274,6 +276,7 @@ void JabberContact::slotViewHistory()
 void JabberContact::slotCloseHistoryDialog()
 {
     delete historyDialog;
+	historyDialog = 0L;
 }
 
 #include "jabbercontact.moc"
