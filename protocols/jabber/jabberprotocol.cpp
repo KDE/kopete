@@ -248,36 +248,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 		statusBarIcon->setPixmap(onlineIcon);
 
 		// since we are online now, set initial presence
-		Status status;
-
-		switch(initialPresence)
-		{
-			case STATUS_ONLINE:
-				status.setShow("chat");
-				break;
-			case STATUS_AWAY:
-				status.setShow("away");
-				break;
-			case STATUS_XA:
-				status.setShow("xa");
-				break;
-			case STATUS_DND:
-				status.setShow("dnd");
-				break;
-			case STATUS_INVISIBLE:
-				status.setIsInvisible(true);
-				break;
-			case STATUS_OFFLINE:
-				kdDebug() << "[JabberProtocol] WARNING: Initial presence set to STATUS_OFFLINE, hardwiring to STATUS_ONLINE." << endl;
-				status.setShow("chat");
-				break;
-		}
-
-		status.setStatus(myContact->reason());
-
-		JT_Presence *task = new JT_Presence(jabberClient->rootTask());
-		task->pres(status);
-		task->go(true);
+		setPresence(initialPresence, myContact->reason());
 		
 		// request roster
 		jabberClient->rosterRequest();
@@ -435,24 +406,24 @@ void JabberProtocol::setPresence(Presence status, const QString &reason, int pri
 		Jabber::Status presence;
 
 		presence.setPriority(priority);
-		presence.setShow(reason);
+		presence.setStatus(reason);
 		presence.setIsAvailable(true);
 		
 		switch(status)
 		{
 			case STATUS_AWAY:
 						statusBarIcon->setPixmap(awayIcon);
-						presence.setStatus("away");
+						presence.setShow("away");
 						break;
 						
 			case STATUS_XA:
 						statusBarIcon->setPixmap(awayIcon);
-						presence.setStatus("xa");
+						presence.setShow("xa");
 						break;
 
 			case STATUS_DND:
 						statusBarIcon->setPixmap(naIcon);
-						presence.setStatus("dnd");
+						presence.setShow("dnd");
 						break;
 			case STATUS_INVISIBLE:
 						statusBarIcon->setPixmap(offlineIcon);
@@ -461,7 +432,7 @@ void JabberProtocol::setPresence(Presence status, const QString &reason, int pri
 
 			case STATUS_ONLINE:
 						statusBarIcon->setPixmap(onlineIcon);
-						presence.setStatus("chat");
+						presence.setShow("chat");
 						break;
 
 			default:
@@ -469,6 +440,10 @@ void JabberProtocol::setPresence(Presence status, const QString &reason, int pri
 						break;
 		}
 
+		kdDebug() << "[JabberProtocol] setPresence() called, updating to \"" << presence.status() << "\" with reason \"" << reason << endl;
+
+		myContact->slotUpdatePresence(status, reason);
+		
 		Jabber::JT_Presence *task = new Jabber::JT_Presence(jabberClient->rootTask());
 		task->pres(presence);
 		task->go(true);
@@ -479,6 +454,8 @@ void JabberProtocol::setPresence(Presence status, const QString &reason, int pri
 
 void JabberProtocol::setAway(void)
 {
+
+	kdDebug() << "[JabberProtocol] Setting globally away." << endl;
     
 	setPresence(STATUS_AWAY, KopeteAway::getInstance()->message());
 
@@ -501,7 +478,7 @@ KopeteContact* JabberProtocol::myself() const
 bool JabberProtocol::isAway(void) const
 {
 
-	return isConnected();
+	return (myContact->status() != JabberContact::Online);
 
 }
 

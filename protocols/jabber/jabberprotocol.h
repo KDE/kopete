@@ -201,7 +201,7 @@ public:
 	void slotSaveVCard(QDomElement &);
 
 public slots:
-	void setPresence(Presence status, const QString &reason = 0, int priority = 0);
+	void setPresence(Presence status, const QString &reason = 0, int priority = 5);
 
 	/**
 	 * Send a raw message to the server (usually called by the dialog widget)
