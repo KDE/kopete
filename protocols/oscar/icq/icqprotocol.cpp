@@ -106,7 +106,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 			i18n("'%1' (%2)").arg(nick, uin);
 
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-			i18n("Do you want to add %1 to your contactlist?").arg(nickuin))
+			i18n("Do you want to add %1 to your contact list?").arg(nickuin))
 			!= KMessageBox::Yes)
 		{
 			kdDebug(14200) << k_funcinfo << "Cancelled" << endl;

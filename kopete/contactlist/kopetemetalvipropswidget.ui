@@ -297,7 +297,7 @@ This option is only available if there is exactly one child contact </string>
                         <cstring>checkBox8</cstring>
                     </property>
                     <property name="text">
-                        <string>Surpress standard notifications</string>
+                        <string>Suppress standard notifications</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0">

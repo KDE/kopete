@@ -153,7 +153,7 @@ GaduEditAccount::apply()
 	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
 
 	if ( static_cast<GaduAccount*>(account())->setDcc( dccCheck_->isChecked() ) == false ) {
-		KMessageBox::sorry( this, i18n( "<b>Starting DCC listening socket failed, dcc isn't working now.</b>" ), i18n( "Gadu-Gadu" ) );
+		KMessageBox::sorry( this, i18n( "<b>Starting DCC listening socket failed; dcc is not working now.</b>" ), i18n( "Gadu-Gadu" ) );
 	}
 
 	return account();
