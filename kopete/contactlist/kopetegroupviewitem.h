@@ -50,9 +50,13 @@ private:
 	QString key( int column, bool ascending ) const;
 
 	QString m_renameText;
+
+	unsigned int onlineMemberCount;
+	unsigned int totalMemberCount;
 		
 public slots:
 	void refreshDisplayName();
+	void updateVisibility();
 };
 
 #endif

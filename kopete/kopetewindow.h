@@ -63,6 +63,7 @@ private slots:
 	void showMenubar();
 	void showStatusbar();
 	void slotToggleShowOffliners();
+	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();
 	void slotConfKeys();
 	void slotConfToolbar();
@@ -151,6 +152,7 @@ public:
 	KToggleAction *menubarAction;
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
+	KToggleAction *actionShowEmptyGroups;
 //	KAction *actionShowTransfers;
 	KGlobalAccel *globalAccel;
 

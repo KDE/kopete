@@ -221,7 +221,7 @@ void KopeteMetaContactLVI::slotUpdateIcons()
 
 	setPixmap( 0, statusIcon );
 
-	updateVisibility();
+	if(!KopetePrefs::prefs()->sortByGroup()) updateVisibility();
 
 	if( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
@@ -340,7 +340,7 @@ void KopeteMetaContactLVI::slotAddTemporaryContact()
 
 void KopeteMetaContactLVI::slotConfigChanged()
 {
-	updateVisibility();
+	if(!KopetePrefs::prefs()->sortByGroup()) updateVisibility();
 	slotIdleStateChanged();
 //	repaint();
 }

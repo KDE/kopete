@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kkopete" version="7">
+<kpartgui name="kkopete" version="8">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -38,6 +38,7 @@
 			<Action name="settings_prefs" />
 			<Separator lineSeparator="true" />
 			<Action name="settings_show_offliners" />
+			<Action name="settings_show_empty_groups" />
 		</Menu>
 	</MenuBar>
 
@@ -47,6 +48,7 @@
 		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="settings_show_offliners"/>
+		<Action name="settings_show_empty_groups"/>
 	</ToolBar>
 
 	<Menu name="contact_popup">
@@ -77,5 +79,6 @@
 		<Separator lineSeparator="true"/>
 		<Action name="settings_showmenubar" />
 		<Action name="settings_show_offliners" />
+		<Action name="settings_show_empty_groups" />
 	</Menu>
 </kpartgui>
