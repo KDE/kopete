@@ -230,7 +230,11 @@ void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 		m_balloon->deleteLater();
 		m_balloon=0l;
 		if(!mEventList.isEmpty())
-			addBalloon();
+		{
+			//delay the addBalloon to let the time to event be deleted
+			//in case a contact has been deleted   cf Bug 100196
+			QTimer::singleShot(0, this, SLOT(addBalloon()));
+		}
 	}
 
 	if(mEventList.isEmpty())
