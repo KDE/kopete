@@ -1,4 +1,6 @@
-INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
+INCLUDES = -I$(top_srcdir)/kopete/library \
+			-I$(top_builddir)/kopete/library/ui \
+			$(all_includes)
 noinst_LTLIBRARIES = libkopeteui.la
 
 noinst_HEADERS = contactlist.h\   
