@@ -19,6 +19,8 @@
 
 #include <qstring.h>
 
+#include <kopete_export.h>
+
 class QObject;
 
 /**
@@ -30,7 +32,7 @@ class QObject;
  * or create one and insert it to a kmm with @ref MSNChatSession::initInvitation()
  * you can add action with @ref Kopete::Plugin::customChatActions()
  */
-class MSNInvitation
+class KOPETE_EXPORT MSNInvitation
 {
 public:
 	/**

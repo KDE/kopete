@@ -20,6 +20,7 @@
 
 #include <qwidget.h>
 #include <kopeteprotocol.h>
+#include <kopete_export.h>
 
 class AccountSelectorPrivate;
 class QListViewItem;
@@ -27,7 +28,7 @@ class QListViewItem;
  * \brief widget to select an account, based on KListView
  * @author Stefan Gehn <metz AT gehn.net>
  */
-class AccountSelector : public QWidget
+class KOPETE_EXPORT AccountSelector : public QWidget
 {
 Q_OBJECT
 

@@ -39,7 +39,7 @@ class QTimer;
  * @author Tom Linsky <twl6@po.cwru.edu>
  * @author Chris TenHarmsel <tenharmsel@staticmethod.net>
  */
-class OscarContact : public Kopete::Contact
+class KDE_EXPORT OscarContact : public Kopete::Contact
 {
 	Q_OBJECT
 

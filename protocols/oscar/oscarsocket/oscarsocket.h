@@ -160,7 +160,7 @@ const unsigned int AIM_PORT	= 5190;
  * @author Tom Linsky
  * @author Stefan Gehn
  */
-class OscarSocket : public OscarConnection
+class KDE_EXPORT OscarSocket : public OscarConnection
 {
 	Q_OBJECT
 

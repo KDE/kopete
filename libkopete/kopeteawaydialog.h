@@ -20,6 +20,7 @@
 #define KOPETEAWAYDIALOG_H
 
 #include <kdialogbase.h>
+#include <kopete_export.h>
 
 namespace Kopete
 {
@@ -49,7 +50,7 @@ class KopeteAwayDialogPrivate;
  * @author Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
  */
 
-class KopeteAwayDialog : public KDialogBase
+class KOPETE_EXPORT KopeteAwayDialog : public KDialogBase
 {
 	Q_OBJECT
 

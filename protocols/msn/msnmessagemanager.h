@@ -31,7 +31,7 @@ class QLabel;
 /**
  * @author Olivier Goffart
  */
-class MSNChatSession : public Kopete::ChatSession
+class KOPETE_EXPORT MSNChatSession : public Kopete::ChatSession
 {
 	Q_OBJECT
 

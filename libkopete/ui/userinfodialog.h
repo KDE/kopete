@@ -21,11 +21,13 @@
 #include <kdialogbase.h>
 #include <qstring.h>
 
+#include <kopete_export.h>
+
 class KLineEdit;
 
 namespace Kopete {
 
-	class UserInfoDialog : public KDialogBase
+	class KOPETE_EXPORT UserInfoDialog : public KDialogBase
 	{
 		Q_OBJECT
 	public:

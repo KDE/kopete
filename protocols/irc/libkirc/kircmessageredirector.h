@@ -87,6 +87,6 @@ private:
 	QString m_helpMessage;
 };
 
-};
+}
 
 #endif

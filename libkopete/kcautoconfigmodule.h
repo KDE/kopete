@@ -22,6 +22,8 @@
 
 #include <kcmodule.h>
 
+#include <kopete_export.h>
+
 class KAutoConfig;
 class KConfig;
 
@@ -48,7 +50,7 @@ class KConfig;
  * @author Olivier Goffart <ogoffart(@)tisclinet.be>
  * @since 3.2
  */
-class KCAutoConfigModule : public KCModule
+class KOPETE_EXPORT KCAutoConfigModule : public KCModule
 {
 	Q_OBJECT
 	public:

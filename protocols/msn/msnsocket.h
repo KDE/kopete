@@ -24,6 +24,8 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
+#include <kopete_export.h>
+
 namespace KNetwork {
   class KBufferedSocket;
   class KServerSocket;
@@ -36,7 +38,7 @@ namespace KNetwork {
  * Server, the Notification Server and the Switchboard Server. It is
  * inherited by the various specialized classes.
  */
-class MSNSocket : public QObject
+class KDE_EXPORT MSNSocket : public QObject
 {
 	Q_OBJECT
 

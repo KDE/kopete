@@ -19,6 +19,7 @@
 
 #include <qobject.h>
 //#include <kdemacros.h>
+#include <kopete_export.h>
 
 //FIXME: Message::MessageDirection could be moved into namespace Kopete
 // to avoid this being included everywhere
@@ -41,7 +42,7 @@ class ChatSession;
  * This class implements Handler role in the Chain of Responsibility pattern.
  * The Client role will be filled by the Kopete::MessageHandlerChain class.
  */
-class MessageHandler : public QObject
+class KOPETE_EXPORT MessageHandler : public QObject
 {
 	Q_OBJECT
 public:
@@ -106,7 +107,7 @@ private:
  * chain to the protocol, then (when it has been delivered) it passes back through the Inbound
  * chain to the chat window to be displayed.
  */
-class MessageHandlerFactory
+class KOPETE_EXPORT MessageHandlerFactory
 {
 public:
 	/**

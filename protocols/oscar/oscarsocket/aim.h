@@ -17,6 +17,9 @@
 
 #ifndef AIM_H
 #define AIM_H
+
+#include <kopete_export.h>
+
 class QString;
-QString tocNormalize(const QString &);
+KDE_EXPORT QString tocNormalize(const QString &);
 #endif

@@ -49,7 +49,7 @@ namespace Kopete { class Group; }
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
-class MSNProtocol : public Kopete::Protocol
+class KOPETE_EXPORT MSNProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
