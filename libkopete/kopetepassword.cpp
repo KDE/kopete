@@ -201,7 +201,7 @@ public:
 		mView->m_password->insert( password );
 		int maxLength = mPassword.maximumLength();
 		if ( maxLength != 0 )
-			mView->m_password->setMaxLength( maxLength );
+			mView->m_password->setMaxPasswordLength( maxLength );
 		mView->m_password->setFocus();
 
 		// FIXME: either document what these are for or remove them - lilac
