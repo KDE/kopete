@@ -34,6 +34,8 @@ KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *pare
 
 	m_metaContact = parent;
 	m_protocolId = protocolId;
+	m_cachedSize = 0;
+	m_cachedOldStatus = Offline;
 }
 
 KopeteContact::~KopeteContact()
@@ -112,7 +114,7 @@ QPixmap KopeteContact::scaledStatusIcon(int size)
 {
     if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
 	{
-		QImage afScal = ((QPixmap(SmallIcon(this->statusIcon()))).convertToImage()).smoothScale( size, size);
+		QImage afScal = ((QPixmap(SmallIcon(this->statusIcon()))).convertToImage()).smoothScale( size, size );
 		m_cachedScaledIcon = QPixmap(afScal);
 		m_cachedOldStatus = this->status();
 		m_cachedSize = size;
