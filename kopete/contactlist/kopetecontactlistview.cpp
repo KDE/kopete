@@ -1540,7 +1540,7 @@ void KopeteContactListView::slotRemove()
 		QString msg;
 		if(!contacts.isEmpty())
 		{
-			msg=i18n("Are you sure you want to the contact `%1` from your contact list?").arg(contacts.first()->displayName()) ;
+			msg=i18n("Are you sure you want to remove the contact `%1` from your contact list?").arg(contacts.first()->displayName()) ;
 		}
 		else if(!groups.isEmpty())
 		{
