@@ -64,10 +64,11 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	chatView = new KHTMLPart( this, "view" );
 
 	//Security settings, we don't need this stuff
-	chatView->setJScriptEnabled( true ) ;
+	chatView->setJScriptEnabled( false ) ;
 	chatView->setJavaEnabled( false );
 	chatView->setPluginsEnabled( false );
 	chatView->setMetaRefreshEnabled( false );
+
 
 	chatView->begin();
 	chatView->write( QString::fromLatin1( "<html><head><style>") + styleHTML() + QString::fromLatin1("</style></head><body></body></html>") );
@@ -905,7 +906,7 @@ void ChatView::addChatMessage( KopeteMessage &m )
 		m.setBgOverride( bgOverride );
 
 	messageMap.insert( ++messageId, m );
-	QDomDocument message = m.asXML();
+ QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
 	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), KopetePrefs::prefs()->styleContents() );
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
@@ -1119,7 +1120,11 @@ void ChatView::refreshView()
 {
 	//This doesn't work well using the DOM, so just use some JS
 	if( bgChanged && !backgroundFile.isNull() )
+	{
+		chatView->setJScriptEnabled( true ) ;
 		chatView->executeScript( QString::fromLatin1("document.body.background = \"%1\";").arg( backgroundFile ) );
+		chatView->setJScriptEnabled( false ) ;
+	}
 
 	bgChanged = false;
 
