@@ -33,10 +33,11 @@
 
 #include "kgpginterface.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, KGenericFactory<CryptographyPlugin> );
+typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory );
 
 CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( KGlobal::instance(), parent, name ),
+: KopetePlugin( CryptographyPluginFactory::instance(), parent, name ),
 		m_cachedPass()
 {
 	if( !pluginStatic_ )

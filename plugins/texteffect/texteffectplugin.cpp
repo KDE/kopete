@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include <stdlib.h>
- 
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -26,10 +25,11 @@
 #include "texteffectplugin.h"
 #include "texteffectpreferences.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, KGenericFactory<TextEffectPlugin> );
+typedef KGenericFactory<TextEffectPlugin> TextEffectPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory );
 
 TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( TextEffectPluginFactory::instance(), parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;

@@ -16,6 +16,7 @@
     *                                                                       *
     *************************************************************************
 */
+
 #include <qapplication.h>
 #include <qtextedit.h>
 
@@ -31,12 +32,13 @@
 #include "spellcheckpreferences.h"
 #include "singlespellinstance.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, KGenericFactory<SpellCheckPlugin> );
+typedef KGenericFactory<SpellCheckPlugin> SpellCheckPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, SpellCheckPluginFactory );
 
 SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
 
 SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QStringList & )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( SpellCheckPluginFactory::instance(), parent, name )
 {
 	if ( !pluginStatic_ )
 		pluginStatic_ = this;

@@ -40,10 +40,11 @@
 #include "nlxmms.h"
 #endif
 
-K_EXPORT_COMPONENT_FACTORY(  kopete_nowlistening, KGenericFactory<NowListeningPlugin> );
+typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory );
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const QStringList & /*args*/ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( NowListeningPlugin::instance(), parent, name )
 {
 	if ( pluginStatic_ )
 		kdDebug(14307)<<"####"<<"Now Listening already initialized"<<endl;

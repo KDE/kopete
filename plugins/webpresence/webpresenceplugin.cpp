@@ -50,10 +50,11 @@
 #include "webpresenceplugin.h"
 #include "webpresencepreferences.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, KGenericFactory<WebPresencePlugin> );
+typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory );
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( WebPresencePluginFactory::instance(), parent, name )
 {
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );

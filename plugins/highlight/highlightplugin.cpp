@@ -32,11 +32,11 @@
 #include "highlightplugin.h"
 #include "highlightpreferences.h"
 
-
-K_EXPORT_COMPONENT_FACTORY( kopete_highlight, KGenericFactory<HighlightPlugin> );
+typedef KGenericFactory<HighlightPlugin> HighlightPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_highlight, HighlightPluginFactory );
 
 HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( HighlightPluginFactory::instance(), parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;

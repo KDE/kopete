@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kaction.h>
@@ -31,10 +30,11 @@
 #include "historypreferences.h"
 #include "historyguiclient.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_history, KGenericFactory<HistoryPlugin> );
+typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory );
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: KopetePlugin( HistoryPluginFactory::instance(), parent, name )
 {
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotMessageDisplayed( KopeteMessage & ) ) );
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ), this, SLOT( slotViewCreated( KopeteView* ) ) );
