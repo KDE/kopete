@@ -501,10 +501,8 @@ void MSNProtocol::addContact( const QString &userID )
 		}
 		else
 		{
-			m_serviceSocket->addContact( userID, m_contacts[ userID ]->nickname(),
-				0, FL );
-			m_serviceSocket->addContact( userID, m_contacts[ userID ]->nickname(),
-				0, AL );
+			m_serviceSocket->addContact( userID, userID, 0, FL );
+			m_serviceSocket->addContact( userID, userID, 0, AL );
 		}
 	}
 }
