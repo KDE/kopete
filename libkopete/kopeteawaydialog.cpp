@@ -42,6 +42,7 @@ void KopeteAwayDialog::slotOkayClicked()
 	/* Set the global away message */
 	(txtOneShot->text() != "") ?  KopeteAway::getInstance()->mAwayMessage = txtOneShot->text() : KopeteAway::getInstance()->mAwayMessage = KopeteAway::getInstance()->getMessage(cmbHistory->currentText());
 
+	kopeteapp->setAwayAll();
 	close();
 }
 /*

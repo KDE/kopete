@@ -200,7 +200,6 @@ void Kopete::slotSetAwayAll(void)
 {
 	KopeteAway::setGlobalAway(true);
 	KopeteAway::show();
-	setAwayAll();
 }
 
 // Set a meta-away in all protocol plugins without showing the dialog
