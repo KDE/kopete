@@ -360,6 +360,21 @@ void KopeteContact::setIdleState( KopeteContact::IdleState newState )
 	emit idleStateChanged( this, m_idleState );
 }
 
+void KopeteContact::addToGroup( KopeteGroup * /* newGroup */ )
+{
+	/* Default implementation does nothing */
+}
+
+void KopeteContact::removeFromGroup( KopeteGroup * /* group */ )
+{
+	/* Default implementation does nothing */
+}
+
+void KopeteContact::moveToGroup( KopeteGroup * /* from */, KopeteGroup * /* to */ )
+{
+	/* Default implementation does nothing */
+}
+
 #include "kopetecontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -56,20 +56,6 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 		this, SLOT (slotMoved(KopeteMetaContact*) ));
 	setDisplayName( displayName );
 
-	if( metaContact() )
-	{
-		// we are under a metacontact
-		connect ( metaContact(),
-			SIGNAL( movedToGroup( KopeteGroup *, KopeteGroup * , KopeteMetaContact * ) ),
-			this, SLOT( moveToGroup( KopeteGroup *, KopeteGroup * ) ) );
-		connect( metaContact(),
-			SIGNAL( addedToGroup( KopeteGroup * , KopeteMetaContact * ) ),
-			this, SLOT( addToGroup( KopeteGroup * ) ) );
-		connect( metaContact(),
-			SIGNAL( removedFromGroup(  KopeteGroup * , KopeteMetaContact * ) ),
-			this, SLOT( removeFromGroup( KopeteGroup * ) ) );
-	}
-
 	setFileCapable(true);
 }
 
@@ -524,29 +510,30 @@ void MSNContact::addToGroup( KopeteGroup *group )
 	}
 }
 
-void MSNContact::removeFromGroup( KopeteGroup * group )
+void MSNContact::removeFromGroup( KopeteGroup *group )
 {
-	if(!group)
+	//kdDebug( 14140 ) << k_funcinfo << group->displayName() << endl;
+
+	if( !group )
 		return;
 
-//	kdDebug(14140) << "MSNContact::removeFromGroup: " << group->displayName() << endl;
-	
-	m_moving=false;
+	m_moving = false;
 
 	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
-		if(m_groups.count()==1)
+		if( m_groups.count() == 1 )
 		{
-			//Do not remove the contact if he has no group:
-			//Kopete allow top-level contact
-			kdDebug(14140) << "MSNContact::removeFromGroup : contact not removed.  MSN requires all contacts to be in at least one group" <<endl;
+			// Do not remove the contact if this is the last group,
+			// Kopete allows top-level ('groupless' contacts, but MSN doesn't
+			kdDebug( 14140 ) << k_funcinfo << "Contact not removed. MSN requires all contacts to be in at least one group" << endl;
 			return;
 		}
-		QStringList strL=group->pluginData(protocol());
-		if(strL.count() >= 1 )
+
+		QStringList strL = group->pluginData( protocol() );
+		if( strL.count() >= 1 )
 		{
-			if(m_groups.contains(strL.first().toUInt()))
+			if( m_groups.contains( strL.first().toUInt() ) )
 				notify->removeContact( contactId(), strL.first().toUInt(), MSNProtocol::FL );
 		}
 	}
@@ -558,11 +545,12 @@ void MSNContact::removeFromGroup( KopeteGroup * group )
 	}
 }
 
-void MSNContact::slotAddedToGroup(unsigned int group)
+void MSNContact::slotAddedToGroup( unsigned int group )
 {
 	m_moving=false;
-	m_groups.append(group);
+	m_groups.append( group );
 }
+
 void MSNContact::slotRemovedFromGroup(unsigned int group)
 {
 	m_groups.remove(group);
@@ -584,20 +572,6 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 		if(!groups_new.contains(g) && m_groups.contains(g->pluginData(protocol()).first().toUInt()))
 			removeFromGroup(g);
 	}
-
-	disconnect (from , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
-	disconnect (from , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (addToGroup(KopeteGroup*) ));
-	disconnect (from , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (removeFromGroup(KopeteGroup*) ));
-
-	connect (metaContact() , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
-	connect (metaContact() , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (addToGroup(KopeteGroup*) ));
-	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (removeFromGroup(KopeteGroup*) ));
 }
 
 void MSNContact::sendFile(const KURL &sourceURL, const QString &altFileName, 

@@ -58,7 +58,6 @@ public:
 	 */
 /*	bool isDeleted() const;
 	void setDeleted( bool d );*/
-	
 
 	/**
 	 * Indicate whether this contact is allowed
@@ -72,8 +71,6 @@ public:
 	bool isReversed() const;
 	void setReversed( bool d );
 
-
-
 	/**
 	 * Indicate whether this contact is currently moving to another group
 	 * Flag needed for don't delete the contact if he is removed from a group
@@ -81,7 +78,6 @@ public:
 	 */
 	bool isMoving() { return m_moving; }
 	void setMoving(bool b=true) { m_moving=b; }
-
 
 	/**
 	 * set one phone number
@@ -104,8 +100,14 @@ public:
 
 	virtual KActionCollection *customContextMenuActions();
 
-public slots:
+	/**
+	 * Add/Remove user to/from a group
+	 */
+	virtual void addToGroup( KopeteGroup *newGroup );
+	virtual void removeFromGroup( KopeteGroup *group );
+	virtual void moveToGroup( KopeteGroup *oldGroup, KopeteGroup *newGroup );
 
+public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
@@ -113,13 +115,6 @@ public slots:
 
 	void slotRemovedFromGroup(unsigned int);
 	void slotAddedToGroup(unsigned int);
-
-	/**
-	 * Add/Remove user to/from a group
-	 */
-	void addToGroup( KopeteGroup * );
-	void removeFromGroup( KopeteGroup * );
-	void moveToGroup( KopeteGroup * , KopeteGroup * );
 
 signals:
 	void chatToUser( QString );

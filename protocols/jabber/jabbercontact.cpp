@@ -84,12 +84,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 
 	if(mc)
 	{
-		connect (mc , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
-				this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
-		connect (mc , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
-				this, SLOT (addToGroup(KopeteGroup*) ));
-		connect (mc , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
-				this, SLOT (removeFromGroup(KopeteGroup*) ));
 		connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
 				this, SLOT (slotMoved(KopeteMetaContact*) ));
 	}
@@ -824,20 +818,6 @@ void JabberContact::slotMoved(KopeteMetaContact* from)
 		if(groups_current.contains(group) && !groups_new.contains(group))
 			removeFromGroup(KopeteContactList::contactList()->getGroup(group));
 	}
-
-	disconnect (from , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
-	disconnect (from , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (addToGroup(KopeteGroup*) ));
-	disconnect (from , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (removeFromGroup(KopeteGroup*) ));
-
-	connect (metaContact() , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
-	connect (metaContact() , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (addToGroup(KopeteGroup*) ));
-	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
-			this, SLOT (removeFromGroup(KopeteGroup*) ));
 }
 
 void JabberContact::serialize( QMap<QString, QString> &serializedData,

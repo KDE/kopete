@@ -469,61 +469,58 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 	}
 }
 
-void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
+void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 {
-	if(m_temporary && to!=KopeteGroup::temporary)
+	if( isTemporary() && to != KopeteGroup::temporary )
 		return;
 
-	if (!from || !m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()))
+	if( !from || !m_groups.contains( from ) ||
+		( !isTopLevel() && from == KopeteGroup::toplevel ) )
 	{
-		addToGroup(to);
+		// We're adding, not moving, because 'from' is illegal
+		addToGroup( to );
 		return;
 	}
 
-	if(!to ||  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) )
+	if( !to || m_groups.contains( to ) ||
+		( isTopLevel() && to == KopeteGroup::toplevel ) )
 	{
-		removeFromGroup(from);
+		// We're removing, not moving, because 'to' is illegal
+		removeFromGroup( from );
 		return;
 	}
 
-//	kdDebug(14010) << "KopeteMetaContact::moveToGroup: "<<from.string() <<" => "<<to.string() << endl;
+	//kdDebug( 14010 ) << k_funcinfo << from.string() << " => " << to.string() << endl;
 
 	m_groups.remove( from );
-
 	m_groups.append( to );
 
-/*	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 	{
-		c->moveToGroup(from,to);
-	}*/
+		c->moveToGroup( from, to );
+	}
 
-	emit movedToGroup(from, to, this );
+	emit movedToGroup( this, from, to );
 }
 
-void KopeteMetaContact::removeFromGroup(  KopeteGroup *from)
+void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 {
-	if(m_temporary && from==KopeteGroup::temporary)
-		return ;
-
-	if (!from || !m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()))
+	if( !group || !m_groups.contains( group ) ||
+		( !isTopLevel() && group == KopeteGroup::toplevel ) ||
+		( isTemporary() && group == KopeteGroup::temporary ) )
 	{
-		/*kdDebug(14010) << "KopeteMetaContact::removeFromGroup: This contact is removed from all groups, deleting contact" <<endl;
-		KopeteContactList::contactList()->removeMetaContact(this);*/
 		return;
 	}
 
-	m_groups.remove( from );
+	m_groups.remove( group );
 
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+		c->removeFromGroup( group );
 
-	/*for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
-	{
-		c->removeFromGroup(from);
-	} */
-
-	emit removedFromGroup(  from, this);
+	emit removedFromGroup( this, group );
 }
 
-void KopeteMetaContact::addToGroup(  KopeteGroup *to )
+void KopeteMetaContact::addToGroup( KopeteGroup *to )
 {
 	if(m_temporary && to!=KopeteGroup::temporary)
 		return;
@@ -535,12 +532,12 @@ void KopeteMetaContact::addToGroup(  KopeteGroup *to )
 
 	m_groups.append( to );
 
-	/*for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 	{
-		c->addToGroup(to);
-	}*/
+		c->addToGroup( to );
+	}
 
-	emit addedToGroup( to ,this );
+	emit addedToGroup( this, to );
 }
 
 KopeteGroupList KopeteMetaContact::groups() const

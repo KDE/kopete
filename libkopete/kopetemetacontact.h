@@ -309,17 +309,17 @@ signals:
 	/**
 	 * The contact was moved
 	 */
-	void movedToGroup( KopeteGroup *from, KopeteGroup *to, KopeteMetaContact *contact);
+	void movedToGroup( KopeteMetaContact *contact, KopeteGroup *from, KopeteGroup *to );
 
 	/**
 	 * The contact was removed from group
 	 */
-	void removedFromGroup(KopeteGroup *from, KopeteMetaContact *contact);
+	void removedFromGroup( KopeteMetaContact *contact, KopeteGroup *group );
 
 	/**
 	 * The contact was added to another group
 	 */
-	void addedToGroup( KopeteGroup * to, KopeteMetaContact *contact);
+	void addedToGroup( KopeteMetaContact *contact, KopeteGroup *to );
 
 	/**
 	 * This signal is emmited when a contact is added to this metacontact

@@ -135,21 +135,23 @@ public:
 	 * multi-group memberships this method can do nothing. The group name
 	 * passed is the logical group. Protocols with server-side contact lists
 	 * can use this to keep the local and remote lists in sync.
+	 * The default implementation just ignores the call and is fine for use
+	 * in group-less protocols.
 	 */
-//	virtual void addToGroup( const QString &group );
+	virtual void addToGroup( KopeteGroup *newGroup );
 
 	/**
 	 * Remove a contact from a physical group.
 	 * If the logical group passed is different from the physical group, or
 	 * if this kind of changes is not supported this method may do nothing.
 	 */
-//	virtual void removeFromGroup( const QString &group );
+	virtual void removeFromGroup( KopeteGroup *group );
 
 	/**
 	 * Move a contact from one group to another. Again, this method may do
 	 * nothing if there's no support for this in the protocol.
 	 */
-//	virtual void moveToGroup( const QString &from, const QString &to );
+	virtual void moveToGroup( KopeteGroup *from, KopeteGroup *to );
 
 	/**
 	 * Sets the display name, or alias, for the contact.

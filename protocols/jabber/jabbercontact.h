@@ -63,6 +63,13 @@ public:
 	 ********************************************************************/
 
 	/**
+	 * Add/Remove user to/from a group
+	 */
+	virtual void addToGroup( KopeteGroup * );
+	virtual void removeFromGroup( KopeteGroup * );
+	virtual void moveToGroup( KopeteGroup * , KopeteGroup * );
+
+	/**
 	 * Return contact's status
 	 */
 	virtual ContactStatus status() const;
@@ -204,13 +211,6 @@ public slots:
 	 * Update contact to a new status
 	 */
 	void slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason);
-
-	/**
-	 * Add/Remove user to/from a group
-	 */
-	void addToGroup( KopeteGroup * );
-	void removeFromGroup( KopeteGroup * );
-	void moveToGroup( KopeteGroup * , KopeteGroup * );
 
 private slots:
 	/**
