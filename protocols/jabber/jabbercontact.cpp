@@ -91,13 +91,20 @@ void JabberContact::showContextMenu(QPoint, QString /*group */) {
 		items.append("Automatic (best resource)");
 		JabberResource *tmpBestResource = bestResource();
 		items.append(tmpBestResource->resource());
-		for (JabberResource *resource = resources.first(); resource; resource = resources.next()) {
-			if (resource != tmpBestResource) {
-				items.append(resource->resource());
+		int i = 1;
+		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++) {
+			if (tmpResource != tmpBestResource) {
+				items.append(tmpResource->resource());
+			}
+			if (hasResource && tmpResource->resource() == activeResource->resource()) {
+				kdDebug() << "Jabber contact: Woot woot, it's the same resource, activating item " << i << endl;
+				actionSelectResource->setCurrentItem(i);
 			}
 		}
 		actionSelectResource->setItems(items);
-		actionSelectResource->setCurrentItem(0);
+		if (!hasResource) {
+			actionSelectResource->setCurrentItem(0);
+		}
 		actionSelectResource->plug(popup);
 	}
 	popup->insertSeparator();
@@ -347,6 +354,7 @@ void JabberContact::slotSelectResource() {
 		hasResource = true;
 		JabberResource *resource;
 		QString selectedResource = actionSelectResource->currentText();
+		kdDebug() << "Jabber contact: Moving to resource " << selectedResource << endl;
 		for (resource = resources.first(); resource; resource = resources.next()) {
 			if (resource->resource() == selectedResource) {
 				activeResource = resource;
