@@ -115,15 +115,12 @@ KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot,
 	KListAction *a=new KListAction(  i18n("&Add Contact"), "bookmark_add", 0, recvr, slot, parent, name );
 	QStringList protocolList;
 
-	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
 	{
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( ( *i ).name );
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>( tmpprot );
-		if (prot)
-		{
-			protocolList.append((*i).name);
-		}
+		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+		if( proto )
+			protocolList.append( proto->pluginId() );
 	}
 
 	a->setItems( protocolList );
