@@ -164,6 +164,9 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 
 void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 {
+	if ( !m_session )
+		return;
+
 	if ( sct == MakeConnections )
 	{
 		QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
