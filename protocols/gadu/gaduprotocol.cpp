@@ -340,37 +340,38 @@ GaduProtocol::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 void
 GaduProtocol::changeStatus( int status, const QString& descr )
 {
-    if ( session_->isConnected() ) {
-        if ( descr.isEmpty() ) {
-            session_->changeStatus( status );
-        } else {
-            session_->changeStatusDescription( status, descr );
-        }
-        status_ = status;
-        myself_->setGaduStatus( status_ );
-        switch( status_ ) {
-        case GG_STATUS_NOT_AVAIL:
-        case GG_STATUS_NOT_AVAIL_DESCR:
-            statusBarIcon_->setPixmap( awayIcon_ );
-            break;
-        case GG_STATUS_AVAIL:
-        case GG_STATUS_AVAIL_DESCR:
-            statusBarIcon_->setPixmap( onlineIcon_ );
-            break;
-        case GG_STATUS_BUSY:
-        case GG_STATUS_BUSY_DESCR:
-            statusBarIcon_->setPixmap( busyIcon_ );
-            break;
-        case GG_STATUS_INVISIBLE:
-        case GG_STATUS_INVISIBLE_DESCR:
-            statusBarIcon_->setPixmap( invisibleIcon_ );
-            break;
-        default:
-            statusBarIcon_->setPixmap( offlineIcon_ );
-            break;
-        }
-    } else
+    if ( !session_->isConnected() ) {
+        slotLogin();
+    }
+    if ( descr.isEmpty() ) {
+        session_->changeStatus( status );
+    } else {
+        session_->changeStatusDescription( status, descr );
+    }
+    status_ = status;
+    myself_->setGaduStatus( status_ );
+    switch( status_ ) {
+    case GG_STATUS_NOT_AVAIL:
+    case GG_STATUS_NOT_AVAIL_DESCR:
+        statusBarIcon_->setPixmap( awayIcon_ );
+        break;
+    case GG_STATUS_AVAIL:
+    case GG_STATUS_AVAIL_DESCR:
+        statusBarIcon_->setPixmap( onlineIcon_ );
+        break;
+    case GG_STATUS_BUSY:
+    case GG_STATUS_BUSY_DESCR:
+        statusBarIcon_->setPixmap( busyIcon_ );
+        break;
+    case GG_STATUS_INVISIBLE:
+    case GG_STATUS_INVISIBLE_DESCR:
+        statusBarIcon_->setPixmap( invisibleIcon_ );
+        break;
+    default:
+        slotLogoff();
         statusBarIcon_->setPixmap( offlineIcon_ );
+        break;
+    }
 }
 
 void
@@ -530,7 +531,6 @@ GaduProtocol::slotGoOnline()
         kdDebug()<<"#### Connecting..."<<endl;
         slotLogin();
     }
-    changeStatus( GG_STATUS_AVAIL );
 }
 
 void
