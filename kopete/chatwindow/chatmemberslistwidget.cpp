@@ -38,7 +38,7 @@ public:
 	{
 	}
 
-	~ToolTip()
+	virtual ~ToolTip()
 	{
 		remove( m_listView->viewport() );
 	}
