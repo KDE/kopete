@@ -148,6 +148,8 @@ signals:
 	 */
 	void typingMsg( bool isTyping );
 
+	void dying( QWidget* );
+
 public slots:
 	/**
 	 * Got a typing notification from a user

@@ -83,7 +83,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mId = id;
 	d->mLog = true;
 	d->isEmpty= others.isEmpty();
-	d->mCanBeDeleted= false;
+	d->mCanBeDeleted = false;
 	d->isBusy=false;
 	myWindow = 0L;
 	readModeChanged();
@@ -103,12 +103,10 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 
 KopeteMessageManager::~KopeteMessageManager()
 {
-	kdDebug(14010) << k_funcinfo <<endl;
-	d->mCanBeDeleted=false; //prevent double deletion
-	emit dying(this);
-	delete widget();
+	kdDebug(14010) << k_funcinfo << endl;
+	d->mCanBeDeleted = false; //prevent double deletion
+	emit dying(d->mView);
 	delete d;
-	d = 0;
 }
 
 void KopeteMessageManager::slotSendEnabled(bool e)
@@ -485,12 +483,12 @@ void KopeteMessageManager::slotMessageSent(const KopeteMessage &message)
 
 void KopeteMessageManager::slotChatViewClosing()
 {
-	d->mView = 0L;
 	if(d->mCanBeDeleted)
 	{
 		kdDebug(14010) << k_funcinfo << "delete KMM" << endl;
-		deleteLater();
+		delete this;
 	}
+	d->mView = 0L;
 }
 
 void KopeteMessageManager::slotChatWindowClosing()
@@ -502,7 +500,7 @@ void KopeteMessageManager::slotChatWindowClosing()
 		ChatWindowMap windowMap = *(chatWindowMap());
 		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
 			chatWindowMap()->remove( d->mProtocol );
-
+		myWindow = 0L;
 		d->mView = 0L;
 	}
 	else if (d->mWidget == Email)
@@ -513,7 +511,7 @@ void KopeteMessageManager::slotChatWindowClosing()
 	}
 	if(d->mCanBeDeleted)
 	{
-		kdDebug(14010) << k_funcinfo << "delete KMM" << endl;
+	 	kdDebug(14010) << k_funcinfo << "delete KMM" << endl;
 		deleteLater();
 	}
 }
@@ -694,7 +692,7 @@ void KopeteMessageManager::slotTyping ( bool t )
 
 void KopeteMessageManager::setCanBeDeleted ( bool b )
 {
-	d->mCanBeDeleted =b;
+	d->mCanBeDeleted = b;
 	if(b && !widget())
 		deleteLater();
 }
