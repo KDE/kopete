@@ -54,7 +54,7 @@ class KopeteContact : public QObject
 {
 	Q_OBJECT
 
-	Q_PROPERTY( QString displayName READ displayName )
+	//Q_PROPERTY( QString displayName READ displayName )
 	Q_PROPERTY( QString formattedName READ formattedName )
 	Q_PROPERTY( QString formattedIdleTime READ formattedIdleTime )
 	Q_PROPERTY( bool isOnline READ isOnline )
@@ -119,8 +119,8 @@ public:
 	 * @brief Serialize the contact for storage in the contact list.
 	 *
 	 * The provided serializedData contain the contact id in the field
-	 * "contactId" and the display name in the field "displayName". If
-	 * you don't like this, or don't want to store these fields at all,
+	 * "contactId". If you don't like this, or don't want to 
+	 * store these fields at all,
 	 * you are free to remove them from the list.
 	 *
 	 * Most plugins don't need more than these fields, so they only need
@@ -153,8 +153,9 @@ public:
 	/**
 	 * \brief Get the current display name
 	 * @return The display name
+	 * @deprecated  Use the nickname property instead
 	 */
-	QString displayName() const;
+	QString displayName() const  KDE_DEPRECATED;
 
 	/**
 	 * @brief Get the online status of the contact
@@ -261,18 +262,6 @@ public:
 	 * \return false if this contact is not capable of receiving files
 	 */
 	bool canAcceptFiles() const;
-
-	/**
-	 * @brief Rename a contact's display name.
-	 *
-	 * This method can be asynchronous, i.e. it starts the rename, but the
-	 * result may not be instant. Whenever the rename is done the contact
-	 * will call @ref setDisplayName() (which emits @ref displayNameChanged() )
-	 * to confirm the change.
-	 *
-	 * The default implementation calls @ref setDisplayName() immediately.
-	 */
-	virtual void rename( const QString &newName );
 
 	/**
 	 * Returns the primary message manager affiliated with this contact
@@ -426,11 +415,15 @@ public slots:
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
+	 * @brief Syncronise the server and the metacontact.
 	 * Protocols with server-side contact lists can implement this to
-	 * sync the server groups with the metaContact groups.
-	 * This method is called every time the metacontact has been moved
+	 * sync the server groups with the metaContact groups. Or the server alias if any.
+	 *
+	 * This method is called every time the metacontact has been moved or renamed.
 	 *
 	 * default implementation does nothing
+	 *
+	 * @todo rename it to syncronise since it's not anymore only for groups.
 	 */
 	virtual void syncGroups();
 
@@ -441,19 +434,14 @@ public slots:
 
 protected:
 	/**
-	 * Sets the display name, or alias, for the contact.
+	 * Sets the display name, for the contact.
 	 * this is what is shown in the contact list.
 	 * @param name Then new display name
+	 * @deprecated uses the nickname property.
 	 */
-	void setDisplayName( const QString &name );
+	void setDisplayName( const QString &name )  KDE_DEPRECATED;
 
 private slots:
-	/**
-	 * Function that is called when "Change Alias" is chosen from the
-	 * context menu.  Presents dialog box to change alias, and calls
-	 * setDisplayName with the returned value
-	 */
-	void slotChangeDisplayName();
 
 	/**
 	 * This add the contact totally in the list if it was a temporary contact
@@ -466,12 +454,6 @@ signals:
 	 */
 	void onlineStatusChanged( KopeteContact *contact,
 		const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
-
-	/**
-	 * Connect to this signal to know when the contact
-	 * changed its name/nick
-	 */
-	void displayNameChanged( const QString &oldName, const QString &newName );
 
 	/**
 	 * The contact is about to be destroyed.

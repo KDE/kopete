@@ -40,6 +40,7 @@
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 
 struct KopeteMetaContactPrivate
 {
@@ -107,8 +108,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-		connect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
-			this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
+		connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -120,7 +121,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		{
 			/*kdDebug(14010) << k_funcinfo <<
 				"empty displayname, using contacts display" << endl;*/
-			setDisplayName( c->displayName() );
+			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+			setDisplayName( nick.isEmpty() ? c->contactId() : nick );
 			d->trackChildNameChanges = true;
 		}
 
@@ -203,8 +205,9 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-			disconnect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
-				this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
+			connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+
 
 			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -489,12 +492,12 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	//The name is set by the user, disable tracking
 	d->trackChildNameChanges = false;
 
-	//Forward new name to subcontacts if requested
-	if ( KopetePrefs::prefs()->forwardContactRenames() )
-		for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
-			( *it )->rename( name );
-
 	emit displayNameChanged( old , name );
+
+	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
+		( *it )->syncGroups();
+	
+	
 }
 
 QString KopeteMetaContact::displayName() const
@@ -511,7 +514,9 @@ void KopeteMetaContact::setTrackChildNameChanges( bool  track  )
 {
 	if (track && (d->contacts.count() == 1))
 	{
-		setDisplayName( (d->contacts.first())->displayName() );
+		QString nick=d->contacts.first()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		setDisplayName( nick.isEmpty() ? d->contacts.first()->contactId() : nick );
+
 		d->trackChildNameChanges = true;
 	}
 	else
@@ -521,18 +526,21 @@ void KopeteMetaContact::setTrackChildNameChanges( bool  track  )
 	emitPersistentDataChanged();
 }
 
-void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, const QString &newName )
+void KopeteMetaContact::slotProperyChanged( KopeteContact*, const QString &key,
+		const QVariant&, const QVariant &newValue  )
 {
-	/*kdDebug(14010) << k_funcinfo << "name=" << newName <<
-		", d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;*/
-
-	if( d->trackChildNameChanges || d->displayName.isEmpty() )
+	if( key == Kopete::Global::Properties::self()->nickName().key() )
 	{
-		setDisplayName( newName );
-		//because d->trackChildNameChanges is set to false in setDisplayName
-		d->trackChildNameChanges = true;
-	}
+		QString newNick=newValue.toString();
+		if( (d->trackChildNameChanges || d->displayName.isEmpty()) && !newNick.isEmpty() )
+		{
+			setDisplayName( newNick );
+			//because d->trackChildNameChanges is set to false in setDisplayName
+			d->trackChildNameChanges = true;
+		}
+	//TODO:  chack if the property was persistent, and emit, not only when it's the displayname
 	emitPersistentDataChanged();
+	}  // <<<<===  move that  one line before when ready :-)
 }
 
 void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )

@@ -420,9 +420,9 @@ private slots:
 	void slotContactStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 
 	/**
-	 * One of the child contact's display names changed
+	 * One of the child contact's property changed
 	 */
-	void slotContactNameChanged( const QString &oldName, const QString &newName );
+	void slotProperyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still

@@ -55,7 +55,6 @@
 struct KopeteContactPrivate
 {
 public:
-	QString displayName;
 	bool fileCapable;
 
 	KopeteOnlineStatus onlineStatus;
@@ -67,7 +66,6 @@ public:
 	KAction *actionChat;
 	KAction *actionDeleteContact;
 	KAction *actionChangeMetaContact;
-	KAction *actionChangeAlias;
 	KAction *actionUserInfo;
 	KAction *actionSendFile;
 	KAction *actionAddContact;
@@ -93,7 +91,6 @@ KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId,
 
 	d->metaContact = parent;
 	d->fileCapable = false;
-	d->displayName = contactId;
 	d->account = account;
 	d->idleTime = 0;
 
@@ -120,25 +117,23 @@ KopeteContact::~KopeteContact()
 	delete d;
 }
 
-void KopeteContact::rename( const QString &name )
-{
-	// Default implementation immediately sets the new name
-	setDisplayName( name );
-}
 
 void KopeteContact::setDisplayName( const QString &name )
 {
-	if( name == d->displayName )
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if( name == nick )
 		return;
-
-	QString old = d->displayName;
-	d->displayName = name;
-	emit displayNameChanged( old , name );
+ 
+	setProperty( Kopete::Global::Properties::self()->nickName(), nick );
 }
 
 QString KopeteContact::displayName() const
 {
-	return d->displayName;
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if( !nick.isEmpty() )
+		return nick;
+		
+	return d->contactId;
 }
 
 const KopeteOnlineStatus& KopeteContact::onlineStatus() const
@@ -215,7 +210,6 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              menu, "actionSendFile" );
 	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          menu, "actionUserInfo" );
 	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           menu, "actionSendMessage" );
-	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), menu, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
 	d->actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
@@ -229,10 +223,11 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 
 	QString titleText;
 
-	if( displayName() == contactId() )
-		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName(), d->onlineStatus.description() );
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if( nick.isEmpty() )
+		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), d->onlineStatus.description() );
 	else
-		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName(), contactId(), d->onlineStatus.description() );
+		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), d->onlineStatus.description() );
 
 	menu->insertTitle( titleText );
 
@@ -272,20 +267,10 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 
 	if( metaContact() && !metaContact()->isTemporary() )
 	{
-		d->actionChangeAlias->plug( menu );
 		d->actionDeleteContact->plug( menu );
 	}
 
 	return menu;
-}
-
-void KopeteContact::slotChangeDisplayName()
-{
-	QString newName =
-		KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ), displayName());
-
-	if( !newName.isNull() )
-		rename( newName );
 }
 
 void KopeteContact::slotChangeMetaContact()
@@ -357,9 +342,9 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		int result=KMessageBox::No;
 		if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1 <%2>' to `%3'.\n"
-				"`%4' will be empty afterwards. Do you want to delete this contact?" )
-					.arg(displayName(), contactId(), m ? m->displayName() : QString::null, old->displayName())
+			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
+				"`%3' will be empty afterwards. Do you want to delete this contact?" )
+					.arg(contactId(), m ? m->displayName() : QString::null, old->displayName())
 				, i18n( "Move Contact" ), i18n( "&Delete" ) , i18n( "&Keep" ) , QString::fromLatin1("delete_old_contact_when_move") );
 
 			if(result==KMessageBox::Cancel)
@@ -418,9 +403,9 @@ void KopeteContact::serializeProperties(QMap<QString, QString> &serializedData)
 		QVariant val = it.data().value();
 		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
 
-		kdDebug(14010) << k_funcinfo << "storing data of property '" <<
+		/*kdDebug(14010) << k_funcinfo << "storing data of property '" <<
 			it.key() << "' for contact " << d->displayName <<
-			" using xmlized key " << key << endl;
+			" using xmlized key " << key << endl;*/
 
 		serializedData[key] = val.toString();
 
@@ -692,12 +677,14 @@ QString KopeteContact::toolTip() const
 				KURL::encode_string( account()->accountId() ),
 				KURL::encode_string( contactId() ) );
 
-	if ( displayName() == contactId() )
+	// TODO:  the nickname should be a configurable properties, like others. -Olivier
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if ( nick.isEmpty() )
 	{
 		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
 			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1" ).
 			arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
-				QStyleSheet::escape( displayName() ) );
+				QStyleSheet::escape( d->contactId ) );
 	}
 	else
 	{
@@ -705,7 +692,7 @@ QString KopeteContact::toolTip() const
 			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
 				arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
 					QStyleSheet::escape( contactId() ),
-					QStyleSheet::escape( displayName() ) );
+					QStyleSheet::escape( nick ) );
 	}
 
 	// --------------------------------------------------------------------------

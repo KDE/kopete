@@ -176,6 +176,13 @@ const ContactPropertyTmpl &Properties::emailAddress() const
 		i18n("Email Address"), QString::fromLatin1("mail_generic"), true);
 }
 
+const ContactPropertyTmpl &Properties::nickName() const
+{
+	return createProp(QString::fromLatin1("nickName"),
+		i18n("Nick Name"), QString::null, true);
+}
+
+
 const ContactPropertyTmpl &Properties::createProp(const QString &key,
 	const QString &label, const QString &icon, bool persistent) const
 {

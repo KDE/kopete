@@ -25,6 +25,7 @@
 #include <kiconloader.h>
 #include <kstringhandler.h>
 
+#include "kopeteglobal.h"
 #include "kopetemessage.h"
 #include "kopeteemoticons.h"
 #include "kopetemetacontact.h"
@@ -692,15 +693,20 @@ const QDomDocument KopeteMessage::asXML() const
 
 	if( d->from )
 	{
-		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName(): d->from->displayName();
+		//the nickname
+		QString nick=d->from->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		if(nick.isEmpty()) 
+			nick= d->from->metaContact() ? d->from->metaContact()->displayName() : d->from->contactId() ;
+	
+		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName(): nick;
 		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
 		QDomElement fromContactNode = doc.createElement( QString::fromLatin1("contact") );
 		fromContactNode.setAttribute( QString::fromLatin1("contactId"), d->from->contactId() );
 
 		QDomElement fromDisplayName = doc.createElement( QString::fromLatin1("contactDisplayName") );
-		fromDisplayName.setAttribute( QString::fromLatin1("dir"), d->from->displayName().isRightToLeft() ?
+		fromDisplayName.setAttribute( QString::fromLatin1("dir"), nick.isRightToLeft() ?
 			QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-		fromDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( d->from->displayName() ) );
+		fromDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( nick ) );
 		fromContactNode.appendChild( fromDisplayName );
 
 		QDomElement fromMcDisplayname = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
@@ -730,16 +736,21 @@ const QDomDocument KopeteMessage::asXML() const
 		KopeteContact *c = d->to.first();
 		if( c )
 		{
+		//the nickname
+			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+			if(nick.isEmpty()) 
+				nick= c->metaContact() ? c->metaContact()->displayName() : c->contactId() ;
+			
 			QDomElement cNode = doc.createElement( QString::fromLatin1("contact") );
 			cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
 
 			QDomElement toDisplayName = doc.createElement( QString::fromLatin1("contactDisplayName") );
-			toDisplayName.setAttribute( QString::fromLatin1("dir"), c->displayName().isRightToLeft() ?
+			toDisplayName.setAttribute( QString::fromLatin1("dir"), nick.isRightToLeft() ?
 				QString::fromLatin1("rtl") : QString::fromLatin1("ltr"));
-			toDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( c->displayName() ) );
+			toDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( nick ) );
 			cNode.appendChild( toDisplayName );
 
-			QString toName = c->metaContact() ? c->metaContact()->displayName() : c->displayName();
+			QString toName = c->metaContact() ? c->metaContact()->displayName() : nick;
 			QDomElement toMDisplayName = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
 			toMDisplayName.setAttribute( QString::fromLatin1("dir"), toName.isRightToLeft() ?
 				QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );

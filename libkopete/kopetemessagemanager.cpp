@@ -37,6 +37,7 @@
 #include "kopetenotifyclient.h"
 #include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 #include "kopeteview.h"
 
 class KMMPrivate
@@ -155,36 +156,33 @@ void KopeteMessageManager::slotUpdateDisplayName()
 	if( d->customDisplayName )
 		return;
 
-	QString nextDisplayName;
-
 	KopeteContact *c = d->mContactList.first();
 
 	//If there is no member yet, don't try to update the display name
 	if ( !c )
 		return;
 
-	if ( c->metaContact() )
-		d->displayName = c->metaContact()->displayName();
-	else
-		d->displayName = c->displayName();
-
+	d->displayName=QString::null;
+	while ( ( c = d->mContactList.next() ) != 0L )
+	{
+		if(! d->displayName.isNull() )
+			d->displayName.append( QString::fromLatin1( ", " ) ) ;
+		
+		if ( c->metaContact() )
+			d->displayName.append( c->metaContact()->displayName() );
+		else
+		{
+			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+			d->displayName.append( nick.isEmpty() ? c->contactId() : nick );
+		}
+	}
+	
 	//If we have only 1 contact, add the status of him
 	if ( d->mContactList.count() == 1 )
 	{
 		d->displayName.append( QString::fromLatin1( " (%1)" ).arg( c->onlineStatus().description() ) );
 	}
-	else
-	{
-		while ( ( c = d->mContactList.next() ) != 0L )
-		{
-			if ( c->metaContact() )
-				nextDisplayName = c->metaContact()->displayName();
-			else
-				nextDisplayName = c->displayName();
-			d->displayName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
-		}
-	}
-	kdDebug( 14010 ) << k_funcinfo << " : " << d->displayName <<endl;
+
 	emit displayNameChanged();
 }
 
@@ -244,8 +242,9 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 	if ( msg.direction() == KopeteMessage::Inbound )
 	{
-		if ( KopetePrefs::prefs()->highlightEnabled() && !user()->displayName().isEmpty() &&
-			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( user()->displayName() ), false ) ) )
+		QString nick=user()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		if ( KopetePrefs::prefs()->highlightEnabled() && !nick.isEmpty() &&
+			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), false ) ) )
 		{
 			msg.setImportance( KopeteMessage::Highlight );
 		}
@@ -281,7 +280,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 			if ( old->metaContact() )
 				disconnect( old->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			else
-				disconnect( old, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+				disconnect( old, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
 			emit contactRemoved( old, QString::null );
 		}
@@ -297,7 +296,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 		if ( c->metaContact() )
 			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		else
-			connect( c, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 	}
 	d->isEmpty = false;
@@ -324,7 +323,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		if ( c->metaContact() )
 			disconnect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		else
-			disconnect( c, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			disconnect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 	}
 

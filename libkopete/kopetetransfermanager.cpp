@@ -91,7 +91,7 @@ KURL KopeteTransfer::displayURL( const KopeteContact *contact, const QString &fi
 	else if( contact->metaContact() )
 		host = contact->metaContact()->displayName();
 	else
-		host = contact->displayName();
+		host = contact->contactId();
 	url.setHost(host);
 
 	// url.setPath( contact->protocol()->displayName() );

@@ -57,7 +57,6 @@ void KopetePrefs::load()
 	mTreeView = config->readBoolEntry("TreeView", true);
 	mStartDocked = config->readBoolEntry("StartDocked", false);
 	mUseQueue = config->readBoolEntry("Use Queue", true);
-	mForwardContactRenames = config->readBoolEntry("Forward Contact Renames", false);
 	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
 	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
 	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
@@ -159,7 +158,6 @@ void KopetePrefs::save()
 	config->writeEntry("SortByGroup", mSortByGroup);
 	config->writeEntry("StartDocked", mStartDocked);
 	config->writeEntry("Use Queue", mUseQueue);
-	config->writeEntry("Forward Contact Renames", mForwardContactRenames);
 	config->writeEntry("Raise Msg Window", mRaiseMsgWindow);
 	config->writeEntry("Show Events in Chat Window", mShowEvents);
 	config->writeEntry("Trayflash Notification", mTrayflashNotify);
@@ -276,10 +274,6 @@ void KopetePrefs::setUseQueue(bool value)
 	mUseQueue = value;
 }
 
-void KopetePrefs::setForwardContactRenames(bool value)
-{
-	mForwardContactRenames = value;
-}
 
 void KopetePrefs::setRaiseMsgWindow(bool value)
 {

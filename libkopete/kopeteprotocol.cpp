@@ -121,10 +121,10 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		// Preset the contactId and displayName, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
-		sd[ QString::fromLatin1( "displayName" ) ] = c->displayName();
+		//TODO(nick) remove
+		sd[ QString::fromLatin1( "displayName" ) ] = c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 		if(c->account())
 			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
-
 
 		// If there's an index field preset it too
 		QString index = c->protocol()->addressBookIndexField();

@@ -201,9 +201,9 @@ public slots:
 
 signals:
 	/**
-	 * Use result() and check error() for ERR_USER_CANCELLED
+	 * @deprecated Use result() and check error() for ERR_USER_CANCELLED
 	 */
-	void transferCanceled() KDE_DEPRECATED;
+	void transferCanceled() ;
 
 private:
 	void init( const KURL &, bool );

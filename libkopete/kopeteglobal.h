@@ -123,7 +123,10 @@ namespace Global
 			 * @return default template for a contact's work mobile number
 			 */
 			const ContactPropertyTmpl &workMobilePhone() const;
-
+			/**
+			 * @return default template for a contact's nickname (set by the contact)
+			 */
+			const ContactPropertyTmpl &nickName() const;
 			/**
 			 * @return a map of all registered ContactPropertyTmpl object
 			 */
