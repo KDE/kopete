@@ -17,69 +17,75 @@
 
 #include <qtimer.h>
 
-#include <kdebug.h>
-#include <klocale.h>
 #include <kaction.h>
+#include <kdebug.h>
 #include <klineeditdlg.h>
+#include <klocale.h>
 #include <kmessagebox.h>
- 
+
 #include "kopete.h"
-#include "kopetemessagemanagerfactory.h"
 #include "kopetecontactlist.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetetransfermanager.h"
 
- 
-#include "msnmessagemanager.h"
 #include "msncontact.h"
-#include "msnswitchboardsocket.h"
 #include "msnfiletransfersocket.h"
+#include "msnmessagemanager.h"
 #include "msnprotocol.h"
+#include "msnswitchboardsocket.h"
 
-
-MSNMessageManager::MSNMessageManager(const KopeteContact *user, KopeteContactPtrList others,QString logFile, const char *name)
-		: KopeteMessageManager(user,others,MSNProtocol::protocol(),0,logFile,ChatWindow,MSNProtocol::protocol(),name )
+MSNMessageManager::MSNMessageManager( const KopeteContact *user,
+	KopeteContactPtrList others, QString logFile, const char *name )
+: KopeteMessageManager( user, others, MSNProtocol::protocol(), 0, logFile,
+	ChatWindow, MSNProtocol::protocol(), name )
 {
-	kopeteapp->sessionFactory()->addKopeteMessageManager(this);
-	m_chatService=0l;
-//	m_msgQueued=0L;
-	m_actions=0L;
+	kopeteapp->sessionFactory()->addKopeteMessageManager( this );
+	m_chatService = 0l;
+//	m_msgQueued = 0L;
+	m_actions = 0L;
 
-	connect( this, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
-			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
+	connect( this, SIGNAL( messageSent( const KopeteMessage&,
+		KopeteMessageManager* ) ),
+		this, SLOT( slotMessageSent( const KopeteMessage&,
+		KopeteMessageManager* ) ) );
+	connect( kopeteapp->transferManager(),
+		SIGNAL( accepted( KopeteTransfer *, const QString& ) ),
+		this,
+		SLOT( slotFileTransferAccepted( KopeteTransfer *, const QString& ) ) );
+	connect( kopeteapp->transferManager(),
+		SIGNAL( refused( const KopeteFileTransferInfo & ) ),
+		this,
+		SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
 
-	connect( kopeteapp->transferManager() , SIGNAL( accepted(KopeteTransfer *, const QString& )) ,
-			this , SLOT(slotFileTransferAccepted(KopeteTransfer *, const QString& )));
-	connect( kopeteapp->transferManager() , SIGNAL( refused(const KopeteFileTransferInfo & )) ,
-			this , SLOT(slotFileTransferRefused(const KopeteFileTransferInfo &)));
-
-
-	m_timerOn=false;
-
+	m_timerOn = false;
 }
+
 MSNMessageManager::~MSNMessageManager()
 {
 	//force to disconnect the switchboard
 	if(m_chatService)
 		delete m_chatService;
 
-	QMap<unsigned long int,MSNFileTransferSocket*>::Iterator it;
-	for ( it = m_invitations.begin(); it != m_invitations.end() ; it = m_invitations.begin())
+	QMap<unsigned long int, MSNFileTransferSocket*>::Iterator it;
+	for( it = m_invitations.begin(); it != m_invitations.end() ; it = m_invitations.begin())
 	{
-		m_invitations.remove(it);
+		m_invitations.remove( it );
 		delete *it;
 	}
 }
 
-void MSNMessageManager::createChat(const QString &handle, const QString &address, const QString &auth, const QString &ID)
+void MSNMessageManager::createChat( const QString &handle,
+	const QString &address, const QString &auth, const QString &ID )
 {
-	if(m_chatService)
+	if( m_chatService )
 	{
-		kdDebug() << "MSNMessageManager::createChat - Service already exists, disconnect thmem " <<endl;
+		kdDebug() << "MSNMessageManager::createChat: "
+			<< "Service already exists, disconnect them." << endl;
 		delete m_chatService;
 	}
 
-	setCanBeDeleted(false);
+	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket();
 	m_chatService->setHandle( MSNProtocol::protocol()->myself()->id() );

@@ -138,9 +138,11 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString &userID , KopeteMetaContact *m=0L, const QString &group=QString::null);
+	void addContact( const QString &userID, KopeteMetaContact *mc = 0L,
+		const QString &group = QString::null );
 
-	void addGroup( const QString &groupName , const QString& contactToAdd=QString::null );
+	void addGroup( const QString &groupName,
+		const QString &contactToAdd = QString::null );
 	void renameGroup( const QString &oldGroup, const QString &newGroup );
 	void removeGroup( const QString &groupName );
 
@@ -160,13 +162,12 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
-
 	ContactList& contacts() { return m_contacts; }
 
 	MSNContact *contact( const QString &handle );
 
-  void setStatus(Status);
-  /** 
+	void setStatus(Status);
+	/**
 	 * Returns a set of action items for the chatWindows
 	 */
   KActionCollection * customChatActions(KopeteMessageManager * );
@@ -178,9 +179,6 @@ public:
 	 * Returns -1 if the group was not found.
 	 */
 	int groupNumber( const QString &groupName ) const;
-
-
-
 
 signals:
 //	void protocolUnloading();
@@ -371,8 +369,6 @@ private:
 	QStringList m_blockList;
 
 	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
-
-
 
 };
 

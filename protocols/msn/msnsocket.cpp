@@ -552,21 +552,23 @@ void MSNSocket::Buffer::add(char *str, unsigned int sz)
 	delete[] b;
 }
 
-QByteArray MSNSocket::Buffer::take(unsigned int sz)
+QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 {
-	if(size()<sz)
+	if( size() < blockSize )
 	{
-		kdDebug() << "MSNSocket::Buffer::take : [WARNING] buffer size ("<< size()<<") < asked size (" << sz <<") " << endl;
+		kdWarning() << "MSNSocket::Buffer::take: [WARNING] buffer size "
+			<< size() <<" < asked size " << blockSize << "!" << endl;
 		return QByteArray();
 	}
-	QByteArray rep(sz);
-	for (unsigned int f=0;f<sz;f++)
-		rep[f] = data()[f];
 
-	char *str=new char[size()-sz];
-	for(unsigned int f=0;f<size()-sz;f++)
-		str[f]=data()[sz+f];
-	duplicate(str,size()-sz);
+	QByteArray rep( blockSize );
+	for( unsigned i = 0; i < blockSize; i++ )
+		rep[ i ] = data()[ i ];
+
+	char *str = new char[ size() - blockSize ];
+	for( unsigned i = 0; i < size() - blockSize; i++ )
+		str[ i ] = data()[ blockSize + i ];
+	duplicate( str, size() - blockSize );
 	delete[] str;
 
 	return rep;
