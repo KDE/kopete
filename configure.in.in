@@ -16,22 +16,36 @@ KDE_CHECK_HEADERS(knotifydialog.h)
 KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui'
 
 # -- Check for KDE 3.1 and enable the compat dir --------------------
-AC_MSG_CHECKING([for kdelibs newer than 3.1.x])
-AC_TRY_COMPILE(dnl
-[
-#include <kdeversion.h>
 
+AC_MSG_CHECKING([for kdelibs newer than 3.1.x])
+
+kcompat_save_CXXFLAGS="$CXXFLAGS"
+kcompat_safe_LIBS="$LIBS"
+LIBS="$LIBS $X_EXTRA_LIBS"
+if test "$GXX" = "yes"; then
+CXXFLAGS="$CXXFLAGS $all_includes"
+fi
+
+AC_TRY_COMPILE([
+#include <kdeversion.h>
 #if !( KDE_IS_VERSION( 3, 1, 90 ) )
 #error Need to enable libkopete/compat/
 #endif
 ],
 [
 ],
+	AC_MSG_RESULT(yes)
+,
 	KOPETE_COMPAT_INCLUDES='-I$(top_srcdir)/kopete/libkopete/compat -I$(top_srcdir)/kopete/libkopete/compat/kcdialog'
 	KOPETE_INCLUDES=$KOPETE_INCLUDES' $(KOPETE_COMPAT_INCLUDES)'
 	LIB_KOPETECOMPAT='$(top_builddir)/kopete/libkopete/libkopete.la'
+	AC_MSG_RESULT(no)
 )
+CXXFLAGS="$kcompat_save_CXXFLAGS"
+LIBS="$kcompat_safe_LIBS"
+
 AM_CONDITIONAL(compile_LIBKOPETE_COMPAT, test -n "$LIB_KOPETECOMPAT")
+
 # -- End KDE 3.1 check ----------------------------------------------
 
 KDE_FIND_PATH(xml2-config, XML_CONFIG, [${prefix}/bin ${exec_prefix}/bin /usr/local/bin /opt/local/bin /usr/bin], [
