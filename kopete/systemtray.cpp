@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Nick Betcher           <nbetcher@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2003      by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -190,7 +190,6 @@ void KopeteSystemTray::slotNewEvent( KopeteEvent *event )
 			if( !event->message().manager()->account()->isAway() ||
 				KopetePrefs::prefs()->soundIfAway() )
 			{
-				kdDebug(14000) << k_funcinfo << "adding a balloon" << endl;
 				addBalloon();
 			}
 			else
@@ -237,9 +236,8 @@ void KopeteSystemTray::addBalloon()
 
 		if ( msg.from() )
 		{
-			kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
 			QString msgText = squashMessage( msg );
-			kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
+			kdDebug(14010) << k_funcinfo << "msg text=" << msgText << endl;
 
 			QString msgFrom;
 			if( msg.from()->metaContact() )
@@ -324,7 +322,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 
 QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 {
-	QString msgText = msg.plainBody();
+	QString msgText = msg.parsedBody();
 
 	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
 	rx.setMinimal( true );
@@ -333,7 +331,7 @@ QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 		// no URLs in text, just pick the first 30 chars of
 		// the parsed text if necessary. We used parsed text
 		// so that things like "<knuff>" show correctly
-		msgText = msg.parsedBody();
+		msgText = msg.escapedBody();
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
 	}
