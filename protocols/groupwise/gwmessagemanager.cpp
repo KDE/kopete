@@ -39,7 +39,7 @@
 
 #include "gwmessagemanager.h"
 
-GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_memberCount( others.count() )
+GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_memberCount( others.count() ), m_searchDlg( 0 )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
@@ -335,16 +335,20 @@ void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 
 void GroupWiseMessageManager::slotInviteOtherContact()
 {
-	// show search dialog
-	// connect ok signal to another slot
-	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
-				Kopete::UI::Global::mainWidget() );
-	KDialogBase * searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
-	m_search = new GroupWiseSearch( account(), QListView::Single, searchDlg, "invitesearchwidget" );
-	searchDlg->setMainWidget( m_search );
-	connect( searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-	connect( searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
-	searchDlg->show();
+	if ( !m_searchDlg )
+	{
+		// show search dialog
+		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
+					Kopete::UI::Global::mainWidget() );
+		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
+		m_search = new GroupWiseSearch( account(), QListView::Single, true, m_searchDlg, "invitesearchwidget" );
+		m_searchDlg->setMainWidget( m_search );
+		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
+		connect( m_searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
+		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
+		m_searchDlg->enableButtonOK( false );
+	}
+	m_searchDlg->show();
 }
 
 void GroupWiseMessageManager::slotSearchedForUsers()
@@ -364,7 +368,7 @@ void GroupWiseMessageManager::slotSearchedForUsers()
 				&ok, w , "invitemessagedlg", &validator );
 		if ( ok )
 		{	
-			static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, cd.dn, inviteMessage );
+			account()->sendInvitation( m_guid, cd.dn, inviteMessage );
 		}
 	}
 }

@@ -34,19 +34,24 @@ class GroupWiseSearch : public GroupWiseSearchWidget
 {
 Q_OBJECT
 public:
-	GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, QWidget *parent = 0, const char *name = 0);
+	GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly, 
+			QWidget *parent = 0, const char *name = 0);
 	~GroupWiseSearch();
 	QValueList< GroupWise::ContactDetails > selectedResults();
 public slots:
 	void doSearch();
+signals:
+	void selectionValidates( bool );
 protected:
 	unsigned char searchOperation( int comboIndex );
 protected slots:
 	void slotGotSearchResults();
 	void slotShowDetails();
+	void slotValidateSelection();
 private:
 	QValueList< GroupWise::ContactDetails > m_searchResults;
 	GroupWiseAccount * m_account;
+	bool m_onlineOnly;
 };
 
 #endif

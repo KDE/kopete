@@ -21,6 +21,7 @@
 class QLabel;
 class KAction;
 class KActionMenu;
+class KDialogBase;
 class GroupWiseAccount;
 class GroupWiseContact;
 class GroupWiseSearch;
@@ -131,7 +132,7 @@ protected slots:
 	 * Process the response from the search dialog; send the actual invitation
 	 */
 	void slotSearchedForUsers();
-	
+
 	void slotShowSecurity();
 	void slotShowArchiving();
 private:
@@ -148,8 +149,9 @@ private:
 	// labels showing secure and logging status
 	KAction *m_secure;
 	KAction *m_logging;
-	// search widget used for inviting contacts
+	// search widget and dialog used for inviting contacts
 	GroupWiseSearch * m_search;
+	KDialogBase * m_searchDlg;
 	// contacts who have been invited to join but have not yet joined the chat
 	KopeteContactPtrList m_invitees;
 	// track the number of members actually in the chat

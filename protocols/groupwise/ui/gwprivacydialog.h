@@ -61,6 +61,7 @@ private:
 	GroupWiseSearch * m_search;
 	QListBoxItem * m_defaultPolicy;
 	bool m_dirty;
+	KDialogBase * m_searchDlg;
 };
 
 #endif

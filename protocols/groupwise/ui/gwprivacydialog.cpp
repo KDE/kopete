@@ -174,15 +174,20 @@ void GroupWisePrivacyDialog::slotAllowClicked()
 
 void GroupWisePrivacyDialog::slotAddClicked()
 {
-	KDialogBase * searchDlg = new KDialogBase( this, "invitesearchdialog", false, 
-			i18n( "Search for contact to invite" ),
-			KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, 
-			KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
-	m_search = new GroupWiseSearch( m_account, QListView::Multi, searchDlg, "privacysearchwidget" );
-	searchDlg->setMainWidget( m_search );
-	connect( searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-	connect( searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
-	searchDlg->show();
+	if ( !m_searchDlg )
+	{
+		KDialogBase * m_searchDlg = new KDialogBase( this, "invitesearchdialog", false, 
+				i18n( "Search for contact to invite" ),
+				KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, 
+				KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
+		m_search = new GroupWiseSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );
+		m_searchDlg->setMainWidget( m_search );
+		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
+		connect( m_searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
+		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
+		m_searchDlg->enableButtonOK( false );
+	}
+	m_searchDlg->show();
 }
 
 void GroupWisePrivacyDialog::slotSearchedForUsers()

@@ -57,12 +57,13 @@ public:
 	int m_status;
 };
 
-GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, QWidget *parent, const char *name)
- : GroupWiseSearchWidget(parent, name), m_account( account )
+GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
+ : GroupWiseSearchWidget(parent, name), m_account( account ), m_onlineOnly( onlineOnly )
 {
 	m_results->setSelectionMode( mode );
 	m_results->setAllColumnsShowFocus( true );
 	connect( m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
+	connect( m_results, SIGNAL( selectionChanged() ), SLOT( slotValidateSelection() ) );
 }
 
 
@@ -160,6 +161,9 @@ void GroupWiseSearch::slotGotSearchResults()
 	QValueList< GroupWise::ContactDetails >::Iterator end = m_searchResults.end();
 	for ( ; it != end; ++it )
 	{
+		// it's necessary to change the status used for the LVIs,
+		// because the status returned by the server does not go linearly from Unknown to Available
+		// which is no use for us to sort on, and converting it to a KopeteOnlineStatus is overkill here
 		int statusOrdered;
 		switch ( (*it).status )
 		{
@@ -181,11 +185,19 @@ void GroupWiseSearch::slotGotSearchResults()
 			case 5: //idle
 				statusOrdered = 4;
 				break;
+			default:
+				statusOrdered = 0;
+				break;
 		}
 
 		new GWSearchResultsLVI( m_results, *it, statusOrdered,
 				m_account->protocol()->gwStatusToKOS( (*it).status ).iconFor( m_account ) );
 	}
+	// if there was only one hit, select it
+	if ( m_results->childCount() == 1 )
+		m_results->firstChild()->setSelected( true );
+	
+	slotValidateSelection();
 }
 
 QValueList< GroupWise::ContactDetails > GroupWiseSearch::selectedResults()
@@ -217,6 +229,44 @@ unsigned char GroupWiseSearch::searchOperation( int comboIndex )
 			return NMFIELD_METHOD_EQUAL;
 	}
 	return NMFIELD_METHOD_IGNORE;
+}
+
+void GroupWiseSearch::slotValidateSelection()
+{
+	bool ok = false;
+	// if we only allow online contacts to be selected
+	if ( m_onlineOnly )
+	{
+		// check that one of the selected items is online
+		QListViewItemIterator it( m_results );
+		while ( it.current() )
+		{
+			if ( it.current()->isSelected() && 
+					!( static_cast< GWSearchResultsLVI * >( it.current() )->m_status == 1 ) )
+			{
+				ok = true;
+				break;
+			}
+			++it;
+		}
+	}
+	else
+	{
+		// check that at least one item is selected
+		bool ok = false;
+		QListViewItemIterator it( m_results );
+		while ( it.current() )
+		{
+			if ( it.current()->isSelected() )
+			{
+				ok = true;
+				break;
+			}
+			++it;
+		}
+    }
+
+	emit selectionValidates( ok );
 }
 
 #include "gwsearch.moc"

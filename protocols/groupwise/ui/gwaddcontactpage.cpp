@@ -59,7 +59,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget
 		
 		// add search widget
 		( new QVBoxLayout( m_gwAddUI->m_tabWidget->page( 1 ) ) )->setAutoAdd( true );
- 		m_searchUI = new GroupWiseSearch( m_account, QListView::Single,
+ 		m_searchUI = new GroupWiseSearch( m_account, QListView::Single, false,
 				 m_gwAddUI->m_tabWidget->page( 1 ), "searchwidget" );
 		QHBoxLayout * hb = new QHBoxLayout( m_gwAddUI->m_tabWidget->page( 1 ) );
 		hb->addStretch( 2 );
@@ -67,6 +67,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget
 		QPushButton * searchButton = new QPushButton( i18n( "&Search" ), m_gwAddUI->m_tabWidget->page( 1 ), "searchbutton" );
 
 		connect( searchButton, SIGNAL( clicked() ), m_searchUI, SLOT( doSearch() ) );
+
 		m_gwAddUI->show ();
 
 		m_canadd = true;
