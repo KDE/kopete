@@ -14,7 +14,10 @@ o IRC Plugin
 		o Turning on/off left side icons in chat messages
 		o Turning on/off timestamping
 		o Colors, bold, and underlining in messages
+		o Ability to load more than one console
 	o Many bug fixes
+	o Removed servers from the contact list. They were intrusive.
+	o Channels and private conversation windows only appear in the contact list when added using "Add Contact"
 
 
 o ICQ Plugin
