@@ -192,7 +192,7 @@ static const char *msgerrreason[] = {
 
 static const int msgerrreasonlen = 25;
 
-OscarSocket::OscarSocket(const QString &connName, char cookie[8], QObject *parent, const char *name)
+OscarSocket::OscarSocket( const QString &connName, char *cookie, QObject *parent, const char *name)
     : OscarConnection("unknown", connName, Server, cookie, parent,name)
 {
     connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));

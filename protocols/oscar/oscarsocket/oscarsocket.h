@@ -92,7 +92,7 @@ struct UserInfo { //user info
 class OscarSocket : public OscarConnection  {
 	Q_OBJECT
 public:
-	OscarSocket(const QString &connName, char cookie[8]="ABCDEFGH", QObject *parent=0, const char *name=0);
+	OscarSocket(const QString &connName, char *cookie = "ABCDEFGH", QObject *parent=0, const char *name=0);
 	~OscarSocket();
 
   /** Sends an authorization request to the server */

@@ -43,7 +43,7 @@ public:
 	};
 
 	OscarConnection(const QString &sn, const QString &connName, ConnectionType type,
-		char cookie[8]="ABCDEFGH", QObject *parent=0, const char *name=0);
+		char *cookie = "ABCDEFGH", QObject *parent=0, const char *name=0);
 	~OscarConnection();
 
 	/** Sets the pointer to the debug dialog */

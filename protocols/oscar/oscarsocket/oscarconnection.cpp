@@ -20,7 +20,7 @@
 #include "oscarconnection.h"
 
 OscarConnection::OscarConnection(const QString &sn, const QString &connName,
-	ConnectionType type, char cookie[8], QObject *parent, const char *name)
+	ConnectionType type, char *cookie, QObject *parent, const char *name)
 	: QSocket(parent, name)
 {
 	mConnName = connName;
