@@ -174,6 +174,11 @@ public slots:
 	 */
 	void typing(bool t);
 
+	/**
+	 * Called after a message was sent successfully
+	 */
+	void messageSucceeded();
+
 protected:
 	/**
 	 * Create a message manager. This constructor is private, because the

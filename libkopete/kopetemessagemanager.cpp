@@ -157,10 +157,15 @@ void KopeteMessageManager::sendMessage(KopeteMessage &message)
 	}
 }
 
+void KopeteMessageManager::messageSucceeded()
+{
+	emit( messageSuccess() );
+}
+
 void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 {
 	kdDebug(14010) << k_funcinfo << endl;
-	
+
 	if( msg.direction() == KopeteMessage::Inbound )
 		emit( messageReceived( msg, this ) );
 
