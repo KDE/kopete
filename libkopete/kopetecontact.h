@@ -129,7 +129,7 @@ public:
 	const KopeteOnlineStatus& onlineStatus() const;
 
 	/**
-	 * Set the contact's online status and status descryption
+	 * Set the contact's online status and status description
 	 * When unused description is set to QString::null
 	*/
 	void setOnlineStatus(const KopeteOnlineStatus &status, 

@@ -30,7 +30,7 @@
                 <string>Use the name of the child contact</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>If you select this option, the displayname will be syncronized to the displayname of the child contact.
+                <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
 This option is only available if there is exactly one child contact </string>
             </property>
         </widget>
@@ -191,7 +191,7 @@ This option is only available if there is exactly one child contact </string>
                 <string>Check to use KDE address book</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>If you select this option, the displayname will be syncronized to the displayname of the child contact.
+                <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
 This option is only available if there is exactly one child contact </string>
             </property>
         </widget>

@@ -99,7 +99,7 @@ void GaduEditAccount::registrationComplete( const QString& , const QString& )
 	passwordEdit2__->setDisabled(true);
         rememberCheck_->setChecked(true);
 		    
-	KMessageBox::information(this, i18n("<b>You've registered a new acount.</b>"), i18n("Gadu-Gadu"));
+	KMessageBox::information(this, i18n("<b>You've registered a new account.</b>"), i18n("Gadu-Gadu"));
 }
 
 void GaduEditAccount::registrationError( const QString& title, const QString& what )

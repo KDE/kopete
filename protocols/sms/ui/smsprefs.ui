@@ -109,7 +109,7 @@
                         <cstring>subEnable</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Enable phone number internationalisation</string>
+                        <string>&amp;Enable phone number internationalization</string>
                     </property>
                     <property name="accel">
                         <string>Alt+E</string>

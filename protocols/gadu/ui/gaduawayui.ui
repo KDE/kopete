@@ -27,7 +27,7 @@
                 <number>40</number>
             </property>
             <property name="toolTip" stdset="0">
-                <string>type in your status descryption here</string>
+                <string>type in your status description here</string>
             </property>
         </widget>
         <widget class="QButtonGroup" row="0" column="0">

@@ -344,7 +344,7 @@
                                     <cstring>textLabel1_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Please select a square image.  The image will be scalled to 96x96</string>
+                                    <string>Please select a square image. The image will be scaled to 96x96</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignVCenter</set>

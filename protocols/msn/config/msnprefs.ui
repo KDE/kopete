@@ -65,7 +65,7 @@
                 <cstring>AutoDownloadPicture</cstring>
             </property>
             <property name="text">
-                <string>&amp;Automaticaly download the display picture if possible</string>
+                <string>&amp;Automatically download the display picture if possible</string>
             </property>
             <property name="checked">
                 <bool>true</bool>

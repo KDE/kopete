@@ -112,15 +112,15 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("deop"),
 		SLOT( slotDeopCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /deop <nickanme> - Remove channel operator status from someone (Requires operator status).") );
+		i18n("USAGE: /deop <nickname> - Remove channel operator status from someone (Requires operator status).") );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("voice"),
 		SLOT( slotVoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /voice <nickanme> - Give channel voice status to someone (Requires operator status).") );
+		i18n("USAGE: /voice <nickname> - Give channel voice status to someone (Requires operator status).") );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /devoice <nickanme> - Remove channel voice status from someone (Requires operator status).") );
+		i18n("USAGE: /devoice <nickname> - Remove channel voice status from someone (Requires operator status).") );
 
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)),
 		this, SLOT(slotMessageFilter(KopeteMessage &)) );
