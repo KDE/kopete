@@ -40,6 +40,7 @@
 #  include <arpa/inet.h>
 #endif
 #include <unistd.h>
+#include <stdint.h>
 
 DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
 	: QSocket()
