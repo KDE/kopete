@@ -285,15 +285,6 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 
 void KopeteMetaContactLVI::rename( const QString& newName )
 {
-	KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
-	if ( lv )
-	{
-		KopeteContactListView::UndoItem *u=new KopeteContactListView::UndoItem(KopeteContactListView::UndoItem::MetaContactRename, m_metaContact);
-		if(!m_metaContact->trackChildNameChanges())
-			u->args << m_metaContact->displayName();
-		lv->insertUndoItem(u);
-	}
-	
 	if ( newName.isEmpty() )
 	{
 		// Reset the last display name
@@ -475,7 +466,7 @@ void KopeteMetaContactLVI::slotRemoveFromGroup()
 }
 */
 
-void KopeteMetaContactLVI::startRename( int /*col*/ )
+void KopeteMetaContactLVI::startRename( int col )
 {
 	KListViewItem::startRename( 0 );
 }

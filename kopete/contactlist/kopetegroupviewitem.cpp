@@ -263,16 +263,7 @@ QString KopeteGroupViewItem::text( int column ) const
 void KopeteGroupViewItem::setText( int column, const QString &text )
 {
 	if ( column == 0 )
-	{
-		KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
-		if ( lv )
-		{
-			KopeteContactListView::UndoItem *u=new KopeteContactListView::UndoItem(KopeteContactListView::UndoItem::GroupRename, 0L, m_group);
-			u->args << m_group->displayName();
-			lv->insertUndoItem(u);
-		}
 		group()->setDisplayName( text );
-	}
 	else
 		KListViewItem::setText( column, text );
 }
