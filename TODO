@@ -5,8 +5,6 @@ Beware: It's totally unsorted ;)
 
 ================================================================================
 
-- fix account pluginData() handling, it obviously gets lost somehow sometimes
-
 - Once and for all fix the way displayName is used in KopeteContact. With
   serverside contact lists it's now impossible to rename contacts on the server
   because some people (e.g. Olivier) want to see the nickname that a user
@@ -53,8 +51,6 @@ OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 
 	- make renaming serverside contacts possible (function is there but fails due
 	  to massive contactlist crappyness caused by above mentioned classes)
-
-	- fix adding contacts for both addcontactwizard and serverside list
 
 	- error handling on channel 0x04 messages. properly disconnect and emit a
 	  signal in oscarsocket.
