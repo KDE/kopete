@@ -4,6 +4,7 @@ AM_CPPFLAGS = -I$(srcdir)/../ \
 	-I$(srcdir)/../../ \
 	-I$(srcdir)/ui/ \
 	-I$(srcdir)/../../oscarsocket \
+	-I$(srcdir)/../../../../ \
 	$(KOPETE_INCLUDES) $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteicqui.la
