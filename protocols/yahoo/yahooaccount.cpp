@@ -15,9 +15,6 @@
     *************************************************************************
 */
 
-//QT
-#include <qregexp.h>
-
 // KDE
 #include <kconfig.h>
 #include <kdebug.h>

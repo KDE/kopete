@@ -52,19 +52,24 @@ public:
 	static YahooProtocol *protocol();
 
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
-		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
-	
+									 const QMap<QString,
+									 QString> &serializedData,
+									 const QMap<QString, QString> &addressBookData );
+
 	QString server() { return m_server; }
 	int port() { return m_port; }
 	bool importContacts() { return m_importContacts; }
 	bool useGroupNames() { return m_useGroupNames; }
-	
+
 public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
-	void slotSettingsChanged(void);					// Callback when settings changed
+	/**
+	 * Callback when settings changed
+	 */
+	void slotSettingsChanged(void);
 
 private:
 	static YahooProtocol* s_protocolStatic_;

@@ -35,18 +35,26 @@
 
 
 // Yahoo Preferences
-class YahooPreferences : public ConfigModule {
-	Q_OBJECT public:
-		YahooPreferences(const QString & pixmap, QObject * parent = 0);
-								// Constructor
+class YahooPreferences : public ConfigModule
+{
+	Q_OBJECT
+public:
+
+	YahooPreferences(const QString & pixmap, QObject * parent = 0);
 	~YahooPreferences();	// Destructor
+
+	/**
+	 * Method that saves preferences
+	 */
 	virtual void save();	// save preferences method
 
-	signals: 
-		void saved();	// Parent slot saved
+signals:
 
-	private:
-		dlgPreferences *m_preferencesDialog;	// Preferences Dialog
+	void saved();	// Parent slot saved
+
+private:
+
+	dlgPreferences *m_preferencesDialog;	// Preferences Dialog
 };
 
 #endif

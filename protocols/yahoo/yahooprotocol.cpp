@@ -33,8 +33,6 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
 
-class KPopupMenu;
-
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & ) : KopeteProtocol( parent, name )
 {
 	kdDebug(14180) << "YahooProtocol::YahooProtocol()" << endl;
@@ -45,8 +43,9 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 		kdDebug(14180) << "YahooProtocol already initialized" << endl;
 
 	// Init actions and icons and create the status bar icon
-//	initActions();
 	// TODO: this will be useful for introduing yahoo specific actions in the future, but i cant be bothered yet.
+	//initActions();
+
 
 
 	// Create preferences menu
@@ -86,7 +85,8 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 
-	YahooAccount *theAccount = static_cast<YahooAccount *>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
+	YahooAccount *theAccount = static_cast<YahooAccount*>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
+	
 	if(!theAccount)
 	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
 		return;

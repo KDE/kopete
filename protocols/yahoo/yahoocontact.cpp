@@ -82,15 +82,17 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText = QString
 
 void YahooContact::syncToServer()
 {
-	kdDebug(14180) << "[YahooContact::syncToServer()]" << endl;
-	if(!static_cast<YahooAccount *>(account())->isConnected()) return;
+	YahooAccount* yAccount = static_cast<YahooAccount*> (account());
 
-	if(!static_cast<YahooAccount *>(account())->isOnServer(m_userId))
+	kdDebug(14180) << "[YahooContact::syncToServer()]" << endl;
+	if(!yAccount->isConnected()) return;
+
+	if(!yAccount->isOnServer(m_userId))
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
 		KopeteGroupList groupList = metaContact()->groups();
 		for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
-			static_cast<YahooAccount *>(account())->yahooSession()->addBuddy(m_userId, g->displayName() );
+			yAccount->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 }
 

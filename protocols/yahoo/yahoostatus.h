@@ -23,11 +23,11 @@
 #include "kopetecontact.h"
 #include "libyahoo2/yahoo2_types.h"
 
-#define YSTOffline		I18N_NOOP("Offline")
+#define YSTOffline			I18N_NOOP("Offline")
 #define YSTInvisible		I18N_NOOP("Invisible")
 #define YSTAvailable		I18N_NOOP("Available")
 #define YSTBeRightBack		I18N_NOOP("Be Right Back")
-#define YSTBusy			I18N_NOOP("Busy")
+#define YSTBusy				I18N_NOOP("Busy")
 #define YSTNotAtHome		I18N_NOOP("Not at Home")
 #define YSTNotAtMyDesk		I18N_NOOP("Not at my Desk")
 #define YSTNotInTheOffice	I18N_NOOP("Not in the Office")
@@ -35,7 +35,7 @@
 #define YSTOnVacation		I18N_NOOP("On Vacation")
 #define YSTOutToLunch		I18N_NOOP("Out to Lunch")
 #define YSTSteppedOut		I18N_NOOP("Stepped Out")
-#define YSTIdle			I18N_NOOP("Idle")
+#define YSTIdle				I18N_NOOP("Idle")
 
 class YahooStatus
 {

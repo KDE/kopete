@@ -56,25 +56,58 @@ public:
 	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
 	~YahooAccount();
 
-	virtual KopeteContact *myself() const;				// returns our yahoo contact
-	YahooContact *contact(const QString &id);			// returns a contact of name "id"
+	/**
+	 * Returns our Yahoo Contact
+	 */
+	virtual KopeteContact *myself() const;
+
+	/*
+	 * Returns a contact of name @p id
+	 */
+	YahooContact *contact(const QString &id);
+
 	virtual KActionMenu* actionMenu();
 
-	virtual void setAway(bool, const QString &);			// set away status
+	/**
+	 * Sets the yahoo away status
+	 */
+	virtual void setAway(bool, const QString &);
 
-	YahooSession *yahooSession();					// the session
+	/**
+	 * The session
+	 */
+	YahooSession *yahooSession();
 
-	bool isOnServer(const QString &id) { return IDs.contains(id); }	// returns true is contact id is on SS contact list
-	bool haveContactList() { return theHaveContactList; }		// returns true if we have the SS contact list
+	/**
+	 * Returns true if contact @p id is on the server-side contact list
+	 */
+	bool isOnServer(const QString &id) { return IDs.contains(id); }
+
+	/**
+	 * Returns true if we have the server-side contact list
+	 */
+	bool haveContactList() { return theHaveContactList; }
 
 public slots:
+	/**
+	 * Connect to the Yahoo service
+	 */
 	virtual void connect();
+	/**
+	 * Disconnect from the Yahoo service
+	 */
 	virtual void disconnect();
 
 signals:
-	void receivedTypingMsg(const QString &contactId, bool isTyping);// fires when contact given starts/stops typing
+	/**
+	 * Emitted when we recieve notification that the person we're talking to is typing
+	 */
+	void receivedTypingMsg(const QString &contactId, bool isTyping);
 
 protected:
+	/**
+	 * Adds our Yahoo contact to a metacontact
+	 */
 	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
 
 protected slots:
@@ -124,13 +157,18 @@ private slots:
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
 
 private:
-	// internal (to the plugin) controls/flags
+	/**
+	 * internal (to the plugin) controls/flags
+	 * This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
+	 */
 	QMap<QString, QPair<QString, QString> > IDs;
-		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
+
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
 
-	// external settings/descriptors
+	/**
+	 * External Settings and Descriptors
+	 */
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
