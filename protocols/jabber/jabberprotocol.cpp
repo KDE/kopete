@@ -238,28 +238,29 @@ void JabberProtocol::slotSettingsChanged ()
 void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
+//	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
 
 	QString contactId = serializedData["contactId"];
 	QString displayName = serializedData["displayName"];
+	QString accountId =  serializedData[ "accountId" ] ;
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "ContactId: " << contactId << "\n" << endl;
+	if(accountId.isNull())
+	{
+		//Kopete 0.6.x contactlist
+		// FIXME: This should be in a KConfUpdate - Martijn
+		accountId=serializedData[ "identityId" ] ;
 
-	if (displayName.isEmpty ())
-		displayName = contactId;
+		/*KGlobal::config()->setGroup("Jabber");
+		accountId=KGlobal::config()->readEntry( "UserID", "" );*/
+	}
 
-	QDict < KopeteAccount > accounts = KopeteAccountManager::manager ()->accounts (this);
-	if (!accounts.isEmpty ())
-	  {
-		  KopeteAccount *a = accounts[serializedData["accountId"]];
+	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
+	KopeteAccount *account=accounts[accountId];
+	if( !account )
+		account = createNewAccount( accountId );
 
-		  if (a)
-			  a->addContact (contactId, displayName, metaContact);
-		  else
-			  kdDebug (14120) << k_funcinfo << serializedData["accountId"] << " was a contact's account," " but we dont have it in the accounts list" << endl;
-	  }
-	else
-		kdDebug (14120) << k_funcinfo << "No accounts loaded!" << endl;
+	if(account)
+		account->addContact (contactId, displayName, metaContact);
 
 }
 
