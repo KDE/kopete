@@ -81,17 +81,12 @@ public:
 	virtual KActionCollection *customContextMenuActions();
 
 	/**
-	 * Add/Remove user to/from a group
+	 * update the server group map
 	 */
-	virtual void addToGroup( KopeteGroup *newGroup );
-	virtual void removeFromGroup( KopeteGroup *group );
-	virtual void moveToGroup( KopeteGroup *oldGroup, KopeteGroup *newGroup );
-
+	void contactRemovedFromGroup( unsigned int group );
 	void contactAddedToGroup( uint groupNumber, KopeteGroup *group );
 
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
-
-	void removeFromGroup( unsigned int group );
 
 	/**
 	 * Rename contact on server
@@ -123,7 +118,7 @@ public slots:
 	/**
 	 * Everytime the kopete's contactlist is modified, we sync the serverlist with it
 	 */
-	void syncGroups();
+	virtual void syncGroups();
 
 private slots:
 	void slotBlockUser();

@@ -321,26 +321,13 @@ void MSNContact::syncGroups( )
 
 }
 
-void MSNContact::moveToGroup( KopeteGroup *, KopeteGroup * )
-{
-	syncGroups();
-}
-void MSNContact::addToGroup( KopeteGroup * )
-{
-	syncGroups();
-}
-void MSNContact::removeFromGroup( KopeteGroup * )
-{
-	syncGroups();
-}
-
 void MSNContact::contactAddedToGroup( uint groupNumber, KopeteGroup *group )
 {
 	m_serverGroups.insert( groupNumber, group );
 	m_moving=false;
 }
 
-void MSNContact::removeFromGroup( unsigned int group )
+void MSNContact::contactRemovedFromGroup( unsigned int group )
 {
 	m_serverGroups.remove( group );
 	m_moving=false;

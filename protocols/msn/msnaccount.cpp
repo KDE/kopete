@@ -711,7 +711,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				if( !contactGroups.contains( QString::number( it.key() ) ) )
 				{
 					// The contact has been removed from a group by another client
-					c->removeFromGroup( it.key() );
+					c->contactRemovedFromGroup( it.key() );
 					metaContact->removeFromGroup( m_groupList[ it.key() ] );
 				}
 			}
@@ -882,7 +882,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		else if( list == "FL" )
 		{
 			// Contact is removed from the FL list, remove it from the group
-			c->removeFromGroup( group );
+			c->contactRemovedFromGroup( group );
 			//FIXME: I think we have to delete this contact is it is in no groups
 		}
 		else if( list == "BL" )
