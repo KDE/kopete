@@ -15,7 +15,10 @@
 							</xsl:attribute>
 							Message from 
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							(<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>)
+							(<span>
+								<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></xsl:attribute>
+								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
+							</span>)
 						</xsl:when>
 						<xsl:when test="@direction='2'"><!-- internal message -->
 							<xsl:attribute name="style">
@@ -29,7 +32,10 @@
 							</xsl:attribute>
 							Message to 
 							<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
-							(from <xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>)
+							(from <span>
+								<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></xsl:attribute>
+								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
+							</span>)
 						</xsl:when>
 						<xsl:otherwise><!-- Incoming -->
 							<xsl:attribute name="style">
@@ -37,7 +43,10 @@
 							</xsl:attribute>
 							Message from
 							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							(<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>)
+							(<span>
+								<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></xsl:attribute>
+								<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>
+							</span>)
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>
