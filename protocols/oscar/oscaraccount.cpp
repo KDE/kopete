@@ -738,7 +738,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			mRandomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
-			return ( createNewContact( contactId, displayName, parentContact ) == 0L);
+			return ( createNewContact( contactId, displayName, parentContact ));
 		}
 		else
 		{
