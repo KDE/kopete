@@ -375,12 +375,7 @@ void KopeteChatWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-#if KDE_IS_VERSION( 3, 1, 90 )
 	createStandardStatusBarAction();
-#else
-	mStatusbarAction = KStdAction::showStatusbar(this,
-			SLOT(slotToggleStatusBar()), actionCollection());
-#endif
 
 	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( slotSendMessage() ), coll, "chat_send" );
@@ -448,15 +443,10 @@ void KopeteChatWindow::initActions(void)
 #if KDE_IS_VERSION(3,2,90)
 	toggleMembers->setCheckedState(i18n("Hide"));
 #endif
-	//toggleMembers->setChecked( true );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
-
-	//actionActionMenu = new KActionMenu(i18n("&Actions"), coll, "actions_menu" );
-	//connect ( actionActionMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareActionMenu()) );
-//	connect ( actionActionMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotActionActivated(int)) );
 
 	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll, "contacts_menu" );
 	actionContactMenu->setDelayed( false );
@@ -475,11 +465,7 @@ KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-#if KDE_IS_VERSION(3, 1, 90)
 	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
-#else
-	animIcon = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
-#endif
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
@@ -610,23 +596,6 @@ void KopeteChatWindow::slotSetBgColor()
 	m_activeView->setBgColor();
 }
 
-/*
-KopeteView *KopeteChatWindow::addChatView( KopeteMessageManager *manager )
-{
-	kdDebug(14010) << k_funcinfo << "Adding a new chat view" << endl;
-
-	//Save options so we can duplicate its appearance
-	if( m_activeView )
-		m_activeView->saveOptions();
-
-	QPixmap pluginIcon = SmallIcon( manager->protocol()->pluginIcon() );
-
-	ChatView *newView = new ChatView ( manager, this, pluginIcon, mainArea );
-
-	return newView;
-}
-*/
-
 void KopeteChatWindow::setStatus(const QString &text)
 {
 	m_status_text->setText(text);
@@ -644,14 +613,12 @@ void KopeteChatWindow::createTabBar()
 		m_tabBar->setTabReorderingEnabled(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
 
-		#if QT_VERSION >= 0x030200
-			QToolButton* m_rightWidget = new QToolButton( m_tabBar );
-			connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
-			m_rightWidget->setIconSet( SmallIcon( "tab_remove" ) );
-			m_rightWidget->adjustSize();
-			QToolTip::add( m_rightWidget, i18n("Close the current tab"));
-			m_tabBar->setCornerWidget( m_rightWidget, QWidget::TopRight );
-		#endif
+		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
+		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
+		m_rightWidget->setIconSet( SmallIcon( "tab_remove" ) );
+		m_rightWidget->adjustSize();
+		QToolTip::add( m_rightWidget, i18n("Close the current tab"));
+		m_tabBar->setCornerWidget( m_rightWidget, QWidget::TopRight );
 
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
@@ -869,8 +836,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 {
 	ChatView *view = static_cast<ChatView*>(widget);
 
-//	kdDebug(14010) << k_funcinfo << m_activeView << "  |||||||||  " << view << endl;
-
 	if( m_activeView == view )
 		return;
 
@@ -1086,12 +1051,10 @@ void KopeteChatWindow::slotChatPrint()
 
 void KopeteChatWindow::slotToggleStatusBar()
 {
-#if !KDE_IS_VERSION( 3, 1, 90 )
 	if (statusBar()->isVisible())
 		statusBar()->hide();
 	else
 		statusBar()->show();
-#endif
 }
 
 void KopeteChatWindow::slotViewMenuBar()
