@@ -78,6 +78,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	jabberClient = 0L;
 	registerFlag = 0;
+	sendRawDialog = 0L;
 
 	initialPresence = protocol()->JabberOnline;
 
