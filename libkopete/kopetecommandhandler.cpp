@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+#include <qapplication.h>
 #include <qstringlist.h>
 #include <qregexp.h>
 #include <qptrlist.h>
@@ -46,9 +47,8 @@ struct CommandHandlerPrivate
 
 CommandHandlerPrivate *KopeteCommandHandler::p = 0L;
 
-KopeteCommandHandler::KopeteCommandHandler()
+KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 {
-	p = new CommandHandlerPrivate;
 	p->s_handler = this;
 
 	p->reservedCommands.insert( QString::fromLatin1("help"),
@@ -75,6 +75,12 @@ KopeteCommandHandler::~KopeteCommandHandler()
 
 KopeteCommandHandler *KopeteCommandHandler::commandHandler()
 {
+	if( !p )
+	{
+		p = new CommandHandlerPrivate;
+		p->s_handler = new KopeteCommandHandler();
+	}
+
 	return p->s_handler;
 }
 

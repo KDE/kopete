@@ -34,9 +34,6 @@ class KopeteCommandHandler : public QObject
 	Q_OBJECT
 
 	public:
-		KopeteCommandHandler();
-		~KopeteCommandHandler();
-
 		/**
 		 * Returns a pointer to the command handler
 		 */
@@ -121,6 +118,9 @@ class KopeteCommandHandler : public QObject
 		 * (all non-protocol commands, plus this protocols commands)
 		 */
 		CommandList commands( KopeteProtocol * );
+
+		KopeteCommandHandler();
+		~KopeteCommandHandler();
 
 		static CommandHandlerPrivate *p;
 };

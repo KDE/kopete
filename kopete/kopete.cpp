@@ -89,13 +89,13 @@ Kopete::~Kopete()
 	KopeteContactList::contactList()->save();
 	KopeteAccountManager::manager()->save();
 	delete m_mainWindow;
-	delete KopeteCommandHandler::commandHandler();
 //	kdDebug(14000) << "Kopete::~Kopete: done" <<endl;
 }
 
 void Kopete::slotLoadPlugins()
 {
-	new KopeteCommandHandler();
+	//Create the command handler (looks silly)
+	KopeteCommandHandler::commandHandler();
 
 	KopeteAccountManager::manager()->load();
 	KopeteContactList::contactList()->load();
