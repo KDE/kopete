@@ -115,7 +115,7 @@
                                             <cstring>lblAccountId</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;AIM Screen Name:</string>
+                                            <string>&amp;AIM screen name:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>edtAccountId</cstring>

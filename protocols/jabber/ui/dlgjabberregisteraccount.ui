@@ -203,7 +203,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>&amp;Repeat Password:</string>
+                        <string>&amp;Repeat password:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>lePasswordVerify</cstring>
@@ -250,7 +250,7 @@
                         <cstring>lblServer</cstring>
                     </property>
                     <property name="text">
-                        <string>Jabber &amp;Server:</string>
+                        <string>Jabber &amp;server:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>leServer</cstring>

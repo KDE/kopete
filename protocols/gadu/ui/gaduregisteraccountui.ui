@@ -63,7 +63,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>Repeat Pass&amp;word:</string>
+                        <string>Repeat pass&amp;word:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>valuePasswordVerify</cstring>
@@ -133,7 +133,7 @@
                         <cstring>labelEmailAddress</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;E-Mail Address:</string>
+                        <string>&amp;E-Mail address:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>valueEmailAddress</cstring>
@@ -181,7 +181,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>&amp;Verification Sequence:</string>
+                        <string>&amp;Verification sequence:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>valueVerificationSequence</cstring>

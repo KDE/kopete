@@ -54,7 +54,7 @@
                                     <cstring>btnSaveNick</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Save Nickname To Contact List</string>
+                                    <string>Save Nickname to Contact List</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="2" column="0">

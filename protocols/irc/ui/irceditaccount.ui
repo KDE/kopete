@@ -616,7 +616,7 @@
                             <cstring>groupBox7</cstring>
                         </property>
                         <property name="title">
-                            <string>Message Desintations</string>
+                            <string>Message Destinations</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -627,7 +627,7 @@
                                     <cstring>textLabel4_3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Server Notices:</string>
+                                    <string>Server notices:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">
@@ -635,7 +635,7 @@
                                     <cstring>textLabel1_4</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Server Messages:</string>
+                                    <string>Server messages:</string>
                                 </property>
                             </widget>
                             <widget class="QComboBox" row="0" column="1">
@@ -769,7 +769,7 @@
                                     <cstring>textLabel2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Information Replies:</string>
+                                    <string>Information replies:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="3">
@@ -777,7 +777,7 @@
                                     <cstring>textLabel3_3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Error Messages:</string>
+                                    <string>Error messages:</string>
                                 </property>
                             </widget>
                             <spacer row="0" column="2">
