@@ -19,7 +19,12 @@
 #define KOPETE_EXPORT_H
 
 #include <kdemacros.h>
+#include <kdeversion.h>
 
+#if KDE_IS_VERSION(3,3,2)
 #define KOPETE_EXPORT KDE_EXPORT
+#else
+#define KOPETE_EXPORT
+#endif
 
 #endif
