@@ -100,7 +100,7 @@ class KopeteView
 		 */
 		virtual void makeVisible() = 0;
 
-		/*
+		/**
 		 * Close this view
 		 */
 		virtual bool closeView( bool force = false ) = 0;
@@ -151,6 +151,9 @@ class KopeteView
 		 * a pointer to the KopeteMessageManager given in the constructor
 		 */
 		KopeteMessageManager *m_manager;
+		/**
+		 * the type of this view
+		 */
 		KopeteMessage::MessageType m_type;
 };
 

@@ -107,22 +107,31 @@ public:
 	 * @param pass set to Qtring::null means that
 	 * the password is not remembered, otherwise sets the new password
 	 * for this account
-	 * Should be called only by EditAccountWidget
+	 * Cas be called only by EditAccountWidget
 	 */
 	void setPassword(const QString &pass = QString::null);
 
 	/**
-	 * say if the password is remember.
-	 * if it return false, that mean a call to @ref getPassword() will popup a window
+	 * @brief say if the password is remember.
+	 *
+	 * if it return false, that mean a call to @ref getPassword() will popup a window.
+	 *
+	 * This fucntion should be used by the editAccountPage (and only by the editAccountPage)
 	 */
 	bool rememberPassword();
 
 	/**
 	 * Set if the account should log in automatically or not
+	 *
+	 * This function can be used by the editaccountPage (and only by it)
+	 * Remember than kopete handle autoconnection itself
 	 */
 	void setAutoLogin(bool);
 	/**
 	 * Say if the account should log in automatically
+	 *
+ 	 * This function can be used by the editaccountPage (and only by it)
+	 * Remember than kopete handle autoconnection itself
 	 */
 	bool autoLogin() const;
 

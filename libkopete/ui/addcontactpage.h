@@ -25,7 +25,6 @@
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  *
  */
-
 class AddContactPage : public QWidget
 {
 Q_OBJECT
@@ -36,8 +35,12 @@ public:
 	//KopeteProtocol *protocol;
 
 	/**
-	 * Plugin should reimplement this methot.
+	 * Plugin should reimplement this methode.
 	 * return true if the content of the page are valid
+	 *
+	 * This method is called in the add account wizzard when the user press the next button
+	 * and this page is showed. when it return false, it does not go to the nextpage.
+	 * You should popup a dialog to explain WHY the page has not been validate
 	 */
 	virtual bool validateData()=0;
 

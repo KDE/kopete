@@ -27,8 +27,9 @@
 /**
   * @author Duncan Mac-Vicar Prett <duncan@kde.org>
   *
+  * This is a widget automagically added to the KopetePreference page.
+  * You should subclass this class, and for example create a new instence of it in your plugin (or protocol) constructor.
   */
-
 class ConfigModule : public QWidget
 {
    Q_OBJECT
@@ -39,19 +40,23 @@ public:
 	 *
 	 * parent is the object that is this modules virtual-parent.
 	 * When that is deleted, this also will go away, automagically.
-	 **/
+	 */
 	ConfigModule(const QString &name, const QString &description, QObject *parent=0);
+	/**
+	 * This is the same contrucor as above, but with a icon which is used in the preference dialog.
+	 * We recomand to use this constructor
+	 */
 	ConfigModule(const QString &name, const QString &description, const QString &icon, QObject *parent=0);
 	virtual ~ConfigModule();
 
 public slots:
 	/**
 	 * save all your options, and apply them
-	 **/
+	 */
 	virtual void save() {}
 	/**
 	 * reload all options (e.g., read config files)
-	 **/
+	 */
 	virtual void reopen() {}
 
 

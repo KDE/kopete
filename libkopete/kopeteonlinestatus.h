@@ -57,25 +57,26 @@ public:
 	 * states map to the same global statuses. For example ICQ's 'Do not disturb'
 	 * is handled just like 'Away' by libkopete. Only ICQ itself makes (and
 	 * should make) a distinction.
+	 * The order is important and is used in the < or > operator
 	 *
-	 * Online  refers to a true online state, i.e. you can be contacted by
+	 * - Online  refers to a true online state, i.e. you can be contacted by
 	 *         others both technically and practically. This also applies
 	 *         to e.g. ICQ's 'Free for Chat' status.
-	 * Away    refers to a state where you can be technically reached, but
+	 * - Away    refers to a state where you can be technically reached, but
 	 *         for one reason or another it is often not useful to do so.
 	 *         This can be because you really aren't behind the computer
 	 *         ('Away' or 'Idle') or because you have other things to do
 	 *         and don't want to get involved in messaging ('Busy' or 'Do
 	 *         not Disturb' for example).
-	 * Offline is a state where you really cannot be contacted. Although
+	 * - Offline is a state where you really cannot be contacted. Although
 	 *         Kopete doesn't oppose any technical limitations it really
 	 *         doesn't make sense to have more than one status per protocol
 	 *         that maps to 'Offline', since you're supposed to be
 	 *         disconnected from the network in this state.
-	 * Connecting is a state where the user is not available on the network yet
+	 * - Connecting is a state where the user is not available on the network yet
 	 *         but trying to get onto. Most useful to yourself contact, because
 	 *         this state means not visible but with network access
-	 * Unknown refers to protocols where state cannot be determined. This
+	 * - Unknown refers to protocols where state cannot be determined. This
 	 *         applies to SMS contacts (text messages via mobile phones),
 	 *         since there's no presence information over SMS, but also
 	 *         to e.g. MSN contacts that are not on your contact list,
@@ -84,7 +85,7 @@ public:
 	 *         itself uses the Unknown state in @ref KopeteMetaContact for
 	 *         meta contacts that have no child contacts at all.
 	 */
-	enum OnlineStatus { Unknown, Connecting, Offline, Away, Online };
+	enum OnlineStatus { Offline=0 , Unknown=1, Connecting=2, Away=3, Online=4 };
 
 	/**
 	 * Constructor.
