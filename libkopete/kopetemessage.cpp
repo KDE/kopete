@@ -124,7 +124,7 @@ void KopeteMessage::setBgOverride( bool enabled )
 
 void KopeteMessage::setFg( const QColor &color )
 {
-	if( !d->bgOverride && color.isValid() )
+	if( color.isValid() )
 	{
 		detach();
 		QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
@@ -134,7 +134,7 @@ void KopeteMessage::setFg( const QColor &color )
 
 void KopeteMessage::setBg( const QColor &color )
 {
-	if( color.isValid() )
+	if( !d->bgOverride && color.isValid() )
 	{
 		detach();
 		QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
@@ -187,6 +187,8 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	messageNode.setAttribute( QString::fromLatin1("subject"), subject );
 	messageNode.setAttribute( QString::fromLatin1("direction"), direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
+	if( from )
+		messageNode.setAttribute( QString::fromLatin1("mainContactId"), direction == Inbound ? d->from->contactId() : d->to.first()->contactId() );
 
 	d->xmlDoc.appendChild( messageNode );
 
@@ -296,15 +298,6 @@ const QDomDocument KopeteMessage::asXML() const
 	QDomDocument doc = d->xmlDoc.cloneNode().toDocument();
 	QDomCDATASection bodyText = doc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
 	bodyText.setData( parsedBody() );
-	return doc;
-}
-
-const QDomDocument KopeteMessage::asCompressedXML() const
-{
-	QDomDocument doc;
-	doc.appendChild( doc.createElement( QString::fromLatin1("compressedMessage") ) );
-	doc.documentElement().setAttribute( QString::fromLatin1("timestamp"), d->xmlDoc.documentElement().attribute( QString::fromLatin1("timestamp") ) );
-	doc.documentElement().appendChild( doc.createTextNode( KCodecs::base64Encode( qCompress( d->xmlDoc.toString().utf8() ) ) ) );
 	return doc;
 }
 
