@@ -639,16 +639,14 @@ QString JabberProtocol::protocolIcon() const
 
 }
 
-bool JabberProtocol::serialize(KopeteMetaContact *mc, QStringList &data) const
+void JabberProtocol::serialize(KopeteMetaContact *mc ) 
 {
 	QStringList addressList;
-
+	QStringList data;
 	kdDebug() << "[JabberProtocol] Serializing data for metacontact " << mc->displayName() << endl;
 
 	QPtrList<KopeteContact> contacts = mc->contacts();
 
-	bool done = false;
-	
 	// iterate through all contacts that the metacontact has
 	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
 	{
@@ -657,21 +655,15 @@ bool JabberProtocol::serialize(KopeteMetaContact *mc, QStringList &data) const
 
 		JabberContact *jc = (JabberContact *)c;
 		
-		kdDebug() << "[JabberProtocol] Subcontact " << jc->userId() << " is ours, serializing." << endl;
-
 		data << jc->identityId() << jc->userId() << jc->displayName() << jc->groups().join(",");
 
 		addressList << jc->userId();
-
-		done = true;
 	}
 
 	QString addresses = addressList.join(",");
-	if(!addresses.isEmpty())
-		mc->setAddressBookField(JabberProtocol::protocol(), "messaging/jabber", addresses);
-
-	return done;
-
+//	if(!addresses.isEmpty()) //if there are no contact, then erase old data
+	mc->setAddressBookField(this, "messaging/jabber", addresses);
+	mc->setPluginData(this , data );
 }
 
 void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &data)

@@ -66,6 +66,7 @@ public slots:
 private slots:
 	void userPrefs();
 	void messageSent(const KopeteMessage&);
+	void slotMovedToMetaContact();
 
 private:
 	KopeteMessageManager* msgManager();

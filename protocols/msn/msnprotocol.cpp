@@ -281,14 +281,9 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
-bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
-	QStringList &stream ) const
+void MSNProtocol::serialize( KopeteMetaContact *metaContact)
 {
-	//kdDebug() << "MSNProtocol::serialize " << metaContact->displayName()
-	//<< endl;
-	//MSNContact *c = m_metaContacts.find( metaContact );
-	bool r=false;
-
+	QStringList stream;
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
@@ -300,10 +295,9 @@ bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
 		if( g )
 		{
 			stream << g->id() << g->displayName() << g->groups().join( "," );
-			r=true;
 		}
 	}
-	return r;
+	metaContact->setPluginData(this , stream);
 }
 
 void MSNProtocol::deserialize( KopeteMetaContact *metaContact,

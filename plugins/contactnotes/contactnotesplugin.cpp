@@ -40,7 +40,6 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name,
 	else
 		pluginStatic_ = this;
 
-//	m_prefs = new TranslatorPreferences ( "locale", this );
 }
 
 ContactNotesPlugin::~ContactNotesPlugin()
@@ -54,22 +53,6 @@ ContactNotesPlugin* ContactNotesPlugin::plugin()
 }
 
 ContactNotesPlugin* ContactNotesPlugin::pluginStatic_ = 0L;
-
-
-bool ContactNotesPlugin::serialize( KopeteMetaContact *metaContact, QStringList &strList  ) const
-{
-	if ( m_infoMap.contains( metaContact ) )
-	{
-		strList << m_infoMap[ metaContact ] ;
-		return true;
-	}
-	return false;
-}
-
-void ContactNotesPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
-{
-	m_infoMap[ metaContact ] = data.join("\n");
-}
 
 KActionCollection *ContactNotesPlugin::customContextMenuActions(KopeteMetaContact *m)
 {
@@ -93,12 +76,15 @@ void ContactNotesPlugin::slotEditInfo()
 
 QString ContactNotesPlugin::notes(KopeteMetaContact *m)
 {
-	return m_infoMap[m];
+	return m->pluginData(this).join("\n");
 }
 
-void ContactNotesPlugin::setNotes(QString n, KopeteMetaContact *m)
+void ContactNotesPlugin::setNotes(const QString &n, KopeteMetaContact *m)
 {
-	m_infoMap[m]=n;
+	if(n.isEmpty())
+		m->setPluginData(this , QStringList() );
+	else
+		m->setPluginData(this , n );
 }
 
 

@@ -119,6 +119,8 @@ public slots:
 
 signals:
 	void statusChanged(KopeteContact *contact, KopeteContact::ContactStatus status);
+private slots: // Private slots
+	void slotMovedToMetaContact();
 };
 
 #endif

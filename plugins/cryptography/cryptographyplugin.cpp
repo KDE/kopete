@@ -80,20 +80,6 @@ void CryptographyPlugin::setCachedPass(const QCString& p)
 	pluginStatic_->m_cachedPass=p;
 }
 
-bool CryptographyPlugin::serialize( KopeteMetaContact *metaContact,
-			  QStringList &strList  ) const
-{
-	if ( !m_keyMap.contains( metaContact ) )
-		return false;
-
-	strList<<  m_keyMap[ metaContact ] ;
-	return true;
-}
-
-void CryptographyPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
-{
-	m_keyMap[ metaContact ] = data.first();
-}
 
 KActionCollection *CryptographyPlugin::customContextMenuActions(KopeteMetaContact *m)
 {
@@ -162,14 +148,15 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QPtrList<KopeteContact> contactlist = msg.to();
 	for (KopeteContact *c=contactlist.first(); c; c = contactlist.next()) 
 	{
-		if(!m_keyMap.contains(c->metaContact()))
+		QStringList strlist= c->metaContact()->pluginData(this);
+		if(strlist.isEmpty())
 		{
 			kdDebug() << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
 			return;
 		}
 		if(!key.isNull())
 			key+=" ";
-		key+=m_keyMap[c->metaContact()];
+		key+=strlist.first();
 	}
 
 	if(key.isEmpty())
@@ -211,18 +198,16 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 void CryptographyPlugin::slotSelectContactKey()
 {
-	QString key;
-	if(m_keyMap.contains(m_currentMetaContact))
-		key=m_keyMap[m_currentMetaContact];
+	QString key = m_currentMetaContact->pluginData(this).first();
 	CryptographySelectUserKey *opts=new CryptographySelectUserKey(key,m_currentMetaContact);
 	opts->exec();
 	if (opts->result()==true)
 	{
 		key=opts->publicKey();
 		if(key.isEmpty())
-			m_keyMap.remove(m_currentMetaContact);
+			m_currentMetaContact->setPluginData(this , QStringList()) ;
 		else
-			m_keyMap[m_currentMetaContact]=key;
+			m_currentMetaContact->setPluginData(this , key) ;
 	}
 	delete opts;
 }

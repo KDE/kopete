@@ -101,12 +101,13 @@ YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
  *                                                                         *
  ***************************************************************************/
 
-bool YahooProtocol::serialize( KopeteMetaContact *metaContact, QStringList &strList ) const
+void YahooProtocol::serialize( KopeteMetaContact *metaContact )
 {
 	kdDebug() << "[YahooProtocol::serialize] Serializing metacontact" << endl;
 
+	QStringList strList;
+
 	KopeteContact *c;
-	bool done = false;
 
 	for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
 	{
@@ -123,11 +124,10 @@ bool YahooProtocol::serialize( KopeteMetaContact *metaContact, QStringList &strL
 
 			strList << g->displayName() << g->group();
 			metaContact->setAddressBookField( YahooProtocol::protocol(), "messaging/yahoo" , g->id() );
-			done = true;
 		}
 	}
 
-	return done;
+	metaContact->setPluginData(this, strList);
 }
 
 YahooProtocol *YahooProtocol::protocol()

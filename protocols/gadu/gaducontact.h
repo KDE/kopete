@@ -88,6 +88,9 @@ private:
     KAction     *actionSendMessage_;
     KAction     *actionInfo_;
     KAction     *actionRemove_;
+private slots: // Private slots
+  /** No descriptions */
+  void slotMovedToMetaContact();
 };
 
 #endif

@@ -71,7 +71,6 @@ public:
     AddContactPage *createAddContactWidget( QWidget *parent );
     bool canSendOffline() const { return true; }
     KopeteContact *myself() const;
-    bool serialize( KopeteMetaContact *metaContact, QStringList &strList ) const;
     void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
     QStringList addressBookFields() const;
     // }
@@ -94,6 +93,8 @@ public slots:
     void slotGoInvisible();
     void slotGoAway();
     void slotGoBusy();
+
+    void serialize( KopeteMetaContact *metaContact);
 
 private slots:
     void settingsChanged();

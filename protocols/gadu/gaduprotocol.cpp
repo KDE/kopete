@@ -576,21 +576,18 @@ GaduProtocol::pingServer()
     session_->ping();
 }
 
-bool
-GaduProtocol::serialize( KopeteMetaContact *metaContact,
-                         QStringList &strList ) const
+void GaduProtocol::serialize( KopeteMetaContact *metaContact)
 {
-    KopeteContact *c;
-    bool done = false;
-    for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() ) {
-        if ( c->protocol()->id() == this->id() ) {
-            GaduContact *g = static_cast<GaduContact*>(c);
-            strList << g->name();
-            done = true;
-        }
-    }
-
-    return done;
+	QStringList strList;
+	for( KopeteContact *c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
+	{
+		if ( c->protocol()->id() == this->id() )
+		{
+			GaduContact *g = static_cast<GaduContact*>(c);
+			strList << g->name();
+		}
+	}
+	metaContact->setPluginData(this , strList);
 }
 
 void

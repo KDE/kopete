@@ -99,10 +99,9 @@ SMSProtocol* SMSProtocol::protocol()
 	return s_protocol;
 }
 
-bool SMSProtocol::serialize( KopeteMetaContact *metaContact,
-	QStringList &stream ) const
+void SMSProtocol::serialize( KopeteMetaContact *metaContact)
 {
-	bool r=false;
+	QStringList stream;
 	
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
@@ -125,10 +124,9 @@ bool SMSProtocol::serialize( KopeteMetaContact *metaContact,
 			}
 			else
 				stream << " " << " ";
-			r=true;
 		}
 	}
-	return r;
+	metaContact->setPluginData(this, stream);
 }
 
 void SMSProtocol::deserialize( KopeteMetaContact *metaContact,

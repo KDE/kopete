@@ -71,6 +71,10 @@ WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContac
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myChatManager, SLOT(appendMessage(const KopeteMessage &)));
 
+	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol, SLOT (serialize(KopeteMetaContact*) ));
+
+
 	// Set up the context menu
 	myActionCollection = new KActionCollection(this);
 }
@@ -142,4 +146,11 @@ void WPContact::slotCloseHistoryDialog()
 	myHistoryDialog = 0;
 }
 
+void WPContact::slotMovedToMetaContact()
+{
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
+}
+
+
 #include "wpcontact.moc"
+

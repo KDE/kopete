@@ -124,11 +124,6 @@ public:
 	bool canSendOffline() const;
 	
 	/**
-	 * Serialize  contact data
-	 */
-	virtual bool serialize(KopeteMetaContact *contact, QStringList &data) const;
-
-	/**
 	 * Deserialize contact data
 	 */
 	virtual void deserialize(KopeteMetaContact *contact, const QStringList &data);
@@ -214,6 +209,12 @@ public slots:
 	 * Slot for retrieving a vCard
 	 */
 	void slotRetrieveVCard (const Jid &);
+
+	/**
+	 * Serialize  contact data
+	 */
+	void serialize(KopeteMetaContact *contact);
+
 
 signals:
 	void settingsChanged();

@@ -58,8 +58,10 @@ MSNContact::MSNContact( const QString &msnId,
 		m_groups = group;
 
 	connect ( this, SIGNAL( chatToUser( QString ) ),
-		MSNProtocol::protocol(),
-		SLOT( slotStartChatSession( QString ) ) );
+		MSNProtocol::protocol(), SLOT( slotStartChatSession( QString ) ) );
+	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
+		this, SLOT (slotMoved(KopeteMetaContact*) ));
+
 
 	setDisplayName( displayName );
 
@@ -71,8 +73,8 @@ MSNContact::MSNContact( const QString &msnId,
 				this, SLOT (addToGroup(KopeteGroup*) ));
 		connect (parent , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 				this, SLOT (removeFromGroup(KopeteGroup*) ));
-		connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
-				this, SLOT (slotMoved(KopeteMetaContact*) ));
+		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
+				MSNProtocol::protocol(), SLOT (serialize(KopeteMetaContact*) ));
 	}
 
 	setFileCapable(true);
@@ -620,6 +622,10 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (addToGroup(KopeteGroup*) ));
 	disconnect (from , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
+	// no need to disconnect: 1) maybe there are other msncontact here ; 2) we need to remove old info
+//	disconnect (from , SIGNAL( aboutToSave(KopeteMetaContact*) ),
+//				MSNProtocol::protocol(), SLOT (serialize(KopeteMetaContact*) ));
+
 
 	connect (metaContact() , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
@@ -627,6 +633,9 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (addToGroup(KopeteGroup*) ));
 	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
+			MSNProtocol::protocol(), SLOT (serialize(KopeteMetaContact*) ));
+
 }
 
 void MSNContact::slotSendFile()

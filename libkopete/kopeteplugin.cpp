@@ -43,13 +43,6 @@ const char *KopetePlugin::id() const
 	return this->className();
 }
 
-bool KopetePlugin::serialize( KopeteMetaContact * /* metaContact */,
-	QStringList & /* stream */ ) const
-{
-	// Do nothing in default implementation
-	return false;
-}
-
 void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,
 	const QStringList & /* stream */ )
 {

@@ -106,6 +106,7 @@ private slots:
 	void slotOpenConnect();
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
+	void slotMovedToMetaContact();
 
 public slots:
 

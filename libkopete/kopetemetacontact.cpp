@@ -471,6 +471,8 @@ void KopeteMetaContact::slotContactDestroyed( KopeteContact *contact )
 
 QString KopeteMetaContact::toXML()
 {
+	emit aboutToSave(this);
+
 	QString xml = "  <meta-contact id=\"TODO: KABC ID\">\n"
 		"    <display-name>" +
 		QStyleSheet::escape( m_displayName ) +
@@ -513,6 +515,7 @@ QString KopeteMetaContact::toXML()
 		xml += "    <groups><top-level/></groups>\n";
 	}
 
+/* //SERIALIZE IS NOW OBSOLETE
 	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
 	for( KopetePlugin *p = ps.first() ; p != 0L; p = ps.next() )
 	{
@@ -525,35 +528,25 @@ QString KopeteMetaContact::toXML()
 				(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
 			}
 			QString data = QStyleSheet::escape( strList.join( "||" ) );
-//			kdDebug() << "KopeteMetaContact::toXML: plugin-data = " << data <<endl;
 			xml += "    <plugin-data plugin-id=\"" +
 				QStyleSheet::escape( p->id())  + "\">" + data  + "</plugin-data>\n";
 		}
-	}
+	}*/
 
 	// Store address book fields
 	AddressBookFields::Iterator addrIt = m_addressBook.begin();
 	for( ; addrIt != m_addressBook.end(); ++addrIt )
 	{
-//		kdDebug() << "KopeteMetaContact::toXML: Storing address book field "
-//			<< addrIt.key() << " with value '" << addrIt.data() << "'" << endl;
 		xml += "    <address-book-field id=\"" + QStyleSheet::escape(addrIt.key()) + "\">" +
 					QStyleSheet::escape(addrIt.data()) + "</address-book-field>\n";
 	}
 
-	// We may have more 'cached' plugin data from plugins that are not
-	// loaded at the moment. Assume our copy is still valid and store it
+	// Store other plugin data
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
-		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(
-			it.key() );
-
-		if( !plugin )
-		{
-			xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
+		xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
 				+ QStyleSheet::escape(it.data()) + "</plugin-data>\n";
-		}
 	}
 
 	xml += "  </meta-contact>\n";
@@ -613,7 +606,8 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 		contactNode = contactNode.nextSibling();
 	}
 
-	// Deserialize when the *whole* meta contact has been read!
+/*	// Deserialize when the *whole* meta contact has been read!
+//Not needed anymore since plugins are loaded after contactlist
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
@@ -630,7 +624,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 
 			plugin->deserialize( this, strList );
 		}
-	}
+	}*/
 
 	// If a plugin is loaded, load data cached
 	connect( kopeteapp->libraryLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
@@ -710,16 +704,39 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	{
 		if( p->id() == it.key() )
 		{
-			QStringList strList = QStringList::split( "||", it.data() );
-			for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
-			{
-				//unescape '||'
-				(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
-			}
-
-			p->deserialize( this, strList );
+			p->deserialize( this, pluginData(p) );
 		}
 	}
+}
+
+void KopeteMetaContact::setPluginData(KopetePlugin *p, QStringList strList )
+{
+	if(strList.isEmpty())
+	{
+		m_pluginData.remove(p->id());
+		return;
+	}
+	
+	for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
+	{
+		//escape '||' I don't like this but it is needed
+		(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
+	}
+	m_pluginData[p->id()] =  strList.join( "||" ) ;
+}
+
+QStringList KopeteMetaContact::pluginData(KopetePlugin *p) 
+{
+	if(!m_pluginData.contains(p->id()))
+		return QStringList();
+
+	QStringList strList = QStringList::split( "||", m_pluginData[p->id()] );
+	for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
+	{
+		//unescape '||'
+		(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
+	}
+	return strList;
 }
 
 #include "kopetemetacontact.moc"

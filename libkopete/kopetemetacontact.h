@@ -57,7 +57,6 @@ public:
 	 * Add contact to the meta contact
 	 */
 	void addContact( KopeteContact *c);
-//	void addContact( KopeteContact *c, const QStringList &groups );
 	
 	/**
 	 * Find the KopeteContact to a given contact. If contact
@@ -175,6 +174,28 @@ public:
 	 */
 	void removeContact(KopeteContact *c , bool deleted=false);
 
+	/**
+	 * Set or get data specific for each plugin.
+	 * Theses data are saved to the contactlist
+	 */
+	void setPluginData(KopetePlugin *p, QStringList value );
+	QStringList pluginData(KopetePlugin *p) ;
+
+	/**
+	 * Get or set a field for the KDE address book backend. Fields not
+	 * registered during the call to KopetePlugin::addressBookFields()
+	 * cannot be altered!
+	 */
+	QString addressBookField( KopetePlugin *p, const QString &key ) const;
+	void setAddressBookField( KopetePlugin *p, const QString &key, const QString &value );
+
+	/**
+	 * Return a copy of all address book fields exported by this
+	 * meta contact
+	 */
+	AddressBookFields addressBookFields() const;
+
+
 public slots:
 	/**
 	 * Contact another user.
@@ -198,21 +219,6 @@ public slots:
 	 * ICQ the only true difference is the GUI shown to the user.
 	 */
 	void startChat();
-
-	/**
-	 * Get or set a field for the KDE address book backend. Fields not
-	 * registered during the call to KopetePlugin::addressBookFields()
-	 * cannot be altered!
-	 */
-	QString addressBookField( KopetePlugin *p, const QString &key ) const;
-	void setAddressBookField( KopetePlugin *p, const QString &key,
-		const QString &value );
-
-	/**
-	 * Return a copy of all address book fields exported by this
-	 * meta contact
-	 */
-	AddressBookFields addressBookFields() const;
 
 signals:
 	/**
@@ -244,8 +250,21 @@ signals:
 	 */
 	void addedToGroup( KopeteGroup * to, KopeteMetaContact *contact);
 
+	/**
+	 * This signal is emmited when a contact is added to this metacontact
+	 */
 	void contactAdded( KopeteContact *c );
+
+	/**
+	 * This signal is emmited when a contact is removed from this metacontact
+	 */
 	void contactRemoved( KopeteContact *c );
+
+	/**
+	 * This metaContact is going to be saved to the contactlist. Plugin should
+	 * connect to this signal to update data with setPluginData()
+	 */
+	void aboutToSave(KopeteMetaContact*);
 
 private slots:
 	/**
@@ -262,8 +281,6 @@ private slots:
 
 	/**
 	 * One of the child contact's display names changed
-	 * FIXME: Add a KopeteContact * to this method and the associated signal
-	 *        in KopeteContact!
 	 */
 	void slotContactNameChanged( const QString &name );
 

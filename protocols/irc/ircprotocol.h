@@ -53,7 +53,6 @@ public:
 	/* Plugin reimplementation */
 	void init();
 	bool unload();
-	bool serialize(KopeteMetaContact * metaContact, QStringList & strList) const;
 	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
 
 	/** KopeteProtocol reimplementation */
@@ -94,7 +93,7 @@ private:
 	bool m_isConnected;
 
 public slots: // Public slots
-  /** No descriptions */
+	void serialize(KopeteMetaContact * metaContact);
 private slots:
 	void slotIconRightClicked(const QPoint&);
 	void slotNewConsole();

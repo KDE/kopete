@@ -158,14 +158,13 @@ QStringList WPProtocol::addressBookFields() const
 	return QStringList("messaging/winpopup");
 }
 
-bool WPProtocol::serialize(KopeteMetaContact *metaContact, QStringList &strList) const
+void WPProtocol::serialize(KopeteMetaContact *metaContact) 
 {
-	DEBUG(WPDMETHOD, "WPProtocol::serialize(metaContact => " << metaContact->displayName() << ", <strList>)");
-
+//	DEBUG(WPDMETHOD, "WPProtocol::serialize(metaContact => " << metaContact->displayName() << ", <strList>)");
+	QStringList strList;
 	QStringList addressList;
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 
-	bool done = false;
 	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
 		if(c->protocol()->id() == this->id())
 		{
@@ -173,15 +172,15 @@ bool WPProtocol::serialize(KopeteMetaContact *metaContact, QStringList &strList)
 			DEBUG(WPDINFO, "Sub-Contact " << curContact->host() << " is ours - serialising.");
 			strList << curContact->host();
 //			addressList << curContact->host();
-			done = true;
 		}
 
 //	QString addresses = addressList.join(",");
 //	if(!addresses.isEmpty())
 //		metaContact->setAddressBookField(WPProtocol::protocol(), "messaging/winpopup", addresses);
+	metaContact->setPluginData(this , strList);
 
-	DEBUG(WPDINFO, "Finished with strList = " << strList.join(","));
-	return done;
+//	DEBUG(WPDINFO, "Finished with strList = " << strList.join(","));
+
 }
 
 void WPProtocol::deserialize(KopeteMetaContact *metaContact, const QStringList &strList)

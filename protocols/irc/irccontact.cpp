@@ -29,6 +29,7 @@
 #include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
 #include "tabcompleter.h"
 
 #include <kaction.h>
@@ -132,6 +133,10 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 	connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 
 	connect(m_serverContact->engine(), SIGNAL(connectionClosed()), this, SLOT(unloading()));
+
+	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
+
 	if (mJoinOnConnect == true)
 	{
 		if (m_serverContact->engine()->isLoggedIn() == true)
@@ -435,6 +440,12 @@ QString IRCContact::id() const
 	return QString(m_targetName+"@"+m_serverName).lower();
 }
 
+void IRCContact::slotMovedToMetaContact()
+{
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
+}
+
+
 #include "irccontact.moc"
 /*
  * Local variables:
@@ -444,4 +455,5 @@ QString IRCContact::id() const
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
+
 

@@ -18,6 +18,7 @@
 
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetemetacontact.h"
 #include "kopete.h"
 
 #include <qlineedit.h>
@@ -41,6 +42,10 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &phoneNumber,
 	initActions();
 
 	m_msgManager = 0L;
+
+	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol, SLOT (serialize(KopeteMetaContact*) ));
+
 }
 
 SMSContact::~SMSContact()
@@ -236,9 +241,13 @@ void SMSContact::userPrefs()
 	p->show();
 }
 
+void SMSContact::slotMovedToMetaContact()
+{
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
+}
+
+
 #include "smscontact.moc"
-
-
 
 /*
  * Local variables:

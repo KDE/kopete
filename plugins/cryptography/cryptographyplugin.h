@@ -56,9 +56,6 @@ public:
 	 *   Re-implementation of KopetePlugin class methods                       *
 	 ***************************************************************************/
 
-	bool serialize( KopeteMetaContact *metaContact, QStringList &strList) const;
-	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
-
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 //	virtual KActionCollection *customChatActions(KopeteMessageManager*);
 
@@ -79,8 +76,6 @@ private:
 	static CryptographyPlugin* pluginStatic_;
 	QCString m_cachedPass;
 	CryptographyPreferences *m_prefs;
-
-	QMap<const KopeteMetaContact*, QString> m_keyMap;
 
 	//cache messages for showing
 	QMap<QString, QString> m_cachedMessages;

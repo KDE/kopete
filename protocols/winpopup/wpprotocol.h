@@ -137,7 +137,6 @@ public:
 	QStringList addressBookFields() const;	// Returns the address book fields we're interested in
 	bool unload();				// Unload statusbar icon
 
-	bool serialize(KopeteMetaContact *metaContact, QStringList &strList) const;	// Serialises a given metacontact
 	void deserialize(KopeteMetaContact *metaContact, const QStringList &strList);	// Deserialises a strlist into a metacontact
 
 // Stuff used by WPContact
@@ -152,6 +151,8 @@ public slots:
 	 * Despatches said message to the destination.
 	 */
 	void slotSendMessage(const QString &Body, const QString &Destination);
+
+	void serialize(KopeteMetaContact *metaContact);	// Serialises a given metacontact
 };
 
 #endif

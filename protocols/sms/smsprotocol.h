@@ -43,8 +43,6 @@ public:
     bool unload();
 	typedef QMap<QString, SMSContact*> ContactList;
 
-	virtual bool serialize( KopeteMetaContact *metaContact,
-		QStringList &strList ) const;
 	virtual void deserialize( KopeteMetaContact *metaContact,
 		const QStringList &strList );
 
@@ -67,7 +65,9 @@ private:
 	StatusBarIcon *statusBarIcon;
 
 	SMSContact *m_mySelf;
-signals:
+
+public slots:
+	void serialize( KopeteMetaContact *metaContact);
 };
 
 #endif

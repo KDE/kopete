@@ -264,9 +264,9 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 }
 
 
-bool IRCProtocol::serialize(KopeteMetaContact * metaContact, QStringList & strList) const
+void IRCProtocol::serialize(KopeteMetaContact * metaContact) 
 {
-	bool r=false;
+	QStringList strList;
 
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
@@ -277,12 +277,10 @@ bool IRCProtocol::serialize(KopeteMetaContact * metaContact, QStringList & strLi
 		IRCContact *g = static_cast<IRCContact*>(c);
 
 		if( g )
-		{
 			strList << g->id() << g->displayName();
-			r=true;
-		}
 	}
-	return r;
+
+	metaContact->setPluginData(this, strList);
 }
 
 void IRCProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList &strList )

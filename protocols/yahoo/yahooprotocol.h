@@ -53,7 +53,6 @@ public:
 	/* Plugin reimplementation */
 	void init();
 	bool unload();
-	bool serialize( KopeteMetaContact *metaContact, QStringList &strList ) const;
 	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
 	QStringList addressBookFields() const;
 
@@ -110,7 +109,8 @@ public slots:
 	void slotError( const QString &, int);
 	void slotRemoveHandler( int fd);
 	//void slotHostConnect(const QString &host, int port);
-	
+
+	void serialize( KopeteMetaContact *metaContact);
 
 signals:
 //	void protocolUnloading();	// Unload Protocol

@@ -147,23 +147,6 @@ TranslatorPlugin* TranslatorPlugin::plugin()
 
 TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
-bool TranslatorPlugin::serialize( KopeteMetaContact *metaContact,
-			  QStringList &strList  ) const
-{
-	if ( m_langMap.contains( metaContact ) )
-		strList<<  m_langMap[ metaContact ] ;
-	else
-		strList<< "null";
-	return true;
-}
-
-void TranslatorPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
-{
-	m_langMap[ metaContact ] = data.first();
-//	kdDebug() << "[Translator] Deserialize " << metaContact->displayName() << " lang is " << data.first() << endl;
-
-}
-
 KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact *m)
 {
 	QStringList keys;
@@ -180,10 +163,12 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 
 	m_actionLanguage->setItems( keys );
 
-	if ( ( m_langMap[m] == 0L ) || ( m_langMap[m] == "" ) )
-		m_langMap[m] = "null";
-
-	m_actionLanguage->setCurrentItem( languageIndex(m_langMap[m]) );
+	QStringList strlist=m->pluginData( this );
+	if (!strlist.isEmpty() && strlist.first() != "null" && strlist.first() != "")
+		m_actionLanguage->setCurrentItem( languageIndex(strlist.first()) );
+	else
+		m_actionLanguage->setCurrentItem( languageIndex("null") );
+	
 
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
 	m_actionCollection->insert(m_actionLanguage);
@@ -217,9 +202,10 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	if ( (msg.direction() == KopeteMessage::Inbound) && ( msg.body() != QString::null ) )
 	{
 		KopeteMetaContact *from = msg.from()->metaContact();
-		if ( m_langMap.contains( from ) && (m_langMap[from] != "null"))
+		QStringList strlist=from->pluginData( this );
+		if (!strlist.isEmpty() && strlist.first() != "null" )
 		{
-			src_lang = m_langMap[ from ];
+			src_lang = strlist.first();
 		}
 		else
 		{
@@ -275,10 +261,10 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 		/* Sad, we have to consideer only the first To: metacontact only */
 		KopeteMetaContact *to = msg.to().first()->metaContact();
-		if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
+		QStringList strlist=to->pluginData( this );
+		if (!strlist.isEmpty() && strlist.first() != "null" )
 		{
-			dst_lang = m_langMap[ to ];
-//			kdDebug() << "[Translator] ( Outgoing ) remote lang is: " << dst_lang << endl;
+			dst_lang = strlist.first();
 		}
 		else
 		{
@@ -501,7 +487,7 @@ void TranslatorPlugin::slotSetLanguage()
 {
 	if( m_actionLanguage && m_currentMetaContact)
 	{
-		m_langMap[ m_currentMetaContact ]= languageKey( m_actionLanguage->currentItem() );
+		m_currentMetaContact->setPluginData(this , languageKey( m_actionLanguage->currentItem() ) );
 	}
 }
 
@@ -520,9 +506,10 @@ void TranslatorPlugin::slotTranslateChat()
 
 	QPtrList<KopeteContact> list=m_currentMessageManager->members();
 	KopeteMetaContact *to = list.first()->metaContact();
-	if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
+	QStringList strlist=to->pluginData( this );
+	if (!strlist.isEmpty() && strlist.first() != "null" )
 	{
-		dst_lang = m_langMap[ to ];
+		dst_lang = strlist.first();
 	}
 	else
 	{

@@ -124,8 +124,6 @@ public:
 		RL     // reverse
 	};
 
-	virtual bool serialize( KopeteMetaContact *metaContact,
-		QStringList &strList ) const;
 	virtual void deserialize( KopeteMetaContact *metaContact,
 		const QStringList &strList );
 
@@ -170,7 +168,7 @@ public:
 	/**
 	 * Returns a set of action items for the chatWindows
 	 */
-  KActionCollection * customChatActions(KopeteMessageManager * );
+	KActionCollection * customChatActions(KopeteMessageManager * );
 
 	MSNNotifySocket *notifySocket() { return m_notifySocket; };
 
@@ -188,6 +186,11 @@ public slots:
 	 * Start a new chat session: the result is an XFR command, see above
 	 */
 	void slotStartChatSession( QString handle );
+
+	/**
+	 * Update metaContact data for saving
+	 */
+	void serialize( KopeteMetaContact *metaContact);
 
 private slots:
 	/**

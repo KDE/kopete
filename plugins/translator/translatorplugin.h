@@ -71,9 +71,6 @@ public:
 	 *   Re-implementation of KopetePlugin class methods                       *
 	 ***************************************************************************/
 
-	bool serialize( KopeteMetaContact *metaContact, QStringList &strList) const;
-	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
-
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 	virtual KActionCollection *customChatActions(KopeteMessageManager*);
 
@@ -130,12 +127,6 @@ private:
 	/* Supported translations per service, src_dst format ( ie: en_es )*/
 	QMap< QString, QStringList > m_supported;
 
-	/* Each person language */
-	QMap<const KopeteMetaContact*, QString> m_langMap;
-
-	/* My language for each metacontact */
-	QMap<const KopeteMetaContact*, QString> m_myLangMap;
-
 	/* My default language */
 	QString m_myLang;
 
@@ -143,7 +134,7 @@ private:
 	QMap<int, QString> m_langIntKeyMap;
 	QMap<QString, int> m_langKeyIntMap;
 
-	/* int to lang key and viceversa*/
+	/* int to services key and viceversa*/
 	QMap<int, QString> m_servicesIntKeyMap;
 	QMap<QString, int> m_servicesKeyIntMap;
 

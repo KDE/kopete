@@ -94,6 +94,8 @@ public slots:
 	YahooStatus mStatus;
 	QString mStatusText;
 
+private slots: // Private slots
+	void slotMovedToMetaContact();
 };
 	
 #endif

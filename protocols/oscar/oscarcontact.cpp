@@ -29,6 +29,7 @@
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetemetacontact.h"
 
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
@@ -45,6 +46,14 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),this,SLOT(slotOffgoingBuddy(QString)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),this,SLOT(slotIMReceived(QString,QString,bool)));
 	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)), this, SLOT(slotMainStatusChanged(int)));
+
+	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
+		this, SLOT (slotMoved(KopeteMetaContact*) ));
+	if(parent)
+		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
+			protocol, SLOT (serialize(KopeteMetaContact*) ));
+
+
 	initActions();
 	TBuddy tmpBuddy;
 	int num = mProtocol->buddyList()->getNum(mName);
@@ -502,6 +511,12 @@ QStringList OscarContact::removeTag ( QString &message, QString tag )
 		tagStartEnd = message.find ( ">", tagStart+4, false );
 	}
 	return attr;
+}
+
+void OscarContact::slotMoved(KopeteMetaContact * /*old */)
+{
+	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
+		protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
 /*

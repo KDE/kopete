@@ -53,16 +53,12 @@ public:
 	 *   Re-implementation of KopetePlugin class methods                       *
 	 ***************************************************************************/
 
-	bool serialize( KopeteMetaContact *metaContact, QStringList &strList) const;
-	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
-
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 
 public slots:
-	void setNotes(QString n, KopeteMetaContact *m);
+	void setNotes(const QString &n, KopeteMetaContact *m);
 
 private:
-	QMap<const KopeteMetaContact*, QString> m_infoMap;
 
 	KActionCollection* m_actionCollection;
 	KAction* m_actionEdit;

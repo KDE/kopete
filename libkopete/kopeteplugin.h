@@ -82,8 +82,8 @@ public slots:
 	 * The default implementation returns false to disable streaming and
 	 * doesn't store anything in the KDE address book.
 	 */
-	virtual bool serialize( KopeteMetaContact *metaContact,
-		QStringList &strList ) const;
+	//virtual bool serialize( KopeteMetaContact *metaContact,
+	//	QStringList &strList ) const;
 
 	/**
 	 * deserialize() does the opposite of serialize() and tells the plugin
