@@ -22,7 +22,7 @@ class QString;
 
 class KopeteProtocol;
 
-class KopeteOnlineStatusPrivate;
+struct KopeteOnlineStatusPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -176,6 +176,13 @@ public:
 	 * identical.
 	 */
 	bool operator==( const KopeteOnlineStatus &other ) const;
+	
+	/**
+	 * Comparison operator
+	 *
+	 * This operator works exactly opposite of @ref operator==()
+	 */
+	bool operator!=( const KopeteOnlineStatus &other ) const;
 
 	/**
 	 * Comparison operator

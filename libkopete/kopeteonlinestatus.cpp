@@ -21,7 +21,7 @@
 
 #include <klocale.h>
 
-class KopeteOnlineStatusPrivate
+struct KopeteOnlineStatusPrivate
 {
 public:
 	KopeteOnlineStatus::OnlineStatus status;
@@ -105,6 +105,12 @@ bool KopeteOnlineStatus::operator==( const KopeteOnlineStatus &other ) const
 {
 	return d && other.d && d->internalStatus == other.d->internalStatus && d->protocol == other.d->protocol;
 }
+
+bool KopeteOnlineStatus::operator!=( const KopeteOnlineStatus &other ) const
+{
+	return !d || !other.d || d->internalStatus != other.d->internalStatus || d->protocol != other.d->protocol;
+}
+
 
 bool KopeteOnlineStatus::operator>( const KopeteOnlineStatus &other ) const
 {
