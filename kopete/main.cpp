@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
 
   KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
     version, description, KAboutData::License_GPL,
-    "(c) 2001, Duncan Mac-Vicar Prett", 0, 0, "duncan@puc.cl");
+    "(c) 2002, Duncan Mac-Vicar Prett", 0, 0, "duncan@puc.cl");
  	
 	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@puc.cl","http://www.mac-vicar.com");
-	aboutData.addAuthor ("Nick Betcher", "core developer","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
+	aboutData.addAuthor ("Nick Betcher", "core developer, faster plugin developer in the earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 
 	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
 	aboutData.addCredit("Olaf Lueg", I18N_NOOP("Kmerlin MSN Code"));
