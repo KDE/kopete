@@ -55,6 +55,7 @@ KActionMenu* KopeteProtocol::protocolActions()
 	return 0L;
 }
 
+#include "kopeteprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 
