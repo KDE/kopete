@@ -144,6 +144,8 @@ private slots:
 
 	void slotEventDone( KopeteEvent* );
 	void slotBlink();
+	
+	void updateContactIcons();
 
 protected:
 	void okRename(int col);
@@ -153,7 +155,6 @@ private:
 	void initLVI();
 	void setDisplayMode( int mode );
 	QString key( int column, bool ascending ) const;
-	void updateContactIcons();
 	void updateContactIcon( KopeteContact * );
 	ContactComponent *contactComponent( const KopeteContact *c ) const;
 
