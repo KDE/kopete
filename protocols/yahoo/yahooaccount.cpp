@@ -205,7 +205,6 @@ void YahooAccount::initActions()
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 */
-	kdDebug(14180) << "Yahoo: Using icon: " << m_myself->onlineStatus().icon() << endl;
 	
 	actionStatusMenu = new KActionMenu("Yahoo", this);
 	actionStatusMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
