@@ -64,7 +64,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	KopeteAccount *i=KopeteAccountManager::manager()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kdDebug() << k_funcinfo << "Account not found" << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
 		return 0L;
 	}
 	KopeteContact *c=i->contacts()[contactId];
@@ -128,7 +128,7 @@ void KopeteContactList::loadXML()
 	{
 		// The version string is invalid, or we're using an older version.
 		// Convert first and reparse the file afterwards
-		kdDebug() << k_funcinfo << "Contact list version " << version
+		kdDebug( 14010 ) << k_funcinfo << "Contact list version " << version
 			<< " is older than current version " << ContactListVersion
 			<< ". Converting first." << endl;
 
@@ -548,7 +548,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 	QDir().rename( fileName, fileName + QString::fromLatin1( ".bak" ) );
 
-	// kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
+	// kdDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
 	contactListFile.open( IO_WriteOnly );
 	QTextStream stream( &contactListFile );

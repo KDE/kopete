@@ -205,7 +205,7 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 
 bool LibraryLoader::loadPlugin( const QString &spec )
 {
-	kdDebug() << k_funcinfo << spec << endl;
+	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
 	QString pluginId = spec;
 	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );

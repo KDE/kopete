@@ -75,7 +75,7 @@ KopeteViewManager::KopeteViewManager() : QObject( kapp, "KopeteViewManager" )
 
 KopeteViewManager::~KopeteViewManager()
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14000) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -134,7 +134,7 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool foreign
 
 void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManager *manager)
 {
-//	kdDebug( 14010 ) << k_funcinfo << endl;
+//	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	bool outgoingMessage = ( msg.direction() == KopeteMessage::Outbound );
 
@@ -193,7 +193,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoingMessage )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 	KopeteView *thisView = view( manager, !outgoingMessage );
 
  	if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow )
@@ -237,7 +237,7 @@ void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 
 void KopeteViewManager::nextEvent()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	if( d->eventQueue.isEmpty() )
 		return;
@@ -248,13 +248,13 @@ void KopeteViewManager::nextEvent()
 
 void KopeteViewManager::slotViewActivated( KopeteView *view )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->activeView = view;
 }
 
 void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	if( d->managerMap.contains( closingView->msgManager() ) )
 	{
@@ -268,7 +268,7 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 
 void KopeteViewManager::slotMessageManagerDestroyed( KopeteMessageManager *manager )
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	if( d->managerMap.contains( manager ) )
 	{

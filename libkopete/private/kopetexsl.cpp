@@ -108,25 +108,25 @@ void KopeteXSLThread::run()
 				}
 				else
 				{
-					kdDebug() << "Transformed document is null!!!" << endl;
+					kdDebug( 14010 ) << "Transformed document is null!!!" << endl;
 				}
 				xsltFreeStylesheet(style_sheet);
 			}
 			else
 			{
-				kdDebug() << "Document is not valid XSL!!!" << endl;
+				kdDebug( 14010 ) << "Document is not valid XSL!!!" << endl;
 				xmlFreeDoc(xslDoc);
 			}
 		}
 		else
 		{
-			kdDebug() << "XSL Document could not be parsed!!!" << endl;
+			kdDebug( 14010 ) << "XSL Document could not be parsed!!!" << endl;
 		}
 		xmlFreeDoc(xmlDoc);
 	}
 	else
 	{
-		kdDebug() << "XML Document could not be parsed!!!" << endl;
+		kdDebug( 14010 ) << "XML Document could not be parsed!!!" << endl;
 	}
 
 	//Signal completion

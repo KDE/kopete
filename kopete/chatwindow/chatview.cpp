@@ -207,7 +207,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 ChatView::~ChatView()
 {
-	kdDebug( 14010 ) << k_funcinfo << "Destroying ChatView" << endl;
+	kdDebug( 14000 ) << k_funcinfo << "Destroying ChatView" << endl;
 
 	emit( closing( static_cast<KopeteView*>(this) ) );
 
@@ -388,7 +388,7 @@ void ChatView::createMembersList(void)
 {
 	if( !membersDock )
 	{
-		kdDebug(14010) << k_funcinfo << "Creating members list" << endl;
+		kdDebug(14000) << k_funcinfo << "Creating members list" << endl;
 
 		//Create the chat members list
 		membersDock = createDockWidget( QString::fromLatin1( "membersDock" ), QPixmap(), 0L,
@@ -545,7 +545,7 @@ void ChatView::nickComplete()
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
 		QString m_Match;
 
-		kdDebug() << "Word is '" << word << "', last match is '" << m_lastMatch << "'" << endl;
+		kdDebug( 14000 ) << "Word is '" << word << "', last match is '" << m_lastMatch << "'" << endl;
 
 		if( word != m_lastMatch )
 		{
@@ -717,7 +717,7 @@ void ChatView::slotMarkMessageRead()
 
 void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ )
 {
-	//kdDebug(14010) << "slotContactStatusChanged" << endl;
+	//kdDebug(14000) << "slotContactStatusChanged" << endl;
 	// %2 before %1 because displayName can contains '%' . And i don't think the status can
 	if(KopetePrefs::prefs()->showEvents())
 	{
@@ -738,7 +738,7 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 
 void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
 {
-	kdDebug(14010) << k_funcinfo << "url=" << url.url() << endl;
+	kdDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
 	new KRun(url, 0, false); // false = non-local files
 }
 
@@ -822,7 +822,7 @@ void ChatView::historyDown()
 
 void ChatView::saveOptions()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kdDebug(14000) << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
 
@@ -842,7 +842,7 @@ void ChatView::saveOptions()
 
 void ChatView::readOptions()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kdDebug(14000) << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
 
@@ -1131,7 +1131,7 @@ void ChatView::cut()
 
 void ChatView::copy()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kdDebug(14000) << k_funcinfo << endl;
 
 	if ( chatView->hasSelection() )
 	{
@@ -1208,7 +1208,7 @@ void ChatView::slotRepeatTimer()
 
 void ChatView::slotRemoteTypingTimeout()
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
 	if( !m_remoteTypingMap.isEmpty() )
@@ -1217,7 +1217,7 @@ void ChatView::slotRemoteTypingTimeout()
 
 void ChatView::slotStopTimer()
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	m_typingRepeatTimer->stop();
 	emit typing( false );
@@ -1225,18 +1225,18 @@ void ChatView::slotStopTimer()
 
 void ChatView::slotTransparancyChanged()
 {
-	kdDebug(14010) << k_funcinfo << "called." << endl;
+	kdDebug(14000) << k_funcinfo << "called." << endl;
 
 	transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
 	bgOverride = KopetePrefs::prefs()->bgOverride();
 
-//	kdDebug(14010) << k_funcinfo << "transparencyEnabled=" << transparencyEnabled << ", bgOverride=" << bgOverride << "." << endl;
+//	kdDebug(14000) << k_funcinfo << "transparencyEnabled=" << transparencyEnabled << ", bgOverride=" << bgOverride << "." << endl;
 
 	if( transparencyEnabled )
 	{
 		if( !root )
 		{
-//			kdDebug(14010) << k_funcinfo << "enabling transparency" << endl;
+//			kdDebug(14000) << k_funcinfo << "enabling transparency" << endl;
 			root = new KRootPixmap( this );
 			connect(root, SIGNAL(backgroundUpdated(const QPixmap &)), this, SLOT(slotUpdateBackground(const QPixmap &)));
 			root->setCustomPainting ( true );
@@ -1251,7 +1251,7 @@ void ChatView::slotTransparancyChanged()
 	{
 		if ( root )
 		{
-//			kdDebug(14010) << k_funcinfo << "disabling transparency" << endl;
+//			kdDebug(14000) << k_funcinfo << "disabling transparency" << endl;
 			disconnect(root, SIGNAL(backgroundUpdated(const QPixmap &)), this, SLOT(slotUpdateBackground(const QPixmap &)));
 			delete root;
 			root = 0L;

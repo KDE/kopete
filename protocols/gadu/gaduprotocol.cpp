@@ -106,7 +106,7 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
                                   const QMap<QString, QString> &serializedData,
                                   const QMap<QString, QString> & /* addressBookData */ )
 {
-    //kdDebug()<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
+    //kdDebug(14100)<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
     //addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
 }
 

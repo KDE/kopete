@@ -1,1 +1,1 @@
-SUBDIRS = msn irc oscar sms winpopup yahoo
+SUBDIRS = msn irc oscar sms winpopup yahoo gadu

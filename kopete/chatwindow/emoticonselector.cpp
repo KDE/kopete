@@ -48,23 +48,23 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
 EmoticonSelector::EmoticonSelector(QWidget *parent, const char *name)
 	: QWidget(parent, name)
 {
-//	kdDebug(14010) << k_funcinfo << "called." << endl;
+//	kdDebug(14000) << k_funcinfo << "called." << endl;
 	lay = 0L;
 }
 
 void EmoticonSelector::prepareList(void)
 {
-//	kdDebug(14010) << k_funcinfo << "called." << endl;
+//	kdDebug(14000) << k_funcinfo << "called." << endl;
 	int row = 0;
 	int col = 0;
 	QMap<QString, QString> list = KopeteEmoticons::emoticons()->emoticonAndPicList();
 	int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
-//	kdDebug(14010) << "emoticonsPerRow=" << emoticonsPerRow << endl;
+//	kdDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
 
 	if ( lay )
 	{
 		QObjectList *list = queryList( "EmoticonLabel" );
-//		kdDebug(14010) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
+//		kdDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
 		list->setAutoDelete( true );
 		list->clear();
 		delete list;
@@ -76,7 +76,7 @@ void EmoticonSelector::prepareList(void)
 	{
 		QWidget *w = new EmoticonLabel(it.key(), it.data(), this);
 		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
-//		kdDebug(14010) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
+//		kdDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
 		lay->addWidget(w, row, col);
 		if ( col == emoticonsPerRow )
 		{
@@ -91,7 +91,7 @@ void EmoticonSelector::prepareList(void)
 
 void EmoticonSelector::emoticonClicked(const QString &str)
 {
-//	kdDebug(14010) << "selected emoticon '" << str << "'" << endl;
+//	kdDebug(14000) << "selected emoticon '" << str << "'" << endl;
 	emit ItemSelected ( str );
 	if ( isVisible() && parentWidget() &&
 		parentWidget()->inherits("QPopupMenu") )

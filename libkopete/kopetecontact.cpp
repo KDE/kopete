@@ -96,7 +96,7 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 {
 	d = new KopeteContactPrivate;
 
-	//kdDebug() << k_funcinfo << "Creating contact with id " << contactId << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
 	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
@@ -134,7 +134,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 {
 	d = new KopeteContactPrivate;
 
-	//kdDebug() << k_funcinfo << "Creating contact with id " << contactId << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
 	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );

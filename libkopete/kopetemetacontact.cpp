@@ -452,7 +452,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const Kopet
 
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
-//	kdDebug( 14000 ) << k_funcinfo << "Change displayName from " << d->displayName <<
+//	kdDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
 //		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
 
 	if( name == d->displayName )

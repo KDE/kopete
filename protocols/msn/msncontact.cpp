@@ -265,7 +265,7 @@ void MSNContact::syncGroups( )
 		// FIXME: if this method is called a seconds times, that mean change can be
 		//        done in the contactlist. we should found a way to recall this
 		//        method later. (a QTimer?)
-		kdDebug() << k_funcinfo << " This contact is already moving. Abort sync " << endl;
+		kdDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync " << endl;
 		return;
 	}
 
@@ -339,7 +339,7 @@ void MSNContact::contactRemovedFromGroup( unsigned int group )
 
 void MSNContact::rename( const QString &newName )
 {
-	//kdDebug() << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
+	//kdDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
 
 	if( newName == displayName() )
 		return;
