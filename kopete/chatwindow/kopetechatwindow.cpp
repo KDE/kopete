@@ -176,6 +176,8 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
 	vBox->setFrameStyle( QFrame::NoFrame );
+	// set default window size.  This could be removed by fixing the size hints of the contents
+	resize( 500, 500 );
 	setCentralWidget( vBox );
 
 	mainArea = new QFrame( vBox );
@@ -840,7 +842,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
 {
 	if(!view||!m_activeView||view!=m_activeView )
-		return; //(pas de charité)
+		return; //(pas de charitÃ©)
 	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
 	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
