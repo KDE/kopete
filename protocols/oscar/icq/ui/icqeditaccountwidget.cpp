@@ -106,6 +106,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mUserInfoSettings->roWrkCountry->hide();
 	mUserInfoSettings->wrkHomepageLabel->hide();
 
+	connect(mAccountSettings->btnServerDefaults, SIGNAL(clicked()),
+	this, SLOT(slotSetDefaultServer()));
+
 	// ==========================================================================
 
 	// Read in the settings from the account if it exists
@@ -123,18 +126,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->edtAccountId->setDisabled(true);
 
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
-
-
-
-        if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
-            mAccountSettings->optionOverrideServer->setChecked( true );
-        }
-
-
-
-
-
-
 		mAccountSettings->edtServerAddress->setText(mAccount->pluginData(mProtocol, "Server"));
 		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
 		mAccountSettings->chkHideIP->setChecked((mAccount->pluginData(mProtocol,"HideIP").toUInt()==1));
@@ -231,6 +222,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		kdDebug(14200) << k_funcinfo << "Difference from UTC = " << diff << endl;
 
 		mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, (diff*2));
+		slotSetDefaultServer();
 	}
 
 	connect(mAccountSettings->chkWebAware, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
@@ -281,18 +273,11 @@ KopeteAccount *ICQEditAccountWidget::apply()
 
 	mAccount->setAutoLogin(mAccountSettings->chkAutoLogin->isChecked());
 
-	if (mAccountSettings->optionOverrideServer->isChecked() ) {
-		static_cast<OscarAccount *>(mAccount)->setServerAddress(
-			mAccountSettings->edtServerAddress->text());
-		static_cast<OscarAccount *>(mAccount)->setServerPort(
-			mAccountSettings->edtServerPort->value());
-	}
-	else {
-		static_cast<OscarAccount *>(mAccount)->setServerAddress(
-			"login.icq.com");
-		static_cast<OscarAccount *>(mAccount)->setServerPort(
-			5190);
-	}
+	static_cast<OscarAccount *>(mAccount)->setServerAddress(
+		mAccountSettings->edtServerAddress->text());
+
+	static_cast<OscarAccount *>(mAccount)->setServerPort(
+		mAccountSettings->edtServerPort->value());
 
 	mAccount->setPluginData(mProtocol, "HideIP",
 		QString::number(mAccountSettings->chkHideIP->isChecked()));
@@ -425,6 +410,12 @@ void ICQEditAccountWidget::slotReadInfo()
 		static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
 	mModified=false;
 } // END slotReadInfo()
+
+void ICQEditAccountWidget::slotSetDefaultServer()
+{
+	mAccountSettings->edtServerAddress->setText(ICQ_SERVER);
+	mAccountSettings->edtServerPort->setValue(ICQ_PORT);
+}
 
 void ICQEditAccountWidget::slotSend()
 {

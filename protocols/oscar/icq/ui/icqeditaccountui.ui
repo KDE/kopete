@@ -12,6 +12,9 @@
             <height>433</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>ICQEditAccountUI</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -139,6 +142,9 @@
                                                 <property name="text">
                                                     <string>Remember &amp;password</string>
                                                 </property>
+                                                <property name="accel">
+                                                    <string>Alt+P</string>
+                                                </property>
                                                 <property name="toolTip" stdset="0">
                                                     <string>Check to save your password.</string>
                                                 </property>
@@ -156,6 +162,9 @@
                                 </property>
                                 <property name="text">
                                     <string>Hide &amp;IP</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+I</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this to hide your IP address from other users.</string>
@@ -349,6 +358,9 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
+                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -362,6 +374,9 @@ If you do not currently have an ICQ account, please click the &lt;b&gt;Register 
                                 </property>
                                 <property name="text">
                                     <string>&amp;Override default server information</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+O</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">

@@ -12,6 +12,9 @@
             <height>554</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>ICQUserInfoWidget</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
