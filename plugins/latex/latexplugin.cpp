@@ -85,26 +85,16 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 	//QRegExp rg("\\[([^]\]).*?\\[/$1\\]");
 	
 	int pos = 0;
-	int count = 0;
 	
 	QMap<QString, QString> replaceMap;
-    // FIXME:  this loop never end for me, that's why i limited count to 30  - Olivier
-	while (pos >= 0 && (unsigned int)pos < messageText.length()  && count < 30)
+	while (pos >= 0 && (unsigned int)pos < messageText.length())
 	{
-		kdDebug() << k_funcinfo  << " searching pos: " << pos << " count: " << count << endl;
-		rg.search(messageText, pos);
+//		kdDebug() << k_funcinfo  << " searching pos: " << pos << endl;
+		pos = rg.search(messageText, pos);
 		
 		if (pos >= 0 )
 		{
 			QString match = rg.cap(0);
-			
-			if ( !match.length() )
-			{
-				pos += rg.matchedLength();
-				count++;
-				continue;
-			}
-			
 //			kdDebug() << k_funcinfo << " captured: " << match << endl;
 			QString latexFormula = match;
 			latexFormula.replace("$$","");  
@@ -145,7 +135,6 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 			#endif
 			// ok, go for the next one
 			pos += rg.matchedLength();
-			count++;
 
 		}
 	}
