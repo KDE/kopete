@@ -4,6 +4,8 @@
     begin                : Fri Apr 12 2002
     copyright            : (C) 2002 by Daniel Stone
     email                : dstone@kde.org
+    
+    Lots of cleanup and fixing by Till Gerken, till@tantalo.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -141,7 +143,6 @@ private:
 	KAction *actionGoDND;
 	KAction *actionGoOffline;
 	KAction *actionSendRaw;
-	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
 
 	QString mUsername, mPassword, mServer, mResource;
@@ -154,10 +155,12 @@ private:
 	static const JabberProtocol *sProtocol;
 	Jabber *mProtocol;
 	JabberContact *myContact;
-	KMessageBox *authContact;
 	dlgJabberStatus *reasonDialog;
 	dlgJabberSendRaw *sendRawDialog;
-	QMap<QString, JabberContact *> contactList;
+	
+	// this is the local contact list used to keep Jabber contacts in
+	// synch with the related meta-contacts
+	QMap<QString, JabberContact> contactList;
 };
 
 #endif
