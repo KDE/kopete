@@ -31,7 +31,7 @@ while (defined ($ARGV[0]))
         $string .= $_;
         chomp($string);
 
-        $textstring = '(Example|GroupName|Text|Comment|Syntax|TypeName|kopete-i18n)>';
+        $textstring = 'kopete-i18n>';
 
         if ($intext == 0)
         {
