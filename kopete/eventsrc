@@ -440,6 +440,7 @@ default_presentation=65
 [kopete_lowpriority]
 Name=Low priority messages
 Name[da]=Breve med lav prioritet
+Name[es]=Mensajes de prioridad baja
 Name[et]=Madala prioriteediga sõnumid
 Name[nl]=Berichten met lage prioriteit
 Name[pt]=Mensagens de baixa prioridade
@@ -460,6 +461,7 @@ default_presentation=0
 [yahoo_mail]
 Name=Yahoo Mail
 Name[bg]=Пристигна нова поща в Yahoo
+Name[es]=Correo de Yahoo
 Name[fr]=Courrier Yahoo
 Name[pt]=E-mail Yahoo
 Name[pt_BR]=E-mail Yahoo
