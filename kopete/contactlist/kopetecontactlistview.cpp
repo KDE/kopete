@@ -337,6 +337,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactCopy" );
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ),
 		ac, "contactRemove" );
+	actionSendEmail = new KAction( i18n( "Send Email..." ), QString::fromLatin1( "mail_generic" ),
+		0, this, SLOT(  slotSendEmail() ), ac, "contactSendEmail" );
 	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0,
 		this, SLOT( slotRename() ), ac, "contactRename" );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
@@ -1498,7 +1500,9 @@ void KopeteContactListView::updateActionsForSelection(
 		contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( groups.isEmpty() && contacts.count()==1 &&
 		!contacts.first()->isTemporary());
-
+	actionSendEmail->setEnabled( groups.isEmpty() && contacts.count()==1 &&
+		!contacts.first()->metaContactId().isEmpty() );
+		
 	if(contacts.count() == 1 && groups.isEmpty())
 	{
 		actionRename->setText(i18n("Rename Contact"));
@@ -1546,6 +1550,29 @@ void KopeteContactListView::slotSendFile()
 	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
 	if(m)
 		m->sendFile(KURL());
+}
+
+ void KopeteContactListView::slotSendEmail()
+{
+	//I borrowed this from slotSendMessage
+	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+	if ( !m->metaContactId().isEmpty( ) ) // check if in kabc
+	{
+		KABC::Addressee addressee = KABC::StdAddressBook::self()->findByUid( m->metaContactId() );
+		if ( !addressee.isEmpty() )
+		{
+			QString emailAddr = addressee.preferredEmail();
+			kdDebug( 14000 ) << "Email: " << emailAddr << "!" << endl;
+			if ( !emailAddr.isEmpty() )
+				kapp->invokeMailer( emailAddr, QString::null );
+			else
+				KMessageBox::error( this, i18n( "There is no email address set for this contact in the KDE Address Book" ), i18n( "No Email Address In Address Book" ) );
+		}
+		else
+			KMessageBox::error( this, i18n( "This contact was not found in the KDE Address Book.  Check that a contact is selected in the Properties dialog." ), i18n( "Not Found In Address Book" ) );
+	}
+	else
+		KMessageBox::error( this, i18n( "This contact is not associated with a KDE Address Book entry, where the email address is stored.  Check that a contact is selected in the Properties dialog." ), i18n( "Not Found In Address Book" ) );
 }
 
 void KopeteContactListView::slotMoveToGroup()

@@ -161,6 +161,7 @@ private slots:
 	void slotSendMessage();
 	void slotStartChat();
 	void slotSendFile();
+	void slotSendEmail();
 	void slotMoveToGroup();
 	void slotCopyToGroup();
 	void slotRemoveFromGroup();
@@ -201,6 +202,7 @@ private:
 	KAction *actionSendMessage;
 	KAction *actionStartChat;
 	KAction *actionSendFile;
+	KAction *actionSendEmail;
 	KListAction *actionMove;
 	KListAction *actionCopy;
 	KAction *actionRename;
