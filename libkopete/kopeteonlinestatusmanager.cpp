@@ -268,8 +268,11 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 			}
 		}
 
+#if 0
+		//disabled because since action are reused, they are not enabled back if the account is online.
 		if(options & OnlineStatusManager::DisabledIfOffline  && !account->isConnected())
 			action->setEnabled(false);
+#endif
 		
 		if(parent)
 			parent->insert(action);
