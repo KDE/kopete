@@ -474,6 +474,7 @@ QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt,
 	view->m_image->setPixmap( image );
 	if ( maxLength != 0 )
 		view->m_password->setMaxLength( maxLength );
+	view->m_password->setFocus();
 
 	// FIXME: either document what these are for or remove them - lilac
 	view->adjustSize();
