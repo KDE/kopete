@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="25" name="kopetechatwindow">
+<kpartgui version="26" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -24,6 +24,8 @@
 			<Action name="tabs_placement"/>
 			<Action name="tabs_detach"/>
 			<Action name="tabs_detachmove"/>
+			<Action name="tabs_left"/>
+			<Action name="tabs_right"/>
 		</Menu>
 
 		<Menu name="settings">

@@ -44,6 +44,7 @@
 #include <kdialog.h>
 #include <kstringhandler.h>
 #include <ksqueezedtextlabel.h>
+#include <kstdaccel.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -391,12 +392,11 @@ void KopeteChatWindow::initActions(void)
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 
-	tabLeft = KStdAction::back( this, SLOT( slotPreviousTab() ), coll, "tabs_left" );
-	tabLeft->setText( i18n( "&Previous Chat" ) );
+	tabRight=new KAction( i18n( "&Activate Next Tab" ), 0, KStdAccel::tabNext(),
+		this, SLOT( slotNextTab() ), coll, "tabs_right" );
+	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), 0, KStdAccel::tabPrev(),
+		this, SLOT( slotPreviousTab() ), coll, "tabs_left" );
 	tabLeft->setEnabled( false );
-
-	tabRight = KStdAction::forward( this, SLOT( slotNextTab() ), coll, "tabs_right" );
-	tabRight->setText( i18n( "&Next Chat" ) );
 	tabRight->setEnabled( false );
 
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), QString::null, 0, this, SLOT( slotNickComplete() ), coll , "nick_compete");
