@@ -96,6 +96,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_supported["google"].append("en_it");
 	m_supported["google"].append("en_pt");
 	m_supported["google"].append("de_en");
+	m_supported["google"].append("de_fr");
 	m_supported["google"].append("es_en");
 	m_supported["google"].append("fr_en");
 	m_supported["google"].append("fr_de");
@@ -434,7 +435,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QStr
 //	kdDebug(14308) << "[Translator]: Babelfish response: "<< endl << data << endl;
 
 	//QRegExp re("*-*-* (.*) *-*-*");
-	QRegExp re("<Div style=padding:10px;>(.*)</div");
+	QRegExp re("<Div style=padding:10px; lang=..>(.*)</div");
 	re.setMinimal(true);
 	re.match( data );
 
