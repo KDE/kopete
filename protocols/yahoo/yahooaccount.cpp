@@ -27,7 +27,6 @@
 // Yahoo
 #include "yahooaccount.h"
 #include "yahoocontact.h"
-#include "yahoostatus.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)
 : KopeteAccount(parent, AccountID, name)

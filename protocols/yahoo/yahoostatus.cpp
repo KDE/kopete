@@ -36,8 +36,8 @@ KopeteOnlineStatus YahooStatus::translate() const
 	else if(m_status == Mobile)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,     5, YahooProtocol::protocol(), m_status + 1, "yahoo_mobile",  i18n("On the mobile"), i18n("On the mobile"));
 	else if(m_status == Invisible)
-		return KopeteOnlineStatus(KopeteOnlineStatus::Away,     0, YahooProtocol::protocol(), m_status + 1, QString::null, i18n(YSTInvisible), i18n(YSTInvisible));
-	else if(m_status == Idle)
+		return KopeteOnlineStatus(KopeteOnlineStatus::Away,     0, YahooProtocol::protocol(), m_status + 1, "yahoo_invisible", i18n(YSTInvisible), i18n(YSTInvisible));
+ 	else if(m_status == Idle)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    15, YahooProtocol::protocol(), m_status + 1, "yahoo_idle",    i18n("Idle"), i18n("Idle"));
 	else if(m_status == Custom)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    20, YahooProtocol::protocol(), m_status + 1, "yahoo_away",    m_statusText, m_statusText);
