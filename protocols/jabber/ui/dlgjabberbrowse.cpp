@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include <qlayout.h>
-#include <qpushbutton.h>
+#include <kpushbutton.h>
 #include <qgroupbox.h>
 #include <qtable.h>
 #include <qlabel.h>
