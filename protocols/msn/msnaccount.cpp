@@ -959,7 +959,17 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 
 	if ( c && myself() )
 	{
-		static_cast<MSNMessageManager *>( c->manager( true ) )->createChat( handle, address, auth, ID );
+		// we can't use simply c->manager(true) here to get the manager, because this will re-open
+		// another chat session, and then, close this new one. We have to re-create the manager manualy.
+		MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( c->manager( false ) );
+		if(!manager)
+		{
+			KopeteContactPtrList chatmembers;
+			chatmembers.append(c);
+			manager = new MSNMessageManager( protocol(), myself(), chatmembers  );
+		}
+	
+		manager->createChat( handle, address, auth, ID );
 
 		KGlobal::config()->setGroup( "MSN" );
 		bool notifyNewChat = KGlobal::config()->readBoolEntry( "NotifyNewChat", false );
@@ -967,8 +977,8 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		{
 			// this temporary message should open the window if they not exist
 			QString body = i18n( "%1 has started a chat with you" ).arg( c->displayName() );
-			KopeteMessage tmpMsg = KopeteMessage( c, c->manager()->members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
-			c->manager()->appendMessage( tmpMsg );
+			KopeteMessage tmpMsg = KopeteMessage( c, manager->members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
+			manager->appendMessage( tmpMsg );
 		}
 	}
 
