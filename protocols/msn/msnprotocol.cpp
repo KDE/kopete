@@ -16,27 +16,25 @@
  ***************************************************************************/
 
 #include <qcursor.h>
-#include <qlayout.h>
 
-#include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 
+#include "kmsnservice.h"
 #include "kopete.h"
-#include "msnadd.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
+#include "msnmessagedialog.h"
+#include "msnpreferences.h"
 #include "msnprotocol.h"
 #include "msnuser.h"
-#include "systemtray.h"
+#include "newuserimpl.h"
+#include "statusbaricon.h"
 
-///////////////////////////////////////////////////
-//           Constructor & Destructor
-///////////////////////////////////////////////////
 MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), IMProtocol()
 {
 	QString path;
@@ -247,7 +245,7 @@ void MSNProtocol::initActions()
 	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu(), 1 );
 }
 
-void MSNProtocol::slotIconRightClicked(const QPoint point)
+void MSNProtocol::slotIconRightClicked( const QPoint /* point */ )
 {
 	KGlobal::config()->setGroup("MSN");
 	QString handle = KGlobal::config()->readEntry("UserID", i18n("(User ID not set)"));
@@ -301,7 +299,6 @@ void MSNProtocol::slotConnected()
 	groups = m_msnService->getGroups();
 	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
 	{
-		QListViewItem *groupItem;
 		if ( !kopeteapp->contactList()->groups().contains( (*it).latin1() ) )
 		{
 			kdDebug() << "MSN Plugin: Group: [ " << (*it).latin1() << " ] exits in server but not locally!! CREATING!" <<endl;
@@ -541,8 +538,6 @@ void MSNProtocol::slotUserSetOffline (QString str)
 void MSNProtocol::slotContactAdded( QString handle, QString nick, QString group)
 {
 	kdDebug() << "MSN Plugin: Contact Added in group " << group << " ... creating contact" << endl;
-	MSNContact *tmpcontact;
-	uint status;	
 	kopeteapp->contactList()->addContact(new MSNContact( handle, nick, group, this ), group);
 }
 
@@ -589,11 +584,11 @@ void MSNProtocol::slotBlockContact( QString handle)
 	m_msnService->contactBlock( handle );
 }
 
-void MSNProtocol::slotGroupAdded( QString handle)
+void MSNProtocol::slotGroupAdded( QString /* handle */ )
 {
 }
 
-void MSNProtocol::slotDeletingGroup( QString handle)
+void MSNProtocol::slotDeletingGroup( QString /* handle */ )
 {
 }
 

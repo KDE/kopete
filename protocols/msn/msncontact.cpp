@@ -16,28 +16,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <klocale.h>
-#include "msncontact.h"
-#include "msncontact.moc"
-
-#include <contactlist.h>
-#include "kmsncontact.h"
-#include <kmsnchatservice.h>
-
-#include <qcursor.h>
-#include <qstringlist.h>
-#include <qlistview.h>
-#include <qtimer.h>
-#include <qpixmap.h>
-#include <qstring.h>
-
-#include <kmessagebox.h>
-#include <kiconloader.h>
-#include <kpopupmenu.h>
 #include <kdebug.h>
+#include <klocale.h>
 
-/* Constructor for no-groups */
+#include "msncontact.h"
+#include "kmsnservice.h"
 
+// Constructor for no-groups
 MSNContact::MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol)
 	: KopeteContact(protocol)
 {
@@ -365,3 +350,8 @@ int MSNContact::importance() const
 		}
 	}
 }
+
+#include "msncontact.moc"
+
+// vim: noet set ts=4 sts=4 sw=4:
+

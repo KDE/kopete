@@ -18,34 +18,27 @@
 #ifndef MSNPROTOCOL_H
 #define MSNPROTOCOL_H
 
-#include "addcontactpage.h"
-#include "improtocol.h"
-#include "kmsnservice.h"
-#include "msnmessage.h"
-#include "msnmessagedialog.h"
-#include "msnpreferences.h"
-#include "newuserimpl.h"
-#include "statusbaricon.h"
-
-#include <qlabel.h>
-#include <qlist.h>
 #include <qmovie.h>
 #include <qpixmap.h>
 #include <qptrlist.h>
-#include <qstringlist.h>
-#include <qwidget.h>
 
-#include <kaction.h>
-#include <kdialogbase.h>
-#include <kpopupmenu.h>
-#include <ksimpleconfig.h>
-#include <kurllabel.h>
+#include "improtocol.h"
 
-#include <klocale.h> // for the whole plugin
+class QLabel;
 
-/**
-  *@author duncan
-  */
+class KAction;
+class KActionMenu;
+class KDialogBase;
+class KPopupMenu;
+class KSimpleConfig;
+class KURLLabel;
+
+class KMSNChatService;
+class KMSNService;
+class MSNMessageDialog;
+class MSNPreferences;
+class StatusBarIcon;
+
 struct MSNContactStruct
 {
 	QString UserID;
@@ -53,6 +46,7 @@ struct MSNContactStruct
 	bool isdeleted;
 	bool isnew;
 };
+
 struct MSNGroupStruct
 {
 	QString Name;
@@ -60,6 +54,9 @@ struct MSNGroupStruct
 	bool isnew;
 };
 
+/**
+ * @author duncan
+ */
 class MSNProtocol : public QObject, public IMProtocol
 {
 	Q_OBJECT

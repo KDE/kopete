@@ -1,12 +1,12 @@
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <kdebug.h>
-#include "msnaddcontactpage.h"
-#include <msnadd.h>
-#include <msnprotocol.h>
-#include <kglobal.h>
-#include <kconfig.h>
+
 #include <klocale.h>
+
+#include "kmsnservice.h"
+#include "msnadd.h"
+#include "msnaddcontactpage.h"
+#include "msnprotocol.h"
 
 MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
