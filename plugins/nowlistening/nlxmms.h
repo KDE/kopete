@@ -23,12 +23,16 @@
 #ifndef NLXMMS_H
 #define NLXMMS_H
 
+#ifdef HAVE_XMMS
+
 class NLXmms : public NLMediaPlayer
 {
 	public:
 		NLXmms();
 		virtual void update();
 };
+
+#endif
 
 #endif
 

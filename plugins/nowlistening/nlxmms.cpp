@@ -21,6 +21,8 @@
     *************************************************************************
 */
 
+#ifdef HAVE_XMMS
+
 #include <kdebug.h>
 #include <xmmsctrl.h> // need to fix Makefile.am for this?
 #include "nlmediaplayer.h"
@@ -65,4 +67,6 @@ void NLXmms::update()
 	else
 		kdDebug(14307) << "NLXmms::update() - xmms not found" << endl;
 }
+
+#endif 
 // vim: set noet ts=4 sts=4 sw=4:
