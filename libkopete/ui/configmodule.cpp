@@ -26,6 +26,10 @@
 #include <kdeversion.h>
 #include <kiconloader.h>
 
+#if (QT_VERSION>=0x030005 && QT_VERSION<0x030102) && KDE_VERSION<0x0302000
+#include <kapplication.h>
+#endif
+
 ConfigModule::ConfigModule(const QString &name, const QString &description, QObject *owner)
 	: QWidget( PreferencesDialog::preferencesDialog()->addPage( name, description ) )
 {

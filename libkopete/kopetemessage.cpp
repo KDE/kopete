@@ -18,22 +18,27 @@
 #include <stdlib.h>
 
 #include <qdatetime.h>
+#include <qfont.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kmdcodec.h>
 
 #include "kopeteemoticons.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopeteprefs.h"
+#include "kopetexsl.h"
 
 struct KopeteMessagePrivate
 {
 	uint refCount;
 
 	const KopeteContact *from;
+	KopeteMessageManager *manager;
 	KopeteContactPtrList to;
 	QDomDocument xmlDoc;
 
@@ -195,6 +200,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	d->importance = (to.count() <= 1) ? Normal : Low;
 	d->timeStamp = timeStamp;
 	d->direction = direction;
+	d->manager=0l;
 
 	QDomElement messageNode = d->xmlDoc.createElement( QString::fromLatin1("message") );
 	messageNode.setAttribute( QString::fromLatin1("time"), KGlobal::locale()->formatTime(timeStamp.time(), true) );
@@ -412,6 +418,18 @@ KopeteMessage::MessageImportance KopeteMessage::importance() const
 {
 	return d->importance;
 }
+
+KopeteMessageManager *KopeteMessage::manager()
+{
+	return d->manager();
+}
+
+void KopeteMessage::setManager(KopeteMessageManager *kmm)
+{
+	detach();
+	d->manager=kmm;
+}
+
 
 void KopeteMessage::detach()
 {

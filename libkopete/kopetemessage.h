@@ -27,6 +27,7 @@
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 class QDateTime;
+class KopeteMessageManager;
 
 struct KopeteMessagePrivate;
 
@@ -251,6 +252,23 @@ public:
 	 */
 	QString parsedBody() const;
 
+	/**
+	 * Get the related kopete message manager.
+	 * If it is not set, return 0l
+	 * The kopeteMessagemanager is only set if the message is already passed by the manager.
+	 * we should trust this only in aboutToSend/aboutToReceive signals
+	 */
+	 KopeteMessageManager *manager() ;
+
+	 /**
+	  * set the kopetemessagemanager for this message.
+	  * should be only used by the manager itself
+	  */
+	 void setManager(KopeteMessageManager *);
+
+	/**
+	 * get a XML version of this message
+	 */
 	const QDomDocument asXML() const;
 
 	void setBgOverride( bool enable );

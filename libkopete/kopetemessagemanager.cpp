@@ -192,9 +192,11 @@ void KopeteMessageManager::setMMId( int id )
 
 void KopeteMessageManager::sendMessage(KopeteMessage &message)
 {
+
 	KopeteMessage sentMessage = message;
 	if( !KopeteCommandHandler::commandHandler()->processMessage( message, this ) )
 	{
+		sentMessage.setManager(this);
 		emit messageSent(sentMessage, this);
 		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
@@ -211,6 +213,7 @@ void KopeteMessageManager::messageSucceeded()
 void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 {
 //	kdDebug(14010) << k_funcinfo << endl;
+	msg.setManager(this);
 
 	if( msg.direction() == KopeteMessage::Inbound )
 	{
