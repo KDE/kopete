@@ -34,6 +34,8 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 			mGui->mPassword->setText(account->getPassword());
 		}
 		mGui->mAccountId->setText(account->accountId());
+		//Remove me after we can change Account IDs (Matt)
+		mGui->mAccountId->setDisabled(true);
 		mGui->mAutoLogon->setChecked(account->autoLogin());
 		mGui->mServer->setText(account->pluginData(protocol, "Server"));
 		mGui->mPort->setValue(account->pluginData(protocol,"Port").toInt());

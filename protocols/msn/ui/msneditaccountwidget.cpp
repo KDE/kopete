@@ -42,7 +42,7 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 
 	m_rememberpasswd = new QCheckBox( i18n("Remember password") , this );
 	m_autologin = new QCheckBox( i18n("Auto login") , this );
-	
+
 
 	layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding ));
 
@@ -54,6 +54,8 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 			m_password->setText(ident->getPassword());
 		}
 		m_login->setText(ident->accountId());
+		//remove me after we can change account ids (Matt)
+		m_login->setDisabled(true);
 		m_autologin->setChecked((ident && ident->autoLogin()));
 	}
 	else

@@ -40,7 +40,8 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 	theProtocol = protocol;
 	if(m_account)
 	{	mScreenName->setText(m_account->accountId());
-		mScreenName->setReadOnly(true) ; //the accountId is Constent
+		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
+		mScreenName->setDisabled(true);
 		if(m_account->rememberPassword())
 			mPassword->setText(m_account->getPassword());
 		mAutoConnect->setChecked(m_account->autoLogin());
