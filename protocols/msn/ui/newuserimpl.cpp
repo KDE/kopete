@@ -35,7 +35,7 @@ void NewUserImpl::setHandle(QString _handle ,QString _public){
 	if(_public.isNull())
 		handle->setText(_handle);
 	else
-		handle->setText(_public+" ("+_handle+")");
+		handle->setText(_public+"\n("+_handle+")");
 		
 	userHandle = _handle;
 }
