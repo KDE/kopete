@@ -3,7 +3,7 @@
                         both MSNAuthSocket and MSNNotifySocket
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -52,6 +52,8 @@ void MSNAuthSocket::handleError( uint code, uint id )
 	switch ( code )
 	{
 	case 600:
+	case 910:
+	case 912:
 	{
 		disconnect();
 /*

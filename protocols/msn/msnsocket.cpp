@@ -2,7 +2,7 @@
     msnsocket.cpp - Base class for the sockets used in MSN
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -383,11 +383,20 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		disconnect();
 		msg = i18n ( "An internal server error occurred. Please try again later." );
 		break;
+	case 502:
+		msg = i18n ( "It is no longer possible to perform this operation. The MSN server does not allow it anymore." );
+		break;
 	case 600:
 		disconnect();
 		msg = i18n ( "The server is busy. Please try again later." );
 		break;
 	case 601:
+	case 604:
+	case 605:
+	case 914:
+	case 915:
+	case 916:
+	case 917:
 		disconnect();
 		msg = i18n ( "The server is not available at the moment. Please try again later." );
 		break;

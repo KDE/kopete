@@ -2,7 +2,7 @@
     msnswitchboardsocket.cpp - switch board connection socket
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
@@ -121,6 +121,13 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is currently not signed in.\n" "Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle, i18n("user disconnected"));
+			break;
+		}
+		case 713:
+		{
+			QString msg = i18n( "You are trying to invite too many contact to this chat in the same time" ).arg( m_msgHandle );
+			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
+			userLeftChat(m_msgHandle, i18n("user blocked you"));
 			break;
 		}
 		default:
