@@ -35,7 +35,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 #include "addcontactpage.h"
-#include "jabbermap.h"
 
 #define JABBER_DEBUG_GLOBAL		14130
 #define JABBER_DEBUG_PROTOCOL	14131
