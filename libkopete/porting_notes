@@ -1,0 +1,20 @@
+
+*) KopetePluginManager has been renamed Kopete::PluginManager
+	.) QMap<KPluginInfo *, KopetePlugin *> loadedPlugins( const QString &category = QString::null ) const;
+		the QMap has been replaced by a QPtrList<KopetePlugin>   the KPluginInfo is not interesting here.
+	.) addressBookFields( KopetePlugin *p )   has been removed
+	.) pluginName, pluginId, pluginIcon  has been removed  (they are acessible from pluginInfo
+	.) KPluginInfo *pluginInfo( KopetePlugin* )  has been added
+
+
+*) KopetePlugin  has been renamed Kopete::Plugin
+	.) addressBookFields, addressBookIndexField and addAddressBookField  has been removed (they was useless)
+	.) customChatWindowPopupActions( const KopeteMessage &, DOM::Node &node )  has been removed.
+		It was used to show the chanel's menu when right click on a IRC channel.   better to show the contact menu in the chatwindow for everycontact.
+	.) KPluginInfo *pluginInfo()
+
+
+*) KopeteProtocol has been renamed Kopete::Protocol
+	.) protocolAction() has been removed
+	.) the broken canSendOffline()  has been removed, and we can uses capabilities insteads
+	.) (set)RichTextCapabilities  has been renamed to (set)Capabilities

@@ -1,0 +1,54 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=ServiceType
+X-KDE-ServiceType=Kopete/Plugin
+X-KDE-Derived=KPluginInfo
+Comment=Kopete Plugin
+Comment[ar]=توصيلة Kopete
+Comment[be]=Дапаўненьне Kopete
+Comment[bg]=Приставки на Kopete
+Comment[br]=Lugent Kopete
+Comment[bs]=Kopete dodatak
+Comment[ca]=Connector de Kopete
+Comment[cs]=Modul aplikace Kopete
+Comment[cy]=Ategyn Kopete
+Comment[da]=Kopete-plugin
+Comment[de]=Kopete-Modul
+Comment[el]=Πρόσθετο Kopete
+Comment[es]=Plugin de KDE
+Comment[et]=Kopete plugin
+Comment[fi]=Kopete-liitännäinen
+Comment[fr]=Module de Kopete
+Comment[gl]=Plugin de Kopete
+Comment[he]=תוסף Kopete
+Comment[hi]=के-ऑप्टी प्लगइन
+Comment[hr]=Umetak za Kopete
+Comment[hu]=Kopete bővítőmodul
+Comment[is]=Kopete íforritið
+Comment[it]=Plugin di Kopete
+Comment[ja]=Kopeteプラグイン
+Comment[nb]=Programtillegg for Kopete
+Comment[nl]=Kopete plug-in
+Comment[nn]=Kopete-programtillegg
+Comment[pl]=Wtyczka Kopete
+Comment[pt]='Plugin' do Kopete
+Comment[pt_BR]=Plug-in do Kopete
+Comment[ru]=Модуль Kopete
+Comment[sk]=Modul Kopete
+Comment[sl]=Dodatek za Kopete
+Comment[sr]=Прикључак за Kopete
+Comment[sr@Latn]=Dodatak za Kopete
+Comment[sv]=Insticksprogram för Kopete
+Comment[ta]=Kopete செருகல்
+Comment[tg]=Модули Kopete 
+Comment[tr]=Kopete Eklentisi
+Comment[uk]=Втулок Kopete
+Comment[uz]=Kopete плагини
+Comment[wa]=Tchôke-divins po Kopete
+Comment[xx]=xxKopete Pluginxx
+Comment[zh_CN]=Kopete 插件
+
+# The Kopete version for which the plugin is written
+[PropertyDef::X-Kopete-Version]
+Type=int
+
