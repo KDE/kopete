@@ -151,7 +151,7 @@ KGaduMessage*
 GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 {
 	QString htmlString = message.escapedBody();
-
+kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------------"<<endl;
 	KGaduMessage* output = new KGaduMessage;
 	rtcs.blue  = rtcs.green = rtcs.red = 0;
 	color = QColor();
@@ -161,7 +161,7 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 	output->rtf.resize(0);
 
 	// test first if there is any HTML formating in it
-	if( htmlString.find( QString::fromLatin1("</span") ) > -1 ){
+	if( htmlString.find( QString::fromLatin1("</span") ) > -1 ) {
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 		findTags.setMinimal( true );
 		int pos = 0;
@@ -169,16 +169,19 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 
 		while ( pos >= 0 ){
 			pos = findTags.search( htmlString );
-			if ( pos > -1 ) {
-				QString styleHTML = findTags.cap(1);
-				QString replacement = findTags.cap(2);
-				QStringList styleAttrs = QStringList::split( ';', styleHTML );
-				rtfs.font = 0;
 
-				if ( pos != lastpos ) {
-					QString tmp = htmlString.mid( lastpos, pos-lastpos );
+			kdDebug( 14100 ) << "pos: " << pos <<", lastpos: " << lastpos << endl;
+			if ( pos != lastpos ) {
+				QString tmp;
+				if ( pos < 0 ) {
+					tmp = htmlString.mid( lastpos );
+				}
+				else {
+					tmp = htmlString.mid( lastpos, pos - lastpos );
+				}
+				if ( !tmp.isEmpty() ) {
 					color.setRgb( 0, 0, 0 );
-					rtfs.font = GG_FONT_COLOR;
+//					rtfs.font = GG_FONT_COLOR;
 					if ( insertRtf( position ) == false ) {
 						delete output;
 						return NULL;
@@ -188,8 +191,16 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 					position += tmp.length();
 					kdDebug(14100) << "text between without encoding I reckon \"" << tmp << "\"" << endl;
 				}
+			}
+
+			if ( pos > -1 ) {
+				QString styleHTML = findTags.cap(1);
+				QString replacement = findTags.cap(2);
+				QStringList styleAttrs = QStringList::split( ';', styleHTML );
+				rtfs.font = 0;
 
 				lastpos = pos + replacement.length();
+
 				kdDebug(14100) << "\nposition : " << pos << endl;
 				kdDebug(14100)  <<"--------------\nstyle: "  << endl;
 				for( QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair ) {
@@ -203,7 +214,7 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 					return NULL;
 				}
 
-				QRegExp rx( QString::fromLatin1("<span style=\"%1\">.*</span>" ).arg( styleHTML ) );
+				QRegExp rx( QString::fromLatin1("<span style=\"%1\">%2</span>" ).arg( styleHTML ).arg( replacement ) );
 				rx.setMinimal( true );
 				htmlString.replace( rx, replacement );
 				replacement = unescapeGaduMessage( replacement );
@@ -211,21 +222,7 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 				output->message += replacement;
 				position += replacement.length();
 			}
-			else {
-				QString tmp = htmlString.mid( lastpos, htmlString.length() - lastpos );
-				if ( tmp.length() ) {
-					color.setRgb( 0, 0, 0 );
-					rtfs.font = GG_FONT_COLOR;
-					if ( insertRtf( position ) == false ) {
-						delete output;
-						return NULL;
-					}
-					tmp = unescapeGaduMessage( tmp );
-					output->message += tmp;
-					position += tmp.length();
-					kdDebug(14100) << "end left :\"" << tmp << "\"" <<endl;
-				}
-			}
+
 		}
 		output->rtf = rtf;
 		// this is sick, but that's the way libgadu is designed
