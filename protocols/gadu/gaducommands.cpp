@@ -334,7 +334,7 @@ ChangeInfoCommand::setInfo( uin_t uin, const QString& passwd,
 						const QString& nickname, const QString& email,
 						int born, int gender, const QString& city )
 {
-// XXX: update for 6.0 and add support in plugin
+// FIXME: update for 6.0 and add support in plugin
 /*
 	memset( &info_, 0, sizeof( struct gg_change_info_request ) );
 	uin_			= uin;

@@ -435,7 +435,7 @@ GaduSession::exportContacts( gaduContactsList* u )
 			(*loo)->phonenr+";"+(*loo)->group+";"+(*loo)->uin+";"+(*loo)->email+";0;;0;\n";
 	}
 
-	// XXX:Remove before release
+	// FIXME:Remove before release
 	kdDebug(14100) <<"--------------------userlists\n" << contacts << "\n---------------" << endl;
 
 	plist = textcodec->fromUnicode( contacts );
@@ -524,7 +524,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 		if ( cl->uin.isNull() ) {
 			kdDebug(14100) << "no Uin, strange "<<endl;
 			kdDebug(14100) << "LINE:" << cline <<endl;
-			// XXX: maybe i should consider this as an fatal error, and return false
+			// FIXME: maybe i should consider this as an fatal error, and return false
 			continue;
 		}
 
@@ -548,7 +548,7 @@ GaduSession::handleUserlist( gg_event* e )
 			}
 			else {
 				kdDebug( 14100 ) << "Got Contacts list  FAILED/EMPTY " << endl;
-				// XXX: send failed?
+				// FIXME: send failed?
 			}
 			emit userListRecieved( ul );
 			break;

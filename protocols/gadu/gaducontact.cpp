@@ -142,7 +142,7 @@ GaduContact::customContextMenuActions()
 void
 GaduContact::slotUserInfo()
 {
-	/// XXX: use more decent information here
+	/// FIXME: use more decent information here
 	UserInfoDialog *dlg = new UserInfoDialog( i18n( "Gadu contact" ) );
 
 	dlg->setName( metaContact()->displayName() );
@@ -215,7 +215,7 @@ GaduContact::contactDetails()
 	KopeteGroup* gr;
 	for ( gr = groupList.first (); gr ; gr = groupList.next () ) {
 // if present in any group, don't export to top level
-// XXX: again, probably bug in libkopete
+// FIXME: again, probably bug in libkopete
 // in case of topLevel group, KopeteGroup::displayName() returns "TopLevel" ineasted of just " " or "/"
 // imo TopLevel group should be detected like i am doing that below
 		if ( gr!=KopeteGroup::topLevel() ) {

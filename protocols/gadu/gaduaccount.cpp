@@ -395,8 +395,8 @@ GaduAccount::messageReceived( struct gg_event* e )
 		return;
 	}
 
-	// XXX:check for ignored users list
-	// XXX:anonymous (those not on the list) users should be ignored, as an option
+	// FIXME:check for ignored users list
+	// FIXME:anonymous (those not on the list) users should be ignored, as an option
 
 	message = textcodec_->toUnicode( (const char*) e->event.msg.message );
 
@@ -454,7 +454,7 @@ GaduAccount::notify( struct gg_event* e )
 			continue;
 		}
 
-// XXX store this info in GaduContact, be usefull in dcc and custom images
+// FIXME:store this info in GaduContact, be usefull in dcc and custom images
 //		n->remote_ip;
 //		n->remote_port;
 //		n->version;
@@ -492,7 +492,7 @@ GaduAccount::statusChanged( struct gg_event* e )
 		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status60.status )  );
 	}
 
-/// XXX: again, store this information
+/// FIXME: again, store this information
 //	e->event.status60.remote_ip;
 //	e->event.status60.remote_port;
 //	e->event.status60.version;
@@ -595,7 +595,7 @@ GaduAccount::userlist( const QString& list )
 	bool s;
 	int i;
 
-	// XXX: give feedback about error
+	// FIXME: give feedback about error
 	if ( session_->stringToContacts( u , list ) == false ) {
 		return;
 	}
@@ -661,7 +661,7 @@ GaduAccount::userlist( const QString& list )
 		ucontact->setInfo( (*loo)->email, (*loo)->firstname, (*loo)->surname, (*loo)->nickname, (*loo)->phonenr );
 
 		if ( !( (*loo)->group.isEmpty() ) ) {
-			// XXX: libkopete bug i guess, by default contact goes to top level group
+			// FIXME: libkopete bug i guess, by default contact goes to top level group
 			// if user desrired to see contact somewhere else, remove it from top level one
 			metac = ucontact->metaContact();
 			metac->removeFromGroup( KopeteGroup::topLevel() );
@@ -747,7 +747,7 @@ GaduAccount::slotChangePassword()
 void
 GaduAccount::slotCommandDone( const QString& /*title*/, const QString& what )
 {
-	//XXX: any chance to have my own title in event popup ?
+	//FIXME: any chance to have my own title in event popup ?
 	KNotifyClient::userEvent( 0, what,
 			KNotifyClient::PassivePopup, KNotifyClient::Notification  );
 }
