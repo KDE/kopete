@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>480</width>
-            <height>475</height>
+            <height>610</height>
         </rect>
     </property>
     <property name="caption">
@@ -175,6 +175,17 @@
                         <string>Alt+F</string>
                     </property>
                 </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mFoldVisibility</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+L</string>
+                    </property>
+                </widget>
             </vbox>
         </widget>
         <widget class="QLayoutWidget">
@@ -228,7 +239,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>80</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>

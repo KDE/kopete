@@ -161,6 +161,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mFadeVisibility, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mFoldVisibility, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
 
 	// don't enable the checkbox if XRender is not available
 	mPrfsContactList->mFadeVisibility->setEnabled( HAVE_XRENDER );
@@ -241,6 +243,7 @@ void AppearanceConfig::save()
 	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(mPrfsContactList->mDisplayMode->selectedId()));
 	p->setContactListAnimation(mPrfsContactList->mAnimateChanges->isChecked());
 	p->setContactListFading(mPrfsContactList->mFadeVisibility->isChecked());
+	p->setContactListFolding(mPrfsContactList->mFoldVisibility->isChecked());
 
 	// "Colors & Fonts" TAB =====================================================
 	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
@@ -304,6 +307,7 @@ void AppearanceConfig::load()
 	mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
 	mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
 	mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() && HAVE_XRENDER );
+	mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
 
 	// "Colors & Fonts" TAB =====================================================
 	mPrfsColors->foregroundColor->setColor(p->highlightForeground());
