@@ -1,8 +1,9 @@
 METASOURCES = AUTO
 SUBDIRS = ui pixmaps icons libxmpp
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
-	-I$(top_builddir)/kopete/protocols/jabber/ui \
-	-I$(top_builddir)/kopete/protocols/jabber/libxmpp/xmpp/src \
+	-I$(srcdir)/libxmpp/xmpp/src \
+	-I$(srcdir)/ui \
+	-I./ui \
 	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_jabber.la

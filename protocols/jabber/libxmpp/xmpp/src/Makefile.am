@@ -1,7 +1,11 @@
 METASOURCES = AUTO
 
+AM_CPPFLAGS = -I$(srcdir)/../../cutestuff/network \
+	-I$(srcdir)/../../cutestuff/util \
+	-I$(srcdir)/../../cutestuff/ssl \
+	$(all_includes)
+
 noinst_LTLIBRARIES = libxmpp.la
-INCLUDES = -I../../cutestuff/network -I../../cutestuff/util -I../../cutestuff/ssl $(all_includes)
 
 libxmpp_la_LDFLAGS = -avoid-version -module
 
@@ -21,3 +25,4 @@ libxmpp_la_SOURCES = \
 	xmpp_vcard.cpp \
 	xmpp_xmlcommon.cpp \
 	xmpp_xmlfilter.cpp
+
