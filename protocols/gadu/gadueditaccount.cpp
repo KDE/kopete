@@ -39,6 +39,8 @@
 #include <klocale.h>
 #include <kpassdlg.h>
 
+#include "kopetepasswordwidget.h"
+
 GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, QWidget* parent, const char* name )
 : GaduAccountEditUI( parent, name ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
 {
@@ -60,16 +62,10 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		loginEdit_->setDisabled( true );
 		loginEdit_->setText( account()->accountId() );
 
-		if ( account()->rememberPassword() ) {
-			passwordEdit_->setText( account()->password()  );
-		}
-		else {
-			passwordEdit_->setText( "" );
-		}
+		passwordWidget_->load( &static_cast<GaduAccount*>(account())->password() );
 
 		nickName->setText( account()->myself()->displayName() );
 
-		rememberCheck_->setChecked( account()->rememberPassword() );
 		autoLoginCheck_->setChecked( account()->autoConnect() );
 		dccCheck_->setChecked( static_cast<GaduAccount*>(account())->dccEnabled() );
 		useTls_->setCurrentItem( isSsl ?  ( static_cast<GaduAccount*> (account()) ->useTls() ) : 2 );
@@ -86,8 +82,6 @@ GaduEditAccount::registerNewAccount()
 	connect( regDialog, SIGNAL( registeredNumber( unsigned int, QString  ) ), SLOT( newUin( unsigned int, QString  ) ) );
 	if ( regDialog->exec() != QDialog::Accepted ) {
 		loginEdit_->setText( "" );
-		rememberCheck_->setChecked( true );
-		passwordEdit_->setText( "" );
 		return;
 	}
 	registerNew->setDisabled( false );
@@ -103,7 +97,7 @@ void
 GaduEditAccount::newUin( unsigned int uni, QString password )
 {
 	loginEdit_->setText( QString::number( uni ) );
-	passwordEdit_->setText( password );
+	passwordWidget_->setPassword( password );
 }
 
 bool 
@@ -120,7 +114,7 @@ GaduEditAccount::validateData()
 		return false;
 	}
 
-	if ( passwordEdit_->text().isEmpty() && rememberCheck_->isChecked() ) {
+	if ( !passwordWidget_->validate() ) {
 		KMessageBox::sorry( this, i18n( "<b>Enter password please.</b>" ), i18n( "Gadu-Gadu" ) );
 		return false;
 	}
@@ -137,15 +131,7 @@ GaduEditAccount::apply()
 
 	account()->setAutoConnect( autoLoginCheck_->isChecked() );
 
-#warning implement the PasswordedAccount API
- #if 0
-	if( rememberCheck_->isChecked() && passwordEdit_->text().length() ) {
-		account()->setPassword( passwordEdit_->text() );
-	}
-	else {
-		account()->setPassword();
-	}
-#endif
+	passwordWidget_->save( &static_cast<GaduAccount*>(account())->password() );
 
 	account()->myself()->rename( nickName->text() );
 

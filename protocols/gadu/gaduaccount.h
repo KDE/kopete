@@ -23,7 +23,7 @@
 #ifndef GADUACCOUNT_H
 #define GADUACCOUNT_H
 
-#include "kopeteaccount.h"
+#include "kopetepasswordedaccount.h"
 #include "kopeteonlinestatus.h"
 #include "kopetecontact.h"
 
@@ -51,7 +51,7 @@ class KActionMenu;
 class GaduDCC;
 class GaduDCCTransaction;
 
-class GaduAccount : public Kopete::Account
+class GaduAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 
@@ -68,7 +68,7 @@ public:
 
 public slots:
 	//{
-	void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());
+	void connectWithPassword(const QString &password);
 	void disconnect( DisconnectReason );
 	void disconnect();
 	//}

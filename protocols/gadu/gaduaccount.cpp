@@ -32,6 +32,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
+#include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 
 #include <kpassdlg.h>
@@ -100,7 +101,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 };
 
  GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID,const char* name )
-: Kopete::Account( parent, accountID, name )
+: Kopete::PasswordedAccount( parent, accountID, 0, name )
 {
 	QHostAddress ip;
 	p = new GaduAccountPrivate;
@@ -299,8 +300,10 @@ GaduAccount::actionMenu()
 }
 
 void
-GaduAccount::connect(const Kopete::OnlineStatus& /*initial*/)
+GaduAccount::connectWithPassword(const QString& password)
 {
+	if (password.isEmpty())
+		return;
 #warning TODO: honor the initial status
 	slotGoOnline();
 }
@@ -399,11 +402,11 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, dscr );
 
 	if ( !p->session_->isConnected() ) {
-		if ( password().isEmpty() ) {
+		if ( password().cachedValue().isEmpty() ) {
 			connectionFailed( GG_FAILURE_PASSWORD );
 		}
 		else {
-			p->loginInfo.password		= password();
+			p->loginInfo.password		= password().cachedValue();
 			p->loginInfo.useTls		= p->connectWithSSL;
 			p->loginInfo.status		= status;
 			p->loginInfo.statusDescr	= dscr;
@@ -597,22 +600,12 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 
 	switch (failure) {
 		case GG_FAILURE_PASSWORD:
-			pass = password( true );
-			if ( pass.isEmpty() ) {
-				slotCommandDone( QString::null, i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
-				// and set status disconnected, so icon on toolbar won't blink
-				p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-				myself()->setOnlineStatus( p->status_ );
-				return;
-			}
-			if ( pass.isNull() ){
-				// user pressed CANCEL
-				p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-				myself()->setOnlineStatus( p->status_ );
-				return;
-			}
-			tryReconnect = true;
-		break;
+			password().setWrong();
+			// user pressed CANCEL
+			p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+			myself()->setOnlineStatus( p->status_ );
+			connect();
+			return;
 		default:
 			if ( p->connectWithSSL ) {
 				if ( useTls() != TLS_only ) {
