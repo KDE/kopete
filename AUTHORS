@@ -11,7 +11,8 @@ Developer Team
 ==============
 
 Ryan Cumming <bodnar42@phalynx.dhs.org>
-- ChatView class.
+- ChatView class. API re-design & cleanup.
+  History logger, etc
 
 Martin Klingens <klingens@kde.org>
 - Misc hacks, bugfixes, KopeteMessage
@@ -20,7 +21,7 @@ Stefan Gehen <sgehn@gmx.net>
 - Misc bugfixes, cleanups, hacks, features.
 
 Richard Stellingwerff <remenic@linuxfromscratch.org>
-- Misc fixes.
+- Misc fixes. History dialog, etc
 
 Contributed patches. Thanks!!!
 ==============================
