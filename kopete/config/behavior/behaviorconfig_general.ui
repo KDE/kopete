@@ -118,10 +118,10 @@
                         <cstring>mAutoConnect</cstring>
                     </property>
                     <property name="text">
-                        <string>Connect automaticaly at startup</string>
+                        <string>Connect automatically at startup</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Automaticaly connect all your account when Kopete start</string>
+                        <string>Automatically connect all your account when Kopete start</string>
                     </property>
                 </widget>
             </vbox>
