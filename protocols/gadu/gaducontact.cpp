@@ -154,16 +154,16 @@ GaduContact::statusIcon() const
         return "gg_away";
         break;
     case GG_STATUS_BUSY:
-        return "gg_away";
+        return "gg_busy";
         break;
     case GG_STATUS_BUSY_DESCR:
-        return "gg_away";
+        return "gg_busy";
         break;
     case GG_STATUS_INVISIBLE:
-        return "gg_ignored";
+        return "gg_invi";
         break;
     case GG_STATUS_INVISIBLE_DESCR:
-        return "gg_ignored";
+        return "gg_invi";
         break;
     case GG_STATUS_AVAIL:
         return "gg_online";
@@ -171,7 +171,7 @@ GaduContact::statusIcon() const
     case GG_STATUS_AVAIL_DESCR:
         return "gg_online";
         break;
-    default://this sucks, need more icons
+    default:
         return "gg_offline";
         break;
     }
