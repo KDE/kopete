@@ -111,7 +111,7 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 {
 	if( add && !user()->account()->contacts()[ handle ] )
 		user()->account()->addContact( handle, publicName, 0L, QString::null, true );
-		
+
 	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
 
 	if(add)
@@ -154,6 +154,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		else
 		{
 			m_messagesSent.insert( id, message );
+			//FIXME: What is the point of this?  Why not just message.setBg, it is not const - Jason
 			KopeteMessage msg2=message;
 			msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
 			msg2.setBody(message.plainBody() , KopeteMessage::PlainText);
@@ -190,7 +191,7 @@ KActionCollection * MSNMessageManager::chatActions()
 		}
 	}
 	actionInvite->insert( new KAction( i18n ("Other ..."), 0, this, SLOT( slotInviteOtherContact() ), actionInvite, "actionOther" ));
-	
+
 	m_actions->insert( actionInvite );
 
 	return m_actions;
@@ -220,7 +221,7 @@ void MSNMessageManager::slotInviteOtherContact()
 			QString::null, &ok );
 	if( !ok )
 		return;
-	
+
 	if( handle.contains('@') != 1 || handle.contains('.') <1)
 	{
 			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
@@ -318,7 +319,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 						"Launch-Application: FALSE\r\n"
 						"Request-Data: IP-Address:\r\n\r\n").utf8();
 				m_chatService->sendCommand( "MSG" , "N", true, message );
-				
+
 				MFTS->listen(6891);
 
 			}
@@ -368,7 +369,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
 			KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage(tmpMsg);
-			
+
 			QCString message=QString(
 				"MIME-Version: 1.0\r\n"
 				"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
@@ -461,11 +462,11 @@ void MSNMessageManager::slotFileTransferDone(MSNFileTransferSocket* MFTS)
 		setCanBeDeleted(true);
 }
 
-void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fileName, 
-	long unsigned int fileSize) 
+void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fileName,
+	long unsigned int fileSize)
 {
 	QString theFileName;
-	
+
 	if(m_chatService)
 	{
 		//If the alternate filename is null, then get the filename from the location
@@ -475,13 +476,13 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fil
 		} else {
 			theFileName = fileName;
 		}
-			
+
 		unsigned long int cookie = (rand()%(999999))+1;
 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(m_protocol,false,this);
 		MFTS->setCookie(cookie);
 		connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 		m_invitations.insert( cookie  , MFTS);
-		
+
 		//Call the setFile command to let the MFTS know what file we are sending
 		MFTS->setFile(fileLocation, fileSize);
 

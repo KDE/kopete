@@ -21,7 +21,6 @@
 #include <qfont.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
-
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -30,8 +29,6 @@
 #include "kopeteemoticons.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
-#include "kopeteaccount.h"
 #include "kopeteprefs.h"
 #include "kopetexsl.h"
 
@@ -41,20 +38,13 @@ struct KopeteMessagePrivate
 
 	const KopeteContact *from;
 	KopeteContactPtrList to;
-	QColor bgColor;
-	QColor fgColor;
-	QColor contactColor;
 	QDomDocument xmlDoc;
-	bool contentsModified;
-	bool highlighted;
-	QDateTime timeStamp;
-	QFont font;
-	QString body;
-	QString subject;
+
 	KopeteMessage::MessageDirection direction;
 	KopeteMessage::MessageFormat format;
 	KopeteMessage::MessageType type;
 	KopeteMessage::MessageImportance importance;
+	QDateTime timeStamp;
 
 	bool bgOverride;
 };
@@ -129,57 +119,48 @@ void KopeteMessage::setBgOverride( bool enabled )
 {
 	detach();
 	d->bgOverride = enabled;
-	d->contentsModified = true;
 }
 
 void KopeteMessage::setFg( const QColor &color )
 {
-	detach();
-	d->fgColor = color;
-	compareColors( d->fgColor, d->bgColor );
-	d->contentsModified = true;
+	if( !d->bgOverride && color.isValid() )
+	{
+		detach();
+		QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+		bodyNode.setAttribute( QString::fromLatin1("color"), color.name() );
+	}
 }
 
 void KopeteMessage::setBg( const QColor &color )
 {
-	detach();
-	d->bgColor = color;
-	compareColors( d->fgColor, d->bgColor );
-	compareColors( d->contactColor, d->bgColor );
-	d->contentsModified = true;
-}
-
-void KopeteMessage::compareColors( QColor &colorFg, QColor &colorBg )
-{
-	int h1, s1, v1, h2, s2, v2, vDiff;
-	colorFg.hsv( &h1, &s1, &v1 );
-	colorBg.hsv( &h2, &s2, &v2 );
-	vDiff = v1 - v2;
-
-	if( h1 == s1 && h2 == s2 && ( abs( vDiff ) <= 150 ) )
-		colorFg = QColor( h2, s2, (v1 + 127) % 255, QColor::Hsv );
+	if( color.isValid() )
+	{
+		detach();
+		QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+		bodyNode.setAttribute( QString::fromLatin1("bgcolor"), color.name() );
+	}
 }
 
 void KopeteMessage::setFont( const QFont &font )
 {
 	detach();
-	d->font = font;
-	d->contentsModified = true;
-}
-
-void KopeteMessage::highlight()
-{
-	detach();
-	d->importance = Highlight;
-	d->contentsModified = true;
+	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	bodyNode.setAttribute( QString::fromLatin1("font"), font.family() );
+	bodyNode.setAttribute( QString::fromLatin1("fontsize"), font.pointSize() );
 }
 
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
 {
 	detach();
-	d->body = body;
+	QDomCDATASection bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
+	bodyNode.setData( body );
 	d->format = f;
-	d->contentsModified = true;
+}
+
+void KopeteMessage::setImportance(KopeteMessage::MessageImportance i)
+{
+	detach();
+	d->xmlDoc.documentElement().setAttribute( QString::fromLatin1("importance"), i );
 }
 
 void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
@@ -193,23 +174,26 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	};
 
 	d->refCount = 1;
-	d->timeStamp = timeStamp;
 	d->from = from;
 	d->to   = to;
-	d->subject = subject;
-	d->direction = direction;
-	d->fgColor = QColor();
-	d->bgColor = QColor();
-	d->font = QFont();
-	setBody( body, f );
-	d->bgOverride = false;
-	d->type = type;
-	//Importance to low in a multi chat
-	d->importance= (to.count() <= 1) ? Normal : Low ;
+	d->importance = (to.count() <= 1) ? Normal : Low;
+	d->timeStamp = timeStamp;
+
+	QDomElement messageNode = d->xmlDoc.createElement( QString::fromLatin1("message") );
+	messageNode.setAttribute( QString::fromLatin1("timestamp"), KGlobal::locale()->formatTime(timeStamp.time(), true) );
+	messageNode.setAttribute( QString::fromLatin1("subject"), subject );
+	messageNode.setAttribute( QString::fromLatin1("direction"), direction );
+	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
+	d->xmlDoc.appendChild( messageNode );
 
 	if( from )
 	{
-		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName() : d->from->displayName();
+		QDomElement fromNode = d->xmlDoc.createElement( QString::fromLatin1("from") );
+		QDomElement fromContactNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
+		fromContactNode.setAttribute( QString::fromLatin1("contactDisplayName"), from->displayName() );
+		QString fromName = from->metaContact() ? from->metaContact()->displayName() : from->displayName();
+		fromContactNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), fromName );
+		fromNode.appendChild( fromContactNode );
 
 		if( !colorMap.contains( fromName ) )
 		{
@@ -220,66 +204,72 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 				newColor = nameColors[(lastColor++) % (sizeof(nameColors) / sizeof(nameColors[0]))];
 			colorMap.insert( fromName, newColor );
 		}
-		d->contactColor = colorMap[ fromName ];
-
-		//Highlight if the message contains the nickname (i think it should be place in the highlight plugin)
-		if( KopetePrefs::prefs()->highlightEnabled() && from->account() && from->account()->myself() &&
-			d->body.contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(from->account()->myself()->displayName()),false) ) )
-		{
-			highlight();
-		}
+		fromContactNode.setAttribute( QString::fromLatin1("color"), colorMap[ fromName ].name() );
+		messageNode.appendChild( fromNode );
 	}
 
-	d->contentsModified = true;
+	QDomElement toNode = d->xmlDoc.createElement( QString::fromLatin1("to") );
+	for( KopeteContact *c = d->to.first(); c; c = d->to.next() )
+	{
+		QDomElement cNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
+		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), c->displayName() );
+		cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
+		toNode.appendChild( cNode );
+	}
+	messageNode.appendChild( toNode );
+
+	QDomElement bodyNode = d->xmlDoc.createElement( QString::fromLatin1("body") );
+	QDomCDATASection bodyText = d->xmlDoc.createCDATASection( body );
+	bodyNode.appendChild( bodyText );
+
+	messageNode.appendChild( bodyNode );
+
+	d->format = f;
+	d->bgOverride = false;
+	d->type = type;
 }
 
 QString KopeteMessage::plainBody() const
 {
-	if( d->format & PlainText )
-		return d->body;
+	QDomElement bodyText = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 
-	//FIXME: is there a better way to unescape HTML?
-	QString r = d->body;
-	r = r.replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) ).
-		replace( QRegExp( QString::fromLatin1( "<br>" ) ), QString::fromLatin1( "\n" ) ).
-		replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) ).
-		replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) ).
-		replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) ).
-		replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) ).
-		replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
-
-	return r;
+	if( d->format == PlainText )
+		return bodyText.text();
+	else
+		return KopeteXSL::unescape( bodyText.text() ).replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) );
 }
 
 QString KopeteMessage::escapedBody() const
 {
+	QDomElement bodyText = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	QString escapedBody = bodyText.text();
+
 	if( d->format == PlainText )
 	{
-		QString parsedString = d->body;
-
-		parsedString = QStyleSheet::escape( parsedString );
+		escapedBody = QStyleSheet::escape( escapedBody );
 
 		//Replace carriage returns inside the text
-		parsedString.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
+		escapedBody.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
 
 		//Replace a tab with 4 spaces
-		parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+		escapedBody.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
 		//Replace multiple spaces with &nbsp;
-		parsedString.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp;&nbsp;" ) );
-
-		return parsedString;
+		escapedBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp;&nbsp;" ) );
 	}
 
-	return d->body;
+	return escapedBody;
 }
 
 QString KopeteMessage::parsedBody() const
 {
+	QDomElement bodyText = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	QString parsedBody = bodyText.text();
+	kdDebug() << k_funcinfo << parsedBody << endl;
 	if( d->format == ParsedHTML )
-		return d->body;
-
-	return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody()));
+		return parsedBody;
+	else
+		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody()));
 }
 
 QString KopeteMessage::parseLinks( const QString &message ) const
@@ -295,62 +285,12 @@ QString KopeteMessage::parseLinks( const QString &message ) const
 	return result;
 }
 
-QDomDocument KopeteMessage::asXML()
+const QDomDocument KopeteMessage::asXML() const
 {
-	if( !d->xmlDoc.hasChildNodes() || d->contentsModified )
-	{
-		QDomDocument doc;
-		QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
-		messageNode.setAttribute( QString::fromLatin1("timestamp"), KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
-		messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
-		messageNode.setAttribute( QString::fromLatin1("subject"), d->subject );
-		messageNode.setAttribute( QString::fromLatin1("direction"), d->direction );
-		doc.appendChild( messageNode );
-
-		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
-		QDomElement cNode = doc.createElement( QString::fromLatin1("contact") );
-		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), d->from->displayName() );
-		cNode.setAttribute( QString::fromLatin1("color"), d->contactColor.name() );
-		if( d->from->metaContact() )
-			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), d->from->metaContact()->displayName() );
-		else
-			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), d->from->displayName() );
-		fromNode.appendChild( cNode );
-
-		messageNode.setAttribute( QString::fromLatin1("from"), d->from->displayName() );
-
-		QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
-		for( KopeteContact *c = d->to.first(); c; c = d->to.next() )
-		{
-			QDomElement cNode = doc.createElement( QString::fromLatin1("contact") );
-			cNode.setAttribute( QString::fromLatin1("contactDisplayName"), c->displayName() );
-			if( c->metaContact() )
-				cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact()->displayName() );
-			else
-				cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->displayName() );
-			toNode.appendChild( cNode );
-		}
-
-		messageNode.appendChild( fromNode );
-		messageNode.appendChild( toNode );
-
-		QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
-		if( !d->bgOverride && d->bgColor.isValid() )
-			bodyNode.setAttribute( QString::fromLatin1("bgcolor"), d->bgColor.name() );
-		if( d->fgColor.isValid() )
-			bodyNode.setAttribute( QString::fromLatin1("color"), d->fgColor.name() );
-		bodyNode.setAttribute( QString::fromLatin1("font"), d->font.family() );
-
-		QDomCDATASection bodyText = doc.createCDATASection( KopeteEmoticons::parseEmoticons(parseLinks( escapedBody() )) );
-		bodyNode.appendChild( bodyText );
-
-		messageNode.appendChild( bodyNode );
-
-		d->xmlDoc = doc;
-		d->contentsModified = false;
-	}
-
-	return d->xmlDoc;
+	QDomDocument doc = d->xmlDoc.cloneNode().toDocument();
+	QDomCDATASection bodyText = doc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
+	bodyText.setData( parsedBody() );
+	return doc;
 }
 
 QDateTime KopeteMessage::timestamp() const
@@ -375,27 +315,23 @@ KopeteMessage::MessageType KopeteMessage::type() const
 
 QColor KopeteMessage::fg() const
 {
-	return d->fgColor;
+	return QColor( d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement().attribute( QString::fromLatin1("color") ) );
 }
 
 QColor KopeteMessage::bg() const
 {
-	return d->bgColor;
+	return QColor( d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement().attribute( QString::fromLatin1("bgcolor") ) );
 }
 
 QFont KopeteMessage::font() const
 {
-	return d->font;
-}
-
-QString KopeteMessage::body() const
-{
-	return d->body;
+	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	return QFont( bodyNode.attribute( QString::fromLatin1("font") ), bodyNode.attribute( QString::fromLatin1("font") ).toInt() );
 }
 
 QString KopeteMessage::subject() const
 {
-	return d->subject;
+	return d->xmlDoc.documentElement().attribute( QString::fromLatin1("subject") );
 }
 
 KopeteMessage::MessageFormat KopeteMessage::format() const
@@ -411,11 +347,6 @@ KopeteMessage::MessageDirection KopeteMessage::direction() const
 KopeteMessage::MessageImportance KopeteMessage::importance() const
 {
 	return d->importance;
-}
-
-void KopeteMessage::setImportance(KopeteMessage::MessageImportance i)
-{
-	d->importance=i;
 }
 
 void KopeteMessage::detach()

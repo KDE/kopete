@@ -104,7 +104,7 @@ GaduContact::messageReceived( KopeteMessage& msg )
 void
 GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 {
-    if ( msg.body().isEmpty() )
+    if ( msg.plainBody().isEmpty() )
         return;
     //FIXME: handle colors
     GaduProtocol::protocol()->sendMessage( uin_, msg.plainBody().local8Bit() );

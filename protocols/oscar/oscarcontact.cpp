@@ -514,7 +514,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 /** Called when we want to send a message */
 void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
-	if ( message.body().isEmpty() ) // no text, do nothing
+	if ( message.plainBody().isEmpty() ) // no text, do nothing
 	return;
 
 	// Check to see if we're even online

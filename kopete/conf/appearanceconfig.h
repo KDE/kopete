@@ -70,6 +70,7 @@ private slots:
 	void slotAddStyle();
 	void slotEditStyle();
 	void slotDeleteStyle();
+	void slotImportStyle();
 	void slotStyleSaved();
 	void slotStyleSelected();
 
@@ -97,6 +98,7 @@ private:
 	void updateHighlight();
 	bool errorAlert;
 	QString fileContents( const QString &path );
+	void addStyle( const QString &styleName, const QString &xslString );
 
 };
 #endif

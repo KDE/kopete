@@ -51,9 +51,12 @@
 #include <kmessagebox.h>
 #include <knotifydialog.h>
 #include <kprocess.h>
+#include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <ktabctl.h>
 #include <kglobalsettings.h>
+#include <kurlrequesterdlg.h>
+#include <kurl.h>
 #include <kpushbutton.h>
 #include <kfontdialog.h>
 #include <ktrader.h>
@@ -150,6 +153,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	connect(mPrfsChatAppearance->addButton, SIGNAL(clicked()), this, SLOT(slotAddStyle()));
 	connect(mPrfsChatAppearance->editButton, SIGNAL(clicked()), this, SLOT(slotEditStyle()));
 	connect(mPrfsChatAppearance->deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteStyle()));
+	connect(mPrfsChatAppearance->importButton, SIGNAL(clicked()), this, SLOT(slotImportStyle()));
 	// ===========================================================================
 
 	errorAlert = false;
@@ -433,6 +437,27 @@ void AppearanceConfig::slotStyleSelected()
 	slotUpdatePreview();
 }
 
+void AppearanceConfig::slotImportStyle()
+{
+	KURL chosenStyle = KURLRequesterDlg::getURL( QString::null, this, i18n("Choose Stylesheet") );
+	QString stylePath;
+	if( KIO::NetAccess::download(chosenStyle, stylePath ) )
+	{
+		QString xslString = fileContents( stylePath );
+		if( KopeteXSL::isValid( xslString ) )
+		{
+			QFileInfo fi( stylePath );
+			addStyle( fi.fileName().section('.',0,0), xslString );
+		}
+		else
+			KMessageBox::error( this, i18n("\"%1\" is not a valid XSL document. Import canceled.").arg(chosenStyle.path()), i18n("Invalid Style") );
+	}
+	else
+	{
+		KMessageBox::error( this, i18n("Could not import \"%1\". Check access permissions / network connection.").arg( chosenStyle.path() ), i18n("Import Error") );
+	}
+}
+
 void AppearanceConfig::slotEditStyle()
 {
 	slotAddStyle();
@@ -481,25 +506,37 @@ void AppearanceConfig::slotStyleSaved()
 			QFile::remove( filePath );
 	}
 
-	filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleEditor->styleName->text()) );
+	addStyle( styleEditor->styleName->text(), fileSource );
 
-	QFile out( filePath );
-	if ( out.open( IO_WriteOnly ) )
+	styleEditor->deleteLater();
+}
+
+void AppearanceConfig::addStyle( const QString &styleName, const QString &xslString )
+{
+	if( !mPrfsChatAppearance->styleList->findItem( styleName ) )
 	{
-		QTextStream stream( &out );
-		stream << fileSource;
-		out.close();
+		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
+		QFile out( filePath );
+		if ( out.open( IO_WriteOnly ) )
+		{
+			QTextStream stream( &out );
+			stream << xslString;
+			out.close();
 
-		mPrfsChatAppearance->styleList->insertItem( styleEditor->styleName->text(), 0 );
-		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), filePath );
-		mPrfsChatAppearance->styleList->sort();
-		mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->findItem( styleEditor->styleName->text() ), true );
+			mPrfsChatAppearance->styleList->insertItem( styleName, 0 );
+			itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), filePath );
+			mPrfsChatAppearance->styleList->sort();
+			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->firstItem(), true );
+		}
+		else
+		{
+			KMessageBox::error( this, i18n("Error saving file. Check access permissions to \"%1\".").arg( filePath ), i18n("Could Not Save") );
+		}
 	}
 	else
 	{
-		KMessageBox::error( this, i18n("Error saving file. Check access permissions to \"%1\".").arg( filePath ), i18n("Could Not Save") );
+		KMessageBox::error( this, i18n("A style named \"%1\" already exists. Please re-name the style.").arg( styleName ), i18n("Could Not Save") );
 	}
-	styleEditor->deleteLater();
 }
 
 void AppearanceConfig::slotUpdatePreview()
@@ -546,7 +583,7 @@ void AppearanceConfig::slotUpdatePreview()
 			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
-			msgHigh.highlight();
+			msgHigh.setImportance( KopeteMessage::Highlight );
 			preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model ) );
 
 			preview->write( QString::fromLatin1( "</body></html>" ) );

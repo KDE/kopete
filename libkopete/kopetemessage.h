@@ -172,16 +172,10 @@ public:
 	QColor bg() const;
 
 	/**
-	 * Accessor method for the font used in the message
+	 * Accessor method for the font of the message
 	 * @return The message's font
 	 */
 	QFont font() const;
-
-	/**
-	 * Accessor method for the body of the message in the current format
-	 * @return The message body
-	 */
-	QString body() const;
 
 	/**
 	 * Accessor method for the subject of the message
@@ -255,16 +249,11 @@ public:
 	 * @internal
 	 * @return The HTML and Emoticon parsed message body
 	 */
-	QString parsedBody() const ;
+	QString parsedBody() const;
 
-	QDomDocument asXML();
+	const QDomDocument asXML() const;
 
 	void setBgOverride( bool enable );
-
-	/**
-	 * Highlight the message with the default highlight options
-	 */
-	void highlight();
 
 private:
 	/**
@@ -280,13 +269,6 @@ private:
 	void detach();
 
 	KopeteMessagePrivate *d;
-
-	/**
-	 * Compares colors. If the colors are too simmilar (they are deemed
-	 * not be readable on top of eachother), then colorFg is adjusted to become
-	 * readable.
-	 */
-	void compareColors( QColor &colorFg, QColor &colorBg );
 
 	QString parseLinks( const QString &message ) const;
 };
