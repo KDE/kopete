@@ -2,7 +2,7 @@
 #include <qwidgetplugin.h>
 
 #include <kinstance.h>
-#include <kopete/ui/kopetelistview.h>
+#include "kopetelistview.h"
 #ifndef EMBED_IMAGES
 #include <kstandarddirs.h>
 #endif
