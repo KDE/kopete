@@ -210,12 +210,11 @@ private slots:
 	void slotShowServerWindow();
 	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
-//	void slotConnectedToServer();
-//	void slotDisconnected();
 	void slotServerBusy();
 	void slotSearchChannels();
 	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );
+	void slotPerformOnConnectCommands();
 
 private:
 	Kopete::ChatSession *m_manager;

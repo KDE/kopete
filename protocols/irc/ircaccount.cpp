@@ -526,16 +526,11 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 			currentHost = 0;
 			m_contactManager->addToNotifyList( m_engine->nickName() );
 
-			Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
-			if (!manager)
-				return;
-
-			if (!autoConnect.isEmpty())
-				Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
-
-			QStringList commands(connectCommands());
-			for (QStringList::Iterator it=commands.begin(); it != commands.end(); ++it)
-				Kopete::CommandHandler::commandHandler()->processMessage(*it, manager);
+			// HACK! See bug #85200 for details. Some servers still cannot accept commands
+			// after the 001 is sent, you need to wait until all the init junk is done.
+			// Unfortunatly, there is no way for us to know when it is done (it could be
+			// spewing out any number of replies), so just try delaying it
+			QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		}
 		break;
 	case KIRC::Engine::Closing:
@@ -555,6 +550,20 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 	case KIRC::Engine::Disconnected:
 		break;
 	}
+}
+
+void IRCAccount::slotPerformOnConnectCommands()
+{
+	Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
+	if (!manager)
+		return;
+
+	if (!autoConnect.isEmpty())
+		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
+
+	QStringList commands(connectCommands());
+	for (QStringList::Iterator it=commands.begin(); it != commands.end(); ++it)
+		Kopete::CommandHandler::commandHandler()->processMessage(*it, manager);
 }
 
 void IRCAccount::slotJoinedUnknownChannel(const QString &channel, const QString &nick)
@@ -790,7 +799,7 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 	}
 
 
-	if( destination & ActiveWindow )
+	if( destination == ActiveWindow )
 	{
 		KopeteView *activeView = Kopete::ChatSessionManager::self()->activeView();
 		if( activeView && activeView->msgManager()->account() == this )
@@ -802,17 +811,17 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 		}
 	}
 
-	if( destination & AnonymousWindow )
+	if( destination == AnonymousWindow )
 	{
 		//TODO: Create an anonymous window??? What will this mean...
 	}
 
-	if( destination & ServerWindow )
+	if( destination == ServerWindow )
 	{
 		myServer()->appendMessage(message);
 	}
 
-	if( destination & KNotify )
+	if( destination == KNotify )
 	{
 		KNotifyClient::event(
 			Kopete::UI::Global::mainWidget()->winId(), QString::fromLatin1("irc_event"), message
