@@ -19,7 +19,6 @@
 #ifndef JABBERGROUPCHAT_H
 #define JABBERGROUPCHAT_H
 
-#include "xmpp_types.h"
 #include "jabbercontact.h"
 
 /**
@@ -30,15 +29,15 @@ class JabberGroupChat:public JabberContact
 {
 
   public:
-	JabberGroupChat (Jabber::Jid room, QStringList groups, JabberAccount * p, KopeteMetaContact * mc);
+	JabberGroupChat (XMPP::Jid room, QStringList groups, JabberAccount * p, KopeteMetaContact * mc);
 	~JabberGroupChat ();
 
-	void updatePresence (const Jabber::Jid & jid, const Jabber::Status & status);
+	void updatePresence (const XMPP::Jid & jid, const XMPP::Status & status);
 
 	private slots:virtual void slotMessageManagerDeleted ();
 
   private:
-	  Jabber::Jid room;
+	  XMPP::Jid room;
 
 };
 

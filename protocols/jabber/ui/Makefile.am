@@ -1,6 +1,7 @@
 METASOURCES = AUTO
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
-	-I$(srcdir)/../libxmpp/xmpp/src \
+	-I$(srcdir)/../libiris/iris/include \
+	-I$(srcdir)/../libiris/iris/xmpp-im \
 	-I$(srcdir)/.. \
 	$(all_includes)
 

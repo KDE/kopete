@@ -38,8 +38,8 @@ class KopeteMessageManager;
 class KopeteMetaContact;
 class KopeteGroup;
 
-class Jabber::Jid;
-class Jabber::Message;
+class XMPP::Jid;
+class XMPP::Message;
 
 class JabberContact:public KopeteContact
 {
@@ -111,12 +111,12 @@ public slots:
 	 * Slots called when a certain resource
 	 * appears or disappears for the contact
 	 */
-	void slotResourceAvailable (const Jabber::Jid & jid, const Jabber::Resource & resource);
+	void slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource);
 
 	/**
 	 * Remove a resource from the contact
 	 */
-	void slotResourceUnavailable (const Jabber::Jid & jid, const Jabber::Resource & resource);
+	void slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::Resource & resource);
 
 	/**
 	* Select a new resource for the contact
@@ -126,7 +126,7 @@ public slots:
 	/**
 	 * Update contact to new roster data
 	 */
-	void slotUpdateContact (const Jabber::RosterItem & item);
+	void slotUpdateContact (const XMPP::RosterItem & item);
 
 	/**
 	 * Update contact to a new status
@@ -136,7 +136,7 @@ public slots:
 	/**
 	 * Received a message for this contact
 	 */
-	void slotReceivedMessage (const Jabber::Message & message);
+	void slotReceivedMessage (const XMPP::Message & message);
 
 	/**
 	 * Sync Groups with server
@@ -199,9 +199,9 @@ private slots:
 private:
 
 	/**
-	 * Convert KopeteMessage to Jabber::Message
+	 * Convert KopeteMessage to XMPP::Message
 	 */
-	void km2jm (const KopeteMessage & km, Jabber::Message & jm);
+	void km2jm (const KopeteMessage & km, XMPP::Message & jm);
 
 	/**
 	 * Sends subscription messages.
@@ -223,7 +223,7 @@ private:
 	 * This will simply cache all
 	 * relevant data for this contact.
 	 */
-	Jabber::RosterItem rosterItem;
+	XMPP::RosterItem rosterItem;
 
 	/**
 	 * List of available resources for the

@@ -22,7 +22,7 @@
 #include "jabberformlineedit.h"
 #include "jabberformtranslator.h"
 
-JabberFormTranslator::JabberFormTranslator (const Jabber::Form & form, QWidget * parent, const char *name):QWidget (parent, name)
+JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * parent, const char *name):QWidget (parent, name)
 {
 	/* Copy basic form values. */
 	privForm.setJid (form.jid ());
@@ -42,7 +42,7 @@ JabberFormTranslator::JabberFormTranslator (const Jabber::Form & form, QWidget *
 	QGridLayout *formLayout = new QGridLayout (innerLayout, form.count (), 2);
 
 	int row = 1;
-	for (Jabber::Form::const_iterator it = form.begin (); it != form.end (); it++, row++)
+	for (XMPP::Form::const_iterator it = form.begin (); it != form.end (); it++, row++)
 	{
 		kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
 			(*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
@@ -57,13 +57,13 @@ JabberFormTranslator::JabberFormTranslator (const Jabber::Form & form, QWidget *
 		formLayout->addWidget (edit, row, 1);
 		edit->show ();
 
-		connect (this, SIGNAL (gatherData (Jabber::Form &)), edit, SLOT (slotGatherData (Jabber::Form &)));
+		connect (this, SIGNAL (gatherData (XMPP::Form &)), edit, SLOT (slotGatherData (XMPP::Form &)));
 	}
 
 	innerLayout->addStretch ();
 }
 
-Jabber::Form & JabberFormTranslator::resultData ()
+XMPP::Form & JabberFormTranslator::resultData ()
 {
 	/* Let all line edit fields write into our form. */
 	emit gatherData (privForm);

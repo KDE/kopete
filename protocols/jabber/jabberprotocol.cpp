@@ -32,11 +32,8 @@
 #include <qpixmap.h>
 #include <qstringlist.h>
 
-#include "xmpp_client.h"
-#include "xmpp_stream.h"
-#include "xmpp_tasks.h"
-#include "xmpp_types.h"
-#include "xmpp_vcard.h"
+#include "im.h"
+#include "xmpp.h"
 
 #include <sys/utsname.h>
 

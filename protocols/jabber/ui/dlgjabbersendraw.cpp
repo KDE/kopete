@@ -23,7 +23,7 @@
 #include "dlgjabbersendraw.h"
 
 
-dlgJabberSendRaw::dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent, const char *name)
+dlgJabberSendRaw::dlgJabberSendRaw (XMPP::Client * engine, QWidget * parent, const char *name)
 	: DlgSendRaw (parent, name), mEngine(engine)
 {
 	// Connect the GUI elements to things that do stuff

@@ -24,8 +24,8 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 
-#include "xmpp_types.h"
-#include "xmpp_tasks.h"
+#include "im.h"
+#include "xmpp.h"
 
 #include "jabberaccount.h"
 #include "dlgregister.h"
@@ -41,7 +41,7 @@ class dlgJabberRegister:public dlgRegister
 	Q_OBJECT
 
 public:
-	  dlgJabberRegister (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	  dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberRegister ();
 
 private slots:

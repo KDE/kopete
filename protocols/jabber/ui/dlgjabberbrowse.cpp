@@ -29,7 +29,7 @@
 #include "jabberformtranslator.h"
 #include "dlgjabberbrowse.h"
 
-dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent, const char *name):dlgBrowse (parent, name)
+dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent, const char *name):dlgBrowse (parent, name)
 {
 	m_account = account;
 
@@ -42,7 +42,7 @@ dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const Jabber::Jid & ji
 	// disable user selections
 	tblResults->setSelectionMode (QTable::NoSelection);
 
-	Jabber::JT_Search * task = new Jabber::JT_Search (m_account->client()->rootTask ());
+	XMPP::JT_Search * task = new XMPP::JT_Search (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
 
@@ -52,7 +52,7 @@ dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const Jabber::Jid & ji
 
 void dlgJabberBrowse::slotGotForm ()
 {
-	Jabber::JT_Search * task = (Jabber::JT_Search *) sender ();
+	XMPP::JT_Search * task = (XMPP::JT_Search *) sender ();
 
 	// delete the wait message
 	delete lblWait;
@@ -89,7 +89,7 @@ void dlgJabberBrowse::slotGotForm ()
 void dlgJabberBrowse::slotSendForm ()
 {
 
-	Jabber::JT_Search * task = new Jabber::JT_Search (m_account->client()->rootTask ());
+	XMPP::JT_Search * task = new XMPP::JT_Search (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));
 
@@ -103,7 +103,7 @@ void dlgJabberBrowse::slotSendForm ()
 
 void dlgJabberBrowse::slotSentForm ()
 {
-	Jabber::JT_Search * task = (Jabber::JT_Search *) sender ();
+	XMPP::JT_Search * task = (XMPP::JT_Search *) sender ();
 
 	btnSearch->setEnabled (true);
 	btnClose->setEnabled (true);
@@ -119,7 +119,7 @@ void dlgJabberBrowse::slotSentForm ()
 
 	int row = 0;
 
-	for (QValueList < Jabber::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); it++)
+	for (QValueList < XMPP::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); it++)
 	{
 		tblResults->setText (row, 0, (*it).jid ().userHost ());
 		tblResults->setText (row, 1, (*it).first ());

@@ -27,9 +27,8 @@
 #include <kaction.h>
 #include <kpopupmenu.h>
 
-#include "xmpp_client.h"
-#include "xmpp_types.h"
-#include "xmpp_jid.h"
+#include "im.h"
+#include "xmpp.h"
 
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
@@ -43,7 +42,7 @@ class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
 
-using namespace Jabber;
+using namespace XMPP;
 
 class JabberProtocol:public KopeteProtocol
 {

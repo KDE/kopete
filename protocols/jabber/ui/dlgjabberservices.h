@@ -22,7 +22,6 @@
 #include <qwidget.h>
 
 #include "jabberaccount.h"
-#include "xmpp_types.h"
 #include "xmpp_tasks.h"
 
 #include "dlgservices.h"
@@ -48,7 +47,7 @@ private slots:
 
 private:
 	JabberAccount *m_account;
-	Jabber::JT_GetServices * serviceTask;
+	XMPP::JT_GetServices * serviceTask;
 	int selectedRow;
 
 };
