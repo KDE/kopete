@@ -149,6 +149,12 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
+	case 710:
+	{
+		QString msg = i18n( "You can't open a hotmail inbox because you haven't a valid hotmail/msn account." );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}
 	case 913:
 	{
 		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline." );
@@ -305,21 +311,21 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "ADG" )
 	{
-		// groupName, group 
+		// groupName, group
 		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
 			data.section( ' ', 2, 2 ).toUInt() );
 		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "REG" )
 	{
-		// groupName, group 
+		// groupName, group
 		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
 			data.section( ' ', 1, 1 ).toUInt() );
 		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "RMG" )
 	{
-		// group 
+		// group
 		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() );
 		m_account->setPluginData(m_account->protocol() , "serial" ,  data.section( ' ', 0, 0 ) );
 	}
@@ -365,6 +371,58 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		//this is a reply from a ping
 	}
+	else if( cmd == "URL" )
+	{
+		//example of reply: URL 10 /cgi-bin/HoTMaiL https://msnialogin.passport.com/ppsecure/md5auth.srf?lc=1036 3
+		QString from_action_url = data.section( ' ', 1, 1 );
+		QString rru = data.section( ' ', 0, 0 );
+		QString id = data.section( ' ', 2, 2 );
+
+		//write the tmp file
+		QString UserID=m_account->accountId();
+
+		QString sl="10"; //FIXME: sl should be a time since we are connected
+
+		QString md5this(m_MSPAuth+sl+m_password);
+		KMD5 md5(md5this);
+
+
+		QString hotmailRequest ="<html>\n"
+			"<head>\n"
+				"<noscript>\n"
+					"<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
+				"</noscript>\n"
+			"</head>\n"
+			"<body onload=\"document.pform.submit(); \">\n"
+				"<form name=\"pform\" action=\"" + from_action_url  + "\" method=\"POST\">\n"
+					"<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
+					"<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.find('@') ) + "\">\n"
+					"<input type=\"hidden\" name=\"username\" value=\"" + UserID + "\">\n"
+					"<input type=\"hidden\" name=\"sid\" value=\"" + m_sid + "\">\n"
+					"<input type=\"hidden\" name=\"kv\" value=\"" + m_kv + "\">\n"
+					"<input type=\"hidden\" name=\"id\" value=\""+ id +"\">\n"
+					"<input type=\"hidden\" name=\"sl\" value=\"" + sl +"\">\n"
+					"<input type=\"hidden\" name=\"rru\" value=\"" + rru + "\">\n"
+					"<input type=\"hidden\" name=\"auth\" value=\"" + m_MSPAuth + "\">\n"
+					"<input type=\"hidden\" name=\"creds\" value=\"" + QString::fromLatin1( md5.hexDigest() ) + "\">\n"
+					"<input type=\"hidden\" name=\"svc\" value=\"mail\">\n"
+					"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
+				"</form></body>\n</html>\n";
+
+
+		KTempFile tmpFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
+		*tmpFile.textStream() << hotmailRequest;
+
+		// In KDE 3.1 and older this will leave a stale temp file lying
+		// around. There's no easy way for us to detect the browser exiting
+		// though, so we can't do anything about it. For KDE 3.2 and newer
+		// we use the improved KRun that auto-deletes the temp file when done.
+		#if KDE_IS_VERSION(3,1,90)
+		KRun::runURL( tmpFile.name(), "text/html", true );
+		#else
+		KRun::runURL( tmpFile.name(), "text/html" );
+		#endif
+	}
 	else
 	{
 		// Let the base class handle the rest
@@ -374,22 +432,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 void MSNNotifySocket::slotOpenInbox()
 {
-	if( m_isHotmailAccount )
-	{
-		KTempFile tmpFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
-		*tmpFile.textStream() << m_hotmailRequest;
-
-		// In KDE 3.1 and older this will leave a stale temp file lying
-		// around. There's no easy way for us to detect the browser exiting
-		// though, so we can't do anything about it. For KDE 3.2 and newer
-		// we use the improved KRun that auto-deletes the temp file when done.
-
-#if KDE_IS_VERSION(3,1,90)
-		KRun::runURL( tmpFile.name(), "text/html", true );
-#else
-		KRun::runURL( tmpFile.name(), "text/html" );
-#endif
-	}
+	sendCommand("URL", "INBOX" );
 }
 
 void MSNNotifySocket::slotReadMessage( const QString &msg )
@@ -440,62 +483,31 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
 	{
-		if( msnId().contains("@hotmail.com") || msnId().contains("@msn.com"))
+		//Hotmail profile
+		if(msg.contains("MSPAuth:"))
 		{
-			//Hotmail profile
-			if(msg.contains("MSPAuth:"))
-			{
-				QRegExp rx("MSPAuth: ([A-Za-z0-9$!*]*)");
-				rx.search(msg);
-				m_MSPAuth=rx.cap(1);
-			}
-			if(msg.contains("sid:"))
-			{
-				QRegExp rx("sid: ([0-9]*)");
-				rx.search(msg);
-				m_sid=rx.cap(1);
-			}
-			if(msg.contains("kv:"))
-			{
-				QRegExp rx("kv: ([0-9]*)");
-				rx.search(msg);
-				m_kv=rx.cap(1);
-			}
-
-			//write the tmp file
-			QString UserID=m_account->accountId();
-
-			QString md5this(m_MSPAuth+"1"+m_password);
-			KMD5 md5(md5this);
-
-			KTempFile tmpFile(locateLocal("tmp", "kopetehotmail"), ".html");
-
-			m_hotmailRequest =
-				"<html>\n"
-				"<head>\n"
-				"<noscript>\n"
-				"<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
-				"</noscript>\n"
-				"</head>\n"
-				"<body onload=\"document.pform.submit(); \">\n"
-				"<form name=\"pform\" action=\"https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033\" method=\"POST\">\n"
-				"<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
-				"<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.find('@') ) + "\">\n"
-				"<input type=\"hidden\" name=\"username\" value=\"" + UserID + "\">\n"
-				"<input type=\"hidden\" name=\"sid\" value=\"" + m_sid + "\">\n"
-				"<input type=\"hidden\" name=\"kv\" value=\"" + m_kv + "\">\n"
-				"<input type=\"hidden\" name=\"id\" value=\"2\">\n"
-				"<input type=\"hidden\" name=\"sl\" value=\"1\">\n"
-				"<input type=\"hidden\" name=\"rru\" value=\"/cgi-bin/HoTMaiL\">\n"
-				"<input type=\"hidden\" name=\"auth\" value=\"" + m_MSPAuth + "\">\n"
-				"<input type=\"hidden\" name=\"creds\" value=\"" + QString::fromLatin1( md5.hexDigest() ) + "\">\n"
-				"<input type=\"hidden\" name=\"svc\" value=\"mail\">\n"
-				"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
-				"</form></body>\n"
-				"</html>\n";
-
-			m_isHotmailAccount = true;
-			emit hotmailSeted(true);
+			QRegExp rx("MSPAuth: ([A-Za-z0-9$!*]*)");
+			rx.search(msg);
+			m_MSPAuth=rx.cap(1);
+		}
+		if(msg.contains("sid:"))
+		{
+			QRegExp rx("sid: ([0-9]*)");
+			rx.search(msg);
+			m_sid=rx.cap(1);
+		}
+		if(msg.contains("kv:"))
+		{
+			QRegExp rx("kv: ([0-9]*)");
+			rx.search(msg);
+			m_kv=rx.cap(1);
+		}
+		if(msg.contains("EmailEnabled:"))
+		{
+			QRegExp rx("EmailEnabled: ([0-9]*)");
+			rx.search(msg);
+			m_isHotmailAccount = (rx.cap(1).toUInt() == 1);
+			emit hotmailSeted(m_isHotmailAccount);
 		}
 	}
 }

@@ -145,7 +145,6 @@ private:
 	QString m_MSPAuth;
 	QString m_kv;
 	QString m_sid;
-	QString m_hotmailRequest;
 
 	QTimer *m_keepaliveTimer;
 

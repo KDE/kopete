@@ -228,8 +228,8 @@ void MSNSocket::slotDataReceived()
 				<< "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-//		buf[ ret ] = '\0'; // Make it properly null-terminated
-//		kdDebug(14140) << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
+		buf[ ret ] = '\0'; // Make it properly null-terminated for the following debug output
+		kdDebug(14140) << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
 
 		m_buffer.add(buf,ret); // fill the buffer with the received data
 
@@ -269,7 +269,7 @@ void MSNSocket::slotReadLine()
 
 			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
 			command.replace( QRegExp( "\r\n" ), "" );
-			kdDebug(14140) << "MSNSocket::slotReadLine: " << command << endl;
+//			kdDebug(14140) << "MSNSocket::slotReadLine: " << command << endl;
 
 			parseLine(command);
 			//WARNING: since here, this can be deleted (when disconnecitng)
