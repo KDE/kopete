@@ -16,7 +16,7 @@ kcm_kopete_history_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 service_DATA = history.desktop
 servicedir = $(kde_servicesdir)
 
-mydatadir = $(kde_datadir)/kopete
+mydatadir = $(kde_datadir)/kopete_history
 mydata_DATA = historyui.rc  historychatui.rc
 
 
