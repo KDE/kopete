@@ -51,6 +51,7 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 		mGui->mSavePassword->setChecked(false);
 		slotSetDefaultServer();
 	}
+	QObject::connect(mGui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 }
 
 AIMEditAccountWidget::~AIMEditAccountWidget()
@@ -108,6 +109,11 @@ void AIMEditAccountWidget::slotSetDefaultServer()
 {
 	mGui->edtServerAddress->setText(AIM_SERVER);
 	mGui->sbxServerPort->setValue(AIM_PORT);
+}
+
+void ICQEditAccountWidget::slotOpenRegister()
+{
+    KRun::runURL( "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1", "text/html" );
 }
 
 #include "aimeditaccountwidget.moc"

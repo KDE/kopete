@@ -42,6 +42,9 @@ class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
 
+	private slots:
+		void slotOpenRegister();
+
 	protected slots:
 		void slotSetDefaultServer();
 
