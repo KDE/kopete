@@ -76,10 +76,6 @@ public slots:
 
 	void removeContact( const GaduContact* c );
 
-	void slotExportContactsList();
-	void slotExportContactsListToFile();
-	void slotImportContactsFromFile();
-
 	void addNotify( uin_t uin );
 	void notify( uin_t* userlist, int count );
 
@@ -125,6 +121,11 @@ private slots:
 	void contactStatusChanged( KGaduNotify* );
 	void slotSessionDisconnect();
 
+	void slotExportContactsList();
+	void slotExportContactsListToFile();
+	void slotImportContactsFromFile();
+	void slotFriendsMode();
+
 	void userlist( const QString& contacts );
 	gaduContactsList* userlist();
 
@@ -162,6 +163,7 @@ private:
 	KAction*		listputAction;
 	KAction*		listToFileAction;
 	KAction*		listFromFileAction;
+	KAction*		friendsModeAction;
 	bool			connectWithSSL;
 
 	int			currentServer;

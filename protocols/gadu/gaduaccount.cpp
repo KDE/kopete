@@ -97,6 +97,9 @@ GaduAccount::initActions()
 							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
 	listFromFileAction	= new KAction( i18n( "Import Contacts from file" ), "", 0,
 							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
+	friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
+							this, SLOT( slotFriendsMode() ), this, 
+							"actionFriendsMode" );
 }
 
 void
@@ -155,6 +158,7 @@ GaduAccount::actionMenu()
 	kdDebug(14100) << "actionMenu() " << endl;
 
 	actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
+
 	actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 
 #if QT_VERSION < 0x030200
@@ -166,10 +170,12 @@ GaduAccount::actionMenu()
 	if ( session_->isConnected() ) {
 		searchAction->setEnabled( TRUE );
 		listputAction->setEnabled( TRUE );
+		friendsModeAction->setEnabled( TRUE );
 	}
 	else {
 		searchAction->setEnabled( FALSE );
 		listputAction->setEnabled( FALSE );
+		friendsModeAction->setEnabled( FALSE );
 	}
 	kdDebug( 14100 ) << "nr of contacts - " << contacts().count() <<endl ;
 
@@ -209,12 +215,16 @@ GaduAccount::actionMenu()
 	actionMenu_->insert( new KAction( i18n( "Set &Description" ),
 			"info",
 			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
-
+	
+	actionMenu_->insert( friendsModeAction );
+	
 	actionMenu_->popupMenu()->insertSeparator();
 
 	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
+	
 	actionMenu_->popupMenu()->insertSeparator();
+	
 	actionMenu_->insert( listToFileAction );
 	actionMenu_->insert( listFromFileAction );
 
@@ -759,6 +769,16 @@ GaduAccount::userListExportDone()
 	slotCommandDone( QString::null, i18n( "Contacts exported to the server.") );
 }
 
+
+void
+GaduAccount::slotFriendsMode()
+{
+	static bool friendsMode = false;
+
+	friendsMode = !friendsMode;
+	kdDebug( 14100 ) << "for friends mode: " << friendsMode << endl;
+
+}
 
 // FIXME: make loading and saving nonblocking (at the moment KFileDialog stops plugin/kopete)
 
