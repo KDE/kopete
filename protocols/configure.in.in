@@ -24,7 +24,7 @@ ac_save_LIBS="$LIBS"
 ac_save_CXXFLAGS="$CXXFLAGS"
 LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
 CFLAGS="$CFLAGS $LIBGG_INCLUDES"
-AC_MSG_CHECKING([if libgadu supports protocol version 6.0 and pthreads])
+AC_MSG_CHECKING([libgadu version 1.4rc2 to 1.4 with pthread support])
 	AC_TRY_RUN(
 	[
 	
@@ -35,6 +35,19 @@ AC_MSG_CHECKING([if libgadu supports protocol version 6.0 and pthreads])
 	int main()
 	{
 #if defined __GG_LIBGADU_HAVE_PTHREAD && defined GG_LOGIN60
+		int maj, min, date;
+		sscanf( gg_libgadu_version(), "%u.%u.%u", &maj,&min,&date );
+		if ( maj != 1 ) {
+			return 1;
+		}
+		if ( min == 3 && date < 20031020 ) {
+			return 1;
+		}
+
+		if ( min > 4 ){
+			return 1;
+		}
+			     
 	    return 0;
 #else
 	    return 1;
