@@ -214,9 +214,9 @@ void KopeteWindow::showToolbar(void)
 
 void KopeteWindow::slotExecuted( QListViewItem *item )
 {
-	KopeteContact *contact = dynamic_cast<KopeteContact *>(item);
-	if ( contact )
-		contact->execute();
+	KopeteContactViewItem *contactvi = dynamic_cast<KopeteContactViewItem *>(item);
+	if ( contactvi )
+		contactvi->contact()->execute();
 }
 
 // vim: set noet sw=4 ts=4 sts=4:

@@ -21,89 +21,63 @@
 #include <qtimer.h>
 #include <klistview.h>
 #include <kdebug.h>
+#include <klocale.h>
 
-KopeteContact::KopeteContact(QListViewItem *parent)
-	: QObject(),
-	KListViewItem(parent)
+KopeteContact::KopeteContact(QObject *parent)
+	: QObject(parent)
 {
-	blinkTimer = new QTimer();
-	numBlinks=0;
-}
-
-KopeteContact::KopeteContact(QListView *parent)
-	: QObject(),
-	KListViewItem(parent)
-{
-	blinkTimer = new QTimer();
-	numBlinks=0;
 }
 
 KopeteContact::~KopeteContact()
 {
 }
 
-void KopeteContact::setHidden( bool hideme )
-{
-//	kdDebug() << "KopeteContact::setHidden for user " << text(0) << endl;
-	setVisible( !hideme );
-}
-
-void KopeteContact::triggerNotify()
-{
-	numBlinks=0;
-	connect ( blinkTimer, SIGNAL(timeout()), this, SLOT(slotNewItemNotify()) );
-	blinkTimer->start(1000, false);
-	kdDebug() << "notify on" << endl;
-}
-
-void KopeteContact::slotNotify(void)
-{
-	numBlinks++;
-	repaint();
-	if ( numBlinks == 5 )
-	{
-		kdDebug() << "notify off" << endl;
-		blinkTimer->stop();
-		blinkTimer->disconnect();
-		numBlinks = 0;
-	}
-}
-
-void KopeteContact::paintCell (QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
-{
-	QColorGroup myColor = QColorGroup (cg);
-
-	if (numBlinks != 0)
-	{
-		kdDebug() << "numBlinks=" << numBlinks << endl;
-		switch ( numBlinks )
-		{
-			case 1:
-			case 3:
-			case 5:
-				myColor.setColor( QColorGroup::Base,myColor.highlight() );
-				break;
-		}
-	}
-
-	KListViewItem::paintCell (p, myColor, column, width, alignment);
-}
-
-
-bool KopeteContact::isHidden()
-{
-	return (!isVisible());
-}
-
 void KopeteContact::setName( const QString &name )
 {
 	mName = name;
-	setText ( 0, name );
+	emit nameChanged(name);
 }
 
 QString KopeteContact::name() const
 {
 	return mName;
+}
+
+KopeteContact::ContactStatus KopeteContact::status() const
+{
+	return Online;
+}
+
+QString KopeteContact::statusText() const
+{
+	ContactStatus stat = status();
+
+	if (stat == Online)
+		return i18n("Online");
+
+	if (stat == Away)
+		return i18n("Away");
+
+	if (stat == Offline)
+		return i18n("Offline");
+}
+
+QString KopeteContact::statusIcon() const
+{
+	return "unknown";
+}
+
+int KopeteContact::importance() const {
+	ContactStatus stat = status();
+
+	if (stat == Online)
+		return 20;
+
+	if (stat == Away)
+		return 10;
+
+	if (stat == Offline)
+		return 0;
 }
 
 #include "kopetecontact.moc"

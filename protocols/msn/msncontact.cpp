@@ -37,84 +37,18 @@
 
 /* Constructor for no-groups */
 
-MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol)
-	: IMContact(kopeteapp->contactList())
+MSNContact::MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol)
+	: KopeteContact(protocol)
 {
 	mProtocol = protocol;
 	mName = name;
+	mGroup =  group;
 	mUserID = userid;
 	hasLocalGroup = false;
 
 	historyDialog = 0L;
 
 	initContact(userid, name, protocol);
-}
-
-
-MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol)
-	: IMContact(parent)
-{
-	mProtocol = protocol;
-	mName = name;
-	mUserID = userid;
-	hasLocalGroup = true;
-	parentGroup = parent;
-
-	historyDialog = 0L;
-
-	initContact(userid, name, protocol);
-}
-
-QString MSNContact::key(int column, bool ascending) const
-{
-	switch(mStatus)
-	{
-		case BLO:
-		{
-			return "G"+ text(0);
-			break;
-		}
-		case NLN:
-		{
-			return "A"+ text(0);
-			break;
-		}
-		case FLN:
-		{
-			return "Z"+ text(0);
-			break;
-		}
-		case BSY:
-		{
-			return "F"+ text(0);
-			break;
-		}
-		case IDL:
-		{
-			return "A"+ text(0);
-			break;
-		}
-		case AWY:
-		{
-			return "B"+ text(0);
-			break;
-		}
-		case PHN:
-		{
-			return "C"+ text(0);
-			break;
-		}
-		case BRB:
-		{
-			return "D"+ text(0);
-			break;
-		}
-		case LUN:
-		{
-			return "E"+ text(0);
-			break;
-		}
-	}
 }
 
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
@@ -126,7 +60,6 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 	// We connect this signal so that we can tell when a user's status changes
 	connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
 	connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
-	connect(mProtocol, SIGNAL(settingsChanged()), this, SLOT(slotReadSettings()) );
 
 	connect ( this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
 //	connect ( messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
@@ -141,14 +74,14 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 void MSNContact::initActions()
 {
 	actionChat				= new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChatThisUser()), this, "actionChat" );
-	actionRemoveFromGroup	= new KAction ( i18n("Remove from group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
-	actionRemove			= new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
-	actionContactCopy		= new KListAction ( i18n("Copy contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );
-	actionContactMove		= new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );
+	actionRemoveFromGroup	= new KAction ( i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
+	actionRemove			= new KAction ( i18n("Delete Contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
+	actionContactCopy		= new KListAction ( i18n("Copy Contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );
+	actionContactMove		= new KListAction ( i18n("Move Contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );
 	actionHistory			= new KAction ( i18n("View History"), "history", 0, this, SLOT(slotViewHistory()), this, "actionHistory" );
 }
 
-void MSNContact::rightButtonPressed(const QPoint &point)
+void MSNContact::showContextMenu(QPoint point)
 {
 	QStringList grouplist1 = mProtocol->engine->getGroups();
 	QStringList grouplist2 = mProtocol->engine->getGroups();
@@ -165,10 +98,10 @@ void MSNContact::rightButtonPressed(const QPoint &point)
 	actionRemove->plug( popup );
 	actionContactCopy->plug( popup );
 	actionContactMove->plug( popup );
-	popup->popup(QCursor::pos());
+	popup->popup(point);
 }
 
-void MSNContact::leftButtonDoubleClicked()
+void MSNContact::execute()
 {
 	emit chatToUser( mUserID );
 }
@@ -187,7 +120,7 @@ void MSNContact::slotRemoveThisUser()
 void MSNContact::slotRemoveFromGroup()
 {
 	QString group;
-	group = parentGroup->text(0);
+	group = mGroup;
 	mProtocol->engine->contactRemove(mUserID, group);
 }
 
@@ -196,9 +129,8 @@ void MSNContact::slotMoveThisUser()
 	QString newgroup;
 	QString oldgroup;
 	newgroup = actionContactMove->currentText();
-	oldgroup = parentGroup->text(0);
-	mProtocol->engine->contactMove( mUserID, oldgroup, newgroup);
-	
+	oldgroup = mGroup;
+	mProtocol->engine->contactMove( mUserID, oldgroup, newgroup);	
 }
 
 void MSNContact::slotCopyThisUser()
@@ -210,7 +142,7 @@ void MSNContact::slotCopyThisUser()
 
 void MSNContact::slotContactRemoved(QString handle, QString group)
 {
-	if ( (handle == mUserID) && ( group == parentGroup->text(0) ) )
+	if ( (handle == mUserID) && ( group == mGroup ) )
 	{
 		delete this;
 	}
@@ -230,15 +162,7 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 	QString tmppublicname = mProtocol->engine->getPublicName( handle);
 
 	if ( status == FLN ) // offline
-	{
-		if ( !kopeteapp->appearance()->showOffline() && !isHidden() )
-			setHidden(true);
-
 		setName( tmppublicname );
-		setPixmap(0, mProtocol->offlineIcon );
-	}
-	else if ( isHidden() )		// we are something like online :)
-		setHidden ( false );	// show me
 
 	switch ( status )
 	{
@@ -250,48 +174,39 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 		case NLN: // Online
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->onlineIcon );
 			break;
 		}
 		case BSY: // Busy
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->awayIcon );
 			break;
 		}
 		case IDL: // Idle
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->awayIcon );
 			break;
 		}
 		case AWY: // Away from computer
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->awayIcon );
 			break;
 		}
 		case PHN: // On the phone
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->awayIcon );
 			break;
 		}
 		case BRB: // Be right back
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->awayIcon );
 			break;
 		}
 		case LUN: // Out to lunch
 		{
 			setName( tmppublicname );
-			setPixmap(0, mProtocol->awayIcon );
 			break;
 		}
 	}
-	/* We need to resort the group */
-	parentGroup->sortChildItems(0,0);
 }
 
 /*
@@ -315,57 +230,6 @@ void MSNContact::slotDeleteMySelf(bool connected)
 }
 
 
-/*
-void MSNContact::slotFlashIcon()
-{
-	if (isMessageIcon == true)
-	{
-		isMessageIcon = false;
-		if (mStatus == STATUS_ONLINE)
-		{
-			setPixmap(0, mProtocol->contactOnlineIcon);
-		}
-		if (mStatus == STATUS_OFFLINE)
-		{
-			setPixmap(0, mProtocol->contactOfflineIcon);
-		}
-		if (mStatus == STATUS_AWAY)
-		{
-			setPixmap(0, mProtocol->awayIcon);
-		}
-		if (mStatus == STATUS_DND || mStatus == STATUS_DND_99)
-		{
-			setPixmap(0, mProtocol->dndIcon);
-		}
-		if (mStatus == STATUS_NA_99 || mStatus == STATUS_NA)
-		{
-			setPixmap(0, mProtocol->naIcon);
-		}
-		if (mStatus == STATUS_OCCUPIED || mStatus == STATUS_OCCUPIED_MAC)
-		{
-			setPixmap(0, mProtocol->occupiedIcon);
-		}
-	} else {
-		isMessageIcon = true;
-		setPixmap(0, mProtocol->messageIcon);
-	}
-}
-*/
-
-
-void MSNContact::slotReadSettings(void)
-{
-	if ( !kopeteapp->appearance()->showOffline() && mStatus ==  FLN )
-	{	// hide offline contacts
-		setHidden(true);
-	}
-	else if ( kopeteapp->appearance()->showOffline() && mStatus == FLN  )
-	{	// show offliners if wanted
-		setHidden(false);
-	}
-}
-
-
 void MSNContact::slotViewHistory()
 {
 	kdDebug() << "MSN Plugin: slotViewHistory()" << endl;
@@ -385,7 +249,7 @@ void MSNContact::slotViewHistory()
 
 void MSNContact::slotCloseHistoryDialog()
 {
-	kdDebug() << "MSN Plugin: slotCoseHistoryDialog()" << endl;
+	kdDebug() << "MSN Plugin: slotCloseHistoryDialog()" << endl;
 	delete historyDialog;
 }
 
@@ -397,3 +261,4 @@ void MSNContact::slotHistoryDialogClosing()
 		historyDialog = 0L;
 	}
 }
+

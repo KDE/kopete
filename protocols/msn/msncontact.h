@@ -18,7 +18,7 @@
 #ifndef MSNCONTACT_H
 #define MSNCONTACT_H
 
-#include "imcontact.h"
+#include "kopetecontact.h"
 #include "msnprotocol.h"
 #include "historydialog.h"
 #include <kmsnchatservice.h>
@@ -46,22 +46,19 @@ struct MSNMessageStruct
 
 class MSNProtocol;
 
-class MSNContact : public IMContact
+class MSNContact : public KopeteContact
 {
 	Q_OBJECT
 	public:
-		MSNContact(QString userid, const QString name, MSNProtocol *protocol);
-		MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol);
+		MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol);
 		
 		void initContact(QString userid, const QString name, MSNProtocol *protocol);
-		virtual void rightButtonPressed(const QPoint &);
-		virtual void leftButtonDoubleClicked();
-		virtual QString key(int, bool) const;
+		virtual void showContextMenu(QPoint);
+		virtual void execute();
 
 		QString mUserID;
 		QString mName;
 		bool hasLocalGroup;
-		QListViewItem *parentGroup;
 
 	public slots:
 		void slotContactRemoved(QString, QString);
@@ -79,7 +76,6 @@ class MSNContact : public IMContact
 		void slotDeleteMySelf ( bool );
 //		void slotNewMessage(QString, QString, QString);
 //		void slotFlashIcon ( void );
-		void slotReadSettings ( void );
 
 		void slotHistoryDialogClosing();
 		void slotCloseHistoryDialog();
@@ -89,7 +85,7 @@ class MSNContact : public IMContact
 	private:
 		void initActions();
 
-//		QString mStatus;
+		QString mGroup;
 		uint mStatus;
 		bool isMessageIcon;
 		MSNProtocol *mProtocol;

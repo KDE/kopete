@@ -15,43 +15,59 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef IMCONTACT_H
-#define IMCONTACT_H
+#ifndef KOPETECONTACT_H
+#define KOPETECONTACT_H
 
-#include <improtocol.h>
 #include <contactlist.h>
 
 #include <qobject.h>
 
 class QString;
-class KListViewItem;
-class QListView;
-class QListViewItem;
-class QTimer;
+class KopeteEvent;
+
 /**
   *@author duncan
   */
 
-class KopeteContact : public QObject, public KListViewItem
+class KopeteContact : public QObject
 {
 	Q_OBJECT
 	public:
-		KopeteContact(QListViewItem *parent);
-		KopeteContact(QListView *parent);
-		~KopeteContact();
+		enum ContactStatus { Online, Away, Offline };
 
-		void setHidden ( bool hideme); // hides and shows a contact
-		bool isHidden();				// returns if a contact is hidden
-		
-		// makes a contact blink to notify the user
-		// that something special happened
-		void triggerNotify();
+		KopeteContact(QObject *parent);
+		~KopeteContact();
 
 		// set name of an KopeteContact
 		// This is the string that gets drawn in the listview
 		virtual void setName( const QString &name );
 		// return name of an KopeteContact
-		virtual QString name(void) const;
+		virtual QString name() const;
+
+		virtual ContactStatus status() const;
+		// The text describing the contact's status
+		// The default implement does what you'd expect,
+		// but you might want to reimplement it for more
+		// fine-grained reporting of status
+		virtual QString statusText() const;
+		// The name of the icon associated with the contact's status
+		virtual QString statusIcon() const;
+
+		// The "importance" of this contact, used for sorting
+		// This is almost always related to the contact's status
+		// Here is how ICQ does it: 
+		// 25 = Free For Chat
+		// 20 = Online
+		// 15 = Away (temporary away)
+		// 10 = Not Available (extended away)
+		// 5 = Invisible
+		// 0 = Offline
+
+		// The default implementation returns 20 for Online,
+		// 10 for away, and 0 for offline
+		// Please make your importance values between 0 and 25,
+		// and try to follow ICQ's scheme somewhat
+		virtual int importance() const;
 
 		// This should typically pop up a KopeteChatWindow
 		virtual void execute() {}
@@ -60,15 +76,10 @@ class KopeteContact : public QObject, public KListViewItem
 
 	signals:
 		void statusChanged();
-		void nameChanged();
+		void nameChanged(const QString &name);
+		void incomingEvent(KopeteEvent *);
 		
 	private:
-		void paintCell (QPainter *p, const QColorGroup &cg, int column, int width, int alignment);
-		QTimer *blinkTimer;
-		int numBlinks;
 		QString mName;
-
-	private slots:
-		void slotNotify(void);
 };
 #endif

@@ -196,7 +196,7 @@ bool MSNProtocol::isAway(void)
 		case BRB:
 		case LUN:
 		{
-    		return true;
+	    		return true;
 			break;
 		}
 	}
@@ -302,91 +302,40 @@ void MSNProtocol::slotConnected()
 	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
 	{
 		QListViewItem *groupItem;
-		if ( kopeteapp->contactList()->getGroup( (*it).latin1() ) == NULL )
+		if ( !kopeteapp->contactList()->groups().contains( (*it).latin1() ) )
 		{
 			kdDebug() << "MSN Plugin: Group: [ " << (*it).latin1() << " ] exits in server but not locally!! CREATING!" <<endl;
 		    kopeteapp->contactList()->addGroup( (*it).latin1() );
 		}
+
 		/* We now get the widget for the group */
-		groupItem = kopeteapp->contactList()->getGroup( (*it).latin1() );
-		//item=  new QListViewItem(ListView,(*it).latin1() ,"","1");
-		//item->setPixmap(0,expandedPixmap);
-		//item->setOpen(true);
+		if (!kopeteapp->contactList()->groups().contains( (*it).latin1() ) )
+			kopeteapp->contactList()->addGroup((*it).latin1());
+
 		kdDebug() << "MSN Plugin: Searching contacts for group: [ " << (*it).latin1() << " ]" <<endl;
+
 		// We get the contacts for this group
 		contacts = engine->getContacts( (*it).latin1() );
 		for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
 		{
 			userid = (*it1).latin1();
 			publicname = engine->getPublicName((*it1).latin1());
-			/* We check if the group was created ok, if not, just no group */
-			if ( groupItem )
-			{
-				kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
-				tmpcontact = new MSNContact( groupItem, userid , publicname , this );
-			}
-			else
-			{
-				kdDebug() << "MSN Plugin: Ups! The group widget was null!" <<endl;
-				tmpcontact = new MSNContact( userid , publicname , this );
-			}
-			//item1= new QListViewItem(item, engine->getPublicName((*it1).latin1())  , (*it1).latin1() ,"1");
-			status = engine->getStatus( userid );
+
+			kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
+			tmpcontact = new MSNContact( userid , publicname, (*it).latin1(), this );
+			kopeteapp->contactList()->addContact(tmpcontact, (*it).latin1() );
+
 			kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
-			switch(status)
-			{
-				case NLN:
-				{
-					tmpcontact->setPixmap(0, onlineIcon);
-					break;
-				}
-				case FLN:
-				{
-					tmpcontact->setPixmap(0, offlineIcon);
-					break;
-				}
-				case BSY:
-				{
-					tmpcontact->setPixmap(0, onlineIcon);
-					break;
-				}
-				case IDL:
-				{
-					tmpcontact->setPixmap(0, onlineIcon);
-					break;
-				}
-				case AWY:
-				{
-					tmpcontact->setPixmap(0, awayIcon);
-					break;
-				}
-				case PHN:
-				{
-					tmpcontact->setPixmap(0, onlineIcon);
-					break;
-				}
-				case BRB:
-				{
-					tmpcontact->setPixmap(0, onlineIcon);
-					break;
-				}
-				case LUN:
-				{
-					tmpcontact->setPixmap(0, onlineIcon);
-					break;
-				}
-			}
+
 			if( engine->isBlocked( userid ) )
 			{
-				tmpcontact->setText(0,  publicname + i18n(" Blocked") );
-				tmpcontact->setPixmap(0, onlineIcon);
+				tmpcontact->setName(publicname + i18n(" Blocked") );
 			}
-
 		}
 	}
 #warning FIXME is there any way to do a faster sync of msn groups?
 	/* Now we sync local groups that dont exist in server */
-	QStringList localgroups = *(kopeteapp->contactList()->groupStringList) ;
+	QStringList localgroups = (kopeteapp->contactList()->groups()) ;
 	QStringList servergroups = engine->getGroups();
 	QString localgroup;
 	QString remotegroup;
@@ -575,8 +524,10 @@ void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick
 	kdDebug() << "MSN Plugin: User State change " << status << " " << userid << " " << nick <<"\n";
 	if ( status == "NLN" )
 	{
-		MSNContact *newContact = new MSNContact(userid, nick, this);
-		newContact->setPixmap(0,onlineIcon);
+		if (kopeteapp->contactList()->groups().contains(i18n("Unknown")))
+			kopeteapp->contactList()->addGroup(i18n("Unknown"));
+
+		kopeteapp->contactList()->addContact(new MSNContact(userid, nick, i18n("Unknown"), this), i18n("Unknown"));
 	}
 }
 
@@ -587,12 +538,12 @@ void MSNProtocol::slotUserSetOffline (QString str)
 		
 }
 
-void MSNProtocol::slotContactAdded( QString handle, QString nick,QString group)
+void MSNProtocol::slotContactAdded( QString handle, QString nick, QString group)
 {
 	kdDebug() << "MSN Plugin: Contact Added in group " << group << " ... creating contact" << endl;
 	MSNContact *tmpcontact;
 	uint status;	
-	tmpcontact = new MSNContact( kopeteapp->contactList()->getGroup(group) , handle , nick , this );
+	kopeteapp->contactList()->addContact(new MSNContact( handle, nick, group, this ), group);
 }
 
 // Dont use this for now
@@ -600,8 +551,11 @@ void MSNProtocol::slotNewUserFound (QString userid )
 {
 	QString tmpnick = engine->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
-	MSNContact *newContact = new MSNContact(userid, tmpnick, this);
-	newContact->setPixmap(0,offlineIcon);		
+
+	if (kopeteapp->contactList()->groups().contains(i18n("Unknown")))
+		kopeteapp->contactList()->addGroup(i18n("Unknown"));
+
+	kopeteapp->contactList()->addContact(new MSNContact(userid, tmpnick, i18n("Unknown"), this), i18n("Unknown"));
 }
 
 // Dont use this for now
@@ -609,8 +563,11 @@ void MSNProtocol::slotNewUser (QString userid )
 {
 	QString tmpnick = engine->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
-	MSNContact *newContact = new MSNContact(userid, tmpnick, this);
-	newContact->setPixmap(0,offlineIcon);		
+
+	if (kopeteapp->contactList()->groups().contains(i18n("Unknown")))
+		kopeteapp->contactList()->addGroup(i18n("Unknown"));
+
+	kopeteapp->contactList()->addContact(new MSNContact(userid, tmpnick, i18n("Unknown"),this), i18n("Unknown"));
 }
 
 void MSNProtocol::slotAuthenticate( QString handle )
