@@ -48,7 +48,7 @@ void Engine::bindNumericReplies()
 //	bind(266, this, SLOT(numericReply_266(const KIRC::Message &)));
 
 //	bind(301, this, SLOT(numericReply_301(const KIRC::Message &)), 2, 2); // incomingUserIsAway
-//	bind(303, this, SLOT(numericReply_303(const KIRC::Message &)), 1, 1);
+	bind(303, this, SLOT(numericReply_303(const KIRC::Message &)), 1, 1); // incomingUserOnline
 //	bind(305, Engine::IgnoreMethod );
 //	bind(306, Engine::IgnoreMethod );
 //	bind(307, this, SLOT(numericReply_307(const KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
@@ -56,9 +56,9 @@ void Engine::bindNumericReplies()
 	bind(312, this, SLOT(numericReply_312(const KIRC::Message &)), 3, 3);
 //	bind(313, this, SLOT(numericReply_313(const KIRC::Message &)), 2, 2); // incomingWhoIsOperator
 	bind(314, this, SLOT(numericReply_314(const KIRC::Message &)), 5, 5);
-//	bind(315, this, SLOT(numericReply_315(const KIRC::Message &)), 2, 2); //incomingEndOfWho
+	bind(315, this, SLOT(numericReply_315(const KIRC::Message &)), 2, 2); //incomingEndOfWho
 	bind(317, this, SLOT(numericReply_317(const KIRC::Message &)), 3, 4);
-//	bind(318, this, SLOT(numericReply_318(const KIRC::Message &)), 2, 2); // incomingEndOfWhois
+	bind(318, this, SLOT(numericReply_318(const KIRC::Message &)), 2, 2); // incomingEndOfWhois
 	bind(319, this, SLOT(numericReply_319(const KIRC::Message &)), 2, 2);
 //	bind(320, this, SLOT(numericReply_320(const KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
 //	bind(321, Engine::IgnoreMethod );
@@ -267,6 +267,11 @@ void Engine::numericReply_314(const Message &msg)
 	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
 
+void Engine::numericReply_315(const Message &msg)
+{
+	emit incomingEndOfWho(msg.arg(1));
+}
+
 void Engine::numericReply_317(const Message &msg)
 {
 	/* RFC say: "<nick> <integer> :seconds idle"
@@ -278,12 +283,13 @@ void Engine::numericReply_317(const Message &msg)
 		emit incomingSignOnTime(msg.arg(1),msg.arg(3).toULong());
 }
 
-/* 318: "<nick> :End of /WHOIS list"
+/* 318: "<nick>{<space><realname>} :End of /WHOIS list"
  * End of WHOIS for a given nick.
  */
-// void Engine::numericReply_218(const Message &)
-// {
-// }
+void Engine::numericReply_318(const Message &msg)
+{
+	emit incomingEndOfWhois(msg.arg(1));
+}
 
 void Engine::numericReply_319(const Message &msg)
 {
