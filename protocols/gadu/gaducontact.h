@@ -63,10 +63,10 @@ protected:
 
 private:
 	KopeteMessageManager *msgManager_;
-	uin_t									uin_;
-	QString								description_;
-	QString								parentIdentity_;
-	GaduAccount					 *account_;
+	uin_t		uin_;
+	QString		description_;
+	QString		parentIdentity_;
+	GaduAccount	*account_;
 	KopeteContactPtrList	thisContact_;
 
 	KAction			*actionSendMessage_;
