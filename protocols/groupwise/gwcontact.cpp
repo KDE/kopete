@@ -58,13 +58,13 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 : KopeteContact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence ), m_actionBlock( 0 )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
+	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
 	if ( dn.find( '=' ) != -1 )
 	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "dn: " << dn << " m_dn before: " << m_dn << endl;
 		m_dn = dn;
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "dn: " << dn << " m_dn after: " << m_dn << endl;
 	}
+	connect( static_cast< GroupWiseAccount *>( account ), SIGNAL( privacyChanged( const QString &, bool ) ),
+			SLOT( receivePrivacyChanged( const QString &, bool ) ) );
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
 }
 
@@ -103,11 +103,11 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 	if ( details.status != GroupWise::Invalid )
 	{	
 		KopeteOnlineStatus status = protocol()->gwStatusToKOS( details.status );
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "setting initial status to " << status.description() << endl;
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "setting initial status to " << status.description() << endl;
 		setOnlineStatus( status );
 	}
-	else 
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status is, not setting " << details.status << endl; 
+	//else 
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status is, not setting " << details.status << endl; 
 }
 
 GroupWiseProtocol *GroupWiseContact::protocol()
@@ -455,8 +455,6 @@ void GroupWiseContact::slotBlock()
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( account()->isConnected() )
 	{
-		connect( account()->client()->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ),
-				SLOT( receivePrivacyChanged( const QString &, bool ) ) );
 		if ( account()->isContactBlocked( m_dn ) )
 			account()->client()->privacyManager()->setAllow( m_dn );
 		else
@@ -467,13 +465,8 @@ void GroupWiseContact::slotBlock()
 void GroupWiseContact::receivePrivacyChanged( const QString & dn, bool allow )
 {
 	Q_UNUSED( allow );
-	if ( dn == m_dn )
-	{
-		disconnect( account()->client()->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ),
-					this, SLOT( receivePrivacyChanged( const QString &, bool ) ) );
-		// set the online status back to itself. this will reset the blocking state
+	if ( dn == m_dn )	// set the online status back to itself. this will set the blocking state
 		setOnlineStatus( this->onlineStatus() );
-	}
 }
 
 void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )

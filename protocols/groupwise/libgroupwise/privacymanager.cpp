@@ -137,12 +137,33 @@ void PrivacyManager::removeDeny( const QString & dn )
 	pit->go( true );
 }
 
-void PrivacyManager::setPrivacy( bool defaultDeny, const QStringList & allowList, const QStringList & denyList )
+void PrivacyManager::setPrivacy( bool defaultIsDeny, const QStringList & allowList, const QStringList & denyList )
 {
-	qDebug( "PrivacyManager::setPrivacy() - NOT IMPLEMENTED" );
-
-}
+	if ( defaultIsDeny != m_defaultDeny )
+		setDefaultDeny( defaultIsDeny );
+	// find the DNs no longer in the allow list
+	QStringList allowsToRemove = difference( m_allowList, allowList );
+	// find the DNs no longer in the deny list
+	QStringList denysToRemove = difference( m_denyList, denyList );
+	// find the DNs new in the allow list
+	QStringList allowsToAdd = difference( allowList, m_allowList );
+	// find the DNs new in the deny list
+	QStringList denysToAdd = difference( denyList, m_denyList );
 	
+	QStringList::ConstIterator end = allowsToRemove.end();
+	for ( QStringList::ConstIterator it = allowsToRemove.begin(); it != end; ++it )
+		removeAllow( *it );
+	end = denysToRemove.end();
+	for ( QStringList::ConstIterator it = denysToRemove.begin(); it != end; ++it )
+		removeDeny( *it );
+	end = allowsToAdd.end();
+	for ( QStringList::ConstIterator it = allowsToAdd.begin(); it != end; ++it )
+		addAllow( *it );
+	end = denysToAdd.end();
+	for ( QStringList::ConstIterator it = denysToAdd.begin(); it != end; ++it )
+		addDeny( *it );
+}
+
 void PrivacyManager::slotGotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList )
 {
 	m_locked = locked;
@@ -199,7 +220,8 @@ void PrivacyManager::slotAllowRemoved()
 }
 
 void PrivacyManager::slotDenyRemoved()
-{	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
+{
+	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
 	{
 		m_denyList.remove( pit->dn() );
@@ -207,4 +229,16 @@ void PrivacyManager::slotDenyRemoved()
 	}
 }
 
+QStringList PrivacyManager::difference( const QStringList & lhs, const QStringList & rhs )
+{
+	QStringList diff;
+	const QStringList::ConstIterator lhsEnd = lhs.end();
+	const QStringList::ConstIterator rhsEnd = rhs.end();
+	for ( QStringList::ConstIterator lhsIt = lhs.begin(); lhsIt != lhsEnd; ++lhsIt )
+	{
+		if ( rhs.find( *lhsIt ) == rhsEnd )
+			diff.append( *lhsIt );
+	}
+	return diff;
+}
 #include "privacymanager.moc"

@@ -41,6 +41,8 @@ public:
 	void setAllow( const QString & dn );
 	void setDeny( const QString & dn );
 	void getDetailsForPrivacyLists();
+	// change everything at once
+	void setPrivacy( bool defaultIsDeny, const QStringList & allowList, const QStringList & denyList );
 
 signals:
 	void privacyChanged( const QString &dn, bool allowed );
@@ -54,9 +56,13 @@ protected:
 	void addDeny( const QString & dn );
 	void removeAllow( const QString & dn );
 	void removeDeny( const QString & dn );
-	// change everything at once
-	void setPrivacy( bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
-
+	/**
+	 * A set difference function
+	 * @param lhs The set of strings to be subtracted from
+	 * @param rhs The set of string to subtract
+	 * @return The difference between the two sets
+	 */
+	QStringList difference( const QStringList & lhs, const QStringList & rhs );
 protected slots:
 	// Receive the results of Tasks manipulating the privacy lists
 	void slotDefaultPolicyChanged();

@@ -146,6 +146,7 @@ signals:
 	void conferenceCreationFailed( const int mmId, const int statusCode );
 	void contactTyping( const ConferenceEvent & );
 	void contactNotTyping( const ConferenceEvent & );
+	void privacyChanged( const QString & dn, bool allowed );
 protected slots:
 	/**
 	 * Change the account's status.  Called by KActions and internally.

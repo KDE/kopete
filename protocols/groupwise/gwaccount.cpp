@@ -282,11 +282,11 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const ContactDetails &) ), SLOT( receiveAccountDetails( const ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( tempContactReceived( const ContactDetails &) ), SLOT( receiveTemporaryContact( const ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
+	// privacy - contacts can't connect directly to this signal because myself() is initialised before m_client
+	QObject::connect( m_client->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ), SIGNAL( privacyChanged( const QString &, bool ) ) );
 	
 	struct utsname utsBuf;
-
 	uname (&utsBuf);
-	
 	m_client->setClientName ("Kopete");
 	m_client->setClientVersion ( kapp->aboutData ()->version () );
 	m_client->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2)); 
