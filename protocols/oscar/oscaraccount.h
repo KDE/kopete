@@ -155,6 +155,8 @@ class OscarAccount : public KopeteAccount
 		/** Displays an error dialog with the given text */
 		void slotError(QString errmsg, int errorCode);
 
+		void slotFastAddContact();
+
 	protected:
 		/** Adds a contact to a meta contact */
 		virtual bool addContactToMetaContact(const QString &contactId,
@@ -208,6 +210,7 @@ class OscarAccount : public KopeteAccount
 		KAction *mActionGoFFC;
 		KAction *mActionEditInfo;
 		KAction *mActionShowDebug;
+		KAction *mActionFastAddContact;
 
 		/** Our away dialog */
 		OscarChangeStatus *mAwayDialog;

@@ -39,6 +39,8 @@
 #include "oscaruserinfo.h"
 #include "oscardebugdialog.h"
 
+#include <klineeditdlg.h>
+
 OscarAccount::OscarAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: KopeteAccount(parent, accountID, name)
 {
@@ -207,6 +209,8 @@ void OscarAccount::initActions()
 	mActionShowDebug = new KAction( i18n("Show Debug"), "wizard", 0,
 		this, SLOT(slotShowDebugDialog()),
 		this, "actionShowDebug");
+
+	mActionFastAddContact = new KAction(i18n("Fast add a Contact"), "", 0, this, SLOT(slotFastAddContact()), this, "actionFastAddContact" );
 }
 
 void OscarAccount::initActionMenu()
@@ -238,6 +242,7 @@ void OscarAccount::initActionMenu()
 
 	mActionMenu->insert(mActionGoOffline); // always last
 	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->insert(mActionFastAddContact);
 	mActionMenu->insert(mActionShowDebug);
 }
 
@@ -324,6 +329,13 @@ void OscarAccount::setUserProfile( QString profile )
 KActionMenu* OscarAccount::actionMenu()
 {
 	return mActionMenu;
+}
+
+void OscarAccount::slotFastAddContact()
+{
+	QString newUIN = KLineEditDlg::getText("Add ICQ/AIM Contact", "Add Contact");
+	if (!newUIN.isEmpty())
+		addContact( newUIN, QString::null, 0L, QString::null, true); //add a temporary contact
 }
 
 void OscarAccount::slotGoOnline()
