@@ -179,7 +179,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
 			i18n("Kopete is trying to perform an operation on a group or a contact that does not exists on the server.\n"
-			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report"),
+			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report."),
 			i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -227,7 +227,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 923:
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-			i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'" ) ,
+			i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'." ) ,
 			i18n( "MSN Plugin" ) );
 		break;
 
@@ -666,7 +666,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		if(mailCount > 0 )
 		{
 			KNotifyClient::event( 0, "msn_mail", i18n( "You have one unread message in your MSN inbox.",
-				"You have %n unread messages in your MSN inbox.", mailCount ), i18n( "Open &inbox..." ), this, SLOT( slotOpenInbox() ) );
+				"You have %n unread messages in your MSN inbox.", mailCount ), i18n( "Open &Inbox..." ), this, SLOT( slotOpenInbox() ) );
 		}
 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
@@ -867,7 +867,7 @@ void MSNNotifySocket::slotSendKeepAlive()
 	{
 		disconnect();
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
-			i18n( "The connection with the MSN network has been lost" ) , i18n ("MSN Plugin") );
+			i18n( "The connection with the MSN network has been lost." ) , i18n ("MSN Plugin") );
 		return;
 	}
 	else

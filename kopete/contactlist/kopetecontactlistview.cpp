@@ -1039,7 +1039,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 			{
 				/*
 				int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n( "<qt>Would you like to add this contact to your contact list</qt>" ),
+					i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
 					"addTemporaryWhenMoving" );
 
@@ -1503,13 +1503,13 @@ void KopeteContactListView::slotSendFile()
 			if ( !emailAddr.isEmpty() )
 				kapp->invokeMailer( emailAddr, QString::null );
 			else
-				KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "There is no email address set for this contact in the KDE Address Book" ), i18n( "No Email Address in Address Book" ) );
+				KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "There is no email address set for this contact in the KDE address book." ), i18n( "No Email Address in Address Book" ) );
 		}
 		else
-			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact was not found in the KDE Address Book. Check that a contact is selected in the Properties dialog." ), i18n( "Not Found in Address Book" ) );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact was not found in the KDE address book. Check that a contact is selected in the properties dialog." ), i18n( "Not Found in Address Book" ) );
 	}
 	else
-		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact is not associated with a KDE Address Book entry, where the email address is stored. Check that a contact is selected in the Properties dialog." ), i18n( "Not Found in Address Book" ) );
+		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact is not associated with a KDE address book entry, where the email address is stored. Check that a contact is selected in the properties dialog." ), i18n( "Not Found in Address Book" ) );
 }
 
 void KopeteContactListView::slotSyncKABC()
@@ -1517,7 +1517,7 @@ void KopeteContactListView::slotSyncKABC()
 	KopeteMetaContact *m = KopeteContactList::contactList()->selectedMetaContacts().first();
 	if( m )
 		if ( !m->syncWithKABC() )
-			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n( "No contacts were added to Kopete from the Address Book" ), i18n( "No change" ) );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n( "No contacts were added to Kopete from the address book" ), i18n( "No Change" ) );
 }
 
 

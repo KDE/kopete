@@ -718,8 +718,8 @@ void AppearanceConfig::installNewTheme()
 	//TODO: support remote theme files!
 	if ( !themeURL.isLocalFile() )
 	{
-		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files"),
-		                               i18n("Could not install emoticon theme") );
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files."),
+		                               i18n("Could Not Install Emoticon Theme") );
 		return;
 	}
 

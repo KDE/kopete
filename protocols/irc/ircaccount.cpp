@@ -430,7 +430,7 @@ void IRCAccount::connect()
 				KMessageBox::queuedMessageBox(
 					Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(m_network->name),
-					i18n("Network Is Empty"), 0 );
+					i18n("Network is Empty"), 0 );
 			}
 			else
 			{
@@ -491,7 +491,7 @@ void IRCAccount::slotServerBusy()
 	KMessageBox::queuedMessageBox(
 		Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 		i18n("The IRC server is currently too busy to respond to this request."),
-		i18n("Server is busy"), 0
+		i18n("Server is Busy"), 0
 	);
 }
 

@@ -368,14 +368,14 @@ void KIMIfaceImpl::unknown( const QString &uid )
 	KABC::Addressee addr = bk->findByUid( uid );
 	if ( addr.isEmpty() )
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n("Another KDE application tried to use Kopete for instant messaging, but Kopete could not find the specified contact in the KDE Address Book."), i18n( "Not found in Address Book" ) );
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n("Another KDE application tried to use Kopete for instant messaging, but Kopete could not find the specified contact in the KDE address book."), i18n( "Not Found in Address Book" ) );
 	}
 	else
 	{
 		QString apology = i18n( "Translators: %1 is the name of a person taken from the KDE address book, who Kopete doesn't know about.  Kopete must either be told that an existing contact in Kopete is this person, or add a new contact for them", 
-			"<qt><p>The KDE Address Book has no instant messaging information for</p><p><b>%1</b>.</p><p>If he/she is already present in the Kopete Contact List, indicate the correct addressbook entry in their Properties.</p><p>Otherwise, add a new contact using the Add Contact Wizard.</p></qt>" );
+			"<qt><p>The KDE Address Book has no instant messaging information for</p><p><b>%1</b>.</p><p>If he/she is already present in the Kopete contact list, indicate the correct addressbook entry in their properties.</p><p>Otherwise, add a new contact using the Add Contact wizard.</p></qt>" );
 		apology = apology.arg( addr.realName() );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, apology, i18n( "No instant messaging address" ) );
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, apology, i18n( "No Instant Messaging Address" ) );
 	}
 }
 

@@ -307,7 +307,7 @@ void JavaScriptConfig::installPackage( const QString &archiveName, bool &retVal 
 
 	KMessageBox::queuedMessageBox(
 		Kopete::UI::Global::mainWidget(),
-		KMessageBox::Error, i18n("The file \"%1\" is not a valid kopete script package.")
+		KMessageBox::Error, i18n("The file \"%1\" is not a valid Kopete script package.")
 		.arg(archiveName)
 	);
 }

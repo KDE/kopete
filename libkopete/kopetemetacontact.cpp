@@ -990,8 +990,8 @@ bool KopeteMetaContact::syncWithKABC()
 					if ( !proto )
 					{
 						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-								i18n( "<qt>\"%1\" is not supported by Kopete</qt>" ).arg( protocolName ),
-								i18n( "Could not sync with KDE Address Book" )  );
+								i18n( "<qt>\"%1\" is not supported by Kopete.</qt>" ).arg( protocolName ),
+								i18n( "Could Not Sync with KDE Address Book" )  );
 						continue;
 					}
 					
@@ -1010,7 +1010,7 @@ bool KopeteMetaContact::syncWithKABC()
 					{
 						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 							i18n( "<qt>One or more of your accounts using %1 are offline.  Most systems have to be connected to add contacts.  Please connect these accounts and try again.</qt>" ).arg( protocolName ),
-							i18n( "Not connected" )  );
+							i18n( "Not Connected" )  );
 						continue;
 					}
 
@@ -1044,7 +1044,7 @@ bool KopeteMetaContact::syncWithKABC()
 							// if not, prompt to add it
 							kdDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add..." << endl;
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
-															 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import address from Address Book" ), i18n("&Yes"), i18n("&No"), QString::fromLatin1( "ImportFromKABC" ) ) )
+															 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import Address From Address Book" ), i18n("&Yes"), i18n("&No"), QString::fromLatin1( "ImportFromKABC" ) ) )
 							{
 								for ( ; acs.current(); ++acs )
 									if ( !acs.current()->isConnected() )
@@ -1076,7 +1076,7 @@ bool KopeteMetaContact::syncWithKABC()
 								{
 									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 										i18n( "<qt>You do not have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>" ).arg( protocolName ),
-										i18n( "No account found" )  );
+										i18n( "No Account Found" )  );
 									continue;
 								}
 								else // if we have 1 account in this protocol, choose it
@@ -1093,7 +1093,7 @@ bool KopeteMetaContact::syncWithKABC()
 									else
 										KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 											i18n( "<qt>It was not possible to add the contact. Please see the debug messages for details.</qt>" ),
-											i18n( "Could not add contact") ) ;
+											i18n( "Could Not Add Contact") ) ;
 								}
 							}
 							else

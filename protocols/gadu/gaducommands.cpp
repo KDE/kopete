@@ -143,7 +143,7 @@ RegisterCommand::requestToken()
 	state = RegisterStateWaitingForToken;
 
 	if ( !( session_ = gg_token( 1 ) ) ) {
-		emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
+		emit error( i18n( "Gadu-Gadu" ), i18n( "Unable to retrieve token." ) );
 		state = RegisterStateNoToken;
 		return;
 	}
@@ -196,7 +196,7 @@ void RegisterCommand::watcher()
 		disableNotifiers();
 		if ( gg_token_watch_fd( session_ ) == -1 ) {
 			deleteNotifiers();
-			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while retriving token" ) );
+			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while retrieving token." ) );
 			gg_token_free( session_ );
 			session_ = NULL;
 			state = RegisterStateNoToken;
@@ -230,7 +230,7 @@ void RegisterCommand::watcher()
 					emit tokenRecieved( tokenImg, tokenId );
 				}
 				else {
-					emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
+					emit error( i18n( "Gadu-Gadu" ), i18n( "Unable to retrieve token." ) );
 					state = RegisterStateNoToken;
 					deleteLater();
 				}
@@ -247,7 +247,7 @@ void RegisterCommand::watcher()
 		disableNotifiers();
 		if ( gg_register_watch_fd( session_ ) == -1 ) {
 			deleteNotifiers();
-			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while registering" ) );
+			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while registering." ) );
 			gg_free_register( session_ );
 			session_ = NULL;
 			state = RegisterStateGotToken;

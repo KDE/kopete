@@ -2,7 +2,7 @@
 /***************************************************************************
                    jabberaccount.cpp  -  core Jabber account class
                              -------------------
-    begin                : Sat Mär 8 2003
+    begin                : Sat Mï¿½ 8 2003
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
@@ -303,7 +303,7 @@ void JabberAccount::errorConnectionInProgress ()
 									i18n ("A connection attempt is already in progress. "
 									"Please wait until the previous attempt finished or "
 									"disconnect to start over."),
-									i18n ("Connection attempt already in progress") );
+									i18n ("Connection Attempt Already in Progress") );
 
 }
 
@@ -354,7 +354,7 @@ void JabberAccount::connect ()
 	if ( cachedPassword.isEmpty () )
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Information,
-								i18n("Passwordless logins are not supported. Please provide a password."), i18n("Jabber requires password"));
+								i18n("Passwordless logins are not supported. Please provide a password."), i18n("Jabber Requires Password"));
 		return;
 	}
 
