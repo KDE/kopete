@@ -176,12 +176,17 @@ void parseKey( const QString &group, const QString &key, const QString &value, c
 	}
 }
 
-void flushData()
+void flushData( const QString &group )
 {
 
 	qcout << "[Account_" << protocol << "_" << accountId << "]" << endl;
 	qcout << "Protocol=" << protocol << endl;
-	qcout << "AccountId=" << accountId << endl;
+
+	if( group == "Jabber" )
+		qcout << "AccountId=" << accountId << "@" << pluginData["Server"] << endl;
+	else
+		qcout << "AccountId=" << accountId << endl;
+
 	qcout << "Password=" << cryptStr( password ) << endl;
 	qcout << "AutoConnect=" << autoConnect << endl;
 
@@ -218,7 +223,7 @@ int main()
 			{
 				// ... but we were already working on a group, so finish what
 				// we were doing - flush existing group first
-				flushData ();
+				flushData ( curGroup );
 				needFlush = false;
 			}
 
@@ -237,7 +242,7 @@ int main()
 	}
 
 	if ( needFlush )
-		flushData ();
+		flushData ( curGroup );
 
 	return 0;
 }
