@@ -325,12 +325,18 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 			qDebug( "CoreProtocol::wireToTransfer() - looks like an EVENT: %i\n", val );
 			m_state = ReadingEvent;
 			m_collatingEvent = val;
+			if ( !m_din->atEnd() )
+			{
+				readEvent( wire, sizeof( Q_UINT32 ) );
+				m_state = Available;
+				emit incomingData();
+			}	
 		}
 	}
 	delete m_din;
 }
 
-void CoreProtocol::readEvent( const QByteArray& wire )
+void CoreProtocol::readEvent( const QByteArray& wire, int bytesRead )
 {
 	// wire == m_din at this point
 	qDebug( "Reading event of type %i", m_collatingEvent);
@@ -339,9 +345,10 @@ void CoreProtocol::readEvent( const QByteArray& wire )
 	char* rawData;
 	m_din->readBytes( rawData, len );
 	source = QCString( rawData ); // shallow copy, QCString's destructor will delete the allocated space
+	bytesRead = bytesRead + sizeof( Q_UINT32 ) + len;
 	// now create an event object, passing it the wire data minus the source we just read
-	QByteArray remainder( wire.size() - 4 - len );
-	memcpy( remainder.data(), wire.data() + 4 + len, wire.size() - 4 - len );
+	QByteArray remainder( wire.size() - bytesRead );
+	memcpy( remainder.data(), wire.data() + bytesRead, wire.size() - bytesRead );
 	m_inTransfer = new EventTransfer( m_collatingEvent, source, QTime::currentTime(), remainder );
 	m_collatingEvent = 0;
 }

@@ -83,9 +83,11 @@ protected:
 	 */
 	void fieldsToWire( Field::FieldList fields, int depth = 0 );
 	/**
-	 * Read in an eventconst
+	 * Read in an event
+	 * @param wire The raw data received from the wire
+	 * @param bytesRead The number of bytes that have already been read from wire using m_din.  Needed to find the correct size of the payload to pass up to the event handlers.
 	 */
-	void readEvent( const QByteArray& wire );
+	void readEvent( const QByteArray& wire, int bytesRead = 0 );
 	/**
 	 * Read in a response
 	 */
