@@ -75,6 +75,17 @@ Q_OBJECT
 		 */
 		void sendTyping( /*Conference &conference ,*/ bool typing );
 		
+		/** 
+		 * Request details for one or more users, for example, if we receive a message from someone who isn't on our contact list
+		 * @param userDNs A list of one or more user's DNs to fetch details for
+		 */
+		void requestDetails( const QStringList & userDNs );
+		 
+		/**
+		 * Request the status of a single user, for example, if they have messaged us and are not on our contact list
+		 */
+		void requestStatus( const QString & userDN );
+		
 		/**
 		 * Add a contact to the contact list
 		 * Protocol action P13 
@@ -143,7 +154,7 @@ Q_OBJECT
 		/** 
 		 * Notify that we've just received a message 
 		 */
-		void messageReceived( const ConferenceEvent &, const Message & );
+		void messageReceived( const ConferenceEvent & );
 		/**
 		 * We've just got the user's own details from the server.
 		 */
@@ -171,7 +182,6 @@ Q_OBJECT
 	public slots:
 		// INTERNAL, FOR USE BY TASKS' SIGNALS //
 		void lt_loginFinished();
-		void slotMessageReceived( const ConferenceEvent &, const Message & );
 		void sst_statusChanged();
 	protected:
 		/**

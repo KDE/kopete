@@ -4,6 +4,8 @@
 #include "requestfactory.h"
 #include "task.h"
 #include "tasks/conferencetask.h"
+#include "tasks/getdetailstask.h"
+#include "tasks/getstatustask.h"
 #include "tasks/logintask.h"
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
@@ -140,7 +142,7 @@ void Client::initialiseEventTasks()
 	StatusTask * st = new StatusTask( d->root ); // FIXME - add an additional EventRoot?
 	connect( st, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
 	ConferenceTask * ct = new ConferenceTask( d->root ); 
-	connect( ct, SIGNAL( message( const ConferenceEvent &, const Message & ) ), SLOT( slotMessageReceived( const ConferenceEvent &, const Message & ) ) );
+	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SIGNAL( messageReceived( const ConferenceEvent & ) ) );
 	
 }
 
@@ -148,11 +150,18 @@ void Client::setStatus( GroupWise::Status status, const QString & reason )
 {
 	SetStatusTask * sst = new SetStatusTask( d->root );
 	sst->status( status, reason, QString::null );
-	sst->go( true );
-	// set status change in progress signal
-	
-	// TODO: catch finished and set our status locally
 	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
+	sst->go( true );
+	// TODO: set status change in progress flag
+	
+}
+
+void Client::requestStatus( const QString & userDN )
+{
+	GetStatusTask * gst = new GetStatusTask( d->root );
+	gst->userDN( userDN );
+	connect( gst, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
+	gst->go( true );
 }
 
 void Client::sendMessage( const Message &message )
@@ -165,6 +174,15 @@ void Client::sendTyping( /*Conference &conference ,*/ bool typing )
 {
 	//TODO Implement sendTyping
 	qDebug( "TODO: sendTyping" );
+}
+
+void Client::requestDetails( const QStringList & userDNs )
+{
+	GetDetailsTask * gdt = new GetDetailsTask( d->root );
+	gdt->userDNs( userDNs );
+	connect( gdt, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
+			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) );
+	gdt->go( true );
 }
 
 // SLOTS //
@@ -204,12 +222,6 @@ void Client::sst_statusChanged()
 		qDebug( "status change succeeded" );
 		emit ourStatusChanged( sst->requestedStatus(), sst->awayMessage(), sst->autoReply() );
 	}
-}
-
-void Client::slotMessageReceived( const ConferenceEvent & event, const Message & msg )
-{
-	qDebug( "got message signal" );
-	emit messageReceived( event, msg );
 }
 
 // INTERNALS //
