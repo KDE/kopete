@@ -21,9 +21,12 @@
 #include <qdict.h>
 #include "kopetemessage.h"
 
-class KopeteMessageManager;
 class KopeteCommand;
+class KopeteMessageManager;
 class KProcess;
+class KopetePlugin;
+class KopeteProtocol;
+
 struct CommandHandlerPrivate;
 
 typedef QDict<KopeteCommand> CommandList;
@@ -40,6 +43,8 @@ class KopeteCommandHandler : public QObject
 	Q_OBJECT
 
 	public:
+		enum CommandType { Normal, SystemAlias, UserAlias, Undefined };
+		
 		/**
 		 * Returns a pointer to the command handler
 		 */
@@ -64,6 +69,19 @@ class KopeteCommandHandler : public QObject
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 			const QString &help = QString::null );
+			
+		/**
+		 * Registers a command alias.
+		 *
+		 * @param parent The plugin who owns this alias
+		 * @param alias The command for the alias
+		 * @param formatString This is the string that will be transformed into another
+		 *    command. The formatString should begin with an already existing command,
+		 *    followed by any other arguments. The variables %1, %2... %9 will be substituted
+		 *    with the arguments passed into the alias
+		 */
+		void registerAlias( QObject *parent, const QString &alias, const QString &formatString, 
+			const QString &help = QString::null, CommandType = SystemAlias );
 
 		/**
 		 * Unregisters a command. When a plugin unloads, all commands are
@@ -75,6 +93,14 @@ class KopeteCommandHandler : public QObject
 		 * @param command The command to unload
 		 */
 		void unregisterCommand( QObject *parent, const QString &command );
+		
+		/**
+		 * Unregisteres an alias. See above.
+		 *
+		 * @param parent The plugin who owns this alias
+		 * @param alias The alais to unload
+		 */
+		void unregisterAlias( QObject *parent, const QString &alias );
 
 		/**
 		 * Processes a message to see if any commands should be handled
@@ -84,6 +110,11 @@ class KopeteCommandHandler : public QObject
 		 * @return True if the command was handled, false if not
 		 */
 		bool processMessage( KopeteMessage &msg, KopeteMessageManager *manager );
+		
+		/**
+		 * An overload of the above function
+		 */
+		bool processMessage( const QString &msg, KopeteMessageManager *manager );
 
 		/**
 		 * Parses a string of command arguments into a QStringList. Quoted
@@ -124,7 +155,7 @@ class KopeteCommandHandler : public QObject
 		/**
 		 * Helper function for commands()
 		 */
-		void addCommands( CommandList &from, CommandList &to );
+		void addCommands( CommandList &from, CommandList &to, CommandType type = Undefined );
 
 		KopeteCommandHandler();
 		~KopeteCommandHandler();

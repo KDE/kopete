@@ -13,19 +13,43 @@
     *************************************************************************
 */
 
+#include <qstringlist.h>
+#include <kdebug.h>
+
 #include "kopetecommand.h"
 
 KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-	const QString &help ) : QObject(parent)
+	const QString &help, KopeteCommandHandler::CommandType type, const QString &formatString ) : QObject(parent)
 {
 	m_command = command;
 	m_help = help;
+	m_type = type;
+	m_formatString = formatString;
+	
 	QObject::connect( this, SIGNAL( handleCommand( const QString &, KopeteMessageManager *) ), parent, handlerSlot );
 }
 
 void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *manager )
 {
-	emit( handleCommand( args, manager ) );
+	if( m_type == KopeteCommandHandler::UserAlias || 
+		m_type == KopeteCommandHandler::SystemAlias )
+	{
+		QString formatString = m_formatString;
+		QStringList mArgs = KopeteCommandHandler::parseArguments( args );
+		while( mArgs.count() > 0 )
+		{
+			formatString = formatString.arg( mArgs.front() );
+			mArgs.pop_front();
+		}
+		
+		kdDebug() << "New Command after processing alias: " << formatString << endl;
+		
+		KopeteCommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager ); 
+	}
+	else
+	{
+		emit( handleCommand( args, manager ) );
+	}
 }
 
 #include "kopetecommand.moc"

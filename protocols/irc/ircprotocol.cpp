@@ -120,8 +120,16 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /devoice <nickname> - Remove channel voice status from someone (Requires operator status).") );
+		i18n("USAGE: /devoice <nickanme> - Remove channel voice status from someone (Requires operator status).") );
+		
+	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
+		QString::fromLatin1("join %1"),
+		i18n("USAGE: /j <channel> - Alias for JOIN."), KopeteCommandHandler::SystemAlias );
 
+	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("ping"),
+		QString::fromLatin1("ctcp PING %1"),
+		i18n("USAGE: /ping <nickname> - Alias for CTCP PING <nickname>."), KopeteCommandHandler::SystemAlias );
+	
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)),
 		this, SLOT(slotMessageFilter(KopeteMessage &)) );
 }

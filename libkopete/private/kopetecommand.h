@@ -19,6 +19,7 @@
 #define __KOPETECOMMAND_H__
 
 #include <qobject.h>
+#include "kopetecommandhandler.h"
 
 class KopeteMessageManager;
 
@@ -37,9 +38,12 @@ class KopeteCommand : public QObject
 		 *   pointer to the Manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help <command>
+		 * @param type If this command is an alias, and what type
+		 * @param formatString The formatString of the alias if any
 		 */
 		 KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-		 	const QString &help = QString::null);
+		 	const QString &help = QString::null, KopeteCommandHandler::CommandType type = KopeteCommandHandler::Normal, 
+			const QString &formatString = QString::null );
 
 		/**
 		 * Process this command
@@ -55,6 +59,11 @@ class KopeteCommand : public QObject
 		  * Returns the help string for this command
 		  */
 		 const QString &help() const { return m_help; };
+		 
+		 /**
+		  * Returns the type of the command
+		  */
+		 const KopeteCommandHandler::CommandType type() const { return m_type; };
 
 	signals:
 		/**
@@ -67,6 +76,8 @@ class KopeteCommand : public QObject
 	private:
 		QString m_command;
 		QString m_help;
+		QString m_formatString;
+		KopeteCommandHandler::CommandType m_type;
 };
 
 #endif

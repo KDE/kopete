@@ -21,7 +21,6 @@
 #include <kprocess.h>
 #include <kdeversion.h>
 
-#include "kopetecommand.h"
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
@@ -30,6 +29,7 @@
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontact.h"
+#include "kopetecommand.h"
 
 typedef QMap<QObject*, CommandList> PluginCommandMap;
 typedef QMap<QString,QString> CommandMap;
@@ -111,20 +111,32 @@ void KopeteCommandHandler::unregisterCommand( QObject *parent, const QString &co
 		p->pluginCommands[ parent ].remove( command );
 }
 
-bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageManager *manager )
+void KopeteCommandHandler::registerAlias( QObject *parent, const QString &alias, const QString &formatString, 
+			const QString &help, CommandType type )
+{
+	QString lowerAlias = alias.lower();
+	
+	KopeteCommand *mCommand = new KopeteCommand( parent, lowerAlias, 0L, help, type, formatString );
+	p->pluginCommands[ parent ].insert( lowerAlias, mCommand );
+}
+
+void KopeteCommandHandler::unregisterAlias( QObject *parent, const QString &alias )
+{
+	if( p->pluginCommands[ parent ].find(alias) )
+		p->pluginCommands[ parent ].remove( alias );
+}
+
+bool KopeteCommandHandler::processMessage( const QString &msg, KopeteMessageManager *manager )
 {
 	QRegExp spaces( QString::fromLatin1("\\s+") );
-	QString messageBody = msg.plainBody();
-	QString command = messageBody.section(spaces, 0, 0).section('/',1).lower();
-
+	QString command = msg.section(spaces, 0, 0).section('/',1).lower();
+	
 	if(command.isEmpty())
 		return false;
 
-	QString args = messageBody.section( spaces, 1 );
-
-
-	//Try to find a plugin specified command first
-	CommandList mCommands = commands( msg.from()->protocol() );
+	QString args = msg.section( spaces, 1 );
+	
+	CommandList mCommands = commands( manager->protocol() );
 	KopeteCommand *c = mCommands[ command ];
 	if(c)
 	{
@@ -132,7 +144,15 @@ bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageMana
 		c->processCommand( args, manager );
 		return true;
 	}
+	
 	return false;
+}
+
+bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageManager *manager )
+{
+	QString messageBody = msg.plainBody();
+		
+	return processMessage( messageBody, manager );
 }
 
 void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageManager *manager )
@@ -308,8 +328,14 @@ bool KopeteCommandHandler::commandHandled( const QString &command )
 CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 {
 	CommandList commandList(63, false);
-
-	//Add the commands for this protocol *first*
+	
+	//Add pluginuser aliases first
+	addCommands( p->pluginCommands[protocol], commandList, UserAlias );
+	
+	//Add plugin system aliases next
+	addCommands( p->pluginCommands[protocol], commandList, SystemAlias );
+	
+	//Add the commands for this protocol next
 	addCommands( p->pluginCommands[protocol], commandList );
 
 	//Add plugin commands
@@ -319,18 +345,25 @@ CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 			addCommands( it.data(), commandList );
 	}
 
+	//Add global user aliases first
+	addCommands( p->pluginCommands[this], commandList, UserAlias );
+	
+	//Add global system aliases next
+	addCommands( p->pluginCommands[this], commandList, SystemAlias );
+	
 	//Add the internal commands *last*
 	addCommands( p->pluginCommands[this], commandList );
 
 	return commandList;
 }
 
-void KopeteCommandHandler::addCommands( CommandList &from, CommandList &to )
+void KopeteCommandHandler::addCommands( CommandList &from, CommandList &to, CommandType type )
 {
 	QDictIterator<KopeteCommand> itDict( from );
 	for( ; itDict.current(); ++itDict )
 	{
-		if( !to[ itDict.currentKey() ] )
+		if( !to[ itDict.currentKey() ] && 
+				( type == Undefined || itDict.current()->type() == type ) )
 			to.insert( itDict.currentKey(), itDict.current() );
 	}
 }
