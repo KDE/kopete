@@ -28,6 +28,7 @@
 /* Kopete Includes */
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
 
 /* Local Includes */
 #include "yahooprotocol.h"
@@ -49,7 +50,8 @@ public:
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
-	void setYahooStatus( YahooStatus::Status , const QString &, int  );
+	void setYahooStatus(YahooStatus::Status, const QString & = "", int = 0);
+	QString icon() { return m_status.translate().icon(); }
 
 public slots:
 	virtual void slotViewHistory();

@@ -66,7 +66,6 @@ public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
-	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
 
 	void slotSettingsChanged(void);					// Callback when settings changed
 

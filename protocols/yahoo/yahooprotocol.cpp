@@ -105,7 +105,7 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 
-	YahooAccount *theAccount = KopeteAccountManager::manager()->findAccount("YahooProtocol", accountId);
+	YahooAccount *theAccount = static_cast<YahooAccount *>(KopeteAccountManager::manager()->findAccount("YahooProtocol", accountId));
 	if(!theAccount)
 	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
 		return;
@@ -151,12 +151,6 @@ EditAccountWidget *YahooProtocol::createEditAccountWidget(KopeteAccount *account
 KopeteAccount *YahooProtocol::createNewAccount(const QString &accountId)
 {
 	return new YahooAccount(this, accountId);
-}
-
-bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact)
-{
-	// for now, just add it to the first account we have
-	
 }
 
 #include "yahooprotocol.moc"

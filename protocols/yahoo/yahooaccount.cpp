@@ -49,7 +49,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
 	m_myself = new YahooContact(this, accountId(), accountId(), 0);
-	m_myself->setOnlineStatus(KopeteOnlineStatus::Offline);
+	m_myself->setYahooStatus(YahooStatus::Offline, "", 0);
 	
 	// now initialise the menu actions
 	initActions();
@@ -101,7 +101,7 @@ void YahooAccount::connect()
 		m_session = session_;
 		if(session_)
 		{	QTimer::singleShot(5000, this, SLOT(slotGotBuddiesTimeout()));
-			m_myself->setOnlineStatus(KopeteOnlineStatus::Online);
+			m_myself->setYahooStatus(YahooStatus::Available);
 			/* We have a session, time to connect its signals to our plugin slots */
 			QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
 			QObject::connect( session_ , SIGNAL(gotBuddy(const QString &, const QString &, const QString &)), this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
@@ -139,7 +139,7 @@ void YahooAccount::disconnect()
 	if(isConnected())
 	{	kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 		m_session->logOff();
-		m_myself->setOnlineStatus(KopeteOnlineStatus::Offline);
+		m_myself->setYahooStatus(YahooStatus::Offline);
 		//m_engine->Disconnect();
 	}
 	else	// Again, what's with the crack? Sheez.
@@ -205,9 +205,10 @@ void YahooAccount::initActions()
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 */
-	QString handle = accountId();
-	actionStatusMenu = new KActionMenu("Yahoo ("+m_myself->displayName()+")", this);
-	actionStatusMenu->popupMenu()->insertTitle(m_myself->onlineStatus().icon(), handle);
+	kdDebug(14180) << "Yahoo: Using icon: " << m_myself->onlineStatus().icon() << endl;
+	
+	actionStatusMenu = new KActionMenu("Yahoo", this);
+	actionStatusMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoOffline);
 /*	actionStatusMenu->insert(actionGoStatus001);
