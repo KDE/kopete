@@ -51,6 +51,8 @@ class SpellCheckPlugin : public KopetePlugin
 		KopeteMessage mBuffer;
 		ReplacementMap mReplacements;
 		QRegExp mBound;
+		QStringList mApproved;
+		QString currentWord;
 		bool spellCheckComplete;
 		bool singleSpellCheckerReady;
 

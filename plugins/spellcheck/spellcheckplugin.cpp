@@ -114,11 +114,26 @@ bool SpellCheckPlugin::eventFilter(QObject *o, QEvent *e)
 		case QEvent::KeyPress:
 		{
 			QKeyEvent *event = (QKeyEvent*) e;
-			if( singleSpellCheckerReady && QChar( event->ascii() ).isSpace() )
+			if( singleSpellCheckerReady && !QChar( event->ascii() ).isLetterOrNumber() )
 			{
-				QString txtContents = t->text();
+			/*	QString txtContents = t->text();
 				QString lastWord = txtContents.section( mBound, -1, -1 );
 				mSingleSpell->checkWord( lastWord );
+			*/
+
+				QStringList words = QStringList::split( mBound, t->text() );
+				if( words.count() > 0 )
+				{
+					for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
+					{
+						if( !mApproved.contains(*it) && !mReplacements.contains(*it) )
+						{
+							kdDebug() << k_funcinfo << "Checking word:" << *it << "..." << endl;
+							currentWord = *it;
+							mSingleSpell->checkWord( currentWord );
+						}
+					}
+				}
 			}
 			break;
 		}
@@ -203,14 +218,22 @@ void SpellCheckPlugin::slotSingleCorrection( const QString &originalword, const 
 {
 	if( mSingleSpell->suggestions().count() > 0 )
 	{
+		kdDebug() << k_funcinfo << originalword << "IS MISSPELLED!" << endl;
 		mReplacements[originalword] = mSingleSpell->suggestions();
-		slotUpdateTextEdit();
 	}
+	else
+	{
+		mApproved.append( currentWord );
+	}
+	slotUpdateTextEdit();
 }
 
 void SpellCheckPlugin::slotUpdateTextEdit()
 {
 	QTextEdit *t = static_cast<QTextEdit*>( KopeteViewManager::viewManager()->activeView()->editWidget() );
+
+	int parIdx = 1, txtIdx = 1;
+	t->getCursorPosition(&parIdx, &txtIdx);
 
 	QString highlightColor;
 	if( t->paletteForegroundColor().red() < 250 )
@@ -220,19 +243,25 @@ void SpellCheckPlugin::slotUpdateTextEdit()
 
 	QString plainTextContents = t->text();
 
-	ReplacementMap::Iterator it;
-	for ( it = mReplacements.begin(); it != mReplacements.end(); ++it )
+	QStringList words = QStringList::split( mBound, plainTextContents );
+	if( words.count() > 0 )
 	{
-		plainTextContents.replace( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( it.key() ) ),
-			QString::fromLatin1("<font color=\"" + highlightColor + "\">") + it.key() +
-			QString::fromLatin1("</font>") );
+		for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
+		{
+			if( !mApproved.contains(*it) )
+			{
+				plainTextContents.replace( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( *it ) ),
+					QString::fromLatin1("<font color=\"" + highlightColor + "\">") + *it +
+					QString::fromLatin1("</font>") );
+			}
+		}
 	}
 
 	t->setTextFormat( QTextEdit::RichText );
 	t->setText( plainTextContents );
 	t->setTextFormat( QTextEdit::PlainText );
 
-	t->setCursorPosition( 0, t->text().length() + 1 );;
+	t->setCursorPosition( parIdx, txtIdx );;
 }
 
 void SpellCheckPlugin::slotCorrection( const QString &originalword, const QString &newword, unsigned int pos )
