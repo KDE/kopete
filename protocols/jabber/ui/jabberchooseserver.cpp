@@ -56,6 +56,8 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent, const ch
 	connect ( mMainWidget->listServers, SIGNAL ( pressed ( int, int, int, const QPoint & ) ), this, SLOT ( slotSetSelection ( int ) ) );
 	connect ( mMainWidget->listServers, SIGNAL ( doubleClicked ( int, int, int, const QPoint & ) ), this, SLOT ( slotOk () ) );
 
+	enableButtonOK ( false );
+
 }
 
 JabberChooseServer::~JabberChooseServer()
@@ -86,6 +88,7 @@ void JabberChooseServer::slotSetSelection ( int row )
 
 	mSelectedRow = row;
 	mMainWidget->listServers->selectRow ( row );
+	enableButtonOK ( true );
 
 }
 

@@ -429,9 +429,18 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
+		// rewire buttons
 		enableButtonOK ( false );
 		setButtonCancel ( KStdGuiItem::close () );
 		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
+
+		// disable input widgets
+		mMainWidget->leServer->setEnabled ( false );
+		mMainWidget->leJID->setEnabled ( false );
+		mMainWidget->lePassword->setEnabled ( false );
+		mMainWidget->lePasswordVerify->setEnabled ( false );
+		mMainWidget->sbPort->setEnabled ( false );
+		mMainWidget->cbUseSSL->setEnabled ( false );
 	}
 	else
 	{
