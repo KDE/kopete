@@ -929,8 +929,7 @@ void MSNProtocol::slotExecute( QString userid )
 
 		chatmembers.append( m_contacts[ userid ] );
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-			m_myself, chatmembers, this,
-			QString( "msnlogs/" + userid + ".log" ) );
+			m_myself, chatmembers, this, QString( "msnlogs/" + userid + ".log" ) );
 		manager->readMessages();
 	}
 }
@@ -940,7 +939,7 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 	kdDebug() << "MSNProtocol::slotMessageReceived: Message received from " <<
 		msg.from()->name() << endl;
 
-    KopeteContactList chatmembers;	
+	KopeteContactList chatmembers;
 
 	if ( msg.direction() == KopeteMessage::Inbound )
 	{
@@ -1016,12 +1015,26 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 void MSNProtocol::slotStartChatSession( QString handle )
 {
-	if( isConnected() )
+	// First create a message manager, because we might get an existing
+	// manager back, in which case we likely also have an active switchboard
+	// connection to reuse...
+	KopeteContact *c = m_contacts[ handle ];
+	if( isConnected() && c && m_myself && handle != m_msnId )
 	{
-		if( handle == m_msnId )
-			return;
-		m_msgHandle = handle;
-		m_serviceSocket->createChatSession();
+		KopeteContactList chatmembers;
+		chatmembers.append(c);
+
+		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+			m_myself, chatmembers, this,
+			QString( "msnlogs/" + handle + ".log" ) );
+
+		if( m_chatServices.find( manager ) )
+			manager->readMessages();
+		else
+		{
+			m_msgHandle = handle;
+			m_serviceSocket->createChatSession();
+		}
 	}
 }
 
