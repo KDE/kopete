@@ -12,7 +12,7 @@
             <x>0</x>
             <y>0</y>
             <width>426</width>
-            <height>555</height>
+            <height>558</height>
         </rect>
     </property>
     <property name="caption">
@@ -289,12 +289,6 @@
     <tabstop>showThisName</tabstop>
     <tabstop>includeIMAddress</tabstop>
 </tabstops>
-<includes>
-    <include location="local" impldecl="in implementation">webpresenceprefs.ui.h</include>
-</includes>
-<slots>
-    <slot>init()</slot>
-</slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kurlrequester.h</includehint>

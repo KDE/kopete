@@ -19,6 +19,7 @@
 
 #include <kgenericfactory.h>
 #include <kautoconfig.h>
+#include <kurlrequester.h>
 
 #include "webpresenceprefs.h"
 #include "webpresencepreferences.h"
@@ -32,7 +33,9 @@ WebPrecencePreferences::WebPrecencePreferences(QWidget *parent, const char* /*na
 	// Add actuall widget generated from ui file.
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new WebPresencePrefsUI(this);
-	
+	preferencesDialog->uploadURL->setMode( KFile::File );
+    preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
+
 	// KAutoConfig stuff
 	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
 	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
