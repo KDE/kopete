@@ -1,7 +1,7 @@
 /*
     msnp2p.cpp - msn p2p protocol
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     *************************************************************************
     *                                                                       *
@@ -21,6 +21,7 @@
 // qt
 #include <qregexp.h>
 #include <qfile.h>
+#include <qtextcodec.h>
 
 // kde
 #include <kdebug.h>
@@ -33,20 +34,31 @@
 #include <kstandarddirs.h>
 
 
+//kopete
+#include <kopetemessagemanager.h>  // { Just for getting the contact
+#include <kopeteaccount.h>         // {
+#include <kopetetransfermanager.h>
+
+
 MSNP2P::MSNP2P( QObject *parent , const char * name )
 : QObject( parent , name )
 {
 	m_file=0l;
 	m_Sfile=0L;
+	m_Rfile=0L;
 	m_msgIdentifier=0;
 	m_sessionId=0;
 	m_totalDataSize=0;
 	m_offset=0;
+	m_kopeteTransfer=0L;
 }
 
 MSNP2P::~MSNP2P()
 {
-	delete m_file;
+	if(m_file)
+		delete m_file;
+	else
+		delete m_Rfile;
 	delete m_Sfile;
 }
 
@@ -77,7 +89,16 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 			startBinHeader++;
 		}
 		startBinHeader++;
-		if(!justCR || startBinHeader+48 > msg.size()) return;  //no binary header, or not long enough   , TODO: error handling
+		if(!justCR || startBinHeader+48 > msg.size())
+		{	//no binary header, or not long enough
+			if(m_kopeteTransfer)
+			{
+				m_kopeteTransfer->slotError( KIO::ERR_INTERNAL , i18n("Malformed packet received")  );
+				m_kopeteTransfer=0L;
+			}
+			abortCurrentTransfer();
+			return;
+		}
 
 		//Read some interesting field from the binary header
 		unsigned int dataMessageSize=(int)(unsigned char)(msg.data()[startBinHeader+24]) + (int)((unsigned char)msg.data()[startBinHeader+25])*256;
@@ -93,7 +114,12 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 		if(msg.size() < startBinHeader+48+dataMessageSize)
 		{
 			//the message's size is shorter than the announced size
-			//TODO error handling
+			if(m_kopeteTransfer)
+			{
+				m_kopeteTransfer->slotError( KIO::ERR_INTERNAL , i18n("Malformed packet received")  );
+				m_kopeteTransfer=0L;
+			}
+			abortCurrentTransfer();
 			return;
 		}
 
@@ -114,26 +140,30 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 		if(dataOffset+dataMessageSize>=totalSize)
 			sendP2PAck( (msg.data()+startBinHeader) );
 
-
-
-		if(m_file)  //we are already downloading something to this file
+		if(m_Rfile)  //we are already downloading something to this file
 		{
-			m_file->file()->writeBlock( (msg.data()+startBinHeader+48) , dataMessageSize );
+			//m_file->file()->writeBlock( (msg.data()+startBinHeader+48) , dataMessageSize );
+			m_Rfile->writeBlock( (msg.data()+startBinHeader+48) , dataMessageSize );
+
+			if(m_kopeteTransfer)
+				m_kopeteTransfer->slotProcessed( dataOffset+dataMessageSize );
 
 			if(dataOffset+dataMessageSize >= totalSize) //the file is complete
 			{
-				m_file->close();
-
-/*				//TODO: show the file in a better way
-				#if KDE_IS_VERSION(3,1,90)
-				KRun::runURL( m_file->name(), "image/png", true );
-				#else
-				KRun::runURL( m_file->name(), "image/png" );
-				#endif
-
+				if(m_file)
+				{
+					m_file->close();
+					emit fileReceived(m_file , m_obj);
+					m_file=0;
+					m_Rfile=0L;
+				}
+				else
+				{
+					if(m_kopeteTransfer) m_kopeteTransfer->slotComplete();
+					m_Rfile->close();
+				}
+/*
 				delete m_file;*/
-				emit fileReceived(m_file , m_obj);
-				m_file=0;
 
 				//send the bye message
 				QCString dataMessage= QString(
@@ -153,15 +183,20 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 		}
 		else
 		{
-//			kdDebug(14141) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
+			kdDebug(14141) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
 
 			if(msg.data()[startBinHeader+48] == '\0' )
 			{  //This can be only the data preparaion message.   prepare to download
 				m_file=new KTempFile( locateLocal( "tmp", "msnpicture-" ), ".png" );
 				m_file->setAutoDelete(true);
+				m_Rfile=m_file->file();
 			}
    			else if (dataMessage.contains("INVITE"))
 			{
+
+//			kdDebug(14141) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
+
+
 				//Parse the message to get some info for replying with the 200 OK message
 				QRegExp rx(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
 				rx.search( dataMessage );
@@ -173,16 +208,61 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 
 				rx=QRegExp("SessionID: ([0-9]*)\r\n");
 				rx.search( dataMessage );
-				unsigned long int sessID=rx.cap(1).toUInt();
+				m_sessionId=rx.cap(1).toUInt();
 
 				rx=QRegExp("AppID: ([0-9]*)\r\n");
 				rx.search( dataMessage );
 				unsigned long int AppID=rx.cap(1).toUInt();
 
-				if(AppID==1) //Ask for a msn picture, or emoticon,  currently, we always send the display picture
+				if(m_kopeteTransfer) // we are probably negotiating a file transfer
 				{
+					QRegExp rx(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
+					rx.search( dataMessage );
+					QString branch=rx.cap(1);
 
-					QString content="SessionID: " + QString::number( sessID ) ;
+					rx=QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
+					rx.search( dataMessage );
+					QString callid=rx.cap(1);
+
+					QString content="Bridge: TCPv1\r\n"
+									"Listening: false\r\n"
+									"Nonce: {00000000-0000-0000-0000-000000000000}";
+
+					QCString dataMessage= QString(
+								"MSNSLP/1.0 200 OK\r\n"
+								"To: <msnmsgr:"+m_msgHandle+">\r\n"
+								"From: <msnmsgr:"+m_myHandle+">\r\n"
+								"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
+								"CSeq: 1\r\n"
+								"Call-ID: {"+callid+"}\r\n"
+								"Max-Forwards: 0\r\n"
+								"Content-Type: application/x-msnmsgr-transreqbody\r\n"
+								"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
+								"\r\n" + content + "\r\n\r\n").utf8(); //\0
+
+					//MSNP2P beleive that the transfer already startyed when sessionID !=0 )
+					unsigned long int si=m_sessionId;
+					m_sessionId=0;
+					sendP2PMessage(dataMessage);
+					m_sessionId=si; //reset the sessionID
+					m_Rfile=new QFile( m_kopeteTransfer->destinationURL().path() );
+					if(!m_Rfile->open(IO_WriteOnly))
+					{
+						if(m_kopeteTransfer)
+						{
+							//TODO: handle the QFILE error
+							m_kopeteTransfer->slotError( KIO::ERR_CANNOT_OPEN_FOR_WRITING , i18n("Cannot open file for writing")  );
+							m_kopeteTransfer=0L;
+							return;
+						}
+						abortCurrentTransfer();
+					}
+					else
+						kdDebug(14140) << "MSNP2P::slotReadMessage: GO GO GO GO: "  << m_kopeteTransfer->info().file() << endl;
+				}
+				else if(AppID==1) //Ask for a msn picture, or emoticon,  currently, we always send the display picture
+				{
+					QString content="SessionID: " + QString::number( m_sessionId ) ;
 
 					QCString dataMessage= QString(
 							"MSNSLP/1.0 200 OK\r\n"
@@ -199,17 +279,75 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 					sendP2PMessage(dataMessage);
 
 					//send the data preparation message
-					m_sessionId=sessID;
+
 					QByteArray initM(4);
 					initM.fill('\0');
 					sendP2PMessage(initM);
 
 					//prepare to send the file
 					m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
-					if(!m_Sfile->open(IO_ReadOnly))  {/*error?*/}
+					if(!m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/}
 					m_totalDataSize=  m_Sfile->size();
 
 					QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
+				}
+				else if(AppID==2) //filetransfer
+				{
+					rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
+					rx.search( dataMessage );
+					QString context=rx.cap(1);
+
+					QByteArray binaryContext;
+					KCodecs::base64Decode( context.utf8() , binaryContext );
+
+					if(binaryContext.size() < 21 )
+					{ //security,  don't let hackers crash everithing.
+						//TODO: handle error
+						return;
+					}
+
+					//the filename is conteined in the context from the 19st char to the end.  (in utf-16)
+					QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
+					if(!codec)
+						return; //abort();
+					QString filename = codec->toUnicode(binaryContext.data()+19 , binaryContext.size()-19) ;
+					//TODO FIXME !!!!!!!!!!!!!!!!!!!
+
+
+					//the size is placed in the context in the bytes 8..12  (source: the amsn code)
+					unsigned long int filesize= (unsigned char)(binaryContext[8]) + (unsigned char)(binaryContext[9]) *256 + (unsigned char)(binaryContext[10]) *65536 + (unsigned char)(binaryContext[11]) *16777216 ;
+
+			/*		unsigned char q1=binaryContext[8];
+					unsigned char q2=binaryContext[9];
+					unsigned char q3=binaryContext[10];
+					unsigned char q4=binaryContext[11];
+
+					unsigned long int filesize= q1 + q2<<8 + q3<<16 + q4<<24;
+
+
+					QString debug= QString::number((unsigned char)binaryContext[8]) +" " +QString::number((unsigned char)binaryContext[9]) +" " +QString::number((unsigned char)binaryContext[10]) +" " +QString::number((unsigned char)binaryContext[11]) +" "+ QString::number((unsigned char)binaryContext[12])  + " et le résultat " + QString::number( filesize1 )  +"\n" +
+						" q1= " +  (uint)q1 + " q2= " +  (uint)q2 + " q3= " +  (uint)q3 + " q4= " +  (uint)q4 + " et le résultat " + QString::number( filesize) ;*/
+
+					//ugly hack to get the contact
+					KopeteContact *c=0L;
+					if(parent())
+					{
+						KopeteMessageManager *kmm=dynamic_cast<KopeteMessageManager*>(parent()->parent());
+						if(kmm)
+							c=kmm->account()->contacts()[m_msgHandle];
+					}
+					disconnect(KopeteTransferManager::transferManager(), 0L , this, 0L);
+					connect(KopeteTransferManager::transferManager() , SIGNAL(accepted(KopeteTransfer*, const QString& )) ,
+							this, SLOT(slotTransferAccepted(KopeteTransfer*, const QString& )));
+					connect(KopeteTransferManager::transferManager() , SIGNAL(refused( const KopeteFileTransferInfo & ) ),
+							this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
+
+					QString description="Warning: I can't extract correctly the filename due to an encoding problem.\n"
+					                  "the extracted filename looks like: " + filename ;
+					filename= "msnfile";
+
+					KopeteTransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, description, QString::number(m_sessionId)+":"+branch+":"+callid);
+
 				}
 				else
 				{
@@ -234,7 +372,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 	}
 	else
 	{
-//		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << endl;
+		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << endl;
 	}
 
 }
@@ -286,8 +424,8 @@ void MSNP2P::requestDisplayPicture( const QString &myHandle, const QString &msgH
 
 void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
-/*	if(m_sessionId == 0)
-		kdDebug(14141) << k_funcinfo << QCString(dataMessage.data() , dataMessage.size()) << endl;*/
+	if(m_sessionId == 0)
+		kdDebug(14141) << k_funcinfo << QCString(dataMessage.data() , dataMessage.size()) << endl;
 
 	QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
@@ -492,6 +630,107 @@ void MSNP2P::slotSendData()
 
 
 
+void MSNP2P::slotTransferAccepted(KopeteTransfer* transfer, const QString& /*filename*/ )
+{
+	QStringList internalId=QStringList::split(":" , transfer->info().internalId() );
+	if(internalId[0].toUInt() == m_sessionId )
+	{
+		m_kopeteTransfer=transfer;
+
+		QObject::connect(transfer , SIGNAL(transferCanceled()), this, SLOT(abortCurrentTransfer()));
+		QObject::connect(transfer,  SIGNAL(destroyed()) , this , SLOT(slotKopeteTransferDestroyed()));
+
+		QString branch=internalId[1];
+		QString callid=internalId[2];
+
+		QString content="SessionID: " + QString::number( m_sessionId ) ;
+
+		QCString dataMessage= QString(
+					"MSNSLP/1.0 200 OK\r\n"
+					"To: <msnmsgr:"+m_msgHandle+">\r\n"
+					"From: <msnmsgr:"+m_myHandle+">\r\n"
+					"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
+					"CSeq: 1\r\n"
+					"Call-ID: {"+callid+"}\r\n"
+					"Max-Forwards: 0\r\n"
+					"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
+					"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
+					"\r\n" + content + "\r\n\r\n").utf8(); //\0
+
+		//MSNP2P beleive that the transfer already startyed when sessionID !=0 )
+		m_sessionId=0;
+
+		sendP2PMessage(dataMessage);
+
+		m_sessionId=internalId[0].toUInt(); //reset the sessionID
+	}
+}
+
+void MSNP2P::slotFileTransferRefused( const KopeteFileTransferInfo &info )
+{
+	QStringList internalId=QStringList::split(":" , info.internalId() );
+	kdDebug(14140) << k_funcinfo << internalId << endl;
+	if(internalId[0].toUInt() == m_sessionId )
+	{
+		QString branch=internalId[1];
+		QString callid=internalId[2];
+
+		QString content="SessionID: " + QString::number( m_sessionId ) ;
+
+		QCString dataMessage= QString(
+					"MSNSLP/1.0 603 DECLINE\r\n"
+					"To: <msnmsgr:"+m_msgHandle+">\r\n"
+					"From: <msnmsgr:"+m_myHandle+">\r\n"
+					"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
+					"CSeq: 1\r\n"
+					"Call-ID: {"+callid+"}\r\n"
+					"Max-Forwards: 0\r\n"
+					"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
+					"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
+					"\r\n" + content + "\r\n\r\n").utf8(); //\0
+
+		//MSNP2P beleive that the transfer already startyed when sessionID !=0 )
+		m_sessionId=0;
+
+		sendP2PMessage(dataMessage);
+
+//		m_sessionId=internalId[0].toUInt(); //reset the sessionID
+	}
+
+}
+
+
+void MSNP2P::abortCurrentTransfer()
+{
+	if(m_kopeteTransfer)
+	{
+		delete m_Rfile;
+		m_Rfile=0L;
+
+		QCString dataMessage= QString(
+				"BYE MSNMSGR:"+m_msgHandle+"MSNSLP/1.0\r\n"
+				"To: <msnmsgr:"+m_msgHandle+">\r\n"
+				"From: <msnmsgr:"+m_myHandle+">\r\n"
+				"Via: MSNSLP/1.0/TLP ;branch={A0D624A6-6C0C-4283-A9E0-BC97B4B46D32}\r\n"
+				"CSeq: 0\r\n"
+				"Call-ID: {"+m_CallID.upper()+"}\r\n"
+				"Max-Forwards: 0\r\n"
+				"Content-Type: application/x-msnmsgr-sessionclosebody\r\n"
+				"Content-Length: 3\r\n\r\n" ).utf8();
+		sendP2PMessage(dataMessage);
+
+
+		m_sessionId=0;
+		//TODO: send BYE message
+	}
+}
+
+
+void MSNP2P::slotKopeteTransferDestroyed()
+{
+	m_kopeteTransfer=0L;
+	kdDebug(14140) << k_funcinfo << endl;
+}
 
 #include "msnp2p.moc"
 

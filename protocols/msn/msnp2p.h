@@ -20,8 +20,8 @@
 #include <qstrlist.h>
 
 
-class KopeteMessage;
-class MSNAccount;
+class KopeteTransfer;
+struct KopeteFileTransferInfo;
 
 class KTempFile;
 class QFile;
@@ -55,11 +55,13 @@ signals:
 	void fileReceived( KTempFile * , const QString &msnObject );
 
 private:
+
 	/**
 	 * send the MSNSLP command in a msn p2p message
 	 * dataMessage cen be a QCString in case of text message
 	 */
 	void sendP2PMessage( const QByteArray& dataMessage );
+
 
 	/**
 	 * send the ACK
@@ -74,24 +76,32 @@ private:
 
 private slots:
 	void slotSendData();
+	void slotTransferAccepted(KopeteTransfer*, const QString& );
+	void slotFileTransferRefused( const KopeteFileTransferInfo & );
+	void slotKopeteTransferDestroyed();
 
 public slots:
 	/**
 	 * Load the dysplayImage.
 	 */
 	void requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject);
+
+	/**
+	 * Abort the current transfer.
+	 */
+	void abortCurrentTransfer();
+
 private:
 	//for the display image
 	KTempFile *m_file;
 	QFile *m_Sfile;
+	QFile *m_Rfile;
 	QString m_obj;
 	QString m_CallID;
 
 	QString m_myHandle;
 	QString m_msgHandle;
-
-
-
+	KopeteTransfer *m_kopeteTransfer;
 
 };
 
