@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-#include "kopete.h"
 #include "kopeteplugin.h"
 #include "pluginloader.h"
 

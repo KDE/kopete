@@ -29,7 +29,6 @@
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 
-#include "kopete.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
@@ -180,7 +179,6 @@ void KopeteContactList::saveXML()
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 
-	
 /*	QFile contactListFile( contactListFileName );
 	if( contactListFile.open( IO_WriteOnly ) )
 	{
@@ -208,7 +206,7 @@ QString KopeteContactList::toXML()
 	KopeteGroup *groupIt;
 	for( groupIt = m_groupList.first(); groupIt; groupIt = m_groupList.next() )
 	    xml += groupIt->toXML();
-	
+
 	// Save metacontact information.
 	QPtrListIterator<KopeteMetaContact> metaContactIt( m_contacts );
 	for( ; metaContactIt.current(); ++metaContactIt )
@@ -311,10 +309,10 @@ QStringList KopeteContactList::contactFileProtocols(QString displayName)
 {
 	kdDebug() << "Get contacts for: " << displayName << "\n";
 	QStringList protocols;
-	
+
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
-	{		
+	{
 		if( it.current()->displayName() == displayName ) {
 			kdDebug() << "Found them!" << endl;
 			QPtrList<KopeteContact> mContacts = it.current()->contacts();
@@ -326,7 +324,6 @@ QStringList KopeteContactList::contactFileProtocols(QString displayName)
 				if( jt.current()->canAcceptFiles() ) {
 					kdDebug() << jt.current()->protocol()->id() << "\n";
 					protocols.append ( jt.current()->protocol()->id() );
-					
 				}
 			}
 			return protocols;
@@ -387,7 +384,6 @@ KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGrou
 	addGroup(rep);
 	return  rep;
 }
-
 
 #include "kopetecontactlist.moc"
 

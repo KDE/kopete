@@ -2,8 +2,8 @@
     kopetemessagemanager.cpp - Manages all chats
 
     Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
-                      (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-              (c) 2002 by Daniel Stone <dstone@kde.org>
+                  (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+                  (c) 2002 by Daniel Stone <dstone@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -493,7 +493,6 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 		}
 	}
 	d->isEmpty=false;
-	
 }
 
 void KopeteMessageManager::removeContact( const KopeteContact *c )
@@ -574,15 +573,7 @@ void KopeteMessageManager::setCurrentMessage(const KopeteMessage& t)
 	}
 }
 
-
-
 #include "kopetemessagemanager.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

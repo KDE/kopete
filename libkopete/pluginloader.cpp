@@ -30,7 +30,6 @@
 #include <kurl.h>
 #include <kparts/componentfactory.h>
 
-#include "kopete.h"
 #include "kopeteplugin.h"
 #include "pluginloader.h"
 
@@ -375,7 +374,6 @@ KopetePlugin * LibraryLoader::searchByName(const QString &name)
 	}
 	return 0L; 
 }
-
 
 #include <pluginloader.moc>
 

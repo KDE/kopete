@@ -18,6 +18,7 @@
 
 #include "kopetecontact.h"
 
+#include <qapplication.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qpixmap.h>
@@ -31,7 +32,6 @@
 #include <kaction.h>
 #include <klineeditdlg.h>
 
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetehistorydialog.h"
@@ -42,7 +42,8 @@
 KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent )
 	: QObject( parent )
 {
-	connect(this, SIGNAL(incomingEvent(KopeteEvent *)), kopeteapp, SLOT(notifyEvent(KopeteEvent *)));
+	connect( this, SIGNAL( incomingEvent( KopeteEvent * ) ),
+		qApp, SLOT( notifyEvent( KopeteEvent * ) ) );
 
 	m_metaContact = parent;
 	m_protocol = protocol;
@@ -53,7 +54,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *paren
 	m_historyDialog = 0L;
 
 	connect(protocol, SIGNAL(unloading()), this, SLOT(slotProtocolUnloading()));
-	
+
 	/* Initialize the context Menu */
 	initActions();
 }
@@ -69,7 +70,7 @@ KopeteContact::~KopeteContact()
 	delete actionChangeAlias;
 	delete actionUserInfo;
 	delete actionSendFile;*/
-	
+
 	emit( contactDestroyed( this ) );
 }
 
@@ -200,7 +201,7 @@ void KopeteContact::slotHistoryDialogDestroyed()
 	m_historyDialog = 0L;
 }
 
-void KopeteContact::slotSendFile(QString fileName = QString::null)
+void KopeteContact::slotSendFile( QString /* fileName */ )
 {
 	kdDebug() << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
 }
@@ -339,7 +340,7 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 	metaContact=m;
 	QString t=m->displayName();
    bool f=true;
-	
+
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
@@ -355,12 +356,5 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 
 #include "kopetecontact.moc"
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

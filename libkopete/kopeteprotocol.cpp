@@ -17,7 +17,7 @@
 */
 
 #include "kopeteprotocol.h"
-#include "kopete.h"
+
 #include "kopetemessagemanagerfactory.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)

@@ -352,7 +352,7 @@ bool KopeteMetaContact::canAcceptFiles() const
 	return false;
 }
 
-void KopeteMetaContact::sendFile( QString fileName = QString::null )
+void KopeteMetaContact::sendFile( QString fileName )
 {
 	if( m_contacts.isEmpty() || !canAcceptFiles() )
 		return;
@@ -363,7 +363,7 @@ void KopeteMetaContact::sendFile( QString fileName = QString::null )
 		if( (*it)->importance() > c->importance())
 			c=*it;
 	}
-	
+
 	c->slotSendFile( fileName );
 }
 
@@ -746,7 +746,7 @@ void KopeteMetaContact::setPluginData(KopetePlugin *p, QStringList strList )
 		m_pluginData.remove(p->id());
 		return;
 	}
-	
+
 	for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
 	{
 		//escape '||' I don't like this but it is needed
@@ -755,7 +755,7 @@ void KopeteMetaContact::setPluginData(KopetePlugin *p, QStringList strList )
 	m_pluginData[p->id()] =  strList.join( "||" ) ;
 }
 
-QStringList KopeteMetaContact::pluginData(KopetePlugin *p) 
+QStringList KopeteMetaContact::pluginData(KopetePlugin *p)
 {
 	if(!m_pluginData.contains(p->id()))
 		return QStringList();

@@ -256,10 +256,10 @@ public:
 	  * virtual slotSendFile
 	  */
 	  void setFileCapable(bool filecap) { mFileCapable = filecap; }
-	  
+
 	 /*
 	  * Returns if this contact can accept file transfers
-	  */ 
+	  */
 	  bool canAcceptFiles() const { return isOnline() && mFileCapable; }
 
 public slots:
@@ -292,7 +292,7 @@ public slots:
 	/**
 	 * Method to send a file. Should be implemented by the protocols
 	 */
-	 virtual void slotSendFile(QString fileName = QString::null);
+	virtual void slotSendFile( QString fileName = QString::null );
 
 private slots:
 	/**

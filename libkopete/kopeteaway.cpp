@@ -1,7 +1,7 @@
 /*
     kopeteaway.cpp  -  Kopete Away
 
-	Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
+    Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -24,7 +24,6 @@
 #include <klocale.h>
 #include <kglobal.h>
 
-#include "kopete.h"
 #include "kopeteawaydialog.h"
 
 KopeteAway *KopeteAway::instance = 0L;
@@ -33,11 +32,11 @@ KopeteAway::KopeteAway()
 {
 	mAwayMessage = "";
 	mGlobalAway = false;
-	
+
 	mAwayMessageList.clear(); // Empty the list
-	
+
 	config = KGlobal::config();
-	
+
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 	/* If Kopete has been run before, this will be true.
@@ -57,19 +56,17 @@ KopeteAway::KopeteAway()
 		KopeteAwayMessage temp;
 		temp.title = i18n("Busy");
 		temp.message = i18n("Sorry, I'm busy right now");
-		
+
 		/* Add it to the vector */
 		mAwayMessageList.append(temp);
-		
+
 		temp.title = i18n("Gone");
 		temp.message = i18n("I'm gone right now, but I'll be back later");
 		mAwayMessageList.append(temp);
-		
+
 		/* Save this list to disk */
 		save();
 	}
-		
-		
 }
 
 QString KopeteAway::message()
@@ -99,7 +96,7 @@ bool KopeteAway::globalAway()
 
 void KopeteAway::setGlobalAway(bool status)
 {
-	getInstance()->mGlobalAway = status;	
+	getInstance()->mGlobalAway = status;
 }
 
 void KopeteAway::save(){
@@ -111,12 +108,10 @@ void KopeteAway::save(){
 		titles.append((*i).title); // Append the title to list of titles
 		config->writeEntry((*i).title, (*i).message); // Append Title->message pair to the config
 	}
-	
+
 	/* Write out the titles */
 	config->writeEntry("Titles", titles);
 }
-
-
 
 QStringList KopeteAway::getTitles()
 {
@@ -127,15 +122,13 @@ QStringList KopeteAway::getTitles()
 	return titles;
 }
 
-
-
 QString KopeteAway::getMessage(QString title)
 {
 	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
 		if((*i).title == title)
 			return (*i).message;
 	}
-	
+
 	/* Return an empty string if none was found */
 	return "";
 }
@@ -150,7 +143,7 @@ bool KopeteAway::addMessage(QString title, QString message)
 			break;
 		}
 	}
-	
+
 	/* If not, add it */
 	if(!found){
 		KopeteAwayMessage temp;
@@ -167,21 +160,25 @@ bool KopeteAway::deleteMessage(QString title)
 {
 	/* Search for the message */
 	QValueList<KopeteAwayMessage>::iterator itemToDelete = mAwayMessageList.begin();
-	while( (itemToDelete != mAwayMessageList.end()) && ((*itemToDelete).title != title) ){      
+	while( (itemToDelete != mAwayMessageList.end()) && ((*itemToDelete).title != title) )
+	{
 		itemToDelete++;
 	}
-	
+
 	/* If it was found, delete it */
-	if(itemToDelete != mAwayMessageList.end()){
+	if(itemToDelete != mAwayMessageList.end())
+	{
 		/* Remove it from the config entry, if it's there */
 		if(config->hasKey((*itemToDelete).title)){
 			config->deleteEntry((*itemToDelete).title);
 		}
 		/* Remove it from the list */
 		mAwayMessageList.remove(itemToDelete);
-		
+
 		return true;
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
@@ -190,10 +187,11 @@ bool KopeteAway::updateMessage(QString title, QString message)
 {
 	/* Search for the message */
 	QValueList<KopeteAwayMessage>::iterator itemToUpdate = mAwayMessageList.begin();
-	while( (itemToUpdate != mAwayMessageList.end()) && ((*itemToUpdate).title != title) ){      
+	while( (itemToUpdate != mAwayMessageList.end()) && ((*itemToUpdate).title != title) )
+	{
 		itemToUpdate++;
 	}
-	
+
 	/* If it was found, update it */
 	if(itemToUpdate != mAwayMessageList.end()){
 		(*itemToUpdate).message = message;
@@ -203,13 +201,5 @@ bool KopeteAway::updateMessage(QString title, QString message)
 	}
 }
 
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
