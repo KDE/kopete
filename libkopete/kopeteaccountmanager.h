@@ -22,7 +22,6 @@
 #include <qobject.h>
 #include <qptrlist.h>
 #include <qdict.h>
-#include <qdom.h>
 
 class KopeteAccount;
 class KopeteProtocol;
@@ -111,13 +110,13 @@ public slots:
 
 	/**
 	 * @internal
-	 * save to accounts.xml
+	 * Save the account data to KConfig
 	 */
 	void save();
 
 	/**
 	 * @internal
-	 * load accounts.xml
+	 * Load the account data from KConfig
 	 */
 	void load();
 
@@ -165,10 +164,9 @@ private:
 	static KopeteAccountManager *s_manager;
 
 	QPtrList<KopeteAccount> m_accounts;
-	QDomDocument m_accountList;
 
 private slots:
-	void loadProtocol( KopetePlugin * );
+	void slotPluginLoaded( KopetePlugin *plugin );
 };
 
 #endif

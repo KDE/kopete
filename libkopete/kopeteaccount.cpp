@@ -20,6 +20,7 @@
 #include <qlabel.h>
 #include <qapplication.h>
 
+#include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kdialogbase.h>
@@ -31,6 +32,7 @@
 #include "kopetemetacontact.h"
 #include "kopetepassworddialog.h"
 #include "kopeteprotocol.h"
+#include "pluginloader.h"
 
 /*
  * Function for (en/de)crypting strings for config file, taken from KMail
@@ -117,76 +119,65 @@ void KopeteAccount::setAccountId( const QString &accountId )
 	}
 }
 
-const QDomElement KopeteAccount::toXML()
+void KopeteAccount::writeConfig( const QString &configGroup )
 {
-	QDomDocument account;
-	account.appendChild( account.createElement( QString::fromLatin1("account") ) );
-	account.documentElement().setAttribute( QString::fromLatin1("account-id"), d->id );
-	account.documentElement().setAttribute( QString::fromLatin1("protocol-id"), d->protocol->pluginId() );
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup );
 
-	if( !d->password.isNull())
-	{
-		QDomElement password = account.createElement( QString::fromLatin1("password") );
-		password.appendChild( account.createTextNode( cryptStr(d->password)  ) );
-		account.documentElement().appendChild( password );
-	}
+	config->writeEntry( "Protocol", d->protocol->pluginId() );
+	config->writeEntry( "AccountId", d->id );
 
-	if( d->autologin )
-		account.documentElement().appendChild( account.createElement( QString::fromLatin1("autologin") ) );
+	if( !d->password.isNull() )
+		config->writeEntry( "Password", cryptStr( d->password ) );
+
+	config->writeEntry( "AutoConnect", d->autologin );
 
 	if( d->color.isValid() )
-	{
-		QDomElement col = account.createElement( QString::fromLatin1("color") );
-		col.appendChild( account.createTextNode( d->color.name()  ) );
-		account.documentElement().appendChild( col );
-	}
+		config->writeEntry( "Color", d->color.name() );
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
-	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
-		account.documentElement().appendChild( account.importNode( *it, true ) );
-
-	return account.documentElement();
+	KopetePluginDataObject::writeConfig( configGroup );
 }
 
-bool KopeteAccount::fromXML(const QDomElement& accountElement)
+void KopeteAccount::readConfig( const QString &configGroup )
 {
-	QDomElement accountData = accountElement.firstChild().toElement();
-	while( !accountData.isNull() )
-	{
-		if( accountData.tagName() == QString::fromLatin1( "password" ) )
-		{
-			d->password= cryptStr(accountData.text());
-		}
-		else if( accountData.tagName() == QString::fromLatin1( "autologin" ) )
-		{
-			d->autologin=true;
-		}
-		else if( accountData.tagName() == QString::fromLatin1( "color" ) )
-		{
-			d->color=accountData.text();
-		}
-		else if( accountData.tagName() == QString::fromLatin1( "plugin-data" ) )
-		{
-			KopetePluginDataObject::fromXML(accountData) ;
-		}
-		else
-		{
-			kdDebug(14010) << "KopeteAccount::fromXML: unknown tag " << accountData.tagName() <<  endl;
-		}
-		accountData = accountData.nextSibling().toElement();
-	}
-	loaded();
-	return true;
-}
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup );
 
+	d->password  = cryptStr( config->readEntry( "Password" ) );
+	d->autologin = config->readBoolEntry( "AutoConnect", false );
+	d->color     = config->readEntry( "Color", QString::null );
+
+	// Handle the plugin data, if any
+	QMap<QString, QString> entries = config->entryMap( configGroup );
+	QMap<QString, QString>::Iterator entryIt;
+	QMap<QString, QMap<QString, QString> > pluginData;
+	for ( entryIt = entries.begin(); entryIt != entries.end(); ++entryIt )
+	{
+		if ( entryIt.key().startsWith( QString::fromLatin1( "PluginData_" ) ) )
+		{
+			QStringList data = QStringList::split( '_', entryIt.key(), true );
+			data.pop_front(); // Strip "PluginData_" first
+			QString pluginName = data.first();
+			data.pop_front();
+
+			// Join remainder and store it
+			pluginData[ pluginName ][ data.join( QString::fromLatin1( "_" ) ) ] = entryIt.data();
+		}
+	}
+
+	// Lastly, pass on the plugin data to the account
+	QMap<QString, QMap<QString, QString> >::Iterator pluginDataIt;
+	for ( pluginDataIt = pluginData.begin(); pluginDataIt != pluginData.end(); ++pluginDataIt )
+		setPluginData( LibraryLoader::pluginLoader()->searchByID( pluginDataIt.key() ), pluginDataIt.data() );
+
+	loaded();
+}
 
 void KopeteAccount::loaded()
 {
-	//do nothing in default implementation
+	/* do nothing in default implementation */
 }
-
-
 
 QString KopeteAccount::getPassword( bool error, bool *ok )
 {

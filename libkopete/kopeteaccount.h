@@ -140,6 +140,7 @@ public:
 	 * returns the user color for this account
 	 */
 	const QColor color() const;
+
 	/**
 	 * Set the color this account will use to differentiate from the other accounts
 	 * normaly, this should be called by the Kopete's account config page. so you
@@ -202,16 +203,18 @@ public:
 	const QDict<KopeteContact>& contacts();
 
 	/**
-	 * @internal
-	 * Save the account to an XML string. Only used internally
+	 * Read the account's config (KConfig)
+	 *
+	 * @ref configGroup is the group in the config file to use.
 	 */
-	const QDomElement toXML();
+	void readConfig( const QString &configGroup );
 
 	/**
-	 * @internal
-	 * Load account from XML
+	 * Write the config back
+	 *
+	 * @ref configGroup is the group in the config file to use.
 	 */
-	bool fromXML(const QDomElement& cnode);
+	void writeConfig( const QString &configGroup );
 
 	/**
 	 * @internal

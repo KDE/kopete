@@ -85,11 +85,15 @@ protected:
 	const QValueList<QDomElement> toXML();
 
 	/**
+	 * Write the plugin data to KConfig
+	 */
+	void writeConfig( const QString &configGroup ) const;
+
+	/**
 	 * Load plugin data from one Dom Element:
 	 * It has to be a <plugin-data> element
 	 */
 	void fromXML( const QDomElement& element );
-
 
 private:
 	QMap<QString, QMap<QString, QString> > m_pluginData;

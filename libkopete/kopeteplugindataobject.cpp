@@ -15,7 +15,9 @@
     *************************************************************************
 */
 
+#include <kconfig.h>
 #include <kdebug.h>
+#include <kglobal.h>
 
 #include "kopeteplugin.h"
 #include "kopeteplugindataobject.h"
@@ -58,6 +60,27 @@ QString KopetePluginDataObject::pluginData( KopetePlugin *p, const QString &key 
 		return QString::null;
 
 	return m_pluginData[ p->pluginId() ][ key ];
+}
+
+void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
+{
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup );
+
+	if( !m_pluginData.isEmpty() )
+	{
+		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
+		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
+		{
+			QMap<QString, QString>::ConstIterator it;
+			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
+#if QT_VERSION < 0x030200
+				config->writeEntry( QString::fromLatin1( "PluginData_%1_%2" ).arg( pluginIt.key() ).arg( it.key() ), it.data() );
+#else
+				config->writeEntry( QString::fromLatin1( "PluginData_%1_%2" ).arg( pluginIt.key(), it.key() ), it.data() );
+#endif
+		}
+	}
 }
 
 const QValueList<QDomElement> KopetePluginDataObject::toXML()

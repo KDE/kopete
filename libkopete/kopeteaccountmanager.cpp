@@ -19,11 +19,11 @@
 #include "kopeteaccountmanager.h"
 
 #include <qapplication.h>
+#include <qregexp.h>
 #include <qfile.h>
 
+#include <kconfig.h>
 #include <kdebug.h>
-#include <ksavefile.h>
-#include <kstandarddirs.h>
 
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
@@ -206,92 +206,55 @@ void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 
 void KopeteAccountManager::save()
 {
-	QDomDocument accounts;
-	QString fileName = locateLocal( "appdata", QString::fromLatin1( "accounts.xml" ) );
+	kdDebug( 14010 ) << k_funcinfo << endl;
 
-	KSaveFile file( fileName );
-	if( file.status() == 0 )
+	KConfig *config = KGlobal::config();
+	for ( KopeteAccount *account = m_accounts.first() ; account; account = m_accounts.next() )
 	{
-		accounts.appendChild( accounts.createElement( QString::fromLatin1("kopete-accounts") ) );
-		accounts.documentElement().setAttribute( QString::fromLatin1("version"), QString::fromLatin1("1.0") );
+		QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId() ).arg( account->protocol()->pluginId() );
+		config->setGroup( groupName );
 
-		QTextStream *stream = file.textStream();
-		stream->setEncoding( QTextStream::UnicodeUTF8 );
-
-		for(KopeteAccount *i = m_accounts.first() ; i; i = m_accounts.next() )
-			accounts.documentElement().appendChild( accounts.importNode( i->toXML(), true ) );
-
-		accounts.save( *stream, 4 );
-		if ( !file.close() )
-		{
-			kdDebug(14010) << "KopeteAccountManager::save: ERROR: failed to write accounts, error code is: " << file.status() << endl;
-		}
+		account->writeConfig( groupName );
 	}
-	else
-	{
-		kdWarning(14010) << "KopeteAccountManager::save: ERROR: Couldn't open accounts file " << fileName << " accounts not saved." << endl;
-	}
+
+	config->sync();
 }
 
 void KopeteAccountManager::load()
 {
-	QString filename = locateLocal( "appdata", QString::fromLatin1( "accounts.xml" ) );
-	if( filename.isEmpty() )
-		return ;
+	kdDebug( 14010 ) << k_funcinfo << endl;
 
-	kdDebug(14010) << k_funcinfo <<endl;
-
-	m_accountList = QDomDocument( QString::fromLatin1( "kopete-accounts" ) );
-
-	QFile file( filename );
-	file.open( IO_ReadOnly );
-	m_accountList.setContent( &file );
-
-	file.close();
-
-	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
-		this, SLOT( loadProtocol(KopetePlugin*) ) );
+	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 }
 
-void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
+void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 {
-	KopeteProtocol* protocol=dynamic_cast<KopeteProtocol*>(plu);
-	if(!protocol)
+	kdDebug( 14010 ) << k_funcinfo <<endl;
+
+	KopeteProtocol* protocol = dynamic_cast<KopeteProtocol*>( plugin );
+	if ( !protocol )
 		return;
 
-	kdDebug(14010) << k_funcinfo <<endl;
-
-	QDomElement element = m_accountList.documentElement().firstChild().toElement();
-	while( !element.isNull() )
+	// Iterate over all groups that start with "Account_" as those are accounts
+	// and parse them if they are from this protocol
+	KConfig *config = KGlobal::config();
+	QStringList accountGroups = config->groupList().grep( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
-		if( element.tagName() == QString::fromLatin1("account") )
-		{
-			QString accountId = element.attribute( QString::fromLatin1("account-id"), QString::null );
-			QString protocolId = element.attribute( QString::fromLatin1("protocol-id"), QString::null );
+		config->setGroup( *it );
 
-			if( (protocolId == protocol->pluginId()) )
-			{
-				if( !accountId.isEmpty() )
-				{
-					KopeteAccount *account = protocol->createNewAccount(accountId);
-					if(account && !account->fromXML( element ) )
-					{
-						delete account;
-						account = 0L;
-					}
-				}
-				else
-				{
-					kdWarning(14010) << k_funcinfo << "Account with empty id!" << endl;
-				}
-			}
-		}
-		else
-		{
-			kdWarning(14010) << k_funcinfo << "Unknown element '" << element.tagName()
-				<< "' in accounts.xml!" << endl;
-		}
-		element = element.nextSibling().toElement();
+		if ( config->readEntry( "Protocol" ) != protocol->pluginId() )
+			return;
+
+		QString accountId = config->readEntry( "AccountId" );
+		if ( accountId.isEmpty() )
+			return;
+
+		kdDebug( 14010 ) << k_funcinfo << "Creating account for " << accountId << endl;
+		
+		KopeteAccount *account = protocol->createNewAccount( accountId );
+		if ( !account )
+			return;
 	}
 }
 
