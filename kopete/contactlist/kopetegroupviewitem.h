@@ -27,7 +27,7 @@
 
 class KopeteGroup;
 
-class KopeteGroupViewItem : public QObject , public QListViewItem
+class KopeteGroupViewItem : public QObject , public KListViewItem
 {
 	Q_OBJECT
 public:

@@ -187,7 +187,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		if ( m_metaContact->isOnline() && m_oldStatus == KopeteOnlineStatus::Offline )
 			KNotifyClient::event( winId,  "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
 		else if ( !m_metaContact->isOnline() && m_oldStatus != KopeteOnlineStatus::Offline && m_oldStatus != KopeteOnlineStatus::Unknown )
-#if KDE_IS_VERSION( 3, 1, 1 ) 
+#if KDE_IS_VERSION( 3, 1, 1 )
 			KNotifyClient::event( winId , "kopete_offline", text );
 #else
 			KNotifyClient::event( "kopete_offline", text );
@@ -372,7 +372,7 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 		if ( prefs->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
 			modcg.setColor( QColorGroup::Text, prefs->idleContactColor() );
 
-		QListViewItem::paintCell( p, modcg, column, cellWidth, align );
+		KListViewItem::paintCell( p, modcg, column, cellWidth, align );
 		QFontMetrics fm( p->font() );
 		int pixelsWide = fm.width( text( 0 ) ) + 16 + 4;
 		if ( pixelsWide > cellWidth )
@@ -384,13 +384,42 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 		if ( !lv )
 			return;
 
+
+			/*
+
+  QColorGroup _cg = cg;
+  const QPixmap *pm = listView()->viewport()->backgroundPixmap();
+  if (pm && !pm->isNull())
+  {
+        _cg.setBrush(QColorGroup::Base, QBrush(backgroundColor(), *pm));
+        QPoint o = p->brushOrigin();
+        p->setBrushOrigin( o.x()-listView()->contentsX(), o.y()-listView()->contentsY() );
+  }
+  else if (isAlternate())
+       if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
+            _cg.setColor(QColorGroup::Background, static_cast< KListView* >(listView())->alternateBackground());
+       else
+        _cg.setColor(QColorGroup::Base, static_cast< KListView* >(listView())->alternateBackground());
+
+  QListViewItem::paintCell(p, _cg, column, width, alignment);
+
+
+			*/
+
 		int marg = lv->itemMargin();
 		int r = marg;
-		const BackgroundMode bgmode = lv->viewport()->backgroundMode();
-		const QColorGroup::ColorRole crole =
-			QPalette::backgroundRoleFromMode( bgmode );
+
 		p->fillRect( cellWidth, 0, width - cellWidth, height(),
-			cg.brush( crole ) );
+			QBrush( backgroundColor() ) );
+
+		/*
+			const BackgroundMode bgmode = lv->viewport()->backgroundMode();
+			const QColorGroup::ColorRole crole =
+				QPalette::backgroundRoleFromMode( bgmode );
+			p->fillRect( cellWidth, 0, width - cellWidth, height(),
+				cg.brush( crole ) );
+		*/
+
 
 		if ( isSelected() && ( column == 0 || listView()->allColumnsShowFocus() ) )
 		{
@@ -417,7 +446,7 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 	else
 	{
 		// Use Qt's own drawing
-		QListViewItem::paintCell( p, cg, column, width, align );
+		KListViewItem::paintCell( p, cg, column, width, align );
 	}
 }
 
@@ -593,7 +622,7 @@ void KopeteMetaContactLVI::slotEventDone( KopeteEvent * /* event */ )
 		mBlinkTimer->stop();
 		//If the contact gone offline while the timer was actif,
 		//the visibility has not been correctly updated. so do it now
-		updateVisibility(); 
+		updateVisibility();
 	}
 
 	setPixmap( 0, SmallIcon( m_metaContact->statusIcon() ) );

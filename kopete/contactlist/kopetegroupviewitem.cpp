@@ -28,7 +28,7 @@
 #include "kopetemetacontact.h"
 
 KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent, const char *name )
-: QObject( group_ ), QListViewItem( parent, name )
+: QObject( group_ ), KListViewItem( parent, name )
 {
 	setVisible( false );
 	m_group = group_;
@@ -39,9 +39,9 @@ KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent
 		SLOT( updateVisibility() ) );
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_,
+KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_,
 	QListViewItem *parent, const char *name )
-		: QObject(group_), QListViewItem(parent,name)
+		: QObject( group_ ), KListViewItem( parent, name )
 {
 	setVisible( false );
 	m_group = group_;

@@ -132,6 +132,7 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		uint yAdjust = itemRect.top();
 		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
 		contact = metaLVI->contactForPoint( relativePos );
+
 		if ( contact )
 		{
 			QRect iconRect = metaLVI->contactRect( contact );
@@ -153,7 +154,6 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 			if ( !contact->statusDescription().isNull() )
 				toolTip += i18n( "<br><blockquote>%1</blockquote>" ).arg( contact->statusDescription() );
-
 		}
 		else
 		{
@@ -243,8 +243,6 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 		m_offlineItem->setOpen( true );
 	}
 
-	// No alternate color, looks ugly
-	setAlternateBackground( QColor() );
 	setFullWidth( true );
 
 	// We have our own tooltips, don't use the default QListView ones
@@ -1774,8 +1772,7 @@ void KopeteContactListView::delayedSort()
 
 void KopeteContactListView::slotSort()
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
-
+	//kdDebug( 14000 ) << k_funcinfo << endl;
 	sort();
 }
 
