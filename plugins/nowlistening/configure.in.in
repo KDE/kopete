@@ -30,7 +30,7 @@ AC_DEFUN([AC_CHECK_XMMS],
 
     for arg in `xmms-config --libs`; do
 	case $arg in
-	    -[lL]*)
+	    -[[lL]]*)
 	    XMMS_LIBS="$XMMS_LIBS $arg"
 	    ;;
 	    *)
