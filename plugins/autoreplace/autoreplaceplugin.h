@@ -42,16 +42,11 @@ public:
 	~AutoReplacePlugin();
 
 private slots:
-	void slotAutoReplaceOutgoingMessage( KopeteMessage & msg );
-	void slotAutoReplaceIncomingMessage( KopeteMessage & msg );
-	void slotAddDot( KopeteMessage & msg );
-	void slotCapitolize( KopeteMessage & msg );
+	void slotAboutToSend( KopeteMessage &msg );
 
 	void slotSettingsChanged();
 
 private:
-	void autoReplaceMessage( KopeteMessage & msg );
-
 	static AutoReplacePlugin * pluginStatic_;
 
 	AutoReplaceConfig *m_prefs;
