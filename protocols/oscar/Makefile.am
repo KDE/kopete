@@ -16,7 +16,7 @@ lib_LTLIBRARIES = kopete_oscar.la
 
 kopete_oscar_la_SOURCES = oscarprotocol.cpp oscarcontact.cpp \
 			oscarpreferences.cpp oscarchangestatus.cpp \
-			oscaruserinfo.cpp xautolock.cpp oscaraccount.cpp
+			oscaruserinfo.cpp oscaraccount.cpp
 #			icquserinfo.cpp icqaddcontactpage.cpp
 
 kopete_oscar_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)

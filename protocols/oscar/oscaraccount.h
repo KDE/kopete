@@ -26,7 +26,6 @@
 #include "kopeteaccount.h"
 #include "oscarsocket.h"
 #include "oscarprotocol.h"
-#include "xautolock.h"
 
 class KAction;
 
@@ -222,10 +221,6 @@ class OscarAccount : public KopeteAccount
 		int mRandomNewGroupNum;
 
 		int mRandomNewBuddyNum;
-
-		/**Idleness manager */
-		// TODO: Why not have this in libkopete? [mETz]
-		XAutoLock mIdleMgr;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

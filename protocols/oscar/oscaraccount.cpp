@@ -17,6 +17,7 @@
 #include "oscaraccount.h"
 #include <qapplication.h>
 #include <qwidget.h>
+#include <qtimer.h>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -310,13 +311,12 @@ void OscarAccount::initSignals()
 		this, SLOT(slotGotDirectIMRequest(QString)));
 
 	// We have officially become idle
-	QObject::connect(&mIdleMgr,
-		SIGNAL(timeout()),
-		this, SLOT(slotIdleTimeout()));
+	QTimer *idleTimer=new QTimer(this, "OscarIdleTimer");
+	QObject::connect(idleTimer, SIGNAL(timeout()), this, SLOT(slotIdleTimeout()));
+	idleTimer->start(3000);
 
 	// We have officially become un-idle
-	QObject::connect(
-		&mIdleMgr, SIGNAL(activity()),
+	QObject::connect(KopeteAway::getInstance(), SIGNAL(activity()),
 		this, SLOT(slotIdleActivity()));
 }
 
@@ -826,11 +826,7 @@ void OscarAccount::slotIdleActivity()
 void OscarAccount::slotIdleTimeout()
 {
 //	kdDebug(14150) << k_funcinfo << "system is IDLE, setting idle time with server" << endl;
-	// idleTimeout() gives a value in minutes, engine wants seconds
-	int idleTimeout = 0;
-	idleTimeout = (pluginData(protocol(), "IdleTimeOut")).toInt();
-
-	getEngine()->sendIdleTime(idleTimeout*60);
+	getEngine()->sendIdleTime(KopeteAway::getInstance()->idleTime());
 }
 
 int OscarAccount::randomNewBuddyNum()
