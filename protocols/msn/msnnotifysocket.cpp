@@ -210,7 +210,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 		if( isConnected )
 		{
 			// Address, AuthInfo
-			emit startChat( data.section( ' ', 0, 0 ),
+			emit startChat( data.section( ' ', 1, 1 ),
 				data.section( ' ', 2, 2 ) );
 		}
 		else
