@@ -11,7 +11,7 @@ updatedir = $(kde_datadir)/kconf_update
 # KDE 3.2 will allow kconf_update scripts to run directly from there,
 # but for us that's too late. Use the .sh script as a workaround.
 kconf_PROGRAMS = kopete-account-kconf_update kopete-pluginloader2-kconf_update
-kconfdir = $(kde_bindir)/kconf_update_bin
+kconfdir = $(libdir)/kconf_update_bin
 
 kopete_account_kconf_update_SOURCES = kopete-account-kconf_update.cpp
 kopete_account_kconf_update_LDFLAGS = $(all_libraries) $(KDE_RPATH)
