@@ -19,6 +19,8 @@
 
 #include "kopetewalletmanager.h"
 
+#include "kopeteglobal.h"
+
 #include <kdebug.h>
 #include <kstaticdeleter.h>
 #include <kwallet.h>
@@ -62,7 +64,7 @@ namespace
 	
 	WId mainWindowID()
 	{
-		if ( QWidget *w = qApp->mainWidget() )
+		if ( QWidget *w = Kopete::UI::Global::mainWidget() )
 			return w->winId();
 		return 0;
 	}
