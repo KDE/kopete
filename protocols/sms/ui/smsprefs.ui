@@ -16,53 +16,47 @@
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QGroupBox">
+    <vbox>
         <property name="name">
-            <cstring>groupBox1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>490</width>
-                <height>66</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Services</string>
-        </property>
-        <widget class="QLayoutWidget">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>layout2</cstring>
+                <cstring>groupBox1</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>20</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>26</height>
-                </rect>
+            <property name="title">
+                <string>Services</string>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>layout2</cstring>
                     </property>
-                    <property name="text">
-                        <string>Service name:</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox">
-                    <property name="name">
-                        <cstring>serviceName</cstring>
-                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Service name:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox">
+                            <property name="name">
+                                <cstring>serviceName</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
             </hbox>
         </widget>
-    </widget>
+    </vbox>
 </widget>
 <includes>
     <include location="global" impldecl="in implementation">knuminput.h</include>
