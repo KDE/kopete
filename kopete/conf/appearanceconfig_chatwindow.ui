@@ -37,10 +37,39 @@
         </widget>
         <widget class="QButtonGroup">
             <property name="name">
+                <cstring>interfaceGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Interface Preference</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mSingleShot</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Single-shot window ( Jabber Email / Old ICQ Style )</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mChatWindow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Chat Window ( Jabber Chat / MSN / New ICQ Style )</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
                 <cstring>chatWindowGroup</cstring>
             </property>
             <property name="title">
-                <string>Chat Grouping Policy</string>
+                <string>Chat Window Grouping Policy</string>
             </property>
             <vbox>
                 <property name="name">
@@ -86,7 +115,7 @@
                 <cstring>mTransparencyGroupBox</cstring>
             </property>
             <property name="title">
-                <string>Translucency</string>
+                <string>Chat Wndow Translucency</string>
             </property>
             <grid>
                 <property name="name">
@@ -214,7 +243,7 @@
         </widget>
         <spacer>
             <property name="name">
-                <cstring>spacer1</cstring>
+                <cstring>spacer2</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
@@ -225,7 +254,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>51</height>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>

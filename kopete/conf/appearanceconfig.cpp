@@ -99,7 +99,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	// "Chat Window" TAB =========================================================
 	mPrfsChatWindow = new AppearanceConfig_ChatWindow(mAppearanceTabCtl);
-	mAppearanceTabCtl->addTab( mPrfsChatWindow, i18n("Chat &Window") );
+	mAppearanceTabCtl->addTab( mPrfsChatWindow, i18n("&Interface") );
 	connect(mPrfsChatWindow->mTransparencyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotTransparencyChanged(bool)));
 
 	// "Chat Appearance" TAB =====================================================
@@ -172,6 +172,7 @@ void AppearanceConfig::save()
 	p->setRaiseMsgWindow( mPrfsChatWindow->cb_RaiseMsgWindowChk->isChecked() );
 	p->setShowEvents( mPrfsChatWindow->cb_ShowEventsChk->isChecked() );
 	p->setChatWindowPolicy ( mPrfsChatWindow->chatWindowGroup->id(mPrfsChatWindow->chatWindowGroup->selected()) );
+	p->setInterfacePreference( mPrfsChatWindow->interfaceGroup->id(mPrfsChatWindow->interfaceGroup->selected()) );
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
@@ -258,6 +259,7 @@ void AppearanceConfig::reopen()
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
+	mPrfsChatWindow->interfaceGroup->setButton( p->interfacePreference() );
 
 	// "Chat Appearance" TAB
 	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );

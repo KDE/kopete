@@ -40,6 +40,9 @@
 #include "systemtray.h"
 #endif
 
+#define EMAIL_WINDOW 0
+#define CHAT_WINDOW 1
+
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
@@ -316,8 +319,17 @@ KopeteContact *KopeteMetaContact::preferredContact()
 
 void KopeteMetaContact::execute()
 {
-	// FIXME: Implement, don't hardcode startChat()!
-	startChat();
+	switch( KopetePrefs::prefs()->interfacePreference() )
+	{
+		case EMAIL_WINDOW:
+			sendMessage();
+			break;
+
+		case CHAT_WINDOW:
+		default:
+			startChat();
+			break;
+	}
 }
 
 QString KopeteMetaContact::statusIcon() const
