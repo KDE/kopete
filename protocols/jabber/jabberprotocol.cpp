@@ -121,7 +121,20 @@ void JabberProtocol::init()
 	statusBarIcon->setPixmap(offlineIcon);
 
 	KGlobal::config()->setGroup("Jabber");
-	
+
+	// make sure we load the SSL library if required
+	if(KGlobal::config()->readBoolEntry("UseSSL", "0"))
+	{
+		// try to load QSSL library needed by libpsi
+		// FIXME: this is ugly because it uses fixed dirs! should check ldconfig or something
+		QStringList dirs;
+
+		dirs += "/usr/lib";
+		dirs += "/usr/local/lib";
+
+		Jabber::Stream::loadSSL(dirs);
+	}
+
 	// if we need to connect on startup, do it now
 	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 		Connect();
@@ -135,6 +148,9 @@ bool JabberProtocol::unload()
 	
 	Disconnect();
 
+	// kick the SSL library
+	Jabber::Stream::unloadSSL();
+	
 	// remove the statusbar indicator
 	if (kopeteapp->statusBar())
 	{
@@ -236,21 +252,13 @@ void JabberProtocol::Connect()
 	// check if we are capable of using SSL if requested
 	if(KGlobal::config()->readBoolEntry("UseSSL", "0"))
 	{
-		// try to load QSSL library needed by libpsi
-		// FIXME: this is ugly because it uses fixed dirs! should check ldconfig or something
-		QStringList dirs;
-
-		dirs += "/usr/lib";
-		dirs += "/usr/local/lib";
-		
-		jabberClient->stream().loadSSL(dirs);
-		
 		bool sslPossible = jabberClient->setSSLEnabled(true);
 		
 		if(!sslPossible)
 		{
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("SSL is not supported. This is most likely "+
-															 "because the QSSL library could not be found."), i18n("SSL Error"));
+			KMessageBox::error(kopeteapp->mainWindow(),
+							   i18n("SSL is not supported. This is most likely because the QSSL library could not be found."),
+							   i18n("SSL Error"));
 			return;
 		}
 	}
