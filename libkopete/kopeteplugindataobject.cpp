@@ -77,14 +77,14 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
 		{
 			QDomElement pluginElement = pluginData.createElement( QString::fromLatin1("plugin-data") );
-			pluginElement.setAttribute( QString::fromLatin1("plugin-id"), QStyleSheet::escape( pluginIt.key() ) );
+			pluginElement.setAttribute( QString::fromLatin1("plugin-id"), pluginIt.key()  );
 
 			QMap<QString, QString>::ConstIterator it;
 			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
 			{
 				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1("plugin-data-field") );
-				pluginDataField.setAttribute( QString::fromLatin1("key"), QStyleSheet::escape( it.key() ) );
-				pluginDataField.appendChild( pluginData.createTextNode( QStyleSheet::escape( it.data() ) ) );
+				pluginDataField.setAttribute( QString::fromLatin1("key"), it.key()  );
+				pluginDataField.appendChild( pluginData.createTextNode(  it.data()  ) );
 				pluginElement.appendChild( pluginDataField );
 			}
 

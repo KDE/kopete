@@ -102,13 +102,13 @@ const QDomElement KopeteAccount::toXML()
 {
 	QDomDocument account;
 	account.appendChild( account.createElement( QString::fromLatin1("account") ) );
-	account.documentElement().setAttribute( QString::fromLatin1("account-id"), QStyleSheet::escape(d->id) );
-	account.documentElement().setAttribute( QString::fromLatin1("protocol-id"), QStyleSheet::escape(d->protocol->pluginId()) );
+	account.documentElement().setAttribute( QString::fromLatin1("account-id"), d->id );
+	account.documentElement().setAttribute( QString::fromLatin1("protocol-id"), d->protocol->pluginId() );
 
 	if( !d->password.isNull())
 	{
 		QDomElement password = account.createElement( QString::fromLatin1("password") );
-		password.appendChild( account.createTextNode( QStyleSheet::escape( cryptStr(d->password) ) ) );
+		password.appendChild( account.createTextNode( cryptStr(d->password)  ) );
 		account.documentElement().appendChild( password );
 	}
 

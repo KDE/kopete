@@ -71,7 +71,7 @@ const QDomElement KopeteGroup::toXML()
 	group.documentElement().setAttribute( QString::fromLatin1("view"), QString::fromLatin1( d->expanded ? "expanded" : "collapsed" )  );
 
 	QDomElement displayName = group.createElement(QString::fromLatin1("display-name"));
-	displayName.appendChild( group.createTextNode(QStyleSheet::escape( d->displayName )) );
+	displayName.appendChild( group.createTextNode( d->displayName ) );
 	group.documentElement().appendChild( displayName );
 
 	// Store other plugin data

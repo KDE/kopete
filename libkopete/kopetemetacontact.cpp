@@ -609,7 +609,7 @@ const QDomElement KopeteMetaContact::toXML()
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name") );
 	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::null );
-	displayName.appendChild( metaContact.createTextNode( QStyleSheet::escape( d->displayName ) ) );
+	displayName.appendChild( metaContact.createTextNode(  d->displayName  ) );
 	metaContact.documentElement().appendChild( displayName );
 
 	// Store groups
@@ -623,7 +623,7 @@ const QDomElement KopeteMetaContact::toXML()
 			if( !group_s.isEmpty() )
 			{
 				QDomElement group = metaContact.createElement( QString::fromLatin1("group") );
-				group.appendChild( metaContact.createTextNode( QStyleSheet::escape( group_s ) ) );
+				group.appendChild( metaContact.createTextNode( group_s  ) );
 				groups.appendChild( group );
 			}
 		}
@@ -653,8 +653,8 @@ const QDomElement KopeteMetaContact::toXML()
 		for( ; addrIt != appIt.data().end(); ++addrIt )
 		{
 			QDomElement addressBook = metaContact.createElement( QString::fromLatin1("address-book-field") );
-			addressBook.setAttribute( QString::fromLatin1("app"), QStyleSheet::escape( appIt.key() ) );
-			addressBook.setAttribute( QString::fromLatin1("key"), QStyleSheet::escape( addrIt.key() ) );
+			addressBook.setAttribute( QString::fromLatin1("app"),  appIt.key() ) ;
+			addressBook.setAttribute( QString::fromLatin1("key"),  addrIt.key()  );
 			addressBook.appendChild( metaContact.createTextNode( addrIt.data() ) );
 			metaContact.documentElement().appendChild( addressBook );
 		}
