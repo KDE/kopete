@@ -18,7 +18,7 @@ libkopeteconf_la_SOURCES = pluginconfig.cpp \
 	addaccountwizardpage1.ui addaccountwizardpage2.ui addaccountwizardpage3.ui \
 	addaccountwizard.cpp
 
-libkopeteconf_la_LDFLAGS = $(all_libraries)
-libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
+libkopeteconf_la_LDFLAGS = $(all_libraries) -no-undefined
+libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la -lktexteditor $(LIB_KDEUI)
 
 # vim: set noet:

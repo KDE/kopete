@@ -537,8 +537,6 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 	}
 }
 
-void AppearanceConfig::slotUpdatePreview()
-{
 	//reimplement KopeteContact and his abstract method
 	class TestContact : public KopeteContact
 	{
@@ -547,8 +545,8 @@ void AppearanceConfig::slotUpdatePreview()
 			virtual KopeteMessageManager* manager(bool) { return 0L; }
 	};
 
-
-
+void AppearanceConfig::slotUpdatePreview()
+{
 	QString model;
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && itemMap[style] != currentStyle )
