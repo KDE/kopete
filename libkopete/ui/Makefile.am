@@ -11,7 +11,7 @@ noinst_HEADERS = kopetecontactlistview.h pluginmodule.h configmodule.h \
 
 libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
 	preferencesdialog.cpp kopetecontactlistview.cpp pluginmodule.cpp \
-	statusbaricon.cpp addwizard.ui addwizardimpl.cpp protocolboxitem.cpp \
+	statusbaricon.cpp addwizardui.ui addwizardimpl.cpp protocolboxitem.cpp \
 	addcontactpage.cpp systemtray.cpp chatview.cpp appearanceconfig.cpp \
 	kopeteballoonbase.cpp kopeteballoon.cpp \
 	kopetehistorydialog.cpp kopetechatwindow.cpp \
