@@ -28,6 +28,7 @@
 #include "chatview.h"
 #include "kopeteemailwindow.h"
 #include "kopeteevent.h"
+#include "systemtray.h"
 
 #include "kopeteviewmanager.h"
 
@@ -168,8 +169,10 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 				msgFrom = msg.from()->displayName();
 
 			QString msgText = msg.plainBody();
-			if( msgText.length() > 30 )
-				msgText = msgText.left(30) + QString::fromLatin1("...");
+			if( msgText.length() > 90 )
+				msgText = msgText.left(88) + QString::fromLatin1("...");
+
+			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
 			switch(msg.importance())
 			{
@@ -177,11 +180,11 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 					//TODO: add an event for this (like a litle beep)
 					break;
 				case KopeteMessage::Highlight:
-					KNotifyClient::event( QString::fromLatin1( "kopete_highlight"), i18n("<qt>An Highlighted message arrived from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+					KNotifyClient::event( winId , QString::fromLatin1( "kopete_highlight"), i18n("<qt>An Highlighted message arrived from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
 					break;
 				case KopeteMessage::Normal:
 				default:
-					KNotifyClient::event( QString::fromLatin1( "kopete_incoming"), i18n("<qt>Incoming message from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+					KNotifyClient::event( winId , QString::fromLatin1( "kopete_incoming"), i18n("<qt>Incoming message from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
 					break;
 			}
 		}
