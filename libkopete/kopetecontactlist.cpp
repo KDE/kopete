@@ -93,6 +93,8 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 
 void KopeteContactList::loadXML()
 {
+	addGroup( KopeteGroup::toplevel );
+
 	QDomDocument contactList( "messaging-contact-list" );
 
 	QString filename = locateLocal( "appdata", "contactlist.xml" );

@@ -98,8 +98,8 @@ bool KopeteGroup::fromXML(const QDomNode& data)
 
 		if( groupElement.tagName() == "display-name" )
 		{
-			if( groupElement.text().isEmpty() )
-				return false;
+//			if( groupElement.text().isEmpty() )
+//				return false;
 			m_displayName = groupElement.text();
 		}
 		if( groupElement.tagName() == "type" )
@@ -123,12 +123,15 @@ bool KopeteGroup::fromXML(const QDomNode& data)
 			QString pluginId = groupElement.attribute(
 				"plugin-id", QString::null );
 			m_pluginData.insert( pluginId, groupElement.text() );
+			if(m_type==TopLevel) //FIXME:
+				toplevel->m_pluginData.insert( pluginId, groupElement.text() );
 		}                           
 
 		groupData = groupData.nextSibling();
 	}
-	
-	return true;
+//	return true;
+	return (m_type==Classic);
+	//FIXME: this workaroud allow to save data for the top-level group
 }
 
 void KopeteGroup::setDisplayName(const QString &s)
