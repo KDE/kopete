@@ -56,7 +56,6 @@
 #include <kcompletion.h>
 #include <kpopupmenu.h>
 #include <klibloader.h>
-#include <ktextedit.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -117,7 +116,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 		doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
 		doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
-		m_edit = static_cast<QTextEdit*>( editpart->widget() );
+		m_edit = static_cast<KTextEdit*>( editpart->widget() );
 	}
 	else
 	{

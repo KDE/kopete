@@ -21,11 +21,11 @@
 #include <qptrdict.h>
 #include <qstringlist.h>
 #include <qpair.h>
+#include <ktextedit.h>
 
 #include <kopetecontact.h>
 #include <kdockwidget.h>
 #include <klistview.h>
-#include <qtextedit.h>
 #include <dom/html_element.h>
 
 #include "kopeteview.h"
@@ -178,7 +178,7 @@ public:
 
 	virtual bool isVisible();
 
-	virtual QTextEdit *editWidget() { return m_edit; }
+	virtual QTextEdit *editWidget() { return static_cast<QTextEdit*>( m_edit ); }
 	virtual QWidget *mainWidget() { return this; }
 
 	/**
@@ -373,7 +373,7 @@ private:
 	QString unreadMessageFrom;
 	QMap<const KopeteContact *, bool> typingMap;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
-	QTextEdit* m_edit;
+	KTextEdit* m_edit;
 	QFont mFont;
 	QColor mFgColor;
 	QColor mBgColor;
