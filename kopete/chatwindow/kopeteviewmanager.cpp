@@ -160,8 +160,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
-		d->foreignMessage=!outgoingMessage;
+		d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
 		manager->view(true)->appendMessage( msg );
+		d->foreignMessage=false; //the view is created, reset the flag
 
 		if ( d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
 		{
@@ -221,8 +222,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoingMessage )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
-	d->foreignMessage=!outgoingMessage;
+	d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
 	KopeteView *thisView = manager->view( true );
+	d->foreignMessage=false; //the view is created, reset the flag
  	if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow )
 		thisView->raise();
 
