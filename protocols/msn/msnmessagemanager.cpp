@@ -51,6 +51,8 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
 
+	setInstance(protocol->instance());
+
 	connect( this, SIGNAL( messageSent( KopeteMessage&,
 		KopeteMessageManager* ) ),
 		this, SLOT( slotMessageSent( KopeteMessage&,

@@ -29,6 +29,6 @@ dummy.cpp: $(srcdir)/Makefile.am
 service_DATA = kopete_msn.desktop
 servicedir = $(kde_servicesdir)
 
-mydatadir = $(kde_datadir)/kopete
+mydatadir = $(kde_datadir)/kopete_msn
 mydata_DATA = msnchatui.rc
 

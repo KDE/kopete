@@ -20,6 +20,8 @@
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kconfig.h>
+#include <kdeversion.h>
+#include <kaboutdata.h>
 
 #include "kopeteaccountmanager.h"
 
@@ -31,8 +33,12 @@
 #include "msnmessagemanager.h"
 
 typedef KGenericFactory<MSNProtocol> MSNProtocolFactory;
-
+#if KDE_IS_VERSION(3,2,90)
+static const KAboutData aboutdata("kopete_msn", I18N_NOOP("MSN Messenger") , "1.0" );
+K_EXPORT_COMPONENT_FACTORY( libkopete_msn_shared, MSNProtocolFactory( &aboutdata ) )
+#else
 K_EXPORT_COMPONENT_FACTORY( libkopete_msn_shared, MSNProtocolFactory( "kopete_msn" ) )
+#endif
 
 MSNProtocol *MSNProtocol::s_protocol = 0L;
 
