@@ -18,6 +18,7 @@
 #include "kopeteiface.h"
 #include "kopetecontactlist.h"
 
+
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {
 }
@@ -59,7 +60,11 @@ void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 }
 
 
-
+bool KopeteIface::addContact( const QString &protocolName, const QString &userId,
+		const QString &nickName )
+{
+	return KopeteContactList::contactList()->addContact( protocolName, userId, nickName );
+}
 /*
  * Local variables:
  * c-indentation-style: k&r

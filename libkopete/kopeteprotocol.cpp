@@ -88,6 +88,12 @@ void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
 	m_contacts.remove( c->contactId() );
 }
 
+KopeteContact* KopeteProtocol::addContact( const QString &, const QString & )
+{
+	kdDebug() << "[KopeteContact] This protocol hasn't implemented addContact yet!" << endl;
+	return 0L;
+}
+
 #include "kopeteprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

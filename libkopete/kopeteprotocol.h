@@ -117,6 +117,15 @@ public:
 	 */
 	QDict<KopeteContact> contacts( KopeteMetaContact *mc );
 
+	/**
+	 * Adds a contact to this protocol with the specified user ID and nickname
+	 * 
+	 * @param userId The unique ID for this protocol
+	 * @param nickName The nickname of the contact (may equal userId for some protocols
+	 * @return Pointer to the KopeteContact object which was added
+	 */
+	virtual KopeteContact* addContact( const QString &userId, const QString &nickName );
+
 public slots:
 	/**
 	 * Go online for this service.
@@ -129,6 +138,7 @@ public slots:
 	 * This is a slot, so it can be called directly from e.g. a KAction.
 	 */
 	virtual void disconnect() = 0;
+
 signals:
 	/**
 	 * The status icon changed. See also @ref setStatusIcon().

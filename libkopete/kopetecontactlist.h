@@ -148,6 +148,17 @@ public:
 	 * Get a group
 	 */
 	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
+	
+	/**
+	 * Adds a contact with the specified params. This function is exposed via DCOP
+	 * 
+	 * @param protocolName The name of the protocol this contact is for ("ICQ", etc)
+	 * @param userId The unique ID for this protocol
+	 * @param nickName The nickname of the contact (may equal userId for some protocols
+	 * @return Weather or not the contact was added sucessfully
+	 */
+	bool addContact( const QString &protocolName, const QString &userId,
+		const QString &nickName );
 
 public slots:
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );

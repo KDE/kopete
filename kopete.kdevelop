@@ -89,10 +89,7 @@
     <classstore>
       <enablepcs>true</enablepcs>
       <enablepp>true</enablepp>
-      <preparsing>
-        <directory dir="/home/jason/src/qt-copy/" parsesubdir="Yes" />
-        <directory dir="/opt/kde3/include/" parsesubdir="Yes" />
-      </preparsing>
+      <preparsing/>
     </classstore>
     <filetemplates>
       <choosefiles>false</choosefiles>

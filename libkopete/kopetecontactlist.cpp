@@ -28,11 +28,12 @@
 #include <klocale.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
-
+#include <kmessagebox.h>
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
 #include "kopetegroup.h"
+
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -395,6 +396,45 @@ void KopeteContactList::removeGroup( KopeteGroup *g)
 	m_groupList.remove( g );
 	emit groupRemoved( g );
 	delete g;
+}
+
+bool KopeteContactList::addContact( const QString &protocolName, const QString &userId,
+		const QString &nickName )
+{
+	//Get the protocol instance
+	KopeteProtocol *myProtocol = (KopeteProtocol*) LibraryLoader::pluginLoader()->searchByName( protocolName );
+	
+	if( myProtocol != 0L ) 
+	{
+		QString contactName;
+		
+		//If the nickName isn't specified we need to display the userId in the prompt
+		if( nickName.isEmpty() || nickName.isNull() )
+			contactName = userId;
+		else
+			contactName = nickName;
+		
+		//Confirm with the user before we add the contact
+		if( KMessageBox::questionYesNo( 0, i18n("An external application is attempting to add the "
+				" %1 contact \"%2\" to your contact list. Do you want to allow this?"
+				).arg(protocolName).arg(contactName), i18n("Allow contact?")) == 3) // Yes == 3
+		{
+			//User said Yes
+			myProtocol->addContact( userId, nickName );
+			return true;
+		} else {
+			//User said No
+			return false;
+		}
+		
+	} else {
+		//This protocol is not loaded
+		KMessageBox::error( 0, i18n("An external application has attempted to add a contact using "
+				" the %1 protocol, which does not exist, or is not loaded.").arg( protocolName ),
+				i18n("Missing Protocol"));
+		
+		return false;
+	}
 }
 
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)

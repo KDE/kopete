@@ -46,6 +46,16 @@ k_dcop:
 	// Better add a contactStatus( const QString id ) I'd say - Martijn
 	QStringList contactsStatus();
 
+	/**
+	 * Adds a contact with the specified params.
+	 * 
+	 * @param protocolName The name of the protocol this contact is for ("ICQ", etc)
+	 * @param userId The unique ID for this protocol
+	 * @param nickName The nickname of the contact (may equal userId for some protocols
+	 * @return Weather or not the contact was added sucessfully
+	 */
+	bool addContact( const QString &protocolName, const QString &userId,
+		const QString &nickName );
 };
 
 #endif
