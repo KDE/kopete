@@ -352,8 +352,8 @@ void KopeteMessageManager::readMessages()
 		{
 			KWin::setOnDesktop(mainWindow()->winId() , KWin::currentDesktop()); //set on the desktop
 			mainWindow()->raise(); // make it top window
+			mainWindow()->makeWidgetDockVisible(mainView);
 		}
-		mainWindow()->makeWidgetDockVisible(mainView);
 	}
 	d->isBusy=false;
 }
@@ -494,7 +494,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	if (!widget())
 		newChatWindow();
 	else
-		isvisible = widget()->isVisible();
+		isvisible = mainWindow()->isVisible();
 
 
 	if (d->mReadMode == Popup)
