@@ -79,7 +79,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 	}
 }
 
-void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint id,
+void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	const QString &data )
 {
 	kdDebug() << "MSNSwitchBoardSocket::parseCommand" << endl;
