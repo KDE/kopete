@@ -119,6 +119,9 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 
 void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {
+	if ( d->contacts.contains( mc ) )
+		return;
+
 	d->contacts.append( mc );
 
 	emit metaContactAdded( mc );
