@@ -70,14 +70,17 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
 }
 
+
+
 void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId   = serializedData[ "contactId" ] ;
 	QString identityId =  serializedData[ "identityId" ] ;
 	QString displayName = serializedData[ "displayName" ];
+	QString lists = serializedData[ "lists" ];
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
-
+	
 	QDict<KopeteIdentity> identities=KopeteIdentityManager::manager()->identities(this);
 
 	if(identityId.isNull())
@@ -96,6 +99,16 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	c->setOnlineStatus( FLN );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
+		
+	c->setInfo( "PHH" , serializedData[ "PHH" ] );
+	c->setInfo( "PHW" , serializedData[ "PHW" ] );
+	c->setInfo( "PHM" , serializedData[ "PHM" ] );
+	
+	//kdDebug( 14140 ) << k_funcinfo << lists << " does it contains R ? : " << (bool)(lists.contains("R" )) << endl;
+
+	c->setBlocked(  (bool)(lists.contains('B')) );
+	c->setAllowed(  (bool)(lists.contains('A')) );
+	c->setReversed( (bool)(lists.contains('R')) );
 }
 
 AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , KopeteIdentity *i)
@@ -133,57 +146,6 @@ void MSNProtocol::slotSyncContactList()
 	cnt=contactsFile->readNumEntry("Count",0);
 */
 }
-
-/*void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
-{
-	kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
-	mIsConnected = (status == MSNSocket::Connected);
-	if( status == MSNSocket::Disconnected )
-	{
-		KopeteMessageManagerDict sessions =
-			KopeteMessageManagerFactory::factory()->protocolSessions( this );
-		QIntDictIterator<KopeteMessageManager> kmmIt( sessions );
-		for( ; kmmIt.current() ; ++kmmIt )
-		{
-			// Disconnect all active chats (but don't actually remove the
-			// chat windows, the user might still want to view them!)
-			MSNMessageManager *msnMM =
-				dynamic_cast<MSNMessageManager *>( kmmIt.current() );
-			if( msnMM )
-			{
-				kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: "
-					<< "Closed MSNMessageManager because the protocol socket "
-					<< "closed." << endl;
-				msnMM->slotCloseSession();
-			}
-		}
-
-		QDictIterator<KopeteContact> it( contacts() );
-		for ( ; it.current() ; ++it )
-			static_cast<MSNContact *>( *it )->setOnlineStatus( statusFLN() );
-
-		m_allowList.clear();
-		m_blockList.clear();
-		m_groupList.clear();
-
-		mIsConnected = false;
-		setStatusIcon( "msn_offline" );
-//		m_openInboxAction->setEnabled(false);
-
-		m_status = statusFLN();
-
-		// Reset flags. They can't be set in the connect method, because
-		// offline changes might have been made before. Instead the c'tor
-		// sets the defaults, and the disconnect slot resets those defaults
-		// FIXME: Can't we share this code?
-		m_publicNameSyncMode = SyncFromServer;
-	}
-	else if( status == MSNSocket::Connecting )
-	{
-		for( QDictIterator<KopeteContact> it( contacts() ); it.current() ; ++it )
-			static_cast<MSNContact *>( *it )->setOnlineStatus( statusFLN() );
-	}
-}*/
 
 KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
 {

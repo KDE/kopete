@@ -238,7 +238,19 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 		groups += QString::number( it.key() );
 	}
 
+	QString lists="C";
+	if(m_blocked)
+		lists +="B";
+	if(m_allowed)
+		lists +="A";
+	if(m_reversed)
+		lists +="R";
+
 	serializedData[ "groups" ]  = groups;
+	serializedData[ "PHH" ]  = m_phoneHome;
+	serializedData[ "PHW" ]  = m_phoneWork;
+	serializedData[ "PHM" ]  = m_phoneMobile;
+	serializedData[ "lists" ] = lists;
 }
 
 const QMap<uint, KopeteGroup*> & MSNContact::serverGroups() const
