@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 #include <qserversocket.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 struct DirectInfo { //info used for keeping track of direct connections
 	QByteArray cookie;

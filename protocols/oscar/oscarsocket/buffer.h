@@ -19,7 +19,7 @@
 #define BUFFER_H
 
 #include <qobject.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 /**The buffer that is sent to the oscar server
   *@author twl6
@@ -91,7 +91,7 @@ public:
   /** Gets a TLV, storing it in a struct and returning it */
   TLV getTLV(void);
   /** Gets a list of TLV's */
-  QList<TLV> getTLVList(void);
+  QPtrList<TLV> getTLVList(void);
   /** appends a flap header to the end of the buffer w/ given length and channel */
   int appendFlap(const BYTE chan, const WORD len);
   /** Creates a chat data segment for a tlv and calls addTLV with that data */

@@ -19,7 +19,7 @@
 #ifndef ADDCONTACTWIZARD_H
 #define ADDCONTACTWIZARD_H
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qptrlist.h>
 

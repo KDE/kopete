@@ -19,7 +19,7 @@
 #define PREFERENCESDIALOG_H
 
 #include <kdialogbase.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 class ConfigModule;
 
@@ -47,7 +47,7 @@ public slots:
 private:
 	PreferencesDialog();
 
-	QList<ConfigModule> mModules;
+	QPtrList<ConfigModule> mModules;
 
 	static PreferencesDialog *s_preferencesDialog;
 };

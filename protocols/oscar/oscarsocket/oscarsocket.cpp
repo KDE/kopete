@@ -702,7 +702,7 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 /** parse the server's authorization response (which hopefully contains the cookie) */
 void OscarSocket::parseAuthResponse(Buffer &inbuf)
 {
-    QList<TLV> lst = inbuf.getTLVList();
+    QPtrList<TLV> lst = inbuf.getTLVList();
     lst.setAutoDelete(TRUE);
     TLV *sn = findTLV(lst,0x0001);  //screen name
     TLV *url = findTLV(lst,0x0004);  //error url
@@ -759,7 +759,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 }
 
 /** finds a tlv of type typ in the list */
-TLV * OscarSocket::findTLV(QList<TLV> &l, WORD typ)
+TLV * OscarSocket::findTLV(QPtrList<TLV> &l, WORD typ)
 {
     TLV *t;
     for(t=l.first();t;t=l.next())
@@ -857,7 +857,7 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 {
     DWORD offset = inbuf.getDWord();
     DWORD len = inbuf.getDWord();
-    QList<TLV> ql = inbuf.getTLVList();
+    QPtrList<TLV> ql = inbuf.getTLVList();
     ql.setAutoDelete(TRUE);
     kdDebug(14150) << "[OSCAR][parseMemRequest] requested offset " << offset
 	      << ", length " << len << endl;
@@ -1007,7 +1007,7 @@ void OscarSocket::requestBOSRights(void)
 /** Parses SSI rights data */
 void OscarSocket::parseBOSRights(Buffer &inbuf)
 {
-	QList<TLV> ql = inbuf.getTLVList();
+	QPtrList<TLV> ql = inbuf.getTLVList();
 	ql.setAutoDelete(TRUE);
 	TLV *t;
 	WORD maxpermits = 0, maxdenies = 0;
@@ -1299,7 +1299,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 										cap[14], cap[15]);
 				}
 				//Next comes a big TLV chain of stuff that may or may not exist
-				QList<TLV> tlvlist = tmpbuf.getTLVList();
+				QPtrList<TLV> tlvlist = tmpbuf.getTLVList();
 				TLV *cur;
 				tlvlist.setAutoDelete(true);
 				for (cur = tlvlist.first();cur;cur = tlvlist.next())
@@ -1608,7 +1608,7 @@ void OscarSocket::sendUserProfileRequest(const QString &sn)
 void OscarSocket::parseUserProfile(Buffer &inbuf)
 {
 	UserInfo u = parseUserInfo(inbuf);
-  QList<TLV> tl = inbuf.getTLVList();
+  QPtrList<TLV> tl = inbuf.getTLVList();
   tl.setAutoDelete(true);
   QString profile = "<HTML><HEAD><TITLE>User Information for %n</TITLE><HEAD><BODY BGCOLOR=#CCCCCC>";
   profile += "Username: <B>" + u.sn + "</B>";
@@ -1731,7 +1731,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 		// called unless you want to connect to the advertisements server
     kdDebug(14150) << "[OSCAR] Parsing redirect" << endl;
     OscarConnection *servsock = new OscarConnection(getSN(),"Redirect",Redirect,QByteArray(8));
-    QList<TLV> tl = inbuf.getTLVList();
+    QPtrList<TLV> tl = inbuf.getTLVList();
     int n;
     QString host;
     tl.setAutoDelete(true);

@@ -47,7 +47,7 @@ struct RateClass { //rate info
 	DWORD current;
 	DWORD max;
 	BYTE unknown[5];
-	QList<SnacPair> members;
+	QPtrList<SnacPair> members;
 };
 
 typedef struct TAimConfig
@@ -196,7 +196,7 @@ private: // Private methods
   /** parse my user info */
   void parseMyUserInfo(Buffer &inbuf);
   /** finds a tlv of type typ in the list */
-  TLV * findTLV(QList<TLV> &l, WORD typ);
+  TLV * findTLV(QPtrList<TLV> &l, WORD typ);
   /**
 	 * Parse the server's authorization response
 	 * (which hopefully contains the cookie)

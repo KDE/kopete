@@ -254,9 +254,9 @@ TLV Buffer::getTLV(void)
 }
 
 /** Gets a list of TLV's */
-QList<TLV> Buffer::getTLVList(void)
+QPtrList<TLV> Buffer::getTLVList(void)
 {
-	QList<TLV> ql;
+	QPtrList<TLV> ql;
 	ql.setAutoDelete(FALSE);
 	while (length != 0)
 	{

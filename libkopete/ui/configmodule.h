@@ -22,7 +22,7 @@
 #define CONFIGMODULE_H
 
 #include <qwidget.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 /**
   * @author Duncan Mac-Vicar Prett <duncan@kde.org>
