@@ -153,11 +153,14 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 		if ( contact )
 		{
+			// We are over a contact
 			if ( !contact->toolTip().isNull() )
 				toolTip = contact->toolTip();
 		}
 		else
 		{
+			// We are over a metacontact with > 1 child contacts, and not over a specific contact
+			// FIXME: this only works where the metacontact has an Id set (i.e., a kabc id).  Otherwise, metaContactId is null, and the mime source factory can't look up an icon.  This is why Richard wants all metacontacts to have an id string, so the mime source factory can look up the metacontact when the tooltip is rendered.  (Will)
 			KopeteMetaContact *mc = metaLVI->metaContact();
 			toolTip = i18n( "<b>%2</b><br><img src=\"kopete-metacontact-icon:%3\">&nbsp;%1" ).
 				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ), mc->metaContactId() );
