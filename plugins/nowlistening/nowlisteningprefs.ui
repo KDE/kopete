@@ -1,0 +1,100 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>NowListeningPrefsUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>NowListeningPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>387</width>
+            <height>320</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>layout3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>20</y>
+                <width>273</width>
+                <height>196</height>
+            </rect>
+        </property>
+        <vbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <widget class="QLayoutWidget">
+                <property name="name">
+                    <cstring>layout1</cstring>
+                </property>
+                <hbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Check for new songs every (s): </string>
+                        </property>
+                    </widget>
+                    <widget class="QSpinBox">
+                        <property name="name">
+                            <cstring>m_freq</cstring>
+                        </property>
+                        <property name="maxValue">
+                            <number>3600</number>
+                        </property>
+                        <property name="minValue">
+                            <number>5</number>
+                        </property>
+                        <property name="lineStep">
+                            <number>5</number>
+                        </property>
+                        <property name="value">
+                            <number>180</number>
+                        </property>
+                    </widget>
+                </hbox>
+            </widget>
+            <widget class="QFrame">
+                <property name="name">
+                    <cstring>frame4</cstring>
+                </property>
+                <property name="frameShape">
+                    <enum>HLine</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Sunken</enum>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel3</cstring>
+                </property>
+                <property name="text">
+                    <string>Use this message when advertising:</string>
+                </property>
+            </widget>
+            <widget class="QTextEdit">
+                <property name="name">
+                    <cstring>m_message</cstring>
+                </property>
+                <property name="text">
+                    <string>Now Listening To: </string>
+                </property>
+            </widget>
+        </vbox>
+    </widget>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
