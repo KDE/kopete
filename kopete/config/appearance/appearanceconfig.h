@@ -103,7 +103,7 @@ private:
 private:
 	void updateHighlight();
 	QString fileContents(const QString &path);
-	void addStyle(const QString &styleName, const QString &xslString);
+	bool addStyle(const QString &styleName, const QString &xslString);
 
 	KopeteAppearanceConfigPrivate *d;
 };

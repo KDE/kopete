@@ -488,24 +488,28 @@ void AppearanceConfig::slotDeleteStyle()
 
 void AppearanceConfig::slotStyleSaved()
 {
-	addStyle( styleEditor->styleName->text(), KTextEditor::editInterface( editDocument )->text() );
-
-	// Remove our tempfile
-	QString filePath = itemMap[ editedItem ];
-	if ( !filePath.isNull() )
+	if( addStyle( styleEditor->styleName->text(), KTextEditor::editInterface( editDocument )->text() ) )
 	{
-		if ( QFileInfo( filePath ).isWritable() )
-			QFile::remove( filePath );
-	}
-	delete editedItem;
+		// Remove our tempfile
+		QString filePath = itemMap[ editedItem ];
+		if ( !filePath.isNull() )
+		{
+			if ( QFileInfo( filePath ).isWritable() )
+				QFile::remove( filePath );
+		}
+		delete editedItem;
+		editedItem=0L;
 
-	styleEditor->deleteLater();
-	emit changed( true );
+		styleEditor->deleteLater();
+		emit changed( true );
+	}
+	else //The style has not been saved for a reason or another - don't loose it
+		styleEditor->show();
 }
 
-void AppearanceConfig::addStyle( const QString &styleName, const QString &styleSheet )
+bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleSheet )
 {
-	if( !mPrfsChatWindow->styleList->findItem( styleName ) )
+	if( !mPrfsChatWindow->styleList->findItem( styleName )  ||  (mPrfsChatWindow->styleList->selectedItem() && mPrfsChatWindow->styleList->selectedItem()->text()==styleName)  )
 	{
 		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
 		QFile out( filePath );
@@ -520,6 +524,7 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 			mPrfsChatWindow->styleList->sort();
 			styleChanged = true;
+			return true;
 		}
 		else
 		{
@@ -530,6 +535,9 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	{
 		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("A style named \"%1\" already exists. Please rename the style.").arg( styleName ), i18n("Could Not Save") );
 	}
+
+	//The style has not been saved for a reason or another
+	return false;
 }
 
 //reimplement KopeteContact and his abstract method
