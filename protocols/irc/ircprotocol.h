@@ -101,6 +101,7 @@ private slots:
 	void slotQuitCommand( const QString &args, KopeteMessageManager *manager);
 	void slotPartCommand( const QString &args, KopeteMessageManager *manager);
 	void slotQuoteCommand( const QString &args, KopeteMessageManager *manager);
+	void slotMotdCommand( const QString &args, KopeteMessageManager *manager);
 
 private:
 	static IRCProtocol *s_protocol;

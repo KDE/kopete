@@ -130,6 +130,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quote"),
 		SLOT( slotQuoteCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /quote <command text> - Send raw commands to the IRC server.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("motd"),
+		SLOT( slotMotdCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /motd - Shows the message of the day.") );
 		
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("raw"),
 		QString::fromLatin1("quote %s"),
@@ -340,6 +344,17 @@ void IRCProtocol::slotQuoteCommand( const QString &args, KopeteMessageManager *m
 	else
 	{
 		KopeteMessage msg(manager->user(), manager->members(), i18n("You must enter some text to send to the server."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		manager->appendMessage(msg);
+	}
+}
+
+void IRCProtocol::slotMotdCommand( const QString &, KopeteMessageManager *manager )
+{
+	const QStringList motd = static_cast<IRCAccount*>( manager->account() )->engine()->motd();
+	for( QStringList::ConstIterator it = motd.begin(); it != motd.end(); ++it )
+	{
+		KopeteMessage msg( manager->user(), manager->members(), *it, KopeteMessage::Internal,
+			KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager->appendMessage(msg);
 	}
 }

@@ -19,6 +19,7 @@
 #define IRCSERVERCONTACT_H
 
 #include <qvaluelist.h>
+#include <qstringlist.h>
 
 #include "kopetemessagemanagerfactory.h"
 #include "irccontact.h"
@@ -58,6 +59,7 @@ class IRCServerContact : public IRCContact
 		void slotViewCreated( KopeteView* );
 		void slotDumpMessages();
 		void slotAppendMessage( const QString &message );
+		void slotIncomingMotd( const QStringList &motd );
 		void slotIncomingNotice( const QString &orig, const QString &notice );
 	
 	private:

@@ -136,6 +136,8 @@ public:
 	void setTopic(const QString &channel, const QString &topic);
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void partChannel(const QString &name, const QString &reason);
+	
+	const QStringList &motd() { return m_motdBuffer; }
 
 signals:
 	//Engine Signals
@@ -147,9 +149,7 @@ signals:
 	void receivedMessage(const KIRCMessage &);
 	
 	//ServerContact Signals
-	void incomingStartOfMotd();
-	void incomingMotd(const QString &motd);
-	void incomingEndOfMotd();
+	void incomingMotd(const QStringList &motd);
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
 	void incomingYourHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
@@ -309,6 +309,9 @@ protected:
 	ircMethod numericReply_332;
 	ircMethod numericReply_333;
 	ircMethod numericReply_353;
+	ircMethod numericReply_372;
+	ircMethod numericReply_375;
+	ircMethod numericReply_376;
 
 	ircMethod numericReply_433;
 	ircMethod numericReply_464;
@@ -375,6 +378,7 @@ protected:
 	QString m_UserString;
 	QString m_SourceString;
 	QString m_PendingNick;
+	QStringList m_motdBuffer;
 
 	QDict<KIRCMethodFunctorCall> m_IrcMethods;
 

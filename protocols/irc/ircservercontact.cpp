@@ -53,6 +53,10 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 			
 	QObject::connect( m_engine, SIGNAL(incomingConnectString( const QString &)),
 			this, SLOT(slotAppendMessage(const QString &)) );
+		
+	//FIXME:: This shouldn't add MOTD stuffs when someone uses /motd	
+	QObject::connect( m_engine, SIGNAL(incomingMotd( const QStringList &)),
+			this, SLOT(slotIncomingMotd(const QStringList &)) );
 			
 	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotViewCreated(KopeteView*)) );
@@ -135,6 +139,12 @@ void IRCServerContact::slotAppendMessage( const QString &message )
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
 	slotAppendMessage( i18n("NOTICE %1: %2").arg( orig ).arg( notice ) );
+}
+
+void IRCServerContact::slotIncomingMotd( const QStringList &motd )
+{
+	for( QStringList::ConstIterator it = motd.begin(); it != motd.end(); ++it )
+		slotAppendMessage( *it );
 }
 
 void IRCServerContact::appendMessage( KopeteMessage &msg )

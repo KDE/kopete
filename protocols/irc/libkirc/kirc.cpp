@@ -220,17 +220,17 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	/* Part of the MOTD.
 	 * ":- <text>" */
-	addIrcMethod("372",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingMotd,			1,	1));
+	addIrcMethod("372",	&KIRC::numericReply_372,	1,	1);
 
 	/* Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
 	 * ":- <server> Message of the day - "
 	 */
-	addIrcMethod("375",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingStartOfMotd,		1,	1));
+	addIrcMethod("375",	&KIRC::numericReply_375,	1,	1);
 //	addIrcMethod("375",	KIRCMethodFunctor_S_Suffix(this, &KIRC::incomingStartOfMotd,	1,	1));
 
 	/* End of the motd.
 	 * ":End of MOTD command" */
-	addIrcMethod("376",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingEndOfMotd,		1,	1));
+	addIrcMethod("376",	&KIRC::numericReply_376,	1,	1);
 
 	/* Gives a signal to indicate that the command issued failed because the person not being on IRC in the for of:
 	 * "<nickname> :No such nick/channel"
@@ -1124,6 +1124,7 @@ bool KIRC::numericReply_333( const KIRCMessage & /* msg */ )
 	 */
 	 return true;
 }
+
 bool KIRC::numericReply_353(const KIRCMessage &msg)
 {
 	/* Gives a listing of all the people in the channel in the form of:
@@ -1133,6 +1134,24 @@ bool KIRC::numericReply_353(const KIRCMessage &msg)
 	 */
 	kdDebug(14120) << "Adding name list:" << msg.suffix() << endl;
 	emit incomingNamesList(msg.args()[2], QStringList::split(' ', msg.suffix()));
+	return true;
+}
+
+bool KIRC::numericReply_372(const KIRCMessage &msg)
+{
+	m_motdBuffer.append( msg.suffix() );
+	return true;
+}
+
+bool KIRC::numericReply_375(const KIRCMessage &msg)
+{
+	m_motdBuffer.clear();
+	return true;
+}
+
+bool KIRC::numericReply_376(const KIRCMessage &msg)
+{
+	emit incomingMotd(m_motdBuffer);
 	return true;
 }
 
