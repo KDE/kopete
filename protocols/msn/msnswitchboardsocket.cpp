@@ -111,7 +111,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you.\nYou can't talk to this user." ).arg( m_msgHandle );
+			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user." ).arg( m_msgHandle );
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
 			break;
@@ -126,7 +126,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 713:
 		{
-			QString msg = i18n( "You are trying to invite too many contact to this chat in the same time" ).arg( m_msgHandle );
+			QString msg = i18n( "You are trying to invite too many contacts to this chat at the same time" ).arg( m_msgHandle );
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
 			break;

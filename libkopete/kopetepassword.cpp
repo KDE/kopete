@@ -330,8 +330,8 @@ public:
 			// call after this point is in Kopete::Password, so as long as we've not been deleted
 			// everything should work out OK. We have no parent QObject, so we should survive.
 			if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
-			        i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
-			              "Do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
+			        i18n( "<qt>Kopete is unable to save your password securely in your wallet;<br>"
+			              "do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
 			        i18n( "Unable to Store Secure Password" ),
 			        KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
 			        QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )

@@ -143,15 +143,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		if(m_tmpLastHandle==msnId())
 		{
-			QString msg = i18n( "Unable to change your display name.\nPlease check if your display name doesn't contain 'forbidden' "
-				"words or is too long." );
+			QString msg = i18n( "Unable to change your display name.\nPlease ensure your display name neither contains 'forbidden' " 				"words nor is too long." );
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		}
 		/*else
 		 {
 			QString msg = i18n( "You are trying to change the display name of a user who has not "
-				"confirmed his or her email address.\n"
-				"The contact was not renamed on the server." );
+				"confirmed his or her email address;\n"
+				"the contact was not renamed on the server." );
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		}*/
 		break;
@@ -159,14 +158,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 210:
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-			i18n("Your contact-list is full! You can't add contact anymore."), 
+			i18n("Your contact list is full; you cannot add any new contacts."), 
 			i18n( "MSN Contact List Full" ) );
 		break;
 	}
 	case 215:
 	{
-		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server!<br>"
-			"If Kopete doesn't show the user, please send us a detailed bug report "
+		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br>"
+			"if Kopete doesn't show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
 			"console (in gzipped format, as it is probably a lot of output!)</qt>" ).arg(m_tmpLastHandle);
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
@@ -182,13 +181,13 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 219:
 	{
-		QString msg = i18n( "The user '%1' seems to already blocked or allowed one the server!" ).arg(m_tmpLastHandle);
+		QString msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." ).arg(m_tmpLastHandle);
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 223:
 	{
-		QString msg = i18n( "You have reached the maximum number of groups.\n"
+		QString msg = i18n( "You have reached the maximum number of groups:\n"
 			"MSN doesn't support more than 30 groups." );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
@@ -199,14 +198,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
 			i18n("Kopete is trying to perform an operation on a group or a contact that does not exists on the server.\n"
-			"This might happen if the Kopete contact-list and the msn server contact-list are not correctly synchrone. If it's the case, you probably should send a bug report"), 
+			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report"), 
 			i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 229:
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-			i18n("The group name is too long. It has not been changed on the MSN server."), 
+			i18n("The group name is too long; it has not been changed on the MSN server."), 
 			i18n( "Invalid group name - MSN Plugin" ) );
 		break;
 	}
@@ -227,7 +226,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 913:
 	{
-		QString msg = i18n( "You cannot send messages when you are offline or when you are invisible." );
+		QString msg = i18n( "You can not send messages when you are offline or when you are invisible." );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -235,11 +234,11 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 921:
 	case 922:
 	    KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n( "The MSN Server is busy or temporarily unavailable. Try to reconnect later." ), i18n( "MSN Plugin" ) );
+			i18n( "The MSN Server is busy or temporarily unavailable; try to reconnect later." ), i18n( "MSN Plugin" ) );
 		break;
 	case 923:
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n( "You are trying to perform an aciton you are not allowed to perform in 'kid mode'" ) ,
+			i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'" ) ,
 			i18n( "MSN Plugin" ) );
 		break;
 

@@ -141,7 +141,7 @@ void installEmoticonTheme(const QString &archiveName)
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error, i18n("<qt>The file \"%1\" is not a valid" \
-				" emoticon theme archive!</qt>").arg(archiveName));
+				" emoticon theme archive.</qt>").arg(archiveName));
 		archive->close();
 		delete archive;
 		delete progressDlg;

@@ -404,7 +404,7 @@
                                     <cstring>preferSSL</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Prefer SSL based connections</string>
+                                    <string>&amp;Prefer SSL-based connections</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="2" rowspan="1" colspan="3">

@@ -645,7 +645,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			switch(streamCondition)
 			{
 				case XMPP::Stream::GenericStreamError:
-					errorCondition = i18n("Generic stream error (sorry, I don't know any more detailed reason)");
+					errorCondition = i18n("Generic stream error (sorry, I do not have a more-detailed reason)");
 					break;
 				case XMPP::Stream::Conflict:
 					// FIXME: need a better error message here
@@ -702,7 +702,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("Could not authenticate with the proxy server.");
 					break;
 				default:
-					errorCondition = i18n("Sorry, something unexpected happened that I don't know more about.");
+					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
 					break;
 			}
 
@@ -721,7 +721,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("Could not connect to a required remote resource.");
 					break;
 				case XMPP::ClientStream::SeeOtherHost:
-					errorCondition = i18n("Seems we have been redirected to another server. Don't know how to handle this.");
+					errorCondition = i18n("It appears we have been redirected to another server; I do not know how to handle this.");
 					break;
 				case XMPP::ClientStream::UnsupportedVersion:
 					errorCondition = i18n("Unsupported protocol version.");
