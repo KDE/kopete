@@ -61,6 +61,8 @@ void KopeteCommand::slotAction()
 	if( m_minArgs > 0 )
 	{
 		args = KInputDialog::getText( i18n("Enter Arguments"), i18n("Enter the arguments to %1:").arg(m_command) );
+		if( args.isNull() )
+			return;
 	}
 
 	processCommand( args, manager, true );
