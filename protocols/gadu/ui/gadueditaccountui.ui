@@ -313,9 +313,6 @@
                     <property name="text">
                         <string>C&amp;ache server information</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
