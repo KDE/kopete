@@ -130,11 +130,9 @@ bool MimeTypeHandler::dispatchURL( const KURL &url )
 		if( mimeHandler )
 		{
 			mimeHandler->handleURL( url );
+			return true;
 		}
-		else
-		{
-			kdDebug(14010) << "No mime type handler can handle this URL: " << url.prettyURL() << endl;
-		}
+		kdDebug(14010) << "No mime type handler can handle this URL: " << url.prettyURL() << endl;
 	}
 	return false;
 }
