@@ -152,8 +152,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		emit contactStatusChanged( data.section( ' ', 0, 0 ),
-			data.section( ' ', 0, 0 ), MSNProtocol::FLN );
+		emit contactStatusChanged( data.section( ' ', 0, 0 ),QString::null, MSNProtocol::FLN );
 	}
 	else if( cmd == "ILN" )
 	{

@@ -132,7 +132,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		QString handle = data.section( ' ', 0, 0 ).replace(
 			QRegExp( "\r\n" ), "" );
 
-    userLeftChat(handle);
+		userLeftChat(handle);
 
 	}
 	else if( cmd == "MSG" )
@@ -154,29 +154,29 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
 	{
 		// filetransfer  
-    if( msg.contains("Invitation-Command: ACCEPT") )
+		if( msg.contains("Invitation-Command: ACCEPT") )
 		{
-      QString ip_adress = msg.right( msg.length() - msg.find( "IP-Address:" ) - 12 );
+			QString ip_adress = msg.right( msg.length() - msg.find( "IP-Address:" ) - 12 );
 			ip_adress.truncate( ip_adress.find("\r\n") );
-    	QString authcook = msg.right( msg.length() - msg.find(  "AuthCookie:" ) - 12 );
+			QString authcook = msg.right( msg.length() - msg.find(  "AuthCookie:" ) - 12 );
 			authcook.truncate( authcook.find("\r\n") );
-    	QString port = msg.right( msg.length() - msg.find(  "Port:" ) - 6 );
+			QString port = msg.right( msg.length() - msg.find(  "Port:" ) - 6 );
 			port.truncate( port.find("\r\n") );
 
-      kdDebug() << "MSNSwitchBoardSocket::slotReadMessage : filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
+			kdDebug() << "MSNSwitchBoardSocket::slotReadMessage : filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
 
-      MSNFileTransferSocket *MFTS=new  MSNFileTransferSocket(m_myHandle,authcook,m_filetransferName);
-      MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contacts()[ m_msgHandle ]->metaContact(),m_filetransferName,0,i18n("Kopete")));
-      MFTS->connect(ip_adress, port.toUInt());
+			MSNFileTransferSocket *MFTS=new  MSNFileTransferSocket(m_myHandle,authcook,m_filetransferName);
+			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contacts()[ m_msgHandle ]->metaContact(),m_filetransferName,0,i18n("Kopete")));
+			MFTS->connect(ip_adress, port.toUInt());
 
-      m_lastId++;  //FIXME:  there is no ACK for prev command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
+			m_lastId++;  //FIXME:  there is no ACK for prev command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
   
 		}
 		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate 
 		{ 
 			QString cookie = msg.right( msg.length() - msg.find( "Invitation-Cookie:" ) - 19 );
 			cookie.truncate( cookie.find("\r\n") );
-  		QString filename = msg.right( msg.length() - msg.find( "Application-File:" ) - 18 );
+			QString filename = msg.right( msg.length() - msg.find( "Application-File:" ) - 18 );
 			filename.truncate( filename.find("\r\n") );
 			QString filesize = msg.right( msg.length() - msg.find( "Application-FileSize:" ) - 22 );
 			filesize.truncate( filesize.find("\r\n") );
@@ -184,47 +184,44 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			kdDebug() << "MSNSwitchBoardService::slotReadMessage: " <<
 				"invitation cookie: " << cookie << endl;
 
-      QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName();
-  		QString txt = i18n("%1 tried to send you a file.\n"
-              "Name: %2 \nSize: %3 bytes\n"
-      	  		"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
+			QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName();
+			QString txt = i18n("%1 tried to send you a file.\n"
+				"Name: %2 \nSize: %3 bytes\n"
+				"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
 
-      int r=KMessageBox::questionYesNo (0l, txt, i18n( "MSN Plugin - Kopete" ), i18n( "Accept" ), i18n( "Refuse" ));
+			int r=KMessageBox::questionYesNo (0l, txt, i18n( "MSN Plugin - Kopete" ), i18n( "Accept" ), i18n( "Refuse" ));
        
-      if(r== KMessageBox::Yes)
-      {
-  			QCString message=QString(
-	  			"MIME-Version: 1.0\r\n"
-		  		"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-			  	"\r\n"
-  				"Invitation-Command: ACCEPT\r\n"
-	  			"Invitation-Cookie: " + cookie + "\r\n"
-		  		"Launch-Application: FALSE\r\n"
-  				"Request-Data: IP-Address:\r\n"//192.168.0.2\r\n" // hardcoded IP?!
-	  			"Port: 6891").utf8();
-        QCString command=QString("MSG").utf8();
-     		QCString args = QString( "N" ).utf8();
- 		    sendCommand( command , args, true, message );
-        m_filetransferName=filename;
+			if(r== KMessageBox::Yes)
+			{
+				QCString message=QString(
+					"MIME-Version: 1.0\r\n"
+					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
+					"\r\n"
+					"Invitation-Command: ACCEPT\r\n"
+					"Invitation-Cookie: " + cookie + "\r\n"
+					"Launch-Application: FALSE\r\n"
+					"Request-Data: IP-Address:\r\n"//192.168.0.2\r\n" // hardcoded IP?!
+					"Port: 6891").utf8();
+				QCString command=QString("MSG").utf8();
+				QCString args = QString( "N" ).utf8();
+				sendCommand( command , args, true, message );
+				m_filetransferName=filename;
                                
-      }
-      else
-      {
-        QCString message=QString(
-	  			"MIME-Version: 1.0\r\n"
-		  		"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-			  	"\r\n"
-  				"Invitation-Command: CANCEL\r\n"
-	  			"Invitation-Cookie: " + cookie + "\r\n"
-		  		"Cancel-Code: REJECT").utf8();
-        QCString command=QString("MSG").utf8();
-     		QCString args = QString( "N" ).utf8();
- 		    sendCommand( command , args, true, message );
-
-      }
-      
- 		}
-
+			}
+			else
+			{
+				QCString message=QString(
+					"MIME-Version: 1.0\r\n"
+					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
+					"\r\n"
+					"Invitation-Command: CANCEL\r\n"
+					"Invitation-Cookie: " + cookie + "\r\n"
+					"Cancel-Code: REJECT").utf8();
+				QCString command=QString("MSG").utf8();
+				QCString args = QString( "N" ).utf8();
+				sendCommand( command , args, true, message );
+			}
+		}
 	}
 	else if(msg.contains("MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:"))
 	{
@@ -429,14 +426,13 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 void MSNSwitchBoardSocket::sendMessageQueue() //O.G.
 {
 	if ( onlineStatus() != Connected || m_chatMembers.empty())
-  		return;
+		return;
 
-  for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
-  {
-    slotSendMsg( *it)  ;
-    m_messagesQueue.remove(it);
-  }
-
+	for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+	{
+		slotSendMsg( *it)  ;
+		m_messagesQueue.remove(it);
+	}
 }
 
 void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.

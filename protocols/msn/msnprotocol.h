@@ -299,7 +299,7 @@ private:
 	 * contacts. This way MSNContact doesn't need to do 'delete this' every
 	 * time, which is very dangerous
 	 */
-	void addToContactList( MSNContact *c, const QString &group );
+
 
 	void initIcons();
 	void initActions();

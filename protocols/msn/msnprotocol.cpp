@@ -84,7 +84,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_publicName = KGlobal::config()->readEntry( "Nick", "Kopete User" );
 	m_publicNameSyncMode = SyncFromServer;
 	m_publicNameSyncNeeded = false;
-  m_msgQueued=0L;
+	m_msgQueued=0L;
 
 	initActions();
 
@@ -591,13 +591,6 @@ void MSNProtocol::slotStateChanged( QString status )
 	}
 }
 
-void MSNProtocol::addToContactList( MSNContact *c, const QString &group )
-{
-	kdDebug() << "MSNProtocol::addToContactList: adding " << c->msnId()
-		<< " to group " << group << endl;
-	kopeteapp->contactList()->addContact( c, group );
-	m_contacts.insert( c->msnId(), c );
-}
 
 void MSNProtocol::slotAddContact( QString handle )
 {
@@ -836,7 +829,7 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 	if( m_contacts.contains( handle ) )
 	{
 		m_contacts[ handle ]->setMsnStatus( status );
-		m_contacts[ handle ]->setDisplayName( publicName );
+		if(publicName)  m_contacts[ handle ]->setDisplayName( publicName );
 
 		if( status == FLN )
 		{
@@ -1064,7 +1057,7 @@ void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 			m_publicName = publicName;
 			m_publicNameSyncMode = SyncBoth;
 
-      m_myself->setDisplayName(publicName);
+			m_myself->setDisplayName(publicName);
 
 			actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
 				*( statusBarIcon->pixmap() ),
@@ -1169,12 +1162,12 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		manager->readMessages();
 
 
-    if(m_msgQueued)
-    {
-        chatService->slotSendMsg( *m_msgQueued );
-        delete m_msgQueued;
-        m_msgQueued=0L;
-    }
+		if(m_msgQueued)
+		{
+			chatService->slotSendMsg( *m_msgQueued );
+			delete m_msgQueued;
+			m_msgQueued=0L;
+		}
 
 	}
 }
@@ -1199,7 +1192,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 			kdDebug() << "MSNProtocol::slotStartChatSession: "
 				<< "Reusing existing switchboard connection" << endl;
 
-      manager->readMessages();
+			manager->readMessages();
 		}
 		else
 		{
@@ -1298,13 +1291,10 @@ void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 	m_metaContacts.remove( c->metaContact() );
 }
 
-/** 
- *  eventually add a contact if the contact does not exist (O.G.)
- */
 void MSNProtocol::slotUpdateChatMember(QString handle, bool add, QString publicName)
 {
-		if( add && !m_contacts.contains( handle ) )
-      slotContactList( handle, publicName, i18n("Not in Contact List") , "FL" );
+	if( add && !m_contacts.contains( handle ) )
+		slotContactList( handle, publicName, "" , "FL" );
 }
 
 
