@@ -79,7 +79,7 @@
                             </size>
                         </property>
                         <property name="text">
-                            <string>&lt;i&gt;To connect to the Jabber network, you will need an account on a Jabber server.  If you do not yet have an account, set a username, password, and server above; and click Register.&lt;/i&gt;</string>
+                            <string>&lt;i&gt;To connect to the Jabber network, you will need an account on a Jabber server.  If you do not yet have an account, set a user name, password, and server above; and click Register.&lt;/i&gt;</string>
                         </property>
                         <property name="alignment">
                             <set>WordBreak|AlignTop</set>
@@ -245,7 +245,7 @@
                                             <string>The Jabber ID for the account you would like to use.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (for example, joe@jabber.org), as there are many Jabber servers.</string>
+                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the user name and the domain (for example, joe@jabber.org), as there are many Jabber servers.</string>
                                         </property>
                                     </widget>
                                     <widget class="QLabel" row="0" column="2" rowspan="1" colspan="2">
@@ -301,7 +301,7 @@
                                             <string>The Jabber ID for the account you would like to use.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+                                            <string>The Jabber ID for the account you would like to use.  Note that this must include the user name and the domain (like an E-mail address), as there are many Jabber servers.</string>
                                         </property>
                                     </widget>
                                     <widget class="QSpinBox" row="1" column="4">
@@ -482,10 +482,10 @@
                                                     <cstring>mServer</cstring>
                                                 </property>
                                                 <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostname of the server you would like to connect to.</string>
+                                                    <string>The IP address or host name of the server you would like to connect to.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
+                                                    <string>The IP address or host name of the server you would like to connect to (for example jabber.org).</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLineEdit">
@@ -496,10 +496,10 @@
                                                     <string>jabber.org</string>
                                                 </property>
                                                 <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostname of the server you would like to connect to.</string>
+                                                    <string>The IP address or host name of the server you would like to connect to.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
+                                                    <string>The IP address or host name of the server you would like to connect to (for example jabber.org).</string>
                                                 </property>
                                             </widget>
                                         </hbox>

@@ -64,7 +64,7 @@
                                             <cstring>label1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Yahoo username:</string>
+                                            <string>&amp;Yahoo user name:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>mScreenName</cstring>

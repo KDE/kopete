@@ -538,7 +538,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if ( succ == YAHOO_LOGIN_UNAME )
 	{
-		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
+		errorMsg = i18n("Could not log into the Yahoo service: the user name specified was invalid.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	}

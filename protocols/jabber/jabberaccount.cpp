@@ -517,7 +517,7 @@ int JabberAccount::handleTLSWarning (int warning, QString server, QString accoun
 			code = "NoCert";
 			break;
 		case QCA::TLS::HostMismatch:
-			validityString = i18n("The hostname does not match the one in the certificate.");
+			validityString = i18n("The host name does not match the one in the certificate.");
 			code = "HostMismatch";
 			break;
 		case QCA::TLS::Rejected:
