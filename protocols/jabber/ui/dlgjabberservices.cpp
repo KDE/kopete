@@ -2,7 +2,7 @@
                           dlgjabberservices.cpp  -  description
                              -------------------
     begin                : Mon Dec 9 2002
-    copyright            : (C) 2002 by Kopete developers
+    copyright            : (C) 2002 by Till Gerken
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -30,7 +30,9 @@
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "dlgjabberregister.h"
+#include "dlgjabberbrowse.h"
 #include "dlgjabberservices.h"
+
 #include "dlgjabberservices.moc"
 
 DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgServices(parent,name)
@@ -152,6 +154,11 @@ void DlgJabberServices::slotRegister()
 
 void DlgJabberServices::slotBrowse()
 {
+
+	DlgJabberBrowse *browseDialog = new DlgJabberBrowse(serviceTask->agents()[selectedRow].jid());
+
+	browseDialog->show();
+	browseDialog->raise();
 
 }
 

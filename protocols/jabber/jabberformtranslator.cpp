@@ -40,6 +40,7 @@ void JabberFormTranslator::translate(const Jabber::Form &form, QLayout *layout)
 
 	QLabel *label = new QLabel(form.instructions(), parentWidget(), "InstructionLabel");
 	innerLayout->addWidget(label, 0, 0);
+	label->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
 	label->show();
 
 	QGridLayout *formLayout = new QGridLayout(innerLayout);
