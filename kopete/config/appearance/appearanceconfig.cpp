@@ -605,8 +605,8 @@ void AppearanceConfig::slotUpdatePreview()
 		// Parsing a XSLT message is incredibly slow! that's why I commented out some preview messages
 		QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ style ]) );
 		d->xsltParser->setXSLT( fileContents(stylePath) );
-		preview->write( d->xsltParser->transform( msgIn.asXML().toString(), QString::null ) );
-		preview->write( d->xsltParser->transform( msgOut.asXML().toString(), QString::null ) );
+		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
+		preview->write( d->xsltParser->transform( msgOut.asXML().toString() ) );
 		msgIn.setFg( QColor( "DodgerBlue" ) );
 		msgIn.setBg( QColor( "LightSteelBlue" ) );
 		msgIn.setBody( i18n( "Here is an incoming colored message" ) );
