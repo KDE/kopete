@@ -29,6 +29,9 @@ Daniel Stone <dstone@kde.org> (irc: DannyS)
 Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
 - KMM work
 
+Christopher TenHarmsel <tenharmsel@users.sourceforge.net> (irc: Ph0nK)
+- AIM/OSCAR work, Away Messages
+
 See the Development team section of http://kopete.kde.org
 for an updated list of Kopete team!
 
@@ -46,9 +49,6 @@ Juanjo Alvarez <juanjux@yahoo.es>
 - Support for configurable Ctrl-Enter or Enter
   shortcut in KopeteChatWindow
 
-Chris TenHarmsel <ctenha56@calvin.edu>
-- AIM fixes
-                                    
 Olivier Goffart <ogoffart@tiscalinet.be>
 - Alternative chatwindows
 - MSN file transfer

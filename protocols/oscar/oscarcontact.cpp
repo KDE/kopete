@@ -298,25 +298,13 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 
 		TBuddy tmpBuddy;
 		mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
-
+		// TODO add code to handle auto responses
 		KopeteMessage parsedMessage = parseAIMHTML( message );
 		msgManager()->appendMessage(parsedMessage);
 	
 		if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
 		{
 				kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
-/*
-// TODO: move to aimprefs and add gui in there!
-KGlobal::config()->setGroup("Oscar");
-QString reply = KGlobal::config()->readEntry("AwayMessage", QString("I'm currently away from my computer. Please leave a message for me when I return to my computer."));
-
-if ( KopeteAway::globalAway() )
-reply = KopeteAway::message();
-
-mProtocol->engine->sendIM(reply, mName, true);
-KopeteMessage replymsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(reply), KopeteMessage::Outbound);
-msgManager()->appendMessage(replymsg);
-*/
 		}
 }
 
@@ -475,21 +463,30 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
 	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound);
-	
+
+	// We get some strange message formats, including ones with multiple HTML tags
 	int htmlStart = result.find( QRegExp(QString("^<HTML>"),false) );
-	int htmlEnd = result.findRev( QRegExp(QString("</HTML>$"),false) );
+	while(htmlStart != -1){
+			
+			kdDebug() << "[OSCAR] Start HTML tag location: " << htmlStart << endl;
+			
+			// Remove the HTML tags if there
+			result.remove ( htmlStart, 6 );
+			
+			// Remove final HTML tag
+			int htmlEnd = result.findRev( QRegExp(QString("</HTML>$"),false) );
+			kdDebug() << "[OSCAR] End HTML tag location: " << htmlEnd << endl;
+			// Only remove it if it's at the end of the message
+			if( htmlEnd > 0){
+					result.remove( htmlEnd, 7);
+			}
 
-	kdDebug() << "AIM Plugin: Start of HTML: " << htmlStart << " End of HTML: " << htmlEnd << endl;
+			// Search for the html start tag again for the loop
+			htmlStart = result.find( QRegExp(QString("^<HTML>"),false) );
+	} 
 
-	// Remove the HTML tags if there
-	if ( htmlStart == 0 && htmlEnd == (result.length()-7) ){
-		result.remove ( htmlStart, 6 );
-		// Have to modify this a bit since we just took off the first 6 chars
-		result.remove ( htmlEnd - 6, 7 );
-
-		kdDebug() << "AIM Plugin: message after HTML removal: " << result << endl;
-	}
-
+	kdDebug() << "AIM Plugin: message after HTML tags removal: " << result << endl;
+	
 	// Get the background color for the message
 	QStringList backColors = removeTag( result, "BODY" );
 	for( QStringList::Iterator it = backColors.begin(); it != backColors.end(); it++){
@@ -508,27 +505,24 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 					value.remove( quotePlace, 1);
 			}
 
-			
-			
-
 	
-		QStringList fontColors = removeTag ( result, "FONT" );
-		for (QStringList::Iterator it = fontColors.begin(); it != fontColors.end(); it++)
-		{
-			QString modifier = (*it).section('=', 0, 0);
-			QString value = (*it).section('=', 1);
-			value.remove(0, 1);
-			value.remove(value.length() -1, 1);
-			if (!modifier.isEmpty() && !value.isEmpty())
+			QStringList fontColors = removeTag ( result, "FONT" );
+			for (QStringList::Iterator it = fontColors.begin(); it != fontColors.end(); it++)
 			{
-				if (modifier.lower() == "color")
-					msg.setFg(QColor(value));
-				if (modifier.lower() == "back")
-					msg.setBg(QColor(value));
+					QString modifier = (*it).section('=', 0, 0);
+					QString value = (*it).section('=', 1);
+					value.remove(0, 1);
+					value.remove(value.length() -1, 1);
+					if (!modifier.isEmpty() && !value.isEmpty())
+					{
+							if (modifier.lower() == "color")
+									msg.setFg(QColor(value));
+							if (modifier.lower() == "back")
+									msg.setBg(QColor(value));
+					}
 			}
-		}
 	}
-
+	
 	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
 	msg.setBody(result , KopeteMessage::PlainText);
 	return msg;

@@ -1030,19 +1030,11 @@ void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 /** Parses an incoming IM */
 void OscarSocket::parseIM(Buffer &inbuf)
 {
-
-		// For some reason, we're getting empty buffers....
-		// This checks for them, I hope
-		if(inbuf.getLength() == 0){
-				kdDebug() << "Got imcoming message length of zero" << endl;
-				return;
-		}
-		
 		Buffer tmpbuf;
     WORD type = 0;
     WORD length = 0;
     //This is probably the hardest thing to do in oscar
-    //first comes an 8 byte ICBM cookie
+    //first comes an 8 byte ICBM cookie (random)
     inbuf.getBlock(8);
 
     // Channel ID.
@@ -1076,46 +1068,100 @@ void OscarSocket::parseIM(Buffer &inbuf)
     QHostAddress qh;
     QString message;
     QSocket *s = new QSocket;
-    switch(channel)
+				
+		switch(channel)
 		{
-		case 0x0001: //normal IM
-				kdDebug() << "[OSCAR] got a normal IM from " << u.sn << endl;
-				type = inbuf.getWord();
-				length = inbuf.getWord();
-				switch(type) {
-				case 0x0002: //message block
-						//first comes 0x0501 (don't know what it is)
-						inbuf.getWord();
-						//next comes the features length, followed by the features
-						int featureslen;
-						featureslen = inbuf.getWord();
-						inbuf.getBlock(featureslen);
-						while (inbuf.getLength() > 0)
+ 		case 0x0001: //normal IM
+		{
+				// Flag to indicate if there are more TLV's to parse
+				bool moreTLVs = true;
+				// This gets set if we are notified of an auto response
+				bool isAutoResponse = false;
+				while( moreTLVs ){
+						kdDebug() << "[OSCAR] got a normal IM block from " << u.sn << endl;
+						type = inbuf.getWord();
+						switch(type) {
+						case 0x0002: //message block
 						{
-								//then comes 0x0101 (don't know what that is either)
+								
+								// This is the total length of the rest of this message TLV
+								length = inbuf.getWord();
+
+								//first comes 0x0501 (don't know what it is)
 								inbuf.getWord();
-								//length of the message
+								//next comes the features length, followed by the features
+								int featureslen;
+								featureslen = inbuf.getWord();
+								inbuf.getBlock(featureslen);
+								// Next is two bytes of static 0x0101
+								inbuf.getWord();
+
+								// Next comes the length of the message block
 								WORD msglen = inbuf.getWord();
-								//unicode encoding of the message
-								/*WORD flag1 = */inbuf.getWord();
-								/*WORD flag2 = */inbuf.getWord();
-								msglen -= 4; //strip off the unicode info
+								//unicode encoding of the message, mostly 0x0000 0x0000
+								inbuf.getWord();
+								inbuf.getWord();
+								
+								//strip off the unicode info length
+								msglen -= 4;
+								// Get the message
 								char *msg = inbuf.getBlock(msglen);
 								message = msg;
 								delete msg;
 								kdDebug() << "[OSCAR] IM text: " << message << endl;
-								emit gotIM(message,u.sn,false);
+								emit gotIM(message,u.sn,isAutoResponse);
+
+								// Check to see if there's anything else
+								if(inbuf.getLength() > 0){
+										moreTLVs = true;
+								} else {
+										moreTLVs = false;
+								}
+								
+								break;
 						}
-						break;
-				case 0x0004: // Away message
-						// The server doesn't actually SEND the away message
-						// I think we have to request it and print it out ourselves
-						break;
-						
-				default: //unknown type
-						kdDebug() << "[OSCAR][parseIM] unknown msg tlv type " << type;
-				};
+						case 0x0004: // Away message
+								// The server doesn't actually SEND the away message
+								// I think we have to request it and print it out ourselves
+								// There is a length specified, but it's always zero, as of  now
+								inbuf.getWord();
+								// Set the autoresponse flag
+								isAutoResponse = true;
+
+								// Check to see if there's more
+								if(inbuf.getLength() > 0){
+										moreTLVs = true;
+								} else {
+										moreTLVs = false;
+								}
+
+								break;
+						case 0x0008: // User Icon
+								// TODO support this
+								// The length of the TLV
+								length = inbuf.getWord();
+								// Get the block
+								/*char *msg =*/ inbuf.getBlock(length);
+
+								// Check to see if there are more TLVs
+								if(inbuf.getLength() > 0){
+										moreTLVs = true;
+								} else {
+										moreTLVs = false;
+								}
+								
+						default: //unknown type
+								kdDebug() << "[OSCAR][parseIM] unknown msg tlv type " << type;
+								if(inbuf.getLength() > 0){
+										moreTLVs = true;
+								} else {
+										moreTLVs = false;
+								}
+																		
+						};
+				}
 				break;
+		};
 		case 0x0002: //rendezvous channel
 				kdDebug() << "[OSCAR] IM recieved on channel 2 from " << u.sn << endl;
 				tlv = inbuf.getTLV();
@@ -1247,10 +1293,17 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		if(inbuf.getLength() > 0){
 				BYTE len = inbuf.getByte();
 				kdDebug() << "[OSCAR] Finished getting user info" << endl;
+
+				// First comes their screen name
 				char *cb = inbuf.getBlock(len);
 				u.sn = cb;
-				u.evil = inbuf.getWord() / 10; //for some reason aol multiplies the warning level by 10
-				WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
+				
+				// Next comes the warning level
+				//for some reason aol multiplies the warning level by 10
+				u.evil = inbuf.getWord() / 10;
+				
+				//the number of TLV's that follow
+				WORD tlvlen = inbuf.getWord();
 				kdDebug() << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
 									<< ", tlvlen: " << tlvlen << endl;
 				delete cb;
