@@ -22,7 +22,7 @@ TODO for Jabber:
 - show (i.e. with a QToolTip) the subscription status: both, to, from
 - vCard doesn't save address and gender (is gender supported?)
 - remove ugly cyclic includes/forward declarations in jabberawaydialog.h and jabberaccount.h
-- received message 404 type error to a non-existing contact bounces the message
+- display error messages in JabberContact::slotReceivedMessage()
 - make awaydialog autodelete itself
 - remove KOS from all classes, make them contact specific for Greg's enhancements,
   make all classes use JabberProtocol::OnlineStatus instead

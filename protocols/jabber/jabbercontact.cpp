@@ -405,6 +405,14 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
+	// check for errors first
+	if (message.type () == "error")
+	{
+		// FIXME: unable to add i18n string here before release,
+		// add warning dialog after 0.7
+		return;
+	}
+
 	// determine message type
 	if (message.type () == "chat")
 		type = KopeteMessage::Chat;
