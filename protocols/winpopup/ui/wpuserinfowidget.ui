@@ -43,10 +43,10 @@
                                 <cstring>sComputerName</cstring>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>The host name of the computer for this contact.</string>
+                                <string>The hostname of the computer for this contact.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>The host name of the computer for this contact.</string>
+                                <string>The hostname of the computer for this contact.</string>
                             </property>
                         </widget>
                         <widget class="QLabel">
@@ -118,10 +118,10 @@
                                 <bool>true</bool>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>The host name of the computer for this contact.</string>
+                                <string>The hostname of the computer for this contact.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>The host name of the computer for this contact.</string>
+                                <string>The hostname of the computer for this contact.</string>
                             </property>
                         </widget>
                         <widget class="KLineEdit">

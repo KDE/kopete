@@ -70,10 +70,10 @@
                                             <cstring>mHostName</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>The host name you would like to use to send WinPopup messages as.</string>
+                                            <string>The hostname you would like to use to send WinPopup messages as.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The host name you would like to use to send WinPopup messages as.  Note that this does not have to be the actual host name of the machine to send messages, but it does to receive them.</string>
+                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
                                         </property>
                                     </widget>
                                     <widget class="QLineEdit">
@@ -81,10 +81,10 @@
                                             <cstring>mHostName</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>The host name you would like to use to send WinPopup messages as.</string>
+                                            <string>The hostname you would like to use to send WinPopup messages as.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The host name you would like to use to send WinPopup messages as.  Note that this does not have to be the actual host name of the machine to send messages, but it does to receive them.</string>
+                                            <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to receive them.</string>
                                         </property>
                                     </widget>
                                     <widget class="KPushButton">
@@ -143,7 +143,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>To receive WinPopup messages sent from other machines, the host name above must be set to this machine's host name.</string>
+                                    <string>To receive WinPopup messages sent from other machines, the hostname above must be set to this machine's hostname.</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignTop</set>

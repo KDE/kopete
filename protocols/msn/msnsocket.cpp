@@ -340,7 +340,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		// We cant show message for error we don't know what they are or not related to the correct socket
 		//  Theses following messages are not so instructive
 	case 205:
-		msg = i18n ( "An invalid user name has been specified.\nPlease correct it, and try to reconnect.\n" );
+		msg = i18n ( "An invalid username has been specified.\nPlease correct it, and try to reconnect.\n" );
 		break;
 	case 201:
 		msg = i18n ( "Fully Qualified domain name missing.\n" );
@@ -349,7 +349,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		msg = i18n ( "You are already logged in!\n" );
 		break;
 	case 208:
-		msg = i18n ( "You specified an invalid user name.\nPlease correct it, and try to reconnect.\n");
+		msg = i18n ( "You specified an invalid username.\nPlease correct it, and try to reconnect.\n");
 		break;
 	case 209:
 		msg = i18n ( "Your nickname is invalid. Please check it, correct it,\nand try to reconnect.\n" );

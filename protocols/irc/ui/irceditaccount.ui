@@ -108,7 +108,7 @@
                                                     <cstring>textLabel5</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>&amp;User name:</string>
+                                                    <string>&amp;Username:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>mUserName</cstring>
