@@ -86,7 +86,16 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ),
 		this, SLOT( slotAllPluginsLoaded() ));
-			
+	//Connect the appropriate account signals
+	/* Please note that I tried to put this in the slotAllPluginsLoaded() function
+	 * but it seemed to break the account icons in the statusbar --Matt */
+
+	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
+		this, SLOT(slotAccountRegistered(KopeteAccount*)));
+	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
+		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
+
+
 	createGUI ( "kopeteui.rc", false );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
@@ -438,12 +447,6 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *  p  )
 
 void KopeteWindow::slotAllPluginsLoaded()
 {
-	//Connect the appropriate account signals
-	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
-		this, SLOT(slotAccountRegistered(KopeteAccount*)));
-	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
-		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
-
 	actionConnect->setEnabled(true);
 	actionConnect->setEnabled(true);
 }
