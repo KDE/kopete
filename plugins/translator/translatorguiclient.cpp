@@ -72,24 +72,8 @@ void TranslatorGUIClient::slotTranslateChat()
 		return;
 	}
 
-	if ( src_lang == dst_lang )
-	{
-		kdDebug( 14308 ) << k_funcinfo << "Src and Dst languages are the same" << endl;
-		return;
-	}
-
 	// We search for src_dst
-	QStringList s = TranslatorPlugin::plugin()->m_languages->supported( TranslatorPlugin::plugin()->m_service );
-	for ( QStringList::ConstIterator i = s.begin(); i != s.end() ; ++i )
-	{
-		if ( *i == src_lang + "_" + dst_lang )
-		{
-			TranslatorPlugin::plugin()->translateMessage( body, src_lang, dst_lang, this, SLOT( messageTranslated( const QVariant & ) ) );
-			return;
-		}
-	}
-
-	kdDebug( 14308 ) << k_funcinfo << src_lang + "_" + dst_lang << " doesn't exists with service " << TranslatorPlugin::plugin()->m_service << endl;
+	TranslatorPlugin::plugin()->translateMessage( body, src_lang, dst_lang, this, SLOT( messageTranslated( const QVariant & ) ) );
 }
 
 void TranslatorGUIClient::messageTranslated( const QVariant &result )
