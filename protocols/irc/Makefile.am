@@ -1,8 +1,9 @@
 SUBDIRS = ui pixmaps libkirc
-AM_CPPFLAGS = -I$(srcdir)/ui -I$(srcdir)/../../libkopete \
-		-I$(srcdir)/../../libkopete/ui \
-		-I./ui \
-		-I$(srcdir)/libkirc \
+AM_CPPFLAGS = -I$(srcdir)/ui -I$(top_srcdir)/kopete/libkopete \
+		-I$(top_srcdir)/kopete/libkopete/ui \
+		-I$(top_srcdir)/kopete/protocols/irc/ui \
+		-I$(top_builddir)/kopete/protocols/irc/ui \
+		-I$(top_srcdir)/kopete/protocols/irc/libkirc \
 		$(all_includes)
 kde_module_LTLIBRARIES = kopete_irc.la
 

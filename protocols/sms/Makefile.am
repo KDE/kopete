@@ -1,11 +1,13 @@
 METASOURCES = AUTO
 SUBDIRS = ui services
-AM_CPPFLAGS = -I$(srcdir)/ui \
-	-I./ui \
-	-I$(srcdir)/services \
+AM_CPPFLAGS = -I$(top_srcdir)/kopete/protocols/sms/ui \
+	-I$(top_builddir)/kopete/protocols/sms/ui \
+	-I$(top_srcdir)/kopete/protocols/sms/services \
+	-I$(top_builddir)/kopete/protocols/sms/services \
 	-I./services \
-	-I$(srcdir)/../../libkopete \
-	-I$(srcdir)/../../libkopete/ui \
+	-I$(top_srcdir)/kopete/libkopete \
+	-I$(top_srcdir)/kopete/libkopete/ui \
+	-I$(top_builddir)/kopete/libkopete/ui \
 	-I../../libkopete/ui \
 	$(all_includes)
 

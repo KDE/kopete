@@ -1,7 +1,9 @@
 SUBDIRS = libyahoo2 ui pixmaps
-AM_CPPFLAGS = -I$(srcdir)/../../libkopete \
-        -I$(srcdir)/../../libkopete/ui \
-	-I$(srcdir)/ui \
+AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete \
+        -I$(top_srcdir)/kopete/libkopete/ui \
+        -I$(top_builddir)/kopete/libkopete/ui \
+	-I$(top_srcdir)/kopete/protocols/yahoo/ui \
+	-I$(top_builddir)/kopete/protocols/yahoo/ui \
 	-Iui \
         $(all_includes) 
 

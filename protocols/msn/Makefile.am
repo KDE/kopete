@@ -2,8 +2,14 @@ METASOURCES = AUTO
 SUBDIRS = ui . pixmaps
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
+	-I$(top_srcdir)/kopete/protocols/msn/ui \
+	-I$(top_builddir)/kopete/protocols/msn/ui \
 	-I$(srcdir)/../../libkopete \
+	-I$(top_srcdir)/kopete/libkopete \
+	-I$(top_builddir)/kopete/libkopete \
 	-I$(srcdir)/../../libkopete/ui \
+	-I$(top_srcdir)/kopete/libkopete/ui \
+	-I$(top_builddir)/kopete/libkopete/ui \
 	-I../../libkopete/ui \
 	$(all_includes)
 

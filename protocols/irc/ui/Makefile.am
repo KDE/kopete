@@ -1,8 +1,9 @@
 noinst_LTLIBRARIES = libkopeteircui.la
-AM_CPPFLAGS = -I$(srcdir)/../../../libkopete\
-	-I$(srcdir)/../../../libkopete/ui\
+AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete\
+	-I$(top_srcdir)/kopete/libkopete/ui\
 	-I$(srcdir)/..\
-	-I$(srcdir)/../libkirc \
+	-I$(top_srcdir)/kopete/protocols/irc/libkirc \
+	-I$(top_srcdir)/kopete/protocols/irc \
 	$(all_includes)
 
 libkopeteircui_la_METASOURCES = AUTO
