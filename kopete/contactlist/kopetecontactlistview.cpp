@@ -821,10 +821,14 @@ void KopeteContactListView::removeGroup()
 
 	QString msg;
 	if ( removeGroupItem->firstChild() )
-		msg = i18n( "<qt>Are you sure you want to remove the group %1 and all "
-            "contacts that are contained within it?</qt>" ).arg(removeGroupItem->group()->displayName());
+	{
+		msg = i18n( "Are you sure you want to remove the group '%1' and all contacts that are contained within it?" ).
+			arg( removeGroupItem->group()->displayName() );
+	}
 	else
-		msg = i18n( "<qt>Are you sure you want to remove the group %1?</qt>" ).arg(removeGroupItem->group()->displayName());
+	{
+		msg = i18n( "Are you sure you want to remove the group '%1' from your contact list?" ).arg( removeGroupItem->group()->displayName() );
+	}
 
 	if( KMessageBox::warningYesNo( this, msg,
 		i18n( "Remove Group" ) ) == KMessageBox::Yes )
@@ -1538,28 +1542,22 @@ void KopeteContactListView::slotRemove()
 		QString msg;
 		if(!contacts.isEmpty())
 		{
-			msg=i18n("Are you sure you want to remove the contact `%1` from your contact list?").arg(contacts.first()->displayName()) ;
+			msg = i18n( "Are you sure you want to remove the contact '%1' from your contact list?" ).arg( contacts.first()->displayName() ) ;
 		}
 		else if(!groups.isEmpty())
 		{
-			msg = i18n( "Are you sure you want to remove the group `%1` and all contacts that are contained within it?" ).arg(groups.first()->displayName());
+			msg = i18n( "Are you sure you want to remove the group '%1' and all contacts that are contained within it?" ).
+				arg( groups.first()->displayName() );
 		}
-		else return; //this should never happends
+		else return; // this should never happen
 
 		if( KMessageBox::warningYesNo( this, msg, i18n( "Remove" ) ) != KMessageBox::Yes )
 			return;
 	}
 	else
 	{
-		QString msg;
-		if(groups.isEmpty())
-		{
-			msg=i18n("Are you sure you want to remove theses contact from your contact list?");
-		}
-		else
-		{
-			msg = i18n( "Are you sure you want to remove theses groups or contacts from your cotactlist?" );
-		}
+		QString msg = groups.isEmpty() ? i18n( "Are you sure you want to remove these contacts from your contact list?" ) :
+			i18n( "Are you sure you want to remove these groups and contacts from your contact list?" )
 
 		if( KMessageBox::questionYesNoList(this, msg , items , i18n("Remove") , KStdGuiItem::yes(), KStdGuiItem::no(), "askRemovingContactOrGroup" )
 			 != KMessageBox::Yes )
