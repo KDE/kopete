@@ -340,9 +340,15 @@ void OscarContact::syncGroups()
 		return;
 	}
 
+	//Don't modify the group if we're moving the contact to the top-level
+	//or the temporary group. This modifies our local list, but doesn't change
+	//the server.
+	if ( groups.contains( KopeteGroup::topLevel() ) || groups.contains( KopeteGroup::temporary() ) )
+		return;
 	
 	// Oscar only supports one group per contact, so just get the first one
 	KopeteGroup *firstKopeteGroup = groups.first();
+
 	if(!firstKopeteGroup)
 	{
 		kdDebug(14150) << k_funcinfo << "Could not get kopete group" << endl;
@@ -361,14 +367,11 @@ void OscarContact::syncGroups()
 		kdDebug(14150) << "New group found in SSI already" << endl;
 
 	/*
-	* temporary contact's have their display name set to what the contactID would be
-	* so if it's a temporary contact, it's not on SSI. We'll have to add it.
-	*
-	* Another possibility is moving a buddy in the blm, but in that case, we don't need
-        * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
-	* 
-	* Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
-	*/
+	 * Another possibility is moving a buddy in the blm, but in that case, we don't need
+         * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
+	 * 
+	 * Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
+	 */
 	SSI* movedItem = mAccount->engine()->ssiData().findContact( contactId() );
 	if ( movedItem )
 	{	//hey, contact's on SSI, move him

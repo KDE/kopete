@@ -329,6 +329,13 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 // Called when a group is added by adding a contact
 void OscarAccount::slotGroupAdded(KopeteGroup *group)
 {
+	if ( !isConnected() )
+		return;
+
+	//Don't add top level or temp groups to contact lists
+	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
+		return;
+
 	kdDebug(14150) << k_funcinfo <<
 		"called, groupname='" << group->displayName() << "'" << endl;
 
@@ -348,12 +355,18 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 
 void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &oldName)
 {
+	if ( !isConnected() )
+		return;
+
 	kdDebug(14150) << k_funcinfo << "Sending 'group rename' to server" << endl;
 	engine()->sendChangeGroupName(oldName, group->displayName());
 }
 
 void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 {
+	if ( !isConnected() )
+		return;
+
 	// This method should be called after the contacts have been removed
 	// We should then be able to remove the group from the server
 	kdDebug(14150) << k_funcinfo <<
@@ -583,6 +596,7 @@ void OscarAccount::setServerPort(int port)
 void OscarAccount::addGroup( const QString& groupName )
 {
 	KopeteGroup* group = KopeteContactList::contactList()->getGroup( groupName );
+	Q_UNUSED( group );
 }
 
 void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
