@@ -66,11 +66,6 @@ IRCUserContact::IRCUserContact(IRCAccount *account, const QString &nickname, Kop
 	setOnlineStatus( IRCProtocol::IRCUserOffline() );
 }
 
-IRCUserContact::~IRCUserContact()
-{
-	delete mOnlineTimer;
-}
-
 KopeteMessageManager* IRCUserContact::manager(bool)
 {
 	if (!mMsgManager)

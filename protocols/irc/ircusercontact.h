@@ -39,57 +39,59 @@ class IRCUserContact : public IRCContact
 {
 	Q_OBJECT
 
-	public:
-		// This class provides a KopeteContact for each user on the channel.
-		IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
-		~IRCUserContact();
+public:
+	// This class provides a KopeteContact for each user on the channel.
+	IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
 
-		/**
-		 * This sets this UserClass of the contact, to either Op, Voiced, or Normal.
-		 * This setting invluences menu options of the KopeteAccount::myself() user, as well
-		 * as alters the user icons in the chat members display.
-		 */
-		void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }
+	/**
+	 * This sets this UserClass of the contact, to either Op, Voiced, or Normal.
+	 * This setting invluences menu options of the KopeteAccount::myself() user, as well
+	 * as alters the user icons in the chat members display.
+	 */
+	void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }
 
-		/**
-		 * Returns the user class of this contact
-		 */
-		const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }
+	/**
+	 * Returns the user class of this contact
+	 */
+	const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }
 
-		// KopeteContact stuff
-		virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
-		virtual const QString caption() const;
-		virtual KopeteMessageManager* manager( bool canCreate = false );
+	// KopeteContact stuff
+	virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
+	virtual const QString caption() const;
+	virtual KopeteMessageManager* manager( bool canCreate = false );
 
-	private slots:
-		void slotMessageManagerDestroyed();
-		void slotOp();
-		void slotDeop();
-		void slotVoice();
-		void slotDevoice();
-		void slotCtcpPing();
-		void slotCtcpVersion();
-		void slotUserOffline();
-		void slotBanHost();
-		void slotBanUserHost();
-		void slotBanDomain();
-		void slotBanUserDomain();
-		void slotKick();
-		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
-		void slotUserOnline( const QString &nick );
+private slots:
+	void slotMessageManagerDestroyed();
+	void slotOp();
+	void slotDeop();
+	void slotVoice();
+	void slotDevoice();
+	void slotCtcpPing();
+	void slotCtcpVersion();
+	void slotUserOffline();
+	void slotBanHost();
+	void slotBanUserHost();
+	void slotBanDomain();
+	void slotBanUserDomain();
+	void slotKick();
+	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+	void slotUserOnline( const QString &nick );
 
-		virtual void slotUserInfo();
+	virtual void slotUserInfo();
 
-	private:
-		KActionCollection *mCustomActions;
-		KActionMenu *actionModeMenu;
-		KActionMenu *actionCtcpMenu;
-		KAction *actionKick;
-		KActionMenu *actionBanMenu;
-		QTimer *mOnlineTimer;
-		QMap<QString,KIRC::UserClass> mUserClassMap;
+private:
+	KActionCollection *mCustomActions;
+	KActionMenu *actionModeMenu;
+	KActionMenu *actionCtcpMenu;
+	KAction *actionKick;
+	KActionMenu *actionBanMenu;
+	QTimer *mOnlineTimer;
+	QMap<QString,KIRC::UserClass> mUserClassMap;
 
-		void contactMode( const QString &mode );
+	void contactMode( const QString &mode );
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 tw=4:
+
