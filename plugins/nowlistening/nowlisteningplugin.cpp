@@ -257,8 +257,8 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 	// get on with it
 	kdDebug(14307) << k_funcinfo <<
 		( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
-	for ( pl.first(); pl.current(); pl.next() )
-		kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl;
+/*	for ( pl.first(); pl.current(); pl.next() )
+		kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl; */
 	// if no-one in this KMM wants to be advertised to, don't send
 	// any message
 	if ( pl.isEmpty() )

@@ -237,9 +237,10 @@ KTempFile* WebPresencePlugin::generateFile()
 		acc.appendChild( protoName );
 
 			Kopete::Contact* me = account->myself();
+			QString displayName = me->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 			QDomElement accName = doc.createElement( "accountname" );
 			QDomText accNameText = doc.createTextNode( ( me )
-					? me->displayName().latin1()
+					? displayName.latin1()
 					: notKnown.latin1() );
 			accName.appendChild( accNameText );
 			acc.appendChild( accName );
