@@ -164,7 +164,10 @@ void KopeteMessageManager::readMessages()
 		newChatWindow();
 	}
 
-	QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : ((d->mWidget == Email) ? d->mEmailWindow : 0L);
+	// for some reason gcc 2.96 doesn't like the line below
+	//QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : ((d->mWidget == Email) ? d->mEmailWindow : 0L);
+	QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : 0L;
+	if (!window) window = (d->mWidget == Email) ? d->mEmailWindow : 0L;
 	if ( !window ) {
 		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << d->mWidget << endl;
 		d->mMessageQueue.clear();
