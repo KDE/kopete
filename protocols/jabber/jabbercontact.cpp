@@ -66,7 +66,7 @@ KopeteMessageManager* JabberContact::msgManager()
 	}
 	else
 	{
-		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "jabber/" + mUserID, KopeteMessageManager::ChatWindow);
+		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "jabber_logs/" + mUserID +".log", KopeteMessageManager::ChatWindow);
 		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsg(const KopeteMessage)));
 		return mMsgManager;
 	}
@@ -251,7 +251,7 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
 
 void JabberContact::slotViewHistory() {
     if (historyDialog == 0L) {
-		historyDialog = new KopeteHistoryDialog(QString("kopete/jabber_logs/%1.log").arg(userID()), name(), true, 50, 0, "JabberHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("jabber_logs/%1.log").arg(userID()), name(), true, 50, 0, "JabberHistoryDialog");
 		connect(historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
     }
 }

@@ -1005,7 +1005,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		chatmembers.append(c);
 
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-			m_myself, chatmembers, this, QString( "msnlogs/" + ID + ".log" ) );
+			m_myself, chatmembers, this, QString( "msn_logs/" + ID + ".log" ) );
 
 		// FIXME: Don't we leak this ?
 		KMSNChatService *chatService = new KMSNChatService();
@@ -1035,7 +1035,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
 			m_myself, chatmembers, this,
-			QString( "msnlogs/" + handle + ".log" ) );
+			QString( "msn_logs/" + handle + ".log" ) );
 
 		if( m_chatServices.find( manager ) )
 			manager->readMessages();
