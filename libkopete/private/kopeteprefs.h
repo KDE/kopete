@@ -35,8 +35,6 @@ public:
 	 */
 	static KopetePrefs *prefs();
 
-	~KopetePrefs();
-
 	/**
 	 * Reads all pref-variables from KConfig
 	 * usually you don't need this as KopePrefs loads settings
@@ -72,6 +70,7 @@ public:
 	const QColor &bgColor() const { return mBgColor; }
 	const QColor &linkColor() const { return mLinkColor; }
 	const QFont &fontFace() const { return mFontFace; }
+	const QColor &idleContactColor() const { return mIdleContactColor; }
 	bool highlightEnabled() const { return mHighlightEnabled; }
 	bool bgOverride() const { return mBgOverride; }
 	int interfacePreference() const { return mInterfacePreference; }
@@ -108,10 +107,11 @@ public:
 	void setTransparencyValue(int);
 	void setBgOverride(bool);
 	void setInterfacePreference(int);
-	void setBgColor( const QColor &);
 	void setTextColor( const QColor &);
-	void setFontFace( const QFont & );
+	void setBgColor( const QColor &);
 	void setLinkColor( const QColor & );
+	void setFontFace( const QFont & );
+	void setIdleContactColor(const QColor &);
 	void setShowTray(bool);
 	void setNotifyAway(bool);
 
@@ -120,9 +120,14 @@ signals:
 	 * Emitted when config gets saved by save()
 	 */
 	void saved();
+	/**
+	 * Emitted when config gets saved by save() and a certain
+	 * setting has changed.
+	 * Naming scheme is the same as with the config vars.
+	 */
 	void windowAppearanceChanged();
 	void messageAppearanceChanged();
-	void transparancyChanged();
+	void transparencyChanged();
 
 private:
 	/**
@@ -161,10 +166,11 @@ private:
 	QColor mBgColor;
 	QColor mLinkColor;
 	QFont mFontFace;
+	QColor mIdleContactColor;
 	bool mHighlightEnabled;
 	bool mBgOverride;
 	bool mShowTray;
-	bool mTransparancyChanged;
+	bool mTransparencyChanged;
 	bool mWindowAppearanceChanged;
 	bool mNotifyAway;
 
@@ -174,8 +180,5 @@ private:
 
 	QString fileContents( const QString &path );
 };
-
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-

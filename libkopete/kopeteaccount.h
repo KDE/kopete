@@ -78,7 +78,7 @@ public:
 	/**
 	 * say if the password is remember
 	 */
-	 bool rememberPassword();
+	bool rememberPassword();
 
 	/*
 	 * Set if the account should log in automaticaly or not

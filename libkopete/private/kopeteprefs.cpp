@@ -24,7 +24,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-//#include <kopetechatwindow.h> // FIXME: I do not like this dependency; mETz
 
 KopetePrefs *KopetePrefs::s_prefs = 0L;
 
@@ -38,73 +37,67 @@ KopetePrefs *KopetePrefs::prefs()
 KopetePrefs::KopetePrefs() : QObject( kapp, "KopetePrefs" )
 {
 	config = KGlobal::config();
-
 	load();
-}
-
-KopetePrefs::~KopetePrefs()
-{
-//	save(); // crashes because KopeteApp is already destructed!
 }
 
 void KopetePrefs::load()
 {
-
 //	kdDebug(14010) << "KopetePrefs::load()" << endl;
 	config->setGroup("Appearance");
 
 	mWindowAppearanceChanged = false;
 
-	mIconTheme		= config->readEntry("EmoticonTheme", defaultTheme());
-	mUseEmoticons		= config->readBoolEntry("Use Emoticons", true);
-	mShowOffline		= config->readBoolEntry("ShowOfflineUsers", true);
-	mGreyIdle		= config->readBoolEntry("GreyIdleMetaContacts", true);
-	mSortByGroup		= config->readBoolEntry("SortByGroup" , true);
-	mTreeView		= config->readBoolEntry("TreeView", true);
-	mStartDocked		= config->readBoolEntry("StartDocked", false);
-	mUseQueue		= config->readBoolEntry("Use Queue", true);
-	mRaiseMsgWindow		= config->readBoolEntry("Raise Msg Window", false);
-	mShowEvents		= config->readBoolEntry("Show Events in Chat Window", true);
-	mTrayflashNotify	= config->readBoolEntry("Trayflash Notification", true);
-	mBalloonNotify		= config->readBoolEntry("Balloon Notification", true);
-	mSoundIfAway		= config->readBoolEntry("Sound Notification If Away", false);
-	mChatWindowPolicy	= config->readNumEntry("Chatwindow Policy", 0);
-	mTransparencyEnabled	= config->readBoolEntry("ChatView Transparency Enabled", false);
-	mTransparencyValue	= config->readNumEntry("ChatView Transparency Value", 50);
-	mNotifyAway			= config->readBoolEntry("Notification Away", false);
+	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
+	mUseEmoticons = config->readBoolEntry("Use Emoticons", true);
+	mShowOffline = config->readBoolEntry("ShowOfflineUsers", true);
+	mGreyIdle = config->readBoolEntry("GreyIdleMetaContacts", true);
+	mSortByGroup = config->readBoolEntry("SortByGroup" , true);
+	mTreeView = config->readBoolEntry("TreeView", true);
+	mStartDocked = config->readBoolEntry("StartDocked", false);
+	mUseQueue = config->readBoolEntry("Use Queue", true);
+	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
+	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
+	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
+	mBalloonNotify = config->readBoolEntry("Balloon Notification", true);
+	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", false);
+	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
+	mTransparencyEnabled = config->readBoolEntry("ChatView Transparency Enabled", false);
+	mTransparencyValue = config->readNumEntry("ChatView Transparency Value", 50);
+	mNotifyAway = config->readBoolEntry("Notification Away", false);
 
-	mTransparencyColor	= config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
-	mChatViewBufferSize	= config->readNumEntry("ChatView BufferSize", 250);
+	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
+	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
 
 	QColor tmpColor = KGlobalSettings::highlightColor();
-	mHighlightBackground	= config->readColorEntry("Highlight Background Color", &tmpColor);
+	mHighlightBackground = config->readColorEntry("Highlight Background Color", &tmpColor);
 	tmpColor = KGlobalSettings::highlightedTextColor();
-	mHighlightForeground	= config->readColorEntry("Highlight Foreground Color", &tmpColor);
-	mHighlightEnabled	= config->readBoolEntry("Highlighting Enabled", true);
-	mBgOverride		= config->readBoolEntry("ChatView Override Background", true);
-	mInterfacePreference	= config->readNumEntry("Interface Preference", 1);
-	tmpColor= KGlobalSettings::textColor();
-	mTextColor		= config->readColorEntry("Text Color", &tmpColor );
+	mHighlightForeground = config->readColorEntry("Highlight Foreground Color", &tmpColor);
+	mHighlightEnabled = config->readBoolEntry("Highlighting Enabled", true);
+	mBgOverride = config->readBoolEntry("ChatView Override Background", true);
+	mInterfacePreference = config->readNumEntry("Interface Preference", 1);
+	tmpColor = KGlobalSettings::textColor();
+	mTextColor = config->readColorEntry("Text Color", &tmpColor );
 	tmpColor = KGlobalSettings::baseColor();
-	mBgColor		= config->readColorEntry("Bg Color", &tmpColor );
+	mBgColor = config->readColorEntry("Bg Color", &tmpColor );
 	tmpColor = KGlobalSettings::linkColor();
-	mLinkColor		= config->readColorEntry("Link Color", &tmpColor );
-	mFontFace		= config->readFontEntry("Font Face");
+	mLinkColor = config->readColorEntry("Link Color", &tmpColor );
+	mFontFace = config->readFontEntry("Font Face");
+	tmpColor = darkGray;
+	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
-	mShowTray		= config->readBoolEntry( "Show Systemtray", true);
-	mStyleSheet     	= config->readEntry("Stylesheet", locate("appdata",QString::fromLatin1("styles/Kopete.xsl") ) );
-	mStyleContents		= fileContents( mStyleSheet );
+	mShowTray = config->readBoolEntry( "Show Systemtray", true);
+	mStyleSheet = config->readEntry("Stylesheet", locate("appdata",QString::fromLatin1("styles/Kopete.xsl") ) );
+	mStyleContents = fileContents( mStyleSheet );
 
-	config->setGroup("Appearance");
-	mTransparancyChanged = false;
+	config->setGroup("Appearance"); // FIXME, Why setgroup again? [mETz]
+	mWindowAppearanceChanged = false;
+	mTransparencyChanged = false;
 }
-
 
 void KopetePrefs::save()
 {
 //	kdDebug(14010) << "KopetePrefs::save()" << endl;
-
-	config->setGroup ( "Appearance");
+	config->setGroup("Appearance");
 
 	config->writeEntry("EmoticonTheme", mIconTheme);
 	config->writeEntry("Use Emoticons", mUseEmoticons);
@@ -133,12 +126,9 @@ void KopetePrefs::save()
 	config->writeEntry("Text Color",mTextColor);
 	config->writeEntry("Bg Color", mBgColor);
 	config->writeEntry("Link Color", mLinkColor);
+	config->writeEntry("Idle Contact Color", mIdleContactColor);
 
 	config->writeEntry("Interface Preference", mInterfacePreference);
-
-//	config->writeEntry("ContactList Transparency Enabled", mCTransparencyEnabled);
-//	config->writeEntry("ContactList Transparency Value", mCTransparencyValue);
-//	config->writeEntry("ContactList Transparency Tint Color", mCTransparencyColor);
 
 	config->writeEntry("Show Systemtray", mShowTray);
 	config->writeEntry("Stylesheet", mStyleSheet);
@@ -146,16 +136,15 @@ void KopetePrefs::save()
 	config->sync();
 	emit saved();
 
-	if( mTransparancyChanged )
-		emit( transparancyChanged() );
+	if(mTransparencyChanged)
+		emit(transparencyChanged());
 
-	if( mWindowAppearanceChanged )
-		emit( windowAppearanceChanged() );
+	if(mWindowAppearanceChanged)
+		emit(windowAppearanceChanged());
 
 	mWindowAppearanceChanged = false;
-	mTransparancyChanged = false;
+	mTransparencyChanged = false;
 }
-
 
 void KopetePrefs::setIconTheme(const QString &value)
 {
@@ -268,13 +257,13 @@ void KopetePrefs::setInterfacePreference(int value)
 
 void KopetePrefs::setTransparencyEnabled(bool value)
 {
-	mTransparancyChanged =  mTransparancyChanged || !(value == mTransparencyEnabled);
+	mTransparencyChanged =  mTransparencyChanged || !(value == mTransparencyEnabled);
 	mTransparencyEnabled = value;
 }
 
 void KopetePrefs::setTransparencyColor(const QColor &value)
 {
-	mTransparancyChanged =  mTransparancyChanged || !(value == mTransparencyColor);
+	mTransparencyChanged =  mTransparencyChanged || !(value == mTransparencyColor);
 	mTransparencyColor = value;
 }
 
@@ -333,15 +322,13 @@ QString KopetePrefs::fileContents( const QString &path )
 		contents = stream.read();
 		file.close();
 	}
-
 	return contents;
 }
 
-
-
+void KopetePrefs::setIdleContactColor(const QColor &value)
+{
+	mIdleContactColor = value;
+}
 
 #include "kopeteprefs.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
-

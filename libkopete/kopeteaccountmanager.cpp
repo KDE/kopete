@@ -252,7 +252,6 @@ void KopeteAccountManager::load()
 
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( loadProtocol(KopetePlugin*) ) );
-
 }
 
 void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
@@ -273,10 +272,10 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 
 			if( (protocolId == protocol->pluginId()) )
 			{
-				if ( !accountId.isEmpty() )
+				if( !accountId.isEmpty() )
 				{
 					KopeteAccount *account = protocol->createNewAccount(accountId);
-					if (account && !account->fromXML( element ) )
+					if(account && !account->fromXML( element ) )
 					{
 						delete account;
 						account = 0L;
@@ -284,7 +283,7 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 				}
 				else
 				{
-					kdWarning(14010) << k_funcinfo << "Account with emtpy id!" << endl;
+					kdWarning(14010) << k_funcinfo << "Account with empty id!" << endl;
 				}
 			}
 		}
