@@ -97,7 +97,7 @@
             </property>
             <property name="text">
                 <string>&lt;h2&gt;Congratulations!&lt;/h2&gt; 
-&lt;p&gt;You have finished configuring the account. Please click the "Finish" button and your contact will be added to your contact list.&lt;/p&gt;
+&lt;p&gt;You have finished configuring the account. Please click the "Finish" button.&lt;/p&gt;
 
 </string>
             </property>
