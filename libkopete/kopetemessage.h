@@ -21,7 +21,9 @@
 #include <qstring.h>
 #include <qfont.h>
 #include <qcolor.h>
+
 #include "kopetecontact.h"
+#include "qptrlist.h"
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
 

@@ -21,6 +21,7 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qstringlist.h>
 #include <qmap.h>
 #include <qpair.h>
 
@@ -30,6 +31,8 @@
  * @author Martijn Klingens <klingens@kde.org>
  *
  */
+class QStringList;
+
 class KopeteMetaContact : public QObject
 {
 	Q_OBJECT

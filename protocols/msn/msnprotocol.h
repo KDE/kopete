@@ -23,6 +23,7 @@
 #include <qpixmap.h>
 #include <qptrdict.h>
 #include <qptrlist.h>
+#include <qstringlist.h>
 
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"

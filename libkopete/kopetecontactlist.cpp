@@ -15,6 +15,7 @@
     *************************************************************************
 */
 
+#include "kopetecontactlistview.h"
 #include "kopetecontactlist.h"
 
 #include "kopetemetacontact.h"

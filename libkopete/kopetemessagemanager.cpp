@@ -21,7 +21,7 @@
 #include "kopete.h"
 #include "kopeteprefs.h"
 
-#include "messagelog.h"
+#include "kopetemessagelog.h"
 
 #include <kcolorbutton.h>
 #include <kdebug.h>

@@ -4,7 +4,7 @@
 #include "kopete.h"
 #include "kopetestdaction.h"
 #include "kopetestdaction.moc"
-#include "contactlist.h"
+#include "kopetecontactlistview.h"
 
 /** KopeteGroupList **/
 KopeteGroupList::KopeteGroupList(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)

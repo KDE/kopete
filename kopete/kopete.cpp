@@ -570,7 +570,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 	return result;
 }
 
-ContactList* Kopete::contactList() const
+KopeteContactListView *Kopete::contactList() const
 {
 	return m_mainWindow ? m_mainWindow->contactlist : 0L;
 }

@@ -19,9 +19,8 @@
 #ifndef KOPETECONTACT_H
 #define KOPETECONTACT_H
 
-#include "contactlist.h"
-
 #include <qobject.h>
+#include <qpixmap.h>
 
 class QString;
 class QPixmap;

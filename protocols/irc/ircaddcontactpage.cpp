@@ -13,7 +13,7 @@
 #include "ircadd.h"
 #include "ircprotocol.h"
 #include "kopete.h"
-#include "contactlist.h"
+#include "kopetecontactlistview.h"
 
 IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)

@@ -91,7 +91,7 @@ public:
 	/**
 	* Use it to access Kopete's Contact List.
 	**/
-	ContactList *contactList() const;
+	KopeteContactListView *contactList() const;
 	/**
 	* Use it to access the status bar
 	* The plugins can dock status bar icons to

@@ -19,13 +19,14 @@
 #define KOPETEWINDOW_H
 
 #include <kmainwindow.h>
+#include <kopetecontactlistview.h>
 
 class QLabel;
 class KAction;
 class KActionMenu;
 class KToggleAction;
 class KSelectAction;
-class ContactList;
+class KopeteContactListView;
 class KopeteSystemTray;
 class QListViewItem;
 
@@ -44,7 +45,7 @@ private slots:
 
         void closeEvent(QCloseEvent*);
 public:
-	ContactList *contactlist;
+	KopeteContactListView *contactlist;
 
 	// Some Actions
 	KAction* actionAddContact;

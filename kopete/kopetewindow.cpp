@@ -18,7 +18,7 @@
 #include "kopetewindow.h"
 #include "kopetewindow.moc"
 
-#include "contactlist.h"
+#include "kopetecontactlistview.h"
 #include "kopetecontact.h"
 #include "kopete.h"
 #include "kopeteballoon.h"
@@ -58,7 +58,7 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 
 void KopeteWindow::initView ( void )
 {
-	contactlist = new ContactList(this);
+	contactlist = new KopeteContactListView(this);
 	setCentralWidget(contactlist);
 
 	connect( contactlist, SIGNAL(executed(QListViewItem *)), this, SLOT(slotExecuted(QListViewItem *)) );
