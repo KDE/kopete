@@ -128,6 +128,15 @@ public:
 	 * return the list of groups actualy selected in the contactlist UI
 	 */
 	QPtrList<Group> selectedGroups() const ;
+
+	/**
+	  * return the metacontact that represent the user itself.
+	  * This metacontact should be the parent of every @ref KopeteAccount::myself() contacts.
+	  *
+	  * This metacontact is not in the contactlist.
+	  */
+	MetaContact* myself();
+
 	
 public slots:
 

@@ -329,6 +329,9 @@ protected:
 	 * contact is used as a member of every ChatSession involving this account. myself's
 	 * contactId should be the accountID. The online status of the myself contact represents
 	 * the account's status.
+	 * 
+	 * The myself should have the @ref KopeteContactList::myself() as parent metacontact
+	 * 
 	 */
 	void setMyself( Contact *myself );
 

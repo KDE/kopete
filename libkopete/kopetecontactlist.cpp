@@ -54,6 +54,8 @@ class ContactList::Private
 
 	QTimer *saveTimer;
 
+	MetaContact *myself;
+
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
 	 */
@@ -75,6 +77,10 @@ ContactList::ContactList()
 {
 	d=new Private;
 
+	//the myself metacontact can't be created now, because it will use
+	//ContactList::self() as parent which will call this constructor -> infinite loop
+	d->myself=0L;
+
 	//no contactlist loaded yet, don't save them
 	d->loaded=false;
 
@@ -91,6 +97,7 @@ ContactList::ContactList()
 
 ContactList::~ContactList()
 {
+	delete d->myself;
 	delete d;
 }
 
@@ -281,6 +288,13 @@ void ContactList::setSelectedItems(QPtrList<MetaContact> metaContacts , QPtrList
 
 	emit metaContactSelected( groups.isEmpty() && metaContacts.count()==1 );
 	emit selectionChanged();
+}
+
+MetaContact* ContactList::myself()
+{
+	if(!d->myself)
+		d->myself=new MetaContact();
+	return d->myself;
 }
 
 
@@ -1004,6 +1018,7 @@ void ContactList::slotKABCChanged()
 
 		mc->syncWithKABC();*/
 }
+
 
 } //END namespace Kopete
 
