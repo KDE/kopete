@@ -439,6 +439,10 @@ default_presentation=65
 
 [kopete_lowpriority]
 Name=Low priority messages
+Name[da]=Breve med lav prioritet
+Name[et]=Madala prioriteediga sõnumid
+Name[nl]=Berichten met lage prioriteit
+Name[ta]=குறைந்த முண்ணுரிமை உள்ள செய்திகள்
 Comment=A message marked with a low priority has been received
 default_presentation=0
 
