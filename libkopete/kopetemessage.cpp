@@ -111,14 +111,15 @@ QString KopeteMessage::plainBody() const
 
 QString KopeteMessage::escapedBody() const
 {
-	if(mFormat==PlainText)
-	{
-//		kdDebug() << "KopeteMessage::escapeBody: escape" <<endl;
-		return QStyleSheet::escape(mBody);
-	}
+				if(mFormat==PlainText)
+				{
+								QString parsedString = QStyleSheet::escape(mBody);
+								kdDebug() << "KopeteMessage::escapeBody: " << parsedString <<endl;
+								return parsedString;
+				}
 
 //	kdDebug() << "KopeteMessage::escapeBody: not escape needed" <<endl;
-	return mBody;
+				return mBody;
 }
 
 QString KopeteMessage::parsedBody() const
