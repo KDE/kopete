@@ -46,7 +46,6 @@
 #include "wppreferences.h"
 
 // Kopete Includes
-#include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
 
 class KPopupMenu;
