@@ -84,6 +84,8 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 				this, SIGNAL( updateContact( QString, uint ) ) );
 	connect( m_msnService, SIGNAL( contactRemoved( QString, QString ) ),
 				this, SIGNAL( contactRemoved( QString, QString ) ) );
+	connect( m_msnService, SIGNAL( connectedToService( bool ) ),
+				this, SIGNAL( connectedToService( bool ) ) );
 
 	KGlobal::config()->setGroup("MSN");
 
@@ -598,6 +600,16 @@ void MSNProtocol::copyContact( const QString &userID, const QString &newGroup )
 QStringList MSNProtocol::groups()
 {
 	return m_msnService->getGroups();
+}
+
+int MSNProtocol::contactStatus( const QString &handle )
+{
+	return m_msnService->status( handle );
+}
+
+QString MSNProtocol::publicName( const QString &handle )
+{
+	return m_msnService->getPublicName( handle );
 }
 
 #include "msnprotocol.moc"

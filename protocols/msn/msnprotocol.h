@@ -85,6 +85,9 @@ public:
 						const QString &newGroup );
 	void copyContact( const QString &userID, const QString &newGroup );
 
+	int contactStatus( const QString &handle );
+	QString publicName( const QString &handle );
+
 	QStringList groups();
 
 	KMSNService* msnService() const;
@@ -135,6 +138,7 @@ signals:
 	// classes:
 	void updateContact( QString handle, uint status );
 	void contactRemoved( QString handle, QString groupName );
+	void connectedToService( bool connected );
 
 private:
 	void initIcons();

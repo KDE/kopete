@@ -47,12 +47,12 @@ void MSNContact::initContact( QString /* userid */, const QString name, MSNProto
 				this, SLOT( slotContactRemoved( QString, QString ) ) );
 
 	connect ( this, SIGNAL(chatToUser(QString)), protocol->msnService(), SLOT( slotStartChatSession(QString)) );
-	connect ( protocol->msnService(), SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	connect ( protocol, SIGNAL( connectedToService( bool ) ), this, SLOT( slotDeleteMySelf( bool ) ) );
 
 	QString tmp = name;
 	setName  ( tmp );
 	initActions();
-	slotUpdateContact( mUserID, mProtocol->msnService()->status( mUserID ) );
+	slotUpdateContact( mUserID, mProtocol->contactStatus( mUserID ) );
 }
 
 void MSNContact::initActions()
@@ -132,7 +132,7 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 
 	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
 	mStatus = status;
-	QString tmppublicname = mProtocol->msnService()->getPublicName( handle);
+	QString tmppublicname = mProtocol->publicName( handle );
 
 	if (mStatus == BLO)
 		setName( i18n("%1 (Blocked)").arg(tmppublicname) );
