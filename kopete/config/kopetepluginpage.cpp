@@ -18,7 +18,9 @@
 #include "kopetepluginpage.h"
 
 #include <kgenericfactory.h>
+#include <kplugininfo.h>
 #include <kpluginselector.h>
+#include <ktrader.h>
 
 typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) );
@@ -26,10 +28,10 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
 : KCDPluginPage( KopetePluginConfigFactory::instance(), parent, args )
 {
-    pluginSelector()->addPlugins( KGlobal::instance()->instanceName(), i18n( "Protocols" ), "Protocols" );
-    pluginSelector()->addPlugins( KGlobal::instance()->instanceName(), i18n( "General Plugins" ), "Plugins" );
+	QValueList<KPluginInfo*> pluginInfo = KPluginInfo::fromServices( KTrader::self()->query( "Kopete/Protocol" ) );
+	pluginSelector()->addPlugins( pluginInfo, i18n( "Protocols" ), "Protocols" );
+	pluginSelector()->addPlugins( KGlobal::instance()->instanceName(), i18n( "General Plugins" ), "Plugins" );
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -1,10 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Name=MSN Messenger
-Name[pt]=Messenger da MSN
-Name[pt_BR]=Messenger da MSN
-Name[sv]=MSN-meddelandehantering
 Icon=msn_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_msn
@@ -14,9 +10,18 @@ X-Kopete-Author=Kopete Developers
 X-Kopete-Site=http://kopete.kde.org
 X-Kopete-Email=kopete-devel@kde.org
 X-Kopete-License=GPL
+Name=MSN Messenger
 Comment=MSN Messenger
-Comment[es]=Mensajero MSN
-Comment[fr]=Messager MSN
-Comment[pt]=Mensageiro do MSN
-Comment[pt_BR]=Mensageiro do MSN
-Comment[sv]=MSN-meddelandehantering
+
+[X-KDE Plugin Info]
+Author=Kopete Developers
+Email=kopete-devel@kde.org
+PluginName=kopete_msn
+Version=0.8.0
+Website=http://kopete.kde.org
+Category=Protocols
+Require=
+License=GPL
+EnabledByDefault=false
+Messaging-Protocol=messaging/msn
+

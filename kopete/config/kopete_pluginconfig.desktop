@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=plugin
+Icon=input_devices_settings
 Type=Service
 ServiceTypes=KCModule
 
@@ -11,5 +11,8 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Plugins
+Name[bs]=Dodaci
+Name[cs]=Moduly
+Name[fi]=Sovelmat
 Comment=Select and configure your plugins:
 
