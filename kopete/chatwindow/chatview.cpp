@@ -571,7 +571,7 @@ void ChatView::nickComplete()
 {
 	int firstSpace, lastSpace, para = 1, parIdx = 1;
 	m_edit->getCursorPosition( &para, &parIdx);
-	QString txt = m_edit->text( para );
+	QString txt = editpart->text( Qt::PlainText );
 
 	if( parIdx > 0 )
 	{
@@ -582,6 +582,8 @@ void ChatView::nickComplete()
 
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
 		QString m_Match;
+
+		kdDebug() << k_funcinfo << word << endl;
 
 		if( word != m_lastMatch )
 		{
@@ -847,8 +849,8 @@ void ChatView::sendMessage()
 	m_sendInProgress = true;
 	m_mainWindow->setSendEnabled(false);
 
-	QString txt = m_edit->text();
-	if( m_lastMatch.isNull() && txt.contains( QRegExp( QString::fromLatin1("^\\w+:[\\s\\w]") ) ) )
+	QString txt = editpart->text( Qt::PlainText );
+	if( m_lastMatch.isNull() && txt.contains( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) )
 	{
 		QString search = txt.left( (int)txt.find(':') );
 		if( !search.isEmpty() )
