@@ -54,7 +54,7 @@ class AIMAccount : public OscarAccount
 		virtual void setStatus(const unsigned long status,
 			const QString &awayMessage = QString::null);
 
-		virtual void connect();
+		virtual void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus() );
 
 	public slots:
 		void slotEditInfo();

@@ -68,7 +68,7 @@ public:
 
 public slots:
 	//{
-	void connect();
+	void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());
 	void disconnect( DisconnectReason );
 	void disconnect();
 	//}

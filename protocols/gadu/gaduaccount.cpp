@@ -299,17 +299,16 @@ GaduAccount::actionMenu()
 }
 
 void
-GaduAccount::connect()
+GaduAccount::connect(const Kopete::OnlineStatus& /*initial*/)
 {
+#warning TODO: honor the initial status
 	slotGoOnline();
 }
 
 void
 GaduAccount::disconnect()
 {
-	slotGoOffline();
-	p->connectWithSSL = true;
-	Kopete::Account::disconnect( Manual );
+	disconnect( Manual );
 }
 
 void
@@ -317,7 +316,7 @@ GaduAccount::disconnect( DisconnectReason reason )
 {
 	slotGoOffline();
 	p->connectWithSSL = true;
-	Kopete::Account::disconnect( reason );
+	Kopete::Account::disconnected( reason );
 }
 
 bool

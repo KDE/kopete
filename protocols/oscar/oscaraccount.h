@@ -41,11 +41,6 @@ public:
 	virtual ~OscarAccount();
 
 	/*
-	 * Connects this account
-	 */
-	virtual void connect()=0;
-
-	/*
 	 * Disconnects this account
 	 */
 	virtual void disconnect();

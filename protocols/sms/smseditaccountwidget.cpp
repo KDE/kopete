@@ -91,9 +91,7 @@ bool SMSEditAccountWidget::validateData()
 
 Kopete::Account* SMSEditAccountWidget::apply()
 {
-	if (account())
-		account()->setAccountId(preferencesDialog->accountId->text());
-	else
+	if (!account())
 		setAccount( new SMSAccount( m_protocol, preferencesDialog->accountId->text() ) );
 
 	if (service)

@@ -727,10 +727,9 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 {
-
 	// FIXME: this ugly sequence is a libkopete requirement
 	disconnect ();
-	Kopete::Account::disconnect ( reason );
+	Kopete::Account::disconnected ( reason );
 
 }
 

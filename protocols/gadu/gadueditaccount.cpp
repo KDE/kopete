@@ -133,17 +133,19 @@ GaduEditAccount::apply()
 {
 	if ( account() == NULL ) {
 		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
-		account()->setAccountId( loginEdit_->text() );
 	}
 
 	account()->setAutoConnect( autoLoginCheck_->isChecked() );
 
+#warning implement the PasswordedAccount API
+ #if 0
 	if( rememberCheck_->isChecked() && passwordEdit_->text().length() ) {
 		account()->setPassword( passwordEdit_->text() );
 	}
 	else {
 		account()->setPassword();
 	}
+#endif
 
 	account()->myself()->rename( nickName->text() );
 

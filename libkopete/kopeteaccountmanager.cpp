@@ -239,10 +239,8 @@ Account * AccountManager::findAccount( const QString &protocolId, const QString 
 
 void AccountManager::removeAccount( Account *account )
 {
-#if 0 //TODO when the funciton will be there
 	if(!account->removeAccount())
 		return;
-#endif
 
 	Protocol *protocol = account->protocol();
 

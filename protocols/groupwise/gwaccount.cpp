@@ -198,7 +198,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isEmpty () )
 	{
-		disconnect ( Kopete::Account::Manual );
+		disconnected ( Kopete::Account::Manual );
 		return;
 	}
 	bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
@@ -312,11 +312,11 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_client->connectToServer( m_clientStream, dn, true );
 }
 
-void GroupWiseAccount::disconnect ( Kopete::Account::DisconnectReason reason )
+void GroupWiseAccount::disconnected ( Kopete::Account::DisconnectReason reason )
 {
 	// FIXME: this ugly sequence is a libkopete requirement
 	disconnect();
-	Kopete::Account::disconnect( reason );
+	Kopete::Account::disconnected( reason );
 }
 
 
@@ -426,7 +426,7 @@ void GroupWiseAccount::slotGoAppearOffline()
 void GroupWiseAccount::slotGoOffline()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	disconnect ( Kopete::Account::Manual );
+	disconnected ( Kopete::Account::Manual );
 }
 
 void GroupWiseAccount::slotLoggedIn()
@@ -506,7 +506,7 @@ void GroupWiseAccount::slotConnError()
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 				i18n( "Error shown when connecting failed", "Kopete was not able to connect to the GroupWise Messenger server for account '%1'.\nPlease check your server and port settings and try again." ).arg( accountId() ) , i18n ("Unable to connect '%1'").arg( accountId() ) );
 
-	disconnect ( Kopete::Account::Manual );
+	disconnected ( Kopete::Account::Manual );
 }
 
 void GroupWiseAccount::slotConnConnected()

@@ -70,11 +70,15 @@ Kopete::Account *AIMEditAccountWidget::apply()
 		mAccount = new AIMAccount(mProtocol, newId);
 	}
 
+	
+#warning implements PasswordedAccount
+#if 0
 	// Check to see if we're saving the password, and set it if so
 	if (mGui->mSavePassword->isChecked())
 		mAccount->setPassword(QString::fromLocal8Bit(mGui->edtPassword->password()));
 	else
 		mAccount->setPassword(QString::null);
+#endif
 
 	mAccount->setAutoConnect(mGui->mAutoLogon->isChecked()); // save the autologon choice
 	if (mGui->optionOverrideServer->isChecked()) {

@@ -229,8 +229,9 @@ void AIMAccount::slotGoAway(const QString &message)
 	setAway(true, message);
 }
 
-void AIMAccount::connect()
+void AIMAccount::connect(  const Kopete::OnlineStatus& /*initial*/  )
 {
+#warning TODO: honor the initial status
 	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	setStatus(OSCAR_ONLINE, QString::null);
 }

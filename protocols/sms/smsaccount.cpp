@@ -72,7 +72,7 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 {
 }
 
-void SMSAccount::connect()
+void SMSAccount::connect(const Kopete::OnlineStatus&)
 {
 //	myself()->setOnlineStatus( SMSOnline );
 

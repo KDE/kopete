@@ -143,7 +143,7 @@ public slots:
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
-	virtual void disconnect( Kopete::Account::DisconnectReason reason );
+	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );

@@ -181,7 +181,7 @@ void OscarAccount::disconnect(DisconnectReason reason)
 {
 	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	d->engine->doLogoff();
-	Kopete::Account::disconnect(reason);
+	Kopete::Account::disconnected(reason);
 }
 
 bool OscarAccount::passwordWasWrong()

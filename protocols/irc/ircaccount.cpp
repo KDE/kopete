@@ -423,8 +423,10 @@ KActionMenu *IRCAccount::actionMenu()
 	return mActionMenu;
 }
 
-void IRCAccount::connect()
+void IRCAccount::connect(const Kopete::OnlineStatus &initial)
 {
+	//TODO:  honor the initial status
+
 	if( m_engine->isConnected() )
 	{
 		if( isAway() )

@@ -269,6 +269,8 @@ Kopete::Account *ICQEditAccountWidget::apply()
 			return NULL;
 	}
 
+#warning implement PasswordedAccount 
+#if 0
 	// Check to see if we're saving the password, and set it if so
 	if (mAccountSettings->chkSavePassword->isChecked())
 		mAccount->setPassword(mAccountSettings->edtPassword->text());
@@ -276,6 +278,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 		mAccount->setPassword(QString::null);
 
 	mAccount->setAutoConnect(mAccountSettings->chkAutoLogin->isChecked());
+#endif
 
 	if (mAccountSettings->optionOverrideServer->isChecked() ) {
 		static_cast<OscarAccount *>(mAccount)->setServerAddress(
