@@ -133,11 +133,6 @@ private:
 
 	JabberProtocol *mProtocol;
 
-	dlgJabberStatus *reasonDialog;
-	dlgJabberSendRaw *sendRawDialog;
-
-	//JabberPreferences *preferences;
-
 	/* Initial presence to set after connecting. */
 	KopeteOnlineStatus initialPresence;
 
@@ -239,6 +234,8 @@ private slots:
 
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
+
+	void slotQuit();
 
 };
 
