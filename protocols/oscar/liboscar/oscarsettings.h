@@ -18,6 +18,8 @@
 #ifndef OSCARSETTINGS_H
 #define OSCARSETTINGS_H
 
+#include <kdemacros.h>
+
 namespace Oscar
 {
 
@@ -27,7 +29,7 @@ namespace Oscar
 * settings.
 * @author Matt Rogers
 */
-class Settings
+class KDE_EXPORT Settings
 {
 public:
 	Settings();
