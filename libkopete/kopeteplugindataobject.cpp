@@ -15,52 +15,65 @@
     *************************************************************************
 */
 
+#include "kopeteplugindataobject.h"
+
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 
 #include "kopeteplugin.h"
-#include "kopeteplugindataobject.h"
 
-KopetePluginDataObject::KopetePluginDataObject(QObject *parent, const char *name) : QObject (parent, name)
+class KopetePluginDataObjectPrivate
 {
-	m_useCustomIcon=false;
+public:
+	QMap<QString, QMap<QString, QString> > pluginData;
+	QMap<KopetePluginDataObject::IconState, QString> icons;
+	bool useCustomIcon;
+};
+
+KopetePluginDataObject::KopetePluginDataObject( QObject *parent, const char *name )
+: QObject( parent, name )
+{
+	d = new KopetePluginDataObjectPrivate;
+
+	d->useCustomIcon = false;
 }
 
 KopetePluginDataObject::~KopetePluginDataObject()
 {
+	delete d;
 }
 
-void KopetePluginDataObject::setPluginData( KopetePlugin *p, const QMap<QString, QString> &pluginData )
+void KopetePluginDataObject::setPluginData( KopetePlugin *plugin, const QMap<QString, QString> &pluginData )
 {
-	if( pluginData.isEmpty() )
+	if ( pluginData.isEmpty() )
 	{
-		m_pluginData.remove( p->pluginId() );
+		d->pluginData.remove( plugin->pluginId() );
 		return;
 	}
 
-	m_pluginData[ p->pluginId() ] = pluginData;
+	d->pluginData[ plugin->pluginId() ] = pluginData;
 }
 
 void KopetePluginDataObject::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	m_pluginData[ p->pluginId() ][ key ] = value;
+	d->pluginData[ p->pluginId() ][ key ] = value;
 }
 
-QMap<QString, QString> KopetePluginDataObject::pluginData( KopetePlugin *p ) const
+QMap<QString, QString> KopetePluginDataObject::pluginData( KopetePlugin *plugin ) const
 {
-	if( !m_pluginData.contains( p->pluginId() ) )
+	if ( !d->pluginData.contains( plugin->pluginId() ) )
 		return QMap<QString, QString>();
 
-	return m_pluginData[ p->pluginId() ];
+	return d->pluginData[ plugin->pluginId() ];
 }
 
-QString KopetePluginDataObject::pluginData( KopetePlugin *p, const QString &key ) const
+QString KopetePluginDataObject::pluginData( KopetePlugin *plugin, const QString &key ) const
 {
-	if( !m_pluginData.contains( p->pluginId() ) || !m_pluginData[ p->pluginId() ].contains( key ) )
+	if ( !d->pluginData.contains( plugin->pluginId() ) || !d->pluginData[ plugin->pluginId() ].contains( key ) )
 		return QString::null;
 
-	return m_pluginData[ p->pluginId() ][ key ];
+	return d->pluginData[ plugin->pluginId() ][ key ];
 }
 
 void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
@@ -68,13 +81,13 @@ void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup );
 
-	if( !m_pluginData.isEmpty() )
+	if ( !d->pluginData.isEmpty() )
 	{
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
+		for ( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
 		{
 			QMap<QString, QString>::ConstIterator it;
-			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
+			for ( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
 #if QT_VERSION < 0x030200
 				config->writeEntry( QString::fromLatin1( "PluginData_%1_%2" ).arg( pluginIt.key() ).arg( it.key() ), it.data() );
 #else
@@ -91,21 +104,21 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 {
 	QDomDocument pluginData;
 	QValueList<QDomElement> pluginNodes;
-	pluginData.appendChild( pluginData.createElement( QString::fromLatin1("plugin-data")) );
+	pluginData.appendChild( pluginData.createElement( QString::fromLatin1( "plugin-data" ) ) );
 
-	if( !m_pluginData.isEmpty() )
+	if ( !d->pluginData.isEmpty() )
 	{
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
+		for ( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
 		{
-			QDomElement pluginElement = pluginData.createElement( QString::fromLatin1("plugin-data") );
-			pluginElement.setAttribute( QString::fromLatin1("plugin-id"), pluginIt.key()  );
+			QDomElement pluginElement = pluginData.createElement( QString::fromLatin1( "plugin-data" ) );
+			pluginElement.setAttribute( QString::fromLatin1( "plugin-id" ), pluginIt.key()  );
 
 			QMap<QString, QString>::ConstIterator it;
-			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
+			for ( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
 			{
-				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1("plugin-data-field") );
-				pluginDataField.setAttribute( QString::fromLatin1("key"), it.key()  );
+				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1( "plugin-data-field" ) );
+				pluginDataField.setAttribute( QString::fromLatin1( "key" ), it.key()  );
 				pluginDataField.appendChild( pluginData.createTextNode(  it.data()  ) );
 				pluginElement.appendChild( pluginDataField );
 			}
@@ -114,44 +127,43 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 			pluginNodes.append( pluginElement );
 		}
 	}
-	if( !m_icons.isEmpty() )
+	if ( !d->icons.isEmpty() )
 	{
-		QDomElement iconsElement = pluginData.createElement( QString::fromLatin1("custom-icons") );
-		iconsElement.setAttribute( QString::fromLatin1("use"), m_useCustomIcon ?  QString::fromLatin1("1") : QString::fromLatin1("0")   );
+		QDomElement iconsElement = pluginData.createElement( QString::fromLatin1( "custom-icons" ) );
+		iconsElement.setAttribute( QString::fromLatin1( "use" ), d->useCustomIcon ?  QString::fromLatin1( "1" ) : QString::fromLatin1( "0" ) );
 
-		QMap<iconState, QString >::ConstIterator it;
-		for( it = m_icons.begin(); it != m_icons.end(); ++it )
+		for ( QMap<IconState, QString >::ConstIterator it = d->icons.begin(); it != d->icons.end(); ++it )
 		{
-			QDomElement iconElement = pluginData.createElement( QString::fromLatin1("icon") );
+			QDomElement iconElement = pluginData.createElement( QString::fromLatin1( "icon" ) );
 			QString stateStr;
 			switch ( it.key() )
 			{
 			case Open:
-				stateStr=QString::fromLatin1("open");
+				stateStr = QString::fromLatin1( "open" );
 				break;
 			case Closed:
-				stateStr=QString::fromLatin1("closed");
+				stateStr = QString::fromLatin1( "closed" );
 				break;
 			case Online:
-				stateStr=QString::fromLatin1("online");
+				stateStr = QString::fromLatin1( "online" );
 				break;
 			case Away:
-				stateStr=QString::fromLatin1("away");
+				stateStr = QString::fromLatin1( "away" );
 				break;
 			case Offline:
-				stateStr=QString::fromLatin1("offline");
+				stateStr = QString::fromLatin1( "offline" );
 				break;
 			case Unknown:
-				stateStr=QString::fromLatin1("unknown");
+				stateStr = QString::fromLatin1( "unknown" );
 				break;
 			case None:
 			default:
-				stateStr=QString::fromLatin1("none");
+				stateStr = QString::fromLatin1( "none" );
 				break;
 			}
-			iconElement.setAttribute( QString::fromLatin1("state"), stateStr );
+			iconElement.setAttribute( QString::fromLatin1( "state" ), stateStr );
 			iconElement.appendChild( pluginData.createTextNode( it.data() )  );
-			iconsElement.appendChild(iconElement);
+			iconsElement.appendChild( iconElement );
 		}
 		pluginData.documentElement().appendChild( iconsElement );
 		pluginNodes.append( iconsElement );
@@ -161,89 +173,94 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 
 bool KopetePluginDataObject::fromXML( const QDomElement& element )
 {
-	if( element.tagName() == QString::fromLatin1( "plugin-data" ) )
+	if ( element.tagName() == QString::fromLatin1( "plugin-data" ) )
 	{
 		QMap<QString, QString> pluginData;
 		QString pluginId = element.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
 
 		//in kopete 0.6 the AIM protocol was called OSCAR
-		if(pluginId == QString::fromLatin1("OscarProtocol"))
-			pluginId=QString::fromLatin1("AIMProtocol");
+		if ( pluginId == QString::fromLatin1( "OscarProtocol" ) )
+			pluginId = QString::fromLatin1( "AIMProtocol" );
 
 		QDomNode field = element.firstChild();
 		while( !field.isNull() )
 		{
 			QDomElement fieldElement = field.toElement();
-			if( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
+			if ( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
 			{
 				pluginData.insert( fieldElement.attribute( QString::fromLatin1( "key" ),
 					QString::fromLatin1( "undefined-key" ) ), fieldElement.text() );
 			}
 			field = field.nextSibling();
 		}
-		m_pluginData.insert( pluginId, pluginData );
+		d->pluginData.insert( pluginId, pluginData );
 	}
-	else if (element.tagName() == QString::fromLatin1( "custom-icons" ) )
+	else if ( element.tagName() == QString::fromLatin1( "custom-icons" ) )
 	{
-		m_useCustomIcon= element.attribute( QString::fromLatin1( "use" ), QString::fromLatin1("1") ) == QString::fromLatin1("1");
+		d->useCustomIcon= element.attribute( QString::fromLatin1( "use" ), QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" );
 		QDomNode ic = element.firstChild();
 		while( !ic.isNull() )
 		{
 			QDomElement iconElement = ic.toElement();
-			if( iconElement.tagName() == QString::fromLatin1( "icon" ) )
+			if ( iconElement.tagName() == QString::fromLatin1( "icon" ) )
 			{
 				QString stateStr = iconElement.attribute( QString::fromLatin1( "state" ), QString::null );
-				QString icon=iconElement.text();
-				iconState state=None;
+				QString icon = iconElement.text();
+				IconState state = None;
 
-				if(stateStr == QString::fromLatin1("open") )
-					state=Open;
-				if(stateStr == QString::fromLatin1("closed") )
-					state=Closed;
-				if(stateStr == QString::fromLatin1("online") )
-					state=Online;
-				if(stateStr == QString::fromLatin1("offline") )
-					state=Offline;
-				if(stateStr == QString::fromLatin1("away") )
-					state=Away;
-				if(stateStr == QString::fromLatin1("unknown") )
-					state=Unknown;
+				if ( stateStr == QString::fromLatin1( "open" ) )
+					state = Open;
+				if ( stateStr == QString::fromLatin1( "closed" ) )
+					state = Closed;
+				if ( stateStr == QString::fromLatin1( "online" ) )
+					state = Online;
+				if ( stateStr == QString::fromLatin1( "offline" ) )
+					state = Offline;
+				if ( stateStr == QString::fromLatin1( "away" ) )
+					state = Away;
+				if ( stateStr == QString::fromLatin1( "unknown" ) )
+					state = Unknown;
 
-				m_icons[state]=icon;
+				d->icons[ state ] = icon;
 			}
 			ic = ic.nextSibling();
 		}
 	}
 	else
+	{
 		return false;
+	}
+
 	return true;
 }
 
-QString KopetePluginDataObject::icon(KopetePluginDataObject::iconState state) const
+QString KopetePluginDataObject::icon( KopetePluginDataObject::IconState state ) const
 {
-	if(m_icons.contains(state))
-		return m_icons[state];
+	if ( d->icons.contains( state ) )
+		return d->icons[state];
 
-	return m_icons[None];
+	return d->icons[ None ];
 }
 
-
-void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObject::iconState state )
+void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObject::IconState state )
 {
-	if(icon.isNull())
-		m_icons.remove(state);
+	if ( icon.isNull() )
+		d->icons.remove( state );
 	else
-		m_icons[state]=icon;
+		d->icons[ state ] = icon;
 }
 
 bool KopetePluginDataObject::useCustomIcon() const
 {
-	return m_useCustomIcon;
+	return d->useCustomIcon;
 }
-void KopetePluginDataObject::setUseCustomIcon(bool b)
+
+void KopetePluginDataObject::setUseCustomIcon( bool useCustomIcon )
 {
-	m_useCustomIcon=b;
+	d->useCustomIcon = useCustomIcon;
 }
+
+#include "kopeteplugindataobject.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

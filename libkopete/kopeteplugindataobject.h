@@ -25,6 +25,8 @@
 class KopetePlugin;
 class QDomElement;
 
+class KopetePluginDataObjectPrivate;
+
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  *
@@ -37,10 +39,12 @@ class QDomElement;
 
 class KopetePluginDataObject : public QObject
 {
-public:
-    KopetePluginDataObject(QObject *parent=0l, const char *name=0L);
+	Q_OBJECT
 
-    ~KopetePluginDataObject();
+public:
+	KopetePluginDataObject( QObject *parent = 0L, const char *name = 0L );
+
+	~KopetePluginDataObject();
 
 	/**
 	 * Set the plugin-specific data.
@@ -48,18 +52,12 @@ public:
 	 * Note that protocol plugins usually shouldn't use this method, but
 	 * reimplement @ref KopeteContact::serialize() instead. This method
 	 * is called by @ref KopeteProtocol for those classes.
-	 * You maybe should use the other @ref setPluginData function in your plugin
-	 * WARNING: this erase all old data stored for this object.
-	 */
-	void setPluginData( KopetePlugin *p, const QMap<QString, QString> &value );
-
-	/**
-	 * Get the settings as stored previously by calls to @ref setPluginData()
 	 *
-	 * Note that calling this method for protocol plugins that use the
-	 * @ref KopeteContact::serialize() API may yield unexpected results.
+	 * WARNING: This erases all old data stored for this object!
+	 *          You may want to consider the @ref setPluginData() overload
+	 *          that takes a single field as parameter.
 	 */
-	QMap<QString, QString> pluginData( KopetePlugin *p ) const;
+	void setPluginData( KopetePlugin *plugin, const QMap<QString, QString> &value );
 
 	/**
 	 * Convenience method to store or change only a single field of the
@@ -67,52 +65,65 @@ public:
 	 * are advised not to use this method and reimplement
 	 * @ref KopeteContact::serialize() instead.
 	 *
-	 * Note that it is quite useless to add date after the last saving to the file.
+	 * Note that you should save the file after adding data or it will get lost.
 	 */
-	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
+	void setPluginData( KopetePlugin *plugin, const QString &key, const QString &value );
+
+	/**
+	 * Get the settings as stored previously by calls to @ref setPluginData()
+	 *
+	 * Note that calling this method for protocol plugins that use the
+	 * @ref KopeteContact::serialize() API may yield unexpected results.
+	 */
+	QMap<QString, QString> pluginData( KopetePlugin *plugin ) const;
 
 	/**
 	 * Convenience method to retrieve only a single field from the plugin
 	 * data. See @ref setPluginData().
 	 *
-	 * Note that date are accessible only after the load from the XML file.
-	 * Take care to don't call this function before the data has been loaded (example, from the constructor)
+	 * Note that plugin data is accessible only after it has been loaded
+	 * from the XML file. Don't call this method before then (e.g. in
+	 * constructors).
 	 */
-	QString pluginData( KopetePlugin *p, const QString &key ) const;
-
+	QString pluginData( KopetePlugin *plugin, const QString &key ) const;
 
 	/**
-	 * This represent all icon state. Some state are reserved for Groups, other for metacontact.
-	 * None is the default icon.
+	 * The various icon states. Some state are reserved for Groups,
+	 * other for metacontact.
+	 * 'None' is the default icon.
+	 *
+	 * FIXME: This icon stuff looks far too specialized to me for
+	 *        KopetePluginDataObject, it should be made a lot more generic
+	 *        remain here - Martijn
 	 */
-	enum iconState { None, Open, Closed, Online, Away, Offline, Unknown };
+	enum IconState { None, Open, Closed, Online, Away, Offline, Unknown };
 
 	/**
 	 * return the icon for this object, in the given state.
-	 * if there is no icon registered for this state, the None icon is used if available
+	 * if there is no icon registered for this state, the None icon is used
+	 * if available
 	 */
-	QString icon(iconState state=None) const;
+	QString icon( IconState state = None ) const;
 
 	/**
 	 * Set the icon in the given state
 	 * To clear an entry, set a QString::null
 	 */
-	void setIcon(const QString& icon , iconState=None);
+	void setIcon( const QString &icon, IconState = None );
 
 	/**
 	 * return if yes or no the user wants to display some custom icon.
 	 * you can use @ref icon() to know the icons to uses
 	 */
-	bool useCustomIcon() const ;
+	bool useCustomIcon() const;
+
 	/**
 	 * set if the user want to show custom icon he set with @ref setIcon
 	 * this does not clear icons string if you set false
 	 */
-	void setUseCustomIcon(bool);
-
+	void setUseCustomIcon( bool useCustomIcon );
 
 protected:
-
 	/**
 	 * Return a XML representation of plugin data
 	 */
@@ -128,12 +139,10 @@ protected:
 	 * It should be a <plugin-data> element or a <custom-icons> element. if not, nothing will happen
 	 * @return true if something has ben loaded. false if the element was not a fine
 	 */
-	bool fromXML( const QDomElement& element );
+	bool fromXML( const QDomElement &element );
 
 private:
-	QMap<QString, QMap<QString, QString> > m_pluginData;
-	QMap<iconState, QString> m_icons;
-	bool m_useCustomIcon;
+	KopetePluginDataObjectPrivate *d;
 };
 
 #endif
