@@ -205,7 +205,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			group = 0;
 
 		// handle, list, serial, group
-		contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ),
+		emit contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ),
 			data.section( ' ', 1, 1 ).toUInt(), group );
 	}
 	else if( cmd == "OUT" )

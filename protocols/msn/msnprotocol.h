@@ -173,7 +173,6 @@ public:
 
 signals:
 	void protocolUnloading();
-	void settingsChanged( void );
 
 private slots:
 	/**
@@ -204,11 +203,6 @@ private slots:
 	 */
 	void slotMessageReceived( const KopeteMessage &msg );
 	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
-
-	/**
-	 * Open the chat window for a specific user
-	 */
-    void slotExecute( QString handle );
 
 	/**
 	 * The group has successful renamed
@@ -336,16 +330,12 @@ private:
 	KAction* actionUnload;
 	int m_menuTitleId;
 
-	MSNPreferences *mPrefs;
-
 	ContactList m_contacts;
 
 	QMap<uint, QString> m_groupList;
 
 	static const MSNProtocol *s_protocol;
 	Status m_status;
-	uint m_serial;
-	bool m_silent;
 	QString m_msnId;
 	QString m_password;
 	QString m_publicName;
@@ -370,15 +360,5 @@ private:
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- *
- * vim: set noet ts=4 sts=4 sw=4:
- */
+// vim: set noet ts=4 sts=4 sw=4:
 

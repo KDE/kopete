@@ -65,7 +65,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 	m_status = FLN;
 	mIsConnected = false;
-	m_serial = 0;
 	m_notifySocket = 0L;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
@@ -73,14 +72,10 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	initIcons();
+	new MSNPreferences( "msn_protocol", this );
 
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
-
-	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
-	mPrefs = new MSNPreferences( "msn_protocol", this );
-	connect( mPrefs, SIGNAL( saved( void ) ),
-		this, SIGNAL( settingsChanged( void ) ) );
 
 	// FIXME: Duplicated, needs to get proper code!
 	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
@@ -544,7 +539,6 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 		statusBarIcon->setPixmap(offlineIcon);
 
 		m_status = FLN;
-		m_serial = 0;
 
 		// Reset flags. They can't be set in the connect method, because
 		// offline changes might have been made before. Instead the c'tor
@@ -941,10 +935,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 }
 
 void MSNProtocol::slotContactRemoved( QString handle, QString list,
-	uint serial, uint group )
+	uint /* serial */, uint group )
 {
-	m_serial = serial;
-
 	QString gn = groupName( group );
 	if( gn.isNull() )
 		gn = i18n( "Unknown" );
@@ -986,10 +978,8 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 }
 
 void MSNProtocol::slotContactAdded( QString handle, QString publicName,
-	QString list, uint serial, uint group )
+	QString list, uint /* serial */, uint group )
 {
-	m_serial = serial;
-
 	QString gn = groupName( group );
 	if( gn.isNull() )
 		gn = "Unknown";
@@ -1078,7 +1068,6 @@ void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 			config->setGroup( "MSN" );
 			config->writeEntry( "Nick", m_publicName );
 			config->sync();
-			emit settingsChanged();
 		}
 		else
 		{
@@ -1102,19 +1091,6 @@ void MSNProtocol::setPublicName( const QString &publicName )
 void MSNProtocol::slotCreateChat( QString address, QString auth)
 {
 	slotCreateChat( 0L, address, auth, m_msgHandle, publicName() );
-}
-
-void MSNProtocol::slotExecute( QString userid )
-{
-	if ( m_contacts.contains( userid ) && m_myself )
-	{
-		KopeteContactPtrList chatmembers;
-
-		chatmembers.append( m_contacts[ userid ] );
-		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-			m_myself, chatmembers, this, QString( "msnlogs/" + userid + ".log" ) );
-		manager->readMessages();
-	}
 }
 
 void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
@@ -1335,15 +1311,5 @@ void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 
 #include "msnprotocol.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- *
- * vim: set noet ts=4 sts=4 sw=4:
- */
+// vim: set noet ts=4 sts=4 sw=4:
 
