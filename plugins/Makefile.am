@@ -4,5 +4,4 @@ endif
 
 SUBDIRS = autoreplace history contactnotes cryptography\
 	connectionstatus translator nowlistening webpresence texteffect\
-	highlight alias $(MOTIONAUTOAWAY_SUBDIR)
-
+	highlight $(MOTIONAUTOAWAY_SUBDIR)
