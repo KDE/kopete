@@ -4,6 +4,8 @@ SUBDIRS = . icons libgroupwise ui
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
+METASOURCES = AUTO
+
 noinst_HEADERS = gwprotocol.h gwcontact.h gwaccount.h gwfakeserver.h \
 	gwincomingmessage.h gwbytestream.h gwconnector.h gwmessagemanager.h
 kde_module_LTLIBRARIES =  kopete_groupwise.la
