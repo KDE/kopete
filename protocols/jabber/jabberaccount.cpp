@@ -564,11 +564,10 @@ void JabberAccount::setAvailable (void)
 
 void JabberAccount::slotGoOnline ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Going online!" << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	if (!isConnected ())
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << "Trying to go online!" << endl;
 		/* We are not connected yet, so connect now. */
 		initialPresence = protocol()->JabberOnline;
 		connect ();
@@ -579,14 +578,14 @@ void JabberAccount::slotGoOnline ()
 
 void JabberAccount::slotGoOffline ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Going offline." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	disconnect ();
 }
 
 void JabberAccount::slotGoChatty ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting 'chatty' mode." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	if (!isConnected ())
 	{
@@ -601,7 +600,7 @@ void JabberAccount::slotGoChatty ()
 
 void JabberAccount::slotGoAway ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting away mode." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	if (!isConnected ())
 	{
@@ -616,7 +615,7 @@ void JabberAccount::slotGoAway ()
 
 void JabberAccount::slotGoXA ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting extended away mode." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	if (!isConnected ())
 	{
@@ -631,7 +630,7 @@ void JabberAccount::slotGoXA ()
 
 void JabberAccount::slotGoDND ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting do not disturb mode." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	if (!isConnected ())
 	{
@@ -646,7 +645,7 @@ void JabberAccount::slotGoDND ()
 
 void JabberAccount::slotGoInvisible ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting invisible mode." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
 	if (!isConnected ())
 	{
