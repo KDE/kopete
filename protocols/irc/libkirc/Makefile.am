@@ -1,6 +1,14 @@
 noinst_LTLIBRARIES = libkirc.la
 
-libkirc_la_SOURCES = dcchandler.cpp kirc.cpp kircmessage.cpp ksslsocket.cpp
+libkirc_la_SOURCES = \
+	kirc.cpp \
+	kirc_ctcp.cpp \
+	kirc_numericreplies.cpp \
+	kircmessage.cpp \
+	kirctransfer.cpp \
+	kirctransferhandler.cpp \
+	kirctransferserver.cpp \
+	ksslsocket.cpp
 libkirc_la_LDFLAGS = -no-undefined $(KDE_PLUGIN)
 libkirc_la_LIBADD = $(all_libraries) $(KDE_RPATH) $(LIB_KIO)
 
