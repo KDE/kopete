@@ -47,6 +47,11 @@ public:
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;
 
+    /**
+	  * Search by Id
+	  **/
+    Plugin *searchByID( QString &Id );
+
 	/**
 	 * loads all the enabled plugins
 	 **/

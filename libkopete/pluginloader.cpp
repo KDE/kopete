@@ -322,3 +322,20 @@ void LibraryLoader::removeNow(const QString &spec)
 //	delete lib->library;
 //	delete lib;
 }
+
+Plugin* LibraryLoader::searchByID( QString &Id )
+{
+	QValueList<KopeteLibraryInfo> l = loaded();
+
+	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	{
+		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
+		Plugin *tmp_plug = mLibHash[(*i).specfile]->plugin;
+		if ( tmp_plug->id() == Id )
+		{
+			return tmp_plug;
+		}
+	}
+	return NULL;
+}
+
