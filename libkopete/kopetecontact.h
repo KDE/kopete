@@ -129,9 +129,16 @@ public:
 	/**
 	 * Set the contact's online status and status description
 	 * When unused description is set to QString::null
-	*/
+	 */
 	void setOnlineStatus(const KopeteOnlineStatus &status,
 			const QString &statusDescription=QString::null);
+
+	/**
+	 * Set the contact's status description for its current status
+	 * This is handy if a protocol receives its status description
+	 * after the status change itself
+	 */
+	void setStatusDescription( const QString &statusDescription  );
 
 	/**
 	 * Returns QString::null if protocol do not use it,

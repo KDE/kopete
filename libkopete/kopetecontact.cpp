@@ -170,6 +170,14 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status, const QSt
 	emit onlineStatusChanged( this, status, oldStatus );
 }
 
+void KopeteContact::setStatusDescription( const QString &statusDescription  )
+{
+	if( statusDescription == d->statusDescription )
+		return;
+
+	d->statusDescription = statusDescription;
+}
+
 QString KopeteContact::statusDescription() const
 {
     return d->statusDescription;
@@ -259,7 +267,7 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 		if ( !customActions->isEmpty() )
 		{
 			menu->insertSeparator();
-	
+
 			for( KAction *a = customActions->first(); a; a = customActions->next() )
 				a->plug( menu );
 		}
