@@ -39,15 +39,15 @@ NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject
 			);
 	preferencesDialog->m_header->setText( 
 			KGlobal::config()->readEntry( "Header",
-				"Now Listening To: " ) 
+				i18n( "Now Listening To: " ) )
 			 );
-	preferencesDialog->m_perTrack->setText( 
-			KGlobal::config()->readEntry( "PerTrack", 
-				"%track( by %artist)( on %album)" ) 
+	preferencesDialog->m_perTrack->setText(
+			KGlobal::config()->readEntry( "PerTrack",
+				i18n( "%track( by %artist)( on %album)" ) )
 			 );
 	preferencesDialog->m_conjunction->setText( 
 			KGlobal::config()->readEntry( "Conjunction", 
-				", and " ) 
+				i18n( ", and " ) )
 			 );
 }
 
