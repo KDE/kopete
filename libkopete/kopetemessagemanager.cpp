@@ -120,6 +120,12 @@ void KopeteMessageManager::slotSendEnabled(bool e)
 	}
 }
 
+void KopeteMessageManager::setChatView( Kopete::ChatView *newView )
+{
+	d->mView = newView;
+	mainWindow( newView->mainWindow() );
+}
+
 void KopeteMessageManager::setLogging( bool on )
 {
 	d->mLog = on;
@@ -152,71 +158,90 @@ const QString KopeteMessageManager::chatName()
 	return chatName;
 }
 
-KopeteChatWindow *KopeteMessageManager::mainWindow(bool addNewWindow, bool removeWindow)
+/*
+ * This method sets and returns a static mainWindow pointer - shared across all KMMs
+ */
+KopeteChatWindow *KopeteMessageManager::mainWindow(KopeteChatWindow *newValue)
 {
-	static KopeteChatWindow *mainWindow = 0L;
-	static QMap<KopeteProtocol*,KopeteChatWindow*> chatWindowMap;
-
-	if( !removeWindow )
-	{
-		//Determine tabbed window settings
-		switch( KopetePrefs::prefs()->chatWindowPolicy() )
-		{
-			case NEW_WINDOW: //Open every chat in a new window
-				if( addNewWindow )
-				{	kdDebug(14010) << "KopeteMessageManager::mainWindow() : Always open new window" << endl;
-					mainWindow = new KopeteChatWindow();
-					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
-				}
-				break;
-
-			case GROUP_BY_PROTOCOL: //Open chats in the same protocol in the same window
-				kdDebug(14010) << "KopeteMessageManager::mainWindow() : Group by protocol" << endl;
-				if( chatWindowMap.contains( d->mProtocol ) )
-					mainWindow = chatWindowMap[d->mProtocol];
-				else
-				{
-					mainWindow = new KopeteChatWindow();
-					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
-				}
-				break;
-
-			case GROUP_ALL: //Open all chats in the same window
-				kdDebug(14010) << "KopeteMessageManager::mainWindow() : Group all" << endl;
-				if( mainWindow == 0L ) {
-					mainWindow = new KopeteChatWindow();
-					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
-				}
-				break;
-		}
-
-		//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
-		if( !chatWindowMap.contains( d->mProtocol ) )
-			chatWindowMap.insert(d->mProtocol, mainWindow);
-	}
-	else
-	{
-		//We are deleting this window instance
-		kdDebug(14010) << "KopeteMessageManager::mainWindow() : Chat Window closed, now 0L" << endl;
-		if( chatWindowMap.contains( d->mProtocol ) )
-			chatWindowMap.remove( d->mProtocol );
-		mainWindow = 0L;
-	}
-
-	return mainWindow;
+	static KopeteChatWindow *m_mainWindow = 0L;
+	if( newValue != 0L )
+		m_mainWindow = newValue;
+	return m_mainWindow;
 }
 
-void KopeteMessageManager::newChatWindow()
+/*
+ * This method returns the static chatWindowMap pointer for the protocol<->window mapping
+ */
+QMap<KopeteProtocol*,KopeteChatWindow*> KopeteMessageManager::chatWindowMap()
+{
+	static QMap<KopeteProtocol*,KopeteChatWindow*> m_chatWindowMap;
+	return m_chatWindowMap;
+}
+
+
+/*
+ * This method returns the static mainWindow pointer for our policy type
+ */
+KopeteChatWindow *KopeteMessageManager::newMainWindow()
+{
+	//Determine tabbed window settings
+	switch( KopetePrefs::prefs()->chatWindowPolicy() )
+	{
+		case NEW_WINDOW: //Open every chat in a new window
+			kdDebug(14010) << "KopeteMessageManager::newMainWindow() : Always open new window" << endl;
+			
+			//Always create new window
+			mainWindow( new KopeteChatWindow() );
+			connect (mainWindow(), SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+			break;
+
+		case GROUP_BY_PROTOCOL: //Open chats in the same protocol in the same window
+			kdDebug(14010) << "KopeteMessageManager::newMainWindow() : Group by protocol" << endl;
+			
+			//Check if we have a window for this protocol
+			if( chatWindowMap().contains( d->mProtocol ) )
+				mainWindow( chatWindowMap()[d->mProtocol] );
+			else
+			{
+				//A window for this protocol does not exist, create new window
+				mainWindow( new KopeteChatWindow() );
+				connect (mainWindow(), SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+			}
+			break;
+
+		case GROUP_ALL: //Open all chats in the same window
+			kdDebug(14010) << "KopeteMessageManager::newMainWindow() : Group all" << endl;
+			
+			//Check if a window exists
+			if( !mainWindow() ) {
+				//No window exists, create new window
+				mainWindow( new KopeteChatWindow() );
+				connect (mainWindow(), SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+			}
+			break;
+	}
+
+	//Set *our* window equal to this window
+	myWindow = mainWindow();
+	
+	//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
+	if( !chatWindowMap().contains( d->mProtocol ) )
+		chatWindowMap().insert(d->mProtocol, mainWindow());
+
+	return mainWindow();
+}
+
+void KopeteMessageManager::newChatView()
 {
 	if (d->mWidget == ChatWindow)
 	{
 		if(d->mView == 0L)
 		{
-			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat window/view" << endl;
-			d->mView = mainWindow(true)->addChatView( this );
+			kdDebug(14010) << "KopeteMessageManager::newChatView() : Adding a new chat window/view" << endl;
+			d->mView = newMainWindow()->addChatView( this );
 		} else {
-			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat view" << endl;
-			d->mView = mainWindow(true)->addChatView( this );
+			kdDebug(14010) << "KopeteMessageManager::newChatView() : Adding a new chat view" << endl;
+			d->mView = newMainWindow()->addChatView( this );
 		}
 
 		/* When the window is shown, we have to delete this contact event */
@@ -297,7 +322,7 @@ bool KopeteMessageManager::emptyMessageBuffer()
 	if (!widget() )
 	{
 		kdDebug(14010) << "KopeteMessageManager::emptyMessageBuffer: ChatView doesn't exist" << endl;
-		newChatWindow();
+		newChatView();
 	}
 
 	bool foreignMessage = false;
@@ -330,7 +355,7 @@ void KopeteMessageManager::readMessages()
 	if ( widget() == 0L )
 	{
 		kdDebug(14010) << "KopeteMessageManager::readMessages: ChatView doesn't exist" << endl;
-		newChatWindow();
+		newChatView();
 	}
 	QWidget *mainView = widget();
 	if ( mainView == 0L )
@@ -340,7 +365,7 @@ void KopeteMessageManager::readMessages()
 		return;
 	}
 
-	d->isBusy=true;
+	d->isBusy = true;
 	bool queueEmpty = d->mMessageQueue.isEmpty();
 	bool foreignMessage = emptyMessageBuffer();
 
@@ -431,9 +456,15 @@ void KopeteMessageManager::slotChatWindowClosing()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		mainWindow(false, true); // Delete this mainWindow
+		//We are deleting this window instance
+		kdDebug(14010) << "KopeteMessageManager::mainWindow() : Chat Window closed, now 0L" << endl;
+		if( chatWindowMap().contains( d->mProtocol ) )
+			chatWindowMap().remove( d->mProtocol );
+		
+		//Close *our* window
+		myWindow->deleteLater();
+		
 		d->mView = 0L;
-		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing" << endl;
 	}
 	else if (d->mWidget == Email)
 	{
@@ -493,7 +524,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	bool isvisible = false;
 
 	if (!widget())
-		newChatWindow();
+		newChatView();
 	else
 		isvisible = mainWindow()->isVisible();
 

@@ -28,7 +28,6 @@
 
 #include "appearanceconfig.h"
 #include "kopetecontactlist.h"
-#include "kopetemessagemanagerfactory.h"
 #include "kopeteuserpreferences.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"

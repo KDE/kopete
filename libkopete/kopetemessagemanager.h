@@ -20,17 +20,22 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
+#include <qmap.h>
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
+namespace Kopete {
+	class ChatView;
+}
+
+using Kopete::ChatView;
 
 class KopeteContact;
 class KopeteMessageManager;
-
-class KopeteChatWindow;
 class KopeteEvent;
 class KopeteMessageLog;
 class KopeteProtocol;
+class KopeteChatWindow;
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
@@ -61,7 +66,7 @@ public:
 	/**
 	 * Fire up a new widget.
 	 */
-	void newChatWindow();
+	void newChatView();
 	void newReplyWindow();
 
 	/**
@@ -109,6 +114,8 @@ public:
 	KopeteMessage currentMessage();
 	
 	virtual const QString chatName();
+	
+	void setChatView( Kopete::ChatView *newView );
 
 signals:
 	/**
@@ -212,6 +219,7 @@ protected:
 	
 	void setMMId( int );
 	
+		
 private:
 	/**
 	 * Empties Message buffer, filling the window and returning true
@@ -219,8 +227,11 @@ private:
 	 */
 	bool emptyMessageBuffer();
 	bool dockChatWindows;
-	KopeteChatWindow *mainWindow(bool addNewWindow = false, bool removeWindow = false);
-			
+	KopeteChatWindow *newMainWindow();
+	KopeteChatWindow *mainWindow(KopeteChatWindow* newValue = 0L);
+	QMap<KopeteProtocol*,KopeteChatWindow*> chatWindowMap();
+	KopeteChatWindow *myWindow;
+	
 	KMMPrivate *d;
 };
 
