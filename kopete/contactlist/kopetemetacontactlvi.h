@@ -78,7 +78,10 @@ public:
 	 */
 	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
 
-	void movedToGroup( KopeteGroup * );
+	/**
+	 * call this when the item has been moved to a different group
+	 */
+	void movedToDifferentGroup();
 	void rename( const QString& name );
 	void startRename( int );
 

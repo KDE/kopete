@@ -7,6 +7,7 @@
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn <metz AT gehn.net>
     Copyright (c) 2002-2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -62,10 +63,6 @@ public:
 	 */
 	void initActions(KActionCollection*);
 
-
-	// FIXME: Make this private again when meta contact is more mature...
-	KopeteGroupViewItem *getGroup( KopeteGroup* , bool add=true );
-
 	/**
 	 * Add a given group name and return it
 	 */
@@ -119,7 +116,6 @@ protected:
 	 */
 	void updateActionsForSelection( QPtrList<KopeteMetaContact> contacts, QPtrList<KopeteGroup> groups );
 
-
 private slots:
 	void slotViewSelectionChanged();
 	void slotListSelectionChanged();
@@ -135,6 +131,8 @@ private slots:
 	void slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
 	void slotRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
 	void slotMovedToGroup( KopeteMetaContact *mc, KopeteGroup *from, KopeteGroup *to );
+
+	void slotSyncKABC();
 
 	/**
 	 * A meta contact was added to the contact list - update the view
@@ -171,8 +169,6 @@ private slots:
 	void slotAddTemporaryContact();
 	void slotProperties();
 
-	void slotSyncKABC();
-	
 	/**
 	 * Sort the view when the timer expires.
 	 * Too bad QListView::sort() is not a slot itself...
@@ -182,15 +178,10 @@ private slots:
 private:
 	bool mShowAsTree;
 
-	QPtrList<KopeteGroupViewItem> mGroups;
-
-	QPtrList<KopeteMetaContactLVI> m_metaContacts;
-
+	// TODO: do we really need to store these?
 	QPtrList<KopeteMetaContactLVI> m_selectedContacts;
 	QPtrList<KopeteGroupViewItem> m_selectedGroups;
 
-	KopeteStatusGroupViewItem *m_onlineItem;
-	KopeteStatusGroupViewItem *m_offlineItem;
 	bool mSortByGroup;
 	KRootPixmap *root;
 
@@ -215,9 +206,10 @@ private:
 
 	KopeteContactListViewPrivate *d;
 
-	public:
-		// This is public so the chatwinodw can handle sub actions
-		KActionMenu *actionAddContact;
+public:
+	// This is public so the chatwinodw can handle sub actions
+	// FIXME: do we not believe in accessor functions any more?
+	KActionMenu *actionAddContact;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

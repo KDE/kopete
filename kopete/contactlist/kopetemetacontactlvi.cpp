@@ -198,7 +198,7 @@ KopeteMetaContactLVI::~KopeteMetaContactLVI()
 	//	m_parentGroup->refreshDisplayName();
 }
 
-void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
+void KopeteMetaContactLVI::movedToDifferentGroup()
 {
 	KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
 	if ( !lv )
@@ -216,7 +216,7 @@ void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
 		new SpacerComponent( d->spacerBox, 20, 0 );
 	}
 
-	KopeteGroupViewItem *group_item = lv->getGroup( to );
+	KopeteGroupViewItem *group_item = dynamic_cast<KopeteGroupViewItem*>(KListViewItem::parent());
 	if ( group_item )
 	{
 		m_isTopLevel = false;
