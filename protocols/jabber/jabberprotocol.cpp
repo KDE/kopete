@@ -1252,17 +1252,7 @@ void JabberProtocol::slotMessageManagerDeleted(KopeteMessageManager *manager)
 			 << "manager deleted, removing from map"
 			 << endl;
 
-	for(JabberMessageManagerMap::iterator it = messageManagerMap.begin();
-		it != messageManagerMap.end(); it++)
-	{
-		// static cast required unfortunately
-		if(it.data() == (JabberMessageManager *)manager)
-		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotMessageManagerDeleted() "
-					 << "found a match in " << it.key() << endl;
-			messageManagerMap.remove(it);
-		}
-	}
+	messageManagerMap.remove(manager->user()->contactId());
 
 }
 
