@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "msncontact.h"
+#include "msncontact.moc"
 
 #include <contactlist.h>
 #include "kmsncontact.h"
@@ -41,9 +42,9 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	mProtocol = protocol;
 	mName = name;
 	mUserID = userid;
-    hasLocalGroup = false;
+	hasLocalGroup = false;
+
 	initContact(userid, name, protocol);
-	
 }
 
 
@@ -53,78 +54,81 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 	mProtocol = protocol;
 	mName = name;
 	mUserID = userid;
-    hasLocalGroup = true;
+	hasLocalGroup = true;
 	parentGroup = parent;
+
 	initContact(userid, name, protocol);
-	
 }
 
 QString MSNContact::key(int column, bool ascending) const
 {
-	switch(mStatus_n)
+	switch(mStatus)
 	{
-  		case BLO:
-  		{
+		case BLO:
+		{
 			return "G"+ text(0);
-  			break;
-  		}
-  		case NLN:
-  		{
+			break;
+		}
+		case NLN:
+		{
 			return "A"+ text(0);
-  			break;
-  		}
-  		case FLN:
-  		{
+			break;
+		}
+		case FLN:
+		{
 			return "Z"+ text(0);
-  			break;
-  		}
-  		case BSY:
-  		{
+			break;
+		}
+		case BSY:
+		{
 			return "F"+ text(0);
-  			break;
-  		}
-  		case IDL:
-  		{
+			break;
+		}
+		case IDL:
+		{
 			return "A"+ text(0);
-  			break;
-  		}
-  		case AWY:
-  		{
+			break;
+		}
+		case AWY:
+		{
 			return "B"+ text(0);
-  			break;
-  		}
-  		case PHN:
-  		{
+			break;
+		}
+		case PHN:
+		{
 			return "C"+ text(0);
-  			break;
-  		}
-  		case BRB:
-  		{
+			break;
+		}
+		case BRB:
+		{
 			return "D"+ text(0);
-  			break;
-  		}
-  		case LUN:
-  		{
+			break;
+		}
+		case LUN:
+		{
 			return "E"+ text(0);
-  			break;
-  		}
-   	}	
+			break;
+		}
+	}
 }
 
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
 {
-	messageTimer = new QTimer();
+//	messageTimer = new QTimer();
 	messageQueue = new QValueStack<MSNMessageStruct>;
 	isMessageIcon = false;
+
 	// We connect this signal so that we can tell when a user's status changes
-	QObject::connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
-	QObject::connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
-	
-	QObject::connect(this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
-	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
-	QObject::connect(protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
+	connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
+	connect(mProtocol, SIGNAL(settingsChanged()), this, SLOT(slotReadSettings()) );
+
+	connect ( this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
+//	connect ( messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
+	connect ( protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
+
 	QString tmp = name;
-	setText(0,tmp);
+	setName  ( tmp );
 	initActions();
 	slotUpdateContact( mUserID, mProtocol->engine->getStatus( mUserID ) );		
 }
@@ -210,85 +214,95 @@ void MSNContact::slotContactRemoved(QString handle, QString group)
 	}
 }
 
-void MSNContact::slotUpdateContact (QString handle , uint status)
+void MSNContact::slotUpdateContact ( QString handle, uint status)
 {
-	if (handle == mUserID)
+	if (handle != mUserID) // not our contact
+		return;
+
+	if ( status == mStatus ) // no statuschange
+		return;
+
+	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
+	mStatus = status;
+	isMessageIcon = false;
+	QString tmppublicname = mProtocol->engine->getPublicName( handle);
+
+	if ( status == FLN ) // offline
 	{
-		kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
-		mStatus_n = status;
-		isMessageIcon = false;
-        QString tmppublicname = mProtocol->engine->getPublicName( handle);
-		switch(status)
-		{
-   			case BLO:
-   			{
-   				setText(0,  tmppublicname + " ( " + i18n("Blocked") + " )" );
-   				break;
-   			}
-   			case NLN:
-   			{
-   				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
-   				break;
-   			}
-   			case FLN:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->offlineIcon );
-   				break;
-   			}
-   			case BSY:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->awayIcon );
-   				break;
-   			}
-   			case IDL:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->awayIcon );
-   				break;
-   			}
-   			case AWY:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->awayIcon );
-   				break;
-   			}
-   			case PHN:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->awayIcon );
-   				break;
-   			}
-   			case BRB:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->awayIcon );
-   				break;
-   			}
-   			case LUN:
-   			{
-				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->awayIcon );
-   				break;
-   			}
-		}
-		/* We need to resort the group */
-		parentGroup->sortChildItems(0,0);
+		if ( !kopeteapp->appearance()->showOffline() && !isHidden() )
+			setHidden(true);
+
+		setName( tmppublicname );
+		setPixmap(0, mProtocol->offlineIcon );
 	}
+	else if ( isHidden() )		// we are something like online :)
+		setHidden ( false );	// show me
+
+	switch ( status )
+	{
+		case BLO: // blocked
+		{
+			setName( i18n("%1 (Blocked)").arg(tmppublicname) );
+			break;
+		}
+		case NLN: // Online
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->onlineIcon );
+			break;
+		}
+		case BSY: // Busy
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->awayIcon );
+			break;
+		}
+		case IDL: // Idle
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->awayIcon );
+			break;
+		}
+		case AWY: // Away from computer
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->awayIcon );
+			break;
+		}
+		case PHN: // On the phone
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->awayIcon );
+			break;
+		}
+		case BRB: // Be right back
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->awayIcon );
+			break;
+		}
+		case LUN: // Out to lunch
+		{
+			setName( tmppublicname );
+			setPixmap(0, mProtocol->awayIcon );
+			break;
+		}
+	}
+	/* We need to resort the group */
+	parentGroup->sortChildItems(0,0);
 }
 
+/*
 void MSNContact::slotNewMessage(QString userid, QString publicname, QString message)
 {
-	/*
 	if (uin == mUIN)
 	{
 		messageQueue->prepend(message);
 		messageTimer->start(1000, false);
 	}
-	*/
 }
+*/
+
 
 void MSNContact::slotDeleteMySelf(bool connected)
 {
@@ -298,9 +312,10 @@ void MSNContact::slotDeleteMySelf(bool connected)
 	}
 }
 
+
+/*
 void MSNContact::slotFlashIcon()
 {
-	/*
 	if (isMessageIcon == true)
 	{
 		isMessageIcon = false;
@@ -332,7 +347,18 @@ void MSNContact::slotFlashIcon()
 		isMessageIcon = true;
 		setPixmap(0, mProtocol->messageIcon);
 	}
-	*/
 }
+*/
 
-#include "msncontact.moc"
+
+void MSNContact::slotReadSettings(void)
+{
+	if ( !kopeteapp->appearance()->showOffline() && mStatus ==  FLN )
+	{	// hide offline contacts
+		setHidden(true);
+	}
+	else if ( kopeteapp->appearance()->showOffline() && mStatus == FLN  )
+	{	// show offliners if wanted
+		setHidden(false);
+	}
+}

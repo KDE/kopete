@@ -37,7 +37,7 @@
 ///////////////////////////////////////////////////
 //           Constructor & Destructor
 ///////////////////////////////////////////////////
-MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
+MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), IMProtocol()
 {
 	QString path;
 	path = locateLocal("data","kopete/msn.contacts");
@@ -63,16 +63,18 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	statusBarIcon->setPixmap(offlineIcon);
 
 	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
-	new MSNPreferences(protocolIcon, this);
-	
+	mPrefs = new MSNPreferences(protocolIcon, this);
+	connect(mPrefs, SIGNAL(saved(void)), this, SIGNAL(settingsChanged(void)) );
+
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
 	engine = new KMSNService;
+	
 	connect(engine, SIGNAL(connectingToService()), this, SLOT(slotConnecting()) );
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
 	connect(engine, SIGNAL(statusChanged( uint)), this, SLOT(slotStateChanged ( uint) ) );
 	connect(engine, SIGNAL(contactAdded( QString, QString, QString)), this, SLOT(slotContactAdded ( QString, QString, QString) ) );
-  QObject::connect(engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
+	connect(engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
 	connect(engine, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
 
 	connect(kopeteapp->contactList(), SIGNAL( groupAdded(QString) ), this, SLOT(slotGroupAdded(QString) ) );

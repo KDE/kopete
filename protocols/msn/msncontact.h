@@ -77,17 +77,16 @@ class MSNContact : public IMContact
 		// We have to delete the contact if MSN disconenct
 		// We will use the engine signal
 		void slotDeleteMySelf ( bool );
-		void slotNewMessage(QString, QString, QString);
-		void slotFlashIcon();
+//		void slotNewMessage(QString, QString, QString);
+//		void slotFlashIcon ( void );
+		void slotReadSettings ( void );
 
 	private:
 		void initActions();
-	
-		QString mStatus;
-		uint mStatus_n;
+
+//		QString mStatus;
+		uint mStatus;
 		bool isMessageIcon;
-		//QPixmap onlineIcon;
-		//QPixmap offlineIcon;
 		MSNProtocol *mProtocol;
 		QValueStack<MSNMessageStruct> *messageQueue;
 		QTimer *messageTimer;
