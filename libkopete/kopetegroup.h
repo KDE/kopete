@@ -19,6 +19,7 @@
 #ifndef KOPETEGROUP_H
 #define KOPETEGROUP_H
 
+#include "kopetenotifydataobject.h"
 #include "kopeteplugindataobject.h"
 
 #include <qptrlist.h>
@@ -31,7 +32,7 @@ class KopeteMetaContact;
 /**
  * @author Olivier Goffart
  */
-class KopeteGroup : public KopetePluginDataObject
+class KopeteGroup : public KopetePluginDataObject, public KopeteNotifyDataObject
 {
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
 	Q_PROPERTY( uint groupId READ groupId )

@@ -31,6 +31,7 @@
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessage.h"
+#include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -82,6 +83,7 @@ KopeteContactList::KopeteContactList()
 	connect( this, SIGNAL( groupAdded( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupRemoved( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ), SLOT( slotSaveLater() ) );
+	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ), this, SLOT( slotKABCChanged() ) );
 }
 
 KopeteContactList::~KopeteContactList()
@@ -970,6 +972,15 @@ void KopeteContactList::slotSaveLater()
 	// if we already have a save scheduled, it will be cancelled. either way,
 	// start a timer to save the contact list a bit later.
 	d->saveTimer->start( 1000 /* 1 second */, true /* single-shot */ );
+}
+
+void KopeteContactList::slotKABCChanged()
+{
+	// call syncWithKABC on each metacontact to check if its associated kabc entry has changed.
+	for ( KopeteMetaContact * mc = d->contacts.first(); mc; mc = d->contacts.next() )
+	{
+		mc->syncWithKABC();
+	}
 }
 
 #include "kopetecontactlist.moc"

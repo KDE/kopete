@@ -27,7 +27,7 @@ class QDomElement;
 class KopeteNotifyEvent
 {
 public:
-	KopeteNotifyEvent( const bool suppressCommon = true );
+	KopeteNotifyEvent( const bool suppressCommon = false );
 	~KopeteNotifyEvent();
 
 	bool suppressCommon() const;

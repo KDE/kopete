@@ -20,6 +20,7 @@
 */
 
 #include "kopeteeventpresentation.h"
+#include "kopetegroup.h"
 #include "kopetenotifydataobject.h"
 #include "kopetenotifyevent.h"
 #include "kopetemetacontact.h"
@@ -51,6 +52,7 @@ static const char daemonName[] = "knotify";
 
 static int notifyBySound( const QString &filename , const QString &appname, int uniqueId )
 {
+  kdDebug( 14010 ) << k_funcinfo << filename << endl;
   if (!kapp) return 0;
 
   DCOPClient *client=kapp->dcopClient();
@@ -312,7 +314,12 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
     
     bool suppress = false;
     performCustomNotifications( winId, mc, message, suppress);
-    
+	// perform notifications for each group this MC is in.
+	// Anything, including the MC itself, may set suppress and prevent further notifications
+	KopeteGroupList groups = mc->groups();
+	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
+		performCustomNotifications( winId, it, message, suppress );
+		 
     if ( suppress )
 	{
 		//kdDebug( 14000 ) << "suppressing common notifications" << endl;
@@ -389,10 +396,10 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
 
     // emit event
     if ( present & KNotifyClient::Sound ) // && QFile(sound).isReadable()
-	notifyBySound( sound , appname , uniqueId ) ;
+		notifyBySound( sound , appname , uniqueId ) ;
 
     if ( present & KNotifyClient::PassivePopup )
-	notifyByPassivePopup( text, appname, winId, action, receiver, slot );
+		notifyByPassivePopup( text, appname, winId, action, receiver, slot );
 
     else if ( present & KNotifyClient::Messagebox )
 	notifyByMessagebox( text, level, winId, action, receiver, slot );
@@ -417,6 +424,9 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
 void KNotifyClient::performCustomNotifications( int winId, KopeteNotifyDataObject *dataObj, const QString &message, bool& suppress)
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
+	if ( suppress )
+		return;
+
 	QString sound;
 	QString text;
 

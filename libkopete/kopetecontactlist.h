@@ -276,7 +276,10 @@ private slots:
 	 * Called when the contact list changes. Flags the list dirty and schedules a save for a little while later.
 	 */
 	void slotSaveLater();
-
+	/**
+	 * Called on contactlist load or when KABC has changed, to check if we need to update our contactlist from there.
+	 */
+	void slotKABCChanged();
 private:
 	/**
 	 * Return a XML representation of the contact list
