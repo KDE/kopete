@@ -54,17 +54,17 @@ static TestSet kopete07Baseline =
 
 static TestSet knownGood =
 {
-	{ ":):)", "<img align=\"center\" width=\"16\" height=\"16\" src=\"smile.png\" title=\":)\"/>"
-			  "<img align=\"center\" width=\"16\" height=\"16\" src=\"smile.png\" title=\":)\"/>" },
-	{ "http://", "http://" },
+	{ ":):)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"smile.png\" title=\":)\"/>"
+			  "<img align=\"center\" width=\"20\" height=\"20\" src=\"smile.png\" title=\":)\"/>" },
 	{ "<img src=\"...\" title=\":-)\" />", "<img src=\"...\" title=\":-)\" />" },
-	{ "End of sentence:p", "End of sentence<img align=\"center\" width=\"16\" height=\"16\" src=\"tongue.png\" title=\":p\"/>" },
+	{ "End of sentence:p", "End of sentence<img align=\"center\" width=\"20\" height=\"20\" src=\"tongue.png\" title=\":p\"/>" },
+	{ "http://www.kde.org", "http://www.kde.org" },
 	{ NULL, NULL }
 };
 
 static TestSet knownBroken =
 {
-	{ "&gt;:-)", "<img align=\"center\" width=\"16\" height=\"16\" src=\"devil.png\" title=\"&gt;:-)\"/>" },
+	{ "&gt;:-)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"devil.png\" title=\"&gt;:-)\"/>" },
 	{ ":))", ":))" },
 	{ "In a sentence:practical example", "In a sentence:practical example" },
 	{ "Bla (&nbsp;)", "Bla (&nbsp;)" },
@@ -74,7 +74,10 @@ static TestSet knownBroken =
 void runTests( QString description, TestSet tests )
 {
 	// Detect the image path by copying some code from kopeteemoticons.cpp
-	QString path = KGlobal::dirs()->findResource( "data", "kopete/pics/emoticons/Default/smile.png" ).replace( "smile.png", QString::null );
+	// Use the KMess-Cartoon theme because it has a smiley for the troublesome ':/' pattern, which
+	// also exists in http:// URIs. (Default doesn't have such a smiley, making it useless for
+	// the test.)
+	QString path = KGlobal::dirs()->findResource( "data", "kopete/pics/emoticons/KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
 
 	_out << endl;
 	_out << "* Running test set '" << description << "'" << endl;
@@ -107,7 +110,7 @@ int main( int argc, char *argv[] )
 
 	// Set prefs (but don't save them :)
 	KopetePrefs::prefs()->setUseEmoticons( true );
-	KopetePrefs::prefs()->setIconTheme( "Default" );
+	KopetePrefs::prefs()->setIconTheme( "KMess-Cartoon" );
 
 	runTests( "Baseline of working emoticons in Kopete 0.7", kopete07Baseline );
 	runTests( "Known working tests", knownGood );
