@@ -147,16 +147,16 @@ void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 		//Kopete 0.6.x contactlist
 		// FIXME: This should be in a KConfUpdate - Martijn
 		accountId = serializedData["identityId"];
-
-		/*KGlobal::config()->setGroup("Jabber");
-		   accountId=KGlobal::config()->readEntry( "UserID", "" ); */
 	}
 
 	QDict < KopeteAccount > accounts = KopeteAccountManager::manager ()->accounts (this);
 	KopeteAccount *account = accounts[accountId];
 
 	if (!account)
-		account = createNewAccount (accountId);
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		return;
+	}
 
 	if (account)
 		account->addContact (contactId, displayName, metaContact);
