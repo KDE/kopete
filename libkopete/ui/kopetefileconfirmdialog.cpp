@@ -1,29 +1,29 @@
-/***************************************************************************
-                          kopetefileconfirmdialog.cpp  -  description
-                             -------------------
-    begin                : dim nov 17 2002
-    copyright            : (C) 2002 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
- ***************************************************************************/
+/*
+    kopetefileconfirmdialog.cpp
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002      by Olivier Goffart       <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <qdir.h>
 #include <qtextedit.h>
- 
+
 #include <klineedit.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kpushbutton.h>
 
-//#include "kopetetransfermanager.h" 
+//#include "kopetetransfermanager.h"
 #include "fileconfirmbase.h"
 #include "kopetefileconfirmdialog.h"
 
@@ -37,26 +37,25 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &i
 	m_info=KopeteFileTransferInfo(info);
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
-	m_view->m_from->setText( info.contact()->metaContact()->displayName() + " <"+info.contact()->contactId()+"> ");
+	m_view->m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
+		info.contact()->contactId() + QString::fromLatin1( "> " ) );
 	m_view->m_size->setText( QString::number(info.size()) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );
-	m_view->m_saveto->setText( QDir::homeDirPath()+"/"+info.file() );
+	m_view->m_saveto->setText( QDir::homeDirPath() + QString::fromLatin1( "/" ) + info.file() );
 
 	setMainWidget(m_view);
 
 	connect(m_view->cmdBrowse, SIGNAL(pressed()), this, SLOT(slotBrowsePressed()));
-	
 }
 
 KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
 {
 }
 
-
 void KopeteFileConfirmDialog::slotBrowsePressed()
 {
-	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text() ,"*.*", 0l  , i18n( "Kopete File Transfer" ) );
+	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text(), QString::fromLatin1( "*.*" ), 0L , i18n( "Kopete File Transfer" ) );
 	if ( !saveFileName.isNull())
 	{
 		m_view->m_saveto->setText(saveFileName);
@@ -86,7 +85,6 @@ void KopeteFileConfirmDialog::closeEvent( QCloseEvent *e)
 	}
 	KDialogBase::closeEvent(e);
 }
-
 
 #include "kopetefileconfirmdialog.moc"
 
