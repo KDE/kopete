@@ -45,14 +45,14 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 
 	mIsConnected = false;
 	kdDebug() << "\nMSN Plugin Loading\n";
-	
+
 	/* Load all ICQ icons from KDE standard dirs */
 	initIcons();
-	
+
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
-	
+
 	/* We init the actions to plug them in the Kopete gui */
 	initActions();
 
@@ -65,7 +65,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
 	m_msnService = new KMSNService;
-	
+
 	connect( m_msnService, SIGNAL( connectingToService() ),
 				this, SLOT( slotConnecting() ) );
 	connect( m_msnService, SIGNAL( connectedToService( bool ) ),
@@ -85,16 +85,13 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	connect( m_msnService, SIGNAL( contactRemoved( QString, QString ) ),
 				this, SIGNAL( contactRemoved( QString, QString ) ) );
 
-	connect(kopeteapp->contactList(), SIGNAL( groupAdded(const QString &) ), this, SLOT(slotGroupAdded(const QString &) ) );
-	connect(kopeteapp->contactList(), SIGNAL( deletingGroup(const QString &) ), this, SLOT(slotDeletingGroup(const QString &) ) );
-		
 	KGlobal::config()->setGroup("MSN");
 
 	if ( (KGlobal::config()->readEntry("UserID", "") == "" ) || (KGlobal::config()->readEntry("Password", "") == "" ) )
 	{
 		QString emptyText = i18n( "<qt>If you have a <a href=\"http://www.passport.com\">MSN account</a>, please configure it in the Kopete Settings. Get a MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a>.</qt>" );
 		QString emptyCaption = i18n( "No MSN Configuration found!" );
-		
+
 		KMessageBox::error(kopeteapp->mainWindow(), emptyText,emptyCaption );
 	}
 	/** Autoconnect if is selected in config */
@@ -102,21 +99,17 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	{
 		Connect();
 	}
-	
 }
 
 MSNProtocol::~MSNProtocol()
 {
-
 }
 
-///////////////////////////////////////////////////
-//           Plugin Class reimplementation
-///////////////////////////////////////////////////
-
+/*
+ * Plugin Class reimplementation
+ */
 void MSNProtocol::init()
 {
-
 }
 
 bool MSNProtocol::unload()
@@ -132,10 +125,9 @@ bool MSNProtocol::unload()
 	return true;
 }
 
-///////////////////////////////////////////////////
-//           KopeteProtocol Class reimplementation
-///////////////////////////////////////////////////
-
+/*
+ * KopeteProtocol Class reimplementation
+ */
 void MSNProtocol::Connect()
 {
 	if ( !isConnected() )
@@ -154,7 +146,7 @@ void MSNProtocol::Connect()
 	else
 	{
     	kdDebug() << "MSN Plugin: Ignoring Connect request (Already Connected)" << endl;
-	}	
+	}
 }
 
 void MSNProtocol::Disconnect()
@@ -166,13 +158,13 @@ void MSNProtocol::Disconnect()
 	else
 	{
     	kdDebug() << "MSN Plugin: Ignoring Disconnect request (Im not Connected)" << endl;
-	}	
+	}
 }
 
 
 bool MSNProtocol::isConnected()
 {
-	return mIsConnected;	
+	return mIsConnected;
 }
 
 
@@ -205,13 +197,12 @@ bool MSNProtocol::isAway(void)
 		case BRB:
 		case LUN:
 		{
-	    		return true;
+	    	return true;
 			break;
 		}
 	}
 	return false;
 }
-
 
 /** This i used for al protocol selection dialogs */
 QPixmap MSNProtocol::getProtocolIcon()
@@ -221,14 +212,12 @@ QPixmap MSNProtocol::getProtocolIcon()
 
 AddContactPage *MSNProtocol::getAddContactWidget(QWidget *parent)
 {
-	return (new MSNAddContactPage(this,parent));	
+	return (new MSNAddContactPage(this,parent));
 }
 
-///////////////////////////////////////////////////
-//           Internal functions implementation
-///////////////////////////////////////////////////
-
-/** No descriptions */
+/*
+ * Internal functions implementation
+ */
 void MSNProtocol::initIcons()
 {
 	KIconLoader *loader = KGlobal::iconLoader();
@@ -251,8 +240,8 @@ void MSNProtocol::initActions()
 	actionStatusMenu = new KActionMenu("MSN",this);
 	actionStatusMenu->insert( actionGoOnline );
 	actionStatusMenu->insert( actionGoOffline );
-	actionStatusMenu->insert( actionGoAway );	
-	
+	actionStatusMenu->insert( actionGoAway );
+
 	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu(), 1 );
 }
 
@@ -265,14 +254,14 @@ void MSNProtocol::slotIconRightClicked( const QPoint /* point */ )
 	popup->insertTitle(handle);
 	actionGoOnline->plug( popup );
 	actionGoOffline->plug( popup );
-	actionGoAway->plug( popup );	
+	actionGoAway->plug( popup );
 	popup->popup(QCursor::pos());
 }
 
 /* While trying to connect :-) */
 void MSNProtocol::slotConnecting()
 {
-	statusBarIcon->setMovie(connectingIcon);	
+	statusBarIcon->setMovie(connectingIcon);
 }
 
 /** NOTE: CALL THIS ONLY BEING CONNECTED */
@@ -338,7 +327,7 @@ void MSNProtocol::slotConnected()
 	QString localgroup;
 	QString remotegroup;
 	int exists;
-	
+
 	KGlobal::config()->setGroup("MSN");
 	if ( KGlobal::config()->readBoolEntry("ExportGroups", true) )
 	{
@@ -530,7 +519,6 @@ void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick
 void MSNProtocol::slotUserSetOffline (QString str)
 {
 	kdDebug() << "MSN Plugin: User Set Offline " << str << "\n";
-		
 }
 
 void MSNProtocol::slotContactAdded( QString handle, QString nick, QString group)
@@ -576,14 +564,6 @@ void MSNProtocol::slotBlockContact( QString handle)
 	m_msnService->contactBlock( handle );
 }
 
-void MSNProtocol::slotGroupAdded( const QString & )
-{
-}
-
-void MSNProtocol::slotDeletingGroup( const QString & )
-{
-}
-
 void MSNProtocol::slotGoURL( QString url)
 {
 	kapp->invokeBrowser( url );
@@ -594,23 +574,23 @@ KMSNService* MSNProtocol::msnService() const
 	return m_msnService;
 }
 
-void MSNProtocol::removeContact( const QString userID )
+void MSNProtocol::removeContact( const QString &userID )
 {
 	m_msnService->contactDelete( userID );
 }
 
-void MSNProtocol::removeFromGroup( const QString userID, const QString group )
+void MSNProtocol::removeFromGroup( const QString &userID, const QString &group )
 {
 	m_msnService->contactRemove( userID, group );
 }
 
-void MSNProtocol::moveContact( const QString userID, const QString oldGroup,
-								const QString newGroup )
+void MSNProtocol::moveContact( const QString &userID, const QString &oldGroup,
+								const QString &newGroup )
 {
 	m_msnService->contactMove( userID, oldGroup, newGroup);
 }
 
-void MSNProtocol::copyContact( const QString userID, const QString newGroup )
+void MSNProtocol::copyContact( const QString &userID, const QString &newGroup )
 {
 	m_msnService->contactCopy( userID, newGroup);
 }
