@@ -290,7 +290,7 @@ KopeteAccount *IRCProtocol::createNewAccount(const QString &accountId)
 	return new IRCAccount( this, accountId );
 }
 
-void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+KopeteContact *IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	kdDebug(14120) << k_funcinfo << endl;
@@ -306,13 +306,18 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	{
 		KopeteAccount *a = accounts[ serializedData[ "accountId" ] ];
 		if( a )
+		{
 			a->addContact( contactId, displayName, metaContact );
+			return a->contacts()[contactId];
+		}
 		else
 			kdDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
 				" but we don't have it in the accounts list" << endl;
 	}
 	else
 		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+
+	return 0;
 }
 
 void IRCProtocol::slotRawCommand( const QString &args, KopeteMessageManager *manager )

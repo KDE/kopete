@@ -164,19 +164,25 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 
+	Kopete::Global::Properties *globalProps = Kopete::Global::Properties::self();
+
 	// Contact changed from Offline to another status
 	if( oldStatus.status() == KopeteOnlineStatus::Offline &&
 		status.status() != KopeteOnlineStatus::Offline )
 	{
-		setProperty(Kopete::Global::Properties::self()->onlineSince(), QDateTime::currentDateTime());
-		removeProperty(Kopete::Global::Properties::self()->lastSeen());
+		setProperty(globalProps->onlineSince(), QDateTime::currentDateTime());
+		kdDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
+			d->displayName << endl;
+		removeProperty(globalProps->lastSeen());
 	}
 	else if( oldStatus.status() != KopeteOnlineStatus::Offline &&
 		oldStatus.status() != KopeteOnlineStatus::Unknown &&
 		status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
 	{
-		removeProperty(Kopete::Global::Properties::self()->onlineSince());
-		setProperty(Kopete::Global::Properties::self()->lastSeen(), QDateTime::currentDateTime());
+		removeProperty(globalProps->onlineSince());
+		kdDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
+			d->displayName << endl;
+		setProperty(globalProps->lastSeen(), QDateTime::currentDateTime());
 	}
 
 	emit onlineStatusChanged(this, status, oldStatus);
@@ -403,11 +409,15 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	syncGroups();
 }
 
-void KopeteContact::serialize( QMap<QString, QString> &serializedData,
+void KopeteContact::serialize( QMap<QString, QString> &/*serializedData*/,
 	QMap<QString, QString> & /* addressBookData */ )
 {
-#if 0
-	kdDebug(14010) << k_funcinfo << "for contact " << d->displayName << endl;
+}
+
+
+void KopeteContact::serializeProperties(QMap<QString, QString> &serializedData)
+{
+	//kdDebug(14010) << k_funcinfo << "for contact " << d->displayName << endl;
 
 	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
 	for (it=d->properties.begin(); it != d->properties.end(); ++it)
@@ -416,45 +426,58 @@ void KopeteContact::serialize( QMap<QString, QString> &serializedData,
 			continue;
 
 		QVariant val = it.data().value();
-		switch (val.type())
+		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
+
+		kdDebug(14010) << k_funcinfo << "storing data of property '" <<
+			it.key() << "' for contact " << d->displayName <<
+			" using xmlized key " << key << endl;
+
+		serializedData[key] = val.toString();
+
+	} // END for()
+} // END serializeProperties()
+
+void KopeteContact::deserializeProperties(
+	QMap<QString, QString> &serializedData )
+{
+	QMap<QString, QString>::ConstIterator it;
+	for ( it=serializedData.begin(); it != serializedData.end(); ++it )
+	{
+		QString key = it.key();
+
+		if ( !key.startsWith( QString::fromLatin1("prop_") ) ) // avoid parsing other serialized data
+			continue;
+
+		QStringList keyList = QStringList::split( QChar('_'), key, false );
+		if( keyList.count() < 3 ) // invalid key, not enough parts in string "prop_X_Y"
+			continue;
+
+		key = keyList[2]; // overwrite key var with the real key name this property has
+		QString type( keyList[1] ); // needed for QVariant casting
+
+		kdDebug( 14010 ) << k_funcinfo <<
+			"key=" << key << ", type=" << type << endl;
+
+		QVariant variant( it.data() );
+		if( !variant.cast(QVariant::nameToType(type.latin1())) )
 		{
-			case QVariant::CString:
-			case QVariant::String:
-				serializedData[it.key()] = val.toString();
-				break;
+			kdDebug(14010) << k_funcinfo <<
+				"Casting QVariant to needed type FAILED" << endl;
+			continue;
+		}
 
-			case QVariant::StringList:
-				serializedData[it.key()] = val.toStringList().join(QString::fromLatin1(","));
-				break;
+		Kopete::ContactPropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
+		if( tmpl.isNull() )
+		{
+			kdDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
+				" key " << key << ", cannot restore persistent property" << endl;
+			continue;
+		}
 
-			case QVariant::Color:
-				serializedData[it.key()] = val.toColor().name();
-				break;
-
-			case QVariant::Int:
-			case QVariant::UInt:
-			case QVariant::Bool:
-			case QVariant::Double:
-			case QVariant::LongLong:
-			case QVariant::ULongLong:
-				serializedData[it.key()] = val.toString();
-				break;
-
-			case QVariant::Date:
-			case QVariant::Time:
-			case QVariant::DateTime:
-				serializedData[it.key()] = val.toString();
-				break;
-
-			default:
-				kdDebug(14010) << k_funcinfo <<
-					"UNHANDLED property type, saving as generic string!" << endl;
-				serializedData[it.key()] = val.toString();
-				break;
-		} // switch()
-	} // for()
-#endif
+		setProperty(tmpl, variant);
+	} // END for()
 }
+
 
 bool KopeteContact::isReachable()
 {

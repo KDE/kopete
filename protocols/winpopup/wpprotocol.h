@@ -84,7 +84,7 @@ public:
 
 // KopetePlugin overloading
 public:
-	virtual void deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
+	virtual KopeteContact *deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
 
 // Stuff used internally & by colleague classes
 public:

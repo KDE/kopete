@@ -43,7 +43,7 @@ class ICQProtocol : public KopeteProtocol
 
 		bool canSendOffline() const;
 
-		void deserializeContact( KopeteMetaContact *metaContact,
+		KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
 			const QMap<QString, QString> &serializedData,
 			const QMap<QString, QString> &addressBookData );
 		AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);

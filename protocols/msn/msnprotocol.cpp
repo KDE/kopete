@@ -71,7 +71,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	// m_status = m_unknownStatus = UNK;
 }
 
-void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+KopeteContact *MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId   = serializedData[ "contactId" ] ;
@@ -99,6 +99,7 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	c->setBlocked(  (bool)(lists.contains('B')) );
 	c->setAllowed(  (bool)(lists.contains('A')) );
 	c->setReversed( (bool)(lists.contains('R')) );
+	return c;
 }
 
 AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , KopeteAccount *i)

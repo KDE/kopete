@@ -121,6 +121,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		if( !index.isEmpty() )
 			ad[ index ] = c->contactId();
 
+		c->serializeProperties( sd );
 		c->serialize( sd, ad );
 
 		// Merge the returned fields with what we already (may) have
@@ -173,7 +174,8 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 
 void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data )
 {
-	//kdDebug( 14010 ) << "KopeteProtocol::deserialize: protocol " << pluginId() << ": deserializing " << metaContact->displayName() << endl;
+	/*kdDebug( 14010 ) << "KopeteProtocol::deserialize: protocol " <<
+		pluginId() << ": deserializing " << metaContact->displayName() << endl;*/
 
 	QMap<QString, QStringList> serializedData;
 	QMap<QString, QStringList::Iterator> serializedDataIterators;
@@ -233,17 +235,23 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 			}
 			else
 			{
-				kdWarning() << k_funcinfo << "No account available and account not set in contactlist.xml either!" << endl
+				kdWarning( 14010 ) << k_funcinfo <<
+					"No account available and account not set in " \
+					"contactlist.xml either!" << endl
 					<< "Not deserializing this contact." << endl;
 				return;
 			}
 		}
 
-		deserializeContact( metaContact, sd, ad );
+		KopeteContact *c = deserializeContact( metaContact, sd, ad );
+		if (c) // should never be null but I do not like crashes
+			c->deserializeProperties( sd );
 	}
 }
 
-void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, const QMap<QString, QString> & /* serializedData */,
+KopeteContact *KopeteProtocol::deserializeContact(
+	KopeteMetaContact */*metaContact */,
+	const QMap<QString, QString> & /* serializedData */,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	/* Default implementation does nothing */

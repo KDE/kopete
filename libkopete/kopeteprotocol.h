@@ -57,7 +57,7 @@ public:
 		BaseBgColor = 2,     // Setting the fg color of the whole edit widget / message
 		RichFgColor = 4,       // Setting the fg/bg color of text portions individually
 		RichBgColor = 8,       // Setting the fg/bg color of text portions individually
-		
+
 		BaseFont = 16,        // Setting the font of the whole edit widget / message
 		RichFont = 32,       // Setting the font of text portions individually
 
@@ -164,7 +164,8 @@ public:
 	 * meta contact yourself.
 	 * The default implementation does nothing.
 	 */
-	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+	virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+		const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
 
 	/**

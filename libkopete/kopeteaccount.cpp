@@ -193,6 +193,8 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 
 void KopeteAccount::readConfig( const QString &configGroupName )
 {
+	kdDebug(14010) << k_funcinfo << "with group " << configGroupName << endl;
+
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroupName );
 
@@ -232,7 +234,9 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 		}
 	}
 
+	kdDebug(14010) << k_funcinfo << "calling virtual void loaded()..." << endl;
 	loaded();
+	kdDebug(14010) << k_funcinfo << "virtual void loaded() returned." << endl;
 }
 
 void KopeteAccount::loaded()
@@ -380,7 +384,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	{
 		realDisplayName = displayName;
 	}
-	
+
 	if ( c )
 	{
 		c->setMetaContact( parentContact );

@@ -63,7 +63,7 @@ AIMProtocol *AIMProtocol::protocol(void)
 	return protocolStatic_;
 }
 
-void AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
+KopeteContact *AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
@@ -78,12 +78,13 @@ void AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	if(!account)
 	{
 		kdDebug(14190) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
-		return;
+		return 0;
 	}
-	// Create Oscar contact, this adds it to the proper account
-	// TODO
-	new AIMContact(contactId, displayName, static_cast<AIMAccount*>(account), metaContact);
 
+	AIMContact *c = new AIMContact(contactId, displayName,
+		static_cast<AIMAccount*>(account), metaContact);
+
+	return c;
 }
 
 AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)

@@ -108,7 +108,7 @@ GaduProtocol::settingsChanged()
 {
 }
 
-void
+KopeteContact *
 GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 				const QMap<QString, QString>& serializedData,
 				const QMap<QString, QString>&  /* addressBookData */ )
@@ -139,6 +139,7 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 	contact->setProperty( propPhoneNr, serializedData["telephone"] );
 	//contact->setProperty( "ignored", i18n( "ignored" ), serializedData["ignored"] );
 	contact->setIgnored(serializedData["ignored"] == "true");
+	return contact;
 }
 
 uint

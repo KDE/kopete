@@ -128,7 +128,7 @@ JabberProtocol *JabberProtocol::protocol ()
 	return protocolInstance;
 }
 
-void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
+KopeteContact *JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
 //  kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
@@ -148,7 +148,7 @@ void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 
 	if (account)
 		account->addContact (contactId, displayName, metaContact);
-
+	return account->contacts()[contactId];
 }
 
 #include "jabberprotocol.moc"

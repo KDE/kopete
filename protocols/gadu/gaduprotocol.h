@@ -64,7 +64,7 @@ public:
 	KopeteEditAccountWidget *createEditAccountWidget( KopeteAccount* account, QWidget* parent );
 	bool canSendOffline() const { return true; }
 
-	virtual void deserializeContact( KopeteMetaContact* metaContact,
+	virtual KopeteContact *deserializeContact( KopeteMetaContact* metaContact,
 						 const QMap<QString, QString>& serializedData,
 						 const QMap<QString, QString>& addressBookData );
 	// }

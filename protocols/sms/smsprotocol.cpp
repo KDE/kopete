@@ -66,7 +66,8 @@ SMSProtocol* SMSProtocol::protocol()
 	return s_protocol;
 }
 
-void SMSProtocol::deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+KopeteContact *SMSProtocol::deserializeContact(KopeteMetaContact *metaContact,
+	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
 	QString contactId = serializedData["contactId"];
@@ -79,10 +80,10 @@ void SMSProtocol::deserializeContact(KopeteMetaContact *metaContact, const QMap<
 	if (!account)
 	{
 		kdDebug(14160) << "Account doesn't exist, skipping" << endl;
-		return;
+		return 0;
 	}
 
-	/*SMSContact* c =*/ new SMSContact(account, contactId, displayName, metaContact);
+	return new SMSContact(account, contactId, displayName, metaContact);
 }
 
 KopeteAccount* SMSProtocol::createNewAccount(const QString &accountId)

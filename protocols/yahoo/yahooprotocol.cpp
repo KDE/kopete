@@ -118,7 +118,7 @@ YahooProtocol *YahooProtocol::protocol()
 	return s_protocolStatic_;
 }
 
-void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
+KopeteContact *YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId = serializedData[ "contactId" ];
@@ -128,15 +128,16 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 
 	if(!theAccount)
 	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
-		return;
+		return 0;
 	}
 
 	if(theAccount->contact(contactId))
 	{	kdDebug( 14180 ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
-		return;
+		return 0;
 	}
 
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
+	return theAccount->contacts()[contactId];
 }
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , KopeteAccount* )

@@ -30,11 +30,11 @@ class TestbedProtocol : public KopeteProtocol
 public:
 	TestbedProtocol(QObject *parent, const char *name, const QStringList &args);
     ~TestbedProtocol();
-	/** 
-	 * Convert the serialised data back into a TestbedContact and add this 
+	/**
+	 * Convert the serialised data back into a TestbedContact and add this
 	 * to its KopeteMetaContact
 	 */
-	virtual void deserializeContact( 
+	virtual KopeteContact *deserializeContact(
 			KopeteMetaContact *metaContact,
 			const QMap< QString, QString > & serializedData,
 			const QMap< QString, QString > & addressBookData
@@ -51,7 +51,7 @@ public:
 	 * Generate a TestbedAccount
 	 */
 	virtual KopeteAccount * createNewAccount( const QString &accountId );
-	/** 
+	/**
 	 * Access the instance of this protocol
 	 */
 	static TestbedProtocol *protocol();

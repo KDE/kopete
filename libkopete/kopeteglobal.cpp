@@ -142,32 +142,32 @@ const ContactPropertyTmpl &Properties::lastName() const
 const ContactPropertyTmpl &Properties::privatePhone() const
 {
 	return createProp(QString::fromLatin1("privatePhoneNumber"),
-		i18n("Private Phone"));
+		i18n("Private Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::privateMobilePhone() const
 {
 	return createProp(QString::fromLatin1("privateMobilePhoneNumber"),
-		i18n("Private Mobile Phone"));
+		i18n("Private Mobile Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::workPhone() const
 {
 	return createProp(QString::fromLatin1("workPhoneNumber"),
-		i18n("Work Phone"));
+		i18n("Work Phone"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::workMobilePhone() const
 {
 	return createProp(QString::fromLatin1("workMobilePhoneNumber"),
-		i18n("Work Mobile Phone"));
+		i18n("Work Mobile Phone"), QString::null, true);
 }
 
 
 const ContactPropertyTmpl &Properties::emailAddress() const
 {
 	return createProp(QString::fromLatin1("emailAddress"),
-		i18n("Email Address"), QString::fromLatin1("mail_generic"));
+		i18n("Email Address"), QString::fromLatin1("mail_generic"), true);
 }
 
 const ContactPropertyTmpl &Properties::createProp(const QString &key,

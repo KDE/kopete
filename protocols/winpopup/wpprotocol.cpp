@@ -112,7 +112,8 @@ void WPProtocol::destroyInterface(KopeteWinPopup *theInterface)
 	delete theInterface;
 }
 
-void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+KopeteContact *WPProtocol::deserializeContact( KopeteMetaContact *metaContact,
+	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId = serializedData[ "contactId" ];
@@ -121,15 +122,16 @@ void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<
 	WPAccount *theAccount = static_cast<WPAccount *>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)
 	{	DEBUG(WPDINFO, "Account " << accountId << " not found");
-		return;
+		return 0;
 	}
 
 	if(theAccount->contacts()[contactId])
 	{	DEBUG(WPDINFO, "User " << contactId << " already in contacts map");
-		return;
+		return 0;
 	}
 
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
+	return theAccount->contacts()[contactId];
 }
 
 KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)

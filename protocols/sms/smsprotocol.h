@@ -50,7 +50,7 @@ public:
 	/**
 	 * Deserialize contact data
 	 */
-	virtual void deserializeContact(KopeteMetaContact *metaContact,
+	virtual KopeteContact *deserializeContact(KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	virtual AddContactPage *createAddContactWidget(QWidget *parent , KopeteAccount *i);

@@ -34,7 +34,7 @@ TestbedProtocol::TestbedProtocol( QObject* parent, const char *name, const QStri
 	  testbedOnline(  KopeteOnlineStatus::Online, 25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
 	  testbedAway(  KopeteOnlineStatus::Away, 25, this, 1, "msn_away",  i18n( "Go &Away" ),   i18n( "Away" ) ),
 	  testbedOffline(  KopeteOnlineStatus::Offline, 25, this, 2,  QString::null,  i18n( "Go O&ffline" ),   i18n( "Offline" ) )
-	  
+
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;
 
@@ -45,14 +45,15 @@ TestbedProtocol::~TestbedProtocol()
 {
 }
 
-void TestbedProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+KopeteContact *TestbedProtocol::deserializeContact(
+	KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 	QString displayName = serializedData[ "displayName" ];
 	QString type = serializedData[ "contactType" ];
-	
+
 	TestbedContact::TestbedContactType tbcType;
 	if ( type == QString::fromLatin1( "echo" ) )
 		tbcType = TestbedContact::Echo;
@@ -60,17 +61,17 @@ void TestbedProtocol::deserializeContact( KopeteMetaContact *metaContact, const 
 		tbcType = TestbedContact::Null;
 	else
 		tbcType = TestbedContact::Null;
-		
+
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 
 	KopeteAccount *account = accounts[ accountId ];
 	if ( !account )
 	{
 		kdDebug(14210) << "Account doesn't exist, skipping" << endl;
-		return;
+		return 0;
 	}
 
-	new TestbedContact(account, contactId, tbcType, displayName, metaContact);
+	return new TestbedContact(account, contactId, tbcType, displayName, metaContact);
 }
 
 AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
@@ -92,7 +93,7 @@ KopeteAccount *TestbedProtocol::createNewAccount( const QString &accountId )
 
 TestbedProtocol *TestbedProtocol::protocol()
 {
-	return s_protocol; 
+	return s_protocol;
 }
 
 

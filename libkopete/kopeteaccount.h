@@ -76,16 +76,16 @@ public:
 	 * \brief Describes what should be done when the contact is added to a metacontact
 	 */
 	enum AddMode { ChangeKABC=0, DontChangeKABC=1 };
-	
+
 	/**
 	 * \brief Describes how the account was disconnected
 	 *
 	 * Manual means that the disconnection was done by the user and no reconnection
 	 * will take place. Any other value will reconnect the account on disconnection.
-	 * The case where the password is wrong will be handled differently. 
+	 * The case where the password is wrong will be handled differently.
 	 */
 	enum DisconnectReason { Manual = 0, ConnectionReset = 1, Unknown = 99 };
-	
+
 	/**
 	 * constructor:
 	 * The constructor register automatically the account to the @ref KopeteAccountManager
@@ -310,7 +310,7 @@ public slots:
 	 *
 	 */
 	virtual void connect() = 0;
-	
+
 	/**
 	 * @brief Go online for this service using a different status
 	 */
@@ -320,8 +320,8 @@ public slots:
 	 * @brief Disconnect from this service.
 	 * \deprecated
 	 */
-	virtual void disconnect() = 0 ; 
-	
+	virtual void disconnect() = 0 ;
+
 	/**
 	 * \brief Disconnect from this service with the specified reason
 	 *
@@ -331,15 +331,15 @@ public slots:
 	virtual void disconnect( DisconnectReason reason );
 
 	/**
-	 * Adds a contact to this protocol with the specified details
+	 * \brief Adds a contact to this protocol with the specified details
 	 *
 	 * @param contactId The unique ID for this protocol
 	 * @param displayName The displayname of the contact (may equal userId for some protocols
 	 * @param parentContact The metacontact to add this contact to
-	 * @param mode If the KDE addressbook should be changed to include the new contact.  Don't change if you are using this method to deserialise.
+	 * @param mode If the KDE addressbook should be changed to include the new contact. Don't change if you are using this method to deserialise.
 	 * @param groupName The name of the group to add the contact to
 	 * @param isTemporary If this is a temporary contact
-	 * @return Pointer to the KopeteContact object which was added
+	 * @return true if the contact was added, false if not
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
 		KopeteMetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC,

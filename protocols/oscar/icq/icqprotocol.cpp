@@ -873,7 +873,7 @@ bool ICQProtocol::canSendOffline() const
 	return true;
 }
 
-void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
+KopeteContact *ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
@@ -885,7 +885,7 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	{
 		kdDebug(14200) << k_funcinfo <<
 			"WARNING: Account for contact does not exist, skipping." << endl;
-		return;
+		return 0;
 	}
 
 	QString displayName=serializedData["displayName"];
@@ -893,6 +893,7 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact);
 	c->setGroupId(serializedData["groupID"].toInt());
 	c->setEncoding(serializedData["Encoding"].toInt());
+	return c;
 }
 
 AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)

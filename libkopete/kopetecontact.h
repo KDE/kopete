@@ -132,6 +132,21 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	/**
+	 * @brief Serialize the contacts persistent properties for storage in the contact list.
+	 *
+	 * Does the same @ref serialize() does but fur KopeteContactProperties
+	 * set in this contact with their persistency flag turned on.
+	 * In contrary to @ref serialize() this does not need to be reimplemented.
+	 *
+	 */
+	void serializeProperties(QMap<QString, QString> &serializedData);
+
+	/**
+	 * @brief Deserialize the contacts persistent properties
+	 */
+	void deserializeProperties(QMap<QString, QString> &serializedData);
+
+	/**
 	 * Get the current display name
 	 * @return The display name
 	 */
