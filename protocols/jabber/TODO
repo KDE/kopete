@@ -1,8 +1,6 @@
 TODO for Jabber:
 
 - update status is not signalled after a new contact has been added
-- check renaming
-- check moving between groups
 - check if pending subscriptions are displayed
   + they should be displayed as offline. status icon for this, maybe? -DS
 - check if incoming auth requests are properly added
@@ -17,7 +15,6 @@ TODO for Jabber:
 - make sure that messages sent via a gateway from a non-subscribed contact
   are actually displayed
 - check if vCards are actually deleted after having retrieved them
-- contacts that are waiting to be authorized should be displayed as such (special icon)
 - moving a user currently does seem to pass on the correct parameters to the protocol
   backend, however, slotUpdate() is not called on the contact in return after a
   successful move. check that this doesn't lead to data corruption or data loss
@@ -25,3 +22,4 @@ TODO for Jabber:
   emulated via the serialization API somehow
 - allow synchronization of offline changes / online changes, this requires adding
   groups to the serialized data
+- group() does not seem to work with JabberContact serialization
