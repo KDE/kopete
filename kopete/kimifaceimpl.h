@@ -36,6 +36,7 @@ public:
 	
 // individual
 	bool isPresent( const QString &uid );
+	QString displayName( const QString &uid );
 	QString presenceString( const QString &uid );
 	int presenceStatus( const QString &uid );
 	bool canReceiveFiles( const QString &uid );

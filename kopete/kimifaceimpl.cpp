@@ -30,6 +30,8 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 
+#include "kdebug.h"
+
 #include "kimifaceimpl.h"
 
 KIMIfaceImpl::KIMIfaceImpl() : DCOPObject( "KIMIface" ), QObject()
@@ -107,8 +109,21 @@ bool KIMIfaceImpl::isPresent( const QString & uid )
 	return ( mc != 0 );
 }
 
+
+QString KIMIfaceImpl::displayName( const QString & uid )
+{
+	KopeteMetaContact *mc;
+	mc = KopeteContactList::contactList()->metaContact( uid );
+	QString name;
+	if ( mc )
+		name = mc->displayName();
+	
+	return name;
+}
+
 int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
+	kdDebug( 14000 ) << k_funcinfo << endl;
 	int p = -1;
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
@@ -138,16 +153,19 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 
 QString KIMIfaceImpl::presenceString( const QString & uid )
 {
+	kdDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
 	QString p;
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 	{
 		KopeteOnlineStatus status = m->status();
 			p = status.description();
+		kdDebug( 14000 ) << "Got presence for " <<  uid << " : " << p.ascii() << endl;
 	}
 	else
 	{
-		p = QString::null;
+		kdDebug( 14000 ) << "Couldn't find MC: " << uid << endl;;
+		p = QString();
 	}
 	return p;
 }
@@ -228,7 +246,7 @@ QString KIMIfaceImpl::context( const QString & uid )
 	// shush warning
 	QString myUid = uid;
 
-	return QString( "Home" );
+	return QString::null;
 }
 
 QStringList KIMIfaceImpl::protocols()
