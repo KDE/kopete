@@ -20,6 +20,7 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 
+#include "kopete.h"
 #include "kopetestdaction.h"
 #include "msncontact.h"
 #include "msnprotocol.h"
@@ -154,7 +155,7 @@ void MSNContact::slotMoveThisUser()
 	// FIXME: originating group should also be provided!
 	if( m_actionMove )
 	{
-		kdDebug() << "***** MOVE: Groups: " << m_groups.join( ", " ) << endl;
+		//kdDebug() << "***** MOVE: Groups: " << m_groups.join( ", " ) << endl;
 		if( m_movingToGroup == m_actionMove->currentText() )
 		{
 			kdDebug() << "MSNContact::slotMoveThisUser: Suppressing second "
@@ -162,8 +163,9 @@ void MSNContact::slotMoveThisUser()
 		}
 		else
 		{
-			m_movingToGroup = m_actionMove->currentText();
-			MSNProtocol::protocol()->moveContact( this, m_groups.first(),
+			m_movingToGroup   = m_actionMove->currentText();
+			m_movingFromGroup = m_groups.first();
+			MSNProtocol::protocol()->moveContact( this, m_movingFromGroup,
 				m_movingToGroup );
 		}
 	}
@@ -462,7 +464,12 @@ void MSNContact::addToGroup( const QString &group )
 {
 	m_groups.append( group );
 	if( m_movingToGroup == group )
+	{
+		kopeteapp->contactList()->moveContact( this, m_movingFromGroup, group );
+
 		m_movingToGroup = QString::null;
+		m_movingFromGroup = QString::null;
+	}
 }
 
 void MSNContact::removeFromGroup( const QString &group )

@@ -156,6 +156,12 @@ private:
 	 * this. 'nuff said.
 	 */
 	QString m_movingToGroup;
+
+	/**
+	 * Slightly less hacky, but still ugly: the group we're moving FROM. We
+	 * need that to signal the completed move to libkopete when done.
+	 */
+	QString m_movingFromGroup;
 };
 
 #endif
