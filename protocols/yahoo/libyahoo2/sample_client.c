@@ -6,7 +6,7 @@
  * $Revision$
  * $Date$
  * 
- * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -444,7 +444,7 @@ void ext_yahoo_chat_cat_xml(int id, char *xml)
 	print_message(("%s", xml));
 }
 
-void ext_yahoo_chat_join(int id, char *room, char * topic, YList *members, int fd)
+void ext_yahoo_chat_join(int id, char *room, char * topic, YList *members)
 {
 	print_message(("You have joined the chatroom %s with topic %s", room, topic));
 
@@ -577,7 +577,7 @@ void ext_yahoo_got_im(int id, char *who, char *msg, long tm, int stat, int utf8)
 	if(tm) {
 		char timestr[255];
 
-		strncpy(timestr, ctime((time_t *)&tm), sizeof(timestr));
+		strncpy(timestr, ctime(&tm), sizeof(timestr));
 		timestr[strlen(timestr) - 1] = '\0';
 
 		print_message(("[Offline message at %s from %s]: %s", 
@@ -654,7 +654,7 @@ void ext_yahoo_mail_notify(int id, char *from, char *subj, int cnt)
 }
 
 void ext_yahoo_got_webcam_image(int id, const char *who,
-		const unsigned char *image, unsigned int image_size, unsigned int real_size,
+		unsigned char *image, unsigned int image_size, unsigned int real_size,
 		unsigned int timestamp)
 {
 	static unsigned char *cur_image = NULL;
@@ -809,7 +809,6 @@ void ext_yahoo_login(yahoo_local_account * ylad, int login_mode)
 
 	ylad->id = yahoo_init_with_attributes(ylad->yahoo_id, ylad->password, 
 			"local_host", local_host,
-			"pager_port", 23,
 			NULL);
 	ylad->status = YAHOO_STATUS_OFFLINE;
 	yahoo_login(ylad->id, login_mode);
@@ -836,25 +835,16 @@ void ext_yahoo_login_response(int id, int succ, char *url)
 		print_message(("logged in"));
 		return;
 		
-	} else if(succ == YAHOO_LOGIN_UNAME) {
-
-		snprintf(buff, sizeof(buff), "Could not log into Yahoo service - username not recognised.  Please verify that your username is correctly typed.");
 	} else if(succ == YAHOO_LOGIN_PASSWD) {
 
-		snprintf(buff, sizeof(buff), "Could not log into Yahoo service - password incorrect.  Please verify that your password is correctly typed.");
+		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
 
 	} else if(succ == YAHOO_LOGIN_LOCK) {
 		
 		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Your account has been locked.\nVisit %s to reactivate it.", url);
 
 	} else if(succ == YAHOO_LOGIN_DUPL) {
-
 		snprintf(buff, sizeof(buff), "You have been logged out of the yahoo service, possibly due to a duplicate login.");
-	} else if(succ == YAHOO_LOGIN_SOCK) {
-
-		snprintf(buff, sizeof(buff), "The server closed the socket.");
-	} else {
-		snprintf(buff, sizeof(buff), "Could not log in, unknown reason: %d.", succ);
 	}
 
 	ylad->status = YAHOO_STATUS_OFFLINE;
@@ -964,40 +954,35 @@ int ext_yahoo_connect(char *host, int port)
  */
 YList *connections = NULL;
 struct _conn {
-	int tag;
-	int fd;
 	int id;
+	int fd;
 	yahoo_input_condition cond;
 	void *data;
 	int remove;
 };
-static int connection_tags=0;
 
-int ext_yahoo_add_handler(int id, int fd, yahoo_input_condition cond, void *data)
+void ext_yahoo_add_handler(int id, int fd, yahoo_input_condition cond, void *data)
 {
 	struct _conn *c = y_new0(struct _conn, 1);
-	c->tag = ++connection_tags;
 	c->id = id;
 	c->fd = fd;
 	c->cond = cond;
 	c->data = data;
 
-	LOG(("Add %d for %d, tag %d", fd, id, c->tag));
+	LOG(("Add %d for %d", fd, id));
 
 	connections = y_list_prepend(connections, c);
-
-	return c->tag;
 }
 
-void ext_yahoo_remove_handler(int id, int tag)
+void ext_yahoo_remove_handler(int id, int fd)
 {
 	YList *l;
 	for(l = connections; l; l = y_list_next(l)) {
 		struct _conn *c = l->data;
-		if(c->tag == tag) {
+		if(c->fd == fd) {
 			/* don't actually remove it, just mark it for removal */
 			/* we'll remove when we start the next poll cycle */
-			LOG(("Marking id:%d fd:%d tag:%d for removal", c->id, c->fd, c->tag));
+			LOG(("Marking id:%d fd:%d for removal", id, fd));
 			c->remove = 1;
 			return;
 		}
@@ -1008,7 +993,6 @@ struct connect_callback_data {
 	yahoo_connect_callback callback;
 	void * callback_data;
 	int id;
-	int tag;
 };
 
 static void connect_complete(void *data, int source, yahoo_input_condition condition)
@@ -1016,7 +1000,7 @@ static void connect_complete(void *data, int source, yahoo_input_condition condi
 	struct connect_callback_data *ccd = data;
 	int error, err_size = sizeof(error);
 
-	ext_yahoo_remove_handler(0, ccd->tag);
+	ext_yahoo_remove_handler(-1, source);
 	getsockopt(source, SOL_SOCKET, SO_ERROR, &error, (socklen_t *)&err_size);
 
 	if(error) {
@@ -1040,7 +1024,7 @@ void yahoo_callback(struct _conn *c, yahoo_input_condition cond)
 	} else {
 		if(cond & YAHOO_INPUT_READ)
 			ret = yahoo_read_ready(c->id, c->fd, c->data);
-		if(ret>0 && cond & YAHOO_INPUT_WRITE)
+		if(cond & YAHOO_INPUT_WRITE)
 			ret = yahoo_write_ready(c->id, c->fd, c->data);
 
 		if(ret == -1)
@@ -1090,12 +1074,9 @@ int ext_yahoo_connect_async(int id, char *host, int port,
 		ccd->callback_data = data;
 		ccd->id = id;
 
-		ccd->tag = ext_yahoo_add_handler(-1, servfd, YAHOO_INPUT_WRITE, ccd);
-		return ccd->tag;
+		ext_yahoo_add_handler(-1, servfd, YAHOO_INPUT_WRITE, ccd);
+		return 1;
 	} else {
-		if(error == -1) {
-			LOG(("%s", strerror(errno)));
-		}
 		close(servfd);
 		return -1;
 	}
@@ -1566,19 +1547,6 @@ void ext_yahoo_got_file(int id, char *who, char *url, long expires, char *msg, c
 void ext_yahoo_got_identities(int id, YList * ids)
 {
 }
-void ext_yahoo_chat_yahoologout(int id)
-{ 
- 	LOG(("got chat logout"));
-}
-void ext_yahoo_chat_yahooerror(int id)
-{ 
- 	LOG(("got chat logout"));
-}
-
-void ext_yahoo_got_search_result(int id, int found, int start, int total, YList *contacts)
-{
-	LOG(("got search result"));
-}
 
 static void register_callbacks()
 {
@@ -1602,8 +1570,6 @@ static void register_callbacks()
 	yc.ext_yahoo_chat_userjoin = ext_yahoo_chat_userjoin;
 	yc.ext_yahoo_chat_userleave = ext_yahoo_chat_userleave;
 	yc.ext_yahoo_chat_message = ext_yahoo_chat_message;
-	yc.ext_yahoo_chat_yahoologout = ext_yahoo_chat_yahoologout;
-	yc.ext_yahoo_chat_yahooerror = ext_yahoo_chat_yahooerror;
 	yc.ext_yahoo_got_webcam_image = ext_yahoo_got_webcam_image;
 	yc.ext_yahoo_webcam_invite = ext_yahoo_webcam_invite;
 	yc.ext_yahoo_webcam_invite_reply = ext_yahoo_webcam_invite_reply;
@@ -1616,7 +1582,6 @@ static void register_callbacks()
 	yc.ext_yahoo_typing_notify = ext_yahoo_typing_notify;
 	yc.ext_yahoo_game_notify = ext_yahoo_game_notify;
 	yc.ext_yahoo_mail_notify = ext_yahoo_mail_notify;
-	yc.ext_yahoo_got_search_result = ext_yahoo_got_search_result;
 	yc.ext_yahoo_system_message = ext_yahoo_system_message;
 	yc.ext_yahoo_error = ext_yahoo_error;
 	yc.ext_yahoo_log = ext_yahoo_log;

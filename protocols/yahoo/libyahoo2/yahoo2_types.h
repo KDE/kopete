@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo2_types.h
  *
- * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,8 +106,7 @@ enum yahoo_connection_type {
 	YAHOO_CONNECTION_YAB,
 	YAHOO_CONNECTION_WEBCAM_MASTER,
 	YAHOO_CONNECTION_WEBCAM,
-	YAHOO_CONNECTION_CHATCAT,
-	YAHOO_CONNECTION_SEARCH
+	YAHOO_CONNECTION_CHATCAT
 };
 
 enum yahoo_webcam_direction_type {
@@ -188,30 +187,6 @@ struct yahoo_buddy {
 	char *id;
 	char *real_name;
 	struct yab *yab_entry;
-};
-
-enum yahoo_search_type {
-	YAHOO_SEARCH_KEYWORD = 0,
-	YAHOO_SEARCH_YID,
-	YAHOO_SEARCH_NAME
-};
-
-enum yahoo_search_gender {
-	YAHOO_GENDER_NONE = 0,
-	YAHOO_GENDER_MALE,
-	YAHOO_GENDER_FEMALE
-};
-
-enum yahoo_search_agerange {
-	YAHOO_AGERANGE_NONE = 0
-};
-
-struct yahoo_found_contact {
-	char *id;
-	char *gender;
-	char *location;
-	int age;
-	int online;
 };
 
 /*

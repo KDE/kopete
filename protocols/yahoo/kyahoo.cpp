@@ -1,7 +1,7 @@
  /*
     kyahoo.cpp - Qt Based libyahoo2 wrapper II
 
-    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -132,8 +132,6 @@ YahooSessionManager* YahooSessionManager::manager()
     *************************************************************************
 */
 
-int YahooSession::m_tags = 0;
-
 YahooSession::YahooSession(int id, const QString username, const QString password)
 {
 	kdDebug(14181) << k_funcinfo << endl;
@@ -143,7 +141,6 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_socket = 0L;
 	m_waitingForKeepalive = false;
 	m_keepalive = new QTimer(this, "keepaliveTimer");
-	m_tag = 0;
 	connect( m_keepalive, SIGNAL( timeout() ), this, SLOT( refresh() ) );
 }
 
@@ -246,9 +243,7 @@ void YahooSession::setAway( enum yahoo_status state, const QString &msg, int awa
 void YahooSession::addBuddy( const QString &who, const QString &group)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	// FIXME we are passing a null message, to keep it up compiling
-	// libyahoo will ignore it, add support for it in the future
-	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit(), 0L );
+	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit() );
 }
 
 void YahooSession::removeBuddy( const QString &who, const QString &group)
@@ -567,7 +562,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_cat_xml )( int /*id*/, char* /*xml*/ )
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_join )( int /*id*/, char* /*room*/,
-		char* /*topic*/, YList* /*members*/, int /*fd*/ )
+		char* /*topic*/, YList* /*members*/ )
 {
 	/* Not implemented , No receiver yet */
 }
@@ -651,17 +646,17 @@ int YAHOO_CALLBACK_TYPE( ext_yahoo_log )( const char* /*fmt*/, ... )
 	return 0;
 }
 
-int YAHOO_CALLBACK_TYPE( ext_yahoo_add_handler )( int id, int fd, yahoo_input_condition cond, void * data )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_add_handler )( int id, int fd, yahoo_input_condition cond, void * data )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	session->_addHandlerReceiver( fd, cond, data );
-	return ++YahooSession::m_tags;
+
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_remove_handler )( int id, int tag )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_remove_handler )( int id, int fd )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_removeHandlerReceiver( tag );
+	session->_removeHandlerReceiver( fd );
 
 }
 
@@ -705,21 +700,6 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_viewer )( int /*id*/, char* /*who*/, 
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*send*/ )
-{
-	/* Not implemented , No receiver yet */
-}
-
-void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahoologout)(int /*id*/)
-{
-	/* Not implemented , No receiver yet */
-}
-
-void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahooerror)(int /*id*/)
-{
-	/* Not implemented , No receiver yet */
-}
-
-void YAHOO_CALLBACK_TYPE(ext_yahoo_got_search_result)(int /*id*/, int /*found*/, int /*start*/, int /*total*/, YList */*contacts*/)
 {
 	/* Not implemented , No receiver yet */
 }
@@ -989,11 +969,11 @@ void YahooSession::addHandler( int /*fd*/, yahoo_input_condition /*cond*/ )
 {
 }
 
-void YahooSession::_removeHandlerReceiver( int tag )
+void YahooSession::_removeHandlerReceiver( int fd )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	if ( m_tag == tag )
-	{ 
+	if ( fd != -1 )
+	{
 		kdDebug(14181) << k_funcinfo << " read off" << endl;
 		m_socket->enableRead( false );
 		disconnect ( m_socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
@@ -1022,27 +1002,27 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 		yahoo_connect_callback callback, void *callback_data )
 {
 	struct connect_callback_data *ccd;
-	int socketError;
+	int error;
 	kdDebug(14181) << k_funcinfo << endl;
 	m_socket = new KExtendedSocket( host, port );
 
 	// TODO Do an async connect in the future
-	socketError = m_socket->connect();
+	error = m_socket->connect();
 
-	if ( !socketError )
+	if ( !error )
 	{
 		kdDebug(14181) << k_funcinfo << " Connected! fd "<< m_socket->fd() << endl;
 		callback( m_socket->fd(), 0, callback_data );
 		return 0;
 	}
-	else if( socketError == -1 && errno == EINPROGRESS )
+	else if( error == -1 && errno == EINPROGRESS )
 	{
 		kdDebug(14181) << k_funcinfo << " In progress?" << endl;
 		ccd = ( struct connect_callback_data* ) calloc( 1, sizeof( struct connect_callback_data ) );
 		ccd->callback = callback;
 		ccd->callback_data = callback_data;
 		ccd->id = m_connId;
-		m_tag = ext_yahoo_add_handler( -1, m_socket->fd(), YAHOO_INPUT_WRITE, ccd );
+		ext_yahoo_add_handler( -1, m_socket->fd(), YAHOO_INPUT_WRITE, ccd );
 		return 1;
 	}
 	else
@@ -1051,7 +1031,6 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 		m_socket->close();
 		delete m_socket;
 		m_socket = 0L;
-		emit error( QString::null , -1 );
 		return -1;
 	}
 }

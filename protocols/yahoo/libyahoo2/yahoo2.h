@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo2.h
  *
- * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ int  yahoo_get_fd(int id);
 /* says how much logging to do */
 /* see yahoo2_types.h for the different values */
 int  yahoo_set_log_level(enum yahoo_log_level level);
-enum yahoo_log_level  yahoo_get_log_level( void );
 
 /* these functions should be self explanatory */
 /* who always means the buddy you're acting on */
@@ -93,7 +92,6 @@ void yahoo_get_yab(int id);
 /* modify that entry else it creates a new entry */
 void yahoo_set_yab(int id, struct yab * yab);
 void yahoo_keepalive(int id);
-void yahoo_chat_keepalive(int id);
 
 /* from is the identity you're sending from.  if NULL, the default is used */
 /* utf8 is whether msg is a utf8 string or not. */
@@ -105,7 +103,7 @@ void yahoo_send_typing(int id, const char *from, const char *who, int typ);
 /* away says whether the custom message is an away message or a sig */
 void yahoo_set_away(int id, enum yahoo_status state, const char *msg, int away);
 
-void yahoo_add_buddy(int id, const char *who, const char *group, const char *msg);
+void yahoo_add_buddy(int id, const char *who, const char *group);
 void yahoo_remove_buddy(int id, const char *who, const char *group);
 void yahoo_reject_buddy(int id, const char *who, const char *msg);
 /* if unignore is true, unignore, else ignore */
@@ -131,12 +129,11 @@ void yahoo_chat_logoff(int id, const char *from);
 
 /* requests a webcam feed */
 /* who is the person who's webcam you would like to view */
-/* if who is null, then you're the broadcaster */
 void yahoo_webcam_get_feed(int id, const char *who);
 void yahoo_webcam_close_feed(int id, const char *who);
 
 /* sends an image when uploading */
-/* image points to a JPEG-2000 image, length is the length of the image */
+/* image points to a JPEG-2000 image, lenght is the length of the image */
 /* in bytes. The timestamp is the time in milliseconds since we started the */
 /* webcam. */
 void yahoo_webcam_send_image(int id, unsigned char *image, unsigned int length, unsigned int timestamp);
@@ -155,18 +152,6 @@ void yahoo_webcam_invite(int id, const char *who);
  */
 void yahoo_send_file(int id, const char *who, const char *msg, const char *name, unsigned long size,
 		yahoo_get_fd_callback callback, void *data);
-
-/* send a search request
- */
-void yahoo_search(int id, enum yahoo_search_type t, const char *text, enum yahoo_search_gender g, enum yahoo_search_agerange ar,
-		int photo, int yahoo_only);
-
-/* continue last search
- * should be called if only (start+found >= total)
- *
- * where the above three are passed to ext_yahoo_got_search_result
- */
-void yahoo_search_again(int id, int start);
 
 /* returns a socket fd to a url for downloading a file. */
 void yahoo_get_url_handle(int id, const char *url, 

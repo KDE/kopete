@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo2_callbacks.h
  *
- * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,10 +58,10 @@ typedef enum {
  * Params:
  *     fd    - The file descriptor that has been connected, or -1 on error
  *     error - The value of errno set by the call to connect or 0 if no error
- *	       Set both fd and error to 0 if the connect was cancelled by the
- *	       user
+ *             Set both fd and error to 0 if the connect was cancelled by the
+ *             user
  *     callback_data - the callback_data passed to the ext_yahoo_connect_async
- *	       function
+ *             function
  */
 typedef void (*yahoo_connect_callback)(int fd, int error, void *callback_data);
 
@@ -192,7 +192,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_got_im)(int id, char *who, char *msg, long tm
  * 	who  - the user inviting you
  * 	room - the room to join
  * 	msg  - the message
- *	members - the initial members of the conference (null terminated list)
+ *      members - the initial members of the conference (null terminated list)
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_got_conf_invite)(int id, char *who, char *room, char *msg, YList *members);
 
@@ -237,47 +237,27 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userjoin)(int id, char *who, char *room)
 void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userleave)(int id, char *who, char *room);
 
 
-
-
-
-
 /*
  * Name: ext_yahoo_chat_cat_xml
  * 	Called when joining the chatroom.
  * Params:
  * 	id      - the id that identifies the server connection
- * 	room    - the room joined, used in all other chat calls, freed by 
- * 	          library after call
+ * 	room    - the room joined, used in all other chat calls, freed by library after call
  * 	topic   - the topic of the room, freed by library after call
- *	members - the initial members of the chatroom (null terminated YList of 
- *	          yahoo_chat_member's) Must be freed by the client
+ *      members - the initial members of the chatroom (null terminated YList of yahoo_chat_member's) Must be freed by the client
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_cat_xml)(int id, char *xml);
-
-
-
-
-
-
 
 /*
  * Name: ext_yahoo_chat_join
  * 	Called when joining the chatroom.
  * Params:
  * 	id      - the id that identifies the server connection
- * 	room    - the room joined, used in all other chat calls, freed by 
- * 	          library after call
+ * 	room    - the room joined, used in all other chat calls, freed by library after call
  * 	topic   - the topic of the room, freed by library after call
- *	members - the initial members of the chatroom (null terminated YList 
- *	          of yahoo_chat_member's) Must be freed by the client
- *	fd	- the socket where the connection is coming from (for tracking)
+ *      members - the initial members of the chatroom (null terminated YList of yahoo_chat_member's) Must be freed by the client
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_join)(int id, char *room, char *topic, YList *members, int fd);
-
-
-
-
-
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_join)(int id, char *room, char *topic, YList *members);
 
 /*
  * Name: ext_yahoo_chat_userjoin
@@ -319,35 +299,6 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_userleave)(int id, char *room, char *who
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_message)(int id, char *who, char *room, char *msg, int msgtype, int utf8);
 
-/*
- *
- * Name: ext_yahoo_chat_yahoologout
- *	called when yahoo disconnects your chat session
- *	Note this is called whenver a disconnect happens, client or server
- *	requested. Care should be taken to make sure you know the origin 
- *	of the disconnect request before doing anything here (auto-join's etc)
- * Params:
- *	id   - the id that identifies this connection
- * Returns:
- *	nothing.
- */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahoologout)(int id);
-
-/*
- *
- * Name: ext_yahoo_chat_yahooerror
- *	called when yahoo sends back an error to you
- *	Note this is called whenver chat message is sent into a room
- *	in error (fd not connected, room doesn't exists etc)
- *	Care should be taken to make sure you know the origin 
- *	of the error before doing anything about it.
- * Params:
- *	id   - the id that identifies this connection
- * Returns:
- *	nothing.
- */
-
-void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahooerror)(int id);
 
 /*
  * Name: ext_yahoo_conf_message
@@ -515,7 +466,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_invite)(int id, char *from);
  * Params:
  * 	id   - the id that identifies the server connection
  * 	from - who the invitation response is from
- *	accept - 0 (decline), 1 (accept)
+ *      accept - 0 (decline), 1 (accept)
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_invite_reply)(int id, char *from, int accept);
 
@@ -527,28 +478,13 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_invite_reply)(int id, char *from, int 
  * Params:
  * 	id   - the id that identifies the server connection
  * 	who  - the user who we where connected to
- *	reason - reason why the connection closed
+ *      reason - reason why the connection closed
  *	         1 = user stopped broadcasting
  *	         2 = user cancelled viewing permission
  *	         3 = user declines permission
  *	         4 = user does not have webcam online
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_closed)(int id, char *who, int reason);
-
-
-/*
- * Name: ext_yahoo_got_search_result
- *      Called when the search result received from server
- * Params:
- *      id  	 - the id that identifies the server connection
- * 	found	 - total number of results returned in the current result set
- * 	start	 - offset from where the current result set starts
- * 	total	 - total number of results available (start + found <= total)
- * 	contacts - the list of results as a YList of yahoo_found_contact
- * 		   these will be freed after this function returns, so
- * 		   if you need to use the information, make a copy
- */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_got_search_result)(int id, int found, int start, int total, YList *contacts);
 
 
 
@@ -617,10 +553,8 @@ int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(const char *fmt, ...);
  * 	fd   - the fd on which to listen
  * 	cond - the condition on which to call the callback
  * 	data - callback data to pass to yahoo_*_ready
- * 	
- * Returns: a tag to be used when removing the handler
  */
-int YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condition cond, void *data);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condition cond, void *data);
 
 
 
@@ -629,10 +563,10 @@ int YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condi
  * Name: ext_yahoo_remove_handler
  * 	Remove the listener for the fd.
  * Params:
- * 	id   - the id that identifies the connection
- * 	tag  - the handler tag to remove
+ * 	id   - the id that identifies the server connection
+ * 	fd   - the fd on which to listen
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_remove_handler)(int id, int tag);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_remove_handler)(int id, int fd);
 
 
 

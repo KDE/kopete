@@ -1,7 +1,7 @@
 /*
- * yahoo_list.h: linked list routines
+ * llist.h: linked list routines
  *
- * Some code copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
+ * Some code copyright (C) 2002-2003, Philip S Tellis <philip . tellis AT gmx . net>
  * Other code copyright Meredydd Luff <meredydd AT everybuddy.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ typedef void (*YListFunc) (void *, void *);
 
 YList *y_list_append(YList * list, void *data);
 YList *y_list_prepend(YList * list, void *data);
-YList *y_list_remove_link(YList * list, const YList * lnk);
+YList *y_list_remove_link(YList * list, const YList * listlink);
 YList *y_list_remove(YList * list, void *data);
 
 YList *y_list_insert_sorted(YList * list, void * data, YListCompFunc comp);
