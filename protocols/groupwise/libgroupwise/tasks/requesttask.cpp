@@ -40,8 +40,13 @@ void RequestTask::createTransfer( const QString & command, const Field::FieldLis
 
 void RequestTask::onGo()
 {
-	qDebug( "%s::onGo() - sending %s fields", className(), ( static_cast<Request *>( transfer() )->command().ascii() ) );
-	send( static_cast<Request *>( transfer() ) );
+	if ( transfer() )
+	{
+		qDebug( "%s::onGo() - sending %s fields", className(), ( static_cast<Request *>( transfer() )->command().ascii() ) );
+		send( static_cast<Request *>( transfer() ) );
+	}
+	else
+		qDebug( "RequestTask::onGo() - called prematurely, no transfer set." );
 }
 
 bool RequestTask::take( Transfer * transfer )
