@@ -22,10 +22,6 @@ Olivier Goffart <ogoffart@tiscalinet.be> (irc: Gof)
 - Kopete API and main application core developer, primary maintainer of the
   MSN plugin, misc changes and fixes in the other plugins
 
-Stefan Gehn <metz@gehn.net> (irc: mETz)
-- OSCAR and OSCAR/ICQ stuff, misc bugfixes, cleanups, hacks, features,
-  KopeteEmoticons engine
-
 Will Stephenson <lists@stevello.free-online.co.uk> (irc: bille)
 - Core developer, KAddressBook integration, nowlistening and webpresence plugin
   maintainer, Testbed testing plugin
