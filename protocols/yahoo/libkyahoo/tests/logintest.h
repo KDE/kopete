@@ -1,11 +1,22 @@
-//
-// C++ Implementation: clientstream_test
-//
-// Description: 
-//
-//
-// Author: Kopete Developers <kopete-devel@kde.org>, (C) 2004
-// Licensed under the GNU General Public License
+/*
+    Kopete Yahoo Protocol
+    
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
+    
+    Based on code 
+    Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
+    
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef logintest_h
 #define logintest_h
