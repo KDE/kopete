@@ -311,7 +311,7 @@ void IRCChannelContact::slotUserKicked(const QString &nick, const QString &chann
 		}
 		else
 		{
-			KMessageBox::error(0l, i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
+			KMessageBox::error(0l, r, i18n("IRC Plugin"));
 			manager()->view()->closeView();
 		}
 	}
