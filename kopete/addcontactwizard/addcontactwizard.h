@@ -67,6 +67,7 @@ protected slots:
 	void slotAddAddresseeClicked();
 	void slotCheckAddresseeChoice( bool on );
 	void slotAddresseeListClicked( QListViewItem *addressee );
+	void slotValidateDisplayName( const QString & );
 	/**
 	 * Utility function, populates the addressee list
 	 */

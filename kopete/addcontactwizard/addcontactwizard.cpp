@@ -101,6 +101,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	setNextEnabled( selectService, ( accounts.count() == 1 ) );
 	setNextEnabled( selectAddressee, false );
+	setNextEnabled( selectGroup, false );
 	setFinishEnabled( finis, true );
 
 	// Addressee validation connections
@@ -121,8 +122,11 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
-}
 
+	// Display name validation connection
+	connect( mDisplayName, SIGNAL(textChanged(const QString &)), this, SLOT(slotValidateDisplayName(const QString &)));
+
+}
 
 AddContactWizard::~AddContactWizard()
 {
@@ -230,16 +234,21 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 	setNextEnabled(selectService, oneIsChecked);
 }
 
+void AddContactWizard::slotValidateDisplayName(const QString &)
+{
+	if ( mDisplayName->text().isEmpty() ) 
+		setNextEnabled( selectGroup, false );
+	else
+		setNextEnabled( selectGroup, true );
+}
+
 void AddContactWizard::accept()
 {
 	KopeteMetaContact *metaContact = new KopeteMetaContact();
 
-	// set the display name if required
-	if ( !mDisplayName->text().isEmpty() )
-	{
-		metaContact->setTrackChildNameChanges( false );
-		metaContact->setDisplayName( mDisplayName->text() );
-	}
+	metaContact->setTrackChildNameChanges( false );
+	metaContact->setDisplayName( mDisplayName->text() );
+
 	// NOT SURE IF I MEANT TO TAKE THIS OUT - WILL
 	//// set the KABC uid in the metacontact
 	KABC::AddresseeItem *item = 0L;
