@@ -134,7 +134,7 @@ const cap oscar_caps[] =
 	// last 4 bytes determine version
 	// NOTE change with each Kopete Release!
 	{'K', 'o', 'p', 'e', 't', 'e', ' ', 'I',
-	 'C', 'Q', ' ', ' ', 0, 9, 0, 0},
+	 'C', 'Q', ' ', ' ', 0, 9, 0, 1},
 
 	// CAP_MICQ
 	// last 4 bytes determine version
