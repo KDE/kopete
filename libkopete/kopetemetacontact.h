@@ -124,6 +124,21 @@ public:
 	 */
 	bool fromXML( const QDomNode& cnode );
 
+  	/**
+	 * Move a contact from one group to another.
+	 */
+	void moveToGroup( const QString &from, const QString &to );
+    /**
+	 * Remove a contact from one group
+	 */
+	void removeFromGroup( const QString &from);
+  	/**
+	 * Add a contact to another group.
+	 */
+	void addToGroup( const QString &to );
+
+
+
 public slots:
 	/**
 	 * Contact another user.
@@ -148,18 +163,6 @@ public slots:
 	 */
 	void startChat();
 
-	/**
-	 * Move a contact from one group to another.
-	 */
-	void moveToGroup( const QString &from, const QString &to );
-    /**
-	 * Remove a contact from one group
-	 */
-	void removeFromGroup( const QString &from);
-	/**
-	 * Add a contact to another group.
-	 */
-	void addToGroup( const QString &to );
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
@@ -189,7 +192,7 @@ signals:
 	void displayNameChanged( KopeteMetaContact *c, const QString &name );
 
 	/**
-	 * The contact was moved, be carefull, also removed and added will be wmited when moving
+	 * The contact was moved
 	 */
 	void movedToGroup( KopeteMetaContact *contact, const QString &from, const QString &to );
     /**
@@ -236,7 +239,7 @@ private:
 	bool m_trackChildNameChanges;
 
 	QStringList m_groups;
-
+                
 	/**
 	 * Data to store in the XML file
 	 */
