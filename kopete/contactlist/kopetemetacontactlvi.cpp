@@ -1,6 +1,7 @@
 /*
     kopetemetacontactlvi.cpp - Kopete Meta Contact KListViewItem
 
+    Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2004 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
@@ -65,6 +66,8 @@ public:
 	ListView::BoxComponent *contactIconBox;
 	ListView::ImageComponent *buddyIcon;
 	int iconSize;
+	QTimer opacityTimer;
+	float opacityTarget;
 };
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
@@ -139,7 +142,11 @@ void KopeteMetaContactLVI::initLVI()
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
 		SLOT( slotConfigChanged() ) );
-	
+
+	connect( &d->opacityTimer, SIGNAL( timeout() ), SLOT( slotOpacityTimer() ) );
+
+	setOpacity( 0.0 );
+
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
 	mIsBlinkIcon = false;
@@ -173,7 +180,6 @@ void KopeteMetaContactLVI::initLVI()
 		new HSpacerComponent( box );
 
 		d->buddyIcon = new ImageComponent( hbox );
-		d->buddyIcon->setPixmap( SmallIcon(QString::fromLatin1("newmsg")) );
 		d->iconSize = 32;
 	}
 	else if( type == QString::fromLatin1("RightAligned") ) // old right-aligned contact
@@ -206,6 +212,37 @@ KopeteMetaContactLVI::~KopeteMetaContactLVI()
 	delete d;
 	//if ( m_parentGroup )
 	//	m_parentGroup->refreshDisplayName();
+}
+
+void KopeteMetaContactLVI::setOpacityTarget( float target )
+{
+	d->opacityTarget = target;
+
+	if ( target != 0.0 )
+		setVisible( true );
+
+	if ( opacity() != target )
+		d->opacityTimer.start( 50 );
+}
+
+void KopeteMetaContactLVI::slotOpacityTimer()
+{
+	float dist = d->opacityTarget - opacity();
+	float absdist = dist;
+	if ( absdist < 0.0 )
+		absdist = -absdist;
+
+	if ( absdist > 0.1 )
+	{
+		setOpacity( opacity() + 0.1 * dist / absdist );
+	}
+	else
+	{
+		d->opacityTimer.stop();
+		setOpacity( d->opacityTarget );
+		if ( d->opacityTarget == 0.0 )
+			setVisible( false );
+	}
 }
 
 void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
@@ -424,11 +461,11 @@ void KopeteMetaContactLVI::slotConfigChanged()
 void KopeteMetaContactLVI::updateVisibility()
 {
 	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */ )
-		setVisible( true );
+		setOpacityTarget( 1.0 );
 	else if ( m_metaContact->status() == KopeteOnlineStatus::Offline && !mBlinkTimer->isActive() )
-		setVisible( false );
+		setOpacityTarget( 0.0 );
 	else
-		setVisible( true );
+		setOpacityTarget( 1.0 );
 }
 
 class ContactComponent : public ListView::ImageComponent

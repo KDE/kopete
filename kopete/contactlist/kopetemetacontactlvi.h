@@ -117,6 +117,7 @@ public slots:
 	void updateVisibility();
 
 private slots:
+	void slotOpacityTimer();
 	void slotUpdateIcons();
 	void slotContactStatusChanged(KopeteContact *);
 
@@ -140,6 +141,7 @@ private:
 	void initLVI();
 	QString key( int column, bool ascending ) const;
 	void updateContactIcons();
+	void setOpacityTarget( float target );
 
 	KopeteMetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;
