@@ -96,6 +96,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 KopeteMessageManager::~KopeteMessageManager()
 {
 	kdDebug(14010) << k_funcinfo << endl;
+	if (!d) return;
 	d->mCanBeDeleted = false; //prevent double deletion
 	KopeteMessageManagerFactory::factory()->removeSession( this );
 	emit(closing( this ) );
