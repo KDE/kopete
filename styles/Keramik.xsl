@@ -4,7 +4,6 @@
 	<xsl:template match="message">
 		<div class="KopeteMessage">
 			<xsl:attribute name="style">
-				<xsl:text>margin-bottom:2.25em;</xsl:text>
 				<xsl:choose>
 					<xsl:when test="@direction='2'"><!-- Internal message -->
 						<xsl:text>border: 2px solid #800000; border-top:1.5em solid #800000;margin-top: 1.7em;</xsl:text>
@@ -82,5 +81,11 @@
 				<xsl:value-of disable-output-escaping="yes" select="body"/>
 			</div>
 		</div>
+		<div>
+			<xsl:attribute name="style">
+				<xsl:text>height:10px;</xsl:text>
+			</xsl:attribute>
+		</div>
+
 	</xsl:template>
 </xsl:stylesheet>
