@@ -73,7 +73,7 @@ class ChatViewMembersTip : public QToolTip
 		KListView *m_listView;
 };
 
-ChatViewMembersTip::ChatViewMembersTip( KListView *parent ) : QToolTip( parent )
+ChatViewMembersTip::ChatViewMembersTip( KListView *parent ) : QToolTip( parent->viewport() )
 {
 	m_listView = parent;
 }
@@ -497,6 +497,7 @@ void ChatView::createMembersList(void)
 		membersDock = createDockWidget( QString::fromLatin1( "membersDock" ), QPixmap(), 0L,
 			QString::fromLatin1( "membersDock" ), QString::fromLatin1( " " ) );
 		membersList = new KListView(this);
+		membersList->setShowToolTips( false );
 		new ChatViewMembersTip( membersList );
 		membersList->setAllColumnsShowFocus( true );
 		membersList->addColumn( QString::null, 18);
