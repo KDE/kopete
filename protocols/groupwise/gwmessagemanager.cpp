@@ -83,6 +83,7 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	updateArchiving();
 	
 	setXMLFile("gwchatui.rc");
+	setMayInvite( true );
 
 	m_invitees.setAutoDelete( true );
 }
@@ -346,6 +347,13 @@ void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 			static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc->dn(), inviteMessage );
 		}
 	}
+}
+
+void GroupWiseMessageManager::inviteContact( const QString &contactId )
+{
+	KopeteContact * contact = account()->contacts()[ contactId ];
+	if ( contact )
+		slotInviteContact( contact );
 }
 
 void GroupWiseMessageManager::slotInviteOtherContact()

@@ -95,6 +95,10 @@ public:
 	 * Check whether the conversation being administratively logged and update the UI to indicate this
 	 */
 	void updateArchiving();
+	/**
+	 * Reimplemented from KopeteMessageManager - invites contacts via DND
+	 */
+	virtual void inviteContact(const QString& );
 signals:
 	/**
 	 * Tell the contact we got a GUID so it can route incoming messages here.
