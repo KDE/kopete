@@ -356,6 +356,11 @@ GaduAccount::notify( struct gg_event* e )
 	    ++n;
 	    continue;
 	}
+	if ( c->onlineStatus() == GaduProtocol::protocol()->convertStatus( n->status ) ) {
+            kdDebug(14100)<<"### " << c->displayName()<<" seems to be INVISIBLE"<<endl;
+	    ++n;
+	    continue;
+	}	
 	c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( n->status ) );
 	++n;
     }
