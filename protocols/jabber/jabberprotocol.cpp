@@ -331,9 +331,9 @@ void JabberProtocol::connect()
 			uname(&utsBuf);
 
 			jabberClient->setClientName("Kopete Jabber Plugin");
-			jabberClient->setClientVersion("0.5.1");
+			jabberClient->setClientVersion("0.6.0");
 			jabberClient->setOSName(QString("%1 %2").arg(utsBuf.sysname,
-																			1).arg(utsBuf.release,2));
+													1).arg(utsBuf.release,2));
 
 	}
 
