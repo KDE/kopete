@@ -327,6 +327,9 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message )
 {
+	//parse emoticons and URL now.
+	message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
+	
 	messageMap.insert( ++messageId, message );
 	
 	// transform all messages every time. needed for Adium style.
