@@ -3,8 +3,9 @@ Gadu-Gadu Installation
 
 To use the Gadu-Gadu plugin you will require libgadu installed on your system.  
 You can get it from http://dev.null.pl/ekg, where there are source and some 
-binary packages available.  To build libgadu from source for Kopete, you must 
-follow the instructions at http://gj.pointblue.com.pl/kopete.
+binary packages available.  
+To build libgadu from source for Kopete, you must follow the instructions in 
+protocols/gadu/README.gadu or at http://gj.pointblue.com.pl/kopete.
 
 Basic Installation
 ==================
