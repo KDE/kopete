@@ -26,24 +26,32 @@
 #include "msnprotocol.h"
 
 // Constructor for no-groups
-MSNContact::MSNContact( QString userid, const QString name, QString group,
-						MSNProtocol *protocol )
-	: KopeteContact(protocol)
+MSNContact::MSNContact( const QString &msnId, const QString &nickname,
+	const QString &group, MSNProtocol *protocol )
+	: KopeteContact( protocol )
 {
-	mProtocol = protocol;
-	mName = name;
-	mGroup =  group;
-	mUserID = userid;
-	hasLocalGroup = false;
+	initContact( msnId, nickname, group, protocol );
+}
+
+void MSNContact::initContact( const QString &msnId, const QString &nickname,
+	const QString &group, const MSNProtocol *protocol)
+{
+	m_actionRemove = 0L;
+	m_actionRemoveFromGroup = 0L;
+	m_actionChat = 0L;
+	m_actionInfo = 0L;
+	m_actionHistory = 0L;
+	m_actionMove = 0L;
+	m_actionCopy = 0L;
 
 	historyDialog = 0L;
 
-	initContact(userid, name, protocol);
-}
+	m_protocol = protocol;
+	m_msnId = msnId;
+	m_nickname = nickname;
+	mGroup =  group;
+	hasLocalGroup = false;
 
-void MSNContact::initContact( QString /* userid */, const QString name,
-								const MSNProtocol *protocol)
-{
 	// We connect this signal so that we can tell when a user's status changes
 	connect( protocol, SIGNAL( updateContact( QString, uint ) ),
 				this, SLOT( slotUpdateContact( QString, uint ) ) );
@@ -53,74 +61,106 @@ void MSNContact::initContact( QString /* userid */, const QString name,
 	connect ( this, SIGNAL(chatToUser(QString)), protocol->msnService(), SLOT( slotStartChatSession(QString)) );
 	connect ( protocol, SIGNAL( connectedToService( bool ) ), this, SLOT( slotDeleteMySelf( bool ) ) );
 
-	QString tmp = name;
-	setName  ( tmp );
-	initActions();
-	slotUpdateContact( mUserID, mProtocol->contactStatus( mUserID ) );
-}
-
-void MSNContact::initActions()
-{
-	actionChat				= KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat" );
-	actionRemoveFromGroup	= new KAction( i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
-	actionRemove			= KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
-	actionContactCopy		= new KListAction ( i18n("Copy Contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );
-	actionContactMove		= KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove" );
-	actionHistory			= KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory" );
+	setName( nickname );
+	slotUpdateContact( m_msnId, m_protocol->contactStatus( m_msnId ) );
 }
 
 void MSNContact::showContextMenu(QPoint point)
 {
-	QStringList grouplist = mProtocol->groups();
-	actionContactCopy->setItems(grouplist);
-
 	popup = new KPopupMenu();
-	popup->insertTitle(mUserID);
-	actionChat->plug( popup );
+	popup->insertTitle( i18n( "%1 (%2)" ).arg( name() ).arg( msnId() ) );
+
+	// Chat with user
+	if( !m_actionChat )
+	{
+		m_actionChat = KopeteStdAction::sendMessage(
+			this, SLOT( slotChatThisUser() ), this, "m_actionChat" );
+	}
+	m_actionChat->plug( popup );
 	popup->insertSeparator();
-	actionHistory->plug( popup );
+
+	// View History
+	if( !m_actionHistory )
+	{
+		m_actionHistory = KopeteStdAction::viewHistory( this,
+			SLOT( slotViewHistory() ), this, "m_actionHistory" );
+	}
+	m_actionHistory->plug( popup );
 	popup->insertSeparator();
-	actionContactMove->plug( popup );
-	actionContactCopy->plug( popup );
-	actionRemoveFromGroup->plug( popup );
-	actionRemove->plug( popup );
-	popup->popup(point);
+
+	// Move Contact
+	if( !m_actionMove )
+	{
+		m_actionMove = KopeteStdAction::moveContact( this,
+			SLOT( slotMoveThisUser() ), this, "m_actionMove" );
+	}
+	m_actionMove->plug( popup );
+
+	// Copy Contact
+	if( !m_actionCopy )
+	{
+		m_actionCopy = new KListAction( i18n( "Copy Contact" ), "editcopy", 0,
+			this, SLOT( slotCopyThisUser() ), this, "m_actionCopy" );
+	}
+	m_actionCopy->setItems( m_protocol->groups() );
+	m_actionCopy->plug( popup );
+
+	// Remove From Group
+	if( !m_actionRemoveFromGroup )
+	{
+		m_actionRemoveFromGroup = new KAction( i18n( "Remove From Group" ),
+			"edittrash", 0, this, SLOT( slotRemoveFromGroup() ),
+			this, "m_actionRemoveFromGroup" );
+	}
+	m_actionRemoveFromGroup->plug( popup );
+
+	// Remove Contact
+	if( !m_actionRemove )
+	{
+		m_actionRemove = KopeteStdAction::deleteContact( this,
+			SLOT( slotRemoveThisUser() ), this, "m_actionRemove" );
+	}
+	m_actionRemove->plug( popup );
+
+	popup->popup( point );
 }
 
 void MSNContact::execute()
 {
-	emit chatToUser( mUserID );
+	emit chatToUser( m_msnId );
 }
 
 void MSNContact::slotChatThisUser()
 {
-	emit chatToUser( mUserID );
+	emit chatToUser( m_msnId );
 }
 
 void MSNContact::slotRemoveThisUser()
 {
-	mProtocol->removeContact( mUserID );
+	m_protocol->removeContact( m_msnId );
 	delete this;
 }
 
 void MSNContact::slotRemoveFromGroup()
 {
-	mProtocol->removeFromGroup( mUserID, mGroup );
+	m_protocol->removeFromGroup( m_msnId, mGroup );
 }
 
 void MSNContact::slotMoveThisUser()
 {
-	mProtocol->moveContact( mUserID, mGroup, actionContactMove->currentText() );
+	if( m_actionMove )
+		m_protocol->moveContact( m_msnId, mGroup, m_actionMove->currentText() );
 }
 
 void MSNContact::slotCopyThisUser()
 {
-	mProtocol->copyContact( mUserID, actionContactCopy->currentText() );
+	if( m_actionCopy )
+		m_protocol->copyContact( m_msnId, m_actionCopy->currentText() );
 }
 
 void MSNContact::slotContactRemoved(QString handle, QString group)
 {
-	if ( (handle == mUserID) && ( group == mGroup ) )
+	if ( (handle == m_msnId) && ( group == mGroup ) )
 	{
 		delete this;
 	}
@@ -128,7 +168,7 @@ void MSNContact::slotContactRemoved(QString handle, QString group)
 
 void MSNContact::slotUpdateContact ( QString handle, uint status)
 {
-	if (handle != mUserID) // not our contact
+	if (handle != m_msnId) // not our contact
 		return;
 
 	if ( status == mStatus ) // no statuschange
@@ -136,7 +176,7 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 
 	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
 	mStatus = status;
-	QString tmppublicname = mProtocol->publicName( handle );
+	QString tmppublicname = m_protocol->publicName( handle );
 
 	if (mStatus == BLO)
 		setName( i18n("%1 (Blocked)").arg(tmppublicname) );
@@ -165,7 +205,7 @@ void MSNContact::slotViewHistory()
 	}
 	else
 	{
-		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(mUserID), mName, true, 50, 0, "MSNHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(m_msnId), name(), true, 50, 0, "MSNHistoryDialog");
 
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
 		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
@@ -346,6 +386,16 @@ int MSNContact::importance() const
 			return 0;
 		}
 	}
+}
+
+QString MSNContact::msnId() const
+{
+	return m_msnId;
+}
+
+QString MSNContact::nickname() const
+{
+	return m_nickname;
 }
 
 #include "msncontact.moc"

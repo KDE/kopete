@@ -38,11 +38,11 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-	MSNContact( QString userid, const QString name, QString group,
-				MSNProtocol *protocol );
+	MSNContact( const QString &msnId, const QString &nickname,
+				const QString &group, MSNProtocol *protocol );
 
-	void initContact( QString userid, const QString name,
-						const MSNProtocol *protocol );
+	void initContact( const QString &msnId, const QString &nickname,
+						const QString &group, const MSNProtocol *protocol );
 	virtual void showContextMenu(QPoint);
 	virtual void execute();
 
@@ -50,6 +50,18 @@ public:
 	QString statusText() const;
 	QString statusIcon() const;
 	int importance() const;
+
+	/**
+	 * The MSN id of this user, e.g. kopeteuser@kde.org
+	 */
+	QString msnId() const;
+
+	/**
+	 * The nickname of this user as known to MSN. By default this is also
+	 * the name as displayed in the contact list, but the user may want to
+	 * rename contacts locally, in which case there is an obvious difference.
+	 */
+	QString nickname() const;
 
 public slots:
 	void slotContactRemoved( QString, QString );
@@ -74,24 +86,23 @@ private slots:
 	void slotViewHistory();
 
 private:
-	void initActions();
-
-	QString mUserID;
-	QString mName;
+	QString m_msnId;
+	QString m_nickname;
 	bool hasLocalGroup;
 
 	QString mGroup;
 	uint mStatus;
-	const MSNProtocol *mProtocol;
+	const MSNProtocol *m_protocol;
 	KopeteHistoryDialog *historyDialog;
 	KPopupMenu *popup;
-	KAction* actionRemove;
-	KAction* actionRemoveFromGroup;
-	KAction* actionChat;
-	KAction* actionInfo;
-	KAction* actionHistory;
-	KListAction *actionContactMove;
-	KListAction *actionContactCopy;
+
+	KAction* m_actionRemove;
+	KAction* m_actionRemoveFromGroup;
+	KAction* m_actionChat;
+	KAction* m_actionInfo;
+	KAction* m_actionHistory;
+	KListAction *m_actionMove;
+	KListAction *m_actionCopy;
 };
 
 #endif
