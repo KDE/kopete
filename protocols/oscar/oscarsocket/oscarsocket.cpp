@@ -4271,54 +4271,7 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 		}
 	}
 
-	if(!codec) // no per-contact codec, guessing starts here :)
-	{
-		codec = QTextCodec::codecForMib(3); // US-ASCII
-
-		if(codec)
-		{
-			cresult=codec->heuristicContentMatch(string, length);
-#ifdef CHARSET_DEBUG
-			kdDebug(14150) << k_funcinfo <<
-				"result for US-ASCII=" << cresult <<
-				", message length=" << length << endl;
-#endif
-			if(cresult < length-1)
-				codec=0L; // codec not appropriate
-		}
-
-		if(!codec)
-		{
-			codec = QTextCodec::codecForMib(106); //UTF-8
-			if(codec)
-			{
-				cresult = codec->heuristicContentMatch(string, length);
-#ifdef CHARSET_DEBUG
-				kdDebug(14150) << k_funcinfo <<
-					"result for UTF-8=" << cresult <<
-					", message length=" << length << endl;
-#endif
-				if(cresult < (length/2)-1)
-					codec = 0L;
-			}
-		}
-
-		if(!codec)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Couldn't find suitable encoding for incoming message, " <<
-				"encoding using local system-encoding, TODO: sane fallback?" << endl;
-			codec = QTextCodec::codecForLocale();
-			// TODO: optionally have a per-account encoding as fallback!
-		}
-	}
-
-#ifdef CHARSET_DEBUG
-	kdDebug(14150) << k_funcinfo <<
-		"Decoding using codec '" << codec->name() << "'" << endl;
-#endif
-
-	return codec->toUnicode(string);
+	return KopeteMessage::decodeString( string, codec );
 }
 
 
