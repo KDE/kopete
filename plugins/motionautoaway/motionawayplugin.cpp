@@ -65,7 +65,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	m_height = DEF_HEIGHT;
 	m_quality = DEF_QUALITY;
 	m_maxChanges = DEF_CHANGES;
-    m_gap = DEF_GAP;
+	m_gap = DEF_GAP;
 	
 	/* We haven't took the first picture yet */
 	m_tookFirst = false;
@@ -76,7 +76,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	mPrefs = new MotionAwayPreferences ( "camera_umount", this );
 	connect( mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()) );
 	connect( m_captureTimer, SIGNAL(timeout()), this, SLOT(slotCapture()) );
-    connect( m_awayTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
+	connect( m_awayTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 
 	signal(SIGCHLD, SIG_IGN);
 
