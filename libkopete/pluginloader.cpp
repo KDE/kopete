@@ -73,13 +73,21 @@ LibraryLoader::~LibraryLoader()
 		// Remove causes the iterator to auto-increment, so
 		// only increment explicitly when not removing
 		if( getInfo( i.currentKey() ).type != "protocol" )
+		{
+			kdDebug() << "LibraryLoader::~LibraryLoader(): removing plugin: " << getInfo( i.currentKey() ).name << endl;
 			remove( i.current() );
+		}
 		else
 			++i;
 	}
 	i.toFirst();
 	while( i.current() )
+	{
+		kdDebug() << "LibraryLoader::~LibraryLoader(): removing protocol: " << getInfo( i.currentKey() ).name << endl;
 		remove( i.current() );
+	}
+
+	kdDebug() << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const
