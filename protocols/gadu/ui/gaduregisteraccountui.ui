@@ -262,6 +262,9 @@
             <property name="text">
                 <string>&lt;i&gt;Type the letters and numbers shown in the image above into the &lt;b&gt;Verification Sequence&lt;/b&gt; field.  This is used to prevent automated registration abuse.&lt;/i&gt;</string>
             </property>
+            <property name="alignment">
+                <set>WordBreak|AlignTop</set>
+            </property>
         </widget>
         <spacer>
             <property name="name">

@@ -54,8 +54,8 @@ private:
 	void validateInput();
 
 	GaduRegisterAccountUI*	ui;
-	RegisterCommand*		cRegister;
-	QRegExp*				emailRegexp; 
+	RegisterCommand*	cRegister;
+	QRegExp*		emailRegexp; 
 };
 
 #endif

@@ -46,7 +46,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 
 	cRegister = new RegisterCommand( this );
 
-	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}.[\\w\\d.-]{2,}" );
+	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}\\.[\\w\\d.-]{2,}" );
 
 	connect( this, SIGNAL( applyClicked() ), SLOT( doRegister() ) );
 	connect( this, SIGNAL( cancelClicked() ), SLOT( slotCancel() ) );
@@ -123,14 +123,18 @@ GaduRegisterAccount::inputChanged( const QString & )
 void
 GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
 {
-	ui->valueVerificationSequence->setDisabled( true );
+	ui->valueEmailAddress->setDisabled( true );
 	ui->valuePassword->setDisabled( true );
 	ui->valuePasswordVerify->setDisabled( true );
-	ui->valueEmailAddress->setDisabled( true );
+	ui->valueVerificationSequence->setDisabled( true );
+	ui->labelEmailAddress->setDisabled( true );
+	ui->labelPassword->setDisabled( true );
+	ui->labelPasswordVerify->setDisabled( true );
+	ui->labelVerificationSequence->setDisabled( true );
+	ui->labelInstructions->setDisabled( true );
 	enableButton( Apply, false );
 	emit registeredNumber( cRegister->newUin(), ui->valuePassword->text() );
-	updateStatus( i18n( "Your UIN is %1" ).arg(QString::number( cRegister->newUin() )  ) );
-	enableButton( Apply, true );
+	updateStatus( i18n( "Account created!  Your new UIN is %1." ).arg(QString::number( cRegister->newUin() )  ) );
 }
 
 void
