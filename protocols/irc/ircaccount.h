@@ -95,6 +95,9 @@ public:
 	virtual void setAway(bool);
 
 	virtual bool isConnected();
+	
+protected:
+	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
 
 public slots:
 	void successfullyChangedNick(const QString &, const QString &);
@@ -118,6 +121,7 @@ private:
 	QMap<QString, IRCUserContact * > mUsers;
 	KAction *actionOnline;
 	KAction *actionOffline;
+
 };
 
 #endif

@@ -165,15 +165,15 @@ public:
 
 protected:
 	/**
-	 * Adds a contact to an existing MetaContact. Also performs any server-related
-	 * functions. *MUST* be implemented in each protocol
+	 * Create a new contact in the specified metacontact
+	 * You shouldn't call yourself this method, for adding contact see @ref addContact()
 	 *
 	 * @param contactId The unique ID for this protocol
 	 * @param displayName The displayname of the contact (may equal userId for some protocols
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-		 KopeteMetaContact *parentContact );
+		 KopeteMetaContact *parentContact ) =0;
 
 public slots:
 	/**
@@ -199,7 +199,7 @@ public slots:
 	 * @return Pointer to the KopeteContact object which was added
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
+		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
 
 signals:
 	/**

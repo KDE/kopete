@@ -309,12 +309,6 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		return addContactToMetaContact( contactId, displayName, parentContact );
 }
 
-bool KopeteAccount::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
-{
-	kdDebug(14010) << "KopeteAccount::addContactToMetaContact() Not Implemented!!!" << endl;
-	return false;
-}
-
 KActionMenu* KopeteAccount::actionMenu()
 {
 	//default implementation

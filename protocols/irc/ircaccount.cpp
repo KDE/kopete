@@ -245,4 +245,13 @@ void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QStri
 		engine()->changeNickname( newnick );
 }
 
+bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
+	 KopeteMetaContact *parentContact ) 
+{
+	//TODO:
+	kdDebug(14120) << k_funcinfo << "TODO" << endl;
+	return false;
+}
+
+
 #include "ircaccount.moc"
