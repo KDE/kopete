@@ -112,9 +112,12 @@ KopeteMessageManager::~KopeteMessageManager()
 	emit dying(d->mView);
 	if( d->mWidget == ChatWindow )
 	{
+		KopeteChatWindow *chatWindow = static_cast<KopeteChatWindow*>(myWindow);
 		ChatWindowMap windowMap = *(chatWindowMap());
 		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
 			chatWindowMap()->remove( d->mProtocol );
+		if( chatWindow->chatViewCount() == 0 )
+			chatWindowList()->remove( chatWindow );
 	}
 	delete d;
 }
