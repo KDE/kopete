@@ -1,16 +1,11 @@
-Gadu-Gadu Installation
-======================
-
-To use the Gadu-Gadu plugin you will require libgadu installed on your system.  
-You can get it from http://dev.null.pl/ekg, where there are source and some 
-binary packages available.  
-To build libgadu from source for Kopete, you must follow the instructions in 
-protocols/gadu/README.gadu or at http://gj.pointblue.com.pl/kopete.
-
 Basic Installation
 ==================
 
    These are generic installation instructions.
+
+   If you know how to build GNU autotools based packages using the
+common 'configure/make/make install' scheme, please read on below in
+the 'Finding Plugins' chapter.
 
    The `configure' shell script attempts to guess correct values for
 various system-dependent variables used during compilation.  It uses
@@ -190,10 +185,19 @@ operates.
 
 Finding Plugins
 ===============
-If you don't see any "plugins" listed in the "plugins" page of the
-configuration dialog after installing Kopete you may have installed
-it in a directory where KDE doesn't look for additional resources
-like plugins.
+If you don't see any "plugins" listed in the Configure Plugins...
+dialog, or the list of messaging protocols in the Add Account Wizard
+is empty after installing, Kopete you may have installed it in a
+directory where KDE doesn't look for additional resources like plugins.
+
+It's also possible that you've just been too impatient :)
+
+Kopete installs several .desktop files that have to be processed by a
+KDE application called 'kbuildsycoca'. If you run Kopete directly
+after installing it this process might still be running and Kopete
+doesn't see the new plugins yet. Try running 'kbuildsycoca' from a
+console and restart Kopete when it finishes. If that doesn't help,
+please read on.
 
 KDE applications by default look in all directories listed in the
 /etc/kderc file, the $KDEDIRS environment variable, in $KDEDIR if

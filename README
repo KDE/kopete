@@ -7,17 +7,12 @@ Kopete is an Instant Messaging client designed to be modular and plugin based.
 
 It requires the KDE Desktop, version 3.1 or higher.
 
-Kopete ships with a lot of protocol plugins, supporting nine different IM 
-systems.  The MSN, ICQ, AIM, Jabber, Gadu-gadu and IRC plugins have seen 
-numerous enhancements and bugfixes since the last release and should bring 
-your Kopete experience to a whole new level.
+Kopete ships with a lot of protocol plugins, supporting nine different messaging
+systems.  All plugins have seen numerous enhancements and bugfixes since the
+last release and should bring your Kopete experience to a whole new level.
 
-Additionally there are some new plugins.  The Yahoo plugin and the new Oscar 
-plugin make their debut with this release.  The Oscar plugin replaces the previous AIM and ICQ plugins with a common codebase based around a newer protocol.
-The Gadu-Gadu plugin is complete. To use it you have to set up libgadu in your 
-system.  See INSTALL for details.  WinPopup and SMS have seen a lot of clean ups, and are fully supported in this release.  
-
-There are a number of new general plugins that apply to all protocols.  Try out Text Effect, Spell Check, Auto Replace and Highlight.  These demonstrate the advantages of a unified IM client, as you can enjoy rich features without having to learn a different UI for every chat protocol they use.
+Additionally a lot of work has gone into cleaning up the core Kopete API and
+GUI with several important usability-, stability- and performance-improvements.
 
 The Kopete team consists now of several active developers, working on the
 various plugins and the core API. However, Kopete wouldn't be in the shape
@@ -25,9 +20,10 @@ in which it is now without the various contributions from KDE developers
 all over the world and the high-quality bug reports from active users.
 Thanks to all of you for your support and your interest in Kopete!
 
-As always, more bug reports and patches are welcome.  
+As always, more bug reports and patches are welcome.
 Please use http://bugs.kde.org.
 
 The Kopete main developers can be contacted on our mailing list,
-kopete-devel@kde.org, and on IRC in #kopete, on irc.freenode.net. We always welcome new contributors.
+kopete-devel@kde.org, and on IRC in #kopete, on irc.freenode.net.
+We always welcome new contributors.
 

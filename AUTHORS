@@ -1,73 +1,74 @@
 See the Development team section of http://kopete.kde.org
 for an updated list of Kopete team!
 
-
-Main Developers
+Core Developers
 ===============
 
 Duncan Mac-Vicar Prett <duncan@kde.org> (irc: duncanmv)
 - Original author, main app work & design, original MSN Plugin, hacks in all plugins
 
-Nick Betcher <nbetcher@kde.org> (irc: Error403)
-- ICQ Plugin, AIM Plugin, IRC Plugin, various hacks
+Jason Keirstead <jason@keirstead.org> (irc: brunes)
+- Kopete API developer, co-maintainer of the IRC plugin, website
 
 Martijn Klingens <klingens@kde.org> (irc: spaze)
-- Misc hacks, bugfixes, KopeteMessage, MSN plugin cleanups and redesign
+- Kopete API and main application core developer, co-maintainer of the MSN plugin,
+  misc changes and fixes in the other plugins
 
-Stefan Gehn <metz AT gehn.net> (irc: mETz)
-- Misc bugfixes, cleanups, hacks, features, KopeteEmoticons, ICQ Plugin, OSCAR work
-
-Daniel Stone <dstone@kde.org> (irc: DannyS)
-- Jabber plugin, misc hacks
+Matt Rogers <matt@matt.rogers.name> (irc: mattr)
+- Kopete 0.7.x and 0.8 release coordinator, Yahoo maintainer, several bug fixes
+  all over the place
 
 Olivier Goffart <ogoffart@tiscalinet.be> (irc: Gof)
-- Core developer, MSN plugin, oters plugins
+- Kopete API and main application core developer, primary maintainer of the
+  MSN plugin, misc changes and fixes in the other plugins
 
-Christopher TenHarmsel <tenharmsel@users.sourceforge.net> (irc: Ph0nK)
-- AIM/OSCAR work, Away Messages
+Stefan Gehn <metz@gehn.net> (irc: mETz)
+- OSCAR (ICQ and AIM) maintainer, misc bugfixes, cleanups, hacks, features,
+  KopeteEmoticons engine
 
-Till Gerken <till@tantalo.net> (irc: tigloo)
-- Jabber plugin
+Will Stephenson <lists@stevello.free-online.co.uk> (irc: bille)
+- Core developer, KAddressBook integration, nowlistening and webpresence plugin
+  maintainer, Testbed testing plugin
+
+Other developers
+================
+
+Andy Goossens <andygoossens@pandora.be> (irc: gandy)
+- Bugfixes, cleanups and maintainer of our stable branches (backporting patches)
+
+Casey Allen Shobe <cshobe@softhome.net> (irc: sigthor)
+- Testing, Quality Assurance and usability improvements
+
+Ladislav Strojil <ladislav@strojil.cz> (irc: bwian)
+- Bugfixes, testing and keeping Kopete running on KDE 3.1
+
+Plugin Developers
+=================
 
 Gav Wood <gjw102@york.ac.uk> (irc: emmCee)
--Winpopup and Yahoo plugins
-
-James Grant <topace@lightbox.org> (irc: topace)
-- Developer
-
-Jason Keirstead <jason@keirstead.org> (irc: brunes)
-- Core developer, website
+- Winpopup and SMS maintainer, several contributions to the Yahoo plugin
 
 Grzegorz Jaskiewicz <gj@pointblue.com.pl> (irc: gregj)
-- Gadu plugin developer
+- Gadu-Gadu maintainer
 
-Contributed patches. Thanks!
-==============================
+Michel Hermier <michel.hermier@wanadoo.fr> (irc: slayer)
+- IRC plugin co-maintainer
 
-Simon Perreault <nomis80@linuxquebec.com>
-- Start docked feature.
+Till Gerken <till@tantalo.net> (irc: tigloo)
+- Jabber maintainer
 
-Hendrik vom Lehn <hvl@linux-4-ever.de>
-- KNotify beep support for KopeteEvent
-- KNotify Sound support for KopeteEvent
+Other contributors. Thanks!
+===========================
 
-Juanjo Alvarez <juanjux@yahoo.es>
-- Support for configurable Ctrl-Enter or Enter
-  shortcut in KopeteChatWindow
+This list is too long too mention. If you want to have an idea of all the
+various contributions we've got, please check the CVS commit logs. If we
+would attempt to list the people here other people would surely be forgotten
+and feel left out.
 
-Zack Rustin <zack@kde.org>
-- Many bugfixes
-- Gadu plugin
+Let's leave it at telling you that several hundreds of people have
+contributed code, helpful information, documentation, translations or
+useful bug reports to Kopete, making Kopete what it is now.
 
-Ryan Cumming <bodnar42@phalynx.dhs.org> (irc: Phalynx)
-- old ChatView class. API re-design & cleanup.
-  History logger, etc
+If you contributed to Kopete, you know who you are, and many thanks for
+the work you've done!
 
-Richard Stellingwerff <remenic@linuxfromscratch.org> (irc: Remenic)
-- Misc fixes. History dialog, etc
-
-Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
-- KMM work
-
-Piotr Szymanski <djurban@gnu.univ.gda.pl> (irc: djurban)
-- Thanks to Pit we are now using external libgadu - for gadu plugin
