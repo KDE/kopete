@@ -28,6 +28,8 @@
 // other
 #include <time.h>
 
+class MSNDispatchSocket;
+
 /**
  * @author Olaf Lueg
  */
@@ -61,9 +63,14 @@ protected slots:
 	 */
 	void slotReadLine();
 
+	/**
+	 * The actual connect code, shared between the initial connect and a
+	 * server-initiated redirect to another server
+	 */
+	void slotReceivedServer( const QString &server, uint port );
+
 protected:
 	void sendProtocol();
-	void newConnect( const QString &server, uint port );
 	void sendCVR();
 
 	void parseCommand( QString str);
@@ -113,12 +120,6 @@ signals:
 
 private:
 	/**
-	 * The actual connect code, shared between the initial connect and a
-	 * server-initiated redirect to another server
-	 */
-	void connectInternal( const QString &server, uint port );
-
-	/**
 	 * Send an MSN command to the socket
 	 */
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
@@ -136,6 +137,8 @@ private:
 	QString statusToString( int status ) const;
 
 	void closeSocket();
+
+	MSNDispatchSocket *m_dispatchSocket;
 };
 
 #endif

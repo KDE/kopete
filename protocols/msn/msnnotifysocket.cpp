@@ -19,6 +19,7 @@
 
 #include "kmsnservicesocket.h"
 #include "msnprotocol.h"
+#include "msndispatchsocket.h"
 
 // kde
 #include <kglobal.h>
@@ -39,7 +40,6 @@ KMSNServiceSocket::~KMSNServiceSocket()
 {
 }
 
-/* Connect to MSN Service */
 void KMSNServiceSocket::connectToMSN( const QString &handle,
 	const QString &password, uint serial, bool silent )
 {
@@ -49,14 +49,19 @@ void KMSNServiceSocket::connectToMSN( const QString &handle,
 	_silent = silent;
 	mailCount = 0;
 
-	connectInternal( "messenger.hotmail.com", 1863 );
-}
-
-void KMSNServiceSocket::connectInternal( const QString &server, uint port )
-{
 	isConnected = false;
 	m_id = 0;
 
+	m_dispatchSocket = new MSNDispatchSocket( _handle );
+	connect( m_dispatchSocket,
+		SIGNAL( receivedNotificationServer( const QString &, uint ) ),
+		this,
+		SLOT( slotReceivedServer( const QString &, uint ) ) );
+	m_dispatchSocket->connect();
+}
+
+void KMSNServiceSocket::slotReceivedServer( const QString &server, uint port )
+{
 	socket = new KExtendedSocket( server, port, 0x600000 );
 	socket->enableRead( true );
 
@@ -93,6 +98,8 @@ void KMSNServiceSocket::closeSocket()
 	emit connected( isConnected );
 	delete socket;
 	socket = 0L;
+	delete m_dispatchSocket;
+	m_dispatchSocket = 0L;
 	buffer = QString::null;
 }
 
@@ -275,26 +282,17 @@ void KMSNServiceSocket::parseCommand(QString str)
 	}
 	else if( cmd == "XFR" )
 	{
-		// XFR is a bit special. When connected it's used to start a chat,
-		// but when connecting it's a redirect to another server, essentially
-		// aborting the connect
-		if( isConnected )
-		{
-			// Address, AuthInfo
-			emit startChat( data.section( ' ', 1, 1 ),
-				data.section( ' ', 3, 3 ) );
-		}
-		else
-		{
-			// new server reconnect
-			QString host = data.section( ' ', 1, 1 );
-			QString server = host.section( ':', 0, 0 );
-			uint port = host.section( ':', 1, 1 ).toUInt();
-			newConnect( server, port );
-		}
+		// Address, AuthInfo
+		emit startChat( data.section( ' ', 1, 1 ),
+			data.section( ' ', 3, 3 ) );
 	}
 	else if( cmd == "VER" )
 	{
+		// This can not be done in the slotReceivedServer, because the
+		// signal is emitted from this class. To avoid a crash, delete here.
+		delete m_dispatchSocket;
+		m_dispatchSocket = 0L;
+
 		kdDebug() << "Sending server policy" << endl;
 		sendCommand( "INF" );
 	}
@@ -539,17 +537,6 @@ void KMSNServiceSocket::sendCommand( const QString &cmd, const QString &args,
 	socket->writeBlock( data, data.length() );
 
 	m_id++;
-}
-
-/* MSN Service has send a new IP , so connect to it */
-void KMSNServiceSocket::newConnect( const QString &server, uint port )
-{
-	socket->flush();
-	socket->closeNow();
-	delete socket;
-
-	kdDebug() << "Connecting to new server " << server << ":" << port << endl;
-	connectInternal( server, port );
 }
 
 void KMSNServiceSocket::addGroup(QString groupName)
