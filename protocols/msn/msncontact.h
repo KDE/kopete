@@ -43,7 +43,7 @@ public:
 
 	void initContact( const QString &msnId, const QString &nickname,
 						const QString &group, const MSNProtocol *protocol );
-	virtual void showContextMenu(QPoint);
+	virtual void showContextMenu(QPoint, QString group);
 	virtual void execute();
 
 	ContactStatus status() const;

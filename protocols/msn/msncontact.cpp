@@ -66,7 +66,7 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	slotUpdateContact( m_msnId, m_protocol->contactStatus( m_msnId ) );
 }
 
-void MSNContact::showContextMenu(QPoint point)
+void MSNContact::showContextMenu(QPoint point, QString /*group*/)
 {
 	popup = new KPopupMenu();
 	popup->insertTitle( i18n( "%1 (%2)" ).arg( name() ).arg( msnId() ) );
