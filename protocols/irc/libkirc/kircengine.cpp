@@ -139,9 +139,9 @@ void Engine::setStatus(Engine::Status status)
 
 		// If password is given for this server, send it now, and don't expect a reply
 		if (!(password()).isEmpty())
-			writeMessage("PASS", password(), m_Realname);
+			pass(password());
 
-		user(m_Username, 0, QString::fromLatin1("Kopete User"));
+		user(m_Username, 0, m_realName);
 		nick(m_Nickname);
 		break;
 	case Connected:
@@ -233,6 +233,15 @@ void Engine::setUserName(const QString &newName)
 	else
 		m_Username = newName;
 	m_Username.remove(m_RemoveLinefeeds);
+}
+
+void Engine::setRealName(const QString &newName)
+{
+	if(newName.isEmpty())
+		m_realName = QString::fromLatin1(getpwuid(getuid())->pw_gecos);
+	else
+		m_realName = newName;
+	m_realName.remove(m_RemoveLinefeeds);
 }
 
 bool Engine::_bind(QDict<KIRC::MessageRedirector> &dict,

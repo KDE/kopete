@@ -91,6 +91,7 @@ const QString IRCAccount::CONFIG_CODECMIB = QString::fromLatin1("Codec");
 const QString IRCAccount::CONFIG_NETWORKNAME = QString::fromLatin1("NetworkName");
 const QString IRCAccount::CONFIG_NICKNAME = QString::fromLatin1("NickName");
 const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
+const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
 	: Kopete::PasswordedAccount(protocol, accountId), autoConnect( autoChan )
@@ -224,6 +225,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	}
 
 	m_engine->setUserName(userName());
+	m_engine->setRealName(realName());
 
 	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
@@ -285,6 +287,17 @@ void IRCAccount::setUserName( const QString &userName )
 const QString IRCAccount::userName() const
 {
 	return configGroup()->readEntry(CONFIG_USERNAME);
+}
+
+void IRCAccount::setRealName( const QString &userName )
+{
+	m_engine->setRealName(userName);
+	configGroup()->writeEntry(CONFIG_REALNAME, userName);
+}
+
+const QString IRCAccount::realName() const
+{
+	return configGroup()->readEntry(CONFIG_REALNAME);
 }
 
 void IRCAccount::setNetwork( const QString &network )
@@ -498,7 +511,7 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 			Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
 			if (!manager)
 				return;
-			
+
 			if (!autoConnect.isEmpty())
 				Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
 
@@ -533,7 +546,7 @@ void IRCAccount::slotConnectedToServer()
 	Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
 	if (!manager)
 		return;
-	
+
 	if(!autoConnect.isEmpty())
 		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
 

@@ -210,29 +210,29 @@ void Engine::quit(Message &msg)
 	emit incomingQuitIRC(msg.prefix(), msg.suffix());
 }
 
-void Engine::user(const QString &newUsername, const QString &hostname, const QString &newRealname)
+void Engine::user(const QString &newUserName, const QString &hostname, const QString &newRealName)
 {
 	/* RFC1459: "<username> <hostname> <servername> <realname>"
 	* The USER command is used at the beginning of connection to specify
 	* the username, hostname and realname of a new user.
 	* hostname is usualy set to "127.0.0.1" */
-	m_Username = newUsername;
-	m_Realname = newRealname;
+	m_Username = newUserName;
+	m_realName = newRealName;
 
-	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_Realname);
+	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_realName);
 }
 
-void Engine::user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
+void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRealName)
 {
 	/* RFC2812: "<user> <mode> <unused> <realname>"
 	* mode is a numeric value (from a bit mask).
 	* 0x00 normal
 	* 0x04 request +w
 	* 0x08 request +i */
-	m_Username = newUsername;
-	m_Realname = newRealname;
+	m_Username = newUserName;
+	m_realName = newRealName;
 
-	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_Realname);
+	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_realName);
 }
 
 void Engine::topic(const QString &channel, const QString &topic)

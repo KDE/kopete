@@ -58,9 +58,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		QString serverInfo = account()->accountId();
 
 		mNickName->setText( nickName );
-
-		mUserName->setText( account()->userName() );
 		mAltNickname->setText( account()->altNick() );
+		mUserName->setText( account()->userName() );
+		m_realNameLineEdit->setText( account()->realName() );
+
 		partMessage->setText( account()->defaultPart() );
 		quitMessage->setText( account()->defaultQuit() );
 		if( account()->codec() )
@@ -82,8 +83,8 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	}
 
 	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
-	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mUserName ) );
-	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mUserName ) );
+	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
+	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
 	KCharsets *c = KGlobal::charsets();
 	charset->insertStringList( c->availableEncodingNames() );
@@ -226,8 +227,10 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	mPasswordWidget->save( &account()->password() );
 
 	account()->setNickName( nickName );
-	account()->setUserName( mUserName->text() );
 	account()->setAltNick( mAltNickname->text() );
+	account()->setUserName( mUserName->text() );
+	account()->setRealName( m_realNameLineEdit->text() );
+
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setAutoConnect( autoConnect->isChecked() );

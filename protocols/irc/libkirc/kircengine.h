@@ -124,6 +124,10 @@ public:
 
 	void setUserName(const QString &newName);
 
+	void setRealName(const QString &newName);
+	inline const QString &realName() const
+		{ return m_realName; }
+
 	inline const bool reqsPassword() const
 		{ return m_ReqsPasswd; };
 
@@ -459,9 +463,9 @@ private:
 
 //	QUrl serverURL;
 //	QUrl currentServerURL;
-	QString m_Username;
-	QString m_Realname;
 	QString m_Nickname;
+	QString m_Username;
+	QString m_realName;
 	QString m_Passwd;
 	bool m_ReqsPasswd;
 	bool m_FailedNickOnLogin;

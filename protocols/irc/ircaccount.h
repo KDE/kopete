@@ -97,6 +97,7 @@ public:
 	static const QString CONFIG_NETWORKNAME;
 	static const QString CONFIG_NICKNAME;
 	static const QString CONFIG_USERNAME;
+	static const QString CONFIG_REALNAME;
 
 	enum MessageType
 	{
@@ -120,7 +121,16 @@ public:
 	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null);
 	~IRCAccount();
 
+	void setNickName( const QString & );
+
+	void setAltNick( const QString & );
+	const QString altNick() const;
+
+	void setUserName( const QString & );
 	const QString userName() const;
+
+	void setRealName( const QString & );
+	const QString realName() const;
 
 	const QStringList connectCommands() const;
 
@@ -132,12 +142,6 @@ public:
 
 	void setDefaultQuit( const QString & );
 
-	void setUserName( const QString & );
-
-	void setNickName( const QString & );
-
-	void setAltNick( const QString & );
-
 	void setCodec( QTextCodec *codec );
 
 	QTextCodec *codec() const;
@@ -145,8 +149,6 @@ public:
 	const QString defaultPart() const;
 
 	const QString defaultQuit() const;
-
-	const QString altNick() const;
 
 	const QString networkName() const;
 
