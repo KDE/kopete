@@ -113,13 +113,6 @@ public:
 	 */
 	void setOnlineStatus(const KopeteOnlineStatus&);
 
-	/**
-	 * set the m_moving
-	 * prevent change in the serverside contactlist when moving metacontacts
-	 * used when syncing contactlist
-	 */
-	void setDontSync(bool b);
-
 	QString phoneHome();
 	QString phoneWork();
 	QString phoneMobile();

@@ -826,8 +826,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				if( !c->metaContact()->groups().contains(newServerGroup) )
 				{
 					// The contact has been added in a group by another client
-					c->setDontSync( true ); // prevent the moving of the metacontact change the server
-					c->metaContact()->addToGroup( newServerGroup  );
+					c->metaContact()->addToGroup( newServerGroup , KopeteMetaContact::DontSyncGroups  );
 				}
 			}
 
@@ -840,13 +839,11 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					if ( !oldnewID.isEmpty() && contactGroups.contains( oldnewID ) )
 						continue; //ok, it's correctn no need to do anything.
 					
-					c->setDontSync( true ); // prevent the moving of the metacontact change the server
-					c->metaContact()->removeFromGroup( old_group );
+					c->metaContact()->removeFromGroup( old_group , KopeteMetaContact::DontSyncGroups );
 				}
 			}
 
 			// Update server if the contact has been moved to another group while MSN was offline
-			c->setDontSync( false ); // now, allow to change the server
 			c->syncGroups();
 		}
 		else

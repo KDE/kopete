@@ -574,11 +574,6 @@ void MSNContact::slotSendMail()
 	}
 }
 
-void MSNContact::setDontSync(bool b)
-{
-	m_moving=b;
-}
-
 void MSNContact::setDisplayPicture(KTempFile *f)
 {
 	if(m_displayPicture && m_displayPicture!=f)
