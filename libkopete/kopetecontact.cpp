@@ -177,9 +177,9 @@ void KopeteContact::slotViewHistory()
 		/*m_historyDialog = new KopeteHistoryDialog(this,*/
 		
 		m_historyDialog = new KopeteHistoryDialog(
--               QString( protocol()->pluginId()) + "/" +
--                       contactId().replace( QRegExp( "[./~]" ), "-" ) + ".log",
- 			displayName(),
+			QString( protocol()->pluginId() ) + "/" +
+			contactId().replace( QRegExp( "[./~]" ), "-" ) + ".log",
+			displayName(),
 			true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
 		
 		connect ( m_historyDialog, SIGNAL( destroyed()),
