@@ -329,7 +329,6 @@ Plugin* LibraryLoader::searchByID( QString &Id )
 
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
 		Plugin *tmp_plug = mLibHash[(*i).specfile]->plugin;
 		if ( tmp_plug->id() == Id )
 		{
