@@ -61,27 +61,18 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	//m_status = m_unknownStatus = UNK;
 }
 
-
-
 void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId   = serializedData[ "contactId" ] ;
-	QString accountId =  serializedData[ "accountId" ] ;
+	QString accountId   = serializedData[ "accountId" ] ;
 	QString displayName = serializedData[ "displayName" ];
 	QString lists = serializedData[ "lists" ];
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
 
-	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 
-	if(accountId.isNull())
-	{
-		//Kopete 0.6.x contactlist
-		// FIXME: This should be in a KConfUpdate - Martijn
-		KGlobal::config()->setGroup("MSN");
-		accountId=KGlobal::config()->readEntry( "UserID", "" );
-	}
-	KopeteAccount *account=accounts[accountId];
+	KopeteAccount *account = accounts[ accountId ];
 	if( !account )
 		account = createNewAccount( accountId );
 

@@ -100,7 +100,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
 		sd[ QString::fromLatin1( "displayName" ) ] = c->displayName();
 		if(c->account())
-			sd[ QString::fromLatin1( "accountId" ) ] =   c->account()->accountId();
+			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
 
 
 		// If there's an index field preset it too
@@ -205,6 +205,25 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 				ad[ *fieldIt ] = metaContact->addressBookField( this, *fieldIt, QString::fromLatin1( "All" ) );
 			else
 				ad[ *fieldIt ] = metaContact->addressBookField( this, QString::fromLatin1( "kopete" ), *fieldIt );
+		}
+
+		// Check if we have an account id. If not we're deserializing a Kopete 0.6 contact
+		// (our our config is corrupted). Pick the first available account there. This
+		// might not be what you want for corrupted accounts, but it's correct for people
+		// who migrate from 0.6, as there's only one account in that case
+		if( sd[ QString::fromLatin1( "accountId" ) ].isNull() )
+		{
+			QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+			if ( accounts.count() > 0 )
+			{
+				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<KopeteAccount>( accounts ).currentKey();
+			}
+			else
+			{
+				kdWarning() << k_funcinfo << "No account available and account not set in contactlist.xml either!" << endl
+					<< "Not deserializing this contact." << endl;
+				return;
+			}
 		}
 
 		deserializeContact( metaContact, sd, ad );

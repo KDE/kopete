@@ -49,11 +49,16 @@ QString cryptStr(const QString &aStr)
 void parseGroup( const QString &group, const QString &rawLine )
 {
 	// Groups that are converted can almost certainly be removed entirely
-	if ( group == "MSN" /* || .... */ )
+	if ( group == "MSN" || group == "ICQ" || group == "Oscar" /* || .... */ )
 	{
 		accountId = "EMPTY";
 		autoConnect = "false";
-		protocol = group + "Protocol";
+
+		if ( group == "Oscar" )
+			protocol = "AIMProtocol";
+		else
+			protocol = group + "Protocol";
+
 		password = QString::null;
 		pluginData.clear();
 
@@ -83,6 +88,44 @@ void parseKey( const QString &group, const QString &key, const QString &value, c
 
 		// All other keys are ignored for MSN, as these apply to stuff that's
 		// now in libkopete (and the main app) instead.
+	}
+
+	if ( group == "ICQ" )
+	{
+		if ( key == "UIN" )
+			accountId = value;
+		if ( key == "Password" )
+			password = value;
+		if ( key == "AutoConnect" )
+			autoConnect = value;
+		if ( key == "Nick" )
+			pluginData[ "displayName" ] = value;
+	}
+
+	if ( group == "Oscar" )
+	{
+		if ( key == "ScreenName" )
+			accountId = value;
+		if ( key == "Password" )
+			password = value;
+ 	}
+
+	if ( group == "Jabber" )
+	{
+		if ( key == "UserID" )
+			accountId = value;
+		if ( key == "Password" )
+			password = value;
+	}
+
+	if ( group == "Gadu" )
+	{
+		if ( key == "UIN" )
+			accountId = value;
+		if ( key == "Password" )
+			password = value;
+		if ( key == "Nick" )
+			pluginData[ "displayName" ] = value;
 	}
 	/*
 		FIXME: Insert all other plugins here - Martijn
