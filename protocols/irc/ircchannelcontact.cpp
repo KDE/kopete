@@ -291,7 +291,8 @@ void IRCChannelContact::userPartedChannel(const QString &nickname,const QString 
 		if ( c )
 		{
 			manager()->removeContact( c, reason );
-			m_account->contactManager()->unregisterUser(c);
+			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
+				c->deleteLater();
 		}
 	}
 }
@@ -308,11 +309,12 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 		if ( c )
 		{
 			manager()->removeContact( c, r );
-			m_account->contactManager()->unregisterUser(c);
 			KopeteMessage msg( (KopeteContact *)this, mMyself,
 				r, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			msg.setImportance(KopeteMessage::Low);
 			appendMessage(msg);
+			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
+				c->deleteLater();
 		}
 	}
 	else

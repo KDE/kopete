@@ -143,15 +143,8 @@ KopeteMessageManager *IRCContact::manager(bool canCreate)
 
 void IRCContact::messageManagerDestroyed()
 {
-	// Called after all users have been removed from the chat..
-	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
-	// Removed the unregister() function in favor of just removing the Channel
-	// - JLN
-	m_account->contactManager()->unregisterChannel( this );
-
 	m_msgManager = 0L;
 	m_isConnected = false;
-
 }
 
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
@@ -164,7 +157,8 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		{
 			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason) );
 			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
-			m_account->contactManager()->unregisterUser( c );
+			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
+				c->deleteLater();
 		}
 	}
 }

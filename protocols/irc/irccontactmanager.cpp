@@ -234,7 +234,6 @@ void IRCContactManager::unregisterUser(KopeteContact *contact, bool force )
 		!user->isChatting() &&
 		user->metaContact()->isTemporary() ) )
 	{
-		kdDebug(14120) << k_funcinfo << user->nickName() << endl;
 		m_users.remove( user->nickName() );
 	}
 }
