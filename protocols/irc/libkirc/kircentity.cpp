@@ -29,7 +29,7 @@ QString KIRCEntity::userInfo(const QString &s, int num)
 	userRegExp.search(s);
 	return userRegExp.cap(num);
 }
-#if KDE_IS_VERSION( 3, 2, 90 )
+
 KResolverResults KIRCEntity::resolve(bool *success)
 {
 	resolveAsync();
@@ -69,7 +69,6 @@ KResolver *KIRCEntity::getResolver()
 
 	return m_resolver;
 }
-#endif
 
 #include "kircentity.moc"
 

@@ -23,14 +23,9 @@
 #include <qstring.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 2, 90 )
 #include <kresolver.h>
+
 using namespace KNetwork;
-#else
-// we provide a dummy definition because moc disregards compiler directives, and sees the signal definition using this below
-#define KResolverResults int
-#endif
-#include <kdemacros.h>
 
 class KIRCEntity
 	: public QObject
@@ -79,7 +74,6 @@ public:
 	inline static bool isChannel( const QString &s )
 		{ return sm_channelRegExp.exactMatch(s); };
 
-#if KDE_IS_VERSION( 3, 2, 90 )
 	inline KResolver::StatusCodes resolverStatus()
 		{ return (KResolver::StatusCodes)getResolver()->status(); }
 
@@ -87,15 +81,13 @@ public:
 	void resolveAsync();
 	KResolverResults resolverResults()
 		{ return getResolver()->results(); }
-#endif
+
 signals:
 	void resolverResults(KResolverResults);
 
 protected:
 	static QString userInfo(const QString &s, int num_cap);
-#if KDE_IS_VERSION( 3, 2, 90 )
 	KResolver *getResolver();
-#endif
 private:
 	static const QRegExp sm_userRegExp;
 	static const QRegExp sm_channelRegExp;
@@ -104,10 +96,7 @@ private:
 
 	// peer ip address if the entity is a User.
 	QString m_address;
-#if KDE_IS_VERSION( 3, 2, 90 )
 	KResolver *m_resolver;
-#endif
-
 };
 
 #endif
