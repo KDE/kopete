@@ -16,20 +16,26 @@
 #ifndef KCODECACTION_H
 #define KCODECACTION_H
 
-#include <kactionclasses.h>
+#include <kdeversion.h>
+
+#if KDE_IS_VERSION( 3, 1, 90 )
+	#include <kactionclasses.h>
+#else
+	#include <kaction.h>
+#endif
 
 class KCodecAction : public KSelectAction
 {
 	Q_OBJECT
 	public:
-		KCodecAction( const QString &text, const KShortcut &cut = KShortcut(), 
+		KCodecAction( const QString &text, const KShortcut &cut = KShortcut(),
 			QObject *parent = 0, const char *name = 0 );
-			
+
 		void setCodec( const QTextCodec *codec );
 
 	signals:
 		void activated( const QTextCodec * );
-		
+
 	private slots:
 		void slotActivated( const QString & );
 };
