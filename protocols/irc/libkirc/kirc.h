@@ -69,11 +69,11 @@ private slots:
 protected:
 	inline KIRCMessage writeString(const QString &str);
 
-	inline KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null);
+	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null);
 	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null)
 		{ return writeMessage(QString::fromLatin1(command), args, suffix); }
 
-	inline KIRCMessage writeMessage(const QString &command, const QString &args = QString::null, const QString &suffix = QString::null);
+	KIRCMessage writeMessage(const QString &command, const QString &args = QString::null, const QString &suffix = QString::null);
 	inline KIRCMessage writeMessage(const char *command, const QString &args = QString::null, const QString &suffix = QString::null)
 		{ return writeMessage(QString::fromLatin1(command), args, suffix); }
 
@@ -81,7 +81,7 @@ protected:
 			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 			bool emitRepliedCtcp = true);
 
-	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
+	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 			bool emitRepliedCtcp = true);
 	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
@@ -89,7 +89,7 @@ protected:
 			bool emitRepliedCtcp = true)
 		{ return writeCtcpQueryMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
-	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
+	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 			 bool emitRepliedCtcp = true);
 	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
@@ -214,9 +214,9 @@ protected:
 	typedef bool ircMethod(const KIRCMessage &msg);
 	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
 
-	inline void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method);
+	void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method);
 
-	inline void addIrcMethod( QDict<KIRCMethodFunctorCall> &map,
+	void addIrcMethod( QDict<KIRCMethodFunctorCall> &map,
 			const char *str,
 			pIrcMethod method,
 			int argsSize_min=-1, int argsSize_max=-1,
