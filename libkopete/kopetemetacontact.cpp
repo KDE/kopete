@@ -141,7 +141,7 @@ void KopeteMetaContact::updateOnlineStatus()
 			// 'Away'
 			newStatus = Away;
 		}
-		else if( ( status == KopeteOnlineStatus::Offline ) && ( newStatus != Away ) && ( newStatus != Online ) )
+		else if( ( status.status() == KopeteOnlineStatus::Offline ) && ( newStatus != Away ) && ( newStatus != Online ) )
 		{
 			newStatus = Offline;
 		}
