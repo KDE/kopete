@@ -68,7 +68,8 @@ ConfigModule::~ConfigModule()
 
 void ConfigModule::activate()
 {
-	PreferencesDialog::preferencesDialog()->showPage(PreferencesDialog::preferencesDialog()->pageIndex(parentWidget()));
+	PreferencesDialog::preferencesDialog()->showPage(
+		PreferencesDialog::preferencesDialog()->pageIndex(parentWidget()));
 	PreferencesDialog::preferencesDialog()->show();
 	PreferencesDialog::preferencesDialog()->raise();
 }

@@ -45,7 +45,7 @@ PreferencesDialog::~PreferencesDialog()
 }
 void PreferencesDialog::show()
 {
-    for (ConfigModule *i=mModules.first(); i != 0; i=mModules.next())
+	for (ConfigModule *i=mModules.first(); i != 0; i=mModules.next())
 		i->reopen();
 	KDialogBase::show();
 }

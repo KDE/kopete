@@ -80,7 +80,7 @@ LibraryLoader::~LibraryLoader()
 	while( i.current() )
 		delete i.current();
 
-	kdDebug( 14010 ) << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
+	kdDebug(14010) << k_funcinfo << "All plugins removed" << endl;
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const
@@ -201,7 +201,7 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 
 bool LibraryLoader::loadPlugin( const QString &spec )
 {
-	kdDebug( 14010 ) << k_funcinfo << spec << endl;
+//	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
 	QString pluginId = spec;
 	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
@@ -239,14 +239,14 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 
 		m_addressBookFields.insert( plugin, plugin->addressBookFields() );
 
-		kdDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'"<< endl;
+		kdDebug(14010) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'"<< endl;
 
 		emit pluginLoaded( plugin );
 		return true;
 	}
 	else
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Unable to load plugin '" << pluginId << "'!" << endl;
+		kdDebug(14010) << k_funcinfo << "Unable to load plugin '" << pluginId << "'!" << endl;
 		return false;
 	}
 }
