@@ -111,9 +111,9 @@ void MSNAccount::setAway( bool away, const QString & awayReason )
 {
 	m_awayReason = awayReason;
 	if ( away )
-		setOnlineStatus( MSNProtocol::protocol()->IDL );
+		setOnlineStatus( MSNProtocol::protocol()->IDL , awayReason);
 	else // if ( myself()->onlineStatus() == MSNProtocol::statusIDL )
-		setOnlineStatus( MSNProtocol::protocol()->NLN );
+		setOnlineStatus( MSNProtocol::protocol()->NLN , awayReason);
 }
 
 void MSNAccount::connectWithPassword( const QString &passwd )
