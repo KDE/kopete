@@ -132,7 +132,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason)
 		Kopete::Message msg( (Kopete::Contact*)ircAccount()->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
 			Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
-		manager()->appendMessage(msg);
+		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	}
 }
 
@@ -472,7 +472,7 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 	{
 		if(to==account()->myself())
 		{
-			Kopete::Message msg(from, from->manager()->members(), message,
+		 Kopete::Message msg(from, from->manager(Kopete::Contact::CanCreate)->members(), message,
 			                    Kopete::Message::Inbound, Kopete::Message::RichText, Kopete::Message::Chat);
 			from->appendMessage(msg);
 		}
