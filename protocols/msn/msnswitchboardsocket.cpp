@@ -35,12 +35,12 @@
 
 #include "kopetemessage.h"
 #include "msncontact.h"
-#include "msnprotocol.h"
+#include "msnidentity.h"
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNProtocol *protocol )
-: MSNSocket( protocol )
+MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNIdentity *identity )
+: MSNSocket( identity )
 {
-	m_protocol = protocol;
+	m_identity = identity;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -336,15 +336,15 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			<< m_msgHandle << endl;*/
 
 		KopeteContactPtrList others;
-		others.append( m_protocol->myself() );
+		others.append( m_identity->myself() );
 		QStringList::iterator it;
 		for( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 		{
 			if( *it != m_msgHandle )
-				others.append( m_protocol->contacts()[ *it ] );
+				others.append( m_identity->contacts()[ *it ] );
 		}
 
-		KopeteMessage kmsg( m_protocol->contacts()[ m_msgHandle ], others,
+		KopeteMessage kmsg( m_identity->contacts()[ m_msgHandle ], others,
 			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
 			KopeteMessage::Inbound , KopeteMessage::PlainText );
 

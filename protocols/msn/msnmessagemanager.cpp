@@ -86,8 +86,8 @@ void MSNMessageManager::createChat( const QString &handle,
 
 	setCanBeDeleted( false );
 
-	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNProtocol*>( protocol() ) );
-	m_chatService->setHandle( user()->identity()->myself()->contactId() );
+	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNIdentity*>( user()->identity() ) );
+	m_chatService->setHandle( user()->identity()->identityId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
 

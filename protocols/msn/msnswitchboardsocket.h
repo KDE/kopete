@@ -26,7 +26,7 @@
 #include <msnsocket.h>
 
 class KopeteMessage;
-class MSNProtocol;
+class MSNIdentity;
 
 /**
  * @author Olaf Lueg
@@ -39,11 +39,11 @@ public:
 	/**
 	 * Contructor: id is the KopeteMessageMangager's id
 	 */
-	MSNSwitchBoardSocket( MSNProtocol *protocol );
+	MSNSwitchBoardSocket( MSNIdentity * identity );
 	~MSNSwitchBoardSocket();
 
 private:
-	MSNProtocol *m_protocol;
+	MSNIdentity *m_identity;
 
 	QString m_myHandle; // our handle
 
