@@ -380,7 +380,7 @@ void IRCProtocol::slotQuoteCommand( const QString &args, Kopete::ChatSession *ma
 {
 	if( !args.isEmpty() )
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args, false );
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args );
 	}
 	else
 	{
