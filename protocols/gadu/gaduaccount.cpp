@@ -38,9 +38,6 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 			      
 	initActions();
 	initConnections();
-
-	setAutoLogin(autoLogin()); 
-
 }
 
 void
