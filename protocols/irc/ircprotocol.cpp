@@ -38,6 +38,8 @@
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  );
 
+static QRegExp isChannelRegex( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
+
 IRCProtocol *IRCProtocol::s_protocol = 0L;
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
@@ -324,12 +326,12 @@ void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *ma
 {
 	if( !args.isEmpty() )
 	{
-		QStringList argsList = KopeteCommandHandler::parseArguments( args );
-		if( argsList.front().startsWith( QString::fromLatin1("#") ) )
-			static_cast<IRCAccount*>( manager->account() )->findChannel( argsList.front() )->startChat();
+		QString chan = KopeteCommandHandler::parseArguments( args ).front();
+		if( isChannelRegex.search( chan ) != -1 )
+			static_cast<IRCAccount*>( manager->account() )->findChannel( chan )->startChat();
 		else
 		{
-			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid channel. Channels must start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid channel. Channels must start with '#'.").arg(chan), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager->appendMessage(msg);
 		}
 	}
@@ -369,7 +371,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 		QString user = args.section( ' ', 0, 0 );
 		QString rest = args.section( ' ', 1 );
 
-		if( !user.startsWith( QString::fromLatin1("#") ) )
+		if( !isChannelRegex.search( user ) != -1 )
 		{
 			IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->findUser( user );
 			c->startChat();
@@ -441,7 +443,7 @@ void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *ma
 		QString reason = args.section( spaces, 1);
 		KopeteContactPtrList members = manager->members();
 		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
-		if( channel.startsWith( QString::fromLatin1("#")) )
+		if( isChannelRegex.search( channel ) != -1 )
 			static_cast<IRCAccount*>( manager->account() )->engine()->kickUser( nick, channel, reason );
 	}
 }
