@@ -27,7 +27,7 @@
 struct yahoo_fn
 {
 	int type; 
-	int arg1, arg2;
+	long arg1, arg2;
 };
 
 int yahoo_xfrm( int table, int depth, int seed );
