@@ -191,6 +191,11 @@ public:
 	 *
 	 * You have to reimplement this method to return the custom action menu which will
 	 * be shown in the statusbar. Kopete takes care of the deletion of the menu.
+	 *
+	 * The default implementation provide a generic menu, with all actions from registered status
+	 * (@see OnlineStatusManager::registerOnlineStatus) and an action to show the preference of the account.
+	 *
+	 * You may may call the default implementation from your reimplementation to add more action in the resulting action menu.
 	 */
 	virtual KActionMenu* actionMenu() ;
 
@@ -407,12 +412,13 @@ public slots:
 	/**
 	 * this will be called if main-kopete wants
 	 * the plugin to set the user's mode to away
-	 * @todo change
+	 * @todo change ; make use of setOnlineStatus
 	 */
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
 
 	/**
-	 * reimplement this function to set the online status
+	 * Reimplement this function to set the online status
+	 * @note If needed, you need to connect.  if the offline status is given, you should disconnect
 	 */
 	virtual void setOnlineStatus( const Kopete::OnlineStatus& ) = 0;
 

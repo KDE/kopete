@@ -183,10 +183,10 @@ public:
 	 * used by the KDE icon loader. (Status whiwh doesn't have icon to overlay like
 	 * Online and Offline should use QString::null as icon string)
 	 * @param description is a description in e.g. tooltips.
-	 * @param caption is the text that will be seen when this status is displayed
+	 * @param caption is the text of the action in the menu
 	 * @param categories the categories this online status is in
 	 * @param options the options of this online status
-	 * @see Kopete::OnlineStatusManager for more info about the categories and options parameters
+	 * @see Kopete::OnlineStatusManager::registerOnlineStatus for more info about the categories and options parameters
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QString &overlayIcon,
 		const QString &description, const QString& caption,  unsigned int categories=0x0 , unsigned int options=0x0 );

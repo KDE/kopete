@@ -44,7 +44,14 @@ class OnlineStatusManager : public QObject
 public:
 	static OnlineStatusManager* self();
 	~OnlineStatusManager();
-	
+
+	/**
+	 * Kopete will uses categories to have a more general system than siply globaly away.
+	 * 
+	 * Idealy, in each protocol, there should be one status per categories (status may be in several or in none categories
+	 *
+	 * @todo  this is not yet implemented in kopete but reserved for futur use  (i hope soon)
+	 */
 	enum Categories
 	{
 		Offline=0x01,
@@ -63,7 +70,9 @@ public:
 	/**
 	 * You need to register each status an account can be.
 	 * Registered statuses will appear in the account menu.
-	 * The Protocol constructor is a good place to call this function
+	 * 
+	 * The Protocol constructor is a good place to call this function.
+	 * But if you want, you may use a special OnlineStatus constructor that call this function automaticaly
 	 *
 	 * You can set the status to be in the predefined categories.
 	 * Ideally, each category should own one status.
