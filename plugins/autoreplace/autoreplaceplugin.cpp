@@ -93,8 +93,8 @@ void AutoReplacePlugin::autoReplaceMessage( KopeteMessage & msg )
 	QString match = "\\b(%1)\\b";
 	AutoReplacePreferences::WordsToReplace::Iterator it;
 		for ( it = map.begin(); it != map.end(); ++it )
-			replaced_message.replace(
-				QRegExp( match.arg( it.key() ) ), map.find( it.key() ).data() );
+			replaced_message.replace(QRegExp( 
+					match.arg(QRegExp(it.key()) ) ), map.find( it.key() ).data() );
 
 	// eventually add . at the end of the lines, sent lines only
 	if( m_prefs->getAddDot() && msg.direction()!=KopeteMessage::Inbound )
