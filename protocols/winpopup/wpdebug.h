@@ -31,7 +31,7 @@
 #endif
 
 #define DEBUG(level, text) \
-	if(level >= WPDEBUGLEVEL) { kdDebug() << "WinPopup Plugin [" << level << "] [" << __FILE__ << ":" << __LINE__ << "]: " << text << endl; }
+	if(level >= WPDEBUGLEVEL) { kdDebug( 14170 ) << "WinPopup Plugin [" << level << "] [" << __FILE__ << ":" << __LINE__ << "]: " << text << endl; }
 
 #endif
 
