@@ -220,7 +220,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	else
 		prompt = i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 
-	QString pass = d->password.retrieve( accountIcon( IconSize(KIcon::Toolbar) ), prompt, error, maxLength );
+	QString pass = d->password.retrieve( accountIcon( KopetePassword::preferredImageSize() ), prompt, error, maxLength );
 	if ( ok ) *ok = !pass.isNull();
 	return pass;
 }
