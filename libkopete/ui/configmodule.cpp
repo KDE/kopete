@@ -70,9 +70,7 @@ ConfigModule::~ConfigModule()
 
 void ConfigModule::ownerDeleted()
 {
-	QObject *p=parent();
-	delete this;
-	delete p;
+	parent()->deleteLater();
 }
 
 void ConfigModule::activate()
