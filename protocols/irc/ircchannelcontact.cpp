@@ -208,6 +208,8 @@ void IRCChannelContact::slotAddNicknames()
 			status = m_protocol->m_UserStatusOp;
 		else if( firstChar == '+')
 			status = m_protocol->m_UserStatusVoice;
+		else
+			status = user->onlineStatus();
 
 		if( user != account->mySelf() )
 			manager()->addContact(static_cast<Kopete::Contact*>(user) , status, true);
