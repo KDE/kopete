@@ -44,6 +44,11 @@ QString KopeteContact::name() const
 	return mName;
 }
 
+QString KopeteContact::userID() const
+{
+	return mUserID;
+}
+
 KopeteContact::ContactStatus KopeteContact::status() const
 {
 	return Online;
