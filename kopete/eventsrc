@@ -714,3 +714,8 @@ Comment[uk]=Прийшли нові листи у Вашу скриньку MSN
 Comment[xx]=xxNew email has arrived in your MSN inboxxx
 Comment[zh_CN]=您的 MSN 收件箱中有新邮件到达
 default_presentation=2
+
+[icq_authorization]
+Name=ICQ Authorization
+Comment=A ICQ user have authorized/declined your authorization request
+default_presentation=16
