@@ -112,12 +112,6 @@ public:
 					const QMap<QString, QString> &serializedData,
 					const QMap<QString, QString> &addressBookData );
 
-	/**
-	 * addressBookFieldChanged() is a notification slot for changes
-	 */
-//	virtual void addressBookFieldChanged(KopeteMetaContact *contact,
-//					const QString &key);
-
 	/*********************************************************************
 	 *
 	 * KopeteProtocol reimplementation end

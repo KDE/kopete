@@ -731,17 +731,6 @@ void JabberProtocol::deserializeContact( KopeteMetaContact *metaContact,
 
 }
 
-/*
- * Notification slot in case one of the monitored address book fields changed
- */
-
-// void JabberProtocol::addressBookFieldChanged(KopeteMetaContact *contact,
-// 				const QString &key)
-// {
-
-// }
-
-
 AddContactPage *JabberProtocol::createAddContactWidget(QWidget *parent)
 {
 	return new JabberAddContactPage(this, parent);

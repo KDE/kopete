@@ -123,15 +123,6 @@ public slots:
 	 */
 	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data );
 
-	/**
-	 * Notify that an address book field was changed.
-	 * You need to register your fields to receive the notifications
-	 *
-	 * The default implementation does nothing.
-	 */
-	virtual void addressBookFieldChanged( KopeteMetaContact *c,
-		const QString &key );
-
 signals:
 	/*
 	 * Signal emitted when the protocol is unloaded

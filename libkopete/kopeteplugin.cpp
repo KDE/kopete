@@ -54,12 +54,6 @@ void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,
 	// Do nothing in default implementation
 }
 
-void KopetePlugin::addressBookFieldChanged( KopeteMetaContact * /* c */,
-	const QString & /* key */ )
-{
-	// Do nothing in default implementation
-}
-
 QStringList KopetePlugin::addressBookFields() const
 {
 	return m_addressBookFields;
