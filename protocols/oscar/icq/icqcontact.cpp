@@ -128,6 +128,10 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 		// TODO: Add queues for away message requests
 		mAccount->engine()->requestAwayMessage(this);
 	}
+	else
+	{
+		removeProperty("awayMessage"); // unset awayMessage
+	}
 
 	setStatus(newStatus);
 
@@ -219,7 +223,7 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 			break;
 	}
 
-	if( !actionReadAwayMessage )
+	if(actionReadAwayMessage==0)
 	{
 		actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
 			this, SLOT(slotReadAwayMessage()), this, "actionReadAwayMessage");
@@ -365,6 +369,36 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 		return;
 	generalInfo = inf;
 
+	if(!generalInfo.firstName.isEmpty())
+		setProperty("firstName", i18n("First Name"), generalInfo.firstName);
+	else
+		removeProperty("firstName");
+
+	if(!generalInfo.lastName.isEmpty())
+		setProperty("lastName", i18n("Last Name"), generalInfo.lastName);
+	else
+		removeProperty("lastName");
+
+	if(!generalInfo.eMail.isEmpty())
+		setProperty("emailAddress", i18n("eMail"), generalInfo.eMail);
+	else
+		removeProperty("emailAddress");
+
+	if(!generalInfo.phoneNumber.isEmpty())
+		setProperty("privPhoneNum", i18n("Private Phone Number"), generalInfo.phoneNumber);
+	else
+		removeProperty("privPhoneNum");
+
+	if(!generalInfo.faxNumber.isEmpty())
+		setProperty("privFaxNum", i18n("Private Fax Number"), generalInfo.faxNumber);
+	else
+		removeProperty("privFaxNum");
+
+	if(!generalInfo.cellularNumber.isEmpty())
+		setProperty("privMobileNum", i18n("Private Mobile Number"), generalInfo.cellularNumber);
+	else
+		removeProperty("privMobileNum");
+
 	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
 	{
 		kdDebug(14200) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
@@ -382,6 +416,17 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 	workInfo = inf;
+
+	if(!workInfo.phone.isEmpty())
+		setProperty("workPhoneNum", i18n("Work Phone Number"), workInfo.phone);
+	else
+		removeProperty("workPhoneNum");
+
+	if(!workInfo.fax.isEmpty())
+		setProperty("workFaxNum", i18n("Work Fax Number"), workInfo.fax);
+	else
+		removeProperty("workFaxNum");
+
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
