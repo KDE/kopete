@@ -34,6 +34,12 @@
 #include <ktempfile.h>
 #include <krun.h>
 
+// Ugly hack to remain compatible with KDE 3.0 - We can't #ifdef out
+// preprocessor directives :(
+#ifndef KDE_IS_VERSION
+#define KDE_IS_VERSION 0
+#endif
+
 MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
 : MSNAuthSocket( msnId, protocol )
 {
