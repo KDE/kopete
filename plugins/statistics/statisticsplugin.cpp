@@ -62,9 +62,6 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 		
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
 		viewMetaContactStatistics, SLOT(setEnabled(bool)));
-	
-	connect(Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)),
-				this, SLOT(slotListenAccount(Kopete::Account *)));
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)),
 			this, SLOT(slotMetaContactAdded(Kopete::MetaContact*)));	
 
@@ -73,7 +70,6 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 	// Initializes the database
 	m_db = new StatisticsDB();
 	
-
 	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for (; it.current(); ++it)
@@ -110,8 +106,10 @@ void StatisticsPlugin::slotViewClosed(Kopete::ChatSession* session)
 	
 	for (; it.current(); ++it)
 	{
-		if (!it.current()->manager() && !it.current()->metaContact()->metaContactId().isEmpty()) // If this contact is not in other chat sessions
-			statisticsContactMap[it.current()->metaContact()->metaContactId()]->setIsChatWindowOpen(false);
+		// If this contact is not in other chat sessions
+		if (!it.current()->manager() && !it.current()->metaContact()->metaContactId().isEmpty()
+				   && statisticsContactMap[it.current()->metaContact()->metaContactId()])
+		statisticsContactMap[it.current()->metaContact()->metaContactId()]->setIsChatWindowOpen(false);
 	}
 }
 

@@ -371,16 +371,12 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	 */
 	// Some "total times"
 	generalHTMLPart->write(i18n("<div class=\"statgroup\">"));
-	generalHTMLPart->write(i18n("<b title=\"The total time I have been able to see ") + m_contact->metaContact()->displayName()+i18n(" status\">Total seen time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalTime)));
-	generalHTMLPart->write(i18n("<b title=\"The total time I have seen ")
-			+m_contact->metaContact()->displayName()
-			+i18n(" online\">Total online time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalOnlineTime)));
-	generalHTMLPart->write(i18n("<b title=\"The total time I have seen ")
-			+m_contact->metaContact()->displayName()
-			+i18n(" away\">Total busy time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalAwayTime)));
-	generalHTMLPart->write(i18n("<b title=\"The total time I have seen ")
-			+m_contact->metaContact()->displayName()
-			+i18n(" offline\">Total offline time :</b> %1 hour(s)").arg(stringFromSeconds(totalOfflineTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have been able to see %1 status\">"
+		"Total seen time :</b> %2 hour(s)<br>").arg(m_contact->metaContact()->displayName()).arg(stringFromSeconds(totalTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 online\">"
+		"Total online time :</b> %2 hour(s)<br>").arg(m_contact->metaContact()->displayName()).arg(stringFromSeconds(totalOnlineTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 away\">Total busy time :</b> %2 hour(s)<br>").arg(m_contact->metaContact()->displayName()).arg(stringFromSeconds(totalAwayTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 offline\">Total offline time :</b> %2 hour(s)").arg(m_contact->metaContact()->displayName()).arg(stringFromSeconds(totalOfflineTime)));
 	generalHTMLPart->write(QString("</div>"));
 
 	if (subTitle == "General informations")
@@ -389,39 +385,33 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	 */
 	{
 		generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-	 	generalHTMLPart->write(i18n("<b>Average message length :</b> %1 characters<br>").arg(m_contact->messageLength()));
-	 	generalHTMLPart->write(i18n("<b>Time between two messages : </b> %1 second(s)").arg(m_contact->timeBetweenTwoMessages()));
-	 	generalHTMLPart->write(QString("</div>"));
+		generalHTMLPart->write(i18n("<b>Average message length :</b> %1 characters<br>").arg(m_contact->messageLength()));
+		generalHTMLPart->write(i18n("<b>Time between two messages : </b> %1 second(s)").arg(m_contact->timeBetweenTwoMessages()));
+		generalHTMLPart->write(QString("</div>"));
 	
-		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-		 generalHTMLPart->write(QString("<b title=\"The last time you talked with ")
-				 +m_contact->metaContact()->displayName()
-				 +i18n("\">Last talk :</b> %1<br>").arg(m_contact->lastTalk().toString()));
-		 generalHTMLPart->write(QString("<b title=\"The last time I have seen ")
-				 +m_contact->metaContact()->displayName()
-				 +i18n(" online or away\">Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
-		 generalHTMLPart->write(QString("</div>"));
+		generalHTMLPart->write(QString("<div class=\"statgroup\">"));
+		generalHTMLPart->write(i18n("<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>").arg(m_contact->metaContact()->displayName()).arg(m_contact->lastTalk().toString()));
+		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time contact was present :</b> %2").arg(m_contact->metaContact()->displayName()).arg(m_contact->lastPresent().toString()));
+		generalHTMLPart->write(QString("</div>"));
 
-		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-		 generalHTMLPart->write(QString("<b title=\"")
-				 +m_contact->metaContact()->displayName()
-				 +i18n(" use to set his status online at these hours (EXPERIMENTAL)\">Main online events :</b><br>"));
-		 QValueList<QTime> mainEvents = m_contact->mainEvents(Kopete::OnlineStatus::Online);
-		 for (uint i=0; i<mainEvents.count(); i++)
-			generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
-		 generalHTMLPart->write(QString("</div>"));
-	 	 
-		 generalHTMLPart->write(QString("<div title=\"Current status\" class=\"statgroup\">"));
-	 	generalHTMLPart->write(i18n("Is <b>%1</b> since <b>%2</b>").arg(
+		//generalHTMLPart->write(QString("<div class=\"statgroup\">"));
+		//generalHTMLPart->write(i18n("<b title=\"%1 uses to set his status online at these hours (EXPERIMENTAL)\">Main online events :</b><br>").arg(m_contact->metaContact()->displayName()));
+		//QValueList<QTime> mainEvents = m_contact->mainEvents(Kopete::OnlineStatus::Online);
+		//for (uint i=0; i<mainEvents.count(); i++)
+		//generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
+		//generalHTMLPart->write(QString("</div>"));
+ 
+		generalHTMLPart->write(QString("<div title=\"Current status\" class=\"statgroup\">"));
+		generalHTMLPart->write(i18n("Is <b>%1</b> since <b>%2</b>").arg(
 				Kopete::OnlineStatus::statusTypeToString(m_contact->oldStatus()),m_contact->oldStatusDateTime().toString()));
-	 	generalHTMLPart->write(QString("</div>"));
+		generalHTMLPart->write(QString("</div>"));
 	}
 		
 	/*
 	 * Chart which show the hours where plugin has seen this contact online
 	 */
 	generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-	generalHTMLPart->write(QString("<table width=\"100%\"><tr><td colspan=\"3\">When have I seen this contact ?</td></tr>"));
+	generalHTMLPart->write(QString("<table width=\"100%\"><tr><td colspan=\"3\">") + i18n("When have I seen this contact ?") + QString("</td></tr>"));
 	generalHTMLPart->write(QString("<tr><td height=\"200\" valign=\"bottom\" colspan=\"3\" class=\"chart\">"));
 	
 	QString chartString;
@@ -434,9 +424,9 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 				+(totalTime ? QString::number(hrWidth) : QString::number(0))
 				+QString("\" src=\"file://")
 				+colorPath
-				+"\" width=\"4%\" title=\""+
-				i18n("Between ")+QString::number(i)+
-				"00 and "+QString::number((i+1)%24)+":00, I was able to see "+m_contact->metaContact()->displayName()+ " status " + QString::number(hrWidth)+"% of the hour\">";
+				+"\" width=\"4%\" title=\""
+				+i18n("Between %1:00 and %2:00, I was able to see %3 status %4% of the hour.").arg(QString::number(i)).arg(QString::number((i+1)%24)).arg(m_contact->metaContact()->displayName()).arg(QString::number(hrWidth))
+				+QString("\">");
 	}
 	generalHTMLPart->write(chartString);
 	generalHTMLPart->write(QString("</td></tr>"));
@@ -444,7 +434,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	
 	
 	generalHTMLPart->write(QString(	"<tr>"
-					"<td>Online time</td><td>Away time</td><td>Offline time</td>"
+		"<td>")+i18n("Online time")+QString("</td><td>")+i18n("Away time")+QString("</td><td>")+i18n("Offline time")+QString("</td>"
 					"</tr>"
 					"<td valign=\"bottom\" width=\"33%\" class=\"chart\">"));
 	
@@ -495,7 +485,7 @@ QString StatisticsDialog::generateHTMLChart(const int *hours, const int *hours2,
 				+colorPath
 				+"\" width=\"4%\" title=\"Between "
 				+QString::number(i)
-				+":00 and " + QString::number((i+1) % 24) +":00, I have see " 
+				+":00 and " + QString::number((i+1) % 24) +":00, I have seen " 
 				+ m_contact->metaContact()->displayName() 
 				+ " " + QString::number(hrWidth)+"% "
 				+caption
