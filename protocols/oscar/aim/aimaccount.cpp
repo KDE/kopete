@@ -183,10 +183,14 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 		engine()->setStatus( Client::Away, awayReason );
 		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
 		me->setLastAwayMessage(awayReason);
+		me->setProperty( Kopete::Global::Properties::self()->awayMessage(), awayReason );
 	}
 	else
 	{
 		engine()->setStatus( Client::Online );
+		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
+		me->setLastAwayMessage(QString::null);
+		me->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
 	}
 }
 
@@ -212,6 +216,7 @@ void AIMAccount::slotGoOnline()
 	{
 		kdDebug(14152) << k_funcinfo << accountId() << " was away. welcome back." << endl;
 		engine()->setStatus( Client::Online );
+		myself()->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
 	}
 	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 	{
