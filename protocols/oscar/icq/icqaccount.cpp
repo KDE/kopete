@@ -257,7 +257,7 @@ void ICQAccount::setStatus(const unsigned long status,
 		{
 			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
 				"ICQ network because no password was specified in the " \
-				"preferences."), 0);
+				"preferences."), 0, false);
 		}
 		else
 		{
@@ -321,7 +321,7 @@ OscarContact *ICQAccount::createNewContact(const QString &contactId,
 	/*kdDebug(14200) << k_funcinfo <<
 		"contactId='" << contactId <<
 		"', displayName='" << displayName << endl;*/
-	
+
 	ICQContact* contact = new ICQContact(contactId, displayName, this, parentContact);
 	contact->setServerSide( isOnSSI );
 	return contact;

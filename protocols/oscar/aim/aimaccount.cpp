@@ -248,12 +248,12 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 	if(server.isEmpty())
 	{
 		slotError(i18n("You have not specified a server address in the " \
-			"account set up yet, please do so."), 0);
+			"account set up yet, please do so."), 0, false);
 	}
 	else if(port.isEmpty() || (port.toInt() < 1))
 	{
 		slotError(i18n("You have not specified a server port in the " \
-			"account set up yet, please do so."), 0);
+			"account set up yet, please do so."), 0, false);
 	}
 	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
 	{
@@ -262,7 +262,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 		{
 			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
 				"AIM network because no password was specified in the " \
-				"preferences."), 0);
+				"preferences."), 0, false);
 		}
 		else
 		{
@@ -283,7 +283,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 	else
 	{
 		slotError(i18n("You have not specified your account name in the " \
-			"account set up yet, please do so."), 0);
+			"account set up yet, please do so."), 0, false);
 	}
 }
 

@@ -345,9 +345,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 		emit protocolError(i18n("The account %1 will be disconnected for " \
 			"exceeding the rate limit. Please wait approximately 10 minutes" \
 			" before reconnecting.")
-			.arg(mAccount->accountId()), 0);
-		//let the account properly clean itself up
-		mAccount->disconnect(KopeteAccount::Manual);
+			.arg(mAccount->accountId()), -1, true);
 	}
 	else
 	{
@@ -409,15 +407,16 @@ void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 	{
 		emit protocolError(i18n(
 			"An unknown error occurred. Your connection may be lost. " \
-			"The error was: \"AOL MOTD Error: your connection may be lost. ID: %1\"").arg(id), 0);
+			"The error was: \"AOL MOTD Error: your connection may be" \
+			" lost. ID: %1\"").arg(id), 0, true);
 	}
 }
 
 
-
 void OscarSocket::parseServerVersions(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_FAMILIES2), got list of families this server understands" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"RECV (SRV_FAMILIES2), got list of families this server understands" << endl;
 
 	int srvFamCount;
 	for (srvFamCount=0; inbuf.length(); srvFamCount++)
@@ -475,7 +474,8 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 
 void OscarSocket::sendClientReady()
 {
-	kdDebug(14150) << "SEND (CLI_READY) sending client ready, end of login procedure." << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_READY) sending client ready, end of login procedure." << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_1,CLI_READY,0x0000,0x00000000);
@@ -525,9 +525,6 @@ void OscarSocket::sendClientReady()
 		}
 	}
 	sendBuf(outbuf,0x02);
-
-	kdDebug(14150) << "============================================================================" << endl;
-	kdDebug(14150) << "============================================================================" << endl;
 
 	isLoggedIn = true;
 	emit loggedIn();

@@ -166,7 +166,7 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 				errstring += i18n("Unknown reason.");
 				break;
 		};
-		emit protocolError(errstring, 0);
+		emit protocolError(errstring, 0, false);
 	}
 }
 

@@ -125,8 +125,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	// Protocol error
 	QObject::connect(
-		engine(), SIGNAL(protocolError(QString, int)),
-		this, SLOT(slotError(QString, int)));
+		engine(), SIGNAL(protocolError(QString, int, bool)),
+		this, SLOT(slotError(QString, int, bool)));
 
 	QObject::connect(
 		engine(), SIGNAL(receivedMessage(const QString &, OscarMessage &)),
@@ -210,13 +210,13 @@ void OscarAccount::slotGoOffline()
 	OscarAccount::disconnect(KopeteAccount::Manual);
 }
 
-void OscarAccount::slotError(QString errmsg, int errorCode)
+void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
 {
 	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() <<
 		"' errmsg=" << errmsg <<
 		", errorCode=" << errorCode << "." << endl;
 
-	if (errorCode > 0)
+	if (isFatal)
 		OscarAccount::disconnect(KopeteAccount::Manual);
 
 	// suppress error dialog for password-was-wrong error, since we're about

@@ -459,7 +459,9 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001: //registration refused!
-							emit protocolError(i18n("Registration refused. Check your user name and password and try again"), 0);
+							emit protocolError(
+								i18n("Registration refused. Check your user name " \
+									"and password and try again"), -1, false);
 							break;
 						case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
@@ -941,8 +943,9 @@ bool OscarSocket::parseAuthFailedCode(WORD errorCode)
 		}
 	}
 
+
 	if (errorCode > 0)
-		emit protocolError(err, errorCode);
+		emit protocolError(err, errorCode, true);
 	return (errorCode > 0);
 }
 
@@ -1656,7 +1659,7 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 		}
 	}
 
-	emit protocolError(msg, reason);
+	emit protocolError(msg, reason, false);
 	// in case a special request failed
 	emit snacFailed(snacID);
 }

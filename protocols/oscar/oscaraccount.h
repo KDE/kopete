@@ -186,7 +186,7 @@ protected slots:
 	/*
 	 * Displays an error dialog with the given text
 	 */
-	void slotError(QString errmsg, int errorCode);
+	void slotError(QString errmsg, int errorCode, bool isFatal);
 
 	void slotLoggedIn();
 

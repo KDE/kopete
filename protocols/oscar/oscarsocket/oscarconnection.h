@@ -118,8 +118,11 @@ class OscarConnection : public QObject
 
 		/**
 		 * Emitted when an OSCAR protocol error occurs
+		 * @param error an error message to present the user, already i18ned
+		 * @param errNum an error number, in case you have to do certain special actions on an error
+		 * @param isFatal true if a disconnect is needed
 		 */
-		void protocolError(QString, int);
+		void protocolError(QString error, int errNum, bool isFatal);
 
 		/**
 		 * Emitted when we get a minityping notifications

@@ -580,7 +580,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 #else
 			.arg(budName,budGroup)
 #endif
-			,0);
+			,0, false);
 		return;
 	}
 
@@ -706,7 +706,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 			<< " not found" << endl;
 		emit protocolError(
 			i18n("Group %1 was not found on the server's " \
-				 "buddy list and cannot be deleted.").arg(groupName),0);
+				 "buddy list and cannot be deleted.").arg(groupName), 0, false);
 		return;
 	}
 
