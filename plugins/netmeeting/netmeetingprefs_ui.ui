@@ -27,7 +27,7 @@
             <property name="text">
                 <string>The NetMeeting Plugin allows you to start a video or voice chat with your MSN Messenger contacts.
 
-This is not the same as webcam chat you can find in the newer Windows Messenger®,  but uses the older NetMeeding chat you can find in old versions.</string>
+This is not the same as webcam chat you can find in the newer Windows Messenger®,  but uses the older NetMeeting chat you can find in old versions.</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>
