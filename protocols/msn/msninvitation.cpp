@@ -24,7 +24,7 @@ MSNInvitation::MSNInvitation(bool incoming, const QString &applicationID , const
 	m_applicationId=applicationID;
 	m_applicationName=applicationName;
 	m_cookie= (rand()%(999999))+1;
-	m_state=0;
+	m_state = Nothing;
 }
 
 
