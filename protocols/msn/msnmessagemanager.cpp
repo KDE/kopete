@@ -20,6 +20,7 @@
 #include <qlabel.h>
 #include <qimage.h>
 #include <qtooltip.h>
+#include <qfile.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -491,7 +492,8 @@ void MSNMessageManager::slotDisplayPictureChanged()
 	const MSNContact *c = static_cast<const MSNContact *>( members().getFirst() );
 	if ( c && m_image )
 	{
-		if ( c->displayPicture() )
+		KTempFile* tempFile = c->displayPicture();
+		if ( tempFile && tempFile->file() && tempFile->file()->size() != 0 )
 		{
 			// FIXME: don't duplicate this code with the c'tor - Martijn
 			// FIXME: don't hardcode the 22x22 geometry, but adjust to the toolbar's height - Martijn
