@@ -181,8 +181,6 @@ class OscarContact : public KopeteContact
 		/** Called when a file transfer begins */
 		void slotTransferBegun(OscarConnection *con, const QString& file,
 			const unsigned long size, const QString &recipient);
-		/** Called when a contact is being destroyed */
-		void slotContactDestroyed( KopeteContact *c );
 		/** Called when a contact from the Kopete contact list has been removed */
 		void slotGroupRemoved( KopeteGroup * );
 

@@ -122,10 +122,7 @@ void OscarContact::initSignals()
 	QObject::connect(
 		KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)));
-	// When the contact is being removed (whether from a group or not)
-	QObject::connect(
-		this, SIGNAL(contactDestroyed(KopeteContact *)),
-		this, SLOT(slotContactDestroyed(KopeteContact *)));
+
 	// When a group in the contact list is being removed, we're notified
 	QObject::connect(
 		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup*)),
@@ -137,6 +134,7 @@ void OscarContact::initSignals()
 OscarContact::~OscarContact()
 {
 //	kdDebug(14150) << k_funcinfo << "Called for '" << mName << "'" << endl;
+	slotDeleteContact();
 }
 
 
@@ -245,11 +243,6 @@ void OscarContact::slotDeleteContact()
 	mAccount->internalBuddyList()->removeBuddy(mListContact);
 	mAccount->engine()->sendDelBuddy(mListContact->screenname(),group->name());
 	deleteLater();
-}
-
-void OscarContact::slotContactDestroyed(KopeteContact * /* contact */ )
-{
-	slotDeleteContact();
 }
 
 void OscarContact::slotGroupRemoved(KopeteGroup * /* removedGroup */ )
