@@ -590,7 +590,7 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 	if (oldNick.lower() == m_Nickname.lower())
 	{
 		emit successfullyChangedNick(oldNick, msg.suffix());
-		m_Nickname = msg.args()[0];
+		m_Nickname = msg.suffix();
 	}
 	else
 		emit incomingNickChange(oldNick, msg.suffix());
