@@ -44,31 +44,23 @@
 #include "tabcompleter.h"
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, server, parent),
+	: KopeteContact(protocol, QString(target+"@"+server).lower(), parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
 
-	if (!init(server, port,target,contact,joinOnConnect))
-	{
-		delete this;
-		return;
-	}
+	init(server, port,target,contact,joinOnConnect);
 }
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port,
 		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
 		       KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, server, parent),
+	: KopeteContact(protocol, QString(target+"@"+server).lower(), parent),
 	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	contactOnList = false;
 
-	if (!init(server,  port,target,contact,true))
-	{
-		delete this;
-		return;
-	}
+	init(server,  port,target,contact,true);
 
 	//TODO: show pending messages
 }
@@ -151,7 +143,7 @@ bool IRCContact::isChannel() const
 
 KopeteContact::ContactStatus IRCContact::status() const
 {
-	if (m_serverContact->engine()->isLoggedIn())
+	if (!m_serverContact.isNull() && m_serverContact->engine()->isLoggedIn())
 		return KopeteContact::Online;
 
 	return KopeteContact::Offline;
@@ -343,7 +335,7 @@ void IRCContact::slotUserKicked(const QString &user, const QString &channel,
 
 IRCContact::~IRCContact()
 {
-	if (added && !contactOnList)
+	if (added && !contactOnList && !m_serverContact.isNull())
 		m_serverContact->activeContacts().remove(m_targetName.lower());
 }
 
@@ -351,7 +343,7 @@ void IRCContact::unloading()
 {
 	if (mTabPage !=0)
 	{
-		kdDebug(14120)<< "IRCContact::unloading()" <<endl;
+		kdDebug(14120)<< k_funcinfo <<endl;
 		if (m_serverContact->closing() == false)
 			delete mTabPage;
 
@@ -364,7 +356,7 @@ void IRCContact::unloading()
 
 void IRCContact::joinNow()
 {
-	kdDebug(14120) << "IRC Plugin: IRCContact::joinNow() creating mTabPage!" << endl;
+	kdDebug(14120) << "IRCContact::joinNow() creating mTabPage!" << endl;
 	mTabPage = new QVBox(m_serverContact->chatWindow()->mTabWidget);
 	if (isChannel())
 	{

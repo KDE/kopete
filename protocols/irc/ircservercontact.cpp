@@ -172,7 +172,7 @@ void IRCServerContact::initiateDcc(const QString &nickname, const QString &filen
 		}
 	}
 	DCCServer *dccServer = new DCCServer(type, newFile);
-	kdDebug(14120) << "IRC Plugin: dccServer->ok() == " << dccServer->ok() << endl;
+	kdDebug(14120) << "dccServer->ok() == " << dccServer->ok() << endl;
 	if (dccServer->ok())
 	{
 		//unsigned int port = dccServer->port();
@@ -232,15 +232,15 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
 		QString contactID=QString(queryName+"@"+m_serverName).lower();
-		QString protocolID = m_protocol->pluginId();
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(protocolID, QString::null, contactID);
-		if(m)
-			kdDebug(14120) << "IRCServerContact::incomingPrivMessage: "
-				<< "Contact already exists and not in this ServerContact : " << contactID <<endl;
+		KopeteContact *c = m_protocol->contacts()[contactID];
+		if (c)
+		{
+			kdDebug(14120) << k_funcinfo << "Contact already exists and not in this ServerContact : " << contactID <<endl;
+		}
 		else
 		{
 			//kdDebug(14120) << "IRCServerContact::incomingPrivMessage: add contact: " << queryName <<endl;
-			m=new KopeteMetaContact();
+			KopeteMetaContact *m = new KopeteMetaContact();
 			m->setTemporary(true);
 			m->addContact(new IRCContact(m_serverName, queryName, 0, this, QStringList(message), m, m_protocol));
 			KopeteContactList::contactList()->addMetaContact(m);
@@ -257,16 +257,16 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
 		QString contactID=QString(queryName+"@"+m_serverName).lower();
-		QString protocolID = m_protocol->pluginId();
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->pluginId(), QString::null,contactID);
-		if(m)
-			kdDebug(14120) << "IRCServerContact::incomingPrivAction: "
-				<< "Contact already exists and not in this ServerContact : " << contactID <<endl;
+		KopeteContact *c = m_protocol->contacts()[contactID];
+		if (c)
+		{
+			kdDebug(14120) << k_funcinfo << "Contact already exists and not in this ServerContact : " << contactID <<endl;
+		}
 		else
 		{
 			//kdDebug(14120) << "IRCServerContact::incomingPrivAction: add contact: " <<contactID <<endl;
 
-			m=new KopeteMetaContact();
+			KopeteMetaContact *m = new KopeteMetaContact();
 			m->setTemporary(true);
 			m->addContact(new IRCContact(m_serverName, queryName, 0, true, this, m, m_protocol));
 			KopeteContactList::contactList()->addMetaContact(m);

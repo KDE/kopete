@@ -9,8 +9,8 @@
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
     </keywords>
-    <version/>
-    <description/>
+    <version></version>
+    <description></description>
     <ignoreparts/>
   </general>
   <kdevfileview>
@@ -42,8 +42,8 @@
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <programargs/>
-      <gdbpath/>
+      <programargs></programargs>
+      <gdbpath></gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -71,16 +71,19 @@
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
     <run>
-      <mainprogram/>
-      <programargs/>
+      <mainprogram>kopete/kopete</mainprogram>
+      <programargs></programargs>
     </run>
     <envvars/>
     <make>
       <abortonerror>true</abortonerror>
       <numberofjobs>3</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
     </make>
+    <general>
+      <activetarget>libkopete/libkopete.la</activetarget>
+    </general>
   </kdevautoproject>
   <cppsupportpart>
     <codecompletion>
@@ -93,8 +96,8 @@
     </classstore>
     <filetemplates>
       <choosefiles>false</choosefiles>
-      <interfaceURL/>
-      <implementationURL/>
+      <interfaceURL></interfaceURL>
+      <implementationURL></implementationURL>
       <interfacesuffix>.h</interfacesuffix>
       <implementationsuffix>.cpp</implementationsuffix>
       <lowercasefilenames>true</lowercasefilenames>
@@ -106,11 +109,11 @@
   </kdevclassview>
   <kdevcvs>
     <cvsoptions>-f</cvsoptions>
-    <commitoptions/>
+    <commitoptions></commitoptions>
     <updateoptions>-dP</updateoptions>
     <addoptions>-z4</addoptions>
     <removeoptions>-f</removeoptions>
     <diffoptions>-u3 -p</diffoptions>
-    <logoptions/>
+    <logoptions></logoptions>
   </kdevcvs>
 </kdevelop>

@@ -60,9 +60,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 {
 	if( m_contacts.contains( c ) )
 	{
-		kdDebug(14010) << "KopeteMetaContact::addContact: WARNING: "
-			<< "Ignoring attempt to add duplicate contact " << c->contactId()
-			<< "!" << endl;
+		kdWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!" << endl;
 	}
 	else
 	{
@@ -221,7 +219,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		//kdDebug(14010) << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
+		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto " << it.current()->protocol()->pluginId() << ", identity " << it.current()->identityId() << endl;
 		if( (it.current()->contactId() == contactId ) && (it.current()->protocol()->pluginId() == protocolId ) && (it.current()->identityId() == identityId))
 			return it.current();
 	}

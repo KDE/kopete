@@ -60,7 +60,7 @@ KIRC::KIRC()
 
 KIRC::~KIRC()
 {
-
+	kdDebug(14120) << k_funcinfo << endl;
 }
 
 Q_LONG KIRC::writeString(const QString &str)
@@ -77,7 +77,7 @@ Q_LONG KIRC::writeString(const QString &str)
 
 void KIRC::slotError(int error)
 {
-	kdDebug(14120) << "IRC Plugin: Error, error code == " << error << endl;
+	kdDebug(14120) << "Error, error code == " << error << endl;
 	loggedIn = false;
 }
 
@@ -108,7 +108,7 @@ void KIRC::slotReadyRead()
 			/*
 			This is the response of someone joining a channel. Remember that this will be emitted when *you* /join a room for the first time
 			*/
-			kdDebug(14120) << "IRC Plugin: userJoinedChannel emitting" << endl;
+			kdDebug(14120) << "userJoinedChannel emitting" << endl;
 			QString channel = line.mid((line.findRev(':')+1), (line.length()-1));
 			emit userJoinedChannel(line.mid(1, (commandIndex-1)), channel);
 			continue;
@@ -118,7 +118,7 @@ void KIRC::slotReadyRead()
 			/*
 			This is a signal that indicates there is a new message. This can be either from a channel or from a specific user.
 			*/
-			kdDebug(14120) << "IRC Plugin: We have a message" << endl;
+			kdDebug(14120) << "We have a message" << endl;
 			QString originating = line.section(' ', 0, 0);
 			originating.remove(0, 1);
 			QString target = line.section(' ', 2, 2);
@@ -288,7 +288,7 @@ void KIRC::slotReadyRead()
 					emit incomingCtcpReply("VERSION", originating.section('!', 0, 0), message.remove(0, 7));
 				}
 			}
-			kdDebug(14120) << "IRC Plugin: NOTICE received: originating is \"" << originating << "\" and message is \"" << message << "\"" << endl;
+			kdDebug(14120) << "NOTICE received: originating is \"" << originating << "\" and message is \"" << message << "\"" << endl;
 			if (originating.isEmpty())
 				originating = mHost;
 
@@ -299,7 +299,7 @@ void KIRC::slotReadyRead()
 			/*
 			This signal emits when a user parts a channel
 			*/
-			kdDebug(14120) << "IRC Plugin: User parting" << endl;
+			kdDebug(14120) << "User parting" << endl;
 			QString originating = line.section(' ', 0, 0);
 			originating.remove(0, 1);
 			QString target = line.section(' ', 2, 2);
@@ -313,7 +313,7 @@ void KIRC::slotReadyRead()
 			/*
 			This signal emits when a user quits irc
 			*/
-			kdDebug(14120) << "IRC Plugin: User quiting" << endl;
+			kdDebug(14120) << "User quiting" << endl;
 			QString originating = line.section(' ', 0, 0);
 			originating.remove(0, 1);
 			QString message = line.section(' ', 2);
@@ -587,10 +587,10 @@ void KIRC::slotReadyRead()
 					channels, and "=" for others (public channels).
 					*/
 					QString channel = line.section(' ', 4, 4);
-					kdDebug(14120) << "IRC Plugin: Case 353: channel == \"" << channel << "\"" << endl;
+					kdDebug(14120) << "Case 353: channel == \"" << channel << "\"" << endl;
 					QString names = line.section(' ', 5);
 					names = names.remove(0, 1);
-					kdDebug(14120) << "IRC Plugin: Case 353: names before preprocessing == \"" << names << "\"" << endl;
+					kdDebug(14120) << "Case 353: names before preprocessing == \"" << names << "\"" << endl;
 					QStringList namesList = QStringList::split(' ', names);
 					for (QStringList::Iterator it = namesList.begin(); it != namesList.end(); it++)
 					{
@@ -835,7 +835,7 @@ void KIRC::messageContact(const QString &contact, const QString &message)
 
 void KIRC::slotConnectionClosed()
 {
-	kdDebug(14120) << "IRC Plugin: Connection Closed" << endl;
+	kdDebug(14120) << "Connection Closed" << endl;
 	loggedIn = false;
 	if (attemptingQuit == true)
 		emit successfulQuit();
@@ -857,12 +857,12 @@ void KIRC::changeNickname(const QString &newNickname)
 
 void KIRC::slotHostFound()
 {
-	kdDebug(14120) << "IRC Plugin: Host Found" << endl;
+	kdDebug(14120) << "Host Found" << endl;
 }
 
 void KIRC::slotConnected()
 {
-	kdDebug(14120) << "IRC Plugin: Connected" << endl;
+	kdDebug(14120) << "Connected" << endl;
 	// Just a test for now:
 	QString ident = "USER ";
 	ident.append(mUsername);

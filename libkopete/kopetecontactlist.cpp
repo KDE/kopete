@@ -65,7 +65,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 		if( it.current()->findContact( protocolId, identityId, contactId ) )
 			return it.current();
 	}
-	// kdDebug(14010) << "KopeteContactList::findContact  *** Not found!" << endl;
+	//kdDebug(14010) << k_funcinfo << "*** Not found!" << endl;
 	return 0L;
 }
 
@@ -147,7 +147,7 @@ void KopeteContactList::loadXML()
 			}
 			else
 			{
-				kdDebug(14010) << "KopeteContactList::loadXML: Warning: "
+				kdWarning(14010) << "KopeteContactList::loadXML: "
 					  << "Unknown element '" << element.tagName()
 					  << "' in contact list!" << endl;
 			}
@@ -180,7 +180,7 @@ void KopeteContactList::saveXML()
 	}
 	else
 	{
-		kdDebug(14010) << "WARNING: Couldn't open contact list file "
+		kdWarning(14010) << "Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 
@@ -196,7 +196,7 @@ void KopeteContactList::saveXML()
 	}
 	else
 	{
-		kdDebug(14010) << "WARNING: Couldn't open contact list file "
+		kdWarning(14010) << "Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 */

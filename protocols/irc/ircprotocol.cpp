@@ -53,7 +53,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	kdDebug(14120) << "IRCProtocol::IRCProtocol"<<endl;
+	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
 	setStatusIcon( "irc_protocol_small" );
 
@@ -109,7 +109,8 @@ KActionMenu* IRCProtocol::protocolActions()
 
 void IRCProtocol::slotNewConsole()
 {
-	kdDebug(14120) << "IRCProtocol::slotNewConsole";
+	kdDebug(14120) << k_funcinfo << endl;
+	
 	KGlobal::config()->setGroup("IRC");
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
 	QString server = KGlobal::config()->readEntry("Server", "(Console)");
@@ -131,11 +132,14 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 	QString protocolID = this->pluginId();
 	QString contactID=contact+"@"+server;
 
-	KopeteMetaContact *m=KopeteContactList::contactList()->findContact( protocolID, QString::null, contactID);
+	KopeteContact *c = contacts()[contactID];
+	KopeteMetaContact *m = 0L;
+	
+	if (c) m = c->metaContact();
+	
 	if(m)
 	{
-		kdDebug(14120) << "IRCProtocol::slotContactList: Warnign: "
-			<< "Contact already exists " << contactID << endl;
+		kdWarning(14120) << k_funcinfo << "Contact already exists " << contactID << endl;
 		if(m->isTemporary())
 			m->setTemporary(false);
 		return;
@@ -247,12 +251,17 @@ void IRCProtocol::serialize(KopeteMetaContact * metaContact)
 
 void IRCProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList &strList )
 {
+	/* This seems to not be required??! Results in a duplicate contact adding warning */
+	
 	QString contactID = strList[0];
-	QString displayName = strList[1];
-	QString serverName = strList[2];
-	if(displayName.isEmpty())
-		displayName = contactID;
-	addContact( serverName, displayName, false, false,metaContact);
+	
+	if (!contacts()[contactID]) {
+		QString displayName = strList[1];
+		QString serverName = strList[2];
+		if(displayName.isEmpty())
+			displayName = contactID;
+		addContact( serverName, displayName, false, false,metaContact);
+	}
 }
 
 

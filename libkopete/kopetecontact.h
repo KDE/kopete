@@ -201,7 +201,7 @@ public:
 	QString contactId() const;
 
 	/**
-	 * Return the protocol id that identifies a contact.
+	 * Return the protocol that the contact belongs to.
 	 *
 	 * Note: Id is required to be unique per protocol and per identity.
 	 * Across those boundaries ids may occur multiple times.
@@ -210,7 +210,7 @@ public:
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
 	 * this is undefined and may change at any time!
 	 *
-	 * @return the unique protocol id of the contact
+	 * @return the contact's protocol
 	 */
 	KopeteProtocol* protocol() const { return m_protocol; }
 

@@ -23,7 +23,7 @@
 #include "kopetecontact.h"
 
 #include <qstring.h>
-
+#include <qguardedptr.h>
 
 
 class IRCChatView;
@@ -41,8 +41,8 @@ class IRCContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol*);
-	IRCContact(const QString &server, const QString &target, unsigned int port, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, KopeteProtocol*);
+	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol);
+	IRCContact(const QString &server, const QString &target, unsigned int port, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, KopeteProtocol *protocol);
 	~IRCContact();
 	// KopeteContact virtual functions
 	virtual ContactStatus status() const;
@@ -81,7 +81,7 @@ private:
 
 
 	KIRC *m_engine;
-	IRCServerContact *m_serverContact;
+	QGuardedPtr<IRCServerContact> m_serverContact;
 	unsigned int m_port;
 
 	QString m_username;
