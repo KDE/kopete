@@ -135,6 +135,16 @@ void MSNProtocol::init()
 bool MSNProtocol::unload()
 {
 	kdDebug() << "MSN Protocol: Unloading...\n";
+
+	Disconnect();
+
+	// Delete all MSNContacts from the meta contacts. Not doing this will
+	// cause all kinds of memory overrun crashes ;-)
+	while( m_metaContacts.count() )
+		delete ( QPtrDictIterator<MSNContact>( m_metaContacts ) ).current();
+
+	m_metaContacts.clear();
+
 	if( kopeteapp->statusBar() )
 	{
 		kopeteapp->statusBar()->removeWidget(statusBarIcon);
