@@ -166,8 +166,9 @@ void MSNSocket::slotDataReceived()
 		return;
 	}
 
-	// incoming data
-	char *buf = new char[ avail ];
+	// incoming data, plus an extra char where we pretend a NUL is so the conversion
+	// to QCString doesn't go over the end of the allocated memory.
+	char *buf = new char[ avail + 1 ];
 	int ret = m_socket->readBlock( buf, avail );
 	if ( ret < 0 )
 	{
@@ -196,7 +197,7 @@ void MSNSocket::slotDataReceived()
 		// all MSN commands start with one or more uppercase characters.
 		// For now just check the first three chars, let's see how accurate it is.
 		// Additionally, if we receive an MSN-P2P packet, strip off anything after the P2P header.
-		QString rawData = QString( QCString( buf, avail ) ).stripWhiteSpace().replace(
+		QString rawData = QString( QCString( buf, avail + 1 ) ).stripWhiteSpace().replace(
 			QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
 
 		bool isBinary = false;
