@@ -709,6 +709,7 @@ GaduSession::checkDescriptor()
 
 	if ( !( event = gg_watch_fd( session_ ) ) ) {
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
+		destroyNotifiers();
 		logoff();
 		return;
 	}
