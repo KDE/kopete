@@ -44,9 +44,11 @@ public:
 	Yahoo::Service service();
 	void setService(Yahoo::Service service);
 	Yahoo::Status status();
+	void setStatus(Yahoo::Status status);
 	unsigned int id();
-	QString param(int index);
-	void setParam(int index, QString data);
+	void setId(unsigned int id);
+	QString param(const QString &index);
+	void setParam(const QString &index, const QString &data);
 	QByteArray serialize();
 	
 	int length();

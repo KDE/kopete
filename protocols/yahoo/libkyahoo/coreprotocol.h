@@ -1,11 +1,12 @@
 /*
-    Kopete Groupwise Protocol
-    coreprotocol.h- the core GroupWise protocol
-
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Kopete Yahoo Protocol
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
-
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
+    
+    Based on code 
+    Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
+    Copyright (C) 2003  Justin Karneges
+    
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************

@@ -100,6 +100,9 @@ void ByteStream::close()
 void ByteStream::write(const QByteArray &a)
 {
 	kdDebug(14180) << k_funcinfo << "[data size: " << a.size() << "]" << endl;
+	
+	kdDebug(14180) << k_funcinfo << "[Data: " << a << "]" << endl;
+	
 	if(!isOpen())
 		return;
 

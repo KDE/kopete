@@ -19,11 +19,14 @@
 
 #include <qcstring.h>
 #include <qdatastream.h>
+#include <qmap.h>
 #include <qobject.h>
+
+#include <kdebug.h>
 
 #include "ymsgprotocol.h"
 #include "ymsgtransfer.h"
-
+#include "yahootypes.h"
 
 YMSGProtocol::YMSGProtocol(QObject *parent, const char *name)
  : InputProtocolBase(parent, name)
@@ -36,41 +39,132 @@ YMSGProtocol::~YMSGProtocol()
 
 Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 {
-	QDataStream* m_din = new QDataStream( packet, IO_ReadOnly );
+	/*
+	<------- 4B -------><------- 4B -------><---2B--->
+	+-------------------+-------------------+---------+
+	|   Y   M   S   G   |      version      | pkt_len |
+	+---------+---------+---------+---------+---------+
+	| service |      status       |    session_id     |
+	+---------+-------------------+-------------------+
+	|                                                 |
+	:                    D A T A                      :
+	/                   0 - 65535*                   |
+	+-------------------------------------------------+
+	*/
+	kdDebug(14180) << k_funcinfo << packet << endl;
 	
-	//BYTE b;
-	//WORD w;
-	//DWORD dw;
+	int pos = 0;
+	int len = 0;
+	
+	Yahoo::Status status;
+	int statusnum = 0;
+	int sessionid = 0;
+	Yahoo::Service service;
+	int servicenum;
+	int version1, version2;
+	
+	QMap<QString, QString> params;
+	
+	// Skip the YMSG header
+	pos += 4;
+	
+	// Skip the version
+	version1 = yahoo_get16(packet.data() + pos);
+	pos += 2;
+	version2 = yahoo_get16(packet.data() + pos);
+	pos += 2;
+	kdDebug(14180) << k_funcinfo << " - parsed packet version " << version1 << " " << version2 << endl;
+	
+	len = yahoo_get16(packet.data() + pos);
+	pos += 2;
+	kdDebug(14180) << k_funcinfo << " - parsed packet len " << len << endl;
+	
+	servicenum = yahoo_get16(packet.data() + pos);
+	pos += 2;
+	kdDebug(14180) << k_funcinfo << " - parsed packet service " << servicenum << endl;
+	
+	switch (servicenum)
+	{
+		// TODO add remamining services
+		case (Yahoo::ServiceAuth) :
+			service = Yahoo::ServiceAuth;
+		break;
+		case (Yahoo::ServiceVerify) :
+			service = Yahoo::ServiceVerify;
+		break;
+		default:
+			kdDebug(14180) << k_funcinfo << " - unknown service " << servicenum << endl;
+			return 0L;
+		break;
+	}
+	
+	statusnum = yahoo_get32(packet.data() + pos);
+	pos += 4;
+	
+	switch (statusnum)
+	{
+		// TODO add remaining status
+		case (Yahoo::StatusAvailable) :
+			status = Yahoo::StatusAvailable;
+		case (Yahoo::StatusBRB) :
+			status = Yahoo::StatusBRB;
+		break;
+		default:
+			kdDebug(14180) << k_funcinfo << " - unknown status " << statusnum << endl;
+			return 0L;
+		break;
+	}
+	
+	sessionid = yahoo_get32(packet.data() + pos);
+	pos += 4;
+	
+	// parse data
+	int offset = 0;
+	int parsedDataPos = 0;
+	QString key;
+	
+	while ( offset < len )
+	{
+		if ((packet[pos+offset] == 0xc0) && (packet[pos+offset+1] == 0x80))
+		{
+			kdDebug(14180) << k_funcinfo << " found key [" << key << "]" << endl;
+			// jump the second delimiter
+			offset++;
+			QString value;
+			while (!(( (packet[pos+offset] == 0xc0) && (packet[pos+offset+1] == 0x80) )))
+			{
+				value += packet[pos+offset];
+				offset++;
+			}
+			kdDebug(14180) << k_funcinfo << " value [" << value << "]" << endl;
+			params[key] = value;
+			// back one so the if can find the next key
+			offset--;
+		}
+		else
+		{
+			key += packet[pos+offset];
+		}
+		offset++;
+	}
+	
+	// ok, parsed all data
+	pos += offset;
 	
 	YMSGTransfer *t = new YMSGTransfer();
-	//*m_din >> b; //this should be the start byte
-	//qDebug( "read: %u", b );
-	//*m_din >> b;
-	/*
-	t->setFlapChannel( b );
-	*m_din >> w;
-	t->setFlapSequence( w );
-	*m_din >> w;
-	t->setFlapLength( w );
-	*m_din >> w;
-	t->setSnacService( w );
-	*m_din >> w;
-	t->setSnacSubtype( w );
-	*m_din >> w;
-	t->setSnacFlags( w );
-	*m_din >> dw;
-	t->setSnacRequest( dw );
-	*/
-
-	//use pointer arithmatic to skip the flap and snac headers
-	//so we don't have to do double parsing in the tasks
-	//char* charPacket = packet.data();
-	//char* snacData = charPacket + 16;
-	/* TODO: Write the buffer class
-	Buffer snacBuffer( snacData, ( t->flapLength() - 10 ) );
-	t->setBuffer( Buffer );
-	*/
+	t->setService(service);
+	t->setId(sessionid);
+	t->setStatus(status);
 	
+	for (QMap<QString, QString>::ConstIterator it = params.begin(); it !=  params.end(); ++it) 
+	{
+		kdDebug(14180) << k_funcinfo << " setting packet key " << it.key() << endl;
+		t->setParam(it.key(), (*it));
+	}
+	kdDebug(14180) << k_funcinfo << " Returning transfer" << endl;
+	// tell them we have parsed offset bytes
+	
+	bytes = pos;
 	return t;
 }
 

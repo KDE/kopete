@@ -1,24 +1,24 @@
 /*
-	Kopete Oscar Protocol
-	client.h - The main interface for the Oscar protocol
-	
-	Copyright (c) 2004 by Matt Rogers <matt.rogers@kdemail.net>
-	
-	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
-	
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
-	
-	*************************************************************************
-	*                                                                       *
-	* This library is free software; you can redistribute it and/or         *
-	* modify it under the terms of the GNU Lesser General Public            *
-	* License as published by the Free Software Foundation; either          *
-	* version 2 of the License, or (at your option) any later version.      *
-	*                                                                       *
-	*************************************************************************
+    Kopete Yahoo Protocol
+    
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
+    
+    Based on code 
+    Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
+    Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
+    Copyright (C) 2003  Justin Karneges
+    
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
 */
-
 
 #ifndef LIBYAHOO_CLIENT_H
 #define LIBYAHOO_CLIENT_H
@@ -121,6 +121,10 @@ Q_OBJECT
 		/**
 		 * Notifies tasks and account so they can react properly
 		 */
+		void connected();
+		/**
+		 * Notifies tasks and account so they can react properly
+		 */
 		void disconnected();
 		/**
 		 * We were disconnected because we connected elsewhere
@@ -130,6 +134,7 @@ Q_OBJECT
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
+		void cs_connected();
 		
 		/**
 		 * Used by the client stream to notify errors to upper layers.
@@ -143,6 +148,7 @@ Q_OBJECT
 
 	private:
 		void distribute( Transfer *transfer );
+		
 		class ClientPrivate;
 		ClientPrivate* d;
 };

@@ -1,13 +1,12 @@
 /*
-    Kopete Groupwise Protocol
-    coreprotocol.h- the core GroupWise protocol
-
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Kopete Yahoo Protocol
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
-    url_escape_string from Gaim src/protocols/novell/nmconn.c
-    Copyright (c) 2004 Novell, Inc. All Rights Reserved
-
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
+    
+    Based on code 
+    Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
+    Copyright (C) 2003  Justin Karneges
+    
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
@@ -51,26 +50,28 @@ int CoreProtocol::state()
 
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
-// store locally
-	kdDebug(14180) << k_funcinfo << endl;
+	// store locally
 	int oldsize = m_in.size();
+	kdDebug(14180) << k_funcinfo << incomingBytes.size() << " bytes. already had " << oldsize << " bytes" << endl;
+	
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
+	
 	m_state = Available;
 	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
 	
 	int parsedBytes = 0;
 	int transferCount = 0;
 	// while there is data left in the input buffer, and we are able to parse something out of it
-	/*
-	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
+	
+	while ( m_in.size() && ( parsedBytes = wireToTransfer(m_in) ) )
 	{
 		transferCount++;
-		qDebug( "CoreProtocol::addIncomingData() - parsed transfer #%i in chunk", transferCount);
+		kdDebug(14180) << k_funcinfo << " parsed transfer " <<  transferCount << " in chunk of "<< parsedBytes << " bytes" << endl; 
 		int size =  m_in.size();
 		if ( parsedBytes < size )
 		{
-			qDebug( " - more data in chunk!" );
+			kdDebug(14180) << k_funcinfo << " more data in chunk! ( I have parsed " << parsedBytes << " and total data of " << size << ")" << endl;
 			// copy the unparsed bytes into a new qbytearray and replace m_in with that
 			QByteArray remainder( size - parsedBytes );
 			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
@@ -80,14 +81,16 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 			m_in.truncate( 0 );
 	}
 	if ( m_state == NeedMore )
-		qDebug( " - message was incomplete, waiting for more..." );
+		kdDebug(14180) << k_funcinfo << " message was incomplete, waiting for more..." << endl;
+	/*
 	if ( m_eventProtocol->state() == EventProtocol::OutOfSync )
 	{	
 		qDebug( " - protocol thinks it's out of sync, discarding the rest of the buffer and hoping the server regains sync soon..." );
 		m_in.truncate( 0 );
 	}
-	qDebug( " - done processing chunk" );
 	*/
+	kdDebug(14180) << k_funcinfo << " done processing chunk" << endl;
+	
 }
 
 Transfer* CoreProtocol::incomingTransfer()
@@ -144,46 +147,43 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 
 int CoreProtocol::wireToTransfer( const QByteArray& wire )
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
 	
 	uint bytesParsed = 0;
 			
-	if ( wire.size() < 6 ) //check for valid flap length
+	if ( wire.size() < 20 ) // minimal value of a YMSG header
 	{
 		m_state = NeedMore;
 		return bytesParsed;
-	}	
+	}
 	
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
-	QByteArray ymsgStart = QByteArray(4);
 	if ( okToProceed() )
 	{
-		*m_din >> ymsgStart;
-		
-		if ( (char * ) ymsgStart.data() == "YMSG" )
+		if ( (wire[0] == 'Y') && (wire[1] == 'M') && (wire[2] == 'S') && (wire[3] == 'G'))
 		{
 			kdDebug(14180) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
-			/*
-			QByteArray packet = wire.duplicate( wire.data(), flapLength + 6 )
-			Transfer * t = m_YMSGProtocol->parse( packet, bytesParsed );
-			
+			QByteArray packet = packet.duplicate(wire);
+			Transfer *t = m_YMSGProtocol->parse( packet, bytesParsed );
+			kdDebug(14180) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
 			if ( t )
 			{
 				m_inTransfer = t;
-				qDebug( "CoreProtocol::wireToTransfer() - got a valid packet " );
+				kdDebug(14180) << k_funcinfo << " - got a valid packet " << endl;
 				
 				m_state = Available;
 				emit incomingData();
 			}
 			else
 				bytesParsed = 0;
-			*/	
 		}
 		else 
-		{ //unknown wire format
+		{ 
+			kdDebug(14180) << k_funcinfo << " - not a valid YMSG packet" << endl;
 		}
 	}
 	delete m_din;

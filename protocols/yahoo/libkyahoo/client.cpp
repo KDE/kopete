@@ -1,27 +1,30 @@
 /*
-	client.cpp - Kopete Oscar Protocol
-	
-	Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
-	
-	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
-	
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
-	
-	*************************************************************************
-	*                                                                       *
-	* This library is free software; you can redistribute it and/or         *
-	* modify it under the terms of the GNU Lesser General Public            *
-	* License as published by the Free Software Foundation; either          *
-	* version 2 of the License, or (at your option) any later version.      *
-	*                                                                       *
-	*************************************************************************
+    Kopete Yahoo Protocol
+    
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
+    
+    Based on code 
+    Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
+    Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
+    Copyright (C) 2003  Justin Karneges
+    
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
 */
 
-#include <qapplication.h> //for qDebug
+#include <kdebug.h>
 
 #include "yahooclientstream.h"
 #include "task.h"
+#include "logintask.h"
 #include "client.h"
 
 class Client::ClientPrivate
@@ -39,8 +42,7 @@ public:
 
 };
 
-Client::Client(QObject *par)
-:QObject(par, "yahooclient" )
+Client::Client(QObject *par) :QObject(par, "yahooclient" )
 {
 	d = new ClientPrivate;
 /*	d->tzoffset = 0;*/
@@ -59,28 +61,41 @@ Client::~Client()
 
 void Client::connectToServer( ClientStream *s, const QString& server, bool auth )
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	d->stream = s;
 
 	connect(d->stream, SIGNAL(error(int)), SLOT(streamError(int)));
 	connect(d->stream, SIGNAL(readyRead()), SLOT(streamReadyRead()));
-
+	
+	connect(d->stream, SIGNAL(connected()), SLOT(cs_connected()));
 	d->stream->connectToServer(server, auth);
 }
 
 void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	d->host = host;
 	d->port = port;
 	d->user = userId;
 	d->pass = pass;
 
 	//start login task here
+}
+
+void Client::cs_connected()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	emit connected();
+	kdDebug(14180) << k_funcinfo << " starting login task ... "<<  endl;
+	LoginTask * login = new LoginTask( d->root );
+	connect(login, SIGNAL(finished()), SLOT(lt_loginFinished()));
+	login->go(true);
 	d->active = true;
 }
 
 void Client::close()
 {
-	qDebug( "TODO: close()" );
+	kdDebug(14180) << k_funcinfo << endl;
 }
 
 QString Client::host()
@@ -96,12 +111,12 @@ int Client::port()
 // SLOTS //
 void Client::streamError( int error )
 {
-	qDebug( "CLIENT ERROR (Error %i)", error );
+	kdDebug(14180) << k_funcinfo << "CLIENT ERROR (Error " <<  error<< ")" << endl;
 }
 
 void Client::streamReadyRead()
 {
-	qDebug( "CLIENT STREAM READY READ" );
+	kdDebug(14180) << k_funcinfo << endl;
 	// take the incoming transfer and distribute it to the task tree
 	Transfer * transfer = d->stream->read();
 	distribute( transfer );
@@ -109,7 +124,7 @@ void Client::streamReadyRead()
 
 void Client::lt_loginFinished()
 {
-	qDebug( "Client::lt_loginFinished() got login finished" );
+	kdDebug(14180) << k_funcinfo << endl;
 }
 
 // INTERNALS //
@@ -138,15 +153,15 @@ QCString Client::ipAddress()
 void Client::distribute( Transfer * transfer )
 {
 	if( !rootTask()->take( transfer ) )
-		qDebug( "CLIENT: root task refused transfer" );
+		kdDebug(14180) << "CLIENT: root task refused transfer" << endl;
 }
 
 void Client::send( Transfer* request )
 {
-	qDebug( "CLIENT::send()" );
+	kdDebug(14180) << "CLIENT::send()"<< endl;
 	if( !d->stream )
 	{	
-		qDebug( "CLIENT - NO STREAM TO SEND ON!");
+		kdDebug(14180) << "CLIENT - NO STREAM TO SEND ON!" << endl;
 		return;
 	}
 

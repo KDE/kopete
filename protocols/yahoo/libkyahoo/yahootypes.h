@@ -31,74 +31,73 @@ namespace Yahoo
 		ServiceIsBack,
 		ServiceIdle, /* 5 (placemarker) */
 		ServiceMessage,
-		/* TODO switch all the rest to CamelCase */
-		ServiceIDACT,
-		ServiceIDDEACT,
+		ServiceIdAct,
+		ServiceIddeAct,
 		ServiceMailStat,
 		ServiceUserStat, /* 0xa */
-		ServiceNEWMAIL,
-		ServiceCHATINVITE,
-		ServiceCALENDAR,
-		ServiceNEWPERSONALMAIL,
-		ServiceNEWCONTACT,
-		ServiceADDIDENT, /* 0x10 */
-		ServiceADDIGNORE,
-		ServicePING,
-		ServiceGOTGROUPRENAME, /* < 1, 36(old), 37(new) */
-		ServiceSYSMESSAGE = 0x14,
-		ServicePASSTHROUGH2 = 0x16,
-		ServiceCONFINVITE = 0x18,
-		ServiceCONFLOGON,
-		ServiceCONFDECLINE,
-		ServiceCONFLOGOFF,
-		ServiceCONFADDINVITE,
-		ServiceCONFMSG,
-		ServiceCHATLOGON,
-		ServiceCHATLOGOFF,
-		ServiceCHATMSG = 0x20,
-		ServiceGAMELOGON = 0x28,
-		ServiceGAMELOGOFF,
-		ServiceGAMEMSG = 0x2a,
-		ServiceFILETRANSFER = 0x46,
-		ServiceVOICECHAT = 0x4A,
-		ServiceNOTIFY,
-		ServiceVERIFY,
-		ServiceP2PFILEXFER,
-		ServicePEERTOPEER = 0x4F,	/* Checks if P2P possible */
-		ServiceWEBCAM,
-		ServiceAUTHRESP = 0x54,
-		ServiceLIST,
-		ServiceAUTH = 0x57,
-		ServiceADDBUDDY = 0x83,
-		ServiceREMBUDDY,
-		ServiceIGNORECONTACT,	/* > 1, 7, 13 < 1, 66, 13, 0*/
-		ServiceREJECTCONTACT,
-		ServiceGROUPRENAME = 0x89, /* > 1, 65(new), 66(0), 67(old) */
-		ServiceCHATONLINE = 0x96, /* > 109(id), 1, 6(abcde) < 0,1*/
-		ServiceCHATGOTO,
-		ServiceCHATJOIN,	/* > 1 104-room 129-1600326591 62-2 */
-		ServiceCHATLEAVE,
-		ServiceCHATEXIT = 0x9b,
-		ServiceCHATLOGOUT = 0xa0,
-		ServiceCHATPING,
-		ServiceCOMMENT = 0xa8
+		ServiceNewMail,
+		ServiceChatInvite,
+		ServiceCalendar,
+		ServiceNewPersonalMail,
+		ServiceNewContact,
+		ServiceAddIdent, /* 0x10 */
+		ServiceAddIgnore,
+		ServicePing,
+		ServiceGotGroupRename, /* < 1, 36(old), 37(new) */
+		ServiceSysMessage = 0x14,
+		ServicePassThrough2 = 0x16,
+		ServiceConfInvite = 0x18,
+		ServiceConfLogon,
+		ServiceConfDecline,
+		ServiceConfLogoff,
+		ServiceConfAddInvite,
+		ServiceConfMsg,
+		ServiceChatLogon,
+		ServiceChatLogoff,
+		ServiceChatMsg = 0x20,
+		ServiceGameLogon = 0x28,
+		ServiceGameLogoff,
+		ServiceGameMsg = 0x2a,
+		ServiceFileTransfer = 0x46,
+		ServiceVoiceChat = 0x4A,
+		ServiceNotify,
+		ServiceVerify = 76,
+		ServiceP2PFileXfer,
+		ServicePeerToPeer = 0x4F,	/* Checks if P2P possible */
+		ServiceWebcam,
+		ServiceAuthEsp = 0x54,
+		ServiceList,
+		ServiceAuth = 0x57,
+		ServiceAddBuddy = 0x83,
+		ServiceRemBuddy,
+		ServiceIgnoreContact,	/* > 1, 7, 13 < 1, 66, 13, 0*/
+		ServiceRejectContact,
+		ServiceGroupRename = 0x89, /* > 1, 65(new), 66(0), 67(old) */
+		ServiceChatOnline = 0x96, /* > 109(id), 1, 6(abcde) < 0,1*/
+		ServiceChatGoto,
+		ServiceChatJoin,	/* > 1 104-room 129-1600326591 62-2 */
+		ServiceChatleave,
+		ServiceChatExit = 0x9b,
+		ServiceChatLogout = 0xa0,
+		ServiceChatPing,
+		ServiceComment = 0xa8
 	};
 	
 	enum Status 
 	{
 		StatusAvailable = 0,
-		StatusBRB,
-		StatusBUSY,
-		StatusNOTATHOME,
-		StatusNOTATDESK,
-		StatusNOTINOFFICE,
-		StatusONPHONE,
-		StatusONVACATION,
-		StatusOUTTOLUNCH,
-		StatusSTEPPEDOUT,
-		StatusINVISIBLE = 12,
-		StatusCUSTOM = 99,
-		StatusIDLE = 999,
+		StatusBRB = 1,
+		StatusBusy,
+		StatusNotAtHome,
+		StatusNotAtDesk,
+		StatusNotInOffice,
+		StatusOnPhone,
+		StatusOnVacation,
+		StatusOutToLunch,
+		StatusSteppedOut,
+		StatusInvisible = 12,
+		StatusCustom = 99,
+		StatusIdle = 999,
 		StatusOffline = 0x5a55aa56, /* don't ask */
 		StatusNotify = 0x16
 	};
@@ -107,5 +106,21 @@ namespace Yahoo
 	typedef Q_UINT16 WORD;
 	typedef Q_UINT32 DWORD;
 }
+
+#define yahoo_put16(buf, data) ( \
+		(*(buf) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+1) = (unsigned char)(data)&0xff),  \
+		2)
+#define yahoo_get16(buf) ((((*(buf))&0xff)<<8) + ((*((buf)+1)) & 0xff))
+#define yahoo_put32(buf, data) ( \
+		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
+		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
+		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+3) = (unsigned char)(data)&0xff), \
+		4)
+#define yahoo_get32(buf) ((((*(buf)   )&0xff)<<24) + \
+			 (((*((buf)+1))&0xff)<<16) + \
+			 (((*((buf)+2))&0xff)<< 8) + \
+			 (((*((buf)+3))&0xff)))
 
 #endif
