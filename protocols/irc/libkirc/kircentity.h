@@ -26,6 +26,7 @@
 #if KDE_IS_VERSION( 3, 2, 90 )
 #include <qt-addon/qresolver.h>
 #else
+// we provide a dummy definition because moc disregards compiler directives, and sees the signal definition using this below
 #define QResolverResults int
 #endif
 #include <kdemacros.h>
