@@ -443,6 +443,14 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 	if ( !a )
 		return;
 
+	//enable the connect all toolbar button
+	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	if (!accounts.isEmpty())
+	{
+		actionConnect->setEnabled(true);
+		actionDisconnect->setEnabled(true);
+	}
+		
 	connect( a->myself(),
 		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
 		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
@@ -468,6 +476,13 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
 
+	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	if (accounts.isEmpty())
+	{
+		actionConnect->setEnabled(false);
+		actionDisconnect->setEnabled(false);
+	}
+	
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ a ] );
 	if( !i )
 		return;
