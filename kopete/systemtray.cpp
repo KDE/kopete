@@ -232,15 +232,21 @@ void KopeteSystemTray::addBalloon()
 	{
 		KopeteMessage msg = mEventList.first()->message();
 		if( (!msg.from()->protocol()->isAway() || KopetePrefs::prefs()->soundIfAway()) &&
-			msg.from() && msg.from()->metaContact() )
+			msg.from() )
 		{
 			QString msgText = msg.plainBody();
 			if( msgText.length() > 30 )
 				msgText = msgText.left(30) + QString::fromLatin1("...");
 
+			QString msgFrom;
+			if( msg.from()->metaContact() )
+				msgFrom = msg.from()->metaContact()->displayName();
+			else
+				msgFrom = msg.from()->displayName();
+
 			m_balloon= new KopeteBalloon(
 				i18n("<qt><nobr><b>New Message from %1:</b></nobr><br><br><nobr>\"%2\"</nobr></qt>")
-					.arg( msg.from()->metaContact()->displayName() ).arg( msgText ), QString::null );
+					.arg( msgFrom ).arg( msgText ), QString::null );
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
