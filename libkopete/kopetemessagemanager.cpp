@@ -520,7 +520,7 @@ void KopeteMessageManager::userTypingMsg ( const KopeteContact *c , bool t )
 
 void KopeteMessageManager::slotTyping ( bool t )
 {
-	kdDebug() << "KopeteMessageManager::slotTyping "<< t << endl;
+//	kdDebug() << "KopeteMessageManager::slotTyping "<< t << endl;
 	emit typingMsg(t);
 }
 
