@@ -8,6 +8,9 @@
 typedef Q_UINT16 NMERR_T;
 #define GROUPWISE_DEBUG_GLOBAL 14220
 
+#define BLANK_GUID "[00000000-00000000-00000000-0000-0000]"
+#define CONF_GUID_END 27
+
 /*#define	NM_STATUS_UNKNOWN			0
 #define	NM_STATUS_OFFLINE			1
 #define NM_STATUS_AVAILABLE			2
@@ -26,19 +29,31 @@ namespace GroupWise
 					AwayIdle= 5,
 					Invalid = 6
 				};
+				
+	enum Error {	None = 0,
+					ErrorBase = 0x2000L,
+					BadParm,
+					TCPWrite,
+					TCPRead,
+					Protocol,
+					ServerRedirect,
+					ConferenceNotFound,
+					ConferenceNotInstantiated,
+					FolderExists
+				};
 };
 					
 
-#define NMERR_BASE							0x2000L
-#define NM_OK								0L
-#define NMERR_BAD_PARM						(NMERR_BASE + 0x0001)
-#define NMERR_TCP_WRITE						(NMERR_BASE + 0x0002)
-#define NMERR_TCP_READ						(NMERR_BASE + 0x0003)
-#define NMERR_PROTOCOL						(NMERR_BASE + 0x0004)
-#define NMERR_SERVER_REDIRECT				(NMERR_BASE + 0x0005)
-#define NMERR_CONFERENCE_NOT_FOUND 			(NMERR_BASE + 0x0006)
-#define NMERR_CONFERENCE_NOT_INSTANTIATED 	(NMERR_BASE + 0x0007)
-#define NMERR_FOLDER_EXISTS					(NMERR_BASE + 0x0008)
+// #define NMERR_BASE							0x2000L
+// #define NM_OK								0L
+// #define NMERR_BAD_PARM						(NMERR_BASE + 0x0001)
+// #define NMERR_TCP_WRITE						(NMERR_BASE + 0x0002)
+// #define NMERR_TCP_READ						(NMERR_BASE + 0x0003)
+// #define NMERR_PROTOCOL						(NMERR_BASE + 0x0004)
+// #define NMERR_SERVER_REDIRECT				(NMERR_BASE + 0x0005)
+// #define NMERR_CONFERENCE_NOT_FOUND 			(NMERR_BASE + 0x0006)
+// #define NMERR_CONFERENCE_NOT_INSTANTIATED 	(NMERR_BASE + 0x0007)
+// #define NMERR_FOLDER_EXISTS					(NMERR_BASE + 0x0008)
 
 /* Errors that are returned from the server */
 #define NMERR_SERVER_BASE			 	0xD100L
