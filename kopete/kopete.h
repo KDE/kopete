@@ -109,6 +109,7 @@ public slots:
 	void slotDisconnectAll();
 	void slotAddContact();
 	void slotSetAwayAll(void);
+	void slotSetAvailableAll(void);
 
 signals:
 	void signalSettingsChanged();

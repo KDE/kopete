@@ -2,10 +2,10 @@
 <kpartgui name="kkopete" version="0.1">
 	<MenuBar>
 		<Menu name="file" noMerge="1"><text>&amp;File</text>
-			<Action name="Connect"/>
-			<Action name="Disconnect"/>
+			<Action name="Connection"/>
+			<Action name="Status"/>
+			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
-			<Action name="SetAway"/>
 			<Separator lineSeparator="true"/>
 			<Action name="file_quit"/>
 		</Menu>
@@ -18,6 +18,7 @@
 	<ToolBar fullWidth="true" name="mainToolBar">
 		<Action name="Connect"/>
 		<Action name="Disconnect"/>
+		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="options_configure"/>
 		<Action name="file_quit"/>

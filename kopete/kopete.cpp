@@ -155,6 +155,24 @@ void Kopete::slotSetAwayAll(void)
 	}
 }
 
+// Set a meta-available in all protocol plugins
+// This is a fire and forget thing, we do not check if
+// it worked or if the plugin exits away-mode
+void Kopete::slotSetAvailableAll(void)
+{
+	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	{
+		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
+		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
+		if ( prot->isConnected() && prot->isAway() )
+		{
+			kdDebug() << "[Kopete] setting available-mode for: " << (*i).name << endl;
+			prot->setAvailable(); // sets protocol-plugin into away-mode
+		}
+	}
+}
 
 /** Add a contact through Wizard */
 void Kopete::slotAddContact()

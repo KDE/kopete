@@ -3,6 +3,30 @@ Kopete Messenger ChangeLog
 
 o Main App
 
+	o Added globally Away/Available
+
+o IRC Plugin
+
+	o Updated for globally Away/Vailable
+
+o ICQ Plugin
+
+	 o Updated for globally Away/Vailable
+
+o MSN Plugin
+
+	 o Updated for globally Away/Vailable
+
+o AIM Plugin
+
+	 o Updated for globally Away/Vailable
+
+
+05-04-2002 Released Kopete 0.3
+==============================
+
+o Main App
+
 	o Event Notifier
 		o Balloon Style (Duncan)
 		o Flashing Tray Style (Duncan)

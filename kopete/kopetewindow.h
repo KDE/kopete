@@ -22,6 +22,7 @@
 
 class QLabel;
 class KAction;
+class KActionMenu;
 class KToggleAction;
 class KSelectAction;
 class ContactList;
@@ -45,9 +46,15 @@ public:
 
 	// Some Actions
 	KAction* actionAddContact;
+	
+	KActionMenu* actionConnectionMenu;
 	KAction* actionConnect;
 	KAction* actionDisconnect;
+	
+	KActionMenu* actionAwayMenu;
 	KAction* actionSetAway;
+	KAction* actionSetAvailable;
+	
 	KAction* actionPrefs;
 	KAction* actionQuit;
 	KToggleAction *toolbarAction;
