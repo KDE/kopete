@@ -35,7 +35,6 @@
 #include <qstylesheet.h>
 #include <qtimer.h>
 #include <qptrlist.h>
-#include <qdict.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -456,21 +455,7 @@ void OscarAccount::slotGotServerBuddyList()
 			}
 		}
 	}
-	
-	//Get our list of contacts and move the ones that aren't on SSI
-	//to the temp group.
-	QDictIterator<KopeteContact> it( contacts() );
-	for ( ; it.current(); ++it ) 
-	{
-		OscarContact* oc = static_cast<OscarContact*> ( it.current() );
-		kdDebug(14150) << "Looking at " << oc->contactId() << endl;
-		if ( oc->metaContact() && !engine()->ssiData().findContact( oc->contactId() ) )
-		{
-			kdDebug(14150) << "Setting " << oc->displayName() << " as temp" << endl;
-			oc->metaContact()->setTemporary();
-		}
-	}
-	
+
 	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
 
