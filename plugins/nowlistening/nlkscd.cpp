@@ -62,39 +62,45 @@ void NLKscd::update()
 //					( m_playing ? "" : "not " ) << "playing!" << endl;
 			}
 		}
-		// poll it for its current artist and album
-		// 'data' here is an unused input parameter
+		// poll it for its current artist 
 		if ( !m_client->call( "kscd", "CDPlayer",
-					"trackList()", data, replyType, replyData ) )
+					"currentArtist()", data, replyType, replyData ) )
 			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
 			QDataStream reply( replyData, IO_ReadOnly );
-			if ( replyType == "QStringList" ) {
-				QStringList result;
-				reply >> result;
-				QString artistAlbum = result.first();
-				m_artist = artistAlbum.section( '/', 0, 0 ).left( artistAlbum.length() - 1 ).stripWhiteSpace();
-				m_album = artistAlbum.section( '/', 1, 1 ).right( artistAlbum.length() - 1 ).stripWhiteSpace();
-//				kdDebug( 14307 ) << "NLKscd::update() artist:" << m_artist <<
-//					" album:" << m_album << endl;
+			if ( replyType == "QString" )
+				reply >> m_artist;
+			else
+				kdDebug( 14307 ) << "NLKscd::update() trackList returned unexpected reply type!" << endl;
+		}
+
+		//album
+		if ( !m_client->call( "kscd", "CDPlayer",
+					"currentAlbum()", data, replyType, replyData ) )
+			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
+				<< endl;
+		else {
+			QDataStream reply( replyData, IO_ReadOnly );
+			if ( replyType == "QString" )
+				reply >> m_album;
+			else
+				kdDebug( 14307 ) << "NLKscd::update() trackList returned unexpected reply type!" << endl;
+		}
+
+		// Get the current track title
+		if ( !m_client->call( "kscd", "CDPlayer",
+					"currentTrackTitle()", data, replyType, replyData ) )
+			kdDebug( 14307 ) << "NLKscd::update() - there was some error using DCOP." << endl;
+		else {
+			QDataStream reply( replyData, IO_ReadOnly );
+			if ( replyType == "QString" ) {
+				reply >> newTrack;
+				//kdDebug( 14307 ) << "the result is: " << newTrack.latin1()
+				//	<< endl;
 			} else
-				kdDebug( 14307 ) << "NLKscd::update() trackList returned unexpected reply type!"
-					<< endl;
-			// Get the current track title
-			if ( !m_client->call( "kscd", "CDPlayer",
-						"currentTrackTitle()", data, replyType, replyData ) )
-				kdDebug( 14307 ) << "NLKscd::update() - there was some error using DCOP." << endl;
-			else {
-				QDataStream reply( replyData, IO_ReadOnly );
-				if ( replyType == "QString" ) {
-					reply >> newTrack;
-					//kdDebug( 14307 ) << "the result is: " << newTrack.latin1()
-					//	<< endl;
-				} else
-					kdDebug( 14307 ) << "NLKscd::update()-  currentTrackTitle "
-						<< "returned unexpected reply type!" << endl;
-			}
+				kdDebug( 14307 ) << "NLKscd::update()-  currentTrackTitle "
+					<< "returned unexpected reply type!" << endl;
 		}
 		// if the current track title has changed
 		if ( newTrack != m_track )
