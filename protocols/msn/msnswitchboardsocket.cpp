@@ -199,7 +199,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
       QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName();
   		QString txt = i18n("%1 tried to send you a file.\n"
               "Name: %2 \nSize: %3 bytes\n"
-      	  		"would you accept?\n").arg( contact).arg( filename).arg( filesize );
+      	  		"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
 
       int r=KMessageBox::questionYesNo (0l, txt, i18n( "MSN Plugin - Kopete" ), i18n( "Accept" ), i18n( "Refuse" ));
        
