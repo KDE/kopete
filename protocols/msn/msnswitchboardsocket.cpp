@@ -18,6 +18,7 @@
 
 #include "kmsnchatservice.h"
 #include "kmsnservice.h"
+#include "msnprotocol.h"
 #include <time.h>
 // qt
 #include <qdatetime.h>
@@ -210,7 +211,7 @@ redo:
 				QString handle = kstr.word(str,1);
 				kdDebug() << "MSG Plugin: ChatBoard: handle seria " << handle << endl;
 
-				emit msgReceived(handle,imService->getPublicName(handle), miss, font, fg);//.replace(QRegExp("\r\n"),""));
+				emit msgReceived(handle,MSNProtocol::protocol()->publicName(handle), miss, font, fg);//.replace(QRegExp("\r\n"),""));
 				//emit msgReceived(handle,"Nick", miss);//.replace(QRegExp("\r\n"),""));
 			}
 			// incoming message for File-transfer

@@ -44,31 +44,28 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	else
 		s_protocol = this;
 
-	QString path;
-	path = locateLocal("data","kopete/msn.contacts");
-	mContactsFile=new KSimpleConfig(path);
-	path = locateLocal("data","kopete/msn.groups");
-	mGroupsFile=new KSimpleConfig(path);
-
+	m_status = FLN;
 	mIsConnected = false;
-	kdDebug() << "\nMSN Plugin Loading\n";
 
-	/* Load all ICQ icons from KDE standard dirs */
+	mContactsFile = new KSimpleConfig( locateLocal( "data",
+		"kopete/msn.contacts" ) );
+	mGroupsFile = new KSimpleConfig( locateLocal( "data",
+		"kopete/msn.groups" ) );
+
+	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
+
 	initIcons();
+	initActions();
 
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
-
-	/* We init the actions to plug them in the Kopete gui */
-	initActions();
-
-	kdDebug() << "MSN Protocol Plugin: Setting icon offline\n";
-	statusBarIcon->setPixmap(offlineIcon);
+	statusBarIcon->setPixmap( offlineIcon );
 
 	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
-	mPrefs = new MSNPreferences("msn_protocol", this);
-	connect(mPrefs, SIGNAL(saved(void)), this, SIGNAL(settingsChanged(void)) );
+	mPrefs = new MSNPreferences( "msn_protocol", this );
+	connect( mPrefs, SIGNAL( saved( void ) ),
+		this, SIGNAL( settingsChanged( void ) ) );
 
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
 	m_msnService = new KMSNService;
@@ -83,40 +80,58 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 		this, SLOT( slotGroupListed( QString, uint ) ) );
 	connect( serviceSocket(), SIGNAL(groupRemoved( uint, uint ) ),
 		this, SLOT( slotGroupRemoved( uint, uint ) ) );
+	connect( serviceSocket(), SIGNAL( statusChanged( QString ) ),
+				this, SLOT( slotStateChanged( QString ) ) );
+	connect( serviceSocket(),
+		SIGNAL( contactStatusChanged( QString, QString, QString ) ),
+		this,
+		SLOT( slotContactStatusChanged( QString, QString, QString ) ) );
+	connect( serviceSocket(),
+		SIGNAL( contactList( QString, QString, QString, QString ) ),
+		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
+	connect( serviceSocket(),
+		SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
+		this,
+		SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
+	connect( serviceSocket(),
+		SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
+		this,
+		SLOT( slotContactRemoved( QString, QString, uint, uint ) ) );
+	connect( serviceSocket(), SIGNAL( statusChanged( QString ) ),
+		this, SLOT( slotStatusChanged( QString ) ) );
+	connect( serviceSocket(),
+		SIGNAL( contactStatus( QString, QString, QString ) ),
+		this, SLOT( slotContactStatus( QString, QString, QString ) ) );
 
 	connect( m_msnService, SIGNAL( connectingToService() ),
 				this, SLOT( slotConnecting() ) );
-	connect( m_msnService, SIGNAL( statusChanged( uint ) ),
-				this, SLOT( slotStateChanged( uint) ) );
-	connect( m_msnService, SIGNAL( contactAdded( QString, QString, QString ) ),
-				this, SLOT( slotContactAdded( QString, QString, QString ) ) );
 	connect( m_msnService, SIGNAL( startChat( KMSNChatService *, QString ) ),
 				this, SLOT( slotIncomingChat( KMSNChatService *, QString ) ) );
-	connect( m_msnService, SIGNAL( newContact( QString ) ),
-				this, SLOT( slotAuthenticate( QString ) ) );
 
 	// Propagate signals from the MSN Service
-	connect( m_msnService, SIGNAL( updateContact( QString, uint ) ),
-				this, SIGNAL( updateContact( QString, uint ) ) );
-	connect( m_msnService, SIGNAL( contactRemoved( QString, QString ) ),
-				this, SLOT( slotContactRemoved( QString, QString ) ) );
 	connect( m_msnService, SIGNAL( connectedToService( bool ) ),
 				this, SLOT( slotConnectedToMSN( bool ) ) );
 
-	KGlobal::config()->setGroup("MSN");
+	KConfig *cfg = KGlobal::config();
+	cfg->setGroup( "MSN" );
 
-	if ( (KGlobal::config()->readEntry("UserID", "") == "" ) || (KGlobal::config()->readEntry("Password", "") == "" ) )
+	if( ( cfg->readEntry( "UserID", "" ).isEmpty() ) ||
+		( cfg->readEntry( "Password", "" ).isEmpty() ) )
 	{
-		QString emptyText = i18n( "<qt>If you have a <a href=\"http://www.passport.com\">MSN account</a>, please configure it in the Kopete Settings. Get a MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a>.</qt>" );
-		QString emptyCaption = i18n( "No MSN Configuration found!" );
+		QString emptyText =
+			i18n( "<qt>If you have an "
+			"<a href=\"http://www.passport.com\">MSN account</a>, "
+			"please configure it in the Kopete Settings.\n"
+			"Get an MSN account <a href=\"http://login.hotmail.passport.com/"
+			"cgi-bin/register/en/default.asp\">here</a>.</qt>" );
+		QString emptyCaption = i18n( "MSN Not Configured Yet" );
 
-		KMessageBox::error(kopeteapp->mainWindow(), emptyText,emptyCaption );
+		KMessageBox::information( kopeteapp->mainWindow(),
+			emptyText, emptyCaption );
 	}
-	/** Autoconnect if is selected in config */
-	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
-	{
+
+	if ( cfg->readBoolEntry( "AutoConnect", "0" ) )
 		Connect();
-	}
 }
 
 MSNProtocol::~MSNProtocol()
@@ -201,15 +216,10 @@ void MSNProtocol::setAvailable(void)
 
 bool MSNProtocol::isAway(void) const
 {
-	uint status;
-	status = m_msnService->status();
-	switch(status)
+	switch( m_status )
 	{
 		case NLN:
-		{
 			return false;
-			break;
-		}
 		case FLN:
 		case BSY:
 		case IDL:
@@ -217,12 +227,10 @@ bool MSNProtocol::isAway(void) const
 		case PHN:
 		case BRB:
 		case LUN:
-		{
-	    	return true;
-			break;
-		}
+			return true;
+		default:
+			return false;
 	}
-	return false;
 }
 
 /** This i used for al protocol selection dialogs */
@@ -304,84 +312,6 @@ void MSNProtocol::slotSyncContactList()
 */
 }
 
-/** OK! We are connected , let's do some work */
-void MSNProtocol::slotConnected()
-{
-	mIsConnected = true;
-	MSNContact *tmpcontact;
-
-	QStringList contacts;
-	QString group, publicname, userid;
-	uint status = 0;
-	// First, we change status bar icon
-	statusBarIcon->setPixmap(onlineIcon);
-
-	// We get the group list
-	QMap<uint, QString>::Iterator it;
-	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
-	{
-		kdDebug() << "MSN Plugin: Searching contacts for group: [ " << *it << " ]" <<endl;
-
-		// We get the contacts for this group
-		contacts = m_msnService->getContacts( (*it).latin1() );
-		for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
-		{
-			userid = (*it1).latin1();
-			publicname = m_msnService->getPublicName((*it1).latin1());
-
-			kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
-			addToContactList( new MSNContact( userid , publicname,
-				(*it).latin1(), this ), (*it).latin1() );
-
-			kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
-
-			if( m_msnService->isBlocked( userid ) )
-			{
-				tmpcontact->setName(publicname + i18n(" Blocked") );
-			}
-		}
-	}
-	// FIXME: is there any way to do a faster sync of msn groups?
-	/* Now we sync local groups that dont exist in server */
-	QStringList localgroups = (kopeteapp->contactList()->groups()) ;
-	QStringList servergroups = groups();
-	QString localgroup;
-	QString remotegroup;
-	int exists;
-
-	KGlobal::config()->setGroup("MSN");
-	if ( KGlobal::config()->readBoolEntry("ExportGroups", true) )
-	{
-		for ( QStringList::Iterator it1 = localgroups.begin(); it1 != localgroups.end(); ++it1 )
-		{
-			exists = 0;
-			localgroup = (*it1).latin1();
-			for ( QStringList::Iterator it2 = servergroups.begin(); it2 != servergroups.end(); ++it2 )
-			{
-				remotegroup = (*it2).latin1();
-				if ( localgroup == remotegroup )
-				{
-					exists++;
-				}
-			}
-
-			/* Groups doesnt match any server group */
-			if ( exists == 0 )
-			{
-				kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
-				/*
-				QString notexistsMsg = i18n(
-					"the group %1 doesn't exist in MSN server group list, if you want to move" \
-					" a MSN contact to this group you need to add it to MSN server, do you want" \
-					" to add this group to the server group list?" ).arg(localgroup);
-				useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
-				*/
-				addGroup( localgroup );
-			}
-		}
-	}
-}
-
 void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 {
 	MSNMessageDialog *messageDialog;
@@ -403,7 +333,7 @@ void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 	else
 	{
 		kdDebug() << "MSN Plugin: Incoming chat, no window, creating window for " << reqUserID <<"\n";
-		QString nick = m_msnService->getPublicName( reqUserID );
+		QString nick = publicName( reqUserID );
 
 		// FIXME: MSN message dialog needs status
 
@@ -430,35 +360,6 @@ void MSNProtocol::slotMessageDialogClosing(QString handle)
 		}
 	}
 }
-
-void MSNProtocol::slotContactRemoved( QString msnId, QString group )
-{
-	if( m_contacts.contains( msnId ) )
-	{
-		m_contacts[ msnId ]->removeFromGroup( group );
-		if( m_contacts[ msnId ]->groups().isEmpty() )
-		{
-			delete m_contacts[ msnId ];
-			m_contacts.remove( msnId );
-		}
-	}
-}
-
-void MSNProtocol::slotDisconnected()
-{
-	QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
-	while( it != m_contacts.end() )
-	{
-		delete *it;
-		m_contacts.remove( it );
-		it = m_contacts.begin();
-	}
-
-	m_groupList.clear();
-	mIsConnected = false;
-	statusBarIcon->setPixmap(offlineIcon);
-}
-
 
 void MSNProtocol::slotGoOnline()
 {
@@ -492,9 +393,92 @@ void MSNProtocol::slotConnectedToMSN(bool c)
 {
 	mIsConnected = c;
 	if ( c )
-		slotConnected();
+	{
+		mIsConnected = true;
+		MSNContact *tmpcontact;
+
+		QStringList contacts;
+		QString group, publicname, userid;
+		uint status = 0;
+
+		statusBarIcon->setPixmap( onlineIcon );
+/*
+		// We get the group list
+		QMap<uint, QString>::Iterator it;
+		for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
+		{
+			kdDebug() << "MSN Plugin: Searching contacts for group: [ " << *it << " ]" <<endl;
+
+			// We get the contacts for this group
+			contacts = groupContacts( (*it).latin1() );
+			for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
+			{
+				userid = (*it1).latin1();
+				publicname = publicName( userid );
+
+				kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
+				addToContactList( new MSNContact( userid , publicname,
+					(*it).latin1(), this ), (*it).latin1() );
+
+				kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
+			}
+		}*/
+		// FIXME: is there any way to do a faster sync of msn groups?
+		/* Now we sync local groups that dont exist in server */
+		QStringList localgroups = (kopeteapp->contactList()->groups()) ;
+		QStringList servergroups = groups();
+		QString localgroup;
+		QString remotegroup;
+		int exists;
+
+		KGlobal::config()->setGroup("MSN");
+		if ( KGlobal::config()->readBoolEntry("ExportGroups", true) )
+		{
+			for ( QStringList::Iterator it1 = localgroups.begin(); it1 != localgroups.end(); ++it1 )
+			{
+				exists = 0;
+				localgroup = (*it1).latin1();
+				for ( QStringList::Iterator it2 = servergroups.begin(); it2 != servergroups.end(); ++it2 )
+				{
+					remotegroup = (*it2).latin1();
+					if ( localgroup == remotegroup )
+					{
+						exists++;
+					}
+				}
+
+				/* Groups doesnt match any server group */
+				if ( exists == 0 )
+				{
+					kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
+					/*
+					QString notexistsMsg = i18n(
+						"the group %1 doesn't exist in MSN server group list, if you want to move" \
+						" a MSN contact to this group you need to add it to MSN server, do you want" \
+						" to add this group to the server group list?" ).arg(localgroup);
+					useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
+					*/
+					addGroup( localgroup );
+				}
+			}
+		}
+	}
 	else
-		slotDisconnected();
+	{
+		QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
+		while( it != m_contacts.end() )
+		{
+			delete *it;
+			m_contacts.remove( it );
+			it = m_contacts.begin();
+		}
+
+		m_groupList.clear();
+		mIsConnected = false;
+		statusBarIcon->setPixmap(offlineIcon);
+
+		m_status = FLN;
+	}
 }
 
 void MSNProtocol::slotUserStateChange( QString handle, QString nick,
@@ -503,51 +487,40 @@ void MSNProtocol::slotUserStateChange( QString handle, QString nick,
 	kdDebug() << "MSN Plugin: User State change " << handle << " " << nick << " " << newstatus <<"\n";
 }
 
-void MSNProtocol::slotStateChanged( uint newstate ) const
+void MSNProtocol::slotStateChanged( QString status )
 {
-	kdDebug() << "MSN Plugin: My Status Changed to " << newstate <<"\n";
-	switch(newstate)
+	m_status = convertStatus( status );
+
+	kdDebug() << "MSN Plugin: My Status Changed to " << m_status <<
+		" (" << status <<")\n";
+
+	switch( m_status )
 	{
 		case NLN:
-		{
 			statusBarIcon->setPixmap(onlineIcon);
 			break;
-		}
+		case AWY:
+			statusBarIcon->setPixmap(awayIcon);
+			break;
+		case BSY:
+			statusBarIcon->setPixmap(awayIcon);
+			break;
+		case IDL:
+			statusBarIcon->setPixmap(awayIcon);
+			break;
+		case PHN:
+			statusBarIcon->setPixmap(awayIcon);
+			break;
+		case BRB:
+			statusBarIcon->setPixmap(awayIcon);
+			break;
+		case LUN:
+			statusBarIcon->setPixmap(awayIcon);
+			break;
 		case FLN:
-		{
+		default:
 			statusBarIcon->setPixmap(offlineIcon);
 			break;
-		}
-		case AWY:
-		{
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		}
-		case BSY:
-		{
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		}
-		case IDL:
-		{
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		}
-		case PHN:
-		{
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		}
-		case BRB:
-		{
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		}
-		case LUN:
-		{
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		}
 	}
 }
 
@@ -567,17 +540,10 @@ void MSNProtocol::slotUserSetOffline( QString str ) const
 	kdDebug() << "MSN Plugin: User Set Offline " << str << "\n";
 }
 
-void MSNProtocol::slotContactAdded( QString handle, QString nick,
-	QString group )
-{
-	kdDebug() << "MSN Plugin: Contact Added in group " << group << " ... creating contact" << endl;
-	addToContactList( new MSNContact( handle, nick, group, this ), group );
-}
-
 // Dont use this for now
 void MSNProtocol::slotNewUserFound( QString userid )
 {
-	QString tmpnick = m_msnService->getPublicName(userid);
+	QString tmpnick = publicName( userid );
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 
 	addToContactList( new MSNContact( userid, tmpnick, i18n( "Unknown" ),
@@ -595,20 +561,11 @@ void MSNProtocol::addToContactList( MSNContact *c, const QString &group )
 // Dont use this for now
 void MSNProtocol::slotNewUser( QString userid )
 {
-	QString tmpnick = m_msnService->getPublicName(userid);
+	QString tmpnick = publicName( userid );
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 
 	addToContactList( new MSNContact( userid, tmpnick, i18n( "Unknown" ),
 		this ), i18n( "Unknown" ) );
-}
-
-void MSNProtocol::slotAuthenticate( QString handle )
-{
-	NewUserImpl *authDlg = new NewUserImpl(0);
-	authDlg->setHandle(handle);
-	connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
-	connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
-	authDlg->show();
 }
 
 void MSNProtocol::slotAddContact( QString handle )
@@ -705,14 +662,18 @@ QStringList MSNProtocol::groups() const
 	return result;
 }
 
-int MSNProtocol::contactStatus( const QString &handle ) const
-{
-	return m_msnService->status( handle );
-}
-
 QString MSNProtocol::publicName( const QString &handle ) const
 {
-	return m_msnService->getPublicName( handle );
+	if( m_contacts.contains( handle ) )
+	{
+		kdDebug() << "MSNProtocol::publicName: handle found, nick=" << m_contacts[ handle ]->nickname() << endl;
+		return m_contacts[ handle ]->nickname();
+	}
+	else
+	{
+		kdDebug() << "MSNProtocol::publicName: handle " << handle << " NOT found!!!" << endl;
+		return handle;
+	}
 }
 
 const MSNProtocol* MSNProtocol::s_protocol = 0L;
@@ -812,6 +773,226 @@ void MSNProtocol::removeGroup( const QString &name )
 	int g = groupNumber( name );
 	if( g != -1 )
 		serviceSocket()->removeGroup( g );
+}
+
+MSNProtocol::Status MSNProtocol::status() const
+{
+	return m_status;
+}
+
+MSNProtocol::Status MSNProtocol::convertStatus( QString status ) const
+{
+	if( status == "NLN" )
+		return NLN;
+	else if( status == "FLN" )
+		return FLN;
+	else if( status == "HDN" )
+		return HDN;
+	else if( status == "PHN" )
+		return PHN;
+	else if( status == "LUN" )
+		return LUN;
+	else if( status == "BRB" )
+		return BRB;
+	else if( status == "AWY" )
+		return AWY;
+	else if( status == "BSY" )
+		return BSY;
+	else if( status == "IDL" )
+		return IDL;
+	else
+		return FLN;
+}
+
+void MSNProtocol::slotContactStatus( QString handle, QString publicName,
+	QString status )
+{
+	kdDebug() << "MSNProtocol::slotContactStatus: " << handle << " (" <<
+		publicName << ") has status " << status << endl;
+
+	if( m_contacts.contains( handle ) )
+	{
+		m_contacts[ handle ]->setMsnStatus( convertStatus( status ) );
+		m_contacts[ handle ]->setNickname( publicName );
+	}
+}
+
+void MSNProtocol::slotContactStatusChanged( QString handle, QString publicName,
+	QString status )
+{
+	kdDebug() << "MSNProtocol::slotContactStatusChanged: " << handle << " (" <<
+		publicName << ") has status " << status << endl;
+
+	if( m_contacts.contains( handle ) )
+	{
+		if( status == "FLN" )
+			m_contacts[ handle ]->setMsnStatus( FLN );
+		else
+		{
+			m_contacts[ handle ]->setMsnStatus( convertStatus( status ) );
+			m_contacts[ handle ]->setNickname( publicName );
+		}
+	}
+}
+
+void MSNProtocol::slotContactList( QString handle, QString publicName,
+	QString group, QString list )
+{
+	MSNContact *c;
+	QStringList groups;
+	groups = QStringList::split(",", group, false );
+	if( list == "FL" )
+	{
+		// FIXME: Proper MSNContact CTOR!
+		c = new MSNContact( handle, publicName, QString::null, 0L );
+		for( QStringList::Iterator it = groups.begin();
+			it != groups.end(); ++it )
+		{
+			c->addToGroup( groupName( (*it).toUInt() ) );
+			addToContactList( c, groupName( (*it).toUInt() ) );
+		}
+	}
+	else if( list == "BL" )
+	{
+		if( m_contacts.contains( handle ) )
+			m_contacts[ handle ]->setBlocked( true );
+	}
+	else if( list == "AL" )
+	{
+		// deleted Contacts might still be in allow list
+		if( !m_contacts.contains( handle ) )
+		{
+			// FIXME: Proper MSNContact ctor required!
+			c = new MSNContact( handle, publicName, QString::null, 0L );
+			c->setDeleted( true );
+			addToContactList( c, "UNKNOWN GROUP!" );
+		}
+	}
+	else if( list == "RL" )
+	{
+		// search for new Contacts
+		if( m_contacts.contains( handle ) )
+			m_contacts[ handle ]->setNickname( publicName );
+		else
+		{
+			kdDebug() << "MSNProtocol: Contact not found in list!" << endl;
+/*
+			NewUserImpl *authDlg = new NewUserImpl(0);
+			authDlg->setHandle(handle);
+			connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
+			authDlg->show();
+*/
+		}
+	}
+}
+
+void MSNProtocol::slotContactRemoved( QString handle, QString list,
+	uint serial, uint group )
+{
+	m_msnService->setSerial( serial );
+
+	QString gn = groupName( group );
+	if( gn.isNull() )
+		gn = i18n( "Unknown" );
+
+	if( m_contacts.contains( handle ) )
+	{
+		if( group )
+			m_contacts[ handle ]->removeFromGroup( gn );
+
+		if( list == "BL" )
+		{
+			// the contact is removed from the blocked list,
+			// add it to the AL list
+			m_contacts[ handle ]->setBlocked( false );
+			serviceSocket()->addContact( handle, publicName( handle ), 0, KMSNService::AL );
+		}
+		else if( list == "RL" )
+		{
+/*
+			// Contact is removed from the reverse list
+			// only MSN can do this, so this is currently not supported
+			
+			InfoWidget *info = new InfoWidget(0);
+			info->title->setText("<b>" + i18n( "Contact removed!" ) +"</b>" );
+			QString dummy;
+			dummy = "<center><b>" + imContact->getPublicName() + "(" +imContact->getHandle()  +")</b></center><br>";
+			dummy += i18n("has removed you from his contact list!") + "<br>";
+			dummy += i18n("This contact is now removed from your contact list");
+			info->infoText->setText(dummy);
+			info->setCaption("KMerlin - Info");
+			info->show();
+*/
+		}
+		else if( list == "FL" )
+		{
+			// Contact is removed from the FL list, remove it from the group
+			m_contacts[ handle ]->removeFromGroup( gn );
+		}
+
+		if( m_contacts[ handle ]->groups().isEmpty() )
+		{
+			delete m_contacts[ handle ];
+			m_contacts.remove( handle );
+		}
+	}
+}
+
+void MSNProtocol::slotContactAdded( QString handle, QString publicName,
+	QString list, uint serial, uint group )
+{
+	m_msnService->setSerial( serial );
+
+	QString gn = groupName( group );
+	if( gn.isNull() )
+		gn = "Unknown";
+
+	if( m_contacts.contains( handle ) )
+	{
+		if( group )
+			m_contacts[ handle ]->addToGroup( gn );
+
+		if( list == "BL" )
+			m_contacts[ handle ]->setBlocked( true );
+		else if( list == "FL" )
+			m_contacts[ handle ]->addToGroup( gn );
+	}
+	else
+	{
+		// contact not found, create new one
+		if( list == "FL" )
+		{
+			// FIXME: Proper MSNContact ctor!
+			MSNContact *c = new MSNContact( handle, publicName, gn, 0L );
+			c->setDeleted( true );
+			addToContactList( c, gn );
+		}
+		else if( list == "AL" )
+		{
+			// FIXME: Proper MSNContact ctor!
+			MSNContact *c = new MSNContact( handle, publicName, QString::null, 0L );
+			c->setBlocked( false );
+			addToContactList( c, gn );
+		}
+	}
+}
+
+QStringList MSNProtocol::groupContacts( const QString &group ) const
+{
+	QStringList result;
+	QMap<QString, MSNContact*>::ConstIterator it;
+
+	for( it = m_contacts.begin(); it != m_contacts.end(); ++it )
+		if( ( *it )->groups().contains( group ) )
+			result.append( it.key() );
+
+	return result;
+}
+
+void MSNProtocol::slotStatusChanged( QString status )
+{
+	m_status = convertStatus( status );
 }
 
 #include "msnprotocol.moc"

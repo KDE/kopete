@@ -66,6 +66,12 @@ public:
 	void setNickname( const QString &nick );
 
 	/**
+	 * Return nickname for now, but with 'blocked' appended for blocked
+	 * contacts
+	 */
+	virtual QString name() const;
+
+	/**
 	 * Indicate whether this contact is blocked
 	 */
 	bool isBlocked() const;
@@ -117,8 +123,6 @@ private slots:
 	void slotCopyThisUser();
 	void slotMoveThisUser();
 	void slotRemoveFromGroup();
-
-	void slotUpdateContact ( QString, uint );
 
 	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();

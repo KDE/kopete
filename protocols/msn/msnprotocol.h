@@ -104,10 +104,17 @@ public:
 	void renameGroup( const QString &oldGroup, const QString &newGroup );
 	void removeGroup( const QString &groupName );
 
-	int contactStatus( const QString &handle ) const;
+	/**
+	 * Convert string-like status to Status enum
+	 * FIXME: should be made private again when possible
+	 */
+	Status convertStatus( QString status ) const;
+	Status status() const;
+
 	QString publicName( const QString &handle ) const;
 
 	QStringList groups() const;
+	QStringList groupContacts( const QString &group ) const;
 
 	KMSNService* msnService() const;
 
@@ -116,9 +123,6 @@ public slots:
 	void slotIncomingChat( KMSNChatService *, QString );
 
 	void slotSyncContactList();
-
-	void slotConnected();
-	void slotDisconnected();
 
 	// To go online we need to check if connected
 	void slotGoOnline();
@@ -129,17 +133,14 @@ public slots:
 	void slotConnectedToMSN( bool c );
 	void slotConnecting();
 
-	void slotContactAdded( QString, QString, QString );
 	void slotUserStateChange( QString, QString, int ) const;
-	void slotStateChanged( uint ) const;
+	void slotStateChanged( QString status );
 	void slotUserSetOffline( QString ) const;
 	void slotInitContacts( QString, QString, QString );
 	void slotNewUserFound( QString );
 
 	// Someone tries to talk with us
 	void slotNewUser( QString );
-	// Ask user to auth the new contact
-	void slotAuthenticate( QString );
 	// Add a Contact
 	void slotAddContact( QString );
 	// Block a Contact
@@ -152,10 +153,6 @@ signals:
 	void userStateChange( QString, QString, int );
 	void protocolUnloading();
 	void settingsChanged( void );
-
-	// Propagated from the MSN Service, in order to hide it from external
-	// classes:
-	void updateContact( QString handle, uint status );
 
 private slots:
 	/**
@@ -180,7 +177,13 @@ private slots:
 	/**
 	 * Contact was removed from the list
 	 */
-	void slotContactRemoved( QString handle, QString groupName );
+	void slotContactRemoved(QString handle, QString list, uint serial, uint group );
+	void slotContactStatus( QString handle, QString publicName, QString status );
+	void slotContactAdded(QString handle, QString publicName, QString list, uint serial, uint group );
+
+	void slotContactList(QString handle, QString publicName, QString group, QString list );
+	void slotContactStatusChanged( QString handle, QString publicName, QString status );
+	void slotStatusChanged( QString status );
 
 private:
 	/**
@@ -246,6 +249,7 @@ private:
 	QMap<uint, QString> m_groupList;
 
 	static const MSNProtocol *s_protocol;
+	Status m_status;
 };
 
 #endif

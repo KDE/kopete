@@ -58,14 +58,11 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	m_groups = group;
 	hasLocalGroup = false;
 
-	// We connect this signal so that we can tell when a user's status changes
-	connect( MSNProtocol::protocol(), SIGNAL( updateContact( QString, uint ) ),
-				this, SLOT( slotUpdateContact( QString, uint ) ) );
-
-	connect ( this, SIGNAL(chatToUser(QString)), MSNProtocol::protocol()->msnService(), SLOT( slotStartChatSession(QString)) );
+	connect ( this, SIGNAL( chatToUser( QString ) ),
+		MSNProtocol::protocol()->msnService(),
+		SLOT( slotStartChatSession( QString ) ) );
 
 	setName( nickname );
-	slotUpdateContact( m_msnId, MSNProtocol::protocol()->contactStatus( m_msnId ) );
 }
 
 void MSNContact::showContextMenu(QPoint point, QString /*group*/)
@@ -166,26 +163,6 @@ void MSNContact::slotCopyThisUser()
 {
 	if( m_actionCopy )
 		MSNProtocol::protocol()->copyContact( this, m_actionCopy->currentText() );
-}
-
-void MSNContact::slotUpdateContact ( QString handle, uint status)
-{
-	if (handle != m_msnId) // not our contact
-		return;
-
-	if ( status == m_status ) // no statuschange
-		return;
-
-	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
-	m_status = static_cast<MSNProtocol::Status>( status );
-	QString tmppublicname = MSNProtocol::protocol()->publicName( handle );
-
-	if (m_status == MSNProtocol::BLO)
-		setName( i18n("%1 (Blocked)").arg(tmppublicname) );
-	else
-		setName( tmppublicname );
-
-	emit statusChanged();
 }
 
 void MSNContact::slotViewHistory()
@@ -396,9 +373,21 @@ QString MSNContact::nickname() const
 	return m_nickname;
 }
 
+QString MSNContact::name() const
+{
+	if( m_blocked )
+		return i18n( "%1 (Blocked)" ).arg( nickname() );
+	else
+		return nickname();
+}
+
 void MSNContact::setNickname( const QString &nick )
 {
-	m_nickname = nick;
+	if( m_nickname != nick )
+	{
+		m_nickname = nick;
+		emit nameChanged( name() );
+	}
 }
 
 MSNProtocol::Status MSNContact::msnStatus() const
@@ -408,7 +397,17 @@ MSNProtocol::Status MSNContact::msnStatus() const
 
 void MSNContact::setMsnStatus( MSNProtocol::Status status )
 {
+	if( m_status == status )
+		return;
+
+	kdDebug() << "MSNContact::setMsnStatus: Setting status for " << m_msnId <<
+		" to " << status << endl;
 	m_status = status;
+
+	if( m_status == MSNProtocol::BLO )
+		setNickname( i18n( "%1 (Blocked)").arg( nickname() ) );
+
+	emit statusChanged();
 }
 
 bool MSNContact::isBlocked() const
@@ -418,7 +417,11 @@ bool MSNContact::isBlocked() const
 
 void MSNContact::setBlocked( bool blocked )
 {
-	m_blocked = blocked;
+	if( m_blocked != blocked )
+	{
+		m_blocked = blocked;
+		emit nameChanged( name() );
+	}
 }
 
 bool MSNContact::isDeleted() const
