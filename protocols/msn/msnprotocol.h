@@ -172,6 +172,8 @@ public:
 
 	void blockContact( QString passport ) const;
 
+  void setStatus(Status);
+
 signals:
 	void protocolUnloading();
 
@@ -198,6 +200,12 @@ private slots:
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoAway();
+	void slotGoBusy();
+	void slotGoBeRightBack();
+	void slotGoOnThePhone();
+	void slotGoOutToLunch();
+	void slotGoInvisible();
+
 
 	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
 
@@ -319,6 +327,11 @@ private:
 	KAction* actionGoOnline;
 	KAction* actionGoOffline;
 	KAction* actionGoAway;
+	KAction* actionGoBusy;
+	KAction* actionGoBeRightBack;
+	KAction* actionGoOnThePhone;
+	KAction* actionGoOutToLunch;
+	KAction* actionGoInvisible;
 	KAction* m_renameAction;
 
 	KActionMenu *m_debugMenu;
@@ -337,6 +350,7 @@ private:
 
 	static const MSNProtocol *s_protocol;
 	Status m_status;
+	Status m_connectstatus;
 	QString m_msnId;
 	QString m_password;
 	QString m_publicName;

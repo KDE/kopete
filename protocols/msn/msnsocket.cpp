@@ -198,13 +198,13 @@ void MSNSocket::slotDataReceived()
 				<< "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-  		buf[ ret ] = '\0'; // Make it properly null-terminated
-  		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
+		buf[ ret ] = '\0'; // Make it properly null-terminated
+		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
     
-      m_buffer.add(buf,ret); // fill the buffer with the received data
+		m_buffer.add(buf,ret); // fill the buffer with the received data
 
 
-      slotReadLine();
+		slotReadLine();
 	}
 
 	// Cleanup
@@ -219,24 +219,22 @@ void MSNSocket::slotReadLine()
 	if( !pollReadBlock() )
 	{
 
-    if(m_buffer.size()>=3 && m_buffer.data()[0]=='\0')
-    {
-      bytesReceived(m_buffer.take(3));
-      return;
-    }
+		if(m_buffer.size()>=3 && m_buffer.data()[0]=='\0')
+		{
+			bytesReceived(m_buffer.take(3));
+			return;
+		}
 
-    	// If there's no CR/LF waiting, just stop and wait for new data to arrive
-   	if( !QCString(m_buffer).contains( "\r\n" ) )
+		// If there's no CR/LF waiting, just stop and wait for new data to arrive
+		if( !QCString(m_buffer).contains( "\r\n" ) )
 		  return;
 
-
-  
 		int index = QCString(m_buffer).find( "\r\n" );
 		if( index != -1 )
 		{
 			QString command = QString::fromUtf8(QCString(m_buffer.take(index+2)).left(index));
 
-   		command.replace( QRegExp( "\r\n" ), "" );
+			command.replace( QRegExp( "\r\n" ), "" );
 			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
 
 			parseLine(command);
@@ -303,7 +301,7 @@ bool MSNSocket::pollReadBlock()
 			<< m_waitBlockSize << endl;
 
 	m_waitBlockSize = 0;
- 	emit blockRead( baBlock );
+	emit blockRead( baBlock );
 	emit blockRead( block );
 
 	return false;
@@ -346,7 +344,7 @@ void MSNSocket::handleError( uint code, uint id )
 			"or send in a patch yourself.\n"
 			"See http://www.hypothetic.org/docs/msn/basics.php for a "
 			"description of all error codes." ).arg( code ).arg( id );
-	disconnect();
+	//disconnect();
 	KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 }
 
@@ -419,6 +417,7 @@ void MSNSocket::slotSocketClosed( int state )
 	setOnlineStatus( Disconnected );
 	
 	emit( socketClosed( state ) );
+	kdDebug() << "MSNSocket::slotSocketClosed: done" << endl;
 }
 
 
@@ -426,7 +425,7 @@ void MSNSocket::slotSocketClosed( int state )
 /** Used in MSNFileTransferSocket */
 void MSNSocket::bytesReceived(const QByteArray &)
 {
-  kdDebug() << "MSNSocket::bytesReceived : WARNING: unknow bytes were received" <<endl  ;
+	kdDebug() << "MSNSocket::bytesReceived : WARNING: unknow bytes were received" <<endl  ;
 }
 
 
@@ -437,30 +436,30 @@ MSNSocket::Buffer::~Buffer() {}
 
 void MSNSocket::Buffer::add(char *str, unsigned int sz)
 {
-  char *b=new char[size()+sz];
-  for(int f=0;f<size(); f++)
-       b[f]=data()[f];
-  for(int f=0;f<sz; f++)
-       b[size()+f]=str[f];
+	char *b=new char[size()+sz];
+	for(int f=0;f<size(); f++)
+		b[f]=data()[f];
+	for(int f=0;f<sz; f++)
+		b[size()+f]=str[f];
 
-  assign(b,size()+sz);
+	assign(b,size()+sz);
 }
 
 QByteArray MSNSocket::Buffer::take(unsigned int sz)
 {
-    char *str=new char[sz];
-    for (int f=0;f<sz;f++)
-       str[f] = data()[f];
+	char *str=new char[sz];
+	for (int f=0;f<sz;f++)
+		str[f] = data()[f];
 
-    QByteArray rep=QByteArray().assign(str,sz);
+	QByteArray rep=QByteArray().assign(str,sz);
 
-    str=new char[size()-sz];
-    for(int f=0;f<size()-sz;f++)
-        str[f]=data()[sz+f];
+	str=new char[size()-sz];
+	for(int f=0;f<size()-sz;f++)
+		str[f]=data()[sz+f];
 
-    assign(str,size()-sz);
+	assign(str,size()-sz);
 
-    return rep;
+	return rep;
 }
 
 

@@ -100,6 +100,8 @@ private slots:
 private:
 //	uint mailCount;
 	QString m_password;
+	
+	int m_newstatus;
 
 	/**
 	 * Convert an entry of the Status enum back to a string

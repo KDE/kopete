@@ -65,6 +65,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	//enableStreaming( true );
 
 	m_status = FLN;
+	m_connectstatus=NLN;
 	mIsConnected = false;
 	m_notifySocket = 0L;
 
@@ -87,6 +88,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	
 	m_msgQueued=0L;
 	m_addWizard_metaContact=0L;
+	m_connectstatus=NLN;
 
 	initActions();
 
@@ -224,6 +226,7 @@ void MSNProtocol::Connect()
 	connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
 		this, SLOT( slotNotifySocketClosed( int ) ) );
 
+	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect( m_password );
 	statusBarIcon->setMovie( connectingIcon );
 }
@@ -231,12 +234,14 @@ void MSNProtocol::Connect()
 void MSNProtocol::Disconnect()
 {
 	if (m_notifySocket)
+	{
 		m_notifySocket->disconnect();
 
-	//delete m_notifySocket;
-	m_notifySocket->deleteLater();
-	m_notifySocket = 0L;
-
+		//delete m_notifySocket;
+		m_notifySocket->deleteLater();
+		m_notifySocket = 0L;
+	}
+	
 	m_switchBoardSockets.setAutoDelete( true );
 	m_switchBoardSockets.clear();
 	m_switchBoardSockets.setAutoDelete( false );
@@ -377,21 +382,34 @@ void MSNProtocol::initActions()
 	actionGoOnline = new KAction ( i18n("Go O&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
 	actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
 	actionGoAway = new KAction ( i18n("Set &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
+	actionGoBusy = new KAction ( i18n("Set &Busy"), "msn_na", 0, this, SLOT(slotGoBusy()), this, "actionMSNConnect" );
+	actionGoBeRightBack = new KAction ( i18n("Set Be &right back"), "msn_away", 0, this, SLOT(slotGoBeRightBack()), this, "actionMSNConnect" );
+	actionGoOnThePhone = new KAction ( i18n("Set On the &phone"), "msn_na", 0, this, SLOT(slotGoOnThePhone()), this, "actionMSNConnect" );
+	actionGoOutToLunch = new KAction ( i18n("Set Out to &Lunch"), "msn_away", 0, this, SLOT(slotGoOutToLunch()), this, "actionMSNConnect" );
+	actionGoInvisible = new KAction ( i18n("Set &Invisible"), "msn_offline", 0, this, SLOT(slotGoInvisible()), this, "actionMSNConnect" );
+
 	m_renameAction = new KAction ( i18n( "&Change Nickname..." ),
 		QString::null, 0, this, SLOT( slotChangePublicName() ),
 		this, "m_renameAction" );
 	actionStatusMenu = new KActionMenu( "MSN", this );
 
 	m_debugMenu = new KActionMenu( "Debug", this );
-	m_debugRawCommand = new KAction( i18n( "Send &Raw Command..." ), 0,
+	m_debugRawCommand = new KAction( i18n( "Send Raw C&ommand..." ), 0,
 		this, SLOT( slotDebugRawCommand() ), this, "m_debugRawCommand" );
 
 	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(
 		*( statusBarIcon->pixmap() ),
 		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
+		
 	actionStatusMenu->insert( actionGoOnline );
-	actionStatusMenu->insert( actionGoOffline );
 	actionStatusMenu->insert( actionGoAway );
+	actionStatusMenu->insert( actionGoBusy );
+	actionStatusMenu->insert( actionGoBeRightBack );
+	actionStatusMenu->insert( actionGoOnThePhone );
+	actionStatusMenu->insert( actionGoOutToLunch );
+	actionStatusMenu->insert( actionGoInvisible );
+	actionStatusMenu->insert( actionGoOffline );
+
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert( m_renameAction );
 
@@ -433,25 +451,60 @@ void MSNProtocol::slotSyncContactList()
 
 void MSNProtocol::slotGoOnline()
 {
+	m_connectstatus=NLN;
 	kdDebug() << "MSN Plugin: Going Online" << endl;
 	if (!isConnected() )
 		Connect();
 	else
-		m_notifySocket->setStatus( NLN );
+		setStatus( NLN );
 }
 
 void MSNProtocol::slotGoOffline()
 {
 	Disconnect();
+	m_connectstatus=NLN;
 }
 
 void MSNProtocol::slotGoAway()
 {
-	kdDebug() << "MSN Plugin: Going Away" << endl;
-	if (!isConnected() )
-		Connect();
-	m_notifySocket->setStatus( AWY );
+	setStatus( AWY );
 }
+void MSNProtocol::slotGoBusy()
+{
+	setStatus( BSY );
+}
+
+void MSNProtocol::slotGoBeRightBack()
+{
+	setStatus( BRB );
+}
+void MSNProtocol::slotGoOnThePhone()
+{
+	setStatus( PHN );
+}
+void MSNProtocol::slotGoOutToLunch()
+{
+	setStatus( LUN );
+}                     
+void MSNProtocol::slotGoInvisible()
+{
+	setStatus( HDN );
+}
+
+        
+void MSNProtocol::setStatus(Status s)
+{
+	if (isConnected() )
+	{
+		m_notifySocket->setStatus( s );
+	}
+	else
+	{
+		m_connectstatus=s;
+		Connect();
+	}
+}   
+
 
 void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 {
@@ -574,13 +627,13 @@ void MSNProtocol::slotStateChanged( QString status )
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		case BSY:
-			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(naIcon);
 			break;
 		case IDL:
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		case PHN:
-			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(naIcon);
 			break;
 		case BRB:
 			statusBarIcon->setPixmap(awayIcon);

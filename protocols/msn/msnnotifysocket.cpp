@@ -32,6 +32,7 @@ MSNNotifySocket::MSNNotifySocket( const QString &msnId )
 		this, SLOT( slotReadMessage( const QString & ) ) );
 		
 	m_dispatchSocket = 0L;
+	m_newstatus=MSNProtocol::NLN;
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -99,6 +100,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
+	case 201:  
+	case 205:
+	{
+		QString msg = i18n( "Invalid user! \n"
+			"This MSN user does not exist. Please check the MSN ID" );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}
 	default:
 		MSNAuthSocket::handleError( code, id );
 		break;
@@ -107,7 +116,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
-	kdDebug() << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
+	//kdDebug() << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
 	if( cmd == "USR" )
 	{
@@ -211,8 +220,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
-			KMessageBox::information( 0,
-				i18n( "You have connected from another client" ) );
+			kdDebug() << "[MSN-PLUGIN] You have connected from another client" << endl;
+			//this provoque crash
+			//KMessageBox::information( 0, i18n( "You have connected from another client" ) );
 		}
 
 		disconnect();
@@ -230,19 +240,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "LSG" )
 	{
-/*
-		// Does this have to stay in??? - Martijn
-		if( str.contains("1 1 0 ~ 0") )
-		{
-			emit groupName( i18n( "Friends" ), 0 );
-			renameGroup( i18n( "Friends" ),0 );
-		}
-		else
-		{*/
-			// groupName, group
-			emit groupName( unescape( data.section( ' ', 4, 4 ) ),
-				data.section( ' ', 3, 3 ).toUInt() );
-//		}
+		emit groupName( unescape( data.section( ' ', 4, 4 ) ),
+		data.section( ' ', 3, 3 ).toUInt() );
 	}
 	else if( cmd == "ADG" )
 	{
@@ -281,9 +280,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			_serial = serial;
 		}*/
 		//emit connected(true);
-		// set the status to online
-		// create an option in config dialog to select the state to be set
-		setStatus(MSNProtocol::NLN);
+		// set the status 
+		setStatus(m_newstatus);
 	}
 	else
 	{
@@ -391,7 +389,12 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,
 
 void MSNNotifySocket::setStatus( int status )
 {
-	sendCommand( "CHG", statusToString( status ) );
+	kdDebug() << "MSNNotifySocket::setStatus : " <<statusToString(status) <<endl;
+	if(onlineStatus() == Disconnected)
+		m_newstatus=status;
+	else
+		sendCommand( "CHG", statusToString( status ) );
+
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName )
