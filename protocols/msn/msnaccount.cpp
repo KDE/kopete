@@ -265,15 +265,15 @@ void MSNAccount::slotStartChat()
 	QString handle = KLineEditDlg::getText(
 		i18n( "Start Chat - MSN Plugin" ),
 		i18n( "Please enter the email address of the person with whom you want to chat:" ),
-		QString::null, &ok );
+		QString::null, &ok ).lower();
 	if( ok )
 	{
 		if( MSNProtocol::validContactId(handle))
 		{
-			m_msgHandle = handle;
-			// don't crash when we were disconnected before we got the address
-			if ( m_notifySocket )
-				m_notifySocket->createChatSession();
+			if( !contacts()[ handle ] )
+				addContact( handle , handle, 0L, QString::null, true);
+
+			contacts()[ handle ]->execute();
 		}
 		else
 		{
@@ -728,7 +728,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			KopeteMetaContact *m = KopeteContactList::contactList()->findContact( protocol()->pluginId(), QString::null, handle );
 			if(m)
 			{
-				kdDebug(14140) << "MSNProtocol::slotContactAdded: Warning: the contact was found in the contactlist but not referenced in the protocol" <<endl;
+				kdDebug(14140) << k_funcinfo << "Warning: the contact was found in the contactlist but not referenced in the protocol" <<endl;
 				MSNContact *c = static_cast<MSNContact*>(m->findContact( protocol()->pluginId(), QString::null, handle ));
 				c->contactAddedToGroup( group, m_groupList[ group ] );
 			}
@@ -794,7 +794,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		// search for new Contacts
 		if( !contacts()[ handle ])
 		{
-			// FIXME: Users in the allow list or block list now never trigger the
+			// Users in the allow list or block list now never trigger the
 			// 'new user' dialog, which makes it impossible to add those here.
 			// Not necessarily bad, but the usability effects need more thought
 			// before I declare it good :-)
@@ -912,8 +912,6 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 
 void MSNAccount::slotStartChatSession( const QString& handle )
 {
-	//FIXME: raise the manager if it does exist
-
 	// First create a message manager, because we might get an existing
 	// manager back, in which case we likely also have an active switchboard
 	// connection to reuse...
