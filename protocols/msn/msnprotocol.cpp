@@ -17,6 +17,7 @@
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
+ #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -170,7 +171,9 @@ void MSNProtocol::initIcons()
 	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
 	awayIcon = QPixmap(loader->loadIcon("msn_away", KIcon::User));
 	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
-	connectingIcon = QPixmap(loader->loadIcon("msn_connecting", KIcon::User));
+	kdDebug() << "MSN Plugin: Loading animation " << loader->moviePath("msn_connecting", KIcon::User) << endl;
+	connectingIcon = QMovie(loader->loadMovie("msn_connecting.mng", KIcon::User));
+	//connectingIcon = QMovie("/opt/kde3/share/apps/kopete/pics/msn_connecting.mng");
 }
 
 void MSNProtocol::initActions()
@@ -207,7 +210,7 @@ void MSNProtocol::slotIconRightClicked(const QPoint point)
 /* While trying to connect :-) */
 void MSNProtocol::slotConnecting()
 {
-	statusBarIcon->setPixmap(connectingIcon);	
+	//statusBarIcon->setMovie(connectingIcon);	
 }
 
 /** OK! We are connected , let's do some work */

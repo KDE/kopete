@@ -21,6 +21,8 @@
 #include <qpixmap.h>
 #include <qwidget.h>
 #include <qstringlist.h>
+#include <qmovie.h>
+
 #include "msnpreferences.h"
 #include <statusbaricon.h>
 #include <addcontactpage.h>
@@ -58,7 +60,7 @@ public:
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
 	QPixmap naIcon;
-	QPixmap connectingIcon;
+	QMovie connectingIcon;
 	
 	/* The main msn popup */
 	KPopupMenu *popup;

@@ -168,14 +168,18 @@ redo:
 		}
 		if(str.left(3) == "MSG")
 		{
+			kdDebug() << "MSG Plugin: ChatBoard: Received data MSG" << endl;
 			len = kstr.word(str,3);
 			miss = readBlock(len.toUInt());
 			miss = miss.left(len.toUInt());
 			if(miss.contains("Content-Type: text/plain;"))
 			{
 				miss = miss.right(miss.length() -miss.findRev("\r\n\r\n"));
+				kdDebug() << "MSG Plugin: ChatBoard: miss seria " << miss << endl;
 				QString handle = kstr.word(str,1);
+				kdDebug() << "MSG Plugin: ChatBoard: handle seria " << handle << endl;
 				emit msgReceived(handle,imService->getPublicName(handle), miss);//.replace(QRegExp("\r\n"),""));
+				//emit msgReceived(handle,"Nick", miss);//.replace(QRegExp("\r\n"),""));
 			}
 			// incoming message for File-transfer
 			if(miss.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8"))
