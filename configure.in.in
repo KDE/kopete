@@ -1,5 +1,5 @@
 #MIN_CONFIG(3.1)
-
+KDE_INIT_DOXYGEN
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
         AC_TRY_COMPILE([
                 #include <time.h>

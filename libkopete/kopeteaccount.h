@@ -37,24 +37,28 @@ struct KopeteAccountPrivate;
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  *
- * The KopeteAccount class handle one account.
- * Each protocol should subclass this class in their own customAccounts class.
- * there are few pure virtual method than the protocol must implement. like
- * @ref myself()  @ref connect()  @ref disconnect() or @ref addContactToMetaContact()
+ * The KopeteAccount class handles one account.
+ * Each protocol should subclass this class in their own custom accounts class.
+ * There are few pure virtual method that the protocol must implement. Examples are:
+ * \li \ref myself()
+ * \li \ref connect()
+ * \li \ref disconnect()
+ * \li \ref addContactToMetaContact()
  *
- * The accountId is an *constant* unique id. which represent the login.
- * The @ref myself() contact one of the most importent contact, which represent the user
+ * The accountId is an <b>constant</b> unique id, which represents the login.
+ * The @ref myself() contact is one of the most important contacts, which represents 
+ * the user tied to this account.
  *
  * All account data is automatically saved to @ref KConfig. This includes the
- * accountId, the password (in a encrypted format) , the autoconnect flag, the color,
- * and all PluginData. KopeteAccount is a @ref KopetePluginDataObject. in the account,
+ * accountId, the password (in a encrypted format), the autoconnect flag, the color,
+ * and all PluginData. KopeteAccount is a @ref KopetePluginDataObject. In the account,
  * you can call setPluginData( protocol() , "key" , "value") and pluginData( protocol , "key")
- * see @ref KopetePluginDataObject::setPluginData() and KopetePluginDataObject::pluginData()
- * note than plugin data are not yet availiable in the account constructor. they are
- * only availiable after the xml file has been totaly parsed. You can reimplement
- * @ref KopeteAccount::loaded() to do what you have to do right after the xml file is
+ * see @ref KopetePluginDataObject::setPluginData() and \ref KopetePluginDataObject::pluginData()
+ * Note that plugin data are not availiable in the account constructor. They are
+ * only availiable after the XML file has been totally parsed. You can reimplement
+ * @ref KopeteAccount::loaded() to do what you have to do right after the XML file is
  * loaded. in the same way, you can't set pluginData in the destructor, because the
- * xml file has already been writed, and new changes will not be updated on the disk.
+ * XML file has already been written, and new changes will not be updated on the disk.
  */
 class KopeteAccount : public KopetePluginDataObject
 {
@@ -98,12 +102,12 @@ public:
 	~KopeteAccount();
 
 	/**
-	 * return the KopeteProtocol for this account
+	 * \return the KopeteProtocol for this account
 	 */
 	KopeteProtocol *protocol() const ;
 
 	/**
-	 * return the unique id of this account used as the login
+	 * \return the unique id of this account used as the login
 	 */
 	QString accountId() const;
 
@@ -119,20 +123,23 @@ public:
 	void setAccountId( const QString &accountId );
 
  	/**
-	 * Returns the priority of this account. Used for sorting and determining
-	 * the preferred account to message a contact
+	 * \brief Get the priority of this account.
+	 *
+	 * Used for sorting and determining the preferred account to message a contact
 	 */
 	const uint priority() const;
 
 	/**
-	 * Sets the account priority. This method is called by the UI, should not
-	 * be called elsewhere.
+	 * \brief Set the priority of this account.
+	 *
+	 * This method is called by the UI, and should not be called elsewhere.
 	 */
 	void setPriority( uint priority );
 
 	/**
-	 * Get the password for this account. Has the ability to open an input dialog
-	 * if the password is not currently set
+	 * \brief Get the password for this account.
+	 * 
+	 * The user will be prompted if for a password if the password is not currently set
 	 * @param error Set this value to true if you previously called password and the
 	 * result was incorrect (the password was wrong). It adds a label in the input
 	 * dialog saying that the password was wrong
@@ -144,53 +151,59 @@ public:
 	QString password( bool error = false, bool *ok =0L, unsigned int maxLength=0 ) const;
 
 	/**
-	 * Set the password for this account.
-	 * @param pass set to Qtring::null means that
-	 * the password is not remembered, otherwise sets the new password
-	 * for this account
-	 * Cas be called only by EditAccountWidget
+	 * \brief Set the password for this account.
+	 * @param pass contains the new password. If set to QString::null, the password
+	 * is forgotten.
+	 *
+	 * Should only be called by EditAccountWidget
 	 */
 	void setPassword(const QString &pass = QString::null);
 
 	/**
-	 * @brief say if the password is remembered.
+	 * @brief Get if the password is remembered.
 	 *
-	 * if it return false, that mean a call to @ref password() will popup a window.
+	 * This function should be used by the EditAccountPage (and only by the EditAccountPage)
 	 *
-	 * This function should be used by the editAccountPage (and only by the editAccountPage)
+	 * \return true if the password is remembered
+	 * \return false if the user needs to be prompted for a password
 	 */
 	bool rememberPassword() const;
 
 	/**
-	 * Set if the account should log in automatically or not
+	 * \brief Set if the account should log in automatically.
 	 *
-	 * This function can be used by the editaccountPage (and only by it)
-	 * Remember that kopete handles autoconnection itself
+	 * This function can be used by the EditAccountPage (and only by it)
+	 * Kopete handles the autoconnection automatically
 	 */
 	void setAutoLogin(bool);
 	/**
-	 * Say if the account should log in automatically
+	 * \brief Get if the account should log in automatically.
 	 *
- 	 * This function can be used by the editaccountPage (and only by it)
-	 * Remember than kopete handle autoconnection itself
+ 	 * This function can be used by the EditAccountPage (and only by it)
+	 * Kopete handles the autoconnection automatically
 	 */
 	bool autoLogin() const;
 
 	/**
-	 * returns the user color for this account
+	 * \brief Get the color for this account.
+	 * \return the user color for this account
 	 */
 	const QColor color() const;
 
 	/**
-	 * Set the color this account will use to differentiate from the other accounts
-	 * normaly, this should be called by the Kopete's account config page. so you
-	 * don't have to set yourself the color.
+	 * \brief Set the color for this account.
+	 * 
+	 * The color will be used to differentiate this account from the other accounts
+	 * Normally, this should be called by Kopete's account config page so you
+	 * don't have to set the color yourself
 	 */
 	void setColor( const QColor &color);
 
 	/**
-	 * return the icon for this account, colored if needed
-	 * Note: there is no cache in this funciton
+	 * \brief Get the icon for this account.
+	 *
+	 * The icon is not cached.
+	 * \return the icon for this account, colored if needed
 	 * @param size is the size of the icon.  If the size is 0, the default size is used
 	 *
 	 */
@@ -213,11 +226,12 @@ public:
 	bool isAway() const;
 
 	/**
-	 * Retrieve the 'myself' contact.
+	 * \brief Retrieve the 'myself' contact.
 	 *
-	 * Returns 0L if myself is not initialized yet.
+	 * \return the pointer to the KopeteContact object for this
+	 * account or NULL if not initialized
 	 *
-	 * See also @ref setMyself().
+	 * \see setMyself().
 	 */
 	KopeteContact * myself() const;
 
@@ -240,16 +254,18 @@ public:
 	const QDict<KopeteContact>& contacts();
 
 	/**
-	 * Read the account's config (KConfig)
+	 * \brief Read the account's configuration
+	 * 
+	 * Uses KConfig to read the configuration for this account
 	 *
-	 * @ref configGroup is the group in the config file to use.
+	 * @param configGroup the group in the config file to use.
 	 */
 	void readConfig( const QString &configGroup );
 
 	/**
 	 * Write the config back
 	 *
-	 * @ref configGroup is the group in the config file to use.
+	 * @param configGroup the group in the config file to use.
 	 */
 	void writeConfig( const QString &configGroup );
 
@@ -267,22 +283,26 @@ public:
 	QString configGroup() const;
 
 	/**
-	 * @return whether we should suppress status notifications for contacts
-	 * belonging to this account. When true, no passive popups and other
+	 * Indicates whether or not we should suppress status notifications
+	 * for contacts belonging to this account. 
+	 * \return true if notifications should not be used, false if
 	 * notifications should be used
 	 */
 	bool suppressStatusNotification() const;
 
 protected:
 	/**
-	 * Set the 'myself' contact. This contact HAS to be defined for every
-	 * account, because it holds the online status of an account!
+	 * \brief Set the 'myself' contact. 
+	 *
+	 * This contact HAS to be defined for every  account, because it
+	 * holds the online status of an account!
 	 *
 	 * The myself contact can't be deleted as long as the account still
-	 * exists. The myself contact is used in each KMM, the myself contactId
-	 * should be the accountID, the onlineStatus should represent the
-	 * current user's status. The statusbar icon is connected to
-	 * myself-> @ref onlineStatusChanged() to update the icon.
+	 * exists. The myself contact is used in each KopeteMessageManager,
+	 * the myself contactId should be the accountID, the onlineStatus
+	 * should represent the current user's status. The statusbar icon
+	 * is connected to myself-> @ref onlineStatusChanged()
+	 * to update the icon.
 	 *
 	 * @return contact associated with the currently logged in user
 	 */

@@ -3,6 +3,10 @@ COMPAT_DIR = compat
 COMPAT_LIBS = compat/libkopetecompat.la
 endif
 
+include ../../admin/Doxyfile.am
+DOXYGEN_REFERENCES = kio kdecore kdeui
+DOXYGEN_EXCLUDE = compat
+
 SUBDIRS = private ui $(COMPAT_DIR) . tests
 
 METASOURCES = AUTO
