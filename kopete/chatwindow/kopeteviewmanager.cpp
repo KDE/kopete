@@ -199,14 +199,12 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 						event = QString::fromLatin1( "kopete_highlight" );
 						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 					}
-
 #if QT_VERSION < 0x030200
 					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
 #else
 					KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
 #endif
 						i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
-;
 				}
 			}
 		}

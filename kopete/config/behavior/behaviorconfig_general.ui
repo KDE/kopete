@@ -24,7 +24,7 @@
                 <cstring>mShowTrayChk</cstring>
             </property>
             <property name="text">
-                <string>Show system tray &amp;icon</string>
+                <string>Show the system tray &amp;icon</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -35,7 +35,7 @@
                 <string>Start &amp;hidden</string>
             </property>
             <property name="toolTip" stdset="0">
-                <string>Start with the mainwindow hidden, the only visible item is the system tray icon</string>
+                <string>Start with the main window hidden, the only visible item is the system tray icon</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -46,7 +46,7 @@
                 <string>Use message &amp;queue</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Use a queue instead of opening chat windows on incoming messages</string>
+                <string>Use a queue instead of opening a chat window on incoming messages</string>
             </property>
         </widget>
         <widget class="QButtonGroup">
@@ -65,7 +65,7 @@
                         <cstring>mBalloonNotifyChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Show &amp;bubble on new message</string>
+                        <string>Show a &amp;bubble on new message</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0">
@@ -73,7 +73,7 @@
                         <cstring>mTrayflashNotifyChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Flash system &amp;tray on new message</string>
+                        <string>Flash the system &amp;tray on new messages</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0">
@@ -127,7 +127,7 @@
                         <cstring>mTreeContactList</cstring>
                     </property>
                     <property name="text">
-                        <string>Show as t&amp;ree</string>
+                        <string>Show as a t&amp;ree</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">

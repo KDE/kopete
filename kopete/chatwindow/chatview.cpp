@@ -303,7 +303,7 @@ bool ChatView::closeView( bool force )
 		if( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
-				"second, are you sure you want to close this chat?</qt>").arg(unreadMessageFrom), i18n("Unread Message"),
+				"second. Are you sure you want to close this chat?</qt>").arg(unreadMessageFrom), i18n("Unread Message"),
 				i18n("Cl&ose Chat"), i18n("Do not ask me this again"));
 		}
 
@@ -604,7 +604,7 @@ void ChatView::slotChatDisplayNameChanged()
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
 {
 	if( KopetePrefs::prefs()->showEvents() )
-		sendInternalMessage( i18n( "%1 changed his or her nickname to %2" ).
+		sendInternalMessage( i18n( "%1 has changed their nickname to %2" ).
 #if QT_VERSION < 0x030200
 			arg( oldName ).arg( newName )
 #else
@@ -758,7 +758,7 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 	{
 		if( contact->metaContact() )
 		{
-			sendInternalMessage( i18n( "%2 changed status to %1." )
+			sendInternalMessage( i18n( "%2 has changed their status to %1." )
 #if QT_VERSION < 0x030200
 				.arg(contact->onlineStatus().description() ).arg( contact->metaContact()->displayName() )
 #else
@@ -768,7 +768,7 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		}
 		else
 		{
-			sendInternalMessage( i18n( "%2 changed status to %1." )
+			sendInternalMessage( i18n( "%2 has changed their status to %1." )
 #if QT_VERSION < 0x030200
 				.arg( contact->onlineStatus().description() ).arg( contact->displayName() )
 #else

@@ -541,7 +541,7 @@ bool KopeteEmailWindow::closeView( bool force )
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
-				"second, are you sure you want to close this chat?</qt>").arg(d->unreadMessageFrom), i18n("Unread Message"),
+				"second. Are you sure you want to close this chat?</qt>").arg(d->unreadMessageFrom), i18n("Unread Message"),
 				i18n("&Close Chat"), i18n("Do not ask me this again"));
 		}
 

@@ -63,7 +63,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&lt;h2&gt;Welcome to the Account Wizard&lt;/h2&gt;
+                <string>&lt;h2&gt;Welcome to the Add Account Wizard&lt;/h2&gt;
 &lt;p&gt;This wizard will help you set up your accounts.&lt;/p&gt;
 &lt;p&gt;Press "Next" to start adding a new account.&lt;/p&gt;</string>
             </property>

@@ -99,7 +99,7 @@
                         <string>Open all messages in a new chat window</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Every chat has its own window.</string>
+                        <string>Every chat will have its own window.</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -110,7 +110,7 @@
                         <string>Group messages from the same account in the same chat window</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>All chats for one account get grouped into one window by using tabs.</string>
+                        <string>All chats for one account get grouped in to one window by using tabs.</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -121,7 +121,7 @@
                         <string>Group all messages in the same chat window</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>All chats get grouped into one window by using tabs.</string>
+                        <string>All chats get grouped in to one window by using tabs.</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -155,7 +155,7 @@
                         <cstring>txtChatViewBufferSize</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Maximum chat window lines:</string>
+                        <string>&amp;Maximum number of chat window lines:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mChatViewBufferSize</cstring>
