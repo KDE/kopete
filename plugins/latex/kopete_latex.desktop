@@ -1,0 +1,19 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+X-Kopete-Version=1000800
+Icon=latex
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_latex
+X-KDE-PluginInfo-Author=Duncan Mac-Vicar
+X-KDE-PluginInfo-Email=duncan@kde.org
+X-KDE-PluginInfo-Name=kopete_latex
+X-KDE-PluginInfo-Version=0.8.0
+X-KDE-PluginInfo-Website=http://kopete.kde.org
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+Name=KopeTeX
+Comment=Render Latex formulas in the chatwindow
+

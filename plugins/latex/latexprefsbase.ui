@@ -1,0 +1,26 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>LatexPrefsUI</class>
+<author>Duncan Mac-Vicar</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>LatexPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>513</width>
+            <height>504</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>LatexPrefsUI</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
