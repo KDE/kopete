@@ -73,8 +73,8 @@ public:
 	QString reason () const;
 
 	/**
-	 * Return if we are reachable (defaults to
-	 * true because we can send on- and offline
+	 * Return if the contact is reachable (this is true if the account
+	 * is online)
 	 */
 	virtual bool isReachable ();
 

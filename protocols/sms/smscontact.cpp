@@ -126,6 +126,14 @@ void SMSContact::slotSendMessage(KopeteMessage &msg)
 	kdWarning( 14160 ) << "<<<" << endl;
 }
 
+bool SMSContact::isReachable()
+{
+	if ( onlineStatus().status() != KopeteOnlineStatus::Unknown )
+		return true;
+	else
+		return false;
+}
+
 void SMSContact::slotUserInfo()
 {
 }

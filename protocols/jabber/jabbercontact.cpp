@@ -136,7 +136,8 @@ QString JabberContact::reason () const
    we can send on- and offline */
 bool JabberContact::isReachable ()
 {
-	return true;
+	if (account()->isConnected())
+		return true;
 }
 
 QPtrList<KAction> *JabberContact::customContextMenuActions ()

@@ -71,6 +71,14 @@ MSNContact::~MSNContact()
 	delete m_displayPicture;
 }
 
+bool MSNContact::isReachable()
+{
+	if ( account()->isConnected() && isOnline() )
+		return true;
+	else
+		return false;
+}
+
 KopeteMessageManager *MSNContact::manager( bool canCreate )
 {
 	KopeteContactPtrList chatmembers;

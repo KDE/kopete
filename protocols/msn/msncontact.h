@@ -81,7 +81,7 @@ public:
 	 */
 	const QMap<uint, KopeteGroup *> & serverGroups() const;
 
-	virtual bool isReachable() { return true; };
+	virtual bool isReachable();
 
 	virtual QPtrList<KAction> *customContextMenuActions();
 
