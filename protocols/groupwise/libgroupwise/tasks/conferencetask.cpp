@@ -134,11 +134,16 @@ bool ConferenceTask::take( Transfer * transfer )
 Q_UINT32 ConferenceTask::readFlags( QDataStream & din )
 {
 	Q_UINT32 flags;
-	/*if ( din.atEnd()
-		; //set error
-	else*/
-	din >> flags;
-	return flags;
+	if ( din.atEnd() )
+	{
+		setError( GroupWise::Protocol );
+		return 0;
+	}
+	else
+	{
+		din >> flags;
+		return flags;
+	}
 }
 
 QString ConferenceTask::readMessage( QDataStream & din )
@@ -149,8 +154,8 @@ QString ConferenceTask::readMessage( QDataStream & din )
 	din.readBytes( rawData, val );
 	if ( val ) // val is 0 if there is no status text
 		message = QString::fromUtf8( rawData, val );
-	// else
-	// seterror
+	 else
+		setError( GroupWise::Protocol );
 	return message;
 }
 
