@@ -488,7 +488,7 @@ void KIRC::slotReadyRead()
 					Show info about a user (part of a /whois) in the form of:
 					"<nick> <user> <host> * :<real name>"
 					*/
-					QString realName = line.section(' ', 7,7);
+					QString realName = line.section(' ', 7);
 					realName.remove(0, 1);
 					emit incomingWhoIsUser(line.section(' ', 3, 3), line.section(' ', 4, 4), line.section(' ', 5, 5), realName);
 					break;
@@ -499,7 +499,7 @@ void KIRC::slotReadyRead()
 					Show info about a server (part of a /whois) in the form of:
 					"<nick> <server> :<server info>"
 					*/
-					QString serverInfo = line.section(' ', 5, 5);
+					QString serverInfo = line.section(' ', 5);
 					serverInfo.remove(0, 1);
 					emit incomingWhoIsServer(line.section(' ', 3, 3), line.section(' ', 4, 4), serverInfo);
 					break;
@@ -537,7 +537,7 @@ void KIRC::slotReadyRead()
 					Show info a channel a user is logged in (part of a /whois) in the form of:
 					"<nick> :{[@|+]<channel><space>}"
 					*/
-					QString channel = line.section(' ', 4, 4);
+					QString channel = line.section(' ', 4);
 					channel.remove(0, 1);
 					emit incomingWhoIsChannels(line.section(' ', 3, 3), channel);
 					break;
