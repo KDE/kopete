@@ -81,6 +81,12 @@ void MSNSocket::connect( const QString &server, uint port )
 
 void MSNSocket::disconnect()
 {
+	if( m_onlineStatus == Disconnected )
+	{
+		doneDisconnect();	
+		return;
+	}
+
 	delete m_socket;
 	m_socket = 0L;
 	m_buffer = QString::null;
@@ -106,7 +112,9 @@ void MSNSocket::doneDisconnect()
 
 void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 {
-	if( m_onlineStatus == status )
+	// wah, dunno if this is good, but otherwise the connecting animation
+	// just keeps on going...
+	if( m_onlineStatus == status && status != Disconnected)
 		return;
 
 	m_onlineStatus = status;

@@ -50,6 +50,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	mIsConnected = false;
 	m_serial = 0;
 	m_silent = false;
+	m_serviceSocket = 0L;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
 
@@ -200,7 +201,9 @@ void MSNProtocol::Connect()
 
 void MSNProtocol::Disconnect()
 {
-	m_serviceSocket->disconnect();
+	if (m_serviceSocket)
+		m_serviceSocket->disconnect();
+
 	delete m_serviceSocket;
 	m_serviceSocket = 0L;
 
