@@ -20,6 +20,7 @@
 
 #include <qcursor.h>
 #include <qapplication.h>
+#include <qtimer.h>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -83,15 +84,18 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	// FIXME: I think we should add a global self metaContact (Olivier)
 	m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
 
-	if( mPrefs->autoConnect() )
-		connect();
-
 	QObject::connect( KopeteContactList::contactList(),
 		SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
 		SLOT( slotKopeteGroupRenamed( KopeteGroup * ) ) );
 	QObject::connect( KopeteContactList::contactList(),
 		SIGNAL( groupRemoved( KopeteGroup * ) ),
 		SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
+
+	if( mPrefs->autoConnect() )
+	{
+		kdDebug(14140) << "[MSNProtocol] autoconnect..." << endl;
+		QTimer::singleShot( 0, this, SLOT( connect() ) );
+	}
 
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
 }
