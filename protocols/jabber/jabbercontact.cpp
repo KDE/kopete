@@ -419,11 +419,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	JabberMessageManager *mManager = manager ( message.from().resource (), true );
 
 	// evaluate typing notifications
-	if ( message.containsEvent ( CancelEvent ) )
-		mManager->receivedTypingMsg ( this, false );
-	else
-		if ( message.containsEvent ( ComposingEvent ) )
-			mManager->receivedTypingMsg ( this, true );
+	if ( message.type () != "error" )
+	{
+		if ( message.containsEvent ( CancelEvent ) )
+			mManager->receivedTypingMsg ( this, false );
+		else
+			if ( message.containsEvent ( ComposingEvent ) )
+				mManager->receivedTypingMsg ( this, true );
+	}
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -444,7 +447,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.type () == "error" )
 	{
 		newMessage = new KopeteMessage( message.timeStamp (), this, contactList,
-										i18n("Your message could not be delivered: \"%1\"").arg ( message.body () ),
+										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
+										arg ( message.body () ).arg ( message.error().text ),
 										message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText, type );
 	}
 	else
