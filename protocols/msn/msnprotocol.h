@@ -35,6 +35,7 @@ class KURLLabel;
 
 class KMSNChatService;
 class KMSNService;
+class KMSNServiceSocket;
 class MSNContact;
 class MSNMessageDialog;
 class MSNPreferences;
@@ -82,6 +83,7 @@ public:
 	virtual bool isAway() const;
 
 	void addContact( const QString &userID ) const;
+	void addGroup( const QString &groupName );
 	void removeContact( const MSNContact *c ) const;
 	void removeFromGroup( const MSNContact *c, const QString &group ) const;
 	void moveContact( const MSNContact *c, const QString &oldGroup,
@@ -148,6 +150,13 @@ private:
 	void initActions();
 
 	bool mIsConnected;
+
+	/**
+	 * Return the service socket. Use this and be safe. Use the static
+	 * KMSNServiceSocket::kmsnServiceSocket() directly and prepare to be
+	 * shot - Martijn
+	 */
+	KMSNServiceSocket *serviceSocket() const;
 
 	// The MSN Engine
 	KMSNService *m_msnService;

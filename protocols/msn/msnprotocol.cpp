@@ -26,6 +26,7 @@
 
 #include "kmsnchatservice.h"
 #include "kmsnservice.h"
+#include "kmsnservicesocket.h"
 #include "kopete.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
@@ -300,7 +301,7 @@ void MSNProtocol::slotConnected()
 
 	QStringList groups, contacts;
 	QString group, publicname, userid;
-	uint status;
+	uint status = 0;
 	// First, we change status bar icon
 	statusBarIcon->setPixmap(onlineIcon);
 	// We get the group list
@@ -363,7 +364,7 @@ void MSNProtocol::slotConnected()
 					" to add this group to the server group list?" ).arg(localgroup);
 				useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
 				*/
-				m_msnService->groupAdd( localgroup );
+				addGroup( localgroup );
 			}
 		}
 	}
@@ -633,6 +634,17 @@ const MSNProtocol* MSNProtocol::s_protocol = 0L;
 const MSNProtocol* MSNProtocol::protocol()
 {
 	return s_protocol;
+}
+
+KMSNServiceSocket* MSNProtocol::serviceSocket() const
+{
+	return KMSNServiceSocket::kmsnServiceSocket();
+}
+
+void MSNProtocol::addGroup( const QString &groupName )
+{
+	if( !( groups().contains( groupName ) ) )
+		serviceSocket()->addGroup( groupName );
 }
 
 #include "msnprotocol.moc"
