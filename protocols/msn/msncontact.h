@@ -33,6 +33,7 @@ class KActionCollection;
 class KListAction;
 
 class KopeteProtocol;
+class KopeteOnlineStatus;
 
 class MSNContact : public KopeteContact
 {
@@ -116,10 +117,12 @@ public:
 	 * MSNIdentity and MSNSwhitchBoardSocket need to change the displayName of contacts.
 	 * Then, we do this fuction public  
 	 **/
-	void setDisplayName(const QString &Dname)
-	{
-		KopeteContact::setDisplayName(Dname);
-	}
+	void setDisplayName(const QString &Dname);
+	
+	/**
+	 * Because blocked contact have a small auto-modified status
+	 */
+	void setOnlineStatus(const KopeteOnlineStatus&);
 
 public slots:
 	virtual void slotUserInfo();

@@ -32,6 +32,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
 
 #include "msninfo.h"
 #include "msnmessagemanager.h"
@@ -166,18 +167,12 @@ bool MSNContact::isBlocked() const
 void MSNContact::setBlocked( bool blocked )
 {
 	if( m_blocked != blocked )
+	{
 		m_blocked = blocked;
+		//update the status
+		setOnlineStatus(onlineStatus());
+	}
 }
-
-/*bool MSNContact::isDeleted() const
-{
-	return m_deleted;
-}
-
-void MSNContact::setDeleted( bool deleted )
-{
-	m_deleted = deleted;
-} */
 
 bool MSNContact::isAllowed() const
 {
@@ -429,6 +424,59 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, co
 	}
 }
 
+void MSNContact::setDisplayName(const QString &Dname)
+{	//call the protocted method
+	KopeteContact::setDisplayName(Dname);
+}
+
+void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
+{
+	if(isBlocked() && status.internalStatus() < 15)
+	{
+		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
+			protocol() , status.internalStatus()+15 , 
+			(status.status()==KopeteOnlineStatus::Offline)? QString::fromLatin1("msn_offline_blocked") : QString::fromLatin1("msn_online_blocked")  ,
+			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
+	}
+	else 
+	{
+		if(status.internalStatus() >= 15)
+		{	//the user is not blocked, but the status is blocked
+			switch(status.internalStatus()-15)
+			{
+				case 1:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->NLN);
+					break;
+				case 2:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->BSY);
+					break;
+				case 3:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->BRB);
+					break;
+				case 4:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->AWY);
+					break;
+				case 5:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->PHN);
+					break;
+				case 6:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->LUN);
+					break;
+				case 7:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->FLN);
+					break;
+				case 8:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->IDL);
+					break;
+				default:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->UNK);
+					break;
+			}
+		}
+		else
+			KopeteContact::setOnlineStatus(status);
+	}
+}
 
 #include "msncontact.moc"
 
