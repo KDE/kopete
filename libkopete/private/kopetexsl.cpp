@@ -122,6 +122,16 @@ void KopeteXSLThread::run()
 	QTimer::singleShot( 500, this, SLOT( deleteLater() ) );
 }
 
+const QString &KopeteXSLThread::result()
+{
+	return m_resultString;
+}
+
+const QDomDocument &KopeteXSLThread::resultDocument()
+{
+	return m_result;
+}
+
 int KopeteXSLThread::writeToQString( void * context, const char * buffer, int len )
 {
 	QString *t = (QString*)context;
