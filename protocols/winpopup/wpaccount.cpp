@@ -112,33 +112,6 @@ bool WPAccount::addContactToMetaContact(const QString &contactId, const QString 
 	return false;
 }
 
-/*
-WPContact *WPAccount::getContact(const QString &Name, KopeteMetaContact* theMetaContact)
-{
-	DEBUG(WPDMETHOD, "WPAccount::getContact(" << Name << ", " << theMetaContact << ")");
-
-	KopeteContactList *l = KopeteContactList::contactList();
-
-	if(!theMetaContact)
-	{
-		// Should really ask to see if they want the contact adding to their list first...
-		theMetaContact = l->findContact(protocol()->pluginId(), Name, Name);
-		if(!theMetaContact)
-		{	DEBUG(WPDINFO, "Adding " << Name << " to the contact list...");
-			theMetaContact = new KopeteMetaContact();
-			l->addMetaContact(theMetaContact);
-		}
-	}
-
-	KopeteContact *theContact = theMetaContact->findContact(protocol()->pluginId(), Name, Name);
-	if(!theContact)
-	{	theContact = new WPContact(this, Name, Name, theMetaContact);
-		theMetaContact->addContact(theContact);
-	}
-
-	return dynamic_cast<WPContact *>(theContact);
-}
-*/
 void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From)
 {
 	DEBUG(WPDMETHOD, "WPAccount::slotGotNewMessage(" << Body << ", " << Arrival.toString() << ", " << From << ")");
@@ -148,12 +121,7 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 		if(!isAway())
 		{	if(!contacts()[From]) addContact(From, From, 0, QString::null, true);
 			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
-/*			KopeteMessageManager *mm = contacts()[From]->manager();
-			KopeteContactPtrList justMe;
-			justMe.append(myself());
-			KopeteMessage theMessage(contacts()[From], justMe, Body, KopeteMessage::Inbound);
-			mm->appendMessage(theMessage);
-*/		}
+		}
 		else
 		{
 			// send away message - TODO: should be taken from global settings

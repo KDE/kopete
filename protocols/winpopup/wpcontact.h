@@ -62,14 +62,14 @@ public:
 	virtual KopeteMessageManager *manager(bool canCreate = false);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
-	QPixmap icon() { return onlineStatus().customIcon("wp_online"); }
+	QPixmap icon() { return onlineStatus().customIcon("wp_available"); }
 	const QString &hostName() { return theHostName; }
 
 public slots:
+	virtual void slotDeleteContact() { deleteLater(); }
+	virtual void slotUserInfo();
 	void slotCheckStatus();	// the call back for the checkStatus timer
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
-	void slotDeleteContact() { deleteLater(); }
-	void slotUserInfo();
 
 signals:
 	void messageSuccess();

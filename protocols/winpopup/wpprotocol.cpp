@@ -60,8 +60,7 @@ K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name),
 	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_available", i18n( "Go O&nline" ),   i18n( "Online" ) ),
 	WPAway(    KopeteOnlineStatus::Away,    25, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
-	WPOffline( KopeteOnlineStatus::Offline, 25, this, 2,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) ),
-	WPUnknown( KopeteOnlineStatus::Unknown, 25, this, 3,  "wp_available", "FIXME: Make unavail!", i18n( "Unknown" ) )
+	WPOffline( KopeteOnlineStatus::Offline, 25, this, 2,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
 	
@@ -105,7 +104,6 @@ KopeteWinPopup *WPProtocol::createInterface(const QString &theHostName)
 	KGlobal::config()->setGroup("WinPopup");
 	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
 	QString theInitialSearchHost = KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1");
-	QString theAwayMessage = KGlobal::config()->readEntry("AwayMessage", i18n("Sorry, I'm not here right now."));
 	int theHostCheckFrequency = KGlobal::config()->readNumEntry("HostCheckFrequency", 60);
 	int theMessageCheckFrequency = KGlobal::config()->readNumEntry("MessageCheckFrequency", 5);
 	KopeteWinPopup *newOne = new KopeteWinPopup(theSMBClientPath, theInitialSearchHost, theHostName, theHostCheckFrequency, theMessageCheckFrequency);

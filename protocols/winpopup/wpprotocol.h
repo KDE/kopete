@@ -98,7 +98,6 @@ public:
 	const KopeteOnlineStatus WPOnline;
 	const KopeteOnlineStatus WPAway;
 	const KopeteOnlineStatus WPOffline;
-	const KopeteOnlineStatus WPUnknown;
 
 public slots:
 	void slotSettingsChanged(void);			// Callback when settings changed

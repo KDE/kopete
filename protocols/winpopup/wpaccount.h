@@ -60,6 +60,7 @@ public:
 	virtual KopeteContact *myself() const {	return (KopeteContact *)theMyself; } 					// Return the user's contact object
 	virtual KActionMenu* actionMenu();	// Per-protocol actions for the systray and the status bar
 	virtual void setAway(bool status);	// Set user away
+	virtual const QString protocolIcon() { return "wp_available"; }
 
 public slots:
 	virtual void connect();						// Connect to server

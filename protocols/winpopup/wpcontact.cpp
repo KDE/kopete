@@ -55,7 +55,7 @@ WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const Q
 
 	// Initialise and start the periodical checking for contact's status
 	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
-	slotCheckStatus();
+//	slotCheckStatus();
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
 
@@ -72,7 +72,7 @@ void WPContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, 
 	KopeteContact::serialize(serializedData, addressBookData);
 }
 
-KopeteMessageManager* WPContact::manager( bool )
+KopeteMessageManager* WPContact::manager( bool )	// TODO: use the parameter as canCreate
 {
 	if( !m_manager )
 	{
@@ -85,7 +85,7 @@ KopeteMessageManager* WPContact::manager( bool )
 		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
   		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		connect(this, SIGNAL(messageSuccess()), m_manager, SLOT(messageSuccess()));
+		connect(this, SIGNAL(messageSuccess()), m_manager, SLOT(messageSucceeded()));
 	}
 
 	return m_manager;
@@ -125,7 +125,7 @@ void WPContact::slotCheckStatus()
 	bool oldWasConnected = myWasConnected;
 	bool newIsOnline = false;
 
-	myWasConnected = protocol() != 0;
+	myWasConnected = protocol() != 0 && account() != 0;
 	if(account()) newIsOnline = static_cast<WPAccount *>(account())->checkHost(theHostName);
 	
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected)

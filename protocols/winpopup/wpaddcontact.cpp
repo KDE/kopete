@@ -95,7 +95,7 @@ bool WPAddContact::validateData()
 
 bool WPAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact)
 {
-	DEBUG(WPDMETHOD, "WPAddContact::apply()");
+	DEBUG(WPDMETHOD, "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")");
 
 	// TODO: make the displayname an option
 	theAccount->addContact(theDialog->mHostName->currentText(), theDialog->mHostName->currentText(), theMetaContact);
