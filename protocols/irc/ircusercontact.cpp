@@ -215,8 +215,6 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
 			else if(modeChange == QString::fromLatin1("-v"))
 				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
-
-			emit( onlineStatusChanged( static_cast<KopeteContact*>(this), onlineStatus() ) );
 		}
 	}
 }
