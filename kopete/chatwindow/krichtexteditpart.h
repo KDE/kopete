@@ -34,13 +34,13 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		*/
 		KTextEdit *widget() const { return (KTextEdit*)editor; }
 
-		const QString text( Qt::TextFormat = Qt::AutoText ) const;
+		QString text( Qt::TextFormat = Qt::AutoText ) const;
 
-		const QFont &font() { return mFont; }
+		QFont font() { return mFont; }
 
-		const QColor &fgColor() { return mFgColor; }
+		QColor fgColor() { return mFgColor; }
 
-		const QColor &bgColor() { return mBgColor; }
+		QColor bgColor() { return mBgColor; }
 
 		void clear();
 

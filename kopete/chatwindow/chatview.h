@@ -213,6 +213,11 @@ public slots:
 	 * show a Font dialog and set the font selected by the user
 	 */
 	void setFont();
+	
+	/**
+	 * Get the font used in the format toolbar for Rich Text formatting
+	 */
+	QFont font();
 
 	/**
 	 * Sets the background color of the entry area, and outgoing messages

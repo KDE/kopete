@@ -15,6 +15,7 @@
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
 #include "kopeteprotocol.h"
+#include "kopeteprefs.h"
 
 typedef KParts::GenericFactory<KopeteRichTextEditPart> KopeteRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart, KopeteRichTextEditPartFactory )
@@ -301,7 +302,7 @@ void KopeteRichTextEditPart::readConfig()
 	tmpColor = KGlobalSettings::baseColor();
 	setBgColor( config->readColorEntry("BgColor", &tmpColor ) );
 
-	QFont tmpFont = KGlobalSettings::generalFont();
+	QFont tmpFont = KopetePrefs::prefs()->fontFace();
 	setFont( config->readFontEntry("Font", &tmpFont ) );
 }
 
@@ -381,7 +382,6 @@ void KopeteRichTextEditPart::setFont()
 {
 	KFontDialog::getFont(mFont, false, editor);
 	setFont(mFont);
-	updateFont();
 	writeConfig();
 }
 
@@ -389,6 +389,7 @@ void KopeteRichTextEditPart::setFont( const QFont &newFont )
 {
 	mFont = newFont;
 	editor->setFont(mFont);
+	updateFont();
 }
 
 void KopeteRichTextEditPart::setFont( const QString &newFont )
@@ -398,6 +399,7 @@ void KopeteRichTextEditPart::setFont( const QString &newFont )
 		editor->setFamily( newFont );
 	else if( m_capabilities & Kopete::Protocol::BaseFont)
 		editor->setFont( mFont );
+	updateFont();
 	writeConfig();
 }
 
@@ -463,7 +465,7 @@ void KopeteRichTextEditPart::setAlignJustify( bool yes )
 		editor->setAlignment( AlignJustify );
 }
 
-const QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
+QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
 {
 	if( fmt == editor->textFormat() || fmt != Qt::PlainText )
 		return editor->text();

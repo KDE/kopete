@@ -611,9 +611,14 @@ void KopeteChatWindow::addTab( ChatView *view )
 
 void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 {
+	//TODO figure out what else we have to save here besides the font
+	//reparent clears a lot of stuff out
+	QFont savedFont = view->font();
 	view->reparent( mainArea, 0, QPoint(), true );
 	view->setTabBar( 0L );
+	view->setFont( savedFont );
 	view->show();
+
 	mainLayout->addWidget( view );
 	setActiveView( view );
 }

@@ -225,6 +225,11 @@ void ChatView::setFont()
 	editPart()->setFont();
 }
 
+QFont ChatView::font()
+{
+	return editPart()->font();
+}
+
 void ChatView::setFont( const QFont &font )
 {
 	editPart()->setFont( font );
