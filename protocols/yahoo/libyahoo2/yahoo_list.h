@@ -57,4 +57,4 @@ YList * y_list_find_custom(YList * list, void * data, YListCompFunc comp);
 }
 #endif
 
-#endif // __YAHOO_LIST_H__
+#endif

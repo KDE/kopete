@@ -8,4 +8,3 @@ libyahoo2_la_SOURCES = libyahoo2.c crypt.c md5.c yahoo_connections.c \
 
 libyahoo2_la_LDFLAGS = -module
 
-CFLAGS = -gnu

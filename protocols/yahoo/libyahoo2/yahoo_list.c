@@ -81,7 +81,7 @@ YList * y_list_remove_link(YList * list, const YList * link)
   if(link == list)
     list = link->next;
 
-//  link->prev = link->next = NULL;
+/*  link->prev = link->next = NULL; */
 
   return list;
 }
