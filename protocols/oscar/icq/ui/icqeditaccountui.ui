@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,9 +11,6 @@
             <width>501</width>
             <height>425</height>
         </rect>
-    </property>
-    <property name="caption">
-        <string>ICQEditAccountUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -142,9 +139,6 @@
                                                 <property name="text">
                                                     <string>Remember &amp;password</string>
                                                 </property>
-                                                <property name="accel">
-                                                    <string>Alt+P</string>
-                                                </property>
                                                 <property name="toolTip" stdset="0">
                                                     <string>Check to save your password.</string>
                                                 </property>
@@ -162,9 +156,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -220,60 +211,13 @@ If you do not currently have an ICQ account, please click the button to create o
                                     <set>WordBreak|AlignVCenter</set>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QPushButton">
                                 <property name="name">
-                                    <cstring>layout168</cstring>
+                                    <cstring>buttonRegister</cstring>
                                 </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacerButtonTop</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>31</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>buttonRegister</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Re&amp;gister New Account</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+G</string>
-                                        </property>
-                                    </widget>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacerButtonBottom</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>31</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </vbox>
+                                <property name="text">
+                                    <string>Re&amp;gister New Account</string>
+                                </property>
                             </widget>
                         </hbox>
                     </widget>
@@ -324,9 +268,6 @@ If you do not currently have an ICQ account, please click the button to create o
                                 </property>
                                 <property name="text">
                                     <string>&amp;Override default server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -452,9 +393,6 @@ If you do not currently have an ICQ account, please click the button to create o
                                 <property name="text">
                                     <string>Require authori&amp;zation for contact list addition</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+Z</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
                                 </property>
@@ -469,9 +407,6 @@ If you do not currently have an ICQ account, please click the button to create o
                                 <property name="text">
                                     <string>Hide &amp;IP Address</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+I</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this to hide your IP address from other users.</string>
                                 </property>
@@ -485,9 +420,6 @@ If you do not currently have an ICQ account, please click the button to create o
                                 </property>
                                 <property name="text">
                                     <string>Do not make my status available on &amp;websites</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+W</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this box to enable Web Aware functionality.</string>
