@@ -7,5 +7,5 @@ kopete_contactnotes_la_METASOURCES = AUTO
 kopete_contactnotes_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_contactnotes_la_LIBADD      = ../../libkopete/libkopete.la -lkio
 
-data_DATA = contactnotes.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = contactnotes.desktop
+servicedir = $(kde_servicesdir)

@@ -24,6 +24,7 @@
 #include <qapplication.h>
 #include <qdir.h>
 #include <qfile.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <kglobal.h>
@@ -68,27 +69,28 @@ LibraryLoader::LibraryLoader()
 
 LibraryLoader::~LibraryLoader()
 {
-	QDictIterator<KopetePlugin> i( mLibHash );
+	QDictIterator<KopetePlugin> i( m_loadedPlugins );
 	while( i.current() )
 	{
 		// Remove causes the iterator to auto-increment, so
 		// only increment explicitly when not removing
 		if( getInfo( i.currentKey() ).type != QString::fromLatin1( "Kopete/Protocol" ) )
-			remove( i.current() );
+			delete i.current();
 		else
 			++i;
 	}
+
 	i.toFirst();
 	while( i.current() )
-		remove( i.current() );
+		delete i.current();
 
-	kdDebug(14010) << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
+	kdDebug( 14010 ) << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const
 {
 	QPtrList<KopetePlugin> list;
-	QDictIterator<KopetePlugin> i( mLibHash );
+	QDictIterator<KopetePlugin> i( m_loadedPlugins );
 	for( ; i.current(); ++i )
 		list.append( i.current() );
 
@@ -99,10 +101,10 @@ QValueList<KopeteLibraryInfo> LibraryLoader::loaded() const
 {
 	QValueList<KopeteLibraryInfo> items;
 
-	QDictIterator<KopetePlugin> i( mLibHash );
+	QDictIterator<KopetePlugin> i( m_loadedPlugins );
 	for( ; i.current(); ++i )
 	{
-		if( mLibHash[ i.currentKey() ] )
+		if( m_loadedPlugins[ i.currentKey() ] )
 			items.append( getInfo( i.currentKey() ) );
 	}
 
@@ -125,26 +127,11 @@ bool LibraryLoader::loadAll()
 		loadPlugin( *i );
 	}
 */
-	// load all the protocols in the first
+
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
-		KopeteLibraryInfo info=getInfo(*i);
-		if( !info.type.contains( QString::fromLatin1( "Kopete/Protocol" ) ) )
-			continue;
-
-		if ( !loadPlugin( *i ) )
-			kdDebug(14010) << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
-	}
-
-	// load all misc plugins
-	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
-	{
-		KopeteLibraryInfo info=getInfo(*i);
-		if( !info.type.contains( QString::fromLatin1( "Kopete/Plugin" ) ) )
-			continue;
-
-		if ( !loadPlugin( *i ) )
-			kdDebug(14010) << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
+		KopeteLibraryInfo info = getInfo( *i );
+		loadPlugin( *i );
 	}
 
 	return true;
@@ -157,7 +144,7 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 		return *cached;
 
 	KopeteLibraryInfo info;
-	QString specPath = ( spec[ 0 ] == '/' ) ? spec : KGlobal::dirs()->findResource( "appdata", spec );
+	QString specPath = ( spec[ 0 ] == '/' ) ? spec : KGlobal::dirs()->findResource( "services", spec );
 	if( !QFile::exists( specPath ) )
 		return info;
 
@@ -178,6 +165,11 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 	info.comment  = file.readEntry( "Comment" );
 	info.license  = file.readEntry( "X-Kopete-License" );
 	info.icon     = file.readEntry( "Icon" );
+	info.pluginId = file.readEntry( "X-Kopete-Plugin-Id" );
+	info.messagingProtocol = file.readEntry( "X-Kopete-Messaging-Protocol" );
+
+	if ( info.type != QString::fromLatin1( "Kopete/Plugin" ) && info.type != QString::fromLatin1( "Kopete/Protocol" ) )
+		return KopeteLibraryInfo();
 
 	m_cachedInfo[ spec ] = info;
 	return info;
@@ -185,7 +177,7 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 
 bool LibraryLoader::isLoaded( const QString &spec ) const
 {
-	KopetePlugin *p = mLibHash[ spec ];
+	KopetePlugin *p = m_loadedPlugins[ spec ];
 	return p;
 }
 
@@ -200,72 +192,63 @@ void LibraryLoader::setModules(const QStringList &mods)
 QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 {
 	QValueList<KopeteLibraryInfo> items;
-	QStringList files = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "*.desktop" ), false, true );
+	QStringList files = KGlobal::dirs()->findAllResources( "services", QString::fromLatin1( "*.desktop" ), false, true );
 	for( QStringList::Iterator i=files.begin(); i!=files.end(); ++i )
-		items.append(getInfo(*i));
+	{
+		KopeteLibraryInfo info = getInfo( *i );
+		if ( info.type == QString::fromLatin1( "Kopete/Plugin" ) || info.type == QString::fromLatin1( "Kopete/Protocol" ) )
+			items.append( info );
+	}
 
 	return items;
 }
 
 bool LibraryLoader::loadPlugin( const QString &spec )
 {
-	KopetePlugin *plugin = mLibHash[ spec ];
-	if( !plugin )
+	kdDebug() << k_funcinfo << spec << endl;
+
+	QString pluginId = spec;
+	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
+
+	KopetePlugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>( QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-Kopete-Plugin-Id]=='%1'" ).arg( pluginId ), this );
+
+	//KopetePlugin *plugin = m_loadedPlugins[ spec ];
+	if( plugin )
 	{
-		KopeteLibraryInfo info = getInfo( spec );
+		/*KopeteLibraryInfo info = getInfo( spec );
 		if( info.specfile != spec )
-			return false;
+			return false;*/
 
-		// Get the library loader instance
-		KLibLoader *loader = KLibLoader::self();
-
-		KLibrary *lib = loader->library( QFile::encodeName( info.filename) );
-		if( !lib )
-		{
-			kdDebug(14010) << "LibraryLoader::loadPlugin: Error while loading plugin: " << loader->lastErrorMessage() << endl;
-			return false;
-		}
-		plugin = KParts::ComponentFactory::createInstanceFromFactory<KopetePlugin> ( lib->factory(), this );
-		mLibHash.insert( spec, plugin );
+		m_loadedPlugins.insert( spec, plugin );
 
 		connect( plugin, SIGNAL( destroyed( QObject * ) ),
 			SLOT( slotPluginDestroyed( QObject * ) ) );
 
 		// Automatically load the i18n catalogue for the plugin
-		KGlobal::locale()->insertCatalogue( info.filename );
+		//KGlobal::locale()->insertCatalogue( info.filename );
 
 		m_addressBookFields.insert( plugin, plugin->addressBookFields() );
 
-		kdDebug(14010) << "LibraryLoader::loadPlugin: Successfully loaded plugin '" << spec << "'."<< endl;
+		kdDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'"<< endl;
 
 		emit pluginLoaded( plugin );
 		return true;
 	}
 	else
 	{
-		kdDebug(14010) << "LibraryLoader::loadPlugin: Plugin '" << spec << "' is already loaded!" << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Unable to load plugin '" << pluginId << "'!" << endl;
 		return false;
 	}
 }
 
 bool LibraryLoader::remove( const QString &spec )
 {
-	KopetePlugin *plugin = mLibHash[ spec ];
+	KopetePlugin *plugin = m_loadedPlugins[ spec ];
 	if( !plugin )
 		return false;
 
-	remove( plugin );
-	return true;
-}
-
-bool LibraryLoader::remove( KopetePlugin *p )
-{
-	if( !p )
-		return false;
-
-	kdDebug(14010) << "LibraryLoader::remove: Removing plugin: " << p->pluginId() << endl;
-
-	delete p;
+	delete plugin;
 
 	return true;
 }
@@ -274,12 +257,12 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 {
 	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
 
-	QDictIterator<KopetePlugin> it( mLibHash );
+	QDictIterator<KopetePlugin> it( m_loadedPlugins );
 	for( ; it.current() ; ++it )
 	{
 		if( it.current() == o )
 		{
-			mLibHash.remove( it.currentKey() );
+			m_loadedPlugins.remove( it.currentKey() );
 			break;
 		}
 	}
@@ -298,7 +281,7 @@ QStringList LibraryLoader::addressBookFields( KopetePlugin *p ) const
 
 KopetePlugin * LibraryLoader::searchByName(const QString &name)
 {
-	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
+	for( QDictIterator<KopetePlugin> i( m_loadedPlugins ); i.current(); ++i )
 	{
 		if (getInfo(i.currentKey()).name==name)
 			return (*i);
@@ -312,7 +295,7 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 
 	for ( QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i )
 	{
-		KopetePlugin *tmp_plug = mLibHash[ ( *i ).specfile ];
+		KopetePlugin *tmp_plug = m_loadedPlugins[ ( *i ).specfile ];
 		if( tmp_plug->pluginId() == Id )
 			return tmp_plug;
 	}
@@ -321,7 +304,7 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 
 QString LibraryLoader::pluginName( const KopetePlugin *plugin ) const
 {
-	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
+	for( QDictIterator<KopetePlugin> i( m_loadedPlugins ); i.current(); ++i )
 	{
 		if( i.current() == plugin )
 			return getInfo( i.currentKey() ).name;
@@ -331,7 +314,7 @@ QString LibraryLoader::pluginName( const KopetePlugin *plugin ) const
 
 QString LibraryLoader::pluginIcon( const KopetePlugin *plugin ) const
 {
-	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
+	for( QDictIterator<KopetePlugin> i( m_loadedPlugins ); i.current(); ++i )
 	{
 		if( i.current() == plugin )
 			return getInfo( i.currentKey() ).icon;

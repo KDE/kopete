@@ -44,6 +44,8 @@ struct KopeteLibraryInfo
 	QString name;
 	QString comment;
 	QString icon;
+	QString messagingProtocol;
+	QString pluginId;
 };
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
@@ -107,11 +109,6 @@ public:
 	 */
 	bool remove(const QString &spec);
 
-	/**
-	 * unload the plugin that is plugin
-	 */
-	bool remove( KopetePlugin *plugin );
-
 	QPtrList<KopetePlugin> plugins() const;
 
 	/**
@@ -141,7 +138,7 @@ private slots:
 private:
 	LibraryLoader();
 
-	QDict<KopetePlugin> mLibHash;
+	QDict<KopetePlugin> m_loadedPlugins;
 
 	/**
 	 * The list of all address book keys used by each plugin

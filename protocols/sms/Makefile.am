@@ -17,5 +17,5 @@ kopete_sms_la_LIBADD  = ./ui/libkopetesmsui.la \
 	./services/libkopetesmsservices.la \
 	../../libkopete/libkopete.la  $(LIB_KIO)
 
-data_DATA = sms.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = sms.desktop
+servicedir = $(kde_servicesdir)

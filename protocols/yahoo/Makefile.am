@@ -13,6 +13,6 @@ kopete_yahoo_la_METASOURCES = AUTO
 kopete_yahoo_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_yahoo_la_LIBADD      = $(top_builddir)/kopete/libkopete/libkopete.la  ui/libkopeteyahooui.la libyahoo2/libyahoo2.la
 
-data_DATA = yahoo.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = yahoo.desktop
+servicedir = $(kde_servicesdir)
 

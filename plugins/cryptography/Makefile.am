@@ -7,5 +7,5 @@ kopete_cryptography_la_METASOURCES = AUTO
 kopete_cryptography_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
 kopete_cryptography_la_LIBADD      = ../../libkopete/libkopete.la
 
-data_DATA = cryptography.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = cryptography.desktop
+servicedir = $(kde_servicesdir)

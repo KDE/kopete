@@ -7,5 +7,5 @@ kopete_spellcheck_la_SOURCES     = spellcheckplugin.cpp spellcheckprefs.ui spell
 kopete_spellcheck_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_spellcheck_la_LIBADD      = ../../libkopete/libkopete.la -lkspell
 
-data_DATA = spellcheck.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = spellcheck.desktop
+servicedir = $(kde_servicesdir)

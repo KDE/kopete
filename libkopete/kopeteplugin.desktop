@@ -4,6 +4,9 @@ Type=ServiceType
 X-KDE-ServiceType=Kopete/Plugin
 Comment=Kopete Plugin
 
+[PropertyDef::X-Kopete-Plugin-Id]
+Type=QString
+
 [PropertyDef::X-Kopete-Author]
 Type=QString
 

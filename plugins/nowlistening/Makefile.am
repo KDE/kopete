@@ -7,5 +7,5 @@ kopete_nowlistening_la_METASOURCES = AUTO
 kopete_nowlistening_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_nowlistening_la_LIBADD      = ../../libkopete/libkopete.la $(XMMS_LIBS)
 
-data_DATA = nowlistening.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = nowlistening.desktop
+servicedir = $(kde_servicesdir)

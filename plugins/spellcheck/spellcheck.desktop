@@ -2,9 +2,15 @@
 Encoding=UTF-8
 Type=Service
 Name=Spell Checking Plugin
+Name[es]=Plugin verificador ortográfico.
+Name[fr]=Module de vérification orthographique
+Name[pt]='Plugin' de Verificação Ortográfica
+Name[pt_BR]=Plug-in de Verificação de Ortografia
+Name[sv]=Insticksprogram för stavningskontroll
 Icon=spellcheck
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_spellcheck
+X-Kopete-Plugin-Id=spellcheck
 X-Kopete-Author=Jason Keirstead
 X-Kopete-Site=http://kopete.kde.org
 X-Kopete-Email=jason@keirstead.org

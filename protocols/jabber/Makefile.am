@@ -17,6 +17,6 @@ kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
 	psi/libpsi/src/libpsi.la
 
-data_DATA = jabber.desktop
-datadir = $(kde_datadir)/kopete
+service_DATA = jabber.desktop
+servicedir = $(kde_servicesdir)
 
