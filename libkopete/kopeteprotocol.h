@@ -82,7 +82,7 @@ public:
 		Alignment = 4096,     // Setting the alignment of text portions
 
 		//Shortcut for base properties only - basically MSN
-		BaseRTF = BaseFgColor | BaseBgColor | BaseFont | BaseFormatting ,
+		BaseRTF = BaseFgColor | BaseFont | BaseFormatting,
 
 		//Shortcut for All of the above - full HTML
 		FullRTF =  65535
