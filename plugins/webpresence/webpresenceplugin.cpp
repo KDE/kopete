@@ -63,9 +63,11 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const Q
 				this, SLOT( listenToAllAccounts() ) );
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
 				this, SLOT( listenToAllAccounts() ) );
+	
 
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 	loadSettings();
+	listenToAllAccounts();
 }
 
 WebPresencePlugin::~WebPresencePlugin()
@@ -79,7 +81,7 @@ void WebPresencePlugin::loadSettings()
 	
 	frequency = kconfig->readNumEntry("UploadFrequency" , 15);
 	
-	QString url = kconfig->readEntry("uploadURL");
+	url = kconfig->readEntry("uploadURL");
 	useDefaultStyleSheet = kconfig->readBoolEntry("formatDefault", true);
 	justXml = kconfig->readBoolEntry("formatXML", false);
 	userStyleSheet = kconfig->readEntry("formatStylesheetURL");
@@ -141,6 +143,12 @@ void WebPresencePlugin::slotWriteFile()
 	// generate the (temporary) XML file representing the current contactlist
 	KTempFile* xml = generateFile();
 	xml->setAutoDelete( true );
+	
+	if ( url.isEmpty() )
+	{
+		kdDebug(14309) << "url is empty. NOT UPDATING!" << endl;
+		error = true;
+	}
 
 	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
