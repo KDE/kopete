@@ -106,7 +106,6 @@ KopeteContactListViewToolTip::KopeteContactListViewToolTip( QWidget *parent,
 
 KopeteContactListViewToolTip::~KopeteContactListViewToolTip()
 {
-	QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon", 0 );
 }
 
 void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
@@ -129,9 +128,15 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 	if( metaLVI )
 	{
+		//FIXME: this should be in the metacontact lvi, not here...
+
 		uint leftMargin = m_listView->treeStepSize() *
-				( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
-				m_listView->itemMargin();
+		                  ( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
+		                  m_listView->itemMargin();
+
+		uint xAdjust = itemRect.left() + leftMargin;
+		uint yAdjust = itemRect.top();
+		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
 
 		if( metaLVI->metaContact()->contacts().count() == 1 )
 		{
@@ -141,20 +146,14 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		{
 			// Check if we are hovering over a protocol icon. If so, use that
 			// tooltip in the code below
-			uint xAdjust = itemRect.left() + leftMargin;
-			uint yAdjust = itemRect.top();
-			QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
 			contact = metaLVI->contactForPoint( relativePos );
 
 			if( contact )
 			{
 				QRect iconRect = metaLVI->contactRect( contact );
 
-				itemRect = QRect(
-					iconRect.left() + xAdjust,
-					iconRect.top() + yAdjust,
-					iconRect.width(),
-					iconRect.height() );
+				itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust,
+				                  iconRect.width(), iconRect.height() );
 			}
 		}
 
@@ -166,37 +165,26 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		else
 		{
 			KopeteMetaContact *mc = metaLVI->metaContact();
-			toolTip = i18n( "<b>%2</b><br><img src=\"kopete:icon\">&nbsp;%1" ).
-#if QT_VERSION < 0x030200
-				arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
-#else
-				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
-#endif
-			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
-				SmallIcon( mc->statusIcon() ).convertToImage() );
+			toolTip = i18n( "<b>%2</b><br><img src=\"kopete-metacontact-icon:%3\">&nbsp;%1" ).
+			                arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ), mc->metaContactId() );
 
 			if( mc->idleTime() > 0 )
 				toolTip += idleTime2String(mc->idleTime());
 
-			// Adjust the item rect on the right
-			uint first = metaLVI->firstContactIconX();
-			uint last  = metaLVI->lastContactIconX();
-
-			if ( first != last )
+			if ( Kopete::UI::ListView::Component *comp = metaLVI->componentAt( relativePos ) )
 			{
-				if ( pos.x() > int( itemRect.left() + leftMargin + first ) )
-					itemRect.setLeft( itemRect.left() + leftMargin + last );
-				else
-					itemRect.setWidth( leftMargin + first );
+				QRect iconRect = comp->rect();
+				itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust,
+				                  iconRect.width(), iconRect.height() );
 			}
 		}
 	}
 	else if( groupLVI )
 	{
-		// FIXME: use item->text( 0 ) for now so we get the # online / # total, since there is no
+		// FIXME: display the members-online/members-total information here. there is currently no
 		//        interface to get these from KopeteGroup
-		//KopeteGroup *g=groupLVI->group();
-		toolTip = QString( "<b>%1</b>" ).arg( item->text( 0 ) );
+		KopeteGroup *g = groupLVI->group();
+		toolTip = QString( "<b>%1</b>" ).arg( g->displayName() );
 	}
 
 	//kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: " << itemRect << ", tooltip:  " << toolTip << endl;
@@ -306,13 +294,13 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setDropHighlighter( true );
 	setSelectionMode( QListView::Extended );
 
-	clearWFlags( WStaticContents | WNoAutoErase );
+	clearWFlags( WStaticContents );
 
 	// clear the appropriate flags from the viewport - qt docs say we have to mask
 	// these flags out of the QListView to make weirdly painted list items work, but
 	// that doesn't do the job. this does.
 	class MyWidget : public QWidget { public: QWidget::clearWFlags; };
-	static_cast<MyWidget*>( viewport() )->clearWFlags( WStaticContents | WNoAutoErase );
+	static_cast<MyWidget*>( viewport() )->clearWFlags( WStaticContents );
 }
 
 void KopeteContactListView::initActions( KActionCollection *ac )
@@ -1045,7 +1033,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 		KopeteMetaContactLVI *source_metaLVI = it.current();
 		++it;
 
-
 		if(source_metaLVI)
 			source_contact = source_metaLVI->contactForPoint( m_startDragPos );
 
@@ -1310,7 +1297,7 @@ void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 }
 
 /* This is a small hack ensuring that only F2 triggers inline
- * renameing. Won't win a beauty award, but I think relying on
+ * renaming. Won't win a beauty award, but I think relying on
  * the fact that QListView intercepts and processes the F2 event
  * through this event filter is sorta safe.
  *
@@ -1675,7 +1662,7 @@ void KopeteContactListView::slotRename()
 {
 	if ( KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( currentItem() ) )
 	{
-		metaLVI->slotRename();
+		metaLVI->startRename( 0 );
 	}
 	else if ( KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( currentItem() ) )
 	{

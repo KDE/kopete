@@ -18,7 +18,7 @@
 #ifndef KOPETEGROUPVIEWITEM_H
 #define KOPETEGROUPVIEWITEM_H
 
-#include <klistview.h>
+#include "kopetelistviewitem.h"
 #include <qpixmap.h>
 
 /**
@@ -27,39 +27,43 @@
 
 class KopeteGroup;
 
-class KopeteGroupViewItem : public QObject , public KListViewItem
+class KopeteGroupViewItem : public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 public:
-	KopeteGroupViewItem( KopeteGroup *group , QListView *parent,
-		const char *name=0 );
-	KopeteGroupViewItem( KopeteGroup *group , QListViewItem *parent,
-		const char *name=0 );
+	KopeteGroupViewItem( KopeteGroup *group , QListView *parent, const char *name = 0 );
+	KopeteGroupViewItem( KopeteGroup *group , QListViewItem *parent, const char *name = 0 );
 	~KopeteGroupViewItem();
 
 	KopeteGroup * group() const;
 
 	virtual void startRename( int col );
 
+public slots:
+	void refreshDisplayName();
+	void updateIcon();
+	void updateVisibility();
+
 protected:
 	virtual void okRename( int col );
 	virtual void cancelRename( int col );
 
 private:
+	void initLVI();
+
 	KopeteGroup *m_group;
 	QPixmap open, closed;
 
 	QString key( int column, bool ascending ) const;
 
-	QString m_renameText;
-
 	unsigned int onlineMemberCount;
 	unsigned int totalMemberCount;
 
-public slots:
-	void refreshDisplayName();
-	void updateIcon();
-	void updateVisibility();
+	class Private;
+	Private *d;
+
+private slots:
+	void slotConfigChanged();
 };
 
 #endif

@@ -1,6 +1,7 @@
 /*
     kopetemetacontactlvi.h - Kopete Meta Contact KListViewItem
 
+    Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
@@ -20,12 +21,15 @@
 #ifndef __kopetemetacontactlvi_h__
 #define __kopetemetacontactlvi_h__
 
+#include "kopetelistviewitem.h"
+
 #include <qobject.h>
 #include <qpixmap.h>
 #include <qptrdict.h>
 
 #include <klistview.h>
 
+class QVariant;
 
 class KAction;
 class KListAction;
@@ -38,10 +42,12 @@ class KopeteGroupViewItem;
 class KopeteGroup;
 class KopeteEvent;
 
+class ContactComponent;
+
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopeteMetaContactLVI : public QObject, public KListViewItem
+class KopeteMetaContactLVI : public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 
@@ -49,12 +55,6 @@ public:
 	KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent );
 	KopeteMetaContactLVI( KopeteMetaContact *contact, QListViewItem *parent );
 	KopeteMetaContactLVI( KopeteMetaContact *contact, QListView *parent );
-	/**
-	 * Copy constructor.
-	 * Makes a second view of the same meta contact, if the meta contact
-	 * resides in multiple groups.
-	 */
-//	KopeteMetaContactLVI( KopeteMetaContactLVI *other, QListViewItem *parent );
 	~KopeteMetaContactLVI();
 
 	/**
@@ -78,19 +78,9 @@ public:
 	 */
 	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
 
-//	virtual void setup();
-	virtual void paintCell ( QPainter *p, const QColorGroup &cg, int column, int width, int align );
-
-	/* Duncan experiment */
-/*	virtual void setColor( const QColor &color );
-	virtual void setColor( const QString &color );
-	virtual void setText( int column, const QString &text );
-	QColor color();
-	QString colorName();*/
-
-
-	void movedToGroup(KopeteGroup * );
+	void movedToGroup( KopeteGroup * );
 	void rename( const QString& name );
+	void startRename( int );
 
 	KopeteGroup *group();
 
@@ -116,19 +106,6 @@ public:
 	 */
 	QRect contactRect( const KopeteContact *c ) const;
 
-	/**
-	 * Returns the first X position used by contact icons.
-	 * Returns the entire width of the LVI if there are no KopeteContacts.
-	 */
-	uint firstContactIconX() const;
-
-	/**
-	 * Returns the last X position used by contact icons, i.e. the first
-	 * position AFTER the last icon.
-	 * Returns the entire width of the LVI if there are no KopeteContacts.
-	 */
-	uint lastContactIconX() const;
-
 	bool isGrouped() const;
 
 public slots:
@@ -138,36 +115,38 @@ public slots:
 	 */
 	void execute() const;
 
-	void catchEvent(KopeteEvent *);
-
-	void slotRename();
+	void catchEvent( KopeteEvent * );
 
 	void updateVisibility();
 
 private slots:
 	void slotUpdateIcons();
-	void slotContactStatusChanged(KopeteContact *);
+	void slotContactStatusChanged( KopeteContact * );
+	void slotContactPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactAdded( KopeteContact * );
+	void slotContactRemoved( KopeteContact * );
 
 	void slotDisplayNameChanged();
 
 	void slotAddToNewGroup();
-	void slotIdleStateChanged();
+	void slotIdleStateChanged( KopeteContact * );
 
-	/**
-	 * maybe remove this and find a better way to check for pref-changes
-	 */
 	void slotConfigChanged();
 
-	void slotEventDone(KopeteEvent* );
+	void slotEventDone( KopeteEvent* );
 	void slotBlink();
 
 protected:
-	virtual void okRename(int col);
+	void okRename(int col);
+	void cancelRename(int col);
 
 private:
 	void initLVI();
+	void setDisplayMode( int mode );
 	QString key( int column, bool ascending ) const;
-
+	void updateContactIcons();
+	void updateContactIcon( KopeteContact * );
+	ContactComponent *contactComponent( const KopeteContact *c ) const;
 
 	KopeteMetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;
@@ -186,6 +165,9 @@ private:
 
 	bool mIsBlinkIcon;
 	int m_blinkLeft;
+
+	class Private;
+	Private *d;
 };
 
 #endif
