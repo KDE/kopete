@@ -268,11 +268,11 @@ QString IRCUserContact::formattedName() const
 
 void IRCUserContact::updateInfo()
 {
-	setProperty( QString::fromLatin1("UserInfo"), i18n("User"), QString::fromLatin1("%1@%2")
+	setProperty( QString::fromLatin1("userInfo"), i18n("User"), QString::fromLatin1("%1@%2")
 		.arg(mInfo.userName).arg(mInfo.hostName) );
-	setProperty( QString::fromLatin1("Server"), i18n("Server"), mInfo.serverName );
-	setProperty( QString::fromLatin1("Channels"), i18n("Channels"), mInfo.channels.join(" ") );
-	setProperty( QString::fromLatin1("Hops"), i18n("Hops"), QString::number(mInfo.hops) );
+	setProperty( QString::fromLatin1("server"), i18n("Server"), mInfo.serverName );
+	setProperty( QString::fromLatin1("channels"), i18n("Channels"), mInfo.channels.join(" ") );
+	setProperty( QString::fromLatin1("hops"), i18n("Hops"), QString::number(mInfo.hops) );
 
 	setIdleTime( mInfo.idle );
 	mInfo.lastUpdate = QTime::currentTime();

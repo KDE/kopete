@@ -124,6 +124,7 @@ private slots:
 	void slotConnectedToServer();
 	void slotJoin();
 	void slotUpdateInfo();
+	void slotChannelListed(const QString &channel, uint members, const QString &topic);
 
 private:
 	// KAction stuff:
@@ -146,6 +147,7 @@ private:
 	QStringList mJoinedNicks;
 	QMap<QString,bool> modeMap;
 	QTimer *mInfoTimer;
+
 	void toggleMode( QChar mode, bool enabled, bool update );
 };
 

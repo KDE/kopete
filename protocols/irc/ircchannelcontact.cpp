@@ -48,6 +48,9 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
 
+	QObject::connect(m_engine, SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ),
+		this, SLOT( slotChannelListed( const QString &, uint, const QString & ) ) );
+
 	actionJoin = 0L;
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), this );
@@ -56,10 +59,39 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	actionModeI = new KToggleAction(i18n("&Invite Only"), 0, this, SLOT(slotModeChanged()), this );
 
 	updateStatus();
+	slotUpdateInfo();
 }
 
 IRCChannelContact::~IRCChannelContact()
 {
+}
+
+void IRCChannelContact::slotUpdateInfo()
+{
+	if( !m_isConnected )
+		m_engine->writeMessage( QString::fromLatin1("LIST %1").arg(m_nickName) );
+	else
+		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
+
+	/*if( m_isConnected )
+		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
+	else
+	{
+		removeProperty( QString::fromLatin1("channelMembers") );
+		removeProperty( QString::fromLatin1("channelTopic") );
+	} */
+	mInfoTimer->start( 45000, true );
+}
+
+void IRCChannelContact::slotChannelListed( const QString &channel, uint members, const QString &topic )
+{
+	if( onlineStatus() == m_protocol->m_ChannelStatusOnline &&
+		!m_isConnected && channel.lower() == m_nickName.lower() )
+	{
+		mTopic = topic;
+		setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), topic );
+		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), members );
+	}
 }
 
 void IRCChannelContact::updateStatus()
@@ -151,19 +183,10 @@ void IRCChannelContact::slotAddNicknames()
 	QTimer::singleShot(0, this, SLOT( slotAddNicknames() ) );
 }
 
-void IRCChannelContact::slotUpdateInfo()
-{
-	if( m_isConnected )
-	{
-		mInfoTimer->start( 60000, true );
-		if( manager()->members().count() < 100 )
-			m_engine->writeMessage( QString::fromLatin1("WHO %1").arg( m_nickName ), true );
-	}
-}
-
 void IRCChannelContact::channelTopic(const QString &topic)
 {
 	mTopic = topic;
+	setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), mTopic );
 	manager()->setDisplayName( caption() );
 	KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
 		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -305,6 +328,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopic)
 {
 	mTopic = newtopic;
+	setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), mTopic );
 	manager()->setDisplayName( caption() );
 	KopeteMessage msg(m_account->myServer(), mMyself,
 		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
