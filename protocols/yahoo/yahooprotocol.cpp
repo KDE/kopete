@@ -94,7 +94,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 	/* Call slotSettingsChanged() to get it all registered. */
 	slotSettingsChanged();
 
-	if (KGlobal::config()->readBoolEntry("AutoConnect", "0"))
+	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 		Connect();
 }
 

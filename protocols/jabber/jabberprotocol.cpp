@@ -124,7 +124,7 @@ void JabberProtocol::init()
 	KGlobal::config()->setGroup("Jabber");
 	
 	// if we need to connect on startup, do it now
-	if (KGlobal::config()->readBoolEntry("AutoConnect", "0"))
+	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 		Connect();
 
 }

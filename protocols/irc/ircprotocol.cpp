@@ -101,7 +101,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	}
 
 	/** Autoconnect if is selected in config */
-	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
+	if ( KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 	{
 		Connect();
 	}
