@@ -690,7 +690,10 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			{
 				//OSCAR doesn't support multiple groups for a contact. Add to the
 				//first one
-				groupName = kopeteGroups.first()->displayName();
+				
+				//apparently kopeteGroups.first() can be invalid. Attempt to prevent
+				//crashes in SSIData::findGroup(const QString& name)
+				groupName = kopeteGroups.first() ? kopeteGroups.first()->displayName() : i18n("Buddies");
 
 				kdDebug(14150) << k_funcinfo << "Contact with group." <<
 					" No. of groups = " << kopeteGroups.count() <<
