@@ -51,7 +51,7 @@ public:
 	/** returns the actual buffer */
 	inline char *getBuf(void) const { return buf; };
   /** adds the given string to the buffer (make sure it's NULL-terminated) */
-  int addString(const char *, const WORD);
+  int addString(const char *, const DWORD);
   /** adds the given DWord to the buffer */
   int addDWord(const DWORD);
   /** adds the given word to the buffer */
@@ -97,12 +97,17 @@ public:
   /** Creates a chat data segment for a tlv and calls addTLV with that data */
   int addChatTLV(const WORD, const WORD, const QString &, const WORD);
   /** Gets a snac header out of the buffer */
+private: //Private members
+	/** Make the buffer bigger by inc bytes, reallocating memory if needed */
+	void doResize(int inc);
 signals: // Signals
   /** Emitted when an error occurs */
   void bufError(QString);
 private: // Private attributes
   /** The length of the buffer */
-  WORD length;
+  DWORD length;
+  /** The allocated size of the buffer */
+  DWORD alloc_length;
   /** The actual buffer */
   char * buf;
   /** The sequence number, incremented after every command sent to the oscar server */

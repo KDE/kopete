@@ -26,6 +26,7 @@ Buffer::Buffer(QObject *parent, const char *name)
 	: QObject(parent,name)
 {
 	length = 0;
+	alloc_length = 0;
 	buf = NULL;
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
@@ -44,27 +45,17 @@ Buffer::~Buffer()
 /** adds the given byte to the buffer */
 int Buffer::addByte(const BYTE b)
 {
-	char *tmp = new char[length+1];
-	for (int i=0;i<length;i++) //copy the string
-		tmp[i] = buf[i];
-	tmp[length] = b;
-	if (buf)
-		delete buf; //get rid of the old string
-	buf = tmp;
+	doResize(1);
+	buf[length] = b;
 	return ++length;
 }
 
 /** adds the given word to the buffer */
 int Buffer::addWord(const WORD w)
 {
-	char *tmp = new char[length+2];
-	for (int i=0;i<length;i++) //copy the string
-		tmp[i] = buf[i];
-	tmp[length] = (w & 0xff00) >> 8;
-	tmp[length+1] = (w & 0x00ff);
-	if (buf)
-		delete buf; //get rid of the old string
-	buf = tmp;
+	doResize(2);
+	buf[length] = (w & 0xff00) >> 8;
+	buf[length+1] = (w & 0x00ff);
 	length = length + 2;
 	return length;
 }
@@ -72,31 +63,21 @@ int Buffer::addWord(const WORD w)
 /** adds the given DWord to the buffer */
 int Buffer::addDWord(const DWORD dw)
 {
-	char *tmp = new char[length+4];
-	for (int i=0;i<length;i++) //copy the string
-		tmp[i] = buf[i];
-	tmp[length] = (dw & 0xff000000) >> 24;
-	tmp[length+1] = (dw & 0x00ff0000) >> 16;
-	tmp[length+2] = (dw & 0x0000ff00) >> 8;
-	tmp[length+3] = (dw & 0x000000ff);
-	if (buf)
-		delete buf; //get rid of the old string
-	buf = tmp;
+	doResize(4);
+	buf[length] = (dw & 0xff000000) >> 24;
+	buf[length+1] = (dw & 0x00ff0000) >> 16;
+	buf[length+2] = (dw & 0x0000ff00) >> 8;
+	buf[length+3] = (dw & 0x000000ff);
 	length = length + 4;
 	return length;
 }
 
 /** adds the given string to the buffer (make sure it's NULL-terminated) */
-int Buffer::addString(const char * s, const WORD len)
+int Buffer::addString(const char * s, const DWORD len)
 {
-	char *tmp = new char[length+len];
-	for (int i=0;i<length;i++) //copy the string
-		tmp[i] = buf[i];
+	doResize(len);
 	for (int i=0;i<len;i++) //concatenate the new string onto the buffer
-		tmp[length+i] = s[i];
-	if (buf)
-		delete buf; //get rid of the old string
-	buf = tmp;
+		buf[length+i] = s[i];
 	length = length + len;
 	return length;
 }
@@ -120,19 +101,16 @@ int Buffer::addTLV(WORD type, WORD len, const char *data)
 /** constructs a flap header from given channel to the beginning of the buffer, returns new buffer length */
 int Buffer::addFlap(const BYTE channel)
 {
-	char *tmp = new char[length+6];
+	doResize(6);
 	//create the flap header
-	tmp[0] = 0x2a;
-	tmp[1] = channel;
-	tmp[2] = (sequenceNum & 0xff00) >> 8;
-	tmp[3] = (sequenceNum & 0x00ff);
-	tmp[4] = (length & 0xff00) >> 8;
-	tmp[5] = (length & 0x00ff);
-	for (int i=0;i<length;i++) //then copy over the rest
-		tmp[i+6] = buf[i];
-	if (buf)
-		delete buf;
-	buf = tmp;
+	for (int i=length-1;i>=0;i--) //copy over the packet
+		buf[i+6] = buf[i];
+	buf[0] = 0x2a;
+	buf[1] = channel;
+	buf[2] = (sequenceNum & 0xff00) >> 8;
+	buf[3] = (sequenceNum & 0x00ff);
+	buf[4] = (length & 0xff00) >> 8;
+	buf[5] = (length & 0x00ff);
 	length = length + 6;
 	sequenceNum++;
 	return length;
@@ -230,6 +208,7 @@ void Buffer::setBuf(char *b, const WORD l)
 		delete buf;
 	buf = b;
 	length = l;
+	alloc_length = l;
 }
 
 /** Allocates memory for and gets a block of buffer bytes */
@@ -287,19 +266,13 @@ QList<TLV> Buffer::getTLVList(void)
 /** appends a flap header to the end of the buffer w/ given length and channel */
 int Buffer::appendFlap(const BYTE chan, const WORD len)
 {
-	char *tmp;
-	tmp = new char[length+6];
-	for (int i=0;i<length;i++)
-		tmp[i] = buf[i];
-	tmp[length] = 0x2a;
-	tmp[length+1] = chan;
-	tmp[length+2] = (sequenceNum & 0xff00) >> 8;
-	tmp[length+3] = (sequenceNum & 0x00ff);
-	tmp[length+4] = (len & 0xff00) >> 8;
-	tmp[length+5] = (len & 0x00ff);
-	if (buf)
-		delete buf;
-	buf = tmp;
+	doResize(6);
+	buf[length] = 0x2a;
+	buf[length+1] = chan;
+	buf[length+2] = (sequenceNum & 0xff00) >> 8;
+	buf[length+3] = (sequenceNum & 0x00ff);
+	buf[length+4] = (len & 0xff00) >> 8;
+	buf[length+5] = (len & 0x00ff);
 	length = length + 6;
 	sequenceNum++;
 	return length;
@@ -314,4 +287,20 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange, const QString &room
 	addByte(roomname.length());
 	addString(roomname.latin1(),roomname.length());
 	return addWord(instance);
+}
+
+/** Make the buffer bigger by inc bytes, reallocating memory if needed */
+void Buffer::doResize(int inc)
+{
+	if ( length + inc > alloc_length ) //if we need a new array
+	{
+		char *tmp;
+		tmp = new char[(length + inc)*2];
+		for (int i=0;i<length;i++)
+			tmp[i] = buf[i];
+		if (buf)
+			delete buf;
+		buf = tmp;
+		alloc_length = (length + inc)*2;
+	}
 }
