@@ -48,7 +48,7 @@ private:
 	void handleType2Message() {};
 	
 	//!Handles messages from channel 4 (type 4 messages)
-	void handleType4Message() {};
+	void handleType4Message();
 	
 private:
 	

@@ -61,7 +61,8 @@ public:
 		Normal = 0x0000,
 		AutoResponse = 0x0001,
 		UCS2 = 0x0010,
-		Latin = 0x0020
+		Latin = 0x0020,
+		UTF8 = 0x0040
 	};
 	
 	Message();

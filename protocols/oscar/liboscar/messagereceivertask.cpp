@@ -16,6 +16,7 @@
 
 #include "messagereceivertask.h"
 
+#include <qcstring.h>
 #include <kdebug.h>
 #include "transfer.h"
 #include "buffer.h"
@@ -115,19 +116,26 @@ void MessageReceiverTask::handleType1Message()
 			m_subCharSet = message.getWord();
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message charset: " << m_charSet 
 				<< " message subcharset: " << m_subCharSet << endl;
-			if ( m_charSet == 0x0000 || m_charSet == 0x0003 )
-			{ //we can just decode from the raw QByteArray because ascii and latin1 are all 8bit
+			if ( m_charSet == 0x0000 )
+			{ //we can just decode from the raw QByteArray because ascii is 7 bit
 				msg.addProperty( Oscar::Message::Latin );
 				msg.setText( QString( message.getBlock( ( *it ).length - 4 ) ) );
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
 			}
-			else //must be UCS-2
+			else if ( m_charSet = 0x0002 )
 			{
 				msg.addProperty( Oscar::Message::UCS2 );
 				int messageLength = ( ( *it ).length - 4 ) / 2;
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message length: " << messageLength << endl;
 				msg.setText( QString::fromUcs2( message.getWordBlock( messageLength ) ) );
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
+			}
+			else
+			{
+				msg.addProperty( Oscar::Message::UTF8 );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Decoding message as UTF-8" << endl;
+				QCString rawMessage( message.getBlock( ( *it ).length - 4 ) );
+				msg.setText( QString::fromUtf8( rawMessage, rawMessage.length() ) );
 			}
 			break;
 		} //end case
@@ -152,6 +160,42 @@ void MessageReceiverTask::handleType1Message()
 	msg.setType( 0x01 );
 	
 	emit receivedMessage( msg );
+}
+
+void MessageReceiverTask::handleType4Message()
+{
+	/*
+	TLV tlv5 = inbuf.getTLV();
+	kdDebug(14151) << k_funcinfo << "The first TLV is of type " << tlv5.type << endl;
+	if (tlv5.type != 0x0005)
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
+		return;
+	}
+	
+	Buffer tlv5buffer(tlv5.data, tlv5.length);
+	
+	DWORD uin = tlv5buffer.getLEDWord(); // little endian for no sane reason!
+	if ( QString::number(uin) != u.sn )
+		kdWarning(14151) << k_funcinfo << "message uin does not match uin found in packet header!" << endl;
+
+	BYTE msgType = tlv5buffer.getByte();
+	BYTE msgFlags = tlv5buffer.getByte();
+	
+	kdDebug(14151) << k_funcinfo << "Received server message. type = " << msgType 
+		<< ", flags = " << mgsFlags << endl;
+		
+	QCString msgText = tlv5buffer.getLNTS();
+	
+	Oscar::Message msg;
+	OscarMessage oMsg;
+	oMsg.setText(ServerToQString(msgText, contact, false), OscarMessage::Plain);
+	
+	delete [] msgText; // getBlock allocates memory, we HAVE to free it again!
+	
+	if(!oMsg.text().isEmpty())
+		parseMessage(u, oMsg, msgtype, msgflags);
+	*/
 }
 
 
