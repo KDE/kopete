@@ -111,8 +111,9 @@ void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 		kdDebug(14120) << k_funcinfo << endl;
 		QString messageText = msg.escapedBody();
 		kdDebug(14120) << k_funcinfo << messageText << endl;
-		//Add right click for channels
-		messageText.replace( QRegExp( QString::fromLatin1("(^|[\\W\\s])(#\\w+)") ), QString::fromLatin1("\\1<span class=\"KopeteIRCChannel\" style=\"cursor:pointer;\">\\2</span>") );
+
+		//Add right click for channels, only replace text not in HTML tags
+		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#\\w+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteIRCChannel\" style=\"cursor:pointer;\">\\1</span>") );
 
 		msg.setBody( messageText, KopeteMessage::RichText );
 	}
