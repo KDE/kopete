@@ -1,14 +1,14 @@
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+
+#include <kconfig.h>
 #include <kdebug.h>
-#include <qcheckbox.h>
+#include <kglobal.h>
 
 #include "ircaddcontactpage.h"
-#include <ircadd.h>
-#include <ircprotocol.h>
-
-#include <kglobal.h>
-#include <kconfig.h>
+#include "ircadd.h"
+#include "ircprotocol.h"
 
 IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)

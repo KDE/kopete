@@ -19,9 +19,11 @@
 #define MSNPREFERENCES_H
 
 #include <qwidget.h>
+
 #include <klineedit.h>
-#include <configmodule.h>
-#include <ircprefs.h>
+
+#include "configmodule.h"
+#include "ircprefs.h"
 
 /**
   *@author duncan
