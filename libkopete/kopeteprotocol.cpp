@@ -241,8 +241,7 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 		<< "; groupName: " << groupName  << endl;
 
 	//If this is a temporary contact, use the temporary group
-	KopeteGroup *parentGroup;
-	isTemporary ? parentGroup = KopeteGroup::temporary : parentGroup = KopeteContactList::contactList()->getGroup( groupName );
+	KopeteGroup *parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
 
 	if( parentContact )
 	{
