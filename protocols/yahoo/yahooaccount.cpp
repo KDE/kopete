@@ -61,7 +61,7 @@ YahooAccount::~YahooAccount()
 {
 }
 
-void YahooAccount::slotGoStatus(int status)
+void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
 {
 	kdDebug(14180) << "YahooAccount::slotGoStatus(" << status << ")" << endl;
 
@@ -74,7 +74,7 @@ void YahooAccount::slotGoStatus(int status)
 		stateOnConnection = status;
 	}
 	else
-	{	m_session->setAway(yahoo_status(status), "", status ? 1 : 0);
+	{	m_session->setAway(yahoo_status(status), awayMessage, status ? 1 : 0);
 		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(status));
 	}
 }
@@ -170,8 +170,10 @@ void YahooAccount::disconnect()
 void YahooAccount::setAway(bool status, const QString &awayMessage)
 {
 	kdDebug(14180) << "YahooAccount::setAway(" << status << ", " << awayMessage << ")" << endl;
-	// or SteppedOut?
-	slotGoStatus(status ? 2 : 0);
+	if(awayMessage.isNull() || awayMessage == "")
+		slotGoStatus(status ? 2 : 0);
+	else
+		slotGoStatus(status ? 99 : 0, awayMessage);
 }
 
 void YahooAccount::slotConnected()

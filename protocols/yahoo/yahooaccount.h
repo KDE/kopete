@@ -68,7 +68,7 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-	void slotGoStatus(int status);
+	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 
 	void slotLoginResponse(int succ, const QString &url);
 	void slotGotBuddies(const YList * buds);

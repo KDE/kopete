@@ -100,6 +100,7 @@ private:
 	void initActions();			// Load Status Actions
 	KActionMenu *theActionMenu;		// Statusbar Popup
 
+	QString theAwayMessage;			// The message to give when the user is away
 	KopeteWinPopup *theInterface;		// Our KopeteWinPopup instance
 	WPContact *theMyself;			// A contact to return for the API
 };

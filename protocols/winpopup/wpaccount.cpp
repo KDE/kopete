@@ -124,21 +124,14 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 	DEBUG(WPDMETHOD, "WPAccount::slotGotNewMessage(" << Body << ", " << Arrival.toString() << ", " << From << ")");
 
 	if(isConnected())
-	{
 		if(!isAway())
 		{	if(!contacts()[From]) addContact(From, From, 0, QString::null, true);
 			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
 		}
 		else
-		{
-			// send away message - TODO: should be taken from global settings
-			theInterface->slotSendMessage("AWAY", From);
-		}
-	}
+			theInterface->slotSendMessage(theAwayMessage, From);
 	else
-	{
 		DEBUG(WPDINFO, "WinPopup: That's strange - we got a message while offline! Ignoring.");
-	}
 }
 
 void WPAccount::connect()
@@ -164,9 +157,11 @@ void WPAccount::updateAccountId()
 	theMyself = new WPContact(this, accountId(), accountId(), 0);
 }
 
-void WPAccount::setAway(bool status, const QString &)
+void WPAccount::setAway(bool status, const QString &awayMessage)
 {
 	DEBUG(WPDMETHOD, "WPAccount::setAway()");
+
+	theAwayMessage = awayMessage.isNull() ? "I'm away at the moment." : awayMessage;
 
 	if(!isConnected())
 		theInterface->goOnline();

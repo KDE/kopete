@@ -206,7 +206,7 @@ void YahooSession::setAway( enum yahoo_status state, const QString &msg, int awa
 {
 	kdDebug(14180)<<"[YahooSession::setAway" << state << ", " << msg << ", " << away << "]" << m_connId << endl;
 
-	yahoo_set_away(m_connId, state, msg.local8Bit(), away);
+	yahoo_set_away(m_connId, state, msg.isNull() ? 0 : msg.local8Bit(), away);
 }
 
 void YahooSession::addBuddy( const QString &who, const QString &group)
@@ -794,7 +794,7 @@ void YahooSessionManager::errorReceiver(int id, char *err, int fatal)
 	emit session->error(err, fatal);
 }
 
-int YahooSessionManager::logReceiver(char *fmt, ...)
+int YahooSessionManager::logReceiver(char */*fmt*/, ...)
 {
 	kdDebug(14180) << "[YahooSessionManager::logReceiver]" << endl;
 	//emit session->
