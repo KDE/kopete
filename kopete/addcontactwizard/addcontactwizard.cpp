@@ -221,7 +221,6 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 			break;
 		}
 	}
-	kdDebug( 0 ) << k_funcinfo << "setting next enabled: " << oneIsChecked << endl;
 	setNextEnabled(selectService, oneIsChecked);
 }
 
@@ -321,7 +320,6 @@ void AddContactWizard::next()
 
 				connect(addPage, SIGNAL(dataValid( AddContactPage *, bool )),
 					this, SLOT( slotDataValid( AddContactPage *, bool )));
-				kdDebug( 14000 ) << k_funcinfo << "Connected slotDataValid" << endl;
 				addPage->show();
 
 				insertPage( addPage, i18n( "The account name is prepended here",
@@ -330,7 +328,6 @@ void AddContactWizard::next()
 			}
 		}
 		QWizard::next();
-		kdDebug( 14000 ) << k_funcinfo << "On next page after selectService" << endl;
 		return;
 	}
 
