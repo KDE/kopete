@@ -36,12 +36,12 @@ signals:
 	void notTyping( ConferenceEvent & );
 	void joined( ConferenceEvent & );
 	void left( ConferenceEvent &);
-	void invited( ConferenceEvent &, Message & );
+	void invited( ConferenceEvent & );
 	void otherInvited( ConferenceEvent & );
 	void invitationRejected( ConferenceEvent & );
 	void closed( ConferenceEvent & );
-	void message( const ConferenceEvent &, const Message & );
-	void autoReply( ConferenceEvent &, Message & );
+	void message( const ConferenceEvent &);
+	void autoReply( ConferenceEvent & );
 protected:
 	Q_UINT32 readFlags( QDataStream & din );
 	QString readMessage( QDataStream & din );

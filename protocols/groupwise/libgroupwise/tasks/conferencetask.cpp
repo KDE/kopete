@@ -82,11 +82,11 @@ bool ConferenceTask::take( Transfer * transfer )
 				break;
 			case EventTransfer::ReceiveMessage:
 				event.flags = readFlags( din );
-				m = readMessage( din );
+				event.message = readMessage( din );
 				qDebug( "ReceiveMessage" );
 				dumpConferenceEvent( event );
 				qDebug( "message: %s\n", m.ascii() );
-				emit message( event, m );
+				emit message( event );
 				break;
 			case EventTransfer::UserTyping:
 				qDebug( "UserTyping" );
@@ -99,11 +99,11 @@ bool ConferenceTask::take( Transfer * transfer )
 				emit notTyping( event );
 				break;
 			case EventTransfer::ConferenceInvite:
-				m = readMessage( din );
+				event.message = readMessage( din );
 				qDebug( "ConferenceInvite" );
 				dumpConferenceEvent( event );
 				qDebug( "message: %s\n", m.ascii() );
-				emit invited( event, m );
+				emit invited( event );
 				break;
 			case EventTransfer::ConferenceInviteNotify:
 				qDebug( "ConferenceInviteNotify" );
@@ -117,11 +117,11 @@ bool ConferenceTask::take( Transfer * transfer )
 				break;
 			case EventTransfer::ReceiveAutoReply:
 				event.flags = readFlags( din );
-				m = readMessage( din );
+				event.message = readMessage( din );
 				qDebug( "ReceiveAutoReply" );
 				dumpConferenceEvent( event );
 				qDebug( "message: %s\n", m.ascii() );
-				emit autoReply( event, m );
+				emit autoReply( event );
 				break;
 			default:
 				qDebug( "WARNING: didn't handle registered event %i, on conference %s\n", incomingEvent->event(), event.guid.ascii() );
