@@ -96,7 +96,7 @@ public:
 	 * Used on initial contactlist fetch to add contacts to the Kopete contact list
 	 * 
 	 */
-	void addOldContact( SSI* ssiItem, KopeteMetaContact* meta );
+	void addOldContact( SSI* ssiItem, KopeteMetaContact* meta = 0L );
 
 	/**
 	 * \brief Add contacts that were missing groups to the contact list

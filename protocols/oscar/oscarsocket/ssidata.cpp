@@ -62,7 +62,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 		// TLV(0x0066) with no data
 		newitem->tlvlist = "\x00\x66\x00\x00";
 		newitem->tlvlength = 4;
-		newItem->waitingAuth = true;
+		newitem->waitingAuth = true;
 	}
 
 	append(newitem);
@@ -195,6 +195,7 @@ SSI *SSIData::addInvis(const QString &name)
 	newitem->type = ROSTER_INVISIBLE; // the type here is deny
 	newitem->tlvlist = 0L;
 	newitem->tlvlength = 0;
+	newitem->waitingAuth = false;
 
 	append(newitem);
 
@@ -261,10 +262,12 @@ void SSIData::setWaitingAuth( SSI* item, bool waiting )
 		item->waitingAuth = waiting;
 }
 
-bool SSIData::waitingAuth( SSI* item );
+bool SSIData::waitingAuth( SSI* item )
 {
 	if ( item )
 		return item->waitingAuth;
+
+	return 0L;
 }
 
 
