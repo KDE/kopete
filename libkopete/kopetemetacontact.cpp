@@ -104,9 +104,9 @@ MetaContact::MetaContact()
 	connect( this, SIGNAL( contactAdded( Kopete::Contact * ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( contactRemoved( Kopete::Contact * ) ), SIGNAL( persistentDataChanged() ) );
 
-	
+
 	// make sure MetaContact is at least in one group
-	addToGroup( Group::topLevel() ); 
+	addToGroup( Group::topLevel() );
 			 //i'm not sure this is correct -Olivier
 			 // we probably should do the check in groups() instead
 }
@@ -129,10 +129,10 @@ void MetaContact::addContact( Contact *c )
 
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-		
+
 		connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-		
+
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 			this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
@@ -309,7 +309,7 @@ Contact *MetaContact::preferredContact()
 		Contact *c=it.current();
 
 		//Has the contact an open chatwindow?
-		 if( c->manager( Contact::CanCreate ) /*&& c->manager()->view(false)*/)
+		 if( c->manager( Contact::CannotCreate ) /*&& c->manager()->view(false)*/)
 		 {      //there is no need of having a view() i consider already having a manager
 		        // is enough to give the priority to that contact
 		 	if( !hasOpenView )
@@ -323,7 +323,7 @@ Contact *MetaContact::preferredContact()
 		 }
 		 else if( hasOpenView && contact->isOnline() )
 		 	continue; //This contact has not open view, but the selected contact has, and is reachable
-			
+
 		// FIXME: The isConnected call should be handled in Contact::isReachable
 		//        after KDE 3.2 - Martijn
 		if ( !c->account() || !c->account()->isConnected() || !c->isReachable() )
@@ -611,7 +611,7 @@ void MetaContact::removeFromGroup( Group *group )
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
 		c->sync(Contact::MovedBetweenGroup);
-	
+
 	emit removedFromGroup( this, group );
 }
 
@@ -832,7 +832,7 @@ void MetaContact::setMetaContactId( const QString& newMetaContactId )
 		removeKABC();
 	d->metaContactId = newMetaContactId;
 	updateKABC();
-	
+
 	emit onlineStatusChanged( this, d->onlineStatus );
 	emit persistentDataChanged();
 }
