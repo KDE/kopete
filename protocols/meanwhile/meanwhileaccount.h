@@ -27,19 +27,18 @@ class MeanwhileAccount : public Kopete::Account
 {
     Q_OBJECT
 public:
-    MeanwhileAccount(   MeanwhileProtocol *parent, 
-                        const QString &accountID,     
+    MeanwhileAccount(   MeanwhileProtocol *parent,
+                        const QString &accountID,
                         const char *name = 0 );
 
     ~MeanwhileAccount();
-    
-    virtual bool addContactToMetaContact(
-                        const QString &contactId, 
-                        const QString &displayName, 
+
+    virtual bool createContact(
+                        const QString &contactId,
                         Kopete::MetaContact *parentContact);
-                        
+
     virtual void connect();
-    
+
     virtual void disconnect();
 
     virtual void setAway(bool away,

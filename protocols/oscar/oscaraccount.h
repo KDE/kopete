@@ -162,12 +162,12 @@ protected:
 	/*
 	 * Adds a contact to a meta contact
 	 */
-	virtual bool addContactToMetaContact(const QString &contactId,
-		const QString &displayName, Kopete::MetaContact *parentContact );
+	virtual bool createContact(const QString &contactId,
+		 Kopete::MetaContact *parentContact );
 
 	/*
 	 * Protocols using Oscar must implement this to perform the instantiation
-	 * of their contact for Kopete.  Called by @ref addContactToMetaContact().
+	 * of their contact for Kopete.  Called by @ref createContact().
 	 * @param contactId theprotocol unique id of the contact
 	 * @param displayName the display name of the contact
 	 * @param parentContact the parent metacontact

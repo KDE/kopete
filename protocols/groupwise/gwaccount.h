@@ -2,10 +2,10 @@
     gwaccount.h - Kopete GroupWise Protocol
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
-    Based on Testbed    
+
+    Based on Testbed
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
-    
+
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -70,7 +70,7 @@ public:
 	 * Construct the context menu used for the status bar icon
 	 */
 	virtual KActionMenu* actionMenu();
-	
+
 	// DEBUG ONLY
 	void dumpManagers();
 	// DEBUG ONLY
@@ -78,16 +78,16 @@ public:
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
 	 * Kopete::MetaContact
 	 */
-	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, Kopete::MetaContact* parentContact);
+	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
 	/**
 	 * Called when Kopete is set globally away
 	 */
 	virtual void setAway(bool away, const QString& reason);
-	/** 
+	/**
 	 * Utility access to the port given by the user
 	 */
 	const int port() const;
-	/** 
+	/**
 	 * Utility access to the server given by the user
 	 */
 	const QString server() const;
@@ -101,7 +101,7 @@ public:
 	 * to start Tasks directly on the client and respond directly to their signals.
 	 */
 	Client * client() const;
-	/** 
+	/**
 	 * Utility access to a message manager instance for a given GUID
 	 */
 	GroupWiseMessageManager * messageManager( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
@@ -114,17 +114,17 @@ public:
 	 * Create a conference (start a chat) on the server
 	 */
 	void createConference( const int clientId, const QStringList& invitees );
-	
+
 	/**
 	 * Send a message
-	 */ 
+	 */
 	void sendMessage( const ConferenceGuid & guid, const Kopete::Message & message );
-	
+
 	/**
 	 * Invite someone to join a conference
 	 */
 	void sendInvitation( const ConferenceGuid & guid, const QString & dn, const QString & message );
-	
+
 	/**
 	 * Check a contact's blocking status
 	 * Only works when connected - otherwise always returns false
@@ -137,14 +137,14 @@ public:
 public slots:
 
 	void slotTestRTFize();
-	
+
 	/* Connects to the server. */
 	virtual void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
 	virtual void disconnect( Kopete::Account::DisconnectReason reason );
-signals: 
+signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
 	void contactTyping( const ConferenceEvent & );
@@ -184,17 +184,17 @@ protected slots:
 	void receiveContact( const ContactItem & );
 	/**
 	 * Called when we receive a CONTACT'S METADATA (including initial status) from the server side contact list,
-	 * or in response to an explicity query.  This is necessary to handle some events from the server.  
+	 * or in response to an explicity query.  This is necessary to handle some events from the server.
 	 * These events are queued in the account until the data arrives and then we handle the event.
 	 */
 	void receiveContactUserDetails( const GroupWise::ContactDetails & );
 	/**
-	 * Called after we create a contact on the server 
+	 * Called after we create a contact on the server
 	 */
 	void receiveContactCreated();
 	// SLOTS HANDLING PROTOCOL EVENTS
 	/**
-	 * Called when the server has a message for us.  
+	 * Called when the server has a message for us.
 	 * This identifies the sending Kopete::Contact and passes the message on to it,
 	 * in order to locate the MessageManager and finally pass to the GUI.
 	 */
@@ -210,13 +210,13 @@ protected slots:
 	void changeOurStatus( GroupWise::Status, const QString &, const QString & );
 	/**
 	 * Called when we've been disconnected for logging in as this user somewhere else
-	 */ 
+	 */
 	void slotConnectedElsewhere();
-	/** 
+	/**
 	 * Called when we've logged in successfully
 	 */
 	void slotLoggedIn();
-	/** 
+	/**
 	 * Called when a login attempt failed
 	 */
 	void slotLoginFailed();
@@ -270,7 +270,7 @@ protected slots:
 	void slotCSDisconnected();
 	void slotCSError( int error );
 	void slotCSWarning( int warning );
-	
+
 	// HOUSEKEEPING
 	/**
 	 * Because a message manager that we create will get a GUID from the server some time after it is created,
@@ -283,7 +283,7 @@ protected slots:
 	 * might have been in, and remove it from our map.
 	 */
 	void slotMessageManagerDestroyed( QObject * );
-	
+
 	/** Debug slots */
 	void slotConnError();
 	void slotConnConnected();
@@ -299,14 +299,14 @@ protected:
 private:
 	// current auto reply message
 	QString m_autoReply;
-	// Network code 
+	// Network code
 	KNetworkConnector * m_connector;
 	QCA::TLS * m_QCATLS;
 	QCATLSHandler *	m_tlsHandler;
 	ClientStream * m_clientStream;
 	// Client, entry point of libgroupwise
 	Client * m_client;
-	
+
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
 	GroupWiseMessageManager::Dict m_managers;

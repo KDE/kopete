@@ -47,12 +47,12 @@ class BlackLister;
  * There are few pure virtual method that the protocol must implement. Examples are:
  * \li \ref connect()
  * \li \ref disconnect()
- * \li \ref addContactToMetaContact()
+ * \li \ref createContact()
  *
  * The accountId is an <b>constant</b> unique id, which represents the login.
  * The @ref myself() contact is one of the most important contacts, which represents
  * the user tied to this account. You must create this contact in the contructor of your
- * account and use @ref setMyself() 
+ * account and use @ref setMyself()
  *
  * All account data is automatically saved to @ref KConfig. This includes the
  * accountId, the password (in a encrypted format), the autoconnect flag, the color,
@@ -93,7 +93,7 @@ public:
 	 * will take place. Any other value will reconnect the account on disconnection.
 	 * The case where the password is wrong will be handled differently.
 	 */
-	enum DisconnectReason { 
+	enum DisconnectReason {
 		BadUserName = -2,
 		InvalidHost = -1,
 		Manual = 0,
@@ -270,8 +270,8 @@ public:
 	 * not from any other class! (Not even a derived class).
 	 */
 	void registerContact( Contact *c );
-	
-	
+
+
 	/**
 	  * Return the @ref KConfigGroup used to write and read special properties
 	  *
@@ -286,17 +286,17 @@ public:
 	 * notifications should be used
 	 */
 	bool suppressStatusNotification() const;
-	
+
 	/**
 	 * \return a pointer to the blacklist of the account
 	 */
 	BlackLister* blackLister();
-	
+
 	/**
 	 * \return @c true if the contact with ID @p contactId is in the blacklist, @c false otherwise
 	 */
 	virtual bool isBlocked( const QString &contactId );
-	
+
 protected:
 	/**
 	 * \brief Set the 'myself' contact.
@@ -324,11 +324,9 @@ protected:
 	 * add the contact to the server if the protocol supports it
 	 *
 	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols)
 	 * @param parentContact The metacontact to add this contact to
 	 */
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-		 MetaContact *parentContact ) =0;
+	virtual bool createContact( const QString &contactId, MetaContact *parentContact ) =0;
 
 public slots:
 	/**
@@ -384,7 +382,7 @@ public slots:
 	 * @param contactId the contact to be added to the blacklist
 	 */
 	virtual void block( const QString &contactId );
-	
+
 	/**
 	 * Remove a user from the blacklist. The default implementation calls
 	 * blackList()->removeContact( contactId )
@@ -392,8 +390,8 @@ public slots:
 	 * @param contactId the contact to be removed from the blacklist
 	 */
 	virtual void unblock( const QString &contactId );
-	
-	
+
+
 	/**
 	 * @deprecated   place everithing in the constructor
 	 * @todo remove
@@ -405,12 +403,12 @@ signals:
 	 * The accountId should be constant, see @ref Kopete::Account::setAccountId()
 	 */
 	void accountIdChanged();
-	
+
 	/**
 	 * The color of the account has been changed
 	 */
 	void colorChanged( const QColor & );
-	
+
 	void accountDestroyed( const Kopete::Account* );
 
 private slots:
@@ -435,9 +433,9 @@ private slots:
 private:
 
 	KopeteAccountPrivate *d;
-	
-	
-	
+
+
+
 public:
 	/**
 	 * @todo remove

@@ -46,7 +46,7 @@ public:
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
 	 * Kopete::MetaContact
 	 */
-	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, Kopete::MetaContact* parentContact);
+	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
 	/**
 	 * Called when Kopete is set globally away
 	 */
@@ -65,7 +65,7 @@ public:
 	TestbedFakeServer* server();
 public slots:
 	/**
-	 * Called by the server when it has a message for us.  
+	 * Called by the server when it has a message for us.
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
 	 */
 	void receivedMessage( const QString &message );

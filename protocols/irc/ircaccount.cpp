@@ -647,8 +647,7 @@ void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &
 	m_contactManager->addToNotifyList( newnick );
 }
 
-bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
-	 Kopete::MetaContact *m )
+bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m )
 {
 	kdDebug(14120) << k_funcinfo << contactManager() << endl;
 	IRCContact *c;
@@ -657,7 +656,6 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	{//This should NEVER happen
 		m = new Kopete::MetaContact();
 		Kopete::ContactList::self()->addMetaContact(m);
-		m->setDisplayName( displayName );
 	}
 
 	if ( contactId.startsWith( QString::fromLatin1("#") ) )

@@ -55,7 +55,7 @@ public:
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{
 	}
-	
+
 	~KopeteAccountPrivate() { delete blackList; }
 
 	Kopete::Protocol *protocol;
@@ -76,7 +76,7 @@ Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, co
  : QObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
 {
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
-	
+
 	d->autoconnect = d->configGroup->readBoolEntry( "AutoConnect", true );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
@@ -313,24 +313,13 @@ bool Kopete::Account::addContact( const QString &contactId, const QString &displ
 		Kopete::ContactList::self()->addMetaContact( parentContact );
 	}
 
-	//Fix for 77835 (forward the metacontact name is displayName is empty)
-	QString realDisplayName;
-	if ( displayName.isEmpty() )
-	{
-		realDisplayName = parentContact->displayName();
-	}
-	else
-	{
-		realDisplayName = displayName;
-	}
-
 	if ( c )
 	{
 		c->setMetaContact( parentContact );
 	}
 	else
 	{
-		if ( !addContactToMetaContact( contactId, realDisplayName, parentContact ) )
+		if ( !createContact( contactId , parentContact ) )
 			return false;
 	}
 

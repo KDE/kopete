@@ -151,10 +151,9 @@ protected:
 	 * (updating the GUI, parenting to meta contact, etc.) is being taken care of.
 	 *
 	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols)
 	 * @param parentContact The metacontact to add this contact to
 	 */
-	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, Kopete::MetaContact * parentContact);
+	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
 
 private:
 	/* Psi backend for this account. */

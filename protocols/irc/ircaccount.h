@@ -190,7 +190,7 @@ public slots:
 	void appendMessage( const QString &message, MessageType type = Default );
 
 protected:
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact ) ;
+	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
 protected slots:
 	virtual void loaded();

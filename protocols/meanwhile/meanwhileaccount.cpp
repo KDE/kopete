@@ -37,9 +37,9 @@
         initServer();    \
     if (server != NULL)
 
-MeanwhileAccount::MeanwhileAccount( 
-                        MeanwhileProtocol *parent, 
-                        const QString &accountID, 
+MeanwhileAccount::MeanwhileAccount(
+                        MeanwhileProtocol *parent,
+                        const QString &accountID,
                         const char *name)
     : Kopete::Account ( parent, accountID , name )
 {
@@ -68,7 +68,7 @@ void MeanwhileAccount::initServer()
         QObject::connect(server,
                      SIGNAL(loginDone()),
                      this,
-                     SLOT(slotLoginDone())); 
+                     SLOT(slotLoginDone()));
         QObject::connect(server,
                      SIGNAL(mesgReceived(const QString &,
                                          const QString &)),
@@ -99,18 +99,17 @@ void MeanwhileAccount::setPlugin(MeanwhilePlugin *plugin)
     infoPlugin = plugin;
 }
 
-bool MeanwhileAccount::addContactToMetaContact(
-                        const QString & contactId , 
-                        const QString & displayName , 
+bool MeanwhileAccount::createContact(
+                        const QString & contactId ,
                         Kopete::MetaContact * parentContact)
 {
-	MeanwhileContact* newContact = 
+	MeanwhileContact* newContact =
                 new MeanwhileContact(contactId,
-                                     displayName,
+                                     parentContact->displayName(),
                                      this,
                                      parentContact);
     if ((newContact != NULL) && (server != NULL)
-        && (myself()->onlineStatus() != 
+        && (myself()->onlineStatus() !=
                 MeanwhileProtocol::protocol()->meanwhileOffline))
         server->addContact(newContact,contacts());
 
@@ -119,8 +118,8 @@ bool MeanwhileAccount::addContactToMetaContact(
 
 void MeanwhileAccount::connect()
 {
-    
-    if (server==NULL) 
+
+    if (server==NULL)
         meanwhileGoOnline();
 }
 
@@ -145,8 +144,8 @@ void MeanwhileAccount::setAway(
 
 KActionMenu * MeanwhileAccount::actionMenu()
 {
-    KActionMenu * theMenu = 
-            new KActionMenu(accountId(), 
+    KActionMenu * theMenu =
+            new KActionMenu(accountId(),
                             myself()->onlineStatus().iconFor(this),
                             this);
     theMenu->popupMenu()->insertTitle(
@@ -224,8 +223,8 @@ void MeanwhileAccount::meanwhileGoOnline()
 
 void MeanwhileAccount::meanwhileGoOffline()
 {
-    if ((server!=NULL) && 
-        (myself()->onlineStatus() != 
+    if ((server!=NULL) &&
+        (myself()->onlineStatus() !=
             MeanwhileProtocol::protocol()->meanwhileOffline))
             server->logoff();
     if (server!=NULL)
@@ -235,11 +234,11 @@ void MeanwhileAccount::meanwhileGoOffline()
     }
     myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
 
-    QDictIterator<Kopete::Contact> it(contacts()); 
+    QDictIterator<Kopete::Contact> it(contacts());
 
     for( ; it.current(); ++it )
     {
-        Kopete::Contact *contact = 
+        Kopete::Contact *contact =
                 static_cast<Kopete::Contact *>(it.current());
         contact->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
     }
@@ -252,16 +251,16 @@ void MeanwhileAccount::meanwhileGoAway()
 
 void MeanwhileAccount::meanwhileGoAway(const QString &statusmsg)
 {
-    if ((server!=NULL) && 
-        (myself()->onlineStatus() !=    
+    if ((server!=NULL) &&
+        (myself()->onlineStatus() !=
             MeanwhileProtocol::protocol()->meanwhileOffline))
         server->goAway(statusmsg);
 }
 
 void MeanwhileAccount::meanwhileGoDND()
 {
-    if ((server!=NULL) && 
-        (myself()->onlineStatus() !=    
+    if ((server!=NULL) &&
+        (myself()->onlineStatus() !=
             MeanwhileProtocol::protocol()->meanwhileOffline))
         server->goDND(QString("Please donot disturb"));
 }
@@ -347,10 +346,10 @@ void MeanwhileAccount::meanwhileChangeStatus()
 
 void MeanwhileAccount::slotServerNotification(const QString &mesg)
 {
-    KMessageBox::queuedMessageBox( 
-                        0, KMessageBox::Error , 
+    KMessageBox::queuedMessageBox(
+                        0, KMessageBox::Error ,
                         mesg,
-                        i18n( "Meanwhile Plugin: Message from server" ), 
+                        i18n( "Meanwhile Plugin: Message from server" ),
                         KMessageBox::Notify );
 }
 

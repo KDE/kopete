@@ -70,9 +70,9 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
 	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
 
-	
-	KConfigGroup *config=configGroup();	
-	
+
+	KConfigGroup *config=configGroup();
+
 	QString publicName = config->readEntry(  QString::fromLatin1( "displayName" ) );
 	if ( !publicName.isNull() )
 		myself()->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
@@ -130,7 +130,7 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 		return;
 	}
 
-	m_password = passwd; 
+	m_password = passwd;
 
 	if ( m_password.isNull() )
 	{
@@ -145,9 +145,9 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 		// ( the 1 is for the myself contact )
 		configGroup()->writeEntry( "serial", 0 );
 	}
-	
+
 	m_openInboxAction->setEnabled( false );
-	
+
 	createNotificationServer(serverName(), serverPort());
 }
 
@@ -157,9 +157,9 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 	{
 		//remove every slots to that socket, so we won't delete receive signals
 		// from the old socket thinking they are from the new one
-		QObject::disconnect( m_notifySocket , 0, this, 0 ); 
+		QObject::disconnect( m_notifySocket , 0, this, 0 );
 		m_notifySocket->deleteLater(); //be sure it will be deleted
-		m_notifySocket=0L; 
+		m_notifySocket=0L;
 	}
 
 
@@ -196,11 +196,11 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 		SLOT( slotNotifySocketClosed() ) );
 	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
 		SLOT( slotNewContactList() ) );
-	QObject::connect( m_notifySocket, SIGNAL( receivedNotificationServer(const QString&, uint )  ), 
+	QObject::connect( m_notifySocket, SIGNAL( receivedNotificationServer(const QString&, uint )  ),
 		SLOT(createNotificationServer(const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
-	
+
 	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect(host, port);
 }
@@ -539,11 +539,11 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		// kdDebug( 14140 ) << k_funcinfo << "Group " << groupName << " already in list, skipped." << endl;
 		return;
 	}
-	
+
 	//--------- Find the appropriate Kopete::Group, or create one ---------//
 	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	Kopete::Group *fallBack = 0L;
-	
+
 	//check if we have one in the old group list. if yes, update the id translate map.
 	for(QMap<unsigned int, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
 	{
@@ -560,7 +560,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 			break;
 		}
 	}
-	
+
 	if(!fallBack)
 	{
 		//it's certenly a new group !  search if one already exist with the same displayname.
@@ -614,7 +614,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 	fallBack->setPluginData( protocol(), accountId() + " id", QString::number( groupNumber ) );
 	fallBack->setPluginData( protocol(), accountId() + " displayName", groupName );
 	m_groupList.insert( groupNumber, fallBack );
-	
+
 	// We have pending groups that we need add a contact to
 	if ( tmp_addToNewGroup.contains(groupName) )
 	{
@@ -623,7 +623,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		{
 			QString contactId =*it;
 			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
-			notifySocket()->addContact( contactId, contacts()[ contactId ] ? 
+			notifySocket()->addContact( contactId, contacts()[ contactId ] ?
 					contacts()[contactId]->property( Kopete::Global::Properties::self()->nickName()).value().toString()
 					: contactId, groupNumber, MSNProtocol::FL );
 		}
@@ -736,7 +736,7 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 		// (in slotGroupRemoved)
 		m_groupList.remove(groupNumber);
 	}
-	
+
 	//remove it from the old list
 	for(QMap<unsigned int, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
 	{
@@ -752,7 +752,7 @@ void MSNAccount::slotNewContactList()
 {
 		m_oldGroupList=m_groupList;
 		for(QMap<unsigned int, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
-		{	//they are about to be changed 
+		{	//they are about to be changed
 			it.data()->setPluginData( protocol(), accountId() + " id", QString::null );
 		}
 
@@ -785,7 +785,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 	// On empty lists handle might be empty, ignore that
 	if ( handle.isEmpty() )
 		return;
-		
+
 	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
 
 	if ( lists & 1 )	// FL
@@ -808,7 +808,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			c->setProperty( Kopete::Global::Properties::self()->nickName() ,  publicName );
 
 			const QMap<uint, Kopete::Group *> oldServerGroups = c->serverGroups();
-			c->clearServerGroups();  
+			c->clearServerGroups();
 			for ( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
 			{
 				uint newServerGroupID =  ( *it ).toUInt();
@@ -829,7 +829,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					QString oldnewID=old_group->pluginData(protocol() , accountId() +" id");
 					if ( !oldnewID.isEmpty() && contactGroups.contains( oldnewID ) )
 						continue; //ok, it's correctn no need to do anything.
-					
+
 					c->metaContact()->removeFromGroup( old_group , Kopete::MetaContact::DontSyncGroups );
 				}
 			}
@@ -1146,7 +1146,7 @@ void MSNAccount::slotAddContact( const QString &userName, const QString &display
 		m_notifySocket->addContact( userName, displayName, 0, MSNProtocol::FL );
 }
 
-bool MSNAccount::addContactToMetaContact( const QString &contactId, const QString &displayName, Kopete::MetaContact *metaContact )
+bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )
 {
 	if ( m_notifySocket )
 	{
@@ -1175,7 +1175,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 					else
 					{
 						// Add the contact to the group on the server
-						m_notifySocket->addContact( contactId, displayName, Gid, MSNProtocol::FL );
+						m_notifySocket->addContact( contactId, metaContact->displayName(), Gid, MSNProtocol::FL );
 						added = true;
 					}
 				}
@@ -1193,7 +1193,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 			if ( !added )
 			{
 				// only on top-level, or in no groups ( add it to the default group )
-				m_notifySocket->addContact( contactId, displayName, 0, MSNProtocol::FL );
+				m_notifySocket->addContact( contactId, metaContact->displayName(), 0, MSNProtocol::FL );
 			}
 
 			// FIXME: Find out if this contact was really added or not!

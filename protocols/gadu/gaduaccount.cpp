@@ -321,13 +321,12 @@ GaduAccount::disconnect( DisconnectReason reason )
 }
 
 bool
-GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
-					 Kopete::MetaContact* parentContact )
+GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* parentContact )
 {
-	kdDebug(14100) << "addContactToMetaContact " << contactId << endl;
+	kdDebug(14100) << "createContact " << contactId << endl;
 
 	uin_t uinNumber = contactId.toUInt();
-	GaduContact* newContact = new GaduContact( uinNumber, displayName, this, parentContact );
+	GaduContact* newContact = new GaduContact( uinNumber, parentContact->displayName(), this, parentContact );
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
 

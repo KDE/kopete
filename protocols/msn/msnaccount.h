@@ -102,7 +102,7 @@ public slots:
 	void slotStartChatSession( const QString& handle );
 
 protected:
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact );
+	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );
 
 
 private slots:
@@ -178,7 +178,7 @@ private slots:
 	/** add contact ui **/
 	void slotBlockContact( const QString& passport ) ;
 	void slotAddContact( const QString &userName , const QString& displayName);
-	
+
 	/**
 	 * When the dispatch server sends us the notification server to use.
 	 */
@@ -201,7 +201,7 @@ public: //FIXME: should be private
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
-private:	
+private:
 	// server data
 	QStringList m_allowList;
 	QStringList m_blockList;
@@ -216,10 +216,10 @@ private:
 
 	//this is the translation between old to new groups id when syncing from server.
 	QMap<unsigned int, Kopete::Group*> m_oldGroupList;
-	
+
 	/**
 	 * I need the password in createNotificationServer.
-	 * but i can't ask it there with password() because a nested loop will provoque crash 
+	 * but i can't ask it there with password() because a nested loop will provoque crash
 	 * at this place.   so i'm forced to keep it here.
 	 * I would like an API to request the password WITHOUT askling it.
 	 */

@@ -84,13 +84,13 @@ bool WPAccount::checkHost(const QString &Name)
 	return theInterface->checkHost(Name);
 }
 
-bool WPAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact )
+bool WPAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact )
 {
-	kdDebug(14180) << "[WPAccount::addContactToMetaContact] contactId: " << contactId << endl;
+	kdDebug(14180) << "[WPAccount::createContact] contactId: " << contactId << endl;
 
 	if(!contacts()[contactId])
 	{
-		WPContact *newContact = new WPContact(this, contactId, displayName, parentContact);
+		WPContact *newContact = new WPContact(this, contactId, parentContact->displayName(), parentContact);
 		return newContact != 0;
 	}
 	else

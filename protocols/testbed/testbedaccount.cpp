@@ -59,15 +59,13 @@ KActionMenu* TestbedAccount::actionMenu()
 	theActionMenu->insert(new KAction (TestbedProtocol::protocol()->testbedOffline.caption(),
 		TestbedProtocol::protocol()->testbedOffline.iconFor(this), 0, this, SLOT (slotGoOffline ()), this,
 		"actionTestbedOfflineDisconnect"));
-	
+
 	return theActionMenu;
 }
 
-bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, Kopete::MetaContact* parentContact)
+bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	kdDebug ( 14210 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
-			<< endl;
-	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, displayName, parentContact );
+	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, parentContact->displayName(), parentContact );
 	return newContact != 0L;
 }
 
@@ -115,7 +113,7 @@ void TestbedAccount::slotGoAway ()
 
 	if (!isConnected ())
 		connect();
-	
+
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedAway );
 	updateContactStatus();
 }
@@ -135,11 +133,11 @@ void TestbedAccount::receivedMessage( const QString &message )
 	// Look up the contact the message is from
 	QString from;
 	TestbedContact* messageSender;
-	
+
 	from = message.section( ':', 0, 0 );
 	//from = QString::fromLatin1("echo");
 	messageSender = static_cast<TestbedContact *>( contacts ()[ from ] );
-	
+
 	kdDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
 	messageSender->receivedMessage( message );

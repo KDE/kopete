@@ -56,7 +56,7 @@ class YahooAccount : public Kopete::PasswordedAccount
 public:
 
 	enum SignalConnectionType { MakeConnections, DeleteConnections };
-	
+
 	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
 	~YahooAccount();
 
@@ -100,7 +100,7 @@ public slots:
 	 * Disconnect from the Yahoo service
 	 */
 	virtual void disconnect();
-	
+
 
 signals:
 	/**
@@ -117,7 +117,7 @@ protected:
 	/**
 	 * Adds our Yahoo contact to a metacontact
 	 */
-	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact);
+	virtual bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
 
 	/**
 	 * Gets the just-received message color
@@ -134,7 +134,7 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-	
+
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
 	void slotGotBuddies(const YList * buds);
@@ -213,7 +213,7 @@ private:
 	int m_currentMailCount;
 	YahooSession *m_session;	// Connection Object
 	YahooProtocol *m_protocol;	// The Protocol Object
-	
+
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 };

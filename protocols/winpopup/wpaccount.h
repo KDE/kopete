@@ -86,7 +86,7 @@ public slots:
 	void slotSendMessage(const QString &Body, const QString &Destination);
 
 protected:
-	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact);
+	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
 
 private slots:
 	/**

@@ -612,8 +612,8 @@ void OscarAccount::setServerPort(int port)
 }
 
 
-bool OscarAccount::addContactToMetaContact(const QString &contactId,
-	const QString &displayName, Kopete::MetaContact *parentContact)
+bool OscarAccount::createContact(const QString &contactId,
+	Kopete::MetaContact *parentContact)
 {
 	/* We're not even online or connecting
 	 * (when getting server contacts), so don't bother
@@ -632,7 +632,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Found contact on internal list. Making new OscarContact" << endl;
-		OscarContact* newContact = createNewContact(contactId, displayName, parentContact, true);
+		OscarContact* newContact = createNewContact(contactId, parentContact->displayName(), parentContact, true);
 		if ( newContact )
 		{
 			newContact->setStatus(OSCAR_OFFLINE);
@@ -688,14 +688,14 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			engine()->sendAddBuddy(tocNormalize(contactId), groupName, false);
 
 			// Create the actual contact, which adds it to the metacontact
-			return(createNewContact(contactId, displayName, parentContact, true));
+			return(createNewContact(contactId, parentContact->displayName(), parentContact, true));
 		}
 		else
 		{
 			kdDebug(14150) << "Temporary new contact, only adding him to local list" << endl;
 			// This is a temporary contact, so don't add it to the server list
 			// Create the contact, which adds it to the parent contact
-			if(!createNewContact(contactId, displayName, parentContact))
+			if(!createNewContact(contactId, parentContact->displayName(), parentContact))
 				return false;
 
 			// Get user status through BLM if contact is temporary (only works on ICQ)

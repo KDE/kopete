@@ -279,7 +279,7 @@ JabberContactPool *JabberAccount::contactPool ()
 
 }
 
-bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString &/*displayName*/, Kopete::MetaContact * metaContact)
+bool JabberAccount::createContact (const QString & contactId,  Kopete::MetaContact * metaContact)
 {
 
 	// collect all group names

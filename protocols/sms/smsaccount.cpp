@@ -21,6 +21,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kopetemetacontact.h>
 
 #include "kopeteuiglobal.h"
 
@@ -93,10 +94,10 @@ void SMSAccount::disconnect()
 	// FIXME: Set all contacts to SMSOffline here
 }
 
-bool SMSAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
+bool SMSAccount::createContact( const QString &contactId,
 	Kopete::MetaContact * parentContact )
 {
-	if (new SMSContact(this, contactId, displayName, parentContact))
+	if (new SMSContact(this, contactId, parentContact->displayName(), parentContact))
 		return true;
 	else
 		return false;

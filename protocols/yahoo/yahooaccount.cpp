@@ -39,6 +39,7 @@
 #include <kopetepassword.h>
 #include <kopeteuiglobal.h>
 #include <kopetenotifyclient.h>
+#include <kopetemetacontact.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -479,7 +480,7 @@ YahooContact *YahooAccount::contact( const QString &id )
 	return static_cast<YahooContact *>(contacts()[id]);
 }
 
-bool YahooAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact )
+bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact )
 {
 	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
@@ -487,7 +488,9 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 	{
 		// FIXME: New Contacts are NOT added to KABC, because:
 		// How on earth do you tell if a contact is being deserialised or added brand new here?
-		YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact );
+			// -- actualy (oct 2004) this method is only called when new contact are added.  but this will
+			//    maybe change and you will be noticed   --Olivier
+		YahooContact *newContact = new YahooContact( this, contactId, parentContact->displayName(), parentContact );
 		return newContact != 0;
 	}
 	else

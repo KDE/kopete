@@ -120,8 +120,7 @@ protected slots:
 
 protected:
 	//{
-	bool addContactToMetaContact( const QString& contactId,
-			const QString& displayName,
+	bool createContact( const QString& contactId,
 			Kopete::MetaContact* parentContact );
 	//}
 

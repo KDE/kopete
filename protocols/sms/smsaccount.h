@@ -55,7 +55,7 @@ public slots:
 	virtual void disconnect();
 
 protected:
-	bool addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact);
+	bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
 	virtual void loaded();
 
 private:
