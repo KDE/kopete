@@ -20,8 +20,8 @@
 
 #include <libxml/globals.h>
 #include <libxml/parser.h>
-#include <libxslt/transform.h>
 #include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
 #include <libxslt/xsltconfig.h>
 
 // Solaris Fix
