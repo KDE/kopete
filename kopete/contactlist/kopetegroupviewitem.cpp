@@ -82,7 +82,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 	default:
 		newText = m_group->displayName();
 		break;
-    }
+	}
 
 	totalMemberCount = 0;
 	onlineMemberCount = 0;
@@ -98,8 +98,8 @@ void KopeteGroupViewItem::refreshDisplayName()
 		}
 	}
 
-	newText += " (" + QString::number( onlineMemberCount ) + "/" + QString::number( totalMemberCount ) + ")";
 	m_renameText = newText;
+	newText += " (" + QString::number( onlineMemberCount ) + "/" + QString::number( totalMemberCount ) + ")";
 	//kdDebug( 14000 ) << k_funcinfo << "newText='" << newText << "', old text= " << text( 0 ) << endl;
 
 	setText( 0, newText );
@@ -127,9 +127,11 @@ QString KopeteGroupViewItem::key( int, bool ) const
 void KopeteGroupViewItem::startRename( int col )
 {
 	kdDebug(14000) << k_funcinfo << endl;
+	if ( col != 0 ) return;
 	refreshDisplayName();
 	setText( 0, m_renameText );
-	QListViewItem::startRename(col);
+	setRenameEnabled( 0, true );
+	QListViewItem::startRename( 0 );
 }
 
 void KopeteGroupViewItem::okRename( int col )
