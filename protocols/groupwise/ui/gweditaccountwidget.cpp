@@ -83,7 +83,7 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_server->setText( account()->pluginData( GroupWiseProtocol::protocol(), "Server") );
 	m_preferencesDialog->m_port->setValue( account()->pluginData( GroupWiseProtocol::protocol(), "Port" ).toInt() );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->autoLogin() );
-	
+	m_preferencesDialog->m_alwaysAccept->setChecked( account()->pluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations" ) == "true" );
 }
 
 KopeteAccount* GroupWiseEditAccountWidget::apply()
@@ -116,6 +116,7 @@ void GroupWiseEditAccountWidget::writeConfig()
 	account()->setPluginData( GroupWiseProtocol::protocol(), "Server", m_preferencesDialog->m_server->text() );
 	account()->setPluginData( GroupWiseProtocol::protocol(), "Port", QString::number( m_preferencesDialog->m_port->value() ) );
 	account()->setAutoLogin( m_preferencesDialog->m_autoConnect->isChecked() );
+	account()->setPluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations", m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
 	m_preferencesDialog->m_password->save( &account()->password() );
 	settings_changed = false;
 }

@@ -21,6 +21,8 @@
 
 #include <kdialogbase.h>
 
+class ShowInvitationWidget;
+
 /**
 This is the dialog that is shown when you receive an invitation to chat.
 
@@ -40,6 +42,7 @@ protected slots:
 private:
 	GroupWiseAccount * m_account;
 	ConferenceGuid m_guid; // the conference we were invited to join.
+	ShowInvitationWidget * m_wid;
 };
 
 #endif

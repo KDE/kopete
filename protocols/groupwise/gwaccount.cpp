@@ -901,8 +901,17 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	GroupWiseContact * contactFrom = contactForDN( event.user );
 	if ( !contactFrom )
 		contactFrom = createTemporaryContact( event.user );
-	ReceiveInvitationDialog * dlg = new ReceiveInvitationDialog( this, event, Kopete::UI::Global::mainWidget(), "invitedialog" );
-	dlg->show();
+	if ( pluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations" ) == "true" )
+	{
+		client()->joinConference( event.guid );
+	}
+	else
+	{
+		ReceiveInvitationDialog * dlg = new ReceiveInvitationDialog( this, event,
+				Kopete::UI::Global::mainWidget(), "invitedialog" );
+		dlg->show();
+	}
+	
 }
 
 void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & guid, const QStringList & participants, const QStringList & invitees )

@@ -16,6 +16,7 @@
     *************************************************************************
 */
 
+#include <qcheckbox.h>
 #include <qlabel.h>
 
 #include <klocale.h>
@@ -27,6 +28,7 @@
 #include "gwaccount.h"
 #include "gwcontact.h"
 #include "gwerror.h"
+#include "gwprotocol.h"
 #include "gwshowinvitation.h"
 
 #include "gwreceiveinvitationdialog.h"
@@ -41,15 +43,16 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 	
 	GroupWiseContact * c = account->contactForDN( event.user );
 	
-	ShowInvitationWidget * wid = new ShowInvitationWidget ( this );
+	m_wid = new ShowInvitationWidget ( this );
 	if ( c )
-		wid->m_contactName->setText( c->metaContact()->displayName() );
+		m_wid->m_contactName->setText( c->metaContact()->displayName() );
 	else //something is very wrong
-		wid->m_contactName->setText( event.user );
+		m_wid->m_contactName->setText( event.user );
 		
-	wid->m_dateTime->setText( KGlobal::locale()->formatDateTime( event.timeStamp ) );
-	wid->m_message->setText( QString("<b>%1</b>").arg( event.message ) );
-	setMainWidget( wid );
+	m_wid->m_dateTime->setText( KGlobal::locale()->formatDateTime( event.timeStamp ) );
+	m_wid->m_message->setText( QString("<b>%1</b>").arg( event.message ) );
+	
+	setMainWidget( m_wid );
 }
 
 ReceiveInvitationDialog::~ReceiveInvitationDialog()
@@ -59,6 +62,9 @@ ReceiveInvitationDialog::~ReceiveInvitationDialog()
 void ReceiveInvitationDialog::slotYesClicked()
 {
 	m_account->client()->joinConference( m_guid );
+	// save the state of always accept invitations
+	QString alwaysAccept = m_wid->cb_dontShowAgain->isChecked() ? "true" : "false";
+	m_account->setPluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations", alwaysAccept );
 	deleteLater();
 }
 

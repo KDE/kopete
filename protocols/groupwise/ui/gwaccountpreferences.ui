@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>GroupWiseAccountPreferences</class>
 <widget class="QWidget">
     <property name="name">
@@ -100,6 +100,9 @@
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -241,6 +244,47 @@
                             </widget>
                         </vbox>
                     </widget>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Advanced &amp;Options</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_alwaysAccept</cstring>
+                        </property>
+                        <property name="text">
+                            <string>A&amp;lways accept invitations</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+L</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer7</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>91</height>
+                            </size>
+                        </property>
+                    </spacer>
                 </vbox>
             </widget>
         </widget>

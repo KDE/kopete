@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>ShowInvitationWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,6 +11,9 @@
             <width>495</width>
             <height>204</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string></string>
     </property>
     <vbox>
         <property name="name">
@@ -124,6 +127,9 @@
             </property>
             <property name="text">
                 <string>A&amp;lways accept invitations</string>
+            </property>
+            <property name="accel">
+                <string>Alt+L</string>
             </property>
         </widget>
     </vbox>
