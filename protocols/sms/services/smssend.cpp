@@ -53,7 +53,7 @@ void SMSSend::send(const KopeteMessage& msg)
 
 	if (provider.length() < 1)
 	{
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No provider configured"), i18n("Could Not Send Message"));
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("No provider configured."), i18n("Could Not Send Message"));
 		return;
 	}
 
