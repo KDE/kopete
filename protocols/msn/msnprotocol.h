@@ -79,6 +79,14 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway();
 
+	void removeContact( const QString userID );
+	void removeFromGroup( const QString userID, const QString group );
+	void moveContact( const QString userID, const QString oldGroup,
+						const QString newGroup );
+	void copyContact( const QString userID, const QString newGroup );
+
+	QStringList groups();
+
 	KMSNService* msnService() const;
 
 public slots:

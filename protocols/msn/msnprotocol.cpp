@@ -594,6 +594,32 @@ KMSNService* MSNProtocol::msnService() const
 	return m_msnService;
 }
 
+void MSNProtocol::removeContact( const QString userID )
+{
+	m_msnService->contactDelete( userID );
+}
+
+void MSNProtocol::removeFromGroup( const QString userID, const QString group )
+{
+	m_msnService->contactRemove( userID, group );
+}
+
+void MSNProtocol::moveContact( const QString userID, const QString oldGroup,
+								const QString newGroup )
+{
+	m_msnService->contactMove( userID, oldGroup, newGroup);
+}
+
+void MSNProtocol::copyContact( const QString userID, const QString newGroup )
+{
+	m_msnService->contactCopy( userID, newGroup);
+}
+
+QStringList MSNProtocol::groups()
+{
+	return m_msnService->getGroups();
+}
+
 // vim: set ts=4 sts=4 sw=4 noet:
 
 #include "msnprotocol.moc"

@@ -41,10 +41,8 @@ MSNContact::MSNContact(QString userid, const QString name, QString group, MSNPro
 void MSNContact::initContact( QString /* userid */, const QString name, MSNProtocol *protocol)
 {
 	// We connect this signal so that we can tell when a user's status changes
-	//connect(protocol->msnService(), SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
 	connect( protocol, SIGNAL( updateContact( QString, uint ) ),
 				this, SLOT( slotUpdateContact( QString, uint ) ) );
-	//connect(protocol->msnService(), SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
 	connect( protocol, SIGNAL( contactRemoved( QString, QString ) ),
 				this, SLOT( slotContactRemoved( QString, QString ) ) );
 
@@ -69,7 +67,7 @@ void MSNContact::initActions()
 
 void MSNContact::showContextMenu(QPoint point)
 {
-	QStringList grouplist = mProtocol->msnService()->getGroups();
+	QStringList grouplist = mProtocol->groups();
 	actionContactCopy->setItems(grouplist);
 
 	popup = new KPopupMenu();
@@ -97,31 +95,23 @@ void MSNContact::slotChatThisUser()
 
 void MSNContact::slotRemoveThisUser()
 {
-	mProtocol->msnService()->contactDelete(mUserID);
+	mProtocol->removeContact( mUserID );
 	delete this;
 }
 
 void MSNContact::slotRemoveFromGroup()
 {
-	QString group;
-	group = mGroup;
-	mProtocol->msnService()->contactRemove(mUserID, group);
+	mProtocol->removeFromGroup( mUserID, mGroup );
 }
 
 void MSNContact::slotMoveThisUser()
 {
-	QString newgroup;
-	QString oldgroup;
-	newgroup = actionContactMove->currentText();
-	oldgroup = mGroup;
-	mProtocol->msnService()->contactMove( mUserID, oldgroup, newgroup);	
+	mProtocol->moveContact( mUserID, mGroup, actionContactMove->currentText() );
 }
 
 void MSNContact::slotCopyThisUser()
 {
-	QString newgroup;
-	newgroup = actionContactCopy->currentText();
-	mProtocol->msnService()->contactCopy( mUserID, newgroup);
+	mProtocol->copyContact( mUserID, actionContactCopy->currentText() );
 }
 
 void MSNContact::slotContactRemoved(QString handle, QString group)
