@@ -98,6 +98,7 @@ void IRCAccount::slotNewPrivMessage(const QString &originating, const QString &,
 
 void IRCAccount::connect()
 {
+	mMySelf->setOnlineStatus( IRCProtocol::IRCUserConnecting() );
 	engine()->connectToServer( mMySelf->nickName() );
 }
 

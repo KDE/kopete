@@ -59,6 +59,7 @@ KopeteOnlineStatus IRCProtocol::m_UserOp;
 KopeteOnlineStatus IRCProtocol::m_UserVoice;
 KopeteOnlineStatus IRCProtocol::m_UserOffline;
 KopeteOnlineStatus IRCProtocol::m_UserAway;
+KopeteOnlineStatus IRCProtocol::m_UserConnecting;
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
@@ -77,6 +78,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
 	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 0, this, 3, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
 	m_UserAway = KopeteOnlineStatus( KopeteOnlineStatus::Away, 5, this, 3, QString::null, i18n( "Go &Away" ), i18n( "Away" ));
+	m_UserConnecting = KopeteOnlineStatus( KopeteOnlineStatus::Connecting, 1, this, 4, QString::null, i18n( "Connecting" ), i18n( "Connecting" ));
 
 	setStatusIcon( "irc_protocol_offline" );
 

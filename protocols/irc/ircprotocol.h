@@ -69,6 +69,7 @@ public:
 	static IRCProtocol *protocol();
 
 	static KopeteOnlineStatus IRCChannelOnline() { return m_ChannelOnline; };
+	static KopeteOnlineStatus IRCUserConnecting() { return m_UserConnecting; };
 	static KopeteOnlineStatus IRCUserOnline() { return m_UserOnline; };
 	static KopeteOnlineStatus IRCChannelOffline() { return m_ChannelOffline; };
 	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
@@ -108,6 +109,7 @@ private:
 	static KopeteOnlineStatus m_UserVoice;
 	static KopeteOnlineStatus m_UserOffline;
 	static KopeteOnlineStatus m_UserAway;
+	static KopeteOnlineStatus m_UserConnecting;
 
 	KActionCollection *mActions;
 
