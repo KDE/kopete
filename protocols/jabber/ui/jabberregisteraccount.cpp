@@ -400,10 +400,6 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
-		// FIXME: this is required because Iris crashes if we try
-		//        to disconnect here. Hopefully Justin can fix this.
-		QTimer::singleShot(0, this, SLOT(disconnect ()));
-
 		slotDeleteDialog ();
 	}
 	else
