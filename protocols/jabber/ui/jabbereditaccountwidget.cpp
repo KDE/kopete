@@ -124,6 +124,13 @@ KopeteAccount *JabberEditAccountWidget::apply ()
 		m_account = new JabberAccount (m_protocol, mID->text ());
 	}
 
+	if(m_account->isConnected())
+	{
+		KMessageBox::information(this,
+					i18n("The changes you just made will take effect next time you log in with Jabber."),
+					i18n("Jabber Changes During Online Jabber Session"));
+	}
+
 	this->writeConfig ();
 
 	return m_account;
