@@ -113,7 +113,7 @@ public:
   virtual void sendAddBuddy(const QString &name, const QString &group);
   /** Adds a group to the server side buddy list */
   virtual void sendAddGroup(const QString &name);
-  /** Deletes a buddy from the server side contact list */
+  /** Deletes a buddy from the server side buddy list */
   virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
   /** Sends the server lots of  information about the currently logged in user */
   void sendInfo(void);

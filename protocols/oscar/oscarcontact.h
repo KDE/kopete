@@ -24,7 +24,7 @@
 
 /**
   * Contact for oscar protocol
-  * @author twl6
+  * @author Tom Linsky <twl6@po.cwru.edu>
   */
 
 struct UserInfo;

@@ -924,59 +924,59 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
     blist.revision = inbuf.getWord(); //gets the revision
     kdDebug() << "[OSCAR] Receiving buddy list: revision " << blist.revision << endl;
     while(inbuf.getLength() > 4) //the last 4 bytes are the timestamp
-	{
-	    SSI *ssi = new SSI;
-	    WORD namelen = inbuf.getWord(); //length of name
-	    char *name = inbuf.getBlock(namelen); //name
-	    ssi->name = QString(name);
-	    ssi->gid = inbuf.getWord();
-	    ssi->bid = inbuf.getWord();
-	    ssi->type = inbuf.getWord(); //type of the entry
-	    ssi->tlvlength = inbuf.getWord(); //length of data
-	    if (ssi->tlvlength) //sometimes there is additional info
-		ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
-	    ssiData.append(ssi);
-	    SSI *ssi2 = ssiData.current();
-	    if (ssi->name == "CWRU")
-		kdDebug() << "[OSCAR] Read CWRU: name: " << ssi2->name << ", gid: " << ssi2->gid
-			  << ", bid: " << ssi2->bid << ", type: " << ssi2->type << ", tbslen: "
-			  << ssi2->tlvlength << endl;
-	    kdDebug() << "[OSCAR] Read a buddy: name: " << ssi->name << ", gid: " << ssi->gid
-		      << ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
-		      << endl;
-	    TBuddy *bud;
-	    switch (ssi->type) {
-	    case 0x0000: //buddy
-				bud = new TBuddy;
-				bud->name = ssi->name;
-				bud->group = curgroup;
-				bud->status = OSCAR_OFFLINE;
-				kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup
-			  	<< " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
-				blist.buddyList.add(bud);
-				break;
-	    case 0x0001: //group
-				if (namelen) //if it's not the master group
-		    {
-					blist.buddyList.addGroup(ssi->name);
-					curgroup++;
-		    }
-				break;
-	    case 0x0002: // TODO permit buddy
-				break;
-	    case 0x0003: // TODO deny buddy
-				bud = new TBuddy;
-				bud->name = ssi->name;
-				kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to deny list." << endl;
-				blist.denyList.add(bud);
-				emit denyAdded(ssi->name);
-				break;	    	
-	    case 0x0004: // TODO permit-deny setting
-				break;
-	   	};
-	    if (name)
-				delete name;
-	}
+		{
+				SSI *ssi = new SSI;
+				WORD namelen = inbuf.getWord(); //length of name
+				char *name = inbuf.getBlock(namelen); //name
+				ssi->name = QString(name);
+				ssi->gid = inbuf.getWord();
+				ssi->bid = inbuf.getWord();
+				ssi->type = inbuf.getWord(); //type of the entry
+				ssi->tlvlength = inbuf.getWord(); //length of data
+				if (ssi->tlvlength) //sometimes there is additional info
+						ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
+				ssiData.append(ssi);
+				SSI *ssi2 = ssiData.current();
+				if (ssi->name == "CWRU")
+						kdDebug() << "[OSCAR] Read CWRU: name: " << ssi2->name << ", gid: " << ssi2->gid
+											<< ", bid: " << ssi2->bid << ", type: " << ssi2->type << ", tbslen: "
+											<< ssi2->tlvlength << endl;
+				kdDebug() << "[OSCAR] Read a buddy: name: " << ssi->name << ", gid: " << ssi->gid
+									<< ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
+									<< endl;
+				TBuddy *bud;
+				switch (ssi->type) {
+				case 0x0000: //buddy
+						bud = new TBuddy;
+						bud->name = ssi->name;
+						bud->group = curgroup;
+						bud->status = OSCAR_OFFLINE;
+						kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup
+											<< " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
+						blist.buddyList.add(bud);
+						break;
+				case 0x0001: //group
+						if (namelen) //if it's not the master group
+						{
+								blist.buddyList.addGroup(ssi->name);
+								curgroup++;
+						}
+						break;
+				case 0x0002: // TODO permit buddy
+						break;
+				case 0x0003: // TODO deny buddy
+						bud = new TBuddy;
+						bud->name = ssi->name;
+						kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to deny list." << endl;
+						blist.denyList.add(bud);
+						emit denyAdded(ssi->name);
+						break;	    	
+				case 0x0004: // TODO permit-deny setting
+						break;
+				};
+				if (name)
+						delete name;
+		}
     blist.timestamp = inbuf.getDWord();
     kdDebug() << "[OSCAR] Finished getting buddy list" << endl;
     sendSSIActivate();
