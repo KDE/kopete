@@ -61,7 +61,7 @@ K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name),
 	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_protocol",    i18n( "Go O&nline" ),   i18n( "Online" ) ),
 	WPAway(    KopeteOnlineStatus::Away,    20, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
-	WPOffline( KopeteOnlineStatus::Offline, 0,  this, 2,  "",   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
+	WPOffline( KopeteOnlineStatus::Offline, 0,  this, 2,  QString::null,   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
 
