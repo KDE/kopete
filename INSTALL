@@ -2,7 +2,7 @@ Basic Installation
 ==================
 
    These are generic installation instructions.
-   
+
    The `configure' shell script attempts to guess correct values for
 various system-dependent variables used during compilation.  It uses
 those values to create a `Makefile' in each directory of the package.
@@ -178,4 +178,37 @@ operates.
      script, and exit.
 
 `configure' also accepts some other, not widely useful, options.
+
+Finding Plugins
+===============
+If you don't see any "plugins" listed in the "plugins" page of the
+configuration dialog after installing Kopete you may have installed
+it in a directory where KDE doesn't look for additional resources
+like plugins.
+
+KDE applications by default look in all directories listed in the
+$KDEDIRS environment variable, in $KDEDIR if this variable doesn't
+exist, and ultimately in the directory where kdelibs is installed.
+Unless you take special precautions applications will _NOT_ look in
+other directories, even if you install additional software (like
+Kopete) there.
+
+There are two solutions to this problem.
+
+The 'correct' solution if you want to keep your filesystem clean and
+have self-compiled software separate from your distribution's packages
+is to add the Kopete prefix to $KDEDIRS.
+
+So, if $KDEDIRS currently points to /opt/kde3 and you installed Kopete
+to /usr/local then you need to set $KDEDIRS to '/opt/kde3:/usr/local'.
+You need to store this change in a file that is picked up by all shells
+and for all users, like /etc/profile. The name of the preferred version
+varies from system to system.
+
+An easier solution is to simply install Kopete in the same directory as
+where your KDE resides by adding a flag to configure like
+
+./configure --prefix=/opt/kde3
+
+if KDE is installed in /opt/kde3.
 
