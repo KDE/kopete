@@ -1101,15 +1101,15 @@ void JabberProtocol::slotGotVCard()
 {
 	Jabber::JT_VCard *vCard = (Jabber::JT_VCard *) sender();
 	
+	if ((vCard->jid().userHost() == myContact->userId()) && vCard->success()){ /* Gwah ... evil evil evil evil evil. */
+		myContact->slotGotVCard(vCard);
+		return;
+	}
+	
 	if (!(vCard->success() && !vCard->vcard().isIncomplete()))
 	{
 		// unsuccessful, or incomplete
 		KMessageBox::error(kopeteapp->mainWindow(), i18n("Unable to retrieve vCard for %1").arg(vCard->jid().userHost()));
-		return;
-	}
-
-	if (vCard->jid().userHost() == myContact->userId()) { /* Gwah. */
-		myContact->slotGotVCard(vCard);
 		return;
 	}
 
