@@ -1543,37 +1543,6 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 			chatWindowPopup->insertSeparator();
 		}
 
-		Kopete::Message message = messageFromNode( activeElement );
-		if ( m_manager->members().contains( message.from() ) > -1 ) //FIXME: QPtrList::find() is faster, find a way to use it
-		{
-			bool actions = false;
-			int j = 0;
-
-			Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Plugins" );
-
-			// Add the protocol to the list
-			plugins.append( m_manager->protocol() );
-
-			Kopete::PluginList::ConstIterator it;
-			for ( it = plugins.begin(); it != plugins.end(); ++it )
-			{
-				uint i = 0;
-				QPtrList<KAction> *customActions = (*it)->customChatWindowPopupActions( message, activeElement );
-
-				if ( customActions && !customActions->isEmpty() )
-				{
-					actions = true;
-					for( KAction *a = customActions->first(); a; a = customActions->next() )
-						a->plug( chatWindowPopup, (++i) + j );
-				}
-				delete customActions;
-				j++;
-			}
-
-			if ( actions )
-				chatWindowPopup->insertSeparator();
-		}
-
 		copyAction->setEnabled( chatView->hasSelection() );
 		copyAction->plug( chatWindowPopup );
 		saveAction->plug( chatWindowPopup );
