@@ -1,3 +1,20 @@
+/***************************************************************************
+                          ircpreferences.h  -  description
+                             -------------------
+    begin                : Wed Jan 23 2002
+    copyright            : (C) 2002 by nbetcher
+    email                : nbetcher@kde.org
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+ 
 #include "ircpreferences.h"
 
 #include "ircprefs.h"
@@ -15,8 +32,6 @@
 #include <qlineedit.h>
 #include <qradiobutton.h>
 
-
-
 IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	: ConfigModule(i18n("IRC Plugin"),i18n("Internet Relay Chat Protocol"),pixmap,parent)
 {
@@ -31,6 +46,7 @@ IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	preferencesDialog->highlightColor->setColor(KGlobal::config()->readColorEntry("HighlightColor", &color));
 	preferencesDialog->chkHighlightNick->setChecked(KGlobal::config()->readBoolEntry("HighlightNickname", false));
 	preferencesDialog->chkHighlightOthers->setChecked(KGlobal::config()->readBoolEntry("HighlightOthers", false));
+	preferencesDialog->phraseHighlight->setEnabled(KGlobal::config()->readBoolEntry("HighlightOthers", false));
 	preferencesDialog->chkSideIcons->setChecked(KGlobal::config()->readBoolEntry("UseSidePics", true));
 	preferencesDialog->chkShowTimes->setChecked(KGlobal::config()->readBoolEntry("UseTimeStamps", true));
 	preferencesDialog->useMDI->setChecked(KGlobal::config()->readBoolEntry("UseMDI", true));
@@ -135,14 +151,16 @@ void IRCPreferences::slotHighlightOthers()
 	} else {
 		if (preferencesDialog->chkHighlightNick->isChecked() == false)
 		{
-			preferencesDialog->lblUseToHighlight->setEnabled(false);
 			preferencesDialog->lblClick->setEnabled(false);
 			preferencesDialog->highlightColor->setEnabled(false);
-			preferencesDialog->phraseHighlight->setEnabled(false);
+			preferencesDialog->lblUseToHighlight->setEnabled(false);
 		}
+		preferencesDialog->phraseHighlight->setEnabled(false);
 	}
 }
+
 #include "ircpreferences.moc"
+
 /*
  * Local variables:
  * c-indentation-style: k&r

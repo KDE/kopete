@@ -1,9 +1,9 @@
 /***************************************************************************
-                          msnpreferences.h  -  description
+                          ircpreferences.h  -  description
                              -------------------
     begin                : Wed Jan 23 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+    copyright            : (C) 2002 by nbetcher
+    email                : nbetcher@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,21 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef MSNPREFERENCES_H
-#define MSNPREFERENCES_H
-
-
+#ifndef IRCPREFERENCES_H
+#define IRCPREFERENCES_H
 
 #include "configmodule.h"
 
-
-
 class ircPrefsUI;
 
-
-
 /**
-  *@author duncan
+  *@author nbetcher
   */
 
 class IRCPreferences : public ConfigModule
@@ -60,4 +54,3 @@ private slots:
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

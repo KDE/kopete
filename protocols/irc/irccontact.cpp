@@ -394,7 +394,6 @@ void IRCContact::execute()
 
 void IRCContact::slotDeleteContact()
 {
-#ifdef 0
 	if (KMessageBox::warningYesNo(qApp->mainWidget(),
 				      i18n("<qt>Are you sure you want to remove %1 from your contact list?</qt>").arg(displayName()),
 				      i18n("Confirmation")) == KMessageBox::Yes)
@@ -415,7 +414,6 @@ void IRCContact::slotDeleteContact()
 		}
 		delete this;
 	}
-#endif
 }
 
 void IRCContact::slotPart()
