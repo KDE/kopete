@@ -1456,12 +1456,36 @@ void OscarSocket::parseBuddyRights(Buffer &/*inbuf*/)
 	}
 }
 
-/** Parses msg rights info from server */
-void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
+void OscarSocket::parseMsgRights(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYICBM) TODO: Ignoring ICBM rights" << endl;
-	// FIXME: write code to parse this
-	//requestBOSRights();
+	// docu: http://iserverd.khstu.ru/oscar/snac_04_05.html
+
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYICBM) Parsing ICBM rights" << endl;
+
+	WORD channel = inbuf.getWord();
+	kdDebug(14150) << k_funcinfo << "channel=" << channel << endl;
+
+	DWORD messageFlags = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "messageFlags=" << messageFlags << endl;
+	/*
+bit1: messages allowed for specified channel
+bit2: missed calls notifications enabled for specified channel
+bit4: client supports typing notifications
+	*/
+
+	WORD maxMessageSnacSize = inbuf.getWord();
+	kdDebug(14150) << k_funcinfo << "maxMessageSnacSize=" << maxMessageSnacSize << endl;
+
+	WORD maxSendWarnLvl = inbuf.getWord(); // max sender Warning Level
+	kdDebug(14150) << k_funcinfo << "maxSendWarnLvl=" << maxSendWarnLvl << endl;
+
+	WORD maxRecvWarnLvl = inbuf.getWord(); // max Receiver Warning Level
+	kdDebug(14150) << k_funcinfo << "maxRecvWarnLvl=" << maxRecvWarnLvl << endl;
+
+	WORD minMsgInterval = inbuf.getWord(); // minimum message interval (msec)
+	kdDebug(14150) << k_funcinfo << "minMsgInterval=" << minMsgInterval << endl;
+
+	/*WORD unknown = */inbuf.getWord();
 
 	// After we get this from the server
 	// we have to send some messaging parameters
@@ -2040,12 +2064,13 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				}
 				case 0x001e: // unknown, empty
 					break;
-				default: //unknown info type
+				default: // unknown info type
 				{
 					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
 						") length=" << t.length << " in userinfo for user '" <<
 						u.sn << "'" << endl;
-					kdDebug(14150) << k_funcinfo << t.data << endl;
+					Buffer temp(t.data, t.length);
+					kdDebug(14150) << k_funcinfo << temp.toString() << endl;
 				}
 			}; // END switch()
 			delete [] t.data;
@@ -2061,11 +2086,19 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	{
 		kdDebug(14150) << k_funcinfo << "ZERO sized userinfo!" << endl;
 		// Buffer had length of zero for some reason, so
-		u.userclass = -1;
-		u.membersince = 1;
-		u.onlinesince = 1;
-		u.idletime = 0;
-		u.sessionlen = -1;
+		u.evil=0;
+		u.userclass=-1;
+		u.membersince=1;
+		u.onlinesince=1;
+		u.capabilities=0;
+		u.sessionlen=-1;
+		u.idletime=0;
+		u.realip=0;
+		u.localip=0;
+		u.port=0;
+		u.fwType=0;
+		u.version=0;
+		u.icqextstatus=0;
 	}
 	return u;
 }
@@ -3189,25 +3222,32 @@ void OscarSocket::sendInfo()
 // Sends parameters for ICBM messages (CLI_SETICBM)
 void OscarSocket::sendMsgParams()
 {
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_SETICBM)" << endl;
+
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0002,0x0000,0x00000002);
 
+	// max channels
 	//this is read-only, and must be set to 0 here
 	outbuf.addWord(0x0000);
 
 	//these are all read-write
 	//flags
-	outbuf.addDWord(0x0000000b);
+	if(mIsICQ)
+		outbuf.addDWord(0x00000003);
+	else
+		outbuf.addDWord(0x0000000b);
 
-	//TODO: make these parameters customizable options!
-	//max message length
+	//max message length (8000 bytes)
 	outbuf.addWord(0x1f40);
-	//max sender warning level
+	//max sender warning level (999)
 	outbuf.addWord(0x03e7);
-	//max receiver warning level
+	//max receiver warning level  (999)
 	outbuf.addWord(0x03e7);
-	//min message interval limit
-	outbuf.addDWord(0x00000000);
+	//min message interval limit  (0 msec)
+	outbuf.addWord(0x0000);
+	// unknown parameter
+	outbuf.addWord(0x0000);
 
 	sendBuf(outbuf,0x02);
 }
