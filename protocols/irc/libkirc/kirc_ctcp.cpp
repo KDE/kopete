@@ -98,7 +98,7 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uin
 	{
 	case KIRCTransfer::Chat:
 		writeCtcpQueryMessage(nickname, QString::null,
-			QString("DCC"),
+			QString::fromLatin1("DCC"),
 			KIRC::join( QString::fromLatin1("CHAT"), QString::fromLatin1("chat"),
 				m_sock->localAddress()->nodeName(), QString::number(port)
 			)
@@ -111,7 +111,7 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uin
 			noWhiteSpace.replace(QRegExp("\\s+"), "_");
 
 		writeCtcpQueryMessage(nickname, QString::null,
-			QString("DCC"),
+			QString::fromLatin1("DCC"),
 			KIRC::join( QString::fromLatin1( "SEND" ), noWhiteSpace, m_sock->localAddress()->nodeName(),
 				QString::number( port ), QString::number( file.size() )
 			)
@@ -161,7 +161,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		 *  filesize = Size of file being sent
 		 */
 		bool okayHost, okayPort, okaySize;
-		QFileInfo realfile(msg.arg(1));
+//		QFileInfo realfile(msg.arg(1));
 		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
@@ -172,7 +172,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 				this, msg.nickFromPrefix(),
 				address, port,
 				KIRCTransfer::FileIncoming,
-				(QFile *)0L, size );
+				msg.arg(1), size );
 			return true;
 		}
 	}

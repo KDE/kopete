@@ -1,9 +1,9 @@
 /*
     kirctransfer.cpp - IRC transfer.
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2003      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,6 +15,7 @@
     *************************************************************************
 */
 
+#include <kdebug.h>
 #include <kextsock.h>
 
 #include <qfile.h>
@@ -25,42 +26,36 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 				Type type,
 				QObject *parent, const char *name )
 	: QObject( parent, name ),
-//	  m_engine(engine), m_nick(nick),
-	  m_type(type),
-	  m_socket(0),
-	  m_file(0),
-	  m_file_size_cur(0), m_file_size_ack(0),
-	  m_received_bytes_limit(0), m_received_bytes(0),
-	  m_sent_bytes_limit(0), m_sent_bytes(0)
+	  m_engine(engine), m_nick(nick),
+	  m_type(type), m_socket(0),
+	  m_initiated(false),
+	  m_file(0), m_fileName(QString::null), m_fileSize(0), m_fileSizeCur(0), m_fileSizeAck(0),
+	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
 {
 }
 
 KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
 				QHostAddress , Q_UINT16,
 				KIRCTransfer::Type type,
-				QFile *file, Q_UINT32 file_size,
+				QString file, Q_UINT32 file_size,
 				QObject *parent, const char *name )
 	: QObject( parent, name ),
-	  m_type(type),
-	  m_received_bytes_limit(0), m_received_bytes(0),
-	  m_sent_bytes_limit(0), m_sent_bytes(0)
+	  m_engine(engine), m_nick(nick),
+	  m_type(type), m_socket(0),
+	  m_initiated(false),
+	  m_file(0), m_fileName(QString::null), m_fileSize(0), m_fileSizeCur(0), m_fileSizeAck(0),
+	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
 {
 }
 
 KIRCTransfer::~KIRCTransfer()
 {
-	switch( m_type )
+	if(m_socket)
 	{
-	case Chat:
-		break;
-	case FileOutgoing:
-	case FileIncoming:
-		if( m_file )
-			m_file->close();
-		break;
-	default:
-		break;
+		m_socket->close();
+		m_socket->deleteLater();
 	}
+	// m_file is automatically closed on destroy.
 }
 /*
 KIRCTransfer::Status KIRCTransfer::status()
@@ -72,20 +67,23 @@ KIRCTransfer::Status KIRCTransfer::status()
 	return KExtendedSocket::error;
 }
 */
-void KIRCTransfer::connectToPeer()
-{
-	if(m_socket)
-		m_socket->connect();
-}
 
-bool KIRCTransfer::setSocket( KExtendedSocket *socket )
+bool KIRCTransfer::initiate()
 {
-	if (!m_socket)
+	if(m_initiated)
 	{
-		m_socket = socket;
+		kdDebug(14121) << k_funcinfo << "Transfer allready initiated" << endl;
+		return false;
+	}
 
-		m_socket->enableRead( true );
-		m_socket->enableWrite( true );
+	if(m_socket)
+	{
+		m_initiated = true;
+
+		m_file.setName(m_fileName);
+
+		if(m_socket->status())
+			m_socket->connect();
 
 		connect(m_socket, SIGNAL(connectionClosed()),
 			this, SLOT(slotConnectionClosed()));
@@ -99,31 +97,43 @@ bool KIRCTransfer::setSocket( KExtendedSocket *socket )
 		case Chat:
 			connect(m_socket, SIGNAL(readyRead()),
 				this, SLOT(readyReadFileIncoming()));
-			return true;
+			break;
 		case FileIncoming:
-			if( !m_file )
-				break;
+			m_file.open(IO_WriteOnly);
 			connect(m_socket, SIGNAL(readyRead()),
 				this, SLOT(readyReadFileIncoming()));
-			return true;
+			break;
 		case FileOutgoing:
-			if( !m_file )
-				break;
+			m_file.open(IO_ReadOnly);
 			connect(m_socket, SIGNAL(readyRead()),
 				this, SLOT(readyReadFileOutgoing()));
 //			QSignal for sending data
-			return true;
+			break;
 		default:
-//			Unknown extra initializer for type.
+			kdDebug(14121) << k_funcinfo << "Closing transfer: Unknown extra initiation for type:" << m_type << endl;
+			m_socket->close();
+			return false;
 			break;
 		}
 
-//		moved upper as all signal should be called by the event loop.
-//		m_socket->enableRead( true );
-//		m_socket->enableWrite( true );
-//		return true;
+		m_socket->enableRead(true);
+		m_socket->enableWrite(true);
+		return true;
 	}
-//	setAutoDelete( true );
+	else
+		kdDebug(14121) << k_funcinfo << "Socket not set" << endl;
+	return false;
+}
+
+bool KIRCTransfer::setSocket( KExtendedSocket *socket )
+{
+	if (!m_socket)
+	{
+		m_socket = socket;
+		return true;
+	}
+	else
+		kdDebug(14121) << k_funcinfo << "Socket allready set" << endl;
 	return false;
 }
 
@@ -163,14 +173,14 @@ void KIRCTransfer::readyReadLine()
 
 void KIRCTransfer::readyReadFileIncoming()
 {
-	m_buffer_length = m_socket->readBlock(m_buffer, sizeof(m_buffer));
-	if (m_buffer_length != -1)
+	m_bufferLength = m_socket->readBlock(m_buffer, sizeof(m_buffer));
+	if (m_bufferLength != -1)
 	{
-		m_file_size_cur += m_file->writeBlock(m_buffer, m_buffer_length);
-		if(m_file_size_cur > m_file_size_ack)
+		m_fileSizeCur += m_file.writeBlock(m_buffer, m_bufferLength);
+		if(m_fileSizeCur > m_fileSizeAck)
 		{
-			m_file_size_ack = m_file_size_ack;
-			m_socket_dataStream << m_file_size_ack;
+			m_fileSizeAck = m_fileSizeAck;
+			m_socketDataStream << m_fileSizeAck;
 		}
 	}
 	emitSignals();
@@ -195,20 +205,20 @@ void KIRCTransfer::readyReadFileOutgoing()
 {
 //	if( m_socket->canread( sizeof(m_file_size_ack) ) )
 	{
-		m_socket_dataStream >> m_file_size_ack;
+		m_socketDataStream >> m_fileSizeAck;
 		emitSignals();
 	}
 }
 
 void KIRCTransfer::emitSignals()
 {
-	if(m_received_bytes_limit)
-		emit received( m_received_bytes * 100 / m_received_bytes_limit );
-	emit receivedBytes( m_received_bytes );
+	if(m_receivedBytesLimit)
+		emit received( m_receivedBytes * 100 / m_receivedBytesLimit );
+	emit receivedBytes( m_receivedBytes );
 
-	if(m_sent_bytes_limit)
-		emit sent( m_sent_bytes * 100 / m_sent_bytes_limit );
-	emit sentBytes( m_sent_bytes );
+	if(m_sentBytesLimit)
+		emit sent( m_sentBytes * 100 / m_sentBytesLimit );
+	emit sentBytes( m_sentBytes );
 }
 
 #include "kirctransfer.moc"

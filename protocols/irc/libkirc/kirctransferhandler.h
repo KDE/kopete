@@ -34,15 +34,9 @@ class KIRCTransferHandler
 {
 	Q_OBJECT
 
-//protected:
-//	KIRCTransferHandler();
-
 public:
 	static KIRCTransferHandler *self()
-	{
-		return &m_self;
-	}
-
+		{ return &sm_self; }
 
 	KIRCTransferServer *server();
 	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
@@ -51,7 +45,7 @@ public:
 		KIRC *engine, QString nick,// QString nick_peer_adress,
 		QHostAddress peer_address, Q_UINT16 peer_port,
 		KIRCTransfer::Type type,
-		QFile *file = 0L, Q_UINT32 file_size = 0 );
+		QString file = QString::null, Q_UINT32 fileSize = 0 );
 
 //	void registerServer( DCCServer * );
 //	QPtrList<DCCServer> getRegisteredServers();
@@ -68,7 +62,8 @@ signals:
 	void transferCreated( KIRCTransfer *transfer );
 
 private:
-	static KIRCTransferHandler m_self;
+//	KIRCTransferHandler();
+	static KIRCTransferHandler sm_self;
 
 	KIRCTransferServer *m_server;
 //	QPtrList<KIRCTransferServer> m_servers;

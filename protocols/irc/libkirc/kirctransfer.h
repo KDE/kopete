@@ -19,6 +19,7 @@
 #define KIRCTRANSFER_H
 
 #include <qdatastream.h>
+#include <qfile.h>
 #include <qhostaddress.h>
 #include <qobject.h>
 #include <qtextstream.h>
@@ -65,21 +66,34 @@ public:
 	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, Q_UINT16 peer_port,
 			KIRCTransfer::Type type,
-			QFile *file, Q_UINT32 file_size,
+			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 
 	~KIRCTransfer();
 
+	KIRC *engine() const
+		{ return m_engine; }
+	QString nick() const
+		{ return m_nick; }
+	Type type() const
+		{ return m_type; }
+	Status status() const;
+
 	bool setSocket( KExtendedSocket *socket );
+	/* Start the transfer.
+	 * If not connected connect to client.
+	 * Allow receiving/emitting data.
+	 */
+	bool initiate();
 
-	Type getType()
-	{
-		return m_type;
-	}
-
-	Status status();
-	void connectToPeer();
-
+	QString fileName() const
+		{ return m_fileName; }
+	/* Change the file name.
+	 */
+	void setFileName(QString fileName)
+		{ m_fileName = fileName; }
+	unsigned long fileSize() const
+		{ return m_fileSize; }
 public slots:
 	void setCodec( QTextCodec *codec );
 	void writeLine( const QString &msg );
@@ -94,8 +108,8 @@ signals:
 	void sentBytes( Q_UINT32 );
 
 protected:
-	void initClient();
-	void initServer();
+//	void initClient();
+//	void initServer();
 
 	void emitSignals();
 
@@ -108,28 +122,33 @@ protected slots:
 	void readyReadFileOutgoing();
 
 protected:
-	Type		m_type;
+	KIRC *		m_engine;
+	QString		m_nick;
 
+	Type		m_type;
 	KExtendedSocket *m_socket;
+	bool		m_initiated;
 
 	// Text member data
 	QTextStream	m_socket_textStream;
 //	QTextCodec *	m_socket_codec;
 
 	// File member data
-	QFile *		m_file;
-	Q_UINT32 /*usize_t*/	m_file_size_cur;
-	Q_UINT32 /*usize_t*/	m_file_size_ack;
-	QDataStream	m_socket_dataStream;
+	QFile		m_file;
+	QString		m_fileName;
+	Q_UINT32	m_fileSize;
+	Q_UINT32 /*usize_t*/	m_fileSizeCur;
+	Q_UINT32 /*usize_t*/	m_fileSizeAck;
+	QDataStream	m_socketDataStream;
 	char		m_buffer[1024];
-	int		m_buffer_length;
+	int		m_bufferLength;
 
 	// Data transfer measures
-	Q_UINT32	m_received_bytes_limit;
-	Q_UINT32	m_received_bytes;
+	Q_UINT32	m_receivedBytes;
+	Q_UINT32	m_receivedBytesLimit;
 
-	Q_UINT32	m_sent_bytes_limit;
-	Q_UINT32	m_sent_bytes;
+	Q_UINT32	m_sentBytes;
+	Q_UINT32	m_sentBytesLimit;
 };
 
 #endif
