@@ -33,6 +33,8 @@
 class KopeteProtocol;
 class KopetePlugin;
 
+class KPluginInfo;
+
 struct KopeteLibraryInfo
 {
 	QString specfile;
@@ -71,8 +73,25 @@ public:
 	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;
+
 	bool isLoaded(const QString &spec) const;
 	KopetePlugin *loadPlugin( const QString &spec );
+
+	/**
+	 * Returns a list of all available plugins for the given category.
+	 * Currently there are two categories, "Plugins" and "Protocols", but
+	 * the plugin loader doesn't really know about them and just passes
+	 * on the category to KTrader.
+	 *
+	 * You can query all information on the plugins through the @ref KPluginInfo
+	 * interface.
+	 *
+	 * Note that this method is designed for use in the initialization code
+	 * of e.g. the Add Account Wizard and the plugin selector KCM, and not
+	 * for high-performance tight loops. If you need the list in
+	 * time-critical code, cache the result and operate on that instead.
+	 */
+	static QValueList<KPluginInfo *> availablePlugins( const QString &category );
 
 	/**
 	 * @brief Search by ID

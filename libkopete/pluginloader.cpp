@@ -28,6 +28,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
+#include <kplugininfo.h>
 #include <ksettings/dispatcher.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
@@ -84,6 +85,12 @@ LibraryLoader::~LibraryLoader()
 		delete i.current();
 
 	kdDebug(14010) << k_funcinfo << "All plugins removed" << endl;
+}
+
+QValueList<KPluginInfo *> LibraryLoader::availablePlugins( const QString &category )
+{
+	return KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-KDE-PluginInfo-Category]=='" ) + category + QString::fromLatin1( "'" ) ) );
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const

@@ -22,19 +22,16 @@
 #include <kpluginselector.h>
 #include <ktrader.h>
 
+#include "pluginloader.h"
+
 typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) );
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
 : KSettings::PluginPage( KopetePluginConfigFactory::instance(), parent, args )
 {
-	QValueList<KPluginInfo*> protocolInfo =
-		KPluginInfo::fromServices( KTrader::self()->query( "Kopete/Protocol", "[X-KDE-PluginInfo-Category]=='Protocols'" ) );
-	pluginSelector()->addPlugins( protocolInfo, i18n( "Protocols" ), "Protocols" );
-
-	QValueList<KPluginInfo*> pluginInfo =
-		KPluginInfo::fromServices( KTrader::self()->query( "Kopete/Plugin", "[X-KDE-PluginInfo-Category]=='Plugins'" ) );
-	pluginSelector()->addPlugins( pluginInfo, i18n( "General Plugins" ), "Plugins" );
+	pluginSelector()->addPlugins( LibraryLoader::availablePlugins( "Protocols" ), i18n( "Protocols" ), "Protocols" );
+	pluginSelector()->addPlugins( LibraryLoader::availablePlugins( "Plugins" ),   i18n( "General Plugins" ), "Plugins" );
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
