@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>motionawayPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>377</width>
+            <width>405</width>
             <height>146</height>
         </rect>
     </property>
@@ -24,100 +24,93 @@
     <property name="caption">
         <string>Form1</string>
     </property>
-    <spacer>
+    <vbox>
         <property name="name">
-            <cstring>Spacer41</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="orientation">
-            <enum>Vertical</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>0</width>
-                <height>20</height>
-            </size>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>1</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </spacer>
-    <widget class="QLayoutWidget">
-        <property name="name">
-            <cstring>Layout4</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>20</x>
-                <y>11</y>
-                <width>329</width>
-                <height>68</height>
-            </rect>
-        </property>
-        <grid>
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>Layout2</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Become away after</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>mAwayTimeout</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>999</number>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>minutes of user inactivity</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mGoAvailable</cstring>
             </property>
-            <property name="spacing">
-                <number>6</number>
+            <property name="text">
+                <string>Become available when detecting activity again</string>
             </property>
-            <widget class="QLabel" row="2" column="0">
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout5</cstring>
+            </property>
+            <hbox>
                 <property name="name">
-                    <cstring>TextLabel2_2</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="text">
-                    <string>Video4Linux Device:</string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel2</cstring>
-                </property>
-                <property name="text">
-                    <string>Become away after</string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="2">
-                <property name="name">
-                    <cstring>TextLabel3</cstring>
-                </property>
-                <property name="text">
-                    <string>minutes of user inactivity</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
-                <property name="name">
-                    <cstring>mGoAvailable</cstring>
-                </property>
-                <property name="text">
-                    <string>Become available when detecting activity again</string>
-                </property>
-            </widget>
-            <widget class="QSpinBox" row="0" column="1">
-                <property name="name">
-                    <cstring>mAwayTimeout</cstring>
-                </property>
-                <property name="maxValue">
-                    <number>999</number>
-                </property>
-            </widget>
-            <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>m_videoDevice</cstring>
-                </property>
-            </widget>
-        </grid>
-    </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Video4Linux device:</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit">
+                    <property name="name">
+                        <cstring>m_videoDevice</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
