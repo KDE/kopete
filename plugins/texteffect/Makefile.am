@@ -1,20 +1,23 @@
 METASOURCES = AUTO
 
-SUBDIRS = icons
+SUBDIRS = wrappers
 INCLUDES = $(KOPETE_INCLUDES) $(all_includes)
 
-kde_module_LTLIBRARIES = kopete_texteffect.la kcm_kopete_texteffect.la
+kde_module_LTLIBRARIES = kopete_javascript.la kcm_kopete_javascript.la
 
-kopete_texteffect_la_SOURCES     = texteffectplugin.cpp texteffectconfig.cpp
-kopete_texteffect_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
-kopete_texteffect_la_LIBADD      = ../../libkopete/libkopete.la
+kopete_javascript_la_SOURCES     = javascriptplugin.cpp javascriptconfig.cpp
+kopete_javascript_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN )
+kopete_javascript_la_LIBADD      = ../../libkopete/libkopete.la -lkjsembed \
+					wrappers/libwrappers.la
 
-kcm_kopete_texteffect_la_SOURCES = texteffectconfig.cpp texteffectprefs.ui texteffectpreferences.cpp
-kcm_kopete_texteffect_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_texteffect_la_LIBADD  = ../../libkopete/libkopete.la $(LIB_KUTILS)
+kcm_kopete_javascript_la_SOURCES = javascriptprefsbase.ui javascriptpreferences.cpp \
+					javascriptconfig.cpp
 
-service_DATA = kopete_texteffect.desktop
+kcm_kopete_javascript_la_LDFLAGS = -module -no-undefined $(all_libraries)
+kcm_kopete_javascript_la_LIBADD  = ../../libkopete/libkopete.la
+
+service_DATA = kopete_javascript.desktop
 servicedir = $(kde_servicesdir)
 
-kcm_DATA = kopete_texteffect_config.desktop
+kcm_DATA = kopete_javascript_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog

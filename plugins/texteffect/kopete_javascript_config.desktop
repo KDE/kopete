@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=color
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_javascript
+X-KDE-FactoryName=JavaScriptConfigFactory
+X-KDE-ParentApp=kopete_javascript
+X-KDE-ParentComponents=kopete_javascript
+
+Name=JavaScript
+Comment=Script Kopete using JavaScript
+
