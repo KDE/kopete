@@ -27,7 +27,7 @@
 #include <kcmdlineargs.h>
 
 #include "appearanceconfig.h"
-#include "identityconfig.h"
+//#include "identityconfig.h"
 #include "kopetecontactlist.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
@@ -54,7 +54,7 @@ Kopete::Kopete()
 
 	// Create the plugin preferences module
 	new PluginConfig( this );
-	new IdentityConfig( m_mainWindow );
+	//new IdentityConfig( m_mainWindow );
 	new AppearanceConfig( m_mainWindow );
 
 	/*
