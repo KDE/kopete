@@ -278,6 +278,13 @@ public:
 	  */
 	 void setDirectConnectState( bool newState );
 
+	 /**
+	 	 * Returns the direct connection state of the contact
+	   * true = a direct connection is established with the contact
+	   * false = a direct connection is not established with the contact
+	   */
+	  bool getDirectConnectState() const { return mDirectlyConnected; }
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
