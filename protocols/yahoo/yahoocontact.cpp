@@ -127,11 +127,11 @@ KopeteMessageManager *YahooContact::manager( bool )
 	{
 		KopeteContactPtrList m_them;
 		m_them.append( this );
-		m_manager = KopeteMessageManagerFactory::factory()->create( account()->myself(), m_them, protocol() );
+		m_manager = KopeteMessageManagerFactory::factory()->create( m_account->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
 		connect( m_manager, SIGNAL( messageSent(KopeteMessage &, KopeteMessageManager *) ), this, SLOT( slotSendMessage(KopeteMessage &) ) );
 		connect( m_manager, SIGNAL( typingMsg(bool) ), this, SLOT(slotTyping(bool) ) );
-		connect( static_cast<YahooAccount *>(account()), SIGNAL( receivedTypingMsg(const QString &, bool) ), m_manager, SLOT( receivedTypingMsg(const QString &, bool) ) );
+		connect( m_account, SIGNAL( receivedTypingMsg(const QString &, bool) ), m_manager, SLOT( receivedTypingMsg(const QString &, bool) ) );
 	}
 
 	return m_manager;
@@ -148,10 +148,9 @@ void YahooContact::slotSendMessage(KopeteMessage &message)
   
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
-	YahooAccount *i = static_cast<YahooAccount *>(account());
 
-	kdDebug(14180) << "Yahoo: Sending message from " << static_cast<YahooContact *>(i->myself())->m_userId << ", to " << static_cast<YahooContact *>(target)->m_userId << endl;
-	i->yahooSession()->sendIm( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, messageText );
+	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId, 
+		static_cast<YahooContact *>(target)->m_userId, messageText );
 
 	// append message to window
 	manager()->appendMessage(message);
@@ -162,10 +161,10 @@ void YahooContact::slotTyping(bool isTyping_ )
 {
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
-	YahooAccount *i = static_cast<YahooAccount *>(account());
+	
 
-	kdDebug(14180) << "Yahoo: Sending typing notification from " << static_cast<YahooContact *>(i->myself())->m_userId << " to " << static_cast<YahooContact *>(target)->m_userId << endl;
-	i->yahooSession()->sendTyping( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, isTyping_ );
+	m_account->yahooSession()->sendTyping( static_cast<YahooContact*>(m_account->myself())->m_userId,
+		static_cast<YahooContact*>(target)->m_userId, isTyping_ );
 }
 
 void YahooContact::slotMessageManagerDestroyed()
