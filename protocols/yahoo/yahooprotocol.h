@@ -83,27 +83,33 @@ public slots:
 	//void slotConnect();
 	void slotGoOffline();
 	
-	void slotLoginResponse( int succ, char *url);
+	void addContact(const QString &userid, const QString &alias, const QString &group, KopeteMetaContact *metaContact);
+	
+	void slotLoginResponse( int succ, const QString &url);
 	void slotGotBuddies(YList * buds);
+	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotGotIgnore( YList * igns);
-	void slotGotIdentities( YList * ids);
-	void slotStatusChanged( char *who, int stat, char *msg, int away);
-	void slotGotIm( char *who, char *msg, long tm, int stat);
-	void slotGotConfInvite( char *who, char *room, char *msg, YList *members);
-	void slotConfUserDecline( char *who, char *room, char *msg);
-	void slotConfUserJoin( char *who, char *room);
-	void slotConfUserLeave( char *who, char *room);
-	void slotConfMessage( char *who, char *room, char *msg);
-	void slotGotFile( char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
-	void slotContactAdded( char *myid, char *who, char *msg);
-	void slotRejected( char *who, char *msg);
-	void slotTypingNotify( char *who, int stat);
-	void slotGameNotify( char *who, int stat);
-	void slotMailNotify( char *from, char *subj, int cnt);
-	void slotSystemMessage( char *msg);
-	void slotError( char *err, int fatal);
+	void slotGotIdentities( const QStringList &);
+	void slotStatusChanged( const QString &who, int stat, const QString &msg, int away);
+	void slotGotIm( const QString &who, const QString &msg, long tm, int stat);
+	void slotGotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
+	void slotConfUserDecline( const QString &who, const QString &room, const QString &msg);
+	void slotConfUserJoin( const QString &who, const QString &room);
+	void slotConfUserLeave( const QString &who, const QString &room);
+	void slotConfMessage( const QString &who, const QString &room, const QString &msg);
+	void slotGotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
+	void slotContactAdded( const QString &myid, const QString &who, const QString &msg);
+	void slotRejected( const QString &, const QString &);
+	void slotTypingNotify( const QString &, int stat);
+	void slotGameNotify( const QString &, int);
+	/**
+	 * Mail Notification
+	 */
+	void slotMailNotify( const QString &, const QString &, int);
+	void slotSystemMessage( const QString &);
+	void slotError( const QString &, int);
 	void slotRemoveHandler( int fd);
-	//void slotHostConnect(char *host, int port);
+	//void slotHostConnect(const QString &host, int port);
 	
 
 signals:

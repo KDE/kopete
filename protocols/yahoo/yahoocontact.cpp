@@ -74,6 +74,12 @@ YahooContact::ContactStatus YahooContact::status() const
 	}
 }
 
+const QString& YahooContact::group()
+{
+	return mGroup;
+}
+
+
 // Return status text
 QString YahooContact::statusText() const
 {

@@ -20,16 +20,16 @@
 #ifndef YAHOOCONTACT_H
 #define YAHOOCONTACT_H
 
-// Local Includes
+/* Local Includes */
 #include "yahooprotocol.h"
 
-// Kopete Includes
+/* Kopete Includes */
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
-// QT Includes
+/* QT Includes */
 
-// KDE Includes
+/* KDE Includes */
 
 class YahooProtocol;
 
@@ -37,9 +37,10 @@ class YahooContact : public KopeteContact
 {
 	Q_OBJECT public:
 
-	YahooContact(QString userID, QString fullName, QString group,
-		YahooProtocol *protocol, KopeteMetaContact *metaContact);	// Constructor
+	YahooContact(QString userID, QString fullName, QString group, YahooProtocol *protocol, KopeteMetaContact *metaContact);
 	~YahooContact();
+	
+	const QString &group();
 
 	virtual bool isOnline() const;
 	virtual bool isReachable();
@@ -51,7 +52,7 @@ class YahooContact : public KopeteContact
 	virtual int importance() const;
 	virtual QString id() const;
 	virtual KActionCollection *customContextMenuActions();
-	virtual void addThisTemporaryContact(KopeteGroup *group=0l);
+	virtual void addThisTemporaryContact(KopeteGroup *group = 0L);
 	
 public slots:
 	
@@ -86,11 +87,12 @@ public slots:
 			Idle			// 999
 		};
 
-	QString mUserID;			// User ID
-	QString mFullName;			// Full Name
-	QString mGroup;				// Group
-	YahooStatus mStatus;		// Status
-	QString mStatusText;		// StatusText
+	/* User id, full name, group, status code, and status description */
+	QString mUserID;
+	QString mFullName;
+	QString mGroup;
+	YahooStatus mStatus;
+	QString mStatusText;
 
 };
 	

@@ -60,10 +60,10 @@ public:
 	
 	/* Receivers for libyahoo callbacks, resolve connection id and emit signal for the correct session */
 	void loginResponseReceiver( int id, int succ, char *url);
-	void gotIgnoreReceiver(int id, YList * igns);
-	void gotBuddiesReceiver(int id, YList * buds);
+	void gotIgnoreReceiver(int id, YList *igns);
+	void gotBuddiesReceiver(int id, YList *buds);
 	void gotidentitiesReceiver(int id, char *who, int stat, char *msg, int away);
-	void gotIdentitiesReceiver(int id, YList * ids);
+	void gotIdentitiesReceiver(int id, YList *ids);
 	void statusChangedReceiver(int id, char *who, int stat, char *msg, int away);
 	void gotImReceiver(int id, char *who, char *msg, long tm, int stat);
 	void gotConfInviteReceiver(int id, char *who, char *room, char *msg, YList *members);
@@ -118,53 +118,127 @@ public:
 	
 	void logOff();
 	void refresh();
-	void setIdentityStatus( const char * identity, int active);
+	void setIdentityStatus( const QString &identity, int active);
 	void getList();
 	void keepalive();
-	void sendIm( const char *from, const char *who, const char *msg);
-	void sendTyping( const char *from, const char *who, int typ);
-	void setAway( enum yahoo_status state, const char *msg, int away);
-	void addBuddy( const char *who, const char *group);
-	void removeBuddy( const char *who, const char *group);
-	void rejectBuddy( const char *who, const char *msg);
-	void ignoreBuddy( const char *who, int unignore);
-	void changeBuddyGroup( const char *who, const char *old_group, const char *new_group);
-	void conferenceInvite( const char * from, YList *who, const char *room, const char *msg);
-	void conferenceAddinvite( const char * from, const char *who, const char *room, const YList * members, const char *msg);
-	void conferenceDecline( const char * from, YList *who, const char *room, const char *msg);
-	void conferenceMessage( const char * from, YList *who, const char *room, const char *msg);
-	void conferenceLogon( const char * from, YList *who, const char *room);
-	void conferenceLogoff( const char * from, YList *who, const char *room);
-	int sendFile( const char *who, const char *msg, const char *name, long size);
-	int getUrlHandle( const char *url, char *filename, unsigned long *filesize);
+	void sendIm( const QString &from, const QString &who, const QString &msg);
+	void sendTyping( const QString &from, const QString &who, int typ);
+	void setAway( enum yahoo_status state, const QString &msg, int away);
+	void addBuddy( const QString &who, const QString &group);
+	void removeBuddy( const QString &who, const QString &group);
+	void rejectBuddy( const QString &who, const QString &msg);
+	void ignoreBuddy( const QString &who, int unignore);
+	void changeBuddyGroup( const QString &who, const QString &old_group, const QString &new_group);
+	void conferenceInvite( const QString & from, const QStringList &who, const QString &room, const QString &msg);
+	void conferenceAddinvite( const QString & from, const QString &who, const QString &room, const QStringList & members, const QString &msg);
+	void conferenceDecline( const QString & from, const QStringList &who, const QString &room, const QString &msg);
+	void conferenceMessage( const QString & from, const QStringList &who, const QString &room, const QString &msg);
+	void conferenceLogon( const QString & from, const QStringList &who, const QString &room);
+	void conferenceLogoff( const QString & from, const QStringList &who, const QString &room);
+	int sendFile( const QString &who, const QString &msg, const QString &name, long size);
+	int getUrlHandle( const QString &url, const QString &filename, unsigned long *filesize);
 	enum yahoo_status currentStatus();
-	const YList * getBuddylist();
-	const YList * getIgnorelist();
-	const YList * getIdentities();
-	const char  * getCookie( const char *which);
-	const char  * getProfile_url( void );
+	QStringList getBuddylist();
+	QStringList getIgnorelist();
+	QStringList getIdentities();
+	QString getCookie( const QString &which);
+	QString getProfile_url( void );
 	
 signals:
 
-	void loginResponse( int succ, char *url);
-	void gotBuddies(YList * buds);
-	void gotIgnore( YList * igns);
-	void gotIdentities( YList * ids);
-	void statusChanged( char *who, int stat, char *msg, int away);
-	void gotIm( char *who, char *msg, long tm, int stat);
-	void gotConfInvite( char *who, char *room, char *msg, YList *members);
-	void confUserDecline( char *who, char *room, char *msg);
-	void confUserJoin( char *who, char *room);
-	void confUserLeave( char *who, char *room);
-	void confMessage( char *who, char *room, char *msg);
-	void gotFile( char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
-	void contactAdded( char *myid, char *who, char *msg);
-	void rejected( char *who, char *msg);
-	void typingNotify( char *who, int stat);
-	void gameNotify( char *who, int stat);
-	void mailNotify( char *from, char *subj, int cnt);
-	void systemMessage( char *msg);
-	void error( char *err, int fatal);
+	/**
+	 * emitted when server says login OK
+	 */
+	void loginResponse( int succ, const QString &url);
+	
+	/**
+	 * emitted when servers send us our contact list
+	 */
+	void gotBuddy(const QString &userid, const QString &alias, const QString &group);
+	
+	/**
+	 * emitted when server notifies us our ignore list
+	 */
+	void gotIgnore( const QStringList &igns);
+	
+	/**
+	 * emitted when server notify us our identities
+	 */
+	void gotIdentities( const QStringList &ids);
+	
+	/**
+	 * emitted when a contact changes status
+	 */
+	void statusChanged( const QString &who, int stat, const QString &msg, int away);
+	
+	/**
+	 * emitted when someone send us a message
+	 */
+	void gotIm( const QString &who, const QString &msg, long tm, int stat);
+	
+	/**
+	 * emitted when someone invites us into a conference room
+	 */
+	void gotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
+	
+	/**
+	 * emitted when someone declines joining a conference room
+	 */
+	void confUserDecline( const QString &who, const QString &room, const QString &msg);
+	
+	/**
+	 * emitted when someone joins a conference
+	 */
+	void confUserJoin( const QString &who, const QString &room);
+	
+	/**
+	 * emitted when someone leaves a conference
+	 */
+	void confUserLeave( const QString &who, const QString &room);
+	
+	/**
+	 * emitted when someone send us a Conference message
+	 */
+	void confMessage( const QString &who, const QString &room, const QString &msg);
+	
+	/**
+	 * emitted when someone wants to send us a file
+	 */
+	void gotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
+	
+	/**
+	 * emitted when a contact is added
+	 */
+	void contactAdded( const QString &myid, const QString &who, const QString &msg);
+	
+	/**
+	 * emitted when someone rejects our auth request
+	 */
+	void rejected( const QString &who, const QString &msg);
+	
+	/**
+	 * emitted when someone is typing a message
+	 */
+	void typingNotify( const QString &who, int stat);
+	
+	/**
+	 * emitted when someone invites us to join a game
+	 */
+	void gameNotify( const QString &who, int stat);
+	/**
+	 * Notify that we have mail
+	 */
+	void mailNotify( const QString &from, const QString &subject, int cnt);
+	
+	/**
+	 * emitted when Yahoo servers send us a system message
+	 */
+	void systemMessage( const QString &msg);
+	
+	/**
+	 * emitted when error
+	 */
+	void error( const QString &err, int fatal);
 	//void hostConnect(char *host, int port);
 
 	private slots:
