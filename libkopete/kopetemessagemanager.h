@@ -118,7 +118,7 @@ public:
 	
 	virtual const QString chatName();
 	
-	void setChatView( Kopete::ChatView *newView );
+	void setMainWindow();
 	
 	void setCurrentMessage( const KopeteMessage &message );
 

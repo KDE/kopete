@@ -121,10 +121,16 @@ void KopeteMessageManager::slotSendEnabled(bool e)
 	}
 }
 
-void KopeteMessageManager::setChatView( Kopete::ChatView *newView )
+void KopeteMessageManager::setMainWindow()
 {
-	d->mView = newView;
-	myWindow = newView->mainWindow();
+	disconnect(myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+	myWindow = d->mView->mainWindow();
+
+ 	if( chatWindowMap()->contains( d->mProtocol ) )
+		chatWindowMap()->remove( d->mProtocol );
+
+	chatWindowMap()->insert( d->mProtocol, myWindow);
+	connect(myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
 }
 
 void KopeteMessageManager::setLogging( bool on )
@@ -181,7 +187,7 @@ ChatWindowMap *KopeteMessageManager::chatWindowMap()
  */
 KopeteChatWindow *KopeteMessageManager::newWindow()
 {
-	bool windowCreated = false;
+	bool mappedWindowCreated = false;
 
 	//Determine tabbed window settings
 	switch( KopetePrefs::prefs()->chatWindowPolicy() )
@@ -191,8 +197,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 
 			//Always create new window
 			myWindow = new KopeteChatWindow();
-			connect (myWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
-			windowCreated = true;
+			connect (myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
 
 			break;
 
@@ -209,8 +214,8 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			{
 				//A window for this protocol does not exist, create new window
 				myWindow = new KopeteChatWindow();
-				connect (myWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
-				windowCreated = true;
+				connect (myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+				mappedWindowCreated = true;
 			}
 			break;
 
@@ -223,8 +228,8 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			{
 				//No window exists, create a new window
 				myWindow = new KopeteChatWindow();
-				connect (myWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
-				windowCreated = true;
+				connect (myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+				mappedWindowCreated = true;
 			}
 			else
 			{
@@ -236,7 +241,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 	}
 
 	//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
-	if( windowCreated && !chatWindowMap()->contains( d->mProtocol ) )
+	if( mappedWindowCreated && !chatWindowMap()->contains( d->mProtocol ) )
 		chatWindowMap()->insert(d->mProtocol, myWindow);
 
 	return static_cast<KopeteChatWindow *>( myWindow );
@@ -259,7 +264,7 @@ void KopeteMessageManager::newChatView()
 		//kdDebug(14010) << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect (d->mView, SIGNAL(Shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mView, SIGNAL(SendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
-		connect (d->mView, SIGNAL(Closing()), this, SLOT(slotChatViewClosing()));
+		connect (d->mView, SIGNAL(destroyed()), this, SLOT(slotChatViewClosing()));
 		connect (d->mView, SIGNAL(Typing(bool)), this, SLOT(slotTyping(bool)));
 
 		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mView, SLOT(contactAdded(const KopeteContact *)));
@@ -403,7 +408,7 @@ void KopeteMessageManager::readMessages()
 			
 			//Raise the tab if needed
 			if (d->mWidget == ChatWindow)
-				chatWindow->setActiveView( chatView->dockWidget() );
+				chatWindow->setActiveView( chatView );
 
 			//Only grab focus if we opened the chat ourselves
 			if ( queueEmpty )
@@ -413,7 +418,7 @@ void KopeteMessageManager::readMessages()
 		{
 			//Dock in the view if needed
 			if( !chatView->docked() )
-				chatWindow->setActiveView( chatView->dockWidget() );
+				chatWindow->setActiveView( chatView );
 		}
 	}
 
@@ -497,9 +502,6 @@ void KopeteMessageManager::slotChatWindowClosing()
 		ChatWindowMap windowMap = *(chatWindowMap());
 		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
 			chatWindowMap()->remove( d->mProtocol );
-
-		//Close *our* window
-		myWindow->deleteLater();
 
 		d->mView = 0L;
 	}
