@@ -30,6 +30,7 @@
 
 class KopeteMessage;
 class MSNAccount;
+class QTimer;
 
 class MSNP2P;
 class KTempFile;
@@ -62,9 +63,11 @@ private:
 	MSNP2P *m_p2p ;
 
 	//used for emoticons
-	QString m_lastMessage;
-
+	QValueList<const KopeteMessage> m_msgQueue;
+	unsigned  m_recvIcons;
 	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
+	KopeteMessage &parseCustomEmoticons(KopeteMessage &msg);
+	QTimer *m_emoticonTimer;
 
 protected:
 	/**
@@ -107,6 +110,8 @@ private slots:
 	void slotSocketClosed(  );
 	void slotReadMessage( const QString &msg );
 	void slotEmoticonReceived( KTempFile *, const QString& );
+	
+	void cleanQueue();
 
 signals:
 	void msgReceived( KopeteMessage &msg );
