@@ -45,6 +45,12 @@ KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent,
 KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 {
 	s_factory = 0L;
+	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
+	for ( ; it.current() ; ++it )
+	{
+		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
+		delete it.current();
+	}
 }
 
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(const KopeteContact *user,
@@ -162,6 +168,7 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 		if ( it.current()->protocol() == protocol )
 		{
 			kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
+			mSessionDict.remove( it.current()->mmId() );
 			delete it.current();
 		}
 	}
