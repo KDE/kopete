@@ -44,7 +44,7 @@ YahooConferenceMessageManager::YahooConferenceMessageManager(const KopeteContact
 
 	// in order to use auto-deletion, we have to create a chat window
 	// first or we will self-destruct ourselves right away
-	newChatWindow();
+	newChatView();
 	setCanBeDeleted(true);
 
 }
