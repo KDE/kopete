@@ -3,12 +3,15 @@
 #include <qpushbutton.h>
 #include <qtextedit.h>
 #include <qwidgetstack.h>
+#include <qlistview.h>
+#include <qptrlist.h>
 
 #include <kapplication.h>
 #include <kdatewidget.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kurllabel.h>
+#include <klistview.h>
 
 
 GaduPublicDir::GaduPublicDir(GaduAccount *account,
@@ -39,6 +42,8 @@ GaduPublicDir::GaduPublicDir(GaduAccount *account,
 	connect( account, SIGNAL(pubDirSearchResult( const searchResult & )),
 				SLOT(slotSearchResult( const searchResult & )) );
 
+	mAccount->pubDirSearchClose();
+	
 	show();
 }
 void GaduPublicDir::getData()
@@ -62,10 +67,34 @@ bool GaduPublicDir::validateData()
 
 void GaduPublicDir::slotSearchResult( const searchResult &result )
 {
-    enableButton(User2, true);
-    enableButton(User1, true);
+    QListViewItem *element;
+    QListView *list=mMainWidget->listFound;    
+    int i;
     
-    kdDebug(14100) << "searchResult" << endl;
+    kdDebug(14100) << "searchResults(" << result.count() <<")" << endl;
+
+    // if not found anything, obviously we don't want to search for more
+    
+    if (result.count()){
+	enableButton(User2, true);
+    }
+    
+    
+    enableButton(User1, true);
+    QPtrListIterator< resLine > r (result);
+    
+    for ( i = result.count()  ; i-- ; i ){
+        kdDebug(14100) << "adding" << (*r)->uin << endl;
+        new QListViewItem( list, 
+			    QString::number((*r)->status),
+			    (*r)->firstname,
+			    (*r)->surname,
+			    (*r)->nickname,
+			    (*r)->age,
+			    (*r)->city,
+	    		    (*r)->uin);
+	++r;
+    }
 }
 
 void GaduPublicDir::slotNewSearch()
@@ -77,13 +106,14 @@ void GaduPublicDir::slotNewSearch()
     showButton(User1, false);
     showButton(User3, false);
     enableButton(User2, true);
-        
+    mAccount->pubDirSearchClose();
 }
 
 void GaduPublicDir::slotSearch()
 {
 	
 	// search more, or search ?
+	mMainWidget->listFound->clear();
 	
 	if (mMainWidget->pubsearch->id(mMainWidget->pubsearch->visibleWidget())==0){ 
 	    

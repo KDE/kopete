@@ -354,7 +354,7 @@ GaduSession::pubDirSearch(QString &name, QString &surname, QString &nick, int UI
 void
 GaduSession::sendResult( gg_pubdir50_t result )
 {
-  int i, count;
+  int i, count, age;
   resLine *rl=NULL;
   searchResult sres;
 	QTextCodec *textcodec = QTextCodec::codecForName( "CP1250" );
@@ -369,9 +369,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 
 	for (i = 0; i < count; i++){
     
-    if ( !rl ){
       rl = new resLine;
-    }
     
 		rl->uin =   textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
 		rl->firstname = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
@@ -381,14 +379,16 @@ GaduSession::sendResult( gg_pubdir50_t result )
 		rl->city = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
 		QString stat = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
 		rl->status = stat.toInt();
-
+		age = rl->age.toInt();
+		rl->age = QString::number(QDate::currentDate().year()-age);
+		
     kdDebug(14100) << "found line "<< rl->uin << " " << rl->firstname << endl;
 
     sres.append(rl);
-    rl=NULL;    
   }
     
 	searchSeqNr_ = gg_pubdir50_next( result );
+
 
   emit pubDirSearchResult( sres );
   
