@@ -87,8 +87,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
 	KopeteContact *c = others.first();
-	QString logFileName = "kopete/" + QString( c->protocol()->id() ) +
-		"/" + c->id().replace( QRegExp( "[./~]" ), "-" ) + ".log";
+	QString logFileName = "kopete/" + QString( c->protocol()->pluginId() ) +
+		"/" + c->contactId().replace( QRegExp( "[./~]" ), "-" ) + ".log";
 	d->mLogger = new KopeteMessageLog( logFileName, this );
 
 //	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
@@ -297,12 +297,12 @@ const KopeteProtocol* KopeteMessageManager::protocol() const
 	return d->mProtocol;
 }
 
-int KopeteMessageManager::id() const
+int KopeteMessageManager::mmId() const
 {
 	return d->mId;
 }
 
-void KopeteMessageManager::setID( int id )
+void KopeteMessageManager::setMMId( int id )
 {
 	d->mId = id;
 }

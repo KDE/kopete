@@ -99,7 +99,7 @@ void OscarContact::execute(void)
 /** Return the unique id that identifies a contact.  Id is required
  *  to be unique per protocol and per identity.  Across those boundaries
  *  ids may occur multiple times. */
-QString OscarContact::id(void) const
+QString OscarContact::contactId(void) const
 {
 	return mName;
 }

@@ -143,7 +143,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	m_msg = msg;
 
 	QString message = msg.plainBody();
-	QString nr = msg.to().first()->id();
+	QString nr = msg.to().first()->contactId();
 
 	if (canSend = false)
 		return;

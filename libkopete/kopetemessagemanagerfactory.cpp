@@ -59,7 +59,7 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(cons
 	{
 		if ( it.current()->protocol() == protocol )
 		{
-			protocolSessions.insert( it.current()->id(), it.current() );
+			protocolSessions.insert( it.current()->mmId(), it.current() );
 		}
 	}
 	// Point this to the right KMM, if found
@@ -116,9 +116,9 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 
 void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager * result)
 {
-	if(result->id() == 0)
+	if(result->mmId() == 0)
 	{
-		result->setID(++mId);
+		result->setMMId(++mId);
 	}
 
 	mSessionDict.insert( mId, result );
@@ -140,7 +140,7 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager( int
 void KopeteMessageManagerFactory::slotRemoveSession( KopeteMessageManager *session)
 {
 	mSessionDict.setAutoDelete( false );
-	mSessionDict.remove( session->id() );
+	mSessionDict.remove( session->mmId() );
 }
 
 KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopeteProtocol *protocol)
@@ -151,7 +151,7 @@ KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopetePr
 	{
 		if ( it.current()->protocol() == protocol )
 		{
-			protocolSessions.insert( it.current()->id(), it.current() );
+			protocolSessions.insert( it.current()->mmId(), it.current() );
 		}
 	}
 	return protocolSessions;

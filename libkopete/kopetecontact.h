@@ -193,7 +193,7 @@ public:
 	 *
 	 * @return The unique id of the contact
 	 */
-	virtual QString id() const = 0;
+	virtual QString contactId() const = 0;
 
 	/**
 	 * Return the protocol id that identifies a contact.

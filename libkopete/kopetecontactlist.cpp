@@ -320,10 +320,10 @@ QStringList KopeteContactList::contactFileProtocols(QString displayName)
 			QPtrListIterator<KopeteContact> jt( mContacts );
 			for ( ; jt.current(); ++jt )
 			{
-				kdDebug() << "1" << jt.current()->protocol()->id() << "\n";
+				kdDebug() << "1" << jt.current()->protocol()->pluginId() << "\n";
 				if( jt.current()->canAcceptFiles() ) {
-					kdDebug() << jt.current()->protocol()->id() << "\n";
-					protocols.append ( jt.current()->protocol()->id() );
+					kdDebug() << jt.current()->protocol()->pluginId() << "\n";
+					protocols.append ( jt.current()->protocol()->pluginId() );
 				}
 			}
 			return protocols;

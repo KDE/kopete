@@ -187,8 +187,8 @@ void KopeteContact::slotViewHistory()
 	else
 	{
 		m_historyDialog = new KopeteHistoryDialog(
-			QString( protocol()->id() ) + "/" +
-			id().replace( QRegExp( "[./~]" ), "-" ) + ".log", displayName(),
+			QString( protocol()->pluginId()) + "/" +
+			contactId().replace( QRegExp( "[./~]" ), "-" ) + ".log", displayName(),
 			true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
 
 		connect ( m_historyDialog, SIGNAL( destroyed()),
@@ -213,7 +213,7 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 	/* Build the menu */
 	KPopupMenu *menu = new KPopupMenu();
-	menu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );
+	menu->insertTitle( displayName()+" <"+contactId()+"> ("+statusText()+")" );
 
 	actionSendMessage->plug( menu );
 	actionSendMessage->setEnabled( isReachable() );
@@ -260,7 +260,7 @@ void KopeteContact::showContextMenu(const QPoint& p)
 
 void KopeteContact::slotChangeDisplayName(){
 	bool okClicked;
-	QString newName = KLineEditDlg::getText(i18n("Change Alias"), i18n("New alias for %1").arg(id()),
+	QString newName = KLineEditDlg::getText(i18n("Change Alias"), i18n("New alias for %1").arg(contactId()),
 											 displayName(), &okClicked);
 	if(okClicked){
 		setDisplayName( newName );
@@ -346,7 +346,7 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 	{
 		if(f) t+=" [";
 		else t+=" ; ";
-		t+=c->id();
+		t+=c->contactId();
 		f=false;
 	}
 	if(!f) t+="]";

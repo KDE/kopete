@@ -107,7 +107,7 @@ public:
 	 * @return Returns a unique identifier associated with this
 	 *         manager
 	 */
-	int id() const;
+	int mmId() const;
 
 	KopeteMessage currentMessage();
 
@@ -197,7 +197,7 @@ protected:
 		KopeteContactPtrList others, KopeteProtocol *protocol, int id = 0,
 		enum WidgetType widget = ChatWindow, QObject *parent = 0,
 		const char *name = 0 );
-	void setID( int );
+	void setMMId( int );
 
 private:
 	/**

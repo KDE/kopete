@@ -39,7 +39,7 @@ public:
 	KopeteFileTransferInfo( KopeteContact *, const QString&, const unsigned long size, const QString &,KopeteFileTransferInfo::KopeteTransferDirection di, const unsigned int id, void *internalId=0L);
 	~KopeteFileTransferInfo(){};
 	KopeteFileTransferInfo(){};
-	unsigned int id() const { return mId; };
+	unsigned int transferId() const { return mId; };
 	KopeteContact* contact() const { return mContact; };
 	QString file() const { return mFile; };
 	QString recipient() const { return mRecipient; };

@@ -204,9 +204,9 @@ int YahooContact::importance() const
 	return 0;
 }
 
-QString YahooContact::id() const
+QString YahooContact::contactId() const
 {
-	kdDebug() << "[YahooContact::id()]" << endl;
+	kdDebug() << "[YahooContact::contactId()]" << endl;
 	return mUserID;
 }
 

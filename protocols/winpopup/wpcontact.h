@@ -101,7 +101,7 @@ public:
 	KActionCollection *customContextMenuActions() { return myActionCollection; }
 
 	QString identityId() const { return myHost; }
-	QString id() const { return "smb://" + myHost; }
+	QString contactId() const { return "smb://" + myHost; }
 
 	// null actions
 /*	void addToGroup(const QString &) {}

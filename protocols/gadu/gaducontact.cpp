@@ -212,7 +212,7 @@ GaduContact::importance() const
 }
 
 QString
-GaduContact::id() const
+GaduContact::contactId() const
 {
     return QString::number( uin_ );
 }

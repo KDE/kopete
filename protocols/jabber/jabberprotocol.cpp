@@ -672,7 +672,7 @@ void JabberProtocol::serialize(KopeteMetaContact *mc )
 	// iterate through all contacts that the metacontact has
 	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
 	{
-		if(c->protocol()->id() != this->id())
+		if(c->protocol()->pluginId() != this->pluginId())
 			continue;
 
 		JabberContact *jc = (JabberContact *)c;
@@ -976,11 +976,11 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 {
 	if(!mc)
 	{
-		mc = KopeteContactList::contactList()->findContact(this->id(), myContact->userId(), item.jid().userHost());
+		mc = KopeteContactList::contactList()->findContact(this->pluginId(), myContact->userId(), item.jid().userHost());
 
 		if(mc)
 		{
-			JabberContact *jc = (JabberContact *)mc->findContact(this->id(), myContact->userId(), item.jid().userHost());
+			JabberContact *jc = (JabberContact *)mc->findContact(this->pluginId(), myContact->userId(), item.jid().userHost());
 
 			if(jc)
 			{
@@ -1056,7 +1056,7 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 					subscribed(jid);
 
 					// is the user already in our contact list?
-					mc = KopeteContactList::contactList()->findContact(this->id(), myContact->userId(), jid.userHost());
+					mc = KopeteContactList::contactList()->findContact(this->pluginId(), myContact->userId(), jid.userHost());
 
 					// if it is not, ask the user if he wants to subscribe in return
 					if(!mc && (KMessageBox::questionYesNo(qApp->mainWidget(),
@@ -1349,9 +1349,9 @@ void JabberProtocol::slotOpenEmptyMail()
 
 	KopeteContactList::contactList()->addMetaContact(metaContact);
 
-	messageManagerMap[contact->id()] = createMessageManager(contact, KopeteMessageManager::Email);
+	messageManagerMap[contact->contactId()] = createMessageManager(contact, KopeteMessageManager::Email);
 
-	messageManagerMap[contact->id()]->readMessages();
+	messageManagerMap[contact->contactId()]->readMessages();
 
 }
 
@@ -1419,13 +1419,13 @@ void JabberProtocol::slotChatUser(JabberContact *contact)
 
 	kdDebug() << "[JabberProtocol] slotChatUser() trying to open a new message window..." << endl;
 
-	if(!messageManagerMap.contains(contact->id()))
+	if(!messageManagerMap.contains(contact->contactId()))
 	{
 		kdDebug() << "[JabberProtocol] slotChatUser() no old window, creating new one" << endl;
-		messageManagerMap[contact->id()] = createMessageManager(contact, KopeteMessageManager::ChatWindow);
+		messageManagerMap[contact->contactId()] = createMessageManager(contact, KopeteMessageManager::ChatWindow);
 	}
 
-	messageManagerMap[contact->id()]->readMessages();
+	messageManagerMap[contact->contactId()]->readMessages();
 
 }
 
@@ -1434,13 +1434,13 @@ void JabberProtocol::slotEmailUser(JabberContact *contact)
 
 	kdDebug() << "[JabberProtocol] slotEmailUser() trying to open a new message window..." << endl;
 
-	if(!messageManagerMap.contains(contact->id()))
+	if(!messageManagerMap.contains(contact->contactId()))
 	{
 		kdDebug() << "[JabberProtocol] slotEmailUser() no old window, creating new one" << endl;
-		messageManagerMap[contact->id()] = createMessageManager(contact, KopeteMessageManager::Email);
+		messageManagerMap[contact->contactId()] = createMessageManager(contact, KopeteMessageManager::Email);
 	}
 
-	messageManagerMap[contact->id()]->readMessages();
+	messageManagerMap[contact->contactId()]->readMessages();
 
 }
 

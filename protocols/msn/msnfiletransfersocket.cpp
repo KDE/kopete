@@ -66,7 +66,7 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 		else
 		{
 			if(m_incomming)
-				sendCommand( "USR" , MSNProtocol::protocol()->myself()->id()+ " " +m_authcook ,false);
+				sendCommand( "USR" , MSNProtocol::protocol()->myself()->contactId()+ " " +m_authcook ,false);
 			else
 				sendCommand( "VER", "MSNFTP" , false );
 		}

@@ -349,7 +349,7 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		KopetePlugin *tmp_plug = mLibHash[(*i).specfile]->plugin;
-		if ( tmp_plug->id() == Id )
+		if ( tmp_plug->pluginId() == Id )
 		{
 			return tmp_plug;
 		}

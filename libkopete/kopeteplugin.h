@@ -42,7 +42,7 @@ public:
 
 	virtual void init();
 	virtual bool unload();
-	virtual const char *id() const;
+	virtual const char *pluginId() const;
 
 	/**
 	 * Return the list of all keys from the address book in which the plugin

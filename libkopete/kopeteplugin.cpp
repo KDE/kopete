@@ -37,7 +37,7 @@ bool KopetePlugin::unload()
 	return true;
 }
 
-const char *KopetePlugin::id() const
+const char *KopetePlugin::pluginId() const
 {
 	return this->className();
 }

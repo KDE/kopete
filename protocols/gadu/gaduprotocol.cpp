@@ -1,3 +1,23 @@
+//////////////////////////////////////////////////////////////////////////////
+// gaduprotocol.cpp                                                         //
+//                                                                          //
+// Copyright (C)  2002  Zack Rusin <zack@kde.org>                           //
+//                                                                          //
+// This program is free software; you can redistribute it and/or            //
+// modify it under the terms of the GNU General Public License              //
+// as published by the Free Software Foundation; either version 2           //
+// of the License, or (at your option) any later version.                   //
+//                                                                          //
+// This program is distributed in the hope that it will be useful,          //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of           //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            //
+// GNU General Public License for more details.                             //
+//                                                                          //
+// You should have received a copy of the GNU General Public License        //
+// along with this program; if not, write to the Free Software              //
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA                //
+// 02111-1307, USA.                                                         //
+//////////////////////////////////////////////////////////////////////////////
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qtimer.h>
@@ -45,7 +65,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     userUin_ = KGlobal::config()->readEntry("Uin", "0").toUInt();
     password_= KGlobal::config()->readEntry("Password", "");
     nick_    = KGlobal::config()->readEntry("Nick", "");
-    myself_ = new GaduContact( this->id(), userUin_, nick_,
+    myself_ = new GaduContact( this->pluginId(), userUin_, nick_,
                                new KopeteMetaContact() );
 
     prefs_ = new GaduPreferences( "gadu_protocol", this );
@@ -83,7 +103,7 @@ GaduProtocol::initActions()
 
     actionMenu_ = new KActionMenu( "Gadu", this );
 
-    actionMenu_->popupMenu()->insertTitle( id() );
+    actionMenu_->popupMenu()->insertTitle( pluginId() );
 
     actionMenu_->insert( onlineAction_ );
     actionMenu_->insert( offlineAction_ );
@@ -196,7 +216,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 
 	if ( !parent )
 	{
-		m = KopeteContactList::contactList()->findContact( this->id(),  QString::number( userUin_ ), uin );
+		m = KopeteContactList::contactList()->findContact( this->pluginId(),  QString::number( userUin_ ), uin );
 		if( !m )
 		{
 			m = new KopeteMetaContact();
@@ -208,7 +228,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 		m = parent;
 
 
-    KopeteContact *c = m->findContact( this->id(), QString::number( userUin_ ) , uin );
+    KopeteContact *c = m->findContact( this->pluginId(), QString::number( userUin_ ) , uin );
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();
@@ -219,7 +239,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
             uins = m->addressBookField( this, "messaging/gadu" )
                    + "\n" + uin;
         m->setAddressBookField( this, "messaging/gadu", uins );
-        GaduContact *contact = new GaduContact( this->id(), uinNumber,
+        GaduContact *contact = new GaduContact( this->pluginId(), uinNumber,
                                                 nick, m );
         contact->setParentIdentity( QString::number( userUin_ ) );
         m->addContact( contact );
@@ -542,7 +562,7 @@ void GaduProtocol::serialize( KopeteMetaContact *metaContact)
 	QStringList strList;
 	for( KopeteContact *c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() )
 	{
-		if ( c->protocol()->id() == this->id() )
+		if ( c->protocol()->pluginId() == this->pluginId() )
 		{
 			GaduContact *g = static_cast<GaduContact*>(c);
 			strList << g->name();
@@ -555,7 +575,7 @@ void
 GaduProtocol::deserialize( KopeteMetaContact *metaContact,
                            const QStringList &strList )
 {
-    QString protocolId = this->id();
+    QString protocolId = this->pluginId();
 
     QString uin, nick;
     int numContacts = strList.size();

@@ -50,7 +50,7 @@ public:
     virtual QString       statusText() const;
     virtual QString       statusIcon() const;
     virtual int           importance() const;
-    virtual QString       id() const;
+    virtual QString       contactId() const;
     virtual QString       data() const;
     virtual bool          isReachable();
     virtual KActionCollection *customContextMenuActions();

@@ -235,7 +235,7 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
 		QString contactID=QString(queryName+"@"+m_serverName).lower();
-		QString protocolID = m_protocol->id();
+		QString protocolID = m_protocol->pluginId();
 		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(protocolID, QString::null, contactID);
 		if(m)
 		{
@@ -265,8 +265,8 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
 		QString contactID=QString(queryName+"@"+m_serverName).lower();
-		QString protocolID = m_protocol->id();
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null,contactID);
+		QString protocolID = m_protocol->pluginId();
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->pluginId(), QString::null,contactID);
 		if(m)
 		{
 			kdDebug() << "IRCServerContact::incomingPrivAction: "
@@ -395,7 +395,7 @@ bool IRCServerContact::parentClosing()
 	}
 	return true;
 }
-QString IRCServerContact::id() const
+QString IRCServerContact::contactId() const
 {
 	return QString(m_nickname+"@"+m_serverName);
 }

@@ -739,7 +739,7 @@ void JabberContact::slotSaveVCard(QDomElement &vCardXML)
 
 }
 
-QString JabberContact::id() const
+QString JabberContact::contactId() const
 {
 
 	return userId();

@@ -87,7 +87,7 @@ void MSNMessageManager::createChat( const QString &handle,
 	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket();
-	m_chatService->setHandle( MSNProtocol::protocol()->myself()->id() );
+	m_chatService->setHandle( MSNProtocol::protocol()->myself()->contactId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
 
@@ -111,10 +111,10 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 	MSNContact *c=MSNProtocol::protocol()->contact(handle);
 	if( add && !c )
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( MSNProtocol::protocol()->id(), QString::null, handle );
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( MSNProtocol::protocol()->pluginId(), QString::null, handle );
 		if(m)
 		{
-			KopeteContact *kc=m->findContact( MSNProtocol::protocol()->id(), QString::null, handle );
+			KopeteContact *kc=m->findContact( MSNProtocol::protocol()->pluginId(), QString::null, handle );
 			c=static_cast<MSNContact*>(kc);
 			kdDebug() << "MSNMessageManager::slotUpdateChatMember : WARNING - KopeteContact was found, but not on the protocl"  << endl;
 			//MSNProtocol::protocol()->contacts().insert( handle, c );
@@ -197,7 +197,7 @@ void MSNMessageManager::slotTyping(bool t)
 		}
 		else
 		{
-			MSNProtocol::protocol()->slotStartChatSession( QPtrList<KopeteContact>(members()).first()->id() );
+			MSNProtocol::protocol()->slotStartChatSession( QPtrList<KopeteContact>(members()).first()->contactId() );
 		}
 	}
 }
@@ -224,7 +224,7 @@ void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessa
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
-		MSNProtocol::protocol()->slotStartChatSession( message.to().first()->id() );
+		MSNProtocol::protocol()->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
 		//m_msgQueued=new KopeteMessage(message);
 	}
@@ -248,7 +248,7 @@ KActionCollection * MSNMessageManager::chatActions()
 	{
 		if((*it)->isOnline() && !members().contains(*it))
 		{
-			sl.append((*it)->id());
+			sl.append((*it)->contactId());
 		}
 	}
 	sl.append( otherString=i18n("Other...") );

@@ -157,7 +157,7 @@ void WPProtocol::serialize(KopeteMetaContact *metaContact)
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 
 	for(KopeteContact *c = contacts.first(); c; c = contacts.next())
-		if(c->protocol()->id() == this->id())
+		if(c->protocol()->pluginId() == this->pluginId())
 		{
 			WPContact *curContact = static_cast<WPContact*>(c);
 			DEBUG(WPDINFO, "Sub-Contact " << curContact->host() << " is ours - serialising.");
@@ -201,7 +201,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 	if(!theMetaContact)
 	{
 		// Should really ask to see if they want the contact adding to their list first...
-		theMetaContact = l->findContact(this->id(), Name, "smb://" + Name);
+		theMetaContact = l->findContact(this->pluginId(), Name, "smb://" + Name);
 		if(!theMetaContact)
 		{	DEBUG(WPDINFO, "Adding " << Name << " to the contact list...");
 			theMetaContact = new KopeteMetaContact();
@@ -209,7 +209,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 		}
 	}
 
-	KopeteContact *theContact = theMetaContact->findContact(this->id(), Name, "smb://" + Name);
+	KopeteContact *theContact = theMetaContact->findContact(this->pluginId(), Name, "smb://" + Name);
 	if(!theContact)
 	{	theContact = new WPContact(Name, this, theMetaContact);
 		theMetaContact->addContact(theContact);

@@ -28,7 +28,7 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 	
 	new SMSPreferences("sms_protocol", this);
 
-	QString protocolId = this->id();
+	QString protocolId = this->pluginId();
 
 	m_mySelf = new SMSContact(protocol(), "", "", 0);
 }
@@ -106,14 +106,14 @@ void SMSProtocol::serialize( KopeteMetaContact *metaContact)
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		if ( c->protocol()->id() != this->id() )
+		if ( c->protocol()->pluginId() != this->pluginId() )
 			continue;
 
 		SMSContact *g = static_cast<SMSContact*>(c);
 
 		if (g)
 		{
-			stream << g->id() << g->displayName();
+			stream << g->contactId() << g->displayName();
 			if (g->serviceName() != QString::null)
 			{
 				stream << g->serviceName();
@@ -128,7 +128,7 @@ void SMSProtocol::serialize( KopeteMetaContact *metaContact)
 void SMSProtocol::deserialize( KopeteMetaContact *metaContact,
 	const QStringList &strList )
 {
-	QString protocolId = this->id();
+	QString protocolId = this->pluginId();
 
 	unsigned idx=0;
 

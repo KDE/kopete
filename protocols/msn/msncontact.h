@@ -40,7 +40,7 @@ public:
 		KopeteMetaContact *parent );
 	~MSNContact();
 
-	virtual QString id() const;
+	virtual QString contactId() const;
 	virtual QString data() const;
 
 	ContactStatus status() const;

@@ -432,7 +432,7 @@ void IRCContact::joinNow()
 
 }
 
-QString IRCContact::id() const
+QString IRCContact::contactId() const
 {
 	return QString(m_targetName+"@"+m_serverName).lower();
 }

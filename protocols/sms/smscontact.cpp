@@ -51,7 +51,7 @@ SMSContact::~SMSContact()
 }
 
 
-QString SMSContact::id() const
+QString SMSContact::contactId() const
 {
 	return m_phoneNumber;
 }

@@ -60,7 +60,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 	if( m_contacts.contains( c ) )
 	{
 		kdDebug() << "KopeteMetaContact::addContact: WARNING: "
-			<< "Ignoring attempt to add duplicate contact " << c->id()
+			<< "Ignoring attempt to add duplicate contact " << c->contactId()
 			<< "!" << endl;
 	}
 	else
@@ -186,7 +186,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	for( ; it.current(); ++it )
 	{
 		//kdDebug() << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
-		if( (it.current()->id() == contactId ) && (it.current()->protocol()->id() == protocolId ) && (it.current()->identityId() == identityId))
+		if( (it.current()->contactId() == contactId ) && (it.current()->protocol()->pluginId() == protocolId ) && (it.current()->identityId() == identityId))
 			return it.current();
 	}
 
@@ -685,7 +685,7 @@ void KopeteMetaContact::setAddressBookField( KopetePlugin * p ,
 		m_addressBook.insert( key, value );
 	else
 		kdDebug() << "[KopeteMetaContact::setAddressBookField] Sorry, plugin "
-			  << p->id() << " doesn't have field "
+			  << p->pluginId() << " doesn't have field "
 			  << key << " registered" << endl;
 }
 
@@ -735,7 +735,7 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
-		if( p->id() == it.key() )
+		if( p->pluginId() == it.key() )
 		{
 			p->deserialize( this, pluginData(p) );
 		}
@@ -746,7 +746,7 @@ void KopeteMetaContact::setPluginData(KopetePlugin *p, QStringList strList )
 {
 	if(strList.isEmpty())
 	{
-		m_pluginData.remove(p->id());
+		m_pluginData.remove(p->pluginId());
 		return;
 	}
 
@@ -755,15 +755,15 @@ void KopeteMetaContact::setPluginData(KopetePlugin *p, QStringList strList )
 		//escape '||' I don't like this but it is needed
 		(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
 	}
-	m_pluginData[p->id()] =  strList.join( "||" ) ;
+	m_pluginData[p->pluginId()] =  strList.join( "||" ) ;
 }
 
 QStringList KopeteMetaContact::pluginData(KopetePlugin *p)
 {
-	if(!m_pluginData.contains(p->id()))
+	if(!m_pluginData.contains(p->pluginId()))
 		return QStringList();
 
-	QStringList strList = QStringList::split( "||", m_pluginData[p->id()] );
+	QStringList strList = QStringList::split( "||", m_pluginData[p->pluginId()] );
 	for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
 	{
 		//unescape '||'

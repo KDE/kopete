@@ -218,7 +218,7 @@ void KopeteTransferManager::slotAccepted(const KopeteFileTransferInfo& info, con
 {
 	KopeteTransfer *trans = new KopeteTransfer(info, this, "KopeteTransfer");
 	connect(trans, SIGNAL(done(KopeteTransfer *)), this, SIGNAL(done(KopeteTransfer *))); // Just for handiness
-	mTransfersMap.insert(info.id(), trans);
+	mTransfersMap.insert(info.transferId(), trans);
 	mListView->insertItem(trans);
 	show();
 	emit accepted(trans,filename);

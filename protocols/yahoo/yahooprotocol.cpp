@@ -115,7 +115,7 @@ void YahooProtocol::serialize( KopeteMetaContact *metaContact )
 			}
 
 			strList << g->displayName() << g->group();
-			metaContact->setAddressBookField( YahooProtocol::protocol(), "messaging/yahoo" , g->id() );
+			metaContact->setAddressBookField( YahooProtocol::protocol(), "messaging/yahoo" , g->contactId() );
 		}
 	}
 
@@ -132,7 +132,7 @@ void YahooProtocol::deserialize( KopeteMetaContact *metaContact, const QStringLi
 {
 	kdDebug() << "[YahooProtocol::deserialize] Deserializing metacontact" << endl;
 
-	QString protocolId = this->id();
+	QString protocolId = this->pluginId();
 
 	QString userid, alias, group;
 	userid = metaContact->addressBookField( this, "messaging/yahoo" ) ;
@@ -409,7 +409,7 @@ void YahooProtocol::addContact(const QString &userid, const QString &alias, cons
 		else
 		{
 			/* They didn't provide us a metaContact, we will try to get one */
-			metaContact = KopeteContactList::contactList()->findContact( id(), QString::null, userid );
+			metaContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, userid );
 
 			if ( metaContact )
 			{

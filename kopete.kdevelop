@@ -1,40 +1,66 @@
 <!DOCTYPE kdevelop>
 <kdevelop>
-<general>
-<author>Kopete developers</author>
-  <email>kopete-devel@kde.org</email>
-  <projectmanagement>KDevKDEAutoProject</projectmanagement>
-  <primarylanguage>C++</primarylanguage>
-  <keywords>
-<keyword>Qt</keyword>
-   <keyword>KDE</keyword>  </keywords> </general>
- <kdevfileview>
-<groups>
-<group pattern="*.cpp;*.cxx;*.h" name="Sources" />
-   <group pattern="*.ui" name="User Interface" />
-   <group pattern="*.png" name="Icons" />
-   <group pattern="*.po;*.ts" name="Translations" />
-   <group pattern="*" name="Others" />  </groups>
-  <tree>
-<hidenonprojectfiles>false</hidenonprojectfiles>
-   <hidepatterns>*.o,*.lo,CVS</hidepatterns>  </tree> </kdevfileview>
- <kdevdoctreeview>
-<ignoretocs>
-<toc>gtk</toc>
-   <toc>gnustep</toc>
-   <toc>python</toc>
-   <toc>php</toc>
-   <toc>perl</toc>  </ignoretocs> </kdevdoctreeview>
- <kdevdebugger>
-<general>
-<dbgshell>libtool</dbgshell>  </general>
-  <breakpoints/> </kdevdebugger>
- <workspace>
-<openfiles>
-<file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.h" />
-   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.cpp" />
-   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.h" />
-   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.cpp" />
-   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.h" />
-   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.cpp" />
-   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wppreferences.cpp" />  </openfiles> </workspace></kdevelop>
+  <general>
+    <author>Kopete developers</author>
+    <email>kopete-devel@kde.org</email>
+    <projectmanagement>KDevKDEAutoProject</projectmanagement>
+    <primarylanguage>C++</primarylanguage>
+    <keywords>
+      <keyword>Qt</keyword>
+      <keyword>KDE</keyword>
+    </keywords>
+  </general>
+  <kdevfileview>
+    <groups>
+      <group pattern="*.cpp;*.cxx;*.h" name="Sources" />
+      <group pattern="*.ui" name="User Interface" />
+      <group pattern="*.png" name="Icons" />
+      <group pattern="*.po;*.ts" name="Translations" />
+      <group pattern="*" name="Others" />
+    </groups>
+    <tree>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+    </tree>
+  </kdevfileview>
+  <kdevdoctreeview>
+    <ignoretocs>
+      <toc>gtk</toc>
+      <toc>gnustep</toc>
+      <toc>python</toc>
+      <toc>php</toc>
+      <toc>perl</toc>
+    </ignoretocs>
+  </kdevdoctreeview>
+  <kdevdebugger>
+    <general>
+      <dbgshell>libtool</dbgshell>
+    </general>
+    <breakpoints/>
+  </kdevdebugger>
+  <workspace>
+    <openfiles>
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahoocontact.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahooprefs.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahooprotocol.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/kyahoo.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/kyahoo.h" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/libyahoo2.c" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahooprotocol.h" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/libkopete/kopetecontactlist.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/msn/msnprotocol.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo2.h" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo2_types.h" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo_list.h" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/gadu/gadusession.cpp" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo2_callbacks.h" />
+      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahoocontact.h" />
+    </openfiles>
+  </workspace>
+  <kdevautoproject>
+    <makeenvvars>
+      <envvar value="1" name="WANT_AUTOCONF_2_5" />
+      <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+    </makeenvvars>
+  </kdevautoproject>
+</kdevelop>

@@ -169,7 +169,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if (publicName!=c->displayName())
-				changePublicName(publicName,c->id());
+				changePublicName(publicName,c->contactId());
 		}
 	}
 	else if( cmd == "LST" )

@@ -74,7 +74,7 @@ public:
 	IRCConsoleView *consoleView() { return m_consoleView; };
 	QVBox *tabView() { return mTabView ;};
 	void initiateDcc(const QString &nickname, const QString &, DCCServer::Type type);
-	QString id() const;
+	QString contactId() const;
 
 private:
 	KIRC *m_engine;

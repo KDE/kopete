@@ -63,7 +63,7 @@ public:
 	QString targetName() { return m_targetName; } ;
 //	QString groupName() { return m_groupName; };
 
-	virtual QString id() const;
+	virtual QString contactId() const;
 
 private:
 

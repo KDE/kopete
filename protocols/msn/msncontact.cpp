@@ -108,7 +108,7 @@ KActionCollection *MSNContact::customContextMenuActions()
 }
 
 
-QString MSNContact::id() const
+QString MSNContact::contactId() const
 {
 	return m_msnId;
 }

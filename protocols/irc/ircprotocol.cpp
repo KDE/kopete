@@ -135,7 +135,7 @@ void IRCProtocol::slotNewConsole()
 
 void IRCProtocol::addContact(  const QString &server, const QString &contact, bool connectNow, bool joinNow, KopeteMetaContact *meta)
 {
-	QString protocolID = this->id();
+	QString protocolID = this->pluginId();
 	QString contactID=contact+"@"+server;
 
 	KopeteMetaContact *m=KopeteContactList::contactList()->findContact( protocolID, QString::null, contactID);
@@ -250,13 +250,13 @@ void IRCProtocol::serialize(KopeteMetaContact * metaContact)
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		if ( c->protocol()->id() != this->id() ) // not our contact, next one please
+		if ( c->protocol()->pluginId() != this->pluginId() ) // not our contact, next one please
 				continue;
 
 		IRCContact *g = static_cast<IRCContact*>(c);
 
 		if( g )
-			strList << g->id() << g->displayName();
+			strList << g->contactId() << g->displayName();
 	}
 
 	metaContact->setPluginData(this, strList);

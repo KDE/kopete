@@ -37,7 +37,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &i
 	m_info=KopeteFileTransferInfo(info);
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
-	m_view->m_from->setText( info.contact()->metaContact()->displayName() + " <"+info.contact()->id()+"> ");
+	m_view->m_from->setText( info.contact()->metaContact()->displayName() + " <"+info.contact()->contactId()+"> ");
 	m_view->m_size->setText( QString::number(info.size()) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );

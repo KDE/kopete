@@ -41,7 +41,7 @@ void SMSClient::send(const KopeteMessage& msg)
 	KProcess* p = new KProcess;
 
 	QString message = msg.plainBody();
-	QString nr = msg.to().first()->id();
+	QString nr = msg.to().first()->contactId();
 	
 	*p << programName;
 	*p << provider + ":" + nr;

@@ -41,7 +41,7 @@ DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 	if(JabberProtocol::protocol()->isConnected())
 	{
 		// pre-populate the server field
-		leServer->setText(Jid(JabberProtocol::protocol()->myContact->id()).host());
+		leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 	}
 
 	// disable the left margin
@@ -107,7 +107,7 @@ void DlgJabberServices::slotQuery()
 
 	/* populate server field if it is empty */
 	if(leServer->text().isEmpty())
-		leServer->setText(Jid(JabberProtocol::protocol()->myContact->id()).host());
+		leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 
 	kdDebug() << "[DlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
 
