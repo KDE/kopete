@@ -50,14 +50,14 @@ Options:
 -a         change status of antialiasing
            default is on for normal mode and
 			  off for transparent mode
--o file    specifies output filename, 
+-o file    specifies output filename,
            default is inputfile with new extension
--f expr    specifies output format, 
+-f expr    specifies output format,
            possible examples: gif, jpg, tif......
-           all formates supported by 'convert' should work, 
+           all formates supported by 'convert' should work,
            default: png
--r expr    specifies desired resolution in dpi, 
-           possible examples: 100x100, 300x300, 200x150, 
+-r expr    specifies desired resolution in dpi,
+           possible examples: 100x100, 300x300, 200x150,
            default is 150x150
 -b expr    specifies the background color
            default: white
@@ -76,16 +76,16 @@ Options:
 		o) outfile=$OPTARG;;
 		z) trans=1
 		   aa=0;;
-		a) if [ $aa -eq 0 ]; then 
-				aa=1 
-			else 
+		a) if [ $aa -eq 0 ]; then
+				aa=1
+			else
 				aa=0
 			fi;;
 		n) noformula=1;;
 		b) color1=$OPTARG;;
 		t) color2=$OPTARG;;
 		f) format=$OPTARG;;
-      x) extra_header=$OPTARG;; 		
+      x) extra_header=$OPTARG;;
 	esac
 done
 
@@ -105,7 +105,7 @@ else
 	fi
 	mkdir $tmpdir
 fi
-homedir="`pwd`" || exit 1  
+homedir="`pwd`" || exit 1
 
 #
 # Names for input and output files
@@ -114,9 +114,9 @@ homedir="`pwd`" || exit 1
 while [ $OPTIND -le $# ]
 do
 
-eval infile=\$${OPTIND}   
+eval infile=\$${OPTIND}
 
-if [ -z $outfile ]; then	
+if [ -z $outfile ]; then
 	if [ -e "$infile" ]; then
 		base=`basename ${infile} .tex` ;
 		outfile=${base}.$format
@@ -171,8 +171,8 @@ fi
 #if [ -e "$infile" ]; then
 #	cat $infile >> $tmpdir/out.tex
 #else
-	echo $infile >> $tmpdir/out.tex
-#fi	
+	echo "$infile" >> $tmpdir/out.tex
+#fi
 
 if [ $noformula -eq 1 ]; then
 (
@@ -203,15 +203,15 @@ dvips -o $tmpdir/out.eps -E $tmpdir/out.dvi 2> /dev/null
 
 if [ $trans -eq 1 ]; then
 	if [ $aa -eq 1 ]; then
-		convert +adjoin -antialias -transparent $color1 -density $resolution $tmpdir/out.eps $tmpdir/out.$format	
+		convert +adjoin -antialias -transparent $color1 -density $resolution $tmpdir/out.eps $tmpdir/out.$format
 	else
-		convert +adjoin +antialias -transparent $color1 -density $resolution $tmpdir/out.eps $tmpdir/out.$format	
+		convert +adjoin +antialias -transparent $color1 -density $resolution $tmpdir/out.eps $tmpdir/out.$format
 	fi
-else	
+else
 	if [ $aa -eq 1 ]; then
-		convert +adjoin -antialias -density $resolution $tmpdir/out.eps $tmpdir/out.$format	
+		convert +adjoin -antialias -density $resolution $tmpdir/out.eps $tmpdir/out.$format
 	else
-		convert +adjoin +antialias -density $resolution $tmpdir/out.eps $tmpdir/out.$format	
+		convert +adjoin +antialias -density $resolution $tmpdir/out.eps $tmpdir/out.$format
 	fi
 fi
 
@@ -230,5 +230,5 @@ done
 # Cleanup
 #
 
-rm -rf $tmpdir 
+rm -rf $tmpdir
 exit 0
