@@ -577,7 +577,7 @@ void MSNNotifySocket::slotAuthJobDataReceived ( KIO::Job */*job*/,const  QByteAr
 
 void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 {
-	kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: "<< m_authData << endl;
+//	kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: "<< m_authData << endl;
 
 	if(job->error())
 	{
@@ -593,12 +593,12 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		QString cookies="Cookie: ";
 		for ( QStringList::Iterator it = cookielist.begin(); it != cookielist.end(); ++it )
 		{
-			kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cl: " << *it << endl;
+//			kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cl: " << *it << endl;
 			QRegExp rx("Set-Cookie: ([^;]*)");
 			rx.search(*it);
 			cookies+=rx.cap(1)+";";
 		}
-		kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cookie: " << cookies << endl;
+//		kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cookie: " << cookies << endl;
 
 		//QRegExp rx("lc=([1-9]*),id=([1-9]*),tw=([1-9]*),fs=[1-9]*,ru=[1-9a-zA-Z%]*,ct=[1-9]*,kpp=[1-9]*,kv=([1-9]*),");
 		QRegExp rx("lc=([0-9]*),id=([0-9]*),tw=([0-9]*),.*kv=([0-9]*),");
@@ -608,7 +608,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 			rx.cap( 2 ) + "&tw=" + rx.cap( 3 ) + "&cbid=" + rx.cap( 2 ) + "&da=passport.com&login=" +
 			KURL::encode_string( m_account->accountId()) + "&domain=passport.com&passwd=";
 
-		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*******)" << endl;
+//		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*******)" << endl;
 
 		m_authData = QString::null;
 		m_kv=rx.cap(4);
