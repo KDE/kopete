@@ -569,15 +569,14 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	}
 }
 
-void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
-	const QPoint &p )
+void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account, const QPoint &p )
 {
-	KActionMenu *actionMenu=account->actionMenu();
-	if(!actionMenu)
+	KActionMenu *actionMenu = account->actionMenu();
+	if ( !actionMenu )
 		return;
-	connect(actionMenu->popupMenu(), SIGNAL(aboutToHide) , actionMenu , SLOT(deleteLater()) );
-	actionMenu->popupMenu()->popup( p );
 
+	connect( actionMenu->popupMenu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
+	actionMenu->popupMenu()->popup( p );
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
@@ -596,21 +595,14 @@ void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 
 }
 
-void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
-	const QPoint &p )
+void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto, const QPoint &p )
 {
-//	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconRightClicked()" << endl;
-	// if the protocol has accounts, show its menu
-	// otherwise just show a menu containing "Add New Account"
-	KActionMenu *menu = 0L;
-
-	QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( proto );
-	if ( dict.count() > 0 )
-		menu = proto->protocolActions();
-
-	if( menu )
+	//kdDebug( 14000 ) << k_funcinfo << endl;
+	if ( KopeteAccountManager::manager()->accounts( proto ).count() > 0 )
 	{
-		connect( menu->popupMenu() , SIGNAL(aboutToHide) , menu , SLOT(deleteLater()) );
+		KActionMenu *menu = proto->protocolActions();
+
+		connect( menu->popupMenu(), SIGNAL( aboutToHide() ), menu, SLOT( deleteLater() ) );
 		menu->popupMenu()->popup( p );
 	}
 }
