@@ -127,7 +127,7 @@ void MSNMessageManager::slotSwitchBoardClosed()
 
 void MSNMessageManager::slotUserTypingMsg( QString handle )
 {
-	MSNContact *c=MSNProtocol::protocol()->contact(handle);
+	MSNContact *c=MSNProtocol::protocol()->contact(handle.lower());
 	if(!c)
 	{
 		kdDebug() << "MSNMessageManager::slotUserTypingMsg : WARNING - KopeteContact not found"  << endl;
@@ -199,7 +199,7 @@ void MSNMessageManager::slotCloseSession()
 
 void MSNMessageManager::slotInviteContact(const QString &_handle)
 {
-	QString handle=_handle;
+	QString handle=_handle.lower();
 	if(handle==otherString)
 	{
 		bool ok;

@@ -1254,6 +1254,8 @@ void MSNProtocol::slotCreateChat( QString address, QString auth)
 void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	QString handle, QString  publicName  )
 {
+	handle = handle.lower();
+
 	kdDebug() << "MSNProtocol::slotCreateChat: Creating chat for " <<
 		handle << endl;
 
