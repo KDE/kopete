@@ -356,7 +356,20 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 
 void KopeteAccount::setPassword( const QString &pass )
 {
-	d->rememberPassword = !pass.isNull();
+	if ( pass.isNull() )
+	{
+		// FIXME: This is a quick workaround for the problem that after Jason
+		//        added the rememberPassword flag he didn't accordingly update
+		//        all plugins to setRememberPassword( false ), so they now
+		//        try to set a null pass when the pass is not to be remembered.
+		//
+		//        After KDE 3.2 this should be fixed by disallowing null
+		//        passwords here and adding said property setter method - Martijn
+		d->password = pass;
+		d->rememberPassword = false;
+		writeConfig( configGroup() );
+		return;
+	}
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	kdDebug( 14010 ) << k_funcinfo << endl;
