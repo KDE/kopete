@@ -453,6 +453,7 @@ default_presentation=0
 
 [yahoo_mail]
 Name=Yahoo Mail
+Name[be]=Пошта Yahoo
 Name[bg]=Пристигна нова поща в Yahoo
 Name[ca]=Correu Yahoo
 Name[es]=Correo de Yahoo
