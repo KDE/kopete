@@ -7,14 +7,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kgenericfactory.h>
-#include <kmessagebox.h>
-#include <kdebug.h>
 #include "smsprotocol.h"
 #include "smspreferences.h"
 #include "smscontact.h"
 #include "smsaddcontactpage.h"
 #include "kopetemetacontact.h"
+#include <kgenericfactory.h>
+#include <kmessagebox.h>
+#include <kdebug.h>
 
 K_EXPORT_COMPONENT_FACTORY( kopete_sms, KGenericFactory<SMSProtocol> );
 
@@ -146,5 +146,14 @@ void SMSProtocol::deserialize( KopeteMetaContact *metaContact,
 
 #include "smsprotocol.moc"
 
+
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
 // vim: set noet ts=4 sts=4 sw=4:
 

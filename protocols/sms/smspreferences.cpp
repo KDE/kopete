@@ -11,14 +11,15 @@
 #include "smspreferences.h"
 #include "smsservice.h"
 #include "serviceloader.h"
+#include "smsprefs.h"
 
 #include <qlayout.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qpoint.h>
+#include <qsizepolicy.h>
 
 #include <kconfig.h>
-#include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
 
@@ -26,18 +27,15 @@ SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 : ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ),
 	pixmap, parent )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	(new QVBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
+
 	preferencesDialog = new smsPrefsUI(this);
 
 	service = 0L;
 	configWidget = 0L;
 
-	preferencesDialog->serviceName->insertItem("Spray");
+	preferencesDialog->serviceName->insertItem("SMSSend");
 
-	configVBox = new QGroupBox(this, "configVBox");
-	configLayout = new QHBoxLayout(configVBox);
-	configLayout->setAutoAdd(true);
-    
 	connect (preferencesDialog->serviceName, SIGNAL(activated(const QString &)), this, SLOT(setServicePreferences(const QString &)));
 
 	reopen();
@@ -96,10 +94,20 @@ void SMSPreferences::setServicePreferences(const QString& name)
 	if ( service == 0L)
 		return;
 
-	configWidget = service->configureWidget(configVBox);
+	configWidget = service->configureWidget(this);
+	configWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	configWidget->show();
 }
 
 #include "smspreferences.moc"
 
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
 // vim: set noet ts=4 sts=4 sw=4:
+

@@ -25,6 +25,9 @@ public slots: // Public slots
 
 
 #endif
+
+
+
 /*
  * Local variables:
  * c-indentation-style: k&r

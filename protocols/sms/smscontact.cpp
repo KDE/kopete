@@ -9,6 +9,16 @@
     *************************************************************************
 */
 
+#include "smsservice.h"
+#include "serviceloader.h"
+#include "smsprotocol.h"
+#include "smscontact.h"
+
+#include "kopetehistorydialog.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopete.h"
+
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <kdialogbase.h>
@@ -17,20 +27,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
-
-#include "kopete.h"
-#include "kopetecontactlistview.h"
-#include "kopetestdaction.h"
-#include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "smscontact.h"
-#include "smsprotocol.h"
-#include "kopetewindow.h"
-#include "kopeteemailwindow.h"
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
-#include "smsservice.h"
-#include "serviceloader.h"
 
 SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 	const QString &displayName, KopeteMetaContact *parent )
@@ -94,17 +90,14 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 	if ( s == 0L)
 		return;
 
-	s->send(nr, text);
-
-	msgManager()->appendMessage(msg);
+	if (s->send(nr, text))
+		msgManager()->appendMessage(msg);
 
 	delete s;
 }
 
 void SMSContact::slotViewHistory()
 {
-	kdDebug() << "SMS Plugin: slotViewHistory()" << endl;
-
 	if (historyDialog != 0L)
 	{
 		historyDialog->raise();
@@ -118,7 +111,6 @@ void SMSContact::slotViewHistory()
 
 void SMSContact::slotCloseHistoryDialog()
 {
-	kdDebug() << "SMS Plugin: slotCloseHistoryDialog()" << endl;
 	delete historyDialog;
 	historyDialog = 0L;
 }
@@ -129,8 +121,6 @@ void SMSContact::slotUserInfo()
 
 void SMSContact::slotDeleteContact()
 {
-	kdDebug() << "SMSContact::slotDeleteContact" << endl;
-
 	delete this;
 	return;
 }
@@ -157,5 +147,14 @@ void SMSContact::setSmsId( const QString &id )
 
 #include "smscontact.moc"
 
+
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
 // vim: set noet ts=4 sts=4 sw=4:
 

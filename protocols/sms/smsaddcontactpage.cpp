@@ -1,12 +1,13 @@
+#include "smsadd.h"
+#include "smsaddcontactpage.h"
+#include "smsprotocol.h"
+
 #include <qlayout.h>
 #include <qlineedit.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "smsadd.h"
-#include "smsaddcontactpage.h"
-#include "smsprotocol.h"
 
 SMSAddContactPage::SMSAddContactPage(SMSProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
@@ -36,3 +37,12 @@ bool SMSAddContactPage::validateData()
 }
 
 #include "smsaddcontactpage.moc"
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
+

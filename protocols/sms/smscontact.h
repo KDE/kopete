@@ -12,18 +12,14 @@
 #ifndef SMSCONTACT_H
 #define SMSCONTACT_H
 
-#include <qptrlist.h>
-
 #include "kopetecontact.h"
-#include "kopetehistorydialog.h"
-#include "kopetegroup.h"
-#include "smsprotocol.h"
 
-class KAction;
-class KActionCollection;
+#include <qstring.h>
 
+class SMSProtocol;
 class KopeteHistoryDialog;
 class KopeteMessageManager;
+class KopeteMetaContact;
 
 
 class SMSContact : public KopeteContact
@@ -67,4 +63,13 @@ private:
 };
 
 #endif
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
 

@@ -12,10 +12,10 @@
 
 #include "configmodule.h"
 #include "kopeteprefs.h"
-#include "smsprefs.h"
 
-class QBoxLayout;
+class QVBoxLayout;
 class SMSService;
+class smsPrefsUI;
 
 class SMSPreferences : public ConfigModule
 {
@@ -31,17 +31,24 @@ signals:
 
 private:
 	smsPrefsUI *preferencesDialog;
-	QGroupBox *configVBox;
-	QBoxLayout *configLayout;
 	QWidget *configWidget;
 	SMSService *service;
-public slots: // Public slots
-  /** No descriptions */
+public slots:
+
   virtual void reopen();
   void setServicePreferences(const QString& name);
 };
 
 #endif
 
+
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
 // vim: set noet ts=4 sts=4 sw=4:
 

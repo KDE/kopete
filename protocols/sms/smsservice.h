@@ -3,8 +3,9 @@
 
 #include <qstring.h>
 #include <qwidget.h>
+#include <qobject.h>
 
-class SMSService
+class SMSService : public QObject
 {
 public:
 	SMSService();
@@ -16,3 +17,12 @@ public:
 } ;
 
 #endif //SMSSERVICE_H
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
+
