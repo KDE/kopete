@@ -41,6 +41,7 @@
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
@@ -364,7 +365,8 @@ void JabberContact::km2jm(const KopeteMessage & km, Jabber::Message & jm) {
 	jabMessage.setSubject(km.subject());
 
     // determine type of the widget and set message type accordingly
-    if (km.type() == KopeteMessage::Chat)
+    //if (km.type() == KopeteMessage::Chat)
+    	if (messageManager->view()->viewType() == KopeteMessage::Chat)
 	jabMessage.setType("chat");
     else
 	jabMessage.setType("normal");
@@ -377,6 +379,7 @@ void JabberContact::slotReceivedMessage(const Jabber::Message & message) {
     KopeteMessage::MessageType type;
     KopeteContactPtrList contactList;
 
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberContact] Received Message Type:" << message.type() << endl;
     // determine message type
     if (message.type() == "chat")
 	type = KopeteMessage::Chat;

@@ -462,11 +462,6 @@ void JabberAccount::slotConnected(bool success, int statusCode,
 	myself()->setOnlineStatus(JabberProtocol::getJabberOnline());
 
 
-	kdDebug(JABBER_DEBUG_GLOBAL) << "JabberOnline: " << JabberOnline.description() << "\n" << endl;		
-	kdDebug(JABBER_DEBUG_GLOBAL) << "online status: " << myself()->onlineStatus().status() << "\n" << endl;		
-	kdDebug(JABBER_DEBUG_GLOBAL) << "kopete offline status: " << KopeteOnlineStatus::Offline << "\n" << endl;		
-	kdDebug(JABBER_DEBUG_GLOBAL) << "isConnected()?" << isConnected() << endl;
-
 	/* Request roster. */
 	jabberClient->rosterRequest();
 
@@ -525,7 +520,7 @@ void JabberAccount::disconnect() {
     /* It seems that we don't get offline notifications when going offline
      * with the protocol, so update all contacts manually. */
     for (QDictIterator <KopeteContact> it(contacts()); it.current(); ++it)
-	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberOffline, "Disconnected");
+	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberProtocol::JabberOffline, "Disconnected");
 }
 
 void JabberAccount::slotConnect() {
@@ -551,7 +546,7 @@ void JabberAccount::slotDisconnected() {
     /* It seems that we don't get offline notifications when going offline
      * with the protocol, so update all contacts manually. */
     for (QDictIterator <KopeteContact> it(contacts()); it.current(); ++it)
-	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberOffline, "disconnected");
+	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberProtocol::JabberOffline, "disconnected");
 }
 
 void JabberAccount::slotError(const Jabber::StreamError & error) {
