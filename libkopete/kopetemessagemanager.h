@@ -39,6 +39,7 @@ class KopeteChatWindow;
 class KMainWindow;
 
 typedef QMap<KopeteProtocol*,KopeteChatWindow*> ChatWindowMap;
+typedef QPtrList<KopeteChatWindow>        ChatWindowList;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
@@ -122,6 +123,8 @@ public:
 	
 	void setCurrentMessage( const KopeteMessage &message );
 
+	ChatWindowList *chatWindowList();
+
 signals:
 	/**
 	 * A message has been sent by the user or a plugin. The protocol should
@@ -203,7 +206,7 @@ private slots:
 protected slots:
 	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
-	void slotChatWindowClosing();
+	void slotChatWindowClosing( KopeteChatWindow *closedWindow = 0L );
 	void slotReplyWindowClosing();
 	void slotReadMessages();
 	void slotReply();
@@ -231,6 +234,7 @@ private:
 	bool dockChatWindows;
 	KopeteChatWindow *newWindow();
 	ChatWindowMap *chatWindowMap();
+
 	KMainWindow *myWindow;
 	
 	KMMPrivate *d;

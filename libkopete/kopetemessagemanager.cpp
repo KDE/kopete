@@ -108,9 +108,13 @@ KopeteMessageManager::~KopeteMessageManager()
 	d->mCanBeDeleted = false; //prevent double deletion
 	KopeteMessageManagerFactory::factory()->removeSession( this );
 	emit dying(d->mView);
-	ChatWindowMap windowMap = *(chatWindowMap());
-	if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
-		chatWindowMap()->remove( d->mProtocol );
+	if( d->mWidget == ChatWindow )
+	{
+		ChatWindowMap windowMap = *(chatWindowMap());
+		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
+			chatWindowMap()->remove( d->mProtocol );
+		chatWindowList()->remove( static_cast<KopeteChatWindow*>(myWindow) );
+	}
 	delete d;
 }
 
@@ -126,12 +130,16 @@ void KopeteMessageManager::slotSendEnabled(bool e)
 
 void KopeteMessageManager::setMainWindow()
 {
-	disconnect(myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
 	myWindow = d->mView->mainWindow();
 
  	if( !chatWindowMap()->contains( d->mProtocol ) )
 		chatWindowMap()->insert( d->mProtocol, static_cast<KopeteChatWindow*>(myWindow) );
-	connect(myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+
+	if( !chatWindowList()->contains( static_cast<KopeteChatWindow*>(myWindow) ) )
+		chatWindowList()->append( static_cast<KopeteChatWindow*>(myWindow) );
+
+	connect(myWindow, SIGNAL(closing(KopeteChatWindow*)), this, SLOT(slotChatWindowClosing(KopeteChatWindow*)));
+	kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
 }
 
 void KopeteMessageManager::setLogging( bool on )
@@ -184,6 +192,15 @@ ChatWindowMap *KopeteMessageManager::chatWindowMap()
 }
 
 /*
+ * This method returns the static chatWindowMap pointer for the protocol<->window mapping
+ */
+ChatWindowList *KopeteMessageManager::chatWindowList()
+{
+	static ChatWindowList *m_chatWindowList = new ChatWindowList();
+	return m_chatWindowList;
+}
+
+/*
  * This method returns the window pointer for our policy type
  */
 KopeteChatWindow *KopeteMessageManager::newWindow()
@@ -198,7 +215,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 
 			//Always create new window
 			myWindow = new KopeteChatWindow();
-			connect (myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+			connect(myWindow, SIGNAL(closing(KopeteChatWindow*)), this, SLOT(slotChatWindowClosing(KopeteChatWindow*)));
 
 			break;
 
@@ -215,21 +232,20 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			{
 				//A window for this protocol does not exist, create new window
 				myWindow = new KopeteChatWindow();
-				connect (myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+				connect(myWindow, SIGNAL(closing(KopeteChatWindow*)), this, SLOT(slotChatWindowClosing(KopeteChatWindow*)));
 				mappedWindowCreated = true;
 			}
 			break;
 
 		case GROUP_ALL: //Open all chats in the same window
 			kdDebug(14010) << k_funcinfo << "Group all" << endl;
-			kdDebug(14010) << k_funcinfo << "chatWindowMap contains " << chatWindowMap()->count() << endl;
 
 			//Check if a window exists
 			if( chatWindowMap()->isEmpty() )
 			{
 				//No window exists, create a new window
 				myWindow = new KopeteChatWindow();
-				connect (myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
+				connect(myWindow, SIGNAL(closing(KopeteChatWindow*)), this, SLOT(slotChatWindowClosing(KopeteChatWindow*)));
 				mappedWindowCreated = true;
 			}
 			else
@@ -250,9 +266,15 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			break;
 	}
 
+	kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
+
 	//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
-	if( mappedWindowCreated && !chatWindowMap()->contains( d->mProtocol ) )
-		chatWindowMap()->insert(d->mProtocol, static_cast<KopeteChatWindow*>(myWindow) );
+	if( mappedWindowCreated )
+	{
+		if( !chatWindowMap()->contains( d->mProtocol ) )
+			chatWindowMap()->insert(d->mProtocol, static_cast<KopeteChatWindow*>(myWindow) );
+		chatWindowList()->append( static_cast<KopeteChatWindow*>(myWindow) );
+	}
 
 	return static_cast<KopeteChatWindow *>( myWindow );
 }
@@ -498,23 +520,19 @@ void KopeteMessageManager::slotChatViewClosing()
 	if(d->mCanBeDeleted)
 	{
 		kdDebug(14010) << k_funcinfo << "delete KMM" << endl;
-		delete this;
+		deleteLater();
 	}
-	ChatWindowMap windowMap = *(chatWindowMap());
-	if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
-		chatWindowMap()->remove( d->mProtocol );
-
 	d->mView = 0L;
 }
 
-void KopeteMessageManager::slotChatWindowClosing()
+void KopeteMessageManager::slotChatWindowClosing( KopeteChatWindow* closedWindow )
 {
 	if (d->mWidget == ChatWindow)
 	{
 		//We are deleting this window instance
-		kdDebug(14010) << k_funcinfo << "Chat Window closed, now 0L" << endl;
+		chatWindowList()->remove( closedWindow );
 		myWindow = 0L;
-		slotChatViewClosing();
+		kdDebug(14010) << k_funcinfo << "There are now this many windows open:" << chatWindowList()->count() << endl;
 	}
 	else if (d->mWidget == Email)
 	{
