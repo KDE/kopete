@@ -501,6 +501,10 @@ void OscarAccount::slotGotServerBuddyList()
 		}
 	}
 
+	//Get a list of contacts, if they're not on the SSI, move them to a new
+	//metacontact, and then move that new metacontact to the temp group
+	//so they're gone on kopete exit
+
 	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
 }
