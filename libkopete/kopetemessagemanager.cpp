@@ -38,6 +38,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	mUser = user;
 	mChatWindow = 0L;
 	mEmailWindow = 0L;
+	mEmailReplyWindow = 0L;
 	mUnreadMessageEvent = 0L;
 	mProtocol = protocol;
 	mWidget = widget;
@@ -89,9 +90,25 @@ void KopeteMessageManager::newChatWindow() {
 		mEmailWindow->setSendEnabled(mSendEnabled);
 		if (mContactList.first() != 0L)
 			mEmailWindow->setCaption(mContactList.first()->name());
-		connect (mEmailWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()));
+		connect (mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (mEmailWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (mEmailWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
+		connect (mEmailWindow, SIGNAL(replyClicked()), this, SLOT(slotReply()));
+	}
+}
+
+void KopeteMessageManager::newReplyWindow() {
+	if (mWidget == Email) {
+		kdDebug() << "[KopeteMessageManager] newReplyWindow() called for email-type window" << endl;
+		mEmailReplyWindow = new KopeteEmailWindow(mUser, mContactList);
+		mEmailReplyWindow->setSendEnabled(true);
+		mEmailReplyWindow->setReplyMode(true);
+		mEmailReplyWindow->show();
+		mEmailReplyWindow->raise();
+		if (mContactList.first() != 0L)
+			mEmailReplyWindow->setCaption(mContactList.first()->name());
+		connect (mEmailReplyWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (mEmailReplyWindow, SIGNAL(closeClicked()), this, SLOT(slotReplyWindowClosing()));
 	}
 }
 
@@ -154,6 +171,18 @@ void KopeteMessageManager::slotReadMessages() {
 	readMessages();
 }
 
+void KopeteMessageManager::slotReply() {
+	kdDebug() << "[KopeteMessageManager] slotReply() called." << endl;
+	if (mEmailReplyWindow == 0L) {
+		/* PLTHARG! */
+		kdDebug() << "[KopeteMessageManager] mEmailReplyWindow == 0L, calling nRW()" << endl;
+		newReplyWindow();
+	}
+	else {
+		kdDebug() << "[KopeteMessageManager] mEmailWindow != 0L, not starting a new one (duh)." << endl;
+	}
+}
+
 void KopeteMessageManager::slotMessageSent(const KopeteMessage &message) {
 	emit messageSent(message);
 	if ( kopeteapp->appearance()->soundNotify() )
@@ -172,7 +201,14 @@ void KopeteMessageManager::slotChatWindowClosing() {
 	}
 }
 
-void KopeteMessageManager::cancelUnreadMessageEvent() {
+void KopeteMessageManager::slotReplyWindowClosing() {
+	if (mWidget == Email) {
+		delete mEmailReplyWindow;
+		mEmailReplyWindow = 0L;
+	}
+}
+
+void KopeteMessageManager::slotCancelUnreadMessageEvent() {
 	if (mUnreadMessageEvent == 0L)
 	{
 		kdDebug() << "[KopeteMessageManager] No event to delete" << endl;

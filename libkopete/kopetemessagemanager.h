@@ -61,9 +61,10 @@ public:
 	~KopeteMessageManager();
 
 	/**
-	 * Fire up a new KopeteChatWindow
+	 * Fire up a new widget.
 	 */
 	void newChatWindow();
+	void newReplyWindow();
 	
 	/**
 	 * Append a message to the queue
@@ -100,7 +101,7 @@ public:
 	/**
 	 * Get a list of all contacts in the session
 	 */
-	const KopeteContactList& members() const { return mContactList; }; /* Sorry, had to change this to members(), it was conflicting with kxContact */
+	const KopeteContactList& members() const { return mContactList; }; /* kxContact takes it in the arse from a donkey. */ 
     /**
 	 * Get the local user in the session
 	 */
@@ -112,18 +113,21 @@ signals:
 	 * A message has been sent by the user or a plugin. The protocol should
 	 * connect to this signal to actually send the message over the wire.
 	 */
-	void messageSent( const KopeteMessage msg );
-	void dying( KopeteMessageManager *);
+	void messageSent(const KopeteMessage msg);
+	void dying(KopeteMessageManager *);
 
 public slots:
 	void readModeChanged();
-	void slotSendEnabled( bool );
+	void slotSendEnabled(bool);
 protected slots:
-	void cancelUnreadMessageEvent();
+	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
     void slotChatWindowClosing();
+	void slotReplyWindowClosing();
 	void slotMessageSent(const KopeteMessage &message);
 	void slotReadMessages();
+	void slotReply();
+	
 private:
 	/**
 	 * Create a message manager. This constructor is private, because the
@@ -137,7 +141,7 @@ private:
 	KopeteContactList mContactList;
 	const KopeteContact *mUser;
 	KopeteChatWindow *mChatWindow;
-	KopeteEmailWindow *mEmailWindow;
+	KopeteEmailWindow *mEmailWindow, *mEmailReplyWindow;
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;

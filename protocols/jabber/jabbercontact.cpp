@@ -76,7 +76,7 @@ KopeteMessageManager* JabberContact::msgManagerKCW() {
 
 void JabberContact::initActions() {
     actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
-	actionMessage = new KAction(i18n("Send Email Message"), "sendmessage", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
+	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
     actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
     actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
     actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
@@ -245,7 +245,12 @@ void JabberContact::slotEmailUser() {
 
 void JabberContact::execute() {
 	KGlobal::config()->setGroup("Jabber");
-	slotChatThisUser();
+	if (KGlobal::config()->readBoolEntry("EmailDefault", false)) {
+		slotEmailUser();
+	}
+	else {
+		slotChatThisUser();
+	}
 }
 
 void JabberContact::slotNewMessage(const JabMessage &message) {
