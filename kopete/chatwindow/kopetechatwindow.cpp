@@ -545,7 +545,9 @@ void KopeteChatWindow::createTabBar()
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 		m_tabBar->setHoverCloseButton(KGlobal::config()->readBoolEntry( QString::fromLatin1("HoverClose"), false ));
 		m_tabBar->setTabReorderingEnabled(true);
+#if KDE_IS_VERSION(3,4,0)
 		m_tabBar->setAutomaticResizeTabs(true);
+#endif
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
