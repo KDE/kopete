@@ -36,7 +36,6 @@
 #include "pluginloader.h"
 #include "kopetegroup.h"
 
-
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
 KopeteContactList *KopeteContactList::contactList()
@@ -113,7 +112,7 @@ void KopeteContactList::loadXML()
 	QString versionString = list.attribute( "version", QString::null );
 	uint version = 0;
 	if( QRegExp( "[0-9]+\\.[0-9]" ).exactMatch( versionString ) )
-		version = versionString.replace( '.', QString::null ).toUInt();
+		version = versionString.replace( QRegExp( "\\." ), QString::null ).toUInt();
 
 	if( version < ContactListVersion )
 	{
@@ -271,11 +270,11 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							QString data = oldContactElement.text();
 
 							QString app, key, val;
-							QChar separator = ',';
+							QString separator = ",";
 							if( id == "messaging/gadu" )
-								separator = '\n';
+								separator = "\n";
 							else if( id == "messaging/icq" )
-								separator = ';';
+								separator = ";";
 							else if( id == "messaging/jabber" )
 								id = "messaging/xmpp";
 
@@ -284,7 +283,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							{
 								app = id;
 								key = "All";
-								val = data.replace( separator, QChar( 0xE000 ) );
+								val = data.replace( QRegExp( separator ), QChar( 0xE000 ) );
 							}
 
 							if( !app.isEmpty() )
@@ -536,7 +535,11 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 	contactListFile.open( IO_WriteOnly );
 	QTextStream stream( &contactListFile );
 	stream.setEncoding( QTextStream::UnicodeUTF8 );
+#if QT_VERSION < 0x030100
+	stream << newList.toString();
+#else
 	stream << newList.toString( 2 );
+#endif
 	contactListFile.flush();
 	contactListFile.close();
 }
