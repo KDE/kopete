@@ -196,14 +196,16 @@ void KopeteContact::slotAddContact()
 
 KPopupMenu* KopeteContact::popupMenu()
 {
-	//FIXME: This should perhaps be KActionCollection * KopeteContact::contactActions() to
-	//FIXME: 	avoid passing around KPopupMenu's
-	//FIXME: (Jason) - KActionCollections are bad for popup menus because they are unordered..
-	//FIXME: 	in fact, I think customContextMenuActions should be remade into a popupmenu,
-	//FIXME:	or a QPtrList<KAction>, or something that has a notion of order, because
-	//FIXME:	currently the customContextMenuActions do not return in the order they are
-	//FIXME:	added, which makes for a mess when you want certain things at the top and
-	//FIXME:	others later on
+	// FIXME:
+	// This should perhaps be KActionCollection * KopeteContact::contactActions() to
+	// avoid passing around KPopupMenu's (Jason)
+	//
+	// KActionCollections are bad for popup menus because they are unordered.
+	// in fact, I think customContextMenuActions should be remade into a popupmenu,
+	// or a QPtrList<KAction>, or something that has a notion of order, because
+	// currently the customContextMenuActions do not return in the order they are
+	// added, which makes for a mess when you want certain things at the top and
+	// others later on.
 
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
@@ -217,6 +219,13 @@ KPopupMenu* KopeteContact::popupMenu()
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
 	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
+
+	bool reach = isReachable() && d->account->isConnected(); // save calling a method several times
+	d->actionChat->setEnabled( reach );
+	d->actionSendFile->setEnabled( reach && d->fileCapable );
+	d->actionSendMessage->setEnabled( reach );
+	// FIXME: is userinfo supposed to work while being offline.
+	// Some protocols might have valid userinfo while the contact is offline [mETz]
 
 	QString titleText;
 #if QT_VERSION < 0x030200
@@ -241,8 +250,7 @@ KPopupMenu* KopeteContact::popupMenu()
 
 	d->actionSendMessage->plug( menu );
 	d->actionChat->plug( menu );
-	if( d->fileCapable )
-		d->actionSendFile->plug( menu );
+	d->actionSendFile->plug( menu );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function
@@ -382,7 +390,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 
 		// Reparent the contact
 		old->removeChild( this );
-		
+
 		if(result==KMessageBox::Yes)
 		{
 			//remove the old metacontact.  (this delete the MC)

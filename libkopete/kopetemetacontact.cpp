@@ -411,10 +411,8 @@ bool KopeteMetaContact::isReachable() const
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		// FIXME: implement KopeteContact::protocol()!!!
-		//if( it.current()->protocol()->canSendOffline() )
-		//	return true;
-		continue;
+		if( it.current()->isReachable() && it.current()->account()->isConnected() )
+			return true;
 	}
 	return false;
 }
