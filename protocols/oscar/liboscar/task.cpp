@@ -31,7 +31,7 @@ class Task::TaskPrivate
 public:
 	TaskPrivate() {}
 
-	long id;
+	Q_UINT32 id;
 	bool success;
 	int statusCode;
 	QString statusString;
@@ -278,6 +278,11 @@ bool Task::forMe( const Transfer * transfer ) const
 {
 	Q_UNUSED( transfer );
 	return false;
+}
+
+void Task::setId( Q_UINT32 id )
+{
+	d->id = id;
 }
 
 #include "task.moc"

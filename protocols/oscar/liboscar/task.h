@@ -74,6 +74,7 @@ signals:
 protected:
 	virtual void onGo();
 	virtual void onDisconnect();
+	void setId( Q_UINT32 id );
 	void send( Transfer * request );
 	void setSuccess( int code=0, const QString &str="" );
 	void setError( int code=0, const QString &str="" );
