@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-X-Kopete-Version=1000800
+X-Kopete-Version=1000900
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_motionaway
 X-KDE-PluginInfo-Author=Duncan Mac-Vicar Prett
@@ -26,6 +26,7 @@ Name[fr]=Détection de mouvement
 Name[gl]=Auto-alonxamento
 Name[he]=שינוי מצב לפי גלאי תזוזה
 Name[hi]=मोशन आटो अवे
+Name[hr]=Automatska odsutnost u nedostatku pokreta
 Name[hu]=A távollét érzékelése mozgásdetektálással
 Name[it]=Automaticamente "assente" se inutilizzato
 Name[nb]=Bli borte automatisk
@@ -36,8 +37,10 @@ Name[pt_BR]=Ausente Automático
 Name[sk]=Automatická prítomnosť podľa pohybu
 Name[sl]=Samodejna odsotnost
 Name[sr]=Аутоматска одсутност без покретâ
+Name[sr@Latn]=Automatska odsutnost bez pokretâ
 Name[sv]=Automatisk rörelsefrånvaro
 Name[ta]=அகராதி
+Name[uk]=Автоматична відсутність
 Name[xx]=xxMotion Auto-Awayxx
 Name[zh_CN]=自动离开
 Comment=Sets away status when not detecting movement near the computer 

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-X-Kopete-Version=1000800
+X-Kopete-Version=1000900
 Icon=jabber_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_jabber
@@ -34,7 +34,9 @@ Comment[fr]=Protocole pour se connecter sur Jabber
 Comment[gl]=Protocolo para se conectar a Jabber
 Comment[he]=פרוטוקול התחברות ל- Jabber
 Comment[hi]=जैबर से जुड़ने का प्रोटोकॉल
+Comment[hr]=Protokol za povezivanje na Jabber
 Comment[hu]=Protokoll a Jabber használatához
+Comment[is]=Samskiptamáti til að tengjast Jabber
 Comment[it]=Protocollo per connessione a Jabber
 Comment[nb]=Protokoll for å koble til Jabber
 Comment[nl]=Protocol om met Jabber te verbinden
@@ -45,8 +47,10 @@ Comment[ru]=Протокол для подключения к Jabber
 Comment[sk]=Protokol pre pripojenie k Jabber
 Comment[sl]=Protokol za povezavo na Jabber
 Comment[sr]=Протокол за повезивање на Jabber
+Comment[sr@Latn]=Protokol za povezivanje na Jabber
 Comment[sv]=Protokoll för att ansluta till Jabber
 Comment[ta]=ஜாபருடன் இணைக்க விதிமுறை
+Comment[uk]=Протокол для з'єднання з Jabber
 Comment[uz]=Jabber билан алоқа ўрнатиш учун протокол
 Comment[xx]=xxProtocol to connect to Jabberxx
 
