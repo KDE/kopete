@@ -7,10 +7,20 @@ AM_CPPFLAGS = -I$(srcdir)/ui $(KOPETE_INCLUDES) \
 		$(all_includes)
 kde_module_LTLIBRARIES = kopete_irc.la
 
-kopete_irc_la_SOURCES = ircaddcontactpage.cpp ircchannelcontact.cpp \
-	irccontact.cpp ircaccount.cpp  \
-	ircprotocol.cpp ircservercontact.cpp ircusercontact.cpp \
-	irccontactmanager.cpp ksparser.cpp kcodecaction.cpp ircsignalhandler.cpp ircguiclient.cpp
+kopete_irc_la_SOURCES = \
+	ircaccount.cpp  \
+	ircaddcontactpage.cpp \
+	ircchannelcontact.cpp \
+	irccontact.cpp \
+	ircguiclient.cpp \
+	ircprotocol.cpp \
+	ircservercontact.cpp \
+	ircsignalhandler.cpp \
+	irctransferhandler.cpp \
+	ircusercontact.cpp \
+	irccontactmanager.cpp \
+	kcodecaction.cpp \
+	ksparser.cpp
 
 kopete_irc_la_LDFLAGS     = -module $(KDE_PLUGIN) $(all_libraries)
 kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \

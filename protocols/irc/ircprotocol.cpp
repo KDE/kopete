@@ -51,6 +51,7 @@
 #include "ircguiclient.h"
 #include "ircusercontact.h"
 #include "irceditaccountwidget.h"
+#include "irctransferhandler.h"
 
 #include "ircprotocol.h"
 
@@ -213,6 +214,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	netConf = 0L;
 
 	slotReadNetworks();
+
+	IRCTransferHandler::self(); // Initiate the transfer handling system.
 }
 
 IRCProtocol * IRCProtocol::protocol()

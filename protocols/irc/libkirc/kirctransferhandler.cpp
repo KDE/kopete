@@ -27,7 +27,7 @@
 
 #include "kirctransferhandler.h"
 
-KIRCTransferHandler KIRCTransferHandler::m_self;
+KIRCTransferHandler KIRCTransferHandler::sm_self;
 
 KIRCTransferServer *KIRCTransferHandler::server()
 {
@@ -52,13 +52,13 @@ KIRCTransfer *KIRCTransferHandler::createClient(
 	KIRC *engine, QString nick,// QString nick_peer_adress,
 	QHostAddress peer_address, Q_UINT16 peer_port,
 	KIRCTransfer::Type type,
-	QFile *file, Q_UINT32 file_size )
+	QString file, Q_UINT32 fileSize )
 {
 	KIRCTransfer *client = new KIRCTransfer(
 		engine, nick,// QString nick_peer_adress,
 		peer_address, peer_port,
 		type,
-		file, file_size,
+		file, fileSize,
 		this );
 	transferCreated( client );
 	return client;
