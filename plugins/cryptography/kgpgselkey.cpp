@@ -33,6 +33,7 @@
 #include <qclipboard.h>
 #include <qkeysequence.h>
 #include <qtextcodec.h>
+#include <qlabel.h>
 
 #include <kio/netaccess.h>
 #include <klistview.h>
@@ -43,11 +44,9 @@
 #include <kprocess.h>
 #include <kshortcut.h>
 #include <kstdaccel.h>
+#include <kiconloader.h>
 
 #include "kgpgselkey.h"
-#include "kgpginterface.h"
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

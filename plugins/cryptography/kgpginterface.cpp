@@ -30,6 +30,24 @@
 #include <kpassdlg.h>
 #include <kmdcodec.h>
 #include <klineedit.h>
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <qstring.h>
+#include <qfile.h>
+#include <qlabel.h>
+
+#include <kled.h>
+#include <kprocess.h>
+#include <kprocio.h>
+#include <kdialogbase.h>
+#include <kurl.h>
+#include <kiconloader.h>
+#include <kio/netaccess.h>
+
+
 //#include "kdetailedconsole.h"
 
 
@@ -39,7 +57,7 @@
 KgpgInterface::KgpgInterface()
 {}
 
-void KgpgInterface::KgpgEncryptFile(QString encuserIDs,KURL srcUrl,KURL destUrl, QString Options, bool symetrical)
+/*void KgpgInterface::KgpgEncryptFile(QString encuserIDs,KURL srcUrl,KURL destUrl, QString Options, bool symetrical)
 {
   file=destUrl;
   encError=false;
@@ -87,14 +105,14 @@ void KgpgInterface::KgpgEncryptFile(QString encuserIDs,KURL srcUrl,KURL destUrl,
   QObject::connect(proc,SIGNAL(readReady(KProcIO *)),this,SLOT(readencprocess(KProcIO *)));
   proc->start(KProcess::NotifyOnExit,true);
   //encryptfin(proc);
-}
+}*/
 
 
 KgpgInterface::~KgpgInterface()
 {}
 
 
-void KgpgInterface::encryptfin(KProcess *)
+/*void KgpgInterface::encryptfin(KProcess *)
 {
   if (message.find("END_ENCRYPTION")!=-1)
     emit encryptionfinished();
@@ -141,11 +159,11 @@ void KgpgInterface::readencprocess(KProcIO *p)
       message+=required+"\n";
     }
 }
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////   File decryption
 
-void KgpgInterface::KgpgDecryptFile(KURL srcUrl,KURL destUrl,QString Options)
+/*void KgpgInterface::KgpgDecryptFile(KURL srcUrl,KURL destUrl,QString Options)
 {
   message="";
   step=3;
@@ -257,7 +275,7 @@ void KgpgInterface::readdecprocess(KProcIO *p)
       message+=required+"\n";
     }
 }
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////    Text encryption
 
@@ -298,7 +316,7 @@ txtsent=false;
 }*/
 
 
-void KgpgInterface::txtencryptfin(KProcess *)
+/*void KgpgInterface::txtencryptfin(KProcess *)
 {
 if (txtsent) emit txtencryptionfinished(message);
 else emit txtencryptionfinished("");
@@ -318,7 +336,7 @@ void KgpgInterface::txtreadencprocess(KProcIO *p)
 	  if (required.find("END_ENCRYPTION")!=-1) txtsent=true;
      else message+=required+"\n";
 	}
-}
+}*/
 
 
 
@@ -524,7 +542,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 }
 
 
-QString KgpgInterface::KgpgDecryptFileToText(KURL srcUrl,QString userID)
+/*QString KgpgInterface::KgpgDecryptFileToText(KURL srcUrl,QString userID)
 {
   FILE *fp,*pass;
   QString encResult,gpgcmd;
@@ -567,10 +585,10 @@ QString KgpgInterface::KgpgDecryptFileToText(KURL srcUrl,QString userID)
   else
     return "";
 }
-
+*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////   MD5
 
-Md5Widget::Md5Widget(QWidget *parent, const char *name,KURL url):KDialogBase( parent, name, true,i18n("MD5 Checksum"),Apply | Close)
+/*Md5Widget::Md5Widget(QWidget *parent, const char *name,KURL url):KDialogBase( parent, name, true,i18n("MD5 Checksum"),Apply | Close)
 {
   setButtonApplyText(i18n("Compare MD5 With Clipboard"));
   mdSum="";
@@ -648,11 +666,11 @@ void Md5Widget::slotApply()
           KLed1->on();
         }
     }
-}
+}*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////   signatures
 
-
+/*
 void KgpgInterface::KgpgSignFile(QString keyID,KURL srcUrl,QString Options)
 {
   //////////////////////////////////////   create a detached signature for a chosen file
@@ -863,7 +881,8 @@ signKeyMail.replace(QRegExp("<"),"&lt;");
   conprocess->start(KProcess::NotifyOnExit,KProcess::AllOutput);
 
 }
-
+*/
+/*
 void KgpgInterface::sigprocess(KProcIO *p)//ess *p,char *buf, int buflen)
 {
   QString required="";
@@ -921,7 +940,7 @@ void KgpgInterface::sigprocess(KProcIO *p)//ess *p,char *buf, int buflen)
           signSuccess=1;  /////  switching to console mode
 		  p->writeStdin("quit");
 		  p->closeWhenDone();
-/*
+/-*
 #if (KDE_VERSION >= 310)
 pop = new KPassivePopup();
 pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI mode... switching to konsole"),KGlobal::iconLoader()->loadIcon("kgpg",KIcon::Desktop));
@@ -957,34 +976,28 @@ pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI
             *conprocess<<"--lsign-key"<<konsKeyID;
           conprocess->start(KProcess::Block);
           emit signatureFinished(0);
-        */
+        *-/
 		}
     }
   //p->ackRead();
-}
+}*/
 
-void KgpgInterface::signkillDisplayClip()
+/*void KgpgInterface::signkillDisplayClip()
 {
-/*
-#if (KDE_VERSION < 310)
-delete clippop;
-#endif
-*/
-}
 
 
-void KgpgInterface::signover(KProcess *)
+}*/
+
+
+/*void KgpgInterface::signover(KProcess *)
 {
   if ((signSuccess==3) || (signSuccess==2)) emit signatureFinished(signSuccess);  ////   signature successfull or bad passphrase 
   else 
   {
-/*  KDetailedConsole *q=new KDetailedConsole(0,"sign_error",i18n("<b>Encryption failed:</b><br>Do you want to try signing in a console ?"),output);
-  if (q->exec()==QDialog::Accepted) openSignConsole();
-  else emit signatureFinished(0);*/ 
   }
-}
+}*/
 
-void KgpgInterface::openSignConsole()
+/*void KgpgInterface::openSignConsole()
 {
 KProcess *conprocess=new KProcess();
           *conprocess<< "konsole"<<"-e"<<"gpg";
@@ -1011,11 +1024,6 @@ void KgpgInterface::KgpgDelSignature(QString keyID,QString signKeyID)
   message=signKeyID.remove(0,2);
   deleteSuccess=false;
   step=0;
-  /*
-    int code=KPasswordDialog::getPassword(passphrase,i18n("Enter passphrase for %1:").arg(signKeyMail));
-    if (code!=QDialog::Accepted)
-    return;
-  */
   FILE *fp;
   QString encResult;
   char buffer[200];
@@ -1122,11 +1130,11 @@ int KgpgInterface::checkuid(QString KeyID)
     }
   pclose(fp);
   return uidcnt;
-}
+}*/
 
 //////////////////////////////////////////////////////////////    key import
 
-void KgpgInterface::importKeyURL(KURL url, bool importSecret)
+/*void KgpgInterface::importKeyURL(KURL url, bool importSecret)
 {
   /////////////      import a key
 
@@ -1254,6 +1262,6 @@ QString KgpgInterface::extractKeyName(QString txt)
   pclose(fp);
   return IDs;
 }
-
+*/
 
 #include "kgpginterface.moc"
