@@ -23,6 +23,8 @@
 
 class IRCProtocol;
 class IRCAccount;
+class KListView;
+class QListViewItem;
 
 class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
 {
@@ -35,6 +37,10 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
 
+	private slots:
+		void slotContextMenu( KListView*, QListViewItem*, const QPoint & );
+		void slotAddCommand();
+	
 	private:
 		IRCProtocol *mProtocol;
 		IRCAccount *m_IRCAccount;

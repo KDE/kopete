@@ -16,6 +16,9 @@
 */
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <klistview.h>
+#include <qpopupmenu.h>
+#include <qpushbutton.h>
 #include <kdebug.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
@@ -45,11 +48,34 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mUserName->setText( m_IRCAccount->userName() );
 
 		if(m_account->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
+		
+		QStringList cmds = m_IRCAccount->connectCommands();
+		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
+			new QListViewItem( commandList, *i );
 	}
+	
+	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
+		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+		
+	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
 }
 
 IRCEditAccountWidget::~IRCEditAccountWidget()
 {
+}
+
+void IRCEditAccountWidget::slotContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+{
+	QPopupMenu popup;
+	popup.insertItem( i18n("Remove Command"), 1 );
+	if( popup.exec( p ) == 1 )
+		delete item;
+}
+
+void IRCEditAccountWidget::slotAddCommand()
+{
+	new QListViewItem( commandList, commandEdit->text() );
+	commandEdit->clear();
 }
 
 KopeteAccount *IRCEditAccountWidget::apply()
@@ -65,9 +91,16 @@ KopeteAccount *IRCEditAccountWidget::apply()
 		kdDebug(14120) << k_funcinfo << "Saving password '" << mPassword->text() << "' empty: " << mPassword->text().isEmpty() << " null: " <<  mPassword->text().isNull() << endl;
 		m_IRCAccount->setPassword( mPassword->text() );
 	}
+	
 	m_IRCAccount->setUserName( mUserName->text() );
 	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
-
+	
+	QStringList cmds;
+	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
+		cmds.append( i->text(0) );
+	
+	m_IRCAccount->setConnectCommands( cmds );
+	
 	return m_IRCAccount;
 }
 

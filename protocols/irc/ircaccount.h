@@ -19,6 +19,7 @@
 #define IRCACCOUNT_H
 
 #include <qstring.h>
+#include <qstringlist.h>
 
 #include "kopeteaccount.h"
 
@@ -51,6 +52,10 @@ public:
 	virtual void loaded();
 
 	QString userName();
+	
+	inline const QStringList connectCommands() const { return m_connectCommands; }
+	
+	void setConnectCommands( const QStringList & );
 	
 public slots:
 	void setUserName(QString userName);
@@ -138,6 +143,7 @@ private slots:
 	void slotShowServerWindow();
 	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
+	void slotConnectedToServer();
 
 private:
 	IRCProtocol *m_protocol;
@@ -151,6 +157,9 @@ private:
 
 	IRCContactManager *m_contactManager;
 	IRCServerContact *m_myServer;
+	
+	// Commands to run on connect
+	QStringList m_connectCommands;
 };
 
 #endif

@@ -26,6 +26,7 @@
 #include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopetecommandhandler.h"
 
 #include "ircaccount.h"
 #include "ircprotocol.h"
@@ -60,6 +61,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	
 	QObject::connect(m_engine, SIGNAL(incomingFailedNickOnLogin(const QString &)),
 			this, SLOT(slotNickInUse( const QString &)) );
+			
+	QObject::connect(m_engine, SIGNAL(connectedToServer()),
+		this, SLOT(slotConnectedToServer()));
 
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	setMyself( m_contactManager->mySelf() );
@@ -110,10 +114,20 @@ QString IRCAccount::userName()
 {
 	return pluginData(protocol(), QString::fromLatin1("userName"));
 }
+
 void IRCAccount::setUserName(QString userName)
 {
 	m_engine->setUserName(userName);
 	setPluginData(protocol(), QString::fromLatin1( "userName" ), userName);
+}
+
+void IRCAccount::setConnectCommands( const QStringList &commands )
+{
+	m_connectCommands = commands;
+	
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup() );
+	config->writeEntry( "ConnectCommands", m_connectCommands );
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -143,6 +157,15 @@ void IRCAccount::connect()
 	else if( m_engine->isDisconnected() )
 	{
 		m_engine->connectToServer( static_cast<IRCUserContact *>( myself() )->nickName() );
+	}
+}
+
+void IRCAccount::slotConnectedToServer()
+{
+	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
+	{
+		KopeteMessageManager *manager = myServer()->manager();
+		KopeteCommandHandler::commandHandler()->processMessage( *it, manager );
 	}
 }
 

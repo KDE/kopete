@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>IRCEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>462</width>
-            <height>514</height>
+            <width>427</width>
+            <height>500</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -36,6 +36,12 @@
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>groupBox59</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>GroupBoxPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
             <property name="title">
                 <string>Account Information</string>
@@ -254,11 +260,11 @@
             <property name="title">
                 <string>Connection Preferences</string>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>mAutoConnect</cstring>
                     </property>
@@ -283,7 +289,7 @@
                         <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget">
+                <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>layout111</cstring>
                     </property>
@@ -413,7 +419,61 @@
                         </widget>
                     </hbox>
                 </widget>
-            </vbox>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Run the following commands on connect:</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="4" column="1">
+                    <property name="name">
+                        <cstring>addButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Add Command</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="0">
+                    <property name="name">
+                        <cstring>commandEdit</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="KListView" row="3" column="0" rowspan="1" colspan="2">
+                    <column>
+                        <property name="text">
+                            <string>Command</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <property name="name">
+                        <cstring>commandList</cstring>
+                    </property>
+                    <property name="allColumnsShowFocus">
+                        <bool>true</bool>
+                    </property>
+                    <property name="fullWidth">
+                        <bool>true</bool>
+                    </property>
+                    <property name="itemsRenameable">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget class="QLabel">
             <property name="name">
@@ -426,6 +486,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>100</height>
+                </size>
             </property>
             <property name="text">
                 <string>&lt;i&gt;Most IRC servers do not require a password, and only a nickname of your choosing is required to connect.&lt;br&gt;&lt;br&gt;If you're new to IRC, please take a moment to read the IRC FAQ.&lt;/i&gt;</string>
@@ -441,7 +507,7 @@
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
+                    <vsizetype>3</vsizetype>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
@@ -452,6 +518,8 @@
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>mNickName</tabstop>
     <tabstop>mUserName</tabstop>
@@ -464,6 +532,7 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>klistview.h</includehint>
     <includehint>kactivelabel.h</includehint>
 </includehints>
 </UI>
