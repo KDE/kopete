@@ -31,7 +31,7 @@
 class KAction;
 class KActionMenu;
 
-class KMSNChatService;
+class MSNSwitchBoardSocket;
 class KMSNServiceSocket;
 class KopeteContact;
 class KopeteMessage;
@@ -337,7 +337,7 @@ private:
 	KopeteContact *m_myself;
 
 	MSNIdentity *m_identity;
-	QPtrDict<KMSNChatService> m_chatServices;
+	QPtrDict<MSNSwitchBoardSocket> m_chatServices;
 };
 
 #endif

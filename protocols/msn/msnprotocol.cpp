@@ -756,7 +756,7 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 			do
 			{
 				done = true;
-				QPtrDictIterator<KMSNChatService> it( m_chatServices );
+				QPtrDictIterator<MSNSwitchBoardSocket> it( m_chatServices );
 				for( ; m_chatServices.count() && it.current(); ++it )
 				{
 					if( ( *it ).chatMembers().contains( handle ) )
@@ -1021,7 +1021,7 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
 		m_myself, msg.to(), this );
 
-	KMSNChatService *service = m_chatServices[ manager ];
+	MSNSwitchBoardSocket *service = m_chatServices[ manager ];
 	if( service )
 		service->slotSendMsg( msg );
 	else
@@ -1047,9 +1047,9 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			m_myself, chatmembers, this, QString( "msn_logs/" + ID + ".log" ) );
 
 		// FIXME: Don't we leak this ?
-		KMSNChatService *chatService = new KMSNChatService();
+		MSNSwitchBoardSocket *chatService = new MSNSwitchBoardSocket();
 		chatService->setHandle( m_msnId );
-		chatService->msgHandle = handle;
+		chatService->setMsgHandle( handle );
 		chatService->connectToSwitchBoard( ID, address, auth );
 		m_chatServices.insert( manager, chatService );
 

@@ -173,6 +173,8 @@ private slots:
 	 * Check if new lines of data are available and process the first line
 	 */
 	void slotReadLine();
+	
+	void slotSocketClosed( int state );
 
 private:
 	/**

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          imchatservice.h  -  description
+                          msnswitchboardsocket.h  -  description
                              -------------------
     begin                : Tue Nov 27 2001
     copyright            : (C) 2001 by Olaf Lueg
@@ -15,79 +15,80 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KMSNCHATSERVICE_H
-#define KMSNCHATSERVICE_H
+#ifndef MSNSWITCHBOARDSOCKET_H
+#define MSNSWITCHBOARDSOCKET_H
 
 #include <qobject.h>
 #include <qstrlist.h>
 
 #include <kstringhandler.h>
 
-class QSocket;
-class KExtendedSocket;
+#include <msnsocket.h>
+
 class KopeteMessage;
 
 /**
  * @author Olaf Lueg
  */
-class KMSNChatService : public QObject
+class MSNSwitchBoardSocket : public MSNSocket
 {
 	Q_OBJECT
 
 public:
-	KMSNChatService();
-	~KMSNChatService();
-	KExtendedSocket *msgSocket;
-	QString msgHandle;
-	KStringHandler kstr;
-	QSocket *fileSocket;
-	int socketTimer;
+	MSNSwitchBoardSocket();
+	~MSNSwitchBoardSocket();
+
 
 protected:
-	QString myHandle;
-	QString buffer;
+	QString m_myHandle; // our handle
+	QString m_msgHandle; // the other side's handle
+	QString m_ID;
+	QString m_auth;
 
-	// functions
-	QString readLine();
-	bool canReadLine();
-	QString readBlock(uint len);
-	void timerEvent(QTimerEvent *ev);
-	QString parseFontAttr(QString str, QString attr);
+	// contains the handle of the last person that msg'ed us.
+	// since we receive the actual message by readBlock(), we need
+	// to remember what the handle was of the person sending us the message.
+	//QString m_handle;
+
+	/**
+	 * Handle an MSN command response line.
+	 */
+	virtual void parseCommand( const QString &cmd, uint id,
+		const QString &data );
+
+	QString parseFontAttr( QString str, QString attr );
 
 public:
-	void connectToSwitchBoard(QString ID, QString address, QString auth);
+	void connectToSwitchBoard( QString ID, QString address, QString auth );
 	void callUser();
-	void setHandle(QString handle){myHandle = handle;}
+	void setHandle( QString handle ) { m_myHandle = handle; }
+	void setMsgHandle( QString handle ) { m_msgHandle = handle; }
 
 	const QStringList &chatMembers() { return m_chatMembers; }
 
 public slots:
-	void slotDataReceived();
+	void slotReadMessage( const QString &msg );
 	void slotSendMsg( const KopeteMessage &msg );
 	void slotSocketClosed();
 	void slotCloseSession();
 	void slotInviteContact(QString handle);
 	void slotTypingMsg();
 
+private slots:
+	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
+
 signals:
 	void msgReceived( const KopeteMessage &msg );
-	void startChat(KMSNChatService* switchoard);
+	void startChat(MSNSwitchBoardSocket* switchoard);
 	void userTypingMsg(QString);
 	void msgAcknowledgement(bool);
 	void userInChat(QString);
 	void chatWith(QString,bool);
 	void switchBoardIsActive(bool);
 	void updateChatMember(QString,QString,bool);
+	void userLeftChat( QString );
 
 private:
-	uint m_id;
-
-	/**
-	 * Send an MSN command to the socket
-	 */
-	void sendCommand( const QCString &cmd, const QCString &args = "",
-		bool addNewLine = true );
-
 	QStringList m_chatMembers;
 };
 

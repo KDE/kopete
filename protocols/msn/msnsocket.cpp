@@ -81,6 +81,9 @@ void MSNSocket::connect( const QString &server, uint port )
 	QObject::connect( m_socket, SIGNAL( lookupFinished ( int ) ),
 		this, SLOT( slotLookupFinished( int ) ) );
 
+	QObject::connect( m_socket, SIGNAL( closed ( int ) ),
+		this, SLOT( slotSocketClosed( int ) ) );
+
 	aboutToConnect();
 	m_socket->startAsyncConnect();
 }
@@ -159,6 +162,8 @@ void MSNSocket::slotDataReceived()
 	else if ( avail == -1 )
 	{
 		// error!
+		kdDebug() << "MSNSocket::slotDataReceived: bytesAvailable() returned"
+			" -1. Are we disconnected?" << endl;
 	}
 
 	// incoming data
@@ -387,6 +392,15 @@ void MSNSocket::slotLookupFinished( int count )
 		m_lookupStatus = Success;
 }
 
+void MSNSocket::slotSocketClosed( int state )
+{
+	kdDebug() << "MSNSocket::slotSocketClosed: socket closed. State: 0x" <<
+		QString::number( state, 16 ) << endl;
+		
+	if ( state == 0x40 )
+		setOnlineStatus( Disconnected );
+		
+}
 #include "msnsocket.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
