@@ -289,7 +289,11 @@ ChangePasswordCommand::setInfo( uin_t uin, const QString& passwd, const QString&
 void
 ChangePasswordCommand::execute()
 {
-	session_ = gg_change_passwd2( uin_, passwd_.latin1(), newpasswd_.latin1(), newemail_, newemail_, 1 );
+	session_ = gg_change_passwd2( uin_,
+						passwd_.latin1(),
+						newpasswd_.latin1(),
+						newemail_.latin1(),
+						newemail_.latin1(), 1 );
 	connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
 	checkSocket( session_->fd, session_->check );
 }
@@ -605,7 +609,7 @@ UserlistGetCommand::watcher()
 		QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
 				
 		result = textcodec->toUnicode(
-			    QString( static_cast<char*>(session_->data) ) );
+			    static_cast<char*>(session_->data) );
 
 		gl.setAutoDelete(TRUE);
 		

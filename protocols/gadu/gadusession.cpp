@@ -228,7 +228,7 @@ GaduSession::changeStatusDescription( int status, const QString& descr )
 	ndescr= textcodec->fromUnicode(descr);
 
 	if ( isConnected() )
-		return gg_change_status_descr( session_, status, ndescr );
+		return gg_change_status_descr( session_, status, ndescr.latin1() );
 	else
 		emit error( i18n("Not Connected"),
 								i18n("You have to be connected to the server to change your status!") );
@@ -328,10 +328,10 @@ GaduSession::pubDirSearch(QString &name, QString &surname, QString &nick, int UI
   }
   // otherwise we are looking only for one fellow with this nice UIN
   else{
-    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, (const char *)QString::number( UIN ) );
+    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, QString::number( UIN ).latin1() );
   }
 
-  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_) );
+  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_).latin1() );
                                    	
   gg_pubdir50( session_, searchRequest_ );
 
