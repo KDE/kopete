@@ -17,7 +17,9 @@ libiris_xmpp_core_la_SOURCES = \
 	parser.cpp \
 	simplesasl.cpp
 
+securestream.lo: securestream.moc
+
 CLEANFILES = securestream.moc
-securestream.moc: securestream.cpp securestream.h Makefile
-	${MOC} securestream.h > $@
-	${MOC} securestream.cpp >> $@
+securestream.moc: $(srcdir)/securestream.cpp $(srcdir)/securestream.h
+	${MOC} $(srcdir)/securestream.h > $@
+	${MOC} $(srcdir)/securestream.cpp >> $@
