@@ -40,6 +40,6 @@ rc_DATA = kopetecommandui.rc
 servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop
 servicetypedir = $(kde_servicetypesdir)
 
-# vim: set noet:
-
 noinst_HEADERS = kopeteblacklister.h
+
+# vim: set noet:

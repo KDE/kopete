@@ -67,7 +67,7 @@ class BlackLister;
  * When you create a new account, you have to register it in the account manager with @ref AccountManager::registerAccount
  *
  */
-class Account : public QObject
+class KOPETE_EXPORT Account : public QObject
 {
 	Q_OBJECT
 

@@ -23,6 +23,8 @@
 #include <qptrlist.h>
 #include <qdict.h>
 
+#include <kopete_export.h>
+
 
 namespace Kopete {
 
@@ -41,7 +43,7 @@ class OnlineStatus;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@ tiscalinet.be>
  */
-class AccountManager : public QObject
+class KOPETE_EXPORT AccountManager : public QObject
 {
 	Q_OBJECT
 

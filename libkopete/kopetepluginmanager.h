@@ -25,6 +25,8 @@
 #include <qstringlist.h>
 #include <qvaluelist.h>
 
+#include <kopete_export.h>
+
 class KPluginInfo;
 
 namespace Kopete
@@ -38,7 +40,7 @@ typedef QValueList<Plugin*> PluginList;
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
  */
-class PluginManager : public QObject
+class KOPETE_EXPORT PluginManager : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS( PluginLoadMode )

@@ -24,6 +24,8 @@
 #include <qobject.h>
 #include <kdemacros.h>
 
+#include <kopete_export.h>
+
 #include <kopetemessage.h> //TODO: remove
 namespace DOM  { class Node; }  //TODO: remove
 class KAction; //TODO: remove
@@ -85,7 +87,7 @@ Comment=Plugin that do some nice stuff
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  * @author Olivier Goffart <ogoffart @ tiscalinet.be>
  */
-class Plugin : public QObject, public KXMLGUIClient
+class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 {
 	Q_OBJECT
 

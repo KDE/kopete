@@ -77,6 +77,7 @@ char *strchr (), *strrchr ();
 
 #include "sha.h"
 #include "md5.h"
+#include "sha.h"
 #include "yahoo2.h"
 #include "yahoo_httplib.h"
 #include "yahoo_util.h"

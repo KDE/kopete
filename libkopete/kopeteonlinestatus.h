@@ -23,6 +23,7 @@
 
 #include <qobject.h>
 #include <kdemacros.h>
+#include <kopete_export.h>
 
 class QString;
 class QPixmap;
@@ -55,7 +56,7 @@ namespace Kopete
  * to be const after creation as there really shouldn't be a need to change
  * a status' characteristics during runtime!
  */
-class OnlineStatus
+class KOPETE_EXPORT OnlineStatus
 {
 public:
 	/**

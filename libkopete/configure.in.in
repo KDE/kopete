@@ -31,3 +31,4 @@ KDE_CHECK_HEADER(X11/extensions/scrnsaver.h,
 AC_SUBST(LIB_XSS)
 LDFLAGS="$xss_save_ldflags"
 
+dnl AC_OUTPUT(kopete/libkopete/kopete_export.h)

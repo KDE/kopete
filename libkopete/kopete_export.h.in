@@ -1,0 +1,34 @@
+/*
+    Kopete Export macors
+
+    Copyright (c) 2004 by Dirk Mueller <mueller@kde.org>
+
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#ifndef KOPETE_EXPORT_H
+#define KOPETE_EXPORT_H
+
+#include <qglobal.h>
+
+#if @HAVE_GCC_VISIBILITY@
+#define KDE_NO_EXPORT __attribute__ ((visibility("hidden")))
+#define KDE_EXPORT __attribute__ ((visibility("default")))
+#elif defined(Q_WS_WIN)
+#define KDE_NO_EXPORT
+#define KDE_EXPORT __declspec(dllexport)
+#else
+#define KDE_NO_EXPORT
+#define KDE_EXPORT
+#endif
+
+#endif

@@ -22,9 +22,11 @@
 #include <qcolor.h>
 #include <qfont.h>
 
+#include <kopete_export.h>
+
 class KConfig;
 
-class KopetePrefs : public QObject
+class KOPETE_EXPORT KopetePrefs : public QObject
 {
 	Q_OBJECT
 	// here so we can use Qt to translate enums<-->strings
