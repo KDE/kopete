@@ -152,7 +152,7 @@ void OscarAccount::initEngine(bool icq)
 
 	QByteArray cook;
 	cook.duplicate("01234567",8);
-	mEngine = new OscarSocket(pluginData(protocol(),"server"), cook,
+	mEngine = new OscarSocket(pluginData(protocol(),"Server"), cook,
 		this, this, "mEngine", icq);
 }
 
