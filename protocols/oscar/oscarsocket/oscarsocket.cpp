@@ -38,7 +38,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 //	kdDebug(14150) << k_funcinfo << "connName=" << connName <<
 //		QString::fromLatin1( isicq?" ICQ":" AIM" ) << endl;
 
-	mIsICQ=isicq; // TODO: Maybe find a better way of handling icq mode
+	mIsICQ=isicq;
 	toicqsrv_seq=1;
 	type2SequenceNum=0xFFFF;
 	flapSequenceNum=rand() & 0x7FFF; // value taken from libicq
@@ -282,7 +282,7 @@ void OscarSocket::slotRead()
 						case 0x0003: //server ready
 							parseServerReady(inbuf);
 							break;
-						case 0x0005: //redirect, TODO: unused
+						case 0x0005: //redirect
 							kdDebug(14150) << k_funcinfo <<
 								"TODO: Parse redirect!" << endl;
 							//parseRedirect(inbuf);
@@ -630,8 +630,6 @@ void OscarSocket::doLogin(
 
 	QObject::disconnect(socket(), SIGNAL(connectionSuccess()), this, SLOT(OnBosConnect()));
 	QObject::connect(socket(), SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-	//TODO: start connecting animation after host has been found
-//	connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
 
 	setSN(name);
 	loginPassword=password;

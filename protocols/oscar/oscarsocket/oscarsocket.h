@@ -543,7 +543,7 @@ class OscarSocket : public OscarConnection
 			int minage,
 			int maxage,
 			int sex,
-			int lang, // TODO: unused
+			int lang,
 			const QString &city,
 			const QString state,
 			int country,
@@ -846,8 +846,7 @@ class OscarSocket : public OscarConnection
 		void parseAuthReply(Buffer &inbuf);
 
 		/*
-		* Probably important TODO:
-		* this adds contacts to the "client-side" contactlist, we probably have to call this after
+		* Adds contacts to the "client-side" contactlist, we probably have to call this after
 		* login with ALL our contactnames and when adding a new contact
 		*/
 		void sendBuddylistAdd(QStringList &contacts);

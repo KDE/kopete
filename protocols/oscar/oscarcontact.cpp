@@ -69,7 +69,7 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	}
 	// END TODO: remove AIMBuddy
 
-	setFileCapable(false); // FIXME
+	setFileCapable(false);
 
 	if (!displayName.isEmpty())
 		setDisplayName(displayName);
@@ -101,7 +101,7 @@ void OscarContact::initSignals()
 		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 		this, SLOT(slotParseUserInfo(const UserInfo &)));
 
-/*
+#if 0
 	// New direct connection
 	QObject::connect(
 		mAccount->engine(), SIGNAL(connectionReady(QString)),
@@ -135,11 +135,7 @@ void OscarContact::initSignals()
 	QObject::connect(
 		KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)));
-*/
-	// When a group in the contact list is being removed, we're notified
-	QObject::connect(
-		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup*)),
-			this, SLOT(slotGroupRemoved(KopeteGroup *)));
+#endif
 
 	QObject::connect(
 		mAccount->engine(), SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
@@ -148,13 +144,7 @@ void OscarContact::initSignals()
 
 OscarContact::~OscarContact()
 {
-//	kdDebug(14150) << k_funcinfo << "Called for '" << mName << "'" << endl;
-
-	// FIXME: Why was this here, we shouldn't try to remove users from
-	// contactlist just because their destructor was called
-//	slotDeleteContact();
 }
-
 
 KopeteMessageManager* OscarContact::manager(bool canCreate)
 {
@@ -179,10 +169,10 @@ void OscarContact::slotMessageManagerDestroyed()
 	mMsgManager = 0L;
 }
 
-// TODO: Can be removed when AIMBuddy is gone
+// FIXME: Can be removed when AIMBuddy is gone
 void OscarContact::slotUpdateBuddy()
 {
-	// FIXME: just to make sure the stupid AIMBuddy has proper status
+	// Just to make sure the stupid AIMBuddy has proper status
 	// This should be handled in AIM/ICQContact now!
 	mListContact->setStatus(onlineStatus().internalStatus());
 
@@ -199,7 +189,7 @@ void OscarContact::slotUpdateBuddy()
 	}
 	else // oscar-account is offline so all users are offline too
 	{
-		mListContact->setStatus(OSCAR_OFFLINE); // TODO: remove AIMBuddy
+		mListContact->setStatus(OSCAR_OFFLINE);
 		setStatus(OSCAR_OFFLINE);
 		mInfo.idletime = 0;
 		setIdleTime(0);
@@ -235,7 +225,7 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName(newNickname);
 	//emit updateNickname ( newNickname );
-	mListContact->setAlias(newNickname); // TODO: remove AIMBuddy :)
+	mListContact->setAlias(newNickname);
 }
 
 void OscarContact::slotDeleteContact()
@@ -265,33 +255,6 @@ void OscarContact::slotDeleteContact()
 
 	mAccount->internalBuddyList()->removeBuddy(mListContact);
 	deleteLater();
-}
-
-void OscarContact::slotGroupRemoved(KopeteGroup * /* removedGroup */ )
-{
-/******
-//For an unknown reason, when deleting a group, even if the contact is not in this group, the contact was deleted.
-//In many case, when a group is deleted, Kopete move contacts to toplevel. and OscarContact::syncGroups() is called
-// so you can handle the moving to top level here  (it should be called before the deletion of the group)
-
-	AIMGroup *aGroup = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
-	if (!aGroup)
-	{
-		kdDebug(14150) << k_funcinfo << "contact '" << displayName() <<
-			"' has no AIMGroup associated with it!" << endl;
-		return;
-	}
-
-	if (aGroup->name() != removedGroup->displayName()) // our group did not get removed
-		return;
-
-	kdDebug(14150) << k_funcinfo << "displayName=" << displayName() <<
-		", groupname=" << aGroup->name() <<
-		", Calling slotDeleteContact()" << endl;
-
-	slotDeleteContact();
-
-*****/
 }
 
 void OscarContact::slotBlock()
@@ -533,7 +496,6 @@ void OscarContact::rename(const QString &newNick)
 			mAccount->internalBuddyList()->findGroup(mGroupId);
 		if(!currentOscarGroup)
 		{
-			// FIXME: workaround for not knowing the groupid
 			if(metaContact() && metaContact()->groups().count() > 0)
 			{
 				QString grpName=metaContact()->groups().first()->displayName();
@@ -555,7 +517,7 @@ void OscarContact::rename(const QString &newNick)
 		}
 	}
 
-	mListContact->setAlias(newNick); // FIXME: remove AIMBuddy
+	mListContact->setAlias(newNick);
 	setDisplayName(newNick);
 }
 

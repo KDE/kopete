@@ -1,26 +1,36 @@
-  THINGS FOR THE SPLIT UP [written by mETz, these notes are to be removed!]
-- most important: find a sane replacement for OscarProtocol::protocol()
-  - fix calls of *Protocol::getOnlineStatus() all over the place
-    (used in conjunction with aboves ugly static ;))
-- finish OscarAccount and OscarContact split up (i.e. find out what can be generalized)
-- fix possible stupidity inside OscarProtocol
-- make aim and icq compile with new base classes (I'll help on icq)
-- fix and add GUI parts in aim/icq (I will help on that one)
 
-- handle incorrect account id/password, notify the user
-- correctly return to offline if bad password
-- fix the account edit widget so it is possible to edit existing accounts
+- general support for SNAC (0x15, *)
+- fix adding contacts for both addcontactwizard and serverside list
+- read away reasons
+X own away-reasons
+X support type-2 messages
+- use rtf in own messages
+X keepalive for connection to server (icq has ping packets)
+X STOP stupid users from adding their own UIN to the userlist
+X honor encodings for both sides (I need more knowledge about this!)
+- Option: Allow access from contacts on my contact list only
+- group handling in general
+- ignore lists (needs proper group-handling)
+- invisible list (needs proper group-handling)
+X invisible mode
 
-  OLDER STUFF
-- Prompt user to accept, deny, or warn incoming DirectIM and file transfer requests
-- Add ability to abort, pause, and resume transfers
-- Make Buffer inherit QByteArray, get rid of possibly error prone c-style array code
-- Add support for directory transfers
-- Add support for buddy icons
-- Add GetFile support
-- Add support for sending/receiving buddy lists
-- Add support for reverse connections for both file transfers and direct IM
-  (this is used when one client is behind a firewall that does not allow direct connections)
-- Handling of SNAC(0x0001,0x000b) (Server pause) This will be very difficult to debug
-  since that server command is very rare
-- See what we can do about plugin loading speed.. seems very slow on my machine
+- error handling on channel 0x04 messages. properly disconnect and emit a
+  signal in oscarsocket.
+
+- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
+
+- save groupID in KopeteGroups
+
+- somehow sync server and local list, this is not as trivial as everybody
+  always thinks it is because you cannot sure if local changes or
+  serverside-changes caused the difference (think about two clients being used
+  for the same account, one at home and one at work).
+
+- make renaming serverside contacts possible (function is there but fails due
+  to massive contactlist crappyness caused by above mentioned classes)
+
+- support logging in with something different than "online" status for AIM
+
+- finish icq userinfo dialog and sending your own icq userinfo to the server,
+  it's easy to do but because of the mass of items takes lots of time
+  and is extremely boring.

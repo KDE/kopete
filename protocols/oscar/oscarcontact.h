@@ -119,20 +119,13 @@ class OscarContact : public KopeteContact
 		 */
 		virtual void syncGroups();
 
-		/*
-		 * Called when a buddy changes
-		 */
-		void slotUpdateBuddy();
+		void slotUpdateBuddy(); // aimbuddy legacy crap
 
 	protected:
-		/*
-		 * The account we're associated with
-		 */
+		// The account we're associated with
 		OscarAccount *mAccount;
 
-		/*
-		 * The name of the contact as used on the protocol-level
-		 */
+		// The name of the contact as used on the protocol-level
 		QString mName;
 
 		KActionCollection* actionCollection;
@@ -195,10 +188,6 @@ class OscarContact : public KopeteContact
 		void slotTransferBegun(OscarConnection *con, const QString& file,
 			const unsigned long size, const QString &recipient);
 */
-
-
-		// Called when a contact from the Kopete contact list has been removed
-		void slotGroupRemoved(KopeteGroup *);
 
 		void slotParseUserInfo(const UserInfo &);
 
