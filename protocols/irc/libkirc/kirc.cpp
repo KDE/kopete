@@ -773,7 +773,7 @@ void KIRC::killUser(const QString &nickname, const QString &comment)
 // bool KIRC::kill(const KIRCMessage &msg)
 
 //	FIXME: <server1> [ <server2> ]
-void KIRC::ping(const QString &server1, const QString &server2=QString::null)
+void KIRC::ping(const QString &server1, const QString &server2)
 {
 	writeMessage("PING", server1 << server2);
 }

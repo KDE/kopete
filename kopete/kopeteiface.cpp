@@ -70,7 +70,7 @@ void KopeteIface::messageContact( const QString &displayName, const QString &mes
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
-	const QString &altFileName = QString::null, uint fileSize = 0)
+	const QString &altFileName, uint fileSize)
 {
 	return KopeteContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
 }

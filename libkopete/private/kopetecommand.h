@@ -39,7 +39,7 @@ class KopeteCommand : public QObject
 		 *   /help <command>
 		 */
 		 KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-		 	const QString &help );
+		 	const QString &help = QString::null);
 
 		/**
 		 * Process this command

@@ -16,7 +16,7 @@
 #include "kopetecommand.h"
 
 KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-	const QString &help = QString::null ) : QObject(parent)
+	const QString &help ) : QObject(parent)
 {
 	m_command = command;
 	m_help = help;

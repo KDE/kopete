@@ -69,7 +69,7 @@ void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &m
 }
 
 /*
-void YahooContact::slotUpdateStatus(QString status, QString statusText = QString::null)
+void YahooContact::slotUpdateStatus(QString status, QString statusText)
 {
 	kdDebug(14180) << "[YahooContact::slotUpdateStatus(" << status << ")]" << endl;
 	kdDebug(14180) "Buddy  - updating " << handle << " to " << status << "." << endl;
