@@ -178,6 +178,9 @@ private:
 
 	QPtrList<KopeteMetaContactLVI> m_metaContacts;
 
+	QPtrList<KopeteMetaContactLVI> m_selectedContacts;
+	QPtrList<KopeteGroupViewItem> m_selectedGroups;
+
 	KopeteStatusGroupViewItem *m_onlineItem;
 	KopeteStatusGroupViewItem *m_offlineItem;
 	bool mSortByGroup;
