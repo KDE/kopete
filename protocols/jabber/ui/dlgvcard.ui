@@ -359,7 +359,7 @@
                 <string>Country:</string>
             </property>
         </widget>
-        <widget class="KTextEdit">
+        <widget class="QTextEdit">
             <property name="name">
                 <cstring>teAddress</cstring>
             </property>
