@@ -34,8 +34,7 @@ mydatadir = $(kde_datadir)/kopete
 mydata_DATA = kopeteui.rc eventsrc
 
 # this is where the desktop file will go
-desktopdir   = $(kde_appsdir)/Internet
-desktop_DATA = kopete.desktop
+xdg_apps_DATA = kopete.desktop
 
 # vim: set noet:
 
