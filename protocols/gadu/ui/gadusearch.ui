@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>497</width>
-            <height>269</height>
+            <width>841</width>
+            <height>297</height>
         </rect>
     </property>
     <property name="caption">
@@ -415,7 +415,7 @@
                             <number>2</number>
                         </property>
                         <property name="resizePolicy">
-                            <enum>AutoOne</enum>
+                            <enum>AutoOneFit</enum>
                         </property>
                         <property name="selectionMode" stdset="0">
                             <enum>Extended</enum>
@@ -428,6 +428,18 @@
                         </property>
                         <property name="resizeMode">
                             <enum>AllColumns</enum>
+                        </property>
+                        <property name="fullWidth">
+                            <bool>true</bool>
+                        </property>
+                        <property name="itemsMovable">
+                            <bool>false</bool>
+                        </property>
+                        <property name="autoOpen">
+                            <bool>false</bool>
+                        </property>
+                        <property name="dropVisualizer">
+                            <bool>false</bool>
                         </property>
                     </widget>
                 </grid>
