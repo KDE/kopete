@@ -160,7 +160,7 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>(.*)</body>.*") ), QString::fromLatin1("\\1") );
+		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
 
 		//Strip <p> tags
 		theBody.replace( QRegExp( QString::fromLatin1("<p>") ), QString::null );
@@ -251,7 +251,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
-		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>(.*)</body>.*") ), QString::fromLatin1("\\1") );
+		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
 
 		//Strip <p> tags
 		theBody.replace( QRegExp( QString::fromLatin1("<p>") ), QString::null );

@@ -30,6 +30,8 @@ typedef QDict<KopeteCommand> CommandList;
 
 class KopeteCommandHandler : public QObject
 {
+	friend class my_best_friend;
+
 	Q_OBJECT
 
 	public:
