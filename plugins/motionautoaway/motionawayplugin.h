@@ -26,6 +26,7 @@
 #define MOTIONAWAYPLUGIN_H
 
 #include "kopeteplugin.h"
+#include <qcstring.h>
 
 class MotionAwayPreferences;
 class QTimer;
@@ -54,37 +55,36 @@ private:
 	QTimer *m_captureTimer;
 	QTimer *m_awayTimer;
 
-	int getImage(int, char *,int ,int ,int ,int ,int );
+	int getImage(int, QByteArray& ,int ,int ,int ,int ,int );
 
 	bool m_tookFirst;
 	bool m_wentAway;
 
-	int width;
-	int height;
-	int quality;
-	int max_changes;
-	int dev;
-	int shots;
-	int sms;
-	int mail;
-	int gap;
-	char *image_ref;
-	char *image_new;
-	char *image_old;
-	char *image_out;
+	int m_width;
+	int m_height;
 
+	int m_quality;
+	int m_maxChanges;
+
+	int m_deviceHandler;
+	int shots;
+	int m_gap;
+
+	QByteArray m_imageRef;
+	QByteArray m_imageNew;
+	QByteArray m_imageOld;
+	QByteArray m_imageOut;
+
+    /*
 	time_t currenttimep;
 	time_t lasttime;
 	struct tm *currenttime;
-	char *device;
-	char *mail_address;
-	char *sms_nr;
 	
 	char file[255];
 	char filepath[255];
 	char c;
-	FILE *picture;
-
+	
+    */
 };
 
 #endif

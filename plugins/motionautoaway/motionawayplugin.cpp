@@ -63,20 +63,16 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopetePlugin( parent, name )
 {
-    m_tookFirst = false;
-
-	width=DEF_WIDTH;
-	height=DEF_HEIGHT;
-	quality=DEF_QUALITY;
-	max_changes=DEF_CHANGES;
-	shots=0;
-	sms=0;
-	mail=0;
-	gap=DEF_GAP;
-	lasttime=0;
-	device=VIDEO_DEVICE;
-	mail_address=NULL;
-	sms_nr=NULL;
+   
+	/* This should be read from config someday may be */
+	m_width = DEF_WIDTH;
+	m_height = DEF_HEIGHT;
+	m_quality = DEF_QUALITY;
+	m_maxChanges = DEF_CHANGES;
+    m_gap = DEF_GAP;
+	
+	/* We haven't took the first picture yet */
+	m_tookFirst = false;
 
 	m_captureTimer = new QTimer(this);
 	m_awayTimer = new QTimer(this);
@@ -86,17 +82,19 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	connect( m_captureTimer, SIGNAL(timeout()), this, SLOT(slotCapture()) );
     connect( m_awayTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 
-	filepath[0]=0;
 	signal(SIGCHLD, SIG_IGN);
 
-	image_ref=malloc(width*height*3);
-	image_new=malloc(width*height*3);
-	image_out=malloc(width*height*3);
-	image_old=malloc(width*height*3);
+	m_imageRef.resize( m_width * m_height * 3);
+	m_imageNew.resize( m_width * m_height * 3);
+	m_imageOld.resize( m_width * m_height * 3);
+	m_imageOut.resize( m_width * m_height * 3);
+
 
 	kdDebug() << "[MotionAway Plugin] : Opening Video4Linux Device" << endl;
-	dev = open(device, O_RDWR);
-	if (dev < 0)
+
+	m_deviceHandler = open( (mPrefs->device()).latin1() , O_RDWR);
+
+	if (m_deviceHandler < 0)
 	{
 		kdDebug() << "[MotionAway Plugin] : Can't open Video4Linux Device" << endl;
 	}
@@ -104,7 +102,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	{
         kdDebug() << "[MotionAway Plugin] : Worked! Setting Capture timers!" << endl;
 		/* Capture first image, or we will get a alarm on start */
-		this->getImage (this->dev, this->image_ref, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
+		this->getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
 	    	VIDEO_PALETTE_RGB24);
 
         /* We have the first image now */
@@ -119,12 +117,8 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 MotionAwayPlugin::~MotionAwayPlugin()
 {
     kdDebug() << "[MotionAway Plugin] : Closing Video4Linux Device" << endl;
-	close (dev);
+	close (m_deviceHandler);
 	kdDebug() << "[MotionAway Plugin] : Freeing memory" << endl;
-	free(image_ref);
-	free(image_new);
-	free(image_out);
-	free(image_old);
 }
 
 void MotionAwayPlugin::init()
@@ -136,11 +130,14 @@ bool MotionAwayPlugin::unload()
 	return true;
 }
 
-int MotionAwayPlugin::getImage(int _dev, char *_image, int _width, int _height, int _input, int _norm,  int _fmt)
+int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)
 {
 	struct video_capability vid_caps;
 	struct video_channel vid_chnl;
 	struct video_window vid_win;
+
+	// Just to avoid a warning
+	_fmt = 0;
 
 	if (ioctl (_dev, VIDIOCGCAP, &vid_caps) == -1)
 	{
@@ -179,7 +176,7 @@ int MotionAwayPlugin::getImage(int _dev, char *_image, int _width, int _height, 
 		return (-1);
 
 	/* Read an image */
-	return read (_dev, _image, _width * _height * 3);
+	return read (_dev, _image.data() , _width * _height * 3);
 }
 
 void MotionAwayPlugin::slotCapture()
@@ -187,36 +184,36 @@ void MotionAwayPlugin::slotCapture()
     int i, diffs;
 
 	/* Should go on forever... emphasis on 'should' */
-	if (getImage (this->dev, this->image_new, this->width, this->height, IN_DEFAULT, NORM_DEFAULT,
-	    VIDEO_PALETTE_RGB24) == width*height*3)
+	if ( getImage ( m_deviceHandler, m_imageNew, m_width, m_height, IN_DEFAULT, NORM_DEFAULT,
+	    VIDEO_PALETTE_RGB24) == m_width * m_height *3 )
 	{
         if ( m_tookFirst )
 		{
 			/* Make a differences picture in image_out */
 			diffs=0;
-			for (i=0; i<width*height*3; i++)
+			for (i=0; i< m_width * m_height * 3 ; i++)
 			{
-				image_out[i]=image_old[i]-image_new[i];
-				if ((signed char)image_out[i] > 32 || (signed char)image_out[i] < -32)
+				m_imageOut[i]= m_imageOld[i]- m_imageNew[i];
+				if ((signed char)m_imageOut[i] > 32 || (signed char)m_imageOut[i] < -32)
 				{
-					image_old[i]=image_new[i];
+					m_imageOld[i] = m_imageNew[i];
 					diffs++;
 				}
 				else
 				{
-					image_out[i]=0;
+					m_imageOut[i] = 0;
 				}
 			}
 		}
 		else
 		{
 			/* First picture: new image is now the old */
-			for (i=0; i<width*height*3; i++)
-				image_old[i]=image_new[i];		
+			for (i=0; i< m_width * m_height * 3; i++)
+				m_imageOld[i] = m_imageNew[i];		
 		}
 
 		/* The cat just walked in :) */
-		if (diffs > max_changes)
+		if (diffs > m_maxChanges)
 		{
             kdDebug() << "[MotionAway Plugin] : Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
@@ -235,7 +232,7 @@ void MotionAwayPlugin::slotCapture()
 			slow moving object to stay undetected */
 
         /*
-		for (i=0; i<width*height*3; i++)
+		for (i=0; i<m_width*m_height*3; i++)
 		{
 			image_ref[i]=(image_ref[i]+image_new[i])/2;
 		}

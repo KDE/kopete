@@ -51,14 +51,14 @@
     </spacer>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout1</cstring>
+            <cstring>Layout4</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>20</x>
-                <y>10</y>
-                <width>324</width>
-                <height>44</height>
+                <y>11</y>
+                <width>329</width>
+                <height>68</height>
             </rect>
         </property>
         <grid>
@@ -71,12 +71,12 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QLabel" row="0" column="2">
+            <widget class="QLabel" row="2" column="0">
                 <property name="name">
-                    <cstring>TextLabel3</cstring>
+                    <cstring>TextLabel2_2</cstring>
                 </property>
                 <property name="text">
-                    <string>minutes of user inactivity</string>
+                    <string>Video4Linux Device:</string>
                 </property>
             </widget>
             <widget class="QLabel" row="0" column="0">
@@ -85,6 +85,14 @@
                 </property>
                 <property name="text">
                     <string>Become away after</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="0" column="2">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="text">
+                    <string>minutes of user inactivity</string>
                 </property>
             </widget>
             <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
@@ -101,6 +109,11 @@
                 </property>
                 <property name="maxValue">
                     <number>999</number>
+                </property>
+            </widget>
+            <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>m_videoDevice</cstring>
                 </property>
             </widget>
         </grid>

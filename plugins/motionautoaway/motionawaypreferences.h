@@ -42,6 +42,7 @@ public:
 
 	bool goAvailable() { return preferencesDialog->mGoAvailable->isChecked(); };
 	int awayTimeout() { return preferencesDialog->mAwayTimeout->value(); };
+	const QString device() { return preferencesDialog->m_videoDevice->text(); };
 
 signals:
 	void saved();

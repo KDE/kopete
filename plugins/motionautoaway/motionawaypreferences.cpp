@@ -39,6 +39,7 @@ MotionAwayPreferences::MotionAwayPreferences(const QString &pixmap,QObject *pare
 	preferencesDialog = new motionawayPrefsUI(this);
 
 	KGlobal::config()->setGroup("MotionAway Plugin");
+    preferencesDialog->m_videoDevice->setText(KGlobal::config()->readEntry("Device", "/dev/video0"));
 	preferencesDialog->mAwayTimeout->setValue(KGlobal::config()->readNumEntry("Timeout", 1));
 	preferencesDialog->mGoAvailable->setChecked(KGlobal::config()->readBoolEntry("GoAvailable", true));
 }
@@ -54,6 +55,7 @@ void MotionAwayPreferences::save()
 	config->setGroup("MotionAway Plugin");
 	config->writeEntry("Timeout", preferencesDialog->mAwayTimeout->value());
 	config->writeEntry("GoAvailable", preferencesDialog->mGoAvailable->isChecked());
+    config->writeEntry("Device", preferencesDialog->m_videoDevice->text());
 	config->sync();
 	emit saved();
 
