@@ -217,13 +217,15 @@ const QDict<Contact>& Account::contacts()
 
 bool Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  )
 {
+
 	if ( contactId == d->myself->contactId() )
 	{
-		KMessageBox::error( Kopete::UI::Global::mainWidget(),
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.").arg(contactId,accountId()), i18n("Error Creating Contact")
 		);
 		return false;
 	}
+ 
 	bool isTemporary = mode == Temporary;
 
 	Contact *c = d->contacts[ contactId ];
