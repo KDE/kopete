@@ -35,7 +35,8 @@ void GetStatusTask::userDN( const QString & dn )
 	m_userDN = dn;
 	// set up Transfer
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, m_userDN ) );
+	// changed from USERID to DN as per Gaim/GWIM
+	lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, m_userDN ) );
 	createTransfer( "getstatus", lst );
 }
 
@@ -57,6 +58,7 @@ bool GetStatusTask::take( Transfer * transfer )
 	{
 		// As of Sept 2004 the server always responds with 2 (Available) here, even if the sender is not
 		// This must be because the sender is not on our contact list but has sent us a message.
+		// TODO: Check that the change to sending DNs above has fixed this problem.
 		status = sf->value().toInt();
 		// unfortunately getstatus doesn't give us an away message so we pass QString::null here
 		emit gotStatus( m_userDN, status, QString::null );
