@@ -267,11 +267,6 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 			// Such fields include: URLs, Contact IDs, Display Aliases,
 			// Metacontact names, Status/system messages, HTML tags/entities.
 			// - Casey
-
-			// FIXME: I would say that every emoticon should have a
-			// beginning-of-line, end-of-line, or whitespace character (space,
-			// tab, &nbsp;) on at least one side of the emoticon.  No
-			// surrounding whitespace/eol/bol - no emoticon.  - Casey
 		}
 	}
 
