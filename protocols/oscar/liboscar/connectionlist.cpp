@@ -26,17 +26,14 @@
 
 ConnectionList::ConnectionList()
 	: m_bosConnection( 0 ),
-		m_authConnection( 0 ),
-		m_iconConnection( 0 )
+	  m_authConnection( 0 ),
+	  m_iconConnection( 0 )
 {
 
 }
 
 ConnectionList::~ConnectionList()
 {
-	delete m_bosConnection;
-	delete m_authConnection;
-	delete m_iconConnection;
 }
 
 QValueList<Connection*> ConnectionList::getConnections()
@@ -56,6 +53,9 @@ QValueList<Connection*> ConnectionList::getConnections()
 
 void ConnectionList::removeAllConnections()
 {
+	delete m_authConnection;
+	delete m_bosConnection;
+	delete m_iconConnection;
 	m_bosConnection = 0;
 	m_authConnection = 0;
 	m_iconConnection = 0;
