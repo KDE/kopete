@@ -406,7 +406,7 @@ void OscarSocket::slotRead()
 					break;
 				} // END OSCAR_FAM_9
 
-				case OSCAR_FAM_19: // Contact list management
+				case OSCAR_FAM_19: // Contact list management (SSI)
 				{
 					switch(s.subtype)
 					{
@@ -1988,10 +1988,12 @@ FLAP OscarSocket::getFLAP()
 		//kdDebug(14150) << k_funcinfo << "FLAP length=" << fl.length << endl;
 		//kdDebug(14150) << k_funcinfo << "bytes available=" << mSocket->bytesAvailable() << endl;
 
-		if(mSocket->bytesAvailable() <= fl.length+6)
+		if(mSocket->bytesAvailable() < fl.length+6)
 		{
-			/*kdDebug(14150) << k_funcinfo <<
-				"Not enough data in recv buffer to read the full FLAP, aborting" << endl;*/
+			kdDebug(14150) << k_funcinfo <<
+				"Not enough data in recv buffer to read the full FLAP (want " <<
+				fl.length+6 << " bytes, got " << mSocket->bytesAvailable() <<
+				"bytes), aborting" << endl;
 			fl.error = true;
 		}
 	}
