@@ -160,14 +160,25 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		else
 		{
 			// We are over a metacontact with > 1 child contacts, and not over a specific contact
-            // Display limited tooltip containing MC status, name, and icon, where available
-			// FIXME: this only works where the metacontact has an Id set (i.e., a kabc id).  Otherwise, metaContactId is null, and the mime source factory can't look up an icon.  This is why Richard wants all metacontacts to have an id string, so the mime source factory can look up the metacontact when the tooltip is rendered.  (Will)
-			KopeteMetaContact *mc = metaLVI->metaContact();
-			toolTip = i18n( "<b>%2</b><br><img src=\"kopete-metacontact-icon:%3\">&nbsp;%1" ).
-				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ), mc->metaContactId() );
+			// Iterate through children and display a summary tooltip
 
-			if( mc->idleTime() > 0 )
-				toolTip += idleTime2String(mc->idleTime());
+			KopeteMetaContact *mc = metaLVI->metaContact();
+			toolTip = QString::fromLatin1("<qt><table>");
+			QPtrList<KopeteContact> contacts = mc->contacts();
+			for(KopeteContact *c = contacts.first(); c; c = contacts.next())
+			{
+				QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+					.arg( KURL::encode_string( c->protocol()->pluginId() ),
+						KURL::encode_string( c->account()->accountId() ),
+						KURL::encode_string( c->contactId() )
+					);
+
+				toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
+					"<tr><td><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</td><td align=\"right\">%4</td></tr>")
+					.arg( iconName, c->protocol()->displayName(), c->contactId(), c->onlineStatus().description() );
+			}
+
+			toolTip += QString::fromLatin1("</table></qt>");
 
 			if ( Kopete::UI::ListView::Component *comp = metaLVI->componentAt( relativePos ) )
 			{
