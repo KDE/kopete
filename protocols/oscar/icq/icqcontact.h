@@ -60,7 +60,7 @@ class ICQContact : public OscarContact
 		 * Returns a set of custom menu items for
 		 * the context menu
 		 */
-		virtual KActionCollection *customContextMenuActions();
+		virtual QPtrList<KAction> *customContextMenuActions();
 
 		/* Return whether or not this contact is REACHABLE. */
 		virtual bool isReachable();
@@ -103,6 +103,10 @@ class ICQContact : public OscarContact
 		ICQInfoItemList interestInfo;
 		ICQInfoItemList currentBackground;
 		ICQInfoItemList pastBackground;
+		
+		KAction *actionReadAwayMessage;
+		KAction *actionRequestAuth;
+		KAction *actionSendAuth;
 
 		int userinfoRequestSequence;
 		unsigned int userinfoReplyCount;

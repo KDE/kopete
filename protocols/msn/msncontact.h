@@ -83,7 +83,7 @@ public:
 
 	virtual bool isReachable() { return true; };
 
-	virtual KActionCollection *customContextMenuActions();
+	virtual QPtrList<KAction> *customContextMenuActions();
 
 	/**
 	 * update the server group map
@@ -172,6 +172,10 @@ private:
 
 	QString m_obj; //the MSNObject
 	KTempFile *m_displayPicture;
+	
+	KAction *actionBlock;
+	KAction *actionShowProfile;
+	KAction *actionSendMail;
 };
 
 #endif

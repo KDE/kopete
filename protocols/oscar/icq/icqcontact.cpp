@@ -88,6 +88,8 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestUserInfo();
 	}
+	
+	actionReadAwayMessage = 0L;
 }
 
 ICQContact::~ICQContact()
@@ -179,9 +181,9 @@ bool ICQContact::isReachable()
 	return true;
 }
 
-KActionCollection *ICQContact::customContextMenuActions()
+QPtrList<KAction> *ICQContact::customContextMenuActions()
 {
-	actionCollection = new KActionCollection(this);
+	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 
 	QString awTxt;
 	QString awIcn;
@@ -211,20 +213,24 @@ KActionCollection *ICQContact::customContextMenuActions()
 			awIcn = "icq_away";
 			break;
 	}
-	KAction* actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
-		this, SLOT(slotReadAwayMessage()), actionCollection, "actionReadAwayMessage");
-	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
-		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
-	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
-		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
+	
+	if( !actionReadAwayMessage )
+	{
+		actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
+			this, SLOT(slotReadAwayMessage()), this, "actionReadAwayMessage");
+		actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
+			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
+		actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
+			this, SLOT(slotSendAuth()), this, "actionSendAuth");
+	}
 
 	actionRequestAuth->setEnabled(waitAuth() && account()->isConnected());
 	actionSendAuth->setEnabled(account()->isConnected());
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 
-	actionCollection->insert(actionRequestAuth);
-	actionCollection->insert(actionSendAuth);
-	actionCollection->insert(actionReadAwayMessage);
+	actionCollection->append(actionRequestAuth);
+	actionCollection->append(actionSendAuth);
+	actionCollection->append(actionReadAwayMessage);
 
 	return actionCollection;
 }

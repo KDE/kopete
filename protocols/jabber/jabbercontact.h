@@ -81,7 +81,7 @@ public:
 	/**
 	 * Create custom context menu items for the contact
 	 */
-	virtual KActionCollection *customContextMenuActions ();
+	virtual QPtrList<KAction> *customContextMenuActions ();
 
 	/**
 	 * Determine the currently best resource for the contact
@@ -251,6 +251,12 @@ private:
 	KopeteMessageManager *m_manager;
 
 	dlgJabberVCard *dlgVCard;
+	
+	//Actions
+	KAction *actionSendAuth;
+	KAction *actionRequestAuth;
+	KAction *actionRemoveAuth;
+	KActionMenu *actionSetAvailability;
 };
 
 #endif

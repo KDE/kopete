@@ -253,21 +253,19 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
-	KActionCollection *customActions = customContextMenuActions( manager );
-	if( customActions != 0L )
+	QPtrList<KAction> *customActions = customContextMenuActions( manager );
+	if( customActions )
 	{
 		if ( !customActions->isEmpty() )
-			menu->insertSeparator();
-
-		for( uint i = 0; i < customActions->count(); i++ )
 		{
-			customActions->action( i )->plug( menu );
+			menu->insertSeparator();
+	
+			for( KAction *a = customActions->first(); a; a = customActions->next() )
+				a->plug( menu );
 		}
-
-		//Reparent the collection
-		customActions->parent()->removeChild( customActions );
-		menu->insertChild( customActions );
 	}
+
+	delete customActions;
 
 	menu->insertSeparator();
 	if( metaContact() && !metaContact()->isTemporary() )
@@ -497,12 +495,12 @@ KopeteAccount * KopeteContact::account() const
 	return d->account;
 }
 
-KActionCollection * KopeteContact::customContextMenuActions()
+QPtrList<KAction> *KopeteContact::customContextMenuActions()
 {
 	return 0L;
 }
 
-KActionCollection * KopeteContact::customContextMenuActions( KopeteMessageManager * /* manager */ )
+QPtrList<KAction> *KopeteContact::customContextMenuActions( KopeteMessageManager * /* manager */ )
 {
 	return customContextMenuActions();
 }

@@ -78,7 +78,8 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, QString::null);
 
 	connect(this, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SLOT(slotRenameContact(const QString &, const QString &)));
-
+	
+	actionSendAuth = 0L;
 }
 
 /* Return the user ID */
@@ -138,23 +139,38 @@ bool JabberContact::isReachable ()
 	return true;
 }
 
-KActionCollection *JabberContact::customContextMenuActions ()
+QPtrList<KAction> *JabberContact::customContextMenuActions ()
 {
-	KActionCollection *actionCollection = new KActionCollection (this);
-
-	new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
-	new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
-	// FIXME wrong position in the popup menu
-	new KAction (i18n ("Remove Authorization From"), "mail_delete", 0, this, SLOT (slotRemoveAuth ()), actionCollection, "actionRemoveAuth");
-
-	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", actionCollection, "jabber_online");
-
-	actionSetAvailability->insert(new KAction (i18n ("Online"),         static_cast<JabberProtocol *>(protocol())->JabberKOSOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
-	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),   static_cast<JabberProtocol *>(protocol())->JabberKOSChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
-	actionSetAvailability->insert(new KAction (i18n ("Away"),           static_cast<JabberProtocol *>(protocol())->JabberKOSAway.iconFor(this), 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
-	actionSetAvailability->insert(new KAction (i18n ("Extended Away"),  static_cast<JabberProtocol *>(protocol())->JabberKOSXA.iconFor(this), 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
-	actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"), static_cast<JabberProtocol *>(protocol())->JabberKOSDND.iconFor(this), 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
-	actionSetAvailability->insert(new KAction (i18n ("Invisible"),      static_cast<JabberProtocol *>(protocol())->JabberKOSInvisible.iconFor(this), 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
+	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	if( !actionSendAuth )
+	{
+		actionSendAuth = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0, 
+			this, SLOT (slotSendAuth ()), this, "actionSendAuth");
+		actionRequestAuth = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0, 
+			this, SLOT (slotRequestAuth ()), this, "actionRequestAuth");
+		actionRemoveAuth = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0, 
+			this, SLOT (slotRemoveAuth ()), this, "actionRemoveAuth");
+	
+		actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", this, "jabber_online");
+	
+		actionSetAvailability->insert(new KAction (i18n ("Online"),
+			static_cast<JabberProtocol *>(protocol())->JabberKOSOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
+		actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),
+			static_cast<JabberProtocol *>(protocol())->JabberKOSChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
+		actionSetAvailability->insert(new KAction (i18n ("Away"),
+			static_cast<JabberProtocol *>(protocol())->JabberKOSAway.iconFor(this), 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
+		actionSetAvailability->insert(new KAction (i18n ("Extended Away"), 
+			static_cast<JabberProtocol *>(protocol())->JabberKOSXA.iconFor(this), 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
+		actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"),
+			static_cast<JabberProtocol *>(protocol())->JabberKOSDND.iconFor(this), 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
+		actionSetAvailability->insert(new KAction (i18n ("Invisible"),
+			static_cast<JabberProtocol *>(protocol())->JabberKOSInvisible.iconFor(this), 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
+	}
+	
+	actionCollection->append( actionSendAuth );
+	actionCollection->append( actionRequestAuth );
+	actionCollection->append( actionRemoveAuth );
+	actionCollection->append( actionSetAvailability );
 
 	KGlobal::config ()->setGroup ("Jabber");
 
@@ -162,18 +178,16 @@ KActionCollection *JabberContact::customContextMenuActions ()
 	// display the resources we have for it
 	if (onlineStatus ().status () != KopeteOnlineStatus::Offline)
 	{
+		/*
+		* FIXME: KopeteContact doesn't do implicit garbage collection anymore, so
+		this is a mem leak
+		*/
+		KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no",
+			this, "actionSelectResource");
+				
 		QStringList items;
 		int activeItem = 0;
 		JabberResource *tmpBestResource = bestResource ();
-
-		/*
-		 * FIXME: This is a workaround for the automatic garbage collection
-		 *        in KopeteContact. The reparenting of the menu actions
-		 *        makes the signal/slot mechanism break in the case of
-		 *        a KSelectAction. Due to this, a KActionMenu is instantiated
-		 *        instead as a replacement below.
-		 */
-		KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no", actionCollection, "actionSelectResource");
 
 		// put best resource first
 		items.append (i18n ("Automatic (best resource)"));
@@ -223,11 +237,11 @@ KActionCollection *JabberContact::customContextMenuActions ()
 
 			i++;
 		}
-
+		
+		actionCollection->append( actionSelectResource );
 	}
-
+	
 	return actionCollection;
-
 }
 
 void JabberContact::slotUpdatePresence (const KopeteOnlineStatus & newStatus, const QString & reason)

@@ -27,10 +27,9 @@
 
 struct KopeteContactPrivate;
 
-class KActionCollection;
 class KPopupMenu;
 class KURL;
-
+class KAction;
 class KopeteGroup;
 class KopeteMetaContact;
 class KopeteMessageManager;
@@ -184,8 +183,8 @@ public:
 	 *
 	 * @return Collection of menu items to be show on the context menu
 	 */
-	virtual KActionCollection *customContextMenuActions();
-	virtual KActionCollection *customContextMenuActions( KopeteMessageManager *manager );
+	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual QPtrList<KAction> *customContextMenuActions( KopeteMessageManager *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact

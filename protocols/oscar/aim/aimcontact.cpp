@@ -56,6 +56,7 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	/*kdDebug(14190) << k_funcinfo <<
 		"contactName()='" << contactName() <<
 		"', displayName()='" << displayName << "'" << endl;*/
+	actionRequestAuth = 0L;
 }
 
 AIMContact::~AIMContact()
@@ -88,30 +89,33 @@ bool AIMContact::isReachable()
 	return isOnline();
 }
 
-KActionCollection *AIMContact::customContextMenuActions()
+QPtrList<KAction> *AIMContact::customContextMenuActions()
 {
-	actionCollection = new KActionCollection(this);
+	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 
-	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
-		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
-	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
-		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
-	KAction* actionWarn = new KAction(i18n("&Warn"), 0,
-		this, SLOT(slotWarn()), actionCollection, "actionWarn");
-	KAction* actionBlock = new KAction(i18n("&Block"), 0,
-		this, SLOT(slotBlock()), actionCollection, "actionBlock");
-	/*KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
-		this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");*/
+	if( !actionRequestAuth )
+	{
+		actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
+			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
+		actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
+			this, SLOT(slotSendAuth()), this, "actionSendAuth");
+		actionWarn = new KAction(i18n("&Warn"), 0,
+			this, SLOT(slotWarn()), this, "actionWarn");
+		actionBlock = new KAction(i18n("&Block"), 0,
+			this, SLOT(slotBlock()), this, "actionBlock");
+		/*KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
+			this, SLOT(slotDirectConnect()), this, "actionDirectConnect");*/
+	}
 
 	actionRequestAuth->setEnabled(isOnline());
 	actionSendAuth->setEnabled(isOnline());
 	actionWarn->setEnabled(isOnline());
 	actionBlock->setEnabled(mAccount->isConnected()); // works if contact is offline
 
-	actionCollection->insert(actionRequestAuth);
-	actionCollection->insert(actionSendAuth);
-	actionCollection->insert(actionWarn);
-	actionCollection->insert(actionBlock);
+	actionCollection->append(actionRequestAuth);
+	actionCollection->append(actionSendAuth);
+	actionCollection->append(actionWarn);
+	actionCollection->append(actionBlock);
 	//actionCollection->insert(actionDirectConnect);
 
 	return actionCollection;

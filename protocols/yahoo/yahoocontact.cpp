@@ -172,7 +172,7 @@ void YahooContact::slotMessageManagerDestroyed()
 	m_manager = 0L;
 }
 
-KActionCollection *YahooContact::customContextMenuActions()
+QPtrList<KAction> *YahooContact::customContextMenuActions()
 {
 	//kdDebug(14180) << k_funcinfo << endl;
 	return 0L;

@@ -30,7 +30,6 @@ class KIRC;
 class EditAccountWidget;
 class KopeteAccount;
 class IRCAccount;
-class KActionCollection;
 
 class QStringList;
 class QWidget;
@@ -60,7 +59,7 @@ public:
 
 	virtual KopeteAccount* createNewAccount(const QString &accountId);
 
-	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
+	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
 	
 	virtual bool supportsRichText();
 
@@ -112,8 +111,6 @@ private slots:
 
 private:
 	static IRCProtocol *s_protocol;
-
-	KActionCollection *mActions;
 
 	void simpleModeChange( const QString &, KopeteMessageManager *, const QString &mode );
 

@@ -36,7 +36,7 @@ public:
 	SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 		const QString &displayName, KopeteMetaContact *parent );
 
-	KActionCollection* customContextMenuActions();
+	QPtrList<KAction>* customContextMenuActions();
 
 	virtual bool isReachable() { return true; };
 
@@ -69,7 +69,6 @@ private slots:
 	void slotMessageManagerDestroyed();
 
 private:
-	KActionCollection* m_actionCollection;
 	KAction* m_actionPrefs;
 
 	QString m_phoneNumber;

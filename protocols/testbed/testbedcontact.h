@@ -55,7 +55,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual KActionCollection *customContextMenuActions();
+	virtual QPtrList<KAction> *customContextMenuActions();
 	/**
 	 * Returns a KopeteMessageManager associated with this contact
 	 */

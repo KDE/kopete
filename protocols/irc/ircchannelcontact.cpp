@@ -82,6 +82,7 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));	
 
+	actionJoin = 0L;
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeS = new KToggleAction(i18n("&Secret"), 0, this, SLOT(slotModeChanged()), this );
@@ -490,27 +491,34 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 	return false;
 }
 
-KActionCollection *IRCChannelContact::customContextMenuActions()
+QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 {
 	// KAction stuff
-	mCustomActions = new KActionCollection(this);
-	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), mCustomActions, "actionJoin");
-	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), mCustomActions, "actionPart");
-	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
-	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, mCustomActions, "actionModeMenu");
-
-	actionModeMenu->insert( actionModeT );
-	actionModeMenu->insert( actionModeN );
-	actionModeMenu->insert( actionModeS );
-	actionModeMenu->insert( actionModeM );
-	actionModeMenu->insert( actionModeI );
-	actionModeMenu->setEnabled( true );
+	QPtrList<KAction> *mCustomActions = new QPtrList<KAction>();
+	if( !actionJoin )
+	{
+		actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
+		actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), this, "actionPart");
+		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
+		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
+	
+		actionModeMenu->insert( actionModeT );
+		actionModeMenu->insert( actionModeN );
+		actionModeMenu->insert( actionModeS );
+		actionModeMenu->insert( actionModeM );
+		actionModeMenu->insert( actionModeI );
+		actionModeMenu->setEnabled( true );
+	}
+	
+	mCustomActions->append( actionJoin );
+	mCustomActions->append( actionPart );
+	mCustomActions->append( actionTopic );
+	mCustomActions->append( actionModeMenu );
 
 	bool isOperator = m_isConnected && ( manager()->contactOnlineStatus( m_account->myself() ) == m_protocol->m_UserStatusOp );
 
 	actionJoin->setEnabled( !m_isConnected );
 	actionPart->setEnabled( m_isConnected );
-
 	actionTopic->setEnabled( m_isConnected && ( !modeEnabled('t') || isOperator ) );
 
 	actionModeT->setEnabled(isOperator);

@@ -135,7 +135,7 @@ GaduContact::isReachable()
 	return true;
 }
 
-KActionCollection*
+QPtrList<KAction>*
 GaduContact::customContextMenuActions()
 {
 	KActionCollection *actionCollection = new KActionCollection(this);

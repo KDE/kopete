@@ -79,7 +79,7 @@ void KopetePlugin::addAddressBookField( const QString &field, AddressBookFieldAd
 		d->indexField = field;
 }
 
-KActionCollection *KopetePlugin::customChatWindowPopupActions( const KopeteMessage &, DOM::Node & )
+QPtrList<KAction> *KopetePlugin::customChatWindowPopupActions( const KopeteMessage &, DOM::Node & )
 {
 	return 0L;
 }

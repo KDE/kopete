@@ -54,7 +54,7 @@ WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const Q
 	m_infoDialog = 0L;
 }
 
-KActionCollection * WPContact::customContextMenuActions()
+QPtrList<KAction> * WPContact::customContextMenuActions()
 {
 	//myActionCollection = new KActionCollection(parent);
 	return 0L;

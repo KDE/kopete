@@ -70,7 +70,7 @@ public:
 	bool modeEnabled( QChar mode, QString *value = 0 );
 
 	// KopeteContact stuff
-	virtual KActionCollection *customContextMenuActions();
+	virtual QPtrList<KAction> *customContextMenuActions();
 	virtual const QString caption() const;
 
 public slots:
@@ -122,7 +122,6 @@ private slots:
 
 private:
 	// KAction stuff:
-	KActionCollection *mCustomActions;
 	KAction *actionJoin;
 	KAction *actionPart;
 	KAction *actionTopic;

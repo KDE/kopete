@@ -47,7 +47,7 @@ public:
 	IRCUserContact(IRCContactManager *, const QString &nickname, KopeteMetaContact *mc);
 
 	// KopeteContact stuff
-	virtual KActionCollection *customContextMenuActions( KopeteMessageManager *manager );
+	virtual QPtrList<KAction> *customContextMenuActions( KopeteMessageManager *manager );
 	virtual const QString caption() const;
 	
 	void setAway(bool isAway);
@@ -77,7 +77,6 @@ private slots:
 	virtual void slotUserInfo();
 	
 private:
-	KActionCollection *mCustomActions;
 	KActionMenu *actionModeMenu;
 	KActionMenu *actionCtcpMenu;
 	KAction *actionKick;

@@ -1174,13 +1174,15 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 			QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 			for ( it = plugins.begin(); it != plugins.end(); ++it )
 			{
-				KActionCollection *customActions = it.data()->customChatWindowPopupActions( m, n );
+				uint i = 0;
+				QPtrList<KAction> *customActions = it.data()->customChatWindowPopupActions( m, n );
 				if( customActions  && !customActions->isEmpty() )
 				{
 					actions = true;
-					for( uint i = 0; i < customActions->count(); i++ )
-						customActions->action( i )->plug( chatWindowPopup, i + j );
+					for( KAction *a = customActions->first(); a; a = customActions->next() )
+						a->plug( chatWindowPopup, (++i) + j );
 				}
+				delete customActions;
 				j++;
 			}
 

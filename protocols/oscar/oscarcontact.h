@@ -133,8 +133,6 @@ class OscarContact : public KopeteContact
 		// The name of the contact as used on the protocol-level
 		QString mName;
 
-		KActionCollection* actionCollection;
-
 		KopeteMessageManager *mMsgManager;
 
 		/*

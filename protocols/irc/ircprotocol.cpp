@@ -63,7 +63,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 //	kdDebug(14120) << k_funcinfo << endl;
 
 	s_protocol = this;
-	mActions = 0L;
 
 	//m_status = m_unknownStatus = m_Unknown;
 
@@ -201,10 +200,8 @@ void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 	}
 }
 
-KActionCollection *IRCProtocol::customChatWindowPopupActions( const KopeteMessage &m, DOM::Node &n )
+QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions( const KopeteMessage &m, DOM::Node &n )
 {
-	delete mActions;
-	mActions = 0L;
 	DOM::HTMLElement e = n;
 
 	//isNull checks that the cast was successful
@@ -212,12 +209,11 @@ KActionCollection *IRCProtocol::customChatWindowPopupActions( const KopeteMessag
 	{
 		activeNode = n;
 		activeAccount = static_cast<IRCAccount*>( m.from()->account() );
-		mActions = new KActionCollection(this);
 		if( e.getAttribute( QString::fromLatin1("type") ) == QString::fromLatin1("IRCChannel") )
 			return activeAccount->findChannel( e.innerText().string() )->customContextMenuActions();
 	}
 
-	return mActions;
+	return 0L;
 }
 
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)

@@ -48,7 +48,7 @@ public:
 	~YahooContact();
 	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual KActionCollection *customContextMenuActions();
+	virtual QPtrList<KAction> *customContextMenuActions();
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 

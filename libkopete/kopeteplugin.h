@@ -95,7 +95,7 @@ public:
 	/**
 	 * The user right-click on the chatwindow
 	 */
-	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node &node );
+	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node &node );
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the

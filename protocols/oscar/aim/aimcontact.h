@@ -30,7 +30,7 @@ class AIMContact : public OscarContact
 		virtual ~AIMContact();
 
 		bool isReachable();
-		KActionCollection *customContextMenuActions();
+		QPtrList<KAction> *customContextMenuActions();
 
 		/*
 		 * Reimplemented because AIM handles start/stop of typing
@@ -108,5 +108,9 @@ class AIMContact : public OscarContact
 //		UserInfo mUserInfo;
 		QString mAwayMessage;
 		AIMUserInfoDialog *infoDialog;
+		KAction *actionRequestAuth;
+		KAction *actionSendAuth;
+		KAction *actionWarn;
+		KAction *actionBlock;
 };
 #endif

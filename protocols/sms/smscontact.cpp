@@ -35,7 +35,9 @@ SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
 	setDisplayName( displayName );
+
 	m_msgManager = 0L;
+	m_actionPrefs = 0L;
 
 	setOnlineStatus( SMSProtocol::protocol()->SMSUnknown );
 }
@@ -152,10 +154,13 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 	new SMSContact(account(), phoneNumber, displayName(), metaContact());
 }
 
-KActionCollection* SMSContact::customContextMenuActions()
+QPtrList<KAction>* SMSContact::customContextMenuActions()
 {
-	m_actionCollection = new KActionCollection(this, "userColl");
-	m_actionPrefs = new KAction(i18n("&Contact Settings"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
+	QPtrList<KAction> m_actionCollection = new QPtrList<KAction>();
+	if( !m_actionPrefs )
+		m_actionPrefs = new KAction(i18n("&Contact Settings"), 0, this, SLOT(userPrefs()), this, "userPrefs");
+
+	m_actionCollection.append( m_actionPrefs );
 
 	return m_actionCollection;
 }

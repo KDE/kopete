@@ -82,7 +82,7 @@ KopeteMessageManager* TestbedContact::manager( bool )
 }
 
 
-KActionCollection *TestbedContact::customContextMenuActions() //OBSOLETE
+QPtrList<KAction> *TestbedContact::customContextMenuActions() //OBSOLETE
 {
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );

@@ -50,7 +50,7 @@ public:
 
 	virtual bool isReachable();
 	virtual void serialize( QMap<QString, QString>&, QMap<QString, QString>& );
-	virtual KActionCollection* customContextMenuActions();
+	virtual QPtrList<KAction>* customContextMenuActions();
 	virtual QString identityId() const;
 
 	void	setInfo( const QString& email, const QString& firstName, const QString& secondName,
