@@ -86,7 +86,7 @@ private slots:
 	void notifyDescription( struct gg_event* e );
 	void statusChanged( struct gg_event* e );
 	void slotSessionDisconnect();
-	void userlist( const QStringList& u );
+	void userlist( const QString& );
 	void connectionFailed( struct gg_event* /*e*/ );
 	void connectionSucceed( struct gg_event* /*e*/ );
 

@@ -116,7 +116,7 @@ SearchCommand::~SearchCommand()
 void
 SearchCommand::searchMode0( const QString& nickname, const QString& firstName,
 			    const QString& lastName, const QString& city,
-			    int gender, int min_birth, int max_birth, int active, 
+			    int gender, int min_birth, int max_birth, int active,
 			    int start )
 {
 
@@ -124,7 +124,7 @@ SearchCommand::searchMode0( const QString& nickname, const QString& firstName,
 				          qstrToChar(firstName),
 				         qstrToChar(lastName),
 				          qstrToChar(city),
-				           gender, min_birth, 
+				           gender, min_birth,
 					   max_birth, active, start );
 }
 
@@ -245,7 +245,7 @@ void RegisterCommand::watcher()
 {
 	disableNotifiers();
 	gg_pubdir *gg_pub;
-	
+
 
 	if ( gg_register_watch_fd( session_ ) == -1 ) {
 		gg_free_register( session_ );
@@ -292,7 +292,7 @@ void RegisterCommand::watcher()
 		else{
 		    emit error( i18n("Registration error"),
 				i18n("Data send to server were invalid") );
-		}	
+		}
 
 		gg_free_register( session_ );
 		done_ = true;
@@ -584,12 +584,13 @@ UserlistGetCommand::execute()
 	checkSocket( session_->fd, session_->check );
 }
 
-
 void
 UserlistGetCommand::watcher()
 {
+	QString result=QString::null;
+
 	disableNotifiers();
-	//kdDebug(14100)<<"Watching start"<<endl;
+	kdDebug(14100)<<"Watching start"<<endl;
 
 	if ( gg_userlist_get_watch_fd( session_ ) == -1 ) {
 		gg_userlist_get_free( session_ );
@@ -608,44 +609,15 @@ UserlistGetCommand::watcher()
 		return;
 	}
 	if ( session_->state == GG_STATE_DONE) {
-		QString data = QString( static_cast<char*>(session_->data) );
-		QStringList result;
-		QString name;
-		QString group;
-		QString uin;
-		QStringList::iterator it;
-		QStringList::iterator itNext;
-		int idx = 6;
+		result = QString( static_cast<char*>(session_->data) );
 
-		if ( data.contains( '\n' ) ) {
-			result = QStringList::split( ";", data, true );
-		} else {
-			QStringList strList = QStringList::split( ";", data, true );
-			for( it = strList.begin(); it != strList.end(); ++it, --idx ) {
-				if ( idx == 5 )
-					name = (*it);
-				if ( idx == 1 )
-					group = (*it);
-				if ( idx == 0 ) {
-					idx = 6;
-					itNext = it;
-					++itNext;
-					if ( (*it).endsWith( (*itNext) ) ) {
-						uin = (*it).replace( QRegExp( (*itNext) ), "" );
-					} else {
-						//super bad
-					}
-					result.append( name + ";" + name + ";" + name + ";" + name + ";" + ";" + group + ";" + uin );
-				}
-			}
-		}
 		emit done( result );
 		done_ = true;
 		deleteLater();
 		return;
 	}
 
-	//kdDebug(14100)<<"Watching end"<<endl;
+	kdDebug(14100)<<"Watching end"<<endl;
 	enableNotifiers( session_->check );
 }
 

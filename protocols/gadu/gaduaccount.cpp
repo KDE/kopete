@@ -416,8 +416,8 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
     startNotify();
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( accountId().toInt(), getPassword() );
-    QObject::connect( cmd, SIGNAL(done(const QStringList&)),
-    			SLOT(userlist(const QStringList&)) );
+    QObject::connect( cmd, SIGNAL(done(const QString&)),
+    			SLOT(userlist(const QString&)) );
     cmd->execute();
 
     if ( !pingTimer_ ) {
@@ -467,26 +467,94 @@ GaduAccount::slotSessionDisconnect()
 }
 
 void
-GaduAccount::userlist( const QStringList& u )
+GaduAccount::userlist( const QString& u)
 {
-	int i;
-	QString name, group, uin;
+	QStringList result;
+	QString name;
+	QString group;
+	QString uin;
+	QString firstname;
+	QString surname;
+	QString nickname;
+	QString phonenr;
+	QString cline;
+	QString contactname;
+	QStringList::iterator it;
+	QStringList::iterator itNext;
+	QStringList strList ;
+
+
 	kdDebug(14100)<<"### Got userlist"<<endl;
-	for ( QStringList::ConstIterator it = u.begin(); it != u.end(); ++it ) {
-		QStringList user = QStringList::split( ";", *it );
-		i = 0;
-		for ( QStringList::Iterator it = user.begin(); it != user.end() && !(*it).isEmpty(); ++it,++i ) {
-			if ( i == 0 ) {
-				name = *it;
-			} else if ( i == 4 ) {
-				group = *it;
-			} else if ( i == 5 ) {
-				uin = *it;
-			}
+
+	QStringList ln  = QStringList::split( QChar('\n') , u, true );
+	QStringList::iterator lni=ln.begin();
+
+	while(lni != ln.end()){
+		cline=(*lni);
+		if (cline.isNull()){
+			break;
 		}
-		kdDebug(14100)<<"uin = "<< uin << "; name = "<< name << "; group = " << group <<endl;
-		if ( ! contactsMap_.contains( uin.toUInt() ) )
-			addContact( uin, name, 0L, group );
+
+		strList  = QStringList::split( QChar(';'), cline, true );
+		if (strList.count()!=8){
+			kdDebug(14100)<< "fishy, maybe contact format was changed. Contact author/update software"<<endl;
+			kdDebug(14100)<<"nr of elements should be 8, but is "<<strList.count() << " LINE:" << cline <<endl;
+			++lni;
+			continue;
+		}
+
+		it = strList.begin();
+//each line ((firstname);(secondname);(nickname).;(name);(tel);(group);(uin);
+
+		firstname	= (*it);
+		surname		= (*++it);
+		nickname	= (*++it);
+		name		= (*++it);
+		phonenr		= (*++it);
+		group		= (*++it);
+		uin		= (*++it);
+
+		++lni;
+
+		if (uin.isNull()){
+		    kdDebug(14100) << "no Uin, strange "<<endl;
+		    kdDebug(14100) << "LINE:" << cline <<endl;
+		    		    
+		}
+
+		if ( ! contactsMap_.contains( uin.toUInt() ) ){
+			// if there is no nicname
+			if (nickname.isNull()){
+				// no name either
+				if (name.isNull()){
+					// maybe we can use fistname + surname ?
+					if (firstname.isNull() && surname.isNull()){
+						contactname=uin;
+					}
+					// what a shame, i have to use UIN than :/
+					else{
+						if (firstname.isNull()){
+							contactname=surname;
+						}
+						else{
+							if (surname.isNull()){
+							contactname=firstname;
+							}
+							else{
+								contactname=firstname+" "+surname;
+							}
+						}
+					}
+				}
+				else{
+					contactname=name;
+				}
+			}
+			else{
+				contactname=nickname;
+			}
+			addContact( uin, contactname, 0L, group );
+		}
 	}
 }
 

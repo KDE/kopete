@@ -203,7 +203,7 @@ public:
 	void setInfo( uin_t uin, const QString& password );
 	void execute();
 signals:
-	void done( const QStringList& );
+	void done( const QString& );
 protected slots:
 	void watcher();
 
