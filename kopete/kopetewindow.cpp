@@ -34,7 +34,7 @@ KopeteWindow::~KopeteWindow()
 void KopeteWindow::initActions()
 {
 	/* CTRL+SHIFT+Key_F */
-	actionAddContact = 	new KAction( i18n("&Add contact"),"hotlistadd",0 ,
+	actionAddContact = 	new KAction( i18n("&Add contact"),"bookmark_add",0 ,
                           kopeteapp, SLOT(slotAddContact()),
                           actionCollection(), "AddContact" );
 
@@ -51,7 +51,7 @@ void KopeteWindow::initActions()
                           kopeteapp, SLOT(slotAboutPlugins()),
                           actionCollection(), "AboutPlugins" );
 
-	actionPrefs = new KAction( i18n("&Configure"),"configure", 0,
+	actionPrefs = new KAction( i18n("&Configure Kopete"),"configure", 0,
                           kopeteapp, SLOT(slotPreferences()),
                           actionCollection(), "Preferences" );
 

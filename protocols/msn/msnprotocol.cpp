@@ -24,7 +24,10 @@
 #include "msncontact.h"
 #include <msnadd.h>
 #include "kopete.h"
+#include <systemtray.h>
 #include <msnaddcontactpage.h>
+#include <qcursor.h>
+
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor
@@ -38,10 +41,13 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	kdDebug() << "\nMSN Plugin Loading\n";
 	// Load all ICQ icons from KDE standard dirs
  	initIcons();
-	
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
-	
+	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+	initActions();
+
+	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu() );	
+
 	kdDebug() << "MSN Protocol Plugin: Setting icon offline\n";
 	statusBarIcon->setPixmap(&offlineIcon);
 
@@ -52,6 +58,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	engine = new KMSNService;
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
+	connect(engine, SIGNAL(statusChanged( uint)), this, SIGNAL(slotStateChanged ( uint) ) );
 	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ) );
 	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotInitContacts(QString, QString, QString) ) );
 	//connect(engine, SIGNAL(userSetOffline (QString) ), this, SLOT(slotUserSetOffline(QString) ) );
@@ -90,6 +97,7 @@ bool MSNProtocol::unload()
 	kopeteapp->statusBar()->removeWidget(statusBarIcon);
 	delete statusBarIcon;
 	// heh!
+	emit protocolUnloading();
 	return 1;
 }
 
@@ -163,10 +171,43 @@ void MSNProtocol::initIcons()
 	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
 }
 
+void MSNProtocol::initActions()
+{
+	actionGoOnline = new KAction ( i18n("Go online"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
+	actionGoOffline = new KAction ( i18n("Go Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
+	actionGoAway = new KAction ( i18n("Go Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
+	actionStatusMenu = new KActionMenu("MSN",this);
+	actionStatusMenu->insert( actionGoOnline );
+	actionStatusMenu->insert( actionGoOffline );
+	actionStatusMenu->insert( actionGoAway );
+	//actionPrefs = = new KAction ( i18n("Connect to MSN"), "msn_online", 0, this, "slotConnect", this, "actionMSNConnect" );
+	//actionUnload = = new KAction ( i18n("Connect to MSN"), "msn_online", 0, this, "slotConnect", this, "actionMSNConnect" );
+	
+}
+
+void MSNProtocol::slotIconRightClicked(const QPoint point)
+{
+	//  \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/
+	//
+	// DO NOT USE 'POINT' FOR YOUR popup() VALUE! This value is relative to the Status Bar, not the Application.
+	//
+	// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\
+	KGlobal::config()->setGroup("MSN");
+	QString handle = KGlobal::config()->readEntry("UserID", "(User ID not set)");
+    popup = new KPopupMenu(statusBarIcon);
+	popup->insertTitle(handle);
+	actionGoOnline->plug( popup );
+	actionGoOffline->plug( popup );
+	actionGoAway->plug( popup );	
+	popup->popup(QCursor::pos());
+}
+
+
 /** OK! We are connected , let's do some work */
 void MSNProtocol::slotConnected()
 {
- 	MSNContact *tmpcontact;
+ 	connected = true;
+	MSNContact *tmpcontact;
 		
  	QStringList groups, contacts;
  	QString group, publicname, userid;
@@ -246,7 +287,37 @@ void MSNProtocol::slotConnected()
 
 void MSNProtocol::slotDisconnected()
 {
+		connected = false;
 		statusBarIcon->setPixmap(&offlineIcon);
+}
+
+
+void MSNProtocol::slotGoOnline()
+{
+	kdDebug() << "MSN Plugin: Going Online" << endl;
+	if (!isConnected() )
+	{
+		kdDebug() << "MSN Plugin: Ups! we have to connect before going online" << endl;
+		Connect();
+	}
+	engine->changeStatus( NLN );		
+}
+void MSNProtocol::slotGoOffline()
+{
+	kdDebug() << "MSN Plugin: Going Offline" << endl;
+	if (isConnected() )
+	{
+		Disconnect();
+	}
+}
+void MSNProtocol::slotGoAway()
+{
+	kdDebug() << "MSN Plugin: Going Away" << endl;	
+	if (!isConnected() )
+	{
+		Connect();
+	}
+	engine->changeStatus( AWY );
 }
 
 void MSNProtocol::slotConnectedToMSN(bool c)
@@ -262,9 +333,57 @@ void MSNProtocol::slotConnectedToMSN(bool c)
 		}
 }
 
-void MSNProtocol::slotUserStateChange (QString st1, QString st2, int i3)
+void MSNProtocol::slotUserStateChange (QString handle, QString nick, int newstatus)
 {
-	kdDebug() << "MSN Plugin: User State change " << st1 << " " << st2 << " " << i3 <<"\n";
+	kdDebug() << "MSN Plugin: User State change " << handle << " " << nick << " " << newstatus <<"\n";
+}
+
+void MSNProtocol::slotStateChanged (uint newstate)
+{
+	kdDebug() << "MSN Plugin: My Status Changed to " << newstate <<"\n";
+	switch(newstate)
+ 	{
+  		case NLN:
+		{
+  			statusBarIcon->setPixmap(&onlineIcon);
+			break;
+		}
+		case FLN:
+		{
+  			statusBarIcon->setPixmap(&offlineIcon);
+			break;
+		}
+		case AWY:
+		{
+  			statusBarIcon->setPixmap(&awayIcon);
+			break;
+		}
+		case BSY:
+		{
+  			statusBarIcon->setPixmap(&awayIcon);
+			break;
+		}
+		case IDL:
+		{
+  			statusBarIcon->setPixmap(&awayIcon);
+			break;
+		}
+		case PHN:
+		{
+  			statusBarIcon->setPixmap(&awayIcon);
+			break;
+		}
+		case BRB:
+		{
+  			statusBarIcon->setPixmap(&awayIcon);
+			break;
+		}
+		case LUN:
+		{
+  			statusBarIcon->setPixmap(&awayIcon);
+			break;
+		}
+ 	}
 }
 
 void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick)

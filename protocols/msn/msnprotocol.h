@@ -27,7 +27,8 @@
 #include <improtocol.h>
 #include <kmsnservice.h>
 #include <newuserimpl.h>
-
+#include <kpopupmenu.h>
+#include <kaction.h>
 /**
   *@author duncan
   */
@@ -57,14 +58,38 @@ public:
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
 	QPixmap naIcon;
+	
+	/* The main msn popup */
+	KPopupMenu *popup;
+	/* Actions we use */
+  	
+	KAction* actionGoOnline;
+	KAction* actionGoOffline;
+	KAction* actionGoAway;
+	//KSelectAction* actionStatus;
+	
+    KActionMenu *actionStatusMenu;
+	KAction* actionConnect;
+	KAction* actionDisconnect;
+	KAction* actionPrefs;
+	KAction* actionUnload;
+
+
 private:
 	void initIcons();
+	void initActions();
 public slots: // Public slots
   /** No descriptions */
 	void slotConnected();
 	void slotDisconnected();
+	// To go online we need to check if connected
+	void slotGoOnline();
+	void slotGoOffline();
+	void slotGoAway();
+	void slotIconRightClicked(const QPoint);
 	void slotConnectedToMSN(bool c);
 	void slotUserStateChange (QString, QString, int);
+	void slotStateChanged (uint);
 	void slotUserSetOffline( QString );
 	void slotInitContacts (QString, QString, QString);
 	void slotNewUserFound (QString);
@@ -74,7 +99,8 @@ public slots: // Public slots
     void slotAddContact(QString);	// Add a Contact
 	void slotBlockContact(QString);	// Block a Contact
 signals:
-	void userStateChange (QString, QString, QString);	
+	void userStateChange (QString, QString, QString);
+	void protocolUnloading();	
 };
 
 #endif
