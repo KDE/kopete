@@ -176,7 +176,8 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	if (errorCode == 1 || errorCode == 5)
 		OscarAccount::disconnect();
 
-	KMessageBox::error(qApp->mainWidget(), errmsg);
+	KMessageBox::queuedMessageBox(0, KMessageBox::Error, errmsg,
+		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
 }
 
 void OscarAccount::slotReceivedMessage(const QString &sender, const QString &incomingMessage, OscarSocket::OscarMessageType type)
@@ -535,7 +536,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 			.arg(sn,sn);
 #endif
 
-	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
+	int result = KMessageBox::questionYesNo(0, message, title);
 
 	if (result == KMessageBox::Yes)
 		engine()->sendDirectIMAccept(sn);
