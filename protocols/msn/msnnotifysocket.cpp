@@ -36,6 +36,7 @@
 #include <ktempfile.h>
 #include <krun.h>
 #include <kio/job.h>
+#include <qfile.h>
 
 #include "kopetenotifyclient.h"
 
@@ -52,6 +53,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId, con
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
 	m_dispatchSocket = 0L;
+	m_tmpMailFile = 0L;
 
 	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
 	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
@@ -61,6 +63,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId, con
 
 MSNNotifySocket::~MSNNotifySocket()
 {
+	delete m_tmpMailFile;
 	kdDebug(14140) << "MSNNotifySocket::~MSNNotifySocket" << endl;
 }
 
@@ -462,19 +465,19 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 					"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
 				"</form></body>\n</html>\n";
 
+		delete m_tmpMailFile;
+		m_tmpMailFile = new KTempFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
+		*m_tmpMailFile->textStream() << hotmailRequest;
+		m_tmpMailFile->file()->flush();
 
-		KTempFile tmpFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
-		*tmpFile.textStream() << hotmailRequest;
+		// runURL should handle itself the deletion of the file with the third argument (false) ][since kde 3.2]
+		// Anyway, this is auto-deletion is broken, since kioexec delete the file BEFORE konqueror has the time to open it
+		// FIXME: when it's fixed in kdelibs use the correct way to delete the file with the KRun's API
+		//  (this is just a workaround)
+		// see Bug 62555 for more information  (http://bugs.kde.org/show_bug.cgi?id=62555)
+		KRun::runURL( m_tmpMailFile->name(), "text/html" /*, true */);
+		m_tmpMailFile->setAutoDelete(true);
 
-		// In KDE 3.1 and older this will leave a stale temp file lying
-		// around. There's no easy way for us to detect the browser exiting
-		// though, so we can't do anything about it. For KDE 3.2 and newer
-		// we use the improved KRun that auto-deletes the temp file when done.
-		#if KDE_IS_VERSION(3,1,90)
-		KRun::runURL( tmpFile.name(), "text/html", true );
-		#else
-		KRun::runURL( tmpFile.name(), "text/html" );
-		#endif
 	}
 	else
 	{

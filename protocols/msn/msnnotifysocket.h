@@ -28,8 +28,10 @@
 
 class MSNDispatchSocket;
 class MSNAccount;
+class KTempFile;
 
 #include <kio/job.h>
+
 
 /**
  * @author Olaf Lueg
@@ -136,6 +138,8 @@ private:
 
 	MSNAccount *m_account;
 	QString m_password;
+
+	KTempFile *m_tmpMailFile; //Workaround.. see note in parseCommand (URL)
 
 	unsigned int mailCount;
 
