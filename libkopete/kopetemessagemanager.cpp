@@ -133,13 +133,13 @@ bool KopeteMessageManager::logging() const
 const QString KopeteMessageManager::chatName()
 {
 	QString chatName, nextDisplayName;
-	
+
 	KopeteContact *c = d->mContactList.first();
 	if( c->metaContact() )
 		chatName = c->metaContact()->displayName();
 	else
 		chatName = c->displayName();
-		
+
 	while( ( c = d->mContactList.next() ) )
 	{
 		if( c->metaContact() )
@@ -148,7 +148,7 @@ const QString KopeteMessageManager::chatName()
 			nextDisplayName = c->displayName();
 		chatName.append(", ").append( nextDisplayName );
 	}
-	
+
 	return chatName;
 }
 
@@ -156,7 +156,7 @@ KopeteChatWindow *KopeteMessageManager::mainWindow(bool addNewWindow, bool remov
 {
 	static KopeteChatWindow *mainWindow = 0L;
 	static QMap<KopeteProtocol*,KopeteChatWindow*> chatWindowMap;
-	
+
 	if( !removeWindow )
 	{
 		//Determine tabbed window settings
@@ -189,7 +189,7 @@ KopeteChatWindow *KopeteMessageManager::mainWindow(bool addNewWindow, bool remov
 				}
 				break;
 		}
-		
+
 		//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
 		if( !chatWindowMap.contains( d->mProtocol ) )
 			chatWindowMap.insert(d->mProtocol, mainWindow);
@@ -202,7 +202,7 @@ KopeteChatWindow *KopeteMessageManager::mainWindow(bool addNewWindow, bool remov
 			chatWindowMap.remove( d->mProtocol );
 		mainWindow = 0L;
 	}
-	
+
 	return mainWindow;
 }
 
@@ -218,14 +218,14 @@ void KopeteMessageManager::newChatWindow()
 			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat view" << endl;
 			d->mView = mainWindow(true)->addChatView( this );
 		}
-		
+
 		/* When the window is shown, we have to delete this contact event */
 		//kdDebug(14010) << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect (d->mView, SIGNAL(Shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mView, SIGNAL(SendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (d->mView, SIGNAL(Closing()), this, SLOT(slotChatViewClosing()));
 		connect (d->mView, SIGNAL(Typing(bool)), this, SLOT(slotTyping(bool)));
-		
+
 		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mView, SLOT(contactAdded(const KopeteContact *)));
 		connect (this, SIGNAL(contactRemoved(const KopeteContact *)), d->mView, SLOT(contactRemoved(const KopeteContact *)));
 	}
@@ -409,7 +409,7 @@ void KopeteMessageManager::slotMessageSent(const KopeteMessage &message)
 	KopeteMessage sentMessage = message;
 	emit messageQueued( sentMessage );
 	emit messageSent(sentMessage, this);
-	
+
 	if ( KopetePrefs::prefs()->soundNotify() )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
@@ -495,7 +495,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	if (!widget())
 		newChatWindow();
 	else
-		isvisible = mainWindow()->isVisible();
+		isvisible = mainWindow() && mainWindow()->isVisible();
 
 
 	if (d->mReadMode == Popup)
