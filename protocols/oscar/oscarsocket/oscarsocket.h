@@ -129,7 +129,8 @@ const DWORD AIM_CAPS_TRILLIANCRYPT	= 0x00010000;
 const DWORD AIM_CAPS_UTF8			= 0x00020000;
 const DWORD AIM_CAPS_IS_WEB			= 0x00040000;
 const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
-const DWORD AIM_CAPS_LAST			= 0x00100000;
+const DWORD AIM_CAPS_KOPETE			= 0x00100000;
+const DWORD AIM_CAPS_LAST			= 0x00200000;
 
 const struct
 {
@@ -220,6 +221,10 @@ const struct
 	{0x09, 0x46, 0x13, 0x4D, 0x4C, 0x7F, 0x11, 0xD1,
 	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
+	{AIM_CAPS_KOPETE,
+	{0x4b, 0x6f, 0x70, 0x65, 0x74, 0x65, 0x20, 0x49,	// TODO: change with each Kopete Release!
+	 0x43, 0x51, 0x20, 0x20, 0x00, 0x07, 0x5d, 0x00}},	//  "Kopete ICQ  " + 0 + 7 + 93 + 0
+
 	{AIM_CAPS_LAST,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
@@ -228,7 +233,7 @@ const struct
 // DON'T touch these if you're not 100% sure what they are for!
 //#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 #define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ | AIM_CAPS_KOPETE
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
 
@@ -1140,3 +1145,4 @@ class OscarSocket : public OscarConnection
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
+
