@@ -277,7 +277,7 @@ void Client::sendInvitation( const GroupWise::ConferenceGuid & guid, const QStri
 // SLOTS //
 void Client::streamError( int error )
 {
-	debug( QString( "CLIENT ERROR (Error %i)" ).arg( error ) );
+	debug( QString( "CLIENT ERROR (Error %1)" ).arg( error ) );
 }
 
 void Client::streamReadyRead()

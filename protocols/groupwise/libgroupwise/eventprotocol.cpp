@@ -53,10 +53,10 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	m_din >> type;
 	m_bytes += sizeof( Q_UINT32 );
 	
-	debug( QString( "EventProtocol::parse() Reading event of type %i" ).arg( type ) );
+	debug( QString( "EventProtocol::parse() Reading event of type %1" ).arg( type ) );
 	if ( type > Stop )
 	{
-		debug( QString ( "EventProtocol::parse() - found unexpected event type %i - assuming out of sync" ).arg( type ) );
+		debug( QString ( "EventProtocol::parse() - found unexpected event type %1 - assuming out of sync" ).arg( type ) );
 		m_state = OutOfSync;
 		return 0;
 	}
