@@ -13,35 +13,40 @@
     *                                                                       *
     *************************************************************************
 */
-#include <kglobal.h>
-#include <kcharsets.h>
 #include <qstringlist.h>
+#include <qtextcodec.h>
 
 #include "kcodecaction.h"
 
 KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
 		QObject *parent, const char *name ) : KSelectAction( text, "", cut, parent, name )
 {
-	QObject::connect( this, SIGNAL( activated( const QString & ) ),
-		this, SLOT(slotActivated( const QString & )) );
+	QObject::connect( this, SIGNAL( activated( int ) ),
+		this, SLOT(slotActivated( int )) );
 
-	setItems( KGlobal::charsets()->availableEncodingNames() );
+	QTextCodec *codec;
+	QStringList items;
+
+	for (uint i = 0; ( codec = QTextCodec::codecForIndex(i) ); ++i)
+	{
+        	items.append( codec->name() );
+		codecMap.insert( i, codec );
+	}
+
+	setItems( items );
 }
 
-void KCodecAction::slotActivated( const QString &codec )
+void KCodecAction::slotActivated( int index )
 {
-	KCharsets *c = KGlobal::charsets();
-	emit activated( c->codecForName( codec ) );
+	emit activated( codecMap[ index ] );
 }
 
 void KCodecAction::setCodec( const QTextCodec *codec )
 {
-	QStringList myItems = comboItems();
-	KCharsets *c = KGlobal::charsets();
-	for( uint i = 0; i < myItems.count(); i++ )
+	for( QIntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it )
 	{
-		if( c->codecForName( myItems[i] ) == codec )
-			setCurrentItem( i );
+		if( it.current() == codec )
+			setCurrentItem( it.currentKey() );
 	}
 }
 
