@@ -1136,8 +1136,6 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			ssi->tlvlist = 0L;
 		ssi->waitingAuth = false;
 		mSSIData.append(ssi);
-		mSSIData.print();
-
 
 		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
 			ssi->name << "', groupId=" << ssi->gid << ", id=" << ssi->bid <<

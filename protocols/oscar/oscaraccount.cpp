@@ -557,7 +557,7 @@ void OscarAccount::addGroup( const QString& groupName )
 
 	QPtrListIterator<SSI> it( d->groupQueue );
 	int i = 0;
-	int gid;
+	int gid = 0;
 	SSI* ssiGroup = engine()->ssiData().findGroup( groupName );
 
 	if ( ssiGroup )
