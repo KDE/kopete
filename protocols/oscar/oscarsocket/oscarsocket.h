@@ -325,6 +325,7 @@ class OscarSocket : public OscarConnection
 		 */
 		DWORD setIPv4Address(const QString &address);
 
+		/** \return true if we're in ICQ mode, false if not */
 		bool isICQ() { return mIsICQ; }
 
 		/*
