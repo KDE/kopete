@@ -350,7 +350,7 @@ void ChatView::slotScrollingTo( int /*x*/, int y)
 
 void ChatView::save()
 {
-	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/xml" ), this , "fileSaveDialog", false );
+	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/xml text/plain" ), this , "fileSaveDialog", false );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
@@ -370,6 +370,14 @@ void ChatView::save()
 				xmlString += (*it).asXML().toString();
 
 			stream << QString::fromLatin1("<document>") << xmlString << QString::fromLatin1("</document>") << '\n';
+		}
+		else if( dlg.currentFilter() == QString::fromLatin1("text/plain") )
+		{
+			for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
+			{
+				stream << "[" << KGlobal::locale()->formatDateTime( (*it).timestamp(), true, true );
+				stream << "] " << (*it).plainBody() << '\n';
+			}
 		}
 		else
 		{
