@@ -347,16 +347,6 @@ QString KopeteMetaContact::toXML()
 		xml += "    </groups>\n";
 	}
 
-	// Store address book fields
-	AddressBookFields::Iterator addrIt = m_addressBook.begin();
-	for( ; addrIt != m_addressBook.end(); ++addrIt )
-	{
-		kdDebug() << "KopeteMetaContact::toXML: Storing address book field "
-			<< addrIt.key() << " with value '" << addrIt.data() << "'" << endl;
-		xml += "    <address-book-field id=\"" + addrIt.key() + "\">" +
-			addrIt.data() + "</address-book-field>\n";
-	}
-
 	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
 	for( KopetePlugin *p = ps.first() ; p != 0L; p = ps.next() )
 	{
@@ -365,10 +355,20 @@ QString KopeteMetaContact::toXML()
 		if ( p->serialize( this, strList ) && !strList.empty() )
 		{
 			QString data = strList.join( "||" );
-			kdDebug()<<"### Data = "<< data <<endl;
+			kdDebug() << "KopeteMetaContact::toXML: plugin-data = " << data <<endl;
 			xml += "    <plugin-data plugin-id=\"" +
 				QString( p->id() ) + "\">" + data  + "</plugin-data>\n";
 		}
+	}
+
+	// Store address book fields
+	AddressBookFields::Iterator addrIt = m_addressBook.begin();
+	for( ; addrIt != m_addressBook.end(); ++addrIt )
+	{
+		kdDebug() << "KopeteMetaContact::toXML: Storing address book field "
+			<< addrIt.key() << " with value '" << addrIt.data() << "'" << endl;
+		xml += "    <address-book-field id=\"" + addrIt.key() + "\">" +
+			addrIt.data() + "</address-book-field>\n";
 	}
 
 	// We may have more 'cached' plugin data from plugins that are not
