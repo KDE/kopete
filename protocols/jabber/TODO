@@ -27,4 +27,6 @@ TODO for Jabber:
 - verify groupchat
 - JabberAccount::slotSettingsChanged() serves no purpose?
 - use connecting state for kopete online status instead of isConnecting in JabberAccount
-- using "online" presents emits "Going online"?
+- using "online" presence emits "Going online"?
+- going away globally does not allow returning to online mode
+- should the away dialog pop up when going away using the account context menu?

@@ -113,8 +113,6 @@ KopeteContact *JabberAccount::myself () const
 	return myContact;
 }
 
-//void JabberAccount::setStatus(KopeteOnlineStatus status, const QString & reason) { }
-
 KActionMenu *JabberAccount::actionMenu ()
 {
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
@@ -373,10 +371,6 @@ void JabberAccount::disconnect ()
 
 	emit disconnected ();
 
-	/* It seems that we don't get offline notifications when going offline
-	 * with the protocol, so update all contacts manually. */
-	for (QDictIterator < KopeteContact > it (contacts ()); it.current (); ++it)
-		static_cast < JabberContact * >(*it)->slotUpdatePresence (protocol()->JabberOffline, "Disconnected");
 }
 
 void JabberAccount::slotConnect ()
@@ -551,12 +545,6 @@ void JabberAccount::deserializeContact (KopeteMetaContact * metaContact,
 
 }
 
-
-// Appears to be in kopeteprotocol as virutal
-//AddContactPage *JabberAccount::createAddContactWidget(QWidget * parent) {
- //   return new JabberAddContactPage(this, parent);
-//}
-
 void JabberAccount::slotGoOnline ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Going online!" << endl;
@@ -605,7 +593,7 @@ void JabberAccount::slotGoAway ()
 		connect ();
 	}
 
-	/* TODO: Fix this to work with KopeteAwayDialog. */
+	setPresence (protocol()->JabberAway, KopeteAway::message());
 
 }
 
@@ -620,7 +608,7 @@ void JabberAccount::slotGoXA ()
 		connect ();
 	}
 
-	/* TODO: Fix this to work with KopeteAwayDialog. */
+	setPresence (protocol()->JabberXA, KopeteAway::message());
 
 }
 
@@ -635,7 +623,7 @@ void JabberAccount::slotGoDND ()
 		connect ();
 	}
 
-	/* TODO: Fix this to work with KopeteAwayDialog. */
+	setPresence (protocol()->JabberDND, KopeteAway::message());
 
 }
 
@@ -650,7 +638,7 @@ void JabberAccount::slotGoInvisible ()
 		connect ();
 	}
 
-	setPresence (protocol()->JabberInvisible);
+	setPresence (protocol()->JabberInvisible, "");
 
 }
 
