@@ -17,6 +17,7 @@ AC_DEFUN(AC_CHECK_LIBPERL,
       ac_cv_have_libperl="no"
     )
     LIBS="$ac_save_libs"
+    CPPFLAGS="$ac_CPPFLAGS_save"
     LDFLAGS="$ac_LDFLAGS_save"
   ])
   AC_MSG_RESULT($ac_cv_have_libperl)
