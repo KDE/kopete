@@ -36,11 +36,11 @@
 #include "msnswitchboardsocket.h"
 
 MSNMessageManager::MSNMessageManager( const KopeteContact *user,
-	KopeteContactPtrList others, QString logFile, const char *name )
-: KopeteMessageManager( user, others, MSNProtocol::protocol(), 0, logFile,
+	KopeteContactPtrList others, const char *name )
+: KopeteMessageManager( user, others, MSNProtocol::protocol(), 0,
 	ChatWindow, MSNProtocol::protocol(), name )
 {
-	kopeteapp->sessionFactory()->addKopeteMessageManager( this );
+	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
 	m_actions = 0L;

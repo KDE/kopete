@@ -266,7 +266,6 @@ GaduContact::msgManager()
     } else {
         msgManager_ = kopeteapp->sessionFactory()->create( GaduProtocol::protocol()->myself(),
                                                            thisContact_, GaduProtocol::protocol(),
-                                                           QString("gadu_logs/%1.log ").arg( id() ),
                                                            KopeteMessageManager::ChatWindow );
         connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
                  this, SLOT(messageSend(const KopeteMessage&, KopeteMessageManager*)) );

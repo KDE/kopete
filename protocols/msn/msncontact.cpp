@@ -15,29 +15,31 @@
     *************************************************************************
 */
 
-#include <qlineedit.h>
+#include "msncontact.h"
+
 #include <qcheckbox.h>
-#include <kdialogbase.h>
+
 #include <kaction.h>
 #include <kdebug.h>
+#include <kdialogbase.h>
+#include <kfiledialog.h>
+#include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kfiledialog.h>
 
-#include "kopete.h"
-#include "msnmessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetecontactlistview.h"
-#include "kopetestdaction.h"
-#include "kopetemetacontact.h"
+//#include "kopete.h"
 #include "kopetecontactlist.h"
+//#include "kopetecontactlistview.h"
+//#include "kopetegroup.h"
 #include "kopetehistorydialog.h"
-#include "kopetegroup.h"
-#include "msncontact.h"
-#include "msnprotocol.h"
-#include "msnnotifysocket.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopetemetacontact.h"
+//#include "kopetestdaction.h"
 
 #include "msninfo.h"
+#include "msnmessagemanager.h"
+#include "msnnotifysocket.h"
+#include "msnprotocol.h"
 
 MSNContact::MSNContact( const QString &msnId,
 	const QString &displayName, const QString &group,
@@ -163,7 +165,9 @@ void MSNContact::slotViewHistory()
 	}
 	else
 	{
-		historyDialog = new KopeteHistoryDialog(QString("msn_logs/%1.log").arg(m_msnId), displayName(), true, 50, 0, "MSNHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(
+			QString( protocol()->id() ) + "/" + m_msnId + ".log", displayName(),
+			true, 50, 0, "MSNHistoryDialog" );
 
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
 	}
@@ -654,24 +658,27 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (addToGroup(KopeteGroup*) ));
 	connect (metaContact() , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
-
-
 }
 
 void MSNContact::slotSendFile()
 {
-	QString fileName = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ) );
-	if ( !fileName.isNull())
+	QString fileName = KFileDialog::getOpenFileName( QString::null , "*.*",
+		0L, i18n( "Kopete File Transfer" ) );
+	if ( !fileName.isNull() )
 	{
 		KopeteContactPtrList chatmembers;
-		chatmembers.append(this);
-		KopeteMessageManager *_manager = kopeteapp->sessionFactory()->findKopeteMessageManager( MSNProtocol::protocol()->myself(), chatmembers, MSNProtocol::protocol()  );
+		chatmembers.append( this );
+		KopeteMessageManager *_manager =
+			KopeteMessageManagerFactory::factory()->findKopeteMessageManager(
+				MSNProtocol::protocol()->myself(), chatmembers,
+				MSNProtocol::protocol() );
 		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
-		if(!manager)
+		if( !manager )
 		{
-			manager=new MSNMessageManager(MSNProtocol::protocol()->myself(),chatmembers, QString( "msn_logs/" + id() + ".log" ));
+			manager = new MSNMessageManager( MSNProtocol::protocol()->myself(),
+				chatmembers );
 		}
-		manager->sendFile(fileName);
+		manager->sendFile( fileName );
 	}
 }
 

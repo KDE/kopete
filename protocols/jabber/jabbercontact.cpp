@@ -132,7 +132,7 @@ KopeteMessageManager* JabberContact::msgManagerKEW()
 	if (!mMsgManagerKEW)
 	{
 		// get new instance
-		mMsgManagerKEW = kopeteapp->sessionFactory()->create(protocol->myself(), contacts, protocol, "jabber_logs/" + userId() +".log", KopeteMessageManager::Email);
+		mMsgManagerKEW = kopeteapp->sessionFactory()->create(protocol->myself(), contacts, protocol, KopeteMessageManager::Email);
 
 		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
 				this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
@@ -154,7 +154,7 @@ KopeteMessageManager* JabberContact::msgManagerKCW()
 	if (!mMsgManagerKCW)
 	{
 		// get new instance
-		mMsgManagerKCW = kopeteapp->sessionFactory()->create(protocol->myself(), contacts, protocol, "jabber_logs/" + userId() +".log", KopeteMessageManager::ChatWindow);
+		mMsgManagerKCW = kopeteapp->sessionFactory()->create(protocol->myself(), contacts, protocol, KopeteMessageManager::ChatWindow);
 
 		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
 				this, SLOT(slotSendMsgKCW(const KopeteMessage&)));

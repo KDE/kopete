@@ -22,8 +22,8 @@
 #include "kopetemessagemanager.h"
 
 /**
-  *@author Olivier Goffart
-  */
+ * @author Olivier Goffart
+ */
 
 class MSNSwitchBoardSocket;
 class KActionCollection;
@@ -33,9 +33,11 @@ class KopeteFileTransferInfo;
 
 class MSNMessageManager : public KopeteMessageManager
 {
-   Q_OBJECT
-public: 
-	MSNMessageManager(const KopeteContact *user, KopeteContactPtrList others, QString logFile=QString::null, const char *name=0);
+	Q_OBJECT
+
+public:
+	MSNMessageManager( const KopeteContact *user, KopeteContactPtrList others,
+		const char *name = 0 );
 	~MSNMessageManager();
 
 	void createChat(const QString &handle, const QString &adress, const QString &auth, const QString &ID=QString::null);
