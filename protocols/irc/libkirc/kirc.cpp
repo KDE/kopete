@@ -425,8 +425,7 @@ void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str,
 
 bool KIRC::canSend( bool mustBeConnected ) const
 {
-	return	(m_status==Connected) ||
-		(!mustBeConnected && m_status==Authentifying);
+	return	( !mustBeConnected || m_status == Connected );
 }
 
 /* Message will be send as passed.
