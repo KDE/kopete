@@ -55,6 +55,9 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Developer"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Developer, MSN plugin maintainer"), "ogoffart@tiscalinet.be");
+#if 0
+	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer, Oscar Maintainer"), "metz@gehn.net", "http://metz.gehn.net" );
+#endif
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("WinPopup plugin maintainer"), "gjw102@york.ac.uk" );
 	aboutData.addAuthor ( "Grzegorz Jaskiewicz", I18N_NOOP("Developer, Gadu plugin maintainer"), "gj@pointblue.com.pl" );
 	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Developer, original Gadu plugin author"), "zack@kde.org" );
@@ -63,7 +66,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@pandora.be" );
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, icons, plugins"), "lists@stevello.free-online.co.uk" );
-	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, Yahoo plugin maintainer, Oscar/AIM maintainer"), "mattrogers@sbcglobal.net" );
+	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, Yahoo plugin maintainer"), "mattrogers@sbcglobal.net" );
 	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "metz@gehn.net", "http://metz.gehn.net" );
 
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
@@ -94,12 +97,6 @@ int main( int argc, char *argv[] )
 
 	kopete.exec();
 }
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 
