@@ -173,7 +173,7 @@ void IRCContact::setNickName( const QString &nickname )
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << " changed to " << nickname << endl;
 	m_nickName = nickname;
-	setProperty( Kopete::Global::Properties::self()->nickName(), nickname);
+	Kopete::Contact::setNickName( nickname );
 }
 
 void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &newnickname)
@@ -196,8 +196,6 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 
 void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 {
-	KIRC::Engine *engine = kircEngine();
-
 	QString htmlString = message.escapedBody();
 
 	if (htmlString.find(QString::fromLatin1("</span")) > -1)
@@ -245,10 +243,8 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
-			Kopete::Message msg(message.from(), message.to(), *it, message.direction(),
+			Kopete::Message msg(message.from(), message.to(), sendMessage(*it), message.direction(),
 			                    Kopete::Message::RichText, CHAT_VIEW, message.type());
-
-			engine->privmsg(m_nickName, *it );
 
 			msg.setBg(QColor());
 			msg.setFg(QColor());
@@ -259,7 +255,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 	}
 	else
 	{
-		engine->privmsg(m_nickName, htmlString );
+		message.setBody( sendMessage( htmlString ), Kopete::Message::RichText );
 
 		message.setBg( QColor() );
 		message.setFg( QColor() );
@@ -267,6 +263,22 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 		appendMessage(message);
 		manager(Kopete::Contact::CanCreate)->messageSucceeded();
 	}
+}
+
+QString IRCContact::sendMessage( const QString &msg )
+{
+	QString newMessage = msg;
+	uint trueLength = msg.length() + m_nickName.length() + 12;
+	if( trueLength > 512 )
+	{
+		//TODO: tell them it is truncated
+		kdWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters" << endl;
+		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
+	}
+
+	kircEngine()->privmsg(m_nickName, newMessage );
+
+	return newMessage;
 }
 
 Kopete::Contact *IRCContact::locateUser(const QString &nick)

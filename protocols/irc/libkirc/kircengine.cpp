@@ -39,6 +39,10 @@
 
 #include <kopetemessage.h>
 
+#ifndef KIRC_SSL_SUPPORT
+#define KIRC_SSL_SUPPORT
+#endif
+
 using namespace KIRC;
 
 // FIXME: Remove slotConnected() and error(int errCode) while going to KNetwork namespace
@@ -104,7 +108,7 @@ void Engine::setUseSSL( bool useSSL )
 		else
 		#else
 			kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
-				" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl; 
+				" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
 		}
 		#endif
 		{
@@ -319,7 +323,7 @@ void Engine::writeMessage(const QString &msg, const QTextCodec *codec)
 
 void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix, const QTextCodec *codec)
 {
-Message::writeMessage(this, codec ? codec : defaultCodec, command, args, suffix );
+	Message::writeMessage(this, codec ? codec : defaultCodec, command, args, suffix );
 }
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
@@ -370,12 +374,12 @@ void Engine::slotReadyRead()
 			}
 			else if (msg.isNumeric())
 			{
-				kdDebug(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
-				emit internalError(UnknownNumericReply, msg);
+				kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+				emit incomingUnknown(msg.raw());
 			}
 			else
 			{
-				kdDebug(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
+				kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
 				emit internalError(UnknownCommand, msg);
 			}
 		}

@@ -116,6 +116,7 @@ public slots:
 
 protected slots:
 	virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
+	QString sendMessage( const QString &msg );
 
 	virtual void chatSessionDestroyed();
 
