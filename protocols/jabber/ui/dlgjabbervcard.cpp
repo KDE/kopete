@@ -21,7 +21,7 @@
  
 #include <klocale.h>
 #include <klineedit.h>
-#include <ktextedit.h>
+#include <qtextedit.h>
 #include <kurllabel.h>
 #include <qpushbutton.h>
 #include "dlgjabbervcard.h"

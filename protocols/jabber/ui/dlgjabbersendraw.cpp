@@ -4,7 +4,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <ktextedit.h>
+#include <qtextedit.h>
 
 #include "kopetewindow.h"
 #include "dlgpreferences.h"
