@@ -88,7 +88,8 @@ void KopeteMetaContactLVI::initLVI()
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
 
-	m_oldStatus=KopeteOnlineStatus::Offline;
+	m_oldStatus=m_metaContact->status();
+	m_oldStatusIcon=m_metaContact->statusIcon();
 
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
@@ -175,8 +176,6 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 
 void KopeteMetaContactLVI::slotContactStatusChanged()
 {
-	slotUpdateIcons();
-
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
 
@@ -200,6 +199,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 			.arg(m_metaContact->statusString())
 			.arg(m_metaContact->displayName()));
 #endif
+
+	if(!mBlinkTimer->isActive() && m_metaContact->statusIcon() != m_oldStatusIcon)
+	{
+		mIsBlinkIcon=false;
+		m_blinkLeft=3;
+		mBlinkTimer->start(400, false);
+	}
+
+	slotUpdateIcons();
 }
 
 void KopeteMetaContactLVI::slotUpdateIcons()
@@ -351,7 +359,7 @@ void KopeteMetaContactLVI::updateVisibility()
 {
 	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */)
 		setVisible(true);
-	else if ( m_metaContact->status() == KopeteOnlineStatus::Offline )
+	else if ( m_metaContact->status() == KopeteOnlineStatus::Offline && !mBlinkTimer->isActive() )
 		setVisible(false);
 	else
 		setVisible(true);
@@ -554,15 +562,33 @@ void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)
 	if (mBlinkTimer->isActive())
 		mBlinkTimer->stop();
 
+	m_oldStatusIcon=m_metaContact->statusIcon();
+
 	mBlinkTimer->start(500, false);
 }
 
 void KopeteMetaContactLVI::slotBlink()
 {
 	if (mIsBlinkIcon)
+	{
 		setPixmap(0,SmallIcon(m_metaContact->statusIcon()));
+		if(!m_event && m_blinkLeft <= 0)
+		{
+			mBlinkTimer->stop();
+			m_oldStatusIcon=m_metaContact->statusIcon();
+			updateVisibility();
+		}
+	}
 	else
-		setPixmap(0,SmallIcon("newmsg"));
+	{
+		if(m_event)
+			setPixmap(0,SmallIcon("newmsg"));
+		else
+		{
+			setPixmap(0,SmallIcon(m_oldStatusIcon));
+			m_blinkLeft--;
+		}
+	}
 
 	mIsBlinkIcon = !mIsBlinkIcon;
 }

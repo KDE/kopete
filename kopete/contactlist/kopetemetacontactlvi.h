@@ -185,6 +185,7 @@ private:
 	int m_pixelWide;
 
 	/*KopeteOnlineStatus::OnlineStatus*/ unsigned int m_oldStatus;
+	QString m_oldStatusIcon;
 
 	KopeteEvent *m_event;
 	QTimer *mBlinkTimer;
@@ -192,6 +193,7 @@ private:
 	QPtrDict<KopeteAccount> m_addContactActions;
 
 	bool mIsBlinkIcon;
+	int m_blinkLeft;
 };
 
 #endif
