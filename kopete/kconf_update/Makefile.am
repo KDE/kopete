@@ -1,9 +1,11 @@
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT $(all_includes)
 
 update_DATA = kopete-pluginloader.upd kopete-account-kconf_update.upd \
-	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd
+	kopete-pluginloader2.upd kopete-jabberproxytype-kconf_update.upd \
+	kopete-jabberpriorityaddition-kconf_update.upd
 update_SCRIPTS = kopete-pluginloader.pl kopete-account-kconf_update.sh \
-	kopete-pluginloader2.sh kopete-jabberproxytype-kconf_update.sh
+	kopete-pluginloader2.sh kopete-jabberproxytype-kconf_update.sh \
+	kopete-jabberpriorityaddition-kconf_update.sh
 updatedir = $(kde_datadir)/kconf_update
 
 # The Qt app cannot go into kde_datadir, that is not portable.
