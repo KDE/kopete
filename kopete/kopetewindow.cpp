@@ -477,7 +477,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 
 	connect( account->myself(),
 		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
-		this, SLOT(  ) );
+		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
 	//FIXME  add a KopeteContact::displayNameChanged(KopeteContact * , ..... )  and connect
 	//  it dirrectly to slotAccountStatusIconChanged( KopeteContact * )
 	connect( account->myself(),
