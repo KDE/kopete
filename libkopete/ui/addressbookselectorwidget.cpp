@@ -47,6 +47,13 @@
 #include <addresseeitem.h>
 #include "kabcpersistence.h"
 
+using namespace Kopete::UI;
+
+namespace Kopete
+{
+namespace UI
+{
+
 AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const char *name )
 		: AddressBookSelectorWidget_Base( parent, name )
 {
@@ -153,6 +160,9 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 		addresseeListView->ensureItemVisible( added );
 	}
 }
+
+} // namespace UI
+} // namespace Kopete
 
 #include "addressbookselectorwidget.moc"
 

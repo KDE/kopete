@@ -23,13 +23,18 @@
 #include "kopete_export.h"
 #include <kdialogbase.h>
 
-class AddressBookSelectorWidget;
-
 namespace KABC
 {
 		class AddressBook;
 		class Addressee;
 }
+
+namespace Kopete
+{
+namespace UI
+{
+
+class AddressBookSelectorWidget;
 
 /**
  * A dialog that uses AddressBookSelectorWidget to allow the user
@@ -75,6 +80,9 @@ protected slots:
 protected:
 	 AddressBookSelectorWidget *m_addressBookSelectorWidget;
 };
+
+} // namespace UI
+} // namespace Kopete
 
 #endif
 

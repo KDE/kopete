@@ -25,6 +25,11 @@
 #include <klocale.h>
 #include <kdialog.h>
 
+namespace Kopete
+{
+namespace UI
+{
+
 AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent, const char *name, bool modal ) : KDialogBase(parent, name, modal, title, Help|Ok|Cancel, Ok, true )
 {
 	QVBox *vbox=new QVBox(this);
@@ -74,6 +79,9 @@ void AddressBookSelectorDialog::reject()
 {
 	QDialog::reject();
 }
+
+} // namespace UI
+} // namespace Kopete
 
 #include "addressbookselectordialog.moc"
 

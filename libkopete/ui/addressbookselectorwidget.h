@@ -1,9 +1,12 @@
 /*
-    linkaddressbookui.h
+    AddressBookSelectorWidget
+    Copyright (c) 2005 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    This code was shamelessly stolen from kopete's add new contact wizard, used in
-    Konversation, and then reappropriated by Kopete.
+    Based on LinkAddressBookUI whose code was shamelessly stolen from 
+    kopete's add new contact wizard, used in Konversation, and then 
+    reappropriated by Kopete.
 
+    LinkAddressBookUI:
     Copyright (c) 2004 by John Tapsell           <john@geola.co.uk>
     Copyright (c) 2003-2005 by Will Stephenson   <will@stevello.free-online.co.uk>
     Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
@@ -36,6 +39,11 @@ namespace KABC {
 		class AddressBook;
 		class Addressee;
 }
+
+namespace Kopete
+{
+namespace UI
+{
 
 class KOPETE_EXPORT AddressBookSelectorWidget : public AddressBookSelectorWidget_Base
 {
@@ -74,7 +82,9 @@ signals:
 	void addAddresseeClicked();
 };
 
+} // namespace UI
+} // namespace Kopete
+
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-
