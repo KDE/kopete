@@ -272,10 +272,10 @@ void JabberEditAccountWidget::configChanged ()
 void JabberEditAccountWidget::setJIDValidation ()
 {
 
-	if(account ()->pluginData(m_protocol, "Server") == mServer->text ())
+	revalidateJID = true;
+
+	if((account() != 0L) && (account ()->pluginData(m_protocol, "Server") == mServer->text ()))
 		revalidateJID = false;
-	else
-		revalidateJID = true;
 
 }
 
