@@ -155,6 +155,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
 	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
 	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
+	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
 
 	if( !codecMib.isEmpty() )
 	{
@@ -266,6 +267,13 @@ void IRCAccount::setAltNick( const QString &altNick )
 const QString IRCAccount::altNick() const
 {
 	return configGroup()->readEntry(QString::fromLatin1("altNick"));
+}
+
+void IRCAccount::setAutoShowServerWindow( bool show )
+{
+	autoShowServerWindow = show;
+	configGroup()->writeEntry(QString::fromLatin1( "AutoShowServerWindow" ), autoShowServerWindow);
+	configGroup()->sync();
 }
 
 const QString IRCAccount::networkName() const
@@ -507,7 +515,10 @@ void IRCAccount::connectWithPassword(const QString &password)
 				}
 
 				IRCHost *host = hosts[ currentHost++ ];
-				kdDebug( 0 ) << k_funcinfo << "connecting to " << host->host << ", SSL= " << host->ssl << endl;
+				myServer()->appendMessage( i18n("Connecting to %1...").arg( host->host ) );
+				if( host->ssl )
+					myServer()->appendMessage("Using SSL");
+
 				m_engine->setPassword(password);
 				m_engine->connectToServer( host->host, host->port, mNickName, host->ssl );
 			}
@@ -531,7 +542,11 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 		// Do nothing.
 		break;
 	case KIRC::Engine::Connecting:
+	{
+		if( autoShowServerWindow )
+		    myServer()->startChat();
 		break;
+	}
 	case KIRC::Engine::Authentifying:
 		break;
 	case KIRC::Engine::Connected:

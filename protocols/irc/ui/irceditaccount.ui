@@ -538,15 +538,18 @@
                             </property>
                             <widget class="QCheckBox" row="1" column="1">
                                 <property name="name">
-                                    <cstring>checkBox5</cstring>
+                                    <cstring>autoShowAnonWindows</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Auto-show anonymous windows</string>
                                 </property>
+				<property name="disabled">
+				    <bool>true</bool>
+				</property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">
-                                    <cstring>checkBox4</cstring>
+                                    <cstring>autoShowServerWindow</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Auto-show the server window</string>
@@ -1004,8 +1007,8 @@
     <tabstop>serverNotices</tabstop>
     <tabstop>informationReplies</tabstop>
     <tabstop>errorMessages</tabstop>
-    <tabstop>checkBox4</tabstop>
-    <tabstop>checkBox5</tabstop>
+    <tabstop>autoShowServerWindow</tabstop>
+    <tabstop>autoShowAnonWindows</tabstop>
     <tabstop>ctcpList</tabstop>
     <tabstop>newCTCP</tabstop>
     <tabstop>newReply</tabstop>

@@ -123,6 +123,8 @@ public:
 
 	void setNickName( const QString & );
 
+	void setAutoShowServerWindow( bool show );
+
 	void setAltNick( const QString & );
 	const QString altNick() const;
 
@@ -222,6 +224,7 @@ private:
 	QString mNickName;
 	Kopete::AwayAction *mAwayAction;
 	bool triedAltNick;
+	bool autoShowServerWindow;
 	QString autoConnect;
 
 	KIRC::Engine *m_engine;

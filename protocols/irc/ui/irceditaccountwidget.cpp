@@ -70,7 +70,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mPasswordWidget->load ( &account()->password() );
 
 		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
-
+		autoShowServerWindow->setChecked( account()->configGroup()->readBoolEntry("AutoShowServerWindow") );
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
 		KConfigGroup *config = account()->configGroup();
@@ -243,6 +243,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setNetwork( networkName );
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
+	account()->setAutoShowServerWindow( autoShowServerWindow->isChecked() );
 	account()->setExcludeConnect( autoConnect->isChecked() );
 	account()->setMessageDestinations( serverNotices->currentItem() + 1, serverMessages->currentItem() + 1,
 		informationReplies->currentItem() + 1, errorMessages->currentItem() + 1
