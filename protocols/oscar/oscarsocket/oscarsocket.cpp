@@ -17,19 +17,25 @@
 //define this if you want to get tons of packets printed out
 //#define OSCAR_PACKETLOG 1
 
-extern "C" {
+extern "C"
+{
 #include "md5.h"
 };
 
 #include "oscarsocket.h"
+
+/*
+#include <qapplication.h>
+#include <unistd.h>*/
+#include <stdlib.h>
+
 #include "oscarprotocol.h"
 #include "oscaraccount.h"
-#include "oncomingsocket.h"
 #include "oscardebugdialog.h"
 
 #include <qdatetime.h>
-#include <unistd.h>
-#include <stdlib.h>
+
+#include <kfileitem.h>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -87,98 +93,96 @@ static const struct
 {
     DWORD flag;
     char data[16];
-} aim_caps[] = {
+} aim_caps[] =
+{
+	/*
+	* Chat is oddball.
+	*/
+	{AIM_CAPS_CHAT,
+	{0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    /*
-     * Chat is oddball.
-     */
-    {AIM_CAPS_CHAT,
-     {0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	/*
+	* These are mostly in order.
+	*/
+	{AIM_CAPS_VOICE,
+	{0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    /*
-     * These are mostly in order.
-     */
-    {AIM_CAPS_VOICE,
-     {0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_SENDFILE,
+	{0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_SENDFILE,
-     {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	/*
+	* Advertised by the EveryBuddy client.
+	*/
+	{AIM_CAPS_ISICQ,
+	{0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    /*
-     * Advertised by the EveryBuddy client.
-     */
-    {AIM_CAPS_ISICQ,
-     {0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_IMIMAGE,
+	{0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_IMIMAGE,
-     {0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_BUDDYICON,
+	{0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_BUDDYICON,
-     {0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_SAVESTOCKS,
+	{0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_SAVESTOCKS,
-     {0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_GETFILE,
+	{0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_GETFILE,
-     {0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_ICQSERVERRELAY,
+	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_ICQSERVERRELAY,
-     {0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	/*
+	* Indeed, there are two of these.  The former appears to be correct,
+	* but in some versions of winaim, the second one is set.  Either they
+	* forgot to fix endianness, or they made a typo. It really doesn't
+	* matter which.
+	*/
+	{AIM_CAPS_GAMES,
+	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_GAMES2,
+	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+		0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    /*
-     * Indeed, there are two of these.  The former appears to be correct,
-     * but in some versions of winaim, the second one is set.  Either they
-     * forgot to fix endianness, or they made a typo. It really doesn't
-     * matter which.
-     */
-    {AIM_CAPS_GAMES,
-     {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-    {AIM_CAPS_GAMES2,
-     {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-      0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_SENDBUDDYLIST,
+	{0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-    {AIM_CAPS_SENDBUDDYLIST,
-     {0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
-      0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+	{AIM_CAPS_ICQRTF,
+	{0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
+		0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
 
-    {AIM_CAPS_ICQRTF,
-     {0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
-      0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
+	{AIM_CAPS_IS_2001,
+	{0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
+		0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
 
-    {AIM_CAPS_IS_2001,
-     {0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
-      0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
+	{AIM_CAPS_EMPTY,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 
-    {AIM_CAPS_EMPTY,
-     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+	{AIM_CAPS_TRILLIANCRYPT,
+	{0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
+		0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
 
-    {AIM_CAPS_TRILLIANCRYPT,
-     {0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
-      0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
+	{AIM_CAPS_APINFO,
+	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
+		0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
 
-    {AIM_CAPS_APINFO,
-     {0xAA, 0x4A, 0x32, 0xB5,
-      0xF8, 0x84,
-      0x48, 0xc6,
-      0xA3, 0xD7,
-      0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
-
-    {AIM_CAPS_LAST,
-     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
+	{AIM_CAPS_LAST,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
 };
 
+// TODO: replace this by some i18n() compatible method
 static const char *msgerrreason[] =
 {
 	"Invalid error",
@@ -237,12 +241,12 @@ OscarSocket::~OscarSocket(void)
 /** This is called when a connection is established */
 void OscarSocket::OnConnect(void)
 {
-	kdDebug(14150) << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
+	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
 
 	mDirectIMMgr = new OncomingSocket(this, address(), DirectIM);
 	mFileTransferMgr = new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
 
-	kdDebug(14150) << "[OSCAR] address() is " << address().toString() <<
+	kdDebug(14150) << k_funcinfo << "address() is " << address().toString() <<
 		" mDirectIMMgr->address() is " << mDirectIMMgr->address().toString() << endl;
 
 	emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
@@ -257,21 +261,23 @@ void OscarSocket::slotRead(void)
 
 	if ( fl.error ) //something went wrong, this shouldn't happen
 	{
-		kdDebug(14150) << "[OSCAR] this is bad, flap read error occured " << endl;
+		kdDebug(14150) << k_funcinfo << "FLAP read error occured!" << endl;
 		//dump packet, try to recover
 		char *tmp = new char[bytesAvailable()];
 		readBlock(tmp, bytesAvailable());
 		inbuf.setBuf(tmp, bytesAvailable());
+
 		inbuf.print();
 		if (hasDebugDialog())
 			debugDialog()->addMessageFromServer(inbuf.toString(), connectionName());
+
 		return;
 	}
 
 	if (bytesAvailable() < fl.length)
 	{
 		while (waitForMore(500) < fl.length)
-			kdDebug(14150) << "[OSCAR][slotRead()] not enough data read yet... waiting" << endl;
+			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
 	}
 
 	int bytesread = readBlock(buf,fl.length);
@@ -281,7 +287,7 @@ void OscarSocket::slotRead(void)
 	inbuf.setBuf(buf,bytesread);
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "[OSCAR] Input: " << endl;
+	kdDebug(14150) << k_funcinfo << "Input: " << endl;
 	inbuf.print();
 #endif
 	if(hasDebugDialog())
@@ -299,7 +305,7 @@ void OscarSocket::slotRead(void)
 			}
 			else
 			{
-				kdDebug(14150) << "[OSCAR][OnRead()] could not read flapversion on channel 0x01" << endl;
+				kdDebug(14150) << k_funcinfo << "Could not read FLAP version on channel 0x01" << endl;
 				return;
 			}
 			break;
@@ -310,8 +316,7 @@ void OscarSocket::slotRead(void)
 			SNAC s;
 			s = inbuf.getSnacHeader();
 
-			kdDebug(14150) << "[OSCAR] SNAC(" << s.family << ", " << s.subtype <<
-				"), flags are "<< s.flags << ", id is " << s.id << endl;
+			kdDebug(14150) << k_funcinfo << "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
 
 			switch(s.family)
 			{
@@ -322,7 +327,7 @@ void OscarSocket::slotRead(void)
 						case 0x0001:  //error
 						{
 #ifdef OSCAR_PACKETLOG
-							kdDebug(14150) << "[OSCAR] Generic service error.. remaining data is:" << endl;
+							kdDebug(14150) << k_funcinfo << "Generic service error, remaining data is:" << endl;
 							inbuf.print();
 #endif
 							emit protocolError(
@@ -334,20 +339,14 @@ void OscarSocket::slotRead(void)
 							break;
 						}
 						case 0x0003: //server ready
-						{
 							parseServerReady(inbuf);
 							break;
-						}
 						case 0x0005: //redirect
-						{
 							parseRedirect(inbuf);
 							break;
-						}
 						case 0x0007: //rate info request response, SRV_RATES
-						{
 							parseRateInfoResponse(inbuf);
 							break;
-						}
 						case 0x000f: //my user info
 							parseMyUserInfo(inbuf);
 							break;
@@ -367,8 +366,7 @@ void OscarSocket::slotRead(void)
 							parseMemRequest(inbuf);
 							break;
 						default:
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" <<
-								s.family << ", " << s.subtype << ")" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				}
@@ -378,17 +376,13 @@ void OscarSocket::slotRead(void)
 					switch(s.subtype)
 					{
 						case 0x0003: //locate rights
-						{
 							parseLocateRights(inbuf);
 							break;
-						}
 						case 0x0006: //user profile
-						{
 							parseUserProfile(inbuf);
 							break;
-						}
-						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown subtype SNAC(" << s.family << "," << s.subtype << ")" << endl;
+						default:
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0002
@@ -398,25 +392,19 @@ void OscarSocket::slotRead(void)
 					switch(s.subtype)
 					{
 						case 0x0003: //buddy list rights
-						{
 							parseBuddyRights(inbuf);
 							break;
-						}
 						case 0x000b: //buddy changed status
-						{
 							parseBuddyChange(inbuf);
 							break;
-						}
 						case 0x000c: //offgoing buddy
-						{
 							parseOffgoingBuddy(inbuf);
 							break;
-						}
-						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+						default:
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				}
+				} // END 0x0003
 
 				case 0x0004: //msg services
 				{
@@ -441,10 +429,10 @@ void OscarSocket::slotRead(void)
 							parseMiniTypeNotify(inbuf);
 							break;
 						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				}
+				} // END 0x0004
 
 				case 0x0009: //bos service
 				{
@@ -453,11 +441,11 @@ void OscarSocket::slotRead(void)
 						case 0x0003: //bos rights incoming
 							parseBOSRights(inbuf);
 							break;
-						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+						default:
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				}
+				} // END 0x0009
 
 				case 0x0013: //buddy list management
 				{
@@ -473,10 +461,10 @@ void OscarSocket::slotRead(void)
 							parseSSIAck(inbuf);
 							break;
 						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				}
+				} // END 0x0013
 
 				case 0x0015: // ICQ CLI_META packets
 				{
@@ -485,8 +473,8 @@ void OscarSocket::slotRead(void)
 						case 0x0003:
 							parseICQ_CLI_META(inbuf);
 							break;
-						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+						default:
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					}
 				}
 
@@ -500,14 +488,14 @@ void OscarSocket::slotRead(void)
 						case 0x0007: //encryption key is being sent
 							parsePasswordKey(inbuf);
 							break;
-						default: //invalid subtype
-							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+						default:
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				}
 
-				default: //invalid subtype
-					kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" << s.family << "," << s.subtype << ")"<< endl;
+				default:
+					kdDebug(14150) << k_funcinfo << "Unknown SNAC(|" << s.family << "|," << s.subtype << ")" << endl;
 			}; // END switch (s.family)
 			break;
 		} // END channel 0x02
@@ -522,7 +510,7 @@ void OscarSocket::slotRead(void)
 			if(hasDebugDialog())
 				debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 			break;
-		} // END 0x03
+		} // END channel 0x03
 
 		case 0x04: //close connection negotiation channel
 		{
@@ -637,6 +625,7 @@ void OscarSocket::sendICQserverRequest(unsigned short cmd, unsigned short seq)
 /** Sends an authorization request to the server */
 void OscarSocket::sendLoginRequest(void)
 {
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0017,0x0006,0x0000,0x00000000);
 	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
@@ -716,9 +705,7 @@ void OscarSocket::OnConnectionClosed(void)
 	if (mFileTransferMgr)
 		delete mFileTransferMgr;
 
-	emit statusChanged(
-		OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE)
-		);
+	emit statusChanged(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
 }
 
 /** Called when the server aknowledges the connection */
@@ -762,11 +749,17 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	outbuf.clear();
 }
 
-/** Logs in the user! */
+// Logs in the user!
 void OscarSocket::doLogin(const QString &host, int port, const QString &s, const QString &password)
 {
 	kdDebug(14150) << k_funcinfo << endl;
-	kdDebug(14150) << "[OSCAR] Connecting to '" << host << "', port=" << port << endl;
+	if (isConnected)
+	{
+		kdDebug(14150) << k_funcinfo << "We're already connected, aborting." << endl;
+		return;
+	}
+
+	kdDebug(14150) << k_funcinfo "Connecting to '" << host << "', port=" << port << endl;
 
 	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
 	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
@@ -780,7 +773,7 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 	connectToHost(host,port);
 }
 
-/** The program does this when a key is received */
+// The program does this when a key is received
 void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "Got the key" << endl;;
@@ -793,7 +786,7 @@ void OscarSocket::parsePasswordKey(Buffer &inbuf)
 	sendLoginAIM();
 }
 
-/** Sends login information, actually logs onto the server */
+// Sends login information, actually logs onto the server
 void OscarSocket::sendLoginAIM(void)
 {
 	kdDebug(14150) << k_funcinfo << "Sending AIM login info..." << endl;;
@@ -855,7 +848,7 @@ void OscarSocket::sendLoginICQ(void)
 }
 
 
-/** Called when a cookie is received */
+// Called when a cookie is received
 void OscarSocket::connectToBos(void)
 {
 	kdDebug(14150) << k_funcinfo << "Cookie received!... preparing to connect to BOS server" << endl;
@@ -879,11 +872,10 @@ void OscarSocket::OnBosConnAckReceived()
 	emit connectionChanged(5,"Connected to server, authorizing...");
 }
 
-/** Sends the authorization cookie to the BOS server */
+// Sends the authorization cookie to the BOS server
 void OscarSocket::sendCookie(void)
 {
-	kdDebug(14150) << k_funcinfo << endl;
-
+	kdDebug(14150) << k_funcinfo << "Mhh, cookies, let's give one to the server" << endl;
 	Buffer outbuf;
 	putFlapVer(outbuf);
 	outbuf.addTLV(0x0006,cookielen, mCookie);
@@ -893,11 +885,11 @@ void OscarSocket::sendCookie(void)
 /** Called when the server is ready for normal commands */
 void OscarSocket::OnServerReady(void)
 {
-	kdDebug(14150) << k_funcinfo << endl;
+	kdDebug(14150) << k_funcinfo << "What is this? [mETz] ==================" << endl;
 	emit connectionChanged(6,"Authorization successful, getting info from server");
 }
 
-/** Gets the rate info from the server */
+// Gets the rate info from the server
 void OscarSocket::sendRateInfoRequest(void)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_RATESREQUEST)" << endl;
@@ -934,13 +926,12 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		rateClasses.append(rc);
 	}
 
-/*	kdDebug(14150) << "[OSCAR] The buffer is " << inbuf.getLength() <<
-		" bytes long after reading the classes." << endl;
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "[OSCAR] It looks like this: " << endl;
+	kdDebug(14150) << k_funcinfo << "The buffer is " << inbuf.getLength() << " bytes long after reading the classes." << endl;
+	kdDebug(14150) << k_funcinfo << "It looks like this: " << endl;
 	inbuf.print();
 #endif
-*/
+
 	//now here come the members of each class
 	for (unsigned int i=0;i<numclasses;i++)
 	{
@@ -977,7 +968,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 	sendRateAck();
 }
 
-/** Tells the server we accept it's communist rate limits, even though I have no idea what they mean */
+// Tells the server we accept it's communist rate limits, even though I have no idea what they mean
 void OscarSocket::sendRateAck()
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_ACKRATES)" << endl;
@@ -997,13 +988,13 @@ void OscarSocket::sendRateAck()
 	requestInfo();
 }
 
-/** Called on connection to bos server */
+// Called on connection to bos server
 void OscarSocket::OnBosConnect()
 {
 	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
 }
 
-/** Sends privacy flags to the server  */
+// Sends privacy flags to the server
 void OscarSocket::sendPrivacyFlags(void)
 {
 	Buffer outbuf;
@@ -1014,7 +1005,7 @@ void OscarSocket::sendPrivacyFlags(void)
 	sendBuf(outbuf,0x02);
 }
 
-/** requests the current user's info */
+// requests the current user's info
 void OscarSocket::requestMyUserInfo()
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQINFO)" << endl;
@@ -1023,7 +1014,7 @@ void OscarSocket::requestMyUserInfo()
 	sendBuf(outbuf,0x02);
 }
 
-/** parse my user info */
+// parse my user info
 void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
@@ -1048,6 +1039,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
 	TLV *regstatus = findTLV(lst,0x0013); //whether the e-mail address is available to others
 	TLV *err = findTLV(lst,0x0008); //whether an error occured
+
 	if (mCookie)
 		delete[] mCookie;
 
@@ -1124,7 +1116,7 @@ TLV * OscarSocket::findTLV(QPtrList<TLV> &l, WORD typ)
 void OscarSocket::sendClientReady(void)
 {
 	kdDebug(14150) << "SEND (CLI_READY) sending client ready, end of login procedure " <<
-		"===================================================" << endl;
+		"======================================================" << endl;
 
 	Buffer outbuf;
 //	outbuf.addSnac(0x0001,0x0002,0x0000,0x00000002);
@@ -1334,10 +1326,10 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				break;
 			}
 
-			case 0x0002: // TODO permit buddy/visible list
+			case 0x0002: // TODO permit buddy list AKA visible list
 				break;
 
-			case 0x0003: // TODO deny buddy/invisible list
+			case 0x0003: // TODO deny buddy AKA invisible list
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name << " to deny list." << endl;
@@ -3271,5 +3263,4 @@ void OscarSocket::sendStatus(unsigned long status)
 
 	emit statusChanged( kStat );
 }
-
 #include "oscarsocket.moc"

@@ -19,9 +19,9 @@
 #ifndef OSCARACCOUNT_H
 #define OSCARACCOUNT_H
 
-#include <qwidget.h>
 #include <qdict.h>
 #include <qstring.h>
+#include <qwidget.h>
 
 #include "kopeteaccount.h"
 #include "oscarsocket.h"

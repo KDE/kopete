@@ -1,30 +1,30 @@
 /*
-oscarsocket.h  -  Oscar Protocol Implementation
+    oscarsocket.h  -  Oscar Protocol Implementation
 
-Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
-Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-
-*************************************************************************
-*                                                                       *
-* This program is free software; you can redistribute it and/or modify  *
-* it under the terms of the GNU General Public License as published by  *
-* the Free Software Foundation; either version 2 of the License, or     *
-* (at your option) any later version.                                   *
-*                                                                       *
-*************************************************************************
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
 #ifndef OSCARSOCKET_H
 #define OSCARSOCKET_H
 
 #include "oscardirectconnection.h"
-#include <qptrlist.h>
-#include <kfileitem.h>
-#include "oncomingsocket.h"
 #include "ssidata.h"
 #include "aimbuddylist.h"
+#include "oncomingsocket.h"
 
+#include <qptrlist.h>
+
+class KFileItem;
 class OscarAccount;
 
 struct FLAP
@@ -304,8 +304,7 @@ class OscarSocket : public OscarConnection
 	type == 0: request
 	type == 1: deny
 	type == 2: accept  */
-	void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType,
-	const KFileItem *finfo=0L);
+	void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
 	/** Sends a 0x0013,0x0002 (requests SSI rights information) */
 	void sendSSIRightsRequest(void);
 	/** Sends a 0x0013,0x0004 (requests SSI data?) */

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <kdebug.h>
+
 #include "oscarsocket.h"
 #include "oscardirectconnection.h"
 #include "oscarfilesendconnection.h"
@@ -69,13 +70,13 @@ void OncomingSocket::newConnection( int socket )
 	//AIM clients will try to reverse the connection if that is the case
 	//if ( tmp->type == DirectInfo::Incoming )  && mType == OscarConnection::SendFile )
   	newsock->sendFileSendRequest();
-   
+
 	kdDebug(14150) << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
 }
 
 /** Finds the connection with cookie @cookie and returns a pointer to it.
 		If no such connection is found, return NULL */
-OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie) 
+OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie)
 {
 	OscarConnection *tmp;
 	kdDebug(14150) << "[OncomingSocket] there are " << mConns.count() << " connections." << endl;
@@ -142,7 +143,7 @@ void OncomingSocket::slotConnectionReady(QString name)
 		kdDebug(14150) << "[OncomingSocket] Connection " << name << " not found!!!  exiting slotConnectionReady()" << endl;
 		return;
 	}
-	
+
 	kdDebug(14150) << "[OncomingSocket] slotConnectionReady(): Setting up direct IM signals!" << endl;
   // Connect protocol error signal
 	QObject::connect(dc, SIGNAL(protocolError(QString, int)),
@@ -175,7 +176,7 @@ void OncomingSocket::setupConnection(OscarConnection *newsock)
 	// Ready signal
 	QObject::connect(newsock, SIGNAL(connectionReady(QString)),
 		this, SLOT(slotConnectionReady(QString)));
-	
+
 	//only connect this if it is a direct IM connection
 	if ( mType == OscarConnection::DirectIM )
 	{
@@ -248,7 +249,7 @@ void OncomingSocket::addFileInfo(const QString &sn, KFileItem *finfo)
 	{
 		if ( tmp->sn == tocNormalize(sn) )
 		{
-			tmp->finfo = finfo;			
+			tmp->finfo = finfo;
 		}
   }
 }

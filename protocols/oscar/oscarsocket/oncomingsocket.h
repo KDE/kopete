@@ -22,6 +22,8 @@
 #include <qserversocket.h>
 #include <qptrlist.h>
 
+#include <kfileitem.h>
+
 struct DirectInfo { //info used for keeping track of direct connections
 	QByteArray cookie;
 	QString sn;
@@ -42,49 +44,53 @@ struct DirectInfo { //info used for keeping track of direct connections
 class OscarConnection;
 class OscarSocket;
 
-class OncomingSocket : public QServerSocket  {
-   Q_OBJECT
-public: 
-	OncomingSocket(QObject *parent=0, const char *name=0);
-	OncomingSocket(OscarSocket *server, const QHostAddress &address, OscarConnection::ConnectionType type, Q_UINT16 port=DIRECTIM_PORT,
-		int backlog=5, QObject *parent=0, const char *name=0);
-	~OncomingSocket();
-  /** Called when someone connects to the serversocket */
-  virtual void newConnection( int socket );
-  /** Finds the connection with cookie @cookie and returns a pointer to it.
-			If no such connection is found, return NULL */
-  OscarConnection * findConnection(const QByteArray &cookie);
-  /** Finds the connection named @name and returns a pointer to it.
-			If no such connection is found, return NULL */
-  OscarConnection * findConnection(const QString &name);
-  /** Adds the connection to the list of pending connections, returns it */
-  DirectInfo *addPendingConnection(const QString &sn, const QByteArray &cookie, const KFileItem *finfo, const QString &host, int port, DirectInfo::Type typ);
-  /** Adds an outgoing connection to the list and attempts to connect */
-  OscarConnection * establishOutgoingConnection(const QString &sn);
-  /** Removes the named connection from the connection list and disconnects it. */
-  void removeConnection(const QString &name);
-  /** Adds the passed file info to the appropriate screen name in the list of pending connections */
-  void addFileInfo(const QString &sn, KFileItem *finfo);
-  /** Gets the cookie associated with the pending connection for @sn, stores it in cook */
-  bool getPendingCookie(const QString &sn, QByteArray &cook);
-private:
-  /** A list of all connections */
-  QPtrList<OscarConnection> mConns;
-  /** A list with pending connection info */
-  QPtrList<DirectInfo> mPendingConnections;
-  /** The type of objects to be created */
-  OscarConnection::ConnectionType mType;
-	OscarSocket *mServer;
-public slots: // Public slots
-  /** Called when a connection is ready */
-  void slotConnectionReady(QString name);
-  /** Called when connection named name has been closed */
-  void slotConnectionClosed(QString name);
-private: // Private methods
-  /** Set up a connection before adding it to the list of connections */
-  void setupConnection(OscarConnection *newsock);
-  /** Allocates memory to ptr of the proper type */
-  OscarConnection * createAppropriateType(DirectInfo *info);
+class OncomingSocket : public QServerSocket
+{
+		Q_OBJECT
+	public:
+		OncomingSocket(QObject *parent=0, const char *name=0);
+		OncomingSocket(OscarSocket *server, const QHostAddress &address, OscarConnection::ConnectionType type, Q_UINT16 port=DIRECTIM_PORT,
+			int backlog=5, QObject *parent=0, const char *name=0);
+		~OncomingSocket();
+	/** Called when someone connects to the serversocket */
+	virtual void newConnection( int socket );
+	/** Finds the connection with cookie @cookie and returns a pointer to it.
+				If no such connection is found, return NULL */
+	OscarConnection * findConnection(const QByteArray &cookie);
+	/** Finds the connection named @name and returns a pointer to it.
+				If no such connection is found, return NULL */
+	OscarConnection * findConnection(const QString &name);
+	/** Adds the connection to the list of pending connections, returns it */
+	DirectInfo *addPendingConnection(const QString &sn, const QByteArray &cookie, const KFileItem *finfo, const QString &host, int port, DirectInfo::Type typ);
+	/** Adds an outgoing connection to the list and attempts to connect */
+	OscarConnection * establishOutgoingConnection(const QString &sn);
+	/** Removes the named connection from the connection list and disconnects it. */
+	void removeConnection(const QString &name);
+	/** Adds the passed file info to the appropriate screen name in the list of pending connections */
+	void addFileInfo(const QString &sn, KFileItem *finfo);
+	/** Gets the cookie associated with the pending connection for @sn, stores it in cook */
+	bool getPendingCookie(const QString &sn, QByteArray &cook);
+
+	private:
+		/** A list of all connections */
+		QPtrList<OscarConnection> mConns;
+		/** A list with pending connection info */
+		QPtrList<DirectInfo> mPendingConnections;
+		/** The type of objects to be created */
+		OscarConnection::ConnectionType mType;
+		OscarSocket *mServer;
+
+	public slots:
+		/** Called when a connection is ready */
+		void slotConnectionReady(QString name);
+		/** Called when connection named name has been closed */
+		void slotConnectionClosed(QString name);
+
+	private:
+		/** Set up a connection before adding it to the list of connections */
+		void setupConnection(OscarConnection *newsock);
+		/** Allocates memory to ptr of the proper type */
+		OscarConnection * createAppropriateType(DirectInfo *info);
 };
 
 #endif

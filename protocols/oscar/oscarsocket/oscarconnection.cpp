@@ -14,14 +14,16 @@
     *************************************************************************
 */
 
+#include "oscarconnection.h"
 #include <kdebug.h>
 #include "oscardebugdialog.h"
-#include "oscarconnection.h"
 
 OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name)
 	: QSocket(parent, name)
 {
+	kdDebug(14150) << k_funcinfo << "called, sn='" << sn << "' connName='" << connName << "'" << endl;
+
 	mConnName = connName;
 	mConnType = type;
 	mSN = sn;
@@ -36,14 +38,15 @@ OscarConnection::~OscarConnection()
 {
 }
 
-/** Called when there is data to be read.
-		If you want your connection to be able to receive data, you
-		should override this
-		No need to connect the signal in derived classes, just override this slot */
+/* Called when there is data to be read.
+ * If you want your connection to be able to receive data, you
+ * should override this
+ * No need to connect the signal in derived classes, just override this slot
+ */
 void OscarConnection::slotRead()
 {
-	kdDebug(14150) << "[OSCAR] OscarConnection: in slotRead(), " << bytesAvailable() <<
-		" bytes, name: " << mConnName << endl;
+	kdDebug(14150) << k_funcinfo << bytesAvailable() << " bytes, connection name: " << mConnName << endl;
+
 	Buffer inbuf;
 	int len = bytesAvailable();
 	char *buf = new char[len];
