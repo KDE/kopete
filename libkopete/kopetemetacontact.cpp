@@ -523,9 +523,6 @@ void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, cons
 
 void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 {
-	if ( isTemporary() && to->type() != KopeteGroup::Temporary )
-		return;
-
 	if ( !from || !d->groups.contains( from ) || ( !isTopLevel() && from->type() == KopeteGroup::TopLevel ) )
 	{
 		// We're adding, not moving, because 'from' is illegal
@@ -539,6 +536,10 @@ void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		removeFromGroup( from );
 		return;
 	}
+
+	if ( isTemporary() && to->type() != KopeteGroup::Temporary )
+		return;
+
 
 	//kdDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
 
@@ -569,11 +570,12 @@ void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 
 void KopeteMetaContact::addToGroup( KopeteGroup *to )
 {
+	if ( !to || d->groups.contains( to ) || ( to->type() == KopeteGroup::TopLevel && isTopLevel() ) )
+		return;
+
 	if ( d->temporary && to->type() != KopeteGroup::Temporary )
 		return;
 
-	if ( !to || d->groups.contains( to ) || ( to->type() == KopeteGroup::TopLevel && isTopLevel() ) )
-		return;
 
 	d->groups.append( to );
 
@@ -597,7 +599,7 @@ const QDomElement KopeteMetaContact::toXML()
 {
 	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 	emit aboutToSave(this);
-	
+
 	QDomDocument metaContact;
 	metaContact.appendChild( metaContact.createElement( QString::fromLatin1( "meta-contact" ) ) );
 	metaContact.documentElement().setAttribute( QString::fromLatin1( "contactId" ), metaContactId() );
@@ -728,7 +730,7 @@ void KopeteMetaContact::setTemporary( bool isTemporary, KopeteGroup *group )
 		}
 	}
 	else
-		moveToGroup(temporaryGroup, group);
+		moveToGroup(temporaryGroup, group ? group : KopeteGroup::topLevel());
 }
 
 void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
