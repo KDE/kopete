@@ -17,32 +17,30 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <kgenericfactory.h>
-#include <kstandarddirs.h>
-#include <kurl.h>
-#include <kio/global.h>
-#include <kio/job.h>
+#include "translatorplugin.h"
+
+#include <qcolor.h>
 #include <qcstring.h>
 #include <qregexp.h>
 
+#include <kdebug.h>
+#include <kgenericfactory.h>
+#include <kio/global.h>
+#include <kio/job.h>
+#include <kstandarddirs.h>
+#include <kurl.h>
 
 #include "kopete.h"
-#include "kopetemessage.h"
 #include "kopetecontact.h"
+#include "kopetemessage.h"
 #include "kopetemetacontact.h"
-
-#include "translatorplugin.h"
 #include "translatorprefs.h"
-
-#include <qregexp.h>
-#include <qcolor.h>
 
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, KGenericFactory<TranslatorPlugin> );
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
-			      const QStringList &/*args*/ )
-	: Plugin( parent, name )
+	const QStringList &/*args*/ )
+: KopetePlugin( parent, name )
 {
 
 	m_prefs = new TranslatorPreferences ( "locale", this );

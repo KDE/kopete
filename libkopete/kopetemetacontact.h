@@ -29,7 +29,7 @@
 class QStringList;
 
 class KopetePlugin;
-class Plugin;
+class KopetePlugin;
 class QDomNode;
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -39,7 +39,7 @@ class KopeteMetaContact : public QObject
 	Q_OBJECT
 
 public:
-	//          <PluginID, Value   >
+	// <PluginID, Value   >
 	typedef QMap< QString, QString > AddressBookFields;
 
 	KopeteMetaContact();
@@ -163,8 +163,8 @@ public slots:
 	 * registered during the call to KopetePlugin::addressBookFields()
 	 * cannot be altered!
 	 */
-	QString addressBookField( Plugin *p, const QString &key ) const;
-	void setAddressBookField( Plugin *p, const QString &key,
+	QString addressBookField( KopetePlugin *p, const QString &key ) const;
+	void setAddressBookField( KopetePlugin *p, const QString &key,
 		const QString &value );
 	/**
 	 * Return a copy of all address book fields exported by this
@@ -236,14 +236,6 @@ private:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 
 // vim: set noet ts=4 sts=4 sw=4:
 

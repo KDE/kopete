@@ -22,7 +22,7 @@
 #include "kopete.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
-    : Plugin( parent, name )
+    : KopetePlugin( parent, name )
 {
 }
 

@@ -27,8 +27,7 @@
 #include <kio/job.h>
 
 #include "kopetemessage.h"
-
-#include "plugin.h"
+#include "kopeteplugin.h"
 
 class QStringList;
 class QString;
@@ -38,9 +37,10 @@ class KopeteMetaContact;
 
 class TranslatorPreferences;
 
-class TranslatorPlugin : public Plugin
+class TranslatorPlugin : public KopetePlugin
 {
 	Q_OBJECT
+
 public:
 	TranslatorPlugin( QObject *parent, const char *name, const QStringList &args );
 	~TranslatorPlugin();

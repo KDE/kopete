@@ -1,9 +1,9 @@
 /*
     pluginloader.h - Kopete Plugin Loader
 
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
 
-	Portions of this code based in Noatun plugin code:
+    Portions of this code based in Noatun plugin code:
     Copyright (c) 2000-2002 The Noatun Developers
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -46,7 +46,7 @@ struct KopeteLibraryInfo
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
 class KopeteProtocol;
-class Plugin;
+class KopetePlugin;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -57,12 +57,12 @@ class LibraryLoader : public QObject
 
 private:
 	friend class Kopete;
-	friend class Plugin;
+	friend class KopetePlugin;
 	friend class KopeteProtocol;
 	friend class AddWizardImpl;
 	struct PluginLibrary
 	{
-		Plugin *plugin;
+		KopetePlugin *plugin;
 		KLibrary *library;
 	};
 
@@ -76,7 +76,7 @@ public:
 	/**
 	 * Search by Id
 	 */
-	Plugin *searchByID( QString &Id );
+	KopetePlugin *searchByID( QString &Id );
 
 	/**
 	 * loads all the enabled plugins
@@ -95,7 +95,7 @@ public:
 	 * unload the plugin that is plugin
 	 */
 	bool remove(const LibraryLoader::PluginLibrary *plugin);
-	bool remove(const Plugin *plugin);
+	bool remove(const KopetePlugin *plugin);
 
 	/**
 	 * This is needed for the Plugin-List-View
@@ -103,14 +103,14 @@ public:
 	 * (when required by another noatun-plugin)
 	**/
 	KopeteLibraryInfo getInfo(const QString &spec) const;
-	QPtrList<Plugin> plugins() const;
+	QPtrList<KopetePlugin> plugins() const;
 
 	/**
 	 * Return all registered address book fields for a given plugin.
 	 *
 	 * Returns an empty QStringList if the plugin is invalid.
 	 */
-	QStringList addressBookFields( Plugin *p ) const;
+	QStringList addressBookFields( KopetePlugin *p ) const;
 
 private slots:
 	/**
@@ -127,18 +127,10 @@ private:
 	/**
 	 * The list of all address book keys used by each plugin
 	 */
-	QMap<Plugin *, QStringList> m_addressBookFields;
+	QMap<KopetePlugin *, QStringList> m_addressBookFields;
 };
 
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 
 // vim: set noet ts=4 sts=4 sw=4:
 

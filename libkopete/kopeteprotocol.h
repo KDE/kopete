@@ -20,21 +20,21 @@
 #define KOPETEPROTOCOL_H
 
 #include <qobject.h>
-#include <qwidget.h>
-#include <plugin.h>
 #include <qptrlist.h>
+#include <qwidget.h>
+
+#include "kopeteplugin.h"
 
 class AddContactPage;
-class QString;
 class KopeteContact;
-class KopeteMetaContact;
 class KopeteFileTransferInfo;
+class KopeteMetaContact;
 class KopeteTransfer;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KopeteProtocol : public Plugin
+class KopeteProtocol : public KopetePlugin
 {
 public:
 	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);

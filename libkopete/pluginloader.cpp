@@ -1,9 +1,9 @@
 /*
     pluginloader.cpp - Kopete Plugin Loader
 
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
 
-	Portions of this code based in Noatun plugin code:
+    Portions of this code based in Noatun plugin code:
     Copyright (c) 2000-2002 The Noatun Developers
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -31,7 +31,7 @@
 #include <kparts/componentfactory.h>
 
 #include "kopete.h"
-#include "plugin.h"
+#include "kopeteplugin.h"
 #include "pluginloader.h"
 
 class KopeteLibraryInfo;
@@ -85,9 +85,9 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 	return items;
 }
 
-QPtrList<Plugin> LibraryLoader::plugins() const
+QPtrList<KopetePlugin> LibraryLoader::plugins() const
 {
-	QPtrList<Plugin> list;
+	QPtrList<KopetePlugin> list;
 	QDictIterator<LibraryLoader::PluginLibrary> i( mLibHash );
 	for( ; i.current(); ++i )
 		list.append( i.current()->plugin );
@@ -200,7 +200,7 @@ bool LibraryLoader::loadSO(const QString &spec)
 		}
 
 		listitem->plugin =
-			KParts::ComponentFactory::createInstanceFromFactory<Plugin>
+			KParts::ComponentFactory::createInstanceFromFactory<KopetePlugin>
 			( listitem->library->factory(), 0L /* FIXME: parent object */ );
 
 		connect( listitem->plugin, SIGNAL( destroyed( QObject * ) ),
@@ -273,7 +273,7 @@ bool LibraryLoader::remove(const PluginLibrary *pl)
 	return false;
 }
 
-bool LibraryLoader::remove(const Plugin *plugin)
+bool LibraryLoader::remove(const KopetePlugin *plugin)
 {
 	for (QDictIterator<PluginLibrary> i(mLibHash); i.current(); ++i)
 	{
@@ -333,13 +333,13 @@ void LibraryLoader::removeNow(const QString &spec)
 //	delete lib;
 }
 
-Plugin* LibraryLoader::searchByID( QString &Id )
+KopetePlugin* LibraryLoader::searchByID( QString &Id )
 {
 	QValueList<KopeteLibraryInfo> l = loaded();
 
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		Plugin *tmp_plug = mLibHash[(*i).specfile]->plugin;
+		KopetePlugin *tmp_plug = mLibHash[(*i).specfile]->plugin;
 		if ( tmp_plug->id() == Id )
 		{
 			return tmp_plug;
@@ -350,7 +350,7 @@ Plugin* LibraryLoader::searchByID( QString &Id )
 
 void LibraryLoader::slotPluginDestroyed( QObject *o )
 {
-	Plugin *p = dynamic_cast<Plugin *>( o );
+	KopetePlugin *p = dynamic_cast<KopetePlugin *>( o );
 	if( p )
 	{
 		m_addressBookFields.remove( p );
@@ -360,7 +360,7 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 	}
 }
 
-QStringList LibraryLoader::addressBookFields( Plugin *p ) const
+QStringList LibraryLoader::addressBookFields( KopetePlugin *p ) const
 {
 	if( m_addressBookFields.contains( p ) )
 		return m_addressBookFields[ p ];
@@ -369,14 +369,6 @@ QStringList LibraryLoader::addressBookFields( Plugin *p ) const
 }
 
 #include <pluginloader.moc>
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 
 // vim: set noet ts=4 sts=4 sw=4:
 

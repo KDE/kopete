@@ -29,7 +29,7 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontactlvi.h"
-#include "plugin.h"
+#include "kopeteplugin.h"
 #include "pluginloader.h"
 
 // FIXME: Add parent!!
@@ -382,8 +382,8 @@ QString KopeteMetaContact::toXML()
 			xml += "</address-book-field>\n";
 	}
 
-	QPtrList<Plugin> ps = kopeteapp->libraryLoader()->plugins();
-	for( Plugin *p = ps.first() ; p != 0L; p = ps.next() )
+	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
+	for( KopetePlugin *p = ps.first() ; p != 0L; p = ps.next() )
 	{
 		//++pluginIt;
 		QStringList strList;
@@ -392,8 +392,7 @@ QString KopeteMetaContact::toXML()
 			QString data = strList.join( "||" );
 			kdDebug()<<"### Data = "<< data <<endl;
 			xml += "    <plugin-data plugin-id=\"" +
-			       QString( p->id() ) + "\">" +
-			       data  + "</plugin-data>\n";
+				QString( p->id() ) + "\">" + data  + "</plugin-data>\n";
 		}
 	}
 
@@ -439,7 +438,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				QString pluginId = contactElement.attribute(
 					"plugin-id", QString::null );
 				QStringList strList = QStringList::split( "||", contactElement.text() );
-				Plugin *plugin = kopeteapp->libraryLoader()->searchByID( pluginId );
+				KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID( pluginId );
 				plugin->deserialize( this, strList );
 			}
 
@@ -449,7 +448,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	return true;
 }
 
-QString KopeteMetaContact::addressBookField( Plugin * p,
+QString KopeteMetaContact::addressBookField( KopetePlugin * p,
 	const QString & key ) const
 {
 	if ( p->addressBookFields().contains( key ) ) {
@@ -461,7 +460,7 @@ QString KopeteMetaContact::addressBookField( Plugin * p,
 	return QString::null;
 }
 
-void KopeteMetaContact::setAddressBookField( Plugin * p ,
+void KopeteMetaContact::setAddressBookField( KopetePlugin * p ,
 	const QString & key, const QString & value )
 {
 	if ( p->addressBookFields().contains( key ) )
@@ -478,14 +477,6 @@ KopeteMetaContact::AddressBookFields KopeteMetaContact::addressBookFields() cons
 }
 
 #include "kopetemetacontact.moc"
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 
 // vim: set noet ts=4 sts=4 sw=4:
 
