@@ -1,6 +1,6 @@
 /*
-   Copyright (c) 2000 Praduroux Alessandro <pradu@thekompany.com>
-   Modifications (c) 2002 Jason Keirstead <jason@keirstead.org>
+   Copyright (c) 2002 Jason Keirstead <jason@keirstead.org>
+   Based on kio_sql.cpp (c) 2000 Praduroux Alessandro <pradu@thekompany.com>
  
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
