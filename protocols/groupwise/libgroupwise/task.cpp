@@ -28,7 +28,7 @@ Task::Task(Task *parent)
 :QObject(parent)
 {
 	init();
-	d->transfer =-0;
+	d->transfer = 0;
 	d->client = parent->client();
 	d->id = client()->genUniqueId();
 	connect(d->client, SIGNAL(disconnected()), SLOT(clientDisconnected()));
