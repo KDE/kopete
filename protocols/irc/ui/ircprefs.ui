@@ -517,7 +517,7 @@
                                     <cstring>chkMinimizeQueries</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Minimize private conversation (query) tabs when first messsaged.</string>
+                                    <string>Minimize private conversation (query) tabs when first messaged.</string>
                                 </property>
                             </widget>
                         </grid>
