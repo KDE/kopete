@@ -107,7 +107,6 @@ public:
 	void removeFromGroup( const QString &group );
 
 public slots:
-	void slotContactRemoved( QString, QString );
 	void slotChatThisUser();
 
 signals:
@@ -120,9 +119,6 @@ private slots:
 	void slotRemoveFromGroup();
 
 	void slotUpdateContact ( QString, uint );
-	// We have to delete the contact if MSN disconenct
-	// We will use the engine signal
-	void slotDeleteMySelf ( bool );
 
 	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();

@@ -156,8 +156,6 @@ signals:
 	// Propagated from the MSN Service, in order to hide it from external
 	// classes:
 	void updateContact( QString handle, uint status );
-	void contactRemoved( QString handle, QString groupName );
-	void connectedToService( bool connected );
 
 private slots:
 	/**
@@ -179,7 +177,19 @@ private slots:
 	 */
 	void slotGroupListed( QString groupName, uint group );
 
+	/**
+	 * Contact was removed from the list
+	 */
+	void slotContactRemoved( QString handle, QString groupName );
+
 private:
+	/**
+	 * Add contact to contact list and maintain a list of currently active
+	 * contacts. This way MSNContact doesn't need to do 'delete this' every
+	 * time, which is very dangerous
+	 */
+	void addToContactList( MSNContact *c, const QString &group );
+
 	void initIcons();
 	void initActions();
 
@@ -231,6 +241,8 @@ private:
 //	QList<MSNContactStruct> contactList;
 //	QList<MSNGroupStruct> groupList;
 
+	QMap<QString, MSNContact*> m_contacts;
+	
 	QMap<uint, QString> m_groupList;
 
 	static const MSNProtocol *s_protocol;

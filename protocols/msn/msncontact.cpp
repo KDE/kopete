@@ -61,11 +61,8 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	// We connect this signal so that we can tell when a user's status changes
 	connect( MSNProtocol::protocol(), SIGNAL( updateContact( QString, uint ) ),
 				this, SLOT( slotUpdateContact( QString, uint ) ) );
-	connect( MSNProtocol::protocol(), SIGNAL( contactRemoved( QString, QString ) ),
-				this, SLOT( slotContactRemoved( QString, QString ) ) );
 
 	connect ( this, SIGNAL(chatToUser(QString)), MSNProtocol::protocol()->msnService(), SLOT( slotStartChatSession(QString)) );
-	connect ( MSNProtocol::protocol(), SIGNAL( connectedToService( bool ) ), this, SLOT( slotDeleteMySelf( bool ) ) );
 
 	setName( nickname );
 	slotUpdateContact( m_msnId, MSNProtocol::protocol()->contactStatus( m_msnId ) );
@@ -145,7 +142,7 @@ void MSNContact::slotChatThisUser()
 void MSNContact::slotRemoveThisUser()
 {
 	MSNProtocol::protocol()->removeContact( this );
-	delete this;
+//	delete this;
 }
 
 void MSNContact::slotRemoveFromGroup()
@@ -171,16 +168,6 @@ void MSNContact::slotCopyThisUser()
 		MSNProtocol::protocol()->copyContact( this, m_actionCopy->currentText() );
 }
 
-void MSNContact::slotContactRemoved( QString handle, QString group )
-{
-	// FIXME: Likely the 'delete this' is only ok if the group list
-	// is empty, and maybe even that is wrong!
-	if ( ( handle == m_msnId ) && ( m_groups.contains( group ) ) )
-	{
-		delete this;
-	}
-}
-
 void MSNContact::slotUpdateContact ( QString handle, uint status)
 {
 	if (handle != m_msnId) // not our contact
@@ -200,15 +187,6 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 
 	emit statusChanged();
 }
-
-void MSNContact::slotDeleteMySelf(bool connected)
-{
-	if (!connected)
-	{
-		delete this;
-	}
-}
-
 
 void MSNContact::slotViewHistory()
 {

@@ -86,8 +86,6 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 
 	connect( m_msnService, SIGNAL( connectingToService() ),
 				this, SLOT( slotConnecting() ) );
-	connect( m_msnService, SIGNAL( connectedToService( bool ) ),
-				this, SLOT( slotConnectedToMSN( bool ) ) );
 	connect( m_msnService, SIGNAL( statusChanged( uint ) ),
 				this, SLOT( slotStateChanged( uint) ) );
 	connect( m_msnService, SIGNAL( contactAdded( QString, QString, QString ) ),
@@ -101,9 +99,9 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	connect( m_msnService, SIGNAL( updateContact( QString, uint ) ),
 				this, SIGNAL( updateContact( QString, uint ) ) );
 	connect( m_msnService, SIGNAL( contactRemoved( QString, QString ) ),
-				this, SIGNAL( contactRemoved( QString, QString ) ) );
+				this, SLOT( slotContactRemoved( QString, QString ) ) );
 	connect( m_msnService, SIGNAL( connectedToService( bool ) ),
-				this, SIGNAL( connectedToService( bool ) ) );
+				this, SLOT( slotConnectedToMSN( bool ) ) );
 
 	KGlobal::config()->setGroup("MSN");
 
@@ -332,8 +330,8 @@ void MSNProtocol::slotConnected()
 			publicname = m_msnService->getPublicName((*it1).latin1());
 
 			kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
-			tmpcontact = new MSNContact( userid , publicname, (*it).latin1(), this );
-			kopeteapp->contactList()->addContact(tmpcontact, (*it).latin1() );
+			addToContactList( new MSNContact( userid , publicname,
+				(*it).latin1(), this ), (*it).latin1() );
 
 			kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
 
@@ -433,8 +431,29 @@ void MSNProtocol::slotMessageDialogClosing(QString handle)
 	}
 }
 
+void MSNProtocol::slotContactRemoved( QString msnId, QString group )
+{
+	if( m_contacts.contains( msnId ) )
+	{
+		m_contacts[ msnId ]->removeFromGroup( group );
+		if( m_contacts[ msnId ]->groups().isEmpty() )
+		{
+			delete m_contacts[ msnId ];
+			m_contacts.remove( msnId );
+		}
+	}
+}
+
 void MSNProtocol::slotDisconnected()
 {
+	QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
+	while( it != m_contacts.end() )
+	{
+		delete *it;
+		m_contacts.remove( it );
+		it = m_contacts.begin();
+	}
+
 	m_groupList.clear();
 	mIsConnected = false;
 	statusBarIcon->setPixmap(offlineIcon);
@@ -538,7 +557,8 @@ void MSNProtocol::slotInitContacts( QString status, QString userid,
 	kdDebug() << "MSN Plugin: User State change " << status << " " << userid << " " << nick <<"\n";
 	if ( status == "NLN" )
 	{
-		kopeteapp->contactList()->addContact(new MSNContact(userid, nick, i18n("Unknown"), this), i18n("Unknown"));
+		addToContactList( new MSNContact( userid, nick, i18n( "Unknown" ),
+			this ), i18n( "Unknown" ) );
 	}
 }
 
@@ -551,7 +571,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString nick,
 	QString group )
 {
 	kdDebug() << "MSN Plugin: Contact Added in group " << group << " ... creating contact" << endl;
-	kopeteapp->contactList()->addContact(new MSNContact( handle, nick, group, this ), group);
+	addToContactList( new MSNContact( handle, nick, group, this ), group );
 }
 
 // Dont use this for now
@@ -560,7 +580,16 @@ void MSNProtocol::slotNewUserFound( QString userid )
 	QString tmpnick = m_msnService->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 
-	kopeteapp->contactList()->addContact(new MSNContact(userid, tmpnick, i18n("Unknown"), this), i18n("Unknown"));
+	addToContactList( new MSNContact( userid, tmpnick, i18n( "Unknown" ),
+		this ), i18n( "Unknown" ) );
+}
+
+void MSNProtocol::addToContactList( MSNContact *c, const QString &group )
+{
+	kdDebug() << "MSNProtocol::addToContactList: adding " << c->msnId()
+		<< " to group " << group << endl;
+	kopeteapp->contactList()->addContact( c, group );
+	m_contacts.insert( c->msnId(), c );
 }
 
 // Dont use this for now
@@ -569,7 +598,8 @@ void MSNProtocol::slotNewUser( QString userid )
 	QString tmpnick = m_msnService->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 
-	kopeteapp->contactList()->addContact(new MSNContact(userid, tmpnick, i18n("Unknown"),this), i18n("Unknown"));
+	addToContactList( new MSNContact( userid, tmpnick, i18n( "Unknown" ),
+		this ), i18n( "Unknown" ) );
 }
 
 void MSNProtocol::slotAuthenticate( QString handle )
