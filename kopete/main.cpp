@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Patches, bugfixes"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("features and bugfixes"), "remenic@linuxfromscratch.org");
 	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Jabber plugin, random hacks"), "dstone@kde.org", "http://raging.dropbear.id.au");
-	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("cleanups, features and bugfixes") );
     aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("random hacks and bugfixes"), "dae@chez.com" );
 
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
