@@ -42,6 +42,9 @@
 #include "ircpreferences.h"
 #include "ircservercontact.h"
 #include "ircservermanager.h"
+#include "ircchatwindow.h"
+#include "ircconsoleview.h"
+#include "tabcompleter.h"
 #include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -59,20 +62,17 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	kdDebug() << "\nIRC Plugin Loading\n";
+	kdDebug() << "IRCProtocol::IRCProtocol"<<endl;
 	// Load all ICQ icons from KDE standard dirs
 	setIcon( "irc_protocol_small" );
 
 	initIcons();
 	m_serverManager = new IRCServerManager();
-	kdDebug() << "IRC Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
 
-	kdDebug() << "IRC Protocol Plugin: Setting icon offline\n";
 	statusBarIcon->setPixmap(protocolSmallIcon);
 	connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
 
-	kdDebug() << "IRC Protocol Plugin: Creating Config Module\n";
 	new IRCPreferences("irc_protocol", this);
 
 	KGlobal::config()->setGroup("IRC");
@@ -82,31 +82,22 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 		return;
 	}
 
-	QString filename = locateLocal("data", "kopete/irc.buddylist");
-	m_config = new KSimpleConfig(filename);
-
-	QStringList contacts = m_config->groupList();
-	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); it++)
+	KConfig *cfg = KGlobal::config();
+	cfg->setGroup("IRC");
+	QString listVersion=cfg->readEntry( "ContactList Version", "0.4.x" ) ;
+	if ( listVersion=="0.4.x" )
 	{
-		m_config->setGroup((*it));
-		QString groupName = m_config->readEntry("Group", "");
-		if (groupName.isEmpty())
-		{
-			continue;
-		}
-		QString server = m_config->readEntry("Server", "");
-		if (server.isEmpty())
-		{
-			KGlobal::config()->setGroup("IRC");
-			server = KGlobal::config()->readEntry("Server", "irc.unknown.com");
-		}
-		addContact(groupName, server, (*it), false, false);
+		kdDebug() << "IRCProtocol::IRCProtocol: import contact from kopete 0.4.x" << endl;
+		importOldContactList();
+		cfg->setGroup("IRC");
+		cfg->writeEntry ( "ContactList Version", "0.5" );
 	}
+
 
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->readBoolEntry("HideConsole", false) == false)
 	{
-		(void)new IRCServerContact(this);
+		slotNewConsole();
 	}
 
 	/** Autoconnect if is selected in config */
@@ -116,7 +107,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	}
 }
 
-void IRCProtocol::slotIconRightClicked(const QPoint&)
+IRCProtocol::~IRCProtocol()
+{
+
+}
+
+void IRCProtocol::slotIconRightClicked(const QPoint &)
 {
 	popup = new KPopupMenu(statusBarIcon);
 	popup->insertTitle("IRC");
@@ -127,73 +123,77 @@ void IRCProtocol::slotIconRightClicked(const QPoint&)
 void IRCProtocol::slotNewConsole()
 {
 	kdDebug() << "IRCProtocol::slotNewConsole";
-	(void)new IRCServerContact(this);
+	KGlobal::config()->setGroup("IRC");
+	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
+	QString server = KGlobal::config()->readEntry("Server", "(Console)");
+	QString serverAndNick = nick+"@"+server;
+
+	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
+
+	if(serverContact)
+	{
+		serverContact->chatWindow()->show();
+		serverContact->consoleView()->messageEdit()->setFocus();
+	}
+	else
+	{
+		m_serverManager->addServer(serverAndNick, true, this);
+	}
+
 }
 
-void IRCProtocol::addContact( const QString &groupName, const QString &server, const QString &contact, bool connectNow, bool joinNow)
+void IRCProtocol::addContact(  const QString &server, const QString &contact, bool connectNow, bool joinNow, KopeteMetaContact *meta)
 {
-
 	QString protocolID = this->id();
+	QString contactID=contact+"@"+server;
+
+	KopeteMetaContact *m=KopeteContactList::contactList()->findContact( protocolID, QString::null, contactID);
+	if(m)
+	{
+		kdDebug() << "IRCProtocol::slotContactList: Warnign: "
+			<< "Contact already exists " << contactID << endl;
+		if(m->isTemporary())
+			m->setTemporary(false);
+		return;
+	}
+	
+	if (meta)
+		m=meta;
+	else
+	{
+		m = new KopeteMetaContact();
+		KopeteContactList::contactList()->addMetaContact(m);
+	}
+
+	if(contact[0]=='#')
+	{ //if it is a channel, add to the server metaContact (this is an idea of Nick)
+		if(m->displayName().isEmpty())
+		{
+			m->setDisplayName(server);
+		}
+	}
+
 	KGlobal::config()->setGroup("IRC");
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
 	QString serverAndNick = nick;
 	serverAndNick.append("@");
 	serverAndNick.append(server);
+
 	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
-
-	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact( this->id(), QString::null, server, false);
-	if (!m) m = new KopeteMetaContact();
-	KopeteContact *c = m->findContact(this->id(), QString::null, nick);
-
-	if( c )
+	if (serverContact != 0)
 	{
-		// Existing contact, update data
-		// FIXME: TODO!
-		kdDebug() << "IRCProtocol::slotContactList: Not implemented: "
-			<< "Meta contact already contains contact " << contact
-			<< "???" << endl;
-
-		//KopeteContact *c = m->findContact( this->id(), QString::null, serverAndNick );
+		m->addContact( new IRCContact(server, contact, 0, joinNow, serverContact, m, protocolID));
 	}
 	else
 	{
-		if (serverContact != 0)
+		IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
+		if (serverItem != 0)
 		{
-			m->addContact( new IRCContact(groupName, server, contact, 6667, joinNow, serverContact, m, protocolID));
-		} else {
-			IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
-			if (serverItem != 0)
-			{
-				m->addContact(new IRCContact(groupName, server, contact, 6667, joinNow, serverItem, m, protocolID));
-			}
+			m->addContact(new IRCContact(server, contact, 0, joinNow, serverItem, m, protocolID));
 		}
-		KopeteContactList::contactList()->addMetaContact(m);
-
 	}
 }
 
-KopeteContact* IRCProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
-{
-    QString protocolID = this->id();
-	// FIXME: serializedData contains much more than just the server, target, port, joinonconnect contact
-
-	// FIXME: more error-proof deserialize would be useful :)
-	QStringList data    = QStringList::split( ' ', serializedData );
-	QString server = data[ 0 ].replace( QRegExp( "%20" ), " " );
-	QString target = data[ 1 ].replace( QRegExp( "%20" ), " " );
-	unsigned int port =(data[ 2 ].replace( QRegExp( "%20" ), " " )).toUInt();
-	bool joinOnConnect = (data[ 3 ].replace( QRegExp( "%20" ), " " )).toUInt();
-
-	return new IRCContact( server, target, port, joinOnConnect, new IRCServerContact(this, true), parent, protocolID );
-	//FIXME connectNow in IRCServerContact should not be hardwired to true
-	//FIXME is new IRCServerContact good thing?
-}
-
-IRCProtocol::~IRCProtocol()
-{
-
-}
 
 ///////////////////////////////////////////////////
 //           Plugin Class reimplementation
@@ -264,6 +264,50 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 	return (new IRCAddContactPage(this,parent));
 }
 
+
+bool IRCProtocol::serialize(KopeteMetaContact * metaContact, QStringList & strList) const
+{
+	bool r=false;
+
+	QPtrList<KopeteContact> contacts = metaContact->contacts();
+	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
+	{
+		if ( c->protocol() != this->id() ) // not our contact, next one please
+				continue;
+
+		IRCContact *g = static_cast<IRCContact*>(c);
+
+		if( g )
+		{
+			strList << g->id() << g->displayName();
+			r=true;
+		}
+	}
+	return r;
+}
+
+void IRCProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList &strList )
+{
+	unsigned int idx = 0;
+	while( idx < strList.size() )
+	{
+		QStringList cID  = QStringList::split( "@", strList[ idx ] );
+		QString displayName = strList[ idx + 1 ];
+		if(cID.size()!=2)
+		{
+			kdDebug() << "IRCProtocol::deserialize : WARNING: bad id '" << strList[ idx ] << "' for " << displayName <<endl;
+			break;
+		}
+
+		addContact( cID[1], cID[0], false, false,metaContact);
+
+		idx += 2;
+	}
+
+
+}
+
+
 ///////////////////////////////////////////////////
 //           Internal functions implementation
 ///////////////////////////////////////////////////
@@ -281,6 +325,33 @@ void IRCProtocol::initIcons()
 	privmsgIcon = QPixmap(loader->loadIcon("irc_privmsg", KIcon::User));
 }
 
+void IRCProtocol::importOldContactList()
+{
+	//this code import contact list from old irc plugin (Kopete 0.4.x)
+	QString filename = locateLocal("data", "kopete/irc.buddylist");
+	KSimpleConfig *m_config = new KSimpleConfig(filename);
+
+	QStringList contacts = m_config->groupList();
+	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); it++)
+	{
+		m_config->setGroup((*it));
+		QString groupName = m_config->readEntry("Group", "");
+		if (groupName.isEmpty())
+		{
+			continue;
+		}
+		QString server = m_config->readEntry("Server", "");
+		if (server.isEmpty())
+		{
+			KGlobal::config()->setGroup("IRC");
+			server = KGlobal::config()->readEntry("Server", "irc.unknown.com");
+		}
+		KopeteMetaContact *m = new KopeteMetaContact();
+		m->addToGroup(groupName);
+		addContact( server, (*it), false, false,m);
+		KopeteContactList::contactList()->addMetaContact(m);
+	}
+}
 
 
 
@@ -296,4 +367,5 @@ void IRCProtocol::initIcons()
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
+
 

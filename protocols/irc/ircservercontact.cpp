@@ -73,36 +73,6 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	}
 }
 
-IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
-{
-	m_protocol = protocol;
-	m_serverManager = m_protocol->serverManager();
-	KGlobal::config()->setGroup("IRC");
-	m_nickname = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	QString tmpServer = KGlobal::config()->readEntry("Server", "");
-
-	if (tmpServer.isEmpty())
-	{
-		m_serverName = "(Console)";
-	}
-	else
-	{
-		m_serverName = tmpServer;
-	}
-
-	init();
-
-	if (connectNow == true)
-	{
-		m_ircChatWindow->show();
-		m_consoleView->messageEdit()->setFocus();
-	}
-	else
-	{
-		m_ircChatWindow->hide();
-	}
-}
-
 void IRCServerContact::init()
 {
 	m_parser = new IRCCmdParser(m_protocol, this);
@@ -199,14 +169,14 @@ void IRCServerContact::initiateDcc(const QString &nickname, const QString &filen
 	kdDebug() << "IRC Plugin: dccServer->ok() == " << dccServer->ok() << endl;
 	if (dccServer->ok())
 	{
-		unsigned int port = dccServer->port();
+		//unsigned int port = dccServer->port();
 		QVBox *parent = new QVBox(m_ircChatWindow->mTabWidget);
 		if (type == DCCServer::Chat)
 		{
-			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, dccServer);
+			/*IRCDCCView *dccView =*/ new IRCDCCView(nickname, this, parent, dccServer);
 		} else if (type == DCCServer::File)
 		{
-			IRCDCCSend *dccView = new IRCDCCSend(nickname, filename, this, parent, dccServer);
+			/*IRCDCCSend *dccView =*/ new IRCDCCSend(nickname, filename, this, parent, dccServer);
 		}
 		m_ircChatWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 		m_ircChatWindow->mTabWidget->showPage(parent);
@@ -215,14 +185,14 @@ void IRCServerContact::initiateDcc(const QString &nickname, const QString &filen
 	}
 }
 
-void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject)
+void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int /*port*/, const QString &nickname, DCCClient &chatObject)
 {
 	if (m_ircChatWindow != 0)
 	{
 		if (DCCConfirm::confirmRequest(DCCConfirm::Chat, nickname, QString(""), 0, m_ircChatWindow))
 		{
 			QVBox *parent = new QVBox(m_ircChatWindow->mTabWidget);
-			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, &chatObject);
+			/*IRCDCCView *dccView =*/ new IRCDCCView(nickname, this, parent, &chatObject);
 			m_ircChatWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 			chatObject.dccAccept();
 			m_ircChatWindow->mTabWidget->showPage(parent);
@@ -232,7 +202,7 @@ void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int
 	}
 }
 
-void IRCServerContact::incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &filename, unsigned int size, DCCClient &chatObject)
+void IRCServerContact::incomingDccSendRequest(const QHostAddress &, unsigned int /*port*/, const QString &nickname, const QString &filename, unsigned int size, DCCClient &chatObject)
 {
 	if (m_ircChatWindow != 0)
 	{
@@ -244,7 +214,7 @@ void IRCServerContact::incomingDccSendRequest(const QHostAddress &, unsigned int
 				return;
 			}
 			QVBox *parent = new QVBox(m_ircChatWindow->mTabWidget);
-			IRCDCCReceive *dccView = new IRCDCCReceive(nickname, newFile, this, parent, &chatObject);
+			/*IRCDCCReceive *dccView =*/ new IRCDCCReceive(nickname, newFile, this, parent, &chatObject);
 			m_ircChatWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 			chatObject.dccAccept(newFile);
 			m_ircChatWindow->mTabWidget->showPage(parent);
@@ -254,7 +224,7 @@ void IRCServerContact::incomingDccSendRequest(const QHostAddress &, unsigned int
 	}
 }
 
-void IRCServerContact::incomingPrivMessage(const QString &originating, const QString &target, const QString &message)
+void IRCServerContact::incomingPrivMessage(const QString &originating, const QString &/*target*/, const QString &message)
 {
 	QString queryName = originating.section('!', 0, 0);
 	if (queryName.lower() == m_engine->nickName().lower())
@@ -264,19 +234,27 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null, m_serverName, false);
-		//FIXME: make this better
-		if(!m)
+		QString contactID=QString(queryName+"@"+m_serverName).lower();
+		QString protocolID = m_protocol->id();
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(protocolID, QString::null, contactID);
+		if(m)
 		{
+			kdDebug() << "IRCServerContact::incomingPrivMessage: "
+				<< "Contact already exists and not in this ServerContact : " << contactID <<endl;
+			//FIXME: TODO
+		}
+		else
+		{
+			//kdDebug() << "IRCServerContact::incomingPrivMessage: add contact: " << queryName <<endl;
 			m=new KopeteMetaContact();
+			m->setTemporary(true);
+			m->addContact(new IRCContact(m_serverName, queryName, 0, this, QStringList(message), m, protocolID));
 			KopeteContactList::contactList()->addMetaContact(m);
 		}
-		QString protocolID=m_protocol->id();
-		(void)new IRCContact(m_serverName, queryName, 6667, true, this, m, protocolID);
 	}
 }
 
-void IRCServerContact::incomingPrivAction(const QString &originating, const QString &target, const QString &message)
+void IRCServerContact::incomingPrivAction(const QString &originating, const QString &/*target*/, const QString &/*message*/)
 {
 	QString queryName = originating.section('!', 0, 0);
 	if (queryName.lower() == m_engine->nickName().lower())
@@ -286,15 +264,24 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null,m_serverName, false);
-		//FIXME: make this better
-		if(!m)
+		QString contactID=QString(queryName+"@"+m_serverName).lower();
+		QString protocolID = m_protocol->id();
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null,contactID);
+		if(m)
 		{
+			kdDebug() << "IRCServerContact::incomingPrivAction: "
+				<< "Contact already exists and not in this ServerContact : " << contactID <<endl;
+			//FIXME: TODO
+		}
+		else
+		{
+			//kdDebug() << "IRCServerContact::incomingPrivAction: add contact: " <<contactID <<endl;
+
 			m=new KopeteMetaContact();
+			m->setTemporary(true);
+			m->addContact(new IRCContact(m_serverName, queryName, 0, true, this, m, protocolID));
 			KopeteContactList::contactList()->addMetaContact(m);
 		}
-		QString protocolID=m_protocol->id();
-		(void)new IRCContact(m_serverName, queryName, 6667, true, this, m, protocolID);
 	}
 }
 
@@ -410,7 +397,7 @@ bool IRCServerContact::parentClosing()
 }
 QString IRCServerContact::id() const
 {
-	return m_serverName+m_nickname; //FIXME Is this the righway(TM)
+	return QString(m_nickname+"@"+m_serverName);
 }
 
 #include "ircservercontact.moc"

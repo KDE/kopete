@@ -25,7 +25,7 @@
 #include <qpixmap.h>
 
 
-
+class KopeteMetaContact;
 class AddContactPage;
 class IRCServerManager;
 class KIRC;
@@ -53,9 +53,10 @@ public:
 	/* Plugin reimplementation */
 	void init();
 	bool unload();
+	bool serialize(KopeteMetaContact * metaContact, QStringList & strList) const;
+	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
 
 	/** KopeteProtocol reimplementation */
-	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData );
 	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
 	virtual void Connect();
@@ -77,17 +78,18 @@ public:
 	QPixmap joinIcon;
 	QPixmap privmsgIcon;
 
-	void addContact(const QString &, const QString &, const QString &, bool, bool);
+	void addContact(const QString &, const QString &, bool, bool,KopeteMetaContact *m=0l);
 
 	IRCServerManager *serverManager() { return m_serverManager; }
-	KSimpleConfig *config() { return m_config; };
 	KIRC *engine() { return m_engine; };
+
 
 private:
 	void initIcons();
+	/** import contact-list from kopete 0.4.x */
+	void importOldContactList();
 	KPopupMenu *popup;
 	IRCServerManager *m_serverManager;
-	KSimpleConfig *m_config;
 	KIRC *m_engine;
 	bool m_isConnected;
 

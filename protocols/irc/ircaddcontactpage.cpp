@@ -22,45 +22,24 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 	ircdata = new ircAddUI(this);
 	plugin = owner;
 	QObject::connect(ircdata->chkConnectNow, SIGNAL(clicked()), this, SLOT(connectNowClicked()));
-	ircdata->cmbGroup->insertStringList(KopeteContactList::contactList()->groups());
-	ircdata->cmbGroup->setCurrentItem(0);
+
+	KGlobal::config()->setGroup("IRC");
+	QString server = KGlobal::config()->readEntry("Server", "");
+	ircdata->ircServer->setText(server);
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
 }
-/** No descriptions */
-void IRCAddContactPage::slotFinish()
+
+void IRCAddContactPage::slotFinish(KopeteMetaContact *m)
 {
-	QString currentGroup = ircdata->cmbGroup->currentText();
-	if (currentGroup.isEmpty() == true)
-	{
-		KMessageBox::sorry(this, i18n("<qt>You need to have a buddy listed under a group. Please create a group first. You may do this by right clicking in the buddy list and selecting \"Add Group...\"</qt>"), i18n("You Must Select a Group"));
-		return;
-	}
 	QString server = ircdata->ircServer->text();
-	if (server.isEmpty() == true)
-	{
-		KMessageBox::sorry(this, i18n("<qt>You need to specify a server to connect to. Please try again. Aborting.</qt>"), i18n("You Must Specify a Server"));
-		return;
-	}
 	QString name = ircdata->addID->text();
-	if (name.isEmpty() == true)
-	{
-		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or query to open. Please try again. Aborting.</qt>"), i18n("You Must Specify a Channel"));
-		return;
-	}
-	plugin->addContact(currentGroup, server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked());
+	plugin->addContact(server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked(),m);
 }
 
-/** No descriptions */
 bool IRCAddContactPage::validateData()
 {
-	QString currentGroup = ircdata->cmbGroup->currentText();
-	if (currentGroup.isEmpty() == true)
-	{
-		KMessageBox::sorry(this, i18n("<qt>You need to have a buddy listed under a group. Please create a group first. You may do this by right clicking in the buddy list and selecting \"Add Group...\"</qt>"), i18n("You Must Select a Group"));
-		return false;
-	}
 	QString server = ircdata->ircServer->text();
 	if (server.isEmpty() == true)
 	{
@@ -73,6 +52,11 @@ bool IRCAddContactPage::validateData()
 		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or query to open.</qt>"), i18n("You Must Specify a Channel"));
 		return false;
 	}
+	/*if(name.contains('@'))
+	{
+		KMessageBox::sorry(this, i18n("<qt>Bad charactere (@) in channel name</qt>"), i18n("You Must Specify a Channel"));
+		return false;
+	} */
   return true;
 }
 

@@ -41,8 +41,7 @@ class IRCContact : public KopeteContact
 	Q_OBJECT
 public:
 	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID);
-	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, QString &protocolID);
-	IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID);
+	IRCContact(const QString &server, const QString &target, unsigned int port, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, QString &protocolID);
 	~IRCContact();
 	// KopeteContact virtual functions
 	virtual ContactStatus status() const;
@@ -67,7 +66,7 @@ public:
 
 private:
 
-	bool init();
+	bool init(const QString &server, unsigned int port,const QString &target, IRCServerContact *contact,bool joinOnConnect);
 
 	/**
 	 * Returns true, if targetName() begins with '#', '&', '!' or '+'.

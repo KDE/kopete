@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>390</width>
+            <width>391</width>
             <height>284</height>
         </rect>
     </property>
@@ -42,19 +42,6 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QComboBox" row="3" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>cmbGroup</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>List in group:</string>
-                    </property>
-                </widget>
                 <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>ircServer</cstring>
@@ -129,7 +116,6 @@
 <tabstops>
     <tabstop>addID</tabstop>
     <tabstop>ircServer</tabstop>
-    <tabstop>cmbGroup</tabstop>
     <tabstop>chkConnectNow</tabstop>
     <tabstop>chkJoinNow</tabstop>
 </tabstops>

@@ -10,6 +10,7 @@
 
 class ircAddUI;
 class IRCProtocol;
+class KopeteMetaContact;
 
 
 
@@ -26,7 +27,7 @@ public:
 	IRCProtocol *plugin;
 public slots: // Public slots
   /** No descriptions */
-  virtual void slotFinish();
+  virtual void slotFinish(KopeteMetaContact *m);
 private slots:
   /** No descriptions */
   virtual bool validateData();
