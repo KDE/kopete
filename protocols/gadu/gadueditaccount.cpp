@@ -126,7 +126,7 @@ bool GaduEditAccount::validateData()
 	    return false;
 	}
     
-	if (passwordEdit_->text().isEmpty()){
+	if (passwordEdit_->text().isEmpty() && rememberCheck_->isChecked()){
 	    KMessageBox::sorry(this, i18n("<b>Enter Password please</b>"), i18n("Gadu-gadu"));
 	    return false;
 	}
@@ -177,8 +177,7 @@ KopeteAccount* GaduEditAccount::apply()
 	    }
 	}
 	else{
-	    // not implemented yey
-	    // registration of new account follows
+	    // should never happend
 	    return NULL;
 	}
     }
