@@ -38,13 +38,16 @@ public:
 	enum GroupType { Normal=0, Temporary, TopLevel };
 
 	/**
-	 * Create an empty group
-	 * Note that the constructor doesn't add the group automatically to the contactlist.
-	 * use @ref KopeteContactList::addGroup() to add it
+	 * \brief Create an empty group
+	 *
+	 * Note that the constructor will not add the group automatically to the contact list.
+	 * Use @ref KopeteContactList::addGroup() to add it
 	 */
 	KopeteGroup();
 
 	/**
+	 * \brief Create a group of the specified type
+	 *
 	 * Overloaded constructor to create a group of the specified type.
 	 */
 	KopeteGroup( const QString &name, GroupType type = Normal );
@@ -52,63 +55,71 @@ public:
 	~KopeteGroup();
 
 	/**
-	 * return the group displayName
+	 * \brief Return the group's display name
+	 *
+	 * \return the display name of the group
 	 */
 	QString displayName() const;
 
 	/**
-	 *  rename the group
+	 * \brief Rename the group
 	 */
 	void setDisplayName( const QString &newName );
 
 	/**
-	 * return the group type
+	 * \return the group type
 	 */
 	GroupType type() const;
 
 	/**
-	 * set the group type
+	 * \brief Set the group type
 	 */
 	void setType( GroupType newType );
 
 	/**
-	 * Return the unique id for this group
+	 * \return the unique id for this group
 	 */
 	uint groupId() const;
 
 	/**
 	 * @internal
+	 * Outputs the group data in XML
 	 */
 	const QDomElement toXML();
 
 	/**
 	 * @internal
+	 * Loads the group data from XML
 	 */
 	bool fromXML( const QDomElement &data );
 
 	/**
-	 * set if the group is expanded. this is saved to the xml contactlist file
+	 * \brief Set if the group is expanded.
+	 *
+	 * This is saved to the xml contactlist file
 	 */
 	void setExpanded( bool expanded );
 
 	/**
-	 * return whether the group is expanded or not,
+	 * 
+	 * \return true if the group is expanded. 
+	 * \return false otherwise
 	 */
 	bool isExpanded() const;
 
 	/**
-	 * a link to the toplevel group
+	 * \return a KopeteGroup pointer to the toplevel group
 	 */
 	static KopeteGroup *topLevel();
 
 	/**
-	 * a link to the temporary group
+	 * \return a KopeteGroup pointer to the temporary group
 	 */
 	static KopeteGroup *temporary();
 
 signals:
 	/**
-	 * The group has been renamed
+	 * \brief Emitted when the group has been renamed
 	 */
 	void renamed( KopeteGroup *group , const QString &oldName );
 
