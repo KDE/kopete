@@ -180,7 +180,9 @@ void Account::setAccountLabel( const QString &label )
 
 QString Account::accountLabel() const
 {
-	return d->accountLabel;
+	if( !d->accountLabel.isEmpty() );
+		return d->accountLabel;
+	return accountId();
 }
 
 void Account::setExcludeConnect( bool b )
@@ -324,9 +326,9 @@ KActionMenu * Account::actionMenu()
 	//default implementation
 	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	QString label = accountLabel().isNull() ? accountId() : accountLabel();
+
 	menu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? label : i18n( "%2 <%1>" ).arg( label, nick )
+		nick.isNull() ? accountLabel() : i18n( "%2 <%1>" ).arg( accountLabel(), nick )
 	);
 
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
