@@ -87,21 +87,14 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	m_contacts.append( mc );
 
 	connect( mc,
-		SIGNAL( addedToGroup( KopeteMetaContact *, const QString & ) ),
-		SLOT( slotAddedToGroup( KopeteMetaContact *, const QString & ) ) );
-	connect( mc,
 		SIGNAL( removedFromGroup( KopeteMetaContact *, const QString & ) ),
 		SLOT( slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );
-	connect( mc,
-		SIGNAL( movedToGroup( KopeteMetaContact *, const QString &,
-			const QString & ) ),
-		SLOT( slotMovedToGroup( KopeteMetaContact *, const QString &,
-			const QString & ) ) );
 
 	kdDebug() << "KopeteContactList::addMetaContact: "
 		<< "Adding meta contact to groups '" << mc->groups().join( "', '" )
 		<< "'" << endl;
-	kopeteapp->contactList()->addContact( mc );
+
+	emit metaContactAdded( mc );
 }
 
 void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
@@ -329,6 +322,10 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *c)
 	delete c;
 }
 
+QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const
+{
+	return m_contacts;
+}
 
 #include "kopetecontactlist.moc"
 

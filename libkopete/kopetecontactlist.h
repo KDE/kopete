@@ -28,7 +28,6 @@ class KopeteMetaContact;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
- *
  */
 class KopeteContactList : public QObject
 {
@@ -92,25 +91,42 @@ public:
 	 */
 	QStringList groups() const;
 
-  	/**
+	/**
 	 * add a metacontact into the contact list
 	 * It handles the groups for it.
 	 */
 	void addMetaContact( KopeteMetaContact *c );
 
-	
-  void removeMetaContact(KopeteMetaContact *contact);
+	void removeMetaContact( KopeteMetaContact *contact );
+
+	/**
+	 * Retrieve the list of all available meta contacts.
+	 * The returned QPtrList is not the internally used variable, so changes
+	 * to it won't propagate into the actual contact list. This can be
+	 * useful if you need a subset of the contact list, because you can
+	 * simply filter the result set as you wish without worrying about
+	 * side effects.
+	 * The contained KopeteMetaContacts are obviously _not_ duplicates, so
+	 * changing those *will* have the expected result :-)
+	 */
+	QPtrList<KopeteMetaContact> metaContacts() const;
 
 public slots:
-	void slotRemovedFromGroup(KopeteMetaContact *mc, const QString &from );
+	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 signals:
+	/**
+	 * A meta contact was added to the contact list. Interested classes
+	 * ( like the listview widgets ) can connect to this signal to receive
+	 * the newly added contacts.
+	 */
+	void metaContactAdded( KopeteMetaContact *mc );
+
 	/* Not used yet.... */
-	void addedToGroup(KopeteMetaContact *mc, const QString &to );
+	void addedToGroup( KopeteMetaContact *mc, const QString &to );
 	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 private:
-
 	/**
 	 * Return a XML representation of the contact list
 	 */
@@ -132,7 +148,7 @@ private:
 	KopeteContactList();
 
 	/**
-	 * The list of contacts embodied in the meta contact
+	 * The list of meta contacts that are available
 	 */
 	QPtrList<KopeteMetaContact> m_contacts;
 
@@ -140,7 +156,6 @@ private:
 	 * Our contact list instance
 	 */
 	static KopeteContactList *s_contactList;
-
 };
 
 #endif
