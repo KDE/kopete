@@ -81,7 +81,6 @@ void KopeteGroupViewItem::initLVI()
 		smallFont.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	d->count = new TextComponent( hbox, smallFont );
 
-	setVisible( false );
 	refreshDisplayName();
 	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
@@ -190,7 +189,7 @@ void KopeteGroupViewItem::updateVisibility()
 
 	if ( isVisible() != visible )
 	{
-		setVisible( visible );
+		setTargetVisibility( visible );
 		if ( visible )
 		{
 			// When calling setVisible(true) EVERY child item will be shown,

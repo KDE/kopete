@@ -89,6 +89,18 @@ public:
 	}
 };
 
+// FIXME: move to kopetelistviewitem.cpp
+class SpacerComponent : public ListView::Component
+{
+public:
+	SpacerComponent( ListView::ComponentBase *parent, int w, int h )
+	 : ListView::Component( parent )
+	{
+		setMinWidth(w);
+		setMinHeight(h);
+	}
+};
+
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
@@ -173,22 +185,22 @@ void KopeteMetaContactLVI::initLVI()
 	// generate our contents
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
-	d->metaContactIcon = new ImageComponent( hbox );
+
+	// FIXME: this is a nasty hack - store a small font in the config
+	QFont smallFont = listView()->font();
+	int size = smallFont.pixelSize();
+	if ( size != -1 )
+		smallFont.setPixelSize( (size * 3) / 2 );
+	else
+		smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.667 );
 
 	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
 	QString type = KGlobal::config()->readEntry( QString::fromLatin1("ViewStyle"), QString::fromLatin1("Default") );
 	if( type == QString::fromLatin1("Detailed") )    // new funky contact
 	{
+		d->metaContactIcon = new ImageComponent( hbox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new TextComponent( vbox, listView()->font() );
-
-		// FIXME: this is a nasty hack
-		QFont smallFont = listView()->font();
-		int size = smallFont.pixelSize();
-		if ( size != -1 )
-			smallFont.setPixelSize( (size * 3) / 2 );
-		else
-			smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.667 );
 		d->extraText = new TextComponent( vbox, smallFont );
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
@@ -198,8 +210,24 @@ void KopeteMetaContactLVI::initLVI()
 		d->buddyIcon = new ImageComponent( hbox );
 		d->iconSize = 32;
 	}
+	else if( type == QString::fromLatin1("Yagami") )    // new funky contact
+	{
+		new SpacerComponent( hbox, 26, 16 );
+		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+		d->nameText = new TextComponent( vbox, listView()->font() );
+		d->extraText = new TextComponent( vbox, smallFont );
+
+		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
+		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
+		new HSpacerComponent( box );
+
+		d->buddyIcon = new ImageComponent( hbox );
+		d->iconSize = 24;
+		d->metaContactIcon = new ImageComponent( hbox );
+	}
 	else if( type == QString::fromLatin1("RightAligned") ) // old right-aligned contact
 	{
+		d->metaContactIcon = new ImageComponent( hbox );
 		d->nameText = new TextComponent( hbox, listView()->font() );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 		d->buddyIcon = 0;
@@ -208,6 +236,7 @@ void KopeteMetaContactLVI::initLVI()
 	}
 	else                 // older left-aligned contact
 	{
+		d->metaContactIcon = new ImageComponent( hbox );
 		d->nameText = new TextComponent( hbox, listView()->font() );
 		d->nameText->setFixedWidth( true );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );

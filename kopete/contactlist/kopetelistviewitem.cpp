@@ -572,11 +572,13 @@ public:
 	int layoutAnimateSteps;
 	static const int layoutAnimateStepsTotal = 10;
 
-	QTimer visibilityTimer;
 	float opacity;
+	QTimer visibilityTimer;
 	int visibilityLevel;
-	static const int visibilityStepsTotal = 10;
 	bool visibilityTarget;
+	static const int visibilityFoldSteps = 10;
+	static const int visibilityFadeSteps = 10;
+	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
 };
 
 Item::Item( QListViewItem *parent, QObject *owner, const char *name )
@@ -625,7 +627,7 @@ void Item::slotLayoutItems()
 			int d = depth() + (listView()->rootIsDecorated() ? 1 : 0);
 			width -= d * listView()->treeStepSize();
 		}
-	
+
 		int height = component( n )->heightForWidth( width );
 		component( n )->layout( QRect( 0, 0, width, height ) );
 		//kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
@@ -647,7 +649,7 @@ void Item::slotLayoutAnimateItems()
 
 	const int s = Private::layoutAnimateStepsTotal;
 	const int p = d->layoutAnimateSteps;
-	
+
 	updateAnimationPosition( p, s );
 	setHeight(0);
 	repaint();
@@ -735,7 +737,10 @@ void Item::setHeight( int )
 		minHeight = QMAX( minHeight, component( n )->rect().height() );
 	//kdDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
 	if ( d->visibilityTimer.isActive() )
-		minHeight = (minHeight * d->visibilityLevel) / Private::visibilityStepsTotal;
+	{
+		int vis = QMIN( d->visibilityLevel, Private::visibilityFoldSteps );
+		minHeight = (minHeight * vis) / Private::visibilityFoldSteps;
+	}
 	KListViewItem::setHeight( minHeight );
 }
 
@@ -748,22 +753,25 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		comp->paint( &paint, cg );
 	paint.end();
 
-	p->drawPixmap( 0, 0, back );
-        
-#ifdef HAVE_XRENDER                
-	QColor rgb = backgroundColor();
+#ifdef HAVE_XRENDER
+	QColor rgb = cg.base();//backgroundColor();
 	float opac = 1.0;
 	if ( d->visibilityTimer.isActive() )
-		opac = float(d->visibilityLevel) / Private::visibilityStepsTotal;
+	{
+		int vis = QMAX( d->visibilityLevel - Private::visibilityFoldSteps, 0 );
+		opac = float(vis) / Private::visibilityFadeSteps;
+	}
 	opac *= opacity();
 	const int alpha = 257 - int(opac * 257);
-	if ( alpha == 0 ) return;
-
-	QPoint zp(0,0); zp = p->xForm(zp);
-	XRenderColor clr = { alpha * rgb.red(),alpha * rgb.green(),alpha * rgb.blue(),alpha * 0xff };
-	XRenderFillRectangle( p->device()->x11Display(), PictOpOver, p->device()->x11RenderHandle(),
-	                      &clr, zp.x(), zp.y(), width, height() );
+	if ( alpha != 0 )
+	{
+		XRenderColor clr = { alpha * rgb.red(), alpha * rgb.green(), alpha * rgb.blue(), alpha * 0xff };
+		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11RenderHandle(),
+		                      &clr, 0, 0, width, height() );
+	}
 #endif
+
+	p->drawPixmap( 0, 0, back );
 }
 
 void Item::componentAdded( Component *component )
