@@ -22,10 +22,16 @@
 
 #include <kopetetransfermanager.h>
 
-namespace Kopete { class Transfer; }
+namespace Kopete
+{
+	class Transfer;
+}
 
-class KIRCTransfer;
-class KIRCTransferHandler;
+namespace KIRC
+{
+class Transfer;
+class TransferHandler;
+};
 
 class IRCTransferHandler
 	: public QObject
@@ -36,7 +42,7 @@ public:
 	static IRCTransferHandler *self();
 
 private slots:
-	void transferCreated(KIRCTransfer *);
+	void transferCreated(KIRC::Transfer *);
 	void transferAccepted(Kopete::Transfer *kt, const QString&file);
 	void transferRefused(const Kopete::FileTransferInfo &info);
 
@@ -45,15 +51,15 @@ private slots:
 private:
 	IRCTransferHandler();
 
-	void connectKopeteTransfer(Kopete::Transfer *kt, KIRCTransfer *t);
+	void connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Transfer *t);
 
-	/* warning: After calling this method the KIRCTransfer is removed from the m_idMap.
+	/* warning: After calling this method the KIRC::Transfer is removed from the m_idMap.
 	 */
-	KIRCTransfer *getKIRCTransfer(const Kopete::FileTransferInfo &info);
+	KIRC::Transfer *getKIRCTransfer(const Kopete::FileTransferInfo &info);
 
-	KIRCTransferHandler *handler();
+	KIRC::TransferHandler *handler();
 
-	QIntDict<KIRCTransfer> m_idMap;
+	QIntDict<KIRC::Transfer> m_idMap;
 };
 
 #endif

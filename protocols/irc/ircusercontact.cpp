@@ -105,7 +105,7 @@ void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned in
 	if ( !filePath.isEmpty() )
 	{
 		//Send the file
-		MYACCOUNT->engine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRCTransfer::FileOutgoing);
+		MYACCOUNT->engine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRC::Transfer::FileOutgoing);
 	}
 }
 

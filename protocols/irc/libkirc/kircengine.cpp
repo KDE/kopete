@@ -312,7 +312,7 @@ void Engine::writeCtcpMessage(const QString &command, const QString &to, const Q
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool )
 {
-	QString nick =  KIRCEntity::userNick(to);
+	QString nick =  Entity::userNick(to);
 
 	Message::writeCtcpMessage(this, codecForNick( nick ), command, nick, suffix,
 		ctcpCommand, ctcpArgs, ctcpSuffix );

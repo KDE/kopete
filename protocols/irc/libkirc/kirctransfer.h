@@ -32,9 +32,8 @@ class QTextCodec;
 namespace KIRC
 {
 class Engine;
-};
 
-class KIRCTransfer
+class Transfer
 	: public QObject
 {
 	Q_OBJECT
@@ -57,23 +56,23 @@ public:
 		Closed
 	};
 public:
-	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress
+	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress
 			Type type = Unknown,
 			QObject *parent = 0L, const char *name = 0L );
 
-	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, Q_UINT16 peer_port,
-			KIRCTransfer::Type type,
+			Transfer::Type type,
 			QObject *parent = 0L, const char *name = 0L );
 
-	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
-			KIRCTransfer::Type type,
+	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+			Transfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 
-	KIRCTransfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
+	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			QHostAddress peer_address, Q_UINT16 peer_port,
-			KIRCTransfer::Type type,
+			Transfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 /*
@@ -89,11 +88,11 @@ public:
 		Q_UINT32		fileSize
 	for detemining the file propeties.
 *//*
-	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
-			KIRCTransfer::Type type, QVariant properties,
+	Transfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+			Transfer::Type type, QVariant properties,
 			QObject *parent = 0L, const char *name = 0L );
 */
-	~KIRCTransfer();
+	~Transfer();
 
 	KIRC::Engine *engine() const
 		{ return m_engine; }
@@ -187,7 +186,6 @@ protected:
 	Q_UINT32	m_sentBytesLimit;
 };
 
+};
+
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
-

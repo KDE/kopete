@@ -164,7 +164,7 @@ public:
 	/* CTCP commands */
 	void CtcpRequestCommand(const QString &contact, const QString &command);
 	void CtcpRequest_action(const QString &contact, const QString &message);
-	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRCTransfer::Type type);
+	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRC::Transfer::Type type);
 	void CtcpRequest_pingPong(const QString &target);
 	void CtcpRequest_version(const QString &target);
 
@@ -247,7 +247,7 @@ signals:
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &channel, const QString &originating, const QString &message);
-	void incomingPrivAction(const QString &target, const QString &originating, const QString &message);
+	void incomingPrivAction(const QString &target, const QString &originating, const QString &message); // FIXME: Remove this, use generic incomingAction instead.
 	void incomingUserModeChange(const QString &nick, const QString &mode);
 
 	//Response Signals

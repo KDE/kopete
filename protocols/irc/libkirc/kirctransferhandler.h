@@ -28,25 +28,28 @@ class QTextCodec;
 
 class KExtendedSocket;
 
-class KIRCTransferHandler
+namespace KIRC
+{
+
+class TransferHandler
 	: public QObject
 {
 	Q_OBJECT
 
 public:
-	static KIRCTransferHandler *self();
+	static TransferHandler *self();
 
-	KIRCTransferServer *server();
-	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
+	TransferServer *server();
+	TransferServer *server( Q_UINT16 port, int backlog  = 1 );
 
-	KIRCTransferServer *createServer(KIRC::Engine *engine, QString m_userName,
-			KIRCTransfer::Type type,
+	TransferServer *createServer(KIRC::Engine *engine, QString m_userName,
+			Transfer::Type type,
 			QString fileName, Q_UINT32 fileSize);
 
-	KIRCTransfer *createClient(
+	Transfer *createClient(
 		KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 		QHostAddress peer_address, Q_UINT16 peer_port,
-		KIRCTransfer::Type type,
+		Transfer::Type type,
 		QString file = QString::null, Q_UINT32 fileSize = 0 );
 
 //	void registerServer( DCCServer * );
@@ -60,17 +63,17 @@ public:
 //	void unregisterClient( DCCClient * );
 
 signals:
-	void transferServerCreated( KIRCTransferServer *server );
-	void transferCreated( KIRCTransfer *transfer );
+	void transferServerCreated(KIRC::TransferServer *server);
+	void transferCreated(KIRC::Transfer *transfer);
 
 private:
-//	KIRCTransferHandler();
+//	TransferHandler();
 
-	KIRCTransferServer *m_server;
-//	QPtrList<KIRCTransferServer> m_servers;
-//	QPtrList<KIRCTransfer> m_clients;
+	TransferServer *m_server;
+//	QPtrList<TransferServer> m_servers;
+//	QPtrList<Transfer> m_clients;
+};
+
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:

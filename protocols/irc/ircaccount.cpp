@@ -659,7 +659,7 @@ void IRCAccount::slotJoinChannel()
 
 		if( !chan.isNull() )
 		{
-			if( KIRCEntity::isChannel( chan ) )
+			if( KIRC::Entity::isChannel( chan ) )
 				contactManager()->findChannel( chan )->startChat();
 			else
 				KMessageBox::error( Kopete::UI::Global::mainWidget(),

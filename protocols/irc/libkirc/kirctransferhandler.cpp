@@ -29,13 +29,13 @@
 
 using namespace KIRC;
 
-KIRCTransferHandler *KIRCTransferHandler::self()
+TransferHandler *TransferHandler::self()
 {
-	static KIRCTransferHandler sm_self;
+	static TransferHandler sm_self;
 	return &sm_self;
 }
 
-KIRCTransferServer *KIRCTransferHandler::server()
+TransferServer *TransferHandler::server()
 {
 	if( m_server )
 //		server( m_default_server_port, m_default_server_backlog );
@@ -43,33 +43,33 @@ KIRCTransferServer *KIRCTransferHandler::server()
 	return m_server;
 }
 
-KIRCTransferServer *KIRCTransferHandler::server( Q_UINT16 port, int backlog )
+TransferServer *TransferHandler::server( Q_UINT16 port, int backlog )
 {
 //	if( m_server )
 //		m_server->terminate();
-	KIRCTransferServer *m_server = new KIRCTransferServer( port, backlog, this );
+	TransferServer *m_server = new TransferServer( port, backlog, this );
 
 	// here connect the slots of the server
 
 	return m_server;
 }
 
-KIRCTransferServer *KIRCTransferHandler::createServer(Engine *engine, QString m_userName,
-		KIRCTransfer::Type type,
+TransferServer *TransferHandler::createServer(Engine *engine, QString m_userName,
+		Transfer::Type type,
 		QString fileName, Q_UINT32 fileSize)
 {
-	KIRCTransferServer *server = new KIRCTransferServer(engine, m_userName, type, fileName, fileSize, this);
+	TransferServer *server = new TransferServer(engine, m_userName, type, fileName, fileSize, this);
 	transferServerCreated(server);
 	return server;
 }
 
-KIRCTransfer *KIRCTransferHandler::createClient(
+Transfer *TransferHandler::createClient(
 	Engine *engine, QString nick,// QString nick_peer_adress,
 	QHostAddress peer_address, Q_UINT16 peer_port,
-	KIRCTransfer::Type type,
+	Transfer::Type type,
 	QString fileName, Q_UINT32 fileSize )
 {
-	KIRCTransfer *client = new KIRCTransfer(
+	Transfer *client = new Transfer(
 		engine, nick,// QString nick_peer_adress,
 		peer_address, peer_port,
 		type,

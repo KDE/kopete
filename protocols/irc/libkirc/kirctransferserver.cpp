@@ -25,7 +25,7 @@
 using namespace KIRC;
 
 /*
-KIRCTransferServer::KIRCTransferServer( QObject *parent, const char *name )
+TransferServer::TransferServer( QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_socket( 0 ),
 	  m_port( 0 ),
@@ -33,7 +33,7 @@ KIRCTransferServer::KIRCTransferServer( QObject *parent, const char *name )
 {
 }
 */
-KIRCTransferServer::KIRCTransferServer(Q_UINT16 port, int backlog, QObject *parent, const char *name)
+TransferServer::TransferServer(Q_UINT16 port, int backlog, QObject *parent, const char *name)
 	: QObject( parent, name ),
 	  m_socket( 0 ),
 	  m_port( port ),
@@ -41,8 +41,8 @@ KIRCTransferServer::KIRCTransferServer(Q_UINT16 port, int backlog, QObject *pare
 {
 }
 
-KIRCTransferServer::KIRCTransferServer(Engine *engine, QString nick,// QString nick_peer_adress,
-			KIRCTransfer::Type type,
+TransferServer::TransferServer(Engine *engine, QString nick,// QString nick_peer_adress,
+			Transfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent, const char *name)
 	: QObject( parent, name ),
@@ -58,18 +58,18 @@ KIRCTransferServer::KIRCTransferServer(Engine *engine, QString nick,// QString n
 	initServer();
 }
 
-KIRCTransferServer::~KIRCTransferServer()
+TransferServer::~TransferServer()
 {
 	if (m_socket)
 		delete m_socket;
 }
 
-bool KIRCTransferServer::initServer()
+bool TransferServer::initServer()
 {
 	if (!m_socket)
 	{
-		QObject::connect(this, SIGNAL(incomingNewTransfer(KIRCTransfer *)),
-				KIRCTransferHandler::self(), SIGNAL(transferCreated(KIRCTransfer *)));
+		QObject::connect(this, SIGNAL(incomingNewTransfer(Transfer *)),
+				TransferHandler::self(), SIGNAL(transferCreated(Transfer *)));
 
 		m_socket = new KExtendedSocket();
 
@@ -104,7 +104,7 @@ bool KIRCTransferServer::initServer()
 	return (m_socket->socketStatus() != KExtendedSocket::error);
 }
 
-bool KIRCTransferServer::initServer( Q_UINT16 port, int backlog )
+bool TransferServer::initServer( Q_UINT16 port, int backlog )
 {
 	if (m_socket)
 	{
@@ -114,17 +114,17 @@ bool KIRCTransferServer::initServer( Q_UINT16 port, int backlog )
 	return initServer();
 }
 
-void KIRCTransferServer::readyAccept()
+void TransferServer::readyAccept()
 {
 	KExtendedSocket *socket;
 	m_socket->accept( socket );
-	KIRCTransfer *transfer = new KIRCTransfer(m_engine, m_nick, m_type, m_fileName, m_fileSize);
+	Transfer *transfer = new Transfer(m_engine, m_nick, m_type, m_fileName, m_fileSize);
 	transfer->setSocket(socket);
 	transfer->initiate();
 	emit incomingNewTransfer(transfer);
 }
 
-void KIRCTransferServer::connectionFailed(int error)
+void TransferServer::connectionFailed(int error)
 {
 	if (error!=0)
 	{
@@ -133,7 +133,7 @@ void KIRCTransferServer::connectionFailed(int error)
 	}
 }
 /*
-void KIRCTransfer::initClient()
+void Transfer::initClient()
 {
 	if(!m_socket)
 	{
@@ -152,5 +152,3 @@ void KIRCTransfer::initClient()
 }
 */
 #include "kirctransferserver.moc"
-
-// vim: set noet ts=4 sts=4 sw=4:

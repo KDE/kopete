@@ -67,7 +67,7 @@ void Engine::CtcpRequest_action(const QString &contact, const QString &message)
 	{
 		writeCtcpQueryMessage(contact, QString::null, "ACTION", message );
 
-		if( KIRCEntity::isChannel(contact) )
+		if( Entity::isChannel(contact) )
 			emit incomingAction(contact, m_Nickname, message);
 		else
 			emit incomingPrivAction(m_Nickname, contact, message);
@@ -112,16 +112,16 @@ bool Engine::CtcpQuery_clientInfo(const Message &msg)
 	return true;
 }
 
-void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, KIRCTransfer::Type type)
+void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, Transfer::Type type)
 {
 	if(	m_status != Connected ||
 		m_sock->localAddress() == 0 ||
 		m_sock->localAddress()->nodeName() == QString::null)
 		return;
 
-	switch( type )
+	switch(type)
 	{
-		case KIRCTransfer::Chat:
+		case Transfer::Chat:
 		{
 			writeCtcpQueryMessage(nickname, QString::null,
 				QString::fromLatin1("DCC"),
@@ -132,14 +132,14 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 			break;
 		}
 
-		case KIRCTransfer::FileOutgoing:
+		case Transfer::FileOutgoing:
 		{
 			QFileInfo file(fileName);
 			QString noWhiteSpace = file.fileName();
 			if (noWhiteSpace.contains(' ') > 0)
 				noWhiteSpace.replace(QRegExp("\\s+"), "_");
 
-			KIRCTransferServer *server = KIRCTransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
+			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 			QString ip = m_sock->localAddress()->nodeName();
 			QRegExp reg("^(\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})$");
@@ -165,8 +165,8 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 			break;
 		}
 
-		case KIRCTransfer::FileIncoming:
-		case KIRCTransfer::Unknown:
+		case Transfer::FileIncoming:
+		case Transfer::Unknown:
 		default:
 			break;
 	}
@@ -194,10 +194,10 @@ bool Engine::CtcpQuery_dcc(const Message &msg)
 		if (okayHost && okayPort)
 		{
 			kdDebug(14120) << "Starting DCC chat window." << endl;
-			KIRCTransferHandler::self()->createClient(
+			TransferHandler::self()->createClient(
 				this, msg.nickFromPrefix(),
 				address, port,
-				KIRCTransfer::Chat );
+				Transfer::Chat );
 			return true;
 		}
 	}
@@ -220,10 +220,10 @@ bool Engine::CtcpQuery_dcc(const Message &msg)
 		if (okayHost && okayPort && okaySize)
 		{
 			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
-			KIRCTransferHandler::self()->createClient(
+			TransferHandler::self()->createClient(
 				this, msg.nickFromPrefix(),
 				address, port,
-				KIRCTransfer::FileIncoming,
+				Transfer::FileIncoming,
 				ctcpMsg.arg(1), size );
 			return true;
 		}
@@ -261,7 +261,7 @@ void Engine::CtcpRequest_pingPong(const QString &target)
 	{
 		QString timeReply;
 
-		if( KIRCEntity::isChannel(target) )
+		if( Entity::isChannel(target) )
 			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
 		else
 		 	timeReply = QString::number( time.tv_sec );

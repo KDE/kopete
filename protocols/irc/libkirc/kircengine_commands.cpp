@@ -207,7 +207,7 @@ bool Engine::modeChange(const Message &msg)
 	 */
 	QStringList args = msg.args();
 	args.pop_front();
-	if( KIRCEntity::isChannel( msg.arg(0) ) )
+	if( Entity::isChannel( msg.arg(0) ) )
 		emit incomingChannelModeChange( msg.arg(0), msg.nickFromPrefix(), args.join(" "));
 	else
 		emit incomingUserModeChange( msg.nickFromPrefix(), args.join(" "));
@@ -268,7 +268,7 @@ bool Engine::privateMessage(const Message &msg)
 		QString user = m.arg(0);
 		QString message = m.suffix();
 
-		if( KIRCEntity::isChannel(user) )
+		if( Entity::isChannel(user) )
 			emit incomingMessage(msg.nickFromPrefix(), msg.arg(0), message );
 		else
 			emit incomingPrivMessage(msg.nickFromPrefix(), msg.arg(0), message );

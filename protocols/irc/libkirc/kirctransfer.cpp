@@ -26,9 +26,9 @@
 
 using namespace KIRC;
 
-KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
-				Type type,
-				QObject *parent, const char *name )
+Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
+			Type type,
+			QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
 	  m_type(type), m_socket(0),
@@ -38,10 +38,10 @@ KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_ad
 {
 }
 
-KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
-				KIRCTransfer::Type type,
-				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
-				QObject *parent, const char *name )
+Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
+			Transfer::Type type,
+			QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
+			QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
 	  m_type(type), m_socket(0),
@@ -51,11 +51,11 @@ KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_ad
 {
 }
 
-KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
-				QHostAddress hostAdress, Q_UINT16 port, // put this in a QVariant ?
-				KIRCTransfer::Type type,
-				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
-				QObject *parent, const char *name )
+Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
+			QHostAddress hostAdress, Q_UINT16 port, // put this in a QVariant ?
+			Transfer::Type type,
+			QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
+			QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
 	  m_type(type), m_socket(0),
@@ -66,8 +66,8 @@ KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_ad
 	setSocket(new KExtendedSocket(hostAdress.toString(), port));
 }
 /*
-KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_adress
-				KIRCTransfer::Type type, QVariant properties,
+Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
+				Transfer::Type type, QVariant properties,
 				QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
@@ -88,23 +88,23 @@ KIRCTransfer::KIRCTransfer(	Engine *engine, QString nick,// QString nick_peer_ad
 		this, SLOT(closeSocket()));
 }
 */
-KIRCTransfer::~KIRCTransfer()
+Transfer::~Transfer()
 {
 	closeSocket();
 	// m_file is automatically closed on destroy.
 }
 
-KIRCTransfer::Status KIRCTransfer::status() const
+Transfer::Status Transfer::status() const
 {
 	if(m_socket)
 	{
-//		return (KIRCTransfer::Status)m_socket->socketStatus();
+//		return (Transfer::Status)m_socket->socketStatus();
 		return Connected;
 	}
 	return Error_NoSocket;
 }
 
-void KIRCTransfer::slotError( int error )
+void Transfer::slotError( int error )
 {
 	// Connection in progress.. This is a signal fired wrong
 	if (m_socket->socketStatus () != KExtendedSocket::connecting)
@@ -114,7 +114,7 @@ void KIRCTransfer::slotError( int error )
 	}
 }
 
-bool KIRCTransfer::initiate()
+bool Transfer::initiate()
 {
 	QTimer *timer = 0;
 
@@ -197,7 +197,7 @@ bool KIRCTransfer::initiate()
 	return true;
 }
 
-bool KIRCTransfer::setSocket( KExtendedSocket *socket )
+bool Transfer::setSocket( KExtendedSocket *socket )
 {
 	if (!m_socket)
 	{
@@ -209,7 +209,7 @@ bool KIRCTransfer::setSocket( KExtendedSocket *socket )
 	return false;
 }
 
-void KIRCTransfer::closeSocket()
+void Transfer::closeSocket()
 {
 	if(m_socket)
 	{
@@ -224,7 +224,7 @@ void KIRCTransfer::closeSocket()
  * This slot ensure that all the stream are flushed.
  * This slot is called periodically internaly.
  */
- void KIRCTransfer::flush()
+ void Transfer::flush()
 {
 	/*
 	 * Enure the incoming file content in case of a crash.
@@ -240,12 +240,12 @@ void KIRCTransfer::closeSocket()
 		m_socket->flush();
 }
 
-void KIRCTransfer::userAbort(QString msg)
+void Transfer::userAbort(QString msg)
 {
 	emit abort(msg);
 }
 
-void KIRCTransfer::setCodec( QTextCodec *codec )
+void Transfer::setCodec( QTextCodec *codec )
 {
 	switch( m_type )
 	{
@@ -258,7 +258,7 @@ void KIRCTransfer::setCodec( QTextCodec *codec )
 	}
 }
 
-void KIRCTransfer::writeLine( const QString &line )
+void Transfer::writeLine( const QString &line )
 {
 	switch( m_type )
 	{
@@ -271,7 +271,7 @@ void KIRCTransfer::writeLine( const QString &line )
 	}
 }
 
-void KIRCTransfer::readyReadLine()
+void Transfer::readyReadLine()
 {
 	if( m_socket->canReadLine() )
 	{
@@ -280,7 +280,7 @@ void KIRCTransfer::readyReadLine()
 	}
 }
 
-void KIRCTransfer::readyReadFileIncoming()
+void Transfer::readyReadFileIncoming()
 {
 	kdDebug(14121) << k_funcinfo << endl;
 
@@ -305,7 +305,7 @@ void KIRCTransfer::readyReadFileIncoming()
 		abort("Error while reading socket.");
 }
 
-void KIRCTransfer::readyReadFileOutgoing()
+void Transfer::readyReadFileOutgoing()
 {
 	kdDebug(14121) << k_funcinfo << "Available bytes:" << m_socket->bytesAvailable() << endl;
 
@@ -325,7 +325,7 @@ void KIRCTransfer::readyReadFileOutgoing()
 	}
 }
 
-void KIRCTransfer::writeFileOutgoing()
+void Transfer::writeFileOutgoing()
 {
 	kdDebug(14121) << k_funcinfo << endl;
 
@@ -348,7 +348,7 @@ void KIRCTransfer::writeFileOutgoing()
 	}
 }
 
-void KIRCTransfer::checkFileTransferEnd(Q_UINT32 fileSizeAck)
+void Transfer::checkFileTransferEnd(Q_UINT32 fileSizeAck)
 {
 	kdDebug(14121) << k_funcinfo << "Acknowledged:" << fileSizeAck << endl;
 
@@ -363,5 +363,3 @@ void KIRCTransfer::checkFileTransferEnd(Q_UINT32 fileSizeAck)
 }
 
 #include "kirctransfer.moc"
-
-// vim: set noet ts=4 sts=4 sw=4:

@@ -18,7 +18,7 @@
 #ifndef KIRCMESSAGE_H
 #define KIRCMESSAGE_H
 
-#include "kircentity.h" // Don't remove this prefix should/could(MUST?) be returned as a KIRCEntity
+#include "kircentity.h"
 
 #include <kbufferedio.h>
 
@@ -62,7 +62,7 @@ public:
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
 
 	inline const QString nickFromPrefix() const
-		{ return KIRCEntity::userNick(m_prefix); }
+		{ return KIRC::Entity::userNick(m_prefix); }
 
 	QString toString() const;
 

@@ -18,14 +18,17 @@
 #ifndef KIRCENTITY_H
 #define KIRCENTITY_H
 
+#include <kdeversion.h>
+#include <kresolver.h>
+
 #include <qobject.h>
 #include <qregexp.h>
 #include <qstring.h>
 
-#include <kdeversion.h>
-#include <kresolver.h>
+namespace KIRC
+{
 
-class KIRCEntity
+class Entity
 	: public QObject
 {
 	Q_OBJECT
@@ -41,7 +44,7 @@ public:
 	};
 */
 
-	KIRCEntity( const QString &name )
+	Entity( const QString &name )
 		: m_name(name)
 		{  }
 
@@ -96,6 +99,8 @@ private:
 	// peer ip address if the entity is a User.
 	QString m_address;
 	KNetwork::KResolver *m_resolver;
+};
+
 };
 
 #endif

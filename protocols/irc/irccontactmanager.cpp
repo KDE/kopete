@@ -15,26 +15,25 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-
-#include <kconfig.h>
-#include <kstandarddirs.h>
-
-#include <kopeteaccountmanager.h>
-#include <kopetemetacontact.h>
-#include <kopeteview.h>
-
-#include "kircengine.h"
-
 #include "ircaccount.h"
+#include "irccontactmanager.h"
 #include "ircprotocol.h"
+#include "ircsignalhandler.h"
 
 #include "ircservercontact.h"
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 
-#include "irccontactmanager.h"
-#include "ircsignalhandler.h"
+#include "kircengine.h"
+
+#include <kopeteaccountmanager.h>
+#include <kopetemetacontact.h>
+#include <kopeteview.h>
+
+#include <kconfig.h>
+#include <kstandarddirs.h>
+
+#include <qtimer.h>
 
 IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *account, const char *name)
 	: QObject(account, name),
@@ -181,7 +180,7 @@ IRCUserContact *IRCContactManager::existUser( const QString &user ) const
 
 IRCContact *IRCContactManager::findContact( const QString &id, Kopete::MetaContact *m )
 {
-	if( KIRCEntity::isChannel(id) )
+	if( KIRC::Entity::isChannel(id) )
 		return findChannel( id, m );
 	else
 		return findUser( id, m );
@@ -202,7 +201,7 @@ IRCContact *IRCContactManager::existContact( const KIRC::Engine *engine, const Q
 
 IRCContact *IRCContactManager::existContact( const QString &id ) const
 {
-	if( KIRCEntity::isChannel(id) )
+	if( KIRC::Entity::isChannel(id) )
 		return existChannel( id );
 	else
 		return existUser( id );

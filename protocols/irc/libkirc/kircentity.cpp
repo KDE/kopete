@@ -15,24 +15,24 @@
     *************************************************************************
 */
 
+#include "kircentity.h"
 
 #include <kdebug.h>
 
-#include "kircentity.h"
-
+using namespace KIRC;
 using namespace KNetwork;
 
-const QRegExp KIRCEntity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
-const QRegExp KIRCEntity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
+const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
+const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 
-QString KIRCEntity::userInfo(const QString &s, int num)
+QString Entity::userInfo(const QString &s, int num)
 {
 	QRegExp userRegExp(sm_userRegExp);
 	userRegExp.search(s);
 	return userRegExp.cap(num);
 }
 
-KResolverResults KIRCEntity::resolve(bool *success)
+KResolverResults Entity::resolve(bool *success)
 {
 	resolveAsync();
 
@@ -42,7 +42,7 @@ KResolverResults KIRCEntity::resolve(bool *success)
 	return resolver->results();
 }
 
-void KIRCEntity::resolveAsync()
+void Entity::resolveAsync()
 {
 	KResolver *resolver = getResolver();
 	switch(resolver->status())
@@ -58,7 +58,7 @@ void KIRCEntity::resolveAsync()
 	}
 }
 
-KResolver *KIRCEntity::getResolver()
+KResolver *Entity::getResolver()
 {
 	if (!m_resolver)
 	{
