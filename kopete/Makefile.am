@@ -32,8 +32,8 @@ kopete_LDADD = \
 icondir = $(kde_datadir)/kopete/pics
 icon_DATA =
 
-datadir = $(kde_datadir)/kopete
-data_DATA = kopeteui.rc eventsrc
+mydatadir = $(kde_datadir)/kopete
+mydata_DATA = kopeteui.rc eventsrc
 
 # this is where the desktop file will go
 desktopdir   = $(kde_appsdir)/Internet

@@ -10,6 +10,6 @@ kopete_webpresence_la_LIBADD      = ../../libkopete/libkopete.la $(LIBXML_LIBS) 
 service_DATA = webpresence.desktop
 servicedir = $(kde_servicesdir)
 
-data_DATA = webpresencedefault.xsl wpimages.xsl
-datadir = $(kde_datadir)/kopete/webpresence
-EXTRA_DIST = $(data_DATA)
+mydata_DATA = webpresencedefault.xsl wpimages.xsl
+mydatadir = $(kde_datadir)/kopete/webpresence
+EXTRA_DIST = $(mydata_DATA)

@@ -1,4 +1,4 @@
-data_DATA = MSN.xsl XChat.xsl Kopete.xsl
-datadir = $(kde_datadir)/kopete/styles
+mydata_DATA = MSN.xsl XChat.xsl Kopete.xsl
+mydatadir = $(kde_datadir)/kopete/styles
 
-EXTRA_DIST = $(data_DATA)
+EXTRA_DIST = $(mydata_DATA)

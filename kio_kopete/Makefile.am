@@ -10,8 +10,7 @@ kio_kopete_la_LDFLAGS = $(all_libraries) $(KDE_RPATH) -module $(KDE_PLUGIN)
 
 kio_kopete_la_LIBADD = $(LIB_KIO)
 
-datadir = $(kde_servicesdir)
-data_DATA = kopete.protocol
+kde_services_DATA = kopete.protocol
 
 #check_PROGRAMS = linktest
 #linktest_SOURCES = $(kio_kopete_la_SOURCES) linktest.cpp
