@@ -58,11 +58,11 @@ void KopetePrefs::load()
 	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
 	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
 	mBalloonNotify = config->readBoolEntry("Balloon Notification", true);
-	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", false);
+	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", true);
 	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
 	mTransparencyEnabled = config->readBoolEntry("ChatView Transparency Enabled", false);
 	mTransparencyValue = config->readNumEntry("ChatView Transparency Value", 50);
-	mNotifyAway = config->readBoolEntry("Notification Away", true);
+	mNotifyAway = config->readBoolEntry("Notification Away", false);
 	mRichText = config->readBoolEntry("RichText editor", false);
 
 	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
