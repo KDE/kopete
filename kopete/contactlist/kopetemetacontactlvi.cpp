@@ -31,12 +31,15 @@
 #include <kiconeffect.h>
 
 #include "kopetecontactlistview.h"
+#include "kopeteaccountmanager.h"
 #include "kopetemetacontactlvi.h"
 #include "kopetegroupviewitem.h"
 #include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "addcontactpage.h"
 #include "pluginloader.h"
+#include "kopeteaccount.h"
 #include "kopeteprefs.h"
 
 #include <kdeversion.h>
@@ -86,9 +89,7 @@ void KopeteMetaContactLVI::initLVI()
 
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
-	m_actionAddContact = 0L;
 
-	m_addContactPage=0L;
 
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
@@ -220,8 +221,21 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 	KAction *m_actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemoveThisUser() ), popup, "m_actionRemove" );
 	KAction *m_actionRename = new KAction( i18n( "Rename Contact" ), "filesaveas", 0,
 			this, SLOT( slotRename() ), popup, "m_actionRename" );
-	if(!m_actionAddContact)
-		m_actionAddContact = KopeteStdAction::addContact( this, SLOT( slotAddContact() ), this, "m_actionAddContact" );
+
+
+	KActionMenu *m_actionAddContact= new KActionMenu( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), popup );
+
+	m_actionAddContact->popupMenu()->insertTitle(i18n("Select an account"));
+	m_addContactActions.clear();
+
+	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
+	for( KopeteAccount *a = accounts.first() ; a ; a = accounts.next() )
+	{
+		KAction *aa=new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , this, SLOT( slotAddContact() ) , m_actionAddContact);
+		m_actionAddContact->insert(aa);
+		m_addContactActions.insert(aa,a);
+	}
+
 	KAction *m_actionAddTemporaryContact = new KAction( i18n( "Add to your contact list" ), "bookmark_add", 0,
 		this, SLOT( slotAddTemoraryContact() ), popup, "m_actionAddTemporaryContact" );
 
@@ -239,7 +253,6 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 		m_actionMove->setCurrentItem( -1 );
 		m_actionCopy->setCurrentItem( -1 );
 	}
-	m_actionAddContact->setCurrentItem( -1 );
 
 	// Plug all items in the menu
 	popup->insertSeparator();
@@ -446,31 +459,32 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 
 void KopeteMetaContactLVI::slotAddContact()
 {
-	if( m_actionAddContact && !m_metaContact->isTemporary())
+	QObject *s=sender();
+	KopeteAccount *account=m_addContactActions[s];
+	if( account && !m_metaContact->isTemporary())
 	{
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( m_actionAddContact->currentText() );
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>( tmpprot );
-		if(!prot)
-			kdDebug(14000) << "KopeteMetaContactLVI::slotAddContact : WARNING protocol not found" <<endl;
+		KDialogBase *addDialog= new KDialogBase( qApp->mainWidget(), "addDialog", true, i18n( "Add Contact" ),
+				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
+
+		addDialog->resize( 543, 379 );
+
+		AddContactPage *m_addContactPage = account->protocol()->createAddContactWidget(addDialog, account);
+		if (!m_addContactPage)
+		{
+			kdDebug(14000) << "KopeteMetaContactLVI::slotAddContact : error while creating addcontactpage" <<endl;
+		}
 		else
 		{
-			KDialogBase *addDialog= new KDialogBase( qApp->mainWidget(),
-				"addDialog", true, i18n( "Add Contact" ),
-				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
-			addDialog->resize( 543, 379 );
-
-			//FIXME: select an account and not a protocol to choose a contact. this may crash if the m_c is empty
-			m_addContactPage = prot->createAddContactWidget(addDialog, m_metaContact->contacts().first()->account());
-			if (!m_addContactPage)
-				kdDebug(14000) << "KopeteMetaContactLVI::slotAddContact : error while creating addcontactpage" <<endl;
-			else
+			addDialog->setMainWidget(m_addContactPage);
+			if(addDialog->exec() == QDialog::Accepted && m_addContactPage->validateData())
 			{
-				addDialog->setMainWidget(m_addContactPage);
-				connect( addDialog, SIGNAL( okClicked()) , this, SLOT( slotAddDialogOkClicked() ) );
-				addDialog->show();
+				m_addContactPage->apply(account , m_metaContact);
 			}
 		}
+		addDialog->deleteLater();
 	}
+	m_addContactActions.clear();
+
 }
 
 void KopeteMetaContactLVI::slotAddTemoraryContact()
@@ -577,19 +591,6 @@ KopeteContact *KopeteMetaContactLVI::getContactFromIcon( const QPoint &p )
 	return 0L;
 }
 
-void KopeteMetaContactLVI::slotAddDialogOkClicked()
-{
-	if( m_addContactPage )
-	{
-		kdDebug(14000) << k_funcinfo << "FIXME!!! CRASH! " << endl;
-		//FIXME: what is the account?
-		if(m_addContactPage->validateData())
-			m_addContactPage->apply(0L , m_metaContact);
-
-		delete m_addContactPage;
-		m_addContactPage=0L;
-	}
-}
 
 KopeteGroup *KopeteMetaContactLVI::group()
 {

@@ -22,13 +22,15 @@
 
 #include <qobject.h>
 #include <qpixmap.h>
+#include <qptrdict.h>
 
 #include <klistview.h>
 
-#include "kopetemetacontact.h"
 
 class KAction;
 class KListAction;
+class KopeteAccount;
+class KopeteMetaContact;
 
 class AddContactPage;
 class KopeteContact;
@@ -126,14 +128,12 @@ private slots:
 	void slotAddToNewGroup();
 	void slotRename();
 	void slotIdleStateChanged();
-//	void slotViewHistory();
 
 	/**
 	 * maybe remove this and find a better way to check for pref-changes
 	 */
 	void slotConfigChanged();
 
-	void slotAddDialogOkClicked();
 	void slotEventDone(KopeteEvent* );
 	void slotBlink();
 
@@ -149,16 +149,6 @@ private:
 	KopeteMetaContact *m_metaContact;
 
 	// Used actions in the context menu
-/*	KAction* m_actionRemove;
-	KAction* m_actionRename;
-	KAction* m_actionRemoveFromGroup;
-	KAction* m_actionChat;
-	KAction* m_actionSendMessage;
-	KAction* m_actionInfo;
-	KAction* m_actionBlock;
-	KAction* m_actionHistory;
-	KAction* m_actionAddTemporaryContact;*/
-	KListAction* m_actionAddContact;
 	KListAction *m_actionMove;
 	KListAction *m_actionCopy;
 
@@ -166,14 +156,14 @@ private:
 	QListView *m_parentView;
 	bool m_isTopLevel;
 
-	AddContactPage *m_addContactPage;
-
 	int m_pixelWide;
 
 	KopeteEvent *m_event;
 	QTimer *mBlinkTimer;
 	QPixmap mBlinkIcon;
 	bool mIsBlinkIcon;
+
+	QPtrDict<KopeteAccount> m_addContactActions;
 };
 
 #endif
