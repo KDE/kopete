@@ -65,7 +65,7 @@ public:
 	/**
 	 * @brief Performs any processing necessary on the message
 	 *
-	 * @param e The message event to process. Should not be null.
+	 * @param event The message event to process. Should not be null.
 	 */
 	virtual void handleMessage( MessageEvent *event );
 
@@ -77,7 +77,14 @@ private:
 /**
  * @author Richard Smith       <kde@metafoo.co.uk>
  *
- * A factory for creating MessageHandlers.
+ * A factory for creating MessageHandlers. Instantiate a class derived from MessageHandlerFactory
+ * in order to make your MessageHandler be automatically added to the list of handlers used
+ * when constructing handler chains.
+ * 
+ * @note If you construct a handler for an Inbound chain, it may still be asked to process Outbound
+ * messages. This is because when a message is being sent it first passes through the Outbound
+ * chain to the protocol, then (when it has been delivered) it passes back through the Inbound
+ * chain to the chat window to be displayed.
  */
 class MessageHandlerFactory
 {
