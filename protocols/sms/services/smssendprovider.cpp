@@ -124,7 +124,7 @@ void SMSSendProvider::slotSendFinished(KProcess* p)
 	kdDebug() << "SMSSendProvider::slotSendFinished()" << endl;
 	if (p->exitStatus() == 0)
 	{
-		KMessageBox::informationList(0L, i18n("Message send"), output, i18n("Message send"));
+		KMessageBox::informationList(0L, i18n("Message sent"), output, i18n("Message sent"));
 
 		emit messageSent(m_msg);
 	}
@@ -167,6 +167,8 @@ void SMSSendProvider::slotOptionsFinished(KProcess* p)
 		}
 	}
 
+	optionsLoaded = true;
+
 	if ( !nameFound )
 	{
 		canSend = false;
@@ -184,7 +186,6 @@ void SMSSendProvider::slotOptionsFinished(KProcess* p)
 	}
 
 	canSend = true;
-	optionsLoaded = true;
 	kdDebug() << "SMSSendProvider::slotOptionsFinished()" << endl;
 
 	delete p;
