@@ -51,8 +51,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	UNK( KopeteOnlineStatus::Unknown, 25, this, 0, "status_unknown","FIXME: Make this unselectable", i18n( "Status not available" ) ),
 	CNT( KopeteOnlineStatus::Unknown,  2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) )
 {
-	kdDebug( 14140 ) << k_funcinfo << endl;
-
 	s_protocol = this;
 
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
@@ -84,8 +82,6 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	c->setInfo( "PHH" , serializedData[ "PHH" ] );
 	c->setInfo( "PHW" , serializedData[ "PHW" ] );
 	c->setInfo( "PHM" , serializedData[ "PHM" ] );
-
-	//kdDebug( 14140 ) << k_funcinfo << lists << " does it contains R ? : " << (bool)(lists.contains("R" )) << endl;
 
 	c->setBlocked(  (bool)(lists.contains('B')) );
 	c->setAllowed(  (bool)(lists.contains('A')) );

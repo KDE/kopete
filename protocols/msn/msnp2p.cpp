@@ -153,7 +153,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 		}
 		else
 		{
-			kdDebug(14140) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
+			kdDebug(14141) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
 
 			if(msg.data()[startBinHeader+48] == '\0' )
 			{  //This can be only the data preparaion message.   prepare to download
@@ -266,7 +266,7 @@ void MSNP2P::requestDisplayPicture( const QString &myHandle, const QString &msgH
 void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
 	if(m_sessionId == 0)
-		kdDebug(14140) << k_funcinfo << QCString(dataMessage.data() , dataMessage.size()) << endl;
+		kdDebug(14141) << k_funcinfo << QCString(dataMessage.data() , dataMessage.size()) << endl;
 
 	QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
@@ -454,13 +454,13 @@ void MSNP2P::slotSendData()
 	for (  int f = 0; f < bytesRead; f++ )
 		dataBA[f] = data[f];
 
-	kdDebug(14140) << "MSNP2P::slotSendData: offset="  << m_offset << "  size=" << bytesRead << "   totalSize=" << m_totalDataSize << "     sent=" << m_offset+bytesRead <<   endl;
+//	kdDebug(14140) << "MSNP2P::slotSendData: offset="  << m_offset << "  size=" << bytesRead << "   totalSize=" << m_totalDataSize << "     sent=" << m_offset+bytesRead <<   endl;
 
 	sendP2PMessage(dataBA);
 
 	if( m_totalDataSize == 0  ) //this has been reseted bacause the file is completely send
 	{
-		kdDebug(14140) << "MSNP2P::slotSendData: FINISHED! wait for the BYE message" <<   endl;
+//		kdDebug(14140) << "MSNP2P::slotSendData: FINISHED! wait for the BYE message" <<   endl;
 		delete m_Sfile;
 		m_Sfile=0L;
 		m_sessionId=0;
