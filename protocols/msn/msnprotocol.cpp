@@ -266,7 +266,7 @@ AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent)
 void MSNProtocol::initIcons()
 {
 	KIconLoader *loader = KGlobal::iconLoader();
-    KStandardDirs dir;
+	KStandardDirs dir;
 
 	onlineIcon = QPixmap(loader->loadIcon("msn_online", KIcon::User));
 	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
@@ -333,6 +333,7 @@ void MSNProtocol::slotGoOnline()
 	else
 		m_serviceSocket->setStatus( NLN );
 }
+
 void MSNProtocol::slotGoOffline()
 {
 	Disconnect();
@@ -732,7 +733,25 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 
 		if( status == FLN )
 		{
-			// TODO: Remove all users from the list!
+			// FIXME: Support multi-user chats, this code will surely break!
+			bool done;
+			do
+			{
+				done = true;
+				QPtrDictIterator<KMSNChatService> it( m_chatServices );
+				for( ; m_chatServices.count() && it.current(); ++it )
+				{
+					if( ( *it ).chatMembers().contains( handle ) )
+					{
+						kdDebug() << "MSNProtocol::slotContactStatusChanged: "
+							<< "Removing stale switchboard from offline user "
+							<< handle << endl;
+						delete m_chatServices.take( it.currentKey() );
+						done = false;
+						break;
+					}
+				}
+			} while( !done );
 		}
 	}
 }
@@ -955,23 +974,19 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
 			<< "session (Inbound)" << endl;
 		chatmembers.append( msg.from() );
-		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-			m_myself, chatmembers, this );
-
-		if( manager )
-			manager->appendMessage( msg );
 	}
 	else if ( msg.direction() == KopeteMessage::Outbound )
     {
 		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
 			<< "session (Outbound)" << endl;
 		chatmembers = msg.to();
-		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-			m_myself, chatmembers, this );
-		if( manager )
-			manager->appendMessage( msg );
 	}
-			
+
+	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
+		m_myself, chatmembers, this );
+
+	if( manager )
+		manager->appendMessage( msg );
 }
 
 void MSNProtocol::slotMessageSent( const KopeteMessage msg )
@@ -987,7 +1002,7 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 		service->slotSendMsg( msg );
 	else
 	{
-		kdDebug() << "WARNING: No chat service active for thse recipients!"
+		kdDebug() << "WARNING: No chat service active for these recipients!"
 			<< endl;
 	}
 }
@@ -1016,6 +1031,12 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
 			this, SLOT( slotMessageReceived( const KopeteMessage & ) ) );
+
+		// We may have a new KMM here, but it could just as well be an
+		// existing instance. To avoid connecting multiple times, try to
+		// disconnect the existing connection first
+		disconnect( manager, SIGNAL( messageSent( const KopeteMessage ) ),
+			this, SLOT( slotMessageSent( const KopeteMessage ) ) );
 		connect( manager, SIGNAL( messageSent( const KopeteMessage ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage ) ) );
 		manager->readMessages();
@@ -1038,9 +1059,15 @@ void MSNProtocol::slotStartChatSession( QString handle )
 			QString( "msn_logs/" + handle + ".log" ) );
 
 		if( m_chatServices.find( manager ) )
+		{
+			kdDebug() << "MSNProtocol::slotStartChatSession: "
+				<< "Reusing existing switchboard connection" << endl;
 			manager->readMessages();
+		}
 		else
 		{
+			kdDebug() << "MSNProtocol::slotStartChatSession: "
+				<< "Creating new switchboard connection" << endl;
 			m_msgHandle = handle;
 			m_serviceSocket->createChatSession();
 		}

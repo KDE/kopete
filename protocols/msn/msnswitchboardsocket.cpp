@@ -35,8 +35,9 @@ KMSNChatService::KMSNChatService()
 {
 	socketTimer = 0L;
 }
-KMSNChatService::~KMSNChatService(){
-	
+
+KMSNChatService::~KMSNChatService()
+{
 }
 
 void KMSNChatService::connectToSwitchBoard(QString ID, QString address, QString auth)
@@ -189,20 +190,24 @@ redo:
 			{
 				// new user joins the chat, update user in chat list
 				emit switchBoardIsActive(true);
-				emit updateChatMember(kstr.word(str,1),"JOI",false);
+				QString handle = kstr.word( str, 1 );
+				emit updateChatMember( handle, "JOI", false );
+
+				if( !m_chatMembers.contains( handle ) )
+					m_chatMembers.append( handle );
 			}
 			if(str.left(3) == "IRO")
 			{
 				// we have joined a multi chat session- this are the users in this chat
 				emit switchBoardIsActive(true);
-				if(kstr.word(str,2) == kstr.word(str,3) )
-				{
-					emit updateChatMember(kstr.word(str,4),"IRO",true);
-				}
+				QString handle = kstr.word( str, 4 );
+				if( !m_chatMembers.contains( handle ) )
+					m_chatMembers.append( handle );
+
+				if( kstr.word( str, 2 ) == kstr.word( str, 3 ) )
+					emit updateChatMember( handle, "IRO", true );
 				else
-				{
-					emit updateChatMember(kstr.word(str,4),"IRO",false);
-				}
+					emit updateChatMember( handle, "IRO", false );
 			}
 			if(str.left(3) == "USR")
 			{
@@ -211,7 +216,12 @@ redo:
 			if(str.left(3) == "BYE")
 			{
 				// some has disconnect from chat, update user in chat list
-				emit updateChatMember(kstr.word(str,1).replace(QRegExp("\r\n"),""),"BYE",false);
+				QString handle = kstr.word( str, 1 ).replace(
+					QRegExp( "\r\n" ), "" );
+
+				emit updateChatMember( handle, "BYE", false );
+				if( m_chatMembers.contains( handle ) )
+					m_chatMembers.remove( handle );
 			}
 			if(str.left(3) == "MSG")
 			{
@@ -373,7 +383,8 @@ void KMSNChatService::sendCommand( const QString &cmd, const QString &args,
 	if( addNewLine )
 		data += "\r\n";
 
-	kdDebug() << "KMSNChatService::sendCommand: Sending command " << data;
+	kdDebug() << "KMSNChatService::sendCommand: Sending command " << data
+		<< endl;
 
 	msgSocket->writeBlock( data, data.length() );
 
@@ -419,3 +430,6 @@ QString KMSNChatService::parseFontAttr(QString str, QString attr)
 }
 
 #include "kmsnchatservice.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

@@ -15,26 +15,26 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #ifndef KMSNCHATSERVICE_H
 #define KMSNCHATSERVICE_H
 
 #include <qobject.h>
-#include <kstringhandler.h>
 #include <qstrlist.h>
 
-
-/**
-  *@author Olaf Lueg
-  */
+#include <kstringhandler.h>
 
 class QSocket;
 class KExtendedSocket;
 class KopeteMessage;
 
-class KMSNChatService : public QObject  {
-Q_OBJECT
-public: 
+/**
+ * @author Olaf Lueg
+ */
+class KMSNChatService : public QObject
+{
+	Q_OBJECT
+
+public:
 	KMSNChatService();
 	~KMSNChatService();
 	KExtendedSocket *msgSocket;
@@ -46,17 +46,21 @@ public:
 protected:
 	QString myHandle;
 	QString buffer;
-// functions
+
+	// functions
 	QString readLine();
 	bool canReadLine();
 	QString readBlock(uint len);
 	void timerEvent(QTimerEvent *ev);
 	QString parseFontAttr(QString str, QString attr);
+
 public:
 	void connectToSwitchBoard(QString ID, QString address, QString auth);
 	void callUser();
 	void setHandle(QString handle){myHandle = handle;}
-// slots
+
+	const QStringList &chatMembers() { return m_chatMembers; }
+
 public slots:
 	void slotDataReceived();
 	void slotSendMsg( const KopeteMessage &msg );
@@ -64,18 +68,16 @@ public slots:
 	void slotCloseSession();
 	void slotInviteContact(QString handle);
 	void slotTypingMsg();
-  /** No descriptions */
 
-// signals	
 signals:
-  	void msgReceived( const KopeteMessage &msg );
+	void msgReceived( const KopeteMessage &msg );
 	void startChat(KMSNChatService* switchoard);
-  	void userTypingMsg(QString);
-  	void msgAcknowledgement(bool);
-  	void userInChat(QString);
-  	void chatWith(QString,bool);
-  	void switchBoardIsActive(bool);
-  	void updateChatMember(QString,QString,bool);
+	void userTypingMsg(QString);
+	void msgAcknowledgement(bool);
+	void userInChat(QString);
+	void chatWith(QString,bool);
+	void switchBoardIsActive(bool);
+	void updateChatMember(QString,QString,bool);
 
 private:
 	uint m_id;
@@ -85,6 +87,11 @@ private:
 	 */
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addNewLine = true );
+
+	QStringList m_chatMembers;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
