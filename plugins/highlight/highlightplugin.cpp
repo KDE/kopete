@@ -23,6 +23,7 @@
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
+#include <knotifyclient.h>
 
 
 #include "kopetemessagemanagerfactory.h"
@@ -34,7 +35,7 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_highlight, KGenericFactory<HighlightPlugin> );
 
-HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStringList &/*args*/ ) :  KopetePlugin( parent, name ) 
+HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStringList &/*args*/ ) :  KopetePlugin( parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
@@ -65,22 +66,12 @@ HighlightPlugin* HighlightPlugin::plugin()
 HighlightPlugin* HighlightPlugin::pluginStatic_ = 0L;
 
 
-
-/*KActionCollection *HighlightPlugin::customContextMenuActions(KopeteMetaContact *m)
-{
-	delete m_collection;
-
-	m_collection = new KActionCollection(this);
-
-	KAction *action=new KAction( i18n("&Select Highlight Public Key"), "kgpg", 0, this, SLOT (slotSelectContactKey()), m_collection);
-
-	m_collection->insert(action);
-	m_currentMetaContact=m;
-	return m_collection;
-}*/
-
 void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
+	if(msg.direction() != KopeteMessage::Inbound)
+		return;	// FIXME: highlighted internal/actions messages are not showed correctly in the chat window (bad style)
+				//  but they should maybe be highlinghted if needed
+
 	for(Filter *f=m_filters.first() ; f; f=m_filters.next() )
 	{
 		if(f->isRegExp ?
@@ -93,6 +84,8 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 				msg.setFg(f->FG);
 			if(f->setImportance)
 				msg.setImportance((KopeteMessage::MessageImportance)f->importance);
+			if(f->playSound)
+				KNotifyClient::userEvent (QString::null, KNotifyClient::Sound, KNotifyClient::Default, f->soundFN );
 
 			break; //uh?
 		}
@@ -145,10 +138,10 @@ void HighlightPlugin::save()
 		for( ; filtreIt.current(); ++filtreIt )
 		{
 			Filter *filtre = *filtreIt;
-			xml += QString::fromLatin1( "  <filter>\n    <display-name>" ) 
+			xml += QString::fromLatin1( "  <filter>\n    <display-name>" )
 				+ QStyleSheet::escape(filtre->displayName)
 				+ QString::fromLatin1( "</display-name>\n" );
-				
+
 			xml += QString::fromLatin1("    <search caseSensitive=\"") + QString::number( static_cast<int>( filtre->caseSensitive ) ) +
 				QString::fromLatin1("\" regExp=\"") + QString::number( static_cast<int>( filtre->isRegExp ) ) +
 				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
@@ -160,18 +153,18 @@ void HighlightPlugin::save()
 
 			xml += QString::fromLatin1("    <importance set=\"") + QString::number( static_cast<int>( filtre->setImportance ) ) +
 				QString::fromLatin1( "\">" ) + QString::number( filtre->importance ) + QString::fromLatin1( "</importance>\n" );
-				
+
 			xml += QString::fromLatin1("    <sound set=\"") + QString::number( static_cast<int>( filtre->playSound ) ) +
 				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
-			
+
 			xml += QString::fromLatin1( "  </filter>\n" );
 		}
-	
+
 		xml += QString::fromLatin1( "</highlight-plugin>\n" );
 
 		*stream << xml;
 	}
-	
+
 }
 
 void HighlightPlugin::load()
@@ -194,11 +187,11 @@ void HighlightPlugin::load()
 		QDomElement element = node.toElement();
 		if( !element.isNull() )
 		{
-//			if( element.tagName() == QString::fromLatin1("filter") 
+//			if( element.tagName() == QString::fromLatin1("filter")
 //			{
 				Filter *filtre=newFilter();
 				QDomNode filterNode = node.firstChild();
-				
+
 				while( !filterNode.isNull() )
 				{
 					QDomElement filterElement = filterNode.toElement();

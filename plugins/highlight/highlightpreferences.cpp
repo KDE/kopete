@@ -23,18 +23,16 @@
 #include <kparts/componentfactory.h>
 #include <klocale.h>
 #include <klistview.h>
-#include <kcolorcombo.h>
+//#include <kcolorcombo.h>
+#include <kcolorbutton.h>
 #include <klineeditdlg.h>
 #include <kurlrequester.h>
 #include <kregexpeditorinterface.h>
-
 
 #include "filter.h"
 #include "highlightplugin.h"
 #include "highlightprefsbase.h"
 #include "highlightpreferences.h"
-
-
 
 
 HighlightPreferences::HighlightPreferences(const QString &pixmap,QObject *parent)
@@ -58,10 +56,11 @@ HighlightPreferences::HighlightPreferences(const QString &pixmap,QObject *parent
 	connect(preferencesDialog->m_setFG , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_sound , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog->m_soundFN , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_importance , SIGNAL(activated(int)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog->m_FG , SIGNAL(activated(int)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog->m_BG , SIGNAL(activated(int)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog->m_FG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog->m_BG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
 
 	reopen();
 	donttouch=false;
@@ -127,7 +126,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_setFG->setEnabled(true);
 	preferencesDialog->m_sound->setEnabled(true);
 
-	
+
 	preferencesDialog->m_search->setText(current->search);
 	preferencesDialog->m_case->setChecked(current->caseSensitive);
 	preferencesDialog->m_regexp->setChecked(current->isRegExp);
@@ -144,8 +143,8 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_soundFN->setURL(current->soundFN);
 	preferencesDialog->m_sound->setChecked(current->playSound);
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
-	
-	
+
+
 	donttouch=false;
 }
 
@@ -166,7 +165,7 @@ void HighlightPreferences::slotRemoveFilter()
 	Filter *current=m_filterItems[lvi];
 	if(!current)
 		return;
-	
+
 	m_filterItems.remove(lvi);
 	delete lvi;
 	HighlightPlugin::plugin()->removeFilter(current);
@@ -180,7 +179,7 @@ void HighlightPreferences::slotRenameFilter()
 	Filter *current=m_filterItems[lvi];
 	if(!current)
 		return;
-		
+
 	bool ok;
 	QString newname = KLineEditDlg::getText(
 		i18n( "Rename Filter" ), i18n( "Please enter the new name for the filter:" ), current->displayName, &ok );
@@ -210,7 +209,7 @@ void HighlightPreferences::slotSomethingHasChanged()
 	current->FG=preferencesDialog->m_FG->color();
 	current->setFG=preferencesDialog->m_setFG->isChecked();
 	preferencesDialog->m_FG->setEnabled(current->setFG);
-//	current->soundFN=preferencesDialog->m_soundFN->URL();
+	current->soundFN=preferencesDialog->m_soundFN->url();
 	current->playSound=preferencesDialog->m_sound->isChecked();
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
 }
@@ -231,7 +230,7 @@ void HighlightPreferences::slotEditRegExp()
 		{
 			preferencesDialog->m_search->setText(editor->regExp());
 		}
-		
+
 	}
 	else
 	{

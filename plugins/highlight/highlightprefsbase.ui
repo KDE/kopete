@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>658</width>
-            <height>564</height>
+            <width>758</width>
+            <height>392</height>
         </rect>
     </property>
     <property name="caption">
@@ -165,30 +165,20 @@
                         <string>Change background color into </string>
                     </property>
                 </widget>
-                <widget class="KColorCombo" row="1" column="2">
+                <widget class="KColorButton" row="1" column="2">
                     <property name="name">
                         <cstring>m_BG</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="text">
+                        <string></string>
                     </property>
                 </widget>
-                <widget class="KColorCombo" row="2" column="2">
+                <widget class="KColorButton" row="2" column="2">
                     <property name="name">
                         <cstring>m_FG</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="text">
+                        <string></string>
                     </property>
                 </widget>
                 <widget class="KURLRequester" row="3" column="1" rowspan="1" colspan="2">
@@ -211,11 +201,22 @@
             <property name="sizeHint">
                 <size>
                     <width>31</width>
-                    <height>251</height>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QGroupBox" row="0" column="0" rowspan="3" colspan="1">
+        <widget class="QLabel" row="3" column="1">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>We recommand to disable the default highlightment of messages containing your nickname in "Behavior" -&gt; "Chat Appearance"</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="0" column="0" rowspan="4" colspan="1">
             <property name="name">
                 <cstring>groupBox1</cstring>
             </property>
@@ -234,7 +235,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QPushButton" row="2" column="0">
+                <widget class="QPushButton" row="1" column="0">
                     <property name="name">
                         <cstring>m_add</cstring>
                     </property>
@@ -242,7 +243,7 @@
                         <string>Add</string>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="2">
+                <widget class="QPushButton" row="1" column="1">
                     <property name="name">
                         <cstring>m_remove</cstring>
                     </property>
@@ -250,7 +251,7 @@
                         <string>Remove</string>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="2" column="3">
+                <widget class="QPushButton" row="1" column="2">
                     <property name="name">
                         <cstring>m_rename</cstring>
                     </property>
@@ -258,23 +259,7 @@
                         <string>Rename...</string>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="1" column="2" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_up</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Up</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_down</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Down</string>
-                    </property>
-                </widget>
-                <widget class="KListView" row="0" column="0" rowspan="1" colspan="4">
+                <widget class="KListView" row="0" column="0" rowspan="1" colspan="3">
                     <column>
                         <property name="text">
                             <string>Filters</string>
@@ -296,11 +281,10 @@
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>qwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
-    <includehint>kcolorcombo.h</includehint>
-    <includehint>kcolorcombo.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
