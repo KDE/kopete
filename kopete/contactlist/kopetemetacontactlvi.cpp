@@ -2,6 +2,7 @@
     kopetemetacontactlvi.cpp - Kopete Meta Contact KListViewItem
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
 
     Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
