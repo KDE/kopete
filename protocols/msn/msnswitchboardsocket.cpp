@@ -250,12 +250,12 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString fontInfo;
 			QString color;
 
-			rx=QRegExp("X-MMS-IM-Format: ([A-Za-z0-9$!*/;\\-]*)");
+			rx=QRegExp("X-MMS-IM-Format: ([^\r\n]*)");
 			rx.search(msg);
 			fontInfo =rx.cap(1);
 
 			color = parseFontAttr(fontInfo, "CO");
-
+			
 			// FIXME: this is so BAAAAAAAAAAAAD :(
 			if (!color.isEmpty() && color.toInt(0,16)!=0)
 			{
