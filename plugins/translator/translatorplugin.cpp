@@ -203,7 +203,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( (msg.direction() == KopeteMessage::Inbound) && ( !msg.body().isNull() ) )
+	if ( (msg.direction() == KopeteMessage::Inbound) && ( !msg.plainBody().isNull() ) )
 	{
 		KopeteMetaContact *from = msg.from()->metaContact();
 		if( !from )
@@ -235,7 +235,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 		{
 			if ( *i == src_lang + "_" + dst_lang )
 			{
-				sendTranslation(msg , translateMessage( msg.body() , src_lang, dst_lang));
+				sendTranslation(msg , translateMessage( msg.plainBody() , src_lang, dst_lang));
 				return;
 			}
 		}
@@ -259,7 +259,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.body().isNull() ) )
+	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.plainBody().isNull() ) )
 	{
 		src_lang = m_prefs->myLang();
 //		kdDebug(14308) << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
@@ -293,7 +293,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		{
 			if ( *i == src_lang + "_" + dst_lang )
 			{
-				sendTranslation(msg , translateMessage( msg.body() , src_lang, dst_lang));
+				sendTranslation(msg , translateMessage( msg.plainBody() , src_lang, dst_lang));
 				return;
 //				kdDebug(14308) << "[Translator] Outgoing, DONE" << endl;
 				return;
@@ -457,7 +457,7 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 			msg.setBody(translated, msg.format());
 			break;
 		case ShowOriginal:
-			msg.setBody(i18n("%2\nAuto Translated: %1").arg(translated).arg(msg.body()), msg.format());
+			msg.setBody(i18n("%2\nAuto Translated: %1").arg(translated).arg(msg.plainBody()), msg.format());
 			break;
 		case ShowDialog:
 		{
