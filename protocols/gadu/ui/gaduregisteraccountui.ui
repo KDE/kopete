@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>GaduRegisterAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,331 +8,297 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>342</width>
-            <height>318</height>
+            <width>337</width>
+            <height>368</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Register New Gadu-Gadu Account</string>
+        <string>Form1</string>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout13</cstring>
+                <cstring>layout47</cstring>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLayoutWidget">
+                <widget class="KLineEdit" row="3" column="1">
                     <property name="name">
-                        <cstring>layout10</cstring>
+                        <cstring>valuePasswordVerify</cstring>
                     </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout6</cstring>
-                            </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel2</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Email:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>kLineEdit1_2</cstring>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>Your E-mail address.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The E-mail address you would like to use to register this account.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel2_3</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Password:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>kLineEdit1_2</cstring>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The password you would like to use.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The password you would like to use for this account.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel1_2</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Repeat password:</string>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>A confirmation of the password you would like to use.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>A confirmation of the password you would like to use for this account.</string>
-                                    </property>
-                                </widget>
-                            </vbox>
-                        </widget>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout4</cstring>
-                            </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="KLineEdit">
-                                    <property name="name">
-                                        <cstring>emailArea</cstring>
-                                    </property>
-                                    <property name="echoMode">
-                                        <enum>Normal</enum>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>Your E-mail address.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The E-mail address you would like to use to register this account.</string>
-                                    </property>
-                                </widget>
-                                <widget class="KLineEdit">
-                                    <property name="name">
-                                        <cstring>password1</cstring>
-                                    </property>
-                                    <property name="maxLength">
-                                        <number>256</number>
-                                    </property>
-                                    <property name="echoMode">
-                                        <enum>Password</enum>
-                                    </property>
-                                    <property name="edited">
-                                        <bool>true</bool>
-                                    </property>
-                                    <property name="dragEnabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The password you would like to use.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The password you would like to use for this account.</string>
-                                    </property>
-                                </widget>
-                                <widget class="KLineEdit">
-                                    <property name="name">
-                                        <cstring>password2</cstring>
-                                    </property>
-                                    <property name="echoMode">
-                                        <enum>Password</enum>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>A confirmation of the password you would like to use.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>A confirmation of the password you would like to use for this account.</string>
-                                    </property>
-                                </widget>
-                            </vbox>
-                        </widget>
-                    </hbox>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>A confirmation of the password you would like to use.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>A confirmation of the password you would like to use for this account.</string>
+                    </property>
                 </widget>
-                <widget class="QLabel">
+                <widget class="QLabel" row="2" column="0">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>labelPassword</cstring>
                     </property>
                     <property name="text">
-                        <string>&lt;p align="center"&gt;&lt;i&gt;Type in token from picture below in text area. 
-This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
+                        <string>&amp;Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>valuePassword</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The password you would like to use.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The password you would like to use for this account.</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget">
+                <widget class="QLineEdit" row="4" column="1">
                     <property name="name">
-                        <cstring>layout12</cstring>
+                        <cstring>valueToken</cstring>
                     </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout10</cstring>
-                            </property>
-                            <hbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <spacer>
-                                    <property name="name">
-                                        <cstring>spacer3</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>30</width>
-                                            <height>20</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                                <widget class="QLayoutWidget">
-                                    <property name="name">
-                                        <cstring>layout9</cstring>
-                                    </property>
-                                    <vbox>
-                                        <property name="name">
-                                            <cstring>unnamed</cstring>
-                                        </property>
-                                        <widget class="QLabel">
-                                            <property name="name">
-                                                <cstring>pixmapToken</cstring>
-                                            </property>
-                                            <property name="sizePolicy">
-                                                <sizepolicy>
-                                                    <hsizetype>0</hsizetype>
-                                                    <vsizetype>0</vsizetype>
-                                                    <horstretch>20</horstretch>
-                                                    <verstretch>13</verstretch>
-                                                </sizepolicy>
-                                            </property>
-                                            <property name="minimumSize">
-                                                <size>
-                                                    <width>256</width>
-                                                    <height>64</height>
-                                                </size>
-                                            </property>
-                                            <property name="maximumSize">
-                                                <size>
-                                                    <width>256</width>
-                                                    <height>64</height>
-                                                </size>
-                                            </property>
-                                            <property name="backgroundMode">
-                                                <enum>PaletteForeground</enum>
-                                            </property>
-                                            <property name="paletteForegroundColor">
-                                                <color>
-                                                    <red>255</red>
-                                                    <green>255</green>
-                                                    <blue>255</blue>
-                                                </color>
-                                            </property>
-                                            <property name="scaledContents">
-                                                <bool>true</bool>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Registration token</string>
-                                            </property>
-                                            <property name="whatsThis" stdset="0">
-                                                <string>This field contains bitmap with number that you need to type in in field below to register new account.</string>
-                                            </property>
-                                        </widget>
-                                        <widget class="QLineEdit">
-                                            <property name="name">
-                                                <cstring>textToken</cstring>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>The text from the picture above.</string>
-                                            </property>
-                                            <property name="whatsThis" stdset="0">
-                                                <string>The text from the picture above.  This is used to prevent abusive automated registration scripts.</string>
-                                            </property>
-                                        </widget>
-                                        <widget class="QPushButton">
-                                            <property name="name">
-                                                <cstring>submitData</cstring>
-                                            </property>
-                                            <property name="enabled">
-                                                <bool>false</bool>
-                                            </property>
-                                            <property name="text">
-                                                <string>Register</string>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Press to begin registration.</string>
-                                            </property>
-                                            <property name="whatsThis" stdset="0">
-                                                <string>When you finished filling out token information, email and password - press this button to query for new User ID</string>
-                                            </property>
-                                        </widget>
-                                    </vbox>
-                                </widget>
-                                <spacer>
-                                    <property name="name">
-                                        <cstring>spacer4</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>30</width>
-                                            <height>20</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                            </hbox>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>statusLabel</cstring>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="scaledContents">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                    </vbox>
+                    <property name="toolTip" stdset="0">
+                        <string>The text from the image below.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
+                    </property>
                 </widget>
+                <widget class="KLineEdit" row="1" column="1" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>valuePassword</cstring>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The password you would like to use.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The password you would like to use for this account.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>labelVerificationSequence</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Verification Sequence:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>valueToken</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The text from the image below.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>valueEmailAddress</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Your E-mail address.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The E-mail address you would like to use to register this account.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>labelServer</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;E-Mail Address:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>valueEmailAddress</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Your E-mail address.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The E-mail address you would like to use to register this account.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>labelPasswordVerify</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>Repeat Pass&amp;word:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>valuePasswordVerify</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>A confirmation of the password you would like to use.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>A confirmation of the password you would like to use for this account.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layoutImageCenter</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
                 <spacer>
                     <property name="name">
-                        <cstring>spacer5</cstring>
+                        <cstring>spacerImageLeft</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>20</width>
-                            <height>38</height>
+                            <width>23</width>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>
-            </vbox>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>pixmapToken</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>20</horstretch>
+                            <verstretch>13</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>256</width>
+                            <height>64</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>256</width>
+                            <height>64</height>
+                        </size>
+                    </property>
+                    <property name="backgroundMode">
+                        <enum>PaletteForeground</enum>
+                    </property>
+                    <property name="paletteForegroundColor">
+                        <color>
+                            <red>255</red>
+                            <green>255</green>
+                            <blue>255</blue>
+                        </color>
+                    </property>
+                    <property name="frameShape">
+                        <enum>Box</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Gadu-Gadu registration token.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This field contains an image with number that you need to type into the &lt;b&gt;Verification Sequence&lt;/b&gt; field above.</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacerImageRight</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>22</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
         </widget>
-    </grid>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelInstructions</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>3</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&lt;i&gt;Type the letters and numbers shown in the image above into the &lt;b&gt;Verification Sequence&lt;/b&gt; field.  This is used to prevent automated registration abuse.&lt;/i&gt;</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacerMiddle</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+    </vbox>
 </widget>
+<tabstops>
+    <tabstop>valueEmailAddress</tabstop>
+    <tabstop>valuePassword</tabstop>
+    <tabstop>valuePasswordVerify</tabstop>
+    <tabstop>valueToken</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
