@@ -24,6 +24,14 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 	m_canStream = false;
 }
 
+KopeteContact* KopeteProtocol::createContact( KopeteMetaContact *parent, const QString &Id )
+{
+	KopeteContact *kc;
+	kc = new KopeteContact( parent );
+	kc->setId( Id );
+	return kc;
+}
+
 KopeteProtocol::~KopeteProtocol()
 {
 }

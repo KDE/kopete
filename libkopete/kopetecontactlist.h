@@ -70,17 +70,21 @@ public:
 	 */
 	static QStringList meta_status();
 
+    /**
+	 * Load the contact list from XML file [NON-FINISHED YET]
+	 */
+    void loadXML();
+
+	/**
+	 * Save the contact list to XML file [NON-FINISHED YET]
+	 */
+    void saveXML();
 
 private:
 	/**
 	 * Private constructor: we are a singleton
 	 */
 	KopeteContactList();
-	
-	/**
-	 * Load the contact list from XML file [NON-FINISHED YET]
-	 */
-    void loadXML();
 	
 	/**
 	 * The list of contacts embodied in the meta contact

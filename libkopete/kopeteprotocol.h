@@ -25,6 +25,8 @@
 
 class AddContactPage;
 class QString;
+class KopeteContact;
+class KopeteMetaContact;
 
 /**
  * @author duncan
@@ -35,6 +37,8 @@ public:
 	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);
 	virtual ~KopeteProtocol();
 
+    /* This will be called when Kopete read the contact list, implement it */
+    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id );
 	/**
 	 * Protocol API. Must be reimplemented
 	 */

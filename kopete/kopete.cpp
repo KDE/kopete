@@ -36,6 +36,7 @@
 #include "kopeteemoticons.h"
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
+#include "kopetecontactlist.h"
 
 #include "plugin.h"
 #include "pluginloader.h"
@@ -107,6 +108,8 @@ void Kopete::initialize()
 
 	// Ok, load saved plugins
 	loadPlugins();
+
+	(KopeteContactList::contactList())->loadXML();
 }
 
 

@@ -36,6 +36,7 @@ KopeteContact::~KopeteContact()
 {
 }
 
+
 void KopeteContact::setName( const QString &name )
 {
 	mName = name;

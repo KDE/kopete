@@ -19,7 +19,10 @@
 
 #include "kopetemetacontact.h"
 
+#include <kglobal.h>
+#include <kstandarddirs.h>
 #include <kapplication.h>
+#include <kdebug.h>
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -64,16 +67,79 @@ void KopeteContactList::loadXML()
 	QString xml_filename;
 
 	m_dom = new QDomDocument("ContactList");
-	xml_filename = "/home/duncan/contacts.xml";
+	xml_filename = locateLocal("data","kopete/contacts.xml");
+
+    /* No contacts */
+	if ( xml_filename.isNull() )
+		return ;
 
 	QFile xml_file(xml_filename);
 	xml_file.open(IO_ReadWrite);
 	m_dom->setContent(&xml_file);
 
 	QDomElement list = m_dom->documentElement();
-	QDomNode node_person;
-	QDomNode node_contact;
-	node_person = list.firstChild();
+
+	QDomNode nodel1;
+	nodel1 = list.firstChild();
+
+	while ( ! nodel1.isNull() )
+	{
+		QDomElement elementl1 = nodel1.toElement();
+
+		if ( ! elementl1.isNull())
+		{
+			/* We have found a metacontact person */
+			if ( elementl1.tagName() == "person" )
+			{
+				QString person_name = elementl1.attribute("name", "No Name");
+				kdDebug() << "XML Reader: New Person" << person_name << endl;
+
+				/* Now we have to find all contacts and metadata for this person */
+				QDomNode nodel2;
+				nodel2 = nodel1.firstChild();
+
+    			while ( ! nodel2.isNull() )
+				{
+                    /* We try to convert it to an element */
+					QDomElement elementl2 = nodel2.toElement();
+
+                    /* Was it an element ? */
+					if ( ! elementl2.isNull())
+					{
+						kdDebug() << "XML Reader: " << elementl2.tagName() << endl;
+            			/* We have found a plugin contact */
+						if ( elementl2.tagName() == "contact" )
+						{
+							QString contactid = elementl2.attribute("id", "Help!");
+							QString protocol = elementl2.attribute("protocol", "Unknown");
+							kdDebug() << "XML Reader: \tNew Contact ID:" << person_name << " Protocol: " << protocol << endl;
+
+						}
+						if ( elementl2.tagName() == "metadata" )
+						{
+							QString pluginid = elementl2.attribute("pluginid", "Ups");
+							QString mdkey = elementl2.attribute("key", "No key");
+							kdDebug() << "XML Reader: \tNew Metadata PluginID: " << pluginid << " Key: " << mdkey << endl;
+
+						}
+					}
+
+					/* We go for the next contact, metadata, etc */
+                	nodel2 = nodel2.nextSibling();
+				}
+
+			}
+
+		}
+		nodel1 = nodel1.nextSibling();
+	}
+
+	/* All ok! */
+}
+
+void KopeteContactList::saveXML()
+{
+
 
 }
 
