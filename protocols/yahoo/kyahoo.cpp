@@ -993,7 +993,7 @@ void YahooSession::_removeHandlerReceiver( int tag )
 {
 	kdDebug(14181) << k_funcinfo << endl;
 	if ( m_tag == tag )
-	{
+	{ 
 		kdDebug(14181) << k_funcinfo << " read off" << endl;
 		m_socket->enableRead( false );
 		disconnect ( m_socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );

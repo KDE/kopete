@@ -40,7 +40,7 @@
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 
 	m_userId = userId;
 	if ( metaContact )

@@ -479,7 +479,7 @@ YahooContact *YahooAccount::contact( const QString &id )
 
 bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact )
 {
-	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
+//	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
 	if(!contact(contactId))
 	{
