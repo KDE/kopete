@@ -107,7 +107,7 @@ void IRCServerContact::init()
 
 	mTabView = new QVBox(mWindow->mTabWidget);
 	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
-	mWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg.xpm"),mServer);
+	mWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg"),mServer);
 
 	QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
@@ -123,7 +123,7 @@ void IRCServerContact::connectNow()
 
 		mTabView = new QVBox(mWindow->mTabWidget);
 		mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
-		mWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg.xpm"),mServer);
+		mWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg"),mServer);
 
 		mConsoleView->messageBox->setFocus();
 		QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));

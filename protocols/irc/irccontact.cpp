@@ -476,10 +476,10 @@ void IRCContact::joinNow()
 	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 	{
 		chatView = new IRCChatView(mServer, mTarget, this, mTabPage);
-		mContact->mWindow->mTabWidget->addTab(mTabPage, SmallIconSet("irc_privmsg.xpm"), mTarget);
+		mContact->mWindow->mTabWidget->addTab(mTabPage, SmallIconSet("irc_privmsg"), mTarget);
 	} else {
 		queryView = new IRCQueryView(mServer, mTarget, mContact, mTabPage, this);
-		mContact->mWindow->mTabWidget->addTab(mTabPage, SmallIconSet("irc_querymsg.xpm"), mTarget);
+		mContact->mWindow->mTabWidget->addTab(mTabPage, SmallIconSet("irc_querymsg"), mTarget);
 	}
 
 	mContact->mWindow->show();
