@@ -25,6 +25,7 @@
 #include <qobject.h>
 #include <qregexp.h>
 #include <qstring.h>
+#include <qvaluelist.h>
 
 namespace KIRC
 {
@@ -102,6 +103,33 @@ private:
 	// peer ip address if the entity is a User.
 	QString m_address;
 	KNetwork::KResolver *m_resolver;
+};
+
+class EntityPtr
+	: public KSharedPtr<KIRC::Entity>
+{
+public:
+	EntityPtr(KIRC::Entity *entity = 0)
+		: KSharedPtr<KIRC::Entity>(entity)
+	{ }
+
+};
+
+class EntityPtrList
+	: public QValueList<EntityPtr>
+{
+public:
+	EntityPtrList()
+	{ }
+
+	EntityPtrList(const EntityPtr &entity)
+	{
+		append(entity);
+	}
+
+	EntityPtrList(const QValueList<EntityPtr> &list)
+		: QValueList<EntityPtr>(list)
+	{ }
 };
 
 }
