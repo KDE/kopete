@@ -324,11 +324,11 @@ void MeanwhileAccount::slotServerDead()
 
 void MeanwhileAccount::setOnlineStatus( const Kopete::OnlineStatus & status )
 {
- 	if ( myself()->onlineStatus.status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
+ 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect( status );
-	else if ( myself()->onlineStatus.status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
-		disconnect( Kopete::Account::Manual );
-	else if ( myself()->onlineStatus.status != Kopete::OnlineStatuf::Offline && status.status() == Kopete::OnlineStatus::Away )
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
+		disconnect();
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
 		setAway( true, QString::null );
 }
 
