@@ -44,11 +44,13 @@
 /*
  * JabberContact constructor
  */
-JabberContact::JabberContact(QString userID, QString nickname, QString group, JabberProtocol *protocol, KopeteMetaContact *mc) : KopeteContact(protocol->id(), mc)
+JabberContact::JabberContact(QString userID, QString nickname, QString group, JabberProtocol *protocol, KopeteMetaContact *mc, QString identity) : KopeteContact(protocol->id(), mc)
 {
 
 	// save parent protocol object
 	mProtocol = protocol;
+	
+	parentMetaContact = mc;
 	
 	// no resource so far
 	hasResource = false;
@@ -57,9 +59,29 @@ JabberContact::JabberContact(QString userID, QString nickname, QString group, Ja
 	mMsgManagerKCW = 0L;
 	mMsgManagerKEW = 0L;
 	popup = 0L;
+	
+	mIdentityId = identity;
 
 	// initialize contact with data
 	initContact(userID, nickname, group);
+
+}
+
+JabberContact::~JabberContact()
+{
+	
+	delete actionMessage;
+	delete actionRemoveFromGroup;
+	delete actionRename;
+	delete actionSelectResource;
+	delete actionSnarfVCard;
+
+	// Authorization actions 
+	delete actionSendAuth;
+	delete actionRerequestAuth;
+
+	if(popup)
+		delete popup;
 
 }
 

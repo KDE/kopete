@@ -47,7 +47,9 @@ class JabberContact : public KopeteContact
 	public:
 
 		JabberContact( QString userid, QString name, QString group,
-				JabberProtocol *protocol, KopeteMetaContact *mc);
+				JabberProtocol *protocol, KopeteMetaContact *mc, QString identity);
+				
+		~JabberContact();
 
 		/**
 		 * Initialize contact
@@ -85,6 +87,14 @@ class JabberContact : public KopeteContact
 		 */
 		void execute();
 
+		/**
+		 * Return the identity ID
+		 */
+		virtual QString identityId() const
+		{
+			return mIdentityId;
+		}
+		
 		/*
 		 * Return the currently used resource for this contact
 		 */
@@ -274,9 +284,19 @@ class JabberContact : public KopeteContact
 		 */
 		void initActions();
 
+		/**
+		 * Protocol identity (user ID) that this
+		 * contact belongs to. Basically identifies
+		 * the account into whose roster this contact
+		 * belongs.
+		 */
+		QString mIdentityId;
+		
 		JabberProtocol *mProtocol;
 		JabberResource *activeResource;
 
+		KopeteMetaContact *parentMetaContact;
+		
 		QPtrList<JabberResource> resources;
 		QPtrList<KopeteContact> theContacts;
 

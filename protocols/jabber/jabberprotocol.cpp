@@ -74,6 +74,8 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	// they have served their purpose
 	reasonDialog = 0L;
 	sendRawDialog = 0L;
+	
+	myContact = 0L;
 
 	mPrefs = new JabberPreferences("jabber_protocol_32", this);
 	connect (mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()));
@@ -305,9 +307,6 @@ void JabberProtocol::slotConnected()
 					break;
 	}
 
-	// create a contact instance for self, should eventually be converted to a 
-	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this, 0L);
-
 }
 
 /*
@@ -322,6 +321,7 @@ void JabberProtocol::slotDisconnected()
 	statusBarIcon->setPixmap(offlineIcon);
 	
 	delete myContact;
+	myContact = 0L;
 	
 }
 
@@ -433,7 +433,7 @@ bool JabberProtocol::serialize(KopeteMetaContact *contact, QStringList &data) co
 	
 	if(c)
 	{
-		data << c->userID() << c->displayName() << c->group();
+		data << c->identityId() << c->userID() << c->displayName() << c->group();
 		
 		return true;
 	}
@@ -454,7 +454,16 @@ void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &
 
 	kdDebug() << "[JabberProtocol] Deserializing data for metacontact " << contact->displayName() << endl;
 	
-	JabberContact *c = new JabberContact(data[0], data[1], data[2], this, contact);
+	if(data[0] != myContact->userID())
+	{
+		// trying to deserialize a contact that does not belong to our roster, skip it.
+		// this usually happens if the contact list was serialized from a certain account
+		// and the user changed his account details (and thus receives a new roster)
+		kdDebug() << "[JabberProtocol] Contact " << data[2] << " belongs to " << data[0] << ", however, we are " << myContact->userID() << ". Skipping." << endl;
+		return;
+	}
+	
+	JabberContact *c = new JabberContact(data[1], data[2], data[3], this, contact, data[0]);
 	
 	metaContactMap.insert(contact, c);
 	contactList[c->userID()] = c;
@@ -871,7 +880,7 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 	{
 		kdDebug() << "[JabberProtocol] Adding contact " << contact->jid << " ..." << endl;
 		
-		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L);
+		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L, myContact->userID());
 		contactList[contact->jid] = jabContact;
 
 		connect(jabContact, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
@@ -898,7 +907,7 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
 	// assumption: data is just the JID; this could change at some stage
 	addContact(data);
 	
-	JabberContact *contact = new JabberContact(data, "", QString(""), this, parent);
+	JabberContact *contact = new JabberContact(data, "", QString(""), this, parent, myContact->userID());
 	
 	connect(contact, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
 	
@@ -914,6 +923,7 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
  */
 void JabberProtocol::slotSettingsChanged()
 {
+	QString currentId = QString::null;
 	
 	// read all configuration data from the configuration file
 	KGlobal::config()->setGroup("Jabber");
@@ -923,7 +933,26 @@ void JabberProtocol::slotSettingsChanged()
 	mServer = KGlobal::config()->readEntry("Server", "jabber.org");
 	mPort = KGlobal::config()->readNumEntry("Port", 5222);
 
-	
+	if(myContact)
+	{
+		currentId = myContact->userID();
+		delete myContact;
+	}
+		
+	// create a contact instance for self
+	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this, 0L, QString::null);
+
+	if(currentId != myContact->userID())
+	{
+		for(JabberContactList::iterator it = contactList.begin(); it != contactList.end(); it++)
+			delete it.data();
+
+		// the account details were changed,
+		// flush contact list
+		contactList.clear();
+		metaContactMap.clear();
+	}
+		
 	// set the title according to the new changes
 	actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId , mUsername + "@" + mServer );
 
