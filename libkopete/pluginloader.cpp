@@ -1,18 +1,34 @@
-#include <qfile.h>
-#include <qdir.h>
+/*
+    pluginloader.cpp - Kopete Plugin Loader
 
+    Copyright (c) 2001-2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#include <qdir.h>
+#include <qfile.h>
+
+#include <kdebug.h>
 #include <kglobal.h>
+#include <klocale.h>
+#include <knotifyclient.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
-#include <knotifyclient.h>
-#include <klocale.h>
 #include <kurl.h>
-#include <kdebug.h>
-
-#include <plugin.h>
-#include <pluginloader.h>
-#include <kopete.h>
 #include <kparts/componentfactory.h>
+
+#include "kopete.h"
+#include "plugin.h"
+#include "pluginloader.h"
+
 class KopeteLibraryInfo;
 
 bool operator ==(const KopeteLibraryInfo &a, const KopeteLibraryInfo &b)
@@ -176,29 +192,9 @@ bool LibraryLoader::loadSO(const QString &spec)
 			mLibHash.insert(spec, listitem);
 		}
 
-#if KDE_VERSION < 305
-		// This code works with KDE 3.0.x, but will generate a warning on
-		// stderr if the symbol is not found. For later KDE versions use
-		// the new hasSymbol() method instead
-		if( listitem->library->symbol( "create_plugin" ) == 0 &&
-			listitem->library->factory() )
-#else
-		if( !listitem->library->hasSymbol( "create_plugin" ) &&
-			listitem->library->factory() )
-#endif
-		{
-			listitem->plugin =
-				KParts::ComponentFactory::createInstanceFromFactory<Plugin>
-				( listitem->library->factory(), 0L /* FIXME: parent object */ );
-		}
-		else
-		{
-			kdDebug() << "LibraryLoader::loadSO old plugin" << endl;
-			void *create = listitem->library->symbol("create_plugin");
-			Plugin* (*plugInStart)();
-			plugInStart = (Plugin* (*)()) create;
-			listitem->plugin = plugInStart();
-		}
+		listitem->plugin =
+			KParts::ComponentFactory::createInstanceFromFactory<Plugin>
+			( listitem->library->factory(), 0L /* FIXME: parent object */ );
 
 		// Automatically load the i18n catalogue for the plugin
 		KGlobal::locale()->insertCatalogue( info.filename );
@@ -337,4 +333,6 @@ Plugin* LibraryLoader::searchByID( QString &Id )
 	}
 	return NULL;
 }
+
+// vim: set noet ts=4 sts=4 sw=4:
 

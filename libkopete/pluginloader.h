@@ -1,13 +1,27 @@
+/*
+    pluginloader.h - Kopete Plugin Loader
+
+    Copyright (c) 2001-2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #ifndef PLUGIN_LOADER_H
 #define PLUGIN_LOADER_H
 
-#include <qstring.h>
-#include <qvaluelist.h>
-#include <qstringlist.h>
 #include <qdict.h>
+#include <qstring.h>
+#include <qstringlist.h>
+#include <qvaluelist.h>
 
 #include <klibloader.h>
-
 
 struct KopeteLibraryInfo
 {
@@ -48,13 +62,13 @@ public:
 	QValueList<KopeteLibraryInfo> loaded() const;
 
     /**
-	  * Search by Id
-	  **/
-    Plugin *searchByID( QString &Id );
+	 * Search by Id
+	 */
+	Plugin *searchByID( QString &Id );
 
 	/**
 	 * loads all the enabled plugins
-	 **/
+	 */
 	bool loadAll(void);
 	bool loadAll(const QStringList &);
 
@@ -63,11 +77,11 @@ public:
 	void setModules(const QStringList &mods);
 	/**
 	 * unload the plugin specified by spec
-	 **/
+	 */
 	bool remove(const QString &spec);
 	/**
 	 * unload the plugin that is plugin
-	 **/
+	 */
 	bool remove(const LibraryLoader::PluginLibrary *plugin);
 	bool remove(const Plugin *plugin);
 	
@@ -91,4 +105,6 @@ private:
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
 
