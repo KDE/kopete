@@ -22,13 +22,11 @@
 
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
-// INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 static const char *version="0.3";
 	
 static KCmdLineOptions options[] =
 {
   { 0, 0, 0 }
-  // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
 int main(int argc, char *argv[])
@@ -43,6 +41,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Patches, bugfixes"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("cleanups, features and bugfixes"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("features and bugfixes"), "remenic@linuxfromscratch.org");
+	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Jabber plugin, random fixes"), "dstone@kde.org", "http://raging.dropbear.id.au");
 
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN Code") );
