@@ -205,8 +205,8 @@ void MSNProtocol::Connect()
 		this, SLOT( slotGroupListed( QString, uint ) ) );
 	connect( m_notifySocket, SIGNAL(groupRemoved( uint, uint ) ),
 		this, SLOT( slotGroupRemoved( uint, uint ) ) );
-	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
-		this, SLOT( slotStateChanged( QString ) ) );
+//	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
+//		this, SLOT( slotStateChanged( QString ) ) );
 	connect( m_notifySocket, SIGNAL( contactList( QString, QString, QString, QString ) ),
 		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
 	connect( m_notifySocket, SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
@@ -663,9 +663,10 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 	}
 }
 
-void MSNProtocol::slotStateChanged( QString status )
+void MSNProtocol::slotStatusChanged( QString status )
 {
 	m_status = convertStatus( status );
+	m_myself->setMsnStatus(m_status);
 
 	kdDebug() << "MSN Plugin: My Status Changed to " << m_status <<
 		" (" << status <<")\n";
@@ -1204,11 +1205,6 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			m_contacts[ handle ]->setReversed( true );
 		}
 	}
-}
-
-void MSNProtocol::slotStatusChanged( QString status )
-{
-	m_status = convertStatus( status );
 }
 
 void MSNProtocol::slotPublicNameChanged( QString publicName)

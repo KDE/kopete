@@ -208,8 +208,6 @@ private slots:
 
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
 
-	void slotStateChanged( QString status );
-
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoAway();
