@@ -254,53 +254,6 @@ MSNNotifySocket *MSNAccount::notifySocket()
 	return m_notifySocket;
 }
 
-void MSNAccount::slotGoOnline()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->NLN );
-}
-
-void MSNAccount::slotGoOffline()
-{
-	disconnect();
-	// m_connectstatus = NLN;
-}
-
-void MSNAccount::slotGoAway()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->AWY );
-}
-
-void MSNAccount::slotGoBusy()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->BSY );
-}
-
-void MSNAccount::slotGoBeRightBack()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->BRB );
-}
-
-void MSNAccount::slotGoOnThePhone()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->PHN );
-}
-
-void MSNAccount::slotGoOutToLunch()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->LUN );
-}
-
-void MSNAccount::slotGoInvisible()
-{
-	m_awayReason = QString::null;
-	setOnlineStatus( MSNProtocol::protocol()->HDN );
-}
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason)
 {

@@ -104,15 +104,6 @@ protected:
 
 private slots:
 	// Actions related
-	void slotGoOnline();
-	void slotGoOffline();
-	void slotGoAway();
-	void slotGoBusy();
-	void slotGoBeRightBack();
-	void slotGoOnThePhone();
-	void slotGoOutToLunch();
-	void slotGoInvisible();
-
 	void slotStartChat();
 	void slotOpenInbox();
 	void slotChangePublicName();
