@@ -635,6 +635,9 @@ void JabberContact::slotSendMessage(KopeteMessage &message)
 
 		// append the message to the manager
 		manager()->appendMessage(message);
+
+		// tell the manager that we sent successfully
+		manager()->messageSucceeded();
 	}
 
 }
