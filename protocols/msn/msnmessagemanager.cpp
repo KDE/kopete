@@ -171,7 +171,7 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->displayPicture())
+	if ( members().count()==1 && config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->displayPicture())
 		slotRequestPicture();
 }
 
