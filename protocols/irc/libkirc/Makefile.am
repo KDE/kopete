@@ -8,6 +8,7 @@ libkirc_la_SOURCES = \
 	kircengine_numericreplies.cpp \
 	kircentity.cpp \
 	kircmessage.cpp \
+	kircmessageredirector.cpp \
 	kirctransfer.cpp \
 	kirctransferhandler.cpp \
 	kirctransferserver.cpp \
