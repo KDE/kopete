@@ -43,7 +43,6 @@ class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 	private slots:
 		void slotFetchInfo();
 		void slotReadInfo();
-		void slotSetDefaultServer();
 		void slotSend();
 		void slotModified();
 		void slotRecalcAge(QDate);
@@ -57,6 +56,7 @@ class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 		void slotAffiliation1Changed(int);
 		void slotAffiliation2Changed(int);
 		void slotAffiliation3Changed(int);
+		void slotOpenRegister();
 
 	protected:
 		KopeteAccount *mAccount;

@@ -32,6 +32,7 @@
 #include <kjanuswidget.h>
 #include <kurllabel.h>
 #include <kdatewidget.h>
+#include <krun.h>
 
 #include "icquserinfowidget.h"
 #include "icqprotocol.h"
@@ -106,9 +107,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mUserInfoSettings->roWrkCountry->hide();
 	mUserInfoSettings->wrkHomepageLabel->hide();
 
-	connect(mAccountSettings->btnServerDefaults, SIGNAL(clicked()),
-	this, SLOT(slotSetDefaultServer()));
-
 	// ==========================================================================
 
 	// Read in the settings from the account if it exists
@@ -126,10 +124,22 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->edtAccountId->setDisabled(true);
 
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
+
+
+
+        if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
+            mAccountSettings->optionOverrideServer->setChecked( true );
+        }
+
+
+
+
+
+
 		mAccountSettings->edtServerAddress->setText(mAccount->pluginData(mProtocol, "Server"));
 		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
 		mAccountSettings->chkHideIP->setChecked((mAccount->pluginData(mProtocol,"HideIP").toUInt()==1));
-		mAccountSettings->chkWebAware->setChecked((mAccount->pluginData(mProtocol,"WebAware").toUInt()==1));
+		mAccountSettings->chkWebAware->setChecked((mAccount->pluginData(mProtocol,"WebAware").toUInt()==0));
 		mAccountSettings->chkRequireAuth->setChecked((mAccount->pluginData(mProtocol,"RequireAuth").toUInt()==1));
 
 		mUserInfoSettings->rwNickName->setText(
@@ -222,7 +232,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		kdDebug(14200) << k_funcinfo << "Difference from UTC = " << diff << endl;
 
 		mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, (diff*2));
-		slotSetDefaultServer();
 	}
 
 	connect(mAccountSettings->chkWebAware, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
@@ -250,6 +259,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	connect(mUserInfoSettings->bgrdPastOrgCombo1, SIGNAL(activated(int)), this, SLOT(slotAffiliation1Changed(int)));
 	connect(mUserInfoSettings->bgrdPastOrgCombo2, SIGNAL(activated(int)), this, SLOT(slotAffiliation2Changed(int)));
 	connect(mUserInfoSettings->bgrdPastOrgCombo3, SIGNAL(activated(int)), this, SLOT(slotAffiliation3Changed(int)));
+
+	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 }
 
 KopeteAccount *ICQEditAccountWidget::apply()
@@ -273,16 +284,23 @@ KopeteAccount *ICQEditAccountWidget::apply()
 
 	mAccount->setAutoLogin(mAccountSettings->chkAutoLogin->isChecked());
 
-	static_cast<OscarAccount *>(mAccount)->setServerAddress(
-		mAccountSettings->edtServerAddress->text());
-
-	static_cast<OscarAccount *>(mAccount)->setServerPort(
-		mAccountSettings->edtServerPort->value());
+	if (mAccountSettings->optionOverrideServer->isChecked() ) {
+		static_cast<OscarAccount *>(mAccount)->setServerAddress(
+			mAccountSettings->edtServerAddress->text());
+		static_cast<OscarAccount *>(mAccount)->setServerPort(
+			mAccountSettings->edtServerPort->value());
+	}
+	else {
+		static_cast<OscarAccount *>(mAccount)->setServerAddress(
+			"login.icq.com");
+		static_cast<OscarAccount *>(mAccount)->setServerPort(
+			5190);
+	}
 
 	mAccount->setPluginData(mProtocol, "HideIP",
 		QString::number(mAccountSettings->chkHideIP->isChecked()));
 	mAccount->setPluginData(mProtocol, "WebAware",
-		QString::number(mAccountSettings->chkWebAware->isChecked()));
+		QString::number(!mAccountSettings->chkWebAware->isChecked()));
 	mAccount->setPluginData(mProtocol, "RequireAuth",
 		QString::number(mAccountSettings->chkRequireAuth->isChecked()));
 
@@ -410,12 +428,6 @@ void ICQEditAccountWidget::slotReadInfo()
 		static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
 	mModified=false;
 } // END slotReadInfo()
-
-void ICQEditAccountWidget::slotSetDefaultServer()
-{
-	mAccountSettings->edtServerAddress->setText(ICQ_SERVER);
-	mAccountSettings->edtServerPort->setValue(ICQ_PORT);
-}
 
 void ICQEditAccountWidget::slotSend()
 {
@@ -585,6 +597,11 @@ void ICQEditAccountWidget::slotAffiliation3Changed(int i)
 {
 	mUserInfoSettings->bgrdPastOrgText3->setEnabled(i != 0);
 	slotModified();
+}
+
+void ICQEditAccountWidget::slotOpenRegister()
+{
+	KRun::runURL( "http://go.icq.com/register/", "text/html" );
 }
 
 #include "icqeditaccountwidget.moc"
