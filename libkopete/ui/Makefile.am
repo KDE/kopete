@@ -1,6 +1,4 @@
-INCLUDES = -I$(top_srcdir)/kopete/library \
-			-I$(top_builddir)/kopete/library/ui \
-			$(all_includes)
+INCLUDES = -I$(srcdir)/.. $(all_includes)
 noinst_LTLIBRARIES = libkopeteui.la
 
 noinst_HEADERS = contactlist.h\   
@@ -21,7 +19,7 @@ noinst_HEADERS = contactlist.h\
 		historydialog.h
 
 #CXXFLAGS = -g -O2 -Wall
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+#DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 
 libkopeteui_la_SOURCES = configmodule.cpp\
 			kopetewindow.cpp preferencesdialog.cpp\
