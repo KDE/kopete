@@ -110,7 +110,8 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 		QString emptyCaption = i18n( "MSN Not Configured Yet" );
 
 		KMessageBox::information( kopeteapp->mainWindow(),
-			emptyText, emptyCaption );
+			emptyText, emptyCaption, QString::null,
+			KMessageBox::AllowLink );
 	}
 
 	// FIXME: Is 'self' supposed to be a KopeteMetaContact? I guess so.
