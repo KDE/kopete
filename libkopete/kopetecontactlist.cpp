@@ -208,7 +208,7 @@ void KopeteContactList::saveXML()
 QString KopeteContactList::toXML()
 {
 	QString xml = "<?xml version=\"1.0\"?>\n"
-		"<messaging-contact-list>\n";
+		"<messaging-contact-list version=\"0.5\">\n";
 
 	QPtrListIterator<KopeteMetaContact> metaContactIt( m_contacts );
 	for( ; metaContactIt.current(); ++metaContactIt )
