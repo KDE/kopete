@@ -105,6 +105,7 @@ signals:
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 	void incomingKick(const QString &, const QString &, const QString &, const QString &);
 	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject);
+	void incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

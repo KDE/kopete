@@ -68,7 +68,6 @@ void KIRC::slotReadyRead()
 		QString number = line.mid((line.find(' ', 0, false)+1), 3);
 		int commandIndex = line.find(' ', 0, false);
 		QString command = line.section(' ', 1, 1);
-		kdDebug() << "IRC Plugin: command == \"" << command << "\"" << endl;
 		if (command == QString("JOIN"))
 		{
 			/*
@@ -175,8 +174,23 @@ void KIRC::slotReadyRead()
 						unsigned int port = message.section(' ', 4, 4).toUInt(&okayPort);
 						if (okayHost && okayPort)
 						{
-							DCCClient *chatObject = new DCCClient(address, port, DCCClient::Chat);
+							DCCClient *chatObject = new DCCClient(address, port, 0, DCCClient::Chat);
 							emit incomingDccChatRequest(address, port, originating.section('!', 0, 0), *chatObject);
+						}
+					} else if (message.section(' ', 1, 1).lower() == "send")
+					{
+						// Tells if the conversion went okay to unsigned int
+						bool okayHost;
+						bool okayPort;
+						QString filename = message.section(' ', 2, 2);
+						QFileInfo realfile(filename);
+						QHostAddress address(message.section(' ', 3, 3).toUInt(&okayHost));
+						unsigned int port = message.section(' ', 4, 4).toUInt(&okayPort);
+						unsigned int size = message.section(' ', 5, 5).toUInt();
+						if (okayHost && okayPort)
+						{
+							DCCClient *chatObject = new DCCClient(address, port, message.section(' ', 5, 5).toUInt(), DCCClient::File);
+							emit incomingDccSendRequest(address, port, originating.section('!', 0, 0), realfile.fileName(), size, *chatObject);
 						}
 					}
 					continue;
@@ -356,7 +370,7 @@ void KIRC::slotReadyRead()
 				{
 					if (failedNickOnLogin == true)
 					{
-						// this is if we had a "Nickname in user" message when connecting and we set another nick. This signal emits that the nick was accepted and we are now logged in
+						// this is if we had a "Nickname in use" message when connecting and we set another nick. This signal emits that the nick was accepted and we are now logged in
 						emit loginNickNameAccepted(pendingNick);
 						mNickname = pendingNick;
 						failedNickOnLogin = false;

@@ -431,7 +431,7 @@ void IRCContact::slotPart()
 
 void IRCContact::slotPartedChannel(const QString &originating, const QString &channel, const QString &)
 {
-	if (mTarget.lower() == channel.lower() && originating.left(originating.find("!")).lower() == mContact->mNickname.lower())
+	if (mTarget.lower() == channel.lower() && originating.section('!', 0, 0).lower() == engine->nickName().lower())
 	{
 		unloading();
 	}
@@ -439,7 +439,7 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 void IRCContact::slotUserKicked(const QString &user, const QString &channel, const QString &by, const QString &reason)
 {
-	if (mTarget.lower() == channel.lower() && user.lower() == mContact->mNickname.lower())
+	if (mTarget.lower() == channel.lower() && user.lower() == engine->nickName().lower())
 	{
 		unloading();
 	}
@@ -447,7 +447,6 @@ void IRCContact::slotUserKicked(const QString &user, const QString &channel, con
 
 IRCContact::~IRCContact()
 {
-	kdDebug() << "IRC Plugin: ~IRCContact: added == " << added << endl;
 	if (added && !contactOnList)
 	{
 		mContact->activeContacts.remove(mTarget.lower());
@@ -458,7 +457,7 @@ void IRCContact::unloading()
 {
 	if (mTabPage !=0)
 	{
-		if (mContact->closing == true)
+		if (mContact->closing == false)
 		{
 			delete mTabPage;
 		}

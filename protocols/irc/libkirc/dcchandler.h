@@ -32,8 +32,9 @@ public:
 		Chat = 0,
 		File = 1
 	};
-	DCCClient(QHostAddress host, unsigned int port, Type type);
+	DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type);
 	void dccAccept();
+	void dccAccept(const QString &filename);
 	void dccCancel();
 	bool sendMessage(const QString &message);
 	const QHostAddress ipaddress() { return mHost; };
@@ -41,13 +42,19 @@ public:
 signals:
 	void incomingDccMessage(const QString &, bool fromMe);
 	void terminating();
+	void receiveAckPercent(int);
+	void sendFinished();
 private:
 	QHostAddress mHost;
 	unsigned int mPort;
+	Type mType;
+	unsigned int mSize;
+	QFile *mFile; // Allocate on the heap because we need pass the filename parameter to it
 private slots:
 	void slotReadyRead();
 	void slotConnectionClosed();
 	void slotError(int);
+	void slotReadyReadFile();
 };
 
 class DCCServer : public QServerSocket

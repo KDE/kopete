@@ -23,21 +23,52 @@
 #include <qregexp.h>
 #include <netinet/in.h>
 #include <qcstring.h>
+#include <inttypes.h>
+#include <netinet/in.h>
+#include <unistd.h>
 
-DCCClient::DCCClient(QHostAddress host, unsigned int port, Type type)
+DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
 	: QSocket()
 {
+	mType = type;
 	mHost = host;
 	mPort = port;
+	mSize = size;
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
-	connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+	if (mType == Chat)
+	{
+		connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+	} else {
+		connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyReadFile()));
+	}
 	connect(this, SIGNAL(delayedCloseFinished()), this, SLOT(slotConnectionClosed()));
 	connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
 }
 
+void DCCClient::dccAccept(const QString &filename)
+{
+	if (mType == File)
+	{
+		mFile = new QFile(filename);
+		if (!mFile->open(IO_ReadWrite))
+		{
+			slotConnectionClosed();
+			return;
+		}
+		connectToHost(mHost.toString(), mPort);
+	} else {
+		slotConnectionClosed();
+	}
+}
+
 void DCCClient::dccAccept()
 {
-	connectToHost(mHost.toString(), mPort);
+	if (mType == Chat)
+	{
+		connectToHost(mHost.toString(), mPort);
+	} else {
+		slotConnectionClosed();
+	}
 }
 
 void DCCClient::dccCancel()
@@ -53,6 +84,24 @@ void DCCClient::slotError(int error)
 	}
 }
 
+void DCCClient::slotReadyReadFile()
+{
+	int bytes = bytesAvailable();
+	QCString data(bytes);
+	int actualBytes = readBlock(data.data(), bytes);
+	mFile->writeBlock(data.data(), actualBytes);
+	uint32_t ack = ::htonl(mFile->at());
+	writeBlock((char *)&ack, sizeof(ack));
+	if (mSize != 0)
+	{
+		emit receiveAckPercent((mFile->at() * 100) / mSize);
+	}
+	if (mFile->size() == mSize)
+	{
+		emit sendFinished();
+	}
+}
+
 void DCCClient::slotReadyRead()
 {
 	while(canReadLine())
@@ -65,12 +114,25 @@ void DCCClient::slotReadyRead()
 
 void DCCClient::slotConnectionClosed()
 {
+	if (mFile != 0)
+	{
+		if (mFile->size() != 0 && mSize != 0 && mFile->size() == mSize)
+		{
+			emit sendFinished();
+			delete this;
+			return;
+		}
+	}
 	emit terminating();
 	delete this;
 }
 
 bool DCCClient::sendMessage(const QString &message)
 {
+	if (mType == File)
+	{
+		return false;
+	}
 	if (state() != QSocket::Connected)
 	{
 		return false;
@@ -90,7 +152,7 @@ DCCServer::DCCServer(Type type, const QString filename)
 	mType = type;
 	if (type == Chat)
 	{
-		mClient = new DCCClient(QHostAddress(), 0, DCCClient::Chat);
+		mClient = new DCCClient(QHostAddress(), 0, 0, DCCClient::Chat);
 	} else if (type == File)
 	{
 		if (filename.isEmpty())
@@ -148,9 +210,6 @@ void DCCServer::slotError(int error)
 		slotConnectionClosed();
 	}
 }
-
-#include <inttypes.h>
-#include <netinet/in.h>
 
 void DCCServer::slotReadyRead()
 {

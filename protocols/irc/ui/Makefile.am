@@ -6,5 +6,5 @@ INCLUDES = -I$(srcdir)/../../../libkopete\
 	$(all_includes)
 
 libkopeteircui_la_METASOURCES = AUTO
-libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui ircmessagebase.ui ircchatviewbase.ui ircchatwindow.cpp ircconsoleviewbase.ui dccconfirmbase.ui ircsendbase.ui ircqueryview.cpp dccconfirm.cpp empty.cpp
+libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui ircmessagebase.ui ircchatviewbase.ui ircchatwindow.cpp ircconsoleviewbase.ui dccconfirmbase.ui ircsendbase.ui ircqueryview.cpp dccconfirm.cpp ircreceivebase.ui empty.cpp
 EXTRA_DIST = ircadd.ui ircprefs.ui empty.cpp

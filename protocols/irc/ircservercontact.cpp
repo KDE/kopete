@@ -41,6 +41,7 @@
 #include "ircdccsend.h"
 #include "ircdccview.h"
 #include "dccconfirm.h"
+#include "ircdccreceive.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
@@ -106,6 +107,7 @@ void IRCServerContact::init()
 	QObject::connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCClient &)), this, SLOT(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCClient &)));
+	QObject::connect(engine, SIGNAL(incomingDccSendRequest(const QHostAddress &, unsigned int, const QString &, const QString &, unsigned int, DCCClient &)), this, SLOT(incomingDccSendRequest(const QHostAddress &, unsigned int, const QString &, const QString &, unsigned int, DCCClient &)));
 	mWindow = new IRCChatWindow(mServer, this);
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
@@ -207,12 +209,34 @@ void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int
 {
 	if (mWindow != 0)
 	{
-		if (DCCConfirm::confirmRequest(DCCConfirm::Chat, nickname, mWindow))
+		if (DCCConfirm::confirmRequest(DCCConfirm::Chat, nickname, QString(""), 0, mWindow))
 		{
 			QVBox *parent = new QVBox(mWindow->mTabWidget);
 			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, &chatObject);
 			mWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
 			chatObject.dccAccept();
+			mWindow->mTabWidget->showPage(parent);
+		} else {
+			chatObject.dccCancel();
+		}
+	}
+}
+
+void IRCServerContact::incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &filename, unsigned int size, DCCClient &chatObject)
+{
+	if (mWindow != 0)
+	{
+		if (DCCConfirm::confirmRequest(DCCConfirm::Send, nickname, filename, size, mWindow))
+		{
+			QString newFile = KFileDialog::getSaveFileName(filename, "*.*", mWindow);
+			if (newFile.isEmpty())
+			{
+				return;
+			}
+			QVBox *parent = new QVBox(mWindow->mTabWidget);
+			IRCDCCReceive *dccView = new IRCDCCReceive(nickname, newFile, this, parent, &chatObject);
+			mWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
+			chatObject.dccAccept(newFile);
 			mWindow->mTabWidget->showPage(parent);
 		} else {
 			chatObject.dccCancel();
