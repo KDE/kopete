@@ -92,8 +92,8 @@ public:
 	 * @return The MetaContact object for this contact
 	 */
 	MetaContact *metaContact() const;
-	
-	
+
+
 	/**
 	 * \brief Get the unique id that identifies a contact.
 	 *
@@ -231,7 +231,7 @@ public:
 	 * @ref customContextMenuActions()
 	 */
 	KPopupMenu *popupMenu( ChatSession *manager = 0L );
-	
+
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
 	 *
@@ -262,23 +262,6 @@ public:
 	 * @todo have a capabilioties. or move to protocol capabilities
 	 */
 	bool canAcceptFiles() const;
-	
-	/**
-	 * This is the Contact level slot for sending files. It should be
-	 * implemented by all contacts which have the setFileCapable() flag set to
-	 * true. If the function is called through the GUI, no parameters are sent
-	 * and they take on default values (the file is chosen with a file open dialog)
-	 *
-	 * @param sourceURL The actual KURL of the file you are sending
-	 * @param fileName (Optional) An alternate name for the file - what the
-	 * receiver will see
-	 * @param fileSize (Optional) Size of the file being sent. Used when sending
-	 * a nondeterminate
-	 *                file size (such as over  asocket
-	 */
-	virtual void sendFile( const KURL &sourceURL = KURL(),
-		const QString &fileName = QString::null, uint fileSize = 0L );
-
 
 	enum CanCreateFlags {  CannotCreate=false , CanCreate=true  };
 
@@ -301,18 +284,18 @@ public:
 	 * The icon is not colored, nor has the status icon overloaded
 	 */
 	QString& icon() const;
-	
+
 	/**
 	 * @brief Change the icon to use for this contact
 	 * If you don't want to have the protocol icon as icon for this contact, you may set
-	 * another icon.  The icon doesn't need to be colored with the account icon as this operation 
+	 * another icon.  The icon doesn't need to be colored with the account icon as this operation
 	 * will be performed later.
 	 *
 	 * if you want to go back to the protocol icon, set a null string.
 	 */
 	void setIcon( const QString& icon );
 
-	
+
 	/**
 	 * \brief Get the time (in seconds) this contact has been idle
 	 * It will return the time set in @ref setIdleTime() with an addition of the time
@@ -391,15 +374,15 @@ public:
 	 * Suitable for GUI display
 	 **/
 	QString formattedIdleTime() const;
-	
-	
+
+
 
 	/**
-	 * used in @ref sync()   
+	 * used in @ref sync()
 	 */
 	enum Changed{ MovedBetweenGroup = 0x01, ///< the contact has been moved between groups
 		      DisplayNameChanged = 0x02 ///< the displayname of the contact changed
-	}; 
+	};
 
 
 public slots:
@@ -456,6 +439,22 @@ public slots:
 	 */
 	virtual void deleteContact();
 
+	/**
+	 * This is the Contact level slot for sending files. It should be
+	 * implemented by all contacts which have the setFileCapable() flag set to
+	 * true. If the function is called through the GUI, no parameters are sent
+	 * and they take on default values (the file is chosen with a file open dialog)
+	 *
+	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param fileName (Optional) An alternate name for the file - what the
+	 * receiver will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when sending
+	 * a nondeterminate
+	 *                file size (such as over  asocket
+	 */
+	virtual void sendFile( const KURL &sourceURL = KURL(),
+			       const QString &fileName = QString::null, uint fileSize = 0L );
+
 
 private slots:
 
@@ -463,22 +462,22 @@ private slots:
 	 * This add the contact totally in the list if it was a temporary contact
 	 */
 	void slotAddContact();
-	
+
 	/**
 	 * slot called when the action "delete" is called.
 	 */
 	void slotDelete();
-	
+
 	/**
 	 * slot called when the action "block" is called.
 	 */
 	void slotBlock();
-	
+
 	/**
 	 * slot called when the action "unblock" is called.
 	 */
 	void slotUnblock();
-	
+
 	/**
 	 * The account's isConnected has changed.
 	 */
@@ -501,8 +500,8 @@ signals:
 	 */
 	void contactDestroyed( Kopete::Contact *contact );
 
-	
-	
+
+
 	/**
 	 * The contact's idle state changed.
 	 * You need to emit this signal to update the view.
@@ -526,9 +525,9 @@ protected:
 private:
 	class Private;
 	Private *d;
-	
-	
-	
+
+
+
 public:
 
 //MOC_SKIP_BEGIN//
@@ -543,7 +542,7 @@ public:
 		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if( name == nick )
 			return;
-	
+
 		setProperty( Kopete::Global::Properties::self()->nickName(), name );
 	}
 
@@ -556,7 +555,7 @@ public:
 		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if( name == nick )
 			return;
-			
+
  		setProperty( Kopete::Global::Properties::self()->nickName(), name );
 	}
 
@@ -569,10 +568,10 @@ public:
 		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if( !nick.isEmpty() )
 			return nick;
-			
+
 		return contactId();
 	}
-	
+
 //MOC_SKIP_END//
 
 };
