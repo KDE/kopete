@@ -53,18 +53,18 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 	int r, g, b;
 	r = g = b = 0;
 	bool opened = false;
-	for ( i = 0, j = 0 ; i < formats ; i++ ) {
+	for ( i = 0, j = 0 ; i < formats ; ) {
 		format = (gg_msg_richtext_format*) pointer;
 		unsigned int position = format->position;
 		char font = format->font;
 		QString style;
 
-		// FIXME: there is something wrong with libgadu, besides richtext formating information, there is something attached at the end as well
 		if ( position < j || position > msg.length() ) {
 			break;
 		}
 
 		if ( font & GG_FONT_IMAGE ) {
+			i += sizeof( gg_msg_richtext_image );
 			pointer += sizeof( gg_msg_richtext_image );
 			tmp += "<b>[this should be a picture, not yet implemented]</b>";
 		}
@@ -90,6 +90,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			// add color
 			if ( font & GG_FONT_COLOR ) {
 				pointer += sizeof( gg_msg_richtext_format );
+				i += sizeof( gg_msg_richtext_format );
 				gg_msg_richtext_color *color = (gg_msg_richtext_color*)( pointer );
 				r = (int)color->red;
 				g = (int)color->green;
@@ -104,6 +105,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 
 		// advance to next structure in row
 		pointer += sizeof( gg_msg_richtext_format );
+		i += sizeof( gg_msg_richtext_format );
 	}
 
 	tmp += msg.mid( j, msg.length() );
