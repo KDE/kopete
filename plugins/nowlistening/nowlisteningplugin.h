@@ -43,32 +43,39 @@ class NowListeningPlugin : public KopetePlugin
 		virtual KActionCollection *customContextMenuActions( KopeteMetaContact* );
 		virtual KActionCollection *customChatActions( KopeteMessageManager* );
 
-
 	public slots:
 		/**
 		 * Apply updated settings from preferences instance
 		 */
 		void slotSettingsChanged();
+		/**
+		 * Perform any string substitution needed on outgoing messages
+		 */
 		void slotOutgoingMessage( KopeteMessage& msg );
+	
 	protected:
 		/** 
 		 * Constructs a string containing the track information for all
 		 * players
 		 */
-		QString allPlayerAdvert();
-		/** 
-		 * Constructs and sends the message
+		QString allPlayerAdvert() const;
+		/**
+		 * Constructs a string containing any changes to the media being played
 		 */
-		QString substDepthFirst( NLMediaPlayer *player, QString in, bool );
+		QString changesOnlyAdvert() const;
+		/**  
+		 * Creates the string for a single player
+		 * @p player - the media player we're using
+		 * @p in - the source format string
+		 * @p bool - is this call within a set of brackets for conditional expansion?
+		 */
+		QString substDepthFirst( NLMediaPlayer *player, QString in, bool inBrackets) const;
 		/**
 		 * Sends a message to a single chat
 		 */
 		void advertiseToChat( KopeteMessageManager* theChat, QString message );
+	
 	protected slots:
-		/**
-		 * Polls all players for current state and sends "now listening" message
-		 */
-		//void slotPollPlayers();
 		/**
 		 * called to change whether a contact should receive adverts
 		 */
@@ -76,20 +83,19 @@ class NowListeningPlugin : public KopetePlugin
 		/**
 		 * called to reactively send an advert
 		 */
-		void slotSendAdvert();
+		void slotAdvertToCurrentChat();
 		/** 
 		 * informs all active chats of any changes since last
 		 */
 		void slotChangesToAllChats();
+	
 	private:
-		// Points to the preferences instance
+		// used to access the GUI settings
 		NowListeningPreferences *m_prefs;
-		// Array of pointers to media player interfaces
+		// abstracted media player interfaces
 		NLMediaPlayer **m_mediaPlayer;
-		// Triggers slotPollPlayers
+		// Triggers slotChangesToAllChats
 		QTimer *m_pollTimer;
-		// The initial part of the "now listening" message
-		//QString m_message;
 		// Needed for DCOP interprocess communication
 		DCOPClient *m_client;
 		// Support GUI actions

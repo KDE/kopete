@@ -33,7 +33,7 @@ NLNoatun::NLNoatun( DCOPClient *client ) : NLMediaPlayer()
 	m_type = Audio;
 }
 
-QCString NLNoatun::find()
+QCString NLNoatun::find() const
 {
 	QCString app = "noatun";
 	if ( !m_client->isApplicationRegistered( app ) )

@@ -117,7 +117,7 @@ KActionCollection *NowListeningPlugin::customChatActions(  KopeteMessageManager*
 	delete m_actionCollection;
 	m_actionCollection = new KActionCollection( this );
 	KAction *actionSendAdvert = new KAction( "Send Media Info", 0, this,
-			SLOT( slotSendAdvert() ), m_actionCollection, "actionSendAdvert" );
+			SLOT( slotAdvertToCurrentChat() ), m_actionCollection, "actionSendAdvert" );
 	m_actionCollection->insert( actionSendAdvert );
 	m_currentMessageManager = kmm;
 	return m_actionCollection;
@@ -130,45 +130,25 @@ void NowListeningPlugin::slotContactWantsToggled( bool on )
 	{
 		m_currentMetaContact->setPluginData( this, ( on ? "true" : "false" ) );
 	}
+	return;
 }
 
-void NowListeningPlugin::slotSendAdvert()
+void NowListeningPlugin::slotAdvertToCurrentChat()
 {
 	//advertise  to a single chat
-	advertiseToChat( m_currentMessageManager, allPlayerAdvert() );
+	if ( m_currentMessageManager )
+		advertiseToChat( m_currentMessageManager, allPlayerAdvert() );
+	return;
 }	
 
 void NowListeningPlugin::slotChangesToAllChats()
 {
 	kdDebug() << "NowListeningPlugin::slotChangesToAllChats()" << endl;
-	bool sthToAdvertise = false;
-	QString message = m_prefs->header();
-	QString perTrack = m_prefs->perTrack();
-
-	// see if there is something new
-	for ( int i = 0; i < NO_PLAYERS; i++ )
+	//bool sthToAdvertise = false;
+	QString message = changesOnlyAdvert();
+	// tell each active chat about the new tracks
+	if ( !message.isEmpty() )
 	{
-		m_mediaPlayer[ i ]->update();
-		if ( m_mediaPlayer[ i ]->playing() && m_mediaPlayer[ i ]->newTrack() )
-		{
-			sthToAdvertise = true;
-			// generate a message 
-			//kdDebug() << m_mediaPlayer[ i ]->name() << " says it's playing "
-			//	<< "a " << ( m_mediaPlayer[ i ]->newTrack() ? "new" : "old" )  << " track" << endl;
-			// CLEVER SUBSTITUTION WITH DEPTH FIRST SEARCH FOR 
-			// INCLUSION CONDITIONAL ON SUBSTITUTION BEING MADE
-			if (  message != m_prefs->header() ) // > 1 track playing!
-				message = message + m_prefs->conjunction();
-			//kdDebug() << m_mediaPlayer[ i ]->track() << m_mediaPlayer[ i ]->artist() << m_mediaPlayer[ i ]->album() << m_mediaPlayer[ i ]->name() << endl;
-			message = message + substDepthFirst( m_mediaPlayer[ i ], 
-					perTrack, false );
-		}
-	}
-	// tell anyone who is interested
-	if ( sthToAdvertise )
-	{
-		// tell each active chat about the new song 
-
 		// get the list of active chats
 		KopeteMessageManagerDict allsessions = 
 			KopeteMessageManagerFactory::factory()->sessions();
@@ -180,10 +160,12 @@ void NowListeningPlugin::slotChangesToAllChats()
 			advertiseToChat( it.current(), message );
 		}
 	}
+	return;
 }
 
 void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
+	//NB DOESN'T RESPECT USER PREFS"!!!
 	QString originalBody = msg.plainBody();
 	// look for messages that we've generated and ignore them
 	if ( !originalBody.startsWith( m_prefs->header() ) )
@@ -200,11 +182,12 @@ void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	}
 }
 
-QString NowListeningPlugin::allPlayerAdvert()
+QString NowListeningPlugin::allPlayerAdvert() const
 {
 	// generate message for all players
 	QString message = m_prefs->header();
 	QString perTrack = m_prefs->perTrack();
+	
 	for ( int i = 0; i < NO_PLAYERS; i++ )
 	{
 		m_mediaPlayer[ i ]->update();
@@ -218,9 +201,37 @@ QString NowListeningPlugin::allPlayerAdvert()
 	}
 	return message;
 }
+	
+QString NowListeningPlugin::changesOnlyAdvert() const
+{	
+	QString message = "";
+	QString perTrack = m_prefs->perTrack();
+
+	// see if there is something new
+	for ( int i = 0; i < NO_PLAYERS; i++ )
+	{
+		m_mediaPlayer[ i ]->update();
+		if ( m_mediaPlayer[ i ]->playing() && m_mediaPlayer[ i ]->newTrack() )
+		{
+			if ( message.isEmpty() )
+				message = m_prefs->header();
+			// generate a message 
+			//kdDebug() << m_mediaPlayer[ i ]->name() << " says it's playing "
+			//	<< "a " << ( m_mediaPlayer[ i ]->newTrack() ? "new" : "old" )  << " track" << endl;
+			// CLEVER SUBSTITUTION WITH DEPTH FIRST SEARCH FOR 
+			// INCLUSION CONDITIONAL ON SUBSTITUTION BEING MADE
+			if (  message != m_prefs->header() ) // > 1 track playing!
+				message = message + m_prefs->conjunction();
+			//kdDebug() << m_mediaPlayer[ i ]->track() << m_mediaPlayer[ i ]->artist() << m_mediaPlayer[ i ]->album() << m_mediaPlayer[ i ]->name() << endl;
+			message = message + substDepthFirst( m_mediaPlayer[ i ], 
+					perTrack, false );
+		}
+	}
+	return message;
+}
 
 QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
-		QString in, bool inBrackets )
+		QString in, bool inBrackets ) const
 {
 	QString track = player->track();
 	QString artist = player->artist();

@@ -36,13 +36,13 @@ class NLMediaPlayer
 		 * the model of its state in this class
 		 */
 		virtual void update() = 0;
-		bool playing() { return m_playing; }
-		bool newTrack() { return m_newTrack; }
-		QString artist() { return m_artist; }
-		QString album() { return m_album; }
-		QString track() { return m_track; }
-		QString name() { return m_name; }
-		NLMediaType mediaType() { return m_type; }
+		bool playing() const { return m_playing; }
+		bool newTrack() const { return m_newTrack; }
+		QString artist() const { return m_artist; }
+		QString album() const { return m_album; }
+		QString track() const { return m_track; }
+		QString name() const{ return m_name; }
+		NLMediaType mediaType() const { return m_type; }
 	protected:
 		// The name of the application
 		QString m_name;

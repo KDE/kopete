@@ -31,9 +31,10 @@ class NLNoatun : public NLMediaPlayer
 	public:
 		NLNoatun( DCOPClient *client );
 		virtual void update();
-		QCString find();
+		QCString find() const;
  	protected:
 		DCOPClient *m_client;
 };
 
 #endif
+// vim: set noet ts=4 sts=4 sw=4:
