@@ -879,6 +879,11 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			m_contacts[ handle ]->setBlocked( true );
 		else if( list == "FL" )
 			m_contacts[ handle ]->addToGroup( gn );
+		else if( list == "AL" )
+		{
+			// Unblocking a blocked contact
+			m_contacts[ handle ]->setBlocked( false );
+		}
 	}
 	else
 	{
@@ -893,7 +898,8 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		else if( list == "AL" )
 		{
 			// FIXME: Proper MSNContact ctor!
-			MSNContact *c = new MSNContact( handle, publicName, QString::null, 0L );
+			MSNContact *c = new MSNContact( handle, publicName, QString::null,
+				0L );
 			c->setBlocked( false );
 			addToContactList( c, gn );
 		}
