@@ -66,16 +66,16 @@ void y_strfreev(char ** vector)
 	FREE(vector);
 }
 
-char ** y_strsplit(char * str, char * sep, int nelem)
+char ** y_strsplit(const char * str, const char * sep, int nelem)
 {
 	char ** vector;
-	char *s, *p;
+	const char *s, *p;
 	int i=0;
 	int l = strlen(sep);
 	if(nelem < 0) {
-		char * s;
+		char * _s;
 		nelem=0;
-		for(s=strstr(str, sep); s; s=strstr(s+l, sep),nelem++)
+		for(_s=strstr(str, sep); _s; _s=strstr(_s+l, sep),nelem++)
 			;
 		if(strcmp(str+strlen(str)-l, sep))
 			nelem++;

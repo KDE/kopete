@@ -42,7 +42,7 @@ typedef struct _YList {
 typedef int (*YListCompFunc)(const void *, const void *);
 
 YList * y_list_append(YList * list, void * data);
-YList * y_list_remove_link(YList * list, const YList * link);
+YList * y_list_remove_link(YList * list, const YList * _link);
 YList * y_list_remove(YList * list, void * data);
 
 YList * y_list_copy(YList * list);

@@ -347,7 +347,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_error)(int id, char *err, int fatal);
  * Returns:
  * 	0
  */
-int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char *fmt, ...);
+int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(const char *fmt, ...);
 
 
 

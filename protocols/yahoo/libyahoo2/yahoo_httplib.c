@@ -139,7 +139,7 @@ static int isurlchar(unsigned char c)
 	return (isalnum(c) || '-' == c || '_' == c);
 }
 
-char *yahoo_urlencode(const char *instr)
+const char *yahoo_urlencode(const char *instr)
 {
 	int ipos=0, bpos=0;
 	char *str = NULL;
@@ -167,7 +167,7 @@ char *yahoo_urlencode(const char *instr)
 	return (str);
 }
 
-char *yahoo_urldecode(const char *instr)
+const char *yahoo_urldecode(const char *instr)
 {
 	int ipos=0, bpos=0;
 	char *str = NULL;

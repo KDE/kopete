@@ -90,7 +90,7 @@ void yahoo_register_callbacks(struct yahoo_callbacks * tyc)
 #define YAHOO_CALLBACK(x)	x
 #endif
 
-int yahoo_log_message(char * fmt, ...)
+int yahoo_log_message(const char * fmt, ...)
 {
 	char out[1024];
 	va_list ap;
@@ -175,7 +175,7 @@ struct yahoo_packet {
 
 static int last_id=0;
 
-extern char *yahoo_crypt(char *, char *);
+extern char *yahoo_crypt(const char *, const char *);
 
 enum yahoo_log_level log_level = YAHOO_LOG_NONE;
 
@@ -702,8 +702,10 @@ static void yahoo_process_conference(struct yahoo_data *yd, struct yahoo_packet 
 		if (pair->key == 14)		/* decline/conf message */
 			msg = pair->value;
 
+		/*
 		if (pair->key == 13)
 			;
+		*/
 		if (pair->key == 16)		/* error */
 			msg = pair->value;
 
@@ -808,7 +810,7 @@ static void yahoo_process_status(struct yahoo_data *yd, struct yahoo_packet *pkt
 	int away = 0;
 	char *msg = NULL;
 	
-	if(pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
+	if(pkt->service == YAHOO_SERVICE_LOGOFF && (int) pkt->status == -1) {
 		YAHOO_CALLBACK(ext_yahoo_login_response)(yd->client_id, YAHOO_LOGIN_DUPL, NULL);
 		return;
 	}
@@ -1176,7 +1178,7 @@ static void yahoo_process_contact(struct yahoo_data *yd, struct yahoo_packet *pk
 static void yahoo_process_buddyadd(struct yahoo_data *yd, struct yahoo_packet *pkt)
 {
 	char *who = NULL;
-	char *where = NULL;
+	const char *where = NULL;
 	int status = 0;
 	char *me = NULL;
 
@@ -1648,9 +1650,9 @@ void yahoo_set_away(int id, enum yahoo_status state, const char *msg, int away)
 		yahoo_packet_hash(pkt, 47, away?"1":"0");
 	}
 
-	printf("libyahoo2: sending away packet...\n", id, state, msg, away);
+	printf("libyahoo2: sending away packet...\n" /*, id, state, msg, away */);
 	yahoo_send_packet(yd, pkt, 0);
-	printf("libyahoo2: done.\n", id, state, msg, away);
+	printf("libyahoo2: done.\n" /*, id, state, msg, away */);
 	yahoo_packet_free(pkt);
 }
 

@@ -29,8 +29,8 @@ extern "C" {
 #include "yahoo2_types.h"
 
 int yahoo_tcp_readline(char *ptr, int maxlen, int fd);
-char *yahoo_urlencode(const char *instr);
-char *yahoo_urldecode(const char *instr);
+const char *yahoo_urlencode(const char *instr);
+const char *yahoo_urldecode(const char *instr);
 int yahoo_http_post(const char *url, const struct yahoo_data *yd, long size);
 int yahoo_http_get(const char *url, const struct yahoo_data *yd);
 int yahoo_get_url_fd(const char *url, const struct yahoo_data *yd,
