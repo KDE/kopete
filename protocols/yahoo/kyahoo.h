@@ -1,5 +1,5 @@
 /*
-    kyahoo.h - QT libyahoo2 wrapper
+    kyahoo.h - Qt based libyahoo2 wrapper II
 
     Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
@@ -44,75 +44,39 @@ public:
 	YahooSessionManager();
 	~YahooSessionManager();
 
-	int socketDescriptor( int session_id );
 
 	/* Creates a new session */
-	YahooSession* createSession(const QString username, const QString password, int initial);
+	YahooSession* createSession(const QString username, const QString password);
 	bool cleanSessions();
-	YahooSession* getSession(int id);
-	int getSessionCount() const;
+	YahooSession* session(int id);
+	int sessionCount() const;
 
 	/* Sets the host and port for connection to the pager and f.t. servers */
 	void setPager(QString host, int port);
 	void setFileTransfer(QString host, int port);
 
-	/* Receivers for libyahoo callbacks, resolve connection id and emit signal for the correct session */
-	void loginResponseReceiver( int id, int succ, char *url);
-	void gotIgnoreReceiver(int id, YList *igns);
-	void gotBuddiesReceiver(int id, YList *buds);
-	void gotidentitiesReceiver(int id, char *who, int stat, char *msg, int away);
-	void gotIdentitiesReceiver(int id, YList *ids);
-	void statusChangedReceiver(int id, char *who, int stat, char *msg, int away);
-	void gotImReceiver(int id, char *who, char *msg, long tm, int stat);
-	void gotConfInviteReceiver(int id, char *who, char *room, char *msg, YList *members);
-	void confUserDeclineReceiver(int id, char *who, char *room, char *msg);
-	void confUserJoinReceiver(int id, char *who, char *room);
-	void confUserLeaveReceiver(int id, char *who, char *room);
-	void confMessageReceiver(int id, char *who, char *room, char *msg);
-	void gotFileReceiver(int id, char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
-	void contactAddedReceiver(int id, char *myid, char *who, char *msg);
-	void rejectedReceiver(int id, char *who, char *msg);
-	void typingNotifyReceiver(int id, char *who, int stat);
-	void gameNotifyReceiver(int id, char *who, int stat);
-	void mailNotifyReceiver(int id, char *from, char *subj, int cnt);
-	void systemMessageReceiver(int id, char *msg);
-	void errorReceiver(int id, char *err, int fatal);
-	int logReceiver(char *fmt, ...);
-	void addHandlerReceiver(int id, int fd, yahoo_input_condition cond);
-	void removeHandlerReceiver(int id, int fd);
-	int hostConnectReceiver(char *host, int port);
+	int _hostConnectReceiver(char *host, int port);
 
 private:
-	/* id to session */
 	QMap< int, YahooSession*> m_sessionsMap;
-	/* fd to sockets */
-	QMap< int, KExtendedSocket *> m_socketsMap;
-	/* id to fd */
-	QMap< int,int> m_fdMap;
-	/* fd to id */
-	QMap< int,int> m_idMap;
-
 	static YahooSessionManager *managerStatic_;
 };
 
 // Yahoo Protocol Connection
 class YahooSession : public QObject
 {
-friend class YahooSessionManager;
+	friend class YahooSessionManager;
 	Q_OBJECT
 
 public:
 	~YahooSession();
-	int Id() const
-	{ return m_connId; };
-
-	int socketDescriptor() const
-	{ return m_fd; };
+	int sessionId() const;
 
 	int setLogLevel(enum yahoo_log_level level);
 
-	int login(const QString username, const QString password, int initial);
-
+	/* YahooSession public API */
+	
+	void login(int initial);
 	void logOff();
 	void refresh();
 	void setIdentityStatus( const QString &identity, int active);
@@ -141,6 +105,34 @@ public:
 	QStringList getIdentities();
 	QString getCookie( const QString &which);
 	QString getProfile_url( void );
+	
+	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals 
+	   called only by libyahoo callbacks, don't use them */
+	
+	void _loginResponseReceiver(int succ, char *url);
+	void _gotIgnoreReceiver(YList *igns);
+	void _gotBuddiesReceiver(YList *buds);
+	void _gotidentitiesReceiver(char *who, int stat, char *msg, int away);
+	void _gotIdentitiesReceiver(YList *ids);
+	void _statusChangedReceiver(char *who, int stat, char *msg, int away);
+	void _gotImReceiver(char *who, char *msg, long tm, int stat, int utf8);
+	void _gotConfInviteReceiver(char *who, char *room, char *msg, YList *members);
+	void _confUserDeclineReceiver(char *who, char *room, char *msg);
+	void _confUserJoinReceiver(char *who, char *room);
+	void _confUserLeaveReceiver(char *who, char *room);
+	void _confMessageReceiver(char *who, char *room, char *msg, int utf8);
+	void _gotFileReceiver(char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
+	void _contactAddedReceiver(char *myid, char *who, char *msg);
+	void _rejectedReceiver(char *who, char *msg);
+	void _typingNotifyReceiver(char *who, int stat);
+	void _gameNotifyReceiver(char *who, int stat);
+	void _mailNotifyReceiver(char *from, char *subj, int cnt);
+	void _systemMessageReceiver(char *msg);
+	void _errorReceiver(char *err, int fatal);
+	int _logReceiver(char *fmt, ...);
+	void _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
+	void _removeHandlerReceiver(int fd);
+	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
 
 signals:
 	/**
@@ -244,19 +236,21 @@ signals:
 	void slotWriteReady();
 	private:
 	/* Private constructor */
-	YahooSession();
+	YahooSession(int id, const QString username, const QString password);
 
 	void addHandler(int fd, yahoo_input_condition cond);
 	void removeHandler(int fd);
 
 	KExtendedSocket *m_socket;
-
-	void setSocket(int fd);
+	void *m_data;
+	
 	QString m_Username, m_Password, m_Server; // User data
+	
 	int m_Port;
 	int m_Status;
 	int m_connId;
 	int m_fd;
+	
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
 };
