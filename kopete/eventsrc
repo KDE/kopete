@@ -7,9 +7,6 @@ Comment[sv]=Kopete Instant Messenger
 
 [kopete_event]
 Name=Event
-Name[hr]=poruka_svima
-Name[pt_BR]=mensagens
-Name[sv]=Alla meddelanden
 Comment=Sound Notification for Kopete Events
 Comment[da]=Lydbesked for Kopete-begivenheder
 Comment[he]=הודעות צליל לאירועים של Kopete
