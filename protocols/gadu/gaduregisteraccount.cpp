@@ -41,7 +41,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 
 	ui->valueVerificationSequence->setDisabled( true );
 	setButtonText( User1, i18n( "&Register" ) );
-	setButtonText( Ok, i18n( "&Close" ) );
+	setButtonText( Ok, i18n( "&Cancel" ) );
 	enableButton( User1, false );
 
 	cRegister = new RegisterCommand( this );
@@ -132,9 +132,10 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 	ui->labelPasswordVerify->setDisabled( true );
 	ui->labelVerificationSequence->setDisabled( true );
 	ui->labelInstructions->setDisabled( true );
-	enableButton( User1, false );
 	emit registeredNumber( cRegister->newUin(), ui->valuePassword->text() );
 	updateStatus( i18n( "Account created; your new UIN is %1." ).arg(QString::number( cRegister->newUin() )  ) );
+	enableButton( User1, false );
+	setButtonText( Ok, i18n( "&Close" ) );
 }
 
 void

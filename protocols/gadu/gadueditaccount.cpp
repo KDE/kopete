@@ -37,6 +37,7 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kpassdlg.h>
 
 GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWidget* parent, const char* name )
 : GaduAccountEditUI( parent, name ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
