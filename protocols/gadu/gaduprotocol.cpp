@@ -49,6 +49,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     userUin_ = KGlobal::config()->readEntry("Uin", "0").toUInt();
     password_= KGlobal::config()->readEntry("Password", "");
     nick_    = KGlobal::config()->readEntry("Nick", "");
+    status_  = KGlobal::config()->readNumEntry( "Status", 0 );
     myself_ = new GaduContact( this->id(), userUin_, nick_,
                                new KopeteMetaContact() );
 
@@ -66,6 +67,9 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 GaduProtocol::~GaduProtocol()
 {
     protocolStatic_ = 0L;
+    KGlobal::config()->setGroup("Gadu");
+    KGlobal::config()->writeEntry( "Status", status_ );
+    KGlobal::config()->sync();
 }
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
@@ -298,10 +302,13 @@ GaduProtocol::slotLogin()
     }
     if ( !session_->isConnected() ) {
         session_->login( userUin_, password_, GG_STATUS_AVAIL );
+        status_ = GG_STATUS_AVAIL;
+        myself_->setGaduStatus( status_);
+        changeStatus( status_ );
     } else {
         session_->changeStatus( GG_STATUS_AVAIL );
         status_ = GG_STATUS_AVAIL;
-        myself_->setGaduStatus( status_ );
+        myself_->setGaduStatus( status_);
         changeStatus( status_ );
     }
 }
@@ -350,6 +357,7 @@ GaduProtocol::changeStatus( int status, const QString& descr )
     }
     status_ = status;
     myself_->setGaduStatus( status_ );
+
     switch( status_ ) {
     case GG_STATUS_NOT_AVAIL:
     case GG_STATUS_NOT_AVAIL_DESCR:
@@ -480,8 +488,6 @@ void
 GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
 {
     kdDebug()<<"#### Gadu-Gadu connected!"<<endl;
-    //FIXME: remember last state and set it appropriately
-    //changeStatus( GG_STATUS_INVISIBLE );
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( userUin_, password_ );
     connect( cmd, SIGNAL(done(const QStringList&)),
@@ -530,7 +536,8 @@ GaduProtocol::slotGoOnline()
     if ( !session_->isConnected() ) {
         kdDebug()<<"#### Connecting..."<<endl;
         slotLogin();
-    }
+    } else
+        changeStatus( GG_STATUS_AVAIL );
 }
 
 void
