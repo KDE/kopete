@@ -694,6 +694,11 @@ GaduAccount::slotIncomingDcc( unsigned int UIN )
 		return;
 	}
 
+	// if incapabile to transfer files, forget about it.
+	if ( contact->contactPort() < 10 ) {
+		return;
+	}
+	
 	dcc = gg_dcc_get_file( htonl( contact->contactIp().ip4Addr() ), contact->contactPort(), p->loginInfo.uin ,UIN );
 	
 	if ( !dcc) {
