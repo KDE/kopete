@@ -34,7 +34,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	m_protocol = proto;
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-	connect (mID, SIGNAL (lostFocus ()), this, SLOT (validateJID ()));
 	connect (mPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mResource, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -118,6 +117,8 @@ void JabberEditAccountWidget::reopen ()
 KopeteAccount *JabberEditAccountWidget::apply ()
 {
 	kdDebug (14180) << "JabberEditAccount::apply()" << endl;
+
+	validateJID();
 
 	if (!m_account)
 	{
