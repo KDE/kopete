@@ -66,7 +66,7 @@ void KopeteWindow::initView ( void )
 
 void KopeteWindow::initActions ( void )
 {
-	actionAddContact = new KAction( i18n("&Add contact"),"bookmark_add", 0 ,
+	actionAddContact = new KAction( i18n("&Add Contact..."),"bookmark_add", 0 ,
 							kopeteapp, SLOT(slotAddContact()),
 							actionCollection(), "AddContact" );
 
