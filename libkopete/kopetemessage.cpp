@@ -78,7 +78,10 @@ void KopeteMessage::setFont(QFont font)
 
 void KopeteMessage::setBody( const QString& body , MessageFormat f )
 {
-	mBody = body;
+	if( mDirection == Outbound && body.startsWith("/me ") )
+                mBody = body.section(" ",1).prepend(" ").prepend( mFrom->displayName() ).prepend("*");
+	else
+		mBody = body;
 	mFormat = f;
 }
 
@@ -88,13 +91,12 @@ void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 	mTimestamp = timeStamp;
 	mFrom = from;
 	mTo = to;
-	mBody = body;
 	mSubject = subject;
 	mDirection = direction;
 	mFg = QColor();
 	mBg = QColor();
 	mFont = QFont();
-	mFormat = f;
+	setBody( body, f );
 }
 
 

@@ -349,7 +349,7 @@ void KopeteMessageManager::readMessages()
 	if ( foreignMessage || queueEmpty )
 	{
 		mainWindow()->show();
-		if(KopetePrefs::prefs()->raiseMsgWindow())
+		if( queueEmpty || KopetePrefs::prefs()->raiseMsgWindow() )
 		{
 			KWin::setOnDesktop(mainWindow()->winId() , KWin::currentDesktop()); //set on the desktop
 			mainWindow()->raise(); // make it top window
