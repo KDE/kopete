@@ -4,8 +4,9 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -586,6 +587,21 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	{
 		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
 		i->setMovie( mv );
+	}
+
+	//the tool-tip of the systemtray.
+	if(m_tray)
+	{
+		QToolTip::remove(m_tray);
+		
+		QString tt;
+		
+		QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+		for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
+		{
+			tt+=QString::fromLatin1("<p>")+a->myself()->toolTip()+QString::fromLatin1("</p>");
+		}
+		QToolTip::add(m_tray,tt);
 	}
 }
 
