@@ -25,7 +25,7 @@
 #include "kopeteonlinestatus.h"
 
 #include "gaducommands.h"
-
+#include "gadusession.h"
 #include "libgadu.h"
 
 #include <qmap.h>
@@ -50,7 +50,7 @@ public:
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
-	KActionMenu* actionMenu();	
+	KActionMenu* actionMenu();
 	//}
 public slots:
 	//{
@@ -75,6 +75,19 @@ public slots:
 	void error( const QString& title, const QString& message );
 	void pong();
 	void pingServer();
+
+	// those two functions are connected straight to gadusession ones
+	// with the same names/params. This was the easiest way to
+	// make this interface public
+	bool pubDirSearch(QString &name, QString &surname, QString &nick, 
+			    int UIN, QString &city, int gender, 
+			    int ageFrom, int ageTo, bool onlyAlive);
+                            
+	void pubDirSearchClose();
+
+signals:
+	void pubDirSearchResult( searchResult &result );
+
 
 protected slots:
 	virtual void loaded();
@@ -101,6 +114,7 @@ private slots:
 	
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
+	void slotSearchResult( searchResult &result );
 	
 private:
 	void initConnections();

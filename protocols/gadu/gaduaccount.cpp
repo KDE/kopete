@@ -1,6 +1,5 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 #include "gaduaccount.h"
-#include "gadusession.h"
 #include "gaducontact.h"
 #include "gaduprotocol.h"
 #include "gaduaway.h"
@@ -78,6 +77,8 @@ GaduAccount::initConnections()
 				SLOT(slotSessionDisconnect()) );
 	QObject::connect( session_, SIGNAL(ackReceived(struct gg_event*)),
 				SLOT(ackReceived(struct gg_event*)) );
+	QObject::connect( session_, SIGNAL(pubDirSearchResult( searchResult &result )),
+				SLOT(slotSearchResult( searchResult &result )) );
 
 }
 
@@ -555,7 +556,7 @@ GaduAccount::pingServer()
 void
 GaduAccount::slotSearch()
 {
-    GaduPublicDir *gpd=new GaduPublicDir( this, qApp->mainWidget(), "Gadu Public user directory search" );
+    new GaduPublicDir( this, qApp->mainWidget(), "Gadu Public user directory search" );
 }
 
 void
@@ -599,5 +600,24 @@ GaduAccount::slotDescription()
 	}
 	delete away;
 }
+
+bool GaduAccount::pubDirSearch(QString &name, QString &surname, QString &nick, 
+			    int UIN, QString &city, int gender, 
+			    int ageFrom, int ageTo, bool onlyAlive)
+{
+    return session_->pubDirSearch( name, surname, nick, UIN, city, gender, 
+				    ageFrom, ageTo, onlyAlive );
+}
+                            
+void GaduAccount::pubDirSearchClose()
+{
+    session_->pubDirSearchClose();
+}
+
+void GaduAccount::slotSearchResult( searchResult &result )
+{
+    emit pubDirSearchResult( result );
+}
+
 
 #include "gaduaccount.moc"
