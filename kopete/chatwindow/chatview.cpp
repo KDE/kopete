@@ -252,11 +252,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	membersStatus = Smart;
 	bgChanged = false;
 	m_tabState=Normal;
-	//valgrind complained about this - initialize it to true
-	visibleMembers = true;
+	visibleMembers = false;
 
-//	m_icon = SmallIcon( mgr->protocol()->pluginIcon() );
-//	m_iconLight = KIconEffect().apply( m_icon, KIconEffect::ToGamma, 0.5, Qt::white, true );
 	m_sendInProgress = false;
 	scrollPressed = false;
 	mComplete = new KCompletion();
@@ -419,7 +416,7 @@ bool ChatView::closeView( bool force )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
-				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatMessageInProgress") );
+				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatMessageInProgress"));
 		}
 	}
 
@@ -489,14 +486,14 @@ void ChatView::setMainWindow( KopeteChatWindow* parent )
 	}
 }
 
-void ChatView::createMembersList(void)
+void ChatView::createMembersList()
 {
 	if( !membersDock )
 	{
 		//Create the chat members list
 		membersDock = createDockWidget( QString::fromLatin1( "membersDock" ), QPixmap(), 0L,
 			QString::fromLatin1( "membersDock" ), QString::fromLatin1( " " ) );
-		membersList = new KListView(this);
+		membersList = new KListView( this, "membersList" );
 		membersList->setShowToolTips( false );
 		new ChatViewMembersTip( membersList );
 		membersList->setAllColumnsShowFocus( true );
@@ -517,9 +514,21 @@ void ChatView::createMembersList(void)
 		membersDock->setWidget(membersList);
 
 		KopeteContactPtrList members = m_manager->members();
-		membersStatus = members.first()->metaContact() ?  static_cast<MembersListPolicy>(
-			members.first()->metaContact()->pluginData( m_manager->protocol(),
-				QString::fromLatin1("MembersListPolicy") ).toInt() )        : Smart;
+
+		if(members.first()->metaContact() != 0 )
+		{
+			membersStatus = static_cast<MembersListPolicy>
+			(
+				members.first()->metaContact()->pluginData
+				(
+					m_manager->protocol(), QString::fromLatin1("MembersListPolicy")
+				).toInt()
+			);
+		}
+		else
+		{
+			membersStatus = Smart;
+		}
 
 		if( membersStatus == Smart )
 			visibleMembers = ( memberContactMap.count() > 2 );
@@ -543,8 +552,10 @@ void ChatView::toggleMembersVisibility()
 		placeMembersList( membersDockPosition );
 		KopeteContactPtrList members = m_manager->members();
 		if(members.first()->metaContact())
+		{
 			members.first()->metaContact()->setPluginData( m_manager->protocol(),
 				QString::fromLatin1("MembersListPolicy"), QString::number(membersStatus) );
+		}
 		refreshView();
 	}
 }
@@ -561,12 +572,17 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 		// look up the dock width
 		int dockWidth;
 		KGlobal::config()->setGroup( QString::fromLatin1("ChatViewDock") );
+
 		if( membersDockPosition == KDockWidget::DockLeft )
+		{
 			dockWidth = KGlobal::config()->readNumEntry(
 				QString::fromLatin1("membersDock,viewDock:sepPos"), 30);
+		}
 		else
+		{
 			dockWidth = KGlobal::config()->readNumEntry(
 				QString::fromLatin1("viewDock,membersDock:sepPos"), 70);
+		}
 
 		// Make sure it is shown then place it wherever
 		membersDock->setEnableDocking( KDockWidget::DockLeft | KDockWidget::DockRight );
@@ -1080,7 +1096,7 @@ void ChatView::readOptions()
 	KConfig *config = KGlobal::config();
 
 	/** THIS IS BROKEN !!! */
-	//dockManager->readConfig ( config, "ChatViewDock" );
+	//dockManager->readConfig ( config, QString::fromLatin1("ChatViewDock") );
 
 	//Work-around to restore dock widget positions
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
@@ -1097,8 +1113,8 @@ void ChatView::readOptions()
 			dockKey.append( QString::fromLatin1(",membersDock") );
 	}
 	dockKey.append( QString::fromLatin1(",editDock:sepPos") );
-
-	int splitterPos = config->readNumEntry( dockKey, 70);
+	//kdDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
+	int splitterPos = config->readNumEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, KDockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite(KDockWidget::DockLeft | KDockWidget::DockRight );
 	editDock->setEnableDocking(KDockWidget::DockNone);
