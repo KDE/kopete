@@ -132,14 +132,13 @@ class KopeteMetaContactLVI::Private
 {
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
-	            buddyIcon( 0L ), metaContactPhoto( 0L ), currentMode( -1 ) {}
+	            metaContactPhoto( 0L ), currentMode( -1 ) {}
 	ListView::ImageComponent *metaContactPhoto;
 	ListView::ImageComponent *metaContactIcon;
 	ListView::TextComponent *nameText;
 	ListView::TextComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
 	ListView::BoxComponent *spacerBox;
-	ListView::ImageComponent *buddyIcon;
 	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 	// metacontact icon size
 	int iconSize;
@@ -700,7 +699,6 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	d->nameText = 0L;
 	d->metaContactPhoto = 0L;
 	d->extraText = 0L;
-	d->buddyIcon = 0L;
 	d->metaContactIcon = 0L;
 	d->iconSize = IconSize( KIcon::Small );
 	d->contactIconSize = 12;
@@ -721,8 +719,6 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
 
-		new HSpacerComponent( hbox );
-		d->buddyIcon = new ImageComponent( hbox );
 		d->iconSize = IconSize( KIcon::Toolbar );
 	}
 	else if( mode == KopetePrefs::Yagami )             // Style with metacontact photo
@@ -739,11 +735,6 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-
-/*		new HSpacerComponent( hbox );
-		d->buddyIcon = new ImageComponent( hbox );
-		d->iconSize = IconSize( KIcon::Toolbar );
-		d->metaContactIcon = new ImageComponent( hbox );*/
 	}
 	else if( mode == KopetePrefs::RightAligned )       // old right-aligned contact
 	{
