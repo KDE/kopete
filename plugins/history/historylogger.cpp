@@ -144,6 +144,9 @@ QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int mon
 	QString FileName = getFileName( c , month);
 
 	QDomDocument doc( "Kopete-History" );
+	documents.insert(month, doc);
+	m_documents[c]=documents;
+
 	QFile file( FileName );
 	if ( !file.open( IO_ReadOnly ) )
 	{
@@ -162,9 +165,6 @@ QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int mon
 
 	if(contain)
 		*contain=true;
-
-	documents.insert(month, doc);
-	m_documents[c]=documents;
 
 	return doc;
 }
