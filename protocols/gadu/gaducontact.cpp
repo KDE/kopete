@@ -54,15 +54,18 @@ GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount* account
 	version		= 0;
 	image_size	= 0;
 
+	thisContact_.append( this );
+
+	initActions();
+
+	// don't call libkopete functions like these until the object is fully
+	// constructed. all GaduContact construction must be above this point.
 	setFileCapable( false );
 
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
 
-	initActions();
-
 	setDisplayName( name );
-	thisContact_.append( this );
 }
 
 QString
