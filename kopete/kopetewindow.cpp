@@ -94,6 +94,7 @@ void KopeteWindow::initActions ( void )
 
 	actionAwayMenu = new KActionMenu( i18n("Status"),"kopetestatus",
 							actionCollection(), "Status" );
+	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
 
