@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>LatexPrefsUI</class>
 <author>Duncan Mac-Vicar</author>
 <widget class="QWidget">
@@ -10,13 +10,41 @@
             <x>0</x>
             <y>0</y>
             <width>513</width>
-            <height>504</height>
+            <height>228</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>LatexPrefsUI</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;blockquote&gt;The KopeTeX plugin allows Kopete to render Latex formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$. This plugin requires ImageMagick convert program installed in order to work.&lt;/blockquote&gt;</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>130</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
