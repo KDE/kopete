@@ -404,7 +404,7 @@ void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
 	KopeteMetaContact * inviteeMC = new KopeteMetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
 	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
-	invitee->setOnlineStatus( GroupWiseProtocol::protocol()->groupwisePending );
+	invitee->setOnlineStatus( c->onlineStatus() );
 	// TODO: we could set all the placeholder's properties etc here too
 	addContact( invitee, true );
 	m_invitees.append( invitee );
