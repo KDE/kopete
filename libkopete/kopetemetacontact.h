@@ -2,6 +2,8 @@
     kopetemetacontact.h - Kopete Meta Contact
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -45,6 +47,15 @@ public:
 	 * Add contact to the meta contact
 	 */
 	void addContact( KopeteContact *c, const QStringList &groups );
+	
+	/**
+	 * Add metadata to the meta contact
+	 */
+	void addData( QString &pluginId, QString &key, QString &value );
+	/**
+	 * Get metadata to the meta contact
+	 */
+	QString data( QString &pluginId, QString &key);
 
 	/**
 	 * Find the KopeteContact to a given contact. If contact

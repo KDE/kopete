@@ -2,6 +2,8 @@
     kopetemetacontact.cpp - Kopete Meta Contact
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -86,12 +88,12 @@ KopeteContact *KopeteMetaContact::findContact( const QString &contactId )
 	return 0L;
 }
 
-KopeteContact *KopeteMetaContact::findContact( const QString &ProtocolId, const QString &contactId )
+KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &contactId )
 {
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		if( it.current()->id() == contactId )
+		if( (it.current()->id() == contactId ) && (it.current()->protocol() == protocolId ))
 			return it.current();
 	}
 
@@ -99,6 +101,16 @@ KopeteContact *KopeteMetaContact::findContact( const QString &ProtocolId, const 
 	return 0L;
 }
 
+void KopeteMetaContact::addData( QString &pluginId, QString &key, QString &value )
+{
+	//m_metadata.insert( QPair( pluginId, key) , value);
+	m_metadata[ qMakePair( pluginId, key) ] = value;
+}
+
+QString KopeteMetaContact::data( QString &pluginId, QString &key)
+{
+	return m_metadata[ qMakePair( pluginId, key) ];
+}
 
 void KopeteMetaContact::sendMessage()
 {

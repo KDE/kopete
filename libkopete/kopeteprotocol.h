@@ -1,19 +1,20 @@
-/***************************************************************************
-                          kopeteprotocol.h  -  description
-                             -------------------
-    begin                : Tue Jan 1 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
- ***************************************************************************/
+/*
+    kopeteprotocol.h - Kopete Protocol
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+	Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef IMPROTOCOL_H
 #define IMPROTOCOL_H

@@ -2,7 +2,8 @@
     kopetecontactlist.h - Kopete's Contact List backend
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+	Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
