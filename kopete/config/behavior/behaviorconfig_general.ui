@@ -8,32 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>390</width>
-            <height>296</height>
+            <width>421</width>
+            <height>380</height>
         </rect>
     </property>
     <property name="caption">
         <string>General</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>mUseQueueChk</cstring>
-            </property>
-            <property name="text">
-                <string>Use the message &amp;queue</string>
-            </property>
-            <property name="accel">
-                <string>Alt+Q</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Use a queue instead of opening a chat window on incoming messages</string>
-            </property>
-        </widget>
-        <widget class="QButtonGroup">
+        <widget class="QButtonGroup" row="0" column="0">
             <property name="name">
                 <cstring>buttonGroup2</cstring>
             </property>
@@ -71,7 +57,70 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QButtonGroup">
+        <spacer row="3" column="0">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>30</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QGroupBox" row="2" column="0">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Miscellaneous</string>
+            </property>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>mUseQueueChk</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>20</y>
+                        <width>370</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Use the message &amp;queue</string>
+                </property>
+                <property name="accel">
+                    <string>Alt+Q</string>
+                </property>
+                <property name="whatsThis" stdset="0">
+                    <string>Use a queue instead of opening a chat window on incoming messages</string>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>mForwardRenamesChk</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>50</y>
+                        <width>370</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Rename all subcontacts when renaming</string>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QButtonGroup" row="1" column="0">
             <property name="name">
                 <cstring>notifyGroupBox</cstring>
             </property>
@@ -97,6 +146,9 @@
                     <property name="text">
                         <string>Flash the system &amp;tray on new messages</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
+                    </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0">
                     <property name="name">
@@ -108,24 +160,7 @@
                 </widget>
             </grid>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>16</width>
-                    <height>8</height>
-                </size>
-            </property>
-        </spacer>
-    </vbox>
+    </grid>
 </widget>
 <tabstops>
     <tabstop>mUseQueueChk</tabstop>

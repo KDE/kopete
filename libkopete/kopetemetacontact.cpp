@@ -489,15 +489,10 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	//The name is set by the user, disable tracking
 	d->trackChildNameChanges = false;
 
-	// Don't rename contacts on the server automagically as not everyone seems
-	// to like it. We need a GUI for this first, but that's post-0.7 work.
-	// After Kopete 0.7 is out we can think about the required options and/or
-	// heuristics for when to sync to or from the server (and in what way)
-	// - Martijn
-#if 0
-	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->rename( name );
-#endif
+	//Forward new name to subcontacts if requested
+	if ( KopetePrefs::prefs()->forwardContactRenames() )
+		for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
+			( *it )->rename( name );
 
 	emit displayNameChanged( old , name );
 }

@@ -59,6 +59,7 @@ public:
 	bool greyIdleMetaContacts() const { return mGreyIdle; }
 	bool startDocked() const { return mStartDocked; }
 	bool useQueue() const { return mUseQueue; }
+	bool forwardContactRenames() const { return mForwardContactRenames; }
 	bool raiseMsgWindow() const{ return mRaiseMsgWindow; }
 	bool showEvents() const{ return mShowEvents; }
 	bool trayflashNotify() const { return mTrayflashNotify; }
@@ -116,6 +117,7 @@ public:
 	void setGreyIdleMetaContacts(bool);
 	void setStartDocked(bool);
 	void setUseQueue(bool);
+	void setForwardContactRenames(bool);
 	void setRaiseMsgWindow(bool);
 	void setShowEvents(bool);
 	void setTrayflashNotify(bool);
@@ -190,6 +192,7 @@ private:
 	bool mSortByGroup;
 	bool mStartDocked;
 	bool mUseQueue;
+	bool mForwardContactRenames;
 	bool mRaiseMsgWindow;
 	bool mShowEvents;
 	bool mTrayflashNotify;
