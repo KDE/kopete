@@ -1,9 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
-  <!ENTITY kopete "<application>Kopete</application>">
-  <!ENTITY Will.Stephenson
-"<personname><firstname>Will</firstname><surname>Stephenson</surname></personname>">
-  <!ENTITY Will.Stephenson.mail "<email>lists@stevello.free-online.co.uk</email>">
+  <!ENTITY kopete "<application>kopete</application>">
   <!ENTITY package "kdenetwork">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
@@ -18,21 +15,29 @@ Getting Started (WIP, Will)
         Start chatting
 Using Kopete
         Contact List window
+			Layout
+				Menu
+				Toolbar
+				Contact List view
+				Status bar
+ 			Set your presence
+			Start a chat
+            Organising contacts
                 Adding contacts
-			Metacontacts - What are they and why do I want them? should probably be the first item under adding contacts. People new to a unified client or coming from Gaim will have no clue why metacontacts are good.
-                Organising contacts
-			Within Metacontacts
-			Grouping Contacts
-                Shortcuts
+					Metacontacts - What are they and why do I want them? should probably be the first item under adding contacts. People new to a unified client or coming from Gaim will have no clue why metacontacts are good.
+				Grouping Contacts
+					Within Metacontacts
+			configure &kopete;
+			Quit.
+            Shortcuts
         Chat window
-		Chat window Layout
-			Chat members list
-			Status bar (typing notifications, etc )
-	 		Tabbing
-
-                Starting group chats
-                Shortcuts
-        File transfers?
+			Layout
+				Chat members list
+				Status bar (typing notifications, etc )
+	 			Tabbing
+            Starting group chats
+            Shortcuts
+	        File transfers?
 Configuring Kopete
 	Global Shortcuts
         Adding/Editing Accounts
@@ -45,8 +50,8 @@ Menus
         (Short description of each menu item)
 FAQ
 Specialised Tasks
+    (Any tricks involving _use_ of Kopete)
 	Command line flags
-        (Any tricks involving _use_ of Kopete)
 Credits
 Appendix: Obtaining and installation
 -->
@@ -56,11 +61,13 @@ Appendix: Obtaining and installation
 <title>The &kopete; Handbook</title>
 
 <authorgroup>
-
-<author>&Will.Stephenson; &Will.Stephenson.mail;</author>
-
+<author>
+<firstname>Will</firstname>
+<othername></othername>
+<surname>Stephenson</surname>
+<address><email>lists@stevello.free-online.co.uk</email></address>
+</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
-
 </authorgroup>
 
 <legalnotice>&FDLNotice;</legalnotice>
@@ -148,9 +155,9 @@ using their respective web site before creating an account in
 is being configured.  Click the <guiicon>Accounts</guiicon> icon.  The main pane
 will change to display the account management pane.  This is currently
 empty, but will soon list your &im; accounts.  Click
-<guibutton>New</guibutton> to display the <guilabel>Account
-Wizard</guilabel>.</para>
-		<para>The <guilabel>Account Wizard</guilabel> helps you create an &im; account.  After the <guilabel>Welcome</guilabel> page, you are asked to select the messaging service that you'd like to use.  Click one of the services show and then click <guibutton>Next</guibutton>.  On the following page, you should enter your registration details for that instant messaging service.</para>
+<guibutton>New</guibutton> to display the <interface>Account
+Wizard</interface>.</para>
+		<para>The <interface>Account Wizard</interface> helps you create an &im; account.  After the <guilabel>Welcome</guilabel> page, you are asked to select the messaging service that you'd like to use.  Click one of the services show and then click <guibutton>Next</guibutton>.  On the following page, you should enter your registration details for that instant messaging service.</para>
 		<para>Most services just require you to enter a username or unique
 identifying number (<acronym>UIN</acronym>) and password.  The special
 purpose services Winpopup and <acronym>SMS</acronym> work slightly
@@ -161,19 +168,19 @@ at:</para>
 			<varlistentry><term>Remember password</term><listitem><para>When this is checked, &kopete; will store the password for you, so you don't have to enter it every time you connect to the &im; service.  If you are security-conscious or want to limit access to the &im; account you can leave this unchecked.</para></listitem></varlistentry>
 			<varlistentry><term>Connect at startup</term><listitem><para>When this is checked, &kopete; will try to connect to the &im; service as when it starts.  If you use a <acronym>LAN</acronym>, <acronym>DSL</acronym>or other <quote>always-on</quote> connection, this is appropriate; dial-up modem users should turn this off and connect manually when you have dialed up.</para></listitem></varlistentry>
 		</variablelist>
-		<para>Once you've entered your &im; details, you can proceed to the <guilabel>Finish</guilabel>screen and then dismiss the wizard and the Configure window.</para>
+		<para>Once you've entered your &im; details, you can proceed to the <guilabel>Finish</guilabel> page and then dismiss the wizard and the Configure window.</para>
 	</sect1><!-- creating-accounts -->
 	<sect1 id="go-online">
 		<title>Go Online and Start Chatting!</title>
 		<para>Now you'll notice that an icon representing the account has
 appeared in the status bar at the bottom of the &kopete;
-<guilabel>Contact List</guilabel> window.  This represents your current
+<interface>Contact List</interface> window.  This represents your current
 presence for this account.  <mousebutton>Right</mousebutton> click on
 it and you can go online from the menu that appears.  The status bar
 icon will animate while &kopete; connects to the &im; service.</para>
 		<para>Once you're online, if you've used this &im; service before,
 your contacts will be fetched from the server and displayed in the
-<guilabel>Contact List</guilabel>.  To start a chat with a contact, just
+<interface>Contact List</interface>.  To start a chat with a contact, just
 click their name and a Chat window will appear.  The upper part of the
 window is where the conversation appears - to say something, type into
 the bottom part of the window and click
@@ -186,6 +193,41 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 	</sect1><!-- go-online -->
 	</chapter>
 
+	<chapter id="using-kopete">
+		<title>Using Kopete</title>
+		<para>This chapter gives an overview of &kopete;'s basic features.  We will look first at the contact list, where your contacts are displayed, and then at the Chat window, where you carry out a conversation.</para>
+		<sect1 id="contact-list">
+			<title>The Contact List</title>
+			<para>The Contact List appears when you start &kopete;.  It's the main window where you can set your presence, start a chat, organise your contacts, configure &kopete; and quit.</para>
+			<sect2 id="contact-list-layout">
+				<title>Layout of the Contact List window</title>
+				<para>Menu</para>
+				<para>Tool bar</para>
+				<para>Contact List</para>
+				<para>Status bar</para>
+			</sect2>
+			<sect2 id="contact-list-setting-presence">
+				<title>Setting Your Presence</title>
+				<para>We introduced you to setting presence <link linkend="go-online">in the previous chapter</link>.  'Presence' determines how visible you are on the &im; network.  To use the network at all, you have to connect to the network, so you can send and receive messages and see others' presence.  Once you are connected, most &im; systems allow you to indicate what you're doing and whether you want to chat by setting special types of presence such as 'Away' or 'Free For Chat'.  The difference presence settings are particular to each away system; but Kopete allows you some control all your &im; systems at once by setting them to 'Away' or 'Available' at the same time.</para>
+				<para>You set your presence for individual &im; accounts by right-clicking the account's icon in the <interface>status</interface> bar at the bottom of the <interface>Contact List</interface>.  The context menu for each account lets you choose the possible presence settings for each &im; system.</para>
+				<para>To change all your accounts' presence together, click the <guibutton>Status</guibutton>, or use the <menuchoice><guimenu>File</guimenu> <guimenuitem>Status</guimenuitem> </menuchoice> menu.</para>
+			</sect2>
+			<sect2 id="contact-list-start-chat">
+				<title>Start A Chat From The Contact List</title>
+				<para>To start a chat from the <interface>Contact List</interface>, simply click a contact.  A <link linkend="chat-window">Chat window</link> will appear.</para>
+				<para>You can also right-click a contact and select either <menuchoice><guimenuitem>Send Message</guimenuitem></menuchoice> or <menuchoice><guimenuitem>Start Chat</guimenuitem></menuchoice>.  <menuchoice><guimenuitem>Send Message</guimenuitem></menuchoice> works differently in that it just sends a single message without opening the <interface>Chat window</interface>, using a simple dialog.  Use it for <quote>fire-and-forget</quote> messages.</para>
+			</sect2>
+			<sect2 id="organise-contacts">
+				<title>Organising Contacts</title>
+				<para>One of the principles behind &kopete; is that it offers a standardised way to use &im; systems.  Differences between &im; systems are smoothed over, making it easier to communicate.  We follow this principle in the way contacts are organised.  When you use &kopete; you just find contacts by name; the actual &im; system used is less important.  Some people have more than one &im; account - &kopete; puts the person using the account first.</para>
+				<para>To support this, &kopete; introduced <quote>Metacontacts</quote>, which represent the person you want to chat with.  All the different &im; accounts they may have are attached to their Metacontact, making it easy to see at a glance whether someone is available, regardless of which &im; system they are using right now.</para>
+			</sect2>
+		</sect1><!-- chat-window -->
+		<sect1 id="chat-window">
+			<title>The Chat Window</title>
+			<para>The Chat Window </para>
+		</sect1><!-- chat-window -->
+	</chapter><!-- Using-kopete -->
 	<chapter id="credits-and-licenses">
 		<title>Credits and Licenses</title>
 		<para>
