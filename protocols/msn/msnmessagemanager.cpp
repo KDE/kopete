@@ -49,23 +49,23 @@
 #include "msndebugrawcmddlg.h"
 #endif
 
-MSNMessageManager::MSNMessageManager( Kopete::Protocol *protocol, const Kopete::Contact *user,
+MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others, const char *name )
-: Kopete::MessageManager( user, others, protocol, 0, name )
+: Kopete::ChatSession( user, others, protocol, 0, name )
 {
-	Kopete::MessageManagerFactory::self()->addMessageManager( this );
+	Kopete::ChatSessionManager::self()->addChatSession( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
 
 	setInstance(protocol->instance());
 
 	connect( this, SIGNAL( messageSent( Kopete::Message&,
-		Kopete::MessageManager* ) ),
+		Kopete::ChatSession* ) ),
 		this, SLOT( slotMessageSent( Kopete::Message&,
-		Kopete::MessageManager* ) ) );
+		Kopete::ChatSession* ) ) );
 
-	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) ,
-		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) );
+	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) ,
+		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
 
 
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "msnInvite" );
@@ -90,7 +90,7 @@ MSNMessageManager::MSNMessageManager( Kopete::Protocol *protocol, const Kopete::
 			//How to know when a our view is created?  We can't.
 			// but chances are the next created view will be for this KMM
 			// And if it is not?  never mind. the icon will just be sized 22x22
-			connect( Kopete::MessageManagerFactory::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+			connect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 			//it's viewActivated and not viewCreated because the view get his mainwindow only when it is shown.
 		}
 	}
@@ -104,7 +104,7 @@ MSNMessageManager::MSNMessageManager( Kopete::Protocol *protocol, const Kopete::
 	setMayInvite( true );
 }
 
-MSNMessageManager::~MSNMessageManager()
+MSNChatSession::~MSNChatSession()
 {
 	delete m_image;
 	//force to disconnect the switchboard
@@ -120,7 +120,7 @@ MSNMessageManager::~MSNMessageManager()
 	}
 }
 
-void MSNMessageManager::createChat( const QString &handle,
+void MSNChatSession::createChat( const QString &handle,
 	const QString &address, const QString &auth, const QString &ID )
 {
 	if( m_chatService )
@@ -155,7 +155,7 @@ void MSNMessageManager::createChat( const QString &handle,
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
 }
 
-void MSNMessageManager::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
+void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
 	if( !account()->contacts()[ handle ] )
 		account()->addMetaContact( handle, publicName, 0L, Kopete::Account::Temporary);
@@ -175,7 +175,7 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 		slotRequestPicture();
 }
 
-void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reason )
+void MSNChatSession::slotUserLeft( const QString &handle, const QString& reason )
 {
 	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
 	if(c)
@@ -184,9 +184,9 @@ void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reas
 
 
 
-void MSNMessageManager::slotSwitchBoardClosed()
+void MSNChatSession::slotSwitchBoardClosed()
 {
-	//kdDebug(14140) << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
+	//kdDebug(14140) << "MSNChatSession::slotSwitchBoardClosed"  << endl;
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
@@ -204,7 +204,7 @@ void MSNMessageManager::slotSwitchBoardClosed()
 		setCanBeDeleted( true );
 }
 
-void MSNMessageManager::slotMessageSent(Kopete::Message &message,Kopete::MessageManager *)
+void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSession *)
 {
  	if(m_chatService)
 	{
@@ -241,7 +241,7 @@ void MSNMessageManager::slotMessageSent(Kopete::Message &message,Kopete::Message
 	}
 }
 
-void MSNMessageManager::slotMessageReceived( Kopete::Message &msg )
+void MSNChatSession::slotMessageReceived( Kopete::Message &msg )
 {
 	if( msg.plainBody().startsWith( "AutoMessage: " ) )
 	{
@@ -273,7 +273,7 @@ void MSNMessageManager::slotMessageReceived( Kopete::Message &msg )
 	}
 }
 
-void MSNMessageManager::slotActionInviteAboutToShow()
+void MSNChatSession::slotActionInviteAboutToShow()
 {
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
@@ -300,20 +300,20 @@ void MSNMessageManager::slotActionInviteAboutToShow()
 	m_inviteactions.append( b ) ;
 }
 
-void MSNMessageManager::slotCloseSession()
+void MSNChatSession::slotCloseSession()
 {
 	kdDebug(14140) << k_funcinfo  << m_chatService <<endl;
 	if(m_chatService)
 		m_chatService->slotCloseSession();
 }
 
-void MSNMessageManager::slotInviteContact( Kopete::Contact *contact )
+void MSNChatSession::slotInviteContact( Kopete::Contact *contact )
 {
 	if(contact)
 		inviteContact( contact->contactId() );
 }
 
-void MSNMessageManager::inviteContact(const QString &contactId)
+void MSNChatSession::inviteContact(const QString &contactId)
 {
 	if( m_chatService )
 		m_chatService->slotInviteContact( contactId );
@@ -321,7 +321,7 @@ void MSNMessageManager::inviteContact(const QString &contactId)
 		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( contactId );
 }
 
-void MSNMessageManager::slotInviteOtherContact()
+void MSNChatSession::slotInviteOtherContact()
 {
 	bool ok;
 	QString handle = KInputDialog::getText(i18n( "MSN Plugin" ),
@@ -341,14 +341,14 @@ void MSNMessageManager::slotInviteOtherContact()
 }
 
 
-void MSNMessageManager::sendMessageQueue()
+void MSNChatSession::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
 		kdDebug(14140) <<k_funcinfo << "Service doesn't exist" <<endl;
 		return;
 	}
-//	kdDebug(14140) << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+//	kdDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
 	for ( QValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
 		//m_chatService->sendMsg( *it)  ;
@@ -368,7 +368,7 @@ void MSNMessageManager::sendMessageQueue()
 	}
 }
 
-void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
+void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 {
 	if ( !m_messagesSent.contains( id ) )
 	{
@@ -393,7 +393,7 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 	m_messagesSent.remove( id );
 }
 
-void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg)
+void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 {
 	//FIXME! a contact from another account can send a file
 	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
@@ -448,7 +448,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	}
 }
 
-void MSNMessageManager::invitationDone(MSNInvitation* MFTS)
+void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 {
 	kdDebug(14140) << k_funcinfo <<endl;
 	m_invitations.remove(MFTS->cookie());
@@ -458,7 +458,7 @@ void MSNMessageManager::invitationDone(MSNInvitation* MFTS)
 		setCanBeDeleted(true);
 }
 
-void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*fileName*/,
+void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
 //	if(m_chatService)
@@ -482,7 +482,7 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 //	}
 }
 
-void MSNMessageManager::initInvitation(MSNInvitation* invitation)
+void MSNChatSession::initInvitation(MSNInvitation* invitation)
 {
 	connect(invitation->object(), SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
 	m_invitations.insert( invitation->cookie() , invitation);
@@ -499,7 +499,7 @@ void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 	}
 }
 
-void MSNMessageManager::slotRequestPicture()
+void MSNChatSession::slotRequestPicture()
 {
 	QPtrList<Kopete::Contact> mb=members();
 	MSNContact *c = static_cast<MSNContact*>( mb.first() );
@@ -523,7 +523,7 @@ void MSNMessageManager::slotRequestPicture()
 
 }
 
-void MSNMessageManager::slotDisplayPictureChanged()
+void MSNChatSession::slotDisplayPictureChanged()
 {
 	const MSNContact *c = static_cast<const MSNContact *>( members().getFirst() );
 	if ( c && m_image )
@@ -537,7 +537,7 @@ void MSNMessageManager::slotDisplayPictureChanged()
 			if(w)
 			{
 				//We connected that in the constructor.  we don't need to keep this slot active.
-				disconnect( Kopete::MessageManagerFactory::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 			
 				QPtrListIterator<KToolBar>  it=w->toolBarIterator() ;
 				KAction *imgAction=actionCollection()->action("msnDisplayPicture");
@@ -570,7 +570,7 @@ void MSNMessageManager::slotDisplayPictureChanged()
 	}
 }
 
-void MSNMessageManager::slotDebugRawCommand()
+void MSNChatSession::slotDebugRawCommand()
 {
 #if !defined NDEBUG
 	if ( !m_chatService )

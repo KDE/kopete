@@ -24,7 +24,7 @@
 /* Kopete Includes */
 #include "kopetecontact.h"
 
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 namespace Kopete { class OnlineStatus; }
 class YahooProtocol;
@@ -41,7 +41,7 @@ public:
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
+	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	void setYahooStatus( const Kopete::OnlineStatus& );
@@ -65,7 +65,7 @@ public slots:
 	void sync(unsigned int);
 
 private slots:
-	void slotMessageManagerDestroyed();
+	void slotChatSessionDestroyed();
 	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
 
@@ -77,7 +77,7 @@ private:
 	QString m_groupName;
 
 	//The message manager
-	Kopete::MessageManager *m_manager;
+	Kopete::ChatSession *m_manager;
 
 	//the account that this contact belongs to
 	YahooAccount* m_account;

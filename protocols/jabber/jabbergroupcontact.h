@@ -61,7 +61,7 @@ public:
 	 */
 	void removeSubContact ( const XMPP::RosterItem &rosterItem );
 
-	Kopete::MessageManager *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
+	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
 
 public slots:
 
@@ -87,7 +87,7 @@ private slots:
 	/**
 	 * Catch a dying message manager and leave the room.
 	 */
-	void slotMessageManagerDeleted ();
+	void slotChatSessionDeleted ();
 
 private:
 

@@ -50,12 +50,12 @@ public:
 	/**
 	 * Creates and returns a SimpleMessageHandler object.
 	 */
-	MessageHandler *create( MessageManager *manager, Message::MessageDirection direction );
+	MessageHandler *create( ChatSession *manager, Message::MessageDirection direction );
 	/**
 	 * Returns the filter position passed to the constructor if @p direction matches the
 	 * direction passed to the constructor, otherwise returns @c StageDoNotCreate.
 	 */
-	int filterPosition( MessageManager *manager, Message::MessageDirection direction );
+	int filterPosition( ChatSession *manager, Message::MessageDirection direction );
 	
 private:
 	class Private;

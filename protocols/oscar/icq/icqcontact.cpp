@@ -209,7 +209,7 @@ void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 }
 #endif
 
-void ICQContact::slotSendMsg(Kopete::Message& message, Kopete::MessageManager *)
+void ICQContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;

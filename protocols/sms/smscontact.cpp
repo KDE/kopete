@@ -67,7 +67,7 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 		serializedData[ "contactId" ] = m_phoneNumber;
 }
 
-Kopete::MessageManager* SMSContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
+Kopete::ChatSession* SMSContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	if ( m_msgManager || canCreate != Kopete::Contact::CanCreate )
@@ -78,16 +78,16 @@ Kopete::MessageManager* SMSContact::manager( Kopete::Contact::CanCreateFlags can
 	{
 		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
-		m_msgManager = Kopete::MessageManagerFactory::self()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
+		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
 		this, SLOT(slotSendMessage(Kopete::Message&)));
-		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
 		connect(this, SIGNAL(messageSuccess()), m_msgManager, SIGNAL(messageSuccess()));
 		return m_msgManager;
 	}
 }
 
-void SMSContact::slotMessageManagerDestroyed()
+void SMSContact::slotChatSessionDestroyed()
 {
 	m_msgManager = 0L;
 }

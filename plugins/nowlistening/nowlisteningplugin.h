@@ -68,13 +68,13 @@ friend class NowListeningGUIClient;
 		/**
 		 * Sends a message to a single chat
 		 */
-		void advertiseToChat( Kopete::MessageManager* theChat, QString message );
+		void advertiseToChat( Kopete::ChatSession* theChat, QString message );
 
 	protected slots:
 		/**
 		 * Reacts to a new chat starting and adds actions to its GUI
 		 */
-		void slotNewKMM( Kopete::MessageManager* );
+		void slotNewKMM( Kopete::ChatSession* );
 		
 		/**
 		 * Reacts to the plugin's settings changed signal, originating from the KCModule dispatcher
@@ -90,7 +90,7 @@ friend class NowListeningGUIClient;
 		DCOPClient *m_client;
 		// Support GUI actions
 		KActionCollection *m_actionCollection;
-		Kopete::MessageManager *m_currentMessageManager;
+		Kopete::ChatSession *m_currentChatSession;
 		KToggleAction *m_actionWantsAdvert;
 		Kopete::MetaContact *m_currentMetaContact;
 

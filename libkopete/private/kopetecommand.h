@@ -25,7 +25,7 @@
 namespace Kopete
 {
 
-class MessageManager;
+class ChatSession;
 
 class Command : public KAction
 {
@@ -38,7 +38,7 @@ class Command : public KAction
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
 		 * @param handlerSlot The slot used to handle the command. This slot must
-		 *   accept two parameters, a QString of arguments, and a Kopete::MessageManager
+		 *   accept two parameters, a QString of arguments, and a Kopete::ChatSession
 		 *   pointer to the Manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help <command>
@@ -53,7 +53,7 @@ class Command : public KAction
 		/**
 		 * Process this command
 		 */
-		void processCommand( const QString &args, MessageManager *manager, bool gui = false );
+		void processCommand( const QString &args, ChatSession *manager, bool gui = false );
 
 		/**
 		 * Returns the command this object handles
@@ -76,7 +76,7 @@ class Command : public KAction
 		 * has been handled, all processing on it stops by the command handler
 		 * (a command cannot be handled twice)
 		 */
-		void handleCommand( const QString &args, Kopete::MessageManager *manager );
+		void handleCommand( const QString &args, Kopete::ChatSession *manager );
 
 	private slots:
 		/**
@@ -89,7 +89,7 @@ class Command : public KAction
 			CommandHandler::CommandType type, const QString &formatString,
 			uint minArgs, int maxArgs );
 
-		void printError( const QString &error, MessageManager *manager, bool gui = false ) const;
+		void printError( const QString &error, ChatSession *manager, bool gui = false ) const;
 
 		QString m_command;
 		QString m_help;

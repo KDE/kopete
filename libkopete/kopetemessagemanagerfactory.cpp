@@ -25,27 +25,27 @@
 
 
 
-Kopete::MessageManagerFactory* Kopete::MessageManagerFactory::s_factory = 0L;
+Kopete::ChatSessionManager* Kopete::ChatSessionManager::s_factory = 0L;
 
-Kopete::MessageManagerFactory* Kopete::MessageManagerFactory::self()
+Kopete::ChatSessionManager* Kopete::ChatSessionManager::self()
 {
 	if( !s_factory )
-		s_factory = new Kopete::MessageManagerFactory( kapp );
+		s_factory = new Kopete::ChatSessionManager( kapp );
 
 	return s_factory;
 }
 
-Kopete::MessageManagerFactory::MessageManagerFactory( QObject* parent,
+Kopete::ChatSessionManager::ChatSessionManager( QObject* parent,
 	const char* name )
 	: QObject( parent, name ), mId( 0 )
 {
 	s_factory = this;
 }
 
-Kopete::MessageManagerFactory::~MessageManagerFactory()
+Kopete::ChatSessionManager::~ChatSessionManager()
 {
 	s_factory = 0L;
-	QIntDictIterator<Kopete::MessageManager> it( mSessionDict );
+	QIntDictIterator<Kopete::ChatSession> it( mSessionDict );
 	for ( ; it.current() ; ++it )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM: Why this KMM isn't yet unloaded?" << endl;
@@ -53,13 +53,13 @@ Kopete::MessageManagerFactory::~MessageManagerFactory()
 	}
 }
 
-Kopete::MessageManager* Kopete::MessageManagerFactory::findMessageManager(const Kopete::Contact *user,
+Kopete::ChatSession* Kopete::ChatSessionManager::findChatSession(const Kopete::Contact *user,
 		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol)
 {
-	Kopete::MessageManager *result = 0L;
-	QIntDictIterator<Kopete::MessageManager> it( mSessionDict );
+	Kopete::ChatSession *result = 0L;
+	QIntDictIterator<Kopete::ChatSession> it( mSessionDict );
 
-	for ( Kopete::MessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  )
+	for ( Kopete::ChatSession* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  )
 	{
 		if ( it.current()->protocol() == protocol && user == kmm->user() )
 		{
@@ -93,24 +93,24 @@ Kopete::MessageManager* Kopete::MessageManagerFactory::findMessageManager(const 
 	return result;
 }
 
-Kopete::MessageManager *Kopete::MessageManagerFactory::create(
+Kopete::ChatSession *Kopete::ChatSessionManager::create(
 	const Kopete::Contact *user, Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol)
 {
-	Kopete::MessageManager *result=findMessageManager( user,  chatContacts, protocol);
+	Kopete::ChatSession *result=findChatSession( user,  chatContacts, protocol);
 	if (!result)
 	{
-		result = new Kopete::MessageManager(user,  chatContacts, protocol, ++mId );
-		addMessageManager(result);
+		result = new Kopete::ChatSession(user,  chatContacts, protocol, ++mId );
+		addChatSession(result);
 	}
 	return (result);
 }
 
-void Kopete::MessageManagerFactory::slotReadMessage()
+void Kopete::ChatSessionManager::slotReadMessage()
 {
 	emit readMessage();
 }
 
-void Kopete::MessageManagerFactory::addMessageManager(Kopete::MessageManager * result)
+void Kopete::ChatSessionManager::addChatSession(Kopete::ChatSession * result)
 {
 	if(result->mmId() == 0)
 	{
@@ -123,37 +123,37 @@ void Kopete::MessageManagerFactory::addMessageManager(Kopete::MessageManager * r
 	 * There's no need for a slot here... just add a public remove()
 	 * method and call from KMM's destructor
 	 */
-	connect( result, SIGNAL( messageAppended( Kopete::Message &, Kopete::MessageManager * ) ),
+	connect( result, SIGNAL( messageAppended( Kopete::Message &, Kopete::ChatSession * ) ),
 		SIGNAL( aboutToDisplay( Kopete::Message & ) ) );
-	connect( result, SIGNAL( messageSent( Kopete::Message &, Kopete::MessageManager * ) ),
+	connect( result, SIGNAL( messageSent( Kopete::Message &, Kopete::ChatSession * ) ),
 		SIGNAL( aboutToSend(Kopete::Message & ) ) );
-	connect( result, SIGNAL( messageReceived( Kopete::Message &, Kopete::MessageManager * ) ),
+	connect( result, SIGNAL( messageReceived( Kopete::Message &, Kopete::ChatSession * ) ),
 		SIGNAL( aboutToReceive(Kopete::Message & ) ) );
 
-	connect( result, SIGNAL(messageAppended( Kopete::Message &, Kopete::MessageManager *) ),
-		SIGNAL( display( Kopete::Message &, Kopete::MessageManager *) ) );
+	connect( result, SIGNAL(messageAppended( Kopete::Message &, Kopete::ChatSession *) ),
+		SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ) );
 
-	emit messageManagerCreated(result);
+	emit chatSessionCreated(result);
 }
 
-Kopete::MessageManager* Kopete::MessageManagerFactory::findMessageManager( int id )
+Kopete::ChatSession* Kopete::ChatSessionManager::findChatSession( int id )
 {
 	return mSessionDict.find ( id );
 }
 
-void Kopete::MessageManagerFactory::removeSession( Kopete::MessageManager *session)
+void Kopete::ChatSessionManager::removeSession( Kopete::ChatSession *session)
 {
 	kdDebug(14010) << k_funcinfo << endl;
 	mSessionDict.setAutoDelete( false );
 	mSessionDict.remove( session->mmId() );
 }
 
-const Kopete::MessageManagerDict& Kopete::MessageManagerFactory::sessions( )
+const Kopete::ChatSessionDict& Kopete::ChatSessionManager::sessions( )
 {
 	return mSessionDict;
 }
 
-KopeteView * Kopete::MessageManagerFactory::createView( Kopete::MessageManager *kmm , Kopete::Message::ViewType type )
+KopeteView * Kopete::ChatSessionManager::createView( Kopete::ChatSession *kmm , Kopete::Message::ViewType type )
 {
 	KopeteView *newView=0L;
 	emit requestView( newView , kmm , type  );
@@ -180,12 +180,12 @@ KopeteView * Kopete::MessageManagerFactory::createView( Kopete::MessageManager *
 	return newView;
 }
 
-void Kopete::MessageManagerFactory::postNewEvent(Kopete::MessageEvent *e)
+void Kopete::ChatSessionManager::postNewEvent(Kopete::MessageEvent *e)
 {
 	emit newEvent(e);
 }
 
-KopeteView *Kopete::MessageManagerFactory::activeView()
+KopeteView *Kopete::ChatSessionManager::activeView()
 {
 	/**
 	 * FIXME: This is an awful retarded way to do this. Why can't

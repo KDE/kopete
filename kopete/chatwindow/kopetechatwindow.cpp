@@ -74,7 +74,7 @@ namespace
 	WindowList windows;
 }
 
-KopeteChatWindow *KopeteChatWindow::window( Kopete::MessageManager *manager )
+KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 {
 	bool windowCreated = false;
 	KopeteChatWindow *myWindow;

@@ -23,7 +23,7 @@
 
 #include "kopetemessagemanager.h" // needed for silly Kopete::ContactPtrList
 
-class JabberMessageManager;
+class JabberChatSession;
 
 class JabberContact : public JabberBaseContact
 {
@@ -57,7 +57,7 @@ public:
 	 * not suitable for groupchat, as it only looks for
 	 * managers with ourselves in the contact list.
 	 */
-	Kopete::MessageManager *manager ( Kopete::Contact::CanCreateFlags );
+	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags );
 	
 	/**
 	 * Reads a vCard object and updates the contact's
@@ -126,7 +126,7 @@ private slots:
 	*/
 	void slotSelectResource ();
 
-	void slotMessageManagerDeleted ( QObject *sender );
+	void slotChatSessionDeleted ( QObject *sender );
 	
 	/**
 	 * Check if cached vCard is recent.
@@ -157,7 +157,7 @@ private:
 	 * the manager. If a new manager is created, the given
 	 * resource is preselected.
 	 */
-	JabberMessageManager *manager ( const QString &resource, Kopete::Contact::CanCreateFlags );
+	JabberChatSession *manager ( const QString &resource, Kopete::Contact::CanCreateFlags );
 
 	/**
 	 * Create a message manager for this contact.
@@ -165,7 +165,7 @@ private:
 	 * looks for a message manager with a given
 	 * list of contacts as members.
 	 */
-	JabberMessageManager *manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags );
+	JabberChatSession *manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags );
 
 	/**
 	 * Sends subscription messages.
@@ -184,11 +184,11 @@ private:
 	 * with several resources of the same contact
 	 * at the same time. Note that this does *not*
 	 * apply to group chats, so this variable
-	 * only contains classes of type JabberMessageManager.
-	 * The casts in manager() and slotMessageManagerDeleted()
+	 * only contains classes of type JabberChatSession.
+	 * The casts in manager() and slotChatSessionDeleted()
 	 * are thus legal.
 	 */
-	QPtrList<JabberMessageManager> mManagers;
+	QPtrList<JabberChatSession> mManagers;
 
 	/**
 	 * Indicates whether the vCard is currently

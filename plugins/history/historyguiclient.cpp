@@ -27,7 +27,7 @@
 
 class HistoryPlugin;
 
-HistoryGUIClient::HistoryGUIClient(Kopete::MessageManager *parent, const char *name)
+HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent, const char *name)
  : QObject(parent, name), KXMLGUIClient(parent)
 {
 	setInstance(KGenericFactory<HistoryPlugin>::instance());

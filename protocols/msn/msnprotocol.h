@@ -36,9 +36,9 @@ class MSNContact;
 class MSNAccount;
 class MSNNotifySocket;
 class MSNSwitchBoardSocket;
-class MSNMessageManager;
+class MSNChatSession;
 class MSNInvitation;
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 namespace Kopete { class Contact; }
 namespace Kopete { class Message; }
@@ -142,7 +142,7 @@ signals:
 	 * @param msnMM is the message manager
 	 * @param c is the contact
 	 */
-	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
 #endif

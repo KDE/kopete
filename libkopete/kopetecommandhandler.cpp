@@ -38,12 +38,12 @@ using Kopete::CommandList;
 
 typedef QMap<QObject*, CommandList> PluginCommandMap;
 typedef QMap<QString,QString> CommandMap;
-typedef QPair<Kopete::MessageManager*, Kopete::Message::MessageDirection> ManagerPair;
+typedef QPair<Kopete::ChatSession*, Kopete::Message::MessageDirection> ManagerPair;
 
 class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 {
 	public:
-		KopeteCommandGUIClient( Kopete::MessageManager *manager ) : QObject(manager), KXMLGUIClient(manager)
+		KopeteCommandGUIClient( Kopete::ChatSession *manager ) : QObject(manager), KXMLGUIClient(manager)
 		{
 			setXMLFile( QString::fromLatin1("kopetecommandui.rc") );
 
@@ -103,40 +103,40 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 	mCommands.setAutoDelete( true );
 	p->pluginCommands.insert( this, mCommands );
 
-	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ), 0, 1 );
 
-	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /close - Closes the current view." ) );
 
 	// FIXME: What's the difference with /close? The help doesn't explain it - Martijn
-	registerCommand( this, QString::fromLatin1("part"), SLOT( slotPartCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("part"), SLOT( slotPartCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /part - Closes the current view." ) );
 
-	registerCommand( this, QString::fromLatin1("clear"), SLOT( slotClearCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("clear"), SLOT( slotClearCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /clear - Clears the active view's chat buffer." ) );
 
-	//registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, Kopete::MessageManager * ) ),
+	//registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, Kopete::ChatSession * ) ),
 	//	i18n( "USAGE: /me <text> - Formats message as in '<nickname> went to the store'." ) );
 
-	registerCommand( this, QString::fromLatin1("away"), SLOT( slotAwayCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("away"), SLOT( slotAwayCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /away [<reason>] - Marks you as away/back for the current account only." ) );
 
-	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /awayall [<reason>] - Marks you as away/back for all accounts." ) );
 
-	registerCommand( this, QString::fromLatin1("say"), SLOT( slotSayCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("say"), SLOT( slotSayCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /say <text> - Say text in this chat. This is the same as just typing a message, but is very "
 			"useful for scripts." ), 1 );
 
-	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, Kopete::MessageManager * ) ),
+	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /exec [-o] <command> - Executes the specified command and displays the output in the chat buffer. "
 		"If -o is specified, the output is sent to all members of the chat."), 1 );
 
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin*) ),
 		this, SLOT(slotPluginLoaded(Kopete::Plugin*) ) );
 
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( viewCreated( KopeteView * ) ),
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( viewCreated( KopeteView * ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 }
 
@@ -188,7 +188,7 @@ void Kopete::CommandHandler::unregisterAlias( QObject *parent, const QString &al
 		p->pluginCommands[ parent ].remove( alias );
 }
 
-bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::MessageManager *manager )
+bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSession *manager )
 {
 	if( p->inCommand )
 		return false;
@@ -218,14 +218,14 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::Message
 	return false;
 }
 
-bool Kopete::CommandHandler::processMessage( Kopete::Message &msg, Kopete::MessageManager *manager )
+bool Kopete::CommandHandler::processMessage( Kopete::Message &msg, Kopete::ChatSession *manager )
 {
 	QString messageBody = msg.plainBody();
 
 	return processMessage( messageBody, manager );
 }
 
-void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QString output;
 	if( args.isEmpty() )
@@ -260,7 +260,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::Messa
 	manager->appendMessage(msg);
 }
 
-void Kopete::CommandHandler::slotSayCommand( const QString &args, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotSayCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	//Just say whatever is passed
 	Kopete::Message msg(manager->user(), manager->members(), args,
@@ -268,7 +268,7 @@ void Kopete::CommandHandler::slotSayCommand( const QString &args, Kopete::Messag
 	manager->sendMessage(msg);
 }
 
-void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	if( !args.isEmpty() )
 	{
@@ -306,17 +306,17 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::Messa
 	}
 }
 
-void Kopete::CommandHandler::slotClearCommand( const QString &, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotClearCommand( const QString &, Kopete::ChatSession *manager )
 {
 	manager->view()->clear();
 }
 
-void Kopete::CommandHandler::slotPartCommand( const QString &, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotPartCommand( const QString &, Kopete::ChatSession *manager )
 {
 	manager->view()->closeView();
 }
 
-void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	bool goAway = !manager->account()->isAway();
 
@@ -326,7 +326,7 @@ void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::Messa
 		manager->account()->setAway( goAway, args );
 }
 
-void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	if( manager->account()->isAway() )
 		Kopete::AccountManager::self()->setAvailableAll();
@@ -340,7 +340,7 @@ void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::Me
 	}
 }
 
-void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::MessageManager *manager )
+void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSession *manager )
 {
 	manager->view()->closeView();
 }

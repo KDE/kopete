@@ -23,8 +23,8 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-namespace Kopete { class MessageManager; }
-class MSNMessageManager;
+namespace Kopete { class ChatSession; }
+class MSNChatSession;
 class NetMeetingPlugin;
 
 /**
@@ -36,14 +36,14 @@ class NetMeetingGUIClient : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	NetMeetingGUIClient( MSNMessageManager *parent, const char *name=0L);
+	NetMeetingGUIClient( MSNChatSession *parent, const char *name=0L);
 	~NetMeetingGUIClient();
 
 private slots:
 	void slotStartInvitation();
 
 private:
-	MSNMessageManager *m_manager;
+	MSNChatSession *m_manager;
 	NetMeetingPlugin *m_plugin;
 };
 

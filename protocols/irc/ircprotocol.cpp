@@ -141,72 +141,72 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	addAddressBookField("messaging/irc", Kopete::Plugin::MakeIndexField);
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("raw"),
-		SLOT( slotRawCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotRawCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /raw <text> - Sends the text in raw form to the server."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quote"),
-		SLOT( slotQuoteCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotQuoteCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /quote <text> - Sends the text in quoted form to the server."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("ctcp"),
-		SLOT( slotCtcpCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotCtcpCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /ctcp <nick> <message> - Send the CTCP message to nick<action>."), 2 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("ping"),
-		SLOT( slotPingCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotPingCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /ping <nickname> - Alias for /CTCP <nickname> PING."), 1, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("motd"),
-		SLOT( slotMotdCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotMotdCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /motd [<server>] - Shows the message of the day for the current or the given server.") );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("list"),
-		SLOT( slotListCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotListCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /list - List the public channels on the server.") );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("join"),
-		SLOT( slotJoinCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotJoinCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /join <#channel 1> <#channel 2...> - Joins the specified channels."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("topic"),
-		SLOT( slotTopicCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotTopicCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /topic [<topic>] - Sets and/or displays the topic for the active channel.") );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whois"),
-		SLOT( slotWhoisCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotWhoisCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /whois <nickname> - Display whois info on this user."), 1, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whowas"),
-		SLOT( slotWhoWasCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotWhoWasCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /whowas <nickname> - Display whowas info on this user."), 1, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("who"),
-		SLOT( slotWhoCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotWhoCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /who <nickname|channel> - Display who info on this user/channel."), 1, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("query"),
-		SLOT( slotQueryCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotQueryCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /query <nickname> [<message>] - Open a private chat with this user."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("mode"),
-		SLOT( slotModeCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotModeCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /mode <channel> <modes> - Set modes on the given channel."), 2 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("nick"),
-		SLOT( slotNickCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotNickCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /nick <nickname> - Change your nickname to the given one."), 1, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("me"),
-		SLOT( slotMeCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotMeCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /me <action> - Do something."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("kick"),
-		SLOT( slotKickCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotKickCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /kick <nickname> [<reason>] - Kick someone from the channel (requires operator status).")
 		, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("ban"),
-		SLOT( slotBanCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotBanCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (requires operator status)."),
 		1, 1 );
 
@@ -215,33 +215,33 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		i18n("USAGE: /bannick <nickname> - Add someone to this channel's ban list. Uses the hostmask nickname!*@* (requires operator status)."), Kopete::CommandHandler::SystemAlias, 1, 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("op"),
-		SLOT( slotOpCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotOpCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /op <nickname 1> [<nickname 2> <...>] - Give channel operator status to someone (requires operator status)."),
 		1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("deop"),
-		SLOT( slotDeopCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotDeopCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /deop <nickname> [<nickname 2> <...>]- Remove channel operator status from someone (requires operator status)."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("voice"),
-		SLOT( slotVoiceCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotVoiceCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /voice <nickname> [<nickname 2> <...>]- Give channel voice status to someone (requires operator status)."),
 		1);
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
-		SLOT( slotDevoiceCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotDevoiceCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /devoice <nickname> [<nickname 2> <...>]- Remove channel voice status from someone (requires operator status)."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quit"),
-		SLOT( slotQuitCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotQuitCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /quit [<reason>] - Disconnect from IRC, optionally leaving a message.") );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("part"),
-		SLOT( slotPartCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotPartCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /part [<reason>] - Part from a channel, optionally leaving a message.") );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("invite"),
-		SLOT( slotInviteCommand( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotInviteCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /invite <nickname> [<channel>] - Invite a user to join a channel."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
@@ -253,10 +253,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		QString::fromLatin1("query %s"),
 		i18n("USAGE: /msg <nickname> [<message>] - Alias for QUERY <nickname> <message>."), Kopete::CommandHandler::SystemAlias, 1 );
 
-	QObject::connect( Kopete::MessageManagerFactory::self(), SIGNAL(aboutToDisplay(Kopete::Message &)),
+	QObject::connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message &)),
 		this, SLOT(slotMessageFilter(Kopete::Message &)) );
 
-	QObject::connect( Kopete::MessageManagerFactory::self(), SIGNAL( viewCreated( KopeteView* ) ),
+	QObject::connect( Kopete::ChatSessionManager::self(), SIGNAL( viewCreated( KopeteView* ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	setCapabilities( Kopete::Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor );
@@ -363,7 +363,7 @@ Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	return 0;
 }
 
-void IRCProtocol::slotRawCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotRawCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	if( !args.isEmpty() )
 	{
@@ -376,7 +376,7 @@ void IRCProtocol::slotRawCommand( const QString &args, Kopete::MessageManager *m
 	}
 }
 
-void IRCProtocol::slotQuoteCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotQuoteCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	if( !args.isEmpty() )
 	{
@@ -389,7 +389,7 @@ void IRCProtocol::slotQuoteCommand( const QString &args, Kopete::MessageManager 
 	}
 }
 
-void IRCProtocol::slotCtcpCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotCtcpCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	if( !args.isEmpty() )
 	{
@@ -399,24 +399,24 @@ void IRCProtocol::slotCtcpCommand( const QString &args, Kopete::MessageManager *
 	}
 }
 
-void IRCProtocol::slotMotdCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotMotdCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->motd(argsList.front());
 }
 
-void IRCProtocol::slotPingCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotPingCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments(args);
 	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_ping(argsList.front());
 }
 
-void IRCProtocol::slotListCommand( const QString &/*args*/, Kopete::MessageManager *manager )
+void IRCProtocol::slotListCommand( const QString &/*args*/, Kopete::ChatSession *manager )
 {
 	static_cast<IRCAccount*>( manager->account() )->listChannels();
 }
 
-void IRCProtocol::slotTopicCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotTopicCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	Kopete::ContactPtrList members = manager->members();
 	IRCChannelContact *chan = dynamic_cast<IRCChannelContact*>( members.first() );
@@ -437,7 +437,7 @@ void IRCProtocol::slotTopicCommand( const QString &args, Kopete::MessageManager 
 	}
 }
 
-void IRCProtocol::slotJoinCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotJoinCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QString chan = Kopete::CommandHandler::parseArguments( args ).front();
 	if( KIRC::Entity::isChannel(chan) )
@@ -453,7 +453,7 @@ void IRCProtocol::slotJoinCommand( const QString &args, Kopete::MessageManager *
 	}
 }
 
-void IRCProtocol::slotInviteCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotInviteCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	IRCChannelContact *c = 0L;
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
@@ -492,7 +492,7 @@ void IRCProtocol::slotInviteCommand( const QString &args, Kopete::MessageManager
 	}
 }
 
-void IRCProtocol::slotQueryCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QString user = args.section( ' ', 0, 0 );
 	QString rest = args.section( ' ', 1 );
@@ -517,14 +517,14 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::MessageManager 
 	}
 }
 
-void IRCProtocol::slotWhoisCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotWhoisCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( argsList.first() );
 	m_commandInProgress = true;
 }
 
-void IRCProtocol::slotWhoCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotWhoCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
@@ -532,7 +532,7 @@ void IRCProtocol::slotWhoCommand( const QString &args, Kopete::MessageManager *m
 	m_commandInProgress = true;
 }
 
-void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
@@ -540,25 +540,25 @@ void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::MessageManager
 	m_commandInProgress = true;
 }
 
-void IRCProtocol::slotQuitCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotQuitCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	static_cast<IRCAccount*>( manager->account() )->quit( args );
 }
 
-void IRCProtocol::slotNickCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotNickCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->nick( argsList.front() );
 }
 
-void IRCProtocol::slotModeCommand(const QString &args, Kopete::MessageManager *manager)
+void IRCProtocol::slotModeCommand(const QString &args, Kopete::ChatSession *manager)
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->mode( argsList.front(),
 		args.section( QRegExp(QString::fromLatin1("\\s+")), 1 ) );
 }
 
-void IRCProtocol::slotMeCommand(const QString &args, Kopete::MessageManager *manager)
+void IRCProtocol::slotMeCommand(const QString &args, Kopete::ChatSession *manager)
 {
 	Kopete::ContactPtrList members = manager->members();
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
@@ -566,7 +566,7 @@ void IRCProtocol::slotMeCommand(const QString &args, Kopete::MessageManager *man
 		static_cast<const IRCContact*>(members.first())->nickName(), args );
 }
 
-void IRCProtocol::slotKickCommand(const QString &args, Kopete::MessageManager *manager)
+void IRCProtocol::slotKickCommand(const QString &args, Kopete::ChatSession *manager)
 {
 	if (manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp)
 	{
@@ -585,7 +585,7 @@ void IRCProtocol::slotKickCommand(const QString &args, Kopete::MessageManager *m
 	}
 }
 
-void IRCProtocol::slotBanCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotBanCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{
@@ -602,7 +602,7 @@ void IRCProtocol::slotBanCommand( const QString &args, Kopete::MessageManager *m
 	}
 }
 
-void IRCProtocol::slotPartCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotPartCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments(args);
 	Kopete::ContactPtrList members = manager->members();
@@ -623,27 +623,27 @@ void IRCProtocol::slotPartCommand( const QString &args, Kopete::MessageManager *
 	}
 }
 
-void IRCProtocol::slotOpCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotOpCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	simpleModeChange( args, manager, QString::fromLatin1("+o") );
 }
 
-void IRCProtocol::slotDeopCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotDeopCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	simpleModeChange( args, manager, QString::fromLatin1("-o") );
 }
 
-void IRCProtocol::slotVoiceCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotVoiceCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	simpleModeChange( args, manager, QString::fromLatin1("+v") );
 }
 
-void IRCProtocol::slotDevoiceCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotDevoiceCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	simpleModeChange( args, manager, QString::fromLatin1("-v") );
 }
 
-void IRCProtocol::simpleModeChange( const QString &args, Kopete::MessageManager *manager, const QString &mode )
+void IRCProtocol::simpleModeChange( const QString &args, Kopete::ChatSession *manager, const QString &mode )
 {
 	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{

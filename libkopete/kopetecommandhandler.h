@@ -31,7 +31,7 @@ class KopeteCommandGUIClient;
 namespace Kopete
 {
 
-class MessageManager;
+class ChatSession;
 class Plugin;
 class Protocol;
 class Command;
@@ -74,7 +74,7 @@ class CommandHandler : public QObject
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
 		 * @param handlerSlot The slot used to handle the command. This slot must
-		 *   accept two parameters, a QString of arguments, and a Kopete::MessageManager
+		 *   accept two parameters, a QString of arguments, and a Kopete::ChatSession
 		 *   pointer to the manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help \<command\>
@@ -142,17 +142,17 @@ class CommandHandler : public QObject
 		 * @param manager The manager who owns this message
 		 * @return True if the command was handled, false if not
 		 */
-		bool processMessage( Message &msg, MessageManager *manager );
+		bool processMessage( Message &msg, ChatSession *manager );
 
 		/**
 		 * \brief Process a message to see if any commands should be handled
 		 *
-		 * \see processMessage( Kopete::Message &msg, Kopete::MessageManager *manager)
+		 * \see processMessage( Kopete::Message &msg, Kopete::ChatSession *manager)
 		 * \param msg A QString contain the message
-		 * \param manager the Kopete::MessageManager who will own the message
+		 * \param manager the Kopete::ChatSession who will own the message
 		 * \return true if the command was handled, false if the command was not handled.
 		 */
-		bool processMessage( const QString &msg, MessageManager *manager );
+		bool processMessage( const QString &msg, ChatSession *manager );
 
 		/**
 		 * Parses a string of command arguments into a QStringList. Quoted
@@ -175,15 +175,15 @@ class CommandHandler : public QObject
 		void slotExecFinished(KProcess *proc);
 		void slotViewCreated( KopeteView *view );
 
-		void slotHelpCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotClearCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotPartCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotCloseCommand( const QString & args, Kopete::MessageManager *manager );
-		//void slotMeCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotExecCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotAwayCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotAwayAllCommand( const QString & args, Kopete::MessageManager *manager );
-		void slotSayCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotHelpCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotClearCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotPartCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotCloseCommand( const QString & args, Kopete::ChatSession *manager );
+		//void slotMeCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotExecCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotAwayCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotAwayAllCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotSayCommand( const QString & args, Kopete::ChatSession *manager );
 
 	private:
 		/**

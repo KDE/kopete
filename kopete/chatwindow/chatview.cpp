@@ -187,7 +187,7 @@ void KopeteChatViewTip::maybeTip( const QPoint &/*p*/ )
 	}
 }
 
-ChatView::ChatView( Kopete::MessageManager *mgr, const char *name )
+ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
 {
 	d = new KopeteChatViewPrivate;

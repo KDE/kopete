@@ -38,7 +38,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatw
 
 
 
-typedef QMap<Kopete::MessageManager*,KopeteView*> ManagerMap;
+typedef QMap<Kopete::ChatSession*,KopeteView*> ManagerMap;
 typedef QPtrList<Kopete::MessageEvent> EventList;
 
 struct KopeteViewManagerPrivate
@@ -68,15 +68,15 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 	d->activeView = 0L;
 	d->foreignMessage=false;
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
-	connect( Kopete::MessageManagerFactory::self() , SIGNAL ( requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType  ) ) ,
-		this, SLOT (slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType  )));
-	connect( Kopete::MessageManagerFactory::self() , SIGNAL( display( Kopete::Message &, Kopete::MessageManager *) ),
-		this, SLOT ( messageAppended( Kopete::Message &, Kopete::MessageManager *) ) );
+	connect( Kopete::ChatSessionManager::self() , SIGNAL ( requestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType  ) ) ,
+		this, SLOT (slotRequestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType  )));
+	connect( Kopete::ChatSessionManager::self() , SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ),
+		this, SLOT ( messageAppended( Kopete::Message &, Kopete::ChatSession *) ) );
 
-	connect( Kopete::MessageManagerFactory::self() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
+	connect( Kopete::ChatSessionManager::self() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
 		this, SLOT (slotGetActiveView(KopeteView*&)));
 
-	connect( Kopete::MessageManagerFactory::self() , SIGNAL( readMessage() ),
+	connect( Kopete::ChatSessionManager::self() , SIGNAL( readMessage() ),
 		this, SLOT ( nextEvent() ) );
 
 
@@ -101,7 +101,7 @@ void KopeteViewManager::slotPrefsChanged()
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 }
 
-KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*foreignMessage*/, Kopete::Message::ViewType type )
+KopeteView *KopeteViewManager::view( Kopete::ChatSession* manager, bool /*foreignMessage*/, Kopete::Message::ViewType type )
 {
 	/*if( d->eventMap.contains( manager ) )
 	{
@@ -145,14 +145,14 @@ KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*for
 		connect( newViewWidget, SIGNAL( messageSent(Kopete::Message &) ), manager, SLOT( sendMessage(Kopete::Message &) ) );
 		connect( newViewWidget, SIGNAL( activated( KopeteView * ) ), this, SLOT( slotViewActivated( KopeteView * ) ) );
 		connect( manager, SIGNAL( messageSuccess() ), newViewWidget, SLOT( messageSentSuccessfully() ));
-		connect( manager, SIGNAL( closing(Kopete::MessageManager *) ), this, SLOT(slotMessageManagerDestroyed(Kopete::MessageManager*)) );
+		connect( manager, SIGNAL( closing(Kopete::ChatSession *) ), this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)) );
 
 		return newView;
 	}
 }
 
 
-void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageManager *manager)
+void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSession *manager)
 {
 	kdDebug(14000) << k_funcinfo << endl;
 
@@ -172,7 +172,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageMa
 				Kopete::MessageEvent *event=new Kopete::MessageEvent(msg,manager);
 				d->eventList.append( event );
 				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
-				Kopete::MessageManagerFactory::self()->postNewEvent(event);
+				Kopete::ChatSessionManager::self()->postNewEvent(event);
 			}
 		}
 		else
@@ -219,7 +219,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageMa
 	}
 }
 
-void KopeteViewManager::readMessages( Kopete::MessageManager *manager, bool outgoingMessage )
+void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoingMessage )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
@@ -247,7 +247,7 @@ void KopeteViewManager::readMessages( Kopete::MessageManager *manager, bool outg
 void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	Kopete::MessageManager *kmm=event->message().manager();
+	Kopete::ChatSession *kmm=event->message().manager();
 	if(!kmm)
 		return;
 
@@ -313,7 +313,7 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 		d->activeView = 0L;
 }
 
-void KopeteViewManager::slotMessageManagerDestroyed( Kopete::MessageManager *manager )
+void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *manager )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
@@ -328,7 +328,7 @@ KopeteView* KopeteViewManager::activeView() const
 	return d->activeView;
 }
 
-void KopeteViewManager::slotRequestView(KopeteView*& v, Kopete::MessageManager *kmm , Kopete::Message::ViewType type )
+void KopeteViewManager::slotRequestView(KopeteView*& v, Kopete::ChatSession *kmm , Kopete::Message::ViewType type )
 {
 	v=view(kmm, false , type);
 }

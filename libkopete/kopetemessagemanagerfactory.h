@@ -37,22 +37,22 @@ class MessageEvent;
 
 typedef QPtrList<Contact>        ContactPtrList;
 typedef QValueList<Message>      MessageList;
-typedef QIntDict<MessageManager> MessageManagerDict;
+typedef QIntDict<ChatSession> ChatSessionDict;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  *
- * Kopete::MessageManagerFactory is responsible for creating and tracking Kopete::MessageManager
+ * Kopete::ChatSessionManager is responsible for creating and tracking Kopete::ChatSession
  * instances for each chat.
  */
-class MessageManagerFactory : public QObject
+class ChatSessionManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	static MessageManagerFactory* self();
+	static ChatSessionManager* self();
 
-	~MessageManagerFactory();
+	~ChatSessionManager();
 
 	/**
 	 * Create a new chat session. Provided is the initial list of contacts in
@@ -61,9 +61,9 @@ public:
 	 * @param user The local user in the session.
 	 * @param chatContacts The list of contacts taking part in the chat.
 	 * @param protocol The protocol that the chat is using.
-	 * @return A pointer to a new or reused Kopete::MessageManager.
+	 * @return A pointer to a new or reused Kopete::ChatSession.
 	 */
-	Kopete::MessageManager* create( const Kopete::Contact *user,
+	Kopete::ChatSession* create( const Kopete::Contact *user,
 		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol);
 
 	/**
@@ -71,39 +71,39 @@ public:
 	 * @param user The local user in the session.
 	 * @param chatContacts The list of contacts taking part in the chat.
 	 * @param protocol The protocol that the chat is using.
-	 * @return A pointer to an existing Kopete::MessageManager, or 0L if none was found.
+	 * @return A pointer to an existing Kopete::ChatSession, or 0L if none was found.
 	 */
-	Kopete::MessageManager* findMessageManager( const Kopete::Contact *user,
+	Kopete::ChatSession* findChatSession( const Kopete::Contact *user,
 		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol);
 
 	/**
-	 * Registers a Kopete::MessageManager (or subclass thereof) with the Kopete::MessageManagerFactory
+	 * Registers a Kopete::ChatSession (or subclass thereof) with the Kopete::ChatSessionManager
 	 */
-	void addMessageManager(Kopete::MessageManager *);
+	void addChatSession(Kopete::ChatSession *);
 
 	/**
-	 * Find the idth Kopete::MessageManager that the factory knows of.
-	 * @param id The number of the desired Kopete::MessageManager.
-	 * @return A pointer to the Kopete::MessageManager, or 0 if it was not found.
+	 * Find the idth Kopete::ChatSession that the factory knows of.
+	 * @param id The number of the desired Kopete::ChatSession.
+	 * @return A pointer to the Kopete::ChatSession, or 0 if it was not found.
 	 */
-	Kopete::MessageManager *findMessageManager( int id );
+	Kopete::ChatSession *findChatSession( int id );
 
 	/**
 	 * Get a list of all open sessions.
 	 */
-	const Kopete::MessageManagerDict& sessions();
+	const Kopete::ChatSessionDict& sessions();
 
 	/**
 	 * @internal
 	 * called by the kmm itself when it gets deleted
 	 */
-	void removeSession( Kopete::MessageManager *session );
+	void removeSession( Kopete::ChatSession *session );
 
 	/**
 	 * create a new view for the manager.
 	 * only the manager should call this function
 	 */
-	KopeteView *createView( Kopete::MessageManager * , Kopete::Message::ViewType type );
+	KopeteView *createView( Kopete::ChatSession * , Kopete::Message::ViewType type );
 
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal
@@ -160,17 +160,17 @@ signals:
 	/**
 	 * a new KMM has been created
 	 */
-	void messageManagerCreated( Kopete::MessageManager *);
+	void chatSessionCreated( Kopete::ChatSession *);
 
 	/*
 	 * Request the creation of a new view
 	 */
-	void requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType type );
+	void requestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType type );
 
 	/**
 	 * the message is ready to be displayed
 	 */
-	void display( Kopete::Message& message, Kopete::MessageManager * );
+	void display( Kopete::Message& message, Kopete::ChatSession * );
 
 	/**
 	 * A new event has been posted.
@@ -194,12 +194,12 @@ public slots:
 	void slotReadMessage();
 
 private:
-	MessageManagerFactory( QObject* parent = 0, const char* name = 0 );
+	ChatSessionManager( QObject* parent = 0, const char* name = 0 );
 
 	int mId;
-	Kopete::MessageManagerDict mSessionDict;
+	Kopete::ChatSessionDict mSessionDict;
 
-	static MessageManagerFactory *s_factory;
+	static ChatSessionManager *s_factory;
 
 };
 

@@ -222,7 +222,7 @@ void MSNFileTransferSocket::slotTimer()
 		m_kopeteTransfer->slotError( KIO::ERR_CONNECTION_BROKEN , i18n( "Connection timed out" ) );
 	}
 
-	MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+	MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 	if(manager && manager->service())
 		manager->service()->sendCommand( "MSG" , "N", true, rejectMessage("TIMEOUT") );
 
@@ -378,7 +378,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 
 			setKopeteTransfer(Kopete::TransferManager::transferManager()->addTransfer(m_contact, fileName(), size(),  m_contact->metaContact() ? m_contact->metaContact()->displayName() : m_contact->contactId() , Kopete::FileTransferInfo::Outgoing));
 
-			MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+			MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 			if(manager && manager->service())
 			{
 				QCString message=QString(
@@ -419,7 +419,7 @@ void MSNFileTransferSocket::slotFileTransferAccepted(Kopete::Transfer *trans, co
 
 	setKopeteTransfer(trans);
 
-	MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+	MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 
 	if(manager && manager->service())
 	{
@@ -454,7 +454,7 @@ void MSNFileTransferSocket::slotFileTransferRefused(const Kopete::FileTransferIn
 	if(!info.contact())
 		return;
 
-	MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+	MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 
 	if(manager && manager->service())
 	{

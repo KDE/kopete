@@ -23,7 +23,7 @@
 #include <qstring.h>
 
 class SMSAccount;
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 
 class KActionCollection;
@@ -48,7 +48,7 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
-	Kopete::MessageManager* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
+	Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 
 public slots:
 	virtual void slotUserInfo();
@@ -64,14 +64,14 @@ signals:
 
 private slots:
 	void userPrefs();
-	void slotMessageManagerDestroyed();
+	void slotChatSessionDestroyed();
 
 private:
 	KAction* m_actionPrefs;
 
 	QString m_phoneNumber;
 
-	Kopete::MessageManager* m_msgManager;
+	Kopete::ChatSession* m_msgManager;
 };
 
 #endif

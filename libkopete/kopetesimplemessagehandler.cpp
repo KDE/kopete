@@ -50,7 +50,7 @@ SimpleMessageHandlerFactory::~SimpleMessageHandlerFactory()
 	delete d;
 }
 
-MessageHandler *SimpleMessageHandlerFactory::create( MessageManager */*manager*/, Message::MessageDirection direction )
+MessageHandler *SimpleMessageHandlerFactory::create( ChatSession */*manager*/, Message::MessageDirection direction )
 {
 	if ( direction != d->direction )
 		return 0;
@@ -59,7 +59,7 @@ MessageHandler *SimpleMessageHandlerFactory::create( MessageManager */*manager*/
 	return handler;
 }
 
-int SimpleMessageHandlerFactory::filterPosition( MessageManager */*manager*/, Message::MessageDirection direction )
+int SimpleMessageHandlerFactory::filterPosition( ChatSession */*manager*/, Message::MessageDirection direction )
 {
 	if ( direction != d->direction )
 		return StageDoNotCreate;

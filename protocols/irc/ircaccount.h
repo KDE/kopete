@@ -42,7 +42,7 @@ namespace Kopete
 class AwayAction;
 class Contact;
 class Message;
-class MessageManager;
+class ChatSession;
 class MetaContact;
 }
 
@@ -213,7 +213,7 @@ private slots:
 	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );
 
 private:
-	Kopete::MessageManager *m_manager;
+	Kopete::ChatSession *m_manager;
 	QString mNickName;
 	Kopete::AwayAction *mAwayAction;
 	bool triedAltNick;

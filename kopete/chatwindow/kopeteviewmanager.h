@@ -23,7 +23,7 @@
 
 namespace Kopete
 {
-class MessageManager;
+class ChatSession;
 class Protocol;
 class Contact;
 class MessageEvent;
@@ -52,13 +52,13 @@ class KopeteViewManager : public Kopete::Plugin
 		~KopeteViewManager();
 
 		/**
-		 * Return a view for the supplied Kopete::MessageManager.  If one already
+		 * Return a view for the supplied Kopete::ChatSession.  If one already
 		 * exists, it will be returned, otherwise, a new view is created.
-		 * @param manager The Kopete::MessageManager we are viewing.
+		 * @param manager The Kopete::ChatSession we are viewing.
 		 * @param foreignMessage Whether the message is inbound or outbound.
 		 * @param type Specifies the type of view.
 		 */
-		KopeteView *view( Kopete::MessageManager *, bool foreignMessage, Kopete::Message::ViewType type = Kopete::Message::Undefined );
+		KopeteView *view( Kopete::ChatSession *, bool foreignMessage, Kopete::Message::ViewType type = Kopete::Message::Undefined );
 
 		/**
 		 * Provide access to the list of KopeteChatWindow the class maintains.
@@ -74,24 +74,24 @@ class KopeteViewManager : public Kopete::Plugin
 	public slots:
 		/**
 		 * Make a view visible and on top.
-		 * @param manager The originating Kopete::MessageManager.
+		 * @param manager The originating Kopete::ChatSession.
 		 * @param foreignMessage Whether the message is inbound or outbound.
 		 */
-		void readMessages( Kopete::MessageManager*, bool outgoingMessage );
+		void readMessages( Kopete::ChatSession*, bool outgoingMessage );
 
 		/**
 		 * Called when a new message has been appended to the given
-		 * Kopete::MessageManager.  Procures a view for the message, and generates any notification events or displays messages, as appropriate.
+		 * Kopete::ChatSession.  Procures a view for the message, and generates any notification events or displays messages, as appropriate.
 		 * @param msg The new message
-		 * @param manager The originating Kopete::MessageManager
+		 * @param manager The originating Kopete::ChatSession
 		 */
-		void messageAppended( Kopete::Message &msg, Kopete::MessageManager *manager);
+		void messageAppended( Kopete::Message &msg, Kopete::ChatSession *manager);
 
 		void nextEvent();
 
 	private slots:
 		void slotViewDestroyed( KopeteView *);
-		void slotMessageManagerDestroyed( Kopete::MessageManager * );
+		void slotChatSessionDestroyed( Kopete::ChatSession * );
 
 		/**
 		 * An event has been deleted.
@@ -101,7 +101,7 @@ class KopeteViewManager : public Kopete::Plugin
 		void slotPrefsChanged();
 		void slotViewActivated( KopeteView * );
 
-		void slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::ViewType type );
+		void slotRequestView(KopeteView*& , Kopete::ChatSession * , Kopete::Message::ViewType type );
 
 		//obsolete, used only by spellchecking plugin
 		void slotGetActiveView(KopeteView*&);

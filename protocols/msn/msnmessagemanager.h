@@ -31,13 +31,13 @@ class QLabel;
 /**
  * @author Olivier Goffart
  */
-class MSNMessageManager : public Kopete::MessageManager
+class MSNChatSession : public Kopete::ChatSession
 {
 	Q_OBJECT
 
 public:
-	MSNMessageManager( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
-	~MSNMessageManager();
+	MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
+	~MSNChatSession();
 
 	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString::null );
 
@@ -62,7 +62,7 @@ public slots:
 	void slotRequestPicture();
 
 private slots:
-	void slotMessageSent( Kopete::Message &message, Kopete::MessageManager *kmm );
+	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession *kmm );
 	void slotMessageReceived( Kopete::Message &message );
 
 	void slotUserJoined( const QString &handle, const QString &publicName, bool IRO );
@@ -105,7 +105,7 @@ signals:
 	/*
 	 * This signal is relayed to the protocol and after, to plugins
 	 */
-	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
 #endif

@@ -56,7 +56,7 @@ public:
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual Kopete::MessageManager *manager(bool canCreate = false);
+	virtual Kopete::ChatSession *manager(bool canCreate = false);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 public slots:
@@ -65,7 +65,7 @@ public slots:
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 
 private slots:
-	void slotMessageManagerDestroyed();
+	void slotChatSessionDestroyed();
 	void slotSendMessage(Kopete::Message &message);
 	void slotCloseUserInfoDialog(); // Called when the userinfo dialog is getting closed
 
@@ -75,7 +75,7 @@ private:
 	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
 							// holds all the protocol specific actions (not many!)
-	Kopete::MessageManager *m_manager;
+	Kopete::ChatSession *m_manager;
 							// holds the two message managers - one for email and one for chat
 	WPUserInfo *m_infoDialog;
 };

@@ -29,7 +29,7 @@ namespace Kopete
 {
 	class Message;
 	class MetaContact;
-	class MessageManager;
+	class ChatSession;
 	class SimpleMessageHandlerFactory;
 }
 
@@ -69,7 +69,7 @@ private slots:
 	void slotForgetCachedPass();
 	void loadSettings();
 	
-	void slotNewKMM(Kopete::MessageManager *);
+	void slotNewKMM(Kopete::ChatSession *);
 
 private:
 	static CryptographyPlugin* pluginStatic_;

@@ -279,7 +279,7 @@ void Group::sendMessage()
 	c->sendMessage();
 	if( c->manager( Contact::CanCreate ) )
 	{
-		connect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
+		connect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
 	}
 }
 
@@ -301,7 +301,7 @@ void Group::sendMessage( Message& msg )
 	}
 	if( c->manager( Contact::CannotCreate ) )
 	{
-		disconnect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
+		disconnect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
 	}
 }
 

@@ -57,7 +57,7 @@ class IRCServerContact
 
 	protected slots:
 		void engineInternalError(KIRC::Engine::Error error, const KIRC::Message &ircmsg);
-		virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
+		virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
 
 	private slots:
 		virtual void updateStatus();

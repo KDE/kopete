@@ -21,7 +21,7 @@
 
 class AIMAccount;
 class AIMProtocol;
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 class AIMUserInfoDialog;
 
 class AIMContact : public OscarContact
@@ -64,7 +64,7 @@ class AIMContact : public OscarContact
 		/**
 		 * Called when we want to send a message
 		 */
-		void slotSendMsg(Kopete::Message&, Kopete::MessageManager *);
+		void slotSendMsg(Kopete::Message&, Kopete::ChatSession *);
 
 		/**
 		 * Called when the user requests a contact's user info

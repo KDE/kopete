@@ -437,18 +437,18 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 	else if ( status == MSNSocket::Disconnected )
 	{
 /*
-		Kopete::MessageManagerDict sessions =
-			Kopete::MessageManagerFactory::self()->protocolSessions( this );
-		QIntDictIterator<Kopete::MessageManager> kmmIt( sessions );
+		Kopete::ChatSessionDict sessions =
+			Kopete::ChatSessionManager::self()->protocolSessions( this );
+		QIntDictIterator<Kopete::ChatSession> kmmIt( sessions );
 		for ( ; kmmIt.current(); ++kmmIt )
 		{
 			// Disconnect all active chats (but don't actually remove the
 			// chat windows, the user might still want to view them!)
-			MSNMessageManager *msnMM = dynamic_cast<MSNMessageManager *>( kmmIt.current() );
+			MSNChatSession *msnMM = dynamic_cast<MSNChatSession *>( kmmIt.current() );
 			if ( msnMM )
 			{
 				kdDebug( 14140 ) << "MSNProtocol::slotOnlineStatusChanged: "
-					<< "Closed MSNMessageManager because the protocol socket "
+					<< "Closed MSNChatSession because the protocol socket "
 					<< "closed." << endl;
 				msnMM->slotCloseSession();
 			}
@@ -1063,12 +1063,12 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	{
 		// we can't use simply c->manager(true) here to get the manager, because this will re-open
 		// another chat session, and then, close this new one. We have to re-create the manager manualy.
-		MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( c->manager( Kopete::Contact::CannotCreate ) );
+		MSNChatSession *manager = dynamic_cast<MSNChatSession*>( c->manager( Kopete::Contact::CannotCreate ) );
 		if(!manager)
 		{
 			Kopete::ContactPtrList chatmembers;
 			chatmembers.append(c);
-			manager = new MSNMessageManager( protocol(), myself(), chatmembers  );
+			manager = new MSNChatSession( protocol(), myself(), chatmembers  );
 		}
 
 		manager->createChat( handle, address, auth, ID );
@@ -1112,7 +1112,7 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	// if ( isConnected() && c && myself() && handle != m_msnId )
 	if ( m_notifySocket && c && myself() && handle != accountId() )
 	{
-		if ( !c->manager(Kopete::Contact::CannotCreate) || !static_cast<MSNMessageManager *>( c->manager( Kopete::Contact::CanCreate ) )->service() )
+		if ( !c->manager(Kopete::Contact::CannotCreate) || !static_cast<MSNChatSession *>( c->manager( Kopete::Contact::CanCreate ) )->service() )
 		{
 			m_msgHandle = handle;
 			m_notifySocket->createChatSession();

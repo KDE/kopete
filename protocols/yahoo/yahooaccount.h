@@ -198,7 +198,7 @@ private:
 	/**
 	 * Conferences list, maped by room name (id)
 	 */
-	QMap<QString, YahooConferenceMessageManager *> m_conferences;
+	QMap<QString, YahooConferenceChatSession *> m_conferences;
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection

@@ -52,7 +52,7 @@ public:
 	 * Create a new MessageHandlerChain object with the appropriate handlers for
 	 * processing messages entering @p manager in direction @p direction.
 	 */
-	static Ptr create( MessageManager *manager, Message::MessageDirection direction );
+	static Ptr create( ChatSession *manager, Message::MessageDirection direction );
 
 	ProcessMessageTask *processMessage( const Message &message );
 	int capabilities();

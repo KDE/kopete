@@ -25,7 +25,7 @@ BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStrin
  : Kopete::Plugin(BookmarksPluginFactory::instance(), parent, name)
 {
 	//kdDebug(14501) << "plugin loading" << endl;
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), this, SLOT( slotBookmarkURLsInMessage( Kopete::Message & ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), this, SLOT( slotBookmarkURLsInMessage( Kopete::Message & ) ) );
 }
 
 

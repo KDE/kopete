@@ -65,7 +65,7 @@ public:
 	IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
 
 	// Kopete::Contact stuff
-	virtual QPtrList<KAction> *customContextMenuActions( Kopete::MessageManager *manager );
+	virtual QPtrList<KAction> *customContextMenuActions( Kopete::ChatSession *manager );
 	virtual const QString caption() const;
 
 	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
@@ -121,7 +121,7 @@ private:
 	KAction *actionKick;
 	KActionMenu *actionBanMenu;
 	KCodecAction *codecAction;
-	Kopete::MessageManager *mActiveManager;
+	Kopete::ChatSession *mActiveManager;
 	QTimer *mOnlineTimer;
 	IRCUserInfo mInfo;
 

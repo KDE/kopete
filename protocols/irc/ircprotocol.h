@@ -142,39 +142,39 @@ private slots:
 
 	void slotMessageFilter( Kopete::Message &msg );
 
-	void slotRawCommand( const QString &args, Kopete::MessageManager *manager );
-	void slotQuoteCommand( const QString &args, Kopete::MessageManager *manager );
-	void slotCtcpCommand( const QString &args, Kopete::MessageManager *manager );
-	void slotPingCommand( const QString &args, Kopete::MessageManager *manager );
+	void slotRawCommand( const QString &args, Kopete::ChatSession *manager );
+	void slotQuoteCommand( const QString &args, Kopete::ChatSession *manager );
+	void slotCtcpCommand( const QString &args, Kopete::ChatSession *manager );
+	void slotPingCommand( const QString &args, Kopete::ChatSession *manager );
 
-	void slotMotdCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotListCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotTopicCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotJoinCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotNickCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotWhoisCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotWhoWasCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotWhoCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotMeCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotModeCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotQueryCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotMotdCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotListCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotTopicCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotJoinCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotNickCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotWhoisCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotWhoWasCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotWhoCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotMeCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotModeCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotQueryCommand( const QString &args, Kopete::ChatSession *manager);
 
-	void slotKickCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotBanCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotOpCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotDeopCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotVoiceCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotDevoiceCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotQuitCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotPartCommand( const QString &args, Kopete::MessageManager *manager);
-	void slotInviteCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotKickCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotBanCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotOpCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotDeopCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotVoiceCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotDevoiceCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotQuitCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotPartCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotInviteCommand( const QString &args, Kopete::ChatSession *manager);
 
 	void slotViewCreated( KopeteView * );
 
 private:
 	static IRCProtocol *s_protocol;
 
-	void simpleModeChange( const QString &, Kopete::MessageManager *, const QString &mode );
+	void simpleModeChange( const QString &, Kopete::ChatSession *, const QString &mode );
 
 	// FIXME: All the code for managing the networks list should be in another class - Will
 	void storeCurrentNetwork();

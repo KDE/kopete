@@ -48,10 +48,10 @@ NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QSt
 		connect(Kopete::PluginManager::self() , SIGNAL(pluginLoaded(Kopete::Plugin*) ), this, SLOT(slotPluginLoaded(Kopete::Plugin*)));
 
 
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::self()->sessions();
-	QIntDictIterator<Kopete::MessageManager> it( sessions );
+	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
+	QIntDictIterator<Kopete::ChatSession> it( sessions );
 	for ( ; it.current() ; ++it )
 	{
 		slotNewKMM(it.current());
@@ -67,14 +67,14 @@ void NetMeetingPlugin::slotPluginLoaded(Kopete::Plugin *p)
 {
 	if(p->pluginId()=="MSNProtocol")
 	{
-		connect( p , SIGNAL(invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact* )) ,
-			this, SLOT( slotInvitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact* )));
+		connect( p , SIGNAL(invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact* )) ,
+			this, SLOT( slotInvitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact* )));
 	}
 }
 
-void NetMeetingPlugin::slotNewKMM(Kopete::MessageManager *KMM)
+void NetMeetingPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 {
-	MSNMessageManager *msnMM=dynamic_cast<MSNMessageManager*>(KMM);
+	MSNChatSession *msnMM=dynamic_cast<MSNChatSession*>(KMM);
 	if(msnMM)
 	{
 		connect(this , SIGNAL( destroyed(QObject*)) ,
@@ -84,7 +84,7 @@ void NetMeetingPlugin::slotNewKMM(Kopete::MessageManager *KMM)
 }
 
 
-void NetMeetingPlugin::slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int /*cookie*/ , MSNMessageManager* msnMM , MSNContact* c )
+void NetMeetingPlugin::slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int /*cookie*/ , MSNChatSession* msnMM , MSNContact* c )
 {
 	if(!invitation &&  bodyMSG.contains(NetMeetingInvitation::applicationID()))
 	{

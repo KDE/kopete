@@ -159,7 +159,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		//This might happen is you rename an user if he is not in the contactlist
 		//currently, we just iniore;
 		//TODO: try to don't rename user not in the list
-		//actualy, the bug is in MSNMessageManager::slotUserJoined()
+		//actualy, the bug is in MSNChatSession::slotUserJoined()
 		break;
 	}
 	case 219:

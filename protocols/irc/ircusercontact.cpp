@@ -377,7 +377,7 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 	}
 }
 
-QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::MessageManager *manager )
+QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession *manager )
 {
 	if( manager )
 	{

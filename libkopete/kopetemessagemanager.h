@@ -44,7 +44,7 @@ class Message;
 class Protocol;
 class OnlineStatus;
 class Account;
-class MessageManagerFactory;
+class ChatSessionManager;
 class MessageHandlerChain;
 
 typedef QPtrList<Contact>   ContactPtrList;
@@ -58,7 +58,7 @@ typedef QValueList<Message> MessageList;
  * @author Olivier Goffart        <ogoffart@tiscalinet.be>
  * @author Jason Keirstead        <jason@keirstead.org>
  *
- * The Kopete::MessageManager (also called KMM for simplicity) manages a single chat.
+ * The Kopete::ChatSession (also called KMM for simplicity) manages a single chat.
  * It is an interface between the protocol, and the chatwindow.
  * The protocol can connect to @ref messageSent() signals to send the message, and can
  * append received message with @ref messageReceived()
@@ -67,10 +67,10 @@ typedef QValueList<Message> MessageList;
  * so plugins can add childClients of this client to add their own actions in the
  * chatwindow.
  */
-class MessageManager : public QObject , public KXMLGUIClient
+class ChatSession : public QObject , public KXMLGUIClient
 {
 	// friend class so the object factory can access the protected constructor
-	friend class MessageManagerFactory;
+	friend class ChatSessionManager;
 
 	Q_OBJECT
 
@@ -80,7 +80,7 @@ public:
 	 * You shouldn't delete the KMM yourself. it will be deleted when the chatwindow is closed
 	 * see also @ref setCanBeDeleted()
 	 */
-	~MessageManager();
+	~ChatSession();
 
 	/**
 	 * @brief Get a list of all contacts in the session
@@ -143,7 +143,7 @@ public:
 	/**
 	 * @brief the manager's view
 	 *
-	 * Return the view for the supplied Kopete::MessageManager.  If it already
+	 * Return the view for the supplied Kopete::ChatSession.  If it already
 	 * exists, it will be returned, otherwise, 0L will be returned or a new one
 	 * if canCreate=true
 	 * @param canCreate create a new one if it does not exist
@@ -178,21 +178,21 @@ public:
 signals:
 	/**
 	 * @brief the KMM will be deleted
-	 * Used by a Kopete::MessageManager to signal that it is closing.
+	 * Used by a Kopete::ChatSession to signal that it is closing.
 	 */
-	void closing( Kopete::MessageManager *kmm );
+	void closing( Kopete::ChatSession *kmm );
 
 	/**
 	 * a message will be soon shown in the chatwindow.
-	 * See @ref Kopete::MessageManagerFactory::aboutToDisplay() signal
+	 * See @ref Kopete::ChatSessionManager::aboutToDisplay() signal
 	 */
-	void messageAppended( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
+	void messageAppended( Kopete::Message &msg, Kopete::ChatSession *kmm = 0L );
 
 	/**
 	 * a message will be soon received
-	 * See @ref Kopete::MessageManagerFactory::aboutToReceive() signal
+	 * See @ref Kopete::ChatSessionManager::aboutToReceive() signal
 	 */
-	void messageReceived( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
+	void messageReceived( Kopete::Message &msg, Kopete::ChatSession *kmm = 0L );
 
 	/**
 	 * @brief a message is going to be sent
@@ -200,9 +200,9 @@ signals:
 	 * The message is going to be sent.
 	 * protocols can connect to this signal to send the message ro the network.
 	 * the protocol have also to call @ref appendMessage() and @ref messageSucceeded()
-	 * See also @ref Kopete::MessageManagerFactory::aboutToSend() signal
+	 * See also @ref Kopete::ChatSessionManager::aboutToSend() signal
 	 */
-	void messageSent( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
+	void messageSent( Kopete::Message &msg, Kopete::ChatSession *kmm = 0L );
 
 	/**
 	 * The last message has finaly successfully been sent
@@ -324,7 +324,7 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	MessageManager( const Contact *user, ContactPtrList others,
+	ChatSession( const Contact *user, ContactPtrList others,
 		Protocol *protocol, int id = 0, const char *name = 0 );
 
 	void setMMId( int );

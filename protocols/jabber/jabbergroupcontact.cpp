@@ -53,7 +53,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	mManager = new JabberGroupChatManager ( protocol (), subContact,
 											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
-	connect ( mManager, SIGNAL ( closing ( Kopete::MessageManager* ) ), this, SLOT ( slotMessageManagerDeleted () ) );
+	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
 
 	/**
 	 * FIXME: The first contact in the list of the message manager
@@ -102,7 +102,7 @@ void JabberGroupContact::rename ( const QString &/*newName*/ )
 
 }
 
-Kopete::MessageManager *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
+Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
 {
 
 	return mManager;
@@ -273,7 +273,7 @@ void JabberGroupContact::slotUserInfo ()
 
 }
 
-void JabberGroupContact::slotMessageManagerDeleted ()
+void JabberGroupContact::slotChatSessionDeleted ()
 {
 
 	mManager = 0;

@@ -25,7 +25,7 @@
 class KAction;
 class KActionCollection;
 namespace Kopete { class Account; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 
 class MeanwhileContact : public Kopete::Contact
@@ -45,7 +45,7 @@ public:
 
 	virtual QPtrList<KAction> *customContextMenuActions();
 
-	virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlag canCreate = Kopete::Contact::CanCreate );
+	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlag canCreate = Kopete::Contact::CanCreate );
 
     QString meanwhileId;
 
@@ -57,11 +57,11 @@ public slots:
 
 protected slots:
 	void showContactSettings();
-	void slotMessageManagerDestroyed();
+	void slotChatSessionDestroyed();
     void slotMeTypingMsg(bool isTyping);
 	
 protected:
-	Kopete::MessageManager* m_msgManager;
+	Kopete::ChatSession* m_msgManager;
 	KActionCollection* m_actionCollection;
 	KAction* m_actionPrefs;
 };

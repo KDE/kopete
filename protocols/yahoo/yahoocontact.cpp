@@ -118,15 +118,15 @@ bool YahooContact::isReachable()
 		return false;
 }
 
-Kopete::MessageManager *YahooContact::manager( Kopete::Contact::CanCreateFlags canCreate )
+Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
 	if( !m_manager && canCreate)
 	{
 		Kopete::ContactPtrList m_them;
 		m_them.append( this );
-		m_manager = Kopete::MessageManagerFactory::self()->create( m_account->myself(), m_them, protocol() );
-		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
-		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
+		m_manager = Kopete::ChatSessionManager::self()->create( m_account->myself(), m_them, protocol() );
+		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotChatSessionDestroyed() ) );
+		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
 		connect( m_manager, SIGNAL( typingMsg( bool) ), this, SLOT( slotTyping( bool ) ) );
 		connect( m_account, SIGNAL( receivedTypingMsg( const QString &, bool ) ), m_manager, SLOT( receivedTypingMsg( const QString&, bool ) ) );
 	}
@@ -164,7 +164,7 @@ void YahooContact::slotTyping(bool isTyping_ )
 		static_cast<YahooContact*>(target)->m_userId, isTyping_ );
 }
 
-void YahooContact::slotMessageManagerDestroyed()
+void YahooContact::slotChatSessionDestroyed()
 {
 	m_manager = 0L;
 }

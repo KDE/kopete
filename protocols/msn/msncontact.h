@@ -31,7 +31,7 @@ class QListViewItem;
 class QPixmap;
 class QTimer;
 
-class MSNMessageManager;
+class MSNChatSession;
 class KAction;
 class KActionCollection;
 class KTempFile;
@@ -106,7 +106,7 @@ public:
 	/**
 	 * Returns the MSN Message Manager associated with this contact
 	 */
-	virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate );
+	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate );
 
 
 	/**

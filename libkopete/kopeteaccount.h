@@ -312,7 +312,7 @@ protected:
 	 * You must call this function in the constructor of your account
 	 *
 	 * The myself contact can't be deleted as long as the account still
-	 * exists. The myself contact is used in each MessageManager,
+	 * exists. The myself contact is used in each ChatSession,
 	 * the myself contactId can be the accountID, the onlineStatus
 	 * should represent the current user's status. The statusbar icon
 	 * is connected to @p myself's @ref Kopete::Contact::onlineStatusChanged()

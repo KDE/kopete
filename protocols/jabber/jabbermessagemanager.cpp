@@ -25,17 +25,17 @@
 #include "jabberaccount.h"
 #include "jabbercontact.h"
 
-JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
+JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource, const char *name )
-											 : Kopete::MessageManager ( user, others, protocol, 0, name )
+											 : Kopete::ChatSession ( user, others, protocol, 0, name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	// make sure Kopete knows about this instance
-	Kopete::MessageManagerFactory::self()->addMessageManager ( this );
+	Kopete::ChatSessionManager::self()->addChatSession ( this );
 
-	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
-			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );
+	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
+			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
 
 	connect ( this, SIGNAL ( typingMsg ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
 
@@ -49,7 +49,7 @@ JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const Jab
 
 }
 
-void JabberMessageManager::updateDisplayName ()
+void JabberChatSession::updateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
@@ -71,39 +71,39 @@ void JabberMessageManager::updateDisplayName ()
 
 }
 
-const JabberBaseContact *JabberMessageManager::user () const
+const JabberBaseContact *JabberChatSession::user () const
 {
 
-	return static_cast<const JabberBaseContact *>(Kopete::MessageManager::user());
+	return static_cast<const JabberBaseContact *>(Kopete::ChatSession::user());
 
 }
 
-JabberAccount *JabberMessageManager::account () const
+JabberAccount *JabberChatSession::account () const
 {
 
-	return static_cast<JabberAccount *>(Kopete::MessageManager::account ());
+	return static_cast<JabberAccount *>(Kopete::ChatSession::account ());
 
 }
 
-const QString &JabberMessageManager::resource () const
+const QString &JabberChatSession::resource () const
 {
 
 	return mResource;
 
 }
 
-void JabberMessageManager::appendMessage ( Kopete::Message &msg, const QString &fromResource )
+void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fromResource )
 {
 
 	mResource = fromResource;
 
 	updateDisplayName ();
 
-	Kopete::MessageManager::appendMessage ( msg );
+	Kopete::ChatSession::appendMessage ( msg );
 
 }
 
-void JabberMessageManager::slotSendTypingNotification ( bool typing )
+void JabberChatSession::slotSendTypingNotification ( bool typing )
 {
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
@@ -144,7 +144,7 @@ void JabberMessageManager::slotSendTypingNotification ( bool typing )
 
 }
 
-void JabberMessageManager::slotMessageSent ( Kopete::Message &message, Kopete::MessageManager * )
+void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::ChatSession * )
 {
 
 	if( account()->isConnected () )
@@ -208,7 +208,7 @@ void JabberMessageManager::slotMessageSent ( Kopete::Message &message, Kopete::M
 		account()->client()->sendMessage ( jabberMessage );
 
 		// append the message to the manager
-		Kopete::MessageManager::appendMessage ( message );
+		Kopete::ChatSession::appendMessage ( message );
 
 		// tell the manager that we sent successfully
 		messageSucceeded ();

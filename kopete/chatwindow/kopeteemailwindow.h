@@ -42,7 +42,7 @@ public:
 	 * Constructs a KopeteEmailWindowBase as a child of 'parent', with the
 	 * name 'name' and widget flags set to 'f'.
 	 */
-	KopeteEmailWindow( Kopete::MessageManager *, bool foreignMessage );
+	KopeteEmailWindow( Kopete::ChatSession *, bool foreignMessage );
 
 	/**
 	 * Destroys the object and frees any allocated resources

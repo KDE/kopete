@@ -30,7 +30,7 @@ namespace Kopete
 {
 
 class MessageEvent;
-class MessageManager;
+class ChatSession;
 
 /**
  * @author Richard Smith       <kde@metafoo.co.uk>
@@ -111,7 +111,7 @@ class MessageHandlerFactory
 public:
 	/**
 	 * Constructs a MessageHandlerFactory, and adds it to the list of factories considered when
-	 * creating a MessageHandlerChain for a MessageManager.
+	 * creating a MessageHandlerChain for a ChatSession.
 	 * 
 	 * @note Since the factory is added to the list of possible factories before the object is
 	 * finished being constructed, it is not safe to call any function from a derived class's
@@ -135,7 +135,7 @@ public:
 	 * @param direction The direction of the chain that is being created.
 	 * @return the @ref MessageHandler object to put in the chain, or 0 if none is needed.
 	 */
-	virtual MessageHandler *create( MessageManager *manager, Message::MessageDirection direction ) = 0;
+	virtual MessageHandler *create( ChatSession *manager, Message::MessageDirection direction ) = 0;
 	
 	/**
 	 * Special stages usable with any message direction
@@ -206,7 +206,7 @@ public:
 	 *         appropriate, optionally combined with a member of the Offset enumeration.
 	 * @retval StageDoNotCreate No filter should be created for this chain.
 	 */
-	virtual int filterPosition( MessageManager *manager, Message::MessageDirection direction ) = 0;
+	virtual int filterPosition( ChatSession *manager, Message::MessageDirection direction ) = 0;
 	
 private:
 	// noncopyable

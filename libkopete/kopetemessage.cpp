@@ -46,7 +46,7 @@ public:
 
 	const Kopete::Contact *from;
 	Kopete::ContactPtrList to;
-	Kopete::MessageManager *manager;
+	Kopete::ChatSession *manager;
 
 	Kopete::Message::MessageDirection direction;
 	Kopete::Message::MessageFormat format;
@@ -451,12 +451,12 @@ Kopete::Message::MessageImportance Kopete::Message::importance() const
 	return d->importance;
 }
 
-Kopete::MessageManager *Kopete::Message::manager() const
+Kopete::ChatSession *Kopete::Message::manager() const
 {
 	return d->manager;
 }
 
-void Kopete::Message::setManager(Kopete::MessageManager *kmm)
+void Kopete::Message::setManager(Kopete::ChatSession *kmm)
 {
 	detach();
 	d->manager=kmm;

@@ -19,7 +19,7 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 class IRCContact;
 
 /**
@@ -29,7 +29,7 @@ class IRCGUIClient : public QObject , public KXMLGUIClient
 {
 	Q_OBJECT
 	public:
-		IRCGUIClient( Kopete::MessageManager *parent = 0 );
+		IRCGUIClient( Kopete::ChatSession *parent = 0 );
 		~IRCGUIClient();
 	
 	private slots:

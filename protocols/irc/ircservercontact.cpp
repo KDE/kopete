@@ -57,7 +57,7 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 	QObject::connect( MYACCOUNT->engine(), SIGNAL(incomingMotd( const QString &)),
 			this, SLOT(slotIncomingMotd(const QString &)) );
 
-	QObject::connect(Kopete::MessageManagerFactory::self(), SIGNAL(viewCreated(KopeteView*)),
+	QObject::connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotViewCreated(KopeteView*)) );
 
 	updateStatus();
@@ -117,7 +117,7 @@ void IRCServerContact::engineInternalError( KIRC::Engine::Error engineError, con
 	MYACCOUNT->appendMessage( error + QString( ircmsg.raw() ), IRCAccount::ErrorReply );
 }
 
-void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::MessageManager *manager )
+void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::ChatSession *manager )
 {
 	manager->messageSucceeded();
 	Kopete::Message msg( manager->user(), manager->members(),

@@ -46,7 +46,7 @@ void Kopete::Command::init( const QString &command, const char* slot, const QStr
 
 	if(  m_type == Kopete::CommandHandler::Normal )
 	{
-		QObject::connect( this, SIGNAL( handleCommand( const QString &, Kopete::MessageManager *) ),
+		QObject::connect( this, SIGNAL( handleCommand( const QString &, Kopete::ChatSession *) ),
 			parent(), slot );
 	}
 
@@ -55,7 +55,7 @@ void Kopete::Command::init( const QString &command, const char* slot, const QStr
 
 void Kopete::Command::slotAction()
 {
-	Kopete::MessageManager *manager = Kopete::MessageManagerFactory::self()->activeView()->msgManager();
+	Kopete::ChatSession *manager = Kopete::ChatSessionManager::self()->activeView()->msgManager();
 
 	QString args;
 	if( m_minArgs > 0 )
@@ -68,7 +68,7 @@ void Kopete::Command::slotAction()
 	processCommand( args, manager, true );
 }
 
-void Kopete::Command::processCommand( const QString &args, Kopete::MessageManager *manager, bool gui )
+void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *manager, bool gui )
 {
 	QStringList mArgs = Kopete::CommandHandler::parseArguments( args );
 	if( mArgs.count() < m_minArgs )
@@ -115,7 +115,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::MessageManage
 	}
 }
 
-void Kopete::Command::printError( const QString &error, Kopete::MessageManager *manager, bool gui ) const
+void Kopete::Command::printError( const QString &error, Kopete::ChatSession *manager, bool gui ) const
 {
 	if( gui )
 	{

@@ -34,7 +34,7 @@ class IRCContactManager;
 
 namespace Kopete
 {
-class MessageManager;
+class ChatSession;
 class MetaContact;
 }
 
@@ -84,12 +84,12 @@ public:
 	 * return true if the contact is in a chat. false if the contact is in no chats
 	 * that loop over all manager, and checks the presence of the user
 	 */
-	bool isChatting( Kopete::MessageManager *avoid = 0L ) const;
+	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
 
 	virtual const QString caption() const = 0;
 //	virtual const QString formatedName() const;
 
-	virtual Kopete::MessageManager *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
+	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 
 	virtual void appendMessage( Kopete::Message & );
 
@@ -109,9 +109,9 @@ public slots:
 	virtual void updateStatus() = 0;
 
 protected slots:
-	virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
+	virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
 
-	virtual void messageManagerDestroyed();
+	virtual void chatSessionDestroyed();
 
 	void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
 	void slotUserDisconnected( const QString &nickname, const QString &reason);
@@ -122,7 +122,7 @@ protected slots:
 
 protected:
 	QString m_nickName;
-	Kopete::MessageManager *m_msgManager;
+	Kopete::ChatSession *m_msgManager;
 
 	QPtrList<Kopete::Contact> mMyself;
 	Kopete::Message::MessageDirection execDir;

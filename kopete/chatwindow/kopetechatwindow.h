@@ -45,7 +45,7 @@ class ChatView;
 namespace Kopete
 {
 class Message;
-class MessageManager;
+class ChatSession;
 class Contact;
 class Protocol;
 typedef QPtrList<Contact>  ContactPtrList;
@@ -65,7 +65,7 @@ public:
 	 * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
 	 *  to be a valid pointer.
 	 */
-	static KopeteChatWindow *window( Kopete::MessageManager *manager );
+	static KopeteChatWindow *window( Kopete::ChatSession *manager );
 	~KopeteChatWindow();
 
 	/**

@@ -27,7 +27,7 @@
 #include "oscarsocket.h"
 
 class KToggleAction;
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class OnlineStatus; }
 class OscarConnection;
 class OscarProtocol;
@@ -59,7 +59,7 @@ class OscarContact : public Kopete::Contact
 
 		virtual void rename(const QString &);
 
-		virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
+		virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 
 		const QString &contactName() const { return mName; };
 		OscarAccount *account() const { return mAccount; };
@@ -142,7 +142,7 @@ class OscarContact : public Kopete::Contact
 		// The name of the contact as used on the protocol-level
 		QString mName;
 
-		Kopete::MessageManager *mMsgManager;
+		Kopete::ChatSession *mMsgManager;
 
 	protected slots:
 		/** Called when a buddy has changed status */
@@ -162,7 +162,7 @@ class OscarContact : public Kopete::Contact
 		/** Called when a buddy is offgoing */
 		void slotOffgoingBuddy(QString sn);
 		/** Called when we want to send a message */
-		//void slotSendMsg(Kopete::Message&, Kopete::MessageManager *);
+		//void slotSendMsg(Kopete::Message&, Kopete::ChatSession *);
 		/** Called when an IM is received */
 //		void slotIMReceived(QString sender, QString msg, bool isAuto);
 		/** Called when nickname needs to be updated */
@@ -174,7 +174,7 @@ class OscarContact : public Kopete::Contact
 		void slotMainStatusChanged(const unsigned int);
 
 		/** Called when KMM is destroyed */
-		void slotMessageManagerDestroyed();
+		void slotChatSessionDestroyed();
 
 
 /*

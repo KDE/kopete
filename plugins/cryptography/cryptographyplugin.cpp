@@ -58,7 +58,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 
 	m_inboundHandler = new Kopete::SimpleMessageHandlerFactory( Kopete::Message::Inbound,
 		Kopete::MessageHandlerFactory::InStageToSent, this, SLOT( slotIncomingMessage( Kopete::Message& ) ) );
-	connect( Kopete::MessageManagerFactory::self(),
+	connect( Kopete::ChatSessionManager::self(),
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
@@ -74,10 +74,10 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 	
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::self()->sessions();
-	QIntDictIterator<Kopete::MessageManager> it( sessions );
+	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
+	QIntDictIterator<Kopete::ChatSession> it( sessions );
 	for ( ; it.current() ; ++it )
 	{
 		slotNewKMM(it.current());
@@ -137,7 +137,7 @@ bool CryptographyPlugin::passphraseHandling()
 }
 
 
-/*KActionCollection *CryptographyPlugin::customChatActions(Kopete::MessageManager *KMM)
+/*KActionCollection *CryptographyPlugin::customChatActions(Kopete::ChatSession *KMM)
 {
 	delete m_actionCollection;
 
@@ -146,7 +146,7 @@ bool CryptographyPlugin::passphraseHandling()
 		this, SLOT( slotTranslateChat() ), m_actionCollection, "actionTranslate" );
 	m_actionCollection->insert( actionTranslate );
 
-	m_currentMessageManager=KMM;
+	m_currentChatSession=KMM;
 	return m_actionCollection;
 }*/
 
@@ -309,7 +309,7 @@ void CryptographyPlugin::slotForgetCachedPass()
 	m_cachedPass_timer->stop();
 }
 
-void CryptographyPlugin::slotNewKMM(Kopete::MessageManager *KMM) 
+void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM) 
 {
 	connect(this , SIGNAL( destroyed(QObject*)) ,
 			new CryptographyGUIClient(KMM) , SLOT(deleteLater()));

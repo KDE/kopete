@@ -60,7 +60,7 @@ public:
 	Kopete::MessageHandlerChain::Ptr chains[3];
 };
 
-Kopete::MessageManager::MessageManager( const Kopete::Contact *user,
+Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	Kopete::ContactPtrList others, Kopete::Protocol *protocol, int id, const char *name )
 : QObject( user->account(), name )
 {
@@ -83,7 +83,7 @@ Kopete::MessageManager::MessageManager( const Kopete::Contact *user,
 	slotUpdateDisplayName();
 }
 
-Kopete::MessageManager::~MessageManager()
+Kopete::ChatSession::~ChatSession()
 {
 	//for ( Kopete::Contact *c = d->mContactList.first(); c; c = d->mContactList.next() )
 	//	c->setConversations( c->conversations() - 1 );
@@ -91,18 +91,18 @@ Kopete::MessageManager::~MessageManager()
 	if ( !d )
 		return;
 	d->mCanBeDeleted = false; //prevent double deletion
-	Kopete::MessageManagerFactory::self()->removeSession( this );
+	Kopete::ChatSessionManager::self()->removeSession( this );
 	emit closing( this );
 	delete d;
 }
 
-void Kopete::MessageManager::slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus )
+void Kopete::ChatSession::slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus )
 {
 	slotUpdateDisplayName();
 	emit onlineStatusChanged((Kopete::Contact*)c, status, oldStatus);
 }
 
-void Kopete::MessageManager::setContactOnlineStatus( const Kopete::Contact *contact, const Kopete::OnlineStatus &status )
+void Kopete::ChatSession::setContactOnlineStatus( const Kopete::Contact *contact, const Kopete::OnlineStatus &status )
 {
 	Kopete::OnlineStatus oldStatus = d->contactStatus[ contact ];
 	d->contactStatus[ contact ] = status;
@@ -111,7 +111,7 @@ void Kopete::MessageManager::setContactOnlineStatus( const Kopete::Contact *cont
 	emit onlineStatusChanged( (Kopete::Contact*)contact, status, oldStatus );
 }
 
-const Kopete::OnlineStatus Kopete::MessageManager::contactOnlineStatus( const Kopete::Contact *contact ) const
+const Kopete::OnlineStatus Kopete::ChatSession::contactOnlineStatus( const Kopete::Contact *contact ) const
 {
 	if ( d->contactStatus.contains( contact ) )
 		return d->contactStatus[ contact ];
@@ -119,7 +119,7 @@ const Kopete::OnlineStatus Kopete::MessageManager::contactOnlineStatus( const Ko
 	return contact->onlineStatus();
 }
 
-const QString Kopete::MessageManager::displayName()
+const QString Kopete::ChatSession::displayName()
 {
 	if ( d->displayName.isNull() )
 	{
@@ -129,14 +129,14 @@ const QString Kopete::MessageManager::displayName()
 	return d->displayName;
 }
 
-void Kopete::MessageManager::setDisplayName( const QString &newName )
+void Kopete::ChatSession::setDisplayName( const QString &newName )
 {
 	d->displayName = newName;
 	d->customDisplayName = true;
 	emit displayNameChanged();
 }
 
-void Kopete::MessageManager::slotUpdateDisplayName()
+void Kopete::ChatSession::slotUpdateDisplayName()
 {
 	if( d->customDisplayName )
 		return;
@@ -172,27 +172,27 @@ void Kopete::MessageManager::slotUpdateDisplayName()
 	emit displayNameChanged();
 }
 
-const Kopete::ContactPtrList& Kopete::MessageManager::members() const
+const Kopete::ContactPtrList& Kopete::ChatSession::members() const
 {
 	return d->mContactList;
 }
 
-const Kopete::Contact* Kopete::MessageManager::user() const
+const Kopete::Contact* Kopete::ChatSession::user() const
 {
 	return d->mUser;
 }
 
-Kopete::Protocol* Kopete::MessageManager::protocol() const
+Kopete::Protocol* Kopete::ChatSession::protocol() const
 {
 	return d->mProtocol;
 }
 
-int Kopete::MessageManager::mmId() const
+int Kopete::ChatSession::mmId() const
 {
 	return d->mId;
 }
 
-void Kopete::MessageManager::setMMId( int id )
+void Kopete::ChatSession::setMMId( int id )
 {
 	d->mId = id;
 }
@@ -203,9 +203,9 @@ void Kopete::MessageManager::setMMId( int id )
 // FIXME: remove this and the friend decl in KMM
 class Kopete::TemporaryKMMCallbackAppendMessageHandler : public Kopete::MessageHandler
 {
-	Kopete::MessageManager *manager;
+	Kopete::ChatSession *manager;
 public:
-	TemporaryKMMCallbackAppendMessageHandler( Kopete::MessageManager *manager )
+	TemporaryKMMCallbackAppendMessageHandler( Kopete::ChatSession *manager )
 	: manager(manager)
 	{
 	}
@@ -220,18 +220,18 @@ public:
 class TempFactory : public Kopete::MessageHandlerFactory
 {
 public:
-	Kopete::MessageHandler *create( Kopete::MessageManager *manager, Kopete::Message::MessageDirection )
+	Kopete::MessageHandler *create( Kopete::ChatSession *manager, Kopete::Message::MessageDirection )
 	{
 		return new Kopete::TemporaryKMMCallbackAppendMessageHandler( manager );
 	}
-	int filterPosition( Kopete::MessageManager *, Kopete::Message::MessageDirection )
+	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
 	{
 		// FIXME: somewhere after everyone else.
 		return 100000;
 	}
 };
 
-Kopete::MessageHandlerChain::Ptr Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
+Kopete::MessageHandlerChain::Ptr Kopete::ChatSession::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
 		kdFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
@@ -243,7 +243,7 @@ Kopete::MessageHandlerChain::Ptr Kopete::MessageManager::chainForDirection( Kope
 	return d->chains[dir];
 }
 
-void Kopete::MessageManager::sendMessage( Kopete::Message &message )
+void Kopete::ChatSession::sendMessage( Kopete::Message &message )
 {
 	message.setManager( this );
 	Kopete::Message sentMessage = message;
@@ -263,12 +263,12 @@ void Kopete::MessageManager::sendMessage( Kopete::Message &message )
 	}
 }
 
-void Kopete::MessageManager::messageSucceeded()
+void Kopete::ChatSession::messageSucceeded()
 {
 	emit messageSuccess();
 }
 
-void Kopete::MessageManager::appendMessage( Kopete::Message &msg )
+void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 {
 	msg.setManager( this );
 
@@ -295,7 +295,7 @@ void Kopete::MessageManager::appendMessage( Kopete::Message &msg )
 //	emit messageAppended( msg, this );
 }
 
-void Kopete::MessageManager::addContact( const Kopete::Contact *c, bool suppress )
+void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( d->mContactList.contains( c ) )
@@ -344,7 +344,7 @@ void Kopete::MessageManager::addContact( const Kopete::Contact *c, bool suppress
 	d->isEmpty = false;
 }
 
-void Kopete::MessageManager::removeContact( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification )
+void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( !c || !d->mContactList.contains( c ) )
@@ -376,12 +376,12 @@ void Kopete::MessageManager::removeContact( const Kopete::Contact *c, const QStr
 	emit contactRemoved( c, reason, format, suppressNotification );
 }
 
-void Kopete::MessageManager::receivedTypingMsg( const Kopete::Contact *c, bool t )
+void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 {
 	emit remoteTyping( c, t );
 }
 
-void Kopete::MessageManager::receivedTypingMsg( const QString &contactId, bool t )
+void Kopete::ChatSession::receivedTypingMsg( const QString &contactId, bool t )
 {
 	for ( Kopete::Contact *it = d->mContactList.first(); it; it = d->mContactList.next() )
 	{
@@ -393,23 +393,23 @@ void Kopete::MessageManager::receivedTypingMsg( const QString &contactId, bool t
 	}
 }
 
-void Kopete::MessageManager::typing( bool t )
+void Kopete::ChatSession::typing( bool t )
 {
 	emit typingMsg( t );
 }
 
-void Kopete::MessageManager::setCanBeDeleted ( bool b )
+void Kopete::ChatSession::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;
 	if ( b && !d->view )
 		deleteLater();
 }
 
-KopeteView* Kopete::MessageManager::view( bool canCreate, Kopete::Message::ViewType type )
+KopeteView* Kopete::ChatSession::view( bool canCreate, Kopete::Message::ViewType type )
 {
 	if ( !d->view && canCreate )
 	{
-		d->view = Kopete::MessageManagerFactory::self()->createView( this, type );
+		d->view = Kopete::ChatSessionManager::self()->createView( this, type );
 		if ( d->view )
 		{
 			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
@@ -424,19 +424,19 @@ KopeteView* Kopete::MessageManager::view( bool canCreate, Kopete::Message::ViewT
 	return d->view;
 }
 
-void Kopete::MessageManager::slotViewDestroyed()
+void Kopete::ChatSession::slotViewDestroyed()
 {
 	d->view = 0L;
 	if ( d->mCanBeDeleted )
 		deleteLater();
 }
 
-Kopete::Account *Kopete::MessageManager::account() const
+Kopete::Account *Kopete::ChatSession::account() const
 {
 	return user()->account();
 }
 
-void Kopete::MessageManager::slotContactDestroyed( Kopete::Contact *contact )
+void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 {
 	if ( !contact || !d->mContactList.contains( contact ) )
 		return;
@@ -451,17 +451,17 @@ void Kopete::MessageManager::slotContactDestroyed( Kopete::Contact *contact )
 		deleteLater();
 }
 
-bool Kopete::MessageManager::mayInvite() const
+bool Kopete::ChatSession::mayInvite() const
 {
 	return d->mayInvite;
 }
 
-void Kopete::MessageManager::inviteContact(const QString& )
+void Kopete::ChatSession::inviteContact(const QString& )
 {
 	//default implementation do nothing
 }
 
-void Kopete::MessageManager::setMayInvite( bool b )
+void Kopete::ChatSession::setMayInvite( bool b )
 {
 	d->mayInvite=b;
 }

@@ -86,7 +86,7 @@ bool MSNContact::isReachable()
 	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
 		return true;
 
-	MSNMessageManager *kmm=dynamic_cast<MSNMessageManager*>(manager(Kopete::Contact::CanCreate));
+	MSNChatSession *kmm=dynamic_cast<MSNChatSession*>(manager(Kopete::Contact::CanCreate));
 	if( kmm && kmm->service() )  //the chat socket is open.  than mean message will be sent
 		return true;
 
@@ -104,16 +104,16 @@ bool MSNContact::isReachable()
 	return true;
 }
 
-Kopete::MessageManager *MSNContact::manager( Kopete::Contact::CanCreateFlags canCreate )
+Kopete::ChatSession *MSNContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
 	Kopete::ContactPtrList chatmembers;
 	chatmembers.append(this);
 
-	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::self()->findMessageManager(  account()->myself(), chatmembers, protocol() );
-	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
+	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession(  account()->myself(), chatmembers, protocol() );
+	MSNChatSession *manager = dynamic_cast<MSNChatSession*>( _manager );
 	if(!manager &&  canCreate==Kopete::Contact::CanCreate)
 	{
-		manager = new MSNMessageManager( protocol(), account()->myself(), chatmembers  );
+		manager = new MSNChatSession( protocol(), account()->myself(), chatmembers  );
 		static_cast<MSNAccount*>( account() )->slotStartChatSession( contactId() );
 	}
 	return manager;
@@ -536,7 +536,7 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 	if ( !filePath.isEmpty() )
 	{
 		//Send the file
-		static_cast<MSNMessageManager*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
+		static_cast<MSNChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
 
 	}
 }

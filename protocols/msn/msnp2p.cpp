@@ -260,7 +260,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						Kopete::Contact *c=0L;
 						if(parent())
 						{
-							Kopete::MessageManager *kmm=dynamic_cast<Kopete::MessageManager*>(parent()->parent());
+							Kopete::ChatSession *kmm=dynamic_cast<Kopete::ChatSession*>(parent()->parent());
 							if(kmm)
 								c=kmm->account()->contacts()[m_msgHandle];
 						}

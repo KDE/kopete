@@ -51,7 +51,7 @@ public:
 	MessageHandler *first;
 };
 
-MessageHandlerChain::Ptr MessageHandlerChain::create( MessageManager *manager, Message::MessageDirection direction )
+MessageHandlerChain::Ptr MessageHandlerChain::create( ChatSession *manager, Message::MessageDirection direction )
 {
 	// create the handler chain
 	MessageHandlerChain *chain = new MessageHandlerChain;

@@ -24,7 +24,7 @@
 class KAction;
 class KActionCollection;
 namespace Kopete { class Account; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 
 /**
@@ -57,15 +57,15 @@ public:
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
 	/**
-	 * Returns a Kopete::MessageManager associated with this contact
+	 * Returns a Kopete::ChatSession associated with this contact
 	 */
-	virtual Kopete::MessageManager *manager( bool canCreate = false );
+	virtual Kopete::ChatSession *manager( bool canCreate = false );
 
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
-	 * (in response to the relevant Kopete::MessageManager signal)
+	 * (in response to the relevant Kopete::ChatSession signal)
 	 */
 	void sendMessage( Kopete::Message &message );
 	/**
@@ -80,13 +80,13 @@ protected slots:
 	 */
 	void showContactSettings();
 	/**
-	 * Notify the contact that its current Kopete::MessageManager was
+	 * Notify the contact that its current Kopete::ChatSession was
 	 * destroyed - probably by the chatwindow being closed
 	 */
-	void slotMessageManagerDestroyed();
+	void slotChatSessionDestroyed();
 	
 protected:
-	Kopete::MessageManager* m_msgManager;
+	Kopete::ChatSession* m_msgManager;
 	KActionCollection* m_actionCollection;
 	TestbedContactType m_type;
 	KAction* m_actionPrefs;

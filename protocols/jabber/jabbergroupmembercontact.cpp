@@ -66,7 +66,7 @@ void JabberGroupMemberContact::rename ( const QString &/*newName*/ )
 
 }
 
-Kopete::MessageManager *JabberGroupMemberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
+Kopete::ChatSession *JabberGroupMemberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
 
 	if ( mManager )
@@ -82,14 +82,14 @@ Kopete::MessageManager *JabberGroupMemberContact::manager ( Kopete::Contact::Can
 	 * FIXME: We might have to use the group chat contact here instead of
 	 *        the global myself() instance for a correct representation.
 	 */
-	mManager = new JabberMessageManager ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers );
-	connect ( mManager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotMessageManagerDeleted () ) );
+	mManager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers );
+	connect ( mManager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted () ) );
 
 	return mManager;
 
 }
 
-void JabberGroupMemberContact::slotMessageManagerDeleted ()
+void JabberGroupMemberContact::slotChatSessionDeleted ()
 {
 
 	mManager = 0;

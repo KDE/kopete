@@ -29,12 +29,12 @@ class QString;
 /**
  * @author Till Gerken
  */
-class JabberMessageManager : public Kopete::MessageManager
+class JabberChatSession : public Kopete::ChatSession
 {
 	Q_OBJECT
 
 public:
-	JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
+	JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 						   Kopete::ContactPtrList others, const QString &resource = "",
 						   const char *name = 0 );
 
@@ -78,7 +78,7 @@ public slots:
 
 private slots:
 	void slotSendTypingNotification ( bool typing );
-	void slotMessageSent ( Kopete::Message &message, Kopete::MessageManager *kmm );
+	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
 
 private:
 	QString mResource;

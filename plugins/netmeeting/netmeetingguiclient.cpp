@@ -32,7 +32,7 @@
 
 class NetMeetingPlugin;
 
-NetMeetingGUIClient::NetMeetingGUIClient( MSNMessageManager *parent,  const char *name )
+NetMeetingGUIClient::NetMeetingGUIClient( MSNChatSession *parent,  const char *name )
 : QObject( parent, name ) , KXMLGUIClient(parent)
 {
 	setInstance(KGenericFactory<NetMeetingPlugin>::instance());

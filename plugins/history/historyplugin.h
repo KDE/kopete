@@ -33,7 +33,7 @@ class KActionCollection;
 namespace Kopete
 {
 class MetaContact;
-class MessageManager;
+class ChatSession;
 }
 
 class HistoryPreferences;
@@ -56,13 +56,13 @@ class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
 	HistoryPlugin *history;
 public:
 	HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {}
-	Kopete::MessageHandler *create( Kopete::MessageManager *manager, Kopete::Message::MessageDirection direction )
+	Kopete::MessageHandler *create( Kopete::ChatSession *manager, Kopete::Message::MessageDirection direction )
 	{
 		if( direction != Kopete::Message::Inbound )
 			return 0;
 		return new HistoryMessageLogger(history);
 	}
-	int filterPosition( Kopete::MessageManager *, Kopete::Message::MessageDirection )
+	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
 	{
 		return InStageStart;
 	}
@@ -92,12 +92,12 @@ class HistoryPlugin : public Kopete::Plugin
 	private slots:
 		void slotViewCreated( KopeteView* );
 		void slotViewHistory();
-		void slotKMMClosed( Kopete::MessageManager* );
+		void slotKMMClosed( Kopete::ChatSession* );
 		void slotSettingsChanged();
 
 	private:
 		HistoryMessageLoggerFactory m_loggerFactory;
-		QMap<Kopete::MessageManager*,HistoryGUIClient*> m_loggers;
+		QMap<Kopete::ChatSession*,HistoryGUIClient*> m_loggers;
 		Kopete::Message m_lastmessage;
 };
 

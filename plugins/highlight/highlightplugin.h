@@ -31,7 +31,7 @@ class QTimer;
 
 namespace Kopete { class Message; }
 namespace Kopete { class MetaContact; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 
 class HighlightConfig;
 class Filter;

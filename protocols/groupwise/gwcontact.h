@@ -41,7 +41,7 @@ class KAction;
 class KActionCollection;
 namespace Kopete { class Account; }
 class GroupWiseAccount;
-class GroupWiseMessageManager;
+class GroupWiseChatSession;
 class GroupWiseProtocol;
 namespace Kopete { class MetaContact; }
 
@@ -102,14 +102,14 @@ public:
 	virtual QPtrList<KAction> *customContextMenuActions();
 	
 	/**
-	 * Returns a Kopete::MessageManager associated with this contact
+	 * Returns a Kopete::ChatSession associated with this contact
 	 */
-	virtual Kopete::MessageManager *manager( bool canCreate = false );
+	virtual Kopete::ChatSession *manager( bool canCreate = false );
 
 	/** 
 	 * Locate or create a messagemanager for the specified group of contacts
 	 */
-	GroupWiseMessageManager *manager ( Kopete::ContactPtrList chatMembers, bool canCreate = false );
+	GroupWiseChatSession *manager ( Kopete::ContactPtrList chatMembers, bool canCreate = false );
 
 	/**
 	 * Received a message from the server.
@@ -183,7 +183,7 @@ public slots:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
-	 * (in response to the relevant Kopete::MessageManager signal)
+	 * (in response to the relevant Kopete::ChatSession signal)
 	 */
 	void sendMessage( Kopete::Message &message );
 	/**
@@ -202,9 +202,9 @@ public slots:
 	
 protected:
 	/**
-	 * Returns the Kopete::MessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
+	 * Returns the Kopete::ChatSession for the GroupWise conference with the supplied GUID, or creates a new one.
 	 */
-	GroupWiseMessageManager *manager( const ConferenceGuid & guid, bool canCreate = false );
+	GroupWiseChatSession *manager( const ConferenceGuid & guid, bool canCreate = false );
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
 protected slots:
@@ -217,10 +217,10 @@ protected slots:
 	 */
 	void slotConferenceCreated();
 	/**
-	 * Notify the contact that a Kopete::MessageManager was
+	 * Notify the contact that a Kopete::ChatSession was
 	 * destroyed - probably by the chatwindow being closed
 	 */
-	void slotMessageManagerDeleted( QObject *sender );
+	void slotChatSessionDeleted( QObject *sender );
 	/**
 	 * Block or unblock the contact, toggle its current blocking state
 	 */
@@ -240,7 +240,7 @@ protected:
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
 	// all the message managers that this contact is currently chatting via
-	GroupWiseMessageManager::Dict m_msgManagers;
+	GroupWiseChatSession::Dict m_msgManagers;
 	// a list of all the instances that this contact appears in the server side contact list
 	CLInstanceList m_instances;
 	// Novell Messenger Properties, as received by the server.  

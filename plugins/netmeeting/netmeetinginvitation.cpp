@@ -67,7 +67,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 					i18n("%1 wants to start a chat with NetMeeting; do you want to accept it? " ).arg(m_contact->metaContact()->displayName()),
 					i18n("MSN Plugin") , i18n("Accept"),i18n("Refuse"));
 
-		MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+		MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 
 		if(manager && manager->service())
 		{
@@ -102,7 +102,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 	{
 		if( ! incoming() )
 		{
-			MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+			MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 			if(manager && manager->service())
 			{
 				QCString message=QString(
@@ -145,7 +145,7 @@ void NetMeetingInvitation::slotTimeout()
 	if(oki)
 		return;
 
- 	MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
+ 	MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 
 	if(manager && manager->service())
 	{

@@ -207,13 +207,13 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 		pluginStatic_ = this;
 
 	//Kopete::Message events
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		this, SLOT( slotDisplayMessage( Kopete::Message & ) ) );
 
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToReceive( Kopete::Message & ) ),
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToReceive( Kopete::Message & ) ),
 		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
 	connect( Kopete::AccountManager::self(), SIGNAL( accountRegistered( Kopete::Account * ) ),
@@ -229,11 +229,11 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 	}
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("jsconsole"),
-		SLOT( slotShowConsole( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotShowConsole( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /jsconsole - Shows the JavaScript console."), 0, 0 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("jsexec"),
-		SLOT( slotJsExec( const QString &, Kopete::MessageManager*) ),
+		SLOT( slotJsExec( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /jsexec [-o] <args> - Executes the JavaScript arguments in the current context and displays the results in the chat buffer. If -o is specified, the output is sent to all members of the chat."), 1 );
 }
 
@@ -281,11 +281,11 @@ void JavaScriptPlugin::slotAccountCreated( Kopete::Account *a )
 		ep->jsEngine->factory()->addType( "Kopete::Contact" );
 		ep->jsEngine->factory()->addType( "Kopete::MetaContact" );
 		ep->jsEngine->factory()->addType( "Kopete::ContactList" );
-		ep->jsEngine->factory()->addType( "Kopete::MessageManager" );
-		ep->jsEngine->factory()->addType( "Kopete::MessageManagerFactory" );
+		ep->jsEngine->factory()->addType( "Kopete::ChatSession" );
+		ep->jsEngine->factory()->addType( "Kopete::ChatSessionManager" );
 		ep->jsEngine->factory()->addType( "KopeteView" );
 
-		ep->jsEngine->addObject( Kopete::MessageManagerFactory::self(), "MessageManagerFactory" );
+		ep->jsEngine->addObject( Kopete::ChatSessionManager::self(), "ChatSessionManager" );
 		ep->jsEngine->addObject( Kopete::AccountManager::self(), "AccountManager" );
 
 		KJS::Object account = ep->jsEngine->addObject( a, "Account" );
@@ -327,7 +327,7 @@ JavaScriptPlugin* JavaScriptPlugin::self()
 	return pluginStatic_ ;
 }
 
-void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::MessageManager *manager )
+void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::ChatSession *manager )
 {
 	JavaScriptEnginePrivate *ep = d->engineMap[ manager->account() ];
 	if( !ep )
@@ -344,7 +344,7 @@ void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::MessageManager 
 	}
 }
 
-void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::MessageManager *manager )
+void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *manager )
 {
 	JavaScriptEnginePrivate *ep = d->engineMap[ manager->account() ];
 	if( !ep )

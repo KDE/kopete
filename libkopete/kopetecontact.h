@@ -34,7 +34,7 @@ namespace Kopete
 
 class Group;
 class MetaContact;
-class MessageManager;
+class ChatSession;
 class OnlineStatus;
 class Plugin;
 class Protocol;
@@ -226,7 +226,7 @@ public:
 	/**
 	 * @todo  What is this function for ?
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions( MessageManager *manager );
+	virtual QPtrList<KAction> *customContextMenuActions( ChatSession *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact
@@ -234,7 +234,7 @@ public:
 	 * This menu includes generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
-	KPopupMenu *popupMenu( MessageManager *manager = 0L );
+	KPopupMenu *popupMenu( ChatSession *manager = 0L );
 	
 
 
@@ -299,7 +299,7 @@ public:
 	 * to any existing managers. Currently, this is only set to true when
 	 * a chat is initiated by the user by clicking the contact list.
 	 */
-	virtual MessageManager * manager( CanCreateFlags canCreate = CannotCreate ) =0;
+	virtual ChatSession * manager( CanCreateFlags canCreate = CannotCreate ) =0;
 
 	/**
 	 * Returns the name of the icon to use for this contact

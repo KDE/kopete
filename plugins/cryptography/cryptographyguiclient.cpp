@@ -27,7 +27,7 @@
 
 class CryptographyPlugin;
 
-CryptographyGUIClient::CryptographyGUIClient(Kopete::MessageManager *parent )
+CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
  : QObject(parent) , KXMLGUIClient(parent)
 {
 	if(!parent || parent->members().isEmpty())

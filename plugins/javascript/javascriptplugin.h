@@ -20,7 +20,7 @@
 
 namespace Kopete { class Account; }
 namespace Kopete { class Contact; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 class JSMessage;
 class JavaScriptConfig;
 class JavaScriptPluginPrivate;
@@ -60,8 +60,8 @@ class JavaScriptPlugin : public Kopete::Plugin
 		void slotContactAdded( Kopete::Contact *c );
 		void slotContactRemoved( Kopete::Contact *c );
 
-		void slotShowConsole( const QString &, Kopete::MessageManager *manager );
-		void slotJsExec( const QString &, Kopete::MessageManager *manager );
+		void slotShowConsole( const QString &, Kopete::ChatSession *manager );
+		void slotJsExec( const QString &, Kopete::ChatSession *manager );
 
 	private:
 		void execScripts( Kopete::Account *a );

@@ -27,7 +27,7 @@
 struct UserInfo;
 class KAction;
 class KToggleAction;
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class OnlineStatus; }
 class ICQProtocol;
 class ICQAccount;
@@ -140,7 +140,7 @@ class ICQContact : public OscarContact
 		/*
 		 * Called when we want to send a message
 		 */
-		void slotSendMsg(Kopete::Message&, Kopete::MessageManager *);
+		void slotSendMsg(Kopete::Message&, Kopete::ChatSession *);
 
 		void slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &);
 		void slotUpdWorkInfo(const int, const ICQWorkUserInfo &);

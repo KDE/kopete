@@ -19,7 +19,7 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 class HistoryLogger;
 class KAction;
 
@@ -30,7 +30,7 @@ class HistoryGUIClient : public QObject , public KXMLGUIClient
 {
 Q_OBJECT
 public:
-	HistoryGUIClient(Kopete::MessageManager *parent = 0, const char *name = 0);
+	HistoryGUIClient(Kopete::ChatSession *parent = 0, const char *name = 0);
 	~HistoryGUIClient();
 
 	HistoryLogger *logger() const { return m_logger; }
@@ -42,7 +42,7 @@ private slots:
 
 private:
 	HistoryLogger *m_logger;
-	Kopete::MessageManager *m_manager;
+	Kopete::ChatSession *m_manager;
 	//bool m_autoChatWindow;
 	//int m_nbAutoChatWindow;
 	//unsigned int m_nbChatWindow;

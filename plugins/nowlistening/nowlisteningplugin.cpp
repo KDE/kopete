@@ -59,18 +59,18 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_actionCollection = 0L;
 	m_actionWantsAdvert = 0L;
 	m_currentMetaContact = 0L;
-	m_currentMessageManager = 0L;
+	m_currentChatSession = 0L;
 
 	// initialise preferences
 	m_config = new NowListeningConfig;
 
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL(
-			messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM(
-			Kopete::MessageManager * ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(
+			chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM(
+			Kopete::ChatSession * ) ) );
 
-	QIntDict<Kopete::MessageManager> sessions =
-			Kopete::MessageManagerFactory::self()->sessions();
-	QIntDictIterator<Kopete::MessageManager> it( sessions );
+	QIntDict<Kopete::ChatSession> sessions =
+			Kopete::ChatSessionManager::self()->sessions();
+	QIntDictIterator<Kopete::ChatSession> it( sessions );
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
 
@@ -91,7 +91,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 #endif
 
 	// watch for '/media' getting typed
-	connect(  Kopete::MessageManagerFactory::self(),
+	connect(  Kopete::ChatSessionManager::self(),
 			SIGNAL( aboutToSend( Kopete::Message & ) ),
 			SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 			
@@ -108,7 +108,7 @@ NowListeningPlugin::~NowListeningPlugin()
 	pluginStatic_ = 0L;
 }
 
-void NowListeningPlugin::slotNewKMM(Kopete::MessageManager *KMM)
+void NowListeningPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 {
 	new NowListeningGUIClient( KMM );
 }
@@ -252,7 +252,7 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 		return in;
 }
 
-void NowListeningPlugin::advertiseToChat( Kopete::MessageManager *theChat, QString message )
+void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString message )
 {
 	Kopete::ContactPtrList pl = theChat->members();
 

@@ -62,7 +62,7 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 	serializedData[ "contactType" ] = value;
 }
 
-Kopete::MessageManager* TestbedContact::manager( bool )
+Kopete::ChatSession* TestbedContact::manager( bool )
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;
 	if ( m_msgManager )
@@ -73,10 +73,10 @@ Kopete::MessageManager* TestbedContact::manager( bool )
 	{
 		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
-		m_msgManager = Kopete::MessageManagerFactory::self()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
+		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
-		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
 		return m_msgManager;
 	}
 }
@@ -129,7 +129,7 @@ void TestbedContact::receivedMessage( const QString &message )
 	delete newMessage;
 }
 
-void TestbedContact::slotMessageManagerDestroyed()
+void TestbedContact::slotChatSessionDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
 	m_msgManager = 0L;

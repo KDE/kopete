@@ -121,7 +121,7 @@ void IRCChannelContact::updateStatus()
 	}
 }
 
-void IRCChannelContact::messageManagerDestroyed()
+void IRCChannelContact::chatSessionDestroyed()
 {
 	if(manager(Kopete::Contact::CannotCreate))
 	{
@@ -136,7 +136,7 @@ void IRCChannelContact::messageManagerDestroyed()
 		}
 	}
 
-	IRCContact::messageManagerDestroyed();
+	IRCContact::chatSessionDestroyed();
 }
 
 void IRCChannelContact::initConversation()

@@ -431,7 +431,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ),
 	         SLOT( slotGroupAdded( Kopete::Group * ) ) );
 
-	connect( Kopete::MessageManagerFactory::self(), SIGNAL( newEvent( Kopete::MessageEvent * ) ),
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( newEvent( Kopete::MessageEvent * ) ),
 	         this, SLOT( slotNewMessageEvent( Kopete::MessageEvent * ) ) );
 
 	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),

@@ -32,7 +32,7 @@
 #include "nowlisteningplugin.h"
 #include "nowlisteningguiclient.h"
 
-NowListeningGUIClient::NowListeningGUIClient( Kopete::MessageManager *parent )
+NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent )
 		: QObject(parent) , KXMLGUIClient(parent)
 {
 	m_msgManager = parent;

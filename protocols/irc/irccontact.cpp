@@ -46,7 +46,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	QObject::connect(contactManager, SIGNAL(privateMessage(IRCContact *, IRCContact *, const QString &)),
 			this, SLOT(privateMessage(IRCContact *, IRCContact *, const QString &)));
 
-	// Kopete::MessageManagerFactory stuff
+	// Kopete::ChatSessionManager stuff
 	mMyself.append( static_cast<Kopete::Contact*>( this ) );
 
 	// KIRC stuff
@@ -109,20 +109,20 @@ const QTextCodec *IRCContact::codec()
 	return codec;
 }
 
-Kopete::MessageManager *IRCContact::manager(Kopete::Contact::CanCreateFlags canCreate)
+Kopete::ChatSession *IRCContact::manager(Kopete::Contact::CanCreateFlags canCreate)
 {
 	if( canCreate && !m_msgManager )
 	{
 		if(MYACCOUNT->engine()->status() == KIRC::Engine::Disconnected)
 			MYACCOUNT->connect();
 
-		m_msgManager = Kopete::MessageManagerFactory::self()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
+		m_msgManager = Kopete::ChatSessionManager::self()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
 		m_msgManager->setDisplayName(caption());
 
-		QObject::connect( m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager *)),
-			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::MessageManager *)));
-		QObject::connect( m_msgManager, SIGNAL(closing(Kopete::MessageManager*)),
-			this, SLOT(messageManagerDestroyed()));
+		QObject::connect( m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
+			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
+		QObject::connect( m_msgManager, SIGNAL(closing(Kopete::ChatSession*)),
+			this, SLOT(chatSessionDestroyed()));
 
 		QTimer::singleShot( 0, this, SLOT( initConversation() ) );
 	}
@@ -130,7 +130,7 @@ Kopete::MessageManager *IRCContact::manager(Kopete::Contact::CanCreateFlags canC
 	return m_msgManager;
 }
 
-void IRCContact::messageManagerDestroyed()
+void IRCContact::chatSessionDestroyed()
 {
 	m_msgManager = 0L;
 
@@ -177,7 +177,7 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 	}
 }
 
-void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::MessageManager *)
+void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 {
 	QString htmlString = message.escapedBody();
 
@@ -272,13 +272,13 @@ Kopete::Contact *IRCContact::locateUser( const QString &nick )
 	return 0L;
 }
 
-bool IRCContact::isChatting(Kopete::MessageManager *avoid) const
+bool IRCContact::isChatting(Kopete::ChatSession *avoid) const
 {
 	if (!MYACCOUNT)
 		return false;
 
-	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::self()->sessions();
-	for (QIntDictIterator<Kopete::MessageManager> it( sessions ); it.current() ; ++it)
+	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QIntDictIterator<Kopete::ChatSession> it( sessions ); it.current() ; ++it)
 	{
 		if( it.current() != avoid && it.current()->account() == MYACCOUNT &&
 			it.current()->members().contains(this) )

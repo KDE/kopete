@@ -90,7 +90,7 @@ public:
 	Kopete::XSLT *xsltParser;
 };
 
-KopeteEmailWindow::KopeteEmailWindow( Kopete::MessageManager *manager, bool foreignMessage )
+KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreignMessage )
 :  KParts::MainWindow( ), KopeteView( manager )
 {
 	d = new KopeteEmailWindowPrivate;

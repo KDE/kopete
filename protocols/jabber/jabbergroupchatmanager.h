@@ -30,7 +30,7 @@ class QString;
 /**
  * @author Till Gerken
  */
-class JabberGroupChatManager : public Kopete::MessageManager
+class JabberGroupChatManager : public Kopete::ChatSession
 {
 	Q_OBJECT
 
@@ -56,7 +56,7 @@ public:
 	void updateDisplayName ();
 
 private slots:
-	void slotMessageSent ( Kopete::Message &message, Kopete::MessageManager *kmm );
+	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
 
 private:
 	XMPP::Jid mRoomJid;

@@ -215,7 +215,7 @@ void KopeteWindow::initActions()
 
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::MessageManagerFactory::self(), SLOT(slotReadMessage()) );
+		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
 		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );

@@ -20,8 +20,8 @@
 
 #include "kopeteplugin.h"
 
-namespace Kopete { class MessageManager; }
-class MSNMessageManager;
+namespace Kopete { class ChatSession; }
+class MSNChatSession;
 class MSNContact;
 class MSNInvitation;
 
@@ -35,9 +35,9 @@ public:
 	~NetMeetingPlugin();
 
 private slots:
-	void slotNewKMM(Kopete::MessageManager *);
+	void slotNewKMM(Kopete::ChatSession *);
 	void slotPluginLoaded(Kopete::Plugin*);
-	void slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
+	void slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
 
 
 };

@@ -126,14 +126,14 @@ GaduContact::contactPort()
 	return remote_port;
 }
 
-Kopete::MessageManager*
+Kopete::ChatSession*
 GaduContact::manager( Kopete::Contact::CanCreateFlags  canCreate  )
 {
 	if ( !msgManager_ && canCreate ) {
-		msgManager_ = Kopete::MessageManagerFactory::self()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
-		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager*) ),
-			 this, SLOT( messageSend( Kopete::Message&, Kopete::MessageManager*) ) );
-		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );
+		msgManager_ = Kopete::ChatSessionManager::self()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
+		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession*) ),
+			 this, SLOT( messageSend( Kopete::Message&, Kopete::ChatSession*) ) );
+		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotChatSessionDestroyed() ) );
 
 	}
 	kdDebug(14100) << "GaduContact::manager returning:  " << msgManager_ << endl;
@@ -141,7 +141,7 @@ GaduContact::manager( Kopete::Contact::CanCreateFlags  canCreate  )
 }
 
 void
-GaduContact::slotMessageManagerDestroyed()
+GaduContact::slotChatSessionDestroyed()
 {
 	msgManager_ = 0L;
 }
@@ -160,7 +160,7 @@ GaduContact::messageReceived( Kopete::Message& msg )
 }
 
 void
-GaduContact::messageSend( Kopete::Message& msg, Kopete::MessageManager* mgr )
+GaduContact::messageSend( Kopete::Message& msg, Kopete::ChatSession* mgr )
 {
 	if ( msg.plainBody().isEmpty() ) {
 		return;

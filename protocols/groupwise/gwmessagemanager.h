@@ -26,13 +26,13 @@ class GroupWiseAccount;
 class GroupWiseContact;
 class GroupWiseSearch;
 /**
- * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::messageManager().
+ * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::chatSession().
  * @author SUSE AG
 */
 
 using namespace GroupWise;
 
-class GroupWiseMessageManager : public Kopete::MessageManager
+class GroupWiseChatSession : public Kopete::ChatSession
 {
 Q_OBJECT
 
@@ -43,17 +43,17 @@ public:
 	 * Specialised dictionary that only keys on the first CONF_GUID_END characters of a conference GUID
 	 * INNER CLASS derived from an INSTANCE of a TEMPLATE CLASS with an OVERLOADED OPERATOR []
 	 */
-	class Dict : public QMap< ConferenceGuid, GroupWiseMessageManager * >
+	class Dict : public QMap< ConferenceGuid, GroupWiseChatSession * >
 	{
 		// QMap::insert isn't virtual 
 		public:
-		void insert( const ConferenceGuid & key, GroupWiseMessageManager * item );
-		GroupWiseMessageManager * operator[]( const ConferenceGuid & key );
+		void insert( const ConferenceGuid & key, GroupWiseChatSession * item );
+		GroupWiseChatSession * operator[]( const ConferenceGuid & key );
 		void remove( const ConferenceGuid & k );
 	};
 
 
-	~GroupWiseMessageManager();
+	~GroupWiseChatSession();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
 	 */
@@ -96,7 +96,7 @@ public:
 	 */
 	void updateArchiving();
 	/**
-	 * Reimplemented from Kopete::MessageManager - invites contacts via DND
+	 * Reimplemented from Kopete::ChatSession - invites contacts via DND
 	 */
 	virtual void inviteContact(const QString& );
 signals:
@@ -131,7 +131,7 @@ protected slots:
 	void slotCreationFailed( const int mmId,const int statusCode );
 	 
 	void slotSendTypingNotification ( bool typing );
-	void slotMessageSent( Kopete::Message &message, Kopete::MessageManager * );
+	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
 	// TODO: slots for us leaving conference, us inviting someone, someone joining, someone leaving, someone sending an invitation, getting typing?
 	void slotGotTypingNotification( const ConferenceEvent & );
 	void slotGotNotTypingNotification( const ConferenceEvent & );
@@ -156,7 +156,7 @@ protected slots:
 	void slotShowArchiving();
 private:
 	
-	GroupWiseMessageManager(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
+	GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
 	
 	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server

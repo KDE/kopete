@@ -22,7 +22,7 @@
 #include "kopetemessage.h"
 #include <qvaluelist.h>
 
-class Kopete::MessageManager;
+class Kopete::ChatSession;
 class QTextEdit;
 class Kopete::Message;
 
@@ -40,7 +40,7 @@ class KopeteView
 		/**
 		 * constructor
 		 */
-		KopeteView( Kopete::MessageManager *manager );
+		KopeteView( Kopete::ChatSession *manager );
 
 		/**
 		 * @brief Returns the message currently in the edit area
@@ -55,9 +55,9 @@ class KopeteView
 
 		/**
 		 * @brief Get the message manager
-		 * @return The Kopete::MessageManager that the view is in communication with.
+		 * @return The Kopete::ChatSession that the view is in communication with.
 		 */
-		Kopete::MessageManager *msgManager() const;
+		Kopete::ChatSession *msgManager() const;
 
 		/**
 		 * @brief Get the view type
@@ -136,9 +136,9 @@ class KopeteView
 
 	protected:
 		/**
-		 * a pointer to the Kopete::MessageManager given in the constructor
+		 * a pointer to the Kopete::ChatSession given in the constructor
 		 */
-		Kopete::MessageManager *m_manager;
+		Kopete::ChatSession *m_manager;
 		/**
 		 * the type of this view
 		 */

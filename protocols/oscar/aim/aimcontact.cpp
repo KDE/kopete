@@ -236,7 +236,7 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	setStatus(OSCAR_OFFLINE);
 }
 
-void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::MessageManager *)
+void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;

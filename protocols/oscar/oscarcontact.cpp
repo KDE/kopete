@@ -147,26 +147,26 @@ OscarContact::~OscarContact()
 }
 
 
-Kopete::MessageManager* OscarContact::manager(CanCreateFlags canCreate )
+Kopete::ChatSession* OscarContact::manager(CanCreateFlags canCreate )
 {
 	if(!mMsgManager && canCreate)
 	{
 		/*kdDebug(14190) << k_funcinfo <<
-			"Creating new MessageManager for contact '" << displayName() << "'" << endl;*/
+			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
 
 		QPtrList<Kopete::Contact> theContact;
 		theContact.append(this);
 
-		mMsgManager = Kopete::MessageManagerFactory::self()->create(account()->myself(), theContact, protocol());
+		mMsgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
 		connect(mMsgManager,
-			SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager *)),
-			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::MessageManager *)));
+			SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
+			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
 
 		// For when the message manager is destroyed
 		connect(mMsgManager, SIGNAL(destroyed()),
-			this, SLOT(slotMessageManagerDestroyed()));
+			this, SLOT(slotChatSessionDestroyed()));
 
 		connect(mMsgManager, SIGNAL(typingMsg(bool)),
 			this, SLOT(slotTyping(bool)));
@@ -175,10 +175,10 @@ Kopete::MessageManager* OscarContact::manager(CanCreateFlags canCreate )
 }
 
 
-void OscarContact::slotMessageManagerDestroyed()
+void OscarContact::slotChatSessionDestroyed()
 {
 	/*kdDebug(14190) << k_funcinfo <<
-		"MessageManager for contact '" << displayName() << "' destroyed" << endl;*/
+		"ChatSession for contact '" << displayName() << "' destroyed" << endl;*/
 	mMsgManager = 0L;
 }
 

@@ -51,7 +51,7 @@ using namespace DOM;
 
 namespace Kopete
 {
-class MessageManager;
+class ChatSession;
 typedef QPtrList<Contact> ContactPtrList;
 }
 
@@ -86,7 +86,7 @@ class ChatView : public KDockMainWindow, public KopeteView
 
 	Q_OBJECT
 public:
-	ChatView( Kopete::MessageManager *manager, const char *name = 0 );
+	ChatView( Kopete::ChatSession *manager, const char *name = 0 );
 	~ChatView();
 
 	/**

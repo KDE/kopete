@@ -222,7 +222,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
 	// fetch message manager
-	JabberMessageManager *mManager = manager ( message.from().resource (), Kopete::Contact::CanCreate );
+	JabberChatSession *mManager = manager ( message.from().resource (), Kopete::Contact::CanCreate );
 
 	// evaluate typing notifications
 	if ( message.type () != "error" )
@@ -573,22 +573,22 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 }
 
-void JabberContact::slotMessageManagerDeleted ( QObject *sender )
+void JabberContact::slotChatSessionDeleted ( QObject *sender )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Message manager deleted, collecting the pieces..." << endl;
 
-	JabberMessageManager *manager = static_cast<JabberMessageManager *>(sender);
+	JabberChatSession *manager = static_cast<JabberChatSession *>(sender);
 
 	mManagers.remove ( mManagers.find ( manager ) );
 
 }
 
-JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate )
+JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
-	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::self()->findMessageManager ( account()->myself(), chatMembers, protocol() );
-	JabberMessageManager *manager = dynamic_cast<JabberMessageManager*>( _manager );
+	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession ( account()->myself(), chatMembers, protocol() );
+	JabberChatSession *manager = dynamic_cast<JabberChatSession*>( _manager );
 
 	/*
 	 * If we didn't find a message manager for this contact,
@@ -609,8 +609,8 @@ JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMember
 
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No manager found, creating a new one with resource '" << jid.resource () << "'" << endl;
 
-		manager = new JabberMessageManager ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers, jid.resource () );
-		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotMessageManagerDeleted ( QObject * ) ) );
+		manager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers, jid.resource () );
+		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted ( QObject * ) ) );
 		mManagers.append ( manager );
 	}
 
@@ -618,7 +618,7 @@ JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMember
 
 }
 
-Kopete::MessageManager *JabberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
+Kopete::ChatSession *JabberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
@@ -629,7 +629,7 @@ Kopete::MessageManager *JabberContact::manager ( Kopete::Contact::CanCreateFlags
 
 }
 
-JabberMessageManager *JabberContact::manager ( const QString &resource, Kopete::Contact::CanCreateFlags canCreate )
+JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << ", Resource: '" << resource << "'" << endl;
 
@@ -640,7 +640,7 @@ JabberMessageManager *JabberContact::manager ( const QString &resource, Kopete::
 	 */
 	if ( !resource.isEmpty () )
 	{
-		for ( JabberMessageManager *mManager = mManagers.first (); mManager; mManager = mManagers.next () )
+		for ( JabberChatSession *mManager = mManagers.first (); mManager; mManager = mManagers.next () )
 		{
 			if ( mManager->resource().isEmpty () || ( mManager->resource () == resource ) )
 			{
@@ -661,10 +661,10 @@ JabberMessageManager *JabberContact::manager ( const QString &resource, Kopete::
 		 */
 		Kopete::ContactPtrList chatmembers;
 		chatmembers.append ( this );
-		JabberMessageManager *manager = new JabberMessageManager ( protocol(),
+		JabberChatSession *manager = new JabberChatSession ( protocol(),
 																   static_cast<JabberBaseContact *>(account()->myself()),
 																   chatmembers, resource );
-		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotMessageManagerDeleted ( QObject * ) ) );
+		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted ( QObject * ) ) );
 		mManagers.append ( manager );
 
 		return manager;
@@ -675,7 +675,7 @@ JabberMessageManager *JabberContact::manager ( const QString &resource, Kopete::
 	/*
 	 * The resource is empty, so just return first available manager.
 	 */
-	return dynamic_cast<JabberMessageManager *>( manager ( canCreate ) );
+	return dynamic_cast<JabberChatSession *>( manager ( canCreate ) );
 
 }
 

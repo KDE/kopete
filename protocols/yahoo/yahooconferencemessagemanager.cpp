@@ -30,14 +30,14 @@
 
 #include "yahooconferencemessagemanager.h"
 
-YahooConferenceMessageManager::YahooConferenceMessageManager( const QString & /* yahooRoom */, Kopete::Protocol *protocol, const Kopete::Contact *user,
+YahooConferenceChatSession::YahooConferenceChatSession( const QString & /* yahooRoom */, Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others, const char *name )
-: Kopete::MessageManager( user, others, protocol, 0, name )
+: Kopete::ChatSession( user, others, protocol, 0, name )
 {
-	Kopete::MessageManagerFactory::self()->addMessageManager( this );
+	Kopete::ChatSessionManager::self()->addChatSession( this );
 }
 
-YahooConferenceMessageManager::~YahooConferenceMessageManager()
+YahooConferenceChatSession::~YahooConferenceChatSession()
 {
 }
 

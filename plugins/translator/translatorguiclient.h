@@ -28,7 +28,7 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 
 /**
   * @author Olivier Goffart <ogoffart@tiscalinet.be>
@@ -39,7 +39,7 @@ class TranslatorGUIClient : public QObject , public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	TranslatorGUIClient( Kopete::MessageManager *parent, const char *name=0L);
+	TranslatorGUIClient( Kopete::ChatSession *parent, const char *name=0L);
 	~TranslatorGUIClient();
 
 private slots:
@@ -47,7 +47,7 @@ private slots:
 	 void messageTranslated(const QVariant&);
 
 private:
-	Kopete::MessageManager *m_manager;
+	Kopete::ChatSession *m_manager;
 };
 
 #endif

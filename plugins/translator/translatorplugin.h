@@ -38,7 +38,7 @@ class KSelectAction;
 
 namespace Kopete { class Message; }
 namespace Kopete { class MetaContact; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 
 class TranslatorPreferences;
 class TranslatorGUIClient;
@@ -76,7 +76,7 @@ private slots:
 	void slotJobDone ( KIO::Job *);
 	void slotSetLanguage();
 	void slotSelectionChanged(bool);
-	void slotNewKMM(Kopete::MessageManager *);
+	void slotNewKMM(Kopete::ChatSession *);
 	void loadSettings();
 
 public:

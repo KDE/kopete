@@ -104,7 +104,7 @@ public:
 	/**
 	 * Utility access to a message manager instance for a given GUID
 	 */
-	GroupWiseMessageManager * messageManager( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
+	GroupWiseChatSession * chatSession( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -196,7 +196,7 @@ protected slots:
 	/**
 	 * Called when the server has a message for us.
 	 * This identifies the sending Kopete::Contact and passes the message on to it,
-	 * in order to locate the MessageManager and finally pass to the GUI.
+	 * in order to locate the ChatSession and finally pass to the GUI.
 	 */
 	void receiveMessage( const ConferenceEvent & event );
 	void receiveAutoReply( const ConferenceEvent & event );
@@ -277,12 +277,12 @@ protected slots:
 	 * when we get a GUID back after a successful conference create, we signal the GUID and the message manager's internal ID
 	 * using conferenceCreated, then listen for a conferenceCreated signal back from the manager, and register it in this slot
 	 */
-	void slotMessageManagerGotGuid();
+	void slotChatSessionGotGuid();
 	/**
 	 * We listen for the destroyed() signal and leave any conferences we
 	 * might have been in, and remove it from our map.
 	 */
-	void slotMessageManagerDestroyed( QObject * );
+	void slotChatSessionDestroyed( QObject * );
 
 	/** Debug slots */
 	void slotConnError();
@@ -309,7 +309,7 @@ private:
 
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
-	GroupWiseMessageManager::Dict m_managers;
+	GroupWiseChatSession::Dict m_managers;
 };
 
 #endif

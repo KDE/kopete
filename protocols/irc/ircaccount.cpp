@@ -502,7 +502,7 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 		{
 			m_contactManager->addToNotifyList( m_engine->nickName() );
 
-			Kopete::MessageManager *manager = myServer()->manager();
+			Kopete::ChatSession *manager = myServer()->manager();
 			if (!autoConnect.isEmpty())
 				Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
 
@@ -534,7 +534,7 @@ void IRCAccount::slotConnectedToServer()
 
 	m_contactManager->addToNotifyList( m_engine->nickName() );
 
-	Kopete::MessageManager *manager = myServer()->manager();
+	Kopete::ChatSession *manager = myServer()->manager();
 	if( !autoConnect.isEmpty() )
 		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager );
 
@@ -754,10 +754,10 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 
 	if( destination & ActiveWindow )
 	{
-		KopeteView *activeView = Kopete::MessageManagerFactory::self()->activeView();
+		KopeteView *activeView = Kopete::ChatSessionManager::self()->activeView();
 		if( activeView && activeView->msgManager()->account() == this )
 		{
-			Kopete::MessageManager *manager = activeView->msgManager();
+			Kopete::ChatSession *manager = activeView->msgManager();
 			Kopete::Message msg( manager->user(), manager->members(), message,
 				Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
 			activeView->appendMessage(msg);

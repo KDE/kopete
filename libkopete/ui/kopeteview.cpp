@@ -17,12 +17,12 @@
 
 #include "kopeteview.h"
 
-KopeteView::KopeteView( Kopete::MessageManager *manager )
+KopeteView::KopeteView( Kopete::ChatSession *manager )
 {
 	m_manager = manager;
 }
 
-Kopete::MessageManager *KopeteView::msgManager() const
+Kopete::ChatSession *KopeteView::msgManager() const
 {
 	return m_manager;
 }

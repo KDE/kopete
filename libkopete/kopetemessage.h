@@ -34,7 +34,7 @@ namespace Kopete
 {
 
 class Contact;
-class MessageManager;
+class ChatSession;
 typedef QPtrList<Contact> ContactPtrList;
 
 /**
@@ -324,16 +324,16 @@ public:
 	 * Get the related kopete message manager.
 	 * If it is not set, returns 0L.
 	 *
-	 * The @ref Kopete::MessageManager is only set if the message is already passed by the manager.
+	 * The @ref Kopete::ChatSession is only set if the message is already passed by the manager.
 	 * We should trust this only in aboutToSend/aboutToReceive signals
 	 */
-	 MessageManager *manager() const ;
+	 ChatSession *manager() const ;
 
 	 /**
 	  * set the kopetemessagemanager for this message.
 	  * should be only used by the manager itself
 	  */
-	 void setManager(MessageManager *);
+	 void setManager(ChatSession *);
 
 	/**
 	 * get a XML version of this message

@@ -22,7 +22,7 @@
 
 namespace Kopete { class MetaContact; }
 class JabberGroupChatManager;
-class JabberMessageManager;
+class JabberChatSession;
 
 class JabberGroupMemberContact : public JabberBaseContact
 {
@@ -50,7 +50,7 @@ public:
 	/**
 	 * Return message manager for this instance.
 	 */
-	Kopete::MessageManager *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
+	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
 
 	/**
 	 * Deal with incoming messages.
@@ -80,10 +80,10 @@ private slots:
 	/**
 	 * Catch a dying message manager
 	 */
-	void slotMessageManagerDeleted ();
+	void slotChatSessionDeleted ();
 
 private:
-	JabberMessageManager *mManager;
+	JabberChatSession *mManager;
 
 };
 

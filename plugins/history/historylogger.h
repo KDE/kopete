@@ -27,7 +27,7 @@ class QDomDocument;
 class QTimer;
 
 /**
- * One hinstance of this class is opened for every Kopete::MessageManager,
+ * One hinstance of this class is opened for every Kopete::ChatSession,
  * or for the history dialog
  *
  * @author Olivier Goffart

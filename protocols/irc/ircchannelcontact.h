@@ -28,7 +28,7 @@ class KCodecAction;
 class KToggleAction;
 
 namespace Kopete { class MetaContact; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 namespace Kopete { class Message; }
 class KopeteView;
 
@@ -114,7 +114,7 @@ public slots:
 	void join();
 
 protected slots:
-	void messageManagerDestroyed();
+	void chatSessionDestroyed();
 
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void initConversation();

@@ -61,7 +61,7 @@ void MeanwhileContact::serialize(
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
-Kopete::MessageManager* MeanwhileContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
+Kopete::ChatSession* MeanwhileContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
 {
 	if ( m_msgManager || canCreate != Kopete::Contact::CanCreate )
 	{
@@ -73,16 +73,16 @@ Kopete::MessageManager* MeanwhileContact::manager( Kopete::Contact::CanCreateFla
 		contacts.append(this);
 
 		m_msgManager = 
-				Kopete::MessageManagerFactory::self()->create(
+				Kopete::ChatSessionManager::self()->create(
 									account()->myself(), 
 									contacts, protocol());
 
 		connect(m_msgManager, 
-				SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+				SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
 
 		connect(m_msgManager, SIGNAL(destroyed()), 
-				this, SLOT(slotMessageManagerDestroyed()));
+				this, SLOT(slotChatSessionDestroyed()));
 
 		connect(m_msgManager, SIGNAL(typingMsg(bool)),
 				this, SLOT(slotMeTypingMsg(bool)));
@@ -132,7 +132,7 @@ void MeanwhileContact::receivedMessage( const QString &message )
 	delete newMessage;
 }
 
-void MeanwhileContact::slotMessageManagerDestroyed()
+void MeanwhileContact::slotChatSessionDestroyed()
 {
 	m_msgManager = 0L;
 }

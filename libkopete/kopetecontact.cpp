@@ -173,7 +173,7 @@ void Contact::slotAddContact()
 	}
 }
 
-KPopupMenu* Contact::popupMenu( MessageManager *manager )
+KPopupMenu* Contact::popupMenu( ChatSession *manager )
 {
 	// FIXME:
 	// This should perhaps be KActionCollection * Contact::contactActions()
@@ -536,7 +536,7 @@ QPtrList<KAction> *Contact::customContextMenuActions()
 	return 0L;
 }
 
-QPtrList<KAction> *Contact::customContextMenuActions( MessageManager * /* manager */ )
+QPtrList<KAction> *Contact::customContextMenuActions( ChatSession * /* manager */ )
 {
 	return customContextMenuActions();
 }

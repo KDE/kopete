@@ -37,7 +37,7 @@
 class KAction;
 class GaduAccount;
 namespace Kopete { class Account; }
-namespace Kopete { class MessageManager; }
+namespace Kopete { class ChatSession; }
 class KGaduNotify;
 class QString;
 class QStringList;
@@ -77,7 +77,7 @@ public slots:
 	void slotUserInfo();
 	void deleteContact();
 	void messageReceived( Kopete::Message& );
-	void messageSend( Kopete::Message&, Kopete::MessageManager* );
+	void messageSend( Kopete::Message&, Kopete::ChatSession* );
 	void messageAck();
 	void slotShowPublicProfile();
 	void slotEditContact();
@@ -86,14 +86,14 @@ public slots:
 
 
 protected:
-	virtual Kopete::MessageManager* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
+	virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 	void initActions();
 
 private:
 	const uin_t		uin_;
 	bool 			ignored_;
 
-	Kopete::MessageManager*	msgManager_;
+	Kopete::ChatSession*	msgManager_;
 	QString			description_;
 	QString			parentIdentity_;
 	GaduAccount*		account_;
@@ -112,7 +112,7 @@ private:
 
 
 private slots:
-	void slotMessageManagerDestroyed();
+	void slotChatSessionDestroyed();
 
 };
 
