@@ -118,25 +118,7 @@ void MessageReceiverTask::handleType1Message()
 			if ( m_charSet == 0x0000 )
 			{ //we can just decode from the raw QByteArray because ascii is 7 bit
 				msg.addProperty( Oscar::Message::Latin );
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Using QTextCodec to ensure proper decoding " <<
-					"of a message that's supposed to be ASCII compatible" << endl;
-				WORD testLength = ( *it ).length - 4;
-				QCString testString( message.getBlock( ( *it ).length - 4 ) );
-				
-				QTextCodec* codec = guessCodec( testString, testLength );
-				if ( codec )
-				{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << 
-						"Decoding with QTextCodec succeeded" << endl;
-					msg.setText( codec->toUnicode( testString ) );
-				}
-				else
-				{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
-						"Decoding with QTextCodec failed. Using latin1 based encoding" << endl;
-					msg.setText( QString( message.getBlock( ( *it ).length - 4 ) ) );
-				}
-				
+				msg.setText( QString( message.getBlock( ( *it ).length - 4 ) ) );
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
 			}
 			else if ( m_charSet == 0x0002 )
@@ -150,22 +132,13 @@ void MessageReceiverTask::handleType1Message()
 			else
 			{
 				msg.addProperty( Oscar::Message::UTF8 );
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Attempting to decode message with QTextCodec" << endl;
-				WORD testLength = ( *it ).length - 4;
-				QCString testString( message.getBlock( ( *it ).length - 4 ) );
-				QTextCodec* codec = guessCodec( testString, testLength );
-				if ( codec )
-				{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << 
-						"Decoding with QTextCodec succeeded" << endl;
-					msg.setText( codec->toUnicode( testString ) );
-				}
-				else
-				{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
-						"Decoding with QTextCodec failed. Using latin1 based encoding" << endl;
-					msg.setText( QString( message.getBlock( ( *it ).length - 4 ) ) );
-				}
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Attempting to decode message with QChar array" << endl;
+				int messageLength = ( ( *it ).length - 4 );
+				QChar* testString = new QChar[messageLength];
+				for ( int i = 0; i < messageLength; i++ )
+					testString[i] = message.getByte();
+				
+				msg.setText( QString( testString, messageLength ) );
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
 			}
 			break;
@@ -240,59 +213,9 @@ void MessageReceiverTask::handleType4Message()
 	emit receivedMessage( msg );
 }
 
-QTextCodec* MessageReceiverTask::guessCodec( const QCString& string, WORD stringLength )
+QTextCodec* MessageReceiverTask::guessCodec( const QCString& string )
 {
-	/* Parts shamelessly stolen from Kopete::Message::decodeString()
-	Note to everyone. This function is not the most efficient, that is for sure.
-	However, it *is* the only way we can be guarenteed that a given string is
-	decoded properly.
-	*/
-	
-	// Avoid heavy codec tests on empty message.
-	if( string.isEmpty() )
-		return 0;
-	
-	/*
-	//Check first 128 chars
-	int charsToCheck = message.length();
-	charsToCheck = 128 > charsToCheck ? charsToCheck : 128;
-	
-	//They are providing a possible codec. Check if it is valid
-	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
-	{
-		//All chars decodable.
-		return providedCodec->toUnicode( message );
-	}*/
-	
-	/*
-	//Check if it is UTF
-	if( KStringHandler::isUtf8(message) )
-	{
-		//We have a UTF string almost for sure. At least we know it will be decoded.
-		return QString::fromUtf8( message );
-	}
-	*/
-	
-	//Try local codec
-	QTextCodec* testCodec = QTextCodec::codecForLocale();
-	if( testCodec && testCodec->heuristicContentMatch( string, stringLength ) >= stringLength )
-	{
-		//All chars decodable.
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Using locale's codec " << testCodec->locale() << endl;
-		return testCodec;
-	}
-
-	
-	//Try codecForContent - exact match
-	testCodec = QTextCodec::codecForContent(string, stringLength);
-	if( testCodec && testCodec->heuristicContentMatch( string, stringLength ) >= stringLength )
-	{
-		//All chars decodable.
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Using QTextCodec::codecForContent, which gives " << testCodec->locale() << endl;
-		return testCodec;
-	}
-	
-	kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Unable to decode string in the proper locale. Latin1 will be used instead!" << endl;
+	Q_UNUSED( string );
 	return 0;
 }
 
