@@ -112,7 +112,7 @@ void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager *
 		result->setMMId(++mId);
 	}
 
-	mSessionDict.insert( mId, result );
+	mSessionDict.insert( result->mmId(), result );
 
 	/*
 	 * There's no need for a slot here... just add a public remove()
