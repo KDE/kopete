@@ -40,15 +40,22 @@
 			<td>
 				<xsl:apply-templates select="protoname"/>
 			</td>
-			<td>
-				<xsl:apply-templates select="protostatus"/>
-			</td>
-			<td>
-				<xsl:value-of select="protoaddress"/>
-			</td>
+			<xsl:apply-templates select="account"/>
 		</tr>
 	</xsl:template>
-	
+
+	<xsl:template match="account">
+			<td>
+				<xsl:value-of select="accountname"/>
+			</td>
+			<td>
+				<xsl:apply-templates select="accountstatus"/>
+			</td>
+			<td>
+				<xsl:value-of select="accountaddress"/>
+			</td>
+	</xsl:template>
+
 	<xsl:template match="protoname">
 		<xsl:choose>
 			<xsl:when test=".='MSNProtocol'">
@@ -71,10 +78,14 @@
 				<!-- Oscar gubbins here -->
 				<img src="images/oscar_protocol.png"/>
 			</xsl:when>
+			<xsl:when test=".='IRCProtocol'">
+				<!-- IRC gubbins here -->
+				<img src="images/irc_protocol.png"/>
+			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="protostatus">
+	<xsl:template match="accountstatus">
 		<xsl:choose>
 			<xsl:when test=".='ONLINE'">
 				<font color="#00FF00">

@@ -68,7 +68,7 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const Q
 	connect ( m_prefs, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 	m_timer = new QTimer();
 	connect ( m_timer, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	m_timer->start( m_prefs->frequency() * 1000 * 60);
+	m_timer->start( m_prefs->frequency() * 1000 * 60 );
 }
 
 WebPresencePlugin::~WebPresencePlugin()
@@ -144,7 +144,7 @@ KTempFile* WebPresencePlugin::generateFile()
 	output += h.openTag( "contact", "type=\"self\"" );
 
 	// insert the user's name
-	if ( m_prefs->useImName() && !m_prefs->userName().isEmpty() )
+	if ( !m_prefs->useImName() && !m_prefs->userName().isEmpty() )
 		output += h.oneLineTag( "name", m_prefs->userName() );
 	else
 		output += h.oneLineTag( "name", notKnown );
@@ -209,7 +209,7 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 	// test if the stylesheet exists
 	QFile sheet;
 	if ( m_prefs->useDefaultStyleSheet() )
-		sheet.setName( locate( "appdata", "webpresencedefault.xsl" ) );
+		sheet.setName( locate( "appdata", "webpresence/webpresencedefault.xsl" ) );
 	else
 		sheet.setName( m_prefs->userStyleSheet() );
 	

@@ -30,11 +30,22 @@
 		</table>
 	</xsl:template>
 
+	<xsl:template match="account">
+		<table>
+			<xsl:apply-templates/>
+		</table>
+	</xsl:template>
+
 	<xsl:template match="protocol">
 		<tr>
 			<td>
 				<xsl:apply-templates select="protoname"/>
 			</td>
+			<xsl:apply-templates select="account"/>
+		</tr>
+	</xsl:template>
+
+	<xsl:template match="account">
 			<td>
 				<xsl:value-of select="accountname"/>
 			</td>
@@ -44,7 +55,6 @@
 			<td>
 				<xsl:value-of select="accountaddress"/>
 			</td>
-		</tr>
 	</xsl:template>
 
 	<xsl:template match="protoname">
@@ -80,6 +90,10 @@
 			<xsl:when test=".='SMSProtocol'">
 				<!-- SMS gubbins here -->
 				SMS
+			</xsl:when>
+			<xsl:when test=".='IRCProtocol'">
+				<!-- SMS gubbins here -->
+				IRC
 			</xsl:when>
 			<xsl:otherwise>
 				<!-- default case -->

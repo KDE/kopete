@@ -7,5 +7,9 @@ kopete_webpresence_la_METASOURCES = AUTO
 kopete_webpresence_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_webpresence_la_LIBADD      = ../../libkopete/libkopete.la $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
-service_DATA = webpresence.desktop webpresencedefault.xsl wpimages.xsl
+service_DATA = webpresence.desktop
 servicedir = $(kde_servicesdir)
+
+data_DATA = webpresencedefault.xsl wpimages.xsl
+datadir = $(kde_datadir)/kopete/webpresence
+EXTRA_DIST = $(data_DATA)
