@@ -271,7 +271,7 @@ void AddContactWizard::next()
 									  "%1 contact information" )
 									 .arg( item->text(0) );
 				addPage->show();
-				insertPage( addPage, title, indexOf( selectGroup) );
+				insertPage( addPage, title, indexOf( finis ) );
 				protocolPages.insert( m_accountItems[item] , addPage );
 			}
 		}
