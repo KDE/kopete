@@ -226,7 +226,7 @@ void MSNSocket::slotReadLine()
 		}
 
 		int index = -1;
-		for ( uint x = 0; ( x + 1 ) < m_buffer.size() > x + 1; ++x )
+		for ( uint x = 0; m_buffer.size() > x + 1; ++x )
 		{
 			if ( ( m_buffer[ x ] == '\r' ) && ( m_buffer[ x + 1 ] == '\n' ) )
 			{
