@@ -7,11 +7,9 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
         -I$(top_builddir)/kopete/libkopete $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteconf.la
-noinst_HEADERS = pluginconfig.h appearanceconfig.h  \
-	behaviorconfig.h
+noinst_HEADERS = behaviorconfig.h
 
-libkopeteconf_la_SOURCES = pluginconfig.cpp \
-	styleeditdialog.ui appearanceconfig_chatwindow.ui \
+libkopeteconf_la_SOURCES = styleeditdialog.ui appearanceconfig_chatwindow.ui \
 	appearanceconfig_colors.ui appearanceconfig.cpp \
 	behaviorconfig_general.ui behaviorconfig_chat.ui behaviorconfig.cpp \
 	kopeteawayconfigbase.ui kopeteawayconfigui.cpp

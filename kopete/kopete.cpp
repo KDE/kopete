@@ -35,10 +35,8 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetewindow.h"
-#include "pluginconfig.h"
+#include "pluginloader.h"
 #include "preferencesdialog.h"
-
-
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -59,8 +57,7 @@ Kopete::Kopete()
 	connect( m_mainWindow, SIGNAL( destroyed() ),
 		SLOT( slotMainWindowDestroyed() ) );
 
-	// Create the plugin preferences module
-	new PluginConfig( this );
+	// Create the preferences module
 	new AppearanceConfig( m_mainWindow );
 	new BehaviorConfig( m_mainWindow );
 
