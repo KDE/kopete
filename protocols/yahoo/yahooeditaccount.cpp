@@ -77,14 +77,14 @@ KopeteAccount *YahooEditAccount::apply()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	if(!account())
-		setAccount(new YahooAccount(theProtocol, mScreenName->text()));
+	if ( !account() )
+		setAccount( new YahooAccount( theProtocol, mScreenName->text() ) );
 
-	YahooAccount *yahooAccount = static_cast<YahooAccount *>(account());
+	YahooAccount *yahooAccount = static_cast<YahooAccount *>( account() );
 
-	yahooAccount->setAutoLogin(mAutoConnect->isChecked());
+	yahooAccount->setAutoLogin( mAutoConnect->isChecked() );
 
-	mPasswordWidget->save(&yahooAccount->password());
+	mPasswordWidget->save( &yahooAccount->password() );
 
 	return yahooAccount;
 }
