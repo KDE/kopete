@@ -1281,13 +1281,20 @@ void JabberProtocol::slotReceivedMessage(const Jabber::Message &message)
 			// FIXME: this can also happen with contacts we did not
 			// previously subscribe to! (especially via transports etc)
 			kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Message received from an "
-			 << "unknown contact, is it groupchat?" << endl;
+				<< "unknown contact, creating temporary contact." << endl;
+
+			KopeteMetaContact *metaContact = new KopeteMetaContact();
+			metaContact->setTemporary(true);
+
+			contactFrom = createContact(userHost, userHost,
+										QStringList(), metaContact, myContact->userId());
+
+			KopeteContactList::contactList()->addMetaContact(metaContact);
+
 		}
-		else
-		{
-			// pass the message on to the contact
-			contactFrom->slotReceivedMessage(message);
-		}
+
+		// pass the message on to the contact
+		contactFrom->slotReceivedMessage(message);
 	}
 
 }
@@ -1314,19 +1321,23 @@ void JabberProtocol::slotEmptyMail()
 
 void JabberProtocol::slotOpenEmptyMail()
 {
-	QString emailAddress = ((KLineEditDlg *)sender() )->text();
+	QString userHost = ((KLineEditDlg *)sender() )->text();
 
-	if( !emailAddress.isEmpty() && !emailAddress.isNull() )
+	if( !userHost.isEmpty() && !userHost.isNull() )
 	{
-		// FIXME: this always creates a new contact, we should check
-		// for existing contacts
-		KopeteMetaContact *metaContact = new KopeteMetaContact();
-		metaContact->setTemporary(true);
+		JabberContact *contact = contacts()[ userHost ];
 
-		JabberContact *contact = createContact(emailAddress, emailAddress,
-						QStringList(), metaContact, myContact->userId());
+		// if the contact is not in our contact list yet, create a new temporary one
+		if(!contact)
+		{
+			KopeteMetaContact *metaContact = new KopeteMetaContact();
+			metaContact->setTemporary(true);
 
-		KopeteContactList::contactList()->addMetaContact(metaContact);
+			contact = createContact(userHost, userHost,
+							QStringList(), metaContact, myContact->userId());
+
+			KopeteContactList::contactList()->addMetaContact(metaContact);
+		}
 
 		KopeteViewManager::viewManager()->launchWindow( contact->manager(), KopeteMessage::Email );
 	}
