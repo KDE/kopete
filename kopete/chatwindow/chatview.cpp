@@ -156,15 +156,11 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	connect( mgr, SIGNAL( contactAdded(const KopeteContact*, bool) ), this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
 	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, bool) ), this, SLOT( slotContactRemoved(const KopeteContact*, bool) ) );
 
-	// Some settings for the HTML part
-	htmlWidget->setMarginWidth(4);
-	htmlWidget->setMarginHeight(4);
 	connect ( chatView->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
 		SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
 
 	connect( chatView, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	connect( htmlWidget, SIGNAL(verticalSliderPressed()), this, SLOT(slotScrollPressed()) );
-	connect( htmlWidget, SIGNAL(verticalSliderReleased()), this, SLOT(slotScrollPressed()) );
+	connect( htmlWidget, SIGNAL(contentsMoving(int,int)), this, SLOT(slotScrollingTo(int,int)) );
 
 	htmlWidget->setFocusPolicy( NoFocus );
 	setFocusProxy( m_edit );
@@ -230,19 +226,13 @@ void ChatView::raise()
 	m_mainWindow->raise();
 }
 
-void ChatView::slotScrollPressed()
+void ChatView::slotScrollingTo( int /*x*/, int y)
 {
-	if( !scrollPressed )
-		scrollPressed = true;
+	int scrolledTo = y + htmlWidget->visibleHeight();
+	if( scrolledTo >= ( htmlWidget->contentsHeight() - 10 ) )
+		scrollPressed = false;
 	else
-	{
-		//If they scrolled to within 10px of the bottom, make sure they go the full way
-		if( (htmlWidget->contentsY() + htmlWidget->visibleHeight()) >= (htmlWidget->contentsHeight() - 10) )
-		{
-			scrollPressed = false;
-			slotScrollView();
-		}
-	}
+		scrollPressed = true;
 }
 
 void ChatView::save()
@@ -939,7 +929,7 @@ const QString ChatView::styleHTML() const
 	KopetePrefs *p = KopetePrefs::prefs();
 
 	QString style = QString::fromLatin1(
-		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4;background-repeat:no-repeat;background-attachment:fixed}"
+		"body{margin:4px;background-color:%1;font-family:%2;font-size:%3pt;color:%4;background-repeat:no-repeat;background-attachment:fixed}"
 		"td{font-family:%5;font-size:%6pt;color:%7}"
 		"a{color:%8}a.visited{color:%9}"
 		"span.KopeteDisplayName{cursor:pointer;}span.KopeteDisplayName:hover{text-decoration:underline}"

@@ -335,7 +335,7 @@ private slots:
 	 */
 	void slotUpdateBackground( const QPixmap &pm );
 
-	void slotScrollPressed();
+	void slotScrollingTo( int x, int y);
 
 	void slotRefreshNodes();
 
