@@ -1,9 +1,15 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+o Main App
+	o Now it uses standard KDE method to load plugins (Faure, Simon, Martijn)
+	 
 o ICQ Plugin
-	 o New ICQ-Userinfo Dialog, now tabbed and more infos (Stefan)
-	 o Make 'Web Awareness' and 'Hide IP' configurable (Stefan)
+	o New ICQ-Userinfo Dialog, now tabbed and more infos (Stefan)
+	o Make 'Web Awareness' and 'Hide IP' configurable (Stefan)
+
+o MSN Plugin
+	o Updated protocol due to Microsoft server changes
 
 01-Jun-2002 Released Kopete 0.4
 ==============================
