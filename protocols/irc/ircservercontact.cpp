@@ -15,33 +15,35 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "ircservercontact.h"
 #include <qinputdialog.h>
-#include <kconfig.h>
-#include <klocale.h>
-#include <qinputdialog.h>
-#include <kdebug.h>
 #include <qlayout.h>
-#include "ircconsoleview.h"
 #include <qtabwidget.h>
 #include <qvbox.h>
-#include <ktoolbar.h>
+#include <qstringlist.h>
 #include <qsocket.h>
+
+#include <kdebug.h>
+#include <ktextbrowser.h>
+#include <ktoolbar.h>
+#include <kconfig.h>
+#include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <qstringlist.h>
 #include <kfiledialog.h>
 #include <kstddirs.h>
+
 #include "kirc.h"
+#include "dccconfirm.h"
 #include "ircmessage.h"
+#include "ircservercontact.h"
 #include "irccmdparser.h"
 #include "irccontact.h"
 #include "ircservermanager.h"
 #include "ircmessage.h"
 #include "ircdccsend.h"
 #include "ircdccview.h"
-#include "dccconfirm.h"
 #include "ircdccreceive.h"
+#include "ircconsoleview.h"
 #include "messagetransport.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)

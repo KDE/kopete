@@ -15,29 +15,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <klocale.h>
-#include "irccontact.h"
-#include "ircservercontact.h"
-#include <kmessagebox.h>
 #include <qlayout.h>
+#include <qtabwidget.h>
+#include <qvbox.h>
+#include <qiconset.h>
+#include <qvbox.h>
+#include <qstringlist.h>
+
+#include <klocale.h>
+#include <kmessagebox.h>
 #include <kdialog.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <ktabctl.h>
 #include <kstddirs.h>
-#include <ircchatwindow.h>
-#include <qtabwidget.h>
-#include <qvbox.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include "ircqueryview.h"
-#include <qiconset.h>
-#include <qvbox.h>
-#include <qstringlist.h>
 #include <ksimpleconfig.h>
-#include "kopetestdaction.h"
+#include <ktextbrowser.h>
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
+#include <ircchatwindow.h>
+
+#include "kopetestdaction.h"
+#include "ircqueryview.h"
+#include "irccontact.h"
+#include "ircservercontact.h"
+
+	IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
 	: KopeteContact(contact->mProtocol)
 {
 	engine = contact->engine;
