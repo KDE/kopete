@@ -258,12 +258,12 @@ void KopeteMessageManager::slotReadMessages()
 
 KopeteMessage KopeteMessageManager::currentMessage()
 {
-	//return KopeteViewManager::viewManager()->view(this)->currentMessage();
+	return KopeteViewManager::viewManager()->view(this, false)->currentMessage();
 }
 
 void KopeteMessageManager::setCurrentMessage(const KopeteMessage &message)
 {
-	//KopeteViewManager::viewManager()->view(this)->setCurrentMessage(message);
+	KopeteViewManager::viewManager()->view(this, false)->setCurrentMessage(message);
 }
 
 #include "kopetemessagemanager.moc"
