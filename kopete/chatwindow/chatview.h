@@ -211,6 +211,9 @@ public:
 	 * Is the user typing right now?
 	 */
 	bool isTyping();
+	
+	
+
 
 public slots:
 	/**
@@ -407,6 +410,11 @@ private slots:
 	void slotCopyURL();
 
 	void slotToggleRtfToolbar( bool enabled );
+	
+	
+protected:
+	virtual void dragEnterEvent ( QDragEnterEvent * );
+	virtual void dropEvent ( QDropEvent * );
 
 private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };

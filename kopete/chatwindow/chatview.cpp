@@ -44,6 +44,7 @@
 #include <krun.h>
 #include <ktempfile.h>
 #include <kwin.h>
+#include <kurldrag.h>
 
 #include "kopetechatwindow.h"
 #include "krichtexteditpart.cpp"
@@ -139,7 +140,7 @@ KopeteChatViewTip::KopeteChatViewTip( ChatView *c ) : QToolTip( c->htmlWidget->v
 	m_chat = c;
 }
 
-void KopeteChatViewTip::maybeTip( const QPoint &p )
+void KopeteChatViewTip::maybeTip( const QPoint &/*p*/ )
 {
 	// FIXME: it's wrong to look for the node under the mouse - this makes too many
 	//        assumptions about how tooltips work
@@ -182,7 +183,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents() );
 
 	hide();
-
+	
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
 	viewDock = createDockWidget(QString::fromLatin1( "viewDock" ), QPixmap(),
 		0L,QString::fromLatin1("viewDock"), QString::fromLatin1(" "));
@@ -234,7 +235,14 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	//Set the view as the main widget
 	setMainDockWidget( viewDock );
 	setView(viewDock);
-
+	
+	//It is possible to drag and drop on this widget.
+	// I had to disable the acceptDrop in the khtml widget to be able to intercept theses events.
+	setAcceptDrops(true);
+	viewDock->setAcceptDrops(false);
+	htmlWidget->setAcceptDrops(false);
+	
+	
 	// some signals and slots connections
 	connect( m_edit, SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(transparencyChanged()),
@@ -1864,6 +1872,57 @@ void ChatView::slotUpdateBackground(const QPixmap &pm)
 		refreshView();
 	}
 }
+
+
+
+void ChatView::dragEnterEvent ( QDragEnterEvent * e )
+{
+	if( e->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
+	{
+		KopeteContactPtrList members = m_manager->members();
+		KopeteContact *c=members.first();
+		if(c && c->canAcceptFiles());
+			e->accept();
+	}
+	KDockMainWindow::dragEnterEvent(e);
+}
+
+void ChatView::dropEvent ( QDropEvent * e )
+{
+	if( e->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
+	{
+		KopeteContactPtrList members = m_manager->members();
+		KopeteContact *c=members.first();
+		
+		if(!c || !c->canAcceptFiles() || !QUriDrag::canDecode( e )  )
+		{
+			e->ignore();
+			return;
+		}
+
+		KURL::List urlList;
+		KURLDrag::decode( e, urlList );
+
+		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+		{
+			if( (*it).isLocalFile() )
+			{ //send a file
+				c->sendFile( *it );
+			}
+			else
+			{ //this is a URL, send the URL in a message
+				m_edit->insert( (*it).url() );
+			}
+		}
+		e->acceptAction();
+		return;
+	}
+	KDockMainWindow::dropEvent(e);
+
+}
+
+//-------------------------------------------------------------------------------------------------------
+//-- class KopeteContactLVI --
 
 KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *contact, KListView *parent ) : KListViewItem( parent )
 {
