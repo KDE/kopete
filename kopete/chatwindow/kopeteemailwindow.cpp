@@ -631,7 +631,11 @@ void KopeteEmailWindow::raise(bool activate)
 	
 	//Will not activate window if user was typing
 	if(activate)
+#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
+		KWin::setActiveWindow( winId() );
+#else
 		KWin::activateWindow( winId() );
+#endif
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )
