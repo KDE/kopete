@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="18">
+<kpartgui name="kopete" version="19">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -66,7 +66,7 @@
 		<Action name="contactStartChat" />
 
 		<Menu name="contact_popup_actions">
-			  <text>&amp;Others Actions</text>
+			  <text>&amp;Other Actions</text>
 			  <Action name="contactSendFile" />
 			  <Action name="contactSendEmail" />
 			  <Action name="contactSyncKABC"/>
