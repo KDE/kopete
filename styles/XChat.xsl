@@ -8,7 +8,7 @@
 <xsl:if test="@direction='3'">
 	<xsl:attribute name="style"><xsl:text>color:darkgreen</xsl:text></xsl:attribute>
 </xsl:if>
-[<xsl:value-of select="@timestamp"/>]
+[<xsl:value-of select="@time"/>]
 <!-- Choose based on message direction -->
 <xsl:choose>
 	<xsl:when test="@direction='2'"><!--internal message-->

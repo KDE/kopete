@@ -15,7 +15,7 @@
 				<xsl:text>Message from </xsl:text><span class="KopeteDisplayName"><xsl:value-of select="from/contact/@metaContactDisplayName"/></span>
 			</xsl:otherwise>
 			</xsl:choose>
-			<xsl:text> at </xsl:text><xsl:value-of select="@timestamp"/>
+			<xsl:text> at </xsl:text><xsl:value-of select="@time"/>
 		</div>
 		<xsl:text disable-output-escaping="yes">&#160;&#160;&#160;&#160;</xsl:text>
 	</xsl:if>
