@@ -310,7 +310,7 @@ void JabberProtocol::connect()
 
 		QObject::connect(jabberClient,
 						SIGNAL(messageReceived(const Message &)),
-						this, SLOT(slotRecievedMessage(const Message &)));
+						this, SLOT(slotReceivedMessage(const Message &)));
 
 		QObject::connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)),
 						this, SLOT(slotGroupChatJoined(const Jid &)));
@@ -1271,7 +1271,7 @@ void JabberProtocol::slotMessageManagerDeleted(KopeteMessageManager *manager)
 
 }
 
-void JabberProtocol::slotRecievedMessage(const Jabber::Message &message)
+void JabberProtocol::slotReceivedMessage(const Jabber::Message &message)
 {
 	QString userHost_;
 	JabberContact *contactFrom_;

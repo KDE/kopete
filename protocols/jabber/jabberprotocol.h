@@ -183,12 +183,7 @@ public:
 		 * Slot for sending a message
 		 */
 		void slotSendMessage(Message);
-	
-		/**
-		 * Save a vCard.
-		 */
-		void slotSaveVCard(QDomElement &);
-		
+
 		virtual const QString protocolIcon();
 
 		JabberMessageManager *manager( const QString &key );
@@ -358,7 +353,7 @@ private slots:
 	/*
 	 * Slot for displaying a new message
 	 */
-	void slotRecievedMessage(const Message &);
+	void slotReceivedMessage(const Message &);
 
 	/*
 	 * Evaluate results of account registration
