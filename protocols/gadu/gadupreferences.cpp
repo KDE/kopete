@@ -1,3 +1,36 @@
+//
+// Current author and maintainer: Grzegorz Jaskiewicz
+//				gj at pointblue.com.pl
+//
+// Kopete initial author:
+// Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
+//
+// gaducommands.h - all basic, and not-session dependent commands
+// (meaning you don't have to be logged in for any
+//  of these). These delete themselves, meaning you don't
+//  have to/can't delete them explicitely and have to create
+//  them dynamically (via the 'new' call).
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+// * 2003-06-29
+//	(GJ) Due to API change, some properties are now on per account basis
+//		and they will be transfered to gadueditaccount.cpp all others
+//		will be implemented afterwards here
+
 #include "gaduprefs.h"
 #include "gadupreferences.h"
 #include "gaducommands.h"
@@ -21,9 +54,7 @@ GaduPreferences::GaduPreferences( const QString& pixmap, QObject* parent )
 	prefDialog_ = new gaduPrefsUI( this );
 
 	KGlobal::config()->setGroup("Gadu");
-	prefDialog_->nicknameEdit_->setText( KGlobal::config()->readEntry("Nick", i18n("Your Gadu-Gadu nickname here")) );
 	prefDialog_->logAll_->setChecked( KGlobal::config()->readBoolEntry( "LogAll", false ) );
-  connect( prefDialog_->registerButton_, SLOT(clicked()),this, SIGNAL(slotRegister()) );
 }
 
 GaduPreferences::~GaduPreferences()
@@ -37,40 +68,10 @@ GaduPreferences::save()
 
 
 	config->setGroup("Gadu");
-	config->writeEntry("Nick", prefDialog_->nicknameEdit_->text());
 	config->writeEntry("LogAll", prefDialog_->logAll_->isChecked());
 	config->sync();
 
 	emit saved();
-}
-
-void
-GaduPreferences::slotRegister()
-{
-  QString email =  prefDialog_->emailEdit_->text();
-  QString pass  =  prefDialog_->passEdit_->text();
-
-  if ( email.isEmpty() || pass.isEmpty() || !email.contains( '@' ) ) {
-    KMessageBox::information( this, i18n("Incorrect data"), i18n("All fields must be filled in.") );
-  }
-  RegisterCommand *cmd = new RegisterCommand( email, pass, this );
-  connect( cmd, SIGNAL(done(const QString&, const QString&)),
-           SLOT(registrationComplete(const QString&, const QString&)) );
-  connect( cmd, SIGNAL(error(const QString&, const QString&)),
-           SLOT(registrationError(const QString&, const QString&)) );
-  cmd->execute();
-}
-
-void
-GaduPreferences::registrationComplete( const QString& title, const QString& what )
-{
-  KMessageBox::information( this, title, what );
-}
-
-void
-GaduPreferences::registrationError( const QString& title, const QString& what )
-{
-  KMessageBox::information( this, title, what );
 }
 
 #include "gadupreferences.moc"

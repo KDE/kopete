@@ -12,14 +12,23 @@ class KopeteAccount;
 class GaduEditAccount : public GaduAccountEditUI,
                         public EditAccountWidget
 {
+    Q_OBJECT
+
 public:
 	GaduEditAccount( GaduProtocol *proto, KopeteAccount *,
-									QWidget *parent=0, const char *name=0 );
-	bool validateData();
+			    QWidget *parent=0, const char *name=0 );
+	virtual bool validateData();
 	KopeteAccount* apply();
+	
+public slots:
+	void  registrationComplete( const QString&, const QString& );
+	void  registrationError( const QString&, const QString& );
+	
 private:
-	GaduAccount  *account_;
 	GaduProtocol *protocol_;
+	bool reg_in_progress;
+	
 };
 
 #endif
+

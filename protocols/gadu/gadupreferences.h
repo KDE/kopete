@@ -39,10 +39,6 @@ public:
 signals:
 	void saved();
 
-private slots:
-  void slotRegister();
-  void registrationComplete( const QString&, const QString& );
-  void registrationError( const QString&, const QString& );
 private:
 	gaduPrefsUI *prefDialog_;
 	QString password_;

@@ -1,4 +1,38 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
+//
+// Current author and maintainer: Grzegorz Jaskiewicz
+//				gj at pointblue.com.pl
+//
+// Kopete initial author:
+// Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
+//
+// gaducommands.h - all basic, and not-session dependent commands
+// (meaning you don't have to be logged in for any
+//  of these). These delete themselves, meaning you don't
+//  have to/can't delete them explicitely and have to create
+//  them dynamically (via the 'new' call).
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+// * 2003-06-29
+//	(GJ) checkdescriptor race was corrected, slot should be unregistered
+//	     first, than any signal should be send - error was cousing unfinity	
+//	     number of message boxes on screen sometimes.
+//	
+
 #include "gadusession.h"
 
 #include <klocale.h>
@@ -247,10 +281,10 @@ GaduSession::checkDescriptor()
 	struct gg_event *e;
 
 	if (!(e = gg_watch_fd(session_))) {
+		QObject::disconnect( this, SLOT(checkDescriptor()) );
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		emit error( i18n("Connection broken!"),
-								i18n(strerror(errno)) );
-		QObject::disconnect( this, SLOT(checkDescriptor()) );
+				i18n(strerror(errno)) );
 		delete read_;
 		delete write_;
 		read_ = 0;

@@ -47,7 +47,7 @@ public:
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
-	KActionMenu*	 actionMenu();
+	KActionMenu* actionMenu();
 	//}
 public slots:
 	//{
@@ -62,7 +62,7 @@ public slots:
 	void slotGoOffline();
 	void slotGoInvisible();
 	void slotGoBusy();
-  void slotDescription();
+	void slotDescription();
 
 	void removeContact( const GaduContact* c );
 
@@ -98,18 +98,18 @@ private:
 	void initConnections();
 	void initActions();
 
-	GaduSession*					 session_;
-	QPtrList<GaduCommand>	 commandList_;
-	ContactsMap						 contactsMap_;
+	GaduSession* session_;
+	QPtrList<GaduCommand> commandList_;
+	ContactsMap contactsMap_;
 
 	KActionMenu *actionMenu_;
 
 	QTimer	*pingTimer_;
 
-	GaduContact					*myself_;
-	Q_UINT32						 userUin_;
-	KopeteOnlineStatus	 status_;
-	QString							 nick_;
+	GaduContact* myself_;
+//	Q_UINT32 userUin_;
+	KopeteOnlineStatus status_;
+	QString	nick_;
 };
 
 #endif
