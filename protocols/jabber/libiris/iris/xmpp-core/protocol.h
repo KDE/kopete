@@ -242,7 +242,7 @@ namespace XMPP
 		enum {
 			NPassword = NCustom,  // need password for old-mode
 			EDBVerify = ECustom,  // breakpoint after db:verify request
-			ErrPlain = ErrCustom // server only supports plain, but allowPlain is false locally
+			ErrPlain = ErrCustom  // server only supports plain, but allowPlain is false locally
 		};
 
 		CoreProtocol();

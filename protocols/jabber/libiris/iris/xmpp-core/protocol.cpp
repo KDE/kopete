@@ -330,7 +330,7 @@ void BasicProtocol::extractStreamError(const QDomElement &e)
 
 void BasicProtocol::send(const QDomElement &e, bool clip)
 {
-	writeElement(e, TypeElement, clip);
+	writeElement(e, TypeElement, false, clip);
 }
 
 void BasicProtocol::sendStreamError(int cond, const QString &text, const QDomElement &appSpec)
@@ -348,7 +348,7 @@ void BasicProtocol::sendStreamError(int cond, const QString &text, const QDomEle
 	}
 	se.appendChild(appSpec);
 
-	writeElement(se, 100);
+	writeElement(se, 100, false);
 }
 
 void BasicProtocol::sendStreamError(const QString &text)
@@ -356,7 +356,7 @@ void BasicProtocol::sendStreamError(const QString &text)
 	QDomElement se = doc.createElementNS(NS_ETHERX, "stream:error");
 	se.appendChild(doc.createTextNode(text));
 
-	writeElement(se, 100);
+	writeElement(se, 100, false);
 }
 
 bool BasicProtocol::errorAndClose(int cond, const QString &text, const QDomElement &appSpec)
@@ -538,17 +538,17 @@ bool BasicProtocol::doStep(const QDomElement &e)
 			// outgoing stanza?
 			if(!i.stanzaToSend.isNull()) {
 				++stanzasPending;
-				writeElement(i.stanzaToSend, TypeStanza);
+				writeElement(i.stanzaToSend, TypeStanza, true);
 				event = ESend;
 			}
 			// direct send?
 			else if(!i.stringToSend.isEmpty()) {
-				writeString(i.stringToSend, TypeDirect);
+				writeString(i.stringToSend, TypeDirect, true);
 				event = ESend;
 			}
 			// whitespace keepalive?
 			else if(i.doWhitespace) {
-				writeString("\n", TypePing);
+				writeString("\n", TypePing, false);
 				event = ESend;
 			}
 			return true;
@@ -947,7 +947,7 @@ bool CoreProtocol::dialbackStep(const QDomElement &e)
 			r.setAttribute("type", i.ok ? "valid" : "invalid");
 		}
 
-		writeElement(r, TypeElement);
+		writeElement(r, TypeElement, false);
 		event = ESend;
 		return true;
 	}
@@ -1123,7 +1123,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		if(isIncoming()) {
 			if(sasl_authed) {
 				QDomElement e = doc.createElementNS(NS_SASL, "success");
-				writeElement(e, TypeElement, true);
+				writeElement(e, TypeElement, false, true);
 				event = ESend;
 				step = IncHandleSASLSuccess;
 				return true;
@@ -1134,7 +1134,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				if(!stepData.isEmpty())
 					e.appendChild(doc.createTextNode(Base64::arrayToString(stepData)));
 
-				writeElement(e, TypeElement, true);
+				writeElement(e, TypeElement, false, true);
 				event = ESend;
 				step = GetSASLResponse;
 				return true;
@@ -1235,7 +1235,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			f.appendChild(mechs);
 		}
 
-		writeElement(f, TypeElement);
+		writeElement(f, TypeElement, false);
 		event = ESend;
 		step = GetRequest;
 		return true;
@@ -1518,7 +1518,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			// TODO: don't let this be done twice
 
 			QDomElement e = doc.createElementNS(NS_TLS, "proceed");
-			writeElement(e, TypeElement, true);
+			writeElement(e, TypeElement, false, true);
 			event = ESend;
 			step = HandleTLS;
 			return true;
@@ -1561,7 +1561,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				bind.appendChild(jid);
 				r.appendChild(bind);
 
-				writeElement(r, TypeElement);
+				writeElement(r, TypeElement, false);
 				event = ESend;
 				// TODO
 				return true;
@@ -1584,6 +1584,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		if(!e.isNull() && isValidStanza(e)) {
 			stanzaToRecv = e;
 			event = EStanzaReady;
+			setIncomingAsExternal();
 			return true;
 		}
 	}

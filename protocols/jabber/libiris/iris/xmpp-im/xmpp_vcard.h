@@ -26,10 +26,7 @@
 #include <qcstring.h>
 
 #include <qvaluelist.h>
-
-
-class QDomDocument;
-class QDomElement;
+#include <qdom.h>
 
 class QDate;
 

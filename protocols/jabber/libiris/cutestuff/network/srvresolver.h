@@ -41,8 +41,8 @@ public:
 
 	QValueList<QDns::Server> servers() const;
 
-	uint result() const;
-	QString resultString() const;
+	bool failed() const;
+	QHostAddress resultAddress() const;
 	Q_UINT16 resultPort() const;
 
 signals:

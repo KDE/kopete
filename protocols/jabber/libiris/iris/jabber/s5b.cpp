@@ -18,34 +18,25 @@
  *
  */
 
-/*
-  TODO:
-
-    S5BConnection 'progress' signals
-      querying proxy
-      requesting
-      accepted
-      connected
-    remove roleswitch code
-    support zeroconf
-*/
-
 #include"s5b.h"
 
 #include<qtimer.h>
+#include<qguardedptr.h>
 #include<stdlib.h>
 #include<qca.h>
 #include"xmpp_xmlcommon.h"
 #include"socks.h"
+
+#define MAXSTREAMHOSTS 5
+
+#define S5B_DEBUG
 
 namespace XMPP {
 
 static QString makeKey(const QString &sid, const Jid &initiator, const Jid &target)
 {
 	QString str = sid + initiator.full() + target.full();
-	QString result = QCA::SHA1::hashToString(str.utf8());
-	printf("key=[%s]\n", result.latin1());
-	return result;
+	return QCA::SHA1::hashToString(str.utf8());
 }
 
 static bool haveHost(const StreamHostList &list, const Jid &j)
@@ -62,7 +53,7 @@ class S5BManager::Item : public QObject
 	Q_OBJECT
 public:
 	enum { Idle, Initiator, Target, Active };
-	enum { ErrRefused, ErrConnect, ErrWrongHost, ErrProxy, ErrRoleswitch };
+	enum { ErrRefused, ErrConnect, ErrWrongHost, ErrProxy };
 	enum { Unknown, Fast, NotFast };
 	S5BManager *m;
 	int state;
@@ -70,33 +61,36 @@ public:
 	Jid self, peer;
 	StreamHostList in_hosts;
 	JT_S5B *task, *proxy_task;
-	SocksClient *client;
+	SocksClient *client, *client_out;
 	S5BConnector *conn, *proxy_conn;
-	QPtrList<SocksClient> clientList;
-	bool wantRoleswitch, wantFast;
-	bool peerDoesRoleswitch;
-	bool fastFailed;
+	bool wantFast;
 	StreamHost proxy;
 	int targetMode; // initiator sets this once it figures it out
 	bool fast; // target sets this
 	bool activated;
 	bool lateProxy;
 	bool connSuccess;
+	bool localFailed, remoteFailed;
+	bool allowIncoming;
+	int statusCode;
 
 	Item(S5BManager *manager);
 	~Item();
 
 	void reset();
-	void startInitiator(const QString &_sid, const Jid &_self, const Jid &_peer, bool roleswitch, bool fast);
-	void startTarget(const QString &_sid, const Jid &_self, const Jid &_peer, const StreamHostList &hosts, const QString &iq_id, bool roleswitch, bool fast);
+	void startInitiator(const QString &_sid, const Jid &_self, const Jid &_peer, bool fast);
+	void startTarget(const QString &_sid, const Jid &_self, const Jid &_peer, const StreamHostList &hosts, const QString &iq_id, bool fast);
 	void handleFast(const StreamHostList &hosts, const QString &iq_id);
 
 	void doOutgoing();
 	void doIncoming();
 	void setIncomingClient(SocksClient *sc);
-	void clientReady(SocksClient *sc);
 
 signals:
+	void accepted();
+	void tryingHosts(const StreamHostList &list);
+	void proxyConnect();
+	void waitingForActivation();
 	void connected();
 	void error(int);
 
@@ -113,6 +107,7 @@ private:
 	void doConnectError();
 	void tryActivation();
 	void checkForActivation();
+	void checkFailure();
 	void finished();
 };
 
@@ -133,6 +128,7 @@ public:
 	bool notifyRead, notifyClose;
 	int id;
 	S5BRequest req;
+	Jid proxy;
 };
 
 static int id_conn = 0;
@@ -147,7 +143,9 @@ S5BConnection::S5BConnection(S5BManager *m, QObject *parent)
 
 	++num_conn;
 	d->id = id_conn++;
+#ifdef S5B_DEBUG
 	printf("S5BConnection[%d]: constructing, count=%d, %p\n", d->id, num_conn, this);
+#endif
 
 	reset();
 }
@@ -157,7 +155,9 @@ S5BConnection::~S5BConnection()
 	reset(true);
 
 	--num_conn;
+#ifdef S5B_DEBUG
 	printf("S5BConnection[%d]: destructing, count=%d\n", d->id, num_conn);
+#endif
 
 	delete d;
 }
@@ -179,6 +179,16 @@ void S5BConnection::reset(bool clear)
 	d->notifyClose = false;
 }
 
+Jid S5BConnection::proxy() const
+{
+	return d->proxy;
+}
+
+void S5BConnection::setProxy(const Jid &proxy)
+{
+	d->proxy = proxy;
+}
+
 void S5BConnection::connectToJid(const Jid &peer, const QString &sid)
 {
 	reset(true);
@@ -188,7 +198,9 @@ void S5BConnection::connectToJid(const Jid &peer, const QString &sid)
 	d->peer = peer;
 	d->sid = sid;
 	d->state = Requesting;
+#ifdef S5B_DEBUG
 	printf("S5BConnection[%d]: connecting %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+#endif
 	d->m->con_connect(this);
 }
 
@@ -198,7 +210,9 @@ void S5BConnection::accept()
 		return;
 
 	d->state = Connecting;
+#ifdef S5B_DEBUG
 	printf("S5BConnection[%d]: accepting %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+#endif
 	d->m->con_accept(this);
 }
 
@@ -211,7 +225,9 @@ void S5BConnection::close()
 		d->m->con_reject(this);
 	else if(d->state == Active)
 		d->sc->close();
+#ifdef S5B_DEBUG
 	printf("S5BConnection[%d]: closing %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+#endif
 	reset();
 }
 
@@ -292,16 +308,22 @@ void S5BConnection::man_clientReady(SocksClient *sc)
 	connect(d->sc, SIGNAL(error(int)), SLOT(sc_error(int)));
 
 	d->state = Active;
+#ifdef S5B_DEBUG
 	printf("S5BConnection[%d]: %s [%s] <<< success >>>\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+#endif
 
 	// bytes already in the stream?
 	if(d->sc->bytesAvailable()) {
+#ifdef S5B_DEBUG
 		printf("Stream has %d bytes in it.\n", d->sc->bytesAvailable());
+#endif
 		d->notifyRead = true;
 	}
 	// closed before it got here?
 	if(!d->sc->isOpen()) {
+#ifdef S5B_DEBUG
 		printf("Stream was closed before S5B request finished?\n");
+#endif
 		d->notifyClose = true;
 	}
 	if(d->notifyRead || d->notifyClose)
@@ -322,10 +344,6 @@ void S5BConnection::doPending()
 
 void S5BConnection::man_failed(int x)
 {
-	// TODO: roleswitch
-	//if(x == S5BManager::Item::ErrRoleswitch) {
-	//}
-
 	reset(true);
 	if(x == S5BManager::Item::ErrRefused)
 		error(ErrRefused);
@@ -333,13 +351,17 @@ void S5BConnection::man_failed(int x)
 		error(ErrConnect);
 	if(x == S5BManager::Item::ErrWrongHost)
 		error(ErrConnect);
+	if(x == S5BManager::Item::ErrProxy)
+		error(ErrProxy);
 }
 
 void S5BConnection::sc_connectionClosed()
 {
 	// if we have a pending read notification, postpone close
 	if(d->notifyRead) {
+#ifdef S5B_DEBUG
 		printf("closed while pending read\n");
+#endif
 		d->notifyClose = true;
 		return;
 	}
@@ -405,7 +427,6 @@ public:
 	QPtrList<Entry> activeList;
 	S5BConnectionList incomingConns;
 	JT_PushS5B *ps;
-	Jid proxy;
 };
 
 S5BManager::S5BManager(Client *parent)
@@ -452,11 +473,6 @@ void S5BManager::setServer(S5BServer *serv)
 	}
 }
 
-void S5BManager::setProxy(const Jid &proxy)
-{
-	d->proxy = proxy;
-}
-
 S5BConnection *S5BManager::createConnection()
 {
 	S5BConnection *c = new S5BConnection(this);
@@ -482,7 +498,9 @@ S5BConnection *S5BManager::takeIncoming()
 
 void S5BManager::ps_incoming(const S5BRequest &req)
 {
+#ifdef S5B_DEBUG
 	printf("S5BManager: incoming from %s\n", req.from.full().latin1());
+#endif
 
 	bool ok = false;
 	// ensure we don't already have an incoming connection from this peer+sid
@@ -494,24 +512,30 @@ void S5BManager::ps_incoming(const S5BRequest &req)
 			if(e->i) {
 				// loopback
 				if(req.from.compare(d->client->jid()) && (req.id == e->i->out_id)) {
+#ifdef S5B_DEBUG
 					printf("ALLOWED: loopback\n");
+#endif
 					ok = true;
 				}
 				// allowed by 'fast mode'
 				else if(e->i->state == Item::Initiator && e->i->targetMode == Item::Unknown) {
+#ifdef S5B_DEBUG
 					printf("ALLOWED: fast-mode\n");
+#endif
 					e->i->handleFast(req.hosts, req.id);
 					return;
 				}
 			}
 		}
 		else {
+#ifdef S5B_DEBUG
 			printf("ALLOWED: we don't have it\n");
+#endif
 			ok = true;
 		}
 	}
 	if(!ok) {
-		d->ps->respondError(req.from, req.id, 403, "SID in use");
+		d->ps->respondError(req.from, req.id, 406, "SID in use");
 		return;
 	}
 
@@ -553,14 +577,15 @@ QString S5BManager::genUniqueSID(const Jid &peer) const
 bool S5BManager::isAcceptableSID(const Jid &peer, const QString &sid) const
 {
 	QString key = makeKey(sid, d->client->jid(), peer);
+	QString key_out = makeKey(sid, peer, d->client->jid());
 
 	// if we have a server, then check through it
 	if(d->serv) {
-		if(findServerEntryByHash(key))
+		if(findServerEntryByHash(key) || findServerEntryByHash(key_out))
 			return false;
 	}
 	else {
-		if(findEntryByHash(key))
+		if(findEntryByHash(key) || findEntryByHash(key_out))
 			return false;
 	}
 	return true;
@@ -638,7 +663,7 @@ bool S5BManager::srv_ownsHash(const QString &key) const
 void S5BManager::srv_incomingReady(SocksClient *sc, const QString &key)
 {
 	Entry *e = findEntryByHash(key);
-	if(e->i->client || e->i->state == Item::Active) {
+	if(!e->i->allowIncoming) {
 		sc->requestGrant(false);
 		sc->deleteLater();
 		return;
@@ -656,7 +681,7 @@ void S5BManager::con_connect(S5BConnection *c)
 	e->sid = c->d->sid;
 	d->activeList.append(e);
 
-	if(d->proxy.isValid()) {
+	if(c->d->proxy.isValid()) {
 		queryProxy(e);
 		return;
 	}
@@ -669,7 +694,7 @@ void S5BManager::con_accept(S5BConnection *c)
 	if(!e)
 		return;
 
-	if(d->proxy.isValid()) {
+	if(e->c->d->req.fast) {
 		if(targetShouldOfferProxy(e)) {
 			queryProxy(e);
 			return;
@@ -694,6 +719,38 @@ void S5BManager::con_unlink(S5BConnection *c)
 		d->ps->respondError(e->i->peer, e->i->out_id, 406, "Not acceptable");
 	delete e->i;
 	d->activeList.removeRef(e);
+}
+
+void S5BManager::item_accepted()
+{
+	Item *i = (Item *)sender();
+	Entry *e = findEntry(i);
+
+	e->c->accepted(); // signal
+}
+
+void S5BManager::item_tryingHosts(const StreamHostList &list)
+{
+	Item *i = (Item *)sender();
+	Entry *e = findEntry(i);
+
+	e->c->tryingHosts(list); // signal
+}
+
+void S5BManager::item_proxyConnect()
+{
+	Item *i = (Item *)sender();
+	Entry *e = findEntry(i);
+
+	e->c->proxyConnect(); // signal
+}
+
+void S5BManager::item_waitingForActivation()
+{
+	Item *i = (Item *)sender();
+	Entry *e = findEntry(i);
+
+	e->c->waitingForActivation(); // signal
 }
 
 void S5BManager::item_connected()
@@ -722,27 +779,36 @@ void S5BManager::entryContinue(Entry *e)
 	e->i = new Item(this);
 	e->i->proxy = e->proxyInfo;
 
-	if(e->c->isRemote()) {
-		connect(e->i, SIGNAL(connected()), SLOT(item_connected()));
-		connect(e->i, SIGNAL(error(int)), SLOT(item_error(int)));
+	connect(e->i, SIGNAL(accepted()), SLOT(item_accepted()));
+	connect(e->i, SIGNAL(tryingHosts(const StreamHostList &)), SLOT(item_tryingHosts(const StreamHostList &)));
+	connect(e->i, SIGNAL(proxyConnect()), SLOT(item_proxyConnect()));
+	connect(e->i, SIGNAL(waitingForActivation()), SLOT(item_waitingForActivation()));
+	connect(e->i, SIGNAL(connected()), SLOT(item_connected()));
+	connect(e->i, SIGNAL(error(int)), SLOT(item_error(int)));
 
+	if(e->c->isRemote()) {
 		const S5BRequest &req = e->c->d->req;
-		e->i->startTarget(e->sid, d->client->jid(), e->c->d->peer, req.hosts, req.id, req.roleswitch, req.fast);
+		e->i->startTarget(e->sid, d->client->jid(), e->c->d->peer, req.hosts, req.id, req.fast);
 	}
 	else {
-		connect(e->i, SIGNAL(connected()), SLOT(item_connected()));
-		connect(e->i, SIGNAL(error(int)), SLOT(item_error(int)));
-
-		e->i->startInitiator(e->sid, d->client->jid(), e->c->d->peer, false, true);
+		e->i->startInitiator(e->sid, d->client->jid(), e->c->d->peer, true);
+		e->c->requesting(); // signal
 	}
 }
 
 void S5BManager::queryProxy(Entry *e)
 {
-	printf("querying proxy: [%s]\n", d->proxy.full().latin1());
+	QGuardedPtr<QObject> self = this;
+	e->c->proxyQuery(); // signal
+	if(!self)
+		return;
+
+#ifdef S5B_DEBUG
+	printf("querying proxy: [%s]\n", e->c->d->proxy.full().latin1());
+#endif
 	e->query = new JT_S5B(d->client->rootTask());
 	connect(e->query, SIGNAL(finished()), SLOT(query_finished()));
-	e->query->requestProxyInfo(d->proxy);
+	e->query->requestProxyInfo(e->c->d->proxy);
 	e->query->go(true);
 }
 
@@ -762,20 +828,32 @@ void S5BManager::query_finished()
 		return;
 	e->query = 0;
 
+#ifdef S5B_DEBUG
 	printf("query finished: ");
+#endif
 	if(query->success()) {
 		e->proxyInfo = query->proxyInfo();
+#ifdef S5B_DEBUG
 		printf("host/ip=[%s] port=[%d]\n", e->proxyInfo.host().latin1(), e->proxyInfo.port());
+#endif
 	}
-	else
+	else {
+#ifdef S5B_DEBUG
 		printf("fail\n");
+#endif
+	}
+
+	QGuardedPtr<QObject> self = this;
+	e->c->proxyResult(query->success()); // signal
+	if(!self)
+		return;
 
 	entryContinue(e);
 }
 
 bool S5BManager::targetShouldOfferProxy(Entry *e)
 {
-	if(!d->proxy.isValid())
+	if(!e->c->d->proxy.isValid())
 		return false;
 
 	// if target, don't offer any proxy if the initiator already did
@@ -786,7 +864,7 @@ bool S5BManager::targetShouldOfferProxy(Entry *e)
 	}
 
 	// ensure we don't offer the same proxy as the initiator
-	if(haveHost(hosts, d->proxy))
+	if(haveHost(hosts, e->c->d->proxy))
 		return false;
 
 	return true;
@@ -803,6 +881,7 @@ S5BManager::Item::Item(S5BManager *manager) : QObject(0)
 	conn = 0;
 	proxy_conn = 0;
 	client = 0;
+	client_out = 0;
 	reset();
 }
 
@@ -815,45 +894,51 @@ void S5BManager::Item::reset()
 {
 	delete task;
 	task = 0;
+
 	delete proxy_task;
 	proxy_task = 0;
+
 	delete conn;
 	conn = 0;
+
 	delete proxy_conn;
 	proxy_conn = 0;
-	clientList.setAutoDelete(true);
-	clientList.clear();
-	clientList.setAutoDelete(false);
+
 	delete client;
 	client = 0;
+
+	delete client_out;
+	client_out = 0;
+
 	state = Idle;
-	wantRoleswitch = false;
 	wantFast = false;
-	peerDoesRoleswitch = false;
-	fastFailed = false;
 	targetMode = Unknown;
 	fast = false;
 	activated = false;
 	lateProxy = false;
 	connSuccess = false;
+	localFailed = false;
+	remoteFailed = false;
+	allowIncoming = false;
 }
 
-void S5BManager::Item::startInitiator(const QString &_sid, const Jid &_self, const Jid &_peer, bool roleswitch, bool fast)
+void S5BManager::Item::startInitiator(const QString &_sid, const Jid &_self, const Jid &_peer, bool fast)
 {
 	sid = _sid;
 	self = _self;
 	peer = _peer;
 	key = makeKey(sid, self, peer);
 	out_key = makeKey(sid, peer, self);
-	wantRoleswitch = roleswitch;
 	wantFast = fast;
 
+#ifdef S5B_DEBUG
 	printf("S5BManager::Item initiating request %s [%s]\n", peer.full().latin1(), sid.latin1());
+#endif
 	state = Initiator;
 	doOutgoing();
 }
 
-void S5BManager::Item::startTarget(const QString &_sid, const Jid &_self, const Jid &_peer, const StreamHostList &hosts, const QString &iq_id, bool roleswitch, bool _fast)
+void S5BManager::Item::startTarget(const QString &_sid, const Jid &_self, const Jid &_peer, const StreamHostList &hosts, const QString &iq_id, bool _fast)
 {
 	sid = _sid;
 	peer = _peer;
@@ -863,11 +948,10 @@ void S5BManager::Item::startTarget(const QString &_sid, const Jid &_self, const 
 	fast = _fast;
 	key = makeKey(sid, self, peer);
 	out_key = makeKey(sid, peer, self);
-	//key = makeKey(sid, peer, self);
-	//out_key = makeKey(sid, self, peer);
-	peerDoesRoleswitch = roleswitch;
 
+#ifdef S5B_DEBUG
 	printf("S5BManager::Item incoming request %s [%s]\n", peer.full().latin1(), sid.latin1());
+#endif
 	state = Target;
 	if(fast)
 		doOutgoing();
@@ -878,9 +962,14 @@ void S5BManager::Item::handleFast(const StreamHostList &hosts, const QString &iq
 {
 	targetMode = Fast;
 
+	QGuardedPtr<QObject> self = this;
+	accepted();
+	if(!self)
+		return;
+
 	// if we already have a stream, then bounce this request
 	if(client) {
-		m->doError(peer, iq_id, 406, "Not Acceptable");
+		m->doError(peer, iq_id, 406, "Not acceptable");
 	}
 	else {
 		in_hosts = hosts;
@@ -893,7 +982,7 @@ void S5BManager::Item::doOutgoing()
 {
 	StreamHostList hosts;
 	S5BServer *serv = m->server();
-	if(serv && serv->isActive() /*&& !haveHost(in_hosts, m->client()->jid())*/) {
+	if(serv && serv->isActive() && !haveHost(in_hosts, m->client()->jid())) {
 		QStringList hostList = serv->hostList();
 		for(QStringList::ConstIterator it = hostList.begin(); it != hostList.end(); ++it) {
 			StreamHost h;
@@ -904,19 +993,21 @@ void S5BManager::Item::doOutgoing()
 		}
 	}
 
-	// if the proxy is valid, then it's ok to add (the manager already
-	// ensured that it doesn't conflict)
+	// if the proxy is valid, then it's ok to add (the manager already ensured that it doesn't conflict)
 	if(proxy.jid().isValid())
 		hosts += proxy;
 
+	// if we're the target and we have no streamhosts of our own, then don't even bother with fast-mode
 	if(state == Target && hosts.isEmpty()) {
 		fast = false;
 		return;
 	}
 
+	allowIncoming = true;
+
 	task = new JT_S5B(m->client()->rootTask());
 	connect(task, SIGNAL(finished()), SLOT(jt_finished()));
-	task->request(peer, sid, hosts, state == Initiator ? wantRoleswitch : false, state == Initiator ? wantFast : false);
+	task->request(peer, sid, hosts, state == Initiator ? wantFast : false);
 	out_id = task->id();
 	task->go(true);
 }
@@ -928,18 +1019,18 @@ void S5BManager::Item::doIncoming()
 		return;
 	}
 
-	// if target, see about trying non-proxy before proxy
 	StreamHostList list;
-	if(state == Target) {
-		if(lateProxy) {
-			// take just the proxy streamhosts
-			for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
-				if((*it).isProxy())
-					list += *it;
-			}
-			lateProxy = false;
+	if(lateProxy) {
+		// take just the proxy streamhosts
+		for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
+			if((*it).isProxy())
+				list += *it;
 		}
-		else {
+		lateProxy = false;
+	}
+	else {
+		// only try doing the late proxy trick if we did not offer a proxy
+		if(!proxy.jid().isValid()) {
 			// take just the non-proxy streamhosts
 			bool hasProxies;
 			for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
@@ -948,72 +1039,47 @@ void S5BManager::Item::doIncoming()
 				else
 					list += *it;
 			}
-			if(hasProxies)
+			if(hasProxies) {
 				lateProxy = true;
 
-			// hmm, no regular streamhosts?
-			if(list.isEmpty()) {
-				// if fast, wait for iq-error before trying proxy
-				if(fast)
-					return;
-				// else try proxy now
-				else
-					list = in_hosts;
+				// no regular streamhosts?
+				if(list.isEmpty()) {
+					// if fast mode, then wait for iq-error before trying proxy
+					if(state == Initiator || (state == Target && fast))
+						return;
+					// else try proxy now
+					else
+						list = in_hosts;
+				}
 			}
 		}
+		else
+			list = in_hosts;
 	}
-	else
-		list = in_hosts;
 
 	conn = new S5BConnector;
 	connect(conn, SIGNAL(result(bool)), SLOT(conn_result(bool)));
+
+	QGuardedPtr<QObject> self = this;
+	tryingHosts(list);
+	if(!self)
+		return;
+
 	conn->start(list, out_key);
 }
 
 void S5BManager::Item::setIncomingClient(SocksClient *sc)
 {
+#ifdef S5B_DEBUG
 	printf("S5BManager::Item: %s [%s] successful incoming connection\n", peer.full().latin1(), sid.latin1());
+#endif
 
 	connect(sc, SIGNAL(readyRead()), SLOT(sc_readyRead()));
 	connect(sc, SIGNAL(bytesWritten(int)), SLOT(sc_bytesWritten(int)));
 	connect(sc, SIGNAL(error(int)), SLOT(sc_error(int)));
 
-	if(state == Initiator)
-		clientReady(sc);
-	else
-		clientList.append(sc);
-}
-
-// This function singles out a stream.  The initiator calls this prior to activation,
-// and the target calls it after activation.
-void S5BManager::Item::clientReady(SocksClient *sc)
-{
-	// if connecting, stop and send error
-	bool senderr = false;
-	if(conn) {
-		delete conn;
-		conn = 0;
-		senderr = true;
-	}
-
-	// cancel any proxy activity
-	if(proxy_conn) {
-		delete proxy_conn;
-		proxy_conn = 0;
-	}
-	delete proxy_task;
-	proxy_task = 0;
-
-	// throw away unused connections
-	clientList.setAutoDelete(true);
-	clientList.clear();
-	clientList.setAutoDelete(false);
-
-	// make it official
 	client = sc;
-
-	if(senderr)
-		doConnectError();
+	allowIncoming = false;
 }
 
 void S5BManager::Item::jt_finished()
@@ -1021,84 +1087,98 @@ void S5BManager::Item::jt_finished()
 	JT_S5B *j = task;
 	task = 0;
 
-	printf("jt_finished: state=%s, success=%d\n", state == Initiator ? "initiator" : "target", j->success());
+#ifdef S5B_DEBUG
+	printf("jt_finished: state=%s, %s\n", state == Initiator ? "initiator" : "target", j->success() ? "ok" : "fail");
+#endif
 
 	if(state == Initiator) {
-		if(targetMode == Unknown)
+		if(targetMode == Unknown) {
 			targetMode = NotFast;
+			QGuardedPtr<QObject> self = this;
+			accepted();
+			if(!self)
+				return;
+		}
+	}
+
+	// if we've already reported successfully connecting to them, then this response doesn't matter
+	if(state == Initiator && connSuccess) {
+		tryActivation();
+		return;
 	}
 
 	if(j->success()) {
+		// stop connecting out
+		if(conn || lateProxy) {
+			delete conn;
+			conn = 0;
+			doConnectError();
+		}
+
 		Jid streamHost = j->streamHostUsed();
 		// they connected to us?
 		if(streamHost.compare(self)) {
-			if(state == Initiator && client) {
-				tryActivation();
-			}
-			else if(state == Target && !clientList.isEmpty()) {
-				checkForActivation();
+			if(client) {
+				if(state == Initiator)
+					tryActivation();
+				else
+					checkForActivation();
 			}
 			else {
+#ifdef S5B_DEBUG
 				printf("S5BManager::Item %s claims to have connected to us, but we don't see this\n", peer.full().latin1());
+#endif
 				reset();
 				error(ErrWrongHost);
 			}
 		}
 		else if(streamHost.compare(proxy.jid())) {
-			if(state == Initiator && client) {
-				delete client;
-				client = 0;
+			// toss out any direct incoming, since it won't be used
+			delete client;
+			client = 0;
+			allowIncoming = false;
 
-				// Hack trick: setting zero here will basically
-				// reset everything.  clientReady() calls
-				// doConnectError() if needed, which does not
-				// cause signals if state == Initiator, so
-				// it is safe to call here.
-				clientReady(0);
-			}
-
+#ifdef S5B_DEBUG
 			printf("attempting to connect to proxy\n");
+#endif
 			// connect to the proxy
 			proxy_conn = new S5BConnector;
 			connect(proxy_conn, SIGNAL(result(bool)), SLOT(proxy_result(bool)));
 			StreamHostList list;
 			list += proxy;
+
+			QGuardedPtr<QObject> self = this;
+			proxyConnect();
+			if(!self)
+				return;
+
 			proxy_conn->start(list, key);
 		}
 		else {
+#ifdef S5B_DEBUG
 			printf("S5BManager::Item %s claims to have connected to a streamhost we never offered\n", peer.full().latin1());
+#endif
 			reset();
 			error(ErrWrongHost);
 		}
 	}
 	else {
+#ifdef S5B_DEBUG
 		printf("S5BManager::Item %s [%s] error\n", peer.full().latin1(), sid.latin1());
-		if(state == Target) {
-			fastFailed = true;
+#endif
+		remoteFailed = true;
+		statusCode = j->statusCode();
 
-			// now that fast has failed, tend to some pending things
-			if(lateProxy) {
-				if(!conn)
-					doIncoming();
-			}
-			else {
-				if(connSuccess)
-					checkForActivation();
-				else
-					doConnectError();
-			}
+		if(lateProxy) {
+			if(!conn)
+				doIncoming();
 		}
-		// initiator
 		else {
-			reset();
-			if(wantRoleswitch && j->statusCode() == 300)
-				error(ErrRoleswitch);
-			else {
-				if(j->statusCode() == 404)
-					error(ErrConnect);
-				else
-					error(ErrRefused);
-			}
+			// if connSuccess is true at this point, then we're a Target
+			if(connSuccess)
+				checkForActivation();
+			else
+				checkFailure();
 		}
 	}
 }
@@ -1112,7 +1192,9 @@ void S5BManager::Item::conn_result(bool b)
 		conn = 0;
 		connSuccess = true;
 
+#ifdef S5B_DEBUG
 		printf("S5BManager::Item: %s [%s] successful outgoing connection\n", peer.full().latin1(), sid.latin1());
+#endif
 
 		connect(sc, SIGNAL(readyRead()), SLOT(sc_readyRead()));
 		connect(sc, SIGNAL(bytesWritten(int)), SLOT(sc_bytesWritten(int)));
@@ -1120,12 +1202,19 @@ void S5BManager::Item::conn_result(bool b)
 
 		m->doSuccess(peer, in_id, h.jid());
 
+		// if the first batch works, don't try proxy
+		lateProxy = false;
+
+		// if initiator, run with this one
 		if(state == Initiator) {
-			clientReady(sc);
+			// if we had an incoming one, toss it
+			delete client;
+			client = sc;
+			allowIncoming = false;
 			tryActivation();
 		}
 		else {
-			clientList.append(sc);
+			client_out = sc;
 			checkForActivation();
 		}
 	}
@@ -1135,7 +1224,7 @@ void S5BManager::Item::conn_result(bool b)
 
 		// if we delayed the proxies for later, try now
 		if(lateProxy) {
-			if(!fast || fastFailed)
+			if(remoteFailed)
 				doIncoming();
 		}
 		else
@@ -1145,7 +1234,9 @@ void S5BManager::Item::conn_result(bool b)
 
 void S5BManager::Item::proxy_result(bool b)
 {
-	printf("proxy_result: %d\n", b);
+#ifdef S5B_DEBUG
+	printf("proxy_result: %s\n", b ? "ok" : "fail");
+#endif
 	if(b) {
 		SocksClient *sc = proxy_conn->takeClient();
 		delete proxy_conn;
@@ -1155,13 +1246,12 @@ void S5BManager::Item::proxy_result(bool b)
 		connect(sc, SIGNAL(bytesWritten(int)), SLOT(sc_bytesWritten(int)));
 		connect(sc, SIGNAL(error(int)), SLOT(sc_error(int)));
 
-		if(state == Initiator)
-			clientReady(sc);
-		else
-			clientList.append(sc);
+		client = sc;
 
 		// activate
+#ifdef S5B_DEBUG
 		printf("activating proxy stream\n");
+#endif
 		proxy_task = new JT_S5B(m->client()->rootTask());
 		connect(proxy_task, SIGNAL(finished()), SLOT(proxy_finished()));
 		proxy_task->requestActivation(proxy.jid(), sid, peer);
@@ -1181,7 +1271,9 @@ void S5BManager::Item::proxy_finished()
 	proxy_task = 0;
 
 	if(j->success()) {
+#ifdef S5B_DEBUG
 		printf("proxy stream activated\n");
+#endif
 		if(state == Initiator)
 			tryActivation();
 		else
@@ -1195,75 +1287,66 @@ void S5BManager::Item::proxy_finished()
 
 void S5BManager::Item::sc_readyRead()
 {
-	printf("sc_readyRead: %p\n", this);
+#ifdef S5B_DEBUG
+	printf("sc_readyRead\n");
+#endif
 	// only targets check for activation, and only should do it if there is no pending outgoing iq-set
-	if(state == Target && !task)
+	if(state == Target && !task && !proxy_task)
 		checkForActivation();
 }
 
 void S5BManager::Item::sc_bytesWritten(int)
 {
-	printf("sc_bytesWritten: %p\n", this);
+#ifdef S5B_DEBUG
+	printf("sc_bytesWritten\n");
+#endif
 	// this should only happen to the initiator, and should always be 1 byte (the '\r' sent earlier)
 	finished();
 }
 
 void S5BManager::Item::sc_error(int)
 {
-	printf("sc_error: %p\n", this);
-	SocksClient *sc = (SocksClient *)sender();
-
-	if(sc == client) {
-		reset();
-		error(ErrConnect);
-	}
-	else {
-		// drop
-		clientList.removeRef(sc);
-		delete sc;
-	}
+#ifdef S5B_DEBUG
+	printf("sc_error\n");
+#endif
+	reset();
+	error(ErrConnect);
 }
 
 void S5BManager::Item::doConnectError()
 {
-	if(state == Target && fast) {
-		if(conn || !fastFailed)
-			return;
-	}
-
-	// try role-switch
-	peerDoesRoleswitch = false; // TODO: support roleswitch
-	if(peerDoesRoleswitch) {
-		m->doError(peer, in_id, 300, "Role-switch");
-		if(state == Target) {
-			reset();
-			error(ErrRoleswitch);
-		}
-	}
-	else {
-		m->doError(peer, in_id, 404, "Could not connect to given hosts");
-		if(state == Target) {
-			reset();
-			error(ErrConnect);
-		}
-	}
+	localFailed = true;
+	m->doError(peer, in_id, 404, "Could not connect to given hosts");
+	checkFailure();
 }
 
 void S5BManager::Item::tryActivation()
 {
+#ifdef S5B_DEBUG
 	printf("tryActivation\n");
+#endif
 	if(activated) {
-		printf("already activated\n");
+#ifdef S5B_DEBUG
+		printf("already activated !?\n");
+#endif
 		return;
 	}
 
 	if(targetMode == NotFast) {
+#ifdef S5B_DEBUG
 		printf("tryActivation: NotFast\n");
+#endif
 		// nothing to activate, we're done
 		finished();
 	}
 	else if(targetMode == Fast) {
-		printf("sending extra CR (%p)\n", client);
+		// with fast mode, we don't wait for the iq reply, so delete the task (if any)
+		delete task;
+		task = 0;
+
+#ifdef S5B_DEBUG
+		printf("sending extra CR\n");
+#endif
 		// must send [CR] to activate target streamhost
 		activated = true;
 		QByteArray a(1);
@@ -1274,11 +1357,20 @@ void S5BManager::Item::tryActivation()
 
 void S5BManager::Item::checkForActivation()
 {
+	QPtrList<SocksClient> clientList;
+	if(client)
+		clientList.append(client);
+	if(client_out)
+		clientList.append(client_out);
 	QPtrListIterator<SocksClient> it(clientList);
 	for(SocksClient *sc; (sc = it.current()); ++it) {
+#ifdef S5B_DEBUG
 		printf("checking for activation\n");
+#endif
 		if(fast) {
-			printf("need CR (%p)\n", sc);
+#ifdef S5B_DEBUG
+			printf("need CR\n");
+#endif
 			if(sc->bytesAvailable() >= 1) {
 				clientList.removeRef(sc);
 				QByteArray a = sc->read(1);
@@ -1287,30 +1379,80 @@ void S5BManager::Item::checkForActivation()
 					return;
 				}
 				sc->disconnect(this);
+				clientList.setAutoDelete(true);
+				clientList.clear();
+				client = sc;
+				client_out = 0;
+				activated = true;
+#ifdef S5B_DEBUG
 				printf("activation success\n");
-				clientReady(sc);
+#endif
 				break;
 			}
 		}
 		else {
+#ifdef S5B_DEBUG
 			printf("not fast mode, no need to wait for anything\n");
+#endif
 			clientList.removeRef(sc);
 			sc->disconnect(this);
-			clientReady(sc);
+			clientList.setAutoDelete(true);
+			clientList.clear();
+			client = sc;
+			client_out = 0;
+			activated = true;
 			break;
 		}
 	}
 
-	if(client)
+	if(activated) {
 		finished();
+	}
+	else {
+		// only emit waitingForActivation if there is nothing left to do
+		if((connSuccess || localFailed) && !proxy_task && !proxy_conn)
+			waitingForActivation();
+	}
+}
+
+void S5BManager::Item::checkFailure()
+{
+	bool failed = false;
+	if(state == Initiator) {
+		if(remoteFailed) {
+			if((localFailed && targetMode == Fast) || targetMode == NotFast)
+				failed = true;
+		}
+	}
+	else {
+		if(localFailed) {
+			if((remoteFailed && fast) || !fast)
+				failed = true;
+		}
+	}
+
+	if(failed) {
+		if(state == Initiator) {
+			reset();
+			if(statusCode == 404)
+				error(ErrConnect);
+			else
+				error(ErrRefused);
+		}
+		else {
+			reset();
+			error(ErrConnect);
+		}
+	}
 }
 
 void S5BManager::Item::finished()
 {
-	printf("finished: %p\n", this);
 	client->disconnect(this);
 	state = Active;
+#ifdef S5B_DEBUG
 	printf("S5BManager::Item %s [%s] linked successfully\n", peer.full().latin1(), sid.latin1());
+#endif
 	connected();
 }
 
@@ -1350,14 +1492,18 @@ signals:
 private slots:
 	void sc_connected()
 	{
+#ifdef S5B_DEBUG
 		printf("S5BConnector[%s]: success\n", host.host().latin1());
+#endif
 		client->disconnect(this);
 		result(true);
 	}
 
 	void sc_error(int)
 	{
+#ifdef S5B_DEBUG
 		printf("S5BConnector[%s]: error\n", host.host().latin1());
+#endif
 		delete client;
 		client = 0;
 		result(false);
@@ -1401,7 +1547,9 @@ void S5BConnector::start(const StreamHostList &hosts, const QString &key)
 {
 	reset();
 
+#ifdef S5B_DEBUG
 	printf("S5BConnector: starting [%p]!\n", this);
+#endif
 	for(StreamHostList::ConstIterator it = hosts.begin(); it != hosts.end(); ++it) {
 		Item *i = new Item(*it, key);
 		connect(i, SIGNAL(result(bool)), SLOT(item_result(bool)));
@@ -1432,14 +1580,18 @@ void S5BConnector::item_result(bool b)
 		d->activeHost = i->host;
 		d->itemList.clear();
 		d->t.stop();
+#ifdef S5B_DEBUG
 		printf("S5BConnector: complete! [%p]\n", this);
+#endif
 		result(true);
 	}
 	else {
 		d->itemList.removeRef(i);
 		if(d->itemList.isEmpty()) {
 			d->t.stop();
+#ifdef S5B_DEBUG
 			printf("S5BConnector: failed! [%p]\n", this);
+#endif
 			result(false);
 		}
 	}
@@ -1448,7 +1600,9 @@ void S5BConnector::item_result(bool b)
 void S5BConnector::t_timeout()
 {
 	reset();
+#ifdef S5B_DEBUG
 	printf("S5BConnector: failed! (timeout)\n");
+#endif
 	result(false);
 }
 
@@ -1577,6 +1731,7 @@ int S5BServer::port() const
 void S5BServer::ss_incomingReady()
 {
 	Item *i = new Item(d->serv.takeIncoming());
+	//printf("S5BServer: incoming connection from %s:%d\n", i->client->peerAddress().toString().latin1(), i->client->peerPort());
 	connect(i, SIGNAL(result(bool)), SLOT(item_result(bool)));
 	d->itemList.append(i);
 }
@@ -1649,7 +1804,7 @@ JT_S5B::~JT_S5B()
 	delete d;
 }
 
-void JT_S5B::request(const Jid &to, const QString &sid, const StreamHostList &hosts, bool roleswitch, bool fast)
+void JT_S5B::request(const Jid &to, const QString &sid, const StreamHostList &hosts, bool fast)
 {
 	d->mode = 0;
 
@@ -1671,11 +1826,6 @@ void JT_S5B::request(const Jid &to, const QString &sid, const StreamHostList &ho
 			shost.appendChild(p);
 		}
 		query.appendChild(shost);
-	}
-	if(roleswitch) {
-		QDomElement e = doc()->createElement("roleswitch");
-		e.setAttribute("xmlns", "http://affinix.com/jabber/stream");
-		query.appendChild(e);
 	}
 	if(fast) {
 		QDomElement e = doc()->createElement("fast");
@@ -1756,7 +1906,6 @@ bool JT_S5B::take(const QDomElement &x)
 					Jid j = shost.attribute("jid");
 					if(j.isValid()) {
 						QString host = shost.attribute("host");
-						// TODO: support zeroconf
 						if(!host.isEmpty()) {
 							int port = shost.attribute("port").toInt();
 							StreamHost h;
@@ -1829,12 +1978,11 @@ bool JT_PushS5B::take(const QDomElement &e)
 	QDomNodeList nl = q.elementsByTagName("streamhost");
 	for(uint n = 0; n < nl.count(); ++n) {
 		QDomElement shost = nl.item(n).toElement();
-		if(hosts.count() < 3) {
+		if(hosts.count() < MAXSTREAMHOSTS) {
 			Jid j = shost.attribute("jid");
 			if(!j.isValid())
 				continue;
 			QString host = shost.attribute("host");
-			// TODO: support zeroconf
 			if(host.isEmpty())
 				continue;
 			int port = shost.attribute("port").toInt();
@@ -1851,12 +1999,9 @@ bool JT_PushS5B::take(const QDomElement &e)
 			hosts += h;
 		}
 	}
-	bool roleswitch = false;
+
 	bool fast = false;
 	QDomElement t;
-	t = q.elementsByTagName("roleswitch").item(0).toElement();
-	if(!t.isNull() && t.attribute("xmlns") == "http://affinix.com/jabber/stream")
-		roleswitch = true;
 	t = q.elementsByTagName("fast").item(0).toElement();
 	if(!t.isNull() && t.attribute("xmlns") == "http://affinix.com/jabber/stream")
 		fast = true;
@@ -1866,7 +2011,6 @@ bool JT_PushS5B::take(const QDomElement &e)
 	r.id = e.attribute("id");
 	r.sid = sid;
 	r.hosts = hosts;
-	r.roleswitch = roleswitch;
 	r.fast = fast;
 
 	incoming(r);
@@ -1918,11 +2062,6 @@ int StreamHost::port() const
 	return v_port;
 }
 
-const QString & StreamHost::zeroconf() const
-{
-	return v_zeroconf;
-}
-
 bool StreamHost::isProxy() const
 {
 	return proxy;
@@ -1941,11 +2080,6 @@ void StreamHost::setHost(const QString &host)
 void StreamHost::setPort(int port)
 {
 	v_port = port;
-}
-
-void StreamHost::setZeroconf(const QString &s)
-{
-	v_zeroconf = s;
 }
 
 void StreamHost::setIsProxy(bool b)

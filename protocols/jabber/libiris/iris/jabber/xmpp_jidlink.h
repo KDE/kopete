@@ -29,7 +29,6 @@
 #include<qstring.h>
 #include"xmpp.h"
 
-class QDomElement;
 class ByteStream;
 
 namespace XMPP

@@ -44,9 +44,12 @@ namespace XMPP
 	{
 		Q_OBJECT
 	public:
-		enum { ErrRefused, ErrConnect, ErrSocket };
+		enum { ErrRefused, ErrConnect, ErrProxy, ErrSocket };
 		enum { Idle, Requesting, Connecting, WaitingForAccept, Active };
 		~S5BConnection();
+
+		Jid proxy() const;
+		void setProxy(const Jid &proxy);
 
 		void connectToJid(const Jid &peer, const QString &sid);
 		void accept();
@@ -64,8 +67,14 @@ namespace XMPP
 		int bytesToWrite() const;
 
 	signals:
-		void accepted();
-		void connected();
+		void proxyQuery();                             // querying proxy for streamhost information
+		void proxyResult(bool b);                      // query success / fail
+		void requesting();                             // sent actual S5B request (initiator only)
+		void accepted();                               // target accepted (initiator only
+		void tryingHosts(const StreamHostList &hosts); // currently connecting to these hosts
+		void proxyConnect();                           // connecting to proxy
+		void waitingForActivation();                   // waiting for activation (target only)
+		void connected();                              // connection active
 
 	private slots:
 		void doPending();
@@ -99,7 +108,6 @@ namespace XMPP
 		Client *client() const;
 		S5BServer *server() const;
 		void setServer(S5BServer *s);
-		void setProxy(const Jid &proxy);
 
 		bool isAcceptableSID(const Jid &peer, const QString &sid) const;
 		QString genUniqueSID(const Jid &peer) const;
@@ -115,6 +123,10 @@ namespace XMPP
 
 	private slots:
 		void ps_incoming(const S5BRequest &req);
+		void item_accepted();
+		void item_tryingHosts(const StreamHostList &list);
+		void item_proxyConnect();
+		void item_waitingForActivation();
 		void item_connected();
 		void item_error(int);
 		void query_finished();
@@ -213,7 +225,7 @@ namespace XMPP
 		JT_S5B(Task *);
 		~JT_S5B();
 
-		void request(const Jid &to, const QString &sid, const StreamHostList &hosts, bool roleswitch, bool fast);
+		void request(const Jid &to, const QString &sid, const StreamHostList &hosts, bool fast);
 		void requestProxyInfo(const Jid &to);
 		void requestActivation(const Jid &to, const QString &sid, const Jid &target);
 
@@ -237,7 +249,7 @@ namespace XMPP
 		Jid from;
 		QString id, sid;
 		StreamHostList hosts;
-		bool roleswitch, fast;
+		bool fast;
 	};
 	class JT_PushS5B : public Task
 	{
@@ -263,19 +275,16 @@ namespace XMPP
 		const Jid & jid() const;
 		const QString & host() const;
 		int port() const;
-		const QString & zeroconf() const;
 		bool isProxy() const;
 		void setJid(const Jid &);
 		void setHost(const QString &);
 		void setPort(int);
-		void setZeroconf(const QString &);
 		void setIsProxy(bool);
 
 	private:
 		Jid j;
 		QString v_host;
 		int v_port;
-		QString v_zeroconf;
 		bool proxy;
 	};
 }

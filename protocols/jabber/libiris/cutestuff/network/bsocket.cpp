@@ -23,13 +23,18 @@
 #include<qcstring.h>
 #include<qsocket.h>
 #include<qdns.h>
+#include<qguardedptr.h>
 #include"safedelete.h"
+#ifndef NO_NDNS
 #include"ndns.h"
+#endif
 #include"srvresolver.h"
 
 #ifdef BS_DEBUG
 #include<stdio.h>
 #endif
+
+#define READBUFSIZE 65536
 
 // CS_NAMESPACE_BEGIN
 
@@ -44,11 +49,12 @@ public:
 	QSocket *qsock;
 	int state;
 
+#ifndef NO_NDNS
 	NDns ndns;
+#endif
 	SrvResolver srv;
 	QString host;
 	int port;
-	QHostAddress peerAddress;
 	SafeDelete sd;
 };
 
@@ -56,7 +62,9 @@ BSocket::BSocket(QObject *parent)
 :ByteStream(parent)
 {
 	d = new Private;
+#ifndef NO_NDNS
 	connect(&d->ndns, SIGNAL(resultsReady()), SLOT(ndns_done()));
+#endif
 	connect(&d->srv, SIGNAL(resultsReady()), SLOT(srv_done()));
 
 	reset();
@@ -72,15 +80,28 @@ void BSocket::reset(bool clear)
 {
 	if(d->qsock) {
 		d->qsock->disconnect(this);
+
+		if(!clear) {
+			// move remaining into the local queue
+			QByteArray block(d->qsock->bytesAvailable());
+			d->qsock->readBlock(block.data(), block.size());
+			appendRead(block);
+		}
+
 		d->sd.deleteLater(d->qsock);
 		d->qsock = 0;
 	}
+	else {
+		if(clear)
+			clearReadBuffer();
+	}
+
 	if(d->srv.isBusy())
 		d->srv.stop();
+#ifndef NO_NDNS
 	if(d->ndns.isBusy())
 		d->ndns.stop();
-	if(clear)
-		clearReadBuffer();
+#endif
 	d->state = Idle;
 }
 
@@ -88,6 +109,8 @@ void BSocket::ensureSocket()
 {
 	if(!d->qsock) {
 		d->qsock = new QSocket;
+		d->qsock->setReadBufferSize(READBUFSIZE);
+		connect(d->qsock, SIGNAL(hostFound()), SLOT(qs_hostFound()));
 		connect(d->qsock, SIGNAL(connected()), SLOT(qs_connected()));
 		connect(d->qsock, SIGNAL(connectionClosed()), SLOT(qs_connectionClosed()));
 		connect(d->qsock, SIGNAL(delayedCloseFinished()), SLOT(qs_delayedCloseFinished()));
@@ -102,8 +125,13 @@ void BSocket::connectToHost(const QString &host, Q_UINT16 port)
 	reset(true);
 	d->host = host;
 	d->port = port;
+#ifdef NO_NDNS
+	d->state = Connecting;
+	do_connect();
+#else
 	d->state = HostLookup;
 	d->ndns.resolve(d->host);
+#endif
 }
 
 void BSocket::connectToServer(const QString &srv, const QString &type)
@@ -111,6 +139,14 @@ void BSocket::connectToServer(const QString &srv, const QString &type)
 	reset(true);
 	d->state = HostLookup;
 	d->srv.resolve(srv, type, "tcp");
+}
+
+int BSocket::socket() const
+{
+	if(d->qsock)
+		return d->qsock->socket();
+	else
+		return -1;
 }
 
 void BSocket::setSocket(int s)
@@ -164,6 +200,37 @@ void BSocket::write(const QByteArray &a)
 	d->qsock->writeBlock(a.data(), a.size());
 }
 
+QByteArray BSocket::read(int bytes)
+{
+	QByteArray block;
+	if(d->qsock) {
+		int max = bytesAvailable();
+		if(bytes <= 0 || bytes > max)
+			bytes = max;
+		block.resize(bytes);
+		d->qsock->readBlock(block.data(), block.size());
+	}
+	else
+		block = ByteStream::read(bytes);
+
+#ifdef BS_DEBUG
+	QCString cs;
+	cs.resize(block.size()+1);
+	memcpy(cs.data(), block.data(), block.size());
+	QString s = QString::fromUtf8(cs);
+	fprintf(stderr, "BSocket: read [%d]: {%s}\n", block.size(), s.latin1());
+#endif
+	return block;
+}
+
+int BSocket::bytesAvailable() const
+{
+	if(d->qsock)
+		return d->qsock->bytesAvailable();
+	else
+		return ByteStream::bytesAvailable();
+}
+
 int BSocket::bytesToWrite() const
 {
 	if(!d->qsock)
@@ -171,39 +238,64 @@ int BSocket::bytesToWrite() const
 	return d->qsock->bytesToWrite();
 }
 
+QHostAddress BSocket::address() const
+{
+	if(d->qsock)
+		return d->qsock->address();
+	else
+		return QHostAddress();
+}
+
+Q_UINT16 BSocket::port() const
+{
+	if(d->qsock)
+		return d->qsock->port();
+	else
+		return 0;
+}
+
 QHostAddress BSocket::peerAddress() const
 {
-	return d->peerAddress;
+	if(d->qsock)
+		return d->qsock->peerAddress();
+	else
+		return QHostAddress();
 }
 
 Q_UINT16 BSocket::peerPort() const
 {
-	return d->port;
+	if(d->qsock)
+		return d->qsock->port();
+	else
+		return 0;
 }
 
 void BSocket::srv_done()
 {
-	if(d->srv.result()) {
-		d->host = d->srv.resultString();
-		d->port = d->srv.resultPort();
-		d->peerAddress = QHostAddress(d->srv.result());
-		do_connect();
-	}
-	else {
+	if(d->srv.failed()) {
 #ifdef BS_DEBUG
 		fprintf(stderr, "BSocket: Error resolving hostname.\n");
 #endif
 		error(ErrHostNotFound);
+		return;
 	}
+
+	d->host = d->srv.resultAddress().toString();
+	d->port = d->srv.resultPort();
+	do_connect();
+	//QTimer::singleShot(0, this, SLOT(do_connect()));
+	//hostFound();
 }
 
 void BSocket::ndns_done()
 {
+#ifndef NO_NDNS
 	if(d->ndns.result()) {
 		d->host = d->ndns.resultString();
-		d->peerAddress = QHostAddress(d->ndns.result());
 		d->state = Connecting;
 		do_connect();
+		//QTimer::singleShot(0, this, SLOT(do_connect()));
+		//hostFound();
 	}
 	else {
 #ifdef BS_DEBUG
@@ -211,6 +303,7 @@ void BSocket::ndns_done()
 #endif
 		error(ErrHostNotFound);
 	}
+#endif
 }
 
 void BSocket::do_connect()
@@ -220,6 +313,11 @@ void BSocket::do_connect()
 #endif
 	ensureSocket();
 	d->qsock->connectToHost(d->host, d->port);
+}
+
+void BSocket::qs_hostFound()
+{
+	//SafeDeleteLock s(&d->sd);
 }
 
 void BSocket::qs_connected()
@@ -254,27 +352,6 @@ void BSocket::qs_delayedCloseFinished()
 
 void BSocket::qs_readyRead()
 {
-	// read in the block
-	QByteArray block;
-	int len = d->qsock->bytesAvailable();
-	if(len < 1)
-		len = 1024; // zero bytes available?  we'll assume a bogus value and default to 1024
-	block.resize(len);
-	int actual = d->qsock->readBlock(block.data(), len);
-	if(actual < 1)
-		return;
-	block.resize(actual);
-
-#ifdef BS_DEBUG
-	QCString cs;
-	cs.resize(block.size()+1);
-	memcpy(cs.data(), block.data(), block.size());
-	QString s = QString::fromUtf8(cs);
-	fprintf(stderr, "BSocket: read [%d]: {%s}\n", block.size(), s.latin1());
-#endif
-
-	appendRead(block);
-
 	SafeDeleteLock s(&d->sd);
 	readyRead();
 }
@@ -293,13 +370,14 @@ void BSocket::qs_error(int x)
 #ifdef BS_DEBUG
 	fprintf(stderr, "BSocket: Error.\n");
 #endif
+	SafeDeleteLock s(&d->sd);
+
 	// connection error during SRV host connect?  try next
 	if(d->state == HostLookup && (x == QSocket::ErrConnectionRefused || x == QSocket::ErrHostNotFound)) {
 		d->srv.next();
 		return;
 	}
 
-	SafeDeleteLock s(&d->sd);
 	reset();
 	if(x == QSocket::ErrConnectionRefused)
 		error(ErrConnectionRefused);

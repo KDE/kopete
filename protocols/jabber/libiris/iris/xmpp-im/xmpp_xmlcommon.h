@@ -21,11 +21,9 @@
 #ifndef JABBER_XMLCOMMON_H
 #define JABBER_XMLCOMMON_H
 
-class QString;
-class QDateTime;
-class QDomElement;
-class QDomDocument;
+#include<qdom.h>
 
+class QDateTime;
 class QRect;
 class QSize;
 class QColor;

@@ -38,6 +38,7 @@ public:
 
 	void connectToHost(const QString &host, Q_UINT16 port);
 	void connectToServer(const QString &srv, const QString &type);
+	int socket() const;
 	void setSocket(int);
 	int state() const;
 
@@ -45,15 +46,24 @@ public:
 	bool isOpen() const;
 	void close();
 	void write(const QByteArray &);
+	QByteArray read(int bytes=0);
+	int bytesAvailable() const;
 	int bytesToWrite() const;
 
+	// local
+	QHostAddress address() const;
+	Q_UINT16 port() const;
+
+	// remote
 	QHostAddress peerAddress() const;
 	Q_UINT16 peerPort() const;
 
 signals:
+	void hostFound();
 	void connected();
 
 private slots:
+	void qs_hostFound();
 	void qs_connected();
 	void qs_connectionClosed();
 	void qs_delayedCloseFinished();
@@ -62,13 +72,13 @@ private slots:
 	void qs_error(int);
 	void srv_done();
 	void ndns_done();
+	void do_connect();
 
 private:
 	class Private;
 	Private *d;
 
 	void reset(bool clear=false);
-	void do_connect();
 	void ensureSocket();
 };
 

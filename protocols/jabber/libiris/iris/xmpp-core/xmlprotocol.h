@@ -73,6 +73,22 @@ namespace XMPP
 		QString xmlEncoding() const;
 		QString elementToString(const QDomElement &e, bool clip=false);
 
+		class TransferItem
+		{
+		public:
+			TransferItem();
+			TransferItem(const QString &str, bool sent, bool external=false);
+			TransferItem(const QDomElement &elem, bool sent, bool external=false);
+
+			bool isSent; // else, received
+			bool isString; // else, is element
+			bool isExternal; // not owned by protocol
+			QString str;
+			QDomElement elem;
+		};
+		QValueList<TransferItem> transferItemList;
+		void setIncomingAsExternal();
+
 	protected:
 		virtual QDomElement docElement()=0;
 		virtual void handleDocOpen(const Parser::Event &pe)=0;
@@ -92,8 +108,8 @@ namespace XMPP
 		void startConnect();
 		void startAccept();
 		bool close();
-		int writeString(const QString &s, int id);
-		int writeElement(const QDomElement &e, int id, bool clip=false);
+		int writeString(const QString &s, int id, bool external);
+		int writeElement(const QDomElement &e, int id, bool external, bool clip=false);
 		QByteArray resetStream();
 
 	private:

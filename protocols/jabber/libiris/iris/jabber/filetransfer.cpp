@@ -23,6 +23,7 @@
 #include<qtimer.h>
 #include<qptrlist.h>
 #include<qguardedptr.h>
+#include<qfileinfo.h>
 #include"xmpp_xmlcommon.h"
 #include"s5b.h"
 
@@ -52,14 +53,17 @@ public:
 	JT_FT *ft;
 	Jid peer;
 	QString fname;
-	int size;
-	int sent;
+	Q_LLONG size;
+	Q_LLONG sent;
 	bool rangeSupported;
-	int rangeOffset, rangeLength;
+	Q_LLONG rangeOffset, rangeLength;
 	QString streamType;
 	bool needStream;
 	QString id, iq_id;
 	S5BConnection *c;
+	Jid proxy;
+	int state;
+	bool sender;
 };
 
 FileTransfer::FileTransfer(FileTransferManager *m, QObject *parent)
@@ -74,14 +78,12 @@ FileTransfer::FileTransfer(FileTransferManager *m, QObject *parent)
 
 FileTransfer::~FileTransfer()
 {
-	printf("~FileTransfer: %p\n", this);
 	reset();
 	delete d;
 }
 
 void FileTransfer::reset()
 {
-	printf("FileTransfer: reset(), %p\n", this);
 	d->m->unlink(this);
 
 	delete d->ft;
@@ -90,15 +92,24 @@ void FileTransfer::reset()
 	delete d->c;
 	d->c = 0;
 
+	d->state = Idle;
 	d->needStream = false;
 	d->sent = 0;
+	d->sender = false;
 }
 
-void FileTransfer::sendFile(const Jid &to, const QString &fname, int size)
+void FileTransfer::setProxy(const Jid &proxy)
 {
+	d->proxy = proxy;
+}
+
+void FileTransfer::sendFile(const Jid &to, const QString &fname, Q_LLONG size)
+{
+	d->state = Requesting;
 	d->peer = to;
 	d->fname = fname;
 	d->size = size;
+	d->sender = true;
 	d->id = d->m->link(this);
 
 	d->ft = new JT_FT(d->m->client()->rootTask());
@@ -106,35 +117,35 @@ void FileTransfer::sendFile(const Jid &to, const QString &fname, int size)
 	QStringList list;
 	list += "http://jabber.org/protocol/bytestreams";
 	d->ft->request(to, d->id, fname, size, list);
-	printf("iq-set begin\n");
 	d->ft->go(true);
 }
 
 int FileTransfer::dataSizeNeeded() const
 {
 	int pending = d->c->bytesToWrite();
-	int left = d->size - (d->sent + pending);
+	if(pending >= SENDBUFSIZE)
+		return 0;
+	Q_LLONG left = d->size - (d->sent + pending);
 	int size = SENDBUFSIZE - pending;
-	if(size > left)
-		size = left;
+	if((Q_LLONG)size > left)
+		size = (int)left;
 	return size;
 }
 
 void FileTransfer::writeFileData(const QByteArray &a)
 {
 	int pending = d->c->bytesToWrite();
-	int left = d->size - (d->sent + pending);
-	if(left <= 0)
+	Q_LLONG left = d->size - (d->sent + pending);
+	if(left == 0)
 		return;
 
 	QByteArray block;
-	if((int)a.size() > left) {
-		QByteArray b = a.copy();
-		block = ByteStream::takeArray(&b, left);
+	if((Q_LLONG)a.size() > left) {
+		block = a.copy();
+		block.resize((uint)left);
 	}
 	else
 		block = a;
-	printf("writing %d bytes\n", block.size());
 	d->c->write(block);
 }
 
@@ -148,7 +159,7 @@ QString FileTransfer::fileName() const
 	return d->fname;
 }
 
-uint FileTransfer::fileSize() const
+Q_LLONG FileTransfer::fileSize() const
 {
 	return d->size;
 }
@@ -158,39 +169,51 @@ bool FileTransfer::rangeSupported() const
 	return d->rangeSupported;
 }
 
-void FileTransfer::accept(int offset, int length)
+void FileTransfer::accept(Q_LLONG offset, Q_LLONG length)
 {
+	d->state = Connecting;
 	d->rangeOffset = offset;
 	d->rangeLength = length;
 	d->streamType = "http://jabber.org/protocol/bytestreams";
 	d->m->con_accept(this);
 }
 
-void FileTransfer::reject()
+void FileTransfer::close()
 {
-	// TODO
+	if(d->state == Idle)
+		return;
+	if(d->state == WaitingForAccept)
+		d->m->con_reject(this);
+	else if(d->state == Active)
+		d->c->close();
+	reset();
+}
+
+S5BConnection *FileTransfer::s5bConnection() const
+{
+	return d->c;
 }
 
 void FileTransfer::ft_finished()
 {
-	printf("iq-set finished\n");
 	JT_FT *ft = d->ft;
 	d->ft = 0;
 
 	if(ft->success()) {
-		QGuardedPtr<QObject> self = this;
-		accepted();
-		if(!self)
-			return;
-
+		d->state = Connecting;
 		d->rangeOffset = ft->rangeOffset();
 		d->rangeLength = ft->rangeLength();
 		d->streamType = ft->streamType();
 		d->c = d->m->client()->s5bManager()->createConnection();
 		connect(d->c, SIGNAL(connected()), SLOT(s5b_connected()));
+		connect(d->c, SIGNAL(connectionClosed()), SLOT(s5b_connectionClosed()));
 		connect(d->c, SIGNAL(bytesWritten(int)), SLOT(s5b_bytesWritten(int)));
 		connect(d->c, SIGNAL(error(int)), SLOT(s5b_error(int)));
+
+		if(d->proxy.isValid())
+			d->c->setProxy(d->proxy);
 		d->c->connectToJid(d->peer, d->id);
+		accepted();
 	}
 	else {
 		reset();
@@ -205,42 +228,45 @@ void FileTransfer::takeConnection(S5BConnection *c)
 {
 	d->c = c;
 	connect(d->c, SIGNAL(connected()), SLOT(s5b_connected()));
+	connect(d->c, SIGNAL(connectionClosed()), SLOT(s5b_connectionClosed()));
 	connect(d->c, SIGNAL(readyRead()), SLOT(s5b_readyRead()));
 	connect(d->c, SIGNAL(error(int)), SLOT(s5b_error(int)));
+	if(d->proxy.isValid())
+		d->c->setProxy(d->proxy);
 	d->c->accept();
+	accepted();
 }
 
 void FileTransfer::s5b_connected()
 {
-	QGuardedPtr<QObject> self = this;
+	d->state = Active;
 	connected();
-	if(!self)
-		return;
+}
+
+void FileTransfer::s5b_connectionClosed()
+{
+	reset();
+	error(ErrStream);
 }
 
 void FileTransfer::s5b_readyRead()
 {
 	QByteArray a = d->c->read();
+	Q_LLONG need = d->size - d->sent;
+	if((Q_LLONG)a.size() > need)
+		a.resize((uint)need);
 	d->sent += a.size();
-	if(d->sent == d->size) {
-		printf("about to reset\n");
+	if(d->sent == d->size)
 		reset();
-		printf("done resetting\n");
-	}
 	readyRead(a);
 }
 
 void FileTransfer::s5b_bytesWritten(int x)
 {
 	d->sent += x;
-	if(d->sent == d->size) {
-		printf("about to reset\n");
+	if(d->sent == d->size)
 		reset();
-		printf("done resetting\n");
-	}
-	printf("byteswritten\n");
 	bytesWritten(x);
-	printf("done bytes written\n");
 }
 
 void FileTransfer::s5b_error(int x)
@@ -254,14 +280,13 @@ void FileTransfer::s5b_error(int x)
 
 void FileTransfer::man_waitForAccept(const FTRequest &req)
 {
+	d->state = WaitingForAccept;
 	d->peer = req.from;
 	d->id = req.id;
 	d->iq_id = req.iq_id;
 	d->fname = req.fname;
 	d->size = req.size;
 	d->rangeSupported = req.rangeSupported;
-
-	// TODO: do something with req.streamTypes
 }
 
 //----------------------------------------------------------------------------
@@ -319,9 +344,21 @@ FileTransfer *FileTransferManager::takeIncoming()
 
 void FileTransferManager::pft_incoming(const FTRequest &req)
 {
-	printf("incoming file request from [%s] (%s)\n", req.from.full().latin1(), req.id.latin1());
-
-	// TODO: ensure we aren't using this sid
+	bool found = false;
+	for(QStringList::ConstIterator it = req.streamTypes.begin(); it != req.streamTypes.end(); ++it) {
+		if((*it) == "http://jabber.org/protocol/bytestreams") {
+			found = true;
+			break;
+		}
+	}
+	if(!found) {
+		d->pft->respondError(req.from, req.iq_id, 400, "No valid stream types");
+		return;
+	}
+	if(!d->client->s5bManager()->isAcceptableSID(req.from, req.id)) {
+		d->pft->respondError(req.from, req.iq_id, 400, "SID in use");
+		return;
+	}
 
 	FileTransfer *ft = new FileTransfer(this);
 	ft->man_waitForAccept(req);
@@ -341,7 +378,7 @@ void FileTransferManager::s5b_incomingReady(S5BConnection *c)
 	}
 	if(!ft) {
 		c->close();
-		c->deleteLater();
+		delete c;
 		return;
 	}
 	ft->takeConnection(c);
@@ -359,6 +396,11 @@ void FileTransferManager::con_accept(FileTransfer *ft)
 	d->pft->respondSuccess(ft->d->peer, ft->d->iq_id, ft->d->rangeOffset, ft->d->rangeLength, ft->d->streamType);
 }
 
+void FileTransferManager::con_reject(FileTransfer *ft)
+{
+	d->pft->respondError(ft->d->peer, ft->d->iq_id, 403, "Declined");
+}
+
 void FileTransferManager::unlink(FileTransfer *ft)
 {
 	d->list.removeRef(ft);
@@ -372,7 +414,7 @@ class JT_FT::Private
 public:
 	QDomElement iq;
 	Jid to;
-	int rangeOffset, rangeLength;
+	Q_LLONG rangeOffset, rangeLength;
 	QString streamType;
 	QStringList streamTypes;
 };
@@ -388,7 +430,7 @@ JT_FT::~JT_FT()
 	delete d;
 }
 
-void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, int size, const QStringList &streamTypes)
+void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, Q_LLONG size, const QStringList &streamTypes)
 {
 	QDomElement iq;
 	d->to = to;
@@ -401,7 +443,7 @@ void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, int
 	QDomElement file = doc()->createElement("file");
 	file.setAttribute("xmlns", "http://jabber.org/protocol/si/profile/file-transfer");
 	file.setAttribute("name", fname);
-	file.setAttribute("size", size);
+	file.setAttribute("size", QString::number(size));
 	QDomElement range = doc()->createElement("range");
 	file.appendChild(range);
 	si.appendChild(file);
@@ -433,12 +475,12 @@ void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, int
 	d->iq = iq;
 }
 
-int JT_FT::rangeOffset() const
+Q_LLONG JT_FT::rangeOffset() const
 {
 	return d->rangeOffset;
 }
 
-int JT_FT::rangeLength() const
+Q_LLONG JT_FT::rangeLength() const
 {
 	return d->rangeLength;
 }
@@ -465,19 +507,20 @@ bool JT_FT::take(const QDomElement &x)
 
 		QString id = si.attribute("id");
 
-		int range_offset = 0;
-		int range_length = -1;
+		Q_LLONG range_offset = 0;
+		Q_LLONG range_length = 0;
 		QDomElement file = si.elementsByTagName("file").item(0).toElement();
 		if(!file.isNull()) {
 			QDomElement range = file.elementsByTagName("range").item(0).toElement();
 			if(!range.isNull()) {
 				int x;
-				x = range.attribute("offset").toInt();
-				if(x < 0)
+				bool ok;
+				x = range.attribute("offset").toLongLong(&ok);
+				if(!ok || x < 0)
 					return true;
 				range_offset = x;
-				x = range.attribute("length").toInt();
-				if(x < 0)
+				x = range.attribute("length").toLongLong(&ok);
+				if(!ok || x < 0)
 					return true;
 				range_length = x;
 			}
@@ -532,19 +575,19 @@ JT_PushFT::~JT_PushFT()
 {
 }
 
-void JT_PushFT::respondSuccess(const Jid &to, const QString &id, int rangeOffset, int rangeLength, const QString &streamType)
+void JT_PushFT::respondSuccess(const Jid &to, const QString &id, Q_LLONG rangeOffset, Q_LLONG rangeLength, const QString &streamType)
 {
 	QDomElement iq = createIQ(doc(), "result", to.full(), id);
 	QDomElement si = doc()->createElement("si");
 	si.setAttribute("xmlns", "http://jabber.org/protocol/si");
 
-	if(rangeOffset != 0 || rangeLength != -1) {
+	if(rangeOffset != 0 || rangeLength != 0) {
 		QDomElement file = doc()->createElement("file");
 		file.setAttribute("xmlns", "http://jabber.org/protocol/si/profile/file-transfer");
 		QDomElement range = doc()->createElement("range");
-		if(rangeOffset != 0)
+		if(rangeOffset > 0)
 			range.setAttribute("offset", QString::number(rangeOffset));
-		if(rangeLength != -1)
+		if(rangeLength > 0)
 			range.setAttribute("length", QString::number(rangeLength));
 		file.appendChild(range);
 		si.appendChild(file);
@@ -601,9 +644,23 @@ bool JT_PushFT::take(const QDomElement &e)
 		return true;
 
 	QString fname = file.attribute("name");
-	int size = file.attribute("size").toInt();
-	if(size < 1)
+	if(fname.isEmpty()) {
+		respondError(from, id, 400, "Bad file name");
 		return true;
+	}
+
+	// ensure kosher
+	{
+		QFileInfo fi(fname);
+		fname = fi.fileName();
+	}
+
+	bool ok;
+	Q_LLONG size = file.attribute("size").toLongLong(&ok);
+	if(!ok || size < 1) {
+		respondError(from, id, 400, "Bad file size");
+		return true;
+	}
 
 	bool rangeSupported = false;
 	QDomElement range = file.elementsByTagName("range").item(0).toElement();
@@ -627,9 +684,6 @@ bool JT_PushFT::take(const QDomElement &e)
 			}
 		}
 	}
-
-	if(streamTypes.isEmpty())
-		return true;
 
 	FTRequest r;
 	r.from = from;

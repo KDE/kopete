@@ -144,6 +144,26 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 //----------------------------------------------------------------------------
 // Protocol
 //----------------------------------------------------------------------------
+XmlProtocol::TransferItem::TransferItem()
+{
+}
+
+XmlProtocol::TransferItem::TransferItem(const QString &_str, bool sent, bool external)
+{
+	isString = true;
+	isSent = sent;
+	isExternal = external;
+	str = _str;
+}
+
+XmlProtocol::TransferItem::TransferItem(const QDomElement &_elem, bool sent, bool external)
+{
+	isString = false;
+	isSent = sent;
+	isExternal = external;
+	elem = _elem;
+}
+
 XmlProtocol::XmlProtocol()
 {
 	init();
@@ -170,6 +190,7 @@ void XmlProtocol::reset()
 	xml.reset();
 	outData.resize(0);
 	trackQueue.clear();
+	transferItemList.clear();
 }
 
 void XmlProtocol::addIncomingData(const QByteArray &a)
@@ -216,6 +237,7 @@ bool XmlProtocol::processStep()
 {
 	Parser::Event pe;
 	notify = 0;
+	transferItemList.clear();
 
 	if(state != Closing && (state == RecvOpen || stepAdvancesParser())) {
 		// if we get here, then it's because we're in some step that advances the parser
@@ -224,11 +246,15 @@ bool XmlProtocol::processStep()
 			// note: error/close events should be handled for ALL steps, so do them here
 			switch(pe.type()) {
 				case Parser::Event::DocumentOpen: {
-					stringRecv(pe.actualString());
+					transferItemList += TransferItem(pe.actualString(), false);
+
+					//stringRecv(pe.actualString());
 					break;
 				}
 				case Parser::Event::DocumentClose: {
-					stringRecv(pe.actualString());
+					transferItemList += TransferItem(pe.actualString(), false);
+
+					//stringRecv(pe.actualString());
 					if(incoming) {
 						sendTagClose();
 						event = ESend;
@@ -241,7 +267,9 @@ bool XmlProtocol::processStep()
 					return true;
 				}
 				case Parser::Event::Element: {
-					elementRecv(pe.element());
+					transferItemList += TransferItem(pe.element(), false);
+
+					//elementRecv(pe.element());
 					break;
 				}
 				case Parser::Event::Error: {
@@ -281,6 +309,9 @@ QString XmlProtocol::xmlEncoding() const
 
 QString XmlProtocol::elementToString(const QDomElement &e, bool clip)
 {
+	if(elem.isNull())
+		elem = elemDoc.importNode(docElement(), true).toElement();
+
 	// Determine the appropriate 'fakeNS' to use
 	QString ns;
 
@@ -375,19 +406,21 @@ bool XmlProtocol::close()
 	return true;
 }
 
-int XmlProtocol::writeString(const QString &s, int id)
+int XmlProtocol::writeString(const QString &s, int id, bool external)
 {
-	stringSend(s);
+	transferItemList += TransferItem(s, true, external);
 	return internalWriteString(s, TrackItem::Custom, id);
 }
 
-int XmlProtocol::writeElement(const QDomElement &e, int id, bool clip)
+int XmlProtocol::writeElement(const QDomElement &e, int id, bool external, bool clip)
 {
 	if(e.isNull())
 		return 0;
-	elementSend(e);
+	transferItemList += TransferItem(e, true, external);
+
+	//elementSend(e);
 	QString out = elementToString(e, clip);
-	return writeString(out, id);
+	return internalWriteString(out, TrackItem::Custom, id);
 }
 
 QByteArray XmlProtocol::resetStream()
@@ -426,7 +459,8 @@ int XmlProtocol::internalWriteString(const QString &s, TrackItem::Type t, int id
 
 void XmlProtocol::sendTagOpen()
 {
-	elem = elemDoc.importNode(docElement(), true).toElement();
+	if(elem.isNull())
+		elem = elemDoc.importNode(docElement(), true).toElement();
 
 	QString xmlHeader;
 	createRootXmlTags(elem, &xmlHeader, &tagOpen, &tagClose);
@@ -435,14 +469,19 @@ void XmlProtocol::sendTagOpen()
 	s += xmlHeader + '\n';
 	s += tagOpen + '\n';
 
-	stringSend(xmlHeader);
-	stringSend(tagOpen);
+	transferItemList += TransferItem(xmlHeader, true);
+	transferItemList += TransferItem(tagOpen, true);
+
+	//stringSend(xmlHeader);
+	//stringSend(tagOpen);
 	internalWriteString(s, TrackItem::Raw);
 }
 
 void XmlProtocol::sendTagClose()
 {
-	stringSend(tagClose);
+	transferItemList += TransferItem(tagClose, true);
+
+	//stringSend(tagClose);
 	internalWriteString(tagClose, TrackItem::Close);
 }
 
@@ -491,3 +530,14 @@ bool XmlProtocol::baseStep(const Parser::Event &pe)
 		return false;
 	}
 }
+
+void XmlProtocol::setIncomingAsExternal()
+{
+	for(QValueList<TransferItem>::Iterator it = transferItemList.begin(); it != transferItemList.end(); ++it) {
+		TransferItem &i = *it;
+		// look for elements received
+		if(!i.isString && !i.isSent)
+			i.isExternal = true;
+	}
+}
+

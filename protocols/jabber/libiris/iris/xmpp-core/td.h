@@ -1,8 +1,7 @@
 #ifndef TESTDEBUG_H
 #define TESTDEBUG_H
 
-class QString;
-class QDomElement;
+#include<qdom.h>
 
 class TD
 {

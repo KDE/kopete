@@ -1245,7 +1245,28 @@ void ClientStream::processNext()
 #ifdef XMPP_DEBUG
 		printf("Processing step...\n");
 #endif
-		if(!d->client.processStep()) {
+		bool ok = d->client.processStep();
+		// deal with send/received items
+		for(QValueList<XmlProtocol::TransferItem>::ConstIterator it = d->client.transferItemList.begin(); it != d->client.transferItemList.end(); ++it) {
+			const XmlProtocol::TransferItem &i = *it;
+			if(i.isExternal)
+				continue;
+			QString str;
+			if(i.isString) {
+				// skip whitespace pings
+				if(i.str.stripWhiteSpace().isEmpty())
+					continue;
+				str = i.str;
+			}
+			else
+				str = d->client.elementToString(i.elem);
+			if(i.isSent)
+				outgoingXml(str);
+			else
+				incomingXml(str);
+		}
+
+		if(!ok) {
 			bool cont = handleNeed();
 
 			// now we can announce stanzas

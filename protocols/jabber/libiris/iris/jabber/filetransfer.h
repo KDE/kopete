@@ -33,23 +33,29 @@ namespace XMPP
 		Q_OBJECT
 	public:
 		enum { ErrReject, ErrNeg, ErrConnect, ErrStream };
+		enum { Idle, Requesting, Connecting, WaitingForAccept, Active };
 		~FileTransfer();
 
+		void setProxy(const Jid &proxy);
+
 		// send
-		void sendFile(const Jid &to, const QString &fname, int size);
+		void sendFile(const Jid &to, const QString &fname, Q_LLONG size);
 		int dataSizeNeeded() const;
 		void writeFileData(const QByteArray &a);
 
 		// receive
 		Jid peer() const;
 		QString fileName() const;
-		uint fileSize() const;
+		Q_LLONG fileSize() const;
 		bool rangeSupported() const;
-		void accept(int offset=0, int length=-1);
-		void reject();
+		void accept(Q_LLONG offset=0, Q_LLONG length=0);
+
+		// both
+		void close(); // reject, or stop sending/receiving
+		S5BConnection *s5bConnection() const; // active link
 
 	signals:
-		void accepted();
+		void accepted(); // indicates S5BConnection has started
 		void connected();
 		void readyRead(const QByteArray &a);
 		void bytesWritten(int);
@@ -58,6 +64,7 @@ namespace XMPP
 	private slots:
 		void ft_finished();
 		void s5b_connected();
+		void s5b_connectionClosed();
 		void s5b_readyRead();
 		void s5b_bytesWritten(int);
 		void s5b_error(int);
@@ -101,6 +108,7 @@ namespace XMPP
 		friend class FileTransfer;
 		QString link(FileTransfer *);
 		void con_accept(FileTransfer *);
+		void con_reject(FileTransfer *);
 		void unlink(FileTransfer *);
 	};
 
@@ -111,9 +119,9 @@ namespace XMPP
 		JT_FT(Task *parent);
 		~JT_FT();
 
-		void request(const Jid &to, const QString &id, const QString &fname, int size, const QStringList &streamTypes);
-		int rangeOffset() const;
-		int rangeLength() const;
+		void request(const Jid &to, const QString &id, const QString &fname, Q_LLONG size, const QStringList &streamTypes);
+		Q_LLONG rangeOffset() const;
+		Q_LLONG rangeLength() const;
 		QString streamType() const;
 
 		void onGo();
@@ -129,7 +137,7 @@ namespace XMPP
 		Jid from;
 		QString iq_id, id;
 		QString fname;
-		int size;
+		Q_LLONG size;
 		bool rangeSupported;
 		QStringList streamTypes;
 	};
@@ -140,7 +148,7 @@ namespace XMPP
 		JT_PushFT(Task *parent);
 		~JT_PushFT();
 
-		void respondSuccess(const Jid &to, const QString &id, int rangeOffset, int rangeLength, const QString &streamType);
+		void respondSuccess(const Jid &to, const QString &id, Q_LLONG rangeOffset, Q_LLONG rangeLength, const QString &streamType);
 		void respondError(const Jid &to, const QString &id, int code, const QString &str);
 
 		bool take(const QDomElement &);

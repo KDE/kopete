@@ -24,7 +24,10 @@
 #include<qtimer.h>
 #include<qdns.h>
 #include"safedelete.h"
+
+#ifndef NO_NDNS
 #include"ndns.h"
+#endif
 
 // CS_NAMESPACE_BEGIN
 
@@ -58,15 +61,18 @@ public:
 	Private() {}
 
 	QDns *qdns;
+#ifndef NO_NDNS
 	NDns ndns;
+#endif
 
-	uint result;
-	QString resultString;
+	bool failed;
+	QHostAddress resultAddress;
 	Q_UINT16 resultPort;
 
 	bool srvonly;
 	QString srv;
 	QValueList<QDns::Server> servers;
+	bool aaaa;
 
 	QTimer t;
 	SafeDelete sd;
@@ -78,7 +84,9 @@ SrvResolver::SrvResolver(QObject *parent)
 	d = new Private;
 	d->qdns = 0;
 
+#ifndef NO_NDNS
 	connect(&d->ndns, SIGNAL(resultsReady()), SLOT(ndns_done()));
+#endif
 	connect(&d->t, SIGNAL(timeout()), SLOT(t_timeout()));
 	stop();
 }
@@ -93,6 +101,7 @@ void SrvResolver::resolve(const QString &server, const QString &type, const QStr
 {
 	stop();
 
+	d->failed = false;
 	d->srvonly = false;
 	d->srv = QString("_") + type + "._" + proto + '.' + server;
 	d->t.start(15000, true);
@@ -106,6 +115,7 @@ void SrvResolver::resolveSrvOnly(const QString &server, const QString &type, con
 {
 	stop();
 
+	d->failed = false;
 	d->srvonly = true;
 	d->srv = QString("_") + type + "._" + proto + '.' + server;
 	d->t.start(15000, true);
@@ -132,18 +142,24 @@ void SrvResolver::stop()
 		d->sd.deleteLater(d->qdns);
 		d->qdns = 0;
 	}
+#ifndef NO_NDNS
 	if(d->ndns.isBusy())
 		d->ndns.stop();
-	d->result = 0;
-	d->resultString = "";
+#endif
+	d->resultAddress = QHostAddress();
 	d->resultPort = 0;
 	d->servers.clear();
 	d->srv = "";
+	d->failed = true;
 }
 
 bool SrvResolver::isBusy() const
 {
+#ifndef NO_NDNS
 	if(d->qdns || d->ndns.isBusy())
+#else
+	if(d->qdns)
+#endif
 		return true;
 	else
 		return false;
@@ -154,14 +170,14 @@ QValueList<QDns::Server> SrvResolver::servers() const
 	return d->servers;
 }
 
-uint SrvResolver::result() const
+bool SrvResolver::failed() const
 {
-	return d->result;
+	return d->failed;
 }
 
-QString SrvResolver::resultString() const
+QHostAddress SrvResolver::resultAddress() const
 {
-	return d->resultString;
+	return d->resultAddress;
 }
 
 Q_UINT16 SrvResolver::resultPort() const
@@ -171,7 +187,17 @@ Q_UINT16 SrvResolver::resultPort() const
 
 void SrvResolver::tryNext()
 {
+#ifndef NO_NDNS
 	d->ndns.resolve(d->servers.first().name);
+#else
+	d->qdns = new QDns;
+	connect(d->qdns, SIGNAL(resultsReady()), SLOT(ndns_done()));
+	if(d->aaaa)
+		d->qdns->setRecordType(QDns::Aaaa); // IPv6
+	else
+		d->qdns->setRecordType(QDns::A); // IPv4
+	d->qdns->setLabel(d->servers.first().name);
+#endif
 }
 
 void SrvResolver::qdns_done()
@@ -206,12 +232,14 @@ void SrvResolver::qdns_done()
 		resultsReady();
 	else {
 		// kick it off
+		d->aaaa = true;
 		tryNext();
 	}
 }
 
 void SrvResolver::ndns_done()
 {
+#ifndef NO_NDNS
 	SafeDeleteLock s(&d->sd);
 
 	uint r = d->ndns.result();
@@ -219,8 +247,7 @@ void SrvResolver::ndns_done()
 	d->servers.remove(d->servers.begin());
 
 	if(r) {
-		d->result = r;
-		d->resultString = d->ndns.resultString();
+		d->resultAddress = QHostAddress(d->ndns.result());
 		d->resultPort = port;
 		resultsReady();
 	}
@@ -235,6 +262,49 @@ void SrvResolver::ndns_done()
 		// otherwise try the next
 		tryNext();
 	}
+#else
+	if(!d->qdns)
+		return;
+
+	// apparently we sometimes get this signal even though the results aren't ready
+	if(d->qdns->isWorking())
+		return;
+
+	SafeDeleteLock s(&d->sd);
+
+	// grab the address list and destroy the qdns object
+	QValueList<QHostAddress> list;
+	if(d->qdns->recordType() == QDns::A || d->qdns->recordType() == QDns::Aaaa)
+		list = d->qdns->addresses();
+	d->qdns->disconnect(this);
+	d->sd.deleteLater(d->qdns);
+	d->qdns = 0;
+
+	if(!list.isEmpty()) {
+		int port = d->servers.first().port;
+		d->servers.remove(d->servers.begin());
+		d->aaaa = true;
+
+		d->resultAddress = list.first();
+		d->resultPort = port;
+		resultsReady();
+	}
+	else {
+		if(!d->aaaa)
+			d->servers.remove(d->servers.begin());
+		d->aaaa = !d->aaaa;
+
+		// failed?  bail if last one
+		if(d->servers.isEmpty()) {
+			stop();
+			resultsReady();
+			return;
+		}
+
+		// otherwise try the next
+		tryNext();
+	}
+#endif
 }
 
 void SrvResolver::t_timeout()

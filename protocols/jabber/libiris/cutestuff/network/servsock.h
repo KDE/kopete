@@ -36,6 +36,7 @@ public:
 	bool listen(Q_UINT16 port);
 	void stop();
 	int port() const;
+	QHostAddress address() const;
 
 signals:
 	void connectionReady(int);

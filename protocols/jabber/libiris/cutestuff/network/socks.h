@@ -25,6 +25,7 @@
 
 // CS_NAMESPACE_BEGIN
 
+class QHostAddress;
 class SocksServer;
 
 class SocksClient : public ByteStream
@@ -55,6 +56,9 @@ public:
 	QByteArray read(int bytes=0);
 	int bytesAvailable() const;
 	int bytesToWrite() const;
+
+	QHostAddress peerAddress() const;
+	Q_UINT16 peerPort() const;
 
 signals:
 	// outgoing
@@ -98,6 +102,7 @@ public:
 	bool listen(Q_UINT16 port);
 	void stop();
 	int port() const;
+	QHostAddress address() const;
 	SocksClient *takeIncoming();
 
 signals:

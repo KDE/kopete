@@ -80,6 +80,14 @@ int ServSock::port() const
 		return -1;
 }
 
+QHostAddress ServSock::address() const
+{
+	if(d->serv)
+		return d->serv->address();
+	else
+		return QHostAddress();
+}
+
 void ServSock::sss_connectionReady(int s)
 {
 	connectionReady(s);
