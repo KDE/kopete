@@ -81,6 +81,9 @@ IRCChannelContact::~IRCChannelContact()
 
 KopeteMessageManager* IRCChannelContact::manager(bool)
 {
+	if( !mEngine->isLoggedIn() )
+		mAccount->connect();
+
 	if ( !mMsgManager && mEngine->isLoggedIn() )
 	{
 		mMsgManager = KopeteMessageManagerFactory::factory()->create( mAccount->myself(), mMyself, (KopeteProtocol *)mAccount->protocol());
@@ -359,19 +362,19 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
-	bool isOperator = ( manager()->contactOnlineStatus( mAccount->mySelf() ) == IRCProtocol::IRCUserOp() );
 	bool amOnline = onlineStatus().status() == KopeteOnlineStatus::Online || onlineStatus().status() == KopeteOnlineStatus::Away;
+	bool isOperator = isConnected && ( manager()->contactOnlineStatus( mAccount->mySelf() ) == IRCProtocol::IRCUserOp() );
 
-	actionJoin->setEnabled( !isConnected && amOnline );
-	actionPart->setEnabled( !actionJoin->isEnabled() );
+	actionJoin->setEnabled( !isConnected );
+	actionPart->setEnabled( isConnected );
 
-	actionTopic->setEnabled( amOnline && ( !modeEnabled('t') || isOperator ) );
+	actionTopic->setEnabled( isConnected && ( !modeEnabled('t') || isOperator ) );
 
-	actionModeT->setEnabled(amOnline && isOperator);
-	actionModeN->setEnabled(amOnline && isOperator);
-	actionModeS->setEnabled(amOnline && isOperator);
-	actionModeM->setEnabled(amOnline && isOperator);
-	actionModeI->setEnabled(amOnline && isOperator);
+	actionModeT->setEnabled(isOperator);
+	actionModeN->setEnabled(isOperator);
+	actionModeS->setEnabled(isOperator);
+	actionModeM->setEnabled(isOperator);
+	actionModeI->setEnabled(isOperator);
 
 	return mCustomActions;
 }

@@ -168,7 +168,7 @@ void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 		kdDebug(14120) << k_funcinfo << messageText << endl;
 
 		//Add right click for channels, only replace text not in HTML tags
-		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#\\w+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteIRCChannel\" style=\"cursor:pointer;\">\\1</span>") );
+		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#\\w+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
 
 		msg.setBody( messageText, KopeteMessage::RichText );
 	}
@@ -186,7 +186,7 @@ KActionCollection *IRCProtocol::customChatWindowPopupActions( const KopeteMessag
 		activeNode = n;
 		activeAccount = static_cast<IRCAccount*>( m.from()->account() );
 		mActions = new KActionCollection(this);
-		if( e.className() == QString::fromLatin1("KopeteIRCChannel") )
+		if( e.getAttribute( QString::fromLatin1("type") ) == QString::fromLatin1("IRCChannel") )
 			return activeAccount->findChannel( e.innerText().string() )->customContextMenuActions();
 	}
 

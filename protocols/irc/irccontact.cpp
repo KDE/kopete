@@ -254,9 +254,6 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 			mEngine->removeFromNotifyList( oldnickname );
 			mEngine->addToNotifyList( newnickname );
 		}
-
-		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 now known as %2").arg(oldName).arg(newnickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager()->appendMessage(msg);
 	}
 }
 
