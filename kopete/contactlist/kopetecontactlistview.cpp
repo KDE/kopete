@@ -791,8 +791,8 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 		if( c )
 		{
 			KPopupMenu *p = c->popupMenu();
-			p->exec( point );
-			delete p;
+			connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
+			p->popup( point );
 		}
 		else
 		{
@@ -838,7 +838,7 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
 				}
 
-				popup->exec(point);
+				popup->popup(point);
 			} // END if(popup)
 		}
 	}
@@ -856,14 +856,14 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 			else
 				popup->changeTitle ( 0, title );
 
-			popup->exec(point);
+			popup->popup(point);
 		}
 	}
 	else if( nb >= 1 )
 	{
 		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contactlistitems_popup",window));
 		if(popup)
-			popup->exec(point);
+			popup->popup(point);
 	}
 	else
 	{
@@ -873,7 +873,7 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 			if( popup->title(0).isNull() )
 				popup->insertTitle( i18n("Kopete") , 0, 0 );
 
-			popup->exec( point );
+			popup->popup( point );
 		}
 	}
 }

@@ -372,9 +372,8 @@ void KopeteWindow::slotConfToolbar()
 	saveMainWindowSettings(KGlobal::config(), "General Options");
 	KEditToolbar *dlg = new KEditToolbar(actionCollection(), "kopeteui.rc");
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
-
-	dlg->exec();
-	delete dlg;
+	connect( dlg, SIGNAL(finished()) , dlg, SLOT(deleteLater()));
+	dlg->show();
 }
 
 void KopeteWindow::slotUpdateToolbar()
@@ -565,7 +564,12 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
 	const QPoint &p )
 {
-	account->actionMenu()->popupMenu()->exec( p );
+	KActionMenu *actionMenu=account->actionMenu();
+	if(!actionMenu)
+		return;
+	connect(actionMenu->popupMenu(), SIGNAL(aboutToHide) , actionMenu , SLOT(deleteLater()) );
+	actionMenu->popupMenu()->popup( p );
+
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
@@ -598,8 +602,8 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 
 	if( menu )
 	{
-		menu->popupMenu()->exec( p );
-		delete menu;
+		connect( menu->popupMenu() , SIGNAL(aboutToHide) , menu , SLOT(deleteLater()) );
+		menu->popupMenu()->popup( p );
 	}
 }
 

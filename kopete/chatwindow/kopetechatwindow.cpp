@@ -443,10 +443,10 @@ void KopeteChatWindow::initActions(void)
 
 	selectStyle = new KSelectAction( i18n("Chat Style"), 0, coll, "options_styles" );
 	connect( selectStyle, SIGNAL(activated(int)), this, SLOT(slotChangeStyle(int)) );
-	
+
 	QStringList mChatStyles = KGlobal::dirs()->findAllResources(
 		"appdata",QString::fromLatin1("styles/*.xsl") );
-	
+
 	for( uint i = 0; i < mChatStyles.size(); i++ )
 	{
 		QString fileName = mChatStyles[i];
@@ -454,9 +454,9 @@ void KopeteChatWindow::initActions(void)
 		styleMap.insert(i, fileContents( fileName ) );
 		mChatStyles[i] = fi.fileName().section('.',0,0);;
 	}
-	
+
 	selectStyle->setItems( mChatStyles );
-	
+
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
 	anim->setMargin(5);
@@ -882,7 +882,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 		m_tabBar->showPage( m_activeView );
 	}
-	
+
 	for( StyleMap::Iterator it = styleMap.begin(); it != styleMap.end(); ++it )
 	{
 		if( it.data() == m_activeView->xslStyleString() )
@@ -890,7 +890,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 			selectStyle->setCurrentItem(it.key());
 		}
 	}
-	
+
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->status() );
 	m_activeView->setFocus();

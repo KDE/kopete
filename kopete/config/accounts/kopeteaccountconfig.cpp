@@ -200,6 +200,7 @@ void KopeteAccountConfig::slotEditAccount()
 	}
 	editDialog->deleteLater();
 	load();
+	KopeteAccountManager::manager()->save();
 }
 
 void KopeteAccountConfig::slotRemoveAccount()
@@ -224,6 +225,7 @@ void KopeteAccountConfig::slotRemoveAccount()
 void KopeteAccountConfig::slotAddWizardDone()
 {
 	load();
+	KopeteAccountManager::manager()->save();
 }
 
 #include "kopeteaccountconfig.moc"
