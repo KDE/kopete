@@ -45,6 +45,9 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
 
+	private slots:
+		void slotFetchInfo();
+
 	protected:
 		/** Our account we're editing */
 		KopeteAccount *mAccount;

@@ -30,24 +30,25 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mTop = new KJanusWidget(this, "ICQEditAccountWidget::mTop", KJanusWidget::IconList);
-	QFrame *acc = mTop->addPage(i18n("Account"), i18n("ICQ Account Settings used for connecting to the ICQ Server"));
-	QFrame *det = mTop->addPage(i18n("Contact Details"), i18n("ICQ Contact Details shown to other users"));
-
-	(new QVBoxLayout(acc))->setAutoAdd(true);
-	mAccountSettings = new OscarEditAccountUI(acc,
-		"ICQEditAccountWidget::mAccountSettings");
-
-	(new QVBoxLayout(det))->setAutoAdd(true);
-	mUserInfoSettings = new ICQUserInfoWidget(det,
-		"ICQEditAccountWidget::mUserInfoSettings");
 
 	// ----------------------------------------------------------------
-	QVBoxLayout *buttons = new QVBoxLayout(det);
-	buttons->addStretch(1);
-	QPushButton *fetch = new QPushButton(i18n("Fetch from Server"), det, "fetch");
-	buttons->addWidget(fetch);
-	QPushButton *send = new QPushButton(i18n("Send to Server"), det, "send");
-	buttons->addWidget(send);
+
+	QFrame *acc = mTop->addPage(i18n("Account"),
+		i18n("ICQ Account Settings used for connecting to the ICQ Server"));
+	QVBoxLayout *accLay = new QVBoxLayout(acc);
+	mAccountSettings = new OscarEditAccountUI(acc,
+		"ICQEditAccountWidget::mAccountSettings");
+	accLay->addWidget(mAccountSettings);
+
+	// ----------------------------------------------------------------
+
+	QFrame *det = mTop->addPage(i18n("Contact Details"),
+		i18n("ICQ Contact Details shown to other users"));
+	QVBoxLayout *detLay = new QVBoxLayout(det);
+	mUserInfoSettings = new ICQUserInfoWidget(det,
+		"ICQEditAccountWidget::mUserInfoSettings");
+	detLay->addWidget(mUserInfoSettings);
+
 	// ----------------------------------------------------------------
 
 	mProtocol->fillComboFromTable(mUserInfoSettings->rwGender, mProtocol->genders());
@@ -117,7 +118,19 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			mAccount->pluginData(mProtocol, "Lang2").toInt());
 		mUserInfoSettings->rwLang3->setCurrentItem(
 			mAccount->pluginData(mProtocol, "Lang3").toInt());
-		// TODO: allow fetching userinfo from server
+
+		QHBoxLayout *buttons = new QHBoxLayout(detLay);
+		buttons->addStretch(1);
+		QPushButton *fetch = new QPushButton(i18n("Fetch from Server"), det, "fetch");
+		buttons->addWidget(fetch);
+		QPushButton *send = new QPushButton(i18n("Send to Server"), det, "send");
+		buttons->addWidget(send);
+
+		connect(fetch, SIGNAL(clicked()), this, SLOT(slotFetchInfo()));
+// 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
+// 		connect(
+// 			mAccount->myself(), SIGNAL(updatedUserInfo()),
+// 			this, SLOT(slotReadInfo()));
 	}
 	else
 	{
@@ -167,6 +180,14 @@ KopeteAccount *ICQEditAccountWidget::apply()
 		(mUserInfoSettings->rwBday->date()).toString(Qt::ISODate));
 	mAccount->setPluginData(mProtocol, "Age",
 		QString::number(mUserInfoSettings->rwAge->value()));
+	mAccount->setPluginData(mProtocol, "Gender", QString::number(
+		mProtocol->getCodeForCombo(mUserInfoSettings->rwGender, mProtocol->genders())));
+	mAccount->setPluginData(mProtocol, "Lang1", QString::number(
+		mProtocol->getCodeForCombo(mUserInfoSettings->rwLang1, mProtocol->languages())));
+	mAccount->setPluginData(mProtocol, "Lang2", QString::number(
+		mProtocol->getCodeForCombo(mUserInfoSettings->rwLang2, mProtocol->languages())));
+	mAccount->setPluginData(mProtocol, "Lang3", QString::number(
+		mProtocol->getCodeForCombo(mUserInfoSettings->rwLang3, mProtocol->languages())));
 
 	static_cast<ICQContact *>(mAccount->myself())->setOwnDisplayName(
 		mUserInfoSettings->rwNickName->text());
@@ -207,6 +228,23 @@ bool ICQEditAccountWidget::validateData()
 		"Account data validated successfully." << endl;
 	return true;
 }
+
+
+void ICQEditAccountWidget::slotFetchInfo()
+{
+	if(mAccount->isConnected())
+	{
+		kdDebug(14200) << k_funcinfo << "(DISABLED!) fetching User Info for '" <<
+			mAccount->myself()->displayName() << "'." << endl;
+
+//		mUserInfoSettings->setDisabled(true);
+
+//		mAccount->myself()->requestUserInfo(); // initiate retrival of userinfo
+	}
+	else
+		kdDebug(14200) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
+}
+
 
 #include "icqeditaccountwidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:
