@@ -53,6 +53,8 @@
 #include "pluginloader.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
 
 #include "webpresenceplugin.h"
 #include "webpresencepreferences.h"
@@ -77,7 +79,7 @@ void WebPresencePlugin::slotWriteFile()
 	bool error = false;
 	// generate the (temporary) XML file representing the current contactlist
 	KTempFile* xml = generateFile();
-	xml->setAutoDelete( true );
+	xml->setAutoDelete( false );
 
 	kdDebug(14309) << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
 		<< endl;
@@ -138,26 +140,14 @@ KTempFile* WebPresencePlugin::generateFile()
 	// insert the current date/time
 	output += h.oneLineTag( "listdate",
 			KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
-			
+
 	output += h.openTag( "contact", "type=\"self\"" );
 
-	// insert the contact's name
+	// insert the user's name
 	if ( m_prefs->useImName() && !m_prefs->userName().isEmpty() )
-		output += h.oneLineTag( "name",  m_prefs->userName() );
+		output += h.oneLineTag( "name", m_prefs->userName() );
 	else
-	{
-		// pick the name from the first configured protocol
-		QString myName;
-		for ( KopeteProtocol *p = protocols.first(); p; p = protocols.next() )
-			if ( p->myself() != 0L )
-			{
-				myName = p->myself()->displayName();
-				break;
-			}
-		if ( myName.isNull() )
-			myName = i18n( "No Name Set Yet, configure your IM protocols and connect!" );
-		output += h.oneLineTag( "name",  myName );
-	}
+		output += h.oneLineTag( "name", notKnown );
 
 	// insert the list of the contact's protocols
 	output += h.openTag( "protocols" );
@@ -165,24 +155,36 @@ KTempFile* WebPresencePlugin::generateFile()
 	for ( KopeteProtocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
-		KopeteContact* me = p->myself();
+		// get all the accounts per protocol
+		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( p );
 
 		output += h.openTag( "protocol" );
-
 		output += h.oneLineTag( "protoname", p->pluginId() );
 
-		output += h.oneLineTag( "protostatus",
-				( me )
-				? statusAsString( me->onlineStatus() )
-				: notKnown );
+		for( QDictIterator<KopeteAccount> it( dict );
+			 KopeteAccount *account=it.current();
+			 ++it )
+		{
+			output += h.openTag( "account" );
 
-		if ( m_prefs->showAddresses() )
-			output += h.oneLineTag( "protoaddress",
+			KopeteContact* me = account->myself();
+			output += h.oneLineTag( "accountname",
 					( me )
-					? me->contactId().latin1()
-					: notKnown.latin1()
-					);
+					? me->displayName().latin1()
+					: notKnown.latin1() );
+			output += h.oneLineTag( "accountstatus",
+					( me )
+					? statusAsString( me->onlineStatus() )
+					: notKnown );
 
+			if ( m_prefs->showAddresses() )
+				output += h.oneLineTag( "accountaddress",
+						( me )
+						? me->contactId().latin1()
+						: notKnown.latin1() );
+
+			output += h.closeTag();
+		}
 		output += h.closeTag();
 	}
 

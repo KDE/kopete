@@ -36,19 +36,22 @@
 				<xsl:apply-templates select="protoname"/>
 			</td>
 			<td>
-				<xsl:apply-templates select="protostatus"/>
+				<xsl:value-of select="accountname"/>
 			</td>
 			<td>
-				<xsl:value-of select="protoaddress"/>
+				<xsl:apply-templates select="accountstatus"/>
+			</td>
+			<td>
+				<xsl:value-of select="accountaddress"/>
 			</td>
 		</tr>
 	</xsl:template>
-	
+
 	<xsl:template match="protoname">
 		<xsl:choose>
 			<xsl:when test=".='MSNProtocol'">
 				<!-- MSN gubbins here -->
-				MSN 
+				MSN
 			</xsl:when>
 			<xsl:when test=".='ICQProtocol'">
 				<!-- ICQ gubbins here -->
@@ -85,7 +88,7 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="protostatus">
+	<xsl:template match="accountstatus">
 		<xsl:choose>
 			<xsl:when test=".='ONLINE'">
 				<font color="#00FF00">
