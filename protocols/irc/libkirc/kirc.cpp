@@ -66,8 +66,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	m_Host = host;
 	m_Port = (port==0)?6667:port;
-//	m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
-	m_Username = QString::fromLatin1("slayer");
+	m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
 
 //	The following order is based on the RFC2812.
 
