@@ -4,9 +4,6 @@
     Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Portions of this code are based on the Noatun plugin code
-    Noatun    (c) 2000-2002 The Noatun Developers
-
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
