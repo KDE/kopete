@@ -26,7 +26,9 @@
 class QLabel;
 class KopeteAccount;
 class KopeteMetaContact;
+class GroupWiseAccount;
 class GroupWiseAddUI;
+class GWSearchWidget;
 
 /**
  * A page in the Add Contact Wizard
@@ -49,8 +51,14 @@ public:
     virtual bool validateData();
 protected slots:
 	void slotAddMethodChanged();
+	void slotDoSearch();
+	void slotShowDetails();
+	void slotGotSearchResults();
 protected:
-	GroupWiseAddUI *m_gwAddUI;
+	unsigned char searchOperation( int comboIndex );
+	GroupWiseAccount * m_account;
+	GroupWiseAddUI * m_gwAddUI;
+	GWSearchWidget * m_searchUI;
 	QLabel *m_noaddMsg1;
 	QLabel *m_noaddMsg2;
 	bool m_canadd;

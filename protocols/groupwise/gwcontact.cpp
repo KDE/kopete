@@ -428,6 +428,7 @@ void GroupWiseContact::syncGroups()
 		UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
 		uct->renameContact( metaContact()->displayName(), instancesToChange );
 		uct->go( true );
+		setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
 	}
 }
 

@@ -12,6 +12,10 @@
 #ifndef POLLSEARCHRESULTSTASK_H
 #define POLLSEARCHRESULTSTASK_H
 
+#include <qvaluelist.h>
+
+#include "gwerror.h"
+
 #include "requesttask.h"
 
 /**
@@ -23,10 +27,14 @@ class PollSearchResultsTask : public RequestTask
 {
 Q_OBJECT
 public:
+	enum SearchResultCode { Pending=0, InProgess=1, Completed=2, TimeOut=3, Cancelled=4, Error=5 };
 	PollSearchResultsTask(Task* parent);
 	~PollSearchResultsTask();
 	void poll( const QString & queryHandle);
 	bool take( Transfer * transfer );
+	QValueList< GroupWise::ContactItem > results();
+private:
+	QValueList< GroupWise::ContactItem > m_results;
 };
 
 #endif

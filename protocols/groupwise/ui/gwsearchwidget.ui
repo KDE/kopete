@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string></string>
+        <string>GWSearchWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -44,12 +44,12 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>comboBox1_4</cstring>
+                        <cstring>m_titleOperation</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="2" column="2">
                     <property name="name">
-                        <cstring>lineEdit3</cstring>
+                        <cstring>m_userId</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -65,7 +65,7 @@
                 </widget>
                 <widget class="QLineEdit" row="4" column="2">
                     <property name="name">
-                        <cstring>lineEdit5</cstring>
+                        <cstring>m_dept</cstring>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="1" column="1">
@@ -85,7 +85,7 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>comboBox1_6</cstring>
+                        <cstring>m_lastNameOperation</cstring>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="0" column="1">
@@ -105,7 +105,7 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>comboBox1</cstring>
+                        <cstring>m_firstNameOperation</cstring>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="2" column="1">
@@ -125,7 +125,7 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>comboBox1_5</cstring>
+                        <cstring>m_userIdOperation</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -189,22 +189,22 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>comboBox1_3</cstring>
+                        <cstring>m_deptOperation</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="1" column="2">
                     <property name="name">
-                        <cstring>lineEdit2</cstring>
+                        <cstring>m_lastName</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="0" column="2">
                     <property name="name">
-                        <cstring>lineEdit1</cstring>
+                        <cstring>m_firstName</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="3" column="2">
                     <property name="name">
-                        <cstring>lineEdit4</cstring>
+                        <cstring>m_title</cstring>
                     </property>
                 </widget>
             </grid>
@@ -223,13 +223,82 @@
                 <enum>Horizontal</enum>
             </property>
         </widget>
-        <widget class="QLabel">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>textLabel9</cstring>
+                <cstring>layout7</cstring>
             </property>
-            <property name="text">
-                <string>Results:</string>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel9</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Results:</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>181</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel8</cstring>
+                            </property>
+                            <property name="text">
+                                <string>0</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel6</cstring>
+                            </property>
+                            <property name="text">
+                                <string>matching users found</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel8_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>0</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel7</cstring>
+                            </property>
+                            <property name="text">
+                                <string>selected</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </hbox>
         </widget>
         <widget class="QListView">
             <column>
@@ -277,58 +346,27 @@
                 </property>
             </column>
             <property name="name">
-                <cstring>listView1</cstring>
+                <cstring>m_results</cstring>
             </property>
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout6</cstring>
+                <cstring>layout8</cstring>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLayoutWidget">
+                <widget class="QPushButton">
                     <property name="name">
-                        <cstring>layout4</cstring>
+                        <cstring>m_search</cstring>
                     </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>textLabel8</cstring>
-                            </property>
-                            <property name="text">
-                                <string>0</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>textLabel6</cstring>
-                            </property>
-                            <property name="text">
-                                <string>matching users found</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>textLabel8_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>0</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>textLabel7</cstring>
-                            </property>
-                            <property name="text">
-                                <string>selected</string>
-                            </property>
-                        </widget>
-                    </hbox>
+                    <property name="text">
+                        <string>Searc&amp;h</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
+                    </property>
                 </widget>
                 <spacer>
                     <property name="name">
@@ -342,17 +380,23 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>71</width>
+                            <width>72</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
                 <widget class="QPushButton">
                     <property name="name">
-                        <cstring>pushButton1</cstring>
+                        <cstring>m_details</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Details...</string>
+                        <string>Detai&amp;ls...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+L</string>
                     </property>
                 </widget>
             </hbox>
@@ -360,16 +404,16 @@
     </vbox>
 </widget>
 <tabstops>
-    <tabstop>comboBox1</tabstop>
-    <tabstop>lineEdit1</tabstop>
-    <tabstop>comboBox1_6</tabstop>
-    <tabstop>lineEdit2</tabstop>
-    <tabstop>comboBox1_5</tabstop>
-    <tabstop>lineEdit3</tabstop>
-    <tabstop>comboBox1_4</tabstop>
-    <tabstop>lineEdit4</tabstop>
-    <tabstop>comboBox1_3</tabstop>
-    <tabstop>lineEdit5</tabstop>
+    <tabstop>m_firstNameOperation</tabstop>
+    <tabstop>m_firstName</tabstop>
+    <tabstop>m_lastNameOperation</tabstop>
+    <tabstop>m_lastName</tabstop>
+    <tabstop>m_userIdOperation</tabstop>
+    <tabstop>m_userId</tabstop>
+    <tabstop>m_titleOperation</tabstop>
+    <tabstop>m_title</tabstop>
+    <tabstop>m_deptOperation</tabstop>
+    <tabstop>m_dept</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -14,6 +14,8 @@
 
 #include "requesttask.h"
 
+class QTimer;
+
 /**
 This Task performs user searching on the server
 
@@ -28,14 +30,20 @@ public:
     ~SearchTask();
 	/**
 	 * Create the search query
-	 * @param are currently missing!
+	 * @param query a list of search terms
 	 */
-	void search();
+	void search( const QValueList<GroupWise::UserSearchQueryTerm> & query);
 	/** 
-	 * Send the query and start a timer to poll for results using PollSearchResultsTask
+	 * If the query was accepted, start a timer to poll for results using PollSearchResultsTask
 	 */
-	virtual void onGo();
-	
+	virtual bool take( Transfer * transfer );
+protected slots:
+	void slotPollForResults();
+	void slotGotPollResults();
+private: 
+	QString m_queryHandle;  // used to identify our query to the server, so we can poll for its results
+	QTimer * m_resultsPollTimer;
+	QValueList< GroupWise::ContactItem > m_results;
 };
 
 #endif
