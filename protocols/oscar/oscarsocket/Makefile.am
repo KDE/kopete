@@ -1,7 +1,7 @@
 METASOURCES = AUTO
-AM_CPPFLAGS = $(all_includes) $(KOPETE_INCLUDES) \
+AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(top_srcdir)/kopete/protocols/oscar -I$(top_builddir)/kopete/protocols/oscar \
-	-I$(top_srcdir)/kopete/protocols/oscar/oscarsocket
+	-I$(top_srcdir)/kopete/protocols/oscar/oscarsocket $(all_includes)
 
 noinst_LTLIBRARIES = liboscarsocket.la
 
