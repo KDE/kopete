@@ -196,7 +196,7 @@ void KopeteWindow::initActions()
 	
 	// quick search bar
 	QHBox *quickSearchContainer = new QHBox( 0, "kde toolbar widget" );
-	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), quickSearchContainer );
+	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), quickSearchContainer, "kde toolbar widget" );
 	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( quickSearchContainer, contactlist, "quicksearch_bar" );
 	searchLabel->setBuddy( searchBar );
 	KWidgetAction *quickSearch = new KWidgetAction( quickSearchContainer, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
