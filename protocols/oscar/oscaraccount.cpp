@@ -543,12 +543,12 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		if(buddy->waitAuth())
 			kdDebug(14150) << k_funcinfo << "setting WAITAUTH on '" << contact->displayName() << "'" << endl;
 
-		contact->setWaitAuth(buddy->waitAuth());
+		contact->setWaitAuth( buddy->waitAuth() );
 
-		if(contact->displayName()!=nick)
+		if( contact->displayName() != nick )
 			contact->rename(nick);
 
-		contact->setGroupId(buddy->groupID());
+		contact->setGroupId( buddy->groupID() );
 		contact->syncGroups();
 	}
 	else
@@ -616,6 +616,7 @@ void OscarAccount::slotGotSSIAck(WORD result)
 			break;
 		case SSIACK_NEEDAUTH:
 			kdDebug(14150) << k_funcinfo << "Adding: " << buddyWaitingSSIAck.contact() << " group: " << buddyWaitingSSIAck.group() << endl;
+
 			engine()->sendAuthRequest(tocNormalize(buddyWaitingSSIAck.contact()), reason);
 			engine()->setAddingAuthBuddy(true);
 			engine()->sendAddBuddy(tocNormalize(buddyWaitingSSIAck.contact()), buddyWaitingSSIAck.group());
@@ -851,7 +852,7 @@ void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 }
 
 // Adds a contact that we already know about to the list
-void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
+void OscarAccount::addOldContact(AIMBuddy *bud, KopeteMetaContact *meta)
 {
 	bool temporary = false;
 
