@@ -632,6 +632,29 @@ public:
 	virtual void slotUserInfo() {};
 };
 
+static QString sampleConversationXML()
+{
+	//Kopete::MetaContact jackMC;
+	FakeContact myself( i18n( "Myself" ), 0 );
+	FakeContact jack( i18n( "Jack" ), /*&jackMC*/ 0 );
+	
+	Kopete::Message msgIn  ( &jack,   &myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
+	Kopete::Message msgOut ( &myself, &jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
+	Kopete::Message msgCol ( &jack,   &myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
+	msgCol.setFg( QColor( "DodgerBlue" ) );
+	msgCol.setBg( QColor( "LightSteelBlue" ) );
+	Kopete::Message msgInt ( &jack,   &myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
+	Kopete::Message msgAct ( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Inbound,
+	                        Kopete::Message::PlainText, Kopete::Message::Chat, Kopete::Message::TypeAction );
+	Kopete::Message msgHigh( &jack,   &myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
+	msgHigh.setImportance( Kopete::Message::Highlight );
+	Kopete::Message msgBye ( &myself, &jack,   i18n( "Bye" ), Kopete::Message::Outbound );
+	
+	return QString::fromLatin1( "<document>" ) + msgIn.asXML().toString() + msgOut.asXML().toString()
+	       + msgCol.asXML().toString() + msgInt.asXML().toString() + msgAct.asXML().toString()
+	       + msgHigh.asXML().toString() + msgBye.asXML().toString() + QString::fromLatin1( "</document>" );
+}
+
 void AppearanceConfig::slotUpdatePreview()
 {
 	if(loading)
@@ -640,17 +663,7 @@ void AppearanceConfig::slotUpdatePreview()
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && style->text() != currentStyle )
 	{
-		Kopete::MetaContact jackMC;
-		FakeContact myself( i18n( "Myself" ), 0 );
-		FakeContact jack( i18n( "Jack" ), &jackMC );
-
-		Kopete::Message msgIn ( &jack,   &myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
-		Kopete::Message msgOut( &myself, &jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
-		Kopete::Message msgInt( &jack,   &myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
-		Kopete::Message msgAct( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Inbound,
-		                        Kopete::Message::PlainText, Kopete::Message::Chat, Kopete::Message::TypeAction );
-		//Kopete::Message msgHigh( &jack, &myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
-
+		//FIXME: should be using a ChatMessagePart
 		preview->begin();
 		preview->write( QString::fromLatin1(
 			"<html><head><style>"
@@ -664,26 +677,13 @@ void AppearanceConfig::slotUpdatePreview()
 			.arg( mPrfsColors->foregroundColor->color().name() ).arg( mPrfsColors->backgroundColor->color().name() )
 			.arg( mPrfsColors->bgColor->color().name() ).arg( mPrfsColors->linkColor->color().name() )
 			.arg( mPrfsColors->linkColor->color().name() ) );
-
-		// Parsing a XSLT message is incredibly slow! that's why I commented out some preview messages
+		
 		QString stylePath = itemMap[ style ];
 		d->xsltParser->setXSLT( fileContents(stylePath) );
-		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
-		preview->write( d->xsltParser->transform( msgOut.asXML().toString() ) );
-		msgIn.setFg( QColor( "DodgerBlue" ) );
-		msgIn.setBg( QColor( "LightSteelBlue" ) );
-		msgIn.setBody( i18n( "Here is an incoming colored message" ) );
-		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
-		preview->write( d->xsltParser->transform( msgInt.asXML().toString() ) );
-		preview->write( d->xsltParser->transform( msgAct.asXML().toString() ) );
-		//msgHigh.setImportance( Kopete::Message::Highlight );
-		//preview->write( d->xsltParser->transform( msgHigh.asXML().toString() ) ) ;
-		msgOut.setBody( i18n( "Bye" ) );
-		preview->write( d->xsltParser->transform( msgOut.asXML().toString() ) );
-
+		preview->write( d->xsltParser->transform( sampleConversationXML() ) );
 		preview->write( QString::fromLatin1( "</body></html>" ) );
 		preview->end();
-
+		
 		emitChanged();
 	}
 }
