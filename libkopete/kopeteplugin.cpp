@@ -18,19 +18,13 @@
 #include "kopeteplugin.h"
 #include "pluginloader.h"
 
-#include <kdeversion.h>
-
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kcddispatcher.h>
-#endif
 
 KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *name )
 : QObject( parent, name )
 {
 	setInstance( instance );
-#if KDE_IS_VERSION( 3, 1, 90 )
 	KCDDispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
-#endif
 }
 
 KopetePlugin::~KopetePlugin()
