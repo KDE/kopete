@@ -28,7 +28,7 @@
 #include <qheader.h>
 #include <qtooltip.h>
 
-// BEGIN ChatMembersListWidget::ToolTip
+//BEGIN ChatMembersListWidget::ToolTip
 
 class ChatMembersListWidget::ToolTip : public QToolTip
 {
@@ -52,10 +52,10 @@ private:
 	KListView *m_listView;
 };
 
-// END ChatMembersListWidget::ToolTip
+//END ChatMembersListWidget::ToolTip
 
 
-// BEGIN ChatMembersListWidget::ContactItem
+//BEGIN ChatMembersListWidget::ContactItem
 
 ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, Kopete::Contact *contact )
 	: KListViewItem( parent ), m_contact( contact )
@@ -112,10 +112,10 @@ void ChatMembersListWidget::ContactItem::reposition()
 	static_cast<KListView*>(KListViewItem::listView())->moveItem( this, 0, after );
 }
 
-// END ChatMembersListWidget::ContactItem
+//END ChatMembersListWidget::ContactItem
 
 
-// BEGIN ChatMembersListWidget
+//BEGIN ChatMembersListWidget
 
 ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent, const char *name )
 	 : KListView( parent, name ), m_session( session )
@@ -183,7 +183,13 @@ void ChatMembersListWidget::slotContactStatusChanged( Kopete::Contact *contact, 
 		m_members[contact]->setStatus( status );
 }
 
-// END ChatMembersListWidget
+void ChatMembersListWidget::slotExecute( QListViewItem *item )
+{
+	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item ) )
+		contactItem->contact()->execute();
+}
+
+//END ChatMembersListWidget
 
 #include "chatmemberslistwidget.moc"
 

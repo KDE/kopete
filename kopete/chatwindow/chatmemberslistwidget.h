@@ -68,6 +68,12 @@ private slots:
 	 * @param status The new status of the contact
 	 */
 	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
+	
+	/**
+	 * Called when a contact is clicked.
+	 * @param item The list view item representing the clicked contact
+	 */
+	void slotExecute( QListViewItem *contact );
 
 private:
 	Kopete::ChatSession *m_session;
