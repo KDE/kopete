@@ -156,7 +156,7 @@ void KopeteMessageManager::sendMessage(KopeteMessage &message)
 	if ( KopetePrefs::prefs()->soundNotify() )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing" ) );
+			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
 	}
 }
 

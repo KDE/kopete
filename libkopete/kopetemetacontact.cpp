@@ -454,7 +454,10 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 			return;
 		}
 		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_online" ) );
+		{
+			KNotifyClient::event( QString::fromLatin1( "kopete_online" ), i18n( "%2 is now %1!" ).arg(
+				statusString() ).arg( displayName() ) );
+		}
 	}
 }
 
