@@ -54,7 +54,5 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mIsServerSide = false;
 }
 
-#include "aimbuddylist.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
 
