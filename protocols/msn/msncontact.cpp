@@ -16,6 +16,9 @@
  ***************************************************************************/
 
 #include "msncontact.h"
+
+#include <qcursor.h>
+
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include "kmsncontact.h"
@@ -33,6 +36,8 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	// We connect this signal so that we can tell when a user's status changes
 	QObject::connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
 	QObject::connect(protocol->engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
+	QObject::connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
+	
 	QObject::connect(this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
 	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
     QObject::connect(protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
@@ -41,16 +46,32 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	//tmp.append(QString::number(uin));
 	//tmp.append(")");
 	setText(0,tmp);
-
+    initActions();
 	//slotUserStateChanged(uin, (protocol->kxContacts->getContact(uin)).status, 0);
+}
+
+void MSNContact::initActions()
+{
+	actionChat = new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChat()), this, "actionChat" );
+	actionRemove = new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionRemove" );
+		
 }
 
 void MSNContact::rightButtonPressed(const QPoint &point)
 {
-
+	popup = new KPopupMenu();
+	popup->insertTitle(mUserID);
+	actionChat->plug( popup );
+	actionRemove->plug( popup );
+	popup->popup(QCursor::pos());
 }
 
 void MSNContact::leftButtonDoubleClicked()
+{
+	emit chatToUser( mUserID );
+}
+
+void MSNContact::slotChatThisUser()
 {
 	emit chatToUser( mUserID );
 }
@@ -85,10 +106,14 @@ void MSNContact::slotMessageBoxClosing()
 	}
 }
 
-void MSNContact::removeThisUser()
+void MSNContact::slotRemoveThisUser()
 {
 	mProtocol->engine->contactDelete(mUserID);
 	delete this;
+}
+
+void MSNContact::slotContactRemoved(QString handle, QString nick)
+{
 }
 
 void MSNContact::slotUpdateContact (QString handle , uint status)

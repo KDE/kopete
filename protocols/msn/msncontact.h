@@ -53,8 +53,10 @@ class MSNContact : public IMContact
 	public slots:
 		void slotMessageBoxClosing();
 		void slotIncomingChat(KMSNChatService *, QString);
+		void slotContactRemoved(QString, QString);
+		void slotChatThisUser();
 	private slots:
-		void removeThisUser();
+		void slotRemoveThisUser();
 		void slotUpdateContact (QString, uint);
 		// We have to delete the contact if MSN disconenct
 		// We will use the engine signal
@@ -62,6 +64,8 @@ class MSNContact : public IMContact
 		void slotNewMessage(QString, QString, QString);
 		void slotFlashIcon();
 	private:
+		void initActions();	
+	
 		QString mStatus;
 		uint mStatus_n;
 		bool isMessageIcon;
@@ -72,6 +76,11 @@ class MSNContact : public IMContact
 		QTimer *messageTimer;
 		MSNMessage *messageBox;
 		bool messageBoxInited;
+		KPopupMenu *popup;
+		KAction* actionRemove;
+		KAction* actionChat;
+		KAction* actionInfo;
+
 	signals:
 		void chatToUser( QString );
 };
