@@ -364,8 +364,9 @@ QString KopeteMessage::escapedBody() const
 		//Replace a tab with 4 spaces
 		escapedBody.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
-		//Replace multiple spaces with &nbsp;
-		escapedBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp;&nbsp;" ) );
+		//Replace multiple spaces with &nbsp;  //do not remplace everyspace so we break the linebreak
+		escapedBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+
 	}
 
 	return escapedBody;
