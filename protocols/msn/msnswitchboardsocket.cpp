@@ -119,13 +119,14 @@ QString KMSNChatService::readBlock(uint len)
 }
 void KMSNChatService::slotDataReceived()
 {
-	QString str,len,miss, data; char dat[1024];
+	QString str,len,miss, data;
+	char dat[ 1025 ];
 	int ret;
 	ret = msgSocket->readBlock(dat,1024);
-	if(ret <= 0) return;
-	data = dat;
-	data = data.left(ret);
-	data = QString::fromUtf8(data);
+	if( ret <= 0 )
+		return;
+	dat[ ret ] = '\0'; // Make it properly null-terminated
+	data = QString::fromUtf8( dat );
 	buffer += data;
 redo:
 	if(canReadLine())

@@ -132,12 +132,12 @@ void KMSNServiceSocket::slotDataReceived()
 	// incoming data
 	QString data;
 	int ret;
-	char buf[1024];
+	char buf[1025];
 	ret =socket->readBlock(buf,1024);
-	if(ret <= 0) return;
-	data = buf;
-	data = data.left(ret);
-	data = QString::fromUtf8(data);
+	if( ret <= 0 )
+		return;
+	buf[ ret ] = '\0'; // Make it properly null-terminated
+	data = QString::fromUtf8( buf );
 //	showError(data);
 	if((data.left(3)) == "911")
 	{
