@@ -212,22 +212,26 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 
-	QImage iconImage;
-	QString imgPath;
+
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
-		QString em = QRegExp::escape( QStyleSheet::escape(*it) );
-		imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
-		iconImage = QImage(imgPath);
-		message.replace(
-			QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%1)(?!\\w)" ).arg(em).arg(em)),
-			QString::fromLatin1("\\1<img align=\"center\" width=\"") +
-			QString::number(iconImage.width()) +
-			QString::fromLatin1("\" height=\"") +
-			QString::number(iconImage.height()) +
-			QString::fromLatin1("\" src=\"") +
-			imgPath + QString::fromLatin1( "\">" )
-			);
+		if(message.contains( QStyleSheet::escape(*it) ))
+		{
+			QString em = QRegExp::escape( QStyleSheet::escape(*it) );
+
+			QString imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
+
+			QImage iconImage(imgPath);
+
+			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%1)(?!\\w)" ).arg(em).arg(em)),
+				QString::fromLatin1("\\1<img align=\"center\" width=\"") +
+				QString::number(iconImage.width()) +
+				QString::fromLatin1("\" height=\"") +
+				QString::number(iconImage.height()) +
+				QString::fromLatin1("\" src=\"") +
+				imgPath + QString::fromLatin1( "\">" )
+				);
+		}
 	}
 
 	return message;
