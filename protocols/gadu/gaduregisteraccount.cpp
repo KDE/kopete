@@ -46,7 +46,8 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 
 	cRegister = new RegisterCommand( this );
 
-	emailRegexp = new QRegExp( "[\\w\\d\\.\\-\\+\\_]{1,}\\@[\\w\\d\\.\\-]{1,}" );
+	//emailRegexp = new QRegExp( "[\\w\\d\\.\\-\\+\\_]{1,}\\@[\\w\\d\\.\\-]{1,}" );
+	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
 	connect( this, SIGNAL( cancelClicked() ), SLOT( slotCancel() ) );
