@@ -192,9 +192,10 @@ KActionCollection * MSNMessageManager::chatActions()
 
 	m_actions = new KActionCollection( this );
 
-	KAction *actionClose = new KAction( i18n ( "Leave Chat" ), 0,
+	KAction *actionClose = new KAction( i18n ( "&Leave Chat" ), 0,
 		SLOT( slotCloseSession() ), m_actions, "actionClose" );
 	m_actions->insert( actionClose );
+	kdDebug(14140) << "MSNMessageManager::chatActions"  <<endl;
 
 	KActionMenu *actionInvite = new KActionMenu( i18n( "&Invite" ), m_actions , "actionInvite" );
 	QPtrList<KopeteContact> availableContacts = KopeteContactList::contactList()->onlineContacts( protocol()->pluginId() );
@@ -204,8 +205,8 @@ KActionCollection * MSNMessageManager::chatActions()
 		actionInvite->insert( new KopeteContactAction( it.current(), this,
 			SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
 	}
-
 	// FIXME: Remove the currently active members from this list again!
+	// TODO: invite other contact 
 	//sl.append( otherString = i18n( "Other..." ) );
 	//actionInvite->setItems( sl );
 	//connect( actionInvite, SIGNAL( activated( const QString & ) ),
@@ -217,6 +218,7 @@ KActionCollection * MSNMessageManager::chatActions()
 
 void MSNMessageManager::slotCloseSession()
 {
+	kdDebug(14140) << "MSNMessageManager::slotCloseSession: " << m_chatService <<endl;
 	if(m_chatService)
 		m_chatService->slotCloseSession();
 }

@@ -192,7 +192,7 @@ private slots:
 
 	void slotOpenInbox();
 
-	void slotAddTemporaryContact( const QString &userName );
+	void slotAddContact( const QString &userName );
 	/**
 	 * A kopetegroup is renamed, just call renameGroup
 	 **/

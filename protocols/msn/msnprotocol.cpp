@@ -933,7 +933,7 @@ void MSNProtocol::slotContactListed( QString handle, QString publicName, QString
 
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
-			QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddTemporaryContact( const QString & )));
+			QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddContact( const QString & )));
 			QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
@@ -1067,7 +1067,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		{
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
-			QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddTemporaryContact( const QString & )));
+			QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddContact( const QString & )));
 			QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
@@ -1078,10 +1078,9 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	}
 }
 
-void MSNProtocol::slotAddTemporaryContact( const QString &userName )
+void MSNProtocol::slotAddContact( const QString &userName )
 {
-	kdDebug(14140) << "[MSNProtocol] slotAddTemporaryContact() for " << userName << endl;
-	addContact( userName, QString::null, 0L, QString::null, true);
+	addContact( userName );
 }
 
 void MSNProtocol::slotPublicNameChanged( QString publicName )
