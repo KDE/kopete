@@ -2,6 +2,7 @@
     msnsocket.cpp - Base class for the sockets used in MSN
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
@@ -464,6 +465,7 @@ void MSNSocket::sendBytes(const QByteArray &data)
 		return;
 	}
 	m_socket->writeBlock( data, data.size() );
+	m_socket->enableWrite( true );
 }
 
 

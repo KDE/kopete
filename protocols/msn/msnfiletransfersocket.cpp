@@ -45,7 +45,7 @@ MSNFileTransferSocket::MSNFileTransferSocket(bool incomming, QObject* parent) : 
 	m_incomming=incomming;
 	m_file=0L;
 	m_server=0L;
-	ready=false;
+	ready=true;
 
 	QObject::connect( this, SIGNAL( socketClosed( int ) ), this, SLOT( slotSocketClosed( ) ) );
 	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ), this, SLOT(slotReadBlock( const QByteArray & ) ) );
@@ -118,7 +118,7 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 	else
 		kdDebug() << "MSNFileTransferSocket::parseCommand : unknown command " <<cmd <<endl;
 
-	kdDebug() << "MSNFileTransferSocket::parseCommand : done " <<cmd <<endl;
+//	kdDebug() << "MSNFileTransferSocket::parseCommand : done " <<cmd <<endl;
 }
 
 void MSNFileTransferSocket::doneConnect()
@@ -279,8 +279,8 @@ void MSNFileTransferSocket::slotSendFile()
 		kdDebug() << "MSNFileTransferSocket::slotSendFile:  " <<percent <<"% done"<<endl;
 	}
 	ready=false;
-//	if( m_downsize < m_size)
-		QTimer::singleShot( 10, this, SLOT(slotSendFile()) );
+	
+	QTimer::singleShot( 10, this, SLOT(slotSendFile()) );
 }
 
 void MSNFileTransferSocket::slotReadyWrite()
