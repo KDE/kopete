@@ -530,8 +530,15 @@ void MSNProtocol::slotStartChat()
 		QString::null, &ok );
 	if( ok )
 	{
-		m_msgHandle = handle;
-		m_notifySocket->createChatSession();
+		if( handle.contains('@') ==1 && handle.contains('.') >=1)
+		{
+			m_msgHandle = handle;
+			m_notifySocket->createChatSession();
+		}
+		else
+		{
+			KMessageBox::error(0l, i18n("<qt>You must enter a valide e-mail adress</qt>"), i18n("MSN Plugin"));
+		}
 	}
 }
 

@@ -2,6 +2,7 @@
 #include <qlineedit.h>
 
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #include "msnadd.h"
 #include "msnaddcontactpage.h"
@@ -58,8 +59,16 @@ void MSNAddContactPage::slotFinish(KopeteMetaContact *m)
 
 bool MSNAddContactPage::validateData()
 {
-	// PLEASE DO SOME VALIDATING HERE FOR MSN ID'S!!!
-	return true;
+	if(!canadd)
+		return false;
+
+	QString userid = msndata->addID->text();
+	if( userid.contains('@') ==1 && userid.contains('.') >=1)
+		return true;
+
+	KMessageBox::sorry(this, i18n("<qt>You must enter a valide e-mail adress</qt>"), i18n("MSN Plugin"));
+	return false;
+
 }
 
 #include "msnaddcontactpage.moc"

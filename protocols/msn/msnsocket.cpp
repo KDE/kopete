@@ -337,6 +337,15 @@ void MSNSocket::parseLine( const QString &str )
 
 void MSNSocket::handleError( uint code, uint id )
 {
+	if(code==500);
+	{
+		QString msg = i18n( "Internal server error!\n"
+				"The server is maybe down for maintenance. Try later " );
+
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		return;
+	}
+
 	QString msg =
 		i18n( "Unhandled MSN error code %1 (in response to "
 			"transaction ID %2).\n"
