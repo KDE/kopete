@@ -48,6 +48,8 @@ MSNNotifySocket::~MSNNotifySocket()
 void MSNNotifySocket::connect( const QString &pwd )
 {
 	m_password = pwd;
+	dispatchOK=false;
+	m_isHotmailAccount=false;
 
 	m_dispatchSocket = new MSNDispatchSocket( msnId() );
 	QObject::connect( m_dispatchSocket,
@@ -59,12 +61,18 @@ void MSNNotifySocket::connect( const QString &pwd )
 		SIGNAL( connectionFailed( ) ),
 		this,
 		SLOT( slotDispatchFailed( ) ) );
+	QObject::connect( m_dispatchSocket,
+		SIGNAL( socketClosed( int ) ),
+		this,
+		SLOT( slotDispatchFailed( ) ) );
+
 
 	m_dispatchSocket->connect();
 }
 
 void MSNNotifySocket::slotReceivedServer( const QString &server, uint port )
 {
+	dispatchOK=true;
 	MSNAuthSocket::connect( server, port );
 	m_dispatchSocket->deleteLater();
 	m_dispatchSocket = 0L;
@@ -99,15 +107,6 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
 			"console (in gzipped format, as it is probably a lot of output!)" );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-		break;
-	}
-	case 911:
-	{
-		QString msg = i18n( "Authentication failed.\n"
-			"Check your username and password in the "
-			"MSN Preferences dialog." );
-		disconnect();
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
@@ -231,8 +230,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
 			kdDebug() << "[MSN-PLUGIN] You have connected from another client" << endl;
-			//this provoque crash
-			//KMessageBox::information( 0, i18n( "You have connected from another client" ) );
+			KMessageBox::information( 0, i18n( "You have connected from another client" ) );
 		}
 
 		disconnect();
@@ -304,52 +302,15 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 }
 
-void MSNNotifySocket::slotWriteHotmailTmpFile()
-{
-	KGlobal::config()->setGroup( "MSN" );
-	QString UserID=KGlobal::config()->readEntry( "UserID" );
-
-	QString md5this(m_MSPAuth+"1"+m_password);
-	KMD5 md5(md5this);
-
-	//write the tmp file
-	KTempFile tmpFile(locateLocal("tmp", "kopetehotmail"), ".html");
-
-	m_HotmailTmpFile=tmpFile.name();
-	*tmpFile.textStream() << 
-	"<html>"
-	<< endl << "<head>"
-	<< endl << "<noscript>"
-	<< endl << "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">"
-	<< endl << "</noscript>"
-	<< endl << "</head>"
-	<< endl << "<body onload=\"document.pform.submit(); \">"
-	<< endl << "<form name=\"pform\" action=\"https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033\" method=\"POST\">"
-	<< endl << "<input type=\"hidden\" name=\"mode\" value=\"ttl\">"
-	<< endl << "<input type=\"hidden\" name=\"login\" value=\"" << UserID << "\">"
-	<< endl << "<input type=\"hidden\" name=\"username\" value=\"" << UserID << "\">"
-	<< endl << "<input type=\"hidden\" name=\"sid\" value=\"" << m_sid << "\">"
-	<< endl << "<input type=\"hidden\" name=\"kv\" value=\"" << m_kv << "\">"
-	<< endl << "<input type=\"hidden\" name=\"id\" value=\"2\">"
-	<< endl << "<input type=\"hidden\" name=\"sl\" value=\"1\">"
-	<< endl << "<input type=\"hidden\" name=\"rru\" value=\"/cgi-bin/HoTMaiL\">"
-	<< endl << "<input type=\"hidden\" name=\"auth\" value=\"" << m_MSPAuth << "\">"
-	<< endl << "<input type=\"hidden\" name=\"creds\" value=\"" << md5.hexDigest() << "\">"
-	<< endl << "<input type=\"hidden\" name=\"svc\" value=\"mail\">"
-	<< endl << "<input type=\"hidden\" name=\"js\" value=\"yes\">"
-	<< endl << "</form></body>"
-	<< endl << "</html>"
-	<< endl;
-}
-
 void MSNNotifySocket::slotOpenInbox()
 {
-	kapp->invokeBrowser(m_HotmailTmpFile);
+	if(m_isHotmailAccount)
+		kapp->invokeBrowser(m_HotmailTmpFile);
 }
 
 void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
-	if(msg.contains("Inbox-Unread:"))
+	if(msg.contains("text/x-msmsgsinitialemailnotification"))
 	{
 		 //this sends the server if we are going online, contains the unread message count
 		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
@@ -360,60 +321,99 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		if(KGlobal::config()->readBoolEntry( "MailNotifications", true ))
 		{
 			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
-			slotWriteHotmailTmpFile();
 
-			//3 is Yes button
-			//FIXME: how the hell do you use KGuiItem::yes() ???
-			if(answer==3)
+			if(answer==KMessageBox::Yes)
 			{
 				slotOpenInbox();
 			}
-			
 		}
-//		 emit newMail("",mailCount);
 	}
-	else if(msg.contains("Message-Delta:"))
+	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
 		 //this sends the server if mails are deleted
 		 QString m = msg.right(msg.length() - msg.find("Message-Delta:") );
 		 m = m.left(msg.find("\r\n"));
 		 mailCount = mailCount - m.right(m.length() -m.find(" ")-1).toUInt();
-//		 emit newMail("",mailCount);
 	}
-	else if(msg.contains("From-Addr:"))
+	else if(msg.contains("text/x-msmsgsemailnotification"))
 	{
-			 //this sends the server if a new mail has arrived
-		QString m = msg.right(msg.length() - msg.find("From-Addr:") );
-		m = m.left(msg.find("\r\n"));
+		 //this sends the server if a new mail has arrived
+		QRegExp rx("From-Addr:([A-Za-z0-9@._\\-]*)");
+		rx.search(msg);
+		QString m=rx.cap(1);
+
 		mailCount++;
-		m = m.right(m.length() -m.find(" ")-1);
 
 		KGlobal::config()->setGroup( "MSN" );
 		if(KGlobal::config()->readBoolEntry( "MailNotifications", true ))
 		{
-			KMessageBox::information( 0l, i18n( "<qt>You have one new e-mail from %1</qt>" ).arg(m),i18n( "MSN Plugin" ) );
+			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have one new e-mail from %1.<br>Would you like to open your inbox now?</qt>" ).arg(m), i18n( "MSN Plugin" ) );
+
+			if(answer==KMessageBox::Yes)
+			{
+				slotOpenInbox();
+			}
+		}
+	}
+	else if(msg.contains("text/x-msmsgsprofile"))
+	{
+		//Hotmail profile
+		if(msg.contains("MSPAuth:"))
+		{
+			QRegExp rx("MSPAuth: ([A-Za-z0-9$!*]*)");
+			rx.search(msg);
+			m_MSPAuth=rx.cap(1);
+		}
+		if(msg.contains("sid:"))
+		{
+			QRegExp rx("sid: ([0-9]*)");
+			rx.search(msg);
+			m_sid=rx.cap(1);
+		}
+		if(msg.contains("kv:"))
+		{
+			QRegExp rx("kv: ([0-9]*)");
+			rx.search(msg);
+			m_kv=rx.cap(1);
 		}
 
-//		 emit newMail(msg,mailCount);
-	}
+		//write the tmp file
+		KGlobal::config()->setGroup( "MSN" );
+		QString UserID=KGlobal::config()->readEntry( "UserID" );
 
-	if(msg.contains("MSPAuth:"))
-	{
-		QRegExp rx("MSPAuth: ([A-Za-z0-9$!*]*)");
-		rx.search(msg);
-		m_MSPAuth=rx.cap(1);
-	}
-	if(msg.contains("sid:"))
-	{
-		QRegExp rx("sid: ([0-9]*)");
-		rx.search(msg);
-		m_sid=rx.cap(1);
-	}
-	if(msg.contains("kv:"))
-	{
-		QRegExp rx("kv: ([0-9]*)");
-		rx.search(msg);
-		m_kv=rx.cap(1);
+		QString md5this(m_MSPAuth+"1"+m_password);
+		KMD5 md5(md5this);
+
+		KTempFile tmpFile(locateLocal("tmp", "kopetehotmail"), ".html");
+
+		m_HotmailTmpFile=tmpFile.name();
+		*tmpFile.textStream() <<
+			"<html>"
+			<< endl << "<head>"
+			<< endl << "<noscript>"
+			<< endl << "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">"
+			<< endl << "</noscript>"
+			<< endl << "</head>"
+			<< endl << "<body onload=\"document.pform.submit(); \">"
+			<< endl << "<form name=\"pform\" action=\"https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033\" method=\"POST\">"
+			<< endl << "<input type=\"hidden\" name=\"mode\" value=\"ttl\">"
+			<< endl << "<input type=\"hidden\" name=\"login\" value=\"" << UserID << "\">"
+			<< endl << "<input type=\"hidden\" name=\"username\" value=\"" << UserID << "\">"
+			<< endl << "<input type=\"hidden\" name=\"sid\" value=\"" << m_sid << "\">"
+			<< endl << "<input type=\"hidden\" name=\"kv\" value=\"" << m_kv << "\">"
+			<< endl << "<input type=\"hidden\" name=\"id\" value=\"2\">"
+			<< endl << "<input type=\"hidden\" name=\"sl\" value=\"1\">"
+			<< endl << "<input type=\"hidden\" name=\"rru\" value=\"/cgi-bin/HoTMaiL\">"
+			<< endl << "<input type=\"hidden\" name=\"auth\" value=\"" << m_MSPAuth << "\">"
+			<< endl << "<input type=\"hidden\" name=\"creds\" value=\"" << md5.hexDigest() << "\">"
+			<< endl << "<input type=\"hidden\" name=\"svc\" value=\"mail\">"
+			<< endl << "<input type=\"hidden\" name=\"js\" value=\"yes\">"
+			<< endl << "</form></body>"
+			<< endl << "</html>"
+			<< endl;
+
+		m_isHotmailAccount=true;
+		emit hotmailSeted(true);
 	}
 }
 
@@ -533,9 +533,12 @@ QString MSNNotifySocket::statusToString( int status ) const
 
 void MSNNotifySocket::slotDispatchFailed()
 {
-	emit( onlineStatusChanged( Disconnected ) );
-	m_dispatchSocket->deleteLater();
-	m_dispatchSocket = 0L;
+	if(!dispatchOK)
+	{
+		emit( onlineStatusChanged( Disconnected ) );
+		m_dispatchSocket->deleteLater();
+		m_dispatchSocket = 0L;
+	}
 }
 
 #include "msnnotifysocket.moc"

@@ -42,9 +42,9 @@ void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
 		QString host = data.section( ' ', 1, 1 );
 		QString server = host.section( ':', 0, 0 );
 		uint port = host.section( ':', 1, 1 ).toUInt();
-		disconnect();
 		setOnlineStatus( Connected );
 		emit receivedNotificationServer( server, port );
+		disconnect();
 	}
 	else
 	{

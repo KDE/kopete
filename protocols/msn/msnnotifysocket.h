@@ -54,7 +54,7 @@ public slots:
 	void slotOpenInbox();
 
 signals:
-//	void newMail(QString, uint);
+	//void newMail(QString, unsigned int);
 	void contactList(QString, QString, QString, QString);
 	void contactList(QString, QString, uint);
 	void contactStatusChanged( const QString &msnId, const QString &publicName,
@@ -75,6 +75,7 @@ signals:
 	void statusChanged( QString );
 
 	void recievedInfo(QString, QString , QString);
+	void hotmailSeted(bool) ;
 
 protected:
 	/**
@@ -101,7 +102,6 @@ private slots:
 	void slotReadMessage( const QString &msg );
 	
 	void slotDispatchFailed();
-	void slotWriteHotmailTmpFile();
 
 private:
 	unsigned int mailCount;
@@ -115,8 +115,10 @@ private:
 	QString statusToString( int status ) const;
 
 	MSNDispatchSocket *m_dispatchSocket;
+	bool dispatchOK;
 
 	//for hotmail inbox opening
+	bool m_isHotmailAccount;
 	QString m_MSPAuth;
 	QString m_kv;
 	QString m_sid;

@@ -43,24 +43,38 @@ void MSNAuthSocket::reconnect()
 
 void MSNAuthSocket::handleError( uint code, uint id )
 {
-	if( code != 600 )
+	switch(code)
 	{
+	case 600:
+	{
+		disconnect();
+		QTimer::singleShot( 10, this, SLOT( reconnect() ) );
+
+		if( !m_msgBoxShown )
+		{
+			QString msg =
+				i18n( "The MSN server is busy.\n"
+					"Trying to reconnect every 10 seconds. Please be patient..." );
+			m_msgBoxShown = true;
+	
+			KMessageBox::information( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		}
+		break;
+	}
+
+	case 911:
+	{
+		QString msg = i18n( "Authentication failed.\n"
+			"Check your username and password in the "
+			"MSN Preferences dialog." );
+		disconnect();
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}
+	default:
 		MSNSocket::handleError( code, id );
-		return;
 	}
 
-	disconnect();
-	QTimer::singleShot( 10, this, SLOT( reconnect() ) );
-
-	if( !m_msgBoxShown )
-	{
-		QString msg =
-			i18n( "The MSN server is busy.\n"
-				"Trying to reconnect every 10 seconds. Please be patient..." );
-		m_msgBoxShown = true;
-
-		KMessageBox::information( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-	}
 }
 
 void MSNAuthSocket::parseCommand( const QString &cmd, uint id,

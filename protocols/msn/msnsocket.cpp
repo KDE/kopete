@@ -214,12 +214,27 @@ void MSNSocket::slotDataReceived()
 
 void MSNSocket::slotReadLine()
 {
-  
+	// See if we have pending changes in the queue...
+	if( !m_sendQueue.isEmpty() )
+	{
+		kdDebug() << "MSNSocket::slotReadLine: Send queue not empty,"
+			" attempting to flush first item. m_lastId: " << m_lastId << endl;
+		for(QMap<uint, QCString>::Iterator it = m_sendQueue.begin(); it!=m_sendQueue.end() ; ++it)
+		{
+			if( m_lastId >= it.key() - 1 )
+			{
+				kdDebug() << "MSNSocket::slotReadLine: Flushing entry from send queue: "
+					<< it.data() << endl;
+				m_socket->writeBlock( it.data(), it.data().length() );
+				m_sendQueue.remove( it );
+			}
+		}
+	}
+
 	// We have data, first check if it's meant for a block read, otherwise
 	// parse the first line (which will recursively parse the other lines)
 	if( !pollReadBlock() )
 	{
-
 		if(m_buffer.size()>=3 && m_buffer.data()[0]=='\0')
 		{
 			bytesReceived(m_buffer.take(3));
@@ -236,35 +251,18 @@ void MSNSocket::slotReadLine()
 				break;
 			}
 		}
-
 		if( index != -1 )
 		{
-			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
-
-			command.replace( QRegExp( "\r\n" ), "" );
-			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
-
-			parseLine(command);
-
-			// See if we have pending changes in the queue...
-			if( !m_sendQueue.isEmpty() )
-			{
-				kdDebug() << "MSNSocket::slotReadLine: Send queue not "
-					<< "empty, attempting to flush first item. m_lastId: "
-					<< m_lastId << endl;
-				QMap<uint, QCString>::Iterator it = m_sendQueue.begin();
-				if( m_lastId >= it.key() - 1 )
-				{
-					kdDebug() << "MSNSocket::slotReadLine: "
-						<< "Flushing entry from send queue: "
-						<< it.data() << endl;
-					m_socket->writeBlock( it.data(), it.data().length() );
-					m_sendQueue.remove( it );
-				}
-			}
-
 			// Don't block the GUI while parsing data, only do a single line!
 			QTimer::singleShot( 0, this, SLOT( slotReadLine() ) );
+			//(placed here and not in the end on the fuction for prevent crash)
+
+			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
+			command.replace( QRegExp( "\r\n" ), "" );
+			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
+			
+			parseLine(command);
+			//WARNING: since here, this can be deleted (when disconnecitng)
 		}
 	}
 }

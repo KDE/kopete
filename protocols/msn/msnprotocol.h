@@ -207,6 +207,7 @@ private slots:
 
 	void slotStartChat();
 
+	void slotOpenInbox();
 
 	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
 
@@ -301,7 +302,6 @@ private slots:
 	 */
 	void slotRecievedInfo(QString handle,QString type,QString data);
 
-	void slotOpenInbox();
 
 private:
 	/**

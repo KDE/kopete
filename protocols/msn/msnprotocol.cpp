@@ -249,7 +249,8 @@ void MSNProtocol::Connect()
 		this, SLOT( slotCreateChat( QString, QString ) ) );
 	connect( m_notifySocket, SIGNAL( recievedInfo( QString, QString,QString ) ),
 		this, SLOT( slotRecievedInfo( QString, QString,QString ) ) );
-
+	connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
+		m_openInboxAction, SLOT( setEnabled( bool ) ) );
 
 	connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
 		this, SLOT( slotNotifySocketClosed( int ) ) );
@@ -257,6 +258,7 @@ void MSNProtocol::Connect()
 	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect( m_password );
 	statusBarIcon->setMovie( connectingIcon );
+	m_openInboxAction->setEnabled(false);
 }
 
 void MSNProtocol::Disconnect()
@@ -411,7 +413,8 @@ void MSNProtocol::initIcons()
 
 void MSNProtocol::slotOpenInbox()
 {
-	m_notifySocket->slotOpenInbox();
+	if(m_notifySocket)
+		m_notifySocket->slotOpenInbox();
 }
 
 void MSNProtocol::initActions()
@@ -434,6 +437,7 @@ void MSNProtocol::initActions()
 		this, "m_renameAction" );
 
 	m_openInboxAction = new KAction ( i18n( "Open inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
+	m_openInboxAction->setEnabled(false);
 
 	m_debugMenu = new KActionMenu( "Debug", this );
 	m_debugRawCommand = new KAction( i18n( "Send Raw C&ommand..." ), 0,
@@ -673,6 +677,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 
 		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
+		m_openInboxAction->setEnabled(false);
 
 		m_status = FLN;
 
@@ -1464,7 +1469,6 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		connect( chatService, SIGNAL( updateChatMember(QString,QString,bool,MSNSwitchBoardSocket*)),
 			this, SLOT( slotUpdateChatMember(QString,QString,bool,MSNSwitchBoardSocket*) ) );
 
-
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
 			manager, SLOT( appendMessage( const KopeteMessage & ) ) );
 		connect( chatService,
@@ -1589,9 +1593,9 @@ void MSNProtocol::slotNotifySocketClosed( int state )
 {
 	if ( state == 0x10 ) // connection died unexpectedly
 	{
-		//KMessageBox::error( 0, i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
-		Disconnect();
-		kdDebug() << "MSNProtocol::slotNotifySocketClosed: Done." << endl;
+		KMessageBox::error( 0, i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
+		//Disconnect();
+		//kdDebug() << "MSNProtocol::slotNotifySocketClosed: Done." << endl;
 	}
 }
 
