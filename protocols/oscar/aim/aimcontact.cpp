@@ -42,15 +42,20 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	QObject::connect(
 		account->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
 		this, SLOT(slotContactChanged(const UserInfo &)));
+
+	/*
 	// Received IM
-/*	QObject::connect(
+	QObject::connect(
 		account,
 		 SIGNAL(slotGotIM(OscarMessageType type, QString &sender, QString &msg, bool isAuto))),
-		this, SLOT(slotIMReceived(QString,QString,bool)));*/
+		this, SLOT(slotIMReceived(QString,QString,bool)));
+	*/
+
 	// Incoming minitype notification
 	QObject::connect(
-		account->engine(), SIGNAL(gotMiniTypeNotification(QString, int)),
-		this, SLOT(slotGotMiniType(QString, int)));
+		account->engine(), SIGNAL(gotMiniTypeNotification(const QString &, int)),
+		this, SLOT(slotGotMiniType(const QString &, int)));
+
 	// received userprofile
 	QObject::connect(
 		account->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
@@ -162,27 +167,27 @@ void AIMContact::setStatus(const unsigned int newStatus)
 void AIMContact::slotTyping(bool typing)
 {
 //	kdDebug(14190) << k_funcinfo << "Typing: " << typing << endl;
-	mAccount->engine()->sendMiniTypingNotify(tocNormalize(mName),
+	mAccount->engine()->sendMiniTypingNotify(contactName(),
 		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished );
 }
 
 // Called when we get a minityping notification
-void AIMContact::slotGotMiniType(QString screenName, int type)
+void AIMContact::slotGotMiniType(const QString &screenName, int type)
 {
-	//TODO
 	// Check to see if it's us
 	if(tocNormalize(screenName) != contactName())
 		return;
 
-	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << mName << endl;
+//	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << mName << endl;
 
-	// If we already have a message manager
-	if( mMsgManager )
+	// Only if we already have a message manager
+	if(!mMsgManager)
+		return;
+
+	switch(type)
 	{
-		// Switch on the type
-		switch(type)
-		{
-		case 0: case 1:
+		case 0:
+		case 1:
 			// 0 == Typing Finished
 			// 1 == Text Typed
 			// Both of these are types of "not typing"
@@ -194,7 +199,6 @@ void AIMContact::slotGotMiniType(QString screenName, int type)
 			break;
 		default:
 			break;
-		}
 	}
 }
 
@@ -264,19 +268,16 @@ void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 	// send our away message in fire-and-forget-mode :)
 	if(mAccount->isAway())
 	{
-		// Get the current time
-		long currentTime = time(0L);
-
-		// Compare to the last time we sent a message
+		// Compare current time to last time we sent a message
 		// We'll wait 2 minutes between responses
-		if( (currentTime - mLastAutoResponseTime) > 120 )
+		if((time(0L) - mLastAutoResponseTime) > 120)
 		{
 			kdDebug(14190) << k_funcinfo << " while we are away, " \
 				"sending away-message to annoy buddy :)" << endl;
 			// Send the autoresponse
 			mAccount->engine()->sendIM(
 				KopeteAway::getInstance()->message(),
-				mName, true);
+				userInfo(), true);
 			// Build a pointerlist to insert this contact into
 			KopeteContactPtrList toContact;
 			toContact.append(this);
@@ -287,7 +288,7 @@ void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 				"<font color='#666699'>Autoresponse: </font>" +
 				KopeteAway::getInstance()->message();
 
-			KopeteMessage message( mAccount->myself(), toContact,
+			KopeteMessage message(mAccount->myself(), toContact,
 				responseDisplay, KopeteMessage::Outbound, KopeteMessage::RichText);
 
 			manager()->appendMessage(message);
@@ -331,14 +332,14 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	// Will asks: Does this still apply in AIM?
-	mAccount->engine()->sendIM(plainMessage, mName, false);
+	mAccount->engine()->sendIM(plainMessage, userInfo(), false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
 	manager()->messageSucceeded();
 }
 
-KopeteMessage AIMContact::parseAIMHTML ( QString m )
+KopeteMessage AIMContact::parseAIMHTML(QString m)
 {
 /*	============================================================================================
 	Original AIM-Messages, just a few to get the idea of the weird format[tm]:

@@ -482,26 +482,26 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	// General tab
 	if(!editMode) // no idea how to get ip for ourselves
 	{
-		QHostAddress mIP(ntohl(c->localIP()));
-		QHostAddress mRealIP(ntohl(c->realIP()));
-		unsigned short mPort = c->port();
+		QHostAddress ip(ntohl(c->userInfo().localip));
+		QHostAddress realip(ntohl(c->userInfo().realip));
+		unsigned short port = c->userInfo().port;
 
-		if ( !(mIP == mRealIP) && !(mRealIP == QHostAddress()) )
+		if ( !(ip == realip) && !(realip == QHostAddress()) )
 		{
 			widget->roIPAddress->setText(
-				QString("%1 (%2:%3)").arg(mIP.toString()).arg(mRealIP.toString()).arg(mPort)
+				QString("%1 (%2:%3)").arg(ip.toString()).arg(realip.toString()).arg(port)
 				);
 		}
 		else
 		{
 			widget->roIPAddress->setText(
-				QString("%1:%2").arg(mIP.toString()).arg(mPort)
+				QString("%1:%2").arg(ip.toString()).arg(port)
 				);
 		}
 	}
 
-	if(c->signonTime().isValid())
-		widget->roSignonTime->setText(c->signonTime().toString(Qt::LocalDate));
+	if(c->userInfo().onlinesince.isValid())
+		widget->roSignonTime->setText(c->userInfo().onlinesince.toString(Qt::LocalDate));
 
 	widget->rwNickName->setText(c->generalInfo.nickName);
 	widget->rwAlias->setText(c->displayName());

@@ -53,21 +53,16 @@ void OscarDirectConnection::slotRead()
 	}
 
 	inbuf.setBuf(buf, bytesread);
+	QString screenName = QString::fromLatin1(fl.sn);
 
 	if (fl.type == 0x000e) // started typing
-	{
-		emit gotMiniTypeNotification(fl.sn, 2);
-	}
+		emit gotMiniTypeNotification(screenName, 2);
 	else if (fl.type == 0x0002) //finished typing
-	{
-		emit gotMiniTypeNotification(fl.sn, 0);
-	}
+		emit gotMiniTypeNotification(screenName, 0);
 	else
-	{
-		emit gotMiniTypeNotification(fl.sn, 1);
-	}
+		emit gotMiniTypeNotification(screenName, 1);
 
-	if((fl.length > 0) && fl.sn) //there is a message here
+	if((fl.length > 0) && !screenName.isEmpty()) //there is a message here
 		parseMessage(inbuf);
 
 	if(inbuf.length() > 0)
@@ -97,12 +92,14 @@ ODC2 OscarDirectConnection::getODC2(void)
 		//get the header length
 		if ((theword = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading length, byte 1: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading length, byte 1: nothing to be read" << endl;
 			odc.headerLength = 0x00;
 		}
 		else if((theword2 = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading data field length, byte 2: nothing to be read" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Error reading data field length, byte 2: nothing to be read" << endl;
 			odc.headerLength = 0x00;
 		}
 		else

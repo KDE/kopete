@@ -158,9 +158,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 
 	QObject::disconnect(mContact, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
 
-	QDateTime qdt;
-	qdt.setTime_t(static_cast<uint>(mContact->userInfo().onlinesince));
-	mMainWidget->txtOnlineSince->setText(qdt.toString());
+	mMainWidget->txtOnlineSince->setText(mContact->userInfo().onlinesince.toString());
 	mMainWidget->txtIdleTime->setText(QString::number(mContact->userInfo().idletime));
 	mMainWidget->txtAwayMessage->setText(mContact->awayMessage());
 	mMainWidget->txtWarnLevel->setText(QString::number(mContact->userInfo().evil));

@@ -187,7 +187,7 @@ void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	static_cast<ICQAccount*>(account())->engine()->sendIM(
-		message.plainBody(), contactName(), false);
+		message.plainBody(), userInfo(), false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);

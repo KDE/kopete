@@ -73,7 +73,7 @@ class AIMContact : public OscarContact
 		/*
 		 * Called when we get a minityping notification
 		 */
-		void slotGotMiniType(QString screenName, int type);
+		void slotGotMiniType(const QString &screenName, int type);
 		void slotTyping(bool typing);
 		/*
 		 * Called when a buddy has changed status

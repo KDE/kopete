@@ -62,7 +62,7 @@ class OscarContact : public KopeteContact
 
 		virtual KopeteMessageManager *manager( bool canCreate = false );
 
-		QString contactName() const { return mName; };
+		const QString &contactName() const { return mName; };
 		OscarAccount *account() const { return mAccount; };
 
 		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message) = 0;
@@ -75,15 +75,16 @@ class OscarContact : public KopeteContact
 
 //		virtual unsigned long int idleTime() const  {return mIdle;}
 
-		const unsigned long realIP() const { return mRealIP; }
+		/*const unsigned long realIP() const { return mRealIP; }
 		const unsigned long localIP() const { return mLocalIP; }
 		const unsigned int  port() const { return mPort; }
 		const unsigned int  fwType() const { return mFwType; }
 		const unsigned int  tcpVersion() const { return mTcpVersion; }
-		const QDateTime signonTime() const { return mSignonTime; }
+		const QDateTime signonTime() const { return mSignonTime; }*/
 
 		bool waitAuth() const;
 		void setWaitAuth(bool b) const;
+		const UserInfo &userInfo() { return mInfo; }
 
 	public slots:
 		/** Method to delete a contact from the contact list */
@@ -93,10 +94,14 @@ class OscarContact : public KopeteContact
 		virtual void sendFile(const KURL &sourceURL, const QString &altFileName,
 			const long unsigned int fileSize);
 */
-		/** Called when the metacontact owning this contact changes groups */
+		/*
+		 * Called when the metacontact owning this contact changes groups
+		 */
 		virtual void syncGroups();
 
-		/** Called when a buddy changes */
+		/*
+		 * Called when a buddy changes
+		 */
 		void slotUpdateBuddy();
 
 	protected:
@@ -112,10 +117,10 @@ class OscarContact : public KopeteContact
 
 		KopeteMessageManager *mMsgManager;
 
-		/**
-		* The internal representation of our AIMBuddy
-		* in the internal buddy list
-		*/
+		/*
+		 * The internal representation of our AIMBuddy
+		 * in the internal buddy list
+		 */
 		AIMBuddy *mListContact;
 
 	private slots:
@@ -176,23 +181,28 @@ class OscarContact : public KopeteContact
 		void slotGotAuthReply(const QString &contact, const QString &reason, bool granted);
 
 	private:
-		/** Initializes signal connections */
+		/*
+		 * Initializes signal connections
+		 */
 		void initSignals();
 
-		/** Initialzes the actions */
+		/*
+		 * Initialzes the actions
+		 */
 		void initActions();
 
 	private:
 		/*
 		 * stuff filled from UserInfo
 		 */
-		unsigned int mIdle;
-		unsigned long mRealIP;
-		unsigned long mLocalIP;
-		unsigned int mPort;
-		unsigned int mFwType;
-		unsigned int mTcpVersion;
-		QDateTime mSignonTime;
+//		unsigned int mIdle;
+//		unsigned long mRealIP;
+//		unsigned long mLocalIP;
+//		unsigned int mPort;
+//		unsigned int mFwType;
+//		unsigned int mTcpVersion;
+//		QDateTime mSignonTime;
+		UserInfo mInfo;
 
 		/** Tells whether or not we have a direct connection with the contact */
 		bool mDirectlyConnected;

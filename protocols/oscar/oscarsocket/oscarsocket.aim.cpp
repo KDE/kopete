@@ -79,11 +79,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 	// Throw away two bytes (0x0001) which are always there
 	inbuf.getWord(); // notification channel
 
-	// The length of the screen name
 	int snlen = inbuf.getByte();
-//	kdDebug(14150) << k_funcinfo << "Trying to find username of length: " << snlen << endl;
-
-	// The screen name
 	char *sn = inbuf.getBlock(snlen);
 	QString screenName = QString::fromLatin1(sn); // TODO: check if encoding is right
 	delete [] sn;
@@ -113,7 +109,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 	}
 }
 
-void OscarSocket::sendMiniTypingNotify(QString screenName, TypingNotify notifyType)
+void OscarSocket::sendMiniTypingNotify(const QString &screenName, TypingNotify notifyType)
 {
 //	kdDebug(14150) << k_funcinfo << "SEND (SRV_TYPINGNOTIFY)" << endl;
 

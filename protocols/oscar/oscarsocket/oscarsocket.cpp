@@ -1676,15 +1676,15 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 				TLV caps = inbuf.getTLV(); // TLV(1281), CAPABILITIES
 				if (caps.type==1281)
 				{
-					kdDebug(14150) << k_funcinfo << "TLV(1281), CAPABILITIES" << endl;
+					//kdDebug(14150) << k_funcinfo << "TLV(1281), CAPABILITIES" << endl;
 					Buffer capBuf(caps.data, caps.length);
 					while(capBuf.length() > 0)
 					{
 						BYTE capPart = capBuf.getByte();
-						kdDebug(14150) << k_funcinfo <<
-							"capPart = '" << capPart << "'" << endl;
+						/*kdDebug(14150) << k_funcinfo <<
+							"capPart = '" << capPart << "'" << endl;*/
 						if (capPart==0x06)
-							kdDebug(14150) << k_funcinfo << "  TLV(1281) says sender does UTF-8 :)" << endl;
+							kdDebug(14150) << k_funcinfo << "TLV(1281) says sender does UTF-8 :)" << endl;
 					}
 					capBuf.clear();
 				}
@@ -1706,8 +1706,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 					QString message;
 					if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
 					{
-						kdDebug(14150) << k_funcinfo << "UCS-2 message, length = " <<
-							(messageLength/2) << endl;
+						kdDebug(14150) << k_funcinfo << "UTF-16BE message" << endl;
 						unsigned short *txt = msgBuf.getWordBlock(messageLength/2);
 						message = QString::fromUcs2(txt);
 						delete [] txt;
@@ -1723,7 +1722,8 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 					}
 					else
 					{	// BEGIN unknown or us-ascii
-						kdDebug(14150) << k_funcinfo << "Unknown encoding or US-ASCII" << endl;
+						kdDebug(14150) << k_funcinfo <<
+							"Unknown encoding or US-ASCII, guessing encoding" << endl;
 						const char *messagetext = msgBuf.getBlock(messageLength);
 
 						int cresult = -1;
@@ -1735,7 +1735,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 								"result for UTF-16 = " << cresult << endl;
 						}
 
-						if(cresult < 1)
+						if(cresult < (messageLength/2))
 						{
 							codec=QTextCodec::codecForMib(106); //UTF-8
 							if(codec)
@@ -1746,7 +1746,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 							}
 						}
 
-						if(cresult < 1)
+						if(cresult < (messageLength/2))
 						{
 							codec=QTextCodec::codecForMib(4); // ISO 8859-1 aka Latin1
 							if(codec)
@@ -1757,8 +1757,9 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 							}
 						}
 
-						if(cresult < 1)
+						if(cresult < messageLength)
 						{
+							// FIXME: same as for sendIM
 							kdDebug(14150) << k_funcinfo <<
 								"Couldn't find suitable encoding for incoming message, " <<
 								"encoding using local system-encoding" << endl;
@@ -1930,8 +1931,9 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 {
 	UserInfo u;
 	u.userclass = 0;
-	u.membersince = 0;
-	u.onlinesince = 0;
+	u.evil=0;
+	//u.membersince = QDateTime();
+	//u.onlinesince = QDateTime();
 	u.idletime = 0;
 	u.sessionlen = 0;
 	u.localip = 0;
@@ -1939,6 +1941,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	u.port = 0;
 	u.fwType = 0;
 	u.version = 0;
+	u.icqextstatus=0;
 
 	if(inbuf.length() > 0)
 	{
@@ -1963,82 +1966,59 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		for (unsigned int i=0; i<tlvlen; i++)
 		{
 			TLV t = inbuf.getTLV();
+			Buffer tlvBuf(t.data,t.length);
+
 			switch(t.type)
 			{
 				case 0x0001: //user class
 				{
-					u.userclass = (((BYTE)t.data[0] << 8)) | ((BYTE)t.data[1]);
+					u.userclass = tlvBuf.getWord();;
 					break;
 				}
 				case 0x0002: //member since time
+				case 0x0005: // member since time (again)
 				{
-					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-/*					kdDebug(14150) << k_funcinfo <<
-						"TLV(2) membersince=" << u.membersince << endl;*/
+					u.membersince.setTime_t(tlvBuf.getDWord());
 					break;
 				}
 				case 0x0003: //online since time
 				{
-					u.onlinesince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+					u.onlinesince.setTime_t(tlvBuf.getDWord());
 					break;
 				}
 				case 0x0004: //idle time
 				{
-					u.idletime = (WORD) ((((BYTE)t.data[0]) << 8) | ((BYTE)t.data[1]));
-					break;
-				}
-				case 0x0005: // member since time (again)
-				{
-					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-/*					kdDebug(14150) << k_funcinfo <<
-						"TLV(5) membersince=" << u.membersince << endl;*/
+					u.idletime = tlvBuf.getWord();
 					break;
 				}
 				case 0x0006:
 				{
-					Buffer tmpBuf(t.data,t.length);
-					DWORD status = tmpBuf.getDWord();
-//					kdDebug(14150) << k_funcinfo << "TLV(6) [STATUS] status=" << status << endl;
-					u.icqextstatus = status;
+					u.icqextstatus = tlvBuf.getDWord();
 					break;
 				}
-				case 0x000a: // IP in a DWORD
+				case 0x000a: // IP in a DWORD [ICQ]
 				{
-					Buffer tmpBuf(t.data,t.length);
-					u.realip = htonl(tmpBuf.getDWord());
+					u.realip = htonl(tlvBuf.getDWord());
 					break;
 				}
 				case 0x000c: // CLI2CLI
 				{
-//					kdDebug(14150) << "TLV(12) [CLI2CLI] data left unparsed (TODO)" << endl;
-					Buffer tmpBuf(t.data,t.length);
-					u.localip = htonl(tmpBuf.getDWord());
-					u.port = tmpBuf.getDWord();
-					u.fwType = static_cast<int>(tmpBuf.getWord());
-					u.version = tmpBuf.getWord();
+					u.localip = htonl(tlvBuf.getDWord());
+					u.port = tlvBuf.getDWord();
+					u.fwType = static_cast<int>(tlvBuf.getWord());
+					u.version = tlvBuf.getWord();
 					// ignore the rest of the packet for now
 					break;
 				}
 				case 0x000d: //capability info
 				{
-/*					char *cap = t.data;
-					QString capstring;
-					capstring.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-						cap[0], cap[1], cap[2], cap[3],cap[4], cap[5],
-						cap[6], cap[7], cap[8], cap[9],
-						cap[10], cap[11], cap[12], cap[13],
-						cap[14], cap[15]);
-					kdDebug(14150) << k_funcinfo << "TLV(13) [CAPABILITIES], " << capstring << endl;*/
+					u.capabilities = parseCapabilities(tlvBuf);
 					break;
 				}
 				case 0x0010: //session length (for AOL users, in seconds)
 				case 0x000f: //session length (for AIM users, in seconds)
 				{
-					u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+					u.sessionlen = tlvBuf.getDWord();
 					break;
 				}
 				case 0x001e: // unknown, empty
@@ -2047,64 +2027,142 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
 						") length=" << t.length << " in userinfo for user '" <<
-						u.sn << "'" << endl;
-					Buffer temp(t.data, t.length);
-					kdDebug(14150) << k_funcinfo << temp.toString();
+						u.sn << "'" << tlvBuf.toString() << endl;
 				}
 			}; // END switch()
-			delete [] t.data;
+			tlvBuf.clear(); // unlink tmpBuf from tlv data
+			delete [] t.data; // get rid of tlv data.
 		} // END for (unsigned int i=0; i<tlvlen; i++)
-
-/*
-		kdDebug(14150) << k_funcinfo << "userclass: " << u.userclass <<
-			", membersince: " << u.membersince <<
-			", onlinesince: " << u.onlinesince <<
-			", idletime: " << u.idletime << endl;
-*/
-
 	}
 	else // Never seen this happening [mETz]
 	{
 		kdDebug(14150) << k_funcinfo << "ZERO sized userinfo!" << endl;
 		// Buffer had length of zero for some reason, so
-		u.evil=0;
 		u.userclass=-1;
-		u.membersince=1;
-		u.onlinesince=1;
 		u.capabilities=0;
 		u.sessionlen=-1;
-		u.idletime=0;
-		u.realip=0;
-		u.localip=0;
-		u.port=0;
-		u.fwType=0;
-		u.version=0;
-		u.icqextstatus=0;
 	}
 	return u;
 }
 
 
+
+const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
+{
+//
+// FIXME: port capabilities array to some qt based list class, makes usage of memcmp obsolete
+//
+	DWORD capflags = 0;
+
+	while(inbuf.length() >= 0x10)
+	{
+		char *cap;
+		cap = inbuf.getBlock(0x10);
+
+		for (unsigned int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
+		{
+			if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
+			{
+				capflags |= oscar_caps[i].flag;
+				/*
+				switch(oscar_caps[i].flag)
+				{
+					case AIM_CAPS_BUDDYICON:
+						kdDebug(14150) << "AIM_CAPS_BUDDYICON" << endl;
+						break;
+					case AIM_CAPS_VOICE:
+						kdDebug(14150) << "AIM_CAPS_VOICE" << endl;
+						break;
+					case AIM_CAPS_IMIMAGE:
+						kdDebug(14150) << "AIM_CAPS_IMIMAGE" << endl;
+						break;
+					case AIM_CAPS_CHAT:
+						kdDebug(14150) << "AIM_CAPS_CHAT" << endl;
+						break;
+					case AIM_CAPS_GETFILE:
+						kdDebug(14150) << "AIM_CAPS_GETFILE" << endl;
+						break;
+					case AIM_CAPS_SENDFILE:
+						kdDebug(14150) << "AIM_CAPS_SENDFILE" << endl;
+						break;
+					case AIM_CAPS_GAMES2:
+					case AIM_CAPS_GAMES:
+						kdDebug(14150) << "AIM_CAPS_GAMES" << endl;
+						break;
+					case AIM_CAPS_SAVESTOCKS:
+						kdDebug(14150) << "AIM_CAPS_SAVESTOCKS" << endl;
+						break;
+					case AIM_CAPS_SENDBUDDYLIST:
+						kdDebug(14150) << "AIM_CAPS_SENDBUDDYLIST" << endl;
+						break;
+					case AIM_CAPS_ISICQ:
+						kdDebug(14150) << "AIM_CAPS_ISICQ" << endl;
+						break;
+					case AIM_CAPS_APINFO:
+						kdDebug(14150) << "AIM_CAPS_APINFO" << endl;
+						break;
+					case AIM_CAPS_RTFMSGS:
+						kdDebug(14150) << "AIM_CAPS_RTFMSGS" << endl;
+						break;
+					case AIM_CAPS_EMPTY:
+						kdDebug(14150) << "AIM_CAPS_EMPTY" << endl;
+						break;
+					case AIM_CAPS_ICQSERVERRELAY:
+						kdDebug(14150) << "AIM_CAPS_ICQSERVERRELAY" << endl;
+						break;
+					case AIM_CAPS_IS_2001:
+						kdDebug(14150) << "AIM_CAPS_IS_2001" << endl;
+						break;
+					case AIM_CAPS_TRILLIANCRYPT:
+						kdDebug(14150) << "AIM_CAPS_TRILLIANCRYPT" << endl;
+						break;
+					case AIM_CAPS_UTF8:
+						kdDebug(14150) << "AIM_CAPS_UTF8" << endl;
+						break;
+					case AIM_CAPS_IS_WEB:
+						kdDebug(14150) << "AIM_CAPS_IS_WEB" << endl;
+						break;
+					case AIM_CAPS_INTEROPERATE:
+						kdDebug(14150) << "AIM_CAPS_INTEROPERATE" << endl;
+						break;
+					default:
+						QString capstring;
+						capstring.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
+							cap[0], cap[1], cap[2], cap[3],cap[4], cap[5],
+							cap[6], cap[7], cap[8], cap[9],
+							cap[10], cap[11], cap[12], cap[13],
+							cap[14], cap[15]);
+						kdDebug(14150) << k_funcinfo << "Unknown Capability: " << capstring << endl;
+				} // END switch
+				*/
+				break;
+			} // END if(memcmp...
+		} // END for...
+		delete [] cap;
+	}
+	return capflags;
+}
+
+
 // FIXME: This func is just plain ugly, unreadable and incomplete! [mETz]
-void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
+void OscarSocket::sendIM(const QString &message, const UserInfo &u, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	OscarConnection *dc = mDirectIMMgr->findConnection(dest);
+	OscarConnection *dc = mDirectIMMgr->findConnection(u.sn);
 	if (dc)
 	{
-		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << dest << endl;
+		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << u.sn << endl;
 		dc->sendIM(message,isAuto);
 		return;
 	}
 
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
-		"' to '" << dest << "'" << endl;
+		"' to '" << u.sn << "'" << endl;
 
-//	static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
-	static const char deffeatures[] = { 0x01 };
-
-	// for utf messages, make sure receiver understands these
-//	static const char deffeatures[] = { 0x01, 0x06 };
+	// Old features data
+	//static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
+	//static const char deffeatures[] = { 0x01 };
+	static const char deffeatures[] =  { 0x01, 0x06 }; // 0x06 == UTF support
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000, toicqsrv_seq);
@@ -2118,70 +2176,80 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	// 2 -> special messages (also known as advanced messages)
 	// 4 -> url etc.
 
-	outbuf.addByte(dest.length()); //dest sn length
-	outbuf.addString(dest.latin1(),dest.length()); //dest sn
+	outbuf.addByte((u.sn).length()); //dest sn length
+	outbuf.addString((u.sn).latin1(), (u.sn).length()); //dest sn
 
-	// ==================================================================
+	// ====================================================================================
 	Buffer tlv2;
 	tlv2.addWord(0x0501); // add TLV(0x0501) also known as TLV(1281)
 	tlv2.addWord(sizeof(deffeatures)); // add TLV length
 	tlv2.addString(deffeatures, sizeof(deffeatures)); //add deffeatures
 
-	QTextCodec *codec;
+	QTextCodec *codec = 0L;
 	WORD charset = 0x0000; // default to ascii
 	WORD charsubset = 0x0000;
+	int length = message.length();
+	unsigned char *utfMessage = 0L;
 
-	codec=QTextCodec::codecForName("ISO 8859-1");
+	codec=QTextCodec::codecForMib(4); // ISO 8859-1 aka Latin1
 	if(codec && codec->canEncode(message))
 	{
-		kdDebug(14150) << k_funcinfo << "Encoding outgoing message as ISO8859-1" << endl;
 		charset=0x0003;
-		charsubset=0x0000;
 	}
-	else // last try: utf
+	else if(u.capabilities & AIM_CAPS_UTF8)
 	{
-		// TODO: add UTF8 GUID at the end of messages if we send utf8
-		// otherwise peers will display crap
-
-		/*codec=QTextCodec::codecForName("utf8");
-		if(codec && codec->canEncode(message))
+		length=message.length()*2;
+		utfMessage=new unsigned char[length];
+		for(unsigned int l=0; l<message.length(); l++)
 		{
-			kdDebug(14150) << k_funcinfo << "Encoding outgoing message as UTF-8" << endl;
-			charset=0x0002;
-			charsubset=0x0000;
+			utfMessage[l*2]=message.unicode()[l].row();
+			utfMessage[(l*2)+1]=message.unicode()[l].cell();
 		}
-		else*/
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"couldn't find suitable encoding for outgoing message, " <<
-				"encoding using local system-encoding" << endl;
-			codec = QTextCodec::codecForLocale();
-			if (!codec)
-				return;
-		}
+		charset=0x0002;
 	}
-
-	QCString outgoingMessage = codec->fromUnicode(message);
+	else
+	{
+		//
+		// TODO: Use a per account decoding or even a per contact encoding
+		// this is broken!
+		//
+		kdDebug(14150) << k_funcinfo <<
+			"Couldn't find suitable encoding for outgoing message, " <<
+			"encoding using local system-encoding" << endl;
+		charset=0x0003;
+		codec=QTextCodec::codecForLocale();
+		if (!codec)
+			return;
+	}
 
 	tlv2.addWord(0x0101); //add TLV(0x0101) also known as TLV(257)
-	tlv2.addWord(outgoingMessage.length() + 0x04); // add TLV length
+	tlv2.addWord(length + 0x04); // add TLV length
 	tlv2.addWord(charset); // normal char set
 	tlv2.addWord(charsubset); // normal char set
 
-	tlv2.addString(outgoingMessage, outgoingMessage.length()); // the actual message
-	// ==================================================================
+	if(utfMessage)
+	{
+		kdDebug(14150) << "Outgoing message encoded as 'UTF-16BE'" << endl;
+		tlv2.addString(utfMessage, length); // the actual message
+		delete [] utfMessage;
+	}
+	else
+	{
+		kdDebug(14150) << "Outgoing message encoded as '" << codec->name() << "'" << endl;
+		QCString outgoingMessage=codec->fromUnicode(message);
+		tlv2.addString(outgoingMessage, length); // the actual message
+	}
+	// ====================================================================================
 
 	outbuf.addTLV(0x0002, tlv2.length(), tlv2.buffer());
 
-	if(isAuto) // No clue about this stuff, mETz
+	if(isAuto) // No clue about this stuff, probably AIM-specific [mETz]
 	{
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
-
 //	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
 //	outbuf.addWord(0x0000);
-
 	outbuf.addWord(0x0006); // TLV.Type(0x06) - store message if recipient offline
 	outbuf.addWord(0x0000);
 

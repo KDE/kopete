@@ -26,6 +26,7 @@
 #include <klocale.h>
 
 #include <qptrlist.h>
+#include <qdatetime.h>
 
 class KFileItem;
 class OscarAccount;
@@ -69,9 +70,9 @@ class UserInfo
 		QString sn;
 		int evil;
 		int userclass;
-		unsigned long membersince;
-		unsigned long onlinesince;
-		long capabilities;
+		QDateTime membersince;
+		QDateTime onlinesince;
+		DWORD capabilities;
 		long sessionlen;
 		unsigned int idletime;
 		unsigned long realip;
@@ -112,6 +113,9 @@ const DWORD AIM_CAPS_LAST			= 0x00100000;
 
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
+//
+// FIXME: port capabilities array to some qt based list class, makes usage of memcmp obsolete
+//
 const struct
 {
 	DWORD flag;
@@ -358,7 +362,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Sends message to dest
 		 */
-		void sendIM(const QString &message, const QString &dest, bool isAuto);
+		void sendIM(const QString &message, const UserInfo &u, bool isAuto);
 		/** Requests sn's user info */
 		void sendUserProfileRequest(const QString &sn);
 		/** Sends someone a warning */
@@ -470,7 +474,7 @@ class OscarSocket : public OscarConnection
 		 * @param screenName The name of the person to send to
 		 * @param notifyType Type of notify to send
 		 */
-		void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
+		void sendMiniTypingNotify(const QString &screenName, TypingNotify notifyType);
 #if 0
 		/** Initiate a transfer of the given file to the given sn */
 		void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
@@ -668,6 +672,13 @@ class OscarSocket : public OscarConnection
 
 	/** parses the aim standard user info block */
 	UserInfo parseUserInfo(Buffer &inbuf);
+
+	/*
+	 * parses a capabilities block contained in inbuf
+	 * inbuf should NOT contain anything else or it'll break ya neck ;)
+	 */
+	const DWORD parseCapabilities(Buffer &inbuf);
+
 	/** Activates the SSI list on the server */
 	void sendSSIActivate();
 	/** Parses the oncoming buddy server notification */

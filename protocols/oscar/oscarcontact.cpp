@@ -49,12 +49,6 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 
 	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
 	mMsgManager = 0L;
-	mIdle = 0;
-	mRealIP = 0;
-	mLocalIP = 0;
-	mPort = 0;
-	mFwType = 0;
-	mTcpVersion = 0;
 
 	mListContact = mAccount->internalBuddyList()->findBuddy(mName); // TODO: remove AIMBuddy
 
@@ -507,23 +501,25 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	if(tocNormalize(u.sn) != mName)
 		return;
 
-	mRealIP = u.realip;
+	if (mInfo.idletime != u.idletime)
+	{
+		setIdleTime(u.idletime*60);
+		/*if(mIdle > 0)
+			setIdleState(Idle);
+		else // we are not idling anymore
+			setIdleState(Active);*/
+		if(u.idletime == 0)
+			emit idleStateChanged(this);
+	}
+
+	mInfo = u;
+	/*mRealIP = u.realip;
 	mLocalIP = u.localip;
 	mPort = u.port;
 	mFwType = u.fwType;
 	mTcpVersion = u.version;
-	if (mIdle != u.idletime)
-	{
-		mIdle = u.idletime;
-		setIdleTime(mIdle*60);
-/*		if(mIdle > 0)
-			setIdleState(Idle);
-		else // we are not idling anymore
-			setIdleState(Active);*/
-		if(mIdle == 0)
-			emit idleStateChanged(this);
-	}
 	mSignonTime.setTime_t(u.onlinesince);
+	*/
 }
 
 void OscarContact::slotRequestAuth()

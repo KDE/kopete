@@ -92,7 +92,7 @@ class OscarConnection : public QSocket
 		* 1: Typed
 		* 2: Begun (is typing)
 		*/
-		void gotMiniTypeNotification(QString, int);
+		void gotMiniTypeNotification(const QString &, int);
 		/*
 		 * Emitted when we are ready to send commands!
 		 */
