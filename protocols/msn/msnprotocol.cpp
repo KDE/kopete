@@ -54,11 +54,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 {
 	QString protocolId = this->pluginId();
 
-	if( s_protocol )
-		kdDebug() << "MSNProtocol::MSNProtocol: WARNING: s_protocol already defined!" << endl;
-	else
-		s_protocol = this;
-
 	// Go in experimental mode: enable the new API :-)
 	//enableStreaming( true );
 
@@ -98,7 +93,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 MSNProtocol::~MSNProtocol()
 {
-	s_protocol = 0L;
 }
 
 /*
@@ -165,7 +159,7 @@ void MSNProtocol::Connect()
 
 	kdDebug() << "MSNProtocol::connect: Connecting to MSN with Passport "
 		<< m_msnId << endl;
-	m_notifySocket = new MSNNotifySocket( m_msnId );
+	m_notifySocket = new MSNNotifySocket( this, m_msnId );
 
 	connect( m_notifySocket, SIGNAL( groupAdded( QString, uint,uint ) ),
 		this, SLOT( slotGroupAdded( QString, uint ) ) );
@@ -716,13 +710,6 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m,
 //	kdDebug() << "MSNProtocol::groups(): " << result.join(", " ) << endl;
 	return result;
 } */
-
-MSNProtocol *MSNProtocol::s_protocol = 0L;
-
-MSNProtocol* MSNProtocol::protocol()
-{
-	return s_protocol;
-}
 
 void MSNProtocol::slotGroupAdded( QString groupName, uint groupNumber )
 {

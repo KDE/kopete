@@ -86,7 +86,7 @@ void MSNMessageManager::createChat( const QString &handle,
 
 	setCanBeDeleted( false );
 
-	m_chatService = new MSNSwitchBoardSocket();
+	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNProtocol*>( protocol() ) );
 	m_chatService->setHandle( protocol()->myself()->contactId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
@@ -350,7 +350,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 		if(m_invitations.contains(cookie))
 		{
 			MSNFileTransferSocket *MFTS=m_invitations[cookie];
-			if(MFTS && MFTS->incomming())
+			if(MFTS && MFTS->incoming())
 			{
 				rx=QRegExp("IP-Address: ([0-9\\.]*)");
 				rx.search(msg);
@@ -398,7 +398,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 		{
 			kdDebug() << " MSNMessageManager::slotInvitation: canceled "<<  endl;
 			MSNFileTransferSocket *MFTS=m_invitations[cookie];
-			if(MFTS && MFTS->incomming())
+			if(MFTS && MFTS->incoming())
 			{
 				MFTS->setCookie(0);
 				m_invitations.remove(cookie);
@@ -425,7 +425,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			MFTS->setCookie(cookie);
 			connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 			m_invitations.insert( cookie  , MFTS);
-			KopeteTransferManager::transferManager()->askIncommingTransfer(c , filename,  filesize, QString::null, MFTS );
+			KopeteTransferManager::transferManager()->askIncomingTransfer( c , filename, filesize, QString::null, MFTS );
 		}
 		else
 		{

@@ -35,10 +35,10 @@
 #include "kopetetransfermanager.h"
 #include "msnprotocol.h"
 
-MSNFileTransferSocket::MSNFileTransferSocket(bool incomming, QObject* parent) : MSNSocket(parent)
+MSNFileTransferSocket::MSNFileTransferSocket(bool incoming, QObject* parent) : MSNSocket(parent)
 {
 	m_kopeteTransfer=0l;
-	m_incomming=incomming;
+	m_incoming=incoming;
 	m_file=0L;
 	m_server=0L;
 	ready=true;
@@ -65,8 +65,8 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 		}
 		else
 		{
-			if(m_incomming)
-				sendCommand( "USR" , MSNProtocol::protocol()->myself()->contactId()+ " " +m_authcook ,false);
+			if( m_incoming )
+				sendCommand( "USR", m_protocol->myself()->contactId() + " " + m_authcook, false );
 			else
 				sendCommand( "VER", "MSNFTP" , false );
 		}
@@ -119,7 +119,7 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 
 void MSNFileTransferSocket::doneConnect()
 {
-	if(m_incomming)
+	if(m_incoming)
 		sendCommand( "VER", "MSNFTP", false );
 	MSNSocket::doneConnect();
 }
@@ -213,17 +213,16 @@ void MSNFileTransferSocket::slotTimer()
 
 void MSNFileTransferSocket::abort()
 {
-	if(m_incomming)
+	if(m_incoming)
 		sendCommand( "CCL" , NULL ,false);
 	disconnect();
 //	emit done(this);
 }
 
-
 void MSNFileTransferSocket::setFileName(const QString &fn)
 {
 	m_fileName=fn;
-	if(!m_incomming)
+	if(!m_incoming)
 	{
 		if(m_file)
 		{

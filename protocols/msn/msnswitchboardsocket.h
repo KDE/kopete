@@ -26,6 +26,7 @@
 #include <msnsocket.h>
 
 class KopeteMessage;
+class MSNProtocol;
 
 /**
  * @author Olaf Lueg
@@ -38,10 +39,12 @@ public:
 	/**
 	 * Contructor: id is the KopeteMessageMangager's id
 	 */
-	MSNSwitchBoardSocket();
+	MSNSwitchBoardSocket( MSNProtocol *protocol );
 	~MSNSwitchBoardSocket();
 
 private:
+	MSNProtocol *m_protocol;
+
 	QString m_myHandle; // our handle
 
 	// contains the handle of the last person that msg'ed us.

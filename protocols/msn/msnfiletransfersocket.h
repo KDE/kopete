@@ -19,74 +19,85 @@
 #define MSNFILETRANSFERSOCKET_H
 
 #include <qwidget.h>
+
 #include "msnsocket.h"
 
-/**
-  *@author Olivier Goffart
-  */
-
 class QFile;
-class KopeteTransfer;
+
 class KExtendedSocket;
 
+class KopeteTransfer;
+class MSNProtocol;
 
-class MSNFileTransferSocket : public MSNSocket  {
-   Q_OBJECT
+/**
+ * @author Olivier Goffart
+ */
+class MSNFileTransferSocket : public MSNSocket
+{
+	Q_OBJECT
+
 public:
-	MSNFileTransferSocket( bool incomming,QObject* parent=0L);
+	MSNFileTransferSocket( bool incoming, QObject* parent = 0L );
 	~MSNFileTransferSocket();
 
-	void setKopeteTransfer(KopeteTransfer *kt);
-	KopeteTransfer* kopeteTransfer() {return m_kopeteTransfer;}
-	void setFileName(const QString &fn);
-	void setAuthCookie(const QString& c)  {m_authcook=c;}
-	void setCookie(long unsigned int c)  {m_cookie=c;}
-	long unsigned int cookie()  {return m_cookie;}
-	bool incomming() { return m_incomming;}
+	void setKopeteTransfer( KopeteTransfer *kt );
+	KopeteTransfer* kopeteTransfer() { return m_kopeteTransfer; }
+	void setFileName( const QString &fn );
+	void setAuthCookie( const QString &c ) { m_authcook = c; }
+	void setCookie( long unsigned int c ) { m_cookie = c; }
+	long unsigned int cookie() { return m_cookie; }
+	bool incoming() { return m_incoming; }
 	QString fileName() { return m_fileName;}
 	long unsigned int size() { return m_size;}
-	void listen(int port);
+	void listen( int port );
 
-protected: // Protected methods
-  /**
+public slots:
+	void abort();
+
+signals:
+	void done( MSNFileTransferSocket * );
+
+protected:
+	/**
 	 * This reimplementation sets up the negotiating with the server and
 	 * suppresses the change of the status to online until the handshake
 	 * is complete.
 	 */
-  virtual void doneConnect();
-  /**
+	virtual void doneConnect();
+
+	/**
 	 * Handle an MSN command response line.
 	 */
 	virtual void parseCommand(const QString & cmd, uint id, const QString & data);
 	virtual void bytesReceived(const QByteArray & data);
 
-private:
-	long unsigned int m_cookie;
-	long unsigned int m_size;
-	long unsigned int m_downsize;
-	QString m_authcook;
-	QString m_fileName;
-	bool m_incomming;
-	KopeteTransfer* m_kopeteTransfer;
-	QFile *m_file ;
-	KExtendedSocket *m_server;
+protected slots:
+	virtual void slotReadyWrite();
 
-	bool ready;
-
-private slots: // Private slots
+private slots:
 	void slotSocketClosed();
 	void slotReadBlock(const QByteArray &);
 	void slotAcceptConnection();
 	void slotTimer();
 	void slotSendFile();
-public slots: // Public slots
-	void abort();
-protected slots: // Protected slots
-	virtual void slotReadyWrite();
 
-signals:
-	void done(MSNFileTransferSocket*);
+private:
+	MSNProtocol *m_protocol;
 
+	long unsigned int m_cookie;
+	long unsigned int m_size;
+	long unsigned int m_downsize;
+	QString m_authcook;
+	QString m_fileName;
+	bool m_incoming;
+	KopeteTransfer* m_kopeteTransfer;
+	QFile *m_file ;
+	KExtendedSocket *m_server;
+
+	bool ready;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 tw=4:
+

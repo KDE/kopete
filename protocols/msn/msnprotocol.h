@@ -56,8 +56,6 @@ public:
 	MSNProtocol( QObject *parent, const char *name, const QStringList &args );
 	~MSNProtocol();
 
-	static MSNProtocol *protocol();
-
 	/**
 	 * SyncMode indicates whether settings differing between client and
 	 * server should be propagated to keep them in sync.

@@ -32,14 +32,15 @@
 #include <ktempfile.h>
 #include <kapplication.h>
 
-MSNNotifySocket::MSNNotifySocket( const QString &msnId )
-: MSNAuthSocket( msnId ,  MSNProtocol::protocol())
+MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
+: MSNAuthSocket( msnId, protocol )
 {
+	m_protocol = protocol;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
-		
+
 	m_dispatchSocket = 0L;
-	m_newstatus=MSNProtocol::NLN;
+	m_newstatus = MSNProtocol::NLN;
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -166,7 +167,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, status
 
-		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 1, 1 ));
+		MSNContact *c = m_protocol->contact(data.section( ' ', 1, 1 ));
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
@@ -188,14 +189,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 0, 0 ));
+		MSNContact *c = m_protocol->contact(data.section( ' ', 0, 0 ));
 		if( c )
 			c->setMsnStatus( MSNProtocol::FLN );
 	}
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 1, 1 ));
+		MSNContact *c = m_protocol->contact(data.section( ' ', 1, 1 ));
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
@@ -261,7 +262,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 		else
 		{
-			MSNContact *c=MSNProtocol::protocol()->contact(handle);
+			MSNContact *c = m_protocol->contact( handle );
 			if( c )
 			{
 				c->setDisplayName(unescape(data.section( ' ', 2, 2 )));
@@ -314,7 +315,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "BPR" )
 	{
-		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 0, 0));
+		MSNContact *c = m_protocol->contact(data.section( ' ', 0, 0));
 		if( c )
 		{
 			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));

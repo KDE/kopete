@@ -37,8 +37,10 @@
 #include "msncontact.h"
 #include "msnprotocol.h"
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket() : MSNSocket( MSNProtocol::protocol() )
+MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNProtocol *protocol )
+: MSNSocket( protocol )
 {
+	m_protocol = protocol;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -185,8 +187,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// missing:	-a signal when the transfer is aborted
 			//         	-a flag to precies if it is an outgoing or an incomming transfer
 			// I would like set the size later in the MSNFileTransferSocket.  (current size is set to 0)
-			MFTS->setKopeteTransfer( KopeteTransferManager::transferManager()->addTransfer(MSNProtocol::protocol()->contact(m_msgHandle)->metaContact(),
-				m_filetransferName, 0,  MSNProtocol::protocol()->contact(m_msgHandle)->displayName()));
+			MFTS->setKopeteTransfer( KopeteTransferManager::transferManager()->addTransfer( m_protocol->contact(m_msgHandle)->metaContact(),
+				m_filetransferName, 0, m_protocol->contact(m_msgHandle)->displayName()));
 			MFTS->connect(ip_adress, port.toUInt());
 		}
 		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
@@ -201,7 +203,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			kdDebug() << "MSNSwitchBoardService::slotReadMessage: " <<
 				"invitation cookie: " << cookie << endl;
 
-			QString contact = MSNProtocol::protocol()->contact(m_msgHandle)->displayName();
+			QString contact = m_protocol->contact(m_msgHandle)->displayName();
 			QString txt = i18n("%1 tried to send you a file.\n"
 				"Name: %2 \nSize: %3 bytes\n"
 				"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
@@ -332,12 +334,12 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			<< m_msgHandle << endl;*/
 
 		KopeteContactPtrList others;
-		others.append( MSNProtocol::protocol()->myself() );
+		others.append( m_protocol->myself() );
 		QStringList::iterator it;
 		for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
-			if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contact(*it) );
+			if(*it != m_msgHandle) others.append( m_protocol->contact(*it) );
 
-		KopeteMessage kmsg( MSNProtocol::protocol()->contact(m_msgHandle) , others,
+		KopeteMessage kmsg( m_protocol->contact(m_msgHandle) , others,
 			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
 			KopeteMessage::Inbound , KopeteMessage::PlainText );
 
