@@ -16,6 +16,7 @@
 */
 
 /* QT Includes */
+#include <qapplication.h>
 #include <qcursor.h>
 #include <qwidget.h>
 #include <qobject.h>
@@ -29,17 +30,22 @@
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 /* Local Includes */
 #include "yahoodebug.h"
 #include "yahoostatus.h"
 #include "yahooprotocol.h"
 #include "yahoocontact.h"
+#include "yahooimmessagemanager.h"
+#include "yahooconferencemessagemanager.h"
 
 /* Kopete Includes */
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
 
@@ -50,9 +56,9 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	kdDebug(14180) << "YahooProtocol::YahooProtocol()" << endl;
 	kdDebug(14180) << "Loading Yahoo Plugin..." << endl;
 
-	if ( !protocolStatic_ )
+	if ( !s_protocolStatic_ )
 	{
-		protocolStatic_ = this;
+		s_protocolStatic_ = this;
 	}
 	else
 	{
@@ -65,10 +71,13 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	setStatusIcon( "yahoo_offline" );
 
 	/* Create preferences menu */
-	mPrefs = new YahooPreferences("yahoo_protocol_32", this);
-	QObject::connect( mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
+	m_prefs = new YahooPreferences("yahoo_protocol_32", this);
+	
+	m_myself = new YahooContact( m_userId, QString::null, this, 0L);
+	
+	QObject::connect( m_prefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
-	mIsConnected = false;
+	m_isConnected = false;
 
 	/* Call slotSettingsChanged() to get it all registered. */
 	slotSettingsChanged();
@@ -84,11 +93,38 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 YahooProtocol::~YahooProtocol()
 {
 	kdDebug(14180) << "YahooProtocol::~YahooProtocol()" << endl;
-	delete mPrefs;
-	protocolStatic_ = 0L;
+	delete m_prefs;
+	s_protocolStatic_ = 0L;
 }
 
-YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
+YahooProtocol* YahooProtocol::s_protocolStatic_ = 0L;
+
+YahooSession *YahooProtocol::yahooSession()
+{
+	return m_session ? m_session : 0L;
+}
+
+YahooImMessageManager* YahooProtocol::chatMsgManager( const QString &who )
+{
+	if ( m_chatMap[who] )
+	{
+		return m_chatMap[who];
+	}
+	else
+	{
+		YahooImMessageManager *newMM;
+		
+		KopeteContactPtrList contacts;
+		contacts.append(contact(who));
+		
+		newMM = new YahooImMessageManager(
+			yahooSession(),
+			myself(), contacts, KopeteMessageManager::ChatWindow);
+
+		m_chatMap[who] = newMM;
+		return newMM;
+	}
+}
 
 /***************************************************************************
  *                                                                         *
@@ -98,7 +134,7 @@ YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
 
 YahooProtocol *YahooProtocol::protocol()
 {
-	return protocolStatic_;
+	return s_protocolStatic_;
 }
 
 void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
@@ -127,8 +163,7 @@ void YahooProtocol::init()
 
 KopeteContact *YahooProtocol::myself() const
 {
-	// FIXME: For future maintainers : reimplement this!
-	return 0L;
+	return m_myself ? m_myself : 0L;
 }
 
 void YahooProtocol::connect()
@@ -141,9 +176,9 @@ void YahooProtocol::connect()
 	if ( ! isConnected() )
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo server <"
-			<< mServer << ":" << mPort << "< with user <" << mUsername << ">" << endl;
+			<< m_server << ":" << m_port << "< with user <" << m_userId << ">" << endl;
 
-		session_ = YahooSessionManager::manager()->createSession( mPrefs->username(), mPrefs->password(), YAHOO_STATUS_AVAILABLE);
+		session_ = YahooSessionManager::manager()->createSession( m_prefs->username(), m_prefs->password(), YAHOO_STATUS_AVAILABLE);
 		m_session = session_;
 	}
 	else if (isAway())
@@ -159,7 +194,7 @@ void YahooProtocol::connect()
 	if (session_)
 	{
 		setStatusIcon( "yahoo_online" );
-		mIsConnected = true;
+		m_isConnected = true;
 
 		/* We have a session, time to connect its signals to our plugin slots */
 		QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
@@ -191,13 +226,12 @@ void YahooProtocol::disconnect()
 
 	if (isConnected())
 	{
-		kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << mServer << endl;
-
+		kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << m_server << endl;
 
 		m_session->logOff();
 		setStatusIcon( "yahoo_offline" );
 		//m_engine->Disconnect();
-		mIsConnected = false;
+		m_isConnected = false;
 	}
 	else
 	{
@@ -219,7 +253,7 @@ void YahooProtocol::setAway()
 bool YahooProtocol::isConnected() const
 {
 	kdDebug(14180) << "YahooProtocol::isConnected()" << endl;
-	return mIsConnected; // XXX
+	return m_isConnected; // XXX
 }
 
 bool YahooProtocol::isAway() const
@@ -244,10 +278,10 @@ KActionMenu* YahooProtocol::protocolActions()
 void YahooProtocol::slotSettingsChanged()
 {
 	kdDebug(14180) << "YahooProtocol::slotSettingsChanged()" <<endl;
-	mUsername = KGlobal::config()->readEntry("UserID", "");
-	mPassword = KGlobal::config()->readEntry("Password", "");
-	mServer   = KGlobal::config()->readEntry("Server", "cs.yahoo.com");
-	mPort     = KGlobal::config()->readNumEntry("Port", 5050);
+	m_userId = KGlobal::config()->readEntry("UserID", "");
+	m_password = KGlobal::config()->readEntry("Password", "");
+	m_server   = KGlobal::config()->readEntry("Server", "cs.yahoo.com");
+	m_port     = KGlobal::config()->readNumEntry("Port", 5050);
 }
 
 void YahooProtocol::slotConnected()
@@ -293,7 +327,7 @@ void YahooProtocol::initActions()
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 
-	QString handle = mUsername + "@" + mServer;
+	QString handle = m_userId + "@" + m_server;
 	actionStatusMenu = new KActionMenu("Yahoo", this);
 	actionStatusMenu->popupMenu()->insertTitle( statusIcon(), handle );
 
@@ -352,7 +386,9 @@ bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QStr
 		YahooContact *newContact = new YahooContact( contactId, displayName, this, parentContact);
 	
 		return (newContact != 0L);
-	} else {
+	}
+	else
+	{
 		kdDebug(14180) << "[YahooProtocol::addContact] Contact already exists" << endl;
 	}
 
@@ -388,6 +424,59 @@ void YahooProtocol::slotStatusChanged( const QString &who, int stat, const QStri
 void YahooProtocol::slotGotIm( const QString &who, const QString &msg, long tm, int stat)
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotIm] " << who << " " << msg << " " << tm << " " << stat << endl;
+
+	if ( ! contact(who) )
+	{
+		addContact( who, who, 0L, QString::null, true );
+	}
+	
+	KopeteMessageManager *mm = chatMsgManager(who);
+
+	// Tell the message manager that the buddy is done typing
+	mm->receivedTypingMsg(contact(who), false);
+
+	KopeteContactPtrList justMe;
+	justMe.append( myself() );
+	KopeteMessage kmsg( contact(who), justMe, msg, KopeteMessage::Inbound );
+	mm->appendMessage(kmsg);
+
+	// send our away message in fire-and-forget-mode :)
+	/*
+	if ( mProtocol->isAway() )
+	{
+		// Get the current time
+		long currentTime = time(0L);
+
+		// Compare to the last time we sent a message
+		// We'll wait 2 minutes between responses
+		if( (currentTime - mLastAutoResponseTime) > 120 )
+		{
+			kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
+			// Send the autoresponse
+			mProtocol->engine->sendIM(
+					KopeteAway::getInstance()->message(),
+					mName, true);
+			// Build a pointerlist to insert this contact into
+			KopeteContactPtrList toContact;
+			toContact.append(this);
+			// Display the autoresponse
+			// Make it look different
+			QString responseDisplay = KopeteAway::getInstance()->message();
+			responseDisplay.prepend("<font color='#666699'>Autoresponse: </font>");
+
+			KopeteMessage message( mProtocol->myself(), toContact,
+					responseDisplay,
+					KopeteMessage::Outbound,
+					KopeteMessage::RichText);
+
+			msgManager()->appendMessage(message);
+
+			// Set the time we last sent an autoresponse
+			// which is right now
+			mLastAutoResponseTime = time(0L);
+		}
+	}
+	*/
 }
 
 void YahooProtocol::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
@@ -421,19 +510,14 @@ void YahooProtocol::slotGotFile( const QString & /* who */, const QString & /* u
 	kdDebug(14180) << "[YahooProtocol::slotGotFile]" << endl;
 }
 
-void YahooProtocol::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )
+void YahooProtocol::slotContactAdded( const QString &  myid , const QString &  who , const QString &  msg  )
 {
-	kdDebug(14180) << "[YahooProtocol::slotContactAdded]" << endl;
+	kdDebug(14180) << "[YahooProtocol::slotContactAdded] " << myid << " " << who << " " << msg << endl;
 }
 
 void YahooProtocol::slotRejected( const QString & /* who */, const QString & /* msg */ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotRejected]" << endl;
-}
-
-void YahooProtocol::slotTypingNotify( const QString & /* who */, int /* stat */ )
-{
-	kdDebug(14180) << "[YahooProtocol::slotTypingNotify]" << endl;
 }
 
 void YahooProtocol::slotGameNotify( const QString & /* who */, int /* stat */ )

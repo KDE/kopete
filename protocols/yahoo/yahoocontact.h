@@ -22,13 +22,13 @@
 
 /* Local Includes */
 #include "yahooprotocol.h"
-
+#include "yahoostatus.h"
 /* Kopete Includes */
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
 /* QT Includes */
-
+#include <qtimer.h>
 /* KDE Includes */
 
 class YahooProtocol;
@@ -37,7 +37,7 @@ class YahooContact : public KopeteContact
 {
 	Q_OBJECT public:
 
-	YahooContact(QString userID, QString fullName, YahooProtocol *protocol, KopeteMetaContact *metaContact);
+	YahooContact(QString userId, QString fullName, YahooProtocol *protocol, KopeteMetaContact *metaContact);
 	~YahooContact();
 
 	virtual bool isOnline() const;
@@ -56,17 +56,13 @@ public slots:
 	virtual void slotViewHistory();
 	virtual void slotDeleteContact();
 	virtual void slotUserInfo();
-	virtual void slotSendFile();
+	virtual void slotSendFile();	
 
-	private slots:
-
-	private:
-
-	/* User id, full name, group, status code, and status description */
-	QString mUserID;
-	QString mFullName;
-
-	YahooStatus mStatus;
+private:
+	QString m_fullName;
+	YahooStatus m_status;
+signals:
+	void chatTo( QString );
 };
 
 #endif

@@ -59,6 +59,11 @@ YahooSessionManager::~YahooSessionManager()
 	managerStatic_ = 0L;
 }
 
+int YahooSessionManager::socketDescriptor( int session_id )
+{ 
+	return m_fdMap[session_id] ? m_fdMap[session_id] : 0L; 
+}
+
 YahooSession* YahooSessionManager::createSession(const QString username, const QString password, int initial)
 {
 	int id;

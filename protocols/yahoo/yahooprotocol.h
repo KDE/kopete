@@ -39,6 +39,10 @@ class KPopupMenu;
 class KActionMenu;
 class KAction;
 class KopeteMetaContact;
+class KopeteMessage;
+
+class YahooImMessageManager;
+class YahooConferenceMessageManager;
 
 // Yahoo Protocol
 class YahooProtocol : public KopeteProtocol
@@ -57,13 +61,13 @@ public:
 	~YahooProtocol();
 
 	KopeteContact* myself() const;
-
 	bool addContactToMetaContact(const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact);
+				KopeteMetaContact *parentContact);
 
 	virtual KActionMenu* protocolActions();
 	YahooContact *contact( const QString &id );
-
+	YahooSession *yahooSession();
+	
 public slots:
 	void connect();			// Connect to server
 	void disconnect();		// Disconnect from server
@@ -79,7 +83,7 @@ public slots:
 						// Callback when settings changed
 	//void slotConnect();
 	void slotGoOffline();
-
+	
 	void slotLoginResponse( int succ, const QString &url);
 	void slotGotBuddies(YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
@@ -95,7 +99,6 @@ public slots:
 	void slotGotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
 	void slotContactAdded( const QString &myid, const QString &who, const QString &msg);
 	void slotRejected( const QString &, const QString &);
-	void slotTypingNotify( const QString &, int stat);
 	void slotGameNotify( const QString &, int);
 	/**
 	 * Mail Notification
@@ -113,16 +116,24 @@ protected slots:
 	void slotConnected();
 
 private:
+	YahooImMessageManager* chatMsgManager( const QString &);
+	YahooConferenceMessageManager* conferenceMsgManager( const QString &);
+
+
 	QMap <QString, YahooContact *> m_contactsMap;
 
 	int m_sessionId;	
 	
-	bool mIsConnected;				// Am I connected ?
-	QString mUsername, mPassword, mServer; int mPort;
+	bool m_isConnected;				// Am I connected ?
+	QString m_userId, m_password, m_server; int m_port;
 									// Configuration data
-	YahooPreferences *mPrefs;		// Preferences Object
+	YahooPreferences *m_prefs;		// Preferences Object
 	YahooSession *m_session;			// Connection Object
-
+	YahooContact *m_myself;
+	
+	QMap< QString, YahooImMessageManager *> m_chatMap;
+	QMap< QString, YahooConferenceMessageManager *> m_conferenceMap;
+	
 	void initActions();	// Load Status Actions
 
 	KActionMenu *actionStatusMenu; // Statusbar Popup
@@ -141,7 +152,12 @@ private:
 	KAction *actionGoStatus099; // Custom
 	KAction *actionGoStatus999; // Idle
 
-	static YahooProtocol* protocolStatic_;
+	static YahooProtocol* s_protocolStatic_;
+	
+	/** The contact's idle time */
+	int m_idle;
+	/** Timer for sending typing notifications */
+	QTimer* m_typingTimer;
 
 };
 

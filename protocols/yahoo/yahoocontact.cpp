@@ -29,22 +29,24 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 
-YahooContact::YahooContact(QString userID, QString fullName,
-			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
-:  KopeteContact( protocol, userID, metaContact)
+YahooContact::YahooContact(QString userId, QString fullName,
+			     YahooProtocol *pluginInstance, KopeteMetaContact *metaContact)
+:  KopeteContact( pluginInstance, userId, metaContact)
 {
-	kdDebug(14180) << "YahooContact::YahooContact("<< userID << ", " << fullName << ")" << endl;
+	kdDebug(14180) << "YahooContact::YahooContact("<< userId << ", " << fullName << ")" << endl;
 
-	mUserID = userID;
-	mFullName = fullName;
+	m_fullName = fullName;
 
-	mStatus.setStatus(YahooStatus::Offline);
+	m_status.setStatus(YahooStatus::Offline);
 
 	// Update ContactList
-	setDisplayName(mFullName);
+	setDisplayName(m_fullName);
 	emit statusChanged(this, status());
 
 	// XXX initActions();
+
+	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
+	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));
 }
 
 YahooContact::~YahooContact()
@@ -56,27 +58,28 @@ YahooContact::~YahooContact()
 KopeteContact::ContactStatus YahooContact::status() const
 {
 	kdDebug(14180) << "YahooContact::status()" << endl;
-	return mStatus.translate();
+	return m_status.translate();
 }
 
 // Return status text
 QString YahooContact::statusText() const
 {
 	kdDebug(14180) << "Yahoo::statusText()";
-	return mStatus.text();
+	return m_status.text();
 }
 
 // Return status icon
 QString YahooContact::statusIcon() const
 {
-	return mStatus.icon();
+	return m_status.icon();
 }
 
 void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int away)
 {
-	mStatus.setStatus(status_);
-	emit statusChanged( this, mStatus.translate() );
+	m_status.setStatus(status_);
+	emit statusChanged( this, m_status.translate() );
 }
+
 
 /* XXX
 void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
@@ -135,6 +138,7 @@ KActionCollection *YahooContact::customContextMenuActions()
 void YahooContact::execute()
 {
 	kdDebug(14180) << "[YahooContact::execute()]" << endl;
+	emit chatTo( contactId() );
 }
 
 void YahooContact::slotViewHistory()

@@ -44,9 +44,8 @@ public:
 	YahooSessionManager();
 	~YahooSessionManager();
 
-	int socketDescriptor( int session_id )
-	{ return m_fdMap[session_id] ? m_fdMap[session_id] : 0L ; };
-
+	int socketDescriptor( int session_id );
+	
 	/* Creates a new session */
 	YahooSession* createSession(const QString username, const QString password, int initial);
 	bool cleanSessions();
@@ -255,36 +254,6 @@ signals:
 	int m_fd;
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
-
-	static YahooSession* sessionStatic_;
-
-	typedef struct {
-        int id;
-        char *label;
-	} yahoo_idlabel;
-
-
-
-	/*yahoo_idlabel yahoo_status_codes[] = {
-        {YAHOO_STATUS_AVAILABLE, "Available"},
-        {YAHOO_STATUS_BRB, "BRB"},
-        {YAHOO_STATUS_BUSY, "Busy"},
-        {YAHOO_STATUS_NOTATHOME, "Not Home"},
-        {YAHOO_STATUS_NOTATDESK, "Not at Desk"},
-        {YAHOO_STATUS_NOTINOFFICE, "Not in Office"},
-        {YAHOO_STATUS_ONPHONE, "On Phone"},
-        {YAHOO_STATUS_ONVACATION, "On Vacation"},
-        {YAHOO_STATUS_OUTTOLUNCH, "Out to Lunch"},
-        {YAHOO_STATUS_STEPPEDOUT, "Stepped Out"},
-        {YAHOO_STATUS_INVISIBLE, "Invisible"},
-        {YAHOO_STATUS_IDLE, "Idle"},
-        {YAHOO_STATUS_OFFLINE, "Offline"},
-        {YAHOO_STATUS_CUSTOM, "[Custom]"},
-        {YAHOO_STATUS_TYPING, "Typing"},
-        {0, NULL}
-	};
-*/
-
 };
 
 #endif
