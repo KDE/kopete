@@ -378,6 +378,7 @@ void ChatView::save()
 	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/xml text/plain" ), this , "fileSaveDialog", false );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
+	dlg.setMode( KFile::LocalOnly ); // We can't save remotely using QTextStream
 
 	if( dlg.exec() != QDialog::Accepted )
 		return;
