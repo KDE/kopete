@@ -279,7 +279,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
 			//kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
-					" - Old MC Status: " << m_oldStatus.status() << ", New MC Status: " << newStatus.status() << endl;
+			//" - Old MC Status: " << m_oldStatus.status() << ", New MC Status: " << newStatus.status() << endl;
 			// first, exclude changes due to blocking or subscription changes at the protocol level
 			if ( ( m_oldStatus.status() == KopeteOnlineStatus::Unknown
 						|| newStatus.status() == KopeteOnlineStatus::Unknown ) )
