@@ -3,6 +3,7 @@ SUBDIRS = ui services
 INCLUDES = -I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/services \
+	-I./services \
 	-I$(srcdir)/../../libkopete \
 	-I$(srcdir)/../../libkopete/ui \
 	-I../../libkopete/ui \
