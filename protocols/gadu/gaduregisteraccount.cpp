@@ -67,6 +67,8 @@ void GaduRegisterAccount::doRegister( )
 {
 	cRegister->setUserinfo( ui->emailArea->text(), ui->password1->text(), ui->textToken->text() );
 	cRegister->execute();
+	ui->submitData->setDisabled( true );
+	enableButton( Ok, false );
 }
 
 void GaduRegisterAccount::validateInput()
@@ -115,6 +117,7 @@ void GaduRegisterAccount::passwordsChanged( const QString & )
 void GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
 {
 	KMessageBox::sorry( this, QString::number( cRegister->newUin() ), "dupa" );
+	enableButton( Ok, true );
 }
 
 void GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
