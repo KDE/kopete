@@ -181,7 +181,7 @@
                                     <widget class="QComboBox">
                                         <item>
                                             <property name="text">
-                                                <string>Contact Status at Date and Time</string>
+                                                <string>Contact Status at Date & Time</string>
                                             </property>
                                         </item>
                                         <item>

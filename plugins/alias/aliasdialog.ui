@@ -74,9 +74,6 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
             <property name="text">
                 <string>&amp;Save</string>
             </property>
-            <property name="accel">
-                <string>Alt+S</string>
-            </property>
             <property name="default">
                 <bool>false</bool>
             </property>

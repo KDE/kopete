@@ -35,7 +35,7 @@
                         <cstring>mSingleShot</cstring>
                     </property>
                     <property name="text">
-                        <string>Single-shot window (Jabber email/Old ICQ style)</string>
+                        <string>Single-shot window (Jabber email/old ICQ style)</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -43,7 +43,7 @@
                         <cstring>mChatWindow</cstring>
                     </property>
                     <property name="text">
-                        <string>Chat window (Jabber chat/MSN/New ICQ style)</string>
+                        <string>Chat window (Jabber chat/MSN/new ICQ style)</string>
                     </property>
                 </widget>
             </vbox>
