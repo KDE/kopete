@@ -14,7 +14,8 @@ kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
 	psi/libpsi/src/libpsi.la \
-	psi/libpsi/qssl/libqssl.la
+	psi/libpsi/qssl/libqssl.la \
+	$(LIBSSL)
 
 service_DATA = jabber.desktop
 servicedir = $(kde_servicesdir)
