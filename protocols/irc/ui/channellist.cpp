@@ -103,7 +103,6 @@ ChannelList::ChannelList( QWidget* parent, KIRC *engine )
 	QToolTip::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here." ) );
 	QWhatsThis::add( channelSearch, i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
 	mSearchButton->setText( i18n( "S&earch" ) );
-	mSearchButton->setAccel( QKeySequence( i18n( "Alt+E" ) ) );
 	QToolTip::add( mSearchButton, i18n( "Perform a channel search." ) );
 	QWhatsThis::add( mSearchButton, i18n( "Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server." ) );
 	QToolTip::add( mChannelList, i18n( "Double click on a channel to select it." ) );
