@@ -28,6 +28,7 @@
 #include <klineeditdlg.h>
 #include <kurlrequester.h>
 #include <kregexpeditorinterface.h>
+#include <kdebug.h>
 
 #include "filter.h"
 #include "highlightplugin.h"
@@ -72,7 +73,6 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/
 
 HighlightPreferences::~HighlightPreferences()
 {
-	delete preferencesDialog;
 	delete m_config;
 }
 
@@ -98,6 +98,7 @@ void HighlightPreferences::load()
 		first=false;
 	}
 	donttouch=false;
+	setChanged(false);
 }
 
 void HighlightPreferences::save()
@@ -153,7 +154,6 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_sound->setChecked(current->playSound);
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
 
-
 	donttouch=false;
 }
 
@@ -178,6 +178,7 @@ void HighlightPreferences::slotRemoveFilter()
 	m_filterItems.remove(lvi);
 	delete lvi;
 	m_config->removeFilter(current);
+	setChanged(true);
 }
 
 void HighlightPreferences::slotRenameFilter()
@@ -196,6 +197,7 @@ void HighlightPreferences::slotRenameFilter()
 		return;
 	current->displayName=newname;
 	lvi->setText(0,newname);
+	setChanged(true);
 }
 
 
@@ -221,6 +223,8 @@ void HighlightPreferences::slotSomethingHasChanged()
 	current->soundFN=preferencesDialog->m_soundFN->url();
 	current->playSound=preferencesDialog->m_sound->isChecked();
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
+
+	setChanged(true);
 }
 
 void HighlightPreferences::slotEditRegExp()
@@ -245,7 +249,6 @@ void HighlightPreferences::slotEditRegExp()
 	{
 		// Don't offer the dialog.
 	}
-
 }
 
 #include "highlightpreferences.moc"

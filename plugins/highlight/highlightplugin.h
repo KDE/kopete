@@ -51,15 +51,8 @@ public:
 	HighlightPlugin( QObject *parent, const char *name, const QStringList &args );
 	~HighlightPlugin();
 
-
-	Filter* newFilter();
 	void removeFilter(Filter *f);
-
-	void load();
-	void save();
-
-
-//	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
+	void slotSettingsChanged();
 
 
 public slots:

@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include <qregexp.h>
-#include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kopetenotifyclient.h>
 
@@ -36,10 +35,11 @@ HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStri
 		pluginStatic_=this;
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
 	m_config = new HighlightConfig;
-	
-	load();
+
+	m_config->load();
 }
 
 HighlightPlugin::~HighlightPlugin()
@@ -85,27 +85,16 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 	}
 }
 
-Filter* HighlightPlugin::newFilter()
-{
-	return m_config->newFilter();
-}
-
 void HighlightPlugin::removeFilter(Filter *f)
 {
 	m_config->removeFilter(f);
 	delete f;
 }
 
-void HighlightPlugin::save()
-{
-	m_config->save();
-}
-
-void HighlightPlugin::load()
+void HighlightPlugin::slotSettingsChanged()
 {
 	m_config->load();
 }
-
 
 
 
