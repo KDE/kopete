@@ -195,6 +195,9 @@ void KopeteContact::slotSendFile()
 
 KPopupMenu* KopeteContact::createContextMenu()
 {
+	//FIXME: this should perhaps be KActionCollection * KopeteContact::contactActions()
+	//FIXME: to avoid passing aorund KPopupMenu's
+
 	/* Build the menu */
 	KPopupMenu *menu = new KPopupMenu();
 	menu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );
