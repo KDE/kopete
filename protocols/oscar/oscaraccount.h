@@ -139,7 +139,7 @@ protected slots:
 
 protected:
 	/** Adds a contact to a meta contact */
-	bool addContactToMetaContact(const QString &contactId,
+	virtual bool addContactToMetaContact(const QString &contactId,
 		const QString &displayName, KopeteMetaContact *parentContact );
 
 	/**
