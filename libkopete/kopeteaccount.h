@@ -76,11 +76,20 @@ public:
 	 * return the KopeteProtocol for this account
 	 */
 	KopeteProtocol *protocol() const ;
+	
 	/**
 	 * return the unique id of this account used as the login
 	 */
 	QString accountId() const;
 
+
+	/**
+	 * Return the full account name, fe. nick(UID). 
+	 * By default returns id returned by @ref accountId() 
+	 */
+	 
+	virtual QString fullAccountName() const;
+	
 	/**
 	 * The account ID should be constant, don't use this method.
 	 * Reserved for expert usage, use it with care of risk
