@@ -145,7 +145,7 @@ bool ConnectionManager::askToConnect( QWidget * mainWidget )
 	i18n( "This application is currently in offline mode.  Do you want to connect?" );
 	return ( KMessageBox::questionYesNo( mainWidget,
 			 i18n("This application is currently in offline mode.  Do you want to connect in order to carry out this operation?"),
-																		i18n("Leave offline mode?"),
+																		i18n("Leave Offline Mode?"),
 																		KStdGuiItem::yes(), KStdGuiItem::no(),
 																		QString::fromLatin1("OfflineModeAlwaysGoOnline") ) == KMessageBox::Yes );
 }

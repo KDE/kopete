@@ -46,7 +46,7 @@
                             <cstring>csMethod</cstring>
                         </property>
                         <property name="title">
-                            <string>Method of connection status detection</string>
+                            <string>Method of Connection Status Detection</string>
                         </property>
                         <vbox>
                             <property name="name">
@@ -65,9 +65,6 @@
                                 <property name="text">
                                     <string>&amp;netstat - Standard method of connection status detection</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+N</string>
-                                </property>
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
@@ -81,9 +78,6 @@
                                 </property>
                                 <property name="text">
                                     <string>s&amp;mpppd - Advanced method of connection status detection</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+M</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Uses the smpppd on a gateway; suitable for a computer in a private network</string>
@@ -102,10 +96,7 @@
                                             <cstring>autoCSTest</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Try to detect &amp;automatically</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+A</string>
+                                            <string>Try to Detect &amp;Automatically</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Tries to find an appropriate connection method</string>
