@@ -13,7 +13,7 @@ noinst_HEADERS = configmodule.h \
 libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp kopetecontactaction.cpp \
 	addcontactpage.cpp editidentitywidget.cpp\
-	kopetehistorydialog.cpp \
+	kopetehistorydialog.cpp kopetepassworddialog.ui \
 	kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp \
 	kopeteawaydialogbase.ui \
