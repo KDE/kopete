@@ -49,7 +49,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 
 	// this contact is able to transfer files
 	setFileCapable ( true );
-	
+
 	/*
 	 * Catch when we're going online for the first time to
 	 * update our properties from a vCard. (properties are
@@ -235,7 +235,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () )
 		return;
 
 	// determine message type
@@ -266,15 +266,46 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		}
 
 		// convert XMPP::Message into KopeteMessage
-		newMessage = new KopeteMessage ( message.timeStamp (), this, contactList, body,
-										 message.subject (), KopeteMessage::Inbound,
-										 KopeteMessage::PlainText, type );
+		if ( !message.body().isEmpty () )
+		{
+			newMessage = new KopeteMessage ( message.timeStamp (), this, contactList, body,
+											 message.subject (), KopeteMessage::Inbound,
+											 KopeteMessage::PlainText, type );
+		}
 	}
 
 	// append message to (eventually new) manager and preselect the originating resource
-	mManager->appendMessage ( *newMessage, message.from().resource () );
+	if ( newMessage )
+	{
+		mManager->appendMessage ( *newMessage, message.from().resource () );
 
-	delete newMessage;
+		delete newMessage;
+	}
+
+	// append URLs as separate messages
+	if ( !message.urlList().isEmpty () )
+	{
+		/*
+		 * We need to copy it here because Iris returns a copy
+		 * and we can't work with a returned copy in a for() loop.
+		 */
+		XMPP::UrlList urlList = message.urlList();
+
+		for ( XMPP::UrlList::const_iterator it = urlList.begin (); it != urlList.end (); ++it )
+		{
+			QString description = (*it).desc().isEmpty() ? (*it).url() : (*it).desc();
+			QString url = (*it).url ();
+
+			newMessage = new KopeteMessage ( message.timeStamp (), this, contactList,
+											 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( description ),
+											 message.subject (), KopeteMessage::Inbound,
+											 KopeteMessage::RichText, type );
+
+			mManager->appendMessage ( *newMessage, message.from().resource () );
+
+			delete newMessage;
+		}
+	}
 
 }
 
@@ -402,7 +433,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * Due to these inconsistencies, if first and last name don't
 	 * exist, it is attempted to parse the full name.
 	 */
-	
+
 	// remove all properties first
 	removeProperty ( protocol()->propFirstName );
 	removeProperty ( protocol()->propLastName );
@@ -411,7 +442,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	{
 		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
 		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).stripWhiteSpace ();
-		
+
 		setProperty ( protocol()->propFirstName, firstName );
 		setProperty ( protocol()->propLastName, lastName );
 	}
