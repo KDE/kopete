@@ -27,7 +27,7 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, bool modal, 
     if ( !name )
 	setName( "dlgJabberVCard" );
     resize( 400, 422 ); 
-    setCaption( tr2i18n( "dlgJabberVCard" ) );
+    setCaption( tr2i18n( "dlgJabbervCard" ) );
     dlgJabberVCardLayout = new QGridLayout( this, 1, 1, 5, 1, "dlgJabberVCardLayout"); 
 
     GroupBox1 = new QGroupBox( this, "GroupBox1" );

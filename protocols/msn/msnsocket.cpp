@@ -329,8 +329,8 @@ void MSNSocket::handleError( uint code, uint id )
 	QString msg =
 		i18n( "Unhandled MSN error code %1 (in response to "
 			"transaction ID %2).\n"
-			"Please mail kopete-devel@kde.org to ask for an implementation "
-			"or send in a patch yourself ;-).\n"
+			"Please mail kopete-devel@kde.org to ask for an implementation, "
+			"or send in a patch yourself.\n"
 			"See http://www.hypothetic.org/docs/msn/basics.php for a "
 			"description of all error codes." ).arg( code ).arg( id );
 	disconnect();

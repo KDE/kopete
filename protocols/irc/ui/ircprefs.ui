@@ -321,7 +321,7 @@
                                     <cstring>lblClick</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>( Click to change)</string>
+                                    <string>(Click to change)</string>
                                 </property>
                                 <property name="alignment">
                                     <set>AlignCenter</set>

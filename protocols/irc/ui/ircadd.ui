@@ -65,7 +65,7 @@
                         <cstring>TextLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>( for example: #kde or SomeNickName )</string>
+                        <string>(for example: #kde or SomeNickName)</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
@@ -116,7 +116,7 @@
                         <cstring>TextLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Note: If you're already connected to this server, don't worry. Kopete will automaticly use the existing IRC server session.</string>
+                        <string>Note: If you're already connected to this server, don't worry. Kopete will automatically use the existing IRC server session.</string>
                     </property>
                     <property name="alignment">
                         <set>WordBreak|AlignVCenter</set>

@@ -109,7 +109,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	KGlobal::config()->writeEntry("EmailDefault", theEmailDefault);
 
 	// ask for installation.
-	if(KMessageBox::questionYesNo(mPrefs, i18n("The Samba configuration file needs to be modified in order that Kopete receive WinPopup messages. Would you like to do this now?"), i18n("Modify Samba Configuration Now?"), KGuiItem(), KGuiItem(), "WPFirstTime") == KMessageBox::Yes)
+	if(KMessageBox::questionYesNo(mPrefs, i18n("The Samba configuration file needs to be modified in order for Kopete to receive WinPopup messages. Would you like to do this now?"), i18n("Modify Samba Configuration Now?"), KGuiItem(), KGuiItem(), "WPFirstTime") == KMessageBox::Yes)
 		installSamba();
 
 	// Create the interface...

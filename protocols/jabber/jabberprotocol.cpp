@@ -74,7 +74,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 
     KGlobal::config()->setGroup("Jabber");
 	if ((KGlobal::config()->readEntry("UserID", "") == "") || (KGlobal::config()->readEntry("Password", "") == ""))
-		KMessageBox::error(kopeteapp->mainWindow(), i18n("<qt>If you have a Jabber account, please configure it in the Kopete Settings. If you don't, you can register in the settings.</qt>"),	i18n("No Jabber Configuration Found!"));
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("<qt>If you have a Jabber account, please configure it in the Kopete Settings dialog. If you don't, you can register from there as well.</qt>"),	i18n("No Jabber Configuration Found!"));
 
 	mIsConnected = false;
 	doRegister = false;
@@ -204,13 +204,13 @@ void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
 	switch(error->type)
 	{
 		case JABERR_CONNECT:
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but there was an error connecting to the Jabber server (%1).").arg(error->msg, 1), i18n("Error Connecting to Jabber Server"));
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("There was an error connecting to the Jabber server (%1).").arg(error->msg, 1), i18n("Error Connecting to Jabber Server"));
 			break;
 		case JABERR_AUTH:   /* FIXME FIXME FIXME FIXME!!! */
 		case JABERR_CREATE: /* Isn't red-on-orange just so PRETTY? */
 		default: /* o/~ cause i'm that fool who broke the key/i'm unlockable so don't check me/
 					    i got weight on my shoulders and things on my mind/ the sky is falling, and i'm falling behind */
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but you were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected from Jabber Server")); /* (But were they really disconnected, or are they just on speed? */
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("You were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected From Jabber Server")); /* (But were they really disconnected, or are they just on speed? (Who said programmers have no sense of humour! hehe) */
 	}
 }
 
@@ -384,7 +384,7 @@ void JabberProtocol::addContact(QString userID) {
 void JabberProtocol::slotUserWantsAuth(const Jid &jid) {
 	QString userID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 	kdDebug() << "[JabberProtocol] " << userID << " wants auth!" << endl;
-	if (authContact->questionYesNo(kopeteapp->mainWindow(), i18n("The Jabber user %1 wants to add you to your contact list. Do you want to authorize them?").arg(userID, 1), i18n("Authorize Jabber user?")) == 3)
+	if (authContact->questionYesNo(kopeteapp->mainWindow(), i18n("The Jabber user %1 wants to add you to their contact list. Do you want to authorize them?").arg(userID, 1), i18n("Authorize Jabber User?")) == 3)
 			mProtocol->subscribed(userID);
 }
 
