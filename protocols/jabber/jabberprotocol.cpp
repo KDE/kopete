@@ -907,6 +907,10 @@ void JabberProtocol::sendPresenceToNode(const Presence &pres,const QString &user
 		case STATUS_DND:
 			status.setShow("dnd");
 			break;
+		case STATUS_INVISIBLE:
+			status.setShow("away");
+			status.setIsInvisible(true);
+			break;
 		default:
 			status.setShow("away");
 			break;

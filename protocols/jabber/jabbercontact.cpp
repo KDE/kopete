@@ -110,10 +110,11 @@ JabberContact::~JabberContact()
 	delete actionSelectResource;
 	delete actionSetAvailability;
 	delete actionSendAuth;
-	delete actionStatusAway;
 	delete actionStatusChat;
+	delete actionStatusAway;
 	delete actionStatusXA;
 	delete actionStatusDND;
+	delete actionStatusInvisible;
 
 }
 
@@ -130,15 +131,17 @@ void JabberContact::initActions()
 	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
 	actionRequestAuth = new KAction(i18n("(Re)request authorization from"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 	actionSetAvailability = new KActionMenu(i18n("Set availability"), "jabber_online");
-	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	actionStatusChat = new KAction(i18n("Free to chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
+	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	actionStatusXA = new KAction(i18n("Extended away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
 	actionStatusDND = new KAction(i18n("Do not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
+	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
 
-	actionSetAvailability->insert(actionStatusAway);
 	actionSetAvailability->insert(actionStatusChat);
+	actionSetAvailability->insert(actionStatusAway);
 	actionSetAvailability->insert(actionStatusXA);
 	actionSetAvailability->insert(actionStatusDND);
+	actionSetAvailability->insert(actionStatusInvisible);
 
 }
 
@@ -805,6 +808,18 @@ void JabberContact::slotStatusDND()
 		id += activeResource->resource();
 
 	protocol->sendPresenceToNode(JabberProtocol::STATUS_DND, id);
+
+}
+
+void JabberContact::slotStatusInvisible()
+{
+
+	QString id = userId();
+
+	if(resourceOverride)
+		id += activeResource->resource();
+
+	protocol->sendPresenceToNode(JabberProtocol::STATUS_INVISIBLE, id);
 
 }
 

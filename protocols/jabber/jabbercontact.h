@@ -275,7 +275,7 @@ class JabberContact : public KopeteContact
 		void slotStatusAway();
 		void slotStatusXA();
 		void slotStatusDND();
-
+		void slotStatusInvisible();
 
 		/**
 		 *  the contact is moved to another metaContact
@@ -346,7 +346,7 @@ class JabberContact : public KopeteContact
 				*actionSendAuth, *actionRequestAuth,
 				*actionInfo, *actionStatusAway,
 				*actionStatusChat, *actionStatusXA,
-				*actionStatusDND;
+				*actionStatusDND, *actionStatusInvisible;
 		
 		KSelectAction *actionSelectResource;
 		KActionMenu *actionSetAvailability;
