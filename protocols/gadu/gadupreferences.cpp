@@ -20,9 +20,9 @@ GaduPreferences::GaduPreferences( const QString& pixmap, QObject* parent )
     prefDialog_ = new gaduPrefsUI( this );
 
     KGlobal::config()->setGroup("Gadu");
-    prefDialog_->uinEdit_->setText( KGlobal::config()->readEntry("Uin", "Your Gadu-Gadu uin here") );
+    prefDialog_->uinEdit_->setText( KGlobal::config()->readEntry("Uin", i18n("Your Gadu-Gadu uin here")) );
     prefDialog_->passwordEdit_->setText( KGlobal::config()->readEntry("Password", "") );
-    prefDialog_->nicknameEdit_->setText( KGlobal::config()->readEntry("Nick", "Your Gadu-Gadu nickname here") );
+    prefDialog_->nicknameEdit_->setText( KGlobal::config()->readEntry("Nick", i18n("Your Gadu-Gadu nickname here")) );
     prefDialog_->autoConnect_->setChecked( KGlobal::config()->readBoolEntry( "AutoConnect", false ) );
     prefDialog_->logAll_->setChecked( KGlobal::config()->readBoolEntry( "LogAll", false ) );
 }

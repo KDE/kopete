@@ -59,7 +59,7 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 
 }
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, 
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port,
 		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
 		       KopeteMetaContact *parent, KopeteProtocol *protocol)
 	: KopeteContact(protocol, parent),
@@ -143,7 +143,7 @@ bool IRCContact::init(const QString &server, unsigned int port,const QString &ta
 			QObject::connect(m_serverContact->engine(), SIGNAL(connectedToServer()), this, SLOT(joinNow()));
 		}
 	}
-	
+
 	return true;
 }
 
@@ -339,7 +339,7 @@ void IRCContact::slotPart()
 		QColor color(175, 8, 8);
 		QString partWarning = "<font color=";
 		partWarning.append(color.name());
-		partWarning.append(">Attempting to part channel. If this takes an unusual amount of time, please click the close button on this window again, or right click on the contact in the Kopete window and click \"Part\" again.</font><br>");
+		partWarning.append(">" + i18n("Attempting to part channel. If this takes an unusual amount of time, please click the close button on this window again, or right click on the contact in the Kopete window and click \"Part\" again.") + "</font><br>");
 		if (isChannel())
 		{
 			if (chatView !=0)
@@ -432,7 +432,7 @@ void IRCContact::joinNow()
 
 QString IRCContact::id() const
 {
-	return QString(m_targetName+"@"+m_serverName).lower(); 
+	return QString(m_targetName+"@"+m_serverName).lower();
 }
 
 #include "irccontact.moc"

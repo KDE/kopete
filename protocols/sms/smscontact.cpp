@@ -86,7 +86,7 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 
 	if ( s == 0L)
 		return;
-	
+
 	connect ( s, SIGNAL(messageSent(const KopeteMessage&)),
 		this, SLOT(messageSent(const KopeteMessage&)));
 
@@ -96,7 +96,7 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 		s->send(msg);
 	else if (s->maxSize() < msgLength)
 	{
-		int res = KMessageBox::questionYesNo( 0L, i18n(QString("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(s->maxSize()).arg(msgLength/(s->maxSize())+1)), i18n("Message too long") );
+		int res = KMessageBox::questionYesNo( 0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(s->maxSize()).arg(msgLength/(s->maxSize())+1), i18n("Message too long") );
 		switch (res)
 		{
 		case KMessageBox::Yes:
@@ -227,7 +227,7 @@ void SMSContact::setServicePrefsString(QString servicePrefs)
 {
 	QStringList prefs;
 	prefs = QStringList::split(";", servicePrefs);
-	
+
 	for ( QStringList::Iterator it = prefs.begin(); it != prefs.end(); ++it)
 	{
 		QRegExp r("(.*)=(.*)");
@@ -246,7 +246,7 @@ KActionCollection* SMSContact::customContextMenuActions()
 {
 	if( m_actionCollection != 0L )
 		delete m_actionCollection;
-	
+
 	m_actionCollection = new KActionCollection(this, "userColl");
 	m_actionCollection->insert(m_actionPrefs);
 	return m_actionCollection;

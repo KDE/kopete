@@ -42,27 +42,27 @@ void
 GaduSession::login( const struct gg_login_params& p )
 {
     if ( !isConnected() ) {
-	if ( !(session_ = gg_login( &p ))) {
+        if ( !(session_ = gg_login( &p ))) {
             gg_free_session( session_ );
             session_ = 0;
             emit connectionFailed( 0L );
             return;
-	}
-	read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
-	read_->setEnabled( false );
-	QObject::connect( read_, SIGNAL(activated(int)),
-			  SLOT(checkDescriptor()) );
+        }
+        read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
+        read_->setEnabled( false );
+        QObject::connect( read_, SIGNAL(activated(int)),
+                          SLOT(checkDescriptor()) );
 
-	write_ = new QSocketNotifier( session_->fd, QSocketNotifier::Write, this );
-	write_->setEnabled( false );
-	QObject::connect( write_, SIGNAL(activated(int)),
-			  SLOT(checkDescriptor()) );
-	if( session_->check & GG_CHECK_READ ) {
+        write_ = new QSocketNotifier( session_->fd, QSocketNotifier::Write, this );
+        write_->setEnabled( false );
+        QObject::connect( write_, SIGNAL(activated(int)),
+                          SLOT(checkDescriptor()) );
+        if( session_->check & GG_CHECK_READ ) {
             read_->setEnabled( true );
-	}
-	if( session_->check & GG_CHECK_WRITE ) {
+        }
+        if( session_->check & GG_CHECK_WRITE ) {
             write_->setEnabled( true );
-	}
+        }
     }
 }
 
@@ -94,9 +94,9 @@ GaduSession::login( uin_t uin, const QString& password,
 
     memset( &p, 0, sizeof(p) );
     p.uin = uin;
-    p.password = const_cast<char*>(password.latin1());
+    p.password = password.local8Bit().data();
     p.status = status;
-    p.status_descr = const_cast<char*>(statusDescr.latin1());
+    p.status_descr = statusDescr.local8Bit().data();
     p.async = 1;
     login( p );
 }
@@ -106,7 +106,7 @@ GaduSession::logoff()
 {
     if ( isConnected() ) {
         gg_logoff( session_ );
-	QObject::disconnect( this, SLOT(checkDescriptor()) );
+        QObject::disconnect( this, SLOT(checkDescriptor()) );
         delete read_;
         delete write_;
         read_ = 0;
@@ -157,7 +157,7 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg,
         return gg_send_message( session_,
                                 msgClass,
                                 recipient,
-                                reinterpret_cast<const unsigned char*>(msg.latin1()) );
+                                msg.local8Bit().data() );
     else
         emit error( i18n("Not Connected..."),
                     i18n("You are not connected to the server!") );
@@ -172,7 +172,7 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
         return gg_send_message_ctcp( session_,
                                      msgClass,
                                      recipient,
-                                     reinterpret_cast<const unsigned char*>(msg.latin1()),
+                                     msg.local8Bit().data(),
                                      msg.length() );
     else
         emit error( i18n("Not Connected..."),
@@ -195,7 +195,7 @@ int
 GaduSession::changeStatusDescription( int status, const QString& descr )
 {
     if ( isConnected() )
-        return gg_change_status_descr( session_, status, descr.latin1() );
+        return gg_change_status_descr( session_, status, descr.local8Bit() );
     else
         emit error( i18n("Not Connected..."),
                     i18n("You have to be connected to the server to change your status!") );
@@ -294,7 +294,7 @@ GaduSession::checkDescriptor()
     default:
         emit error( i18n("Unknown event..."),
                     i18n("Can't handle an event. Please report this to zack@kde.org") );
-	kdDebug()<<"GaduGadu Event = "<<e->type<<endl;
+        kdDebug()<<"GaduGadu Event = "<<e->type<<endl;
         break;
     }
 

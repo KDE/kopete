@@ -52,7 +52,7 @@ WPPreferences::WPPreferences(const QString & pixmap,
 	theProtocol = dynamic_cast<WPProtocol *>(parent);
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	preferencesDialog = new WPPreferencesBase(this);
-	preferencesDialog->inSMBClientPath->setFilter("smbclient|Samba Client Binary\n*|All Files");
+	preferencesDialog->inSMBClientPath->setFilter(i18n("smbclient|Samba Client Binary\n*|All Files"));
 	preferencesDialog->show();
 
 	KGlobal::config()->setGroup("WinPopup");

@@ -1395,7 +1395,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
     // normal char set
     outbuf.addDWord(0x00000000);
     // the actual message
-    outbuf.addString(message.latin1(),message.length());
+    outbuf.addString(message.local8Bit(),message.length());
 
     //NOTE TO TOM: there are a lot of other options that can go here
     // IMPLEMENT THEM!
@@ -1516,7 +1516,7 @@ void OscarSocket::sendAway(int, const QString &message)
     if (message.length()) //make sure there actually is an away message there
 	{
 	    outbuf.addTLV(0x0003,defencoding.length(),defencoding.latin1());
-	    outbuf.addTLV(0x0004,message.length(),message.latin1());
+	    outbuf.addTLV(0x0004,message.length(),message.local8Bit());
 	    emit statusChanged(OSCAR_AWAY);
 	}
     else

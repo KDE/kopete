@@ -85,7 +85,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 	m_publicNameSyncMode = SyncFromServer;
 	m_publicNameSyncNeeded = false;
-	
+
 	m_addWizard_metaContact=0L;
 	m_connectstatus=NLN;
 
@@ -137,7 +137,7 @@ bool MSNProtocol::unload()
 	kdDebug() << "MSNProtocol::unload" << endl;
 
 	Disconnect();
-	
+
 	if( kopeteapp->statusBar() )
 	{
 		kopeteapp->statusBar()->removeWidget(statusBarIcon);
@@ -153,7 +153,7 @@ bool MSNProtocol::unload()
 		kdDebug() << "MSNProtocol::unload: WARNING NotifySocket was not deleted" <<endl;
 		delete m_notifySocket;
 	}
-	
+
 	return KopeteProtocol::unload();
 }
 
@@ -294,9 +294,9 @@ bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
 	{
 		if ( c->protocol()->id() != this->id() ) // not our contact, next one please
 				continue;
-		
+
 		MSNContact *g = static_cast<MSNContact*>(c);
-		
+
 		if( g )
 		{
 			stream << g->id() << g->displayName() << g->groups().join( "," );
@@ -418,7 +418,7 @@ void MSNProtocol::initActions()
 	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(
 		*( statusBarIcon->pixmap() ),
 		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
-		
+
 	actionStatusMenu->insert( actionGoOnline );
 	actionStatusMenu->insert( actionGoAway );
 	actionStatusMenu->insert( actionGoBusy );
@@ -505,13 +505,13 @@ void MSNProtocol::slotGoOnThePhone()
 void MSNProtocol::slotGoOutToLunch()
 {
 	setStatus( LUN );
-}                     
+}
 void MSNProtocol::slotGoInvisible()
 {
 	setStatus( HDN );
 }
 
-        
+
 void MSNProtocol::setStatus(Status s)
 {
 	if (isConnected() )
@@ -550,7 +550,7 @@ void MSNProtocol::slotStartChat()
 		}
 		else
 		{
-			KMessageBox::error(0l, i18n("<qt>You must enter a valide e-mail adress</qt>"), i18n("MSN Plugin"));
+			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
 		}
 	}
 }
@@ -736,7 +736,7 @@ void MSNProtocol::slotBlockContact( QString handle ) const
 		m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
-void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m, const QString &group) 
+void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m, const QString &group)
 {
 	if( isConnected() )
 	{
@@ -748,7 +748,7 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m, cons
 			for( QStringList::ConstIterator it = gprs.begin(); it != gprs.end(); ++it )
 			{
 				int g = groupNumber( *it );
-				if(g!=-1) 
+				if(g!=-1)
 				{
 					m_notifySocket->addContact( userID, userID, g, FL );
 				}
@@ -767,7 +767,7 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m, cons
 				addGroup(group);
 			}
 			else {
-				m_notifySocket->addContact( userID, userID, g, FL ); 
+				m_notifySocket->addContact( userID, userID, g, FL );
 			}
 		}
 	}
@@ -890,7 +890,7 @@ void MSNProtocol::groupRenamed(KopeteGroup *g,const QString& oldname)
 	{
 		renameGroup(oldname,g->displayName());
 	}
-}     
+}
 
 void MSNProtocol::renameGroup( const QString &oldGroup,
 	const QString &newGroup )
@@ -1006,7 +1006,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			KopeteContactList::contactList()->addMetaContact(m);
 
 			m_contacts.insert( msnContact->msnId(), msnContact );
-			
+
 		}
 	}
 	else if( list == "BL" )
@@ -1086,7 +1086,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 			info->setCaption("KMerlin - Info");
 			info->show();
 */
-			
+
 		}
 		else if( list == "FL" )
 		{
@@ -1107,7 +1107,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 			kdDebug() << "MSNProtocol::slotContactRemoved : contact removed from each group, delete contact" << endl;
 			delete c;
 			m_contacts.remove( handle );
-		} 
+		}
 	}
 }
 
@@ -1164,7 +1164,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			if(c->metaContact()->isTemporary())
 				c->metaContact()->setTemporary(false,KopeteContactList::contactList()->getGroup(gn));
 		}
-		
+
 		if(!m_allowList.contains(handle) && !m_blockList.contains(handle))
 			m_notifySocket->addContact( handle, handle, 0, AL );
 	}
@@ -1225,7 +1225,7 @@ void MSNProtocol::slotPublicNameChanged( QString publicName)
 				m_publicNameSyncNeeded = false;
 		}
 	}
-} 
+}
 
 void MSNProtocol::setPublicName( const QString &publicName )
 {

@@ -147,7 +147,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 			disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
 				this, SLOT( slotContactNameChanged( const QString & ) ) );
-	
+
 			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
@@ -162,7 +162,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 bool KopeteMetaContact::isTopLevel()
 {
 	if(m_groups.isEmpty())
-		m_groups.append(KopeteGroup::toplevel);	
+		m_groups.append(KopeteGroup::toplevel);
 	return (m_groups.contains(KopeteGroup::toplevel));
 }
 
@@ -265,7 +265,7 @@ void KopeteMetaContact::startChat()
 		if( (*it)->importance() > c->importance())
 			c=*it;
 	}
-	
+
 	c->execute();
 }
 
@@ -295,14 +295,14 @@ QString KopeteMetaContact::statusString() const
 	switch( status() )
 	{
 		case Online:
-			return "Online";
+			return i18n("Online");
 		case Away:
-			return "Away";
+			return i18n("Away");
 		case Offline:
-			return "Offline";
+			return i18n("Offline");
 		case Unknown:
 		default:
-			return "Status not avaliable";
+			return i18n("Status not available");
 	}
 }
 
@@ -393,7 +393,7 @@ void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
 		addToGroup(to);
 		return;
 	}
-	
+
 	if(!to ||  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) )
 	{
 		removeFromGroup(from);
@@ -498,7 +498,7 @@ QString KopeteMetaContact::toXML()
 		{
 			xml += "      <top-level/>\n";
 		}
-		
+
 		xml += "    </groups>\n";
 	}
 	else
@@ -590,7 +590,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 					{
 						m_groups.append(KopeteGroup::toplevel);
 					}
-	
+
 					group = group.nextSibling();
 				}
 			}
@@ -621,10 +621,10 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 		if( plugin )
 		{
 			QStringList strList = QStringList::split( "||", it.data() );
-	
+
 			for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
 			{
-				//unescape '||' 
+				//unescape '||'
 				(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
 			}
 

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <kglobal.h>
+#include <klocale.h>
 #include <kconfig.h>
 #include <qpushbutton.h>
 #include <kcombobox.h>
@@ -41,7 +42,6 @@ OscarChangeStatus::OscarChangeStatus(QWidget *parent, const char *name ) : Oscar
 
 	// Set as modal
 	setWFlags(Qt::WType_Modal);
-	
 }
 
 OscarChangeStatus::~OscarChangeStatus()

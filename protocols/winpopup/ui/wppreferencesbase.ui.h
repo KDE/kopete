@@ -5,6 +5,7 @@
 ** update this file, preserving your code. Create an init() slot in place of
 ** a constructor, and a destroy() slot in place of a destructor.
 *****************************************************************************/
+#include <klocale.h>
 
 void WPPreferencesBase::doFixSamba_clicked()
 {
@@ -13,7 +14,7 @@ dynamic_cast<WPPreferences *>(parentWidget())->installSamba();
 
 void WPPreferencesBase::doRefreshDisplay()
 {
-    HCFDisplay->setText(QString("").setNum(inHostCheckFrequency->value()) + " second(s)");
-    MCFDisplay->setText(QString("").setNum(inMessageCheckFrequency->value()) + " second(s)");
+    HCFDisplay->setText(QString("").setNum(inHostCheckFrequency->value()) + i18n(" second(s)"));
+    MCFDisplay->setText(QString("").setNum(inMessageCheckFrequency->value()) + i18n(" second(s)"));
 }
 

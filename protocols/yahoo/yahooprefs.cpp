@@ -41,10 +41,10 @@
 
 // Yahoo Preferences
 YahooPreferences::YahooPreferences(const QString & pixmap,
-					QObject * parent) : ConfigModule(i18n("Yahoo Plugin"), 
+					QObject * parent) : ConfigModule(i18n("Yahoo Plugin"),
 					i18n("Yahoo Protocol"), pixmap, parent)
 {
-	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap << 
+	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap <<
 			", <parent>)");
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
@@ -53,9 +53,9 @@ YahooPreferences::YahooPreferences(const QString & pixmap,
 
 	KGlobal::config()->setGroup("Yahoo");
 	m_preferencesDialog->mID->setText(KGlobal::config()->
-			readEntry("UserID", "<your Yahoo ID>"));
+			readEntry("UserID", i18n("<your Yahoo ID>")));
 	m_preferencesDialog->mPass->setText(KGlobal::config()->
-			readEntry("Password", "<your Yahoo password>"));
+			readEntry("Password", i18n("<your Yahoo password>")));
 	m_preferencesDialog->mServer->setText(KGlobal::config()->
 			readEntry("Server", "cs.yahoo.com"));
 	m_preferencesDialog->mPort->setValue(KGlobal::config()->

@@ -198,7 +198,7 @@ RegisterCommand::setUserinfo( const QString& email, const QString& password )
 void
 RegisterCommand::execute()
 {
-    session_ = gg_register( email_.latin1(), password_.latin1(), 1 );
+    session_ = gg_register( email_.local8Bit(), password_.local8Bit(), 1 );
     connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
     checkSocket( session_->fd, session_->check );
 }
@@ -401,19 +401,19 @@ ChangeInfoCommand::setInfo( uin_t uin, const QString& passwd,
     memset( &info_, 0, sizeof(struct gg_change_info_request) );
     uin_ = uin;
     passwd_ = passwd;
-    info_.first_name = (char*)firstName.latin1();
-    info_.last_name = (char*)lastName.latin1();
-    info_.nickname = (char*)nickname.latin1();
-    info_.email = (char*)email.latin1();
+    info_.first_name = firstName.local8Bit().data();
+    info_.last_name = lastName.local8Bit().data();
+    info_.nickname = nickname.local8Bit().data();
+    info_.email = email.local8Bit().data();
     info_.born = born;
     info_.gender = gender;
-    info_.city = (char*)city.latin1();
+    info_.city = city.local8Bit().data();
 }
 
 void
 ChangeInfoCommand::execute()
 {
-    session_ = gg_change_info( uin_, passwd_.latin1(), &info_, 1 );
+    session_ = gg_change_info( uin_, passwd_.local8Bit(), &info_, 1 );
     connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
     checkSocket( session_->fd, session_->check );
 }
@@ -479,7 +479,7 @@ UserlistPutCommand::setInfo( uin_t uin, const QString& password, const QStringLi
 void
 UserlistPutCommand::execute()
 {
-    session_ = gg_userlist_put( uin_, password_.latin1(), contacts_.join( "\r\n" ).latin1(), 1 );
+    session_ = gg_userlist_put( uin_, password_.local8Bit(), contacts_.join( "\r\n" ).local8Bit(), 1 );
     connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
     checkSocket( session_->fd, session_->check );
 }
@@ -539,7 +539,7 @@ UserlistGetCommand::setInfo( uin_t uin, const QString& password )
 void
 UserlistGetCommand::execute()
 {
-    session_ = gg_userlist_get( uin_, password_.latin1(), 1 );
+    session_ = gg_userlist_get( uin_, password_.local8Bit(), 1 );
     connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
     kdDebug()<<"userlist executing"<<endl;
     checkSocket( session_->fd, session_->check );

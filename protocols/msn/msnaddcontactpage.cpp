@@ -15,13 +15,13 @@ MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const 
 	if ( owner->isConnected() )
 	{
 			msndata = new msnAddUI(this);
-			/*			
+			/*
 			msndata->cmbGroup->insertStringList(owner->getGroups());
 			msndata->cmbGroup->setCurrentItem(0);
 			*/
 			plugin = owner;
 			canadd = true;
-			
+
 	}
 	else
 	{
@@ -29,7 +29,7 @@ MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const 
 			noaddMsg2 = new QLabel(i18n("Connect to the MSN network and try again."), this);
 			canadd = false;
 	}
-	
+
 }
 MSNAddContactPage::~MSNAddContactPage()
 {
@@ -66,7 +66,7 @@ bool MSNAddContactPage::validateData()
 	if( userid.contains('@') ==1 && userid.contains('.') >=1)
 		return true;
 
-	KMessageBox::sorry(this, i18n("<qt>You must enter a valide e-mail adress</qt>"), i18n("MSN Plugin"));
+	KMessageBox::sorry(this, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
 	return false;
 
 }

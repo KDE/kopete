@@ -18,17 +18,17 @@
 // KDE Includes
 #include <klocale.h>
 
-#define YSTAvailable		i18n("Available")
-#define YSTBeRightBack		i18n("Be Right Back")
-#define YSTBusy			i18n("Busy")
-#define YSTNotAtHome		i18n("Not at Home")
-#define YSTNotAtMyDesk		i18n("Not at my Desk")
-#define YSTNotInTheOffice	i18n("Not in the Office")
-#define YSTOnThePhone		i18n("On the Phone")
-#define YSTOnVacation		i18n("On Vacation")
-#define YSTOutToLunch		i18n("Out to Lunch")
-#define YSTSteppedOut		i18n("Stepped Out")
-#define YSTIdle				i18n("Idle")
+#define YSTAvailable		I18N_NOOP("Available")
+#define YSTBeRightBack		I18N_NOOP("Be Right Back")
+#define YSTBusy				I18N_NOOP("Busy")
+#define YSTNotAtHome		I18N_NOOP("Not at Home")
+#define YSTNotAtMyDesk		I18N_NOOP("Not at my Desk")
+#define YSTNotInTheOffice	I18N_NOOP("Not in the Office")
+#define YSTOnThePhone		I18N_NOOP("On the Phone")
+#define YSTOnVacation		I18N_NOOP("On Vacation")
+#define YSTOutToLunch		I18N_NOOP("Out to Lunch")
+#define YSTSteppedOut		I18N_NOOP("Stepped Out")
+#define YSTIdle				I18N_NOOP("Idle")
 
 
 /*

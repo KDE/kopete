@@ -152,21 +152,21 @@ void KIRC::slotReadyRead()
 						mUserString = "Response not supplied by user.";
 					}
 					QString reply = QString("NOTICE %1 :%2USERINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mUserString).arg(QChar(0x01)).arg("\r\n");
-					writeBlock(reply.latin1(), reply.length());
+					writeBlock(reply.local8Bit(), reply.length());
 					emit repliedCtcp("USERINFO", originating.section('!', 0, 0), mUserString);
 					continue;
 				} else if (special == "clientinfo")
 				{
 					QString response = "The following commands are supported, but without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.";
 					QString reply = QString("NOTICE %1 :%2CLIENTINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(response).arg(QChar(0x01)).arg("\r\n");
-					writeBlock(reply.latin1(), reply.length());
+					writeBlock(reply.local8Bit(), reply.length());
 					emit repliedCtcp("CLIENTINFO", originating.section('!', 0, 0), response);
 					continue;
 				} else if (special == "time")
 				{
 					QString dateTime = QDateTime::currentDateTime().toString();
 					QString reply = QString("NOTICE %1 :%2TIME %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(dateTime).arg(QChar(0x01)).arg("\r\n");
-					writeBlock(reply.latin1(), reply.length());
+					writeBlock(reply.local8Bit(), reply.length());
 					emit repliedCtcp("TIME", originating.section('!', 0, 0), dateTime);
 					continue;
 				} else if (special == "source")
@@ -869,7 +869,7 @@ void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString user
 	mUsername = username;
 	mNickname = nickname;
 	mHost = host;
-	connectToHost(host.latin1(), port);
+	connectToHost(host, port);
 	emit connecting();
 }
 

@@ -36,9 +36,9 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
 :  KopeteContact( protocol, metaContact)
 {
-	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName << 
+	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName <<
 			", " << group << ", <protocol>)" ;
-	
+
 	mUserID = userID;
 	mFullName = fullName;
 	mGroup = group;
@@ -63,9 +63,9 @@ YahooContact::ContactStatus YahooContact::status() const
 {
 	kdDebug() << "Yahoo::ContactStatus()" << endl;
 
-	if(mStatus == Offline || mStatus == Invisible) { 
+	if(mStatus == Offline || mStatus == Invisible) {
 		return KopeteContact::Offline;
-	} 
+	}
 	else if(mStatus == Idle) {
 		return Away;
 	}
@@ -86,31 +86,31 @@ QString YahooContact::statusText() const
 	kdDebug() << "Yahoo::statusText()";
 
 	if(mStatus == Offline || mStatus == Available || mStatus == Mobile ||
-			mStatus == Invisible) 
+			mStatus == Invisible)
 		return "";
 	else if(mStatus == Idle)
-		return "Idle";
-	else if(mStatus == Custom || mStatus == CustomBusy || 
+		return i18n("Idle");
+	else if(mStatus == Custom || mStatus == CustomBusy ||
 			mStatus == CustomMobile)
 		return mStatusText;
 	else if(mStatus == BeRightBack)
-		return YSTBeRightBack;
+		return i18n(YSTBeRightBack);
 	else if(mStatus == Busy)
-		return YSTBusy;
+		return i18n(YSTBusy);
 	else if(mStatus == NotAtHome)
-		return YSTNotAtHome;
+		return i18n(YSTNotAtHome);
 	else if(mStatus == NotAtMyDesk)
-		return YSTNotAtMyDesk;
+		return i18n(YSTNotAtMyDesk);
 	else if(mStatus == NotInTheOffice)
-		return YSTNotInTheOffice;
+		return i18n(YSTNotInTheOffice);
 	else if(mStatus == OnThePhone)
-		return YSTOnThePhone;
+		return i18n(YSTOnThePhone);
 	else if(mStatus == OnVacation)
-		return YSTOnVacation;
+		return i18n(YSTOnVacation);
 	else if(mStatus == OutToLunch)
-		return YSTOutToLunch;
+		return i18n(YSTOutToLunch);
 	else if(mStatus == SteppedOut)
-		return YSTSteppedOut;
+		return i18n(YSTSteppedOut);
 	else
 	{
 		kdDebug() << "Invalid status" << endl;
@@ -127,21 +127,21 @@ QString YahooContact::statusIcon() const
 	{
 		return "yahoo_offline";
 	}
-	else if(mStatus == Idle) 
-	{	
+	else if(mStatus == Idle)
+	{
 		return "yahoo_idle";
 	}
-	else if(mStatus == Mobile || mStatus == CustomMobile) 
-	{		
+	else if(mStatus == Mobile || mStatus == CustomMobile)
+	{
 		return "yahoo_mobile";
 	}
 	else if(mStatus == Available || mStatus == Custom)
 	{
 		return "yahoo_online";
 	}
-	else if(mStatus == BeRightBack || mStatus == Busy || mStatus == NotAtHome 
+	else if(mStatus == BeRightBack || mStatus == Busy || mStatus == NotAtHome
 			|| mStatus == NotAtMyDesk || mStatus == NotInTheOffice
-			|| mStatus == OnThePhone || mStatus == OnVacation 
+			|| mStatus == OnThePhone || mStatus == OnVacation
 			|| mStatus == OutToLunch || mStatus == SteppedOut
 			|| mStatus == CustomBusy)
 	{
@@ -173,7 +173,7 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 */
 
 bool YahooContact::isOnline() const
-{ 
+{
 	kdDebug() << "[YahooContact::isOnline()]" << endl;
 	return status() != Offline && status() != Unknown;
 }
@@ -219,7 +219,7 @@ void YahooContact::addThisTemporaryContact(KopeteGroup *group)
 {
 	kdDebug() << "[addThisTemporaryContact]" << endl;
 }
-	
+
 void YahooContact::execute()
 {
 	kdDebug() << "[YahooContact::execute()]" << endl;

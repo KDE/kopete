@@ -33,7 +33,7 @@ ContactNotesEdit::ContactNotesEdit(KopeteMetaContact *m,ContactNotesPlugin *p,co
 
 	QVBox *w=new QVBox(this);
 	w->setSpacing(KDialog::spacingHint());
-	m_label = new QLabel(QString(i18n("Notes about %1:")).arg(m->displayName()) , w , "m_label");
+	m_label = new QLabel(i18n("Notes about %1:").arg(m->displayName()) , w , "m_label");
 	m_linesEdit= new QTextEdit ( w , "m_linesEdit");
 
 	m_linesEdit->setText(p->notes(m));

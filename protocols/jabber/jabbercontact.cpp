@@ -54,9 +54,9 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 
 	// save parent protocol object
 	protocol = p;
-	
+
 	parentMetaContact = mc;
-	
+
 	mMsgManagerKCW = 0L;
 	mMsgManagerKEW = 0L;
 
@@ -77,7 +77,7 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	resources.append(defaultResource);
 
 	activeResource = defaultResource;
-	
+
 	// update the displayed name
 	setDisplayName(rosterItem.name());
 
@@ -183,7 +183,7 @@ void JabberContact::initActions()
 	actionSetAvailability->insert(actionStatusChat);
 	actionSetAvailability->insert(actionStatusXA);
 	actionSetAvailability->insert(actionStatusDND);
-	
+
 }
 
 KActionCollection *JabberContact::customContextMenuActions()
@@ -211,7 +211,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 		JabberResource *tmpBestResource = bestResource();
 
 		// put best resource first
-		items.append("Automatic (best resource)");
+		items.append(i18n("Automatic (best resource)"));
 
 		if(tmpBestResource->resource() != QString::null)
 			items.append(tmpBestResource->resource());
@@ -262,7 +262,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 
 void JabberContact::slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason)
 {
-	
+
 	QString dbgString = "[JabberContact] Updating contact " + userId() + "  to ";
 	switch(newStatus)
 	{
@@ -316,7 +316,7 @@ void JabberContact::slotRenameContact()
 
 	renameDialog->setUserId(userId());
 	renameDialog->setNickname(displayName());
-	
+
 	connect(renameDialog, SIGNAL(rename(const QString &)), this, SLOT(slotDoRenameContact(const QString &)));
 
 	renameDialog->show();
@@ -347,7 +347,7 @@ void JabberContact::slotDoRenameContact(const QString &nickname)
 
 void JabberContact::slotDeleteMySelf(bool)
 {
-    
+
 	delete this;
 
 }
@@ -375,9 +375,9 @@ JabberContact::ContactStatus JabberContact::status() const
 					retval = Offline;
 					break;
 	}
-	
+
 	return retval;
-	
+
 }
 
 QString JabberContact::statusText() const
@@ -418,7 +418,7 @@ QString JabberContact::statusText() const
 QString JabberContact::statusIcon() const
 {
 	QString icon;
-	
+
 	switch(presence)
 	{
 		case JabberProtocol::STATUS_ONLINE:
@@ -438,9 +438,9 @@ QString JabberContact::statusIcon() const
 					icon = "jabber_offline";
 					break;
 	}
-	
+
 	return icon;
-	
+
 }
 
 void JabberContact::slotDeleteContact()
@@ -514,7 +514,7 @@ void JabberContact::removeFromGroup(KopeteGroup *group)
 int JabberContact::importance() const
 {
 	int value;
-	
+
 	switch(status())
 	{
 		case JabberProtocol::STATUS_ONLINE:
@@ -533,25 +533,25 @@ int JabberContact::importance() const
 					value = 0;
 					break;
 	}
-	
+
 	return value;
-	
+
 }
 
 void JabberContact::slotChatUser()
 {
 
 	kdDebug() << "[JabberContact] Opening chat with user " << userId() << endl;
-	
+
 	msgManagerKCW()->readMessages();
 
 }
 
 void JabberContact::slotEmailUser()
 {
-	
+
 	kdDebug() << "[JabberContact] Opening message with user " << userId() << endl;
-	
+
 	msgManagerKEW()->readMessages();
 	msgManagerKEW()->slotSendEnabled(true);
 
@@ -561,7 +561,7 @@ void JabberContact::execute()
 {
 
 	KGlobal::config()->setGroup("Jabber");
-	
+
 	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
 		// user selected email window as preference
 		slotEmailUser();
@@ -740,7 +740,7 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &jid, const Jabber::
 	{
 		status = JabberProtocol::STATUS_DND;
 	}
-	
+
 	JabberResource *newResource = new JabberResource(resource.name(), resource.priority(), resource.status().timeStamp(), status, resource.status().status());
 	resources.append(newResource);
 
@@ -760,7 +760,7 @@ void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber
 {
 	JabberResource *tmpResource;
 	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
-	
+
 	// safety check: don't process resources of other users
 	if (theirJID != userId())
 		return;
@@ -772,7 +772,7 @@ void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber
 		if (tmpResource->resource() == resource.name())
 		{
 			kdDebug() << "[JabberContact] Got a match in " << tmpResource->resource() << ", removing." << endl;
-			
+
 			if (resources.remove())
 				kdDebug() << "[JabberContact] Successfully removed, there are now " << resources.count() << " resources!" << endl;
 			else
@@ -781,9 +781,9 @@ void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber
 			break;
 		}
 	}
-	
+
 	JabberResource *newResource = bestResource();
-	
+
 	kdDebug() << "[JabberContact] Best resource is now " << newResource->resource() << "." << endl;
 	slotUpdatePresence(newResource->status(), newResource->reason());
 
@@ -799,11 +799,11 @@ void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber
 
 void JabberContact::slotSelectResource()
 {
-	
+
 	if (actionSelectResource->currentItem() == 0)
 	{
 		kdDebug() << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
-		
+
 		resourceOverride = false;
 		activeResource = bestResource();
 	}
@@ -814,7 +814,7 @@ void JabberContact::slotSelectResource()
 		kdDebug() << "[JabberContact] Moving to resource " << selectedResource << endl;
 
 		resourceOverride = true;
-		
+
 		for (JabberResource *resource = resources.first(); resource; resource = resources.next())
 		{
 			if (resource->resource() == selectedResource)
@@ -827,7 +827,7 @@ void JabberContact::slotSelectResource()
 			}
 		}
 	}
-	
+
 }
 
 
@@ -843,7 +843,7 @@ void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 {
 
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid().userHost() << ", displaying." << endl;
-	
+
 	dlgVCard = new dlgJabberVCard(qApp->mainWidget(), "dlgJabberVCard", vCard);
 
 	if (mEditingVCard) {
@@ -852,7 +852,7 @@ void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 	}
 	else
 		connect(dlgVCard, SIGNAL(updateNickname(const QString &)), this, SLOT(slotDoRenameContact(const QString &)));
-	
+
 	dlgVCard->show();
 	dlgVCard->raise();
 

@@ -85,7 +85,7 @@ GaduContact::groups() const
 GaduContact::setName( const QString& name )
 {
     name_ = name;
-} 
+}
 
 QString
 GaduContact::name() const
@@ -293,7 +293,7 @@ GaduContact::messageSend( const KopeteMessage& msg, KopeteMessageManager* mgr )
     if ( msg.body().isEmpty() )
         return;
     //FIXME: handle colors
-    GaduProtocol::protocol()->sendMessage( uin_, msg.plainBody().latin1() );
+    GaduProtocol::protocol()->sendMessage( uin_, msg.plainBody().local8Bit() );
     mgr->appendMessage( msg );
 }
 

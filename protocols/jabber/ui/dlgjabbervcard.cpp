@@ -4,9 +4,9 @@
     begin                : Thu Aug 08 2002
     copyright            : (C) 2002 by Till Gerken
     email                : till@tantalo.net
-    
+
     Rewritten version of the original dialog
-   
+
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,8 +21,9 @@
 #include <qpushbutton.h>
 #include <qtextedit.h>
 #include <qdom.h>
- 
+
 #include <klineedit.h>
+#include <klocale.h>
 #include <kurllabel.h>
 
 #include <psi/tasks.h>
@@ -31,8 +32,8 @@
 
 #include "dlgjabbervcard.h"
 
-/* 
- *  Constructs a dlgJabberVCard which is a child of 'parent', with the 
+/*
+ *  Constructs a dlgJabberVCard which is a child of 'parent', with the
  *  name 'name'
  *
  */
@@ -44,15 +45,15 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, Jabber::JT_V
 		// populate all fields from the vCard
 		assignVCard(vCard);
 	}
-	
+
 	connect(btnClose, SIGNAL(clicked()), this, SLOT(slotClose()));
 	connect(btnSaveNickname, SIGNAL(clicked()), this, SLOT(slotSaveNickname()));
 
 	setReadOnly(true);
-	
+
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 dlgJabberVCard::~dlgJabberVCard()
@@ -109,7 +110,7 @@ void dlgJabberVCard::slotSaveNickname()
 		element.setAttribute("version", "2.0");
 		element.setAttribute("xmlns", "vcard-temp");
 		element.setAttribute("prodid","-//HandGen//NONSGML vGen v1.0//EN");
-		
+
 		element.appendChild(textTag("country", leCountry->text()));
 		element.appendChild(textTag("pcode", leZIP->text()));
 		element.appendChild(textTag("region", leState->text()));
@@ -163,9 +164,9 @@ void dlgJabberVCard::setReadOnly(bool b)
 	lePhone->setReadOnly(b);
 
 	if (b == false)
-		btnSaveNickname->setText("Save vCard");
+		btnSaveNickname->setText(i18n("Save vCard"));
 	else
-		btnSaveNickname->setText("Save Nickname");
+		btnSaveNickname->setText(i18n("Save Nickname"));
 
 	mIsReadOnly = b;
 

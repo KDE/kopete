@@ -233,7 +233,7 @@ void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessa
 KActionCollection * MSNMessageManager::chatActions()
 {
 	delete m_actions;
-	
+
 	m_actions= new KActionCollection(this);
 
 	KAction *actionClose = new KAction( i18n ("Leave the chat"), 0,
@@ -280,17 +280,17 @@ void MSNMessageManager::slotInviteContact(const QString &_handle)
 	}
 	if( handle.contains('@') != 1 || handle.contains('.') <1)
 	{
-			KMessageBox::error(0l, i18n("<qt>You must enter a valide e-mail adress</qt>"), i18n("MSN Plugin"));
+			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
 			return;
 	}
 	handle=handle.lower();
 	if(m_chatService)
 		m_chatService->slotInviteContact(handle);
 	else
-		MSNProtocol::protocol()->slotStartChatSession( handle );	
+		MSNProtocol::protocol()->slotStartChatSession( handle );
 }
 
-void MSNMessageManager::sendMessageQueue() 
+void MSNMessageManager::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
@@ -356,7 +356,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	QRegExp rx("Invitation-Cookie: ([0-9]*)");
 	rx.search(msg);
 	long unsigned int cookie=rx.cap(1).toUInt();
-	
+
 	if( msg.contains("Invitation-Command: ACCEPT") )
 	{
 		if(m_invitations.contains(cookie))
@@ -383,7 +383,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			{
 				unsigned long int auth = (rand()%(999999))+1;
 				MFTS->setAuthCookie(QString::number(auth));
-				
+
 				MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(c, MFTS->fileName(), MFTS->size(),  c->displayName(), KopeteFileTransferInfo::Outgoing));
 
 				QCString message=QString(
@@ -445,12 +445,12 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			rx.search(msg);
 			QString invitname = rx.cap(1);
 
-			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejeted. \nThe invitation was: %2").arg(c->displayName()).arg(invitname);
+			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
 			appendMessage(KopeteMessage(MSNProtocol::protocol()->contact(handle) , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
 		}
 	}
 }
-                                  
+
 void MSNMessageManager::slotFileTransferAccepted(KopeteTransfer *trans, const QString& fileName)
 {
 	if(!members().contains(trans->info().contact()))
@@ -486,11 +486,11 @@ void MSNMessageManager::slotFileTransferAccepted(KopeteTransfer *trans, const QS
 	{
 		m_invitations.remove(MFTS->cookie());
 		delete MFTS;
-		
+
 		if( m_invitations.isEmpty())
 			setCanBeDeleted(true);
 	}
-}                                 
+}
 
 void MSNMessageManager::slotFileTransferRefused(const KopeteFileTransferInfo &info)
 {
@@ -550,7 +550,7 @@ void MSNMessageManager::sendFile(const QString& file)
 			"Invitation-Cookie: " +QString::number(cookie) +"\r\n"
 			"Application-File: "+file.right( file.length() - file.findRev( QRegExp("/") ) - 1 )+"\r\n"
 			"Application-FileSize: "+ QString::number(MFTS->size()) +"\r\n\r\n").utf8();
- 
+
 		m_chatService->sendCommand( "MSG" , "N", true, message );
 	}
 }
