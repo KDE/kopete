@@ -428,7 +428,7 @@ void IRCContact::slotPart()
 				chatView->chatView->scrollToBottom();
 			}
 			waitingPart = true;
-			mContact->engine->partChannel(QCString(mTarget.local8Bit()) ,QString("Using Kopete IRC Plugin"));
+			mContact->engine->partChannel(mTarget ,QString("Using Kopete IRC Plugin"));
 		}
 	}
 }

@@ -27,6 +27,9 @@
 #include <qfileinfo.h>
 #include "dcchandler.h"
 
+#include <kglobal.h>
+#include <klocale.h>
+
 KIRC::KIRC()
 	: QSocket()
 {
@@ -40,11 +43,27 @@ KIRC::KIRC()
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 	QObject::connect(this, SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
 	QObject::connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
+
+	codec = QTextCodec::codecForLocale();
+	if (KGlobal::locale()->country() == "jp") {
+		codec = QTextCodec::codecForName("iso-2022-jp");
+	}
 }
 
 KIRC::~KIRC()
 {
 
+}
+
+Q_LONG KIRC::writeString(const QString &str)
+{
+	QCString s;
+	if (codec) {
+		s = codec->fromUnicode(str);
+	} else {
+		s = str.local8Bit();
+	}
+	return writeBlock(s.data(), s.length());
 }
 
 void KIRC::slotError(int error)
@@ -63,7 +82,7 @@ void KIRC::slotReadyRead()
 	// Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times. This gets rid of trailing \r\n, \r, \n, and \n\r characters.
 	while (canReadLine() == true)
 	{
-		QString line = readLine();
+		QString line = codec->toUnicode(readLine());
 		line.replace(QRegExp("[\\r\\n]*$"), "");
 		QString number = line.mid((line.find(' ', 0, false)+1), 3);
 		int commandIndex = line.find(' ', 0, false);
@@ -98,7 +117,7 @@ void KIRC::slotReadyRead()
 				if (special == "ping")
 				{
 					QString reply = QString("NOTICE %1 :%2PING %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(message.section(' ', 1, 1)).arg(QChar(0x01)).arg("\r\n");
-					writeBlock(reply.latin1(), reply.length());
+					writeString(reply);
 					emit repliedCtcp("PING", originating.section('!', 0, 0), message.section(' ', 1, 1));
 					continue;
 				} else if (special == "version")
@@ -111,7 +130,7 @@ void KIRC::slotReadyRead()
 						mVersionString = "Anonymous client using the KIRC engine.";
 					}
 					QString reply = QString("NOTICE %1 :%2VERSION %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mVersionString).arg(QChar(0x01)).arg("\r\n");
-					writeBlock(reply.latin1(), reply.length());
+					writeString(reply);
 					emit repliedCtcp("VERSION", originating.section('!', 0, 0), mVersionString);
 					continue;
 				} else if (special == "userinfo")
@@ -147,7 +166,7 @@ void KIRC::slotReadyRead()
 						mSourceString = "Unknown client, known source.";
 					}
 					QString reply = QString("NOTICE %1 :%2SOURCE %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mSourceString).arg(QChar(0x01)).arg("\r\n");
-					writeBlock(reply.latin1(), reply.length());
+					writeString(reply);
 					emit repliedCtcp("TIME", originating.section('!', 0, 0), mSourceString);
 					continue;
 				} else if (special == "finger")
@@ -577,29 +596,29 @@ void KIRC::slotReadyRead()
 		}
 		else if ( line.section(' ', 0, 0) == "PING" )
 		{
-			QCString statement = "PONG";
+			QString statement = "PONG";
 
 			if ( line.contains(' ') )
 				statement.append(" :" + line.section(':', 1, 1));
 
 			statement.append( "\r\n");
-			writeBlock(statement.data(), statement.length() );
+			writeString(statement);
 			continue;
 		}
 	}
 }
 
-void KIRC::joinChannel(const QCString &name)
+void KIRC::joinChannel(const QString &name)
 {
 	/*
 	This will join a channel
 	*/
 	if (state() == QSocket::Connected && loggedIn == true)
 	{
-		QCString statement = "JOIN ";
+		QString statement = "JOIN ";
 		statement.append(name.data());
 		statement.append("\r\n");
-		writeBlock(statement.data(), statement.length());
+		writeString(statement);
 	}
 }
 
@@ -611,10 +630,10 @@ void KIRC::quitIRC(const QString &reason)
 	if (state() == QSocket::Connected && loggedIn == true && attemptingQuit == false)
 	{
 		attemptingQuit = true;
-		QCString statement = "QUIT :";
-		statement.append(reason.local8Bit());
+		QString statement = "QUIT :";
+		statement.append(reason);
 		statement.append("\r\n");
-		writeBlock(statement.data(), statement.length());
+		writeString(statement);
 	}
 }
 
@@ -632,23 +651,23 @@ void KIRC::sendCtcpPing(const QString &target)
 		statement.append(timeReply);
 		statement.append(0x01);
 		statement.append("\r\n");
-		writeBlock(statement.local8Bit(), statement.length());
+		writeString(statement);
 	}
 }
 
-void KIRC::partChannel(const QCString &name, const QString &reason)
+void KIRC::partChannel(const QString &name, const QString &reason)
 {
 	/*
 	This will part a channel with 'reason' as the reason for parting
 	*/
 	if (state() == QSocket::Connected && loggedIn == true)
 	{
-		QCString statement = "PART ";
-		statement.append(name.data());
+		QString statement = "PART ";
+		statement.append(name);
 		statement.append(" :");
-		statement.append(reason.local8Bit());
+		statement.append(reason);
 		statement.append("\r\n");
-		writeBlock(statement.data(), statement.length());
+		writeString(statement);
 	}
 }
 
@@ -664,7 +683,7 @@ void KIRC::actionContact(const QString &contact, const QString &message)
 		statement.append(message);
 		statement.append(0x01);
 		statement.append("\r\n");
-		writeBlock(statement.local8Bit(), statement.length());
+		writeString(statement);
                 if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
                 {
                         emit incomingPrivAction(mNickname, contact, message);
@@ -690,7 +709,7 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 			if (type == DCCClient::Chat)
 			{
 				QString message = QString("PRIVMSG %1 :%2DCC CHAT chat %3 %4%5\r\n").arg(nickname).arg(QChar(0x01)).arg(host.ip4Addr()).arg(port).arg(QChar(0x01));
-				writeBlock(message.local8Bit(), message.length());
+				writeString(message);
 			} else if (type == DCCClient::File)
 			{
 				QFileInfo file(filename);
@@ -700,22 +719,22 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 					noWhiteSpace.replace(QRegExp("\\s+"), "-");
 				}
 				QString message = QString("PRIVMSG %1 :%2DCC SEND %3 %4 %5 %6 %7\r\n").arg(nickname).arg(QChar(0x01)).arg(noWhiteSpace).arg(host.ip4Addr()).arg(port).arg(file.size()).arg(QChar(0x01));
-				writeBlock(message.local8Bit(), message.length());
+				writeString(message);
 			}
 		}
 	}
 }
 
-void KIRC::messageContact(const QCString &contact, const QCString &message)
+void KIRC::messageContact(const QString &contact, const QString &message)
 {
 	if (state() == QSocket::Connected && loggedIn == true)
 	{
-		QCString statement = "PRIVMSG ";
+		QString statement = "PRIVMSG ";
 		statement.append(contact);
 		statement.append(" :");
 		statement.append(message);
 		statement.append("\r\n");
-		writeBlock(statement.data(), statement.length());
+		writeString(statement);
 		if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
 		{
 			emit incomingPrivMessage(mNickname, contact, message);
@@ -746,7 +765,7 @@ void KIRC::changeNickname(const QString &newNickname)
 	QString newString = "NICK ";
 	newString.append(newNickname);
 	newString.append("\r\n");
-	writeBlock(newString.latin1(), newString.length());
+	writeString(newString);
 }
 
 void KIRC::slotHostFound()
@@ -766,7 +785,7 @@ void KIRC::slotConnected()
 	ident.append("\r\nNICK ");
 	ident.append(mNickname);
 	ident.append("\r\n");
-	writeBlock(ident.latin1(), ident.length());
+	writeString(ident);
 }
 
 void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname)
@@ -784,14 +803,14 @@ void KIRC::setTopic(const QString &channel, const QString &topic)
 	QString command;
 	command = "TOPIC " + channel + " :" + topic + "\r\n";
 
-	writeBlock(command.latin1(), command.length());
+	writeString(command);
 }
 
 void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
 {
 	QString command = "KICK " + channel + " " + user + " :" + reason + "\r\n";
 
-	writeBlock(command.latin1(), command.length());
+	writeString(command);
 }
 
 

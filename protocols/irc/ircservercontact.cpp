@@ -185,7 +185,7 @@ void IRCServerContact::initiateDcc(const QString &nickname, const QString &filen
 			}
 		}
 	}
-	DCCServer *dccServer = new DCCServer(type, filename);
+	DCCServer *dccServer = new DCCServer(type, newFile);
 	kdDebug() << "IRC Plugin: dccServer->ok() == " << dccServer->ok() << endl;
 	if (dccServer->ok())
 	{

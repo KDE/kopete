@@ -23,6 +23,7 @@
 #include <qserversocket.h>
 #include <qfile.h>
 #include <qregexp.h>
+#include <qtextcodec.h>
 
 class DCCClient : public QSocket
 {
@@ -50,6 +51,7 @@ private:
 	Type mType;
 	unsigned int mSize;
 	QFile *mFile; // Allocate on the heap because we need pass the filename parameter to it
+	QTextCodec *codec;
 private slots:
 	void slotReadyRead();
 	void slotConnectionClosed();
@@ -85,6 +87,7 @@ signals:
 	void incomingAckPercent(int);
 	void sendingNonAckPercent(int);
 	void sendFinished();
+	void readAccessDenied();
 };
 
 #endif

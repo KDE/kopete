@@ -23,6 +23,7 @@
 #include <qsocket.h>
 #include <qstring.h>
 #include <qhostaddress.h>
+#include <qtextcodec.h>
 #include "dcchandler.h"
 
 /**
@@ -35,15 +36,15 @@ public:
 	KIRC();
 	~KIRC();
 	void connectToServer(const QString host, Q_UINT16 port, const QString, const QString);
-	void joinChannel(const QCString &);
-	void messageContact(const QCString &contact, const QCString &message);
+	void joinChannel(const QString &);
+	void messageContact(const QString &contact, const QString &message);
 	void actionContact(const QString &contact, const QString &message);
 	QString &userName() { return mUsername; };
 	QString &nickName() { return mNickname; };
 	QString &host() { return mHost; };
 	bool isLoggedIn() { return loggedIn; };
 	void changeNickname(const QString &newNickname);
-	void partChannel(const QCString &name, const QString &reason);
+	void partChannel(const QString &name, const QString &reason);
 	void quitIRC(const QString &reason);
 	void setVersionString(const QString &newString) { mVersionString = newString; };
 	void setUserString(const QString &userString) { mUserString = userString; };
@@ -58,6 +59,9 @@ enum UserClass
 	Operator = 1,
 	Voiced = 2
 };
+private:
+	Q_LONG writeString(const QString &str);
+
 private slots:
 	void slotHostFound();
 	void slotConnected();
@@ -106,6 +110,7 @@ signals:
 	void incomingKick(const QString &, const QString &, const QString &, const QString &);
 	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject);
 	void incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
+	void incomingEndOfWhois(const QString &nickname);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;
@@ -118,6 +123,7 @@ private:
 	QString mVersionString;
 	QString mUserString;
 	QString mSourceString;
+	QTextCodec *codec;
 };
 
 #endif

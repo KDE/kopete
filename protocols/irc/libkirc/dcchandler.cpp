@@ -27,6 +27,9 @@
 #endif
 #include <unistd.h>
 
+#include <kglobal.h>
+#include <klocale.h>
+
 DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
 	: QSocket()
 {
@@ -44,6 +47,10 @@ DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Ty
 	}
 	connect(this, SIGNAL(delayedCloseFinished()), this, SLOT(slotConnectionClosed()));
 	connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
+	codec = QTextCodec::codecForLocale();
+	if (KGlobal::locale()->country() == "jp") {
+		codec = QTextCodec::codecForName("iso-2022-jp");
+	}
 }
 
 void DCCClient::dccAccept(const QString &filename)
@@ -107,7 +114,7 @@ void DCCClient::slotReadyRead()
 {
 	while(canReadLine())
 	{
-		QString message = readLine();
+		QString message = codec->toUnicode(readLine());
 		message.replace(QRegExp("[\\r\\n]*$"), "");
 		emit incomingDccMessage(message, false);
 	}
@@ -138,7 +145,7 @@ bool DCCClient::sendMessage(const QString &message)
 	{
 		return false;
 	} else {
-		QCString block = message.local8Bit();
+		QCString block = codec->fromUnicode(message);
 		block.append("\r\n");
 		writeBlock(block, block.length());
 	}
@@ -160,6 +167,7 @@ DCCServer::DCCServer(Type type, const QString filename)
 		{
 			// This shouldn't happen, and if it does, it's your own damn fault
 			delete this;
+			return;
 		} else {
 			mFile = new QFile(filename);
 			mSocket = new QSocket();
@@ -180,7 +188,9 @@ void DCCServer::newConnection(int socket)
 	{
 		if (!mFile->open(IO_ReadOnly))
 		{
+			emit readAccessDenied();
 			delete this;
+			return;
 		}
 		mSocket->setSocket(socket);
 		connect(mSocket, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
@@ -189,7 +199,7 @@ void DCCServer::newConnection(int socket)
 		connect(mSocket, SIGNAL(error(int)), this, SLOT(slotError(int)));
 		sendNextPacket();
 	}
-	emit clientConnected();	
+	emit clientConnected();
 }
 
 void DCCServer::abort()
