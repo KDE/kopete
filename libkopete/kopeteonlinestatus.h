@@ -35,8 +35,6 @@ namespace Kopete
 	class OnlineStatusIconCache;
 }
 
-struct KopeteOnlineStatusPrivate;
-
 /**
  * @author Martijn Klingens <klingens@kde.org>
  * @author Will Stephenson (icon generating code)
@@ -321,10 +319,12 @@ public:
 	bool operator<( const KopeteOnlineStatus &other ) const;
 
 private:
-	KopeteOnlineStatusPrivate *d;
+	class Private;
+	Private *d;
+
 	QPixmap cacheLookupByObject( const QString& icon, int size, QColor color, bool idle = false) const;
 	QPixmap cacheLookupByMimeSource( const QString &mimeSource ) const;
-	QString KopeteOnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const;
+	QString mimeSource( const QString& icon, int size, QColor color, bool idle ) const;
 	friend class Kopete::OnlineStatusIconCache;
 };
 
@@ -354,12 +354,12 @@ private slots:
 	void slotIconsChanged();
 
 private:
-	QPixmap* renderIcon( const KopeteOnlineStatus &statusFor, const QString& baseicon, int size, QColor color, bool idle = false) const;
+	QPixmap renderIcon( const KopeteOnlineStatus &statusFor, const QString& baseicon, int size, QColor color, bool idle = false) const;
 
 	friend OnlineStatusIconCache *Global::onlineStatusIconCache();
+
 	class Private;
 	Private *d;
-	QPixmap *nullPixmap;
 };
 
 }
