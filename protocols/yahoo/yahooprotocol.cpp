@@ -218,7 +218,7 @@ void YahooProtocol::Connect()
 		kdDebug() << "Attempting to connect to Yahoo server <"
 			<< mServer << ":" << mPort << "< with user <" << mUsername << ">" << endl;
 
-		session_ = YahooSessionManager::manager()->login( mPrefs->username(), mPrefs->password(), YAHOO_STATUS_AVAILABLE);
+		session_ = YahooSessionManager::manager()->createSession( mPrefs->username(), mPrefs->password(), YAHOO_STATUS_AVAILABLE);
 		m_session = session_;
 	}
 	else if (isAway())

@@ -1554,8 +1554,10 @@ int yahoo_login(const char *username, const char *password, int initial)
 
 	yahoo_packet_free(pkt);
 
+	/*
 	YAHOO_CALLBACK(ext_yahoo_add_handler)(yd->client_id, yd->fd, YAHOO_INPUT_READ);
-
+	*/
+	
 	return yd->client_id;
 }
 

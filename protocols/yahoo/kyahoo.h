@@ -53,8 +53,8 @@ public:
 	{ return m_fdMap[session_id] ? m_fdMap[session_id] : 0L ; };
 
 	/* Creates a new session */
-	YahooSession* login(const QString username, const QString password, int initial);	
-	bool logout();
+	YahooSession* createSession(const QString username, const QString password, int initial);	
+	bool cleanSessions();
 	YahooSession* getSession(int id);
 	int getSessionCount();
 	
@@ -113,6 +113,9 @@ public:
 	{ return m_fd; };
 
 	int setLogLevel(enum yahoo_log_level level);
+	
+	int login(const QString username, const QString password, int initial);
+	
 	void logOff();
 	void refresh();
 	void setIdentityStatus( const char * identity, int active);
@@ -134,8 +137,6 @@ public:
 	void conferenceLogoff( const char * from, YList *who, const char *room);
 	int sendFile( const char *who, const char *msg, const char *name, long size);
 	int getUrlHandle( const char *url, char *filename, unsigned long *filesize);
-	int readReady( int fd);
-	int writeReady( int fd);
 	enum yahoo_status currentStatus();
 	const YList * getBuddylist();
 	const YList * getIgnorelist();
@@ -164,16 +165,23 @@ signals:
 	void mailNotify( char *from, char *subj, int cnt);
 	void systemMessage( char *msg);
 	void error( char *err, int fatal);
-	void removeHandler( int fd);
 	//void hostConnect(char *host, int port);
 
 	private slots:
 	void slotLoginResponseReceiver( int succ, char *url);
-	void slotDataReceived();
-	void slotSendReady();
+	void slotReadReady();
+	void slotWriteReady();
 	private:
-	void addHandler(int fd);
-	YahooSession(int id, const QString username, const QString password, int initial);
+	/* Private constructor */
+	YahooSession();
+	
+	
+	void addHandler(int fd, yahoo_input_condition cond);
+	void removeHandler(int fd);
+	
+	KExtendedSocket *m_socket;
+
+	void setSocket(int fd);
 	QString m_Username, m_Password, m_Server; // User data
 	int m_Port;
 	int m_Status;

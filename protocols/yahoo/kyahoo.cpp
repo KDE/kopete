@@ -32,6 +32,7 @@
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
+#include "libyahoo2/yahoo2_types.h"
 #include <iostream.h>
 #include <errno.h>
 
@@ -55,22 +56,42 @@ YahooSessionManager::~YahooSessionManager()
 	managerStatic_ = 0L;
 }
 
-YahooSession* YahooSessionManager::login(const QString username, const QString password, int initial)
+YahooSession* YahooSessionManager::createSession(const QString username, const QString password, int initial)
 {
 	int id;
 	YahooSession *session;
-	kdDebug() << "[YahooSessionManager::login] login!!!..."<< endl;
-	id = yahoo_login( username.latin1() , password.latin1(), initial);
-	kdDebug() << "[YahooSessionManager::login] got id "<< id << " !, creating session"<< endl;
-	session = new YahooSession( id, username, password, initial);
-	m_sessionsMap[id] = session;
-	//m_fdMap[m_fd]=id;
-	
-	//session->addHandler(m_fd);
+	kdDebug() << "[YahooSessionManager::createSession] login!!!..."<< endl;
+	session = new YahooSession();
+	id = session->login( username, password, initial );
+	kdDebug() << "[YahooSessionManager::createSession] Session created, got id "<< id << " !"<< endl;
+	if (id)
+	{
+		m_sessionsMap[id] = session;
+		//YAHOO_CALLBACK(ext_yahoo_add_handler)( m_connId, yahoo_get_fd(m_connId), YAHOO_INPUT_READ);
+		YahooSessionManager::manager()->addHandlerReceiver( id, yahoo_get_fd(id), YAHOO_INPUT_READ);	
+	}
 	return session;
 }
 
-bool YahooSessionManager::logout()
+
+int YahooSession::login(const QString username, const QString password, int initial)
+{
+	m_Username = username;
+	m_Password = password;
+	m_Status = initial;
+	
+	/* We try to login */
+	m_connId = yahoo_login( username.latin1() , password.latin1(), initial);
+	
+	if ( m_connId )
+	{
+		//QObject::connect ( this,SIGNAL(loginResponse(int,char*)),YahooSessionManager::manager(),SLOT(slotLoginResponseReceiver(int,char*)));
+	}
+	return m_connId;
+}
+
+
+bool YahooSessionManager::cleanSessions()
 {
     QMap< int, YahooSession*>::iterator it;
 	for ( it=m_sessionsMap.begin(); it != m_sessionsMap.end(); it++)
@@ -92,8 +113,9 @@ YahooSession* YahooSessionManager::getSession(int id)
 	return m_sessionsMap[id] ? m_sessionsMap[id] : 0L;
 }
 
-int YahooSessionManager::getSessionCount(){
-    return m_sessionsMap.count();
+int YahooSessionManager::getSessionCount()
+{
+	return m_sessionsMap.count();
 }
 
 YahooSessionManager* YahooSessionManager::managerStatic_ = 0L;
@@ -106,13 +128,8 @@ YahooSessionManager* YahooSessionManager::manager()
 		return ( new YahooSessionManager );
 }
 
-YahooSession::YahooSession(int id, const QString username, const QString password, int initial)
+YahooSession::YahooSession()
 {
-	m_Username = username;
-	m_Password = password;
-	m_Status = initial;
-	m_connId = id;
-	QObject::connect ( this,SIGNAL(loginResponse(int,char*)),this,SLOT(slotLoginResponseReceiver(int,char*)));
 }
 
 YahooSession::~YahooSession()
@@ -233,16 +250,6 @@ int YahooSession::getUrlHandle( const char *url, char *filename, unsigned long *
 	return yahoo_get_url_handle(m_connId, url, filename, filesize);
 }
 
-int YahooSession::readReady( int fd)
-{
-	return yahoo_read_ready(m_connId,fd);
-}
-
-int YahooSession::writeReady( int fd)
-{
-	return yahoo_write_ready(m_connId,fd);
-}
-
 enum yahoo_status YahooSession::currentStatus()
 {
 	return yahoo_current_status(m_connId);
@@ -301,43 +308,7 @@ void YahooSession::slotLoginResponseReceiver(int succ, char *url)
         //yahoo_logout();
 }
 
-void YahooSession::addHandler(int fd)
-{
-	kdDebug()<<"YahooSession::addHandler WHAT THE FUCK IS THIS!";
-	m_fd = fd;
-}
 
-void YahooSession::slotDataReceived()
-{
-	int ret=1;
-	/* FIXME!!!!! */
-    //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
-	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
-
-	kdDebug() << "YahooSession::slotDataReceived" << fd << endl;
-	ret = yahoo_read_ready( m_connId , fd );
-
-	if ( ret == -1)
-		kdDebug() <<"Read Error (" << errno << ": " << strerror(errno) << endl;
-	else if ( ret == 0)
-		kdDebug() << "Server closed socket" << endl;
-}
-
-void YahooSession::slotSendReady()
-{
-	int ret=1;
-	/* FIXME!!!!! */
-    //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
-	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
-
-	kdDebug() << "YahooSession::slotSendReady" << fd << endl;
-	ret = yahoo_write_ready( m_connId , fd );
-
-	if ( ret == -1)
-		kdDebug() <<"Read Error (" << errno << ": " << strerror(errno) << endl;
-	else if ( ret == 0)
-		kdDebug() << "Server closed socket" << endl;
-}
 
 /* Callbacks implementation */
 
@@ -593,28 +564,28 @@ void YahooSessionManager::gameNotifyReceiver(int id, char *who, int stat)
 
 void YahooSessionManager::mailNotifyReceiver(int id, char *from, char *subj, int cnt)
 {
-	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] session: " << id <<  endl;
+	kdDebug() << "[YahooSessionManager::mailNotifyReceiver] session: " << id <<  endl;
 	YahooSession *session = getSession(id);
 	emit session->mailNotify(from, subj,cnt);	
 }
 
 void YahooSessionManager::systemMessageReceiver(int id, char *msg)
 {
-	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] session: " << id << endl;
+	kdDebug() << "[YahooSessionManager::systemMessageReceiver] session: " << id << endl;
 	YahooSession *session = getSession(id);
 	emit session->systemMessage(msg);	
 }
 
 void YahooSessionManager::errorReceiver(int id, char *err, int fatal)
 {
-	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] session: " << id <<  endl;
+	kdDebug() << "[YahooSessionManager::errorReceiver] session: " << id <<  endl;
 	YahooSession *session = getSession(id);
 	emit session->error(err, fatal);	
 }
 
 int YahooSessionManager::logReceiver(char *fmt, ...)
 {
-	kdDebug() << "[YahooSessionManager::removeHandlerReceiver]" << endl;
+	kdDebug() << "[YahooSessionManager::logReceiver]" << endl;
 	//emit session->	
 }
 
@@ -628,19 +599,25 @@ void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_conditi
 	kdDebug() << "[YahooSessionManager::addHandlerReceiver] Session: " <<id<< " Socket: " << fd<< endl;
 
 	YahooSession *_session = m_sessionsMap[id];
+	_session->setSocket(fd);
+	
 	if ( cond == YAHOO_INPUT_READ && _session )
 	{
-		kdDebug() << "[YahooSessionManager::addHandlerReceiver] add handler read";
+		kdDebug() << "[YahooSessionManager::addHandlerReceiver] add handler read" << endl;
 		_socket->enableRead(true);
-		connect (_socket,SIGNAL(readyRead()),_session,SLOT(slotDataReceived()));
+		connect (_socket,SIGNAL(readyRead()),_session,SLOT(slotReadReady()));
 	}
 	else if ( cond == YAHOO_INPUT_WRITE )
 	{
-		kdDebug() << "[YahooSessionManager::addHandlerReceiver] add handler write";
+		kdDebug() << "[YahooSessionManager::addHandlerReceiver] add handler write" << endl;
 		_socket->enableWrite(true);
-		connect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotSendReady()));
+		connect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotWriteReady()));
 	}
 }
+
+void YahooSession::addHandler(int fd, yahoo_input_condition cond)
+{
+}	
 
 void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 {
@@ -648,21 +625,31 @@ void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 	YahooSession *session = getSession(id);
 	
 	KExtendedSocket *_socket = m_socketsMap[fd];
-
-	m_idMap[fd] = id;
-	m_fdMap[id] = fd;
+	YahooSession *_session = m_sessionsMap[id];
+	
+	m_idMap.remove(fd);
+	m_fdMap.remove(id);
 
 	kdDebug() << "[YahooSessionManager::removeReceiver] Session: " <<id<< " Socket: " << fd<< endl;
-
-	YahooSession *_session = m_sessionsMap[id];
-		
-	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] read off";
-	//_socket->enableRead(false);
-	disconnect (_socket,SIGNAL(readyRead()),_session,SLOT(slotDataReceived()));
 	
-	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] write off";
-	//_socket->enableRead(false);
-	disconnect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotSendReady()));
+	if ( _session && _socket )
+	{	
+		kdDebug() << "[YahooSessionManager::removeHandlerReceiver] read off";
+		_socket->enableRead(false);
+		disconnect (_socket,SIGNAL(readyRead()),_session,SLOT(slotReadReady()));
+	
+		kdDebug() << "[YahooSessionManager::removeHandlerReceiver] write off";
+		_socket->enableRead(false);
+		disconnect (_socket,SIGNAL(readyWrite()),_session,SLOT(slotWriteReady()));
+	}
+	else
+	{
+		kdDebug() << "[YahooSessionManager::removeHandlerReceiver] FATAL ERROR: socket or session NULL";
+	}
+}
+
+void YahooSession::removeHandler(int fd)
+{
 }
 
 int YahooSessionManager::hostConnectReceiver(char *host, int port)
@@ -670,11 +657,14 @@ int YahooSessionManager::hostConnectReceiver(char *host, int port)
 	kdDebug() << "[YahooSessionManager::hostConnectReceiver]" << endl;
 	KExtendedSocket *_socket;
 	_socket = new KExtendedSocket( host, port );
-	m_socketsMap[_socket->fd()] =_socket;
-
+	
 	if (! _socket->connect() )
 	{
 		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Connected! fd "<< _socket->fd() << endl;
+		
+		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Adding socket " << _socket->fd() << " to map" << endl;
+		m_socketsMap[_socket->fd()] =_socket;
+
 		return _socket->fd();
 	}
 	else
@@ -684,6 +674,44 @@ int YahooSessionManager::hostConnectReceiver(char *host, int port)
 	}
 }
 
+
+void YahooSession::setSocket(int fd)
+{
+	kdDebug()<<"[YahooSession::setSocket] Setting socket " << fd << " for Session "<< m_connId << endl;
+	m_fd = fd;
+}
+
+void YahooSession::slotReadReady()
+{
+	int ret=1;
+	/* FIXME!!!!! */
+    //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
+	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
+
+	kdDebug() << "YahooSession::slotDataReceived" << fd << endl;
+	ret = yahoo_read_ready( m_connId , m_fd );
+
+	if ( ret == -1)
+		kdDebug() <<"Read Error (" << errno << ": " << strerror(errno) << endl;
+	else if ( ret == 0)
+		kdDebug() << "Server closed socket" << endl;
+}
+
+void YahooSession::slotWriteReady()
+{
+	int ret=1;
+	/* FIXME!!!!! */
+    //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
+	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
+
+	kdDebug() << "YahooSession::slotSendReady" << fd << endl;
+	ret = yahoo_write_ready( m_connId , m_fd );
+
+	if ( ret == -1)
+		kdDebug() <<"Read Error (" << errno << ": " << strerror(errno) << endl;
+	else if ( ret == 0)
+		kdDebug() << "Server closed socket" << endl;
+}
 
 #include "kyahoo.moc"
 
