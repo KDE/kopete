@@ -62,7 +62,9 @@ class OscarConnection : public QSocket
 
 		// virtual functions to be overloaded by child classes
 
-		/** Sends the direct IM message to buddy */
+		/*
+		 * Sends the direct IM message to buddy
+		 */
 		virtual void sendIM(const QString &message, bool isAuto);
 
 		/* Sends a typing notification to the server
@@ -73,10 +75,14 @@ class OscarConnection : public QSocket
 		virtual void sendFileSendRequest();
 
 	signals:
-		/** Emitted when an IM comes in */
-		void gotIM(QString, QString, bool);
+		/*
+		 * Emitted when an IM comes in
+		 */
+//		void gotIM(QString, QString, bool);
 
-		/** called when an AIM protocol error occurs */
+		/*
+		 * called when an AIM protocol error occurs
+		 */
 		void protocolError(QString, int);
 
 		/**
@@ -87,15 +93,25 @@ class OscarConnection : public QSocket
 		* 2: Begun (is typing)
 		*/
 		void gotMiniTypeNotification(QString, int);
-		/** Emitted when we are ready to send commands! */
+		/*
+		 * Emitted when we are ready to send commands!
+		 */
 		void connectionReady(QString name);
-		/** Emitted when the connection is closed */
+		/*
+		 * Emitted when the connection is closed
+		 */
 		void connectionClosed(QString name);
-		/** Emitted when a file transfer is complete */
+		/*
+		 * Emitted when a file transfer is complete
+		 */
 		void transferComplete(QString name);
-		/** Emitted when data is received.. parameter is percentage of transfer complete */
+		/*
+		 * Emitted when data is received.. parameter is percentage of transfer complete
+		 */
 		void percentComplete( unsigned int percent );
-		/** Emitted when a file transfer begins */
+		/*
+		 * Emitted when a file transfer begins
+		 */
 		void transferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient);
 
 	protected slots:
@@ -107,11 +123,17 @@ class OscarConnection : public QSocket
 		virtual void slotRead();
 
 	private slots:
-		/** Called when we have established a connection */
+		/*
+		 * Called when we have established a connection
+		 */
 		void slotConnected();
-		/** Called when the connection is closed */
+		/*
+		 * Called when the connection is closed
+		 */
 		void slotConnectionClosed();
-		/** Called when a socket error occurs */
+		/*
+		 * Called when a socket error occurs
+		 */
 		void slotError(int);
 
 	private:

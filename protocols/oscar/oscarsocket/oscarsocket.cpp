@@ -1604,36 +1604,41 @@ void OscarSocket::parseIM(Buffer &inbuf)
 							WORD charsetNumber=msgBuf.getWord();
 							WORD charsetSubset=msgBuf.getWord();
 							DWORD encoding = (charsetNumber << 16) | charsetSubset;
-
+/*
 							kdDebug(14150) << k_funcinfo << "charsetNumber=" <<charsetNumber <<
 								", charsetSubset=" << charsetSubset << endl;
-							// Get the message
+*/
+							if (msgBuf.length() < 1 )
+								break;
+
 							char *messagetext = msgBuf.getBlock(msgBuf.length());
-/*
+
 							QTextCodec *codec;
- 							if (encoding == 0x00020000) // UCS-2BE (or UTF-16)
+							if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
 							{
 								kdDebug(14150) << k_funcinfo << "UTF16 message" << endl;
 								codec = QTextCodec::codecForName("utf16");
 								message = codec->toUnicode(messagetext);
 							}
-	 						else if (encoding == 0x00030000) // iso-8859-1
+	 						else if (charsetNumber == 0x0003) // iso-8859-1
 							{
-								kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
-								codec = QTextCodec::codecForName("ISO8859-1");
-								message = codec->toUnicode(messagetext);
-							}
-  							else if (encoding == 0x0003ffff) // cp-1257
-							{
-								kdDebug(14150) << k_funcinfo << "CP1257 message" << endl;
-								codec = QTextCodec::codecForName("CP1257");
-								message = codec->toUnicode(messagetext);
+								if (charsetSubset == 0)
+								{
+									kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
+									codec = QTextCodec::codecForName("ISO8859-1");
+									message = codec->toUnicode(messagetext);
+								}
+								else if (charsetSubset == 0xffff)
+								{
+									kdDebug(14150) << k_funcinfo << "CP1257 message" << endl;
+									codec = QTextCodec::codecForName("CP1257");
+									message = codec->toUnicode(messagetext);
+								}
 							}
   							else //if (encoding == 0x0000ffff) // unknown
-*/
 							{
 								kdDebug(14150) << k_funcinfo << "unknown encoded message" << endl;
-								message = QString::fromLocal8Bit(messagetext);
+								message = QString::fromLatin1(messagetext);
 							}
 
 							delete [] messagetext; // getBlock allocates memory, we HAVE to free it again!
@@ -1641,7 +1646,10 @@ void OscarSocket::parseIM(Buffer &inbuf)
 							kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" << u.sn <<
 								"', message='" << message <<
 								"' encoding=" << (void *)encoding << endl;
-							emit gotIM(message, u.sn, isAutoResponse);
+							if(isAutoResponse)
+								emit gotIM(Away, message, u.sn);
+							else
+								emit gotIM(Normal, message, u.sn);
 						}
 						else
 						{
@@ -1698,6 +1706,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 							moreTLVs = true;
 						else
 							moreTLVs = false;
+						break;
 					}
 
 					default: //unknown type
@@ -1916,17 +1925,17 @@ void OscarSocket::parseIM(Buffer &inbuf)
 							inbuf.length() << " == " << msgLength << " ?" << endl;
 
 						char *msgtxt = inbuf.getBlock(msgLength);
-						message = QString::fromLocal8Bit(msgtxt);
+						QStringList msgParts = QStringList::split(QChar('þ') /*0xFE*/,
+							QString::fromLocal8Bit(msgtxt));
 						delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
-						QStringList msgParts = QStringList::split(QChar('þ') /*0xFE*/, message);
 
 						if(msgParts.count() == 2)
 						{
 							kdDebug(14150) << k_funcinfo <<
 								"MSGFORMAT_SERVER; emit gotIM(), contact=" <<
 								u.sn << ", message='" << message << "'" << endl;
-							// TODO: add gotURL signal
-							emit gotIM(QString("[URL:]%1\n%2").arg(msgParts[1]).arg(msgParts[0]), u.sn, false);
+							QString finalMessage = QString("%1\n%2").arg(msgParts[1]).arg(msgParts[0]);
+							emit gotIM(URL, finalMessage, u.sn);
 						}
 
 						if(inbuf.length() > 0)
@@ -3404,7 +3413,10 @@ void OscarSocket::OnDirectIMReceived(QString message, QString sender,
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	//for now, let's just emit a gotIM as though it came from the server
-	emit gotIM(message,sender,isAuto);
+	if(isAuto)
+		emit gotIM(Away, message, sender);
+	else
+		emit gotIM(Normal, message, sender);
 }
 
 // Called when a direct IM connection suffers an error

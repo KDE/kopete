@@ -185,6 +185,7 @@ void OscarContact::slotUpdateBuddy()
 	}
 	else // oscar-account is offline so all users are offline too
 	{
+		setIdleTime(0);
 		mListContact->setStatus(OSCAR_OFFLINE); // TODO: remove AIMBuddy
 		setStatus(OSCAR_OFFLINE);
 	}
@@ -194,8 +195,9 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
 	if(newStatus == OSCAR_OFFLINE)
 	{
-		mListContact->setStatus(OSCAR_OFFLINE); // TODO: remove AIMBuddy
+		setIdleTime(0);
 		setStatus(OSCAR_OFFLINE);
+		slotUpdateBuddy();
 	}
 }
 
@@ -203,6 +205,7 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 {
 	if(tocNormalize(sn) == mName) //if we are the contact that is offgoing
 	{
+		setIdleTime(0);
 		setStatus(OSCAR_OFFLINE);
 		slotUpdateBuddy();
 	}

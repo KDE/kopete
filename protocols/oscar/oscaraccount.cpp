@@ -34,7 +34,6 @@
 // TODO: get rid of the next include
 #include "aim.h" // For tocNormalize()
 
-#include "oscarsocket.h"
 #include "oscarchangestatus.h"
 
 
@@ -88,8 +87,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	// Got IM
 	QObject::connect(
-		engine(), SIGNAL(gotIM(QString,QString,bool)),
-		this, SLOT(slotGotIM(QString,QString,bool)));
+		engine(), SIGNAL(gotIM(OscarSocket::OscarMessageType, QString &, QString &)),
+		this, SLOT(slotGotIM(OscarSocket::OscarMessageType, QString &, QString &)));
 
 	// Got Config (Buddy List)
 	QObject::connect(
@@ -197,6 +196,58 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
 
+void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &message, QString &sender)
+{
+	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "', type=" << static_cast<int>(type) <<
+		", sender='" << sender << "'" << endl;
+
+	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
+
+//	if(!mInternalBuddyList->findBuddy(sender) && !mIgnoreUnknownContacts)
+	if(!contact && !mIgnoreUnknownContacts)
+	{
+		//basically, all this does is add the person to your buddy list
+		// TODO: Right now this has no support for "temporary" buddies
+		// because I could not think of a good way to do this with
+		// AIM.
+
+		kdDebug(14150) << k_funcinfo <<
+			"Message from contact that is not on our contactlist, sender='" <<
+			sender << "'" << endl;
+
+		if (addContact(tocNormalize(sender), sender, 0L, QString::null, true))
+		{
+			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
+		}
+	}
+
+	if (contact)
+	{
+		switch(type)
+		{
+			case OscarSocket::Away:
+				message=i18n("<b>[Away Message:]</b> %1").arg(message);
+				break;
+
+			case OscarSocket::URL:
+				message=i18n("<b>[URL Message:]</b> %1").arg(message);
+				break;
+
+			case OscarSocket::SMS:
+				message=i18n("<b>[SMS Message:]</b> %1").arg(message);
+				break;
+
+			case OscarSocket::WebPanel:
+				message=i18n("<b>[WebPanel Message:]</b> %1").arg(message);
+				break;
+
+			default:
+				break;
+		}
+		contact->gotIM(type, message);
+	}
+}
+
 // Called when a group is added by adding a contact
 void OscarAccount::slotGroupAdded(KopeteGroup *group)
 {
@@ -255,24 +306,6 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 		engine()->sendDelGroup(groupName);
 		// and remove the group from our AIMBuddyList
 		mInternalBuddyList->removeGroup( aGroup->ID() );
-	}
-}
-
-void OscarAccount::slotGotIM(QString /*message*/, QString sender, bool /*isAuto*/)
-{
-//	kdDebug(14150) << k_funcinfo << "account='"<< accountId() <<
-//		"', sender='" << sender << "'" << endl;
-
-	//basically, all this does is add the person to your buddy list
-	// TODO: Right now this has no support for "temporary" buddies
-	// because I could not think of a good way to do this with
-	// AIM.
-	if(!mInternalBuddyList->findBuddy(sender) && !mIgnoreUnknownContacts)
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"Message from contact that is not on our contactlist, sender='" <<
-			sender << "'" << endl;
-		addContact(tocNormalize(sender), sender, 0L, QString::null, true); // last one should be true
 	}
 }
 
@@ -482,12 +515,10 @@ void OscarAccount::slotIdleTimeout()
 
 	int idletime = KopeteAway::getInstance()->idleTime();
 
-	engine()->sendIdleTime( idletime );
-
-/*	// not doing anything for more than 5 mins and still not idle
-	if(idletime > 5*60)
+	// not doing anything for more than 5 mins and still not idle
+	if(idletime >= 5*60)
 	{
-		if (idletime > lastIdleValue + 60)
+		if (idletime >= lastIdleValue + 60)
 		{
 			kdDebug(14150) << k_funcinfo <<
 				"sending idle time to server, idletime=" << idletime << endl;
@@ -508,7 +539,7 @@ void OscarAccount::slotIdleTimeout()
 			mAreIdle = false;
 			lastIdleValue = 0;
 		}
-	}*/
+	}
 }
 
 int OscarAccount::randomNewBuddyNum()

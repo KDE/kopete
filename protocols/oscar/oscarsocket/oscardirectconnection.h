@@ -45,12 +45,15 @@ class OscarDirectConnection : public OscarConnection
 		~OscarDirectConnection();
 
 	/** Sends the direct IM message to buddy */
-	virtual void sendIM(const QString &message, bool isAuto);
+	void sendIM(const QString &message, bool isAuto);
 	/*
 	 * Sends a typing notification to the server
 	 * @param notifyType Type of notify to send
 	 */
 	virtual void sendTypingNotify(TypingNotify notifyType);
+
+	signals:
+		void gotIM(QString, QString, bool);
 
 	protected slots: // Protected slots
 		/** Called when there is data to be read from peer */

@@ -24,7 +24,7 @@
 #include "aim.h"
 
 OncomingSocket::OncomingSocket(QObject *parent, const char *name )
-: QServerSocket(0,5,parent,name)
+: QServerSocket(0, 5, parent, name)
 {
 }
 
@@ -34,7 +34,7 @@ OncomingSocket::OncomingSocket(OscarSocket *server, const QHostAddress &address,
 	int backlog,
 	QObject *parent,
 	const char *name)
-	: QServerSocket(address,port,backlog,parent,name)
+	: QServerSocket(address, port, backlog, parent, name)
 {
 	mType = type;
 	mServer = server;
@@ -57,7 +57,7 @@ OncomingSocket::~OncomingSocket()
 // Called when someone connects to the server socket
 void OncomingSocket::newConnection(int socket)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called! Socket=" << socket << endl;
+	kdDebug(14150) << k_funcinfo << "Called! Socket=" << socket << endl;
 
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
@@ -67,7 +67,7 @@ void OncomingSocket::newConnection(int socket)
 	DirectInfo *tmp = mPendingConnections.first();
 	if (!tmp)
 	{
-		kdDebug(14150) << k_funcinfo <<  "no pending connection exists! uh oh" << endl;
+		kdDebug(14150) << k_funcinfo << "no pending connection exists! uh oh" << endl;
 		return;
 	}
 	OscarConnection *newsock = createAppropriateType(tmp);
@@ -78,7 +78,6 @@ void OncomingSocket::newConnection(int socket)
 	// AIM clients will try to reverse the connection if that is the case
 	// if ( tmp->type == DirectInfo::Incoming ) && mType == OscarConnection::SendFile )
 	newsock->sendFileSendRequest();
-
 }
 
 /** Finds the connection with cookie @cookie and returns a pointer to it.
@@ -86,7 +85,6 @@ void OncomingSocket::newConnection(int socket)
 OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie)
 {
 	OscarConnection *tmp;
-//	kdDebug(14150) << k_funcinfo <<  "There are " << mConns.count() << " connections." << endl;
 	for (tmp = mConns.first(); tmp; tmp = mConns.next())
 	{
 		if (cookie == tmp->cookie())
@@ -100,36 +98,39 @@ OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie)
 OscarConnection * OncomingSocket::findConnection(const QString &name)
 {
 	OscarConnection *tmp;
-	kdDebug(14150) << "[OncomingSocket] there are " << mConns.count() << " connections." << endl;
 	for (tmp = mConns.first(); tmp; tmp = mConns.next())
 	{
-		if ( !tmp->connectionName().compare(tocNormalize(name)) )
+		if(!tmp->connectionName().compare(tocNormalize(name)))
 		{
-			kdDebug(14150) << k_funcinfo <<  tmp->connectionName() << " matches dest sn " << tocNormalize( name ) << endl;
+			kdDebug(14150) << k_funcinfo << "'" << tmp->connectionName() <<
+				"' matches dest sn '" << tocNormalize(name) << "'." << endl;
 			return tmp;
 		}
 	}
 	return 0L;
 }
 
-/** Adds the connection to the list of pending connections */
-DirectInfo *OncomingSocket::addPendingConnection(const QString &sn, const QByteArray &cookie, const KFileItem *finfo, const QString &host, int port, DirectInfo::Type typ)
+DirectInfo *OncomingSocket::addPendingConnection(const QString &sn,
+	const QByteArray &cookie, const KFileItem *finfo, const QString &host,
+	int port, DirectInfo::Type typ)
 {
 	DirectInfo *ninfo = new DirectInfo;
 	ninfo->cookie.duplicate(cookie);
 	ninfo->sn = tocNormalize(sn);
+
 	if ( finfo )
 		ninfo->finfo = new KFileItem( *finfo );
 	else
 		ninfo->finfo = 0L;
+
 	ninfo->host = host;
 	ninfo->port = port;
 	ninfo->type = typ;
 	mPendingConnections.append(ninfo);
+
 	return ninfo;
 }
 
-/** Called when a connection is ready */
 void OncomingSocket::slotConnectionReady(QString name)
 {
 	OscarConnection *dc = 0L;
@@ -143,33 +144,44 @@ void OncomingSocket::slotConnectionReady(QString name)
 		}
 	}
 
-	if (!dc)
+	if (dc)
 	{
-		kdDebug(14150) << "[OncomingSocket] Connection " << name << " not found!!! exiting slotConnectionReady()" << endl;
-		return;
+		kdDebug(14150) << k_funcinfo << "Connection '" << name <<
+			"' not found!!! exiting slotConnectionReady()" << endl;
 	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"slotConnectionReady(): Setting up direct IM signals!" << endl;
 
-	kdDebug(14150) << "[OncomingSocket] slotConnectionReady(): Setting up direct IM signals!" << endl;
-	// Connect protocol error signal
-	QObject::connect(dc, SIGNAL(protocolError(QString, int)),
+		// Connect protocol error signal
+		QObject::connect(
+			dc, SIGNAL(protocolError(QString, int)),
 			mServer, SLOT(OnDirectIMError(QString, int)));
-	// Got IM
-	QObject::connect(dc, SIGNAL(gotIM(QString, QString, bool)),
+		// Got IM
+		QObject::connect(
+			dc, SIGNAL(gotIM(QString, QString, bool)),
 			mServer, SLOT(OnDirectIMReceived(QString,QString,bool)));
-	// Disconnected
-	QObject::connect(dc, SIGNAL(connectionClosed(QString)),
+		// Disconnected
+		QObject::connect(
+			dc, SIGNAL(connectionClosed(QString)),
 			this, SLOT(slotConnectionClosed(QString)));
-	QObject::connect(dc, SIGNAL(connectionClosed(QString)),
+		QObject::connect(
+			dc, SIGNAL(connectionClosed(QString)),
 			mServer, SLOT(OnDirectIMConnectionClosed(QString)));
-	// Typing notification
-	QObject::connect(dc, SIGNAL(gotMiniTypeNotification(QString,int)),
+		// Typing notification
+		QObject::connect(
+			dc, SIGNAL(gotMiniTypeNotification(QString,int)),
 			mServer, SLOT(OnDirectMiniTypeNotification(QString, int)));
-	// File transfer complete
-	QObject::connect(dc, SIGNAL(transferComplete(QString)),
+		// File transfer complete
+		QObject::connect(
+			dc, SIGNAL(transferComplete(QString)),
 			mServer, SLOT(OnFileTransferComplete(QString)));
-	// File transfer begun
-	QObject::connect(dc, SIGNAL(transferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)),
+		// File transfer begun
+		QObject::connect(
+			dc, SIGNAL(transferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)),
 			mServer, SLOT(OnFileTransferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)));
+	}
 }
 
 /** Set up a connection before adding it to the list of connections */
@@ -186,7 +198,7 @@ void OncomingSocket::setupConnection(OscarConnection *newsock)
 		mServer, SLOT(OnDirectIMReady(QString)));
 	}
 
-	kdDebug(14150) << "[OncomingSocket] setting up connection.. .there are currently " << mConns.count() << endl;
+	kdDebug(14150) << k_funcinfo << "setting up connection.. .there are currently " << mConns.count() << endl;
 	mConns.append(newsock);
 }
 
@@ -199,34 +211,35 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 		{
 			OscarConnection *s = createAppropriateType(tmp);
 			setupConnection(s);
-			kdDebug(14150) << "[OncomingSocket] Connecting to " << tmp->host << ":" << tmp->port << endl;
+			kdDebug(14150) << k_funcinfo << "Connecting to " << tmp->host << ":" << tmp->port << endl;
 			s->connectToHost(tmp->host,tmp->port);
 			return s;
 		}
 	}
 
-	kdDebug(14150) << k_funcinfo <<  "WARNING: outgoing connection not found in pending list, returning NULL" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"WARNING: outgoing connection not found in pending list, returning NULL" << endl;
 	return 0L;
 }
 
 /** Called when connection named name has been closed */
 void OncomingSocket::slotConnectionClosed(QString name)
 {
-	kdDebug(14150) << "[OncomingSocket] direct connection closed, deleting it: " << name << endl;
+	kdDebug(14150) << k_funcinfo << "Direct connection closed, deleting it: " << name << endl;
 	removeConnection(name);
 }
 
 /** Removes the named connection from the connection list and disconnects it. */
 void OncomingSocket::removeConnection(const QString &name)
 {
-	kdDebug(14150) << "[OncomingSocket] deleting direct connection " << name << endl;
+	kdDebug(14150) << k_funcinfo << "Deleting direct connection " << name << endl;
 	OscarConnection *dc = findConnection(name);
-	if ( !dc )
+	if(dc)
 	{
-		kdDebug(14150) << "[OncomingSocket] no connection to delete" << endl;
-		return;
+		mConns.remove(dc);
 	}
-	mConns.remove(dc);
+	else
+		kdDebug(14150) << k_funcinfo << "No connection to delete" << endl;
 }
 
 /** Allocates memory to ptr of the proper type */
@@ -240,7 +253,7 @@ OscarConnection * OncomingSocket::createAppropriateType(DirectInfo *tmp)
 	}
 	else // other type?? this should never happen
 	{
-		kdDebug(15150) << "[OncomingSocket] Creating generic OscarConnection type. INVESTIGATE." << endl;
+		kdDebug(14150) << k_funcinfo << "Creating generic OscarConnection type. INVESTIGATE." << endl;
 		return new OscarConnection(mServer->getSN(), tmp->sn, mType, tmp->cookie);
 	}
 }

@@ -24,6 +24,7 @@
 
 #include "kopeteaccount.h"
 #include "oscarcontact.h"
+#include "oscarsocket.h"
 
 class KopeteContact;
 class KopeteGroup;
@@ -145,19 +146,28 @@ protected slots:
 	 */
 	void slotGotServerBuddyList(AIMBuddyList& buddyList);
 
-	/** Called when we've received an IM */
-	void slotGotIM( QString message, QString sender, bool isAuto );
+	/*
+	 * Called when we've received an IM
+	 */
+	void slotGotIM(OscarSocket::OscarMessageType type, QString &message, QString &sender);
+	//void slotGotIM(QString message, QString sender, bool isAuto);
 
-	/** Called when we get a request for a direct IM session with @sn */
+	/*
+	 * Called when we get a request for a direct IM session with @sn
+	 */
 	void slotGotDirectIMRequest(QString sn);
 
-	/** Called when there is no activity for a certain amount of time  */
+	/*
+	 * Called when there is no activity for a certain amount of time
+	 */
 	void slotIdleTimeout();
 
-	/** Displays an error dialog with the given text */
+	/*
+	 * Displays an error dialog with the given text
+	 */
 	void slotError(QString errmsg, int errorCode);
 
-	/**
+	/*
 	 * Having received a new server side group, try
 	 * to find queued buddies that are members of
 	 * this group.
@@ -168,11 +178,13 @@ protected slots:
 	void slotLoggedIn();
 
 protected:
-	/** Adds a contact to a meta contact */
+	/*
+	 * Adds a contact to a meta contact
+	 */
 	virtual bool addContactToMetaContact(const QString &contactId,
 		const QString &displayName, KopeteMetaContact *parentContact );
 
-	/**
+	/*
 	 * Protocols using Oscar must implement this to perform the instantiation
 	 * of their contact for Kopete.  Called by @ref addContactToMetaContact().
 	 * @param contactId theprotocol unique id of the contact
@@ -183,7 +195,7 @@ protected:
 	 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
 		KopeteMetaContact *parentContact ) =0;
 
-	/**
+	/*
 	 * Adds a contact to the internal list.
 	 * This means that the contact is already
 	 * on the server-side list

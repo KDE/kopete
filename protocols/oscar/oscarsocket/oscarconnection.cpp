@@ -88,12 +88,8 @@ void OscarConnection::setSN(const QString &newSN)
 	mSN = newSN;
 }
 
-/** Sends the direct IM message to buddy */
 void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
-{
-	kdDebug(14150) << k_funcinfo <<
-		"Not implemented in this object! " << endl;
-}
+{}
 
 /** Sends a typing notification to the server
 		@param notifyType Type of notify to send

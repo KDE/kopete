@@ -24,6 +24,8 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
+#include "oscarsocket.h"
+
 class AIMBuddy;
 
 struct UserInfo;
@@ -62,6 +64,8 @@ class OscarContact : public KopeteContact
 
 		QString contactName() const { return mName; };
 		OscarAccount *account() const { return mAccount; };
+
+		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message) = 0;
 
 		/*
 		 * Convert between internal status representation

@@ -43,9 +43,10 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 		account->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
 		this, SLOT(slotContactChanged(const UserInfo &)));
 	// Received IM
-	QObject::connect(
-		account->engine(), SIGNAL(gotIM(QString,QString,bool)),
-		this, SLOT(slotIMReceived(QString,QString,bool)));
+/*	QObject::connect(
+		account,
+		 SIGNAL(slotGotIM(OscarMessageType type, QString &sender, QString &msg, bool isAuto))),
+		this, SLOT(slotIMReceived(QString,QString,bool)));*/
 	// Incoming minitype notification
 	QObject::connect(
 		account->engine(), SIGNAL(gotMiniTypeNotification(QString, int)),
@@ -237,19 +238,20 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 
 // Called when an IM is received
 
-void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto */ )
+//void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto */ )
+void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
 	// Check if we're the one who sent the message
-	if(tocNormalize(sender) != contactName())
-		return;
+/*	if(tocNormalize(sender) != contactName())
+		return;*/
 
 	// Tell the message manager that the buddy is done typing
-	manager()->receivedTypingMsg( this, false );
+	manager()->receivedTypingMsg(this, false);
 
 	// Build a KopeteMessage and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(mAccount->myself());
-	KopeteMessage msg = parseAIMHTML( message );
+	KopeteMessage msg = parseAIMHTML(message);
 	manager()->appendMessage(msg);
 
 	// send our away message in fire-and-forget-mode :)

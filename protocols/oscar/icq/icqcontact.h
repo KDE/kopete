@@ -19,7 +19,6 @@
 #define ICQCONTACT_H
 
 #include "oscarcontact.h"
-#include "oscarsocket.h"
 
 #include <qwidget.h>
 #include "kopetecontact.h"
@@ -75,11 +74,13 @@ class ICQContact : public OscarContact
 		 */
 		void setOwnDisplayName(const QString &);
 
-	/**
-	 * Reimplemented because invisible contacts have a
-	 * small auto-modifying status
-	 */
-	void setOnlineStatus(const KopeteOnlineStatus&);
+		/**
+		* Reimplemented because invisible contacts have a
+		* small auto-modifying status
+		*/
+		void setOnlineStatus(const KopeteOnlineStatus&);
+
+		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
 
 	public slots:
 		virtual void slotUserInfo();
@@ -114,8 +115,6 @@ class ICQContact : public OscarContact
 		void slotOffgoingBuddy(QString sn);
 		/** Called when we want to send a message */
 		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
-		/** Called when an IM is received */
-		void slotIMReceived(QString sender, QString msg, bool isAuto);
 
 		void slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &);
 		void slotUpdWorkInfo(const int, const ICQWorkUserInfo &);

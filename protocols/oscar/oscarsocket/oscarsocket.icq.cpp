@@ -162,7 +162,8 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 			kdDebug(14150) << k_funcinfo << "Offline message from '" << UIN <<
 				"' type=" << (type & 0xFF) << ", message='" << message << "'" << endl;
 
-			emit gotIM(message, QString::number(UIN), false);
+			QString num = QString::number(UIN);
+			emit gotIM(Normal, message, num);
 			break;
 		}
 
@@ -805,7 +806,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 									kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
 										user.sn << "', message='" << message << "'" << endl;
 
-									emit gotIM(message, user.sn, false);
+									emit gotIM(Normal, message, user.sn);
 								}
 								else
 								{

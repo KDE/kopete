@@ -15,7 +15,6 @@
 #define AIMCONTACT_H
 
 #include "oscarcontact.h"
-#include "oscarsocket.h"
 
 class AIMAccount;
 class AIMProtocol;
@@ -49,6 +48,8 @@ class AIMContact : public OscarContact
 		 */
 		void setOwnProfile(const QString &profile);
 
+		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
+
 	protected:
 		/**
 		* parses HTML AIM-Clients send to us and
@@ -78,18 +79,17 @@ class AIMContact : public OscarContact
 		 * Called when a buddy has changed status
 		 */
 		void slotContactChanged(const UserInfo &);
+
 		/*
 		 * Called when a buddy is going offline
 		 */
 		void slotOffgoingBuddy(QString sn);
+
 		/*
 		 * Called when we want to send a message
 		 */
 		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
-		/*
-		 * Called when an IM is received
-		 */
-		void slotIMReceived(QString sender, QString msg, bool isAuto);
+
 		/*
 		 * Called when the user requests a contact's user info
 		 */

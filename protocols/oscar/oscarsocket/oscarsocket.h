@@ -246,23 +246,33 @@ class OscarSocket : public OscarConnection
 	Q_OBJECT
 
 	public:
+		enum OscarMessageType
+		{
+			Normal=0, Away, URL, SMS, WebPanel
+		};
+
 		OscarSocket(const QString &connName, const QByteArray &cookie,
 			OscarAccount *account, QObject *parent=0, const char *name=0, bool=false);
 
 		~OscarSocket();
 
-		/** Sends an authorization request to the server */
+		/*
+		 * Sends an authorization request to the server
+		 */
 		void sendLoginRequest();
 
-		/** encodes a password using md5, outputs to digest */
+		/*
+		 * encodes a password using md5, outputs to digest [AIM]
+		 */
 		int encodePassword(unsigned char *digest);
-		/** same as above but for icq which needs a XOR method to encode the password
-		*  returns the encoded password
-		*/
+		/*
+		 * same as above but for icq which needs a XOR method to encode the password
+		 *  returns the encoded password  [ICQ]
+		 */
 		void encodePasswordXOR(const QString &password, QCString &encodedPassword);
 
-		/**
-		 * Logs in the user!
+		/*
+		 * Logs in the user!  [OSCAR]
 		 *
 		 * @param host				Login server.
 		 * @param port				Login port.
@@ -285,15 +295,15 @@ class OscarSocket : public OscarConnection
 		 */
 		void sendRateInfoRequest();
 		/*
-		 * requests the current user's info
+		 * requests the current user's info [AIM]
 		 */
 		void requestMyUserInfo();
 		/*
-		 * Sets idle time
+		 * Sends idle time  [OSCAR]
 		 */
 		void sendIdleTime(DWORD time);
 		/*
-		 * requests ssi data from the server
+		 * requests ssi data from the server  [OSCAR]
 		 */
 		void sendBuddyListRequest();
 		/*
@@ -680,26 +690,53 @@ class OscarSocket : public OscarConnection
 	void slotKeepaliveTimer();
 
 	signals:
-	/** The server has sent the key with which to encrypt the password */
+
+	/*
+	 * emitted when any kind of Instant Message was received
+	 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
+	 * @p message contains the message as received
+	 * @p user contains the screenname/UIN of the sender
+	 */
+	void gotIM(OscarSocket::OscarMessageType type, QString &message, QString &user);
+
+	/*
+	 * The server has sent the key with which to encrypt the password
+	 */
 	void keyReceived();
-	/** The bos server is ready to be sent commands */
+	/*
+	 * The bos server is ready to be sent commands
+	 */
 	void serverReady();
-	/** A buddy has left */
+	/*
+	 * A contact went offline
+	 */
 	void gotOffgoingBuddy(QString);
-	/** A buddy has arrived! */
+	/*
+	 * A contact changed his status to something else then offline
+	 */
 	void gotBuddyChange(const UserInfo &);
-	/** A user profile has arrived */
+	/*
+	 * A user profile was received
+	 */
 	void gotUserProfile(const UserInfo &, const QString &profile, const QString &away);
-	/** Emitted when the status of the connection changes during login */
+	/*
+	 * Emitted when the status of the connection changes during login
+	 */
 //	void connectionChanged(int, QString);
-	/** Emitted when my user info is received */
+	/*
+	 * Emitted when my user info is received
+	 */
 	void gotMyUserInfo(const UserInfo &);
-	/** A buddy list has been received */
+	/*
+	 * A buddy list has been received
+	 */
 	void gotConfig(AIMBuddyList &);
-	/** emitted when we have received an ack from the server */
+	/*
+	 * emitted when we have received an ack from the server
+	 */
 	void gotAck(QString, int);
 
-	/**
+	/*
 	 * Emitted when our status has changed, internalStatus is one of OSCAR_*
 	 */
 	void statusChanged(const unsigned int internalStatus);

@@ -89,9 +89,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 			this, SLOT(slotContactChanged(const UserInfo &)));
 	}
 
-	QObject::connect(
-		acc->engine(), SIGNAL(gotIM(QString,QString,bool)),
-		this, SLOT(slotIMReceived(QString,QString,bool)));
+/*	QObject::connect(
+		acc->engine(), SIGNAL(gotIM(QString &,QString &,bool)),
+		this, SLOT(slotGotIM(QString &,QString &,bool)));*/
 	QObject::connect(
 		acc->engine(), SIGNAL(gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &)),
 		this, SLOT(slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &)));
@@ -158,17 +158,13 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 	slotUpdateBuddy();
 }
 
-void ICQContact::slotIMReceived(QString message, QString sender, bool /*isAuto*/)
+void ICQContact::gotIM(OscarSocket::OscarMessageType type, const QString &message)
 {
-	if(sender != contactName())
-		return;
-
 	// Build a KopeteMessage and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(account()->myself());
-	KopeteMessage msg(
-		this, tmpList, message,
-		KopeteMessage::Inbound, KopeteMessage::PlainText);
+	KopeteMessage msg(this, tmpList, message, KopeteMessage::Inbound,
+		KopeteMessage::PlainText);
 	manager(true)->appendMessage(msg);
 }
 
