@@ -133,6 +133,8 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_connId = id;
 	m_Username = username;
 	m_Password = password;
+	//Uncomment for yahoo packet debugging
+	//yahoo_set_log_level( YAHOO_LOG_DEBUG );
 }
 
 int YahooSession::sessionId() const
@@ -945,6 +947,8 @@ int YahooSessionManager::_hostConnectReceiver(char* /*host*/, int /*port*/)
 		return -1;
 	}
 	*/
+
+	return 0;
 }
 
 int YahooSession::_hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data)
