@@ -135,11 +135,6 @@ k_dcop:
 	 */
 	void setAutoAway();
 
-	/**
-	 * Sets the nickname for the provided account
-	 */
-	void setNickName( const QString &protocolId, const QString &accountId, const QString &newDisplayName );
-
 };
 
 #endif
