@@ -38,10 +38,8 @@ class KopeteGlobalAwayDialog;
  * @class KopeteAway kopeteaway.h
  *
  * KopeteAway is a singleton class that manages away messages
- * for Kopete.  It stores a global away message, as well as
- * a list of user defined away messages.  The messages are
- * primarily configured through the ConfigModule
- * PersonalPrefsConfig, which is a member of the Kopete class.
+ * for Kopete. It stores a global away message, as well as
+ * a list of user defined away messages.
  * This class is used by KopeteAwayDialog, which gets it's
  * list of user-defined away messages from this.  Protocol
  * plugins' individual away dialogs should also get away
