@@ -117,7 +117,6 @@ class ICQContact : public OscarContact
 		KAction *actionRequestAuth;
 		KAction *actionSendAuth;
 		KToggleAction *actionIgnore;
-		KToggleAction *actionInvisibleTo;
 		KToggleAction *actionVisibleTo;
 
 		int userinfoRequestSequence;
@@ -166,7 +165,6 @@ class ICQContact : public OscarContact
 		void slotSnacFailed(WORD snacID);
 		void slotIgnore();
 		void slotVisibleTo();
-		void slotInvisibleTo();
 };
 
 #endif

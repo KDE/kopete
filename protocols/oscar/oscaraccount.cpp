@@ -142,9 +142,11 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		this, SLOT(slotGotServerBuddyList()));
 
 	// Got direct IM request
+#if 0
 	QObject::connect(
 		engine(), SIGNAL(gotDirectIMRequest(QString)),
 		this, SLOT(slotGotDirectIMRequest(QString)));
+#endif
 
 	d->idleTimer = new QTimer(this, "OscarIdleTimer");
 	QObject::connect(
@@ -578,7 +580,7 @@ void OscarAccount::syncLocalWithServerBuddyList()
 }
 #endif
 
-
+#if 0
 void OscarAccount::slotGotDirectIMRequest(QString sn)
 {
 	//FIXME: This is a stupid question, ICQ always accepts
@@ -605,6 +607,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 	else if (result == KMessageBox::No)
 		engine()->sendDirectIMDeny(sn);
 }
+#endif
 
 
 void OscarAccount::slotIdleTimeout()
@@ -754,11 +757,12 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	SSI* ssiItem = engine()->ssiData().findContact( contactId );
 	if ( ssiItem )
 	{
-		kdDebug(14150) << k_funcinfo << "Found contact on internal list. Making new OscarContact" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Found contact on internal list. Making new OscarContact" << endl;
 		OscarContact* newContact = createNewContact(contactId, displayName, parentContact, true);
 		if ( newContact )
 		{
-			newContact->setStatus( OSCAR_OFFLINE );
+			newContact->setStatus(OSCAR_OFFLINE);
 			return true;
 		}
 		else

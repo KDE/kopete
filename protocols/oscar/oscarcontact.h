@@ -20,15 +20,13 @@
 
 #include <qwidget.h>
 #include <qdatetime.h>
-#undef KDE_NO_COMPAT
-#include <kaction.h>
-//#include "kopetetransfermanager.h"
+//#undef KDE_NO_COMPAT
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
 #include "oscarsocket.h"
 
-class KAction;
+class KToggleAction;
 class KopeteMessageManager;
 class KopeteOnlineStatus;
 class OscarConnection;
@@ -202,6 +200,8 @@ class OscarContact : public KopeteContact
 
 		void slotGotAuthReply(const QString &contact, const QString &reason, bool granted);
 
+		void slotInvisibleTo();
+
 	private:
 		void initSignals();
 		void initActions();
@@ -220,6 +220,7 @@ class OscarContact : public KopeteContact
 		bool mIgnore;
 		bool mVisibleTo;
 		bool mInvisibleTo;
+		KToggleAction *actionInvisibleTo;
 };
 
 #endif

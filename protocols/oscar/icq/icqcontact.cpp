@@ -22,6 +22,8 @@
 
 #include <qapplication.h>
 
+#include <kaction.h>
+#include <kactionclasses.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -95,7 +97,8 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 
 	if((name == displayName || displayName.isEmpty()) && account()->isConnected())
 	{
-		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
+		kdDebug(14200) << k_funcinfo <<
+			"ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestShortInfo();
 	}
 
@@ -120,6 +123,33 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 
 	/*kdDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
+	QStringList capList;
+	if (u.capabilities & AIM_CAPS_BUDDYICON)
+		capList << i18n("Buddyicon");
+	if (u.capabilities & AIM_CAPS_TRILLIANCRYPT)
+		capList << i18n("Trillian Encryption");
+	if (u.capabilities & AIM_CAPS_UTF8)
+		capList << i18n("UTF-8");
+	if (u.capabilities & AIM_CAPS_IS_WEB)
+		capList << i18n("Lite/Web-Client");
+	if (u.capabilities & AIM_CAPS_RTFMSGS)
+		capList << i18n("RTF-Messages");
+	if (u.capabilities & AIM_CAPS_KOPETE)
+		capList << i18n("Kopete");
+	if (u.capabilities & AIM_CAPS_MICQ)
+		capList << i18n("MICQ");
+	if (u.capabilities & AIM_CAPS_MACICQ)
+		capList << i18n("MacICQ");
+	if (u.capabilities & AIM_CAPS_IMIMAGE)
+		capList << i18n("DirectIM/IMImage");
+	if (u.capabilities & AIM_CAPS_CHAT)
+		capList << i18n("Groupchat");
+
+	if (capList.count() > 0)
+	{
+		setProperty(mProtocol->clientFeatures, capList.join(", "));
+		//kdDebug(14190) << k_funcinfo << "Client Features: " << caps << endl;
+	}
 
 	unsigned int newStatus = 0;
 	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
@@ -143,7 +173,6 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 		{
 			if(newStatus != OSCAR_ONLINE) // if user changed to some state other than online
 			{
-				// TODO: Add queues for away message requests
 				mAccount->engine()->requestAwayMessage(this);
 			}
 			else // user changed to "Online" status and has no away message anymore
@@ -251,9 +280,9 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 
 		actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
 			this, SLOT(slotIgnore()), this, "actionIgnore");
-		actionVisibleTo = new KToggleAction(i18n("&Visible To"), "", 0,
+		actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
 			this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
-		actionInvisibleTo = new KToggleAction(i18n("&Invisible To"), "", 0,
+		actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
 			this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
 	}
 	else
@@ -262,24 +291,30 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 		actionReadAwayMessage->setIconSet(SmallIconSet(awIcn));
 	}
 
+	bool on = account()->isConnected();
 	//TODO: Only enable this if waitAuth is set
-	actionRequestAuth->setEnabled(account()->isConnected());
-	actionSendAuth->setEnabled(account()->isConnected());
+	actionRequestAuth->setEnabled(on);
+	actionSendAuth->setEnabled(on);
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
+	actionIgnore->setEnabled(on);
+	actionVisibleTo->setEnabled(on);
+	actionInvisibleTo->setEnabled(on);
 
 	actionIgnore->setChecked(mIgnore);
 	actionVisibleTo->setChecked(mVisibleTo);
 	actionInvisibleTo->setChecked(mInvisibleTo);
 
+
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
-	actionCollection->append(actionReadAwayMessage);
 	actionCollection->append(actionIgnore);
 	actionCollection->append(actionVisibleTo);
 	actionCollection->append(actionInvisibleTo);
+	actionCollection->append(actionReadAwayMessage);
 
 	return actionCollection;
 }
+
 
 void ICQContact::setStatus(const unsigned int newStatus)
 {
@@ -358,6 +393,7 @@ void ICQContact::slotUserInfo()
 		infoDialog->raise();
 	}
 }
+
 
 void ICQContact::slotCloseUserInfoDialog()
 {
@@ -609,13 +645,6 @@ void ICQContact::slotVisibleTo()
 	kdDebug(14150) << k_funcinfo <<
 		"Called; visible = " << actionVisibleTo->isChecked() << endl;
 	setVisibleTo(actionVisibleTo->isChecked(), true);
-}
-
-void ICQContact::slotInvisibleTo()
-{
-	kdDebug(14150) << k_funcinfo <<
-		"Called; invisible = " << actionInvisibleTo->isChecked() << endl;
-	setInvisibleTo(actionInvisibleTo->isChecked(), true);
 }
 
 #include "icqcontact.moc"

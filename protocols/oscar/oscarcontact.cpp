@@ -20,6 +20,7 @@
 
 #include <qapplication.h>
 
+#include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -677,6 +678,13 @@ void OscarContact::setInvisibleTo(bool val, bool updateServer)
 		else
 			mAccount->engine()->sendSSIRemoveInvisible(mName);
 	}
+}
+
+void OscarContact::slotInvisibleTo()
+{
+	kdDebug(14150) << k_funcinfo <<
+		"Called; invisible = " << actionInvisibleTo->isChecked() << endl;
+	setInvisibleTo(actionInvisibleTo->isChecked(), true);
 }
 
 #include "oscarcontact.moc"

@@ -166,7 +166,8 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting..."), i18n("Connecting...")),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
-	awayMessage(Kopete::Global::Properties::self()->awayMessage())
+	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
 	if (protocolStatic_)
 		kdDebug(14200) << k_funcinfo << "ICQ plugin already initialized" << endl;

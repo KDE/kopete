@@ -176,7 +176,7 @@ protected slots:
 	/*
 	 * Called when we get a request for a direct IM session with @sn
 	 */
-	void slotGotDirectIMRequest(QString sn);
+	//void slotGotDirectIMRequest(QString sn);
 
 	/*
 	 * Called when there is no activity for a certain amount of time

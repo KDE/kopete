@@ -19,6 +19,7 @@
 #include <qapplication.h>
 #include <qregexp.h>
 
+#include <kactionclasses.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -104,7 +105,7 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 {
 	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 
-	if( !actionRequestAuth )
+	if(!actionRequestAuth)
 	{
 		actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
 			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
@@ -112,6 +113,8 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
 		actionWarn = new KAction(i18n("&Warn"), 0,
 			this, SLOT(slotWarn()), this, "actionWarn");
+		actionInvisibleTo = new KToggleAction(i18n("&Block"), "", 0,
+			this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
 		/*KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
 			this, SLOT(slotDirectConnect()), this, "actionDirectConnect");*/
 	}
@@ -123,6 +126,7 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
 	actionCollection->append(actionWarn);
+	actionCollection->append(actionInvisibleTo);
 	//actionCollection->insert(actionDirectConnect);
 
 	return actionCollection;

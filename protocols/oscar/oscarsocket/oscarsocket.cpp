@@ -1077,18 +1077,36 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 	QString dbgCaps = "CAPS: ";
 	#endif
 
-	while(inbuf.length() >= 0x10)
+	while(inbuf.length() >= 16)
 	{
 		char *cap;
-		cap = inbuf.getBlock(0x10);
+		cap = inbuf.getBlock(16);
 
 		for (unsigned int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
 		{
-			if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
+			if (oscar_caps[i].flag == AIM_CAPS_KOPETE)
+			{
+				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
+				{
+					capflags |= oscar_caps[i].flag;
+					kdDebug(14150) << k_funcinfo <<
+						"Kopete Ver " << cap[12] << "." << cap[13] << "." << cap[14] << cap[15] << endl;
+				}
+			}
+			else if (oscar_caps[i].flag == AIM_CAPS_MICQ)
+			{
+				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
+				{
+					capflags |= oscar_caps[i].flag;
+					kdDebug(14150) << k_funcinfo <<
+						"MICQ Ver " << cap[12] << "." << cap[13] << "." << cap[14] << cap[15] << endl;
+				}
+			}
+			else if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
 			{
 				capflags |= oscar_caps[i].flag;
 
-				#ifdef OSCAR_CAP_DEBUG
+#ifdef OSCAR_CAP_DEBUG
 				switch(oscar_caps[i].flag)
 				{
 					case AIM_CAPS_BUDDYICON:
@@ -1149,6 +1167,9 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 					case AIM_CAPS_INTEROPERATE:
 						dbgCaps += "AIM_CAPS_INTEROPERATE ";
 						break;
+					case AIM_CAPS_MACICQ:
+						dbgCaps += "AIM_CAPS_MACICQ";
+ 						break;
 
 					default:
 						QString capstring;
@@ -1159,7 +1180,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 							cap[14], cap[15]);
 						kdDebug(14150) << k_funcinfo << "Unknown Capability: " << capstring << endl;
 				} // END switch
-				#endif // OSCAR_CAP_DEBUG
+#endif // OSCAR_CAP_DEBUG
 
 				break;
 			} // END if(memcmp...
