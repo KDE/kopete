@@ -66,7 +66,7 @@ void HistoryGUIClient::slotPrevious()
 
 	QPtrList<Kopete::Contact> mb = m_manager->members();
 	QValueList<Kopete::Message> msgs = m_logger->readMessages(
-		HistoryConfig::number_ChatWindow(), mb.first() /*FIXME*/,
+			HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 		HistoryLogger::AntiChronological, true);
 
 	actionPrev->setEnabled(msgs.count() == HistoryConfig::number_ChatWindow());
@@ -84,7 +84,7 @@ void HistoryGUIClient::slotLast()
 	QPtrList<Kopete::Contact> mb = m_manager->members();
 	m_logger->setPositionToLast();
 	QValueList<Kopete::Message> msgs = m_logger->readMessages(
-		HistoryConfig::number_ChatWindow(), mb.first() /*FIXME*/,
+			HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 		HistoryLogger::AntiChronological, true);
 
 	actionPrev->setEnabled(true);
@@ -102,7 +102,7 @@ void HistoryGUIClient::slotNext()
 
 	QPtrList<Kopete::Contact> mb = m_manager->members();
 	QValueList<Kopete::Message> msgs = m_logger->readMessages(
-		HistoryConfig::number_ChatWindow(), mb.first() /*FIXME*/,
+			HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 		HistoryLogger::Chronological, false);
 
 	actionPrev->setEnabled(true);

@@ -168,7 +168,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 	logger->setPositionToLast();
 
 	QValueList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
-		mb.first() /*FIXME*/, HistoryLogger::AntiChronological, true, true);
+			/*mb.first()*/ 0L, HistoryLogger::AntiChronological, true, true);
 
 	// make sure the last message is not the one which will be appened right
 	// after the view is created (and which has just been logged in)
