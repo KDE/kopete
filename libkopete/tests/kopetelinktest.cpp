@@ -53,6 +53,7 @@ static TestSet knownGoodPlain =
 static TestSet knownBrokenPlain =
 {
 	{ "$URL/", "<a href=\"$URL/\" title=\"$URL/\">$URL/</a>" },
+	{ "www.kde.org/", "<a href=\"$URL/\" title=\"$URL/\">www.kde.org/</a>" },
 	{ NULL, NULL }
 };
 

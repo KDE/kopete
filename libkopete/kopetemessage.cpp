@@ -481,6 +481,15 @@ QString KopeteMessage::parsedBody() const
 	}
 }
 
+static QString makeRegExp( const char *pattern )
+{
+	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_," );
+	const QString boundaryStart = QString::fromLatin1( "(^|[^%1])(" ).arg( urlChar );
+	const QString boundaryEnd = QString::fromLatin1( ")([^%1]|$)" ).arg( urlChar );
+
+	return boundaryStart + QString::fromLatin1(pattern) + boundaryEnd;
+}
+
 QString KopeteMessage::parseLinks( const QString &message, MessageFormat format )
 {
 	if ( format == ParsedHTML )
@@ -517,23 +526,44 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 
 	QString result = message;
 
-	//Replace http/https/ftp links
-	result.replace(
-		QRegExp( QString::fromLatin1("(?:\\b|&nbsp;)(\\w+://(\\w+\\@){0,1}[\\+\\-\\w\\./#@&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ),
-		QString::fromLatin1("<a href=\"\\1\" title=\"\\1\">\\1</a>" ) );
+	// common subpatterns - may not contain matching parens!
+	const QString name = QString::fromLatin1( "[\\w\\+\\-=_\\.]+" );
+	const QString userAndPassword = QString::fromLatin1( "(?:%1(?::%1)?\\@)" ).arg( name );
+	const QString urlChar = QString::fromLatin1( "\\+\\-\\w\\./#@&;:=\\?~%_," );
+	const QString urlSection = QString::fromLatin1( "[%1]+" ).arg( urlChar );
+	const QString domain = QString::fromLatin1( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
 
+	//Replace http/https/ftp links:
+	// Replace (stuff)://[user:password@](linkstuff) with a link
 	result.replace(
-		QRegExp( QString::fromLatin1("^(www\\.[\\-\\w\\._]+[\\+\\-\\w\\./#&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ),
-		QString::fromLatin1("<a href=\"http://\\1\" title=\"http://\\1\">\\1</a>" ) );
+		QRegExp( makeRegExp("\\w+://%1?\\w%2")
+#if QT_VERSION < 0x030200
+		          .arg( userAndPassword ).arg( urlSection ) ),
+#else
+		          .arg( userAndPassword, urlSection ) ),
+#endif
+		QString::fromLatin1("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3" ) );
 
+	// Replace www.X.Y(linkstuff) with a http: link
 	result.replace(
-		QRegExp( QString::fromLatin1("([^\\+\\-\\./#&;=\\?~%_,])\\b(www\\.[\\-\\w\\._]+[\\+\\-\\w\\./#&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ),
-		QString::fromLatin1("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>" ) );
+		QRegExp( makeRegExp("%1?www\\.%2%3")
+#if QT_VERSION < 0x030200
+		          .arg( userAndPassword ).arg( domain ).arg( urlSection ) ),
+#else
+		          .arg( userAndPassword, domain, urlSection ) ),
+#endif
+		QString::fromLatin1("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3" ) );
 
 	//Replace Email Links
+	// Replace user@domain with a mailto: link
 	result.replace(
-		QRegExp( QString::fromLatin1("(?:\\b|&nbsp;)([\\w\\+\\-=_\\.]+@(?:[\\+\\-_\\w\\.]+\\.\\w+)+)(?:\\b|&nbsp;)(?!.*</a>)") ),
-		QString::fromLatin1("<a href=\"mailto:\\1\" title=\"mailto:\\1\">\\1</a>") );
+		QRegExp( makeRegExp("%1@%2")
+#if QT_VERSION < 0x030200
+		          .arg( name ).arg( domain ) ),
+#else
+		          .arg( name, domain ) ),
+#endif
+		QString::fromLatin1("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3") );
 
 	return result;
 }
