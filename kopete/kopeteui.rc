@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="11">
+<kpartgui name="kopete" version="12">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -36,14 +36,14 @@
 			<Merge name="StandardToolBarMenuHandler" />
 			<Action name="settings_showstatusbar" />
 			<Separator lineSeparator="true" />
+			<Action name="settings_show_offliners" />
+			<Action name="settings_show_empty_groups" />
+			<Separator lineSeparator="true" />
 			<Action name="settings_keys" />
 			<Action name="settings_global" />
 			<Action name="settings_toolbars" />
 			<Action name="settings_prefs" />
 			<Action name="settings_old_prefs"/>
-			<Separator lineSeparator="true" />
-			<Action name="settings_show_offliners" />
-			<Action name="settings_show_empty_groups" />
 		</Menu>
 	</MenuBar>
 
