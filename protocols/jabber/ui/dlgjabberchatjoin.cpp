@@ -28,7 +28,7 @@ dlgJabberChatJoin::dlgJabberChatJoin(QWidget *parent, const char *name ) : dlgCh
 void dlgJabberChatJoin::slotDialogDone()
 {
 
-	if(!JabberProtocol::protocol()->isConnected())
+	/*if(!JabberProtocol::protocol()->isConnected())
 	{
 			JabberProtocol::protocol()->errorConnectFirst();
 			return;
@@ -36,6 +36,7 @@ void dlgJabberChatJoin::slotDialogDone()
 
 	// send the join request
 	JabberProtocol::protocol()->jabberClient->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
+	*/
 
 }
 

@@ -29,7 +29,7 @@ class JabberGroupChat:public JabberContact {
 
   public:
     JabberGroupChat(Jabber::Jid room, QStringList groups,
-		    JabberProtocol * p, KopeteMetaContact * mc,
+		    JabberAccount * p, KopeteMetaContact * mc,
 		    QString identity);
     ~JabberGroupChat();
 

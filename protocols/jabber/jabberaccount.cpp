@@ -65,14 +65,16 @@
 #include <sys/utsname.h>
 
 
-JabberAccount::JabberAccount(KopeteProtocol * parent, const QString & accountID,
+JabberAccount::JabberAccount(JabberProtocol * parent, const QString & accountID,
 			     const char *name):KopeteAccount(parent, accountID,
 							     name) {
 
+
+    //protocol = parent;
     /* Create a new JabberContact for this account, to be returned from
      * myself(). */
     myContact = new JabberContact(accountID, accountID, QStringList(),
-				  static_cast<JabberAccount *>(parent), 0L,
+				  this, 0L,
 				  accountID);
 
     jabberClient = 0L;
@@ -88,12 +90,18 @@ JabberAccount::JabberAccount(KopeteProtocol * parent, const QString & accountID,
 
     /* Setup actions. */
     initActions();
-
+    setAccountId(accountID);
     userID = accountID;
     password = getPassword();
     resource = pluginData(protocol(), "Resource");
     server = pluginData(protocol(), "Server");
     port = pluginData(protocol(), "Port").toInt();
+
+    kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] created\n";
+    kdDebug(JABBER_DEBUG_GLOBAL) << "accountID:" << accountID << "\n";
+    kdDebug(JABBER_DEBUG_GLOBAL) << "password:" <<  password << "\n";
+    kdDebug(JABBER_DEBUG_GLOBAL) << "server:" << server << "\n";
+    kdDebug(JABBER_DEBUG_GLOBAL) << "port:" << port << "\n";
 }
 
 JabberAccount::~JabberAccount() {
@@ -117,7 +125,7 @@ JabberAccount::~JabberAccount() {
     delete actionServices;
     delete actionSendRaw;
     delete actionEditVCard;
-    delete actionEmptyMail;
+//    delete actionEmptyMail;
 
     delete actionStatusMenu;
 
@@ -131,8 +139,8 @@ KopeteContact *JabberAccount::myself() const
     return myContact;
 }
 
-void JabberAccount::setStatus(KopeteOnlineStatus status, const QString & reason) {
-}
+//void JabberAccount::setStatus(KopeteOnlineStatus status, const QString & reason) {
+//}
 
 void JabberAccount::initActions() {
     actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0,
@@ -160,7 +168,7 @@ void JabberAccount::initActions() {
 	new KAction(i18n("Join Groupchat..."), "filenew", 0, this,
 		    SLOT(slotJoinNewChat()), this, "actionJoinChat");
     actionServices =
-	new KAction(i18n("Services..."), "filenew", 0, this
+	new KAction(i18n("Services..."), "filenew", 0, this,
 		    SLOT(slotGetServices()), this, "actionJabberServices");
     actionSendRaw =
 	new KAction(i18n("Send Raw Packet to Server..."), "filenew", 0, this,
@@ -168,10 +176,11 @@ void JabberAccount::initActions() {
     actionEditVCard =
 	new KAction(i18n("Edit User Info..."), "identity", 0, this,
 		    SLOT(slotEditVCard()), this, "actionEditVCard");
-    actionEmptyMail =
-	new KAction(i18n("New Email Message..."), "filenew", 0, this,
-		    SLOT(slotEmptyMail()), this, "actionEmptyMail");
+    //actionEmptyMail =
+//	new KAction(i18n("New Email Message..."), "filenew", 0, this,
+//		    SLOT(slotEmptyMail()), this, "actionEmptyMail");
 
+	
     actionStatusMenu = new KActionMenu("Jabber", this);
 
     // will be overwritten in slotSettingsChanged to contain the active JID
@@ -194,7 +203,7 @@ void JabberAccount::initActions() {
     actionStatusMenu->insert(actionEditVCard);
 
     actionStatusMenu->popupMenu()->insertSeparator();
-    actionStatusMenu->insert(actionEmptyMail);
+    //actionStatusMenu->insert(actionEmptyMail);
 
     /* make sure we load the SSL library if required. */
     if (pluginData(protocol(), "UseSSL") == "true") {
@@ -219,7 +228,7 @@ void JabberAccount::initActions() {
 	QTimer::singleShot(0, this, SLOT(connect()));
 
     myContact =
-	new JabberContact(userID, userID, StringList(i18n("Unknown")), this, 0L,
+	new JabberContact(userID, userID, QStringList(i18n("Unknown")), this, 0L,
 			  QString::null);
 }
 
@@ -231,6 +240,7 @@ bool JabberAccount::addContactToMetaContact(const QString & contactId,
 					    const QString & displayName,
 					    KopeteMetaContact * parentContact) {
 
+	return true;
 }
 
 void JabberAccount::errorConnectFirst() {
@@ -332,7 +342,7 @@ void JabberAccount::connect() {
     uname(&utsBuf);
 
     jabberClient->setClientName("Kopete (using libpsi)");
-    jabberClient->setClientVersion(KOPETE_VERSION);
+    jabberClient->setClientVersion("KOPETE_VERSION");
     jabberClient->setOSName(QString("%1 %2").arg(utsBuf.sysname,
 						 1).arg(utsBuf.release, 2));
 
@@ -407,7 +417,7 @@ void JabberAccount::connect() {
 	<< " with JID " << userID << endl;
 
     /* Now connect. */
-    jidDomain = userID.section("@", userID.find("@"));
+    QString  jidDomain = userID.section("@", userID.find("@"));
     jabberClient->connectToHost(server, port, jidDomain);
 
     emit connectionAttempt();
@@ -430,7 +440,7 @@ void JabberAccount::slotHandshaken() {
 	task->go(true);
     }
     else {
-	if (pluginData(protocol(), "AuthType", "digest") == QString("digest"))
+	if (pluginData(protocol(), "AuthType") == QString("digest"))
 	    jabberClient->authDigest(userID, password, resource);
 	else
 	    jabberClient->authPlain(userID, password, resource);
@@ -474,10 +484,9 @@ void JabberAccount::slotConnected(bool success, int statusCode,
 }
 
 
-JabberAccount *JabberAccount::protocol() {
-    /* Return our parent. */
+/*JabberProtocol *JabberAccount::protocol() {
     return parent;
-}
+}*/
 
 void JabberAccount::disconnect() {
     kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] disconnect() called" <<
@@ -505,7 +514,7 @@ void JabberAccount::disconnect() {
     /* It seems that we don't get offline notifications when going offline
      * with the protocol, so update all contacts manually. */
     for (QDictIterator <KopeteContact> it(contacts()); it.current(); ++it)
-	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberOffline);
+	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberOffline, "Disconnected");
 }
 
 void JabberAccount::slotConnect() {
@@ -531,7 +540,7 @@ void JabberAccount::slotDisconnected() {
     /* It seems that we don't get offline notifications when going offline
      * with the protocol, so update all contacts manually. */
     for (QDictIterator <KopeteContact> it(contacts()); it.current(); ++it)
-	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberOffline);
+	static_cast<JabberContact *>(*it)->slotUpdatePresence(JabberOffline, "disconnected");
 }
 
 void JabberAccount::slotError(const Jabber::StreamError & error) {
@@ -658,10 +667,9 @@ void JabberAccount::setPresence(const KopeteOnlineStatus & status,
     }
 }
 
-void JabberAccount::setAway(void) {
-    kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting away mode." <<
-	endl;
-    setPresence(JabberAway, KopeteAway::getInstance()->message());
+void JabberAccount::setAway( bool away, const QString &reason = QString::null ) {
+   kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting away mode." << endl;
+   setPresence(JabberAway, KopeteAway::getInstance()->message());
 }
 
 void JabberAccount::setAvailable(void) {
@@ -670,10 +678,10 @@ void JabberAccount::setAvailable(void) {
     slotGoOnline();
 }
 
-KopeteContact *JabberAccount::myself() const
-{
-    return myContact;
-}
+//KopeteContact *JabberAccount::myself() const
+//{
+ //   return myContact;
+//}
 
 void JabberAccount::deserializeContact(KopeteMetaContact * metaContact,
 				       const QMap < QString,
@@ -691,9 +699,11 @@ void JabberAccount::deserializeContact(KopeteMetaContact * metaContact,
 
 }
 
-AddContactPage *JabberAccount::createAddContactWidget(QWidget * parent) {
-    return new JabberAddContactPage(this, parent);
-}
+
+// Appears to be in kopeteprotocol as virutal
+//AddContactPage *JabberAccount::createAddContactWidget(QWidget * parent) {
+ //   return new JabberAddContactPage(this, parent);
+//}
 
 void JabberAccount::slotGoOnline() {
     kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] Going online!" << endl;
@@ -887,15 +897,15 @@ JabberContact *JabberAccount::createContact(const QString & jid,
 void JabberAccount::createAddContact(KopeteMetaContact * mc,
 				     const Jabber::RosterItem & item) {
     if (!mc) {
-	mc = KopeteContactList::contactList()->findContact(pluginId(),
-							   myContact->userID(),
+	mc = KopeteContactList::contactList()->findContact(protocol()->pluginId(),
+							   myContact->contactId(),
 							   item.jid().
 							   userHost());
 
 	if (mc) {
-	    JabberContact *jc = (JabberContact *) mc->findContact(pluginId(),
+	    JabberContact *jc = (JabberContact *) mc->findContact(protocol()->pluginId(),
 								  myContact->
-								  userID(),
+								  contactId(),
 								  item.jid().
 								  userHost());
 
@@ -938,7 +948,7 @@ void JabberAccount::createAddContact(KopeteMetaContact * mc,
 	contactName = item.name();
 
     createContact(item.jid().userHost(), contactName,
-		  item.groups(), mc, myContact->userID());
+		  item.groups(), mc, myContact->contactId());
 
     if (!isContactInList)
 	KopeteContactList::contactList()->addMetaContact(mc);
@@ -971,9 +981,9 @@ void JabberAccount::slotSubscription(const Jabber::Jid & jid,
 	    subscribed(jid);
 
 	    /* Is the user already in our contact list? */
-	    mc = KopeteContactList::contactList()->findContact(pluginId(),
+	    mc = KopeteContactList::contactList()->findContact(protocol()->pluginId(),
 							       myContact->
-							       userID(),
+							       contactId(),
 							       jid.userHost());
 
 	    /* If it is not, ask the user if he wants to subscribe in return. */
@@ -1147,7 +1157,7 @@ void JabberAccount::slotReceivedMessage(const Jabber::Message & message) {
 
 	    contactFrom =
 		createContact(userHost, userHost, QStringList(), metaContact,
-			      myContact->userID());
+			      myContact->contactId());
 
 	    KopeteContactList::contactList()->addMetaContact(metaContact);
 	}
@@ -1192,7 +1202,7 @@ void JabberAccount::slotNewOneShot() {
 
 	    contact =
 		createContact(userHost, userHost, QStringList(), metaContact,
-			      myContact->userID());
+			      myContact->contactId());
 	    KopeteContactList::contactList()->addMetaContact(metaContact);
 	}
 
@@ -1221,7 +1231,7 @@ void JabberAccount::slotGroupChatJoined(const Jabber::Jid & jid) {
 
     /* The group chat object basically works like a JabberContact. */
     JabberGroupChat *groupChat =
-	new JabberGroupChat(jid, QStringList(), this, mc, myContact->userID());
+	new JabberGroupChat(jid, QStringList(), this, mc, myContact->contactId());
 
     /* Add the group chat class to the meta contact. */
     mc->addContact(groupChat);
@@ -1321,9 +1331,10 @@ void JabberAccount::slotRegisterUserDone() {
     }
 }
 
-void JabberAccount::addContact(KopeteMetaContact * mc, const QString & userID) {
+//void JabberAccount::addContact(KopeteMetaContact * mc, const QString & userID) {
     /* First of all, create a Jabber::RosterItem from the information found
      * in the KopeteMetaContact. */
+     /*
     Jabber::RosterItem item;
     KopeteGroupList groupList;
     QStringList groupStringList;
@@ -1338,16 +1349,16 @@ void JabberAccount::addContact(KopeteMetaContact * mc, const QString & userID) {
 
     createAddContact(mc, item);
 
-    /* Add the new contact to our roster. */
+    /* Add the new contact to our roster. 
     Jabber::JT_Roster * rosterTask =
 	new Jabber::JT_Roster(jabberClient->rootTask());
 
     rosterTask->set(item.jid(), item.name(), item.groups());
     rosterTask->go(true);
 
-    /* Send a subscription request. */
+    /* Send a subscription request. 
     subscribe(item.jid());
-}
+}*/
 
 void JabberAccount::updateContact(const Jabber::RosterItem & item) {
     if (!isConnected()) {
@@ -1373,6 +1384,30 @@ void JabberAccount::removeContact(const Jabber::RosterItem & item) {
 
     rosterTask->remove(item.jid());
     rosterTask->go(true);
+}
+
+QString JabberAccount::getResource() {
+	return resource;
+}
+
+QString JabberAccount::getServer() {
+	return server;
+}
+
+int JabberAccount::getPort() {
+	return port;
+}
+
+void JabberAccount::setResource(QString r) {
+	resource = r;
+}
+
+void JabberAccount::setServer(QString s) {
+	server = s;
+}
+
+void JabberAccount::setPort(int p) {
+	port = p;
 }
 
 void JabberAccount::slotGetServices() {

@@ -19,8 +19,13 @@
 #define JABBERACCOUNT_H
 
 #include <qwidget.h>
-#include <kopeteaccount.h>
+#include <kaction.h>
+#include "kopeteaccount.h"
 #include "jabbercontact.h"
+#include "kopeteonlinestatus.h"
+#include "ui/dlgjabberstatus.h"
+#include "ui/dlgjabbersendraw.h"
+#include "jabberprefs.h"
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -35,13 +40,13 @@ class JabberAccount:public KopeteAccount {
     friend class dlgJabberBrowse;
     friend class dlgJabberChatJoin;
     friend class dlgJabberStatus;
+    friend class JabberPreferences;
 
   public:
     /* Standard constructor - takes our JabberProtocol as the parent, plus
      * a unique account ID. */
-     JabberAccount(KopeteProtocol * parent, const QString & accountID,
+     JabberAccount(JabberProtocol * parent, const QString & accountID,
 		   const char *name = 0L);
-
     /* Standard null destructor. */
     ~JabberAccount();
 
@@ -49,27 +54,34 @@ class JabberAccount:public KopeteAccount {
      * away manager).
      * @param away True: set this account away, false: set this account
      * as available. */
-    virtual void setStatus(KopeteOnlineStatus status, const QString & reason =
+
+    /*virtual void setStatus(KopeteOnlineStatus status, const QString & reason =
 			   QString::null);
+    */
 
     /* Returns the contact for this account, must be created in ctor. */
-    virtual KopeteContact *myself() const {
-	return myContact;
-    };
+    virtual KopeteContact *myself() const; 
+	//return myContact;
+    //};
 
     /* Returns the action menu for this account. */
-    virtual KActionMenu *actionMenu() {
-	return actionStatusMenu;
-    };
+    virtual KActionMenu *actionMenu();
+//	return actionStatusMenu;
+ //   };
+
+    void registerUser();
 
     /* Creates the add contact dialog for this account.
      * @param parent The dialog to add our widget to. */
-    virtual AddContactPage *createAddContactWidget(QWidget * parent);
+    //virtual AddContactPage *createAddContactWidget(QWidget * parent);
 
     /* Are we able to relay messages to offline users? */
     virtual bool canSendOffline() const {
 	return true;
     }
+
+
+    virtual void setAway( bool away, const QString &reason = QString::null);
     /* Deserialize contact data.
      * @param metaContact The metacontact to deserialize.
      * @param serializedData Output - serialized data.
@@ -79,6 +91,14 @@ class JabberAccount:public KopeteAccount {
 					QString > &serializedData,
 					const QMap < QString,
 					QString > &addressBookData);
+    /* Return the resource of the client */
+    QString getResource();
+    QString getServer(); 
+    int getPort();
+
+    void setResource(QString r);
+    void setServer(QString s); 
+    void setPort(int p);
 
     public slots:
 	/* Connects to the server. */
@@ -97,6 +117,9 @@ class JabberAccount:public KopeteAccount {
   signals:
     void settingsChanged();
     void statusChanged(KopeteOnlineStatus status);
+    void connected();
+    void disconnected();
+    void connectionAttempt();
 
   protected:
     /* Create a new contact in the specified metacontact.
@@ -110,6 +133,8 @@ class JabberAccount:public KopeteAccount {
 					 const QString & displayName,
 					 KopeteMetaContact * parentContact);
 
+    //void addContact(KopeteMetaContact*, const QString&);
+
   private:
     /* JabberContact for this account. */
     JabberContact * myContact;
@@ -117,8 +142,23 @@ class JabberAccount:public KopeteAccount {
     /* Psi backend for this account. */
     Jabber::Client * client;
 
+    /* Temps stuff to get to compile....needs some work to 
+       port to the accounts stuff.  */
+    QString userID;
+    QString password;
+    QString resource;
+    QString server;
+    int port;
+
+    void setAvailable();
+    void updateContact(const Jabber::RosterItem &);
+    void removeContact(const Jabber::RosterItem &);
+
     /* Set up our actions for the status menu. */
     void initActions();
+
+    /* to get the protocol from the account */
+    //JabberProtocol * protocol();
 
     /* Actions for the menu. */
     KAction *actionGoOnline;
@@ -188,6 +228,8 @@ class JabberAccount:public KopeteAccount {
 	/* Connects to the server. */
     void slotConnect();
 
+    void slotGoOffline();
+
     /* Disconnects from the server. */
     void slotDisconnect();
 
@@ -205,7 +247,7 @@ class JabberAccount:public KopeteAccount {
     void slotPsiDebug(const QString & msg);
 
     /* Called from Psi: alerts us to a protocol error. */
-    void slotError(const StreamError &);
+    void slotError(const Jabber::StreamError &);
 
     /* Set online mode (presence-wise, and connection-wise). */
     void slotGoOnline();
@@ -231,40 +273,40 @@ class JabberAccount:public KopeteAccount {
     void slotSendRaw();
 
     /* Creates a new empty one-shot window. */
-    void slotOneShot();
-    void slotOpenEmptyMail();
+    //void slotOneShot();
+    //void slotOpenEmptyMail();
 
     /* Slots for handling group chats. */
     void slotJoinNewChat();
-    void slotGroupChatJoined(const Jid & jid);
-    void slotGroupChatLeft(const Jid & jid);
-    void slotGroupChatPresence(const Jid & jid, const Status & status);
-    void slotGroupChatError(const Jid & jid, int error, QString & reason);
+    void slotGroupChatJoined(const Jabber::Jid & jid);
+    void slotGroupChatLeft(const Jabber::Jid & jid);
+    void slotGroupChatPresence(const Jabber::Jid & jid, const Jabber::Status & status);
+    void slotGroupChatError(const Jabber::Jid & jid, int error, QString & reason);
 
     /* Incoming subscription request. */
-    void slotSubscription(const Jid & jid, const QString & type);
+    void slotSubscription(const Jabber::Jid & jid, const QString & type);
 
     /* A new item was added to our roster, so update our contact list.
      * If this is a new subscription, make sure we action it. */
-    void slotNewContact(const RosterItem &);
+    void slotNewContact(const Jabber::RosterItem &);
 
     /* Update a contact's details. */
-    void slotContactUpdated(const RosterItem &);
+    void slotContactUpdated(const Jabber::RosterItem &);
 
     /* Someone on our contact list revoked their authorization. */
-    void slotContactDeleted(const RosterItem &);
+    void slotContactDeleted(const Jabber::RosterItem &);
 
     /* Updates the configuration data. */
     void slotSettingsChanged(void);
 
     /* Someone on our contact list had (another) resource come online. */
-    void slotResourceAvailable(const Jid &, const Resource &);
+    void slotResourceAvailable(const Jabber::Jid &, const Jabber::Resource &);
 
     /* Someone on our contact list had (another) resource go offline. */
-    void slotResourceUnavailable(const Jid &, const Resource &);
+    void slotResourceUnavailable(const Jabber::Jid &, const Jabber::Resource &);
 
     /* Displays a new message. */
-    void slotReceivedMessage(const Message &);
+    void slotReceivedMessage(const Jabber::Message &);
 
     /* Checks if we registered OK; proceeds if we did. */
     void slotRegisterUserDone();
@@ -274,6 +316,12 @@ class JabberAccount:public KopeteAccount {
 
     /* Get the services list from the server for management. */
     void slotGetServices();
+
+    void slotGetOneShotRecipient();
+
+    void slotNewOneShot();
+
+
 };
 
 #endif

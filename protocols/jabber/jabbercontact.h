@@ -19,7 +19,7 @@
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
 
-#include "jabberprotocol.h"
+#include "jabberaccount.h"
 #include "jabberresource.h"
 #include "kopetecontact.h"
 
@@ -43,11 +43,11 @@ class Jabber::Jid;
 class Jabber::Message;
 
 class JabberContact:public KopeteContact {
-    Q_OBJECT friend class JabberProtocol;	/* Friends can touch each other's private parts. */
+    Q_OBJECT friend class JabberAccount;	/* Friends can touch each other's private parts. */
 
   public:
     JabberContact(QString userid, QString name, QStringList groups,
-		  JabberProtocol * protocol, KopeteMetaContact * mc,
+		  JabberAccount * protocol, KopeteMetaContact * mc,
 		  QString identity);
 
 	/********************************************************************
@@ -226,7 +226,8 @@ class JabberContact:public KopeteContact {
 	 * Protocol instance that this contact
 	 * belongs to.
 	 */
-    JabberProtocol *protocol;
+    JabberAccount *protocol;
+    //JabberProtocol *protocol;
 
 	/**
 	 * The metacontact that this contact belongs

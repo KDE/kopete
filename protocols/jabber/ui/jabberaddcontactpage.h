@@ -5,23 +5,24 @@
 #include <qwidget.h>
 #include <addcontactpage.h>
 #include <qlabel.h>
-#include "jabberprotocol.h"
+#include "jabberaccount.h"
 #include "dlgaddcontact.h"
 
 /**
   *@author Daniel Stone
   */
 class dlgAddContact;
-class JabberProtocol;
+class JabberAccount;
 
 class JabberAddContactPage:public AddContactPage {
   Q_OBJECT public:
-    JabberAddContactPage(JabberProtocol * owner, QWidget * parent =
+    JabberAddContactPage(KopeteAccount * owner, QWidget * parent =
 			 0, const char *name = 0);
     ~JabberAddContactPage();
     virtual bool validateData();
+    virtual bool apply( KopeteAccount*, KopeteMetaContact* );
     dlgAddContact *jabData;
-    JabberProtocol *plugin;
+    JabberAccount *plugin;
     QLabel *noaddMsg1;
     QLabel *noaddMsg2;
     bool canadd;

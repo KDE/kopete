@@ -20,7 +20,7 @@
 #include "jabbergroupchat.h"
 
 JabberGroupChat::JabberGroupChat(Jabber::Jid jid, QStringList groups,
-				 JabberProtocol * p, KopeteMetaContact * mc,
+				 JabberAccount * p, KopeteMetaContact * mc,
 				 QString identity)
 :  JabberContact(jid.userHost(), jid.userHost(), groups, p, mc, identity) {
     kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] Joined room " << jid.

@@ -4,9 +4,10 @@
 #include <klocale.h>
 
 #include "jabberaddcontactpage.h"
+#include "jabberaccount.h"
 #include "jabberprotocol.h"
 
-JabberAddContactPage::JabberAddContactPage(JabberProtocol * owner,
+JabberAddContactPage::JabberAddContactPage(KopeteAccount * owner,
 					   QWidget * parent,
 					   const char *name)
 :AddContactPage(parent, name)
@@ -51,6 +52,16 @@ void JabberAddContactPage::slotFinish(KopeteMetaContact *mc)
 	return;
     }
 }
+
+bool JabberAddContactPage::apply( KopeteAccount* i, KopeteMetaContact*m )
+{
+        if ( validateData() )
+	{
+		QString userid = i->myself()->contactId();
+	        return i->addContact( userid , userid, m );
+	}
+	return false;
+}	
 
 #include "jabberaddcontactpage.moc"
 /*

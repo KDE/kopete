@@ -50,7 +50,8 @@
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
 #include "jabbercontact.h"
-#include "jabberprefs.h"
+//#include "jabberprefs.h"
+#include "jabberdefprefs.h"
 #include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
@@ -59,6 +60,12 @@
 #include "jabbermap.h"
 #include "jabbergroupchat.h"
 #include "jabberprotocol.h"
+#include "jabberaccount.h"
+#include "kopeteaccountmanager.h"
+#include "kopetemetacontact.h"
+#include "jabbereditaccountwidget.h"
+#include "kopetecommandhandler.h"
+
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
@@ -66,24 +73,24 @@ K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory <JabberProtocol>);
 
 JabberProtocol::JabberProtocol(QObject * parent, QString name, QStringList)
 :  KopeteProtocol(parent, name),
-JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online",
-	     i18n("Go O&nline"), i18n("Online")),
-JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty",
+	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online",
+		     i18n("Go O&nline"), i18n("Online")),
+	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty",
 	     i18n("Set F&ree to Chat"), i18n("Free to Chat")),
-JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away",
-	   i18n("Set A&way"), i18n("Away")), JabberXA(KopeteOnlineStatus::Away,
-						      20, this, 3,
-						      "jabber_away",
-						      i18n
-						      ("Set E&xtended Away"),
-						      i18n("Extended Away")),
-JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na",
-	  i18n("Set &Do not Disturb"), i18n("Do not Disturb")),
-JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline",
+	JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away",
+		   i18n("Set A&way"), i18n("Away")), JabberXA(KopeteOnlineStatus::Away,
+							      20, this, 3,
+							      "jabber_away",
+							      i18n
+							      ("Set E&xtended Away"),
+							      i18n("Extended Away")),
+	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na",
+		  i18n("Set &Do not Disturb"), i18n("Do not Disturb")),
+	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline",
 	      i18n("Go O&ffline"), i18n("Offline")),
-JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline",
+	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline",
 		i18n("Set I&nvisible"), i18n("Invisible")) {
-    kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
+    	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
 
     /* This is meant to be a singleton, so we will check if we have
      * been loaded before. */
@@ -96,7 +103,8 @@ JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline",
 
     protocolInstance = this;
 
-    preferences = new JabberPreferences("jabber_protocol", this);
+    preferences = new JabberDefaultPreferences("jabber_protocol", this);
+
     QObject::connect(preferences, SIGNAL(saved()), this,
 		     SLOT(slotSettingsChanged()));
 
@@ -112,12 +120,33 @@ JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline",
 }
 
 JabberProtocol::~JabberProtocol() {
-    disconnectAll();
+    //disconnectAll();
 
     /* make sure that the next attempt to load Jabber
      * re-initializes the protocol class. */
     protocolInstance = 0L;
 }
+
+
+
+AddContactPage *JabberProtocol::createAddContactWidget(QWidget *parent , KopeteAccount *i)
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n";
+       return new JabberAddContactPage(i,parent);
+}
+
+EditAccountWidget *JabberProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n";
+        return new JabberEditAccountWidget(this,static_cast<JabberAccount*>(account),parent);
+}
+
+KopeteAccount *JabberProtocol::createNewAccount(const QString &accountId)
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account\n";
+        return new JabberAccount(this, accountId);
+}
+
 
 void JabberProtocol::errorConnectFirst() {
     KMessageBox::error(qApp->mainWidget(), i18n("Please connect first"),
@@ -126,23 +155,28 @@ void JabberProtocol::errorConnectFirst() {
 
 KActionMenu *JabberProtocol::protocolActions() {
     KActionMenu *protocolMenu = new KActionMenu();
-    for (JabberAccount * tmpAccount = accounts.first();
+    /*for (JabberAccount * tmpAccount = accounts.first();
 	 tmpAccount != accounts.last(); tmpAccount = accounts.next())
-	protocolMenu->insert(tmpAccount->actionMenu());
+	protocolMenu->insert(tmpAccount->actionMenu());*/
     return protocolMenu;
 }
 
 void JabberProtocol::initActions() {
     // initialize icon that sits in Kopete's status bar
-    setStatusIcon("jabber_offline");
+    //setStatusIcon("jabber_offline");
 
     KGlobal::config()->setGroup("Jabber");
 }
 
 void JabberProtocol::connectAll() {
     kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] connectAll()" << endl;
-    for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
-	tmpAccount->connect();)
+   // QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+    //for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++) 
+    //if (!accounts.isEmpty())
+    //{
+    //	JabberAccount * tmpAccount = accounts[0];
+//	tmpAccount->connect();
+ //   }
 }
 
 JabberProtocol *JabberProtocol::protocol() {
@@ -152,30 +186,41 @@ JabberProtocol *JabberProtocol::protocol() {
 
 void JabberProtocol::disconnectAll() {
     kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] disconnectAll()" << endl;
+    /*
     for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
 	tmpAccount->disconnect();
+	*/
 }
 /*
  * Set presence (usually called by dialog widget)
  */
 void JabberProtocol::setPresenceAll(const KopeteOnlineStatus & status,
 				 const QString & reason, int priority) {
-    for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
+    /*for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
     	tmpAccount->setPresence(status, reason, priority);
+	*/
 }
 
-void JabberProtocol::setAwayAll(void) {
-    kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Setting globally away." <<
-endl;
-    setPresenceAll(JabberAway, KopeteAway::getInstance()->message());}
 
-void JabberProtocol::setAvailableAll(void) {
-    setPresenceAll(JabberOnline);
+void JabberProtocol::slotSettingsChanged()
+{
+        KGlobal::config()->setGroup("Jabber");
+
+        QString userId = KGlobal::config()->readEntry("UserID", "");
+        QString server = KGlobal::config()->readEntry("Server", "jabber.org");
+
+			        // set the title according to the current account
+	//actionStatusMenu->popupMenu()->changeTitle( menuTitleId , userId + "@" + server );
+
 }
 
-KopeteContact *JabberProtocol::myself() const {
-    return myContact;
-}
+//void JabberProtocol::setAvailableAll(void) {
+ //   setPresenceAll(JabberOnline);
+//}
+
+//KopeteContact *JabberProtocol::myself() const {
+ //   return myContact;
+//}
 
 void JabberProtocol::deserializeContact(KopeteMetaContact * metaContact,
 					const QMap < QString,
@@ -185,10 +230,12 @@ void JabberProtocol::deserializeContact(KopeteMetaContact * metaContact,
     kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo <<
 	"Deserializing data for metacontact " << metaContact->
 	displayName() << endl;
+	/*
      for (JabberAccount *tmpAccount = accounts.first(); tmpAccount;
 tmpAccount++)
 	tmpContact->deserializeContact(metaContact, serializedData, QMap<QString,
 QString>());
+*/
 }
 
 #include "jabberprotocol.moc"

@@ -9,7 +9,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 kde_module_LTLIBRARIES = kopete_jabber.la
 
 kopete_jabber_la_SOURCES = jabberprotocol.cpp jabberresource.cpp jabbercontact.cpp \
-                           jabberprefs.cpp jabberformtranslator.cpp \
+                           jabberprefs.cpp jabberformtranslator.cpp jabberdefprefs.cpp \
                            jabberformlineedit.cpp jabbergroupchat.cpp \
                            jabberaccount.cpp
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN)

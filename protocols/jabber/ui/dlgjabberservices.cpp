@@ -28,21 +28,22 @@
 #include "tasks.h"
 
 #include "jabbercontact.h"
-#include "jabberprotocol.h"
+#include "jabberaccount.h"
 #include "dlgjabberregister.h"
 #include "dlgjabberbrowse.h"
 #include "dlgjabberservices.h"
+#include "../psi/libpsi/src/stream.h"
 
 #include "dlgjabberservices.moc"
 
 dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgServices(parent,name)
 {
 
-	if(JabberProtocol::protocol()->isConnected())
+	/*if(JabberAccount::protocol()->isConnected())
 	{
 		// pre-populate the server field
 	//	leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
-	}
+	}*/
 
 	// disable the left margin
 	tblServices->setLeftMargin(0);
@@ -101,11 +102,11 @@ void dlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
 void dlgJabberServices::slotQuery()
 {
 
-	if(!JabberProtocol::protocol()->isConnected())
+	/*if(!JabberProtocol::protocol()->isConnected())
 	{
 		JabberProtocol::protocol()->errorConnectFirst();
 		return;
-	}
+	}*/
 
 	// create the jabber task
 	delete serviceTask;

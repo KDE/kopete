@@ -49,7 +49,7 @@
  * JabberContact constructor
  */
 JabberContact::JabberContact(QString userId, QString nickname,
-			     QStringList groups, JabberProtocol * p,
+			     QStringList groups, JabberAccount * p,
 			     KopeteMetaContact * mc, QString identity)
 :  KopeteContact(p, userId, mc) {
 
@@ -70,7 +70,7 @@ JabberContact::JabberContact(QString userId, QString nickname,
     rosterItem.setName(nickname);
     rosterItem.setGroups(groups);
 
-    initActions();
+    //initActions();
 
     // create a default (empty) resource for the contact
     JabberResource *defaultResource =
@@ -118,7 +118,7 @@ KopeteMessageManager *JabberContact::manager(bool) {
 	messageManager =
 	    KopeteMessageManagerFactory::factory()->create(protocol->myself(),
 							   contactList,
-							   protocol);
+							   protocol->protocol());
 
 	QObject::connect(messageManager, SIGNAL(destroyed()),
 			 this, SLOT(slotMessageManagerDeleted()));
@@ -293,7 +293,7 @@ void JabberContact::slotDoRenameContact(const QString & nickname) {
     rosterItem.setName(name);
 
     // send rename request to protocol backend
-    protocol->updateContact(rosterItem);
+    //protocol->updateContact(rosterItem);
 
     // update display (we cannot use setDisplayName()
     // as parameter here as the above call is asynch
@@ -308,7 +308,7 @@ void JabberContact::slotDeleteContact() {
     kdDebug(14130) << "[JabberContact] Removing user " << userId() << endl;
 
     // unsubscribe
-    protocol->removeContact(rosterItem);
+    //protocol->removeContact(rosterItem);
 
 }
 
@@ -337,7 +337,7 @@ void JabberContact::syncGroups() {
     }
     //FIXME: isn't there a problem is there are no groups (top-level only)
     rosterItem.setGroups(groups);
-    protocol->updateContact(rosterItem);
+    //protocol->updateContact(rosterItem);
 }
 
 void JabberContact::km2jm(const KopeteMessage & km, Jabber::Message & jm) {

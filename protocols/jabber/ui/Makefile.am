@@ -8,6 +8,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 noinst_LTLIBRARIES = libkopetejabberui.la
 
 libkopetejabberui_la_SOURCES = dlgjabberprefs.cpp dlgpreferences.ui \
+	dlgdefaultjabberprefs.cpp dlgdefaultpreferences.ui \
 	dlgjabberstatus.cpp dlgstatus.ui \
 	dlgjabbersendraw.cpp dlgsendraw.ui \
 	jabberaddcontactpage.cpp dlgaddcontact.ui \
@@ -17,9 +18,11 @@ libkopetejabberui_la_SOURCES = dlgjabberprefs.cpp dlgpreferences.ui \
 	dlgjabberregister.cpp dlgregister.ui \
 	dlgjabberbrowse.cpp dlgbrowse.ui \
 	dlgjabberchatjoin.cpp dlgchatjoin.ui \
+	jabbereditaccountwidget.cpp \
 	empty.cpp
 
 EXTRA_DIST = dlgpreferences.ui \
+	dlgdefaultpreferences.ui \
 	dlgstatus.ui \
 	dlgsendraw.ui \
 	dlgaddcontact.ui \
