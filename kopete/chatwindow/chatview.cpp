@@ -27,6 +27,7 @@
 #include <khtml_part.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
+#include <kdeversion.h>
 #include <kapplication.h>
 #include <krun.h>
 #include <kdebug.h>
@@ -694,7 +695,9 @@ void ChatView::messageReceived(KopeteMessage &message)
 		{
 			case KopeteMessage::Highlight:
 				setTabState( Highlighted );
+#if KDE_VERSION >= 0x030190
 				KWin::setState( m_mainWindow->winId(), NET::DemandsAttention );
+#endif
 				break;
 			case KopeteMessage::Normal:
 				if(m.direction() == KopeteMessage::Inbound || m.direction() == KopeteMessage::Action)

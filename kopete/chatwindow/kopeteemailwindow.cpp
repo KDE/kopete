@@ -23,6 +23,7 @@
 #include <qtimer.h>
 
 #include <kaction.h>
+#include <kdeversion.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -421,7 +422,9 @@ void KopeteEmailWindow::messageReceived(KopeteMessage &message)
 
 		d->unreadMessageFrom = message.from()->displayName();
 		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
+#if KDE_VERSION >= 0x030190
 		KWin::setState( winId(), NET::DemandsAttention );
+#endif
 	}
 }
 
