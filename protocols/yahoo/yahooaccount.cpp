@@ -355,7 +355,7 @@ YahooContact *YahooAccount::contact( const QString &id )
 
 bool YahooAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact )
 {
-//	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
+	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
 	if(!contact(contactId))
 	{

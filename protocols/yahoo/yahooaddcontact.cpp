@@ -30,6 +30,7 @@
 // Local Includes
 #include "yahooadd.h"
 #include "yahooaddcontact.h"
+#include "yahooaccount.h"
 
 // Yahoo Add Contact page
 YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)
@@ -60,7 +61,8 @@ bool YahooAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMet
 	kdDebug(14180) << k_funcinfo << endl;
 
 	QString displayName = theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text();
-	theAccount->addContact(theDialog->contactID->text(), displayName, theMetaContact, KopeteAccount::ChangeKABC );
+	YahooAccount* myAccount = static_cast<YahooAccount*>(theAccount);
+	myAccount->addContact(theDialog->contactID->text(), displayName, theMetaContact, KopeteAccount::ChangeKABC );
 	return true;
 }
 
