@@ -168,6 +168,12 @@ private:
 	QTimer *m_saveTimer;
 	QDomDocument m_toSaveDocument;
 	QString m_toSaveFileName;
+	
+	/**
+	 * workaround for the 31 midnight bug.
+	 * it contains the number of the current month.
+	 */
+	int m_realMonth;
 
 	/*
 	 * FIXME:

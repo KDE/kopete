@@ -44,6 +44,7 @@ HistoryLogger::HistoryLogger( KopeteMetaContact *m,  QObject *parent, const char
 	m_metaContact=m;
 	m_hideOutgoing=false;
 	m_cachedMonth=-1;
+	m_realMonth=QDate::currentDate().month();
 	m_oldSens=Default;
 
 	//the contact may be destroyed, for example, if the contact changes its metacontact
@@ -60,6 +61,7 @@ HistoryLogger::HistoryLogger( KopeteContact *c,  QObject *parent, const char *na
 	m_cachedMonth=-1;
 	m_metaContact=c->metaContact();
 	m_hideOutgoing=false;
+	m_realMonth=QDate::currentDate().month();
 	m_oldSens=Default;
 
 	//the contact may be destroyed, for example, if the contact changes its metacontact
@@ -104,6 +106,16 @@ void HistoryLogger::setCurrentMonth(int month)
 
 QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int month , bool canLoad , bool* contain)
 {
+	if(m_realMonth!=QDate::currentDate().month())
+	{ //We changed month, our indice are not correct anymore, clean memory.
+	  // or we will see what i called "the 31 midnight bug"(TM) :-)  -Olivier
+		m_documents.clear();
+		m_cachedMonth=-1;
+		m_currentMonth++; //Not usre it's ok, but should work;
+		m_oldMonth++;     // idem
+		m_realMonth=QDate::currentDate().month();
+	}
+
 	if(!m_metaContact)
 	{ //this may happen if the contact has been moved, and the MC deleted
 		if(c && c->metaContact())
@@ -111,7 +123,6 @@ QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int mon
 		else
 			return QDomDocument();
 	}
-
 
 	if(!m_metaContact->contacts().contains(c))
 	{
