@@ -106,7 +106,7 @@ Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QS
 }
 
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-				  MessageDirection direction, MessageFormat f, ViewType view , MessageType type ) 
+				  MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
 {
 	QPtrList<Contact> to;
 	to.append(toKC);
@@ -114,20 +114,20 @@ Message::Message( const Contact *fromKC, const Contact *toKC, const QString &bod
 }
 
 Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-				  const QString &subject, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )  
+				  const QString &subject, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
   	: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, view, type ) )
 {
 }
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
-				  const QString &body, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )  
+				  const QString &body, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
   : d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, view, type ) )
 {
 }
 
 
 Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
-				  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )  
+				  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType view , MessageType type )
   : d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, view, type ) )
 {
 }
@@ -461,6 +461,7 @@ void Message::setManager(ChatSession *kmm)
 static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 {
 	KopetePrefs *p = KopetePrefs::prefs();
+
 	// These colors are used for coloring nicknames. I tried to use
 	// colors both visible on light and dark background.
 	static const char* nameColors[] =
@@ -471,6 +472,8 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 		"stategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
 		"deeppink", "saddlebrown", "coral", "royalblue"
 	};
+
+	static const int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]) - 1;
 
 	QString contactName = contact->property(Global::Properties::self()->nickName()).value().toString();
 	if( p->truncateContactNames() )
@@ -512,7 +515,6 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 	const QString &contactId = contact->contactId();
 	for( uint f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].latin1() * f;
-	int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]);
 
 	QString color = QColor( nameColors[ hash % nameColorsLen ] ).name();
 	contactNode.setAttribute( QString::fromLatin1("color"), color );
@@ -550,7 +552,7 @@ const QDomDocument Message::asXML() const
 	 * 'directions'. So we fake some for them.
 	 */
 	{
-		int oldDirection;
+		int oldDirection = 0;
 		if( type() == TypeAction )
 			oldDirection = 3;
 		else if( direction() == Inbound )
