@@ -49,25 +49,25 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 
 	useTls_->setDisabled( !isSsl );
 
-	if ( !m_account ) {
+	if ( !account() ) {
 		useTls_->setCurrentItem( isSsl ? 0 : 2 );
 	}
 	else {
 		loginEdit_->setDisabled( true );
-		loginEdit_->setText( m_account->accountId() );
+		loginEdit_->setText( account()->accountId() );
 
-		if ( m_account->rememberPassword() ) {
-			passwordEdit_->setText( m_account->password()  );
+		if ( account()->rememberPassword() ) {
+			passwordEdit_->setText( account()->password()  );
 		}
 		else {
 			passwordEdit_->setText( "" );
 		}
 
-		nickName->setText( m_account->myself()->displayName() );
+		nickName->setText( account()->myself()->displayName() );
 
-		rememberCheck_->setChecked( m_account->rememberPassword() );
-		autoLoginCheck_->setChecked( m_account->autoLogin() );
-		useTls_->setCurrentItem( isSsl ? ( static_cast<GaduAccount*> (m_account) )->isConnectionEncrypted() : 2 );
+		rememberCheck_->setChecked( account()->rememberPassword() );
+		autoLoginCheck_->setChecked( account()->autoLogin() );
+		useTls_->setCurrentItem( isSsl ? ( static_cast<GaduAccount*> (account()) )->isConnectionEncrypted() : 2 );
 	}
 }
 
@@ -89,34 +89,30 @@ bool GaduEditAccount::validateData()
 
 KopeteAccount* GaduEditAccount::apply()
 {
-	if ( m_account == NULL ) {
-		m_account = new GaduAccount( protocol_, loginEdit_->text() );
-		if ( !m_account ) {
-			kdDebug(14100)<<"Couldn't create GaduAccount object, fatal!"<<endl;
-			return NULL;
-		}
-		m_account->setAccountId( loginEdit_->text() );
+	if ( account() == NULL ) {
+		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
+		account()->setAccountId( loginEdit_->text() );
 		
 	}
 
-	m_account->setAutoLogin( autoLoginCheck_->isChecked() );
+	account()->setAutoLogin( autoLoginCheck_->isChecked() );
 
 	if( rememberCheck_->isChecked() && passwordEdit_->text().length() ) {
-		m_account->setPassword( passwordEdit_->text() );
+		account()->setPassword( passwordEdit_->text() );
 	}
 	else {
-		m_account->setPassword();
+		account()->setPassword();
 	}
 
-	m_account->myself()->rename( nickName->text() );
+	account()->myself()->rename( nickName->text() );
 
 	// this is changed only here, so i won't add any proper handling now
-	m_account->setPluginData( m_account->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
+	account()->setPluginData( account()->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
 
-	m_account->setAutoLogin( autoLoginCheck_->isChecked() );
-	( static_cast<GaduAccount*> (m_account) )->useTls( useTls_->currentItem() );
+	account()->setAutoLogin( autoLoginCheck_->isChecked() );
+	( static_cast<GaduAccount*> (account()) )->useTls( useTls_->currentItem() );
 
-	return m_account;
+	return account();
 }
 
 #include "gadueditaccount.moc"
