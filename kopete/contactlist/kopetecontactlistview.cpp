@@ -7,6 +7,7 @@
     Copyright (c) 2002      by Nick Betcher           <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -1709,35 +1710,32 @@ void KopeteContactListView::slotRemove()
 
 void KopeteContactListView::slotRename()
 {
-	KopeteMetaContactLVI *metaLVI =
-		dynamic_cast<KopeteMetaContactLVI*>(currentItem());
-
-	if( metaLVI )
+	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( currentItem() );
+	if ( metaLVI )
 	{
 		metaLVI->slotRename();
 	}
-	else if( KopeteContactList::contactList()->selectedGroups().count() == 1 )
+	else if ( KopeteContactList::contactList()->selectedGroups().count() == 1 )
 	{
-		if(!KopetePrefs::prefs()->sortByGroup())
+		// Not a meta contact, so rename the group instead
+		// FIXME: Shouldn't this be moved to a method KopeteGroupLVI::rename()? - Martijn
+		if ( !KopetePrefs::prefs()->sortByGroup() )
 			return;
 
-		KopeteGroup* group=KopeteContactList::contactList()->selectedGroups().first();
+		KopeteGroup *group = KopeteContactList::contactList()->selectedGroups().first();
 
 		bool ok;
 #if KDE_IS_VERSION( 3, 1, 90 )
-		QString newname = KInputDialog::getText(
-			i18n( "Rename Group" ),
-			i18n( "Please enter the new name for the group '%1':" ).arg(group->displayName()),
-			group->displayName(), &ok );
+		QString newname = KInputDialog::getText
 #else
-		QString newname = KLineEditDlg::getText(
-			i18n( "Rename Group" ),
-			i18n( "Please enter the new name for the group '%1':" ).arg(group->displayName()),
-			group->displayName(), &ok );
+		QString newname = KLineEditDlg::getText
 #endif
-		if( !ok )
+			( i18n( "Rename Group" ), i18n( "Please enter the new name for group '%1':" ).arg( group->displayName() ),
+			group->displayName(), &ok );
+
+		if ( !ok )
 			return;
-		group->setDisplayName(newname);
+		group->setDisplayName( newname );
 	}
 }
 
