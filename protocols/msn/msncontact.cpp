@@ -379,7 +379,7 @@ void MSNContact::slotShowProfile()
 /**
  * FIXME: Make this a standard KMM API call
  */
-void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize )
+void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, uint fileSize )
 {
 	QString filePath;
 
@@ -394,7 +394,8 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, co
 	if ( !filePath.isEmpty() )
 	{
 		//Send the file
-		static_cast<MSNMessageManager*>( manager() )->sendFile( filePath, altFileName, fileSize );
+		static_cast<MSNMessageManager*>( manager(true) )->sendFile( filePath, altFileName, fileSize );
+		
 	}
 }
 
