@@ -51,6 +51,7 @@ public slots:
 	void  slotUinChanged( const QString& );
 
 private:
+	void fillGroups();
 	GaduAccount*	account_;
 	GaduAddUI*	addUI_;
 	QLabel*		noaddMsg1_;

@@ -31,11 +31,15 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <kopetecontactlist.h>
+#include <kopetegroup.h>
 
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qlistview.h>
+#include <qptrlist.h>
 #include <qcombobox.h>
 #include <krestrictedline.h>
 
@@ -48,10 +52,24 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( slotUinChanged( const QString & ) ) );
 	addUI_->addEdit_->setValidChars( "1234567890" );
 	addUI_->addEdit_->setText( "" );
+	kdDebug(14100) << "filling gropus" << endl;
+	fillGroups();
 }
 
 GaduAddContactPage::~GaduAddContactPage()
 {
+	delete addUI_;
+}
+
+void
+GaduAddContactPage::fillGroups()
+{
+	Kopete::Group *g;
+	QPtrList<Kopete::Group> gl = Kopete::ContactList::self()->groups();
+	for( g = gl.first(); g; g = gl.next() ) {
+		QCheckListItem* item = new QCheckListItem( addUI_->groups, g->displayName(), QCheckListItem::CheckBox );
+		kdDebug(14100) << g->displayName() << " " << g->groupId() << endl;
+	}
 }
 
 void

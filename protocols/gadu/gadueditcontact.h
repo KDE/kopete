@@ -32,6 +32,7 @@ class QString;
 class QWidget;
 class GaduContact;
 class GaduContactsList::ContactLine;
+class QListViewItem;
 
 class GaduEditContact : public KDialogBase
 {
@@ -44,12 +45,12 @@ public:
 		    QWidget* parent = 0, const char* name = 0 );
 protected slots:
 	void slotApply();
-
+	void listClicked( QListViewItem* );
 private:
 
 	void init();
 	void fillIn();
-
+	void fillGroups();
 	GaduAccount*	account_;
 	GaduContact*	contact_;
 	GaduAddUI*	ui_;

@@ -30,12 +30,20 @@
 #include <ktextedit.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kopetegroup.h>
+#include <kopetecontactlist.h>
+#include <kopetemetacontact.h>
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qlineedit.h>
 #include <qlayout.h>
+#include <qlistview.h>
+#include <qptrlist.h>
+
 #include <krestrictedline.h>
+
+// FIXME: this and gaduadcontactpage should have one base class, with some code duplicated in both.
 
 GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 		    QWidget* parent, const char* name )
@@ -43,12 +51,7 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 			 KDialogBase::Ok | KDialogBase::Cancel,
 			 KDialogBase::Ok, true ), account_( account ), contact_( contact )
 {
-
-	if ( !account ) {
-		return;
-	}
-
-	if ( contact ) {
+	if ( contact && account ) {
 		cl_ = contact->contactDetails();
 	}
 	else {
@@ -56,6 +59,8 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 	}
 
 	init();
+	fillGroups();
+	fillIn();
 }
 
 GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::ContactLine* clin,
@@ -70,6 +75,34 @@ GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::Conta
 	}
 	cl_ = clin;
 	init();
+	fillGroups();
+	fillIn();
+}
+
+void
+GaduEditContact::fillGroups()
+{
+	Kopete::Group *g, *cg;
+	QPtrList<Kopete::Group> cgl;
+	QPtrList<Kopete::Group> gl;
+
+	if ( contact_ ) {
+		cgl = contact_->metaContact()->groups();
+	}
+
+	gl = Kopete::ContactList::self()->groups();
+
+	for( g = gl.first(); g; g = gl.next() ) {
+		QCheckListItem* item = new QCheckListItem( ui_->groups, g->displayName(), QCheckListItem::CheckBox );
+		// FIXME: optimize this O(2) search
+		for( cg = cgl.first(); cg; cg = cgl.next() ) {
+			if ( cg->groupId() == g->groupId() ) {
+				item->setOn( TRUE );
+				break;
+			}
+		}
+		kdDebug(14100) << g->displayName() << " " << g->groupId() << endl;
+	}
 }
 
 void
@@ -77,12 +110,19 @@ GaduEditContact::init()
 {
 	ui_ = new GaduAddUI( this );
 	setMainWidget( ui_ );
+	ui_->addEdit_->setValidChars( "1234567890" );
 
 	// fill values from cl into proper fields on widget
-	fillIn();
 
 	show();
 	connect( this, SIGNAL( okClicked() ), SLOT( slotApply() ) );
+	connect( ui_->groups, SIGNAL( clicked( QListViewItem * ) ), SLOT( listClicked( QListViewItem * ) ) );
+}
+
+void
+GaduEditContact::listClicked( QListViewItem* item )
+{
+
 }
 
 void
