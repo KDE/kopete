@@ -129,7 +129,7 @@ bool MimeTypeHandler::dispatchURL( const KURL &url )
 
 		if( mimeHandler )
 		{
-			return dispatchToHandler( url, QString::null, mimeHandler );
+			mimeHandler->handleURL( url );
 		}
 		else
 		{
