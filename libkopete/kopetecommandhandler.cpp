@@ -173,20 +173,17 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 		kdDebug(14010) << k_funcinfo << "Execute Command:" << args << endl;
 
 		KProcess *proc = new KProcess(manager);
+		*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
 
 		if( argsList.front() == QString::fromLatin1("-o") )
 		{
-			*proc << *argsList.at(1);
 			processMap.insert( proc, ManagerPair(manager, KopeteMessage::Outbound) );
-			for( QStringList::Iterator it = argsList.at(2); it != argsList.end(); ++it )
-				*proc << KProcess::quote( *it );
+			*proc << args.section(QRegExp(QString::fromLatin1("\\s+")), 1);
 		}
 		else
 		{
-			*proc << argsList.front();
 			processMap.insert( proc, ManagerPair(manager, KopeteMessage::Internal) );
-			for( QStringList::Iterator it = argsList.at(1); it != argsList.end(); ++it )
-				*proc << KProcess::quote( *it );
+			*proc << args;
 		}
 
 		connect(proc, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
