@@ -727,14 +727,8 @@ GaduAccount::userlist( const QString& contactsListString )
 		}
 
 		// update/add infor for contact
-
-		contact->setProperty( "emailAddress", contactsList[i].email );
-		contact->setProperty( "firstName", contactsList[i].firstname );
-		contact->setProperty( "lastName", contactsList[i].surname );
-		contact->setProperty( "privPhoneNum", contactsList[i].phonenr );
-		contact->setProperty( "ignored", i18n( "ignored" ), contactsList[i].ignored ? "true" : "false" );
-		contact->setProperty( "nickName", i18n( "nick name" ), contactsList[i].nickname );
-
+		contact->setContactDetails( &contactsList[i] );
+		
 		if ( !( contactsList[i].group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
 			// if user desrired to see contact somewhere else, remove it from top level one
