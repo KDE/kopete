@@ -38,7 +38,6 @@ void HistoryPlugin::convertOldHistory()
 	bool deleteFiles=  KMessageBox::questionYesNo( kapp->mainWidget(),
 		i18n( "Would you like to remove old history files?" ) , i18n( "History Converter" ) ) == KMessageBox::Yes;
 
-
 	KProgressDialog *progressDlg=new KProgressDialog(kapp->mainWidget() , "history_progress_dlg" , i18n( "History converter" ) ,
 		 QString::null , true); //modal  to  make sure the user will not doing stupid things (we have a kapp->processEvents())
 	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
@@ -57,7 +56,7 @@ void HistoryPlugin::convertOldHistory()
 		QString protocolId;
 		QString accountId;
 
-		if(KopeteProtocol *p=dynamic_cast<KopeteProtocol*>(KopetePluginManager::self()->searchByID(fi->fileName())) )
+		if( KopeteProtocol *p = dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->plugin( fi->fileName() ) ) )
 		{
 			protocolId=p->pluginId();
 			QDictIterator<KopeteAccount> it(KopeteAccountManager::manager()->accounts(p));
@@ -322,7 +321,7 @@ bool HistoryPlugin::detectOldHistory()
 	QFileInfo *fi;
 	while ( (fi = it.current()) != 0 )
 	{
-		if( dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->searchByID( fi->fileName() ) ) )
+		if( dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->plugin( fi->fileName() ) ) )
 			return true;
 
 		if(fi->fileName() == "MSNProtocol" || fi->fileName() == "msn_logs" )
