@@ -194,6 +194,10 @@ Comment[zh_CN]=用户已上线
 Comment[zh_TW]=使用者已上線
 Comment[zu]=Umsebenzi uya ngaphakathi koxhumano
 default_sound=Kopete_User_is_Online.ogg
+default_presentation=16
+
+[kopete_status_change]
+Name=Status Change
+Comment=User changed his online status
+default_sound=Kopete_Event.ogg
 default_presentation=0
-
-
