@@ -65,6 +65,7 @@ class IRCContact : public KopeteContact
 		void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
 		void slotWhoIsComplete(const QString &nickname);
 		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
+		void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 		void slotUserDisconnected( const QString &nickname, const QString &reason);
 
 	protected:

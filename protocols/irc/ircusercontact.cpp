@@ -35,23 +35,31 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 
 	mCustomActions = new KActionCollection(this);
 
-	actionModeMenu = new KActionMenu(i18n("Modes"), 0, mCustomActions, "actionModeMenu");
+	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, this );
+	actionCtcpPing = new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), this);
+	actionCtcpVersion = new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), this);
+	actionCtcpMenu->insert( actionCtcpVersion );
+	actionCtcpMenu->insert( actionCtcpPing );
+	mCustomActions->insert( actionCtcpMenu );
+
+	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
 	actionOp = new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp");
 	actionDeop = new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop");
 	actionVoice = new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice");
 	actionDevoice = new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), this, "actionDevoice");
-
-	actionModeMenu->setEnabled( false );
-
 	actionModeMenu->insert( actionOp );
 	actionModeMenu->insert( actionDeop );
 	actionModeMenu->insert( actionVoice );
 	actionModeMenu->insert( actionDevoice );
 
-	actionWhois = new KAction(i18n("Whois"), 0, this, SLOT(slotWhois()), mCustomActions, "actionWhois");
+	actionModeMenu->setEnabled( false );
+	mCustomActions->insert( actionModeMenu );
+
+	actionWhois = new KAction(i18n("&Whois"), 0, this, SLOT(slotWhois()), this, "actionWhois");
+	mCustomActions->insert( actionWhois );
 
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-
+	QObject::connect(identity->engine(), SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 }
 
 QString IRCUserContact::statusIcon() const
@@ -63,6 +71,16 @@ QString IRCUserContact::statusIcon() const
 		return "irc_voice";
 
 	return "irc_normal";
+}
+
+void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &target, const QString &message)
+{
+	kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
+	if (originating.section('!',0,0).lower() == mNickName.lower())
+	{
+		KopeteMessage msg( (KopeteContact*)this, mMyself, message, KopeteMessage::Inbound );
+		manager()->appendMessage(msg);
+	}
 }
 
 void IRCUserContact::slotWhois()
@@ -107,6 +125,16 @@ void IRCUserContact::contactMode( const QString &mode )
 			mEngine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(mNickName) );
 		}
 	}
+}
+
+void IRCUserContact::slotCtcpPing()
+{
+	mEngine->sendCtcpPing(mNickName);
+}
+
+void IRCUserContact::slotCtcpVersion()
+{
+	mEngine->sendCtcpVersion(mNickName);
 }
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &, const QString &mode )

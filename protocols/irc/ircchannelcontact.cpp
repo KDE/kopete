@@ -102,6 +102,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 			newNick.remove(0, 1);
 
 		IRCUserContact *user = new IRCUserContact(mIdentity, newNick, (KIRC::UserClass)mode);
+		user->setOnlineStatus( KopeteContact::Online );
 		manager()->addContact((KopeteContact *)user, true);
 	}
 }

@@ -49,6 +49,9 @@ class IRCUserContact : public IRCContact
 		void slotDeop();
 		void slotVoice();
 		void slotDevoice();
+		void slotCtcpPing();
+		void slotCtcpVersion();
+		void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);	
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 	private:
@@ -60,6 +63,9 @@ class IRCUserContact : public IRCContact
 		KAction *actionDeop;
 		KAction *actionVoice;
 		KAction *actionDevoice;
+		KActionMenu *actionCtcpMenu;
+		KAction *actionCtcpPing;
+		KAction *actionCtcpVersion;
 		KActionMenu *actionKick;
 		KActionMenu *actionBan;
 		KAction *actionWhois;

@@ -27,6 +27,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopeteviewmanager.h"
 #include "ircusercontact.h"
 #include "irccontact.h"
 
@@ -67,6 +68,7 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingEndOfWhois(const QString &)), this, SLOT( slotWhoIsComplete(const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingQuitIRC(const QString &, const QString &)), this, SLOT( slotUserDisconnected(const QString&, const QString&)));
+	QObject::connect(mEngine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)), this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
 }
 
 KopeteMessageManager* IRCContact::manager(bool)
@@ -281,6 +283,20 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 
 		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 is now known as %2").arg(oldnickname).arg(newnickname), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
+	}
+}
+
+void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
+{
+	kdDebug(14120) << k_funcinfo << target << endl;
+	if( target == mNickName )
+	{
+		KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
+		if( activeView )
+		{
+			KopeteMessage msg((KopeteContact *)this, mContact, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal);
+			activeView->msgManager()->appendMessage(msg);
+		}
 	}
 }
 
