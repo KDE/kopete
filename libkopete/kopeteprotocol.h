@@ -19,19 +19,13 @@
 #ifndef KOPETEPROTOCOL_H
 #define KOPETEPROTOCOL_H
 
-#include <qobject.h>
-#include <qptrlist.h>
-#include <qwidget.h>
-
 #include "kopeteplugin.h"
 
 class KActionMenu;
 
 class AddContactPage;
 class KopeteContact;
-class KopeteFileTransferInfo;
 class KopeteMetaContact;
-class KopeteTransfer;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
