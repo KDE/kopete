@@ -47,6 +47,8 @@ IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : 
 	actionOffline =  new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this);
 
 	mEngine = new KIRC( mServer, mPort );
+	QString version=QString::fromLatin1("Kopete IRC Plugin [http://kopete.kde.org]");
+	mEngine->setVersionString( version  );
 	if( rememberPassword() )
 		mEngine->setPassword( getPassword() );
 

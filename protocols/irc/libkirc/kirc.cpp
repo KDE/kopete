@@ -881,7 +881,7 @@ void KIRC::slotConnected()
 {
 	kdDebug(14120) << "Connected" << endl;
 	// Just a test for now:
-	writeString(  QString::fromLatin1("USER %1 127.0.0.1 %2 :Using Kopete IRC Plugin 2.0 \r\nNICK %3").arg( mUsername ).arg( mHost ).arg( mNickname ) );
+	writeString(  QString::fromLatin1("USER %1 127.0.0.1 %2 :Using Kopete IRC Plugin \r\nNICK %3").arg( mUsername ).arg( mHost ).arg( mNickname ) );
 }
 
 void KIRC::connectToServer(const QString &nickname)
