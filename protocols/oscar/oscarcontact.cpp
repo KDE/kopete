@@ -378,6 +378,8 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
+	if( !metaContact() )
+		return;
 	// Get the (kopete) group that we belong to
 	KopeteGroupList groups = metaContact()->groups();
 	if(groups.count() == 0)
