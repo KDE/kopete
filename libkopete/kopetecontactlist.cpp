@@ -838,6 +838,12 @@ void KopeteContactList::addGroup( KopeteGroup * g)
 
 void KopeteContactList::removeGroup( KopeteGroup *g)
 {
+	if ( d->selectedGroups.contains( g ) )
+	{
+		d->selectedGroups.remove( g );
+		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
+	}
+
 	d->groups.remove( g );
 	emit groupRemoved( g );
 	delete g;
@@ -883,6 +889,7 @@ KopeteGroupList KopeteContactList::selectedGroups() const
 
 void KopeteContactList::setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups)
 {
+	kdDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
 	d->selectedMetaContacts=metaContacts;
 	d->selectedGroups=groups;
 

@@ -239,11 +239,13 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( this, SIGNAL( collapsed( QListViewItem * ) ), SLOT( slotCollapsed( QListViewItem * ) ) );
 	connect( this, SIGNAL( executed( QListViewItem *, const QPoint &, int ) ), SLOT( slotExecuted( QListViewItem *, const QPoint &, int ) ) );
 	connect( this, SIGNAL( doubleClicked( QListViewItem * ) ), SLOT( slotDoubleClicked( QListViewItem * ) ) );
-	connect( this, SIGNAL( selectionChanged() ), SLOT( slotSelectionChanged() ) );
+	connect( this, SIGNAL( selectionChanged() ), SLOT( slotViewSelectionChanged() ) );
 	connect( this, SIGNAL( itemRenamed( QListViewItem * ) ), this, SLOT( slotItemRenamed( QListViewItem * ) ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
 
+	connect( KopeteContactList::contactList(), SIGNAL( selectionChanged() ),
+	         SLOT( slotListSelectionChanged() ) );
 	connect( KopeteContactList::contactList(), SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
 		SLOT( slotMetaContactAdded( KopeteMetaContact * ) ) );
 	connect( KopeteContactList::contactList(), SIGNAL( metaContactDeleted( KopeteMetaContact * ) ),
@@ -319,7 +321,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		this, SLOT( slotProperties() ), ac, "contactProperties" );
 
 	// Update enabled/disabled actions
-	slotSelectionChanged();
+	slotViewSelectionChanged();
 }
 
 KopeteContactListView::~KopeteContactListView()
@@ -1361,7 +1363,7 @@ QDragObject *KopeteContactListView::dragObject()
 	return drag;
 }
 
-void KopeteContactListView::slotSelectionChanged()
+void KopeteContactListView::slotViewSelectionChanged()
 {
 	QPtrList<KopeteMetaContact> contacts;
 	QPtrList<KopeteGroup> groups;
@@ -1382,8 +1384,24 @@ void KopeteContactListView::slotSelectionChanged()
 				groups.append( groupLVI->group());
 		}
 	}
-	KopeteContactList::contactList()->setSelectedItems(contacts , groups);
 
+	// will cause slotListSelectionChanged to be called to update our actions.
+	KopeteContactList::contactList()->setSelectedItems(contacts , groups);
+}
+
+void KopeteContactListView::slotListSelectionChanged()
+{
+	QPtrList<KopeteMetaContact> contacts = KopeteContactList::contactList()->selectedMetaContacts();
+	QPtrList<KopeteGroup> groups = KopeteContactList::contactList()->selectedGroups();
+
+	//TODO: update the list to select the items that should be selected.
+	// make sure slotViewSelectionChanged is *not* called.
+
+	updateActionsForSelection( contacts, groups );
+}
+
+void KopeteContactListView::updateActionsForSelection( QPtrList<KopeteMetaContact> contacts, QPtrList<KopeteGroup> groups )
+{
 	actionSendFile->setEnabled( groups.isEmpty() && contacts.count()==1 && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( groups.isEmpty() && contacts.count()==1 && !contacts.first()->isTemporary());
 
