@@ -60,18 +60,37 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
 
-	// Set up the message managers
-	QPtrList<KopeteContact> singleContact;
-	singleContact.append(this);
-	myEmailManager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::Email);
-	connect(myEmailManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
-	connect(myEmailManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myEmailManager, SLOT(appendMessage(const KopeteMessage &)));
-	myChatManager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::ChatWindow);
-	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
-	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myChatManager, SLOT(appendMessage(const KopeteMessage &)));
+	m_manager = 0L;
 
 	// Set up the context menu
 	myActionCollection = new KActionCollection(this);
+}
+
+KopeteMessageManager* WPContact::manager()
+{
+	if( !m_manager )
+	{
+		// Set up the message managers
+		QPtrList<KopeteContact> singleContact;
+		singleContact.append(this);
+
+		KGlobal::config()->setGroup("WinPopup");
+		if(KGlobal::config()->readBoolEntry("EmailDefault", true))
+			m_manager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::Email);
+		else
+			m_manager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::ChatWindow);
+
+		connect(m_manager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
+		connect(m_manager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(const KopeteMessage &)));
+		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+	}
+
+	return m_manager;
+}
+
+void WPContact::slotMessageManagerDestroyed()
+{
+	m_manager = 0L;
 }
 
 void WPContact::slotCheckStatus()
@@ -91,14 +110,8 @@ void WPContact::execute()
 {
 	DEBUG(WPDMETHOD, "WPContact::execute()");
 
-	KGlobal::config()->setGroup("WinPopup");
-	if(KGlobal::config()->readBoolEntry("EmailDefault", true))
-	{
-		myEmailManager->readMessages();
-		myEmailManager->slotSendEnabled(true);
-	}
-	else
-		myChatManager->readMessages();
+	manager()->readMessages();
+	manager()->slotSendEnabled(true);
 }
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
@@ -110,11 +123,11 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
 	if(subj.search(Body) == -1)
-		myChatManager->appendMessage(KopeteMessage(this, contactList, Body, KopeteMessage::Inbound));
+		manager()->appendMessage(KopeteMessage(this, contactList, Body, KopeteMessage::Inbound));
 	else
 	{
-		myEmailManager->appendMessage(KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound));
-		myEmailManager->slotSendEnabled(false);
+		manager()->appendMessage(KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound));
+		manager()->slotSendEnabled(false);
 	}
 }
 

@@ -70,6 +70,7 @@ public slots:
 private slots:
 	void userPrefs();
 	void messageSent(const KopeteMessage&);
+	void slotMessageManagerDestroyed();
 
 private:
 	KopeteMessageManager* msgManager();

@@ -88,6 +88,7 @@ private:
     KAction     *actionInfo_;
     KAction     *actionRemove_;
 private slots:
+    void slotMessageManagerDestroyed();
 };
 
 #endif

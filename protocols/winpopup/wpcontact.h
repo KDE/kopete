@@ -64,8 +64,9 @@ private:
 	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
 							// holds all the protocol specific actions (not many!)
-	KopeteMessageManager *myEmailManager, *myChatManager;
+	KopeteMessageManager *m_manager;
 							// holds the two message managers - one for email and one for chat
+	KopeteMessageManager *manager();
 
 public slots:
 	void slotCheckStatus();	// the call back for the checkStatus timer
@@ -83,6 +84,8 @@ public:
 //***********************************************************************
 // BEGIN MANDATORY OVERLOADING
 //***********************************************************************
+private slots:
+	void slotMessageManagerDestroyed();
 
 public:
 	// very basic actions

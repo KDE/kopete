@@ -75,8 +75,14 @@ KopeteMessageManager* SMSContact::msgManager()
 		m_msgManager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), contacts, protocol(), KopeteMessageManager::Email);
 		connect(m_msgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
 		this, SLOT(slotSendMessage(const KopeteMessage&)));
+		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		return m_msgManager;
 	}
+}
+
+void SMSContact::slotMessageManagerDestroyed()
+{
+	m_msgManager = 0L;
 }
 
 void SMSContact::slotSendMessage(const KopeteMessage &msg)

@@ -260,8 +260,16 @@ GaduContact::msgManager()
                                                            KopeteMessageManager::ChatWindow );
         connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
                  this, SLOT(messageSend(const KopeteMessage&, KopeteMessageManager*)) );
+	connect( msgManager_, SIGNAL(destroyed()),
+                 this, SLOT(slotMessageManagerDestroyed()) );
         return msgManager_;
     }
+}
+
+void
+GaduContact::slotMessageManagerDestroyed()
+{
+    msgManager_ = 0L;
 }
 
 void
