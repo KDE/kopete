@@ -53,92 +53,92 @@ KopeteAccountManager::~KopeteAccountManager()
 
 void KopeteAccountManager::connectAll()
 {
-	//When a status is changed, the protocol loops into the account to update the menu icon.
-	//and then it change the m_accounts.current().. so we make a copy
-	QPtrList<KopeteAccount>accounts = m_accounts;
-
-	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
-		i->connect();
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
+	{
+		++it;
+		account->connect();
+	}
 }
 
 void KopeteAccountManager::disconnectAll()
 {
-	//When a status is changed, the protocol loops into the account to update the menu icon.
-	//and then it change the m_accounts.current().. so we make a copy
-	QPtrList<KopeteAccount>accounts = m_accounts;
-	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
-		i->disconnect();
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
+	{
+		++it;
+		account->disconnect();
+	}
 }
 
 void KopeteAccountManager::setAwayAll( const QString &awayReason )
 {
 	KopeteAway::setGlobalAway( true );
-	//When a status is changed, the protocol loops into the account to update the menu icon.
-	//and then it change the m_accounts.current().. so we make a copy
-	QPtrList<KopeteAccount>accounts = m_accounts;
-	for(KopeteAccount *i = accounts.first() ; i; i = accounts.next() )
+
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		if(i->isConnected() && !i->isAway())
-		{
-			if( !awayReason.isNull() )
-				i->setAway(true, awayReason);
-			else
-				i->setAway(true, KopeteAway::message() );
-		}
+		++it;
+		if( account->isConnected() && !account->isAway() )
+			account->setAway( true, awayReason.isNull ? KopeteAway::message() : awayReason );
 	}
 }
 
 void KopeteAccountManager::setAvailableAll()
 {
 	KopeteAway::setGlobalAway( false );
-	//When a status is changed, the protocol loops into the account to update the menu icon.
-	//and then it change the m_accounts.current().. so we make a copy
-	QPtrList<KopeteAccount>accounts = m_accounts;
-	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
+
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		if(i->isConnected() && i->isAway())
-			i->setAway(false);
+		++it;
+		if( account->isConnected() && account->isAway() )
+			account->setAway( false );
 	}
 }
 
-QColor KopeteAccountManager::guessColor( KopeteProtocol* protocol )
+QColor KopeteAccountManager::guessColor( KopeteProtocol *protocol )
 {
-	//TODO: use a different algoritm. It should really check if the color is really not used
+	// FIXME: Use a different algoritm. It should check if the color is really not
+	//        used - Olivier
 
-	/* counter for accounts of this protocol */
 	int thisProtocolCounter = 0;
-
-	for ( KopeteAccount *acc = m_accounts.first() ; acc ; acc = m_accounts.next() )
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		if(  acc->protocol()->pluginId() == protocol->pluginId() )
-		{
+		++it;
+		if( account->protocol()->pluginId() == protocol->pluginId() )
 			thisProtocolCounter++;
-		}
 	}
 
+	// let's figure a color
 	QColor color;
-	/* lets figure a color */
 	switch ( thisProtocolCounter % 7 )
 	{
-		case 0:
+	case 0:
 		color = QColor();
 		break;
-		case 1:
+	case 1:
 		color = Qt::red;
 		break;
-		case 2:
+	case 2:
 		color = Qt::green;
 		break;
-		case 3:
+	case 3:
 		color = Qt::blue;
 		break;
-		case 4:
+	case 4:
 		color = Qt::yellow;
 		break;
-		case 5:
+	case 5:
 		color = Qt::magenta;
 		break;
-		case 6:
+	case 6:
 		color = Qt::cyan;
 		break;
 	}
@@ -149,26 +149,20 @@ QColor KopeteAccountManager::guessColor( KopeteProtocol* protocol )
 void KopeteAccountManager::registerAccount(KopeteAccount *i)
 {
 
-	/* Anti-Crash: Valid account pointer? */
-	if ( !i )
+	if ( !i || i->accountId().isNull() )
 		return;
 
-	/* No, we don't allow accounts without id */
-	if ( !(i->accountId()).isNull() )
+	// If this account already exists, do nothing
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		/* Lets check if account exists already in protocol namespace */
-		for ( KopeteAccount *acc = m_accounts.first() ; acc ; acc = m_accounts.next() )
-		{
-			if(  (i->protocol() == acc->protocol()) && ( i->accountId() == acc->accountId() ) )
-			{
-					/* Duplicate!! */
-					return;
-			}
-		}
-
-		m_accounts.append( i );
+		++it;
+		if ( ( i->protocol() == account->protocol() ) && ( i->accountId() == account->accountId() ) )
+			return;
 	}
 
+	m_accounts.append( i );
 }
 
 const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
@@ -178,11 +172,13 @@ const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
 
 QDict<KopeteAccount> KopeteAccountManager::accounts(const KopeteProtocol *p)
 {
-	QDict<KopeteAccount> dict;
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		if( (i->protocol() == p) && !(i->accountId().isNull()) )
-			dict.insert(i->accountId() , i);
+		++it;
+		if( ( account->protocol() == p ) && !account->accountId().isNull() )
+			dict.insert( account->accountId(), account );
 	}
 	return dict;
 }
@@ -190,10 +186,13 @@ QDict<KopeteAccount> KopeteAccountManager::accounts(const KopeteProtocol *p)
 
 KopeteAccount* KopeteAccountManager::findAccount(const QString& protocolId, const QString& accountId)
 {
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		if( i->protocol()->pluginId() == protocolId && i->accountId() == accountId )
-			return i;
+		++it;
+		if( account->protocol()->pluginId() == protocolId && account->accountId() == accountId )
+			return account;
 	}
 	return 0L;
 }
@@ -223,9 +222,16 @@ void KopeteAccountManager::save()
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
-	for ( KopeteAccount *account = m_accounts.first() ; account; account = m_accounts.next() )
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
+		++it;
+#if QT_VERSION < 0x030200
 		QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId() ).arg( account->protocol()->pluginId() );
+#else
+		QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId(), account->protocol()->pluginId() );
+#endif
 		config->setGroup( groupName );
 
 		account->writeConfig( groupName );
