@@ -155,15 +155,15 @@ public:
 class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
 {
 public:
-	KopetePasswordGetRequestPrompt( KopetePassword &pass,  const QPixmap &image, const QString &prompt, bool error, unsigned int maxLength )
-	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mError( error ), mMaxLength( maxLength ), mView( 0 )
+	KopetePasswordGetRequestPrompt( KopetePassword &pass,  const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
+	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mSource( source ), mMaxLength( maxLength ), mView( 0 )
 	{
 	}
 
 	void processRequest()
 	{
 		QString result = grabPassword();
-		if ( mError || result.isNull() )
+		if ( mSource == KopetePassword::FromUser || result.isNull() )
 			doPasswordDialog( result );
 		else
 			finished( result );
@@ -212,7 +212,7 @@ public:
 private:
 	QPixmap mImage;
 	QString mPrompt;
-	bool mError;
+	KopetePassword::PasswordSource mSource;
 	unsigned int mMaxLength;
 	KopetePasswordDialog *mView;
 };
@@ -374,16 +374,16 @@ void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot 
 	request->begin();
 }
 
-void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, bool error, unsigned int maxLength )
+void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
 {
-	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, error, maxLength );
+	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, source, maxLength );
 	connect( request, SIGNAL( requestFinished( const QString & ) ), returnObj, slot );
 	request->begin();
 }
 
-QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, bool error, unsigned int maxLength )
+QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
 {
-	if ( !error )
+	if ( source == KopetePassword::FromConfigOrUser )
 	{
 		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
 		{
@@ -403,11 +403,6 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, b
 
 		if ( d->remembered && !d->passwordFromKConfig.isNull() )
 			return d->passwordFromKConfig;
-	}
-	else
-	{
-		// Error? Invalidate any stored pass
-		set();
 	}
 
 	// FIXME: why is this allocated on the heap?

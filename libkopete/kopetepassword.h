@@ -52,13 +52,20 @@ public:
 	static int preferredImageSize();
 
 	/**
+	 * Type of password request to perform:
+	 * FromConfigOrUser : get the password from the config file, or from the user if no password in config.
+	 * FromUser : always ask the user for a password (ie, if last password was wrong or you know the password has changed).
+	 */
+	enum PasswordSource { FromConfigOrUser, FromUser };
+
+	/**
 	 * Get the password. Has the ability to open an input dialog
 	 * if the password is not currently set.
 	 *
 	 * @see request for description of arguments
 	 * @return The password or QString::null if the user has canceled
 	 */
-	QString retrieve( const QPixmap &image, const QString &prompt, bool error = false, unsigned int maxLength = 0 ) KDE_DEPRECATED;
+	QString retrieve( const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser, unsigned int maxLength = 0 ) KDE_DEPRECATED;
 
 	/**
 	 * Start an asynchronous call to get the password. Causes a password entry dialog
@@ -80,7 +87,7 @@ public:
 	 * @param maxLength The maximum length for a password, restricts the
 	 *        length of the password that can be entered. 0 means no limit.
 	 */
-	void request( QObject *receiver, const char *slot, const QPixmap &image, const QString &prompt, bool error = false, unsigned int maxLength = 0 );
+	void request( QObject *receiver, const char *slot, const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser, unsigned int maxLength = 0 );
 
 	/**
 	 * Start an asynchronous password request. Do not pop up a password entry dialog
