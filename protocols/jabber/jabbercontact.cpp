@@ -505,15 +505,16 @@ void JabberContact::reevaluateStatus ()
 		}
 	}
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
-	setOnlineStatus ( status );
-
 	// remove properties first
 	removeProperty ( protocol()->awayMessage );
 
 	// set away message property
 	if ( !resource.status ().status ().isEmpty () )
 		setProperty ( protocol()->awayMessage, resource.status().status () );
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
+	setOnlineStatus ( status );
+
 }
 
 QString JabberContact::fullAddress ()
