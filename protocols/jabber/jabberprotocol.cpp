@@ -143,7 +143,7 @@ KopeteContact *JabberProtocol::deserializeContact (KopeteMetaContact * metaConta
 	if (!account)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
-		return;
+		return 0;
 	}
 
 	if (account)
