@@ -33,9 +33,6 @@
 #include "ksettings/dispatcher.h"
 #include "ksettings/componentsdialog.h"
 
-#include <kdeversion.h>
-
-
 namespace KSettings
 {
 
@@ -138,7 +135,7 @@ void Dialog::addPluginInfos( const QValueList<KPluginInfo*> & plugininfos )
 {
 	for( QValueList<KPluginInfo*>::ConstIterator it = plugininfos.begin();
 			it != plugininfos.end(); ++it )
-		d->plugininfomap[ ( *it )->pluginname() ] = *it;
+		d->plugininfomap[ ( *it )->pluginName() ] = *it;
 }
 
 void Dialog::show()
@@ -217,7 +214,7 @@ bool Dialog::isPluginForKCMEnabled( KCModuleInfo * moduleinfo ) const
 //X 			if( pinfo->config() )
 //X 				pinfo->config()->reparseConfiguration();
 		pinfo->load();
-		enabled = pinfo->pluginEnabled();
+		enabled = pinfo->isPluginEnabled();
 		kdDebug( 700 ) << "parent " << *pcit << " is " << ( enabled ? "enabled" : "disabled" ) << endl;
 		// if it is enabled we're done for this KCModuleInfo
 		if( enabled )
@@ -277,10 +274,8 @@ void Dialog::createDialogFromServices()
 	else
 		d->dlg = new KCMultiDialog( KJanusWidget::IconList, i18n( "Preferences" ), d->parentwidget );
 
-#if KDE_IS_VERSION( 3, 1, 90 )
 	if( ! d->staticlistview )
 		d->dlg->addButtonBelowList( i18n( "Configure..." ), this, SLOT( configureTree() ) );
-#endif
 
 	connect( d->dlg, SIGNAL( okClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
 	connect( d->dlg, SIGNAL( applyClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );

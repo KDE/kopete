@@ -154,8 +154,8 @@ void AddAccountWizard::next()
 		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
 		if ( lvi )
 		{
-			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->pluginname() << " by name" << endl;
-			KopetePlugin *pl = KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginname() );
+			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->pluginName() << " by name" << endl;
+			KopetePlugin *pl = KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginName() );
 
 			m_proto = dynamic_cast<KopeteProtocol *>( pl );
 			if ( m_proto )

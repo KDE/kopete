@@ -1,0 +1,43 @@
+Index: dialog.cpp
+===================================================================
+RCS file: /home/kde/kdenetwork/kopete/libkopete/compat/ksettings/dialog.cpp,v
+retrieving revision 1.1
+diff -u -p -r1.1 dialog.cpp
+--- dialog.cpp	3 Sep 2003 08:50:34 -0000	1.1
++++ dialog.cpp	7 Sep 2003 11:05:56 -0000
+@@ -33,6 +33,8 @@
+ #include "ksettings/dispatcher.h"
+ #include "ksettings/componentsdialog.h"
+ 
++#include <kdeversion.h>
++
+ namespace KSettings
+ {
+ 
+@@ -277,8 +274,10 @@ void Dialog::createDialogFromServices()
+ 	else
+ 		d->dlg = new KCMultiDialog( KJanusWidget::IconList, i18n( "Preferences" ), d->parentwidget );
+ 
++#if KDE_IS_VERSION( 3, 1, 90 )
+ 	if( ! d->staticlistview )
+ 		d->dlg->addButtonBelowList( i18n( "Configure..." ), this, SLOT( configureTree() ) );
++#endif
+ 
+ 	connect( d->dlg, SIGNAL( okClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
+ 	connect( d->dlg, SIGNAL( applyClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
+@@ -288,12 +283,14 @@ void Dialog::createDialogFromServices()
+ 	d->moduleinfos.sort();
+ 	for( KCModuleInfo * info = d->moduleinfos.first(); info; info = d->moduleinfos.next() )
+ 	{
++//		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
+-		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
+ 		d->dlg->addModule( *info );
+ 	}
+ 
++#if KDE_IS_VERSION( 3, 1, 90 )
+ 	if( groupnames.size() > 1 )
+ 		d->dlg->unfoldTreeList( true );
++#endif
+ }
+ 
+ void Dialog::configureTree()

@@ -61,9 +61,8 @@ class KInstance;
 
 class KCModule : public QWidget
 {
+  friend class KCMultiDialog; // ### KDE4 remove setChanged workaround
   Q_OBJECT
-
-friend class KCMultiDialog;
 
 public:
 
@@ -141,7 +140,7 @@ public:
    * This method is called when the user clicks the "System-Default"
    * button. It should set the display to the system default values.
    *
-   * NOTE: The default behaviour is to call defaults().
+   * NOTE: The default behavior is to call defaults().
    */
   virtual void sysdefaults() { defaults(); };
 

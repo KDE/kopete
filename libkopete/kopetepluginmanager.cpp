@@ -193,7 +193,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 	QValueList<KPluginInfo *>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
-		if ( ( *it )->pluginname() == spec )
+		if ( ( *it )->pluginName() == spec )
 		{
 			info = *it;
 			break;
@@ -271,7 +271,7 @@ bool KopetePluginManager::unloadPlugin( const QString &spec )
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
-		if( it.key()->pluginname() == spec )
+		if( it.key()->pluginName() == spec )
 		{
 			delete it.data();
 			return true;
@@ -310,7 +310,7 @@ KopetePlugin* KopetePluginManager::plugin( const QString &pluginId ) const
 	QValueList<KPluginInfo *>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
-		if ( ( *it )->pluginname() == pluginId )
+		if ( ( *it )->pluginName() == pluginId )
 		{
 			info = *it;
 			break;
