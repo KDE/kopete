@@ -40,10 +40,6 @@ public:
 	virtual bool validateData();
 	KopeteAccount* apply();
 
-public slots:
-	void  registrationComplete( const QString&, const QString& );
-	void  registrationError( const QString&, const QString& );
-
 private:
 	GaduProtocol*		protocol_;
 	bool				reg_in_progress;
