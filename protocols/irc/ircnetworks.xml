@@ -736,16 +736,26 @@
         </servers>
     </network>
     <network>
-        <name>OpenProjectsNet</name>
-        <description>OpenProjectsNet</description>
+        <name>Freenode</name>
+        <description>Freenode Peer-directed Projects Network</description>
         <servers>
             <server>
+	    	<host>irc.debian.org</host>
+		<port>6667</port>
+		<useSSL>false</useSSL>
+	    </server>
+	    <server>
+	    	<host>irc.kde.org</host>
+		<port>6667</port>
+		<useSSL>false</useSSL>
+	    </server>
+	    <server>
+	    	<host>brunner.freenode.net</host>
+		<port>993</port>
+		<useSSL>true</useSSL>
+	    </server>
+	    <server>
                 <host>irc.openprojects.net</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
-                <host>irc.linux.com</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
             </server>
