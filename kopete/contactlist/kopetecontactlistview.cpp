@@ -39,6 +39,9 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kurldrag.h>
+#include <kmultipledrag.h>
+#include <kabc/stdaddressbook.h>
+#include <kabc/vcardconverter.h>
 
 #include <kdeversion.h>
 #if KDE_IS_VERSION( 3, 1, 90 )
@@ -1168,7 +1171,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(afterme);
 
-	if( e->source() == viewport() )
+	if( e->source() == this )
 	{
 		KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
 		KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
@@ -1356,36 +1359,51 @@ QDragObject *KopeteContactListView::dragObject()
 	// we set the pixmap for the drag to the MC's pixmap
 	// or the child contact's small icon
 
-	// Find out if we're starting a drag using parent's implementation
-	QDragObject *drag= KListView::dragObject();
-	if ( drag )
+	QListViewItem *currentLVI = currentItem();
+	if( !currentLVI )
+		return 0L;
+
+	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI*>( currentLVI );
+	if( !metaLVI )
+		return 0L;
+
+	QPixmap pm;
+	KopeteContact *c = metaLVI->contactForPoint( m_startDragPos );
+        KMultipleDrag *drag = new KMultipleDrag( this );
+	drag->addDragObject( new QStoredDrag("application/x-qlistviewitem", 0L ) );
+
+	if ( c ) 	// dragging a contact
+		pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
+	else		// dragging a metacontact
 	{
-		//we're starting to drag something
-		KopeteMetaContactLVI *source_metaLVI =
-			dynamic_cast<KopeteMetaContactLVI*>( currentItem() );
-		KopeteContact *c = 0L;
-		QPixmap pm;
-
-		// get the pixmap depending what we're dragging
-		if ( source_metaLVI )
-		{
-			c = source_metaLVI->contactForPoint( m_startDragPos );
-
-			if ( c ) 	// dragging a contact
-				pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
-			else		// dragging a metacontact
-			{
-				// FIXME: first start at rendering the whole MC incl small icons
-				// into a pixmap to drag - anyone know how to complete this?
-				//QPainter p( pm );
-				//source_metaLVI->paintCell( p, cg?, width(), 0, 0 );
-				pm = SmallIcon( source_metaLVI->metaContact()->statusIcon() );
-			}
-		}
-
-		//QSize s = pm.size();
-		drag->setPixmap( pm /*, QPoint( s.width() , s.height() )*/ );
+		// FIXME: first start at rendering the whole MC incl small icons
+		// into a pixmap to drag - anyone know how to complete this?
+		//QPainter p( pm );
+		//source_metaLVI->paintCell( p, cg?, width(), 0, 0 );
+		pm = SmallIcon( metaLVI->metaContact()->statusIcon() );
 	}
+
+	KABC::Addressee address = KABC::StdAddressBook::self()->findByUid(
+		metaLVI->metaContact()->metaContactId()
+	);
+
+	if( !address.isEmpty() )
+	{
+		drag->addDragObject( new QTextDrag( address.fullEmail(), this ) );
+		KABC::VCardConverter converter;
+		QString vcard;
+
+		if( converter.addresseeToVCard( address, vcard ) )
+		{
+			QStoredDrag *vcardDrag = new QStoredDrag("text/x-vcard", 0L );
+			vcardDrag->setEncodedData( vcard.utf8() );
+			drag->addDragObject( vcardDrag );
+		}
+	}
+
+	//QSize s = pm.size();
+	drag->setPixmap( pm /*, QPoint( s.width() , s.height() )*/ );
+
 	return drag;
 }
 
