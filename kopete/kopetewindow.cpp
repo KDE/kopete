@@ -546,35 +546,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	// over one protocol
 
 	QToolTip::remove( i );
-
-	QString contactLabel;
-	if ( contact->displayName() == contact->account()->accountId() )
-	{
-		contactLabel = contact->displayName();
-	}
-	else
-	{
-		// FIXME: Make this string i18n() after kde3.2 - Martijn
-		contactLabel = QString::fromLatin1( "%1 <%2>" ).
-#if QT_VERSION < 0x030200
-			arg( contact->displayName() ).arg( contact->account()->accountId() );
-#else
-			arg( contact->displayName(), contact->account()->accountId() );
-#endif
-	}
-
-	// FIXME: Make this string i18n() after kde3.2 - Martijn
-	QString tooltip = QString::fromLatin1( "%1 (%2)" ).
-#if QT_VERSION < 0x030200
-		arg( contactLabel ).arg( status.description() );
-#else
-		arg( contactLabel, status.description() );
-#endif
-
-	if ( !contact->statusDescription().isNull() )
-		tooltip += QString::fromLatin1( "\n" ) + contact->statusDescription();
-
-	QToolTip::add( i, tooltip );
+	QToolTip::add( i, contact->toolTip() );
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
