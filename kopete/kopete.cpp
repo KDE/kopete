@@ -90,7 +90,6 @@ Kopete::~Kopete()
 
 void Kopete::slotLoadPlugins()
 {
-	kapp->processEvents();
 	//Create the command handler (looks silly)
 	KopeteCommandHandler::commandHandler();
 
