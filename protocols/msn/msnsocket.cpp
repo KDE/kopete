@@ -139,8 +139,7 @@ void MSNSocket::slotSocketError( int error )
 	if ( error == KSocketBase::LookupFailure )
 		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->peerResolver().nodeName() );
 	else
-	        // FIXME when there is a method to show up error strings!
-          	errormsg += i18n( "Error %1" ).arg( m_socket->error() );
+		errormsg +=  m_socket->errorString() ;
 
 	//delete m_socket;
 	m_socket->deleteLater();
@@ -438,7 +437,7 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 	}
 	else
 	{
-		const int dataLength = data.length();
+		const uint dataLength = data.length();
 		QByteArray data2( dataLength + body.size() );
 		// FIXME: Why not use QByteArray::copy() for the first loop? - Martijn
 		for ( uint f = 0; f < dataLength; f++ )
