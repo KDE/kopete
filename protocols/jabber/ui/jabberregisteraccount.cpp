@@ -117,6 +117,7 @@ void JabberRegisterAccount::validateData ()
 {
 
 	int valid = true;
+	int passwordHighlight = false;
 
 	if ( mMainWidget->leServer->text().isEmpty () )
 	{
@@ -142,16 +143,28 @@ void JabberRegisterAccount::validateData ()
 
 	if ( valid &&
 	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ).isEmpty () ||
-	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ) !=
-		 QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ) ) ) )
+	     QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ).isEmpty () ) )
 	{
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter your password twice." ) );
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter the same password twice." ) );
+		valid = false;
+		passwordHighlight = true;
+	}
+
+	if ( valid &&
+	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ) !=
+	     QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ) ) )
+	{
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Password entries do not match." ) );
+		valid = false;
+		passwordHighlight = true;
+	}
+
+	if ( passwordHighlight == true )
+	{
 		mMainWidget->pixPassword->setPixmap ( hintPixmap );
 		mMainWidget->pixPasswordVerify->setPixmap ( hintPixmap );
-		valid = false;
 	}
-	else
-	{
+	else {
 		mMainWidget->pixPassword->setText ( "" );
 		mMainWidget->pixPasswordVerify->setText ( "" );
 	}
