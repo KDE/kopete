@@ -104,6 +104,10 @@ void KopetePluginDataObject::fromXML( const QDomElement& element )
 		QMap<QString, QString> pluginData;
 		QString pluginId = element.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
 
+		//in kopete 0.6 the AIM protocol was called OSCAR
+		if(pluginId == QString::fromLatin1("OscarProtocol"))
+			pluginId=QString::fromLatin1("AIMProtocol");
+
 		QDomNode field = element.firstChild();
 		while( !field.isNull() )
 		{

@@ -2,7 +2,7 @@ METASOURCES = AUTO
 SUBDIRS = private ui compat
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private $(all_includes)
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
 
 update_DATA = kopete-pluginloader.upd kopete-pluginloader.pl
 updatedir = $(kde_datadir)/kconf_update

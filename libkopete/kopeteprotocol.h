@@ -158,6 +158,12 @@ public slots:
 	 */
 	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
 
+	/**
+	 * @internal
+	 * kopeteAccount call this slot when accounts created or deleted
+	 */
+	void slotAccountAdded();
+
 signals:
 	/**
 	 * The status icon changed.
@@ -177,7 +183,6 @@ private slots:
 	 * response to account status changes
 	 */
 	void slotRefreshStatus();
-	void slotAccountAdded();
 
 protected:
 	KopeteOnlineStatus m_status;
