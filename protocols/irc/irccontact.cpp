@@ -286,7 +286,7 @@ void IRCContact::incomingPrivAction(const QString &originating, const QString &t
 {
 	if (mTarget.lower() == target.lower())
 	{
-		if (mTabPage != 0)
+		if (mTabPage == 0)
 		{
 			mPendingMessage.clear();
 			mPendingMessage << "action" << originating << target << message;
