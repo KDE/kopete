@@ -12,8 +12,6 @@ libkopeteoscarsocket_la_SOURCES = oscarsocket.cpp \
 
 libkopeteoscarsocket_la_LIBADD = $(LIB_KIO)
 
-#EXTRA_DIST =
-
 AM_CPPFLAGS = -DDATADIR=\"$(kde_datadir)/kopete\" \
 	$(KOPETE_INCLUDES) \
 	-I$(top_srcdir)/kopete/protocols/oscar \

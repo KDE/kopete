@@ -177,7 +177,7 @@ int OscarSocket::encodePassword(unsigned char *digest)
  *  help from the good people at Gaim */
 void OscarSocket::parseMemRequest(Buffer &inbuf)
 {
-	DWORD offset = inbuf.getDWord();
+	/* DWORD offset = */ inbuf.getDWord();
 	DWORD len = inbuf.getDWord();
 
 	QPtrList<TLV> ql = inbuf.getTLVList();
