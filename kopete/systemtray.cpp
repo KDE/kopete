@@ -24,6 +24,7 @@
 #include <qtooltip.h>
 #include <qregexp.h>
 
+#include <kwin.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
@@ -228,7 +229,7 @@ void KopeteSystemTray::addBalloon()
 			QRegExp rx( "(<a[^>]+[^<]+</a>)" );
 			if ( rx.search( msgText ) == -1 )
 			{
-				// no URLs in text, just pick the first 30 chars of 
+				// no URLs in text, just pick the first 30 chars of
 				// the plain text if necessary
 				msgText = msg.plainBody();
 				if( msgText.length() > 30 )
@@ -264,6 +265,7 @@ void KopeteSystemTray::addBalloon()
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
 			m_balloon->setAnchor( KopeteSystemTray::systemTray()->mapToGlobal(pos()) );
 			m_balloon->show();
+			KWin::setOnAllDesktops(m_balloon->winId() , true);
 		}
 	}
 }
