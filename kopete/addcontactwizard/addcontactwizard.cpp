@@ -46,6 +46,7 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <klineeditdlg.h>
 
 #include <kpushbutton.h>
 #include <kdebug.h>
@@ -88,11 +89,15 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		m_accountItems.insert(accountLVI,i);
 	}
 
+	// Get a reference to the address book
+	m_addressBook = KABC::StdAddressBook::self();
+	KABC::StdAddressBook::setAutomaticSave( false );
+	
 	// Populate the addressee list
 	// This could be slow - is there a better way of doing it (progressive loading?)
-	loadAddressees();
-
-
+	slotLoadAddressees();
+	
+	connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 
 	if ( accounts.count() == 1 )
 	{
@@ -105,10 +110,10 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	setFinishEnabled(finis, true);
 
 	// FIXME: steal/add a create addressee widget
-	addAddresseeButton->setEnabled( false );
+	//addAddresseeButton->setEnabled( false );
 	// Addressee validation connections
 	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
-	connect( chkNoAddressee, SIGNAL( toggled( bool ) ),
+	connect( chkAddressee, SIGNAL( toggled( bool ) ),
 			SLOT( slotCheckAddresseeChoice( bool ) ) );
 	connect( addresseeListView, SIGNAL( clicked(QListViewItem * ) ),
 			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
@@ -126,31 +131,49 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 }
 
+
 AddContactWizard::~AddContactWizard()
 {
 }
 
-void AddContactWizard::loadAddressees()
+void AddContactWizard::slotLoadAddressees()
 {
 	addresseeListView->clear();
-	KABC::AddressBook* ab = KABC::StdAddressBook::self();
-	KABC::StdAddressBook::setAutomaticSave( false );
 	KABC::AddressBook::Iterator it;
-	for( it = ab->begin(); it != ab->end(); ++it )
+	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
 		/*KABC::AddresseeItem *item =*/ new KABC::AddresseeItem( addresseeListView, (*it) );
 }
 
 void AddContactWizard::slotAddAddresseeClicked()
 {
+	bool* ok;
+	*ok = false;
 	// Pop up add addressee dialog
+	QString addresseeName = KLineEditDlg::getText( i18n( "Name for new Address Book entry:" ),
+													 QString::null, ok, this ); 
+	if ( *ok && !addresseeName.isEmpty() )
+	{
+		KABC::Addressee addr;
+		addr.setNameFromString( addresseeName );
+		m_addressBook->insertAddressee( addr );
+		KABC::Ticket *ticket = m_addressBook->requestSaveTicket();
+		if ( !ticket ) {
+			kdError() << "Resource is locked by other application!" << endl;
+		} else {
+			if ( !m_addressBook->save( ticket ) ) {
+				kdError() << "Saving failed!" << endl;
+			}
+			m_addressBook->releaseSaveTicket( ticket );
+		}
+	}
 }
 
 void AddContactWizard::slotCheckAddresseeChoice( bool on )
 {
 	// Disable addressee selection widgets
-	addresseeListView->setEnabled( !on );
-	addAddresseeButton->setEnabled( !on );
-	if ( on )
+	addresseeListView->setEnabled( on );
+	addAddresseeButton->setEnabled( on );
+	if ( !on )
 		setNextEnabled( selectAddressee, true );
 	else
 	{
@@ -247,7 +270,9 @@ void AddContactWizard::accept()
 	}
 	else
 		delete metaContact;
-
+	
+	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
+	
 	deleteLater();
 }
 

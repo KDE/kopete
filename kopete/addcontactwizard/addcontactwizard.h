@@ -25,7 +25,7 @@
 #include <qmap.h>
 
 #include <kdebug.h>
-
+#include <kabc/addressbook.h>
 #include "addcontactwizard_base.h"
 
 class AddContactPage;
@@ -52,10 +52,7 @@ private:
 	QMap <KopeteAccount*,AddContactPage*> protocolPages;
 	QMap <QCheckListItem*,KopeteAccount*> m_accountItems;
 	QMap <QCheckListItem*,KopeteGroup*> m_groupItems;
-	/**
-	 * Utility function, populates the addressee list
-	 */
-	void loadAddressees();
+	KABC::AddressBook* m_addressBook;
 	
 public slots:
 	virtual void accept();
@@ -68,6 +65,10 @@ protected slots:
 	void slotAddAddresseeClicked();
 	void slotCheckAddresseeChoice( bool on );
 	void slotAddresseeListClicked( QListViewItem *addressee );
+	/**
+	 * Utility function, populates the addressee list
+	 */
+	void slotLoadAddressees();
 };
 
 #endif

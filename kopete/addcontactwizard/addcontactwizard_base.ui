@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>AddContactWizard_Base</class>
 <widget class="QWizard">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>786</width>
-            <height>482</height>
+            <height>484</height>
         </rect>
     </property>
     <property name="caption">
@@ -241,13 +241,16 @@
                     </widget>
                     <widget class="QCheckBox">
                         <property name="name">
-                            <cstring>chkNoAddressee</cstring>
+                            <cstring>chkAddressee</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Do not use the KDE address book for this contact</string>
+                            <string>&amp;Use the KDE address book for this contact</string>
                         </property>
                         <property name="accel">
-                            <string>Alt+D</string>
+                            <string>Alt+U</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>Check box this if you don't want to integrate other KDE applications with Kopete</string>
