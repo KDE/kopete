@@ -51,7 +51,7 @@
 #include <netinet/in.h>
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
-// FIXME: needs to be resolved before 0.8/kde3.2 will be out !
+
 const int NUM_SERVERS = 5;
 const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.88",
