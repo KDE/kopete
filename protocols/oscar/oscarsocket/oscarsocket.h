@@ -435,7 +435,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Adds a buddy to the BLM service (not permanent, local only)
 		 */
-		void OscarSocket::sendAddBuddylist(const QString &contactName);
+		void sendAddBuddylist(const QString &contactName);
 
 		/*
 		 * Changes a buddy's group on the server
@@ -481,7 +481,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Dels a buddy from the BLM service (not permanent, local only)
 		 */
-		 void OscarSocket::sendDelBuddylist(const QString &contactName);
+		 void sendDelBuddylist(const QString &contactName);
 
 		/*
 		 * Sends the server lots of information
