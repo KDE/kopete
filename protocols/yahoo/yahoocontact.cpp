@@ -1,7 +1,7 @@
 /*
     yahoocontact.cpp - Yahoo Contact
 
-    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
+    Copyright (c) 2003-2004 by Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
@@ -18,6 +18,9 @@
     *************************************************************************
 */
 #include "kopetegroup.h"
+#include "kopetemessagemanager.h"
+#include "kopeteonlinestatus.h"
+#include "kopetemetacontact.h"
 #include "kopetemessagemanagerfactory.h"
 
 // Local Includes
@@ -32,25 +35,18 @@
 #include <kapplication.h>
 #include <kmessagebox.h>
 
-YahooContact::YahooContact(YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
-	: KopeteContact(account, userId, metaContact)
+YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact )
+	: KopeteContact( account, userId, metaContact )
 {
-	kdDebug(14180) << "YahooContact::YahooContact(" << userId << ", " << fullName << ")" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	m_userId = userId;
 	m_manager = 0L;
-	m_status.setStatus(YahooStatus::Offline);
 	m_account = account;
 
 	// Update ContactList
-	setDisplayName(fullName);
-	setOnlineStatus(m_status.ys2kos());
-
-	// XXX initActions();
-
-//	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-//	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));
-	//TODO: Probably doesn't save contacts now!
+	setDisplayName( fullName );
+	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
 
 	if ( m_account->haveContactList() )
 		syncToServer();
@@ -66,30 +62,6 @@ void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QStrin
 
 	KopeteContact::serialize(serializedData, addressBookData);
 }
-
-void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int /*away*/)
-{
-	kdDebug(14180) << "Yahoo::setYahooStatus( " << status_ << ", " << msg << ")" << endl;
-	if (status_ == 13)
-		m_status.setStatus(status_, msg);
-	else
-		m_status.setStatus(status_);
-	setOnlineStatus( m_status.ys2kos() );
-}
-
-/*
-void YahooContact::slotUpdateStatus(QString status, QString statusText)
-{
-	kdDebug(14180) << "[YahooContact::slotUpdateStatus(" << status << ")]" << endl;
-	kdDebug(14180) "Buddy  - updating " << handle << " to " << status << "." << endl;
-	if (status != QString("")) {
-		mStatus = status;
-		kdDebug(14180) << "Yahoo plugin: Updating status." << endl;
-	}
-	mStatusText = statusText;
-	setOnlineStatus( m_status.ys2kos() );
-}
-*/
 
 void YahooContact::syncToServer()
 {
@@ -128,15 +100,15 @@ KopeteMessageManager *YahooContact::manager( bool )
 		m_them.append( this );
 		m_manager = KopeteMessageManagerFactory::factory()->create( m_account->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
-		connect( m_manager, SIGNAL( messageSent(KopeteMessage &, KopeteMessageManager *) ), this, SLOT( slotSendMessage(KopeteMessage &) ) );
-		connect( m_manager, SIGNAL( typingMsg(bool) ), this, SLOT(slotTyping(bool) ) );
-		connect( m_account, SIGNAL( receivedTypingMsg(const QString &, bool) ), m_manager, SLOT( receivedTypingMsg(const QString &, bool) ) );
+		connect( m_manager, SIGNAL( messageSent ( KopeteMessage&, KopeteMessageManager* ) ), this, SLOT( slotSendMessage( KopeteMessage& ) ) );
+		connect( m_manager, SIGNAL( typingMsg( bool) ), this, SLOT( slotTyping( bool ) ) );
+		connect( m_account, SIGNAL( receivedTypingMsg( const QString &, bool ) ), m_manager, SLOT( receivedTypingMsg( const QString&, bool ) ) );
 	}
 
 	return m_manager;
 }
 
-void YahooContact::slotSendMessage(KopeteMessage &message)
+void YahooContact::slotSendMessage( KopeteMessage &message )
 {
 	kdDebug(14180) << k_funcinfo << endl;
 

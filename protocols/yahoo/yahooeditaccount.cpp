@@ -23,6 +23,7 @@
 #include <qlayout.h>
 
 // KDE Includes
+#include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 
@@ -38,7 +39,7 @@
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << k_funcinfo << endl;
-  
+
 	theProtocol = protocol;
 
 	mPasswordWidget = new Kopete::UI::PasswordWidget( mAccountInfo );
@@ -60,12 +61,12 @@ bool YahooEditAccount::validateData()
 	kdDebug(14180) << k_funcinfo << endl;
 
 	if(mScreenName->text().isEmpty())
-	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, 
+	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
 			i18n("<qt>You must enter a valid screen name.</qt>"), i18n("Yahoo"));
 		return false;
 	}
 	if(!mPasswordWidget->validate())
-	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, 
+	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
 			i18n("<qt>You must enter a valid password.</qt>"), i18n("Yahoo"));
 		return false;
 	}
@@ -82,7 +83,7 @@ KopeteAccount *YahooEditAccount::apply()
 	YahooAccount *yahooAccount = static_cast<YahooAccount *>(account());
 
 	yahooAccount->setAutoLogin(mAutoConnect->isChecked());
-	
+
 	mPasswordWidget->save(&yahooAccount->password());
 
 	return yahooAccount;

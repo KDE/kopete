@@ -2,9 +2,9 @@
     yahooprotocol.h - Yahoo Plugin for Kopete
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net
+    Copyright (c) 2003-2004 by Matt Rogers <mattrogers@sbcglobal.net
 
-    Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -41,6 +41,7 @@ class KAction;
 class KopeteMetaContact;
 class KopeteMessage;
 class YahooPreferences;
+class KopeteOnlineStatus;
 
 class YahooProtocol : public KopeteProtocol
 {
@@ -49,11 +50,30 @@ public:
 	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
 	~YahooProtocol();
 
+	//Online Statuses
+	const KopeteOnlineStatus Offline;
+	const KopeteOnlineStatus Online;
+	const KopeteOnlineStatus BeRightBack;
+	const KopeteOnlineStatus Busy;
+	const KopeteOnlineStatus NotAtHome;
+	const KopeteOnlineStatus NotAtMyDesk;
+	const KopeteOnlineStatus NotInTheOffice;
+	const KopeteOnlineStatus OnThePhone;
+	const KopeteOnlineStatus OnVacation;
+	const KopeteOnlineStatus OutToLunch;
+	const KopeteOnlineStatus SteppedOut;
+	const KopeteOnlineStatus Invisible;
+	const KopeteOnlineStatus Custom;
+	const KopeteOnlineStatus Idle;
+
+	/** Protocol Accessor **/
 	static YahooProtocol *protocol();
 
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 					 const QMap<QString,QString> &serializedData,
 					 const QMap<QString, QString> &addressBookData );
+
+	KopeteOnlineStatus statusFromYahoo( int status );
 
 public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);

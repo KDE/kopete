@@ -1,7 +1,7 @@
 /*
     yahoocontact.h - Yahoo Contact
 
-    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
+    Copyright (c) 2003-2004 by Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
@@ -21,38 +21,29 @@
 #ifndef YAHOOCONTACT_H
 #define YAHOOCONTACT_H
 
-/* QT Includes */
-#include <qtimer.h>
-
-/* KDE Includes */
-
 /* Kopete Includes */
 #include "kopetecontact.h"
-#include "kopetemetacontact.h"
-#include "kopeteonlinestatus.h"
 
-/* Local Includes */
-#include "yahooprotocol.h"
-#include "yahoostatus.h"
-
-class YahooProtocol;
 class KopeteMessageManager;
+class KopeteMetaContact;
+class KopeteOnlineStatus;
+class YahooProtocol;
 class YahooAccount;
 
 class YahooContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	YahooContact(YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
+	YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact );
 
 	~YahooContact();
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
 	virtual KopeteMessageManager *manager( bool canCreate = false );
-	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
+	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
-	void setYahooStatus(YahooStatus::Status, const QString & = "", int = 0);
+	void setYahooStatus( const KopeteOnlineStatus& );
 
 public slots:
 	virtual void slotUserInfo();
@@ -67,14 +58,16 @@ public slots:
 
 private slots:
 	void slotMessageManagerDestroyed();
-	void slotSendMessage(KopeteMessage &);
-	void slotTyping(bool);
+	void slotSendMessage( KopeteMessage& );
+	void slotTyping( bool );
 
 private:
+	//the user id of the contact
 	QString m_userId;
-	YahooStatus m_status;
+
+	//The message manager
 	KopeteMessageManager *m_manager;
-	
+
 	//the account that this contact belongs to
 	YahooAccount* m_account;
 };

@@ -37,6 +37,7 @@ class KAction;
 class KActionMenu;
 class YahooContact;
 class YahooAccount;
+class YahooProtocol;
 
 class YahooAwayDialog : public KopeteAwayDialog
 {
@@ -72,7 +73,7 @@ public:
 	 * The session
 	 */
 	YahooSession *yahooSession();
-	
+
 	/**
 	 * Returns true if contact @p id is on the server-side contact list
 	 */
@@ -106,7 +107,7 @@ signals:
 	 * Emitted when we receive notification that the person we're talking to is typing
 	 */
 	void receivedTypingMsg(const QString &contactId, bool isTyping);
-	
+
 	/**
 	 * Emitted when a reconnect is needed due to a bad password
 	 */
@@ -117,7 +118,7 @@ protected:
 	 * Adds our Yahoo contact to a metacontact
 	 */
 	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
-	
+
 	/**
 	 * Gets the just-received message color
 	 */
@@ -126,7 +127,7 @@ protected:
 	 * Remove color codes from a message
 	 */
 	QString stripMsgColorCodes(const QString& msg);
-	
+
 protected slots:
 	virtual void loaded();
 
@@ -172,9 +173,9 @@ private slots:
 	void slotGoStatus012() { slotGoStatus(12); } // Invisible
 	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
-	
+
 	/**
-	 * Set an error flag so that the password box 
+	 * Set an error flag so that the password box
 	 * is popped up again when the password is wrong
 	 */
 	void slotNeedReconnect();
@@ -201,6 +202,7 @@ private:
 	bool m_importContacts;		// Import the contacts from the server
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooSession *m_session;	// Connection Object
+	YahooProtocol *m_protocol;	// The Protocol Object
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 };
