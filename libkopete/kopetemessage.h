@@ -71,6 +71,7 @@ public:
 	void setFg(QColor color);
 	void setBg(QColor color);
 	void setFont(QFont font);
+	void setBody( const QString& body );
 
 protected:
 	// Helper for constructors

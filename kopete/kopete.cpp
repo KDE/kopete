@@ -88,10 +88,14 @@ void Kopete::initialize()
 
 	mAppearance = new AppearanceConfig(m_mainWindow);
 	mUserPreferencesConfig = new KopeteUserPreferencesConfig(m_mainWindow);
-	
+
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
 	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");
+        connect( mMessageManagerFactory, SIGNAL(messageReceived(KopeteMessage&)),
+                 SIGNAL(aboutToDisplay(KopeteMessage&)) );
+        connect( mMessageManagerFactory, SIGNAL(messageQueued(KopeteMessage&)),
+                 SIGNAL(aboutToSend(KopeteMessage&)) );
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
@@ -277,10 +281,10 @@ QString Kopete::parseEmoticons( QString message )
 	{
 		return message;
 	}
-	
+
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 	QString em;
-	
+
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
 		em = (*it);
@@ -288,8 +292,7 @@ QString Kopete::parseEmoticons( QString message )
 		em.replace( QRegExp("\\("), "\\(" );
 		em.replace( QRegExp("\\>"), "\\>" );
 		em.replace( QRegExp("\\<"), "\\<" );
-		kdDebug() << "emoticon to exchange: " << em << endl;
-	
+
 		message = message.replace ( QRegExp(em), "<img src=\""+KopeteEmoticons::emoticons()->emoticonToPicPath(*it)+"\">" );
 	}
 	return message;

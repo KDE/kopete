@@ -69,6 +69,11 @@ void KopeteMessage::setFont(QFont font)
 	mFont = font;
 }
 
+void KopeteMessage::setBody( const QString& body )
+{
+	mBody = body;
+}
+
 void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction)
 {

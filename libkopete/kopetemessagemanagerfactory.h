@@ -69,6 +69,10 @@ public:
 	  */
 	void cleanSessions( KopeteProtocol *);
 
+signals:
+	void messageReceived( KopeteMessage& message );
+	void messageQueued( KopeteMessage& message );
+
 protected slots:
 	void slotRemoveSession( KopeteMessageManager *session );
 

@@ -126,6 +126,17 @@ signals:
 	void messageSent(const KopeteMessage& msg, KopeteMessageManager *);
 	void dying(KopeteMessageManager *);
 
+	/**
+	 * The following signals are used internally by Kopete.
+	 * They allow plugins to change message before
+	 * they are being displayed or sent.
+	 * If I'll see them used anywhere in plugins I will
+	 * strangle the author - Zack
+	 */
+	void messageReceived( KopeteMessage& msg );
+	void messageQueued( KopeteMessage& msg );
+
+
 public slots:
 	void readModeChanged();
 	void slotSendEnabled(bool);
@@ -134,7 +145,7 @@ protected slots:
 	void slotEventDeleted(KopeteEvent *);
 	void slotChatWindowClosing();
 	void slotReplyWindowClosing();
-	void slotMessageSent(const KopeteMessage &message);
+	void slotMessageSent(KopeteMessage &message);
 	void slotReadMessages();
 	void slotReply();
 

@@ -25,6 +25,7 @@
 #endif
 
 #include <kuniqueapplication.h>
+#include "kopetemessage.h"
 
 class KIconLoader;
 class KStatusBar;
@@ -65,7 +66,7 @@ class KopeteUserPreferencesConfig;
 class Kopete : public KUniqueApplication
 {
 	Q_OBJECT
-	
+
 public:
 	Kopete();
 	~Kopete();
@@ -174,6 +175,23 @@ public slots:
 	void slotShowTransfers();
 
 signals:
+	/**
+	 * This signal is emitted whenever a message
+	 * is about to be displayed by the KopeteChatWindow.
+	 * Please remember that both messages sent and
+	 * messages received will emit this signal!
+	 * Plugins may connect to this signal to change
+	 * the message contents before it's going to be displayed.
+	 */
+	void aboutToDisplay( KopeteMessage& );
+
+	/**
+	 * Plugins may connect to this signal
+	 * to manipulate the contents of the
+	 * message that is being sent.
+	 */
+	void aboutToSend( KopeteMessage& );
+
 	void signalSettingsChanged();
 
 private slots:

@@ -104,6 +104,8 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 		 * method and call from KMM's destructor
 		 */
 		connect( result, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
+		connect( result, SIGNAL(messageReceived(KopeteMessage&)), SIGNAL(messageReceived(KopeteMessage&)) );
+		connect( result, SIGNAL(messageQueued(KopeteMessage&)), SIGNAL(messageQueued(KopeteMessage&)) );
 	}
 	return (result);
 }

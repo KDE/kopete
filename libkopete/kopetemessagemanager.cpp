@@ -101,15 +101,15 @@ void KopeteMessageManager::newChatWindow() {
 		/* When the window is shown, we have to delete this contact event */
 		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect (d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
-		connect (d->mChatWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
 		connect (d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
 	}
 	if (d->mWidget == Email) {
 		d->mEmailWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailWindow->setSendEnabled(d->mSendEnabled);
 		connect (d->mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
-		connect (d->mEmailWindow, SIGNAL(sendMessage(const KopeteMessage &)),
-			 this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (d->mEmailWindow, SIGNAL(sendMessage(KopeteMessage &)),
+			 this, SLOT(slotMessageSent(KopeteMessage &)));
 		connect (d->mEmailWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
 		connect (d->mEmailWindow, SIGNAL(replyClicked()), this, SLOT(slotReply()));
 	}
@@ -123,8 +123,8 @@ void KopeteMessageManager::newReplyWindow() {
 		d->mEmailReplyWindow->setReplyMode(true);
 		d->mEmailReplyWindow->show();
 		d->mEmailReplyWindow->raise();
-		connect (d->mEmailReplyWindow, SIGNAL(sendMessage(const KopeteMessage &)),
-			 this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (d->mEmailReplyWindow, SIGNAL(sendMessage(KopeteMessage &)),
+			 this, SLOT(slotMessageSent(KopeteMessage &)));
 		connect (d->mEmailReplyWindow, SIGNAL(closeClicked()),
 			 this, SLOT(slotReplyWindowClosing()));
 	}
@@ -169,6 +169,7 @@ void KopeteMessageManager::readMessages()
 		for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it++)
 		{
 			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
+			emit messageReceived( *it );
 			d->mChatWindow->messageReceived(*it);
 		}
 		d->mChatWindow->show();	// show message window again
@@ -186,6 +187,7 @@ void KopeteMessageManager::readMessages()
 			d->mEmailWindow->raise();
 		for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it++) {
 			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
+			emit messageReceived( *it );
 			d->mEmailWindow->messageReceived(*it);
 		}
 		d->mEmailWindow->show();
@@ -238,7 +240,9 @@ void KopeteMessageManager::slotReply() {
 	}
 }
 
-void KopeteMessageManager::slotMessageSent(const KopeteMessage &message) {
+void KopeteMessageManager::slotMessageSent(KopeteMessage &message) {
+
+	emit messageQueued( message );
 	emit messageSent(message, this);
 	if ( KopetePrefs::prefs()->soundNotify() )
 	    KNotifyClient::event("kopete_outgoing");
@@ -314,8 +318,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg ) {
 	}
 
 	if (d->mReadMode == Popup)
-    	readMessages();
-
+		readMessages();
 	else if (d->mReadMode == Queued) {
 		/* Second stage, do it */
 		if (isvisible) {
