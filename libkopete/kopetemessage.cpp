@@ -137,10 +137,22 @@ QString KopeteMessage::escapedBody() const
 {
 	if( mFormat == PlainText )
 	{
-		QString parsedString = QStyleSheet::escape( mBody ).replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br>\n" ) );
+		QStringList words;
+		QString parsedString;
+
+		//Strip whitespace off the end of the string only
+		//(stripWhiteSpace removes it from beginning as well)
+		int stringEnd = mBody.findRev( QRegExp( QString::fromLatin1( "\\S" ) ) );
+		kdDebug(14010) << k_funcinfo << "String End:" << stringEnd <<endl;
+		if( stringEnd > -1 )
+			parsedString = QStyleSheet::escape( mBody.left( stringEnd ) );
+		else
+			parsedString = QStyleSheet::escape( mBody );
+
+		words = QStringList::split( ' ', parsedString, true );
+
 		// Replace multiple spaces with '&nbsp;', but leave the first space
 		// intact for any necessary wordwrap:
-		QStringList words = QStringList::split( ' ', parsedString, true );
 		parsedString = "";
 		for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
 		{
@@ -150,10 +162,13 @@ QString KopeteMessage::escapedBody() const
 				parsedString += *it + QString::fromLatin1( " " );
 		}
 
-		// Lastly, remove trailing whitespace:
-		parsedString.stripWhiteSpace();
+		//Replace carriage returns inside the text
+		parsedString = parsedString.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
 
-		kdDebug(14010) << "KopeteMessage::escapeBody: " << parsedString <<endl;
+		//Replace a tab with 4 spaces
+		parsedString = parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+
+		kdDebug(14010) << k_funcinfo << parsedString <<endl;
 		return parsedString;
 	}
 
@@ -342,24 +357,6 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 			case '\r':
 				lastReplacement = idx;
 				break;
-			case '\n':
-				lastReplacement = idx;
-				result += QString::fromLatin1( "<br>" );
-				break;
-			case '\t':		// tab == 4 spaces
-				lastReplacement = idx;
-				result += QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" );
-				break;
-			case ' ':		// convert doubles spaces to HTML
-			{
-				if( (idx>0) && (text[idx-1]==' '))
-					result += QString::fromLatin1( "&nbsp;" );
-				else
-					result += QString::fromLatin1( " " );
-				lastReplacement = idx;
-				break;
-			}
-
 			case '@':		// email-addresses or message-ids
 			{
 				if ( parseURLs )
