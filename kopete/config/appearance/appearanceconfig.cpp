@@ -747,8 +747,8 @@ void AppearanceConfig::removeSelectedTheme()
 			"This will delete the files installed by this theme.</qt>").
 		arg(themeName);
 
-	int res = KMessageBox::questionYesNo(this, question, i18n("Confirmation"));
-	if (res!=KMessageBox::Yes)
+        int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStdGuiItem::del());
+	if (res!=KMessageBox::Continue)
 		return;
 
 	KURL themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
