@@ -64,7 +64,7 @@ KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot
 KListAction *KopeteStdAction::copyContact( const QObject *recvr,
 	const char *slot, QObject* parent, const char *name )
 {
-	return new KopeteGroupList( "&Move Contact", "editcopy", 0, recvr, slot,
+	return new KopeteGroupList( "&Copy Contact", "editcopy", 0, recvr, slot,
 		parent, name );
 }
 
