@@ -36,11 +36,12 @@
 #include "kopetecontactlist.h"
 #include "kopetestdaction.h"
 
-//#include "aimbuddylist.h"
 #include "oscaraccount.h"
 #include "oscarsocket.h"
-#include "icqchangestatus.h"
+#include "oscarsocket.icq.h"
 #include "oscarcontact.h"
+
+#include "icqchangestatus.h"
 //#include "icquserinfo.h"
 
 #include <klineeditdlg.h>
@@ -137,9 +138,9 @@ void ICQAccount::setAway(bool away, const QString &awayReason)
 	kdDebug(14200) << k_funcinfo << " " << accountId() << endl;
 // TODO: Make use of away message as well
 	if(away)
-		mEngine->sendStatus(ICQ_STATUS_ONLINE);
-	else
 		mEngine->sendStatus(ICQ_STATUS_AWAY);
+	else
+		mEngine->sendStatus(ICQ_STATUS_ONLINE);
 }
 
 OscarContact *ICQAccount::createNewContact(

@@ -15,6 +15,7 @@
 */
 
 #include "oscarsocket.h"
+#include "oscarsocket.icq.h"
 
 #include "oscaraccount.h"
 #include <qdatetime.h>
@@ -343,15 +344,15 @@ void OscarSocket::sendReqOfflineMessages()
 	Buffer outbuf;
 	outbuf.addSnac(0x0015,0x0002,0x0000,0x00010002);
 
-	int tlvlength = 2 + 4 + 2 + 2;
-
 	outbuf.addWord(0x0001); // TLV(1)
-	outbuf.addWord(tlvlength); // length of TLV
-	outbuf.addWord(tlvlength-2); // length of data inside TLV
-	outbuf.addDWord(getSN().toULong()); // own uin
+	outbuf.addWord(0x000A); // length of TLV, 10
+	outbuf.addWord(0x0800); // length of data inside TLV, 8
+	unsigned long tmpuin = getSN().toULong(); // own uin
+	outbuf.addWord((tmpuin & 0xff00) >> 8);
+	outbuf.addWord((tmpuin & 0x00ff));
 	outbuf.addWord(0x3c00); // subcommand, request offline messages (60)
 	outbuf.addWord(0x0200); // TODO: make this the snac sequence's upper Word minus 1!
-//	outbuf.print();
+   outbuf.print();
 	sendBuf(outbuf, 0x2);
 }
 
@@ -538,4 +539,77 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 	kdDebug(14150) << k_funcinfo <<  "END" << endl;
 }
 
+// TODO: get on with the coding, need to implement that sequence counting and
+// some sort of packet queue so I know what requests I sent out
+
+/*
+bool requestAutoReply(unsigned long uin, unsigned long status)
+{
+	if (status == 0)
+		return false;
+
+	responseRequestSeq = --advCounter;
+	unsigned char type = 0xE8;
+	if (status & ICQ_STATUS_DND)
+		type = 0xEB;
+	else if (status & ICQ_STATUS_OCCUPIED)
+		type = 0xE9;
+	else if (status & ICQ_STATUS_NA)
+		type = 0xEA;
+	else if (status & ICQ_STATUS_FREEFORCHAT)
+		type = 0xEC;
+
+
+	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_SENDMSG), requesting away message" << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(OSCAR_FAM_4,0x0006,0x0000,0x00000000);
+	outbuf.addDWord(0x00000000); // TIME
+	outbuf.addDWord(0x00000000); // ID
+
+	outbuf.addWord(MSGFORMAT_ADVANCED); // type-2 message
+	outbuf.addDWord(getSN().toULong()); // own uin
+
+
+	Buffer tlv10001;
+	tlv10001.addWord(0x1B00); // length
+	tlv10001.addWord(ICQ_TCP_VERSION);
+	tlv10001.addDWord(0x00000000); // CAP
+	tlv10001.addDWord(0x00000000); // CAP
+	tlv10001.addDWord(0x00000000); // CAP
+	tlv10001.addDWord(0x00000000); // CAP
+	tlv10001.addDWord(0x00000003); // unknown
+	tlv10001.addDWord(0x00000000); // unknown -> 0 = normal message
+	<< advCounter << 0xE000 << advCounter
+	<< 0x00000000L << 0x00000000L << 0x00000000L
+	<< type << (char)3;
+	tlv10001.pack((unsigned short)(client->owner->uStatus & 0xFFFF));
+	tlv10001 << 0x0100 << 0x0100 << (char)0;
+
+	// TLV(2) =============
+	Buffer tlv2;
+	tlv2.addWord(0x0000) // acktype, 0 = normal message
+	tlv2.addDWord(0x00000000); // time
+	tlv2.addDWord(0x00000000); // random message id
+	tlv2.addDWord(0x09461349); // CAP SERVERRELAY
+	tlv2.addDWord(0x4C7F11D1); // CAP SERVERRELAY
+	tlv2.addDWord(0x82224445); // CAP SERVERRELAY
+	tlv2.addDWord(0x53540000); // CAP SERVERRELAY
+
+	tlv2.addWord(0x000A); // TLV(10)
+	tlv2.addWord(0x0002); // len
+	tlv2.addWord(0x0001); // data, acktype2, 1 = normal message
+
+	tlv2.addWord(0x000F); // TLV(15), always empty
+	tlv2.addWord(0x0000); // len
+
+	tlv2.addTLV(0x2711, tlv10001.data, tlv10001.length);
+	// ========================
+
+	outbuf.addTLV(0x0002, tlv2.data, tlv2.length )
+//	outbuf.print();
+	sendBuf(outbuf, 0x2);
+}
+*/
 // vim: set noet ts=4 sts=4 sw=4:
+

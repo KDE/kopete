@@ -99,15 +99,6 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define OSCAR_SERVER 			"login.oscar.aol.com"
 #define OSCAR_PORT 				5190
 
-//** Internal status for the ICQ protocol **/
-const unsigned short ICQ_STATUS_ONLINE		= 0x0000;
-const unsigned short ICQ_STATUS_OFFLINE	= 0xFFFF;
-const unsigned short ICQ_STATUS_AWAY		= 0x0001;
-const unsigned short ICQ_STATUS_DND			= 0x0002;
-const unsigned short ICQ_STATUS_NA			= 0x0004;
-const unsigned short ICQ_STATUS_OCC			= 0x0010;
-const unsigned short ICQ_STATUS_FFC			= 0x0020;
-
 #define USERCLASS_TRIAL					0x0001
 #define USERCLASS_UNKNOWN2 			0x0002
 #define USERCLASS_AOL					0x0004
@@ -136,11 +127,7 @@ const unsigned short ICQ_STATUS_FFC			= 0x0020;
 #define AIM_CAPS_TRILLIANCRYPT	0x00010000
 #define AIM_CAPS_LAST				0x00020000
 
-
-
 #define KOPETE_AIM_CAPS				AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-// AIM_CAPS_ICQSERVERRELAY commented out until we support
-// type-2 icq-messages (SRV_RECVMSG with type=0x0004)
 #define KOPETE_ICQ_CAPS				AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY
 
 /**Implements the actual communication with the oscar server
@@ -510,3 +497,4 @@ class OscarSocket : public OscarConnection
 		void directIMConnectionClosed(QString name);
 };
 #endif
+// vim: set noet ts=4 sts=4 sw=4:

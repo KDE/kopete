@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>312</width>
-            <height>375</height>
+            <height>307</height>
         </rect>
     </property>
     <property name="caption">
@@ -22,38 +22,6 @@
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox4</cstring>
-            </property>
-            <property name="title">
-                <string>Account Type</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mAIM</cstring>
-                    </property>
-                    <property name="text">
-                        <string>AIM</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mICQ</cstring>
-                    </property>
-                    <property name="text">
-                        <string>ICQ</string>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>groupBox5</cstring>
@@ -70,7 +38,7 @@
                         <cstring>mTxtAccountId</cstring>
                     </property>
                     <property name="text">
-                        <string>Account:</string>
+                        <string>UIN:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -112,7 +80,7 @@
                         <cstring>mSavePassword</cstring>
                     </property>
                     <property name="text">
-                        <string>Save password</string>
+                        <string>Remember password</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -148,12 +116,6 @@
                     <property name="name">
                         <cstring>mServer</cstring>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Defaults for this field are:
-&lt;p&gt;AIM: login.oscar.aol.com&lt;/p&gt;
-&lt;p&gt;ICQ: login.icq.com&lt;/p&gt;
-</string>
-                    </property>
                 </widget>
                 <widget class="QLabel">
                     <property name="name">
@@ -174,7 +136,7 @@
                         <number>1</number>
                     </property>
                     <property name="value">
-                        <number>1</number>
+                        <number>5190</number>
                     </property>
                 </widget>
             </hbox>
@@ -199,8 +161,6 @@
     </vbox>
 </widget>
 <tabstops>
-    <tabstop>mAIM</tabstop>
-    <tabstop>mICQ</tabstop>
     <tabstop>mAccountId</tabstop>
     <tabstop>mPassword</tabstop>
     <tabstop>mSavePassword</tabstop>

@@ -43,8 +43,8 @@
 
 #include "icqaccount.h"
 #include "aim.h"
-//#include "aimbuddylist.h"
 #include "oscarsocket.h"
+#include "oscarsocket.icq.h"
 
 ICQContact::ICQContact(const QString name, const QString displayName,
 	ICQAccount *acc, KopeteMetaContact *parent)

@@ -214,7 +214,7 @@ void OscarContact::setIdleTime(unsigned int idleTime)
 		return;
 
 	kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
-		"' idletime is now " << mIdle << " seconds." << endl;
+		"' idletime is now " << mIdle << " minutes." << endl;
 
 	if(mIdle > 0 /*mListContact->idleTime() > 0*/)
 		setIdleState(Idle);

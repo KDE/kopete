@@ -102,7 +102,7 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 			account = createNewAccount(accountId);
 		else
 			return;
-		// FIX! What is account failed?
+		// FIXME: What is account failed?
 		if (!account)
 			kdDebug(14200) << k_funcinfo << "Error creating new account" << endl;
 	}

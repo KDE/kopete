@@ -12,7 +12,7 @@
 
 #include "icqprotocol.h"
 #include "icqaccount.h"
-
+#include "oscarsocket.icq.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)
@@ -25,7 +25,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 	// create the gui (generated from a .ui file)
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	mGui = new OscarEditAccountUI(this, "OscarEditAccountWidget::mGui");
+	mGui = new OscarEditAccountUI(this, "ICQEditAccountWidget::mGui");
 
 	// Read in the settings from the account if it exists
 	if (account)
@@ -45,8 +45,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		// Just set the default saved password to true
 		mGui->mSavePassword->setChecked(true);
 		// These come from OscarSocket where they are #defined
-		mGui->mServer->setText( OSCAR_SERVER );
-		mGui->mPort->setValue( OSCAR_PORT );
+		mGui->mServer->setText(ICQ_SERVER);
+		mGui->mPort->setValue(ICQ_PORT);
 	}
 }
 
@@ -87,23 +87,15 @@ bool ICQEditAccountWidget::validateData()
 	QString server = mGui->mServer->text();
 	int port = mGui->mPort->value();
 
-	if (mGui->mICQ->isChecked())
-	{
-		if (userName.contains(" "))
-			return false;
+	if (userName.contains(" "))
+		return false;
 
-		if (userName.length() < 4)
-			return false;
+	if (userName.length() < 4)
+		return false;
 
-		for (unsigned int i=0; i<userName.length(); i++)
-		{
-			if(!(userName[i]).isNumber())
-				return false;
-		}
-	}
-	else
+	for (unsigned int i=0; i<userName.length(); i++)
 	{
-		if (userName.length() < 1)
+		if(!(userName[i]).isNumber())
 			return false;
 	}
 
