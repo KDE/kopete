@@ -226,9 +226,6 @@ private:
 
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
-	QTimer *m_keepalive;
-
-	bool m_waitingForKeepalive;
 };
 
 #endif

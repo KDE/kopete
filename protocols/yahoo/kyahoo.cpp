@@ -139,9 +139,6 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	m_socket = 0L;
-	m_waitingForKeepalive = false;
-	m_keepalive = new QTimer(this, "keepaliveTimer");
-	connect( m_keepalive, SIGNAL( timeout() ), this, SLOT( refresh() ) );
 }
 
 int YahooSession::sessionId() const
@@ -177,30 +174,16 @@ void YahooSession::logOff()
 {
 	kdDebug(14181)<< k_funcinfo << " " << m_connId <<endl;
 	yahoo_logoff( m_connId );
-	if (m_keepalive)
-		m_keepalive->stop();
 
-	if ( m_socket )
-	{
-		if ( m_socket->isOpen() )
-		{
-			m_socket->reset();
-		}
-	}
+	if ( m_socket && m_socket->isOpen() )
+		m_socket->reset();
+
 }
 
 void YahooSession::refresh()
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	if ( !m_waitingForKeepalive )
-	{
-		m_waitingForKeepalive = true;
-		yahoo_refresh( m_connId );
-	}
-	else
-	{	// use 2 for the value of fatal here because it's a keepalive disconnect
-		emit error( "Disconnected by keepalive." , 2 );
-	}
+	yahoo_refresh( m_connId );
 }
 
 void YahooSession::setIdentityStatus( const QString &identity, int active)
@@ -718,9 +701,6 @@ void YahooSession::_loginResponseReceiver( int succ, const char *url )
 
 	kdDebug(14181) << k_funcinfo << endl;
 
-	if ( succ == YAHOO_LOGIN_OK )
-		m_keepalive->start(60000);
-
 	emit loginResponse( succ, QString( url ) );
 }
 
@@ -1040,9 +1020,6 @@ void YahooSession::slotReadReady()
 	int ret = 1;
 	int fd = m_socket->fd();
 	//kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
-
-	m_waitingForKeepalive = false;
-
 	ret = yahoo_read_ready( m_connId , fd, m_data );
 
 	if ( ret == -1 )
