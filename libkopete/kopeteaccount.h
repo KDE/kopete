@@ -202,11 +202,6 @@ public slots:
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
 
 signals:
-	/**
-	 * this signal is emitted when this account is deleted
-	 */
-	void accountDestroyed(KopeteAccount * );
-
 	void accountIdChanged();
 
 	void passwordChanged();

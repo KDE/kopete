@@ -119,7 +119,6 @@ KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, 
 	{
 		d->protocol=account->protocol();
 		account->registerContact( this );
-		connect( account, SIGNAL( accountDestroyed(KopeteAccount*) ), SLOT( slotAccountDestroyed() ) );
 	}
 
 	// Initialize the context menu
@@ -165,10 +164,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->account=0l;
 	
 	if( protocol )
-	{
 		protocol->registerContact( this );
-		connect( protocol, SIGNAL( unloading() ), SLOT( slotAccountDestroyed() ) );
-	}
 
 	// Initialize the context menu
 	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             this, "actionChat" );
@@ -196,14 +192,6 @@ KopeteContact::~KopeteContact()
 	emit( contactDestroyed( this ) );
 
 	delete d;
-}
-
-void KopeteContact::slotAccountDestroyed()
-{
-	//use of delete this and not deleteLater because later is too late :-D
-	//we have to delete contacts _before_ the deletion of the protocol
-	//
-	delete this;
 }
 
 void KopeteContact::setConversations( int value ) const

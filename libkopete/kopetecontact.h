@@ -365,7 +365,6 @@ private slots:
 	void slotChangeDisplayName();
 
 	void slotMoveDialogOkClicked();
-	void slotAccountDestroyed();
 
 	/**
 	 * View the chat history

@@ -64,9 +64,6 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 	d->autologin=false;
 	d->password=QString::null;
 
-	//we have to delete the account before the custom protocol.
-	//because contact are deleted when the account is deleted
-	QObject::connect( parent , SIGNAL(unloading() ) , this , SLOT(deleteLater()));
 	KopeteAccountManager::manager()->registerAccount(this);
 
 	//the prococol need to acess to myself, which is create later, in the customAccount constructor
@@ -82,7 +79,8 @@ KopeteAccount::~KopeteAccount()
 	if( !d->contacts.isEmpty() )
 		kdDebug() << k_funcinfo << "?????????? Contact list not empty ???" << endl;
 
-	emit accountDestroyed( this );
+	KopeteAccountManager::manager()->unregisterAccount( this );
+
 	delete d;
 }
 

@@ -123,12 +123,6 @@ public slots:
 	 */
 	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data );
 
-signals:
-	/*
-	 * Signal emitted when the protocol is unloaded
-	 */
-	void unloading();
-
 private:
 	QStringList m_addressBookFields;
 	QString m_indexField;

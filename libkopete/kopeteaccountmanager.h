@@ -39,6 +39,12 @@ class KopeteAccountManager : public QObject
 {
 	Q_OBJECT
 
+	/**
+	 * KopeteAccount needs to be able to call register/unregister,
+	 * so make it a friend.
+	 */
+	friend class KopeteAccount;
+
 public:
 	/**
 	 * Retrieve the instance of KopeteAccountManager.
@@ -49,14 +55,6 @@ public:
 	static KopeteAccountManager* manager();
 
 	~KopeteAccountManager();
-
-	/**
-	 * @internal
-	 * Register the account.
-	 * To be called ONLY from KopeteContact, not from any other class!
-	 * (Not even a derived class).
-	 */
-	void registerAccount(KopeteAccount* );
 
 	/**
 	 * Retrieve the list of accounts
@@ -118,13 +116,29 @@ private:
 	 * Private constructor, because we're a singleton
 	 */
 	KopeteAccountManager();
+
+	/**
+	 * @internal
+	 * Register the account.
+	 * To be called ONLY from KopeteContact, not from any other class!
+	 * (Not even a derived class).
+	 */
+	void registerAccount( KopeteAccount *account );
+
+	/**
+	 * @internal
+	 * Unregister the account.
+	 * To be called ONLY from KopeteContact, not from any other class!
+	 * (Not even a derived class).
+	 */
+	void unregisterAccount( KopeteAccount *account );
+
 	static KopeteAccountManager *s_manager;
 
 	QPtrList<KopeteAccount> m_accounts;
 	QDomDocument m_accountList;
 
 private slots:
-	void slotAccountDestroyed( KopeteAccount * );
 	void loadProtocol( KopetePlugin * );
 };
 

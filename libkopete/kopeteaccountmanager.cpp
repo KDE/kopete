@@ -167,7 +167,6 @@ void KopeteAccountManager::setAvailableAll()
 void KopeteAccountManager::registerAccount(KopeteAccount *i)
 {
 	m_accounts.append( i );
-	QObject::connect( i, SIGNAL( accountDestroyed( KopeteAccount * ) ), this , SLOT( slotAccountDestroyed( KopeteAccount * ) ) );
 }
 
 const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
@@ -197,14 +196,10 @@ KopeteAccount* KopeteAccountManager::findAccount(const QString& protocolId, cons
 	return 0L;
 }
 
-
-
-void KopeteAccountManager::slotAccountDestroyed(KopeteAccount* i)
+void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 {
-	m_accounts.remove(i);
+	m_accounts.remove( account );
 }
-
-
 
 void KopeteAccountManager::save()
 {
