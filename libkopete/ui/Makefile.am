@@ -1,14 +1,8 @@
 METASOURCES = AUTO
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
-	$(KOPETE_INCLUDES) $(all_includes)
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteui.la
-noinst_HEADERS = configmodule.h \
-	preferencesdialog.h \
-	addcontactpage.h  \
-	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
-	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h \
-        kopeteemailwindow.h userinfodialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp preferencesdialog.cpp \
 	kopetecontactaction.cpp addcontactpage.cpp \
@@ -27,3 +21,6 @@ libkopeteui_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(LIB_KHTML)
 
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetechatwindow.rc kopeteemailwindow.rc
+
+# vim: set noet:
+

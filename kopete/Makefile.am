@@ -2,6 +2,7 @@ AM_CPPFLAGS = -I$(srcdir)/conf \
 	-I$(srcdir)/addcontactwizard \
 	-I./addcontactwizard \
 	-I../libkopete/ui \
+	-I$(top_srcdir)/kopete/libkopete/private \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
 
