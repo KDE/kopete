@@ -17,11 +17,11 @@
   <xsl:variable name="show-timestamps">yes</xsl:variable>
 
   <!-- Blank these values and it should use Kopete's settings (temporary workaround) -->
-  <xsl:variable name="font-size">12px</xsl:variable>
-  <xsl:variable name="font-family">Verdana</xsl:variable>
-  <xsl:variable name="name-font-size">10px</xsl:variable>
-  <xsl:variable name="timestamp-font-size">10px</xsl:variable>
-  <xsl:variable name="timestamp-color">LightSlateGrey</xsl:variable>
+  <xsl:variable name="font-size"></xsl:variable>
+  <xsl:variable name="font-family"></xsl:variable>
+  <xsl:variable name="name-font-size">0.8em</xsl:variable>
+  <xsl:variable name="timestamp-font-size">0.8em</xsl:variable>
+  <xsl:variable name="timestamp-color"></xsl:variable>
 
   <xsl:template match="message">
     <div class="KopeteMessage" style="padding-bottom:0px;">
