@@ -63,7 +63,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	//m_status = m_unknownStatus = m_Unknown;
 
-	new IRCPreferences("irc_protocol", this);
+	/* TODO:
+	 * This is commented out until there is stuff in the prefs page that is valid. I didn't
+	 * actually remove the prefs files because I know in 0.8 there will be stuff there, so
+	 * no point removing it all then re-adding it later
+	 */
+	//new IRCPreferences("irc_protocol", this);
 
 	KConfig *cfg = KGlobal::config();
         cfg->setGroup("IRC");
