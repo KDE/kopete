@@ -42,6 +42,7 @@
 #include "pluginloader.h"
 #include "pluginmanager.h"
 
+class AppearanceConfig;
 class LibraryLoader;
 class KopeteLibraryInfo;
 class KopeteSystemTray;
@@ -106,6 +107,7 @@ class Kopete : public KUniqueApplication
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
 	KopeteEmoticons mEmoticons;
+	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
 	static void cleverKCrashHack(int);
 	void loadPlugins();

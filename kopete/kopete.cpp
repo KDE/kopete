@@ -30,6 +30,8 @@
 #include <kopete.h>
 #include <preferencesdialog.h>
 #include <kopetewindow.h>
+
+#include "ui/appearanceconfig.h"
 #include "plugin.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
@@ -52,6 +54,8 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	setMainWidget(mainwindow);
 	mainwindow->statusBar()->show();
   	mPref->hide();
+
+	mAppearance = new AppearanceConfig(mainwindow);
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
