@@ -32,7 +32,7 @@
 #include <kapplication.h>
 #include <kmessagebox.h>
 
-YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
+YahooContact::YahooContact(YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
 	: KopeteContact(account, userId, metaContact)
 {
 	kdDebug(14180) << "YahooContact::YahooContact(" << userId << ", " << fullName << ")" << endl;
@@ -40,7 +40,7 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 	m_userId = userId;
 	m_manager = 0L;
 	m_status.setStatus(YahooStatus::Offline);
-	m_account = static_cast<YahooAccount*>(account);
+	m_account = account;
 
 	// Update ContactList
 	setDisplayName(fullName);
