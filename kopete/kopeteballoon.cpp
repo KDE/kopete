@@ -25,7 +25,7 @@
 #include <qlayout.h>
 
 #include <kdeversion.h>
-#if KDE_VERSION > 0x030100
+#if KDE_VERSION > 0x030190
 #include <kglobalsettings.h>
 #endif
 
@@ -121,7 +121,7 @@ void KopeteBalloon::updateMask()
 
 	// get screen-geometry for screen our anchor is on
 	// (geometry can differ from screen to screen!
-	#if KDE_VERSION > 0x030100
+	#if KDE_VERSION > 0x030190
 		QRect deskRect = KGlobalSettings::desktopGeometry(m_anchor);
 	#else
 		QDesktopWidget* tmp = QApplication::desktop();
