@@ -4,7 +4,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_translator.la kcm_kopete_translator.la
 
-kopete_translator_la_SOURCES     = translatorplugin.cpp translatorprefs.cpp translatorprefsbase.ui \
+kopete_translator_la_SOURCES     = translatorplugin.cpp  \
     translatordialog.cpp translatorguiclient.cpp translatorlanguages.cpp
 kopete_translator_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_translator_la_LIBADD      = ../../libkopete/libkopete.la $(LIB_KIO)
