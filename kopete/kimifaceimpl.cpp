@@ -308,3 +308,5 @@ void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
 		kapp->dcopClient()->emitDCOPSignal( "contactStatusChanged(QString)", params );
 	}
 }
+
+#include "kimifaceimpl.moc"
