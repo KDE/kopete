@@ -14,13 +14,14 @@ SUBDIRS = conf addcontactwizard
 noinst_HEADERS = \
 	kopetewindow.h kopete.h \
 	kopetemetacontactlvi.h kopetegroupviewitem.h kopetecontactlistview.h \
-	statusbaricon.h
+	statusbaricon.h systemtray.h kopeteballoon.h
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
 	kopetewindow.cpp kopete.cpp kopeteiface.cpp kopeteiface.skel \
 	kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \
-	statusbaricon.cpp kopetecontactlistview.cpp
+	statusbaricon.cpp kopetecontactlistview.cpp systemtray.cpp \
+	kopeteballoon.cpp
 
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \

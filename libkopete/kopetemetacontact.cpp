@@ -39,7 +39,6 @@
 
 #if KDE_VERSION >= 306
 #include <kpassivepopup.h>
-#include "systemtray.h"
 #endif
 
 #define EMAIL_WINDOW 0
@@ -440,16 +439,17 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
 	{
 		KopetePrefs *pref = KopetePrefs::prefs();
+		/* I re-moved this in KopeteMetaContactLVI because now, systemTray is private api
 		#if KDE_VERSION >= 306
 		if ( pref->notifyOnline() && pref->showTray() )
 		{
 			KPassivePopup::message(
 				i18n( "%2 is now %1!" ).arg(statusString()).arg(displayName()),
 				QString(),
-				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ),
-				KopeteSystemTray::systemTray() );
+				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ), 
+				qApp->mainWidget() ); //KopeteSystemTray::systemTray() );
 		}
-		#endif
+		#endif*/
 
 		KopeteProtocol* proto = dynamic_cast<KopeteProtocol*>(c->protocol());
 		if (!proto)

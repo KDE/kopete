@@ -5,16 +5,14 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 noinst_LTLIBRARIES = libkopeteui.la
 noinst_HEADERS = configmodule.h \
 	preferencesdialog.h \
-	addcontactpage.h systemtray.h \
-	kopeteballoon.h \
+	addcontactpage.h  \
 	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
 	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h \
         kopeteemailwindow.h
 
 libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp kopetecontactaction.cpp \
-	addcontactpage.cpp systemtray.cpp \
-	kopeteballoon.cpp \
+	addcontactpage.cpp \
 	kopetehistorydialog.cpp \
 	kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp \
