@@ -28,6 +28,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kcmdlineargs.h>
 
 #include "addwizardimpl.h"
 #include "appearanceconfig.h"
@@ -102,7 +103,17 @@ void Kopete::initialize()
 	KConfig *config = KGlobal::config();
 	config->setGroup("");
 
+	// Parse command-line arguments
+	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+	// --noplugins specified?
+	if (!args->isSet("plugins"))
+	{
+		config->writeEntry("Modules", "");
+	}
+
 	// Ups! the user does not have plugins selected.
+	// TODO: show "first time" wizard and let user decide which modules to load
 	if (!config->hasKey("Modules"))
 	{
 		QStringList modules;
