@@ -486,10 +486,11 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
 	bool transferStarted=( m_Rfile || m_Sfile );  //we are stransfering binary if any of the file exists
 	
-	QCString messageHeader=QString(
+	const QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
  				"Content-Type: application/x-msnmsgrp2p\r\n"
  				"P2P-Dest: "+ m_msgHandle  +"\r\n\r\n").utf8();
+	const uint messageHeaderLength = messageHeader.length();
 
 
 	QByteArray binHeader(48);
@@ -560,23 +561,23 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 
 
 	//merge all in a unique message
-	QByteArray data( messageHeader.length() + binHeader.size() + dataMessage.size() + 4 );
-	for(unsigned int f=0; f< messageHeader.length() ; f++)
+	QByteArray data( messageHeaderLength + binHeader.size() + dataMessage.size() + 4 );
+	for(unsigned int f=0; f< messageHeaderLength ; f++)
 		data[f]=messageHeader[f];
 	for(unsigned int f=0; f< binHeader.size() ; f++)
-		data[messageHeader.length()+f]=binHeader[f];
+		data[messageHeaderLength+f]=binHeader[f];
 	for(unsigned int f=0; f< dataMessage.size() ; f++)
-		data[messageHeader.length()+binHeader.size()+f]=dataMessage[f];
+		data[messageHeaderLength+binHeader.size()+f]=dataMessage[f];
 	for(unsigned int f=0; f< 4 ; f++) //footer
-		data[messageHeader.length()+binHeader.size()+dataMessage.size()+f]='\0';
+		data[messageHeaderLength+binHeader.size()+dataMessage.size()+f]='\0';
 
 	if(transferStarted)
 	{ //then, the footer ends with \1  (only for display pictures)
-		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\1';
+		data[messageHeaderLength+binHeader.size() + dataMessage.size()  +3 ]='\1';
 	}
 	else if(m_imageToSend.size()>0)
 	{ //then, the footer ends with \3  (for sending images)
-		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\3';
+		data[messageHeaderLength+binHeader.size() + dataMessage.size()  +3 ]='\3';
 	}
 
 	//send the message
@@ -586,10 +587,11 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 void MSNP2P::sendP2PAck( const char* originalHeader )
 {
 
-	QCString messageHeader=QString(
+	const QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
 				"Content-Type: application/x-msnmsgrp2p\r\n"
 				"P2P-Dest: "+ m_msgHandle  +"\r\n\r\n").utf8();
+	const uint messageHeaderLength = messageHeader.length();
 
 
 	QByteArray binHeader(48);
@@ -654,13 +656,13 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 	binHeader[47]=originalHeader[23];
 
 
-	QByteArray data( messageHeader.length() + binHeader.size() + 4 );
-	for(unsigned int f=0; f< messageHeader.length() ; f++)
+	QByteArray data( messageHeaderLength + binHeader.size() + 4 );
+	for(unsigned int f=0; f< messageHeaderLength ; f++)
 		data[f]=messageHeader[f];
 	for(unsigned int f=0; f< binHeader.size() ; f++) //if binHeader is a QCString, it ends with \0 , which is ok
-		data[messageHeader.length()+f]=binHeader[f];
+		data[messageHeaderLength+f]=binHeader[f];
 	for(unsigned int f=0; f< 4 ; f++)
-		data[messageHeader.length()+binHeader.size() +f ]='\0';
+		data[messageHeaderLength+binHeader.size() +f ]='\0';
 
 	emit sendCommand("MSG", "D" , true , data , true );
 }
