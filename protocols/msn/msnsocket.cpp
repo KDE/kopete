@@ -222,6 +222,7 @@ void MSNSocket::slotReadLine()
 		if ( m_buffer.size() >= 3 && ( m_buffer.data()[ 0 ] == '\0' || m_buffer.data()[ 0 ]== '\1' ) )
 		{
 			bytesReceived( m_buffer.take( 3 ) );
+			QTimer::singleShot( 0, this, SLOT( slotReadLine() ) );
 			return;
 		}
 
