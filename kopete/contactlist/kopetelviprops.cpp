@@ -22,15 +22,16 @@
 #include <kdebug.h>
 
 #include <klocale.h>
-#include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
 #include <qlabel.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qtabwidget.h>
 
-#include <kconfig.h>
 #include <kdialogbase.h>
 #include <kfiledialog.h>
 #include <kicondialog.h>
+#include <kurlrequester.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/addressee.h>
@@ -38,14 +39,14 @@
 #include <kurlrequester.h>
 
 #include "kopeteaddrbookexport.h"
-
-#include "kopeteeventpresentation.h"
-#include "kopetenotifyevent.h"
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontact.h"
 #include "kopetenotifyclient.h"
 #include "kopetemetacontactlvi.h"
+
+#include "customnotificationprops.h"
+#include "customnotifications.h"
 
 const char MC_OFF[] = "metacontact_offline";
 const char MC_ON[] = "metacontact_online";
@@ -59,6 +60,10 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 	mainWidget = new KopeteGVIPropsWidget(this, "mainWidget");
 	mainWidget->icnbOpen->setIconSize(KIcon::SizeSmall);
 	mainWidget->icnbClosed->setIconSize(KIcon::SizeSmall);
+	
+	mNotificationProps = new CustomNotificationProps( this, gvi->group() );
+	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+
 	setMainWidget(mainWidget);
 	item = gvi;
 	m_dirty = false;
@@ -108,6 +113,8 @@ void KopeteGVIProps::slotOkClicked()
 		item->group()->setIcon( mainWidget->icnbClosed->icon(),
 			KopetePluginDataObject::Closed );
 	}
+	
+	mNotificationProps->storeCurrentCustoms();
 }
 
 void KopeteGVIProps::slotUseCustomIconsToggled(bool on)
@@ -134,6 +141,23 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	mainWidget->icnbOnline->setIconSize( KIcon::SizeSmall );
 	mainWidget->icnbAway->setIconSize( KIcon::SizeSmall );
 	mainWidget->icnbUnknown->setIconSize( KIcon::SizeSmall );
+
+	mNotificationProps = new CustomNotificationProps( this, lvi->metaContact() );
+	// add a button to the notification props to get the sound from KABC
+	// the widget's vert box layout
+	QBoxLayout * vb = static_cast<QVBoxLayout*>( mNotificationProps->widget()->layout() );
+	// horiz box layout containing button, spacer
+	QHBoxLayout* hb = new QHBoxLayout( vb, -1, "soundFromKABClayout" );
+	mFromKABC = new QPushButton( i18n( "Sync KABC..." ), mNotificationProps->widget(), "getSoundFromKABC" );
+	hb->addWidget( mFromKABC );
+	hb->addStretch();
+	//QSpacerItem h_spacer = 
+// 	hb->addItem( new QSpacerItem( 1, 1 ) );
+	//vb->addLayout( hb );
+	//vb->addItem( new QSpacerItem( 1, 1 ) );
+	vb->addStretch();
+	
+	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
 	setMainWidget( mainWidget );
 	item = lvi;
 
@@ -183,7 +207,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		mExport = new KopeteAddressBookExport( this, item->metaContact() );
 		
 		mSound = a.sound();
-		mainWidget->btnFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
+		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
 	}
 	
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
@@ -195,13 +219,11 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotSelectAddresseeClicked() ) );
 	connect( mainWidget->btnMerge, SIGNAL( clicked() ),
 		this, SLOT( slotMergeClicked() ) );
-	connect( mainWidget->btnFromKABC, SIGNAL( clicked() ),
+	connect( mFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
-    connect( mainWidget->customSound, SIGNAL( openFileDialog( KURLRequester * )),
+    connect( mNotificationProps->widget()->customSound, SIGNAL( openFileDialog( KURLRequester * )),
              SLOT( openSoundDialog( KURLRequester * )));
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
-
-	populateEventsCombo();
 }
 
 KopeteMetaLVIProps::~KopeteMetaLVIProps()
@@ -242,8 +264,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	if ( !mainWidget->chkHasAddressbookEntry->isChecked() )
 		item->metaContact()->setMetaContactId( QString::null );
 	
-	// save the widgets' state
-	storeCurrentCustoms();
+	mNotificationProps->storeCurrentCustoms();
 }
 
 void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
@@ -275,12 +296,12 @@ void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 	 {
 	 	mainWidget->edtAddressee->setText( QString::null ) ;
 		mainWidget->btnMerge->setEnabled( false );
-		mainWidget->btnFromKABC->setEnabled( false );
+		mFromKABC->setEnabled( false );
 	 }
 	 else
 	 {
 		mSound = a.sound();
-		mainWidget->btnFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
+		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
 	 	mainWidget->btnMerge->setEnabled( true );
 		// set the lineedit to the Addressee's name
 		mainWidget->edtAddressee->setText( a.realName() );
@@ -297,167 +318,45 @@ void KopeteMetaLVIProps::slotMergeClicked()
 		mExport->exportData();
 }
 
-void KopeteMetaLVIProps::populateEventsCombo()
-{
-	QString path = "kopete/eventsrc";
-	KConfig eventsfile( path, true, false, "data" );
-	m_eventList = eventsfile.groupList();
-	QStringList contactSpecificEvents; // we are only interested in events that relate to contacts
-	QStringList::Iterator it = m_eventList.begin();
-	QStringList::Iterator end = m_eventList.end();
-	for ( ; it != end; ++it )
-	{
-		if ( !(*it).startsWith( QString::fromLatin1( "kopete_contact_" ) ) )
-			continue;
-		contactSpecificEvents.append( *it );
-		QMap<QString, QString> entries = eventsfile.entryMap( *it );
-		eventsfile.setGroup( *it );
-		QString comment = eventsfile.readEntry( "Comment", QString::fromLatin1( "Found nothing!" ) );
-		mainWidget->cmbEvents->insertItem( comment );
-	}
-	m_eventList = contactSpecificEvents;
-	slotEventsComboChanged( mainWidget->cmbEvents->currentItem() );
-	connect( mainWidget->cmbEvents, SIGNAL( activated( int ) ), this, SLOT( slotEventsComboChanged( int ) ) );
-}
-
-void KopeteMetaLVIProps::slotEventsComboChanged( int itemNo )
-{
-	// if the combo has changed, store the previous state of the widgets
-	// record the selected item so we can save it when the widget changes next
-	storeCurrentCustoms();
-	m_event = m_eventList[ itemNo ];
-	// update the widgets for the selected item
-	// get the corresponding KopeteNotifyEvent
-	KopeteNotifyEvent *evt = item->metaContact()->notifyEvent( m_event );
-	// set the widgets accordingly
-	resetEventWidgets();
-	if ( evt )
-	{
-		// sound presentation
-		KopeteEventPresentation *pres = evt->presentation( KopeteEventPresentation::Sound );
-		if ( pres )
-		{
-			mainWidget->chkCustomSound->setChecked( pres->enabled() );
-			mainWidget->customSound->setURL( pres->content() );
-			mainWidget->chkSoundSS->setChecked( pres->singleShot() );
-		}
-		// message presentation
-		pres = evt->presentation( KopeteEventPresentation::Message );
-		if ( pres )
-		{
-			mainWidget->chkCustomMsg->setChecked( pres->enabled() );
-			mainWidget->customMsg->setText( pres->content() );
-			mainWidget->chkMsgSS->setChecked( pres->singleShot() );
-		}
-		// chat presentation
-		pres = evt->presentation( KopeteEventPresentation::Chat );
-		if ( pres )
-		{
-			mainWidget->chkCustomChat->setChecked( pres->enabled() );
-			mainWidget->chkChatSS->setChecked( pres->singleShot() );
-		}
-		mainWidget->chkSuppressCommon->setChecked( evt->suppressCommon() );
-	}
-	//dumpData();
-}
-
-
-void KopeteMetaLVIProps::dumpData()
-{
-	KopeteNotifyEvent *evt = item->metaContact()->notifyEvent( m_event );
-	if ( evt )
-		kdDebug( 14000 ) << k_funcinfo << evt->toString() << endl;
-	else 
-		kdDebug( 14000 ) << k_funcinfo << " no event exists." << endl;
-}
-
-void KopeteMetaLVIProps::resetEventWidgets()
-{
-	mainWidget->chkCustomSound->setChecked( false );
-	mainWidget->customSound->clear();
-	mainWidget->chkSoundSS->setChecked( true );
-	mainWidget->chkCustomMsg->setChecked( false );
-	mainWidget->customMsg->clear();
-	mainWidget->chkMsgSS->setChecked( true );
-	mainWidget->chkCustomChat->setChecked( false );
-	mainWidget->chkChatSS->setChecked( true );
-	mainWidget->chkSuppressCommon->setChecked( false );
-}
-
-void KopeteMetaLVIProps::storeCurrentCustoms()
-{
-	if ( !m_event.isNull() )
-	{
-		KopeteNotifyEvent *evt = item->metaContact()->notifyEvent( m_event );
-		if ( !evt )
-		{
-			evt = new KopeteNotifyEvent( );
-			// store the changed event
-			item->metaContact()->setNotifyEvent( m_event, evt );
-		}
-		evt->setSuppressCommon( mainWidget->chkSuppressCommon->isChecked() );
-		// set different presentations
-		KopeteEventPresentation *eventNotify = 0;
-		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Sound, 
-				mainWidget->customSound->url(),
-				mainWidget->chkSoundSS->isChecked(),
-				mainWidget->chkCustomSound->isChecked() );
-		evt->setPresentation( KopeteEventPresentation::Sound, eventNotify );
-		// set message attributes
-		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Message,
-				mainWidget->customMsg->text(),
-				mainWidget->chkMsgSS->isChecked(),
-				mainWidget->chkCustomMsg->isChecked() );
-		evt->setPresentation( KopeteEventPresentation::Message, eventNotify );
-		// set chat attributes
-		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Chat,
-				QString::null,
-				mainWidget->chkChatSS->isChecked(),
-				mainWidget->chkCustomChat->isChecked() );
-		evt->setPresentation( KopeteEventPresentation::Chat, eventNotify );
-		evt->setSuppressCommon( mainWidget->chkSuppressCommon->isChecked() );
-	}
-}
-
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {
-	mainWidget->customSound->setURL( mSound.url() );
+	 mNotificationProps->widget()->customSound->setURL( mSound.url() );
 }
 
 void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
 {
 	// taken from kdelibs/kio/kfile/knotifydialog.cpp
-    // only need to init this once
-    requester->disconnect( SIGNAL( openFileDialog( KURLRequester * )),
-                           this, SLOT( openSoundDialog( KURLRequester * )));
+	// only need to init this once
+	requester->disconnect( SIGNAL( openFileDialog( KURLRequester * )),
+						this, SLOT( openSoundDialog( KURLRequester * )));
 
-    KFileDialog *fileDialog = requester->fileDialog();
-    //fileDialog->setCaption( i18n("Select Sound File") );
-    QStringList filters;
-    filters << "audio/x-wav" << "audio/x-mp3" << "application/ogg"
-            << "audio/x-adpcm";
-    fileDialog->setMimeFilter( filters );
+	KFileDialog *fileDialog = requester->fileDialog();
+	//fileDialog->setCaption( i18n("Select Sound File") );
+	QStringList filters;
+	filters << "audio/x-wav" << "audio/x-mp3" << "application/ogg"
+			<< "audio/x-adpcm";
+	fileDialog->setMimeFilter( filters );
 
-    // find the first "sound"-resource that contains files
-    QStringList soundDirs =
-        KGlobal::dirs()->findDirs("data", "kopete/sounds");
-    soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
+	// find the first "sound"-resource that contains files
+	QStringList soundDirs =
+		KGlobal::dirs()->findDirs("data", "kopete/sounds");
+	soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
 
-    if ( !soundDirs.isEmpty() ) {
-        KURL soundURL;
-        QDir dir;
-        dir.setFilter( QDir::Files | QDir::Readable );
-        QStringList::ConstIterator it = soundDirs.begin();
-        while ( it != soundDirs.end() ) {
-            dir = *it;
-            if ( dir.isReadable() && dir.count() > 2 ) {
-                soundURL.setPath( *it );
-                fileDialog->setURL( soundURL );
-                break;
-            }
-            ++it;
-        }
-    }
+	if ( !soundDirs.isEmpty() ) {
+		KURL soundURL;
+		QDir dir;
+		dir.setFilter( QDir::Files | QDir::Readable );
+		QStringList::ConstIterator it = soundDirs.begin();
+		while ( it != soundDirs.end() ) {
+			dir = *it;
+			if ( dir.isReadable() && dir.count() > 2 ) {
+				soundURL.setPath( *it );
+				fileDialog->setURL( soundURL );
+				break;
+			}
+			++it;
+		}
+	}
 }
 
 #include "kopetelviprops.moc"

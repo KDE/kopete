@@ -25,9 +25,12 @@
 #include "kopetegvipropswidget.h"
 #include "kopetemetalvipropswidget.h"
 
+class CustomNotificationProps;
+class KPushButton;
 class KopeteGroupViewItem;
 class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
+class KURLRequester;
 
 class KopeteGVIProps: public KDialogBase
 {
@@ -38,6 +41,7 @@ class KopeteGVIProps: public KDialogBase
 		~KopeteGVIProps();
 
 	private:
+		CustomNotificationProps * mNotificationProps;
 		KopeteGVIPropsWidget *mainWidget;
 		KopeteGroupViewItem *item;
 		bool m_dirty;
@@ -58,16 +62,11 @@ class KopeteMetaLVIProps: public KDialogBase
 		~KopeteMetaLVIProps();
 
 	private:
-		void populateEventsCombo();
-		void dumpData();
-		void resetEventWidgets();
-		void storeCurrentCustoms();
-
+		CustomNotificationProps * mNotificationProps;
+		QPushButton *mFromKABC;
 		KopeteMetaLVIPropsWidget *mainWidget;
 		KopeteMetaContactLVI *item;
 		KopeteAddressBookExport *mExport;
-		QStringList m_eventList;
-		QString m_event;
 		KABC::Sound mSound;
 
 	private slots:
@@ -77,7 +76,6 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotSelectAddresseeClicked();
 		void slotMergeClicked();
 		void slotFromKABCClicked();
-		void slotEventsComboChanged( int item );
 		void slotOpenSoundDialog( KURLRequester *requester );
 };
 
