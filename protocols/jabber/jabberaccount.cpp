@@ -660,10 +660,18 @@ void JabberAccount::slotCSAuthenticated ()
 	}
 	else
 	{
-		ByteStream *byteStream = jabberClientConnector->stream();
-		if( byteStream->inherits ( "BSocket" ) || byteStream->inherits ( "XMPP::BSocket" ) )
+		// code for Iris-type bytestreams
+		ByteStream *irisByteStream = jabberClientConnector->stream();
+		if ( irisByteStream->inherits ( "BSocket" ) || irisByteStream->inherits ( "XMPP::BSocket" ) )
 		{
-			localAddress = ( (BSocket *)byteStream )->address().toString ();
+			localAddress = ( (BSocket *)irisByteStream )->address().toString ();
+		}
+
+		// code for the KDE-type bytestream
+		JabberByteStream *kdeByteStream = dynamic_cast<JabberByteStream*>(jabberClientConnector->stream());
+		if( kdeByteStream )
+		{
+			localAddress = kdeByteStream->socket()->localAddress().nodeName ();
 		}
 	}
 
