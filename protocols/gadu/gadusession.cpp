@@ -4,6 +4,7 @@
 #include <qobject.h>
 #include <kdebug.h>
 #include <errno.h>
+#include <string.h>
 
 #include "gadusession.h"
 
@@ -91,9 +92,9 @@ GaduSession::login( uin_t uin, const QString& password,
 
     memset( &p, 0, sizeof(p) );
     p.uin = uin;
-    p.password = password.latin1();
+    strcpy(p.password, password.latin1());
     p.status = status;
-    p.status_descr = statusDescr.latin1();
+    strcpy(p.status_descr, statusDescr.latin1());
     p.async = 1;
     login( p );
 }
@@ -154,7 +155,7 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg,
         return gg_send_message( session_,
                                 msgClass,
                                 recipient,
-                                msg.latin1() );
+                                reinterpret_cast<const unsigned char*>(msg.latin1()) );
     else
         emit error( i18n("Not Connected..."),
                     i18n("You are not connected to the server!") );
@@ -169,7 +170,7 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
         return gg_send_message_ctcp( session_,
                                      msgClass,
                                      recipient,
-                                     msg.latin1(),
+                                     reinterpret_cast<const unsigned char*>(msg.latin1()),
                                      msg.length() );
     else
         emit error( i18n("Not Connected..."),
