@@ -69,7 +69,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 
 OscarContact::~OscarContact()
 {
-	kdDebug() << "[OscarContact] ~OscarContact()" << endl;
+		//kdDebug() << "[OscarContact] ~OscarContact()" << endl;
 }
 
 /** Pops up a chat window */
@@ -178,15 +178,15 @@ void OscarContact::slotBuddyChanged(int buddyNum)
 
 //		actionSendMessage->setEnabled(false);
 //		actionInfo->setEnabled(false);
-
+		
 //		emit userStatusChanged(OSCAR_OFFLINE);
 //		emit statusChanged();
 		emit statusChanged( this, status() );
 		return;
 	}
-
-
-	// We can only send messages to online users
+	
+	
+	// We can only send messages to online user
 //	actionSendMessage->setEnabled(mStatus != TAIM_OFFLINE);
 //	actionInfo->setEnabled(mStatus != TAIM_OFFLINE);
 
@@ -269,24 +269,27 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 /** Called when user info is requested */
 void OscarContact::slotUserInfo(void)
 {
-	TBuddy tmpBuddy;
-	int num = mProtocol->buddyList()->getNum(mName);
-
-	if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1)
-	{
-		if (!mProtocol->isConnected())
-		{
-			KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you would like to change the user's nickname.</qt>"), i18n("You Must be Connected") );
-		} else {
-			if (tmpBuddy.status == TAIM_OFFLINE)
-			{
-				KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ), i18n("User not Online"));
-			}
+		TBuddy tmpBuddy;
+		int num = mProtocol->buddyList()->getNum(mName);
+		
+		if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1){
+				if (!mProtocol->isConnected()){
+						KMessageBox::sorry(kopeteapp->mainWindow(),
+										i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
+										i18n("You Must be Connected") );
+				} else {
+						if (tmpBuddy.status == TAIM_OFFLINE){
+								KMessageBox::sorry(kopeteapp->mainWindow(),
+												i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ),
+												i18n("User not Online"));
+						}
+				}
+				OscarUserInfo *Oscaruserinfo =
+						new OscarUserInfo(mName, tmpBuddy.alias, mProtocol, tmpBuddy);
+				connect(Oscaruserinfo, SIGNAL(updateNickname(const QString)),
+								this, SLOT(slotUpdateNickname(const QString)));
+				Oscaruserinfo->show();
 		}
-		OscarUserInfo *Oscaruserinfo = new OscarUserInfo(mName, tmpBuddy.alias, mProtocol, tmpBuddy);
-		connect(Oscaruserinfo, SIGNAL(updateNickname(const QString)), this, SLOT(slotUpdateNickname(const QString)));
-		Oscaruserinfo->show();
-	}
 }
 
 /** Called when an IM is received */
@@ -298,9 +301,12 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 
 		TBuddy tmpBuddy;
 		mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
-		// TODO add code to handle auto responses
-		KopeteMessage parsedMessage = parseAIMHTML( message );
-		msgManager()->appendMessage(parsedMessage);
+		// TODO add code to handle sending auto responses
+		// Build a KopeteMessage and set the body as Rich Text
+		KopeteContactPtrList tmpList;
+		tmpList.append(mProtocol->myself());
+		KopeteMessage msg( this, tmpList, message, KopeteMessage::Inbound, KopeteMessage::RichText);
+		msgManager()->appendMessage(msg);
 	
 		if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
 		{
@@ -311,38 +317,51 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 /** Called when we want to send a message */
 void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManager *)
 {
-	if ( message.body().isEmpty() ) // no text, do nothing
-		return;
+		if ( message.body().isEmpty() ) // no text, do nothing
+				return;
+		
+		TBuddy *tmpBuddy = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
 
-	TBuddy *tmpBuddy = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
+		// Check to see if we're even online
+		if (!mProtocol->isConnected()){
+				KMessageBox::sorry(kopeteapp->mainWindow(),
+								i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
+								i18n("Not Signed On"));
+				return;
+		}
 
-	if (!mProtocol->isConnected())
-	{
-		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"), i18n("Not Signed On"));
-		return;
-	}
-	if (tmpBuddy->status == TAIM_OFFLINE || mStatus == TAIM_OFFLINE)
-	{
-		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"), i18n("User not Online"));
-		return;
-	}
-	QString msg = message.plainBody();
+		// Check to see if the person we're sending the message to is online
+		if (tmpBuddy->status == TAIM_OFFLINE || mStatus == TAIM_OFFLINE){
+				KMessageBox::sorry(kopeteapp->mainWindow(),
+								i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"),
+								i18n("User not Online"));
+				return;
+		}
 
-	if ( message.fg().isValid() ) // we want a custom foreground-color
-		msg.prepend ( QString("<FONT COLOR=\"%1\">").arg(message.fg().name()) );
-	else
-		msg.prepend ( QString("<FONT>") );
+		// Build our message, escaping any control characters in it
+		QString msg = message.plainBody();
 
-	msg.append ( "</FONT>" );
+		// we want a custom foreground-color
+		if ( message.fg().isValid() ){
+				msg.prepend ( QString("<FONT COLOR=\"%1\">").arg(message.fg().name()) );
+		} else {
+				msg.prepend ( QString("<FONT>") );
+		}
+		msg.append ( "</FONT>" );
 
-	if ( message.fg().isValid() ) // we want a custom background-color
-		msg.prepend ( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(message.bg().name()) );
-	else
-		msg.prepend ( QString("<HTML><BODY>") );
+		// we want a custom background-color
+		if ( message.bg().isValid() ){
+				msg.prepend ( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(message.bg().name()) );
+		} else {
+				msg.prepend ( QString("<HTML><BODY>") );
+		}		
+		msg.append ( "</BODY></HTML>" );
+		
+		
+		mProtocol->engine->sendIM( msg, mName, false );
 
-	msg.append ( "</BODY></HTML>" );
-	mProtocol->engine->sendIM( msg, mName, false );
-	msgManager()->appendMessage(message);
+		// Show the message we just sent in the chat window
+		msgManager()->appendMessage(message);
 }
 
 /** Called when nickname needs to be updated */
@@ -464,67 +483,10 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	tmpList.append(mProtocol->myself());
 	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound);
 
-	// We get some strange message formats, including ones with multiple HTML tags
-	int htmlStart = result.find( QRegExp(QString("^<HTML>"),false) );
-	while(htmlStart != -1){
-			
-			kdDebug() << "[OSCAR] Start HTML tag location: " << htmlStart << endl;
-			
-			// Remove the HTML tags if there
-			result.remove ( htmlStart, 6 );
-			
-			// Remove final HTML tag
-			int htmlEnd = result.findRev( QRegExp(QString("</HTML>$"),false) );
-			kdDebug() << "[OSCAR] End HTML tag location: " << htmlEnd << endl;
-			// Only remove it if it's at the end of the message
-			if( htmlEnd > 0){
-					result.remove( htmlEnd, 7);
-			}
-
-			// Search for the html start tag again for the loop
-			htmlStart = result.find( QRegExp(QString("^<HTML>"),false) );
-	} 
-
-	kdDebug() << "AIM Plugin: message after HTML tags removal: " << result << endl;
-	
-	// Get the background color for the message
-	QStringList backColors = removeTag( result, "BODY" );
-	for( QStringList::Iterator it = backColors.begin(); it != backColors.end(); it++){
-			// Get the modifier (tag attr)
-			QString modifier = (*it).section('=', 0, 0);
-			// Get the value
-			QString value = (*it).section( '=', 1);
-
-			// Remove the quotes from the value if they're there
-			int quotePlace = value.find( '"', 0);
-			if( quotePlace > -1){
-					value.remove( quotePlace, 1);
-			}
-			quotePlace = value.find( '"', 0);
-			if( quotePlace > -1){
-					value.remove( quotePlace, 1);
-			}
-
-	
-			QStringList fontColors = removeTag ( result, "FONT" );
-			for (QStringList::Iterator it = fontColors.begin(); it != fontColors.end(); it++)
-			{
-					QString modifier = (*it).section('=', 0, 0);
-					QString value = (*it).section('=', 1);
-					value.remove(0, 1);
-					value.remove(value.length() -1, 1);
-					if (!modifier.isEmpty() && !value.isEmpty())
-					{
-							if (modifier.lower() == "color")
-									msg.setFg(QColor(value));
-							if (modifier.lower() == "back")
-									msg.setBg(QColor(value));
-					}
-			}
-	}
+	// We don't actually do anything in there yet, but we might eventually
 	
 	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
-	msg.setBody(result , KopeteMessage::PlainText);
+	msg.setBody(result , KopeteMessage::RichText);
 	return msg;
 }
 
