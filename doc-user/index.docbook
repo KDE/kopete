@@ -210,17 +210,21 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>To start a chat from the <interface>Contact List</interface>, simply click a contact.  A <link linkend="chat-window">Chat window</link> will appear.</para>
 <para>You can also <mousebutton>right</mousebutton> click a contact and select either <menuchoice><guimenuitem>Send Message</guimenuitem></menuchoice> or <menuchoice><guimenuitem>Start Chat</guimenuitem></menuchoice>.  <menuchoice><guimenuitem>Send Message</guimenuitem></menuchoice> works differently in that it just sends a single message without opening the <interface>Chat window</interface>, using a simple dialog.  Use it for <quote>fire-and-forget</quote> messages.</para>
 </sect2>
+<sect2 id="contact-list-send-file">
+	<title>Send A File</title>
+	<para>You can send files from the <interface>Contact List</interface>, using the context menu on the person you want to send to.  If Kopete supports file transfer on their &im; system, there will be a <menuchoice><guimenuitem>Send File...</guimenuitem></menuchoice> item.  Alternatively, you can drag a file from anywhere else in KDE onto their name to start a file transfer.</para>
+</sect2>
 <sect2 id="organise-contacts">
 <title>Organising Contacts</title>
 <sect3 id="organise-contacts-metacontacts">
 <title>A Word about Metacontacts</title>
 <para>One of the principles behind &kopete; is that it offers a standardized way to use &im; systems.  Differences between &im; systems are smoothed over, making it easier to communicate.  We follow this principle in the way contacts are organized.  When you use &kopete; you just find contacts by name; the actual &im; system used is less important.  Some people have more than one &im; account - &kopete; puts the person using the account first.</para>
-<para>To support this, &kopete; introduced <quote>Metacontacts</quote>, which represent the person you want to chat with.  One Metacontact contains all the different &im; IDs they may have, making it easy to see with a glance at the Metacontact whether someone is available, regardless of which &im; system they are using right now.</para>
+<para>To support this, &kopete; introduced <quote>Metacontacts</quote>, which represent the person you want to chat with.  One Metacontact contains all the different &im; IDs they may have, making it easy to see with a glance at the Metacontact 'smiley icon' whether someone is available, regardless of which &im; system they are using right now.</para>
 </sect3>
 <sect3 id="organise-contacts-grouping">
 <title>A Word about Grouping Contacts</title>
 <para>&kopete; lets you create groups to sort your contacts.  A contact may be in more than one group.  Where possible, groupings are saved on server side contact lists, so if you use other &im; programs, group memberships are kept in sync.  However, if you change groups in another &im; program, &kopete; cannot know to move a metacontact automatically; it is up to you to resolve this by hand.</para>
-
+<para>To change the group a metacontact appears in, you can use its context menu to move it or copy it to a new group, or remove it from a group.  You can also use drag and drop here - just drop the metacontact on a different group name.</para>
 </sect3><sect3 id="organise-contacts-adding">
 <title>Adding Contacts</title>
 <para>To add a contact, either select <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact...</guimenuitem></menuchoice> or click the <guibutton>Add Contact</guibutton> button on the toolbar.  This brings up the Add Contact Wizard.</para>
@@ -252,8 +256,8 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>You can change the metacontact a contact belongs to.  In practice, you only have to do this when you have just added multiple accounts to &kopete;, and you know that HotDog76 and mikejones@hotmail.com are both the same person.</para>
 <para>There are two ways to do this:</para>
 <variablelist>
-<varlistentry><term>Drag and Drop</term><listitem><para>The contact icon to the right of the Metacontact name may be dragged from one Metacontact to another.</para></listitem></varlistentry>
-<varlistentry><term>Contact Context Menu</term><listitem><para>The context menu for contacts (<mousebutton>Right</mousebutton>-click the contact icon) allows you to choose the new Metacontact from a dialog.</para></listitem></varlistentry>
+<varlistentry><term>Drag and Drop</term><listitem><para>The contact icon to the right of the metacontact name may be dragged from one metacontact to another.</para></listitem></varlistentry>
+<varlistentry><term>Contact Context Menu</term><listitem><para>The context menu for contacts (<mousebutton>Right</mousebutton>-click the contact icon) allows you to choose the new metacontact from a dialog.</para></listitem></varlistentry>
 </variablelist>
 <para>If the move would leave a Metacontact empty (with no contacts), you'll be asked if you want to delete this contact.</para>
 </sect3>
