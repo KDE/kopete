@@ -23,6 +23,7 @@
 #include <qptrlist.h>
 
 #include "kopetecontact.h"
+#include "kopeteplugindataobject.h"
 
 class QDomNode;
 
@@ -35,7 +36,7 @@ struct KopeteMetaContactPrivate;
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopeteMetaContact : public QObject
+class KopeteMetaContact : public KopetePluginDataObject
 {
 	Q_OBJECT
 
@@ -196,41 +197,6 @@ public:
 	 */
 	void removeContact( KopeteContact *c , bool deleted = false );
 
-	/**
-	 * Set the plugin-specific data.
-	 * The data in the provided QMap is a set of key/value pairs.
-	 * Note that protocol plugins usually shouldn't use this method, but
-	 * reimplement @ref KopeteContact::serialize() instead. This method
-	 * is called by @ref KopeteProtocol for those classes.
-	 * It is fine to call this method from non-protocol plugins.
-	 */
-	void setPluginData( KopetePlugin *p, const QMap<QString, QString> &value );
-
-	/**
-	 * Get the settings as stored previously by calls to @ref setPluginData()
-	 *
-	 * Note that calling this method for protocol plugins that use the
-	 * @ref KopeteContact::serialize() API may yield unexpected results.
-	 */
-	QMap<QString, QString> pluginData( KopetePlugin *p ) const;
-
-	/**
-	 * Convenience method to store or change only a single field of the
-	 * plugin data. As with the other @ref setPluginData() method, protocols
-	 * are advised not to use this method and reimplement
-	 * @ref KopeteContact::serialize() instead. This method is meant for use
-	 * by non-protocol plugins.
-	 */
-	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
-
-	/**
-	 * Convenience method to retrieve only a single field from the plugin
-	 * data. See @ref setPluginData().
-	 *
-	 * Note that calling this method for protocol plugins that use the
-	 * @ref KopeteContact::serialize() API may yield unexpected results.
-	 */
-	QString pluginData( KopetePlugin *p, const QString &key ) const;
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not

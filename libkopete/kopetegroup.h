@@ -18,7 +18,7 @@
 #ifndef KOPETEGROUP_H
 #define KOPETEGROUP_H
 
-#include <qobject.h>
+#include "kopeteplugindataobject.h"
 #include <qstringlist.h>
 #include <qvaluelist.h>
 
@@ -29,7 +29,7 @@ struct KopeteGroupPrivate;
 /**
  * @author Olivier Goffart
  */
-class KopeteGroup : public QObject
+class KopeteGroup : public KopetePluginDataObject
 {
 	Q_OBJECT
 
@@ -59,21 +59,6 @@ public:
 
 	void setExpanded(bool in_expanded) ;
 	bool expanded() ;
-
-	/**
-	 * Convenience method to store or change only a single field of the
-	 * plugin data. As with the other @ref setPluginData() method, protocols
-	 * are advised not to use this method and reimplement
-	 */
-	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
-
-	/**
-	 * Convenience method to retrieve only a single field from the plugin
-	 * data. See @ref setPluginData().
-	 */
-	QString pluginData( KopetePlugin *p, const QString &key ) const;
-
-
 
 	static KopeteGroup *toplevel;
 	static KopeteGroup *temporary;

@@ -18,7 +18,7 @@
 #ifndef KOPETEACCOUNT_H
 #define KOPETEACCOUNT_H
 
-#include <qobject.h>
+#include "kopeteplugindataobject.h"
 #include <qdict.h>
 
 class QDomNode;
@@ -36,7 +36,7 @@ QString cryptStr(const QString &aStr);
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
-class KopeteAccount : public QObject
+class KopeteAccount : public KopetePluginDataObject
 {
 	Q_OBJECT
 
@@ -83,17 +83,6 @@ public:
 	 * Say if the account should log in automaticaly
 	 */
 	bool autoLogin();
-
-	/**
-	 * Convenience method to store or change only a single field of the plugin data.
-	 */
-	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
-
-	/**
-	 * Convenience method to retrieve only a single field from the plugin
-	 * data. See @ref setPluginData().
-	 */
-	QString pluginData( KopetePlugin *p, const QString &key ) const;
 
 	/**
 	 * this will be called if main-kopete wants

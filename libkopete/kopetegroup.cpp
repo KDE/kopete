@@ -49,20 +49,16 @@ struct KopeteGroupPrivate
 	QString displayName;
 	KopeteGroup::GroupType type;
 	bool expanded;
-	/**
-	 * Data to store in the XML file
-	 */
-	QMap<QString, QMap<QString, QString> > pluginData;
 };
 
-KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : QObject(KopeteContactList::contactList())
+KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : KopetePluginDataObject(KopeteContactList::contactList())
 {
 	d=new KopeteGroupPrivate;
 	d->displayName=_name;
 	d->type=_type;
 	d->expanded = true;
 }
-KopeteGroup::KopeteGroup()  : QObject(KopeteContactList::contactList())
+KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactList())
 {
 	d=new KopeteGroupPrivate;
 	d->expanded = true;
@@ -91,24 +87,7 @@ QString KopeteGroup::toXML()
 	xml += QString::fromLatin1( "    <display-name>" ) + QStyleSheet::escape( d->displayName ) + QString::fromLatin1( "</display-name>\n" );
 
 	// Store other plugin data
-	if( !d->pluginData.isEmpty() )
-	{
-		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
-		{
-			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( pluginIt.key() ) + QString::fromLatin1( "\">\n" );
-
-			QMap<QString, QString>::ConstIterator it;
-			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
-			{
-				if(!it.key().isNull())
-					xml += QString::fromLatin1( "      <plugin-data-field key=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" )
-						+ QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data-field>\n" );
-			}
-
-			xml += QString::fromLatin1( "    </plugin-data>\n" );
-		}
-	}
+	xml +=KopetePluginDataObject::toXML();
 
 	xml += QString::fromLatin1( "  </kopete-group>\n" );
 	return xml;
@@ -118,9 +97,17 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 {
 	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
 	if( type == QString::fromLatin1( "temporary" ) )
-		d->type = Temporary;
+	{
+		if(d->type != Temporary) 
+			temporary->fromXML(data);
+		return false;
+	}
 	else if( type == QString::fromLatin1( "top-level" ) )
-		d->type = TopLevel;
+	{
+		if(d->type != TopLevel)
+			toplevel->fromXML(data);
+		return false;
+	}
 	else
 		d->type = Classic;
 
@@ -139,24 +126,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 		}
 		else if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 		{
-			QMap<QString, QString> pluginData;
-			QString pluginId = groupElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
-
-			QDomNode field = groupElement.firstChild();
-			while( !field.isNull() )
-			{
-				QDomElement fieldElement = field.toElement();
-				if( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
-				{
-					pluginData.insert( fieldElement.attribute( QString::fromLatin1( "key" ),
-						QString::fromLatin1( "undefined-key" ) ), fieldElement.text() );
-				}
-				field = field.nextSibling();
-			}
-
-			d->pluginData.insert( pluginId, pluginData );
-			if( d->type == TopLevel ) //FIXME:
-				toplevel->d->pluginData.insert( pluginId, pluginData );
+			KopetePluginDataObject::fromXML(groupElement);
 		}
 
 		groupData = groupData.nextSibling();
@@ -197,19 +167,6 @@ void KopeteGroup::setExpanded(bool in_expanded)
 bool KopeteGroup::expanded()
 {
 	return d->expanded;
-}
-
-QString KopeteGroup::pluginData( KopetePlugin *p, const QString &key ) const
-{
-	if( !d->pluginData.contains( p->pluginId() ) || !d->pluginData[ p->pluginId() ].contains( key ) )
-		return QString::null;
-
-	return d->pluginData[ p->pluginId() ][ key ];
-}
-
-void KopeteGroup::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
-{
-	d->pluginData[ p->pluginId() ][ key ] = value;
 }
 
 

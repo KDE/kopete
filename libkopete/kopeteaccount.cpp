@@ -53,11 +53,10 @@ struct KopeteAccountPrivate
 	QString id;
 	QString password;
 	bool autologin;
-	QMap<QString, QMap<QString, QString> > pluginData;
 	QDict<KopeteContact> contacts;
 };
 
-KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):   QObject(parent, name)
+KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):  KopetePluginDataObject (parent, name)
 {
 	d=new KopeteAccountPrivate;
 	d->protocol=parent;
@@ -111,24 +110,7 @@ QString KopeteAccount::toXML()
 	
 	
 	// Store other plugin data
-	if( !d->pluginData.isEmpty() )
-	{
-		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
-		{
-			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( pluginIt.key() ) + QString::fromLatin1( "\">\n" );
-
-			QMap<QString, QString>::ConstIterator it;
-			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
-			{
-				if(!it.key().isNull())
-					xml += QString::fromLatin1( "      <plugin-data-field key=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" )
-						+ QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data-field>\n" );
-			}
-
-			xml += QString::fromLatin1( "    </plugin-data>\n" );
-		}
-	}
+	xml += KopetePluginDataObject::toXML();
 
 	xml += QString::fromLatin1( "  </account>\n" );
 
@@ -154,23 +136,7 @@ bool KopeteAccount::fromXML(const QDomNode& cnode)
 			}
 			else if( accountElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 			{
-				QMap<QString, QString> pluginData;
-				QString pluginId = accountElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
-
-				QDomNode field = accountElement.firstChild();
-				while( !field.isNull() )
-				{
-					QDomElement fieldElement = field.toElement();
-					if( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
-					{
-						pluginData.insert( fieldElement.attribute( QString::fromLatin1( "key" ),
-							QString::fromLatin1( "undefined-key" ) ), fieldElement.text() );
-					}
-
-					field = field.nextSibling();
-				}
-
-				d->pluginData.insert( pluginId, pluginData );
+				KopetePluginDataObject::fromXML(accountElement) ;
 			}
 			else
 			{
@@ -254,20 +220,6 @@ bool KopeteAccount::autoLogin()
 bool KopeteAccount::rememberPassword()
 {
 	return !d->password.isNull();
-}
-
-
-void KopeteAccount::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
-{
-	d->pluginData[ p->pluginId() ][ key ] = value;
-}
-
-QString KopeteAccount::pluginData( KopetePlugin *p, const QString &key ) const
-{
-	if( !d->pluginData.contains( p->pluginId() ) || !d->pluginData[ p->pluginId() ].contains( key ) )
-		return QString::null;
-
-	return d->pluginData[ p->pluginId() ][ key ];
 }
 
 void KopeteAccount::registerContact( KopeteContact *c )
