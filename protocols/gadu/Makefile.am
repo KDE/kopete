@@ -1,11 +1,12 @@
 METASOURCES = AUTO
-SUBDIRS = lib ui pixmaps icons
+SUBDIRS = ui pixmaps icons
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	-I./lib \
 	-I$(srcdir)/lib \
 	$(KOPETE_INCLUDES) \
-	$(all_includes)
+	$(all_includes) \
+	$(LIBGG_INCLUDES)
 
 kde_module_LTLIBRARIES = kopete_gadu.la
 
@@ -17,8 +18,8 @@ kopete_gadu_la_SOURCES = gaducommands.cpp gadusession.cpp      \
 
 kopete_gadu_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_gadu_la_LIBADD  = ./ui/libgaduui.la \
-		       ./lib/libgadu.la      \
-		       $(top_builddir)/kopete/libkopete/libkopete.la 
+		       $(top_builddir)/kopete/libkopete/libkopete.la \
+		       $(LIBGG_LIBS)
 
 service_DATA = gadu.desktop
 servicedir = $(kde_servicesdir)
