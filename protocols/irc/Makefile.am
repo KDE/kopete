@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = kopete_irc.la
 
 kopete_irc_la_SOURCES     = ircaddcontactpage.cpp ircchannelcontact.cpp \
 	irccontact.cpp ircidentity.cpp ircpreferences.cpp \
-	ircprotocol.cpp ircusercontact.cpp ircmessagemanager.cpp
+	ircprotocol.cpp ircusercontact.cpp
 
 kopete_irc_la_METASOURCES = AUTO
 kopete_irc_la_LDFLAGS     = -module $(KDE_PLUGIN) $(all_libraries) 
