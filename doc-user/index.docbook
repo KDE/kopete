@@ -810,6 +810,7 @@ sets that you can simply extract there.</para>
 <para>
 &kopete;: copyright 2001-2003, &kopete; Developers
 </para>
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 &underFDL;
 &underGPL;
 <sect1 id="team">
@@ -850,7 +851,6 @@ sets that you can simply extract there.</para>
 Documentation copyright 2003, Will Stephenson (lists at stevello free-online co uk)
 </para>
 </sect1>
-<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 </chapter><!-- credits-and-licenses -->
 
 <appendix id="installation">
