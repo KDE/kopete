@@ -11,6 +11,10 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Accounts
-Comment=Manager all yours accounts:
+Name[da]=Konti
+Name[es]=Cuentas
+Comment=Manage all yours accounts:
+Comment[da]=Håndterer alle dine konti:
+Comment[es]=Gestiona todas sus cuentas
 
 
