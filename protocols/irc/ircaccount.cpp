@@ -645,38 +645,33 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 		destination = type;
 	} */
 
-	switch( destination )
+	if( destination & ActiveWindow )
 	{
-		case ActiveWindow:
+		KopeteView *activeView = KopeteMessageManagerFactory::factory()->activeView();
+		if( activeView && activeView->msgManager()->account() == this )
 		{
-			KopeteView *activeView = KopeteMessageManagerFactory::factory()->activeView();
-			if( activeView && activeView->msgManager()->account() == this )
-			{
-				KopeteMessageManager *manager = activeView->msgManager();
-				KopeteMessage msg( manager->user(), manager->members(), KSParser::parse( message ),
-					KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
-				activeView->appendMessage(msg);
-
-				return;
-			}
+			KopeteMessageManager *manager = activeView->msgManager();
+			KopeteMessage msg( manager->user(), manager->members(), KSParser::parse( message ),
+				KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
+			activeView->appendMessage(msg);
 		}
+	}
 
-		case AnonymousWindow:
-			//TODO: Create an anonymous window??? What will this mean...
+	if( destination & AnonymousWindow )
+	{
+		//TODO: Create an anonymous window??? What will this mean...
+	}
 
-		case ServerWindow:
-			myServer()->appendMessage(message);
-			return;
+	if( destination & ServerWindow )
+	{
+		myServer()->appendMessage(message);
+	}
 
-		case KNotify:
-			KNotifyClient::event(
-				Kopete::UI::Global::mainWidget()->winId(), QString::fromLatin1("irc_event"), message
-			);
-
-			return;
-
-		default:
-			return;
+	if( destination & KNotify )
+	{
+		KNotifyClient::event(
+			Kopete::UI::Global::mainWidget()->winId(), QString::fromLatin1("irc_event"), message
+		);
 	}
 }
 

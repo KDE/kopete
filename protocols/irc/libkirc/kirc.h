@@ -366,6 +366,7 @@ private:
 	ircMethod numericReply_303;
 	ircMethod numericReply_305;
 	ircMethod numericReply_306;
+	ircMethod numericReply_307;
 	ircMethod numericReply_311;
 	ircMethod numericReply_312;
 	ircMethod numericReply_314;

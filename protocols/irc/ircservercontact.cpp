@@ -138,7 +138,7 @@ void IRCServerContact::appendMessage( const QString &message )
 
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
-	m_account->appendMessage( i18n("NOTICE %1: %2").arg( orig.section('!',0,0) ).arg( notice ), IRCAccount::NoticeReply );
+	m_account->appendMessage( i18n("NOTICE from %1: %2").arg( orig.section('!',0,0) ).arg( notice ), IRCAccount::NoticeReply );
 }
 
 void IRCServerContact::slotIncomingUnknown( const QString &message )
