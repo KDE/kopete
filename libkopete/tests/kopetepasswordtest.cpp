@@ -1,5 +1,5 @@
 /*
-    Tests for the KopetePassword class
+    Tests for the Kopete::Password class
 
     Copyright (c) 2003      by Richard Smith          <kde@metafoo.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -41,7 +41,9 @@ static KCmdLineOptions opts[] =
  KCmdLineLastOption
 };
 
-QString retrieve( bool async, KopetePassword &pwd, const QPixmap &image, const QString &prompt )
+using namespace Kopete;
+
+QString retrieve( bool async, Password &pwd, const QPixmap &image, const QString &prompt )
 {
 	if ( !async )
 		return pwd.retrieve( image, prompt );
@@ -85,7 +87,7 @@ int main( int argc, char *argv[] )
 
 	_out << (image.isNull() ? "image is null" : "image is valid") << endl;
 
-	KopetePassword pwd( passwordId );
+	Password pwd( passwordId );
 	pwd.setWrong( error );
 
 	_out << "Cached value is null: " << pwd.cachedValue().isNull() << endl;
