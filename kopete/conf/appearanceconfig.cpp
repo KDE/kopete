@@ -533,7 +533,7 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 	}
 	else
 	{
-		KMessageBox::error( this, i18n("A style named \"%1\" already exists. Please re-name the style.").arg( styleName ), i18n("Could Not Save") );
+		KMessageBox::error( this, i18n("A style named \"%1\" already exists. Please rename the style.").arg( styleName ), i18n("Could Not Save") );
 	}
 }
 

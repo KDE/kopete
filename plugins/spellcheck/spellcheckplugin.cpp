@@ -84,7 +84,7 @@ KSpell *SpellCheckPlugin::speller()
 {
 	if( !mSpell )
 	{
-		mSpell = new KSpell(0L, i18n("Spellcheck - Kopete"), this, SLOT( slotSpellCheckerReady( KSpell * )), mPrefs->spellConfig() );
+		mSpell = new KSpell(0L, i18n("Spellcheck"), this, SLOT( slotSpellCheckerReady( KSpell * )), mPrefs->spellConfig() );
 		connect( mSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotMisspelling( const QString&, const QStringList&, unsigned int ) ) );
 		connect( mSpell, SIGNAL( corrected( const QString&, const QString&, unsigned int ) ), this, SLOT( slotCorrection( const QString&, const QString&, unsigned int ) ) );
 		connect( mSpell, SIGNAL( done( const QString & ) ), this, SLOT( slotSpellDone( const QString &) ) );

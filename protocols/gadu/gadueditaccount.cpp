@@ -103,7 +103,7 @@ void GaduEditAccount::registrationComplete( const QString& title, const QString&
 	passwordEdit2__->setDisabled(true);
         rememberCheck_->setChecked(true);
 		    
-	KMessageBox::information(this, i18n("<b>You've registered new acount</b>"), i18n("Gadu-gadu"));
+	KMessageBox::information(this, i18n("<b>You've registered a new acount.</b>"), i18n("Gadu-Gadu"));
 }
 
 void GaduEditAccount::registrationError( const QString& title, const QString& what )
@@ -122,23 +122,23 @@ bool GaduEditAccount::validateData()
 
     if (radio1->isChecked()){
 	if (loginEdit_->text().toInt()<0 || loginEdit_->text().toInt()==0){
-	    KMessageBox::sorry(this, i18n("<b>UIN should be a positive number</b>"), i18n("Gadu-gadu"));
+	    KMessageBox::sorry(this, i18n("<b>UIN should be a positive number.</b>"), i18n("Gadu-Gadu"));
 	    return false;
 	}
     
 	if (passwordEdit_->text().isEmpty() && rememberCheck_->isChecked()){
-	    KMessageBox::sorry(this, i18n("<b>Enter Password please</b>"), i18n("Gadu-gadu"));
+	    KMessageBox::sorry(this, i18n("<b>Enter password please.</b>"), i18n("Gadu-Gadu"));
 	    return false;
 	}
     }
     else{
 	if (emailedit_->text().isEmpty()){
-	    KMessageBox::sorry(this, i18n("<b>Please enter a valid email addres</b>"), i18n("Gadu-gadu"));
+	    KMessageBox::sorry(this, i18n("<b>Please enter a valid email addres</b>"), i18n("Gadu-Gadu"));
 	    return false;
 	}
-    
+
 	if (passwordEdit2__->text().isEmpty()){
-	    KMessageBox::sorry(this, i18n("<b>Enter Password please</b>"), i18n("Gadu-gadu"));
+	    KMessageBox::sorry(this, i18n("<b>Enter password please.</b>"), i18n("Gadu-Gadu"));
 	    return false;
 	}
 

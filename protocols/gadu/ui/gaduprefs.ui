@@ -79,7 +79,7 @@
                                 <cstring>textLabel1_3</cstring>
                             </property>
                             <property name="text">
-                                <string>Initial Status:</string>
+                                <string>Initial status:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>kComboBox1</cstring>

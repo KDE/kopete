@@ -272,7 +272,7 @@ void MSNAccount::slotStartChat()
 	if ( !isConnected() )
 	{
 		KMessageBox::error( 0l,
-			i18n( "<qt>Please go online before you start a chat</qt>" ),
+			i18n( "<qt>Please go online before you start a chat.</qt>" ),
 			i18n( "MSN Plugin" ));
 		return;
 	}
@@ -293,7 +293,7 @@ void MSNAccount::slotStartChat()
 		}
 		else
 		{
-			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
+			KMessageBox::error(0l, i18n("<qt>You must enter a valid email address.</qt>"), i18n("MSN Plugin"));
 		}
 	}
 }
@@ -319,7 +319,7 @@ void MSNAccount::slotDebugRawCommand()
 void MSNAccount::slotChangePublicName()
 {
 	bool ok;
-	QString name = KLineEditDlg::getText( i18n( "Change Nickname - MSN Plugin - Kopete" ),
+	QString name = KLineEditDlg::getText( i18n( "Change Nickname - MSN Plugin" ),
 		i18n( "Enter the new public name by which you want to be visible to your friends on MSN:" ),
 		m_myself->displayName(), &ok );
 
@@ -333,7 +333,7 @@ void MSNAccount::slotChangePublicName()
 				i18n( "Your display name is "
 					"not allowed to contain the text 'MSN'.\n"
 					"Your display name has not been changed." ),
-				i18n( "Change Nickname - MSN Plugin - Kopete" ) );
+				i18n( "Change Nickname - MSN Plugin" ) );
 			return;
 		}
 
@@ -430,7 +430,7 @@ void MSNAccount::slotNotifySocketClosed( int /*state*/ )
 	//FIXME: Kopete crash when i show this message box...
 /*	if ( state == 0x10 ) // connection died unexpectedly
 	{
-		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
+		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin" ) );
 	}*/
 	m_badpassword=m_notifySocket->badPassword();
 	m_notifySocket->deleteLater();

@@ -167,7 +167,7 @@ GaduSession::notify( uin_t *userlist, int count )
 	if ( isConnected() )
 		return gg_notify( session_, userlist, count );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );
 	return 1;
 }
@@ -178,7 +178,7 @@ GaduSession::addNotify( uin_t uin )
 	if ( isConnected() )
 		return gg_add_notify( session_, uin );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );
 	return 1;
 }
@@ -189,7 +189,7 @@ GaduSession::removeNotify( uin_t uin )
 	if ( isConnected() )
 		gg_remove_notify( session_, uin );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );
 	return 1;
 }
@@ -204,7 +204,7 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg,
 								recipient,
 								reinterpret_cast<const unsigned char *>(msg.local8Bit().data()) );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );
 	return 1;
 }
@@ -220,7 +220,7 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
 								 reinterpret_cast<const unsigned char *>( msg.local8Bit().data() ),
 								 msg.length() );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );
 	return 1;
 }
@@ -232,7 +232,7 @@ GaduSession::changeStatus( int status )
 	if ( isConnected() )
 		return gg_change_status( session_, status );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You have to be connected to the server to change your status!") );
 	return 1;
 }
@@ -248,7 +248,7 @@ GaduSession::changeStatusDescription( int status, const QString& descr )
 	if ( isConnected() )
 		return gg_change_status_descr( session_, status, ndescr );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You have to be connected to the server to change your status!") );
 	return 1;
 
@@ -269,7 +269,7 @@ GaduSession::dccRequest( uin_t uin )
 	if ( isConnected() )
 		return gg_dcc_request( session_, uin );
 	else
-		emit error( i18n("Not Connected..."),
+		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );
 	return 1;
 }
@@ -349,7 +349,7 @@ GaduSession::checkDescriptor()
 	case GG_EVENT_NONE:
 		break;
 	default:
-		emit error( i18n("Unknown event..."),
+		emit error( i18n("Unknown Event"),
 								i18n("Can't handle an event. Please report this to zack@kde.org") );
 		kdDebug(14100)<<"GaduGadu Event = "<<e->type<<endl;
 		break;

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>513</width>
+            <width>555</width>
             <height>406</height>
         </rect>
     </property>
@@ -87,7 +87,7 @@
                         <cstring>mUseAutoAway</cstring>
                     </property>
                     <property name="text">
-                        <string>Use Auto Away</string>
+                        <string>Use auto away</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">

@@ -62,7 +62,7 @@ void KopeteAwayConfigUI::deleteButtonClicked()
 	QListBoxItem *selectedItem = lstTitles->item( lstTitles->currentItem() );
 	int retval = KMessageBox::warningYesNo( this,
 		i18n( "Delete message '%1'?").arg( selectedItem->text() ),
-		i18n( "Delete Message - Kopete" ) );
+		i18n( "Delete Message" ) );
 
 	if( retval == KMessageBox::Yes )
 	{

@@ -348,7 +348,7 @@
                                     <cstring>lblSignonTime</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Signon Time:</string>
+                                    <string>Signon time:</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit" row="1" column="1">
@@ -1070,7 +1070,7 @@
                             <cstring>lblAboutUser</cstring>
                         </property>
                         <property name="text">
-                            <string>About User:</string>
+                            <string>About user:</string>
                         </property>
                     </widget>
                     <widget class="QTextEdit">
@@ -1439,7 +1439,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Name or Keywords:</string>
+                                    <string>Name or keywords:</string>
                                 </property>
                             </widget>
                             <spacer row="0" column="0">

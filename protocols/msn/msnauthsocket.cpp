@@ -54,7 +54,7 @@ void MSNAuthSocket::handleError( uint code, uint id )
 		{
 			m_msgBoxShown = true;*/
 		KMessageBox::information( 0, i18n( "The MSN server is busy.\n"
-				"Please retry." ) , i18n( "MSN Plugin - Kopete" ) );
+				"Please retry." ) , i18n( "MSN Plugin" ) );
 		break;
 	}
 

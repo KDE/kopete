@@ -90,7 +90,7 @@ void dlgJabberRegister::slotSentForm ()
 
 	if (task->success ())
 	{
-		KMessageBox::information (this, i18n ("Registration sent successfully"), i18n ("Jabber Registration"));
+		KMessageBox::information (this, i18n ("Registration sent successfully."), i18n ("Jabber Registration"));
 
 		deleteLater ();
 	}

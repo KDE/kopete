@@ -29,7 +29,7 @@
 
 MSNDebugRawCmdDlg::MSNDebugRawCmdDlg( QWidget *parent )
 : KDialogBase( parent, 0L, true,
-	i18n( "DEBUG: Send Raw Command - MSN Plugin - Kopete" ), Ok | Cancel,
+	i18n( "DEBUG: Send Raw Command - MSN Plugin" ), Ok | Cancel,
 	Ok, true )
 {
 	setInitialSize( QSize( 350, 200 ) );

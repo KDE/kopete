@@ -35,7 +35,7 @@
                 <cstring>mUseColor</cstring>
             </property>
             <property name="text">
-                <string>Use a different color</string>
+                <string>Use a different color:</string>
             </property>
         </widget>
         <spacer row="2" column="2">

@@ -193,7 +193,7 @@ GaduAccount::slotLogin( int status, const QString& dscr  )
 /*
 	if ( (accountId().toInt() == 0) || getPassword().isEmpty() ) {
 		KMessageBox::error( qApp->mainWidget(),
-			i18n("You must fill in UIN and password fields in the preferences dialog before you can login"),
+			i18n("You must fill in UIN and password fields in the preferences dialog before you can login."),
 			i18n("Unable to Login") );
 		return;
 	}
@@ -256,7 +256,7 @@ GaduAccount::removeContact( const GaduContact* c )
 // no reason for me to be online to delete
 
 //	} else {
-//		KMessageBox::error( 0l,	i18n( "Please go online to remove contact" ),
+//		KMessageBox::error( 0l,	i18n( "Please go online to remove contact." ),
 //			    i18n( "Gadu Plugin" ));
 //	}
 

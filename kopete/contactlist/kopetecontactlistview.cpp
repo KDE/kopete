@@ -508,7 +508,7 @@ void KopeteContactListView::addGroup()
 {
 	bool ok;
 	QString groupName = KLineEditDlg::getText(
-		i18n( "New Group - Kopete" ),
+		i18n( "New Group" ),
 		i18n( "Please enter the name for the new group:" ),
 		QString::null, &ok );
 	if( ok )
@@ -1549,7 +1549,7 @@ void KopeteContactListView::slotRemove()
 		}
 		else return; //this should never happends
 
-		if( KMessageBox::warningYesNo( this, msg, i18n( "Remove - Kopete" ) ) != KMessageBox::Yes )
+		if( KMessageBox::warningYesNo( this, msg, i18n( "Remove" ) ) != KMessageBox::Yes )
 			return;
 	}
 	else
@@ -1564,7 +1564,7 @@ void KopeteContactListView::slotRemove()
 			msg = i18n( "Are you sure you want to remove theses groups or contacts from your cotactlist?" );
 		}
 
-		if( KMessageBox::questionYesNoList(this, msg , items , i18n("Remove - Kopete") , KStdGuiItem::yes(), KStdGuiItem::no(), "askRemovingContactOrGroup" )
+		if( KMessageBox::questionYesNoList(this, msg , items , i18n("Remove") , KStdGuiItem::yes(), KStdGuiItem::no(), "askRemovingContactOrGroup" )
 			 != KMessageBox::Yes )
 			 	return;
 	}

@@ -53,7 +53,7 @@
                         <cstring>TextLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>AIM Screenname:</string>
+                        <string>AIM screen name:</string>
                     </property>
                 </widget>
             </grid>

@@ -373,7 +373,7 @@ void MSNContact::rename( const QString &newName )
 		// FIXME: Move this to libkopete instead - Martijn
 		KMessageBox::information( 0L,
 			i18n( "<qt>Changes in the contact list when you are offline don't update the contact "
-				"list server-side. Your changes may be lost</qt>" ),
+				"list server-side. Your changes may be lost.</qt>" ),
 			i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
 }

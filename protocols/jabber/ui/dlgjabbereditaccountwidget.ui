@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>405</width>
+            <width>450</width>
             <height>535</height>
         </rect>
     </property>
@@ -111,7 +111,7 @@
                                     <cstring>chkRemPass</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Remember Password</string>
+                                    <string>Remember password</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="4" column="1">

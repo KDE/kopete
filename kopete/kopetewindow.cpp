@@ -176,7 +176,7 @@ void KopeteWindow::initActions()
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
 		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, KopeteViewManager::viewManager(), SLOT(nextEvent()) );
 
-	globalAccel->insert( QString::fromLatin1("Show / Hide Contact List"), i18n("Show / Hide Contact List"), i18n("Show or hide the contact list"),
+	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
 		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );
 
 	globalAccel->readSettings();
@@ -397,7 +397,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
-		"system tray. Use Quit from the File menu to quit the application.</qt>" ),
+		"system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),
 		i18n( "Docking in System Tray" ), "hideOnCloseInfo" );
 	hide();
 	e->ignore();

@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Step One: Select the messaging service(s)</string>
+        <string>Step One: Select the Messaging Service(s)</string>
     </property>
     <grid>
         <property name="name">

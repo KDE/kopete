@@ -55,7 +55,7 @@ bool AIMAddContactPage::validateData()
 	if ( sn.isEmpty() )
 	{
 		KMessageBox::sorry ( this,
-			i18n("<qt>You must enter a valid screenname</qt>"),
+			i18n("<qt>You must enter a valid screenname.</qt>"),
 			i18n("You Must Enter a Screenname") );
 		return false;
 	}

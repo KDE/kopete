@@ -189,7 +189,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 
 void JabberAccount::errorConnectFirst ()
 {
-	KMessageBox::error (qApp->mainWidget (), i18n ("Please connect first"), i18n ("Error"));
+	KMessageBox::error (qApp->mainWidget (), i18n ("Please connect first."), i18n ("Error"));
 }
 
 
@@ -258,7 +258,7 @@ void JabberAccount::connect ()
 		if (!sslPossible)
 		{
 			KMessageBox::error (qApp->mainWidget (),
-								i18n ("SSL is not supported. This is most likely " "because the QSSL library could not be found."), i18n ("SSL Error"));
+								i18n ("SSL is not supported. This is most likely because the QSSL library could not be found."), i18n ("SSL Error"));
 			return;
 		}
 	}

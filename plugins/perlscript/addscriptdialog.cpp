@@ -66,7 +66,7 @@ AddScriptDialog::AddScriptDialog( QWidget* parent, const char* name, bool modal,
 
     kURLRequester1 = new KURLRequester( this, "kURLRequester1" );
     kURLRequester1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, kURLRequester1->sizePolicy().hasHeightForWidth() ) );
-    kURLRequester1->setFilter( QString::fromLatin1("*.pl|") + i18n("Perl Scripts") + QString::fromLatin1("\n*.*|") + i18n("All files") );
+    kURLRequester1->setFilter( QString::fromLatin1("*.pl|") + i18n("Perl Scripts") + QString::fromLatin1("\n*.*|") + i18n("All Files") );
     AddScriptDialogLayout->addWidget( kURLRequester1, 2, 1 );
     
     QWidget::setTabOrder( kLineEdit1, kLineEdit2 );
@@ -94,7 +94,7 @@ void AddScriptDialog::accept()
 {
 	if( kURLRequester1->url().stripWhiteSpace().isEmpty() || kLineEdit1->text().stripWhiteSpace().isEmpty() || kLineEdit2->text().stripWhiteSpace().isEmpty() )
 	{
-		KMessageBox::sorry( this, i18n("Please fill out all form fields"), i18n("Missing Fields") );
+		KMessageBox::sorry( this, i18n("Please fill out all form fields."), i18n("Missing Fields") );
 	}
 	else
 	{

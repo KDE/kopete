@@ -162,7 +162,7 @@ SearchCommand::watcher()
 
 	if ( gg_search_watch_fd( session_ ) == -1 ) {
 		gg_free_search( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("Unknown connection error") );
 		done_ = true;
 		deleteLater();
@@ -170,8 +170,8 @@ SearchCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_free_search( session_ );
-		emit error( i18n("Searching error"),
-								i18n("There was an unknown searching error") );
+		emit error( i18n("Searching Error"),
+								i18n("There was an unknown searching error.") );
 		switch( session_->error )
 		{
 		case GG_ERROR_RESOLVING:
@@ -249,7 +249,7 @@ void RegisterCommand::watcher()
 
 	if ( gg_register_watch_fd( session_ ) == -1 ) {
 		gg_free_register( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 				i18n("Unknown connection error while registering") );
 		done_ = true;
 		deleteLater();
@@ -257,8 +257,8 @@ void RegisterCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_free_register( session_ );
-		emit error( i18n("Registration error"),
-				i18n("There was an unknown registration error") );
+		emit error( i18n("Registration Error"),
+				i18n("There was an unknown registration error.") );
 		switch( session_->error )
 		{
 		case GG_ERROR_RESOLVING:
@@ -287,11 +287,11 @@ void RegisterCommand::watcher()
 		if (gg_pub){
 		    uin= gg_pub->uin;
 //		    kdDebug(14100713)<<"wylosowany numerek to:"<< uin << endl;
-		    emit done( i18n("Registration finished"), i18n("Registration has completed successfully..") );
+		    emit done( i18n("Registration Finished"), i18n("Registration has completed successfully.") );
 		}
 		else{
-		    emit error( i18n("Registration error"),
-				i18n("Data send to server were invalid") );
+		    emit error( i18n("Registration Error"),
+				i18n("Data send to server were invalid.") );
 		}
 
 		gg_free_register( session_ );
@@ -339,7 +339,7 @@ RemindPasswordCommand::watcher()
 
 	if (gg_remind_passwd_watch_fd( session_ ) == -1) {
 		gg_free_remind_passwd( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("Password reminding finished prematurely due to a connection error.") );
 		done_ = true;
 		deleteLater();
@@ -347,7 +347,7 @@ RemindPasswordCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_free_remind_passwd( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("Password reminding finished prematurely due to a connection error.") );
 		done_ = true;
 		deleteLater();
@@ -355,8 +355,8 @@ RemindPasswordCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_DONE) {
 		struct gg_pubdir *p = static_cast<struct gg_pubdir *>(session_->data);
-		QString finished = (p->success)?i18n("Successfully"):i18n("Unsuccessfully. Please retry.");
-		emit done( i18n("Remind password"),
+		QString finished = (p->success)?i18n("Successfully"):i18n("Unsuccessfull. Please retry.");
+		emit done( i18n("Remind Password"),
 							 i18n("Remind password finished: ") + finished );
 		gg_free_remind_passwd( session_ );
 		done_ = true;
@@ -401,7 +401,7 @@ ChangePasswordCommand::watcher()
 
 	if (gg_pubdir_watch_fd( session_ ) == -1) {
 		gg_change_passwd_free( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("Password changing finished prematurely due to a connection error.") );
 		done_ = true;
 		deleteLater();
@@ -409,14 +409,14 @@ ChangePasswordCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_free_change_passwd( session_ );
-		emit error( i18n("State error."),
+		emit error( i18n("State Error"),
 								i18n("Password changing finished prematurely due to a session related problem (try again later).") );
 		done_ = true;
 		deleteLater();
 		return;
 	}
 	if ( session_->state == GG_STATE_DONE) {
-		emit done( i18n("Changed password"),
+		emit done( i18n("Changed Password"),
 							 i18n("Your password has been changed.") );
 		gg_free_change_passwd( session_ );
 		done_ = true;
@@ -470,7 +470,7 @@ ChangeInfoCommand::watcher()
 
 	if ( gg_change_pubdir_watch_fd( session_ ) == -1 ) {
 		gg_change_pubdir_free( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("User info changing finished prematurely due to a connection error.") );
 		done_ = true;
 		deleteLater();
@@ -478,14 +478,14 @@ ChangeInfoCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_change_pubdir_free( session_ );
-		emit error( i18n("State error."),
+		emit error( i18n("State Error"),
 								i18n("User info changing finished prematurely due to a session related problem (try again later).") );
 		done_ = true;
 		deleteLater();
 		return;
 	}
 	if ( session_->state == GG_STATE_DONE) {
-		emit done( i18n("Changed user info"),
+		emit done( i18n("Changed User Info"),
 							 i18n("Your info has been changed.") );
 		gg_change_pubdir_free( session_ );
 		done_ = true;
@@ -534,7 +534,7 @@ UserlistPutCommand::watcher()
 
 	if ( gg_userlist_put_watch_fd( session_ ) == -1 ) {
 		gg_userlist_put_free( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("Exporting of userlist to the server finished prematurely due to a connection error.") );
 		done_ = true;
 		deleteLater();
@@ -542,14 +542,14 @@ UserlistPutCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_userlist_put_free( session_ );
-		emit error( i18n("State error."),
+		emit error( i18n("State Error"),
 								i18n("Exporting of userlist to the server finished prematurely due to a session related problem (try again later).") );
 		done_ = true;
 		deleteLater();
 		return;
 	}
 	if ( session_->state == GG_STATE_DONE) {
-		emit done( i18n("Userlist exported"),
+		emit done( i18n("Userlist Exported"),
 							 i18n("Your userlist has been exported to the server.") );
 		gg_userlist_put_free( session_ );
 		done_ = true;
@@ -594,7 +594,7 @@ UserlistGetCommand::watcher()
 
 	if ( gg_userlist_get_watch_fd( session_ ) == -1 ) {
 		gg_userlist_get_free( session_ );
-		emit error( i18n("Connection error"),
+		emit error( i18n("Connection Error"),
 								i18n("Importing of userlist from the server finished prematurely due to a connection error.") );
 		done_ = true;
 		deleteLater();
@@ -602,7 +602,7 @@ UserlistGetCommand::watcher()
 	}
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_userlist_get_free( session_ );
-		emit error( i18n("State error."),
+		emit error( i18n("State Error"),
 								i18n("Importing of userlist from the server finished prematurely due to a session related problem (try again later).") );
 		done_ = true;
 		deleteLater();

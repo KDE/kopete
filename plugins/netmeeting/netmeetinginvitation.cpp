@@ -59,8 +59,8 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 		MSNInvitation::parseInvitation(msg); //for the cookie
 
 		unsigned int result = KMessageBox::questionYesNo( 0,
-					i18n("%1 want to start a chat with Gnome-meeting. Do you want to accept it? " ).arg(m_contact->displayName()),
-					i18n("MSN Plugin - Kopete") , i18n("Accept"),i18n("Refuse"));
+					i18n("%1 want to start a chat with GnomeMeeting. Do you want to accept it? " ).arg(m_contact->displayName()),
+					i18n("MSN Plugin") , i18n("Accept"),i18n("Refuse"));
 
 		MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
 

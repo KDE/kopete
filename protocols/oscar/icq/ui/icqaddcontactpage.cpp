@@ -76,9 +76,9 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	if(!mAccount->isConnected())
 	{
 		new QListViewItem( icqdata->resultView,
-			i18n( "Adding Contacts is impossible while being offline" ), "", "", "", "" );
+			i18n( "Adding contacts is impossible while being offline" ), "", "", "", "" );
 		new QListViewItem( icqdata->resultView,
-			i18n( "Please go online before adding ICQ Contacts" ), "", "", "", "");
+			i18n( "Please go online before adding ICQ contacts" ), "", "", "", "");
 
 		icqdata->setDisabled(true);
 	}

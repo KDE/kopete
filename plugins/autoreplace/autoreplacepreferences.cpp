@@ -36,8 +36,8 @@ AutoReplacePreferences::AutoReplacePreferences(	const QString &pixmap,QObject *p
 	preferencesDialog = new AutoReplacePrefsUI( this );
 
 	// creates table columns (avoids new columns every time)
-	preferencesDialog->m_list->addColumn( i18n("text") );
-	preferencesDialog->m_list->addColumn( i18n("replacement") );
+	preferencesDialog->m_list->addColumn( i18n("Text") );
+	preferencesDialog->m_list->addColumn( i18n("Replacement") );
 
 	// connect SIGNALS/SLOTS
 	connect( preferencesDialog->m_add, SIGNAL(pressed()),

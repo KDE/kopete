@@ -333,7 +333,7 @@ void AIMContact::slotWarn()
 		qApp->mainWidget(),
 		message,
 		i18n("Warn User %1?").arg(mName),
-		i18n("Warn anonymously"),
+		i18n("Warn Anonymously"),
 		i18n("Warn"));
 
 	if (result == KMessageBox::Yes)

@@ -139,7 +139,7 @@ void SMSClient::slotSendFinished(KProcess* p)
 	}
 	else
 	{
-		KMessageBox::detailedError(0L, i18n("Something went wrong when sending message"), output.join("\n"),
+		KMessageBox::detailedError(0L, i18n("Something went wrong when sending message."), output.join("\n"),
 				i18n("Could Not Send Message"));
 	}
 }

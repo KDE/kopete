@@ -48,7 +48,7 @@ ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	: KopeteProtocol(parent,name),
 	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null , i18n("Online"), i18n("Online")),
-	statusFFC(KopeteOnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("&Free For Chat"), i18n("Free For Chat")),
+	statusFFC(KopeteOnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("&Free for Chat"), i18n("Free For Chat")),
 	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
 	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "icq_away", i18n("Away"), i18n("Away")),
 	statusDND(KopeteOnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd", i18n("&Do Not Disturb"), i18n("Do not Disturb")),

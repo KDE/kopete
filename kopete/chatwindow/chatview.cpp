@@ -324,7 +324,7 @@ bool ChatView::closeView( bool force )
 		if( m_sendInProgress  && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
-				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message In Transit"),
+				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
 				i18n("Cl&ose Chat"), i18n("Do not ask me this again"));
 		}
 	}

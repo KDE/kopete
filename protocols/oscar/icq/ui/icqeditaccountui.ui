@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>347</width>
-            <height>299</height>
+            <width>424</width>
+            <height>370</height>
         </rect>
     </property>
     <property name="caption">
@@ -180,7 +180,7 @@
                 <cstring>chkWebAware</cstring>
             </property>
             <property name="text">
-                <string>&amp;Web Aware</string>
+                <string>&amp;Web aware</string>
             </property>
         </widget>
         <spacer>

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>569</width>
+            <width>654</width>
             <height>476</height>
         </rect>
     </property>
@@ -103,7 +103,7 @@
             <cstring>selectService</cstring>
         </property>
         <attribute name="title">
-            <string>Step One: Select the account to use</string>
+            <string>Step One: Select the Account to Use</string>
         </attribute>
         <vbox>
             <property name="name">
@@ -221,7 +221,7 @@
             <cstring>selectGroup</cstring>
         </property>
         <attribute name="title">
-            <string>Step Two: Selecting a group</string>
+            <string>Step Two: Selecting a Group</string>
         </attribute>
         <vbox>
             <property name="name">

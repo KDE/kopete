@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>758</width>
-            <height>392</height>
+            <width>811</width>
+            <height>478</height>
         </rect>
     </property>
     <property name="caption">
@@ -110,7 +110,7 @@
                         <cstring>m_setFG</cstring>
                     </property>
                     <property name="text">
-                        <string>Change foreground color into</string>
+                        <string>Change foreground color into:</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
@@ -126,7 +126,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Set message importance to</string>
+                        <string>Set message importance to:</string>
                     </property>
                 </widget>
                 <widget class="KComboBox" row="0" column="2">
@@ -162,7 +162,7 @@
                         <cstring>m_setBG</cstring>
                     </property>
                     <property name="text">
-                        <string>Change background color into </string>
+                        <string>Change background color into:</string>
                     </property>
                 </widget>
                 <widget class="KColorButton" row="1" column="2">

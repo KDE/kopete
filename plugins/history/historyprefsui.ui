@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>502</width>
+            <width>652</width>
             <height>392</height>
         </rect>
     </property>
@@ -36,7 +36,7 @@
                         <cstring>newView</cstring>
                     </property>
                     <property name="text">
-                        <string>Old messages shown in new chat windows</string>
+                        <string>Old messages shown in new chat windows:</string>
                     </property>
                 </widget>
                 <widget class="KIntSpinBox">
@@ -59,7 +59,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Color for history messages in the chatwindow</string>
+                        <string>Color for history messages in the chatwindow:</string>
                     </property>
                 </widget>
                 <widget class="KColorButton">

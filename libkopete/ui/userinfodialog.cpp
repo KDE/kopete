@@ -42,7 +42,7 @@ struct UserInfoDialog::UserInfoDialogPrivate {
 
 UserInfoDialog::UserInfoDialog( const QString& descr )
 	: KDialogBase( kapp->mainWidget(), "userinfodialog",
-								 true, i18n("User info - ") + descr,
+								 true, i18n("User Info - ") + descr,
 								 KDialogBase::Ok )
 {
 	d = new UserInfoDialogPrivate;

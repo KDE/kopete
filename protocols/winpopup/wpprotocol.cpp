@@ -162,9 +162,9 @@ void WPProtocol::installSamba()
 	args += KStandardDirs::findExe("winpopup-install.sh");
 	args += KStandardDirs::findExe("winpopup-send.sh");
 	if (KApplication::kdeinitExecWait("kdesu", args) == 0)
-		KMessageBox::information(mPrefs, i18n("The Samba configuration file is modified."), i18n("Configuration succeeded"));
+		KMessageBox::information(mPrefs, i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
 	else
-		KMessageBox::error(mPrefs, i18n("Updating the Samba configuration file failed."), i18n("Configuration failed"));
+		KMessageBox::error(mPrefs, i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
 }
 
 #include "wpprotocol.moc"

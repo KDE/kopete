@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>510</width>
+            <width>607</width>
             <height>362</height>
         </rect>
     </property>
@@ -47,7 +47,7 @@
                 <cstring>advertiseNewMediaToBuddiesLabel</cstring>
             </property>
             <property name="text">
-                <string>&lt;b&gt;Advertise new media to buddies&lt;/b&gt;</string>
+                <string>&lt;b&gt;Advertise New Media to Buddies&lt;/b&gt;</string>
             </property>
         </widget>
         <widget class="QFrame">

@@ -43,7 +43,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 			gaduStatusOfflineDescr_( KopeteOnlineStatus::Away, 2, this, 
 				GG_STATUS_NOT_AVAIL_DESCR,
 				"gg_offline_d",	 i18n( "Go A&way" ),
-				i18n( "Offline With Description" ) ),
+				i18n( "Offline with Description" ) ),
 				gaduStatusMaybeOffline_( KopeteOnlineStatus::Offline, 4, this, 0x0,
 				"gg_away", i18n( "Go O&ffline" ), i18n( "Offline (maybe)" ) ),
 			gaduStatusBusy_(KopeteOnlineStatus::Away, 20, this, GG_STATUS_BUSY,
@@ -58,7 +58,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 					"gg_online",	i18n( "Go &Online" ),		 i18n( "Online" ) ),
 			gaduStatusAvailDescr_(KopeteOnlineStatus::Online, 30, this, GG_STATUS_AVAIL_DESCR,
 					"gg_online_d",	i18n( "Go &Online" ),		 				
-					i18n( "Online With Description ;P" ) ),
+					i18n( "Online with Description ;P" ) ),
 			gaduConnecting_(KopeteOnlineStatus::Offline, 1, this, GG_STATUS_CONNECTING,
 					"gg_con", i18n( "Connect"), i18n("Connecting") ),
 			defaultAccount_( 0 )

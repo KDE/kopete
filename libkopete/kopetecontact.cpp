@@ -339,7 +339,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 #else
 					.arg(displayName(), contactId(), m ? m->displayName() : QString::null, old->displayName())
 #endif
-				, i18n("Move contact - Kopete"), i18n("&Delete") , i18n("&Keep") , QString::fromLatin1("delete_old_contact_when_move") );
+				, i18n("Move Contact"), i18n("&Delete") , i18n("&Keep") , QString::fromLatin1("delete_old_contact_when_move") );
 
 			if(result==KMessageBox::Cancel)
 				return;

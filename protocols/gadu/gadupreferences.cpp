@@ -47,7 +47,7 @@
 #include <qcheckbox.h>
 
 GaduPreferences::GaduPreferences( const QString& pixmap, QObject* parent )
-	: ConfigModule( i18n("Gadu-Gadu Plugin"), i18n("Gadu Gadu"), pixmap, parent )
+	: ConfigModule( i18n("Gadu-Gadu Plugin"), i18n("Gadu-Gadu"), pixmap, parent )
 {
 	uin_ = 0;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );

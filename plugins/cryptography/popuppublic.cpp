@@ -110,7 +110,7 @@ defaultName="";
   if (sfile.isEmpty())
   keysList->addColumn(i18n("Encryption Key"));
   else
-      keysList->addColumn(i18n("Encryption Keys For %1:").arg(sfile));
+      keysList->addColumn(i18n("Encryption Keys for %1:").arg(sfile));
 
   boutonboxoptions=new QButtonGroup(5,Qt::Vertical ,this,0);
 

@@ -68,9 +68,9 @@ KopeteAccount *IRCEditAccountWidget::apply()
 bool IRCEditAccountWidget::validateData()
 {
 	if( mNickName->text().isEmpty() )
-		KMessageBox::sorry(this, i18n("<qt>You must enter a nickname</qt>"), i18n("Kopete"));
+		KMessageBox::sorry(this, i18n("<qt>You must enter a nickname.</qt>"), i18n("Kopete"));
 	else if( mServer->text().isEmpty() )
-		KMessageBox::sorry(this, i18n("<qt>You must enter a server</qt>"), i18n("Kopete"));
+		KMessageBox::sorry(this, i18n("<qt>You must enter a server.</qt>"), i18n("Kopete"));
 	else
 		return true;
 

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>329</width>
-            <height>226</height>
+            <width>519</width>
+            <height>233</height>
         </rect>
     </property>
     <property name="caption">
@@ -83,12 +83,12 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>Adding a Roster Item</string>
+                            <string>Add Roster Item</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>Deleting a Roster Item</string>
+                            <string>Delete Roster Item</string>
                         </property>
                     </item>
                     <item>

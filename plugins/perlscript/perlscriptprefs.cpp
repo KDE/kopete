@@ -85,7 +85,7 @@ void PerlScriptPreferences::slotAddScript( const QString &scriptPath, const QStr
 	}
 	else
 	{
-		KMessageBox::error( this, i18n("This script has already been loaded"), i18n("Script already loaded") );
+		KMessageBox::error( this, i18n("This script has already been loaded."), i18n("Script already loaded") );
 	}
 }
 
