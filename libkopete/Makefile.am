@@ -4,7 +4,7 @@ INCLUDES = -I$(srcdir)/ui -I./ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
-libkopete_la_SOURCES = kopete.cpp kopeteprotocol.cpp kopetecontact.cpp \
+libkopete_la_SOURCES = kopeteprotocol.cpp kopetecontact.cpp \
 	pluginloader.cpp kopeteplugin.cpp kopetemessagelog.cpp \
 	kopetemessage.cpp kopetenotifier.cpp kopeteevent.cpp \
 	kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp \

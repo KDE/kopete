@@ -1,13 +1,22 @@
 INCLUDES = -I$(srcdir)/../libkopete \
 	-I$(srcdir)/../libkopete/ui \
+	-I../libkopete/ui \
 	$(all_includes)
 
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
+noinst_HEADERS = \
+	kopetewindow.h kopete.h \
+	kopetemetacontactlvi.h kopetegroupviewitem.h kopetecontactlistview.h \
+	statusbaricon.h
+
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
-	kopeteiface.cpp kopeteiface.skel
+	kopetewindow.cpp kopete.cpp kopeteiface.cpp kopeteiface.skel \
+	kopetemetacontactlvi.cpp kopetegroupviewitem.cpp kopetecontactlistview.cpp \
+	statusbaricon.cpp
+
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kopete_LDADD = ../libkopete/libkopete.la
 
@@ -20,4 +29,6 @@ data_DATA = kopeteui.rc eventsrc
 # this is where the desktop file will go
 desktopdir   = $(kde_appsdir)/Internet
 desktop_DATA = kopete.desktop
+
+# vim: set noet:
 
