@@ -60,7 +60,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	statusBarIcon->setPixmap(offlineIcon);
 
 	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
-	mPrefs = new MSNPreferences(protocolIcon, this);
+	mPrefs = new MSNPreferences("msn_protocol", this);
 	connect(mPrefs, SIGNAL(saved(void)), this, SIGNAL(settingsChanged(void)) );
 
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";

@@ -53,7 +53,7 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), KopeteProtocol()
 	connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
 
 	kdDebug() << "IRC Protocol Plugin: Creating Config Module\n";
-	new IRCPreferences(protocolIcon, this);
+	new IRCPreferences("irc_protocol", this);
 
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->hasKey("Nickname") == false)

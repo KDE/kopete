@@ -23,6 +23,8 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <klocale.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 
 ConfigModule::ConfigModule(const QString &name, const QString &description, QObject *owner)
 	: QWidget(kopeteapp->preferencesBox()->addPage(name, description))
@@ -35,8 +37,8 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, QObj
 	(new QHBoxLayout(page))->addWidget(this);
 }
 
-ConfigModule::ConfigModule(const QString &name, const QString &description, const QPixmap &pixmap, QObject *owner)
-	: QWidget(kopeteapp->preferencesBox()->addPage(name, description, pixmap))
+ConfigModule::ConfigModule(const QString &name, const QString &description, const QString &pixmap, QObject *owner)
+	: QWidget(kopeteapp->preferencesBox()->addPage(name, description, KGlobal::iconLoader()->loadIcon(pixmap,KIcon::NoGroup, KIcon::SizeMedium)  ))
 {
 	if (owner)
 		connect(owner, SIGNAL(destroyed()), SLOT(ownerDeleted()));

@@ -33,7 +33,7 @@ class IRCPreferences : public ConfigModule
 {
 Q_OBJECT
 public:
-	IRCPreferences(const QPixmap &pixmap,QObject *parent=0);
+	IRCPreferences(const QString &pixmap,QObject *parent=0);
 	~IRCPreferences();
    virtual void save();
 signals:

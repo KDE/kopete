@@ -11,7 +11,7 @@
 #include <kcolorbutton.h>
 #include <qradiobutton.h>
 
-IRCPreferences::IRCPreferences(const QPixmap &pixmap,QObject *parent)
+IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	: ConfigModule(i18n("IRC Plugin"),i18n("Internet Relay Chat Protocol"),pixmap,parent)
 {
 	preferencesDialog = new ircPrefsUI(this);

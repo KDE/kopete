@@ -36,7 +36,7 @@ public:
 	 * When that is deleted, this also will go away, automagically.
 	 **/
 	ConfigModule(const QString &name, const QString &description, QObject *parent=0);
-	ConfigModule(const QString &name, const QString &description, const QPixmap &pixmap, QObject *parent=0);
+	ConfigModule(const QString &name, const QString &description, const QString &icon, QObject *parent=0);
 	virtual ~ConfigModule();
 
 public slots:
