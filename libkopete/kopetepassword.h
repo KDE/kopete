@@ -40,10 +40,8 @@ public:
 	 *
 	 * @param configGroup The configuration group to save passwords in
 	 *        if using KConfig
-	 * @param passwordId The unique id of the password
-	 * @param displayName The display name for this password, such as 'ICQ' or 'IRC #chanwithkey'
 	 */
-	KopetePassword(const QString &configGroup, const QString &passwordId, const QString &displayName, const char *name = 0);
+	KopetePassword(const QString &configGroup, const char *name = 0);
 	~KopetePassword();
 
 	/**
@@ -64,7 +62,6 @@ public:
 	 * @return The password or QString::null if the user has canceled
 	 */
 	QString retrieve( const QPixmap &image, const QString &prompt, bool error = false, bool *ok = 0, unsigned int maxLength = 0 );
-	QString retrieve( bool error = false, bool *ok = 0, unsigned int maxLength = 0 );
 
 	/**
 	 * @return true if the password is remembered, false otherwise.
@@ -81,12 +78,6 @@ public slots:
 	 *             otherwise sets the password to this value.
 	 */
 	void set( const QString &pass = QString::null );
-
-	/**
-	 * Set the user-visible name for this password.
-	 * @param displayName The new name for the password
-	 */
-	void setDisplayName( const QString &displayName );
 
 private:
 	void readConfig();

@@ -52,7 +52,7 @@ class KopeteAccountPrivate
 public:
 	KopeteAccountPrivate( KopeteProtocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
-	 , password( configGroup( protocol, accountId ), accountId, accountId )
+	 , password( configGroup( protocol, accountId ) )
 	 , autologin( false ), priority( 0 ), myself( 0 )
 	{
 	}

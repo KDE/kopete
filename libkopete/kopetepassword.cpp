@@ -57,24 +57,20 @@ QString cryptStr( const QString &aStr )
 
 struct KopetePassword::KopetePasswordPrivate
 {
-	KopetePasswordPrivate( const QString &group, const QString &id, const QString &displayName )
-	 : id( id ), configGroup( group ), displayName( displayName ), remembered( false )
+	KopetePasswordPrivate( const QString &group )
+	 : configGroup( group ), remembered( false )
 	{
 	}
-	/** ID for password in KConfig and KWallet */
-	QString id;
 	/** Group to use for KConfig and KWallet */
 	QString configGroup;
-	/** Display name for this password when asking the user for it */
-	QString displayName;
 	/** Is the password being remembered? */
 	bool remembered;
 	/** The current password in the KConfig file, or QString::null if no password there */
 	QString passwordFromKConfig;
 };
 
-KopetePassword::KopetePassword( const QString &configGroup, const QString &passwordId, const QString &displayName, const char *name )
- : QObject( 0, name ), d( new KopetePasswordPrivate( configGroup, passwordId, displayName ) ) 
+KopetePassword::KopetePassword( const QString &configGroup, const char *name )
+ : QObject( 0, name ), d( new KopetePasswordPrivate( configGroup ) ) 
 {
 	readConfig();
 }
@@ -82,11 +78,6 @@ KopetePassword::KopetePassword( const QString &configGroup, const QString &passw
 KopetePassword::~KopetePassword()
 {
 	delete d;
-}
-
-void KopetePassword::setDisplayName( const QString &name )
-{
-	d->displayName = name;
 }
 
 void KopetePassword::readConfig()
@@ -114,17 +105,6 @@ void KopetePassword::writeConfig()
 		config->deleteEntry( "Password" );
 
 	config->writeEntry( "RememberPassword", d->remembered );
-}
-
-QString KopetePassword::retrieve( bool error, bool *ok, unsigned int maxLength )
-{
-	QString prompt;
-	if ( error )
-		prompt = i18n( "<b>The password was wrong! Please re-enter your password for %1 (%2)</b>" ).arg( d->displayName, d->id );
-	else
-		prompt = i18n( "Please enter your password for %1 (%2)" ).arg( d->displayName, d->id );
-
-	return retrieve( QPixmap(), prompt, error, ok, maxLength );
 }
 
 QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, bool error, bool *ok, unsigned int maxLength )

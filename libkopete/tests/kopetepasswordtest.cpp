@@ -30,8 +30,7 @@ static QTextStream _out( stdout, IO_WriteOnly );
 
 static KCmdLineOptions opts[] =
 {
- { "id <passwordID>", I18N_NOOP("Unique id of password"), "PasswordTest" },
- { "group <group>", I18N_NOOP("Config group to store settings in"), "TestGroup" },
+ { "id <id>", I18N_NOOP("Config group to store password in"), "TestAccount" },
  { "set <new>", I18N_NOOP("Set password to new"), "" },
  { "error", I18N_NOOP("Claim password was erroneous"), "" },
  { "prompt <prompt>", I18N_NOOP("Password prompt"), "Enter a password" },
@@ -47,17 +46,16 @@ int main( int argc, char *argv[] )
 
 	KApplication app( "kopetepasswordtest" );
 	
-	QString id = args->getOption("id");
 	bool setPassword = args->isSet("set");
 	QString newPwd = args->getOption("set");
-	QString group = args->getOption("group");
+	QString passwordId = args->getOption("id");
 	bool error = args->isSet("error");
 	QString prompt = args->getOption("prompt");
 	QPixmap image = QString(args->getOption("image"));
 
 	_out << (image.isNull() ? "image is null" : "image is valid") << endl;
 
-	KopetePassword pwd( group, id, id );
+	KopetePassword pwd( passwordId );
 	QString pass = pwd.retrieve( image, prompt, error );
 
 	if ( !pass.isNull() )
