@@ -1,10 +1,12 @@
-Prompt user to accept, deny, or warn incoming DirectIM and file transfer requests
-Add ability to abort, pause, and resume transfers
-Make Buffer inherit QByteArray, get rid of possibly error prone c-style array code
-Add support for directory transfers
-Add support for buddy icons
-Add GetFile support
-Add support for sending/receiving buddy lists
-Add support for reverse connections for both file transfers and direct IM (this is used when one client is behind a firewall that does not allow direct connections)
-Handling of 0x0001/0x000b (Server pause) snac: this will be very difficult to debug since that server command is very rare
-See what we can do about plugin loading speed.. seems very slow on my machine
+- Prompt user to accept, deny, or warn incoming DirectIM and file transfer requests
+- Add ability to abort, pause, and resume transfers
+- Make Buffer inherit QByteArray, get rid of possibly error prone c-style array code
+- Add support for directory transfers
+- Add support for buddy icons
+- Add GetFile support
+- Add support for sending/receiving buddy lists
+- Add support for reverse connections for both file transfers and direct IM
+  (this is used when one client is behind a firewall that does not allow direct connections)
+- Handling of SNAC(0x0001,0x000b) (Server pause) This will be very difficult to debug
+  since that server command is very rare
+- See what we can do about plugin loading speed.. seems very slow on my machine
