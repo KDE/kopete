@@ -111,6 +111,8 @@ private slots:
 	void slotRightClick( const QString &, const QPoint &point );
 
 	void slotCopyURL();
+	
+	void slotCloseView( bool force = false );
 
 private:
 	Kopete::ChatSession *m_manager;

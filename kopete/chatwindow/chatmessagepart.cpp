@@ -198,11 +198,10 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	
 
 	//initActions
-	//FIXME: conflicts with the editor's copy action
 	copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
 	saveAction = KStdAction::saveAs( this, SLOT(save()), actionCollection() );
 	printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
-	closeAction = KStdAction::close( this, SLOT(closeView()),actionCollection() );
+	closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
 	copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), actionCollection() );
 
 	// read formatting override flags
@@ -779,6 +778,11 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 	
 	if ( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+}
+
+void ChatMessagePart::slotCloseView( bool force )
+{
+	m_manager->view()->closeView( force );
 }
 
 #include "chatmessagepart.moc"
