@@ -171,8 +171,9 @@ RegisterCommand::setUserinfo( const QString& email, const QString& password, con
 void
 RegisterCommand::execute()
 {
-	if ( state == RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
+	if ( state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
 		// get token first || fill information
+		kdDebug(14100) << "not enough info to ruun execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl; 
 		return;
 	}
 	session_ = gg_register3( email_.ascii(), password_.ascii(), tokenId.ascii(), tokenString.ascii(), 1 );
@@ -226,15 +227,16 @@ void RegisterCommand::watcher()
 					}
 					tokenImg = new QPixmap;
 					tokenImg->loadFromData( imgB );
+					state = RegisterStateGotToken;
 					emit tokenRecieved( *tokenImg, tokenId );
 				}
 				else {
 					emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
+					state = RegisterStateNoToken;
 				}
 				deleteNotifiers();
 				gg_token_free( session_ );
 				session_ = NULL;
-				state = RegisterStateNoToken;
 				return;
 				break;
 		}
