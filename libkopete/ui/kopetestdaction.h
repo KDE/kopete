@@ -23,9 +23,8 @@
 
 /**
  * @author Ryan Cumming. <bodnar42@phalynx.dhs.org>
- *
+ * //FIXME: I WANT TO GET RIDE OF THIS CLASS  - Olivier
  */
-
 class KopeteStdAction
 {
 	public:
@@ -44,7 +43,6 @@ class KopeteStdAction
 		static KListAction *moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KListAction *copyContact( const QObject *recvr, const char *slot, QObject* parent, const char *name = 0 );
 		static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
-		static KListAction *addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KAction *changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 
 };

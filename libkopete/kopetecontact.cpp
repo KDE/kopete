@@ -316,8 +316,6 @@ void KopeteContact::slotMoveDialogOkClicked()
 
 void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
-
 	KopeteMetaContact *old = d->metaContact;
 
 	if( old )
@@ -391,12 +389,12 @@ bool KopeteContact::isReachable()
 
 void KopeteContact::startChat()
 {
-	manager(true)->view(true, KopeteMessage::Chat )->raise();
+	manager(true)->view(true, KopeteMessage::Chat )->raise(true);
 }
 
 void KopeteContact::sendMessage()
 {
-	manager(true)->view(true, KopeteMessage::Email )->raise();
+	manager(true)->view(true, KopeteMessage::Email )->raise(true);
 }
 
 void KopeteContact::execute()

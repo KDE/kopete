@@ -169,7 +169,7 @@ public:
 
 	void historyDown();
 
-	virtual void raise();
+	virtual void raise(bool activate=false);
 
 	virtual void makeVisible();
 

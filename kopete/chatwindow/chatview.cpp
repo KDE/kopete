@@ -195,13 +195,14 @@ ChatView::~ChatView()
 	delete mComplete;
 }
 
-void ChatView::raise()
+void ChatView::raise(bool activate)
 {
 	//this shouldn't change the focus. When the window is reased when a new mesage arrive
 	// if i am coding, or talking to someone else, i want to end my sentence before switch to
 	// the other chat. i just want to KNOW and SEE the other chat to switch to it right later
+	// (exepted if activate==true)
 
-	if(!m_mainWindow || !m_mainWindow->isActiveWindow())
+	if(!m_mainWindow || !m_mainWindow->isActiveWindow() || activate)
 		makeVisible();
 
 	if( !KWin::info( m_mainWindow->winId() ).onAllDesktops )
@@ -213,7 +214,8 @@ void ChatView::raise()
 	if(m_mainWindow->isMinimized())
 		KWin::deIconifyWindow(m_mainWindow->winId() );
 	m_mainWindow->raise();
-	//m_mainWindow->setActiveWindow();  //this set the focus to the window
+	if(activate)
+		m_mainWindow->setActiveWindow();  //this set the focus to the window
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)

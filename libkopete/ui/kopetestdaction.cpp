@@ -21,8 +21,6 @@
 
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
-#include "kopeteprotocol.h"
-#include "pluginloader.h"
 
 /** KopeteGroupList **/
 KopeteGroupListAction::KopeteGroupListAction(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
@@ -106,23 +104,6 @@ KListAction *KopeteStdAction::copyContact( const QObject *recvr, const char *slo
 KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KAction( i18n( "&Delete Contact" ), QString::fromLatin1( "edittrash" ), 0, recvr, slot, parent, name );
-}
-
-KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
-{
-	KListAction *a = new KListAction( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), 0, recvr, slot, parent, name );
-	QStringList protocolList;
-
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-	{
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-		if( proto )
-			protocolList.append( proto->displayName() );
-	}
-
-	a->setItems( protocolList );
-	return a;
 }
 
 KAction* KopeteStdAction::changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name)

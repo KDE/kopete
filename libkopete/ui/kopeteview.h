@@ -89,8 +89,9 @@ class KopeteView
 
 		/**
 		 * Raises the view to the top of the screen.
+		 * @param activate change the focus to the window
 		 */
-		virtual void raise() = 0;
+		virtual void raise(bool activate=false) = 0;
 
 		/**
 		 * Clears the buffer

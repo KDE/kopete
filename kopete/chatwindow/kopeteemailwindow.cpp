@@ -618,12 +618,13 @@ void KopeteEmailWindow::slotReplySendClicked()
 		sendMessage();
 }
 
-void KopeteEmailWindow::raise()
+void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
 	KWin::setOnDesktop( winId(), KWin::currentDesktop() );
-	setActiveWindow();
 	KMainWindow::raise();
+	if(activate)
+		setActiveWindow();
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

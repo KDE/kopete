@@ -49,7 +49,7 @@ public:
 
 	virtual void setCurrentMessage( const KopeteMessage &newMessage );
 
-	virtual void raise();
+	virtual void raise(bool activate=false);
 
 	virtual void makeVisible();
 
