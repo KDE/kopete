@@ -1075,7 +1075,7 @@ bool KopeteMetaContact::syncWithKABC()
 								else if ( accounts.isEmpty() )
 								{
 									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-										i18n( "<qt>You don't have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>" ).arg( protocolName ),
+										i18n( "<qt>You do not have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>" ).arg( protocolName ),
 										i18n( "No account found" )  );
 									continue;
 								}
@@ -1093,7 +1093,7 @@ bool KopeteMetaContact::syncWithKABC()
 									else
 										KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 											i18n( "<qt>It was not possible to add the contact. Please see the debug messages for details.</qt>" ),
-											i18n( "Couldn't add contact") ) ;
+											i18n( "Could not add contact") ) ;
 								}
 							}
 							else
