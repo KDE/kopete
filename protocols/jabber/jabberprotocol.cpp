@@ -44,6 +44,7 @@
 #include "jabcommon.h"
 #include "statusbaricon.h"
 #include "dlgjabberstatus.h"
+#include "dlgjabbersendraw.h"
 #include "jabio.h"
 #include "jabtasks.h"
 
@@ -64,6 +65,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 
     authContact = new KMessageBox;
 	reasonDialog = 0L;
+	sendRawDialog = 0L;
 
     statusBarIcon = new StatusBarIcon();
     QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
@@ -320,7 +322,18 @@ void JabberProtocol::slotSetDND() {
 void JabberProtocol::slotSendRaw()
 {
 
-	kdDebug() << "Sending raw message" << endl;
+	if (sendRawDialog != 0L)
+		delete sendRawDialog;
+	sendRawDialog = new dlgJabberSendRaw(this, kopeteapp->mainWindow());
+
+}
+
+void JabberProtocol::sendRawMessage(const QString &packet)
+{
+
+	kdDebug() << "--- Sending raw message ---" << endl << packet << "---------------------------" << endl ;
+
+	mProtocol->sendRawMessage(packet);
 
 }
 

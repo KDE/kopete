@@ -45,6 +45,7 @@ class KSimpleConfig;
 class JabberContact;
 class JabberPreferences;
 class dlgJabberStatus;
+class dlgJabberSendRaw;
 
 class StatusBarIcon;
 
@@ -100,6 +101,8 @@ public slots:
 	void slotSetDND();
 	void slotSendRaw();
 	void setPresence(int, QString, int = 0);
+	
+	void sendRawMessage(const QString &packet);
 
 	void slotIconRightClicked(const QPoint&);
 
@@ -153,6 +156,7 @@ private:
 	JabberContact *myContact;
 	KMessageBox *authContact;
 	dlgJabberStatus *reasonDialog;
+	dlgJabberSendRaw *sendRawDialog;
 	QMap<QString, JabberContact *> contactList;
 };
 
