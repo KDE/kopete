@@ -63,8 +63,14 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		loginEdit_->setText( account()->accountId() );
 
 		passwordWidget_->load( &static_cast<GaduAccount*>(account())->password() );
-
-		nickName->setText( account()->myself()->displayName() );
+		
+		QString nick = account()->myself()->property( 
+				Kopete::Global::Properties::self()->nickName() ).value().toString();	
+		if ( nick.isEmpty() ) {
+			nick = account()->myself()->contactId();
+		}
+		
+		nickName->setText( nick );
 
 		autoLoginCheck_->setChecked( account()->autoConnect() );
 		dccCheck_->setChecked( static_cast<GaduAccount*>(account())->dccEnabled() );
@@ -139,11 +145,11 @@ GaduEditAccount::apply()
 
 	passwordWidget_->save( &static_cast<GaduAccount*>(account())->password() );
 
-	account()->myself()->rename( nickName->text() );
-
+	account()->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nickName->text() );
+	
 	// this is changed only here, so i won't add any proper handling now
-	account()->setPluginData( account()->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
-
+        account()->configGroup()->writeEntry( QString::fromAscii( "nickName" ), nickName->text() );
+		
 	account()->setAutoConnect( autoLoginCheck_->isChecked() );
 	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
 
