@@ -70,3 +70,6 @@ AM_CONDITIONAL(include_gadu, test -n "$COMPILEGADU")
 LIBS="$ac_save_LIBS"
 CXXFLAGS="$ac_save_CXXFLAGS"
 
+KDE_CHECK_SSL
+
+AM_CONDITIONAL(include_jabber, test "$have_ssl" = "yes")
