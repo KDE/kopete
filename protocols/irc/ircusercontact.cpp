@@ -486,25 +486,20 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 	}
 }
 
-void IRCUserContact::newAction(const QString &from, const QString &action)
+void IRCUserContact::newAction(const QString &to, const QString &action)
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
-	IRCContact *f = MYACCOUNT->contactManager()->findUser(from);
+	IRCContact *t = MYACCOUNT->contactManager()->findUser(to);
+
+	KopeteMessage msg(this, t, action,
+		KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
 
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
 	if (this == MYACCOUNT->mySelf())
-	{
-		KopeteMessage msg(f, this, action,
-			KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
-		f->appendMessage(msg);
-	}
+		t->appendMessage(msg);
 	else
-	{
-		KopeteMessage msg(this, f, action,
-			KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
 		appendMessage(msg);
-	}
 }
 
 #include "ircusercontact.moc"
