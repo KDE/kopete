@@ -102,6 +102,7 @@ public:
 	static QString failureDescription( gg_failure_t );
 	static QString errorDescription( int err );
 	static QString stateDescription( int state );
+	void dccRequest( const unsigned int );
 
 public slots:
 	void	login( KGaduLoginParams* login );

@@ -77,6 +77,32 @@ GaduDCCTransaction::peerUIN()
 }
 
 bool
+GaduDCCTransaction::setupOutgoing( GaduContact* peerContact )
+{
+	GaduContact* me;
+	GaduAccount* metoo;
+
+	if ( !peerContact ) {
+		return false;
+	}
+
+	me = static_cast<GaduContact*>( peerContact->account()->myself() );
+
+	unsigned int aaa =  htonl( peerContact->contactIp().ip4Addr() );
+	kdDebug( 14100 ) << "slotOutgoin for UIN: " << peerContact->uin() << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
+
+	if ( peerContact->contactPort() >= 10 ) {
+		gg_dcc_send_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
+	}
+	else {
+		metoo = static_cast<GaduAccount*>( me->account() );
+		metoo->dccRequest( peerContact );
+	}
+
+	return false;
+}
+
+bool
 GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerContact )
 {
 

@@ -1021,6 +1021,21 @@ GaduAccount::slotSearchResult( const SearchResult& result )
 	emit pubDirSearchResult( result );
 }
 
+void
+GaduAccount::sendFile( GaduContact* peer )
+{
+	GaduDCCTransaction* gtran = new GaduDCCTransaction( p->gaduDcc_ );
+	gtran->setupOutgoing( peer );
+}
+
+void
+GaduAccount::dccRequest( GaduContact* peer )
+{
+	if ( peer && p->session_ ) {
+		p->session_->dccRequest( peer->uin() );
+	}
+}
+
 // dcc settings
 bool
 GaduAccount::dccEnabled()

@@ -149,6 +149,11 @@ GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 
 	kdDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
 
+	// no uin? I'm so sorry
+	if ( !incoming->uin ) {
+		return;
+	}
+
 	handled = true;
 	// TODO: limit number of connections per contact, or maybe even use parametr for that
 	newdcc = new gg_dcc;

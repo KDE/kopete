@@ -149,6 +149,14 @@ GaduSession::disableNotifiers()
 }
 
 void
+GaduSession::dccRequest( const unsigned int uin )
+{
+	if ( session_ ) {
+		gg_dcc_request( session_, uin );
+	}
+}
+
+void
 GaduSession::login( KGaduLoginParams* loginp )
 {
 	memset( &params_, 0, sizeof(params_) );
@@ -164,7 +172,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.client_port	= loginp->client_port;
 
 	kdDebug(14100) << "LOGIN IP: " << loginp->client_addr << " loginp->uin" << endl;
-	
+
 	if ( loginp->useTls ) {
 		params_.server_port = GG_HTTPS_PORT;
 	}

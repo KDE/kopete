@@ -86,25 +86,9 @@ GaduContact::uin() const
 }
 
 void
-GaduContact::sendFile( const KURL &sourceURL, const QString &fileName, uint fileSize )
+GaduContact::sendFile( const KURL &/*sourceURL*/, const QString &/*fileName*/, uint /*fileSize*/ )
 {
-	QString filePath;
-/*
-	if ( remote_port >= 10 ) {
-		if ( !sourceURL.isValid () ) {
-			filePath = KFileDialog::getOpenFileName( QString::null , "*", 0L, i18n ( "Kopete File Transfer" ) );
-		}
-		else {
-			filePath = sourceURL.path( -1 );
-		}
-
-		QFile file ( filePath );
-
-		if ( file.exists () ) {
-		// transfer the bastard
-		}
-	}
-	*/
+	account_->sendFile( this );
 }
 
 
