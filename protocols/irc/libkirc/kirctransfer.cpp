@@ -17,6 +17,7 @@
 
 #include <kdebug.h>
 #include <kextsock.h>
+#include <klocale.h>
 
 #include <qfile.h>
 #include <qtimer.h>
@@ -36,9 +37,9 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 }
 
 KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
-				QHostAddress hostAdress, Q_UINT16 port,
+				QHostAddress hostAdress, Q_UINT16 port, // put this in a QVariant ?
 				KIRCTransfer::Type type,
-				QString fileName, Q_UINT32 fileSize,
+				QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
 				QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
@@ -48,15 +49,39 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
 {
 	setSocket(new KExtendedSocket(hostAdress.toString(), port));
-}
 
+	connect(this, SIGNAL(complete()),
+		this, SLOT(closeSocket()));
+
+	connect(this, SIGNAL(abort(QString)),
+		this, SLOT(closeSocket()));
+}
+/*
+KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+				KIRCTransfer::Type type, QVariant properties,
+				QObject *parent, const char *name )
+	: QObject( parent, name ),
+	  m_engine(engine), m_nick(nick),
+	  m_type(type), m_socket(properties[socket]),
+	  m_initiated(false),
+	  m_file(0), m_fileName(properties[fileName]), m_fileSize(properties[fileSize]), m_fileSizeCur(0), m_fileSizeAck(0),
+	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
+{
+	if(!properites["socket"].isNull())
+		setSocket(properites["socket"]);
+	else if(!properites["hostAddress"].isNull() && !properites["hostPort"].isNull())
+		setSocket(new KExtendedSocket(properites["hostAddress"], properites["hostPort"]));
+
+	connect(this, SIGNAL(complete()),
+		this, SLOT(closeSocket()));
+
+	connect(this, SIGNAL(abort(QString)),
+		this, SLOT(closeSocket()));
+}
+*/
 KIRCTransfer::~KIRCTransfer()
 {
-	if(m_socket)
-	{
-		m_socket->close();
-		m_socket->deleteLater();
-	}
+	closeSocket();
 	// m_file is automatically closed on destroy.
 }
 
@@ -72,11 +97,11 @@ KIRCTransfer::Status KIRCTransfer::status() const
 
 void KIRCTransfer::slotError( int error )
 {
+	// Connection in progress.. This is a signal fired wrong
 	if (m_socket->socketStatus () != KExtendedSocket::connecting)
 	{
-		// Connection in progress.. This is a signal fired wrong
-		m_socket->reset();
-		deleteLater();
+		abort(KExtendedSocket::strError(m_socket->status(), m_socket->systemError()));
+//		closeSocket();
 	}
 }
 
@@ -160,6 +185,42 @@ bool KIRCTransfer::setSocket( KExtendedSocket *socket )
 	return false;
 }
 
+void KIRCTransfer::closeSocket()
+{
+	if(m_socket)
+	{
+		m_socket->close();
+//		m_socket->reset();
+		m_socket->deleteLater();
+	}
+	m_socket = 0;
+}
+
+/*
+ * This slot ensure that all the stream are flushed.
+ * This slot is called periodically internaly.
+ */
+ void KIRCTransfer::flush()
+{
+	/*
+	 * Enure the incoming file content in case of a crash.
+	 */
+	if(m_file.isOpen() && m_file.isWritable())
+		m_file.flush();
+
+	/*
+	 * Ensure that non interactive streams outputs (i.e file transfer acknowledge by example)
+	 * are sent (Don't stay in a local buffer).
+	 */
+	if(m_socket && status() == Connected)
+		m_socket->flush();
+}
+
+void KIRCTransfer::userAbort(QString msg)
+{
+	emit abort(msg);
+}
+
 void KIRCTransfer::setCodec( QTextCodec *codec )
 {
 	switch( m_type )
@@ -186,31 +247,6 @@ void KIRCTransfer::writeLine( const QString &line )
 	}
 }
 
-/*
- * This slot ensure that all the stream are flushed.
- * This slot is called periodically internaly.
- */
- void KIRCTransfer::flush()
-{
-	/*
-	 * Enure the incoming file content in case of a crash.
-	 */
-	if(m_file.isOpen() && m_file.isWritable())
-		m_file.flush();
-
-	/*
-	 * Ensure that non interactive streams outputs (i.e file transfer acknowledge by example)
-	 * are sent (Don't stay in a local buffer).
-	 */
-	if(m_socket && status() == Connected)
-		m_socket->flush();
-}
-
-void KIRCTransfer::abort(const QString &/*reason*/)
-{
-	// Should close/abort the transfert
-}
-
 void KIRCTransfer::readyReadLine()
 {
 	if( m_socket->canReadLine() )
@@ -231,7 +267,7 @@ void KIRCTransfer::readyReadFileIncoming()
 			m_fileSizeCur += written;
 			m_fileSizeAck = m_fileSizeCur;
 			m_socketDataStream << m_fileSizeAck;
-			emit fileSizeAcknowledge( m_fileSizeAck );
+			checkFileTransferEnd(m_fileSizeAck);
 			return;
 		}
 		else
@@ -264,25 +300,23 @@ void KIRCTransfer::writeFileOutgoing()
 
 void KIRCTransfer::readyReadFileOutgoing()
 {
-//	if( m_socket->canread( sizeof(m_file_size_ack) ) )
+//	if(m_socket->canread(sizeof(m_file_size_ack)))
 	{
 		m_socketDataStream >> m_fileSizeAck;
-		emit fileSizeAcknowledge( m_fileSizeAck );
+		checkFileTransferEnd(m_fileSizeAck);
 	}
 }
 
-void KIRCTransfer::emitSignals()
+void KIRCTransfer::checkFileTransferEnd( Q_UINT32 fileSizeAck )
 {
-	emit fileSizeCurrent( m_fileSizeCur );
-	emit fileSizeAcknowledge( m_fileSizeAck );
+	m_fileSizeAck = fileSizeAck;
+	emit fileSizeAcknowledge(m_fileSizeAck);
 
-	if(m_receivedBytesLimit)
-		emit received( m_receivedBytes * 100 / m_receivedBytesLimit );
-	emit receivedBytes( m_receivedBytes );
+	if(m_fileSizeAck > m_fileSize)
+		abort(i18n("Acknowledge size greater then expected file size"));
 
-	if(m_sentBytesLimit)
-		emit sent( m_sentBytes * 100 / m_sentBytesLimit );
-	emit sentBytes( m_sentBytes );
+	if(m_fileSizeAck == m_fileSize)
+		emit complete();
 }
 
 #include "kirctransfer.moc"

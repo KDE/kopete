@@ -98,20 +98,54 @@ void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer 
 		{
 //		case KIRCTransfer::Chat:
 		case KIRCTransfer::FileOutgoing:
-			connect(t , SIGNAL(fileSizeAcknowledge(unsigned int)), kt, SLOT(slotProcessed(unsigned int)));
-			break;
 		case KIRCTransfer::FileIncoming:
-			connect(t , SIGNAL(fileSizeCurrent(unsigned int)), kt, SLOT(slotProcessed(unsigned int)));
+			connect(t , SIGNAL(fileSizeAcknowledge(unsigned int)),
+				kt, SLOT(slotProcessed(unsigned int)));
 			break;
 		default:
 			kdDebug(14120) << k_funcinfo << "Unknown transfer connections for type" << endl;
 			t->deleteLater();
 			return;
 		}
+
+		connect(t , SIGNAL(complete()),
+			kt, SLOT(slotComplete()));
+
+		connect(kt, SIGNAL(transferCanceled()),
+			t , SLOT(userCancel())); // Should be the following ...
+//		connect(kt, SIGNAL(result(KIO *)),
+//			this , SLOT(kioresult(KIO *)));
+
 		t->initiate();
 	}
 }
+/*
+void IRCTransferHandler::kioresult(KIO *kio)
+{
+	KIRCTransfer *t = m_transfers[kio];
 
+	if(!t)
+	{
+		kdDebug(14120) << k_funcinfo << "Transfer not found from kio:" << kio << endl;
+		return;
+	}
+
+	switch(kio->error())
+	{
+		case 0:	// 0 means no error
+			break;
+		case ERR_USER_CANCELLED:
+			// KIO::buildErrorString form error don't provide a result string ...
+			if()
+				t->userAbort(i18n("User canceled transfer."));
+			else
+				t->userAbort(i18n("User canceled transfer for file:%1").arg(t->fileName()));
+			break;
+		default:
+			t->userAbort(KIO::buildErrorString(kio->error(),t->fileName()));
+	}
+}
+*/
 KIRCTransfer *IRCTransferHandler::getKIRCTransfer(const KopeteFileTransferInfo &info)
 {
 	KIRCTransfer *t = m_idMap[info.transferId()];

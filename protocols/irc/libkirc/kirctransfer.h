@@ -68,7 +68,23 @@ public:
 			KIRCTransfer::Type type,
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
+/*
+	For a file transfer properties are:
 
+		KExntendedSocket	*socket
+	or
+		QHostAddress		peerAddress
+		Q_UINT16		peerPort
+	for determining the socket.
+
+		QString			fileName
+		Q_UINT32		fileSize
+	for detemining the file propeties.
+*//*
+	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+			KIRCTransfer::Type type, QVariant properties,
+			QObject *parent = 0L, const char *name = 0L );
+*/
 	~KIRCTransfer();
 
 	KIRC *engine() const
@@ -79,7 +95,6 @@ public:
 		{ return m_type; }
 	Status status() const;
 
-	bool setSocket( KExtendedSocket *socket );
 	/* Start the transfer.
 	 * If not connected connect to client.
 	 * Allow receiving/emitting data.
@@ -95,28 +110,31 @@ public:
 	unsigned long fileSize() const
 		{ return m_fileSize; }
 public slots:
+	bool setSocket( KExtendedSocket *socket );
+	void closeSocket();
+
 	void setCodec( QTextCodec *codec );
 	void writeLine( const QString &msg );
 
 	void flush();
-	void abort(const QString &);
+
+	void userAbort(QString);
+
 signals:
 	void readLine( const QString &msg );
 
-	void fileSizeCurrent( unsigned int );
+//	void fileSizeCurrent( unsigned int );
 	void fileSizeAcknowledge( unsigned int );
 
-	void received( Q_UINT32 ); // percentage received if applicable
-	void receivedBytes( Q_UINT32 );
+//	void received(Q_UINT32);
+//	void sent(Q_UINT32);
 
-	void sent( Q_UINT32 ); // percentage sent if applicable
-	void sentBytes( Q_UINT32 );
+	void abort(QString);
 
-protected:
-//	void initClient();
-//	void initServer();
-
-	void emitSignals();
+	/* Emited when the transfer is complete.
+	 * Usually it means that the file transfer has successfully finished.
+	 */
+	void complete();
 
 protected slots:
 	void slotError(int);
@@ -129,6 +147,9 @@ protected slots:
 	void readyReadFileOutgoing();
 
 protected:
+//	void emitSignals();
+	void checkFileTransferEnd( Q_UINT32 fileSizeAck );
+
 	KIRC *		m_engine;
 	QString		m_nick;
 
