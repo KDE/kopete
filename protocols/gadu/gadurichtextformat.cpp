@@ -24,6 +24,7 @@
 #include "gadurichtextformat.h"
 
 #include <qstring.h>
+#include <qregexp.h>
 
 #include <libgadu.h>
 
@@ -96,9 +97,9 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 				g = (int)color->green;
 				b = (int)color->blue;
 			}
-			style += QString::fromLatin1(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
+			style += QString(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
 
-			tmp += formatOpeningTag(QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( style ) );
+			tmp += formatOpeningTag( QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( style ) );
 			opened = true;
 
 		}
@@ -113,8 +114,9 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 		tmp += formatClosingTag("span");
 	}
 
-	tmp.replace( '\n', "<br />" );
-	tmp.replace( '\t', "&nbsp;&nbsp;&nbsp;&nbsp;" );
+	tmp.replace( '\n', QString::fromLatin1( "<br />" ) );
+	tmp.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+	tmp.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
 
 	return tmp;
 }
@@ -133,3 +135,4 @@ GaduRichTextFormat::formatClosingTag( const QString& tag )
 {
 	return "</" + tag + ">";
 }
+
