@@ -157,10 +157,10 @@
                                     <cstring>cbAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Exclude from connection</string>
+                                    <string>E&amp;xclude from connection</string>
                                 </property>
                                 <property name="accel">
-                                    <string>Alt+E</string>
+                                    <string>Alt+X</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
@@ -263,10 +263,10 @@
                                     <cstring>cbAllowPlainTextPassword</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Allow &amp;plain-text password authentication</string>
+                                    <string>Allow plain-te&amp;xt password authentication</string>
                                 </property>
                                 <property name="accel">
-                                    <string>Alt+P</string>
+                                    <string>Alt+X</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -565,7 +565,7 @@ If two resources have the same priority, the messages will be sent to the one co
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;File Transfer</string>
+                    <string>Fi&amp;le Transfer</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -696,7 +696,7 @@ If two resources have the same priority, the messages will be sent to the one co
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Privacy</string>
+                    <string>Privac&amp;y</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -944,7 +944,7 @@ If two resources have the same priority, the messages will be sent to the one co
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="PNG" length="888">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000033f49444154388dad943f681b6714c07f0a373c8186ef40813b6841820c164e077953d20e3174a8a807d1c9ee940e5d4a276f09a414e22974ee609a4c7520817a4850860cee226948b13c545cc185d360b8030bee410df706813b7cf11fb5c574f007df70df3d7edfefbd7bef2a93fd091820b0bcb27cca35acc97052a90c86039c38765eee9c76963a4c754a9997a427e9ff82a82ae961cae8b711cc2fce03278ee595e5d3d72f5e13d795b0251496b2125429ad20ac8514f3825042645e80846427feb998178481639c806c0b7bbfda05584d01986653c28690e43f53142960c4a19164427e2414335fafb00eed96910720014c0da29b508d1733099c38004a2d292c054b01250e85e13bc7f895323a50fc8700101a4bc217eb8e5607a29aa10691fb07f8cc389da5ac0446517a68ff0decfc987b544d682e392480ecc898fe61fcf05d4e77ddb1715fcee1ff691c4a4869197108c377f21e6adcfb3ca2db139a1f82620831fddd929ded9cfef39c56a341672dc4892e806f9c19175610d620fb4bd8dbd573e8975f0bcda6a2281c0bbf3c2fd858aff2d5b71120fcf44ce104747e857131cfb09990fcae38e7e8f6045753740e628ead274672a014c7b0f92064f4d6c78ec68ea8c615c602e991f98e68bc4fff0cfa48490e145717563f114c4a5a6d01209b1a6ab208be6c2c7308c50744e26b8a3ab61e19c981bf5004c20faac40e08ce6082bbca18016a3e707c640821fd377853274491233f521e3fcc188e42b243df0a71a37a7557642719ed96d1b8254cff34fabb251bf7638a63a3fba950ad5779fc10f2a9b2f54d8a99e1ea42bb5d52ce16c9ffaab105d0edf9cb76b673faaf32361f84343bd0ee146c7edfc4450e55c5e6c66a2fa2759bab8d0bcb9000eedc039b399e3ecb79fa2467f456e8b40505b2c30c9b19041eb0bfa78cd762e29a70319d97272f4fe90a4c677e4c57d7055c83fe4bdf0dc9c1858dab0bdd5e83e19ea2660890e68bcae7c6e961ca380177d3a7e56a46b727743f6b311a6794b93f6fdd8a697e94d1ba0da3b5188743e729c978115c190c07dcbd73f79400da1f0b710c22f87f6be0b704be53ced2f7cb90405085646c64b9a1f9a5d793fd09c0e975eff3aeb8ee75c38963329c54ae1daca62030180eae0d3ed99f54fe06322bb42bd7ba3a4d0000000049454e44ae426082</data>
+        <data format="PNG" length="888">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000033f494441541895ad943f681b6714c07f0a373c8186ef40813b6841820c164e077953d20e3174a8a807d1c9ee940e5d4a276f09a414e22974ee609a4c7520817a4850860cee226948b13c545cc185d360b8030bee410df706813b7cf11fb5c574f007df70df3d7edfefbd7bef2a93fd091820b0bcb27cca35acc97052a90c86039c38765eee9c76963a4c754a9997a427e9ff82a82ae961cae8b711cc2fce03278ee595e5d3d72f5e13d795b0251496b2125429ad20ac8514f3825042645e80846427feb998178481639c806c0b7bbfda05584d01986653c28690e43f53142960c4a19164427e2414335fafb00eed96910720014c0da29b508d1733099c38004a2d292c054b01250e85e13bc7f895323a50fc8700101a4bc217eb8e5607a29aa10691fb07f8cc389da5ac0446517a68ff0decfc987b544d682e392480ecc898fe61fcf05d4e77ddb1715fcee1ff691c4a4869197108c377f21e6adcfb3ca2db139a1f82620831fddd929ded9cfef39c56a341672dc4892e806f9c19175610d620fb4bd8dbd573e8975f0bcda6a2281c0bbf3c2fd858aff2d5b71120fcf44ce104747e857131cfb09990fcae38e7e8f6045753740e628ead274672a014c7b0f92064f4d6c78ec68ea8c615c602e991f98e68bc4fff0cfa48490e145717563f114c4a5a6d01209b1a6ab208be6c2c7308c50744e26b8a3ab61e19c981bf5004c20faac40e08ce6082bbca18016a3e707c640821fd377853274491233f521e3fcc188e42b243df0a71a37a7557642719ed96d1b8254cff34fabb251bf7638a63a3fba950ad5779fc10f2a9b2f54d8a99e1ea42bb5d52ce16c9ffaab105d0edf9cb76b673faaf32361f84343bd0ee146c7edfc4450e55c5e6c66a2fa2759bab8d0bcb9000eedc039b399e3ecb79fa2467f456e8b40505b2c30c9b19041eb0bfa78cd762e29a70319d97272f4fe90a4c677e4c57d7055c83fe4bdf0dc9c1858dab0bdd5e83e19ea2660890e68bcae7c6e961ca380177d3a7e56a46b727743f6b311a6794b93f6fdd8a697e94d1ba0da3b5188743e729c978115c190c07dcbd73f79400da1f0b710c22f87f6be0b704be53ced2f7cb90405085646c64b9a1f9a5d793fd09c0e975eff3aeb8ee75c38963329c54ae1daca62030180eae0d3ed99f54fe06322bb42b4263e4480000000049454e44ae426082</data>
     </image>
 </images>
 <connections>
@@ -968,9 +968,10 @@ If two resources have the same priority, the messages will be sent to the one co
     </connection>
 </connections>
 <tabstops>
-    <tabstop>mID</tabstop>
-    <tabstop>btnRegister</tabstop>
     <tabstop>tabWidget10</tabstop>
+    <tabstop>mID</tabstop>
+    <tabstop>cbAutoConnect</tabstop>
+    <tabstop>btnRegister</tabstop>
     <tabstop>cbUseSSL</tabstop>
     <tabstop>cbAllowPlainTextPassword</tabstop>
     <tabstop>cbCustomServer</tabstop>
@@ -981,6 +982,11 @@ If two resources have the same priority, the messages will be sent to the one co
     <tabstop>leLocalIP</tabstop>
     <tabstop>sbLocalPort</tabstop>
     <tabstop>leProxyJID</tabstop>
+    <tabstop>cbHideSystemInfo</tabstop>
+    <tabstop>cbSendEvents</tabstop>
+    <tabstop>cbSendDeliveredEvent</tabstop>
+    <tabstop>cbSendDisplayedEvent</tabstop>
+    <tabstop>cbSendComposingEvent</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
