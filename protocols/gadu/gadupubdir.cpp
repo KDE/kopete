@@ -39,7 +39,7 @@
 
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char* name )
-: KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
+: KDialogBase( parent, name, false, QString::null, User1|User2|Cancel, User2 )
 {
 	mAccount = account;
 	createWidget();
@@ -49,7 +49,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 }
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent, const char* name )
-: KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
+: KDialogBase( parent, name, false, QString::null, User1|User2|Cancel, User2 )
 {
 	mAccount = account;
 	createWidget();
@@ -64,9 +64,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	mMainWidget->radioByUin->setChecked( true );
 
 	setButtonText( User2, i18n( "Search &More..." ) );
-	showButton( User3, true );
 	showButton( User1, true );
-	enableButton( User3, false );
 	enableButton( User2, false );
 
 	// now it is time to switch to Right Page(tm)
@@ -92,11 +90,9 @@ GaduPublicDir::createWidget()
 
 	setButtonText( User1, i18n( "&New Search" ) );
 	setButtonText( User2, i18n( "S&earch" ) );
-	setButtonText( User3, i18n( "&Add User..." ) );
 	setButtonText( Cancel, i18n( "&Close" ) );
 
 	showButton( User1, false );
-	showButton( User3, false );
 	enableButton( User2, false );
 	
 	mMainWidget->radioByData->setChecked( true );
@@ -166,6 +162,7 @@ GaduPublicDir::validateData()
 	getData();
     
 	if ( mMainWidget->radioByData->isChecked() ) {
+		CHECK_STRING( fCity );
 		CHECK_STRING( fName );
 		CHECK_STRING( fSurname );
 		CHECK_STRING( fNick );
@@ -234,8 +231,8 @@ GaduPublicDir::slotNewSearch()
 	setButtonText( User2, i18n( "S&earch" ) );
 
 	showButton( User1, false );
-	showButton( User3, false );
 	enableButton( User2, false );
+	inputChanged( QString::null );
 	mAccount->pubDirSearchClose();
 }
 
@@ -266,9 +263,7 @@ GaduPublicDir::slotSearch()
 	}
 
 	setButtonText( User2, i18n( "Search &More..." ) );
-	showButton( User3, true );
 	showButton( User1, true );
-	enableButton( User3, false );
 	enableButton( User2, false );
 
 	if ( mMainWidget->radioByData->isChecked() ) {
