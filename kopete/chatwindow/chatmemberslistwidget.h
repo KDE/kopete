@@ -37,6 +37,8 @@ class ChatMembersListWidget : public KListView
 	Q_OBJECT
 public:
 	ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent, const char *name = 0 );
+	virtual ~ChatMembersListWidget();
+
 	Kopete::ChatSession *session() { return m_session; }
 
 	class ToolTip;
@@ -78,6 +80,7 @@ private slots:
 private:
 	Kopete::ChatSession *m_session;
 	QMap<const Kopete::Contact*, ContactItem*> m_members;
+	ToolTip *m_toolTip;
 };
 
 class ChatMembersListWidget::ContactItem : public QObject, public KListViewItem

@@ -38,6 +38,11 @@ public:
 	{
 	}
 	
+	~ToolTip()
+	{
+		remove( m_listView->viewport() );
+	}
+
 	void maybeTip( const QPoint &pos )
 	{
 		if( QListViewItem *item = m_listView->itemAt( pos ) )
@@ -122,7 +127,7 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 {
 	// use our own custom tooltips
 	setShowToolTips( false );
-	new ToolTip( this );
+	m_toolTip = new ToolTip( this );
 	
 	// set up display: no header
 	setAllColumnsShowFocus( true );
@@ -149,6 +154,11 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ) );
+}
+
+ChatMembersListWidget::~ChatMembersListWidget()
+{
+	delete m_toolTip;
 }
 
 void ChatMembersListWidget::slotContextMenu( KListView*, QListViewItem *item, const QPoint &point )
