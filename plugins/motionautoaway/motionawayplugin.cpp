@@ -52,10 +52,6 @@
 
 #define NORM_DEFAULT	0
 #define IN_DEFAULT	8
-#define VIDEO_DEVICE		"/dev/video0"
-
-int deamon=0;
-
 
 K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, KGenericFactory<MotionAwayPlugin> );
 
