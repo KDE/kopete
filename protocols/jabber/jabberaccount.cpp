@@ -883,7 +883,8 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 								  ("The Jabber user %1 removed %2's subscription to them. This account will no longer be able to view their online/offline status.").
 								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification"));
 
-		/* Delete the item from the roster. */
+		/* FIXME: Do we really want that behavior ? 
+		 * Delete the item from the roster. */
 		Jabber::JT_Roster * task = new Jabber::JT_Roster (jabberClient->rootTask ());
 
 		task->remove (jid);
