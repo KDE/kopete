@@ -32,7 +32,7 @@
 #include <libgadu.h>
 
 struct contactLine {
-	QString name;
+	QString displayname;
 	QString group;
 	QString uin;
 	QString firstname;

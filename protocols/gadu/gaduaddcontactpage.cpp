@@ -36,17 +36,10 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 : AddContactPage( parent, name )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	if( owner->isConnected() ) {
-		addUI_	= new gaduAddUI( this );
-		account_	= owner;
-		canAdd_	= true;
-		addUI_->addEdit_->setValidChars( "1234567890" );
-	}
-	else {
-		noaddMsg1_	= new QLabel( i18n( "You need to be connected to be able to add contacts." ), this );
-		noaddMsg2_	= new QLabel( i18n( "Connect to the Gadu-Gadu network and try again." ), this );
-		canAdd_		= false;
-	}
+	addUI_	= new gaduAddUI( this );
+	account_	= owner;
+	canAdd_	= true;
+	addUI_->addEdit_->setValidChars( "1234567890" );
 }
 
 GaduAddContactPage::~GaduAddContactPage()

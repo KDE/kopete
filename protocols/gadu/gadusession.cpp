@@ -449,7 +449,7 @@ GaduSession::exportContacts( gaduContactsList* u )
 	for ( i=u->count() ; i-- ; ++loo ) {
 //	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
 		contacts +=
-			(*loo)->firstname+";"+(*loo)->surname+";"+(*loo)->nickname+";"+(*loo)->name+";"+
+			(*loo)->firstname+";"+(*loo)->surname+";"+(*loo)->nickname+";"+(*loo)->displayname+";"+
 			(*loo)->phonenr+";"+(*loo)->group+";"+(*loo)->uin+";"+(*loo)->email+";0;;0;\n";
 	}
 
@@ -517,7 +517,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 		}
 
 		it = strList.begin();
-//each line ((firstname);(secondname);(nickname).;(name);(tel);(group);(uin);
+//each line ((firstname);(secondname);(nickname).;(displayname);(tel);(group);(uin);
 
 		if ( cl == NULL ) {
 			cl = new contactLine;
@@ -526,7 +526,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QStrin
 		cl->firstname	= (*it);
 		cl->surname	= (*++it);
 		cl->nickname	= (*++it);
-		cl->name		= (*++it);
+		cl->displayname	= (*++it);
 		cl->phonenr	= (*++it);
 		cl->group		= (*++it);
 		cl->uin		= (*++it);

@@ -595,14 +595,14 @@ GaduAccount::userlist( const QString& list )
 			kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl;
 		}
 		else {
-			if ( (*loo)->name.length() ) {
-				contactname = (*loo)->name;
+			if ( (*loo)->displayname.length() ) {
+				contactname = (*loo)->displayname;
 			}
 
 			// if there is no nickname
 			if ( (*loo)->nickname.isNull() ) {
 				// no name either
-				if ( (*loo)->name.isNull() ) {
+				if ( (*loo)->displayname.isNull() ) {
 					// maybe we can use fistname + surname ?
 					if ( (*loo)->firstname.isNull() && (*loo)->surname.isNull() ) {
 						contactname = (*loo)->uin;
@@ -623,7 +623,7 @@ GaduAccount::userlist( const QString& list )
 					}
 				}
 				else {
-					contactname = (*loo)->name;
+					contactname = (*loo)->displayname;
 				}
 			}
 			else {

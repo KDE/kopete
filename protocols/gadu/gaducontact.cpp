@@ -224,11 +224,11 @@ GaduContact::contactDetails()
 	cl->firstname	= firstName_;
 	cl->surname	= secondName_;
 	cl->nickname	= nickName_;
-	cl->name		= firstName_ + " " + secondName_;
+//	cl->name		= firstName_ + " " + secondName_;
 	cl->phonenr	= phonenr_;
 	cl->uin		= QString::number( uin_ );
 	cl->email		= email_;
-	cl->name		= displayName();
+	cl->displayname	= displayName();
 
 	groupList = metaContact ()->groups ();
 
