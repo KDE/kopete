@@ -1,5 +1,18 @@
 Address book integration notes 26/08/03
 
+Premise:
+KDE captures the real life relation between IM Contacts and KABC contacts; both represent people with whom we communicate electronically - so there's no need to separate them
+Goals:
+*) Duplicate Information may be removed.
+*) This enables PIM apps like KMail to use a KDE IM service (Kopete) to display IM status or perform IM actions (chatting)
+*) Or games, desktop sharing
+*) Ability to put IM-delivered contact data into the KDE addressbook
+
+What does Kopete get out of the association?
+*) Ability to view KABC information on that metacontact
+*) Use information in the KABC such as GPG key?
+*) Can store/use KABC information in the metacontact like contact photo
+
 Use cases
 
 1) Add new metacontact + contacts using Add Contact Wizard
@@ -364,3 +377,13 @@ to know what can be saved or not in kabc, i see two ways:
 Syncing contactlist info currently takes place when Kopete exits.  other kabc apps write kabc during their runs.  We will have to make changes to do this and to make sure that we don't try to write 200 kabc entries simultaneously with individual tickets after fetching the SSCL for a new account.
 
 I don't think that syncing the KAB on an SSCL fetch is necessary. The only information we get when we fetch the SSCL is the contact name of that person who is on our SSCL, it's not until later, perhaps when we request the user info that we update the KAB. (Matt)
+
+KABC Association
+----------------
+Association creates a 1:1 relationship between KMC and Addressee.  If we assume IM apps incl Kopete put IM addresses in the KABC (Messaging/msn etc) then whenever an association is made or changed, there will have to be a sync between Kopete's idea of IM addresses and those stored in KABC.  Changes to KABC data could happen while Kopete is offline so this sync check needs to take place when Kopete starts.  Potential problems if another IM client changes the data whilst Kopete is running or vice versa - addressees aren't locked while an apps is running, only while writing.
+
+Association with existing contact: 1) No messaging information 2) Some messaging entries already exist.  Possible courses of action - add (only in KABC) accounts to MC - ask (how do we remember what the user wanted the next time we read the KABC)
+
+What if a related kabc entry is deleted while Kopete is running?
+
+Deserialising contact from contactlist.xml - do we try to check the kabc entries and create any accounts that we find there but not in the contactlist.xml?
