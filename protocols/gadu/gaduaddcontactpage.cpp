@@ -107,7 +107,7 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			else {
 				dname = addUI_->dnEdit_->currentText();
 			}
-			if ( a->addContact( userid, dname, mc, KopeteAccount::ChangeKABC ) == false ) {
+			if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, KopeteAccount::ChangeKABC ) == false ) {
 				return false;
 			}
 			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
