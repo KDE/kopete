@@ -251,7 +251,6 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress 
 		disconnect (c, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 		c->setConversations( c->conversations() - 1 );
 	}
-	qApp->processEvents();
 	emit contactRemoved(c, surpress);
 }
 
