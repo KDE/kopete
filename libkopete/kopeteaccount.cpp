@@ -35,17 +35,13 @@
 #include "kopetegroup.h"
 #include "kopetepassword.h"
 
-namespace
-{
-QString configGroup( KopeteProtocol *protocol, const QString &accountId )
+static QString configGroup( KopeteProtocol *protocol, const QString &accountId )
 {
 #if QT_VERSION < 0x030200
 	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId ).arg( protocol->pluginId() );
 #else
 	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId, protocol->pluginId() );
 #endif
-}
-
 }
 
 class KopeteAccountPrivate

@@ -37,24 +37,19 @@
 #include <kiconloader.h>
 #include <kpassdlg.h>
 
-namespace
-{
-
 /**
  * Function for symmetrically (en/de)crypting strings for config file,
  * taken from KMail.
  *
  * @author Stefan Taferner <taferner@alpin.or.at>
  */
-QString cryptStr( const QString &aStr )
+static QString cryptStr( const QString &aStr )
 {
 	QString result;
 	for ( uint i = 0; i < aStr.length(); i++ )
 		result += ( aStr[ i ].unicode() < 0x20) ? aStr[ i ] : QChar( 0x1001F - aStr[ i ].unicode() );
 
 	return result;
-}
-
 }
 
 class Kopete::Password::Private
@@ -144,13 +139,13 @@ public:
 			mPassword.set( pwd );
 			return pwd;
 		}
-	
+
 		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isNull() )
 			return pwd;
-	
+
 		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
 			return mPassword.d->passwordFromKConfig;
-	
+
 		return QString::null;
 	}
 
@@ -185,17 +180,17 @@ public:
 
 		KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 			KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
-	
+
 		mView = new KopetePasswordDialog( passwdDialog );
 		passwdDialog->setMainWidget( mView );
-	
+
 		mView->m_text->setText( mPrompt );
 		mView->m_image->setPixmap( mImage );
 		mView->m_password->insert( password );
 		int maxLength = mPassword.maximumLength();
 		if ( maxLength != 0 )
 			mView->m_password->setMaxLength( maxLength );
-	
+
 		// FIXME: either document what these are for or remove them - lilac
 		mView->adjustSize();
 		passwdDialog->adjustSize();
@@ -211,7 +206,7 @@ public:
 		QString result = QString::fromLocal8Bit( mView->m_password->password() );
 		if ( mView->m_save_passwd->isChecked() )
 			mPassword.set( result );
-	
+
 		finished( result );
 	}
 
@@ -345,7 +340,7 @@ private:
 };
 
 Kopete::Password::Password( const QString &configGroup, uint maximumLength, const char *name )
- : QObject( 0, name ), d( new Private( configGroup, maximumLength ) ) 
+ : QObject( 0, name ), d( new Private( configGroup, maximumLength ) )
 {
 	readConfig();
 }
@@ -451,7 +446,7 @@ QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt,
 		if ( d->remembered && !d->passwordFromKConfig.isNull() )
 			return d->passwordFromKConfig;
 	}
-	
+
 	KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 

@@ -69,7 +69,7 @@ public:
 	QValueStack<QString> pluginsToLoad;
 };
 
-// Put the static deleter in its anonymous namespace
+// Put the static deleter in its anonymous namespace -- why?
 namespace
 {
 	KStaticDeleter<KopetePluginManager> sd;
