@@ -19,10 +19,44 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 
+#include <qvariant.h>
+#include <qpushbutton.h>
+#include <qlabel.h>
+#include <klineedit.h>
+#include <qlineedit.h>
+#include <qlayout.h>
+#include <qtooltip.h>
+#include <qwhatsthis.h>
+#include <qpixmap.h>
+
 #include "gaduregisteraccount.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
-:GaduRegisterAccountUI( parent, name )
+: KDialogBase( parent, name, true, i18n( "Register New Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true )
+{
+	ui = new GaduRegisterAccountUI( this );
+	setMainWidget( ui );
+
+	ui->textToken->setDisabled( true );
+	enableButton( Ok, false );
+
+	cRegister = new RegisterCommand( this );
+
+	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
+	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
+
+	cRegister->requestToken();
+
+	show();
+}
+
+void GaduRegisterAccount::displayToken( QPixmap image, QString tokenId )
+{
+	ui->textToken->setDisabled( false );
+	ui->pixmapToken->setPixmap( image );
+}
+
+void GaduRegisterAccount::slotApply()
 {
 }
 

@@ -22,10 +22,22 @@
 #ifndef GADUREGISTERACCOUNT_H
 #define GADUREGISTERACCOUNT_H
 
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
+#include <qstring.h>
+#include <qlineedit.h>
+#include <qlabel.h>
+#include <qpixmap.h>
+
+#include <kdialogbase.h>
+#include <ktextedit.h>
+#include <klocale.h>
+#include <klineedit.h>
+
 #include "gaduregisteraccountui.h"
 #include "gaducommands.h"
 
-class GaduRegisterAccount : GaduRegisterAccountUI
+class GaduRegisterAccount : public KDialogBase
 {
     Q_OBJECT
 
@@ -34,7 +46,14 @@ public:
 	~GaduRegisterAccount( );
 	unsigned int registered_number();
 
+protected slots:
+	void slotApply();
+	void displayToken( QPixmap, QString );
+
 private:
+	GaduRegisterAccountUI*	ui;
+	RegisterCommand*		cRegister;
+
 };
 
 #endif
