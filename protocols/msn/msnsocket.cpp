@@ -67,7 +67,8 @@ void MSNSocket::connect( const QString &server, uint port )
 	setOnlineStatus( Connecting );
 	m_id = 0;
 //	m_lastId = 0;
-	m_waitBlockSize = 0L;
+	m_waitBlockSize = 0;
+	m_buffer = Buffer(0);
 
 	m_lookupStatus = Processing;
 
@@ -559,7 +560,7 @@ bool MSNSocket::accept(KExtendedSocket *server)
 
 	m_id = 0;
 //	m_lastId = 0;
-	m_waitBlockSize = 0L;
+	m_waitBlockSize = 0;
 	m_lookupStatus = Processing;
 
 	m_socket->setBlockingMode(false);
