@@ -55,6 +55,7 @@ public slots:
 signals:
 	void quittingServer();
 	void serverQuit();
+	void connecting();
 };
 
 #endif

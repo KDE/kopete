@@ -19,6 +19,9 @@
 #include <qinputdialog.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <qlayout.h>
+#include "ircconsoleview.h"
+#include <ktabctl.h>
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
 	: KListViewItem( kopeteapp->contactList() )
@@ -32,12 +35,28 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	mNickname = nickname;
 	mServer = server;
 	mWindow = new IRCChatWindow(mServer);
+
+	QFrame *mChatViewContainer = new QFrame(mWindow->mChannelsTabCtl);
+	mChatViewContainer->sizeHint();
+	QVBoxLayout *containerLayout = new QVBoxLayout(mChatViewContainer);
+
+	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, mChatViewContainer, this);
+	QObject::connect(consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
+	QObject::connect(this, SIGNAL(connecting()), consoleView, SLOT(slotConnecting()));
+	containerLayout->addWidget(consoleView);
+	mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mServer);
+
+	mWindow->show();
+	mChatViewContainer->show();
+	consoleView->show();
+
 	QString title = nickname;
 	title.append("@");
 	title.append(server);
 	setText(0, title);
 	if (connectNow == true)
 	{
+		emit connecting();
 		engine->connectToServer(server, 6667, QString("kopeteuser"), nickname);
 	}
 }
@@ -88,6 +107,10 @@ void IRCServerContact::slotQuitServer()
 	} else {
 		emit serverQuit();
 		mManager->removeServer(text(0));
+		if (mWindow !=0)
+		{
+			delete mWindow;
+		}
 		delete this;
 	}
 }

@@ -41,7 +41,7 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 	}
 	if (port == 0)
 	{
-		unsigned int port = KGlobal::config()->readEntry("Port", "6667").toUInt();
+		port = KGlobal::config()->readEntry("Port", "6667").toUInt();
 	}
 	QString user = "kopeteuser";
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
@@ -170,26 +170,17 @@ void IRCContact::joinNow()
 	
 	/* This is a frame inside the tab, where we put the widgets in */
 	mChatViewContainer = new QFrame(mContact->mWindow->mChannelsTabCtl);
-	mChatViewContainer->resize(640,480);
-	kdDebug() << "FUCK PART 1" << endl;
+	mChatViewContainer->sizeHint();
 	QVBoxLayout *containerLayout;
 	containerLayout = new QVBoxLayout(mChatViewContainer);
-	//(void)new QLabel(i18n("<b>Test :-):</b>"),mChatViewContainer );	
-    //(void)new QLabel(i18n("<b>Test :-):</b>"), mContact->mWindow->mChannelsTabCtl);	
 
-	kdDebug() << "FUCK PART 2" << endl;
 	chatView = new IRCChatView(mServer, mTarget, this, mChatViewContainer);
 	containerLayout->addWidget(chatView);
-	//chatView = new IRCChatView(mServer, mTarget, this, mContact->mWindow->mChannelsTabCtl );
-	kdDebug() << "FUCK PART 3" << endl;
 	mContact->mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mTarget);
-    //mContact->mWindow->mChannelsTabCtl->addTab(mContact->mWindow->mChannelsTabCtl, mTarget);
 
-	//mContact->mWindow->adjustSize();
 	mContact->mWindow->show();
 	mChatViewContainer->show();
 	chatView->show();
-	kdDebug() << "FUCK PART 4" << endl;
 	QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));

@@ -6,5 +6,5 @@ INCLUDES = $(all_includes)\
 CXXFLAGS = -g -O2 -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libkopeteircui_la_METASOURCES = AUTO
-libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui ircmessagebase.ui ircchatviewbase.ui ircchatwindow.cpp empty.cpp
+libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui ircmessagebase.ui ircchatviewbase.ui ircchatwindow.cpp ircconsoleviewbase.ui empty.cpp
 EXTRA_DIST = ircadd.ui ircprefs.ui empty.cpp

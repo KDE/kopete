@@ -37,7 +37,7 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 	kdDebug() << "\nIRC Plugin Loading\n";
 	// Load all ICQ icons from KDE standard dirs
  	initIcons();
-
+	manager = new IRCServerManager();
 	kdDebug() << "IRC Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
 
@@ -53,8 +53,6 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you haven't setup your IRC settings for the first time, please do so by going to File->Configure Kopete->IRC Plugin. Once you are done there, please try connecting again.</qt>"), "Preferences non-existant");
 		return;
 	}
-
-	manager = new IRCServerManager();
 
 	/** Autoconnect if is selected in config */
 	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
