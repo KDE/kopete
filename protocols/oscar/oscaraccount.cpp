@@ -86,12 +86,6 @@ public:
 
 	QString awayMessage;
 
-	// -- MERGED DATA FROM AIMBUDDYLIST ----------------------------------
-	QMap<int, AIMGroup *> groupMap;
-	QMap<QString, AIMBuddy *> buddyNameMap;
-	QMap<QString, AIMGroup *> groupNameMap;
-	// -- END MERGED DATA FROM AIMBUDDYLIST ------------------------------
-
 	bool passwordWrong;
 };
 
@@ -932,81 +926,6 @@ void OscarAccount::setIgnoreUnknownContacts( bool b )
 {
 	d->ignoreUnknownContacts = b;
 }
-
-// -- MERGED CODE FROM AIMBUDDYLIST ----------------------------------
-void OscarAccount::addBuddy(AIMBuddy *buddy)
-{
-	d->buddyNameMap.insert(tocNormalize(buddy->screenname()), buddy);
-}
-
-void OscarAccount::removeBuddy(AIMBuddy *buddy)
-{
-	d->buddyNameMap.remove(tocNormalize(buddy->screenname()));
-	QMap<int, AIMGroup * >::Iterator group = d->groupMap.find(buddy->groupID());
-	if (group == d->groupMap.end())
-		return;
-	(*group)->removeBuddy(buddy);
-}
-
-AIMBuddy *OscarAccount::findBuddy(const QString &name)
-{
-	QMap<QString, AIMBuddy * >::Iterator it = d->buddyNameMap.find(tocNormalize(name));
-	if (it != d->buddyNameMap.end() && (*it))
-		return (*it);
-	return 0L;
-}
-
-AIMGroup *OscarAccount::addGroup( int id, const QString &name, OscarContactType type )
-{
-	AIMGroup *group = new AIMGroup( id );
-	if ( type == ServerSideContacts )
-		group->setServerSide( true );
-
-	if (!name.isNull())
-	{
-		group->setName(name);
-		d->groupNameMap.insert(name, group);
-	}
-	d->groupMap.insert(group->ID(), group);
-
-	// Process the queue
-	// The AOL server can and often does (on certain accounts) send
-	// us contacts with a GID in which the group matching to that GID hasn't been
-	// sent down from the server yet. This gets around that by having OscarProtocol
-	// queue up contacts that have a GID which hasn't been created yet, then when
-	// that group is greated with the corresponding GID to the contacts which
-	// have been queued up, we add those contacts.
-	kdDebug( 14150 ) << k_funcinfo << "d->groupQueue.count() = " << d->groupQueue.count() << endl;
-	int i = 0;
-	for ( AIMBuddy *buddy = d->groupQueue.at( i ); buddy; buddy = d->groupQueue.at( ++i ) )
-	{
-		// Success, group now exists, add contact
-		if ( findGroup( buddy->groupID() ) )
-		{
-			d->groupQueue.remove( i );
-			addOldContact( buddy );
-		}
-	}
-
-	return group;
-}
-
-AIMGroup *OscarAccount::findGroup( int id, OscarContactType type )
-{
-	QMap<int, AIMGroup * >::Iterator it = d->groupMap.find(id);
-	if ( it != d->groupMap.end() && ( *it ) && ( type == AllContacts || it.data()->isServerSide() ) )
-		return (*it);
-	return 0L;
-}
-
-AIMGroup *OscarAccount::findGroup(const QString &name)
-{
-	QMap<QString, AIMGroup * >::Iterator it = d->groupNameMap.find(name);
-	if (it != d->groupNameMap.end() && (*it))
-		return (*it);
-	return 0L;
-}
-// -- END MERGED CODE FROM AIMBUDDYLIST ------------------------------
 
 #include "oscaraccount.moc"
 

@@ -28,13 +28,8 @@
 
 class KopeteContact;
 class KopeteGroup;
-
 class OscarContact;
-
 class OscarSocket;
-class AIMBuddy;
-class AIMGroup;
-
 class OscarAccountPrivate;
 
 class OscarAccount : public KopeteAccount
@@ -108,42 +103,6 @@ public:
 	 */
 	virtual void setStatus(const unsigned long status,
 		const QString &awayMessage = QString::null) =0;
-
-	// -- MERGED METHODS FROM AIMBUDDYLIST -------------------------------
-	// These methods need to be reviewed and better integrated with
-	// OscarAccount, for now they are just a direct copy of the code
-	enum OscarContactType { AllContacts, ServerSideContacts };
-
-	/**
-	 * Adds a group to the contact list and returns the new group
-	 */
-	AIMGroup *addGroup( int id, const QString &name = QString::null, OscarContactType type = AllContacts );
-
-	/**
-	 * Finds a group and returns it. Uses GID
-	 */
-	AIMGroup *findGroup( int id, OscarContactType type = AllContacts );
-
-	/**
-	 * Adds a buddy to the buddy list
-	 */
-	void addBuddy( AIMBuddy *buddy );
-
-	/**
-	 * Finds a buddy in the buddy list. Returns 0L if none found.
-	 */
-	AIMBuddy *findBuddy( const QString &screenName );
-
-	/**
-	 * Finds a group by name
-	 */
-	AIMGroup *findGroup( const QString &name );
-
-	/**
-	 * Removes a buddy from the buddy list
-	 */
-	void removeBuddy( AIMBuddy *buddy );
-	// -- END MERGED METHODS FROM AIMBUDDYLIST ---------------------------
 
 public slots:
 	/*

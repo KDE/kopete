@@ -27,8 +27,6 @@
 
 #include "oscarsocket.h"
 
-class AIMBuddy;
-
 class KAction;
 class KopeteMessageManager;
 class KopeteOnlineStatus;

@@ -63,16 +63,6 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mGroupId=0;
 	mMsgManager=0L;
 
-	// BEGIN TODO: remove AIMBuddy
-	mListContact = mAccount->findBuddy( mName );
-
-	if (!mListContact) // this Contact is not yet in the internal contactlist!
-	{
-		mListContact=new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
-		mAccount->addBuddy( mListContact );
-	}
-	// END TODO: remove AIMBuddy
-
 	setFileCapable(false);
 
 	if (!displayName.isEmpty())
@@ -179,34 +169,6 @@ void OscarContact::slotMessageManagerDestroyed()
 	/*kdDebug(14190) << k_funcinfo <<
 		"MessageManager for contact '" << displayName() << "' destroyed" << endl;*/
 	mMsgManager = 0L;
-}
-
-// FIXME: Can be removed when AIMBuddy is gone
-void OscarContact::slotUpdateBuddy()
-{
-	// Just to make sure the stupid AIMBuddy has proper status
-	// This should be handled in AIM/ICQContact now!
-	mListContact->setStatus(onlineStatus().internalStatus());
-
-	if (mAccount->isConnected())
-	{
-		// Probably already broken. Does not work at all for ICQ because uin never changes
-		if (mName != mListContact->screenname()) // contact changed his nickname
-		{
-			if(!mListContact->alias().isEmpty())
-				setDisplayName(mListContact->alias());
-			else
-				setDisplayName(mListContact->screenname());
-		}
-	}
-	else // oscar-account is offline so all users are offline too
-	{
-		mListContact->setStatus(OSCAR_OFFLINE);
-		setStatus(OSCAR_OFFLINE);
-		mInfo.idletime = 0;
-		setIdleTime(0);
-		emit idleStateChanged(this);
-	}
 }
 
 void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
@@ -396,15 +358,6 @@ void OscarContact::syncGroups()
 		kdDebug(14150) << k_funcinfo << "Could not get kopete group" << endl;
 		return;
 	}
-
-	//kdDebug(14150) << k_funcinfo << "First Kopete Group: " << firstKopeteGroup->displayName() << endl;
-	//kdDebug(14150) << k_funcinfo << "Current mGroupId: " << mGroupId << endl;
-
-	// Get the current (oscar) group that this contact belongs to on the server
-	AIMGroup *currentOscarGroup = mAccount->findGroup( mGroupId );
-
-	// Get the new (oscar) group that this contact belongs to on the server
-	AIMGroup *newOscarGroup = mAccount->findGroup( firstKopeteGroup->displayName() );
 
 	if(!newOscarGroup)
 	{
