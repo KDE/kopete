@@ -51,7 +51,6 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	m_silent = false;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
-	m_serviceSocket = new KMSNServiceSocket;
 
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
@@ -70,52 +69,12 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	m_password   = KGlobal::config()->readEntry( "Password", "" );
 	m_publicName = KGlobal::config()->readEntry( "Nick", "Kopete User" );
 	m_publicNameSyncMode = SyncFromServer;
+	m_publicNameSyncNeeded = false;
 
 	initActions();
 
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
 	statusBarIcon->setPixmap( offlineIcon );
-
-	connect( m_serviceSocket, SIGNAL( groupAdded( QString, uint,uint ) ),
-		this, SLOT( slotGroupAdded( QString, uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
-		this, SLOT( slotGroupRenamed( QString, uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( groupName( QString, uint ) ),
-		this, SLOT( slotGroupListed( QString, uint ) ) );
-	connect( m_serviceSocket, SIGNAL(groupRemoved( uint, uint ) ),
-		this, SLOT( slotGroupRemoved( uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
-				this, SLOT( slotStateChanged( QString ) ) );
-	connect( m_serviceSocket,
-		SIGNAL( contactStatusChanged( QString, QString, QString ) ),
-		this,
-		SLOT( slotContactStatusChanged( QString, QString, QString ) ) );
-	connect( m_serviceSocket,
-		SIGNAL( contactList( QString, QString, QString, QString ) ),
-		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
-	connect( m_serviceSocket,
-		SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
-		this,
-		SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
-	connect( m_serviceSocket,
-		SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
-		this,
-		SLOT( slotContactRemoved( QString, QString, uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
-		this, SLOT( slotStatusChanged( QString ) ) );
-	connect( m_serviceSocket,
-		SIGNAL( contactStatus( QString, QString, QString ) ),
-		this, SLOT( slotContactStatus( QString, QString, QString ) ) );
-	connect( m_serviceSocket, SIGNAL( connected( bool ) ),
-		this, SLOT( slotConnected( bool ) ) );
-	connect( m_serviceSocket, SIGNAL( publicNameChanged( QString, QString ) ),
-		this, SLOT( slotPublicNameChanged( QString, QString ) ) );
-	connect( m_serviceSocket,
-		SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
-		this,
-		SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
-	connect( m_serviceSocket, SIGNAL( startChat( QString, QString ) ),
-		this, SLOT( slotCreateChat( QString, QString ) ) );
 
 	KConfig *cfg = KGlobal::config();
 	cfg->setGroup( "MSN" );
@@ -174,29 +133,75 @@ bool MSNProtocol::unload()
  */
 void MSNProtocol::Connect()
 {
-	if ( !isConnected() )
+	if( isConnected() )
 	{
-		KGlobal::config()->setGroup("MSN");
-		kdDebug() << "Attempting to connect to MSN" << endl;
-		kdDebug() << "Setting Monopoly mode..." << endl;
-		kdDebug() << "Using Microsoft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password (hidden)" << endl;
-		KGlobal::config()->setGroup("MSN");
+		kdDebug() << "MSN Plugin: Ignoring Connect request "
+			<< "(Already Connected)" << endl;
+		return;
+	}
 
-		m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
-		m_password   = KGlobal::config()->readEntry( "Password", "" );
-		m_serviceSocket->connectToMSN( m_msnId, m_password, m_serial,
-			m_silent );
-		statusBarIcon->setMovie( connectingIcon );
-	}
-	else
-	{
-    	kdDebug() << "MSN Plugin: Ignoring Connect request (Already Connected)" << endl;
-	}
+	KGlobal::config()->setGroup("MSN");
+	kdDebug() << "Attempting to connect to MSN" << endl;
+	kdDebug() << "Setting Monopoly mode..." << endl;
+	kdDebug() << "Using Microsoft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password (hidden)" << endl;
+	KGlobal::config()->setGroup("MSN");
+
+	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
+	m_password   = KGlobal::config()->readEntry( "Password", "" );
+
+	m_serviceSocket = new KMSNServiceSocket( m_msnId );
+
+	connect( m_serviceSocket, SIGNAL( groupAdded( QString, uint,uint ) ),
+		this, SLOT( slotGroupAdded( QString, uint, uint ) ) );
+	connect( m_serviceSocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
+		this, SLOT( slotGroupRenamed( QString, uint, uint ) ) );
+	connect( m_serviceSocket, SIGNAL( groupName( QString, uint ) ),
+		this, SLOT( slotGroupListed( QString, uint ) ) );
+	connect( m_serviceSocket, SIGNAL(groupRemoved( uint, uint ) ),
+		this, SLOT( slotGroupRemoved( uint, uint ) ) );
+	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
+				this, SLOT( slotStateChanged( QString ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( contactStatusChanged( QString, QString, QString ) ),
+		this,
+		SLOT( slotContactStatusChanged( QString, QString, QString ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( contactList( QString, QString, QString, QString ) ),
+		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
+		this,
+		SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
+		this,
+		SLOT( slotContactRemoved( QString, QString, uint, uint ) ) );
+	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
+		this, SLOT( slotStatusChanged( QString ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( contactStatus( QString, QString, QString ) ),
+		this, SLOT( slotContactStatus( QString, QString, QString ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
+		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
+	connect( m_serviceSocket, SIGNAL( publicNameChanged( QString, QString ) ),
+		this, SLOT( slotPublicNameChanged( QString, QString ) ) );
+	connect( m_serviceSocket,
+		SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
+		this,
+		SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
+	connect( m_serviceSocket, SIGNAL( startChat( QString, QString ) ),
+		this, SLOT( slotCreateChat( QString, QString ) ) );
+
+	m_serviceSocket->connect( m_password );
+	statusBarIcon->setMovie( connectingIcon );
 }
 
 void MSNProtocol::Disconnect()
 {
-	m_serviceSocket->closeService();
+	m_serviceSocket->disconnect();
+	delete m_serviceSocket;
+	m_serviceSocket = 0L;
 }
 
 bool MSNProtocol::isConnected() const
@@ -337,18 +342,18 @@ void MSNProtocol::slotGoAway()
 	m_serviceSocket->setStatus( AWY );
 }
 
-void MSNProtocol::slotConnected( bool c )
+void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 {
-	mIsConnected = c;
-	if ( c )
+	mIsConnected = status == MSNSocket::Connected;
+	if ( mIsConnected )
 	{
 		// Sync public name when needed
-		if( ( m_publicNameSyncMode & SyncToServer ) &&
-			m_publicName != m_serviceSocket->_publicName )
+		if( m_publicNameSyncNeeded )
 		{
 			kdDebug() << "MSNProtocol::slotConnected: Syncing public name to "
 				<< m_publicName << endl;
 			setPublicName( m_publicName );
+			m_publicNameSyncNeeded = false;
 		}
 		else
 		{
@@ -406,7 +411,7 @@ void MSNProtocol::slotConnected( bool c )
 			}
 		}
 	}
-	else
+	else if( status == MSNSocket::Disconnected )
 	{
 		QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
 		while( it != m_contacts.end() )
@@ -879,21 +884,32 @@ void MSNProtocol::slotStatusChanged( QString status )
 
 void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 {
-	if( handle == m_msnId && ( m_publicNameSyncMode & SyncFromServer ) )
+	if( handle == m_msnId && publicName != m_publicName )
 	{
-		m_publicName = publicName;
-		m_publicNameSyncMode = SyncBoth;
+		if( m_publicNameSyncMode & SyncFromServer )
+		{
+			m_publicName = publicName;
+			m_publicNameSyncMode = SyncBoth;
 
-		actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
-			*( statusBarIcon->pixmap() ),
-			i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
+			actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
+				*( statusBarIcon->pixmap() ),
+				i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
 
-		// Also sync the config file
-		KConfig *config=KGlobal::config();
-		config->setGroup( "MSN" );
-		config->writeEntry( "Nick", m_publicName );
-		config->sync();
-		emit settingsChanged();
+			// Also sync the config file
+			KConfig *config=KGlobal::config();
+			config->setGroup( "MSN" );
+			config->writeEntry( "Nick", m_publicName );
+			config->sync();
+			emit settingsChanged();
+		}
+		else
+		{
+			// Check if name differs, and schedule sync if needed
+			if( m_publicNameSyncMode & SyncToServer )
+				m_publicNameSyncNeeded = true;
+			else
+				m_publicNameSyncNeeded = false;
+		}
 	}
 }
 

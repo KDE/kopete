@@ -19,67 +19,23 @@
 #ifndef KMSNSERVICESOCKET_H
 #define KMSNSERVICESOCKET_H
 
-#include <qobject.h>
-
-// kde include
-#include <kextsock.h>
-// qt
-#include <qsocket.h>
-// other
-#include <time.h>
+#include "msnauthsocket.h"
 
 class MSNDispatchSocket;
 
 /**
  * @author Olaf Lueg
  */
-class KMSNServiceSocket : public QObject
+class KMSNServiceSocket : public MSNAuthSocket
 {
 	Q_OBJECT
 
 public:
-	KMSNServiceSocket();
+	KMSNServiceSocket( const QString &msnId );
 	~KMSNServiceSocket();
 
-	QString _publicName;
-	QString buffer;
-	QString readBlock(uint len);
-
-protected:
-	uint _serial;
-	uint mailCount;
-	QString _handle;
-	QString _password;
-	bool _silent;
-	KExtendedSocket *socket;
-	bool isConnected;
-
-protected slots:
-	void slotDataReceived();
-	void slotSocketError(int error);
-
-	/**
-	 * Check if new lines of data are available and process the first line
-	 */
-	void slotReadLine();
-
-	/**
-	 * The actual connect code, shared between the initial connect and a
-	 * server-initiated redirect to another server
-	 */
-	void slotReceivedServer( const QString &server, uint port );
-
-protected:
-	void sendProtocol();
-	void sendCVR();
-
-	void parseCommand( QString str);
-
-public:
-	void connectToMSN( const QString &handle, const QString &password,
-		uint serial, bool silent );
-	void close();
-	void closeService();
+	void connect( const QString &password );
+	virtual void disconnect();
 
 	void setStatus( int status );
 	void addContact( const QString &handle, QString pulicName, uint group , int list );
@@ -90,53 +46,61 @@ public:
 	void renameGroup(QString groupName, uint group);
 
 	void changePublicName( const QString &publicName );
-	QString getPublicName() { return _publicName;}
 
 	void createChatSession();
+
 signals:
-	void newMail(QString, uint);
+//	void newMail(QString, uint);
 	void contactList(QString, QString, QString, QString);
 	void contactList(QString, QString, uint);
 	void contactStatusChanged( QString, QString, QString );
 	void contactStatus(QString, QString, QString );
 	void contactAdded(QString, QString, QString, uint, uint);
 	void contactRemoved(QString, QString, uint, uint);
-	void contactOffline(QString);
 
 	void groupName(QString, uint);
 	void groupAdded( QString, uint, uint);
 	void groupRenamed( QString, uint, uint);
 	void groupRemoved( uint, uint);
 
-	void sessionClosed( QString);
-	void connected( bool);
-
 	void invitedToChat(QString, QString, QString, QString, QString );
 	void startChat( QString, QString );
 
 	void publicNameChanged( QString, QString );
-	void newSerial( uint );
 	void statusChanged( QString );
 
-private:
+protected:
 	/**
-	 * Send an MSN command to the socket
+	 * Handle an MSN command response line.
 	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
-		bool addNewLine = true );
+	virtual void parseCommand( const QString &cmd, uint id,
+		const QString &data );
 
 	/**
-	 * The id of the message sent to the MSN server. This ID will increment
-	 * for each subsequent message sent or received.
+	 * Handle an MSN error condition.
+	 * This reimplementation handles most of the other MSN error codes.
+	 * FIXME: It *should* do this, but currently implements only a very
+	 * limited subset...
 	 */
-	uint m_id;
+	virtual void handleError( uint code, uint id );
+
+private slots:
+	void slotReceivedServer( const QString &server, uint port );
+
+	/**
+	 * We received a message from the server, which is sent as raw data,
+	 * instead of cr/lf line-based text.
+	 */
+	void slotReadMessage( const QString &msg );
+
+private:
+//	uint mailCount;
+	QString m_password;
 
 	/**
 	 * Convert an entry of the Status enum back to a string
 	 */
 	QString statusToString( int status ) const;
-
-	void closeSocket();
 
 	MSNDispatchSocket *m_dispatchSocket;
 };

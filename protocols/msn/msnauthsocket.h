@@ -40,6 +40,8 @@ public:
 	MSNAuthSocket( const QString &msnId );
 	~MSNAuthSocket();
 
+	QString msnId() { return m_msnId; }
+
 protected:
 	/**
 	 * This reimplementation sets up the negotiating with the server and

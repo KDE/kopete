@@ -260,7 +260,7 @@ void MSNSocket::parseLine( const QString &str )
 	QString data = str.section( ' ', 2 ).replace( QRegExp( "\r\n" ), "" );
 
 	bool isNum;
-	uint id = str.section( ' ', 1, 1 ).toUInt();
+	uint id = str.section( ' ', 1, 1 ).toUInt( &isNum );
 
 	// In some rare cases, like the 'NLN' / 'FLN' commands no id at all
 	// is sent. Here it's actually a real parameter...
@@ -294,15 +294,18 @@ void MSNSocket::handleError( uint code, uint id )
 }
 
 void MSNSocket::sendCommand( const QString &cmd, const QString &args,
-	bool addNewLine )
+	bool addNewLine, bool addId )
 {
-	QString data = cmd + " " + QString::number( m_id );
+	QString data = cmd;
+	if( addId )
+		data += " " + QString::number( m_id );
 	if( !args.isEmpty() )
 		data += " " + args;
+
+	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
+
 	if( addNewLine )
 		data += "\r\n";
-
-	kdDebug() << "MSNSocket::sendCommand: Sending command " << data;
 
 	m_socket->writeBlock( data, data.length() );
 

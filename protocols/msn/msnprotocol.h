@@ -26,6 +26,7 @@
 
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
+#include "msnsocket.h"
 
 class KAction;
 class KActionMenu;
@@ -179,7 +180,7 @@ public slots:
 	void slotGoAway();
 	void slotIconRightClicked( const QPoint );
 
-	void slotConnected( bool c );
+	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
 
 	void slotStateChanged( QString status );
 
@@ -316,6 +317,7 @@ private:
 	QString m_password;
 	QString m_publicName;
 	SyncMode m_publicNameSyncMode;
+	bool m_publicNameSyncNeeded;
 	QString m_msgHandle;
 
 	KMSNServiceSocket *m_serviceSocket;

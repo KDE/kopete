@@ -63,7 +63,9 @@ public:
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
 
 	void connect( const QString &server, uint port );
-	void disconnect();
+	virtual void disconnect();
+
+	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
 signals:
 	/**
@@ -75,14 +77,14 @@ signals:
 	/**
 	 * The online status has changed
 	 */
-	void onlineStatusChanged( OnlineStatus status );
+	void onlineStatusChanged( MSNSocket::OnlineStatus status );
 
 protected:
 	/**
 	 * Send an MSN command to the socket
 	 */
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
-		bool addNewLine = true );
+		bool addNewLine = true, bool addId = true );
 
 	/**
 	 * Set the online status. Emits onlineStatusChanged.
