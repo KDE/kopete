@@ -14,6 +14,7 @@
 IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	: ConfigModule(i18n("IRC Plugin"),i18n("Internet Relay Chat Protocol"),pixmap,parent)
 {
+	(new QVBoxLayout(this))->setAutoAdd(true);
 	preferencesDialog = new ircPrefsUI(this);
 	KGlobal::config()->setGroup("IRC");
 	preferencesDialog->mID->setText(KGlobal::config()->readEntry("Nickname", "KopeteUser"));

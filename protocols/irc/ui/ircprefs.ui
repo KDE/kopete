@@ -9,54 +9,35 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>440</width>
-            <height>334</height>
+            <width>653</width>
+            <height>344</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QTabWidget">
+    <vbox>
         <property name="name">
-            <cstring>TabWidget3</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>430</width>
-                <height>320</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <widget class="QWidget">
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QTabWidget">
             <property name="name">
-                <cstring>tab</cstring>
+                <cstring>TabWidget3</cstring>
             </property>
-            <attribute name="title">
-                <string>Connection</string>
-            </attribute>
-            <widget class="QGroupBox">
+            <widget class="QWidget">
                 <property name="name">
-                    <cstring>GroupBox1</cstring>
+                    <cstring>tab</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>5</x>
-                        <y>10</y>
-                        <width>415</width>
-                        <height>115</height>
-                    </rect>
-                </property>
-                <property name="frameShape">
-                    <enum>Box</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-                <property name="title">
-                    <string>Login Information</string>
-                </property>
-                <grid>
+                <attribute name="title">
+                    <string>Connection</string>
+                </attribute>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
@@ -66,33 +47,213 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QLabel" row="0" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>TextLabel1</cstring>
+                            <cstring>GroupBox1</cstring>
                         </property>
-                        <property name="text">
-                            <string>IRC Nickname:</string>
+                        <property name="frameShape">
+                            <enum>Box</enum>
                         </property>
+                        <property name="frameShadow">
+                            <enum>Sunken</enum>
+                        </property>
+                        <property name="title">
+                            <string>Login Information</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>IRC Nickname:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>TextLabel2_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>( for example: KopeteUser )</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>mID</cstring>
+                                </property>
+                            </widget>
+                            <spacer row="0" column="3">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer1</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <spacer row="1" column="2" rowspan="1" colspan="4">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QCheckBox" row="0" column="4">
+                                <property name="name">
+                                    <cstring>mAutoConnect</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Auto-Connect</string>
+                                </property>
+                            </widget>
+                            <spacer row="0" column="5">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer3</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
                     </widget>
-                    <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>TextLabel2_2</cstring>
+                            <cstring>GroupBox2</cstring>
                         </property>
-                        <property name="text">
-                            <string>( for example: KopeteUser )</string>
+                        <property name="title">
+                            <string>Default Server Information</string>
                         </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel" row="2" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel7</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Port:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>TextLabel1_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>If you select "Use Default Server Information" in the "Add Contact" screen, the following information will be used.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="2" column="1">
+                                <property name="name">
+                                    <cstring>mPort</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>mServer</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel6</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>IRC Server:</string>
+                                </property>
+                            </widget>
+                            <spacer row="1" column="2">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer4</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <spacer row="2" column="2">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer5</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
                     </widget>
-                    <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>mID</cstring>
-                        </property>
-                    </widget>
-                    <spacer row="0" column="3">
+                    <spacer>
                         <property name="name" stdset="0">
-                            <cstring>Spacer1</cstring>
+                            <cstring>Spacer39</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Horizontal</enum>
+                            <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -104,66 +265,16 @@
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="1" column="2" rowspan="1" colspan="4">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="0" column="4">
-                        <property name="name">
-                            <cstring>mAutoConnect</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Auto-Connect</string>
-                        </property>
-                    </widget>
-                    <spacer row="0" column="5">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer3</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </grid>
+                </vbox>
             </widget>
-            <widget class="QGroupBox">
+            <widget class="QWidget">
                 <property name="name">
-                    <cstring>GroupBox2</cstring>
+                    <cstring>tab</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>5</x>
-                        <y>135</y>
-                        <width>415</width>
-                        <height>145</height>
-                    </rect>
-                </property>
-                <property name="title">
-                    <string>Default Server Information</string>
-                </property>
-                <grid>
+                <attribute name="title">
+                    <string>Highlighting</string>
+                </attribute>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
@@ -173,55 +284,165 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QLabel" row="2" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>TextLabel7</cstring>
+                            <cstring>GroupBox5</cstring>
                         </property>
-                        <property name="text">
-                            <string>Port:</string>
+                        <property name="title">
+                            <string>Highlighting:</string>
                         </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="6">
+                                <property name="name">
+                                    <cstring>chkHighlightNick</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Highlight my nickname when users use it in their messages.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>chkHighlightOthers</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Highlight this phrase:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="5">
+                                <property name="name">
+                                    <cstring>phraseHighlight</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>lblUseToHighlight</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Color to use for highlighting:</string>
+                                </property>
+                            </widget>
+                            <spacer row="3" column="0" rowspan="1" colspan="2">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer13</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QLabel" row="3" column="2" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>lblClick</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>( Click to change)</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>AlignCenter</set>
+                                </property>
+                            </widget>
+                            <spacer row="3" column="5">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer15</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <spacer row="2" column="4" rowspan="1" colspan="2">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer14</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="KColorButton" row="2" column="3">
+                                <property name="name">
+                                    <cstring>highlightColor</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="color">
+                                    <color>
+                                        <red>175</red>
+                                        <green>8</green>
+                                        <blue>8</blue>
+                                    </color>
+                                </property>
+                            </widget>
+                            <spacer row="2" column="2">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer16</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Maximum</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>16</width>
+                                        <height>16</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
                     </widget>
-                    <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>TextLabel1_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>If you select "Use Default Server Information" in the "Add Contact" screen, the following information will be used.</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="2" column="1">
-                        <property name="name">
-                            <cstring>mPort</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="1" column="1">
-                        <property name="name">
-                            <cstring>mServer</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>TextLabel6</cstring>
-                        </property>
-                        <property name="text">
-                            <string>IRC Server:</string>
-                        </property>
-                    </widget>
-                    <spacer row="1" column="2">
+                    <spacer>
                         <property name="name" stdset="0">
-                            <cstring>Spacer4</cstring>
+                            <cstring>Spacer37</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Horizontal</enum>
+                            <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -233,49 +454,16 @@
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="2" column="2">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer5</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </grid>
+                </vbox>
             </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tab</cstring>
-            </property>
-            <attribute name="title">
-                <string>Highlighting</string>
-            </attribute>
-            <widget class="QGroupBox">
+            <widget class="QWidget">
                 <property name="name">
-                    <cstring>GroupBox5</cstring>
+                    <cstring>tab</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>5</x>
-                        <y>10</y>
-                        <width>415</width>
-                        <height>154</height>
-                    </rect>
-                </property>
-                <property name="title">
-                    <string>Highlighting:</string>
-                </property>
-                <grid>
+                <attribute name="title">
+                    <string>Output Control</string>
+                </attribute>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
@@ -285,63 +473,159 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QLabel" row="3" column="3" rowspan="1" colspan="3">
+                    <widget class="QButtonGroup">
                         <property name="name">
-                            <cstring>lblClick</cstring>
+                            <cstring>ButtonGroup1</cstring>
                         </property>
-                        <property name="text">
-                            <string>( Click to change)</string>
+                        <property name="title">
+                            <string>Window Behavior:</string>
                         </property>
-                        <property name="alignment">
-                            <set>AlignCenter</set>
-                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>useMDI</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Group and add each contact to a tabbed window, per server. (Tabbed MDI)</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="2" column="0">
+                                <property name="name">
+                                    <cstring>useSDI</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Open a new window for each new contact. e.g. channel, query, server (SDI)</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>chkMinimizeQueries</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Minimize private conversation (query) tabs when first messsaged.</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
-                    <widget class="QCheckBox" row="1" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>chkHighlightOthers</cstring>
+                            <cstring>GroupBox4</cstring>
                         </property>
-                        <property name="text">
-                            <string>Highlight this phrase:</string>
+                        <property name="title">
+                            <string>Extras:</string>
                         </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QCheckBox" row="0" column="0">
+                                <property name="name">
+                                    <cstring>chkSideIcons</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Show task specific icons next to each event in the windows.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>chkShowTimes</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Show a timestamp to the left of all messages.</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
-                    <widget class="KColorButton" row="2" column="4">
-                        <property name="name">
-                            <cstring>highlightColor</cstring>
+                    <spacer>
+                        <property name="name" stdset="0">
+                            <cstring>Spacer38</cstring>
                         </property>
-                        <property name="text">
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>General</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>11</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>GroupBox7</cstring>
+                        </property>
+                        <property name="title">
                             <string></string>
                         </property>
-                        <property name="color">
-                            <color>
-                                <red>175</red>
-                                <green>8</green>
-                                <blue>8</blue>
-                            </color>
-                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>chkHideConsole</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Close the server console window when the IRC plugin loads.</string>
+                                </property>
+                            </widget>
+                        </hbox>
                     </widget>
-                    <spacer row="2" column="2" rowspan="1" colspan="2">
+                    <spacer>
                         <property name="name" stdset="0">
-                            <cstring>Spacer16</cstring>
+                            <cstring>Spacer40</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Maximum</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <spacer row="2" column="5" rowspan="1" colspan="2">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer14</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
+                            <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -353,242 +637,10 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="7">
-                        <property name="name">
-                            <cstring>chkHighlightNick</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Highlight my nickname when users use it in their messages.</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>lblUseToHighlight</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>true</bool>
-                        </property>
-                        <property name="text">
-                            <string>Color to use for highlighting:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="6">
-                        <property name="name">
-                            <cstring>phraseHighlight</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                    </widget>
-                    <spacer row="3" column="6">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer15</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <spacer row="3" column="0" rowspan="1" colspan="3">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer13</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </grid>
+                </vbox>
             </widget>
         </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tab</cstring>
-            </property>
-            <attribute name="title">
-                <string>Output Control</string>
-            </attribute>
-            <widget class="QGroupBox">
-                <property name="name">
-                    <cstring>GroupBox4</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>5</x>
-                        <y>120</y>
-                        <width>415</width>
-                        <height>85</height>
-                    </rect>
-                </property>
-                <property name="title">
-                    <string>Extras:</string>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>chkSideIcons</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>15</x>
-                            <y>25</y>
-                            <width>335</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Show task specific icons next to each event in the windows.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>chkShowTimes</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>15</x>
-                            <y>50</y>
-                            <width>386</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Show a timestamp to the left of all messages.</string>
-                    </property>
-                </widget>
-            </widget>
-            <widget class="QButtonGroup">
-                <property name="name">
-                    <cstring>ButtonGroup1</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>3</x>
-                        <y>7</y>
-                        <width>416</width>
-                        <height>105</height>
-                    </rect>
-                </property>
-                <property name="title">
-                    <string>Window Behavior:</string>
-                </property>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>useMDI</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>15</x>
-                            <y>25</y>
-                            <width>391</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Group and add each contact to a tabbed window, per server. (Tabbed MDI)</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>useSDI</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>15</x>
-                            <y>70</y>
-                            <width>391</width>
-                            <height>21</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Open a new window for each new contact. e.g. channel, query, server (SDI)</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>chkMinimizeQueries</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>35</x>
-                            <y>50</y>
-                            <width>371</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Minimize private conversation (query) tabs when first messsaged.</string>
-                    </property>
-                </widget>
-            </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tab</cstring>
-            </property>
-            <attribute name="title">
-                <string>General</string>
-            </attribute>
-            <widget class="QGroupBox">
-                <property name="name">
-                    <cstring>GroupBox7</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>5</x>
-                        <y>10</y>
-                        <width>416</width>
-                        <height>55</height>
-                    </rect>
-                </property>
-                <property name="title">
-                    <string></string>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>chkHideConsole</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>15</x>
-                            <y>20</y>
-                            <width>386</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Close the server console window when the IRC plugin loads.</string>
-                    </property>
-                </widget>
-            </widget>
-        </widget>
-    </widget>
+    </vbox>
 </widget>
 <includes>
     <include location="local" impldecl="in implementation">ircprefs.ui.h</include>
