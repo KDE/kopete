@@ -42,11 +42,6 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 	initConnections();
 }
 
-QString GaduAccount::fullAccountName() const
-{
-    return "Gadu-Gadu("+accountId()+")";
-}
-
 void
 GaduAccount::initActions()
 {
