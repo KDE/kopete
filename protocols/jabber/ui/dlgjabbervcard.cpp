@@ -18,15 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 
- 
-#include <klocale.h>
-#include <klineedit.h>
-#include <qtextedit.h>
-#include <kurllabel.h>
 #include <qpushbutton.h>
+#include <qtextedit.h>
+ 
+#include <klineedit.h>
+#include <kurllabel.h>
+
 #include "dlgjabbervcard.h"
-#include "dlgvcard.h"
-#include "jabcommon.h"
 #include "jabtasks.h"
 
 

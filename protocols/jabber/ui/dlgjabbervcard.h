@@ -19,8 +19,8 @@
 #define DLGJABBERVCARD_H
 
 #include "dlgvcard.h"
-#include "jabcommon.h"
-#include "jabtasks.h"
+
+class JT_VCard;
 
 class dlgJabberVCard : public dlgVCard
 { 

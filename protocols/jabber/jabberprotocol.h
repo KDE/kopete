@@ -34,7 +34,6 @@
 #include "jabberprefs.h"
 #include "kopeteprotocol.h"
 #include "jabber.h"
-#include <kmessagebox.h>
 
 class QSocket;
 
