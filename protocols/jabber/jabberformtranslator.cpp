@@ -37,13 +37,13 @@ void JabberFormTranslator::translate (const Jabber::Form & form, QWidget * widge
 
 	/* Add instructions to layout. */
 	if (widget->layout ())
-		innerLayout = new QVBoxLayout (widget->layout ());
+		innerLayout = new QVBoxLayout (widget->layout (), 4);
 	else
-		innerLayout = new QVBoxLayout (widget);
+		innerLayout = new QVBoxLayout (widget, 0, 4);
 
 
 	QLabel *label = new QLabel (form.instructions (), parentWidget (), "InstructionLabel");
-
+	label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed, true);
 	innerLayout->addWidget (label, 0, 0);
 	label->setAlignment (int (QLabel::WordBreak | QLabel::AlignVCenter));
 
@@ -72,6 +72,8 @@ void JabberFormTranslator::translate (const Jabber::Form & form, QWidget * widge
 
 		row++;
 	}
+
+	innerLayout->addStretch ();
 }
 
 Jabber::Form & JabberFormTranslator::resultData ()
