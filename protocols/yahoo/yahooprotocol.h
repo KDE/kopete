@@ -35,7 +35,6 @@
 #include "kopeteprotocol.h"
 
 class YahooContact;
-class StatusBarIcon;	// libkopete::ui::statusbaricon
 class KPopupMenu;
 class KActionMenu;
 class KAction;
@@ -47,12 +46,10 @@ class YahooProtocol : public KopeteProtocol
 	Q_OBJECT
 
 public:
-
 	static YahooProtocol *protocol();
 
 	/* Plugin reimplementation */
 	void init();
-	bool unload();
 	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
 	QStringList addressBookFields() const;
 
@@ -61,6 +58,9 @@ public:
 
 	KopeteContact* myself() const;
 	void addContact(QString);
+
+	virtual KActionMenu* protocolActions();
+						// Protocol-specific actions for status bar
 
 public slots:
 	void Connect();			// Connect to server
@@ -75,8 +75,6 @@ public slots:
 	AddContactPage *createAddContactWidget(QWidget * parent);
 									// Return "add contact" dialog
 
-	void slotIconRightClicked(const QPoint&);
-						// CallBack when clicking on statusbar icon
 	void slotSettingsChanged(void);
 						// Callback when settings changed
 	//void slotConnect();
@@ -119,7 +117,6 @@ protected slots:
 	void slotConnected();
 
 private:
-
 	QMap <QString, YahooContact *> m_contactsMap;
 
 	int m_sessionId;	
@@ -127,18 +124,9 @@ private:
 	bool mIsConnected;				// Am I connected ?
 	QString mUsername, mPassword, mServer; int mPort;
 									// Configuration data
-	StatusBarIcon *statusBarIcon;	// Statusbar Icon Object
-	KPopupMenu *popup;				// Statusbar Popup
 	YahooPreferences *mPrefs;		// Preferences Object
 	YahooSession *m_session;			// Connection Object
 
-	QPixmap onlineIcon;				// Icons
-	QPixmap offlineIcon;
-	QPixmap busyIcon;
-	QPixmap idleIcon;
-	QPixmap mobileIcon;
-
-	void initIcons();	// Load Icons
 	void initActions();	// Load Status Actions
 
 	KActionMenu *actionStatusMenu; // Statusbar Popup
@@ -163,13 +151,5 @@ private:
 
 #endif
 
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

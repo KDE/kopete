@@ -24,7 +24,6 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-#include <kstatusbar.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
@@ -42,7 +41,6 @@
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "statusbaricon.h"
 #include "systemtray.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
@@ -64,13 +62,9 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	}
 
 	/* Init actions and icons and create the status bar icon */
-	initIcons();
 	initActions();
-	statusBarIcon = new StatusBarIcon();
 
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
-
-	statusBarIcon->setPixmap(offlineIcon);
+	setStatusIcon( "yahoo_offline" );
 
 	/* Create preferences menu */
 	mPrefs = new YahooPreferences("yahoo_protocol_32", this);
@@ -173,20 +167,6 @@ QStringList YahooProtocol::addressBookFields() const
 	return QStringList("messaging/yahoo");
 }
 
-// Unload statusbar icon
-bool YahooProtocol::unload()
-{
-	kdDebug() << "YahooProtocol::unload()" << endl;
-
-	if (kopeteapp->statusBar())
-	{
-		kopeteapp->statusBar()->removeWidget(statusBarIcon);
-		delete statusBarIcon;
-	}
-
-	return KopeteProtocol::unload();
-}
-
 void YahooProtocol::init()
 {
 }
@@ -230,7 +210,7 @@ void YahooProtocol::Connect()
 
 	if (session_)
 	{
-		statusBarIcon->setPixmap(onlineIcon);
+		setStatusIcon( "yahoo_online" );
 		mIsConnected = true;
 
 		/* We have a session, time to connect its signals to our plugin slots */
@@ -267,7 +247,7 @@ void YahooProtocol::Disconnect()
 
 
 		m_session->logOff();
-		statusBarIcon->setPixmap(offlineIcon);
+		setStatusIcon( "yahoo_offline" );
 		//m_engine->Disconnect();
 		mIsConnected = false;
 	}
@@ -315,29 +295,9 @@ AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
 	return 0L;
 }
 
-void YahooProtocol::slotIconRightClicked(const QPoint&)
+KActionMenu* YahooProtocol::protocolActions()
 {
-	kdDebug() << "YahooProtocol::slotIconRightClicked(<qpoint>)" << endl;
-
-	QString handle = mUsername + "@" + mServer;
-
-	popup = new KPopupMenu(statusBarIcon);
-	popup->insertTitle(handle);
-	actionGoOnline->plug(popup);
-	actionGoOffline->plug(popup);
-	actionGoStatus001->plug(popup);
-	actionGoStatus002->plug(popup);
-	actionGoStatus003->plug(popup);
-	actionGoStatus004->plug(popup);
-	actionGoStatus005->plug(popup);
-	actionGoStatus006->plug(popup);
-	actionGoStatus007->plug(popup);
-	actionGoStatus008->plug(popup);
-	actionGoStatus009->plug(popup);
-	actionGoStatus012->plug(popup);
-	actionGoStatus099->plug(popup);
-	actionGoStatus999->plug(popup);
-	popup->popup(QCursor::pos());
+	return actionStatusMenu;
 }
 
 void YahooProtocol::slotSettingsChanged()
@@ -357,18 +317,6 @@ void YahooProtocol::slotConnected()
 void YahooProtocol::slotGoOffline()
 {
 	Disconnect();
-}
-
-void YahooProtocol::initIcons()
-{
-	kdDebug() << "YahooProtocol::initIcons()" << endl;
-	KIconLoader *loader = KGlobal::iconLoader();
-	KStandardDirs dir;
-	onlineIcon  = QPixmap(loader->loadIcon("yahoo_online",  KIcon::User));
-	offlineIcon = QPixmap(loader->loadIcon("yahoo_offline", KIcon::User));
-	busyIcon    = QPixmap(loader->loadIcon("yahoo_busy",    KIcon::User));
-	idleIcon    = QPixmap(loader->loadIcon("yahoo_idle",    KIcon::User));
-	mobileIcon  = QPixmap(loader->loadIcon("yahoo_mobile",  KIcon::User));
 }
 
 void YahooProtocol::initActions()
@@ -404,7 +352,10 @@ void YahooProtocol::initActions()
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
 				0, this, SLOT(Connect()), this, "actionYahooConnect");
 
+	QString handle = mUsername + "@" + mServer;
 	actionStatusMenu = new KActionMenu("Yahoo", this);
+	actionStatusMenu->popupMenu()->insertTitle( statusIcon(), handle );
+
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoOffline);
 	actionStatusMenu->insert(actionGoStatus001);
