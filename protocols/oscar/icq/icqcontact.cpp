@@ -81,6 +81,13 @@ void ICQContact::updateSSIItem()
 	//kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	
+	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	     onlineStatus() == Kopete::OnlineStatus::Unknown )
+	{
+		//make sure they're offline
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+	}
 }
 
 
