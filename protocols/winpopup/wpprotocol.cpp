@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Apr 26 2002
     copyright            : (C) 2002 by Gav Wood
-    email                : gav@indigoarchive.net
+    email                : gav@kde.org
 
     Based on code from   : (C) 2002 by Duncan Mac-Vicar Prett
     email                : duncan@kde.org
@@ -38,15 +38,17 @@
 #include <kstandarddirs.h>
 #include <kstdguiitem.h>
 
+// Kopete Includes
+#include "kopetemetacontact.h"
+#include "kopeteaccountmanager.h"
+
 // Local Includes
 #include "wpprotocol.h"
 #include "wpdebug.h"
 #include "wpcontact.h"
 #include "wpaddcontact.h"
 #include "wppreferences.h"
-
-// Kopete Includes
-#include "kopetemetacontact.h"
+#include "wpeditaccount.h"
 
 class KPopupMenu;
 
@@ -55,72 +57,37 @@ WPProtocol *WPProtocol::sProtocol = 0;
 K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 
 // WP Protocol
-WPProtocol::WPProtocol( QObject *parent, QString name, QStringList )
-: KopeteProtocol( parent, name ),
+WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name),
 	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_available", i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	WPOffline( KopeteOnlineStatus::Offline, 25, this, 1,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) ),
-	WPUnknown( KopeteOnlineStatus::Unknown, 25, this, 2,  "wp_available", "FIXME: Make unavail!", i18n( "Unknown" ) )
+	WPAway(    KopeteOnlineStatus::Away,    25, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
+	WPOffline( KopeteOnlineStatus::Offline, 25, this, 2,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) ),
+	WPUnknown( KopeteOnlineStatus::Unknown, 25, this, 3,  "wp_available", "FIXME: Make unavail!", i18n( "Unknown" ) )
 {
+	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
+	
 	sProtocol = this;
 
-	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
-
-	theInterface = 0;
-
 	// Load Status Actions
-	initActions();
+//	initActions();
+	// TODO: Maybe use this in the future?
 
 	// Set up initial settings
 	KGlobal::config()->setGroup("WinPopup");
 	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
 	QString theInitialSearchHost = KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1");
-	QString theHostName = KGlobal::config()->readEntry("HostName", "");
-	QString theAwayMessage = KGlobal::config()->readEntry("AwayMessage", i18n("Sorry, I'm not here right now."));
 	int theHostCheckFrequency = KGlobal::config()->readNumEntry("HostCheckFrequency", 60);
 	int theMessageCheckFrequency = KGlobal::config()->readNumEntry("MessageCheckFrequency", 5);
-	bool theSendAwayMessage = KGlobal::config()->readBoolEntry("SendAwayMessage", true);
-	bool theEmailDefault = KGlobal::config()->readBoolEntry("EmailDefault", true);
-	if(theHostName.isEmpty())
-	{	QFile infile("/etc/hostname");
-		if(infile.open(IO_ReadOnly))
-		{	QTextStream in(&infile);
-			char c;
-			for(in >> c; c != '.' && (!infile.atEnd()); in >> c)
-				theHostName = theHostName + char((c >= 65 && c < 91) ? c : (c - 32));
-			infile.close();
-		}
-		else
-			theHostName = "LOCALHOST";
-	}
-	KGlobal::config()->writeEntry("HostName", theHostName);
 	KGlobal::config()->writeEntry("SMBClientPath", theSMBClientPath);
 	KGlobal::config()->writeEntry("InitialSearchHost", theInitialSearchHost);
-	KGlobal::config()->writeEntry("AwayMessage", theAwayMessage);
-	KGlobal::config()->writeEntry("SendAwayMessage", theSendAwayMessage);
-	KGlobal::config()->writeEntry("EmailDefault", theEmailDefault);
 	KGlobal::config()->writeEntry("HostCheckFrequency", theHostCheckFrequency);
 	KGlobal::config()->writeEntry("MessageCheckFrequency", theMessageCheckFrequency);
 
 	// Create preferences menu
 	mPrefs = new WPPreferences("wp_icon", this);
-	QObject::connect( mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
-
-	// ask for installation.
-	if(KMessageBox::questionYesNo(mPrefs, i18n("The Samba configuration file needs to be modified in order for Kopete to receive WinPopup messages. Would you like to do this now?"), i18n("Modify Samba Configuration Now?"), KGuiItem(), KGuiItem(), "WPFirstTime") == KMessageBox::Yes)
-		installSamba();
-
-	// Create the interface...
-	theInterface = new KopeteWinPopup(theSMBClientPath, theInitialSearchHost, theHostName, theHostCheckFrequency, theMessageCheckFrequency);
+	QObject::connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
 	// Call slotSettingsChanged() to get it all registered.
 	slotSettingsChanged();
-
-	setAvailable();
-	connect();
-
-	// FIXME: I guess 'myself' should be a metacontact as well...
-	theMyself = new WPContact(this, theHostName, 0L);		// XXX: Should be from config file!!!
-	QObject::connect( theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
 
 	addAddressBookField( "messaging/winpopup", KopetePlugin::MakeIndexField );
 }
@@ -128,120 +95,70 @@ WPProtocol::WPProtocol( QObject *parent, QString name, QStringList )
 // Destructor
 WPProtocol::~WPProtocol()
 {
-	sProtocol = 0L;
-
 	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
+	
+	sProtocol = 0L;
+}
+
+KopeteWinPopup *WPProtocol::createInterface(const QString &theHostName)
+{
+	KGlobal::config()->setGroup("WinPopup");
+	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
+	QString theInitialSearchHost = KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1");
+	QString theAwayMessage = KGlobal::config()->readEntry("AwayMessage", i18n("Sorry, I'm not here right now."));
+	int theHostCheckFrequency = KGlobal::config()->readNumEntry("HostCheckFrequency", 60);
+	int theMessageCheckFrequency = KGlobal::config()->readNumEntry("MessageCheckFrequency", 5);
+	KopeteWinPopup *newOne = new KopeteWinPopup(theSMBClientPath, theInitialSearchHost, theHostName, theHostCheckFrequency, theMessageCheckFrequency);
+	theInterfaces.append(newOne);
+	return newOne;
+}
+
+void WPProtocol::destroyInterface(KopeteWinPopup *theInterface)
+{
+	theInterfaces.removeRef(theInterface);
+	delete theInterface;
 }
 
 void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-	new WPContact( this, serializedData[ "contactId" ], metaContact );
-}
+	QString contactId = serializedData[ "contactId" ];
+	QString accountId = serializedData[ "accountId" ];
 
-WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMetaContact)
-{
-	DEBUG(WPDMETHOD, "WPProtocol::getContact(" << Name << ", " << theMetaContact << ")");
-
-	KopeteContactList *l = KopeteContactList::contactList();
-
-	if(!theMetaContact)
-	{
-		// Should really ask to see if they want the contact adding to their list first...
-		theMetaContact = l->findContact(pluginId(), Name, Name);
-		if(!theMetaContact)
-		{	DEBUG(WPDINFO, "Adding " << Name << " to the contact list...");
-			theMetaContact = new KopeteMetaContact();
-			l->addMetaContact(theMetaContact);
-		}
+	WPAccount *theAccount = static_cast<WPAccount *>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
+	if(!theAccount)
+	{	DEBUG(WPDINFO, "Account " << accountId << " not found");
+		return;
+	}
+	
+	if(theAccount->contacts()[contactId])
+	{	DEBUG(WPDINFO, "User " << contactId << " already in contacts map");
+		return;
 	}
 
-	KopeteContact *theContact = theMetaContact->findContact(pluginId(), Name, Name);
-	if(!theContact)
-	{	theContact = new WPContact(this, Name, theMetaContact);
-		theMetaContact->addContact(theContact);
-	}
-
-	return dynamic_cast<WPContact *>(theContact);
+	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
 }
 
-void WPProtocol::slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From)
+void WPProtocol::init()
 {
-	DEBUG(WPDMETHOD, "WPProtocol::slotGotNewMessage(" << Body << ", " << Arrival.toString() << ", " << From << ")");
-
-	if(online)
-		if(available)
-			getContact(From)->slotNewMessage(Body, Arrival);
-		else
-		{
-			// add message quietly?
-
-			// send away message - TODO: should be taken from global settings
-			KGlobal::config()->setGroup("WinPopup");
-			theInterface->slotSendMessage(KGlobal::config()->readEntry("AwayMessage"), From);
-		}
+	DEBUG(WPDMETHOD, "WPProtocol::init()");
 }
 
 bool WPProtocol::unload()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::unload()");
 
-	delete theInterface;
-
 	return KopeteProtocol::unload();
 }
 
-void WPProtocol::connect()
+EditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
-	DEBUG(WPDMETHOD, "WPProtocol::Connect()");
-
-	online = true;
-	theInterface->goOnline();
-	available = true;
-	setStatusIcon( "wp_available" );
+	return new WPEditAccount(this, account, parent);
 }
 
-void WPProtocol::disconnect()
+KopeteAccount *WPProtocol::createNewAccount(const QString &accountId)
 {
-	DEBUG(WPDMETHOD, "WPProtocol::Disconnect()");
-
-	online = false;
-	theInterface->goOffline();
-	setStatusIcon( "wp_offline" );
-}
-
-void WPProtocol::setAvailable()
-{
-	DEBUG(WPDMETHOD, "WPProtocol::setAvailable()");
-
-	online = true;
-	theInterface->goOnline();
-	available = true;
-	setStatusIcon( "wp_available" );
-	// do any other stuff?
-}
-
-void WPProtocol::setAway()
-{
-	DEBUG(WPDMETHOD, "WPProtocol::setAway()");
-
-	available = false;
-	online = true;
-	theInterface->goOnline();
-	setStatusIcon( "wp_away" );
-	// do any other stuff?
-}
-
-KActionMenu* WPProtocol::protocolActions()
-{
-	return actionStatusMenu;
-}
-
-void WPProtocol::slotSendMessage(const QString &Body, const QString &Destination)
-{
-	DEBUG(WPDMETHOD, "WPProtocol::slotSendMessage(" << Body << ", " << Destination << ")");
-
-	theInterface->sendMessage(Body, Destination);
+	return new WPAccount(this, accountId);
 }
 
 void WPProtocol::slotSettingsChanged()
@@ -249,31 +166,12 @@ void WPProtocol::slotSettingsChanged()
 	DEBUG(WPDMETHOD, "WPProtocol::slotSettingsChanged()");
 
 	KGlobal::config()->setGroup("WinPopup");
-	theInterface->setSMBClientPath(KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient"));
-	theInterface->setInitialSearchHost(KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1"));
-	theInterface->setHostName(KGlobal::config()->readEntry("HostName", "LOCAL"));
-	theInterface->setHostCheckFrequency(KGlobal::config()->readNumEntry("HostCheckFrequency", 60));
-	theInterface->setMessageCheckFrequency(KGlobal::config()->readNumEntry("MessageCheckFrequency", 5));
-}
-
-void WPProtocol::initActions()
-{
-	DEBUG(WPDMETHOD, "WPProtocol::initActions()");
-
-	actionGoAvailable = new KAction("Online", "wp_available", 0, this, SLOT(connect()), this, "actionGoAvailable");
-	actionGoOffline = new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), this, "actionGoOffline");
-	actionGoAway = new KAction("Away", "wp_away", 0, this, SLOT(setAway()), this, "actionGoAway");
-
-	KGlobal::config()->setGroup("WinPopup");
-	QString handle = "WinPopup (" + KGlobal::config()->readEntry("HostName", "") + ")";
-
-	actionStatusMenu = new KActionMenu("WinPopup", this);
-	actionStatusMenu->popupMenu()->insertTitle(
-		SmallIcon( statusIcon() ), handle );
-
-	actionStatusMenu->insert(actionGoAvailable);
-	actionStatusMenu->insert(actionGoAway);
-	actionStatusMenu->insert(actionGoOffline);
+	for(KopeteWinPopup *i = theInterfaces.first(); i != theInterfaces.last(); i = theInterfaces.next())
+	{	i->setSMBClientPath(KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient"));
+		i->setInitialSearchHost(KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1"));
+		i->setHostCheckFrequency(KGlobal::config()->readNumEntry("HostCheckFrequency", 60));
+		i->setMessageCheckFrequency(KGlobal::config()->readNumEntry("MessageCheckFrequency", 5));
+	}
 }
 
 void WPProtocol::installSamba()

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Jan 23 2002
     copyright            : (C) 2002 by Gav Wood
-    email                : gav@indigoarchive.net
+    email                : gav@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -46,7 +46,8 @@ public:
 	virtual bool validateData();
 	
 public slots:
-	virtual void slotFinish(KopeteMetaContact *theMetaContact);
+	virtual bool apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact);
+	
 	void slotSelected(const QString &Group);
 	void slotUpdateGroups();
 };

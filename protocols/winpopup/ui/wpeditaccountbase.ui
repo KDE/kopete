@@ -1,37 +1,27 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>WPAddContactBase</class>
+<class>WPEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>WPAddContactBase</cstring>
+        <cstring>WPEditAccountBase</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>369</width>
-            <height>237</height>
+            <width>569</width>
+            <height>399</height>
         </rect>
     </property>
-    <property name="font">
-        <font>
-        </font>
-    </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>Edit A WinPopup Account</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
         <widget class="QLabel">
             <property name="name">
-                <cstring>TextLabel1_2_2</cstring>
+                <cstring>TextLabel1_2</cstring>
             </property>
             <property name="font">
                 <font>
@@ -39,7 +29,7 @@
                 </font>
             </property>
             <property name="text">
-                <string>Host Information</string>
+                <string>Account Information</string>
             </property>
         </widget>
         <widget class="QFrame">
@@ -55,52 +45,41 @@
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout12</cstring>
+                <cstring>layout1</cstring>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Computer &amp;Workgroup/Domain:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>HostGroup</cstring>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="1" column="1">
+                <widget class="QLineEdit" row="0" column="1">
                     <property name="name">
                         <cstring>mHostName</cstring>
                     </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>TextLabel2_2</cstring>
+                        <cstring>label1</cstring>
                     </property>
                     <property name="text">
-                        <string>Computer &amp;Name:</string>
+                        <string>Your Computer's Network Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>HostName</cstring>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>mHostGroup</cstring>
+                        <cstring>mScreenName</cstring>
                     </property>
                 </widget>
             </grid>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>TextLabel1_3</cstring>
+            </property>
+            <property name="text">
+                <string>Note: This &lt;b&gt;must&lt;/b&gt; be set to this machine's host name or you will have trouble receiving messages.</string>
+            </property>
+        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout11</cstring>
+                <cstring>layout8</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -108,7 +87,7 @@
                 </property>
                 <spacer>
                     <property name="name">
-                        <cstring>Spacer2</cstring>
+                        <cstring>spacer2</cstring>
                     </property>
                     <property name="orientation">
                         <enum>Horizontal</enum>
@@ -118,24 +97,56 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>20</width>
-                            <height>20</height>
+                            <width>411</width>
+                            <height>23</height>
                         </size>
                     </property>
                 </spacer>
                 <widget class="KPushButton">
                     <property name="name">
-                        <cstring>mRefresh</cstring>
+                        <cstring>doInstallSamba</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Refresh</string>
+                        <string>Install Into Samba</string>
                     </property>
                 </widget>
             </hbox>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Preferences</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>Frame3_2_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mAutoConnect</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Auto-connect</string>
+            </property>
+        </widget>
         <spacer>
             <property name="name">
-                <cstring>Spacer4</cstring>
+                <cstring>spacer4</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
@@ -145,18 +156,30 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
+                    <width>21</width>
                     <height>50</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>doInstallSamba</sender>
+        <signal>clicked()</signal>
+        <receiver>WPEditAccountBase</receiver>
+        <slot>installSamba()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>mHostName</tabstop>
+    <tabstop>mAutoConnect</tabstop>
+</tabstops>
+<slots>
+    <slot>installSamba()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kcombobox.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Apr 12 2002
     copyright            : (C) 2002 by Gav Wood
-    email                : gav@indigoarchive.net
+    email                : gav@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -38,24 +38,23 @@
 #include "wpprotocol.h"
 #include "wpdebug.h"
 
-WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContact *parent) : KopeteContact(protocol, host, parent)
+WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const QString &displayName, KopeteMetaContact *metaContact)
+	: KopeteContact(account, newHostName, metaContact)
 {
-	DEBUG(WPDMETHOD, "WPContact::WPContact(" << host << ", <protocol>, <parent>)");
+	DEBUG(WPDMETHOD, "WPContact::WPContact(<account>, " << newHostName << ", " << displayName << ", <parent>)");
 
 	QString newDisplayName;
-	for(unsigned i = 0; i < host.length(); i++)
+	for(unsigned i = 0; i < newHostName.length(); i++)
 		if(!i)
-			newDisplayName += host[i].upper();
+			newDisplayName += newHostName[i].upper();
 		else
-			newDisplayName += host[i].lower();
+			newDisplayName += newHostName[i].lower();
 
-	setDisplayName(newDisplayName);
+	setDisplayName(displayName == QString::null || displayName == "" ? newDisplayName : displayName);
 	myWasConnected = false;
-	myProtocol = protocol;
 
 	// Initialise and start the periodical checking for contact's status
-	myIsOnline = true;
-	setOnlineStatus( protocol->WPOffline );
+	setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 	slotCheckStatus();
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
@@ -64,6 +63,13 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 
 	// Set up the context menu
 	myActionCollection = new KActionCollection(this);
+}
+
+void WPContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
+{
+	kdDebug(14180) << "WP::serialize(...)" << endl;
+	
+	KopeteContact::serialize(serializedData, addressBookData);
 }
 
 KopeteMessageManager* WPContact::manager( bool )
@@ -79,10 +85,22 @@ KopeteMessageManager* WPContact::manager( bool )
 		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
   		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		connect(this, SIGNAL(messageSuccess()), m_manager, SIGNAL(messageSuccess()));
+		connect(this, SIGNAL(messageSuccess()), m_manager, SLOT(messageSuccess()));
 	}
 
 	return m_manager;
+}
+/*
+bool WPContact::isOnline() const
+{
+	kdDebug(14180) << "[WPContact::isOnline()]" << endl;
+	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
+}
+*/
+bool WPContact::isReachable()
+{
+	kdDebug(14180) << "[WPContact::isReachable()]" << endl;
+	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
 }
 
 void WPContact::slotMessageManagerDestroyed()
@@ -90,21 +108,28 @@ void WPContact::slotMessageManagerDestroyed()
 	m_manager = 0L;
 }
 
+void WPContact::slotUserInfo()
+{
+	// TODO: show user info?
+}
+
+void slotDeleteContact()
+{
+//	deleteLater();
+}
+
 void WPContact::slotCheckStatus()
 {
 //	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
 
 	bool oldWasConnected = myWasConnected;
-	bool oldIsOnline = myIsOnline;
+	bool newIsOnline = false;
 
-	myWasConnected = myProtocol;
-
-	if(myProtocol)
-		myIsOnline = myProtocol->checkHost( contactId() );
-	else
-		myIsOnline = false;
-	if( oldIsOnline != myIsOnline || myWasConnected != oldWasConnected )
-		setOnlineStatus( myWasConnected ? myIsOnline ? WPProtocol::protocol()->WPOnline : WPProtocol::protocol()->WPOffline : WPProtocol::protocol()->WPUnknown );
+	myWasConnected = protocol() != 0;
+	if(account()) newIsOnline = static_cast<WPAccount *>(account())->checkHost(theHostName);
+	
+	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected)
+		setOnlineStatus(myWasConnected ? newIsOnline ? WPProtocol::protocol()->WPOnline : WPProtocol::protocol()->WPOffline : WPProtocol::protocol()->WPOffline );
 }
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
@@ -112,7 +137,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
 
 	QPtrList<KopeteContact> contactList;
-	contactList.append( protocol()->myself() );
+	contactList.append(protocol()->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
 	KopeteMessage msg;
@@ -130,7 +155,9 @@ void WPContact::slotSendMessage( KopeteMessage& message )
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
 	
 	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
-	static_cast<WPProtocol*>( protocol() )->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->contactId() );
+	static_cast<WPAccount *>(account())->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->hostName() );
+	
+	emit messageSuccess();
 }
 
 #include "wpcontact.moc"

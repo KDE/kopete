@@ -53,46 +53,40 @@ class WPContact: public KopeteContact
 {
 	Q_OBJECT
 
+public:
+	WPContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
+	
+//	virtual bool isOnline() const;
+	virtual bool isReachable();
+	virtual KActionCollection *customContextMenuActions() { return myActionCollection; }
+	virtual KopeteMessageManager *manager(bool canCreate = false);
+	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
+
+	QPixmap icon() { return onlineStatus().customIcon("wp_online"); }
+	const QString &hostName() { return theHostName; }
+
+public slots:
+	void slotCheckStatus();	// the call back for the checkStatus timer
+	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
+	void slotDeleteContact() { deleteLater(); }
+	void slotUserInfo();
+
+signals:
+	void messageSuccess();
+
+private slots:
+	void slotMessageManagerDestroyed();
+	void slotSendMessage(KopeteMessage &message);
+
 private:
-	bool myIsOnline;		// true if online, false if not
+	QString theHostName;
 	bool myWasConnected;	// true if protocol connected at last check
-	WPProtocol *myProtocol;	// stores the protocol instance to which this contact belongs
+	
 	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
 							// holds all the protocol specific actions (not many!)
 	KopeteMessageManager *m_manager;
 							// holds the two message managers - one for email and one for chat
-public slots:
-	void slotCheckStatus();	// the call back for the checkStatus timer
-	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
-							// the call back for the winpopup protocol
-	void slotSendMessage(KopeteMessage& message);
-							// carries out sending of a message (supporting a hacked-up subject field)
-
-public:
-	WPContact(WPProtocol *protocol, const QString &userID, KopeteMetaContact *parent);
-							// the constructor
-	KopeteMessageManager *manager( bool canCreate = false );
-signals:
-	void messageSuccess();
-//***********************************************************************
-// BEGIN MANDATORY OVERLOADING
-//***********************************************************************
-private slots:
-	void slotMessageManagerDestroyed();
-
-public:
-	// very basic actions
-	bool isOnline() const { return myIsOnline; }
-	bool isReachable() { return myIsOnline; }
-	
-	KActionCollection *customContextMenuActions() { return myActionCollection; }
-
-	QString identityId() const { return contactId(); }
-
-public slots:
-	void slotDeleteContact() { deleteLater(); }
-	void slotUserInfo() { /* show user info? */ }
 };
 
 #endif

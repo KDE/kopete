@@ -2,14 +2,14 @@
 Encoding=UTF-8
 Type=Service
 Name=WinPopup
+Name[ja]=ウィンドウポップアップ
 Icon=wp_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_wp
 X-Kopete-Author=Gav Wood
 X-Kopete-Site=http://kopete.kde.org
-X-Kopete-Email=gav@indigoarchive.net
+X-Kopete-Email=gav@kde.org
 X-Kopete-License=GPL
-Name[ja]=ウィンドウポップアップ
 Comment=Protocol to use Windows WinPopup Messages
 Comment[es]=Protocolo para utilizar los mensajes emergentes de Windows
 Comment[fr]=Protocole pour utiliser les messages WinPopup Windows

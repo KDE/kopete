@@ -1,5 +1,5 @@
 /***************************************************************************
-                          wppreferences.h  -  description
+                          wpaddcontact.h  -  description
                              -------------------
     begin                : Wed Jan 23 2002
     copyright            : (C) 2002 by Gav Wood
@@ -15,38 +15,36 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPPREFERENCES_H
-#define __WPPREFERENCES_H
-
-// Local Includes
-#include "wppreferencesbase.h"
-
-// Kopete Includes
-#include <configmodule.h>
-
-// QT Includes
+#ifndef __WPEDITIDENTITY_H
+#define __WPEDITIDENTITY_H
 
 // KDE Includes
 
-class WPProtocol;
+// QT Includes
 
-class WPPreferences : public ConfigModule
+// Kopete Includes
+#include "editaccountwidget.h"
+
+// Local Includes
+#include "wpeditaccountbase.h"
+
+class KopeteAccount;
+
+class WPEditAccount: public WPEditAccountBase, public EditAccountWidget
 {
 	Q_OBJECT
+
 private:
 	WPProtocol *theProtocol;
-	WPPreferencesBase *preferencesDialog;	// Preferences Dialog
 
 public:
-	WPPreferences(const QString & pixmap, QObject * parent = 0);
-	~WPPreferences();
-	virtual void save();	// save preferences method
+	WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);
 
+	virtual bool validateData();
+	
 public slots:
-	void installSamba();
-
-signals:
-	void saved();			// Parent slot saved
+	virtual KopeteAccount *apply();
+	virtual void installSamba();
 };
 
 #endif
