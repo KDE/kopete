@@ -85,6 +85,7 @@ public:
 	void topicChanged(const QString &nick, const QString &newtopic);
 	void topicUser(const QString &nick, const QDateTime &time);
 	void namesList(const QStringList &nicknames);
+	void endOfNames();
 	void incomingModeChange(const QString &nick, const QString &mode);
 	void incomingChannelMode(const QString &mode, const QString &params );
 	void failedChankey();

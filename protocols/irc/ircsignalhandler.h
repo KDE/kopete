@@ -262,6 +262,7 @@ class IRCSignalHandler : public QObject
 
 		//Channel contact slots
 		void slotNamesList( const QString &, const QStringList & );
+		void slotEndOfNames( const QString & );
 		void slotTopicUser( const QString &, const QString&, const QDateTime &);
 
 		//User contact slots

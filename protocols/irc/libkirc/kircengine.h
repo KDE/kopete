@@ -410,6 +410,7 @@ private slots:
 	void numericReply_333(const KIRC::Message &msg);
 	void numericReply_352(const KIRC::Message &msg);
 	void numericReply_353(const KIRC::Message &msg);
+	void numericReply_366(const KIRC::Message &msg);
 	void numericReply_372(const KIRC::Message &msg);
 //	void numericReply_376(const KIRC::Message &msg);
 

@@ -31,6 +31,8 @@ IRCSignalHandler::IRCSignalHandler(IRCContactManager *m)
 	//Channel Connections to ourself
 	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
 		this, SLOT(slotNamesList(const QString &, const QStringList &)));
+	QObject::connect(m_engine, SIGNAL(incomingEndOfNames(const QString &)),
+		this, SLOT(slotEndOfNames(const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(incomingTopicUser(const QString &, const QString &, const QDateTime &)),
 		this, SLOT(slotTopicUser(const QString&,const QString&,const QDateTime&)));
@@ -136,6 +138,13 @@ void IRCSignalHandler::slotNamesList( const QString &chan, const QStringList &li
 	IRCChannelContact *c = manager->existChannel( chan );
 	if( c )
 		c->namesList( list );
+}
+
+void IRCSignalHandler::slotEndOfNames( const QString &chan )
+{
+	IRCChannelContact *c = manager->existChannel( chan );
+	if ( c )
+		c->endOfNames();
 }
 
 void IRCSignalHandler::slotTopicUser(const QString &chan, const QString &user,const QDateTime &time)

@@ -72,7 +72,7 @@ void Engine::bindNumericReplies()
 	bind(333, this, SLOT(numericReply_333(const KIRC::Message &)), 4, 4);
 	bind(352, this, SLOT(numericReply_352(const KIRC::Message &)), 5, 10);
 	bind(353, this, SLOT(numericReply_353(const KIRC::Message &)), 3, 3);
-//	bind(366, this, SLOT(numericReply_366(const KIRC::Message &)), 2, 2); // incomingEndOfNames
+	bind(366, this, SLOT(numericReply_366(const KIRC::Message &)), 2, 2); // incomingEndOfNames
 //	bind(369, this, SLOT(numericReply_369(const KIRC::Message &)), 2, 2); // incomingEndOfWhoWas
 	bind(372, this, SLOT(numericReply_372(const KIRC::Message &)), 1, 1);
 //	bind(375, Engine::IgnoreMethod );
@@ -401,6 +401,10 @@ void Engine::numericReply_353(const Message &msg)
 /* 366: "<channel> :End of NAMES list"
  * Gives a signal to indicate that the NAMES list has ended for channel.
  */
+void Engine::numericReply_366(const Message &msg)
+{
+	emit incomingEndOfNames(msg.arg(1));
+}
 
 /* 369:
  * End of WHOWAS Request

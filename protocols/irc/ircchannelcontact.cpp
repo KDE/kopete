@@ -60,7 +60,6 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	actionHomePage = 0L;
 
 	updateStatus();
-	slotUpdateInfo();
 }
 
 IRCChannelContact::~IRCChannelContact()
@@ -154,46 +153,52 @@ void IRCChannelContact::slotConnectedToServer()
 
 void IRCChannelContact::namesList(const QStringList &nicknames)
 {
+	mInfoTimer->stop();
 	mJoinedNicks += nicknames;
 	if( mJoinedNicks.count() == nicknames.count() )
 		slotAddNicknames();
+}
+
+void IRCChannelContact::endOfNames()
+{
+	slotUpdateInfo();
 }
 
 void IRCChannelContact::slotAddNicknames()
 {
 	if( !manager(false) || mJoinedNicks.isEmpty() )
 	{
-		slotUpdateInfo();
 		setMode( QString::null );
 		return;
 	}
 
-	QString nickToAdd = mJoinedNicks.front();
-	QChar firstChar = nickToAdd[0];
-	if( firstChar == '@' || firstChar == '+' )
-		nickToAdd = nickToAdd.remove(0, 1);
-
-	mJoinedNicks.pop_front();
-	IRCContact *user;
-
-	if ( nickToAdd.lower() != MYACCOUNT->mySelf()->nickName().lower() )
+	while ( !mJoinedNicks.isEmpty() )
 	{
-		//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
-		user = MYACCOUNT->contactManager()->findUser( nickToAdd );
-		user->setOnlineStatus( m_protocol->m_UserStatusOnline );
-		manager()->addContact( static_cast<Kopete::Contact*>(user) , true);
+		QString nickToAdd = mJoinedNicks.front();
+		QChar firstChar = nickToAdd[0];
+		if( firstChar == '@' || firstChar == '%' || firstChar == '+' )
+			nickToAdd = nickToAdd.remove(0, 1);
+	
+		mJoinedNicks.pop_front();
+		IRCContact *user;
+	
+		if ( nickToAdd.lower() != MYACCOUNT->mySelf()->nickName().lower() )
+		{
+			//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
+			user = MYACCOUNT->contactManager()->findUser( nickToAdd );
+			user->setOnlineStatus( m_protocol->m_UserStatusOnline );
+			manager()->addContact( static_cast<Kopete::Contact*>(user) , true);
+		}
+		else
+		{
+			user = MYACCOUNT->mySelf();
+		}
+	
+		if ( firstChar == '@' || firstChar == '%' )
+			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
+		else if( firstChar == '+')
+			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusVoice );
 	}
-	else
-	{
-	        user = MYACCOUNT->mySelf();
-	}
-
-	if ( firstChar == '@' || firstChar == '%' )
-		manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
-	else if( firstChar == '+')
-		manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusVoice );
-
-	QTimer::singleShot(0, this, SLOT( slotAddNicknames() ) );
 }
 
 void IRCChannelContact::channelTopic(const QString &topic)
