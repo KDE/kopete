@@ -60,7 +60,7 @@ KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, QObject *par
 //		kfti = new KopeteFileTransferInfo(0L, QString("Unknown"), 0, QString("Unknown"), 0); // icky
 	setText(0, kfti.file());
 	setText(1, kfti.recipient());
-	setText(2, KGlobal::locale()->formatNumber( kfti.size() ));
+	setText( 2, KGlobal::locale()->formatNumber( long( kfti.size() ) ) );
 	setText(3, i18n("Waiting"));
 	listView()->setColumnWidth(4, 150);
 	slotPercentCompleted(0);
