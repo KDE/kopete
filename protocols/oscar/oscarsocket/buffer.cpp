@@ -19,6 +19,8 @@
 #include <kdebug.h>
 #include "buffer.h"
 
+#include <ctype.h>
+
 Buffer::Buffer(QObject *parent, const char *name)
 	: QObject(parent, name)
 {
