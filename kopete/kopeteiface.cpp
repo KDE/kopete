@@ -212,6 +212,16 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 	}
 }
 
+void KopeteIface::connectAll()
+{
+	KopeteAccountManager::manager()->connectAll();
+}
+
+void KopeteIface::disconnectAll()
+{
+	KopeteAccountManager::manager()->disconnectAll();
+}
+
 bool KopeteIface::loadPlugin( const QString &name )
 {
 	if ( KopetePluginManager::self()->setPluginEnabled( name ) )

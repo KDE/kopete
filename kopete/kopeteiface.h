@@ -94,6 +94,16 @@ k_dcop:
 	void disconnect(const QString &protocolName, const QString &accountId);
 
 	/**
+	 * Ask all accounts to connect
+	 */
+	void connectAll();
+
+	/**
+	 * Ask all accounts to disconnect
+	 */
+	void disconnectAll();
+
+	/**
 	 * load a plugin
 	 * the name is the name of the library: example: kopete_msn
 	 * but you can ommit the kopete_ prefix
