@@ -34,6 +34,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *, QWidget *parent=0, const char *name=0);
 		~IRCEditAccountWidget();
 
+		IRCAccount *account();
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
 
@@ -51,7 +52,6 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		QString generateAccountId( const QString &network );
 
 		IRCProtocol *mProtocol;
-		IRCAccount *m_IRCAccount;
 };
 
 #endif

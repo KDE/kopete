@@ -45,37 +45,36 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 {
 	mProtocol = proto;
 
-	m_IRCAccount = (IRCAccount *)ident;
 	int currentCodec = 4;
 
-	if( m_IRCAccount )
+	if( account() )
 	{
-		QString nickName = m_IRCAccount->mySelf()->nickName();
-		QString serverInfo = m_IRCAccount->accountId();
+		QString nickName = account()->mySelf()->nickName();
+		QString serverInfo = account()->accountId();
 
 		mNickName->setText( nickName );
 
-		mUserName->setText( m_IRCAccount->userName() );
-		mAltNickname->setText( m_IRCAccount->altNick() );
-		partMessage->setText( m_IRCAccount->defaultPart() );
-		quitMessage->setText( m_IRCAccount->defaultQuit() );
-		if( m_IRCAccount->codec() )
-			currentCodec = m_IRCAccount->codec()->mibEnum();
+		mUserName->setText( account()->userName() );
+		mAltNickname->setText( account()->altNick() );
+		partMessage->setText( account()->defaultPart() );
+		quitMessage->setText( account()->defaultQuit() );
+		if( account()->codec() )
+			currentCodec = account()->codec()->mibEnum();
 
-		//mPass->load ( &m_IRCAccount->password() );
+		//mPass->load ( &account()->password() );
 
 		preferSSL->setChecked(
 			account()->pluginData (m_protocol, "PreferSSL") == QString::fromLatin1("true") );
 
-		autoConnect->setChecked( m_IRCAccount->autoLogin(  ) );
+		autoConnect->setChecked( account()->autoLogin(  ) );
 
-		//if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
+		//if(account()->rememberPassword()) mPassword->setText( account()->password() );
 
-		QStringList cmds = m_IRCAccount->connectCommands();
+		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
 			new QListViewItem( commandList, *i );
 
-		const QMap< QString, QString > replies = m_IRCAccount->customCtcpReplies();
+		const QMap< QString, QString > replies = account()->customCtcpReplies();
 		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 			new QListViewItem( ctcpList, it.key(), it.data() );
 	}
@@ -119,6 +118,11 @@ IRCEditAccountWidget::~IRCEditAccountWidget()
 {
 }
 
+IRCAccount *IRCEditAccountWidget::account ()
+{
+	return dynamic_cast<IRCAccount *>(KopeteEditAccountWidget::account () );
+}
+
 void IRCEditAccountWidget::slotUpdateNetworks()
 {
 	network->clear();
@@ -135,7 +139,7 @@ void IRCEditAccountWidget::slotUpdateNetworks()
 	{
 		IRCNetwork * current = IRCProtocol::protocol()->networks()[*it];
 		network->insertItem( current->name );
-		if( m_IRCAccount && m_IRCAccount->networkName() == current->name )
+		if( account() && account()->networkName() == current->name )
 		{
 			network->setCurrentItem( i );
 			description->setText( current->description );
@@ -195,14 +199,14 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 {
 	KConfig *config = KGlobal::config();
 	QString nextId = network;
-
+	
 	uint accountNumber = 1;
-	while( config->hasGroup( nextId ) )
+	while( config->hasGroup( QString("Account_%1_%2").arg( m_protocol->pluginId() ).arg( nextId ) ) )
 	{
-		nextId = QString::fromLatin1("%1_%2").arg(network).arg(++accountNumber);
+		nextId = QString::fromLatin1("%1_%2").arg( network ).arg( ++accountNumber );
 		accountNumber++;
 	}
-
+	kdDebug( 14120 ) << k_funcinfo << " ID IS: " << nextId << endl;
 	return nextId;
 }
 
@@ -211,23 +215,23 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	QString nickName = mNickName->text();
 	QString networkName = network->currentText();
 
-	if( !m_IRCAccount )
+	if( !account() )
 	{
-		m_IRCAccount = new IRCAccount( mProtocol, generateAccountId(networkName) );
+		setAccount( new IRCAccount( mProtocol, generateAccountId(networkName) ) );
 
-		m_IRCAccount->setNetwork( networkName );
+		account()->setNetwork( networkName );
 
-		m_IRCAccount->loaded();
+		account()->loaded();
 	}
 
-//	mPass->save( &m_IRCAccount->password() );
+//	mPass->save( &account()->password() );
 
-	m_IRCAccount->setNickName( nickName );
-	m_IRCAccount->setUserName( mUserName->text() );
-	m_IRCAccount->setAltNick( mAltNickname->text() );
-	m_IRCAccount->setDefaultPart( partMessage->text() );
-	m_IRCAccount->setDefaultQuit( quitMessage->text() );
-	m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
+	account()->setNickName( nickName );
+	account()->setUserName( mUserName->text() );
+	account()->setAltNick( mAltNickname->text() );
+	account()->setDefaultPart( partMessage->text() );
+	account()->setDefaultQuit( quitMessage->text() );
+	account()->setAutoLogin( autoConnect->isChecked() );
 	// what about?:
 	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3 
 	// remember password cb - disabling the UI for this.
@@ -245,13 +249,13 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	for( QListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
 		replies[ i->text(0) ] = i->text(1);
 
-	m_IRCAccount->setCustomCtcpReplies( replies );
-	m_IRCAccount->setConnectCommands( cmds );
+	account()->setCustomCtcpReplies( replies );
+	account()->setConnectCommands( cmds );
 
 	KCharsets *c = KGlobal::charsets();
-	m_IRCAccount->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
+	account()->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
 
-	return m_IRCAccount;
+	return account();
 }
 
 
