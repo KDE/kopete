@@ -74,6 +74,12 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
             <property name="text">
                 <string>&amp;Save</string>
             </property>
+            <property name="accel">
+                <string>Alt+S</string>
+            </property>
+            <property name="default">
+                <bool>false</bool>
+            </property>
         </widget>
         <widget class="KPushButton" row="4" column="2">
             <property name="name">
@@ -156,6 +162,8 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>kPushButton3</sender>
@@ -170,6 +178,13 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
         <slot>accept()</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>alias</tabstop>
+    <tabstop>command</tabstop>
+    <tabstop>protocolList</tabstop>
+    <tabstop>addButton</tabstop>
+    <tabstop>kPushButton3</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
