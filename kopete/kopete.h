@@ -117,6 +117,11 @@ public:
 	* and uses HTML parser.
 	**/
 	QString parseHTML( QString message, bool parseURLs = true );
+	/**
+	* Like slotSetAwayAll, but don't pops up the dialog (for the autowayplugin)
+	**/
+	void setAwayAll(void);
+
 
 
 private:
