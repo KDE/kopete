@@ -50,10 +50,14 @@ DlgJabberBrowse::DlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent, const 
 void DlgJabberBrowse::slotGotForm()
 {
 	Jabber::JT_Search *task = (Jabber::JT_Search *)sender();
-
+	
+	// Let's get rid of previous layout+widgets
+	QLayout *oldLayout = dynamicForm->layout();
+	
 	// remove the "wait" message
 	delete lblWait;
-
+	delete oldLayout;
+	
 	if(!task->success())
 	{
 		KMessageBox::information(this,
@@ -62,12 +66,13 @@ void DlgJabberBrowse::slotGotForm()
 
 		return;
 	}
-
+	
+	
 	// create a layout for the form
-	QGridLayout *layout = new QGridLayout(grpForm, 1, 1, 20, 10);
+	QGridLayout *layout = new QGridLayout(dynamicForm, 1, 1, 20, 10);
 
 	// translate the form and create it inside the layout
-	translator = new JabberFormTranslator(grpForm);
+	translator = new JabberFormTranslator(dynamicForm);
 
 	translator->translate(task->form(), layout);
 

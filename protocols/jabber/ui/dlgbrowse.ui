@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>582</width>
+            <width>818</width>
             <height>381</height>
         </rect>
     </property>
@@ -69,7 +69,7 @@
         </widget>
         <widget class="QGroupBox" row="0" column="0">
             <property name="name">
-                <cstring>dynamicFormLayout</cstring>
+                <cstring>dynamicForm</cstring>
             </property>
             <property name="title">
                 <string>Search for...</string>
@@ -78,23 +78,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>upFormSpacer</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
                 <widget class="QLabel">
                     <property name="name">
                         <cstring>lblWait</cstring>
@@ -109,23 +92,6 @@
                         <set>WordBreak|AlignVCenter</set>
                     </property>
                 </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>downFormSpacer</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
             </vbox>
         </widget>
         <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
