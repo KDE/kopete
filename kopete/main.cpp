@@ -82,6 +82,9 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( "Andres Krapf", I18N_NOOP("Former developer"), "dae@chez.com" );
 	aboutData.addCredit ( "Carsten Pfeiffer", I18N_NOOP("Misc bugfixes and enhancelets"), "pfeiffer@kde.org" );
 
+	aboutData.setTranslator( I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
+		I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails") );
+
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
