@@ -47,11 +47,6 @@ public:
 	int importance() const;
 
 	/**
-	 * The MSN id of this user, e.g. kopeteuser@kde.org
-	 */
-	QString msnId() const;
-
-	/**
 	 * Indicate whether this contact is blocked
 	 */
 	bool isBlocked() const;

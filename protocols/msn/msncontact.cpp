@@ -74,7 +74,6 @@ MSNContact::MSNContact( const QString &msnId,
 
 MSNContact::~MSNContact()
 {
-//	kdDebug() << "MSNContact::~MSNContact" << endl;
 }
 
 KActionCollection *MSNContact::customContextMenuActions()
@@ -350,11 +349,6 @@ int MSNContact::importance() const
 			return 0;
 		}
 	}
-}
-
-QString MSNContact::msnId() const
-{
-	return contactId();
 }
 
 MSNProtocol::Status MSNContact::msnStatus() const
