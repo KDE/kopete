@@ -34,6 +34,7 @@ libkopeteui_la_SOURCES = configmodule.cpp\
 			groupseparator.cpp balloonbase.cpp kopeteballoon.cpp \
 			kopetehistorydialog.cpp kopetechatwindow.cpp \
 			kopetecontactviewitem.cpp kopetestdaction.cpp \
-			kopetehistorywidget.cpp
+			kopetehistorywidget.cpp kopeteemailwindow.cpp \
+			emailwindow.ui
 
 libkopeteui_la_METASOURCES = AUTO

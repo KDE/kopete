@@ -76,7 +76,8 @@ class JabberContact:public KopeteContact {
     void slotNewMessage(const JabMessage &);
     void slotCloseHistoryDialog();
     void slotViewHistory();
-    void slotSendMsg(const KopeteMessage);
+    void slotSendMsgKCW(const KopeteMessage);
+    void slotSendMsgKEW(const KopeteMessage);
     void slotResourceAvailable(const Jid &, const JabResource &);
     void slotResourceUnavailable(const Jid &);
     void slotRemoveFromGroup();
@@ -114,8 +115,8 @@ class JabberContact:public KopeteContact {
     KSelectAction *actionSelectResource;
     
     dlgJabberRename *dlgRename;
-    KopeteMessageManager *mMsgManager;
-    KopeteMessageManager *msgManager();
+    KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
+    KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
 
     KopeteHistoryDialog *historyDialog;
 

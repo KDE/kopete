@@ -28,33 +28,25 @@ KopeteMessage::KopeteMessage()
 
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactList toKC, QString body, MessageDirection direction)
-{
-	init(QDateTime::currentDateTime(), fromKC, toKC, body, direction);
+		KopeteContactList toKC, QString body, MessageDirection direction) {
+	init(QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction);
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContact* toKC, QString body, MessageDirection direction)
-{
-	KopeteContactList kcl;
-	kcl.append(toKC);
-	init(QDateTime::currentDateTime(), fromKC, kcl, body, direction);
+		KopeteContactList toKC, QString body, QString subject, MessageDirection direction) {
+	init(QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactList toKC, QString body,
-		MessageDirection direction)
-{
-	init(timeStamp, fromKC, toKC, body, direction);
+		MessageDirection direction) {
+	init(timeStamp, fromKC, toKC, body, QString::null, direction);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
-		const KopeteContact *fromKC, KopeteContact* toKC, QString body,
-		MessageDirection direction)
-{
-	KopeteContactList kcl;
-	kcl.append(toKC);
-	init(timeStamp, fromKC, kcl, body, direction);
+		const KopeteContact *fromKC, KopeteContactList toKC, QString body,
+		QString subject, MessageDirection direction) {
+	init(timeStamp, fromKC, toKC, body, subject, direction);
 }
 
 void KopeteMessage::setFg(QColor color) {
@@ -69,17 +61,13 @@ void KopeteMessage::setFont(QFont font) {
 	mFont = font;
 }
 
-void KopeteMessage::init(
-		QDateTime timeStamp,
-		const KopeteContact * from,
-		KopeteContactList to,
-		QString body,
-		MessageDirection direction) {
-
+void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
+		KopeteContactList to, QString body, QString subject, MessageDirection direction) {
 	mTimestamp = timeStamp;
 	mFrom = from;
 	mTo = to;
 	mBody = body;
+	mSubject = subject;
 	mDirection = direction;
 	mFg = QColor();
 	mBg = QColor();

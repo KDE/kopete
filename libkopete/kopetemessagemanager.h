@@ -25,6 +25,7 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopetechatwindow.h"
+#include "kopeteemailwindow.h"
 #include "kopeteprotocol.h"
 
 class KopeteContact;
@@ -89,6 +90,7 @@ public:
 	 */
 	int readMode() { return mReadMode; };
 
+	WidgetType widget() { return mWidget; };
 
 	/**
 	 *	Read Messages
@@ -119,8 +121,8 @@ public slots:
 protected slots:
 	void cancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
-    void chatWindowClosing();
-	void messageSentFromWindow( const QString &message);
+    void slotChatWindowClosing();
+	void slotMessageSent(const KopeteMessage &message);
 	void slotReadMessages();
 private:
 	/**
@@ -135,6 +137,7 @@ private:
 	KopeteContactList mContactList;
 	const KopeteContact *mUser;
 	KopeteChatWindow *mChatWindow;
+	KopeteEmailWindow *mEmailWindow;
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;

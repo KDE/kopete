@@ -37,6 +37,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	mContactList = others;
 	mUser = user;
 	mChatWindow = 0L;
+	mEmailWindow = 0L;
 	mUnreadMessageEvent = 0L;
 	mProtocol = protocol;
 	mWidget = widget;
@@ -44,15 +45,12 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	readModeChanged();
 	connect(kopeteapp->appearance(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
 	
-	if (!logFile.isEmpty())
-	{
+	if (!logFile.isEmpty())	{
 		QString logFileName = "kopete/" + logFile;
 		mLogger = new KopeteMessageLog(logFileName, this);
 	}
 	else
-	{
 		mLogger = 0L;
-	}
 }
 
 KopeteMessageManager::~KopeteMessageManager()
@@ -63,23 +61,38 @@ KopeteMessageManager::~KopeteMessageManager()
 void KopeteMessageManager::slotSendEnabled( bool e )
 {
 	mSendEnabled = e;
-	if ( mChatWindow )
-	{
-		mChatWindow->setSendEnabled(e);
-	}	
+	if (mWidget == ChatWindow) {
+		if (mChatWindow)
+			mChatWindow->setSendEnabled(e);
+	}
+	if (mWidget == Email) {
+		if (mEmailWindow)
+			mEmailWindow->setSendEnabled(e);
+	}
 }
 
 void KopeteMessageManager::newChatWindow() {
-	mChatWindow = new KopeteChatWindow();
-	mChatWindow->setSendEnabled( mSendEnabled);	
+	if (mWidget == ChatWindow) {
+		mChatWindow = new KopeteChatWindow(mUser, mContactList);
+		mChatWindow->setSendEnabled(mSendEnabled);	
 
-	if (mContactList.first() != 0L)
-		mChatWindow->setCaption(mContactList.first()->name()); //TODO: add multi-user support
-	/* When the window is shown, we have to delete this contact event */
-	kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
-	connect (mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()));
-	connect (mChatWindow, SIGNAL(sendMessage(const QString &)), this, SLOT(messageSentFromWindow(const QString &)));
-	connect (mChatWindow, SIGNAL(closeClicked()), this, SLOT(chatWindowClosing()));
+		if (mContactList.first() != 0L)
+			mChatWindow->setCaption(mContactList.first()->name()); //TODO: add multi-user support
+		/* When the window is shown, we have to delete this contact event */
+		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
+		connect (mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
+		connect (mChatWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
+	}
+	if (mWidget == Email) {
+		mEmailWindow = new KopeteEmailWindow(mUser, mContactList);
+		mEmailWindow->setSendEnabled(mSendEnabled);
+		if (mContactList.first() != 0L)
+			mEmailWindow->setCaption(mContactList.first()->name());
+		connect (mEmailWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()));
+		connect (mEmailWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
+		connect (mEmailWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
+	}
 }
 
 void KopeteMessageManager::setReadMode(int mode)
@@ -110,9 +123,25 @@ void KopeteMessageManager::readMessages()
 		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++)
 		{
 			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
-			mChatWindow->messageReceived((*it));
+			mChatWindow->messageReceived(*it);
 		}
 		mChatWindow->show();	// show message window again
+	}
+	else if (mWidget == Email) {
+		if (mEmailWindow == 0L) {
+			kdDebug() << "[KopeteMessageManager] mEmailWindow just doesn't exist" << endl;
+			newChatWindow();
+		}
+		if (mEmailWindow->isMinimized())
+			kdDebug() << "[KopeteMessageManager] mEmailWindow is minimized" << endl;
+		if (mEmailWindow->isHidden())
+			kdDebug() << "[KopeteMessageManager] mEmailWindow is hidden" << endl;
+		mEmailWindow->raise();
+		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++) {
+			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
+			mEmailWindow->messageReceived(*it);
+		}
+		mEmailWindow->show();
 	}
 	else {
 		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << mWidget << endl;
@@ -121,34 +150,28 @@ void KopeteMessageManager::readMessages()
 	mMessageQueue.clear();
 }
 
-void KopeteMessageManager::slotReadMessages()
-{
+void KopeteMessageManager::slotReadMessages() {
 	readMessages();
 }
 
-void KopeteMessageManager::messageSentFromWindow(const QString &message)
-{
-	QString body = message;
-	KopeteMessage tmpmessage(mUser, mContactList, body, KopeteMessage::Outbound);
-	if (mChatWindow->fg()->color().isValid()) {
-		tmpmessage.setFg(mChatWindow->fg()->color());
-	}
-	if (mChatWindow->bg()->color().isValid()) {
-		tmpmessage.setBg(mChatWindow->bg()->color());
-	}
-	emit messageSent(tmpmessage);
+void KopeteMessageManager::slotMessageSent(const KopeteMessage &message) {
+	emit messageSent(message);
 	if ( kopeteapp->appearance()->soundNotify() )
 	    KNotifyClient::event("kopete_outgoing");
 }
 
-void KopeteMessageManager::chatWindowClosing()
-{
-	kdDebug() << "[KopeteMessageManager] Chat Window closed, now 0L" << endl;	
-	mChatWindow = 0L;
+void KopeteMessageManager::slotChatWindowClosing() {
+	if (mWidget == ChatWindow) {
+		kdDebug() << "[KopeteMessageManager] Chat Window closed, now 0L" << endl;	
+		mChatWindow = 0L;
+	}
+	else if (mWidget == Email) {
+		kdDebug() << "[KopeteMessageManager] Email Window closed, now 0L." << endl;
+		mEmailWindow = 0L;
+	}
 }
 
-void KopeteMessageManager::cancelUnreadMessageEvent()
-{
+void KopeteMessageManager::cancelUnreadMessageEvent() {
 	if (mUnreadMessageEvent == 0L)
 	{
 		kdDebug() << "[KopeteMessageManager] No event to delete" << endl;
@@ -162,8 +185,7 @@ void KopeteMessageManager::cancelUnreadMessageEvent()
 	}
 }
 
-void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
-{
+void KopeteMessageManager::slotEventDeleted(KopeteEvent *e) {
 	kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;	
 	if ( e == mUnreadMessageEvent)
 		mUnreadMessageEvent = 0L;
@@ -171,8 +193,7 @@ void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
 
 
 
-void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
-{
+void KopeteMessageManager::appendMessage( const KopeteMessage &msg ) {
 	mMessageQueue.append(msg);
 
 	if( mLogger )
@@ -182,35 +203,35 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 
 	/* First stage, see what to do */
 	bool isvisible = false;
-	if ( mChatWindow == 0L )
-	{
-		isvisible = false;
+
+	if (mWidget == ChatWindow) {
+		if (mChatWindow == 0L)
+			newChatWindow();
+		else if (!mChatWindow->isVisible())
+			isvisible = false;
+		else
+			isvisible = true;
 	}
-	else if ( !mChatWindow->isVisible() )
-    {
-		isvisible = false;
-	}
-	else
-	{
-		isvisible = true;
+	else if (mWidget == Email) {
+		if (mEmailWindow == 0L)
+			newChatWindow();
+		else if (!mEmailWindow->isVisible())
+			isvisible = false;
+		else
+			isvisible = true;
 	}
 
 	if (mReadMode == Popup)
-	{
     	readMessages();
-	}
-	else if ( mReadMode == Queued )
-	{
+
+	else if (mReadMode == Queued) {
 		/* Second stage, do it */
-		if ( isvisible )
-		{
+		if (isvisible) {
 			readMessages();	
 		}
-		else
-		{
+		else { /* Bug, WHOOHOO! If a window's on another desktop, we queue regardless. Grrr. */
 			/* Create an event if a prevoius one not exist */
-			if ( (mUnreadMessageEvent == 0L) && (msg.direction() == KopeteMessage::Inbound) )
-			{
+			if ((mUnreadMessageEvent == 0L) && (msg.direction() == KopeteMessage::Inbound)) {
 		 		mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->name()), "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
 				connect(mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
 				kopeteapp->notifyEvent( mUnreadMessageEvent );

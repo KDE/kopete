@@ -104,7 +104,7 @@ void JabberProtocol::Connect() {
 		connect(mProtocol, SIGNAL(messageReceived(const JabMessage &)), this, SLOT(slotNewMessage(const JabMessage &)));
 		connect(mProtocol, SIGNAL(error(JabError *)), this, SLOT(slotError(JabError *)));
 		kdDebug() << "Jabber plugin: Attempting to connect to Jabber server " << mServer << ":" << mPort << endl;
-		kdDebug() << "Jabber plugin: Using UserID " << mUsername << " with password " << mPassword << endl;
+		kdDebug() << "Jabber plugin: Using UserID " << mUsername << endl;
 		KGlobal::config()->setGroup("Jabber");
 		mProtocol->setHost(mServer, mPort);
 		mProtocol->setAccount(mUsername, mPassword, mResource);
@@ -328,6 +328,9 @@ void JabberProtocol::removeUser(QString userID) {
 		kdDebug() << "Jabber plugin: Protocol removing user " << userID << endl;
 	    mProtocol->unsubscribed(userID);
 		mProtocol->unsubscribe(userID);
+		kdDebug() << "Jabber plugin: I'M A SOLDAR" << endl;
+		contactList[userID] = 0L;
+		kdDebug() << "Jabber plugin: I'M A LOITNUNT" << endl;
 	}
 }
 

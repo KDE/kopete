@@ -41,10 +41,10 @@ public:
 	*/
 	KopeteMessage();
 	KopeteMessage(const KopeteContact *, KopeteContactList, QString, MessageDirection );
-	KopeteMessage(const KopeteContact*, KopeteContact*, QString, MessageDirection );
+	KopeteMessage(const KopeteContact*, KopeteContactList, QString, QString, MessageDirection );
 
 	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactList, QString, MessageDirection);
-	KopeteMessage(QDateTime, const KopeteContact *, KopeteContact *, QString, MessageDirection);
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactList, QString, QString, MessageDirection);
 
 	// Accessors
 	QDateTime timestamp() const { return mTimestamp; }
@@ -55,6 +55,7 @@ public:
 	QColor bg() const { return mBg; }
 	QFont font() const { return mFont; }
 	QString body() const { return mBody; }
+	QString subject() const { return mSubject; }
 
 	MessageDirection direction() const { return mDirection; }
 
@@ -65,19 +66,13 @@ public:
 
 protected:
 	// Helper for constructors
-	void init(
-			QDateTime timeStamp,
-			const KopeteContact * from,
-			KopeteContactList to,
-			QString body,
-			MessageDirection direction
-	);
-
+	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactList to, 
+			  QString body, QString subject, MessageDirection direction);
+	
 	QDateTime mTimestamp;
-
 	const KopeteContact *mFrom;
 	QPtrList<KopeteContact> mTo;
-	QString mBody;
+	QString mBody, mSubject;
 	QFont mFont;
 	QColor mFg, mBg;
 
