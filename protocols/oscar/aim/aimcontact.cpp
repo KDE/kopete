@@ -49,9 +49,8 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 		account->getEngine(), SIGNAL(gotMiniTypeNotification(QString, int)),
 		this, SLOT(slotGotMiniType(QString, int)));
 
-	kdDebug(14190) << k_funcinfo "name='" << name <<
-	"', displayName='" << displayName << "' " << this << endl;
-
+// 	kdDebug(14190) << k_funcinfo "name='" << name <<
+// 		"', displayName='" << displayName << "' " << endl;
 }
 
 AIMContact::~AIMContact()

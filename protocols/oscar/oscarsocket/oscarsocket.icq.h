@@ -14,6 +14,9 @@ const unsigned short ICQ_STATUS_NA			= 0x0004;
 const unsigned short ICQ_STATUS_OCC			= 0x0010;
 const unsigned short ICQ_STATUS_FFC			= 0x0020;
 
+const unsigned short ICQ_SEARCHSTATE_OFFLINE = 0;
+const unsigned short ICQ_SEARCHSTATE_ONLINE = 1;
+const unsigned short ICQ_SEARCHSTATE_DISABLED = 2;
 
 const unsigned char ICQ_TCP_VERSION = 0x0008;
 #endif

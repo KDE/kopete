@@ -25,18 +25,12 @@
 
 #include "oscaraccount.h"
 #include "oscarsocket.h"
+#include "oscarsocket.icq.h"
 
-class KAction;
-
-class KopeteContact;
-class KopeteGroup;
+class KActionMenu;
 class KopeteProtocol;
 
 class OscarChangeStatus;
-class ICQContact;
-
-class AIMBuddyList;
-
 class ICQAccount : public OscarAccount
 {
 	Q_OBJECT
@@ -46,7 +40,7 @@ class ICQAccount : public OscarAccount
 		~ICQAccount();
 
 		KActionMenu* actionMenu();
-		virtual void setAway( bool away, const QString &awayReason );
+		virtual void setAway(bool away, const QString &awayReason);
 
 	public slots:
 		void slotGoNA();
@@ -55,8 +49,8 @@ class ICQAccount : public OscarAccount
 		void slotGoDND();
 
 	protected:
-		 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
-			KopeteMetaContact *parentContact ) ;
+		virtual OscarContact *createNewContact(const QString &contactId,
+			const QString &displayName, KopeteMetaContact *parentContact);
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

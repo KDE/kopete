@@ -60,6 +60,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotIMReceived(QString,QString,bool)));
+
+// 	kdDebug(14200) << k_funcinfo "name='" << name <<
+// 		"', displayName='" << displayName << "' " << endl;
 }
 
 ICQContact::~ICQContact()

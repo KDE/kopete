@@ -37,7 +37,7 @@ static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
 void OscarSocket::sendICQserverRequest(unsigned short cmd, unsigned short seq)
 {
 	Buffer outbuf;
-	outbuf.addSnac(0x0015,0x0002,0x0000,seq);
+	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,seq);
 
 	//message TLV (type 2)
 	outbuf.addWord(0x0001);
@@ -125,9 +125,9 @@ void OscarSocket::sendLoginICQ(void)
 }
 
 // Parses all SNAC(15,3) Packets, these are only for ICQ!
-void OscarSocket::parseICQ_CLI_META(Buffer &inbuf)
+void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "START" << endl;
+//	kdDebug(14150) << k_funcinfo <<  "START" << endl;
 
 	QPtrList<TLV> tl = inbuf.getTLVList();
 	tl.setAutoDelete(true);
@@ -140,13 +140,16 @@ void OscarSocket::parseICQ_CLI_META(Buffer &inbuf)
 
 	kdDebug(14150) << k_funcinfo <<  "Got SNAC(21,3) containing TLV(1) of length=" << tlv->length << endl;
 
-	kdDebug(14150) << k_funcinfo <<  "data=" << tlv->data << endl;
+	Buffer fromicqsrv(tlv->data, tlv->length);
 
-	Buffer metadata(tlv->data, tlv->length);
-	WORD commandlength = metadata.getWord();
-	DWORD ourUIN = metadata.getDWord();
-	WORD subcmd = metadata.getWord();
-	WORD sequence = metadata.getWord();
+//	kdDebug(14150) << "==========================================================" << endl;
+//	fromicqsrv.print();
+//	kdDebug(14150) << "==========================================================" << endl;
+
+	WORD commandlength = fromicqsrv.getLEWord();
+	DWORD ourUIN = fromicqsrv.getLEDWord();
+	WORD subcmd = fromicqsrv.getLEWord();
+	WORD sequence = fromicqsrv.getLEWord();
 
 	kdDebug(14150) << k_funcinfo <<  "commandlength=" << commandlength <<
 		", ourUIN=" << ourUIN << ", subcmd=" << subcmd << ", sequence=" << sequence << endl;
@@ -155,17 +158,17 @@ void OscarSocket::parseICQ_CLI_META(Buffer &inbuf)
 	{
 		case 0x0041: //SRV_OFFLINEMSG
 		{
-			kdDebug(14150) << k_funcinfo <<  "SNAC(21,03) SRV_OFFLINEMSG" << endl;
+//			kdDebug(14150) << k_funcinfo <<  "RECV (SRV_OFFLINEMSG), got an offline message" << endl;
 
-			DWORD UIN = metadata.getDWord();
-			WORD year = metadata.getWord();
-			BYTE month = metadata.getByte();
-			BYTE day = metadata.getByte();
-			BYTE hour = metadata.getByte();
-			BYTE minute = metadata.getByte();
-			WORD type = metadata.getWord();
-			WORD msglen = inbuf.getWord();
-			char *msg = inbuf.getBlock(msglen); // Get the message
+			DWORD UIN = fromicqsrv.getLEDWord();
+			/*WORD year =*/ fromicqsrv.getLEWord();
+			/*BYTE month =*/ fromicqsrv.getLEByte();
+			/*BYTE day =*/ fromicqsrv.getLEByte();
+			/*BYTE hour =*/ fromicqsrv.getLEByte();
+			/*BYTE minute =*/ fromicqsrv.getLEByte();
+			WORD type = fromicqsrv.getLEWord();
+			WORD msglen = fromicqsrv.getLEWord();
+			char *msg = fromicqsrv.getLEBlock(msglen); // Get the message
 			QString message = msg;
 			delete [] msg;
 
@@ -175,111 +178,135 @@ void OscarSocket::parseICQ_CLI_META(Buffer &inbuf)
 			emit gotIM(message, QString::number(UIN), false);
 			break;
 		}
+
 		case 0x0042: //SRV_DONEOFFLINEMSGS
 		{
-			kdDebug(14150) << k_funcinfo <<  "SNAC(21,03) SRV_DONEOFFLINEMSG" << endl;
+//			kdDebug(14150) << k_funcinfo << "RECV (SRV_DONEOFFLINEMSG), last offline message" << endl;
 			sendAckOfflineMessages();
 			break;
 		}
+
 		case 0x07da: //SRV_META
 		{
-			kdDebug(14150) << "SNAC(21,03) SRV_META" << endl;
+//			kdDebug(14150) << "RECV (SRV_META), got meta result" << endl;
+			WORD type = fromicqsrv.getLEWord();
+//			kdDebug(14150) << "type=" << type << endl;
+			BYTE result = fromicqsrv.getLEByte();
+//			kdDebug(14150) << "result=" << (int)result << endl;
+
+			switch(type)
+			{
+				case 0x01a4: // SRV_METAFOUND
+				case 0x01ae: // SRV_METALAST
+				{
+					kdDebug(14150) << "RECV (SRV_METAFOUND or SRV_METALAST)" << endl;
+
+					ICQSearchResult searchResult;
+					// codes taken from libicq, some kind of failure,
+					// have to find out what they are for
+					if ((result == 0x32) || (result == 0x14) || (result == 0x1E))
+					{
+						searchResult.uin=1;
+						emit gotSearchResult(searchResult,0);
+						break;
+					}
+
+					// DATALEN; The length of the following data.
+					/*WORD datalen = */fromicqsrv.getLEWord();
+					// UIN; The user's UIN
+					searchResult.uin = fromicqsrv.getLEDWord();
+
+					//QString::fromLocal8Bit() // maybe use this instead of fromLatin1()
+
+					WORD tmplen;
+					char *tmptxt;
+
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						searchResult.nickName = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						searchResult.firstName = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						searchResult.lastName = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						searchResult.eMail = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+
+					//FLAGS; Auth flag.
+					// 1 = anyone can add to list, 0 = authorization required.
+					BYTE flags = fromicqsrv.getLEByte();
+					searchResult.needAuth = (flags==0x00);
+
+					// STATUS
+					// 0 = Offline, 1 = Online, 2 = not webaware.
+					searchResult.status = fromicqsrv.getLEWord();
+
+					if (type==0x01ae) // said to be the last searchresult, unfortunately this is wrong
+					{
+						// MISSED
+						// The number of users not returned that matched this search.
+						DWORD missed = fromicqsrv.getLEDWord();
+//						kdDebug(14150) << "!LAST search result, missed=" << missed << endl;
+						emit gotSearchResult(searchResult,missed);
+					}
+					else
+					{
+						/*if(fromicqsrv.getLength() >=3)
+						{
+							kdDebug(14150) << "EXTRA INFO, SEX AND AGE!" << endl;
+							// The user's gender. 1 = female, 2 = male, 0 = not specified.
+							BYTE sex = fromicqsrv.getLEByte();
+							searchResult.sex = (int)sex;
+
+							searchResult.age = fromicqsrv.getLEWord();
+						}*/
+						emit gotSearchResult(searchResult,-1);
+					}
+					break;
+				} // END SRV_METAFOUND  SRV_METALAST
+
+				default:
+				{
+					kdDebug(14150) << "SRV_META subtype unsupported!" << endl;
+					break;
+				}
+			} // END switch(type)
+			break;
+		} // END SRV_META
+
+		default:
+		{
+			kdDebug(14150) << "Unknown SNAC(21,03) subcommand is" << subcmd << endl;
 			break;
 		}
-		default:
-			kdDebug(14150) << "Unknown SNAC(21,03) subcommand is" << subcmd << endl;
-	}
+	} // END switch(subcmd)
+
+	kdDebug(14150) << k_funcinfo <<  "deleting tlv data" << endl;
 
 	delete [] tlv->data;
 	kdDebug(14150) << k_funcinfo <<  "END" << endl;
-
-// BEGIN Code from libicq, just as a mark for me to see what I have to add here [mETz]
-/*
-            switch (nType){
-            case ICQ_SRVxEND_OFFLINE_MSG:
-                log(L_DEBUG, "End offline messages");
-                serverRequest(ICQ_SRVxREQ_ACK_OFFLINE_MSG);
-                sendServerRequest();
-                break;
-            case ICQ_SRVxOFFLINE_MSG:{
-                    log(L_DEBUG, "Offline message");
-                    unsigned long uin;
-                    char type, flag;
-                    struct tm sendTM;
-                    memset(&sendTM, 0, sizeof(sendTM));
-                    string message;
-                    unsigned short year;
-                    char month, day, hours, min;
-                    msg.unpack(uin);
-                    msg.unpack(year);
-                    msg.unpack(month);
-                    msg.unpack(day);
-                    msg.unpack(min);
-                    msg.unpack(type);
-                    msg.unpack(flag);
-                    msg.unpack(message);
-#ifndef HAVE_TM_GMTOFF
-                    sendTM.tm_sec  = -__timezone;
-#else
-                    time_t now = time (NULL);
-                    sendTM = *localtime (&now);
-                    sendTM.tm_sec  = -sendTM.tm_gmtoff;
-#endif
-                    sendTM.tm_year = year-1900;
-                    sendTM.tm_mon  = month-1;
-                    sendTM.tm_mday = day;
-                    sendTM.tm_hour = hours;
-                    sendTM.tm_min  = min;
-                    sendTM.tm_isdst = -1;
-                    time_t send_time = mktime(&sendTM);
-                    log(L_DEBUG, "Offline message %u [%08lX] %02X %02X %s", uin, uin, type & 0xFF, flag  & 0xFF, message.c_str());
-                    ICQMessage *m = parseMessage(type, uin, message, msg, 0, 0, 0, 0);
-                    if (m){
-                        m->Time = (unsigned long)send_time;
-                        messageReceived(m);
-                    }
-                    break;
-                }
-            case ICQ_SRVxANSWER_MORE:{
-                    unsigned short nSubtype;
-                    char nResult;
-                    msg >> nSubtype >> nResult;
-                    log(L_DEBUG, "Server answer %02X %04X", nResult & 0xFF, nSubtype);
-                    if ((nResult == 0x32) || (nResult == 0x14) || (nResult == 0x1E)){
-                        ICQEvent *e = findVarEvent(nId);
-                        if (e == NULL){
-                            log(L_WARN, "Various event ID %04X not found (%X)", nId, nResult);
-                            break;
-                        }
-                        e->failAnswer(this);
-                        varEvents.remove(e);
-                        delete e;
-                        break;
-                    }
-                    ICQEvent *e = findVarEvent(nId);
-                    if (e == NULL){
-                        log(L_WARN, "Various event ID %04X not found (%X)", nId, nResult);
-                        break;
-                    }
-                    bool nDelete = e->processAnswer(this, msg, nSubtype);
-                    if (nDelete){
-                        log(L_DEBUG, "Delete event");
-                        varEvents.remove(e);
-                        delete e;
-                    }
-                    break;
-                }
-            default:
-                log(L_WARN, "Unknown SNAC(15,03) response type %04X", nType);
-            }
-            break;
-        }
-    default:
-        log(L_WARN, "Unknown various family type %04X", type);
-    }
-
-*/
-} // END OscarSocket::parseICQ_CLI_META()
+} // END OscarSocket::parseSRV_FROMICQSRV()
 
 void OscarSocket::sendICQStatus(unsigned long status)
 {
@@ -338,44 +365,6 @@ void OscarSocket::sendICQStatus(unsigned long status)
 		emit statusChanged(OSCAR_ONLINE);
 	}
 } // END OscarSocket::sendStatus
-
-void OscarSocket::sendReqOfflineMessages()
-{
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQOFFLINEMSGS), requesting offline messages" << endl;
-
-	Buffer outbuf;
-	outbuf.addSnac(0x0015,0x0002,0x0000,0x00010002);
-
-	outbuf.addWord(0x0001); // TLV(1)
-	outbuf.addWord(0x000A); // length of TLV, 10
-	outbuf.addWord(0x0800); // length of data inside TLV, 8
-	unsigned long tmpuin = getSN().toULong(); // own uin
-	outbuf.addWord((tmpuin & 0xff00) >> 8);
-	outbuf.addWord((tmpuin & 0x00ff));
-	outbuf.addWord(0x3c00); // subcommand, request offline messages (60)
-	outbuf.addWord(0x0200); // TODO: make this the snac sequence's upper Word minus 1!
-   outbuf.print();
-	sendBuf(outbuf, 0x2);
-}
-
-void OscarSocket::sendAckOfflineMessages()
-{
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_ACKOFFLINEMSGS), requesting offline messages" << endl;
-
-	Buffer outbuf;
-	outbuf.addSnac(0x0015,0x0002,0x0000,0x00000000);
-
-	int tlvlength = 2 + 4 + 2 + 2;
-
-	outbuf.addWord(0x0001); // TLV(1)
-	outbuf.addWord(tlvlength); // length of TLV
-	outbuf.addWord(tlvlength-2); // length of data inside TLV
-	outbuf.addDWord(getSN().toULong()); // own uin
-	outbuf.addWord(0x3e00); // subcommand, acknowledge offline messages (62)
-	outbuf.addWord(0x0200); // TODO: make this the snac sequence's upper Word minus 1!
-	outbuf.print();
-	sendBuf(outbuf, 0x2);
-}
 
 void OscarSocket::sendKeepalive()
 {
@@ -447,8 +436,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 					if(messageTLV)
 					{
 						Buffer messageBuf(messageTLV->data, messageTLV->length);
-						WORD len;
-						WORD tcpver;
+						//WORD len;
+						//WORD tcpver;
 						char *cap=messageBuf.getBlock(16);
 
 						QString capstring;
@@ -487,8 +476,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 								kdDebug(14150) << k_funcinfo <<  "type-2 messagtext=" << messagetext << endl;
 								delete [] messagetext;
 
-								DWORD fgColor=messageBuf.getDWord();
-								DWORD bgColor=messageBuf.getDWord();
+								/*DWORD fgColor=*/messageBuf.getDWord();
+								/*DWORD bgColor=*/messageBuf.getDWord();
 								kdDebug(14150) << k_funcinfo <<  "messageBuf.getLength() after message and colors =" << messageBuf.getLength() << endl;
 
 								DWORD guidlen = messageBuf.getDWord();
@@ -507,7 +496,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 							{
 								kdDebug(14150) << k_funcinfo <<  "Unhandled message-type:" << msgType << endl;
 							}
-						}
+						} // END switch(msgType)
 					}
 					else
 					{
@@ -622,4 +611,187 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 	sendBuf(outbuf, 0x2);
 }
 */
+
+
+
+void OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
+{
+	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_TOICQSRV), subcommand=" << subcommand << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,0x00010002);
+
+	int tlvLen = 10 + data.getLength();
+	kdDebug(14150) << k_funcinfo << "tlvLen=" << tlvLen << endl;
+
+	outbuf.addWord(0x0001); // TLV(1)
+	outbuf.addWord(tlvLen); // length of TLV, 10 if no data
+	// NOTE: EVERYTHING IN THIS TLV IS LITTLE-ENDIAN
+	outbuf.addLEWord(tlvLen-2); // length of data inside TLV, 8 if no data
+	outbuf.addLEDWord(getSN().toULong()); // own uin
+	outbuf.addLEWord(subcommand); // subcommand
+	outbuf.addLEWord(0x0002); // TODO: make this the snac sequence's upper Word minus 1!
+	if (data.getLength() > 0)
+		outbuf.addString(data.getBuf(), data.getLength());
+
+	kdDebug(14150) << "==========================================" << endl;
+	outbuf.print();
+	kdDebug(14150) << "==========================================" << endl;
+	sendBuf(outbuf, 0x2);
+}
+
+void OscarSocket::sendCLI_SEARCHBYUIN(const unsigned long uin)
+{
+	kdDebug(14150) << k_funcinfo << "SEND CLI_SEARCHBYUIN (CLI_META), uin=" << uin << endl;
+	Buffer search;
+	// NOTE: EVERYTHING IN THIS BUFFER IS LITTLE-ENDIAN
+	search.addLEWord(0x0569); // subtype: 1385
+	search.addLEWord(0x0136); // key = search for uin
+	search.addLEWord(0x0004); // length of following data
+	search.addLEDWord(uin); // the uin to search for
+
+	sendCLI_TOICQSRV(0x07d0, search); // command = 2000, CLI_META
+}
+
+void OscarSocket::sendCLI_SEARCHWP(
+	const QString &first,
+	const QString &last,
+	const QString &nick,
+	const QString &mail,
+	int minage,
+	int maxage,
+	int sex,
+	int lang, // TODO: unused
+	const QString &city,
+	const QString state,
+	int country,
+	const QString &company,
+	const QString &department,
+	const QString &position,
+	int occupation,
+	bool onlineOnly) /*TODO: add all fields or make this somehow clever*/
+{
+	kdDebug(14150) << k_funcinfo << "SEND CLI_SEARCHWP (CLI_META)" << endl;
+
+	Buffer search;
+	// NOTE: EVERYTHING IN THIS BUFFER IS LITTLE-ENDIAN
+	search.addLEWord(0x0533); // subtype: 1331
+
+	//LNTS FIRST
+	search.addLEWord(first.length());
+	if(first.length()>0)
+		search.addLEString(first.local8Bit(), first.length());
+
+	// LNTS LAST
+	search.addLEWord(last.length());
+	if(last.length()>0)
+		search.addLEString(last.local8Bit(), last.length());
+
+	// LNTS NICK
+	search.addLEWord(nick.length());
+	if(nick.length()>0)
+		search.addLEString(nick.local8Bit(), nick.length());
+
+	// LNTS EMAIL
+	search.addLEWord(mail.length());
+	if(mail.length()>0)
+		search.addLEString(mail.local8Bit(), mail.length());
+
+	// WORD.L MINAGE
+	search.addLEWord(minage);
+
+	// WORD.L MAXAGE
+	search.addLEWord(maxage);
+
+	// BYTE xx SEX 1=fem, 2=mal, 0=dontcare
+	if (sex==1)
+		search.addLEByte(0x01);
+	else if(sex==2)
+		search.addLEByte(0x02);
+	else
+		search.addLEByte(0x00);
+
+	// BYTE xx LANGUAGE
+	search.addLEByte(0x00);
+
+	// LNTS CITY
+	search.addLEWord(city.length());
+	if(city.length()>0)
+		search.addLEString(city.local8Bit(), city.length());
+
+	// LNTS STATE
+	search.addLEWord(state.length());
+	if(state.length()>0)
+		search.addLEString(state.local8Bit(), state.length());
+
+	// WORD.L xx xx COUNTRY
+	search.addLEWord(country);
+
+	// LNTS COMPANY
+	search.addLEWord(company.length());
+	if(company.length()>0)
+		search.addLEString(company.local8Bit(), company.length());
+
+	// LNTS DEPARTMENT
+	search.addLEWord(department.length());
+	if(department.length()>0)
+		search.addLEString(department.local8Bit(), department.length());
+
+	// LNTS POSITION
+	search.addLEWord(position.length());
+	if(position.length()>0)
+		search.addLEString(position.local8Bit(), position.length());
+
+	// BYTE xx OCCUPATION
+	search.addLEByte(occupation);
+
+	//WORD.L xx xx PAST
+	search.addLEWord(0x0000);
+
+	//LNTS PASTDESC - The past description to search for.
+	search.addLEWord(0x0000);
+
+	// WORD.L xx xx INTERESTS - The interests category to search for.
+	search.addLEWord(0x0000);
+
+	// LNTS INTERDESC - The interests description to search for.
+	search.addLEWord(0x0000);
+
+	// WORD.L xx xx AFFILIATION - The affiliation to search for.
+	search.addLEWord(0x0000);
+
+	// LNTS AFFIDESC - The affiliation description to search for.
+	search.addLEWord(0x0000);
+
+	// WORD.L xx xx HOMEPAGE - The home page category to search for.
+	search.addLEWord(0x0000);
+
+	// LNTS HOMEDESC - The home page description to search for.
+	search.addLEWord(0x0000);
+
+	// BYTE xx ONLINE 1=online onliners, 0=dontcare
+	if(onlineOnly)
+		search.addLEByte(0x01);
+	else
+		search.addLEByte(0x00);
+
+	sendCLI_TOICQSRV(0x07d0, search); // command = 2000, CLI_META
+}
+
+void OscarSocket::sendReqOfflineMessages()
+{
+	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQOFFLINEMSGS), requesting offline messages" << endl;
+
+	Buffer empty;
+	sendCLI_TOICQSRV(0x003c, empty);
+}
+
+void OscarSocket::sendAckOfflineMessages()
+{
+	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_ACKOFFLINEMSGS), acknowledging offline messages" << endl;
+
+	Buffer empty;
+	sendCLI_TOICQSRV(0x003e, empty);
+}
+
 // vim: set noet ts=4 sts=4 sw=4:

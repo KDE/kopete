@@ -2,7 +2,7 @@
     icqaddcontactpage.h  -  ICQ Protocol Plugin
 
     Copyright (c) 2002 by Stefan Gehn <metz@gehn.net>
-    
+
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -22,44 +22,42 @@
 #include <addcontactpage.h>
 
 /**
-  *@author duncan
-  *@author stefan
+  *@author Duncan
+  *@author Stefan Gehn
   */
 class icqAddUI;
-class ICQProtocol;
 class QWidget;
-class ICQEvent;
 class ICQAccount;
+class ICQSearchResult;
 
 class ICQAddContactPage : public AddContactPage
 {
-Q_OBJECT
+	Q_OBJECT
 
-public:
-	ICQAddContactPage(ICQAccount *owner, QWidget *parent=0, const char *name=0);
-	~ICQAddContactPage();
+	public:
+		ICQAddContactPage(ICQAccount *owner, QWidget *parent=0, const char *name=0);
+		~ICQAddContactPage();
 
-	// Duncan...FIXME, why public?
-	icqAddUI *icqdata;
-	ICQAccount *mAccount;
-	virtual bool validateData();
+		virtual bool validateData();
 
-public slots:
-	void slotFinish( KopeteMetaContact *parentContact );
-	void slotSearchResult ( ICQEvent *e );
+	public slots:
+		void slotFinish(KopeteMetaContact *parentContact);
+		void slotSearchResult(ICQSearchResult &res, const int missed);
 
-private slots:
-	void slotStartSearch( void );
-	void slotStopSearch( void );
-	void slotClearResults( void );
-	void slotSearchTabChanged( QWidget * );
-	void slotTextChanged( void );
+	private slots:
+		void slotStartSearch();
+		void slotStopSearch();
+		void slotClearResults();
+		void slotSearchTabChanged(QWidget *);
+		void slotTextChanged();
 
-private:
-	int searchMode;
-	ICQEvent *searchEvent;
+	private:
+		int searchMode;
+		bool searching;
+		ICQAccount *mAccount;
+		icqAddUI *icqdata;
 
-	void updateGui( void );
-	void removeSearch( void );
+		void updateGui();
+		void removeSearch();
 };
 #endif

@@ -263,7 +263,7 @@ void OscarSocket::slotRead(void)
 			SNAC s;
 			s = inbuf.getSnacHeader();
 
-			kdDebug(14150) << k_funcinfo <<  "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
+//			kdDebug(14150) << k_funcinfo <<  "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
 
 			switch(s.family)
 			{
@@ -418,12 +418,13 @@ void OscarSocket::slotRead(void)
 					switch(s.subtype)
 					{
 						case 0x0003:
-							parseICQ_CLI_META(inbuf);
+							parseSRV_FROMICQSRV(inbuf);
 							break;
 						default:
 							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					}
-				}
+					break;
+				} // END OSCAR_FAM_21
 
 				case OSCAR_FAM_23: //authorization family, TODO: also for icq registration
 				{
@@ -439,7 +440,7 @@ void OscarSocket::slotRead(void)
 							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				}
+				} // END OSCAR_FAM_23
 
 				default:
 					kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(|" << s.family << "|," << s.subtype << ")" << endl;
@@ -1833,7 +1834,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	}
 
 	kdDebug(14150) << k_funcinfo <<  "Sending '" << message << "' to '" << dest << "'" << endl;
-	static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
+//	static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
+	static const char deffeatures[] = { 0x01 };
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
@@ -1841,7 +1843,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	for (int i=0;i<8;i++) //generate random message cookie (MID, message ID)
 		outbuf.addByte( (BYTE) rand());
 
-	outbuf.addWord(0x0001); // message format
+	outbuf.addWord(0x0001); // message type, this is only type-1
 	// TODO: support more types
 	// 2 -> special messages (also known as advanced messages)
 	// 4 -> url etc.
@@ -1878,6 +1880,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
+
+	outbuf.addDWord(0x00060000); // always empty TLV(6)
 	sendBuf(outbuf,0x02);
 }
 

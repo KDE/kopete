@@ -20,7 +20,7 @@
 #include "buffer.h"
 #include "buffer.moc"
 
-WORD Buffer::sequenceNum = 0x010f;
+WORD Buffer::flapSequenceNum = 0x010f;
 
 Buffer::Buffer(QObject *parent, const char *name)
 	: QObject(parent,name)
@@ -55,6 +55,13 @@ int Buffer::addByte(const BYTE b)
 	return ++length;
 }
 
+int Buffer::addLEByte(const BYTE b)
+{
+	doResize(1);
+	buf[length] = ((b) & 0xff);
+	return ++length;
+}
+
 /** adds the given word to the buffer */
 int Buffer::addWord(const WORD w)
 {
@@ -77,12 +84,48 @@ int Buffer::addDWord(const DWORD dw)
 	return length;
 }
 
+/* adds the given word to the buffer in
+ * little-endian format as needed by old icq server
+ */
+int Buffer::addLEWord(const WORD w)
+{
+	doResize(2);
+	buf[length] = (unsigned char) ((w >> 0) & 0xff);
+	buf[length+1] = (unsigned char) ((w >> 8) & 0xff);
+	length = length + 2;
+	return length;
+}
+
+/* adds the given DWord to the buffer in
+ * little-endian format as needed by old icq server
+ */
+int Buffer::addLEDWord(const DWORD dw)
+{
+	doResize(4);
+	buf[length] = (unsigned char) ((dw >> 0) & 0xff);
+	buf[length+1] = (unsigned char) ((dw >>  8) & 0xff);
+	buf[length+2] = (unsigned char) ((dw >> 16) & 0xff);
+	buf[length+3] = (unsigned char) ((dw >> 24) & 0xff);
+
+	length = length + 4;
+	return length;
+}
+
 /** adds the given string to the buffer (make sure it's NULL-terminated) */
 int Buffer::addString(const char * s, const DWORD len)
 {
 	doResize(len);
 	for (unsigned int i=0;i<len;i++) //concatenate the new string onto the buffer
 		buf[length+i] = s[i];
+	length = length + len;
+	return length;
+}
+
+int Buffer::addLEString(const char * s, const DWORD len)
+{
+	doResize(len);
+	for (unsigned int i=0;i<len;i++) //concatenate the new string onto the buffer
+		buf[length+i] = ( (s[i]) & 0xff);
 	length = length + len;
 	return length;
 }
@@ -113,12 +156,12 @@ int Buffer::addFlap(const BYTE channel)
 		buf[i+6] = buf[i];
 	buf[0] = 0x2a;
 	buf[1] = channel;
-	buf[2] = (sequenceNum & 0xff00) >> 8;
-	buf[3] = (sequenceNum & 0x00ff);
+	buf[2] = (flapSequenceNum & 0xff00) >> 8;
+	buf[3] = (flapSequenceNum & 0x00ff);
 	buf[4] = (length & 0xff00) >> 8;
 	buf[5] = (length & 0x00ff);
 	length = length + 6;
-	sequenceNum++;
+	flapSequenceNum++;
 	return length;
 }
 
@@ -165,14 +208,16 @@ SNAC Buffer::getSnacHeader()
 BYTE Buffer::getByte()
 {
 	BYTE thebyte = 0x00;
-	if (length > 0)
+	if(length > 0)
 	{
 		thebyte = buf[0];
 		buf++; //advance buf to the next char
+
 		/*for (unsigned int i=1;i<length;i++)
 		{  //get rid of first element by shifting the array
 			buf[i-1] = buf[i];
 		} */
+
 		length--;
 	}
 	else
@@ -201,10 +246,36 @@ DWORD Buffer::getDWord()
 	return retdword;
 }
 
+WORD Buffer::getLEWord()
+{
+	WORD theword1, theword2, retword;
+	theword1 = getLEByte();
+	theword2 = getLEByte();
+	retword = (theword2 << 8) | theword1;
+	return retword;
+}
+
+DWORD Buffer::getLEDWord()
+{
+	DWORD word1, word2, retdword;
+	word1 = getLEWord();
+	word2 = getLEWord();
+	retdword = (word2 << 16) | word1;
+	return retdword;
+}
+
+BYTE Buffer::getLEByte()
+{
+	BYTE b = getByte();
+	return (b & 0xff);
+}
+
 void Buffer::OnBufError(QString s)
 {
-	// Taking this out for now....
-	kdDebug(14150) << "Buffer error: " << s << endl;
+	kdDebug(14150) <<
+		" ============= " << endl <<
+		" BUFFER ERROR: " << s << endl <<
+		" ============= " << endl;
 }
 
 /** sets the buffer and length to the given values */
@@ -230,6 +301,17 @@ char * Buffer::getBlock(WORD len)
 	return ch;
 }
 
+char *Buffer::getLEBlock(WORD len)
+{
+	char *ch = new char[len+1];
+	for (unsigned int i=0;i<len;i++)
+	{
+		ch[i] = getLEByte();
+	}
+	ch[len] = 0;
+	return ch;
+}
+
 /** adds a 16-bit long TLV */
 int Buffer::addTLV16(const WORD type, const WORD data)
 {
@@ -247,7 +329,7 @@ int Buffer::addTLV8(const WORD type, const BYTE data)
 }
 
 /** Gets a TLV, storing it in a struct and returning it */
-TLV Buffer::getTLV(void)
+TLV Buffer::getTLV()
 {
 	TLV t;
 	t.type = getWord();
@@ -257,7 +339,7 @@ TLV Buffer::getTLV(void)
 }
 
 /** Gets a list of TLV's */
-QPtrList<TLV> Buffer::getTLVList(void)
+QPtrList<TLV> Buffer::getTLVList()
 {
 	QPtrList<TLV> ql;
 	ql.setAutoDelete(FALSE);
@@ -276,12 +358,12 @@ int Buffer::appendFlap(const BYTE chan, const WORD len)
 	doResize(6);
 	buf[length] = 0x2a;
 	buf[length+1] = chan;
-	buf[length+2] = (sequenceNum & 0xff00) >> 8;
-	buf[length+3] = (sequenceNum & 0x00ff);
+	buf[length+2] = (flapSequenceNum & 0xff00) >> 8;
+	buf[length+3] = (flapSequenceNum & 0x00ff);
 	buf[length+4] = (len & 0xff00) >> 8;
 	buf[length+5] = (len & 0x00ff);
 	length = length + 6;
-	sequenceNum++;
+	flapSequenceNum++;
 	return length;
 }
 

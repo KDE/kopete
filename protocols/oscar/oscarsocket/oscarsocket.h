@@ -127,118 +127,162 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define AIM_CAPS_TRILLIANCRYPT	0x00010000
 #define AIM_CAPS_LAST				0x00020000
 
-#define KOPETE_AIM_CAPS				AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-#define KOPETE_ICQ_CAPS				AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY
+#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY
 
-/**Implements the actual communication with the oscar server
-*@author Tom Linsky
+class ICQSearchResult
+{
+	public:
+		unsigned long uin;
+		QString nickName;
+		QString firstName;
+		QString lastName;
+		QString eMail;
+		bool needAuth;
+		unsigned int status; // 0=offline, 1=online, 2=not webaware
+		unsigned int sex; // 1=female, 2=male, 0=unspecified
+		unsigned int age;
+};
+
+/*
+ * Implements the actual communication with the oscar server
+ * @author Tom Linsky
 */
 
 class OscarSocket : public OscarConnection
 {
 	Q_OBJECT
+
 	public:
-	OscarSocket(const QString &connName, const QByteArray &cookie, OscarAccount *account, QObject *parent=0, const char *name=0, bool=false);
-	~OscarSocket();
+		OscarSocket(const QString &connName, const QByteArray &cookie,
+			OscarAccount *account, QObject *parent=0, const char *name=0, bool=false);
 
-	/** Sends an authorization request to the server */
-	void sendLoginRequest();
+		~OscarSocket();
 
-	/** encodes a password using md5, outputs to digest */
-	int encodePassword(unsigned char *digest);
-	/** same as above but for icq which needs a XOR method to encode the password
-	 *  returns the encoded password
-	 */
-	QCString encodePasswordXOR();
+		/** Sends an authorization request to the server */
+		void sendLoginRequest();
 
-	/** Logs in the user! */
-	void doLogin(const QString &host, int port, const QString &s, const QString &password);
-	/** Gets the rate info from the server */
-	void sendRateInfoRequest();
-	/** requests the current user's info */
-	void requestMyUserInfo();
-	/** Sets idle time */
-	void sendIdleTime(DWORD time);
-	/** requests ssi data from the server */
-	void sendBuddyListRequest();
-	/** Sends message to dest */
-	void sendIM(const QString &message, const QString &dest, bool isAuto);
-	/** Requests sn's user info */
-	void sendUserProfileRequest(const QString &sn);
-	/** Sends someone a warning */
-	void sendWarning(const QString &target, bool isAnonymous);
-	/** Changes a user's password (AIM Method) */
-	void sendChangePassword(const QString &newpw, const QString &oldpw);
-	/** Joins the given chat room */
-	void sendChatJoin(const QString &name, const int exchange);
-	/** Sends a request for direct IM */
-	void sendDirectIMRequest(const QString &sn);
-	/** Sends a direct IM denial */
-	void sendDirectIMDeny(const QString &sn);
-	/** Sends a direct IM accept */
-	void sendDirectIMAccept(const QString &sn);
-	/** Sends our capabilities to the server */
-	void sendCapabilities(unsigned long caps);
-	/** Signs the user off */
-	virtual void doLogoff();
-	/** Adds a buddy to the server side buddy list */
-	virtual void sendAddBuddy(const QString &name, const QString &group);
-	/** Changes a buddy's group on the server */
-	virtual void sendChangeBuddyGroup(const QString &buddyName,
-									  const QString &oldGroup,
-									  const QString &newGroup);
-	/** Adds a group to the server side buddy list */
-	virtual void sendAddGroup(const QString &name);
-	/** Changes a group's name on the server side buddy list */
-	virtual void sendChangeGroupName(const QString &currentName,
-									 const QString &newName);
-	/** Removes a group from the server side information */
-	virtual void sendDelGroup(const QString &groupName);
-	/** Deletes a buddy from the server side buddy list */
-	virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
-	/** Sends the server lots of  information about the currently logged in user */
-	void sendInfo();
+		/** encodes a password using md5, outputs to digest */
+		int encodePassword(unsigned char *digest);
+		/** same as above but for icq which needs a XOR method to encode the password
+		*  returns the encoded password
+		*/
+		QCString encodePasswordXOR();
 
-	/* sends a status change, status is one of OSCAR_
-	 * awayMessage is only used for AIM currently
-	 */
-	void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
+		/** Logs in the user! */
+		void doLogin(const QString &host, int port, const QString &s, const QString &password);
+		/** Gets the rate info from the server */
+		void sendRateInfoRequest();
+		/** requests the current user's info */
+		void requestMyUserInfo();
+		/** Sets idle time */
+		void sendIdleTime(DWORD time);
+		/** requests ssi data from the server */
+		void sendBuddyListRequest();
+		/** Sends message to dest */
+		void sendIM(const QString &message, const QString &dest, bool isAuto);
+		/** Requests sn's user info */
+		void sendUserProfileRequest(const QString &sn);
+		/** Sends someone a warning */
+		void sendWarning(const QString &target, bool isAnonymous);
+		/** Changes a user's password (AIM Method) */
+		void sendChangePassword(const QString &newpw, const QString &oldpw);
+		/** Joins the given chat room */
+		void sendChatJoin(const QString &name, const int exchange);
+		/** Sends a request for direct IM */
+		void sendDirectIMRequest(const QString &sn);
+		/** Sends a direct IM denial */
+		void sendDirectIMDeny(const QString &sn);
+		/** Sends a direct IM accept */
+		void sendDirectIMAccept(const QString &sn);
+		/** Sends our capabilities to the server */
+		void sendCapabilities(unsigned long caps);
+		/** Signs the user off */
+		virtual void doLogoff();
+		/** Adds a buddy to the server side buddy list */
+		virtual void sendAddBuddy(const QString &name, const QString &group);
+		/** Changes a buddy's group on the server */
+		virtual void sendChangeBuddyGroup(const QString &buddyName,
+			const QString &oldGroup, const QString &newGroup);
+		/** Adds a group to the server side buddy list */
+		virtual void sendAddGroup(const QString &name);
+		/** Changes a group's name on the server side buddy list */
+		virtual void sendChangeGroupName(const QString &currentName,
+										const QString &newName);
+		/** Removes a group from the server side information */
+		virtual void sendDelGroup(const QString &groupName);
+		/** Deletes a buddy from the server side buddy list */
+		virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
+		/** Sends the server lots of  information about the currently logged in user */
+		void sendInfo();
 
-	/** Sends the user's profile to the server */
-	void sendMyProfile();
-	/** Sets the user's profile */
-	void setMyProfile(const QString &profile);
-	/** Returns the user's profile */
-	inline QString getMyProfile() const { return myUserProfile; };
-	/** Blocks user sname */
-	void sendBlock(const QString &sname);
-	/** Removes the block on user sname */
-	void sendRemoveBlock(const QString &sname);
-	/**
-	* Sends a typing notification to the server
-	* @param screenName The name of the person to send to
-	* @param notifyType Type of notify to send
-	*/
-	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
-	/** Initiate a transfer of the given file to the given sn */
-	void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
-	/** Sends a file transfer deny to @sn */
-	void sendFileSendDeny(const QString &sn);
-	/** Accepts a file transfer from sn, returns OscarConnection created */
-	OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
+		/*
+		 * sends a status change, status is one of OSCAR_
+		 * awayMessage is only used for AIM currently
+		 */
+		void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
 
-	/** send request for offline messages (ICQ method) */
-	void sendReqOfflineMessages();
-	/** send acknowledgment for offline messages (ICQ method) */
-	void sendAckOfflineMessages();
-	/** sends a KEEPALIVE packet, empty FLAP channel 5 */
-	void sendKeepalive();
+		/** Sends the user's profile to the server */
+		void sendMyProfile();
+		/** Sets the user's profile */
+		void setMyProfile(const QString &profile);
+		/** Returns the user's profile */
+		inline QString getMyProfile() const { return myUserProfile; };
+		/** Blocks user sname */
+		void sendBlock(const QString &sname);
+		/** Removes the block on user sname */
+		void sendRemoveBlock(const QString &sname);
+
+		/*
+		 * Sends a typing notification to the server
+		 * @param screenName The name of the person to send to
+		 * @param notifyType Type of notify to send
+		 */
+		void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
+		/** Initiate a transfer of the given file to the given sn */
+		void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
+		/** Sends a file transfer deny to @sn */
+		void sendFileSendDeny(const QString &sn);
+		/** Accepts a file transfer from sn, returns OscarConnection created */
+		OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
+
+		/** send request for offline messages (ICQ method) */
+		void sendReqOfflineMessages();
+		/** send acknowledgment for offline messages (ICQ method) */
+		void sendAckOfflineMessages();
+		/** sends a KEEPALIVE packet, empty FLAP channel 5 */
+		void sendKeepalive();
+
+		/*
+		* start a contact search by providing an UIN, ICQ SPECIFIC
+		*/
+		void sendCLI_SEARCHBYUIN(const unsigned long uin);
+		/*
+		 * same but more evil than you can imagine ;)
+		 */
+		void sendCLI_SEARCHWP(
+			const QString &first,
+			const QString &last,
+			const QString &nick,
+			const QString &mail,
+			int minage,
+			int maxage,
+			int sex,
+			int lang, // TODO: unused
+			const QString &city,
+			const QString state,
+			int country,
+			const QString &company,
+			const QString &department,
+			const QString &position,
+			int occupation,
+			bool onlineOnly); /*...*/
 
 	public slots:
-	/** This is called when a connection is established */
-	void OnConnect();
-	/** This function is called when there is data to be read */
-	virtual void slotRead();
+		/** This is called when a connection is established */
+		void OnConnect();
+		/** This function is called when there is data to be read */
+		virtual void slotRead();
 
 	private:
 	/** adds the flap version to the buffer */
@@ -340,7 +384,7 @@ class OscarSocket : public OscarConnection
 	/** Parses a minityping notification from server */
 	void parseMiniTypeNotify(Buffer &);
 
-	void parseICQ_CLI_META(Buffer &);
+	void parseSRV_FROMICQSRV(Buffer &);
 	void parseAdvanceMessage(Buffer &, UserInfo &);
 
 	/** Parses a rate change */
@@ -375,6 +419,11 @@ class OscarSocket : public OscarConnection
 	void sendAIMAway(bool away, const QString &message=0L);
 	/** send status, i.e. AWAY, NA, OCC (ICQ method) */
 	void sendICQStatus(unsigned long status);
+
+	/*
+	 * send a CLI_TOICQSRV with subcommand and DATA supplied in data
+	 */
+	void sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
 
 	void startKeepalive();
 	void stopKeepalive();
@@ -443,6 +492,11 @@ class OscarSocket : public OscarConnection
 	/** Emitted when someone has requested to send a file to us */
 	void gotFileSendRequest(QString, QString, QString, unsigned long);
 
+	/*
+	 * emitted when a usersearch yielded a result, ICQ SPECIFIC
+	 */
+	void gotSearchResult(ICQSearchResult &, const int);
+
 	private:
 		/** The OscarAccount we're assocated with */
 		OscarAccount *mAccount;
@@ -492,7 +546,7 @@ class OscarSocket : public OscarConnection
 		/** Called when an SSI acknowledgement is recieved */
 		void SSIAck();
 		/** emitted when BOS rights are received */
-		// void gotBOSRights(WORD,WORD);
+//		void gotBOSRights(WORD,WORD);
 		/** emitted when a buddy gets blocked */
 		void denyAdded(QString);
 		/** emitted when a block is removed on a buddy */

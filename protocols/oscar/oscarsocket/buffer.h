@@ -53,17 +53,33 @@ class Buffer : public QObject
 		Buffer(char *b, Q_ULONG len, QObject *parent=0, const char *name=0);
 		~Buffer();
 		/** returns the actual buffer */
-		inline char *getBuf(void) const { return buf; };
+		inline char *getBuf() const { return buf; };
 		/** adds the given string to the buffer (make sure it's NULL-terminated) */
 		int addString(const char *, const DWORD);
+		int addLEString(const char *, const DWORD);
 		/** adds the given DWord to the buffer */
 		int addDWord(const DWORD);
+
 		/** adds the given word to the buffer */
 		int addWord(const WORD);
+
+		/* adds the given word to the buffer in
+		* little-endian format as needed by old icq server
+		*/
+		int addLEWord(const WORD w);
+
+		/* adds the given DWord to the buffer in
+		* little-endian format as needed by old icq server
+		*/
+		int addLEDWord(const DWORD dw);
+
 		/** returns the length of the buffer */
-		inline int getLength(void) const { return length; };
+		inline int getLength() const { return length; };
+
 		/** adds the given byte to the buffer */
 		int addByte(const BYTE);
+		int addLEByte(const BYTE);
+
 		/** deletes the current buffer */
 		void clear();
 		/** Adds a TLV with the given type and data */
@@ -82,20 +98,46 @@ class Buffer : public QObject
 		WORD getWord();
 		/** Gets a byte out of the buffer */
 		BYTE getByte();
+
+		/*
+		 * Same as above but returns little-endian
+		 */
+		WORD getLEWord();
+		DWORD getLEDWord();
+		BYTE getLEByte();
+
 			/** Gets a SNAC header from the head of the buffer */
 		SNAC getSnacHeader();
 		/** sets the buffer and length to the given values */
 		void setBuf(char *, const WORD);
-		/** Allocates memory for and gets a block of buffer bytes */
-		char * getBlock(WORD len);
-		/** adds a 16-bit long TLV */
+
+		/*
+		 * Allocates memory for and gets a block of buffer bytes
+		 */
+		char *getBlock(WORD len);
+		/*
+		 * Same as above but returning little-endian
+		 */
+		char *getLEBlock(WORD len);
+
+		/*
+		 * adds a 16-bit long TLV
+		 */
 		int addTLV16(const WORD type, const WORD data);
-		/** adds the given byte to a TLV */
+		/*
+		 * adds the given byte to a TLV
+		 */
 		int addTLV8(const WORD type, const BYTE data);
-		/** Gets a TLV, storing it in a struct and returning it */
-		TLV getTLV(void);
-		/** Gets a list of TLV's */
-		QPtrList<TLV> getTLVList(void);
+
+		/*
+		 * Gets a TLV, storing it in a struct and returning it
+		 */
+		TLV getTLV();
+		/*
+		 * Gets a list of TLV's
+		 */
+		QPtrList<TLV> getTLVList();
+
 		/** appends a flap header to the end of the buffer w/ given length and channel */
 		int appendFlap(const BYTE chan, const WORD len);
 		/** Creates a chat data segment for a tlv and calls addTLV with that data */
@@ -111,19 +153,33 @@ class Buffer : public QObject
 		void bufError(QString);
 
 	private:
-		/** The length of the buffer */
+		/*
+		 * length of buffer (buf)
+		 */
 		DWORD length;
-		/** The allocated size of the buffer */
+		/*
+		 * allocated size of the buffer
+		 */
 		DWORD alloc_length;
-		/** The actual buffer */
+		/*
+		 * The actual buffer
+		 */
 		char * alloc_buf;
-		/** The usable buffer */
+		/*
+		 * The usable buffer
+		 */
 		char * buf;
-		/** The sequence number, incremented after every command sent to the oscar server */
-		static WORD sequenceNum;
+		/*
+		 * sequence number in a FLAP header
+		 * incremented after every command sent to the oscar server
+		 */
+		static WORD flapSequenceNum;
 
 	public slots:
-		/** Called when a buffer error occurs */
+		/*
+		 * Called when a buffer error occurs
+		 * i.e. reading more bytes the buffer actually contains
+		 */
 		void OnBufError(QString);
 };
 
