@@ -25,3 +25,4 @@ TODO for Jabber:
 - make sure that contact context menus use the same terms (email message vs. chat message)
 - in slotGotVCard() there's a change nickname method, check that it does not
   collide with "rename contact" (change alias) -> disabled for now
+- "Remove Authorization From" in contact popup menu has wrong position
