@@ -932,7 +932,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 
 		KGlobal::config()->setGroup( "MSN" );
 		bool notifyNewChat = KGlobal::config()->readBoolEntry( "NotifyNewChat", false );
-		if ( ID && notifyNewChat )
+		if ( !ID.isEmpty() && notifyNewChat )
 		{
 			//this temporary message should open the window if they not exist
 			QString body=i18n("%1 has opened a new chat").arg(c->displayName());

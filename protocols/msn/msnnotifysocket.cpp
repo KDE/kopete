@@ -373,7 +373,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd  == "CHL" )
 	{
 		kdDebug(14140) << "Sending final Authentication" << endl;
-		KMD5 context( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" );
+		KMD5 context( ( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" ).utf8() );
 		sendCommand( "QRY", "msmsgs@msnmsgr.com", true,
 			context.hexDigest());
 	}
@@ -450,13 +450,12 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 		time_t actualTime;
 		time(&actualTime);
-		QString sl=QString::number(  (unsigned long)actualTime - m_loginTime.toULong()   );
+		QString sl = QString::number( ( unsigned long ) actualTime - m_loginTime.toULong() );
 
-		QString md5this(m_MSPAuth+sl+m_password);
-		KMD5 md5(md5this);
+		QString md5this( m_MSPAuth + sl + m_password );
+		KMD5 md5( md5this.utf8() );
 
-
-		QString hotmailRequest ="<html>\n"
+		QString hotmailRequest = "<html>\n"
 			"<head>\n"
 				"<noscript>\n"
 					"<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
