@@ -33,6 +33,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
+#include <kio/netaccess.h>
+#include <kdebug.h>
 
 #include "kopeteuiglobal.h"
 
@@ -239,13 +241,24 @@ void MSNEditAccountWidget::slotSelectImage()
 	if ( !account() )
 		return;
 
-	QString filePath = KFileDialog::getOpenFileName( QString::null, "*", 0l, i18n( "MSN Display Picture" ) );
+	QString path = 0;
+	bool remoteFile = false;
+	KURL filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "MSN Display Picture" ) );
 	if( filePath.isEmpty() )
 		return;
 
+	if( !filePath.isLocalFile() ) {
+		if(!KIO::NetAccess::download( filePath, path, this )) {
+			KMessageBox::sorry( this, i18n( "Downloading of display image failed" ), i18n( "MSN Plugin" ) );
+			return;
+		}
+		remoteFile = true;
+	}
+	else path = filePath.path();
+
 	QString futurName = locateLocal( "appdata", "msnpicture-" + account()->accountId().lower().replace( QRegExp( "[./~]" ), "-" ) + ".png" );
 
-	QImage img( filePath );
+	QImage img( path );
 	img = img.smoothScale( 96, 96 );
 	if ( !img.isNull() && img.save( futurName, "PNG" ) )
 	{
@@ -256,6 +269,7 @@ void MSNEditAccountWidget::slotSelectImage()
 		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
 			"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
 	}
+	if( remoteFile ) KIO::NetAccess::removeTempFile( path );
 }
 
 #include "msneditaccountwidget.moc"
