@@ -23,5 +23,4 @@ data_DATA = wp.plugin
 datadir = $(kde_datadir)/kopete
 
 bin_SCRIPTS = winpopup-send.sh
-bindir = $(kde_bindir)
 
