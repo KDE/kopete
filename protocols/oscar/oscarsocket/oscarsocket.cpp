@@ -2976,7 +2976,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 
 		// Send CLI_SSIxDELETE with the BuddyID and the GroupID, but null screenname
 		delBuddy.addSnac(0x0013,0x000a,0x0000,0x00000000);
-		delBuddy.addBSTR("");
+		delBuddy.addBSTR(buddyItem->name.latin1());
 		delBuddy.addWord(buddyItem->gid);
 		delBuddy.addWord(buddyItem->bid);
 		delBuddy.addWord(buddyItem->type);
@@ -3008,10 +3008,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 		changeGroup.addWord(groupItem->bid);
 		changeGroup.addWord(groupItem->type);
 		changeGroup.addWord(6);
-		// TLV 0xc8 with the buddy ID
-		changeGroup.addWord(0xc8);
-		changeGroup.addWord(2);
-		changeGroup.addWord(buddyItem->bid);
+		changeGroup.addTLV16(0xc8, buddyItem->bid);
 		sendBuf(changeGroup,0x02);
 
 		// Send CLI_SSI_EDIT_END
