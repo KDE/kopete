@@ -338,7 +338,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 				break;
 			}
 		}
-
+		//blink if the metacontact icon has changed.	
 		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
 			mIsBlinkIcon = false;
@@ -346,8 +346,18 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 			mBlinkTimer->start( 400, false );
 		}
 	}
+	else 
+	{
+		//the status icon probably changed, but we didn't blink.   
+		//So the olfStatusIcon will not be set to the real after the blink.
+		//we set it now.
+		if( !mBlinkTimer->isActive() )
+			m_oldStatusIcon=m_metaContact->statusIcon();
+	}
+	
 	// make a note of the current status for the next time we get a status change
 	m_oldStatus = newStatus;
+
 }
 
 void KopeteMetaContactLVI::slotUpdateMetaContact()
