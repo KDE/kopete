@@ -116,7 +116,8 @@ void KopeteMetaContactLVI::initLVI()
 
 	if(!mBlinkIcon)
 	{
-		mBlinkIcon = new QPixmap(KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User));
+		mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small ) );
+		//mBlinkIcon = &SmallIcon( QString::fromLatin1( "newmsg" ) );
 	}
 
 	slotUpdateIcons();
