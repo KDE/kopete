@@ -16,6 +16,10 @@
     *************************************************************************
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "kopeteaway.h"
 
 #include "kopeteaccountmanager.h"
@@ -32,8 +36,18 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xresource.h>
-/* The following include is to make --enable-final work */
+// The following include is to make --enable-final work
 #include <X11/Xutil.h>
+
+#ifdef HAVE_XSCREENSAVER
+#define HasScreenSaver
+#include <X11/extensions/scrnsaver.h>
+#endif
+
+// As this is an untested X extension we better leave it off
+#undef HAVE_XIDLE
+#undef HasXidle
+
 
 struct KopeteAwayPrivate
 {
@@ -53,12 +67,19 @@ struct KopeteAwayPrivate
 	unsigned int mouse_mask;
 	Window    root;               /* root window the pointer is on */
 	Screen*   screen;             /* screen the pointer is on      */
+
+	Time xIdleTime;
+	bool useXidle;
+	bool useMit;
 };
 
 KopeteAway *KopeteAway::instance = 0L;
 
 KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 {
+	int dummy = 0;
+	dummy = dummy; // shut up
+
 	d = new KopeteAwayPrivate;
 
 	// Set up the away messages
@@ -76,6 +97,22 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	d->mouse_mask = 0;
 	d->root = DefaultRootWindow (dsp);
 	d->screen = ScreenOfDisplay (dsp, DefaultScreen (dsp));
+
+	d->useXidle = false;
+	d->useMit = false;
+#ifdef HasXidle
+	d->useXidle = XidleQueryExtension(qt_xdisplay(), &dummy, &dummy);
+#endif
+#ifdef HasScreenSaver
+	if(!d->useXidle)
+		d->useMit = XScreenSaverQueryExtension(qt_xdisplay(), &dummy, &dummy);
+#endif
+	d->xIdleTime = 0;
+
+	if (d->useXidle)
+		kdDebug(14010) << "using X11 Xidle extension" << endl;
+	if(d->useMit)
+		kdDebug(14010) << "using X11 MIT Screensaver extension" << endl;
 
 	// Set up the config object
 	KConfig *config = KGlobal::config();
@@ -144,7 +181,7 @@ void KopeteAway::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
-		kdDebug( 14013 ) << k_funcinfo <<
+		kdDebug(14010) << k_funcinfo <<
 			"Setting global away message: " << message << endl;
 		d->awayMessage = message;
 	}
@@ -332,17 +369,46 @@ void KopeteAway::slotTimerTimeout()
 		}
 	}
 
-	if (root_x != d->mouse_x || root_y != d->mouse_y || mask != d->mouse_mask)
+	// =================================================================================
+
+	Time xIdleTime = 0; // millisecs since last input event
+
+	#ifdef HasXidle
+	if (d->useXidle)
+	{
+		XGetIdleTime(dsp, &xIdleTime);
+	}
+	else
+	#endif /* HasXIdle */
+
+	{
+	#ifdef HasScreenSaver
+		if(d->useMit)
+		{
+			static XScreenSaverInfo* mitInfo = 0;
+			if (!mitInfo) mitInfo = XScreenSaverAllocInfo();
+			XScreenSaverQueryInfo (dsp, d->root, mitInfo);
+			xIdleTime = mitInfo->idle;
+		}
+	#endif /* HasScreenSaver */
+	}
+
+	// =================================================================================
+
+	if (root_x != d->mouse_x || root_y != d->mouse_y || mask != d->mouse_mask || xIdleTime < d->xIdleTime+2000)
 	{
 		d->mouse_x = root_x;
 		d->mouse_y = root_y;
 		d->mouse_mask = mask;
+		d->xIdleTime = xIdleTime;
 		setActivity();
 	}
 
-	//----------------
+	// =================================================================================
+
 	if(!d->autoaway && d->useAutoAway && idleTime() > d->awayTimeout)
 	{
+//		kdDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
 		d->autoaway = true;
 
 		// Set all accounts that are not away already to away.
@@ -362,7 +428,9 @@ void KopeteAway::slotTimerTimeout()
 
 void KopeteAway::setActivity()
 {
+//	kdDebug(14010) << k_funcinfo << "Found activity on desktop, resetting away timer" << endl;
 	d->idleTime.start();
+
 	if(d->autoaway)
 	{
 		d->autoaway = false;
@@ -404,18 +472,14 @@ void KopeteAway::setGoAvailable(bool t)
 	d->goAvailable = t;
 }
 
-void KopeteAway::setUseAutoAway(bool b)
-{
-	d->useAutoAway = b;
-}
-
 bool KopeteAway::useAutoAway() const
 {
 	return d->useAutoAway;
 }
 
-
+void KopeteAway::setUseAutoAway(bool b)
+{
+	d->useAutoAway = b;
+}
 #include "kopeteaway.moc"
-
 // vim: set et ts=4 sts=4 sw=4:
-

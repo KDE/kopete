@@ -1,1 +1,29 @@
-AC_CHECK_HEADERS(tgmath.h)
+AC_CHECK_HEADERS(tgmath.h)xss_save_ldflags="$LDFLAGS"
+LDFLAGS="$X_LDFLAGS"
+
+LIB_XSS=
+
+KDE_CHECK_HEADER(X11/extensions/scrnsaver.h,
+    [
+    AC_CHECK_LIB(Xext,XScreenSaverQueryInfo,
+	[
+        AC_DEFINE(HAVE_XSCREENSAVER, 1, [Define if you have the XScreenSaver extension])
+	LIB_XSS="-lXext"
+        ],
+        [
+        AC_CHECK_LIB(Xss,XScreenSaverQueryInfo,
+            [
+            AC_DEFINE(HAVE_XSCREENSAVER, 1, [Define if you have the XScreenSaver extension])
+            LIB_XSS="-lXss"
+            ],
+            [],
+            [ -lXext -lX11 $X_PRE_LIBS ])
+        ],
+        [ -lX11 $X_PRE_LIBS ])
+     ], [],
+     [
+     #include <X11/Xlib.h>
+     ] )
+
+AC_SUBST(LIB_XSS)
+LDFLAGS="$xss_save_ldflags"
