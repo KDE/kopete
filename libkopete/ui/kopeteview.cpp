@@ -32,3 +32,8 @@ KopeteMessage::MessageType KopeteView::viewType()
 	return m_type;
 }
 
+void KopeteView::clear()
+{
+	//Do nothing
+}
+

@@ -23,9 +23,11 @@
 #include <qptrlist.h>
 #include <qdict.h>
 #include <qmap.h>
+#include <qpair.h>
 
 class KopetePlugin;
 class KopeteMessageManager;
+class KProcess;
 
 class KopeteCommand : public QObject
 {
@@ -77,6 +79,8 @@ class KopeteCommand : public QObject
 
 typedef QDict<KopeteCommand> CommandList;
 typedef QMap<KopetePlugin*, CommandList> PluginCommandMap;
+typedef QMap<QString,QString> CommandMap;
+typedef QPair<KopeteMessageManager*, KopeteMessage::MessageDirection> ManagerPair;
 
 class KopeteCommandHandler : public QObject
 {
@@ -151,18 +155,21 @@ class KopeteCommandHandler : public QObject
 		 *
 		 * @return A list of commands reserved for internal Kopete use
 		 */
-		const QStringList &reserved() const { return reservedCommands; };
+		const QStringList reserved() const { return QStringList( reservedCommands.keys() ); };
 
 	private slots:
 		void slotPluginLoaded( KopetePlugin * );
 		void slotPluginDestroyed( QObject * );
+		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
 
 	private:
-		QStringList reservedCommands;
-		void reservedCommand( const QString &command, const QStringList &args, KopeteMessageManager *manager );
+		CommandMap reservedCommands;
+		void reservedCommand( const QString &command, const QString &args, KopeteMessageManager *manager );
+
 		CommandList commands( KopeteProtocol * );
 		PluginCommandMap pluginCommands;
 		static KopeteCommandHandler *s_handler;
+		QMap<KProcess*,ManagerPair> processMap;
 };
 
 #endif

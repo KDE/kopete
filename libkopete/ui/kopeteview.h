@@ -93,6 +93,11 @@ class KopeteView
 		virtual void raise() = 0;
 
 		/**
+		 * Clears the buffer
+		 */
+		 virtual void clear();
+
+		/**
 		 * Make the view visible if it is currently hidden.
 		 */
 		virtual void makeVisible() = 0;
