@@ -331,6 +331,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 				unsigned int clientID=data.section( ' ', 3, 3 ).toUInt();
 				if( clientID & 512)
 					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Web Messenger") );
+				else if(clientID & 1)
+					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Windows Mobile") );
 				else if(clientID & 64)
 					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("MSN Mobile") );
 				else if(obj.contains("kopete")  )
@@ -806,7 +808,7 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;
 	else
-		sendCommand( "CHG", statusToString( status ) + " 268435492 " + escape(m_account->pictureObject()) );
+		sendCommand( "CHG", statusToString( status ) + " 268435500 " + escape(m_account->pictureObject()) );
 }
 
 void MSNNotifySocket::changePublicName(  QString publicName, const QString &handle )
