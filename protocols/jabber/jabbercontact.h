@@ -21,7 +21,6 @@
 
 #include "kopetecontact.h"
 
-#include "jabtasks.h"
 
 class KAction;
 class KListAction;
@@ -30,9 +29,12 @@ class KSelectAction;
 
 class dlgJabberRename;
 class dlgJabberVCard;
+class JabMessage;
+class JabResource;
 class JabberProtocol;
 class JabberResource;
 class Jid;
+class JT_VCard;
 class KopeteHistoryDialog;
 class KopeteMessage;
 class KopeteMessageManager;
@@ -207,49 +209,6 @@ class JabberContact : public KopeteContact
 
 };
 
-/*
- * Container class for a contact's resource
- */
-class JabberResource : public QObject
-{
-	Q_OBJECT
-
-	public:
-		JabberResource();
-		JabberResource(const QString &, const int &, const QDateTime &, const int &, const QString &);
-		~JabberResource();
-
-		QString resource()
-		{
-			return mResource;
-		}
-		
-		int priority()
-		{
-			return mPriority;
-		}
-
-		QDateTime timestamp()
-		{
-			return mTimestamp;
-		}
-		
-		int status()
-		{
-			return mStatus;
-		}
-
-		QString reason()
-		{
-			return mReason;
-		}
-
-	private:
-		QString mResource, mReason;
-		int mPriority, mStatus;
-		QDateTime mTimestamp;
-
-};
 #endif
 /*
  * Local variables:

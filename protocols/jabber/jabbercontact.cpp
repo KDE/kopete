@@ -29,6 +29,8 @@
 #include "dlgrename.h"
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
+#include "jabberresource.h"
+#include "jabtasks.h"
 #include "jabcommon.h"
 #include "kopete.h"
 #include "kopetestdaction.h"
@@ -960,40 +962,6 @@ void JabberContact::slotUpdateNickname(const QString newNickname)
 	
 	// update display
 	setDisplayName( newNickname );
-
-}
-
-/*
- * JabberResource constructor
- */
-JabberResource::JabberResource()
-{
-
-	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
-
-}
-
-/*
- * JabberResource constructor
- */
-JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const int &status, const QString &reason)
-{
-	
-	kdDebug() << QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
-	
-	mResource = resource;
-	mPriority = priority;
-	mTimestamp = timestamp;
-	mStatus = status;
-	mReason = reason;
-
-}
-
-/*
- * JabberResource destructor
- */
-JabberResource::~JabberResource()
-{
 
 }
 

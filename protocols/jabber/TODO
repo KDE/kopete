@@ -21,4 +21,3 @@ TODO for Jabber:
 - moving a user currently does seem to pass on the correct parameters to the protocol
   backend, however, slotUpdate() is not called on the contact in return after a
   successful move. check that this doesn't lead to data corruption or data loss
-- split JabberResource into a separate file
