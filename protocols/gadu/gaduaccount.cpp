@@ -59,7 +59,7 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 };
 
  GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
-: KopeteAccount( parent, accountID, name ), pingTimer_( 0 )
+: KopeteAccount( parent, accountID, name ), pingTimer_( 0 ), saveListDialog( NULL )
 {
 	QHostAddress ip;
 
@@ -86,10 +86,12 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 void
 GaduAccount::initActions()
 {
-	searchAction	= new KAction( i18n( "&Search for Friends" ), "", 0,
+	searchAction		= new KAction( i18n( "&Search for Friends" ), "", 0,
 							this, SLOT( slotSearch() ), this, "actionSearch" );
-	listputAction	= new KAction( i18n( "Export Contacts on Server" ), "", 0,
+	listputAction		= new KAction( i18n( "Export Contacts on Server" ), "", 0,
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
+	listToFileAction	= new KAction( i18n( "Export Contacts to file" ), "", 0,
+							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
 }
 
 void
@@ -185,6 +187,7 @@ GaduAccount::actionMenu()
 
 	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
+//	actionMenu_->insert( listToFileAction );
 
 	return actionMenu_;
 }
@@ -264,7 +267,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 
 	myself()->setOnlineStatus( status );
-	myself()->setProperty( "awayMessage", i18n("awayMessage"), descr );
+	myself()->setProperty( "awayMessage", descr );
 
 	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( pingTimer_ ){
@@ -279,7 +282,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 	lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ));
-	myself()->setProperty( "awayMessage", i18n("awayMessage"), dscr );
+	myself()->setProperty( "awayMessage", dscr );
 
 
 	if ( !session_->isConnected() ) {
@@ -438,15 +441,13 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 		}
 
 		if ( (*notifyListIterator)->description.isNull() ) {
-			contact->setDescription( QString::null );
 			contact->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			myself()->removeProperty( "awayMessage" );
+			contact->removeProperty( "awayMessage" );
 
 		}
 		else {
-			contact->setDescription( (*notifyListIterator)->description );
 			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			myself()->setProperty( "awayMessage", i18n("awayMessage"), contact->description() );
+			contact->setProperty( "awayMessage", (*notifyListIterator)->description );
 		}
 	}
 }
@@ -464,14 +465,12 @@ GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 	}
 
 	if ( gaduNotify->description.isEmpty() ) {
-		contact->setDescription( QString::null );
 		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-			myself()->removeProperty( "awayMessage" );
+		contact->removeProperty( "awayMessage" );
 	}
 	else {
-		contact->setDescription( gaduNotify->description );
 		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-		myself()->setProperty( "awayMessage", i18n("awayMessage"), contact->description() );
+		contact->setProperty( "awayMessage", gaduNotify->description );
 	}
 
 /// FIXME: again, store this information
@@ -562,7 +561,7 @@ GaduAccount::connectionSucceed( )
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
 	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
 	myself()->setOnlineStatus( status_ );
-	myself()->setProperty( "awayMessage", i18n("awayMessage"), lastDescription );
+	myself()->setProperty( "awayMessage", lastDescription );
 	startNotify();
 
 	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
@@ -694,9 +693,19 @@ GaduAccount::userlist( const QString& contactsListString )
 			}
 		}
 		contact = static_cast<GaduContact*>( contacts()[ (*contactLine)->uin ] );
-
+		if ( contact == NULL ) {
+			kdDebug(14100) << "oops, no KopeteContact in contacts()[] for some reason, for \"" << (*contactLine)->uin << "\"" << endl;
+			goto next_cont;
+		}
+		
 		// update/add infor for contact
-		contact->setInfo( (*contactLine)->email, (*contactLine)->firstname, (*contactLine)->surname, (*contactLine)->nickname, (*contactLine)->phonenr );
+		
+		contact->setProperty( "emailAddress", (*contactLine)->email );
+		contact->setProperty( "firstName", (*contactLine)->firstname );
+		contact->setProperty( "lastName", (*contactLine)->surname );
+		contact->setProperty( "privPhoneNum", (*contactLine)->phonenr );
+		contact->setProperty( "ignored", i18n( "ignored" ), (*contactLine)->ignored ? "true" : "false" );
+		contact->rename( (*contactLine)->nickname );
 
 		if ( !( (*contactLine)->group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
@@ -723,9 +732,21 @@ GaduAccount::userListExportDone()
 }
 
 void
+GaduAccount::slotExportContactsListToFile()
+{
+	
+	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
+					(QWidget *)NULL, "gadu-list-save", false ); 
+	saveListDialog.setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	QString list = session_->contactsToString( userlist() );
+	saveListDialog.show();
+	kdDebug( 14100 ) << "kurwa mac: \n" << list << "\n" << endl;
+}
+
+void
 GaduAccount::slotExportContactsList()
 {
-	session_->exportContacts( userlist() );
+	session_->exportContactsOnServer( userlist() );
 }
 
 

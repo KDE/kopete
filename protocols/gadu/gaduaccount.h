@@ -36,6 +36,7 @@
 #include <qstring.h>
 #include <qptrlist.h>
 #include <kaction.h>
+#include <kfiledialog.h>
 
 class KopeteAccount;
 class GaduContact;
@@ -76,6 +77,7 @@ public slots:
 	void removeContact( const GaduContact* c );
 
 	void slotExportContactsList();
+	void slotExportContactsListToFile();
 
 	void addNotify( uin_t uin );
 	void notify( uin_t* userlist, int count );
@@ -151,11 +153,12 @@ private:
 	QString			nick_;
 
 	QTextCodec*		textcodec_;
+	KFileDialog*		saveListDialog;
 
 	KActionMenu*		actionMenu_;
 	KAction*			searchAction;
 	KAction*			listputAction;
-
+	KAction*		listToFileAction;
 	bool				connectWithSSL;
 
 	int				currentServer;

@@ -123,13 +123,12 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 	contact->setParentIdentity( aid );
 	gaccount->addNotify( cid.toUInt() );
 
-	contact->setInfo(
-			serializedData["email"],
-			serializedData["FirstName"],
-			serializedData["SecondName"],
-			serializedData["NickName"],
-			serializedData["telephone"]
-			);
+	contact->setProperty( "emailAddress", serializedData["email"] );
+	contact->setProperty( "firstName", serializedData["FirstName"] );
+	contact->setProperty( "lastName", serializedData["SecondName"] );
+//	contact->rename( serializedData["NickName"] );
+	contact->setProperty( "privPhoneNum", serializedData["telephone"] );
+	contact->setProperty( "ignored", i18n( "ignored" ), serializedData["ignored"] );
 }
 
 uint

@@ -111,8 +111,13 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 				return false;
 			}
 			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
-			contact->setInfo( addUI_->emailEdit_->text(), addUI_->fornameEdit_->text(),
-						addUI_->snameEdit_->text(), addUI_->nickEdit_->text(), addUI_->telephoneEdit_ ->text() );
+			
+			contact->setProperty( "emailAddress", addUI_->emailEdit_->text() );
+			contact->setProperty( "firstName", addUI_->fornameEdit_->text() );
+			contact->setProperty( "lastName", addUI_->snameEdit_->text() );
+			contact->rename( addUI_->nickEdit_->text() );
+			contact->setProperty( "privPhoneNum", addUI_->telephoneEdit_ ->text() );
+			contact->setProperty( "ignored", i18n( "ignored" ), "false" );
 		}
 	}
 	else {

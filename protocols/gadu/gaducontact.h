@@ -53,8 +53,8 @@ public:
 	virtual QPtrList<KAction>* customContextMenuActions();
 	virtual QString identityId() const;
 
-	void	setInfo( const QString& email, const QString& firstName, const QString& secondName,
-			 	const QString& nickName, const QString& phonenr );
+//	void	setInfo( const QString& email, const QString& firstName, const QString& secondName,
+//			 	const QString& nickName, const QString& phonenr );
 	contactLine* contactDetails();
 
 	void	setParentIdentity( const QString& );
@@ -82,12 +82,6 @@ private:
 	QString		description_;
 	QString		parentIdentity_;
 	GaduAccount*	account_;
-
-	QString		email_;
-	QString		firstName_;
-	QString		secondName_;
-	QString		nickName_;
-	QString		phonenr_;
 
 	KAction*		actionSendMessage_;
 	KAction*		actionInfo_;

@@ -89,6 +89,7 @@ public:
 	virtual ~GaduSession();
 	bool	isConnected() const;
 	int	status() const;
+	QString contactsToString( gaduContactsList* contactsList );
 	bool	stringToContacts( gaduContactsList& , const QString& );
 	static QString failureDescription( gg_failure_t );
 	static QString errorDescription( int err );
@@ -125,7 +126,7 @@ public slots:
 	*  This will be done on each @ref pubDirNewSearch(), if previuos is not released
 	*/
 	void pubDirSearchClose();
-	void exportContacts( gaduContactsList* );
+	void exportContactsOnServer( gaduContactsList* );
 
 signals:
 	void error( const QString&, const QString& );

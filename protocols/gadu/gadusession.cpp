@@ -423,30 +423,50 @@ GaduSession::requestContacts()
 	kdDebug( 14100 ) << "Contacts list import..started " << endl;
 }
 
-void
-GaduSession::exportContacts( gaduContactsList* contactsList )
+QString
+GaduSession::contactsToString( gaduContactsList* contactsList )
 {
 	QPtrListIterator<contactLine>contactsListIterator( *contactsList );
 	unsigned int i;
-	QString plist, contacts;
+	QString contacts;
+
+	for ( i = contactsList->count() ; i-- ; ++contactsListIterator ) {
+		if ( (*contactsListIterator)->ignored ) {
+			contacts +=
+				"i;;;;;;" + (*contactsListIterator)->uin+
+				"\n";
+		}
+		else {
+//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
+			contacts +=
+				(*contactsListIterator)->firstname +";"+
+				(*contactsListIterator)->surname+";"+
+				(*contactsListIterator)->nickname+";"+
+				(*contactsListIterator)->displayname+";"+
+				(*contactsListIterator)->phonenr+";"+
+				(*contactsListIterator)->group+";"+
+				(*contactsListIterator)->uin+";"+
+				(*contactsListIterator)->email+
+				";0;;0;\n";
+		}
+	}
+
+	return contacts;
+}
+
+void
+GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
+{
+	QString plist;
 
 	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
 		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
 		return;
 	}
+	
 
-	for ( i = contactsList->count() ; i-- ; ++contactsListIterator ) {
-//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
-		contacts +=
-			(*contactsListIterator)->firstname+";"+(*contactsListIterator)->surname+";"+(*contactsListIterator)->nickname+";"+
-			(*contactsListIterator)->displayname+";"+(*contactsListIterator)->phonenr+";"+(*contactsListIterator)->group+";"+
-			(*contactsListIterator)->uin+";"+(*contactsListIterator)->email+";0;;0;\n";
-	}
-
-	// FIXME:Remove before release
-	kdDebug(14100) <<"--------------------userlists\n" << contacts << "\n---------------" << endl;
-
-	plist = textcodec->fromUnicode( contacts );
+	plist = textcodec->fromUnicode( contactsToString( contactsList ) );
+	kdDebug(14100) <<"--------------------userlists\n" << plist << "\n---------------" << endl;
 
 	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.ascii() ) == -1 ) {
 		kdDebug( 14100 ) << "export contact list failed " << endl;
@@ -539,6 +559,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 			cl = new contactLine;
 		}
 
+		cl->ignored		= false;
 		cl->firstname		= (*stringIterator);
 		cl->surname		= (*++stringIterator);
 		cl->nickname		= (*++stringIterator);

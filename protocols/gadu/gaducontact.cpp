@@ -174,38 +174,14 @@ GaduContact::slotDeleteContact()
 	deleteLater();
 }
 
-
-void
-GaduContact::setInfo( const QString& email, const QString& firstName,
-			 	const QString& secondName,
-			 	const QString& nickName, const QString& phonenr )
-{
-	if ( email.length() ) {
-		email_		= email;
-	}
-	if ( firstName.length() ) {
-		firstName_		= firstName;
-	}
-	if ( secondName.length() ) {
-		secondName_	= secondName;
-	}
-	if ( nickName.length() ) {
-		nickName_	= nickName;
-	}
-	if ( phonenr.length() ) {
-		phonenr_		= phonenr;
-	}
-}
-
-
 void
 GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QString>& )
 {
-	serializedData[ "email" ]		= email_;
-	serializedData[ "FirstName"  ]	= firstName_;
-	serializedData[ "SecondName" ]	= secondName_;
-	serializedData[ "NickName" ]	= nickName_;
-	serializedData[ "telephone" ]	= phonenr_;
+	serializedData[ "email" ]	= property( "emailAddress" ).value().toString();
+	serializedData[ "FirstName"  ]	= property( "firstName" ).value().toString();
+	serializedData[ "SecondName" ]	= property( "lastName" ).value().toString();
+	serializedData[ "telephone" ]	= property( "privPhoneNum" ).value().toString();
+	serializedData[ "ignored" ]	= property( "ignored" ).value().toString();
 }
 
 contactLine*
@@ -216,13 +192,16 @@ GaduContact::contactDetails()
 
 	contactLine* cl	= new contactLine;
 
-	cl->firstname	= firstName_;
-	cl->surname	= secondName_;
-	cl->nickname	= nickName_;
-//	cl->name		= firstName_ + " " + secondName_;
-	cl->phonenr	= phonenr_;
+	cl->firstname	= property( "firstName" ).value().toString();
+	cl->surname	= property( "lastName" ).value().toString();
+	cl->nickname	= contactId();
+	
+	cl->email	= property( "emailAddress" ).value().toString();
+	cl->phonenr	= property( "privPhoneNum" ).value().toString();
+	
+	cl->ignored	= ( property( "ignored" ).value().toString() == "true" );
+	
 	cl->uin		= QString::number( uin_ );
-	cl->email		= email_;
 	cl->displayname	= displayName();
 
 	groupList = metaContact ()->groups ();
