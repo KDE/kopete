@@ -17,11 +17,15 @@
  *************************************************************************
  */
 
+#include "config.h"
+
 #include <qtimer.h>
+#include <qfile.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <ktempfile.h>
+#include <kstandarddirs.h>
 
 #ifdef HAVE_XSLT
 #include <libxml/xmlmemory.h>

@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 
+#include "config.h"
 #include "webpresenceprefs.h"
 #include "webpresencepreferences.h"
 #include "webpresencepreferences.moc"
@@ -38,7 +39,7 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 	m_prefsDialog = new WebPresencePrefsUI( this );
 	KConfig *theConfig = KGlobal::config();
 	theConfig->setGroup( "Web Presence Plugin" );
-	m_prefsDialog->m_freq->setValue( theConfig->readNumEntry( "UploadFrequency" , 600 ) );
+	m_prefsDialog->m_freq->setValue( theConfig->readNumEntry( "UploadFrequency" , 60 ) );
 	m_prefsDialog->m_url->setURL( theConfig->readEntry( "DestinationURL", QString::null ) );
 	m_prefsDialog->m_addresses->setChecked( theConfig->readBoolEntry( "ShowAddresses", false ) );
 	m_prefsDialog->m_userName->setText( theConfig->readEntry( "UserName" , QString::null ) );
