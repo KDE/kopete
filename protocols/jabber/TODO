@@ -35,5 +35,4 @@ TODO for Jabber:
 - ask if authorization should be removed if a contact is deleted from the
   list
 - provide better feedback for dialogs querying the server
-- verify registration process
 - nickname for myself() doesn't seem to work
