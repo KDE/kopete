@@ -78,14 +78,17 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, c
 void dlgJabberServices::slotSetSelection (int row, int, int, const QPoint &)
 {
 
-	tblServices->clearSelection (true);
-	tblServices->addSelection (QTableSelection (row, 0, row, 1));
+	if(serviceTask && (row <= serviceTask->agents().count()))
+	{
+		tblServices->clearSelection (true);
+		tblServices->addSelection (QTableSelection (row, 0, row, 1));
 
-	// query the agent list about the selected item
-	btnRegister->setDisabled (!serviceTask->agents ()[row].canRegister ());
-	btnBrowse->setDisabled (!serviceTask->agents ()[row].canSearch ());
+		// query the agent list about the selected item
+		btnRegister->setDisabled (!serviceTask->agents ()[row].canRegister ());
+		btnBrowse->setDisabled (!serviceTask->agents ()[row].canSearch ());
 
-	selectedRow = row;
+		selectedRow = row;
+	}
 
 }
 
