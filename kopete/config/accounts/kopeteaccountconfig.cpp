@@ -241,8 +241,8 @@ void KopeteAccountConfig::slotRemoveAccount()
 
 void KopeteAccountConfig::slotAddWizardDone()
 {
-	load();
 	save();
+	load();
 }
 
 #include "kopeteaccountconfig.moc"

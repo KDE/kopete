@@ -138,12 +138,6 @@ signals:
 	 */
 	void accountUnregistered( KopeteAccount *account );
 
-	/**
-	 * The account priorities have changed
-
-	 */
-	void accountOrderChanged();
-
 private:
 	/**
 	 * Private constructor, because we're a singleton

@@ -113,11 +113,6 @@ private slots:
 	void slotAccountDisplayNameChanged();
 
 	/**
-	 * The account priorities have changed
-	 */
-	void slotAccountOrderChanged();
-
-	/**
 	 * Show a context menu for a protocol
 	 */
 	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
@@ -194,8 +189,7 @@ private:
 	bool hidden;
 	int deskRight;
 	QPoint position;
-	QWidget *m_statusBarWidget;
-	QHBoxLayout *m_statusBarWidgetLayout;
+	QHBox *m_statusBarWidget;
 
 	KopetePluginConfig *m_pluginConfig;
 

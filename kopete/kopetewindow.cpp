@@ -20,6 +20,7 @@
 #include "kopetewindow.h"
 
 #include <qlayout.h>
+#include <qhbox.h>
 #include <qtooltip.h>
 #include <qtimer.h>
 
@@ -70,10 +71,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// a MacOS-style MenuBar.
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
-	m_statusBarWidget = new QWidget(statusBar(), "m_statusBarWidget");
-	m_statusBarWidget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum );
-	m_statusBarWidgetLayout = new QHBoxLayout( m_statusBarWidget, 2, 1 );
-	m_statusBarWidgetLayout->setAutoAdd(true);
+	m_statusBarWidget = new QHBox(statusBar(), "m_statusBarWidget");
+	m_statusBarWidget->setMargin( 2 );
+	m_statusBarWidget->setSpacing( 1 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
@@ -100,8 +100,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT(slotAccountRegistered(KopeteAccount*)));
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
 		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
-	connect( KopeteAccountManager::manager(), SIGNAL(accountOrderChanged()),
-		this, SLOT(slotAccountOrderChanged()));
 
 	createGUI ( "kopeteui.rc", false );
 
@@ -462,18 +460,6 @@ void KopeteWindow::slotAllPluginsLoaded()
 {
 	actionConnect->setEnabled(true);
 	actionDisconnect->setEnabled(true);
-
-	/*
-	Why is this a single shot QTimer and not called directly? Because
-	notifyAccountReady is called by a single shot QTimer, so therefore
-	at this point we are unsure if all the account icons are actually created,
-	even though all the plugins are loaded. This will add the call to the event
-	queue so it's ensured to happen after the accounts are loaded.
-
-	Simple answer: it doesn't work otherwise :P
-		- JK
-	*/
-	QTimer::singleShot( 0, this, SLOT(slotAccountOrderChanged()) );
 }
 
 void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
@@ -514,17 +500,6 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 	slotAccountStatusIconChanged( account->myself() );
 }
 
-void KopeteWindow::slotAccountOrderChanged()
-{
-	QPtrDictIterator<QObject> it( m_accountStatusBarIcons );
-	for( ; it.current(); ++it )
-	{
-		QWidget *w = static_cast<QWidget*>( it.current() );
-		m_statusBarWidgetLayout->remove( w );
-		m_statusBarWidgetLayout->insertWidget( static_cast<KopeteAccount*>( it.currentKey() )->priority(), w );
-	}
-}
-
 void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
@@ -536,10 +511,12 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 	}
 
 	KopeteAccountStatusBarIcon *sbIcon = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
+
 	if( !sbIcon )
 		return;
 
 	m_accountStatusBarIcons.remove( account );
+	delete sbIcon;
 }
 
 void KopeteWindow::slotAccountDisplayNameChanged()

@@ -20,6 +20,7 @@
 
 #include <qapplication.h>
 #include <qregexp.h>
+#include <qtimer.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -238,8 +239,6 @@ void KopeteAccountManager::save()
 		it.current()->writeConfig( it.current()->configGroup() );
 
 	KGlobal::config()->sync();
-
-	emit accountOrderChanged();
 }
 
 void KopeteAccountManager::load()

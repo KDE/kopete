@@ -308,7 +308,7 @@ KopeteContact *KopeteMetaContact::preferredContact()
 	{
 		if( ( *it )->isReachable() && ( !contact || ( *it )->onlineStatus() > contact->onlineStatus()  ||
 				( (*it)->account() && (*it)->onlineStatus() == contact->onlineStatus() &&
-				(*it)->account()->priority() > (*it)->account()->priority() ) ) )
+				(*it)->account()->priority() < contact->account()->priority() ) ) )
 		{
 			contact = *it;
 		}
