@@ -281,6 +281,7 @@ void KopeteEmailWindow::initActions(void)
 #else
 	d->animIcon = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
 #endif
+	d->animIcon.pause();
 
 	d->anim = new QLabel( this, "kde toolbar widget" );
 	d->anim->setMargin(5);
@@ -518,6 +519,7 @@ void KopeteEmailWindow::sendMessage()
 {
 	d->sendInProgress = true;
 	d->anim->setMovie( d->animIcon );
+	d->animIcon.unpause();
 	d->btnReplySend->setEnabled( false );
 	d->txtEntry->setEnabled( false );
 	KopeteMessage sentMessage = currentMessage();
@@ -528,6 +530,7 @@ void KopeteEmailWindow::messageSentSuccessfully()
 {
 	d->sendInProgress = false;
 	d->anim->setPixmap( d->normalIcon );
+	d->animIcon.pause();
 	closeView();
 }
 

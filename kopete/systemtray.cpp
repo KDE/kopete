@@ -138,63 +138,48 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 	}
 }
 
-void KopeteSystemTray::startBlink( const QMovie &icon )
+void KopeteSystemTray::startBlink( const QMovie &movie )
 {
 	kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	setMovie( icon );
+	const_cast<QMovie &>( movie ).unpause();
+	setMovie( movie );
 	mIsBlinking = true;
 }
 
 void KopeteSystemTray::startBlink()
 {
-	if( mMovie.isNull() )
+	if ( mMovie.isNull() )
+	{
 #if KDE_IS_VERSION(3, 1, 90)
 		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
 #else
 		mMovie = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
 #endif
+	}
+
 	startBlink( mMovie );
 }
 
 void KopeteSystemTray::stopBlink()
 {
-	if(movie())
-	{
-		kdDebug(14010) << k_funcinfo << "stopping movie." << endl;
-		setPixmap(mKopeteIcon);
-		mIsBlinkIcon = false;
-		mIsBlinking=false;
-		return;
-	}
-
-	if (mBlinkTimer->isActive() == true)
-	{
+	if ( movie() )
+		kdDebug( 14010 ) << k_funcinfo << "stopping movie." << endl;
+	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
-		setPixmap(mKopeteIcon);
-		mIsBlinkIcon = false;
-		mIsBlinking = false;
 
-	}
-	else
-	{
-		setPixmap(mKopeteIcon);
-		mIsBlinkIcon = false;
-		mIsBlinking = false;
-	}
+	if ( !mMovie.isNull() )
+		mMovie.pause();
+
+	mIsBlinkIcon = false;
+	mIsBlinking = false;
+	setPixmap( mKopeteIcon );
 }
 
 void KopeteSystemTray::slotBlink()
 {
-	if (mIsBlinkIcon == true)
-	{
-		setPixmap(mKopeteIcon);
-		mIsBlinkIcon = false;
-	}
-	else
-	{
-		setPixmap(mBlinkIcon);
-		mIsBlinkIcon = true;
-	}
+	setPixmap( mIsBlinkIcon ? mKopeteIcon : mBlinkIcon );
+
+	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
 void KopeteSystemTray::slotNewEvent(KopeteEvent *event)
@@ -209,7 +194,6 @@ void KopeteSystemTray::slotNewEvent(KopeteEvent *event)
 	if ( KopetePrefs::prefs()->trayflashNotify() )
 		startBlink();
 }
-
 
 void KopeteSystemTray::slotEventDone(KopeteEvent *event)
 {
