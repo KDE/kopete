@@ -26,3 +26,4 @@ TODO for Jabber:
 - in slotGotVCard() there's a change nickname method, check that it does not
   collide with "rename contact" (change alias) -> disabled for now
 - "Remove Authorization From" in contact popup menu has wrong position
+- display dialog when somebody removed the subscription from us
