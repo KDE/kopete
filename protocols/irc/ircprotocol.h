@@ -31,6 +31,7 @@ class IRCIdentity;
 
 class QStringList;
 class QWidget;
+class KSParser;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -57,6 +58,8 @@ public:
 
 	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
 
+	KSParser *parser() const { return mParser; };
+
 	static IRCProtocol *protocol();
 
 	static KopeteOnlineStatus IRCChannelOnline() { return m_ChannelOnline; };
@@ -77,6 +80,8 @@ private:
 	static KopeteOnlineStatus m_ChannelOffline;
 	static KopeteOnlineStatus m_UserOnline;
 	static KopeteOnlineStatus m_UserOffline;
+
+	KSParser *mParser;
 
 };
 

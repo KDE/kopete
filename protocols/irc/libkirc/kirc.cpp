@@ -39,8 +39,7 @@
 #include <unistd.h>
 #include <pwd.h>
 
-KIRC::KIRC(const QString host, const Q_UINT16 port)
-	: QSocket()
+KIRC::KIRC(const QString host, const Q_UINT16 port) : QSocket()
 {
 	attemptingQuit = false;
 	waitingFinishMotd = false;
@@ -49,9 +48,9 @@ KIRC::KIRC(const QString host, const Q_UINT16 port)
 	mHost = host;
 	mUsername = getpwuid(getuid())->pw_name;
 	mNotifyTimer = new QTimer(this);
-	connect( mNotifyTimer, SIGNAL(timeout()), this, SLOT( slotCheckOnline() ) );
+	mRemoveLinefeeds = new QRegExp( QString::fromLatin1("[\\r\\n]*$") );
 
-	if (port == 0)
+	if ( port == 0 )
 		mPort = 6667;
 	else
 		mPort = port;
@@ -60,14 +59,19 @@ KIRC::KIRC(const QString host, const Q_UINT16 port)
 	QObject::connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	QObject::connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-	QObject::connect(this, SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
 	QObject::connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
+	QObject::connect( mNotifyTimer, SIGNAL(timeout()), this, SLOT( slotCheckOnline() ) );
+
+	mVersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
+	mUserString = QString::fromLatin1("Response not supplied by user.");
+	mSourceString = QString::fromLatin1("Unknown client, known source.");
 }
 
 KIRC::~KIRC()
 {
 	kdDebug(14120) << k_funcinfo << endl;
 	delete mNotifyTimer;
+	delete mRemoveLinefeeds;
 }
 
 Q_LONG KIRC::writeString(const QString &str)
@@ -89,9 +93,19 @@ void KIRC::slotError(int error)
 	mNotifyTimer->stop();
 }
 
-void KIRC::slotBytesWritten(int /*bytes*/)
+void KIRC::setVersionString( QString &newString )
 {
+	mVersionString = newString.replace( *mRemoveLinefeeds, QString::null );
+}
 
+void KIRC::setUserString( QString &newString )
+{
+	mUserString = newString.replace( *mRemoveLinefeeds, QString::null );
+}
+
+void KIRC::setSourceString( QString &newString )
+{
+	mSourceString = newString.replace( *mRemoveLinefeeds, QString::null );
 }
 
 void KIRC::slotReadyRead()
@@ -108,11 +122,11 @@ void KIRC::slotReadyRead()
 		else
 			line = rawline;
 
-		line.replace(QRegExp("[\\r\\n]*$"), "");
+		line.replace( *mRemoveLinefeeds, QString::null );
 		QString number = line.mid((line.find(' ', 0, false)+1), 3);
 		int commandIndex = line.find(' ', 0, false);
 		QString command = line.section(' ', 1, 1);
-		if (command == QString("JOIN"))
+		if (command == QString::fromLatin1("JOIN"))
 		{
 			/*
 			This is the response of someone joining a channel. Remember that this will be emitted when *you* /join a room for the first time
@@ -122,7 +136,7 @@ void KIRC::slotReadyRead()
 			emit userJoinedChannel(line.mid(1, (commandIndex-1)), channel);
 			continue;
 		}
-		else if (command == QString("PRIVMSG"))
+		else if (command == QString::fromLatin1("PRIVMSG"))
 		{
 			/*
 			This is a signal that indicates there is a new message. This can be either from a channel or from a specific user.
@@ -138,66 +152,54 @@ void KIRC::slotReadyRead()
 				// Fun!
 				message = message.remove(0, 1);
 				message = message.remove((message.length() -1), 1);
-				QString special = message.section(' ', 0, 0).lower();
-				if (special == "ping")
+
+				QString special = message.section(' ', 0, 0).upper();
+				QString response;
+				QString reply;
+
+				if (special == QString::fromLatin1("PING") )
 				{
-					QString reply = QString::fromLatin1("NOTICE %1 :%2PING %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(message.section(' ', 1, 1)).append( QChar(0x01) );
-					writeString(reply);
-					emit repliedCtcp("PING", originating.section('!', 0, 0), message.section(' ', 1, 1));
-					continue;
-				} else if (special == "version")
+					reply = QString::fromLatin1("NOTICE %1 :%2PING %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(message.section(' ', 1, 1)).append( QChar(0x01) );
+					response = message.section(' ', 1, 1);
+				}
+				else if (special == QString::fromLatin1("VERSION") )
 				{
-					// Just remove newlines and line feeds because we don't want to user to get clever ;)
-					mVersionString.replace(QRegExp("[\\r\\n]*$"), "");
-					if (mVersionString.isEmpty())
-					{
-						// Don't edit this!
-						mVersionString = "Anonymous client using the KIRC engine.";
-					}
-					QString reply = QString::fromLatin1("NOTICE %1 :%2VERSION %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mVersionString).append( QChar(0x01) );
-					writeString(reply);
-					emit repliedCtcp("VERSION", originating.section('!', 0, 0), mVersionString);
-					continue;
-				} else if (special == "userinfo")
+					reply = QString::fromLatin1("NOTICE %1 :%2VERSION %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mVersionString).append( QChar(0x01) );
+					response = mVersionString;
+				}
+				else if (special == QString::fromLatin1("USERINFO") )
 				{
-					mUserString.replace(QRegExp("[\\r\\n]*$"), "");
-					if (mUserString.isEmpty())
-					{
-						mUserString = "Response not supplied by user.";
-					}
-					QString reply = QString::fromLatin1("NOTICE %1 :%2USERINFO %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mUserString).append( QChar(0x01) );
-					writeString(reply);
-					emit repliedCtcp("USERINFO", originating.section('!', 0, 0), mUserString);
-					continue;
-				} else if (special == "clientinfo")
+					reply = QString::fromLatin1("NOTICE %1 :%2USERINFO %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mUserString).append( QChar(0x01) );
+					response = mUserString;
+				}
+				else if (special == QString::fromLatin1("CLIENTINFO") )
 				{
-					QString response = "The following commands are supported, but without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.";
-					QString reply = QString::fromLatin1("NOTICE %1 :%2CLIENTINFO %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(response).append( QChar(0x01) );
-					writeString(reply);
-					emit repliedCtcp("CLIENTINFO", originating.section('!', 0, 0), response);
-					continue;
-				} else if (special == "time")
+					response = QString::fromLatin1("The following commands are supported, but without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.");
+					reply = QString::fromLatin1("NOTICE %1 :%2CLIENTINFO %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(response).append( QChar(0x01) );
+				}
+				else if (special == QString::fromLatin1("TIME") )
 				{
-					QString dateTime = QDateTime::currentDateTime().toString();
-					QString reply = QString::fromLatin1("NOTICE %1 :%2TIME %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(dateTime).append( QChar(0x01) );
-					writeString(reply);
-					emit repliedCtcp("TIME", originating.section('!', 0, 0), dateTime);
-					continue;
-				} else if (special == "source")
+					reply = QString::fromLatin1("NOTICE %1 :%2TIME %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg( QDateTime::currentDateTime().toString() ).append( QChar(0x01) );
+				}
+				else if (special == QString::fromLatin1("SOURCE") )
 				{
-					mSourceString.replace(QRegExp("[\\r\\n]*$"), "");
-					if (mSourceString.isEmpty())
-					{
-						mSourceString = "Unknown client, known source.";
-					}
-					QString reply = QString::fromLatin1("NOTICE %1 :%2SOURCE %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mSourceString).append( QChar(0x01) );
-					writeString(reply);
-					emit repliedCtcp("TIME", originating.section('!', 0, 0), mSourceString);
-					continue;
-				} else if (special == "finger")
+					reply = QString::fromLatin1("NOTICE %1 :%2SOURCE %3").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mSourceString).append( QChar(0x01) );
+					response = mSourceString;
+				}
+				else if (special == QString::fromLatin1("FINGER") )
 				{
 					// Not implemented yet
-				} else if (special == "action")
+				}
+
+				if( !reply.isNull() )
+				{
+					writeString(reply);
+					if( !response.isNull() )
+						emit repliedCtcp( special, originating.section('!', 0, 0), response);
+					continue;
+				}
+
+				if (special == QString::fromLatin1("ACTION") )
 				{
 					message = message.section(' ', 1);
 					if (target[0] == '#' || target[0] == '!' || target[0] == '&')
@@ -207,9 +209,10 @@ void KIRC::slotReadyRead()
 						emit incomingPrivAction(originating, target, message);
 					}
 					continue;
-				} else if (special == "dcc")
+				}
+				else if (special == QString::fromLatin1("DCC") )
 				{
-					if (message.section(' ', 1, 1).lower() == "chat")
+					if (message.section(' ', 1, 1).lower() == QString::fromLatin1("chat") )
 					{
 						// Tells if the conversion went okay to unsigned int
 						bool okayHost;
@@ -221,7 +224,8 @@ void KIRC::slotReadyRead()
 							DCCClient *chatObject = new DCCClient(address, port, 0, DCCClient::Chat);
 							emit incomingDccChatRequest(address, port, originating.section('!', 0, 0), *chatObject);
 						}
-					} else if (message.section(' ', 1, 1).lower() == "send")
+					}
+					else if (message.section(' ', 1, 1).lower() == QString::fromLatin1("send") )
 					{
 						// Tells if the conversion went okay to unsigned int
 						bool okayHost;
@@ -241,14 +245,12 @@ void KIRC::slotReadyRead()
 				}
 			}
 			if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-			{
 				emit incomingMessage(originating, target, message);
-			} else {
+			else
 				emit incomingPrivMessage(originating, target, message);
-			}
 			continue;
 		}
-		else if (command == QString("NOTICE"))
+		else if (command == QString::fromLatin1("NOTICE") )
 		{
 			QString originating = line.section(' ', 0, 0);
 			originating.remove(0, 1);
@@ -260,13 +262,13 @@ void KIRC::slotReadyRead()
 				message = message.remove(0, 1);
 				message = message.remove((message.length() -1), 1);
 				QString special = message.section(' ', 0, 0);
-				if (special.lower() == "ping")
+				if (special.lower() == QString::fromLatin1("ping") )
 				{
 					QString epoch = message.section(' ', 1, 1);
 					timeval time;
 					if (gettimeofday(&time, 0) == 0)
 					{
-						QString timeReply = QString("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+						QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
 						double newTime = timeReply.toDouble();
 						if (!epoch.isEmpty())
 						{
@@ -278,23 +280,23 @@ void KIRC::slotReadyRead()
 								diffString = QString::number(difference);
 								diffString.remove((diffString.find('.') -1), 2);
 								diffString.truncate(3);
-								diffString.append("msecs");
+								diffString.append( i18n("msecs") );
 							} else {
 								diffString = QString::number(difference);
 								QString seconds = diffString.section('.', 0, 0);
 								QString millSec = diffString.section('.', 1, 1);
 								millSec.remove(millSec.find('.'), 1);
 								millSec.truncate(3);
-								diffString = QString("%1 secs %2 msecs").arg(seconds).arg(millSec);
+								diffString = QString::fromLatin1("%1 secs %2 msecs").arg(seconds).arg(millSec);
 							}
-							emit incomingCtcpReply("PING", originating.section('!', 0, 0), diffString);
+							emit incomingCtcpReply( QString::fromLatin1("PING"), originating.section('!', 0, 0), diffString);
 						}
 					}
 					continue;
 				}
-				if (special.lower() == "version")
+				if (special.lower() == QString::fromLatin1("version") )
 				{
-					emit incomingCtcpReply("VERSION", originating.section('!', 0, 0), message.remove(0, 7));
+					emit incomingCtcpReply( QString::fromLatin1("VERSION"), originating.section('!', 0, 0), message.remove(0, 7));
 				}
 			}
 			kdDebug(14120) << "NOTICE received: originating is \"" << originating << "\" and message is \"" << message << "\"" << endl;
@@ -304,7 +306,7 @@ void KIRC::slotReadyRead()
 			emit incomingNotice(originating.section('!', 0, 0), message);
 			continue;
 		}
-		else if (command == QString("PART"))
+		else if (command == QString::fromLatin1("PART") )
 		{
 			/*
 			This signal emits when a user parts a channel
@@ -318,7 +320,7 @@ void KIRC::slotReadyRead()
 			emit incomingPartedChannel(originating, target, message);
 			continue;
 		}
-		else if (command == QString("QUIT"))
+		else if (command == QString::fromLatin1("QUIT") )
 		{
 			/*
 			This signal emits when a user quits irc
@@ -331,7 +333,7 @@ void KIRC::slotReadyRead()
 			emit incomingQuitIRC(originating, message);
 			continue;
 		}
-		else if (command == QString("NICK"))
+		else if (command == QString::fromLatin1("NICK") )
 		{
 			/*
 			Nick name of a user changed
@@ -349,7 +351,7 @@ void KIRC::slotReadyRead()
 			emit incomingNickChange(oldNick, newNick);
 			continue;
 		}
-		else if (command == QString("TOPIC"))
+		else if (command == QString::fromLatin1("TOPIC") )
 		{
 			/*
 			The topic of a channel changed. emit the channel, new topic, and the person who changed it
@@ -370,10 +372,8 @@ void KIRC::slotReadyRead()
 
 			emit( incomingModeChange( nick, target, mode ) );
 			continue;
-			//emit incomingGiveOp(nickname, channel);
-			//emit incomingTakeOp(nickname, channel);
 		}
-		else if (command == "KICK")
+		else if (command == QString::fromLatin1("KICK") )
 		{
 			QString nickname, channel, reason, by;
 
@@ -386,9 +386,9 @@ void KIRC::slotReadyRead()
 			emit incomingKick(nickname, channel, by, reason);
 			continue;
 		}
-		else if (number.contains(QRegExp("^\\d\\d\\d$")))
+		else if (number.contains( QRegExp( QString::fromLatin1("^\\d\\d\\d$") ) ))
 		{
-			QRegExp getServerText("\\s\\d+\\s+[^\\s]+\\s+:(.*)");
+			QRegExp getServerText( QString::fromLatin1("\\s\\d+\\s+[^\\s]+\\s+:(.*)") );
 			getServerText.match(line);
 			QString message = getServerText.cap(1);
 			switch(number.toInt())
@@ -684,9 +684,9 @@ void KIRC::slotReadyRead()
 			}
 			continue;
 		}
-		else if ( line.section(' ', 0, 0) == "PING" )
+		else if ( line.section(' ', 0, 0) == QString::fromLatin1("PING") )
 		{
-			QString statement = "PONG";
+			QString statement = QString::fromLatin1("PONG");
 
 			if ( line.contains(' ') )
 				statement.append(" :" + line.section(':', 1, 1));

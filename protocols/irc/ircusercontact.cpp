@@ -23,7 +23,6 @@
 #include "kopeteviewmanager.h"
 
 #include "kirc.h"
-#include "ksparser.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -191,7 +190,7 @@ void IRCUserContact::slotCtcpVersion()
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
-	if( mChannels.contains( channel.lower() ) )
+	if( mIdentity->findChannel( channel )->locateUser( mNickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
 		if( user == mNickName )

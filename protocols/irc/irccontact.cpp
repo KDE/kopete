@@ -53,7 +53,6 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	mMetaContact = metac;
 	mMsgManager = 0L;
 	mNickName = nick;
-	mParser = new KSParser();
 
 	// Contact list display name
 	setDisplayName(mNickName);
@@ -81,7 +80,14 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 
 IRCContact::~IRCContact()
 {
-	delete mParser;
+}
+
+bool IRCContact::isReachable()
+{
+	if ( onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown )
+		return true;
+
+	return false;
 }
 
 bool IRCContact::processMessage( const KopeteMessage &msg )
@@ -195,7 +201,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 		if ( user )
 		{
 			KopeteMessage msg( user, mContact, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
-			msg.setBody( mParser->parse( msg.escapedBody() ), KopeteMessage::RichText );
+			msg.setBody( mIdentity->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
 			manager()->appendMessage(msg);
 		}
 	}
@@ -285,6 +291,7 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 		QString channelText;
 		for(QStringList::Iterator it = w->channels.begin(); it != w->channels.end(); ++it)
 			channelText += *it + QString::fromLatin1(" \n");
+
 		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 
@@ -327,7 +334,6 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 
 void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
-	//kdDebug(14120) << k_funcinfo << target << endl;
 	if( isConnected )
 	{
 		KopeteView *myView = KopeteViewManager::viewManager()->view( manager(), true);
@@ -341,24 +347,16 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
-	/*if( !isConnected )
+	if( processMessage( message ) )
 	{
-		messageQueue.append( message );
-		mEngine->joinChannel(mNickName);
+		// If the above was false, there was a server command
+		mEngine->messageContact(mNickName, message.plainBody());
+		message.setBg( QColor() );
+		message.setFg( QColor() );
+		manager()->appendMessage(message);
 	}
-	else*/
-	{
-		if( processMessage( message ) )
-		{
-			// If the above was false, there was a server command
-			mEngine->messageContact(mNickName, message.plainBody());
-			message.setBg( QColor() );
-			message.setFg( QColor() );
-			manager()->appendMessage(message);
-		}
 
-		manager()->messageSucceeded();
-	}
+	manager()->messageSucceeded();
 }
 
 KopeteContact *IRCContact::locateUser( const QString &nick )
@@ -375,11 +373,6 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 	}
 
 	return 0L;
-}
-
-const QString IRCContact::caption() const
-{
-	return mNickName;
 }
 
 #include "irccontact.moc"

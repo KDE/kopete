@@ -2,6 +2,7 @@
     ircchannelcontact.h - IRC Channel Contact
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org
 
     Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
@@ -29,26 +30,51 @@ class KToggleAction;
 class KopeteMessageManager;
 class KopeteMessage;
 
+/**
+ * @author Jason Keirstead <jason@keirstead.org
+ *
+ * This class is the @ref KopeteContact object representing IRC Channels, not users.
+ * It is derrived from IRCContact where much of its functionaolity is shared with @ref IRCUserContact.
+ */
 class IRCChannelContact : public IRCContact
 {
 	Q_OBJECT
 
 	public:
 		IRCChannelContact(IRCIdentity *, const QString &channel, KopeteMetaContact *metac);
-
 		~IRCChannelContact();
 
-		// START: Virtual reimplmentations from KopeteContact, see kopetecontact.h:
-		virtual bool isReachable();
+		/*
+		 * Returns the current topic for this channel.
+		 */
+		 const QString &topic() const { return mTopic; };
+
+		/*
+		 * Returns if a mode is enabled for this channel.
+		 * @param mode The mode you want to check ( 't', 'n', etc. )
+		 * @param value This is a pointer to a QString which is set to
+		 * the value of the mode if it has one. Example, the mode 'l' or
+		 * the mode 'k'. If the mode has no such value then the pointer
+		 * is always returned null.
+		 */
+		bool modeEnabled( QChar mode, QString *value = 0 );
+
+		// KopeteContact stuff
+		virtual KopeteMessageManager* manager( bool canCreate = false );
 		virtual KActionCollection *customContextMenuActions();
 		virtual const QString caption() const;
-		const QString &topic() const { return mTopic; };
-		bool modeEnabled( QChar mode, QString *value = 0 );
-		virtual KopeteMessageManager* manager( bool canCreate = false );
-		// FINISH
 
 	public slots:
+		/*
+		 * Sets the topic of this channel
+		 * @param topic The topic you want set
+		 */
 		void setTopic( const QString &topic = QString::null );
+
+		/*
+		 * Sets or unsets a mode on this channel
+		 * @param mode The full text of the mode change you want performed
+		 */
 		void setMode( const QString &mode = QString::null );
 
 	private slots:

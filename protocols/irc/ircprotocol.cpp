@@ -43,6 +43,7 @@
 #include "kopeteidentitymanager.h"
 #include "irceditidentitywidget.h"
 #include "kirc.h"
+#include "ksparser.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
@@ -71,6 +72,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	new IRCPreferences("irc_protocol", this);
 
+	mParser = new KSParser();
+
 	KConfig *cfg = KGlobal::config();
         cfg->setGroup("IRC");
 
@@ -94,7 +97,7 @@ IRCProtocol * IRCProtocol::protocol()
 
 IRCProtocol::~IRCProtocol()
 {
-	//delete identity;
+	delete mParser;
 }
 
 KActionMenu* IRCProtocol::protocolActions()

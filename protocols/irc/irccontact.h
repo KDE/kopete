@@ -2,6 +2,7 @@
     irccontact.h - IRC Contact
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org
 
     Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
@@ -28,10 +29,16 @@ class KopeteMessageManager;
 class KopeteMetaContact;
 class IRCIdentity;
 class KopeteMessage;
-class KSParser;
 
 struct whoIsInfo;
 
+/**
+ * @author Jason Keirstead <jason@keirstead.org
+ *
+ * This class is the base class for @ref IRCUserContact and @ref IRCChannelContact.
+ * Common routines and signal connections that are required for both types of
+ * contacts reside here, to avoid code duplication between these two classes.
+ */
 class IRCContact : public KopeteContact
 {
 	Q_OBJECT
@@ -43,17 +50,26 @@ class IRCContact : public KopeteContact
 		// Checks a message for server commands
 		bool processMessage( const KopeteMessage & );
 
-		// Nickname stuff
+		/*
+		 * Sets the nickname of this contact. The nickname is distinct from the displayName
+		 * in case trackNameChanges is disabled.
+		 */
 		void setNickName(const QString &nickname) { mNickName = nickname; }
+
+		/*
+		 * Returns the nickname
+		 */
 		const QString &nickName() const { return mNickName; }
 
-		virtual const QString caption() const;
-
+		/*
+		 * This function attempts to find the nickname specified within the current chat
+		 * session. Returns a pointer to that IRCUserContact, or 0L if the user does not
+		 * exist in this session. More usefull for channels. Calling IRCChannelContact::locateUser()
+		 * for example tells you if a user is in a certain channel.
+		 */
 		KopeteContact *locateUser( const QString &nickName );
-		KSParser* parser() { return mParser; };
 
-	signals:
-		void endSession();
+		virtual bool isReachable();
 
 	private slots:
 		void slotConnectionClosed();
@@ -82,7 +98,6 @@ class IRCContact : public KopeteContact
 		KopeteMessageManager *mMsgManager;
 		IRCIdentity *mIdentity;
 		QString mNickName;
-		KSParser *mParser;
 		QValueList<KopeteMessage> messageQueue;
 		bool isConnected;
 };

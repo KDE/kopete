@@ -25,6 +25,7 @@
 
 class QHostAddress;
 class QTimer;
+class QRegExp;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
@@ -47,9 +48,9 @@ public:
 	void changeNickname(const QString &newNickname);
 	void partChannel(const QString &name, const QString &reason);
 	void quitIRC(const QString &reason);
-	void setVersionString(const QString &newString) { mVersionString = newString; };
-	void setUserString(const QString &userString) { mUserString = userString; };
-	void setSourceString(const QString &sourceString) { mSourceString = sourceString; };
+	void setVersionString( QString &versionString );
+	void setUserString( QString &userString );
+	void setSourceString( QString &sourceString );
 	void sendCtcpPing(const QString &target);
 	void sendCtcpVersion(const QString &target);
 	void setTopic(const QString &channel, const QString &topic);
@@ -76,7 +77,6 @@ private slots:
 	void slotConnected();
 	void slotConnectionClosed();
 	void slotReadyRead();
-	void slotBytesWritten(int);
 	void slotError(int);
 	void quitTimeout();
 	void slotCheckOnline();
@@ -147,6 +147,7 @@ private:
 	QString mPasswd;
 	QStringList mNotifyList;
 	QTimer *mNotifyTimer;
+	const QRegExp *mRemoveLinefeeds;
 };
 
 #endif

@@ -2,6 +2,7 @@
     ircusercontact.h - IRC User Contact
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org
 
     Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
@@ -28,6 +29,12 @@ class KActionMenu;
 class IRCChannelContact;
 class QTimer;
 
+/**
+ * @author Jason Keirstead <jason@keirstead.org
+ *
+ * This class is the @ref KopeteContact object representing IRC Users, not channels.
+ * It is derrived from IRCContact where much of its functionaolity is shared with @ref IRCChannelContact.
+ */
 class IRCUserContact : public IRCContact
 {
 	Q_OBJECT
@@ -37,8 +44,16 @@ class IRCUserContact : public IRCContact
 		IRCUserContact(IRCIdentity *, const QString &nickname,KopeteMetaContact *mc  );
 		~IRCUserContact();
 
-		// Userclass stuff
+		/*
+		 * This sets this UserClass of the contact, to either Op, Voiced, or Normal.
+		 * This setting invluences menu options of the KopeteIdentity::myself() user, as well
+		 * as alters the user icons in the chat members display.
+		 */
 		void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }
+
+		/*
+		 * Returns the user class of this contact
+		 */
 		const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }
 
 		// KopeteContact stuff
@@ -46,13 +61,8 @@ class IRCUserContact : public IRCContact
 		virtual const QString caption() const;
 		virtual KopeteMessageManager* manager( bool canCreate = false );
 
-		void addChannel( const QString &channel ) { mChannels.append( channel.lower() ); };
-		void removeChannel( const QString &channel ) { mChannels.remove( channel ); };
-		const bool inChannel( const QString &channel ) const { return mChannels.contains( channel ); };
-
 	private slots:
 		void slotMessageManagerDestroyed();
-		virtual void slotUserInfo();
 		void slotOp();
 		void slotDeop();
 		void slotVoice();
@@ -68,6 +78,8 @@ class IRCUserContact : public IRCContact
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 		void slotUserOnline( const QString &nick );
 
+		virtual void slotUserInfo();
+
 	private:
 		KActionCollection *mCustomActions;
 		KActionMenu *actionModeMenu;
@@ -75,7 +87,6 @@ class IRCUserContact : public IRCContact
 		KAction *actionKick;
 		KActionMenu *actionBanMenu;
 		QTimer *mOnlineTimer;
-		QStringList mChannels;
 		QMap<QString,KIRC::UserClass> mUserClassMap;
 
 		void contactMode( const QString &mode );

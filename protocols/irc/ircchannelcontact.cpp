@@ -71,7 +71,6 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
-	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
 
 	isConnected = false;
 
@@ -106,7 +105,7 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 		mIdentity->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
 	}
 
-	emit( endSession() );
+	slotPart();
 	isConnected = false;
 	mMsgManager = 0L;
 }
@@ -145,7 +144,6 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 			IRCUserContact *user = mIdentity->findUser( *it );
 			user->setUserclass( mNickName, userclass );
 			user->setOnlineStatus( IRCProtocol::IRCUserOnline() );
-			user->addChannel( mNickName );
 
 			//Post the event so we don't block the UI
 			ContactAddedEvent *ce = new ContactAddedEvent( static_cast<KopeteContact*>(user) );
@@ -199,12 +197,10 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		{
 			IRCUserContact *contact = mIdentity->findUser( nickname );
 			contact->setOnlineStatus( IRCProtocol::IRCUserOnline() );
-			contact->addChannel( mNickName );
 			manager()->addContact((KopeteContact *)contact, true);
 
 			KopeteMessage msg((KopeteContact *)this, mContact,
-			i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 		}
 	}
@@ -219,12 +215,10 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 		if ( c )
 		{
 			manager()->removeContact( c, true );
-			static_cast<IRCUserContact*>(c)->removeChannel( mNickName );
 			mIdentity->unregisterUser( nickname );
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason),
-		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
@@ -381,14 +375,6 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 	actionModeI->setEnabled(amOnline && isOperator);
 
 	return mCustomActions;
-}
-
-bool IRCChannelContact::isReachable()
-{
-	if ( onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown )
-		return true;
-
-	return false;
 }
 
 const QString IRCChannelContact::caption() const
