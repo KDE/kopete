@@ -467,7 +467,7 @@ void KopeteEmailWindow::slotReadNext()
 
 	d->blnShowingMessage = true;
 
-	const QString model = KopetePrefs::prefs()->kindMessagesHtml();
+	const QString model = KopetePrefs::prefs()->styleContents();
 
 	d->queuePosition++;
 
@@ -497,7 +497,7 @@ void KopeteEmailWindow::slotRefreshAppearance()
 
 void KopeteEmailWindow::writeMessage( KopeteMessage &msg )
 {
-	const QString model = KopetePrefs::prefs()->kindMessagesHtml();
+	const QString model = KopetePrefs::prefs()->styleContents();
 
 	d->htmlPart->begin();
 	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;font-size:%2pt;color:%3}td{font-family:%4;font-size:%5pt;color:%6}</style></head><body style=\"background-repeat:no-repeat;background-attachment:fixed\" bgcolor=\"%7\" vlink=\"%9\" link=\"%9\">%10</body></html>" )

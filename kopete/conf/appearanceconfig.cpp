@@ -50,7 +50,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <knotifydialog.h>
-#include <kprocess.h>
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <ktabctl.h>
@@ -213,9 +212,7 @@ void AppearanceConfig::save()
 	p->setLinkColor( mPrfsChatAppearance->linkColor->color() );
 	p->setFontFace( mPrfsChatAppearance->fontFace->font() );
 
-	QString model = fileContents( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
-	if( !model.isEmpty() )
-		p->setKindMessagesHtml( model );
+	p->setStyleSheet( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
 
 	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
 	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
@@ -321,20 +318,11 @@ void AppearanceConfig::reopen()
 		mPrfsChatAppearance->styleList->insertItem( fileName, 0 );
 		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), *it );
 
-		if( fileContents( *it ) == p->kindMessagesHtml() )
+		if( *it == p->styleSheet() )
 			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->firstItem(), true );
 	}
 
 	mPrfsChatAppearance->styleList->sort();
-
-	if( !mPrfsChatAppearance->styleList->selectedItem() && !PreferencesDialog::preferencesDialog()->isVisible())
-	{
-		errorAlert = true;
-		mAppearanceTabCtl->showPage( mPrfsChatAppearance );
-		PreferencesDialog::preferencesDialog()->show();
-		PreferencesDialog::preferencesDialog()->showPage(2);
-		KMessageBox::error( this, i18n("You do not have a valid Chat Window style chosen. Please select a new one now from the list below."), i18n("Invalid Style") );
-	}
 
 	mAwayConfigUI->updateView();
 }

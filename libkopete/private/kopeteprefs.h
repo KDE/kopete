@@ -78,7 +78,8 @@ public:
 	bool showTray() const { return mShowTray; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
-	QString kindMessagesHtml() const { return mKindMessagesHtml; }
+	QString styleSheet() const { return mStyleSheet; }
+	QString styleContents() const { return mStyleContents; }
 	QString defaultTheme() const { return QString::fromLatin1( "Default" ); }
 
 	void setIconTheme( const QString &value );
@@ -96,7 +97,7 @@ public:
 	void setSoundIfAway( bool );
 	void setBeepNotify( bool );
 	void setChatWindowPolicy( int );
-	void setKindMessagesHtml ( const QString &);
+	void setStyleSheet ( const QString &);
 	void setTransparencyEnabled(bool);
 	void setTransparencyColor(const QColor &);
 	void setChatViewBufferSize(int);
@@ -164,7 +165,10 @@ private:
 	bool mAppearanceChanged;
 
 	int mChatWindowPolicy;
-	QString mKindMessagesHtml;
+	QString mStyleSheet;
+	QString mStyleContents;
+
+	QString fileContents( const QString &path );
 };
 
 #endif

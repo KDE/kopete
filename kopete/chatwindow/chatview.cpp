@@ -873,7 +873,7 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	messageMap.insert( ++messageId, m );
 	QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
-	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), KopetePrefs::prefs()->kindMessagesHtml() );
+	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), KopetePrefs::prefs()->styleContents() );
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
 	newNode.setInnerHTML( resultHTML );
 
@@ -900,7 +900,7 @@ void ChatView::slotRefreshNodes()
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 
 	kdDebug(14010) << "Begin Transform " << m_captionText.left(10) << ".. " << QTime::currentTime().second() << ":" << QTime::currentTime().msec() << endl;
-	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlList.join( QString::fromLatin1("") ) + QString::fromLatin1("</document>"), KopetePrefs::prefs()->kindMessagesHtml(), this, SLOT(slotTransformComplete( const QVariant &)) );
+	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlList.join( QString::fromLatin1("") ) + QString::fromLatin1("</document>"), KopetePrefs::prefs()->styleContents(), this, SLOT(slotTransformComplete( const QVariant &)) );
 }
 
 void ChatView::slotTransformComplete( const QVariant &result )

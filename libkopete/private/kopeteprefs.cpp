@@ -17,13 +17,16 @@
 
 #include "kopeteprefs.h"
 
-#include <kapplication.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
+#include <kapplication.h>
 #include <klocale.h>
 #include <qcolor.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
+#include <kstandarddirs.h>
 //#include <kopetechatwindow.h> // FIXME: I do not like this dependency; mETz
 
 KopetePrefs *KopetePrefs::s_prefs = 0L;
@@ -84,7 +87,8 @@ void KopetePrefs::load()
 	mFontFace		= config->readFontEntry("Font Face");
 
 	mShowTray		= config->readBoolEntry( "Show Systemtray", true);
-	mKindMessagesHtml    	= config->readEntry("MessagesHTML", QString::null );
+	mStyleSheet     	= config->readEntry("Stylesheet", locate("appdata",QString::fromLatin1("styles/Kopete.xsl") ) );
+	mStyleContents		= fileContents( mStyleSheet );
 
 	config->setGroup("Appearance");
 	mTransparancyChanged = false;
@@ -131,7 +135,7 @@ void KopetePrefs::save()
 //	config->writeEntry("ContactList Transparency Tint Color", mCTransparencyColor);
 
 	config->writeEntry("Show Systemtray", mShowTray);
-	config->writeEntry("MessagesHTML", mKindMessagesHtml);
+	config->writeEntry("Stylesheet", mStyleSheet);
 
 	config->sync();
 	emit saved();
@@ -208,11 +212,12 @@ void KopetePrefs::setSoundIfAway(bool value)
 	mSoundIfAway = value;
 }
 
-void KopetePrefs::setKindMessagesHtml(const QString &value)
+void KopetePrefs::setStyleSheet(const QString &value)
 {
-	if( mAppearanceChanged || mKindMessagesHtml != value )
+	if( mAppearanceChanged || mStyleSheet != value )
 	{
-		mKindMessagesHtml = value;
+		mStyleSheet = value;
+		mStyleContents = fileContents( mStyleSheet );
 		emit( messageAppearanceChanged() );
 	}
 }
@@ -301,6 +306,20 @@ void KopetePrefs::setBgOverride(bool value)
 void KopetePrefs::setShowTray(bool value)
 {
 	mShowTray = value;
+}
+
+QString KopetePrefs::fileContents( const QString &path )
+{
+ 	QString contents;
+	QFile file( path );
+	if ( file.open( IO_ReadOnly ) )
+	{
+		QTextStream stream( &file );
+		contents = stream.read();
+		file.close();
+	}
+
+	return contents;
 }
 
 
