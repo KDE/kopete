@@ -771,7 +771,10 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			{
 				Kopete::ChatSession *kmm=dynamic_cast<Kopete::ChatSession*>(parent()->parent());
 				if(kmm)
+				{
 					c=kmm->account()->contacts()[m_msgHandle];
+					kmm->setCanBeDeleted( false );
+				}
 			}
 			if(!c)
 			{
