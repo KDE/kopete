@@ -526,7 +526,7 @@ QString KopeteMetaContact::toXML()
 //		kdDebug() << "KopeteMetaContact::toXML: Storing address book field "
 //			<< addrIt.key() << " with value '" << addrIt.data() << "'" << endl;
 		xml += "    <address-book-field id=\"" + addrIt.key() + "\">" +
-					addrIt.data() + "</address-book-field>\n";
+					QStyleSheet::escape(addrIt.data()) + "</address-book-field>\n";
 	}
 
 	// We may have more 'cached' plugin data from plugins that are not
