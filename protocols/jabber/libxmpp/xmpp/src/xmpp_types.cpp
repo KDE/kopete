@@ -769,7 +769,7 @@ bool Features::test(const QStringList &ns) const
 	return false;
 }
 
-#define FID_REGISTER "jabber:iq:register"
+//#define FID_REGISTER "jabber:iq:register"
 bool Features::canRegister() const
 {
 	QStringList ns;
@@ -778,7 +778,7 @@ bool Features::canRegister() const
 	return test(ns);
 }
 
-#define FID_SEARCH "jabber:iq:search"
+//#define FID_SEARCH "jabber:iq:search"
 bool Features::canSearch() const
 {
 	QStringList ns;
@@ -787,7 +787,7 @@ bool Features::canSearch() const
 	return test(ns);
 }
 
-#define FID_GROUPCHAT "jabber:iq:conference"
+//#define FID_GROUPCHAT "jabber:iq:conference"
 bool Features::canGroupchat() const
 {
 	QStringList ns;
@@ -797,7 +797,7 @@ bool Features::canGroupchat() const
 	return test(ns);
 }
 
-#define FID_GATEWAY "jabber:iq:gateway"
+//#define FID_GATEWAY "jabber:iq:gateway"
 bool Features::isGateway() const
 {
 	QStringList ns;
@@ -806,7 +806,7 @@ bool Features::isGateway() const
 	return test(ns);
 }
 
-#define FID_DISCO "http://jabber.org/protocol/disco"
+//#define FID_DISCO "http://jabber.org/protocol/disco"
 bool Features::canDisco() const
 {
 	QStringList ns;
@@ -817,7 +817,7 @@ bool Features::canDisco() const
 	return test(ns);
 }
 
-#define FID_VCARD "vcard-temp"
+//#define FID_VCARD "vcard-temp"
 bool Features::haveVCard() const
 {
 	QStringList ns;
@@ -825,7 +825,7 @@ bool Features::haveVCard() const
 
 	return test(ns);
 }
-
+/*
 class Features::FeatureName : public QObject
 {
 	Q_OBJECT
@@ -859,6 +859,9 @@ public:
 	QMap<long, QString> id2s;
 	QMap<long, QString> id2f;
 };
+
+static Features::FeatureName *featureName = 0;
+*/
 
 static Features::FeatureName *featureName = 0;
 

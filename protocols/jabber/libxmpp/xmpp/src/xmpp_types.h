@@ -27,9 +27,18 @@
 #include<qdatetime.h>
 #include"xmpp_jid.h"
 
+#include<qmap.h>
+#include<qapplication.h>
+
 class QDomElement;
 class QDomDocument;
 
+const QString FID_REGISTER = "jabber:iq:register";
+const QString FID_SEARCH = "jabber:iq:search";
+const QString FID_GROUPCHAT = "jabber:iq:conference";
+const QString FID_GATEWAY = "jabber:iq:gateway";
+const QString FID_DISCO = "http://jabber.org/protocol/disco";
+const QString FID_VCARD = "vcard-temp";
 
 namespace Jabber
 {
@@ -186,7 +195,7 @@ namespace Jabber
 		class RosterPrivate *d;
 	};
 
-        class Features
+	class Features
 	{
 	public:
 		Features();
@@ -382,6 +391,41 @@ namespace Jabber
 	private:
 		Jid v_jid;
 		QString v_nick, v_first, v_last, v_email;
+	};
+
+
+	class Features::FeatureName : public QObject
+	{
+		Q_OBJECT
+	public:
+		FeatureName()
+		: QObject(qApp)
+		{
+			id2s[FID_Invalid]	= tr("ERROR: Incorrect usage of Features class");
+			id2s[FID_None]		= tr("None");
+			id2s[FID_Register]	= tr("Register");
+			id2s[FID_Search]	= tr("Search");
+			id2s[FID_Groupchat]	= tr("Groupchat");
+			id2s[FID_Gateway]	= tr("Gateway");
+			id2s[FID_Disco]		= tr("Service Discovery");
+			id2s[FID_VCard]		= tr("VCard");
+
+			// compute reverse map
+			//QMap<QString, long>::Iterator it = id2s.begin();
+			//for ( ; it != id2s.end(); ++it)
+			//	s2id[it.data()] = it.key();
+
+			id2f[FID_Register]	= FID_REGISTER;
+			id2f[FID_Search]	= FID_SEARCH;
+			id2f[FID_Groupchat]	= FID_GROUPCHAT;
+			id2f[FID_Gateway]	= FID_GATEWAY;
+			id2f[FID_Disco]		= FID_DISCO;
+			id2f[FID_VCard]		= FID_VCARD;
+		}
+
+		//QMap<QString, long> s2id;
+		QMap<long, QString> id2s;
+		QMap<long, QString> id2f;
 	};
 }
 
