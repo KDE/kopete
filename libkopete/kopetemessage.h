@@ -21,7 +21,6 @@
 #include <qdatetime.h>
 #include <qstring.h>
 
-#include "kopeteviewmanager.h"
 #include "kopetecontact.h"
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
@@ -50,6 +49,14 @@ public:
 	enum MessageFormat  { PlainText, RichText, ParsedHTML };
 
 	/**
+	* Specifies the type of the view.
+	* May currently be of type
+	* - Chat: Two way chat
+	* - Email: Single shot messaging
+	*/
+		enum MessageType { Undefined, Chat, Email };
+
+	/**
 	 * Constructs a new empty message
 	 */
 	KopeteMessage();
@@ -68,7 +75,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
-		MessageDirection direction, MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
+		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Constructs a new message
@@ -80,7 +87,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
-		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
+		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Constructs a new message
@@ -92,7 +99,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
-		const QString &body, MessageDirection direction, MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
+		const QString &body, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Constructs a new message
@@ -106,7 +113,7 @@ public:
 	 */
 	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, KopeteView::ViewType type = KopeteView::Chat );
+		MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Copy constructor
@@ -138,7 +145,7 @@ public:
 	 */
 	KopeteContactPtrList to() const;
 
-	KopeteView::ViewType type() const;
+	MessageType type() const;
 
 	/**
 	 * Acessor method for the foreground color
@@ -249,7 +256,7 @@ private:
 	 * Helper for constructors
 	 */
 	void init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
-		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type );
+		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type );
 
 	/**
 	 * KopeteMessage is implicitly shared.

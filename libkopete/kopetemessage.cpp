@@ -40,7 +40,7 @@ public:
 	QString subject;
 	KopeteMessage::MessageDirection direction;
 	KopeteMessage::MessageFormat format;
-	KopeteView::ViewType type;
+	KopeteMessage::MessageType type;
 
 	bool bgOverride;
 };
@@ -49,11 +49,11 @@ KopeteMessage::KopeteMessage()
 {
 	d = new KopeteMessagePrivate;
 
-	init( QDateTime::currentDateTime(), 0L, KopeteContactPtrList(), QString::null, QString::null, Internal, PlainText, KopeteView::Chat );
+	init( QDateTime::currentDateTime(), 0L, KopeteContactPtrList(), QString::null, QString::null, Internal, PlainText, Chat );
 }
 
 KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
-	MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
+	MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
 
@@ -61,7 +61,7 @@ KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPt
 }
 
 KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
-	const QString &subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
+	const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
 
@@ -69,7 +69,7 @@ KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPt
 }
 
 KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
-	const QString &body, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
+	const QString &body, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
 
@@ -77,7 +77,7 @@ KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *f
 }
 
 KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
-	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
+	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
 
@@ -149,7 +149,7 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 }
 
 void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
-	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
+	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d->refCount = 1;
 	d->timeStamp = timeStamp;
@@ -716,7 +716,7 @@ KopeteContactPtrList KopeteMessage::to() const
 	return d->to;
 }
 
-KopeteView::ViewType KopeteMessage::type() const
+KopeteMessage::MessageType KopeteMessage::type() const
 {
 	return d->type;
 }

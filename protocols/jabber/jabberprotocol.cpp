@@ -1328,7 +1328,7 @@ void JabberProtocol::slotOpenEmptyMail()
 
 		KopeteContactList::contactList()->addMetaContact(metaContact);
 
-		KopeteViewManager::viewManager()->launchWindow( contact->manager(), KopeteView::Email );
+		KopeteViewManager::viewManager()->launchWindow( contact->manager(), KopeteMessage::Email );
 	}
 
 }

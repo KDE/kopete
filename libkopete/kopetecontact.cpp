@@ -39,6 +39,10 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
+#include "kopeteprefs.h"
+
+#define EMAIL_WINDOW 0
+#define CHAT_WINDOW 1
 
 KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
 : QObject( parent )
@@ -424,18 +428,27 @@ bool KopeteContact::isReachable()
 
 void KopeteContact::startChat()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteView::Chat);
+	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteMessage::Chat);
 }
 
 void KopeteContact::sendMessage()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteView::Email);
+	KopeteViewManager::viewManager()->launchWindow( manager(true), KopeteMessage::Email);
 }
 
 void KopeteContact::execute()
 {
-	// FIXME: Implement, don't hardcode startChat()!
-	startChat();
+	switch( KopetePrefs::prefs()->interfacePreference() )
+	{
+		case EMAIL_WINDOW:
+			sendMessage();
+			break;
+
+		case CHAT_WINDOW:
+		default:
+			startChat();
+			break;
+	}
 }
 
 KopeteMessageManager *KopeteContact::manager( bool )

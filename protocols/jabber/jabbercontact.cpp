@@ -44,6 +44,7 @@
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "kopeteviewmanager.h"
 
 /**
  * JabberContact constructor
@@ -584,8 +585,8 @@ void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
 	jabMessage.setSubject(km.subject());
 
 	// determine type of the widget and set message type accordingly
-	KopeteView::ViewType type = KopeteViewManager::viewManager()->view(manager(), false)->viewType();
-	if( type == KopeteView::Chat )
+	KopeteMessage::MessageType type = KopeteViewManager::viewManager()->view(manager(), false)->viewType();
+	if( type == KopeteMessage::Chat )
 		jabMessage.setType("chat");
 	else
 		jabMessage.setType("normal");
@@ -596,14 +597,14 @@ void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
 
 void JabberContact::slotReceivedMessage(const Jabber::Message &message)
 {
-	KopeteView::ViewType type;
+	KopeteMessage::MessageType type;
 	KopeteContactPtrList contactList;
 
 	// determine message type
 	if( message.type() == "chat" )
-		type = KopeteView::Chat;
+		type = KopeteMessage::Chat;
 	else
-		type = KopeteView::Email;
+		type = KopeteMessage::Email;
 
 	contactList.append(protocol->myself());
 
