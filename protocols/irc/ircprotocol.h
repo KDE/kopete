@@ -77,6 +77,7 @@ public:
 
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
+
 	void slotTopicCommand( const QString &args, KopeteMessageManager *manager);
 	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
 	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
@@ -84,6 +85,14 @@ private slots:
 	void slotMeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotModeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotQueryCommand( const QString &args, KopeteMessageManager *manager);
+
+	void slotKickCommand( const QString &args, KopeteMessageManager *manager);
+	void slotBanCommand( const QString &args, KopeteMessageManager *manager);
+	void slotOpCommand( const QString &args, KopeteMessageManager *manager);
+	void slotDeopCommand( const QString &args, KopeteMessageManager *manager);
+	void slotVoiceCommand( const QString &args, KopeteMessageManager *manager);
+	void slotDevoiceCommand( const QString &args, KopeteMessageManager *manager);
+
 
 private:
 	/** FIXME: Do something with this when Account support is added!!!!!!!! */
@@ -99,6 +108,8 @@ private:
 	static KopeteOnlineStatus m_UserOffline;
 
 	KActionCollection *mActions;
+
+	void simpleModeChange( const QString &, KopeteMessageManager *, const QString &mode );
 
 	KSParser *mParser;
 	DOM::Node activeNode;

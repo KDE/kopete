@@ -68,12 +68,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
 
-	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
-	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
+	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  50, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
+	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 40, this, 1, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
 
-	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  20, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
 	m_UserOp = KopeteOnlineStatus( KopeteOnlineStatus::Online,  30, this, 1, "irc_op",   QString::null,  i18n( "Online" ));
-	m_UserVoice = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 2, "irc_voice",   QString::null,  i18n( "Online" ));
+	m_UserVoice = KopeteOnlineStatus( KopeteOnlineStatus::Online,  20, this, 2, "irc_voice",   QString::null,  i18n( "Online" ));
+	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
 	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 0, this, 3, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
 
 	setStatusIcon( "irc_protocol_offline" );
@@ -120,6 +120,30 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("me"),
 		SLOT( slotMeCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /me <action> - Do something.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("kick"),
+		SLOT( slotKickCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /kick <nickname> [<reason>] - Kick someone from the channel (Requires operator status).") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("ban"),
+		SLOT( slotBanCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /ban <nickname> - Add someone to this channel's ban list. Uses the hostmask nickname!*@* (Requires operator status).") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("op"),
+		SLOT( slotOpCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /op <nickname> - Give channel operator status to someone (Requires operator status).") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("deop"),
+		SLOT( slotDeopCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /deop <nickanme> - Remove channel operator status from someone (Requires operator status).") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("voice"),
+		SLOT( slotVoiceCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /voice <nickanme> - Give channel voice status to someone (Requires operator status).") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
+		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /devoicep <nickanme> - Remove channel voice status from someone (Requires operator status).") );
 
 
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)), this, SLOT(slotMessageFilter(KopeteMessage &)) );
@@ -291,6 +315,64 @@ void IRCProtocol::slotMeCommand( const QString &args, KopeteMessageManager *mana
 		QStringList argsList = KopeteCommandHandler::parseArguments( args );
 		static_cast<IRCAccount*>( manager->account() )->engine()->actionContact(
 			static_cast<const IRCContact*>(members.first())->nickName(), args );
+	}
+}
+
+void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserOp )
+	{
+		QRegExp spaces(QString::fromLatin1("\\s+"));
+		QString nick = args.section( spaces, 0, 1);
+		QString reason = args.section( spaces, 1);
+		KopeteContactPtrList members = manager->members();
+		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
+		if( channel.startsWith( QString::fromLatin1("#")) )
+			static_cast<IRCAccount*>( manager->account() )->engine()->kickUser( nick, channel, reason );
+	}
+}
+
+void IRCProtocol::slotBanCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserOp )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		KopeteContactPtrList members = manager->members();
+		IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
+		if( chan && chan->locateUser( argsList.front() ) )
+			chan->setMode( QString::fromLatin1("+b %1!*@*").arg( argsList.front() ) );
+	}
+}
+
+void IRCProtocol::slotOpCommand( const QString &args, KopeteMessageManager *manager )
+{
+	simpleModeChange( args, manager, QString::fromLatin1("+o") );
+}
+
+void IRCProtocol::slotDeopCommand( const QString &args, KopeteMessageManager *manager )
+{
+	simpleModeChange( args, manager, QString::fromLatin1("-o") );
+}
+
+void IRCProtocol::slotVoiceCommand( const QString &args, KopeteMessageManager *manager )
+{
+	simpleModeChange( args, manager, QString::fromLatin1("+v") );
+}
+
+void IRCProtocol::slotDevoiceCommand( const QString &args, KopeteMessageManager *manager )
+{
+	simpleModeChange( args, manager, QString::fromLatin1("-v") );
+}
+
+void IRCProtocol::simpleModeChange( const QString &args, KopeteMessageManager *manager, const QString &mode )
+{
+	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserOp )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		KopeteContactPtrList members = manager->members();
+		IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
+		if( chan && chan->locateUser( argsList.front() ) )
+			chan->setMode( QString::fromLatin1("%1 %2").arg( mode ).arg( argsList.front() ) );
 	}
 }
 

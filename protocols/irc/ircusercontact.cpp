@@ -191,6 +191,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 	if( chan->locateUser( mNickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
+		kdDebug(14120) << k_funcinfo << user << ", " << mNickName << endl;
 		if( user == mNickName )
 		{
 			QString modeChange = mode.section(' ', 0, 0);
@@ -202,6 +203,8 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
 			else if(modeChange == QString::fromLatin1("-v"))
 				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
+
+			emit( onlineStatusChanged( static_cast<KopeteContact*>(this), onlineStatus() ) );
 		}
 
 		bool isOperator = ( chan->manager()->contactOnlineStatus( mAccount->myself() ) == IRCProtocol::IRCUserOp() );
