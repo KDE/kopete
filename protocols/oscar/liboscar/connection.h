@@ -33,6 +33,10 @@ class RateClassManager;
 class SSIManager;
 class Task;
 
+namespace Oscar
+{
+class Settings;
+}
 
 /**
  * This class encapsulates both the low level network layer code and the high level OSCAR protocol
@@ -83,6 +87,9 @@ public:
 	 * \param rc the list rate class to add
 	 */
 	void addToRateClasses( RateClass* rc );
+	
+	/** Get the user settings object */
+	Oscar::Settings* settings() const;
 	
 	/** Get the current FLAP sequence for this connection */
 	Q_UINT16 flapSequence();

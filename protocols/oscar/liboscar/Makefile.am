@@ -17,7 +17,7 @@ liboscar_la_SOURCES = oscarutils.cpp client.cpp task.cpp connector.cpp \
 					connection.cpp onlinenotifiertask.cpp userdetails.cpp ssimodifytask.cpp \
 					oscartypeclasses.cpp messagereceivertask.cpp sendmessagetask.cpp icqtask.cpp \
 					offlinemessagestask.cpp ssiauthtask.cpp userinfotask.cpp icquserinfo.cpp icquserinfotask.cpp \
-					usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp
+					usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp oscarsettings.cpp
 
 liboscar_la_LDFLAGS = -no-undefined $(all_libraries)
 liboscar_la_LIBADD = $(LIB_QT) $(LIB_KDECORE)
@@ -25,4 +25,4 @@ liboscar_la_LIBADD = $(LIB_QT) $(LIB_KDECORE)
 noinst_HEADERS = userdetails.h ssimodifytask.h oscartypeclasses.h \
 					messagereceivertask.h sendmessagetask.h icqtask.h offlinemessagestask.h ssiauthtask.h \
 					userinfotask.h icquserinfo.h icquserinfotask.h usersearchtask.h warningtask.h \
-		changevisibilitytask.h typingnotifytask.h
+		changevisibilitytask.h typingnotifytask.h oscarsettings.h

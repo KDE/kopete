@@ -35,6 +35,7 @@
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
+#include "oscarsettings.h"
 #include "ownuserinfotask.h"
 #include "profiletask.h"
 #include "senddcinfotask.h"
@@ -69,6 +70,7 @@ public:
 	QByteArray cookie;
 	DWORD connectAsStatus; // icq only
 	QString connectWithMessage; // icq only
+	Oscar::Settings* settings;
 
 	//Tasks
 	ErrorTask* errorTask;
@@ -86,6 +88,7 @@ public:
 	
 	//Our Userinfo
 	UserDetails ourDetails;
+	
 };
 
 Client::Client( QObject* parent )
@@ -100,6 +103,7 @@ Client::Client( QObject* parent )
 	d->isIcq = false; //default to AIM
 	d->connectAsStatus = 0x0; // default to online
 	d->ssiManager = new SSIManager( this );
+	d->settings = new Oscar::Settings();
 	d->errorTask = 0L;
 	d->onlineNotifier = 0L;
 	d->ownStatusTask = 0L;
@@ -140,6 +144,11 @@ void Client::deleteConnections()
 		it = d->connections.remove( it );
 		c->deleteLater();
 	}
+}
+
+Oscar::Settings* Client::clientSettings() const
+{
+	return d->settings;
 }
 
 void Client::connectToServer( Connection *c, const QString& server, bool auth )
