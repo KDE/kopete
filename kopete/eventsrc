@@ -147,6 +147,13 @@ Comment[wa]=L' uzeu est so les fyis
 default_sound=Kopete_User_is_Online.ogg
 default_presentation=16
 
+[kopete_offline]
+Name=Offline
+Comment=User goes offline
+default_sound=Kopete_Event.ogg
+default_presentation=0
+
+
 [kopete_status_change]
 Name=Status Change
 Name[be]=Зьмяненьне статусу
@@ -159,7 +166,7 @@ Name[ru]=Изменение статуса
 Name[sr]=Промена статуса
 Name[sv]=Statusändring
 Name[wa]=Candjmint di statut
-Comment=User changed his online status
+Comment=User changed his online status.
 Comment[ca]=L'usuari canvia el seu estat a en línia
 Comment[da]=Bruger ændrede sin status på nettet
 Comment[hu]=Felhasználó megváltoztatta online állapotát

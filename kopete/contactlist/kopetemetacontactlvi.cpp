@@ -178,23 +178,19 @@ void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
 
-	// NOTE: this assume that the use don't want a notification when the contact was away and goes online
-	QString event =
-		( m_metaContact->status() == KopeteOnlineStatus::Online &&
-			( m_oldStatus == KopeteOnlineStatus::Offline ||
-			m_oldStatus == KopeteOnlineStatus::Unknown )
-		) ? "kopete_online" : "kopete_status_change";
-
-	m_oldStatus = m_metaContact->status();
-
 	if(c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting && ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway()  ))
 	{
 		int winId = KopeteSystemTray::systemTray() ?
 			KopeteSystemTray::systemTray()->winId() : 0;
 
-		KNotifyClient::event(winId, event,
-			i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
-			i18n("Chat") , this, SLOT(execute()));
+		QString text=i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName());
+
+		if( m_metaContact->isOnline()  && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Unknown ) )
+			KNotifyClient::event(winId, "kopete_online", text , i18n("Chat") , this, SLOT(execute()));
+		else if( !m_metaContact->isOnline() && m_oldStatus != KopeteOnlineStatus::Offline && m_oldStatus != KopeteOnlineStatus::Unknown  )
+			KNotifyClient::event(winId, "kopete_offline", text );
+		else
+			KNotifyClient::event(winId, "kopete_status_change", text , i18n("Chat") , this, SLOT(execute()));
 
 		if( !mBlinkTimer->isActive() &&
 			( m_metaContact->statusIcon() != m_oldStatusIcon ) )
@@ -205,6 +201,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
 		}
 	}
 
+	m_oldStatus = m_metaContact->status();
 	slotUpdateIcons();
 }
 
