@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>AppearanceConfig_ChatWindow</class>
 <widget class="QWidget">
     <property name="name">
@@ -94,49 +94,40 @@
                         </property>
                     </widget>
                 </widget>
-                <widget class="QFrame">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>frame4</cstring>
-                    </property>
-                    <property name="frameShape">
-                        <enum>NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Raised</enum>
-                    </property>
-                    <property name="lineWidth">
-                        <number>0</number>
+                        <cstring>layout10</cstring>
                     </property>
                     <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <spacer>
+                        <widget class="KPushButton">
                             <property name="name">
-                                <cstring>spacer2</cstring>
+                                <cstring>btnGetStyles</cstring>
                             </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
+                            <property name="enabled">
+                                <bool>true</bool>
                             </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
+                            <property name="text">
+                                <string>&amp;Get New...</string>
                             </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
+                            <property name="accel">
+                                <string>Alt+G</string>
                             </property>
-                        </spacer>
+                            <property name="toolTip" stdset="0">
+                                <string>Get new Chat Window styles over the Internet</string>
+                            </property>
+                        </widget>
                         <widget class="KPushButton">
                             <property name="name">
                                 <cstring>addButton</cstring>
                             </property>
                             <property name="text">
                                 <string>&amp;Add...</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+A</string>
                             </property>
                         </widget>
                         <widget class="KPushButton">
@@ -146,13 +137,19 @@
                             <property name="text">
                                 <string>&amp;Import...</string>
                             </property>
+                            <property name="accel">
+                                <string>Alt+I</string>
+                            </property>
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
                                 <cstring>copyButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Copy...</string>
+                                <string>Cop&amp;y...</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+Y</string>
                             </property>
                         </widget>
                         <widget class="KPushButton">
@@ -162,6 +159,9 @@
                             <property name="text">
                                 <string>&amp;Edit...</string>
                             </property>
+                            <property name="accel">
+                                <string>Alt+E</string>
+                            </property>
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
@@ -169,6 +169,9 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Delete</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+D</string>
                             </property>
                         </widget>
                     </hbox>
@@ -277,7 +280,7 @@
                         <cstring>mTransparencyEnabled</cstring>
                     </property>
                     <property name="text">
-                        <string>Enable &amp;translucency</string>
+                        <string>Enable translucenc&amp;y</string>
                     </property>
                 </widget>
                 <widget class="KColorCombo" row="2" column="1">
@@ -300,8 +303,6 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>styleList</tabstop>
     <tabstop>addButton</tabstop>
@@ -316,6 +317,7 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistbox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>

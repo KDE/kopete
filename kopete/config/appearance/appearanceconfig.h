@@ -52,6 +52,8 @@ class AppearanceConfig : public KCModule
 {
 	Q_OBJECT
 
+friend class KopeteStyleNewStuff;
+
 public:
 	AppearanceConfig( QWidget *parent, const char *name, const QStringList &args );
 	~AppearanceConfig();
@@ -78,12 +80,14 @@ private slots:
 	void installNewTheme();
 	void removeSelectedTheme();
 	void slotGetThemes();
+	void slotGetStyles();
 
 private:
 	void updateHighlight();
 	QString fileContents(const QString &path);
 	bool addStyle(const QString &styleName, const QString &xslString);
 	void updateEmoticonlist();
+	void loadStyles();
 
 private:
 	QTabWidget* mAppearanceTabCtl;

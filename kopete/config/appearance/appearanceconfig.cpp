@@ -53,11 +53,18 @@
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <ktextedit.h>
+#include <kurl.h> // KNewStuff
 #include <kurlrequesterdlg.h>
 #include <krun.h>
+#include <ktar.h> // for extracting tarballed chatwindow styles fetched with KNewStuff
 #include <kdirwatch.h>
 
-#include <knewstuff/downloaddialog.h>
+#include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
+#include <knewstuff/engine.h>         // "
+#include <knewstuff/entry.h>          // "
+#include <knewstuff/knewstuff.h>      // "
+#include <knewstuff/provider.h>       // "
+#include <kfilterdev.h>               // knewstuff gzipped file support
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -83,6 +90,75 @@ class KopeteAppearanceConfigPrivate
 {
 public:
 	Kopete::XSLT *xsltParser;
+};
+
+class KopeteStyleNewStuff : public KNewStuff
+{
+	public:
+	KopeteStyleNewStuff(const QString &type, AppearanceConfig * ac, QWidget *parentWidget=0) : KNewStuff( type, parentWidget ), mAppearanceConfig( ac )
+	{ }
+
+	bool createUploadFile(const QString&)
+	{ return false; }
+
+	bool install( const QString & fileName)
+	{
+		QString origFileName = mFilenameMap[ fileName ];
+		if ( origFileName.endsWith( ".xsl" ) )
+		{
+			// copy to apps/kopete/styles
+			kdDebug(14000) << k_funcinfo << " installing simple style file: " << origFileName << endl;
+			QString styleSheet = mAppearanceConfig->fileContents(fileName);
+			if ( Kopete::XSLT( styleSheet ).isValid() )
+				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
+			QFile::remove( fileName );
+			return true;
+		}
+		else if ( origFileName.endsWith( ".tar.gz" ) )
+		{
+			// install a tar.gz
+			kdDebug(14000) << k_funcinfo << " extracting gzipped tarball: " << origFileName << endl;
+			QString uncompress = "application/x-gzip";
+			KTar tar(fileName, uncompress);
+			tar.open(IO_ReadOnly);
+			const KArchiveDirectory *dir = tar.directory();
+			dir->copyTo( locateLocal( "appdata", QString::fromLatin1( "styles" ) ) );
+			tar.close();
+			QFile::remove(fileName);
+			mAppearanceConfig->loadStyles();
+			return true;
+		}
+		else if ( origFileName.endsWith( ".xsl.gz" ) )
+		{
+			kdDebug(14000) << k_funcinfo << " installing gzipped single style file: " << origFileName << endl;
+			QIODevice * iod = KFilterDev::deviceForFile( fileName, "application/x-gzip" );
+			iod->open( IO_ReadOnly );
+			QTextStream stream( iod );
+			QString styleSheet = stream.read();
+			iod->close();
+			if ( Kopete::XSLT( styleSheet ).isValid() )
+				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
+			QFile::remove( fileName );
+			return true;
+
+		}
+		else
+		{
+			kdDebug( 14000 ) << k_funcinfo << "unsupported file type" << endl;
+			return false;
+		}
+	}
+
+	QString downloadDestination( KNS::Entry * e )
+	{
+		QString filename = e->payload().fileName();
+		QString tempDestination = KNewStuff::downloadDestination( e );
+		mFilenameMap.insert( tempDestination, filename );
+		return tempDestination;
+	}
+
+	QMap<QString, QString > mFilenameMap;
+	AppearanceConfig * mAppearanceConfig;
 };
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
@@ -129,6 +205,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotImportStyle()));
 	connect(mPrfsChatWindow->copyButton, SIGNAL(clicked()),
 		this, SLOT(slotCopyStyle()));
+	connect(mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
+		this, SLOT(slotGetStyles()));
 
 	connect(mPrfsChatWindow->mTransparencyTintColor, SIGNAL(activated (const QColor &)),
 		this, SLOT(emitChanged()));
@@ -307,23 +385,8 @@ void AppearanceConfig::load()
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
-
-	// FIXME: Using the filename as user-visible name is not translatable! - Martijn
-	mPrfsChatWindow->styleList->clear();
-	QStringList chatStyles = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "styles/*.xsl" ) );
-	for ( QStringList::Iterator it = chatStyles.begin(); it != chatStyles.end(); ++it )
-	{
-		QFileInfo fi( *it );
-		QString fileName = fi.fileName().section( '.', 0, 0 );
-		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
-		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), *it );
-		KDirWatch::self()->addFile(*it);
-
-		if ( fileName == p->styleSheet() )
-			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
-	}
-	mPrfsChatWindow->styleList->sort();
-
+	loadStyles();
+	
 	// "Contact List" TAB =======================================================
 	mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
 	mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
@@ -359,6 +422,25 @@ void AppearanceConfig::load()
 
 	loading=false;
 	slotUpdatePreview();
+}
+
+void AppearanceConfig::loadStyles()
+{
+	// FIXME: Using the filename as user-visible name is not translatable! - Martijn
+	mPrfsChatWindow->styleList->clear();
+	QStringList chatStyles = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "styles/*.xsl" ) );
+	for ( QStringList::Iterator it = chatStyles.begin(); it != chatStyles.end(); ++it )
+	{
+		QFileInfo fi( *it );
+		QString fileName = fi.fileName().section( '.', 0, 0 );
+		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
+		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), *it );
+		KDirWatch::self()->addFile(*it);
+
+		if ( fileName == KopetePrefs::prefs()->styleSheet() )
+			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
+	}
+	mPrfsChatWindow->styleList->sort();
 }
 
 void AppearanceConfig::updateEmoticonlist()
@@ -635,6 +717,20 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	return false;
 }
 
+void AppearanceConfig::slotGetStyles()
+{
+	// we need this because KNewStuffGeneric's install function isn't clever enough
+	KopeteStyleNewStuff * kns = new KopeteStyleNewStuff( "kopete/chatstyle", this );
+	KNS::Engine * engine = new KNS::Engine( kns, "kopete/chatstyle", this );
+	KNS::DownloadDialog * d = new KNS::DownloadDialog( engine, this );
+	d->setType( "kopete/chatstyle" );
+	// you have to do this by hand when providing your own Engine
+	KNS::ProviderLoader * p = new KNS::ProviderLoader( this );
+	QObject::connect( p, SIGNAL( providersLoaded(Provider::List*) ), d, SLOT( slotProviders (Provider::List *) ) );
+	p->load( "kopete/chatstyle", "http://www.stevello.free-online.co.uk/khotnewstuff/chatwindowstyle-providers.xml" );
+	d->exec();
+}
+
 // Reimplement Kopete::Contact and its abstract method
 class FakeContact : public Kopete::Contact
 {
@@ -764,15 +860,16 @@ void AppearanceConfig::removeSelectedTheme()
 
 void AppearanceConfig::slotGetThemes()
 {
-   KConfig* config = KGlobal::config();
-   config->setGroup("KNewStuff");
-   config->writeEntry( "ProvidersUrl", "http://www.stevello.free-online.co.uk/khotnewstuff/emoticon-providers.xml" );
-   config->writeEntry( "StandardResource", "emoticons" );
-   config->writeEntry( "Uncompress", "application/x-gzip" );
-   config->sync();
-
-   KNS::DownloadDialog::open("emoticons");
-   updateEmoticonlist();
+	KConfig* config = KGlobal::config();
+	config->setGroup( "KNewStuff" );
+	config->writeEntry( "ProvidersUrl",
+						"http://www.stevello.free-online.co.uk/khotnewstuff/emoticon-providers.xml" );
+	config->writeEntry( "StandardResource", "emoticons" );
+	config->writeEntry( "Uncompress", "application/x-gzip" );
+	config->sync();
+	
+	KNS::DownloadDialog::open( "emoticons" );
+	updateEmoticonlist();
 }
 
 void AppearanceConfig::slotEditTooltips()
