@@ -1,7 +1,11 @@
 /*
-    netmeetingplugin.h
+    netmeetingguiclient.h
+
+    Kopete NetMeeting Plugin
 
     Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -13,35 +17,44 @@
     *************************************************************************
 */
 
+#ifndef TRANSLATORGUICLIENT_H
+#define TRANSLATORGUICLIENT_H
 
-
-#ifndef NetMeetingPLUGIN_H
-#define NetMeetingPLUGIN_H
-
-#include "kopeteplugin.h"
+#include <qobject.h>
+#include <kxmlguiclient.h>
 
 class KopeteMessageManager;
 class MSNMessageManager;
-class MSNContact;
-class MSNInvitation;
+class NetMeetingPlugin;
 
+/**
+  * @author Olivier Goffart <ogoffart@tiscalinet.be>
+  */
 
-class NetMeetingPlugin : public KopetePlugin
+class NetMeetingGUIClient : public QObject , public KXMLGUIClient
 {
 	Q_OBJECT
 
 public:
-	NetMeetingPlugin( QObject *parent, const char *name, const QStringList &args );
-	~NetMeetingPlugin();
+	NetMeetingGUIClient( MSNMessageManager *parent, const char *name=0L);
+	~NetMeetingGUIClient();
 
 private slots:
 	void slotStartInvitation();
-	void slotNewKMM(KopeteMessageManager *);
-	void slotPluginLoaded(KopetePlugin*);
-	void slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
 
-
+private:
+	MSNMessageManager *m_manager;
+	NetMeetingPlugin *m_plugin;
 };
 
 #endif
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
 

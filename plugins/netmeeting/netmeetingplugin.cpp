@@ -21,12 +21,14 @@
 #include <kaction.h>
 
 #include "pluginloader.h"
+#include "kopetemessagemanagerfactory.h"
 
 #include "msnmessagemanager.h"
 #include "msnprotocol.h"
 #include "msncontact.h"
 
 #include "netmeetinginvitation.h"
+#include "netmeetingguiclient.h"
 
 
 K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin> );
@@ -34,11 +36,20 @@ K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin>
 NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 	: KopetePlugin( parent, name )
 {
-	m_actions=0L;
 	if(MSNProtocol::protocol())
 		slotPluginLoaded(MSNProtocol::protocol());
 	else
 		connect(LibraryLoader::pluginLoader() , SIGNAL(pluginLoaded(KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)));
+
+
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );
+	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDictIterator<KopeteMessageManager> it( sessions );
+	for ( ; it.current() ; ++it )
+	{
+		slotNewKMM(it.current());
+	}
 }
 
 NetMeetingPlugin::~NetMeetingPlugin()
@@ -55,28 +66,17 @@ void NetMeetingPlugin::slotPluginLoaded(KopetePlugin *p)
 	}
 }
 
-
-KActionCollection *NetMeetingPlugin::customChatActions(KopeteMessageManager *kmm)
+void NetMeetingPlugin::slotNewKMM(KopeteMessageManager *KMM)
 {
-	delete m_actions;
-
-	m_currentKopeteMessageManager=dynamic_cast<MSNMessageManager*>(kmm);
-
-	if(!m_currentKopeteMessageManager)
-		return 0L;
-
-	m_actions = new KActionCollection( this );
-	m_actions->insert(  new KAction( i18n( "Invite to Use NetMeeting" ), 0, this, SLOT( slotStartInvitation() ), this ) );
-
-	return m_actions;
+	MSNMessageManager *msnMM=dynamic_cast<MSNMessageManager*>(KMM);
+	if(msnMM)
+	{
+		connect(this , SIGNAL( destroyed(QObject*)) ,
+			new NetMeetingGUIClient(msnMM)
+		 , SLOT(deleteLater()));
+	}
 }
 
-void NetMeetingPlugin::slotStartInvitation()
-{
-	QPtrList<KopeteContact> c=m_currentKopeteMessageManager->members();
-	NetMeetingInvitation *i=new NetMeetingInvitation(false, static_cast<MSNContact*>(c.first()),m_currentKopeteMessageManager);
-	m_currentKopeteMessageManager->initInvitation(i);
-}
 
 void NetMeetingPlugin::slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int /*cookie*/ , MSNMessageManager* msnMM , MSNContact* c )
 {
