@@ -146,7 +146,8 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	QString track = player->track();
 	QString artist = player->artist();
 	QString album = player->album();
-
+	QString playerName = player->name();
+	
 	for ( unsigned int i = 0; i < in.length(); i++ )
 	{
 		QChar c = in.at( i );
@@ -199,6 +200,11 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 		in.replace( "%album", album );
 		done = true;
 	}
+	if ( in.contains ( "%player" ) && !playerName.isEmpty() )
+	{
+		in.replace( "%player", playerName );
+		done = true;
+	}
 	//kdDebug() << "Result is: " << in << endl;
 	// make whether we return anything dependent on whether we
 	// were in brackets and if we were, if a substitution was made.
@@ -236,7 +242,7 @@ void NowListeningPlugin::advertiseNewTracks(QString message)
 			while ( pl.current() )
 			{
 				myData = pl.current()->metaContact()->pluginData( this );
-				if ( !myData.isEmpty() && myData.first() != "true" )
+				if ( myData.isEmpty() || myData.first() != "true" )
 					pl.remove();
 				else
 					pl.next();
