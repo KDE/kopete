@@ -130,13 +130,13 @@ PluginConfig::PluginConfig( QObject *_parent )
 
 	(new QVBoxLayout(this, 0, KDialog::spacingHint()))->setAutoAdd(true);
 
-	new QLabel(i18n("Select the protocols you would like loaded:"), this);
+	new QLabel(i18n("Select the protocols you wish to use:"), this);
 
 	protocolList = new PluginListView(this);
 	connect(protocolList, SIGNAL(stateChange(PluginListItem *, bool)),
 		this, SLOT(stateChange(PluginListItem *, bool)));
 
-	new QLabel(i18n("Select the plugins you would like loaded:"), this);
+	new QLabel(i18n("Select the plugins you wish to use:"), this);
 
 	otherList = new PluginListView(this);
 	connect(otherList, SIGNAL(stateChange(PluginListItem *, bool)),
