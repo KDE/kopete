@@ -54,7 +54,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteAccount *protocol, const QString &id, KopeteMetaContact *parent );
+	KopeteContact( KopeteAccount *protocol, const QString &id, KopeteMetaContact *parent, const QString &icon = QString::null );
 	//obsolete one
 	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent );
 	~KopeteContact();
@@ -318,6 +318,16 @@ public slots:
 	 * default implementation do nothing
 	 */
 	virtual void syncGroups();
+
+	/**
+	 * Returns the name of the icon to use for this contact
+	 */
+	virtual QString& icon() const;
+
+	/**
+	 * Changet the icon to use for this account
+	 */
+	virtual void setIcon( const QString& icon );
 
 protected:
 	/**

@@ -20,6 +20,8 @@
 
 class QString;
 class QPixmap;
+class KopeteContact;
+class KopeteAccount;
 
 class KopeteProtocol;
 
@@ -171,18 +173,27 @@ public:
 	KopeteProtocol* protocol() const;
 
 	/**
-	 * Return the standard status icon for the object's protocol.
+	 * Return a status icon generated for the given KopeteContact
+	 * This will draw an overlay representing the online status
+	 * of the contact the KopeteOnlineStatus applies to
+	 * over the base icon.
+	 * @param contact is the contact the icon should apply to.
 	 */
-	QPixmap genericIcon() const;
+	QPixmap iconFor( const KopeteContact *contact ) const;
 
 	/**
-	 * Return a status icon generated for the given base icon
+	 * Return a status icon generated for the given KopeteAccount
 	 * This will draw an overlay representing the online status
-	 * of the account/contact the KopeteOnlineStatus applies to
+	 * of the account the KopeteOnlineStatus applies to
 	 * over the base icon.
-	 * @param baseIcon is the icon to be used as basis for the status icon.
+	 * @param account is the account the icon should apply to.
 	 */
-	QPixmap customIcon( const QString& baseIcon ) const;
+	QPixmap iconFor( const KopeteAccount *account ) const;
+
+	/**
+	 * Returns the status icon for the protocol.
+	 */
+	QPixmap protocolIcon() const;
 
 	/**
 	 * Assignment operator
@@ -221,6 +232,7 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
+	QPixmap renderIcon( const QString& baseicon ) const;
 };
 
 #endif

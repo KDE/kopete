@@ -1,1 +1,1 @@
-SUBDIRS = msn icq_new jabber irc gadu oscar yahoo sms winpopup
+SUBDIRS = msn jabber irc gadu yahoo sms winpopup

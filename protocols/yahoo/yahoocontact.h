@@ -50,7 +50,6 @@ public:
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 	void setYahooStatus(YahooStatus::Status, const QString & = "", int = 0);
-	QPixmap icon() { return onlineStatus().customIcon("yahoo_online"); }
 
 public slots:
 	virtual void slotViewHistory();

@@ -62,7 +62,6 @@ public:
 	virtual KopeteMessageManager *manager(bool canCreate = false);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
-	QPixmap icon() { return onlineStatus().customIcon("wp_available"); }
 	const QString &hostName() { return theHostName; }
 
 public slots:

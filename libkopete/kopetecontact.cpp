@@ -80,6 +80,8 @@ public:
 
 	QString contactId;
 
+	QString icon;
+
 	KopeteProtocol *protocol; //obsolete
 };
 
@@ -94,8 +96,9 @@ public:
 };
 
 
-KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, KopeteMetaContact *parent )
-: QObject( parent )
+KopeteContact::KopeteContact( KopeteAccount *account,
+	const QString &contactId, KopeteMetaContact *parent, const QString &icon )
+	: QObject( parent )
 {
 	d = new KopeteContactPrivate;
 
@@ -120,6 +123,8 @@ KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, 
 		d->protocol=account->protocol();
 		account->registerContact( this );
 	}
+
+	d->icon = icon;
 
 	// Initialize the context menu
 	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             this, "actionChat" );
@@ -244,7 +249,7 @@ QPixmap KopeteContact::scaledStatusIcon( int size )
 {
 	if ( !( d->onlineStatus == d->oldStatus ) || size != d->cachedSize )
 	{
-		QImage afScal = ( d->onlineStatus.genericIcon().convertToImage() ).smoothScale( size, size );
+		QImage afScal = ( d->onlineStatus.iconFor( this ).convertToImage() ).smoothScale( size, size );
 		d->cachedScaledIcon = QPixmap( afScal );
 		d->oldStatus = d->onlineStatus;
 		d->cachedSize = size;
@@ -597,6 +602,17 @@ KopeteContact::IdleState KopeteContact::idleState() const
 void KopeteContact::syncGroups()
 {
 	/* Default implementation does nothing */
+}
+
+QString& KopeteContact::icon() const
+{
+	return d->icon;
+}
+
+void KopeteContact::setIcon( const QString& icon )
+{
+	d->icon = icon;
+	return;
 }
 
 #include "kopetecontact.moc"

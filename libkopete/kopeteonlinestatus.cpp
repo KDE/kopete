@@ -189,15 +189,37 @@ KopeteProtocol* KopeteOnlineStatus::protocol() const
 	return d->protocol;
 }
 
-QPixmap KopeteOnlineStatus::genericIcon() const
+QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact ) const
 {
+	if ( contact->icon().isNull() )
+	{
+		if ( d->protocol )
+			return renderIcon( d->protocol->pluginIcon() );
+		else
+			return SmallIcon( QString::fromLatin1( "unknown" ) );
+	}
+	else
+		return renderIcon( contact->icon() );
+}
+
+QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account ) const
+{
+	//FIXME: support KopeteAccount having knowledge of a custom icon
 	if ( d->protocol )
-		return customIcon( d->protocol->pluginIcon() );
+		return renderIcon( d->protocol->pluginIcon() );
 	else
 		return SmallIcon( QString::fromLatin1( "unknown" ) );
 }
 
-QPixmap KopeteOnlineStatus::customIcon( const QString& baseIcon ) const
+QPixmap KopeteOnlineStatus::protocolIcon() const
+{
+	if ( d->protocol )
+		return renderIcon( d->protocol->pluginIcon() );
+	else
+		return SmallIcon( QString::fromLatin1( "unknown" ) );
+}
+
+QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon ) const
 {
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set

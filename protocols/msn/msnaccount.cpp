@@ -201,9 +201,9 @@ void MSNAccount::disconnect()
 
 KActionMenu* MSNAccount::actionMenu()
 {
-	m_actionMenu->setIconSet( QIconSet( m_myself->onlineStatus().genericIcon() ) );
+	m_actionMenu->setIconSet( QIconSet( m_myself->onlineStatus().iconFor( m_myself ) ) );
 	m_actionMenu->setText( i18n( "%2 <%1>" ).arg( accountId() ).arg( m_myself->displayName() ) );
-	m_actionMenu->popupMenu()->changeTitle( m_menuTitleId, m_myself->onlineStatus().genericIcon(),
+	m_actionMenu->popupMenu()->changeTitle( m_menuTitleId, m_myself->onlineStatus().iconFor( m_myself ),
 		i18n( "%2 <%1>" ).arg( accountId() ).arg( m_myself->displayName() ) );
 
 	return m_actionMenu;

@@ -444,7 +444,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 		// Get the icon for our status
 
 		//QPixmap pm = SmallIcon( icon );
-		QPixmap pm = status.genericIcon();
+		QPixmap pm = status.protocolIcon();
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
 		if( pm.isNull() )
