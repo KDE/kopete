@@ -6,4 +6,4 @@ if include_jabber
 JABBER=jabber
 endif
 
-SUBDIRS = oscar $(JABBER)
+SUBDIRS = msn irc oscar yahoo sms $(JABBER) $(GADU)
