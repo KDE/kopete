@@ -318,35 +318,41 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					}
 					break;
 
-				case 'f': //insert the 'from' displayName
+				case 'f': //insert the 'from' metaContact's displayName
 					if (mFrom->metaContact())
 						message.append( QStyleSheet::escape(mFrom->metaContact()->displayName()) );
 					else
 						message.append( QStyleSheet::escape(mFrom->displayName()) );
 					break;
 
-				case 't': //insert the 'to' displayName
-				{
+				case 't': //insert the 'to' metaContact's displayName
 					if (to().first()->metaContact())
 						message.append( QStyleSheet::escape(to().first()->metaContact()->displayName()) );
 					else
 						message.append( QStyleSheet::escape(to().first()->displayName()) );
 					break;
-				}
+					
+				case 'c': //the 'from' KopeteContact displayName
+					if (to().first())
+						message.append( QStyleSheet::escape(to().first()->displayName()) );
+					break;
+					
+				case 'C': //the 'to' KopeteContact displayName
+					if (mFrom)
+						message.append( QStyleSheet::escape(mFrom->displayName()) );
+					break;
 
 				case 'I': //insert the statusicon path
-				{
-					QString icoPath = KGlobal::iconLoader()->iconPath(mFrom->statusIcon(), KIcon::Small);
-					if (!icoPath.isNull())
+					if(mFrom)
+					{
+						QString icoPath = KGlobal::iconLoader()->iconPath(mFrom->statusIcon(), KIcon::Small);
+						if (!icoPath.isNull())
 						message.append( QStyleSheet::escape(icoPath) );
+					}
 					break;
-				}
-
 				default:
-				{
 					message += c;
 					break;
-				}
 			}
 		}
 		f++;
