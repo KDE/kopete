@@ -37,10 +37,12 @@
 #include <kglobalaccel.h>
 #include <kwin.h>
 #include <kdeversion.h>
+#include <kinputdialog.h>
 
 #include "addcontactwizard.h"
 #include "kopete.h"
 #include "kopeteaccount.h"
+#include "kopeteaway.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccountstatusbaricon.h"
 #include "kopetecontact.h"
@@ -52,6 +54,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
+#include "kopeteawayaction.h"
 #include "systemtray.h"
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
@@ -84,6 +87,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT(slotAccountRegistered(KopeteAccount*)));
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
 		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
+		
+	connect ( KopeteAway::getInstance(), SIGNAL(messagesChanged()), this, SLOT(slotAwayMessagesChanged()) );
 
 	createGUI ( "kopeteui.rc", false );
 
@@ -106,9 +111,6 @@ void KopeteWindow::initView()
 {
 	contactlist = new KopeteContactListView(this);
 	setCentralWidget(contactlist);
-
-	// Initialize the Away message selection dialog
-	m_awayMessageDialog = new KopeteGlobalAwayDialog(this);
 }
 
 void KopeteWindow::initActions()
@@ -131,9 +133,9 @@ void KopeteWindow::initActions()
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 
-	actionSetAway = new KAction( i18n( "&Set Away Globally" ), "kopeteaway",
-		0, this, SLOT( slotGlobalAwayMessageSelect() ),
-		actionCollection(), "SetAwayAll" );
+	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), UserIcon("kopeteaway"), 0, 
+		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
+		"SetAwayAll" );
 
 	actionSetAvailable = new KAction( i18n( "Set Availa&ble Globally" ),
 		"kopeteavailable", 0 , KopeteAccountManager::manager(),
@@ -144,7 +146,7 @@ void KopeteWindow::initActions()
 							actionCollection(), "Status" );
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
-	actionAwayMenu->insert(actionSetAway);
+	actionAwayMenu->insert(selectAway);
 	actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
 	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
@@ -387,12 +389,10 @@ void KopeteWindow::slotUpdateToolbar()
 	applyMainWindowSettings(KGlobal::config(), "General Options");
 }
 
-void KopeteWindow::slotGlobalAwayMessageSelect()
+void KopeteWindow::slotGlobalAwayMessageSelect( const QString &awayReason )
 {
-	// Show the dialog and set the message
-	// This also tells the account manager to
-	// set the away on all protocols
-	m_awayMessageDialog->show();
+	KopeteAway::getInstance()->setGlobalAwayMessage( awayReason );
+	KopeteAccountManager::manager()->setAwayAll( awayReason );
 }
 
 void KopeteWindow::closeEvent( QCloseEvent *e )

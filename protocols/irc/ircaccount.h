@@ -135,7 +135,7 @@ protected:
 
 private slots:
 	void slotFailedServerPassword();
-	void slotGoAway();
+	void slotGoAway( const QString &reason );
 	void slotJoinChannel();
 	void slotShowServerWindow();
 	void slotNickInUse( const QString &nick );
@@ -144,7 +144,6 @@ private slots:
 private:
 	IRCProtocol *m_protocol;
 	KopeteMessageManager *m_manager;
-
 	QString mNickName;
 
 	QString m_server;

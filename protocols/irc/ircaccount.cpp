@@ -23,6 +23,7 @@
 #include <kpopupmenu.h>
 
 #include "kopeteaway.h"
+#include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 
@@ -123,7 +124,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->popupMenu()->insertTitle( m_mySelf->onlineStatus().iconFor( m_mySelf ), menuTitle );
 
 	mActionMenu->insert( new KAction ( i18n("Go Online"), m_protocol->m_UserStatusOnline.iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Set Away"), m_protocol->m_UserStatusAway.iconFor( this ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
+	mActionMenu->insert( new KopeteAwayAction ( i18n("Set Away"), m_protocol->m_UserStatusAway.iconFor( this ), 0, this, SLOT(slotGoAway( const QString & )), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Go Offline"), m_protocol->m_UserStatusOffline.iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
@@ -182,9 +183,9 @@ void IRCAccount::slotFailedServerPassword()
 	m_engine->setPassword(servPass);
 	connect();
 }
-void IRCAccount::slotGoAway()
+void IRCAccount::slotGoAway( const QString &reason )
 {
-	setAway( true, KopeteAway::message() );
+	setAway( true, reason );
 }
 
 void IRCAccount::slotShowServerWindow()
