@@ -30,7 +30,6 @@
 
 #include <kdatewidget.h>
 #include <klineedit.h>
-#include <klocale.h>
 #include <kurllabel.h>
 
 #include <kdebug.h>

@@ -21,7 +21,6 @@
 
 // necessary for renderIcon, remove after!
 #include <qpainter.h>
-#include <qcolor.h>
 #include <qbitmap.h>
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"

@@ -19,7 +19,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
-#include <kdeversion.h>
 
 #include "kopetecommand.h"
 #include "kopetemessagemanager.h"

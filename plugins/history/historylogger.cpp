@@ -16,22 +16,17 @@
 
 #include "historylogger.h"
 
-#include <qdom.h>
-#include <qtextstream.h>
 #include <qregexp.h>
 #include <qfile.h>
-#include <qptrlist.h>
 
 
 #include <kdebug.h>
-#include <klocale.h>
 //#include <kiconloader.h>
 #include <kstandarddirs.h>
 
 
 #include "kopetecontact.h"
 #include "kopeteprotocol.h"
-#include "kopetemessage.h"
 
 #define CBUFLENGTH 512 // buffer length for fgets() //FIXME: i don't like this
 

@@ -24,7 +24,6 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 
-#include "kopetestdaction.h"
 
 #include <oscarcontact.h>
 

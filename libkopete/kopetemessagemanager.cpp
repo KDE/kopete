@@ -25,7 +25,6 @@
 #include <qapplication.h>
 #include <kglobal.h>
 #include <qregexp.h>
-#include <qdatetime.h>
 
 #include "kopeteaccount.h"
 #include "kopetemessagemanager.h"

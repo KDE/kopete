@@ -17,17 +17,11 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qtimer.h>
-#include <qmap.h>
-#include <qstring.h>
 #include <qlistview.h>
 
 #include <klocale.h>
 #include <klineedit.h>
-#include <keditlistbox.h>
 #include <kconfig.h>
 #include <kglobal.h>
 

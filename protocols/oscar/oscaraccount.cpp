@@ -34,7 +34,6 @@
 
 #include "oscarsocket.h"
 
-#include <klineeditdlg.h>
 
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
 	: KopeteAccount(parent, accountID, name)

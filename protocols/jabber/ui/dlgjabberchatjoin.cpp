@@ -15,9 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qlineedit.h>
 #include <qpushbutton.h>
-#include "jabberprotocol.h"
 #include "dlgjabberchatjoin.h"
 
 dlgJabberChatJoin::dlgJabberChatJoin(QWidget *parent, const char *name ) : dlgChatJoin(parent,name)

@@ -23,7 +23,6 @@
 
 #include <qlayout.h>
 
-#include <kdeversion.h>
 #include <kiconloader.h>
 
 #if (QT_VERSION>=0x030005 && QT_VERSION<0x030102) && KDE_VERSION<0x030191

@@ -16,7 +16,6 @@
 */
 
 #include "kopeteaccountstatusbaricon.h"
-#include "kopeteaccount.h"
 
 #include <kdebug.h>
 

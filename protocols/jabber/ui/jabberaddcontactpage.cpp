@@ -4,8 +4,6 @@
 #include <klocale.h>
 
 #include "jabberaddcontactpage.h"
-#include "jabberaccount.h"
-#include "jabberprotocol.h"
 
 JabberAddContactPage::JabberAddContactPage(KopeteAccount * owner,
 					   QWidget * parent,

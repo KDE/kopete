@@ -17,14 +17,12 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qcolor.h>
 #include <qapplication.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kdialogbase.h>
 #include <qtimer.h>
-#include <qmap.h>
 
 
 #include "kopetecontactlist.h"

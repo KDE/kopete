@@ -31,7 +31,6 @@
 #include <qtextedit.h>
 
 #include <kapplication.h>
-#include <kmessagebox.h>
 
 #include <kdatewidget.h>
 #include <klineedit.h>

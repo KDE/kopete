@@ -3,7 +3,6 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>

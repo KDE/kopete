@@ -19,20 +19,15 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-#include <qapplication.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qtable.h>
 
-#include "types.h"
-#include "tasks.h"
 
-#include "jabbercontact.h"
 #include "jabberaccount.h"
 #include "dlgjabberregister.h"
 #include "dlgjabberbrowse.h"
 #include "dlgjabberservices.h"
-#include "../psi/libpsi/src/stream.h"
 
 #include "dlgjabberservices.moc"
 

@@ -14,21 +14,16 @@
     *************************************************************************
 */
 
-#include <qfile.h>
-#include <qfileinfo.h>
 #include <qregexp.h>
 #include <qstylesheet.h>
 #include <qdir.h>
 
 #include <kdebug.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
 
-#include "kopetemessage.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetecontact.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
 #include "historylogger.h"

@@ -30,7 +30,6 @@
 #include <ksimpleconfig.h>
 #include <kstaticdeleter.h>
 #include <kstandarddirs.h>
-#include <kurl.h>
 
 #include "kopeteplugin.h"
 

@@ -20,9 +20,7 @@
 #include <qpushbutton.h>
 
 #include <klocale.h>
-#include <klistbox.h>
 #include <kconfig.h>
-#include <kglobal.h>
 #include <kcolordialog.h>
 
 #include "texteffectprefs.h"

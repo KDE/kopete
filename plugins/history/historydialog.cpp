@@ -15,37 +15,25 @@
     *************************************************************************
 */
 
-#include <kdialogbase.h>
 
 #include "historydialog.h"
 
 #include "historylogger.h"
-#include "kopetemessage.h"
-#include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
-#include "kopetecontact.h"
 
 #include <sys/time.h>
 
-#include <qapplication.h>
-#include <qtextstream.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kstandarddirs.h>
-#include <qdialog.h>
-#include <qdom.h>
 #include <qpushbutton.h>
 #include <qprogressbar.h>
-#include <qregexp.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
-#include <qfile.h>
-#include <qptrlist.h>
 
 #include <ktextbrowser.h>
 

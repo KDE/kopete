@@ -16,23 +16,14 @@
 */
 
 #include <kdebug.h>
-#include <qlayout.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qlabel.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 
-#include <kconfig.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <kmessagebox.h>
 
 #include "jabbereditaccountwidget.h"
-#include "jabberprotocol.h"
-#include "jabberaccount.h"
-#include "dlgpreferences.h"
 
 JabberEditAccountWidget::JabberEditAccountWidget(JabberProtocol *proto, JabberAccount *ident, QWidget *parent, const char * name )
 				  : DlgPreferences(parent, name), EditAccountWidget(ident)
