@@ -44,6 +44,8 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopeteaway.h"
+#include "kopeteprotocol.h"
+#include "kopeteplugin.h"
 #include "addcontactpage.h"
 #include "statusbaricon.h"
 #include "jabbercontact.h"
@@ -54,7 +56,7 @@
 #include "jabbermap.h"
 #include "jabberprotocol.h"
 
-const JabberProtocol *JabberProtocol::protocolInstance = 0;
+JabberProtocol *JabberProtocol::protocolInstance = 0;
 
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
 
@@ -263,7 +265,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 }
 
 
-const JabberProtocol *JabberProtocol::protocol()
+JabberProtocol *JabberProtocol::protocol()
 {
 	
 	// return current instance
@@ -491,6 +493,7 @@ QString JabberProtocol::protocolIcon() const
 
 bool JabberProtocol::serialize(KopeteMetaContact *mc, QStringList &data) const
 {
+	QStringList addressList;
 
 	kdDebug() << "[JabberProtocol] Serializing data for metacontact " << mc->displayName() << endl;
 
@@ -510,8 +513,14 @@ bool JabberProtocol::serialize(KopeteMetaContact *mc, QStringList &data) const
 
 		data << jc->identityId() << jc->userId() << jc->displayName() << jc->groups().join(",");
 
+		addressList << jc->userId();
+
 		done = true;
 	}
+
+	QString addresses = addressList.join(",");
+	if(!addresses.isEmpty())
+		mc->setAddressBookField(JabberProtocol::protocol(), "messaging/jabber", addresses);
 
 	return done;
 
@@ -544,6 +553,13 @@ void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &
 	
 		contact->addContact(jc, jc->groups());
 	}
+
+}
+
+QStringList JabberProtocol::addressBookFields() const
+{
+
+	return QStringList("messaging/jabber");
 
 }
 

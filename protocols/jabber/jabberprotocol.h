@@ -134,10 +134,8 @@ public:
 	 * addressBookFields() returns a list of fields we are interested in
 	 * addressBookFieldChanged() is a notification slot for changes
 	 */
-	/*
 	virtual QStringList addressBookFields() const;
-	virtual void addressBookFieldChanged(KopeteMetaContact *contact, const QString &key);
-	*/
+	//virtual void addressBookFieldChanged(KopeteMetaContact *contact, const QString &key);
 
 	/*********************************************************************
 	 *
@@ -162,7 +160,7 @@ public:
 	/**
 	 * This returns our protocol instance
 	 */
-	static const JabberProtocol *protocol();
+	static JabberProtocol *protocol();
 
 	/**
 	 * Function called by the configuration dialog,
@@ -362,7 +360,7 @@ private:
 	/**
 	 * Singleton instance of our protocol class
 	 */
-	static const JabberProtocol *protocolInstance;
+	static JabberProtocol *protocolInstance;
 	
 	/**
 	 * This is the local contact list used to keep JabberContacts in
