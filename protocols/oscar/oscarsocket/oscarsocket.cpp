@@ -63,6 +63,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	awaitingFirstPresenceBlock=OscarSocket::Waiting;
 	mBlockSend=false;
 	bSomethingOutgoing=false;
+	addAuthBuddy = false;
 
 	socket()->enableWrite(false); // don't spam us with readyWrite() signals
 	socket()->enableRead(true);
@@ -3260,13 +3261,20 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	outbuf.addWord(item->gid); // TAG
 	outbuf.addWord(item->bid); // ID
 	outbuf.addWord(item->type); // TYPE
-	outbuf.addWord(item->tlvlength); // LEN
-
-	if (item->tlvlength > 0)
+	if (addAuthBuddy && requestType == 0x0008)
 	{
-		kdDebug(14150) << k_funcinfo << "Adding TLVs with length=" <<
-			item->tlvlength << endl;
-		outbuf.addString(item->tlvlist,item->tlvlength);
+		outbuf.addWord(4);
+		outbuf.addTLV(0x0066,0,0);
+	}
+	else
+	{
+		outbuf.addWord(item->tlvlength); // LEN
+		if (item->tlvlength > 0)
+		{
+			kdDebug(14150) << k_funcinfo << "Adding TLVs with length=" <<
+				item->tlvlength << endl;
+			outbuf.addString(item->tlvlist,item->tlvlength);
+		}
 	}
 
 	sendBuf(outbuf,0x02);
@@ -3287,31 +3295,36 @@ void OscarSocket::parseSSIAck(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "RECV SRV_SSIACK" << endl;
 
 	WORD result = inbuf.getWord();
+
 	switch(result)
 	{
-		case 0x0000:
+		case SSIACK_OK:
 			kdDebug(14150) << k_funcinfo << "SSI change succeeded" << endl;
 			break;
-		case 0x0002:
+		case SSIACK_NOTFOUND:
 			kdDebug(14150) << k_funcinfo << "Modified item not found on server." << endl;
 			break;
-		case 0x0003:
+		case SSIACK_ALREADYONSERVER:
 			kdDebug(14150) << k_funcinfo << "Added item already on server." << endl;
 			break;
-		case 0x000A:
+		case SSIACK_ADDERR:
 			kdDebug(14150) << k_funcinfo << "Error adding item (invalid id, already in list, invalid data)" << endl;
 			break;
-		case 0x000C:
+		case SSIACK_LIMITEXD:
 			kdDebug(14150) << k_funcinfo << "Cannot add item, item limit exceeded." << endl;
+			emit gotSSIAck(result);
 			break;
-		case 0x000D:
+		case SSIACK_ICQTOAIM:
 			kdDebug(14150) << k_funcinfo << "Cannot add ICQ contact to AIM list." << endl;
+			emit gotSSIAck(result);
 			break;
-		case 0x000E:
+		case SSIACK_NEEDAUTH:
 			kdDebug(14150) << k_funcinfo << "Cannot add contact because he needs AUTH." << endl;
+			emit gotSSIAck(result);
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
+			emit gotSSIAck(result);
 	}
 	//there isn't much here...
 	//we just need to signal to send the next item in the ssi queue

@@ -92,6 +92,23 @@ public:
 	// -- END MERGED DATA FROM AIMBUDDYLIST ------------------------------
 };
 
+BuddyWaitingSSIAck::BuddyWaitingSSIAck()
+{
+	unset();
+}
+
+void BuddyWaitingSSIAck::set(const QString &contact, const QString &group)
+{
+	contactName = contact;
+	groupName = group;
+}
+
+void BuddyWaitingSSIAck::unset()
+{
+	contactName = "";
+	groupName = "";
+}
+
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
 : KopeteAccount( parent, accountID, name )
 {
@@ -152,6 +169,11 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	QObject::connect(
 		engine(), SIGNAL(gotDirectIMRequest(QString)),
 		this, SLOT(slotGotDirectIMRequest(QString)));
+
+	// Got ack for SSI modification
+	QObject::connect(
+		engine(), SIGNAL(gotSSIAck(WORD)),
+		this, SLOT(slotGotSSIAck(WORD)));
 
 	d->idleTimer = new QTimer(this, "OscarIdleTimer");
 	QObject::connect(
@@ -583,6 +605,25 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 		engine()->sendDirectIMDeny(sn);
 }
 
+void OscarAccount::slotGotSSIAck(WORD result)
+{
+	QString reason;
+	switch(result)
+	{
+		case SSIACK_LIMITEXD: case SSIACK_ICQTOAIM:
+			// FIXME: Nice user warning here.
+			kdDebug(14150) << k_funcinfo << "Should remove contact: " << buddyWaitingSSIAck.contact() << " group: " << buddyWaitingSSIAck.group() << endl;
+			break;
+		case SSIACK_NEEDAUTH:
+			kdDebug(14150) << k_funcinfo << "Adding: " << buddyWaitingSSIAck.contact() << " group: " << buddyWaitingSSIAck.group() << endl;
+			engine()->sendAuthRequest(tocNormalize(buddyWaitingSSIAck.contact()), reason);
+			engine()->setAddingAuthBuddy(true);
+			engine()->sendAddBuddy(tocNormalize(buddyWaitingSSIAck.contact()), buddyWaitingSSIAck.group());
+			engine()->setAddingAuthBuddy(false);
+			break;
+	}
+}
+
 void OscarAccount::slotIdleTimeout()
 {
 	//kdDebug(14150) << k_funcinfo << "called" << endl;
@@ -656,6 +697,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	 *
 	 * FIXME: it seems at the moment we are re-adding the
 	 * server-side contact to the server-side list!
+	 * This is not true. No server-side contact list manipulation
+	 * is done at this point in time. (Matt)
 	 *
 	 * The third situation is when somebody new messages you
 	 */
@@ -763,8 +806,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
-			engine()->sendAddBuddy(tocNormalize(contactId),
-									  internalGroup->name());
+			engine()->sendAddBuddy(tocNormalize(contactId), internalGroup->name());
+			buddyWaitingSSIAck.set(tocNormalize(contactId), internalGroup->name());
 
 			// Increase these counters, I'm not sure what this does
 			d->randomNewGroupNum++;

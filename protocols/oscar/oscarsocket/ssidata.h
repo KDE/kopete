@@ -31,6 +31,14 @@ const WORD ROSTER_INVISIBLE = 0x0003;	// a contact on the invisible list
 const WORD ROSTER_VISIBILITY = 0x0004;	// this entry contains visibility setting TLV(0xca)=TLV(202)
 const WORD ROSTER_IGNORE = 0x000e;		// a contact on the ignore list
 
+const WORD SSIACK_OK			= 0x0000; // SSI change succeeded
+const WORD SSIACK_NOTFOUND		= 0x0002; // Modified item not found on server
+const WORD SSIACK_ALREADYONSERVER	= 0x0003; // Added item already on server
+const WORD SSIACK_ADDERR		= 0x000A; // Error adding item (invalid id, already in list, invalid data)
+const WORD SSIACK_LIMITEXD		= 0x000C; // Cannot add item, item limit exceeded
+const WORD SSIACK_ICQTOAIM		= 0x000D; // Cannot add ICQ contact to AIM list
+const WORD SSIACK_NEEDAUTH		= 0x000E; // Cannot add contact because he needs AUTH
+
 struct SSI
 {
 	QString name;

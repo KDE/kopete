@@ -320,6 +320,10 @@ class OscarSocket : public OscarConnection
 
 		bool isICQ() { return mIsICQ; }
 
+		/** Accessors for the addingAuthBuddy variable */
+		bool addingAuthBuddy() { return addAuthBuddy; }
+		void setAddingAuthBuddy(bool newValue) { addAuthBuddy = newValue; }
+
 		/*
 		 * Sends an authorization request to the server
 		 */
@@ -980,6 +984,10 @@ class OscarSocket : public OscarConnection
 		 */
 		void gotDirectIMRequest(QString);
 		/*
+		 * Emitted when the server send the ack for an SSI change
+		 */
+		void gotSSIAck(WORD);
+		/*
 		 * Emitted when someone has requested to send a file to us
 		 */
 		void gotFileSendRequest(QString, QString, QString, unsigned long);
@@ -1119,6 +1127,7 @@ class OscarSocket : public OscarConnection
 		QTimer *keepaliveTimer;
 
 		bool mIsICQ;
+
 		/*
 		 * one up sequence used for packets of type CLI_TOICQSRV
 		 */
@@ -1145,6 +1154,9 @@ class OscarSocket : public OscarConnection
 		FirstPresenceBlock awaitingFirstPresenceBlock;
 
 		bool bSomethingOutgoing;
+
+		/** Used to determine if a contact requires auth */
+		bool addAuthBuddy;
 };
 
 #endif
