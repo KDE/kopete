@@ -152,7 +152,7 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 					output.append( '\n' );
 				}
 			}
-			output.append( i18n("\n\nType /help <command> for more information.") );
+			output.append( i18n("\nType /help <command> for more information.") );
 		}
 		else
 		{
