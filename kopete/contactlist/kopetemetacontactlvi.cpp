@@ -458,12 +458,12 @@ QString KopeteMetaContactLVI::key( int, bool ) const
 	return importance_char + text( 0 ).lower();
 }
 
-bool KopeteMetaContactLVI::isTopLevel()
+bool KopeteMetaContactLVI::isTopLevel() const
 {
 	return m_isTopLevel;
 }
 
-bool KopeteMetaContactLVI::isGrouped()
+bool KopeteMetaContactLVI::isGrouped() const
 {
 	if(m_parentView)
 		return true;

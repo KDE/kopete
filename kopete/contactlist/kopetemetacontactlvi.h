@@ -60,24 +60,24 @@ public:
 	/**
 	 * metacontact this visual item represents
 	 */
-	KopeteMetaContact *metaContact()
+	KopeteMetaContact *metaContact() const
 	{ return m_metaContact; };
 
 	/**
 	 * true if the item is at top level and not under a group
 	 */
-	bool isTopLevel();
+	bool isTopLevel() const;
 
 	/**
 	 * parent when top-level
 	 */
-	QListView *parentView()
+	QListView *parentView() const
 	{ return m_parentView; };
 
 	/**
 	 * parent when not top-level
 	 */
-	KopeteGroupViewItem *parentGroup()
+	KopeteGroupViewItem *parentGroup() const
 	{ return m_parentGroup; };
 
 //	virtual void setup();
@@ -110,7 +110,7 @@ public:
 	 */
 	KopeteContact *getContactFromIcon(const QPoint &p);
 
-	bool isGrouped();
+	bool isGrouped() const;
 
 	void catchEvent(KopeteEvent *);
 
