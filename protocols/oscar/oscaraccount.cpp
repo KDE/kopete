@@ -635,7 +635,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	/* We're not even online or connecting (when getting server contacts), so don't bother */
 	if(
 		(!myself()->isOnline()) &&
-		(myself()->onlineStatus().status() != KopeteOnlineStatus::Offline)
+		(myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting)
 		)
 	{
 		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline!" << endl;
