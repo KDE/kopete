@@ -26,6 +26,7 @@
   *@author Olivier Goffart
   */
 
+class QDomNode;
 //class KopeteGroup;
 
 class KopeteGroup : public QObject 
@@ -44,12 +45,19 @@ public:
 	GroupType type() const ;
 	void setType(GroupType);
 
+	QString toXML();
+	bool fromXML( const QDomNode &data );
+	
+	void setExpanded(bool in_expanded) { m_expanded = in_expanded; }
+	bool expanded() { return m_expanded; }
+
 	static KopeteGroup *toplevel;
 	static KopeteGroup *temporary;
 
 private:
 	QString m_displayName;
 	GroupType m_type;
+	bool m_expanded;
 	
 };
 

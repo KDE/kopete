@@ -130,6 +130,19 @@ void KopeteContactList::loadXML()
 						metaContact );
 				}
 			}
+			else if( element.tagName() == "kopete-group" )
+			{
+				KopeteGroup *group = new KopeteGroup();
+				if( !group->fromXML( node.firstChild() ) )
+				{
+					delete group;
+					group = 0;
+				}
+				else
+				{
+					KopeteContactList::contactList()->addGroup( group );
+				}
+			}
 			else
 			{
 				kdDebug() << "KopeteContactList::loadXML: Warning: "
@@ -193,6 +206,12 @@ QString KopeteContactList::toXML()
 	QString xml = "<?xml version=\"1.0\"?>\n"
 		"<messaging-contact-list version=\"0.5\">\n";
 
+	// Save group information. ie: Open/Closed, pehaps later icons? Who knows.
+	KopeteGroup *groupIt;
+	for( groupIt = m_groupList.first(); groupIt; groupIt = m_groupList.next() )
+	    xml += groupIt->toXML();
+	
+	// Save metacontact information.
 	QPtrListIterator<KopeteMetaContact> metaContactIt( m_contacts );
 	for( ; metaContactIt.current(); ++metaContactIt )
 	{
