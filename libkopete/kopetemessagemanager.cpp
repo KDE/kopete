@@ -23,6 +23,7 @@
 #include "kopeteemailwindow.h"
 #include "kopeteprotocol.h"
 #include "kopetemessagelog.h"
+#include "kopeteaway.h"
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -313,7 +314,10 @@ void KopeteMessageManager::slotMessageSent(KopeteMessage &message)
 	emit messageSent(message, this);
 
 	if ( KopetePrefs::prefs()->soundNotify() )
-	    KNotifyClient::event("kopete_outgoing");
+	{
+		if ( !( (KopetePrefs::prefs()->soundIfAway() == false) && (KopeteAway::globalAway()) ) )
+		    KNotifyClient::event("kopete_outgoing");
+	}
 }
 
 void KopeteMessageManager::slotChatWindowClosing()
@@ -437,7 +441,10 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	}
 
 	if ( KopetePrefs::prefs()->soundNotify() && isvisible && (msg.direction() != KopeteMessage::Outbound) )
-	    KNotifyClient::event("kopete_incoming");
+	{
+		if ( !( (KopetePrefs::prefs()->soundIfAway() == false) && (KopeteAway::globalAway()) ) )
+		    KNotifyClient::event("kopete_incoming");
+	}
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c )
