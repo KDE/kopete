@@ -1,10 +1,9 @@
 /*
-	Kopete , The KDE Instant Messenger
+    Kopete , The KDE Instant Messenger
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-
-	Viva Chile Mierda!
-	Started at Wed Dec 26 03:12:10 CLST 2001, Santiago de Chile
+    Viva Chile Mierda!
+    Started at Wed Dec 26 03:12:10 CLST 2001, Santiago de Chile
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@kde.org", "http://www.kdedevelopers.net" );
-	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("Core developer"), "bodnar42@phalynx.dhs.org" );
+	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("Core developer"), "ryan@kde.org" );
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Core developer"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("Developer"), "remenic@linuxfromscratch.org");
 	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Core developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
@@ -54,12 +53,12 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Developer"), "dae@chez.com" );
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Winpopup plugin"), "gjw102@york.ac.uk" );
-    aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Core developer, Gadu plugin"), "zack@kde.org" );
+	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Core developer, Gadu plugin"), "zack@kde.org" );
 	aboutData.addAuthor ( "Carsten Pfeiffer", I18N_NOOP("Misc Bugfixes and Enhancelets"), "pfeiffer@kde.org" );
 
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Icon Author") );
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
-    aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine icq code") );
+	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine icq code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
 	aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM code") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
