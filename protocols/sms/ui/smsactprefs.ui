@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>smsActPrefsUI</class>
 <author>Richard Lärkäng</author>
 <widget class="QWidget">
@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>465</width>
+            <height>437</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -21,6 +21,9 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>Account Preferences - SMS</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -29,7 +32,7 @@
             <number>0</number>
         </property>
         <property name="spacing">
-            <number>6</number>
+            <number>0</number>
         </property>
         <widget class="QFrame">
             <property name="name">
@@ -67,70 +70,60 @@
                         <property name="title">
                             <string>Account Information</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>layout86</cstring>
+                                    <cstring>textLabel2</cstring>
                                 </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>textLabel2</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Account name:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>accountId</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>A unique name for this SMS account.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>A unique name for this SMS account.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>accountId</cstring>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>A unique name for this SMS account.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
+                                <property name="text">
+                                    <string>&amp;Account name:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>accountId</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>A unique name for this SMS account.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>A unique name for this SMS account.</string>
+                                </property>
                             </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>layout87</cstring>
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;SMS delivery service:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>serviceName</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The delivery service that you would like to use.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The delivery service that you would like to use.  Note that you will need to have this software installed prior to using this account.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="0" column="1">
+                                <property name="name">
+                                    <cstring>accountId</cstring>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>A unique name for this SMS account.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="1">
+                                <property name="name">
+                                    <cstring>layout35</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>textLabel1</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;SMS delivery service:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>serviceName</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The delivery service that you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The delivery service that you would like to use.  Note that you will need to have this software installed prior to using this account.</string>
-                                        </property>
-                                    </widget>
                                     <widget class="QComboBox">
                                         <property name="name">
                                             <cstring>serviceName</cstring>
@@ -166,30 +159,57 @@
                                     </widget>
                                 </hbox>
                             </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox22</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Information</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel12</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>To use SMS, you will need an account with a delivery service.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignTop</set>
+                                </property>
+                            </widget>
                         </vbox>
                     </widget>
-                    <widget class="KActiveLabel">
+                    <spacer>
                         <property name="name">
-                            <cstring>kActiveLabel8</cstring>
+                            <cstring>spacer25</cstring>
                         </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
                         </property>
-                        <property name="minimumSize">
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
                             <size>
-                                <width>600</width>
-                                <height>0</height>
+                                <width>20</width>
+                                <height>181</height>
                             </size>
                         </property>
-                        <property name="text">
-                            <string>&lt;i&gt;To use SMS, you will need an account with a delivery service.&lt;/i&gt;</string>
-                        </property>
-                    </widget>
+                    </spacer>
                 </vbox>
             </widget>
             <widget class="QWidget">
@@ -197,7 +217,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Connection</string>
+                    <string>A&amp;ccount Preferences</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -208,7 +228,7 @@
                             <cstring>groupBox62</cstring>
                         </property>
                         <property name="title">
-                            <string>Connection Preferences</string>
+                            <string>Messaging Preferences</string>
                         </property>
                         <vbox>
                             <property name="name">
@@ -289,23 +309,6 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer23</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                     <widget class="QLabel">
                                         <property name="name">
                                             <cstring>textLabel2_3</cstring>
@@ -386,6 +389,17 @@
                 </vbox>
             </widget>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
     </vbox>
 </widget>
 <connections>
@@ -403,19 +417,19 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget9</tabstop>
     <tabstop>accountId</tabstop>
     <tabstop>serviceName</tabstop>
     <tabstop>descButton</tabstop>
+    <tabstop>ifMessageTooLong</tabstop>
     <tabstop>subEnable</tabstop>
     <tabstop>subCode</tabstop>
-    <tabstop>kActiveLabel8</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kactivelabel.h</includehint>
     <includehint>krestrictedline.h</includehint>
 </includehints>
 </UI>

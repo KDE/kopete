@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>WPEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>463</width>
+            <height>387</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Edit WinPopup Account</string>
+        <string>Account Preferences - WinPopup</string>
     </property>
     <vbox>
         <property name="name">
@@ -23,7 +23,7 @@
             <number>0</number>
         </property>
         <property name="spacing">
-            <number>6</number>
+            <number>0</number>
         </property>
         <widget class="QTabWidget">
             <property name="name">
@@ -53,29 +53,18 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout1</cstring>
+                                    <cstring>layout40</cstring>
                                 </property>
-                                <grid>
+                                <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLineEdit" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>mHostName</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The host name you would like to use to send WinPopup messages as.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The host name you would like to use to send WinPopup messages as.  Note that this does not have to be the actual host name of the machine to send messages, but it does to receive them.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel" row="0" column="0">
+                                    <widget class="QLabel">
                                         <property name="name">
                                             <cstring>label1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Com&amp;puter host name:</string>
+                                            <string>&amp;Hostname:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>mHostName</cstring>
@@ -87,33 +76,17 @@
                                             <string>The host name you would like to use to send WinPopup messages as.  Note that this does not have to be the actual host name of the machine to send messages, but it does to receive them.</string>
                                         </property>
                                     </widget>
-                                </grid>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout8</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <spacer>
+                                    <widget class="QLineEdit">
                                         <property name="name">
-                                            <cstring>spacer2</cstring>
+                                            <cstring>mHostName</cstring>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The host name you would like to use to send WinPopup messages as.</string>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The host name you would like to use to send WinPopup messages as.  Note that this does not have to be the actual host name of the machine to send messages, but it does to receive them.</string>
                                         </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>411</width>
-                                                <height>23</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
+                                    </widget>
                                     <widget class="KPushButton">
                                         <property name="name">
                                             <cstring>doInstallSamba</cstring>
@@ -130,57 +103,6 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel13</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>600</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;To receive WinPopup messages sent from other machines, the host name above must be set to this machine's host name.&lt;/i&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Connection</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox52</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Connection Preferences</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
                             <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>mAutoConnect</cstring>
@@ -197,9 +119,41 @@
                             </widget>
                         </vbox>
                     </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox22</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Information</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel12</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>To receive WinPopup messages sent from other machines, the host name above must be set to this machine's host name.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignTop</set>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer29</cstring>
+                            <cstring>spacer30</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -210,12 +164,23 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>121</height>
+                                <height>220</height>
                             </size>
                         </property>
                     </spacer>
                 </vbox>
             </widget>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
         </widget>
     </vbox>
 </widget>
@@ -228,6 +193,7 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget10</tabstop>
     <tabstop>mHostName</tabstop>
     <tabstop>doInstallSamba</tabstop>
     <tabstop>mAutoConnect</tabstop>

@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>504</width>
+            <height>412</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Edit Yahoo Account</string>
+        <string>Account Preferences - Yahoo</string>
     </property>
     <vbox>
         <property name="name">
@@ -23,7 +23,7 @@
             <number>0</number>
         </property>
         <property name="spacing">
-            <number>6</number>
+            <number>0</number>
         </property>
         <widget class="QTabWidget">
             <property name="name">
@@ -64,7 +64,7 @@
                                             <cstring>label1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Yahoo user name:</string>
+                                            <string>Yahoo &amp;Username:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>mScreenName</cstring>
@@ -89,73 +89,6 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel14</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>600</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;To connect to the Yahoo network, you will need a Yahoo account.&lt;br&gt;&lt;br&gt;If you do not currently have a Yahoo account, you may register for one at the link below.&lt;/i&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
-                    </widget>
-                    <widget class="KActiveLabel">
-                        <property name="name">
-                            <cstring>kActiveLabel10</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>&lt;a href="http://edit.yahoo.com/config/eval_register?new=1"&gt;Register for a Yahoo account&lt;/a&gt;</string>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Connection</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox54</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Connection Preferences</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
                             <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>mAutoConnect</cstring>
@@ -172,9 +105,72 @@
                             </widget>
                         </vbox>
                     </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox5</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="title">
+                            <string>Registration</string>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel6</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>0</height>
+                                    </size>
+                                </property>
+                                <property name="text">
+                                    <string>To connect to the Yahoo network, you will need a Yahoo account.&lt;br&gt;&lt;br&gt;If you do not currently have a Yahoo account, please click the button to create one.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>buttonRegister</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Re&amp;gister New Account</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Register a new account on this network.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Register a new account on this network.</string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer31</cstring>
+                            <cstring>spacer6</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -185,21 +181,31 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>71</height>
+                                <height>81</height>
                             </size>
                         </property>
                     </spacer>
                 </vbox>
             </widget>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
     </vbox>
 </widget>
 <tabstops>
+    <tabstop>tabWidget11</tabstop>
     <tabstop>mScreenName</tabstop>
     <tabstop>mAutoConnect</tabstop>
+    <tabstop>buttonRegister</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kactivelabel.h</includehint>
-</includehints>
 </UI>

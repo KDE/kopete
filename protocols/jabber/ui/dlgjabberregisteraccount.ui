@@ -97,9 +97,6 @@
                             <property name="text">
                                 <string>C&amp;hoose...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+H</string>
-                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -168,9 +165,6 @@
             </property>
             <property name="text">
                 <string>Use protocol encr&amp;yption (SSL)</string>
-            </property>
-            <property name="accel">
-                <string>Alt+Y</string>
             </property>
             <property name="checked">
                 <bool>true</bool>

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>560</width>
-            <height>438</height>
+            <height>473</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -20,6 +20,9 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>Account Preferences - AIM</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -28,7 +31,7 @@
             <number>0</number>
         </property>
         <property name="spacing">
-            <number>6</number>
+            <number>0</number>
         </property>
         <widget class="QTabWidget">
             <property name="name">
@@ -276,64 +279,31 @@
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout14</cstring>
+                                    <cstring>layout58</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLayoutWidget">
+                                    <widget class="QLabel">
                                         <property name="name">
-                                            <cstring>layout13</cstring>
+                                            <cstring>lblServer</cstring>
                                         </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <property name="spacing">
-                                                <number>3</number>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblServer</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Ser&amp;ver /</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>edtServerAddress</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostmask of the AIM server you wish to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblPort</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Po&amp;rt:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>sbxServerPort</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The port on the AIM server that you would like to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The port on the AIM server that you would like to connect to.  Normally this is 5190.</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Ser&amp;ver:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>edtServerAddress</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostmask of the AIM server you wish to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
+                                        </property>
                                     </widget>
                                     <widget class="QLineEdit">
                                         <property name="name">
@@ -350,6 +320,26 @@
                                         </property>
                                         <property name="whatsThis" stdset="0">
                                             <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Po&amp;rt:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>sbxServerPort</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the AIM server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the AIM server that you would like to connect to.  Normally this is 5190.</string>
                                         </property>
                                     </widget>
                                     <widget class="QSpinBox">
@@ -451,9 +441,13 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget6</tabstop>
     <tabstop>edtAccountId</tabstop>
     <tabstop>mSavePassword</tabstop>
     <tabstop>edtPassword</tabstop>
+    <tabstop>mAutoLogon</tabstop>
+    <tabstop>buttonRegister</tabstop>
+    <tabstop>optionOverrideServer</tabstop>
     <tabstop>edtServerAddress</tabstop>
     <tabstop>sbxServerPort</tabstop>
 </tabstops>

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>599</width>
-            <height>438</height>
+            <height>432</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -21,13 +21,16 @@
         </sizepolicy>
     </property>
     <property name="caption">
-        <string>Edit Account Settings</string>
+        <string>Account Preferences - Gadu-Gadu</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
             <number>0</number>
         </property>
         <widget class="QTabWidget">
@@ -224,7 +227,8 @@
                                     </size>
                                 </property>
                                 <property name="text">
-                                    <string>To connect to the Gadu-Gadu network, you will need a Gadu-Gadu account.  If you do not yet have an account, please click the button to create one.</string>
+                                    <string>To connect to the Gadu-Gadu network, you will need a Gadu-Gadu account.&lt;br&gt;&lt;br&gt;
+If you do not currently have an account, please click the button to create one.</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignVCenter</set>
@@ -262,7 +266,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>110</height>
+                                <height>80</height>
                             </size>
                         </property>
                     </spacer>
@@ -689,11 +693,12 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget4</tabstop>
     <tabstop>loginEdit_</tabstop>
     <tabstop>rememberCheck_</tabstop>
     <tabstop>passwordEdit_</tabstop>
+    <tabstop>autoLoginCheck_</tabstop>
     <tabstop>registerNew</tabstop>
-    <tabstop>tabWidget4</tabstop>
     <tabstop>cacheServersCheck__</tabstop>
     <tabstop>dccCheck_</tabstop>
     <tabstop>useTls_</tabstop>

@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>501</width>
-            <height>425</height>
+            <width>499</width>
+            <height>404</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Account Preferences - ICQ</string>
     </property>
     <vbox>
         <property name="name">
@@ -20,7 +23,7 @@
             <number>0</number>
         </property>
         <property name="spacing">
-            <number>6</number>
+            <number>0</number>
         </property>
         <widget class="QTabWidget">
             <property name="name">
@@ -502,11 +505,12 @@ If you do not currently have an ICQ account, please click the button to create o
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget7</tabstop>
     <tabstop>edtAccountId</tabstop>
     <tabstop>chkSavePassword</tabstop>
     <tabstop>edtPassword</tabstop>
+    <tabstop>chkAutoLogin</tabstop>
     <tabstop>buttonRegister</tabstop>
-    <tabstop>tabWidget7</tabstop>
     <tabstop>optionOverrideServer</tabstop>
     <tabstop>edtServerAddress</tabstop>
     <tabstop>edtServerPort</tabstop>
