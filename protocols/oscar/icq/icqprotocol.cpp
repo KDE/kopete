@@ -75,80 +75,80 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	 */
 
 	KSimpleConfig file(url.path(), true);
+
 	if (file.hasGroup("ICQ User"))
-	{
-		ICQProtocol *proto = ICQProtocol::protocol();
-
 		file.setGroup("ICQ User");
+	else if (file.hasGroup("ICQ Message User"))
+		file.setGroup("ICQ Message User");
+	else
+		return;
 
-		QString uin = file.readEntry("UIN");
-		if (uin.isEmpty())
+	ICQProtocol *proto = ICQProtocol::protocol();
+
+	QString uin = file.readEntry("UIN");
+	if (uin.isEmpty())
+		return;
+
+	QString nick = file.readEntry("NickName");
+	QString first = file.readEntry("FirstName");
+	QString last = file.readEntry("LastName");
+	QString email = file.readEntry("Email");
+
+	KopeteAccount *account = 0;
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(proto);
+	// do not show chooser if we only have one account to "choose" from
+	if (accounts.count() == 1)
+	{
+		QDictIterator<KopeteAccount> it(accounts);
+		account = it.current();
+		QString nickuin = nick.isEmpty() ?
+			i18n("'%1'").arg(uin) :
+			i18n("'%1' (%2)").arg(nick, uin);
+
+		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+			i18n("Do you want to add %1 to your contactlist?").arg(nickuin))
+			!= KMessageBox::Yes)
+		{
+			kdDebug(14200) << k_funcinfo << "Cancelled" << endl;
 			return;
-
-		QString nick = file.readEntry("NickName");
-		QString first = file.readEntry("FirstName");
-		QString last = file.readEntry("LastName");
-		QString email = file.readEntry("Email");
-
-		KopeteAccount *account = 0;
-		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(proto);
-		// do not show chooser if we only have one account to "choose" from
-		if (accounts.count() == 1)
-		{
-			QDictIterator<KopeteAccount> it(accounts);
-			account = it.current();
-			QString nickuin = nick.isEmpty() ?
-				i18n("'%1'").arg(uin) :
-				i18n("'%1' (%2)").arg(nick, uin);
-
-			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-				i18n("Do you want to add %1 to your contactlist?").arg(nickuin))
-				!= KMessageBox::Yes)
-			{
-				kdDebug(14200) << k_funcinfo << "Cancelled" << endl;
-				return;
-			}
 		}
-		else
+	}
+	else
+	{
+		KDialogBase *chooser = new KDialogBase(0, "chooser", true,
+			i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
+			KDialogBase::Ok, false);
+		AccountSelector *accSelector = new AccountSelector(proto, chooser,
+			"accSelector");
+		chooser->setMainWidget(accSelector);
+
+		int ret = chooser->exec();
+		KopeteAccount *account = accSelector->selectedItem();
+
+		delete chooser;
+		if (ret == QDialog::Rejected || account == 0)
 		{
-			KDialogBase *chooser = new KDialogBase(0, "chooser", true,
-				i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
-				KDialogBase::Ok, false);
-			AccountSelector *accSelector = new AccountSelector(proto, chooser,
-				"accSelector");
-			chooser->setMainWidget(accSelector);
-
-			int ret = chooser->exec();
-			KopeteAccount *account = accSelector->selectedItem();
-
-			delete chooser;
-			if (ret == QDialog::Rejected || account == 0)
-			{
-				kdDebug(14200) << k_funcinfo << "Cancelled" << endl;
-				return;
-			}
+			kdDebug(14200) << k_funcinfo << "Cancelled" << endl;
+			return;
 		}
+	}
 
 
-		kdDebug(14200) << k_funcinfo <<
-			"Adding Contact; uin = " << uin << ", nick = '" << nick <<
-			"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
-		if (account->addContact(uin, nick, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
-		{
-			KopeteContact *contact = account->contacts()[uin];
-
-			if (!first.isEmpty())
-				contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
-
-			if (!last.isEmpty())
-				contact->setProperty(Kopete::Global::Properties::self()->lastName(), last);
-
-			/*
-			// TODO: email prop in icq missing so far
-			if (!email.isEmpty())
-				contact->setProperty(Kopete::Global::Properties::self()->emailAddress(), email);
-			*/
-		}
+	kdDebug(14200) << k_funcinfo <<
+		"Adding Contact; uin = " << uin << ", nick = '" << nick <<
+		"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
+	if (account->addContact(uin, nick, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
+	{
+		KopeteContact *contact = account->contacts()[uin];
+		if (!first.isEmpty())
+			contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
+		if (!last.isEmpty())
+			contact->setProperty(Kopete::Global::Properties::self()->lastName(), last);
+		/*
+		// TODO: email prop in icq missing so far
+		if (!email.isEmpty())
+			contact->setProperty(Kopete::Global::Properties::self()->emailAddress(), email);
+		*/
 	}
 }
 
