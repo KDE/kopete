@@ -634,10 +634,8 @@ void MSNContact::slotSendFile(QString fileName  )
 				protocol() );
 		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
 		if( !manager )
-		{
-			manager = new MSNMessageManager( protocol()->myself(),
-				chatmembers );
-		}
+			manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
+
 		manager->sendFile( fileName );
 	}
 }

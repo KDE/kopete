@@ -1,19 +1,19 @@
-/***************************************************************************
-                          msnmessagemanager.cpp  -  description
-                             -------------------
-    begin                : dim oct 20 2002
-    copyright            : (C) 2002 by Olivier Goffart
-    email                : kopete-devel@kde.org
- ***************************************************************************/
+/*
+    msnmessagemanager.cpp - MSN Message Manager
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Olivier Goffart        <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <qtimer.h>
 
@@ -34,10 +34,10 @@
 #include "msnprotocol.h"
 #include "msnswitchboardsocket.h"
 
-MSNMessageManager::MSNMessageManager( const KopeteContact *user,
+MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
 	KopeteContactPtrList others, const char *name )
-: KopeteMessageManager( user, others, MSNProtocol::protocol(), 0,
-	ChatWindow, MSNProtocol::protocol(), name )
+: KopeteMessageManager( user, others, protocol, 0,
+	ChatWindow, protocol, name )
 {
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
@@ -87,7 +87,7 @@ void MSNMessageManager::createChat( const QString &handle,
 	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket();
-	m_chatService->setHandle( MSNProtocol::protocol()->myself()->contactId() );
+	m_chatService->setHandle( protocol()->myself()->contactId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
 
@@ -108,23 +108,22 @@ void MSNMessageManager::createChat( const QString &handle,
 
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
 {
-	MSNContact *c=MSNProtocol::protocol()->contact(handle);
+	MSNContact *c = static_cast<MSNContact*>( protocol()->contacts()[ handle ] );
 	if( add && !c )
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( MSNProtocol::protocol()->pluginId(), QString::null, handle );
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( protocol()->pluginId(), QString::null, handle );
 		if(m)
 		{
-			KopeteContact *kc=m->findContact( MSNProtocol::protocol()->pluginId(), QString::null, handle );
+			KopeteContact *kc=m->findContact( protocol()->pluginId(), QString::null, handle );
 			c=static_cast<MSNContact*>(kc);
 			kdDebug() << "MSNMessageManager::slotUpdateChatMember : WARNING - KopeteContact was found, but not on the protocl"  << endl;
-			//MSNProtocol::protocol()->contacts().insert( handle, c );
 		}
 		else
 		{
 			m=new KopeteMetaContact();
 			m->setTemporary(true);
 
-			c = new MSNContact( MSNProtocol::protocol(), handle, publicName, m );
+			c = new MSNContact( protocol(), handle, publicName, m );
 
 			m->addContact( c );
 			KopeteContactList::contactList()->addMetaContact(m);
@@ -163,7 +162,7 @@ void MSNMessageManager::slotSwitchBoardClosed()
 
 void MSNMessageManager::slotUserTypingMsg( const QString &handle )
 {
-	MSNContact *c=MSNProtocol::protocol()->contact(handle.lower());
+	MSNContact *c = static_cast<MSNContact*>( protocol()->contacts()[ handle.lower() ] );
 	if(!c)
 	{
 		kdDebug() << "MSNMessageManager::slotUserTypingMsg : WARNING - KopeteContact not found"  << endl;
@@ -193,7 +192,7 @@ void MSNMessageManager::slotTyping(bool t)
 		}
 		else
 		{
-			MSNProtocol::protocol()->slotStartChatSession( QPtrList<KopeteContact>(members()).first()->contactId() );
+			static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( QPtrList<KopeteContact>( members() ).first()->contactId() );
 		}
 	}
 }
@@ -220,7 +219,7 @@ void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessa
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
-		MSNProtocol::protocol()->slotStartChatSession( message.to().first()->contactId() );
+		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
 		//m_msgQueued=new KopeteMessage(message);
 	}
@@ -237,8 +236,7 @@ KActionCollection * MSNMessageManager::chatActions()
 	m_actions->insert( actionClose );
 
 	KListAction *actionInvite=new KListAction(i18n("&Invite"),"",0, m_actions ,"actionInvite");
-	QStringList sl = KopeteContactList::contactList()->onlineContacts(
-		MSNProtocol::protocol()->pluginId() );
+	QStringList sl = KopeteContactList::contactList()->onlineContacts( protocol()->pluginId() );
 
 	// FIXME: Remove the currently active members from this list again!
 	sl.append( otherString=i18n("Other...") );
@@ -274,10 +272,10 @@ void MSNMessageManager::slotInviteContact(const QString &_handle)
 			return;
 	}
 	handle=handle.lower();
-	if(m_chatService)
+	if( m_chatService )
 		m_chatService->slotInviteContact(handle);
 	else
-		MSNProtocol::protocol()->slotStartChatSession( handle );
+		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( handle );
 }
 
 void MSNMessageManager::sendMessageQueue()
@@ -339,7 +337,7 @@ void MSNMessageManager::slotTimer()
 
 void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg)
 {
-	MSNContact *c=MSNProtocol::protocol()->contact(handle);
+	MSNContact *c = static_cast<MSNContact*>( protocol()->contacts()[ handle ] );
 	if(!c)
 		return;
 
@@ -436,7 +434,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			QString invitname = rx.cap(1);
 
 			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
-			appendMessage(KopeteMessage(MSNProtocol::protocol()->contact(handle) , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
+			appendMessage( KopeteMessage( protocol()->contacts()[ handle ] , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
 		}
 	}
 }

@@ -1231,8 +1231,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 		if( !manager )
 		{
-			manager = new MSNMessageManager( m_myself, chatmembers,
-				QString( "msn_logs/" + handle + ".log" ) );
+			manager = new MSNMessageManager( this, m_myself, chatmembers );
 		}
 		manager->createChat( handle, address, auth, ID );
 
@@ -1260,7 +1259,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
 		if(!manager)
 		{
-			manager=new MSNMessageManager(m_myself,chatmembers, QString( "msn_logs/" + handle + ".log" ));
+			manager = new MSNMessageManager( this, m_myself, chatmembers );
 		}
 
 		if(manager->service())
