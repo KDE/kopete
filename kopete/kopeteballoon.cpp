@@ -154,12 +154,7 @@ void KopeteBalloon::updateMask()
 
 	// get screen-geometry for screen our anchor is on
 	// (geometry can differ from screen to screen!
-	#if KDE_IS_VERSION( 3, 1, 90 )
 		QRect deskRect = KGlobalSettings::desktopGeometry(mAnchor);
-	#else
-		QDesktopWidget* tmp = QApplication::desktop();
-		QRect deskRect = tmp->screenGeometry(tmp->screenNumber(mAnchor));
-	#endif
 
 	bool bottom = (mAnchor.y() + height()) > ((deskRect.y() + deskRect.height()-48));
 	bool right = (mAnchor.x() + width()) > ((deskRect.x() + deskRect.width()-48));

@@ -371,9 +371,7 @@ void KopeteChatWindow::initActions(void)
 		this, SLOT( slotViewMembersRight() ), coll, "options_membersright" );
 	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
 		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
-#if KDE_IS_VERSION(3,2,90)
 	toggleMembers->setCheckedState(i18n("Hide"));
-#endif
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
@@ -384,12 +382,7 @@ void KopeteChatWindow::initActions(void)
 	connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
 	// add configure key bindings menu item
-#if KDE_IS_VERSION(3, 2, 90)
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
-#else  // when we will drop the KDE 3.2 compatibility, do not forget to remove  slotConfKeys
-	KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
-	#endif
-
 
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	KopeteStdAction::preferences( coll , "settings_prefs" );
@@ -419,9 +412,7 @@ void KopeteChatWindow::initActions(void)
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( 0L );
 
-#if !KDE_IS_VERSION( 3, 1, 90 )
 	mStatusbarAction->setChecked(!statusBar()->isHidden());
-#endif
 }
 
 const QString KopeteChatWindow::fileContents( const QString &path ) const

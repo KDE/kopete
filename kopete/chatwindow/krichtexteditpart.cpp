@@ -119,9 +119,7 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 {
 	enableRichText = new KToggleAction(i18n("Enable &Rich Text"), "pencil", 0,
 				ac, "enableRichText" );
-#if KDE_IS_VERSION(3,2,90)
 	enableRichText->setCheckedState(i18n("Disable &Rich Text"));
-#endif
 	connect( enableRichText, SIGNAL( toggled(bool) ),
 			this, SLOT( slotSetRichTextEnabled(bool) ) );
 
