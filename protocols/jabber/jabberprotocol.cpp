@@ -51,8 +51,6 @@
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
 #include "jabbercontact.h"
-//#include "jabberprefs.h"
-#include "jabberdefprefs.h"
 #include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
@@ -107,18 +105,12 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 
 	protocolInstance = this;
 
-	preferences = new JabberDefaultPreferences ("jabber_protocol", this);
-
-	QObject::connect (preferences, SIGNAL (saved ()), this, SLOT (slotSettingsChanged ()));
-
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config ()->setGroup ("Jabber");
 
 	// setup actions
 	initActions ();
 
-	// read remaining settings from configuration file
-	slotSettingsChanged ();
 	addAddressBookField ("messaging/xmpp", KopetePlugin::MakeIndexField);
 }
 
@@ -214,26 +206,6 @@ void JabberProtocol::setPresenceAll (const KopeteOnlineStatus & status, const QS
 	 */
 }
 
-
-void JabberProtocol::slotSettingsChanged ()
-{
-	KGlobal::config ()->setGroup ("Jabber");
-
-	QString userId = KGlobal::config ()->readEntry ("UserID", "");
-	QString server = KGlobal::config ()->readEntry ("Server", "jabber.org");
-
-	// set the title according to the current account
-	//actionStatusMenu->popupMenu()->changeTitle( menuTitleId , userId + "@" + server );
-
-}
-
-//void JabberProtocol::setAvailableAll(void) {
- //   setPresenceAll(JabberOnline);
-//}
-
-//KopeteContact *JabberProtocol::myself() const {
- //   return myContact;
-//}
 
 void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )

@@ -26,7 +26,6 @@
 #include "kopeteonlinestatus.h"
 #include "ui/dlgjabberstatus.h"
 #include "ui/dlgjabbersendraw.h"
-#include "jabberprefs.h"
 #include "jid.h"
 #include "client.h"
 #include "types.h"

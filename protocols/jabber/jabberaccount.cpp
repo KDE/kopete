@@ -47,7 +47,6 @@
 #include "kopeteaccount.h"
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
-#include "jabberprefs.h"
 #include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"

@@ -35,7 +35,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 #include "addcontactpage.h"
-#include "jabberdefprefs.h"
 #include "jabbermap.h"
 
 #define JABBER_DEBUG_GLOBAL		14130
@@ -44,7 +43,6 @@
 class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
-class JabberDefaultPreferences;
 
 using namespace Jabber;
 
@@ -172,9 +170,6 @@ class JabberProtocol:public KopeteProtocol
 	//void sendPresenceToNode(const KopeteOnlineStatus & status,
 //              const QString & reason);
 
-  signals:
-	//void settingsChanged();
-
   private slots:
 	/*
 	 * Slot to connect to the server
@@ -289,11 +284,6 @@ class JabberProtocol:public KopeteProtocol
 	//void slotContactDeleted(const RosterItem &);
 
 	/*
-	 * Slot to update the configuration data
-	 */
-	void slotSettingsChanged (void);
-
-	/*
 	 * Slot for notifying the availability of another resource for a contact
 	 * (called from Psi backend)
 	 */
@@ -338,8 +328,6 @@ class JabberProtocol:public KopeteProtocol
 	static KopeteOnlineStatus JabberDND;
 	static KopeteOnlineStatus JabberOffline;
 	static KopeteOnlineStatus JabberInvisible;
-
-	JabberDefaultPreferences *preferences;
 
 	/*
 	 * Initial presence to set after connecting
