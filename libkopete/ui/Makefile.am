@@ -1,21 +1,6 @@
-#SUBDIRS =
-noinst_LIBRARIES = libui.a
-CXXFLAGS = -g -O2 -Wall
-METASOURCES = AUTO
-libui_a_METASOURCES = AUTO
-# set the include path for X, qt and KDE
-INCLUDES = $(all_includes)
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libui_a_SOURCES = \
-		configmodule.cpp \
-		preferencesdialog.cpp \
-		aboutplugins.cpp \
-		kopetewindow.cpp
-EXTRA_DIST = \
-		preferencesdialog.cpp \
-		preferencesdialog.h \
-		configmodule.cpp \
-		aboutplugins.cpp \
-		kopetewindow.cpp
-
-
+INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
+lib_LTLIBRARIES = libui.la
+libui_la_SOURCES = aboutplugins.cpp configmodule.cpp kopetewindow.cpp preferencesdialog.cpp
+libui_la_METASOURCES = AUTO
+libui_la_LDFLAGS     =  -lDCOP
+libui_la_LIBADD      =  

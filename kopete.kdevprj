@@ -183,6 +183,9 @@ Translations=*.ts,*.po,
 User Interface=*.ui,*.kdevdlg,*.rc,
 groups=Headers,Sources,GNU,Translations,User Interface,Desktop,Others
 
+[Makefile.am]
+sub_dirs=kopete
+
 [admin/ChangeLog]
 dist=true
 install=false
@@ -519,9 +522,21 @@ sub_dirs=icq,msn,
 type=normal
 
 [kopete/protocols/icq/Makefile.am]
-files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,
+files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h
 sub_dirs=kxengine,
-type=normal
+type=static_library
+
+[kopete/protocols/icq/icqpreferences.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/icq/icqpreferences.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/protocols/icq/icqprotocol.cpp]
 dist=true

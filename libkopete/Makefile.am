@@ -6,4 +6,4 @@ lib_LTLIBRARIES = libkopete.la
 libkopete_la_SOURCES = contactlist.cpp kopete.cpp improtocol.cpp imcontact.cpp pluginmanager.cpp
 libkopete_la_METASOURCES = AUTO
 libkopete_la_LDFLAGS     =  -lDCOP
-libkopete_la_LIBADD      =  $(top_srcdir)/kopete/library/ui/libui.a
+libkopete_la_LIBADD      =  $(top_srcdir)/kopete/library/ui/libui.la
