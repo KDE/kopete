@@ -67,7 +67,6 @@ bool GaduPublicDir::validateData()
 
 void GaduPublicDir::slotSearchResult( const searchResult &result )
 {
-    QListViewItem *element;
     QListView *list=mMainWidget->listFound;    
     int i;
     
@@ -83,7 +82,7 @@ void GaduPublicDir::slotSearchResult( const searchResult &result )
     enableButton(User1, true);
     QPtrListIterator< resLine > r (result);
     
-    for ( i = result.count()  ; i-- ; i ){
+    for ( i = result.count()  ; i-- ; i!=0 ){
         kdDebug(14100) << "adding" << (*r)->uin << endl;
         new QListViewItem( list, 
 			    QString::number((*r)->status),
