@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>NowListeningPrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,273 +8,259 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>390</width>
-            <height>296</height>
+            <width>510</width>
+            <height>362</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>Now Listening</string>
     </property>
-    <widget class="QLayoutWidget">
+    <vbox>
         <property name="name">
-            <cstring>layout25</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>370</width>
-                <height>276</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <vbox>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>lookForNewMediaLabel</cstring>
             </property>
-            <widget class="QLabel">
+            <property name="text">
+                <string>&lt;b&gt;Look for new media&lt;/b&gt;</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>lookForNewMediaHLine</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>m_freqLayout</cstring>
+            </property>
+            <hbox>
                 <property name="name">
-                    <cstring>textLabel8</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="text">
-                    <string>&lt;b&gt;Look for new media&lt;/b&gt;</string>
+                <property name="margin">
+                    <number>0</number>
                 </property>
-            </widget>
-            <widget class="QFrame">
-                <property name="name">
-                    <cstring>frame4_2</cstring>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout20</cstring>
-                </property>
-                <hbox>
+                <widget class="QLabel">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>m_freqLabel</cstring>
                     </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Chec&amp;k every: </string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>m_freq</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox">
-                        <property name="name">
-                            <cstring>m_freq</cstring>
-                        </property>
-                        <property name="buttonSymbols">
-                            <enum>UpDownArrows</enum>
-                        </property>
-                        <property name="maxValue">
-                            <number>3600</number>
-                        </property>
-                        <property name="minValue">
-                            <number>5</number>
-                        </property>
-                        <property name="lineStep">
-                            <number>5</number>
-                        </property>
-                        <property name="value">
-                            <number>180</number>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel6</cstring>
-                        </property>
-                        <property name="text">
-                            <string>seconds</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer6</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>91</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </hbox>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel8_2</cstring>
-                </property>
-                <property name="text">
-                    <string>&lt;b&gt;Advertise new media to buddies&lt;/b&gt;</string>
-                </property>
-            </widget>
-            <widget class="QFrame">
-                <property name="name">
-                    <cstring>frame4</cstring>
-                </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout22</cstring>
-                </property>
-                <vbox>
+                    <property name="text">
+                        <string>Chec&amp;k every: </string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_freq</cstring>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>m_freq</cstring>
                     </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout12</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Use this message when advertising:</string>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer7</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>159</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </hbox>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel7</cstring>
-                        </property>
-                        <property name="text">
-                            <string>%track, %artist, %album, %player will be substituted if known.
+                    <property name="suffix">
+                        <string> seconds</string>
+                    </property>
+                    <property name="buttonSymbols">
+                        <enum>UpDownArrows</enum>
+                    </property>
+                    <property name="maxValue">
+                        <number>3600</number>
+                    </property>
+                    <property name="minValue">
+                        <number>5</number>
+                    </property>
+                    <property name="lineStep">
+                        <number>5</number>
+                    </property>
+                    <property name="value">
+                        <number>180</number>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>m_freqSpacer</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>71</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>lookForNewMediaSpacer</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>1</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>advertiseNewMediaToBuddiesLabel</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;b&gt;Advertise new media to buddies&lt;/b&gt;</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>advertiseNewMediaToBuddiesHLine</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>useThisMessageLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Use this message when advertising:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>helperLabel</cstring>
+            </property>
+            <property name="text">
+                <string>%track, %artist, %album, %player will be substituted if known.
 Expressions in brackets depend on a substitution being made.</string>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout13</cstring>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_2_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;For each track: </string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>m_perTrack</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="0" column="1">
-                                <property name="name">
-                                    <cstring>m_header</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Now Listening To: </string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Start with: </string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>m_header</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>m_perTrack</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>%track (by %artist)(on %album)</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="2" column="1">
-                                <property name="name">
-                                    <cstring>m_conjunction</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>, and </string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_2_2_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Co&amp;njunction (if &gt;1 track): </string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>m_conjunction</cstring>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                </vbox>
-            </widget>
-            <spacer>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout9</cstring>
+            </property>
+            <grid>
                 <property name="name">
-                    <cstring>spacer8</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
+                <property name="margin">
+                    <number>0</number>
                 </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>31</height>
-                    </size>
-                </property>
-            </spacer>
-        </vbox>
-    </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>m_headerLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Start with: </string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_header</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>m_header</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Now Listening To: </string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_perTrack</cstring>
+                    </property>
+                    <property name="text">
+                        <string>%track (by %artist)(on %album)</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>m_conjunctionLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Co&amp;njunction (if &gt;1 track): </string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_conjunction</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_conjunction</cstring>
+                    </property>
+                    <property name="text">
+                        <string>, and </string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>m_perTrackLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;For each track: </string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_perTrack</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>nowListeningSpacer</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>18</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
