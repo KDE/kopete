@@ -113,24 +113,32 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 205:
 	{
 		QString msg = i18n( "Invalid user! \n"
-			"This MSN user does not exist. Please check the MSN ID." );
+			"This MSN user does not exist: %1 \n Please check the MSN ID." ).arg(m_tmpLastHandle);
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
 	case 209:
 	{
-		/*QString msg = i18n( "You are trying to change the display name of an user who has not "
-			"confirmed his or her e-mail address.\n"
-			"The contact was not renamed on the server." );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );*/
+		if(m_tmpLastHandle==msnId())
+		{
+			QString msg = i18n( "Your nickname has not been changed, maybe it contains incorrect words or it was too long" );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		}
+		/*else
+		 {
+			QString msg = i18n( "You are trying to change the display name of an user who has not "
+				"confirmed his or her e-mail address.\n"
+				"The contact was not renamed on the server." );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		}*/
 		break;
 	}
 	case 215:
 	{
-		QString msg = i18n( "This MSN user already exists in this group!\n"
+		QString msg = i18n( "The user %1 already exists in this group!\n"
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
-			"console (in gzipped format, as it is probably a lot of output!)" );
+			"console (in gzipped format, as it is probably a lot of output!)" ).arg(m_tmpLastHandle);
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
@@ -174,7 +182,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			if(serial.isEmpty())
 				serial= "0";
 			sendCommand( "SYN", serial );
-			
+
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
 			QString publicName = unescape( data.section( ' ', 2, 2 ) );
@@ -395,7 +403,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 			if(mailCount != 0)
 				answer = KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
- 
+
 			if(answer==KMessageBox::Yes)
 				slotOpenInbox();
 		}
@@ -508,6 +516,7 @@ void MSNNotifySocket::removeGroup( uint group )
 
 void MSNNotifySocket::addContact( const QString &handle, const QString& publicName, uint group, int list )
 {
+	m_tmpLastHandle=handle;
 	QString args;
 	switch( list )
 	{
@@ -530,6 +539,7 @@ void MSNNotifySocket::addContact( const QString &handle, const QString& publicNa
 
 void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list )
 {
+	m_tmpLastHandle=handle;
 	QString args;
 	switch( list )
 	{
@@ -562,8 +572,12 @@ void MSNNotifySocket::setStatus( const KopeteOnlineStatus &status )
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
+	m_tmpLastHandle=handle;
 	if( handle.isNull() )
+	{
 		sendCommand( "REA", msnId() + " " + escape ( publicName ) );
+		m_tmpLastHandle=msnId();
+	}
 	else
 		sendCommand( "REA", handle + " " + escape ( publicName ) );
 }
@@ -619,7 +633,7 @@ void MSNNotifySocket::slotSendKeepAlive()
 {
 	// Send a dummy command to fake activity. This makes sure MSN doesn't
 	// disconnect you when the notify socket is idle.
-	sendCommand( "PNG" , QString::null , false ); 
+	sendCommand( "PNG" , QString::null , false );
 }
 
 void MSNNotifySocket::slotResetKeepAlive()

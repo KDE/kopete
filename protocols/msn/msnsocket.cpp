@@ -348,19 +348,21 @@ void MSNSocket::parseLine( const QString &str )
 		parseCommand( cmd, id, data );
 }
 
-void MSNSocket::handleError( uint code, uint id )
+void MSNSocket::handleError( uint code, uint /*id*/ )
 {
 
-	QString msg;	
+	QString msg;
 
 	switch (code)
 	{
+/*		// We cant show message for error we don't know what they are or not related to the correct socket
+		//  Theses following messages are not so instructive
 	case 205:
 		msg = i18n ( "An invalid username has been specified. \n"
 			    "Please correct it, and try to reconnect.\n" );
 		break;
 	case 201:
-		msg = i18n ( "Fully Qualified domain name missing. \n" ); 
+		msg = i18n ( "Fully Qualified domain name missing. \n" );
 		break;
 	case 207:
 		msg = i18n ( "You are already logged in!\n" );
@@ -385,37 +387,33 @@ void MSNSocket::handleError( uint code, uint id )
 		break;
 	case 302:
 		msg = i18n ( "You are not logged in.\n" );
-		break;
+		break;*/
 	case 500:
+		disconnect();
 		msg = i18n ( "An internal server error occured. Please try again later.\n " );
 		break;
 	case 600:
+		disconnect();
 		msg = i18n ( "The server is busy. Please try again later.\n " );
-                break;
+		break;
 	case 601:
-                msg = i18n ( "The server is not available for the moment. Please try again later.\n " );
-                break;	
-	case 911:
-                msg = i18n ( "Authentication failed.\n " );
-                break;	
-	case 913:
-                msg = i18n ( "You can't do that when you're offline.\n"
-			     "Please connect, and try again.\n" );
+		disconnect();
+		msg = i18n ( "The server is not available for the moment. Please try again later.\n " );
 		break;
 	default:
-		msg = "";
+		//FIXME: if the error cause a disconnection, it will crash, but we can't disconnect everytimes
+		msg = i18n( "Unhandled MSN error code %1 \n"
+			"Please fill a bug report with a detailed discription and if possible the last console debug output. \n"
+			"See http://www.hypothetic.org/docs/msn/basics.php for a description of all error codes." ).arg( code );
 		break;
-
 	}
 
 	if (!msg.isEmpty())
 	{
 		KMessageBox::error(0, msg, i18n( "MSN Plugin - Kopete" ) );
 	}
-	
+
 	return;
-	
-	
 }
 
 int MSNSocket::sendCommand( const QString &cmd, const QString &args,

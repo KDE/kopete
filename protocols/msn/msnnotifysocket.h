@@ -137,6 +137,9 @@ private:
 	MSNDispatchSocket *m_dispatchSocket;
 	bool dispatchOK;
 
+	//know the last handle used
+	QString m_tmpLastHandle;
+
 	//for hotmail inbox opening
 	bool m_isHotmailAccount;
 	QString m_MSPAuth;
@@ -145,6 +148,7 @@ private:
 	QString m_hotmailRequest;
 
 	QTimer *m_keepaliveTimer;
+
 };
 
 #endif
