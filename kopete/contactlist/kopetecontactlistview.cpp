@@ -45,11 +45,7 @@
 #include <kabc/vcardconverter.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
 
 #include "addcontactwizard.h"
 #include "addcontactpage.h"
@@ -658,11 +654,8 @@ KopeteGroupViewItem *KopeteContactListView::getGroup( KopeteGroup *Kgroup , bool
 void KopeteContactListView::addGroup()
 {
 	QString groupName =
-#if KDE_IS_VERSION( 3, 1, 90 )
 		KInputDialog::getText( i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
-#else
-		KLineEditDlg::getText( i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
-#endif
+
 
 	if ( !groupName.isEmpty() )
 		addGroup( groupName );
@@ -759,11 +752,8 @@ void KopeteContactListView::slotContextMenu( KListView * /* listview */, QListVi
 			if ( popup )
 			{
 				QString title = i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
-#if QT_VERSION < 0x030200
-					arg( metaLVI->metaContact()->displayName() ).arg( metaLVI->metaContact()->statusString() );
-#else
 					arg( metaLVI->metaContact()->displayName() , metaLVI->metaContact()->statusString() );
-#endif
+
 				if ( title.length() > 43 )
 					title = title.left( 40 ) + QString::fromLatin1( "..." );
 
@@ -786,11 +776,8 @@ void KopeteContactListView::slotContextMenu( KListView * /* listview */, QListVi
 					KPopupMenu *contactMenu = it.current()->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString text= i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ).
-#if QT_VERSION < 0x030200
-						arg( c->contactId() ).arg( c->displayName() );
-#else
 						arg( c->contactId(), c->displayName() );
-#endif
+
 					if ( text.length() > 41 )
 						text = text.left( 38 ) + QString::fromLatin1( "..." );
 

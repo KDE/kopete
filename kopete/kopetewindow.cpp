@@ -61,9 +61,6 @@
 #include "kopeteawayaction.h"
 #include "systemtray.h"
 
-#if !KDE_IS_VERSION(3, 1, 90)
-#include "loadmovie.h"
-#endif
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
@@ -213,11 +210,8 @@ void KopeteWindow::slotShowHide()
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
 			KWin::deIconifyWindow(winId());
-#if KDE_IS_VERSION(3, 1, 90)
+		
 		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
-#else
-		if(!KWin::info(winId()).onAllDesktops)
-#endif
 			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
 		setActiveWindow();
@@ -545,11 +539,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
-#if KDE_IS_VERSION(3, 1, 90)
 	QMovie mv = loader->loadMovie( status.overlayIcon(), KIcon::Small );
-#else
-	QMovie mv = KopeteCompat::loadMovie( status.overlayIcon(), KIcon::Small );
-#endif
 
 	if ( mv.isNull() )
 	{

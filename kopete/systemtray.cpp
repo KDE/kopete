@@ -35,9 +35,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
 
-#if !KDE_IS_VERSION(3, 1, 90)
-#include "loadmovie.h"
-#endif
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
@@ -60,11 +57,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mBlinkTimer = new QTimer(this, "mBlinkTimer");
 
 	//mKopeteIcon = kapp->miniIcon();
-#if KDE_IS_VERSION( 3, 1, 90 )
 	mKopeteIcon = loadIcon( "kopete" );
-#else
-	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ), 22 ) );
-#endif
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(KopeteMessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
@@ -149,14 +142,8 @@ void KopeteSystemTray::startBlink( const QMovie &movie )
 void KopeteSystemTray::startBlink()
 {
 	if ( mMovie.isNull() )
-	{
-#if KDE_IS_VERSION(3, 1, 90)
 		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
-#else
-		mMovie = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
-#endif
-	}
-
+	
 	startBlink( mMovie );
 }
 
@@ -254,12 +241,7 @@ void KopeteSystemTray::addBalloon()
 
 			m_balloon = new KopeteBalloon(
 				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>" )
-#if QT_VERSION < 0x030200
-					.arg( msgFrom ).arg( msgText ),
-#else
-					.arg( msgFrom, msgText ),
-#endif
-				QString::null );
+					.arg( msgFrom, msgText ), QString::null );
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));

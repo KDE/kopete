@@ -31,11 +31,7 @@
 #include <qlabel.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
 
 #include <kapplication.h>
 #include <kcolorcombo.h>
@@ -467,11 +463,7 @@ void AppearanceConfig::slotImportStyle()
 		QString stylePath;
 		// FIXME: Using NetAccess uses nested event loops with all associated problems.
 		//        Better use normal KIO and an async API - Martijn
-#if KDE_IS_VERSION( 3, 1, 90 )
 		if ( KIO::NetAccess::download( chosenStyle, stylePath, this ) )
-#else
-		if ( KIO::NetAccess::download( chosenStyle, stylePath ) )
-#endif
 		{
 			QString styleSheet = fileContents( stylePath );
 			if ( KopeteXSLT( styleSheet ).isValid() )
@@ -501,11 +493,7 @@ void AppearanceConfig::slotCopyStyle()
 	if( copiedItem )
 	{
 		QString styleName =
-#if KDE_IS_VERSION( 3, 1, 90 )
 			KInputDialog::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
-#else
-			KLineEditDlg::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
-#endif
 
 		if ( !styleName.isEmpty() )
 		{
@@ -729,11 +717,7 @@ void AppearanceConfig::removeSelectedTheme()
 		return;
 
 	KURL themeUrl(KGlobal::dirs()->findResource("data", "kopete/pics/emoticons/"+themeName+"/"));
-#if KDE_IS_VERSION( 3, 1, 90 )
 	KIO::NetAccess::del(themeUrl, this);
-#else
-	KIO::NetAccess::del(themeUrl);
-#endif
 
 	updateEmoticonlist();
 }
