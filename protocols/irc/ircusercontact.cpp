@@ -98,7 +98,7 @@ void IRCUserContact::slotUserOnline( const QString &nick )
 	if( nick.lower() == mNickName.lower() )
 	{
 		setOnlineStatus( IRCProtocol::IRCUserOnline() );
-		mOnlineTimer->start( 90000, true );
+		mOnlineTimer->start( 60000, true );
 	}
 }
 

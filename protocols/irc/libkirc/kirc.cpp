@@ -444,7 +444,7 @@ void KIRC::slotReadyRead()
 					*/
 					loggedIn = true;
 					emit connectedToServer();
-					mNotifyTimer->start( 60000 );
+					mNotifyTimer->start( 45000 );
 					slotCheckOnline();
 					break;
 				}
