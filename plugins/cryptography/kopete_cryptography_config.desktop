@@ -49,7 +49,6 @@ Name[tg]=Рамзгузорӣ
 Name[uk]=Криптографія
 Name[uz]=Криптография
 Name[wa]=Criptografeye
-Name[xx]=xxCryptographyxx
 Name[zh_CN]=加密
 Comment=Encrypts messages using PGP
 Comment[bg]=Шифроване на съобщения с GPG
@@ -87,6 +86,5 @@ Comment[ta]=PGP யை பயன்படுத்தி செய்திக�
 Comment[tg]=Рамзгузории пайёмҳо ба воситаи PGP
 Comment[uk]=Шифрує повідомлення за допомогою PGP
 Comment[wa]=Ecripter les messaedjes avou PGP
-Comment[xx]=xxEncrypts messages using PGPxx
 Comment[zh_CN]=用 PGP 加密消息
 

@@ -17,7 +17,6 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=IRC
 Name[hi]=आईआरसी
-Name[xx]=xxIRCxx
 Comment=Protocol to connect to IRC
 Comment[bg]=Протокол за връзка с IRC
 Comment[bs]=IRC protokol
@@ -56,6 +55,5 @@ Comment[tg]=Қарордоди пайвастшавӣ ба IRC
 Comment[uk]=Протокол для з'єднання з IRC
 Comment[uz]=IRC билан алоқа ўрнатиш учун протокол
 Comment[wa]=Protocole po s' raloyî so les canås IRC
-Comment[xx]=xxProtocol to connect to IRCxx
 Comment[zh_CN]=连接到 IRC 协议
 

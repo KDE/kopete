@@ -41,6 +41,5 @@ Name[sv]=Automatisk rörelsefrånvaro
 Name[ta]=அகராதி
 Name[tg]=Ҳаракати Ақибгардии Худкор
 Name[uk]=Автовизначення відсутності
-Name[xx]=xxMotion Auto-Awayxx
 Name[zh_CN]=自动离开
 Comment=Sets away status when not detecting movement near the computer 

@@ -18,7 +18,6 @@ X-KDE-PluginInfo-EnabledByDefault=false
 Name=ICQ
 Name[br]=XFMail
 Name[hi]=आईसीक्यू
-Name[xx]=xxICQxx
 Comment=Protocol to connect to ICQ
 Comment[bg]=Протокол за връзка с ICQ
 Comment[bs]=ICQ protokol
@@ -56,6 +55,5 @@ Comment[ta]=ICQ உடன் இணைக்க விதிமுறை
 Comment[tg]=Қарордоди пайвастшавӣ ба ICQ
 Comment[uk]=Протокол для з'єднання з ICQ
 Comment[uz]=ICQ билан алоқа ўрнатиш учун протокол
-Comment[xx]=xxProtocol to connect to ICQxx
 Comment[zh_CN]=连接到 ICQ 协议
 

@@ -50,7 +50,6 @@ Name[tr]=Çevirmen
 Name[uk]=Перекладач
 Name[uz]=Таржимон
 Name[wa]=Ratournaedje
-Name[xx]=xxTranslatorxx
 Name[zh_CN]=翻译家
 Comment=Translates messages from your native language to another language
 Comment[bg]=Приставка за превод от един език на друг в реално време
@@ -86,7 +85,6 @@ Comment[sv]=Översätt meddelanden från ditt modersmål till ett annat språk
 Comment[ta]=உங்கள் மொழியிலிருந்து வேறு மொழிக்கு மொழிபெயர்
 Comment[tg]=Пайёмҳоро аз забони модарии шумо ба дигар забонҳо тарҷума мекунад
 Comment[uk]=Перекладає повідомлення Вашою рідною мовою на якусь іншу мову
-Comment[xx]=xxTranslates messages from your native language to another languagexx
 Comment[zh_CN]=将消息从您的母语翻译成其它语言
 
 
