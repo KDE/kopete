@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>SMSUserPrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>252</width>
-            <height>142</height>
+            <height>144</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -19,6 +19,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>SMSUserPrefsUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -72,10 +75,22 @@
                     <property name="buddy" stdset="0">
                         <cstring>telNumber</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The telephone number of the contact.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The telephone number of the contact.  This should be a number with SMS service available.</string>
+                    </property>
                 </widget>
                 <widget class="KLineEdit">
                     <property name="name">
                         <cstring>telNumber</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The telephone number of the contact.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The telephone number of the contact.  This should be a number with SMS service available.</string>
                     </property>
                 </widget>
             </hbox>
