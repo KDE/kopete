@@ -109,7 +109,7 @@ void TextEffectPreferences::load()
 	KCModule::load();
 
 	// Indicate that we have not changed ^_^
-	setChanged( false );
+	emit changed( false );
 
 	kdDebug( 14310 ) << k_funcinfo << "EXIT" << endl;
 
@@ -137,7 +137,7 @@ void TextEffectPreferences::save()
 	KCModule::save();
 
 	// Indicate that we have not changed ^_^
-	setChanged( false );
+	emit changed( false );
 	kdDebug() << k_funcinfo << "EXIT" << endl;
 }
 
@@ -212,7 +212,7 @@ void TextEffectPreferences::slotSettingChanged()
 	kdDebug() << k_funcinfo << "Called"
 			  << endl;
 	// Indicate that our settings have changed
-    setChanged( true );
+    emit changed( true );
 }
 
 #include "texteffectpreferences.moc"
