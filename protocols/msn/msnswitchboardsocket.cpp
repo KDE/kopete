@@ -62,14 +62,17 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 
 void MSNSwitchBoardSocket::handleError( uint code, uint id )
 {
-	QString msg;
 	switch( code )
 	{
 		case 217:
+		{
 			// TODO: we need to know the nickname instead of the handle.
-			msg = i18n( "The user %1 is no longer online.\nThe message you sent could not be delivered.", m_msgHandle );
+			QString msg = i18n( "The user %1 is currently not signed in.\n"
+				"Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
 			break;
+		}
 		default:
 			MSNSocket::handleError( code, id );
 			break;
