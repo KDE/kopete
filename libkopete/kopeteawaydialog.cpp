@@ -30,7 +30,7 @@
 KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 				: KopeteAwayBase(parent, name)
 {
-	kdDebug(14011) << "[KopeteAwayDialog] Building KopeteAwayDialog..." << endl;
+//	kdDebug(14011) << "[KopeteAwayDialog] Building KopeteAwayDialog..." << endl;
 
 	// Connect the buttons to actions
 	QObject::connect( cmdCancel, SIGNAL(clicked()),
@@ -62,7 +62,7 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 	// Set us modal
 	setWFlags( Qt::WType_Dialog | Qt::WShowModal );
 
-	kdDebug(14011) << "[KopeteAwayDialog] KopeteAwayDialog Created." << endl;
+//	kdDebug(14011) << "[KopeteAwayDialog] KopeteAwayDialog Created." << endl;
 }
 
 KopeteAwayDialog::~KopeteAwayDialog(){}
@@ -73,8 +73,7 @@ void KopeteAwayDialog::slotSingleShotTextChanged(const QString &/*newString*/)
 	// They probably want to use it
 	if(!mUseSingleShot)
 	{
-		kdDebug(14011) << "[KopeteAwayDialog] Text Changed, flagging user "
-			 << "entered away text" << endl;
+//		kdDebug(14011) << "[KopeteAwayDialog] Text Changed, flagging user "	 << "entered away text" << endl;
 		mUseSingleShot = true;
 	}
 }
@@ -83,8 +82,7 @@ void KopeteAwayDialog::slotComboBoxSelection(int /*index*/)
 {
 	// If they selected something out of the combo box
 	// They probably want to use it
-	kdDebug(14011) << "[KopeteAwayDialog] Text Changed, flagging saved "
-		<< "away text" << endl;
+//	kdDebug(14011) << "[KopeteAwayDialog] Text Changed, flagging saved " << "away text" << endl;
 	mUseSingleShot = false;
 }
 
@@ -97,8 +95,7 @@ void KopeteAwayDialog::show()
 	// Reinit the GUI
 	init();
 
-	kdDebug(14011) << "[KopeteAwayDialog] Showing Dialog with no "
-		<< "extended away type" << endl;
+//	kdDebug(14011) << "[KopeteAwayDialog] Showing Dialog with no " << "extended away type" << endl;
 
 	// Call the parent class' show method
 	KopeteAwayBase::show();
@@ -140,8 +137,7 @@ QString KopeteAwayDialog::getSelectedAwayMessage()
 	// Figure out which one we're using, and return it
 	if(mUseSingleShot)
 	{
-		kdDebug(14011) << "KopeteAwayDialog: Sending user message: "
-			<< mLastUserAwayMessage << endl;
+//		kdDebug(14011) << "KopeteAwayDialog: Sending user message: " << mLastUserAwayMessage << endl;
 
 		mLastUserAwayMessage = txtOneShot->text();
 		return mLastUserAwayMessage;
@@ -151,8 +147,7 @@ QString KopeteAwayDialog::getSelectedAwayMessage()
 		// Get the text out of the combo box
 		mLastUserAwayMessage = cmbHistory->currentText();
 
-		kdDebug(14011) << "KopeteAwayDialog: Sending saved message: "
-			<< mLastUserAwayMessage << endl;
+//		kdDebug(14011) << "KopeteAwayDialog: Sending saved message: " << mLastUserAwayMessage << endl;
 
 		return awayInstance->getMessage( mLastUserAwayMessage );
 	}

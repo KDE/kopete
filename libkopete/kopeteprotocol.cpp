@@ -102,7 +102,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 	if( mcContacts.isEmpty() )
 		return;
 
-	kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+//	kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 	QDictIterator<KopeteContact> contactIt( mcContacts );
 	for( ; contactIt.current() ; ++contactIt )
 	{
@@ -162,7 +162,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.data() );
-			kdDebug() << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
+//			kdDebug() << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.data() );
@@ -231,8 +231,8 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
-	kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
-		<< "; groupName: " << groupName  << endl;
+//	kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
+//		<< "; groupName: " << groupName  << endl;
 
 	//If this is a temporary contact, use the temporary group
 	KopeteGroup *parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
@@ -277,7 +277,7 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 
 bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
 {
-	kdDebug(14010) << "[KopeteProtocol] addContactToMetaContact() Not Implemented!!!" << endl;
+	kdDebug(14010) << "KopeteProtocol::addContactToMetaContact() Not Implemented!!!" << endl;
 	return false;
 }
 

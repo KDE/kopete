@@ -42,7 +42,7 @@
 KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
 : QObject( parent )
 {
-	kdDebug() << "KopeteContact::KopeteContact: Creating contact with id " << contactId << endl;
+//	kdDebug() << "KopeteContact::KopeteContact: Creating contact with id " << contactId << endl;
 
 	m_contactId = contactId;
 

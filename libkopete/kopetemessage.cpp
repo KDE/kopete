@@ -129,7 +129,7 @@ QString KopeteMessage::plainBody() const
 		replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) ).
 		replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
 
-	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
+//	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
 	return r;
 }
 
@@ -143,7 +143,7 @@ QString KopeteMessage::escapedBody() const
 		//Strip whitespace off the end of the string only
 		//(stripWhiteSpace removes it from beginning as well)
 		int stringEnd = mBody.findRev( QRegExp( QString::fromLatin1( "\\S" ) ) );
-		kdDebug(14010) << k_funcinfo << "String End:" << stringEnd <<endl;
+//		kdDebug(14010) << k_funcinfo << "String End:" << stringEnd <<endl;
 		if( stringEnd > -1 )
 			parsedString = QStyleSheet::escape( mBody.left( stringEnd + 1 ) );
 		else
@@ -168,7 +168,7 @@ QString KopeteMessage::escapedBody() const
 		//Replace a tab with 4 spaces
 		parsedString = parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
-		kdDebug(14010) << k_funcinfo << parsedString <<endl;
+//		kdDebug(14010) << k_funcinfo << parsedString <<endl;
 		return parsedString;
 	}
 
