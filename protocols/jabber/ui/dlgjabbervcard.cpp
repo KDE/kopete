@@ -99,7 +99,7 @@ void dlgJabberVCard::slotGotVCard()
 {
 	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
 
-	if (!vCard->success() && !vCard->vcard().isEmpty())
+	if ( !vCard->success() && ( m_account->myself()->contactId () != m_jid ) )
 	{
 		// unsuccessful, or incomplete
 		KMessageBox::error (this, i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
@@ -130,6 +130,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 	m_mainWidget->leHomepage->setText (vCard.url());
 	m_mainWidget->urlHomepage->setText (vCard.url());
 	m_mainWidget->urlHomepage->setURL (vCard.url());
+	m_mainWidget->urlHomepage->setUseCursor ( !vCard.url().isEmpty () );
 
 	// addresses
 	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
@@ -167,6 +168,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->leWorkEmail->setText (email.userid);
 			m_mainWidget->urlWorkEmail->setText (email.userid);
 			m_mainWidget->urlWorkEmail->setURL ("mailto:" + email.userid);
+			m_mainWidget->urlWorkEmail->setUseCursor ( !email.userid.isEmpty () );
 		}
 		else
 		//if(email.home)
@@ -174,6 +176,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->leHomeEmail->setText (email.userid);
 			m_mainWidget->urlHomeEmail->setText (email.userid);
 			m_mainWidget->urlHomeEmail->setURL ("mailto:" + email.userid);
+			m_mainWidget->urlHomeEmail->setUseCursor ( !email.userid.isEmpty () );
 		}
 	}
 
@@ -293,6 +296,12 @@ void dlgJabberVCard::slotSaveVCard()
 	XMPP::VCard::EmailList emailList;
 	XMPP::VCard::PhoneList phoneList;
 
+	if ( !m_account->isConnected () )
+	{
+		m_account->errorConnectFirst ();
+		return;
+	}
+
 	// general tab
 	vCard.setNickName (m_mainWidget->leNick->text());
 	vCard.setFullName (m_mainWidget->leName->text());
@@ -407,7 +416,8 @@ void dlgJabberVCard::slotSentVCard()
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
 
-	new KRun(KURL( url ) );
+	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
+		new KRun(KURL( url ) );
 
 }
 
