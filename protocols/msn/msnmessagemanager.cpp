@@ -156,9 +156,6 @@ void MSNMessageManager::slotSwitchBoardClosed()
 
 		m_messagesSent.remove(it);
 	}
-
-	if(!m_chatService && m_invitations.isEmpty())
-		setCanBeDeleted(true);
 }
 
 void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessageManager *)
