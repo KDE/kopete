@@ -260,11 +260,16 @@ GaduAccount::slotLogin( int status, const QString& dscr, bool lastAttemptFailed 
 
 	if ( !session_->isConnected() || lastAttemptFailed ) {
 		pass = password( lastAttemptFailed );
-		if ( pass.isEmpty() ){
-			slotCommandDone( QString::null, i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
+		if ( pass.isEmpty() ) {
+			slotCommandDone( QString::null, 
+					i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
+			// and set status disconnected, so icon on toolbar won't blink
+			myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+			return;
 		}
 		if ( pass.isNull() && lastAttemptFailed ){
 			// user pressed CANCEL
+			myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 			return;
 		}
 		session_->login( accountId().toInt(), pass, isUsingTls, status, dscr );

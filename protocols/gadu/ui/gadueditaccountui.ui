@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>440</width>
-            <height>327</height>
+            <width>490</width>
+            <height>322</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -21,7 +21,7 @@
         </sizepolicy>
     </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>Edit account settings</string>
     </property>
     <grid>
         <property name="name">
@@ -43,197 +43,309 @@
             <property name="flat">
                 <bool>true</bool>
             </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="2">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>emailedit_</cstring>
+                        <cstring>layout9</cstring>
                     </property>
-                    <property name="maxLength">
-                        <number>256</number>
-                    </property>
-                    <property name="edited">
-                        <bool>true</bool>
-                    </property>
-                    <property name="dragEnabled">
-                        <bool>false</bool>
-                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>layout15</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>layout14</cstring>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>textLabel1_3</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Nick:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit1</cstring>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>textLabel1</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>UIN:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit1</cstring>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel">
+                                            <property name="name">
+                                                <cstring>textLabel2</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Password:</string>
+                                            </property>
+                                            <property name="buddy" stdset="0">
+                                                <cstring>kLineEdit1_2</cstring>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>layout13</cstring>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="KLineEdit">
+                                            <property name="name">
+                                                <cstring>nickName</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="maxLength">
+                                                <number>16</number>
+                                            </property>
+                                            <property name="edited">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="dragEnabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Account nickname</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>This name will be used by kopete to identify your Gadu-Gadu account.
+Since you can have more than one account, this name should identify it uniquely.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit">
+                                            <property name="name">
+                                                <cstring>loginEdit_</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="maxLength">
+                                                <number>16</number>
+                                            </property>
+                                            <property name="edited">
+                                                <bool>true</bool>
+                                            </property>
+                                            <property name="dragEnabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Gadu-Gadu user number</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>This is your User name. Server identifies you by this number.
+This is also information you have to give to your friends if you want them to be able to chat with you.</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit">
+                                            <property name="name">
+                                                <cstring>passwordEdit_</cstring>
+                                            </property>
+                                            <property name="echoMode">
+                                                <enum>Password</enum>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Enter your password here</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Your account password.
+Please choose it carefully, and don't use any trivial data.
+If "Remember password" isn't checked, this password will be used only during next session!</string>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>layout8</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QCheckBox">
+                                    <property name="name">
+                                        <cstring>rememberCheck_</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Remember password</string>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Check if your password should be remembered.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>&lt;qt&gt;Check this option to store this accounts password on Your disc.&lt;br&gt;Please remember that this might break your privacy, so use it with care.&lt;/qt&gt;</string>
+                                    </property>
+                                </widget>
+                                <widget class="QCheckBox">
+                                    <property name="name">
+                                        <cstring>autoLoginCheck_</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Auto login</string>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Connect automaticaly on kopete startup.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>This option tells Kopete to login this account everytime Kopete starts.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox">
+                                    <item>
+                                        <property name="text">
+                                            <string>Try to connect using SSL if possible</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Connect only using SSL</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Never use SSL</string>
+                                        </property>
+                                    </item>
+                                    <property name="name">
+                                        <cstring>useTls_</cstring>
+                                    </property>
+                                    <property name="autoCompletion">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="duplicatesEnabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Connection type</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>&lt;qt&gt;&lt;i&gt;By default gadu plugin will try to connect using SSL tunnel. 
+This will mean that whole transmission is encrypted.
+But sometimes this is not possible, most of the time due to server problems&lt;/i&gt;. &lt;br&gt;
+&lt;b&gt;-&lt;/b&gt; Option "Try connect using SSL" will reconnect without encryption if SSL mode fails.&lt;br&gt;
+&lt;b&gt;-&lt;/b&gt; Option "Never use SSL" won't use SSL.&lt;br&gt;
+&lt;b&gt;-&lt;/b&gt; Option "Connect using only SSL" will connect using SSL, and will NOT try other connection methods.&lt;qt&gt;</string>
+                                    </property>
+                                </widget>
+                                <widget class="QCheckBox">
+                                    <property name="name">
+                                        <cstring>cacheServersCheck__</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Cache servers information</string>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Cache servers IP and port information.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>This option is used whenever primary loadballance server fails.
+In this case plugin will try to connect to servers using cached information about them. 
+This might prevent connection errors when main loadballancing server is too busy to answer. In practice it helps only very little and very rarely.</string>
+                                    </property>
+                                </widget>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>spacer2</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Vertical</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>20</width>
+                                            <height>31</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>layout7</cstring>
+                                    </property>
+                                    <hbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>registerNew</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>Register for new account.</string>
+                                            </property>
+                                        </widget>
+                                        <spacer>
+                                            <property name="name">
+                                                <cstring>spacer1</cstring>
+                                            </property>
+                                            <property name="orientation">
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property name="sizeType">
+                                                <enum>Expanding</enum>
+                                            </property>
+                                            <property name="sizeHint">
+                                                <size>
+                                                    <width>211</width>
+                                                    <height>21</height>
+                                                </size>
+                                            </property>
+                                        </spacer>
+                                    </hbox>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </vbox>
                 </widget>
-                <widget class="KLineEdit" row="6" column="3">
-                    <property name="name">
-                        <cstring>passwordEdit2__</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>true</bool>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="3" column="3">
-                    <property name="name">
-                        <cstring>passwordEdit_</cstring>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Email:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1_2</cstring>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="4" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>radio2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>I want to register as a new user</string>
-                    </property>
-                    <property name="checked">
-                        <bool>false</bool>
-                    </property>
-                    <property name="buttonGroupId">
-                        <number>1</number>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>loginEdit_</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>true</bool>
-                    </property>
-                    <property name="maxLength">
-                        <number>16</number>
-                    </property>
-                    <property name="edited">
-                        <bool>true</bool>
-                    </property>
-                    <property name="dragEnabled">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>UIN:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel1_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Nick:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>nickName</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>true</bool>
-                    </property>
-                    <property name="maxLength">
-                        <number>16</number>
-                    </property>
-                    <property name="edited">
-                        <bool>true</bool>
-                    </property>
-                    <property name="dragEnabled">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>textLabel2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1_2</cstring>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>radio1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>I already have an account</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>autoLoginCheck_</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Auto login</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>rememberCheck_</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Remember password</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>useTls_</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use protocol encryption</string>
-                    </property>
-                </widget>
-            </grid>
+            </vbox>
         </widget>
     </grid>
 </widget>
 <tabstops>
-    <tabstop>radio1</tabstop>
     <tabstop>nickName</tabstop>
     <tabstop>loginEdit_</tabstop>
     <tabstop>passwordEdit_</tabstop>
-    <tabstop>emailedit_</tabstop>
-    <tabstop>passwordEdit2__</tabstop>
     <tabstop>rememberCheck_</tabstop>
     <tabstop>autoLoginCheck_</tabstop>
-    <tabstop>radio2</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>

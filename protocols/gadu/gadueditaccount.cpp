@@ -24,6 +24,7 @@
 #include "gaduprotocol.h"
 
 #include <qradiobutton.h>
+#include <qcombobox.h>
 #include <qlabel.h>
 #include <qstring.h>
 #include <qcheckbox.h>
@@ -36,13 +37,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#define EMAIL_REGEXP "[\\w\\d\\.]{1,}\\@[\\w\\d\\.]{1,}"
-
 GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWidget* parent, const char* name )
 : GaduAccountEditUI( parent, name ), EditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
 {
-
-	reg_in_progress = false;
 
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
 	isSsl = true;
@@ -53,19 +50,10 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 	useTls_->setDisabled( !isSsl );
 
 	if ( !m_account ) {
-		radio1->setDisabled( false );
-		radio2->setDisabled( false );
-		emailedit_->setDisabled( false );
-		passwordEdit2__->setDisabled( false );
-		useTls_->setChecked( isSsl );
+		useTls_->setCurrentItem( isSsl ? 0 : 2 );
 	}
 	else {
-		radio1->setDisabled( true );
-		radio2->setDisabled( true );
-		radio2->setDisabled( true );
 		loginEdit_->setDisabled( true );
-		emailedit_->setDisabled( true );
-		passwordEdit2__->setDisabled( true );
 		loginEdit_->setText( m_account->accountId() );
 
 		if ( m_account->rememberPassword() ) {
@@ -79,105 +67,36 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 
 		rememberCheck_->setChecked( m_account->rememberPassword() );
 		autoLoginCheck_->setChecked( m_account->autoLogin() );
-		useTls_->setChecked( ( static_cast<GaduAccount*> (m_account) )->isConnectionEncrypted() );
+		useTls_->setCurrentItem( isSsl ? ( static_cast<GaduAccount*> (m_account) )->isConnectionEncrypted() : 2 );
 	}
-}
-
-void GaduEditAccount::registrationComplete( const QString& , const QString& )
-{
-	reg_in_progress = false;
-
-	QRegExp regexp( EMAIL_REGEXP );
-	regexp.search( emailedit_->text() );
-
-	// i am sure rcmd is valid, since it sends this signal ;)
-	loginEdit_->setText( QString::number( rcmd->newUin() ) );
-	passwordEdit_->setText( passwordEdit2__->text() );
-	nickName->setText( regexp.cap(1) + "-" + loginEdit_->text() );
-
-	radio1->setChecked( true );
-	radio2->setChecked( false );
-	radio1->setDisabled( true );
-	radio2->setDisabled( true );
-	textLabel2_2->setDisabled( true );
-	textLabel1_2->setDisabled( true );
-	emailedit_->setDisabled( true );
-	passwordEdit2__->setDisabled( true );
-	rememberCheck_->setChecked( true );
-
-	KMessageBox::information( this, i18n( "<b>You've registered a new account.</b>" ), i18n( "Gadu-Gadu" ) );
-}
-
-void GaduEditAccount::registrationError( const QString& title, const QString& what )
-{
-	reg_in_progress = false;
-	KMessageBox::information( this, what, title );
 }
 
 bool GaduEditAccount::validateData()
 {
-	QRegExp regexp( EMAIL_REGEXP );
 
-	// FIXME: I need to disable somehow next, finish and back button here
-	if ( reg_in_progress ) {
+	if ( loginEdit_->text().toInt() < 0 || loginEdit_->text().toInt() == 0 ) {
+		KMessageBox::sorry( this, i18n( "<b>UIN should be a positive number.</b>" ), i18n( "Gadu-Gadu" ) );
 		return false;
 	}
 
-	if ( radio1->isChecked() ) {
-		if ( loginEdit_->text().toInt() < 0 || loginEdit_->text().toInt() == 0 ) {
-			KMessageBox::sorry( this, i18n( "<b>UIN should be a positive number.</b>" ), i18n( "Gadu-Gadu" ) );
-			return false;
-		}
-
-		if ( passwordEdit_->text().isEmpty() && rememberCheck_->isChecked() ) {
-			KMessageBox::sorry( this, i18n( "<b>Enter password please.</b>" ), i18n( "Gadu-Gadu" ) );
-			return false;
-		}
-	}
-	else {
-		if ( emailedit_->text().isEmpty() ){
-			KMessageBox::sorry(this, i18n( "<b>Please enter a valid email address.</b>" ), i18n( "Gadu-Gadu" ) );
-			return false;
-		}
-
-		if ( regexp.exactMatch( emailedit_->text() ) == FALSE ) {
-			KMessageBox::sorry( this, i18n( "<b>Please enter a valid email address.</b>" ), i18n( "Gadu-Gadu" ) );
-			return false;
-		}
-
-		if ( passwordEdit2__->text().isEmpty() ) {
-			KMessageBox::sorry( this, i18n( "<b>Enter password please.</b>" ), i18n( "Gadu-Gadu" ) );
-			return false;
-		}
-
-		reg_in_progress = true;
-		rcmd = new RegisterCommand( emailedit_->text(), passwordEdit2__->text(), this );
-
-		connect( rcmd, SIGNAL( done( const QString&, const QString& ) ),
-				SLOT( registrationComplete( const QString&, const QString& ) ) );
-		connect( rcmd, SIGNAL( error( const QString&, const QString& ) ),
-				SLOT( registrationError( const QString&, const QString& ) ) );
-		rcmd->execute();
+	if ( passwordEdit_->text().isEmpty() && rememberCheck_->isChecked() ) {
+		KMessageBox::sorry( this, i18n( "<b>Enter password please.</b>" ), i18n( "Gadu-Gadu" ) );
 		return false;
 	}
+
 	return true;
 }
 
 KopeteAccount* GaduEditAccount::apply()
 {
 	if ( m_account == NULL ) {
-		if ( radio1->isChecked() ) {
-			m_account = new GaduAccount( protocol_, loginEdit_->text() );
-			if ( !m_account ) {
-				kdDebug(14100)<<"Couldn't create GaduAccount object, fatal!"<<endl;
-				return NULL;
-			}
-			m_account->setAccountId( loginEdit_->text() );
-		}
-		else {
-			// XXX: should never happend
+		m_account = new GaduAccount( protocol_, loginEdit_->text() );
+		if ( !m_account ) {
+			kdDebug(14100)<<"Couldn't create GaduAccount object, fatal!"<<endl;
 			return NULL;
 		}
+		m_account->setAccountId( loginEdit_->text() );
+		
 	}
 
 	m_account->setAutoLogin( autoLoginCheck_->isChecked() );
@@ -195,7 +114,7 @@ KopeteAccount* GaduEditAccount::apply()
 	m_account->setPluginData( m_account->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
 
 	m_account->setAutoLogin( autoLoginCheck_->isChecked() );
-	( static_cast<GaduAccount*> (m_account) )->useTls( useTls_->isChecked() );
+	( static_cast<GaduAccount*> (m_account) )->useTls( useTls_->currentItem() );
 
 	return m_account;
 }
