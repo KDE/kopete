@@ -89,13 +89,22 @@ class Buffer : public QObject
 		int addByte(const BYTE);
 		int addLEByte(const BYTE);
 
-		/** deletes the current buffer */
+		/*
+		 * deletes the current buffer
+		 */
 		void clear();
-		/** Adds a TLV with the given type and data */
+		/*
+		 * Adds a TLV with the given type and data
+		 */
 		int addTLV(WORD, WORD, const char *);
-		/** adds the given flap header to the beginning of the buffer, returns new buffer length */
-		int addFlap(const BYTE channel);
-		/** Prints out the buffer */
+		/*
+		 * adds the given flap header to the beginning of the buffer,
+		 * returns new buffer length
+		 */
+		int addFlap(const BYTE channel, const WORD flapSequenceNum);
+		/*
+		 * Prints out the buffer, just for debug reasons
+		 */
 		void print() const;
 		/** Returns a QString representation of the buffer */
 		QString toString() const;
@@ -154,9 +163,17 @@ class Buffer : public QObject
 		 */
 		QPtrList<TLV> getTLVList();
 
-		/** appends a flap header to the end of the buffer w/ given length and channel */
-		int appendFlap(const BYTE chan, const WORD len);
-		/** Creates a chat data segment for a tlv and calls addTLV with that data */
+		/*
+		 * Appends a FLAP header to the end of the buffer
+		 * length - length of FLAP contents
+		 * channel - FLAP channel
+		 * flapSequenceNum - sequence for this FLAP
+		 */
+		int appendFlap(const BYTE chan, const WORD len, const WORD flapSequenceNum);
+
+		/*
+		 * Creates a chat data segment for a tlv and calls addTLV with that data
+		 */
 		int addChatTLV(const WORD, const WORD, const QString &, const WORD);
 		/** Gets a snac header out of the buffer */
 
@@ -165,7 +182,10 @@ class Buffer : public QObject
 		void doResize(int inc);
 
 	signals:
-		/** Emitted when an error occurs */
+		/*
+		 * Emitted when an error occurs, error means exceeding
+		 * the buffer size while reading contents
+		 */
 		void bufError(QString);
 
 	private:
@@ -185,11 +205,6 @@ class Buffer : public QObject
 		 * The usable buffer
 		 */
 		char * buf;
-		/*
-		 * sequence number in a FLAP header
-		 * incremented after every command sent to the oscar server
-		 */
-		static WORD flapSequenceNum;
 
 	public slots:
 		/*

@@ -99,12 +99,6 @@ KActionMenu* ICQAccount::actionMenu()
 	mActionMenu->insert(mActionOccupied);
 	mActionMenu->insert(mActionOffline);
 
-	// Not needed if userinfo in ICQEditAccountWidget is done
-// 	mActionMenu->popupMenu()->insertSeparator();
-// 	mActionMenu->insert(
-// 		KopeteStdAction::contactInfo(myself(), SLOT(slotUserInfo()),
-// 			mActionMenu, "ICQAccount::mActionEditInfo"));
-
 	return mActionMenu;
 }
 

@@ -116,6 +116,10 @@ static const struct
 	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
 		0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
 
+	{AIM_CAPS_UTF8,
+	{0x09, 0x46, 0x13, 0x4E, 0x4C, 0x7F, 0x11, 0xD1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
 	{AIM_CAPS_LAST,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
@@ -164,6 +168,8 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 
 	mIsICQ=isicq; // TODO: I have no idea if this is a good way of handling icq mode
 	toicqsrv_seq = 1;
+//	flapSequenceNum = 0x010f; // old value from oscar
+	flapSequenceNum = rand() & 0x7FFF; // value taken from libicq
 	key = NULL;
 	mCookie = NULL;
 	idle = false;
@@ -171,8 +177,10 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	keepaliveTime=60; // TODO: make that an option
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
+
 	// TODO: move this to OscarContact or even AIMContact, it's unused by ICQ
 	myUserProfile = "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>";
+
 	// FIXME: really needed? We have QSocket::status()!
 	isConnected = false;
 	mAccount = account;
@@ -614,7 +622,8 @@ void OscarSocket::OnConnAckReceived(void)
 /** Sends the output buffer, and clears it */
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
-	outbuf.addFlap(chan);
+	outbuf.addFlap(chan, flapSequenceNum);
+	flapSequenceNum++;
 
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "Output: " << endl;
@@ -1481,7 +1490,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 /*
 						if (caps.type==1281)
 						{
-							kdDebug(14150) << k_funcinfo << "TODO: parse CAPABILITIES block!" << endl;
+							kdDebug(14150) << k_funcinfo <<
+								"TODO: parse CAPABILITIES block!" << endl;
 						}
 */
 						delete [] caps.data;
@@ -1764,24 +1774,68 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 		case MSGFORMAT_SERVER: // non-acknowledged, server messages (ICQ ONLY I THINK)
 		{
-			TLV type4 = inbuf.getTLV();
-			kdDebug(14150) << k_funcinfo << "TLV.type=" << type4.type;
+			kdDebug(14150) << k_funcinfo << "message format = MSGFORMAT_SERVER" << endl;
 
-			if (type4.type == 0x0005)
+			// Flag to indicate if there are more TLV's to parse
+			bool moreTLVs = true;
+
+			while(moreTLVs)
 			{
-				DWORD uin = inbuf.getDWord();
-				WORD msgtype = inbuf.getWord();
-				kdDebug(14150) << "server message, type=" << msgtype << endl;
-				WORD msgLen = inbuf.getWord();
-				char *msgtxt = inbuf.getBlock(msgLen);
-				message = QString::fromLocal8Bit(msgtxt);
-				delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
-				kdDebug(14150) << k_funcinfo << "emit gotIM(), contact=" <<
-					u.sn << " == " << uin << "?, message='" << message << "'" << endl;
-				emit gotIM(message, u.sn, false);
+				type = inbuf.getWord();
+				kdDebug(14150) << k_funcinfo << "MSGFORMAT_SERVER; type=" << type << endl;
+				switch(type)
+				{
+					case 0x0005: //TLV(5)
+					{
+						// This is the total length of the rest of this message TLV
+						length = inbuf.getWord();
+						DWORD uin = inbuf.getDWord();
+						WORD msgtype = inbuf.getWord();
+						WORD msgflags = inbuf.getWord();
+
+						kdDebug(14150) << "MSGFORMAT_SERVER; server message, tlv length=" <<
+							length << ", uin=" << uin << ", type=" << msgtype << ", flags=" << msgflags << endl;
+
+						kdDebug(14150) << k_funcinfo <<
+						"MSGFORMAT_SERVER; remaining length after reading uin and type=" << inbuf.getLength() << endl;
+
+						char *msgtxt = inbuf.getBlock(inbuf.getLength());
+						message = QString::fromLocal8Bit(msgtxt);
+						delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
+
+						kdDebug(14150) << k_funcinfo << "MSGFORMAT_SERVER; emit gotIM(), contact=" <<
+							u.sn << " == " << uin << "?, message='" << message << "'" << endl;
+
+						emit gotIM(message, u.sn, false);
+
+						if(inbuf.getLength() > 0)
+						{
+							moreTLVs = true;
+ 							kdDebug(14150) << k_funcinfo <<
+								"MSGFORMAT_SERVER; remaining length after reading message=" << inbuf.getLength() << endl;
+						}
+						else
+						{
+ 							kdDebug(14150) << k_funcinfo <<
+								"MSGFORMAT_SERVER; last TLV after reading message" << endl;
+							moreTLVs = false;
+						}
+						break;
+					}
+
+					default: //unknown type
+					{
+						kdDebug(14150) << k_funcinfo <<
+							"MSGFORMAT_SERVER; Unknown message type, type=" << type << endl;
+						if(inbuf.getLength() > 0)
+							moreTLVs = true;
+						else
+							moreTLVs = false;
+					}
+				};
 			}
 			break;
-		} // END MSGFORMAT_SERVER
+		}; // END MSGFORMAT_SERVER
 
 		default: // unknown channel
 			kdDebug(14150) << "Error: unknown ICBM channel " << channel << endl;

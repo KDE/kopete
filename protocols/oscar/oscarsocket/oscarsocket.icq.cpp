@@ -611,7 +611,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 				if (ackType==0x0000) // normal message
 				{
 					// ERROR
-					QPtrList<TLV> lst = buf.getTLVList(); //type2.getTLVList();
+					QPtrList<TLV> lst = /*buf.getTLVList(); */type2.getTLVList();
 					lst.setAutoDelete(TRUE);
 
 					TLV *messageTLV = findTLV(lst,0x2711); //TLV(10001)

@@ -131,10 +131,12 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define AIM_CAPS_ICQSERVERRELAY	0x00004000
 #define AIM_CAPS_IS_2001			0x00008000
 #define AIM_CAPS_TRILLIANCRYPT	0x00010000
-#define AIM_CAPS_LAST				0x00020000
+#define AIM_CAPS_UTF8				0x00020000
+#define AIM_CAPS_LAST				0x00040000
 
+// DON'T touch these if you're not 100% sure what they are for!
 #define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY /*| AIM_CAPS_ICQRTF | AIM_CAPS_UTF8*/
 
 class ICQSearchResult
 {
@@ -626,7 +628,11 @@ class OscarSocket : public OscarConnection
 		 * one up sequence used for packets of type CLI_TOICQSRV
 		 */
 		WORD toicqsrv_seq;
-
+		/*
+		 * sequence number in a FLAP header
+		 * incremented after every command sent to the oscar server
+		 */
+		WORD flapSequenceNum;
 
 	signals:
 		/** Called when an SSI acknowledgement is recieved */

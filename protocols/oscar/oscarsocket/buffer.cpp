@@ -20,8 +20,6 @@
 #include "buffer.h"
 #include "buffer.moc"
 
-WORD Buffer::flapSequenceNum = 0x010f;
-
 Buffer::Buffer(QObject *parent, const char *name)
 	: QObject(parent,name)
 {
@@ -147,8 +145,7 @@ int Buffer::addTLV(WORD type, WORD len, const char *data)
 	return addString(data,len);
 }
 
-/** constructs a flap header from given channel to the beginning of the buffer, returns new buffer length */
-int Buffer::addFlap(const BYTE channel)
+int Buffer::addFlap(const BYTE channel, const WORD flapSequenceNum)
 {
 	doResize(6);
 	//create the flap header
@@ -161,7 +158,7 @@ int Buffer::addFlap(const BYTE channel)
 	buf[4] = (length & 0xff00) >> 8;
 	buf[5] = (length & 0x00ff);
 	length = length + 6;
-	flapSequenceNum++;
+//	flapSequenceNum++;
 	return length;
 }
 
@@ -354,8 +351,7 @@ QPtrList<TLV> Buffer::getTLVList()
 	return ql;
 }
 
-/** appends a flap header to the end of the buffer w/ given length and channel */
-int Buffer::appendFlap(const BYTE chan, const WORD len)
+int Buffer::appendFlap(const BYTE chan, const WORD len, const WORD flapSequenceNum)
 {
 	doResize(6);
 	buf[length] = 0x2a;
@@ -365,7 +361,7 @@ int Buffer::appendFlap(const BYTE chan, const WORD len)
 	buf[length+4] = (len & 0xff00) >> 8;
 	buf[length+5] = (len & 0x00ff);
 	length = length + 6;
-	flapSequenceNum++;
+//	flapSequenceNum++;
 	return length;
 }
 
@@ -427,14 +423,14 @@ int Buffer::addLNTS(const char * s)
 {
 	unsigned int len = strlen(s);
 	addWord(len);
-	addString(s, len);
+	return addString(s, len);
 }
 
 int Buffer::addLELNTS(const char * s)
 {
 	unsigned int len = strlen(s);
 	addLEWord(len);
-	addLEString(s, len);
+	return addLEString(s, len);
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
