@@ -21,9 +21,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>TranslatorPrefsUI</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
