@@ -102,6 +102,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 	switch(notification)
 	{
 		case 0x0000:
+			// Typing finished
 			emit gotMiniTypeNotification(screenName, 0);
 			break;
 		case 0x0001:
