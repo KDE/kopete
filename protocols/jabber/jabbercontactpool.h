@@ -109,11 +109,8 @@ public:
 	bool dirty ();
 	JabberContact *contact ();
 
-private slots:
-	void slotContactDestroyed ();
-
 private:
-	bool mDirty, canDelete;
+	bool mDirty;
 	JabberContact *mContact;
 };
 

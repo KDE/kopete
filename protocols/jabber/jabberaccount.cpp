@@ -1324,19 +1324,22 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 	// see if we found the contact in our pool
 	if ( !contactFrom )
 	{
+		// eliminate the resource from this contact,
+		// otherwise we will add the contact with the
+		// resource to our list
+		// NOTE: This is a stupid way to do it, but
+		// message.from().setResource("") had no
+		// effect. Iris bug?
+		XMPP::Jid jid ( message.from().userHost () );
+
 		// the contact is not in our pool, add it as a temporary contact
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << message.from().full () << " is unknown to us, creating temporary contact." << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is unknown to us, creating temporary contact." << endl;
 
 		KopeteMetaContact *metaContact = new KopeteMetaContact ();
 
 		metaContact->setTemporary (true);
 
-		// eliminate the resource from this contact,
-		// otherwise we will add the contact with the
-		// resource to our list
-		message.from().setResource ( "" );
-
-		contactFrom = contactPool()->addContact ( XMPP::RosterItem ( message.from () ), metaContact, false );
+		contactFrom = contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
 
 		KopeteContactList::contactList ()->addMetaContact (metaContact);
 	}

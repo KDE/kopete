@@ -75,7 +75,11 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 	{
 		if ( mContactItem->contact()->contactId().lower() == jid.full().lower() )
 		{
-			mPool.removeNode ( mPool.currentNode() );
+			/*
+			 * The following deletion will cause slotContactDestroyed()
+			 * to be called, which will clean the up the list.
+			 */
+			delete mContactItem->contact ();
 			return;
 		}
 	}
@@ -109,11 +113,15 @@ void JabberContactPool::clear ()
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Clearing the contact pool." << endl;
 
-	/*
-	 * Since mPool has autodeletion enabled, this will cause all
-	 * items to be deleted.
-	 */
-	mPool.clear ();
+	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
+	{
+		/*
+		 * The following deletion will cause slotContactDestroyed()
+		 * to be called, which will clean the up the list.
+		 * NOTE: this is a very inefficient way to clear the list
+		 */
+		delete mContactItem->contact ();
+	}
 
 }
 
@@ -144,8 +152,11 @@ void JabberContactPool::cleanUp ()
 		{
 			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing dirty contact " << mContactItem->contact()->contactId () << endl;
 
-			// this will cause the contact instance itself to be deleted
-			mPool.removeNode ( mPool.currentNode() );
+			/*
+			 * The following deletion will cause slotContactDestroyed()
+			 * to be called, which will clean the up the list.
+			 */
+			delete mContactItem->contact ();
 		}
 	}
 
@@ -200,15 +211,11 @@ QPtrList<JabberContact> JabberContactPool::findRelevantSources ( const XMPP::Jid
 JabberContactPoolItem::JabberContactPoolItem ( JabberContact *contact )
 {
 	mDirty = true;
-	canDelete = true;
 	mContact = contact;
-	connect ( contact, SIGNAL ( destroyed () ), this, SLOT ( slotContactDestroyed () ) );
 }
 
 JabberContactPoolItem::~JabberContactPoolItem ()
 {
-	if ( canDelete )
-		delete mContact;
 }
 
 void JabberContactPoolItem::setDirty ( bool dirty )
@@ -224,11 +231,6 @@ bool JabberContactPoolItem::dirty ()
 JabberContact *JabberContactPoolItem::contact ()
 {
 	return mContact;
-}
-
-void JabberContactPoolItem::slotContactDestroyed ()
-{
-	canDelete = false;
 }
 
 #include "jabbercontactpool.moc"
