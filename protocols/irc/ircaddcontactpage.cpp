@@ -34,19 +34,19 @@ void IRCAddContactPage::slotFinish()
 	QString currentGroup = ircdata->cmbGroup->currentText();
 	if (currentGroup.isEmpty() == true)
 	{
-		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to have a buddy listed under a group. Please create a group first. You may do this by right clicking in the buddy list and selecting \"Add Group...\"</qt>"), i18n("You must select a group"));
+		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to have a buddy listed under a group. Please create a group first. You may do this by right clicking in the buddy list and selecting \"Add Group...\"</qt>"), i18n("You Must Select a Group"));
 		return;
 	}
 	QString server = ircdata->ircServer->text();
 	if (server.isEmpty() == true)
 	{
-		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to specify a server to connect to. Please try again. Aborting.</qt>"), i18n("You must input a server"));
+		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to specify a server to connect to. Please try again. Aborting.</qt>"), i18n("You Must Input a Server"));
 		return;
 	}
 	QString name = ircdata->addID->text();
 	if (name.isEmpty() == true)
 	{
-		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to specify a channel to join, or query to open. Please try again. Aborting.</qt>"), i18n("You must input a contact"));
+		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to specify a channel to join, or query to open. Please try again. Aborting.</qt>"), i18n("You Must Input a Contact"));
 		return;
 	}
 	plugin->addContact(currentGroup, server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked());

@@ -298,7 +298,7 @@ QString MSNContact::statusText() const
 		}
 		case MSNProtocol::PHN: // On the phone
 		{
-			return i18n("On The Phone");
+			return i18n("On the Phone");
 			break;
 		}
 		case MSNProtocol::BRB: // Be right back
@@ -308,7 +308,7 @@ QString MSNContact::statusText() const
 		}
 		case MSNProtocol::LUN: // Out to lunch
 		{
-			return i18n("Out To Lunch");
+			return i18n("Out to Lunch");
 			break;
 		}
 

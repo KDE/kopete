@@ -67,7 +67,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->hasKey("Nickname") == false)
 	{
-		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you haven't setup your IRC settings for the first time, please do so by going to File->Configure Kopete->IRC Plugin. Once you are done there, please try connecting again.</qt>"), "Preferences non-existant");
+		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you haven't setup your IRC settings for the first time, please do so by going to File->Configure Kopete->IRC Plugin. Once you are done there, please try connecting again.</qt>"), i18n("Preferences Non-Existant"));
 		return;
 	}
 

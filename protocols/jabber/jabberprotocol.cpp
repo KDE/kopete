@@ -79,7 +79,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 			i18n("<qt>If you have a Jabber account, please \
 			configure it in the Kopete Settings. If you don't, you can register \
 			in the settings.</qt>"),
-			i18n("No Jabber Configuration found!")
+			i18n("No Jabber Configuration Found!")
 			);
 	}
 
@@ -228,13 +228,13 @@ void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
 	switch(error->type)
 	{
 		case JABERR_CONNECT:
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but there was an error connecting to the Jabber server (%1).").arg(error->msg, 1), i18n("Error connecting to Jabber server"));
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but there was an error connecting to the Jabber server (%1).").arg(error->msg, 1), i18n("Error Connecting to Jabber Server"));
 			break;
 		case JABERR_AUTH:   /* FIXME FIXME FIXME FIXME!!! */
 		case JABERR_CREATE: /* Isn't red-on-orange just so PRETTY? */
 		default: /* o/~ cause i'm that fool who broke the key/i'm unlockable so don't check me/
 					    i got weight on my shoulders and things on my mind/ the sky is falling, and i'm falling behind */
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but you were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected from Jabber server")); /* (But were they really disconnected, or are they just on speed? */
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but you were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected From Jabber Server")); /* (But were they really disconnected, or are they just on speed? */
 	}
 }
 
@@ -430,7 +430,7 @@ void JabberProtocol::slotUserWantsAuth(const Jid &jid) {
 		questionYesNo(kopeteapp->mainWindow(), i18n("The Jabber user ") + userID +
 	    i18n(" wants to add you to your contact list. Do you want to \
 			   authorize them?"),
-		i18n("Authorize Jabber user?")) == 3) {
+		i18n("Authorize Jabber User?")) == 3) {
 			mProtocol->subscribed(userID);
     }
 }
@@ -497,7 +497,7 @@ void JabberProtocol::slotNewMessage(const JabMessage &message) {
 	QString jid = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host(), 2);
 	if (message.from.user() == QString("")) {
 		kdDebug() << "[JabberProtocol] New server message for us!" << endl;
-		KMessageBox::information(kopeteapp->mainWindow(), message.body, i18n("Jabber: Server message"));
+		KMessageBox::information(kopeteapp->mainWindow(), message.body, i18n("Jabber: Server Message"));
 	}
 	else
 	{

@@ -351,7 +351,7 @@ bool IRCServerContact::parentClosing()
 {
 	if (engine->isLoggedIn() == true && engine->state() == QSocket::Connected)
 	{
-		if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connected to the IRC server, are you sure you want to quit now?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAsk") == KMessageBox::Yes)
+		if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connected to the IRC server, are you sure you want to quit now?"), i18n("Are You Sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAsk") == KMessageBox::Yes)
 		{
 			closing = true;
 			slotQuitServer();
@@ -363,7 +363,7 @@ bool IRCServerContact::parentClosing()
 	} else {
 		if (engine->state() != QSocket::Idle)
 		{
-			if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connecting to an IRC server, are you sure you want to abort connecting and close this window?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAskNotOnline") == KMessageBox::Yes)
+			if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connecting to an IRC server, are you sure you want to abort connecting and close this window?"), i18n("Are You Sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAskNotOnline") == KMessageBox::Yes)
 			{
 				forceDisconnect();
 				mManager->removeServer(QString("%1@%2").arg(mNickname).arg(mServer));

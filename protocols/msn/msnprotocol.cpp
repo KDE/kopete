@@ -315,7 +315,7 @@ void MSNProtocol::initIcons()
 
 void MSNProtocol::initActions()
 {
-	actionGoOnline = new KAction ( i18n("Go o&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
+	actionGoOnline = new KAction ( i18n("Go O&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
 	actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
 	actionGoAway = new KAction ( i18n("Set &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
 	m_renameAction = new KAction ( i18n( "&Change Nickname..." ),
@@ -457,7 +457,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 						"the group %1 doesn't exist in MSN server group list, if you want to move" \
 						" a MSN contact to this group you need to add it to MSN server, do you want" \
 						" to add this group to the server group list?" ).arg(localgroup);
-					useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
+					useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New Local Group Found") );
 					*/
 					addGroup( localgroup );
 				}

@@ -368,9 +368,9 @@ void IRCContact::showContextMenu(QPoint point, QString /*group*/)
 		} else {
 			if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 			{
-				popup->insertItem(i18n("Connect and Join"), this, SLOT(slotOpenConnect()));
+				popup->insertItem(i18n("Connect && Join"), this, SLOT(slotOpenConnect()));
 			} else {
-				popup->insertItem(i18n("Connect and Open"), this, SLOT(slotOpenConnect()));
+				popup->insertItem(i18n("Connect && Open"), this, SLOT(slotOpenConnect()));
 			}
 		}
 	}

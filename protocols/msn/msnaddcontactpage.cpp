@@ -42,7 +42,7 @@ void MSNAddContactPage::slotFinish()
 		QString currentGroup = msndata->cmbGroup->currentText();
 		if (currentGroup.isEmpty() == true)
 		{
-			KMessageBox::sorry(this, i18n("<qt>I'm sorry, you need to have a buddy listed under a group.</qt>"), i18n("You must select a group"));
+			KMessageBox::sorry(this, i18n("<qt>I'm sorry, you need to have a buddy listed under a group.</qt>"), i18n("You Must Select a Group"));
 			return;
 		}
 		*/
