@@ -229,7 +229,7 @@ public:
 	 *
 	 * Every metacontact has a unique id, set by kopete when creating the contact, or reading the contactlist
 	 */
-	QString contactId() const;
+	QString metaContactId() const;
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
@@ -363,13 +363,13 @@ signals:
 	 * This metaContact is going to be saved to the contactlist. Plugin should
 	 * connect to this signal to update data with setPluginData()
 	 */
-	void aboutToSave(KopeteMetaContact*);
+	void aboutToSave( KopeteMetaContact *metaContact );
 
 	/**
 	 * One of the subcontacts' idle status has changed.  As with online status,
 	 * this can occur without the metacontact changing idle state
 	 */
-	void contactIdleStateChanged( KopeteContact *contact);
+	void contactIdleStateChanged( KopeteContact *contact );
 
 private slots:
 	/**
@@ -397,7 +397,7 @@ private slots:
 	/**
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
-	void slotPluginLoaded(KopetePlugin *p);
+	void slotPluginLoaded( KopetePlugin *plugin );
 
 
 private:

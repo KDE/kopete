@@ -49,7 +49,7 @@ struct KopeteMetaContactPrivate
 
 	bool temporary;
 //	bool dirty;
-	QString contactId;
+	QString metaContactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
 };
 
@@ -62,7 +62,6 @@ KopeteMetaContact::KopeteMetaContact()
 	d->temporary = false;
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
-	d->contactId = QString::null;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -593,10 +592,10 @@ const QDomElement KopeteMetaContact::toXML()
 	emit aboutToSave(this);
 
 	QDomDocument metaContact;
-	metaContact.appendChild( metaContact.createElement( QString::fromLatin1("meta-contact") ) );
-	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), contactId() );
+	metaContact.appendChild( metaContact.createElement( QString::fromLatin1( "meta-contact" ) ) );
+	metaContact.documentElement().setAttribute( QString::fromLatin1( "contactId" ), metaContactId() );
 
-	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name") );
+	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name" ) );
 	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
 	displayName.appendChild( metaContact.createTextNode(  d->displayName  ) );
 	metaContact.documentElement().appendChild( displayName );
@@ -645,9 +644,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 
 	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
 	if( !strContactId.isEmpty() )
-	{
-		d->contactId = strContactId;
-	}
+		d->metaContactId = strContactId;
 
 	QDomElement contactElement = element.firstChild().toElement();
 	while( !contactElement.isNull() )
@@ -755,12 +752,9 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	}
 }
 
-QString KopeteMetaContact::contactId() const
+QString KopeteMetaContact::metaContactId() const
 {
-	if( (d->contactId).isEmpty() )
-		d->contactId = KApplication::randomString(10);
-
-	return d->contactId;
+	return d->metaContactId;
 }
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
