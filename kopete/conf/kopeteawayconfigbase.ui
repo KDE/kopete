@@ -53,6 +53,9 @@
                     <property name="maxValue">
                         <number>999</number>
                     </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="1" column="2">
                     <property name="name">
