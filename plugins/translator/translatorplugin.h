@@ -55,7 +55,7 @@ public:
 public slots:
 	void slotIncomingMessage( KopeteMessage& msg );
 	void slotOutgoingMessage( KopeteMessage& msg );
-    void slotDataReceived ( KIO::Job *, const QByteArray &data);
+	void slotDataReceived ( KIO::Job *, const QByteArray &data);
 	void slotJobDone ( KIO::Job *);
 
 protected:

@@ -88,19 +88,19 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
     kdDebug() << "[Translator] Incoming message " << msg.timestamp().toString("hhmmsszzz") << endl;
     if ( msg.direction() == KopeteMessage::Inbound )
-		translateMessage( msg , "en", "es");
+		translateMessage( msg , "fr", "en");
 }
 
 void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
     kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
     if ( msg.direction() == KopeteMessage::Outbound )
-		translateMessage( msg , "es", "en");
+		translateMessage( msg , "en", "fr");
 }
 
 void TranslatorPlugin::translateMessage( KopeteMessage& msg , const QString &from, const QString &to)
 {
-    kdDebug() << "[Translator] Translating " << from << " " << to << " " << msg.timestamp().toString("hhmmsszzz") << endl;
+	kdDebug() << "[Translator] Translating " << from << " " << to << " " << msg.timestamp().toString("hhmmsszzz") << endl;
 	
 	QString body, lp;
 	KURL translatorURL;
@@ -110,16 +110,16 @@ void TranslatorPlugin::translateMessage( KopeteMessage& msg , const QString &fro
 	translatorURL = "http://babel.altavista.com/tr";
 
 	body = KURL::encode_string("x-x-x " + msg.body() + " x-x-x");
-    lp = from + "_" + to;
+	lp = from + "_" + to;
 
 	postData = "enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp ;
 
-    QString gurl = "http://babel.altavista.com/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp;
-    kdDebug() << "[Translator] URL: " << gurl << endl;
+	QString gurl = "http://babel.altavista.com/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp;
+	kdDebug() << "[Translator] URL: " << gurl << endl;
 	KURL geturl = gurl;
 
 	//job = KIO::http_post( translatorURL, postData, true );
-    job = KIO::get( geturl, false, true );
+	job = KIO::get( geturl, false, true );
 	
 	//job->addMetaData("content-type", "application/x-www-form-urlencoded" );
 	//job->addMetaData("referrer", "http://www.google.com");
@@ -127,11 +127,11 @@ void TranslatorPlugin::translateMessage( KopeteMessage& msg , const QString &fro
 	QObject::connect( job, SIGNAL(data( KIO::Job *,const QByteArray&)), this, SLOT(slotDataReceived( KIO::Job *,const QByteArray&)) );
 	QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotJobDone( KIO::Job *)) );
 
-    /* KIO is async and we use a sync API, hay que dentrar a picarle nomas */
+	/* KIO is async and we use a sync API, hay que dentrar a picarle nomas */
 	while ( ! m_completed[ job ] )
 		kopeteapp->processEvents();
 
-	QString data = m_data[job];
+	QString data = QString::fromUtf8(m_data[job]);
 
 	/* After hacks, we need to clean */
 	m_data.remove( job );
@@ -147,10 +147,8 @@ void TranslatorPlugin::translateMessage( KopeteMessage& msg , const QString &fro
 
 	if ( translated != QString::null )
 		msg.setBody(translated);
-    else
+	else
 		msg.setBody(msg.body());
-
-
 }
 
 void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data)
