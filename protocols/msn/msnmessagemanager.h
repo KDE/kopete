@@ -49,6 +49,7 @@ public:
 public slots:
 	void slotCloseSession();
 	void slotInviteOtherContact();
+	void slotVoiceChat();
 
 	void invitationDone( MSNInvitation*  );
 

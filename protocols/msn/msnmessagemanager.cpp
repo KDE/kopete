@@ -35,6 +35,8 @@
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
+#include "msnvoiceinvitation.h"
+
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
 #endif
@@ -190,6 +192,7 @@ KActionCollection * MSNMessageManager::chatActions()
 	#if !defined NDEBUG
 	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actions );
 	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" ) );
+	debugMenu->insert( new KAction( i18n( "Voice Chat" ), 0, this, SLOT( slotVoiceChat() ), debugMenu, "m_voiceChat" ) );
 	m_actions->insert( debugMenu );
 	#endif
 
@@ -291,6 +294,13 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			m_invitations.insert( cookie  , MFTS);
 			MFTS->parseInvitation(msg);
 		}
+		else if( msg.contains(MSNVoiceInvitation::applicationID()) )
+		{
+			MSNVoiceInvitation *msnVI=new MSNVoiceInvitation(true,c,this);
+			connect(msnVI, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
+			m_invitations.insert( cookie  , msnVI);
+			msnVI->parseInvitation(msg);
+		}
 		else
 		{
 			MSNInvitation *i=0l;
@@ -350,6 +360,19 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 	}
 }
 
+void MSNMessageManager::slotVoiceChat()
+{
+	if(m_chatService)
+	{
+		QPtrList<KopeteContact>contacts=members();
+		MSNVoiceInvitation *msnVI=new MSNVoiceInvitation(false,static_cast<MSNContact*>(contacts.first()),this);
+		connect(msnVI, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
+		m_invitations.insert( msnVI->cookie() , msnVI);
+
+		m_chatService->sendCommand( "MSG" , "N", true, msnVI->invitationHead() );
+	}
+}
+
 void MSNMessageManager::slotDebugRawCommand()
 {
 #if !defined NDEBUG
@@ -361,7 +384,7 @@ void MSNMessageManager::slotDebugRawCommand()
 	if( result == QDialog::Accepted && m_chatService )
 	{
 		m_chatService->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace("\n","\r\n") );
+					dlg->addId(), dlg->msg().replace("\n","\r\n").utf8() );
 	}
 	delete dlg;
 #endif
