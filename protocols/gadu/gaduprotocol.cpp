@@ -37,6 +37,7 @@
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
 #include "kopeteglobal.h"
+#include "kopeteonlinestatusmanager.h"
 
 typedef KGenericFactory<GaduProtocol> GaduProtocolFactory;
 
@@ -53,25 +54,25 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 			propPhoneNr(Kopete::Global::Properties::self()->privatePhone()),
 			defaultAccount_( 0 ),
 			gaduStatusBlocked_( Kopete::OnlineStatus::Away, GG_STATUS_BLOCKED, this, GG_STATUS_BLOCKED,
-				"gg_ignored", "", i18n( "Blocked" ) ),
+				"gg_ignored", i18n( "Blocked" ) ),
 			gaduStatusOffline_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL, this, GG_STATUS_NOT_AVAIL,
-				"gg_offline", i18n( "Go O&ffline" ), i18n( "Offline" ) ),
+				"gg_offline", i18n( "Offline" ) , i18n( "Go O&ffline" ) , Kopete::OnlineStatusManager::Offline ),
 			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Away, GG_STATUS_NOT_AVAIL_DESCR, this, GG_STATUS_NOT_AVAIL_DESCR,
-				"gg_offline_d", i18n( "Go A&way" ), i18n( "Offline" ) ),
+				"gg_offline_d", i18n( "Offline" ), i18n( "Go A&way" ) , Kopete::OnlineStatusManager::Away ),
 			gaduStatusBusy_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY, this, GG_STATUS_BUSY,
-				"gg_busy", i18n( "Go B&usy" ), i18n( "Busy" ) ),
+				"gg_busy", i18n( "Busy" ) , i18n( "Go B&usy" ) , Kopete::OnlineStatusManager::Busy ),
 			gaduStatusBusyDescr_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
-				"gg_busy_d", i18n( "Go B&usy" ), i18n( "Busy" ) ),
+				"gg_busy_d", i18n( "Busy" ) , i18n( "Go B&usy" ) , Kopete::OnlineStatusManager::Idle ),
 			gaduStatusInvisible_( Kopete::OnlineStatus::Invisible, GG_STATUS_INVISIBLE, this, GG_STATUS_INVISIBLE,
-				"gg_invi", i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
+				"gg_invi", i18n( "Invisible" ) , i18n( "Go I&nvisible" ) , Kopete::OnlineStatusManager::Invisible),
 			gaduStatusInvisibleDescr_(Kopete::OnlineStatus::Invisible, GG_STATUS_INVISIBLE_DESCR, this, GG_STATUS_INVISIBLE_DESCR,
-				"gg_invi_d", i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
+				"gg_invi_d", i18n( "Invisible" ) , i18n( "Go I&nvisible" )),
 			gaduStatusAvail_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL, this, GG_STATUS_AVAIL,
-				"gg_online", i18n( "Go &Online" ), i18n( "Online" ) ),
+				"gg_online", i18n( "Online" ) , i18n( "Go &Online" ) ,  Kopete::OnlineStatusManager::Online ),
 			gaduStatusAvailDescr_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL_DESCR, this, GG_STATUS_AVAIL_DESCR,
-				"gg_online_d", i18n( "Go &Online" ), i18n( "Online" ) ),
+				"gg_online_d", i18n( "Online" ) , i18n( "Go &Online" )),
 			gaduConnecting_(Kopete::OnlineStatus::Offline, GG_STATUS_CONNECTING, this, GG_STATUS_CONNECTING,
-				"gg_con", i18n( "Connect" ), i18n( "Connecting" ) )
+				"gg_con", i18n( "Connecting" ) )
 {
 	if ( protocolStatic_ ) {
 		kdDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;

@@ -365,7 +365,6 @@ void ICQContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 				protocol(),
 				status.internalStatus()+15,
 				QString::fromLatin1("icq_invisible"),
-				status.caption(),
 				i18n("%1|Invisible").arg(status.description())
 				)
 			);

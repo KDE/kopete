@@ -67,31 +67,31 @@ KActionMenu* ICQAccount::actionMenu()
 
 	ICQProtocol *p = ICQProtocol::protocol();
 
-	KAction* mActionOnline = new KAction(p->statusOnline.caption(),
+	KAction* mActionOnline = new KAction(i18n("Online"),
 		p->statusOnline.iconFor(this), 0,
 		this, SLOT(slotGoOnline()), this, "ICQAccount::mActionOnline");
 
-	KAction* mActionOffline = new KAction(p->statusOffline.caption(),
+	KAction* mActionOffline = new KAction(i18n("Offline"),
 		p->statusOffline.iconFor(this), 0,
 		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
 
-	Kopete::AwayAction* mActionAway = new Kopete::AwayAction(p->statusAway.caption(),
+	Kopete::AwayAction* mActionAway = new Kopete::AwayAction(i18n("Away"),
 		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway( const QString & )), this, "ICQAccount::mActionAway" );
 
-	Kopete::AwayAction* mActionNA = new Kopete::AwayAction(p->statusNA.caption(),
+	Kopete::AwayAction* mActionNA = new Kopete::AwayAction(i18n("Not A&vailable"),
 		p->statusNA.iconFor(this), 0,
 		this, SLOT(slotGoNA( const QString & )), this, "ICQAccount::mActionNA" );
 
-	Kopete::AwayAction* mActionDND = new Kopete::AwayAction(p->statusDND.caption(),
+	Kopete::AwayAction* mActionDND = new Kopete::AwayAction(i18n("&Do Not Disturb"),
 		p->statusDND.iconFor(this), 0,
 		this, SLOT(slotGoDND( const QString & )), this, "ICQAccount::mActionDND" );
 
-	Kopete::AwayAction* mActionOCC = new Kopete::AwayAction(p->statusOCC.caption(),
+	Kopete::AwayAction* mActionOCC = new Kopete::AwayAction(i18n("O&ccupied"),
 		p->statusOCC.iconFor(this), 0,
 		this, SLOT(slotGoOCC( const QString & )), this, "ICQAccount::mActionOCC" );
 
-	Kopete::AwayAction* mActionFFC = new Kopete::AwayAction(p->statusFFC.caption(),
+	Kopete::AwayAction* mActionFFC = new Kopete::AwayAction(i18n("&Free for Chat"),
 		p->statusFFC.iconFor(this), 0,
 		this, SLOT(slotGoFFC( const QString & )), this, "ICQAccount::mActionFCC" );
 

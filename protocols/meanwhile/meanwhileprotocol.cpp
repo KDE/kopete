@@ -22,6 +22,7 @@
 #include <kgenericfactory.h>
 #include "kopeteaccountmanager.h"
 #include "kopeteglobal.h"
+#include "kopeteonlinestatusmanager.h"
 
 MeanwhileProtocol *MeanwhileProtocol::s_protocol = 0L;
 
@@ -37,27 +38,26 @@ MeanwhileProtocol::MeanwhileProtocol( QObject* parent,
                      parent, name ),
       meanwhileOffline( Kopete::OnlineStatus::Offline, 
                         25, this, 0, QString::null,
-                        i18n( "Go Offline" ),
-                        i18n( "Offline" ) ),
+                        i18n( "Offline" ),
+						i18n( "Go Offline" ), Kopete::OnlineStatusManager::Offline ),
       meanwhileOnline( Kopete::OnlineStatus::Online, 
                         25, this, 1, QString::null,
-                        i18n( "Go Online" ),
-                        i18n( "Online" ) ),
+                        i18n( "Online" ), 
+						i18n( "Go Online" ), Kopete::OnlineStatusManager::Online   ),
       meanwhileAway( Kopete::OnlineStatus::Away, 
                         25, this, 2, "meanwhile_away",
-                        i18n( "Go Away" ),
-                        i18n( "Away" ) ),
+                        i18n( "Away" ) ,
+                        i18n( "Go Away" ), Kopete::OnlineStatusManager::Away ),
       meanwhileBusy( Kopete::OnlineStatus::Away, 
                         25, this, 3, "meanwhile_dnd",
-                        i18n( "Mark as Busy" ),
-                        i18n( "Busy" ) ),
+                        i18n( "Busy" ) , 
+						i18n( "Mark as Busy" ), Kopete::OnlineStatusManager::Busy ),
       meanwhileIdle( Kopete::OnlineStatus::Away, 
                         25, this, 4, "meanwhile_idle",
-                        i18n( "Marked as Idle" ),
-                        i18n( "Idle" ) ),
-      meanwhileUnknown( Kopete::OnlineStatus::Offline, 
+                        i18n( "Idle" ), 
+                        i18n( "Marked as Idle" ), Kopete::OnlineStatusManager::Idle ),
+      meanwhileUnknown( Kopete::OnlineStatus::Unknown, 
                         25, this, 5, "meanwhile_unknown",
-                        i18n( "Where am I" ),
                         i18n( "Catch me if you can" ) ),
       statusMessage(QString::fromLatin1("statusMessage"), i18n("Status Message"),QString::null,false,true),
 	  awayMessage(Kopete::Global::Properties::self()->awayMessage())

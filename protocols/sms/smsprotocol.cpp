@@ -34,9 +34,9 @@ SMSProtocol* SMSProtocol::s_protocol = 0L;
 
 SMSProtocol::SMSProtocol(QObject *parent, const char *name, const QStringList &/*args*/)
 : Kopete::Protocol( SMSProtocolFactory::instance(), parent, name ),
-	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	SMSUnknown( Kopete::OnlineStatus::Unknown, 25, this, 1,  QString::null, "FIXME: Make optional", i18n( "Unknown" ) ),
-	SMSOffline( Kopete::OnlineStatus::Offline, 25, this, 2,  QString::null, i18n( "Go O&ffline" ),  i18n( "Offline" ) )
+	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null,   i18n( "Online" ) ),
+	SMSUnknown( Kopete::OnlineStatus::Unknown, 25, this, 1,  QString::null,  i18n( "Unknown" ) ),
+	SMSOffline( Kopete::OnlineStatus::Offline, 25, this, 2,  QString::null,   i18n( "Offline" ) )
 {
 	if (s_protocol)
 		kdWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
