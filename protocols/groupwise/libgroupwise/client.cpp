@@ -13,7 +13,7 @@
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
 #include "tasks/typingtask.h"
-
+#include "userdetailsmanager.h"
 #include "client.h"
 
 class Client::ClientPrivate
@@ -30,6 +30,7 @@ public:
 /*	int tzoffset;*/
 	bool active;
 	RequestFactory * requestFactory;
+	UserDetailsManager * userDetailsMgr;
 };
 
 Client::Client(QObject *par)
@@ -44,6 +45,7 @@ Client::Client(QObject *par)
 
 	d->root = new Task(this, true);
 	d->requestFactory = new RequestFactory;
+	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
 	d->stream = 0;
 }
 
@@ -52,6 +54,7 @@ Client::~Client()
 	close();
 	delete d->root;
 	delete d->requestFactory;
+	delete d->userDetailsMgr;
 	delete d;
 }
 
@@ -271,6 +274,11 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	ConferenceEvent transformedEvent = messageEvent;
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
+	//QRegExp rx( "&(?!amp;)" );      // match ampersands but not &amp; (?! is negative lookahead
+// 	QRegExp rx( "(\\u\d+) (\?)"
+//     QString line1 = "This & that";
+//     line1.replace( rx, "&amp;" );
+	
 	transformedEvent.message = parser.Parse( rtf.latin1(), "" );
 	emit messageReceived( transformedEvent );
 }
@@ -358,6 +366,11 @@ QString Client::genUniqueId()
 RequestFactory * Client::requestFactory()
 {
 	return d->requestFactory;
+}
+
+UserDetailsManager * Client::userDetailsManager()
+{
+	return d->userDetailsMgr;
 }
 
 Task * Client::rootTask()

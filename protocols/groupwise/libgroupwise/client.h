@@ -11,6 +11,7 @@
 
 class Task;
 class RequestFactory;
+class UserDetailsManager;
 
 using namespace GroupWise;
 
@@ -162,7 +163,18 @@ Q_OBJECT
 		 * for this connection
 		 */
 		RequestFactory * requestFactory();
+		/**
+		 * Get a reference to the UserDetailsManager for this Client.
+		 * Used to track known user details and issue new details requests
+		 */
+		UserDetailsManager * userDetailsManager();
+		/**
+		 * Access the root Task for this client, so tasks may be added to it.
+		 */
+		Task* rootTask();
+
 	signals:
+		/** CONNECTION EVENTS */
 		/**
 		 * Notifies that the login process has succeeded.
 		 */
@@ -171,10 +183,12 @@ Q_OBJECT
 		 * Notifies tasks and account so they can react properly
 		 */
 		void disconnected();
-		/** 
-		 * Notify that we've just received a message.  Sender may not be on our contact list
+		/**
+		 * We were disconnected because we connected elsewhere
 		 */
-		void messageReceived( const ConferenceEvent & );
+		void connectedElsewhere();
+		
+		/** STATUS AND METADATA EVENTS */
 		/**
 		 * We've just got the user's own details from the server.
 		 */
@@ -199,6 +213,12 @@ Q_OBJECT
 		 * Our status changed on the server
 		 */
 		void ourStatusChanged( GroupWise::Status status, const QString & statusText, const QString & autoReply );
+		
+		/** CONFERENCE (MANAGEMENT) EVENTS */
+		/** 
+		 * Notify that we've just received a message.  Sender may not be on our contact list
+		 */
+		void messageReceived( const ConferenceEvent & );
 		/** 
 		 * A conference was successfully created on the server
 		 */
@@ -238,13 +258,12 @@ Q_OBJECT
 		 */
 		void contactNotTyping( const ConferenceEvent & );
 		/**
-		 * We were disconnected because we connected elsewhere
-		 */
-		void connectedElsewhere();
-		/**
 		 * An attempt to create a conference failed.
 		 */
 		 void conferenceCreationFailed( const int clientId, const int error );
+		
+		/** CONTACT LIST MANAGEMENT EVENTS */
+		/** TBD! */
 	protected:
 		/**
 		 * Instantiate all the event handling tasks
@@ -274,7 +293,6 @@ Q_OBJECT
 		
 	private:
 		void distribute( Transfer *transfer );
-		Task* rootTask();
 		class ClientPrivate;
 		ClientPrivate* d;
 };
