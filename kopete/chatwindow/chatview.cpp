@@ -685,12 +685,14 @@ void ChatView::appendMessage(Kopete::Message &message)
 		}
 	}
 
-	if( !d->sendInProgress || message.from() != m_manager->myself() )
+	if( message.direction() == Kopete::Message::Inbound )
 	{
 		unreadMessageFrom = message.from()->metaContact() ?
 			 message.from()->metaContact()->displayName() : message.from()->contactId();
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
+	else
+		unreadMessageFrom = QString::null;
 }
 
 void ChatView::slotMarkMessageRead()
