@@ -19,6 +19,7 @@
 #define IRCCONTACT_H
 
 #include <qptrlist.h>
+#include <qmap.h>
 
 #include "kirc.h"
 #include "kopetecontact.h"
@@ -27,6 +28,8 @@ class KopeteMessageManager;
 class KopeteMetaContact;
 class IRCIdentity;
 class KopeteMessage;
+
+struct whoIsInfo;
 
 class IRCContact : public KopeteContact
 {
@@ -53,12 +56,17 @@ class IRCContact : public KopeteContact
 		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
 		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
 		void slotNewAction(const QString &originating, const QString &target, const QString &message);
-		void slotNewWhois(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
-
+		void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+		void slotNewWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
+		void slotNewWhoIsOperator(const QString &nickname);
+		void slotNewWhoIsIdle(const QString &nickname, unsigned long seconds);
+		void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
+		void slotWhoIsComplete(const QString &nickname);
 	protected:
 		QPtrList<KopeteContact> mContact;
 		QPtrList<KopeteContact> mMyself;
 
+		QMap<QString, whoIsInfo*> mWhoisMap;
 		KopeteMetaContact *mMetaContact;
 		KIRC *mEngine;
 		KopeteMessageManager *mMsgManager;

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <kdebug.h>
+#include <klocale.h>
 #include <qstringlist.h>
 #include <qregexp.h>
 
@@ -26,6 +27,18 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "irccontact.h"
+
+struct whoIsInfo
+{
+	QString userName;
+	QString hostName;
+	QString realName;
+	QString serverName;
+	QString serverInfo;
+	QStringList channels;
+	unsigned long idle;
+	bool isOperator;
+};
 
 IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac) :
 	KopeteContact((KopeteProtocol *)identity->protocol(), nick, metac )
@@ -43,7 +56,13 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingWhoIsUser(const QString &, const QString &, const QString &, const QString &)) ,
-		this, SLOT( slotNewWhois(const QString &, const QString &, const QString &, const QString &) ) );
+		this, SLOT( slotNewWhoIsUser(const QString &, const QString &, const QString &, const QString &) ) );
+
+	QObject::connect(mEngine, SIGNAL(incomingWhoIsServer(const QString &, const QString &, const QString &)), this, SLOT(slotNewWhoIsServer(const QString &, const QString &, const QString &)));
+	QObject::connect(mEngine, SIGNAL(incomingWhoIsOperator(const QString &)), this, SLOT(slotNewWhoIsOperator(const QString &)));
+	QObject::connect(mEngine, SIGNAL(incomingWhoIsIdle(const QString &, unsigned long )), this, SLOT(slotNewWhoIsIdle(const QString &, unsigned long )));
+	QObject::connect(mEngine, SIGNAL(incomingWhoIsChannels(const QString &, const QString &)), this, SLOT(slotNewWhoIsChannels(const QString &, const QString &)));
+	QObject::connect(mEngine, SIGNAL(incomingEndOfWhois(const QString &)), this, SLOT( slotWhoIsComplete(const QString &)));
 }
 
 KopeteMessageManager* IRCContact::manager(bool)
@@ -121,20 +140,68 @@ void IRCContact::slotNewAction(const QString &originating, const QString &target
 		if ( user || mIdentity->mySelf()->nickName().lower() == originating.lower() )
 		{
 			QString msgText = QString::fromLatin1("* ") + QString::fromLatin1(" ") + message;
-			KopeteMessage msg( user, mContact, msgText, KopeteMessage::Inbound );
+			KopeteMessage msg( user, mContact, msgText, KopeteMessage::Action );
 			manager()->appendMessage(msg);
 		}
 	}
 }
 
-void IRCContact::slotNewWhois(const QString &nickname, const QString &username, const QString &hostname, const QString &realname)
+void IRCContact::slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname)
 {
-	kdDebug(14120) << k_funcinfo << endl;
 	KopeteContact *user = locateUser( nickname );
 	if( user )
 	{
-		QString msgText = QString::fromLatin1("[%1] (%2@%3) : %4").arg(nickname).arg(username).arg(hostname).arg(realname);
-		KopeteMessage msg( user, mContact, msgText, KopeteMessage::Internal );
+		kdDebug(14120) << k_funcinfo << endl;
+		mWhoisMap[nickname] = new whoIsInfo;
+		mWhoisMap[nickname]->userName = username;
+		mWhoisMap[nickname]->hostName = hostname;
+		mWhoisMap[nickname]->realName = realname;
+	}
+}
+
+void IRCContact::slotNewWhoIsServer(const QString &nickname, const QString &servername, const QString &serverinfo)
+{
+	if( mWhoisMap.contains(nickname) )
+	{
+		mWhoisMap[nickname]->serverName = servername;
+		mWhoisMap[nickname]->serverInfo = serverinfo;
+	}
+}
+
+void IRCContact::slotNewWhoIsIdle(const QString &nickname, unsigned long idle)
+{
+	if( mWhoisMap.contains(nickname) )
+		mWhoisMap[nickname]->idle = idle;
+}
+
+void IRCContact::slotNewWhoIsOperator(const QString &nickname)
+{
+	if( mWhoisMap.contains(nickname) )
+		mWhoisMap[nickname]->isOperator = true;
+}
+
+void IRCContact::slotNewWhoIsChannels(const QString &nickname, const QString &channel)
+{
+	if( mWhoisMap.contains(nickname) )
+		mWhoisMap[nickname]->channels.append( channel );
+}
+
+void IRCContact::slotWhoIsComplete(const QString &nickname)
+{
+	if( mWhoisMap.contains(nickname) )
+	{
+		whoIsInfo *w = mWhoisMap[nickname];
+		QString msgText = QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName);
+		QString channelText;
+		for(QStringList::Iterator it = w->channels.begin(); it != w->channels.end(); ++it)
+			channelText += *it + QString::fromLatin1(" \n");
+		msgText.append( QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText) );
+		msgText.append( QString::fromLatin1("[%1] %2 : %3\n").arg(nickname).arg(w->serverName).arg(w->serverInfo) );
+		msgText.append( i18n("[%1] idle %2\n").arg(nickname).arg( QString::number(w->idle) ) );
+		msgText.append( i18n("[%1] End of WHOIS list.").arg(nickname) );
+		delete w;
+
+		KopeteMessage msg( locateUser( nickname ) , mContact, msgText, KopeteMessage::Internal );
 		manager()->appendMessage(msg);
 	}
 }
