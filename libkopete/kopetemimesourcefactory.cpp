@@ -52,40 +52,72 @@ MimeSourceFactory::~MimeSourceFactory()
 
 const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 {
+	// flag used to signal something went wrong when creating a mimesource
+	bool completed = false;
 	// extract and decode arguments
 	QStringList parts = QStringList::split( QChar(':'), abs_name );
 	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
 		*it = KURL::decode_string( *it );
 
 	QPixmap img;
-
 	if ( parts[0] == QString::fromLatin1("kopete-contact-icon") )
 	{
-		if ( parts.size() < 4 ) return 0;
-		KopeteAccount *account = KopeteAccountManager::manager()->findAccount( parts[1], parts[2] );
-		if ( !account ) return 0;
-		KopeteContact *contact = account->contacts()[ parts[3] ];
-		if ( !contact ) return 0;
-		img = contact->onlineStatus().iconFor( contact );
+		if ( parts.size() >= 4 )
+		{
+			KopeteAccount *account = KopeteAccountManager::manager()->findAccount( parts[1], parts[2] );
+			if ( account ) 
+			{
+				KopeteContact *contact = account->contacts()[ parts[3] ];
+				if ( contact )
+				{
+					img = contact->onlineStatus().iconFor( contact );
+					completed = true;
+				}
+				else
+					kdDebug( 14010 ) << k_funcinfo << "kopete-contact-icon: contact not found" << endl;
+			}
+			else
+				kdDebug( 14010 ) << k_funcinfo << "kopete-contact-icon: account not found" << endl;
+		}
+		else
+			kdDebug( 14010 ) << k_funcinfo << "kopete-contact-icon: insufficient information in abs_name: " << parts << endl;
 	}
 
 	if ( parts[0] == QString::fromLatin1("kopete-account-icon") )
 	{
-		if ( parts.size() < 3 ) return 0;
-		KopeteAccount *account = KopeteAccountManager::manager()->findAccount( parts[1], parts[2] );
-		if ( !account ) return 0;
-		img = account->myself()->onlineStatus().iconFor( account->myself() );
+		if ( parts.size() >= 3 )
+		{
+			KopeteAccount *account = KopeteAccountManager::manager()->findAccount( parts[1], parts[2] );
+			if ( account )
+			{
+				img = account->myself()->onlineStatus().iconFor( account->myself() );
+				completed = true;
+			}
+			else
+				kdDebug( 14010 ) << k_funcinfo << "kopete-account-icon: account not found" << endl;
+		}
+		else
+			kdDebug( 14010 ) << k_funcinfo << "kopete-account-icon: insufficient information in abs_name: " << parts << endl;
 	}
 
 	if ( parts[0] == QString::fromLatin1("kopete-metacontact-icon") )
 	{
-		if ( parts.size() < 2 ) return 0;
-		KopeteMetaContact *mc = KopeteContactList::contactList()->metaContact( parts[1] );
-		img = SmallIcon( mc->statusIcon() );
+		if ( parts.size() >= 2 )
+		{
+			KopeteMetaContact *mc = KopeteContactList::contactList()->metaContact( parts[1] );
+			img = SmallIcon( mc->statusIcon() );
+			completed = true;
+		}
+		else 
+			kdDebug( 14010 ) << k_funcinfo << "kopete-metacontact-icon: insufficient information in abs_name: " << parts << endl;
 	}
 
+	
 	delete d->lastMimeSource;
-	d->lastMimeSource = new QImageDrag( img.convertToImage() );
+	if ( completed )
+		d->lastMimeSource = new QImageDrag( img.convertToImage() );
+	else
+		d->lastMimeSource = 0;
 	return d->lastMimeSource;
 }
 
