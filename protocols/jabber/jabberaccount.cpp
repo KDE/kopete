@@ -245,7 +245,7 @@ void JabberAccount::connect ()
 		QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
 	}
 
-	utsname utsBuf;
+	struct utsname utsBuf;
 
 	uname (&utsBuf);
 
