@@ -106,6 +106,14 @@ void MSNAccount::connect()
 	}
 	m_badpassword=false;
 
+	if(contacts().count() <= 1)
+	{
+		//Maybe the contactlist.xml has been removed, and the serial number not updated
+		// (the 1 is for the myself contact)
+		setPluginData(protocol() , "serial" , "0" );
+	}
+
+
 	m_notifySocket = new MSNNotifySocket( this, accountId() );
 
 	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, uint ) ),
