@@ -1,6 +1,7 @@
 /*
     yahooaccount.h - Manages a single Yahoo account
 
+    Copyright (c) 2003 by Matt Rogers            <mattrogers@sbcglobal.net>
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
     Based on code by Olivier Goffart             <ogoffart@tiscalinet.be>
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -66,6 +67,15 @@ void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
 	{	m_session->setAway(yahoo_status(status), awayMessage, status ? 1 : 0);
 		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(status));
 	}
+}
+
+void YahooAccount::slotGoStatus099()
+{
+	if((myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+	   (myself()->onlineStatus().status() == KopeteOnlineStatus::Away))
+		theAwayDialog->show(99);
+
+	//
 }
 
 void YahooAccount::loaded()

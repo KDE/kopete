@@ -1,6 +1,7 @@
 /*
     yahoocontact.h - Yahoo Contact
 
+    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>

@@ -1,6 +1,7 @@
 /*
     yahoocontact.cpp - Yahoo Contact
 
+    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Portions based on code by Bruno Rodrigues <bruno.rodrigues@litux.org>
@@ -28,6 +29,7 @@
 
 // KDE Includes
 #include <kdebug.h>
+#include <kapplication.h>
 
 YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
 	: KopeteContact(account, userId, metaContact)
@@ -174,7 +176,11 @@ KActionCollection *YahooContact::customContextMenuActions()
 
 void YahooContact::slotUserInfo()
 {
-	kdDebug(14180) << "[YahooContact::slotUserInfo()]" << endl;
+	kdDebug(14180) << k_funcinfo << endl;
+
+	QString profileSiteString = "http://profiles.yahoo.com/" + m_userId;
+	kdDebug(14180) << "Yahoo profile site string: " << profileSiteString << endl;
+	kapp->invokeBrowser(profileSiteString);
 }
 
 void YahooContact::slotSendFile()

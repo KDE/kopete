@@ -1,8 +1,8 @@
 /*
     yahooaccount.h - Manages a single Yahoo account
 
+    Copyright (c) 2003 by Matt Rogers            <mattrogers@sbcglobal.net>
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
-    Based on code by Olivier Goffart             <ogoffart@tiscalinet.be>
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -153,7 +153,7 @@ private slots:
 	void slotGoStatus008() { slotGoStatus(8); } // Out To Lunch
 	void slotGoStatus009() { slotGoStatus(9); } // Stepped Out
 	void slotGoStatus012() { slotGoStatus(12); } // Invisible
-	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
+	void slotGoStatus099(); // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
 
 private:
