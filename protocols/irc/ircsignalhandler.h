@@ -53,22 +53,22 @@ struct IRCSignalMappingBase{};
 
 struct IRCSignalMappingT : IRCSignalMappingBase
 {
-	virtual void exec( const QString & ){};
+	virtual void exec( const QString & ) = 0L;
 };
 
 struct IRCSignalMappingSingleT : IRCSignalMappingBase
 {
-	virtual void exec( const QString &, const QString & ){};
+	virtual void exec( const QString &, const QString & ) = 0L;
 };
 
 struct IRCSignalMappingDoubleT : IRCSignalMappingBase
 {
-	virtual void exec( const QString &, const QString &, const QString & ){};
+	virtual void exec( const QString &, const QString &, const QString & ) = 0L;
 };
 
 struct IRCSignalMappingTripleT : IRCSignalMappingBase
 {
-	virtual void exec( const QString &, const QString &, const QString &, const QString & ){};
+	virtual void exec( const QString &, const QString &, const QString &, const QString & ) = 0L;
 };
 
 /***
