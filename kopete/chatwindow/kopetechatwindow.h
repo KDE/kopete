@@ -1,9 +1,10 @@
 /*
     kopetechatwindow.h - Chat Window
 
-    Copyright (c) 2002 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2002      by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2004      by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -205,9 +206,11 @@ private slots:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual bool queryExit( );
 	virtual void windowActivationChange(bool);
 	virtual bool eventFilter( QObject *o, QEvent *e );
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
