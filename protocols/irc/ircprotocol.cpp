@@ -814,22 +814,23 @@ void IRCProtocol::slotMoveServerUp()
 	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText() ];
 	IRCNetwork *selectedNetwork = m_networks[ netConf->networkList->currentText() ];
 
-	if( selectedNetwork && selectedHost )
+	if( !selectedNetwork || !selectedHost )
+		return;
+
+	QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+	if( pos != selectedNetwork->hosts.begin() )
 	{
-		QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
-		if( pos != selectedNetwork->hosts.begin() )
-		{
-			QValueList<IRCHost*>::iterator lastPos = pos;
-			lastPos--;
-			selectedNetwork->hosts.insert( lastPos, selectedHost );
-			selectedNetwork->hosts.remove( pos );
-		}
+		QValueList<IRCHost*>::iterator lastPos = pos;
+		lastPos--;
+		selectedNetwork->hosts.insert( lastPos, selectedHost );
+		selectedNetwork->hosts.remove( pos );
 	}
 
 	int currentPos = netConf->hostList->currentItem();
 	if( currentPos > 0 )
 	{
 		netConf->hostList->removeItem( currentPos );
+		kdDebug() << k_funcinfo << selectedHost->host << endl;
 		netConf->hostList->insertItem( selectedHost->host, --currentPos );
 		netConf->hostList->setSelected( currentPos, true );
 	}
@@ -840,16 +841,16 @@ void IRCProtocol::slotMoveServerDown()
 	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText() ];
 	IRCNetwork *selectedNetwork = m_networks[ netConf->networkList->currentText() ];
 
-	if( selectedNetwork && selectedHost )
+	if( !selectedNetwork || !selectedHost )
+		return;
+
+	QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+	if( *pos != selectedNetwork->hosts.back() )
 	{
-		QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
-		if( *pos != selectedNetwork->hosts.back() )
-		{
-			QValueList<IRCHost*>::iterator nextPos = pos;
-			nextPos++; nextPos++;
-			selectedNetwork->hosts.insert( nextPos, selectedHost );
-			selectedNetwork->hosts.remove( pos );
-		}
+		QValueList<IRCHost*>::iterator nextPos = pos;
+		nextPos++; nextPos++;
+		selectedNetwork->hosts.insert( nextPos, selectedHost );
+		selectedNetwork->hosts.remove( pos );
 	}
 
 	int currentPos = netConf->hostList->currentItem();
