@@ -409,12 +409,16 @@ bool KopeteContact::isReachable()
 
 void KopeteContact::startChat()
 {
-	manager(true)->view(true, KopeteMessage::Chat )->raise(true);
+	KopeteView *v=manager(true)->view(true, KopeteMessage::Chat );
+	if(v)
+		v->raise(true);
 }
 
 void KopeteContact::sendMessage()
 {
-	manager(true)->view(true, KopeteMessage::Email )->raise(true);
+	KopeteView *v=manager(true)->view(true, KopeteMessage::Email );
+	if(v)
+		v->raise(true);
 }
 
 void KopeteContact::execute()
