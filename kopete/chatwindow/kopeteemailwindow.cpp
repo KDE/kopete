@@ -500,13 +500,15 @@ void KopeteEmailWindow::writeMessage( KopeteMessage &msg )
 {
 	QString dir = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	d->htmlPart->begin();
-	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;font-size:%2pt;color:%3}td{font-family:%4;font-size:%5pt;color:%6}</style></head><body style=\"background-repeat:no-repeat;background-attachment:fixed\" bgcolor=\"%7\" vlink=\"%8\" link=\"%9\" %10>%11</body></html>" )
+	//FIXME: this should use multi-argument version of .arg!
+	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body {font-family:%1; font-size:%2pt; color:%3} td {font-family:%4; font-size:%5pt; color:%6}</style></head>" )
 		.arg( KopetePrefs::prefs()->fontFace().family() )
 		.arg( KopetePrefs::prefs()->fontFace().pointSize() )
 		.arg( KopetePrefs::prefs()->textColor().name() )
 		.arg( KopetePrefs::prefs()->fontFace().family() )
 		.arg( KopetePrefs::prefs()->fontFace().pointSize() )
-		.arg( KopetePrefs::prefs()->textColor().name() )
+		.arg( KopetePrefs::prefs()->textColor().name() ) );
+	d->htmlPart->write( QString::fromLatin1( "<body style=\"background-repeat:no-repeat; background-attachment:fixed\" bgcolor=\"%1\" vlink=\"%2\" link=\"%3\" %4>%5</body></html>" )
 		.arg( KopetePrefs::prefs()->bgColor().name() )
 		.arg( KopetePrefs::prefs()->linkColor().name() )
 		.arg( KopetePrefs::prefs()->linkColor().name() )
