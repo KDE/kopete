@@ -21,6 +21,7 @@
 #include <qtextstream.h>
 
 #include <kapplication.h>
+#include <kglobalsettings.h>
 #include <klocale.h>
 #include <qcolor.h>
 #include <kconfig.h>
@@ -76,14 +77,19 @@ void KopetePrefs::load()
 	mTransparencyColor	= config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize	= config->readNumEntry("ChatView BufferSize", 250);
 
-	mHighlightBackground	= config->readColorEntry("Highlight Background Color", &Qt::black);
-	mHighlightForeground	= config->readColorEntry("Highlight Foreground Color", &Qt::yellow);
+	QColor tmpColor = KGlobalSettings::highlightColor();
+	mHighlightBackground	= config->readColorEntry("Highlight Background Color", &tmpColor);
+	tmpColor = KGlobalSettings::highlightedTextColor();
+	mHighlightForeground	= config->readColorEntry("Highlight Foreground Color", &tmpColor);
 	mHighlightEnabled	= config->readBoolEntry("Highlighting Enabled", true);
 	mBgOverride		= config->readBoolEntry("ChatView Override Background", true);
 	mInterfacePreference	= config->readNumEntry("Interface Preference", 1);
-	mTextColor		= config->readColorEntry("Text Color", &Qt::black );
-	mBgColor		= config->readColorEntry("Bg Color", &Qt::white );
-	mLinkColor		= config->readColorEntry("Link Color", &Qt::blue );
+	tmpColor= KGlobalSettings::textColor();
+	mTextColor		= config->readColorEntry("Text Color", &tmpColor );
+	tmpColor = KGlobalSettings::baseColor();
+	mBgColor		= config->readColorEntry("Bg Color", &tmpColor );
+	tmpColor = KGlobalSettings::linkColor();
+	mLinkColor		= config->readColorEntry("Link Color", &tmpColor );
 	mFontFace		= config->readFontEntry("Font Face");
 
 	mShowTray		= config->readBoolEntry( "Show Systemtray", true);
