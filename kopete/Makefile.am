@@ -23,12 +23,25 @@ icon_DATA =
 dummy.cpp:
 	echo > dummy.cpp
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kopete.pot
-
 data_DATA = kopeteui.rc
 datadir = $(kde_datadir)/kopete
 
 # this is where the desktop file will go
 desktopdir   = $(kde_appsdir)/Internet
 desktop_DATA = kopete.desktop
+
+# don't ask me which does what, the last one seems to work for me, mETz
+
+#messages: rc.cpp
+#	$(XGETTEXT) -ki18n -kI18N_NOOP *.cpp -o $(podir)/kopete.pot
+
+#messages:
+#	$(EXTRACTRC) `find . -name "*.rc"` > rc.cpp
+#	$(XGETTEXT) rc.cpp `find . -name "*.cc" -o -name "*.cpp" -print` -o $(podir)/kopete.pot
+
+messages: rc.cpp
+	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
+	if test -n "$$LIST"; then \
+		$(XGETTEXT) -C -ki18n -kI18N_NOOP $$LIST -o ../po/kopete.pot; \
+	fi
+

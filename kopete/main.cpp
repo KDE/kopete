@@ -38,21 +38,20 @@ int main(int argc, char *argv[])
 		"(c) 2002, Duncan Mac-Vicar Prett", 0, 0, "duncan@kde.org"
 		);
 
-	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@kde.org","http://www.mac-vicar.com");
-	aboutData.addAuthor ("Nick Betcher", "core developer, fastest plugin developer on earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
-	aboutData.addAuthor ("Ryan Cumming", "core developer","bodnar42@phalynx.dhs.org");
-    aboutData.addAuthor ("Stefan Gehn", "cleanups, features and bugfixes","sgehn@gmx.net");
-    aboutData.addAuthor ("Martijn Klingens", "Patches, bugfixes","klingens@kde.org");
+	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
+	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("core developer, fastest plugin developer on earth."), "nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
+	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("core developer"), "bodnar42@phalynx.dhs.org" );
+	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Patches, bugfixes"), "klingens@kde.org" );
+	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("some cleanups, features and bugfixes"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 
-	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
-	aboutData.addCredit("Olaf Lueg", I18N_NOOP("Kmerlin MSN Code"));
-	aboutData.addCredit("Neil Stevens", I18N_NOOP("TAim engine AIM Code"));
-	
+	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
+	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN Code") );
+	aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM Code") );
+
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
 
 	Kopete kopete;
-//	kopete->show();
 	kopete.exec();
 }
