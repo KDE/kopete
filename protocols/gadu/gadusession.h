@@ -94,7 +94,7 @@ public:
 public slots:
 	void login( struct gg_login_params* );
 	void login( uin_t uin, const QString&, bool, int status = GG_STATUS_AVAIL,
-			const QString& statusDescr = "" );
+			const QString& statusDescr = "", unsigned int server = 0 );
 	void logoff();
 	int	 notify( uin_t*, int );
 	int	 addNotify( uin_t );
@@ -155,9 +155,9 @@ private:
 	void createNotifiers( bool connect );
 
 	gg_session*		session_;
-	QSocketNotifier*		read_;
-	QSocketNotifier*		write_;
-	gg_login_params		params_;
+	QSocketNotifier*	read_;
+	QSocketNotifier*	write_;
+	gg_login_params	params_;
 	QTextCodec*		textcodec;
 	int				searchSeqNr_;
 };

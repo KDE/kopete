@@ -30,7 +30,6 @@
 #include <qtextcodec.h>
 #include <qdatetime.h>
 
-#include <netinet/in.h>
 #include <errno.h>
 #include <string.h>
 
@@ -145,7 +144,7 @@ GaduSession::disableNotifiers()
 
 void
 GaduSession::login( uin_t uin, const QString& password, bool useTls,
-					int status, const QString& statusDescr )
+					int status, const QString& statusDescr, unsigned int server )
 {
 	memset( &params_, 0, sizeof(params_) );
 
@@ -155,8 +154,9 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 	params_.status_descr = (char *)statusDescr.ascii();
 	params_.async = 1;
 	params_.tls = useTls;
-
-	kdDebug(14100)<<"gadusession::login"<<endl;
+	params_ .server_addr = server;
+	 
+	kdDebug(14100)<<"gadusession::login, server ( " << server << " ), tls(" << useTls << ") " <<endl;
 	login( &params_ );
 }
 

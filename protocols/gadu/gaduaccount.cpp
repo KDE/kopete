@@ -45,18 +45,39 @@
 #include <qtextcodec.h>
 #include <qptrlist.h>
 
-GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
+#include <netinet/in.h>
+
+const int NUM_SERVERS = 7;
+const char* const servers_ip[ NUM_SERVERS ] = {
+	"217.17.41.88",
+ 	"217.17.41.89",
+	"217.17.41.82", 
+	"217.17.41.84", 
+	"217.17.41.85", 
+	"217.17.41.86", 
+	"217.17.41.87" 	
+};
+
+ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
 : KopeteAccount( parent, accountID, name ), pingTimer_( 0 )
 {
+	QHostAddress ip;
+
 	textcodec_ = QTextCodec::codecForName( "CP1250" );
 	session_ = new GaduSession( this, "GaduSession" );
 	KGlobal::config()->setGroup( "Gadu" );
-	// Connect if possible using SSL
-	isTls = 0;
-	connectWithSSL=true;
+
 	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() ) );
+
 	lastStatus = GG_STATUS_AVAIL;
 	lastDescription = QString::null;
+	
+	for ( int i = 0; i < NUM_SERVERS; i++ ) {
+		ip.setAddress( QString( servers_ip[i] ) );
+		servers_.append( ip );
+	}
+	currentServer = -1;
+	serverIP = 0;
 
 	initActions();
 	initConnections();
@@ -100,10 +121,6 @@ void GaduAccount::loaded()
 {
 	QString nick;
 	nick	= pluginData( protocol(), QString::fromAscii( "nickName" ) );
-	isTls	= (bool) ( pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) ).toInt() );
-	if ( isTls > 2 || isTls < 0 ) {
-		isTls = 0;
-	}
 	if ( !nick.isNull() ) {
 		myself()->rename( nick );
 	}
@@ -173,7 +190,6 @@ KActionMenu* GaduAccount::actionMenu()
 
 void GaduAccount::connect()
 {
-	connectWithSSL = true;
 	slotGoOnline();
 }
 
@@ -216,7 +232,17 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 	else {
 		if ( !session_->isConnected() ) {
-			connectWithSSL = true;
+			if ( useTls() != TLS_no ) {
+				connectWithSSL = true;
+			}
+			else {
+				connectWithSSL = true;
+			}
+			serverIP = 0;
+			currentServer = -1;
+			kdDebug(14100) << "#### Connecting..." << endl;
+			lastStatus = status.internalStatus();
+			lastDescription = descr;
 			slotLogin( status.internalStatus(), descr );
 			status_ = status;
 			return;
@@ -244,7 +270,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 }
 
 void
-GaduAccount::slotLogin( int status, const QString& dscr, bool lastAttemptFailed )
+GaduAccount::slotLogin( int status, const QString& dscr )
 {
 	QString pass;
 
@@ -253,21 +279,8 @@ GaduAccount::slotLogin( int status, const QString& dscr, bool lastAttemptFailed 
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 
-	if ( !session_->isConnected() || lastAttemptFailed ) {
-		pass = password( lastAttemptFailed );
-		if ( pass.isEmpty() ) {
-			slotCommandDone( QString::null,
-					i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
-			// and set status disconnected, so icon on toolbar won't blink
-			myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
-			return;
-		}
-		if ( pass.isNull() && lastAttemptFailed ){
-			// user pressed CANCEL
-			myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
-			return;
-		}
-		session_->login( accountId().toInt(), pass, connectWithSSL, status, dscr );
+	if ( !session_->isConnected() ) { 
+		session_->login( accountId().toInt(), pass, connectWithSSL, status, dscr, serverIP );
 	}
 	else {
 		session_->changeStatus( status );
@@ -282,20 +295,13 @@ GaduAccount::slotLogoff()
 		changeStatus( status_ );
 		session_->logoff();
 	}
-	connectWithSSL = true;
 }
 
 void
 GaduAccount::slotGoOnline()
 {
-	if ( !session_->isConnected() ) {
-	    connectWithSSL = true;
-		kdDebug(14100) << "#### Connecting..." << endl;
-		slotLogin();
-	}
-	else{
-		changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
-	}
+	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ) );
+	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 }
 void
 GaduAccount::slotGoOffline()
@@ -478,25 +484,60 @@ GaduAccount::pong()
 void
 GaduAccount::connectionFailed( gg_failure_t failure )
 {
-	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-	myself()->setOnlineStatus( status_ );
-
-	if ( failure == GG_FAILURE_PASSWORD ) {
-		slotLogin( lastStatus, lastDescription, true );
-		return;
-	}
-	if ( failure == GG_FAILURE_TLS || ( connectWithSSL && failure == GG_FAILURE_CONNECTING ) ) {
-		if ( isTls == 0 && connectWithSSL) {
-			connectWithSSL = false;
-			slotCommandDone( QString::null, i18n( "connection using SSL was not possible, retrying without." ) );
-			slotLogin( lastStatus, lastDescription );
+	bool tryReconnect = false;
+	QString pass;
+		
+	switch (failure) {
+		case GG_FAILURE_PASSWORD:
+			pass = password( true );
+			if ( pass.isEmpty() ) {
+				slotCommandDone( QString::null, i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
+				// and set status disconnected, so icon on toolbar won't blink
+				status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+				myself()->setOnlineStatus( status_ );
+				return;
+			}
+			if ( pass.isNull() ){
+				// user pressed CANCEL
+				status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+				myself()->setOnlineStatus( status_ );
+				return;
+			}
+			tryReconnect = true;
 			return;
-		}
+		break;
+		case GG_FAILURE_TLS:
+			if ( currentServer == NUM_SERVERS ) {
+				if ( connectWithSSL && useTls() != TLS_only ) {
+					connectWithSSL = false;
+					tryReconnect = true;
+					return;
+				}
+			}
+		break;
+		default:
+		break;
 	}
 
-	error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
-			i18n( "Connection Error" ) );
+	if ( currentServer == NUM_SERVERS ) {
+		serverIP = 0;
+		currentServer = -1;
+	}
+	else {
+		serverIP = htons( servers_[ ++currentServer ].ip4Addr() );
+		kdDebug(14100) << "trying : " << servers_ip[ currentServer ]  << endl;
+		tryReconnect = true;
+	}
 
+	if ( tryReconnect ) {
+			slotLogin( lastStatus, lastDescription );
+	}
+	else {
+		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
+				i18n( "Connection Error" ) );
+		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+		myself()->setOnlineStatus( status_ );
+	}
 }
 
 void
@@ -776,18 +817,23 @@ void GaduAccount::slotSearchResult( const searchResult& result )
 }
 
 
-int GaduAccount::isConnectionEncrypted()
+GaduAccount::tlsConnection
+GaduAccount::useTls()
 {
-	return isTls;
+	tlsConnection Tls = (tlsConnection) ( pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) ).toInt() );
+	if ( Tls != TLS_ifAvaliable && Tls != TLS_only && Tls != TLS_no ) {
+		// default
+		Tls = TLS_ifAvaliable;
+	}
+	return Tls;
 }
 
-void GaduAccount::useTls( int ut )
+void GaduAccount::setUseTls( tlsConnection ut )
 {
 	if ( ut < 0 || ut > 2 ) {
 		return;
 	}
-	isTls = ut;
-	setPluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ), QString::number( ut ) );
+	setPluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ), QString::number( (int) ut ) );
 }
 
 #include "gaduaccount.moc"

@@ -31,6 +31,7 @@
 #include "gadusession.h"
 #include "libgadu.h"
 
+#include <qhostaddress.h>
 #include <qmap.h>
 #include <qstring.h>
 #include <qptrlist.h>
@@ -54,6 +55,7 @@ public:
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KActionMenu* actionMenu();
 	//}
+	enum tlsConnection{ TLS_ifAvaliable, TLS_only, TLS_no };
 
 public slots:
 	//{
@@ -62,8 +64,7 @@ public slots:
 	//}
 
 	void changeStatus( const KopeteOnlineStatus& status, const QString& descr = QString::null );
-	void slotLogin( int status = GG_STATUS_AVAIL,
-			const QString& dscr = QString::null, bool lastAttemptFailed = false );
+	void slotLogin( int status = GG_STATUS_AVAIL, const QString& dscr = QString::null );
 	void slotLogoff();
 	void slotGoOnline();
 	void slotGoOffline();
@@ -96,8 +97,8 @@ public slots:
 	void pubDirSearchClose();
 
 	// tls
-	int isConnectionEncrypted();
-	void useTls( int ut );
+	tlsConnection useTls();
+	void setUseTls( tlsConnection  ut );
 
 signals:
 	void pubDirSearchResult( const searchResult& );
@@ -155,8 +156,12 @@ private:
 	KAction*			searchAction;
 	KAction*			listputAction;
 
-	int				isTls;
 	bool				connectWithSSL;
+
+	int				currentServer;
+	QValueList<QHostAddress> servers_;
+	unsigned int		serverIP;
+
 	int				lastStatus;
 	QString			lastDescription;
 };

@@ -70,7 +70,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 
 		rememberCheck_->setChecked( account()->rememberPassword() );
 		autoLoginCheck_->setChecked( account()->autoLogin() );
-		useTls_->setCurrentItem( isSsl ? ( static_cast<GaduAccount*> (account()) )->isConnectionEncrypted() : 2 );
+		useTls_->setCurrentItem( isSsl ?  ( static_cast<GaduAccount*> (account()) ->useTls() ) : 2 );
 	}
 	
 	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
@@ -145,7 +145,7 @@ KopeteAccount* GaduEditAccount::apply()
 	account()->setPluginData( account()->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
 
 	account()->setAutoLogin( autoLoginCheck_->isChecked() );
-	( static_cast<GaduAccount*> (account()) )->useTls( useTls_->currentItem() );
+	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
 
 	return account();
 }
