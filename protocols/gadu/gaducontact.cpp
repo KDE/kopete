@@ -120,6 +120,7 @@ GaduContact::contactIp()
 {
 	return remote_ip;
 }
+
 unsigned short
 GaduContact::contactPort()
 {
