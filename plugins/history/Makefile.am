@@ -19,6 +19,10 @@ servicedir = $(kde_servicesdir)
 mydatadir = $(kde_datadir)/kopete_history
 mydata_DATA = historyui.rc  historychatui.rc
 
+mydata2dir = $(kde_datadir)/kopete
+mydata2_DATA = historychatui.rc
+
+
 
 kcm_DATA = kopete_history_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog

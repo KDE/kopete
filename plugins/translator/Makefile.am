@@ -10,7 +10,7 @@ kopete_translator_la_LIBADD      = ../../libkopete/libkopete.la -lkio
 
 kcm_kopete_translator_la_SOURCES = translatorprefsbase.ui translatorprefs.cpp translatorlanguages.cpp
 kcm_kopete_translator_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_translator_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS) 
+kcm_kopete_translator_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
 service_DATA = translator.desktop
 servicedir = $(kde_servicesdir)
@@ -18,6 +18,8 @@ servicedir = $(kde_servicesdir)
 kcm_DATA = kopete_translator_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
 
-mydatadir = $(kde_datadir)/kopete
-mydata_DATA = translatorui.rc translatorchatui.rc
+mydatadir = $(kde_datadir)/kopete_translator
+mydata_DATA = translatorui.rc
 
+mydata2dir = $(kde_datadir)/kopete
+mydata2_DATA = translatorchatui.rc
