@@ -106,7 +106,7 @@ void KopeteGVIProps::slotUseCustomIconsToggled(bool on)
 
 
 KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *parent, const char *name)
-: KDialogBase(parent, name, true, i18n("Properties of Meta Contact %1").arg(lvi->group()->displayName()), Ok|Cancel, Ok, false)
+: KDialogBase(parent, name, true, i18n("Properties of Meta Contact %1").arg(lvi->metaContact()->displayName()), Ok|Cancel, Ok, false)
 {
 	mainWidget = new KopeteMetaLVIPropsWidget( this, "mainWidget" );
 	mainWidget->icnbOffline->setIconSize( KIcon::SizeSmall );
@@ -117,6 +117,9 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	item = lvi;
 
 	mainWidget->edtDisplayName->setText( item->metaContact()->displayName() );
+	mainWidget->chkTrackChildDisplayName->setChecked( item->metaContact()->trackChildNameChanges() );
+	mainWidget->chkTrackChildDisplayName->setEnabled( item->metaContact()->contacts().count() == 1 );
+
 	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
 	QString offlineName = item->metaContact()->icon( KopetePluginDataObject::Offline );
@@ -157,6 +160,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	{
 		item->metaContact()->setDisplayName( mainWidget->edtDisplayName->text() );
 	}
+	item->metaContact()->setTrackChildNameChanges( mainWidget->chkTrackChildDisplayName->isChecked() );
 
 	item->metaContact()->setUseCustomIcon(
 		mainWidget->chkUseCustomIcons->isChecked() );
