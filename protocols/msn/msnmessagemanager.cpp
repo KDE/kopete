@@ -238,7 +238,7 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 	{
 		KConfig *config = KGlobal::config();
 		config->setGroup( "MSN" );
-		if ( config->readBoolEntry( "SendAwayMessages", true ) &&
+		if ( config->readBoolEntry( "SendAwayMessages", false ) &&
 			( !m_awayMessageTime.isValid() ||
 			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessagesSeconds", 90 ) )  )
 		{
