@@ -36,7 +36,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <qstring.h>
 #include <qfile.h>
 #include <qlabel.h>
 

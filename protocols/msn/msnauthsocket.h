@@ -21,7 +21,7 @@
 #ifndef MSNAUTHSOCKET_H
 #define MSNAUTHSOCKET_H
 
-#include <msnsocket.h>
+#include "msnsocket.h"
 
 /**
  * @author Martijn Klingens <klingens@kde.org>

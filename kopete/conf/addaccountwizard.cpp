@@ -23,7 +23,6 @@
 #include <klineeditdlg.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kiconloader.h>
 #include <kdebug.h>
 
 #include "addaccountwizard.h"

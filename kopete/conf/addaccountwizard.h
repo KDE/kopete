@@ -18,7 +18,6 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
-#include <qptrlist.h>
 #include <klistview.h>
 
 #include "addaccountwizard_base.h"

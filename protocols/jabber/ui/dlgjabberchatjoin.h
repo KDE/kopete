@@ -19,7 +19,7 @@
 #define DLGJABBERCHATJOIN_H
 
 #include <qwidget.h>
-#include <dlgchatjoin.h>
+#include "dlgchatjoin.h"
 
 /**
   *@author Kopete developers

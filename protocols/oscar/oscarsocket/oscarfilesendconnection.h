@@ -20,7 +20,7 @@
 
 #include <kio/job.h>
 #include <kfileitem.h>
-#include <oscarconnection.h>
+#include "oscarconnection.h"
 
 /**Implementation of a direct connection used to send files
   *@author Kopete developers

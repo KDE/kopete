@@ -23,7 +23,7 @@
 
 #include <kstringhandler.h>
 
-#include <msnsocket.h>
+#include "msnsocket.h"
 
 class KopeteMessage;
 class MSNAccount;

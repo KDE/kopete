@@ -20,7 +20,7 @@
 #ifndef MSNDISPATCHSOCKET_H
 #define MSNDISPATCHSOCKET_H
 
-#include <msnauthsocket.h>
+#include "msnauthsocket.h"
 
 /**
  * @author Martijn Klingens <klingens@kde.org>

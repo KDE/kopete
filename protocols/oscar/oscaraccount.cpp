@@ -12,7 +12,6 @@
 #include "kopetegroup.h"
 #include "kopeteaway.h"
 #include "kopetemetacontact.h"
-#include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetestdaction.h"
 

@@ -322,7 +322,7 @@ QString LibraryLoader::pluginIcon( const KopetePlugin *plugin ) const
 	return QString::fromLatin1( "ERROR: plugin unknown" );
 }
 
-#include <pluginloader.moc>
+#include "pluginloader.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

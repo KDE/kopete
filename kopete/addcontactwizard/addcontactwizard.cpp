@@ -35,7 +35,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
-#include "kopeteprotocol.h"
 
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
