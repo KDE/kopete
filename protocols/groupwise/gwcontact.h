@@ -169,7 +169,7 @@ public:
 	/** 
 	 * Updates this contact's group membership and display name on the server
 	 */
-	void syncGroups();
+	void sync( unsigned int);
 	/**
 	 * Updates this contact's online status, including blocking status
 	 */
@@ -189,7 +189,7 @@ public slots:
 	/**
 	 * Delete this contact on the server
 	 */
-	virtual void slotDeleteContact();
+	virtual void deleteContact();
 	/**
 	 * Receive notification that an instance of this contact on the server was deleted
 	 * If all the instance of the contact are deleted, the contact will delete itself with deleteLater()

@@ -643,7 +643,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
     kdDebug(14180) << "Message after removing font tags '" << newMsgText << "'" << endl;
 
-	Kopete::MessageManager *mm = contact(who)->manager();
+	Kopete::MessageManager *mm = contact(who)->manager(Kopete::Contact::CanCreate);
 
 	// Tell the message manager that the buddy is done typing
 	mm->receivedTypingMsg(contact(who), false);

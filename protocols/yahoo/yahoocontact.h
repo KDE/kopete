@@ -41,7 +41,7 @@ public:
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual Kopete::MessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	void setYahooStatus( const Kopete::OnlineStatus& );
@@ -54,7 +54,7 @@ public:
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
-	virtual void slotDeleteContact();
+	virtual void deleteContact();
 
 	/**
 	 * Must be called after the contact list has been received
@@ -62,7 +62,7 @@ public slots:
 	 */
 	void syncToServer();
 
-	void syncGroups();
+	void sync(unsigned int);
 
 private slots:
 	void slotMessageManagerDestroyed();

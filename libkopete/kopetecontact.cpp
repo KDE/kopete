@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -34,13 +34,13 @@
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
-#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanager.h"
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
+#include "kopeteprefs.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -50,15 +50,17 @@
 #include <qcheckbox.h>
 #include <qwhatsthis.h>
 
-struct KopeteContactPrivate
+namespace Kopete {
+
+struct Contact::Private
 {
 public:
 	bool fileCapable;
 
-	Kopete::OnlineStatus onlineStatus;
-	Kopete::Account *account;
+	OnlineStatus onlineStatus;
+	Account *account;
 
-	Kopete::MetaContact *metaContact;
+	MetaContact *metaContact;
 
 	KAction *actionSendMessage;
 	KAction *actionChat;
@@ -76,13 +78,14 @@ public:
 	unsigned long int idleTime;
 
 	Kopete::ContactProperty::Map properties;
+
 };
 
-Kopete::Contact::Contact( Kopete::Account *account, const QString &contactId,
-	Kopete::MetaContact *parent, const QString &icon )
+Contact::Contact( Account *account, const QString &contactId,
+	MetaContact *parent, const QString &icon )
 	: QObject( parent )
 {
-	d = new KopeteContactPrivate;
+	d = new Private;
 
 	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
 
@@ -108,69 +111,42 @@ Kopete::Contact::Contact( Kopete::Account *account, const QString &contactId,
 	}
 }
 
-Kopete::Contact::~Contact()
+Contact::~Contact()
 {
 	//kdDebug(14010) << k_funcinfo << endl;
 	emit( contactDestroyed( this ) );
-	d->metaContact = 0L;
 	delete d;
 }
 
 
-void Kopete::Contact::rename( const QString &name )
-{
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if( name == nick )
-		return;
- 
-	setProperty( Kopete::Global::Properties::self()->nickName(), name );
-}
 
-void Kopete::Contact::setDisplayName( const QString &name )
-{
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if( name == nick )
-		return;
- 
-	setProperty( Kopete::Global::Properties::self()->nickName(), name );
-}
-
-QString Kopete::Contact::displayName() const
-{
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if( !nick.isEmpty() )
-		return nick;
-		
-	return d->contactId;
-}
-
-const Kopete::OnlineStatus& Kopete::Contact::onlineStatus() const
+const OnlineStatus& Contact::onlineStatus() const
 {
 	return d->onlineStatus;
 }
 
-void Kopete::Contact::setOnlineStatus( const Kopete::OnlineStatus &status )
+void Contact::setOnlineStatus( const OnlineStatus &status )
 {
 	if( status == d->onlineStatus )
 		return;
 
-	Kopete::OnlineStatus oldStatus = d->onlineStatus;
+	OnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 
 	Kopete::Global::Properties *globalProps = Kopete::Global::Properties::self();
 
 	// Contact changed from Offline to another status
-	if( oldStatus.status() == Kopete::OnlineStatus::Offline &&
-		status.status() != Kopete::OnlineStatus::Offline )
+	if( oldStatus.status() == OnlineStatus::Offline &&
+		status.status() != OnlineStatus::Offline )
 	{
 		setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
 		/*kdDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
 			d->displayName << endl;*/
 		removeProperty( globalProps->lastSeen() );
 	}
-	else if( oldStatus.status() != Kopete::OnlineStatus::Offline &&
-		oldStatus.status() != Kopete::OnlineStatus::Unknown &&
-		status.status() == Kopete::OnlineStatus::Offline ) // Contact went back offline
+	else if( oldStatus.status() != OnlineStatus::Offline &&
+		oldStatus.status() != OnlineStatus::Unknown &&
+		status.status() == OnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty( globalProps->onlineSince() );
 		/*kdDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
@@ -181,34 +157,28 @@ void Kopete::Contact::setOnlineStatus( const Kopete::OnlineStatus &status )
 	emit onlineStatusChanged( this, status, oldStatus );
 }
 
-void Kopete::Contact::sendFile( const KURL &, const QString &, uint )
+void Contact::sendFile( const KURL &, const QString &, uint )
 {
 	kdWarning( 14010 ) << k_funcinfo << "Plugin "
 		<< protocol()->pluginId() << " has enabled file sending, "
 		<< "but didn't implement it!" << endl;
 }
 
-void Kopete::Contact::slotAddContact()
+void Contact::slotAddContact()
 {
 	if( metaContact() )
 	{
 		metaContact()->setTemporary( false );
-		Kopete::ContactList::self()->addMetaContact( metaContact() );
+		ContactList::self()->addMetaContact( metaContact() );
 	}
 }
 
-KPopupMenu* Kopete::Contact::popupMenu( Kopete::MessageManager *manager )
+KPopupMenu* Contact::popupMenu( MessageManager *manager )
 {
 	// FIXME:
-	// This should perhaps be KActionCollection * Kopete::Contact::contactActions()
+	// This should perhaps be KActionCollection * Contact::contactActions()
 	// to avoid passing around KPopupMenu's (Jason)
 	//
-	// KActionCollections are bad for popup menus because they are unordered.
-	// in fact, I think customContextMenuActions should be remade into a popupmenu,
-	// or a QPtrList<KAction>, or something that has a notion of order, because
-	// currently the customContextMenuActions do not return in the order they are
-	// added, which makes for a mess when you want certain things at the top and
-	// others later on.
 
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
@@ -283,8 +253,9 @@ KPopupMenu* Kopete::Contact::popupMenu( Kopete::MessageManager *manager )
 	return menu;
 }
 
-void Kopete::Contact::slotChangeMetaContact()
+void Contact::slotChangeMetaContact()
 {
+
 	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
@@ -295,16 +266,16 @@ void Kopete::Contact::slotChangeMetaContact()
 	selectMetaContactListBox->addColumn( i18n( "Display Name" ) );
 	selectMetaContactListBox->addColumn( i18n( "Contact IDs" ) );
 
-	QMap<QListViewItem*,Kopete::MetaContact*> map;
-	QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
-	for( Kopete::MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
+	QMap<QListViewItem*,MetaContact*> map;
+	QPtrList<MetaContact> metaContacts = ContactList::self()->metaContacts();
+	for( MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
 		if( !mc->isTemporary() && mc != metaContact() )
 		{
 			QString t;
 			bool f=true;
-			QPtrList<Kopete::Contact> contacts = mc->contacts();
-			for( Kopete::Contact *c = contacts.first(); c ; c = contacts.next() )
+			QPtrList<Contact> contacts = mc->contacts();
+			for( Contact *c = contacts.first(); c ; c = contacts.next() )
 			{
 				if( !f )
 					t += QString::fromLatin1( " ; " );
@@ -341,9 +312,9 @@ void Kopete::Contact::slotChangeMetaContact()
 	moveDialog->deleteLater();
 }
 
-void Kopete::Contact::setMetaContact( Kopete::MetaContact *m )
+void Contact::setMetaContact( MetaContact *m )
 {
-	Kopete::MetaContact *old = d->metaContact;
+	MetaContact *old = d->metaContact;
 	if(old==m) //that make no sens
 		return;
 
@@ -358,24 +329,22 @@ void Kopete::Contact::setMetaContact( Kopete::MetaContact *m )
 				"`%3' will be empty afterwards. Do you want to delete this contact?" )
 					.arg(contactId(), m ? m->displayName() : QString::null, old->displayName())
 				, i18n( "Move Contact" ), i18n( "&Delete" ) , i18n( "&Keep" ) , QString::fromLatin1("delete_old_contact_when_move") );
-
 			if(result==KMessageBox::Cancel)
 				return;
 		}
-
 		old->removeKABC();
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
-		old->updateKABC();
-
+		
 		if(result==KMessageBox::Yes)
 		{
 			//remove the old metacontact.  (this delete the MC)
-			Kopete::ContactList::self()->removeMetaContact(old);
+			ContactList::self()->removeMetaContact(old);
 		}
 		else
 		{
+			old->updateKABC();
 			d->metaContact = m; //i am forced to do that now if i want the next line works
 			//remove cached data for this protocol which will not be removed since we disconnected
 			protocol()->slotMetaContactAboutToSave( old );
@@ -393,16 +362,16 @@ void Kopete::Contact::setMetaContact( Kopete::MetaContact *m )
 		protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 		m->updateKABC();
 	}
-	syncGroups();
+	sync();
 }
 
-void Kopete::Contact::serialize( QMap<QString, QString> &/*serializedData*/,
+void Contact::serialize( QMap<QString, QString> &/*serializedData*/,
 	QMap<QString, QString> & /* addressBookData */ )
 {
 }
 
 
-void Kopete::Contact::serializeProperties(QMap<QString, QString> &serializedData)
+void Contact::serializeProperties(QMap<QString, QString> &serializedData)
 {
 
 	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
@@ -419,7 +388,7 @@ void Kopete::Contact::serializeProperties(QMap<QString, QString> &serializedData
 	} // end for()
 } // end serializeProperties()
 
-void Kopete::Contact::deserializeProperties(
+void Contact::deserializeProperties(
 	QMap<QString, QString> &serializedData )
 {
 	QMap<QString, QString>::ConstIterator it;
@@ -459,29 +428,31 @@ void Kopete::Contact::deserializeProperties(
 }
 
 
-bool Kopete::Contact::isReachable()
+bool Contact::isReachable()
 {
 	// The default implementation returns false when offline and true
 	// otherwise. Subclass if you need more control over the process.
-	return onlineStatus().status() != Kopete::OnlineStatus::Offline;
+	return onlineStatus().status() != OnlineStatus::Offline;
 }
 
-void Kopete::Contact::startChat()
+
+void Contact::startChat()
 {
-	KopeteView *v=manager(true)->view(true, Kopete::Message::Chat );
+	KopeteView *v=manager( CanCreate )->view(true, Kopete::Message::Chat );
 	if(v)
 		v->raise(true);
 }
 
-void Kopete::Contact::sendMessage()
+void Contact::sendMessage()
 {
-	KopeteView *v=manager(true)->view(true, Kopete::Message::Email );
+	KopeteView *v=manager( CanCreate )->view(true, Kopete::Message::Email );
 	if(v)
 		v->raise(true);
 }
 
-void Kopete::Contact::execute()
+void Contact::execute()
 {
+
 	// FIXME: After KDE 3.2 remove the isConnected check and move it to isReachable - Martijn
 	if ( account()->isConnected() && isReachable() )
 	{
@@ -504,84 +475,96 @@ void Kopete::Contact::execute()
 	}
 }
 
-void Kopete::Contact::slotDelete()
+void Contact::slotDelete()
 {
-	// Default implementation simply deletes the contact
-	
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ).
 		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("editdelete") ) )
 		== KMessageBox::Continue )
 	{
-		slotDeleteContact();
+		deleteContact();
 	}
 }
 
-
-
-void Kopete::Contact::slotDeleteContact()
+void Contact::deleteContact()
 {
 	// Default implementation simply deletes the contact
 	deleteLater();
 }
 
-void Kopete::Contact::slotUserInfo()
-{
-	// Default implementation does nothing
-}
 
-bool Kopete::Contact::isOnline() const
-{
-	return (d->onlineStatus.status() != Kopete::OnlineStatus::Offline) &&
-		(d->onlineStatus.status() != Kopete::OnlineStatus::Unknown);
-}
-
-Kopete::MetaContact * Kopete::Contact::metaContact() const
+MetaContact * Contact::metaContact() const
 {
 	return d->metaContact;
 }
 
-QString Kopete::Contact::contactId() const
+QString Contact::contactId() const
 {
 	return d->contactId;
 }
 
-Kopete::Protocol * Kopete::Contact::protocol() const
+Protocol * Contact::protocol() const
 {
 	return d->account ? d->account->protocol() : 0L;
 }
 
-Kopete::Account * Kopete::Contact::account() const
+Account * Contact::account() const
 {
 	return d->account;
 }
 
-QPtrList<KAction> *Kopete::Contact::customContextMenuActions()
+
+
+void Contact::sync(unsigned int)
+{
+	/* Default implementation does nothing */
+}
+
+QString& Contact::icon() const
+{
+	return d->icon;
+}
+
+void Contact::setIcon( const QString& icon )
+{
+	d->icon = icon;
+	return;
+}
+
+QPtrList<KAction> *Contact::customContextMenuActions()
 {
 	return 0L;
 }
 
-QPtrList<KAction> *Kopete::Contact::customContextMenuActions( Kopete::MessageManager * /* manager */ )
+QPtrList<KAction> *Contact::customContextMenuActions( MessageManager * /* manager */ )
 {
 	return customContextMenuActions();
 }
 
-bool Kopete::Contact::isFileCapable() const
+
+bool Contact::isOnline() const
+{
+	return (d->onlineStatus.status() != OnlineStatus::Offline) &&
+		(d->onlineStatus.status() != OnlineStatus::Unknown);
+}
+
+
+bool Contact::isFileCapable() const
 {
 	return d->fileCapable;
 }
 
-void Kopete::Contact::setFileCapable( bool filecap )
+void Contact::setFileCapable( bool filecap )
 {
 	d->fileCapable = filecap;
 }
 
-bool Kopete::Contact::canAcceptFiles() const
+bool Contact::canAcceptFiles() const
 {
 	return isOnline() && d->fileCapable;
 }
 
-unsigned long int Kopete::Contact::idleTime() const
+unsigned long int Contact::idleTime() const
 {
 	if(d->idleTime==0)
 		return 0;
@@ -589,7 +572,7 @@ unsigned long int Kopete::Contact::idleTime() const
 	return d->idleTime+(d->idleTimer.elapsed()/1000);
 }
 
-void Kopete::Contact::setIdleTime( unsigned long int t )
+void Contact::setIdleTime( unsigned long int t )
 {
 	d->idleTime=t;
 	if(t > 0)
@@ -598,33 +581,18 @@ void Kopete::Contact::setIdleTime( unsigned long int t )
 //		d->idleTimer.stop();
 }
 
-void Kopete::Contact::syncGroups()
-{
-	/* Default implementation does nothing */
-}
 
-QString& Kopete::Contact::icon() const
-{
-	return d->icon;
-}
-
-void Kopete::Contact::setIcon( const QString& icon )
-{
-	d->icon = icon;
-	return;
-}
-
-QStringList Kopete::Contact::properties() const
+QStringList Contact::properties() const
 {
 	return d->properties.keys();
 }
 
-bool Kopete::Contact::hasProperty(const QString &key) const
+bool Contact::hasProperty(const QString &key) const
 {
 	return d->properties.contains(key);
 }
 
-const Kopete::ContactProperty &Kopete::Contact::property(const QString &key) const
+const ContactProperty &Contact::property(const QString &key) const
 {
 	if(hasProperty(key))
 		return d->properties[key];
@@ -632,7 +600,7 @@ const Kopete::ContactProperty &Kopete::Contact::property(const QString &key) con
 		return Kopete::ContactProperty::null;
 }
 
-const Kopete::ContactProperty &Kopete::Contact::property(
+const Kopete::ContactProperty &Contact::property(
 	const Kopete::ContactPropertyTmpl &tmpl) const
 {
 	if(hasProperty(tmpl.key()))
@@ -642,7 +610,7 @@ const Kopete::ContactProperty &Kopete::Contact::property(
 }
 
 
-void Kopete::Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
+void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 	const QVariant &value)
 {
 	if(tmpl.isNull() || tmpl.key().isEmpty())
@@ -667,7 +635,7 @@ void Kopete::Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 	}
 }
 
-void Kopete::Contact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
+void Contact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 {
 	if(!tmpl.isNull() && !tmpl.key().isEmpty())
 	{
@@ -679,7 +647,7 @@ void Kopete::Contact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 }
 
 
-QString Kopete::Contact::toolTip() const
+QString Contact::toolTip() const
 {
 	Kopete::ContactProperty p;
 	QString tip;
@@ -859,6 +827,7 @@ QString Kopete::Contact::formattedIdleTime() const
 	return ret;
 }
 
+
 void Kopete::Contact::slotBlock()
 {
 	account()->block( d->contactId );
@@ -869,5 +838,15 @@ void Kopete::Contact::slotUnblock()
 	account()->unblock( d->contactId );
 }
 
+
+
+void Contact::virtual_hook( uint , void * )
+{ }
+
+
+} //END namespace Kopete
+
+
 #include "kopetecontact.moc"
-// vim: set noet ts=4 sts=4 sw=4:
+
+

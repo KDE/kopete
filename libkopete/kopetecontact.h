@@ -21,17 +21,12 @@
 #define __KOPETECONTACT_H__
 
 #include <qobject.h>
-#include <qstringlist.h>
-#include <qvariant.h>
 #include <kurl.h>
-#include <qvaluelist.h>
+#include <kdemacros.h>
+#include "kopeteglobal.h"
 
-#include "kopetecontactproperty.h"
-
-struct KopeteContactPrivate;
 
 class KPopupMenu;
-class KURL;
 class KAction;
 
 namespace Kopete
@@ -49,7 +44,7 @@ typedef QPtrList<Group> GroupList;
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart@ tiscalinet.be>
  *
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
@@ -58,21 +53,20 @@ class Contact : public QObject
 {
 	Q_OBJECT
 
-	//Q_PROPERTY( QString displayName READ displayName )
-	Q_PROPERTY( QString formattedName READ formattedName )
-	Q_PROPERTY( QString formattedIdleTime READ formattedIdleTime )
-	Q_PROPERTY( bool isOnline READ isOnline )
-	Q_PROPERTY( bool isFileCapable READ isFileCapable )
-	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+//	Q_PROPERTY( QString formattedName READ formattedName )
+//	Q_PROPERTY( QString formattedIdleTime READ formattedIdleTime )
+//	Q_PROPERTY( bool isOnline READ isOnline )
+//	Q_PROPERTY( bool isFileCapable READ isFileCapable )
+//	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
 	Q_PROPERTY( QString contactId READ contactId )
 	Q_PROPERTY( QString icon READ icon )
-	Q_PROPERTY( QString toolTip READ toolTip )
+//	Q_PROPERTY( QString toolTip READ toolTip )
 
 public:
 	/**
 	 * \brief Create new contact.
 	 *
-	 * <b>The parent Kopete::MetaContact must not be NULL</b>
+	 * <b>The parent MetaContact must not be NULL</b>
 	 *
 	 * \note id is required to be unique per protocol and per account.
 	 * Across those boundaries ids may occur multiple times.
@@ -82,14 +76,65 @@ public:
 	 * this is undefined and may change at any time!
 	 *
 	 * @param account is the parent account. this constructor automatically register the contact to the account
-	 * @param id is the Kopete::Contact's unique Id (mostly the user's login)
-	 * @param parent is the parent @ref Kopete::MetaContact this Kopete::Contact is part of
+	 * @param id is the Contact's unique Id (mostly the user's login)
+	 * @param parent is the parent @ref MetaContact this Contact is part of
 	 * @param icon is an optional icon
 	 */
 	Contact( Account *account, const QString &id, MetaContact *parent,
 		const QString &icon = QString::null );
 
 	~Contact();
+
+	/**
+	 * \brief Get the metacontact for this contact
+	 * @return The MetaContact object for this contact
+	 */
+	MetaContact *metaContact() const;
+	
+	
+	/**
+	 * \brief Get the unique id that identifies a contact.
+	 *
+	 * \note Id is required to be unique per protocol and per account.
+	 * Across those boundaries ids may occur multiple times.
+	 * The id is solely for comparing items safely (using pointers is
+	 * more crash-prone). DO NOT assume anything regarding the id's
+	 * value! Even if it may look like an ICQ UIN or an MSN passport,
+	 * this is undefined and may change at any time!
+	 *
+	 * @return The unique id of the contact
+	 */
+	QString contactId() const;
+
+	/**
+	 * \brief Get the protocol that the contact belongs to.
+	 *
+	 * simply return account()->protocol()
+	 *
+	 * @return the contact's protocol
+	 */
+	Protocol* protocol() const;
+
+	/**
+	 * \brief Get the account that this contact belongs to
+	 *
+	 * @return the Account object for this contact
+	 */
+	Account* account() const;
+
+	/**
+	 * \brief Move this contact to a new MetaContact.
+	 * This basically reparents the contact and updates the internal
+	 * data structures.
+	 * If the old contact is going to be empty, a question may ask to the user if it wants to delete the old contact.
+	 *
+	 * @param m The new MetaContact to move this contact to
+	 */
+	void setMetaContact(MetaContact *m);
+
+	
+	
+	
 
 	/**
 	 * \brief Get whether this contact is online
@@ -113,11 +158,6 @@ public:
 	//        protocol-specific work, like 'doIsUnreachable' or so - Martijn
 	virtual bool isReachable();
 
-	/**
-	 * \brief Get the metacontact for this contact
-	 * @return The Kopete::MetaContact object for this contact
-	 */
-	MetaContact *metaContact() const;
 
 	/**
 	 * @brief Serialize the contact for storage in the contact list.
@@ -133,11 +173,11 @@ public:
 	 * 'nothing to save'.
 	 *
 	 * The provided addressBookFields QMap contains the index field as
-	 * marked with @ref Kopete::Plugin::addAddressBookField() with the
+	 * marked with @ref Plugin::addAddressBookField() with the
 	 * contact id as value. If no index field is available the QMap is
 	 * simply passed as an empty map.
 	 *
-	 * @sa Kopete::Protocol::deserializeContact
+	 * @sa Protocol::deserializeContact
 	 */
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
@@ -157,13 +197,6 @@ public:
 	void deserializeProperties(QMap<QString, QString> &serializedData);
 
 	/**
-	 * \brief Get the current display name
-	 * @return The display name
-	 * @deprecated  Use the nickname property instead
-	 */
-	QString displayName() const KDE_DEPRECATED;
-
-	/**
 	 * @brief Get the online status of the contact
 	 * @return the online status of the contact
 	 */
@@ -174,41 +207,9 @@ public:
 	 */
 	void setOnlineStatus(const OnlineStatus &status);
 
-	/**
-	 * \brief Get the unique id that identifies a contact.
-	 *
-	 * \note Id is required to be unique per protocol and per account.
-	 * Across those boundaries ids may occur multiple times.
-	 * The id is solely for comparing items safely (using pointers is
-	 * more crash-prone). DO NOT assume anything regarding the id's
-	 * value! Even if it may look like an ICQ UIN or an MSN passport,
-	 * this is undefined and may change at any time!
-	 *
-	 * @return The unique id of the contact
-	 */
-	QString contactId() const;
-
-	/**
-	 * \brief Get the protocol that the contact belongs to.
-	 *
-	 * \note Id is required to be unique per protocol and per account.
-	 * Across those boundaries ids may occur multiple times.
-	 * The id is solely for comparing items safely (using pointers is
-	 * more crash-prone). DO NOT assume anything regarding the id's
-	 * value! Even if it may look like an ICQ UIN or an MSN passport,
-	 * this is undefined and may change at any time!
-	 *
-	 * @return the contact's protocol
-	 */
-	Protocol* protocol() const;
-
-	/**
-	 * \brief Get the account that this contact belongs to
-	 *
-	 * @return the Kopete::Account object for this contact
-	 */
-	Account* account() const;
-
+	
+	
+	
 	/**
 	 * \brief Get the set of custom menu items for this contact
 	 *
@@ -219,8 +220,12 @@ public:
 	 * Actions should have the collection as parent.
 	 *
 	 * @return Collection of menu items to be show on the context menu
+	 * @todo if possible, try to use KXMLGUI
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
+	/**
+	 * @todo  What is this function for ?
+	 */
 	virtual QPtrList<KAction> *customContextMenuActions( MessageManager *manager );
 
 	/**
@@ -230,16 +235,8 @@ public:
 	 * @ref customContextMenuActions()
 	 */
 	KPopupMenu *popupMenu( MessageManager *manager = 0L );
+	
 
-	/**
-	 * \brief Move this contact to a new MetaContact.
-	 * This basically reparents the contact and updates the internal
-	 * data structures.
-	 * If the old contact is going to be empty, a question may ask to the user if it wants to delete the old contact.
-	 *
-	 * @param m The new MetaContact to move this contact to
-	 */
-	void setMetaContact(MetaContact *m);
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
@@ -248,6 +245,8 @@ public:
 	 * \see setFileCapable()
 	 * \return true if the protocol for this contact is capable of file transfers
 	 * \return false if the protocol for this contact is not capable of file transfers
+	 *
+	 * @todo have a capabilioties. or move to protocol capabilities
 	 */
 	bool isFileCapable() const;
 
@@ -255,6 +254,7 @@ public:
 	 * \brief Set the file transfer capability of this contact
 	 *
 	 * \param filecap The new file transfer capability setting
+	 * @todo have a capabilioties. or move to protocol capabilities
 	 */
 	void setFileCapable( bool filecap );
 
@@ -265,19 +265,28 @@ public:
 	 * capable of sending files.
 	 * \see isReachable()
 	 * @return true if this contact is online and is capable of receiving files
-	 * \return false if this contact is not capable of receiving files
+	 * @todo have a capabilioties. or move to protocol capabilities
 	 */
 	bool canAcceptFiles() const;
-
-    /**
-	 * @brief Rename a contact's display name.
+	
+	/**
+	 * This is the Contact level slot for sending files. It should be
+	 * implemented by all contacts which have the setFileCapable() flag set to
+	 * true. If the function is called through the GUI, no parameters are sent
+	 * and they take on default values (the file is chosen with a file open dialog)
 	 *
-	 * The default implementation calls @ref setDisplayName() immediately.
-	 *
-	 * @deprecated if you want to rename the alias on the server, use syncGroups()
+	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param fileName (Optional) An alternate name for the file - what the
+	 * receiver will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when sending
+	 * a nondeterminate
+	 *                file size (such as over  asocket
 	 */
-	virtual void rename( const QString &newName ) KDE_DEPRECATED;
+	virtual void sendFile( const KURL &sourceURL = KURL(),
+		const QString &fileName = QString::null, uint fileSize = 0L );
 
+
+	enum CanCreateFlags {  CannotCreate=false , CanCreate=true  };
 
 	/**
 	 * Returns the primary message manager affiliated with this contact
@@ -290,13 +299,26 @@ public:
 	 * to any existing managers. Currently, this is only set to true when
 	 * a chat is initiated by the user by clicking the contact list.
 	 */
-	virtual MessageManager * manager( bool canCreate = false ) =0;
+	virtual MessageManager * manager( CanCreateFlags canCreate = CannotCreate ) =0;
 
 	/**
 	 * Returns the name of the icon to use for this contact
+	 *  If null, the protocol icon need to be used.
+	 * The icon is not colored, nor has the status icon overloaded
 	 */
-	virtual QString& icon() const;
+	QString& icon() const;
+	
+	/**
+	 * @brief Change the icon to use for this contact
+	 * If you don't want to have the protocol icon as icon for this contact, you may set
+	 * another icon.  The icon doesn't need to be colored with the account icon as this operation 
+	 * will be performed later.
+	 *
+	 * if you want to go back to the protocol icon, set a null string.
+	 */
+	void setIcon( const QString& icon );
 
+	
 	/**
 	 * \brief Get the time (in seconds) this contact has been idle
 	 * It will return the time set in @ref setIdleTime() with an addition of the time
@@ -368,13 +390,22 @@ public:
 	 * if present.
 	 * Suitable for GUI display
 	 **/
-	virtual QString formattedName() const;
+	QString formattedName() const;
 
 	/**
 	 * Returns a formatted string of idleTime().
 	 * Suitable for GUI display
 	 **/
 	QString formattedIdleTime() const;
+	
+	
+
+	/**
+	 * used in @ref sync()   
+	 */
+	enum Changed{ MovedBetweenGroup = 0x01, /** the contact has been moved between groups */ 
+				DisplayNameChanged = 0x02 }; /** the displayname of the contact changed  */
+
 
 public slots:
 	/**
@@ -400,37 +431,13 @@ public slots:
 	void slotChangeMetaContact();
 
 	/**
-	 * Method to delete a contact from the contact list,
-	 * should be implemented by protocol plugin to handle
-	 * protocol-specific actions required to delete a contact
-	 * (ie. messages to the server, etc)
-	 * the default implementation simply call deleteLater()
-	 *
-	 * @todo rename that function to "deleteContact"
-	 */
-	virtual void slotDeleteContact();
-
-	/**
 	 * Method to retrieve user information.  Should be implemented by
 	 * the protocols, and popup some sort of dialog box
-	 */
-	virtual void slotUserInfo();
-
-	/**
-	 * This is the Kopete::Contact level slot for sending files. It should be
-	 * implemented by all contacts which have the setFileCapable() flag set to
-	 * true. If the function is called through the GUI, no parameters are sent
-	 * and they take on default values (the file is chosen with a file open dialog)
 	 *
-	 * @param sourceURL The actual KURL of the file you are sending
-	 * @param fileName (Optional) An alternate name for the file - what the
-	 * receiver will see
-	 * @param fileSize (Optional) Size of the file being sent. Used when sending
-	 * a nondeterminate
-	 *                file size (such as over  asocket
+	 * reimplement it to show the informlation
+	 * @todo rename and make it pure virtual
 	 */
-	virtual void sendFile( const KURL &sourceURL = KURL(),
-		const QString &fileName = QString::null, uint fileSize = 0L );
+	virtual void slotUserInfo() {};
 
 	/**
 	 * @brief Syncronise the server and the metacontact.
@@ -441,23 +448,19 @@ public slots:
 	 *
 	 * default implementation does nothing
 	 *
-	 * @todo rename it to syncronise since it's not anymore only for groups.
+	 * @param changed is a bitmask of the @ref Changed enum which say why the call to this funtion is done.
 	 */
-	virtual void syncGroups();
+	virtual void sync(unsigned int changed = 0xFF);
 
 	/**
-	 * Change the icon to use for this contact
+	 * Method to delete a contact from the contact list,
+	 * should be implemented by protocol plugin to handle
+	 * protocol-specific actions required to delete a contact
+	 * (ie. messages to the server, etc)
+	 * the default implementation simply call deleteLater()
 	 */
-	void setIcon( const QString& icon );
+	virtual void deleteContact();
 
-protected:
-	/**
-	 * Sets the display name, for the contact.
-	 * this is what is shown in the contact list.
-	 * @param name Then new display name
-	 * @deprecated use the nickname property
-	 */
-	void setDisplayName( const QString &name ) KDE_DEPRECATED;
 
 private slots:
 
@@ -493,11 +496,13 @@ signals:
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.
 	 *
-	 * @warning this signal is emit in the Kopete::Contact destructor, so all
+	 * @warning this signal is emit in the Contact destructor, so all
 	 * virtual method are not available
 	 */
 	void contactDestroyed( Kopete::Contact *contact );
 
+	
+	
 	/**
 	 * The contact's idle state changed.
 	 * You need to emit this signal to update the view.
@@ -515,11 +520,65 @@ signals:
 	void propertyChanged( Kopete::Contact *contact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue );
 
+protected:
+	virtual void virtual_hook(uint id, void *data);
+
 private:
-	KopeteContactPrivate *d;
+	class Private;
+	Private *d;
+	
+	
+	
+public:
+
+//MOC_SKIP_BEGIN//
+//(moc doesn't like the KDE_DEPRECATED macro)
+
+	/**
+	 * @todo remove
+	 * @deprecated  use the nickName property
+	 */
+	KDE_DEPRECATED void Kopete::Contact::rename( const QString &name )
+	{
+		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		if( name == nick )
+			return;
+	
+		setProperty( Kopete::Global::Properties::self()->nickName(), name );
+	}
+
+	/**
+	 * @todo remove
+	 * @deprecated  use the nickName property
+	 */
+	KDE_DEPRECATED void Kopete::Contact::setDisplayName( const QString &name )
+	{
+		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		if( name == nick )
+			return;
+			
+ 		setProperty( Kopete::Global::Properties::self()->nickName(), name );
+	}
+
+	/**
+	 * @todo remove
+	 * @deprecated  use the nickName property
+	 */
+	KDE_DEPRECATED QString Kopete::Contact::displayName() const
+	{
+		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		if( !nick.isEmpty() )
+			return nick;
+			
+		return contactId();
+	}
+	
+//MOC_SKIP_END//
+
 };
 
-}
+
+} //END namespace Kopete
 
 #endif
 

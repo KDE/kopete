@@ -48,11 +48,11 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
-	Kopete::MessageManager* manager( bool canCreate = false );
+	Kopete::MessageManager* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 
 public slots:
 	virtual void slotUserInfo();
-	virtual void slotDeleteContact();
+	virtual void deleteContact();
 	void slotSendMessage(Kopete::Message &msg);
 
 private slots:

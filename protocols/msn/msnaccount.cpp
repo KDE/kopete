@@ -838,7 +838,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			c->setDeleted(false);
 			
 			// Update server if the contact has been moved to another group while MSN was offline
-			c->syncGroups();
+			c->sync();
 		}
 		else
 		{
@@ -1063,7 +1063,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	{
 		// we can't use simply c->manager(true) here to get the manager, because this will re-open
 		// another chat session, and then, close this new one. We have to re-create the manager manualy.
-		MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( c->manager( false ) );
+		MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( c->manager( Kopete::Contact::CannotCreate ) );
 		if(!manager)
 		{
 			Kopete::ContactPtrList chatmembers;
@@ -1112,7 +1112,7 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	// if ( isConnected() && c && myself() && handle != m_msnId )
 	if ( m_notifySocket && c && myself() && handle != accountId() )
 	{
-		if ( !c->manager() || !static_cast<MSNMessageManager *>( c->manager() )->service() )
+		if ( !c->manager(Kopete::Contact::CannotCreate) || !static_cast<MSNMessageManager *>( c->manager( Kopete::Contact::CanCreate ) )->service() )
 		{
 			m_msgHandle = handle;
 			m_notifySocket->createChatSession();

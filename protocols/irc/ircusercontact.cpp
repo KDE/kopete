@@ -132,7 +132,7 @@ void IRCUserContact::setAway(bool isAway)
 
 void IRCUserContact::incomingUserIsAway(const QString &reason )
 {
-	if( manager(false ) )
+	if( manager( Kopete::Contact::CannotCreate ) )
 	{
 		Kopete::Message msg( (Kopete::Contact*)MYACCOUNT->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),

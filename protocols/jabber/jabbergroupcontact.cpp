@@ -102,7 +102,7 @@ void JabberGroupContact::rename ( const QString &/*newName*/ )
 
 }
 
-Kopete::MessageManager *JabberGroupContact::manager ( bool /*canCreate*/ )
+Kopete::MessageManager *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
 {
 
 	return mManager;

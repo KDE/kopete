@@ -315,7 +315,7 @@ void MeanwhileAccount::slotMesgReceived(
     Kopete::Message newMessage( contact, contactList, msg, Kopete::Message::Inbound );
 
     // Add it to the manager
-    Kopete::MessageManager *mm = contact->manager();
+    Kopete::MessageManager *mm = contact->manager(Kopete::Contact::CanCreate);
     mm->appendMessage(newMessage);
 }
 
@@ -333,7 +333,7 @@ void MeanwhileAccount::slotUserTyping(
     contactList.append( myself() );
 
     // Add it to the manager
-    Kopete::MessageManager *mm = contact->manager();
+    Kopete::MessageManager *mm = contact->manager(Kopete::Contact::CanCreate);
     mm->receivedTypingMsg(contact, isTyping);
 }
 

@@ -308,7 +308,6 @@ Contact *MetaContact::preferredContact()
 	{
 		Contact *c=it.current();
 
-#if 0 //TODO when the contact is merged
 		//Has the contact an open chatwindow?
 		 if( c->manager( Contact::CanCreate ) /*&& c->manager()->view(false)*/)
 		 {      //there is no need of having a view() i consider already having a manager
@@ -324,7 +323,6 @@ Contact *MetaContact::preferredContact()
 		 }
 		 else if( hasOpenView && contact->isOnline() )
 		 	continue; //This contact has not open view, but the selected contact has, and is reachable
-#endif
 			
 		// FIXME: The isConnected call should be handled in Contact::isReachable
 		//        after KDE 3.2 - Martijn
@@ -517,11 +515,7 @@ void MetaContact::setDisplayName( const QString &name )
 	emit displayNameChanged( old , name );
 
 	for( QPtrListIterator<Kopete::Contact> it( d->contacts ) ; it.current(); ++it )
-#if 0 //TODO when contact will be ported
 		( *it )->sync(Contact::DisplayNameChanged);
-#else
-		( *it )->syncGroups();
-#endif
 
 }
 
@@ -594,12 +588,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 	d->groups.append( to );
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-#if 0 //TODO when Contact will be mùerged
 		c->sync(Contact::MovedBetweenGroup);
-#else
-		c->syncGroups();
-#endif
-
 
 	emit movedToGroup( this, from, to );
 }
@@ -621,11 +610,7 @@ void MetaContact::removeFromGroup( Group *group )
 	}
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-#if 0 //TODO when Contact will be merged
 		c->sync(Contact::MovedBetweenGroup);
-#else
-		c->syncGroups();
-#endif
 	
 	emit removedFromGroup( this, group );
 }
@@ -647,11 +632,7 @@ void MetaContact::addToGroup( Group *to )
 	d->groups.append( to );
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-#if 0 //TODO when Contact will be merged
 		c->sync(Contact::MovedBetweenGroup);
-#else
-		c->syncGroups();
-#endif
 
 	emit addedToGroup( this, to );
 }

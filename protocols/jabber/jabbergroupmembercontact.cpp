@@ -66,7 +66,7 @@ void JabberGroupMemberContact::rename ( const QString &/*newName*/ )
 
 }
 
-Kopete::MessageManager *JabberGroupMemberContact::manager ( bool canCreate )
+Kopete::MessageManager *JabberGroupMemberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
 
 	if ( mManager )
@@ -114,7 +114,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	type = Kopete::Message::Chat;
 
 	Kopete::ContactPtrList contactList;
-	contactList.append ( manager( true )->user () );
+	contactList.append ( manager( Kopete::Contact::CanCreate )->user () );
 
 	// check for errors
 	if ( message.type () == "error" )
@@ -141,7 +141,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	}
 
 	// append message to manager
-	manager( true )->appendMessage ( *newMessage );
+	manager( Kopete::Contact::CanCreate )->appendMessage ( *newMessage );
 
 	delete newMessage;
 

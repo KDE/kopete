@@ -106,7 +106,7 @@ public:
 	/**
 	 * Returns the MSN Message Manager associated with this contact
 	 */
-	virtual Kopete::MessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate );
 
 
 	/**
@@ -124,13 +124,14 @@ public:
 
 public slots:
 	virtual void slotUserInfo();
-	virtual void slotDeleteContact();
+	virtual void deleteContact();
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, uint fileSize);
 
 	/**
 	 * Every time the kopete's contactlist is modified, we sync the serverlist with it
 	 */
-	virtual void syncGroups();
+	virtual void sync( unsigned int cvhanged= 0xff);
+
 
 	void setDisplayPicture(KTempFile *f) ;
 

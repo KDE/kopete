@@ -46,8 +46,8 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 void SMSContact::slotSendingSuccess(const Kopete::Message &msg)
 {
 //	KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
-	manager()->messageSucceeded();
-	manager()->appendMessage((Kopete::Message &)msg);
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+	manager(Kopete::Contact::CanCreate)->appendMessage((Kopete::Message &)msg);
 }
 
 void SMSContact::slotSendingFailure(const Kopete::Message &/*msg*/, const QString &error)
@@ -56,7 +56,7 @@ void SMSContact::slotSendingFailure(const Kopete::Message &/*msg*/, const QStrin
 			i18n("Could Not Send Message"));
 //	manager()->messageFailed();
 	// TODO: swap for failed as above. show it anyway for now to allow closing of window.
-	manager()->messageSucceeded();
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
 void SMSContact::serialize( QMap<QString, QString> &serializedData,
@@ -67,10 +67,10 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 		serializedData[ "contactId" ] = m_phoneNumber;
 }
 
-Kopete::MessageManager* SMSContact::manager( bool )
+Kopete::MessageManager* SMSContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
-	if ( m_msgManager )
+	if ( m_msgManager || canCreate != Kopete::Contact::CanCreate )
 	{
 		return m_msgManager;
 	}
@@ -131,7 +131,7 @@ void SMSContact::slotUserInfo()
 {
 }
 
-void SMSContact::slotDeleteContact()
+void SMSContact::deleteContact()
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	deleteLater();

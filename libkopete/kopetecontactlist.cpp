@@ -240,11 +240,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 	QPtrList<Contact> cts=m->contacts();
 	for( Contact *c = cts.first(); c; c = cts.next() )
 	{
-#if 0 //TODO: when Contact will be merged
 		c->deleteContact();
-#else
-		c->slotDeleteContact();
-#endif
 	}
 
 	d->contacts.remove( m );
@@ -963,7 +959,7 @@ void Kopete::ContactList::messageContact( const QString &contactId, const QStrin
 	if (!c) return;
 
 	Kopete::Message msg(c->account()->myself(), c, messageText, Kopete::Message::Outbound);
-	c->manager(true)->sendMessage(msg);
+	c->manager(Contact::CanCreate)->sendMessage(msg);
 
 }
 

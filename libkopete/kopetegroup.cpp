@@ -298,9 +298,9 @@ void Kopete::Group::sendMessage()
 		return;
 	c = mc->preferredContact();
 	c->sendMessage();
-	if( c->manager( false ) )
+	if( c->manager( Contact::CannotCreate ) )
 	{
-		connect( c->manager( false ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
+		connect( c->manager(  ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
 	}
 }
 
@@ -315,12 +315,12 @@ void Kopete::Group::sendMessage( Kopete::Message& msg )
 	list.remove( msg.to().first()->metaContact() );
 	for( mc = list.first(); mc; mc = list.next() )
 	{
-		if( mc->preferredContact()->manager( true ) )
+		if( mc->preferredContact()->manager( Contact::CanCreate ) )
 		{
-			mc->preferredContact()->manager( false )->sendMessage( msg );
+			mc->preferredContact()->manager( )->sendMessage( msg );
 		}
 	}
-	disconnect( c->manager( false ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
+	disconnect( c->manager( Contact::CannotCreate ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
 }
 
 QPtrList<Kopete::MetaContact> Kopete::Group::onlineMembers() const

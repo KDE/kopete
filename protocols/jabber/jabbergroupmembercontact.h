@@ -50,7 +50,7 @@ public:
 	/**
 	 * Return message manager for this instance.
 	 */
-	Kopete::MessageManager *manager ( bool canCreate = false );
+	Kopete::MessageManager *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
 
 	/**
 	 * Deal with incoming messages.

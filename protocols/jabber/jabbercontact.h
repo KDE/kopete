@@ -57,7 +57,7 @@ public:
 	 * not suitable for groupchat, as it only looks for
 	 * managers with ourselves in the contact list.
 	 */
-	Kopete::MessageManager *manager ( bool canCreate = false );
+	Kopete::MessageManager *manager ( Kopete::Contact::CanCreateFlags );
 	
 	/**
 	 * Reads a vCard object and updates the contact's
@@ -70,12 +70,12 @@ public slots:
 	/**
 	 * Remove this contact from the roster
 	 */
-	void slotDeleteContact ();
+	void deleteContact ();
 
 	/**
 	 * Sync Groups with server
 	 */
-	void syncGroups ();
+	void sync(unsigned int);
 
 	/**
 	 * This is the JabberContact level slot for sending files.
@@ -157,7 +157,7 @@ private:
 	 * the manager. If a new manager is created, the given
 	 * resource is preselected.
 	 */
-	JabberMessageManager *manager ( const QString &resource, bool canCreate = false );
+	JabberMessageManager *manager ( const QString &resource, Kopete::Contact::CanCreateFlags );
 
 	/**
 	 * Create a message manager for this contact.
@@ -165,7 +165,7 @@ private:
 	 * looks for a message manager with a given
 	 * list of contacts as members.
 	 */
-	JabberMessageManager *manager ( Kopete::ContactPtrList chatMembers, bool canCreate = false );
+	JabberMessageManager *manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags );
 
 	/**
 	 * Sends subscription messages.

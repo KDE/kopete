@@ -986,7 +986,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 				Kopete::Message msg(c->account()->myself(), c, (*it).url(),
 					Kopete::Message::Outbound);
-				c->manager(true)->sendMessage(msg);
+				c->manager(Kopete::Contact::CanCreate)->sendMessage(msg);
 			}
 		}
 		e->acceptAction();

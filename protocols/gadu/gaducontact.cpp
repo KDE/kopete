@@ -127,9 +127,9 @@ GaduContact::contactPort()
 }
 
 Kopete::MessageManager*
-GaduContact::manager( bool /* canCreate */ )
+GaduContact::manager( Kopete::Contact::CanCreateFlags  canCreate  )
 {
-	if ( !msgManager_ ) {
+	if ( !msgManager_ && canCreate ) {
 		msgManager_ = Kopete::MessageManagerFactory::self()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
 		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager*) ),
 			 this, SLOT( messageSend( Kopete::Message&, Kopete::MessageManager*) ) );
@@ -156,7 +156,7 @@ GaduContact::initActions()
 void
 GaduContact::messageReceived( Kopete::Message& msg )
 {
-	manager()->appendMessage( msg );
+	manager(Kopete::Contact::CanCreate)->appendMessage( msg );
 }
 
 void
@@ -221,7 +221,7 @@ GaduContact::slotUserInfo()
 }
 
 void
-GaduContact::slotDeleteContact()
+GaduContact::deleteContact()
 {
 	account_->removeContact( this );
 	deleteLater();
@@ -341,7 +341,7 @@ GaduContact::findBestContactName( const GaduContactsList::ContactLine* cl )
 void
 GaduContact::messageAck()
 {
-	manager()->messageSucceeded();
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
 void

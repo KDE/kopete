@@ -379,7 +379,7 @@ void GroupWiseContact::purgeCLInstances()
 	m_instances.clear();
 }
 
-void GroupWiseContact::slotDeleteContact()
+void GroupWiseContact::deleteContact()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// remove all the instances of this contact from the server's contact list
@@ -404,7 +404,7 @@ void GroupWiseContact::receiveContactDeleted( const ContactItem & instance )
 		deleteLater();
 }
 
-void GroupWiseContact::syncGroups()
+void GroupWiseContact::sync( unsigned int)
 {
 	if ( account()->myself() != this )
 	{

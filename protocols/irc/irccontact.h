@@ -89,7 +89,7 @@ public:
 	virtual const QString caption() const = 0;
 //	virtual const QString formatedName() const;
 
-	virtual Kopete::MessageManager *manager(bool canCreate = true);
+	virtual Kopete::MessageManager *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 
 	virtual void appendMessage( Kopete::Message & );
 
@@ -116,7 +116,7 @@ protected slots:
 	void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
 	void slotUserDisconnected( const QString &nickname, const QString &reason);
 
-	virtual void slotDeleteContact();
+	virtual void deleteContact();
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void initConversation() {};
 

@@ -81,7 +81,7 @@ void YahooContact::syncToServer()
 	}
 }
 
-void YahooContact::syncGroups()
+void YahooContact::sync(unsigned int)
 {
 	if ( !m_account->isConnected() )
 		return;
@@ -118,9 +118,9 @@ bool YahooContact::isReachable()
 		return false;
 }
 
-Kopete::MessageManager *YahooContact::manager( bool )
+Kopete::MessageManager *YahooContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	if( !m_manager )
+	if( !m_manager && canCreate)
 	{
 		Kopete::ContactPtrList m_them;
 		m_them.append( this );
@@ -143,20 +143,20 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	QString messageText = message.plainBody();
 	kdDebug(14180) << "Sending message: " << messageText << endl;
 
-	Kopete::ContactPtrList m_them = manager()->members();
+	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
 	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
 		static_cast<YahooContact *>(target)->m_userId, messageText );
 
 	// append message to window
-	manager()->appendMessage(message);
-	manager()->messageSucceeded();
+	manager(Kopete::Contact::CanCreate)->appendMessage(message);
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
 void YahooContact::slotTyping(bool isTyping_ )
 {
-	Kopete::ContactPtrList m_them = manager()->members();
+	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
 
@@ -188,14 +188,14 @@ void YahooContact::slotSendFile()
 	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooContact::slotDeleteContact()
+void YahooContact::deleteContact()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	//my ugliest hack yet. how many levels of indirection do I want? ;)
 	if ( m_account->isConnected() )
 		m_account->yahooSession()->removeBuddy(m_userId, m_groupName);
 
-	Kopete::Contact::slotDeleteContact();
+	Kopete::Contact::deleteContact();
 }
 #include "yahoocontact.moc"
 

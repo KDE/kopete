@@ -147,7 +147,7 @@ OscarContact::~OscarContact()
 }
 
 
-Kopete::MessageManager* OscarContact::manager(bool canCreate)
+Kopete::MessageManager* OscarContact::manager(CanCreateFlags canCreate )
 {
 	if(!mMsgManager && canCreate)
 	{
@@ -249,7 +249,7 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 }
 
 
-void OscarContact::slotDeleteContact()
+void OscarContact::deleteContact()
 {
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 
@@ -269,7 +269,7 @@ void OscarContact::slotDeleteContact()
 
 
 // Called when the metacontact owning this contact has changed groups
-void OscarContact::syncGroups()
+void OscarContact::sync(unsigned int)
 {
 	if (!metaContact())
 		return;
@@ -607,7 +607,7 @@ void OscarContact::receivedIM(Kopete::Message &msg)
 {
 	//kdDebug(14190) << k_funcinfo << "called" << endl;
 	// Tell the message manager that the buddy is done typing
-	manager(true)->receivedTypingMsg(this, false);
+	manager(Kopete::Contact::CanCreate)->receivedTypingMsg(this, false);
 
 /*
 	// Build a Kopete::Message and set the body as Rich Text
@@ -617,7 +617,7 @@ void OscarContact::receivedIM(Kopete::Message &msg)
 		Kopete::Message::RichText);
 	manager(true)->appendMessage(kmsg);
 */
-	manager(true)->appendMessage(msg);
+	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 
 #if 0
 	// send our away message in fire-and-forget-mode :)

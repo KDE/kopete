@@ -75,7 +75,7 @@ public:
 	
 public slots:
 	void slotUserInfo();
-	void slotDeleteContact();
+	void deleteContact();
 	void messageReceived( Kopete::Message& );
 	void messageSend( Kopete::Message&, Kopete::MessageManager* );
 	void messageAck();
@@ -86,7 +86,7 @@ public slots:
 
 
 protected:
-	virtual Kopete::MessageManager* manager( bool canCreate = false );
+	virtual Kopete::MessageManager* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 	void initActions();
 
 private:

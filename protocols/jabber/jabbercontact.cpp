@@ -222,7 +222,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
 	// fetch message manager
-	JabberMessageManager *mManager = manager ( message.from().resource (), true );
+	JabberMessageManager *mManager = manager ( message.from().resource (), Kopete::Contact::CanCreate );
 
 	// evaluate typing notifications
 	if ( message.type () != "error" )
@@ -583,7 +583,7 @@ void JabberContact::slotMessageManagerDeleted ( QObject *sender )
 
 }
 
-JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMembers, bool canCreate )
+JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
@@ -618,7 +618,7 @@ JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMember
 
 }
 
-Kopete::MessageManager *JabberContact::manager ( bool canCreate )
+Kopete::MessageManager *JabberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
@@ -629,7 +629,7 @@ Kopete::MessageManager *JabberContact::manager ( bool canCreate )
 
 }
 
-JabberMessageManager *JabberContact::manager ( const QString &resource, bool canCreate )
+JabberMessageManager *JabberContact::manager ( const QString &resource, Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << ", Resource: '" << resource << "'" << endl;
 
@@ -679,7 +679,7 @@ JabberMessageManager *JabberContact::manager ( const QString &resource, bool can
 
 }
 
-void JabberContact::slotDeleteContact ()
+void JabberContact::deleteContact ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing user " << contactId () << endl;
 
@@ -696,7 +696,7 @@ void JabberContact::slotDeleteContact ()
 
 }
 
-void JabberContact::syncGroups ()
+void JabberContact::sync ( unsigned int)
 {
 	#warning  dontsync is a temporary solution
 	if( account()->dontSync )
@@ -817,7 +817,7 @@ void JabberContact::slotSelectResource ()
 	 * The resource selection will only apply for newly opened
 	 * windows.
 	 */
-	if ( manager ( false ) != 0 )
+	if ( manager ( Kopete::Contact::CannotCreate ) != 0 )
 	{
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 										KMessageBox::Information,

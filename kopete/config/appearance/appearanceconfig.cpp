@@ -628,7 +628,8 @@ class FakeContact : public Kopete::Contact
 {
 public:
 	FakeContact ( const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( 0, id, mc ) {}
-	virtual Kopete::MessageManager *manager(bool) { return 0L; }
+	virtual Kopete::MessageManager *manager(Kopete::Contact::CanCreateFlags c) { return 0L; }
+	virtual void slotUserInfo() {};
 };
 
 void AppearanceConfig::slotUpdatePreview()

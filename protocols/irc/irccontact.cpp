@@ -109,7 +109,7 @@ const QTextCodec *IRCContact::codec()
 	return codec;
 }
 
-Kopete::MessageManager *IRCContact::manager(bool canCreate)
+Kopete::MessageManager *IRCContact::manager(Kopete::Contact::CanCreateFlags canCreate)
 {
 	if( canCreate && !m_msgManager )
 	{
@@ -140,7 +140,7 @@ void IRCContact::messageManagerDestroyed()
 
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
 {
-	if( manager(false) )
+	if( manager(Kopete::Contact::CannotCreate) )
 	{
 		QString nickname = user.section('!', 0, 0);
 		Kopete::Contact *c = locateUser( nickname );
@@ -237,7 +237,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::MessageManager *)
 			msg.setFg(QColor());
 
 			appendMessage(msg);
-			manager()->messageSucceeded();
+			manager(Kopete::Contact::CanCreate)->messageSucceeded();
 		}
 	}
 	else
@@ -248,14 +248,14 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::MessageManager *)
 		message.setFg( QColor() );
 
 		appendMessage(message);
-		manager()->messageSucceeded();
+		manager(Kopete::Contact::CanCreate)->messageSucceeded();
 	}
 }
 
 Kopete::Contact *IRCContact::locateUser( const QString &nick )
 {
 	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
-	if( manager(false) )
+	if( manager(Kopete::Contact::CannotCreate) )
 	{
 		if( nick == MYACCOUNT->mySelf()->nickName() )
 			return MYACCOUNT->mySelf();
@@ -289,17 +289,16 @@ bool IRCContact::isChatting(Kopete::MessageManager *avoid) const
 	return false;
 }
 
-void IRCContact::slotDeleteContact()
+void IRCContact::deleteContact()
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
-	if (manager(false))
-		delete manager();
+	delete manager(Kopete::Contact::CannotCreate);
 
 	if (!isChatting())
 	{
 		kdDebug(14120) << k_funcinfo << "will delete " << m_nickName << endl;
-		Kopete::Contact::slotDeleteContact();
+		Kopete::Contact::deleteContact();
 	}
 	else
 	{
@@ -312,13 +311,13 @@ void IRCContact::slotDeleteContact()
 
 void IRCContact::appendMessage(Kopete::Message &msg)
 {
-	manager()->appendMessage(msg);
+	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 }
 
 KopeteView *IRCContact::view()
 {
 	if (m_msgManager)
-		return manager()->view(false);
+		return manager(Kopete::Contact::CanCreate)->view(false);
 	return 0L;
 }
 void IRCContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData )

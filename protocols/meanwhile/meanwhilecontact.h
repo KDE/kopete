@@ -45,7 +45,7 @@ public:
 
 	virtual QPtrList<KAction> *customContextMenuActions();
 
-	virtual Kopete::MessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlag canCreate = Kopete::Contact::CanCreate );
 
     QString meanwhileId;
 

@@ -128,7 +128,7 @@ void WPContact::slotCloseUserInfoDialog()
 	m_infoDialog = 0L;
 }
 
-void slotDeleteContact()
+void deleteContact()
 {
 //	deleteLater();
 }

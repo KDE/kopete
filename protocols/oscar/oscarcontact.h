@@ -59,7 +59,7 @@ class OscarContact : public Kopete::Contact
 
 		virtual void rename(const QString &);
 
-		virtual Kopete::MessageManager *manager( bool canCreate = false );
+		virtual Kopete::MessageManager *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 
 		const QString &contactName() const { return mName; };
 		OscarAccount *account() const { return mAccount; };
@@ -124,7 +124,7 @@ class OscarContact : public Kopete::Contact
 		/*
 		 * Method to delete a contact from the contact list
 		 */
-		virtual void slotDeleteContact();
+		virtual void deleteContact();
 
 /*
 		virtual void sendFile(const KURL &sourceURL, const QString &altFileName,
@@ -133,7 +133,7 @@ class OscarContact : public Kopete::Contact
 		/*
 		 * Called when the metacontact owning this contact changes groups
 		 */
-		virtual void syncGroups();
+		virtual void sync(unsigned int);
 
 	protected:
 		// The account we're associated with

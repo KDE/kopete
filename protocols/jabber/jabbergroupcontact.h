@@ -61,7 +61,7 @@ public:
 	 */
 	void removeSubContact ( const XMPP::RosterItem &rosterItem );
 
-	Kopete::MessageManager *manager ( bool canCreate = false );
+	Kopete::MessageManager *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
 
 public slots:
 
