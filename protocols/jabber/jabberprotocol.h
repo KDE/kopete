@@ -190,6 +190,8 @@ public:
 		
 		virtual const QString protocolIcon();
 
+		JabberMessageManager *manager( const QString &key );
+
 public slots:
 		/**
 		 * Function to connect to the server
@@ -305,16 +307,6 @@ private slots:
 	void slotGroupChatLeft(const Jid &jid);
 	void slotGroupChatPresence(const Jid &jid, const Status &status);
 	void slotGroupChatError(const Jid &jid, int error, QString &reason);
-
-	/*
-	 * Slot for sending a chat message to a user
-	 */
-	void slotChatUser(JabberContact *contact);
-
-	/*
-	 * Slot for sending an email message to a user
-	 */
-	void slotEmailUser(JabberContact *contact);
 
 	/*
 	 * Slot to catch a dying message manager

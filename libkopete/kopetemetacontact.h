@@ -429,6 +429,8 @@ private:
 
 	OnlineStatus m_onlineStatus;
 
+	KopeteContact *preferredContact();
+
 	IdleState m_idleState;
 };
 

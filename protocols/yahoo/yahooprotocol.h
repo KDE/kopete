@@ -68,6 +68,7 @@ public:
 	YahooContact *contact( const QString &id );
 	YahooSession *yahooSession();
 	virtual const QString protocolIcon();
+	YahooImMessageManager* chatMsgManager( const QString &);
 	
 public slots:
 	void connect();			// Connect to server
@@ -117,7 +118,6 @@ protected slots:
 	void slotConnected();
 
 private:
-	YahooImMessageManager* chatMsgManager( const QString &);
 	YahooConferenceMessageManager* conferenceMsgManager( const QString &);
 
 

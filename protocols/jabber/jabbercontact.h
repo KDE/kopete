@@ -93,11 +93,6 @@ public:
 	virtual int importance() const;
 
 	/**
-	 * Open a window for this contact (either chat or email)
-	 */
-	void execute();
-
-	/**
 	 * Return the identity ID
 	 */
 	virtual QString identityId() const;
@@ -149,9 +144,7 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
-signals:
-	void chatUser(JabberContact *contact);
-	void emailUser(JabberContact *contact);
+	virtual KopeteMessageManager *manager();
 
 public slots:
 	/**
@@ -210,16 +203,6 @@ private slots:
 	 * Catch the rename dialog's results
 	 */
 	void slotDoRenameContact(const QString &);
-
-	/**
-	 * Open a chat window
-	 */
-	void slotChatUser();
-
-	/**
-	 * Open an email window
-	 */
-	void slotEmailUser();
 
 	/**
 	 * Edit a vCard for the contact.
@@ -305,8 +288,7 @@ private:
 
 	KActionCollection *actionCollection;
 
-	KAction *actionMessage, *actionChat,
-			*actionRename,
+	KAction 	*actionRename,
 			*actionSendAuth, *actionRequestAuth,
 			*actionInfo, *actionStatusAway,
 			*actionStatusChat, *actionStatusXA,
@@ -314,6 +296,7 @@ private:
 
 	KSelectAction *actionSelectResource;
 	KActionMenu *actionSetAvailability;
+	KopeteMessageManager *m_manager;
 
 	dlgJabberVCard *dlgVCard;
 };

@@ -62,15 +62,14 @@ public:
     uin_t uin() const;
 public slots:
 //    void showContextMenu(const QPoint& p, const QString& group);
-    void execute();
 
     void slotUserInfo();
     void slotDeleteContact();
-    void messageReceived( const KopeteMessage& );
-    void messageSend( const KopeteMessage&, KopeteMessageManager* );
+    void messageReceived( KopeteMessage& );
+    void messageSend( KopeteMessage&, KopeteMessageManager* );
 
 protected:
-    KopeteMessageManager* msgManager();
+    virtual KopeteMessageManager* manager();
     void initActions();
 
 private:

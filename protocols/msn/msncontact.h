@@ -136,16 +136,12 @@ public:
 	/**
 	 * Returns the MSN Message Manager associated with this contact
 	 */
-	MSNMessageManager *manager();
+	virtual KopeteMessageManager *manager();
 
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
-	virtual void execute();
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
-
-signals:
-	void chatToUser( QString );
 
 private slots:
 	void slotBlockUser();

@@ -76,8 +76,8 @@ KopeteMessageManager* WPContact::manager()
 
 		m_manager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol);
 
-		connect(m_manager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
-		connect(m_manager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(const KopeteMessage &)));
+		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
+  		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 	}
 
@@ -102,13 +102,6 @@ void WPContact::slotCheckStatus()
 		emit statusChanged(this, status());
 }
 
-void WPContact::execute()
-{
-	DEBUG(WPDMETHOD, "WPContact::execute()");
-
-	manager()->readMessages( KopeteView::Email );
-}
-
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
@@ -117,15 +110,17 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	contactList.append(myProtocol->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
+	KopeteMessage msg;
+
 	if(subj.search(Body) == -1)
-		manager()->appendMessage(KopeteMessage(this, contactList, Body, KopeteMessage::Inbound));
+		msg = KopeteMessage(this, contactList, Body, KopeteMessage::Inbound);
 	else
-	{
-		manager()->appendMessage(KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound));
-	}
+		msg = KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound);
+
+	manager()->appendMessage(msg);
 }
 
-void WPContact::slotSendMessage(const KopeteMessage& message)
+void WPContact::slotSendMessage(KopeteMessage& message)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
 	

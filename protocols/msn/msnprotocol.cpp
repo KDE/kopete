@@ -1139,11 +1139,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 	if ( c && m_myself )
 	{
-		c->manager()->createChat( handle, address, auth, ID );
-		if( mPrefs->openWindow() || !ID )
-		{
-			c->manager()->readMessages();
-		}
+		static_cast<MSNMessageManager*>( c->manager() )->createChat( handle, address, auth, ID );
 	}
 }
 
@@ -1157,14 +1153,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 	{
 		KopeteContactPtrList chatmembers;
 
-		if(c->manager()->service())
-		{
-			kdDebug(14140) << "MSNProtocol::slotStartChatSession: "
-				<< "Reusing existing switchboard connection" << endl;
-
-			c->manager()->readMessages();
-		}
-		else
+		if(!static_cast<MSNMessageManager*>( c->manager() )->service())
 		{
 			kdDebug(14140) << "MSNProtocol::slotStartChatSession: "
 				<< "Creating new switchboard connection" << endl;

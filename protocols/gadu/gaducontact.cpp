@@ -51,12 +51,6 @@ GaduContact::showContextMenu( const QPoint& p, const QString&  )
     delete popup;
 } */
 
-void
-GaduContact::execute()
-{
-    msgManager()->readMessages();
-}
-
 /*void
 GaduContact::addToGroup( const QString& group )
 {
@@ -250,15 +244,15 @@ GaduContact::uin() const
 }
 
 KopeteMessageManager*
-GaduContact::msgManager()
+GaduContact::manager()
 {
     if ( msgManager_ ) {
         return msgManager_;
     } else {
         msgManager_ = KopeteMessageManagerFactory::factory()->create( GaduProtocol::protocol()->myself(),
                                                            thisContact_, GaduProtocol::protocol());
-        connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
-                 this, SLOT(messageSend(const KopeteMessage&, KopeteMessageManager*)) );
+        connect( msgManager_, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
+                 this, SLOT(messageSend(KopeteMessage&, KopeteMessageManager*)) );
 	connect( msgManager_, SIGNAL(destroyed()),
                  this, SLOT(slotMessageManagerDestroyed()) );
         return msgManager_;
@@ -283,13 +277,13 @@ GaduContact::initActions()
 }
 
 void
-GaduContact::messageReceived( const KopeteMessage& msg )
+GaduContact::messageReceived( KopeteMessage& msg )
 {
-    msgManager()->appendMessage( msg );
+    manager()->appendMessage( msg );
 }
 
 void
-GaduContact::messageSend( const KopeteMessage& msg, KopeteMessageManager* mgr )
+GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 {
     if ( msg.body().isEmpty() )
         return;

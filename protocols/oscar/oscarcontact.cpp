@@ -111,22 +111,6 @@ OscarContact::~OscarContact()
 	kdDebug(14150) << "[OscarContact] ~OscarContact()" << endl;
 }
 
-/** Pops up a chat window */
-void OscarContact::execute(void)
-{
-	kdDebug(14150) << "[OscarContact] execute()" << endl;
-
-	if ( mStatus == OSCAR_OFFLINE )
-	{
-		KMessageBox::sorry(qApp->mainWidget(), i18n(
-			"<qt>Sorry, this user is not online at the moment for you" \
-			" to message him/her. AIM users must be online for you to be" \
-			" able to message them.</qt>"), i18n("User not Online") );
-		return;
-	}
-	msgManager()->readMessages();
-}
-
 /** Return the protocol specific serialized data that a plugin may want to store a contact list. */
 QString OscarContact::data(void) const
 {
@@ -139,7 +123,7 @@ QString OscarContact::data(void) const
 	return QString::null;
 }
 
-KopeteMessageManager* OscarContact::msgManager()
+KopeteMessageManager* OscarContact::manager()
 {
 	if ( mMsgManager )
 	{
@@ -154,9 +138,9 @@ KopeteMessageManager* OscarContact::msgManager()
 								mProtocol->myself(), theContacts, mProtocol);
 		QObject::connect(
 						mMsgManager,
-						SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)),
+						SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
 						this,
-						SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
+						SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect(
 						mMsgManager,
 						SIGNAL(destroyed()),
@@ -417,13 +401,13 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
 	// Tell the message manager that the buddy is done typing
-	msgManager()->receivedTypingMsg( this, false );
+	manager()->receivedTypingMsg( this, false );
 
 	// Build a KopeteMessage and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
 	KopeteMessage msg = parseAIMHTML( message );
-	msgManager()->appendMessage(msg);
+	manager()->appendMessage(msg);
 
 	// send our away message in fire-and-forget-mode :)
 	if ( mProtocol->isAway() )
@@ -453,7 +437,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 					KopeteMessage::Outbound,
 					KopeteMessage::RichText);
 
-			msgManager()->appendMessage(message);
+			manager()->appendMessage(message);
 
 			// Set the time we last sent an autoresponse
 			// which is right now
@@ -463,7 +447,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 }
 
 /** Called when we want to send a message */
-void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManager *)
+void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
 	if ( message.body().isEmpty() ) // no text, do nothing
 		return;
@@ -491,7 +475,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 	mProtocol->engine->sendIM(message.escapedBody(), mName, false);
 
 	// Show the message we just sent in the chat window
-	msgManager()->appendMessage(message);
+	manager()->appendMessage(message);
 }
 
 /** Called when nickname needs to be updated */
@@ -725,7 +709,8 @@ void OscarContact::slotDirectConnect(void)
 		execute();
 		KopeteContactPtrList p;
 		p.append(this);
-		msgManager()->appendMessage(KopeteMessage(this, p, i18n("Waiting for %1 to connect...").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText ) );
+		KopeteMessage msg = KopeteMessage(this, p, i18n("Waiting for %1 to connect...").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText );
+		manager()->appendMessage(msg);
 		mProtocol->engine->sendDirectIMRequest(mName);
 	}
 }
@@ -741,7 +726,8 @@ void OscarContact::slotDirectIMReady(QString name)
 	mDirectlyConnected = true;
 	KopeteContactPtrList p;
 	p.append(this);
-	msgManager()->appendMessage(KopeteMessage(this, p, i18n("Direct connection to %1 established").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText ) );
+	KopeteMessage msg = KopeteMessage(this, p, i18n("Direct connection to %1 established").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText ) ;
+	manager()->appendMessage(msg);
 }
 
 /** Called when the direct connection to contact @name has been terminated */

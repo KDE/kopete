@@ -48,21 +48,19 @@ class YahooContact : public KopeteContact
 	virtual QString statusIcon() const;
 	virtual int importance() const;
 	virtual KActionCollection *customContextMenuActions();
+	virtual KopeteMessageManager *manager();
 
 	void setYahooStatus( YahooStatus::Status , const QString &, int  );
 
 public slots:
-	virtual void execute();
 	virtual void slotViewHistory();
 	virtual void slotDeleteContact();
 	virtual void slotUserInfo();
-	virtual void slotSendFile();	
+	virtual void slotSendFile();
 
 private:
 	QString m_fullName;
 	YahooStatus m_status;
-signals:
-	void chatTo( QString );
 };
 
 #endif

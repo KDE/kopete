@@ -66,13 +66,11 @@ private:
 							// holds all the protocol specific actions (not many!)
 	KopeteMessageManager *m_manager;
 							// holds the two message managers - one for email and one for chat
-	KopeteMessageManager *manager();
-
 public slots:
 	void slotCheckStatus();	// the call back for the checkStatus timer
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 							// the call back for the winpopup protocol
-	void slotSendMessage(const KopeteMessage& message);
+	void slotSendMessage(KopeteMessage& message);
 							// carries out sending of a message (supporting a hacked-up subject field)
 
 public:
@@ -80,7 +78,7 @@ public:
 							// the constructor
 	const QString host() { return myHost; }
 							// the host name return method
-
+	KopeteMessageManager *manager();
 //***********************************************************************
 // BEGIN MANDATORY OVERLOADING
 //***********************************************************************
@@ -101,9 +99,6 @@ public:
 	QString identityId() const { return myHost; }
 
 public slots:
-	// not quite so basic actions
-	void execute();
-
 	void slotDeleteContact() { deleteLater(); }
 	void slotUserInfo() { /* show user info? */ }
 };

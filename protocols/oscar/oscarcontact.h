@@ -66,9 +66,9 @@ public:
 	 */
 	bool isDirectConnected() const { return mDirectlyConnected; };
 
+	virtual KopeteMessageManager *manager();
+
 public slots:
-	/** Pops up a chat window */
-	virtual void execute(void);
 	/** Method to delete a contact from the contact list */
 	virtual void slotDeleteContact(void);
 	/** Send a file */
@@ -83,7 +83,7 @@ public: // Public attributes
 	QPtrList<KopeteContact> theContacts;
 
 private: // Private members
-	KopeteMessageManager *msgManager();
+
 	/** Initialzes the actions */
 	void initActions(void);
 
@@ -133,7 +133,7 @@ private slots: // Private slots
 	/** Called when user info is requested */
 	void slotUserInfo(void);
 	/** Called when we want to send a message */
-	void slotSendMsg(const KopeteMessage&, KopeteMessageManager *);
+	void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
 	/** Called when an IM is received */
 	void slotIMReceived(QString sender, QString msg, bool isAuto);
 	/** Called when nickname needs to be updated */

@@ -21,6 +21,7 @@
 #include "yahoodebug.h"
 #include "yahoostatus.h"
 #include "yahoocontact.h"
+#include "yahooimmessagemanager.h"
 
 // QT Includes
 #include <qstring.h>
@@ -116,6 +117,11 @@ QString YahooContact::identityId() const
 	return QString::null;
 }
 
+KopeteMessageManager *YahooContact::manager()
+{
+	return static_cast<KopeteMessageManager*>( static_cast<YahooProtocol*>( protocol() )->chatMsgManager( contactId() ) );
+}
+
 /*
 QPixmap YahooContact::scaledStatusIcon(int size)
 {
@@ -133,12 +139,6 @@ KActionCollection *YahooContact::customContextMenuActions()
 {
 	kdDebug(14180) << "[YahooContact::customContextMenuActions()]" << endl;
 	return 0L;
-}
-
-void YahooContact::execute()
-{
-	kdDebug(14180) << "[YahooContact::execute()]" << endl;
-	emit chatTo( contactId() );
 }
 
 void YahooContact::slotViewHistory()

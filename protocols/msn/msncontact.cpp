@@ -50,8 +50,6 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 	m_blocked = false;
 	m_reversed = false;
 
-	connect ( this, SIGNAL( chatToUser( QString ) ),
-		protocol(), SLOT( slotStartChatSession( QString ) ) );
 	setDisplayName( displayName );
 
 	setFileCapable(true);
@@ -61,7 +59,7 @@ MSNContact::~MSNContact()
 {
 }
 
-MSNMessageManager *MSNContact::manager()
+KopeteMessageManager *MSNContact::manager()
 {
 	if( !m_manager )
 	{
@@ -103,11 +101,6 @@ KActionCollection *MSNContact::customContextMenuActions()
 QString MSNContact::data() const
 {
 	return contactId();
-}
-
-void MSNContact::execute()
-{
-	emit chatToUser( contactId() );
 }
 
 void MSNContact::slotBlockUser()
@@ -616,6 +609,9 @@ void MSNContact::removeFromGroup( unsigned int group )
 	m_serverGroups.remove( group );
 }
 
+/**
+ * FIXME: Make this a standard KMM API call
+ */
 void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize )
 {
 	QString filePath;
@@ -631,7 +627,7 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, co
 	if ( !filePath.isEmpty() )
 	{
 		//Send the file
-		manager()->sendFile( filePath, altFileName, fileSize );
+		static_cast<MSNMessageManager*>( manager() )->sendFile( filePath, altFileName, fileSize );
 	}
 }
 

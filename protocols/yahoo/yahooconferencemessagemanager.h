@@ -38,7 +38,7 @@ public:
 	~YahooConferenceMessageManager();
 
 private slots:
-	void slotMessageSent(const KopeteMessage &message, KopeteMessageManager *);
+	void slotMessageSent( KopeteMessage &message, KopeteMessageManager *);
 private:
 	YahooSession *m_session;
 };

@@ -729,17 +729,11 @@ void JabberProtocol::deserializeContact( KopeteMetaContact *metaContact,
 {
 	kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deserializing data for metacontact "
 										 << metaContact->displayName() << endl;
-	JabberContact *jc = new JabberContact( serializedData[ "contactId" ],
+	new JabberContact( serializedData[ "contactId" ],
 			serializedData[ "displayName" ],
 			QStringList::split( ',', serializedData[ "groups" ] ),
 			this, metaContact, serializedData[ "identityId" ] );
 
-	// FIXME: Shouldn't the JabberContact constructor do this instead?
-	// - Martijn
-	QObject::connect( jc, SIGNAL( chatUser( JabberContact * ) ),
-					SLOT( slotChatUser( JabberContact * ) ) );
-	QObject::connect( jc, SIGNAL( emailUser( JabberContact * ) ),
-					SLOT( slotEmailUser( JabberContact * ) ) );
 }
 
 /*
@@ -957,12 +951,6 @@ JabberContact *JabberProtocol::createContact(const QString &jid,
 
 	JabberContact *jc =
 			new JabberContact(jid, alias, groups, this, metaContact, identity);
-
-	QObject::connect(jc, SIGNAL(chatUser(JabberContact *)),
-					this, SLOT(slotChatUser(JabberContact *)));
-
-	QObject::connect(jc, SIGNAL(emailUser(JabberContact *)),
-					this, SLOT(slotEmailUser(JabberContact *)));
 
 	metaContact->addContact(jc );
 
@@ -1369,8 +1357,6 @@ void JabberProtocol::slotOpenEmptyMail()
 
 		messageManagerMap[contact->contactId()] = createMessageManager(contact);
 
-		messageManagerMap[contact->contactId()]->readMessages( KopeteView::Email );
-
 }
 
 void JabberProtocol::slotJoinNewChat()
@@ -1391,15 +1377,15 @@ void JabberProtocol::slotJoinNewChat()
 
 void JabberProtocol::slotJoinChat()
 {
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Trying to join groupchat" << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Trying to join groupchat" << endl;
 
-		DlgJabberChatJoin *dlg = (DlgJabberChatJoin *)sender();
+	DlgJabberChatJoin *dlg = (DlgJabberChatJoin *)sender();
 
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
+	if(!isConnected())
+	{
+			errorConnectFirst();
+			return;
+	}
 
 	// send the join request
 	jabberClient->groupChatJoin(dlg->host(), dlg->room(), dlg->nick());
@@ -1408,13 +1394,19 @@ void JabberProtocol::slotJoinChat()
 
 void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
 {
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Joined group chat " << jid.full()
-									 << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Joined group chat " << jid.full() << endl;
 
-		messageManagerMap[jid.userHost()] = createMessageManager(myContact);
-		
-		messageManagerMap[jid.userHost()]->readMessages();
+	messageManagerMap[jid.userHost()] = createMessageManager(myContact);
 
+	KopeteViewManager::viewManager()->readMessages( messageManagerMap[jid.userHost()], false );
+}
+
+JabberMessageManager *JabberProtocol::manager( const QString &key )
+{
+	if( messageManagerMap.contains( key ) )
+		return messageManagerMap[ key ];
+
+	return 0L;
 }
 
 void JabberProtocol::slotGroupChatLeave()
@@ -1479,40 +1471,6 @@ void JabberProtocol::slotGroupChatError(const Jabber::Jid &jid,
 {
 		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Group chat error!" << endl;
 
-}
-
-void JabberProtocol::slotChatUser(JabberContact *contact)
-{
-
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotChatUser() trying to open a "
-									 << "new message window..." << endl;
-
-		if(!messageManagerMap.contains(contact->contactId()))
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotChatUser() no old window, "
-											 << "creating new one" << endl;
-				messageManagerMap[contact->contactId()] = createMessageManager(contact);
-		}
-
-		messageManagerMap[contact->contactId()]->readMessages();
-
-}
-
-void JabberProtocol::slotEmailUser(JabberContact *contact)
-{
-
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotEmailUser() trying to open a "
-									 << "new message window..." << endl;
-
-		if(!messageManagerMap.contains(contact->contactId()))
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotEmailUser() no old window, "
-											 << "creating new one" << endl;
-
-				messageManagerMap[contact->contactId()] = createMessageManager(contact);
-		}
-
-		messageManagerMap[contact->contactId()]->readMessages( KopeteView::Email );
 }
 
 void JabberProtocol::slotResourceAvailable(const Jabber::Jid &jid,

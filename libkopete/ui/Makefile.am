@@ -8,7 +8,8 @@ noinst_HEADERS = configmodule.h \
 	addcontactpage.h systemtray.h \
 	kopeteballoon.h \
 	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
-	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h
+	kopetehistorywidget.h chatview.h kopetefileconfirmdialog.h \
+        kopeteemailwindow.h
 
 libkopeteui_la_SOURCES = configmodule.cpp \
 	preferencesdialog.cpp kopetecontactaction.cpp \
@@ -16,7 +17,7 @@ libkopeteui_la_SOURCES = configmodule.cpp \
 	kopeteballoon.cpp \
 	kopetehistorydialog.cpp \
 	kopetestdaction.cpp \
-	kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui \
+	kopetehistorywidget.cpp kopeteemailwindow.cpp \
 	kopeteawaydialogbase.ui \
 	kopetefiletransferui.ui kopetefileconfirmdialog.cpp fileconfirmbase.ui \
 	kopeteawayconfigbase.ui kopeteawayconfigui.cpp kopetechatwindow.cpp chatview.cpp
@@ -25,4 +26,4 @@ libkopeteui_la_LDFLAGS = $(all_libraries)
 libkopeteui_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(LIB_KHTML)
 
 rcdir = $(kde_datadir)/kopete
-rc_DATA = kopetechatwindow.rc
+rc_DATA = kopetechatwindow.rc kopeteemailwindow.rc

@@ -47,32 +47,15 @@ public:
 	/**
 	 * Reading mode
 	 */
-	enum ReadingMode { Queued, Popup };
-
 	/**
 	 * Delete a chat manager instance
 	 */
 	~KopeteMessageManager();
 
 	/**
-	 * Set Reading mode
-	 */
-	void setReadMode( int mode );
-
-	/**
-	 * Get Current Reading mode
-	 */
-	int readMode() const;
-
-	/**
 	 * true if logging is turned on
 	 */
 	bool logging() const;
-
-	/**
-	 * Read Messages
-	 */
-	void readMessages( KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Get a list of all contacts in the session
@@ -100,11 +83,6 @@ public:
 	void setCurrentMessage( const KopeteMessage &message );
 
 signals:
-	/**
-	 * A message has been sent by the user or a plugin. The protocol should
-	 * connect to this signal to actually send the message over the wire.
-	 */
-	void messageSent( const KopeteMessage& msg, KopeteMessageManager *);
 	void closing(KopeteMessageManager *);
 
 	/**
@@ -114,11 +92,14 @@ signals:
 	 * If I'll see them used anywhere in plugins I will
 	 * strangle the author - Zack
 	 */
-	void messageReceived( KopeteMessage& msg );
-	void messageQueued( KopeteMessage& msg );
+	void messageAppended( KopeteMessage& msg, KopeteMessageManager * = 0L );
+	void messageReceived( KopeteMessage& msg, KopeteMessageManager * = 0L );
+ 	void messageSent( KopeteMessage& msg, KopeteMessageManager * = 0L );
 
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
+
+	void readMessages( KopeteMessageManager *, bool );
 
 	/**
 	 * The name of the chat is changed
@@ -147,8 +128,6 @@ public slots:
 	 */
 	void receivedTypingMsg( const QString &contactId, bool isTyping = true );
 
-	void readModeChanged();
-
 	/**
 	 * Enables/disables logging
 	 */
@@ -157,7 +136,7 @@ public slots:
 	/**
 	 * Append a message to the queue
 	 */
-	void appendMessage( const KopeteMessage &msg );
+	void appendMessage( KopeteMessage &msg );
 
 	/**
 	 * Add a contact to the session
@@ -177,17 +156,13 @@ public slots:
 	/**
 	 * Send a message to the user
 	 */
-	void messageSent(const KopeteMessage &message);
+	void sendMessage(KopeteMessage &message);
 
 	void typing(bool t);
 
-	void cancelUnreadMessageEvent();
-
 
 protected slots:
-	void slotEventDeleted(KopeteEvent *);
 	void slotReadMessages();
-	void slotReply();
 
 protected:
 	/**
@@ -203,12 +178,6 @@ protected:
 
 
 private:
-	/**
-	 * Empties Message buffer, filling the window and returning true
-	 * if a foreign message exists
-	 */
-	bool emptyMessageBuffer();
-
 	KMMPrivate *d;
 };
 

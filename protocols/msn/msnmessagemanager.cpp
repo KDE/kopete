@@ -45,9 +45,9 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 //	m_msgQueued = 0L;
 	m_actions = 0L;
 
-	connect( this, SIGNAL( messageSent( const KopeteMessage&,
+	connect( this, SIGNAL( messageSent( KopeteMessage&,
 		KopeteMessageManager* ) ),
-		this, SLOT( slotMessageSent( const KopeteMessage&,
+		this, SLOT( slotMessageSent( KopeteMessage&,
 		KopeteMessageManager* ) ) );
 	connect( KopeteTransferManager::transferManager(),
 		SIGNAL( accepted( KopeteTransfer *, const QString& ) ),
@@ -94,8 +94,8 @@ void MSNMessageManager::createChat( const QString &handle,
 
 	connect( m_chatService, SIGNAL( updateChatMember(const QString&,const QString&,bool)),
 		this, SLOT( slotUpdateChatMember(const QString&,const QString&,bool) ) );
-	connect( m_chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
-		this, SLOT( appendMessage( const KopeteMessage & ) ) );
+	connect( m_chatService, SIGNAL( msgReceived( KopeteMessage & ) ),
+		this, SLOT( appendMessage( KopeteMessage & ) ) );
 	connect( m_chatService, SIGNAL( switchBoardClosed() ),
 		this, SLOT( slotSwitchBoardClosed() ) );
 	connect( m_chatService, SIGNAL( receivedTypingMsg( const QString &, bool ) ),
@@ -152,15 +152,16 @@ void MSNMessageManager::slotSwitchBoardClosed()
 	{
 		KopeteMessage m=it.data();
 		QString body=i18n("The following message has not been sent correctly: \n%1").arg(m.plainBody());
-		appendMessage(KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
+		KopeteMessage msg = KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+		appendMessage(msg);
 
 		m_messagesSent.remove(it);
 	}
 }
 
-void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessageManager *)
+void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageManager *)
 {
-	if(m_chatService)
+ 	if(m_chatService)
 	{
 		int id= m_chatService->sendMsg(message);
 		if(id == -1)
@@ -182,6 +183,7 @@ void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessa
 	{
 		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
+		sendMessageQueue();
 		//m_msgQueued=new KopeteMessage(message);
 	}
 }
@@ -272,7 +274,8 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 	{
 		KopeteMessage m=m_messagesSent[id];
 		QString body=i18n("The following message has not been sent correctly: \n%1").arg(m.plainBody());
-		appendMessage(KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
+		KopeteMessage msg = KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+		appendMessage(msg);
 	}
 
 	m_messagesSent.remove(id);
@@ -377,7 +380,8 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			QString invitname = rx.cap(1);
 
 			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
-			appendMessage( KopeteMessage( protocol()->contacts()[ handle ] , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText));
+			KopeteMessage tmpMsg = KopeteMessage( protocol()->contacts()[ handle ] , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+			appendMessage(tmpMsg);
 		}
 	}
 }

@@ -36,13 +36,13 @@ YahooConferenceMessageManager::YahooConferenceMessageManager(const KopeteContact
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager(this);
 
 	// this slot will forward messages to the protocol
-	connect( this, SIGNAL( messageSent( const KopeteMessage&,
+	connect( this, SIGNAL( messageSent( KopeteMessage&,
 		KopeteMessageManager* ) ),
-		this, SLOT( slotMessageSent( const KopeteMessage&,
+		this, SLOT( slotMessageSent( KopeteMessage&,
 		KopeteMessageManager* ) ) );
 }
 
-void YahooConferenceMessageManager::slotMessageSent(const KopeteMessage &message, KopeteMessageManager *)
+void YahooConferenceMessageManager::slotMessageSent( KopeteMessage &message, KopeteMessageManager *)
 {
 	kdDebug(14130) << "[YahooImMessageManager] slotMessageSent called: " << message.body() << endl;
 

@@ -38,6 +38,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
+#include "kopeteviewmanager.h"
 
 KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
 : QObject( parent )
@@ -63,8 +64,10 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	}
 
 	// Initialize the context menu
-	actionSendMessage = KopeteStdAction::chat( this,
-		SLOT( execute() ), this, "actionSendMessage" );
+	actionSendMessage = KopeteStdAction::sendMessage( this,
+		SLOT( sendMessage() ), this, "actionSendMessage" );
+	actionChat = KopeteStdAction::chat( this,
+		SLOT( startChat() ), this, "actionChat" );
 	actionViewHistory = KopeteStdAction::viewHistory( this,
 		SLOT( slotViewHistory() ), this, "actionViewHistory" );
 	actionChangeMetaContact = KopeteStdAction::changeMetaContact( this,
@@ -225,8 +228,11 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 	menu->insertTitle( QString::fromLatin1("%1 <%2> (%3)").arg(displayName()).arg(contactId()).arg(statusText()) );
 
+
 	actionSendMessage->plug( menu );
 	actionSendMessage->setEnabled( isReachable() );
+	actionChat->plug( menu );
+	actionChat->setEnabled( isReachable() );
 
 	actionViewHistory->plug( menu );
 
@@ -383,11 +389,6 @@ KopeteContact::MetaContactListViewItem::MetaContactListViewItem(KopeteMetaContac
 	setText( 1, t );
 }
 
-QString KopeteContact::contactId() const
-{
-	return m_contactId;
-}
-
 void KopeteContact::serialize( QMap<QString, QString> & /*serializedData */,
 	QMap<QString, QString> & /* addressBookData */ )
 {
@@ -415,9 +416,26 @@ bool KopeteContact::isReachable()
 	return false;
 }
 
+void KopeteContact::startChat()
+{
+	KopeteViewManager::viewManager()->launchWindow( manager(), KopeteView::Chat);
+}
+
+void KopeteContact::sendMessage()
+{
+	KopeteViewManager::viewManager()->launchWindow( manager(), KopeteView::Email);
+}
+
 void KopeteContact::execute()
 {
-	/* Default implementation does nothing */
+	// FIXME: Implement, don't hardcode startChat()!
+	startChat();
+}
+
+KopeteMessageManager *KopeteContact::manager()
+{
+	kdDebug(14010) << "Manager() not implimented for " << protocol()->displayName() << ", crash!" << endl;
+	return 0L;
 }
 
 void KopeteContact::slotDeleteContact()

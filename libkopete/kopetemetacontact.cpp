@@ -239,36 +239,43 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 
 void KopeteMetaContact::sendMessage()
 {
-	kdDebug(14010) << "KopeteMetaContact::sendMessage() not implemented!" << endl;
+	KopeteContact *c = preferredContact();
 
-	/*
-		Algorithm:
-		1. Determine the protocol to use
-		   a. In the configuration the user can specify the order in which
-		      protocols are tried, so if multiple protocols are available, the
-		      preferred one is used.
-		   b. Iterate over the preference order to see if a contact exists
-		      and is online for this protocol and if the same protocol is
-		      connected. Offline contacts are ignored, as are contacts for
-		      which the protocol is currently disconnected.
-		   c. If the protocol is not found in step b, repeat, but now looking
-		      for protocols that support offline messages and send an offline
-		      message.
-		   d. If no combination of a connected protocol and a reachable user
-		      ( either with online or offline messages ) is found, display
-		      an error and return.
-		2. Show dialog for entering the message
-		3. In the background, try to open a chat session. This is a no-op
-		   for message-based protocols like ICQ
-		4. Send the message
-		5. Close the chat session, if any, for the connection-based protocols
-	*/
+	if( !c )
+	{
+		KMessageBox::error( qApp->mainWidget(),
+			i18n( "This user is not reachable at the moment. Please"
+				"try a protocol that supports offline sending, or wait "
+				"until this user goes online." ),
+			i18n( "User is not reachable - Kopete" ) );
+	}
+	else
+	{
+		c->sendMessage();
+	}
+
 }
 
 void KopeteMetaContact::startChat()
 {
-	kdDebug(14010) << "KopeteMetaContact::startChat() not implemented!" << endl;
+	KopeteContact *c = preferredContact();
 
+	if( !c )
+	{
+		KMessageBox::error( qApp->mainWidget(),
+			i18n( "This user is not reachable at the moment. Please"
+				"try a protocol that supports offline sending, or wait "
+				"until this user goes online." ),
+			i18n( "User is not reachable - Kopete" ) );
+	}
+	else
+	{
+		c->startChat();
+	}
+}
+
+KopeteContact *KopeteMetaContact::preferredContact()
+{
 	/*
 		Algorithm:
 		1. Determine the protocol as described in sendMessage(), with a
@@ -296,33 +303,15 @@ void KopeteMetaContact::startChat()
 		  indicate that messages are still pending.
 	*/
 
-	// FIXME: Implement the above!
-	//now just select the highter status importance
-	if( m_contacts.isEmpty() )
-		return;
-
 	KopeteContact *c = 0L;
+
 	for( QPtrListIterator<KopeteContact> it( m_contacts ) ; it.current(); ++it )
 	{
-		if( ( !c || ( *it )->importance() > c->importance() ) &&
-			( *it )->isReachable() )
-		{
-			c = *it;
-		}
+		if( !c || ( (*it)->importance() > c->importance() && (*it)->isReachable() ) )
+			c = (*it);
 	}
 
-	if( c )
-	{
-		c->execute();
-	}
-	else
-	{
-		KMessageBox::error( qApp->mainWidget(),
-			i18n( "This user is not reachable at the moment. Please"
-				"try a protocol that supports offline sending, or wait "
-				"until this user goes online." ),
-			i18n( "User is not reachable - Kopete" ) );
-	}
+	return c;
 }
 
 void KopeteMetaContact::execute()

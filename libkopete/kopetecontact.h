@@ -41,6 +41,7 @@ class KopeteGroup;
 class KopeteHistoryDialog;
 class KopeteMetaContact;
 class KopeteProtocol;
+class KopeteMessageManager;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -223,7 +224,7 @@ public:
 	 *
 	 * @return The unique id of the contact
 	 */
-	QString contactId() const;
+	QString contactId() const { return m_contactId; }
 
 	/**
 	 * Return the protocol that the contact belongs to.
@@ -313,11 +314,20 @@ public:
 	 */
 	virtual void rename( const QString &newName );
 
+	virtual KopeteMessageManager* manager();
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
 	 */
-	virtual void execute();
+	void startChat();
+
+	/**
+	 * Pops up an email type window
+	 */
+	void sendMessage();
+
+	void execute();
 
 	/**
 	 * Changes the MetaContact that this contact is a part of.  This function
@@ -433,6 +443,7 @@ private:
 
 	/* Context Menu Entries */
 	KAction *actionSendMessage;
+	KAction *actionChat;
 	KAction *actionDeleteContact;
 	KAction *actionChangeMetaContact;
 	KAction *actionViewHistory;

@@ -60,20 +60,19 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
+	KopeteMessageManager* manager();
 public slots:
 
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
-	virtual void execute();
-	void slotSendMessage(const KopeteMessage &msg);
+	void slotSendMessage(KopeteMessage &msg);
 
 private slots:
 	void userPrefs();
-	void messageSent(const KopeteMessage&);
+	void messageSent(KopeteMessage&);
 	void slotMessageManagerDestroyed();
 
 private:
-	KopeteMessageManager* msgManager();
 	void initActions();
 
 	KActionCollection* m_actionCollection;

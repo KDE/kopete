@@ -49,7 +49,7 @@ public slots:
 	void slotCloseSession();
 
 private slots:
-	void slotMessageSent( const KopeteMessage &message, KopeteMessageManager *kmm );
+	void slotMessageSent( KopeteMessage &message, KopeteMessageManager *kmm );
 
 	void slotUpdateChatMember( const QString &handle, const QString &publicName, bool add );
 	void slotSwitchBoardClosed();

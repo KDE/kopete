@@ -353,7 +353,7 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 			message,
 			KopeteMessage::Outbound,
 			KopeteMessage::RichText );
-	theChat->messageSent( msg );
+	theChat->sendMessage( msg );
 }
 void NowListeningPlugin::slotSettingsChanged()
 {

@@ -15,48 +15,31 @@
     *************************************************************************
 */
 
-#include <kcolorbutton.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kdockwidget.h>
 #include <knotifyclient.h>
-#include <kwin.h>
-#include <qstylesheet.h>
 #include <qregexp.h>
 #include <qmap.h>
 
 #include "kopeteaway.h"
-#include "kopeteemailwindow.h"
-#include "kopeteevent.h"
 #include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetenotifier.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
-#include "kopeteviewmanager.h"
-
-#define NEW_WINDOW 0
-#define GROUP_BY_PROTOCOL 1
-#define GROUP_ALL 2
 
 struct KMMPrivate
 {
 	KopeteContactPtrList mContactList;
 	const KopeteContact *mUser;
-	KopeteEvent *mUnreadMessageEvent;
-	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;
-	int mReadMode;
 	QMap<const KopeteContact *, QStringList> resources;
 	KopeteProtocol *mProtocol;
-	bool mSendEnabled;
 	int mId;
 	bool mLog;
 	bool isEmpty;
 	bool mCanBeDeleted;
-	bool isBusy;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
@@ -65,19 +48,16 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 : QObject( parent, name )
 {
 	d = new KMMPrivate;
-	d->mSendEnabled = true;
 	d->mContactList = others;
 	d->mUser = user;
-	d->mUnreadMessageEvent = 0L;
 	d->mProtocol = protocol;
 	d->mId = id;
 	d->mLog = true;
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted = false;
-	d->isBusy=false;
 
-	readModeChanged();
-	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
+	connect( this, SIGNAL(readMessages( KopeteMessageManager*, bool )), KopeteViewManager::viewManager(), SLOT(readMessages(KopeteMessageManager*,bool)));
+	connect( this, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ), KopeteViewManager::viewManager(), SLOT( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
 
 	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
 	// directory traversal, although appending '.log' and the rest of the
@@ -143,69 +123,6 @@ const QString KopeteMessageManager::chatName()
 	return chatName;
 }
 
-void KopeteMessageManager::setReadMode(int mode)
-{
-	if ((mode == Queued) || (mode == Popup))
-	{
-		d->mReadMode = mode;
-	}
-	else
-	{
-		kdDebug(14010) << k_funcinfo << "ERROR: unknown reading method, setting to default" << endl;
-		d->mReadMode = Queued;
-	}
-}
-
-int KopeteMessageManager::readMode() const
-{
-	return d->mReadMode;
-}
-
-bool KopeteMessageManager::emptyMessageBuffer()
-{
-	bool foreignMessage = false;
-	for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it = d->mMessageQueue.begin())
-	{
-//		kdDebug(14010) << "KopeteMessageManager::emptyMessageBuffer: Inserting message from " << (*it).from()->displayName() << endl;
-		if ( (*it).from() != d->mUser )
-			foreignMessage = true;
-
-		emit messageReceived( *it );
-
-		d->mMessageQueue.remove(it);
-	}
-	d->mMessageQueue.clear();
-	return foreignMessage;
-}
-
-void KopeteMessageManager::readMessages( KopeteView::ViewType type )
-{
-	if(d->isBusy)
-	{
-		kdDebug(14010) << k_funcinfo << "Busy! A plugin is working on a precedent message" << endl;
-		return;
-	}
-	d->isBusy = true;
-
-	bool queueEmpty = d->mMessageQueue.isEmpty();
-	bool foreignMessage = emptyMessageBuffer();
-
-	// only show the window when a message from someone else (i.e. not an own message) arrived or
-	// when no message at all arrived (happens when you click on a contact, creating the window)
-	if ( foreignMessage || queueEmpty )
-	{
-		KopeteView *thisView = KopeteViewManager::viewManager()->view(this,type);
-
-		if( !thisView->isVisible() )
-			thisView->makeVisible();
-
-		if( queueEmpty || KopetePrefs::prefs()->raiseMsgWindow() )
-			thisView->raise();
-	}
-
-	d->isBusy=false;
-}
-
 const KopeteContactPtrList& KopeteMessageManager::members() const
 {
 	return d->mContactList;
@@ -231,20 +148,9 @@ void KopeteMessageManager::setMMId( int id )
 	d->mId = id;
 }
 
-void KopeteMessageManager::slotReadMessages()
-{
-	readMessages();
-}
-
-void KopeteMessageManager::slotReply()
-{
- /* Used for single shot window */
-}
-
-void KopeteMessageManager::messageSent(const KopeteMessage &message)
+void KopeteMessageManager::sendMessage(KopeteMessage &message)
 {
 	KopeteMessage sentMessage = message;
-	emit messageQueued( sentMessage );
 	emit messageSent(sentMessage, this);
 
 	if ( KopetePrefs::prefs()->soundNotify() )
@@ -254,68 +160,18 @@ void KopeteMessageManager::messageSent(const KopeteMessage &message)
 	}
 }
 
-void KopeteMessageManager::cancelUnreadMessageEvent()
+void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 {
-	if (d->mUnreadMessageEvent == 0L)
-	{
-		kdDebug(14010) << k_funcinfo << "No event to delete" << endl;
-	}
-	else
-	{
-		delete d->mUnreadMessageEvent;
-		d->mUnreadMessageEvent = 0L;
-		kdDebug(14010) << k_funcinfo << "Event Deleted" << endl;
-	}
-	emptyMessageBuffer();
-}
+	kdDebug(14010) << k_funcinfo << endl;
 
-void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
-{
-	if ( e == d->mUnreadMessageEvent)
-	{
-		kdDebug(14010) << k_funcinfo << "Event done(), now 0L" << endl;
-		d->mUnreadMessageEvent = 0L;
-	}
-}
-
-void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
-{
-	bool isVisible = KopeteViewManager::viewManager()->view(this)->isVisible();
-
-	d->mMessageQueue.append(msg);
+	emit messageAppended( msg, this );
+	
+	if( msg.direction() == KopeteMessage::Inbound )
+		emit( messageReceived( msg, this ) );
 
 	if( d->mLogger && d->mLog )
 		d->mLogger->append( msg );
 
-	if ( isVisible || d->mReadMode == Popup )
-		readMessages();
-
-	else if (d->mReadMode == Queued)
-	{
-		// Create an event if a previous one does not exist
-		if ((d->mUnreadMessageEvent == 0L) && (msg.direction() == KopeteMessage::Inbound))
-		{
-			if (msg.from()->metaContact())
-			{
-				d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->metaContact()->displayName()),
-					QString::fromLatin1( "kopete/pics/newmsg.png" ), this, SLOT(slotReadMessages()));
-			}
-			else
-			{
-				d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->displayName()),
-					QString::fromLatin1( "kopete/pics/newmsg.png" ), this, SLOT(slotReadMessages()));
-			}
-			connect(d->mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)),
-				this, SLOT(slotEventDeleted(KopeteEvent *)));
-			KopeteNotifier::notifier()->notifyEvent( d->mUnreadMessageEvent );
-		}
-	}
-
-	if ( KopetePrefs::prefs()->soundNotify() && (isVisible || d->mReadMode == Popup) && (msg.direction() != KopeteMessage::Outbound) )
-	{
-		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_incoming" ) );
-	}
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c )
@@ -367,14 +223,6 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 	emit contactRemoved(c);
 }
 
-void KopeteMessageManager::readModeChanged()
-{
-	if ( KopetePrefs::prefs()->useQueue() )
-		d->mReadMode = Queued;
-	else
-		d->mReadMode = Popup;
-}
-
 void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )
 {
 	emit(remoteTyping( c, t ));
@@ -404,14 +252,19 @@ void KopeteMessageManager::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
+void KopeteMessageManager::slotReadMessages()
+{
+	emit( readMessages( this, true ) );
+}
+
 KopeteMessage KopeteMessageManager::currentMessage()
 {
-	return KopeteViewManager::viewManager()->view(this)->currentMessage();
+	//return KopeteViewManager::viewManager()->view(this)->currentMessage();
 }
 
 void KopeteMessageManager::setCurrentMessage(const KopeteMessage &message)
 {
-	KopeteViewManager::viewManager()->view(this)->setCurrentMessage(message);
+	//KopeteViewManager::viewManager()->view(this)->setCurrentMessage(message);
 }
 
 #include "kopetemessagemanager.moc"

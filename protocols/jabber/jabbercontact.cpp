@@ -89,8 +89,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 JabberContact::~JabberContact()
 {
 	delete actionCollection;
-	delete actionMessage;
-	delete actionChat;
 	delete actionRename;
 	delete actionSelectResource;
 	delete actionSetAvailability;
@@ -120,6 +118,11 @@ QString JabberContact::userId() const
 QString JabberContact::resource() const
 {
 	return activeResource->resource();
+}
+
+KopeteMessageManager *JabberContact::manager()
+{
+	return static_cast<KopeteMessageManager*>( protocol->manager( contactId() ) );
 }
 
 /* Return the group this contact resides in */
@@ -157,8 +160,6 @@ bool JabberContact::isReachable()
  */
 void JabberContact::initActions()
 {
-	actionChat = new KAction(i18n("Send Chat Message"), "mail_generic", 0, this, SLOT(slotChatUser()), this, "actionChat");
-	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
 	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
 	actionSendAuth = new KAction(i18n("(Re)send Authorization To"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
@@ -170,8 +171,6 @@ void JabberContact::initActions()
 	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
 	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
 
-	actionSetAvailability->insert(actionStatusChat);
-	actionSetAvailability->insert(actionStatusAway);
 	actionSetAvailability->insert(actionStatusXA);
 	actionSetAvailability->insert(actionStatusDND);
 	actionSetAvailability->insert(actionStatusInvisible);
@@ -187,12 +186,6 @@ KActionCollection *JabberContact::customContextMenuActions()
 
 	KGlobal::config()->setGroup("Jabber");
 
-	// depending on the window type preference,
-	// chat window or email window goes first
-	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
-		actionCollection->insert(actionChat);
-	else
-		actionCollection->insert(actionMessage);
 
 	// if the contact is online,
 	// display the resources we have for it
@@ -527,38 +520,6 @@ int JabberContact::importance() const
 	}
 
 	return value;
-
-}
-
-void JabberContact::slotChatUser()
-{
-
-	kdDebug(14130) << "[JabberContact] Opening chat with user " << userId() << endl;
-
-	emit chatUser(this);
-
-}
-
-void JabberContact::slotEmailUser()
-{
-
-	kdDebug(14130) << "[JabberContact] Opening message with user " << userId() << endl;
-
-	emit emailUser(this);
-
-}
-
-void JabberContact::execute()
-{
-
-	KGlobal::config()->setGroup("Jabber");
-
-	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
-		// user selected email window as preference
-		slotEmailUser();
-	else
-		// user selected chat window as preference
-		slotChatUser();
 
 }
 

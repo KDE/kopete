@@ -96,7 +96,7 @@ private slots:
 	void slotReadMessage( const QString &msg );
 
 signals:
-	void msgReceived( const KopeteMessage &msg );
+	void msgReceived( KopeteMessage &msg );
 	void receivedTypingMsg( const QString &contactId, bool isTyping );
 	void msgAcknowledgement(unsigned int, bool);
 	/**

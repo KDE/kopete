@@ -57,12 +57,7 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 	}
 }
 
-void SMSContact::execute()
-{
-	msgManager()->readMessages();
-}
-
-KopeteMessageManager* SMSContact::msgManager()
+KopeteMessageManager* SMSContact::manager()
 {
 	if ( m_msgManager )
 	{
@@ -73,8 +68,8 @@ KopeteMessageManager* SMSContact::msgManager()
 		QPtrList<KopeteContact> contacts;
 		contacts.append(this);
 		m_msgManager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
-		this, SLOT(slotSendMessage(const KopeteMessage&)));
+		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
+		this, SLOT(slotSendMessage(KopeteMessage&)));
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		return m_msgManager;
 	}
@@ -85,7 +80,7 @@ void SMSContact::slotMessageManagerDestroyed()
 	m_msgManager = 0L;
 }
 
-void SMSContact::slotSendMessage(const KopeteMessage &msg)
+void SMSContact::slotSendMessage(KopeteMessage &msg)
 {
 	QString sName = SMSGlobal::readConfig("SMS", "ServiceName", this);
 
@@ -94,8 +89,8 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 	if ( s == 0L)
 		return;
 
-	connect ( s, SIGNAL(messageSent(const KopeteMessage&)),
-		this, SLOT(messageSent(const KopeteMessage&)));
+	connect ( s, SIGNAL(messageSent(KopeteMessage&)),
+		this, SLOT(messageSent(KopeteMessage&)));
 
 	int msgLength = msg.plainBody().length();
 
@@ -127,9 +122,9 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 	delete s;
 }
 
-void SMSContact::messageSent(const KopeteMessage& msg)
+void SMSContact::messageSent(KopeteMessage& msg)
 {
-	msgManager()->appendMessage(msg);
+	manager()->appendMessage(msg);
 }
 
 void SMSContact::slotUserInfo()
