@@ -72,11 +72,12 @@ class KopeteMetaLVIProps: public KDialogBase
 		KABC::Sound mSound;
 		int m_countPhotoCapable;
 		QMap<int, Kopete::Contact *> m_withPhotoContacts;
+		QString mAddressBookUid; // the currently selected addressbook UID
 
 	private slots:
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
-		void slotHasAddressbookEntryToggled( bool on );
+		void slotClearAddresseeClicked();
 		void slotSelectAddresseeClicked();
 		void slotExportClicked();
 		void slotImportClicked();
