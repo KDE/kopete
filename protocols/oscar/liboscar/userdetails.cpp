@@ -121,7 +121,6 @@ void UserDetails::fill( Buffer * buffer )
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user << endl;
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Warning level is " << m_warningLevel << endl;
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Parsing " << numTLVs << " TLVs" << endl;
 	//start parsing TLVs
 	for( int i = 0; i < numTLVs; ++i  )
 	{
