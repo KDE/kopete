@@ -63,7 +63,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
 		i18n("Appearance"),
 		i18n("Here You Can Personalize Kopete"),
-		"appearance",
+		"looknfeel",
 		parent )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);

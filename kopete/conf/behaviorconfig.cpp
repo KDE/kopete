@@ -55,7 +55,7 @@ BehaviorConfig::BehaviorConfig(QWidget * parent) :
 	ConfigModule (
 		i18n("Behavior"),
 		i18n("Here You Can Personalize Kopete"),
-		"behavior",
+		"package_settings", // TODO: find or create a icon that fits
 		parent )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
