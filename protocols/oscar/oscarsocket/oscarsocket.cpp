@@ -2809,14 +2809,29 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	switch(requestType)
 	{
 		case 0x0008:
+		{
+			kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDSTART)" << endl;
+			Buffer addstart;
+			addstart.addSnac(0x0013,0x0011,0x0000,0x00000000);
+			sendBuf(addstart,0x02);
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERADD)" << endl;
 			break;
+		}
 		case 0x0009:
+		{
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERUPDATE)" << endl;
 			break;
+		}
 		case 0x000a:
+		{
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERDELETE)" << endl;
 			break;
+		}
+		default:
+		{
+			kdDebug(14150) << k_funcinfo << "unknown requestType given, aborting" << endl;
+			return;
+		}
 	}
 
 	Buffer outbuf;
@@ -2844,6 +2859,14 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	kdDebug(14150) << k_funcinfo << outbuf.toString() << endl;
 #endif
 	sendBuf(outbuf,0x02);
+
+	if(requestType==0x0008)
+	{
+		kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDEND)" << endl;
+		Buffer addend;
+		addend.addSnac(0x0013,0x0012,0x0000,0x00000000);
+		sendBuf(addend,0x02);
+	}
 }
 
 // Parses the SSI acknowledgement

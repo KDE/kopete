@@ -24,8 +24,8 @@ Buffer::Buffer(QObject *parent, const char *name) : QObject(parent, name)
 {
 	mLength = 0;
 	alloc_length = 0;
-	alloc_buf = NULL;
-	mBuf = NULL;
+	alloc_buf = 0L;
+	mBuf = 0L;
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
 
@@ -34,8 +34,8 @@ Buffer::Buffer(char *b, Q_ULONG len, QObject *parent, const char *name)
 {
 	mLength = 0;
 	alloc_length = 0;
-	alloc_buf = NULL;
-	mBuf = NULL;
+	alloc_buf = 0L;
+	mBuf = 0L;
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 	setBuf(b, len);
 }
@@ -127,9 +127,10 @@ int Buffer::addLEString(const char * s, const DWORD len)
 void Buffer::clear()
 {
 	delete [] alloc_buf;
-	mBuf = 0L;
 	mLength = 0;
 	alloc_length = 0;
+	alloc_buf = 0L;
+	mBuf = 0L;
 }
 
 /** Adds a TLV with the given type and data */
@@ -324,12 +325,9 @@ QPtrList<TLV> Buffer::getTLVList(bool debug)
 	{
 		TLV *t = new TLV;
 
-		if(debug)
-			kdDebug(14150) << k_funcinfo << "calling getTLV() ..." << endl;
-
 		*t = getTLV();
 		if (!t)
-			kdDebug(14150) << k_funcinfo << "got no TLV but  NULL pointer!" << endl;
+			kdDebug(14150) << k_funcinfo << "got no TLV but NULL pointer!" << endl;
 
 		if(debug)
 			kdDebug(14150) << k_funcinfo << "got TLV(" << t->type << ")" << endl;
