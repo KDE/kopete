@@ -203,15 +203,21 @@ QString KopeteAccount::getPassword( bool error, bool *ok )
 				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	KopetePasswordDialog *view = new KopetePasswordDialog(passwdDialog);
-	passwdDialog->setMainWidget(view);
 
 	if(error)
 		view->m_text->setText(i18n("<b>The password was wrong! Please re-enter your password for %1</b>").arg(protocol()->displayName()));
 	else
 		view->m_text->setText(i18n("Please enter password for %1").arg(protocol()->displayName()));
 
+
+	passwdDialog->setMainWidget(view);
+
 	view->m_login->setText(d->id);
 	view->m_autologin->setChecked( d->autologin );
+
+	view->adjustSize();
+	passwdDialog->adjustSize();
+
 
 	QString pass=QString::null;
 
