@@ -52,6 +52,7 @@ public:
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
 	KActionMenu* actionMenu();
+	void addContactToMap( uin_t id, GaduContact *&contact);
 	//}
 public slots:
 	//{

@@ -118,11 +118,15 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	if (!account){
 	    account = createNewAccount(aid);
 	}
-//GaduContact::GaduContact( uin_t uin, const QString& name, GaduAccount *account,
-//				KopeteMetaContact* parent )
+	
+	GaduAccount *gaccount = static_cast<GaduAccount *>(account);
 	
 	GaduContact *c= new GaduContact( cid.toUInt(), dn, 
 					account, metaContact );
+	
+	c->setParentIdentity( aid );
+	gaccount->addContactToMap( cid.toUInt(), c );
+	gaccount->addNotify( cid.toUInt() );
 	
 	c->setInfo(	serializedData["email"],
 			serializedData["FirstName"],

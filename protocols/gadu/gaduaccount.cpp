@@ -163,7 +163,10 @@ void GaduAccount::disconnect()
 bool GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
 					 KopeteMetaContact* parentContact )
 {
+	kdDebug(14100) << "addContactToMetaContact " << contactId << endl;
+	
 	uin_t uinNumber = contactId.toUInt();
+	
 	if ( !parentContact->findContact( protocol()->pluginId(), myself_->contactId(), contactId ) ) {
 		GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
 		newContact->setParentIdentity( accountId() );
@@ -500,6 +503,13 @@ GaduAccount::slotSessionDisconnect()
 	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
     }
 }
+
+void 
+GaduAccount::addContactToMap( uin_t id, GaduContact *&contact)
+{
+    contactsMap_.insert(id, contact);
+}
+
 
 void
 GaduAccount::userlist( const gaduContactsList& u)
