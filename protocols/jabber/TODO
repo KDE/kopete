@@ -9,7 +9,6 @@ TODO for Jabber:
 - support all message types (chat/ticker/etc)
 - do a std translation of resource.status().show() to JabberProtocol::Presence
 - verify sane state of a) metacontact handling (adding to list) b) contact handling (tracking changes)
-- fix server browsing
 - make warning about changed preferences while being online work again
   (JabberPreferences::save())
 - when starting with an empty account, either display preferences or delete the code
@@ -20,7 +19,6 @@ TODO for Jabber:
 - get rid of the identity stuff in JabberContact
 - JabberContact has a few inactivated methods regarding subscribing/unsubscribing
 - verify groupchat
-- JabberAccount::slotSettingsChanged() serves no purpose?
 - when going online, setPresence() is called twice, once too early -> investigate
 - using "online" presence emits "Going online"?
 - going away globally does not allow returning to online mode
