@@ -177,6 +177,7 @@ private:
 	KAction *actionStartChat;
 	KAction *actionSendFile;
 	KAction *actionSendEmail;
+	KAction *actionSyncKABC;
 	KListAction *actionMove;
 	KListAction *actionCopy;
 	KAction *actionRename;

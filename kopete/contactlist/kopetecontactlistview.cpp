@@ -481,7 +481,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
 
 	// TEMPORARY FOR TESTING - will be carried out on load once complete
-	actionSendEmail = new KAction( i18n( "Sync KABC..." ), QString::fromLatin1( "kaddressbook" ),
+	actionSyncKABC = new KAction( i18n( "Sync KABC..." ), QString::fromLatin1( "kaddressbook" ),
 		0, this, SLOT(  slotSyncKABC() ), ac, "contactSyncKABC" );
 
 	connect( KopeteContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
@@ -1219,21 +1219,20 @@ void KopeteContactListView::slotListSelectionChanged()
 void KopeteContactListView::updateActionsForSelection(
 	QPtrList<KopeteMetaContact> contacts, QPtrList<KopeteGroup> groups )
 {
-	actionSendFile->setEnabled( groups.isEmpty() && contacts.count()==1 &&
-		contacts.first()->canAcceptFiles());
-	actionAddContact->setEnabled( groups.isEmpty() && contacts.count()==1 &&
-		!contacts.first()->isTemporary());
-	actionSendEmail->setEnabled( groups.isEmpty() && contacts.count()==1 &&
-		!contacts.first()->metaContactId().isEmpty() );
+	bool singleContactSelected = groups.isEmpty() && contacts.count() == 1;
+	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
+	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
+	actionSendEmail->setEnabled( singleContactSelected && !contacts.first()->metaContactId().isEmpty() );
+	actionSyncKABC->setEnabled( singleContactSelected && !contacts.first()->metaContactId().isEmpty() );
 
-	if(contacts.count() == 1 && groups.isEmpty())
+	if( singleContactSelected )
 	{
 		actionRename->setText(i18n("Rename Contact"));
 		actionRemove->setText(i18n("Remove Contact"));
 		actionRename->setEnabled(true);
 		actionRemove->setEnabled(true);
 	}
-	else if(groups.count() == 1 && contacts.isEmpty())
+	else if( groups.count() == 1 && contacts.isEmpty() )
 	{
 		actionRename->setText(i18n("Rename Group"));
 		actionRemove->setText(i18n("Remove Group"));
