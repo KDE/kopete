@@ -49,10 +49,9 @@ class KSSLSocket : public KExtendedSocket
 	private slots:
 		void slotConnected();
 		void slotDisconnected();
-		void slotPoll();
+		void slotReadData();
 
 	private:
-		void readData( int bytes );
 		int verifyCertificate();
 
 		//Copied frm tcpslavebase to simply integrating their dialog function

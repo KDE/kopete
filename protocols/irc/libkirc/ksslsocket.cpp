@@ -20,6 +20,7 @@
 #include <qmutex.h>
 #include <qthread.h>
 #include <qtimer.h>
+#include <qsocketnotifier.h>
 
 #include <dcopclient.h>
 #include <klocale.h>
@@ -37,71 +38,17 @@
 struct KSSLSocketPrivate
 {
 	mutable KSSL *kssl;
-	QMutex mutex;
-	SSLPollThread *thread;
-	int pendingBytes;
 	KSSLCertificateCache *cc;
 	DCOPClient *dcc;
 	bool militantSSL;
 	QMap<QString,QString> metaData;
-};
-
-//Thread to poll the SSL socket
-class SSLPollThread : public QThread
-{
-	public:
-		SSLPollThread( KSSLSocket *s ) : QThread(), parent(s), exiting(false) {};
-
-		void quit()
-		{
-			//Exit the thread
-			exiting = true;
-		}
-
-	protected:
-		void run()
-		{
-			while( !exiting )
-			{
-				/*
-				 * Pending only returns the data that is in the internal
-				 * buffer, that hasn't been picked up by read() yet. It
-				 * doesn't check the socket. So, we need to peek the socket.
-				 *
-				 * peek blocks, which is why this reader thread exists.
-				 */
-				char buff[64];
-
-				//Lock the mutex, so we will wait until the parent is done
-				//reading any previously registered data
-				parent->d->mutex.lock();
-
-				//Register any pending bufer data first, then peek if none
-				int bytes = parent->d->kssl->pending();
-				if( bytes == 0 )
-					bytes = parent->d->kssl->peek( buff, 64 );
-
-				if( bytes )
-				{
-					//Unlock the mutex and register this data with the parent
-					parent->d->mutex.unlock();
-					parent->readData( bytes );
-				}
-			}
-		}
-
-	private:
-		KSSLSocket *parent;
-		bool exiting;
-
+	QSocketNotifier *socketNotifier;
 };
 
 KSSLSocket::KSSLSocket() : KExtendedSocket()
 {
 	d = new KSSLSocketPrivate;
 	d->kssl = 0L;
-	d->pendingBytes = 0;
-	d->thread = new SSLPollThread(this);
 	d->dcc = KApplication::kApplication()->dcopClient();
 	d->cc = new KSSLCertificateCache;
 	d->cc->reload();
@@ -120,10 +67,6 @@ KSSLSocket::~KSSLSocket()
 {
 	//Close connection
 	closeNow();
-
-	//Get rid of reader thread
-	d->thread->wait();
-	delete d->thread;
 
 	if( d->kssl )
 	{
@@ -175,33 +118,15 @@ int KSSLSocket::bytesAvailable() const
 	return KBufferedIO::bytesAvailable();
 }
 
-void KSSLSocket::readData( int bytes )
+void KSSLSocket::slotReadData()
 {
-	//Lock the mutex, so the reader thread will block until we read this data
-	d->mutex.lock();
-	d->pendingBytes = bytes;
-}
+	kdDebug(14120) << k_funcinfo << d->kssl->pending() << endl;
+	QByteArray buff(512);
+	int bytesRead = d->kssl->read( buff.data(), 512 );
 
-void KSSLSocket::slotPoll()
-{
-	//Check for registered data
-	if( d->pendingBytes )
-	{
-		//Read in the data sent by the reader thread
-		QByteArray buff(d->pendingBytes);
-		int bytesRead = d->kssl->read( buff.data(), d->pendingBytes );
-
-		//Fill the read buffer
-		feedReadBuffer( bytesRead, buff.data() );
-		d->pendingBytes = 0;
-		emit readyRead();
-
-		//Unlock the reader thread so it can now check for new data
-		d->mutex.unlock();
-	}
-
-	if( socketStatus() == connected )
-		QTimer::singleShot( 0, this, SLOT( slotPoll() ) );
+	//Fill the read buffer
+	feedReadBuffer( bytesRead, buff.data() );
+	emit readyRead();
 }
 
 void KSSLSocket::slotConnected()
@@ -212,24 +137,26 @@ void KSSLSocket::slotConnected()
 		if( !d->kssl )
 		{
 			d->kssl = new KSSL();
-			d->kssl->connect( fd() );
+			d->kssl->connect( sockfd );
+
+			//Disconnect the KExtSocket notifier slot, we use our own
+			QObject::disconnect( readNotifier(), SIGNAL(activated( int )),
+				this, SLOT( socketActivityRead() ) );
+
+			QObject::connect( readNotifier(), SIGNAL(activated( int )),
+				this, SLOT( slotReadData() ) );
 		}
 		else
 		{
 			d->kssl->reInitialize();
 		}
 
-		if( verifyCertificate() == 1 )
-		{
-			//Start polling for data
-			d->thread->start();
-			slotPoll();
-		}
-		else
+		readNotifier()->setEnabled(true);
+
+		if( verifyCertificate() != 1 )
 		{
 			closeNow();
 		}
-
 	}
 	else
 	{
@@ -243,8 +170,7 @@ void KSSLSocket::slotConnected()
 
 void KSSLSocket::slotDisconnected()
 {
-	d->thread->quit();
-	d->thread->wait();
+	readNotifier()->setEnabled(false);
 }
 
 void KSSLSocket::showInfoDialog( QWidget *parent, bool modal )
