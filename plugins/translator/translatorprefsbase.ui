@@ -67,7 +67,7 @@
                 <cstring>m_incomming</cstring>
             </property>
             <property name="title">
-                <string>Incomming messages</string>
+                <string>Incoming Messages</string>
             </property>
             <vbox>
                 <property name="name">
@@ -100,7 +100,7 @@
                         <cstring>m_in_translate</cstring>
                     </property>
                     <property name="text">
-                        <string>Translate dirrectly</string>
+                        <string>Translate directly</string>
                     </property>
                     <property name="buttonGroupId">
                         <number>2</number>
@@ -113,7 +113,7 @@
                 <cstring>m_outgoing</cstring>
             </property>
             <property name="title">
-                <string>Outgoing messages</string>
+                <string>Outgoing Messages</string>
             </property>
             <vbox>
                 <property name="name">
@@ -146,7 +146,7 @@
                         <cstring>m_out_translate</cstring>
                     </property>
                     <property name="text">
-                        <string>Translate dirrectly</string>
+                        <string>Translate directly</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">

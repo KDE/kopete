@@ -46,7 +46,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>E-mail adress:</string>
+                        <string>Email address:</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -86,7 +86,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Display Name:</string>
+                        <string>Display name:</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -165,7 +165,7 @@
                 <cstring>m_reversed</cstring>
             </property>
             <property name="text">
-                <string>This user has me on his contact-list</string>
+                <string>This user has me on his contact list</string>
             </property>
         </widget>
         <spacer>

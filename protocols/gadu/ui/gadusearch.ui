@@ -38,7 +38,7 @@
                 <cstring>TextLabel2_2</cstring>
             </property>
             <property name="text">
-                <string>First Name</string>
+                <string>First name:</string>
             </property>
         </widget>
         <widget class="QLabel" row="2" column="0">
@@ -46,7 +46,7 @@
                 <cstring>TextLabel2_3</cstring>
             </property>
             <property name="text">
-                <string>Last Name</string>
+                <string>Last name:</string>
             </property>
         </widget>
         <widget class="QLabel" row="0" column="0">
@@ -54,7 +54,7 @@
                 <cstring>textLabel2</cstring>
             </property>
             <property name="text">
-                <string>Nickname</string>
+                <string>Nickname:</string>
             </property>
         </widget>
         <widget class="QLabel" row="3" column="0">
@@ -62,7 +62,7 @@
                 <cstring>TextLabel2_3_2</cstring>
             </property>
             <property name="text">
-                <string>City</string>
+                <string>City:</string>
             </property>
         </widget>
         <widget class="KLineEdit" row="2" column="1">
