@@ -28,6 +28,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
+#include <qdatetime.h>
 
 #include <libgadu.h>
 
@@ -45,8 +46,9 @@ struct contactLine {
 typedef QPtrList<contactLine> gaduContactsList;
 
 struct KGaduMessage {
-    QString message;		// Unicode
-    unsigned int sender_id;	// sender's UIN
+    QString		message;		// Unicode
+    unsigned int	sender_id;	// sender's UIN
+    QDateTime	sendTime;
 };
 
 struct KGaduNotify {

@@ -21,6 +21,8 @@
 // 02111-1307, USA.
 //
 
+#include "ctime"
+
 #include "gadusession.h"
 
 #include <klocale.h>
@@ -718,6 +720,7 @@ GaduSession::checkDescriptor()
 				gaduMessage.message =
 					textcodec->toUnicode((const char*)event->event.msg.message);
 				gaduMessage.sender_id = event->event.msg.sender;
+				gaduMessage.sendTime.setTime_t( event->event.msg.time, Qt::LocalTime );
 				emit messageReceived( &gaduMessage );
 			}
 		break;
